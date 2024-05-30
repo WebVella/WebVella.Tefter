@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Demo", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter", "src\WebVella.Tefter\WebVella.Tefter.csproj", "{488533C5-7E51-4222-AD4C-3B3109B006A3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{45AE6C67-91E3-46F4-B455-911156D227E9}"
+	ProjectSection(SolutionItems) = preProject
+		docs\create_test_structure_and_data.sql = docs\create_test_structure_and_data.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
