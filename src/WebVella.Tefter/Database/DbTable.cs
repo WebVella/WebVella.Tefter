@@ -15,7 +15,7 @@ public class DbTable
     private const int MAX_COLUMN_NAME_LENGTH = 50;
     private const string NAME_VALIDATION_PATTERN = @"^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
 
-    public Guid Id { get; set; }
+    public Guid Id { get; internal set; }
     public string Name { get; set; }
     public DbColumnCollection Columns { get; init; } = new();
 

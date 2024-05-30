@@ -2,7 +2,7 @@
 
 public abstract class DbColumn
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; internal set; }
     public DbTable Table { get; set; }
     public virtual string Name { get; set; }
     public virtual DbType DbType { get; set; }
