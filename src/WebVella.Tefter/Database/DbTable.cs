@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbTable
+public class DbTable : DbObject
 {
     //because the postgres NUMERIC type can hold a value of up to 131,072 digits
     //before the decimal point 16,383 digits after the decimal point.
@@ -15,25 +15,33 @@ public class DbTable
     private const int MAX_COLUMN_NAME_LENGTH = 50;
     private const string NAME_VALIDATION_PATTERN = @"^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
 
-    public Guid Id { get; internal set; }
+    #region <=== Properties ===>
+
     public string Name { get; set; }
     public DbColumnCollection Columns { get; init; } = new();
+    public DbConstraintCollection Constraints { get; init; } = new();
+    public DbIndexCollection Indexes { get; init; } = new();
 
-    public void AddAutoIncrementColumn(string name)
+    #endregion
+
+    #region <=== Columns Management ===>
+
+    public DbAutoIncrementColumn AddAutoIncrementColumn(string name)
     {
         ValidateName(name);
-        DbColumn column = new DbAutoIncrementColumn
+        DbAutoIncrementColumn column = new DbAutoIncrementColumn
         {
             Table = this,
-            Name = name
+            Name = name,
         };
         Columns.Add(column);
+        return column;
     }
 
-    public void AddNumberColumn(string name, bool isNullable = true, decimal? defaultValue = null)
+    public DbNumberColumn AddNumberColumn(string name, bool isNullable = true, decimal? defaultValue = null)
     {
         ValidateName(name);
-        DbColumn column = new DbNumberColumn
+        DbNumberColumn column = new DbNumberColumn
         {
             Table = this,
             Name = name,
@@ -41,12 +49,13 @@ public class DbTable
             DefaultValue = defaultValue
         };
         Columns.Add(column);
+        return column;
     }
 
-    public void AddBooleanColumn(string name, bool isNullable = true, bool? defaultValue = null)
+    public DbBooleanColumn AddBooleanColumn(string name, bool isNullable = true, bool? defaultValue = null)
     {
         ValidateName(name);
-        DbColumn column = new DbBooleanColumn
+        DbBooleanColumn column = new DbBooleanColumn
         {
             Table = this,
             Name = name,
@@ -54,12 +63,13 @@ public class DbTable
             DefaultValue = defaultValue
         };
         Columns.Add(column);
+        return column;
     }
 
-    public void AddDateColumn(string name, bool isNullable = true, DateOnly? defaultValue = null, bool useCurrentTimeAsDefaultValue = false)
+    public DbDateColumn AddDateColumn(string name, bool isNullable = true, DateOnly? defaultValue = null, bool useCurrentTimeAsDefaultValue = false)
     {
         ValidateName(name);
-        DbColumn column = new DbDateColumn
+        DbDateColumn column = new DbDateColumn
         {
             Table = this,
             Name = name,
@@ -68,12 +78,13 @@ public class DbTable
             UseCurrentTimeAsDefaultValue = useCurrentTimeAsDefaultValue
         };
         Columns.Add(column);
+        return column;
     }
 
-    public void AddDateTimeColumn(string name, bool isNullable = true, DateTime? defaultValue = null, bool useCurrentTimeAsDefaultValue = false)
+    public DbDateTimeColumn AddDateTimeColumn(string name, bool isNullable = true, DateTime? defaultValue = null, bool useCurrentTimeAsDefaultValue = false)
     {
         ValidateName(name);
-        DbColumn column = new DbDateTimeColumn
+        DbDateTimeColumn column = new DbDateTimeColumn
         {
             Table = this,
             Name = name,
@@ -82,15 +93,17 @@ public class DbTable
             UseCurrentTimeAsDefaultValue = useCurrentTimeAsDefaultValue
         };
         Columns.Add(column);
+        return column;
     }
 
-    public void AddGuidColumn(string name, bool isNullable = true, Guid? defaultValue = null, bool generateNewIdAsDefaultValue = false)
+    public void AddGuidColumn(string name, DbObjectType objectType, bool isNullable = true, Guid? defaultValue = null, bool generateNewIdAsDefaultValue = false)
     {
         ValidateName(name);
         DbColumn column = new DbGuidColumn
         {
             Table = this,
             Name = name,
+            Meta = new DbObjectMeta { Type = objectType },
             IsNullable = isNullable,
             DefaultValue = defaultValue,
             GenerateNewIdAsDefaultValue = generateNewIdAsDefaultValue
@@ -98,10 +111,11 @@ public class DbTable
         Columns.Add(column);
     }
 
-    internal void AddTableIdColumn()
+    internal DbTableIdColumn AddTableIdColumn()
     {
-        DbColumn column = new DbTableIdColumn { Table = this };
+        DbTableIdColumn column = new DbTableIdColumn { Table = this };
         Columns.Add(column);
+        return column;
     }
 
     public void RemoveColumn(string name)
@@ -217,7 +231,171 @@ public class DbTable
             DbTextColumn c => textDefaultValueFunc(c),
             _ => throw new Exception($"Not supported DbColumn type {column.GetType()} while trying to extract default value")
         };
-
     }
+
+    #endregion
+
+    #region <=== Constraints Management ===>
+
+    public void AddPrimaryKeyContraint(string name)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        var constraint = new DbPrimaryKeyConstraint { Name = name };
+        var idColumn = Columns.Find("tefter_id");
+        if (idColumn is null)
+            throw new DbException($"Table id column is not found while try to create primary key constraint {name}");
+
+        constraint.Columns.Add(idColumn);
+        Constraints.Add(constraint);
+    }
+
+    public void AddUniqueContraint(string name, params string[] columns)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        //TODO validate name, columns (1. at least one, 2. exists)
+
+        var constraint = new DbUniqueConstraint { Name = name };
+
+        foreach (var columnName in columns)
+        {
+            var column = Columns.Find(columnName);
+            if (column is null)
+                throw new DbException($"Column with name {columnName} is not found while try to create unique constraint {name}");
+
+            constraint.Columns.Add(column);
+        }
+
+        Constraints.Add(constraint);
+    }
+
+    public void RemoveConstraint(string name)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        var constraint = Constraints.Find(name);
+
+        if (constraint is null)
+            throw new DbException($"Trying to remove non existent constraint '{name}' from table '{Name}'");
+
+        Constraints.Remove(constraint);
+    }
+
+    public void ClearConstraints()
+    {
+        Constraints.Clear();
+    }
+
+    #endregion
+
+    #region <=== Index Management ===>
+
+    public void AddBTreeIndex(string name, string[] columns)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        //TODO validate name, columns (1. at least one, 2. exists)
+
+        var index = new DbBTreeIndex { Name = name };
+
+        foreach (var columnName in columns)
+        {
+            var column = Columns.Find(columnName);
+            if (column is null)
+                throw new DbException($"Column with name {columnName} is not found while try to create btree index {name}");
+
+            index.Columns.Add(column);
+        }
+
+        Indexes.Add(index);
+    }
+
+    public void AddGistIndex(string name, string[] columns)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        //TODO validate name, columns (1. at least one, 2. exists)
+
+        var index = new DbGistIndex { Name = name };
+
+        foreach (var columnName in columns)
+        {
+            var column = Columns.Find(columnName);
+            if (column is null)
+                throw new DbException($"Column with name {columnName} is not found while try to create GIST index {name}");
+
+            index.Columns.Add(column);
+        }
+
+        Indexes.Add(index);
+    }
+
+    public void AddGinIndex(string name, string[] columns)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        //TODO validate name, columns (1. at least one, 2. exists)
+
+        var index = new DbGinIndex { Name = name };
+
+        foreach (var columnName in columns)
+        {
+            var column = Columns.Find(columnName);
+            if (column is null)
+                throw new DbException($"Column with name {columnName} is not found while try to create GIN index {name}");
+
+            index.Columns.Add(column);
+        }
+
+        Indexes.Add(index);
+    }
+
+    public void AddHashIndex(string name, string[] columns)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        //TODO validate name, columns (1. at least one, 2. exists)
+
+        var index = new DbHashIndex { Name = name };
+
+        foreach (var columnName in columns)
+        {
+            var column = Columns.Find(columnName);
+            if (column is null)
+                throw new DbException($"Column with name {columnName} is not found while try to create HASH index {name}");
+
+            index.Columns.Add(column);
+        }
+
+        Indexes.Add(index);
+    }
+
+    public void RemoveIndex(string name)
+    {
+        if (name is null)
+            throw new ArgumentNullException(name);
+
+        var index = Indexes.Find(name);
+
+        if (index is null)
+            throw new DbException($"Trying to remove non existent index '{name}' from table '{Name}'");
+
+        Indexes.Remove(index);
+    }
+
+    public void ClearIndexes()
+    {
+        Indexes.Clear();
+    }
+
+    #endregion
 }
 

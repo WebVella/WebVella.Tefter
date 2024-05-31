@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using System.Data;
+using System.Xml.Linq;
+
+namespace WebVella.Tefter.Database;
 
 public class DbColumnCollection
 {
@@ -57,6 +60,21 @@ public class DbColumnCollection
 
         using (_lock.Lock())
         {
+            _columns.Remove(column);
+        }
+    }
+
+    internal void Remove(string name)
+    {
+        if (name is null)
+            throw new ArgumentNullException("name");
+
+        using (_lock.Lock())
+        {
+            var column = Find(name);
+            if (column is null)
+                throw new DbException($"Trying to remove non existent column '{name}' from table");
+            
             _columns.Remove(column);
         }
     }

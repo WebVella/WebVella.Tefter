@@ -1,8 +1,7 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public abstract class DbColumn
+public abstract class DbColumn : DbObject
 {
-    public Guid Id { get; internal set; }
     public DbTable Table { get; set; }
     public virtual string Name { get; set; }
     public virtual DbType DbType { get; set; }

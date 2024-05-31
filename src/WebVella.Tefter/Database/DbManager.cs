@@ -12,4 +12,17 @@ public class DbManager : IDbManager
     {
         _dbService = serviceProvider.GetService<IDbService>();
     }
+
+    public void ValidateTable(DbTable table)
+    {
+    }
+
+    public void SaveTable(DbTable table)
+    {
+        ValidateTable(table);
+
+
+    }
+
+
 }
