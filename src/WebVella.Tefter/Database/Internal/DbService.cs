@@ -84,7 +84,7 @@ internal class DbService : IDbService
     public async ValueTask<DataTable> ExecuteSqlQueryCommandAsync(string sql, List<NpgsqlParameter> parameters)
     {
         ProcessNpgsqlParameters(parameters);
-        //we are not using posgres driver for async operation because of transaction wrapper library
+        //we are not using postgres driver for async operation because of transaction wrapper library
         using (var dbCon = CreateConnection())
         {
             NpgsqlCommand cmd = dbCon.CreateCommand(sql, CommandType.Text, parameters);
@@ -106,7 +106,7 @@ internal class DbService : IDbService
     {
 
         ProcessNpgsqlParameters(parameters);
-        //we are not using posgres driver for async operation because of transaction wrapper library
+        //we are not using postgres driver for async operation because of transaction wrapper library
         using (var dbCon = CreateConnection())
         {
             var affectedRows = dbCon.CreateCommand(sql, CommandType.Text, parameters).ExecuteNonQuery();

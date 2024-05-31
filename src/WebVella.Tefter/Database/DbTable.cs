@@ -17,7 +17,6 @@ public class DbTable : DbObject
 
     #region <=== Properties ===>
 
-    public string Name { get; set; }
     public DbColumnCollection Columns { get; init; } = new();
     public DbConstraintCollection Constraints { get; init; } = new();
     public DbIndexCollection Indexes { get; init; } = new();
@@ -56,6 +55,20 @@ public class DbTable : DbObject
     {
         ValidateName(name);
         DbBooleanColumn column = new DbBooleanColumn
+        {
+            Table = this,
+            Name = name,
+            IsNullable = isNullable,
+            DefaultValue = defaultValue
+        };
+        Columns.Add(column);
+        return column;
+    }
+
+    public DbTextColumn AddTextColumn(string name, bool isNullable = true, string defaultValue = null)
+    {
+        ValidateName(name);
+        DbTextColumn column = new DbTextColumn
         {
             Table = this,
             Name = name,
@@ -151,86 +164,6 @@ public class DbTable : DbObject
         var column = Columns.Find(name.Trim());
         if (column is not null)
             throw new DbException($"A column with same name {name} already exists in table");
-    }
-
-    private string ConvertDefaultValueToString(DbColumn column)
-    {
-        Func<DbNumberColumn, string> numberDefaultValueFunc = (column) =>
-        {
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return column.DefaultValue.Value.ToString();
-        };
-
-        Func<DbBooleanColumn, string> booleanDefaultValueFunc = (column) =>
-        {
-            if (column.DefaultValue is null)
-                return "NULL";
-            else if (column.DefaultValue.Value)
-                return "TRUE";
-            else
-                return "FALSE";
-        };
-
-        Func<DbDateColumn, string> dateDefaultValueFunc = (column) =>
-        {
-            if (column.UseCurrentTimeAsDefaultValue)
-                return "now()";
-
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{column.DefaultValue.Value.ToString("yyyy-MM-dd")}'";
-        };
-
-        Func<DbDateTimeColumn, string> dateTimeDefaultValueFunc = (column) =>
-        {
-            if (column.UseCurrentTimeAsDefaultValue)
-                return "now()";
-
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{column.DefaultValue.Value.ToString("yyyy-MM-dd HH:mm:ss")}'";
-        };
-
-        Func<DbGuidColumn, string> guidDefaultValueFunc = (column) =>
-        {
-            if (column.GenerateNewIdAsDefaultValue)
-                return "uuid_generate_v1()";
-
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{column.DefaultValue.Value}'";
-        };
-
-        Func<DbTextColumn, string> textDefaultValueFunc = (column) =>
-        {
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{column.DefaultValue.Value}'";
-        };
-
-        Func<DbTableIdColumn, string> tableIdDefaultValueFunc = (column) =>
-        {
-            return "uuid_generate_v1()";
-        };
-
-        return column switch
-        {
-            DbTableIdColumn c => tableIdDefaultValueFunc(c),
-            DbAutoIncrementColumn c => null,
-            DbNumberColumn c => numberDefaultValueFunc(c),
-            DbBooleanColumn c => booleanDefaultValueFunc(c),
-            DbDateColumn c => dateDefaultValueFunc(c),
-            DbDateTimeColumn c => dateTimeDefaultValueFunc(c),
-            DbGuidColumn c => guidDefaultValueFunc(c),
-            DbTextColumn c => textDefaultValueFunc(c),
-            _ => throw new Exception($"Not supported DbColumn type {column.GetType()} while trying to extract default value")
-        };
     }
 
     #endregion

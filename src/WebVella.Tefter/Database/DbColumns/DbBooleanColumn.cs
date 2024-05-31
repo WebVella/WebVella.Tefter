@@ -2,7 +2,5 @@
 
 public class DbBooleanColumn : DbColumn
 {
-    public virtual DbType Type => DbType.Boolean;
-    public new bool? DefaultValue { get; set; }
-
+    public override DbType Type => DbType.Boolean;
 }

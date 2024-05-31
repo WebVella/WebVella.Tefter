@@ -2,6 +2,6 @@
 
 public class DbTableIdColumn : DbColumn
 {
-    public new string Name => "tefter_id";
-    public virtual DbType Type => DbType.TableId;
+    public override string Name => "tefter_bg";
+    public override DbType Type => DbType.TableId;
 }

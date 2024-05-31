@@ -8,9 +8,23 @@ public partial class DbManagerTests : BaseTest
         using (await locker.LockAsync())
         {
             IDbService dbService = ServiceProvider.GetRequiredService<IDbService>();
+            IDbManager dbManager = ServiceProvider.GetRequiredService<IDbManager>();
+            
             using (var scope = dbService.CreateTransactionScope())
             {
+                var table = new DbTable();
+                table.Name = "test";
+                table.AddTableIdColumn();
+                table.AddAutoIncrementColumn("inc");
+                table.AddBooleanColumn("bool", false, true);
+                table.AddNumberColumn("number", true, 10);
+                table.AddDateColumn("date", false,null,useCurrentTimeAsDefaultValue:true);
+                table.AddDateTimeColumn("datetime", true, DateTime.Now);
+                table.AddTextColumn("text", false, "default value");
 
+                dbManager.SaveTable(table);
+
+                scope.Complete();
             }
 
             //var task1 = Task.Run(async () =>

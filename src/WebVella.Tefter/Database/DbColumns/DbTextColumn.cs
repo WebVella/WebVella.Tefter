@@ -2,6 +2,5 @@
 
 public class DbTextColumn : DbColumn
 {
-    public virtual DbType Type => DbType.Text;
-    public new Guid? DefaultValue { get; set; }
+    public override DbType Type => DbType.Text;
 }

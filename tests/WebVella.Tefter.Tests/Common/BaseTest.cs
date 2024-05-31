@@ -21,6 +21,7 @@ public class BaseTest
         });
         Context.Services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
         Context.Services.AddSingleton<IDbService, DbService>();
+        Context.Services.AddSingleton<IDbManager, DbManager>();
 
         ServiceProvider = Context.Services.BuildServiceProvider();
     }

@@ -2,7 +2,6 @@
 
 public class DbGuidColumn : DbColumn
 {
-    public virtual DbType Type => DbType.Guid;
-    public new Guid? DefaultValue { get; set; }
+    public override DbType Type => DbType.Guid;
     public bool GenerateNewIdAsDefaultValue { get; set; } = false;
 }
