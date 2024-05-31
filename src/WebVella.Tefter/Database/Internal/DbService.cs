@@ -18,9 +18,9 @@ internal interface IDbService
 internal class DbService : IDbService
 {
     private ITransactionRollbackNotifyService _tranRNS = null;
-    public DbConfigurationService Configuration { get; private set; }
+    public IDbConfigurationService Configuration { get; private set; }
 
-    public DbService(DbConfigurationService configuration, ITransactionRollbackNotifyService tranRNS)
+    public DbService(IDbConfigurationService configuration, ITransactionRollbackNotifyService tranRNS)
     {
         _tranRNS = tranRNS;
         Configuration = configuration;

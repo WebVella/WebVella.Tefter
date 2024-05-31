@@ -7,9 +7,12 @@ public partial class DbManagerTests : BaseTest
     {
         using (await locker.LockAsync())
         {
-            IDbService dbService = Context.Services.GetService<IDbService>();
+            IDbService dbService = ServiceProvider.GetRequiredService<IDbService>();
+            using (var scope = dbService.CreateTransactionScope())
+            {
 
-   
+            }
+
             //var task1 = Task.Run(async () =>
             //{
             //    using (var scope = dbService.CreateTransactionScope())

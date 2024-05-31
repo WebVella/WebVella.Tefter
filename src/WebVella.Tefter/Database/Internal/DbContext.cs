@@ -5,7 +5,7 @@ internal class DbContext : IDisposable
     private static AsyncLocal<string> currentDbContextId = new AsyncLocal<string>();
     private static ConcurrentDictionary<string, DbContext> dbContextDict = new ConcurrentDictionary<string, DbContext>();
 
-    public DbConfigurationService Configuration { get; private set; }
+    public IDbConfigurationService Configuration { get; private set; }
     private readonly object lockObj = new object();
     public NpgsqlTransaction Transaction { get { return transaction; } }
     internal Stack<DbConnection> connectionStack;
@@ -24,7 +24,7 @@ internal class DbContext : IDisposable
         }
     }
 
-    private DbContext(DbConfigurationService configuration)
+    private DbContext(IDbConfigurationService configuration)
     {
         Configuration = configuration;
         connectionStack = new Stack<DbConnection>();
@@ -65,7 +65,7 @@ internal class DbContext : IDisposable
         transaction = null;
     }
 
-    internal static DbContext CreateContext(DbConfigurationService configuration)
+    internal static DbContext CreateContext(IDbConfigurationService configuration)
     {
         currentDbContextId.Value = Guid.NewGuid().ToString();
         if (!dbContextDict.TryAdd(currentDbContextId.Value, new DbContext(configuration)))

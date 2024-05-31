@@ -11,6 +11,6 @@ internal class DbConfigurationService : IDbConfigurationService
 
     public DbConfigurationService(IConfiguration config)
     {
-        ConnectionString = config["Settings:ConnectionString"];
+        ConnectionString = config["ConnectionString"];
     }
 }

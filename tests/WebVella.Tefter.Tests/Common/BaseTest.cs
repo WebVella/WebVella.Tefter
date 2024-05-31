@@ -1,11 +1,12 @@
 ﻿namespace WebVella.Tefter.Tests.Common;
 
-
 public class BaseTest
 {
     protected static readonly AsyncLock locker = new AsyncLock();
 
     public TestContext Context { get; }
+
+    public ServiceProvider ServiceProvider { get; }
 
     public BaseTest()
     {
@@ -18,8 +19,10 @@ public class BaseTest
                 .AddJsonFile($"appsettings.{Environment.MachineName}.json".ToApplicationPath(), true)
            .Build());
         });
-        //Context.Services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
+        Context.Services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
         Context.Services.AddSingleton<IDbService, DbService>();
+
+        ServiceProvider = Context.Services.BuildServiceProvider();
     }
 
     protected DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters)
