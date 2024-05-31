@@ -1,0 +1,18 @@
+﻿.location {
+	color: var(--neutral-fill-inverse-rest);
+	display:flex;
+	align-items:center;
+	justify-content:start;
+}
+
+	.location .icon {
+		flex:0 0 auto;
+		padding-right:10px;
+		display:flex;
+		align-items:center;
+	}
+
+	.location .title {
+		flex: 1 1 auto;
+		line-height:1em;
+	}

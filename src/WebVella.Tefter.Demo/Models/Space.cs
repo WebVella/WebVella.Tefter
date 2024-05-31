@@ -1,0 +1,42 @@
+﻿using Bogus;
+
+namespace WebVella.Tefter.Demo.Models;
+
+public class Space
+{
+	public Guid Id { get; set; }
+	public string Name { get; set; }
+
+	public bool IsLocked { get; set; }
+
+	public List<SpaceItem> Items { get; set; } = new();
+
+	public Color IconColor
+	{
+		get
+		{
+			if (IsLocked) return Color.Error;
+			return Color.Success;
+		}
+	}
+
+	public Icon Icon
+	{
+		get
+		{
+			if (IsLocked) return new Icons.Regular.Size20.LockClosed();
+			return new Icons.Regular.Size20.LockOpen();
+		}
+	}
+
+	public static Faker<Space> GetFaker()
+	{
+		var faker = new Faker<Space>()
+		.RuleFor(m => m.Id, (f, m) => f.Random.Uuid())
+		.RuleFor(m => m.Name, (f, m) => f.Lorem.Sentence(3))
+		.RuleFor(m => m.IsLocked, (f, m) => f.Random.Bool())
+		;
+
+		return faker;
+	}
+}

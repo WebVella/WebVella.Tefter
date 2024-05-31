@@ -1,0 +1,22 @@
+﻿@namespace WebVella.Tefter.Demo.Components
+@inherits WvBaseComponent
+
+<FluentPersona Id="user-menu-toggle" Initials="BG" ImageSize="32px" OnClick="() => _visible = !_visible"></FluentPersona>
+
+<FluentMenu Width="200" @bind-Open="_visible" Anchor="user-menu-toggle">
+	<FluentMenuItem>
+		Edit Profile
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentDivider></FluentDivider>
+	<FluentMenuItem>
+		Logout
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.SignOut())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+</FluentMenu>
+
+
