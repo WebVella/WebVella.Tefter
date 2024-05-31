@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using System.Text.Json.Serialization;
 
 namespace WebVella.Tefter.Demo.Models;
 
@@ -7,6 +8,7 @@ public class SpaceItem
 	public Guid Id { get; set; }
 	public Guid SpaceId { get; set; }
 	public string Name { get; set; }
+	public int Position { get; set; }
 	public SpaceItemType ItemType { get; set; } = SpaceItemType.Report;
 
 	public Icon Icon
@@ -23,6 +25,9 @@ public class SpaceItem
 			}
 		}
 	}
+
+	[JsonIgnore]
+	public Action OnSelect { get; set; }
 
 	public static Faker<SpaceItem> GetFaker()
 	{

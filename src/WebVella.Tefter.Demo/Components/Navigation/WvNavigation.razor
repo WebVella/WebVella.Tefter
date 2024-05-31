@@ -8,58 +8,57 @@
 					   Href="/fast-access" Match="@NavLinkMatch.Prefix">Fast Access</FluentNavLink>
 	</FluentNavMenu>
 	<FluentDivider Class="nav-divider"></FluentDivider>
-	<div class="button-actions">
-		<div class="button-actions-left">
-			<FluentButton Id="space-selector" Title="@selectedSpace.Name"
-						  OnClick="() => spaceSelectorVisible = !spaceSelectorVisible">
-				@selectedSpace.Name
-				<FluentIcon Value="@selectedSpace.Icon" Color="@selectedSpace.IconColor" Slot="start" />
-			</FluentButton>
-			<FluentPopover Style="width: 300px;" VerticalThreshold="170" AnchorId="space-selector" @bind-Open="spaceSelectorVisible">
-				<Header>Callout Header</Header>
-				<Body>
-					<FluentStack Orientation="Orientation.Vertical">
-						<FluentCheckbox>Item 1</FluentCheckbox>
-						<FluentCheckbox>Item 2</FluentCheckbox>
-						<FluentTextField tabindex="0"></FluentTextField>
-					</FluentStack>
-				</Body>
-				<Footer>Callout Footer</Footer>
-			</FluentPopover>
-		</div>
-		<div class="button-actions-right">
-			<FluentButton Id="space-settings" Title="edit settings" IconStart="@(new Icons.Regular.Size20.Settings())"
-						  OnClick="() => spaceSettingsVisible = !spaceSettingsVisible" />
-			<FluentMenu Anchor="space-settings" @bind-Open="spaceSettingsVisible" Width="200px">
-				<FluentMenuItem>
-					Rename Space
-					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
-					</span>
-				</FluentMenuItem>
-				<FluentMenuItem>
-					Delete Space
-					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
-					</span>
-				</FluentMenuItem>
-				<FluentDivider></FluentDivider>
-				<FluentMenuItem>
-					Add Space
-					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
-					</span>
-				</FluentMenuItem>
+	@if (_space is null)
+	{
+		<FluentButton Title="Add new Workspace" IconStart="@(new Icons.Regular.Size20.Add())" OnClick="onAddClick"
+					  Appearance="Appearance.Accent" Style="width:100%">Add Workspace</FluentButton>
 
-			</FluentMenu>
-		</div>
-	</div>
-	<FluentNavMenu>
-		@foreach (var item in spaceItems)
-		{
-			<FluentNavLink @key=@item.Id Icon="@item.Icon" Tooltip="@item.Title"
-						   Href="@item.Url" Match="@item.Match">@item.Title</FluentNavLink>
-		}
+	}
+	else
+	{
+		<div class="button-actions">
+			<div class="button-actions-left">
+				<FluentButton Id="space-selector" Title="@_space.Name"
+							  OnClick="onSpaceSelectorClick">
+					@_space.Name
+					<FluentIcon Value="@_space.Icon" Color="@_space.IconColor" Slot="start" />
+				</FluentButton>
+				<WvNavigationSelector @ref=_selectorEl SpaceId=@_space?.Id SpaceChanged="SpaceChanged"></WvNavigationSelector>
+			</div>
+			<div class="button-actions-right">
+				<FluentButton Id="space-settings" Title="edit settings" IconStart="@(new Icons.Regular.Size20.Settings())"
+							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" />
+				<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
+					<FluentMenuItem OnClick="onRenameClick">
+						Rename Space
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="onRemoveClick">
+						Delete Space
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentDivider></FluentDivider>
+					<FluentMenuItem OnClick="onAddClick">
+						Add Space
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+						</span>
+					</FluentMenuItem>
 
-	</FluentNavMenu>
+				</FluentMenu>
+			</div>
+		</div>
+		<FluentNavMenu>
+			@foreach (var item in _menuItems)
+			{
+				<FluentNavLink @key=@item.Id Icon="@item.Icon" Tooltip="@item.Title"
+							   Href="@item.Url" Match="@item.Match">@item.Title</FluentNavLink>
+			}
+
+		</FluentNavMenu>
+	}
 </div>

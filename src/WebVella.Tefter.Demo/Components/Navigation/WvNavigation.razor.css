@@ -18,20 +18,20 @@
 	flex: 0 0 30px;
 }
 
-	::deep .fluent-nav-item .positioning-region {
-		background: var(--neutral-layer-3) !important;
-	}
+::deep > .fluent-nav-menu > .fluent-nav-item .positioning-region {
+	background: var(--neutral-layer-3) !important;
+}
 
-::deep .fluent-nav-menu {
+::deep > .fluent-nav-menu {
 	width: var(--sidebar-nav-width) !important;
 }
 
-	::deep .fluent-nav-menu .fluent-nav-text {
+	::deep > .fluent-nav-menu > .fluent-nav-item .fluent-nav-text {
 		width: calc(100% - 40px) !important;
 	}
 
 
-::deep .nav-divider {
+::deep > .nav-divider {
 	width: var(--sidebar-nav-width) !important;
 	margin: 10px 0;
 }

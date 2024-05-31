@@ -11,6 +11,9 @@
 		display:flex;
 		align-items:center;
 	}
+		::deep.location .icon svg {
+			width:32px !important;
+		}
 
 	.location .title {
 		flex: 1 1 auto;

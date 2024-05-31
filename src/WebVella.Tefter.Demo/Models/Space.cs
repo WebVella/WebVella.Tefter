@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using System.Text.Json.Serialization;
 
 namespace WebVella.Tefter.Demo.Models;
 
@@ -28,6 +29,11 @@ public class Space
 			return new Icons.Regular.Size20.LockOpen();
 		}
 	}
+
+	public DateTime LastUsedByUser { get; set; }
+
+	[JsonIgnore]
+	public Action OnSelect { get; set; }
 
 	public static Faker<Space> GetFaker()
 	{
