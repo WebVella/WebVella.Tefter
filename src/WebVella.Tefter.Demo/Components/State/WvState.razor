@@ -1,0 +1,22 @@
+﻿@namespace WebVella.Tefter.Demo.Components
+@inherits ComponentBase
+
+
+@if (!String.IsNullOrWhiteSpace(_errorMessage))
+{
+	<div class="alert alert-danger p-2">@_errorMessage</div>
+}
+else if (_isLoading)
+{
+	<FluentStack Orientation="Orientation.Vertical" VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Center"
+				 Style="height:300px;">
+		Loading...<br />
+		<FluentProgress Width="240px" />
+	</FluentStack>
+}
+else
+{
+	<CascadingValue Value="@this" Name="WvState" TValue="WvState" IsFixed="true">
+		@ChildContent
+	</CascadingValue>
+}

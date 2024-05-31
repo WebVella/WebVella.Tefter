@@ -1,0 +1,27 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits LayoutComponentBase
+<WvState>
+	<FluentLayout>
+		<FluentHeader Class="header">
+			<WvLogo />
+			<WvLocation />
+			<FluentSpacer />
+			<WvUserNavigation />
+		</FluentHeader>
+		<FluentStack Orientation="Orientation.Horizontal" Class="wrapper">
+			<FluentStack Orientation="Orientation.Vertical" Class="sidebar">
+				<WvNavigation />
+			</FluentStack>
+			<FluentBodyContent Class="content">
+				@Body
+			</FluentBodyContent>
+		</FluentStack>
+	</FluentLayout>
+</WvState>
+<div id="blazor-error-ui">
+	An unhandled error has occurred.
+	<a href="" class="reload">Reload</a>
+	<a class="dismiss">🗙</a>
+</div>
+
+

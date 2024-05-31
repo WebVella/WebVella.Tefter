@@ -1,0 +1,65 @@
+﻿
+.sidebar-nav {
+	--sidebar-nav-width: 180px;
+}
+
+.button-actions {
+	display: flex;
+	margin-bottom:10px;
+}
+
+.button-actions-left {
+	flex: 1 1 auto;
+	display: flex;
+	padding-right:5px;
+}
+
+.button-actions-right {
+	flex: 0 0 30px;
+}
+
+::deep > .fluent-nav-menu > .fluent-nav-item .positioning-region {
+	background: var(--neutral-layer-3) !important;
+}
+
+::deep > .fluent-nav-menu {
+	width: var(--sidebar-nav-width) !important;
+}
+
+	::deep > .fluent-nav-menu > .fluent-nav-item .fluent-nav-text {
+		width: calc(100% - 40px) !important;
+	}
+
+
+::deep > .nav-divider {
+	width: var(--sidebar-nav-width) !important;
+	margin: 10px 0;
+}
+
+::deep #space-selector {
+	/*width: var(--sidebar-nav-width) !important;*/
+	flex: 1 1 auto;
+}
+
+	::deep #space-selector::part(control) {
+		padding-right: 5px !important;
+		justify-content: start;
+		align-items: center;
+	}
+
+	::deep #space-selector::part(start) {
+		flex:0 0 auto;
+	}
+	::deep #space-selector::part(end) {
+		flex: 0 0 auto;
+	}
+
+	::deep #space-selector::part(content) {
+		flex:1 1 auto;
+		display: inline-block;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		width: 100px;
+		text-align: left;
+	}

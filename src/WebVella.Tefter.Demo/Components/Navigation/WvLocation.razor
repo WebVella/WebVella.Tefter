@@ -1,0 +1,16 @@
+﻿@namespace WebVella.Tefter.Demo.Components
+@inherits WvBaseComponent
+
+<div class="location">
+	@if (_spaceItem is not null)
+	{
+		<div class="icon">
+			<FluentIcon Value="_spaceItem.Icon" />
+		</div>
+		<div class="title">@_spaceItem.Name</div>
+
+	}
+
+</div>
+
+
