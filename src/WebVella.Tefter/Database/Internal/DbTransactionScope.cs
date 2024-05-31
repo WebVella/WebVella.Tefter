@@ -14,7 +14,7 @@ internal class DbTransactionScope : IDisposable
 
     public string LockKey { get { return _lockKey; } }
 
-    internal DbTransactionScope(DbConfiguration configuration, ITransactionRollbackNotifyService tranRNS, string lockKey = null)
+    internal DbTransactionScope(DbConfigurationService configuration, ITransactionRollbackNotifyService tranRNS, string lockKey = null)
     {
         _lockKey = lockKey;
         _tranRNS = tranRNS;
