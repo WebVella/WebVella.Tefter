@@ -15,12 +15,12 @@ internal interface IDbService
 }
 
 
-internal class DbService
+internal class DbService : IDbService
 {
     private ITransactionRollbackNotifyService _tranRNS = null;
-    public DbConfiguration Configuration { get; private set; }
+    public IDbConfigurationService Configuration { get; private set; }
 
-    public DbService(DbConfiguration configuration, ITransactionRollbackNotifyService tranRNS)
+    public DbService(IDbConfigurationService configuration, ITransactionRollbackNotifyService tranRNS)
     {
         _tranRNS = tranRNS;
         Configuration = configuration;
@@ -84,7 +84,7 @@ internal class DbService
     public async ValueTask<DataTable> ExecuteSqlQueryCommandAsync(string sql, List<NpgsqlParameter> parameters)
     {
         ProcessNpgsqlParameters(parameters);
-        //we are not using postsgres driver for async operation because of transaction wrapper library
+        //we are not using postgres driver for async operation because of transaction wrapper library
         using (var dbCon = CreateConnection())
         {
             NpgsqlCommand cmd = dbCon.CreateCommand(sql, CommandType.Text, parameters);
@@ -106,7 +106,7 @@ internal class DbService
     {
 
         ProcessNpgsqlParameters(parameters);
-        //we are not using postsgres driver for async operation because of transaction wrapper library
+        //we are not using postgres driver for async operation because of transaction wrapper library
         using (var dbCon = CreateConnection())
         {
             var affectedRows = dbCon.CreateCommand(sql, CommandType.Text, parameters).ExecuteNonQuery();

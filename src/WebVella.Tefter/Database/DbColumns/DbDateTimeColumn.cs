@@ -2,7 +2,6 @@
 
 public class DbDateTimeColumn : DbColumn
 {
-    public virtual DbType Type => DbType.DateTime;
-    public new DateTime? DefaultValue { get; set; }
+    public override DbType Type => DbType.DateTime;
     public bool UseCurrentTimeAsDefaultValue { get; set; } = false;
 }
