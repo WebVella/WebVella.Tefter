@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Demo.Data;
 
-public static class SpaceData
+public static partial class SampleData
 {
 	public static List<Space> GetSpaces()
 	{

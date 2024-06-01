@@ -10,7 +10,9 @@ body {
 
 .wrapper {
 	padding-right: 5px !important;
+	padding-bottom:5px !important;
 	align-items:unset !important;
+
 }
 
 .sidebar {
@@ -22,10 +24,39 @@ body {
 
 .content {
 	background: var(--neutral-fill-layer-rest) !important;
-	padding: 1rem;
+	padding: 15px;
+	padding-right:5px;
 	border-radius: 8px;
-	min-height: 300px;
 }
+
+.content-inner {
+	height: calc(100vh - 83px) !important;
+	overflow-y: scroll !important;
+	padding-right:10px;
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: var(--neutral-layer-3);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: var(--neutral-stroke-rest);
+}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--neutral-base-color);
+	}
+
+ 
+
 
 /*Overrides*/
 fluent-data-grid-row:has([row-selected]) {

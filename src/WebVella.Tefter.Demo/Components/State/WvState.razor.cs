@@ -26,7 +26,7 @@ public partial class WvState : ComponentBase
 	{
 		if (firstRender)
 		{
-			_spaces = SpaceData.GetSpaces();
+			_spaces = SampleData.GetSpaces();
 			_spaceDict = _spaces.ToDictionary(x=> x.Id);
 			foreach (var space in _spaces)
 			{

@@ -1,9 +1,4 @@
 ﻿@page "/space/{SpaceId:guid}/item/{SpaceItemId:guid}"
 @inherits WvBasePage
-@{
-	var (space, spaceItem) = WvState.GetActiveSpaceData();
-}
-<div>@space.Id</div>
-<div>@space.Name</div>
-<div>@spaceItem.Id</div>
-<div>@spaceItem.Name</div>
+
+<WvSpace/>
