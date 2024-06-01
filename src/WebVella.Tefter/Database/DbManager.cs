@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using System.Xml.Linq;
-using WebVella.Tefter.Database.Internal;
-
-namespace WebVella.Tefter.Database;
+﻿namespace WebVella.Tefter.Database;
 
 public partial interface IDbManager
 {
@@ -28,28 +24,52 @@ public partial class DbManager : IDbManager
 
         using (var scope = _dbService.CreateTransactionScope())
         {
-            var extensionSql = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"";
+            var extensionSql = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"; " + 
+                               "CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";";
             _dbService.ExecuteSqlNonQueryCommand(extensionSql);
 
             var tableSql = $"CREATE TABLE \"{table.Name}\"();";
             _dbService.ExecuteSqlNonQueryCommand(tableSql);
 
-           var tableMeta = GetSqlMeta(table);
-           _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON TABLE \"{table.Name}\" IS '{tableMeta}'");
-           
+            var tableMeta = GetSqlMeta(table);
+            _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON TABLE \"{table.Name}\" IS '{tableMeta}'");
+
             foreach (DbColumn column in table.Columns)
             {
                 var sql = GetSqlColumnCreate(column);
                 _dbService.ExecuteSqlNonQueryCommand(sql);
 
-                var columnMeta = GetSqlMeta(column);
-                _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON COLUMN \"{table.Name}\".\"{column.Name}\" IS '{columnMeta}'");
+                var meta = GetSqlMeta(column);
+                _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON COLUMN \"{table.Name}\".\"{column.Name}\" IS '{meta}'");
+            }
+
+            foreach (DbConstraint constraint in table.Constraints)
+            {
+                var sql = GetSqlConstraintCreate(constraint);
+                _dbService.ExecuteSqlNonQueryCommand(sql);
+
+                var meta = GetSqlMeta(constraint);
+                _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON CONSTRAINT \"{constraint.Name}\" ON \"{table.Name}\" IS '{meta}'");
+            }
+
+            foreach (DbIndex index in table.Indexes)
+            {
+                var sql = GetSqlIndexCreate(index);
+                _dbService.ExecuteSqlNonQueryCommand(sql);
+
+                var meta = GetSqlMeta(index);
+                _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON INDEX \"{index.Name}\" IS '{meta}'");
             }
 
             scope.Complete();
         }
     }
 
+    private string GetSqlMeta(DbObject obj)
+    {
+        return JsonSerializer.Serialize(obj.Meta);
+    }
+    
     private string GetSqlColumnCreate(DbColumn column)
     {
         Func<DbColumn, string, string> generalFunc = (column, pgType) =>
@@ -120,11 +140,6 @@ public partial class DbManager : IDbManager
         };
     }
 
-    private string GetSqlMeta(DbObject obj)
-    {
-        return JsonSerializer.Serialize(obj.Meta);
-    }
-
     private string GetSqlColumnDefaultValue(DbColumn column)
     {
         Func<DbNumberColumn, string> numberDefaultValueFunc = (column) =>
@@ -153,7 +168,7 @@ public partial class DbManager : IDbManager
             if (column.DefaultValue is null)
                 return "NULL";
             else
-                return $"'{((DateOnly)column.DefaultValue).ToString("yyyy-MM-dd")}'";
+                return $"'{((DateOnly)column.DefaultValue).ToString("yyyy-MM-dd")}::date'";
         };
 
         Func<DbDateTimeColumn, string> dateTimeDefaultValueFunc = (column) =>
@@ -164,7 +179,7 @@ public partial class DbManager : IDbManager
             if (column.DefaultValue is null)
                 return "NULL";
             else
-                return $"'{((DateTime)column.DefaultValue).ToString("yyyy-MM-dd HH:mm:ss")}'";
+                return $"'{((DateTime)column.DefaultValue).ToString("yyyy-MM-dd HH:mm:ss")}'::timestamp with time zone";
         };
 
         Func<DbGuidColumn, string> guidDefaultValueFunc = (column) =>
@@ -183,7 +198,7 @@ public partial class DbManager : IDbManager
             if (column.DefaultValue is null)
                 return "NULL";
             else
-                return $"'{column.DefaultValue}'";
+                return $"'{column.DefaultValue}'::text";
         };
 
         Func<DbTableIdColumn, string> tableIdDefaultValueFunc = (column) =>
@@ -204,6 +219,65 @@ public partial class DbManager : IDbManager
             _ => throw new Exception($"Not supported DbColumn type {column.GetType()} while trying to extract default value")
         };
     }
+
+    private string GetSqlConstraintCreate(DbConstraint constraint)
+    {
+        Func<DbUniqueConstraint, string> uniqueFunc = (constraint) =>
+        {
+            string columns = string.Join(",", constraint.Columns.Select(x => x.Name));
+            return $"ALTER TABLE \"{constraint.Table.Name}\" ADD CONSTRAINT  \"{constraint.Name}\" UNIQUE ({columns});";
+        };
+
+        Func<DbPrimaryKeyConstraint, string> primaryFunc = (constraint) =>
+        {
+            string columns = string.Join(",", constraint.Columns.Select(x => x.Name));
+            return $"ALTER TABLE \"{constraint.Table.Name}\" ADD CONSTRAINT \"{constraint.Name}\" PRIMARY KEY ({columns});";
+        };
+
+        return constraint switch
+        {
+            DbUniqueConstraint c => uniqueFunc(c),
+            DbPrimaryKeyConstraint c => primaryFunc(c),
+            _ => throw new Exception($"Not supported DbConstraint type {constraint.GetType()}")
+        };
+    }
+
+    private string GetSqlIndexCreate(DbIndex index)
+    {
+        Func<DbBTreeIndex, string> btreeFunc = (index) =>
+        {
+            string columns = string.Join(",", index.Columns.Select(x => x.Name ));
+            return $"CREATE INDEX \"{index.Name}\" ON \"{index.Table.Name}\" USING btree({columns});";
+        };
+
+        Func<DbGinIndex, string> ginFunc = (index) =>
+        {
+            string columns = string.Join(",", index.Columns.Select(x => $"\"{x.Name}\" gin_trgm_ops"));
+            return $"CREATE INDEX \"{index.Name}\" ON \"{index.Table.Name}\" USING gin({columns});";
+        };
+
+        Func<DbGistIndex, string> gistFunc = (index) =>
+        {
+            string columns = string.Join(",", index.Columns.Select(x => $"\"{x.Name}\" gist_trgm_ops"));
+            return $"CREATE INDEX \"{index.Name}\" ON \"{index.Table.Name}\" USING gist({columns});";
+        };
+
+        Func<DbHashIndex, string> hashFunc = (index) =>
+        {
+            string columns = string.Join(",", index.Columns.Select(x => x.Name));
+            return $"CREATE INDEX \"{index.Name}\" ON \"{index.Table.Name}\" USING hash({columns});";
+        };
+
+        return index switch
+        {
+            DbBTreeIndex c => btreeFunc(c),
+            DbGinIndex c => ginFunc(c),
+            DbGistIndex c => gistFunc(c),
+            DbHashIndex c => hashFunc(c),
+            _ => throw new Exception($"Not supported DbConstraint type {index.GetType()}")
+        };
+    }
+
 
 
 

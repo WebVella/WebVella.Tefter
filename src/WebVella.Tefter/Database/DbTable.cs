@@ -175,7 +175,7 @@ public class DbTable : DbObject
         if (name is null)
             throw new ArgumentNullException(name);
 
-        var constraint = new DbPrimaryKeyConstraint { Name = name };
+        var constraint = new DbPrimaryKeyConstraint { Name = name, Table = this };
         var idColumn = Columns.Find("tefter_id");
         if (idColumn is null)
             throw new DbException($"Table id column is not found while try to create primary key constraint {name}");
@@ -191,7 +191,7 @@ public class DbTable : DbObject
 
         //TODO validate name, columns (1. at least one, 2. exists)
 
-        var constraint = new DbUniqueConstraint { Name = name };
+        var constraint = new DbUniqueConstraint { Name = name, Table = this };
 
         foreach (var columnName in columns)
         {
@@ -227,14 +227,14 @@ public class DbTable : DbObject
 
     #region <=== Index Management ===>
 
-    public void AddBTreeIndex(string name, string[] columns)
+    public void AddBTreeIndex(string name, params string[] columns)
     {
         if (name is null)
             throw new ArgumentNullException(name);
 
         //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbBTreeIndex { Name = name };
+        var index = new DbBTreeIndex { Name = name, Table = this };
 
         foreach (var columnName in columns)
         {
@@ -248,20 +248,22 @@ public class DbTable : DbObject
         Indexes.Add(index);
     }
 
-    public void AddGistIndex(string name, string[] columns)
+    public void AddGistIndex(string name, params string[] columns)
     {
         if (name is null)
             throw new ArgumentNullException(name);
 
         //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbGistIndex { Name = name };
+        var index = new DbGistIndex { Name = name, Table = this };
 
         foreach (var columnName in columns)
         {
             var column = Columns.Find(columnName);
             if (column is null)
                 throw new DbException($"Column with name {columnName} is not found while try to create GIST index {name}");
+            if( column is not DbTextColumn)
+                throw new DbException($"Column with name {columnName} is not a text column. GIST index can be created only on text columns");
 
             index.Columns.Add(column);
         }
@@ -269,20 +271,22 @@ public class DbTable : DbObject
         Indexes.Add(index);
     }
 
-    public void AddGinIndex(string name, string[] columns)
+    public void AddGinIndex(string name, params string[] columns)
     {
         if (name is null)
             throw new ArgumentNullException(name);
 
         //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbGinIndex { Name = name };
+        var index = new DbGinIndex { Name = name, Table = this };
 
         foreach (var columnName in columns)
         {
             var column = Columns.Find(columnName);
             if (column is null)
                 throw new DbException($"Column with name {columnName} is not found while try to create GIN index {name}");
+            if (column is not DbTextColumn)
+                throw new DbException($"Column with name {columnName} is not a text column. GIN index can be created only on text columns");
 
             index.Columns.Add(column);
         }
@@ -290,23 +294,20 @@ public class DbTable : DbObject
         Indexes.Add(index);
     }
 
-    public void AddHashIndex(string name, string[] columns)
+    public void AddHashIndex(string name, string columnName )
     {
         if (name is null)
             throw new ArgumentNullException(name);
 
         //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbHashIndex { Name = name };
+        var index = new DbHashIndex { Name = name, Table = this };
 
-        foreach (var columnName in columns)
-        {
             var column = Columns.Find(columnName);
             if (column is null)
                 throw new DbException($"Column with name {columnName} is not found while try to create HASH index {name}");
 
             index.Columns.Add(column);
-        }
 
         Indexes.Add(index);
     }
