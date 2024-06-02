@@ -1,4 +1,7 @@
-﻿
+﻿:root {
+	--wv-content-padding:15px;
+}
+
 body {
 	background: var(--neutral-layer-3) !important;
 }
@@ -24,16 +27,45 @@ body {
 
 .content {
 	background: var(--neutral-fill-layer-rest) !important;
-	padding: 15px;
-	padding-right:5px;
+	padding-bottom: var(--wv-content-padding);
+	padding-right: 5px;
 	border-radius: 8px;
 }
+
+	.content.with-views {
+		padding-top: 0;
+	}
 
 .content-inner {
 	height: calc(100vh - 83px) !important;
 	overflow-y: scroll !important;
+	padding:var(--wv-content-padding);
 	padding-right:10px;
+
 }
+
+.content.with-views .content-inner,
+.content.with-toolbar .content-inner {
+	padding-top:0;
+	height: calc(100vh - 123px) !important;
+}
+
+.content.with-views.with-toolbar .content-inner {
+	height: calc(100vh - 163px) !important;
+}
+
+	.content-views {
+		margin-bottom: 15px;
+		padding-left:15px;
+		padding-right:15px;
+		height: 40px;
+	}
+
+.content-toolbar {
+	height:40px;
+}
+
+
 
 /* width */
 ::-webkit-scrollbar {

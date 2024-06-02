@@ -11,11 +11,26 @@ public class SpaceItem
 	public int Position { get; set; }
 	public SpaceItemType ItemType { get; set; } = SpaceItemType.Report;
 
+	public bool IsBookmarked { get; set; } = false;
+
+	public Guid MainViewId { get; set; } //should be in Views position 0
+	public List<SpaceItemView> Views { get; set; } = new();
+
+	public SpaceItemView GetActiveView(Guid? viewId)
+	{
+		SpaceItemView result = null;
+		if (viewId is null) result = Views.FirstOrDefault(x=> x.Id == MainViewId);
+		else result = Views.FirstOrDefault(x => x.Id == viewId.Value);
+
+		return result;
+	}
+
 	public Icon Icon
 	{
 		get
 		{
-			switch(ItemType){ 
+			switch (ItemType)
+			{
 				case SpaceItemType.Report: return new Icons.Regular.Size20.Table();
 				case SpaceItemType.Dashboard: return new Icons.Regular.Size20.Board();
 				case SpaceItemType.Chart: return new Icons.Regular.Size20.ChartMultiple();
@@ -23,6 +38,15 @@ public class SpaceItem
 
 				default: return new Icons.Regular.Size20.Table();
 			}
+		}
+	}
+
+	public Icon BookmarkIcon
+	{
+		get
+		{
+			if (IsBookmarked) return new Icons.Filled.Size20.Star();
+			return new Icons.Regular.Size20.Star();
 		}
 	}
 
@@ -36,11 +60,12 @@ public class SpaceItem
 			SpaceItemType.Dashboard,
 			SpaceItemType.Chart,
 			SpaceItemType.Form,
-		};	
+		};
 		var faker = new Faker<SpaceItem>()
 		.RuleFor(m => m.Id, (f, m) => f.Random.Uuid())
 		.RuleFor(m => m.Name, (f, m) => f.Lorem.Sentence(3))
 		.RuleFor(m => m.ItemType, (f, m) => f.PickRandom(itemTypes))
+		.RuleFor(m => m.IsBookmarked, (f, m) => f.Random.Bool())
 		;
 
 		return faker;

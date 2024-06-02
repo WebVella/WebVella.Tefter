@@ -1,4 +1,11 @@
 ﻿@page "/space/{SpaceId:guid}/item/{SpaceItemId:guid}"
+@page "/space/{SpaceId:guid}/item/{SpaceItemId:guid}/view/{SpaceItemViewId:guid}"
 @inherits WvBasePage
+<FluentBodyContent Class="content with-toolbar with-views">
+	<WvSpaceItemViews />
+	<WvSpaceItemToolbar />
+	<div class="content-inner">
+		<WvSpace />
+	</div>
+</FluentBodyContent>
 
-<WvSpace/>

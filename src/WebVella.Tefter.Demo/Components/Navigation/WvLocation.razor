@@ -20,7 +20,41 @@
 					<FluentBadge Class="public">public</FluentBadge>
 				}
 			</span>
+			<span class="actions">
+				<FluentButton Appearance="@Appearance.Stealth" Id="space-item-settings"
+							  IconStart="@(new Icons.Regular.Size20.Settings())"
+							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" />
+				<FluentButton Appearance="@Appearance.Stealth"
+							  IconStart="@_spaceItem.BookmarkIcon"/>
+			</span>
 		</div>
+		<FluentMenu Anchor="space-item-settings" @bind-Open="_settingsMenuVisible" Width="200px">
+			<FluentMenuItem OnClick="onDetailsClick">
+				Space Item Details
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Info())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="onRenameClick">
+				Rename Space Item
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="onRemoveClick">
+				Delete Space Item
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+			<FluentDivider></FluentDivider>
+			<FluentMenuItem OnClick="onAccessClick">
+				Show Access 
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+		</FluentMenu>
 	}
 
 </div>

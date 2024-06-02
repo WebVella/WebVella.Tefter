@@ -13,7 +13,7 @@ public partial class WvSpace : WvBaseComponent,IDisposable
 	{
 		if (firstRender)
 		{
-			_dataSource = SampleData.GetDataSource().AsQueryable();
+			loadData();
 			_isLoading = false;
 			await InvokeAsync(StateHasChanged);
 			WvState.ActiveSpaceDataChanged+= onSpaceDataLocation;
@@ -25,9 +25,12 @@ public partial class WvSpace : WvBaseComponent,IDisposable
 		_isLoading = true;
 		StateHasChanged();
 
-		_dataSource = SampleData.GetDataSource().AsQueryable();
+		loadData();
 		_isLoading = false;
 		StateHasChanged();
 	}
-	
+	private void loadData(){
+		var alldata = SampleData.GetDataSource().AsQueryable();
+		_dataSource = alldata.AsQueryable();
+	}
 }

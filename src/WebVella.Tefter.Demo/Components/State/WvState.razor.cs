@@ -19,6 +19,7 @@ public partial class WvState : ComponentBase
 	private Dictionary<Guid,SpaceItem> _spaceItemDict = new();
 	private Guid? _activeSpaceId = null;
 	private Guid? _activeSpaceItemId = null;
+	private Guid? _activeSpaceItemViewId = null;
 	
 
 	//LC
@@ -42,50 +43,59 @@ public partial class WvState : ComponentBase
 	}
 	//Pulbic
 	public List<Space> GetSpaces() => _spaces;
-	public void SetActiveSpaceData(Guid? spaceId, Guid? spaceItemId)
+	public void SetActiveSpaceData(Guid? spaceId, Guid? spaceItemId, Guid? spaceItemViewId)
 	{
-		Console.WriteLine($"{spaceId} {spaceItemId}");
-
 		if (spaceId is null || spaceItemId is null)
 		{
 			_activeSpaceId = null;
 			_activeSpaceItemId = null;
+			_activeSpaceItemViewId = null;
 			ActiveSpaceDataChanged?.Invoke(this, new StateActiveSpaceDataChangedEventArgs
 			{
 				Space = null,
-				SpaceItem = null
+				SpaceItem = null,
+				SpaceItemView = null,
 			});
 		}
 		else
 		{
 			_activeSpaceId = spaceId;
 			_activeSpaceItemId = spaceItemId;
-			if(!_spaceDict.ContainsKey(_activeSpaceId.Value))
+			_activeSpaceItemViewId = spaceItemViewId;
+			if (!_spaceDict.ContainsKey(_activeSpaceId.Value))
 				_errorMessage = $"Space with this identifier is not found: {spaceId}";
 			if (!_spaceItemDict.ContainsKey(_activeSpaceItemId.Value))
 				_errorMessage = $"Space with this identifier is not found: {_activeSpaceItemId}";
-			Console.WriteLine($"{_activeSpaceId} {_activeSpaceItemId}");
-			ActiveSpaceDataChanged?.Invoke(this, new StateActiveSpaceDataChangedEventArgs{ 
+
+			var eventArgs = new StateActiveSpaceDataChangedEventArgs
+			{
 				Space = _spaceDict[_activeSpaceId.Value],
-				SpaceItem = _spaceItemDict[_activeSpaceItemId.Value]
-			});
-			Console.WriteLine($"{_spaceDict[_activeSpaceId.Value].Name} {_spaceItemDict[_activeSpaceItemId.Value].Name}");
+				SpaceItem = _spaceItemDict[_activeSpaceItemId.Value],
+				SpaceItemView = null
+			};
+			eventArgs.SpaceItemView = eventArgs.SpaceItem.GetActiveView(_activeSpaceItemViewId);
+			ActiveSpaceDataChanged?.Invoke(this, eventArgs);
+
 		}
 		
 	}
 	public Guid? ActiveSpaceId => _activeSpaceId;
 	public Guid? ActiveSpaceItemId => _activeSpaceItemId;
+	public Guid? ActiveSpaceItemViewId => _activeSpaceItemViewId;
 
-	public (Space,SpaceItem) GetActiveSpaceData(){ 
+	public (Space,SpaceItem,SpaceItemView) GetActiveSpaceData(){ 
 		Space space = null;	
 		SpaceItem spaceItem = null;
+		SpaceItemView spaceItemView = null;
 		if(_activeSpaceId is not null && _spaceDict.ContainsKey(_activeSpaceId.Value))
 			space = _spaceDict[_activeSpaceId.Value];
 
 		if (_activeSpaceItemId is not null && _spaceItemDict.ContainsKey(_activeSpaceItemId.Value))
 			spaceItem = _spaceItemDict[_activeSpaceItemId.Value];
 
-		return(space, spaceItem);
+		spaceItemView = spaceItem.GetActiveView(_activeSpaceItemViewId);
+
+		return (space, spaceItem, spaceItemView);
 	}
 
 	public EventHandler<StateActiveSpaceDataChangedEventArgs> ActiveSpaceDataChanged { get; set; }

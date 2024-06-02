@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Demo.Pages;
-public partial class FastAccessPage
+public partial class BookmarksPage
 {
 
 

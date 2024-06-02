@@ -34,6 +34,13 @@ public static partial class SampleData
 			new Guid("6801d54a-0853-41d6-84ef-308061380d1b"),
 			new Guid("20774230-9e23-49d5-a888-3978e5d9e7f0"),
 		};
+
+		var spaceItemViewIds = new List<Guid>(){
+			new Guid("39cd80e4-9b6d-4df9-a211-376cf1caf69f"),
+			new Guid("5d6f56cc-b310-4497-8f32-2dd20116d81a"),
+			new Guid("8f3ed396-49bc-46ca-aa74-158f50eb7d48"),
+			new Guid("cedba99a-557a-4e4f-948f-71a503c4b8e7"),
+			};
 		for (int i = 0; i < 3; i++)
 		{
 			var space = Space.GetFaker().Generate();
@@ -43,6 +50,15 @@ public static partial class SampleData
 				var spaceItem = SpaceItem.GetFaker().Generate();
 				spaceItem.Id = spaceItemIds[(i*7) + j];
 				spaceItem.Position = j+1;
+
+				for (int f = 0; f < 4; f++)
+				{
+					var spaceItemView = SpaceItemView.GetFaker().Generate();
+					if(f == 0) spaceItemView.Name = "Main";
+					spaceItemView.Position = f;
+					spaceItem.Views.Add(spaceItemView);
+				}
+				spaceItem.MainViewId = spaceItem.Views[0].Id;
 				space.Items.Add(spaceItem);
 			}
 			result.Add(space);

@@ -9,6 +9,9 @@ public partial class SpacePage : WvBasePage, IDisposable
 	[Parameter]
 	public Guid SpaceItemId { get; set; }
 
+	[Parameter]
+	public Guid? SpaceItemViewId { get; set; }
+
 
 	public void Dispose()
 	{
@@ -17,14 +20,14 @@ public partial class SpacePage : WvBasePage, IDisposable
 
 	protected override void OnInitialized()
 	{
-		WvState.SetActiveSpaceData(SpaceId, SpaceItemId);
+		WvState.SetActiveSpaceData(SpaceId, SpaceItemId, SpaceItemViewId);
 		Navigator.LocationChanged += onChangeLocation;
 	}
 
 	protected void onChangeLocation(object sender, LocationChangedEventArgs e)
 	{
 		if(SpaceId != Guid.Empty && SpaceItemId != Guid.Empty)
-			WvState.SetActiveSpaceData(SpaceId, SpaceItemId);
+			WvState.SetActiveSpaceData(SpaceId, SpaceItemId, SpaceItemViewId);
 	}
 
 }

@@ -7,3 +7,4 @@ global using System.ComponentModel;
 global using WebVella.Tefter.Demo.Components;
 global using WebVella.Tefter.Demo.Models;
 global using WebVella.Tefter.Demo.Data;
+global using WebVella.Tefter.Demo.Utils;
