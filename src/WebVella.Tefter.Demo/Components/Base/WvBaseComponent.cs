@@ -10,8 +10,6 @@ public class WvBaseComponent : ComponentBase
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-
-	[Parameter]
-	public Guid ComponentId { get; set; } = Guid.NewGuid();
+	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 }

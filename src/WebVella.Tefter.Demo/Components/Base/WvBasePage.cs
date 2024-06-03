@@ -8,7 +8,6 @@ public class WvBasePage : ComponentBase
 	[Inject] protected IJSRuntime JSRuntimeSrv { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
 
-	[Parameter]
-	public Guid ComponentId { get; set; } = Guid.NewGuid();
+	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
 }

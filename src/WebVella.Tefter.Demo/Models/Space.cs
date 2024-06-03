@@ -8,7 +8,7 @@ public class Space
 	public Guid Id { get; set; }
 	public string Name { get; set; }
 
-	public bool IsLocked { get; set; }
+	public bool IsPrivate { get; set; }
 
 	public List<SpaceItem> Items { get; set; } = new();
 
@@ -16,7 +16,7 @@ public class Space
 	{
 		get
 		{
-			if (IsLocked) return Color.Error;
+			if (IsPrivate) return Color.Error;
 			return Color.Success;
 		}
 	}
@@ -25,7 +25,7 @@ public class Space
 	{
 		get
 		{
-			if (IsLocked) return new Icons.Regular.Size20.LockClosed();
+			if (IsPrivate) return new Icons.Regular.Size20.LockClosed();
 			return new Icons.Regular.Size20.LockOpen();
 		}
 	}
@@ -40,7 +40,7 @@ public class Space
 		var faker = new Faker<Space>()
 		.RuleFor(m => m.Id, (f, m) => f.Random.Uuid())
 		.RuleFor(m => m.Name, (f, m) => f.Lorem.Sentence(3))
-		.RuleFor(m => m.IsLocked, (f, m) => f.Random.Bool())
+		.RuleFor(m => m.IsPrivate, (f, m) => f.Random.Bool())
 		;
 
 		return faker;

@@ -12,7 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Pages\FastAccessPage.razor">
+    <Content Update="Components\Navigation\WvSpaceItemViews.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+    <Content Update="Pages\BookmarksPage.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
   </ItemGroup>

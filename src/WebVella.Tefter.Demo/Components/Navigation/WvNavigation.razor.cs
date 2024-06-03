@@ -14,8 +14,11 @@ public partial class WvNavigation : WvBaseComponent,IDisposable
 
 	protected override void OnInitialized()
 	{
+		var(space,spaceItem,spaceItemView) = WvState.GetActiveSpaceData();
+		_space = space;
+		GenerateSpaceItemMenu(_space);
 		WvState.ActiveSpaceDataChanged += OnSpaceDataChanged;
-		//space = spaces[0];
+		
 
 	}
 
@@ -33,7 +36,7 @@ public partial class WvNavigation : WvBaseComponent,IDisposable
 			{
 				_menuItems.Add(new MenuItem
 				{
-					Id = item.Id,
+					Id = "wv-" + item.Id,
 					Icon = item.Icon,
 					Match = NavLinkMatch.Prefix,
 					Title = item.Name,
@@ -51,7 +54,10 @@ public partial class WvNavigation : WvBaseComponent,IDisposable
 		
 		Navigator.NavigateTo($"/space/{spaces[0].Id}/item/{spaces[0].Items[0].Id}");
 	}
-
+	private void onDetailsClick()
+	{
+		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for details about the space");
+	}
 	private void onRemoveClick(){
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for removing space");
 	}

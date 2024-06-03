@@ -1,6 +1,8 @@
 ﻿@namespace WebVella.Tefter.Demo.Components
 @inherits WvBaseComponent
 
-
-<div>Space</div>
-
+<FluentDataGrid Items="@_dataSource" Loading="_isLoading" ShowHover="true" GenerateHeader="GenerateHeaderOption.Sticky">
+	<PropertyColumn Property="@(p => p.FirstName)" Sortable="true" />
+	<PropertyColumn Property="@(p => p.LastName)" Sortable="true" />
+	<PropertyColumn Property="@(p => p.BirthDate)" Format="yyyy-MM-dd" Sortable="true" />
+</FluentDataGrid>

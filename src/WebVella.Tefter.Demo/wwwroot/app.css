@@ -1,4 +1,7 @@
-﻿
+﻿:root {
+	--wv-content-padding:15px;
+}
+
 body {
 	background: var(--neutral-layer-3) !important;
 }
@@ -10,7 +13,9 @@ body {
 
 .wrapper {
 	padding-right: 5px !important;
+	padding-bottom:5px !important;
 	align-items:unset !important;
+
 }
 
 .sidebar {
@@ -22,15 +27,77 @@ body {
 
 .content {
 	background: var(--neutral-fill-layer-rest) !important;
-	padding: 1rem;
+	padding-bottom: var(--wv-content-padding);
+	padding-right: 5px;
 	border-radius: 8px;
-	min-height: 300px;
 }
+
+	.content.with-views {
+		padding-top: 0;
+	}
+
+.content-inner {
+	height: calc(100vh - 83px) !important;
+	overflow-y: scroll !important;
+	padding:var(--wv-content-padding);
+	padding-right:10px;
+
+}
+
+.content.with-views .content-inner,
+.content.with-toolbar .content-inner {
+	padding-top:0;
+	height: calc(100vh - 123px) !important;
+}
+
+.content.with-views.with-toolbar .content-inner {
+	height: calc(100vh - 163px) !important;
+}
+
+	.content-views {
+		margin-bottom: 15px;
+		padding-left:15px;
+		padding-right:15px;
+		height: 40px;
+	}
+
+.content-toolbar {
+	height:40px;
+}
+
+
+
+/* width */
+::-webkit-scrollbar {
+	width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: var(--neutral-layer-3);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: var(--neutral-stroke-rest);
+}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: var(--neutral-base-color);
+	}
+
 
 /*Overrides*/
 fluent-data-grid-row:has([row-selected]) {
 	background-color: var(--neutral-fill-stealth-hover)
 }
+
+fluent-select::part(listbox) {
+max-height:200px;
+}
+
+
 /* General */
 #blazor-error-ui {
 	background: #F3D6D8;

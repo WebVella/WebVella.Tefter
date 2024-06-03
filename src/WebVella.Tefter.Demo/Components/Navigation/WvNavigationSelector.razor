@@ -11,8 +11,9 @@
 				</div>
 				<div class="searchbar-right">
 					<FluentSearch @bind-Value="@_selectorSearch"
+								  @bind-Value:after="_handleClear"
 								  @ref=_searchField Class="search-field"
-								  @oninput="@_searchValueChanged" />
+								  @oninput="@_searchValueChanged"/>
 				</div>
 			</div>
 		</Header>

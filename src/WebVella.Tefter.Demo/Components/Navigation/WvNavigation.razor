@@ -4,8 +4,8 @@
 	<FluentNavMenu>
 		<FluentNavLink Icon="@(new Icons.Regular.Size20.Board())" Tooltip="Dashboard"
 					   Href="/" Match="@NavLinkMatch.All">Dashboard</FluentNavLink>
-		<FluentNavLink Icon="@(new Icons.Regular.Size20.TableLightning())" Tooltip="Fast Access"
-					   Href="/fast-access" Match="@NavLinkMatch.Prefix">Fast Access</FluentNavLink>
+		<FluentNavLink Icon="@(new Icons.Filled.Size20.Star())" Tooltip="Bookmarks"
+					   Href="/bookmarks" Match="@NavLinkMatch.Prefix">Bookmarks</FluentNavLink>
 	</FluentNavMenu>
 	<FluentDivider Class="nav-divider"></FluentDivider>
 	@if (_space is null)
@@ -21,14 +21,23 @@
 				<FluentButton Id="space-selector" Title="@_space.Name"
 							  OnClick="onSpaceSelectorClick">
 					@_space.Name
-					<FluentIcon Value="@_space.Icon" Color="@_space.IconColor" Slot="start" />
+					<FluentIcon Value="@(new Icons.Regular.Size16.ChevronDown())" Style="fill:var(--neutral-layer-3)" Slot="start" />
+@* 					<FluentIcon Value="@_space.Icon" Color="@_space.IconColor" Slot="end" /> *@
 				</FluentButton>
 				<WvNavigationSelector @ref=_selectorEl SpaceId=@_space?.Id SpaceChanged="SpaceChanged"></WvNavigationSelector>
 			</div>
 			<div class="button-actions-right">
-				<FluentButton Id="space-settings" Title="edit settings" IconStart="@(new Icons.Regular.Size20.Settings())"
-							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" />
+				<FluentButton Id="space-settings" Title="space actions" 
+							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Stealth">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Neutral" />
+				</FluentButton>
 				<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
+					<FluentMenuItem OnClick="onDetailsClick">
+						Space Details
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.Info())" Slot="start" />
+						</span>
+					</FluentMenuItem>
 					<FluentMenuItem OnClick="onRenameClick">
 						Rename Space
 						<span slot="start">
@@ -41,9 +50,27 @@
 							<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
 						</span>
 					</FluentMenuItem>
+					<FluentMenuItem OnClick="onRemoveClick">
+						Manage Access
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="onRemoveClick">
+						Invite User
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
+						</span>
+					</FluentMenuItem>
 					<FluentDivider></FluentDivider>
 					<FluentMenuItem OnClick="onAddClick">
 						Add Space
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="onAddClick">
+						Add Space Item
 						<span slot="start">
 							<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
 						</span>
