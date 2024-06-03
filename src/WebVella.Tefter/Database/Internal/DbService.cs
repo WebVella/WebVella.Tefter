@@ -6,6 +6,7 @@ internal interface IDbService
     DbConnection CreateConnection();
     DbTransactionScope CreateTransactionScope(string lockKey = null);
     DataTable ExecuteSqlQueryCommand(string sql, List<NpgsqlParameter> parameters);
+    DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters);
     int ExecuteSqlNonQueryCommand(string sql, params NpgsqlParameter[] parameters);
     int ExecuteSqlNonQueryCommand(string sql, List<NpgsqlParameter> parameters);
     ValueTask<DataTable> ExecuteSqlQueryCommandAsync(string sql, params NpgsqlParameter[] parameters);
@@ -44,15 +45,19 @@ internal class DbService : IDbService
         return new DbTransactionScope(Configuration, _tranRNS, lockKey);
     }
 
-
     public DataTable ExecuteSqlQueryCommand(string sql, List<NpgsqlParameter> parameters)
+    {
+        return ExecuteSqlQueryCommand(sql,parameters?.ToArray());
+    }
+
+    public DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters)
     {
         ProcessNpgsqlParameters(parameters);
         using (var dbCon = CreateConnection())
         {
             NpgsqlCommand cmd;
-            if (parameters != null && parameters.Count > 0)
-                cmd = dbCon.CreateCommand(sql, CommandType.Text, parameters);
+            if (parameters != null && parameters.Length > 0)
+                cmd = dbCon.CreateCommand(sql, CommandType.Text, new List<NpgsqlParameter>( parameters));
             else
                 cmd = dbCon.CreateCommand(sql, CommandType.Text);
             DataTable dataTable = new DataTable();
@@ -118,10 +123,10 @@ internal class DbService : IDbService
 
     private void ProcessNpgsqlParameters(params NpgsqlParameter[] parameters)
     {
-        if (parameters == null)
+        if (parameters == null || parameters.Length == 0)
             return;
 
-        ProcessNpgsqlParameters(parameters.ToArray());
+        ProcessNpgsqlParameters( parameters.ToList());
     }
 
     private void ProcessNpgsqlParameters(List<NpgsqlParameter> parameters)

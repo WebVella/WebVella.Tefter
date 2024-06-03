@@ -1,8 +1,11 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
+
+namespace WebVella.Tefter.Database;
 
 public partial interface IDbManager
 {
     void SaveTable(DbTable table);
+    List<DbTable> LoadTables();
 }
 
 public partial class DbManager : IDbManager
@@ -18,20 +21,22 @@ public partial class DbManager : IDbManager
     {
     }
 
+    #region <--- Save Table --->
+
     public void SaveTable(DbTable table)
     {
         ValidateTable(table);
 
-        using (var scope = _dbService.CreateTransactionScope())
+        using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
         {
-            var extensionSql = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"; " + 
+            var extensionSql = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"; " +
                                "CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";";
             _dbService.ExecuteSqlNonQueryCommand(extensionSql);
 
             var tableSql = $"CREATE TABLE \"{table.Name}\"();";
             _dbService.ExecuteSqlNonQueryCommand(tableSql);
 
-            var tableMeta = GetSqlMeta(table);
+            var tableMeta = JsonSerializer.Serialize(table.Meta);
             _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON TABLE \"{table.Name}\" IS '{tableMeta}'");
 
             foreach (DbColumn column in table.Columns)
@@ -39,7 +44,7 @@ public partial class DbManager : IDbManager
                 var sql = GetSqlColumnCreate(column);
                 _dbService.ExecuteSqlNonQueryCommand(sql);
 
-                var meta = GetSqlMeta(column);
+                var meta = JsonSerializer.Serialize(column.Meta);
                 _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON COLUMN \"{table.Name}\".\"{column.Name}\" IS '{meta}'");
             }
 
@@ -47,29 +52,18 @@ public partial class DbManager : IDbManager
             {
                 var sql = GetSqlConstraintCreate(constraint);
                 _dbService.ExecuteSqlNonQueryCommand(sql);
-
-                var meta = GetSqlMeta(constraint);
-                _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON CONSTRAINT \"{constraint.Name}\" ON \"{table.Name}\" IS '{meta}'");
             }
 
             foreach (DbIndex index in table.Indexes)
             {
                 var sql = GetSqlIndexCreate(index);
                 _dbService.ExecuteSqlNonQueryCommand(sql);
-
-                var meta = GetSqlMeta(index);
-                _dbService.ExecuteSqlNonQueryCommand($"COMMENT ON INDEX \"{index.Name}\" IS '{meta}'");
             }
 
             scope.Complete();
         }
     }
 
-    private string GetSqlMeta(DbObject obj)
-    {
-        return JsonSerializer.Serialize(obj.Meta);
-    }
-    
     private string GetSqlColumnCreate(DbColumn column)
     {
         Func<DbColumn, string, string> generalFunc = (column, pgType) =>
@@ -78,7 +72,7 @@ public partial class DbManager : IDbManager
             sb.Append($"ALTER TABLE \"{column.Table.Name}\" ADD COLUMN \"{column.Name}\" {pgType}");
             if (!column.IsNullable)
                 sb.Append(" NOT NULL");
-            var defaultValue = GetSqlColumnDefaultValue(column);
+            var defaultValue = DbUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
             if (defaultValue != null)
                 sb.Append($" DEFAULT {defaultValue}");
 
@@ -140,86 +134,6 @@ public partial class DbManager : IDbManager
         };
     }
 
-    private string GetSqlColumnDefaultValue(DbColumn column)
-    {
-        Func<DbNumberColumn, string> numberDefaultValueFunc = (column) =>
-        {
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return ((decimal)column.DefaultValue).ToString();
-        };
-
-        Func<DbBooleanColumn, string> booleanDefaultValueFunc = (column) =>
-        {
-            if (column.DefaultValue is null)
-                return "NULL";
-            else if ((bool)column.DefaultValue)
-                return "TRUE";
-            else
-                return "FALSE";
-        };
-
-        Func<DbDateColumn, string> dateDefaultValueFunc = (column) =>
-        {
-            if (column.UseCurrentTimeAsDefaultValue)
-                return "now()";
-
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{((DateOnly)column.DefaultValue).ToString("yyyy-MM-dd")}::date'";
-        };
-
-        Func<DbDateTimeColumn, string> dateTimeDefaultValueFunc = (column) =>
-        {
-            if (column.UseCurrentTimeAsDefaultValue)
-                return "now()";
-
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{((DateTime)column.DefaultValue).ToString("yyyy-MM-dd HH:mm:ss")}'::timestamp with time zone";
-        };
-
-        Func<DbGuidColumn, string> guidDefaultValueFunc = (column) =>
-        {
-            if (column.GenerateNewIdAsDefaultValue)
-                return "uuid_generate_v1()";
-
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{(Guid)column.DefaultValue}'";
-        };
-
-        Func<DbTextColumn, string> textDefaultValueFunc = (column) =>
-        {
-            if (column.DefaultValue is null)
-                return "NULL";
-            else
-                return $"'{column.DefaultValue}'::text";
-        };
-
-        Func<DbTableIdColumn, string> tableIdDefaultValueFunc = (column) =>
-        {
-            return "uuid_generate_v1()";
-        };
-
-        return column switch
-        {
-            DbTableIdColumn c => tableIdDefaultValueFunc(c),
-            DbAutoIncrementColumn c => null,
-            DbNumberColumn c => numberDefaultValueFunc(c),
-            DbBooleanColumn c => booleanDefaultValueFunc(c),
-            DbDateColumn c => dateDefaultValueFunc(c),
-            DbDateTimeColumn c => dateTimeDefaultValueFunc(c),
-            DbGuidColumn c => guidDefaultValueFunc(c),
-            DbTextColumn c => textDefaultValueFunc(c),
-            _ => throw new Exception($"Not supported DbColumn type {column.GetType()} while trying to extract default value")
-        };
-    }
-
     private string GetSqlConstraintCreate(DbConstraint constraint)
     {
         Func<DbUniqueConstraint, string> uniqueFunc = (constraint) =>
@@ -246,7 +160,7 @@ public partial class DbManager : IDbManager
     {
         Func<DbBTreeIndex, string> btreeFunc = (index) =>
         {
-            string columns = string.Join(",", index.Columns.Select(x => x.Name ));
+            string columns = string.Join(",", index.Columns.Select(x => x.Name));
             return $"CREATE INDEX \"{index.Name}\" ON \"{index.Table.Name}\" USING btree({columns});";
         };
 
@@ -278,7 +192,313 @@ public partial class DbManager : IDbManager
         };
     }
 
+    #endregion
+
+    public List<DbTable> LoadTables()
+    {
+        List<DbTable> tables = new List<DbTable>();
+        using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+        {
+            const string tableSql = @"
+SELECT t.table_name, pg_catalog.obj_description(pgc.oid, 'pg_class') as meta
+FROM information_schema.tables t
+	INNER JOIN pg_catalog.pg_class pgc ON t.table_name = pgc.relname 
+WHERE t.table_type='BASE TABLE' AND t.table_schema='public'
+ORDER BY t.table_name ASC;";
+            DataTable dtTables = _dbService.ExecuteSqlQueryCommand(tableSql);
+            foreach (DataRow row in dtTables.Rows)
+            {
+                try
+                {
+                    DbObjectMeta meta = JsonSerializer.Deserialize<DbObjectMeta>((string)row["meta"]);
+                    tables.Add(new DbTable { Name = (string)row["table_name"], Meta = meta });
+                }
+                catch { }//ignore tables with comments cant deserialize to meta object
+            }
 
 
+            const string columnsSql = @"
+SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type,
+	(
+        SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int)
+        FROM pg_catalog.pg_class c
+        WHERE c.oid = (SELECT ('""' || cols.table_name || '""')::regclass::oid) AND c.relname = cols.table_name
+    ) AS meta
+FROM information_schema.columns cols
+WHERE table_schema = 'public'
+ORDER BY table_name, ordinal_position;";
+            DataTable dtColumns = _dbService.ExecuteSqlQueryCommand(columnsSql);
+            foreach (DataRow row in dtColumns.Rows)
+            {
+                var tableName = (string)row["table_name"];
+                DbTable table = tables.SingleOrDefault(x => x.Name == tableName);
+                if (table is null)
+                    continue;
 
+                DbObjectMeta meta = null;
+                try
+                {
+                    meta = JsonSerializer.Deserialize<DbObjectMeta>((string)row["meta"]);
+                }
+                catch
+                {
+                    //ignore tables with comments cant deserialize to meta object
+                    continue;
+                }
+
+                var columnName = (string)row["column_name"];
+                var defaultValue = (string)row["column_default"];
+                var isNullable = ((string)row["is_nullable"]).ToLower() == "yes";
+                var dbType = (string)row["data_type"];
+
+                CreateDbColumnDatabaseInfo(table, columnName, dbType, isNullable, defaultValue, meta);
+
+            }
+
+            Dictionary<string,string> constraintTableDict = new Dictionary<string,string>();
+            Dictionary<string, List<string>> constraintColumnsDict = new Dictionary<string, List<string>>();
+            Dictionary<string, char> constraintTypeDict = new Dictionary<string, char>();
+            const string constraintsSql = @"
+select 
+	t.relname as table_name,
+    ix.conname as constraint_name, 
+	a.attname as column_name,
+	ix.contype as constraint_type, 
+	array_position(ix.conkey, a.attnum) as column_position
+from pg_catalog.pg_class t
+	join pg_catalog.pg_attribute a 	ON t.oid    =  a.attrelid 
+	join pg_catalog.pg_constraint ix   ON t.oid    =  ix.conrelid  
+	join pg_catalog.pg_class i     	ON a.attnum = ANY(ix.conkey) AND i.oid=ix.conrelid 
+	join pg_catalog.pg_namespace n 	ON n.oid    = t.relnamespace
+where t.relkind = 'r' AND n.nspname = 'public'
+order by t.relname,ix.conname,array_position(ix.conkey, a.attnum);";
+            DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(constraintsSql);
+            foreach (DataRow row in dtConstraints.Rows)
+            {
+                var constraintName = (string)row["constraint_name"];
+                if (!constraintTableDict.ContainsKey(constraintName))
+                    constraintTableDict[constraintName] = (string)row["table_name"];
+                if (!constraintColumnsDict.ContainsKey(constraintName))
+                    constraintColumnsDict[constraintName] = new List<string>();
+                if (!constraintTypeDict.ContainsKey(constraintName))
+                    constraintTypeDict[constraintName] = (char)row["constraint_type"];
+
+                constraintColumnsDict[constraintName].Add((string)row["column_name"]);
+            }
+
+            foreach(var constraintName in constraintTableDict.Keys)
+            {
+                var tableName = constraintTableDict[constraintName];
+                DbTable table = tables.SingleOrDefault(x => x.Name == tableName);
+                if (table is null)
+                    continue;
+
+                switch (constraintTypeDict[constraintName])
+                {
+                    case 'p':
+                        {
+                            var constraint = table.AddPrimaryKeyContraint(constraintName);
+                            var columns = constraintColumnsDict[constraintName];
+                            foreach(var column in columns)
+                            {
+                                var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
+                                if(dbColumn is null) continue;
+                                constraint.Columns.Add(dbColumn);
+                            }
+                        }
+                        break;
+                    case 'u':
+                        {
+                            var constraint = table.AddUniqueContraint(constraintName);
+                            var columns = constraintColumnsDict[constraintName];
+                            foreach (var column in columns)
+                            {
+                                var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
+                                if (dbColumn is null) continue;
+                                constraint.Columns.Add(dbColumn);
+                            }
+                        }
+                        break;
+                    default:
+                        continue;
+                }
+            }
+
+            Dictionary<string, string> indexTableDict = new Dictionary<string, string>();
+            Dictionary<string, List<string>> indexColumnsDict = new Dictionary<string, List<string>>();
+            Dictionary<string, string> indexTypeDict = new Dictionary<string, string>();
+            const string indexesSql = @"
+select 
+	t.relname as table_name,
+    i.relname as index_name, 
+	a.attname as column_name,
+	am.amname as index_type, 
+	1 + array_position(ix.indkey, a.attnum) as column_position
+from pg_catalog.pg_class t
+	join pg_catalog.pg_attribute a 	ON t.oid    = a.attrelid 
+	join pg_catalog.pg_index ix    	ON t.oid    = ix.indrelid
+	join pg_catalog.pg_class i     	ON a.attnum = ANY(ix.indkey) AND i.oid=ix.indexrelid 
+	join pg_catalog.pg_namespace n 	ON n.oid    = t.relnamespace
+	JOIN pg_catalog.pg_am am			ON am.oid	= i.relam
+where t.relkind = 'r' AND n.nspname = 'public' AND ix.indisprimary = FALSE AND ix.indisunique = FALSE
+order by t.relname,i.relname,array_position(ix.indkey, a.attnum);";
+            DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(indexesSql);
+            foreach (DataRow row in dtIndexes.Rows)
+            {
+                var indexName = (string)row["index_name"];
+                if (!indexTableDict.ContainsKey(indexName))
+                    indexTableDict[indexName] = (string)row["table_name"];
+                if (!indexColumnsDict.ContainsKey(indexName))
+                    indexColumnsDict[indexName] = new List<string>();
+                if (!indexTypeDict.ContainsKey(indexName))
+                    indexTypeDict[indexName] = (string)row["index_type"];
+
+                indexColumnsDict[indexName].Add((string)row["column_name"]);
+            }
+
+            foreach (var indexName in indexTableDict.Keys)
+            {
+                var tableName = indexTableDict[indexName];
+                DbTable table = tables.SingleOrDefault(x => x.Name == tableName);
+                if (table is null)
+                    continue;
+
+                switch (indexTypeDict[indexName])
+                {
+                    case "btree":
+                        {
+                            var index = table.AddBTreeIndex(indexName);
+                            foreach (var column in indexColumnsDict[indexName])
+                            {
+                                var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
+                                if (dbColumn is null) continue;
+                                index.Columns.Add(dbColumn);
+                            }
+                        }
+                        break;
+                    case "gin":
+                        {
+                            var index = table.AddGinIndex(indexName);
+                            foreach (var column in indexColumnsDict[indexName])
+                            {
+                                var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
+                                if (dbColumn is null) continue;
+                                index.Columns.Add(dbColumn);
+                            }
+                        }
+                        break;
+                    case "gist":
+                        {
+                            var index = table.AddGistIndex(indexName);
+                            foreach (var column in indexColumnsDict[indexName])
+                            {
+                                var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
+                                if (dbColumn is null) continue;
+                                index.Columns.Add(dbColumn);
+                            }
+                        }
+                        break;
+                    case "hash":
+                        {
+                            var dbColumn = table.Columns.SingleOrDefault(x => x.Name == indexColumnsDict[indexName][0] );
+                            if (dbColumn is null) continue;
+                            var index = table.AddHashIndex(indexName, dbColumn.Name);
+
+                        }
+                        break;
+                    default:
+                        continue;
+                }
+            }
+        }
+
+        return tables;
+    }
+
+    private DbColumn CreateDbColumnDatabaseInfo(DbTable table, string columnName, string dbType, bool isNullable, string defaultValue, DbObjectMeta meta)
+    {
+        switch (dbType)
+        {
+            case "uuid":
+                {
+                    if (columnName == Constants.DB_TABLE_ID_NAME)
+                    {
+                        var column = table.AddTableIdColumn();
+                        column.SetMeta(meta);
+                    }
+                    else
+                    {
+                        Guid? guidDefaultValue = (Guid?)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbGuidColumn), defaultValue);
+                        DbGuidColumn column = null;
+                        if (defaultValue?.Trim() == "uuid_generate_v1()")
+                            column = table.AddGuidColumn(columnName, isNullable, true );
+                        else
+                            column = table.AddGuidColumn(columnName, isNullable, guidDefaultValue);
+                        column.SetMeta(meta);
+                    }
+                }
+                break;
+            case "integer":
+                {
+                    var column = table.AddAutoIncrementColumn(columnName);
+                    column.SetMeta(meta);
+                }
+                break;
+            case "boolean":
+                {
+                    bool? boolDefaultValue = (bool?)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbBooleanColumn), defaultValue);
+                    var column = table.AddBooleanColumn(columnName, isNullable, boolDefaultValue);
+                    column.SetMeta(meta);
+                }
+                break;
+            case "numeric":
+                {
+                    decimal? decimalDefaultValue = (decimal?)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbNumberColumn), defaultValue);
+                    var column = table.AddNumberColumn(columnName, isNullable, decimalDefaultValue);
+                    column.SetMeta(meta);
+                }
+                break;
+            case "date":
+                {
+                    DbDateColumn column = null;
+                    if (defaultValue == "now()")
+                    {
+                        column = table.AddDateColumn(columnName, isNullable, true);
+                    }
+                    else
+                    {
+                        DateOnly? dateDefaultValue = (DateOnly?)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbDateColumn), defaultValue);
+                        column = table.AddDateColumn(columnName, isNullable, dateDefaultValue);
+                    }
+
+                    column.SetMeta(meta);
+                }
+                break;
+            case "timestamp with time zone":
+                {
+                    DbDateTimeColumn column = null;
+                    if (defaultValue == "now()")
+                    {
+                        column = table.AddDateTimeColumn(columnName, isNullable, true);
+                    }
+                    else
+                    {
+                        DateTime? datetimeDefaultValue = (DateTime?)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbDateTimeColumn), defaultValue);
+                        column = table.AddDateTimeColumn(columnName, isNullable, datetimeDefaultValue);
+                    }
+                    column.SetMeta(meta);
+                }
+                break;
+            case "text":
+                {
+                    string textDefaultValue = (string)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbTextColumn), defaultValue);
+                    var column = table.AddTextColumn(columnName, isNullable, textDefaultValue);
+                    column.SetMeta(meta);
+                }
+                break;
+            default:
+                throw new DbException($"Not supported dbType for column '{columnName}'");
+        };
+        return null;
+    }
 }

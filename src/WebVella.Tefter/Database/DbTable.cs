@@ -1,6 +1,8 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using System;
 
-public class DbTable : DbObject
+namespace WebVella.Tefter.Database;
+
+public class DbTable : DbObjectWithMeta
 {
     //because the postgres NUMERIC type can hold a value of up to 131,072 digits
     //before the decimal point 16,383 digits after the decimal point.
@@ -27,7 +29,6 @@ public class DbTable : DbObject
 
     public DbAutoIncrementColumn AddAutoIncrementColumn(string name)
     {
-        ValidateName(name);
         DbAutoIncrementColumn column = new DbAutoIncrementColumn
         {
             Table = this,
@@ -37,9 +38,8 @@ public class DbTable : DbObject
         return column;
     }
 
-    public DbNumberColumn AddNumberColumn(string name, bool isNullable = true, decimal? defaultValue = null)
+    public DbNumberColumn AddNumberColumn(string name, bool isNullable, decimal? defaultValue = null)
     {
-        ValidateName(name);
         DbNumberColumn column = new DbNumberColumn
         {
             Table = this,
@@ -51,9 +51,8 @@ public class DbTable : DbObject
         return column;
     }
 
-    public DbBooleanColumn AddBooleanColumn(string name, bool isNullable = true, bool? defaultValue = null)
+    public DbBooleanColumn AddBooleanColumn(string name, bool isNullable, bool? defaultValue = null)
     {
-        ValidateName(name);
         DbBooleanColumn column = new DbBooleanColumn
         {
             Table = this,
@@ -65,9 +64,8 @@ public class DbTable : DbObject
         return column;
     }
 
-    public DbTextColumn AddTextColumn(string name, bool isNullable = true, string defaultValue = null)
+    public DbTextColumn AddTextColumn(string name, bool isNullable, string defaultValue = null)
     {
-        ValidateName(name);
         DbTextColumn column = new DbTextColumn
         {
             Table = this,
@@ -79,49 +77,99 @@ public class DbTable : DbObject
         return column;
     }
 
-    public DbDateColumn AddDateColumn(string name, bool isNullable = true, DateOnly? defaultValue = null, bool useCurrentTimeAsDefaultValue = false)
+    public DbDateColumn AddDateColumn(string name, bool isNullable, DateOnly? defaultValue)
     {
-        ValidateName(name);
         DbDateColumn column = new DbDateColumn
         {
             Table = this,
             Name = name,
             IsNullable = isNullable,
             DefaultValue = defaultValue,
+            UseCurrentTimeAsDefaultValue = false
+        };
+        Columns.Add(column);
+        return column;
+    }
+
+    public DbDateColumn AddDateColumn(string name, bool isNullable, bool useCurrentTimeAsDefaultValue)
+    {
+        DbDateColumn column = new DbDateColumn
+        {
+            Table = this,
+            Name = name,
+            IsNullable = isNullable,
+            DefaultValue = null,
             UseCurrentTimeAsDefaultValue = useCurrentTimeAsDefaultValue
         };
         Columns.Add(column);
         return column;
     }
 
-    public DbDateTimeColumn AddDateTimeColumn(string name, bool isNullable = true, DateTime? defaultValue = null, bool useCurrentTimeAsDefaultValue = false)
+    public DbDateTimeColumn AddDateTimeColumn(string name, bool isNullable, DateTime? defaultValue)
     {
-        ValidateName(name);
+        //we remove milliseconds because, they are stored in database with different scale and
+        //later when we restore default value there is always difference 
+        var roundedDefaultValue = defaultValue;
+        if (defaultValue is not null)
+        {
+            roundedDefaultValue = new DateTime(
+                defaultValue.Value.Ticks - (defaultValue.Value.Ticks % TimeSpan.TicksPerSecond),
+                defaultValue.Value.Kind
+            );
+        }
+
         DbDateTimeColumn column = new DbDateTimeColumn
         {
             Table = this,
             Name = name,
             IsNullable = isNullable,
-            DefaultValue = defaultValue,
+            DefaultValue = roundedDefaultValue,
+            UseCurrentTimeAsDefaultValue = false
+        };
+        Columns.Add(column);
+        return column;
+    }
+
+    public DbDateTimeColumn AddDateTimeColumn(string name, bool isNullable, bool useCurrentTimeAsDefaultValue)
+    {
+        DbDateTimeColumn column = new DbDateTimeColumn
+        {
+            Table = this,
+            Name = name,
+            IsNullable = isNullable,
+            DefaultValue = null,
             UseCurrentTimeAsDefaultValue = useCurrentTimeAsDefaultValue
         };
         Columns.Add(column);
         return column;
     }
 
-    public void AddGuidColumn(string name, DbObjectType objectType, bool isNullable = true, Guid? defaultValue = null, bool generateNewIdAsDefaultValue = false)
+    public DbGuidColumn AddGuidColumn(string name, bool isNullable, Guid? defaultValue)
     {
-        ValidateName(name);
-        DbColumn column = new DbGuidColumn
+        DbGuidColumn column = new DbGuidColumn
         {
             Table = this,
             Name = name,
-            Meta = new DbObjectMeta { Type = objectType },
             IsNullable = isNullable,
             DefaultValue = defaultValue,
+            GenerateNewIdAsDefaultValue = false
+        };
+        Columns.Add(column);
+        return column;
+    }
+
+    public DbGuidColumn AddGuidColumn(string name, bool isNullable, bool generateNewIdAsDefaultValue)
+    {
+        DbGuidColumn column = new DbGuidColumn
+        {
+            Table = this,
+            Name = name,
+            IsNullable = isNullable,
+            DefaultValue = null,
             GenerateNewIdAsDefaultValue = generateNewIdAsDefaultValue
         };
         Columns.Add(column);
+        return column;
     }
 
     internal DbTableIdColumn AddTableIdColumn()
@@ -170,21 +218,22 @@ public class DbTable : DbObject
 
     #region <=== Constraints Management ===>
 
-    public void AddPrimaryKeyContraint(string name)
+    public DbPrimaryKeyConstraint AddPrimaryKeyContraint(string name)
     {
         if (name is null)
             throw new ArgumentNullException(name);
 
         var constraint = new DbPrimaryKeyConstraint { Name = name, Table = this };
-        var idColumn = Columns.Find("tefter_id");
+        var idColumn = Columns.Find(Constants.DB_TABLE_ID_NAME);
         if (idColumn is null)
             throw new DbException($"Table id column is not found while try to create primary key constraint {name}");
 
         constraint.Columns.Add(idColumn);
         Constraints.Add(constraint);
+        return constraint;
     }
 
-    public void AddUniqueContraint(string name, params string[] columns)
+    public DbUniqueConstraint AddUniqueContraint(string name, params string[] columns)
     {
         if (name is null)
             throw new ArgumentNullException(name);
@@ -203,6 +252,7 @@ public class DbTable : DbObject
         }
 
         Constraints.Add(constraint);
+        return constraint;
     }
 
     public void RemoveConstraint(string name)
@@ -227,7 +277,7 @@ public class DbTable : DbObject
 
     #region <=== Index Management ===>
 
-    public void AddBTreeIndex(string name, params string[] columns)
+    public DbBTreeIndex AddBTreeIndex(string name, params string[] columns)
     {
         if (name is null)
             throw new ArgumentNullException(name);
@@ -246,9 +296,10 @@ public class DbTable : DbObject
         }
 
         Indexes.Add(index);
+        return index;
     }
 
-    public void AddGistIndex(string name, params string[] columns)
+    public DbGistIndex AddGistIndex(string name, params string[] columns)
     {
         if (name is null)
             throw new ArgumentNullException(name);
@@ -262,16 +313,17 @@ public class DbTable : DbObject
             var column = Columns.Find(columnName);
             if (column is null)
                 throw new DbException($"Column with name {columnName} is not found while try to create GIST index {name}");
-            if( column is not DbTextColumn)
+            if (column is not DbTextColumn)
                 throw new DbException($"Column with name {columnName} is not a text column. GIST index can be created only on text columns");
 
             index.Columns.Add(column);
         }
 
         Indexes.Add(index);
+        return index;
     }
 
-    public void AddGinIndex(string name, params string[] columns)
+    public DbGinIndex AddGinIndex(string name, params string[] columns)
     {
         if (name is null)
             throw new ArgumentNullException(name);
@@ -292,9 +344,10 @@ public class DbTable : DbObject
         }
 
         Indexes.Add(index);
+        return index;
     }
 
-    public void AddHashIndex(string name, string columnName )
+    public DbHashIndex AddHashIndex(string name, string columnName)
     {
         if (name is null)
             throw new ArgumentNullException(name);
@@ -303,13 +356,14 @@ public class DbTable : DbObject
 
         var index = new DbHashIndex { Name = name, Table = this };
 
-            var column = Columns.Find(columnName);
-            if (column is null)
-                throw new DbException($"Column with name {columnName} is not found while try to create HASH index {name}");
+        var column = Columns.Find(columnName);
+        if (column is null)
+            throw new DbException($"Column with name {columnName} is not found while try to create HASH index {name}");
 
-            index.Columns.Add(column);
+        index.Columns.Add(column);
 
         Indexes.Add(index);
+        return index;
     }
 
     public void RemoveIndex(string name)
