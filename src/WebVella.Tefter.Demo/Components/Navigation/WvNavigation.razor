@@ -21,13 +21,16 @@
 				<FluentButton Id="space-selector" Title="@_space.Name"
 							  OnClick="onSpaceSelectorClick">
 					@_space.Name
-					<FluentIcon Value="@_space.Icon" Color="@_space.IconColor" Slot="start" />
+					<FluentIcon Value="@(new Icons.Regular.Size16.ChevronDown())" Style="fill:var(--neutral-layer-3)" Slot="start" />
+@* 					<FluentIcon Value="@_space.Icon" Color="@_space.IconColor" Slot="end" /> *@
 				</FluentButton>
 				<WvNavigationSelector @ref=_selectorEl SpaceId=@_space?.Id SpaceChanged="SpaceChanged"></WvNavigationSelector>
 			</div>
 			<div class="button-actions-right">
-				<FluentButton Id="space-settings" Title="space actions" IconStart="@(new Icons.Regular.Size20.Settings())"
-							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" />
+				<FluentButton Id="space-settings" Title="space actions" 
+							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Stealth">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Neutral" />
+				</FluentButton>
 				<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
 					<FluentMenuItem OnClick="onDetailsClick">
 						Space Details
@@ -45,6 +48,18 @@
 						Delete Space
 						<span slot="start">
 							<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="onRemoveClick">
+						Manage Access
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
+						</span>
+					</FluentMenuItem>
+					<FluentMenuItem OnClick="onRemoveClick">
+						Invite User
+						<span slot="start">
+							<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
 						</span>
 					</FluentMenuItem>
 					<FluentDivider></FluentDivider>

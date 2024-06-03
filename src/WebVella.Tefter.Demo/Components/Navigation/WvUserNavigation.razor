@@ -1,28 +1,40 @@
 ﻿@namespace WebVella.Tefter.Demo.Components
 @inherits WvBaseComponent
-
-<FluentPersona Id="user-menu-toggle" Initials="BG" ImageSize="32px" OnClick="() => _visible = !_visible"></FluentPersona>
-
-<FluentMenu Width="200" @bind-Open="_visible" Anchor="user-menu-toggle">
-	<FluentMenuItem OnClick="_setTheme">
-		Change Theme
-		<span slot="start">
-			<FluentIcon Value="@(new Icons.Regular.Size20.Color())" Slot="start" />
-		</span>
-	</FluentMenuItem>
-	<FluentMenuItem OnClick="_editProfile">
-		Edit Profile
-		<span slot="start">
-			<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
-		</span>
-	</FluentMenuItem>
-	<FluentDivider></FluentDivider>
-	<FluentMenuItem OnClick="_logout">
-		Logout
-		<span slot="start">
-			<FluentIcon Value="@(new Icons.Regular.Size20.SignOut())" Slot="start" />
-		</span>
-	</FluentMenuItem>
-</FluentMenu>
+<div class="usernav">
+	<div class="actions">
+		<FluentCounterBadge BackgroundColor="@Color.Error" Color="Color.Fill" Dot="@true">
+			<FluentButton Appearance="@Appearance.Stealth" OnClick="_alertsClick">
+				<FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.Neutral" />
+			</FluentButton>
+		</FluentCounterBadge>
+		<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminClick">
+			<FluentIcon Value="@(new Icons.Regular.Size20.AppFolder())" Color="@Color.Neutral" />
+		</FluentButton>
+	</div>
+	<div class="avatar">
+		<FluentPersona Id="user-menu-toggle" Initials="BG" ImageSize="32px" OnClick="() => _visible = !_visible"></FluentPersona>
+	</div>
+	<FluentMenu Width="200" @bind-Open="_visible" Anchor="user-menu-toggle">
+		<FluentMenuItem OnClick="_setTheme">
+			Change Theme
+			<span slot="start">
+				<FluentIcon Value="@(new Icons.Regular.Size20.Color())" Slot="start" />
+			</span>
+		</FluentMenuItem>
+		<FluentMenuItem OnClick="_editProfile">
+			Edit Profile
+			<span slot="start">
+				<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
+			</span>
+		</FluentMenuItem>
+		<FluentDivider></FluentDivider>
+		<FluentMenuItem OnClick="_logout">
+			Logout
+			<span slot="start">
+				<FluentIcon Value="@(new Icons.Regular.Size20.SignOut())" Slot="start" />
+			</span>
+		</FluentMenuItem>
+	</FluentMenu>
+</div>
 
 

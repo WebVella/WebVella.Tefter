@@ -53,7 +53,6 @@ public partial class WvNavigationSelector : WvBaseComponent
 	{
 		_selectorSearch = args.Value?.ToString();
 		_selectorItems.Clear();
-		Console.WriteLine(_selectorSearch);
 		if(String.IsNullOrWhiteSpace(_selectorSearch)){ 
 			_selectorItems = _spaces.ToList();
 		}
@@ -65,6 +64,8 @@ public partial class WvNavigationSelector : WvBaseComponent
 
 	private async Task _handleClear(){ 
 		_selectorSearch = null;
+		_selectorItems.Clear();
+		_selectorItems = _spaces.ToList();
 	}
 
 	private async Task _spaceSelected(Space space)

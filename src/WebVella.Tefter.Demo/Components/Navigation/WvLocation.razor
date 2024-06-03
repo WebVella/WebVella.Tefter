@@ -27,13 +27,16 @@
 				</FluentBreadcrumb>
 			</div>
 			<span class="actions">
-				<FluentButton Appearance="@Appearance.Stealth" Id="space-item-settings"
-							  IconStart="@(new Icons.Regular.Size20.Settings())"
-							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" />
-				<FluentButton Appearance="@Appearance.Stealth"
-							  IconStart="@_spaceItem.BookmarkIcon" />
+@* 				<FluentButton Appearance="@Appearance.Stealth" Id="space-item-settings"
+							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Neutral" />
+				</FluentButton> *@
+				<FluentButton Appearance="@Appearance.Stealth">
+					<FluentIcon Value="@_spaceItem.BookmarkIcon" Color="@Color.Neutral" />
+				</FluentButton>
 			</span>
 		</div>
+		@*
 		<FluentMenu Anchor="space-item-settings" @bind-Open="_settingsMenuVisible" Width="200px">
 			<FluentMenuItem OnClick="onDetailsClick">
 				Space Item Details
@@ -55,12 +58,19 @@
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
 			<FluentMenuItem OnClick="onAccessClick">
-				Show Access
+				Manage Access
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="onAccessClick">
+				Invite User
 				<span slot="start">
 					<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
 				</span>
 			</FluentMenuItem>
 		</FluentMenu>
+		*@
 	}
 
 </div>

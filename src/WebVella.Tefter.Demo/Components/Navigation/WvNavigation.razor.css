@@ -5,13 +5,13 @@
 
 .button-actions {
 	display: flex;
-	margin-bottom:10px;
+	margin-bottom: 10px;
 }
 
 .button-actions-left {
 	flex: 1 1 auto;
 	display: flex;
-	padding-right:5px;
+	padding-right: 5px;
 }
 
 .button-actions-right {
@@ -42,20 +42,24 @@
 }
 
 	::deep #space-selector::part(control) {
-		padding-right: 5px !important;
+		padding-left: 2px !important;
+		padding-right: 2px !important;
 		justify-content: start;
 		align-items: center;
 	}
 
 	::deep #space-selector::part(start) {
-		flex:0 0 auto;
+		flex: 0 0 auto;
+		margin-inline-end: 4px !important;
 	}
+
 	::deep #space-selector::part(end) {
 		flex: 0 0 auto;
 	}
 
+
 	::deep #space-selector::part(content) {
-		flex:1 1 auto;
+		flex: 1 1 auto;
 		display: inline-block;
 		overflow: hidden;
 		white-space: nowrap;
@@ -63,3 +67,11 @@
 		width: 100px;
 		text-align: left;
 	}
+
+::deep .stealth::part(control) {
+	background: var(--neutral-layer-3);
+}
+
+::deep .stealth:hover::part(control) {
+	background: var(--neutral-fill-stealth-hover);
+}

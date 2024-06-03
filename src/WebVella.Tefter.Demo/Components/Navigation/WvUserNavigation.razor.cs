@@ -28,4 +28,15 @@ public partial class WvUserNavigation : WvBaseComponent
 		ToastService.ShowToast(ToastIntent.Warning, "Will logout user");
 	}
 
+	private void _alertsClick()
+	{
+		ToastService.ShowToast(ToastIntent.Warning, "Navigates to usr alerts");
+	}
+
+	private void _adminClick()
+	{
+		ToastService.ShowToast(ToastIntent.Warning, "Navigates to Administration panel");
+	}
+
+
 }
