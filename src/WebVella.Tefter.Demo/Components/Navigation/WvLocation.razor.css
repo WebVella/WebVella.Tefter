@@ -5,17 +5,6 @@
 	justify-content: start;
 }
 
-	.location .icon {
-		flex: 0 0 auto;
-		padding-right: 10px;
-		display: flex;
-		align-items: center;
-	}
-
-::deep.location .icon svg {
-	width: 32px !important;
-}
-
 .location .title {
 	flex: 0 0 auto;
 	line-height: 1em;
@@ -24,28 +13,15 @@
 }
 	.location .title .label {
 		flex: 0 0 auto;
-		padding-left:10px;
+		display:flex;
+		align-items:center;
 	}
 
-	.location .title .badge {
-		padding-left: 10px;
-	}
+
 	.location .title .actions {
 		flex: 0 0 auto;
 		padding-left: 10px;
 	}
-
-::deep.location .badge .private::part(control) {
-	color: white;
-	background: var(--error) !important;
-}
-
-::deep.location .badge .public::part(control) {
-	color: white;
-	background: var(--success) !important;
-}
-
-
 
 
 

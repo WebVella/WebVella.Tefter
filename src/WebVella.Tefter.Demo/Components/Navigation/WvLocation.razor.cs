@@ -3,7 +3,9 @@ public partial class WvLocation : WvBaseComponent, IDisposable
 {
 	private Space _space;
 	private SpaceItem _spaceItem;
+	private SpaceItemView _spaceItemView;
 	private bool _settingsMenuVisible = false;
+	private int _ellipsisCount = 20;
 	public void Dispose()
 	{
 		WvState.ActiveSpaceDataChanged -= OnSpaceDataChanged;
@@ -11,6 +13,11 @@ public partial class WvLocation : WvBaseComponent, IDisposable
 
 	protected override void OnInitialized()
 	{
+		var (space, spaceItem, spaceItemView) = WvState.GetActiveSpaceData();
+		_space = space;
+		_spaceItem = spaceItem;
+		_spaceItemView = spaceItemView;
+
 		WvState.ActiveSpaceDataChanged += OnSpaceDataChanged;
 	}
 
@@ -18,6 +25,7 @@ public partial class WvLocation : WvBaseComponent, IDisposable
 	{
 		_space = args.Space;
 		_spaceItem = args.SpaceItem;
+		_spaceItemView = args.SpaceItemView;
 		StateHasChanged();
 	}
 
@@ -38,4 +46,6 @@ public partial class WvLocation : WvBaseComponent, IDisposable
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Shows current access");
 	}
+
+
 }

@@ -4,28 +4,34 @@
 <div class="location">
 	@if (_spaceItem is not null)
 	{
-		<div class="icon">
-			<FluentIcon Value="_spaceItem.Icon" />
-		</div>
 		<div class="title">
-			<span class="label">@_spaceItem.Name</span>
-
-			<span class="badge">
-				@if (_space.IsPrivate)
-				{
-					<FluentBadge Class="private">private</FluentBadge>
-				}
-				else
-				{
-					<FluentBadge Class="public">public</FluentBadge>
-				}
-			</span>
+			<div class="label">
+				<FluentBreadcrumb>
+					<FluentBreadcrumbItem title="@_space.Name">
+						@RenderUtils.StringOverflow(_space.Name, _ellipsisCount)
+						@if (_space.IsPrivate)
+						{
+							<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.LockClosed())" Slot="start" Title="private" />
+						}
+						else
+						{
+							<FluentIcon Color="@Color.Success" Value="@(new Icons.Regular.Size20.LockOpen())" Slot="start" Title="public" />
+						}
+					</FluentBreadcrumbItem>
+					<FluentBreadcrumbItem title="@_spaceItem.Name">
+						@RenderUtils.StringOverflow(_spaceItem.Name, _ellipsisCount)
+					</FluentBreadcrumbItem>
+					<FluentBreadcrumbItem title="@_spaceItemView.Name">
+						@RenderUtils.StringOverflow(_spaceItemView.Name, _ellipsisCount)
+					</FluentBreadcrumbItem>
+				</FluentBreadcrumb>
+			</div>
 			<span class="actions">
 				<FluentButton Appearance="@Appearance.Stealth" Id="space-item-settings"
 							  IconStart="@(new Icons.Regular.Size20.Settings())"
 							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" />
 				<FluentButton Appearance="@Appearance.Stealth"
-							  IconStart="@_spaceItem.BookmarkIcon"/>
+							  IconStart="@_spaceItem.BookmarkIcon" />
 			</span>
 		</div>
 		<FluentMenu Anchor="space-item-settings" @bind-Open="_settingsMenuVisible" Width="200px">
@@ -49,7 +55,7 @@
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
 			<FluentMenuItem OnClick="onAccessClick">
-				Show Access 
+				Show Access
 				<span slot="start">
 					<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
 				</span>

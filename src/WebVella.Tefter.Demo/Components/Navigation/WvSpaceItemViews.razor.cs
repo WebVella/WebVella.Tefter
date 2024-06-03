@@ -26,7 +26,7 @@ public partial class WvSpaceItemViews : WvBaseComponent
 			_menuItems.Add(menu);
 		}
 
-		_activeTabId = RenderUtils.ConvertGuidToHtmlElementId(spaceItemView.Id);
+		_activeTabId = RenderUtils.ConvertGuidToHtmlElementId(spaceItemView?.Id);
 	}
 
 	private void HandleOnTabChange(FluentTab tab)

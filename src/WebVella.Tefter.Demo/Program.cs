@@ -6,6 +6,8 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddFluentUIComponents();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

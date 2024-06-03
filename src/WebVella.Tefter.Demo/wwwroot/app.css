@@ -87,13 +87,17 @@ body {
 		background: var(--neutral-base-color);
 	}
 
- 
-
 
 /*Overrides*/
 fluent-data-grid-row:has([row-selected]) {
 	background-color: var(--neutral-fill-stealth-hover)
 }
+
+fluent-select::part(listbox) {
+max-height:200px;
+}
+
+
 /* General */
 #blazor-error-ui {
 	background: #F3D6D8;

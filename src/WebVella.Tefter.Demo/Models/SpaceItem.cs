@@ -50,6 +50,7 @@ public class SpaceItem
 		}
 	}
 
+
 	[JsonIgnore]
 	public Action OnSelect { get; set; }
 

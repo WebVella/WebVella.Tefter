@@ -2,6 +2,7 @@
 @inherits ComponentBase
 
 
+<FluentDesignTheme Mode="@_user.ThemeMode" OfficeColor="@_user.ThemeColor" />
 @if (!String.IsNullOrWhiteSpace(_errorMessage))
 {
 	<div class="alert alert-danger p-2">@_errorMessage</div>

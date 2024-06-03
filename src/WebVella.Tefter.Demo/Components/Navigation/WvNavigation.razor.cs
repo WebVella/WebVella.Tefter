@@ -14,8 +14,11 @@ public partial class WvNavigation : WvBaseComponent,IDisposable
 
 	protected override void OnInitialized()
 	{
+		var(space,spaceItem,spaceItemView) = WvState.GetActiveSpaceData();
+		_space = space;
+		GenerateSpaceItemMenu(_space);
 		WvState.ActiveSpaceDataChanged += OnSpaceDataChanged;
-		//space = spaces[0];
+		
 
 	}
 
