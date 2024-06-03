@@ -1,4 +1,5 @@
-﻿using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
+﻿using System.Data.Common;
+using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
 
 namespace WebVella.Tefter.Database;
 
@@ -297,7 +298,7 @@ order by t.relname,ix.conname,array_position(ix.conkey, a.attnum);";
                 {
                     case 'p':
                         {
-                            var constraint = table.AddPrimaryKeyContraint(constraintName);
+                            var constraint = new DbPrimaryKeyConstraint { Name = constraintName, Table = table };
                             var columns = constraintColumnsDict[constraintName];
                             foreach(var column in columns)
                             {
@@ -305,11 +306,12 @@ order by t.relname,ix.conname,array_position(ix.conkey, a.attnum);";
                                 if(dbColumn is null) continue;
                                 constraint.Columns.Add(dbColumn);
                             }
+                            table.Constraints.Add(constraint);
                         }
                         break;
                     case 'u':
                         {
-                            var constraint = table.AddUniqueContraint(constraintName);
+                            var constraint = new DbUniqueConstraint { Name = constraintName, Table = table };
                             var columns = constraintColumnsDict[constraintName];
                             foreach (var column in columns)
                             {
@@ -317,6 +319,7 @@ order by t.relname,ix.conname,array_position(ix.conkey, a.attnum);";
                                 if (dbColumn is null) continue;
                                 constraint.Columns.Add(dbColumn);
                             }
+                            table.Constraints.Add(constraint);
                         }
                         break;
                     default:
@@ -367,43 +370,47 @@ order by t.relname,i.relname,array_position(ix.indkey, a.attnum);";
                 {
                     case "btree":
                         {
-                            var index = table.AddBTreeIndex(indexName);
+                            var index = new DbBTreeIndex { Name = indexName, Table = table };
                             foreach (var column in indexColumnsDict[indexName])
                             {
                                 var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
                                 if (dbColumn is null) continue;
                                 index.Columns.Add(dbColumn);
                             }
+                            table.Indexes.Add(index);
                         }
                         break;
                     case "gin":
                         {
-                            var index = table.AddGinIndex(indexName);
+                            var index = new DbGinIndex { Name = indexName, Table = table };
                             foreach (var column in indexColumnsDict[indexName])
                             {
                                 var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
                                 if (dbColumn is null) continue;
                                 index.Columns.Add(dbColumn);
                             }
+                            table.Indexes.Add(index);
                         }
                         break;
                     case "gist":
                         {
-                            var index = table.AddGistIndex(indexName);
+                            var index = new DbGistIndex { Name = indexName, Table = table };
                             foreach (var column in indexColumnsDict[indexName])
                             {
                                 var dbColumn = table.Columns.SingleOrDefault(x => x.Name == column);
                                 if (dbColumn is null) continue;
                                 index.Columns.Add(dbColumn);
                             }
+                            table.Indexes.Add(index);
                         }
                         break;
                     case "hash":
                         {
                             var dbColumn = table.Columns.SingleOrDefault(x => x.Name == indexColumnsDict[indexName][0] );
                             if (dbColumn is null) continue;
-                            var index = table.AddHashIndex(indexName, dbColumn.Name);
-
+                            var index = new DbHashIndex { Name = indexName, Table = table };
+                            index.Columns.Add(dbColumn);
+                            table.Indexes.Add(index);
                         }
                         break;
                     default:

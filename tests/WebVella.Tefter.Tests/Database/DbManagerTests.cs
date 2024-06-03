@@ -26,7 +26,7 @@ public partial class DbManagerTests : BaseTest
                 var text1Column = table.AddTextColumn("text1", false, "default value 1");
                 var text2Column = table.AddTextColumn("text2", false, "default value 2");
 
-                var pkCtt = table.AddPrimaryKeyContraint("id");
+                var pkCtt = table.AddPrimaryKeyContraint();
                 var ux1Ctt = table.AddUniqueContraint("ux_unique1", "number", "bool", "date1");
                 var ux2Ctt = table.AddUniqueContraint("ux_unique2", "number");
 
@@ -36,51 +36,83 @@ public partial class DbManagerTests : BaseTest
                 var ginIdx = table.AddGinIndex("idx_gin", "text1", "text2");
 
                 dbManager.SaveTable(table);
-              
-
+               
                 List<DbTable> tables = dbManager.LoadTables();
-                var loadedTable = tables[0];    
-                loadedTable.Should().NotBeNull();
-                loadedTable.Name.Should().Be(table.Name);
-                loadedTable.Columns.Count().Should().Be(table.Columns.Count());
-                loadedTable.Indexes.Count().Should().Be(table.Indexes.Count());
-                loadedTable.Constraints.Count().Should().Be(table.Constraints.Count());
+                var tableAfterSaveFromDb = tables.SingleOrDefault(x => x.Name == table.Name);
+                tableAfterSaveFromDb.Should().NotBeNull();
 
-                for ( int i = 0; i < table.Columns.Count(); i++ )
-                {
-                    var column = table.Columns[i];
-                    var loadedColumn = loadedTable.Columns[i];
+                CompareTables(table, tableAfterSaveFromDb);
 
-                    column.GetType().Should().Be(loadedColumn.GetType());
-                   
-                    if( column.GetType() == typeof(DbGuidColumn) )
-                        ((DbGuidColumn)column).GenerateNewIdAsDefaultValue.Should().Be(
-                            ((DbGuidColumn)loadedColumn).GenerateNewIdAsDefaultValue);
-                    if (column.GetType() == typeof(DbDateColumn))
-                        ((DbDateColumn)column).UseCurrentTimeAsDefaultValue.Should().Be(
-                            ((DbDateColumn)loadedColumn).UseCurrentTimeAsDefaultValue);
-                    if (column.GetType() == typeof(DbDateTimeColumn))
-                        ((DbDateTimeColumn)column).UseCurrentTimeAsDefaultValue.Should().Be(
-                            ((DbDateTimeColumn)loadedColumn).UseCurrentTimeAsDefaultValue);
-
-                    column.Name.Should().Be(loadedColumn.Name);
-                    column.DefaultValue.Should().Be(loadedColumn.DefaultValue);
-                    column.IsNullable.Should().Be(loadedColumn.IsNullable);
-                }
-
-
-                //scope.Complete();
             }
+        }
+    }
 
-            //var task1 = Task.Run(async () =>
-            //{
-            //    using (var scope = dbService.CreateTransactionScope())
-            //    {
-            //    }
-            //});
+    private void CompareTables(DbTable table1, DbTable table2)
+    {
+        table1.Should().NotBeNull();
+        table1.Name.Should().Be(table2.Name);
+        table1.Columns.Count().Should().Be(table2.Columns.Count());
+        table1.Indexes.Count().Should().Be(table2.Indexes.Count());
+        table1.Constraints.Count().Should().Be(table2.Constraints.Count());
 
-            //var exception1 = Record.ExceptionAsync(async () => await task1).Result;
-            //exception1.Should().BeNull();
+        for (int i = 0; i < table1.Columns.Count(); i++)
+        {
+            var column1 = table1.Columns[i];
+            var column2 = table2.Columns[i];
+
+            column1.GetType().Should().Be(column2.GetType());
+
+            if (column1.GetType() == typeof(DbGuidColumn))
+                ((DbGuidColumn)column1).GenerateNewIdAsDefaultValue.Should().Be(
+                    ((DbGuidColumn)column2).GenerateNewIdAsDefaultValue);
+            if (column1.GetType() == typeof(DbDateColumn))
+                ((DbDateColumn)column1).UseCurrentTimeAsDefaultValue.Should().Be(
+                    ((DbDateColumn)column2).UseCurrentTimeAsDefaultValue);
+            if (column1.GetType() == typeof(DbDateTimeColumn))
+                ((DbDateTimeColumn)column1).UseCurrentTimeAsDefaultValue.Should().Be(
+                    ((DbDateTimeColumn)column2).UseCurrentTimeAsDefaultValue);
+
+            column1.Name.Should().Be(column2.Name);
+            column1.DefaultValue.Should().Be(column2.DefaultValue);
+            column1.IsNullable.Should().Be(column2.IsNullable);
+        }
+
+        for (int i = 0; i < table1.Indexes.Count(); i++)
+        {
+            var index1 = table1.Indexes[i];
+            var index2 = table2.Indexes.SingleOrDefault(x => x.Name == index1.Name);
+
+            index1.GetType().Should().Be(index2.GetType());
+            index1.Table.Name.Should().Be(index2.Table.Name);   
+            index1.Columns.Count().Should().Be(index2.Columns.Count());
+            index1.Name.Should().Be(index2.Name);
+
+            for (int j = 0; j < index1.Columns.Count(); j++)
+            {
+                var column1 = index1.Columns[j];
+                var column2 = index2.Columns[j];
+                column1.Table.Name.Should().Be(column2.Table.Name);
+                column1.GetType().Should().Be(column2.GetType());   
+            }
+        }
+
+        for (int i = 0; i < table1.Constraints.Count(); i++)
+        {
+            var constraint1 = table1.Constraints[i];
+            var constraint2 = table2.Constraints.SingleOrDefault(x => x.Name == constraint1.Name);
+
+            constraint1.GetType().Should().Be(constraint2.GetType());
+            constraint1.Name.Should().Be(constraint2.Name);
+            constraint1.Table.Name.Should().Be(constraint2.Table.Name);
+            constraint1.Columns.Count().Should().Be(constraint2.Columns.Count());
+
+            for (int j = 0; j < constraint1.Columns.Count(); j++)
+            {
+                var column1 = constraint1.Columns[j];
+                var column2 = constraint2.Columns[j];
+                column1.Table.Name.Should().Be(column2.Table.Name);
+                column1.GetType().Should().Be(column2.GetType());
+            }
         }
     }
 }

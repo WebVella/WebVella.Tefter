@@ -218,12 +218,10 @@ public class DbTable : DbObjectWithMeta
 
     #region <=== Constraints Management ===>
 
-    public DbPrimaryKeyConstraint AddPrimaryKeyContraint(string name)
+    public DbPrimaryKeyConstraint AddPrimaryKeyContraint()
     {
-        if (name is null)
-            throw new ArgumentNullException(name);
-
-        var constraint = new DbPrimaryKeyConstraint { Name = name, Table = this };
+        string name = $"primary_key_{this.Name}";
+        var constraint = new DbPrimaryKeyConstraint { Name = name , Table = this };
         var idColumn = Columns.Find(Constants.DB_TABLE_ID_NAME);
         if (idColumn is null)
             throw new DbException($"Table id column is not found while try to create primary key constraint {name}");
