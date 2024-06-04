@@ -1,5 +1,8 @@
 ﻿.content-views {
-	position:relative;
+	position: relative;
+	padding: 0 var(--wv-content-padding);
+	margin-bottom: 15px;
+	height: 40px;
 }
 
 	.content-views:before {
@@ -9,12 +12,16 @@
 		left: 0;
 		width: 100%;
 		height: 0px;
-		border-bottom:1px solid var(--neutral-stroke-rest);
+		border-bottom: 1px solid var(--neutral-stroke-rest);
 		bottom: 6px;
-		z-index:1;
+		z-index: 1;
 	}
 
-	::deep.content-views fluent-tabs {
-		z-index:5;
-		position:relative;
-	}
+::deep.content-views fluent-tabs {
+	z-index: 5;
+	position: relative;
+}
+
+::deep.content-views fluent-tab:first-child {
+	padding-left: 0 !important;
+}

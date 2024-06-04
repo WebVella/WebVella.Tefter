@@ -10,6 +10,24 @@ public class User
 	public string Email { get; set; }
 	public DesignThemeModes ThemeMode { get; set; } = DesignThemeModes.System;
 	public OfficeColor ThemeColor { get; set; } = OfficeColor.Excel;
+	public string Initials
+	{
+		get
+		{
+			var list = new List<string>();
+			if(!String.IsNullOrWhiteSpace(FirstName)){
+				list.Add(FirstName.Substring(0,1));
+			}
+			if (!String.IsNullOrWhiteSpace(LastName))
+			{
+				list.Add(LastName.Substring(0, 1));
+			}
+
+			if(list.Count == 0) return "?";
+
+			return String.Join("", list).ToUpperInvariant();
+		}
+	}
 
 	public static Faker<User> GetFaker()
 	{

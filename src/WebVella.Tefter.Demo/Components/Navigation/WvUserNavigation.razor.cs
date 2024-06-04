@@ -2,14 +2,20 @@
 public partial class WvUserNavigation : WvBaseComponent
 {
     private bool _visible = false;
+    private User _user;
 
-    private void _onClick(){ 
+	protected override void OnInitialized()
+	{
+		_user = WvState.GetUser();
+	}
+
+	private void _onClick(){ 
         _visible = !_visible;
     }
 
     private async Task _setTheme(){
-        var user = WvState.GetUser();
-        var dialog = await DialogService.ShowDialogAsync<WvSetThemeDialog>(user, new DialogParameters()
+
+        var dialog = await DialogService.ShowDialogAsync<WvSetThemeDialog>(_user, new DialogParameters()
         {
             PreventDismissOnOverlayClick = true,
             PreventScroll = true,
@@ -17,8 +23,8 @@ public partial class WvUserNavigation : WvBaseComponent
         var result = await dialog.Result;
         if (!result.Cancelled && result.Data != null)
         {
-            user = (User)result.Data;
-            await WvState.SetTheme(user.ThemeMode,user.ThemeColor);
+			_user = (User)result.Data;
+            await WvState.SetTheme(_user.ThemeMode, _user.ThemeColor);
         }
     }
     private void _editProfile(){

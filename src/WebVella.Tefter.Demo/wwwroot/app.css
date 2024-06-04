@@ -6,6 +6,10 @@ body {
 	background: var(--neutral-layer-3) !important;
 }
 
+.layout {
+	overflow-x:hidden;/*fix for a scroll blink on menu drop*/
+}
+
 .header {
 	background: var(--neutral-layer-3) !important;
 	height: 48px !important;
@@ -53,19 +57,6 @@ body {
 .content.with-views.with-toolbar .content-inner {
 	height: calc(100vh - 163px) !important;
 }
-
-	.content-views {
-		margin-bottom: 15px;
-		padding-left:15px;
-		padding-right:15px;
-		height: 40px;
-	}
-
-.content-toolbar {
-	height:40px;
-}
-
-
 
 /* width */
 ::-webkit-scrollbar {
