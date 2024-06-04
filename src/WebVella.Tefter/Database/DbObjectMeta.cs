@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbObjectMeta
+internal sealed record DbObjectMeta
 {
     public Guid Id { get; set; }
     public Guid? ApplicationId { get; set; } = null;

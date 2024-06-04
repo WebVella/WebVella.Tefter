@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbAutoIncrementColumn : DbColumn
+public record DbAutoIncrementColumn : DbColumn
 {
     public override DbType Type => DbType.AutoIncrement;
     public override object DefaultValue => null;

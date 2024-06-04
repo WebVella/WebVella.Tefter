@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Database;
 
-public class DbTable : DbObjectWithMeta
+public record DbTable : DbObjectWithMeta
 {
     //because the postgres NUMERIC type can hold a value of up to 131,072 digits
     //before the decimal point 16,383 digits after the decimal point.
@@ -172,9 +172,9 @@ public class DbTable : DbObjectWithMeta
         return column;
     }
 
-    internal DbTableIdColumn AddTableIdColumn()
+    internal DbIdColumn AddTableIdColumn()
     {
-        DbTableIdColumn column = new DbTableIdColumn { Table = this };
+        DbIdColumn column = new DbIdColumn { Table = this };
         Columns.Add(column);
         return column;
     }
@@ -216,172 +216,172 @@ public class DbTable : DbObjectWithMeta
 
     #endregion
 
-    #region <=== Constraints Management ===>
+    //#region <=== Constraints Management ===>
 
-    public DbPrimaryKeyConstraint AddPrimaryKeyContraint()
-    {
-        string name = $"primary_key_{this.Name}";
-        var constraint = new DbPrimaryKeyConstraint { Name = name , Table = this };
-        var idColumn = Columns.Find(Constants.DB_TABLE_ID_NAME);
-        if (idColumn is null)
-            throw new DbException($"Table id column is not found while try to create primary key constraint {name}");
+    //public DbPrimaryKeyConstraint AddPrimaryKeyContraint()
+    //{
+    //    string name = $"primary_key_{this.Name}";
+    //    var constraint = new DbPrimaryKeyConstraint { Name = name };
+    //    var idColumn = Columns.Find(Constants.DB_TABLE_ID_COLUMN_NAME);
+    //    if (idColumn is null)
+    //        throw new DbException($"Table id column is not found while try to create primary key constraint {name}");
 
-        constraint.Columns.Add(idColumn);
-        Constraints.Add(constraint);
-        return constraint;
-    }
+    //    constraint.Columns.Add(idColumn);
+    //    Constraints.Add(constraint);
+    //    return constraint;
+    //}
 
-    public DbUniqueConstraint AddUniqueContraint(string name, params string[] columns)
-    {
-        if (name is null)
-            throw new ArgumentNullException(name);
+    //public DbUniqueKeyConstraint AddUniqueContraint(string name, params string[] columns)
+    //{
+    //    if (name is null)
+    //        throw new ArgumentNullException(name);
 
-        //TODO validate name, columns (1. at least one, 2. exists)
+    //    //TODO validate name, columns (1. at least one, 2. exists)
 
-        var constraint = new DbUniqueConstraint { Name = name, Table = this };
+    //    var constraint = new DbUniqueKeyConstraint { Name = name };
 
-        foreach (var columnName in columns)
-        {
-            var column = Columns.Find(columnName);
-            if (column is null)
-                throw new DbException($"Column with name {columnName} is not found while try to create unique constraint {name}");
+    //    foreach (var columnName in columns)
+    //    {
+    //        var column = Columns.Find(columnName);
+    //        if (column is null)
+    //            throw new DbException($"Column with name {columnName} is not found while try to create unique constraint {name}");
 
-            constraint.Columns.Add(column);
-        }
+    //        constraint.Columns.Add(column);
+    //    }
 
-        Constraints.Add(constraint);
-        return constraint;
-    }
+    //    Constraints.Add(constraint);
+    //    return constraint;
+    //}
 
-    public void RemoveConstraint(string name)
-    {
-        if (name is null)
-            throw new ArgumentNullException(name);
+    //public void RemoveConstraint(string name)
+    //{
+    //    if (name is null)
+    //        throw new ArgumentNullException(name);
 
-        var constraint = Constraints.Find(name);
+    //    var constraint = Constraints.Find(name);
 
-        if (constraint is null)
-            throw new DbException($"Trying to remove non existent constraint '{name}' from table '{Name}'");
+    //    if (constraint is null)
+    //        throw new DbException($"Trying to remove non existent constraint '{name}' from table '{Name}'");
 
-        Constraints.Remove(constraint);
-    }
+    //    Constraints.Remove(constraint);
+    //}
 
-    public void ClearConstraints()
-    {
-        Constraints.Clear();
-    }
+    //public void ClearConstraints()
+    //{
+    //    Constraints.Clear();
+    //}
 
-    #endregion
+    //#endregion
 
-    #region <=== Index Management ===>
+    //#region <=== Index Management ===>
 
-    public DbBTreeIndex AddBTreeIndex(string name, params string[] columns)
-    {
-        if (name is null)
-            throw new ArgumentNullException(name);
+    //public DbBTreeIndex AddBTreeIndex(string name, params string[] columns)
+    //{
+    //    if (name is null)
+    //        throw new ArgumentNullException(name);
 
-        //TODO validate name, columns (1. at least one, 2. exists)
+    //    //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbBTreeIndex { Name = name, Table = this };
+    //    var index = new DbBTreeIndex { Name = name };
 
-        foreach (var columnName in columns)
-        {
-            var column = Columns.Find(columnName);
-            if (column is null)
-                throw new DbException($"Column with name {columnName} is not found while try to create btree index {name}");
+    //    foreach (var columnName in columns)
+    //    {
+    //        var column = Columns.Find(columnName);
+    //        if (column is null)
+    //            throw new DbException($"Column with name {columnName} is not found while try to create btree index {name}");
 
-            index.Columns.Add(column);
-        }
+    //        index.Columns.Add(column);
+    //    }
 
-        Indexes.Add(index);
-        return index;
-    }
+    //    Indexes.Add(index);
+    //    return index;
+    //}
 
-    public DbGistIndex AddGistIndex(string name, params string[] columns)
-    {
-        if (name is null)
-            throw new ArgumentNullException(name);
+    //public DbGistIndex AddGistIndex(string name, params string[] columns)
+    //{
+    //    if (name is null)
+    //        throw new ArgumentNullException(name);
 
-        //TODO validate name, columns (1. at least one, 2. exists)
+    //    //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbGistIndex { Name = name, Table = this };
+    //    var index = new DbGistIndex { Name = name };
 
-        foreach (var columnName in columns)
-        {
-            var column = Columns.Find(columnName);
-            if (column is null)
-                throw new DbException($"Column with name {columnName} is not found while try to create GIST index {name}");
-            if (column is not DbTextColumn)
-                throw new DbException($"Column with name {columnName} is not a text column. GIST index can be created only on text columns");
+    //    foreach (var columnName in columns)
+    //    {
+    //        var column = Columns.Find(columnName);
+    //        if (column is null)
+    //            throw new DbException($"Column with name {columnName} is not found while try to create GIST index {name}");
+    //        if (column is not DbTextColumn)
+    //            throw new DbException($"Column with name {columnName} is not a text column. GIST index can be created only on text columns");
 
-            index.Columns.Add(column);
-        }
+    //        index.Columns.Add(column);
+    //    }
 
-        Indexes.Add(index);
-        return index;
-    }
+    //    Indexes.Add(index);
+    //    return index;
+    //}
 
-    public DbGinIndex AddGinIndex(string name, params string[] columns)
-    {
-        if (name is null)
-            throw new ArgumentNullException(name);
+    //public DbGinIndex AddGinIndex(string name, params string[] columns)
+    //{
+    //    if (name is null)
+    //        throw new ArgumentNullException(name);
 
-        //TODO validate name, columns (1. at least one, 2. exists)
+    //    //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbGinIndex { Name = name, Table = this };
+    //    var index = new DbGinIndex { Name = name };
 
-        foreach (var columnName in columns)
-        {
-            var column = Columns.Find(columnName);
-            if (column is null)
-                throw new DbException($"Column with name {columnName} is not found while try to create GIN index {name}");
-            if (column is not DbTextColumn)
-                throw new DbException($"Column with name {columnName} is not a text column. GIN index can be created only on text columns");
+    //    foreach (var columnName in columns)
+    //    {
+    //        var column = Columns.Find(columnName);
+    //        if (column is null)
+    //            throw new DbException($"Column with name {columnName} is not found while try to create GIN index {name}");
+    //        if (column is not DbTextColumn)
+    //            throw new DbException($"Column with name {columnName} is not a text column. GIN index can be created only on text columns");
 
-            index.Columns.Add(column);
-        }
+    //        index.Columns.Add(column);
+    //    }
 
-        Indexes.Add(index);
-        return index;
-    }
+    //    Indexes.Add(index);
+    //    return index;
+    //}
 
-    public DbHashIndex AddHashIndex(string name, string columnName)
-    {
-        if (name is null)
-            throw new ArgumentNullException(name);
+    //public DbHashIndex AddHashIndex(string name, string columnName)
+    //{
+    //    if (name is null)
+    //        throw new ArgumentNullException(name);
 
-        //TODO validate name, columns (1. at least one, 2. exists)
+    //    //TODO validate name, columns (1. at least one, 2. exists)
 
-        var index = new DbHashIndex { Name = name, Table = this };
+    //    var index = new DbHashIndex { Name = name };
 
-        var column = Columns.Find(columnName);
-        if (column is null)
-            throw new DbException($"Column with name {columnName} is not found while try to create HASH index {name}");
+    //    var column = Columns.Find(columnName);
+    //    if (column is null)
+    //        throw new DbException($"Column with name {columnName} is not found while try to create HASH index {name}");
 
-        index.Columns.Add(column);
+    //    index.Columns.Add(column);
 
-        Indexes.Add(index);
-        return index;
-    }
+    //    Indexes.Add(index);
+    //    return index;
+    //}
 
-    public void RemoveIndex(string name)
-    {
-        if (name is null)
-            throw new ArgumentNullException(name);
+    //public void RemoveIndex(string name)
+    //{
+    //    if (name is null)
+    //        throw new ArgumentNullException(name);
 
-        var index = Indexes.Find(name);
+    //    var index = Indexes.Find(name);
 
-        if (index is null)
-            throw new DbException($"Trying to remove non existent index '{name}' from table '{Name}'");
+    //    if (index is null)
+    //        throw new DbException($"Trying to remove non existent index '{name}' from table '{Name}'");
 
-        Indexes.Remove(index);
-    }
+    //    Indexes.Remove(index);
+    //}
 
-    public void ClearIndexes()
-    {
-        Indexes.Clear();
-    }
+    //public void ClearIndexes()
+    //{
+    //    Indexes.Clear();
+    //}
 
-    #endregion
+    //#endregion
 }
 

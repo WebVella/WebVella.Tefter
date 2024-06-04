@@ -1,15 +1,32 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
 
-public abstract class DbObjectWithMeta : DbObject
+namespace WebVella.Tefter.Database;
+
+public abstract record DbObjectWithMeta : DbObject
 {
-    internal DbObjectMeta Meta { get; set; } = new();
+    public Guid Id { get { return _meta.Id; } internal set { _meta.Id = value; } }
+    public Guid? ApplicationId { get { return _meta.ApplicationId; } internal set { _meta.ApplicationId = value; } } 
+    public Guid? DataProviderId { get { return _meta.DataProviderId; } internal set { _meta.DataProviderId = value; } }
+
+    private DbObjectMeta _meta = new();
 
     #region <=== Meta ===>
+
+    internal DbObjectMeta GetMeta()
+    {
+        return new DbObjectMeta(_meta);
+    }
+
+    internal string GetMetaJson()
+    {
+        return JsonSerializer.Serialize(_meta);
+    }
+
     internal void SetMeta(Guid? id = null, Guid? dataProviderId = null, Guid? applicationId = null)
     {
-        Meta = new DbObjectMeta(id.HasValue ? id.Value : Guid.Empty);
-        Meta.ApplicationId = applicationId;
-        Meta.DataProviderId = dataProviderId;
+        _meta = new DbObjectMeta(id.HasValue ? id.Value : Guid.Empty);
+        _meta.ApplicationId = applicationId;
+        _meta.DataProviderId = dataProviderId;
     }
 
     internal void SetMeta(DbObjectMeta meta)
@@ -17,7 +34,12 @@ public abstract class DbObjectWithMeta : DbObject
         if (meta is null)
             throw new ArgumentNullException(nameof(meta));
 
-        Meta = new DbObjectMeta(meta);
+        _meta = new DbObjectMeta(meta);
+    }
+
+    internal static DbObjectMeta GetMetaFromJson(string json)
+    {
+        return JsonSerializer.Deserialize<DbObjectMeta>(json);
     }
 
     #endregion

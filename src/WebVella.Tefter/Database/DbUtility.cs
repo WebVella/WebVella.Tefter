@@ -65,14 +65,14 @@ class DbUtility
                 return $"'{column.DefaultValue}'";
         };
 
-        Func<DbTableIdColumn, string> tableIdDefaultValueFunc = (column) =>
+        Func<DbIdColumn, string> tableIdDefaultValueFunc = (column) =>
         {
             return "uuid_generate_v1()";
         };
 
         return column switch
         {
-            DbTableIdColumn c => tableIdDefaultValueFunc(c),
+            DbIdColumn c => tableIdDefaultValueFunc(c),
             DbAutoIncrementColumn c => null,
             DbNumberColumn c => numberDefaultValueFunc(c),
             DbBooleanColumn c => booleanDefaultValueFunc(c),
@@ -90,7 +90,7 @@ class DbUtility
         {
             return null;
         }
-        else if (columnType == typeof(DbTableIdColumn))
+        else if (columnType == typeof(DbIdColumn))
         {
             return null;
         }

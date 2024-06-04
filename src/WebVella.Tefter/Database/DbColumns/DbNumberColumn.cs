@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbNumberColumn : DbColumn
+public record DbNumberColumn : DbColumn
 {
     public override DbType Type => DbType.Number;
 }

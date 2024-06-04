@@ -2,7 +2,7 @@
 
 public enum DbType
 {
-    TableId,
+    Id,
     AutoIncrement,
     Number,
     Boolean,

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbHashIndex : DbIndex
+public record DbHashIndex : DbIndex
 {
     //used for comparisons: =
 }

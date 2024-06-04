@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace WebVella.Tefter.Database;
 
-public abstract class DbCollection<T> : IEnumerable<T> where T : DbObject 
+public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject 
 {
     private AsyncLock _lock;
     private readonly List<T> _dbObjects;
@@ -14,7 +14,7 @@ public abstract class DbCollection<T> : IEnumerable<T> where T : DbObject
         internal set { _dbObjects[i] = value; }
     }
 
-    public DbCollection()
+    public DbObjectCollection()
     {
         _lock = new AsyncLock();
         _dbObjects = new List<T>();
