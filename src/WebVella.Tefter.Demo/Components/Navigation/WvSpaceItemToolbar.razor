@@ -2,6 +2,37 @@
 @inherits WvBaseComponent
 
 <div class="content-toolbar">
-	<div>toolbar</div>
+	<div class="content-toolbar-left">
+	<FluentButton Id="view-filter-selector" OnClick="OnFilterClick">
+		Filters
+		<FluentIcon Value="@(new Icons.Regular.Size20.Filter())" Slot="start" />
+		<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+	</FluentButton>
+	<FluentButton Id="view-sort-selector" OnClick="OnSortClick">
+		Sorts
+		<FluentIcon Value="@(new Icons.Regular.Size20.ArrowSort())" Slot="start" />
+		<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+	</FluentButton>
+	<FluentButton Id="view-columns-selector" OnClick="OnColumnClick">
+		Columns
+		<FluentIcon Value="@(new Icons.Regular.Size20.Column())" Slot="start" />
+		<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+	</FluentButton>
+	<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick">
+		<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" />
+	</FluentButton>
+	</div>
+	<div class="content-toolbar-right">
+		<FluentButton Id="view-action-selector" OnClick="OnActionClick">
+			Actions
+			<FluentIcon Value="@(new Icons.Regular.Size20.Beaker())" Slot="start" />
+			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+		</FluentButton>
+	</div>
 </div>
+<WvViewFilterSelector @ref="_filterSelector" FilterChanged="OnFilterChange" />
+<WvViewSortSelector @ref="_sortSelector" SortChanged="OnSortChange" />
+<WvViewColumnSelector @ref="_columnSelector" ColumnChanged="OnColumnChange" />
+<WvViewSettingSelector @ref="_settingSelector" SettingChanged="OnSettingChange" />
+<WvViewActionSelector @ref="_actionSelector" ActionChanged="OnActionChange" />
 
