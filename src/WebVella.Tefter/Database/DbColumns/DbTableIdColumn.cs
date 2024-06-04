@@ -2,6 +2,6 @@
 
 public class DbTableIdColumn : DbColumn
 {
-    public override string Name => "tefter_id";
+    public override string Name => Constants.DB_TABLE_ID_NAME;
     public override DbType Type => DbType.TableId;
 }

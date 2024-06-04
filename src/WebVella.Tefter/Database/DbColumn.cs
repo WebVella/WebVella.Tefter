@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public abstract class DbColumn : DbObject
+public abstract class DbColumn : DbObjectWithMeta
 {
     public DbTable Table { get; set; }
     public virtual DbType Type { get; set; }

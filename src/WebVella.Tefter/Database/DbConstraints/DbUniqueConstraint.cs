@@ -2,5 +2,4 @@
 
 public class DbUniqueConstraint : DbConstraint
 {
-    public DbColumnCollection Columns { get; set; } = new();
 }

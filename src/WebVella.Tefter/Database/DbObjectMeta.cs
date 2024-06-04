@@ -3,15 +3,23 @@
 public class DbObjectMeta
 {
     public Guid Id { get; set; }
-    public DbObjectType Type { get; set; } = DbObjectType.System;
+    public Guid? ApplicationId { get; set; } = null;
+    public Guid? DataProviderId { get; set; } = null;
 
-    internal DbObjectMeta() : this(Guid.Empty, DbObjectType.System)
+    [JsonConstructor]
+    internal DbObjectMeta() : this(Guid.Empty)
     {
     }
 
-    internal DbObjectMeta(Guid id, DbObjectType type)
+    internal DbObjectMeta(Guid id)
     {
         Id = id;
-        Type = type;
+    }
+
+    internal DbObjectMeta(DbObjectMeta meta)
+    {
+        Id = meta.Id;
+        DataProviderId = meta.DataProviderId;
+        ApplicationId = meta.ApplicationId;
     }
 }
