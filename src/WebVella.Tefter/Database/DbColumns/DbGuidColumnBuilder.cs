@@ -10,18 +10,6 @@ public class DbGuidColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbGuidColumnBuilder ApplicationId(Guid appId)
-    {
-        _applicationId = appId;
-        return this;
-    }
-
-    public DbGuidColumnBuilder DataProviderId(Guid dataProviderId)
-    {
-        _dataProviderId = dataProviderId;
-        return this;
-    }
-
     public DbGuidColumnBuilder DefaultValue(Guid? defaultValue)
     {
         _defaultValue = defaultValue;
@@ -51,8 +39,6 @@ public class DbGuidColumnBuilder : DbColumnBuilder
         return new DbGuidColumn
         {
             Id = _id,
-            ApplicationId = _applicationId,
-            DataProviderId = _dataProviderId,
             DefaultValue = null,
             IsNullable = false,
             GenerateNewIdAsDefaultValue = _generateNewIdAsDefaultValue,

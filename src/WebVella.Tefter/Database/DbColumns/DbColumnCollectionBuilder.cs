@@ -3,6 +3,13 @@
 public class DbColumnCollectionBuilder
 {
     private readonly List<DbColumnBuilder> _builders = new List<DbColumnBuilder>();
+
+    public DbColumnCollectionBuilder AddTableIdColumn()
+    {
+        _builders.Add(new DbIdColumnBuilder());
+        return this;
+    }
+
     public DbColumnCollectionBuilder AddTableIdColumn(Action<DbIdColumnBuilder> action)
     {
         DbIdColumnBuilder builder = new DbIdColumnBuilder();

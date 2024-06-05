@@ -1,22 +1,22 @@
 ﻿namespace WebVella.Tefter.Database;
 
-internal sealed record DbObjectMeta
+internal sealed record DbTableMeta
 {
     public Guid Id { get; set; }
     public Guid? ApplicationId { get; set; } = null;
     public Guid? DataProviderId { get; set; } = null;
 
     [JsonConstructor]
-    internal DbObjectMeta() : this(Guid.Empty)
+    internal DbTableMeta() : this(Guid.Empty)
     {
     }
 
-    internal DbObjectMeta(Guid id)
+    internal DbTableMeta(Guid id)
     {
         Id = id;
     }
 
-    internal DbObjectMeta(DbObjectMeta meta)
+    internal DbTableMeta(DbTableMeta meta)
     {
         Id = meta.Id;
         DataProviderId = meta.DataProviderId;

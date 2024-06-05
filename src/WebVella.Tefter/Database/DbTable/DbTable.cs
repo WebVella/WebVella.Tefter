@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Database;
 
-public record DbTable : DbObjectWithMeta
+public record DbTable : DbObject
 {
     //because the postgres NUMERIC type can hold a value of up to 131,072 digits
     //before the decimal point 16,383 digits after the decimal point.
@@ -16,6 +16,15 @@ public record DbTable : DbObjectWithMeta
     private const int MIN_COLUMN_NAME_LENGTH = 2;
     private const int MAX_COLUMN_NAME_LENGTH = 50;
     private const string NAME_VALIDATION_PATTERN = @"^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
+
+    #region <=== Meta ===>
+    
+    private DbTableMeta _meta = new();
+    public Guid Id { get { return _meta.Id; } init { _meta.Id = value; } }
+    public Guid? ApplicationId { get { return _meta.ApplicationId; } init { _meta.ApplicationId = value; } }
+    public Guid? DataProviderId { get { return _meta.DataProviderId; } init { _meta.DataProviderId = value; } }
+
+    #endregion
 
     #region <=== Properties ===>
 

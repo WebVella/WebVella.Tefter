@@ -8,18 +8,6 @@ public class DbNumberColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbNumberColumnBuilder ApplicationId(Guid appId)
-    {
-        _applicationId = appId;
-        return this;
-    }
-
-    public DbNumberColumnBuilder DataProviderId(Guid dataProviderId)
-    {
-        _dataProviderId = dataProviderId;
-        return this;
-    }
-
     public DbNumberColumnBuilder Name(string name)
     {
         _name = name;
@@ -43,8 +31,6 @@ public class DbNumberColumnBuilder : DbColumnBuilder
         return new DbNumberColumn
         {
             Id = _id,
-            ApplicationId = _applicationId,
-            DataProviderId = _dataProviderId,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   

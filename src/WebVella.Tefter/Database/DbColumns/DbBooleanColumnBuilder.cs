@@ -8,18 +8,6 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbBooleanColumnBuilder ApplicationId(Guid appId)
-    {
-        _applicationId = appId;
-        return this;
-    }
-
-    public DbBooleanColumnBuilder DataProviderId(Guid dataProviderId)
-    {
-        _dataProviderId = dataProviderId;
-        return this;
-    }
-
     public DbBooleanColumnBuilder Name(string name)
     {
         _name = name;
@@ -43,8 +31,6 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
         return new DbBooleanColumn
         {
             Id = _id,
-            ApplicationId = _applicationId,
-            DataProviderId = _dataProviderId,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   

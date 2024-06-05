@@ -22,17 +22,12 @@ public partial class DbManagerTests : BaseTest
                     .ApplicationId(appId)
                     .Columns(x =>
                     {
-                        x.AddTableIdColumn(c =>
-                        {
-                            c.Id(Guid.NewGuid())
-                            .DataProviderId(dpId)
-                            .ApplicationId(appId);
-                        })
+                        x.AddTableIdColumn()
                         .AddGuidColumn(c =>
                         {
                             c.Id(Guid.NewGuid())
-                            .DataProviderId(dpId)
-                            .ApplicationId(appId);
+                            .Name("guid")
+                            .GenerateNewIdAsDefaultValue(true);
                         });
                     }).Build();
 

@@ -20,6 +20,13 @@ public class DbConstraintCollectionBuilder
         return this;
     }
 
+    public DbConstraintCollectionBuilder AddForeignKeyConstraint(Action<DbForeignKeyConstraintBuilder> action)
+    {
+        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder();
+        action(builder);
+        _builders.Add(builder);
+        return this;
+    }
 
     internal DbConstraintCollection Build()
     {

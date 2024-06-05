@@ -10,18 +10,6 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbDateTimeColumnBuilder ApplicationId(Guid appId)
-    {
-        _applicationId = appId;
-        return this;
-    }
-
-    public DbDateTimeColumnBuilder DataProviderId(Guid dataProviderId)
-    {
-        _dataProviderId = dataProviderId;
-        return this;
-    }
-
     public DbDateTimeColumnBuilder Name(string name)
     {
         _name = name;
@@ -51,8 +39,6 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
         return new DbDateTimeColumn
         {
             Id = _id,
-            ApplicationId = _applicationId,
-            DataProviderId = _dataProviderId,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             UseCurrentTimeAsDefaultValue = _useCurrentTimeAsDefaultValue,
