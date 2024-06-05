@@ -84,30 +84,30 @@ public class DbTableBuilder
     {
         if (!DbUtility.IsValidDbObjectName(columnName, out string error))
         {
-            throw new DbBuilderException($"Constraint column name error: {error}");
+            throw new DbBuilderException($"Column name error: {error}");
         }
-        if (! _columnsBuilder.Builders.Any(c => c.Name == columnName))
+        if (!_columnsBuilder.Builders.Any(c => c.Name == columnName && c.State != DbObjectState.Removed))
         {
-            throw new DbBuilderException($"Constraint column with name '{columnName}' was not found.");
+            throw new DbBuilderException($"Column with name '{columnName}' was not found.");
         }
     }
 
-    internal void ValidateColumnsExists(List<string> columnNames )
+    internal void ValidateColumnsExists(List<string> columnNames)
     {
         foreach (var columnName in columnNames)
         {
             if (!DbUtility.IsValidDbObjectName(columnName, out string error))
             {
-                throw new DbBuilderException($"Constraint column name error: {error}");
+                throw new DbBuilderException($"Column name error: {error}");
             }
-            if (!_columnsBuilder.Builders.Any(c => c.Name == columnName))
+            if (!_columnsBuilder.Builders.Any(c => c.Name == columnName && c.State != DbObjectState.Removed))
             {
-                throw new DbBuilderException($"Constraint column with name '{columnName}' was not found.");
+                throw new DbBuilderException($"Column with name '{columnName}' was not found.");
             }
         }
     }
 
-    internal void ValidateColumnsExists(string[] columnNames)
+    internal void ValidateColumnsExists(params string[] columnNames)
     {
         ValidateColumnsExists(new List<string>(columnNames));
     }
@@ -120,7 +120,7 @@ public class DbTableBuilder
         if (name == Constants.DB_TABLE_ID_COLUMN_NAME && isNew)
             throw new DbBuilderException("Name 'id' is reserved column name");
 
-        if (_columnsBuilder.Builders.Any(x => x.Name == name) && isNew)
+        if (_columnsBuilder.Builders.Any(x => x.Name == name && x.State != DbObjectState.Removed) && isNew)
             throw new DbBuilderException($"There is already existing column with name '{name}'");
     }
 }

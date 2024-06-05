@@ -2,14 +2,13 @@
 
 public class DbUniqueKeyConstraintBuilder : DbConstraintBuilder
 {
-    internal DbUniqueKeyConstraintBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
-        : base(name, isNew, tableBuilder)
+    internal DbUniqueKeyConstraintBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, tableBuilder)
     {
     }
     internal DbUniqueKeyConstraintBuilder(DbUniqueKeyConstraint constraint, DbTableBuilder tableBuilder)
-    : base(constraint.Name, constraint.IsNew, tableBuilder)
+        : base(constraint, tableBuilder)
     {
-        _columns.AddRange(constraint.Columns);
     }
 
     public DbUniqueKeyConstraintBuilder WithColumns(params string[] columnNames)
@@ -25,10 +24,11 @@ public class DbUniqueKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbUniqueKeyConstraint Build()
     {
-        var constraint = new DbUniqueKeyConstraint 
-        { 
+        CalculateState();
+        var constraint = new DbUniqueKeyConstraint
+        {
             Name = _name,
-            IsNew = _isNew,
+            State = _state,
         };
 
         foreach (var columnName in _columns)

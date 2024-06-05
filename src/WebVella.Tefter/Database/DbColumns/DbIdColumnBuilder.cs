@@ -3,12 +3,12 @@
 public class DbIdColumnBuilder : DbColumnBuilder
 {
     public DbIdColumnBuilder( bool isNew, DbTableBuilder tableBuilder) 
-        : base(Constants.DB_TABLE_ID_COLUMN_NAME, isNew, tableBuilder)
+        : base(Constants.DB_TABLE_ID_COLUMN_NAME, DbObjectState.New, tableBuilder)
     {
     }
 
     public DbIdColumnBuilder(DbIdColumn column, DbTableBuilder tableBuilder)
-        : base(column.Name, column.IsNew, tableBuilder)
+        : base(column, tableBuilder)
     {
     }
 
@@ -19,7 +19,8 @@ public class DbIdColumnBuilder : DbColumnBuilder
             DefaultValue = null,
             IsNullable = false,
             Name = _name,
-            Type = DbType.Id
+            Type = DbType.Id,
+            State = _state,
         };
     }
 }

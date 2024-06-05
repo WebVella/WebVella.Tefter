@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public record DbDateColumn : DbColumn
+public record DbDateColumn : DbColumnWithAutoDefaultValue
 {
     public override DbType Type => DbType.Date;
-    public bool AutoDefaultValue { get; set; } = false;
 }

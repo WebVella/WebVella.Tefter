@@ -16,7 +16,7 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder AddNewBTreeIndex(string name, Action<DbBTreeIndexBuilder> action)
     {
-        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, true, _tableBuilder);
+        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -24,7 +24,7 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder AddGinIndex(string name, Action<DbGinIndexBuilder> action)
     {
-        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, true, _tableBuilder);
+        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -32,7 +32,7 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder AddGistIndex(string name, Action<DbGistIndexBuilder> action)
     {
-        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, true, _tableBuilder);
+        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -40,7 +40,7 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder AddHashIndex(string name, Action<DbHashIndexBuilder> action)
     {
-        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, true, _tableBuilder);
+        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -51,11 +51,14 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder Remove(string name)
     {
-        var builder = _builders.SingleOrDefault(x => x.Name == name);
+        var builder = _builders.SingleOrDefault(x => x.Name == name && x.State != DbObjectState.Removed );
         if (builder is null)
             throw new DbBuilderException($"Index with name '{name}' is not found.");
 
-        _builders.Remove(builder);
+        if(builder.State != DbObjectState.New)
+            builder.State = DbObjectState.Removed;
+        else
+            _builders.Remove(builder);
         return this;
     }
 

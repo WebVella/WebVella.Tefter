@@ -2,15 +2,14 @@
 
 public class DbPrimaryKeyConstraintBuilder : DbConstraintBuilder
 {
-    internal DbPrimaryKeyConstraintBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
-        : base(name, isNew, tableBuilder)
+    internal DbPrimaryKeyConstraintBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, tableBuilder)
     {
     }
 
     internal DbPrimaryKeyConstraintBuilder(DbPrimaryKeyConstraint constraint, DbTableBuilder tableBuilder)
-      : base(constraint.Name, constraint.IsNew, tableBuilder)
+        : base(constraint, tableBuilder)
     {
-        _columns.AddRange(constraint.Columns);
     }
 
     public DbPrimaryKeyConstraintBuilder WithColumns(params string[] columnNames)
@@ -25,15 +24,16 @@ public class DbPrimaryKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbPrimaryKeyConstraint Build()
     {
-        var constraint = new DbPrimaryKeyConstraint 
-        { 
+        CalculateState();
+        var constraint = new DbPrimaryKeyConstraint
+        {
             Name = _name,
-            IsNew = _isNew
+            State = _state,
         };
 
         foreach (var columnName in _columns)
             constraint.AddColumn(columnName);
 
-        return constraint; 
+        return constraint;
     }
 }

@@ -2,44 +2,52 @@
 
 public class DbTextColumnBuilder : DbColumnBuilder
 {
-    internal DbTextColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) :
-        base(name, isNew, tableBuilder)
+    internal DbTextColumnBuilder(string name, DbTableBuilder tableBuilder) :
+        base(name, DbObjectState.New, tableBuilder)
     {
     }
 
     internal DbTextColumnBuilder(DbTextColumn column, DbTableBuilder tableBuilder)
-      : base(column.Name, column.IsNew, tableBuilder)
+        : base(column, tableBuilder)
     {
-        _isNullable = column.IsNullable;
-        _defaultValue = column.DefaultValue;
     }
 
-    public DbTextColumnBuilder WithDefaultValue(string devaultValue)
+    public DbTextColumnBuilder WithDefaultValue(string defaultValue)
     {
-        _defaultValue = devaultValue;
+        if (_state == DbObjectState.Commited && (string)_defaultValue != defaultValue)
+            _state = DbObjectState.Changed;
+
+        _defaultValue = defaultValue;
         return this;
     }
 
     public DbTextColumnBuilder Nullable()
     {
+        if (_state == DbObjectState.Commited && _isNullable == false)
+            _state = DbObjectState.Changed;
+
         _isNullable = true;
         return this;
     }
 
     public DbTextColumnBuilder NotNullable()
     {
+        if (_state == DbObjectState.Commited && _isNullable == true)
+            _state = DbObjectState.Changed;
+
         _isNullable = false;
         return this;
     }
 
     internal override DbTextColumn Build()
     {
+        CalculateState();
         return new DbTextColumn
         {
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,
-            IsNew = _isNew,
+            State = _state,
             Type = DbType.Text
         };
     }

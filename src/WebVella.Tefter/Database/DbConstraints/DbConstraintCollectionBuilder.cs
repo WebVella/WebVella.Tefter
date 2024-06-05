@@ -16,7 +16,7 @@ public class DbConstraintCollectionBuilder
 
     public DbConstraintCollectionBuilder AddNewUniqueConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
     {
-        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, true, _tableBuilder);
+        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -24,7 +24,7 @@ public class DbConstraintCollectionBuilder
 
     public DbConstraintCollectionBuilder AddNewPrimaryKeyConstraint(string name, Action<DbPrimaryKeyConstraintBuilder> action)
     {
-        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, true, _tableBuilder);
+        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -32,7 +32,7 @@ public class DbConstraintCollectionBuilder
 
     public DbConstraintCollectionBuilder AddNewForeignKeyConstraint(string name, Action<DbForeignKeyConstraintBuilder> action)
     {
-        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, true, _tableBuilder);
+        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -44,11 +44,15 @@ public class DbConstraintCollectionBuilder
 
     public DbConstraintCollectionBuilder Remove(string name)
     {
-        var builder = _builders.SingleOrDefault(x => x.Name == name);
+        var builder = _builders.SingleOrDefault(x => x.Name == name && x.State != DbObjectState.Removed);
         if (builder is null)
             throw new DbBuilderException($"Constraint with name '{name}' is not found.");
 
-        _builders.Remove(builder);
+        if (builder.State != DbObjectState.New)
+            builder.State = DbObjectState.Removed;
+        else
+            _builders.Remove(builder);
+
         return this;
     }
 

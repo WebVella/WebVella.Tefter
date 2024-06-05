@@ -2,21 +2,19 @@
 
 public class DbNumberColumnBuilder : DbColumnBuilder
 {
-    internal DbNumberColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
-        : base(name, isNew, tableBuilder)
+    internal DbNumberColumnBuilder(string name, DbTableBuilder tableBuilder) 
+        : base(name, DbObjectState.New, tableBuilder)
     {
     }
 
     internal DbNumberColumnBuilder(DbNumberColumn column, DbTableBuilder tableBuilder)
-       : base(column.Name, column.IsNew, tableBuilder)
+        : base(column, tableBuilder)
     {
-        _isNullable = column.IsNullable;
-        _defaultValue = column.DefaultValue;
     }
 
-    public DbNumberColumnBuilder WithDefaultValue(decimal? devaultValue )
+    public DbNumberColumnBuilder WithDefaultValue(decimal? defaultValue )
     {
-        _defaultValue = devaultValue;
+        _defaultValue = defaultValue;
         return this;
     }
 
@@ -34,11 +32,13 @@ public class DbNumberColumnBuilder : DbColumnBuilder
 
     internal override DbNumberColumn Build()
     {
+        CalculateState();
         return new DbNumberColumn
         {
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   
+            State = _state,
             Type = DbType.Number
         }; 
     }

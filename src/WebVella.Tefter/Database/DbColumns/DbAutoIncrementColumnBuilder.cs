@@ -2,16 +2,14 @@
 
 public class DbAutoIncrementColumnBuilder : DbColumnBuilder
 {
-    public DbAutoIncrementColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
-        : base(name, isNew, tableBuilder)
+    public DbAutoIncrementColumnBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, DbObjectState.New, tableBuilder)
     {
     }
 
     internal DbAutoIncrementColumnBuilder(DbAutoIncrementColumn column, DbTableBuilder tableBuilder)
-       : base(column.Name, column.IsNew, tableBuilder)
+       : base(column, tableBuilder)
     {
-        _isNullable = column.IsNullable;
-        _defaultValue = column.DefaultValue;
     }
 
     internal override DbAutoIncrementColumn Build()
@@ -21,7 +19,7 @@ public class DbAutoIncrementColumnBuilder : DbColumnBuilder
             DefaultValue = null,
             IsNullable = false,
             Name = _name,   
-            IsNew = _isNew,
+            State = _state,
             Type = DbType.AutoIncrement
         }; 
     }

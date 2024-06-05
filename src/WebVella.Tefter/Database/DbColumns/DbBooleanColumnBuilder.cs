@@ -2,20 +2,19 @@
 
 public class DbBooleanColumnBuilder : DbColumnBuilder
 {
-    internal DbBooleanColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
-        : base(name, isNew, tableBuilder)
+    internal DbBooleanColumnBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, DbObjectState.New, tableBuilder)
     {
-    }
-    internal DbBooleanColumnBuilder(DbBooleanColumn column, DbTableBuilder tableBuilder)
-      : base(column.Name, column.IsNew, tableBuilder)
-    {
-        _isNullable = column.IsNullable;
-        _defaultValue = column.DefaultValue;
     }
 
-    public DbBooleanColumnBuilder WithDefaultValue(bool? devaultValue)
+    internal DbBooleanColumnBuilder(DbBooleanColumn column, DbTableBuilder tableBuilder)
+        : base(column, tableBuilder)
     {
-        _defaultValue = devaultValue;
+    }
+
+    public DbBooleanColumnBuilder WithDefaultValue(bool? defaultValue)
+    {
+        _defaultValue = defaultValue;
         return this;
     }
 
@@ -27,18 +26,19 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
 
     public DbBooleanColumnBuilder NotNullable()
     {
-        _isNullable = true;
+        _isNullable = false;
         return this;
     }
 
     internal override DbBooleanColumn Build()
     {
+        CalculateState();
         return new DbBooleanColumn
         {
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,
-            IsNew = _isNew,
+            State = _state,
             Type = DbType.Boolean
         };
     }

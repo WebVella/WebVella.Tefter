@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public record DbGuidColumn : DbColumn
+public record DbGuidColumn : DbColumnWithAutoDefaultValue
 {
     public override DbType Type => DbType.Guid;
-    public bool AutoDefaultValue { get; set; } = false;
 }

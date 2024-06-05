@@ -2,15 +2,14 @@
 
 public class DbGistIndexBuilder : DbIndexBuilder
 {
-    public DbGistIndexBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
-        : base(name, isNew, tableBuilder)
+    public DbGistIndexBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, tableBuilder)
     {
     }
 
     internal DbGistIndexBuilder(DbGistIndex index, DbTableBuilder tableBuilder)
-       : base(index.Name, index.IsNew, tableBuilder)
+       : base(index, tableBuilder)
     {
-        _columns.AddRange(index.Columns);
     }
 
     public DbGistIndexBuilder WithColumns(params string[] columnNames)
@@ -23,10 +22,11 @@ public class DbGistIndexBuilder : DbIndexBuilder
 
     internal override DbGistIndex Build()
     {
+        CalculateState();
         var index = new DbGistIndex
         {
-            Name = _name ,
-            IsNew = _isNew 
+            Name = _name,
+            State = _state
         };
 
         foreach (var columnName in _columns)

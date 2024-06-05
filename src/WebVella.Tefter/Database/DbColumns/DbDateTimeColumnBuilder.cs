@@ -2,22 +2,19 @@
 
 public class DbDateTimeColumnBuilder : DbColumnBuilder
 {
-    private bool _autoDefaultValue = false;
+    public DbDateTimeColumnBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, DbObjectState.New, tableBuilder)
+    {
+    }
 
-    public DbDateTimeColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
-        : base(name, isNew, tableBuilder)
-    {
-    }
     internal DbDateTimeColumnBuilder(DbDateTimeColumn column, DbTableBuilder tableBuilder)
-     : base(column.Name, column.IsNew, tableBuilder)
+        : base(column, tableBuilder)
     {
-        _isNullable = column.IsNullable;
-        _defaultValue = column.DefaultValue;
-        _autoDefaultValue = column.AutoDefaultValue;
     }
-    public DbDateTimeColumnBuilder WithDefaultValue(DateTime? devaultValue)
+
+    public DbDateTimeColumnBuilder WithDefaultValue(DateTime? defaultValue)
     {
-        _defaultValue = devaultValue;
+        _defaultValue = defaultValue;
         return this;
     }
 
@@ -45,12 +42,13 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
 
     internal override DbDateTimeColumn Build()
     {
+        CalculateState();
         return new DbDateTimeColumn
         {
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
-            IsNew = _isNew,
+            State = _state,
             Name = _name,
             Type = DbType.DateTime
         };

@@ -4,7 +4,6 @@ namespace WebVella.Tefter.Database;
 
 public record DbTable : DbObject
 {
-   
     #region <=== Meta ===>
     
     private DbTableMeta _meta = new();

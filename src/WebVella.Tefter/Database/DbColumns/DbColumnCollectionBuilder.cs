@@ -30,7 +30,7 @@ public class DbColumnCollectionBuilder
     public DbColumnCollectionBuilder AddNewAutoIncrementColumn(string name)
     {
         _tableBuilder.ValidateColumnName(name);
-        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(name, true, _tableBuilder);
+        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(name, _tableBuilder);
         _builders.Add(builder);
         return this;
     }
@@ -38,7 +38,7 @@ public class DbColumnCollectionBuilder
     public DbColumnCollectionBuilder AddNewGuidColumn(string name, Action<DbGuidColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
-        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(name, true, _tableBuilder);
+        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -47,7 +47,7 @@ public class DbColumnCollectionBuilder
     public DbColumnCollectionBuilder AddNewNumberColumn(string name, Action<DbNumberColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
-        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(name, true, _tableBuilder);
+        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -56,7 +56,7 @@ public class DbColumnCollectionBuilder
     public DbColumnCollectionBuilder AddNewBooleanColumn(string name, Action<DbBooleanColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
-        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(name, true, _tableBuilder);
+        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -65,7 +65,7 @@ public class DbColumnCollectionBuilder
     public DbColumnCollectionBuilder AddNewDateColumn(string name, Action<DbDateColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
-        DbDateColumnBuilder builder = new DbDateColumnBuilder(name, true, _tableBuilder);
+        DbDateColumnBuilder builder = new DbDateColumnBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -74,7 +74,7 @@ public class DbColumnCollectionBuilder
     public DbColumnCollectionBuilder AddNewDateTimeColumn(string name, Action<DbDateTimeColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
-        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(name, true, _tableBuilder);
+        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -83,7 +83,7 @@ public class DbColumnCollectionBuilder
     public DbColumnCollectionBuilder AddNewTextColumn(string name, Action<DbTextColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
-        DbTextColumnBuilder builder = new DbTextColumnBuilder(name, true, _tableBuilder);
+        DbTextColumnBuilder builder = new DbTextColumnBuilder(name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -184,11 +184,15 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder Remove(string name)
     {
-        var builder = _builders.SingleOrDefault(x => x.Name == name);
+        var builder = _builders.SingleOrDefault(x => x.Name == name && x.State != DbObjectState.Removed);
         if (builder is null)
             throw new DbBuilderException($"Column with name '{name}' is not found.");
 
-        _builders.Remove(builder);
+        if (builder.State != DbObjectState.New)
+            builder.State = DbObjectState.Removed;
+        else
+            _builders.Remove(builder);
+        
         return this;
     }
 

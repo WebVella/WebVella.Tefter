@@ -2,19 +2,14 @@
 
 public class DbGuidColumnBuilder : DbColumnBuilder
 {
-    private bool _autoDefaultValue = false;
-
-    internal DbGuidColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
-        : base(name, isNew, tableBuilder)
+    internal DbGuidColumnBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, DbObjectState.New, tableBuilder)
     {
     }
 
     internal DbGuidColumnBuilder(DbGuidColumn column, DbTableBuilder tableBuilder)
-        : base(column.Name, column.IsNew, tableBuilder)
+        : base(column, tableBuilder)
     {
-        _isNullable = column.IsNullable;
-        _defaultValue = column.DefaultValue;
-        _autoDefaultValue = column.AutoDefaultValue;
     }
 
     public DbGuidColumnBuilder WithDefaultValue(Guid? defaultValue)
@@ -49,12 +44,14 @@ public class DbGuidColumnBuilder : DbColumnBuilder
 
     internal override DbGuidColumn Build()
     {
+        CalculateState();
         return new DbGuidColumn
         {
             DefaultValue = null,
             IsNullable = false,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
+            State = _state,
             Type = DbType.Guid
         };
     }
