@@ -52,7 +52,7 @@ public abstract class DbColumnBuilder
             return;
 
         if (_originalIsNullable != _isNullable ||
-            _originalDefaultValue != _defaultValue ||
+            !_originalDefaultValue.Equals(_defaultValue) ||
             _originalAutoDefaultValue != _autoDefaultValue)
         {
             _state = DbObjectState.Changed;
