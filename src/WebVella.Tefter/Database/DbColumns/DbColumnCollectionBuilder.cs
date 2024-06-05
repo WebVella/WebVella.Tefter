@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace WebVella.Tefter.Database;
+﻿namespace WebVella.Tefter.Database;
 
 public class DbColumnCollectionBuilder
 {
@@ -181,12 +179,11 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-
     #endregion
 
     #region <=== Build and Remove Methods ===>
 
-    public DbColumnCollectionBuilder RemoveColumn(string name)
+    public DbColumnCollectionBuilder Remove(string name)
     {
         var builder = _builders.SingleOrDefault(x => x.Name == name);
         if (builder is null)
@@ -212,15 +209,30 @@ public class DbColumnCollectionBuilder
 
     //used for building new DbTable from existing instance
 
-    internal DbColumnCollectionBuilder InternalAddExistingTableIdColumn()
+    internal DbColumnCollectionBuilder InternalAddExistingColumn(DbColumn column)
     {
-        var builder = (DbIdColumnBuilder)_builders
-             .SingleOrDefault(x => x.GetType() == typeof(DbIdColumnBuilder));
+        if (column is null)
+            throw new ArgumentNullException(nameof(column));
 
-        if (builder is not null)
-            throw new DbBuilderException($"Column of type Id already exists in columns. Only one instance can be created.");
+        if (column is DbIdColumn)
+            _builders.Add(new DbIdColumnBuilder((DbIdColumn)column, _tableBuilder));
+        else if (column is DbAutoIncrementColumn)
+            _builders.Add(new DbAutoIncrementColumnBuilder((DbAutoIncrementColumn)column, _tableBuilder));
+        else if (column is DbGuidColumn)
+            _builders.Add(new DbGuidColumnBuilder((DbGuidColumn)column, _tableBuilder));
+        else if (column is DbBooleanColumn)
+            _builders.Add(new DbBooleanColumnBuilder((DbBooleanColumn)column, _tableBuilder));
+        else if (column is DbNumberColumn)
+            _builders.Add(new DbNumberColumnBuilder((DbNumberColumn)column, _tableBuilder));
+        else if (column is DbDateColumn)
+            _builders.Add(new DbDateColumnBuilder((DbDateColumn)column, _tableBuilder));
+        else if (column is DbDateTimeColumn)
+            _builders.Add(new DbDateTimeColumnBuilder((DbDateTimeColumn)column, _tableBuilder));
+        else if (column is DbTextColumn)
+            _builders.Add(new DbTextColumnBuilder((DbTextColumn)column, _tableBuilder));
+        else
+            throw new DbBuilderException($"Not supported db column type {column.GetType()}");
 
-        _builders.Add(new DbIdColumnBuilder(false, _tableBuilder));
         return this;
     }
 

@@ -10,6 +10,14 @@ public class DbForeignKeyConstraintBuilder : DbConstraintBuilder
     {
     }
 
+    internal DbForeignKeyConstraintBuilder(DbForeignKeyConstraint constraint, DbTableBuilder tableBuilder)
+       : base(constraint.Name, constraint.IsNew, tableBuilder)
+    {
+        _columns.AddRange(constraint.Columns);
+        _foreignTableName = constraint.ForeignTable;
+        _foreignColumns.AddRange(constraint.ForeignColumns);
+    }
+
     public DbForeignKeyConstraintBuilder WithColumns(params string[] columnNames)
     {
         if (columnNames == null || columnNames.Length == 0) return this;

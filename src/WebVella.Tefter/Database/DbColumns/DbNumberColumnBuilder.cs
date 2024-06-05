@@ -7,6 +7,13 @@ public class DbNumberColumnBuilder : DbColumnBuilder
     {
     }
 
+    internal DbNumberColumnBuilder(DbNumberColumn column, DbTableBuilder tableBuilder)
+       : base(column.Name, column.IsNew, tableBuilder)
+    {
+        _isNullable = column.IsNullable;
+        _defaultValue = column.DefaultValue;
+    }
+
     public DbNumberColumnBuilder WithDefaultValue(decimal? devaultValue )
     {
         _defaultValue = devaultValue;

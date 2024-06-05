@@ -8,6 +8,13 @@ public class DbDateColumnBuilder : DbColumnBuilder
         : base(name, isNew, tableBuilder)
     {
     }
+    internal DbDateColumnBuilder(DbDateColumn column, DbTableBuilder tableBuilder)
+      : base(column.Name, column.IsNew, tableBuilder)
+    {
+        _isNullable = column.IsNullable;
+        _defaultValue = column.DefaultValue;
+        _autoDefaultValue = column.AutoDefaultValue;
+    }
 
     public DbDateColumnBuilder WithDefaultValue(DateOnly? devaultValue)
     {

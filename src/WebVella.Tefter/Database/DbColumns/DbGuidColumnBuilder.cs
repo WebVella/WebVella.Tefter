@@ -9,6 +9,14 @@ public class DbGuidColumnBuilder : DbColumnBuilder
     {
     }
 
+    internal DbGuidColumnBuilder(DbGuidColumn column, DbTableBuilder tableBuilder)
+        : base(column.Name, column.IsNew, tableBuilder)
+    {
+        _isNullable = column.IsNullable;
+        _defaultValue = column.DefaultValue;
+        _autoDefaultValue = column.AutoDefaultValue;
+    }
+
     public DbGuidColumnBuilder WithDefaultValue(Guid? defaultValue)
     {
         _defaultValue = defaultValue;

@@ -7,6 +7,11 @@ public class DbIdColumnBuilder : DbColumnBuilder
     {
     }
 
+    public DbIdColumnBuilder(DbIdColumn column, DbTableBuilder tableBuilder)
+        : base(column.Name, column.IsNew, tableBuilder)
+    {
+    }
+
     internal override DbIdColumn Build()
     {
         return new DbIdColumn

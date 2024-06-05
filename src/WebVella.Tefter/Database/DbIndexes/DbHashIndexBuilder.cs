@@ -2,9 +2,15 @@
 
 public class DbHashIndexBuilder : DbIndexBuilder
 {
-    public DbHashIndexBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
+    public DbHashIndexBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
         : base(name, isNew, tableBuilder)
     {
+    }
+
+    internal DbHashIndexBuilder(DbHashIndex index, DbTableBuilder tableBuilder)
+       : base(index.Name, index.IsNew, tableBuilder)
+    {
+        _columns.AddRange(index.Columns);
     }
 
     public DbHashIndexBuilder WithColumn(string name)
@@ -17,10 +23,10 @@ public class DbHashIndexBuilder : DbIndexBuilder
 
     internal override DbHashIndex Build()
     {
-        var index = new DbHashIndex 
-        { 
-            Name = _name , 
-            IsNew = _isNew 
+        var index = new DbHashIndex
+        {
+            Name = _name,
+            IsNew = _isNew,
         };
 
         foreach (var columnName in _columns)

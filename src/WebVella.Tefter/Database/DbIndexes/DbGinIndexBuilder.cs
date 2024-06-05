@@ -6,6 +6,12 @@ public class DbGinIndexBuilder : DbIndexBuilder
         : base(name, isNew, tableBuilder)
     {
     }
+   
+    internal DbGinIndexBuilder(DbGinIndex index, DbTableBuilder tableBuilder)
+       : base(index.Name, index.IsNew, tableBuilder)
+    {
+        _columns.AddRange(index.Columns);
+    }
 
     public DbGinIndexBuilder WithColumns(params string[] columnNames)
     {

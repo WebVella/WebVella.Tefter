@@ -2,9 +2,16 @@
 
 public class DbTextColumnBuilder : DbColumnBuilder
 {
-    public DbTextColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) :
+    internal DbTextColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) :
         base(name, isNew, tableBuilder)
     {
+    }
+
+    internal DbTextColumnBuilder(DbTextColumn column, DbTableBuilder tableBuilder)
+      : base(column.Name, column.IsNew, tableBuilder)
+    {
+        _isNullable = column.IsNullable;
+        _defaultValue = column.DefaultValue;
     }
 
     public DbTextColumnBuilder WithDefaultValue(string devaultValue)

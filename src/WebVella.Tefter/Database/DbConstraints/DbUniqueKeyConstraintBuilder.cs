@@ -6,10 +6,17 @@ public class DbUniqueKeyConstraintBuilder : DbConstraintBuilder
         : base(name, isNew, tableBuilder)
     {
     }
+    internal DbUniqueKeyConstraintBuilder(DbUniqueKeyConstraint constraint, DbTableBuilder tableBuilder)
+    : base(constraint.Name, constraint.IsNew, tableBuilder)
+    {
+        _columns.AddRange(constraint.Columns);
+    }
 
     public DbUniqueKeyConstraintBuilder WithColumns(params string[] columnNames)
     {
         if (columnNames == null || columnNames.Length == 0) return this;
+
+        //TODO validate
 
         _columns.AddRange(columnNames);
         return this;

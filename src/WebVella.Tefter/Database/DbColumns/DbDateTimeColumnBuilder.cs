@@ -8,7 +8,13 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
         : base(name, isNew, tableBuilder)
     {
     }
-
+    internal DbDateTimeColumnBuilder(DbDateTimeColumn column, DbTableBuilder tableBuilder)
+     : base(column.Name, column.IsNew, tableBuilder)
+    {
+        _isNullable = column.IsNullable;
+        _defaultValue = column.DefaultValue;
+        _autoDefaultValue = column.AutoDefaultValue;
+    }
     public DbDateTimeColumnBuilder WithDefaultValue(DateTime? devaultValue)
     {
         _defaultValue = devaultValue;

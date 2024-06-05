@@ -2,12 +2,18 @@
 
 public class DbBooleanColumnBuilder : DbColumnBuilder
 {
-    public DbBooleanColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
+    internal DbBooleanColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
         : base(name, isNew, tableBuilder)
     {
     }
+    internal DbBooleanColumnBuilder(DbBooleanColumn column, DbTableBuilder tableBuilder)
+      : base(column.Name, column.IsNew, tableBuilder)
+    {
+        _isNullable = column.IsNullable;
+        _defaultValue = column.DefaultValue;
+    }
 
-    public DbBooleanColumnBuilder WithDefaultValue(bool? devaultValue )
+    public DbBooleanColumnBuilder WithDefaultValue(bool? devaultValue)
     {
         _defaultValue = devaultValue;
         return this;
@@ -31,9 +37,9 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
         {
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
-            Name = _name,   
+            Name = _name,
             IsNew = _isNew,
             Type = DbType.Boolean
-        }; 
+        };
     }
 }

@@ -12,6 +12,7 @@ public class DbIndexCollectionBuilder
         _tableBuilder = tableBuilder;
     }
 
+    #region <=== Public Methods ===>
 
     public DbIndexCollectionBuilder AddNewBTreeIndex(string name, Action<DbBTreeIndexBuilder> action)
     {
@@ -44,7 +45,19 @@ public class DbIndexCollectionBuilder
         _builders.Add(builder);
         return this;
     }
+    #endregion
 
+    #region <=== Build and Remove Methods ===>
+
+    public DbIndexCollectionBuilder Remove(string name)
+    {
+        var builder = _builders.SingleOrDefault(x => x.Name == name);
+        if (builder is null)
+            throw new DbBuilderException($"Index with name '{name}' is not found.");
+
+        _builders.Remove(builder);
+        return this;
+    }
 
     internal DbIndexCollection Build()
     {
@@ -55,4 +68,31 @@ public class DbIndexCollectionBuilder
 
         return collection;
     }
+
+    #endregion
+
+    #region <=== Internal Methods ==>
+
+    //used for building new DbTable from existing instance
+
+    internal DbIndexCollectionBuilder InternalAddExistingIndex(DbIndex index)
+    {
+        if (index is null)
+            throw new ArgumentNullException(nameof(index));
+
+        if (index is DbBTreeIndex)
+            _builders.Add(new DbBTreeIndexBuilder((DbBTreeIndex)index, _tableBuilder));
+        else if (index is DbGinIndex)
+            _builders.Add(new DbGinIndexBuilder((DbGinIndex)index, _tableBuilder));
+        else if (index is DbGistIndex)
+            _builders.Add(new DbGistIndexBuilder((DbGistIndex)index, _tableBuilder));
+        else if (index is DbHashIndex)
+            _builders.Add(new DbHashIndexBuilder((DbHashIndex)index, _tableBuilder));
+        else
+            throw new DbBuilderException($"Not supported db constraint type {index.GetType()}");
+
+        return this;
+    }
+
+    #endregion
 }

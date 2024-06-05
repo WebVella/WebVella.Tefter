@@ -7,6 +7,12 @@ public class DbGistIndexBuilder : DbIndexBuilder
     {
     }
 
+    internal DbGistIndexBuilder(DbGistIndex index, DbTableBuilder tableBuilder)
+       : base(index.Name, index.IsNew, tableBuilder)
+    {
+        _columns.AddRange(index.Columns);
+    }
+
     public DbGistIndexBuilder WithColumns(params string[] columnNames)
     {
         if (columnNames == null || columnNames.Length == 0) return this;

@@ -7,6 +7,13 @@ public class DbAutoIncrementColumnBuilder : DbColumnBuilder
     {
     }
 
+    internal DbAutoIncrementColumnBuilder(DbAutoIncrementColumn column, DbTableBuilder tableBuilder)
+       : base(column.Name, column.IsNew, tableBuilder)
+    {
+        _isNullable = column.IsNullable;
+        _defaultValue = column.DefaultValue;
+    }
+
     internal override DbAutoIncrementColumn Build()
     {
         return new DbAutoIncrementColumn
