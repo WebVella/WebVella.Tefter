@@ -3,5 +3,5 @@
 public record DbDateColumn : DbColumn
 {
     public override DbType Type => DbType.Date;
-    public bool UseCurrentTimeAsDefaultValue { get; set; } = false;
+    public bool AutoDefaultValue { get; set; } = false;
 }

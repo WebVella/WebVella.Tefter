@@ -2,27 +2,35 @@
 
 public class DbConstraintCollectionBuilder
 {
-    private readonly List<DbConstraintBuilder> _builders = new List<DbConstraintBuilder>();
-
-    public DbConstraintCollectionBuilder AddUniqueConstraint(Action<DbUniqueKeyConstraintBuilder> action)
+    internal ReadOnlyCollection<DbConstraintBuilder> Builders => _builders.AsReadOnly();
+    private readonly DbTableBuilder _tableBuilder;
+    private readonly List<DbConstraintBuilder> _builders;
+    
+    internal DbConstraintCollectionBuilder(DbTableBuilder tableBuilder)
     {
-        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder();
+        _builders = new List<DbConstraintBuilder>();
+        _tableBuilder = tableBuilder; 
+    }
+
+    public DbConstraintCollectionBuilder AddNewUniqueConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
+    {
+        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbConstraintCollectionBuilder AddPrimaryKeyConstraint(Action<DbPrimaryKeyConstraintBuilder> action)
+    public DbConstraintCollectionBuilder AddNewPrimaryKeyConstraint(string name, Action<DbPrimaryKeyConstraintBuilder> action)
     {
-        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder();
+        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbConstraintCollectionBuilder AddForeignKeyConstraint(Action<DbForeignKeyConstraintBuilder> action)
+    public DbConstraintCollectionBuilder AddNewForeignKeyConstraint(string name, Action<DbForeignKeyConstraintBuilder> action)
     {
-        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder();
+        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;

@@ -2,20 +2,18 @@
 
 public class DbIdColumnBuilder : DbColumnBuilder
 {
-    public DbIdColumnBuilder Id(Guid id)
+    public DbIdColumnBuilder( bool isNew, DbTableBuilder tableBuilder) 
+        : base(Constants.DB_TABLE_ID_COLUMN_NAME, isNew, tableBuilder)
     {
-        _id = id;
-        return this;
     }
 
     internal override DbIdColumn Build()
     {
         return new DbIdColumn
         {
-            Id = _id,
             DefaultValue = null,
             IsNullable = false,
-            Name = Constants.DB_TABLE_ID_COLUMN_NAME,
+            Name = _name,
             Type = DbType.Id
         };
     }

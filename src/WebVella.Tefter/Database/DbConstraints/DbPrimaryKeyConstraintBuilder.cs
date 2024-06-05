@@ -2,13 +2,12 @@
 
 public class DbPrimaryKeyConstraintBuilder : DbConstraintBuilder
 {
-    public DbPrimaryKeyConstraintBuilder Name(string name)
+    internal DbPrimaryKeyConstraintBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
+        : base(name, isNew, tableBuilder)
     {
-        _name = name;
-        return this;
     }
 
-    public DbPrimaryKeyConstraintBuilder ForColumns(params string[] columnNames)
+    public DbPrimaryKeyConstraintBuilder WithColumns(params string[] columnNames)
     {
         if (columnNames == null || columnNames.Length == 0) return this;
 
@@ -18,7 +17,12 @@ public class DbPrimaryKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbPrimaryKeyConstraint Build()
     {
-        var constraint = new DbPrimaryKeyConstraint { Name = _name };
+        var constraint = new DbPrimaryKeyConstraint 
+        { 
+            Name = _name,
+            IsNew = _isNew
+        };
+
         foreach (var columnName in _columns)
             constraint.AddColumn(columnName);
 

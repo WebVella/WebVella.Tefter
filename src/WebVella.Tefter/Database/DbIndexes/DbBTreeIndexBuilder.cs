@@ -2,15 +2,16 @@
 
 public class DbBTreeIndexBuilder : DbIndexBuilder
 {
-    public DbBTreeIndexBuilder Name(string name)
+    public DbBTreeIndexBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
+        : base(name, isNew, tableBuilder)
     {
-        _name = name;
-        return this;
     }
 
-    public DbBTreeIndexBuilder ForColumns( params string[] columnNames)
+    public DbBTreeIndexBuilder WithColumns( params string[] columnNames)
     {
         if(columnNames == null || columnNames.Length == 0) return this;
+
+        //TODO validate columns
 
         _columns.AddRange(columnNames);
         return this;
@@ -18,7 +19,12 @@ public class DbBTreeIndexBuilder : DbIndexBuilder
 
     internal override DbBTreeIndex Build()
     {
-        var index = new DbBTreeIndex { Name = _name };
+        var index = new DbBTreeIndex 
+        {
+            Name = _name,
+            IsNew = _isNew
+        };
+
         foreach (var columnName in _columns)
             index.AddColumn(columnName);
 

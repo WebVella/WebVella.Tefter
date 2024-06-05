@@ -2,27 +2,26 @@
 
 public class DbBooleanColumnBuilder : DbColumnBuilder
 {
-    public DbBooleanColumnBuilder Id(Guid id)
+    public DbBooleanColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
+        : base(name, isNew, tableBuilder)
     {
-        _id = id;
-        return this;
     }
 
-    public DbBooleanColumnBuilder Name(string name)
-    {
-        _name = name;
-        return this;
-    }
-
-    public DbBooleanColumnBuilder DefaultValue(bool? devaultValue )
+    public DbBooleanColumnBuilder WithDefaultValue(bool? devaultValue )
     {
         _defaultValue = devaultValue;
         return this;
     }
 
-    public DbBooleanColumnBuilder IsNullable(bool isNullable)
+    public DbBooleanColumnBuilder Nullable()
     {
-        _isNullable = isNullable;
+        _isNullable = true;
+        return this;
+    }
+
+    public DbBooleanColumnBuilder NotNullable()
+    {
+        _isNullable = true;
         return this;
     }
 
@@ -30,10 +29,10 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
     {
         return new DbBooleanColumn
         {
-            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   
+            IsNew = _isNew,
             Type = DbType.Boolean
         }; 
     }

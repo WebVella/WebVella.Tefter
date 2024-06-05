@@ -2,27 +2,26 @@
 
 public class DbNumberColumnBuilder : DbColumnBuilder
 {
-    public DbNumberColumnBuilder Id(Guid id)
+    internal DbNumberColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
+        : base(name, isNew, tableBuilder)
     {
-        _id = id;
-        return this;
     }
 
-    public DbNumberColumnBuilder Name(string name)
-    {
-        _name = name;
-        return this;
-    }
-
-    public DbNumberColumnBuilder DefaultValue(decimal? devaultValue )
+    public DbNumberColumnBuilder WithDefaultValue(decimal? devaultValue )
     {
         _defaultValue = devaultValue;
         return this;
     }
 
-    public DbNumberColumnBuilder IsNullable(bool isNullable)
+    public DbNumberColumnBuilder Nullable()
     {
-        _isNullable = isNullable;
+        _isNullable = true;
+        return this;
+    }
+
+    public DbNumberColumnBuilder NotNullable()
+    {
+        _isNullable = false;
         return this;
     }
 
@@ -30,7 +29,6 @@ public class DbNumberColumnBuilder : DbColumnBuilder
     {
         return new DbNumberColumn
         {
-            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   

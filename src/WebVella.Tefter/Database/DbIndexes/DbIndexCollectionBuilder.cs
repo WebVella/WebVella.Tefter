@@ -2,35 +2,44 @@
 
 public class DbIndexCollectionBuilder
 {
-    private readonly List<DbIndexBuilder> _builders = new List<DbIndexBuilder>();
+    internal ReadOnlyCollection<DbIndexBuilder> Builders => _builders.AsReadOnly();
+    protected readonly DbTableBuilder _tableBuilder;
+    private readonly List<DbIndexBuilder> _builders;
 
-    public DbIndexCollectionBuilder AddBTreeIndex(Action<DbBTreeIndexBuilder> action)
+    internal DbIndexCollectionBuilder(DbTableBuilder tableBuilder)
     {
-        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder();
+        _builders = new List<DbIndexBuilder>();
+        _tableBuilder = tableBuilder;
+    }
+
+
+    public DbIndexCollectionBuilder AddNewBTreeIndex(string name, Action<DbBTreeIndexBuilder> action)
+    {
+        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbIndexCollectionBuilder AddGinIndex(Action<DbGinIndexBuilder> action)
+    public DbIndexCollectionBuilder AddGinIndex(string name, Action<DbGinIndexBuilder> action)
     {
-        DbGinIndexBuilder builder = new DbGinIndexBuilder();
+        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbIndexCollectionBuilder AddGistIndex(Action<DbGistIndexBuilder> action)
+    public DbIndexCollectionBuilder AddGistIndex(string name, Action<DbGistIndexBuilder> action)
     {
-        DbGistIndexBuilder builder = new DbGistIndexBuilder();
+        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbIndexCollectionBuilder AddHashIndex(Action<DbHashIndexBuilder> action)
+    public DbIndexCollectionBuilder AddHashIndex(string name, Action<DbHashIndexBuilder> action)
     {
-        DbHashIndexBuilder builder = new DbHashIndexBuilder();
+        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;

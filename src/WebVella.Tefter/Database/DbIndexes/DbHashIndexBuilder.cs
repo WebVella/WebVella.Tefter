@@ -2,22 +2,27 @@
 
 public class DbHashIndexBuilder : DbIndexBuilder
 {
-    public DbHashIndexBuilder Name(string name)
+    public DbHashIndexBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
+        : base(name, isNew, tableBuilder)
     {
-        _name = name;
-        return this;
     }
 
-    public DbHashIndexBuilder ForColumn(string name)
+    public DbHashIndexBuilder WithColumn(string name)
     {
-        _columns.Clear();
+        //TODO validate name
+
         _columns.Add(name);
         return this;
     }
 
     internal override DbHashIndex Build()
     {
-        var index = new DbHashIndex { Name = _name };
+        var index = new DbHashIndex 
+        { 
+            Name = _name , 
+            IsNew = _isNew 
+        };
+
         foreach (var columnName in _columns)
             index.AddColumn(columnName);
 

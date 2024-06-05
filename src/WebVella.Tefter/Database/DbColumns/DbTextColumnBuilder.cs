@@ -2,27 +2,26 @@
 
 public class DbTextColumnBuilder : DbColumnBuilder
 {
-    public DbTextColumnBuilder Id(Guid id)
+    public DbTextColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) :
+        base(name, isNew, tableBuilder)
     {
-        _id = id;
-        return this;
     }
 
-    public DbTextColumnBuilder Name(string name)
-    {
-        _name = name;
-        return this;
-    }
-
-    public DbTextColumnBuilder DefaultValue(string devaultValue )
+    public DbTextColumnBuilder WithDefaultValue(string devaultValue)
     {
         _defaultValue = devaultValue;
         return this;
     }
 
-    public DbTextColumnBuilder IsNullable(bool isNullable)
+    public DbTextColumnBuilder Nullable()
     {
-        _isNullable = isNullable;
+        _isNullable = true;
+        return this;
+    }
+
+    public DbTextColumnBuilder NotNullable()
+    {
+        _isNullable = false;
         return this;
     }
 
@@ -30,11 +29,11 @@ public class DbTextColumnBuilder : DbColumnBuilder
     {
         return new DbTextColumn
         {
-            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
-            Name = _name,   
+            Name = _name,
+            IsNew = _isNew,
             Type = DbType.Text
-        }; 
+        };
     }
 }

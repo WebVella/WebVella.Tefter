@@ -2,35 +2,38 @@
 
 public class DbDateTimeColumnBuilder : DbColumnBuilder
 {
-    private bool _useCurrentTimeAsDefaultValue = false;
+    private bool _autoDefaultValue = false;
 
-    public DbDateTimeColumnBuilder Id(Guid id)
+    public DbDateTimeColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder) 
+        : base(name, isNew, tableBuilder)
     {
-        _id = id;
-        return this;
     }
 
-    public DbDateTimeColumnBuilder Name(string name)
-    {
-        _name = name;
-        return this;
-    }
-
-    public DbDateTimeColumnBuilder DefaultValue(DateTime? devaultValue)
+    public DbDateTimeColumnBuilder WithDefaultValue(DateTime? devaultValue)
     {
         _defaultValue = devaultValue;
         return this;
     }
 
-    public DbDateTimeColumnBuilder IsNullable(bool isNullable)
+    public DbDateTimeColumnBuilder Nullable()
     {
-        _isNullable = isNullable;
+        _isNullable = true;
+        return this;
+    }
+    public DbDateTimeColumnBuilder NotNullable()
+    {
+        _isNullable = false;
         return this;
     }
 
-    public DbDateTimeColumnBuilder UseCurrentTimeAsDefaultValue(bool useCurrentTimeAsDefaultValue)
+    public DbDateTimeColumnBuilder WithAutoDefaultValue()
     {
-        _useCurrentTimeAsDefaultValue = useCurrentTimeAsDefaultValue;
+        _autoDefaultValue = true;
+        return this;
+    }
+    public DbDateTimeColumnBuilder WithNoAutoDefaultValue()
+    {
+        _autoDefaultValue = false;
         return this;
     }
 
@@ -38,10 +41,10 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
     {
         return new DbDateTimeColumn
         {
-            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
-            UseCurrentTimeAsDefaultValue = _useCurrentTimeAsDefaultValue,
+            AutoDefaultValue = _autoDefaultValue,
+            IsNew = _isNew,
             Name = _name,
             Type = DbType.DateTime
         };

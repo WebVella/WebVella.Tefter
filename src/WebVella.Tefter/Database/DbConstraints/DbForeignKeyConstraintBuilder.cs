@@ -5,29 +5,34 @@ public class DbForeignKeyConstraintBuilder : DbConstraintBuilder
     protected string _foreignTableName = string.Empty;
     protected List<string> _foreignColumns = new List<string>();
 
-    public DbForeignKeyConstraintBuilder Name(string name)
+    internal DbForeignKeyConstraintBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
+        : base(name, isNew, tableBuilder)
     {
-        _name = name;
-        return this;
     }
 
-    public DbForeignKeyConstraintBuilder ForColumns(params string[] columnNames)
+    public DbForeignKeyConstraintBuilder WithColumns(params string[] columnNames)
     {
         if (columnNames == null || columnNames.Length == 0) return this;
+
+        //TODO validate
 
         _columns.AddRange(columnNames);
         return this;
     }
 
-    public DbForeignKeyConstraintBuilder ForForeignTable(string foreignTableName)
+    public DbForeignKeyConstraintBuilder WithForeignTable(string foreignTableName)
     {
+        //TODO validate
+
         _foreignTableName = foreignTableName;
         return this;
     }
 
-    public DbForeignKeyConstraintBuilder ForForeignColumns(params string[] columnNames)
+    public DbForeignKeyConstraintBuilder WithForeignColumns(params string[] columnNames)
     {
         if (columnNames == null || columnNames.Length == 0) return this;
+
+        //TODO validate
 
         _foreignColumns.AddRange(columnNames);
         return this;
@@ -35,9 +40,16 @@ public class DbForeignKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbForeignKeyConstraint Build()
     {
-        var constraint = new DbForeignKeyConstraint { Name = _name, ForeignTable= _foreignTableName };
+        var constraint = new DbForeignKeyConstraint 
+        {
+            IsNew = _isNew,
+            Name = _name, 
+            ForeignTable= _foreignTableName 
+        };
+      
         foreach (var columnName in _columns)
             constraint.AddColumn(columnName);
+       
         foreach (var columnName in _foreignColumns)
             constraint.AddForeignColumn(columnName);
 

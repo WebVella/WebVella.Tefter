@@ -1,86 +1,228 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using System.Xml.Linq;
+
+namespace WebVella.Tefter.Database;
 
 public class DbColumnCollectionBuilder
 {
-    private readonly List<DbColumnBuilder> _builders = new List<DbColumnBuilder>();
+    private readonly List<DbColumnBuilder> _builders;
+    private DbTableBuilder _tableBuilder;
 
-    public DbColumnCollectionBuilder AddTableIdColumn()
+    internal ReadOnlyCollection<DbColumnBuilder> Builders => _builders.AsReadOnly();
+
+    public DbColumnCollectionBuilder(DbTableBuilder tableBuilder)
     {
-        _builders.Add(new DbIdColumnBuilder());
+        _builders = new List<DbColumnBuilder>();
+        _tableBuilder = tableBuilder;
+    }
+
+    #region <=== Add New Columns Methods ===>
+
+    public DbColumnCollectionBuilder AddNewTableIdColumn()
+    {
+        var builder = (DbIdColumnBuilder)_builders
+             .SingleOrDefault(x => x.GetType() == typeof(DbIdColumnBuilder));
+
+        if (builder is not null)
+            throw new DbBuilderException($"Column of type Id already exists in columns. Only one instance can be created.");
+
+        _builders.Add(new DbIdColumnBuilder(true, _tableBuilder));
         return this;
     }
 
-    public DbColumnCollectionBuilder AddTableIdColumn(Action<DbIdColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewAutoIncrementColumn(string name, Action<DbAutoIncrementColumnBuilder> action)
     {
-        DbIdColumnBuilder builder = new DbIdColumnBuilder();
+        _tableBuilder.ValidateColumnName(name);
+        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbColumnCollectionBuilder AddGuidColumn(Action<DbGuidColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewGuidColumn(string name, Action<DbGuidColumnBuilder> action)
     {
-        DbGuidColumnBuilder builder = new DbGuidColumnBuilder();
+        _tableBuilder.ValidateColumnName(name);
+        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbColumnCollectionBuilder AddAutoIncrementColumn(Action<DbAutoIncrementColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewNumberColumn(string name, Action<DbNumberColumnBuilder> action)
     {
-        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder();
+        _tableBuilder.ValidateColumnName(name);
+        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbColumnCollectionBuilder AddNumberColumn(Action<DbNumberColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewBooleanColumn(string name, Action<DbBooleanColumnBuilder> action)
     {
-        DbNumberColumnBuilder builder = new DbNumberColumnBuilder();
+        _tableBuilder.ValidateColumnName(name);
+        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbColumnCollectionBuilder AddBooleanColumn(Action<DbBooleanColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewDateColumn(string name, Action<DbDateColumnBuilder> action)
     {
-        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder();
+        _tableBuilder.ValidateColumnName(name);
+        DbDateColumnBuilder builder = new DbDateColumnBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbColumnCollectionBuilder AddDateColumn(Action<DbDateColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewDateTimeColumn(string name, Action<DbDateTimeColumnBuilder> action)
     {
-        DbDateColumnBuilder builder = new DbDateColumnBuilder();
+        _tableBuilder.ValidateColumnName(name);
+        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbColumnCollectionBuilder AddDateTimeColumn(Action<DbDateTimeColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewTextColumn(string name, Action<DbTextColumnBuilder> action)
     {
-        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder();
+        _tableBuilder.ValidateColumnName(name);
+        DbTextColumnBuilder builder = new DbTextColumnBuilder(name, true, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
     }
 
-    public DbColumnCollectionBuilder AddTextColumn(Action<DbTextColumnBuilder> action)
+    #endregion
+
+    #region <=== Update Columns Methods ===>
+
+    public DbColumnCollectionBuilder WithGuidColumn(string name, Action<DbGuidColumnBuilder> action)
     {
-        DbTextColumnBuilder builder = new DbTextColumnBuilder();
+        _tableBuilder.ValidateColumnName(name, isNew: false);
+
+        var builder = (DbGuidColumnBuilder)_builders
+            .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbGuidColumnBuilder));
+
+        if (builder is null)
+            throw new DbBuilderException($"Column of type GUID and name '{name}' is not found.");
+
         action(builder);
         _builders.Add(builder);
+        return this;
+    }
+
+    public DbColumnCollectionBuilder WithNumerColumn(string name, Action<DbNumberColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name, isNew: false);
+
+        var builder = (DbNumberColumnBuilder)_builders
+            .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbNumberColumnBuilder));
+
+        if (builder is null)
+            throw new DbBuilderException($"Column of type Number and name '{name}' is not found.");
+
+        action(builder);
+        return this;
+    }
+
+    public DbColumnCollectionBuilder WithBooleanColumn(string name, Action<DbBooleanColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name, isNew: false);
+
+        var builder = (DbBooleanColumnBuilder)_builders
+            .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbBooleanColumnBuilder));
+
+        if (builder is null)
+            throw new DbBuilderException($"Column of type Boolean and name '{name}' is not found.");
+
+        action(builder);
+        return this;
+    }
+
+    public DbColumnCollectionBuilder WithDateColumn(string name, Action<DbDateColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name, isNew: false);
+
+        var builder = (DbDateColumnBuilder)_builders
+            .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbDateColumnBuilder));
+
+        if (builder is null)
+            throw new DbBuilderException($"Column of type Date and name '{name}' is not found.");
+
+        action(builder);
+        return this;
+    }
+
+    public DbColumnCollectionBuilder WithDateTimeColumn(string name, Action<DbDateTimeColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name, isNew: false);
+
+        var builder = (DbDateTimeColumnBuilder)_builders
+            .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbDateTimeColumnBuilder));
+
+        if (builder is null)
+            throw new DbBuilderException($"Column of type DateTime and name '{name}' is not found.");
+
+        action(builder);
+        return this;
+    }
+
+    public DbColumnCollectionBuilder WithTextColumn(string name, Action<DbTextColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name, isNew: false);
+
+        var builder = (DbTextColumnBuilder)_builders
+            .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbTextColumnBuilder));
+
+        if (builder is null)
+            throw new DbBuilderException($"Column of type Text and name '{name}' is not found.");
+
+        action(builder);
+        return this;
+    }
+
+
+    #endregion
+
+    #region <=== Build and Remove Methods ===>
+
+    public DbColumnCollectionBuilder RemoveColumn(string name)
+    {
+        var builder = _builders.SingleOrDefault(x => x.Name == name);
+        if (builder is null)
+            throw new DbBuilderException($"Column with name '{name}' is not found.");
+
+        _builders.Remove(builder);
         return this;
     }
 
     internal DbColumnCollection Build()
     {
-        var collection = new DbColumnCollection(); 
-        
-        foreach(var builder in _builders)
+        var collection = new DbColumnCollection();
+
+        foreach (var builder in _builders)
             collection.Add(builder.Build());
-        
+
         return collection;
     }
+
+    #endregion
+
+    #region <=== Internal Methods ==>
+
+    //used for building new DbTable from existing instance
+
+    internal DbColumnCollectionBuilder InternalAddExistingTableIdColumn()
+    {
+        var builder = (DbIdColumnBuilder)_builders
+             .SingleOrDefault(x => x.GetType() == typeof(DbIdColumnBuilder));
+
+        if (builder is not null)
+            throw new DbBuilderException($"Column of type Id already exists in columns. Only one instance can be created.");
+
+        _builders.Add(new DbIdColumnBuilder(false, _tableBuilder));
+        return this;
+    }
+
+    #endregion
 }

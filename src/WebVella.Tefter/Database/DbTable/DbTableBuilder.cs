@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
+
+namespace WebVella.Tefter.Database;
 
 public class DbTableBuilder
 {
@@ -6,9 +8,25 @@ public class DbTableBuilder
     private Guid? _applicationId = null;
     private Guid? _dataProviderId = null;
     private string _name = string.Empty;
-    private readonly DbColumnCollectionBuilder _columnsBuilder = new DbColumnCollectionBuilder();
-    private readonly DbConstraintCollectionBuilder _constraintsBuilder = new DbConstraintCollectionBuilder();
-    private readonly DbIndexCollectionBuilder _indexesBuilder = new DbIndexCollectionBuilder();
+    private readonly DbColumnCollectionBuilder _columnsBuilder;
+    private readonly DbConstraintCollectionBuilder _constraintsBuilder;
+    private readonly DbIndexCollectionBuilder _indexesBuilder;
+
+    internal DbColumnCollectionBuilder ColumnsCollectionBuilder { get { return _columnsBuilder; } }
+    internal DbConstraintCollectionBuilder ConstraintsCollectionBuilder { get { return _constraintsBuilder; } }
+    internal DbIndexCollectionBuilder IndexesCollectionBuilder { get { return _indexesBuilder; } }
+
+    private DbTableBuilder()
+    {
+        _columnsBuilder = new DbColumnCollectionBuilder(this);
+        _constraintsBuilder = new DbConstraintCollectionBuilder(this);
+        _indexesBuilder = new DbIndexCollectionBuilder(this);
+    }
+
+    public static DbTableBuilder New(string name, Guid? id = null)
+    {
+        return new DbTableBuilder { _id = id is null ? Guid.NewGuid() : id.Value, _name = name };
+    }
 
     public static DbTableBuilder FromTable(DbTable table)
     {
@@ -18,43 +36,31 @@ public class DbTableBuilder
         return new DbTableBuilder();
     }
 
-    public DbTableBuilder Id(Guid id) 
-    { 
-        _id = id; 
-        return this; 
-    }
-    
-    public DbTableBuilder ApplicationId(Guid appId) 
+    public DbTableBuilder WithApplicationId(Guid appId)
     {
-        _applicationId = appId; 
-        return this; 
-    }
-    
-    public DbTableBuilder DataProviderId(Guid dataProviderId) 
-    { 
-        _dataProviderId = dataProviderId; 
-        return this; 
+        _applicationId = appId;
+        return this;
     }
 
-    public DbTableBuilder Name(string name) 
-    { 
-        _name = name; 
-        return this; 
+    public DbTableBuilder WithDataProviderId(Guid dataProviderId)
+    {
+        _dataProviderId = dataProviderId;
+        return this;
     }
 
-    public DbTableBuilder Columns(Action<DbColumnCollectionBuilder> action)
+    public DbTableBuilder WithColumns(Action<DbColumnCollectionBuilder> action)
     {
         action(_columnsBuilder);
         return this;
     }
 
-    public DbTableBuilder Indexes(Action<DbIndexCollectionBuilder> action)
+    public DbTableBuilder WithIndexes(Action<DbIndexCollectionBuilder> action)
     {
         action(_indexesBuilder);
         return this;
     }
 
-    public DbTableBuilder Constraints(Action<DbConstraintCollectionBuilder> action)
+    public DbTableBuilder WithConstraints(Action<DbConstraintCollectionBuilder> action)
     {
         action(_constraintsBuilder);
         return this;
@@ -72,5 +78,49 @@ public class DbTableBuilder
             Indexes = _indexesBuilder.Build(),
             Constraints = _constraintsBuilder.Build()
         };
+    }
+
+    internal void ValidateColumnExists(string columnName)
+    {
+        if (!DbUtility.IsValidDbObjectName(columnName, out string error))
+        {
+            throw new DbBuilderException($"Constraint column name error: {error}");
+        }
+        if (! _columnsBuilder.Builders.Any(c => c.Name == columnName))
+        {
+            throw new DbBuilderException($"Constraint column with name '{columnName}' was not found.");
+        }
+    }
+
+    internal void ValidateColumnsExists(List<string> columnNames )
+    {
+        foreach (var columnName in columnNames)
+        {
+            if (!DbUtility.IsValidDbObjectName(columnName, out string error))
+            {
+                throw new DbBuilderException($"Constraint column name error: {error}");
+            }
+            if (!_columnsBuilder.Builders.Any(c => c.Name == columnName))
+            {
+                throw new DbBuilderException($"Constraint column with name '{columnName}' was not found.");
+            }
+        }
+    }
+
+    internal void ValidateColumnsExists(string[] columnNames)
+    {
+        ValidateColumnsExists(new List<string>(columnNames));
+    }
+
+    internal void ValidateColumnName(string name, bool isNew = true)
+    {
+        if (!DbUtility.IsValidDbObjectName(name, out string error))
+            throw new DbBuilderException($"Invalid column name '{name}'. {error}");
+
+        if (name == Constants.DB_TABLE_ID_COLUMN_NAME && isNew)
+            throw new DbBuilderException("Name 'id' is reserved column name");
+
+        if (_columnsBuilder.Builders.Any(x => x.Name == name) && isNew)
+            throw new DbBuilderException($"There is already existing column with name '{name}'");
     }
 }

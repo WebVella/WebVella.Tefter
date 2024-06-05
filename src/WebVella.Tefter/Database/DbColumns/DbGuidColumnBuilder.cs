@@ -2,35 +2,40 @@
 
 public class DbGuidColumnBuilder : DbColumnBuilder
 {
-    private bool _generateNewIdAsDefaultValue = false;
+    private bool _autoDefaultValue = false;
 
-    public DbGuidColumnBuilder Id(Guid id)
+    internal DbGuidColumnBuilder(string name, bool isNew, DbTableBuilder tableBuilder)
+        : base(name, isNew, tableBuilder)
     {
-        _id = id;
-        return this;
     }
 
-    public DbGuidColumnBuilder DefaultValue(Guid? defaultValue)
+    public DbGuidColumnBuilder WithDefaultValue(Guid? defaultValue)
     {
         _defaultValue = defaultValue;
         return this;
     }
 
-    public DbGuidColumnBuilder Name(string name)
+    public DbGuidColumnBuilder Nullable()
     {
-        _name = name;
+        _isNullable = true;
         return this;
     }
 
-    public DbGuidColumnBuilder IsNullable(bool isNullable)
+    public DbGuidColumnBuilder NotNullable()
     {
-        _isNullable = isNullable;
+        _isNullable = false;
         return this;
     }
-    public DbGuidColumnBuilder GenerateNewIdAsDefaultValue(bool generate)
-    {
-        _generateNewIdAsDefaultValue = generate;
 
+    public DbGuidColumnBuilder WithAutoDefaultValue()
+    {
+        _autoDefaultValue = true;
+        return this;
+    }
+
+    public DbGuidColumnBuilder WithNoAutoDefaultValue()
+    {
+        _autoDefaultValue = false;
         return this;
     }
 
@@ -38,12 +43,11 @@ public class DbGuidColumnBuilder : DbColumnBuilder
     {
         return new DbGuidColumn
         {
-            Id = _id,
             DefaultValue = null,
             IsNullable = false,
-            GenerateNewIdAsDefaultValue = _generateNewIdAsDefaultValue,
-            Name = _name,   
+            AutoDefaultValue = _autoDefaultValue,
+            Name = _name,
             Type = DbType.Guid
-        }; 
+        };
     }
 }

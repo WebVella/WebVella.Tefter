@@ -12,23 +12,19 @@ public partial class DbManagerTests : BaseTest
 
             using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
             {
+                const string tableName = "test_table";
                 Guid appId = Guid.NewGuid();
                 Guid dpId = Guid.NewGuid();
 
-                var buildTable = new DbTableBuilder()
-                    .Name("test")
-                    .Id(Guid.NewGuid())
-                    .DataProviderId(dpId)
-                    .ApplicationId(appId)
-                    .Columns(x =>
+                var buildTable = DbTableBuilder
+                    .New(tableName)
+                    .WithDataProviderId(dpId)
+                    .WithApplicationId(appId)
+                    .WithColumns( columns =>
                     {
-                        x.AddTableIdColumn()
-                        .AddGuidColumn(c =>
-                        {
-                            c.Id(Guid.NewGuid())
-                            .Name("guid")
-                            .GenerateNewIdAsDefaultValue(true);
-                        });
+                        columns
+                        .AddNewTableIdColumn()
+                        .AddNewGuidColumn("guid", c => { c.WithAutoDefaultValue(); });
                     }).Build();
 
                 //var table = new DbTable { Name = "test" };
