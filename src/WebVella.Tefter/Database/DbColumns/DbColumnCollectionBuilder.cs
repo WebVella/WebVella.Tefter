@@ -27,11 +27,10 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    public DbColumnCollectionBuilder AddNewAutoIncrementColumn(string name, Action<DbAutoIncrementColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNewAutoIncrementColumn(string name)
     {
         _tableBuilder.ValidateColumnName(name);
         DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(name, true, _tableBuilder);
-        action(builder);
         _builders.Add(builder);
         return this;
     }

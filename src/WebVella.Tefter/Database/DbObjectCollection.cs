@@ -96,4 +96,12 @@ public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject
     {
         return GetEnumerator();
     }
+
+    public override string ToString()
+    {
+        using (_lock.Lock())
+        {
+            return string.Join(",",_dbObjects.Select(x => x.Name));
+        }
+    }
 }

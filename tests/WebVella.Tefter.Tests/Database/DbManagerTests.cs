@@ -20,12 +20,203 @@ public partial class DbManagerTests : BaseTest
                     .New(tableName)
                     .WithDataProviderId(dpId)
                     .WithApplicationId(appId)
-                    .WithColumns( columns =>
+                    .WithColumns(columns =>
                     {
                         columns
+
+                        #region <--- Id --->
                         .AddNewTableIdColumn()
-                        .AddNewGuidColumn("guid", c => { c.WithAutoDefaultValue(); });
+                        #endregion
+
+                        #region <--- AutoInc --->
+                        .AddNewAutoIncrementColumn("auto_inc1")
+                        .AddNewAutoIncrementColumn("auto_inc2")
+                        #endregion
+
+                        #region <--- Guid --->
+                        .AddNewGuidColumn("guid_nullable_with_auto_default", c =>
+                        {
+                            c.WithAutoDefaultValue()
+                            .Nullable();
+                        })
+                        .AddNewGuidColumn("guid_not_nullable_with_auto_default", c =>
+                        {
+                            c.WithAutoDefaultValue()
+                            .NotNullable();
+                        })
+                        .AddNewGuidColumn("guid_nullable_with_default_value", c =>
+                        {
+                            c.WithDefaultValue(Guid.NewGuid())
+                            .Nullable();
+                        })
+                        .AddNewGuidColumn("guid_not_nullable_with_default_value", c =>
+                        {
+                            c.WithDefaultValue(Guid.NewGuid())
+                            .NotNullable();
+                        })
+                        .AddNewGuidColumn("guid_nullable_with_default_value_and_auto", c =>
+                        {
+                            c.Nullable()
+                            .WithDefaultValue(Guid.NewGuid())
+                            .WithNoAutoDefaultValue();
+                        })
+                        .AddNewGuidColumn("guid_not_nullable_with_default_value_and_auto", c =>
+                        {
+                            c.WithDefaultValue(Guid.NewGuid())
+                            .WithNoAutoDefaultValue();
+                        })
+                        .AddNewGuidColumn("guid_nullable_without_default_value", c => { c.Nullable(); })
+                        //this should provide exception
+                        //.AddNewGuidColumn("guid_not_nullable_without_default_value", c => { c.Nullable(); }) 
+                        #endregion
+
+                        #region <--- Boolean --->
+                        .AddNewBooleanColumn("bool_not_nullable_with_default_true", c =>
+                        {
+                            c.WithDefaultValue(true);
+                        })
+                        .AddNewBooleanColumn("bool_not_nullable_with_default_false", c =>
+                        {
+                            c.WithDefaultValue(false);
+                        })
+                        .AddNewBooleanColumn("bool_nullable_default_true", c =>
+                        {
+                            c.WithDefaultValue(true).Nullable();
+                        })
+                        .AddNewBooleanColumn("bool_nullable_default_false", c =>
+                        {
+                            c.WithDefaultValue(true).Nullable();
+                        })
+                        .AddNewBooleanColumn("bool_nullable_without_default", c =>
+                        {
+                            c.Nullable();
+                        })
+                        //this should provide exception
+                        //.AddNewBooleanColumn("bool_not_nullable_without_default", c => { c.NotNullable(); })  
+                        #endregion
+
+                        #region <--- Number --->
+                        .AddNewNumberColumn("number_nullable_with_default", c =>
+                        {
+                            c.WithDefaultValue(2)
+                            .Nullable();
+                        })
+                        .AddNewNumberColumn("number_not_nullable_with_default", c =>
+                        {
+                            c.WithDefaultValue(1).NotNullable();
+                        })
+                        .AddNewNumberColumn("number_nullable_without_default", c =>
+                        {
+                            c.Nullable();
+                        })
+                        //this should provide exception
+                        //.AddNewNumberColumn("number_not_nullable_without_default", c => { c.NotNullable(); }) 
+                        #endregion
+
+                        #region <--- Date --->
+                        .AddNewDateColumn("date_nullable_with_auto_default", c =>
+                        {
+                            c.WithAutoDefaultValue()
+                            .Nullable();
+                        })
+                        .AddNewDateColumn("date_not_nullable_with_auto_default", c =>
+                        {
+                            c.WithAutoDefaultValue()
+                            .NotNullable();
+                        })
+                        .AddNewDateColumn("date_nullable_with_default_value", c =>
+                        {
+                            c.WithDefaultValue(new DateOnly(2000, 1, 1))
+                            .Nullable();
+                        })
+                        .AddNewDateColumn("date_not_nullable_with_default_value", c =>
+                        {
+                            c.WithDefaultValue(new DateOnly(2000, 1, 1))
+                            .NotNullable();
+                        })
+                        .AddNewDateColumn("date_nullable_with_default_value_and_auto", c =>
+                        {
+                            c.Nullable()
+                            .WithDefaultValue(new DateOnly(2000, 1, 1))
+                            .WithNoAutoDefaultValue();
+                        })
+                        .AddNewDateColumn("date_not_nullable_with_default_value_and_auto", c =>
+                        {
+                            c.WithDefaultValue(new DateOnly(2000, 1, 1))
+                            .WithNoAutoDefaultValue();
+                        })
+                        .AddNewDateColumn("date_nullable_without_default_value", c =>
+                        {
+                            c.Nullable();
+                        })
+                        //this should provide exception
+                        //.AddNewDateColumn("date_not_nullable_without_default_value", c => { c.NotNullable(); }) 
+                        #endregion
+
+                        #region <--- DateTime --->
+                        .AddNewDateTimeColumn("datetime_nullable_with_auto_default", c =>
+                        {
+                            c.WithAutoDefaultValue()
+                            .Nullable();
+                        })
+                        .AddNewDateTimeColumn("datetime_not_nullable_with_auto_default", c =>
+                        {
+                            c.WithAutoDefaultValue()
+                            .NotNullable();
+                        })
+                        .AddNewDateTimeColumn("datetime_nullable_with_default_value", c =>
+                        {
+                            c.WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
+                            .Nullable();
+                        })
+                        .AddNewDateTimeColumn("datetime_not_nullable_with_default_value", c =>
+                        {
+                            c.WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
+                            .NotNullable();
+                        })
+                        .AddNewDateTimeColumn("datetime_nullable_with_default_value_and_auto", c =>
+                        {
+                            c.Nullable()
+                            .WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
+                            .WithNoAutoDefaultValue();
+                        })
+                        .AddNewDateTimeColumn("datetime_not_nullable_with_default_value_and_auto", c =>
+                        {
+                            c.WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
+                            .WithNoAutoDefaultValue();
+                        })
+                        .AddNewDateTimeColumn("datetime_nullable_without_default_value", c =>
+                        {
+                            c.Nullable();
+                        })
+                        //this should provide exception
+                        //.AddNewDateTimeColumn("datetime_not_nullable_without_default_value", c => { c.NotNullable(); }) 
+                        #endregion
+
+                        #region <--- Text --->
+                        .AddNewTextColumn("test_nullable_with_default", c =>
+                        {
+                            c.WithDefaultValue("default1")
+                            .Nullable();
+                        })
+                        .AddNewTextColumn("text_not_nullable_with_default", c =>
+                        {
+                            c.WithDefaultValue("default2")
+                            .NotNullable();
+                        })
+                        .AddNewTextColumn("text_nullable_without_default", c =>
+                        {
+                            c.Nullable();
+                        });
+                        //this should provide exception
+                        //.AddNewTextColumn("text_not_nullable_without_default", c => { c.NotNullable(); }) 
+                        #endregion
+
                     }).Build();
+
+
+                return;
+
 
                 //var table = new DbTable { Name = "test" };
                 //var idColumn = table.AddTableIdColumn();

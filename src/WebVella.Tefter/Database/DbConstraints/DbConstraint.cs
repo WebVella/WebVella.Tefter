@@ -13,5 +13,10 @@ public abstract record DbConstraint : DbObject
     {
         _columns.Remove(name);
     }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }
 
