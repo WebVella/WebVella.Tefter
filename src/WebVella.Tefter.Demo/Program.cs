@@ -6,7 +6,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddFluentUIComponents();
-
+builder.Services.AddScoped<IWvService,WvService>();
 
 var app = builder.Build();
 

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Demo.Components;
-public partial class WvSpaceItemToolbar : WvBaseComponent
+public partial class WvSpaceViewToolbar : WvBaseComponent
 {
 
 	private WvViewColumnSelector _columnSelector;

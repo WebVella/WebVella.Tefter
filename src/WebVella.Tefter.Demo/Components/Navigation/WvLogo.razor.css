@@ -3,6 +3,7 @@
 	align-items: center;
 	text-decoration:none;
 	width:200px;
+	padding-right:100px;
 }
 
 	.logo .image {
@@ -19,11 +20,19 @@
 	.logo .brand {
 		flex: 1 1 auto;
 		line-height: 1em;
-		color: var(--neutral-foreground-hint);
-		font-weight:normal;
-		font-size:16px;
+		color: var(--neutral-base-color);
+		font-weight: normal;
+		font-size: 16px;
 	}
 
 	.logo:hover {
 		color: var(--neutral-foreground-hover)
 	}
+
+.sidebar-collapsed .logo {
+	width:40px;
+	padding-right:0;
+}
+.sidebar-collapsed .logo .brand {
+	display: none;
+}

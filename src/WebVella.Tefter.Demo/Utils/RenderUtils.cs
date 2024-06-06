@@ -29,4 +29,6 @@ public static class RenderUtils
 		return input.Substring(0, charCount) + "...";
 	}
 
+	public static int CalcSkip(int pageSize, int page) => (page-1) * pageSize;
+
 }

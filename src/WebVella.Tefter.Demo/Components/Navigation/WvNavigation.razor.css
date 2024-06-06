@@ -3,6 +3,10 @@
 	--sidebar-nav-width: 180px;
 }
 
+::deep.collapsed.sidebar-nav {
+	--sidebar-nav-width: 40px;
+}
+
 .button-actions {
 	display: flex;
 	margin-bottom: 10px;
@@ -74,4 +78,29 @@
 
 ::deep .stealth:hover::part(control) {
 	background: var(--neutral-fill-stealth-hover);
+}
+
+
+	::deep.collapsed.sidebar-nav > .fluent-nav-menu > .fluent-nav-item .fluent-nav-text {
+		display: none !important;
+	}
+
+::deep.collapsed.sidebar-nav #space-selector::part(content),
+::deep.collapsed.sidebar-nav #add-space-btn::part(content),
+::deep.collapsed.sidebar-nav .button-actions-right {
+	display: none;
+}
+::deep.collapsed.sidebar-nav .button-actions-left {
+	padding-right:0;
+}
+
+::deep.collapsed.sidebar-nav #space-selector::part(control),
+::deep.collapsed.sidebar-nav #add-space-btn::part(control) {
+	display: flex;
+	justify-content: center;
+}
+
+::deep.collapsed.sidebar-nav #space-selector::part(start),
+::deep.collapsed.sidebar-nav #add-space-btn::part(start) {
+	margin-inline-end: 0px !important;
 }

@@ -1,6 +1,35 @@
 ﻿@namespace WebVella.Tefter.Demo.Components
 @inherits WvBaseComponent
 
-<p>Bookmarked by you to quickly get on task</p>
+@if (_isLoading)
+{
+	<FluentSkeleton Style="margin-top: 10px" Height="10px;" Width="100%"></FluentSkeleton>
+	<FluentSkeleton Style="margin-top: 10px" Height="10px;" Width="100%"></FluentSkeleton>
+	<FluentSkeleton Style="margin-top: 10px" Height="10px;" Width="100%"></FluentSkeleton>
+}
+else if (_bookmarks.Count == 0)
+{
+	<WvEmpty />
+}
+else
+{
+	<FluentGrid Spacing="1">
+		@foreach (var item in _bookmarks)
+		{
+			<FluentGridItem xs="3">
+				<WvCard OnClick="@(()=> cardClicked(item))"
+						Icon="@item.Icon"
+						Title="@item.Name" Description="@("Space > SpaceData")" />
+			</FluentGridItem>
+		}
+	</FluentGrid>
+	@if (_showMoreVisible)
+	{
+		<div style="margin-top:1rem">
+			<WvLoadMore Visible="true" OnClick="showMoreClick" />
+		</div>
+	}
+
+}
 
 

@@ -2,75 +2,33 @@
 @inherits WvBaseComponent
 
 <div class="location">
-	@if (_spaceItem is not null)
+	@if (_namedLocation is not null)
 	{
 		<div class="title">
 			<div class="label">
 				<FluentBreadcrumb>
-					<FluentBreadcrumbItem title="@_space.Name">
-						@RenderUtils.StringOverflow(_space.Name, _ellipsisCount)
-						@if (_space.IsPrivate)
-						{
-							<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.LockClosed())" Slot="start" Title="private" />
-						}
-						else
-						{
-							<FluentIcon Color="@Color.Success" Value="@(new Icons.Regular.Size20.LockOpen())" Slot="start" Title="public" />
-						}
-					</FluentBreadcrumbItem>
-					<FluentBreadcrumbItem title="@_spaceItem.Name">
-						@RenderUtils.StringOverflow(_spaceItem.Name, _ellipsisCount)
-					</FluentBreadcrumbItem>
-					<FluentBreadcrumbItem title="@_spaceItemView.Name">
-						@RenderUtils.StringOverflow(_spaceItemView.Name, _ellipsisCount)
+					<FluentBreadcrumbItem title="@_namedLocation.Title">
+						@_namedLocation.Title
+						@* <FluentIcon Color="@Color.Neutral" Value="@_namedLocation.Icon" Slot="start" /> *@
 					</FluentBreadcrumbItem>
 				</FluentBreadcrumb>
 			</div>
-			<span class="actions">
-@* 				<FluentButton Appearance="@Appearance.Stealth" Id="space-item-settings"
-							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Neutral" />
-				</FluentButton> *@
-				<FluentButton Appearance="@Appearance.Stealth">
-					<FluentIcon Value="@_spaceItem.BookmarkIcon" Color="@Color.Neutral" />
-				</FluentButton>
-			</span>
 		</div>
-		@*
-		<FluentMenu Anchor="space-item-settings" @bind-Open="_settingsMenuVisible" Width="200px">
-			<FluentMenuItem OnClick="onDetailsClick">
-				Space Item Details
-				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Info())" Slot="start" />
-				</span>
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="onRenameClick">
-				Rename Space Item
-				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
-				</span>
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="onRemoveClick">
-				Delete Space Item
-				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
-				</span>
-			</FluentMenuItem>
-			<FluentDivider></FluentDivider>
-			<FluentMenuItem OnClick="onAccessClick">
-				Manage Access
-				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
-				</span>
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="onAccessClick">
-				Invite User
-				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
-				</span>
-			</FluentMenuItem>
-		</FluentMenu>
-		*@
+	}
+	else if (_spaceData is not null)
+	{
+		<div class="title">
+			<div class="label">
+				<FluentBreadcrumb>
+					<FluentBreadcrumbItem title="@_spaceData.Name">
+						@RenderUtils.StringOverflow(_spaceData.Name, _ellipsisCount)
+					</FluentBreadcrumbItem>
+					<FluentBreadcrumbItem title="@_spaceView.Name">
+						@RenderUtils.StringOverflow(_spaceView.Name, _ellipsisCount)
+					</FluentBreadcrumbItem>
+				</FluentBreadcrumb>
+			</div>
+		</div>
 	}
 
 </div>

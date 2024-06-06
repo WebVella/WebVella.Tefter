@@ -1,75 +1,103 @@
 ﻿namespace WebVella.Tefter.Demo.Components;
-public partial class WvNavigation : WvBaseComponent,IDisposable
+public partial class WvNavigation : WvBaseComponent
 {
 	private Space _space = null;
-		private List<MenuItem> _menuItems = new();
-	
+	private List<MenuItem> _menuItems = new();
+
 	private bool _selectorMenuVisible = false;
 	private bool _settingsMenuVisible = false;
 	private WvNavigationSelector _selectorEl;
-	public void Dispose()
+	private string _sidebarCollapseCss = "";
+
+	public override async ValueTask DisposeAsync()
 	{
 		WvState.ActiveSpaceDataChanged -= OnSpaceDataChanged;
+		WvState.UISettingsChanged -= OnUISettingsChanged;
+		await base.DisposeAsync();
 	}
 
-	protected override void OnInitialized()
+	protected override void OnAfterRender(bool firstRender)
 	{
-		var(space,spaceItem,spaceItemView) = WvState.GetActiveSpaceData();
-		_space = space;
-		GenerateSpaceItemMenu(_space);
-		WvState.ActiveSpaceDataChanged += OnSpaceDataChanged;
-		
+		if(firstRender){
+			var meta = WvState.GetActiveSpaceMeta();
+			_space = meta.Space;
+			GenerateSpaceDataMenu(_space);
+			_sidebarCollapseCss = WvState.GetUiSettings().SidebarExpanded ? "expanded" : "collapsed";
+			StateHasChanged();
 
+			WvState.ActiveSpaceDataChanged += OnSpaceDataChanged;
+			WvState.UISettingsChanged += OnUISettingsChanged;
+		}
 	}
 
 	protected void OnSpaceDataChanged(object sender, StateActiveSpaceDataChangedEventArgs args)
 	{
-		_space = args.Space;
-		GenerateSpaceItemMenu(_space);
-		StateHasChanged();
+		base.InvokeAsync(async () =>
+		{
+			_space = args.Space;
+			GenerateSpaceDataMenu(_space);
+			await InvokeAsync(StateHasChanged);
+		});
 	}
 
-	private void GenerateSpaceItemMenu(Space space){
+	protected void OnUISettingsChanged(object sender, StateUISettingsChangedEventArgs args)
+	{
+		base.InvokeAsync(async () =>
+		{
+			_sidebarCollapseCss = WvState.GetUiSettings().SidebarExpanded ? "expanded" : "collapsed";
+			await InvokeAsync(StateHasChanged);
+		});
+
+	}
+
+	private void GenerateSpaceDataMenu(Space space)
+	{
 		_menuItems.Clear();
-		if(_space is not null){
-			foreach (var item in _space.Items)
+		if (_space is not null)
+		{
+			foreach (var item in _space.DataItems)
 			{
 				_menuItems.Add(new MenuItem
 				{
 					Id = "wv-" + item.Id,
-					Icon = item.Icon,
+					Icon = new Icons.Regular.Size20.Database(),
 					Match = NavLinkMatch.Prefix,
 					Title = item.Name,
-					Url = $"/space/{_space.Id}/item/{item.Id}"
+					Url = $"/space/{_space.Id}/data/{item.Id}"
 				});
 			}
 		}
 	}
 
-	private async Task onAddClick(){
+	private async Task onAddClick()
+	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for space creation");
 
 		await Task.Delay(500);
 		var spaces = WvState.GetSpaces();
-		
-		Navigator.NavigateTo($"/space/{spaces[0].Id}/item/{spaces[0].Items[0].Id}");
+
+		Navigator.NavigateTo($"/space/{spaces[0].Id}/data/{spaces[0].DataItems[0].Id}");
 	}
 	private void onDetailsClick()
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for details about the space");
 	}
-	private void onRemoveClick(){
+	private void onRemoveClick()
+	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for removing space");
 	}
-	private void onRenameClick(){
+	private void onRenameClick()
+	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for renaming");
 	}
 
-	private async Task onSpaceSelectorClick(){
+	private async Task onSpaceSelectorClick()
+	{
 		await _selectorEl.ToggleSelector();
 	}
 
-	private async Task SpaceChanged(Space space){
-		Navigator.NavigateTo($"/space/{space.Id}/item/{space.Items[0].Id}");
+	private async Task SpaceChanged(Space space)
+	{
+		Navigator.NavigateTo($"/space/{space.Id}/data/{space.DataItems[0].Id}");
 	}
 }

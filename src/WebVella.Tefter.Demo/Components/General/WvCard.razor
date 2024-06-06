@@ -1,0 +1,22 @@
+﻿@namespace WebVella.Tefter.Demo.Components
+@inherits WvBaseComponent
+<div class="@_cssClass" @onclick=@_onClick>
+	<FluentCard>
+		@if (Icon is not null)
+		{
+			<div class="icon">
+				<FluentIcon Value="@Icon" />
+			</div>
+		}
+		<div class="meta">
+			@if (!String.IsNullOrWhiteSpace(Title))
+			{
+				<div class="title">@Title</div>
+			}
+			@if (!String.IsNullOrWhiteSpace(Description))
+			{
+				<div class="description">@Description</div>
+			}
+		</div>
+	</FluentCard>
+</div>

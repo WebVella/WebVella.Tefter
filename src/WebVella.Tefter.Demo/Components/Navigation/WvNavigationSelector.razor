@@ -10,10 +10,9 @@
 								  IconStart="@(new Icons.Regular.Size16.Folder())" Title="browse all" OnClick="_browserAll" />
 				</div>
 				<div class="searchbar-right">
-					<FluentSearch @bind-Value="@_selectorSearch"
-								  @bind-Value:after="_handleClear"
-								  @ref=_searchField Class="search-field"
-								  @oninput="@_searchValueChanged"/>
+					<FluentSearch Value="@_selectorSearch"
+								  ValueChanged="_searchValueChanged"
+								  @ref=_searchField Class="search-field"/>
 				</div>
 			</div>
 		</Header>

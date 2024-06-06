@@ -49,9 +49,9 @@ public partial class WvNavigationSelector : WvBaseComponent
 		}
 	}
 
-	private async Task _searchValueChanged(ChangeEventArgs args)
+	private void _searchValueChanged(string search)
 	{
-		_selectorSearch = args.Value?.ToString();
+		_selectorSearch = search;
 		_selectorItems.Clear();
 		if(String.IsNullOrWhiteSpace(_selectorSearch)){ 
 			_selectorItems = _spaces.ToList();
@@ -60,12 +60,6 @@ public partial class WvNavigationSelector : WvBaseComponent
 			var lowerSearch = _selectorSearch.Trim().ToLowerInvariant();
 			_selectorItems = _spaces.Where(x=> x.Name.ToLowerInvariant().Contains(lowerSearch)).ToList();
 		}
-	}
-
-	private async Task _handleClear(){ 
-		_selectorSearch = null;
-		_selectorItems.Clear();
-		_selectorItems = _spaces.ToList();
 	}
 
 	private async Task _spaceSelected(Space space)

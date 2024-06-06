@@ -1,8 +1,14 @@
 ﻿@namespace WebVella.Tefter.Demo.Components
 @inherits WvBaseComponent
 
-<FluentDataGrid Items="@_dataSource" Loading="_isLoading" ShowHover="true" GenerateHeader="GenerateHeaderOption.Sticky">
+<FluentDataGrid Items="@_dataSource" Loading="_isGridLoading"
+				ShowHover="true" GenerateHeader="GenerateHeaderOption.Sticky">
+	<SelectColumn TGridItem="DataSource"
+				  SelectMode="@DataGridSelectMode.Multiple"
+				  @bind-SelectedItems="@_selectedItems" />
 	<PropertyColumn Property="@(p => p.FirstName)" Sortable="true" />
 	<PropertyColumn Property="@(p => p.LastName)" Sortable="true" />
 	<PropertyColumn Property="@(p => p.BirthDate)" Format="yyyy-MM-dd" Sortable="true" />
 </FluentDataGrid>
+<WvLoadMore Visible="@(!_isGridLoading && !_allLoaded)" Loading="_isMoreLoading"
+			OnClick="_loadMoreAsync" Style="margin-top:0.5rem;"/>

@@ -1,17 +1,17 @@
 ﻿@namespace WebVella.Tefter.Demo.Components
 @inherits WvBaseComponent
-<div class="sidebar-nav">
+<div class="@($"sidebar-nav {_sidebarCollapseCss}")">
 	<FluentNavMenu>
-		<FluentNavLink Icon="@(new Icons.Regular.Size20.Board())" Tooltip="Dashboard"
-					   Href="/" Match="@NavLinkMatch.All">Dashboard</FluentNavLink>
-		<FluentNavLink Icon="@(new Icons.Filled.Size20.Star())" Tooltip="Bookmarks"
-					   Href="/bookmarks" Match="@NavLinkMatch.Prefix">Bookmarks</FluentNavLink>
+		<FluentNavLink Icon="@WvConstants.DashboardIcon" Tooltip="@WvConstants.DashboardMenuTitle"
+					   Href="/" Match="@NavLinkMatch.All">@WvConstants.DashboardMenuTitle</FluentNavLink>
+		<FluentNavLink Icon="@WvConstants.FastAccessIcon" Tooltip="@WvConstants.FastAccesMenuTitle"
+					   Href="/fast-access" Match="@NavLinkMatch.Prefix">@WvConstants.FastAccesMenuTitle</FluentNavLink>
 	</FluentNavMenu>
 	<FluentDivider Class="nav-divider"></FluentDivider>
 	@if (_space is null)
 	{
-		<FluentButton Title="Add new Workspace" IconStart="@(new Icons.Regular.Size20.Add())" OnClick="onAddClick"
-					  Appearance="Appearance.Accent" Style="width:100%">Add Workspace</FluentButton>
+		<FluentButton Title="Add new Workspace" Id="add-space-btn" IconStart="@(new Icons.Regular.Size20.Add())" OnClick="onAddClick"
+					  Appearance="Appearance.Accent" Style="width:100%">Add Space</FluentButton>
 
 	}
 	else
@@ -70,7 +70,7 @@
 						</span>
 					</FluentMenuItem>
 					<FluentMenuItem OnClick="onAddClick">
-						Add Space Item
+						Add Space Data
 						<span slot="start">
 							<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
 						</span>
