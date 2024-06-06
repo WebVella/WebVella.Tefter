@@ -24,11 +24,9 @@ public class DbPrimaryKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbPrimaryKeyConstraint Build()
     {
-        CalculateState();
         var constraint = new DbPrimaryKeyConstraint
         {
             Name = _name,
-            State = _state,
         };
 
         foreach (var columnName in _columns)

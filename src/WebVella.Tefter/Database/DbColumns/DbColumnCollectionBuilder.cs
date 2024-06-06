@@ -184,15 +184,12 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder Remove(string name)
     {
-        var builder = _builders.SingleOrDefault(x => x.Name == name && x.State != DbObjectState.Removed);
+        var builder = _builders.SingleOrDefault(x => x.Name == name );
         if (builder is null)
             throw new DbBuilderException($"Column with name '{name}' is not found.");
 
-        if (builder.State != DbObjectState.New)
-            builder.State = DbObjectState.Removed;
-        else
-            _builders.Remove(builder);
-        
+        _builders.Remove(builder);
+
         return this;
     }
 

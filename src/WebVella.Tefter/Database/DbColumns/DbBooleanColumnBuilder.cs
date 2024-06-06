@@ -3,7 +3,7 @@
 public class DbBooleanColumnBuilder : DbColumnBuilder
 {
     internal DbBooleanColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, DbObjectState.New, tableBuilder)
+        : base(name, tableBuilder)
     {
     }
 
@@ -32,14 +32,12 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
 
     internal override DbBooleanColumn Build()
     {
-        CalculateState();
         return new DbBooleanColumn
         {
             Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,
-            State = _state,
             Type = DbType.Boolean
         };
     }

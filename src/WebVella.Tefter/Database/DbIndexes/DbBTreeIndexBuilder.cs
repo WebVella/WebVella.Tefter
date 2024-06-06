@@ -24,11 +24,9 @@ public class DbBTreeIndexBuilder : DbIndexBuilder
 
     internal override DbBTreeIndex Build()
     {
-        CalculateState();
         var index = new DbBTreeIndex 
         {
             Name = _name,
-            State = _state
         };
 
         foreach (var columnName in _columns)

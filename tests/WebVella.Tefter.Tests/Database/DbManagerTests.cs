@@ -217,11 +217,7 @@ public partial class DbManagerTests : BaseTest
                     });
                 });
 
-                var tables = dbManager.Tables;
-
-                var tableById = dbManager.Tables.Find(tableId);
-                var tableByName = dbManager.Tables.Find(tableName);
-                var equal = tableById == tableByName;
+                var differences = DbObjectsComparer.Compare(null, dbManager.Tables);
 
                 return;
 

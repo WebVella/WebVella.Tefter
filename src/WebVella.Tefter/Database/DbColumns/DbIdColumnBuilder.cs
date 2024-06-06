@@ -3,7 +3,7 @@
 public class DbIdColumnBuilder : DbColumnBuilder
 {
     public DbIdColumnBuilder( bool isNew, DbTableBuilder tableBuilder) 
-        : base(Constants.DB_TABLE_ID_COLUMN_NAME, DbObjectState.New, tableBuilder)
+        : base(Constants.DB_TABLE_ID_COLUMN_NAME, tableBuilder)
     {
     }
 
@@ -21,7 +21,6 @@ public class DbIdColumnBuilder : DbColumnBuilder
             IsNullable = false,
             Name = _name,
             Type = DbType.Id,
-            State = _state,
         };
     }
 }

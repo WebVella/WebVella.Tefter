@@ -22,11 +22,9 @@ public class DbHashIndexBuilder : DbIndexBuilder
 
     internal override DbHashIndex Build()
     {
-        CalculateState();
         var index = new DbHashIndex
         {
             Name = _name,
-            State = _state,
         };
 
         foreach (var columnName in _columns)

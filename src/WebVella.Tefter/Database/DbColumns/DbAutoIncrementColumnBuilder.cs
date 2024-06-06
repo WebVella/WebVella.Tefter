@@ -3,7 +3,7 @@
 public class DbAutoIncrementColumnBuilder : DbColumnBuilder
 {
     public DbAutoIncrementColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, DbObjectState.New, tableBuilder)
+        : base(name, tableBuilder)
     {
     }
 
@@ -20,7 +20,6 @@ public class DbAutoIncrementColumnBuilder : DbColumnBuilder
             DefaultValue = null,
             IsNullable = false,
             Name = _name,   
-            State = _state,
             Type = DbType.AutoIncrement
         }; 
     }

@@ -3,7 +3,7 @@
 public class DbGuidColumnBuilder : DbColumnBuilder
 {
     internal DbGuidColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, DbObjectState.New, tableBuilder)
+        : base(name, tableBuilder)
     {
     }
 
@@ -44,7 +44,6 @@ public class DbGuidColumnBuilder : DbColumnBuilder
 
     internal override DbGuidColumn Build()
     {
-        CalculateState();
         return new DbGuidColumn
         {
             Id = _id,
@@ -52,7 +51,6 @@ public class DbGuidColumnBuilder : DbColumnBuilder
             IsNullable = false,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
-            State = _state,
             Type = DbType.Guid
         };
     }

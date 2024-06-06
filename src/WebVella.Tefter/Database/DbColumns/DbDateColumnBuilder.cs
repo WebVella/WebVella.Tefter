@@ -3,7 +3,7 @@
 public class DbDateColumnBuilder : DbColumnBuilder
 {
     public DbDateColumnBuilder(string name, DbTableBuilder tableBuilder) 
-        : base(name, DbObjectState.New, tableBuilder)
+        : base(name, tableBuilder)
     {
     }
     internal DbDateColumnBuilder(DbDateColumn column, DbTableBuilder tableBuilder)
@@ -43,11 +43,9 @@ public class DbDateColumnBuilder : DbColumnBuilder
 
     internal override DbDateColumn Build()
     {
-        CalculateState();
         return new DbDateColumn
         {
             Id = _id,
-            State = _state,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,

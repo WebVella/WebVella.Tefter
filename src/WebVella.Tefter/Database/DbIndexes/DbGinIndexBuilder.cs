@@ -24,11 +24,9 @@ public class DbGinIndexBuilder : DbIndexBuilder
 
     internal override DbGinIndex Build()
     {
-        CalculateState();
         var index = new DbGinIndex
         {
             Name = _name,
-            State = _state
         };
 
         foreach (var columnName in _columns)

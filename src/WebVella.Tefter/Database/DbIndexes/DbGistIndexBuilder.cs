@@ -22,11 +22,9 @@ public class DbGistIndexBuilder : DbIndexBuilder
 
     internal override DbGistIndex Build()
     {
-        CalculateState();
         var index = new DbGistIndex
         {
             Name = _name,
-            State = _state
         };
 
         foreach (var columnName in _columns)

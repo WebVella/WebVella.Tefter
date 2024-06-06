@@ -4,7 +4,6 @@ namespace WebVella.Tefter.Database;
 
 public class DbTableBuilder
 {
-    private DbObjectState _state;
     private Guid _id;
     private Guid? _applicationId;
     private Guid? _dataProviderId;
@@ -14,14 +13,12 @@ public class DbTableBuilder
     private readonly DbIndexCollectionBuilder _indexesBuilder;
 
     internal string Name { get { return _name; } }
-    internal DbObjectState State { get { return _state; } set { _state = value; } }
     internal DbColumnCollectionBuilder ColumnsCollectionBuilder { get { return _columnsBuilder; } }
     internal DbConstraintCollectionBuilder ConstraintsCollectionBuilder { get { return _constraintsBuilder; } }
     internal DbIndexCollectionBuilder IndexesCollectionBuilder { get { return _indexesBuilder; } }
 
     internal DbTableBuilder(Guid id, string name)
     {
-        _state = DbObjectState.New;
         _id = id;
         _name = name;
         _applicationId = null;
@@ -34,11 +31,12 @@ public class DbTableBuilder
 
     internal DbTableBuilder(DbTable table)
     {
-        _state = table.State;
         _id = table.Id;
         _name = table.Name;
         _applicationId = table.ApplicationId;
         _dataProviderId = table.DataProviderId;
+
+        //TODO implementation pending
 
         _columnsBuilder = new DbColumnCollectionBuilder(this);
         _constraintsBuilder = new DbConstraintCollectionBuilder(this);
@@ -95,7 +93,7 @@ public class DbTableBuilder
         {
             throw new DbBuilderException($"Column name error: {error}");
         }
-        if (!_columnsBuilder.Builders.Any(c => c.Name == columnName && c.State != DbObjectState.Removed))
+        if (!_columnsBuilder.Builders.Any(c => c.Name == columnName))
         {
             throw new DbBuilderException($"Column with name '{columnName}' was not found.");
         }
@@ -109,7 +107,7 @@ public class DbTableBuilder
             {
                 throw new DbBuilderException($"Column name error: {error}");
             }
-            if (!_columnsBuilder.Builders.Any(c => c.Name == columnName && c.State != DbObjectState.Removed))
+            if (!_columnsBuilder.Builders.Any(c => c.Name == columnName))
             {
                 throw new DbBuilderException($"Column with name '{columnName}' was not found.");
             }
@@ -129,7 +127,7 @@ public class DbTableBuilder
         if (name == Constants.DB_TABLE_ID_COLUMN_NAME && isNew)
             throw new DbBuilderException("Name 'id' is reserved column name");
 
-        if (_columnsBuilder.Builders.Any(x => x.Name == name && x.State != DbObjectState.Removed) && isNew)
+        if (_columnsBuilder.Builders.Any(x => x.Name == name && isNew))
             throw new DbBuilderException($"There is already existing column with name '{name}'");
     }
 }

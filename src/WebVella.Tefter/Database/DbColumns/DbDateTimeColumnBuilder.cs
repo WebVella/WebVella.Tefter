@@ -3,7 +3,7 @@
 public class DbDateTimeColumnBuilder : DbColumnBuilder
 {
     public DbDateTimeColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, DbObjectState.New, tableBuilder)
+        : base(name, tableBuilder)
     {
     }
 
@@ -42,14 +42,12 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
 
     internal override DbDateTimeColumn Build()
     {
-        CalculateState();
         return new DbDateTimeColumn
         {
             Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
-            State = _state,
             Name = _name,
             Type = DbType.DateTime
         };

@@ -24,11 +24,9 @@ public class DbUniqueKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbUniqueKeyConstraint Build()
     {
-        CalculateState();
         var constraint = new DbUniqueKeyConstraint
         {
             Name = _name,
-            State = _state,
         };
 
         foreach (var columnName in _columns)

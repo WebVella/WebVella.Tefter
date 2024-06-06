@@ -50,8 +50,7 @@ ORDER BY t.table_name ASC;";
                     Name = (string)row["table_name"],
                     Id = meta.Id,
                     ApplicationId = meta.ApplicationId,
-                    DataProviderId = meta.DataProviderId,
-                    State = DbObjectState.Commited,
+                    DataProviderId = meta.DataProviderId
                 });
             }
 
