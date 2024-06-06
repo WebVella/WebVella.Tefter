@@ -35,6 +35,7 @@ public class DbNumberColumnBuilder : DbColumnBuilder
         CalculateState();
         return new DbNumberColumn
         {
+            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,   

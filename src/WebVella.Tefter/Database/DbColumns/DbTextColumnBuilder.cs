@@ -44,6 +44,7 @@ public class DbTextColumnBuilder : DbColumnBuilder
         CalculateState();
         return new DbTextColumn
         {
+            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,

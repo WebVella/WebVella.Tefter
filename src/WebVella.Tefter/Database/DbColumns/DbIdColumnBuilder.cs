@@ -16,6 +16,7 @@ public class DbIdColumnBuilder : DbColumnBuilder
     {
         return new DbIdColumn
         {
+            Id = _id,
             DefaultValue = null,
             IsNullable = false,
             Name = _name,

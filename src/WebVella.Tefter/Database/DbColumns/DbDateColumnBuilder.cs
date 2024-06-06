@@ -46,6 +46,7 @@ public class DbDateColumnBuilder : DbColumnBuilder
         CalculateState();
         return new DbDateColumn
         {
+            Id = _id,
             State = _state,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,

@@ -16,6 +16,7 @@ public class DbAutoIncrementColumnBuilder : DbColumnBuilder
     {
         return new DbAutoIncrementColumn
         {
+            Id = _id,
             DefaultValue = null,
             IsNullable = false,
             Name = _name,   

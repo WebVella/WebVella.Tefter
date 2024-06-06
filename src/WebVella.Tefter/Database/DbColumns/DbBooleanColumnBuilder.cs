@@ -35,6 +35,7 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
         CalculateState();
         return new DbBooleanColumn
         {
+            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             Name = _name,

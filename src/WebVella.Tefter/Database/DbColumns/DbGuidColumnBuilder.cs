@@ -47,6 +47,7 @@ public class DbGuidColumnBuilder : DbColumnBuilder
         CalculateState();
         return new DbGuidColumn
         {
+            Id = _id,
             DefaultValue = null,
             IsNullable = false,
             AutoDefaultValue = _autoDefaultValue,

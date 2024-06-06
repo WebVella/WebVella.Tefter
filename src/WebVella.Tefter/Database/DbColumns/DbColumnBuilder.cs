@@ -8,6 +8,7 @@ public abstract class DbColumnBuilder
     protected DbObjectState _state;
     protected DbTableBuilder _tableBuilder;
 
+    protected Guid _id;
     protected string _name;
     protected object _defaultValue = null;
     protected bool _isNullable = true;
@@ -32,6 +33,7 @@ public abstract class DbColumnBuilder
         if (column.State != DbObjectState.Commited)
             throw new DbBuilderException("Only committed columns can use this constructor");
 
+        _id = column.Id;
         _tableBuilder = tableBuilder;
         _name = column.Name;
         _state = column.State;

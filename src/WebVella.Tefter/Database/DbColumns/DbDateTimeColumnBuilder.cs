@@ -45,6 +45,7 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
         CalculateState();
         return new DbDateTimeColumn
         {
+            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
