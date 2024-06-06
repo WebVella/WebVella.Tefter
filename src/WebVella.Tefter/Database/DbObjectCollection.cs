@@ -5,13 +5,13 @@ namespace WebVella.Tefter.Database;
 
 public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject 
 {
-    private AsyncLock _lock;
-    private readonly List<T> _dbObjects;
+    protected AsyncLock _lock;
+    protected readonly List<T> _dbObjects;
 
     public T this[int i]
     {
         get { return _dbObjects[i]; }
-        internal set { _dbObjects[i] = value; }
+        private set { _dbObjects[i] = value; }
     }
 
     public DbObjectCollection()

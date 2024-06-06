@@ -4,36 +4,45 @@ namespace WebVella.Tefter.Database;
 
 public class DbTableBuilder
 {
-    private Guid _id = Guid.Empty;
-    private Guid? _applicationId = null;
-    private Guid? _dataProviderId = null;
-    private string _name = string.Empty;
+    private DbObjectState _state;
+    private Guid _id;
+    private Guid? _applicationId;
+    private Guid? _dataProviderId;
+    private string _name;
     private readonly DbColumnCollectionBuilder _columnsBuilder;
     private readonly DbConstraintCollectionBuilder _constraintsBuilder;
     private readonly DbIndexCollectionBuilder _indexesBuilder;
 
+    internal string Name { get { return _name; } }
+    internal DbObjectState State { get { return _state; } set { _state = value; } }
     internal DbColumnCollectionBuilder ColumnsCollectionBuilder { get { return _columnsBuilder; } }
     internal DbConstraintCollectionBuilder ConstraintsCollectionBuilder { get { return _constraintsBuilder; } }
     internal DbIndexCollectionBuilder IndexesCollectionBuilder { get { return _indexesBuilder; } }
 
-    private DbTableBuilder()
+    internal DbTableBuilder(Guid id, string name)
     {
+        _state = DbObjectState.New;
+        _id = id;
+        _name = name;
+        _applicationId = null;
+        _dataProviderId = null;
+
         _columnsBuilder = new DbColumnCollectionBuilder(this);
         _constraintsBuilder = new DbConstraintCollectionBuilder(this);
         _indexesBuilder = new DbIndexCollectionBuilder(this);
     }
 
-    public static DbTableBuilder New(string name, Guid? id = null)
+    internal DbTableBuilder(DbTable table)
     {
-        return new DbTableBuilder { _id = id is null ? Guid.NewGuid() : id.Value, _name = name };
-    }
+        _state = table.State;
+        _id = table.Id;
+        _name = table.Name;
+        _applicationId = table.ApplicationId;
+        _dataProviderId = table.DataProviderId;
 
-    public static DbTableBuilder FromTable(DbTable table)
-    {
-        //TODO implement
-        //var builder = new DbTableBuilder()
-        //    .WithApplicationId(table.Meta.ApplicationId)
-        return new DbTableBuilder();
+        _columnsBuilder = new DbColumnCollectionBuilder(this);
+        _constraintsBuilder = new DbConstraintCollectionBuilder(this);
+        _indexesBuilder = new DbIndexCollectionBuilder(this);
     }
 
     public DbTableBuilder WithApplicationId(Guid appId)

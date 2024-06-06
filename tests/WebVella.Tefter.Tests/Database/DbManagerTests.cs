@@ -13,11 +13,13 @@ public partial class DbManagerTests : BaseTest
             using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
             {
                 const string tableName = "test_table";
+                Guid tableId = Guid.NewGuid();
                 Guid appId = Guid.NewGuid();
                 Guid dpId = Guid.NewGuid();
 
-                var buildTable = DbTableBuilder
-                    .New(tableName)
+                dbManager.NewTable(tableId, tableName, table =>
+                {
+                    table
                     .WithDataProviderId(dpId)
                     .WithApplicationId(appId)
                     .WithColumns(columns =>
@@ -212,8 +214,14 @@ public partial class DbManagerTests : BaseTest
                         //.AddNewTextColumn("text_not_nullable_without_default", c => { c.NotNullable(); }) 
                         #endregion
 
-                    }).Build();
+                    });
+                });
 
+                var tables = dbManager.Tables;
+
+                var tableById = dbManager.Tables.Find(tableId);
+                var tableByName = dbManager.Tables.Find(tableName);
+                var equal = tableById == tableByName;
 
                 return;
 
