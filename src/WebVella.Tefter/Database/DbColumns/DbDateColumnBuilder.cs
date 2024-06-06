@@ -6,6 +6,11 @@ public class DbDateColumnBuilder : DbColumnBuilder
         : base(name, tableBuilder)
     {
     }
+
+    public DbDateColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
+       : base(id, name, tableBuilder)
+    {
+    }
     internal DbDateColumnBuilder(DbDateColumn column, DbTableBuilder tableBuilder)
         : base(column, tableBuilder)
     {

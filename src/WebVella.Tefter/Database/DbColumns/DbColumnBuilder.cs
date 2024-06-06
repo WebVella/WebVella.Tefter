@@ -12,9 +12,14 @@ public abstract class DbColumnBuilder
 
     internal string Name { get { return _name; } }
 
-    internal DbColumnBuilder(string name, DbTableBuilder tableBuilder)
+    internal DbColumnBuilder(string name, DbTableBuilder tableBuilder) 
+        : this(Guid.NewGuid(), name, tableBuilder )
     {
-        _id = Guid.NewGuid();
+    }
+
+    internal DbColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
+    {
+        _id = id;
         _name = name;
         _tableBuilder = tableBuilder;
     }

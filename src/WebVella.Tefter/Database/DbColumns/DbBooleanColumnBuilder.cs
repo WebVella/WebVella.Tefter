@@ -6,6 +6,10 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
         : base(name, tableBuilder)
     {
     }
+    internal DbBooleanColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
+        : base(id, name, tableBuilder)
+    {
+    }
 
     internal DbBooleanColumnBuilder(DbBooleanColumn column, DbTableBuilder tableBuilder)
         : base(column, tableBuilder)

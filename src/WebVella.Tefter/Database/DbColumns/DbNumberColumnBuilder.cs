@@ -6,6 +6,10 @@ public class DbNumberColumnBuilder : DbColumnBuilder
         : base(name, tableBuilder)
     {
     }
+    internal DbNumberColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
+        : base(id, name, tableBuilder)
+    {
+    }
 
     internal DbNumberColumnBuilder(DbNumberColumn column, DbTableBuilder tableBuilder)
         : base(column, tableBuilder)

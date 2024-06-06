@@ -1,26 +1,24 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbTableCollectionBuilder
+public class DatabaseBuilder 
 {
     private readonly List<DbTableBuilder> _builders;
-    private readonly DatabaseBuilder _databaseBuilder;
-
     internal ReadOnlyCollection<DbTableBuilder> Builders => _builders.AsReadOnly();
 
-    internal DbTableCollectionBuilder(DatabaseBuilder databaseBuilder)
+    internal DatabaseBuilder()
     {
         _builders = new List<DbTableBuilder>();
-        _databaseBuilder = databaseBuilder;
     }
 
-    protected DbTableCollectionBuilder WithTables( DbTableCollection tables, Action<DbTableCollectionBuilder> action)
+    public DatabaseBuilder WithTables(DbTableCollection tables)
     {
-        //TODO implement            
-        action(this);
+        foreach(var table in tables)
+            InternalAddExistingTable(table);
+
         return this;
     }
 
-    public DbTableCollectionBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action)
+    public DatabaseBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action)
     {
         if (!DbUtility.IsValidDbObjectName(name, out string error))
             throw new DbBuilderException(error);
@@ -36,7 +34,7 @@ public class DbTableCollectionBuilder
         return this;
     }
 
-    public DbTableCollectionBuilder Remove(string name)
+    public DatabaseBuilder Remove(string name)
     {
         var builder = _builders.SingleOrDefault(x => x.Name == name);
         if (builder is null)
@@ -57,7 +55,7 @@ public class DbTableCollectionBuilder
         return collection;
     }
 
-    internal DbTableCollectionBuilder InternalAddExistingTable(DbTable table)
+    internal DatabaseBuilder InternalAddExistingTable(DbTable table)
     {
         if (table is null)
             throw new ArgumentNullException(nameof(table));

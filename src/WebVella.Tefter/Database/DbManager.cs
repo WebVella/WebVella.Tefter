@@ -5,27 +5,16 @@ namespace WebVella.Tefter.Database;
 
 public partial interface IDbManager
 {
-    DbTableCollection Tables { get; }
-    DbTableCollectionBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action);
 }
 
 public partial class DbManager : IDbManager
 {
-    private readonly DbTableCollectionBuilder _builder;
     private readonly IDbService _dbService;
-
-    public DbTableCollection Tables { get { return _builder.Build(); } }
 
     public DbManager(IServiceProvider serviceProvider)
     {
         _dbService = serviceProvider.GetService<IDbService>();
-        _builder = new DbTableCollectionBuilder(this);
         LoadTables();
-    }
-
-    public DbTableCollectionBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action )
-    {
-        return _builder.NewTable(id, name, action);
     }
 
     private void LoadTables()

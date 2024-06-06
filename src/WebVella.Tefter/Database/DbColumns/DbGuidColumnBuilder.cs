@@ -7,6 +7,11 @@ public class DbGuidColumnBuilder : DbColumnBuilder
     {
     }
 
+    internal DbGuidColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
+        : base(id, name, tableBuilder)
+    {
+    }
+
     internal DbGuidColumnBuilder(DbGuidColumn column, DbTableBuilder tableBuilder)
         : base(column, tableBuilder)
     {

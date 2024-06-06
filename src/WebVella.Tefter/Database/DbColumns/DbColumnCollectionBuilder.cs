@@ -15,7 +15,7 @@ public class DbColumnCollectionBuilder
 
     #region <=== Add New Columns Methods ===>
 
-    public DbColumnCollectionBuilder AddNewTableIdColumn()
+    public DbColumnCollectionBuilder AddNewTableIdColumn(Guid? id = null)
     {
         var builder = (DbIdColumnBuilder)_builders
              .SingleOrDefault(x => x.GetType() == typeof(DbIdColumnBuilder));
@@ -23,7 +23,11 @@ public class DbColumnCollectionBuilder
         if (builder is not null)
             throw new DbBuilderException($"Column of type Id already exists in columns. Only one instance can be created.");
 
-        _builders.Add(new DbIdColumnBuilder(true, _tableBuilder));
+        if (id != null)
+            _builders.Add(new DbIdColumnBuilder(id.Value, _tableBuilder));
+        else
+            _builders.Add(new DbIdColumnBuilder(_tableBuilder));
+
         return this;
     }
 
@@ -35,10 +39,27 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
+    public DbColumnCollectionBuilder AddNewAutoIncrementColumn(Guid id, string name)
+    {
+        _tableBuilder.ValidateColumnName(name);
+        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(id, name, _tableBuilder);
+        _builders.Add(builder);
+        return this;
+    }
+
     public DbColumnCollectionBuilder AddNewGuidColumn(string name, Action<DbGuidColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
         DbGuidColumnBuilder builder = new DbGuidColumnBuilder(name, _tableBuilder);
+        action(builder);
+        _builders.Add(builder);
+        return this;
+    }
+
+    public DbColumnCollectionBuilder AddNewGuidColumn(Guid id, string name, Action<DbGuidColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name);
+        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(id, name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -53,6 +74,15 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
+    public DbColumnCollectionBuilder AddNewNumberColumn(Guid id, string name, Action<DbNumberColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name);
+        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(id, name, _tableBuilder);
+        action(builder);
+        _builders.Add(builder);
+        return this;
+    }
+
     public DbColumnCollectionBuilder AddNewBooleanColumn(string name, Action<DbBooleanColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
@@ -61,11 +91,26 @@ public class DbColumnCollectionBuilder
         _builders.Add(builder);
         return this;
     }
-
+    public DbColumnCollectionBuilder AddNewBooleanColumn(Guid id, string name, Action<DbBooleanColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name);
+        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(id, name, _tableBuilder);
+        action(builder);
+        _builders.Add(builder);
+        return this;
+    }
     public DbColumnCollectionBuilder AddNewDateColumn(string name, Action<DbDateColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
         DbDateColumnBuilder builder = new DbDateColumnBuilder(name, _tableBuilder);
+        action(builder);
+        _builders.Add(builder);
+        return this;
+    }
+    public DbColumnCollectionBuilder AddNewDateColumn(Guid id, string name, Action<DbDateColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name);
+        DbDateColumnBuilder builder = new DbDateColumnBuilder(id, name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -80,10 +125,28 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
+    public DbColumnCollectionBuilder AddNewDateTimeColumn(Guid id, string name, Action<DbDateTimeColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name);
+        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(id, name, _tableBuilder);
+        action(builder);
+        _builders.Add(builder);
+        return this;
+    }
+
     public DbColumnCollectionBuilder AddNewTextColumn(string name, Action<DbTextColumnBuilder> action)
     {
         _tableBuilder.ValidateColumnName(name);
         DbTextColumnBuilder builder = new DbTextColumnBuilder(name, _tableBuilder);
+        action(builder);
+        _builders.Add(builder);
+        return this;
+    }
+
+    public DbColumnCollectionBuilder AddNewTextColumn(Guid id, string name, Action<DbTextColumnBuilder> action)
+    {
+        _tableBuilder.ValidateColumnName(name);
+        DbTextColumnBuilder builder = new DbTextColumnBuilder(id, name, _tableBuilder);
         action(builder);
         _builders.Add(builder);
         return this;
@@ -184,7 +247,7 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder Remove(string name)
     {
-        var builder = _builders.SingleOrDefault(x => x.Name == name );
+        var builder = _builders.SingleOrDefault(x => x.Name == name);
         if (builder is null)
             throw new DbBuilderException($"Column with name '{name}' is not found.");
 

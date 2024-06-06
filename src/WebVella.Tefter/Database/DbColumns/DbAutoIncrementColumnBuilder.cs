@@ -7,6 +7,11 @@ public class DbAutoIncrementColumnBuilder : DbColumnBuilder
     {
     }
 
+    public DbAutoIncrementColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
+       : base(id, name, tableBuilder)
+    {
+    }
+
     internal DbAutoIncrementColumnBuilder(DbAutoIncrementColumn column, DbTableBuilder tableBuilder)
        : base(column, tableBuilder)
     {

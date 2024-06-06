@@ -2,8 +2,13 @@
 
 public class DbIdColumnBuilder : DbColumnBuilder
 {
-    public DbIdColumnBuilder( bool isNew, DbTableBuilder tableBuilder) 
+    internal DbIdColumnBuilder(DbTableBuilder tableBuilder)
         : base(Constants.DB_TABLE_ID_COLUMN_NAME, tableBuilder)
+    {
+    }
+
+    internal DbIdColumnBuilder(Guid id, DbTableBuilder tableBuilder)
+        : base(id, Constants.DB_TABLE_ID_COLUMN_NAME, tableBuilder)
     {
     }
 
