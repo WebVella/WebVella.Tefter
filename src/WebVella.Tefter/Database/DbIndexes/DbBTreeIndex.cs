@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbBTreeIndex : DbIndex
+public record DbBTreeIndex : DbIndex
 {
     //used for comparisons: <, <=, =, >=, >
 }

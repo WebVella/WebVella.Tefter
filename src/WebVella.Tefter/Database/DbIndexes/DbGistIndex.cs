@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbGistIndex : DbIndex
+public record DbGistIndex : DbIndex
 {
     //used for comparisons: <<   &<   &>   >>   <<|   &<|   |&>   |>>   @>   <@   ~=   &&
 }

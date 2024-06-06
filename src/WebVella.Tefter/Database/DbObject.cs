@@ -1,8 +1,9 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public abstract class DbObject
+public abstract record DbObject
 {
-    public virtual string Name { get; set; }
+    public virtual string Name { get; init; }
+    internal virtual DbObjectState State { get; init; }
 
     public override string ToString()
     {

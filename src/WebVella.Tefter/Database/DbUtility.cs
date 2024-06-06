@@ -1,9 +1,31 @@
-﻿using static Npgsql.Replication.PgOutput.Messages.RelationMessage;
+﻿namespace WebVella.Tefter.Database;
 
-namespace WebVella.Tefter.Database;
-
-class DbUtility
+internal class DbUtility
 {
+    public static bool IsValidDbObjectName(string name, out string error)
+    {
+        error = null;
+
+        if (string.IsNullOrEmpty(name))
+        {
+            error = "Name is required and cannot be empty";
+            return false;
+        }
+
+        if (name.Length < Constants.DB_MIN_COLUMN_NAME_LENGTH)
+            error = $"The name must be at least {Constants.DB_MIN_COLUMN_NAME_LENGTH} characters long";
+
+        if (name.Length > Constants.DB_MAX_COLUMN_NAME_LENGTH)
+            error = $"The length of name must be less or equal than {Constants.DB_MAX_COLUMN_NAME_LENGTH} characters";
+
+        Match match = Regex.Match(name, Constants.DB_NAME_VALIDATION_PATTERN);
+        if (!match.Success || match.Value != name.Trim())
+            error = $"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
+                $"not include spaces, not end with an underscore, and not contain two consecutive underscores";
+
+        return string.IsNullOrWhiteSpace(error);
+    }
+
     public static string ConvertDbColumnDefaultValueToDatabaseDefaultValue(DbColumn column)
     {
         Func<DbNumberColumn, string> numberDefaultValueFunc = (column) =>
@@ -26,7 +48,7 @@ class DbUtility
 
         Func<DbDateColumn, string> dateDefaultValueFunc = (column) =>
         {
-            if (column.UseCurrentTimeAsDefaultValue)
+            if (column.AutoDefaultValue)
                 return "now()";
 
             if (column.DefaultValue is null)
@@ -37,7 +59,7 @@ class DbUtility
 
         Func<DbDateTimeColumn, string> dateTimeDefaultValueFunc = (column) =>
         {
-            if (column.UseCurrentTimeAsDefaultValue)
+            if (column.AutoDefaultValue)
                 return "now()";
 
             if (column.DefaultValue is null)
@@ -48,7 +70,7 @@ class DbUtility
 
         Func<DbGuidColumn, string> guidDefaultValueFunc = (column) =>
         {
-            if (column.GenerateNewIdAsDefaultValue)
+            if (column.AutoDefaultValue)
                 return "uuid_generate_v1()";
 
             if (column.DefaultValue is null)
@@ -65,14 +87,14 @@ class DbUtility
                 return $"'{column.DefaultValue}'";
         };
 
-        Func<DbTableIdColumn, string> tableIdDefaultValueFunc = (column) =>
+        Func<DbIdColumn, string> tableIdDefaultValueFunc = (column) =>
         {
             return "uuid_generate_v1()";
         };
 
         return column switch
         {
-            DbTableIdColumn c => tableIdDefaultValueFunc(c),
+            DbIdColumn c => tableIdDefaultValueFunc(c),
             DbAutoIncrementColumn c => null,
             DbNumberColumn c => numberDefaultValueFunc(c),
             DbBooleanColumn c => booleanDefaultValueFunc(c),
@@ -90,7 +112,7 @@ class DbUtility
         {
             return null;
         }
-        else if (columnType == typeof(DbTableIdColumn))
+        else if (columnType == typeof(DbIdColumn))
         {
             return null;
         }
@@ -160,9 +182,9 @@ class DbUtility
             if (string.IsNullOrWhiteSpace(defaultValue))
                 return null;
 
-           return defaultValue
-                .Replace("::text", "")
-                .Replace("'", "");
+            return defaultValue
+                 .Replace("::text", "")
+                 .Replace("'", "");
         }
 
         throw new Exception($"Not supported default value \"{defaultValue}\" for column '{columnName}'");

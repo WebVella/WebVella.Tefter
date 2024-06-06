@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DbPrimaryKeyConstraint : DbConstraint
+public record DbPrimaryKeyConstraint : DbConstraint
 {
 }

@@ -1,0 +1,26 @@
+﻿namespace WebVella.Tefter.Database;
+
+public class DbAutoIncrementColumnBuilder : DbColumnBuilder
+{
+    public DbAutoIncrementColumnBuilder(string name, DbTableBuilder tableBuilder)
+        : base(name, DbObjectState.New, tableBuilder)
+    {
+    }
+
+    internal DbAutoIncrementColumnBuilder(DbAutoIncrementColumn column, DbTableBuilder tableBuilder)
+       : base(column, tableBuilder)
+    {
+    }
+
+    internal override DbAutoIncrementColumn Build()
+    {
+        return new DbAutoIncrementColumn
+        {
+            DefaultValue = null,
+            IsNullable = false,
+            Name = _name,   
+            State = _state,
+            Type = DbType.AutoIncrement
+        }; 
+    }
+}
