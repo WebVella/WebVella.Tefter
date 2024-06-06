@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Demo.Models;
 
-public enum SpaceItemType
+public enum SpaceViewType
 {
 	[Description("Report")]
 	Report = 0,

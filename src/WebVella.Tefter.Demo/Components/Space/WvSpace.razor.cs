@@ -1,36 +1,76 @@
 ﻿namespace WebVella.Tefter.Demo.Components;
-public partial class WvSpace : WvBaseComponent,IDisposable
+public partial class WvSpace : WvBaseComponent
 {
-	private IQueryable<DataSource> _dataSource = default!;
-	private bool _isLoading = true;
+	private Guid? _spaceViewId;
+	private IQueryable<DataSource> _dataSource = Enumerable.Empty<DataSource>().AsQueryable();
+	private IEnumerable<DataSource> _selectedItems = Enumerable.Empty<DataSource>();
+	private bool _isGridLoading = true;
+	private bool _isMoreLoading = false;
+	private bool _allLoaded = false;
+	private int _page = 1;
+	private int _pageSize = WvConstants.PageSize;
 
-	public void Dispose()
+	public override async ValueTask DisposeAsync()
 	{
 		WvState.ActiveSpaceDataChanged -= onSpaceDataLocation;
+		await base.DisposeAsync();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
-			loadData();
-			_isLoading = false;
+			var meta = WvState.GetActiveSpaceMeta();
+			_spaceViewId = meta.SpaceView?.Id;
+			if (_spaceViewId is not null)
+			{
+				await loadDataAsync(1);
+				WvState.ActiveSpaceDataChanged += onSpaceDataLocation;
+			}
+			_isGridLoading = false;
 			await InvokeAsync(StateHasChanged);
-			WvState.ActiveSpaceDataChanged+= onSpaceDataLocation;
+
 		}
 	}
 
 	protected void onSpaceDataLocation(object sender, StateActiveSpaceDataChangedEventArgs e)
 	{
-		_isLoading = true;
-		StateHasChanged();
+		base.InvokeAsync(async () =>
+		{
+			if (e.SpaceView.Id == _spaceViewId) return;
 
-		loadData();
-		_isLoading = false;
-		StateHasChanged();
+			_isGridLoading = true;
+			await InvokeAsync(StateHasChanged);
+			await loadDataAsync(1);
+			_isGridLoading = false;
+			await InvokeAsync(StateHasChanged);
+		});
+
 	}
-	private void loadData(){
-		var alldata = SampleData.GetDataSource().AsQueryable();
-		_dataSource = alldata.AsQueryable();
+	private async Task loadDataAsync(int page)
+	{
+		if (_spaceViewId is null) return;
+		await Task.Delay(500);
+		var alldata = WvService.GetSpaceViewData(_spaceViewId.Value).AsQueryable();
+		if (page == 1)
+		{
+			_dataSource = Enumerable.Empty<DataSource>().AsQueryable();
+			_allLoaded = false;
+		}
+		var skip = RenderUtils.CalcSkip(_pageSize, page);
+		var batch = alldata.Skip(RenderUtils.CalcSkip(_pageSize, page)).Take(_pageSize).AsQueryable();
+		_dataSource = _dataSource.Concat(batch);
+		_page = page;
+		if (batch.Count() < _pageSize) _allLoaded = true;
+	}
+
+	private async Task _loadMoreAsync()
+	{
+		_isMoreLoading = true;
+		await InvokeAsync(StateHasChanged);
+		await loadDataAsync(_page + 1);
+
+		_isMoreLoading = false;
+		await InvokeAsync(StateHasChanged);
 	}
 }

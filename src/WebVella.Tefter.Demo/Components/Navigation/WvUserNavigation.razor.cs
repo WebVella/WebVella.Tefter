@@ -4,9 +4,17 @@ public partial class WvUserNavigation : WvBaseComponent
     private bool _visible = false;
     private User _user;
 
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if(firstRender){
+			_user = WvState.GetUser();
+			StateHasChanged();
+		}
+	}
+
 	protected override void OnInitialized()
 	{
-		_user = WvState.GetUser();
+		
 	}
 
 	private void _onClick(){ 

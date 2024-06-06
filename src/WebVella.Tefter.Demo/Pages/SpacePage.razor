@@ -1,9 +1,9 @@
-﻿@page "/space/{SpaceId:guid}/item/{SpaceItemId:guid}"
-@page "/space/{SpaceId:guid}/item/{SpaceItemId:guid}/view/{SpaceItemViewId:guid}"
+﻿@page "/space/{SpaceId:guid}/data/{SpaceDataId:guid}"
+@page "/space/{SpaceId:guid}/data/{SpaceDataId:guid}/view/{SpaceViewId:guid}"
 @inherits WvBasePage
 <FluentBodyContent Class="content with-toolbar with-views">
-	<WvSpaceItemViews />
-	<WvSpaceItemToolbar />
+	<WvSpaceViewNav />
+	<WvSpaceViewToolbar />
 	<div class="content-inner">
 		<WvSpace />
 	</div>

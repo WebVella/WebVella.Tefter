@@ -1,0 +1,62 @@
+﻿@namespace WebVella.Tefter.Demo.Components
+@inherits WvBaseComponent
+<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector">
+	<FluentMenuItem>
+		Bookmark
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Star())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentMenuItem Disabled="true">
+		Save view
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Save())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentMenuItem>
+		Save view as
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.SaveCopy())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentDivider />
+	<FluentMenuItem>
+		Rename View
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentMenuItem>
+		Delete View
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentMenuItem>
+		Manage Access
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentDivider />
+	<FluentMenuItem Disabled="true">
+		Export All data
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentMenuItem Disabled="true">
+		Export Selection
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+	<FluentMenuItem Disabled="true">
+		Copy link
+		<span slot="start">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Link())" Slot="start" />
+		</span>
+	</FluentMenuItem>
+
+
+</FluentMenu>

@@ -1,0 +1,36 @@
+﻿.content-views {
+	display: flex;
+	flex-flow: row;
+	align-items: center;
+	padding-left: 40px;
+	margin-right: -5px;
+}
+
+.content-views-tabs {
+	flex: 1 1 auto;
+}
+
+.content-views-badges {
+	flex: 0 0 auto;
+}
+
+::deep.content-views fluent-tabs {
+	z-index: 5;
+	position: relative;
+}
+
+	::deep.content-views fluent-tabs::part(activeIndicator) {
+		position: relative;
+		top: 6px;
+		width: 2rem;
+	}
+
+
+::deep.content-views fluent-tab svg {
+	margin-right: 3px;
+	fill: var(--neutral-foreground-rest) !important;
+}
+
+::deep.content-views fluent-tab:first-child {
+	padding-left: 0 !important;
+}

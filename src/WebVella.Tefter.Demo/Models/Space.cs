@@ -7,10 +7,10 @@ public class Space
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
-
+	public int Position { get; set; }
 	public bool IsPrivate { get; set; }
 
-	public List<SpaceItem> Items { get; set; } = new();
+	public List<SpaceData> DataItems { get; set; } = new();
 
 	public Color IconColor
 	{

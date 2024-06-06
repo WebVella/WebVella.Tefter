@@ -1,6 +1,20 @@
 ﻿namespace WebVella.Tefter.Demo;
 
-public static class WvConstants
+public static partial class WvConstants
 {
-	public static string ThemeLocalKey { get; set; } = "theme";
+	public static string UISettingsLocalKey { get; set; } = "wvui";
+
+	public static CultureInfo Culture = new CultureInfo("bg-BG");
+	public static CultureInfo NumberCulture = new CultureInfo("en-US");
+	public static string TimeZoneName = "Europe/Sofia";
+	public const string DateFormat = "dd.MM.yyyy";
+	public const string HourFormat = "HH:mm";
+	public const string DateFormatUrl = "yyyy-MM-dd";
+	public const string YearMonthFormatUrl = "yyyy-MM";
+	public const string DateHourFormat = "dd MMM yyyy HH:mm";
+	public const string DateTimeFormat = "dd MMM yyyy HH:mm:ss";
+	public const string NumberFormat = "G0";
+	public static int PageSize { get; set; } = 10;
+	public static int CardPageSize { get; set; } = 20;
+
 }

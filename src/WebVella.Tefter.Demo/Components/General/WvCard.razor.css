@@ -1,0 +1,28 @@
+﻿::deep.wv-card fluent-card {
+	display: flex;
+}
+	::deep.wv-card fluent-card .icon {
+		flex:0 0 48px;
+	}
+
+	::deep.wv-card fluent-card .icon svg {
+		width: 32px !important;
+	}
+
+	::deep.wv-card .meta {
+		display: flex;
+		flex-flow: column;
+	}
+
+::deep.wv-card .meta .title{
+	font-size:1.25em;
+}
+
+		::deep.wv-card .meta .description {
+			font-size: 0.85em;
+		}
+
+::deep.wv-card.clickable fluent-card:hover {
+	cursor: pointer;
+	background: var(--neutral-fill-hover);
+}

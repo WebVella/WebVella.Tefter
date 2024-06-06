@@ -18,6 +18,8 @@ else if (_isLoading)
 else
 {
 	<CascadingValue Value="@this" Name="WvState" TValue="WvState" IsFixed="true">
-		@ChildContent
+		<div class="@(_sidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
+			@ChildContent
+		</div>
 	</CascadingValue>
 }

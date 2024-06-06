@@ -6,16 +6,15 @@
 .content-toolbar-left,
 .content-toolbar-right {
 	flex:0 0 auto;
-	padding: 0 var(--wv-content-padding);
 	height: 40px;
 	display: inline-grid;
 	grid-gap: 10px;
 }
 
 .content-toolbar-left {
-	grid-template-columns: auto auto auto auto auto auto;
+	grid-template-columns: auto auto auto auto;
 }
 
 .content-toolbar-right {
-	grid-template-columns: auto;
+	grid-template-columns: auto auto auto;
 }

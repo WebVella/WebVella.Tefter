@@ -6,6 +6,14 @@
 		padding-right:10px;
 	}
 
+::deep .fluent-presence-badge {
+	font-size: 12px;
+
+}
+::deep .fluent-persona .initials {
+	background: var(--neutral-base-color) !important;
+}
+
 ::deep.usernav .stealth::part(control) {
 	background: var(--neutral-layer-3);
 }

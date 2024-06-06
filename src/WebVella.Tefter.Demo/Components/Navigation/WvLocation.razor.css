@@ -32,11 +32,14 @@
 ::deep.location .stealth:hover::part(control) {
 	background: var(--neutral-fill-stealth-hover);
 }
-
+::deep.location fluent-breadcrumb-item {
+	color: var(--neutral-base-color);
+	font-size:13px;
+}
 ::deep.location fluent-breadcrumb-item::part(separator) {
 	fill: var(--neutral-fill-strong-rest) !important;
-	padding-left:3px;
-	padding-right:3px;
+	padding-left: 3px;
+	padding-right: 3px;
 }
 /*::deep.location .stealth svg {
 	fill: var(--neutral-fill-inverse-rest) !important;
