@@ -49,7 +49,7 @@ internal class DbUtility
         Func<DbDateColumn, string> dateDefaultValueFunc = (column) =>
         {
             if (column.AutoDefaultValue)
-                return "now()";
+                return Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
 
             if (column.DefaultValue is null)
                 return "NULL";
@@ -60,7 +60,7 @@ internal class DbUtility
         Func<DbDateTimeColumn, string> dateTimeDefaultValueFunc = (column) =>
         {
             if (column.AutoDefaultValue)
-                return "now()";
+                return Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
 
             if (column.DefaultValue is null)
                 return "NULL";
@@ -71,7 +71,7 @@ internal class DbUtility
         Func<DbGuidColumn, string> guidDefaultValueFunc = (column) =>
         {
             if (column.AutoDefaultValue)
-                return "uuid_generate_v1()";
+                return Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
 
             if (column.DefaultValue is null)
                 return "NULL";
@@ -89,7 +89,7 @@ internal class DbUtility
 
         Func<DbIdColumn, string> tableIdDefaultValueFunc = (column) =>
         {
-            return "uuid_generate_v1()";
+            return Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
         };
 
         return column switch
@@ -137,7 +137,7 @@ internal class DbUtility
             if (string.IsNullOrWhiteSpace(defaultValue))
                 return null;
 
-            if (defaultValue == "now()")
+            if (defaultValue == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE)
                 return null;
 
             var processedDefaultValue = defaultValue
@@ -152,7 +152,7 @@ internal class DbUtility
             if (string.IsNullOrWhiteSpace(defaultValue))
                 return null;
 
-            if (defaultValue == "now()")
+            if (defaultValue == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE)
                 return null;
 
             var processedDefaultValue = defaultValue
@@ -167,7 +167,7 @@ internal class DbUtility
             if (string.IsNullOrWhiteSpace(defaultValue))
                 return null;
 
-            if (defaultValue == "uuid_generate_v1()")
+            if (defaultValue == Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE)
                 return null;
 
             var processedDefaultValue = defaultValue

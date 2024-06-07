@@ -3,4 +3,5 @@
 public record DbDateTimeColumn : DbColumnWithAutoDefaultValue
 {
     public override DbType Type => DbType.DateTime;
+    internal override string DatabaseColumnType => "TIMESTAMPTZ";
 }

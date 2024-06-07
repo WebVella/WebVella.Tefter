@@ -15,6 +15,9 @@ internal class Constants
     public const int DB_MAX_COLUMN_NAME_LENGTH = 50;
     public const string DB_NAME_VALIDATION_PATTERN = @"^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
 
+    public const string DB_GUID_COLUMN_AUTO_DEFAULT_VALUE = "uuid_generate_v1()";
+    public const string DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE = "clock_timestamp()";
+
     public const string DB_TABLE_ID_COLUMN_NAME = "id";
     public const string DB_OPERATION_LOCK_KEY = "DB_OPERATION_LOCK_KEY";
     public static DateTime DB_INITIAL_LAST_COMMITED = new DateTime(2000,1,1,0,0,0,0,DateTimeKind.Utc);

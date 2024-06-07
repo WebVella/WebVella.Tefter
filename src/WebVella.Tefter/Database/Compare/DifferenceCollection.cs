@@ -4,6 +4,7 @@ public sealed record DifferenceCollection : IEnumerable
 {
     private AsyncLock _lock;
     private readonly List<Difference> _differences;
+    public int Count => _differences.Count;
 
     public Difference this[int i]
     {
@@ -69,9 +70,5 @@ public sealed record DifferenceCollection : IEnumerable
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
-    }
-    public void OrderForExecution()
-    {
-        //TODO implement
     }
 }

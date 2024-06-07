@@ -7,31 +7,25 @@ public partial class DatabaseBuilderTests : BaseTest
     {
         using (await locker.LockAsync())
         {
-            const string tableName = "test_table";
-            Guid tableId = Guid.NewGuid();
-            Guid appId = Guid.NewGuid();
-            Guid dpId = Guid.NewGuid();
 
             var tables = DatabaseBuilder.New()
-                .NewTable(tableId, tableName, table =>
+                .NewTable("data1", table =>
                 {
                     table
-                        .WithDataProviderId(dpId)
-                        .WithApplicationId(appId)
                         .WithColumns(columns =>
                         {
                             columns
 
-                                #region <--- Id --->
+                            #region <--- Id --->
                                 .AddTableIdColumn()
-                                #endregion
+                            #endregion
 
-                                #region <--- AutoInc --->
+                            #region <--- AutoInc --->
                                 .AddAutoIncrementColumn("auto_inc1")
                                 .AddAutoIncrementColumn("auto_inc2")
-                                #endregion
+                            #endregion
 
-                                #region <--- Guid --->
+                            #region <--- Guid --->
                                 .AddGuidColumn("guid_nullable_with_auto_default", c =>
                                 {
                                     c.WithAutoDefaultValue()
@@ -66,9 +60,9 @@ public partial class DatabaseBuilderTests : BaseTest
                                 .AddGuidColumn("guid_nullable_without_default_value", c => { c.Nullable(); })
                                 //this should provide exception
                                 //.AddNewGuidColumn("guid_not_nullable_without_default_value", c => { c.Nullable(); }) 
-                                #endregion
+                            #endregion
 
-                                #region <--- Boolean --->
+                            #region <--- Boolean --->
                                 .AddBooleanColumn("bool_not_nullable_with_default_true", c =>
                                 {
                                     c.WithDefaultValue(true);
@@ -91,9 +85,9 @@ public partial class DatabaseBuilderTests : BaseTest
                                 })
                                 //this should provide exception
                                 //.AddNewBooleanColumn("bool_not_nullable_without_default", c => { c.NotNullable(); })  
-                                #endregion
+                            #endregion
 
-                                #region <--- Number --->
+                            #region <--- Number --->
                                 .AddNumberColumn("number_nullable_with_default", c =>
                                 {
                                     c.WithDefaultValue(2)
@@ -109,9 +103,9 @@ public partial class DatabaseBuilderTests : BaseTest
                                 })
                                 //this should provide exception
                                 //.AddNewNumberColumn("number_not_nullable_without_default", c => { c.NotNullable(); }) 
-                                #endregion
+                            #endregion
 
-                                #region <--- Date --->
+                            #region <--- Date --->
                                 .AddDateColumn("date_nullable_with_auto_default", c =>
                                 {
                                     c.WithAutoDefaultValue()
@@ -149,9 +143,9 @@ public partial class DatabaseBuilderTests : BaseTest
                                 })
                                 //this should provide exception
                                 //.AddNewDateColumn("date_not_nullable_without_default_value", c => { c.NotNullable(); }) 
-                                #endregion
+                            #endregion
 
-                                #region <--- DateTime --->
+                            #region <--- DateTime --->
                                 .AddDateTimeColumn("datetime_nullable_with_auto_default", c =>
                                 {
                                     c.WithAutoDefaultValue()
@@ -189,9 +183,9 @@ public partial class DatabaseBuilderTests : BaseTest
                                 })
                                 //this should provide exception
                                 //.AddNewDateTimeColumn("datetime_not_nullable_without_default_value", c => { c.NotNullable(); }) 
-                                #endregion
+                            #endregion
 
-                                #region <--- Text --->
+                            #region <--- Text --->
                                 .AddTextColumn("test_nullable_with_default", c =>
                                 {
                                     c.WithDefaultValue("default1")
@@ -206,9 +200,9 @@ public partial class DatabaseBuilderTests : BaseTest
                                 {
                                     c.Nullable();
                                 });
-                                //this should provide exception
-                                //.AddNewTextColumn("text_not_nullable_without_default", c => { c.NotNullable(); }) 
-                                #endregion
+                            //this should provide exception
+                            //.AddNewTextColumn("text_not_nullable_without_default", c => { c.NotNullable(); }) 
+                            #endregion
 
                         })
                         .WithIndexes(indexes =>
@@ -222,15 +216,69 @@ public partial class DatabaseBuilderTests : BaseTest
                         .WithConstraints(constraints =>
                         {
                             constraints
-                                .AddPrimaryKeyConstraint("pk_id", c => c.WithColumns("id"))
-                                .AddUniqueConstraint("ux_text_not_nullable_with_default", c => c.WithColumns("text_not_nullable_with_default"));
+                                .AddPrimaryKeyConstraint("pk_data1_id", c => c.WithColumns("id"))
+                                .AddUniqueKeyConstraint("ux_text_not_nullable_with_default", c => c.WithColumns("text_not_nullable_with_default"));
                         });
+                })
+                 .NewTable("data2", table =>
+                 {
+                     table
+                         .WithColumns(columns =>
+                         {
+                             columns
+                             .AddTableIdColumn()
+                             .AddTextColumn("text", column =>
+                             {
+                                 column
+                                    .WithDefaultValue("test")
+                                    .NotNullable();
+                             });
+
+                         })
+                         .WithIndexes(indexes =>
+                         {
+                             indexes
+                                .AddBTreeIndex("idx_data2_id", i => i.WithColumns("id"));
+                         })
+                         .WithConstraints(constraints =>
+                         {
+                             constraints
+                                 .AddPrimaryKeyConstraint("pk_data2_id", c => c.WithColumns("id"));
+                         });
+                 })
+                 .NewTable("rel_table", table =>
+                 {
+                     table
+                         .WithColumns(columns =>
+                         {
+                             columns
+                             .AddGuidColumn("origin_id", column => { column.NotNullable(); })
+                             .AddGuidColumn("target_id", column => { column.NotNullable(); });
+                         })
+                         .WithConstraints(constraints =>
+                         {
+                             constraints
+                                 .AddPrimaryKeyConstraint("pk_rel_table", c => c.WithColumns("origin_id", "target_id"))
+                                 .AddUniqueKeyConstraint("ux_rel_table", c => c.WithColumns("origin_id", "target_id"))
+                                 .AddForeignKeyConstraint("fk_rel_table_data1", c => {
+                                     c.WithColumns("origin_id")
+                                     .WithForeignTable("data1")
+                                     .WithForeignColumns("id");
+                                  })
+                                  .AddForeignKeyConstraint("fk_rel_table_data2", c => {
+                                      c.WithColumns("target_id")
+                                      .WithForeignTable("data2")
+                                      .WithForeignColumns("id");
+                                  });
+                         });
                  })
                 .Build();
 
             var tables2 = DatabaseBuilder.New(tables).Build();
 
             var differences = DbObjectsComparer.Compare(null, tables);
+
+            var sql = DbSqlGenerator.GenerateUpdateScript(differences);
         }
     }
 

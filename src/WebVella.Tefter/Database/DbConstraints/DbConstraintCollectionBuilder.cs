@@ -16,7 +16,7 @@ public class DbConstraintCollectionBuilder
 
     #region <--- add unique --->
 
-    public DbConstraintCollectionBuilder AddUniqueConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
+    public DbConstraintCollectionBuilder AddUniqueKeyConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
     {
         DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _databaseBuilder);
 
@@ -27,7 +27,7 @@ public class DbConstraintCollectionBuilder
         return this;
     }
 
-    internal DbUniqueKeyConstraintBuilder AddUniqueConstraintBuilder(string name, Action<DbUniqueKeyConstraintBuilder> action = null)
+    internal DbUniqueKeyConstraintBuilder AddUniqueKeyConstraintBuilder(string name, Action<DbUniqueKeyConstraintBuilder> action = null)
     {
         DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _databaseBuilder);
 

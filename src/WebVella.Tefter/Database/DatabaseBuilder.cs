@@ -150,7 +150,7 @@ public class DatabaseBuilder
                         case DbUniqueKeyConstraint c:
                             {
                                 constrCollectionBuilder
-                                    .AddUniqueConstraintBuilder(c.Name)
+                                    .AddUniqueKeyConstraintBuilder(c.Name)
                                     .WithColumns(c.Columns.ToArray());
                             }
                             break;
@@ -173,6 +173,11 @@ public class DatabaseBuilder
         return builder;
     }
 
+    public DatabaseBuilder NewTable( string name, Action<DbTableBuilder> action)
+    {
+        return NewTable(Guid.NewGuid(),name, action);
+    }
+
     public DatabaseBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action)
     {
         if (!DbUtility.IsValidDbObjectName(name, out string error))
@@ -184,8 +189,11 @@ public class DatabaseBuilder
             throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
 
         builder = new DbTableBuilder(id, name, this);
+
         action(builder);
+
         _builders.Add(builder);
+
         return this;
     }
 

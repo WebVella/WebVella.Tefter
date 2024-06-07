@@ -10,6 +10,7 @@ public record DbTable : DbObject
     public Guid Id { get { return _meta.Id; } init { _meta.Id = value; } }
     public Guid? ApplicationId { get { return _meta.ApplicationId; } init { _meta.ApplicationId = value; } }
     public Guid? DataProviderId { get { return _meta.DataProviderId; } init { _meta.DataProviderId = value; } }
+    internal DateTime LastCommited { get { return _meta.LastCommited; } set { _meta.LastCommited = value; } }
 
     #endregion
 
@@ -20,6 +21,12 @@ public record DbTable : DbObject
     public DbIndexCollection Indexes { get; init; } = new();
 
     #endregion
+
+    internal string GetMetaJson(DateTime lastCommited)
+    {
+        var meta = _meta with { LastCommited = lastCommited };
+        return JsonSerializer.Serialize(meta);
+    }
 
     //#region <=== Columns Management ===>
 

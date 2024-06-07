@@ -69,7 +69,8 @@ internal static class DbObjectsComparer
                 differences.AddRange(diffs);
             }
         }
-        return differences;
+        
+        return Process(differences);
     }
 
     private static DifferenceCollection Compare(DbTable initialTable, DbTable modifiedTable)
@@ -258,7 +259,7 @@ internal static class DbObjectsComparer
                     ObjectType = DifferenceObjectType.Column,
                     TableName = tableName,
                     Object = modifiedColumn,
-                    ObjectName= modifiedColumn.Name,
+                    ObjectName = modifiedColumn.Name,
                     Descriptions = new List<string> {
                         $"Attempt to update of columns with same id({modifiedColumn.Id}) from type '{GetDbObjectTypeName(initialColumn)}' to '{GetDbObjectTypeName(modifiedColumn)}'. " +
                         $"It's not supported. These columns will not be compared."
@@ -645,5 +646,72 @@ internal static class DbObjectsComparer
             default:
                 throw new DbException($"Not supported object type: {obj.GetType()}");
         }
+    }
+
+    //remove duplicates and sort in order for SQL script generation
+    private static DifferenceCollection Process(DifferenceCollection differences)
+    {
+        DifferenceCollection result = new DifferenceCollection();
+
+        //remove duplicated records
+        Dictionary<string, Difference> dict = new Dictionary<string, Difference>();
+        foreach (var diff in differences)
+        {
+            string key = $"{diff.Type}{diff.ObjectType}{diff.TableName}{diff.ObjectName}";
+            if (!dict.ContainsKey(key))
+                dict[key] = diff;
+        }
+
+        List<Difference> filteredList = dict.Values.ToList();
+
+        //remove index
+        result.AddRange(filteredList
+            .Where(x => x.Type == DifferenceActionType.Remove &&
+                    x.ObjectType == DifferenceObjectType.Index));
+
+        //remove constraints
+        result.AddRange(filteredList
+            .Where(x => x.Type == DifferenceActionType.Remove &&
+                    x.ObjectType == DifferenceObjectType.Constraint));
+
+        //remove columns
+        result.AddRange(filteredList
+            .Where(x => x.Type == DifferenceActionType.Remove &&
+                    x.ObjectType == DifferenceObjectType.Column));
+
+        //remove tables
+        result.AddRange(filteredList
+            .Where(x => x.Type == DifferenceActionType.Remove &&
+                x.ObjectType == DifferenceObjectType.Table));
+
+        //add tables
+        result.AddRange(filteredList
+          .Where(x => x.Type == DifferenceActionType.Add &&
+                  x.ObjectType == DifferenceObjectType.Table));
+
+        //add columns
+        result.AddRange(filteredList
+          .Where(x => x.Type == DifferenceActionType.Add &&
+                  x.ObjectType == DifferenceObjectType.Column));
+
+        //add indexes
+        result.AddRange(filteredList
+          .Where(x => x.Type == DifferenceActionType.Add &&
+                  x.ObjectType == DifferenceObjectType.Index));
+
+        //add constraints
+        result.AddRange(filteredList
+          .Where(x => x.Type == DifferenceActionType.Add &&
+                  x.ObjectType == DifferenceObjectType.Constraint));
+
+        //update columns
+        result.AddRange(filteredList
+          .Where(x => x.Type == DifferenceActionType.Update &&
+                  x.ObjectType == DifferenceObjectType.Column));
+
+        if (filteredList.Count != result.Count)
+            throw new DbException("Process of processing differences result with incorrect count. This should not happen.");
+            
+        return result;
     }
 }

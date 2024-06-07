@@ -2,7 +2,11 @@
 
 internal sealed record DbColumnMeta
 {
+    [JsonPropertyName("id")]
     public Guid Id { get; set; }
+
+    [JsonInclude]
+    [JsonPropertyName("last_commited")]
     internal DateTime LastCommited { get; set; } = Constants.DB_INITIAL_LAST_COMMITED;
 
     [JsonConstructor]
