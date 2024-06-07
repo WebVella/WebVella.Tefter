@@ -34,7 +34,7 @@
 }
 ::deep.location fluent-breadcrumb-item {
 	color: var(--neutral-base-color);
-	font-size:13px;
+	font-size: var(--type-ramp-minus-1-font-size);
 }
 ::deep.location fluent-breadcrumb-item::part(separator) {
 	fill: var(--neutral-fill-strong-rest) !important;

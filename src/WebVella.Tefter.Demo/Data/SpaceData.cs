@@ -4,7 +4,7 @@ public static partial class SampleData
 {
 	private static List<Space> _spaces = null;
 	private static Dictionary<Guid, Space> _spaceDict = null;
-	private static Dictionary<Guid, SpaceData> _spaceDataDict = null;
+	private static Dictionary<Guid, SpaceDataset> _spaceDataDict = null;
 	private static Dictionary<Guid, SpaceView> _spaceViewDict = null;
 
 	public static List<Space> GetSpaces()
@@ -59,11 +59,11 @@ public static partial class SampleData
 			space.Position = i + 1;
 			for (int j = 0; j < 7; j++)
 			{
-				var spaceData = SpaceData.GetFaker().Generate();
+				var spaceData = SpaceDataset.GetFaker().Generate();
 				spaceData.Id = spaceDataIds[(i * 7) + j];
 				spaceData.SpaceId = space.Id;
 				spaceData.Position = j + 1;
-
+				spaceData.SpaceName = space.Name;
 				for (int f = 0; f < 4; f++)
 				{
 					var spaceView = SpaceView.GetFaker().Generate();
@@ -71,6 +71,11 @@ public static partial class SampleData
 					spaceView.Position = f;
 					spaceView.SpaceId = space.Id;
 					spaceView.SpaceDataId = spaceData.Id;
+					spaceView.SpaceName = space.Name;
+					spaceView.SpaceDataName = spaceData.Name;
+
+					spaceView.Meta = GetSpaceViewMeta(spaceView.Id);
+
 					_spaceViewDict[spaceView.Id] = spaceView;
 					spaceData.Views.Add(spaceView);
 				}
@@ -87,6 +92,73 @@ public static partial class SampleData
 		return _spaces;
 	}
 
+	public static SpaceViewMeta GetSpaceViewMeta(Guid spaceViewId)
+	{
+		var result = new SpaceViewMeta();
+		var index = 1;
+		result.Columns.Add(new SpaceViewColumn
+		{
+			Id = new Guid("79e3eadb-be66-44aa-a3ce-dac7b1774f27"),
+			SpaceViewId = spaceViewId,
+			AppColumnName = "name",
+			Title = "Name",
+			Position = index,
+			DataType = ColumnType.Name,
+			IsVisible = true,
+			CellComponent = "WebVella.Tefter.Demo.Components.WvCellText",
+			CellAssembly = "WebVella.Tefter.Demo"
+
+		});
+		index++;
+		result.Columns.Add(new SpaceViewColumn
+		{
+			Id = new Guid("25677090-baee-49cc-a314-fd71c88ba1ee"),
+			SpaceViewId = spaceViewId,
+			AppColumnName = "city",
+			Title = "City",
+			Position = index,
+			DataType = ColumnType.Text,
+			IsVisible = true
+		});
+		index++;
+		result.Columns.Add(new SpaceViewColumn
+		{
+			Id = new Guid("2056384e-8e89-47fb-bcc1-e4acc1281c4d"),
+			SpaceViewId = spaceViewId,
+			AppColumnName = "email",
+			Title = "Email",
+			Position = index,
+			DataType = ColumnType.Email,
+			IsVisible = true
+		});
+		index++;
+		result.Columns.Add(new SpaceViewColumn
+		{
+			Id = new Guid("6278f849-0a16-430a-a933-577525f11304"),
+			SpaceViewId = spaceViewId,
+			AppColumnName = "age",
+			Title = "Age",
+			Position = index,
+			DataType = ColumnType.Numeric,
+			IsVisible = true
+		});
+		index++;
+		result.Columns.Add(new SpaceViewColumn
+		{
+			Id = new Guid("9331de72-47c7-4941-9105-985d4cfec0e3"),
+			SpaceViewId = spaceViewId,
+			AppColumnName = "wage",
+			Title = "Wage",
+			Position = index,
+			DataType = ColumnType.Currency,
+			IsVisible = true,
+			Width = "80px"
+		});
+		index++;
+
+		return result;
+	}
+
 	public static Space GetSpaceById(Guid id)
 	{
 		if (_spaceDict is null) GetSpaces();
@@ -94,7 +166,7 @@ public static partial class SampleData
 		return _spaceDict.ContainsKey(id) ? _spaceDict[id] : null;
 	}
 
-	public static SpaceData GetSpaceDataById(Guid id)
+	public static SpaceDataset GetSpaceDataById(Guid id)
 	{
 		if (_spaceDataDict is null) GetSpaces();
 
@@ -115,12 +187,12 @@ public static partial class SampleData
 		foreach (var viewId in _spaceViewDict.Keys)
 		{
 			var view = _spaceViewDict[viewId];
-			if(!String.IsNullOrWhiteSpace(searchString) && !view.Name.ToLowerInvariant().Contains(searchString))
+			if (!String.IsNullOrWhiteSpace(searchString) && !view.Name.ToLowerInvariant().Contains(searchString))
 				continue;
 
 			if (view.IsBookmarked)
 				result.Add(view);
 		}
-		return result.Skip(RenderUtils.CalcSkip(pageSize,page)).Take(pageSize).ToList();
+		return result.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
 	}
 }

@@ -4,28 +4,34 @@
 <div class="content-toolbar">
 	<div class="content-toolbar-left">
 		<FluentSearch />
-		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick">
-@* 			Filters *@
+		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters">
 			<FluentIcon Value="@(new Icons.Regular.Size20.Filter())" Slot="start" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
-		<FluentButton Id="view-sort-selector" OnClick="OnSortClick">
-@* 			Sorts *@
+		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort">
 			<FluentIcon Value="@(new Icons.Regular.Size20.ArrowSort())" Slot="start" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
-		<FluentButton Id="view-action-selector" OnClick="OnActionClick">
-			Selected
-			<span slot="start">
-				<FluentBadge Appearance="Appearance.Accent">12</FluentBadge>
-			</span>
+		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties">
+			<FluentIcon Value="@(new Icons.Regular.Size20.TableSettings())"/>
 		</FluentButton>
 	</div>
 	<div class="content-toolbar-right">
-		<FluentButton Id="view-columns-selector" OnClick="OnColumnClick">
-@* 			Columns *@
-			<FluentIcon Value="@(new Icons.Regular.Size20.Column())" Slot="start" />
-			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+		<FluentButton Id="view-action-selector" OnClick="OnActionClick">
+			Actions
+			@if (_selectedRowsCount > 0)
+			{
+				<span slot="start">
+					<FluentBadge Appearance="Appearance.Accent">@_selectedRowsCount</FluentBadge>
+				</span>
+			}
+			else
+			{
+				<FluentIcon Value="@(new Icons.Regular.Size20.Connector())" Slot="start" />
+			}
+		</FluentButton>
+		<FluentButton Id="view-export-selector" OnClick="OnExportClick">
+			<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" />
 		</FluentButton>
 		<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick">
 			<FluentIcon Value="@(new Icons.Regular.Size20.Options())" />
@@ -34,7 +40,8 @@
 </div>
 <WvViewFilterSelector @ref="_filterSelector" FilterChanged="OnFilterChange" />
 <WvViewSortSelector @ref="_sortSelector" SortChanged="OnSortChange" />
-<WvViewColumnSelector @ref="_columnSelector" ColumnChanged="OnColumnChange" />
+<WvGridPropertiesSelector @ref="_gridPropertiesSelector" ColumnChanged="OnGridPropertiesChange" />
 <WvViewSettingSelector @ref="_settingSelector" SettingChanged="OnSettingChange" />
-<WvViewActionSelector @ref="_actionSelector" ActionChanged="OnActionChange" />
+<WvViewActionSelector @ref="_actionSelector" ActionChanged="OnActionChange" Rows="_selectedRows" RowsCount="_selectedRowsCount"/>
+<WvViewExportSelector @ref="_exportSelector" ExportChanged="OnExportChange" Rows="_selectedRows" RowsCount="_selectedRowsCount"/>
 

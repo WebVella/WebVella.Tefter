@@ -3,7 +3,7 @@ namespace WebVella.Tefter.Demo.Components;
 public partial class WvViewSortSelector : WvBaseComponent
 {
 	[Parameter]
-	public EventCallback<ViewSortChangedEventArgs> SortChanged { get; set; }
+	public EventCallback<SpaceViewSortChangedEventArgs> SortChanged { get; set; }
 
 	private bool _open = false;
 	private bool _selectorLoading = false;

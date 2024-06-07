@@ -2,16 +2,16 @@
 
 public partial interface IWvService
 {
-	List<DataSource> GetSpaceViewData(Guid spaceViewId);
+	List<DataRow> GetSpaceViewData(Guid spaceViewId);
 	SpaceView SetSpaceViewBookmarkState(Guid spaceViewId, bool isBookmarked);
 	List<SpaceView> GetBookmaredByUserId(string search, Guid userId, int page, int pageSize);
 }
 
 public partial class WvService : IWvService
 {
-	public List<DataSource> GetSpaceViewData(Guid spaceViewId)
+	public List<DataRow> GetSpaceViewData(Guid spaceViewId)
 	{ 
-		return SampleData.GetDataSource();	
+		return SampleData.GetData();	
 	}
 
 	public SpaceView SetSpaceViewBookmarkState(Guid spaceViewId,bool isBookmarked){ 

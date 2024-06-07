@@ -7,9 +7,10 @@ public partial class WvSpaceViewToolbar : WvBaseComponent
 	{
 		await _actionSelector.ToggleSelector();
 	}
-	private void OnActionChange(ViewActionChangedEventArgs args)
+	private void OnActionChange(SpaceViewActionChangedEventArgs args)
 	{
 
 	}
+
 
 }

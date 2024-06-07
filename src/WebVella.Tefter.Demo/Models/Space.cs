@@ -10,8 +10,12 @@ public class Space
 	public int Position { get; set; }
 	public bool IsPrivate { get; set; }
 
-	public List<SpaceData> DataItems { get; set; } = new();
+	public List<SpaceDataset> DataItems { get; set; } = new();
 
+	public UserPermissions Permissions { get; set; } = new(); //what the current user can do in the space
+
+
+	//Get only
 	public Color IconColor
 	{
 		get
@@ -30,11 +34,11 @@ public class Space
 		}
 	}
 
-	public DateTime LastUsedByUser { get; set; }
-
+	//Actions
 	[JsonIgnore]
 	public Action OnSelect { get; set; }
 
+	//Faker
 	public static Faker<Space> GetFaker()
 	{
 		var faker = new Faker<Space>()

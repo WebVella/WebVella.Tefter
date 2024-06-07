@@ -7,14 +7,18 @@
 .content-toolbar-right {
 	flex:0 0 auto;
 	height: 40px;
-	display: inline-grid;
-	grid-gap: 10px;
+	display: inline-flex;
+	align-items:center;
 }
 
-.content-toolbar-left {
-	grid-template-columns: auto auto auto auto;
+::deep .content-toolbar-left > *{
+	margin-right:5px;
 }
 
-.content-toolbar-right {
-	grid-template-columns: auto auto auto;
+.content-toolbar-right{
+	justify-content: end;
+}
+
+::deep .content-toolbar-right > * {
+	margin-left: 5px;
 }

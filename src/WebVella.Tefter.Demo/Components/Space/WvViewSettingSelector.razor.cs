@@ -3,7 +3,7 @@ namespace WebVella.Tefter.Demo.Components;
 public partial class WvViewSettingSelector : WvBaseComponent
 {
 	[Parameter]
-	public EventCallback<ViewSettingChangedEventArgs> SettingChanged { get; set; }
+	public EventCallback<SpaceViewSettingChangedEventArgs> SettingChanged { get; set; }
 
 	private bool _open = false;
 	private bool _selectorLoading = false;

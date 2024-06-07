@@ -3,7 +3,7 @@ namespace WebVella.Tefter.Demo.Components;
 public partial class WvSpaceViewNav : WvBaseComponent
 {
 	private Space space = null;
-	private SpaceData spaceData = null;
+	private SpaceDataset spaceData = null;
 	private SpaceView spaceView = null;
 	private List<MenuItem> _menuItems = new List<MenuItem>();
 	private string _activeTabId = null;

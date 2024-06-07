@@ -3,7 +3,7 @@ namespace WebVella.Tefter.Demo.Components;
 public partial class WvViewFilterSelector : WvBaseComponent
 {
 	[Parameter]
-	public EventCallback<ViewFilterChangedEventArgs> FilterChanged { get; set; }
+	public EventCallback<SpaceViewFilterChangedEventArgs> FilterChanged { get; set; }
 
 	private bool _open = false;
 	private bool _selectorLoading = false;

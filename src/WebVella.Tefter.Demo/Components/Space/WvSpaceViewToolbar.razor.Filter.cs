@@ -7,7 +7,7 @@ public partial class WvSpaceViewToolbar : WvBaseComponent
 	{
 		await _filterSelector.ToggleSelector();
 	}
-	private void OnFilterChange(ViewFilterChangedEventArgs args){ 
+	private void OnFilterChange(SpaceViewFilterChangedEventArgs args){ 
 	
 	}
 

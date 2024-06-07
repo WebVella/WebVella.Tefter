@@ -19,7 +19,7 @@ else
 			<FluentGridItem xs="3">
 				<WvCard OnClick="@(()=> cardClicked(item))"
 						Icon="@item.Icon"
-						Title="@item.Name" Description="@("Space > SpaceData")" />
+						Title="@item.Name" Description="@($"{item.SpaceName} > {item.SpaceDataName}")" />
 			</FluentGridItem>
 		}
 	</FluentGrid>

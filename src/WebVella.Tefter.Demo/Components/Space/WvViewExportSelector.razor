@@ -1,0 +1,24 @@
+﻿@namespace WebVella.Tefter.Demo.Components
+@inherits WvBaseComponent
+<div class="view-export-selector-menu">
+	<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector">
+		<FluentMenuItem Disabled="@(RowsCount == 0)">
+			Export Selection
+			<span slot="start">
+				<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+			</span>
+			@if (RowsCount > 0)
+			{
+				<span slot="end">
+					<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@RowsCount</FluentBadge>
+				</span>
+			}
+		</FluentMenuItem>
+		<FluentMenuItem>
+			Export All data
+			<span slot="start">
+				<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+			</span>
+		</FluentMenuItem>
+	</FluentMenu>
+</div>

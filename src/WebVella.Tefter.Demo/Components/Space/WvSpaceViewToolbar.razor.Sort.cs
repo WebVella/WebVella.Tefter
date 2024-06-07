@@ -7,7 +7,7 @@ public partial class WvSpaceViewToolbar : WvBaseComponent
 	{
 		await _sortSelector.ToggleSelector();
 	}
-	private void OnSortChange(ViewSortChangedEventArgs args)
+	private void OnSortChange(SpaceViewSortChangedEventArgs args)
 	{
 
 	}
