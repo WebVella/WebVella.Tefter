@@ -33,7 +33,7 @@ public class DbDateTimeColumnBuilder : DbColumnBuilder
         _autoDefaultValue = true;
         return this;
     }
-    public DbDateTimeColumnBuilder WithNoAutoDefaultValue()
+    public DbDateTimeColumnBuilder WithoutAutoDefaultValue()
     {
         _autoDefaultValue = false;
         return this;

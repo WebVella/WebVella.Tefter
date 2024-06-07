@@ -36,7 +36,7 @@ public class DbDateColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbDateColumnBuilder WithNoAutoDefaultValue()
+    public DbDateColumnBuilder WithoutAutoDefaultValue()
     {
         _autoDefaultValue = false;
         return this;

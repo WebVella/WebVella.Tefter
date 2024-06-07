@@ -36,7 +36,7 @@ public class DbGuidColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbGuidColumnBuilder WithNoAutoDefaultValue()
+    public DbGuidColumnBuilder WithoutAutoDefaultValue()
     {
         _autoDefaultValue = false;
         return this;

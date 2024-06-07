@@ -42,7 +42,7 @@ public class DatabaseBuilder
                                     .WithDefaultValue((Guid?)c.DefaultValue);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
-                                if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithNoAutoDefaultValue();
+                                if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
                             }
                             break;
                         case DbBooleanColumn c:
@@ -70,7 +70,7 @@ public class DatabaseBuilder
                                     .WithDefaultValue((DateOnly?)c.DefaultValue);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
-                                if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithNoAutoDefaultValue();
+                                if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
                             }
                             break;
                         case DbDateTimeColumn c:
@@ -80,7 +80,7 @@ public class DatabaseBuilder
                                     .WithDefaultValue((DateTime?)c.DefaultValue);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
-                                if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithNoAutoDefaultValue();
+                                if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
                             }
                             break;
                         case DbTextColumn c:
