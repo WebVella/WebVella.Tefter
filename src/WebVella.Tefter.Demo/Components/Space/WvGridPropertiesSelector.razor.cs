@@ -1,15 +1,9 @@
 ﻿
 namespace WebVella.Tefter.Demo.Components;
-public partial class WvViewActionSelector : WvBaseComponent
+public partial class WvGridPropertiesSelector : WvBaseComponent
 {
 	[Parameter]
-	public IEnumerable<DataRow> Rows { get; set; } = Enumerable.Empty<DataRow>();
-
-	[Parameter]
-	public int RowsCount { get; set; } = 0;
-
-	[Parameter]
-	public EventCallback<SpaceViewActionChangedEventArgs> ActionChanged { get; set; }
+	public EventCallback<GridPropertiesChangedEventArgs> ColumnChanged { get; set; }
 
 	private bool _open = false;
 	private bool _selectorLoading = false;

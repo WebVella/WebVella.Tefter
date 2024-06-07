@@ -51,9 +51,9 @@ public partial class WvState : ComponentBase
 	public Guid? ActiveSpaceId => _activeSpaceId;
 	public Guid? ActiveSpaceDataId => _activeSpaceDataId;
 	public Guid? ActiveSpaceViewId => _activeSpaceViewId;
-	public ActiveSpaceMeta GetActiveSpaceMeta()
+	public ActiveSpaceData GetActiveSpaceMeta()
 	{
-		ActiveSpaceMeta meta = new();
+		ActiveSpaceData meta = new();
 		if (_activeSpaceId is not null && _spaceDict.ContainsKey(_activeSpaceId.Value))
 			meta.Space = _spaceDict[_activeSpaceId.Value];
 

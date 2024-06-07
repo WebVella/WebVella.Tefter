@@ -1,14 +1,22 @@
 ﻿
 namespace WebVella.Tefter.Demo.Components;
-public partial class WvViewColumnSelector : WvBaseComponent
+public partial class WvViewExportSelector : WvBaseComponent
 {
 	[Parameter]
-	public EventCallback<ViewColumnChangedEventArgs> ColumnChanged { get; set; }
+	public IEnumerable<DataRow> Rows { get; set; } = Enumerable.Empty<DataRow>();
+
+	[Parameter]
+	public int RowsCount { get; set; } = 0;
+
+	[Parameter]
+	public EventCallback<SpaceViewExportChangedEventArgs> ExportChanged { get; set; }
+
 
 	private bool _open = false;
 	private bool _selectorLoading = false;
 
-	private void _init(){ 
+	private void _init()
+	{
 	}
 
 	public async Task ToggleSelector()

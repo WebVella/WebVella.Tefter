@@ -2,7 +2,7 @@
 public partial class WvLocation : WvBaseComponent
 {
 	private Space _space;
-	private SpaceData _spaceData;
+	private SpaceDataset _spaceData;
 	private SpaceView _spaceView;
 	private bool _settingsMenuVisible = false;
 	private int _ellipsisCount = 20;

@@ -1,15 +1,20 @@
 ﻿namespace WebVella.Tefter.Demo.Components;
 public partial class WvSpace : WvBaseComponent
 {
-	private Guid? _spaceViewId;
-	private IQueryable<DataSource> _dataSource = Enumerable.Empty<DataSource>().AsQueryable();
-	private IEnumerable<DataSource> _selectedItems = Enumerable.Empty<DataSource>();
+	private SpaceView _spaceView = null;
+	private IQueryable<DataRow> _data = Enumerable.Empty<DataRow>().AsQueryable();
+	private IEnumerable<DataRow> _selectedItems = Enumerable.Empty<DataRow>();
 	private bool _isGridLoading = true;
 	private bool _isMoreLoading = false;
 	private bool _allLoaded = false;
 	private int _page = 1;
 	private int _pageSize = WvConstants.PageSize;
-
+	private RenderFragment options = builder =>
+	{
+		builder.OpenElement(0, "div");
+		builder.AddContent(1, "Hello from RenderFragment!");
+		builder.CloseElement();
+	};
 	public override async ValueTask DisposeAsync()
 	{
 		WvState.ActiveSpaceDataChanged -= onSpaceDataLocation;
@@ -21,8 +26,8 @@ public partial class WvSpace : WvBaseComponent
 		if (firstRender)
 		{
 			var meta = WvState.GetActiveSpaceMeta();
-			_spaceViewId = meta.SpaceView?.Id;
-			if (_spaceViewId is not null)
+			_spaceView = meta.SpaceView;
+			if (_spaceView is not null)
 			{
 				await loadDataAsync(1);
 				WvState.ActiveSpaceDataChanged += onSpaceDataLocation;
@@ -37,7 +42,7 @@ public partial class WvSpace : WvBaseComponent
 	{
 		base.InvokeAsync(async () =>
 		{
-			if (e.SpaceView.Id == _spaceViewId) return;
+			if (e.SpaceView.Id == _spaceView.Id) return;
 
 			_isGridLoading = true;
 			await InvokeAsync(StateHasChanged);
@@ -49,19 +54,32 @@ public partial class WvSpace : WvBaseComponent
 	}
 	private async Task loadDataAsync(int page)
 	{
-		if (_spaceViewId is null) return;
-		await Task.Delay(500);
-		var alldata = WvService.GetSpaceViewData(_spaceViewId.Value).AsQueryable();
+		if (_spaceView is null) return;
+		var alldata = WvService.GetSpaceViewData(_spaceView.Id).AsQueryable();
 		if (page == 1)
 		{
-			_dataSource = Enumerable.Empty<DataSource>().AsQueryable();
+			_data = Enumerable.Empty<DataRow>().AsQueryable();
 			_allLoaded = false;
 		}
 		var skip = RenderUtils.CalcSkip(_pageSize, page);
 		var batch = alldata.Skip(RenderUtils.CalcSkip(_pageSize, page)).Take(_pageSize).AsQueryable();
-		_dataSource = _dataSource.Concat(batch);
+		foreach (var item in batch)
+		{
+			addActions(item);
+		}
+		_data = _data.Concat(batch);
 		_page = page;
 		if (batch.Count() < _pageSize) _allLoaded = true;
+	}
+
+	private void addActions(DataRow row)
+	{
+		row.OnCellDataChange = (args) => { onCellDataChanged(row, args); };
+	}
+
+	private void onCellDataChanged(DataRow row, (string, object) args)
+	{
+
 	}
 
 	private async Task _loadMoreAsync()
@@ -72,5 +90,17 @@ public partial class WvSpace : WvBaseComponent
 
 		_isMoreLoading = false;
 		await InvokeAsync(StateHasChanged);
+	}
+
+	private async Task _selectionChange(IEnumerable<DataRow> items)
+	{
+		_selectedItems = items;
+		WvState.SetSelectedRows(items);
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private async Task _onRowClick(FluentDataGridRow<DataRow> row)
+	{
+
 	}
 }

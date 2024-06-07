@@ -2,12 +2,12 @@
 public partial class WvSpaceViewToolbar : WvBaseComponent
 {
 
-	private WvViewColumnSelector _columnSelector;
-	private async Task OnColumnClick()
+	private WvGridPropertiesSelector _gridPropertiesSelector;
+	private async Task OnGridPropertiesClick()
 	{
-		await _columnSelector.ToggleSelector();
+		await _gridPropertiesSelector.ToggleSelector();
 	}
-	private void OnColumnChange(ViewColumnChangedEventArgs args)
+	private void OnGridPropertiesChange(GridPropertiesChangedEventArgs args)
 	{
 
 	}

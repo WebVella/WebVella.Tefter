@@ -6,7 +6,10 @@
 	--wv-content-views-margin-bottom: 10px;
 	--wv-content-toolbar-height: 40px;
 	--wv-content-toolbar-margin-bottom: 10px;
-
+	--wv-grid-padding-top: calc(var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width));
+	--wv-grid-padding-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1);
+	--wv-grid-negative-margin-top: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
+	--wv-grid-negative-margin-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
 }
 
 body {
@@ -121,7 +124,6 @@ fluent-data-grid-row:has([row-selected]) {
 fluent-select::part(listbox) {
 max-height:200px;
 }
-
 
 /* General */
 #blazor-error-ui {

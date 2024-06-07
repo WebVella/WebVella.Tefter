@@ -8,7 +8,7 @@ public partial class WvSpaceViewToolbar : WvBaseComponent
 	{
 		await _settingSelector.ToggleSelector();
 	}
-	private void OnSettingChange(ViewSettingChangedEventArgs args){ 
+	private void OnSettingChange(SpaceViewSettingChangedEventArgs args){ 
 	
 	}
 

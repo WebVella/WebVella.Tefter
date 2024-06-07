@@ -14,15 +14,20 @@
 		flex-flow: column;
 	}
 
-::deep.wv-card .meta .title{
-	font-size:1.25em;
-}
+		::deep.wv-card .meta .title {
+			font-size: var(--type-ramp-plus-1-font-size);
+		}
 
 		::deep.wv-card .meta .description {
-			font-size: 0.85em;
+			font-size: var(--type-ramp-minus-1-font-size);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			max-width: 100%;
+			color: var(--neutral-base-color);
 		}
 
 ::deep.wv-card.clickable fluent-card:hover {
 	cursor: pointer;
-	background: var(--neutral-fill-hover);
+	background: var(--datagrid-hover-color, var(--neutral-fill-stealth-hover));
 }
