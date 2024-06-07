@@ -2,12 +2,8 @@
 
 public class DbUniqueKeyConstraintBuilder : DbConstraintBuilder
 {
-    internal DbUniqueKeyConstraintBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
-    {
-    }
-    internal DbUniqueKeyConstraintBuilder(DbUniqueKeyConstraint constraint, DbTableBuilder tableBuilder)
-        : base(constraint, tableBuilder)
+    internal DbUniqueKeyConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
 
@@ -24,11 +20,9 @@ public class DbUniqueKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbUniqueKeyConstraint Build()
     {
-        CalculateState();
         var constraint = new DbUniqueKeyConstraint
         {
             Name = _name,
-            State = _state,
         };
 
         foreach (var columnName in _columns)

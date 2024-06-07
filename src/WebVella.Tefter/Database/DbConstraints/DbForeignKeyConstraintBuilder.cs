@@ -2,22 +2,12 @@
 
 public class DbForeignKeyConstraintBuilder : DbConstraintBuilder
 {
-    private string _originalForeignTableName = string.Empty;
-    private List<string> _originalForeignColumns = new List<string>();
-
     protected string _foreignTableName = string.Empty;
     protected List<string> _foreignColumns = new List<string>();
 
-    internal DbForeignKeyConstraintBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
+    internal DbForeignKeyConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
-    }
-
-    internal DbForeignKeyConstraintBuilder(DbForeignKeyConstraint constraint, DbTableBuilder tableBuilder)
-        : base(constraint, tableBuilder)
-    {
-        _foreignTableName = constraint.ForeignTable;
-        _foreignColumns.AddRange(constraint.ForeignColumns);
     }
 
     public DbForeignKeyConstraintBuilder WithColumns(params string[] columnNames)
@@ -50,10 +40,8 @@ public class DbForeignKeyConstraintBuilder : DbConstraintBuilder
 
     internal override DbForeignKeyConstraint Build()
     {
-        CalculateState();
         var constraint = new DbForeignKeyConstraint
         {
-            State = _state,
             Name = _name,
             ForeignTable = _foreignTableName
         };
@@ -65,34 +53,5 @@ public class DbForeignKeyConstraintBuilder : DbConstraintBuilder
             constraint.AddForeignColumn(columnName);
 
         return constraint;
-    }
-
-    internal override void CalculateState()
-    {
-        base.CalculateState();
-
-        if (_state != DbObjectState.Commited)
-            return;
-
-        if (_originalForeignTableName != _foreignTableName)
-        {
-            _state = DbObjectState.Changed;
-            return;
-        }
-
-        if (_originalForeignColumns.Count() != _foreignColumns.Count())
-        {
-            _state = DbObjectState.Changed;
-            return;
-        }
-
-        for (int i = 0; i < _foreignColumns.Count(); i++)
-        {
-            if (_foreignColumns[i] != _originalForeignColumns[i])
-            {
-                _state = DbObjectState.Changed;
-                return;
-            }
-        }
     }
 }

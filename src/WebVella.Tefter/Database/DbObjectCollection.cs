@@ -1,17 +1,14 @@
-﻿using System.Data;
-using System.Xml.Linq;
+﻿namespace WebVella.Tefter.Database;
 
-namespace WebVella.Tefter.Database;
-
-public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject 
+public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject
 {
-    private AsyncLock _lock;
-    private readonly List<T> _dbObjects;
+    protected AsyncLock _lock;
+    protected readonly List<T> _dbObjects;
 
     public T this[int i]
     {
         get { return _dbObjects[i]; }
-        internal set { _dbObjects[i] = value; }
+        private set { _dbObjects[i] = value; }
     }
 
     public DbObjectCollection()
@@ -44,7 +41,7 @@ public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject
 
     internal void AddRange(IEnumerable<T> range)
     {
-        if (_dbObjects is null)
+        if (range is null)
             throw new ArgumentNullException("range");
 
         using (_lock.Lock())
@@ -74,7 +71,7 @@ public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject
             var column = Find(name);
             if (column is null)
                 throw new DbException($"Trying to remove non existent {typeof(T)} with '{name}' from table");
-            
+
             _dbObjects.Remove(column);
         }
     }
@@ -89,7 +86,7 @@ public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject
 
     public IEnumerator<T> GetEnumerator()
     {
-       return _dbObjects.GetEnumerator();
+        return _dbObjects.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -101,7 +98,7 @@ public abstract record DbObjectCollection<T> : IEnumerable<T> where T : DbObject
     {
         using (_lock.Lock())
         {
-            return string.Join(",",_dbObjects.Select(x => x.Name));
+            return string.Join(",", _dbObjects.Select(x => x.Name));
         }
     }
 }

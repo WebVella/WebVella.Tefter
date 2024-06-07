@@ -2,65 +2,140 @@
 
 public class DbIndexCollectionBuilder
 {
-    internal ReadOnlyCollection<DbIndexBuilder> Builders => _builders.AsReadOnly();
-    protected readonly DbTableBuilder _tableBuilder;
+    protected readonly DatabaseBuilder _databaseBuilder;
     private readonly List<DbIndexBuilder> _builders;
+    private readonly string _tableName; 
 
-    internal DbIndexCollectionBuilder(DbTableBuilder tableBuilder)
+    internal DbIndexCollectionBuilder(string tableName, DatabaseBuilder databaseBuilder)
     {
+        _tableName = tableName;
         _builders = new List<DbIndexBuilder>();
-        _tableBuilder = tableBuilder;
+        _databaseBuilder = databaseBuilder;
     }
 
-    #region <=== Public Methods ===>
 
-    public DbIndexCollectionBuilder AddNewBTreeIndex(string name, Action<DbBTreeIndexBuilder> action)
+    #region <-- add btree --->
+
+    public DbIndexCollectionBuilder AddBTreeIndex(string name, Action<DbBTreeIndexBuilder> action)
     {
-        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, _tableBuilder);
+        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, _tableName, _databaseBuilder);
+
         action(builder);
+
         _builders.Add(builder);
+
         return this;
     }
+    internal DbBTreeIndexBuilder AddBTreeIndexBuilder(string name, Action<DbBTreeIndexBuilder> action = null)
+    {
+        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name,  _tableName, _databaseBuilder);
+
+        if (action != null)
+            action(builder);
+
+        _builders.Add(builder);
+
+        return builder;
+    }
+
+    #endregion
+
+    #region <--- add gin --->
 
     public DbIndexCollectionBuilder AddGinIndex(string name, Action<DbGinIndexBuilder> action)
     {
-        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableBuilder);
+        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableName, _databaseBuilder);
+
         action(builder);
+
         _builders.Add(builder);
+
         return this;
     }
+    internal DbGinIndexBuilder AddGinIndexBuilder(string name, Action<DbGinIndexBuilder> action = null)
+    {
+        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableName, _databaseBuilder);
+
+        if (action != null)
+            action(builder);
+
+        _builders.Add(builder);
+
+        return builder;
+    }
+
+    #endregion
+
+    #region <--- gist --->
 
     public DbIndexCollectionBuilder AddGistIndex(string name, Action<DbGistIndexBuilder> action)
     {
-        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableBuilder);
+        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableName, _databaseBuilder);
+
         action(builder);
+
         _builders.Add(builder);
+
         return this;
     }
+
+    internal DbGistIndexBuilder AddGistIndexBuilder(string name, Action<DbGistIndexBuilder> action = null)
+    {
+        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableName, _databaseBuilder);
+
+        if (action != null)
+            action(builder);
+
+        _builders.Add(builder);
+
+        return builder;
+    }
+
+    #endregion
+
+    #region <--- add hash --->
 
     public DbIndexCollectionBuilder AddHashIndex(string name, Action<DbHashIndexBuilder> action)
     {
-        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableBuilder);
+        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableName, _databaseBuilder);
+
         action(builder);
+
         _builders.Add(builder);
+
         return this;
     }
+
+    internal DbHashIndexBuilder AddHashIndexBuilder(string name, Action<DbHashIndexBuilder> action = null)
+    {
+        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableName, _databaseBuilder);
+
+        if (action != null)
+            action(builder);
+
+        _builders.Add(builder);
+
+        return builder;
+    }
+
     #endregion
 
-    #region <=== Build and Remove Methods ===>
+    #region <--- remove --->
 
     public DbIndexCollectionBuilder Remove(string name)
     {
-        var builder = _builders.SingleOrDefault(x => x.Name == name && x.State != DbObjectState.Removed );
+        var builder = _builders.SingleOrDefault(x => x.Name == name);
         if (builder is null)
             throw new DbBuilderException($"Index with name '{name}' is not found.");
 
-        if(builder.State != DbObjectState.New)
-            builder.State = DbObjectState.Removed;
-        else
-            _builders.Remove(builder);
+        _builders.Remove(builder);
+
         return this;
     }
+
+    #endregion
+
+    #region <--- build --->
 
     internal DbIndexCollection Build()
     {
@@ -70,31 +145,6 @@ public class DbIndexCollectionBuilder
             collection.Add(builder.Build());
 
         return collection;
-    }
-
-    #endregion
-
-    #region <=== Internal Methods ==>
-
-    //used for building new DbTable from existing instance
-
-    internal DbIndexCollectionBuilder InternalAddExistingIndex(DbIndex index)
-    {
-        if (index is null)
-            throw new ArgumentNullException(nameof(index));
-
-        if (index is DbBTreeIndex)
-            _builders.Add(new DbBTreeIndexBuilder((DbBTreeIndex)index, _tableBuilder));
-        else if (index is DbGinIndex)
-            _builders.Add(new DbGinIndexBuilder((DbGinIndex)index, _tableBuilder));
-        else if (index is DbGistIndex)
-            _builders.Add(new DbGistIndexBuilder((DbGistIndex)index, _tableBuilder));
-        else if (index is DbHashIndex)
-            _builders.Add(new DbHashIndexBuilder((DbHashIndex)index, _tableBuilder));
-        else
-            throw new DbBuilderException($"Not supported db constraint type {index.GetType()}");
-
-        return this;
     }
 
     #endregion

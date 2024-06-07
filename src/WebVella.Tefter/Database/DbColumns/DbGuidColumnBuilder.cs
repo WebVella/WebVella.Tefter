@@ -2,13 +2,13 @@
 
 public class DbGuidColumnBuilder : DbColumnBuilder
 {
-    internal DbGuidColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, DbObjectState.New, tableBuilder)
+    internal DbGuidColumnBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
 
-    internal DbGuidColumnBuilder(DbGuidColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    internal DbGuidColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+        : base(id, name, databaseBuilder)
     {
     }
 
@@ -36,7 +36,7 @@ public class DbGuidColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbGuidColumnBuilder WithNoAutoDefaultValue()
+    public DbGuidColumnBuilder WithoutAutoDefaultValue()
     {
         _autoDefaultValue = false;
         return this;
@@ -44,14 +44,13 @@ public class DbGuidColumnBuilder : DbColumnBuilder
 
     internal override DbGuidColumn Build()
     {
-        CalculateState();
         return new DbGuidColumn
         {
+            Id = _id,
             DefaultValue = null,
             IsNullable = false,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
-            State = _state,
             Type = DbType.Guid
         };
     }

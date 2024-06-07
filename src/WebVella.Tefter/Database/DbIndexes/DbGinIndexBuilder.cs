@@ -2,13 +2,8 @@
 
 public class DbGinIndexBuilder : DbIndexBuilder
 {
-    public DbGinIndexBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
-    {
-    }
-
-    internal DbGinIndexBuilder(DbGinIndex index, DbTableBuilder tableBuilder)
-        : base(index, tableBuilder)
+    public DbGinIndexBuilder(string name, string tableName, DatabaseBuilder databaseBuilder)
+        : base(name, tableName, databaseBuilder)
     {
     }
 
@@ -24,11 +19,9 @@ public class DbGinIndexBuilder : DbIndexBuilder
 
     internal override DbGinIndex Build()
     {
-        CalculateState();
         var index = new DbGinIndex
         {
             Name = _name,
-            State = _state
         };
 
         foreach (var columnName in _columns)

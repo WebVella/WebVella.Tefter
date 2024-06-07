@@ -24,6 +24,7 @@ global using Npgsql;
 global using Nito.AsyncEx;
 
 global using WebVella.Tefter;
+//global using WebVella.Tefter.Common;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Database.Internal;
 

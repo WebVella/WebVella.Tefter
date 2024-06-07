@@ -2,12 +2,13 @@
 
 public class DbDateColumnBuilder : DbColumnBuilder
 {
-    public DbDateColumnBuilder(string name, DbTableBuilder tableBuilder) 
-        : base(name, DbObjectState.New, tableBuilder)
+    public DbDateColumnBuilder(string name, DatabaseBuilder databaseBuilder) 
+        : base(name, databaseBuilder)
     {
     }
-    internal DbDateColumnBuilder(DbDateColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+
+    public DbDateColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+       : base(id, name, databaseBuilder)
     {
     }
 
@@ -35,7 +36,7 @@ public class DbDateColumnBuilder : DbColumnBuilder
         return this;
     }
 
-    public DbDateColumnBuilder WithNoAutoDefaultValue()
+    public DbDateColumnBuilder WithoutAutoDefaultValue()
     {
         _autoDefaultValue = false;
         return this;
@@ -43,10 +44,9 @@ public class DbDateColumnBuilder : DbColumnBuilder
 
     internal override DbDateColumn Build()
     {
-        CalculateState();
         return new DbDateColumn
         {
-            State = _state,
+            Id = _id,
             DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,

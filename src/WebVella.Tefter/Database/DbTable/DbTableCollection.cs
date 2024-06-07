@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public record DbColumnCollection : DbObjectCollection<DbColumn>
+public sealed record DbTableCollection : DbObjectCollection<DbTable>
 {
-    public DbColumn Find(Guid id)
+    public DbTable Find(Guid id)
     {
         using (_lock.Lock())
         {

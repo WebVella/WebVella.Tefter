@@ -2,13 +2,8 @@
 
 public class DbHashIndexBuilder : DbIndexBuilder
 {
-    public DbHashIndexBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
-    {
-    }
-
-    internal DbHashIndexBuilder(DbHashIndex index, DbTableBuilder tableBuilder)
-        : base(index, tableBuilder)
+    public DbHashIndexBuilder(string name, string tableName, DatabaseBuilder databaseBuilder) 
+        : base(name, tableName, databaseBuilder)
     {
     }
 
@@ -22,11 +17,9 @@ public class DbHashIndexBuilder : DbIndexBuilder
 
     internal override DbHashIndex Build()
     {
-        CalculateState();
         var index = new DbHashIndex
         {
             Name = _name,
-            State = _state,
         };
 
         foreach (var columnName in _columns)

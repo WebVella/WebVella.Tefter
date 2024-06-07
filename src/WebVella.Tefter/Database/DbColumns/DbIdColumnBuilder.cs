@@ -2,13 +2,13 @@
 
 public class DbIdColumnBuilder : DbColumnBuilder
 {
-    public DbIdColumnBuilder( bool isNew, DbTableBuilder tableBuilder) 
-        : base(Constants.DB_TABLE_ID_COLUMN_NAME, DbObjectState.New, tableBuilder)
+    internal DbIdColumnBuilder(DatabaseBuilder databaseBuilder)
+        : base(Constants.DB_TABLE_ID_COLUMN_NAME, databaseBuilder)
     {
     }
 
-    public DbIdColumnBuilder(DbIdColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    internal DbIdColumnBuilder(Guid id, DatabaseBuilder databaseBuilder)
+        : base(id, Constants.DB_TABLE_ID_COLUMN_NAME, databaseBuilder)
     {
     }
 
@@ -16,11 +16,11 @@ public class DbIdColumnBuilder : DbColumnBuilder
     {
         return new DbIdColumn
         {
+            Id = _id,
             DefaultValue = null,
             IsNullable = false,
             Name = _name,
             Type = DbType.Id,
-            State = _state,
         };
     }
 }

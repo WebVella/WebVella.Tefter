@@ -2,13 +2,8 @@
 
 public class DbBTreeIndexBuilder : DbIndexBuilder
 {
-    internal DbBTreeIndexBuilder(string name, DbTableBuilder tableBuilder) 
-        : base(name, tableBuilder)
-    {
-    }
-
-    internal DbBTreeIndexBuilder(DbBTreeIndex index, DbTableBuilder tableBuilder)
-       : base(index, tableBuilder)
+    internal DbBTreeIndexBuilder(string name, string tableName, DatabaseBuilder databaseBuilder) 
+        : base(name, tableName, databaseBuilder)
     {
     }
 
@@ -24,11 +19,9 @@ public class DbBTreeIndexBuilder : DbIndexBuilder
 
     internal override DbBTreeIndex Build()
     {
-        CalculateState();
         var index = new DbBTreeIndex 
         {
             Name = _name,
-            State = _state
         };
 
         foreach (var columnName in _columns)
