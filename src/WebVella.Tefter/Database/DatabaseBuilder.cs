@@ -5,19 +5,25 @@ public class DatabaseBuilder
     private readonly List<DbTableBuilder> _builders;
     internal ReadOnlyCollection<DbTableBuilder> Builders => _builders.AsReadOnly();
 
-    internal DatabaseBuilder()
+    private DatabaseBuilder(DbTableCollection tables = null)
     {
         _builders = new List<DbTableBuilder>();
     }
 
-    public DatabaseBuilder WithTables(DbTableCollection tables)
+    public static DatabaseBuilder New(DbTableCollection tables = null)
     {
-        foreach(var table in tables)
-            InternalAddExistingTable(table);
+        var builder = new DatabaseBuilder();
+        
+        if (tables != null)
+        {
+            foreach (var table in tables)
+                builder.InternalAddExistingTable(table);
 
-        return this;
+        }
+
+        return builder;
     }
-
+        
     public DatabaseBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action)
     {
         if (!DbUtility.IsValidDbObjectName(name, out string error))
@@ -34,6 +40,21 @@ public class DatabaseBuilder
         return this;
     }
 
+    public DbTableBuilder NewTableBuilder(Guid id, string name)
+    {
+        if (!DbUtility.IsValidDbObjectName(name, out string error))
+            throw new DbBuilderException(error);
+
+        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+
+        if (builder is not null)
+            throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
+
+        builder = new DbTableBuilder(id, name);
+        _builders.Add(builder);
+        return builder;
+    }
+
     public DatabaseBuilder Remove(string name)
     {
         var builder = _builders.SingleOrDefault(x => x.Name == name);
@@ -45,7 +66,7 @@ public class DatabaseBuilder
         return this;
     }
 
-    internal DbTableCollection Build()
+    public DbTableCollection Build()
     {
         var collection = new DbTableCollection();
 
@@ -55,7 +76,7 @@ public class DatabaseBuilder
         return collection;
     }
 
-    internal DatabaseBuilder InternalAddExistingTable(DbTable table)
+    private DatabaseBuilder InternalAddExistingTable(DbTable table)
     {
         if (table is null)
             throw new ArgumentNullException(nameof(table));

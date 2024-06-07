@@ -12,35 +12,88 @@ public class DbConstraintCollectionBuilder
         _tableBuilder = tableBuilder;
     }
 
-    #region <=== Public Methods ===>
+    #region <--- add unique --->
 
     public DbConstraintCollectionBuilder AddNewUniqueConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
     {
         DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _tableBuilder);
+
         action(builder);
+
         _builders.Add(builder);
+
         return this;
     }
 
-    public DbConstraintCollectionBuilder AddNewPrimaryKeyConstraint(string name, Action<DbPrimaryKeyConstraintBuilder> action)
+    internal DbUniqueKeyConstraintBuilder AddNewUniqueConstraintBuilder(string name, Action<DbUniqueKeyConstraintBuilder> action = null)
     {
-        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _tableBuilder);
-        action(builder);
-        _builders.Add(builder);
-        return this;
-    }
+        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _tableBuilder);
 
-    public DbConstraintCollectionBuilder AddNewForeignKeyConstraint(string name, Action<DbForeignKeyConstraintBuilder> action)
-    {
-        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _tableBuilder);
-        action(builder);
+        if(action != null) 
+            action(builder);
+
         _builders.Add(builder);
-        return this;
+
+        return builder;
     }
 
     #endregion
 
-    #region <=== Build and Remove methods ===>
+    #region <--- add primary --->
+
+    public DbConstraintCollectionBuilder AddNewPrimaryKeyConstraint(string name, Action<DbPrimaryKeyConstraintBuilder> action)
+    {
+        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _tableBuilder);
+
+        action(builder);
+
+        _builders.Add(builder);
+
+        return this;
+    }
+
+    internal DbPrimaryKeyConstraintBuilder AddNewPrimaryKeyConstraintBuilder(string name, Action<DbPrimaryKeyConstraintBuilder> action = null)
+    {
+        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _tableBuilder);
+
+        if (action != null)
+            action(builder);
+
+        _builders.Add(builder);
+
+        return builder;
+    }
+
+    #endregion
+
+    #region <--- add foreign --->
+
+    public DbConstraintCollectionBuilder AddNewForeignKeyConstraint(string name, Action<DbForeignKeyConstraintBuilder> action)
+    {
+        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _tableBuilder);
+
+        action(builder);
+
+        _builders.Add(builder);
+
+        return this;
+    }
+
+    internal DbForeignKeyConstraintBuilder AddNewForeignKeyConstraintBuilder(string name, Action<DbForeignKeyConstraintBuilder> action = null)
+    {
+        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _tableBuilder);
+
+        if(action != null)
+            action(builder);
+
+        _builders.Add(builder);
+
+        return builder;
+    }
+
+    #endregion
+
+    #region <--- remove --->
 
     public DbConstraintCollectionBuilder Remove(string name)
     {
@@ -53,6 +106,10 @@ public class DbConstraintCollectionBuilder
         return this;
     }
 
+    #endregion
+
+    #region <--- build --->
+
     internal DbConstraintCollection Build()
     {
         var collection = new DbConstraintCollection();
@@ -61,30 +118,7 @@ public class DbConstraintCollectionBuilder
             collection.Add(builder.Build());
 
         return collection;
-    }
-
-    #endregion
-
-    #region <=== Internal Methods ==>
-
-    //used for building new DbTable from existing instance
-
-    internal DbConstraintCollectionBuilder InternalAddExistingConstraint(DbConstraint constraint)
-    {
-        if (constraint is null)
-            throw new ArgumentNullException(nameof(constraint));
-
-        if (constraint is DbPrimaryKeyConstraint)
-            _builders.Add(new DbPrimaryKeyConstraintBuilder((DbPrimaryKeyConstraint)constraint, _tableBuilder));
-        else if (constraint is DbForeignKeyConstraint)
-            _builders.Add(new DbForeignKeyConstraintBuilder((DbForeignKeyConstraint)constraint, _tableBuilder));
-        else if (constraint is DbUniqueKeyConstraint)
-            _builders.Add(new DbUniqueKeyConstraintBuilder((DbUniqueKeyConstraint)constraint, _tableBuilder));
-        else
-            throw new DbBuilderException($"Not supported db constraint type {constraint.GetType()}");
-
-        return this;
-    }
+    } 
 
     #endregion
 }

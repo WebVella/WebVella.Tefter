@@ -12,7 +12,7 @@ public partial class DatabaseBuilderTests : BaseTest
             Guid appId = Guid.NewGuid();
             Guid dpId = Guid.NewGuid();
 
-            var tables = new DatabaseBuilder()
+            var tables = DatabaseBuilder.New()
                 .NewTable(tableId, tableName, table =>
                 {
                     table
@@ -218,6 +218,7 @@ public partial class DatabaseBuilderTests : BaseTest
         }
     }
 
+    #region <--- old code --->
     //private void CompareTables(DbTable table1, DbTable table2)
     //{
     //    table1.Should().NotBeNull();
@@ -285,5 +286,6 @@ public partial class DatabaseBuilderTests : BaseTest
     //            column1.GetType().Should().Be(column2.GetType());
     //        }
     //    }
-    //}
+    //} 
+    #endregion
 }
