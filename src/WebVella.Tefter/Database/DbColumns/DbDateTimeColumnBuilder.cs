@@ -2,17 +2,12 @@
 
 public class DbDateTimeColumnBuilder : DbColumnBuilder
 {
-    public DbDateTimeColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
+    public DbDateTimeColumnBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
-    public DbDateTimeColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
-        : base(id, name, tableBuilder)
-    {
-    }
-
-    internal DbDateTimeColumnBuilder(DbDateTimeColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    public DbDateTimeColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+        : base(id, name, databaseBuilder)
     {
     }
 

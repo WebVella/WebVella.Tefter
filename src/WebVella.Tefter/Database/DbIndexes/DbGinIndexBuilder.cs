@@ -2,13 +2,8 @@
 
 public class DbGinIndexBuilder : DbIndexBuilder
 {
-    public DbGinIndexBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
-    {
-    }
-
-    internal DbGinIndexBuilder(DbGinIndex index, DbTableBuilder tableBuilder)
-        : base(index, tableBuilder)
+    public DbGinIndexBuilder(string name, string tableName, DatabaseBuilder databaseBuilder)
+        : base(name, tableName, databaseBuilder)
     {
     }
 

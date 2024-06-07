@@ -3,20 +3,22 @@
 public class DbConstraintCollectionBuilder
 {
     internal ReadOnlyCollection<DbConstraintBuilder> Builders => _builders.AsReadOnly();
-    private readonly DbTableBuilder _tableBuilder;
+    private readonly DatabaseBuilder _databaseBuilder;
     private readonly List<DbConstraintBuilder> _builders;
+    private readonly string _tableName;
 
-    internal DbConstraintCollectionBuilder(DbTableBuilder tableBuilder)
+    internal DbConstraintCollectionBuilder(string tableName, DatabaseBuilder databaseBuilder)
     {
+        _tableName = tableName;
         _builders = new List<DbConstraintBuilder>();
-        _tableBuilder = tableBuilder;
+        _databaseBuilder = databaseBuilder;
     }
 
     #region <--- add unique --->
 
-    public DbConstraintCollectionBuilder AddNewUniqueConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
+    public DbConstraintCollectionBuilder AddUniqueConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
     {
-        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _tableBuilder);
+        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _databaseBuilder);
 
         action(builder);
 
@@ -25,9 +27,9 @@ public class DbConstraintCollectionBuilder
         return this;
     }
 
-    internal DbUniqueKeyConstraintBuilder AddNewUniqueConstraintBuilder(string name, Action<DbUniqueKeyConstraintBuilder> action = null)
+    internal DbUniqueKeyConstraintBuilder AddUniqueConstraintBuilder(string name, Action<DbUniqueKeyConstraintBuilder> action = null)
     {
-        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _tableBuilder);
+        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _databaseBuilder);
 
         if(action != null) 
             action(builder);
@@ -41,9 +43,9 @@ public class DbConstraintCollectionBuilder
 
     #region <--- add primary --->
 
-    public DbConstraintCollectionBuilder AddNewPrimaryKeyConstraint(string name, Action<DbPrimaryKeyConstraintBuilder> action)
+    public DbConstraintCollectionBuilder AddPrimaryKeyConstraint(string name, Action<DbPrimaryKeyConstraintBuilder> action)
     {
-        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _tableBuilder);
+        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _databaseBuilder);
 
         action(builder);
 
@@ -52,9 +54,9 @@ public class DbConstraintCollectionBuilder
         return this;
     }
 
-    internal DbPrimaryKeyConstraintBuilder AddNewPrimaryKeyConstraintBuilder(string name, Action<DbPrimaryKeyConstraintBuilder> action = null)
+    internal DbPrimaryKeyConstraintBuilder AddPrimaryKeyConstraintBuilder(string name, Action<DbPrimaryKeyConstraintBuilder> action = null)
     {
-        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _tableBuilder);
+        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -68,9 +70,9 @@ public class DbConstraintCollectionBuilder
 
     #region <--- add foreign --->
 
-    public DbConstraintCollectionBuilder AddNewForeignKeyConstraint(string name, Action<DbForeignKeyConstraintBuilder> action)
+    public DbConstraintCollectionBuilder AddForeignKeyConstraint(string name, Action<DbForeignKeyConstraintBuilder> action)
     {
-        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _tableBuilder);
+        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _databaseBuilder);
 
         action(builder);
 
@@ -79,9 +81,9 @@ public class DbConstraintCollectionBuilder
         return this;
     }
 
-    internal DbForeignKeyConstraintBuilder AddNewForeignKeyConstraintBuilder(string name, Action<DbForeignKeyConstraintBuilder> action = null)
+    internal DbForeignKeyConstraintBuilder AddForeignKeyConstraintBuilder(string name, Action<DbForeignKeyConstraintBuilder> action = null)
     {
-        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _tableBuilder);
+        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _databaseBuilder);
 
         if(action != null)
             action(builder);

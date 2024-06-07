@@ -2,18 +2,13 @@
 
 public class DbAutoIncrementColumnBuilder : DbColumnBuilder
 {
-    public DbAutoIncrementColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
+    public DbAutoIncrementColumnBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
 
-    public DbAutoIncrementColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
-       : base(id, name, tableBuilder)
-    {
-    }
-
-    internal DbAutoIncrementColumnBuilder(DbAutoIncrementColumn column, DbTableBuilder tableBuilder)
-       : base(column, tableBuilder)
+    public DbAutoIncrementColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+       : base(id, name, databaseBuilder)
     {
     }
 

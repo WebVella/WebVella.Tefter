@@ -2,17 +2,13 @@
 
 public class DbDateColumnBuilder : DbColumnBuilder
 {
-    public DbDateColumnBuilder(string name, DbTableBuilder tableBuilder) 
-        : base(name, tableBuilder)
+    public DbDateColumnBuilder(string name, DatabaseBuilder databaseBuilder) 
+        : base(name, databaseBuilder)
     {
     }
 
-    public DbDateColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
-       : base(id, name, tableBuilder)
-    {
-    }
-    internal DbDateColumnBuilder(DbDateColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    public DbDateColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+       : base(id, name, databaseBuilder)
     {
     }
 

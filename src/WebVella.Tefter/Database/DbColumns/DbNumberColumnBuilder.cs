@@ -2,17 +2,12 @@
 
 public class DbNumberColumnBuilder : DbColumnBuilder
 {
-    internal DbNumberColumnBuilder(string name, DbTableBuilder tableBuilder) 
-        : base(name, tableBuilder)
+    internal DbNumberColumnBuilder(string name, DatabaseBuilder databaseBuilder) 
+        : base(name, databaseBuilder)
     {
     }
-    internal DbNumberColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
-        : base(id, name, tableBuilder)
-    {
-    }
-
-    internal DbNumberColumnBuilder(DbNumberColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    internal DbNumberColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+        : base(id, name, databaseBuilder)
     {
     }
 

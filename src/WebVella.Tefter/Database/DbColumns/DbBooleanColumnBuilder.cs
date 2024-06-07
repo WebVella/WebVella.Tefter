@@ -2,17 +2,12 @@
 
 public class DbBooleanColumnBuilder : DbColumnBuilder
 {
-    internal DbBooleanColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
+    internal DbBooleanColumnBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
-    internal DbBooleanColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
-        : base(id, name, tableBuilder)
-    {
-    }
-
-    internal DbBooleanColumnBuilder(DbBooleanColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    internal DbBooleanColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+        : base(id, name, databaseBuilder)
     {
     }
 

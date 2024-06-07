@@ -2,18 +2,13 @@
 
 public class DbGuidColumnBuilder : DbColumnBuilder
 {
-    internal DbGuidColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
+    internal DbGuidColumnBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
 
-    internal DbGuidColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
-        : base(id, name, tableBuilder)
-    {
-    }
-
-    internal DbGuidColumnBuilder(DbGuidColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    internal DbGuidColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+        : base(id, name, databaseBuilder)
     {
     }
 

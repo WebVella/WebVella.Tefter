@@ -2,12 +2,8 @@
 
 public class DbUniqueKeyConstraintBuilder : DbConstraintBuilder
 {
-    internal DbUniqueKeyConstraintBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
-    {
-    }
-    internal DbUniqueKeyConstraintBuilder(DbUniqueKeyConstraint constraint, DbTableBuilder tableBuilder)
-        : base(constraint, tableBuilder)
+    internal DbUniqueKeyConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
 

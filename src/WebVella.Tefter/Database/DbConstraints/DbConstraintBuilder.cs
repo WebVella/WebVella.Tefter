@@ -2,25 +2,18 @@
 
 public abstract class DbConstraintBuilder
 {
-    protected DbTableBuilder _tableBuilder;
+    protected DatabaseBuilder _databaseBuilder;
     protected string _name;
 
     protected List<string> _columns;
 
     internal string Name { get { return _name; } }
 
-    internal DbConstraintBuilder(string name, DbTableBuilder tableBuilder)
+    internal DbConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
     {
         _name = name;
-        _tableBuilder = tableBuilder;
+        _databaseBuilder = databaseBuilder;
         _columns = new List<string>();
-    }
-
-    internal DbConstraintBuilder(DbConstraint constraint, DbTableBuilder tableBuilder)
-    {
-        _tableBuilder = tableBuilder;
-        _name = constraint.Name;
-        _columns = constraint.Columns.ToList();
     }
 
     internal abstract DbConstraint Build();

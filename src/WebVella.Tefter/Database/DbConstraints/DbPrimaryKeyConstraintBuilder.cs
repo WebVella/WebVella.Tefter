@@ -2,13 +2,8 @@
 
 public class DbPrimaryKeyConstraintBuilder : DbConstraintBuilder
 {
-    internal DbPrimaryKeyConstraintBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
-    {
-    }
-
-    internal DbPrimaryKeyConstraintBuilder(DbPrimaryKeyConstraint constraint, DbTableBuilder tableBuilder)
-        : base(constraint, tableBuilder)
+    internal DbPrimaryKeyConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
 

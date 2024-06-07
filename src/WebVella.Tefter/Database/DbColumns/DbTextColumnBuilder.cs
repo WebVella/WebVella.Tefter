@@ -2,18 +2,13 @@
 
 public class DbTextColumnBuilder : DbColumnBuilder
 {
-    internal DbTextColumnBuilder(string name, DbTableBuilder tableBuilder)
-        : base(name, tableBuilder)
+    internal DbTextColumnBuilder(string name, DatabaseBuilder databaseBuilder)
+        : base(name, databaseBuilder)
     {
     }
 
-    internal DbTextColumnBuilder(Guid id, string name, DbTableBuilder tableBuilder)
-        : base(id, name, tableBuilder)
-    {
-    }
-
-    internal DbTextColumnBuilder(DbTextColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    internal DbTextColumnBuilder(Guid id, string name, DatabaseBuilder databaseBuilder)
+        : base(id, name, databaseBuilder)
     {
     }
 

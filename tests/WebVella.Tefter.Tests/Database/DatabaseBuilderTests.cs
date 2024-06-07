@@ -3,7 +3,7 @@
 public partial class DatabaseBuilderTests : BaseTest
 {
     [Fact]
-    public async Task CreateSimpleDatabase()
+    public async Task CreateTable()
     {
         using (await locker.LockAsync())
         {
@@ -23,69 +23,69 @@ public partial class DatabaseBuilderTests : BaseTest
                         columns
 
                         #region <--- Id --->
-                        .AddNewTableIdColumn()
+                        .AddTableIdColumn()
                         #endregion
 
                         #region <--- AutoInc --->
-                        .AddNewAutoIncrementColumn("auto_inc1")
-                        .AddNewAutoIncrementColumn("auto_inc2")
+                        .AddAutoIncrementColumn("auto_inc1")
+                        .AddAutoIncrementColumn("auto_inc2")
                         #endregion
 
                         #region <--- Guid --->
-                        .AddNewGuidColumn("guid_nullable_with_auto_default", c =>
+                        .AddGuidColumn("guid_nullable_with_auto_default", c =>
                         {
                             c.WithAutoDefaultValue()
                             .Nullable();
                         })
-                        .AddNewGuidColumn("guid_not_nullable_with_auto_default", c =>
+                        .AddGuidColumn("guid_not_nullable_with_auto_default", c =>
                         {
                             c.WithAutoDefaultValue()
                             .NotNullable();
                         })
-                        .AddNewGuidColumn("guid_nullable_with_default_value", c =>
+                        .AddGuidColumn("guid_nullable_with_default_value", c =>
                         {
                             c.WithDefaultValue(Guid.NewGuid())
                             .Nullable();
                         })
-                        .AddNewGuidColumn("guid_not_nullable_with_default_value", c =>
+                        .AddGuidColumn("guid_not_nullable_with_default_value", c =>
                         {
                             c.WithDefaultValue(Guid.NewGuid())
                             .NotNullable();
                         })
-                        .AddNewGuidColumn("guid_nullable_with_default_value_and_auto", c =>
+                        .AddGuidColumn("guid_nullable_with_default_value_and_auto", c =>
                         {
                             c.Nullable()
                             .WithDefaultValue(Guid.NewGuid())
                             .WithNoAutoDefaultValue();
                         })
-                        .AddNewGuidColumn("guid_not_nullable_with_default_value_and_auto", c =>
+                        .AddGuidColumn("guid_not_nullable_with_default_value_and_auto", c =>
                         {
                             c.WithDefaultValue(Guid.NewGuid())
                             .WithNoAutoDefaultValue();
                         })
-                        .AddNewGuidColumn("guid_nullable_without_default_value", c => { c.Nullable(); })
+                        .AddGuidColumn("guid_nullable_without_default_value", c => { c.Nullable(); })
                         //this should provide exception
                         //.AddNewGuidColumn("guid_not_nullable_without_default_value", c => { c.Nullable(); }) 
                         #endregion
 
                         #region <--- Boolean --->
-                        .AddNewBooleanColumn("bool_not_nullable_with_default_true", c =>
+                        .AddBooleanColumn("bool_not_nullable_with_default_true", c =>
                         {
                             c.WithDefaultValue(true);
                         })
-                        .AddNewBooleanColumn("bool_not_nullable_with_default_false", c =>
+                        .AddBooleanColumn("bool_not_nullable_with_default_false", c =>
                         {
                             c.WithDefaultValue(false);
                         })
-                        .AddNewBooleanColumn("bool_nullable_default_true", c =>
+                        .AddBooleanColumn("bool_nullable_default_true", c =>
                         {
                             c.WithDefaultValue(true).Nullable();
                         })
-                        .AddNewBooleanColumn("bool_nullable_default_false", c =>
+                        .AddBooleanColumn("bool_nullable_default_false", c =>
                         {
                             c.WithDefaultValue(true).Nullable();
                         })
-                        .AddNewBooleanColumn("bool_nullable_without_default", c =>
+                        .AddBooleanColumn("bool_nullable_without_default", c =>
                         {
                             c.Nullable();
                         })
@@ -94,16 +94,16 @@ public partial class DatabaseBuilderTests : BaseTest
                         #endregion
 
                         #region <--- Number --->
-                        .AddNewNumberColumn("number_nullable_with_default", c =>
+                        .AddNumberColumn("number_nullable_with_default", c =>
                         {
                             c.WithDefaultValue(2)
                             .Nullable();
                         })
-                        .AddNewNumberColumn("number_not_nullable_with_default", c =>
+                        .AddNumberColumn("number_not_nullable_with_default", c =>
                         {
                             c.WithDefaultValue(1).NotNullable();
                         })
-                        .AddNewNumberColumn("number_nullable_without_default", c =>
+                        .AddNumberColumn("number_nullable_without_default", c =>
                         {
                             c.Nullable();
                         })
@@ -112,38 +112,38 @@ public partial class DatabaseBuilderTests : BaseTest
                         #endregion
 
                         #region <--- Date --->
-                        .AddNewDateColumn("date_nullable_with_auto_default", c =>
+                        .AddDateColumn("date_nullable_with_auto_default", c =>
                         {
                             c.WithAutoDefaultValue()
                             .Nullable();
                         })
-                        .AddNewDateColumn("date_not_nullable_with_auto_default", c =>
+                        .AddDateColumn("date_not_nullable_with_auto_default", c =>
                         {
                             c.WithAutoDefaultValue()
                             .NotNullable();
                         })
-                        .AddNewDateColumn("date_nullable_with_default_value", c =>
+                        .AddDateColumn("date_nullable_with_default_value", c =>
                         {
                             c.WithDefaultValue(new DateOnly(2000, 1, 1))
                             .Nullable();
                         })
-                        .AddNewDateColumn("date_not_nullable_with_default_value", c =>
+                        .AddDateColumn("date_not_nullable_with_default_value", c =>
                         {
                             c.WithDefaultValue(new DateOnly(2000, 1, 1))
                             .NotNullable();
                         })
-                        .AddNewDateColumn("date_nullable_with_default_value_and_auto", c =>
+                        .AddDateColumn("date_nullable_with_default_value_and_auto", c =>
                         {
                             c.Nullable()
                             .WithDefaultValue(new DateOnly(2000, 1, 1))
                             .WithNoAutoDefaultValue();
                         })
-                        .AddNewDateColumn("date_not_nullable_with_default_value_and_auto", c =>
+                        .AddDateColumn("date_not_nullable_with_default_value_and_auto", c =>
                         {
                             c.WithDefaultValue(new DateOnly(2000, 1, 1))
                             .WithNoAutoDefaultValue();
                         })
-                        .AddNewDateColumn("date_nullable_without_default_value", c =>
+                        .AddDateColumn("date_nullable_without_default_value", c =>
                         {
                             c.Nullable();
                         })
@@ -152,38 +152,38 @@ public partial class DatabaseBuilderTests : BaseTest
                         #endregion
 
                         #region <--- DateTime --->
-                        .AddNewDateTimeColumn("datetime_nullable_with_auto_default", c =>
+                        .AddDateTimeColumn("datetime_nullable_with_auto_default", c =>
                         {
                             c.WithAutoDefaultValue()
                             .Nullable();
                         })
-                        .AddNewDateTimeColumn("datetime_not_nullable_with_auto_default", c =>
+                        .AddDateTimeColumn("datetime_not_nullable_with_auto_default", c =>
                         {
                             c.WithAutoDefaultValue()
                             .NotNullable();
                         })
-                        .AddNewDateTimeColumn("datetime_nullable_with_default_value", c =>
+                        .AddDateTimeColumn("datetime_nullable_with_default_value", c =>
                         {
                             c.WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
                             .Nullable();
                         })
-                        .AddNewDateTimeColumn("datetime_not_nullable_with_default_value", c =>
+                        .AddDateTimeColumn("datetime_not_nullable_with_default_value", c =>
                         {
                             c.WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
                             .NotNullable();
                         })
-                        .AddNewDateTimeColumn("datetime_nullable_with_default_value_and_auto", c =>
+                        .AddDateTimeColumn("datetime_nullable_with_default_value_and_auto", c =>
                         {
                             c.Nullable()
                             .WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
                             .WithNoAutoDefaultValue();
                         })
-                        .AddNewDateTimeColumn("datetime_not_nullable_with_default_value_and_auto", c =>
+                        .AddDateTimeColumn("datetime_not_nullable_with_default_value_and_auto", c =>
                         {
                             c.WithDefaultValue(new DateTime(2000, 1, 1, 13, 12, 11))
                             .WithNoAutoDefaultValue();
                         })
-                        .AddNewDateTimeColumn("datetime_nullable_without_default_value", c =>
+                        .AddDateTimeColumn("datetime_nullable_without_default_value", c =>
                         {
                             c.Nullable();
                         })
@@ -192,17 +192,17 @@ public partial class DatabaseBuilderTests : BaseTest
                         #endregion
 
                         #region <--- Text --->
-                        .AddNewTextColumn("test_nullable_with_default", c =>
+                        .AddTextColumn("test_nullable_with_default", c =>
                         {
                             c.WithDefaultValue("default1")
                             .Nullable();
                         })
-                        .AddNewTextColumn("text_not_nullable_with_default", c =>
+                        .AddTextColumn("text_not_nullable_with_default", c =>
                         {
                             c.WithDefaultValue("default2")
                             .NotNullable();
                         })
-                        .AddNewTextColumn("text_nullable_without_default", c =>
+                        .AddTextColumn("text_nullable_without_default", c =>
                         {
                             c.Nullable();
                         });
@@ -210,9 +210,25 @@ public partial class DatabaseBuilderTests : BaseTest
                         //.AddNewTextColumn("text_not_nullable_without_default", c => { c.NotNullable(); }) 
                         #endregion
 
+                    })
+                    .WithIndexes(indexes =>
+                    {
+                        indexes
+                            .AddBTreeIndex("idx_btree_id", i => i.WithColumns("id"))
+                            .AddHashIndex("idx_hash", i => i.WithColumn("text_not_nullable_with_default"))
+                            .AddGinIndex("idx_gin", i => i.WithColumns("text_not_nullable_with_default"))
+                            .AddGistIndex("idx_gist", i => i.WithColumns("text_not_nullable_with_default"));
+                    })
+                    .WithConstraints(constraints =>
+                    {
+                        constraints
+                            .AddPrimaryKeyConstraint("pk_id", c => c.WithColumns("id"))
+                            .AddUniqueConstraint("ux_text_not_nullable_with_default", c => c.WithColumns("text_not_nullable_with_default"));
                     });
                 })
                 .Build();
+
+            var tables2 = DatabaseBuilder.New(tables).Build();
 
             var differences = DbObjectsComparer.Compare(null, tables);
         }

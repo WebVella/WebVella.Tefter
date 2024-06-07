@@ -2,13 +2,8 @@
 
 public class DbBTreeIndexBuilder : DbIndexBuilder
 {
-    internal DbBTreeIndexBuilder(string name, DbTableBuilder tableBuilder) 
-        : base(name, tableBuilder)
-    {
-    }
-
-    internal DbBTreeIndexBuilder(DbBTreeIndex index, DbTableBuilder tableBuilder)
-       : base(index, tableBuilder)
+    internal DbBTreeIndexBuilder(string name, string tableName, DatabaseBuilder databaseBuilder) 
+        : base(name, tableName, databaseBuilder)
     {
     }
 

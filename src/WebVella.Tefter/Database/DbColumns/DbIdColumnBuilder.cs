@@ -2,18 +2,13 @@
 
 public class DbIdColumnBuilder : DbColumnBuilder
 {
-    internal DbIdColumnBuilder(DbTableBuilder tableBuilder)
-        : base(Constants.DB_TABLE_ID_COLUMN_NAME, tableBuilder)
+    internal DbIdColumnBuilder(DatabaseBuilder databaseBuilder)
+        : base(Constants.DB_TABLE_ID_COLUMN_NAME, databaseBuilder)
     {
     }
 
-    internal DbIdColumnBuilder(Guid id, DbTableBuilder tableBuilder)
-        : base(id, Constants.DB_TABLE_ID_COLUMN_NAME, tableBuilder)
-    {
-    }
-
-    public DbIdColumnBuilder(DbIdColumn column, DbTableBuilder tableBuilder)
-        : base(column, tableBuilder)
+    internal DbIdColumnBuilder(Guid id, DatabaseBuilder databaseBuilder)
+        : base(id, Constants.DB_TABLE_ID_COLUMN_NAME, databaseBuilder)
     {
     }
 

@@ -13,7 +13,7 @@ public class DbTableCollectionBuilder
         _databaseBuilder = databaseBuilder;
     }
 
-    internal DbTableCollectionBuilder WithTables( DbTableCollection tables, Action<DbTableCollectionBuilder> action)
+    internal DbTableCollectionBuilder WithTables(DbTableCollection tables, Action<DbTableCollectionBuilder> action)
     {
         //TODO implement            
         action(this);
@@ -30,7 +30,7 @@ public class DbTableCollectionBuilder
         if (builder is not null)
             throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
 
-        builder = new DbTableBuilder(id, name);
+        builder = new DbTableBuilder(id, name, _databaseBuilder);
 
         action(builder);
 
@@ -49,9 +49,9 @@ public class DbTableCollectionBuilder
         if (builder is not null)
             throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
 
-        builder = new DbTableBuilder(id, name);
+        builder = new DbTableBuilder(id, name, _databaseBuilder);
 
-        if(action != null)
+        if (action != null)
             action(builder);
 
         _builders.Add(builder);

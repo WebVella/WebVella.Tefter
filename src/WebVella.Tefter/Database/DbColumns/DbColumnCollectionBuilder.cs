@@ -3,20 +3,22 @@
 public class DbColumnCollectionBuilder
 {
     private readonly List<DbColumnBuilder> _builders;
-    private DbTableBuilder _tableBuilder;
-
+    private readonly DatabaseBuilder _databaseBuilder;
+    private readonly string _tableName;
+    
     internal ReadOnlyCollection<DbColumnBuilder> Builders => _builders.AsReadOnly();
 
-    public DbColumnCollectionBuilder(DbTableBuilder tableBuilder)
+    internal DbColumnCollectionBuilder(string tableName, DatabaseBuilder databaseBuilder)
     {
+        _tableName = tableName;
         _builders = new List<DbColumnBuilder>();
-        _tableBuilder = tableBuilder;
+        _databaseBuilder = databaseBuilder;
     }
 
 
     #region <--- id --->
 
-    public DbColumnCollectionBuilder AddNewTableIdColumn(Guid? id = null)
+    public DbColumnCollectionBuilder AddTableIdColumn(Guid? id = null)
     {
         var builder = (DbIdColumnBuilder)_builders
              .SingleOrDefault(x => x.GetType() == typeof(DbIdColumnBuilder));
@@ -25,14 +27,14 @@ public class DbColumnCollectionBuilder
             throw new DbBuilderException($"Column of type Id already exists in columns. Only one instance can be created.");
 
         if (id != null)
-            _builders.Add(new DbIdColumnBuilder(id.Value, _tableBuilder));
+            _builders.Add(new DbIdColumnBuilder(id.Value, _databaseBuilder));
         else
-            _builders.Add(new DbIdColumnBuilder(_tableBuilder));
+            _builders.Add(new DbIdColumnBuilder(_databaseBuilder));
 
         return this;
     }
 
-    internal DbIdColumnBuilder AddNewTableIdColumnBuilder(Guid? id = null)
+    internal DbIdColumnBuilder AddTableIdColumnBuilder(Guid? id = null)
     {
         var builder = (DbIdColumnBuilder)_builders
              .SingleOrDefault(x => x.GetType() == typeof(DbIdColumnBuilder));
@@ -41,9 +43,9 @@ public class DbColumnCollectionBuilder
             throw new DbBuilderException($"Column of type Id already exists in columns. Only one instance can be created.");
 
         if (id != null)
-            builder = new DbIdColumnBuilder(id.Value, _tableBuilder);
+            builder = new DbIdColumnBuilder(id.Value, _databaseBuilder);
         else
-            builder = new DbIdColumnBuilder(_tableBuilder);
+            builder = new DbIdColumnBuilder(_databaseBuilder);
 
         _builders.Add(builder);
 
@@ -54,32 +56,32 @@ public class DbColumnCollectionBuilder
 
     #region <--- auto increment --->
 
-    public DbColumnCollectionBuilder AddNewAutoIncrementColumn(string name)
+    public DbColumnCollectionBuilder AddAutoIncrementColumn(string name)
     {
-        return AddNewAutoIncrementColumn(Guid.NewGuid(), name);
+        return AddAutoIncrementColumn(Guid.NewGuid(), name);
     }
 
-    internal DbAutoIncrementColumnBuilder AddNewAutoIncrementColumnBuilder(string name)
+    internal DbAutoIncrementColumnBuilder AddAutoIncrementColumnBuilder(string name)
     {
-        return AddNewAutoIncrementColumnBuilder(Guid.NewGuid(), name);
+        return AddAutoIncrementColumnBuilder(Guid.NewGuid(), name);
     }
 
-    public DbColumnCollectionBuilder AddNewAutoIncrementColumn(Guid id, string name)
+    public DbColumnCollectionBuilder AddAutoIncrementColumn(Guid id, string name)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(id, name, _tableBuilder);
+        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(id, name, _databaseBuilder);
 
         _builders.Add(builder);
 
         return this;
     }
 
-    internal DbAutoIncrementColumnBuilder AddNewAutoIncrementColumnBuilder(Guid id, string name)
+    internal DbAutoIncrementColumnBuilder AddAutoIncrementColumnBuilder(Guid id, string name)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(id, name, _tableBuilder);
+        DbAutoIncrementColumnBuilder builder = new DbAutoIncrementColumnBuilder(id, name, _databaseBuilder);
 
         _builders.Add(builder);
 
@@ -90,21 +92,21 @@ public class DbColumnCollectionBuilder
 
     #region <--- guid --->
 
-    public DbColumnCollectionBuilder AddNewGuidColumn(string name, Action<DbGuidColumnBuilder> action)
+    public DbColumnCollectionBuilder AddGuidColumn(string name, Action<DbGuidColumnBuilder> action)
     {
-        return AddNewGuidColumn(Guid.NewGuid(), name, action);
+        return AddGuidColumn(Guid.NewGuid(), name, action);
     }
 
-    internal DbGuidColumnBuilder AddNewGuidColumnBuilder(string name, Action<DbGuidColumnBuilder> action = null)
+    internal DbGuidColumnBuilder AddGuidColumnBuilder(string name, Action<DbGuidColumnBuilder> action = null)
     {
-        return AddNewGuidColumnBuilder(Guid.NewGuid(), name, action);
+        return AddGuidColumnBuilder(Guid.NewGuid(), name, action);
     }
 
-    public DbColumnCollectionBuilder AddNewGuidColumn(Guid id, string name, Action<DbGuidColumnBuilder> action)
+    public DbColumnCollectionBuilder AddGuidColumn(Guid id, string name, Action<DbGuidColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(id, name, _tableBuilder);
+        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(id, name, _databaseBuilder);
 
         action(builder);
 
@@ -113,11 +115,11 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    internal DbGuidColumnBuilder AddNewGuidColumnBuilder(Guid id, string name, Action<DbGuidColumnBuilder> action = null)
+    internal DbGuidColumnBuilder AddGuidColumnBuilder(Guid id, string name, Action<DbGuidColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(id, name, _tableBuilder);
+        DbGuidColumnBuilder builder = new DbGuidColumnBuilder(id, name, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -128,7 +130,7 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder WithGuidColumn(string name, Action<DbGuidColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbGuidColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbGuidColumnBuilder));
@@ -145,7 +147,7 @@ public class DbColumnCollectionBuilder
 
     internal DbGuidColumnBuilder WithGuidColumnBuilder(string name, Action<DbGuidColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbGuidColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbGuidColumnBuilder));
@@ -164,20 +166,20 @@ public class DbColumnCollectionBuilder
 
     #region <--- number --->
 
-    public DbColumnCollectionBuilder AddNewNumberColumn(string name, Action<DbNumberColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNumberColumn(string name, Action<DbNumberColumnBuilder> action)
     {
-        return AddNewNumberColumn(Guid.NewGuid(), name, action);
+        return AddNumberColumn(Guid.NewGuid(), name, action);
     }
 
-    internal DbNumberColumnBuilder AddNewNumberColumnBuilder(string name, Action<DbNumberColumnBuilder> action = null)
+    internal DbNumberColumnBuilder AddNumberColumnBuilder(string name, Action<DbNumberColumnBuilder> action = null)
     {
-        return AddNewNumberColumnBuilder(Guid.NewGuid(), name, action);
+        return AddNumberColumnBuilder(Guid.NewGuid(), name, action);
     }
 
-    public DbColumnCollectionBuilder AddNewNumberColumn(Guid id, string name, Action<DbNumberColumnBuilder> action)
+    public DbColumnCollectionBuilder AddNumberColumn(Guid id, string name, Action<DbNumberColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name);
-        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(id, name, _tableBuilder);
+        _databaseBuilder.ValidateColumnName(name);
+        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(id, name, _databaseBuilder);
 
         action(builder);
 
@@ -186,10 +188,10 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    internal DbNumberColumnBuilder AddNewNumberColumnBuilder(Guid id, string name, Action<DbNumberColumnBuilder> action = null)
+    internal DbNumberColumnBuilder AddNumberColumnBuilder(Guid id, string name, Action<DbNumberColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name);
-        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(id, name, _tableBuilder);
+        _databaseBuilder.ValidateColumnName(name);
+        DbNumberColumnBuilder builder = new DbNumberColumnBuilder(id, name, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -199,9 +201,9 @@ public class DbColumnCollectionBuilder
         return builder;
     }
 
-    public DbColumnCollectionBuilder WithNumerColumn(string name, Action<DbNumberColumnBuilder> action)
+    public DbColumnCollectionBuilder WithNumberColumn(string name, Action<DbNumberColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbNumberColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbNumberColumnBuilder));
@@ -213,9 +215,9 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    internal DbNumberColumnBuilder WithNumerColumnBuilder(string name, Action<DbNumberColumnBuilder> action = null)
+    internal DbNumberColumnBuilder WithNumberColumnBuilder(string name, Action<DbNumberColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbNumberColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbNumberColumnBuilder));
@@ -233,21 +235,21 @@ public class DbColumnCollectionBuilder
 
     #region <--- boolean --->
 
-    public DbColumnCollectionBuilder AddNewBooleanColumn(string name, Action<DbBooleanColumnBuilder> action)
+    public DbColumnCollectionBuilder AddBooleanColumn(string name, Action<DbBooleanColumnBuilder> action)
     {
-        return AddNewBooleanColumn(Guid.NewGuid(), name, action);
+        return AddBooleanColumn(Guid.NewGuid(), name, action);
     }
 
-    internal DbBooleanColumnBuilder AddNewBooleanColumnBuilder(string name, Action<DbBooleanColumnBuilder> action = null)
+    internal DbBooleanColumnBuilder AddBooleanColumnBuilder(string name, Action<DbBooleanColumnBuilder> action = null)
     {
-        return AddNewBooleanColumnBuilder(Guid.NewGuid(), name, action);
+        return AddBooleanColumnBuilder(Guid.NewGuid(), name, action);
     }
 
-    public DbColumnCollectionBuilder AddNewBooleanColumn(Guid id, string name, Action<DbBooleanColumnBuilder> action)
+    public DbColumnCollectionBuilder AddBooleanColumn(Guid id, string name, Action<DbBooleanColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(id, name, _tableBuilder);
+        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(id, name, _databaseBuilder);
 
         action(builder);
 
@@ -256,11 +258,11 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    internal DbBooleanColumnBuilder AddNewBooleanColumnBuilder(Guid id, string name, Action<DbBooleanColumnBuilder> action = null)
+    internal DbBooleanColumnBuilder AddBooleanColumnBuilder(Guid id, string name, Action<DbBooleanColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(id, name, _tableBuilder);
+        DbBooleanColumnBuilder builder = new DbBooleanColumnBuilder(id, name, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -272,7 +274,7 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder WithBooleanColumn(string name, Action<DbBooleanColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbBooleanColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbBooleanColumnBuilder));
@@ -286,7 +288,7 @@ public class DbColumnCollectionBuilder
 
     internal DbBooleanColumnBuilder WithBooleanColumnBuilder(string name, Action<DbBooleanColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbBooleanColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbBooleanColumnBuilder));
@@ -304,20 +306,20 @@ public class DbColumnCollectionBuilder
 
     #region <--- date --->
 
-    public DbColumnCollectionBuilder AddNewDateColumn(string name, Action<DbDateColumnBuilder> action)
+    public DbColumnCollectionBuilder AddDateColumn(string name, Action<DbDateColumnBuilder> action)
     {
-        return AddNewDateColumn(Guid.NewGuid(), name, action);
+        return AddDateColumn(Guid.NewGuid(), name, action);
     }
-    internal DbDateColumnBuilder AddNewDateColumnBuilder(string name, Action<DbDateColumnBuilder> action = null)
+    internal DbDateColumnBuilder AddDateColumnBuilder(string name, Action<DbDateColumnBuilder> action = null)
     {
-        return AddNewDateColumnBuilder(Guid.NewGuid(), name, action);
+        return AddDateColumnBuilder(Guid.NewGuid(), name, action);
     }
 
-    public DbColumnCollectionBuilder AddNewDateColumn(Guid id, string name, Action<DbDateColumnBuilder> action)
+    public DbColumnCollectionBuilder AddDateColumn(Guid id, string name, Action<DbDateColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbDateColumnBuilder builder = new DbDateColumnBuilder(id, name, _tableBuilder);
+        DbDateColumnBuilder builder = new DbDateColumnBuilder(id, name, _databaseBuilder);
 
         action(builder);
 
@@ -326,13 +328,13 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    internal DbDateColumnBuilder AddNewDateColumnBuilder(Guid id, string name, Action<DbDateColumnBuilder> action = null)
+    internal DbDateColumnBuilder AddDateColumnBuilder(Guid id, string name, Action<DbDateColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbDateColumnBuilder builder = new DbDateColumnBuilder(id, name, _tableBuilder);
+        DbDateColumnBuilder builder = new DbDateColumnBuilder(id, name, _databaseBuilder);
 
-        if (action == null)
+        if (action != null)
             action(builder);
 
         _builders.Add(builder);
@@ -342,7 +344,7 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder WithDateColumn(string name, Action<DbDateColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbDateColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbDateColumnBuilder));
@@ -357,7 +359,7 @@ public class DbColumnCollectionBuilder
 
     internal DbDateColumnBuilder WithDateColumnBuilder(string name, Action<DbDateColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbDateColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbDateColumnBuilder));
@@ -375,21 +377,21 @@ public class DbColumnCollectionBuilder
 
     #region <--- datetime --->
 
-    public DbColumnCollectionBuilder AddNewDateTimeColumn(string name, Action<DbDateTimeColumnBuilder> action)
+    public DbColumnCollectionBuilder AddDateTimeColumn(string name, Action<DbDateTimeColumnBuilder> action)
     {
-        return AddNewDateTimeColumn(Guid.NewGuid(), name, action);
+        return AddDateTimeColumn(Guid.NewGuid(), name, action);
     }
 
-    internal DbDateTimeColumnBuilder AddNewDateTimeColumnBuilder(string name, Action<DbDateTimeColumnBuilder> action = null)
+    internal DbDateTimeColumnBuilder AddDateTimeColumnBuilder(string name, Action<DbDateTimeColumnBuilder> action = null)
     {
-        return AddNewDateTimeColumnBuilder(Guid.NewGuid(), name, action);
+        return AddDateTimeColumnBuilder(Guid.NewGuid(), name, action);
     }
 
-    public DbColumnCollectionBuilder AddNewDateTimeColumn(Guid id, string name, Action<DbDateTimeColumnBuilder> action)
+    public DbColumnCollectionBuilder AddDateTimeColumn(Guid id, string name, Action<DbDateTimeColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(id, name, _tableBuilder);
+        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(id, name, _databaseBuilder);
 
         action(builder);
 
@@ -398,11 +400,11 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    internal DbDateTimeColumnBuilder AddNewDateTimeColumnBuilder(Guid id, string name, Action<DbDateTimeColumnBuilder> action = null)
+    internal DbDateTimeColumnBuilder AddDateTimeColumnBuilder(Guid id, string name, Action<DbDateTimeColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(id, name, _tableBuilder);
+        DbDateTimeColumnBuilder builder = new DbDateTimeColumnBuilder(id, name, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -414,7 +416,7 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder WithDateTimeColumn(string name, Action<DbDateTimeColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbDateTimeColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbDateTimeColumnBuilder));
@@ -429,7 +431,7 @@ public class DbColumnCollectionBuilder
 
     internal DbDateTimeColumnBuilder WithDateTimeColumnBuilder(string name, Action<DbDateTimeColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbDateTimeColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbDateTimeColumnBuilder));
@@ -447,21 +449,21 @@ public class DbColumnCollectionBuilder
 
     #region <--- text --->
 
-    public DbColumnCollectionBuilder AddNewTextColumn(string name, Action<DbTextColumnBuilder> action)
+    public DbColumnCollectionBuilder AddTextColumn(string name, Action<DbTextColumnBuilder> action)
     {
-        return AddNewTextColumn(Guid.NewGuid(), name, action);
+        return AddTextColumn(Guid.NewGuid(), name, action);
     }
 
-    internal DbTextColumnBuilder AddNewTextColumnBuilder(string name, Action<DbTextColumnBuilder> action = null)
+    internal DbTextColumnBuilder AddTextColumnBuilder(string name, Action<DbTextColumnBuilder> action = null)
     {
-        return AddNewTextColumnBuilder(Guid.NewGuid(), name, action);
+        return AddTextColumnBuilder(Guid.NewGuid(), name, action);
     }
 
-    public DbColumnCollectionBuilder AddNewTextColumn(Guid id, string name, Action<DbTextColumnBuilder> action)
+    public DbColumnCollectionBuilder AddTextColumn(Guid id, string name, Action<DbTextColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbTextColumnBuilder builder = new DbTextColumnBuilder(id, name, _tableBuilder);
+        DbTextColumnBuilder builder = new DbTextColumnBuilder(id, name, _databaseBuilder);
 
         action(builder);
 
@@ -470,11 +472,11 @@ public class DbColumnCollectionBuilder
         return this;
     }
 
-    internal DbTextColumnBuilder AddNewTextColumnBuilder(Guid id, string name, Action<DbTextColumnBuilder> action = null)
+    internal DbTextColumnBuilder AddTextColumnBuilder(Guid id, string name, Action<DbTextColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name);
+        _databaseBuilder.ValidateColumnName(name);
 
-        DbTextColumnBuilder builder = new DbTextColumnBuilder(id, name, _tableBuilder);
+        DbTextColumnBuilder builder = new DbTextColumnBuilder(id, name, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -486,7 +488,7 @@ public class DbColumnCollectionBuilder
 
     public DbColumnCollectionBuilder WithTextColumn(string name, Action<DbTextColumnBuilder> action)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbTextColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbTextColumnBuilder));
@@ -501,7 +503,7 @@ public class DbColumnCollectionBuilder
 
     internal DbTextColumnBuilder WithTextColumnBuilder(string name, Action<DbTextColumnBuilder> action = null)
     {
-        _tableBuilder.ValidateColumnName(name, isNew: false);
+        _databaseBuilder.ValidateColumnName(name, isNew: false);
 
         var builder = (DbTextColumnBuilder)_builders
             .SingleOrDefault(x => x.Name == name && x.GetType() == typeof(DbTextColumnBuilder));

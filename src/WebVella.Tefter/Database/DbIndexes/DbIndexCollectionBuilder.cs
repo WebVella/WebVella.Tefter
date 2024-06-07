@@ -2,22 +2,23 @@
 
 public class DbIndexCollectionBuilder
 {
-    internal ReadOnlyCollection<DbIndexBuilder> Builders => _builders.AsReadOnly();
-    protected readonly DbTableBuilder _tableBuilder;
+    protected readonly DatabaseBuilder _databaseBuilder;
     private readonly List<DbIndexBuilder> _builders;
+    private readonly string _tableName; 
 
-    internal DbIndexCollectionBuilder(DbTableBuilder tableBuilder)
+    internal DbIndexCollectionBuilder(string tableName, DatabaseBuilder databaseBuilder)
     {
+        _tableName = tableName;
         _builders = new List<DbIndexBuilder>();
-        _tableBuilder = tableBuilder;
+        _databaseBuilder = databaseBuilder;
     }
 
 
     #region <-- add btree --->
 
-    public DbIndexCollectionBuilder AddNewBTreeIndex(string name, Action<DbBTreeIndexBuilder> action)
+    public DbIndexCollectionBuilder AddBTreeIndex(string name, Action<DbBTreeIndexBuilder> action)
     {
-        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, _tableBuilder);
+        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, _tableName, _databaseBuilder);
 
         action(builder);
 
@@ -25,9 +26,9 @@ public class DbIndexCollectionBuilder
 
         return this;
     }
-    internal DbBTreeIndexBuilder AddNewBTreeIndexBuilder(string name, Action<DbBTreeIndexBuilder> action = null)
+    internal DbBTreeIndexBuilder AddBTreeIndexBuilder(string name, Action<DbBTreeIndexBuilder> action = null)
     {
-        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name, _tableBuilder);
+        DbBTreeIndexBuilder builder = new DbBTreeIndexBuilder(name,  _tableName, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -43,7 +44,7 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder AddGinIndex(string name, Action<DbGinIndexBuilder> action)
     {
-        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableBuilder);
+        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableName, _databaseBuilder);
 
         action(builder);
 
@@ -53,7 +54,7 @@ public class DbIndexCollectionBuilder
     }
     internal DbGinIndexBuilder AddGinIndexBuilder(string name, Action<DbGinIndexBuilder> action = null)
     {
-        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableBuilder);
+        DbGinIndexBuilder builder = new DbGinIndexBuilder(name, _tableName, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -69,7 +70,7 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder AddGistIndex(string name, Action<DbGistIndexBuilder> action)
     {
-        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableBuilder);
+        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableName, _databaseBuilder);
 
         action(builder);
 
@@ -80,7 +81,7 @@ public class DbIndexCollectionBuilder
 
     internal DbGistIndexBuilder AddGistIndexBuilder(string name, Action<DbGistIndexBuilder> action = null)
     {
-        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableBuilder);
+        DbGistIndexBuilder builder = new DbGistIndexBuilder(name, _tableName, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -96,7 +97,7 @@ public class DbIndexCollectionBuilder
 
     public DbIndexCollectionBuilder AddHashIndex(string name, Action<DbHashIndexBuilder> action)
     {
-        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableBuilder);
+        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableName, _databaseBuilder);
 
         action(builder);
 
@@ -107,7 +108,7 @@ public class DbIndexCollectionBuilder
 
     internal DbHashIndexBuilder AddHashIndexBuilder(string name, Action<DbHashIndexBuilder> action = null)
     {
-        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableBuilder);
+        DbHashIndexBuilder builder = new DbHashIndexBuilder(name, _tableName, _databaseBuilder);
 
         if (action != null)
             action(builder);
