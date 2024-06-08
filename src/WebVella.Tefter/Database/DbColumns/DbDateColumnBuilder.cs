@@ -42,6 +42,13 @@ public class DbDateColumnBuilder : DbColumnBuilder
         return this;
     }
 
+    internal override DbDateColumnBuilder WithLastCommited(DateTime lastCommited)
+    {
+        base.WithLastCommited(lastCommited);
+
+        return this;
+    }
+
     internal override DbDateColumn Build()
     {
         return new DbDateColumn

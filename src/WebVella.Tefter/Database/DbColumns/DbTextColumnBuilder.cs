@@ -30,6 +30,13 @@ public class DbTextColumnBuilder : DbColumnBuilder
         return this;
     }
 
+    internal override DbTextColumnBuilder WithLastCommited(DateTime lastCommited)
+    {
+        base.WithLastCommited(lastCommited);
+
+        return this;
+    }
+
     internal override DbTextColumn Build()
     {
         return new DbTextColumn

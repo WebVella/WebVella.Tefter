@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-internal static class DbObjectsComparer
+internal static class DatabaseComparer
 {
     public static DifferenceCollection Compare(DbTableCollection initialCollection, DbTableCollection modifiedCollection)
     {
@@ -297,7 +297,7 @@ internal static class DbObjectsComparer
                     descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will be made NOT NULLABLE");
             }
 
-            if (initialColumn.DefaultValue != modifiedColumn.DefaultValue)
+            if (!AreDefaultValuesEqual(initialColumn.DefaultValue, modifiedColumn.DefaultValue))
             {
                 if (modifiedColumn.DefaultValue == null)
                     descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' default value be changed to NULL");
@@ -646,6 +646,23 @@ internal static class DbObjectsComparer
             default:
                 throw new DbException($"Not supported object type: {obj.GetType()}");
         }
+    }
+
+    private static bool AreDefaultValuesEqual(object obj1, object obj2)
+    {
+        if (obj1 == null && obj2 == null)
+            return true;
+        if (obj1 == null && obj2 != null)
+            return false;
+        if (obj1 != null && obj2 == null)
+            return false;
+
+        if(obj1.GetType() != obj2.GetType())
+            return false;
+        
+        //because we know that our default values are not complex objects,
+        //we can compare them by .ToString()
+        return obj1.ToString().Equals(obj2.ToString());
     }
 
     //remove duplicates and sort in order for SQL script generation

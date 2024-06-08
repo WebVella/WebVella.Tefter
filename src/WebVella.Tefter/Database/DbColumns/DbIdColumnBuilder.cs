@@ -12,6 +12,13 @@ public class DbIdColumnBuilder : DbColumnBuilder
     {
     }
 
+    internal override DbIdColumnBuilder WithLastCommited(DateTime lastCommited)
+    {
+        base.WithLastCommited(lastCommited);
+
+        return this;
+    }
+
     internal override DbIdColumn Build()
     {
         return new DbIdColumn

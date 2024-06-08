@@ -28,6 +28,12 @@ public class DbNumberColumnBuilder : DbColumnBuilder
         _isNullable = false;
         return this;
     }
+    internal override DbNumberColumnBuilder WithLastCommited(DateTime lastCommited)
+    {
+        base.WithLastCommited(lastCommited);
+
+        return this;
+    }
 
     internal override DbNumberColumn Build()
     {

@@ -30,4 +30,12 @@
 	<ItemGroup>
 	  <Folder Include="Common\" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <EditorConfigFiles Remove="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\Database\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
+	</ItemGroup>
 </Project>

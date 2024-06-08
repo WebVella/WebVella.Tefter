@@ -12,6 +12,13 @@ public class DbAutoIncrementColumnBuilder : DbColumnBuilder
     {
     }
 
+    internal override DbAutoIncrementColumnBuilder WithLastCommited(DateTime lastCommited)
+    {
+        base.WithLastCommited(lastCommited);
+
+        return this;
+    }
+
     internal override DbAutoIncrementColumn Build()
     {
         return new DbAutoIncrementColumn

@@ -10,7 +10,7 @@ public class DatabaseBuilder
         _builders = new List<DbTableBuilder>();
     }
 
-    public static DatabaseBuilder New(DbTableCollection tables = null)
+    internal static DatabaseBuilder New(DbTableCollection tables = null)
     {
         var builder = new DatabaseBuilder();
 
@@ -27,19 +27,24 @@ public class DatabaseBuilder
                     {
                         case DbIdColumn c:
                             {
-                                columnCollectionBuilder.AddTableIdColumn(c.Id);
+                                columnCollectionBuilder
+                                    .AddTableIdColumnBuilder(c.Id)
+                                    .WithLastCommited(c.LastCommited);
                             }
                             break;
                         case DbAutoIncrementColumn c:
                             {
-                                columnCollectionBuilder.AddAutoIncrementColumn(c.Id, c.Name);
+                                columnCollectionBuilder
+                                    .AddAutoIncrementColumnBuilder(c.Id, c.Name)
+                                    .WithLastCommited(c.LastCommited);
                             }
                             break;
                         case DbGuidColumn c:
                             {
                                 var cb = columnCollectionBuilder
                                     .AddGuidColumnBuilder(c.Id, c.Name)
-                                    .WithDefaultValue((Guid?)c.DefaultValue);
+                                    .WithDefaultValue((Guid?)c.DefaultValue)
+                                    .WithLastCommited(c.LastCommited);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
                                 if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
@@ -49,7 +54,8 @@ public class DatabaseBuilder
                             {
                                 var cb = columnCollectionBuilder
                                     .AddBooleanColumnBuilder(c.Id, c.Name)
-                                    .WithDefaultValue((bool?)c.DefaultValue);
+                                    .WithDefaultValue((bool?)c.DefaultValue)
+                                    .WithLastCommited(c.LastCommited);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
                             }
@@ -58,7 +64,8 @@ public class DatabaseBuilder
                             {
                                 var cb = columnCollectionBuilder
                                     .AddNumberColumnBuilder(c.Id, c.Name)
-                                    .WithDefaultValue((decimal?)c.DefaultValue);
+                                    .WithDefaultValue((decimal?)c.DefaultValue)
+                                    .WithLastCommited(c.LastCommited);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
                             }
@@ -67,7 +74,8 @@ public class DatabaseBuilder
                             {
                                 var cb = columnCollectionBuilder
                                     .AddDateColumnBuilder(c.Id, c.Name)
-                                    .WithDefaultValue((DateOnly?)c.DefaultValue);
+                                    .WithDefaultValue((DateOnly?)c.DefaultValue)
+                                    .WithLastCommited(c.LastCommited);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
                                 if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
@@ -77,7 +85,8 @@ public class DatabaseBuilder
                             {
                                 var cb = columnCollectionBuilder
                                     .AddDateTimeColumnBuilder(c.Id, c.Name)
-                                    .WithDefaultValue((DateTime?)c.DefaultValue);
+                                    .WithDefaultValue((DateTime?)c.DefaultValue)
+                                    .WithLastCommited(c.LastCommited);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
                                 if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
@@ -87,7 +96,8 @@ public class DatabaseBuilder
                             {
                                 var cb = columnCollectionBuilder
                                     .AddTextColumnBuilder(c.Id, c.Name)
-                                    .WithDefaultValue((string)c.DefaultValue);
+                                    .WithDefaultValue((string)c.DefaultValue)
+                                    .WithLastCommited(c.LastCommited);
 
                                 if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
                             }
@@ -210,6 +220,62 @@ public class DatabaseBuilder
         builder = new DbTableBuilder(id, name, this);
 
         _builders.Add(builder);
+
+        return builder;
+    }
+
+    public DatabaseBuilder WithTable(string name, Action<DbTableBuilder> action)
+    {
+        if (!DbUtility.IsValidDbObjectName(name, out string error))
+            throw new DbBuilderException(error);
+
+        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+
+        if (builder is null)
+            throw new DbBuilderException($"Table with name '{name}' not found.");
+
+        action(builder);
+
+        return this;
+    }
+
+    public DbTableBuilder WithTableBuilder(string name, Action<DbTableBuilder> action = null)
+    {
+        if (!DbUtility.IsValidDbObjectName(name, out string error))
+            throw new DbBuilderException(error);
+
+        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+
+        if (builder is null)
+            throw new DbBuilderException($"Table with name '{name}' not found.");
+
+        if(action != null )
+            action(builder);
+
+        return builder;
+    }
+
+    public DatabaseBuilder WithTable(Guid id, Action<DbTableBuilder> action)
+    {
+        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Id == id);
+
+        if (builder is null)
+            throw new DbBuilderException($"Table with id '{id}' not found.");
+
+        action(builder);
+
+        return this;
+    }
+
+    public DbTableBuilder WithTableBuilder(Guid id, Action<DbTableBuilder> action = null)
+    {
+        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Id == id);
+
+        if (builder is null)
+            throw new DbBuilderException($"Table with id '{id}' not found.");
+
+        if (action != null)
+            action(builder);
 
         return builder;
     }

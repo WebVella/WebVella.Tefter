@@ -42,6 +42,13 @@ public class DbGuidColumnBuilder : DbColumnBuilder
         return this;
     }
 
+    internal override DbGuidColumnBuilder WithLastCommited(DateTime lastCommited)
+    {
+        base.WithLastCommited(lastCommited);
+
+        return this;
+    }
+
     internal override DbGuidColumn Build()
     {
         return new DbGuidColumn

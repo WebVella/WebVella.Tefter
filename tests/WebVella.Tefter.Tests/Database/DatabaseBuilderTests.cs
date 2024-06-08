@@ -252,20 +252,22 @@ public partial class DatabaseBuilderTests : BaseTest
                          .WithColumns(columns =>
                          {
                              columns
-                             .AddGuidColumn("origin_id", column => { column.NotNullable(); })
-                             .AddGuidColumn("target_id", column => { column.NotNullable(); });
+                                .AddGuidColumn("origin_id", column => { column.NotNullable(); })
+                                .AddGuidColumn("target_id", column => { column.NotNullable(); });
                          })
                          .WithConstraints(constraints =>
                          {
                              constraints
                                  .AddPrimaryKeyConstraint("pk_rel_table", c => c.WithColumns("origin_id", "target_id"))
                                  .AddUniqueKeyConstraint("ux_rel_table", c => c.WithColumns("origin_id", "target_id"))
-                                 .AddForeignKeyConstraint("fk_rel_table_data1", c => {
+                                 .AddForeignKeyConstraint("fk_rel_table_data1", c =>
+                                 {
                                      c.WithColumns("origin_id")
                                      .WithForeignTable("data1")
                                      .WithForeignColumns("id");
-                                  })
-                                  .AddForeignKeyConstraint("fk_rel_table_data2", c => {
+                                 })
+                                  .AddForeignKeyConstraint("fk_rel_table_data2", c =>
+                                  {
                                       c.WithColumns("target_id")
                                       .WithForeignTable("data2")
                                       .WithForeignColumns("id");
@@ -274,11 +276,34 @@ public partial class DatabaseBuilderTests : BaseTest
                  })
                 .Build();
 
-            var tables2 = DatabaseBuilder.New(tables).Build();
+            var differences = DatabaseComparer.Compare(null, tables);
+            var createSql = DbSqlProvider.GenerateUpdateScript(differences);
 
-            var differences = DbObjectsComparer.Compare(null, tables);
+            var tables2 = DatabaseBuilder.New(tables)
+                .WithTable("data1", table =>
+                {
+                    table.WithColumns(columns =>
+                    {
+                        columns.Remove("id");
+                    });
+                }).Build();
+                
 
-            var sql = DbSqlGenerator.GenerateUpdateScript(differences);
+            differences = DatabaseComparer.Compare(tables, tables2);
+            var dropSql = DbSqlProvider.GenerateUpdateScript(differences);
+
+            var tables3 = DatabaseBuilder.New(tables2)
+               .WithTable("data2", table =>
+               {
+                   table.WithColumns(columns =>
+                   {
+                       columns.Remove("id");
+                   });
+               }).Build();
+
+            differences = DatabaseComparer.Compare(tables2, tables3);
+            var dropModeSql = DbSqlProvider.GenerateUpdateScript(differences);
+
         }
     }
 

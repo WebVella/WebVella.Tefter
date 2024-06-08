@@ -22,7 +22,7 @@ public record DbTable : DbObject
 
     #endregion
 
-    internal string GetMetaJson(DateTime lastCommited)
+    internal string GenerateMetaJson(DateTime lastCommited)
     {
         var meta = _meta with { LastCommited = lastCommited };
         return JsonSerializer.Serialize(meta);

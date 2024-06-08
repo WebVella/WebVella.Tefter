@@ -5,13 +5,16 @@ public class DbTableBuilder
     private Guid _id;
     private Guid? _applicationId;
     private Guid? _dataProviderId;
+    private DateTime _lastCommited;
     private string _name;
     private readonly DbColumnCollectionBuilder _columnsBuilder;
     private readonly DbConstraintCollectionBuilder _constraintsBuilder;
     private readonly DbIndexCollectionBuilder _indexesBuilder;
     private readonly DatabaseBuilder _databaseBuilder;
 
-    internal string Name { get { return _name; } }
+    internal Guid Id => _id;
+    internal string Name => _name;
+    internal DateTime LastCommited { get { return _lastCommited; } set { _lastCommited = value; } }
     internal DbColumnCollectionBuilder ColumnsCollectionBuilder { get { return _columnsBuilder; } }
     internal DbConstraintCollectionBuilder ConstraintsCollectionBuilder { get { return _constraintsBuilder; } }
     internal DbIndexCollectionBuilder IndexesCollectionBuilder { get { return _indexesBuilder; } }
@@ -28,13 +31,13 @@ public class DbTableBuilder
         _indexesBuilder = new DbIndexCollectionBuilder(name,_databaseBuilder);
     }
 
-    public DbTableBuilder WithApplicationId(Guid appId)
+    public DbTableBuilder WithApplicationId(Guid? appId)
     {
         _applicationId = appId;
         return this;
     }
 
-    public DbTableBuilder WithDataProviderId(Guid dataProviderId)
+    public DbTableBuilder WithDataProviderId(Guid? dataProviderId)
     {
         _dataProviderId = dataProviderId;
         return this;
@@ -80,6 +83,12 @@ public class DbTableBuilder
             action(_constraintsBuilder);
 
         return _constraintsBuilder;
+    }
+    internal DbTableBuilder WithLastCommited(DateTime lastCommited)
+    {
+        _lastCommited = lastCommited;
+
+        return this;
     }
 
     public DbTable Build()

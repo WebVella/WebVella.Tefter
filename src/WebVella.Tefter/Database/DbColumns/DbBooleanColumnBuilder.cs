@@ -11,6 +11,7 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
     {
     }
 
+
     public DbBooleanColumnBuilder WithDefaultValue(bool? defaultValue)
     {
         _defaultValue = defaultValue;
@@ -26,6 +27,13 @@ public class DbBooleanColumnBuilder : DbColumnBuilder
     public DbBooleanColumnBuilder NotNullable()
     {
         _isNullable = false;
+        return this;
+    }
+
+    internal override DbBooleanColumnBuilder WithLastCommited(DateTime lastCommited)
+    {
+        base.WithLastCommited(lastCommited);
+
         return this;
     }
 
