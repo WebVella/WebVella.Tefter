@@ -54,8 +54,8 @@ public class DbGuidColumnBuilder : DbColumnBuilder
         return new DbGuidColumn
         {
             Id = _id,
-            DefaultValue = null,
-            IsNullable = false,
+            DefaultValue = _defaultValue,
+            IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
             Type = DbType.Guid
