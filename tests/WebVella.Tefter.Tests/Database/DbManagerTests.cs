@@ -19,7 +19,7 @@ public partial class DbManagerTests : BaseTest
 		}
 	}
 
-	private void CreateSampleDatabaseStructure(DatabaseBuilder databaseBuilder )
+	private void CreateSampleDatabaseStructure(DatabaseBuilder databaseBuilder)
 	{
 		var tables = databaseBuilder
 			   .NewTable("data1", table =>
@@ -30,7 +30,7 @@ public partial class DbManagerTests : BaseTest
 						   columns
 
 						   #region <--- Id --->
-							   .AddTableIdColumn()
+							   .AddGuidColumn("id", x => x.NotNullable().WithAutoDefaultValue())
 						   #endregion
 
 						   #region <--- AutoInc --->
@@ -239,7 +239,7 @@ public partial class DbManagerTests : BaseTest
 						.WithColumns(columns =>
 						{
 							columns
-							.AddTableIdColumn()
+							.AddGuidColumn("id", x => x.NotNullable().WithAutoDefaultValue())
 							.AddTextColumn("text", column =>
 							{
 								column

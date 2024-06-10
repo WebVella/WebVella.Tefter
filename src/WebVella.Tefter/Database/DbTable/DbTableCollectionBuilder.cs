@@ -13,19 +13,12 @@ public class DbTableCollectionBuilder
         _databaseBuilder = databaseBuilder;
     }
 
-    internal DbTableCollectionBuilder WithTables(DbTableCollection tables, Action<DbTableCollectionBuilder> action)
-    {
-        //TODO implement            
-        action(this);
-        return this;
-    }
-
     public DbTableCollectionBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action)
     {
-        if (!DbUtility.IsValidDbObjectName(name, out string error))
-            throw new DbBuilderException(error);
-
-        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		_databaseBuilder.RegisterId(id);
+		_databaseBuilder.RegisterName(name);
+		
+		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
         if (builder is not null)
             throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
@@ -41,10 +34,10 @@ public class DbTableCollectionBuilder
 
     internal DbTableBuilder NewTableBuilder(Guid id, string name, Action<DbTableBuilder> action = null)
     {
-        if (!DbUtility.IsValidDbObjectName(name, out string error))
-            throw new DbBuilderException(error);
+		_databaseBuilder.RegisterId(id);
+		_databaseBuilder.RegisterName(name);
 
-        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
         if (builder is not null)
             throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
@@ -65,7 +58,11 @@ public class DbTableCollectionBuilder
         if (builder is null)
             throw new DbBuilderException($"Table with name '{name}' is not found.");
 
-        _builders.Remove(builder);
+		_databaseBuilder.UnregisterId(builder.Id);
+
+		_databaseBuilder.UnregisterName(builder.Name);
+
+		_builders.Remove(builder);
 
         return this;
     }

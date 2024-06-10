@@ -11,9 +11,9 @@ internal class Constants
 
     //postgres name boundaries for length
     //maximum length is 63 but we reserve 13 for prefixes
-    public const int DB_MIN_COLUMN_NAME_LENGTH = 2;
-    public const int DB_MAX_COLUMN_NAME_LENGTH = 50;
-    public const string DB_NAME_VALIDATION_PATTERN = @"^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
+    public const int DB_MIN_OBJECT_NAME_LENGTH = 2;
+    public const int DB_MAX_OBJECT_NAME_LENGTH = 50;
+    public const string DB_OBJECT_NAME_VALIDATION_PATTERN = @"^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
 
     public const string DB_GUID_COLUMN_AUTO_DEFAULT_VALUE = "uuid_generate_v1()";
     public const string DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE = "clock_timestamp()";

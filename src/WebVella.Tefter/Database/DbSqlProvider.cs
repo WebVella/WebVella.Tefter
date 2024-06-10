@@ -255,14 +255,8 @@ $$ LANGUAGE plpgsql;
             return $"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" {column.DatabaseColumnType};";
         };
 
-        Func<DbIdColumn, string> tableIdFunc = (column) =>
-        {
-            return $"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" UUID NOT NULL DEFAULT {Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE};";
-        };
-
         string createSql = dbColumn switch
         {
-            DbIdColumn c => tableIdFunc(c),
             DbAutoIncrementColumn c => autoIncFunc(c),
             DbNumberColumn c => generalFunc(c),
             DbBooleanColumn c => generalFunc(c),
@@ -301,11 +295,6 @@ $$ LANGUAGE plpgsql;
             return sb.ToString();
         };
 
-        Func<DbIdColumn, string> tableIdFunc = (column) =>
-        {
-            throw new DbSqlProviderException("Trying to generate update statement for table id column. It's not supported.");
-        };
-
         Func<DbAutoIncrementColumn, string> autoIncFunc = (column) =>
         {
             throw new DbSqlProviderException("Trying to generate update statement for auto increment column. It's not supported.");
@@ -313,7 +302,6 @@ $$ LANGUAGE plpgsql;
 
         string createSql = dbColumn switch
         {
-            DbIdColumn c => tableIdFunc(c),
             DbAutoIncrementColumn c => autoIncFunc(c),
             DbNumberColumn c => generalFunc(c),
             DbBooleanColumn c => generalFunc(c),

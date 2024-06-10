@@ -632,7 +632,6 @@ internal static class DatabaseComparer
             case DbDateColumn: return "Date column";
             case DbDateTimeColumn: return "DateTime column";
             case DbGuidColumn: return "Guid column";
-            case DbIdColumn: return "Id column";
             case DbNumberColumn: return "number column";
             case DbTextColumn: return "text column";
             case DbForeignKeyConstraint: return "foreign key constraint";

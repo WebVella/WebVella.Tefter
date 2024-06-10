@@ -12,13 +12,13 @@ internal class DbUtility
             return false;
         }
 
-        if (name.Length < Constants.DB_MIN_COLUMN_NAME_LENGTH)
-            error = $"The name must be at least {Constants.DB_MIN_COLUMN_NAME_LENGTH} characters long";
+        if (name.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
+            error = $"The name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long";
 
-        if (name.Length > Constants.DB_MAX_COLUMN_NAME_LENGTH)
-            error = $"The length of name must be less or equal than {Constants.DB_MAX_COLUMN_NAME_LENGTH} characters";
+        if (name.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
+            error = $"The length of name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters";
 
-        Match match = Regex.Match(name, Constants.DB_NAME_VALIDATION_PATTERN);
+        Match match = Regex.Match(name, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
         if (!match.Success || match.Value != name.Trim())
             error = $"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
                 $"not include spaces, not end with an underscore, and not contain two consecutive underscores";
@@ -87,14 +87,8 @@ internal class DbUtility
                 return $"'{column.DefaultValue}'";
         };
 
-        Func<DbIdColumn, string> tableIdDefaultValueFunc = (column) =>
-        {
-            return Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
-        };
-
         return column switch
         {
-            DbIdColumn c => tableIdDefaultValueFunc(c),
             DbAutoIncrementColumn c => null,
             DbNumberColumn c => numberDefaultValueFunc(c),
             DbBooleanColumn c => booleanDefaultValueFunc(c),
@@ -109,10 +103,6 @@ internal class DbUtility
     public static object ConvertDatabaseDefaultValueToDbColumnDefaultValue(string columnName, Type columnType, string defaultValue)
     {
         if (columnType == typeof(DbAutoIncrementColumn))
-        {
-            return null;
-        }
-        else if (columnType == typeof(DbIdColumn))
         {
             return null;
         }

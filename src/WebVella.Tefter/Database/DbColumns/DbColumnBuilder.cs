@@ -10,8 +10,9 @@ public abstract class DbColumnBuilder
     protected bool _autoDefaultValue = false;
     private readonly DatabaseBuilder _databaseBuilder;
 
-    internal string Name => _name;
-    internal DateTime LastCommited => _lastCommited;
+    internal Guid Id => _id;
+	internal string Name => _name;
+	internal DateTime LastCommited => _lastCommited;
 
     internal DbColumnBuilder(string name, DatabaseBuilder databaseBuilder) 
         : this(Guid.NewGuid(), name, databaseBuilder )

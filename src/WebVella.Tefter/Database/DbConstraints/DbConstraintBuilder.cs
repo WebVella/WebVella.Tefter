@@ -7,7 +7,7 @@ public abstract class DbConstraintBuilder
 
     protected List<string> _columns;
 
-    internal string Name { get { return _name; } }
+	internal string Name => _name;
 
     internal DbConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
     {

@@ -18,6 +18,8 @@ public class DbConstraintCollectionBuilder
 
     public DbConstraintCollectionBuilder AddUniqueKeyConstraint(string name, Action<DbUniqueKeyConstraintBuilder> action)
     {
+		_databaseBuilder.RegisterName(name);
+
         DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _databaseBuilder);
 
         action(builder);
@@ -29,7 +31,9 @@ public class DbConstraintCollectionBuilder
 
     internal DbUniqueKeyConstraintBuilder AddUniqueKeyConstraintBuilder(string name, Action<DbUniqueKeyConstraintBuilder> action = null)
     {
-        DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _databaseBuilder);
+		_databaseBuilder.RegisterName(name);
+
+		DbUniqueKeyConstraintBuilder builder = new DbUniqueKeyConstraintBuilder(name, _databaseBuilder);
 
         if(action != null) 
             action(builder);
@@ -45,7 +49,9 @@ public class DbConstraintCollectionBuilder
 
     public DbConstraintCollectionBuilder AddPrimaryKeyConstraint(string name, Action<DbPrimaryKeyConstraintBuilder> action)
     {
-        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _databaseBuilder);
+		_databaseBuilder.RegisterName(name);
+
+		DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _databaseBuilder);
 
         action(builder);
 
@@ -56,7 +62,9 @@ public class DbConstraintCollectionBuilder
 
     internal DbPrimaryKeyConstraintBuilder AddPrimaryKeyConstraintBuilder(string name, Action<DbPrimaryKeyConstraintBuilder> action = null)
     {
-        DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _databaseBuilder);
+		_databaseBuilder.RegisterName(name);
+
+		DbPrimaryKeyConstraintBuilder builder = new DbPrimaryKeyConstraintBuilder(name, _databaseBuilder);
 
         if (action != null)
             action(builder);
@@ -72,7 +80,9 @@ public class DbConstraintCollectionBuilder
 
     public DbConstraintCollectionBuilder AddForeignKeyConstraint(string name, Action<DbForeignKeyConstraintBuilder> action)
     {
-        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _databaseBuilder);
+		_databaseBuilder.RegisterName(name);
+
+		DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _databaseBuilder);
 
         action(builder);
 
@@ -83,7 +93,9 @@ public class DbConstraintCollectionBuilder
 
     internal DbForeignKeyConstraintBuilder AddForeignKeyConstraintBuilder(string name, Action<DbForeignKeyConstraintBuilder> action = null)
     {
-        DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _databaseBuilder);
+		_databaseBuilder.RegisterName(name);
+
+		DbForeignKeyConstraintBuilder builder = new DbForeignKeyConstraintBuilder(name, _databaseBuilder);
 
         if(action != null)
             action(builder);
@@ -103,7 +115,9 @@ public class DbConstraintCollectionBuilder
         if (builder is null)
             throw new DbBuilderException($"Constraint with name '{name}' is not found.");
 
-        _builders.Remove(builder);
+		_databaseBuilder.UnregisterName(builder.Name);
+
+		_builders.Remove(builder);
 
         return this;
     }

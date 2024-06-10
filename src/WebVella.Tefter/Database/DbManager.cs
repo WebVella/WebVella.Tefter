@@ -68,33 +68,24 @@ public partial class DbManager : IDbManager
 				{
 					case "uuid":
 						{
-							if (columnName == Constants.DB_TABLE_ID_COLUMN_NAME)
-							{
-								var columnBuider = columnCollectionBuilder
-									.AddTableIdColumnBuilder(meta.Id)
-									.WithLastCommited(meta.LastCommited);
-							}
+							Guid? guidDefaultValue = (Guid?)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbGuidColumn), defaultValue);
+
+							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
+
+							var columnBuider = columnCollectionBuilder
+								.AddGuidColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(guidDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
 							else
-							{
-								Guid? guidDefaultValue = (Guid?)DbUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DbGuidColumn), defaultValue);
+								columnBuider.NotNullable();
 
-								bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
-
-								var columnBuider = columnCollectionBuilder
-									.AddGuidColumnBuilder(meta.Id, columnName)
-									.WithDefaultValue(guidDefaultValue)
-									.WithLastCommited(meta.LastCommited);
-
-								if (isNullable)
-									columnBuider.Nullable();
-								else
-									columnBuider.NotNullable();
-
-								if (isAutoDefaultValue)
-									columnBuider.WithAutoDefaultValue();
-								else
-									columnBuider.WithoutAutoDefaultValue();
-							}
+							if (isAutoDefaultValue)
+								columnBuider.WithAutoDefaultValue();
+							else
+								columnBuider.WithoutAutoDefaultValue();
 						}
 						break;
 					case "integer":

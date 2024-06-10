@@ -1,16 +1,25 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using System.Xml.Linq;
+
+namespace WebVella.Tefter.Database;
 
 public class DatabaseBuilder
 {
-    private readonly List<DbTableBuilder> _builders;
+	private HashSet<Guid> _databaseObjectIds;
+	private HashSet<string> _databaseObjectNames;
+	private Dictionary<string, HashSet<string>> _tableColumnNames;
+
+	private readonly List<DbTableBuilder> _builders;
     internal ReadOnlyCollection<DbTableBuilder> Builders => _builders.AsReadOnly();
 
     private DatabaseBuilder(DbTableCollection tables = null)
     {
+		_databaseObjectIds = new HashSet<Guid>();
+		_databaseObjectNames = new HashSet<string>();
+		_tableColumnNames = new Dictionary<string, HashSet<string>>();
         _builders = new List<DbTableBuilder>();
     }
 
-    internal static DatabaseBuilder New(DbTableCollection tables = null)
+	internal static DatabaseBuilder New(DbTableCollection tables = null)
     {
         var builder = new DatabaseBuilder();
 
@@ -25,13 +34,6 @@ public class DatabaseBuilder
                     var columnCollectionBuilder = tableBuilder.WithColumnsBuilder();
                     switch (column)
                     {
-                        case DbIdColumn c:
-                            {
-                                columnCollectionBuilder
-                                    .AddTableIdColumnBuilder(c.Id)
-                                    .WithLastCommited(c.LastCommited);
-                            }
-                            break;
                         case DbAutoIncrementColumn c:
                             {
                                 columnCollectionBuilder
@@ -190,10 +192,10 @@ public class DatabaseBuilder
 
     public DatabaseBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action)
     {
-        if (!DbUtility.IsValidDbObjectName(name, out string error))
-            throw new DbBuilderException(error);
+		RegisterId(id);
+		RegisterName(name);
 
-        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
         if (builder is not null)
             throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
@@ -209,10 +211,10 @@ public class DatabaseBuilder
 
     public DbTableBuilder NewTableBuilder(Guid id, string name)
     {
-        if (!DbUtility.IsValidDbObjectName(name, out string error))
-            throw new DbBuilderException(error);
+		RegisterId(id);
+		RegisterName(name);
 
-        var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
         if (builder is not null)
             throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
@@ -226,9 +228,6 @@ public class DatabaseBuilder
 
     public DatabaseBuilder WithTable(string name, Action<DbTableBuilder> action)
     {
-        if (!DbUtility.IsValidDbObjectName(name, out string error))
-            throw new DbBuilderException(error);
-
         var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
         if (builder is null)
@@ -241,9 +240,6 @@ public class DatabaseBuilder
 
     public DbTableBuilder WithTableBuilder(string name, Action<DbTableBuilder> action = null)
     {
-        if (!DbUtility.IsValidDbObjectName(name, out string error))
-            throw new DbBuilderException(error);
-
         var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
         if (builder is null)
@@ -302,47 +298,108 @@ public class DatabaseBuilder
         return collection;
     }
 
-    internal void ValidateColumnExists(string columnName)
-    {
-        //if (!DbUtility.IsValidDbObjectName(columnName, out string error))
-        //{
-        //    throw new DbBuilderException($"Column name error: {error}");
-        //}
-        //if (!_columnsBuilder.Builders.Any(c => c.Name == columnName))
-        //{
-        //    throw new DbBuilderException($"Column with name '{columnName}' was not found.");
-        //}
-    }
+	#region <--- Validation --->
+	internal void RegisterId(Guid id)
+	{
+		if (_databaseObjectIds.Contains(id))
+			throw new DbBuilderException($"There is already existing database object with id '{id}'");
 
-    internal void ValidateColumnsExists(List<string> columnNames)
-    {
-        //foreach (var columnName in columnNames)
-        //{
-        //    if (!DbUtility.IsValidDbObjectName(columnName, out string error))
-        //    {
-        //        throw new DbBuilderException($"Column name error: {error}");
-        //    }
-        //    if (!_columnsBuilder.Builders.Any(c => c.Name == columnName))
-        //    {
-        //        throw new DbBuilderException($"Column with name '{columnName}' was not found.");
-        //    }
-        //}
-    }
+		_databaseObjectIds.Add(id);
+	}
 
-    internal void ValidateColumnsExists(params string[] columnNames)
-    {
-        ValidateColumnsExists(new List<string>(columnNames));
-    }
+	internal void UnregisterId(Guid id)
+	{
+		if (!_databaseObjectIds.Contains(id))
+			throw new DbBuilderException($"There is no existing object with specified id '{id}'");
 
-    internal void ValidateColumnName(string name, bool isNew = true)
-    {
-        //if (!DbUtility.IsValidDbObjectName(name, out string error))
-        //    throw new DbBuilderException($"Invalid column name '{name}'. {error}");
+		_databaseObjectIds.Remove(id);
+	}
 
-        //if (name == Constants.DB_TABLE_ID_COLUMN_NAME && isNew)
-        //    throw new DbBuilderException("Name 'id' is reserved column name");
+	internal void RegisterName(string name)
+	{
+		if (name == null)
+			throw new ArgumentNullException("name");
 
-        //if (_columnsBuilder.Builders.Any(x => x.Name == name && isNew))
-        //    throw new DbBuilderException($"There is already existing column with name '{name}'");
-    }
+		if (!IsValidDbObjectName(name, out string error))
+			throw new DbBuilderException($"Invalid name '{name}'. {error}");
+
+		if (_databaseObjectNames.Contains(name))
+			throw new DbBuilderException($"There is already existing database object with name '{name}'");
+
+		_databaseObjectNames.Add(name);
+	}
+
+	internal void UnregisterName(string name)
+	{
+		if (name == null)
+			throw new ArgumentNullException("name");
+
+		if (!_databaseObjectNames.Contains(name))
+			throw new DbBuilderException($"No object with name '{name}' found in registered database objects.");
+
+		_databaseObjectNames.Remove(name);
+	}
+
+	internal void RegisterColumnName(string tableName, string columnName)
+	{
+		if (string.IsNullOrWhiteSpace(tableName))
+			throw new ArgumentNullException(nameof(tableName));
+
+		if (string.IsNullOrWhiteSpace(columnName))
+			throw new ArgumentNullException(nameof(columnName));
+
+		if (!IsValidDbObjectName(columnName, out string error))
+			throw new DbBuilderException($"Invalid name '{columnName}'. {error}");
+
+		if (!_tableColumnNames.ContainsKey(tableName))
+			_tableColumnNames.Add(tableName, new HashSet<string>());
+
+		if (_tableColumnNames[tableName].Contains(columnName))
+			throw new DbBuilderException($"There is already existing column with name '{columnName}' for table '{tableName}'");
+
+		_tableColumnNames[tableName].Add(columnName);
+	}
+
+	internal void UnregisterColumnName(string tableName, string columnName)
+	{
+		if (string.IsNullOrWhiteSpace(tableName))
+			throw new ArgumentNullException(nameof(tableName));
+
+		if (string.IsNullOrWhiteSpace(columnName))
+			throw new ArgumentNullException(nameof(columnName));
+
+		if (!_tableColumnNames.ContainsKey(tableName))
+			throw new DbBuilderException($"Table with name '{tableName}' not found while trying to remove column '{columnName}'");
+
+		if (!_tableColumnNames[tableName].Contains(columnName))
+			throw new DbBuilderException($"Not found a column with name '{columnName}' for table '{tableName}' while trying to remove it.");
+
+		_tableColumnNames[tableName].Remove(columnName);
+	}
+
+	private bool IsValidDbObjectName(string name, out string error)
+	{
+		error = null;
+
+		if (string.IsNullOrEmpty(name))
+		{
+			error = "Name is required and cannot be empty";
+			return false;
+		}
+
+		if (name.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
+			error = $"The name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long";
+
+		if (name.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
+			error = $"The length of name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters";
+
+		Match match = Regex.Match(name, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
+		if (!match.Success || match.Value != name.Trim())
+			error = $"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
+				$"not include spaces, not end with an underscore, and not contain two consecutive underscores";
+
+		return string.IsNullOrWhiteSpace(error);
+	} 
+
+	#endregion
 }
