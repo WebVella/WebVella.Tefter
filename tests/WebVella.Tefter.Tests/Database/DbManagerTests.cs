@@ -3,7 +3,7 @@
 public partial class DbManagerTests : BaseTest
 {
 	[Fact]
-	public async Task GetDatabaseBuilderTest()
+	public async Task CreateStructureSaveAndCompateAfter()
 	{
 		using (await locker.LockAsync())
 		{
@@ -14,7 +14,19 @@ public partial class DbManagerTests : BaseTest
 			{
 				var databaseBuilder = dbManager.GetDatabaseBuilder();
 				CreateSampleDatabaseStructure(databaseBuilder);
+
+				var tablesBeforeSave = databaseBuilder.Build();
+
 				var result = dbManager.SaveChanges(databaseBuilder);
+
+				var tablesAfterSave = dbManager.GetDatabaseBuilder().Build();
+
+				tablesAfterSave.Count().Should().Be(tablesBeforeSave.Count());
+				foreach(var table in tablesBeforeSave )
+				{
+					var savedTable = tablesAfterSave.Find(table.Id);
+					CompareTables(table,savedTable);
+				}
 			}
 		}
 	}
@@ -290,72 +302,83 @@ public partial class DbManagerTests : BaseTest
 			   .Build();
 	}
 
-	//private void CompareTables(DbTable table1, DbTable table2)
-	//{
-	//    table1.Should().NotBeNull();
-	//    table1.Name.Should().Be(table2.Name);
-	//    table1.Columns.Count().Should().Be(table2.Columns.Count());
-	//    table1.Indexes.Count().Should().Be(table2.Indexes.Count());
-	//    table1.Constraints.Count().Should().Be(table2.Constraints.Count());
+	private void CompareTables(DbTable table1, DbTable table2)
+	{
+		table1.Should().NotBeNull();
+		table1.Name.Should().Be(table2.Name);
+		table1.Columns.Count().Should().Be(table2.Columns.Count());
+		table1.Indexes.Count().Should().Be(table2.Indexes.Count());
+		table1.Constraints.Count().Should().Be(table2.Constraints.Count());
 
-	//    for (int i = 0; i < table1.Columns.Count(); i++)
-	//    {
-	//        var column1 = table1.Columns[i];
-	//        var column2 = table2.Columns[i];
+		for (int i = 0; i < table1.Columns.Count(); i++)
+		{
+			var column1 = table1.Columns[i];
+			var column2 = table2.Columns[i];
 
-	//        column1.GetType().Should().Be(column2.GetType());
+			column1.GetType().Should().Be(column2.GetType());
 
-	//        if (column1.GetType() == typeof(DbGuidColumn))
-	//            ((DbGuidColumn)column1).GenerateNewIdAsDefaultValue.Should().Be(
-	//                ((DbGuidColumn)column2).GenerateNewIdAsDefaultValue);
-	//        if (column1.GetType() == typeof(DbDateColumn))
-	//            ((DbDateColumn)column1).UseCurrentTimeAsDefaultValue.Should().Be(
-	//                ((DbDateColumn)column2).UseCurrentTimeAsDefaultValue);
-	//        if (column1.GetType() == typeof(DbDateTimeColumn))
-	//            ((DbDateTimeColumn)column1).UseCurrentTimeAsDefaultValue.Should().Be(
-	//                ((DbDateTimeColumn)column2).UseCurrentTimeAsDefaultValue);
+			if (column1.GetType() == typeof(DbGuidColumn))
+				((DbGuidColumn)column1).AutoDefaultValue.Should().Be(
+					((DbGuidColumn)column2).AutoDefaultValue);
+			if (column1.GetType() == typeof(DbDateColumn))
+				((DbDateColumn)column1).AutoDefaultValue.Should().Be(
+					((DbDateColumn)column2).AutoDefaultValue);
+			if (column1.GetType() == typeof(DbDateTimeColumn))
+				((DbDateTimeColumn)column1).AutoDefaultValue.Should().Be(
+					((DbDateTimeColumn)column2).AutoDefaultValue);
 
-	//        column1.Name.Should().Be(column2.Name);
-	//        column1.DefaultValue.Should().Be(column2.DefaultValue);
-	//        column1.IsNullable.Should().Be(column2.IsNullable);
-	//    }
+			column1.Name.Should().Be(column2.Name);
+			column1.DefaultValue.Should().Be(column2.DefaultValue);
+			column1.IsNullable.Should().Be(column2.IsNullable);
+		}
 
-	//    for (int i = 0; i < table1.Indexes.Count(); i++)
-	//    {
-	//        var index1 = table1.Indexes[i];
-	//        var index2 = table2.Indexes.SingleOrDefault(x => x.Name == index1.Name);
+		for (int i = 0; i < table1.Indexes.Count(); i++)
+		{
+			var index1 = table1.Indexes[i];
+			var index2 = table2.Indexes.SingleOrDefault(x => x.Name == index1.Name);
 
-	//        index1.GetType().Should().Be(index2.GetType());
-	//        index1.Table.Name.Should().Be(index2.Table.Name);
-	//        index1.Columns.Count().Should().Be(index2.Columns.Count());
-	//        index1.Name.Should().Be(index2.Name);
+			index1.GetType().Should().Be(index2.GetType());
+			index1.Columns.Count().Should().Be(index2.Columns.Count());
+			index1.Name.Should().Be(index2.Name);
 
-	//        for (int j = 0; j < index1.Columns.Count(); j++)
-	//        {
-	//            var column1 = index1.Columns[j];
-	//            var column2 = index2.Columns[j];
-	//            column1.Table.Name.Should().Be(column2.Table.Name);
-	//            column1.GetType().Should().Be(column2.GetType());
-	//        }
-	//    }
+			for (int j = 0; j < index1.Columns.Count(); j++)
+			{
+				var column1 = index1.Columns[j];
+				var column2 = index2.Columns[j];
+				column1.GetType().Should().Be(column2.GetType());
+			}
+		}
 
-	//    for (int i = 0; i < table1.Constraints.Count(); i++)
-	//    {
-	//        var constraint1 = table1.Constraints[i];
-	//        var constraint2 = table2.Constraints.SingleOrDefault(x => x.Name == constraint1.Name);
+		for (int i = 0; i < table1.Constraints.Count(); i++)
+		{
+			var constraint1 = table1.Constraints[i];
+			var constraint2 = table2.Constraints.SingleOrDefault(x => x.Name == constraint1.Name);
 
-	//        constraint1.GetType().Should().Be(constraint2.GetType());
-	//        constraint1.Name.Should().Be(constraint2.Name);
-	//        constraint1.Table.Name.Should().Be(constraint2.Table.Name);
-	//        constraint1.Columns.Count().Should().Be(constraint2.Columns.Count());
+			constraint1.GetType().Should().Be(constraint2.GetType());
+			constraint1.Name.Should().Be(constraint2.Name);
+			constraint1.Columns.Count().Should().Be(constraint2.Columns.Count());
 
-	//        for (int j = 0; j < constraint1.Columns.Count(); j++)
-	//        {
-	//            var column1 = constraint1.Columns[j];
-	//            var column2 = constraint2.Columns[j];
-	//            column1.Table.Name.Should().Be(column2.Table.Name);
-	//            column1.GetType().Should().Be(column2.GetType());
-	//        }
-	//    }
-	//}
+			for (int j = 0; j < constraint1.Columns.Count(); j++)
+			{
+				var column1 = constraint1.Columns[j];
+				var column2 = constraint2.Columns[j];
+				column1.GetType().Should().Be(column2.GetType());
+			}
+
+			if (constraint1.GetType() == typeof(DbForeignKeyConstraint))
+			{
+				var fk1 = (DbForeignKeyConstraint)constraint1 as DbForeignKeyConstraint;
+				var fk2 = (DbForeignKeyConstraint)constraint2 as DbForeignKeyConstraint;
+
+				fk1.ForeignTable.Should().Be(fk2.ForeignTable);	
+
+				for (int j = 0; j < fk1.ForeignColumns.Count(); j++)
+				{
+					var column1 = fk1.ForeignColumns[j];
+					var column2 = fk2.ForeignColumns[j];
+					column1.GetType().Should().Be(column2.GetType());
+				}
+			}
+		}
+	}
 }
