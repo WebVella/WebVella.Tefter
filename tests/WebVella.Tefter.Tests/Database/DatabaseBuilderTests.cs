@@ -425,6 +425,58 @@ public partial class DatabaseBuilderTests : BaseTest
 	#region <--- Column Tests --->
 
 	[Fact]
+	public void Column_CRUD_AutoIncrement()
+	{
+		var databaseBuilder = DatabaseBuilder.New();
+		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
+
+		Guid columnId = Guid.NewGuid();
+		const string columnName = "test_auto_inc";
+
+		DbTable table = null;
+		var task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddAutoIncrementColumn(columnId, columnName);
+			})
+			.Build();
+		});
+		var exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(1);
+		var columnById = table.Columns.Find(columnId);
+		var columnByName = table.Columns.Find(columnName);
+
+		columnById.Should().NotBeNull();
+		columnByName.Should().NotBeNull();
+		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
+		columnById.Should().BeOfType<DbAutoIncrementColumn>();
+
+		columnById.IsNullable.Should().BeFalse();
+		columnById.DefaultValue.Should().Be(null);
+
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.Remove(columnName);
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(0);
+	}
+
+
+	[Fact]
 	public void Column_CRUD_Guid()
 	{
 		var databaseBuilder = DatabaseBuilder.New();
