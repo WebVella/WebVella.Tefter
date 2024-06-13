@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Web.Store.UserState;
+﻿using WebVella.Tefter.Web.Store.SessionState;
+using WebVella.Tefter.Web.Store.UserState;
 
 namespace WebVella.Tefter.Web.Layout;
 public partial class MainLayout : FluxorLayout
@@ -6,6 +7,7 @@ public partial class MainLayout : FluxorLayout
 	[Inject] protected ITfService TfService { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
 	[Inject] protected IState<UserState> UserState { get; set; }
+	[Inject] protected IState<SessionState> SessionState { get; set; }
 	[Inject] protected IDispatcher dispatcher { get; set; }
 
 	private bool _firstRender = true;

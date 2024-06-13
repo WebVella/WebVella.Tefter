@@ -18,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Web", "src\WebVella.Tefter.Web\WebVella.Tefter.Web.csproj", "{2AB1A637-0C0C-47C3-BE1F-77C34552D532}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Core", "src\WebVella.Tefter.Core\WebVella.Tefter.Core.csproj", "{965D84C1-1DF2-4D59-8ACB-70E9C00B15D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Core", "src\WebVella.Tefter.Core\WebVella.Tefter.Core.csproj", "{965D84C1-1DF2-4D59-8ACB-70E9C00B15D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

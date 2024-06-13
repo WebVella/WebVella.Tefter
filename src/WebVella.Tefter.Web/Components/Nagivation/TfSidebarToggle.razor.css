@@ -1,0 +1,29 @@
+﻿.sidebar-toggle {
+	position: absolute;
+	top: 8px;
+	right: -22px;
+}
+
+	.sidebar-toggle a {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		width: 24px;
+		height: 24px;
+		border-radius: 50%;
+		background: var(--neutral-layer-3) !important;
+		position: relative;
+		z-index: 5;
+	}
+
+::deep.sidebar-toggle a svg {
+	fill: var(--neutral-base-color) !important;
+}
+
+::deep.sidebar-toggle a:hover {
+	background: var(--neutral-fill-layer-active) !important;
+}
+
+	::deep.sidebar-toggle a:hover svg {
+		fill: var(--neutral-foreground-rest) !important;
+	}

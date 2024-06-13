@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Store.SessionStore;
+﻿namespace WebVella.Tefter.Web.Store.SessionState;
 
 [FeatureState]
 public record SessionState

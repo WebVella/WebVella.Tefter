@@ -14,6 +14,5 @@ global using Fluxor.Blazor.Web.Components;
 
 global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Services;
-global using WebVella.Tefter.Web.Store.SessionStore;
 global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Web.Models;

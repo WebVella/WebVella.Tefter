@@ -7,7 +7,7 @@
 else
 {
 	<FluentDesignTheme Mode="@UserState.Value.User.ThemeMode" OfficeColor="@UserState.Value.User.ThemeColor" />
-	<FluentLayout>
+	<FluentLayout Class="@(SessionState.Value.IsSidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
 			<TfLogo />
 			<FluentSpacer />
@@ -15,9 +15,8 @@ else
 		</FluentHeader>
 		<FluentStack Orientation="Orientation.Horizontal" Class="wrapper">
 			<FluentStack Orientation="Orientation.Vertical" Class="sidebar">
+				<TfSidebarToggle/>
 			</FluentStack>
-			<div>@UserState.Value.User.ThemeMode</div>
-			<div>@UserState.Value.User.ThemeColor</div>
 			@Body
 		</FluentStack>
 	</FluentLayout>
