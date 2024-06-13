@@ -6,6 +6,7 @@ public partial class WvUserNavigation : WvBaseComponent
 
 	protected override void OnAfterRender(bool firstRender)
 	{
+		base.OnAfterRender(firstRender);
 		if(firstRender){
 			_user = WvState.GetUser();
 			StateHasChanged();
@@ -14,7 +15,7 @@ public partial class WvUserNavigation : WvBaseComponent
 
 	protected override void OnInitialized()
 	{
-		
+		base.OnInitialized();
 	}
 
 	private void _onClick(){ 
@@ -33,12 +34,14 @@ public partial class WvUserNavigation : WvBaseComponent
         {
 			_user = (User)result.Data;
             await WvState.SetTheme(_user.ThemeMode, _user.ThemeColor);
-        }
+			Dispatcher.Dispatch(new ChangeThemeAction(){ ThemeMode = _user.ThemeMode, ThemeColor = _user.ThemeColor});
+		}
     }
     private void _editProfile(){
 		ToastService.ShowToast(ToastIntent.Warning, "Will open edit profile modal");
 	}
     private void _logout(){
+		Dispatcher.Dispatch(new GetUserAction());
 		ToastService.ShowToast(ToastIntent.Warning, "Will logout user");
 	}
 

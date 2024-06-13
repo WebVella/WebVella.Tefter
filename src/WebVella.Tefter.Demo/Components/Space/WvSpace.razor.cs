@@ -15,14 +15,18 @@ public partial class WvSpace : WvBaseComponent
 		builder.AddContent(1, "Hello from RenderFragment!");
 		builder.CloseElement();
 	};
-	public override async ValueTask DisposeAsync()
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		WvState.ActiveSpaceDataChanged -= onSpaceDataLocation;
-		await base.DisposeAsync();
+		if (disposing)
+		{
+			WvState.ActiveSpaceDataChanged -= onSpaceDataLocation;
+		}
+		await base.DisposeAsyncCore(disposing);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
 			var meta = WvState.GetActiveSpaceMeta();

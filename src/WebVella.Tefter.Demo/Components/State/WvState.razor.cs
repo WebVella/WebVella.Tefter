@@ -33,6 +33,7 @@ public partial class WvState : ComponentBase, IAsyncDisposable
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
 			_user = WvService.GetUserByCookieValue(String.Empty);

@@ -9,15 +9,19 @@ public partial class WvNavigation : WvBaseComponent
 	private WvNavigationSelector _selectorEl;
 	private string _sidebarCollapseCss = "";
 
-	public override async ValueTask DisposeAsync()
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		WvState.ActiveSpaceDataChanged -= OnSpaceDataChanged;
+		if (disposing)
+		{
+			WvState.ActiveSpaceDataChanged -= OnSpaceDataChanged;
 		WvState.UISettingsChanged -= OnUISettingsChanged;
-		await base.DisposeAsync();
+		}
+		await base.DisposeAsyncCore(disposing);
 	}
 
 	protected override void OnAfterRender(bool firstRender)
 	{
+		base.OnAfterRender(firstRender);
 		if(firstRender){
 			var meta = WvState.GetActiveSpaceMeta();
 			_space = meta.Space;

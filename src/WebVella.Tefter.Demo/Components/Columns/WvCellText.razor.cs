@@ -14,6 +14,7 @@ public partial class WvCellText : WvBaseComponent
 
 	protected override void OnInitialized()
 	{
+		base.OnInitialized();
 		_value = string.Empty;
 		if (Data is not null)
 		{
@@ -26,6 +27,7 @@ public partial class WvCellText : WvBaseComponent
 
 	protected override void OnAfterRender(bool firstRender)
 	{
+		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
 

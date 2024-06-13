@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Demo.Models;
 
-public class User
+public record User
 {
 	public Guid Id { get; set; }
 	public string FirstName { get; set; }

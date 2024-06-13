@@ -7,20 +7,12 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.5.1" />
+    <PackageReference Include="Fluxor" Version="6.0.0" />
+    <PackageReference Include="Fluxor.Blazor.Web" Version="6.0.0" />
+    <PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.0.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.7.2" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.7.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="Components\Space\WvSpaceViewNav.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\SavesPage.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Update="Pages\BookmarksPage.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
 
 </Project>

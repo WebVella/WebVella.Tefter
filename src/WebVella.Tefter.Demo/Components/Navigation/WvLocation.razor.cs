@@ -8,16 +8,21 @@ public partial class WvLocation : WvBaseComponent
 	private int _ellipsisCount = 20;
 	private MenuItem _namedLocation = null;
 
-	public override async ValueTask DisposeAsync()
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		WvState.ActiveSpaceDataChanged -= OnSpaceDataChanged;
-		Navigator.LocationChanged -= OnLocationChanged;
-		await base.DisposeAsync();
+		if (disposing)
+		{
+			WvState.ActiveSpaceDataChanged -= OnSpaceDataChanged;
+			Navigator.LocationChanged -= OnLocationChanged;
+		}
+		await base.DisposeAsyncCore(disposing);
 	}
 
 	protected override void OnAfterRender(bool firstRender)
 	{
-		if(firstRender) {
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
 			var meta = WvState.GetActiveSpaceMeta();
 			_space = meta.Space;
 			_spaceData = meta.SpaceData;

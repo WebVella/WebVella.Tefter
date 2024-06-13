@@ -9,14 +9,18 @@ public partial class WvSpaceViewNav : WvBaseComponent
 	private string _activeTabId = null;
 	private string _emptyTabId = RenderUtils.ConvertGuidToHtmlElementId(Guid.NewGuid());
 
-	public override async ValueTask DisposeAsync()
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		WvState.ActiveSpaceDataChanged -= onSpaceDataChange;
-		await base.DisposeAsync();
+		if (disposing)
+		{
+			WvState.ActiveSpaceDataChanged -= onSpaceDataChange;
+			}
+		await base.DisposeAsyncCore(disposing);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
 			init();

@@ -1,0 +1,39 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+    <FluentStack VerticalAlignment="VerticalAlignment.Center">
+        <FluentIcon Value="@(new Icons.Regular.Size24.WindowApps())" />
+        <FluentLabel Typo="Typography.PaneHeader">
+            Theme Configuration
+        </FluentLabel>
+    </FluentStack>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Accent" OnClick="@_save">Save</FluentButton>
+    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">Cancel</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+    <FluentStack Orientation="@Orientation.Vertical">
+        <FluentSelect @bind-SelectedOption="@_themeMode" TOption="DesignThemeModes"
+                      Items="@(Enum.GetValues<DesignThemeModes>())"
+                      OptionText="@(p => p.ToString())" Label="Theme Mode"></FluentSelect>
+        <FluentSelect @bind-SelectedOption="@_themeColor" TOption="OfficeColor"
+                      Items="@(Enum.GetValues<OfficeColor>())"
+                      OptionText="@(p => p.ToString())" Label="Theme Color">
+            <OptionTemplate>
+                <FluentStack>
+                    <FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())"
+                                Color="Color.Custom"
+                                CustomColor="@(@context.ToAttributeValue() != "default" ? context.ToAttributeValue() : "#036ac4" )" />
+                    <FluentLabel>@context</FluentLabel>
+                </FluentStack>
+            </OptionTemplate>
+        </FluentSelect>
+    </FluentStack>
+</FluentDialogBody>

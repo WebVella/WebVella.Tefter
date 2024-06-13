@@ -5,6 +5,7 @@ public partial class WvSidebarToggle : WvBaseComponent
 
 	protected override void OnAfterRender(bool firstRender)
 	{
+		base.OnAfterRender(firstRender);
 		if(firstRender){
 			_isExpanded = WvState.GetUiSettings().SidebarExpanded;
 			StateHasChanged();

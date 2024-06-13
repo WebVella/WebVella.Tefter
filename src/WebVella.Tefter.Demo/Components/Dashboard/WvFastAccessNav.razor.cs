@@ -6,6 +6,7 @@ public partial class WvFastAccessNav : WvBaseComponent
 
 	protected override void OnAfterRender(bool firstRender)
 	{
+		base.OnAfterRender(firstRender);
 		if(firstRender){
 			generateTabs();
 			StateHasChanged();

@@ -5,13 +5,18 @@ public partial class WvSpaceViewToolbar : WvBaseComponent
 {
 	private IEnumerable<DataRow> _selectedRows = Enumerable.Empty<DataRow>();
 	private int _selectedRowsCount = 0;
-	public override async ValueTask DisposeAsync()
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		WvState.SelectedDataRowsChanged -= _selectedRowsChanged;
+		if (disposing)
+		{
+			WvState.SelectedDataRowsChanged -= _selectedRowsChanged;
+		}
+		await base.DisposeAsyncCore(disposing);
 	}
 
 	protected override void OnAfterRender(bool firstRender)
 	{
+		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
 			WvState.SelectedDataRowsChanged += _selectedRowsChanged;

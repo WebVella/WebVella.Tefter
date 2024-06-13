@@ -10,47 +10,54 @@ public partial class WvBookmarks : WvBaseComponent
 	private int _pageSize = WvConstants.CardPageSize;
 	private bool _showMoreVisible = true;
 
-	public override async ValueTask DisposeAsync()
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		WvState.FilterChanged -= searchHandler;
-		await base.DisposeAsync();
+		if (disposing)
+		{
+			WvState.FilterChanged -= searchHandler;
+		}
+		await base.DisposeAsyncCore(disposing);
 	}
-
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			loadData(null,1);
+			loadData(null, 1);
 			_isLoading = false;
 			await InvokeAsync(StateHasChanged);
 			WvState.FilterChanged += searchHandler;
 		}
 	}
 
-	private void loadData(string search, int page){
-		if(page == 1) _bookmarks.Clear();
-	
-		var batch = WvService.GetBookmaredByUserId(search,WvState.GetUser().Id, page, _pageSize);
+	private void loadData(string search, int page)
+	{
+		if (page == 1) _bookmarks.Clear();
+
+		var batch = WvService.GetBookmaredByUserId(search, WvState.GetUser().Id, page, _pageSize);
 		_bookmarks.AddRange(batch);
 		_page = page;
 		_search = search;
 		_showMoreVisible = batch.Count == _pageSize;
 	}
 
-	private void showMoreClick(){ 
-		loadData(null,_page+1);
+	private void showMoreClick()
+	{
+		loadData(null, _page + 1);
 	}
 
 	private void searchHandler(object sender, StateFilterChangedEventArgs args)
 	{
-		base.InvokeAsync(async() => {
-			if(_search == args.Filter.Search) return;
+		base.InvokeAsync(async () =>
+		{
+			if (_search == args.Filter.Search) return;
 			loadData(args.Filter.Search, 1);
 			await InvokeAsync(StateHasChanged);
 		});
 	}
 
-	private void cardClicked(SpaceView view){ 
+	private void cardClicked(SpaceView view)
+	{
 		Navigator.NavigateTo($"/space/{view.SpaceId}/data/{view.SpaceDataId}/view/{view.Id}");
 	}
 }
