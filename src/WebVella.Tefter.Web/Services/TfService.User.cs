@@ -31,8 +31,7 @@ public partial class TfService : ITfService
 
 	public async ValueTask<User> LoginUserByEmailAndPassword(string email, string password)
 	{
-		await Task.Delay(5);
-		var user =  User.GetFaker().Generate();
+		var user = await dataBroker.GetUserByEmailAndPasswordAsync(email, password);
 		await browserStorage.SetAsync(TfConstants.UserLocalKey, user.Id);
 		await browserStorage.SetAsync(TfConstants.UIThemeLocalKey, user.Id);
 		return user;
@@ -40,13 +39,11 @@ public partial class TfService : ITfService
 
 	private async ValueTask<User> GetUserById(Guid userId)
 	{
-		await Task.Delay(5);
-		return User.GetFaker().Generate();
+		return await dataBroker.GetUserByIdAsync(userId);
 	}
 
 	public async Task LogoutUser()
 	{
-		await Task.Delay(5);
 		await browserStorage.DeleteAsync(TfConstants.UserLocalKey);
 		await browserStorage.DeleteAsync(TfConstants.UIThemeLocalKey);
 	}

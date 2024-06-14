@@ -1,13 +1,24 @@
-﻿namespace WebVella.Tefter.Demo.Data;
+﻿namespace WebVella.Tefter.Web.Brokers;
 
-public static partial class SampleData
+public partial interface IDataBroker
+{
+	ValueTask<List<Space>> GetSpacesAsync();
+	ValueTask<List<Space>> GetSpacesForUserAsync(Guid userId);
+	ValueTask<SpaceViewMeta> GetSpaceViewMetaAsync(Guid spaceViewId);
+	ValueTask<Space> GetSpaceById(Guid id);
+	ValueTask<SpaceData> GetSpaceDataById(Guid id);
+	ValueTask<SpaceView> GetSpaceViewById(Guid id);
+	ValueTask<List<SpaceView>> GetBookmaredByUserId(string search, Guid userId, int page, int pageSize);
+}
+
+public partial class DataBroker : IDataBroker
 {
 	private static List<Space> _spaces = null;
 	private static Dictionary<Guid, Space> _spaceDict = null;
 	private static Dictionary<Guid, SpaceData> _spaceDataDict = null;
 	private static Dictionary<Guid, SpaceView> _spaceViewDict = null;
 
-	public static List<Space> GetSpaces()
+	public async ValueTask<List<Space>> GetSpacesAsync()
 	{
 
 		if (_spaces is not null) return _spaces;
@@ -54,133 +65,138 @@ public static partial class SampleData
 			};
 		for (int i = 0; i < 3; i++)
 		{
-			var space = Space.GetFaker().Generate();
-			space.Id = spaceIds[i];
-			space.Position = i + 1;
+			var spaceBuilder = new SpaceBuilder(Space.GetFaker().Generate());
+			var spaceId = spaceIds[i];
+			spaceBuilder.Id = spaceIds[i];
+			spaceBuilder.Position = i + 1;
 			for (int j = 0; j < 7; j++)
 			{
-				var spaceData = SpaceData.GetFaker().Generate();
-				spaceData.Id = spaceDataIds[(i * 7) + j];
-				spaceData.SpaceId = space.Id;
-				spaceData.Position = j + 1;
-				spaceData.SpaceName = space.Name;
+				var spaceDataBuilder =  new SpaceDataBuilder(SpaceData.GetFaker().Generate());
+				spaceDataBuilder.Id = spaceDataIds[(i * 7) + j];
+				spaceDataBuilder.SpaceId = spaceBuilder.Id;
+				spaceDataBuilder.Position = j + 1;
+				spaceDataBuilder.SpaceName = spaceBuilder.Name;
 				for (int f = 0; f < 4; f++)
 				{
-					var spaceView = SpaceView.GetFaker().Generate();
-					if (f == 0) spaceView.Name = "Main";
-					spaceView.Position = f;
-					spaceView.SpaceId = space.Id;
-					spaceView.SpaceDataId = spaceData.Id;
-					spaceView.SpaceName = space.Name;
-					spaceView.SpaceDataName = spaceData.Name;
+					var spaceViewBuilder = new SpaceViewBuilder(SpaceView.GetFaker().Generate());
+					if (f == 0) spaceViewBuilder.Name = "Main";
+					spaceViewBuilder.Position = f;
+					spaceViewBuilder.SpaceId = spaceBuilder.Id;
+					spaceViewBuilder.SpaceDataId = spaceDataBuilder.Id;
+					spaceViewBuilder.SpaceName = spaceBuilder.Name;
+					spaceViewBuilder.SpaceDataName = spaceDataBuilder.Name;
 
-					spaceView.Meta = GetSpaceViewMeta(spaceView.Id);
+					spaceViewBuilder.Meta = await GetSpaceViewMetaAsync(spaceViewBuilder.Id);
 
-					_spaceViewDict[spaceView.Id] = spaceView;
-					spaceData.Views.Add(spaceView);
+					_spaceViewDict[spaceViewBuilder.Id] = spaceViewBuilder.Buid();
+					spaceDataBuilder.Views.Add(_spaceViewDict[spaceViewBuilder.Id]);
 				}
-				spaceData.MainViewId = spaceData.Views[0].Id;
+				spaceDataBuilder.MainViewId = spaceDataBuilder.Views[0].Id;
 
-				_spaceDataDict[spaceData.Id] = spaceData;
-				space.DataItems.Add(spaceData);
+				_spaceDataDict[spaceDataBuilder.Id] = spaceDataBuilder.Build();
+				spaceBuilder.DataItems.Add(_spaceDataDict[spaceDataBuilder.Id]);
 			}
-			_spaceDict[space.Id] = space;
-			result.Add(space);
+
+			_spaceDict[spaceBuilder.Id] = spaceBuilder.Buid();
+			result.Add(_spaceDict[spaceBuilder.Id]);
 		}
 
 		_spaces = result;
 		return _spaces;
 	}
 
-	public static SpaceViewMeta GetSpaceViewMeta(Guid spaceViewId)
+	public async ValueTask<List<Space>> GetSpacesForUserAsync(Guid userId){ 
+		return await GetSpacesAsync();
+	}
+
+	public async ValueTask<SpaceViewMeta> GetSpaceViewMetaAsync(Guid spaceViewId)
 	{
-		var result = new SpaceViewMeta();
+		var columns = new List<SpaceViewColumn>();
 		var index = 1;
-		result.Columns.Add(new SpaceViewColumn
+		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("79e3eadb-be66-44aa-a3ce-dac7b1774f27"),
 			SpaceViewId = spaceViewId,
 			AppColumnName = "name",
 			Title = "Name",
 			Position = index,
-			DataType = ColumnType.Name,
+			DataType = SpaceViewColumnType.Name,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Demo.Components.WvCellText",
-			CellAssembly = "WebVella.Tefter.Demo"
+			CellComponent = "WebVella.Tefter.Web.Components.WvCellText"
 
 		});
 		index++;
-		result.Columns.Add(new SpaceViewColumn
+		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("25677090-baee-49cc-a314-fd71c88ba1ee"),
 			SpaceViewId = spaceViewId,
 			AppColumnName = "city",
 			Title = "City",
 			Position = index,
-			DataType = ColumnType.Text,
+			DataType = SpaceViewColumnType.Text,
 			IsVisible = true
 		});
 		index++;
-		result.Columns.Add(new SpaceViewColumn
+		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("2056384e-8e89-47fb-bcc1-e4acc1281c4d"),
 			SpaceViewId = spaceViewId,
 			AppColumnName = "email",
 			Title = "Email",
 			Position = index,
-			DataType = ColumnType.Email,
+			DataType = SpaceViewColumnType.Email,
 			IsVisible = true
 		});
 		index++;
-		result.Columns.Add(new SpaceViewColumn
+		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("6278f849-0a16-430a-a933-577525f11304"),
 			SpaceViewId = spaceViewId,
 			AppColumnName = "age",
 			Title = "Age",
 			Position = index,
-			DataType = ColumnType.Numeric,
+			DataType = SpaceViewColumnType.Numeric,
 			IsVisible = true
 		});
 		index++;
-		result.Columns.Add(new SpaceViewColumn
+		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("9331de72-47c7-4941-9105-985d4cfec0e3"),
 			SpaceViewId = spaceViewId,
 			AppColumnName = "wage",
 			Title = "Wage",
 			Position = index,
-			DataType = ColumnType.Currency,
+			DataType = SpaceViewColumnType.Currency,
 			IsVisible = true,
 			Width = "80px"
 		});
 		index++;
 
-		return result;
+		return new SpaceViewMeta{Columns = columns};
 	}
 
-	public static Space GetSpaceById(Guid id)
+	public async ValueTask<Space> GetSpaceById(Guid id)
 	{
-		if (_spaceDict is null) GetSpaces();
+		if (_spaceDict is null) await GetSpacesAsync();
 
 		return _spaceDict.ContainsKey(id) ? _spaceDict[id] : null;
 	}
 
-	public static SpaceData GetSpaceDataById(Guid id)
+	public async ValueTask<SpaceData> GetSpaceDataById(Guid id)
 	{
-		if (_spaceDataDict is null) GetSpaces();
+		if (_spaceDict is null) await GetSpacesAsync();
 
 		return _spaceDataDict.ContainsKey(id) ? _spaceDataDict[id] : null;
 	}
 
-	public static SpaceView GetSpaceViewById(Guid id)
+	public async ValueTask<SpaceView> GetSpaceViewById(Guid id)
 	{
-		if (_spaceViewDict is null) GetSpaces();
+		if (_spaceDict is null) await GetSpacesAsync();
 
 		return _spaceViewDict.ContainsKey(id) ? _spaceViewDict[id] : null;
 	}
 
-	public static List<SpaceView> GetBookmaredByUserId(string search, Guid userId, int page, int pageSize)
+	public async ValueTask<List<SpaceView>> GetBookmaredByUserId(string search, Guid userId, int page, int pageSize)
 	{
 		var searchString = search?.Trim().ToLowerInvariant();
 		var result = new List<SpaceView>();

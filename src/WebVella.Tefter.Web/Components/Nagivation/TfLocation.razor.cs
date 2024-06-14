@@ -1,9 +1,7 @@
-﻿namespace WebVella.Tefter.Demo.Components;
-public partial class WvLocation : WvBaseComponent
+﻿namespace WebVella.Tefter.Web.Components;
+public partial class TfLocation : TfBaseComponent
 {
-	private Space _space;
-	private SpaceData _spaceData;
-	private SpaceView _spaceView;
+	[Inject] protected IState<SessionState> SessionState { get; set; }
 	private bool _settingsMenuVisible = false;
 	private int _ellipsisCount = 20;
 	private MenuItem _namedLocation = null;
@@ -12,7 +10,6 @@ public partial class WvLocation : WvBaseComponent
 	{
 		if (disposing)
 		{
-			WvState.ActiveSpaceDataChanged -= OnSpaceDataChanged;
 			Navigator.LocationChanged -= OnLocationChanged;
 		}
 		await base.DisposeAsyncCore(disposing);
@@ -23,28 +20,12 @@ public partial class WvLocation : WvBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			var meta = WvState.GetActiveSpaceMeta();
-			_space = meta.Space;
-			_spaceData = meta.SpaceData;
-			_spaceView = meta.SpaceView;
 
 			_namedLocation = generateNamedLocation();
 			StateHasChanged();
 
-			WvState.ActiveSpaceDataChanged += OnSpaceDataChanged;
 			Navigator.LocationChanged += OnLocationChanged;
 		}
-	}
-
-	protected void OnSpaceDataChanged(object sender, StateActiveSpaceDataChangedEventArgs args)
-	{
-		base.InvokeAsync(async () =>
-		{
-			_space = args.Space;
-			_spaceData = args.SpaceData;
-			_spaceView = args.SpaceView;
-			await InvokeAsync(StateHasChanged);
-		});
 	}
 
 	protected void OnLocationChanged(object sender, LocationChangedEventArgs args)
@@ -66,8 +47,8 @@ public partial class WvLocation : WvBaseComponent
 		{
 			location = new MenuItem
 			{
-				Title = WvConstants.DashboardMenuTitle,
-				Icon = WvConstants.DashboardIcon,
+				Title = TfConstants.DashboardMenuTitle,
+				Icon = TfConstants.DashboardIcon,
 				Url = "/"
 			};
 		}
@@ -76,7 +57,7 @@ public partial class WvLocation : WvBaseComponent
 			location = new MenuItem
 			{
 				Title = "Bookmarked Views",
-				Icon = WvConstants.BookmarkONIcon,
+				Icon = TfConstants.BookmarkONIcon,
 				Url = "/fast-access"
 			};
 		}
@@ -85,7 +66,7 @@ public partial class WvLocation : WvBaseComponent
 			location = new MenuItem
 			{
 				Title = "Saved Views",
-				Icon = WvConstants.SaveIcon,
+				Icon = TfConstants.SaveIcon,
 				Url = "/fast-access/saves"
 			};
 		}
@@ -114,7 +95,6 @@ public partial class WvLocation : WvBaseComponent
 
 	private void onBookmarkClick()
 	{
-		WvState.SetSpaceViewBookmarkState(_spaceView.Id, !_spaceView.IsBookmarked);
+		//WvState.SetSpaceViewBookmarkState(_spaceView.Id, !_spaceView.IsBookmarked);
 	}
-
 }

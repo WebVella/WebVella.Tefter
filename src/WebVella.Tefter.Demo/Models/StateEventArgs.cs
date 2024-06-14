@@ -3,7 +3,7 @@
 public record StateActiveSpaceDataChangedEventArgs
 {
 	public Space Space { get; set; }
-	public SpaceDataset SpaceData { get; set; }
+	public SpaceData SpaceData { get; set; }
 	public SpaceView SpaceView { get; set; }
 }
 

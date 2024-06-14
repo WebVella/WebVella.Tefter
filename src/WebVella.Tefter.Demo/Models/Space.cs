@@ -10,7 +10,7 @@ public class Space
 	public int Position { get; set; }
 	public bool IsPrivate { get; set; }
 
-	public List<SpaceDataset> DataItems { get; set; } = new();
+	public List<SpaceData> DataItems { get; set; } = new();
 
 	public UserPermissions Permissions { get; set; } = new(); //what the current user can do in the space
 

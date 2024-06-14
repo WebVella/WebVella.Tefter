@@ -10,10 +10,12 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	private ProtectedLocalStorage browserStorage;
+	private IDataBroker dataBroker;
 
-	public TfService(ProtectedLocalStorage protectedLocalStorage)
+	public TfService(ProtectedLocalStorage protectedLocalStorage, IDataBroker dataBroker)
 	{
-		browserStorage = protectedLocalStorage;
+		this.browserStorage = protectedLocalStorage;
+		this.dataBroker = dataBroker;
 	}
 
 

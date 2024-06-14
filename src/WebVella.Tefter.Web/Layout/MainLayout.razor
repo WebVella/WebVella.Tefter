@@ -2,20 +2,22 @@
 
 @if (_isLoading)
 {
-	<TfLoadingPange/>
+	<TfLoadingPane/>
 }
 else
 {
 	<FluentDesignTheme Mode="@UserState.Value.User.ThemeMode" OfficeColor="@UserState.Value.User.ThemeColor" />
-	<FluentLayout Class="@(SessionState.Value.IsSidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
+	<FluentLayout Class="@(UserState.Value.User.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
 			<TfLogo />
+			<TfLocation/>
 			<FluentSpacer />
 			<TfUserNavigation/>
 		</FluentHeader>
 		<FluentStack Orientation="Orientation.Horizontal" Class="wrapper">
 			<FluentStack Orientation="Orientation.Vertical" Class="sidebar">
 				<TfSidebarToggle/>
+				<TfNavigation/>
 			</FluentStack>
 			@Body
 		</FluentStack>

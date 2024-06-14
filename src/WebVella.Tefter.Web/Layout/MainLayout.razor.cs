@@ -16,6 +16,7 @@ public partial class MainLayout : FluxorLayout
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		UserState.StateChanged -= UserState_StateChanged;
+		SessionState.StateChanged -= SessionState_StateChanged;
 		return base.DisposeAsyncCore(disposing);
 	}
 
@@ -45,21 +46,36 @@ public partial class MainLayout : FluxorLayout
 	{
 		// Your async code goes here
 		// You can run sync code too if you wish
-		dispatcher.Dispatch(new GetUserAction());
 		UserState.StateChanged += UserState_StateChanged;
+		dispatcher.Dispatch(new GetUserAction());
 		return ValueTask.CompletedTask;
 	}
 
+	//Step 1: init user
 	private void UserState_StateChanged(object sender, EventArgs e)
 	{
 		if (UserState.Value.IsLoading) return;
 
 		if (UserState.Value.User is null)
 		{
-			_isLoading = true;
 			Navigator.NavigateTo(TfConstants.LoginPageUrl);
 			return;
 		}
-		_isLoading = false;
+
+		SessionState.StateChanged += SessionState_StateChanged;
+		var urlData = NavigatorExt.GetUrlData(Navigator);
+		dispatcher.Dispatch(new GetSessionAction(
+			userId:UserState.Value.User.Id, 
+			spaceId:urlData.SpaceId, 
+			spaceDataId: urlData.SpaceDataId,
+			spaceViewId: urlData.SpaceViewId));
 	}
+	//Step 1: init session
+	private void SessionState_StateChanged(object sender, EventArgs e)
+	{
+		if (SessionState.Value.IsLoading) return;
+		_isLoading = false;
+		StateHasChanged();
+	}
+
 }

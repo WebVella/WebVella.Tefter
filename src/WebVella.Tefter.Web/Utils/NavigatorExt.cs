@@ -312,9 +312,6 @@ public class NavigatorExt
 	{
 		navigator.NavigateTo(navigator.Uri, true);
 	}
-
-
-
 	private static bool IsList(object o)
 	{
 		if (o == null) return false;
@@ -334,5 +331,40 @@ public class NavigatorExt
 	public static void NotFound(NavigationManager navigator)
 	{
 		throw new Exception("Not found");
+	}
+
+	public static UrlData GetUrlData(NavigationManager navigator)
+	{
+		Guid? spaceId = null;
+		Guid? spaceDataId = null;
+		Guid? spaceViewId = null;
+		var uri = new Uri(navigator.Uri);
+
+		if (uri.LocalPath.StartsWith("/space/"))
+		{
+			var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+			if (nodes.Length >= 2)
+			{
+				if (Guid.TryParse(nodes[1], out Guid outGuid)) spaceId = outGuid;
+			}
+
+			if (nodes.Length >= 4)
+			{
+				if (Guid.TryParse(nodes[3], out Guid outGuid)) spaceDataId = outGuid;
+			}
+
+			if (nodes.Length >= 6)
+			{
+				if (Guid.TryParse(nodes[5], out Guid outGuid)) spaceViewId = outGuid;
+			}
+
+		}
+
+		return new UrlData
+		{
+			SpaceId = spaceId,
+			SpaceDataId = spaceDataId,
+			SpaceViewId = spaceViewId,
+		};
 	}
 }

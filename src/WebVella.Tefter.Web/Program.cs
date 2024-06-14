@@ -1,4 +1,5 @@
 ﻿using Fluxor.Blazor.Web.ReduxDevTools;
+using WebVella.Tefter.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ builder.Services.AddFluxor(options =>
 	.ScanAssemblies(typeof(Program).Assembly)
 	.UseReduxDevTools();
 });
-builder.Services.AddScoped<ITfService, TfService>();
+builder.Services.AddTefter();
 
 var app = builder.Build();
 

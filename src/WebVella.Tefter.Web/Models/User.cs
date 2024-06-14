@@ -9,7 +9,9 @@ public record User
     public string Email { get; init; }
     public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
     public OfficeColor ThemeColor { get; init; } = OfficeColor.Excel;
-    public string Initials
+	public bool SidebarExpanded { get; init; } = true;
+	[JsonIgnore]
+	public string Initials
     {
         get
         {
@@ -28,8 +30,7 @@ public record User
             return String.Join("", list).ToUpperInvariant();
         }
     }
-
-    public static Faker<User> GetFaker()
+	public static Faker<User> GetFaker()
     {
         var themeModes = new List<DesignThemeModes>();
         var themeColors = new List<OfficeColor>();

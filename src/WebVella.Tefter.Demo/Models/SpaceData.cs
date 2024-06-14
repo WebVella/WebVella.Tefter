@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace WebVella.Tefter.Demo.Models;
 
-public class SpaceDataset
+public class SpaceData
 {
 	public Guid Id { get; set; }
 	public Guid SpaceId { get; set; }
@@ -26,9 +26,9 @@ public class SpaceDataset
 	[JsonIgnore]
 	public Action OnSelect { get; set; }
 
-	public static Faker<SpaceDataset> GetFaker()
+	public static Faker<SpaceData> GetFaker()
 	{
-		var faker = new Faker<SpaceDataset>()
+		var faker = new Faker<SpaceData>()
 		.RuleFor(m => m.Id, (f, m) => f.Random.Uuid())
 		.RuleFor(m => m.Name, (f, m) => f.Lorem.Sentence(3))
 		;

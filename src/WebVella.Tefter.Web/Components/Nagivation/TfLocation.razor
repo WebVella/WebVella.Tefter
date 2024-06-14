@@ -1,0 +1,36 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="location">
+	@if (_namedLocation is not null)
+	{
+		<div class="title">
+			<div class="label">
+				<FluentBreadcrumb>
+					<FluentBreadcrumbItem title="@_namedLocation.Title">
+						@_namedLocation.Title
+						@* <FluentIcon Color="@Color.Neutral" Value="@_namedLocation.Icon" Slot="start" /> *@
+					</FluentBreadcrumbItem>
+				</FluentBreadcrumb>
+			</div>
+		</div>
+	}
+	else if (SessionState.Value.SpaceData is not null)
+	{
+		<div class="title">
+			<div class="label">
+				<FluentBreadcrumb>
+					<FluentBreadcrumbItem title="@SessionState.Value.SpaceData.Name">
+						@RenderUtils.StringOverflow(SessionState.Value.SpaceData.Name, _ellipsisCount)
+					</FluentBreadcrumbItem>
+					<FluentBreadcrumbItem title="@SessionState.Value.SpaceView.Name">
+						@RenderUtils.StringOverflow(SessionState.Value.SpaceView.Name, _ellipsisCount)
+					</FluentBreadcrumbItem>
+				</FluentBreadcrumb>
+			</div>
+		</div>
+	}
+
+</div>
+
+

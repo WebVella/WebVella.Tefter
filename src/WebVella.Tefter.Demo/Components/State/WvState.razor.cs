@@ -18,7 +18,7 @@ public partial class WvState : ComponentBase, IAsyncDisposable
 	private UISettings _uiSettings = null;
 	private List<Space> _spaces = new();
 	private Dictionary<Guid, Space> _spaceDict = new();
-	private Dictionary<Guid, SpaceDataset> _spaceDataDict = new();
+	private Dictionary<Guid, SpaceData> _spaceDataDict = new();
 	private Dictionary<Guid, SpaceView> _spaceViewDict = new();
 	private Guid? _activeSpaceId = null;
 	private Guid? _activeSpaceDataId = null;

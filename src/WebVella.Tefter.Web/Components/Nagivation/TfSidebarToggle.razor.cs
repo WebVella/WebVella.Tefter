@@ -1,9 +1,9 @@
-﻿using WebVella.Tefter.Web.Store.SessionState;
+﻿using WebVella.Tefter.Web.Store.UserState;
 
 namespace WebVella.Tefter.Web.Components;
 public partial class TfSidebarToggle : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IState<UserState> UserState { get; set; }
 
 	private void _toggle()
 	{
