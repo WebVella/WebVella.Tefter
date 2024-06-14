@@ -9,7 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter", "src\WebV
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{45AE6C67-91E3-46F4-B455-911156D227E9}"
 	ProjectSection(SolutionItems) = preProject
+		docs\column_type.bpmn = docs\column_type.bpmn
 		docs\create_test_structure_and_data.sql = docs\create_test_structure_and_data.sql
+		docs\dataset.bpmn = docs\dataset.bpmn
+		docs\view.bpmn = docs\view.bpmn
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FBDDD2A3-E610-424E-B64E-58B4662A4583}"
