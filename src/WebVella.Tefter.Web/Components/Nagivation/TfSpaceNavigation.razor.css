@@ -1,0 +1,37 @@
+﻿
+.sidebar-nav {
+	padding:5px;
+	flex:1 1 auto;
+	width:100%;
+}
+
+.sidebar-toolbar {
+	display: flex;
+	height:40px;
+	margin-bottom:5px;
+}
+
+.sidebar-toolbar-left {
+	flex: 1 1 auto;
+	padding-right: 5px;
+}
+
+::deep .sidebar-toolbar-left fluent-search {
+	width: 100%;
+}
+
+.sidebar-toolbar-right {
+	flex: 0 0 30px;
+}
+
+::deep.sidebar-nav fluent-tree-item.level-0::part(content-region) {
+	margin-left: 25px;
+}
+
+::deep.sidebar-nav fluent-tree-item::part(positioning-region) {
+	background: transparent !important;
+}
+::deep.sidebar-nav fluent-tree-item.level-0::after {
+	display: none !important;
+}
+ 

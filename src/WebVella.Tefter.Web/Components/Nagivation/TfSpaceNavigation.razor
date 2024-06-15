@@ -1,0 +1,89 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="@($"sidebar-nav {(UserState.Value.User.SidebarExpanded ? "expanded" : "collapsed")}")">
+	<div class="sidebar-toolbar">
+		<div class="sidebar-toolbar-left">
+			<FluentSearch />
+		</div>
+		<div class="sidebar-toolbar-right">
+			<FluentButton Id="space-settings" Title="space actions" BackgroundColor="@SessionState.Value.SpaceButtonColor"
+						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Stealth">
+				<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Neutral" />
+			</FluentButton>
+			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
+				<FluentMenuItem OnClick="onDetailsClick">
+					Space Details
+					<span slot="start">
+						<FluentIcon Value="@(new Icons.Regular.Size20.Info())" Slot="start" />
+					</span>
+				</FluentMenuItem>
+				<FluentMenuItem OnClick="onRenameClick">
+					Rename Space
+					<span slot="start">
+						<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
+					</span>
+				</FluentMenuItem>
+				<FluentMenuItem OnClick="onRemoveClick">
+					Delete Space
+					<span slot="start">
+						<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
+					</span>
+				</FluentMenuItem>
+				<FluentMenuItem OnClick="onRemoveClick">
+					Manage Access
+					<span slot="start">
+						<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
+					</span>
+				</FluentMenuItem>
+				<FluentMenuItem OnClick="onRemoveClick">
+					Invite User
+					<span slot="start">
+						<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
+					</span>
+				</FluentMenuItem>
+				<FluentDivider></FluentDivider>
+				<FluentMenuItem OnClick="onAddClick">
+					Add Space
+					<span slot="start">
+						<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+					</span>
+				</FluentMenuItem>
+				<FluentMenuItem OnClick="onAddClick">
+					Add Space Data
+					<span slot="start">
+						<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+					</span>
+				</FluentMenuItem>
+
+			</FluentMenu>
+		</div>
+	</div>
+	<div class="sidebar-inner">
+		@if (_menuLoading)
+		{
+			<TfLoadingPane />
+		}
+		else
+		{
+			<FluentTreeView>
+				@foreach (var item in _visibleMenuItems)
+				{
+					<FluentTreeItem Class="level-0" Text="@item.Title" @key=@item.Id
+						@bind-Expanded=@item.Expanded Selected=@false SelectedChanged="item.OnSelect">
+						<FluentIcon Value="@item.Icon" Color="@Color.Neutral" Slot="start" />
+						@foreach (var node in item.Nodes)
+						{
+							<FluentTreeItem Class="level-1" Text="@node.Title" @key=@node.Id
+											@bind-Expanded=@node.Expanded Selected=@node.Active SelectedChanged="node.OnSelect">
+								<FluentIcon Value="@node.Icon" Color="@Color.Neutral" Slot="start" />
+							</FluentTreeItem>
+						}
+					</FluentTreeItem>
+				}
+			</FluentTreeView>
+			<TfLoadMore OnClick="loadMoreClick" Visible="true" />
+		}
+	</div>
+</div>
+

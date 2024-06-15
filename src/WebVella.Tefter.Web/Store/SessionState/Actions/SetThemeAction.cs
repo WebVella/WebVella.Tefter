@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Store.UserState;
+﻿namespace WebVella.Tefter.Web.Store.SessionState;
 
 public class SetThemeAction
 {

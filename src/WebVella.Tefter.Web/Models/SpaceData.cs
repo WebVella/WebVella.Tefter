@@ -9,13 +9,12 @@ public record SpaceData
 	public string Name { get; init; }
 	public string SpaceName { get; init; }
 	public int Position { get; init; }
-	public Guid MainViewId { get; init; } //should be in Views position 0
 	public List<SpaceView> Views { get; init; } = new();
 
 	public SpaceView GetActiveView(Guid? viewId)
 	{
 		SpaceView result = null;
-		if (viewId is null) result = Views.FirstOrDefault(x => x.Id == MainViewId);
+		if (viewId is null) result = Views.Count > 0 ? Views[0] : null;
 		else result = Views.FirstOrDefault(x => x.Id == viewId.Value);
 
 		return result;
@@ -42,7 +41,6 @@ public class SpaceDataBuilder{
 	public string Name { get; set; }
 	public string SpaceName { get; set; }
 	public int Position { get; set; }
-	public Guid MainViewId { get; set; }
 	public List<SpaceView> Views { get; set; } = new();
 
 	public SpaceDataBuilder(SpaceData spaceData)
@@ -52,7 +50,6 @@ public class SpaceDataBuilder{
 		Name = spaceData.Name;
 		SpaceName = spaceData.SpaceName;
 		Position = spaceData.Position;
-		MainViewId = spaceData.MainViewId;
 		Views = spaceData.Views ?? new();
 	}
 
@@ -63,7 +60,6 @@ public class SpaceDataBuilder{
 			Name = Name, 
 			SpaceName = SpaceName, 
 			Position = Position,
-			MainViewId = MainViewId,
 			Views = Views
 		};
 	}

@@ -11,7 +11,11 @@ public partial class SessionStateEffects
 			spaceDataId: action.SpaceDataId,
 			spaceViewId: action.SpaceViewId
 		);
-		dispatcher.Dispatch(new InitSessionAction(session));
+		dispatcher.Dispatch(new InitSessionAction(
+		spaceId: action.SpaceId,
+		spaceDataId: action.SpaceDataId,
+		spaceViewId: action.SpaceViewId,
+		userSession: session));
 	}
 
 }

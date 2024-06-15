@@ -2,14 +2,7 @@
 @inherits TfBaseComponent
 
 <div class="sidebar-toggle">
-	<a @onclick=_toggle href="javascript:void(0)">
-		@if (UserState.Value.User.SidebarExpanded)
-		{
-			<FluentIcon Value="@(new Icons.Regular.Size16.ChevronLeft())" Style="fill:var(--neutral-layer-3)" />
-		}
-		else
-		{
-			<FluentIcon Value="@(new Icons.Regular.Size16.ChevronRight())" Style="fill:var(--neutral-layer-3)" />
-		}
-	</a>
+	<FluentButton Appearance="@Appearance.Stealth" OnClick="_toggle">
+		<FluentIcon Value="@(new Icons.Regular.Size20.Navigation())" Color="@Color.Neutral" />
+	</FluentButton>
 </div>

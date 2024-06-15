@@ -1,0 +1,53 @@
+﻿@page "/space/{*Path}"
+@inherits TfBasePage
+
+@if (SessionState.Value.Space is null)
+{
+	<FluentBodyContent Class="content-body">
+		<FluentMessageBar Title="No space found"
+						  Style="border: 1px solid var(--neutral-base-color)"
+						  Intent="MessageIntent.Info"
+						  Type="@MessageType.Notification"
+						  AllowDismiss="false">
+			No spaces found yet notification
+		</FluentMessageBar>
+	</FluentBodyContent>
+}
+else if (SessionState.Value.SpaceData is null)
+{
+	<FluentBodyContent Class="content-body">
+		<FluentMessageBar Title="No space data found"
+						  Style="border: 1px solid var(--neutral-base-color)"
+						  Intent="MessageIntent.Info"
+						  Type="@MessageType.Notification"
+						  AllowDismiss="false">
+			No space data found yet notification
+		</FluentMessageBar>
+	</FluentBodyContent>
+}
+else if (SessionState.Value.SpaceView is null)
+{
+	<FluentBodyContent Class="content-body">
+		<FluentMessageBar Title="No space data found"
+						  Style="border: 1px solid var(--neutral-base-color)"
+						  Intent="MessageIntent.Info"
+						  Type="@MessageType.Notification"
+						  AllowDismiss="false">
+			No space data found yet notification
+		</FluentMessageBar>
+	</FluentBodyContent>
+}
+else
+{
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SessionState.Value.SpaceSidebarStyle">
+		<TfSpaceNavigation />
+	</FluentStack>
+	<FluentBodyContent Class="content-body with-toolbar">
+		<WvSpaceViewNav />
+		<WvSpaceViewToolbar />
+		<div class="content-inner">
+			<WvSpace />
+		</div>
+	</FluentBodyContent>
+}
+

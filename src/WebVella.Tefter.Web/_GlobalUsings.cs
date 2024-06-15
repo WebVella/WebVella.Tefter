@@ -2,6 +2,7 @@
 global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components.Routing;
 global using Microsoft.FluentUI.AspNetCore.Components;
+global using Microsoft.FluentUI.AspNetCore.Components.Extensions;
 global using Microsoft.JSInterop;
 global using System.ComponentModel;
 global using System.Globalization;

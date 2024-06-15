@@ -31,7 +31,7 @@
 				<FluentNavMenu>
 					@foreach (var item in _selectorItems.Take(_optionsCountLimit))
 					{
-						<FluentNavLink OnClick="@item.OnSelect" @key=item.Id Icon="@item.Icon" IconColor="@item.IconColor">
+						<FluentNavLink OnClick="@item.OnSelect" @key=item.Id Icon="@item.Icon">
 							@item.Name
 						</FluentNavLink>
 					}

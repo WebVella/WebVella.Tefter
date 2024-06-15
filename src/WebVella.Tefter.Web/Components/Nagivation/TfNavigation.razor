@@ -1,94 +1,29 @@
 ﻿@namespace WebVella.Tefter.Web.Components
+
 @inherits TfBaseComponent
 
-<div class="@($"sidebar-nav {(UserState.Value.User.SidebarExpanded ? "expanded" : "collapsed")}")">
+<div class="@($"spacenav-nav {(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
 	<FluentNavMenu>
-		<FluentNavLink Icon="@TfConstants.DashboardIcon" Tooltip="@TfConstants.DashboardMenuTitle"
-					   Href="/" Match="@NavLinkMatch.All">@TfConstants.DashboardMenuTitle</FluentNavLink>
-		<FluentNavLink Icon="@TfConstants.FastAccessIcon" Tooltip="@TfConstants.FastAccesMenuTitle"
-					   Href="/fast-access" Match="@NavLinkMatch.Prefix">@TfConstants.FastAccesMenuTitle</FluentNavLink>
+		<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.DashboardIcon"
+					   Href="/" Match="@NavLinkMatch.All" />
+		<FluentTooltip Anchor="tf-dashboard-link" Position="@TooltipPosition.Right">@TfConstants.DashboardMenuTitle</FluentTooltip>
+		<FluentNavLink Id="tf-fast-access-link" Icon="@TfConstants.FastAccessIcon"
+					   Href="/fast-access" Match="@NavLinkMatch.Prefix" />
+		<FluentTooltip Anchor="tf-fast-access-link" Position="@TooltipPosition.Right">@TfConstants.FastAccesMenuTitle</FluentTooltip>
 	</FluentNavMenu>
 	<FluentDivider Class="nav-divider"></FluentDivider>
-	@if (SessionState.Value.Space is null)
-	{
-		<FluentButton Title="Add new Workspace" Id="add-space-btn" IconStart="@(new Icons.Regular.Size20.Add())" OnClick="onAddClick"
-					  Appearance="Appearance.Accent" Style="width:100%">Add Space</FluentButton>
+	<FluentNavMenu>
+		@foreach (var item in _menuItems)
+		{
+			<FluentNavLink Id="@item.Id" @key=@item.Id
+						   Href="@item.Url" Match="@item.Match" Icon="@item.Icon.WithColor(item.IconColor.ToAttributeValue())" IconColor="@Color.Custom" />
+			<FluentTooltip Anchor="@item.Id" Position="@TooltipPosition.Right">@item.Title</FluentTooltip>
+		}
 
-	}
-	else
-	{
-		<div class="button-actions">
-			<div class="button-actions-left">
-				<FluentButton Id="space-selector" Title="@SessionState.Value.Space.Name"
-							  OnClick="onSpaceSelectorClick">
-					@SessionState.Value.Space.Name
-					<FluentIcon Value="@(new Icons.Regular.Size16.ChevronDown())" Style="fill:var(--neutral-layer-3)" Slot="start" />
-@* 					<FluentIcon Value="@_space.Icon" Color="@_space.IconColor" Slot="end" /> *@
-				</FluentButton>
-				<TfSpaceSelector @ref=_selectorEl SpaceId=@SessionState.Value.Space?.Id
-								 SpaceChanged="SpaceChanged" UserId="UserState.Value.User.Id" />
-			</div>
-			<div class="button-actions-right">
-				<FluentButton Id="space-settings" Title="space actions" 
-							  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Stealth">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Neutral" />
-				</FluentButton>
-				<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
-					<FluentMenuItem OnClick="onDetailsClick">
-						Space Details
-						<span slot="start">
-							<FluentIcon Value="@(new Icons.Regular.Size20.Info())" Slot="start" />
-						</span>
-					</FluentMenuItem>
-					<FluentMenuItem OnClick="onRenameClick">
-						Rename Space
-						<span slot="start">
-							<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
-						</span>
-					</FluentMenuItem>
-					<FluentMenuItem OnClick="onRemoveClick">
-						Delete Space
-						<span slot="start">
-							<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
-						</span>
-					</FluentMenuItem>
-					<FluentMenuItem OnClick="onRemoveClick">
-						Manage Access
-						<span slot="start">
-							<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
-						</span>
-					</FluentMenuItem>
-					<FluentMenuItem OnClick="onRemoveClick">
-						Invite User
-						<span slot="start">
-							<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
-						</span>
-					</FluentMenuItem>
-					<FluentDivider></FluentDivider>
-					<FluentMenuItem OnClick="onAddClick">
-						Add Space
-						<span slot="start">
-							<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
-						</span>
-					</FluentMenuItem>
-					<FluentMenuItem OnClick="onAddClick">
-						Add Space Data
-						<span slot="start">
-							<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
-						</span>
-					</FluentMenuItem>
+		<FluentNavLink Id="tf-add-new-space" OnClick="_addSpaceHandler"
+					   Icon="@(new Icons.Regular.Size20.Add())" IconColor="@Color.Accent" />
+		<FluentTooltip Anchor="tf-add-new-space" Position="@TooltipPosition.Right">Add new space</FluentTooltip>
+	</FluentNavMenu>
 
-				</FluentMenu>
-			</div>
-		</div>
-		<FluentNavMenu>
-			@foreach (var item in _menuItems)
-			{
-				<FluentNavLink @key=@item.Id Icon="@item.Icon" Tooltip="@item.Title"
-							   Href="@item.Url" Match="@item.Match">@item.Title</FluentNavLink>
-			}
-
-		</FluentNavMenu>
-	}
 </div>
 

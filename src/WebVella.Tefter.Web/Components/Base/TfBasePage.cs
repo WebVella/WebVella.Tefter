@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 
-public class TfBaseComponent : FluxorComponent
+public class TfBasePage : FluxorComponent
 {
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] protected IJSRuntime JSRuntimeSrv { get; set; }

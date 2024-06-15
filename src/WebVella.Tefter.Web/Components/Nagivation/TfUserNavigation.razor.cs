@@ -1,10 +1,9 @@
-﻿using WebVella.Tefter.Web.Store.UserState;
-
-namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfUserNavigation
 {
 	[Inject] protected IState<UserState> UserState { get; set; }
-	
+	[Inject] protected IState<SessionState> SessionState { get; set; }
+
 	private bool _visible = false;
 	private void _onClick()
 	{
@@ -13,7 +12,7 @@ public partial class TfUserNavigation
 
 	private async Task _setTheme()
 	{
-		var themeSettings = new ThemeSettings { ThemeMode = UserState.Value.User.ThemeMode, ThemeColor = UserState.Value.User.ThemeColor };
+		var themeSettings = new ThemeSettings { ThemeMode = SessionState.Value.ThemeMode, ThemeColor = SessionState.Value.ThemeColor };
 		var dialog = await DialogService.ShowDialogAsync<TfThemeSetDialog>(themeSettings, new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -24,7 +23,7 @@ public partial class TfUserNavigation
 		{
 			var response = (ThemeSettings)result.Data;
 			Dispatcher.Dispatch(new SetThemeAction(response.ThemeMode, response.ThemeColor));
-			
+
 		}
 	}
 	private void _editProfile()

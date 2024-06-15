@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.Web.Components
+
+
+@if (Visible)
+{
+	<div class="@($"load-more {Class}")" style="@Style">
+		<FluentButton OnClick="loadMore" Disabled="Loading">
+			Show more
+			@if (Loading)
+			{
+				<span slot="start">
+					<FluentProgressRing Width="20px" />
+				</span>
+			}
+			else
+			{
+				<FluentIcon Value="@(new Icons.Regular.Size20.PaddingDown())" Slot="start" />
+			}
+		</FluentButton>
+	</div>
+}
