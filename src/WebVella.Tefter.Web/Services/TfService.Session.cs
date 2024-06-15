@@ -22,44 +22,11 @@ public partial class TfService : ITfService
 		SpaceView spaceView = null;
 
 		string dataHashId = String.Empty;
-		List<Space> spaceList = new();
-		IDictionary<Guid, Space> spaceDict = new Dictionary<Guid, Space>();
-		List<SpaceData> spaceDataList = new();
 		IDictionary<Guid, SpaceData> spaceDataDict = new Dictionary<Guid, SpaceData>();
-		List<SpaceView> spaceViewList = new();
 		IDictionary<Guid, SpaceView> spaceViewDict = new Dictionary<Guid, SpaceView>();
 
 		var userSpaces = await GetSpacesForUserAsync(userId);
-
-		foreach (var si in userSpaces)
-		{
-			spaceList.Add(si);
-			spaceDict[si.Id] = si;
-			foreach (var sdi in si.Data)
-			{
-				spaceDataList.Add(sdi);
-				spaceDataDict[sdi.Id] = sdi;
-				foreach (var svi in sdi.Views)
-				{
-					spaceViewList.Add(svi);
-					spaceViewDict[svi.Id] = svi;
-				}
-			}
-		}
-		dataHashId = ObjectHashHelper.CalculateHash(spaceList);
-
-
-		if (spaceId is null)
-		{
-			//Preset the default spaces for user if any exist
-			if (userSpaces.Count > 0 && userSpaces[0].Data.Count > 0)
-			{
-				space = userSpaces[0];
-				spaceData = space.GetActiveData(null);
-				spaceView = spaceData.GetActiveView(null);
-			}
-		}
-		else
+		if(spaceId.HasValue)
 		{
 			var selSpace = userSpaces.FirstOrDefault(x => x.Id == spaceId.Value);
 			if (selSpace is not null && selSpace.Data.Count > 0)
@@ -70,6 +37,32 @@ public partial class TfService : ITfService
 			}
 		}
 
+		if (space is not null)
+		{
+			foreach (var sdi in space.Data)
+			{
+				spaceDataDict[sdi.Id] = sdi;
+				foreach (var svi in sdi.Views)
+				{
+					spaceViewDict[svi.Id] = svi;
+				}
+			}
+			dataHashId = ObjectHashHelper.CalculateHash(space);
+		}
+
+		var spaceNav = new List<MenuItem>();
+		foreach (var item in userSpaces)
+		{
+			spaceNav.Add(new MenuItem
+			{
+				Icon = item.Icon,
+				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
+				Match = NavLinkMatch.Prefix,
+				Url = $"/space/{item.Id}",
+				Title = item.Name,
+				IconColor = item.Color,
+			});
+		}
 
 		return new UserSession
 		{
@@ -81,11 +74,8 @@ public partial class TfService : ITfService
 			SpaceView = spaceView,
 			DataHashId = dataHashId,
 			SpaceDataDict = spaceDataDict,
-			SpaceDataList = spaceDataList,
-			SpaceDict = spaceDict,
-			SpaceList = spaceList,
 			SpaceViewDict = spaceViewDict,
-			SpaceViewList = spaceViewList,
+			SpaceNav = spaceNav,
 		};
 	}
 

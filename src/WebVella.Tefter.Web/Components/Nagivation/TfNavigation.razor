@@ -13,7 +13,7 @@
 	</FluentNavMenu>
 	<FluentDivider Class="nav-divider"></FluentDivider>
 	<FluentNavMenu>
-		@foreach (var item in _menuItems)
+		@foreach (var item in SessionState.Value.SpaceNav)
 		{
 			<FluentNavLink Id="@item.Id" @key=@item.Id
 						   Href="@item.Url" Match="@item.Match" Icon="@item.Icon.WithColor(item.IconColor.ToAttributeValue())" IconColor="@Color.Custom" />

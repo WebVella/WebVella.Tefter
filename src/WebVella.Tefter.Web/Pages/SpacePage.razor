@@ -39,14 +39,17 @@ else if (SessionState.Value.SpaceView is null)
 }
 else
 {
-	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SessionState.Value.SpaceSidebarStyle">
-		<TfSpaceNavigation />
-	</FluentStack>
+	@if (SessionState.Value.SidebarExpanded)
+	{
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SessionState.Value.SpaceSidebarStyle">
+			<TfSpaceNavigation />
+		</FluentStack>
+	}
 	<FluentBodyContent Class="content-body with-toolbar">
 		<WvSpaceViewNav />
 		<WvSpaceViewToolbar />
 		<div class="content-inner">
-			<WvSpace />
+			<TfSpace />
 		</div>
 	</FluentBodyContent>
 }

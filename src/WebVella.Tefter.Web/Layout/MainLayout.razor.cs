@@ -65,8 +65,6 @@ public partial class MainLayout : FluxorLayout
 	{
 		if (UserState.Value.IsLoading) return;
 
-		Console.WriteLine($"******* UserState_StateChanged 1");
-
 		if (UserState.Value.User is null)
 		{
 			Navigator.NavigateTo(TfConstants.LoginPageUrl);
@@ -80,8 +78,6 @@ public partial class MainLayout : FluxorLayout
 			spaceDataId: urlData.SpaceDataId,
 			spaceViewId: urlData.SpaceViewId));
 		SessionState.StateChanged += SessionState_StateChanged;
-
-		Console.WriteLine($"******* UserState_StateChanged 2");
 	}
 	//Step 1: init session
 	private void SessionState_StateChanged(object sender, EventArgs e)
@@ -95,62 +91,19 @@ public partial class MainLayout : FluxorLayout
 
 	private void Navigator_LocationChanged(object sender, EventArgs e)
 	{
-		Console.WriteLine($"******* Navigator_LocationChanged 1");
 		if (_isLoading) return;
 		_initLocationChange();
-
-		Console.WriteLine($"******* Navigator_LocationChanged 2");
 	}
 
 	private void _initLocationChange()
 	{
-		Console.WriteLine($"******* _initLocationChange 1");
 		var urlData = NavigatorExt.GetUrlData(Navigator);
 
-		Space space = null;
-		SpaceData spaceData = null;
-		SpaceView spaceView = null;
-
-		if (urlData.SpaceId is not null)
-		{
-			if (urlData.SpaceId.HasValue)
-			{
-				if (SessionState.Value.SpaceDict is not null 
-					&& SessionState.Value.SpaceDict.ContainsKey(urlData.SpaceId.Value))
-				{
-					space = SessionState.Value.SpaceDict[urlData.SpaceId.Value];
-					spaceData = space.GetActiveData(urlData.SpaceDataId);
-					if(spaceData is not null)
-						spaceView = spaceData.GetActiveView(urlData.SpaceViewId);
-				}
-			}
-		}
-		if (space is null) space = SessionState.Value.Space;
-		if (spaceData is null) spaceData = SessionState.Value.SpaceData;
-		if (spaceView is null) spaceView = SessionState.Value.SpaceView;
-
-		var hasSpaceDataChange = false;
-		var sessionData = SessionState.Value;
-		if (urlData.SpaceId != SessionState.Value.SpaceRouteId) hasSpaceDataChange = true;
-		if (urlData.SpaceDataId != SessionState.Value.SpaceDataRouteId) hasSpaceDataChange = true;
-		if (urlData.SpaceViewId != SessionState.Value.SpaceViewRouteId) hasSpaceDataChange = true;
-		if (space?.Id != SessionState.Value.Space?.Id) hasSpaceDataChange = true;
-		if (spaceData?.Id != SessionState.Value.SpaceData?.Id) hasSpaceDataChange = true;
-		if (spaceView?.Id != SessionState.Value.SpaceView?.Id) hasSpaceDataChange = true;
-
-
-		if (hasSpaceDataChange)
-		{
-			dispatcher.Dispatch(new SessionActiveSpaceDataChangeAction(
-			spaceId: urlData.SpaceId,
-			spaceDataId: urlData.SpaceDataId,
-			spaceViewId: urlData.SpaceViewId,
-			space: space,
-			spaceData: spaceData,
-			spaceView: spaceView
-			));
-		}
-		Console.WriteLine($"******* _initLocationChange 2");
+		dispatcher.Dispatch(new GetSessionAction(
+	userId: UserState.Value.User.Id,
+	spaceId: urlData.SpaceId,
+	spaceDataId: urlData.SpaceDataId,
+	spaceViewId: urlData.SpaceViewId));
 	}
 
 }

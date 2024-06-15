@@ -16,6 +16,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	private bool _settingsMenuVisible = false;
 	private TfSpaceSelector _selectorEl;
 
+	private bool hasMore = true;
 	private int page = 1;
 	private int pageSize = 30;
 
@@ -77,6 +78,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 						SpaceId = SessionState.Value.Space.Id,
 						SpaceDataId = item.Id,
 						SpaceViewId = view.Id,
+						Active = view.Id == SessionState.Value.SpaceView?.Id
 					};
 					SetMenuItemActions(menu2);
 					nodes.Add(menu2);
@@ -89,22 +91,26 @@ public partial class TfSpaceNavigation : TfBaseComponent
 					Match = NavLinkMatch.Prefix,
 					Title = item.Name,
 					Url = $"/space/{SessionState.Value.Space.Id}/data/{item.Id}",
-					Nodes = nodes
+					Nodes = nodes,
+					Expanded = item.Id == SessionState.Value.SpaceData?.Id
 				};
 				SetMenuItemActions(menu);
 				_menuItems.Add(menu);
 
 			}
 		}
-		_visibleMenuItems = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
+		if (batch.Count < pageSize) hasMore = false;
+		_visibleMenuItems = batch;
 		_renderedDataHashId = SessionState.Value.DataHashId;
 		_renderedSpaceId = SessionState.Value.Space?.Id;
 	}
 
 	private async Task loadMoreClick()
 	{
-
-		_visibleMenuItems.AddRange(_menuItems.Skip(RenderUtils.CalcSkip(pageSize, page + 1)).Take(pageSize).ToList());
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page + 1)).Take(pageSize).ToList();
+		if (batch.Count < pageSize) hasMore = false;
+		_visibleMenuItems.AddRange(batch);
 		page++;
 		await InvokeAsync(StateHasChanged);
 	}
@@ -153,16 +159,15 @@ public partial class TfSpaceNavigation : TfBaseComponent
 			return;
 		}
 		item.Active = !item.Active;
-		if(item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;
-
-		Dispatcher.Dispatch(new SessionActiveSpaceDataChangeAction(
-			spaceId: item.SpaceId.Value,
-			spaceDataId: item.SpaceDataId.Value,
-			spaceViewId: item.SpaceViewId.Value,
-			space: SessionState.Value.SpaceDict[item.SpaceId.Value],
-			spaceData: SessionState.Value.SpaceDataDict[item.SpaceDataId.Value],
-			spaceView: SessionState.Value.SpaceViewDict[item.SpaceViewId.Value]
-		));
+		if (item.Active)
+		{
+			if (item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;
+			Dispatcher.Dispatch(new GetSessionAction(
+				userId: UserState.Value.User.Id,
+				spaceId: item.SpaceId.Value,
+				spaceDataId: item.SpaceDataId.Value,
+				spaceViewId: item.SpaceViewId.Value));
+		}
 	}
 
 }

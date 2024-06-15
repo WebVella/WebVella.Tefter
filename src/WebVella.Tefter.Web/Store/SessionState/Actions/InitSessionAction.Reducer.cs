@@ -19,12 +19,9 @@ public static partial class SessionStateReducers
 			IsLoading = false,
 			DataHashId = action.UserSession.DataHashId,
 			IsDataLoading = false,
-			SpaceList = action.UserSession.SpaceList,
-			SpaceDict = action.UserSession.SpaceDict,
 			SpaceDataDict = action.UserSession.SpaceDataDict,
-			SpaceDataList = action.UserSession.SpaceDataList,
 			SpaceViewDict = action.UserSession.SpaceViewDict,
-			SpaceViewList = action.UserSession.SpaceViewList,
+			SpaceNav = action.UserSession.SpaceNav,
 		};
 	}
 }

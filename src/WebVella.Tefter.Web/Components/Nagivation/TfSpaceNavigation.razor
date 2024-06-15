@@ -3,13 +3,28 @@
 
 <div class="@($"sidebar-nav {(UserState.Value.User.SidebarExpanded ? "expanded" : "collapsed")}")">
 	<div class="sidebar-toolbar">
-		<div class="sidebar-toolbar-left">
-			<FluentSearch />
+		<div class="sidebar-toolbar-mode">
+			<FluentToolbar Class="modebar">
+				<FluentButton Class="btn tree active" Title="show tree" BackgroundColor="@SessionState.Value.SpaceColor"
+							  Style="@($"border-color:{SessionState.Value.SpaceBorderColor} !important")">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Branch())" />
+				</FluentButton>
+				<FluentButton Class="btn bookmark" Title="show bookmarked" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Star())" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+				</FluentButton>
+				<FluentButton Class="btn save" Title="show saved" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Save())" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+				</FluentButton>
+			</FluentToolbar>
 		</div>
-		<div class="sidebar-toolbar-right">
-			<FluentButton Id="space-settings" Title="space actions" BackgroundColor="@SessionState.Value.SpaceButtonColor"
-						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Stealth">
-				<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Neutral" />
+		<div class="sidebar-toolbar-search">
+			@* <FluentSearch  /> *@
+			<FluentTextField Class="search" Placeholder="search..." />
+		</div>
+		<div class="sidebar-toolbar-actions">
+			<FluentButton Id="space-settings" Title="space actions" 
+						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
 			</FluentButton>
 			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
 				<FluentMenuItem OnClick="onDetailsClick">
@@ -70,7 +85,7 @@
 				@foreach (var item in _visibleMenuItems)
 				{
 					<FluentTreeItem Class="level-0" Text="@item.Title" @key=@item.Id
-						@bind-Expanded=@item.Expanded Selected=@false SelectedChanged="item.OnSelect">
+									@bind-Expanded=@item.Expanded Selected=@false SelectedChanged="item.OnSelect">
 						<FluentIcon Value="@item.Icon" Color="@Color.Neutral" Slot="start" />
 						@foreach (var node in item.Nodes)
 						{
@@ -82,7 +97,10 @@
 					</FluentTreeItem>
 				}
 			</FluentTreeView>
-			<TfLoadMore OnClick="loadMoreClick" Visible="true" />
+			@if (hasMore)
+			{
+				<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="loadMoreClick">Load more</FluentButton>
+			}
 		}
 	</div>
 </div>

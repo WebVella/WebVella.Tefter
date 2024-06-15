@@ -16,12 +16,9 @@ public record SessionState
 	public Space Space { get; init; }
 	public SpaceData SpaceData { get; init; }
 	public SpaceView SpaceView { get; init; }
-	public IEnumerable<Space> SpaceList { get; init; }
-	public IDictionary<Guid, Space> SpaceDict { get; init; }
-	public IEnumerable<SpaceData> SpaceDataList { get; init; }
 	public IDictionary<Guid, SpaceData> SpaceDataDict { get; init; }
-	public IEnumerable<SpaceView> SpaceViewList { get; init; }
 	public IDictionary<Guid, SpaceView> SpaceViewDict { get; init; }
+	public List<MenuItem> SpaceNav { get; init; }
 
 	public string SpaceColor
 	{
@@ -35,9 +32,9 @@ public record SessionState
 
 	public string SpaceBackgkroundColor => $"{SpaceColor}15";
 
-	public string SpaceBorderColor => $"{SpaceColor}25";
+	public string SpaceBorderColor => $"{SpaceColor}50";
 
-	public string SpaceButtonColor => $"{SpaceColor}35";
+	public string SpaceBackgroundAccentColor => $"{SpaceColor}35";
 
 	public string SpaceSidebarStyle => $"background-color:{SpaceBackgkroundColor} !important; border-color:{SpaceBorderColor} !important";
 
