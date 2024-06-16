@@ -1,0 +1,16 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+@if (_open)
+{
+
+	<div class="view-filter-selector-menu">
+		<FluentPopover Style="width: 300px;" VerticalThreshold="170" AnchorId="view-sort-selector"
+					   @bind-Open="_open">
+			<Body>
+				body
+			</Body>
+		</FluentPopover>
+	</div>
+}
+

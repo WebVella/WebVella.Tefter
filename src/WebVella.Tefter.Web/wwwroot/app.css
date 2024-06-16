@@ -6,6 +6,7 @@
     --tf-content-margin-bottom: 5px;
     --tf-content-toolbar-height: 40px;
     --tf-content-toolbar-margin-bottom: 10px;
+    --tf-content-toolbar-margin-top: 7px;
     --tf-sidebar-toolbar-height: 40px;
     --tf-sidebar-toolbar-margin-top-bottom: 10px;
     --tf-sidebar-padding: 5px;
@@ -90,15 +91,13 @@ body {
 .sidebar-collapsed .content {
     grid-template-columns: auto;
 }
-    .content.with-toolbar {
-        padding-top: 0;
-    }
 
 .content-toolbar {
     position: relative;
     padding: 0 var(--tf-content-padding);
     height: 40px;
-    margin-bottom: 10px;
+    margin-bottom: var(--tf-content-toolbar-margin-bottom);
+    margin-top: var(--tf-content-toolbar-margin-top);
 }
 
 
@@ -110,8 +109,8 @@ body {
     padding-right: var(--tf-content-margin-bottom);
 }
 
-.content.with-toolbar .content-inner {
-    height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-toolbar-height) - var(--tf-content-toolbar-margin-bottom)) !important;
+.content-body.with-toolbar .content-inner {
+    height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-toolbar-height) - var(--tf-content-toolbar-margin-bottom) - var(--tf-content-toolbar-margin-top)) !important;
 }
 
 

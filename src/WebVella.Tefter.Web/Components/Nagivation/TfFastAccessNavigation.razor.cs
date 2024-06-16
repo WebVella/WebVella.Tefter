@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfSpaceNavigation : TfBaseComponent
+public partial class TfFastAccessNavigation : TfBaseComponent
 {
 	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IState<SessionState> SessionState { get; set; }
@@ -60,48 +60,31 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	private void GenerateSpaceDataMenu()
 	{
 		_menuItems.Clear();
-		if (SessionState.Value.Space is not null)
+		var menu = new MenuItem
 		{
-			foreach (var item in SessionState.Value.Space.Data)
-			{
-				var nodes = new List<MenuItem>();
-				foreach (var view in item.Views)
-				{
-					var menu2 = new MenuItem
-					{
-						Id = RenderUtils.ConvertGuidToHtmlElementId(view.Id),
-						Icon = new Icons.Regular.Size20.Grid(),
-						Match = NavLinkMatch.Prefix,
-						Level = 1,
-						Title = view.Name,
-						Url = $"/space/{SessionState.Value.Space.Id}/data/{item.Id}/view/{view.Id}",
-						SpaceId = SessionState.Value.Space.Id,
-						SpaceDataId = item.Id,
-						SpaceViewId = view.Id,
-						Active = view.Id == SessionState.Value.SpaceView?.Id
-					};
-					SetMenuItemActions(menu2);
-					nodes.Add(menu2);
-				}
-				var menu = new MenuItem
-				{
-					Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
-					Icon = new Icons.Regular.Size20.Database(),
-					Level = 0,
-					Match = NavLinkMatch.Prefix,
-					Title = item.Name,
-					Url = $"/space/{SessionState.Value.Space.Id}/data/{item.Id}",
-					Nodes = nodes,
-					Expanded = item.Id == SessionState.Value.SpaceData?.Id
-				};
-				SetMenuItemActions(menu);
-				_menuItems.Add(menu);
+			Id = "bookmarks",
+			Icon = new Icons.Regular.Size20.Star(),
+			Level = 0,
+			Match = NavLinkMatch.Prefix,
+			Title = "Bookmarks",
+			Nodes = new List<MenuItem>(),
+		};
+		SetMenuItemActions(menu);
+		_menuItems.Add(menu);
 
-			}
-		}
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
-		if (batch.Count < pageSize) hasMore = false;
-		_visibleMenuItems = batch;
+		var menu2 = new MenuItem
+		{
+			Id = "saved",
+			Icon = new Icons.Regular.Size20.Save(),
+			Level = 0,
+			Match = NavLinkMatch.Prefix,
+			Title = "Saved Views",
+			Nodes = new List<MenuItem>(),
+		};
+		SetMenuItemActions(menu2);
+		_menuItems.Add(menu2);
+
+		_visibleMenuItems = _menuItems;
 		_renderedDataHashId = SessionState.Value.DataHashId;
 		_renderedSpaceId = SessionState.Value.Space?.Id;
 	}

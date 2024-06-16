@@ -1,0 +1,29 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (_open)
+{
+	<div class="grid-properties-selector-menu">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="grid-properties-selector">
+			<FluentMenuItem>
+				Freeze Columns
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.TableFreezeColumn())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+			<FluentMenuItem>
+				Conditional Format
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.PaintBucket())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+			<FluentDivider />
+			<FluentMenuItem>
+				Manage Columns
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.Column())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+		</FluentMenu>
+	</div>
+}
+

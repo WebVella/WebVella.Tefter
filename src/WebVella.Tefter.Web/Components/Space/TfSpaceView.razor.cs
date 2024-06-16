@@ -1,26 +1,28 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfSpace : TfBaseComponent
+public partial class TfSpaceView : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState {  get; set; }
+	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	private IQueryable<DataRow> _data = Enumerable.Empty<DataRow>().AsQueryable();
 	private IEnumerable<DataRow> _selectedItems = Enumerable.Empty<DataRow>();
 	private bool _isGridLoading = true;
 	private bool _isMoreLoading = false;
+	private Guid? _loadedSpaceViewId = null;
 	private bool _allLoaded = false;
 	private int _page = 1;
 	private int _pageSize = TfConstants.PageSize;
-	private RenderFragment options = builder =>
-	{
-		builder.OpenElement(0, "div");
-		builder.AddContent(1, "Hello from RenderFragment!");
-		builder.CloseElement();
-	};
+
+	//private RenderFragment options = builder =>
+	//{
+	//	builder.OpenElement(0, "div");
+	//	builder.AddContent(1, "Hello from RenderFragment!");
+	//	builder.CloseElement();
+	//};
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
-			
+			SessionState.StateChanged -= SessionState_StateChanged;
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -30,12 +32,10 @@ public partial class TfSpace : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			//var meta = WvState.GetActiveSpaceMeta();
-			//_spaceView = meta.SpaceView;
 			if (SessionState.Value.SpaceView is not null)
 			{
 				await loadDataAsync(1);
-				//WvState.ActiveSpaceDataChanged += onSpaceDataLocation;
+				SessionState.StateChanged += SessionState_StateChanged;
 			}
 			_isGridLoading = false;
 			await InvokeAsync(StateHasChanged);
@@ -43,20 +43,20 @@ public partial class TfSpace : TfBaseComponent
 		}
 	}
 
-	//protected void onSpaceDataLocation(object sender, StateActiveSpaceDataChangedEventArgs e)
-	//{
-	//	base.InvokeAsync(async () =>
-	//	{
-	//		if (e.SpaceView.Id == _spaceView.Id) return;
+	protected void SessionState_StateChanged(object sender, EventArgs e)
+	{
+		InvokeAsync(async () =>
+		{
+			if (SessionState.Value.SpaceView?.Id == _loadedSpaceViewId) return;
 
-	//		_isGridLoading = true;
-	//		await InvokeAsync(StateHasChanged);
-	//		await loadDataAsync(1);
-	//		_isGridLoading = false;
-	//		await InvokeAsync(StateHasChanged);
-	//	});
+			_isGridLoading = true;
+			await InvokeAsync(StateHasChanged);
+			await loadDataAsync(1);
+			_isGridLoading = false;
+			await InvokeAsync(StateHasChanged);
+		});
 
-	//}
+	}
 	private async Task loadDataAsync(int page)
 	{
 		if (SessionState.Value.SpaceView is null) return;
@@ -75,6 +75,7 @@ public partial class TfSpace : TfBaseComponent
 		_data = _data.Concat(batch);
 		_page = page;
 		if (batch.Count() < _pageSize) _allLoaded = true;
+		_loadedSpaceViewId = SessionState.Value.SpaceView.Id;
 	}
 
 	private void addActions(DataRow row)

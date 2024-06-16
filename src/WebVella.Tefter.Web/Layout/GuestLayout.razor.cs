@@ -50,17 +50,19 @@ public partial class GuestLayout : FluxorLayout
 
 	private void UserState_StateChanged(object sender, EventArgs e)
 	{
-		if (UserState.Value.IsLoading) return;
-
-		if (UserState.Value.User is not null)
+		InvokeAsync(async() =>
 		{
-			_isLoading = true;
-			Navigator.NavigateTo(TfConstants.HomePageUrl);
-			return;
-		}
-		_isLoading = false;
-		StateHasChanged();
+			if (UserState.Value.IsLoading) return;
 
+			if (UserState.Value.User is not null)
+			{
+				_isLoading = true;
+				Navigator.NavigateTo(TfConstants.HomePageUrl);
+				return;
+			}
+			_isLoading = false;
+			await InvokeAsync(StateHasChanged);
+		});
 	}
 
 }

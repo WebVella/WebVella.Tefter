@@ -1,0 +1,48 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="content-toolbar">
+	<div class="content-toolbar-left">
+		<FluentSearch />
+		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Filter())" Slot="start" />
+			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+		</FluentButton>
+		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@(new Icons.Regular.Size20.ArrowSort())" Slot="start" />
+			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+		</FluentButton>
+		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@(new Icons.Regular.Size20.TableSettings())"/>
+		</FluentButton>
+	</div>
+	<div class="content-toolbar-right">
+		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
+			Actions
+			@if (_selectedRowsCount > 0)
+			{
+				<span slot="start">
+					<FluentBadge Appearance="Appearance.Accent">@_selectedRowsCount</FluentBadge>
+				</span>
+			}
+			else
+			{
+				<FluentIcon Value="@(new Icons.Regular.Size20.Connector())" Slot="start" />
+			}
+		</FluentButton>
+		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@(new Icons.Regular.Size20.ShareAndroid())" />
+		</FluentButton>
+		<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Options())" />
+		</FluentButton>
+	</div>
+</div>
+<TfSpaceViewFilterSelector @ref="_filterSelector" />
+<TfSpaceViewSortSelector @ref="_sortSelector" />
+<TfSpaceViewPropertiesSelector @ref="_propertiesSelector" />
+<TfSpaceViewSettingsSelector @ref="_settingSelector" />
+<TfSpaceViewActionSelector @ref="_actionSelector" />
+<TfSpaceViewShareSelector @ref="_shareSelector" />
+
+

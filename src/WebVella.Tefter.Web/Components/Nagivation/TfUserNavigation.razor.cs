@@ -45,4 +45,9 @@ public partial class TfUserNavigation
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Navigates to Administration panel");
 	}
+
+	private void _helpClick()
+	{
+		ToastService.ShowToast(ToastIntent.Warning, "Dropdown with menu to help section, license and about Tefter.bg");
+	}
 }

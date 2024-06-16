@@ -12,6 +12,9 @@
 			<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminClick" Title="Administration">
 				<FluentIcon Value="@(new Icons.Regular.Size20.AppFolder())" Color="@Color.Neutral" />
 			</FluentButton>
+			<FluentButton Appearance="@Appearance.Stealth" OnClick="_helpClick" Title="Help">
+				<FluentIcon Value="@(new Icons.Regular.Size20.QuestionCircle())" Color="@Color.Neutral" />
+			</FluentButton>
 		</div>
 		<div class="avatar">
 			<FluentPersona Id="user-menu-toggle" Initials="@UserState.Value.User.Initials"

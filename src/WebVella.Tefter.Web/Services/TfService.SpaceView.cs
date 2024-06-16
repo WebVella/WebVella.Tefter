@@ -10,6 +10,7 @@ public partial class TfService
 {
 	public async ValueTask<List<DataRow>> GetSpaceViewData(Guid spaceViewId)
 	{
+		await Task.Delay(300);
 		return await dataBroker.GetDataAsync();
 	}
 

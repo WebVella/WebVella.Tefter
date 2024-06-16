@@ -42,7 +42,6 @@ public partial class WvSpaceViewNav : WvBaseComponent
 	private void init()
 	{
 		var meta = WvState.GetActiveSpaceMeta();
-		Console.WriteLine($"viewnav get* {meta.Space?.Id} **** {meta.SpaceData?.Id} *** {meta.SpaceView?.Id}");
 
 		space = meta.Space;
 		spaceData = meta.SpaceData;

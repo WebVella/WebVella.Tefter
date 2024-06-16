@@ -1,0 +1,28 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (_open)
+{
+	<div class="view-export-selector-menu">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector">
+			<FluentMenuItem Disabled="@(_rowsCount == 0)">
+				Export Selection
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+				</span>
+				@if (_rowsCount > 0)
+				{
+					<span slot="end">
+						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@_rowsCount</FluentBadge>
+					</span>
+				}
+			</FluentMenuItem>
+			<FluentMenuItem>
+				Export All data
+				<span slot="start">
+					<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+				</span>
+			</FluentMenuItem>
+		</FluentMenu>
+	</div>
+}
+

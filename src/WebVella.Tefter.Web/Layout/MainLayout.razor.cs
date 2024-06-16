@@ -82,17 +82,21 @@ public partial class MainLayout : FluxorLayout
 	//Step 1: init session
 	private void SessionState_StateChanged(object sender, EventArgs e)
 	{
-		if (SessionState.Value.IsLoading) return;
-		Console.WriteLine($"******* SessionState_StateChanged 1");
-		_isLoading = false;
-		StateHasChanged();
-		Console.WriteLine($"******* SessionState_StateChanged 1");
+		InvokeAsync(async () =>
+		{
+			if (SessionState.Value.IsLoading) return;
+			_isLoading = false;
+			await InvokeAsync(StateHasChanged);
+		});
 	}
 
 	private void Navigator_LocationChanged(object sender, EventArgs e)
 	{
-		if (_isLoading) return;
-		_initLocationChange();
+		InvokeAsync(() =>
+		{
+			if (_isLoading) return;
+			_initLocationChange();
+		});
 	}
 
 	private void _initLocationChange()

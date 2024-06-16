@@ -13,7 +13,10 @@
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.7.2" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Update="Pages\BookmarksPage.razor">
+	  <Content Update="Components\Space\TfSpaceViewToolbar.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	  <Content Update="Pages\FastAccessPage.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
 	  <Content Update="Pages\SavesPage.razor">
