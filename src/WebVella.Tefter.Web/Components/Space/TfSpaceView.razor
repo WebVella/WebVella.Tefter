@@ -2,11 +2,11 @@
 @inherits TfBaseComponent
 @{
 	_renderedHs.Clear();
-	var columns = SessionState.Value.SpaceView.Meta.Columns.Where(x => x.IsVisible);
 }
 
 @if (SessionState.Value.SpaceView is not null)
 {
+	var columns = SessionState.Value.SpaceView.Meta.Columns.Where(x => x.IsVisible);
 	<div class="tf-grid-wrapper">
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
