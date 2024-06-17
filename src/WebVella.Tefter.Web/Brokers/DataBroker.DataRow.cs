@@ -41,10 +41,10 @@ public partial class DataBroker : IDataBroker
 				Type = DataFieldType.Number,
 				Value = (decimal)19
 			};
-			item.Fields["wage"] = new DataField
+			item.Fields["comments"] = new DataField
 			{
 				Type = DataFieldType.Number,
-				Value = (decimal)3255
+				Value = (decimal)32
 			};
 			item.Fields["city"] = new DataField
 			{

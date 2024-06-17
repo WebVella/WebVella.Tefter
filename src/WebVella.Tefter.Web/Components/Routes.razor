@@ -1,7 +1,9 @@
-﻿<Fluxor.Blazor.Web.StoreInitializer />
+﻿@using Boz.Tefter
+<Fluxor.Blazor.Web.StoreInitializer />
 <Router AppAssembly="typeof(Program).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
-        <FocusOnNavigate RouteData="routeData" Selector="#top" />
-    </Found>
+	<Found Context="routeData">
+		<RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+		<FocusOnNavigate RouteData="routeData" Selector="#top" />
+	</Found>
 </Router>
+<BozAppInit />

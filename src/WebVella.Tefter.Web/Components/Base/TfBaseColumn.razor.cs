@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfBaseColumn : ComponentBase
+public partial class TfBaseColumn : TfBaseComponent
 {
 	[Parameter]
 	public SpaceViewColumn Meta { get; set; }

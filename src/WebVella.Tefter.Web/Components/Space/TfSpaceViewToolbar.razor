@@ -17,6 +17,10 @@
 		</FluentButton>
 	</div>
 	<div class="content-toolbar-right">
+		@foreach (var comp in _regionComponents)
+		{
+			<DynamicComponent Type="comp.ComponentType" @key=@comp.Id/>
+		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			Actions
 			@if (_selectedRows.Count > 0)

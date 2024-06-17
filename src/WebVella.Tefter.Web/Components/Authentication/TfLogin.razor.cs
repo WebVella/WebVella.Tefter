@@ -8,11 +8,16 @@ public partial class TfLogin : TfBaseComponent
 
 	private string _email = "boz@zashev.com";
 	private string _password = "1232";
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		UserState.StateChanged -= UserState_StateChnanged;
-		return base.DisposeAsyncCore(disposing);
-	}
+
+    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    {
+        if (disposing)
+        {
+            UserState.StateChanged -= UserState_StateChnanged;
+        }
+        await base.DisposeAsyncCore(disposing);
+    }
+
 	private void _login()
 	{
 		Dispatcher.Dispatch(new LoginUserAction(_email, _password));

@@ -16,11 +16,14 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 		await base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		SessionState.StateChanged += SessionState_StateChanged;
-	}
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            SessionState.StateChanged += SessionState_StateChanged;
+        }
+    }
 
 	private void SessionState_StateChanged(object sender, EventArgs e)
 	{

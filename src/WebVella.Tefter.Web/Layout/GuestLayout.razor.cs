@@ -11,10 +11,14 @@ public partial class GuestLayout : FluxorLayout
 	private bool _firstRender = true;
 	private bool _isLoading = true;
 
-	protected override ValueTask DisposeAsyncCore(bool disposing)
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		UserState.StateChanged -= UserState_StateChanged;
-		return base.DisposeAsyncCore(disposing);
+        if (disposing)
+        { 
+			UserState.StateChanged -= UserState_StateChanged;
+        }
+      
+		await base.DisposeAsyncCore(disposing);
 	}
 
 	// Overridden to provide an async method that is run before any rendering

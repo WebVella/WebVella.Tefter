@@ -24,15 +24,15 @@ public record SpaceViewColumn
 		}
 	}
 	public List<Permission> Permissions { get; init; }
-	public string CellComponent { get; init; }  //Temporary for demo
+	public string Component { get; init; }  //Temporary for demo
 
 	[JsonIgnore]
 	public Type CellType
 	{
 		get
 		{
-			if (String.IsNullOrWhiteSpace(CellComponent)) return null;
-			return Type.GetType(CellComponent);
+			if (String.IsNullOrWhiteSpace(Component)) return null;
+			return Type.GetType(Component);
 		}
 	}
 

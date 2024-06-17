@@ -1,0 +1,13 @@
+﻿@namespace Boz.Tefter.Columns
+@inherits TfBaseColumn
+
+<div>
+	<a href="#" @onclick=OpenPanelRightAsync @onclick:preventDefault class="tf-comment-column-component">
+		<span class="tf-comment-column-component__icon">
+			<FluentIcon Value="@(new Icons.Regular.Size20.Comment())"></FluentIcon>
+		</span>
+		<span class="tf-comment-column-component__value">@_value</span>
+	</a>
+</div>
+
+

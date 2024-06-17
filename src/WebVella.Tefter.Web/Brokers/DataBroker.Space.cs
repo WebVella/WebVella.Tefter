@@ -104,7 +104,7 @@ public partial class DataBroker : IDataBroker
 			Position = index,
 			DataType = SpaceViewColumnType.Name,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn",
+			Component = "WebVella.Tefter.Web.Components.TfTextColumn",
 			Width= 200
 		});
 		index++;
@@ -112,12 +112,13 @@ public partial class DataBroker : IDataBroker
 		{
 			Id = new Guid("25677090-baee-49cc-a314-fd71c88ba1ee"),
 			SpaceViewId = spaceViewId,
-			ColumnName = "city",
-			Title = "City",
+			ColumnName = "comments",
+			Title = "Comments",
 			Position = index,
-			DataType = SpaceViewColumnType.Text,
+			DataType = SpaceViewColumnType.Numeric,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
+			Component = "Boz.Tefter.Columns.BozCommentColumn",
+			Width = 30
 		});
 		index++;
 		columns.Add(new SpaceViewColumn
@@ -129,7 +130,7 @@ public partial class DataBroker : IDataBroker
 			Position = index,
 			DataType = SpaceViewColumnType.Email,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
+			Component = "WebVella.Tefter.Web.Components.TfTextColumn"
 		});
 		index++;
 		columns.Add(new SpaceViewColumn
@@ -141,7 +142,7 @@ public partial class DataBroker : IDataBroker
 			Position = index,
 			DataType = SpaceViewColumnType.Numeric,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
+			Component = "WebVella.Tefter.Web.Components.TfTextColumn"
 		});
 		index++;
 		columns.Add(new SpaceViewColumn
@@ -153,7 +154,7 @@ public partial class DataBroker : IDataBroker
 			Position = index,
 			DataType = SpaceViewColumnType.Currency,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
+			Component = "WebVella.Tefter.Web.Components.TfTextColumn"
 		});
 		index++;
 

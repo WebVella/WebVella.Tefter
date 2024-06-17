@@ -20,4 +20,5 @@ global using WebVella.Tefter.Web.Services;
 global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Web.Models;
 global using WebVella.Tefter.Web.Store.UserState;
+global using WebVella.Tefter.Web.Store.ScreenState;
 global using WebVella.Tefter.Web.Store.SessionState;

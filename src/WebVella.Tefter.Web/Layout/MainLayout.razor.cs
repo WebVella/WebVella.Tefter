@@ -4,110 +4,122 @@ using WebVella.Tefter.Web.Store.UserState;
 namespace WebVella.Tefter.Web.Layout;
 public partial class MainLayout : FluxorLayout
 {
-	[Inject] protected ITfService TfService { get; set; }
-	[Inject] protected NavigationManager Navigator { get; set; }
-	[Inject] protected IState<UserState> UserState { get; set; }
-	[Inject] protected IState<SessionState> SessionState { get; set; }
-	[Inject] protected IDispatcher dispatcher { get; set; }
+    [Inject] protected ITfService TfService { get; set; }
+    [Inject] protected NavigationManager Navigator { get; set; }
+    [Inject] protected IState<UserState> UserState { get; set; }
+    [Inject] protected IState<SessionState> SessionState { get; set; }
+    [Inject] protected IDispatcher dispatcher { get; set; }
 
-	private bool _firstRender = true;
-	private bool _isLoading = true;
+    private bool _firstRender = true;
+    private bool _isLoading = true;
 
-	private string _spaceColor = string.Empty;
+    private string _spaceColor = string.Empty;
 
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		UserState.StateChanged -= UserState_StateChanged;
-		SessionState.StateChanged -= SessionState_StateChanged;
-		Navigator.LocationChanged -= Navigator_LocationChanged;
-		return base.DisposeAsyncCore(disposing);
-	}
+    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    {
+        if (disposing)
+        {
+            UserState.StateChanged -= UserState_StateChanged;
+            SessionState.StateChanged -= SessionState_StateChanged;
+            Navigator.LocationChanged -= Navigator_LocationChanged;
+        }
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		Navigator.LocationChanged += Navigator_LocationChanged;
-	}
+        await base.DisposeAsyncCore(disposing);
+    }
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        if (firstRender)
+        {
+            Navigator.LocationChanged += Navigator_LocationChanged;
+        }
+    }
 
-	// Overridden to provide an async method that is run before any rendering
-	public override async Task SetParametersAsync(ParameterView parameters)
-	{
-		// Apply the supplied Parameters to the Conponent
-		// Must do this first
-		parameters.SetParameterProperties(this);
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
 
-		// Run the Pre Render code
-		if (_firstRender)
-		{
-			await this.PreFirstRenderAsync();
-			_firstRender = false;
-		}
+    }
 
-		// Run the base SetParametersAsync providing it with an empty ParameterView
-		// We have already applied the parameters and then may already be stale
-		// This runs the normal lifecycle methods
-		await base.SetParametersAsync(ParameterView.Empty);
-	}
+    // Overridden to provide an async method that is run before any rendering
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        // Apply the supplied Parameters to the Conponent
+        // Must do this first
+        parameters.SetParameterProperties(this);
 
-	// Separate out this component's code to make it clear what we're doing
-	// We use a ValueTask because it's cheaper if no real async await occurs
-	public ValueTask PreFirstRenderAsync()
-	{
-		// Your async code goes here
-		// You can run sync code too if you wish
-		dispatcher.Dispatch(new GetUserAction());
-		UserState.StateChanged += UserState_StateChanged;
-		return ValueTask.CompletedTask;
-	}
+        // Run the Pre Render code
+        if (_firstRender)
+        {
+            await this.PreFirstRenderAsync();
+            _firstRender = false;
+        }
 
-	//Step 1: init user
-	private void UserState_StateChanged(object sender, EventArgs e)
-	{
-		if (UserState.Value.IsLoading) return;
+        // Run the base SetParametersAsync providing it with an empty ParameterView
+        // We have already applied the parameters and then may already be stale
+        // This runs the normal lifecycle methods
+        await base.SetParametersAsync(ParameterView.Empty);
+    }
 
-		if (UserState.Value.User is null)
-		{
-			Navigator.NavigateTo(TfConstants.LoginPageUrl);
-			return;
-		}
+    // Separate out this component's code to make it clear what we're doing
+    // We use a ValueTask because it's cheaper if no real async await occurs
+    public ValueTask PreFirstRenderAsync()
+    {
+        // Your async code goes here
+        // You can run sync code too if you wish
+        dispatcher.Dispatch(new GetUserAction());
+        UserState.StateChanged += UserState_StateChanged;
+        return ValueTask.CompletedTask;
+    }
 
-		var urlData = NavigatorExt.GetUrlData(Navigator);
-		dispatcher.Dispatch(new GetSessionAction(
-			userId: UserState.Value.User.Id,
-			spaceId: urlData.SpaceId,
-			spaceDataId: urlData.SpaceDataId,
-			spaceViewId: urlData.SpaceViewId));
-		SessionState.StateChanged += SessionState_StateChanged;
-	}
-	//Step 1: init session
-	private void SessionState_StateChanged(object sender, EventArgs e)
-	{
-		InvokeAsync(async () =>
-		{
-			if (SessionState.Value.IsLoading) return;
-			_isLoading = false;
-			await InvokeAsync(StateHasChanged);
-		});
-	}
+    //Step 1: init user
+    private void UserState_StateChanged(object sender, EventArgs e)
+    {
+        if (UserState.Value.IsLoading) return;
 
-	private void Navigator_LocationChanged(object sender, EventArgs e)
-	{
-		InvokeAsync(() =>
-		{
-			if (_isLoading) return;
-			_initLocationChange();
-		});
-	}
+        if (UserState.Value.User is null)
+        {
+            Navigator.NavigateTo(TfConstants.LoginPageUrl);
+            return;
+        }
 
-	private void _initLocationChange()
-	{
-		var urlData = NavigatorExt.GetUrlData(Navigator);
+        var urlData = NavigatorExt.GetUrlData(Navigator);
+        dispatcher.Dispatch(new GetSessionAction(
+            userId: UserState.Value.User.Id,
+            spaceId: urlData.SpaceId,
+            spaceDataId: urlData.SpaceDataId,
+            spaceViewId: urlData.SpaceViewId));
+        SessionState.StateChanged += SessionState_StateChanged;
+    }
+    //Step 1: init session
+    private void SessionState_StateChanged(object sender, EventArgs e)
+    {
+        InvokeAsync(async () =>
+        {
+            if (SessionState.Value.IsLoading) return;
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged);
+        });
+    }
 
-		dispatcher.Dispatch(new GetSessionAction(
-	userId: UserState.Value.User.Id,
-	spaceId: urlData.SpaceId,
-	spaceDataId: urlData.SpaceDataId,
-	spaceViewId: urlData.SpaceViewId));
-	}
+    private void Navigator_LocationChanged(object sender, EventArgs e)
+    {
+        InvokeAsync(() =>
+        {
+            if (_isLoading) return;
+            _initLocationChange();
+        });
+    }
+
+    private void _initLocationChange()
+    {
+        var urlData = NavigatorExt.GetUrlData(Navigator);
+
+        dispatcher.Dispatch(new GetSessionAction(
+    userId: UserState.Value.User.Id,
+    spaceId: urlData.SpaceId,
+    spaceDataId: urlData.SpaceDataId,
+    spaceViewId: urlData.SpaceViewId));
+    }
 
 }

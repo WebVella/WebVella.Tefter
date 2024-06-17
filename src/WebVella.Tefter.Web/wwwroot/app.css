@@ -106,7 +106,7 @@ body {
 	overflow-y: scroll !important;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
-	overflow-x: scroll !important;
+	/*overflow-x: scroll !important;*/
 }
 
 .content-body.with-toolbar .content-inner {
@@ -187,6 +187,13 @@ body {
 	cursor:pointer;
 }
 
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td a {
+	text-decoration:none;
+}
+
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td a:hover {
+	text-decoration:underline;
+}
 
 /* width */
 ::-webkit-scrollbar {
