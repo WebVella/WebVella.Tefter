@@ -1,5 +1,4 @@
-﻿using Fluxor.Blazor.Web.ReduxDevTools;
-using WebVella.Tefter.Web;
+﻿using WebVella.Tefter.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +10,7 @@ builder.Services.AddFluentUIComponents();
 builder.Services.AddFluxor(options =>
 {
 	options
-	.ScanAssemblies(typeof(Program).Assembly)
-	.UseReduxDevTools();
+	.ScanAssemblies(typeof(Program).Assembly);
 });
 builder.Services.AddTefter();
 
@@ -35,3 +33,4 @@ app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode();
 
 app.Run();
+
