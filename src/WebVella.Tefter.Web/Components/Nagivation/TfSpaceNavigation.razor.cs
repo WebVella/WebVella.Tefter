@@ -16,6 +16,8 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	private bool _settingsMenuVisible = false;
 	private TfSpaceSelector _selectorEl;
 
+
+	private string search = null;
 	private bool hasMore = true;
 	private int page = 1;
 	private int pageSize = 30;
@@ -50,6 +52,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 			_menuLoading = true;
 			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
 			GenerateSpaceDataMenu();
 			_menuLoading = false;
 			await InvokeAsync(StateHasChanged);
@@ -57,17 +60,21 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 	}
 
-	private void GenerateSpaceDataMenu()
+	private void GenerateSpaceDataMenu(string search = null)
 	{
+		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
 		if (SessionState.Value.Space is not null)
 		{
 			foreach (var item in SessionState.Value.Space.Data)
 			{
 				var nodes = new List<MenuItem>();
+				var hasSelected = false;
 				foreach (var view in item.Views)
 				{
-					var menu2 = new MenuItem
+					if (!String.IsNullOrWhiteSpace(search) && !view.Name.ToLowerInvariant().Contains(search))
+						continue;
+					var viewMenu = new MenuItem
 					{
 						Id = RenderUtils.ConvertGuidToHtmlElementId(view.Id),
 						Icon = new Icons.Regular.Size20.Grid(),
@@ -78,12 +85,20 @@ public partial class TfSpaceNavigation : TfBaseComponent
 						SpaceId = SessionState.Value.Space.Id,
 						SpaceDataId = item.Id,
 						SpaceViewId = view.Id,
-						Active = view.Id == SessionState.Value.SpaceView?.Id
+						Active = view.Id == SessionState.Value.SpaceView?.Id,
+						Expanded = false
 					};
-					SetMenuItemActions(menu2);
-					nodes.Add(menu2);
+					if (viewMenu.Active)
+					{
+						hasSelected = true;
+					}
+					SetMenuItemActions(viewMenu);
+					if (String.IsNullOrWhiteSpace(search))
+						nodes.Add(viewMenu);
+					else
+						_menuItems.Add(viewMenu);
 				}
-				var menu = new MenuItem
+				var dataMenu = new MenuItem
 				{
 					Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
 					Icon = new Icons.Regular.Size20.Database(),
@@ -92,10 +107,13 @@ public partial class TfSpaceNavigation : TfBaseComponent
 					Title = item.Name,
 					Url = $"/space/{SessionState.Value.Space.Id}/data/{item.Id}",
 					Nodes = nodes,
-					Expanded = item.Id == SessionState.Value.SpaceData?.Id
+					Expanded = hasSelected,
+					Active = false
+
 				};
-				SetMenuItemActions(menu);
-				_menuItems.Add(menu);
+				SetMenuItemActions(dataMenu);
+				if (String.IsNullOrWhiteSpace(search))
+					_menuItems.Add(dataMenu);
 
 			}
 		}
@@ -147,19 +165,18 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 	private void SetMenuItemActions(MenuItem item)
 	{
-		item.OnSelect = async () => await OnTreeMenuSelect(item);
-
+		item.OnSelect = (selected) => OnTreeMenuSelect(item, selected);
 	}
 
-	private async Task OnTreeMenuSelect(MenuItem item)
+	private void OnTreeMenuSelect(MenuItem item, bool selected)
 	{
 		if (item.Level == 0)
 		{
 			item.Expanded = !item.Expanded;
+			item.Active = false;
 			return;
 		}
-
-		item.Active = !item.Active;
+		item.Active = selected;
 		if (item.Active)
 		{
 			if (item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;
@@ -171,4 +188,9 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		}
 	}
 
+	private async Task onSearch(string value)
+	{
+		search = value;
+		GenerateSpaceDataMenu(search);
+	}
 }

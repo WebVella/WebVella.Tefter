@@ -1,5 +1,5 @@
-﻿namespace WebVella.Tefter.Demo.Components;
-public partial class WvCellText : WvBaseComponent
+﻿namespace WebVella.Tefter.Web.Components;
+public partial class WvCellText : ComponentBase
 {
 	[Parameter]
 	public SpaceViewColumn Meta { get; set; }

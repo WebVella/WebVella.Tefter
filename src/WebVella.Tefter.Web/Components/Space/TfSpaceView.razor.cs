@@ -4,13 +4,13 @@ public partial class TfSpaceView : TfBaseComponent
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	private IQueryable<DataRow> _data = Enumerable.Empty<DataRow>().AsQueryable();
-	private IEnumerable<DataRow> _selectedItems = Enumerable.Empty<DataRow>();
 	private bool _isGridLoading = true;
 	private bool _isMoreLoading = false;
 	private Guid? _loadedSpaceViewId = null;
 	private bool _allLoaded = false;
 	private int _page = 1;
-	private int _pageSize = TfConstants.PageSize;
+	private int _pageSize = 30;// TfConstants.PageSize;
+	private HashSet<Guid> _renderedHs = new HashSet<Guid>();
 
 	//private RenderFragment options = builder =>
 	//{
@@ -18,6 +18,9 @@ public partial class TfSpaceView : TfBaseComponent
 	//	builder.AddContent(1, "Hello from RenderFragment!");
 	//	builder.CloseElement();
 	//};
+
+
+
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -41,6 +44,12 @@ public partial class TfSpaceView : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 
 		}
+	}
+
+	protected override bool ShouldRender()
+	{
+		Console.WriteLine("Should Render");
+		return true;
 	}
 
 	protected void SessionState_StateChanged(object sender, EventArgs e)
@@ -80,12 +89,7 @@ public partial class TfSpaceView : TfBaseComponent
 
 	private void addActions(DataRow row)
 	{
-		//row.OnCellDataChange = (args) => { onCellDataChanged(row, args); };
-	}
-
-	private void onCellDataChanged(DataRow row, (string, object) args)
-	{
-
+		row.OnSelect = () => { onRowSelect(row); };
 	}
 
 	private async Task _loadMoreAsync()
@@ -98,15 +102,5 @@ public partial class TfSpaceView : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task _selectionChange(IEnumerable<DataRow> items)
-	{
-		_selectedItems = items;
-		//WvState.SetSelectedRows(items);
-		await InvokeAsync(StateHasChanged);
-	}
 
-	private async Task _onRowClick(FluentDataGridRow<DataRow> row)
-	{
-
-	}
 }

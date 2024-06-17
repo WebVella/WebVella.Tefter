@@ -1,4 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Store.SessionState;
+
+using System.Drawing;
 using SystemColor = System.Drawing.Color;
 
 [FeatureState]
@@ -24,9 +26,17 @@ public record SessionState
 	{
 		get
 		{
-			if(SpaceRouteId is null || Space is null) return ThemeColor.ToAttributeValue();
+			if (SpaceRouteId is null || Space is null) return ThemeColor.ToAttributeValue();
 
 			return Space.Color.ToAttributeValue();
+		}
+	}
+
+	public SystemColor SpaceColorObject
+	{
+		get
+		{
+			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(SpaceColor);
 		}
 	}
 

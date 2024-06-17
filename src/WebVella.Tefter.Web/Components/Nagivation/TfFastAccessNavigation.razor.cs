@@ -68,7 +68,9 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 			Match = NavLinkMatch.Prefix,
 			Title = "Bookmarks",
 			Nodes = new List<MenuItem>(),
+			Expanded = true,
 		};
+
 		SetMenuItemActions(menu);
 		_menuItems.Add(menu);
 
@@ -130,19 +132,18 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 
 	private void SetMenuItemActions(MenuItem item)
 	{
-		item.OnSelect = async () => await OnTreeMenuSelect(item);
-
+		item.OnSelect = (selected) => OnTreeMenuSelect(item, selected);
 	}
 
-	private async Task OnTreeMenuSelect(MenuItem item)
+	private void OnTreeMenuSelect(MenuItem item, bool selected)
 	{
 		if (item.Level == 0)
 		{
 			item.Expanded = !item.Expanded;
+			item.Active = false;
 			return;
 		}
-
-		item.Active = !item.Active;
+		item.Active = selected;
 		if (item.Active)
 		{
 			if (item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;

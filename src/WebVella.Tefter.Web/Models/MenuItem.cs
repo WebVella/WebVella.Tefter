@@ -12,6 +12,7 @@ public class MenuItem
 	public bool Expanded { get; set; } = false;
 	public bool Active { get; set; } = false;
 	public int Level { get; set; } = 0;
+	public string LevelClass { get => $"level-{Level}"; }
 
 	public Guid? SpaceId { get; set; }
 	public Guid? SpaceDataId { get; set; }
@@ -20,7 +21,7 @@ public class MenuItem
 	public List<MenuItem> Nodes { get; set; } = new();
 
 	[JsonIgnore]
-	public Action OnSelect { get; set; }
+	public Action<bool> OnSelect { get; set; }
 
 	[JsonIgnore]
 	public Action OnExpand { get; set; }

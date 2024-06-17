@@ -22,7 +22,7 @@ public partial class TfUserNavigation
 		if (!result.Cancelled && result.Data != null)
 		{
 			var response = (ThemeSettings)result.Data;
-			Dispatcher.Dispatch(new SetThemeAction(response.ThemeMode, response.ThemeColor));
+			Dispatcher.Dispatch(new SetUIAction(UserState.Value.User.Id, response.ThemeMode, response.ThemeColor, SessionState.Value.SidebarExpanded));
 
 		}
 	}

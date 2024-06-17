@@ -14,7 +14,7 @@
 
 body {
 	background: var(--neutral-layer-3) !important;
-}
+} 
 
 .layout {
 	overflow-x:hidden;/*fix for a scroll blink on menu drop*/
@@ -82,6 +82,7 @@ body {
 	overflow-y: scroll !important;
 	padding-left: var(--wv-content-padding);
 	padding-right: var(--wv-content-margin-bottom);
+	overflow-x:scroll !important;
 }
 
 .content.with-views .content-inner {

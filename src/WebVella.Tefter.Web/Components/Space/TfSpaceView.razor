@@ -1,47 +1,96 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
+@{
+	_renderedHs.Clear();
+	var columns = SessionState.Value.SpaceView.Meta.Columns.Where(x => x.IsVisible);
+}
 
 @if (SessionState.Value.SpaceView is not null)
 {
-	<FluentDataGrid Items="@_data" Loading="_isGridLoading"
-					ShowHover="true" GenerateHeader="GenerateHeaderOption.Sticky"
-					TGridItem="DataRow">
-		<SelectColumn TGridItem="DataRow" Class="wv-cell-select"
-					  SelectMode="@DataGridSelectMode.Multiple"
-					  SelectedItems="@_selectedItems" SelectedItemsChanged="_selectionChange" />
+	<div class="tf-grid-wrapper">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{SessionState.Value.SpaceBorderColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th tf-selection" @onclick=_onMultipleSelect>
+						@if (_selectedItems.Count == 0)
+						{
+							<FluentIcon Value="@_iconUnselected" />
+						}
+						else if (_selectedItems.Count == _data.Count())
+						{
+							<FluentIcon Value="@_iconSelected" />
+						}
+						else
+						{
+							<FluentIcon Value="@_iconSelectedIndeterminete" />
+						}
+					</th>
 
-		<PropertyColumn Property="@(p => p.Id)" Title="Id" />
-		<PropertyColumn Property="@(p => p.StringId)" Title="StringId" />
-		@foreach (var column in SessionState.Value.SpaceView.Meta.Columns.Where(x => x.IsVisible))
-		{
-			<TemplateColumn Title="@column.Title" Width="@column.Width">
-				@* 				<HeaderCellItemTemplate>
-		<FluentButton Class="col-options-button" Appearance="@Appearance.Stealth">
-		<FluentCounterBadge Count="2" Appearance="Appearance.Neutral" Style="padding:0 !important;">
-		<FluentIcon Value="@(new Icons.Regular.Size20.Filter())" />
-		</FluentCounterBadge>
-		</FluentButton>
-		<FluentButton Class="col-sort-button" Appearance="@Appearance.Stealth" Style="flex-grow:1">
-		<span slot="end">
-		<FluentCounterBadge Count="2" Appearance="Appearance.Neutral" Style="padding:0 !important;">
-		<FluentIcon Value="@(new Icons.Regular.Size20.ArrowDown())" />
-		</FluentCounterBadge>
-		</span>
-		@column.Title
-		</FluentButton>
-		</HeaderCellItemTemplate> *@
-				<ChildContent>
-					@if (column.CellType is null) { }
-					else
+					@foreach (var column in columns)
 					{
-						<DynamicComponent Type="@column.CellType" Parameters="@column.GetComponentParameters(context)" />
+						<th class="tf-grid-th" style="@column.WidthStyle">@column.Title</th>
 					}
-				</ChildContent>
-			</TemplateColumn>
-		}
-	</FluentDataGrid>
-	<TfLoadMore Visible="@(!_isGridLoading && !_allLoaded)" Loading="_isMoreLoading"
-				OnClick="_loadMoreAsync" Style="margin-top:0.5rem;" />
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@if (!_isGridLoading)
+				{
+					foreach (var context in _data)
+					{
+						if (_renderedHs.Contains(context.Id)) { continue; }
+						else { _renderedHs.Add(context.Id); }
+						<tr @key=context.Id class="tf-grid-tr">
+							<td class="tf-grid-td tf-selection" @onclick=context.OnSelect>
+								<div>
+									@if (_selectedItems.Contains(context))
+									{
+										<FluentIcon Value="@_iconSelected" />
+									}
+									else
+									{
+										<FluentIcon Value="@_iconUnselected" />
+									}
+								</div>
+							</td>
+							@foreach (var column in columns)
+							{
+								<td class="tf-grid-td">
+									@if (column.CellType is null) { }
+									else
+									{
+										<DynamicComponent Type="@column.CellType" Parameters="@column.GetComponentParameters(context)" />
+									}
+								</td>
+							}
+						</tr>
+					}
+				}
+				else
+				{
+					<tr class="tf-grid-tr">
+						<td class="tf-grid-td" colspan="@columns.Count()">
+							<TfLoadingPane />
+						</td>
+					</tr>
+
+				}
+			</tbody>
+			@if (!_isGridLoading && !_allLoaded)
+			{
+				<tfoot class="tf-grid-tfoot">
+					<tr class="tf-grid-tr">
+						<td class="tf-grid-td" colspan="@columns.Count()" style="padding-left:0">
+							<div style="padding-top:0.5rem;">
+								<TfLoadMore Visible="@true" Loading="_isMoreLoading" Class="align-left no-border"
+											OnClick="_loadMoreAsync" />
+							</div>
+						</td>
+					</tr>
+				</tfoot>
+			}
+		</table>
+
+	</div>
 }
 

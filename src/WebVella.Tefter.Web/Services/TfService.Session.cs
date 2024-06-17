@@ -5,6 +5,7 @@ public partial interface ITfService
 {
 	ValueTask<UserSession> GetUserSession(Guid userId, Guid? spaceId,
 		Guid? spaceDataId, Guid? spaceViewId);
+	Task SetSessionUI(Guid userId, DesignThemeModes themeMode, OfficeColor themeColor, bool sidebarExpanded);
 }
 
 public partial class TfService : ITfService
@@ -77,6 +78,10 @@ public partial class TfService : ITfService
 			SpaceViewDict = spaceViewDict,
 			SpaceNav = spaceNav,
 		};
+	}
+
+	public async Task SetSessionUI(Guid userId, DesignThemeModes themeMode, OfficeColor themeColor, bool sidebarExpanded){ 
+		await dataBroker.SetUserUISettingsAsync(userId, themeMode, themeColor, sidebarExpanded);
 	}
 
 }

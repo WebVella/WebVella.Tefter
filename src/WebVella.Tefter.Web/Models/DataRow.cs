@@ -9,5 +9,8 @@ public record DataRow
 	public Dictionary<string, DataField> Fields { get; init; } = new();
 
 	[JsonIgnore]
-	public Action<(string, object)> OnCellDataChange { get; init; }
+	public Action<(string, object)> OnCellDataChange { get; set; }
+
+	[JsonIgnore]
+	public Action OnSelect { get; set; }
 }

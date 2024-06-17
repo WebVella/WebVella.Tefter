@@ -30,4 +30,67 @@ public static class RenderUtils
 	}
 
 	public static int CalcSkip(int pageSize, int page) => (page - 1) * pageSize;
+
+	public static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
+	{
+		float red = (float)color.R;
+		float green = (float)color.G;
+		float blue = (float)color.B;
+
+		if (correctionFactor < 0)
+		{
+			correctionFactor = 1 + correctionFactor;
+			red *= correctionFactor;
+			green *= correctionFactor;
+			blue *= correctionFactor;
+		}
+		else
+		{
+			red = (255 - red) * correctionFactor + red;
+			green = (255 - green) * correctionFactor + green;
+			blue = (255 - blue) * correctionFactor + blue;
+		}
+
+		return System.Drawing.Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
+	}
+
+	public static System.Drawing.Color ChangeColorDarkness(System.Drawing.Color color, float correctionFactor)
+	{
+		float red = (float)color.R;
+		float green = (float)color.G;
+		float blue = (float)color.B;
+
+		if (correctionFactor < 0)
+		{
+			correctionFactor = -1 + correctionFactor;
+			red *= correctionFactor;
+			green *= correctionFactor;
+			blue *= correctionFactor;
+		}
+		else
+		{
+			red = (255 - red) * correctionFactor + red;
+			green = (255 - green) * correctionFactor + green;
+			blue = (255 - blue) * correctionFactor + blue;
+		}
+
+		return System.Drawing.Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
+	}
+
+	public static string ChangeColorBrightnessHex(System.Drawing.Color color, float correctionFactor){ 
+		return ColorToHex(ChangeColorBrightness(color,correctionFactor));
+	}
+
+	public static string ChangeColorDarknessHex(System.Drawing.Color color, float correctionFactor)
+	{
+		return ColorToHex(ChangeColorDarkness(color, correctionFactor));
+	}
+
+	public static String ColorToHex(System.Drawing.Color c)
+		=> $"#{c.R:X2}{c.G:X2}{c.B:X2}";
+
+
+	public static String ColorToRGB(System.Drawing.Color c)
+		=> $"RGB({c.R},{c.G},{c.B})";
+
 }

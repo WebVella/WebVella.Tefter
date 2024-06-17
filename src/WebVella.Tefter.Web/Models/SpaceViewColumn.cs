@@ -15,7 +15,14 @@ public record SpaceViewColumn
 	public SpaceViewColumnType DataType { get; init; }
 	public object Settings { get; init; } //Based on type -> dropdown can have the values here
 	public bool IsVisible { get; init; }
-	public string Width { get; init; }
+	public int? Width { get; init; }
+	public string WidthStyle
+	{
+		get {
+			if(Width is null) return "";
+			else return $"width:{Width}px";
+		}
+	}
 	public List<Permission> Permissions { get; init; }
 	public string CellComponent { get; init; }  //Temporary for demo
 

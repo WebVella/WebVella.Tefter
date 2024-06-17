@@ -18,8 +18,7 @@
 			</FluentToolbar>
 		</div>
 		<div class="sidebar-toolbar-search">
-			@* <FluentSearch  /> *@
-			<FluentTextField Class="search" Placeholder="search..." />
+			<FluentTextField Class="search" Placeholder="search..." Immediate="true" ImmediateDelay="500" Value=@search ValueChanged="onSearch"/>
 		</div>
 		<div class="sidebar-toolbar-actions">
 			<FluentButton Id="space-settings" Title="space actions"
@@ -84,15 +83,17 @@
 			<FluentTreeView>
 				@foreach (var item in _visibleMenuItems)
 				{
-					<FluentTreeItem Class="level-0" Text="@item.Title" @key=@item.Id Id="@item.Id"
-									@bind-Expanded=@item.Expanded Selected=@false SelectedChanged="item.OnSelect">
+					<FluentTreeItem Class="@item.LevelClass" Text="@item.Title" Selected="@item.Active" SelectedChanged="@item.OnSelect"
+									Data="item" Id="@item.Id" @bind-Expanded="@item.Expanded"
+									InitiallyExpanded="@item.Expanded"
+									InitiallySelected="@item.Active">
 						<FluentIcon Value="@item.Icon" Color="@Color.Neutral" Slot="start" />
 						@foreach (var node in item.Nodes)
 						{
-							<FluentTreeItem Class="level-1" Text="@node.Title" @key=@node.Id Id="@node.Id"
-											@bind-Expanded=@node.Expanded 
-											Selected=@node.Active SelectedChanged="node.OnSelect"
-											InitiallySelected="@node.Active">
+							<FluentTreeItem Class="@node.LevelClass" Text="@node.Title"
+											Data="node" Id="@node.Id"
+											@bind-Expanded="@node.Expanded" InitiallyExpanded="@node.Expanded"
+											Selected="@node.Active" SelectedChanged="@node.OnSelect">
 								<FluentIcon Value="@node.Icon" Color="@Color.Neutral" Slot="start" />
 							</FluentTreeItem>
 						}
