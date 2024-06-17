@@ -99,12 +99,12 @@ public partial class DataBroker : IDataBroker
 		{
 			Id = new Guid("79e3eadb-be66-44aa-a3ce-dac7b1774f27"),
 			SpaceViewId = spaceViewId,
-			AppColumnName = "name",
+			ColumnName = "name",
 			Title = "Name",
 			Position = index,
 			DataType = SpaceViewColumnType.Name,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.WvCellText",
+			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn",
 			Width= 200
 		});
 		index++;
@@ -112,65 +112,51 @@ public partial class DataBroker : IDataBroker
 		{
 			Id = new Guid("25677090-baee-49cc-a314-fd71c88ba1ee"),
 			SpaceViewId = spaceViewId,
-			AppColumnName = "city",
+			ColumnName = "city",
 			Title = "City",
 			Position = index,
 			DataType = SpaceViewColumnType.Text,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.WvCellText"
+			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
 		});
 		index++;
 		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("2056384e-8e89-47fb-bcc1-e4acc1281c4d"),
 			SpaceViewId = spaceViewId,
-			AppColumnName = "email",
+			ColumnName = "email",
 			Title = "Email",
 			Position = index,
 			DataType = SpaceViewColumnType.Email,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.WvCellText"
+			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
 		});
 		index++;
 		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("6278f849-0a16-430a-a933-577525f11304"),
 			SpaceViewId = spaceViewId,
-			AppColumnName = "age",
+			ColumnName = "age",
 			Title = "Age",
 			Position = index,
 			DataType = SpaceViewColumnType.Numeric,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.WvCellText"
+			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
 		});
 		index++;
 		columns.Add(new SpaceViewColumn
 		{
 			Id = new Guid("9331de72-47c7-4941-9105-985d4cfec0e3"),
 			SpaceViewId = spaceViewId,
-			AppColumnName = "wage",
+			ColumnName = "wage",
 			Title = "Wage",
 			Position = index,
 			DataType = SpaceViewColumnType.Currency,
 			IsVisible = true,
-			CellComponent = "WebVella.Tefter.Web.Components.WvCellText"
+			CellComponent = "WebVella.Tefter.Web.Components.TfTextColumn"
 		});
 		index++;
-		for (int i = 0; i < 5; i++)
-		{
-			columns.Add(new SpaceViewColumn
-			{
-				Id = Guid.NewGuid(),
-				SpaceViewId = spaceViewId,
-				AppColumnName = "email",
-				Title = "email",
-				Position = index,
-				DataType = SpaceViewColumnType.Text,
-				IsVisible = true,
-				CellComponent = "WebVella.Tefter.Web.Components.WvCellText"
-			});
-			index++;
-		}
+
 
 
 		return new SpaceViewMeta { Columns = columns };

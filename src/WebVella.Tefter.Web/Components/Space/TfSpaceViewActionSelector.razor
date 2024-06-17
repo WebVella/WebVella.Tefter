@@ -2,12 +2,28 @@
 @inherits TfBaseComponent
 @if (_open)
 {
-	<div class="view-action-selector">
-		<FluentPopover Style="width: 300px;" VerticalThreshold="170" AnchorId="view-action-selector"
-		@bind-Open="_open">
-			<Body>
-				body
-			</Body>
-		</FluentPopover>
+	<div class="view-export-selector-menu">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector">
+			<FluentMenuItem Disabled="@(_selectedItems.Count == 0)">
+				Comment Selected
+					<FluentIcon Value="@(new Icons.Regular.Size20.Comment())" Slot="start" />
+				@if (_selectedItems.Count > 0)
+				{
+					<span slot="end">
+						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@_selectedItems.Count</FluentBadge>
+					</span>
+				}
+			</FluentMenuItem>
+			<FluentMenuItem Disabled="@(_selectedItems.Count == 0)">
+				Email Selected
+				<FluentIcon Value="@(new Icons.Regular.Size20.Mail())" Slot="start" />
+				@if (_selectedItems.Count > 0)
+				{
+					<span slot="end">
+						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@_selectedItems.Count</FluentBadge>
+					</span>
+				}
+			</FluentMenuItem>
+		</FluentMenu>
 	</div>
 }

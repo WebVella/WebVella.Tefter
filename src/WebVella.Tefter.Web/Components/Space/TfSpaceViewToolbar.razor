@@ -19,10 +19,10 @@
 	<div class="content-toolbar-right">
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			Actions
-			@if (_selectedRowsCount > 0)
+			@if (_selectedRows.Count > 0)
 			{
 				<span slot="start">
-					<FluentBadge Appearance="Appearance.Accent">@_selectedRowsCount</FluentBadge>
+					<FluentBadge Appearance="Appearance.Accent">@_selectedRows.Count</FluentBadge>
 				</span>
 			}
 			else

@@ -179,6 +179,10 @@ body {
 		white-space: break-spaces;
 	}
 
+.tf-grid-thead > .tf-grid-tr > .tf-grid-th.tf-selection {
+	width:50px;
+}
+
 .tf-selection {
 	cursor:pointer;
 }

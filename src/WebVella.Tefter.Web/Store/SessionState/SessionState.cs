@@ -7,9 +7,6 @@ using SystemColor = System.Drawing.Color;
 public record SessionState
 {
 	public bool IsLoading { get; init; } = true;
-	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
-	public OfficeColor ThemeColor { get; init; } = OfficeColor.Excel;
-	public bool SidebarExpanded { get; init; } = true;
 	public bool IsDataLoading { get; init; }
 	public string DataHashId { get; init; }
 	public Guid? SpaceRouteId { get; init; }
@@ -21,7 +18,6 @@ public record SessionState
 	public IDictionary<Guid, SpaceData> SpaceDataDict { get; init; }
 	public IDictionary<Guid, SpaceView> SpaceViewDict { get; init; }
 	public List<MenuItem> SpaceNav { get; init; }
-
 	public string SpaceColor
 	{
 		get
@@ -31,6 +27,13 @@ public record SessionState
 			return Space.Color.ToAttributeValue();
 		}
 	}
+
+	public List<Guid> SelectedDataRows { get; init; } = new();
+
+	//UI
+	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
+	public OfficeColor ThemeColor { get; init; } = OfficeColor.Excel;
+	public bool SidebarExpanded { get; init; } = true;
 
 	public SystemColor SpaceColorObject
 	{

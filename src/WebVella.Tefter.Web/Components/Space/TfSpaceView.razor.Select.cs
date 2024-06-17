@@ -17,6 +17,7 @@ public partial class TfSpaceView : TfBaseComponent
 		{
 			_selectedItems.AddRange(_data);
 		}
+		Dispatcher.Dispatch(new SetSelectedDataRowsAction(_selectedItems.Select(x=> x.Id).ToList()));
 	}
 
 	private void onRowSelect(DataRow row)
@@ -29,5 +30,6 @@ public partial class TfSpaceView : TfBaseComponent
 		{
 			_selectedItems.Add(row);
 		}
+		Dispatcher.Dispatch(new SetSelectedDataRowsAction(_selectedItems.Select(x => x.Id).ToList()));
 	}
 }

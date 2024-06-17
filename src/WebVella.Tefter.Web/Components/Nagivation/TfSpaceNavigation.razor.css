@@ -83,7 +83,9 @@
 ::deep.sidebar-nav fluent-tree-item.level-0::after {
 	display: none !important;
 }
-
+::deep.sidebar-nav fluent-tree-item svg {
+	pointer-events: none;
+}
 
 
 ::deep.sidebar-nav .load-more {

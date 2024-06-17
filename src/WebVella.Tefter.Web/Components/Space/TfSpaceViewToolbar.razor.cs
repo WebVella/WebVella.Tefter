@@ -3,7 +3,7 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
-	private int _selectedRowsCount = 0;
+	private List<Guid> _selectedRows = new();
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -26,8 +26,7 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 	{
 		base.InvokeAsync(async () =>
 		{
-			//Do something
-			
+			_selectedRows = SessionState.Value.SelectedDataRows;
 			await InvokeAsync(StateHasChanged);
 		});
 	}

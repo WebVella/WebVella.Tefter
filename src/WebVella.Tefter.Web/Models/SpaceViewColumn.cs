@@ -5,7 +5,7 @@ public record SpaceViewColumn
 	public Guid Id { get; init; }
 	public Guid SpaceViewId { get; init; }
 	public Guid? AppId { get; init; } // null for system
-	public string AppColumnName { get; init; } // for query and as dev name
+	public string ColumnName { get; init; } // for query and as dev name
 	public string Title { get; init; }
 	public int Position { get; init; }
 	public DateTime CreatedOn { get; init; }
@@ -41,7 +41,7 @@ public record SpaceViewColumn
 	public IDictionary<string, object> GetComponentParameters(DataRow context)
 	{
 		var result = new Dictionary<string, object>();
-		result["Data"] = context.Fields.ContainsKey(AppColumnName) ? context.Fields[AppColumnName] : null;
+		result["Data"] = context;
 		result["Meta"] = this;
 		result["ValueChanged"] = context.OnCellDataChange;
 		return result;
