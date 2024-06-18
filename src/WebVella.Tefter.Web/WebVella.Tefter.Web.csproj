@@ -13,7 +13,7 @@
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.7.2" />
 	</ItemGroup>
 	<ItemGroup>
-	  <Content Update="Components\Space\TfSpaceViewToolbar.razor">
+	  <Content Update="Components\SpaceViewToolbar\TfSpaceViewToolbar.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
 	  <Content Update="Admin\Layout\AdminLayout.razor">

@@ -81,7 +81,7 @@ body {
     padding-top: var(--tf-content-padding);*/
 	padding-top: 0;
 	padding-bottom: 0;
-	padding-right: 5px;
+	/*padding-right: 5px;*/
 	border-radius: var(--tf-content-border-radius);
 	border-top: var(--tf-content-border-top-width) solid transparent;
 	display: grid;
@@ -96,9 +96,9 @@ body {
 .content-toolbar {
 	position: relative;
 	padding: 0 var(--tf-content-padding);
-	height: 40px;
+	height: calc( 40px + var(--tf-content-toolbar-margin-top));
 	margin-bottom: var(--tf-content-toolbar-margin-bottom);
-	margin-top: var(--tf-content-toolbar-margin-top);
+	padding-top: var(--tf-content-toolbar-margin-top);
 }
 
 .content-inner {
@@ -106,10 +106,12 @@ body {
 	overflow-y: scroll !important;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
+	padding-top:var(--tf-content-padding);
 	/*overflow-x: scroll !important;*/
 }
 
 .content-body.with-toolbar .content-inner {
+	padding-top:0;
 	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-toolbar-height) - var(--tf-content-toolbar-margin-bottom) - var(--tf-content-toolbar-margin-top)) !important;
 }
 

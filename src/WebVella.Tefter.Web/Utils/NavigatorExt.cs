@@ -338,11 +338,11 @@ public class NavigatorExt
 		Guid? spaceId = null;
 		Guid? spaceDataId = null;
 		Guid? spaceViewId = null;
+		Guid? userId = null;
 		var uri = new Uri(navigator.Uri);
-
+		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		if (uri.LocalPath.StartsWith("/space/"))
 		{
-			var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 			if (nodes.Length >= 2)
 			{
 				if (Guid.TryParse(nodes[1], out Guid outGuid)) spaceId = outGuid;
@@ -360,7 +360,11 @@ public class NavigatorExt
 
 		}
 
-		return new UrlData
+		if (uri.LocalPath.StartsWith("/admin/users/")){
+			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) userId = outGuid;
+		}
+
+			return new UrlData
 		{
 			SpaceId = spaceId,
 			SpaceDataId = spaceDataId,
