@@ -1,0 +1,31 @@
+﻿.location {
+	color: var(--neutral-fill-inverse-rest);
+	display: flex;
+	align-items: center;
+	justify-content: start;
+}
+
+	.location .title {
+		flex: 0 0 auto;
+		line-height: 1em;
+		display: flex;
+		align-items: center;
+	}
+
+		.location .title .label {
+			flex: 0 0 auto;
+			display: flex;
+			align-items: center;
+			padding-left:10px;
+		}
+
+
+::deep.location fluent-breadcrumb-item {
+	color: var(--neutral-base-color);
+}
+
+	::deep.location fluent-breadcrumb-item::part(separator) {
+		fill: var(--neutral-fill-strong-rest) !important;
+		padding-left: 3px;
+		padding-right: 3px;
+	}

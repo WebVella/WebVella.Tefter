@@ -1,10 +1,53 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿
+namespace WebVella.Tefter.Web.Components;
 public partial class TfUserNavigation
 {
 	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	private bool _visible = false;
+	private bool _isAdmin = false;
+	private bool _auxLoaded = false;
+
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			Navigator.LocationChanged -= Navigator_LocationChanged;
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
+
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
+			initAdmin(null);
+			StateHasChanged();
+			Navigator.LocationChanged += Navigator_LocationChanged;
+		}
+	}
+
+	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	{
+			initAdmin(e.Location);
+			StateHasChanged();
+	}
+
+	private void initAdmin(string location)
+	{
+		Uri uri = null;
+		if(string.IsNullOrEmpty(location)) {
+			uri = new Uri(Navigator.Uri);
+		}
+		else{
+			uri = new Uri(location);
+		}
+		_isAdmin = uri.LocalPath.StartsWith("/admin");
+	}
+
 	private void _onClick()
 	{
 		_visible = !_visible;
@@ -43,11 +86,18 @@ public partial class TfUserNavigation
 
 	private void _adminClick()
 	{
-		ToastService.ShowToast(ToastIntent.Warning, "Navigates to Administration panel");
+		Navigator.NavigateTo("/admin");
+	}
+
+	private void _adminExitClick()
+	{
+		Navigator.NavigateTo("/");
 	}
 
 	private void _helpClick()
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Dropdown with menu to help section, license and about Tefter.bg");
 	}
+
+
 }

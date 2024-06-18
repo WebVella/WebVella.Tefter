@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="@($"tf-appbar {(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")"
+	style="@Style">
+	<FluentAppBar PopoverShowSearch="@true" Style="height:100%">
+		@foreach (var item in Items)
+		{
+			<FluentAppBarItem Href="@item.Url"
+							  Match="@item.Match"
+							  Style="@($"fill: {item.IconColor.ToAttributeValue()}")"
+							  IconRest="@item.Icon"
+							  IconActive="@item.Icon"
+							  Text="@item.Title"
+							  Tooltip="@item.Title" />
+		}
+
+	</FluentAppBar>
+</div>
+
+

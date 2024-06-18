@@ -1,0 +1,49 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="@($"sidebar-nav {(UserState.Value.User.SidebarExpanded ? "expanded" : "collapsed")}")">
+	<div class="sidebar-toolbar">
+		<div class="sidebar-toolbar-search">
+			<FluentTextField Class="search" Placeholder="search..." Immediate="true" ImmediateDelay="500" Value=@search ValueChanged="onSearch"/>
+		</div>
+		<div class="sidebar-toolbar-actions">
+			<FluentButton Title="add new data provider"
+						  IconStart="@(new Icons.Regular.Size20.Add())"
+						  OnClick="onAddClick" Appearance="@Appearance.Accent">Provider</FluentButton>
+		</div>
+	</div>
+	<div class="sidebar-inner">
+		@if (_menuLoading)
+		{
+			<TfLoadingPane />
+		}
+		else
+		{
+			<FluentTreeView>
+				@foreach (var item in _visibleMenuItems)
+				{
+					<FluentTreeItem Class="@item.LevelClass" Text="@item.Title" Selected="@item.Active" SelectedChanged="@item.OnSelect"
+									Data="item" Id="@item.Id" @bind-Expanded="@item.Expanded"
+									InitiallyExpanded="@item.Expanded"
+									InitiallySelected="@item.Active">
+						<FluentIcon Value="@item.Icon" Color="@Color.Neutral" Slot="start" />
+						@foreach (var node in item.Nodes)
+						{
+							<FluentTreeItem Class="@node.LevelClass" Text="@node.Title"
+											Data="node" Id="@node.Id"
+											@bind-Expanded="@node.Expanded" InitiallyExpanded="@node.Expanded"
+											Selected="@node.Active" SelectedChanged="@node.OnSelect">
+								<FluentIcon Value="@node.Icon" Color="@Color.Neutral" Slot="start" />
+							</FluentTreeItem>
+						}
+					</FluentTreeItem>
+				}
+			</FluentTreeView>
+			@if (hasMore)
+			{
+				<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="loadMoreClick">Load more</FluentButton>
+			}
+		}
+	</div>
+</div>
+

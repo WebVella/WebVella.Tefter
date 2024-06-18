@@ -14,4 +14,15 @@ public partial class TfConstants
 
 
 	public static Icon SaveIcon = new Icons.Regular.Size20.Save();
+
+
+	//Admin
+	public static Icon AdminDashboardIcon = new Icons.Regular.Size20.Board();
+	public static string AdminDashboardMenuTitle = "Dashboard";
+
+	public static Icon AdminDataProvidersIcon = new Icons.Regular.Size20.Connector();
+	public static string AdminDataProvidersMenuTitle = "Data Providers";
+
+	public static Icon AdminUsersIcon = new Icons.Regular.Size20.People();
+	public static string AdminUsersMenuTitle = "Users";
 }

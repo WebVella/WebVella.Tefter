@@ -4,17 +4,28 @@
 	@if (UserState.Value is not null && UserState.Value.User is not null)
 	{
 		<div class="actions">
-			<FluentCounterBadge BackgroundColor="@Color.Error" Color="Color.Fill" Dot="@true">
-				<FluentButton Appearance="@Appearance.Stealth" OnClick="_alertsClick" Title="Alerts">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.Neutral" />
+			@if (_isAdmin)
+			{
+				<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminExitClick" Title="Exit Administration">
+					<FluentIcon Value="@(new Icons.Regular.Size20.ArrowExit())" Color="@Color.Neutral" Slot="start"/>
+					Exit Admin
 				</FluentButton>
-			</FluentCounterBadge>
-			<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminClick" Title="Administration">
-				<FluentIcon Value="@(new Icons.Regular.Size20.AppFolder())" Color="@Color.Neutral" />
-			</FluentButton>
-			<FluentButton Appearance="@Appearance.Stealth" OnClick="_helpClick" Title="Help">
-				<FluentIcon Value="@(new Icons.Regular.Size20.QuestionCircle())" Color="@Color.Neutral" />
-			</FluentButton>
+			}
+			else
+			{
+				<FluentCounterBadge BackgroundColor="@Color.Error" Color="Color.Fill" Dot="@true">
+					<FluentButton Appearance="@Appearance.Stealth" OnClick="_alertsClick" Title="Alerts">
+						<FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.Neutral" />
+					</FluentButton>
+				</FluentCounterBadge>
+				<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminClick" Title="Administration">
+					<FluentIcon Value="@(new Icons.Regular.Size20.AppFolder())" Color="@Color.Neutral" />
+				</FluentButton>
+				<FluentButton Appearance="@Appearance.Stealth" OnClick="_helpClick" Title="Help">
+					<FluentIcon Value="@(new Icons.Regular.Size20.QuestionCircle())" Color="@Color.Neutral" />
+				</FluentButton>
+
+			}
 		</div>
 		<div class="avatar">
 			<FluentPersona Id="user-menu-toggle" Initials="@UserState.Value.User.Initials"

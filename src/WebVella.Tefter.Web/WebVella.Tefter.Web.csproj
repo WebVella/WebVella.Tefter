@@ -19,6 +19,9 @@
 	  <Content Update="Components\Space\TfSpaceViewToolbar.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
+	  <Content Update="Admin\Layout\AdminLayout.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	  <Content Update="Pages\FastAccessPage.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>

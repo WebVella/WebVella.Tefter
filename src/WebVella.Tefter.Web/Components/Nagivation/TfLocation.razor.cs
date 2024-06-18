@@ -73,28 +73,4 @@ public partial class TfLocation : TfBaseComponent
 
 		return location;
 	}
-
-
-	private void onDetailsClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for details about the space item");
-	}
-	private void onRemoveClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for removing space item");
-	}
-	private void onRenameClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for renaming");
-	}
-
-	private void onAccessClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Shows current access");
-	}
-
-	private void onBookmarkClick()
-	{
-		//WvState.SetSpaceViewBookmarkState(_spaceView.Id, !_spaceView.IsBookmarked);
-	}
 }
