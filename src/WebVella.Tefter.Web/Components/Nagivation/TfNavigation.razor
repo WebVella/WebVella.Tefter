@@ -12,18 +12,8 @@
 		<FluentTooltip Anchor="tf-fast-access-link" Position="@TooltipPosition.Right">@TfConstants.FastAccesMenuTitle</FluentTooltip>
 	</FluentNavMenu>
 	<FluentDivider Class="nav-divider"></FluentDivider>
-	<FluentNavMenu>
-		@foreach (var item in SessionState.Value.SpaceNav)
-		{
-			<FluentNavLink Id="@item.Id" @key=@item.Id
-						   Href="@item.Url" Match="@item.Match" Icon="@item.Icon.WithColor(item.IconColor.ToAttributeValue())" IconColor="@Color.Custom" />
-			<FluentTooltip Anchor="@item.Id" Position="@TooltipPosition.Right">@item.Title</FluentTooltip>
-		}
-
-		<FluentNavLink Id="tf-add-new-space" OnClick="_addSpaceHandler"
-					   Icon="@(new Icons.Regular.Size20.Add())" IconColor="@Color.Accent" />
-		<FluentTooltip Anchor="tf-add-new-space" Position="@TooltipPosition.Right">Add new space</FluentTooltip>
-	</FluentNavMenu>
-
 </div>
+
+
+<TfAppBar Items="SessionState.Value.SpaceNav" Style="max-height:calc(100vh - 250px)" />
 
