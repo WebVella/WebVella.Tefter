@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DatabaseForeignKeyConstraintBuilder : DatabaaseConstraintBuilder
+public class DatabaseForeignKeyConstraintBuilder : DatabaseConstraintBuilder
 {
     protected string _foreignTableName = string.Empty;
     protected List<string> _foreignColumns = new List<string>();

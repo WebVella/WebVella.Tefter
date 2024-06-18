@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public class DatabasePrimaryKeyConstraintBuilder : DatabaaseConstraintBuilder
+public class DatabasePrimaryKeyConstraintBuilder : DatabaseConstraintBuilder
 {
     internal DatabasePrimaryKeyConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
         : base(name, databaseBuilder)

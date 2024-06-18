@@ -2,15 +2,15 @@
 
 public class DatabaseConstraintCollectionBuilder
 {
-    internal ReadOnlyCollection<DatabaaseConstraintBuilder> Builders => _builders.AsReadOnly();
+    internal ReadOnlyCollection<DatabaseConstraintBuilder> Builders => _builders.AsReadOnly();
     private readonly DatabaseBuilder _databaseBuilder;
-    private readonly List<DatabaaseConstraintBuilder> _builders;
+    private readonly List<DatabaseConstraintBuilder> _builders;
     private readonly string _tableName;
 
     internal DatabaseConstraintCollectionBuilder(string tableName, DatabaseBuilder databaseBuilder)
     {
         _tableName = tableName;
-        _builders = new List<DatabaaseConstraintBuilder>();
+        _builders = new List<DatabaseConstraintBuilder>();
         _databaseBuilder = databaseBuilder;
     }
 

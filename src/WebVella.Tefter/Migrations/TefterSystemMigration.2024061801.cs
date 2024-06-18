@@ -3,11 +3,9 @@
 [TefterSystemMigration("2024.6.14.1")]
 internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 {
-	public void Migrate(IDatabaseManager dbManager, IDboManager dboManager)
+	public void MigrateStructure(DatabaseBuilder dbBuilder)
 	{
-		var dbBuilder = dbManager.GetDatabaseBuilder();
-
-		// MIGRATION
+		// TABLE: MIGRATION
 		dbBuilder
 			.NewTableBuilder(Guid.NewGuid(), "migration")
 			.WithColumns(columns =>
@@ -17,7 +15,10 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 					.AddGuidColumn("addon_id", c => { c.WithoutAutoDefaultValue().Nullable(); })
 					.AddTextColumn("migration_class_name", c => { c.NotNullable(); })
 					.AddDateTimeColumn("executed_on", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddTextColumn("version", c => { c.NotNullable(); });
+					.AddNumberColumn("major_ver", c => { c.NotNullable(); })
+					.AddNumberColumn("minor_ver", c => { c.NotNullable(); })
+					.AddNumberColumn("build_ver", c => { c.NotNullable(); })
+					.AddNumberColumn("revision_ver", c => { c.NotNullable(); });
 			})
 			.WithConstraints(constraints =>
 			{
@@ -25,7 +26,7 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 					.AddPrimaryKeyConstraint("pk_migration_id", c => { c.WithColumns("id"); });
 			});
 
-		// USER
+		// TABLE: USER
 		dbBuilder
 			.NewTableBuilder(Guid.NewGuid(), "user")
 			.WithColumns(columns =>
@@ -44,18 +45,10 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 			{
 				constraints
 					.AddPrimaryKeyConstraint("pk_user_id", c => { c.WithColumns("id"); })
-					.AddUniqueKeyConstraint("ux_user_email", c => { c.WithColumns("email"); })
-					.AddForeignKeyConstraint("fk_user_user_role", c =>
-						{
-							c
-							.WithColumns("id")
-							.WithForeignTable("user_role")
-							.WithForeignColumns("id");
-
-						});
+					.AddUniqueKeyConstraint("ux_user_email", c => { c.WithColumns("email"); });
 			});
 
-		// ROLE
+		// TABLE: ROLE
 		dbBuilder
 			.NewTableBuilder(Guid.NewGuid(), "role")
 			.WithColumns(columns =>
@@ -69,18 +62,11 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 			{
 				constraints
 					.AddPrimaryKeyConstraint("pk_role_id", c => { c.WithColumns("id"); })
-					.AddUniqueKeyConstraint("ux_role_name", c => { c.WithColumns("email"); })
-					.AddForeignKeyConstraint("fk_role_user_role", c =>
-					{
-						c
-						.WithColumns("id")
-						.WithForeignTable("user_role")
-						.WithForeignColumns("id");
-
-					});
+					.AddUniqueKeyConstraint("ux_role_name", c => { c.WithColumns("name"); });
+				
 			});
 
-		// USER_ROLE
+		// TABLE: USER_ROLE
 		dbBuilder
 			.NewTableBuilder(Guid.NewGuid(), "user_role")
 			.WithColumns(columns =>
@@ -93,7 +79,26 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_role_id", c => { c.WithColumns("user_id", "role_id"); });
+					.AddPrimaryKeyConstraint("pk_user_role", c => { c.WithColumns("user_id", "role_id"); })
+					.AddForeignKeyConstraint("fk_user_role_role", c =>
+						{
+							c
+							.WithColumns("role_id")
+							.WithForeignTable("role")
+							.WithForeignColumns("id");
+						})
+					.AddForeignKeyConstraint("fk_user_role_user", c =>
+						{
+							c
+							.WithColumns("user_id")
+							.WithForeignTable("user")
+							.WithForeignColumns("id");
+						});
 			});
+	}
+
+	public void MigrateData(IDboManager dboManager)
+	{
+		//TODO create initial user and roles
 	}
 }

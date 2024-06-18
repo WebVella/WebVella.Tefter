@@ -2,5 +2,7 @@
 
 public interface ITefterAddOnMigration
 {
-	public void Migrate(Guid appId,DatabaseBuilder db);
+	public void MigrateStructure(Guid appId,DatabaseBuilder db);
+
+	public void MigrateData(Guid appId, IDatabaseService dbService);
 }

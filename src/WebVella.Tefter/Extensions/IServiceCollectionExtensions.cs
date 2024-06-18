@@ -24,7 +24,7 @@ public static class IServiceCollectionExtensions
 	public static IServiceProvider UseTefterDI(this IServiceProvider serviceProvider)
 	{
 		var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
-		migrationManager.CheckExecutePendingMigrationsAsync();
+		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
 		return serviceProvider;
 	}
 }

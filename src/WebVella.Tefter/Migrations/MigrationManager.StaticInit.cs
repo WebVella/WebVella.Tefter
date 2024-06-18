@@ -22,6 +22,9 @@ internal partial class MigrationManager : IMigrationManager
 			foreach (Type type in assembly.GetTypes())
 				ScanAndRegisterMigrationType(type);
 		}
+
+		_systemMigrations = _systemMigrations.OrderBy(x => x.Version).ToList();
+		_addonMigrations = _addonMigrations.OrderBy(x => x.Version).ToList();
 	}
 
 	private static void ScanAndRegisterMigrationType(Type type)

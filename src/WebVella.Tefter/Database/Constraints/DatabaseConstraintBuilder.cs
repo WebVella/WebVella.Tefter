@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Database;
 
-public abstract class DatabaaseConstraintBuilder
+public abstract class DatabaseConstraintBuilder
 {
     protected DatabaseBuilder _databaseBuilder;
     protected string _name;
@@ -9,7 +9,7 @@ public abstract class DatabaaseConstraintBuilder
 
 	internal string Name => _name;
 
-    internal DatabaaseConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
+    internal DatabaseConstraintBuilder(string name, DatabaseBuilder databaseBuilder)
     {
         _name = name;
         _databaseBuilder = databaseBuilder;
