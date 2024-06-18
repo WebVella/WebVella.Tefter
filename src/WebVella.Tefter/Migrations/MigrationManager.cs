@@ -42,7 +42,7 @@ internal partial class MigrationManager : IMigrationManager
 					_dbManager.SaveChanges(dbBuilder);
 
 					//execute data migration method
-					initialSystemMigration.Instance.MigrateData(_dboManager);
+					initialSystemMigration.Instance.MigrateData(_dbService, _dboManager);
 
 					bool success = await _dboManager.InsertAsync<Migration>(new Migration
 					{
@@ -58,13 +58,13 @@ internal partial class MigrationManager : IMigrationManager
 					if (!success)
 						throw new DatabaseException("Failed to save migration record.");
 
-					
+
 				}
 
 				var allExecutedMigrations = (await _dboManager.GetListAsync<Migration>()).OrderBy(x => x.Version).ToList();
 				var systemExecutedMigrations = allExecutedMigrations.Where(x => x.AddOnId is null);
 				var addonsExecutedMigrations = allExecutedMigrations.Where(x => x.AddOnId is not null);
-							
+
 				var lastExecutedSystemMigrationVersion = systemExecutedMigrations.Last().Version;
 				foreach (var migration in _systemMigrations.OrderBy(x => x.Version))
 				{
@@ -84,7 +84,7 @@ internal partial class MigrationManager : IMigrationManager
 					_dbManager.SaveChanges(dbBuilder);
 
 					//execute data migration method
-					migration.Instance.MigrateData(_dboManager);
+					migration.Instance.MigrateData(_dbService, _dboManager);
 
 					bool success = await _dboManager.InsertAsync<Migration>(new Migration
 					{

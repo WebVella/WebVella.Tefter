@@ -17,6 +17,7 @@ public static class IServiceCollectionExtensions
 		services.AddSingleton<IDatabaseManager, DatabaseManager>();
 		services.AddSingleton<IDboManager, DboManager>();
 		services.AddSingleton<IMigrationManager, MigrationManager>();
+		services.AddSingleton<IIdentityManager, IdentityManager>();
 
 		return services;
 	}

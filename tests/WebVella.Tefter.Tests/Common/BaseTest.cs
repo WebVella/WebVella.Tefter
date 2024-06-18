@@ -12,8 +12,8 @@ public class BaseTest
     {
         Context = new TestContext();
 		Context.Services.AddTefterDI();
-        Context.Services.AddSingleton<ILogger, DebugLogger>();
         ServiceProvider = Context.Services.BuildServiceProvider();
+		ServiceProvider.UseTefterDI();
     }
 
     protected DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters)
@@ -32,7 +32,5 @@ public class BaseTest
             return dataTable;
         }
     }
-
 }
-
 

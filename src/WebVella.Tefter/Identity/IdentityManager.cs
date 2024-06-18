@@ -2,16 +2,16 @@
 
 namespace WebVella.Tefter.Identity;
 
-public interface IIdentityService
+public interface IIdentityManager
 {
 	Task<List<User>> GetUsersAsync(string searchQuery = null, int? page = null, int? pageSize = null);
 }
 
-public class TefterIdentityService : IIdentityService
+public class IdentityManager : IIdentityManager
 {
 	private readonly IDboManager _dboManager;
 
-	public TefterIdentityService(IServiceProvider serviceProvider)
+	public IdentityManager(IServiceProvider serviceProvider)
 	{
 		_dboManager = serviceProvider.GetService<IDboManager>();
 	}
@@ -26,7 +26,7 @@ public class TefterIdentityService : IIdentityService
 
 		foreach (var user in users)
 		{
-			var userRelatedRoleIdsHashset = (await _dboManager.GetListAsync<UserRoleRelation>(user.Id, nameof(UserRoleRelation.UserId)))
+			var userRelatedRoleIdsHashset = (await _dboManager.GetListAsync<UserRole>(user.Id, nameof(UserRole.UserId)))
 				.Select(x => x.UserId)
 				.ToHashSet<Guid>();
 

@@ -72,13 +72,13 @@ internal partial class DboManager
 			List<string> columnNames = meta.Properties.Select(x => x.ColumnName).ToList();
 			List<string> upsertColumnNames = meta.Properties.Select(x => x.ColumnName).ToList();
 
-			meta.GetSql = $"SELECT {string.Join(", ", columnNames)} FROM {meta.TableName} ";
-			meta.GetRecordSql = $"SELECT {string.Join(",", columnNames)} FROM {meta.TableName} WHERE $$$WHERE$$$ ";
-			meta.InsertRecordSql = $"INSERT INTO {meta.TableName}({string.Join(", ", upsertColumnNames)}) VALUES ({string.Join(", ", upsertColumnNames.Select(x => $"@{x}"))}) ";
-			meta.UpdateRecordSql = $"UPDATE {meta.TableName} SET {string.Join(", ", upsertColumnNames.Where(x => x != "id").Select(x => $"{x}=@{x}"))} WHERE $$$WHERE$$$ ";
-			meta.DeleteRecordSql = $"DELETE FROM {meta.TableName} WHERE $$$WHERE$$$ ";
-			meta.DeleteAllRecordSql = $"DELETE FROM {meta.TableName}";
-			meta.AnyExistsSql = $"SELECT EXISTS ( SELECT 1 FROM {meta.TableName} $$$WHERE$$$ LIMIT 1 ) AS EXISTS";
+			meta.GetSql = $"SELECT {string.Join(", ", columnNames)} FROM \"{meta.TableName}\" ";
+			meta.GetRecordSql = $"SELECT {string.Join(",", columnNames)} FROM \"{meta.TableName}\" WHERE $$$WHERE$$$ ";
+			meta.InsertRecordSql = $"INSERT INTO \"{meta.TableName}\"({string.Join(", ", upsertColumnNames)}) VALUES ({string.Join(", ", upsertColumnNames.Select(x => $"@{x}"))}) ";
+			meta.UpdateRecordSql = $"UPDATE \"{meta.TableName}\" SET {string.Join(", ", upsertColumnNames.Where(x => x != "id").Select(x => $"{x}=@{x}"))} WHERE $$$WHERE$$$ ";
+			meta.DeleteRecordSql = $"DELETE FROM \"{meta.TableName}\" WHERE $$$WHERE$$$ ";
+			meta.DeleteAllRecordSql = $"DELETE FROM \"{meta.TableName}\"";
+			meta.AnyExistsSql = $"SELECT EXISTS ( SELECT 1 FROM \"{meta.TableName}\" $$$WHERE$$$ LIMIT 1 ) AS EXISTS";
 			MetaDict.Add(type, meta);
 		}
 

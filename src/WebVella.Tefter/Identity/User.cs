@@ -13,7 +13,7 @@ public record User
 	public string Email { get; init; }
 
 	[DboModelProperty("password")]
-	internal string Password { get; init; }
+	public string Password { get; init; }
 
 	[DboModelProperty("first_name")]
 	public string FirstName { get; init; }

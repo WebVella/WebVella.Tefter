@@ -9,4 +9,7 @@ public class Role
 
 	[DboModelProperty("name")]
 	public string Name { get; init; }
+
+	[DboModelProperty("is_system")]
+	public bool IsSystem { get; init; } = false;
 }

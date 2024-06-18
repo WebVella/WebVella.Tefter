@@ -55,7 +55,8 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddTextColumn("name", c => { c.NotNullable(); });
+					.AddTextColumn("name", c => { c.NotNullable(); })
+					.AddBooleanColumn("is_system", c => { c.NotNullable().WithDefaultValue(false); });
 
 			})
 			.WithConstraints(constraints =>
@@ -97,8 +98,46 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 			});
 	}
 
-	public void MigrateData(IDboManager dboManager)
+	public void MigrateData(IDatabaseService dbService, IDboManager dboManager)
 	{
-		//TODO create initial user and roles
+		/// CREATES INITIAL ADMINISTRATOR USER, ROLE AND RELATION BETWEEN
+		/// 
+		var user = new User
+		{
+			Id = Guid.NewGuid(),
+			Email = "admin@tefter.bg",
+			Password = "123".ToMD5Hash(),
+			FirstName = "Tefter",
+			LastName = "Administrator",
+			CreatedOn = DateTime.Now,
+			Enabled = true,
+			Settings = new UserSettings()
+		};
+
+		var success = dboManager.Insert<User>(user);
+		if (!success)
+			throw new DatabaseException("Failed to insert initial user record.");
+
+		var role = new Role
+		{
+			Id = Guid.NewGuid(),
+			Name = "Administrator",
+			IsSystem = true
+		};
+
+		success = dboManager.Insert<Role>(role);
+		if (!success)
+			throw new DatabaseException("Failed to insert initial Administrator role record.");
+
+		var userrole = new UserRole
+		{
+			UserId = user.Id,
+			RoleId = role.Id
+		};
+
+		success = dboManager.Insert<UserRole>(userrole);
+		if (!success)
+			throw new DatabaseException("Failed to insert initial relation for administrator user and role record.");
+
 	}
 }

@@ -2,7 +2,7 @@
 
 [DboCacheModel]
 [DboModel("user_role")]
-internal record UserRoleRelation
+internal record UserRole
 {
 	[DboModelProperty("user_id")]
 	public Guid UserId { get; init; }
