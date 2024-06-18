@@ -1,0 +1,79 @@
+﻿.content-toolbar {
+	display: flex;
+	align-items: start;
+	position: relative;
+}
+
+	.content-toolbar:before {
+		content: "";
+		bottom: -10px;
+		left: 0;
+		right: 0;
+		height: 10px;
+		width: 100%;
+		background: inherit;
+		position: absolute;
+	}
+
+	.content-toolbar:after {
+		content: "";
+		bottom: -10px;
+		left: 0;
+		right: 0;
+		height: 13px;
+		width: 100%;
+		background: var(--neutral-fill-layer-rest);
+		border-radius: var(--tf-content-border-radius) 0 0 0;
+		position: absolute;
+	}
+
+::deep .fluent-nav-menu {
+	display: flex;
+	position: relative;
+	margin-top:3px;
+}
+
+::deep .fluent-nav-item {
+	flex: 0 0 auto;
+	margin: 0;
+}
+
+::deep .fluent-nav-link .fluent-nav-icon {
+	width: unset;
+}
+
+::deep .fluent-nav-link .fluent-nav-text {
+	width: unset;
+}
+
+::deep .fluent-nav-link {
+	padding-right: 5px;
+}
+
+	::deep .fluent-nav-link .fluent-nav-icon {
+		margin-left: 5px;
+	}
+
+		::deep .fluent-nav-link .fluent-nav-icon:empty {
+			display: none;
+		}
+
+
+	::deep .fluent-nav-link .content-region {
+		margin-inline-start: 0;
+		padding-right: 10px;
+	}
+
+::deep .fluent-nav-item a .positioning-region {
+	border-radius: calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0 0 !important;
+}
+
+::deep .fluent-nav-item a.active .positioning-region:before {
+	flex: 0 0 auto;
+	left: 0;
+	right: 0;
+	margin: 0;
+	bottom: -1px;
+	height: 2px;
+	width: auto;
+}

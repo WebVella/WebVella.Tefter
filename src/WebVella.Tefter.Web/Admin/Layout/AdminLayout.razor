@@ -7,7 +7,7 @@
 }
 else
 {
-	<FluentDesignTheme Mode="@SessionState.Value.ThemeMode" OfficeColor="@OfficeColor.Stream" />
+	<FluentDesignTheme Mode="@SessionState.Value.ThemeMode" OfficeColor="@TfConstants.AdminOfficeColor" />
 	<FluentLayout Class="@(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
 			<TfSidebarToggle />

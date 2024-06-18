@@ -1,0 +1,12 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="content-toolbar" style="@Style">
+	<FluentNavMenu>
+		<FluentNavLink Href="@($"/admin/users/{new Guid("23b4e192-ac64-4256-99c6-216c6206757d")}")" Match="@NavLinkMatch.Prefix" Icon="@(new Icons.Regular.Size20.AddCircle())">Item 1</FluentNavLink>
+		<FluentNavLink Href="@($"/admin/users/{new Guid("6625a900-c363-4df8-8e96-ec05b05671b0")}")" Icon="@(new Icons.Regular.Size20.AddCircle())">Item 2</FluentNavLink>
+		<FluentNavLink Href="@($"/admin/users/{new Guid("7da5137f-8902-4fbe-ada8-e893d25f3bd4")}")">Item 3</FluentNavLink>
+	</FluentNavMenu>
+</div>
+
+
