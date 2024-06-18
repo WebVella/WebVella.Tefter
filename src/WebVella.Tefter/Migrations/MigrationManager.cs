@@ -7,13 +7,18 @@ internal partial interface IMigrationManager
 
 internal partial class MigrationManager : IMigrationManager
 {
+	private readonly IServiceProvider _serviceProvider;
 	private readonly IDatabaseManager _dbManager;
 	private readonly IDboManager _dboManager;
 	private readonly IDatabaseService _dbService;
 
-	public MigrationManager(IDatabaseService dbService,
-		IDatabaseManager databaseManager, IDboManager dboManager)
+	public MigrationManager(
+		IServiceProvider serviceProvider,
+		IDatabaseService dbService,
+		IDatabaseManager databaseManager,
+		IDboManager dboManager)
 	{
+		_serviceProvider = serviceProvider;
 		_dboManager = dboManager;
 		_dbManager = databaseManager;
 		_dbService = dbService;
@@ -42,7 +47,7 @@ internal partial class MigrationManager : IMigrationManager
 					_dbManager.SaveChanges(dbBuilder);
 
 					//execute data migration method
-					initialSystemMigration.Instance.MigrateData(_dbService, _dboManager);
+					await initialSystemMigration.Instance.MigrateDataAsync(_serviceProvider);
 
 					bool success = await _dboManager.InsertAsync<Migration>(new Migration
 					{
@@ -84,7 +89,7 @@ internal partial class MigrationManager : IMigrationManager
 					_dbManager.SaveChanges(dbBuilder);
 
 					//execute data migration method
-					migration.Instance.MigrateData(_dbService, _dboManager);
+					await migration.Instance.MigrateDataAsync(_serviceProvider);
 
 					bool success = await _dboManager.InsertAsync<Migration>(new Migration
 					{

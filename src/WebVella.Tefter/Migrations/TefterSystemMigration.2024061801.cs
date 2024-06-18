@@ -1,9 +1,9 @@
 ﻿namespace WebVella.Tefter.Migrations;
 
 [TefterSystemMigration("2024.6.14.1")]
-internal class TefterSystemMigration2024061801 : ITefterSystemMigration
+internal class TefterSystemMigration2024061801 : TefterSystemMigration
 {
-	public void MigrateStructure(DatabaseBuilder dbBuilder)
+	public override void MigrateStructure(DatabaseBuilder dbBuilder)
 	{
 		// TABLE: MIGRATION
 		dbBuilder
@@ -39,7 +39,12 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 					.AddTextColumn("last_name", c => { c.NotNullable().WithDefaultValue(""); })
 					.AddTextColumn("settings_json", c => { c.NotNullable().WithDefaultValue("{}"); })
 					.AddBooleanColumn("enabled", c => { c.NotNullable().WithDefaultValue(true); })
-					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); });
+					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
+					.AddTextColumn("x_search", c => { c.NotNullable().WithDefaultValue(""); });
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes.AddGinIndex("idx_user_x_search", i => { i.WithColumns("x_search"); });
 			})
 			.WithConstraints(constraints =>
 			{
@@ -64,7 +69,7 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 				constraints
 					.AddPrimaryKeyConstraint("pk_role_id", c => { c.WithColumns("id"); })
 					.AddUniqueKeyConstraint("ux_role_name", c => { c.WithColumns("name"); });
-				
+
 			});
 
 		// TABLE: USER_ROLE
@@ -98,46 +103,36 @@ internal class TefterSystemMigration2024061801 : ITefterSystemMigration
 			});
 	}
 
-	public void MigrateData(IDatabaseService dbService, IDboManager dboManager)
+	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)
 	{
-		/// CREATES INITIAL ADMINISTRATOR USER, ROLE AND RELATION BETWEEN
-		/// 
-		var user = new User
-		{
-			Id = Guid.NewGuid(),
-			Email = "admin@tefter.bg",
-			Password = "123".ToMD5Hash(),
-			FirstName = "Tefter",
-			LastName = "Administrator",
-			CreatedOn = DateTime.Now,
-			Enabled = true,
-			Settings = new UserSettings()
-		};
+		IDatabaseService dbService = serviceProvider.GetService<IDatabaseService>();
+		IDboManager dboManager = serviceProvider.GetService<IDboManager>();
+		IIdentityManager identityManager = serviceProvider.GetService<IIdentityManager>();
 
-		var success = dboManager.Insert<User>(user);
-		if (!success)
-			throw new DatabaseException("Failed to insert initial user record.");
+		// CREATES INITIAL ADMINISTRATOR USER AND ROLE 
 
-		var role = new Role
-		{
-			Id = Guid.NewGuid(),
-			Name = "Administrator",
-			IsSystem = true
-		};
+		var adminRole = identityManager
+			.CreateRoleBuilder()
+			.WithName("Administrators")
+			.IsSystem(true)
+			.Build();
 
-		success = dboManager.Insert<Role>(role);
-		if (!success)
-			throw new DatabaseException("Failed to insert initial Administrator role record.");
+		adminRole = await identityManager.SaveRoleAsync(adminRole);
 
-		var userrole = new UserRole
-		{
-			UserId = user.Id,
-			RoleId = role.Id
-		};
+		var user = identityManager
+			.CreateUserBuilder()
+			.WithEmail("admin@tefter.bg")
+			.WithFirstName("Tefter")
+			.WithLastName("Administrator")
+			.CreatedOn(DateTime.Now)
+			.WithPassword("123")
+			.Enabled(true)
+			.WithUiTheme("")
+			.WithUiColor("")
+			.WithOpenSidebar(true)
+			.WithRoles(adminRole)
+			.Build();
 
-		success = dboManager.Insert<UserRole>(userrole);
-		if (!success)
-			throw new DatabaseException("Failed to insert initial relation for administrator user and role record.");
-
+		await identityManager.SaveUserAsync(user);
 	}
 }

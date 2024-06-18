@@ -120,7 +120,7 @@ internal partial interface IDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	ValueTask<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, OrderSettings order = null, string searchQuery = null ) where T : class, new();
+	Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, OrderSettings order = null, string searchQuery = null ) where T : class, new();
 	
 	/// <summary>
 	/// Returns list of records from database async  filtered by single property
@@ -130,12 +130,12 @@ internal partial interface IDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	ValueTask<List<T>> GetListAsync<T>(object propertyValue, string propertyName, int? page = null, int? pageSize = null, OrderSettings order = null) where T : class, new();
+	Task<List<T>> GetListAsync<T>(object propertyValue, string propertyName, int? page = null, int? pageSize = null, OrderSettings order = null) where T : class, new();
 
 	/// <summary>
 	/// Returns record for specified parameters and where clause in database async
 	/// </summary>
-	ValueTask<List<T>> GetListAsync<T>(string whereSql, OrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new();
+	Task<List<T>> GetListAsync<T>(string whereSql, OrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new();
 
 	/// <summary>
 	/// Deletes existing record from relation table async
@@ -144,7 +144,7 @@ internal partial interface IDboManager
 	/// <param name="origin_id"></param>
 	/// <param name="target_id"></param>
 	/// <returns></returns>
-	ValueTask<T> GetAsync<T>(Dictionary<string, Guid> compositeKey) where T : class, new();
+	Task<T> GetAsync<T>(Dictionary<string, Guid> compositeKey) where T : class, new();
 
 	/// <summary>
 	/// Returns record for specified identifier in database async filtered by single property
@@ -154,7 +154,7 @@ internal partial interface IDboManager
 	/// <param name="propertyName"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	ValueTask<T> GetAsync<T>(object propertyValue, string propertyName) where T : class, new();
+	Task<T> GetAsync<T>(object propertyValue, string propertyName) where T : class, new();
 
 	/// <summary>
 	///  Returns record for specified identifier in database async filtered by where clause sql async
@@ -163,7 +163,7 @@ internal partial interface IDboManager
 	/// <param name="whereSql"></param>
 	/// <param name="parameters"></param>
 	/// <returns></returns>
-	ValueTask<T> GetAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new();
+	Task<T> GetAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new();
 
 	/// <summary>
 	/// Returns record for specified sql and parameters
@@ -173,7 +173,7 @@ internal partial interface IDboManager
 	/// <param name="parameters"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	ValueTask<T> GetAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new();
+	Task<T> GetAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new();
 
 	/// <summary>
 	/// Return list of records for specified sql and parameters
@@ -183,7 +183,7 @@ internal partial interface IDboManager
 	/// <param name="parameters"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	ValueTask<List<T>> GetListAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new();
+	Task<List<T>> GetListAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new();
 
 	/// <summary>
 	/// Inserts new record into database async
@@ -191,7 +191,7 @@ internal partial interface IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
-	ValueTask<bool> InsertAsync<T>(T obj) where T : class, new();
+	Task<bool> InsertAsync<T>(T obj) where T : class, new();
 
 	/// <summary>
 	/// Updates existing record into database async
@@ -199,7 +199,7 @@ internal partial interface IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
-	ValueTask<bool> UpdateAsync<T>(T obj, Dictionary<string, Guid> compositeKey, params string[] updateThesePropsOnly) where T : class, new();
+	Task<bool> UpdateAsync<T>(T obj, Dictionary<string, Guid> compositeKey, params string[] updateThesePropsOnly) where T : class, new();
 
 
     /// <summary>
@@ -209,7 +209,7 @@ internal partial interface IDboManager
     /// <param name="origin_id"></param>
     /// <param name="target_id"></param>
     /// <returns></returns>
-    ValueTask<bool> DeleteAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new();
+    Task<bool> DeleteAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new();
 
 	/// <summary>
 	/// Returns true/false if any records exists for specified parameters and where clause in database async
@@ -218,6 +218,6 @@ internal partial interface IDboManager
 	/// <param name="whereSql"></param>
 	/// <param name="parameters"></param>
 	/// <returns></returns>
-	ValueTask<bool> ExistsAnyAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new();
+	Task<bool> ExistsAnyAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new();
 }
 

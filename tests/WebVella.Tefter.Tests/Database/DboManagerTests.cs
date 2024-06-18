@@ -3,7 +3,7 @@
 public partial class DboManagerTests : BaseTest
 {
 	[Fact]
-	public async void FullTestRecord()
+	public async Task FullTestRecord()
 	{
 		using (await locker.LockAsync())
 		{
@@ -43,7 +43,7 @@ public partial class DboManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async void NumberTestRecord()
+	public async Task NumberTestRecord()
 	{
 		using (await locker.LockAsync())
 		{
@@ -75,7 +75,7 @@ public partial class DboManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async void LongTestRecord()
+	public async Task LongTestRecord()
 	{
 		using (await locker.LockAsync())
 		{
@@ -106,7 +106,7 @@ public partial class DboManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async void DateTimeTestRecord()
+	public async Task DateTimeTestRecord()
 	{
 		using (await locker.LockAsync())
 		{
@@ -140,7 +140,7 @@ public partial class DboManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async void JsonTestRecord()
+	public async Task JsonTestRecord()
 	{
 		using (await locker.LockAsync())
 		{
@@ -176,7 +176,7 @@ public partial class DboManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async void EnumTestRecord()
+	public async Task EnumTestRecord()
 	{
 		using (await locker.LockAsync())
 		{

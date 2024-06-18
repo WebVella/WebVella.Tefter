@@ -11,12 +11,13 @@ internal partial class MigrationManager : IMigrationManager
 
 	static MigrationManager()
 	{
-		_systemMigrations= new List<SystemMigrationMeta>();
+		_systemMigrations = new List<SystemMigrationMeta>();
 		_addonMigrations = new List<AddOnMigrationMeta>();
 
 		var assemblies = AppDomain.CurrentDomain.GetAssemblies()
 							.Where(a => !(a.FullName.ToLowerInvariant().StartsWith("microsoft.")
 							   || a.FullName.ToLowerInvariant().StartsWith("system.")));
+		
 		foreach (var assembly in assemblies)
 		{
 			foreach (Type type in assembly.GetTypes())
@@ -29,9 +30,11 @@ internal partial class MigrationManager : IMigrationManager
 
 	private static void ScanAndRegisterMigrationType(Type type)
 	{
-		var implSystemMigrationInterface = type.GetInterfaces().Any(x => x == typeof(ITefterSystemMigration));
+		if (type.IsAbstract || type.IsInterface)
+			return;
+
 		var attrs = type.GetCustomAttributes(typeof(TefterSystemMigrationAttribute), false);
-		if (attrs.Length == 1 && type.IsClass && implSystemMigrationInterface )
+		if (attrs.Length == 1 && type.IsClass && type.IsAssignableTo(typeof(TefterSystemMigration)))
 		{
 			var attr = (TefterSystemMigrationAttribute)attrs[0];
 			var instance = Activator.CreateInstance(type);
@@ -39,14 +42,14 @@ internal partial class MigrationManager : IMigrationManager
 			{
 				Version = attr.Version,
 				MigrationClassName = type.FullName,
-				Instance = (ITefterSystemMigration)instance
+				Instance = (TefterSystemMigration)instance
 			};
 			_systemMigrations.Add(meta);
 		}
 
 		var implAddonMigrationInterface = type.GetInterfaces().Any(x => x == typeof(ITefterAddOnMigration));
 		attrs = type.GetCustomAttributes(typeof(TefterAddOnMigrationAttribute), false);
-		if (attrs.Length == 1 && type.IsClass && implAddonMigrationInterface )
+		if (attrs.Length == 1 && type.IsClass && implAddonMigrationInterface)
 		{
 			var attr = (TefterAddOnMigrationAttribute)attrs[0];
 			var instance = Activator.CreateInstance(type);
@@ -59,7 +62,7 @@ internal partial class MigrationManager : IMigrationManager
 			};
 			_addonMigrations.Add(meta);
 		}
-		
-		
+
+
 	}
 }

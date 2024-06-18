@@ -420,7 +420,7 @@ internal partial class DboManager : IDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, OrderSettings order = null, string searchQuery = null ) where T : class, new()
+	public async Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, OrderSettings order = null, string searchQuery = null ) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -460,7 +460,7 @@ internal partial class DboManager : IDboManager
 	/// <param name="propertyName"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<List<T>> GetListAsync<T>(object propertyValue, string propertyName, 
+	public async Task<List<T>> GetListAsync<T>(object propertyValue, string propertyName, 
 		int? page = null, int? pageSize = null, OrderSettings order = null) where T : class, new()
 	{
 		string cacheKey = null;
@@ -495,7 +495,7 @@ internal partial class DboManager : IDboManager
 	/// <summary>
 	/// Returns record for specified parameters and where clause in database async
 	/// </summary>
-	public async ValueTask<List<T>> GetListAsync<T>(string whereSql, OrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new()
+	public async Task<List<T>> GetListAsync<T>(string whereSql, OrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -531,7 +531,7 @@ internal partial class DboManager : IDboManager
 	/// <param name="id"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<T> GetAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new()
+	public async Task<T> GetAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -580,7 +580,7 @@ internal partial class DboManager : IDboManager
 	/// <param name="propertyName"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<T> GetAsync<T>(object propertyValue, string propertyName) where T : class, new()
+	public async Task<T> GetAsync<T>(object propertyValue, string propertyName) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -614,7 +614,7 @@ internal partial class DboManager : IDboManager
 	/// <summary>
 	/// Returns record for specified parameters and where clause in database async
 	/// </summary>
-	public async ValueTask<T> GetAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new()
+	public async Task<T> GetAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -645,7 +645,7 @@ internal partial class DboManager : IDboManager
     /// <summary>
     /// Returns true/false if any records exists for specified parameters and where clause in database async
     /// </summary>
-    public async ValueTask<bool> ExistsAnyAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new()
+    public async Task<bool> ExistsAnyAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new()
     {
         var meta = GetModelMeta<T>();
 
@@ -668,7 +668,7 @@ internal partial class DboManager : IDboManager
     /// <param name="parameters"></param>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
-    public async ValueTask<T> GetAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new()
+    public async Task<T> GetAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new()
 	{
 		var meta = GetModelMeta<T>();			
 		var dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
@@ -684,7 +684,7 @@ internal partial class DboManager : IDboManager
 	/// <param name="parameters"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<List<T>> GetListAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new()
+	public async Task<List<T>> GetListAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new()
 	{
 		var meta = GetModelMeta<T>();
 		var dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
@@ -697,7 +697,7 @@ internal partial class DboManager : IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
-	public async ValueTask<bool> InsertAsync<T>(T obj) where T : class, new()
+	public async Task<bool> InsertAsync<T>(T obj) where T : class, new()
 	{
 		var meta = GetModelMeta<T>();
 
@@ -717,7 +717,7 @@ internal partial class DboManager : IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
-	public async ValueTask<bool> UpdateAsync<T>(T obj,  Dictionary<string, Guid> compositeKey, 
+	public async Task<bool> UpdateAsync<T>(T obj,  Dictionary<string, Guid> compositeKey, 
 		params string [] updateThesePropsOnly ) where T : class, new()
 	{
 		var meta = GetModelMeta<T>();
@@ -774,7 +774,7 @@ internal partial class DboManager : IDboManager
 	/// <param name="origin_id"></param>
 	/// <param name="target_id"></param>
 	/// <returns></returns>
-	public async ValueTask<bool> DeleteAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new()
+	public async Task<bool> DeleteAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new()
 	{
 		var meta = GetModelMeta<T>();
 
@@ -803,7 +803,7 @@ internal partial class DboManager : IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-    public async ValueTask DeleteAllAsync<T>() where T : class, new()
+    public async Task DeleteAllAsync<T>() where T : class, new()
     {
         var meta = GetModelMeta<T>();
 

@@ -10,7 +10,7 @@ internal partial class MigrationManager : IMigrationManager
 	{
 		public Version Version { get; set; }
 		public string MigrationClassName { get; set; }
-		public ITefterSystemMigration Instance { get; set; }
+		public TefterSystemMigration Instance { get; set; }
 
 	}
 
