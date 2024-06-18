@@ -28,4 +28,5 @@ global using Nito.AsyncEx;
 global using WebVella.Tefter;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Database.Dbo;
+global using WebVella.Tefter.Migrations;
 

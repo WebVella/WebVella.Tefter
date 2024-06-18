@@ -2,5 +2,5 @@
 
 internal interface ITefterSystemMigration
 {
-	public void Migrate(IDatabaseService dbService, DatabaseBuilder db);
+	public void Migrate(IDatabaseManager dbManager, IDboManager dboManager);
 }

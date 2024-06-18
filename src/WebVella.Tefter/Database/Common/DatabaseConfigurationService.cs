@@ -11,6 +11,6 @@ public class DatabaseConfigurationService : IDbConfigurationService
 
     public DatabaseConfigurationService(IConfiguration config)
     {
-        ConnectionString = config["ConnectionString"];
+        ConnectionString = config["Tefter:ConnectionString"];
     }
 }

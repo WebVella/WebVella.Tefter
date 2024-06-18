@@ -3,12 +3,12 @@
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
 public class TefterAddOnMigrationAttribute : Attribute
 {
-	public Guid AppId { get; private set; }
+	public Guid AddOnTypeId { get; private set; }
 	public Version Version { get; private set; }
 
-	public TefterAddOnMigrationAttribute(string AppId, string Version)
+	public TefterAddOnMigrationAttribute(string AddOnTypeId, string Version)
 	{
-		this.AppId = new Guid(AppId);
+		this.AddOnTypeId = new Guid(AddOnTypeId);
 		this.Version = new Version(Version);
 	}
 }

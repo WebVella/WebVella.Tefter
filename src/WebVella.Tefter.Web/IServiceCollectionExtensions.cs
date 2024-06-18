@@ -13,4 +13,10 @@ public static class IServiceCollectionExtensions
 		services.AddScoped<ITfService, TfService>();
 		return services;
 	}
+
+	public static IServiceProvider UseTefter(this IServiceProvider serviceProvider)
+	{
+		serviceProvider.UseTefterDI();
+		return serviceProvider;
+	}
 }

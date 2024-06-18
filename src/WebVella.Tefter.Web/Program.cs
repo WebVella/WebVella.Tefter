@@ -32,5 +32,7 @@ app.UseAntiforgery();
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode();
 
+app.Services.UseTefter();
+
 app.Run();
 
