@@ -6,6 +6,6 @@ public sealed record Difference
     public DifferenceObjectType ObjectType { get; init; }
     public string TableName { get; init; }
     public string ObjectName { get; init; }
-    public DbObject Object { get; init; }
+    public DatabaseObject Object { get; init; }
     public ReadOnlyCollection<string> Descriptions { get; init; }
 }

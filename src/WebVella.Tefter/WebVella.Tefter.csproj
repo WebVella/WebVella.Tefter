@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -26,14 +26,6 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="8.0.6" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Common\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EditorConfigFiles Remove="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\Database\.editorconfig" />
 	</ItemGroup>
 
 	<ItemGroup>

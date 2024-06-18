@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,11 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Icon.png" />
+    <EmbeddedResource Include="Assets\BooleanIcon.png" />
+    <EmbeddedResource Include="Assets\TextIcon.png" />
+    <EmbeddedResource Include="Assets\DateTimeIcon.png" />
+    <EmbeddedResource Include="Assets\DateIcon.png" />
+    <EmbeddedResource Include="Assets\NumberIcon.png" />
+    <EmbeddedResource Include="Assets\GuidIcon.png" />
+    <EmbeddedResource Include="Assets\AutoIncrementIcon.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,6 +11,7 @@ global using System.Text.RegularExpressions;
 global using System.Threading.Tasks;
 global using System.Text.Json.Serialization;
 global using System.Collections.ObjectModel;
+global using System.Security.Cryptography;
 
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.DataProtection;
@@ -25,7 +26,6 @@ global using Npgsql;
 global using Nito.AsyncEx;
 
 global using WebVella.Tefter;
-//global using WebVella.Tefter.Common;
 global using WebVella.Tefter.Database;
-global using WebVella.Tefter.Database.Internal;
+global using WebVella.Tefter.Database.Dbo;
 

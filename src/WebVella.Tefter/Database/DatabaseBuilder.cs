@@ -6,18 +6,18 @@ public class DatabaseBuilder
 	private HashSet<string> _databaseObjectNames;
 	private Dictionary<string, HashSet<string>> _tableColumnNames;
 
-	private readonly List<DbTableBuilder> _builders;
-	internal ReadOnlyCollection<DbTableBuilder> Builders => _builders.AsReadOnly();
+	private readonly List<DatabaseTableBuilder> _builders;
+	internal ReadOnlyCollection<DatabaseTableBuilder> Builders => _builders.AsReadOnly();
 
-	private DatabaseBuilder(DbTableCollection tables = null)
+	private DatabaseBuilder(DatabaseTableCollection tables = null)
 	{
 		_databaseObjectIds = new HashSet<Guid>();
 		_databaseObjectNames = new HashSet<string>();
 		_tableColumnNames = new Dictionary<string, HashSet<string>>();
-		_builders = new List<DbTableBuilder>();
+		_builders = new List<DatabaseTableBuilder>();
 	}
 
-	internal static DatabaseBuilder New(DbTableCollection tables = null)
+	internal static DatabaseBuilder New(DatabaseTableCollection tables = null)
 	{
 		var builder = new DatabaseBuilder();
 
@@ -32,14 +32,14 @@ public class DatabaseBuilder
 					var columnCollectionBuilder = tableBuilder.WithColumnsBuilder();
 					switch (column)
 					{
-						case DbAutoIncrementColumn c:
+						case AutoIncrementDatabaseColumn c:
 							{
 								columnCollectionBuilder
 									.AddAutoIncrementColumnBuilder(c.Id, c.Name)
 									.WithLastCommited(c.LastCommited);
 							}
 							break;
-						case DbGuidColumn c:
+						case GuidDatabaseColumn c:
 							{
 								var cb = columnCollectionBuilder
 									.AddGuidColumnBuilder(c.Id, c.Name)
@@ -50,7 +50,7 @@ public class DatabaseBuilder
 								if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
 							}
 							break;
-						case DbBooleanColumn c:
+						case BooleanDatabaseColumn c:
 							{
 								var cb = columnCollectionBuilder
 									.AddBooleanColumnBuilder(c.Id, c.Name)
@@ -60,7 +60,7 @@ public class DatabaseBuilder
 								if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
 							}
 							break;
-						case DbNumberColumn c:
+						case NumberDatabaseColumn c:
 							{
 								var cb = columnCollectionBuilder
 									.AddNumberColumnBuilder(c.Id, c.Name)
@@ -70,7 +70,7 @@ public class DatabaseBuilder
 								if (c.IsNullable) cb.Nullable(); else cb.NotNullable();
 							}
 							break;
-						case DbDateColumn c:
+						case DateDatabaseColumn c:
 							{
 								var cb = columnCollectionBuilder
 									.AddDateColumnBuilder(c.Id, c.Name)
@@ -81,7 +81,7 @@ public class DatabaseBuilder
 								if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
 							}
 							break;
-						case DbDateTimeColumn c:
+						case DateTimeDatabaseColumn c:
 							{
 								var cb = columnCollectionBuilder
 									.AddDateTimeColumnBuilder(c.Id, c.Name)
@@ -92,7 +92,7 @@ public class DatabaseBuilder
 								if (c.AutoDefaultValue) cb.WithAutoDefaultValue(); else cb.WithoutAutoDefaultValue();
 							}
 							break;
-						case DbTextColumn c:
+						case TextDatabaseColumn c:
 							{
 								var cb = columnCollectionBuilder
 									.AddTextColumnBuilder(c.Id, c.Name)
@@ -103,7 +103,7 @@ public class DatabaseBuilder
 							}
 							break;
 						default:
-							throw new DbBuilderException($"{column.GetType()} is not supported");
+							throw new DatabaseBuilderException($"{column.GetType()} is not supported");
 					}
 				}
 
@@ -112,28 +112,28 @@ public class DatabaseBuilder
 					var indexCollectionBuilder = tableBuilder.WithIndexesBuilder();
 					switch (index)
 					{
-						case DbBTreeIndex i:
+						case BTreeDatabaseIndex i:
 							{
 								indexCollectionBuilder
 									.AddBTreeIndexBuilder(index.Name)
 									.WithColumns(index.Columns.ToArray());
 							}
 							break;
-						case DbGinIndex i:
+						case GinDatabaseIndex i:
 							{
 								indexCollectionBuilder
 									.AddGinIndexBuilder(index.Name)
 									.WithColumns(index.Columns.ToArray());
 							}
 							break;
-						case DbGistIndex i:
+						case GistDatabaseIndex i:
 							{
 								indexCollectionBuilder
 									.AddGistIndexBuilder(index.Name)
 									.WithColumns(index.Columns.ToArray());
 							}
 							break;
-						case DbHashIndex i:
+						case HashDatabaseIndex i:
 							{
 								indexCollectionBuilder
 									.AddHashIndexBuilder(index.Name)
@@ -141,7 +141,7 @@ public class DatabaseBuilder
 							}
 							break;
 						default:
-							throw new DbBuilderException($"{index.GetType()} is not supported");
+							throw new DatabaseBuilderException($"{index.GetType()} is not supported");
 					}
 				}
 
@@ -150,21 +150,21 @@ public class DatabaseBuilder
 					var constrCollectionBuilder = tableBuilder.WithConstraintsBuilder();
 					switch (constraint)
 					{
-						case DbPrimaryKeyConstraint c:
+						case DatabasePrimaryKeyConstraint c:
 							{
 								constrCollectionBuilder
 									.AddPrimaryKeyConstraintBuilder(c.Name)
 									.WithColumns(c.Columns.ToArray());
 							}
 							break;
-						case DbUniqueKeyConstraint c:
+						case DatabaseUniqueKeyConstraint c:
 							{
 								constrCollectionBuilder
 									.AddUniqueKeyConstraintBuilder(c.Name)
 									.WithColumns(c.Columns.ToArray());
 							}
 							break;
-						case DbForeignKeyConstraint c:
+						case DatabaseForeignKeyConstraint c:
 							{
 								constrCollectionBuilder
 									.AddForeignKeyConstraintBuilder(c.Name)
@@ -174,7 +174,7 @@ public class DatabaseBuilder
 							}
 							break;
 						default:
-							throw new DbBuilderException($"{constraint.GetType()} is not supported");
+							throw new DatabaseBuilderException($"{constraint.GetType()} is not supported");
 					}
 				}
 			}
@@ -183,22 +183,22 @@ public class DatabaseBuilder
 		return builder;
 	}
 
-	public DatabaseBuilder NewTable(string name, Action<DbTableBuilder> action)
+	public DatabaseBuilder NewTable(string name, Action<DatabaseTableBuilder> action)
 	{
 		return NewTable(Guid.NewGuid(), name, action);
 	}
 
-	public DatabaseBuilder NewTable(Guid id, string name, Action<DbTableBuilder> action)
+	public DatabaseBuilder NewTable(Guid id, string name, Action<DatabaseTableBuilder> action)
 	{
 		RegisterId(id);
 		RegisterName(name);
 
-		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		var builder = (DatabaseTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
 		if (builder is not null)
-			throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
+			throw new DatabaseBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
 
-		builder = new DbTableBuilder(id, name, this);
+		builder = new DatabaseTableBuilder(id, name, this);
 
 		action(builder);
 
@@ -207,41 +207,41 @@ public class DatabaseBuilder
 		return this;
 	}
 
-	public DbTableBuilder NewTableBuilder(Guid id, string name)
+	public DatabaseTableBuilder NewTableBuilder(Guid id, string name)
 	{
 		RegisterId(id);
 		RegisterName(name);
 
-		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		var builder = (DatabaseTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
 		if (builder is not null)
-			throw new DbBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
+			throw new DatabaseBuilderException($"Table with name '{name}' already exists. Only one instance can be created.");
 
-		builder = new DbTableBuilder(id, name, this);
+		builder = new DatabaseTableBuilder(id, name, this);
 
 		_builders.Add(builder);
 
 		return builder;
 	}
 
-	public DatabaseBuilder WithTable(string name, Action<DbTableBuilder> action)
+	public DatabaseBuilder WithTable(string name, Action<DatabaseTableBuilder> action)
 	{
-		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		var builder = (DatabaseTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
 		if (builder is null)
-			throw new DbBuilderException($"Table with name '{name}' not found.");
+			throw new DatabaseBuilderException($"Table with name '{name}' not found.");
 
 		action(builder);
 
 		return this;
 	}
 
-	public DbTableBuilder WithTableBuilder(string name, Action<DbTableBuilder> action = null)
+	public DatabaseTableBuilder WithTableBuilder(string name, Action<DatabaseTableBuilder> action = null)
 	{
-		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
+		var builder = (DatabaseTableBuilder)_builders.SingleOrDefault(x => x.Name == name);
 
 		if (builder is null)
-			throw new DbBuilderException($"Table with name '{name}' not found.");
+			throw new DatabaseBuilderException($"Table with name '{name}' not found.");
 
 		if (action != null)
 			action(builder);
@@ -249,24 +249,24 @@ public class DatabaseBuilder
 		return builder;
 	}
 
-	public DatabaseBuilder WithTable(Guid id, Action<DbTableBuilder> action)
+	public DatabaseBuilder WithTable(Guid id, Action<DatabaseTableBuilder> action)
 	{
-		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Id == id);
+		var builder = (DatabaseTableBuilder)_builders.SingleOrDefault(x => x.Id == id);
 
 		if (builder is null)
-			throw new DbBuilderException($"Table with id '{id}' not found.");
+			throw new DatabaseBuilderException($"Table with id '{id}' not found.");
 
 		action(builder);
 
 		return this;
 	}
 
-	public DbTableBuilder WithTableBuilder(Guid id, Action<DbTableBuilder> action = null)
+	public DatabaseTableBuilder WithTableBuilder(Guid id, Action<DatabaseTableBuilder> action = null)
 	{
-		var builder = (DbTableBuilder)_builders.SingleOrDefault(x => x.Id == id);
+		var builder = (DatabaseTableBuilder)_builders.SingleOrDefault(x => x.Id == id);
 
 		if (builder is null)
-			throw new DbBuilderException($"Table with id '{id}' not found.");
+			throw new DatabaseBuilderException($"Table with id '{id}' not found.");
 
 		if (action != null)
 			action(builder);
@@ -279,16 +279,16 @@ public class DatabaseBuilder
 		var builder = _builders.SingleOrDefault(x => x.Name == name);
 
 		if (builder is null)
-			throw new DbBuilderException($"Table with name '{name}' is not found.");
+			throw new DatabaseBuilderException($"Table with name '{name}' is not found.");
 
 		_builders.Remove(builder);
 
 		return this;
 	}
 
-	public DbTableCollection Build()
+	internal DatabaseTableCollection Build()
 	{
-		var collection = new DbTableCollection();
+		var collection = new DatabaseTableCollection();
 
 		foreach (var builder in _builders)
 			collection.Add(builder.Build());
@@ -300,7 +300,7 @@ public class DatabaseBuilder
 	internal void RegisterId(Guid id)
 	{
 		if (_databaseObjectIds.Contains(id))
-			throw new DbBuilderException($"There is already existing database object with id '{id}'");
+			throw new DatabaseBuilderException($"There is already existing database object with id '{id}'");
 
 		_databaseObjectIds.Add(id);
 	}
@@ -308,7 +308,7 @@ public class DatabaseBuilder
 	internal void UnregisterId(Guid id)
 	{
 		if (!_databaseObjectIds.Contains(id))
-			throw new DbBuilderException($"There is no existing object with specified id '{id}'");
+			throw new DatabaseBuilderException($"There is no existing object with specified id '{id}'");
 
 		_databaseObjectIds.Remove(id);
 	}
@@ -319,10 +319,10 @@ public class DatabaseBuilder
 			throw new ArgumentNullException("name");
 
 		if (!IsValidDbObjectName(name, out string error))
-			throw new DbBuilderException($"Invalid name '{name}'. {error}");
+			throw new DatabaseBuilderException($"Invalid name '{name}'. {error}");
 
 		if (_databaseObjectNames.Contains(name))
-			throw new DbBuilderException($"There is already existing database object with name '{name}'");
+			throw new DatabaseBuilderException($"There is already existing database object with name '{name}'");
 
 		_databaseObjectNames.Add(name);
 	}
@@ -333,7 +333,7 @@ public class DatabaseBuilder
 			throw new ArgumentNullException("name");
 
 		if (!_databaseObjectNames.Contains(name))
-			throw new DbBuilderException($"No object with name '{name}' found in registered database objects.");
+			throw new DatabaseBuilderException($"No object with name '{name}' found in registered database objects.");
 
 		_databaseObjectNames.Remove(name);
 	}
@@ -347,13 +347,13 @@ public class DatabaseBuilder
 			throw new ArgumentNullException(nameof(columnName));
 
 		if (!IsValidDbObjectName(columnName, out string error))
-			throw new DbBuilderException($"Invalid name '{columnName}'. {error}");
+			throw new DatabaseBuilderException($"Invalid name '{columnName}'. {error}");
 
 		if (!_tableColumnNames.ContainsKey(tableName))
 			_tableColumnNames.Add(tableName, new HashSet<string>());
 
 		if (_tableColumnNames[tableName].Contains(columnName))
-			throw new DbBuilderException($"There is already existing column with name '{columnName}' for table '{tableName}'");
+			throw new DatabaseBuilderException($"There is already existing column with name '{columnName}' for table '{tableName}'");
 
 		_tableColumnNames[tableName].Add(columnName);
 	}
@@ -367,10 +367,10 @@ public class DatabaseBuilder
 			throw new ArgumentNullException(nameof(columnName));
 
 		if (!_tableColumnNames.ContainsKey(tableName))
-			throw new DbBuilderException($"Table with name '{tableName}' not found while trying to remove column '{columnName}'");
+			throw new DatabaseBuilderException($"Table with name '{tableName}' not found while trying to remove column '{columnName}'");
 
 		if (!_tableColumnNames[tableName].Contains(columnName))
-			throw new DbBuilderException($"Not found a column with name '{columnName}' for table '{tableName}' while trying to remove it.");
+			throw new DatabaseBuilderException($"Not found a column with name '{columnName}' for table '{tableName}' while trying to remove it.");
 
 		_tableColumnNames[tableName].Remove(columnName);
 	}

@@ -12,6 +12,8 @@ global using System.Threading.Tasks;
 global using System.Text.Json.Serialization;
 global using System.Collections.ObjectModel;
 
+
+global using Microsoft.AspNetCore.Components;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.DataProtection;
 global using Microsoft.AspNetCore.Hosting;
@@ -21,7 +23,8 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 
+
 global using WebVella.Tefter;
 global using WebVella.Tefter.Database;
-
-
+global using WebVella.Tefter.Migrations;
+global using WebVella.Tefter.Core.Components;
