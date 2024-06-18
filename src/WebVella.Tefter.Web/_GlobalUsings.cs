@@ -14,6 +14,7 @@ global using System.Web;
 global using Fluxor;
 global using Fluxor.Blazor.Web.Components;
 
+global using WebVella.Tefter;
 global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Brokers;
 global using WebVella.Tefter.Web.Services;

@@ -2,7 +2,7 @@
 
 internal static class DatabaseComparer
 {
-    public static DifferenceCollection Compare(DbTableCollection initialCollection, DbTableCollection modifiedCollection)
+    public static DifferenceCollection Compare(DatabaseTableCollection initialCollection, DatabaseTableCollection modifiedCollection)
     {
         DifferenceCollection differences = new DifferenceCollection();
 
@@ -15,7 +15,7 @@ internal static class DatabaseComparer
         //all tables are removed
         if (initialCollection != null && (modifiedCollection == null || modifiedCollection.Count() == 0))
         {
-            foreach (DbTable table in initialCollection)
+            foreach (DatabaseTable table in initialCollection)
             {
                 var diffs = Compare(table, null);
                 differences.AddRange(diffs);
@@ -24,7 +24,7 @@ internal static class DatabaseComparer
         //all tables are new
         else if ((initialCollection == null || initialCollection.Count() == 0) && modifiedCollection != null)
         {
-            foreach (DbTable table in modifiedCollection)
+            foreach (DatabaseTable table in modifiedCollection)
             {
                 var diffs = Compare(null, table);
                 differences.AddRange(diffs);
@@ -33,7 +33,7 @@ internal static class DatabaseComparer
         else
         {
             HashSet<Guid> processedTables = new HashSet<Guid>();
-            foreach (DbTable table in initialCollection)
+            foreach (DatabaseTable table in initialCollection)
             {
                 processedTables.Add(table.Id);
                 var modifiedTable = modifiedCollection.Find(table.Id);
@@ -59,7 +59,7 @@ internal static class DatabaseComparer
                 var diffs = Compare(table, modifiedTable);
                 differences.AddRange(diffs);
             }
-            foreach (DbTable table in modifiedCollection)
+            foreach (DatabaseTable table in modifiedCollection)
             {
                 //if table is already processed, skip it
                 if (processedTables.Contains(table.Id))
@@ -73,7 +73,7 @@ internal static class DatabaseComparer
         return Process(differences);
     }
 
-    private static DifferenceCollection Compare(DbTable initialTable, DbTable modifiedTable)
+    private static DifferenceCollection Compare(DatabaseTable initialTable, DatabaseTable modifiedTable)
     {
         DifferenceCollection differences = new DifferenceCollection();
 
@@ -216,7 +216,7 @@ internal static class DatabaseComparer
         return differences;
     }
 
-    private static DifferenceCollection Compare(string tableName, DbColumn initialColumn, DbColumn modifiedColumn)
+    private static DifferenceCollection Compare(string tableName, DatabaseColumn initialColumn, DatabaseColumn modifiedColumn)
     {
         DifferenceCollection differences = new DifferenceCollection();
         if (initialColumn == null && modifiedColumn == null)
@@ -305,10 +305,10 @@ internal static class DatabaseComparer
                     descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' default value be changed to '{modifiedColumn.DefaultValue}'");
             }
 
-            if (initialColumn.GetType().IsAssignableFrom(typeof(DbColumnWithAutoDefaultValue)))
+            if (initialColumn.GetType().IsAssignableFrom(typeof(DatabaseColumnWithAutoDefaultValue)))
             {
-                var initialAutoDefaultValue = ((DbColumnWithAutoDefaultValue)initialColumn).AutoDefaultValue;
-                var modifiedAutoDefaultValue = ((DbColumnWithAutoDefaultValue)modifiedColumn).AutoDefaultValue;
+                var initialAutoDefaultValue = ((DatabaseColumnWithAutoDefaultValue)initialColumn).AutoDefaultValue;
+                var modifiedAutoDefaultValue = ((DatabaseColumnWithAutoDefaultValue)modifiedColumn).AutoDefaultValue;
                 if (initialAutoDefaultValue != modifiedAutoDefaultValue)
                 {
                     if (modifiedAutoDefaultValue)
@@ -335,7 +335,7 @@ internal static class DatabaseComparer
         return differences;
     }
 
-    private static DifferenceCollection Compare(string tableName, DbIndex initialIndex, DbIndex modifiedIndex)
+    private static DifferenceCollection Compare(string tableName, DatabaseIndex initialIndex, DatabaseIndex modifiedIndex)
     {
         DifferenceCollection differences = new DifferenceCollection();
         if (initialIndex == null && modifiedIndex == null)
@@ -440,7 +440,7 @@ internal static class DatabaseComparer
         return differences;
     }
 
-    private static DifferenceCollection Compare(string tableName, DbConstraint initialConstraint, DbConstraint modifiedConstraint)
+    private static DifferenceCollection Compare(string tableName, DatabaseConstraint initialConstraint, DatabaseConstraint modifiedConstraint)
     {
         DifferenceCollection differences = new DifferenceCollection();
         if (initialConstraint == null && modifiedConstraint == null)
@@ -541,10 +541,10 @@ internal static class DatabaseComparer
                 }
                 else
                 {
-                    if (initialConstraint.GetType() == typeof(DbForeignKeyConstraint))
+                    if (initialConstraint.GetType() == typeof(DatabaseForeignKeyConstraint))
                     {
-                        var initialFkConstraint = (DbForeignKeyConstraint)initialConstraint;
-                        var modifiedFkConstraint = (DbForeignKeyConstraint)modifiedConstraint;
+                        var initialFkConstraint = (DatabaseForeignKeyConstraint)initialConstraint;
+                        var modifiedFkConstraint = (DatabaseForeignKeyConstraint)modifiedConstraint;
 
                         if (initialFkConstraint.ForeignTable != modifiedFkConstraint.ForeignTable)
                         {
@@ -619,31 +619,31 @@ internal static class DatabaseComparer
         return differences;
     }
 
-    private static string GetDbObjectTypeName(DbObject obj)
+    private static string GetDbObjectTypeName(DatabaseObject obj)
     {
         if (obj == null)
             throw new ArgumentNullException("obj");
 
         switch (obj)
         {
-            case DbTable: return "table";
-            case DbAutoIncrementColumn: return "auto increment column";
-            case DbBooleanColumn: return "boolean column";
-            case DbDateColumn: return "Date column";
-            case DbDateTimeColumn: return "DateTime column";
-            case DbGuidColumn: return "Guid column";
-            case DbNumberColumn: return "number column";
-            case DbTextColumn: return "text column";
-            case DbForeignKeyConstraint: return "foreign key constraint";
-            case DbPrimaryKeyConstraint: return "primary key constraint";
-            case DbUniqueKeyConstraint: return "unique key constraint";
-            case DbBTreeIndex: return "btree index";
-            case DbGinIndex: return "gin index";
-            case DbGistIndex: return "gist index";
-            case DbHashIndex: return "hash index";
+            case DatabaseTable: return "table";
+            case AutoIncrementDatabaseColumn: return "auto increment column";
+            case BooleanDatabaseColumn: return "boolean column";
+            case DateDatabaseColumn: return "Date column";
+            case DateTimeDatabaseColumn: return "DateTime column";
+            case GuidDatabaseColumn: return "Guid column";
+            case NumberDatabaseColumn: return "number column";
+            case TextDatabaseColumn: return "text column";
+            case DatabaseForeignKeyConstraint: return "foreign key constraint";
+            case DatabasePrimaryKeyConstraint: return "primary key constraint";
+            case DatabaseUniqueKeyConstraint: return "unique key constraint";
+            case BTreeDatabaseIndex: return "btree index";
+            case GinDatabaseIndex: return "gin index";
+            case GistDatabaseIndex: return "gist index";
+            case HashDatabaseIndex: return "hash index";
 
             default:
-                throw new DbException($"Not supported object type: {obj.GetType()}");
+                throw new DatabaseException($"Not supported object type: {obj.GetType()}");
         }
     }
 
@@ -726,7 +726,7 @@ internal static class DatabaseComparer
                   x.ObjectType == DifferenceObjectType.Column));
 
         if (filteredList.Count != result.Count)
-            throw new DbException("Process of processing differences result with incorrect count. This should not happen.");
+            throw new DatabaseException("Process of processing differences result with incorrect count. This should not happen.");
             
         return result;
     }

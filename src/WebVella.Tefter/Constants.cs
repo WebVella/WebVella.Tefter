@@ -2,11 +2,13 @@
 
 internal class Constants
 {
-    //because the postgres NUMERIC type can hold a value of up to 131,072 digits
-    //before the decimal point 16,383 digits after the decimal point.
-    //we need to fit value in C# decimal which allow only 28 numbers,
-    //we limit default precision to 28 and scale only to 8 numbers
-    private const int DB_DEFAULT_NUMBER_PRECISION = 28;
+	public static Guid TEFTER_CORE_APP_ID = new Guid("7d272612-0824-496a-a02d-2c144959ae73");
+
+	//because the postgres NUMERIC type can hold a value of up to 131,072 digits
+	//before the decimal point 16,383 digits after the decimal point.
+	//we need to fit value in C# decimal which allow only 28 numbers,
+	//we limit default precision to 28 and scale only to 8 numbers
+	private const int DB_DEFAULT_NUMBER_PRECISION = 28;
     private const int DB_DEFAULT_NUMBER_SCALE = 8;
 
     //postgres name boundaries for length
