@@ -9,11 +9,11 @@
 		<PackageReference Include="Fluxor" Version="6.0.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.0.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.7.2" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.7.2" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.8.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.8.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
+	  <ProjectReference Include="..\WebVella.Tefter.Core\WebVella.Tefter.Core.csproj" />
 	</ItemGroup>
 	
 </Project>

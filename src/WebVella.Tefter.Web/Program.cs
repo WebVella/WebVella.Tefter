@@ -6,14 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
 
-builder.Services.AddFluentUIComponents();
+builder.Services.AddTefter();
 builder.Services.AddFluxor(options =>
 {
 	options
 	.ScanAssemblies(typeof(Program).Assembly);
 });
-builder.Services.AddTefter();
-
+builder.Services.AddFluentUIComponents();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -4,9 +4,9 @@
 <div class="content-toolbar" style="@Style">
 	<div class="content-toolbar-left">
 		<FluentNavMenu>
-			<FluentNavLink Href="@($"/admin/users")" Match="@NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.AddCircle())">Item 1</FluentNavLink>
-			<FluentNavLink Href="@($"/admin/users/{new Guid("6625a900-c363-4df8-8e96-ec05b05671b0")}")" Icon="@(new Icons.Regular.Size20.AddCircle())">Item 2</FluentNavLink>
-			<FluentNavLink Href="@($"/admin/users/{new Guid("7da5137f-8902-4fbe-ada8-e893d25f3bd4")}")">Item 3</FluentNavLink>
+			<FluentNavLink Href="@($"/admin/users")" Match="@NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.PersonInfo())">Детайли</FluentNavLink>
+			<FluentNavLink Href="@($"/admin/users/{new Guid("6625a900-c363-4df8-8e96-ec05b05671b0")}")" Icon="@(new Icons.Regular.Size20.Key())">Access</FluentNavLink>
+			<FluentNavLink Href="@($"/admin/users/{new Guid("7da5137f-8902-4fbe-ada8-e893d25f3bd4")}")" Icon="@(new Icons.Regular.Size20.Save())">Saved Views</FluentNavLink>
 		</FluentNavMenu>
 	</div>
 	<div class=content-toolbar-right>
