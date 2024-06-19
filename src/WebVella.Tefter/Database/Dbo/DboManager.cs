@@ -130,6 +130,45 @@ internal partial class DboManager : IDboManager
 	/// <param name="id"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
+	public T Get<T>(Guid id) where T : class, new()
+	{
+		string cacheKey = null;
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+		List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+		parameters.Add(new NpgsqlParameter("@id", id));
+
+		string sql = meta.GetRecordSql.Replace("$$$WHERE$$$", " @id = id ");
+		DataTable dt = null;
+		if (meta.UseCache)
+		{
+			cacheKey = GetHashCode(sql, parameters);
+			dt = GetFromCache<T>(cacheKey);
+		}
+
+		if (dt == null)
+			dt = ExecuteSqlQueryCommand(sql, parameters);
+
+		var result = ConvertDataTableToModel<T>(dt, meta);
+
+		if (meta.UseCache)
+			AddToCache<T>(cacheKey, dt);
+		else
+			logger.LogDebug($"No-Cache:GetAsync<T>:{typeof(T)}");
+
+		return result;
+	}
+
+	/// <summary>
+	/// Returns record for specified identifier in database
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
 	public T Get<T>(Dictionary<string, Guid> compositeKey) where T : class, new()
 	{
 		string cacheKey = null;
@@ -314,6 +353,43 @@ internal partial class DboManager : IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
+	public bool Update<T>(T obj, params string[] updateThesePropsOnly) where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+		var whereClause = " @id = id ";
+		List<NpgsqlParameter> parameters = ExractParametersFromObject<T>(obj, updateThesePropsOnly);
+
+		string sql = string.Empty;
+		if (updateThesePropsOnly != null && updateThesePropsOnly.Length > 0)
+		{
+			var existingPropNames = meta.Properties.Select(x => x.PropertyInfo.Name).ToHashSet();
+			var notFoundProps = updateThesePropsOnly.Where(x => !existingPropNames.Contains(x)).ToList();
+
+			if (notFoundProps.Count > 0)
+				throw new Exception("Properties to update contain non existing one or more! [" + string.Join(",", notFoundProps) + "]");
+
+			var columnNamesToUpdate = meta.Properties.Where(x => updateThesePropsOnly.Contains(x.PropertyInfo.Name)).Select(x => x.ColumnName);
+			sql = $"UPDATE {meta.TableName} SET {string.Join(", ", columnNamesToUpdate.Where(x => x != "id").Select(x => $"{x}=@{x}"))} WHERE {whereClause} ";
+		}
+		else
+			sql = meta.UpdateRecordSql.Replace("$$$WHERE$$$", whereClause);
+
+		var affectedRows = ExecuteSqlNonQueryCommand(sql, parameters);
+		if (affectedRows > 0 && meta.UseCache)
+			ClearCache<T>();
+		return affectedRows == 1;
+	}
+
+	/// <summary>
+	/// Updates existing record into database
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="obj"></param>
+	/// <returns></returns>
 	public bool Update<T>(T obj, Dictionary<string, Guid> compositeKey,
 		params string[] updateThesePropsOnly) where T : class, new()
 	{
@@ -359,6 +435,25 @@ internal partial class DboManager : IDboManager
 			sql = meta.UpdateRecordSql.Replace("$$$WHERE$$$", whereClause);
 
 		var affectedRows = ExecuteSqlNonQueryCommand(sql, parameters);
+		if (affectedRows > 0 && meta.UseCache)
+			ClearCache<T>();
+		return affectedRows == 1;
+	}
+
+	/// <summary>
+	/// Deletes existing record from database async
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	public bool Delete<T>(Guid id) where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+		var affectedRows = ExecuteSqlNonQueryCommand(meta.DeleteRecordSql.Replace("$$$WHERE$$$", " id = @id "), new NpgsqlParameter("id", id));
 		if (affectedRows > 0 && meta.UseCache)
 			ClearCache<T>();
 		return affectedRows == 1;
@@ -520,6 +615,47 @@ internal partial class DboManager : IDboManager
 			AddToCache<T>(cacheKey, dt);
 		else
 			logger.LogDebug($"No-Cache:GetListAsync<T>(where):{typeof(T)}");
+
+		return result;
+	}
+
+	/// <summary>
+	/// Returns record for specified identifier in database async
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public async Task<T> GetAsync<T>(Guid id) where T : class, new()
+	{
+		string cacheKey = null;
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+
+
+		List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+		parameters.Add(new NpgsqlParameter("@id", id));
+
+		string sql = meta.GetRecordSql.Replace("$$$WHERE$$$", " @id = id ");
+		DataTable dt = null;
+		if (meta.UseCache)
+		{
+			cacheKey = GetHashCode(sql, parameters);
+			dt = GetFromCache<T>(cacheKey);
+		}
+
+		if (dt == null)
+			dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
+
+		var result = ConvertDataTableToModel<T>(dt, meta);
+
+		if (meta.UseCache)
+			AddToCache<T>(cacheKey, dt);
+		else
+			logger.LogDebug($"No-Cache:GetAsync<T>:{typeof(T)}");
 
 		return result;
 	}
@@ -717,6 +853,43 @@ internal partial class DboManager : IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
+	public async Task<bool> UpdateAsync<T>(T obj, params string[] updateThesePropsOnly) where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+		var whereClause = " @id = id ";
+		List<NpgsqlParameter> parameters = ExractParametersFromObject<T>(obj, updateThesePropsOnly);
+
+		string sql = string.Empty;
+		if (updateThesePropsOnly != null && updateThesePropsOnly.Length > 0)
+		{
+			var existingPropNames = meta.Properties.Select(x => x.PropertyInfo.Name).ToHashSet();
+			var notFoundProps = updateThesePropsOnly.Where(x => !existingPropNames.Contains(x)).ToList();
+
+			if (notFoundProps.Count > 0)
+				throw new Exception("Properties to update contain non existing one or more! [" + string.Join(",", notFoundProps) + "]");
+
+			var columnNamesToUpdate = meta.Properties.Where(x => updateThesePropsOnly.Contains(x.PropertyInfo.Name)).Select(x => x.ColumnName);
+			sql = $"UPDATE {meta.TableName} SET {string.Join(", ", columnNamesToUpdate.Where(x => x != "id").Select(x => $"{x}=@{x}"))} WHERE {whereClause} ";
+		}
+		else
+			sql = meta.UpdateRecordSql.Replace("$$$WHERE$$$", whereClause);
+
+		var affectedRows = await ExecuteSqlNonQueryCommandAsync(sql, parameters);
+		if (affectedRows > 0 && meta.UseCache)
+			ClearCache<T>();
+		return affectedRows == 1;
+	}
+
+	/// <summary>
+	/// Updates existing record into database async
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="obj"></param>
+	/// <returns></returns>
 	public async Task<bool> UpdateAsync<T>(T obj,  Dictionary<string, Guid> compositeKey, 
 		params string [] updateThesePropsOnly ) where T : class, new()
 	{
@@ -762,6 +935,25 @@ internal partial class DboManager : IDboManager
 			sql = meta.UpdateRecordSql.Replace("$$$WHERE$$$", whereClause);
 
 		var affectedRows = await ExecuteSqlNonQueryCommandAsync(sql, parameters);
+		if (affectedRows > 0 && meta.UseCache)
+			ClearCache<T>();
+		return affectedRows == 1;
+	}
+
+	/// <summary>
+	/// Deletes existing record from database async
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	public async Task<bool> DeleteAsync<T>(Guid id) where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+		var affectedRows = await ExecuteSqlNonQueryCommandAsync(meta.DeleteRecordSql.Replace("$$$WHERE$$$", " id = @id "), new NpgsqlParameter("id", id));
 		if (affectedRows > 0 && meta.UseCache)
 			ClearCache<T>();
 		return affectedRows == 1;

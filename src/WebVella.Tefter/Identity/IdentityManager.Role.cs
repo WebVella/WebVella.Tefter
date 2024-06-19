@@ -3,10 +3,18 @@
 public partial interface IIdentityManager
 {
 	RoleBuilder CreateRoleBuilder(Role role = null);
-	Task<Role> GetRoleAsync(Guid id);
-	Task<Role> GetRoleAsync(string name);
-	Task<ReadOnlyCollection<Role>> GetRolesAsync();
-	Task<Role> SaveRoleAsync(Role role);
+
+	Result<Role> GetRole(Guid id);
+	Result<Role> GetRole(string name);
+	Result<ReadOnlyCollection<Role>> GetRoles();
+	Result<Role> SaveRole(Role role);
+	Result DeleteRole(Role role);
+	Task<Result<Role>> GetRoleAsync(Guid id);
+	Task<Result<Role>> GetRoleAsync(string name);
+	Task<Result<ReadOnlyCollection<Role>>> GetRolesAsync();
+	Task<Result<Role>> SaveRoleAsync(Role role);
+	Task<Result> DeleteRoleAsync(Role role);
+
 }
 
 public partial class IdentityManager : IIdentityManager
@@ -16,35 +24,39 @@ public partial class IdentityManager : IIdentityManager
 		return new RoleBuilder(this, role);
 	}
 
-	public async Task<Role> GetRoleAsync(Guid id)
+	public Result<Role> GetRole(Guid id)
 	{
-		var roleDbo = await _dboManager.GetAsync<RoleDbo>(id, nameof(Role.Id));
+		var roleDbo = _dboManager.Get<RoleDbo>(id, nameof(Role.Id));
 		if (roleDbo == null)
-			return null;
+			return Result.Ok();
 
-		return new RoleBuilder(this, roleDbo.Id)
-					.WithName(roleDbo.Name)
-					.IsSystem(roleDbo.IsSystem)
-					.Build();
+		return Result.Ok(
+			new RoleBuilder(this, roleDbo.Id)
+				.WithName(roleDbo.Name)
+				.IsSystem(roleDbo.IsSystem)
+				.Build()
+			);
 	}
 
-	public async Task<Role> GetRoleAsync(string name)
+	public Result<Role> GetRole(string name)
 	{
-		var roleDbo = await _dboManager.GetAsync<RoleDbo>(name, nameof(Role.Name));
+		var roleDbo = _dboManager.Get<RoleDbo>(name, nameof(Role.Name));
 		if (roleDbo == null)
-			return null;
+			return Result.Ok();
 
-		return new RoleBuilder(this, roleDbo.Id)
-					.WithName(roleDbo.Name)
-					.IsSystem(roleDbo.IsSystem)
-					.Build();
+		return Result.Ok(
+			new RoleBuilder(this, roleDbo.Id)
+				.WithName(roleDbo.Name)
+				.IsSystem(roleDbo.IsSystem)
+				.Build()
+			);
 	}
 
-
-	public async Task<ReadOnlyCollection<Role>> GetRolesAsync()
+	public Result<ReadOnlyCollection<Role>> GetRoles()
 	{
 		var orderSettings = new OrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
-		return (await _dboManager.GetListAsync<RoleDbo>(null, null, orderSettings))
+
+		var result = _dboManager.GetList<RoleDbo>(null, null, orderSettings)
 			.Select(x =>
 				new RoleBuilder(this, x.Id)
 					.WithName(x.Name)
@@ -54,23 +66,144 @@ public partial class IdentityManager : IIdentityManager
 			.ToList()
 			.AsReadOnly();
 
+		return Result.Ok(result);
 	}
 
-	public async Task<Role> SaveRoleAsync(Role role)
+	public Result<Role> SaveRole(Role role)
 	{
 		if (role == null)
 			throw new ArgumentNullException(nameof(role));
 
 		if (role.Id == Guid.Empty)
-			return await CreateRole(role);
+			return CreateRole(role);
 		else
-			return await UpdateRole(role);
+			return UpdateRole(role);
 	}
 
-	private async Task<Role> CreateRole(Role role)
+	private Result<Role> CreateRole(Role role)
 	{
-		//ValidateRoleOnCreate(role);
+		ValidationResult result = _roleValidator.ValidateCreate(role);
 
+		if (!result.IsValid)
+			return result.ToResult<Role>();
+
+		RoleDbo roleDbo = new RoleDbo
+		{
+			Id = Guid.NewGuid(),
+			Name = role.Name,
+			IsSystem = role.IsSystem
+		};
+
+		bool success = _dboManager.Insert<RoleDbo>(roleDbo);
+		if (!success)
+			return Result.Fail(new DboManagerError("Insert", roleDbo));
+
+		return GetRole(roleDbo.Id);
+	}
+
+	private Result<Role> UpdateRole(Role role)
+	{
+		ValidationResult result = _roleValidator.ValidateUpdate(role);
+
+		if (!result.IsValid)
+			return result.ToResult<Role>();
+
+		RoleDbo roleDbo = new RoleDbo
+		{
+			Id = role.Id,
+			Name = role.Name,
+			IsSystem = role.IsSystem
+		};
+
+		bool success = _dboManager.Update<RoleDbo>(roleDbo);
+		
+		if (!success)
+			return Result.Fail(new DboManagerError("Update", roleDbo));
+
+		return GetRole(roleDbo.Id);
+	}
+
+	public Result DeleteRole(Role role)
+	{
+		if (role == null)
+			throw new ArgumentNullException(nameof(role));
+
+		ValidationResult result = _roleValidator.ValidateDelete(role);
+
+		if (!result.IsValid)
+			return result.ToResult();
+
+		var success = _dboManager.Delete<RoleDbo>(role.Id);
+		if (!success)
+			return Result.Fail(new DboManagerError("Delete", role));
+
+		return Result.Ok();
+	}
+
+	public async Task<Result<Role>> GetRoleAsync(Guid id)
+	{
+		var roleDbo = await _dboManager.GetAsync<RoleDbo>(id, nameof(Role.Id));
+		
+		if (roleDbo == null)
+			return Result.Ok();
+
+		return Result.Ok(
+			new RoleBuilder(this, roleDbo.Id)
+				.WithName(roleDbo.Name)
+				.IsSystem(roleDbo.IsSystem)
+				.Build()
+			);
+	}
+
+	public async Task<Result<Role>> GetRoleAsync(string name)
+	{
+		var roleDbo = await _dboManager.GetAsync<RoleDbo>(name, nameof(Role.Name));
+		if (roleDbo == null)
+			return Result.Ok();
+
+		return Result.Ok(
+			new RoleBuilder(this, roleDbo.Id)
+				.WithName(roleDbo.Name)
+				.IsSystem(roleDbo.IsSystem)
+				.Build()
+			);
+	}
+
+	public async Task<Result<ReadOnlyCollection<Role>>> GetRolesAsync()
+	{
+		var orderSettings = new OrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
+
+		var result = (await _dboManager.GetListAsync<RoleDbo>(null, null, orderSettings))
+			.Select(x =>
+				new RoleBuilder(this, x.Id)
+					.WithName(x.Name)
+					.IsSystem(x.IsSystem)
+					.Build()
+			)
+			.ToList()
+			.AsReadOnly();
+
+		return Result.Ok(result);
+	}
+
+	public async Task<Result<Role>> SaveRoleAsync(Role role)
+	{
+		if (role == null)
+			throw new ArgumentNullException(nameof(role));
+
+		if (role.Id == Guid.Empty)
+			return await CreateRoleAsync(role);
+		else
+			return await UpdateRoleAsync(role);
+	}
+
+	private async Task<Result<Role>> CreateRoleAsync(Role role)
+	{
+		ValidationResult result = _roleValidator.ValidateCreate(role);
+
+		if(!result.IsValid)
+			return result.ToResult<Role>();
+		
 		RoleDbo roleDbo = new RoleDbo
 		{
 			Id = Guid.NewGuid(),
@@ -81,14 +214,18 @@ public partial class IdentityManager : IIdentityManager
 		bool success = await _dboManager.InsertAsync<RoleDbo>(roleDbo);
 
 		if (!success)
-			throw new DatabaseException("InsertAsync<RoleDbo> operation failed.");
+			return Result.Fail(new DboManagerError("InsertAsync", roleDbo));
 
 		return await GetRoleAsync(roleDbo.Id);
 	}
 
-	private async Task<Role> UpdateRole(Role role)
+	private async Task<Result<Role>> UpdateRoleAsync(Role role)
 	{
-		//ValidateRoleOnUpdate(role);
+		ValidationResult result = _roleValidator.ValidateUpdate(role);
+
+		if (!result.IsValid)
+			return result.ToResult<Role>();
+
 
 		RoleDbo roleDbo = new RoleDbo
 		{
@@ -97,12 +234,28 @@ public partial class IdentityManager : IIdentityManager
 			IsSystem = role.IsSystem
 		};
 
-		Dictionary<string, Guid> recordKey = new Dictionary<string, Guid> { { "id", role.Id } };
-		bool success = await _dboManager.UpdateAsync<RoleDbo>(roleDbo, recordKey);
+		bool success = await _dboManager.UpdateAsync<RoleDbo>(roleDbo);
 
 		if (!success)
-			throw new DatabaseException("UpdateAsync<RoleDbo> operation failed.");
+			return Result.Fail(new DboManagerError("UpdateAsync", roleDbo));
 
 		return await GetRoleAsync(roleDbo.Id);
+	}
+
+	public async Task<Result> DeleteRoleAsync(Role role)
+	{
+		if (role == null)
+			throw new ArgumentNullException(nameof(role));
+
+		ValidationResult result = _roleValidator.ValidateDelete(role);
+
+		if (!result.IsValid)
+			return result.ToResult();
+
+		var success = await _dboManager.DeleteAsync<RoleDbo>(role.Id);
+		if (!success)
+			return Result.Fail(new DboManagerError("DeleteAsync", role));
+
+		return Result.Ok();
 	}
 }

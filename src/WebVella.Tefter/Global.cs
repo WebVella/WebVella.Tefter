@@ -12,6 +12,7 @@ global using System.Threading.Tasks;
 global using System.Text.Json.Serialization;
 global using System.Collections.ObjectModel;
 global using System.Security.Cryptography;
+global using System.Net.Mail; 
 
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.DataProtection;
@@ -24,10 +25,17 @@ global using Microsoft.Extensions.Logging;
 
 global using Npgsql;
 global using Nito.AsyncEx;
+global using FluentResults;
+global using FluentValidation;
+global using FluentValidation.AspNetCore;
+global using FluentValidation.Results;
+global using FluentResults.Extensions;
 
 global using WebVella.Tefter;
+global using WebVella.Tefter.Errors;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Database.Dbo;
 global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Identity;
+
 

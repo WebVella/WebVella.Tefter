@@ -36,6 +36,16 @@ internal partial interface IDboManager
 	/// <param name="origin_id"></param>
 	/// <param name="target_id"></param>
 	/// <returns></returns>
+	T Get<T>(Guid id) where T : class, new();
+
+
+	/// <summary>
+	/// Returns records list for specified sql query
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="origin_id"></param>
+	/// <param name="target_id"></param>
+	/// <returns></returns>
 	T Get<T>(Dictionary<string, Guid> compositeKey) where T : class, new();
 
 	/// <summary>
@@ -91,8 +101,24 @@ internal partial interface IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
+	bool Update<T>(T obj, params string[] updateThesePropsOnly) where T : class, new();
+
+	/// <summary>
+	/// Updates existing record into database
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="obj"></param>
+	/// <returns></returns>
 	bool Update<T>(T obj, Dictionary<string, Guid> compositeKey, params string[] updateThesePropsOnly) where T : class, new();
 
+	/// <summary>
+	/// Deletes existing record from relation table
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="origin_id"></param>
+	/// <param name="target_id"></param>
+	/// <returns></returns>
+	bool Delete<T>(Guid id) where T : class, new();
 
 	/// <summary>
 	/// Deletes existing record from relation table
@@ -138,11 +164,18 @@ internal partial interface IDboManager
 	Task<List<T>> GetListAsync<T>(string whereSql, OrderSettings order = null, params NpgsqlParameter[] parameters) where T : class, new();
 
 	/// <summary>
-	/// Deletes existing record from relation table async
+	/// Gets record by id
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="origin_id"></param>
-	/// <param name="target_id"></param>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	Task<T> GetAsync<T>(Guid id) where T : class, new();
+
+	/// <summary>
+	/// Gets record by composite id
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="compositeKey"></param>
 	/// <returns></returns>
 	Task<T> GetAsync<T>(Dictionary<string, Guid> compositeKey) where T : class, new();
 
@@ -199,17 +232,33 @@ internal partial interface IDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
+	Task<bool> UpdateAsync<T>(T obj, params string[] updateThesePropsOnly) where T : class, new();
+
+
+	/// <summary>
+	/// Updates existing record into database async
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="obj"></param>
+	/// <returns></returns>
 	Task<bool> UpdateAsync<T>(T obj, Dictionary<string, Guid> compositeKey, params string[] updateThesePropsOnly) where T : class, new();
 
+	/// <summary>
+	/// Deletes record by id async
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	Task<bool> DeleteAsync<T>(Guid id) where T : class, new();
 
-    /// <summary>
-    /// Deletes existing record from relation table async
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="origin_id"></param>
-    /// <param name="target_id"></param>
-    /// <returns></returns>
-    Task<bool> DeleteAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new();
+	/// <summary>
+	/// Deletes existing record from relation table async
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="origin_id"></param>
+	/// <param name="target_id"></param>
+	/// <returns></returns>
+	Task<bool> DeleteAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new();
 
 	/// <summary>
 	/// Returns true/false if any records exists for specified parameters and where clause in database async

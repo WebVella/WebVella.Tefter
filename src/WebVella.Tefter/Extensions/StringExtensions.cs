@@ -24,4 +24,16 @@ public static class StringExtensions
 
 		return sBuilder.ToString();
 	}
+
+	public static bool IsEmail(this string text)
+	{
+		try
+		{
+			return new MailAddress(text).Address == text;
+		}
+		catch
+		{
+			return false;
+		}
+	}
 }

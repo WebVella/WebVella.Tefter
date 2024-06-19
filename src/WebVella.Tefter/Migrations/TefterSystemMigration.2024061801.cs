@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Migrations;
+﻿using FluentResults;
+
+namespace WebVella.Tefter.Migrations;
 
 [TefterSystemMigration("2024.6.14.1")]
 internal class TefterSystemMigration2024061801 : TefterSystemMigration
@@ -115,9 +117,13 @@ internal class TefterSystemMigration2024061801 : TefterSystemMigration
 			.CreateRoleBuilder()
 			.WithName("Administrators")
 			.IsSystem(true)
-			.Build();
+		.Build();
 
-		adminRole = await identityManager.SaveRoleAsync(adminRole);
+		var adminRoleResult = await identityManager.SaveRoleAsync(adminRole);
+		if (!adminRoleResult.IsSuccess)
+			throw new DatabaseException("Failed to create administrator role.");
+
+		adminRole = adminRoleResult.Value;
 
 		var user = identityManager
 			.CreateUserBuilder()
@@ -133,6 +139,8 @@ internal class TefterSystemMigration2024061801 : TefterSystemMigration
 			.WithRoles(adminRole)
 			.Build();
 
-		await identityManager.SaveUserAsync(user);
+		var userResult = await identityManager.SaveUserAsync(user);
+		if (!userResult.IsSuccess)
+			throw new DatabaseException("Failed to create administrator user");
 	}
 }
