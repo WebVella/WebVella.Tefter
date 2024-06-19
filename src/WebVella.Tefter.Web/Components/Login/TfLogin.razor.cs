@@ -1,38 +1,37 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿using Microsoft.AspNetCore.Components.Forms;
+using System.ComponentModel.DataAnnotations;
 
-using System;
-using WebVella.Tefter.Web.Store.UserState;
-public partial class TfLogin : TfBaseComponent
+namespace WebVella.Tefter.Web.Components;
+public partial class TfLogin : TfFromBaseComponent
 {
-	[Inject] protected IState<UserState> UserState { get; set; }
+	internal TfLoginModel _form = new();
 
-	private string _email = "boz@zashev.com";
-	private string _password = "1232";
-
-    protected override async ValueTask DisposeAsyncCore(bool disposing)
-    {
-        if (disposing)
-        {
-            UserState.StateChanged -= UserState_StateChnanged;
-        }
-        await base.DisposeAsyncCore(disposing);
-    }
-
-	private void _login()
+	protected override void OnInitialized()
 	{
-		Dispatcher.Dispatch(new LoginUserAction(_email, _password));
-		UserState.StateChanged += UserState_StateChnanged;
-
+		base.OnInitialized();
+		base.InitForm(_form);
 	}
 
-	private void UserState_StateChnanged(object sender, EventArgs e)
+	internal void _submit()
 	{
-		InvokeAsync(() =>
+		try
 		{
-			if (UserState.Value.IsLoading) return;
-
-			if (UserState.Value.User is not null)
-				Navigator.NavigateTo(TfConstants.HomePageUrl);
-		});
+			throw new Exception("boz");
+		}
+		catch (Exception ex)
+		{
+			ResponseUtils.ProcessResponse(this, ex,ToastService);
+		}
 	}
+}
+
+internal class TfLoginModel
+{
+	[Required(ErrorMessage = "email required")]
+	[EmailAddress(ErrorMessage = "invalid email")]
+	public string Email { get; set; }
+
+	[Required(ErrorMessage = "password required")]
+	[MinLength(5, ErrorMessage = "at least 5 chars required")]
+	public string Password { get; set; }
 }

@@ -1,0 +1,45 @@
+﻿.login-logo {
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	flex: 1 1 auto;
+	width:100%;
+}
+
+.login-logo-image {
+	flex:0 0 30px;
+}
+
+	.login-logo-image img {
+		width:100%;
+		vertical-align:text-bottom;
+	}
+.login-logo-text {
+	flex: 0 0 auto;
+	padding-left:10px;
+	line-height:1em;
+	font-size:24px;
+}
+.login-form {
+	flex: 1 1 auto;
+	width:100%;
+}
+
+::deep.login-form .fluent-input-label {
+	margin-top:1rem;
+}
+
+::deep.login-form fluent-text-field {
+	width:100%;
+}
+
+
+.login-btn {
+	width:100%;
+	margin-top:1rem;
+	flex:1 1 auto;
+}
+
+::deep.login-btn fluent-button {
+	width:100%;
+}

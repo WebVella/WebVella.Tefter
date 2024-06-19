@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Layout;
 public partial class AdminLayout : FluxorLayout
 {
+	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] protected ITfService TfService { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
 	[Inject] protected IState<UserState> UserState { get; set; }
@@ -16,6 +17,7 @@ public partial class AdminLayout : FluxorLayout
 	{
 		if (disposing)
 		{
+			KeyCodeService.UnregisterListener(OnKeyDownAsync, OnKeyUpAsync);
 			UserState.StateChanged -= UserState_StateChanged;
 			SessionState.StateChanged -= SessionState_StateChanged;
 			Navigator.LocationChanged -= Navigator_LocationChanged;
@@ -29,13 +31,13 @@ public partial class AdminLayout : FluxorLayout
 		if (firstRender)
 		{
 			Navigator.LocationChanged += Navigator_LocationChanged;
+			KeyCodeService.RegisterListener(OnKeyDownAsync, OnKeyUpAsync);
 		}
 	}
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-
 	}
 
 	// Overridden to provide an async method that is run before any rendering
@@ -118,5 +120,22 @@ public partial class AdminLayout : FluxorLayout
 	spaceDataId: urlData.SpaceDataId,
 	spaceViewId: urlData.SpaceViewId));
 	}
+	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
+	{
+		Console.WriteLine("keydown");
 
+		DispatchUtils.DispatchKeyDown(
+		dispatcher: dispatcher,
+		sessionState: SessionState,
+		userState: UserState,
+		args: args);
+
+		return Task.CompletedTask;
+	}
+
+	public Task OnKeyUpAsync(FluentKeyCodeEventArgs args)
+	{
+		Console.WriteLine("keyup");
+		return Task.CompletedTask;
+	}
 }
