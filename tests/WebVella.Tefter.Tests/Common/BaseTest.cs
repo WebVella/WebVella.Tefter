@@ -4,11 +4,13 @@ public class BaseTest
 {
     protected static readonly AsyncLock locker = new AsyncLock();
 
-    public TestContext Context { get; }
+    public static TestContext Context { get; }
 
-    public ServiceProvider ServiceProvider { get; }
+    public static ServiceProvider ServiceProvider { get; }
 
-    public BaseTest()
+	//this method will be executed once and will update
+	//tefter test database up to latest migration
+    static BaseTest()
     {
         Context = new TestContext();
 		Context.Services.AddTefterDI();

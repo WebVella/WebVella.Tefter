@@ -16,7 +16,7 @@ public partial class DboManagerTests : BaseTest
 
 				Guid id = Guid.NewGuid();
 
-				var succes = await dboManager.InsertAsync<TestModel>(new TestModel
+				var success = await dboManager.InsertAsync<TestModel>(new TestModel
 				{
 					Id = id,
 					Guid = Guid.NewGuid(),
@@ -33,11 +33,11 @@ public partial class DboManagerTests : BaseTest
 					JsonObj = "{}",
 					JsonList = "[]"
 				});
-				Assert.True(succes);
+				success.Should().BeTrue();
 
 				var idKey = new Dictionary<string, Guid> { { nameof(TestModel.Id), id } };
 				var obj = await dboManager.GetAsync<TestModel>(idKey);
-				Assert.NotNull(obj);
+				obj.Should().NotBeNull();
 			}
 		}
 	}
@@ -61,15 +61,16 @@ public partial class DboManagerTests : BaseTest
 					NumberNull = null,
 				};
 
-				var succes = await dboManager.InsertAsync<NumberTestModel>(original);
-				Assert.True(succes);
+				var success = await dboManager.InsertAsync<NumberTestModel>(original);
+				success.Should().BeTrue();
 
 				var idKey = new Dictionary<string, Guid> { { nameof(NumberTestModel.Id), original.Id } };
 				var obj = await dboManager.GetAsync<NumberTestModel>(idKey);
-				Assert.NotNull(obj);
+				obj?.Should().NotBeNull();
 
-				Assert.Equal(obj.Number, original.Number);
-				Assert.Equal(obj.NumberNull, original.NumberNull);
+				obj.Number.Should().Be(original.Number);
+				obj.NumberNull.Should().Be(original.NumberNull);
+				obj.NumberNull.Should().BeNull();
 			}
 		}
 	}
@@ -92,15 +93,16 @@ public partial class DboManagerTests : BaseTest
 					NumberNull = null,
 				};
 
-				var succes = await dboManager.InsertAsync<LongNumberTestModel>(original);
-				Assert.True(succes);
+				var success = await dboManager.InsertAsync<LongNumberTestModel>(original);
+				success.Should().BeTrue();
 
 				var idKey = new Dictionary<string, Guid> { { nameof(NumberTestModel.Id), original.Id } };
 				var obj = await dboManager.GetAsync<LongNumberTestModel>(idKey);
-				Assert.NotNull(obj);
+				obj.Should().NotBeNull();
 
-				Assert.Equal(obj.Number, original.Number);
-				Assert.Equal(obj.NumberNull, original.NumberNull);
+				obj.Number.Should().Be(original.Number);
+				obj.NumberNull.Should().Be(original.NumberNull);
+				obj.NumberNull.Should().BeNull();
 			}
 		}
 	}
@@ -125,16 +127,17 @@ public partial class DboManagerTests : BaseTest
 					DateNull = null
 				};
 
-				var succes = await dboManager.InsertAsync<DateTimeTestModel>(original);
-				Assert.True(succes);
+				var success = await dboManager.InsertAsync<DateTimeTestModel>(original);
+				success.Should().BeTrue();
 
 				var idKey = new Dictionary<string, Guid> { { nameof(DateTimeTestModel.Id), original.Id } };
 				var obj = await dboManager.GetAsync<DateTimeTestModel>(idKey);
-				Assert.NotNull(obj);
+				obj.Should().NotBeNull();
 
-				Assert.Equal(obj.Date, original.Date.Date);
-				Assert.Equal(obj.DateNull, original.DateNull);
-				Assert.True(obj.Date.Kind == DateTimeKind.Local);
+				obj.Date.Should().Be(original.Date.Date);
+				obj.DateNull.Should().Be(original.DateNull);
+				obj.DateNull.Should().BeNull();
+				obj.Date.Kind.Should().Be(DateTimeKind.Local);
 			}
 		}
 	}
@@ -162,15 +165,15 @@ public partial class DboManagerTests : BaseTest
 				}
 				};
 
-				var succes = await dboManager.InsertAsync<JsonTestModel>(original);
-				Assert.True(succes);
+				var success = await dboManager.InsertAsync<JsonTestModel>(original);
+				success.Should().BeTrue();
 
 				var idKey = new Dictionary<string, Guid> { { nameof(DateTimeTestModel.Id), original.Id } };
 				var obj = await dboManager.GetAsync<JsonTestModel>(idKey);
-				Assert.NotNull(obj);
+				obj.Should().NotBeNull();
 
-				Assert.Equal(obj.JsonObj, original.JsonObj);
-				Assert.Equal(obj.JsonList.Count, original.JsonList.Count);
+				obj.JsonObj.Should().Be(original.JsonObj);
+				obj.JsonList.Count.Should().Be(original.JsonList.Count);
 			}
 		}
 	}
@@ -195,15 +198,15 @@ public partial class DboManagerTests : BaseTest
 				};
 
 				var success = await dboManager.InsertAsync<EnumTestModel>(original);
-				Assert.True(success);
+				success.Should().BeTrue();
 
 				var idKey = new Dictionary<string, Guid> { { nameof(EnumTestModel.Id), original.Id } };
 				var obj = await dboManager.GetAsync<EnumTestModel>(idKey);
-				Assert.NotNull(obj);
+				obj.Should().NotBeNull();
 
-				Assert.Equal(obj.Sample, original.Sample);
-				Assert.Null(obj.SampleNull);
-				Assert.Equal(obj.SampleNull, original.SampleNull);
+				obj.Sample.Should().Be( original.Sample);
+				obj.SampleNull.Should().BeNull();
+				original.SampleNull.Should().BeNull();
 
 
 				original = new EnumTestModel
@@ -214,16 +217,12 @@ public partial class DboManagerTests : BaseTest
 				};
 
 				success = await dboManager.InsertAsync<EnumTestModel>(original);
-				Assert.True(success);
+				success.Should().BeTrue();
 
 				idKey = new Dictionary<string, Guid> { { nameof(DateTimeTestModel.Id), original.Id } };
 				obj = await dboManager.GetAsync<EnumTestModel>(idKey);
-				Assert.NotNull(obj);
-
-				Assert.Equal(obj.Sample, original.Sample);
-				Assert.NotNull(obj.SampleNull);
-				Assert.Equal(obj.SampleNull, original.SampleNull);
-
+				obj.Should().NotBeNull();
+				obj.Sample.Should().Be( original.Sample);
 			}
 		}
 	}
@@ -265,7 +264,7 @@ ALTER TABLE IF EXISTS public.test_table
 	protected void DropTestTableInternal()
 	{
 		ExecuteSqlQueryCommand("DROP TABLE IF EXISTS public.test_table;");
-	} 
+	}
 
 	#endregion
 
