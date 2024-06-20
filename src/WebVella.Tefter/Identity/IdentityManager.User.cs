@@ -30,7 +30,12 @@ public partial class IdentityManager : IIdentityManager
 		if (userDbo == null)
 			return Result.Ok();
 
-		var roles = GetRoles().Value;
+		var rolesResult = GetRoles();
+		if (!rolesResult.IsSuccess)
+			return Result.Fail( new Error("Failed to get user.").CausedBy(rolesResult.Errors) );
+
+		var roles = rolesResult.Value;
+
 		var userRoles = new List<Role>();
 		foreach (var userRoleRelation in _dboManager.GetList<UserRoleDbo>(id, nameof(UserRoleDbo.UserId)))
 			userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
@@ -41,7 +46,7 @@ public partial class IdentityManager : IIdentityManager
 			.WithLastName(userDbo.LastName)
 			.CreatedOn(userDbo.CreatedOn)
 			.Enabled(userDbo.Enabled)
-			.WithPassword(string.Empty)
+			.WithPassword(userDbo.Password)
 			.WithRoles(userRoles.ToArray());
 
 		if (userDbo.Settings != null)
@@ -73,7 +78,7 @@ public partial class IdentityManager : IIdentityManager
 			.WithLastName(userDbo.LastName)
 			.CreatedOn(userDbo.CreatedOn)
 			.Enabled(userDbo.Enabled)
-			.WithPassword(string.Empty)
+			.WithPassword(userDbo.Password)
 			.WithRoles(userRoles.ToArray());
 
 		if (userDbo.Settings != null)
@@ -114,7 +119,7 @@ public partial class IdentityManager : IIdentityManager
 			.WithLastName(userDbo.LastName)
 			.CreatedOn(userDbo.CreatedOn)
 			.Enabled(userDbo.Enabled)
-			.WithPassword(string.Empty)
+			.WithPassword(userDbo.Password)
 			.WithRoles(userRoles.ToArray());
 
 		if (userDbo.Settings != null)
@@ -155,7 +160,7 @@ public partial class IdentityManager : IIdentityManager
 				.WithLastName(userDbo.LastName)
 				.CreatedOn(userDbo.CreatedOn)
 				.Enabled(userDbo.Enabled)
-				.WithPassword(string.Empty);
+				.WithPassword(userDbo.Password);
 
 			if (userDbo.Settings != null)
 			{
@@ -318,7 +323,7 @@ public partial class IdentityManager : IIdentityManager
 			.WithLastName(userDbo.LastName)
 			.CreatedOn(userDbo.CreatedOn)
 			.Enabled(userDbo.Enabled)
-			.WithPassword(string.Empty)
+			.WithPassword(userDbo.Password)
 			.WithRoles(userRoles.ToArray());
 
 		if (userDbo.Settings != null)
@@ -350,7 +355,7 @@ public partial class IdentityManager : IIdentityManager
 			.WithLastName(userDbo.LastName)
 			.CreatedOn(userDbo.CreatedOn)
 			.Enabled(userDbo.Enabled)
-			.WithPassword(string.Empty)
+			.WithPassword(userDbo.Password)
 			.WithRoles(userRoles.ToArray());
 
 		if (userDbo.Settings != null)
@@ -391,7 +396,7 @@ public partial class IdentityManager : IIdentityManager
 			.WithLastName(userDbo.LastName)
 			.CreatedOn(userDbo.CreatedOn)
 			.Enabled(userDbo.Enabled)
-			.WithPassword(string.Empty)
+			.WithPassword(userDbo.Password)
 			.WithRoles(userRoles.ToArray());
 
 		if (userDbo.Settings != null)
@@ -432,7 +437,7 @@ public partial class IdentityManager : IIdentityManager
 				.WithLastName(userDbo.LastName)
 				.CreatedOn(userDbo.CreatedOn)
 				.Enabled(userDbo.Enabled)
-				.WithPassword(string.Empty);
+				.WithPassword(userDbo.Password);
 
 			if (userDbo.Settings != null)
 			{
