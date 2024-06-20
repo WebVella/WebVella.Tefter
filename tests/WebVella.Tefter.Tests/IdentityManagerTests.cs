@@ -40,6 +40,11 @@ public partial class IdentityManagerTests : BaseTest
 				userResult.IsSuccess.Should().BeTrue();
 				userResult.Value.Should().NotBeNull();
 
+				userResult = await identityManager.GetUserAsync("test@test.com", "password");
+				userResult.Should().NotBeNull();
+				userResult.IsSuccess.Should().BeTrue();
+				userResult.Value.Should().NotBeNull();
+
 				user = userResult.Value;
 
 				user = identityManager

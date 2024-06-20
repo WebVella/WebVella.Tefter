@@ -47,9 +47,10 @@ public partial class IdentityManager : IIdentityManager
 		if (userDbo.Settings != null)
 		{
 			userBuilder
-				.WithUiTheme(userDbo.Settings.UiTheme)
-				.WithUiColor(userDbo.Settings.UiColor)
-				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+				.WithThemeMode(userDbo.Settings.ThemeMode)
+				.WithThemeColor(userDbo.Settings.ThemeColor)
+				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+				.WithCultureCode(userDbo.Settings.CultureCode);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -78,9 +79,10 @@ public partial class IdentityManager : IIdentityManager
 		if (userDbo.Settings != null)
 		{
 			userBuilder
-				.WithUiTheme(userDbo.Settings.UiTheme)
-				.WithUiColor(userDbo.Settings.UiColor)
-				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+				.WithThemeMode(userDbo.Settings.ThemeMode)
+				.WithThemeColor(userDbo.Settings.ThemeColor)
+				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+				.WithCultureCode(userDbo.Settings.CultureCode);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -118,9 +120,10 @@ public partial class IdentityManager : IIdentityManager
 		if (userDbo.Settings != null)
 		{
 			userBuilder
-				.WithUiTheme(userDbo.Settings.UiTheme)
-				.WithUiColor(userDbo.Settings.UiColor)
-				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+				.WithThemeMode(userDbo.Settings.ThemeMode)
+				.WithThemeColor(userDbo.Settings.ThemeColor)
+				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+				.WithCultureCode(userDbo.Settings.CultureCode);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -157,9 +160,10 @@ public partial class IdentityManager : IIdentityManager
 			if (userDbo.Settings != null)
 			{
 				userBuilder
-					.WithUiTheme(userDbo.Settings.UiTheme)
-					.WithUiColor(userDbo.Settings.UiColor)
-					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+					.WithThemeMode(userDbo.Settings.ThemeMode)
+					.WithThemeColor(userDbo.Settings.ThemeColor)
+					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+					.WithCultureCode(userDbo.Settings.CultureCode);
 			}
 
 			if (userRolesDict.ContainsKey(userDbo.Id))
@@ -320,9 +324,10 @@ public partial class IdentityManager : IIdentityManager
 		if (userDbo.Settings != null)
 		{
 			userBuilder
-				.WithUiTheme(userDbo.Settings.UiTheme)
-				.WithUiColor(userDbo.Settings.UiColor)
-				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+				.WithThemeMode(userDbo.Settings.ThemeMode)
+				.WithThemeColor(userDbo.Settings.ThemeColor)
+				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+				.WithCultureCode(userDbo.Settings.CultureCode);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -351,9 +356,10 @@ public partial class IdentityManager : IIdentityManager
 		if (userDbo.Settings != null)
 		{
 			userBuilder
-				.WithUiTheme(userDbo.Settings.UiTheme)
-				.WithUiColor(userDbo.Settings.UiColor)
-				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+				.WithThemeMode(userDbo.Settings.ThemeMode)
+				.WithThemeColor(userDbo.Settings.ThemeColor)
+				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+				.WithCultureCode(userDbo.Settings.CultureCode);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -391,9 +397,10 @@ public partial class IdentityManager : IIdentityManager
 		if (userDbo.Settings != null)
 		{
 			userBuilder
-				.WithUiTheme(userDbo.Settings.UiTheme)
-				.WithUiColor(userDbo.Settings.UiColor)
-				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+				.WithThemeMode(userDbo.Settings.ThemeMode)
+				.WithThemeColor(userDbo.Settings.ThemeColor)
+				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+				.WithCultureCode(userDbo.Settings.CultureCode);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -430,9 +437,10 @@ public partial class IdentityManager : IIdentityManager
 			if (userDbo.Settings != null)
 			{
 				userBuilder
-					.WithUiTheme(userDbo.Settings.UiTheme)
-					.WithUiColor(userDbo.Settings.UiColor)
-					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen);
+					.WithThemeMode(userDbo.Settings.ThemeMode)
+					.WithThemeColor(userDbo.Settings.ThemeColor)
+					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
+					.WithCultureCode(userDbo.Settings.CultureCode);
 			}
 
 			if (userRolesDict.ContainsKey(userDbo.Id))

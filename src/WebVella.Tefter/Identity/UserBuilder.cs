@@ -10,9 +10,12 @@ public class UserBuilder
 	private string _password;
 	private bool _enabled;
 	private DateTime _createdOn;
-	private string _uiTheme;
-	private string _uiColor;
+
+	private DesignThemeModes _themeMode;
+	private OfficeColor _themeColor;
 	private bool _sidebarOpen;
+	private string _cultureCode;
+
 	private List<Role> _roles = new();
 
 	internal UserBuilder(IIdentityManager identityManager, User user = null)
@@ -31,13 +34,14 @@ public class UserBuilder
 			_password = string.Empty;
 			_enabled = user.Enabled;
 			_createdOn = user.CreatedOn;
-			_uiTheme = user?.Settings?.UiTheme;
-			_uiColor = user?.Settings?.UiColor;
+			_themeMode = user.Settings.ThemeMode;
+			_themeColor = user.Settings.ThemeColor;
 			_sidebarOpen = (user?.Settings?.IsSidebarOpen) ?? true;
+			_cultureCode = (user?.Settings?.CultureCode) ?? string.Empty;
 		}
 	}
 
-	internal UserBuilder(IIdentityManager identityManager, Guid userId )
+	internal UserBuilder(IIdentityManager identityManager, Guid userId)
 	{
 		_identityManager = identityManager;
 		_id = userId;
@@ -79,21 +83,27 @@ public class UserBuilder
 		return this;
 	}
 
-	public UserBuilder WithUiTheme(string theme)
+	public UserBuilder WithThemeMode(DesignThemeModes themeMode)
 	{
-		_uiTheme = theme;
+		_themeMode = themeMode;
 		return this;
 	}
 
-	public UserBuilder WithUiColor(string color)
+	public UserBuilder WithThemeColor(OfficeColor officeColor)
 	{
-		_uiColor = color;
+		_themeColor = officeColor;
 		return this;
 	}
 
 	public UserBuilder WithOpenSidebar(bool isOpen)
 	{
 		_sidebarOpen = isOpen;
+		return this;
+	}
+
+	public UserBuilder WithCultureCode(string cultureCode)
+	{
+		_cultureCode = cultureCode;
 		return this;
 	}
 
@@ -143,8 +153,9 @@ public class UserBuilder
 			Settings = new UserSettings
 			{
 				IsSidebarOpen = _sidebarOpen,
-				UiColor = _uiColor,
-				UiTheme = _uiTheme
+				ThemeColor = _themeColor,
+				ThemeMode = _themeMode,
+				CultureCode = _cultureCode
 			}
 		};
 	}

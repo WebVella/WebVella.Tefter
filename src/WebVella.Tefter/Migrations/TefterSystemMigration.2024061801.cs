@@ -125,6 +125,7 @@ internal class TefterSystemMigration2024061801 : TefterSystemMigration
 
 		adminRole = adminRoleResult.Value;
 
+		//default settings
 		var user = identityManager
 			.CreateUserBuilder()
 			.WithEmail("admin@tefter.bg")
@@ -133,9 +134,6 @@ internal class TefterSystemMigration2024061801 : TefterSystemMigration
 			.CreatedOn(DateTime.Now)
 			.WithPassword("123")
 			.Enabled(true)
-			.WithUiTheme("")
-			.WithUiColor("")
-			.WithOpenSidebar(true)
 			.WithRoles(adminRole)
 			.Build();
 

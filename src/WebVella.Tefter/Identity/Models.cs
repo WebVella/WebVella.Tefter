@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Identity;
+﻿
+
+namespace WebVella.Tefter.Identity;
 
 public class User
 {
@@ -22,11 +24,13 @@ public class Role
 
 public class UserSettings
 {
-	public string UiTheme { get; init; }
+	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
 
-	public string UiColor { get; init; }
+	public OfficeColor ThemeColor { get; init; } = OfficeColor.Excel;
 
-	public bool IsSidebarOpen { get; init; }
+	public bool IsSidebarOpen { get; init; } = true;
+
+	public string CultureCode { get; init; } = string.Empty;
 }
 
 
