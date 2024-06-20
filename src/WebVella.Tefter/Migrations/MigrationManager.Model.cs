@@ -19,7 +19,7 @@ internal partial class MigrationManager : IMigrationManager
 		public string MigrationClassName { get; init; }
 
 		[DboModelProperty("executed_on")]
-		[DboTypeConverter(typeof(LegacyDateTimePropertyConverter))]
+		[DboTypeConverter(typeof(DateTimePropertyConverter))]
 		public DateTime ExecutedOn { get; init; }
 
 		[DboModelProperty("major_ver")]

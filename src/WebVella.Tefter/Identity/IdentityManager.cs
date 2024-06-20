@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace WebVella.Tefter.Identity;
+﻿namespace WebVella.Tefter.Identity;
 
 public partial interface IIdentityManager
 {
-
 }
 
 public partial class IdentityManager : IIdentityManager
 {
-	private readonly IHttpContextAccessor _httpContextAccessor;
+	private readonly IServiceProvider _serviceProvider;
 	private readonly IDatabaseService _dbService;
 	private readonly IDboManager _dboManager;
 	private readonly UserValidator _userValidator;
@@ -17,9 +14,9 @@ public partial class IdentityManager : IIdentityManager
 
 	public IdentityManager(IServiceProvider serviceProvider)
 	{
+		_serviceProvider = serviceProvider;
 		_dbService = serviceProvider.GetService<IDatabaseService>();
 		_dboManager = serviceProvider.GetService<IDboManager>();
-		_httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
 
 		_userValidator = new UserValidator(_dboManager, this);
 		_roleValidator = new RoleValidator(_dboManager, this);

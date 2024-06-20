@@ -41,7 +41,6 @@ public partial class TfLogin : TfFromBaseComponent
 			await InvokeAsync(StateHasChanged);
 			Result<User> result = await IdentityManager.GetUserAsync(_form.Email, _form.Password);
 			ProcessFormSubmitResponse(result);
-			if (result.Value is null) throw new Exception("user not found");
 			if (result.IsSuccess)
 			{
 				//Temporary we need to set the userId in the localstorage

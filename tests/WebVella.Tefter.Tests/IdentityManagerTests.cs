@@ -66,7 +66,7 @@ public partial class IdentityManagerTests : BaseTest
 				userResult.Value.FirstName.Should().Be(user.FirstName);
 				userResult.Value.LastName.Should().Be(user.LastName);
 				userResult.Value.Enabled.Should().Be(user.Enabled);
-				//userResult.Value.CreatedOn.Should().Be(user.CreatedOn);
+				userResult.Value.CreatedOn.Should().Be(user.CreatedOn);
 
 				var deleteRoleResult = await identityManager.DeleteRoleAsync(role);
 				deleteRoleResult.Should().NotBeNull();

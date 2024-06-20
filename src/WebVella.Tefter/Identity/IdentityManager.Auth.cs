@@ -1,50 +1,60 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using System.Security.Claims;
+﻿//using Microsoft.AspNetCore.Authentication.Cookies;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.Extensions.DependencyInjection;
 
-namespace WebVella.Tefter.Identity;
+//namespace WebVella.Tefter.Identity;
 
-public partial interface IIdentityManager
-{
-	Task<Result<User>> AuthenticateAsync(string email, string password, bool rememberMe);
-}
+//public partial interface IIdentityManager
+//{
+//	Task<Result<User>> AuthenticateAsync(string email, string password);
+//}
 
-public partial class IdentityManager : IIdentityManager
-{
-	public async Task<Result<User>> AuthenticateAsync(string email, string password, bool rememberMe)
-	{
-		if (_httpContextAccessor == null)
-			return Result.Fail("IHttpContextAccessor is not available.Call services.AddHttpContextAccessor(); to register it in DI.");
+//public partial class IdentityManager : IIdentityManager
+//{
+//	public async Task<Result<User>> AuthenticateAsync(string email, string password)
+//	{
+//		var user = (await GetUserAsync(email, password)).Value;
 
-		if (_httpContextAccessor.HttpContext == null)
-			return Result.Fail("HttpContext is not available");
+//		if (user == null)
+//			return Result.Fail(new ValidationError(null, "Invalid email or password."));
 
-		var user = (await GetUserAsync(email, password)).Value;
+//		if (user is { Enabled: false })
+//			return Result.Fail(new ValidationError(null, "User access to site is denied."));
 
-		if (user == null)
-			return Result.Fail(new ValidationError(null, "Invalid email or password."));
+//		try
+//		{
+//			IServiceScopeFactory serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
+//			using (var scope = serviceScopeFactory.CreateScope())
+//			{
+//				//var authStateProvider = (TfAuthStateProvider)scope.ServiceProvider.GetRequiredService<AuthenticationStateProvider>();
+//				//await authStateProvider.UpdateAuthenticationStateAsync(user);
+//				//return Result.Ok(user);
 
-		if (user is { Enabled: false })
-			return Result.Fail(new ValidationError(null, "User access to site is denied."));
+//				var claimsIdentity = new ClaimsIdentity(
+//					new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) },
+//					CookieAuthenticationDefaults.AuthenticationScheme);
 
-		var claims = new List<Claim> { new(ClaimTypes.NameIdentifier, user.Id.ToString()) };
-		claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
+//				var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-		var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-		var authProperties = new AuthenticationProperties
-		{
-			AllowRefresh = true,
-			ExpiresUtc = rememberMe ? DateTimeOffset.UtcNow.AddDays(30) : DateTimeOffset.UtcNow.AddDays(1),
-			IsPersistent = rememberMe,
-			IssuedUtc = DateTimeOffset.UtcNow
-		};
+//				var authProperties = new AuthenticationProperties
+//				{
+//					AllowRefresh = true,
+//					ExpiresUtc = DateTimeOffset.UtcNow.AddYears(100),
+//					IsPersistent = false,
+//					IssuedUtc = DateTimeOffset.UtcNow,
+//				};
 
-		await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-			new ClaimsPrincipal(claimsIdentity), authProperties);
-
-		//TODO if we need activity log - here is the place
-
-		return Result.Ok(user);
-	}
-
-}
+//				var httpContextAccesor = _serviceProvider.GetRequiredService<IHttpContextAccessor>();
+//				await httpContextAccesor.HttpContext.SignInAsync(
+//					CookieAuthenticationDefaults.AuthenticationScheme, 
+//					claimsPrincipal, authProperties);
+				
+//				return Result.Ok(user);
+//			}
+//		}
+//		catch (Exception ex)
+//		{
+//			return Result.Fail(new Error("User authentication failed.").CausedBy(ex));
+//		}
+//	}
+//}

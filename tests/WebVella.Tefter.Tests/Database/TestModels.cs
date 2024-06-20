@@ -112,10 +112,10 @@ public class DateTimeTestModel
 	public Guid Id { get; set; }
 
 	[DboModelProperty("date")]
-	[DboTypeConverter(typeof(LegacyDateTimePropertyConverter))]
+	[DboTypeConverter(typeof(DateTimePropertyConverter))]
 	public DateTime Date { get; set; }
 
 	[DboModelProperty("date_null")]
-	[DboTypeConverter(typeof(LegacyDateTimePropertyConverter))]
+	[DboTypeConverter(typeof(DateTimePropertyConverter))]
 	public DateTime? DateNull { get; set; }
 }

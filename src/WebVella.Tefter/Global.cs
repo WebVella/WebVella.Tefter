@@ -12,7 +12,8 @@ global using System.Threading.Tasks;
 global using System.Text.Json.Serialization;
 global using System.Collections.ObjectModel;
 global using System.Security.Cryptography;
-global using System.Net.Mail; 
+global using System.Net.Mail;
+global using System.Security.Claims;
 
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.DataProtection;
@@ -23,6 +24,7 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.FluentUI.AspNetCore.Components;
+
 
 global using Npgsql;
 global using Nito.AsyncEx;

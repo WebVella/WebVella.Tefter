@@ -58,7 +58,7 @@ internal record UserDbo
 	public bool Enabled { get; set; }
 
 	[DboModelProperty("created_on")]
-	[DboTypeConverter(typeof(LegacyDateTimePropertyConverter))]
+	[DboTypeConverter(typeof(DateTimePropertyConverter))]
 	public DateTime CreatedOn { get; set; }
 
 	[DboModelProperty("settings_json")]
