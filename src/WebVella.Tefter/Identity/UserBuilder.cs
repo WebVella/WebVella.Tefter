@@ -31,7 +31,7 @@ public class UserBuilder
 			_email = user.Email;
 			_firstName = user.FirstName;
 			_lastName = user.LastName;
-			_password = string.Empty;
+			_password = user.Password;
 			_enabled = user.Enabled;
 			_createdOn = user.CreatedOn;
 			_themeMode = user.Settings.ThemeMode;
