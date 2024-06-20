@@ -1,9 +1,25 @@
-﻿namespace WebVella.Tefter;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 
-public static class IServiceCollectionExtensions
+namespace WebVella.Tefter;
+
+public static class DependencyInjection
 {
 	public static IServiceCollection AddTefterDI(this IServiceCollection services, bool unitTestModeOn = false)
 	{
+		services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+		   .AddCookie(options =>
+		   {
+			   options.Cookie.HttpOnly = true;
+			   options.Cookie.Name = "tefter";
+			   options.LoginPath = new PathString("/login");
+			   options.LogoutPath = new PathString("/logout");
+			   options.AccessDeniedPath = new PathString("/error?access_denied");
+			   options.ReturnUrlParameter = "ret_url";
+		   });
+
+		services.AddHttpContextAccessor();
 		services.AddSingleton<ILogger, NullLogger>();
 		services.AddSingleton<IDbConfigurationService, DatabaseConfigurationService>((Context) =>
 		{

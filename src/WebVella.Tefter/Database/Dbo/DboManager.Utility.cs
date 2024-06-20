@@ -125,33 +125,33 @@ internal partial class DboManager
         return sb.ToString();
     }
 
-    protected static string GenerateSearchSql(DboModelMeta meta, List<Guid> searchWordIds)
-    {
-        if (meta.Properties.All(x => x.PropertyInfo.Name != "XSearch"))
-            throw new Exception("Trying to do search in database model with no XSearch property");
+//    protected static string GenerateSearchSql(DboModelMeta meta, List<Guid> searchWordIds)
+//    {
+//        if (meta.Properties.All(x => x.PropertyInfo.Name != "XSearch"))
+//            throw new Exception("Trying to do search in database model with no XSearch property");
 
-        if (searchWordIds.Count == 0)
-            return string.Empty;
+//        if (searchWordIds.Count == 0)
+//            return string.Empty;
 
-        return $@" 
-WHERE 
-(
-    SELECT COUNT( * ) FROM 
-    (
-        UNNEST 
-        ( 
-            ARRAY(
-            (
-                SELECT DISTINCT search_word_id 
-                FROM rec_search_element 
-                WHERE rec_search_element.search_element_id = ANY( string_to_array ({meta.TableName}.x_search, ',')::uuid[] )
-            )::uuid[]
-        ) 
-    ) 
-    INTERSECT 
-    UNNEST( ARRAY [{string.Join(",", searchWordIds.Select(x => $"'{x.ToString()}'::uuid"))}]::uuid[] )
-) > 0 ";
-    }
+//        return $@" 
+//WHERE 
+//(
+//    SELECT COUNT( * ) FROM 
+//    (
+//        UNNEST 
+//        ( 
+//            ARRAY(
+//            (
+//                SELECT DISTINCT search_word_id 
+//                FROM rec_search_element 
+//                WHERE rec_search_element.search_element_id = ANY( string_to_array ({meta.TableName}.x_search, ',')::uuid[] )
+//            )::uuid[]
+//        ) 
+//    ) 
+//    INTERSECT 
+//    UNNEST( ARRAY [{string.Join(",", searchWordIds.Select(x => $"'{x.ToString()}'::uuid"))}]::uuid[] )
+//) > 0 ";
+//    }
 
 	protected static (string, List<NpgsqlParameter>) GenerateSearchSql(DboModelMeta meta, string searchQuery )
     {
