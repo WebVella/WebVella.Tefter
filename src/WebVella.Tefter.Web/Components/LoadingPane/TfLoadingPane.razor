@@ -1,8 +1,21 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 
-<div class="loading">
-	<FluentStack Orientation="Orientation.Vertical" VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Center">
-		Loading...<br />
+@if (ShowTop)
+{
+	<div class="loading loading-top">
 		<FluentProgress Width="100%" />
-	</FluentStack>
-</div>
+	</div>
+}
+else
+{
+	<div class="loading">
+		<FluentStack Orientation="Orientation.Vertical" VerticalAlignment="VerticalAlignment.Center" HorizontalAlignment="HorizontalAlignment.Center">
+			Loading...<br />
+			<FluentProgress Width="100%" />
+		</FluentStack>
+	</div>
+}
+
+@code {
+	[Parameter] public bool ShowTop { get; set; } = false;
+}
