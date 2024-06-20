@@ -1,32 +1,42 @@
 ﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 namespace WebVella.Tefter.Web.Services;
-public partial interface ITfService
-{
-    Task SetString();
-    ValueTask<string?> GetString();
+public partial interface ITfService{
+	Task SetUnprotectedLocalStorage(string key, string value);
+	Task RemoveUnprotectedLocalStorage(string key);
+	Task<string> GetUnprotectedLocalStorage(string key);
 }
 
 public partial class TfService : ITfService
 {
 	private ProtectedLocalStorage browserStorage;
 	private IDataBroker dataBroker;
+	private IIdentityManager identityManager;
+	private readonly IJSRuntime _jsRuntime;
 
-	public TfService(ProtectedLocalStorage protectedLocalStorage, IDataBroker dataBroker)
+	public TfService(ProtectedLocalStorage protectedLocalStorage, 
+		IDataBroker dataBroker,
+		IIdentityManager identityManager,
+		IJSRuntime jsRuntime)
 	{
 		this.browserStorage = protectedLocalStorage;
 		this.dataBroker = dataBroker;
+		this.identityManager = identityManager;
+		_jsRuntime = jsRuntime;
 	}
 
-
-	public async Task SetString(){
-		await browserStorage.SetAsync(TfConstants.UISettingsLocalKey,"testing");
-	}
-
-	public async ValueTask<string?> GetString()
+	public async Task SetUnprotectedLocalStorage(string key, string value)
 	{
-		var result = await browserStorage.GetAsync<string>(TfConstants.UISettingsLocalKey);
+		await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, value);
+	}
 
-		return result.Value;
+	public async Task RemoveUnprotectedLocalStorage(string key)
+	{
+		await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
+	}
+
+	public async Task<string> GetUnprotectedLocalStorage(string key)
+	{
+		return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
 	}
 }

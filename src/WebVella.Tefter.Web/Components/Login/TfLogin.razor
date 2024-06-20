@@ -1,5 +1,4 @@
-﻿@namespace WebVella.Tefter.Web.Components
-@inherits TfFromBaseComponent
+﻿@inherits TfFromBaseComponent
 
 <FluentCard Style="width:300px;" Class="login-card">
 	<FluentStack Orientation="@Orientation.Vertical">
@@ -12,15 +11,17 @@
 			<div class="login-form" aria-autocomplete="none">
 				
 
-				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email Label="Email" Id="email"
+				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email Label="@LC["Email"]" Id="email"
 								 AutoComplete="off" ></FluentTextField>
 				<FluentValidationMessage For="@(() => _form.Email)" />
-				<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password Label="Password" Id="password"
+				<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password Label="@LC["Password"]" Id="password"
 								 AutoComplete="off"></FluentTextField>
 				<FluentValidationMessage For="@(() => _form.Password)" />
 			</div>
 			<div class="login-btn">
-				<FluentButton Type="ButtonType.Submit" Appearance="@Appearance.Accent">Login</FluentButton>
+				<FluentButton Type="ButtonType.Submit" Appearance="@Appearance.Accent"
+							  IconStart="@(new Icons.Regular.Size20.Key())" 
+							  Loading="@_submitting" Disabled="@_submitting">@LC["Login"]</FluentButton>
 			</div>
 		</FluentEditForm>
 	</FluentStack>

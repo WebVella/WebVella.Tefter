@@ -2,8 +2,11 @@
 
 public partial class TfConstants
 {
-	public static CultureInfo Culture = new CultureInfo("bg-BG");
-	public static CultureInfo NumberCulture = new CultureInfo("en-US");
+	public static List<CultureOption> CultureOptions = new List<CultureOption>(){
+		new CultureOption{ CultureCode = "en-US", IconUrl ="/media/us.svg", Name = "English (US)"},
+		new CultureOption{ CultureCode = "bg-BG", IconUrl ="/media/bg.svg", Name = "Български"}
+	};
+
 	public static string TimeZoneName = "Europe/Sofia";
 	public const string DateFormat = "dd.MM.yyyy";
 	public const string HourFormat = "HH:mm";

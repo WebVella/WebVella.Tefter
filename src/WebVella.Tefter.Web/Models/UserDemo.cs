@@ -1,7 +1,7 @@
 ﻿using Bogus;
 namespace WebVella.Tefter.Web.Models;
 
-public record User
+public record UserDemo
 {
     public Guid Id { get; init; }
     public string FirstName { get; init; }
@@ -30,7 +30,7 @@ public record User
             return String.Join("", list).ToUpperInvariant();
         }
     }
-	public static Faker<User> GetFaker()
+	public static Faker<UserDemo> GetFaker()
     {
         var themeModes = new List<DesignThemeModes>();
         var themeColors = new List<OfficeColor>();
@@ -42,7 +42,7 @@ public record User
             themeColors.Add(item);
 
         
-        var faker = new Faker<User>()
+        var faker = new Faker<UserDemo>()
         .RuleFor(m => m.Id, (f, m) => new Guid("ca6b3f9f-3e6a-47c1-a84d-cc946c413ef8"))
         .RuleFor(m => m.FirstName, (f, m) => f.Person.FirstName)
         .RuleFor(m => m.LastName, (f, m) => f.Person.LastName)

@@ -25,4 +25,6 @@ public partial class TfConstants
 	public static string AdminSidebarStyle => $"background-color:{AdminBackgkroundColor} !important; border-color:{AdminBorderColor} !important";
 	public static string AdminPagebarStyle => $"background-color:{AdminBorderColor} !important;";
 
+	public static string MESSAGES_NOTIFICATION_CENTER = "MESSAGES_NOTIFICATION_CENTER";
+
 }

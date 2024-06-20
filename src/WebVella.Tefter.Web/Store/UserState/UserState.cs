@@ -3,6 +3,6 @@
 [FeatureState]
 public record UserState
 {
-	public bool IsLoading { get; init; } = true;
+	public bool Loading { get; init; } = true;
 	public User User { get; init; }
 }

@@ -1,23 +1,35 @@
-﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-
-namespace WebVella.Tefter.Web.Services;
+﻿namespace WebVella.Tefter.Web.Services;
 public partial interface ITfService
 {
-	ValueTask<UserSession> GetUserSession(Guid userId, Guid? spaceId,
+	ValueTask<Result<UserSession>> GetUserSession(Guid userId, Guid? spaceId,
 		Guid? spaceDataId, Guid? spaceViewId);
-	Task SetSessionUI(Guid userId, DesignThemeModes themeMode, OfficeColor themeColor, bool sidebarExpanded);
+	ValueTask<Result<UserSession>> SetSessionUI(Guid userId,
+		Guid? spaceId, Guid? spaceDataId, Guid? spaceViewId,
+		DesignThemeModes themeMode, OfficeColor themeColor,
+		bool sidebarExpanded, string cultureCode);
 }
 
 public partial class TfService : ITfService
 {
-	public async ValueTask<UserSession> GetUserSession(Guid userId, Guid? spaceId,
-	Guid? spaceDataId, Guid? spaceViewId)
+	/// <summary>
+	/// Get the complete user session for init of the UI
+	/// </summary>
+	/// <param name="userId"></param>
+	/// <param name="spaceId"></param>
+	/// <param name="spaceDataId"></param>
+	/// <param name="spaceViewId"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public async ValueTask<Result<UserSession>> GetUserSession(Guid userId, Guid? spaceId,
+			Guid? spaceDataId, Guid? spaceViewId)
 	{
 		if (userId == Guid.Empty) throw new Exception("userId not provided");
 
-		var user = await GetUserById(userId);
-		if (user is null) throw new Exception("userId not found");
+		Result<User> userResult = await identityManager.GetUserAsync(userId);
 
+		if (userResult.Value is null) throw new Exception("userId not found");
+
+		var user = userResult.Value;
 		Space space = null;
 		SpaceData spaceData = null;
 		SpaceView spaceView = null;
@@ -27,7 +39,7 @@ public partial class TfService : ITfService
 		IDictionary<Guid, SpaceView> spaceViewDict = new Dictionary<Guid, SpaceView>();
 
 		var userSpaces = await GetSpacesForUserAsync(userId);
-		if(spaceId.HasValue)
+		if (spaceId.HasValue)
 		{
 			var selSpace = userSpaces.FirstOrDefault(x => x.Id == spaceId.Value);
 			if (selSpace is not null && selSpace.Data.Count > 0)
@@ -65,11 +77,12 @@ public partial class TfService : ITfService
 			});
 		}
 
-		return new UserSession
+		return Result.Ok(new UserSession
 		{
-			ThemeColor = user.ThemeColor,
-			ThemeMode = user.ThemeMode,
-			SidebarExpanded = user.SidebarExpanded,
+			UserId = userId,
+			ThemeColor = user.Settings.ThemeColor,
+			ThemeMode = user.Settings.ThemeMode,
+			SidebarExpanded = user.Settings.IsSidebarOpen,
 			Space = space,
 			SpaceData = spaceData,
 			SpaceView = spaceView,
@@ -77,11 +90,39 @@ public partial class TfService : ITfService
 			SpaceDataDict = spaceDataDict,
 			SpaceViewDict = spaceViewDict,
 			SpaceNav = spaceNav,
-		};
+			CultureCode = user.Settings.CultureCode
+		});
 	}
 
-	public async Task SetSessionUI(Guid userId, DesignThemeModes themeMode, OfficeColor themeColor, bool sidebarExpanded){ 
-		await dataBroker.SetUserUISettingsAsync(userId, themeMode, themeColor, sidebarExpanded);
+	/// <summary>
+	/// Sets changes of the User session in its UI part
+	/// </summary>
+	/// <param name="userId"></param>
+	/// <param name="themeMode"></param>
+	/// <param name="themeColor"></param>
+	/// <param name="sidebarExpanded"></param>
+	/// <param name="cultureCode"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public async ValueTask<Result<UserSession>> SetSessionUI(Guid userId,
+		Guid? spaceId, Guid? spaceDataId, Guid? spaceViewId,
+		DesignThemeModes themeMode, OfficeColor themeColor, 
+		bool sidebarExpanded, string cultureCode)
+	{
+		Result<User> userResult = await identityManager.GetUserAsync(userId);
+		if(userResult.IsFailed) 
+			return Result.Fail(new Error("GetUserAsync failed").CausedBy(userResult.Errors));
+		if (userResult is null) throw new Exception("User not found");
+		var userBld = identityManager.CreateUserBuilder(userResult.Value);
+		userBld.WithThemeMode(themeMode);
+		userBld.WithThemeColor(themeColor);
+		userBld.WithOpenSidebar(sidebarExpanded);
+		userBld.WithCultureCode(cultureCode);
+		var user = userBld.Build();
+		var saveResult = await identityManager.SaveUserAsync(userBld.Build());
+		if(saveResult.IsFailed)
+			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(userResult.Errors));
+		return await GetUserSession(userId, spaceId, spaceDataId, spaceViewId);
 	}
 
 }

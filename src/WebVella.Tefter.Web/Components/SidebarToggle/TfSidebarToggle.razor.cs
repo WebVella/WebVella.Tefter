@@ -1,10 +1,17 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.SidebarToggle;
 public partial class TfSidebarToggle : TfBaseComponent
 {
-	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 	private void _toggle()
 	{
-		Dispatcher.Dispatch(new SetUIAction(UserState.Value.User.Id,SessionState.Value.ThemeMode,SessionState.Value.ThemeColor, !SessionState.Value.SidebarExpanded));
+		Dispatcher.Dispatch(new SetUIAction(
+		userId: SessionState.Value.UserId,
+		spaceId: SessionState.Value.SpaceRouteId,
+		spaceDataId: SessionState.Value.SpaceDataRouteId,
+		spaceViewId: SessionState.Value.SpaceViewRouteId,
+		mode:SessionState.Value.ThemeMode,
+		color: SessionState.Value.ThemeColor,
+		sidebarExpanded:!SessionState.Value.SidebarExpanded,
+		cultureOption: SessionState.Value.CultureOption));
 	}
 }

@@ -5,8 +5,14 @@ public static partial class SessionStateReducers
 	[ReducerMethod()]
 	public static SessionState InitSessionResultReducer(SessionState state, InitSessionAction action)
 	{
+		var culture = String.IsNullOrWhiteSpace(action.UserSession.CultureCode) ? null : CultureInfo.GetCultureInfo(action.UserSession.CultureCode);
+		CultureInfo.CurrentCulture = culture;
+		CultureInfo.CurrentUICulture = culture;
+		CultureOption cultureOption = TfConstants.CultureOptions.FirstOrDefault(x=> x.CultureCode ==  action.UserSession.CultureCode);
+		if(cultureOption is null) cultureOption = TfConstants.CultureOptions[0];
 		return state with
 		{
+			UserId = action.UserSession.UserId,
 			ThemeColor = action.UserSession.ThemeColor,
 			ThemeMode = action.UserSession.ThemeMode,
 			SpaceRouteId = action.RouteSpaceId,
@@ -22,6 +28,7 @@ public static partial class SessionStateReducers
 			SpaceDataDict = action.UserSession.SpaceDataDict,
 			SpaceViewDict = action.UserSession.SpaceViewDict,
 			SpaceNav = action.UserSession.SpaceNav,
+			CultureOption = cultureOption
 		};
 	}
 }

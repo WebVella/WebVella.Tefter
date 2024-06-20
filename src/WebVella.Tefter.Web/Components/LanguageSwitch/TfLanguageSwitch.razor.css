@@ -1,0 +1,19 @@
+﻿.language-switch {
+	height:16px;
+	padding-right:5px;
+}
+
+::deep #language-switch-btn {
+	line-height:16px;
+	display:inline-block;
+	height:16px;
+}
+
+::deep #language-switch-btn img{
+	height:16px;
+	vertical-align:central;
+}
+
+::deep fluent-menu-item .btn-image{
+	height:16px;
+}

@@ -32,17 +32,19 @@ public partial class TfUserNavigation
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-			initAdmin(e.Location);
-			StateHasChanged();
+		initAdmin(e.Location);
+		StateHasChanged();
 	}
 
 	private void initAdmin(string location)
 	{
 		Uri uri = null;
-		if(string.IsNullOrEmpty(location)) {
+		if (string.IsNullOrEmpty(location))
+		{
 			uri = new Uri(Navigator.Uri);
 		}
-		else{
+		else
+		{
 			uri = new Uri(location);
 		}
 		_isAdmin = uri.LocalPath.StartsWith("/admin");
@@ -65,7 +67,16 @@ public partial class TfUserNavigation
 		if (!result.Cancelled && result.Data != null)
 		{
 			var response = (ThemeSettings)result.Data;
-			Dispatcher.Dispatch(new SetUIAction(UserState.Value.User.Id, response.ThemeMode, response.ThemeColor, SessionState.Value.SidebarExpanded));
+			Dispatcher.Dispatch(new SetUIAction(
+				userId: SessionState.Value.UserId,
+				spaceId: SessionState.Value.SpaceRouteId,
+				spaceDataId: SessionState.Value.SpaceDataRouteId,
+				spaceViewId: SessionState.Value.SpaceViewRouteId,
+				mode: SessionState.Value.ThemeMode,
+				color: SessionState.Value.ThemeColor,
+				sidebarExpanded: !SessionState.Value.SidebarExpanded,
+				cultureOption: SessionState.Value.CultureOption
+		));
 
 		}
 	}

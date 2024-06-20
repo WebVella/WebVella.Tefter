@@ -69,7 +69,7 @@ public partial class TfSpaceView : TfBaseComponent
 	private async Task loadDataAsync(int page)
 	{
 		if (SessionState.Value.SpaceView is null) return;
-		var alldata = await tfSrv.GetSpaceViewData(SessionState.Value.SpaceView.Id);
+		var alldata = await TfSrv.GetSpaceViewData(SessionState.Value.SpaceView.Id);
 		if (page == 1)
 		{
 			_data = Enumerable.Empty<DataRow>().AsQueryable();

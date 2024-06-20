@@ -5,17 +5,20 @@ public partial class SessionStateEffects
 	[EffectMethod]
 	public async Task HandleGetSessionAction(GetSessionAction action, IDispatcher dispatcher)
 	{
-		var session = await tfService.GetUserSession(
+		Result<UserSession> sessionResult = await tfService.GetUserSession(
 			userId: action.UserId,
 			spaceId: action.SpaceId,
 			spaceDataId: action.SpaceDataId,
 			spaceViewId: action.SpaceViewId
 		);
-		dispatcher.Dispatch(new InitSessionAction(
-		spaceId: action.SpaceId,
-		spaceDataId: action.SpaceDataId,
-		spaceViewId: action.SpaceViewId,
-		userSession: session));
+		if (sessionResult.IsSuccess && sessionResult.Value is not null)
+		{
+			dispatcher.Dispatch(new InitSessionAction(
+			spaceId: action.SpaceId,
+			spaceDataId: action.SpaceDataId,
+			spaceViewId: action.SpaceViewId,
+			userSession: sessionResult.Value));
+		}
 	}
 
 }

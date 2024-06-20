@@ -137,7 +137,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for space creation");
 
-		var spaces = await tfSrv.GetSpacesForUserAsync(UserState.Value.User.Id);
+		var spaces = await TfSrv.GetSpacesForUserAsync(UserState.Value.User.Id);
 		Navigator.NavigateTo($"/space/{spaces[0].Id}/data/{spaces[0].Data[0].Id}");
 	}
 	private void onDetailsClick()

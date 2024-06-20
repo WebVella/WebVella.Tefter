@@ -5,6 +5,9 @@
 
 	.usernav .actions {
 		padding-right: 10px;
+		display:flex;
+		flex-grow:0;
+		align-items:center;
 	}
 
 ::deep .fluent-presence-badge {
@@ -16,19 +19,13 @@
 }
 
 ::deep.usernav .stealth::part(control) {
-	background: var(--neutral-layer-3);
+	background: var(--neutral-layer-3) !important;
 }
 
 ::deep.usernav .stealth:hover::part(control) {
-	background: var(--neutral-fill-stealth-hover);
+	background: var(--neutral-fill-stealth-hover) !important;
 }
 /*::deep.usernav .stealth svg {
 	fill: var(--neutral-fill-inverse-rest) !important;
 }*/
 
-::deep.usernav .fluentui-counterbadge {
-	left: unset !important;
-	bottom: unset !important;
-	right: 5px !important;
-	top: 5px !important;
-}

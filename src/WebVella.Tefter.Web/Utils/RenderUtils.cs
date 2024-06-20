@@ -77,8 +77,9 @@ public static class RenderUtils
 		return System.Drawing.Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
 	}
 
-	public static string ChangeColorBrightnessHex(System.Drawing.Color color, float correctionFactor){ 
-		return ColorToHex(ChangeColorBrightness(color,correctionFactor));
+	public static string ChangeColorBrightnessHex(System.Drawing.Color color, float correctionFactor)
+	{
+		return ColorToHex(ChangeColorBrightness(color, correctionFactor));
 	}
 
 	public static string ChangeColorDarknessHex(System.Drawing.Color color, float correctionFactor)
@@ -89,8 +90,25 @@ public static class RenderUtils
 	public static String ColorToHex(System.Drawing.Color c)
 		=> $"#{c.R:X2}{c.G:X2}{c.B:X2}";
 
-
 	public static String ColorToRGB(System.Drawing.Color c)
 		=> $"RGB({c.R},{c.G},{c.B})";
+
+
+	public static string GetUserInitions(User user)
+	{
+		var list = new List<string>();
+		if (!String.IsNullOrWhiteSpace(user.FirstName))
+		{
+			list.Add(user.FirstName.Substring(0, 1));
+		}
+		if (!String.IsNullOrWhiteSpace(user.LastName))
+		{
+			list.Add(user.LastName.Substring(0, 1));
+		}
+
+		if (list.Count == 0) return "?";
+
+		return String.Join("", list).ToUpperInvariant();
+	}
 
 }

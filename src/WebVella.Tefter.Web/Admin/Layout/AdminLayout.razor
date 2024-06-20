@@ -1,33 +1,20 @@
 ﻿@namespace WebVella.Tefter.Web.Layout
 @inherits FluxorLayout
+@layout UserLayout
 
-@if (_isLoading)
-{
-	<TfLoadingPane />
-}
-else
-{
-	<FluentDesignTheme Mode="@SessionState.Value.ThemeMode" OfficeColor="@TfConstants.AdminOfficeColor" />
-	<FluentLayout Class="@(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
-		<FluentHeader Class="header">
-			<TfSidebarToggle />
-			<TfAdminLocation />
-			<FluentSpacer />
-			<TfUserNavigation />
-		</FluentHeader>
-		<FluentStack Orientation="Orientation.Horizontal" Class="wrapper" HorizontalGap="0" VerticalGap="0">
-			<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
-				<TfAdminNavigation />
-			</FluentStack>
-			<FluentBodyContent Class="content" style="@($"border-top-color:{TfConstants.AdminColor}")">
-				@Body
-			</FluentBodyContent>
+<FluentLayout Class="@(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
+	<FluentHeader Class="header">
+		<TfSidebarToggle />
+		<TfAdminLocation />
+		<FluentSpacer />
+		<TfUserNavigation />
+	</FluentHeader>
+	<FluentStack Orientation="Orientation.Horizontal" Class="wrapper" HorizontalGap="0" VerticalGap="0">
+		<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
+			<TfAdminNavigation />
 		</FluentStack>
-	</FluentLayout>
-
-	<div id="blazor-error-ui">
-		An unhandled error has occurred.
-		<a href="" class="reload">Reload</a>
-		<a class="dismiss">🗙</a>
-	</div>
-}
+		<FluentBodyContent Class="content" style="@($"border-top-color:{TfConstants.AdminColor}")">
+			@Body
+		</FluentBodyContent>
+	</FluentStack>
+</FluentLayout>

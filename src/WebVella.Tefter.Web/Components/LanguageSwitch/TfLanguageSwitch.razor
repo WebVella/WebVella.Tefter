@@ -1,0 +1,19 @@
+﻿@inherits TfBaseComponent
+
+<div class="language-switch">
+	<a href="#" Id="language-switch-btn" @onclick:preventDefault @onclick="() => _visible = !_visible" Appearance="@Appearance.Hypertext">
+		<img src="@SessionState.Value.CultureOption?.IconUrl" />
+	</a>
+</div>
+<FluentMenu Width="200" @bind-Open="_visible" Anchor="language-switch-btn">
+	@foreach (var item in TfConstants.CultureOptions)
+	{
+		<FluentMenuItem OnClick="@(()=> _select(item))">
+			@item.Name
+			<span slot="start">
+				<img style="height:16px;vertical-align:text-bottom;" src="@item.IconUrl" />
+			</span>
+		</FluentMenuItem>
+	}
+
+</FluentMenu>

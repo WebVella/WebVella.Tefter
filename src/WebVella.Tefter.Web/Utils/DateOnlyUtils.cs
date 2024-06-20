@@ -3,7 +3,7 @@
 public static class DateOnlyUtils
 {
 	public static string ToString(DateOnly? date) => date?.ToString(TfConstants.DateFormatUrl);
-	public static string ForView(DateOnly? date) => date?.ToString(TfConstants.DateFormat, TfConstants.Culture);
+	public static string ForView(DateOnly? date) => date?.ToString(TfConstants.DateFormat, CultureInfo.CurrentCulture);
 	public static string FromStringForView(string dateString)
 	{
 		var date = FromString(dateString);

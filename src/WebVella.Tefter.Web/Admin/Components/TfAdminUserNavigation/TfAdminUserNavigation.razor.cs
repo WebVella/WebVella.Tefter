@@ -55,7 +55,10 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 	{
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
-		var users = await tfSrv.GetUsersAsync();
+		var userResult = await IdentityManager.GetUsersAsync();
+		if(userResult.IsFailed) return;
+		
+		var users = userResult.Value;
 
 
 		foreach (var item in users)

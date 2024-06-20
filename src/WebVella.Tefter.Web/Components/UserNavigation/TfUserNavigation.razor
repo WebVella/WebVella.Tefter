@@ -13,11 +13,8 @@
 			}
 			else
 			{
-				<FluentCounterBadge BackgroundColor="@Color.Error" Color="Color.Fill" Dot="@true">
-					<FluentButton Appearance="@Appearance.Stealth" OnClick="_alertsClick" Title="Alerts">
-						<FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="@Color.Neutral" />
-					</FluentButton>
-				</FluentCounterBadge>
+				<TfLanguageSwitch/>
+				<TfNotificationCenter/>
 				<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminClick" Title="Administration">
 					<FluentIcon Value="@(new Icons.Regular.Size20.AppFolder())" Color="@Color.Neutral" />
 				</FluentButton>
@@ -28,7 +25,7 @@
 			}
 		</div>
 		<div class="avatar">
-			<FluentPersona Id="user-menu-toggle" Initials="@UserState.Value.User.Initials"
+			<FluentPersona Id="user-menu-toggle" Initials="@RenderUtils.GetUserInitions(UserState.Value.User)"
 						   ImageSize="24px" OnClick="() => _visible = !_visible"></FluentPersona>
 		</div>
 		<FluentMenu Width="200" @bind-Open="_visible" Anchor="user-menu-toggle">

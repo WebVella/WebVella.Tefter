@@ -10,11 +10,16 @@ global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using System.Collections;
 global using System.Web;
+global using Microsoft.Extensions.Localization;
+global using System.ComponentModel.DataAnnotations;
+
 
 global using Fluxor;
 global using Fluxor.Blazor.Web.Components;
+global using FluentResults;
 
-global using WebVella.Tefter;
+global using WebVella.Tefter.Identity;
+
 global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Brokers;
 global using WebVella.Tefter.Web.Services;

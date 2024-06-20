@@ -56,7 +56,7 @@ public partial class GuestLayout : FluxorLayout
 	{
 		InvokeAsync(async() =>
 		{
-			if (UserState.Value.IsLoading) return;
+			if (UserState.Value.Loading) return;
 
 			if (UserState.Value.User is not null)
 			{

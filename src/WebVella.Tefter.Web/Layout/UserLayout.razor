@@ -1,0 +1,12 @@
+﻿@inherits FluxorLayout
+
+@if (_isLoading)
+{
+	<TfLoadingPane />
+}
+else
+{
+	<FluentDesignTheme Mode="@SessionState.Value.ThemeMode" OfficeColor="@SessionState.Value.ThemeColor" />
+	@Body
+}
+

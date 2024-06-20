@@ -5,11 +5,25 @@ public partial class SessionStateEffects
 	[EffectMethod]
 	public async Task HandleSetThemeAction(SetUIAction action, IDispatcher dispatcher)
 	{
-		await tfService.SetSessionUI(
+		var sessionResult = await tfService.SetSessionUI(
 			userId: action.UserId,
-			themeMode:action.ThemeMode,
+			spaceId: action.SpaceId,
+			spaceDataId: action.SpaceDataId,
+			spaceViewId: action.SpaceViewId,
+			themeMode: action.ThemeMode,
 			themeColor: action.ThemeColor,
-			sidebarExpanded: action.SidebarExpanded
+			sidebarExpanded: action.SidebarExpanded,
+			cultureCode: action.CultureOption.CultureCode
 		);
+
+		if (sessionResult.IsSuccess && sessionResult.Value is not null)
+		{
+			dispatcher.Dispatch(new InitSessionAction(
+			spaceId: sessionResult.Value.Space?.Id,
+			spaceDataId: sessionResult.Value.SpaceData?.Id,
+			spaceViewId: sessionResult.Value.SpaceView?.Id,
+			userSession: sessionResult.Value
+			));
+		}
 	}
 }

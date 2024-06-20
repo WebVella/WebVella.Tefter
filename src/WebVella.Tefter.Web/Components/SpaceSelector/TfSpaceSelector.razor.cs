@@ -28,7 +28,7 @@ public partial class TfSpaceSelector : TfBaseComponent
 	{
 		if (_spaces is null)
 		{
-			_spaces = await tfSrv.GetSpacesForUserAsync(UserId);
+			_spaces = await TfSrv.GetSpacesForUserAsync(UserId);
 			foreach (var space in _spaces)
 			{
 				space.OnSelect = async () => await _spaceSelected(space);

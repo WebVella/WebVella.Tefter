@@ -6,6 +6,7 @@ using SystemColor = System.Drawing.Color;
 [FeatureState]
 public record SessionState
 {
+	public Guid UserId { get; init; }
 	public bool IsLoading { get; init; } = true;
 	public bool IsDataLoading { get; init; }
 	public string DataHashId { get; init; }
@@ -29,6 +30,9 @@ public record SessionState
 	}
 
 	public List<Guid> SelectedDataRows { get; init; } = new();
+
+	//Localization
+	public CultureOption CultureOption { get; init; }
 
 	//UI
 	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;

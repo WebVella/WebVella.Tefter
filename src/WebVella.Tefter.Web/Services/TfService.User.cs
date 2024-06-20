@@ -3,19 +3,12 @@
 namespace WebVella.Tefter.Web.Services;
 public partial interface ITfService
 {
-	ValueTask<List<User>> GetUsersAsync();
 	ValueTask<User> GetUserFromBrowserStorage();
-	ValueTask<User> LoginUserByEmailAndPassword(string email, string password);
 	Task LogoutUser();
 }
 
 public partial class TfService : ITfService
 {
-	public async ValueTask<List<User>> GetUsersAsync()
-	{
-		return await dataBroker.GetUsersAsync();
-	}
-
 	public async ValueTask<User> GetUserFromBrowserStorage()
 	{
 		try
@@ -26,7 +19,8 @@ public partial class TfService : ITfService
 			 || result.Value.Value == Guid.Empty) return null;
 
 			var userId = result.Value.Value;
-			return await GetUserById(userId);
+			return await GetUserByIdAsync(userId);
+
 		}
 		catch (Exception)
 		{
@@ -37,22 +31,17 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public async ValueTask<User> LoginUserByEmailAndPassword(string email, string password)
+	private async ValueTask<User> GetUserByIdAsync(Guid userId)
 	{
-		var user = await dataBroker.GetUserByEmailAndPasswordAsync(email, password);
-		await browserStorage.SetAsync(TfConstants.UserLocalKey, user.Id);
-		await browserStorage.SetAsync(TfConstants.UIThemeLocalKey, user.Id);
-		return user;
-	}
-
-	private async ValueTask<User> GetUserById(Guid userId)
-	{
-		return await dataBroker.GetUserByIdAsync(userId);
+		Result<User> userResult = await identityManager.GetUserAsync(userId);
+		if (userResult.IsFailed) throw new Exception("getting user failed");
+		if (userResult.Value is null) throw new Exception("user not found");
+		return userResult.Value;
 	}
 
 	public async Task LogoutUser()
 	{
 		await browserStorage.DeleteAsync(TfConstants.UserLocalKey);
-		await browserStorage.DeleteAsync(TfConstants.UIThemeLocalKey);
+		await RemoveUnprotectedLocalStorage(TfConstants.UIThemeLocalKey);
 	}
 }
