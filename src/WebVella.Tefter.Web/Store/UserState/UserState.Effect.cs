@@ -4,12 +4,11 @@ namespace WebVella.Tefter.Web.Store.UserState;
 
 public partial class UserStateEffects
 {
-	private readonly ITfService tfService;
+	private readonly IIdentityManager IdentityManager;
 
-	public UserStateEffects(ITfService tfService,
-	IIdentityManager identityManager)
+	public UserStateEffects(IIdentityManager identityManager)
 	{
-		this.tfService = tfService;
+		this.IdentityManager = identityManager;
 	}
 }
 

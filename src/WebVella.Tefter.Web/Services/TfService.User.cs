@@ -3,13 +3,14 @@
 namespace WebVella.Tefter.Web.Services;
 public partial interface ITfService
 {
+	ValueTask<User> GetUserByIdAsync(Guid userId);
 	ValueTask<User> GetUserFromBrowserStorage();
 	Task LogoutUser();
 }
 
 public partial class TfService : ITfService
 {
-	public async ValueTask<User> GetUserFromBrowserStorage()
+    public async ValueTask<User> GetUserFromBrowserStorage()
 	{
 		try
 		{
@@ -31,7 +32,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private async ValueTask<User> GetUserByIdAsync(Guid userId)
+	public async ValueTask<User> GetUserByIdAsync(Guid userId)
 	{
 		Result<User> userResult = await identityManager.GetUserAsync(userId);
 		if (userResult.IsFailed) throw new Exception("getting user failed");
@@ -41,7 +42,7 @@ public partial class TfService : ITfService
 
 	public async Task LogoutUser()
 	{
-		await browserStorage.DeleteAsync(TfConstants.UserLocalKey);
+		//await browserStorage.DeleteAsync(TfConstants.UserLocalKey);
 		await RemoveUnprotectedLocalStorage(TfConstants.UIThemeLocalKey);
 	}
 }

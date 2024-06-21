@@ -46,12 +46,6 @@ public partial class TfSpaceView : TfBaseComponent
 		}
 	}
 
-	protected override bool ShouldRender()
-	{
-		Console.WriteLine("Should Render");
-		return true;
-	}
-
 	protected void SessionState_StateChanged(object sender, EventArgs e)
 	{
 		InvokeAsync(async () =>

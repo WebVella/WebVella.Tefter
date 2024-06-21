@@ -72,8 +72,8 @@ public partial class TfUserNavigation
 				spaceId: SessionState.Value.SpaceRouteId,
 				spaceDataId: SessionState.Value.SpaceDataRouteId,
 				spaceViewId: SessionState.Value.SpaceViewRouteId,
-				mode: SessionState.Value.ThemeMode,
-				color: SessionState.Value.ThemeColor,
+				mode: response.ThemeMode,
+				color: response.ThemeColor,
 				sidebarExpanded: !SessionState.Value.SidebarExpanded,
 				cultureOption: SessionState.Value.CultureOption
 		));
@@ -84,9 +84,11 @@ public partial class TfUserNavigation
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will open edit profile modal");
 	}
-	private void _logout()
+	private async Task _logout()
 	{
-		Dispatcher.Dispatch(new LogoutUserAction());
+		await new Cookie(JSRuntimeSrv).RemoveValue(Constants.TEFTER_AUTH_COOKIE_NAME);
+		Dispatcher.Dispatch(new SetUserAction(null));
+		Navigator.NavigateTo("/login",true);
 
 	}
 
