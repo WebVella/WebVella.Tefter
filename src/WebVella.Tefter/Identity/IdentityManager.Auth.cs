@@ -1,60 +1,45 @@
-﻿//using Microsoft.AspNetCore.Authentication.Cookies;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.Extensions.DependencyInjection;
+﻿namespace WebVella.Tefter.Identity;
 
-//namespace WebVella.Tefter.Identity;
+public partial interface IIdentityManager
+{
+	Task<Result> AuthenticateAsync(string email, string password, bool rememberMe);
+}
 
-//public partial interface IIdentityManager
-//{
-//	Task<Result<User>> AuthenticateAsync(string email, string password);
-//}
+public partial class IdentityManager : IIdentityManager
+{
+	public async Task<Result> AuthenticateAsync(string email, string password, bool rememberMe)
+	{
+		var user = (await GetUserAsync(email, password)).Value;
 
-//public partial class IdentityManager : IIdentityManager
-//{
-//	public async Task<Result<User>> AuthenticateAsync(string email, string password)
-//	{
-//		var user = (await GetUserAsync(email, password)).Value;
+		if (user == null)
+			return Result.Fail(new ValidationError(null, "Invalid email or password."));
 
-//		if (user == null)
-//			return Result.Fail(new ValidationError(null, "Invalid email or password."));
+		if (user is { Enabled: false })
+			return Result.Fail(new ValidationError(null, "User access to site is denied."));
 
-//		if (user is { Enabled: false })
-//			return Result.Fail(new ValidationError(null, "User access to site is denied."));
+		try
+		{
+			IServiceScopeFactory serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
+			using (var scope = serviceScopeFactory.CreateScope())
+			{
+				var jsRuntime = scope.ServiceProvider.GetRequiredService<IJSRuntime>();
+				var cryptoService = scope.ServiceProvider.GetRequiredService<ICryptoService>();
+				if (jsRuntime == null)
+					return Result.Fail("Unable to instantiate JSRuntime.");
 
-//		try
-//		{
-//			IServiceScopeFactory serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
-//			using (var scope = serviceScopeFactory.CreateScope())
-//			{
-//				//var authStateProvider = (TfAuthStateProvider)scope.ServiceProvider.GetRequiredService<AuthenticationStateProvider>();
-//				//await authStateProvider.UpdateAuthenticationStateAsync(user);
-//				//return Result.Ok(user);
+				//Set auth cookie
+				await new CookieService(jsRuntime).SetAsync(
+						key: Constants.TEFTER_AUTH_COOKIE_NAME,
+						value: cryptoService.Encrypt(user.Id.ToString()),
+						expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
 
-//				var claimsIdentity = new ClaimsIdentity(
-//					new List<Claim> { new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) },
-//					CookieAuthenticationDefaults.AuthenticationScheme);
 
-//				var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-//				var authProperties = new AuthenticationProperties
-//				{
-//					AllowRefresh = true,
-//					ExpiresUtc = DateTimeOffset.UtcNow.AddYears(100),
-//					IsPersistent = false,
-//					IssuedUtc = DateTimeOffset.UtcNow,
-//				};
-
-//				var httpContextAccesor = _serviceProvider.GetRequiredService<IHttpContextAccessor>();
-//				await httpContextAccesor.HttpContext.SignInAsync(
-//					CookieAuthenticationDefaults.AuthenticationScheme, 
-//					claimsPrincipal, authProperties);
-				
-//				return Result.Ok(user);
-//			}
-//		}
-//		catch (Exception ex)
-//		{
-//			return Result.Fail(new Error("User authentication failed.").CausedBy(ex));
-//		}
-//	}
-//}
+				return Result.Ok();
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("User authentication failed.").CausedBy(ex));
+		}
+	}
+}

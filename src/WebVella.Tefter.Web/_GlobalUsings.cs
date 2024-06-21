@@ -19,6 +19,7 @@ global using Fluxor.Blazor.Web.Components;
 global using FluentResults;
 
 global using WebVella.Tefter.Identity;
+global using WebVella.Tefter.Utility;
 
 global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Brokers;
