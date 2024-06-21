@@ -14,6 +14,8 @@ internal class TefterSystemMigration2024062101 : TefterSystemMigration
 		//adds users for developers
 		//this migration will be removed for production or at later stage
 
+#if DEBUG
+
 		IDatabaseService dbService = serviceProvider.GetService<IDatabaseService>();
 		IDboManager dboManager = serviceProvider.GetService<IDboManager>();
 		IIdentityManager identityManager = serviceProvider.GetService<IIdentityManager>();
@@ -54,6 +56,7 @@ internal class TefterSystemMigration2024062101 : TefterSystemMigration
 		if (!userResult.IsSuccess)
 			throw new DatabaseException("Failed to create Bozhidar Zashev user");
 
+#endif
 	}
 
 
