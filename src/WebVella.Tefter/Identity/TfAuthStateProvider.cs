@@ -1,19 +1,26 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace WebVella.Tefter.Identity;
 
-public class TfBrowserStorageAuthStateProvider : AuthenticationStateProvider
+public class TfAuthStateProvider : AuthenticationStateProvider
 {
+	private readonly ICryptoService _cryptoService;
+	private readonly IIdentityManager _identityManager;
+	private readonly IHttpContextAccessor _contextAccessor;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly ClaimsPrincipal _anonymous;
 
-	public TfBrowserStorageAuthStateProvider(IServiceProvider serviceProvider)
+	public TfAuthStateProvider(IServiceProvider serviceProvider)
 	{
 		_serviceProvider = serviceProvider;
+
+		_cryptoService = _serviceProvider.GetRequiredService<ICryptoService>();
+
+		_contextAccessor = _serviceProvider.GetRequiredService<IHttpContextAccessor>();
+
+		_identityManager = _serviceProvider.GetService<IIdentityManager>();
+
 		_anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 	}
 
@@ -21,47 +28,33 @@ public class TfBrowserStorageAuthStateProvider : AuthenticationStateProvider
 	{
 		try
 		{
-			//var userSessionStorageResult = await _sessionStorage.GetAsync<User>("UserSession");
-			//var user = userSessionStorageResult.Success ? userSessionStorageResult.Value : null;
+			var cookieEncryptedText = _contextAccessor.HttpContext.Request.Cookies[Constants.TEFTER_AUTH_COOKIE_NAME];
+			if (!string.IsNullOrWhiteSpace(cookieEncryptedText))
+			{
+				var cookieDecryptedText = _cryptoService.Decrypt(cookieEncryptedText);
+				Guid currentUserId;
+				if (!Guid.TryParse(cookieDecryptedText, out currentUserId))
+					return await Task.FromResult(new AuthenticationState(_anonymous));
 
-			var httpAccessor = _serviceProvider.GetRequiredService<IHttpContextAccessor>();
+				var userResult = await _identityManager.GetUserAsync(currentUserId);
+				if (!userResult.IsSuccess || userResult.Value is null)
+					return await Task.FromResult(new AuthenticationState(_anonymous));
 
+				var user = userResult.Value;
 
+				
+				var claims = new List<Claim> { new(ClaimTypes.Email, user.Email.ToString()) };
+				claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
 
-			//User user = ;
+				var claimsIdentity = new ClaimsIdentity(claims);
+				var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-			if (httpAccessor.HttpContext.User == null)
-				return await Task.FromResult(new AuthenticationState(_anonymous));
-
-			//var claims = new List<Claim> { new(ClaimTypes.NameIdentifier, user.Id.ToString()) };
-			//claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
-
-			//var claimsIdentity = new ClaimsIdentity(claims, "Tefter Authentication");
-			//var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-			return await Task.FromResult(new AuthenticationState(httpAccessor.HttpContext.User));
+				_contextAccessor.HttpContext.User = claimsPrincipal;
+				return await Task.FromResult(new AuthenticationState(claimsPrincipal));
+			}
 		}
-		catch
-		{
-			return await Task.FromResult(new AuthenticationState(_anonymous));
-		}
-	}
+		catch { }
 
-	public async Task UpdateAuthenticationStateAsync(User user)
-	{
-		ClaimsPrincipal claimsPrincipal;
-		if (user is not null)
-		{
-			var claims = new List<Claim> { new(ClaimTypes.NameIdentifier, user.Id.ToString()) };
-			claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
-
-			var claimsIdentity = new ClaimsIdentity(claims, "Tefter Authentication");
-			claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-		}
-		else
-		{
-			claimsPrincipal = _anonymous;
-		}
-
-		NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(claimsPrincipal)));
+		return await Task.FromResult(new AuthenticationState(_anonymous));
 	}
 }

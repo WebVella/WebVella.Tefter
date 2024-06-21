@@ -23,7 +23,8 @@ public static class DependencyInjection
 		//	.AddAuthentication(TfAuthenticationOptions.DefaultScheme)
 		//	.AddScheme<TfAuthenticationOptions, TfAuthenticationHandler>(
 		//		TfAuthenticationOptions.DefaultScheme, options => { });
-		//services.AddScoped<AuthenticationStateProvider, TfBrowserStorageAuthStateProvider>();
+		
+		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
 
 
 		services.AddSingleton<ILogger, NullLogger>();
@@ -35,7 +36,7 @@ public static class DependencyInjection
 		   .Build());
 		});
 
-		services.AddSingleton<ICryptoUtilityService, CryptoUtilityService>();
+		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
 		services.AddSingleton<IDatabaseService, DatabaseService>();
