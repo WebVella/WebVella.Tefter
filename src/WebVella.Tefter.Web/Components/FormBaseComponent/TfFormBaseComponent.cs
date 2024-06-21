@@ -63,7 +63,7 @@ public class TfFromBaseComponent : TfBaseComponent
 				if (String.IsNullOrWhiteSpace(error.PropertyName))
 					generalErrors.Add(error.Reason);
 				else
-					MessageStore.Add(EditContext.Field(error.PropertyName), error.Message);
+					MessageStore.Add(EditContext.Field(error.PropertyName), error.Reason);
 			}
 			else
 			{

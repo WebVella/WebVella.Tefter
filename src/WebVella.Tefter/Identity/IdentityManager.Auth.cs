@@ -16,10 +16,10 @@ public partial class IdentityManager : IIdentityManager
 		var user = (await GetUserAsync(email, password)).Value;
 
 		if (user == null)
-			return Result.Fail(new ValidationError(null, "Invalid email or password."));
+			return Result.Fail(new ValidationError(nameof(User.Password), "Invalid email or password."));
 
 		if (user is { Enabled: false })
-			return Result.Fail(new ValidationError(null, "User access to site is denied."));
+			return Result.Fail(new ValidationError(nameof(User.Email), "User access to site is denied."));
 
 		try
 		{
