@@ -1,5 +1,5 @@
-﻿@inherits FluxorLayout
-
+﻿@namespace WebVella.Tefter.Web.Layout
+@inherits FluxorLayout
 <TfStateProvider LoadingChange="_onLoadingChange" />
 @if (_isLoading)
 {
@@ -11,15 +11,15 @@ else
 	<FluentLayout Class="@(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
 			<TfSidebarToggle />
-			<TfLocation />
+			<TfAdminLocation />
 			<FluentSpacer />
 			<TfUserNavigation />
 		</FluentHeader>
 		<FluentStack Orientation="Orientation.Horizontal" Class="wrapper" HorizontalGap="0" VerticalGap="0">
 			<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
-				<TfNavigation />
+				<TfAdminNavigation />
 			</FluentStack>
-			<FluentBodyContent Class="content" style="@($"border-top-color:{SessionState.Value.SpaceColor}")">
+			<FluentBodyContent Class="content" style="@($"border-top-color:{TfConstants.AdminColor}")">
 				@Body
 			</FluentBodyContent>
 		</FluentStack>
