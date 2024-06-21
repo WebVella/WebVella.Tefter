@@ -60,7 +60,10 @@ public class TfFromBaseComponent : TfBaseComponent
 			if (iError is ValidationError)
 			{
 				var error = (ValidationError)iError;
-				MessageStore.Add(EditContext.Field(error.PropertyName), error.Message);
+				if (String.IsNullOrWhiteSpace(error.PropertyName))
+					generalErrors.Add(error.Message);
+				else
+					MessageStore.Add(EditContext.Field(error.PropertyName), error.Message);
 			}
 			else
 			{
@@ -73,7 +76,7 @@ public class TfFromBaseComponent : TfBaseComponent
 		if (generalErrors.Count > 0)
 		{
 			ToastService.ShowToast(ToastIntent.Error, LOC("Unexpected Error! Check Notifications for details"));
-			SendErrorsToNotifications(LOC("Unexpected Error!"),generalErrors);
+			SendErrorsToNotifications(LOC("Unexpected Error!"), generalErrors);
 		}
 	}
 }
