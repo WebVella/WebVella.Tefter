@@ -16,10 +16,10 @@ public partial class IdentityManager : IIdentityManager
 		string email, string password, bool rememberMe)
 	{
 		Result validationResult = new Result();
-		if (email == null)
+		if (string.IsNullOrWhiteSpace(email))
 			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
 
-		if (password == null)
+		if (string.IsNullOrWhiteSpace(password))
 			validationResult.WithError(new ValidationError(nameof(User.Email), "The password is required."));
 
 		if (validationResult.IsFailed)
