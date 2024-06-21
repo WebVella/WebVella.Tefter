@@ -18,7 +18,10 @@ public partial class TfLogin : TfFromBaseComponent
 		{
 			_submitting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = await IdentityManager.AuthenticateAsync(_form.Email, _form.Password, _form.RememberMe);
+			
+			var result = await IdentityManager.AuthenticateAsync(
+				JSRuntimeSrv, _form.Email, _form.Password, _form.RememberMe);
+
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
 				Navigator.NavigateTo(TfConstants.HomePageUrl, true);

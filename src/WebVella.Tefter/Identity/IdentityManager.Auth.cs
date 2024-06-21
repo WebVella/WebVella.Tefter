@@ -2,12 +2,14 @@
 
 public partial interface IIdentityManager
 {
-	Task<Result> AuthenticateAsync(string email, string password, bool rememberMe);
+	Task<Result> AuthenticateAsync(IJSRuntime jsRuntime,
+		string email, string password, bool rememberMe);
 }
 
 public partial class IdentityManager : IIdentityManager
 {
-	public async Task<Result> AuthenticateAsync(string email, string password, bool rememberMe)
+	public async Task<Result> AuthenticateAsync(IJSRuntime jsRuntime,
+		string email, string password, bool rememberMe)
 	{
 		var user = (await GetUserAsync(email, password)).Value;
 
@@ -19,23 +21,18 @@ public partial class IdentityManager : IIdentityManager
 
 		try
 		{
-			IServiceScopeFactory serviceScopeFactory = _serviceProvider.GetRequiredService<IServiceScopeFactory>();
-			using (var scope = serviceScopeFactory.CreateScope())
-			{
-				var jsRuntime = scope.ServiceProvider.GetRequiredService<IJSRuntime>();
-				var cryptoService = scope.ServiceProvider.GetRequiredService<ICryptoService>();
-				if (jsRuntime == null)
-					return Result.Fail("Unable to instantiate JSRuntime.");
+			var cryptoService = _serviceProvider.GetRequiredService<ICryptoService>();
+			if (jsRuntime == null)
+				return Result.Fail("Unable to instantiate JSRuntime.");
 
-				//Set auth cookie
-				await new CookieService(jsRuntime).SetAsync(
-						key: Constants.TEFTER_AUTH_COOKIE_NAME,
-						value: cryptoService.Encrypt(user.Id.ToString()),
-						expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
+			//Set auth cookie
+			await new CookieService(jsRuntime).SetAsync(
+					key: Constants.TEFTER_AUTH_COOKIE_NAME,
+					value: cryptoService.Encrypt(user.Id.ToString()),
+					expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
 
 
-				return Result.Ok();
-			}
+			return Result.Ok();
 		}
 		catch (Exception ex)
 		{
