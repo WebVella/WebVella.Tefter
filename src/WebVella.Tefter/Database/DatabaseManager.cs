@@ -352,6 +352,9 @@ public partial class DatabaseManager : IDatabaseManager
 
 		List<DatabaseUpdateLogRecord> log = new List<DatabaseUpdateLogRecord>();
 
+		if (differences.Count == 0)
+			return new DatabaseUpdateResult(log);
+
 		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
 			var dtLogs = _dbService.ExecuteSqlQueryCommand(updateScript);
