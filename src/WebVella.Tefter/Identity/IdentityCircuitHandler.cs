@@ -24,8 +24,8 @@ public class IdentityCircuitHandler : CircuitHandler
 		{
 			var user = ((TfIdentity)authState.User.Identity).User;
 			CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureCode);
-			Thread.CurrentThread.CurrentCulture = cultureInfo;
-			Thread.CurrentThread.CurrentUICulture = cultureInfo;
+			CultureInfo.CurrentCulture = cultureInfo;
+			CultureInfo.CurrentUICulture = cultureInfo;
 		}
 	}
 
@@ -38,8 +38,8 @@ public class IdentityCircuitHandler : CircuitHandler
 		{
 			var user = ((TfIdentity)authState.User.Identity).User;
 			CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureCode);
-			Thread.CurrentThread.CurrentCulture = cultureInfo;
-			Thread.CurrentThread.CurrentUICulture = cultureInfo;
+			CultureInfo.CurrentCulture = cultureInfo;
+			CultureInfo.CurrentUICulture = cultureInfo;
 		}
 		
 		await base.OnCircuitOpenedAsync(circuit, cancellationToken);
