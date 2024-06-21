@@ -86,7 +86,7 @@ public partial class TfUserNavigation
 	}
 	private async Task _logout()
 	{
-		await new CookieService(JSRuntimeSrv).RemoveAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
+		await IdentityManager.LogoutAsync(JSRuntimeSrv);
 		Dispatcher.Dispatch(new SetUserAction(null));
 		Navigator.NavigateTo("/login",true);
 

@@ -4,6 +4,8 @@ public partial interface IIdentityManager
 {
 	Task<Result> AuthenticateAsync(IJSRuntime jsRuntime,
 		string email, string password, bool rememberMe);
+
+	Task<Result> LogoutAsync(IJSRuntime jsRuntime);
 }
 
 public partial class IdentityManager : IIdentityManager
@@ -39,4 +41,19 @@ public partial class IdentityManager : IIdentityManager
 			return Result.Fail(new Error("User authentication failed.").CausedBy(ex));
 		}
 	}
+
+	public async Task<Result> LogoutAsync(IJSRuntime jsRuntime )
+	{
+		try
+		{
+			//remove auth cookie
+			await new CookieService(jsRuntime).RemoveAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("User logout failed.").CausedBy(ex));
+		}
+	}
+
 }
