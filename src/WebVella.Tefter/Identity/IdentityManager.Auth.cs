@@ -20,7 +20,7 @@ public partial class IdentityManager : IIdentityManager
 			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
 
 		if (string.IsNullOrWhiteSpace(password))
-			validationResult.WithError(new ValidationError(nameof(User.Email), "The password is required."));
+			validationResult.WithError(new ValidationError(nameof(User.Password), "The password is required."));
 
 		if (validationResult.IsFailed)
 			return validationResult;
