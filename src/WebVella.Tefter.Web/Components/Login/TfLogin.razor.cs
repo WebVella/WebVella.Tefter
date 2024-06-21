@@ -4,7 +4,7 @@ using WebVella.Tefter.Utility;
 namespace WebVella.Tefter.Web.Components.Login;
 public partial class TfLogin : TfFromBaseComponent
 {
-    [Inject] internal ICryptoUtilityService CryptoUtilityService { get; set; }
+    [Inject] internal ICryptoService CryptoService { get; set; }
     [Inject] internal IState<UserState> UserState { get; set; }
 
     internal TfLoginModel _form = new();
@@ -29,7 +29,7 @@ public partial class TfLogin : TfFromBaseComponent
                 //Set auth cookie
                 await new Cookie(JSRuntimeSrv).SetValue(
                         key:Constants.TEFTER_AUTH_COOKIE_NAME,
-                        value: CryptoUtilityService.Encrypt(result.Value.Id.ToString()),
+                        value: CryptoService.Encrypt(result.Value.Id.ToString()),
                         days:_form.RememberMe ? 30 : null);
 
                 Navigator.NavigateTo(TfConstants.HomePageUrl);

@@ -3,7 +3,7 @@
 namespace WebVella.Tefter.Web.Layout;
 public partial class GuestLayout : FluxorLayout
 {
-    [Inject] private ICryptoUtilityService CryptoUtilityService { get; set; }
+    [Inject] private ICryptoService CryptoService { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] protected ITfService TfService { get; set; }
     [Inject] protected NavigationManager Navigator { get; set; }

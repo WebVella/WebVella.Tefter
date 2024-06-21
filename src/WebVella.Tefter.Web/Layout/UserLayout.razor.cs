@@ -4,7 +4,7 @@ using WebVella.Tefter.Utility;
 namespace WebVella.Tefter.Web.Layout;
 public partial class UserLayout : FluxorLayout
 {
-    [Inject] private ICryptoUtilityService CryptoUtilityService { get; set; }
+    [Inject] private ICryptoService CryptoService { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] private IKeyCodeService KeyCodeService { get; set; }
     [Inject] protected ITfService TfService { get; set; }
@@ -44,7 +44,7 @@ public partial class UserLayout : FluxorLayout
         Guid? cookieUserId = null;
         var cookieVal = await (new Cookie(JSRuntime)).GetValue(Constants.TEFTER_AUTH_COOKIE_NAME);
         if(!String.IsNullOrWhiteSpace(cookieVal))
-            cookieVal = CryptoUtilityService.Decrypt(cookieVal);
+            cookieVal = CryptoService.Decrypt(cookieVal);
         if (!String.IsNullOrWhiteSpace(cookieVal) && Guid.TryParse(cookieVal, out Guid outGuid))
             cookieUserId = outGuid;
 
