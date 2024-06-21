@@ -2,6 +2,8 @@
 
 internal class Constants
 {
+	public const string TEFTER_AUTH_COOKIE_NAME = "tefter-auth";
+
 	public static Guid TEFTER_CORE_APP_ID = new Guid("7d272612-0824-496a-a02d-2c144959ae73");
 
 	//because the postgres NUMERIC type can hold a value of up to 131,072 digits
