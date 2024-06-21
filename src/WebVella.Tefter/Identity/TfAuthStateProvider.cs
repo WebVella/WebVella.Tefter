@@ -48,11 +48,11 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 					new(ClaimTypes.Email, user.Email.ToString()) };
 				claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
 
-				var claimsIdentity = new ClaimsIdentity(claims,"Tefter Cookie Authentication");
-				var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+				var tfIdentity = new TfIdentity(user, claims);
+				var tfPrincipal = new TfPrincipal(tfIdentity);
 
-				_contextAccessor.HttpContext.User = claimsPrincipal;
-				return await Task.FromResult(new AuthenticationState(claimsPrincipal));
+				_contextAccessor.HttpContext.User = tfPrincipal;
+				return await Task.FromResult(new AuthenticationState(tfPrincipal));
 			}
 		}
 		catch { }
