@@ -15,7 +15,21 @@ public partial class IdentityManager : IIdentityManager
 	public async Task<Result> AuthenticateAsync(IJSRuntime jsRuntime,
 		string email, string password, bool rememberMe)
 	{
-		var user = (await GetUserAsync(email, password)).Value;
+		Result validationResult = new Result();
+		if (email == null)
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+
+		if (password == null)
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The password is required."));
+
+		if (validationResult.IsFailed)
+			return validationResult;
+
+		var userResult = (await GetUserAsync(email, password));
+		if (userResult.IsFailed)
+			return Result.Fail(new Error("Unable to get user.").CausedBy(userResult.Errors));
+
+		var user = userResult.Value;
 
 		if (user == null)
 			return Result.Fail(new ValidationError(nameof(User.Password), "Invalid email or password."));
