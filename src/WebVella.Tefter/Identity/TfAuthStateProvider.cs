@@ -21,7 +21,7 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 
 		_identityManager = _serviceProvider.GetService<IIdentityManager>();
 
-		_anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+		_anonymous = new TfPrincipal(new TfIdentity());
 	}
 
 	public override async Task<AuthenticationState> GetAuthenticationStateAsync()
