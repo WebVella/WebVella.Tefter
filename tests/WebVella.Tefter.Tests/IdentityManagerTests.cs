@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿using WebVella.Tefter.Errors;
+
+namespace WebVella.Tefter.Tests;
 
 public partial class IdentityManagerTests : BaseTest
 {
@@ -87,6 +89,27 @@ public partial class IdentityManagerTests : BaseTest
 				deleteRoleResult = await identityManager.DeleteRoleAsync(role2);
 				deleteRoleResult.Should().NotBeNull();
 				deleteRoleResult.IsSuccess.Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task GetUserWithNoEmailAndPassword()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var result = identityManager.GetUser(null, null);
+				result.IsFailed.Should().BeTrue();
+				result.Errors.Count().Should().Be(2);
+				result.Errors[0].Should().BeOfType<ValidationError>();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(User.Email));
+				result.Errors[1].Should().BeOfType<ValidationError>();
+				((ValidationError)result.Errors[1]).PropertyName.Should().Be(nameof(User.Password));
 			}
 		}
 	}
