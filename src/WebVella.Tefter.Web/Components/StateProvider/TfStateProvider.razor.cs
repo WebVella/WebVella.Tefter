@@ -73,12 +73,13 @@ public partial class TfStateProvider : TfBaseComponent
             {
                 CultureInfo.CurrentCulture = culture;
                 CultureInfo.CurrentUICulture = culture;
+
                 await new CookieService(JSRuntimeSrv).SetAsync(CookieRequestCultureProvider.DefaultCookieName,
                         CookieRequestCultureProvider.MakeCookieValue(
                             new RequestCulture(
                                 culture,
-                                culture)), null);
-            }
+                                culture)), null); //DateTimeOffset.Now.AddDays(30)
+			}
             _isLoading = false;
             await LoadingChange.InvokeAsync(_isLoading);
         });

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components.UserManageDialog;
-public partial class TfUserManageDialog : TfFromBaseComponent, IDialogContentComponent<User>
+public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<User>
 {
 	[Parameter]
 	public User Content { get; set; }

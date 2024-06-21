@@ -3,7 +3,7 @@ using WebVella.Tefter.Errors;
 
 namespace WebVella.Tefter.Web.Components.FormBaseComponent;
 
-public class TfFromBaseComponent : TfBaseComponent
+public class TfFormBaseComponent : TfBaseComponent
 {
 	/// <summary>
 	/// Edit context for the derivative forms

@@ -218,11 +218,6 @@ body {
 		background: var(--neutral-base-color) !important;
 	}
 
-.tf-form fluent-text-field,
-.tf-form fluent-select-field{
-	width:100%;
-}
-
 
 /*Overrides*/
 fluent-data-grid-row:has([row-selected]) {

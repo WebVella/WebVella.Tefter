@@ -1,5 +1,5 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
-@inherits TfFromBaseComponent
+@inherits TfFormBaseComponent
 
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
@@ -31,6 +31,7 @@
 	}
 	else
 	{
+		<div>@CultureInfo.CurrentCulture</div>
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save" 
 				FormName="submit-form" class="tf-form" novalidate>
 			<DataAnnotationsValidator />
