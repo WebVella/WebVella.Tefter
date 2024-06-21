@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Identity;
+﻿using System.Data;
+
+namespace WebVella.Tefter.Identity;
 
 public partial interface IIdentityManager
 {
@@ -67,6 +69,9 @@ public partial class IdentityManager : IIdentityManager
 
 		public ValidationResult ValidateCreate(User user)
 		{
+			if (user == null)
+				return new ValidationResult(new[] { new ValidationFailure("", "The user instance is null.") });
+
 			return this.Validate(user, options =>
 			{
 				options.IncludeRuleSets("general", "create");
@@ -75,6 +80,9 @@ public partial class IdentityManager : IIdentityManager
 
 		public ValidationResult ValidateUpdate(User user)
 		{
+			if (user == null)
+				return new ValidationResult(new[] { new ValidationFailure("", "The user instance is null.") });
+
 			return this.Validate(user, options =>
 			{
 				options.IncludeRuleSets("general", "update");

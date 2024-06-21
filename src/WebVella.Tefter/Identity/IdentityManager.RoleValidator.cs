@@ -49,6 +49,10 @@ public partial class IdentityManager : IIdentityManager
 					.Must((role, id) => { return identityManager.GetRole(id).Value != null; })
 					.WithMessage("There is no existing role for specified identifier.");
 
+				RuleFor(role => role.IsSystem)
+					.Must((role, isSystem ) => { return !role.IsSystem; })
+					.WithMessage("The role is system and cannot be deleted.");
+
 				RuleFor(role => role.Id)
 					.Must(id => 
 					{
@@ -61,6 +65,9 @@ public partial class IdentityManager : IIdentityManager
 
 		public ValidationResult ValidateCreate(Role role)
 		{
+			if (role == null)
+				return new ValidationResult(new[] { new ValidationFailure("", "The role instance is null.") });
+
 			return this.Validate(role, options =>
 			{
 				options.IncludeRuleSets("general", "create");
@@ -69,6 +76,9 @@ public partial class IdentityManager : IIdentityManager
 
 		public ValidationResult ValidateUpdate(Role role)
 		{
+			if (role == null)
+				return new ValidationResult(new[] { new ValidationFailure("", "The role instance is null.") });
+
 			return this.Validate(role, options =>
 			{
 				options.IncludeRuleSets("general", "update");
@@ -77,6 +87,9 @@ public partial class IdentityManager : IIdentityManager
 
 		public ValidationResult ValidateDelete(Role role)
 		{
+			if (role == null)
+				return new ValidationResult(new[] { new ValidationFailure("", "The role instance is null.") });
+
 			return this.Validate(role, options =>
 			{
 				options.IncludeRuleSets("delete");

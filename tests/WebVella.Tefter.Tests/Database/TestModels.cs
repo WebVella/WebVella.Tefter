@@ -111,11 +111,27 @@ public class DateTimeTestModel
 	[DboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("date")]
+	[DboModelProperty("datetime")]
 	[DboTypeConverter(typeof(DateTimePropertyConverter))]
 	public DateTime Date { get; set; }
 
-	[DboModelProperty("date_null")]
+	[DboModelProperty("datetime_null")]
 	[DboTypeConverter(typeof(DateTimePropertyConverter))]
+	public DateTime? DateNull { get; set; }
+}
+
+[DboCacheModel]
+[DboModel("test_table")]
+public class DateTestModel
+{
+	[DboModelProperty("id")]
+	public Guid Id { get; set; }
+
+	[DboModelProperty("date")]
+	[DboTypeConverter(typeof(DatePropertyConverter))]
+	public DateTime Date { get; set; }
+
+	[DboModelProperty("date_null")]
+	[DboTypeConverter(typeof(DatePropertyConverter))]
 	public DateTime? DateNull { get; set; }
 }

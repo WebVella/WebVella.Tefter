@@ -108,6 +108,40 @@ public partial class DboManagerTests : BaseTest
 	}
 
 	[Fact]
+	public async Task DateTestRecord()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+
+			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+
+			{
+				CreateTestTableInternal();
+
+				var original = new DateTestModel
+				{
+					Id = Guid.NewGuid(),
+					Date = DateTime.Now.Date,
+					DateNull = null
+				};
+
+				var success = await dboManager.InsertAsync<DateTestModel>(original);
+				success.Should().BeTrue();
+
+				var obj = await dboManager.GetAsync<DateTestModel>(original.Id);
+				obj.Should().NotBeNull();
+
+				obj.Date.Should().Be(original.Date);
+				obj.DateNull.Should().Be(original.DateNull);
+				obj.DateNull.Should().BeNull();
+				obj.Date.Kind.Should().Be(DateTimeKind.Local);
+			}
+		}
+	}
+
+	[Fact]
 	public async Task DateTimeTestRecord()
 	{
 		using (await locker.LockAsync())
@@ -134,7 +168,7 @@ public partial class DboManagerTests : BaseTest
 				var obj = await dboManager.GetAsync<DateTimeTestModel>(idKey);
 				obj.Should().NotBeNull();
 
-				obj.Date.Should().Be(original.Date.Date);
+				obj.Date.Should().Be(original.Date);
 				obj.DateNull.Should().Be(original.DateNull);
 				obj.DateNull.Should().BeNull();
 				obj.Date.Kind.Should().Be(DateTimeKind.Local);

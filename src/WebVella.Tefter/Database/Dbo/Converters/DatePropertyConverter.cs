@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Database.Dbo;
-internal class DateTimePropertyConverter : IDboPropertyValueConverter
+internal class DatePropertyConverter : IDboPropertyValueConverter
 {
     public bool CanConvert(Type type)
     {
@@ -14,16 +14,16 @@ internal class DateTimePropertyConverter : IDboPropertyValueConverter
         if (obj is DateTime)
         {
             var value = Convert.ToDateTime(obj);
-            return DateTime.SpecifyKind(value, DateTimeKind.Utc).ToLocalTime();
+            return DateTime.SpecifyKind(value, DateTimeKind.Local);
         }
 
         if (obj is DateTime?)
         {
             var value = (DateTime?)Convert.ToDateTime(obj);
-            return DateTime.SpecifyKind(value.Value, DateTimeKind.Utc).ToLocalTime();
+            return DateTime.SpecifyKind(value.Value, DateTimeKind.Local);
         }
         
-        throw new Exception("DateTimePropertyConverter: invalid object to convert");
+        throw new Exception("DatePropertyConverter: invalid object to convert");
     }
 
     public object ConvertToDatabaseType(object obj)
@@ -37,6 +37,6 @@ internal class DateTimePropertyConverter : IDboPropertyValueConverter
         if (obj is DateTime?)
             return (DateTime?)Convert.ToDateTime(obj);
 
-        throw new Exception("DateTimePropertyConverter: invalid object to convert");
+        throw new Exception("DatePropertyConverter: invalid object to convert");
     }
 }

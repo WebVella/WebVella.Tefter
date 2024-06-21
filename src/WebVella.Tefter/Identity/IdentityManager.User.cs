@@ -32,7 +32,7 @@ public partial class IdentityManager : IIdentityManager
 
 		var rolesResult = GetRoles();
 		if (!rolesResult.IsSuccess)
-			return Result.Fail( new Error("Failed to get user.").CausedBy(rolesResult.Errors) );
+			return Result.Fail(new Error("Failed to get user.").CausedBy(rolesResult.Errors));
 
 		var roles = rolesResult.Value;
 
@@ -63,6 +63,13 @@ public partial class IdentityManager : IIdentityManager
 
 	public Result<User> GetUser(string email)
 	{
+		Result validationResult = new Result();
+		if (email == null)
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+
+		if (validationResult.IsFailed)
+			return validationResult;
+
 		var userDbo = _dboManager.Get<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
 			return Result.Ok();
@@ -95,11 +102,15 @@ public partial class IdentityManager : IIdentityManager
 
 	public Result<User> GetUser(string email, string password)
 	{
+		Result validationResult = new Result();
 		if (email == null)
-			throw new ArgumentNullException("email");
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
 
 		if (password == null)
-			throw new ArgumentNullException("password");
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The password is required."));
+
+		if (validationResult.IsFailed)
+			return validationResult;
 
 		var userDbo = _dboManager.Get<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
@@ -340,6 +351,13 @@ public partial class IdentityManager : IIdentityManager
 
 	public async Task<Result<User>> GetUserAsync(string email)
 	{
+		Result validationResult = new Result();
+		if (email == null)
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+
+		if (validationResult.IsFailed)
+			return validationResult;
+
 		var userDbo = await _dboManager.GetAsync<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
 			return Result.Ok();
@@ -372,11 +390,15 @@ public partial class IdentityManager : IIdentityManager
 
 	public async Task<Result<User>> GetUserAsync(string email, string password)
 	{
+		Result validationResult = new Result();
 		if (email == null)
-			throw new ArgumentNullException("email");
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
 
 		if (password == null)
-			throw new ArgumentNullException("password");
+			validationResult.WithError(new ValidationError(nameof(User.Email), "The password is required."));
+
+		if (validationResult.IsFailed)
+			return validationResult;
 
 		var userDbo = await _dboManager.GetAsync<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
@@ -497,13 +519,14 @@ public partial class IdentityManager : IIdentityManager
 
 			foreach (var role in user.Roles)
 			{
-				var dbo = new UserRoleDbo { 
-					RoleId = role.Id, 
-					UserId = userDbo.Id 
+				var dbo = new UserRoleDbo
+				{
+					RoleId = role.Id,
+					UserId = userDbo.Id
 				};
 
 				success = await _dboManager.InsertAsync<UserRoleDbo>(dbo);
-				
+
 				if (!success)
 					return Result.Fail(new DboManagerError("InsertAsync", dbo));
 			}
