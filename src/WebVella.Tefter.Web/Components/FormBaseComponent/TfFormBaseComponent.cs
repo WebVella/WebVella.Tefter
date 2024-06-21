@@ -61,7 +61,7 @@ public class TfFromBaseComponent : TfBaseComponent
 			{
 				var error = (ValidationError)iError;
 				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					generalErrors.Add(error.Message);
+					generalErrors.Add(error.Reason);
 				else
 					MessageStore.Add(EditContext.Field(error.PropertyName), error.Message);
 			}
