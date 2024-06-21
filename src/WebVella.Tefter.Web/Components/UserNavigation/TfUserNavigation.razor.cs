@@ -89,8 +89,7 @@ public partial class TfUserNavigation
 	private async Task _logout()
 	{
 		await IdentityManager.LogoutAsync(JSRuntimeSrv);
-		Dispatcher.Dispatch(new SetUserAction(null));
-		Navigator.NavigateTo("/login",true);
+		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}
 
@@ -101,12 +100,12 @@ public partial class TfUserNavigation
 
 	private void _adminClick()
 	{
-		Navigator.NavigateTo("/admin");
+		Navigator.NavigateTo(TfConstants.AdminPageUrl);
 	}
 
 	private void _adminExitClick()
 	{
-		Navigator.NavigateTo("/");
+		Navigator.NavigateTo(TfConstants.HomePageUrl);
 	}
 
 	private void _helpClick()

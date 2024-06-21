@@ -16,24 +16,28 @@ public class Cookie
 
 public class CookieService
 {
-    readonly IJSRuntime JSRuntime;
+	readonly IJSRuntime JSRuntime;
 
-    public CookieService(IJSRuntime jsRuntime)
-    {
-        JSRuntime = jsRuntime;
-    }
+	public CookieService(IJSRuntime jsRuntime)
+	{
+		JSRuntime = jsRuntime;
+	}
 
 	public async Task<IEnumerable<Cookie>> GetAllAsync()
 	{
 		var raw = await JSRuntime.InvokeAsync<string>("eval", "document.cookie");
 		if (string.IsNullOrWhiteSpace(raw)) return Enumerable.Empty<Cookie>();
-
-		return raw.Split("; ").Select(x =>
+		var cookies = raw.Split("; ");
+		List<Cookie> result = new List<Cookie>();
+		foreach (var x in cookies)
 		{
-			var parts = x.Split("=");
-			if (parts.Length != 2) throw new Exception($"Invalid cookie format: '{x}'.");
-			return new Cookie(parts[0], parts[1]);
-		});
+			var firstEqualSignIndex = x.IndexOf("=");
+			if (firstEqualSignIndex == -1) throw new Exception($"Invalid cookie format: '{x}'.");
+			var name = x.Substring(0, firstEqualSignIndex);
+			var value = x.Substring(firstEqualSignIndex + 1);
+			result.Add(new Cookie(name, value));
+		}
+		return result;
 	}
 
 	public async Task<Cookie?> GetAsync(string key)

@@ -72,23 +72,8 @@ public class TfFromBaseComponent : TfBaseComponent
 		EditContext.NotifyValidationStateChanged();
 		if (generalErrors.Count > 0)
 		{
-			ToastService.ShowToast(ToastIntent.Error, "Unexpected Error! Check Notifications for details");
-			var divHtml = "<ul class='notification-list'>";
-			foreach (var error in generalErrors)
-			{
-				divHtml += $"<li>{error}</li>";
-			}
-			divHtml += "</ul>";
-
-			MessageService.ShowMessageBar(options =>
-			{
-				options.Intent = MessageIntent.Error;
-				options.Title = $"Unexpected Error!";
-				options.Body = divHtml;
-				options.Timestamp = DateTime.Now;
-				options.Timeout = 15000;
-				options.Section = TfConstants.MESSAGES_NOTIFICATION_CENTER;
-			});
+			ToastService.ShowToast(ToastIntent.Error, LOC("Unexpected Error! Check Notifications for details"));
+			SendErrorsToNotifications(LOC("Unexpected Error!"),generalErrors);
 		}
 	}
 }

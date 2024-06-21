@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components.AdminUserNavigation;
+﻿using WebVella.Tefter.Web.Components.UserManageDialog;
+
+namespace WebVella.Tefter.Web.Components.AdminUserNavigation;
 public partial class TfAdminUserNavigation : TfBaseComponent
 {
 	[Inject] protected IState<UserState> UserState { get; set; }
@@ -56,8 +58,8 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
 		var userResult = await IdentityManager.GetUsersAsync();
-		if(userResult.IsFailed) return;
-		
+		if (userResult.IsFailed) return;
+
 		var users = userResult.Value;
 
 
@@ -69,7 +71,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 				Icon = new Icons.Regular.Size20.Person(),
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
-				Title = String.Join(" ", new List<string>{ item.FirstName, item.LastName}),
+				Title = String.Join(" ", new List<string> { item.FirstName, item.LastName }),
 				Url = $"/admin/users/{item.Id}",
 				Expanded = false,
 				Active = false
@@ -96,12 +98,29 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 
 	private async Task onAddClick()
 	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for space creation");
-
-		//var spaces = await tfSrv.GetSpacesForUserAsync(UserState.Value.User.Id);
-		//Navigator.NavigateTo($"/space/{spaces[0].Id}/data/{spaces[0].Data[0].Id}");
+		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(null, new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			//	var response = (ThemeSettings)result.Data;
+			//	Dispatcher.Dispatch(new SetUIAction(
+			//		userId: SessionState.Value.UserId,
+			//		spaceId: SessionState.Value.SpaceRouteId,
+			//		spaceDataId: SessionState.Value.SpaceDataRouteId,
+			//		spaceViewId: SessionState.Value.SpaceViewRouteId,
+			//		mode: response.ThemeMode,
+			//		color: response.ThemeColor,
+			//		sidebarExpanded: !SessionState.Value.SidebarExpanded,
+			//		cultureOption: SessionState.Value.CultureOption
+			//));
+		}
 	}
-	
+
 	private void SetMenuItemActions(MenuItem item)
 	{
 		item.OnSelect = (selected) => OnTreeMenuSelect(item, selected);

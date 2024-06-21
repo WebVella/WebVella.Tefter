@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Nito.AsyncEx;
+using WebVella.Tefter.Errors;
 
 namespace WebVella.Tefter.Web.Components.BaseComponent;
 
@@ -43,14 +44,35 @@ public class TfBaseComponent : FluxorComponent
 	}
 
 	/// <summary>
-	/// Processes Exception from Server call
+	/// Processes Exception from Server call.
+	/// Important: Just non validation errors will be treated as errors.
+	/// Validation messages will not be processed by this method
 	/// </summary>
 	/// <param name="ex"></param>
 	protected void ProcessResponse(Result response)
 	{
 		if (response.IsSuccess) return;
+		var generalErrors = new List<string>();
+		foreach (IError iError in response.Errors)
+		{
+			if (iError is ValidationError)
+			{
+				var error = (ValidationError)iError;
+				if (String.IsNullOrWhiteSpace(error.PropertyName))
+					generalErrors.Add(error.Message);
+			}
+			else
+			{
+				var error = (IError)iError;
+				generalErrors.Add(error.Message);
+			}
 
-		ToastService.ShowToast(ToastIntent.Error, "ex.Message");
+		}
+		if (generalErrors.Count > 0)
+		{
+			ToastService.ShowToast(ToastIntent.Error, LOC("Unexpected Error! Check Notifications for details"));
+			SendErrorsToNotifications(LOC("Unexpected Error!"), generalErrors);
+		}
 	}
 
 
@@ -58,9 +80,38 @@ public class TfBaseComponent : FluxorComponent
 	/// Processes Exception from Server call
 	/// </summary>
 	/// <param name="ex"></param>
-	protected void ProcessException(Exception ex)
+	protected string ProcessException(Exception ex)
 	{
-		ToastService.ShowToast(ToastIntent.Error, ex.Message);
+		string errorMessage = LOC("Unexpected Error! Check Notifications for details");
+		ToastService.ShowToast(ToastIntent.Error, errorMessage);
+		SendErrorsToNotifications(LOC("Unexpected Error!"), new List<string> { ex.Message });
+
+		return errorMessage;
+	}
+	/// <summary>
+	/// Send error details to notification center
+	/// </summary>
+	/// <param name="message"></param>
+	/// <param name="errors"></param>
+	protected void SendErrorsToNotifications(string message, List<string> errors)
+	{
+		var divHtml = "<ul class='notification-list'>";
+		foreach (var error in errors)
+		{
+			divHtml += $"<li>{error}</li>";
+		}
+		divHtml += "</ul>";
+
+		MessageService.ShowMessageBar(options =>
+		{
+			options.Intent = MessageIntent.Error;
+			options.Title = message;
+			options.Body = divHtml;
+			options.Timestamp = DateTime.Now;
+			options.Timeout = 15000;
+			options.AllowDismiss = true;
+			options.Section = TfConstants.MESSAGES_NOTIFICATION_CENTER;
+		});
 	}
 
 }
