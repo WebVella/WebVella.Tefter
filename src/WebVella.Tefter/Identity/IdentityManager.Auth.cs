@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Identity;
+﻿using System.Globalization;
+
+namespace WebVella.Tefter.Identity;
 
 public partial interface IIdentityManager
 {
@@ -16,10 +18,10 @@ public partial class IdentityManager : IIdentityManager
 		var user = (await GetUserAsync(email, password)).Value;
 
 		if (user == null)
-			return Result.Fail(new ValidationError(null, "Invalid email or password."));
+			return Result.Fail(new ValidationError(nameof(User.Password), "Invalid email or password."));
 
 		if (user is { Enabled: false })
-			return Result.Fail(new ValidationError(null, "User access to site is denied."));
+			return Result.Fail(new ValidationError(nameof(User.Email), "User access to site is denied."));
 
 		try
 		{
@@ -32,7 +34,6 @@ public partial class IdentityManager : IIdentityManager
 					key: Constants.TEFTER_AUTH_COOKIE_NAME,
 					value: cryptoService.Encrypt(user.Id.ToString()),
 					expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
-
 
 			return Result.Ok();
 		}
