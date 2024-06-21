@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using WebVella.Tefter.Utility;
 
 namespace WebVella.Tefter;
 
@@ -24,7 +25,7 @@ public static class DependencyInjection
 		//		TfAuthenticationOptions.DefaultScheme, options => { });
 		//services.AddScoped<AuthenticationStateProvider, TfBrowserStorageAuthStateProvider>();
 
-	
+
 		services.AddSingleton<ILogger, NullLogger>();
 		services.AddSingleton<IDbConfigurationService, DatabaseConfigurationService>((Context) =>
 		{
@@ -34,14 +35,16 @@ public static class DependencyInjection
 		   .Build());
 		});
 
+		services.AddSingleton<ICryptoUtilityService, CryptoUtilityService>();
+		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
 		services.AddSingleton<IDatabaseService, DatabaseService>();
 		services.AddSingleton<IDatabaseManager, DatabaseManager>();
 		services.AddSingleton<IDboManager, DboManager>();
 		services.AddSingleton<IMigrationManager, MigrationManager>();
 		services.AddSingleton<IIdentityManager, IdentityManager>();
-		
-		
+
+
 		return services;
 	}
 
