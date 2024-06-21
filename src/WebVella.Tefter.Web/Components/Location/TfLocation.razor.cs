@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.Location;
 public partial class TfLocation : TfBaseComponent
 {
 	[Inject] protected IState<SessionState> SessionState { get; set; }

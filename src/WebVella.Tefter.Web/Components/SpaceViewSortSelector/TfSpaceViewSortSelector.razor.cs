@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.SpaceViewSortSelector;
 public partial class TfSpaceViewSortSelector : TfBaseComponent
 {
 	private bool _open = false;

@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.Navigation;
 public partial class TfNavigation: TfBaseComponent
 {
 	[Inject] protected IState<SessionState> SessionState { get; set; }

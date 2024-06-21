@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿using WebVella.Tefter.Web.Components.SpaceSelector;
+
+namespace WebVella.Tefter.Web.Components.FastAccessNavigation;
 public partial class TfFastAccessNavigation : TfBaseComponent
 {
 	[Inject] protected IState<UserState> UserState { get; set; }

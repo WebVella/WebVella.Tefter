@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.Empty;
 public partial class TfEmpty : TfBaseComponent
 {
 	[Parameter]

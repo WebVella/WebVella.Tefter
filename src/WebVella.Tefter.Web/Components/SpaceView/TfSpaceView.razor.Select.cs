@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.SpaceView;
 public partial class TfSpaceView : TfBaseComponent
 {
 	private Icon _iconUnselected = new Icons.Regular.Size20.CheckboxUnchecked().WithColor(Color.FillInverse);

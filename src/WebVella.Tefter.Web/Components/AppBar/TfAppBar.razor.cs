@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.AppBar;
 public partial class TfAppBar : TfBaseComponent
 {
 	[Parameter]

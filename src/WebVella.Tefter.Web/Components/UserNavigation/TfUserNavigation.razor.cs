@@ -1,5 +1,7 @@
 ﻿
-namespace WebVella.Tefter.Web.Components;
+using WebVella.Tefter.Web.Components.ThemeSetDialog;
+
+namespace WebVella.Tefter.Web.Components.UserNavigation;
 public partial class TfUserNavigation
 {
 	[Inject] protected IState<UserState> UserState { get; set; }

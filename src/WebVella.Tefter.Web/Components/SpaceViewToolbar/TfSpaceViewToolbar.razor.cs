@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.SpaceViewToolbar;
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
     [Inject] protected IState<SessionState> SessionState { get; set; }

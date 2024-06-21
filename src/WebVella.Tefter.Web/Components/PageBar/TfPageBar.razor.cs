@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.PageBar;
 public partial class TfPageBar : TfBaseComponent
 {
 	[Parameter]

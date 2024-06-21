@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components;
+namespace WebVella.Tefter.Web.Components.BasePage;
 
 public class TfBasePage : FluxorComponent
 {

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿using WebVella.Tefter.Web.Components.SpaceSelector;
+
+namespace WebVella.Tefter.Web.Components.SpaceNavigation;
 public partial class TfSpaceNavigation : TfBaseComponent
 {
 	[Inject] protected IState<UserState> UserState { get; set; }

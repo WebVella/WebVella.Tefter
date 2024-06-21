@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Localization;
 
-namespace WebVella.Tefter.Web.Components;
+namespace WebVella.Tefter.Web.Components.StateProvider;
 public partial class TfStateProvider : TfBaseComponent
 {
 	[Parameter]

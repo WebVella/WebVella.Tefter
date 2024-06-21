@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.SpaceViewSettingsSelector;
 public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 {
 	private bool _open = false;

@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components;
+namespace WebVella.Tefter.Web.Components.SpaceViewActionSelector;
 public partial class TfSpaceViewActionSelector : TfBaseComponent
 {
 	[Inject] protected IState<SessionState> SessionState {  get; set; }

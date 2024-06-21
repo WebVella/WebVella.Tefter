@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Web.Components.ThemeSetDialog;
 public partial class TfThemeSetDialog : IDialogContentComponent<ThemeSettings>
 {
     [Parameter]
