@@ -3,7 +3,8 @@
 namespace WebVella.Tefter.Web.Layout;
 public partial class GuestLayout : FluxorLayout
 {
-    [Inject] private ICryptoService CryptoService { get; set; }
+	[Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+	[Inject] private ICryptoService CryptoService { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] protected ITfService TfService { get; set; }
     [Inject] protected NavigationManager Navigator { get; set; }
@@ -18,21 +19,18 @@ public partial class GuestLayout : FluxorLayout
         base.OnAfterRender(firstRender);
         if (firstRender)
         {
-            Console.WriteLine("FirstRenderAsync");
-            Guid? cookieUserId = null;
-            var cookieVal = await (new Cookie(JSRuntime)).GetValue(Constants.TEFTER_AUTH_COOKIE_NAME);
-            if (String.IsNullOrWhiteSpace(cookieVal) && Guid.TryParse(cookieVal, out Guid outGuid))
-                cookieUserId = outGuid;
+			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+			var user = authState.User;
 
-            if (cookieUserId is null)
-            {
-                _isLoading = false;
-                await InvokeAsync(StateHasChanged);
+			if (user.Identity is not null && user.Identity.IsAuthenticated)
+			{
+				Navigator.NavigateTo(TfConstants.HomePageUrl);
                 return;
-            }
-            //the the user layout check
-            Navigator.NavigateTo(TfConstants.HomePageUrl);
-        }
+			}
+			_isLoading = false;
+			await InvokeAsync(StateHasChanged);
+
+		}
     }
 
 }

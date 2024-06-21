@@ -5,7 +5,6 @@ public static class DispatchUtils
 	public static void DispatchKeyDown(
 		IDispatcher dispatcher,
 		IState<SessionState> sessionState,
-		IState<UserState> userState,
 		FluentKeyCodeEventArgs args)
 	{
 
@@ -14,7 +13,7 @@ public static class DispatchUtils
 			if (args.Key == KeyCode.Function11)
 			{
 				dispatcher.Dispatch(new SetUIAction(
-				userId: userState.Value.User.Id,
+				userId: sessionState.Value.UserId,
 				spaceId: sessionState.Value.SpaceRouteId,
 				spaceDataId: sessionState.Value.SpaceDataRouteId,
 				spaceViewId: sessionState.Value.SpaceViewRouteId,

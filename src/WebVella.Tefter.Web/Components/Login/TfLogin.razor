@@ -3,24 +3,25 @@
 <FluentCard Style="width:300px;" Class="login-card">
 	<FluentStack Orientation="@Orientation.Vertical">
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_submit" FormName="login-form" novalidate>
-			<DataAnnotationsValidator/>
+			<DataAnnotationsValidator />
 			<div class="login-logo">
 				<div class="login-logo-image"><img src="@ConfigurationService.CompanyLogoUrl" /></div>
 				<div class="login-logo-text">@ConfigurationService.CompanyName</div>
 			</div>
 			<div class="login-form" aria-autocomplete="none">
-				
+
 
 				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email Label="@LC["Email"]" Id="email"
-								 AutoComplete="off" ></FluentTextField>
+								 AutoComplete="off"></FluentTextField>
 				<FluentValidationMessage For="@(() => _form.Email)" />
 				<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password Label="@LC["Password"]" Id="password"
 								 AutoComplete="off"></FluentTextField>
 				<FluentValidationMessage For="@(() => _form.Password)" />
+				<FluentCheckbox @bind-Value=_form.RememberMe Style="margin-top:1rem;">Remember me</FluentCheckbox>
 			</div>
 			<div class="login-btn">
 				<FluentButton Type="ButtonType.Submit" Appearance="@Appearance.Accent"
-							  IconStart="@(new Icons.Regular.Size20.Key())" 
+							  IconStart="@(new Icons.Regular.Size20.Key())"
 							  Loading="@_submitting" Disabled="@_submitting">@LC["Login"]</FluentButton>
 			</div>
 		</FluentEditForm>

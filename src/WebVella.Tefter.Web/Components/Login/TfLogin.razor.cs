@@ -27,12 +27,11 @@ public partial class TfLogin : TfFromBaseComponent
             if (result.IsSuccess)
             {
                 //Set auth cookie
-                await new Cookie(JSRuntimeSrv).SetValue(
+                await new CookieService(JSRuntimeSrv).SetAsync(
                         key:Constants.TEFTER_AUTH_COOKIE_NAME,
                         value: CryptoService.Encrypt(result.Value.Id.ToString()),
-                        days:_form.RememberMe ? 30 : null);
-
-                Navigator.NavigateTo(TfConstants.HomePageUrl);
+                        expiration:_form.RememberMe ? DateTimeOffset.Now.AddDays(30) : null);
+                Navigator.NavigateTo(TfConstants.HomePageUrl,true);
             }
         }
         catch (Exception ex)

@@ -4,6 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 
 public class TfBaseComponent : FluxorComponent
 {
+	[Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] protected IJSRuntime JSRuntimeSrv { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }

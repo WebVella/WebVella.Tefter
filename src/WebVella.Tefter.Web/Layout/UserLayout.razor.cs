@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Localization;
 using WebVella.Tefter.Utility;
 
 namespace WebVella.Tefter.Web.Layout;
 public partial class UserLayout : FluxorLayout
 {
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
     [Inject] private ICryptoService CryptoService { get; set; }
     [Inject] private IJSRuntime JSRuntime { get; set; }
     [Inject] private IKeyCodeService KeyCodeService { get; set; }
     [Inject] protected ITfService TfService { get; set; }
     [Inject] protected NavigationManager Navigator { get; set; }
-    [Inject] protected IState<UserState> UserState { get; set; }
     [Inject] protected IState<SessionState> SessionState { get; set; }
     [Inject] protected IDispatcher dispatcher { get; set; }
 
@@ -19,7 +20,6 @@ public partial class UserLayout : FluxorLayout
         if (disposing)
         {
             KeyCodeService.UnregisterListener(OnKeyDownAsync);
-            UserState.StateChanged -= UserState_StateChanged;
             SessionState.StateChanged -= SessionState_StateChanged;
             Navigator.LocationChanged -= Navigator_LocationChanged;
         }
@@ -31,57 +31,30 @@ public partial class UserLayout : FluxorLayout
         base.OnAfterRender(firstRender);
         if (firstRender)
         {
-            KeyCodeService.RegisterListener(OnKeyDownAsync);
+			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+			var user = authState.User;
+
+			if (user.Identity is not null && user.Identity.IsAuthenticated)
+			{
+                var tfUser = ((TfIdentity)authState.User.Identity).User;
+		        dispatcher.Dispatch(new SetUserAction(tfUser));
+				//Trigger session init
+				var urlData = NavigatorExt.GetUrlData(Navigator);
+				SessionState.StateChanged += SessionState_StateChanged;
+				dispatcher.Dispatch(new GetSessionAction(
+					userId: tfUser.Id,
+					spaceId: urlData.SpaceId,
+					spaceDataId: urlData.SpaceDataId,
+					spaceViewId: urlData.SpaceViewId));
+			}
+			else
+			{
+				_redirectToLogin();
+			}
+
+			KeyCodeService.RegisterListener(OnKeyDownAsync);
             Navigator.LocationChanged += Navigator_LocationChanged;
-            await FirstRenderAsync();
         }
-    }
-
-    public async Task FirstRenderAsync()
-    {
-        Console.WriteLine("FirstRenderAsync");
-
-        Guid? cookieUserId = null;
-        var cookieVal = await (new Cookie(JSRuntime)).GetValue(Constants.TEFTER_AUTH_COOKIE_NAME);
-        if(!String.IsNullOrWhiteSpace(cookieVal))
-            cookieVal = CryptoService.Decrypt(cookieVal);
-        if (!String.IsNullOrWhiteSpace(cookieVal) && Guid.TryParse(cookieVal, out Guid outGuid))
-            cookieUserId = outGuid;
-
-        UserState.StateChanged += UserState_StateChanged;
-        dispatcher.Dispatch(new GetUserAction(cookieUserId));
-    }
-
-    /// <summary>
-    /// Sets User State, Sets Authentication cookie and calls for Session State init
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void UserState_StateChanged(object sender, EventArgs e)
-    {
-        Console.WriteLine("UserState_StateChanged");
-
-        InvokeAsync(async () =>
-        {
-            if (UserState.Value.Loading) return;
-
-            if (UserState.Value.User is null)
-            {
-                _redirectToLogin();
-                return;
-            }
-            //Trigger session init
-            var urlData = NavigatorExt.GetUrlData(Navigator);
-            SessionState.StateChanged += SessionState_StateChanged;
-            dispatcher.Dispatch(new GetSessionAction(
-                userId: UserState.Value.User.Id,
-                spaceId: urlData.SpaceId,
-                spaceDataId: urlData.SpaceDataId,
-                spaceViewId: urlData.SpaceViewId));
-
-
-
-        });
     }
 
     /// <summary>
@@ -91,23 +64,25 @@ public partial class UserLayout : FluxorLayout
     /// <param name="e"></param>
     private void SessionState_StateChanged(object sender, EventArgs e)
     {
-        Console.WriteLine("SessionState_StateChanged");
         InvokeAsync(async () =>
         {
             if (SessionState.Value.IsLoading) return;
-            _isLoading = false;
+
+			Console.WriteLine("SessionState_StateChanged");
+
             var culture = SessionState.Value.CultureOption is null ? TfConstants.CultureOptions[0].CultureInfo : CultureInfo.GetCultureInfo(SessionState.Value.CultureOption.CultureCode);
             if (culture != CultureInfo.CurrentCulture)
             {
                 CultureInfo.CurrentCulture = culture;
                 CultureInfo.CurrentUICulture = culture;
-                await new Cookie(JSRuntime).SetValue(CookieRequestCultureProvider.DefaultCookieName,
+                await new CookieService(JSRuntime).SetAsync(CookieRequestCultureProvider.DefaultCookieName,
                         CookieRequestCultureProvider.MakeCookieValue(
                             new RequestCulture(
                                 culture,
-                                culture)));
+                                culture)),null);
             }
-            await InvokeAsync(StateHasChanged);
+			_isLoading = false;
+			await InvokeAsync(StateHasChanged);
         });
     }
 
@@ -136,9 +111,6 @@ public partial class UserLayout : FluxorLayout
     /// </summary>
     private void _initLocationChange()
     {
-        if (UserState is null || UserState.Value is null
-        || UserState.Value.Loading || UserState.Value.User is null) return;
-
         var urlData = NavigatorExt.GetUrlData(Navigator);
 
         if (urlData.SpaceId == SessionState.Value.SpaceRouteId
@@ -147,7 +119,7 @@ public partial class UserLayout : FluxorLayout
 
 
         dispatcher.Dispatch(new GetSessionAction(
-                userId: UserState.Value.User.Id,
+                userId: SessionState.Value.UserId,
                 spaceId: urlData.SpaceId,
                 spaceDataId: urlData.SpaceDataId,
                 spaceViewId: urlData.SpaceViewId));
@@ -165,7 +137,6 @@ public partial class UserLayout : FluxorLayout
         DispatchUtils.DispatchKeyDown(
         dispatcher: dispatcher,
         sessionState: SessionState,
-        userState: UserState,
         args: args);
 
         return Task.CompletedTask;
