@@ -38,6 +38,7 @@ public class UserBuilder
 			_themeColor = user.Settings.ThemeColor;
 			_sidebarOpen = (user?.Settings?.IsSidebarOpen) ?? true;
 			_cultureCode = (user?.Settings?.CultureCode) ?? string.Empty;
+			_roles = user.Roles.ToList();
 		}
 	}
 
