@@ -126,4 +126,7 @@
   <data name="Password" xml:space="preserve">
     <value>Парола</value>
   </data>
+  <data name="Remember Me" xml:space="preserve">
+    <value>Запомни ме</value>
+  </data>
 </root>

@@ -59,7 +59,7 @@ public class TfBaseComponent : FluxorComponent
 			{
 				var error = (ValidationError)iError;
 				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					generalErrors.Add(error.Message);
+					generalErrors.Add(error.Reason);
 			}
 			else
 			{

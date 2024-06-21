@@ -16,9 +16,14 @@ public partial class TfLogin : TfFormBaseComponent
 	{
 		try
 		{
+			//Workaround to wait for the form to be bound 
+			//on enter click without blur
+			await Task.Delay(10);
+			var isValid = EditContext.Validate();
+			if(!isValid) return;
 			_submitting = true;
 			await InvokeAsync(StateHasChanged);
-			
+
 			var result = await IdentityManager.AuthenticateAsync(
 				JSRuntimeSrv, _form.Email, _form.Password, _form.RememberMe);
 

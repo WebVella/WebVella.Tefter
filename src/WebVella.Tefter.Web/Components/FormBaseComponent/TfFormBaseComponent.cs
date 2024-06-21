@@ -19,7 +19,8 @@ public class TfFormBaseComponent : TfBaseComponent
 	{
 		if (disposing)
 		{
-			EditContext.OnValidationRequested -= EditContext_OnValidationRequested;
+			if (EditContext is not null)
+				EditContext.OnValidationRequested -= EditContext_OnValidationRequested;
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
