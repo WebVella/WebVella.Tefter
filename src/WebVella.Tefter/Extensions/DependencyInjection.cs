@@ -25,7 +25,6 @@ public static class DependencyInjection
 		//		TfAuthenticationOptions.DefaultScheme, options => { });
 		
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
-		services.AddScoped<CircuitHandler, IdentityCircuitHandler>();
 
 		services.AddSingleton<ILogger, NullLogger>();
 		services.AddSingleton<IDbConfigurationService, DatabaseConfigurationService>((Context) =>

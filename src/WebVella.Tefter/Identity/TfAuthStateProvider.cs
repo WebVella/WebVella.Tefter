@@ -43,10 +43,6 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 
 				var user = userResult.Value;
 
-				CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureCode);
-				CultureInfo.CurrentCulture = cultureInfo;
-				CultureInfo.CurrentUICulture = cultureInfo;
-
 				var claims = new List<Claim> {
 					new(ClaimTypes.NameIdentifier, user.Id.ToString()),
 					new(ClaimTypes.Email, user.Email.ToString()) };
