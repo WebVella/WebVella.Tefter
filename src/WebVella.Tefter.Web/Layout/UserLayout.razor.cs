@@ -67,9 +67,6 @@ public partial class UserLayout : FluxorLayout
         InvokeAsync(async () =>
         {
             if (SessionState.Value.IsLoading) return;
-
-			Console.WriteLine("SessionState_StateChanged");
-
             var culture = SessionState.Value.CultureOption is null ? TfConstants.CultureOptions[0].CultureInfo : CultureInfo.GetCultureInfo(SessionState.Value.CultureOption.CultureCode);
             if (culture != CultureInfo.CurrentCulture)
             {

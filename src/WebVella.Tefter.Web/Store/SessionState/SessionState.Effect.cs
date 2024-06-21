@@ -2,11 +2,11 @@
 
 public partial class SessionStateEffects
 {
-    private readonly ITfService tfService;
+    private readonly ITfService TfService;
 
     public SessionStateEffects(ITfService tfService)
     {
-        this.tfService = tfService;
+        this.TfService = tfService;
     }
 }
 
