@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Identity;
+﻿using System.Globalization;
+
+namespace WebVella.Tefter.Identity;
 
 public partial interface IIdentityManager
 {
@@ -32,7 +34,6 @@ public partial class IdentityManager : IIdentityManager
 					key: Constants.TEFTER_AUTH_COOKIE_NAME,
 					value: cryptoService.Encrypt(user.Id.ToString()),
 					expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
-
 
 			return Result.Ok();
 		}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
 
 namespace WebVella.Tefter.Identity;
 
@@ -42,7 +43,12 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 
 				var user = userResult.Value;
 
-				
+
+				CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureCode);
+				Thread.CurrentThread.CurrentCulture = cultureInfo;
+				Thread.CurrentThread.CurrentUICulture = cultureInfo;
+
+
 				var claims = new List<Claim> {
 					new(ClaimTypes.NameIdentifier, user.Id.ToString()),
 					new(ClaimTypes.Email, user.Email.ToString()) };
