@@ -5,7 +5,7 @@ public partial class SessionStateEffects
 	[EffectMethod]
 	public async Task HandleGetSessionAction(GetSessionAction action, IDispatcher dispatcher)
 	{
-		Result<UserSession> sessionResult = await tfService.GetUserSession(
+		Result<UserSession> sessionResult = await TfService.GetUserSession(
 			userId: action.UserId,
 			spaceId: action.SpaceId,
 			spaceDataId: action.SpaceDataId,
