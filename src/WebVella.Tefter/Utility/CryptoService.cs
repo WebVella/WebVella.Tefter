@@ -1,18 +1,18 @@
 ﻿namespace WebVella.Tefter.Utility;
 
-public interface ICryptoUtilityService
+public interface ICryptoService
 {
 	string Encrypt(string plainText);
 	string Decrypt(string cipherText);
 }
-public class CryptoUtilityService : ICryptoUtilityService
+public class CryptoService : ICryptoService
 {
 	private const string defaultPass = "Keys are created with a default lifetime of 90 days";
 	private readonly ICryptoServiceConfiguration _options;
 	private readonly IDataProtectionProvider _provider;
 	private string _password;
 
-	public CryptoUtilityService(
+	public CryptoService(
 		ICryptoServiceConfiguration cryptoServiceConfiguration,
 		IDataProtectionProvider provider
 		)
