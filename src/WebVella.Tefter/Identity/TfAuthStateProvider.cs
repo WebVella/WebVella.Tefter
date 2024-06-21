@@ -15,6 +15,8 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 	{
 		_serviceProvider = serviceProvider;
 
+		_cryptoService = _serviceProvider.GetRequiredService<ICryptoService>();
+
 		_contextAccessor = _serviceProvider.GetRequiredService<IHttpContextAccessor>();
 
 		_identityManager = _serviceProvider.GetService<IIdentityManager>();
@@ -40,14 +42,15 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 
 				var user = userResult.Value;
 
-				var claims = new List<Claim> { new(ClaimTypes.NameIdentifier, user.Id.ToString()) };
+				
+				var claims = new List<Claim> { new(ClaimTypes.Email, user.Email.ToString()) };
 				claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
 
 				var claimsIdentity = new ClaimsIdentity(claims);
 				var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
 				_contextAccessor.HttpContext.User = claimsPrincipal;
-				return await Task.FromResult(new AuthenticationState(_anonymous));
+				return await Task.FromResult(new AuthenticationState(claimsPrincipal));
 			}
 		}
 		catch { }
