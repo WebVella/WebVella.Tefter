@@ -1,8 +1,9 @@
-﻿namespace WebVella.Tefter.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+
+namespace WebVella.Tefter.Identity;
 
 internal class TfAuthenticationOptions : AuthenticationSchemeOptions
 {
 	public static string DefaultScheme { get; set; } = "TfAuthenticationScheme";
-	public string AUTH_TOKEN_NAME { get; set; } = "authentication-token";
-	public string COOKIE_NAME { get; set; } = "tefter";
+	public string COOKIE_NAME { get; set; } = Constants.TEFTER_AUTH_COOKIE_NAME;
 }
