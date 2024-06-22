@@ -3,7 +3,6 @@
 namespace WebVella.Tefter.Web.Components.AdminDataProviderNavigation;
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
-	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	private bool _menuLoading = true;
@@ -139,7 +138,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for space creation");
 
-		var spaces = await TfSrv.GetSpacesForUserAsync(UserState.Value.User.Id);
+		var spaces = await TfSrv.GetSpacesForUserAsync(SessionState.Value.UserId);
 		Navigator.NavigateTo($"/space/{spaces[0].Id}/data/{spaces[0].Data[0].Id}");
 	}
 	private void onDetailsClick()
@@ -183,7 +182,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		{
 			if (item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;
 			Dispatcher.Dispatch(new GetSessionAction(
-				userId: UserState.Value.User.Id,
+				userId: SessionState.Value.UserId,
 				spaceId: item.SpaceId.Value,
 				spaceDataId: item.SpaceDataId.Value,
 				spaceViewId: item.SpaceViewId.Value));

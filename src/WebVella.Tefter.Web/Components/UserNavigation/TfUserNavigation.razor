@@ -5,9 +5,9 @@
 		<div class="actions">
 			@if (_isAdmin)
 			{
-				<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminExitClick" Title="Exit Administration">
+				<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminExitClick" Title="@LOC("Exit Admin")">
 					<FluentIcon Value="@(new Icons.Regular.Size20.ArrowExit())" Color="@Color.Neutral" Slot="start"/>
-					Exit Admin
+					@LOC("Exit Admin")
 				</FluentButton>
 				<TfLanguageSwitch />
 				<TfNotificationCenter />
@@ -38,20 +38,14 @@
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
 			<FluentMenuItem OnClick="_setTheme">
-				Change Theme
+				@LOC("Change Theme")
 				<span slot="start">
 					<FluentIcon Value="@(new Icons.Regular.Size20.Color())" Slot="start" />
 				</span>
 			</FluentMenuItem>
-			<FluentMenuItem OnClick="_editProfile">
-				Edit Profile
-				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
-				</span>
-			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
 			<FluentMenuItem OnClick="_logout">
-				Logout
+				@LOC("Logout")
 				<span slot="start">
 					<FluentIcon Value="@(new Icons.Regular.Size20.SignOut())" Slot="start" />
 				</span>

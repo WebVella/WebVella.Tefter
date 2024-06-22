@@ -10,7 +10,7 @@ public partial class TfLocation : TfBaseComponent
 	{
 		if (disposing)
 		{
-			Navigator.LocationChanged -= OnLocationChanged;
+			Navigator.LocationChanged -= Navigator_LocationChanged;
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -24,11 +24,11 @@ public partial class TfLocation : TfBaseComponent
 			_namedLocation = generateNamedLocation();
 			StateHasChanged();
 
-			Navigator.LocationChanged += OnLocationChanged;
+			Navigator.LocationChanged += Navigator_LocationChanged;
 		}
 	}
 
-	protected void OnLocationChanged(object sender, LocationChangedEventArgs args)
+	protected void Navigator_LocationChanged(object sender, LocationChangedEventArgs args)
 	{
 
 		base.InvokeAsync(async () =>

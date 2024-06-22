@@ -1,0 +1,7 @@
+﻿@inherits TfBaseComponent
+@if (UserId != Guid.Empty)
+{
+	<TfPageBar Style="@TfConstants.AdminPagebarStyle" Items="menu">
+		<Actions><TfAdminUserDetailsActions /></Actions>
+	</TfPageBar>
+}

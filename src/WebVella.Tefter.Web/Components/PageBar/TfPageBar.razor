@@ -3,15 +3,15 @@
 <div class="content-toolbar" style="@Style">
 	<div class="content-toolbar-left">
 		<FluentNavMenu>
-			<FluentNavLink Href="@($"/admin/users")" Match="@NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.PersonInfo())">Детайли</FluentNavLink>
-			<FluentNavLink Href="@($"/admin/users/{new Guid("6625a900-c363-4df8-8e96-ec05b05671b0")}")" Icon="@(new Icons.Regular.Size20.Key())">Access</FluentNavLink>
-			<FluentNavLink Href="@($"/admin/users/{new Guid("7da5137f-8902-4fbe-ada8-e893d25f3bd4")}")" Icon="@(new Icons.Regular.Size20.Save())">Saved Views</FluentNavLink>
+			@foreach (var item in Items)
+			{
+				<FluentNavLink Match="@item.Match" Href="@item.Url"
+					Icon="@item.Icon">@item.Title</FluentNavLink>
+			}
 		</FluentNavMenu>
 	</div>
 	<div class=content-toolbar-right>
-		<FluentButton Title="add new user"
-					  IconStart="@(new Icons.Regular.Size20.Add())"
-					  Appearance="@Appearance.Accent">User</FluentButton>
+		@Actions
 	</div>
 </div>
 

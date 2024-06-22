@@ -3,7 +3,6 @@
 namespace WebVella.Tefter.Web.Components.AdminUserNavigation;
 public partial class TfAdminUserNavigation : TfBaseComponent
 {
-	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	private bool _menuLoading = true;
@@ -19,48 +18,38 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 	{
 		if (disposing)
 		{
-			//SessionState.StateChanged -= SessionState_StateChanged;
+			ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		base.OnAfterRender(firstRender);
+		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			GenerateSpaceDataMenu();
-			//SessionState.StateChanged += SessionState_StateChanged;
+			await GenerateSpaceDataMenu();
+			ActionSubscriber.SubscribeToAction<SetCurrentAdminUser>(this, (action) =>
+			{
+				InvokeAsync(async () =>
+				{
+					await GenerateSpaceDataMenu(search);
+					await InvokeAsync(StateHasChanged);
+				});
+			});
 			_menuLoading = false;
 			StateHasChanged();
 		}
 	}
 
-	//private void SessionState_StateChanged(object sender, EventArgs e)
-	//{
-	//	InvokeAsync(async () =>
-	//	{
-	//		if (SessionState.Value.DataHashId == _renderedDataHashId
-	//			&& SessionState.Value.Space?.Id == _renderedSpaceId) return;
-
-	//		_menuLoading = true;
-	//		await InvokeAsync(StateHasChanged);
-	//		await Task.Delay(1);
-	//		GenerateSpaceDataMenu();
-	//		_menuLoading = false;
-	//		await InvokeAsync(StateHasChanged);
-	//	});
-
-	//}
-
-	private async void GenerateSpaceDataMenu(string search = null)
+	private async Task GenerateSpaceDataMenu(string search = null)
 	{
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
 		var userResult = await IdentityManager.GetUsersAsync();
 		if (userResult.IsFailed) return;
 
-		var users = userResult.Value;
+		var users = userResult.Value.OrderBy(x => x.FirstName).ThenBy(x => x.LastName).ToList();
 
 
 		foreach (var item in users)
@@ -68,13 +57,13 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 			var menu = new MenuItem
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
+				Data = item,
 				Icon = new Icons.Regular.Size20.Person(),
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = String.Join(" ", new List<string> { item.FirstName, item.LastName }),
 				Url = $"/admin/users/{item.Id}",
-				Expanded = false,
-				Active = false
+				Active = SessionState.Value.CurrentAdminUser?.Id == item.Id,
 
 			};
 			SetMenuItemActions(menu);
@@ -107,17 +96,10 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			//	var response = (ThemeSettings)result.Data;
-			//	Dispatcher.Dispatch(new SetUIAction(
-			//		userId: SessionState.Value.UserId,
-			//		spaceId: SessionState.Value.SpaceRouteId,
-			//		spaceDataId: SessionState.Value.SpaceDataRouteId,
-			//		spaceViewId: SessionState.Value.SpaceViewRouteId,
-			//		mode: response.ThemeMode,
-			//		color: response.ThemeColor,
-			//		sidebarExpanded: !SessionState.Value.SidebarExpanded,
-			//		cultureOption: SessionState.Value.CultureOption
-			//));
+			var user = (User)result.Data;
+			ToastService.ShowSuccess("User successfully created!");
+			Dispatcher.Dispatch(new SetCurrentAdminUser(user));
+			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
 		}
 	}
 
@@ -128,21 +110,12 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 
 	private void OnTreeMenuSelect(MenuItem item, bool selected)
 	{
-		if (item.Level == 0)
-		{
-			item.Expanded = !item.Expanded;
-			item.Active = false;
-			return;
-		}
 		item.Active = selected;
-		if (item.Active)
+		if (item.Active && item.Data is not null)
 		{
-			if (item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;
-			Dispatcher.Dispatch(new GetSessionAction(
-				userId: UserState.Value.User.Id,
-				spaceId: item.SpaceId.Value,
-				spaceDataId: item.SpaceDataId.Value,
-				spaceViewId: item.SpaceViewId.Value));
+			var user = (User)item.Data;
+			Dispatcher.Dispatch(new SetCurrentAdminUser(user));
+			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
 		}
 	}
 

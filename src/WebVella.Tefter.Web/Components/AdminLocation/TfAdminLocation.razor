@@ -1,7 +1,7 @@
 ﻿@inherits TfBaseComponent
 
 <div class="location">
-	<FluentBadge Fill="somevalue" BackgroundColor="@TfConstants.AdminColor" Color="#ffffff">Admin Panel</FluentBadge>
+	<FluentBadge Fill="somevalue" BackgroundColor="@TfConstants.AdminColor" Color="#ffffff">@LOC("Admin Panel")</FluentBadge>
 	@if (_bcMenu is not null && _bcMenu.Count > 0)
 	{
 		<div class="title">
@@ -10,7 +10,7 @@
 					@foreach (var item in _bcMenu)
 				{
 						<FluentBreadcrumbItem title="@item.Title">
-							@item.Title
+							@LOC(item.Title)
 						</FluentBreadcrumbItem>
 				}
 

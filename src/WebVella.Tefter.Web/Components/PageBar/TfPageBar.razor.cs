@@ -7,4 +7,8 @@ public partial class TfPageBar : TfBaseComponent
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	[Parameter] public string Style { get; set; }
+
+	[Parameter] public RenderFragment Actions { get; set; }
+
+
 }

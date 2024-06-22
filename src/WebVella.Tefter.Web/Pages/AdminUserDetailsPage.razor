@@ -1,0 +1,34 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/admin/users"
+@page "/admin/users/{UserId:guid}"
+@layout AdminLayout
+@inherits TfBasePage
+
+@if (SessionState.Value.SidebarExpanded)
+{
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
+		<TfAdminUserNavigation />
+	</FluentStack>
+}
+@if (UserId != Guid.Empty)
+{
+	<FluentBodyContent Class="content-body with-toolbar">
+		<TfAdminUserDetailsNav UserId="UserId"/>
+		<div class="content-inner with-toolbar">
+			<TfAdminUserDetails />
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<div>TBD: Users dashboard</div>
+			<div>Select user from the list to review and manage it</div>
+
+		</div>
+	</FluentBodyContent>
+
+}
+
+

@@ -16,5 +16,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\WebVella.Tefter.Core\WebVella.Tefter.Core.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Store\RouteState\" />
+	</ItemGroup>
 	
 </Project>

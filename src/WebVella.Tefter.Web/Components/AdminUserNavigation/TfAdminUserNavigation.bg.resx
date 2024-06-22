@@ -117,55 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Confirm Password" xml:space="preserve">
-    <value>Потвърди Парола</value>
+  <data name="search..." xml:space="preserve">
+    <value>търси...</value>
   </data>
-  <data name="Create" xml:space="preserve">
-    <value>Създай</value>
-  </data>
-  <data name="Create user" xml:space="preserve">
-    <value>Създай потребител</value>
-  </data>
-  <data name="Email" xml:space="preserve">
-    <value>Имейл</value>
-  </data>
-  <data name="Enabled" xml:space="preserve">
-    <value>активен</value>
-  </data>
-  <data name="First Name" xml:space="preserve">
-    <value>Име</value>
-  </data>
-  <data name="Last Name" xml:space="preserve">
-    <value>Фамилия</value>
-  </data>
-  <data name="leave empty too keep the password" xml:space="preserve">
-    <value>остави празно за да запазиш паролата</value>
-  </data>
-  <data name="Localization" xml:space="preserve">
-    <value>Локализация</value>
-  </data>
-  <data name="Manage user" xml:space="preserve">
-    <value>Редакция на потребител</value>
-  </data>
-  <data name="Password" xml:space="preserve">
-    <value>Парола</value>
-  </data>
-  <data name="Passwords do not match" xml:space="preserve">
-    <value>Паролите не съвпадат</value>
-  </data>
-  <data name="Roles" xml:space="preserve">
-    <value>Роли</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Запомни</value>
-  </data>
-  <data name="Status" xml:space="preserve">
-    <value>Статус</value>
-  </data>
-  <data name="Theme Color" xml:space="preserve">
-    <value>Интерфейс Цвят</value>
-  </data>
-  <data name="Theme Mode" xml:space="preserve">
-    <value>Интерфейс Режим</value>
+  <data name="User" xml:space="preserve">
+    <value>Потребител</value>
   </data>
 </root>

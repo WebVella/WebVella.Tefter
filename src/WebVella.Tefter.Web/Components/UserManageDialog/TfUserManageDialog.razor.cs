@@ -19,7 +19,6 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		base.InitForm(_form);
 		if (Content is null)
 		{
 			_title = LC["Create user"];
@@ -48,6 +47,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureCode);
 			if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];
 		}
+		base.InitForm(_form);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -89,6 +89,8 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			//Workaround to wait for the form to be bound 
 			//on enter click without blur
 			await Task.Delay(10);
+			if(String.IsNullOrWhiteSpace(_form.Password))
+				_form.Password = null; //fixes a case when password was touched
 			if (_form.Password != _form.ConfirmPassword)
 			{
 				MessageStore.Add(EditContext.Field(nameof(_form.Password)), LOC("Passwords do not match"));
@@ -96,8 +98,6 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			}
 			var isValid = EditContext.Validate();
 			if (!isValid) return;
-
-
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
@@ -122,14 +122,24 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			else
 			{
 				userBuilder = IdentityManager.CreateUserBuilder(Content);
+				userBuilder
+					.WithEmail(_form.Email)
+					.WithFirstName(_form.FirstName)
+					.WithLastName(_form.LastName)
+					.Enabled(_form.Enabled)
+					.WithThemeMode(_form.ThemeMode)
+					.WithThemeColor(_form.ThemeColor)
+					.WithCultureCode(_form.Culture.CultureCode)
+					.WithRoles(_form.Roles.ToArray());
 			}
 
 			var user = userBuilder.Build();
 			var result = await IdentityManager.SaveUserAsync(user);
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
-				NavigatorExt.ReloadCurrentUrl(Navigator);
-
+			{
+				await Dialog.CloseAsync(result.Value);
+			}
 		}
 		catch (Exception ex)
 		{
@@ -170,9 +180,7 @@ public class TfUserManageDialogModel
 	public string FirstName { get; set; }
 	[Required]
 	public string LastName { get; set; }
-	[Required]
 	internal string Password { get; set; }
-	[Required]
 	internal string ConfirmPassword { get; set; }
 	[Required]
 	public bool Enabled { get; set; } = true;

@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/admin/users/{UserId:guid}/saves"
+@layout AdminLayout
+@inherits TfBasePage
+
+@if (SessionState.Value.SidebarExpanded)
+{
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
+		<TfAdminUserNavigation />
+	</FluentStack>
+}
+<FluentBodyContent Class="content-body with-toolbar">
+	<TfAdminUserDetailsNav UserId="UserId" />
+	<div class="content-inner with-toolbar">
+		<TfAdminUserDetails/>
+	</div>
+</FluentBodyContent>
+
+

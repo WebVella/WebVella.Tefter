@@ -8,12 +8,12 @@ public class MenuItem
 	public OfficeColor IconColor { get; set; }
 	public string Url { get; set; }
 	public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
-
 	public bool Expanded { get; set; } = false;
 	public bool Active { get; set; } = false;
 	public int Level { get; set; } = 0;
 	public string LevelClass { get => $"level-{Level}"; }
 
+	public object Data { get; set; }
 	public Guid? SpaceId { get; set; }
 	public Guid? SpaceDataId { get; set; }
 	public Guid? SpaceViewId { get; set; }
@@ -22,6 +22,9 @@ public class MenuItem
 
 	[JsonIgnore]
 	public Action<bool> OnSelect { get; set; }
+
+	[JsonIgnore]
+	public Action OnClick { get; set; }
 
 	[JsonIgnore]
 	public Action OnExpand { get; set; }

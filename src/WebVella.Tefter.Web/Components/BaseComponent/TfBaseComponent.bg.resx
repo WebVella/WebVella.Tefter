@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Unexpected Error!" xml:space="preserve">
-    <value>Неочаквана грешка!</value>
+  <data name="Access" xml:space="preserve">
+    <value>Достъп</value>
   </data>
-  <data name="Unexpected Error! Check Notifications for details" xml:space="preserve">
-    <value>Неочаквана грешка! За детайли, вижте добавената нотификация</value>
+  <data name="Details" xml:space="preserve">
+    <value>Детайли</value>
+  </data>
+  <data name="Saved Views" xml:space="preserve">
+    <value>Запазени Изгледи</value>
   </data>
 </root>

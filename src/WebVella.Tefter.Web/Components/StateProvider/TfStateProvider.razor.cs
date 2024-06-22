@@ -11,6 +11,7 @@ public partial class TfStateProvider : TfBaseComponent
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	private bool _isLoading = true;
+	private bool _sessionInited = false;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -27,7 +28,6 @@ public partial class TfStateProvider : TfBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-
 			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 			var user = authState.User;
 			//Temporary fix for multitab logout
@@ -65,6 +65,7 @@ public partial class TfStateProvider : TfBaseComponent
 	/// <param name="e"></param>
 	private void SessionState_StateChanged(object sender, EventArgs e)
 	{
+		if(_sessionInited) return;
 		InvokeAsync(async () =>
 		{
 			if (SessionState.Value.IsLoading) return;
@@ -86,18 +87,22 @@ public partial class TfStateProvider : TfBaseComponent
 				if (cultureCookie is null)
 					NavigatorExt.ReloadCurrentUrl(Navigator);
 			}
-			_isLoading = false;
-			await LoadingChange.InvokeAsync(_isLoading);
+			_sessionInited = true;
+			if (_isLoading)
+			{
+				_isLoading = false;
+				await LoadingChange.InvokeAsync(_isLoading);
+			}
 		});
 	}
 
 	/// <summary>
-	/// Monitors Navigation changes in order to get and set the correct values of 
+	/// Fixing a problem when loging out from one tab leaves the user logged on the others
 	/// Space data
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void Navigator_LocationChanged(object sender, EventArgs e)
+	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
 		InvokeAsync(async () =>
 		{
@@ -112,36 +117,8 @@ public partial class TfStateProvider : TfBaseComponent
 				Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 				return;
 			}
-
-			if (_isLoading) return;
-
-			_isLoading = true;
-			await LoadingChange.InvokeAsync(_isLoading);
-			_initLocationChange();
-			_isLoading = false;
-			await LoadingChange.InvokeAsync(_isLoading);
 		});
 	}
-
-	/// <summary>
-	/// Performs the needed changes on location change
-	/// </summary>
-	private void _initLocationChange()
-	{
-		var urlData = NavigatorExt.GetUrlData(Navigator);
-
-		if (urlData.SpaceId == SessionState.Value.SpaceRouteId
-		   && urlData.SpaceDataId == SessionState.Value.SpaceDataRouteId
-		   && urlData.SpaceViewId == SessionState.Value.SpaceViewRouteId) return;
-
-
-		Dispatcher.Dispatch(new GetSessionAction(
-				userId: SessionState.Value.UserId,
-				spaceId: urlData.SpaceId,
-				spaceDataId: urlData.SpaceDataId,
-				spaceViewId: urlData.SpaceViewId));
-	}
-
 
 	/// <summary>
 	/// Monitors Key events globally
