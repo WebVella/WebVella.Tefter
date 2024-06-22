@@ -49,7 +49,7 @@ body {
 
 .sidebar {
 	position: relative;
-	width: 100% !important;
+	width: 300px !important;
 	flex: 0 0 auto;
 	background: var(--neutral-layer-3) !important;
 	height: 100%;
@@ -84,13 +84,8 @@ body {
 	/*padding-right: 5px;*/
 	border-radius: var(--tf-content-border-radius);
 	border-top: var(--tf-content-border-top-width) solid transparent;
-	display: grid;
-	grid-template-columns: 300px auto;
-	grid-template-rows: 100%;
-}
+	display: flex;
 
-.sidebar-collapsed .content {
-	grid-template-columns: auto;
 }
 
 .content-toolbar {
@@ -196,6 +191,7 @@ body {
 .tf-grid-tbody > .tf-grid-tr > .tf-grid-td a:hover {
 	text-decoration:underline;
 }
+
 
 /* width */
 ::-webkit-scrollbar {

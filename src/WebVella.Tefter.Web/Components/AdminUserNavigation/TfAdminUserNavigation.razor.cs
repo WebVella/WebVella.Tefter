@@ -54,6 +54,9 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 
 		foreach (var item in users)
 		{
+			if (!String.IsNullOrWhiteSpace(search) && !item.FirstName.ToLowerInvariant().Contains(search)
+			 && !item.LastName.ToLowerInvariant().Contains(search))
+				continue;
 			var menu = new MenuItem
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
@@ -122,6 +125,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 	private async Task onSearch(string value)
 	{
 		search = value;
-		GenerateSpaceDataMenu(search);
+		await GenerateSpaceDataMenu(search);
+		await InvokeAsync(StateHasChanged);
 	}
 }

@@ -1,3 +1,16 @@
 ﻿@inherits TfBaseComponent
 
-@LOC("Boz",1,12,3)
+<TfCard>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@SessionState.Value?.CurrentAdminUser?.FirstName"
+							 ReadOnly="true" Label="@LC["First Name"]" Style="width:100%" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@SessionState.Value?.CurrentAdminUser?.LastName"
+							 ReadOnly="true" Label="@LC["Last Name"]" Style="width:100%" />
+		</FluentGridItem>
+	</FluentGrid>
+</TfCard>
+
+

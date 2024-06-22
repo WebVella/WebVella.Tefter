@@ -1,9 +1,10 @@
 ﻿@inherits TfBaseComponent
 
 <div class="language-switch">
-	<a href="#" Id="language-switch-btn" @onclick:preventDefault @onclick="() => _visible = !_visible" Appearance="@Appearance.Hypertext">
+	<FluentButton Id="language-switch-btn"
+		Appearance="@Appearance.Stealth" OnClick="@(() => _visible = !_visible)" Title="@LOC("Exit Admin")">
 		<img src="@SessionState.Value.CultureOption?.IconUrl" />
-	</a>
+	</FluentButton>
 </div>
 <FluentMenu Width="200" @bind-Open="_visible" Anchor="language-switch-btn">
 	@foreach (var item in TfConstants.CultureOptions)

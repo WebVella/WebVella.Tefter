@@ -1,9 +1,15 @@
 ﻿@page "/admin"
 @layout AdminLayout
 
-<div class="content-body">
+<FluentBodyContent Class="content-body">
 	<div class="content-inner">
-		<div>@CultureInfo.CurrentCulture</div>
-		<div>@CultureInfo.CurrentUICulture</div>
+		<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+						  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+			<div>TBD: High level system overview and syncronization log</div>
+		</FluentMessageBar>
+		<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
+						  Intent="@MessageIntent.Warning">
+			<div>Select a menu from the navigation to proceed</div>
+		</FluentMessageBar>
 	</div>
-</div>
+</FluentBodyContent>

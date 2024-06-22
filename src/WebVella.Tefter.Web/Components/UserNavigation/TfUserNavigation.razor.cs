@@ -76,7 +76,7 @@ public partial class TfUserNavigation
 				spaceViewId: SessionState.Value.SpaceViewRouteId,
 				mode: response.ThemeMode,
 				color: response.ThemeColor,
-				sidebarExpanded: !SessionState.Value.SidebarExpanded,
+				sidebarExpanded: SessionState.Value.SidebarExpanded,
 				cultureOption: SessionState.Value.CultureOption
 		));
 

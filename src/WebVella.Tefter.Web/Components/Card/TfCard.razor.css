@@ -1,0 +1,19 @@
+﻿::deep {
+}
+
+::deep fluent-card {
+	height: unset !important;
+	background:transparent;
+	box-shadow:none;
+	border-width:2px;
+}
+	::deep fluent-text-field[readonly]::part(root) {
+		border:1px solid var(--neutral-fill-input-alt-active) !important;
+	}
+	::deep fluent-text-field[readonly]::part(control) {
+		border:none !important;
+	}
+
+	::deep fluent-text-field[readonly]::after {
+		display:none;
+	}

@@ -65,13 +65,28 @@ public partial class TfStateProvider : TfBaseComponent
 	/// <param name="e"></param>
 	private void SessionState_StateChanged(object sender, EventArgs e)
 	{
-		if(_sessionInited) return;
+		if (_sessionInited) return;
 		InvokeAsync(async () =>
 		{
 			if (SessionState.Value.IsLoading) return;
 			var cultureCookie = await new CookieService(JSRuntimeSrv).GetAsync(CookieRequestCultureProvider.DefaultCookieName);
+			CultureInfo cookieCultureInfo = null;
+			ProviderCultureResult cultureCookieValue = CookieRequestCultureProvider.ParseCookieValue(cultureCookie.Value);
+			if (cultureCookieValue != null && cultureCookieValue.UICultures.Count > 0)
+			{
+				try
+				{
+					var cookieCulture = CultureInfo.GetCultureInfo(cultureCookieValue.UICultures.First().ToString());
+					if(TfConstants.CultureOptions.Any(x=> x.CultureInfo.Name ==  cookieCulture.Name)) {
+						cookieCultureInfo = cookieCulture;
+					}
+				}
+				//in case there is unrecognized culture in the cookie
+				catch{}
+			}
 			var culture = SessionState.Value.CultureOption is null ? TfConstants.CultureOptions[0].CultureInfo : CultureInfo.GetCultureInfo(SessionState.Value.CultureOption.CultureCode);
-			if (culture != CultureInfo.CurrentCulture)
+
+			if (cookieCultureInfo is null || cookieCultureInfo.Name != culture.Name)
 			{
 				CultureInfo.CurrentCulture = culture;
 				CultureInfo.CurrentUICulture = culture;
@@ -82,10 +97,7 @@ public partial class TfStateProvider : TfBaseComponent
 								culture,
 								culture)), DateTimeOffset.Now.AddYears(30));
 
-				//The reload is a workaround for not being able to set properly the CultureInfo for the user session
-				//Until the cookie is set
-				if (cultureCookie is null)
-					NavigatorExt.ReloadCurrentUrl(Navigator);
+				NavigatorExt.ReloadCurrentUrl(Navigator);
 			}
 			_sessionInited = true;
 			if (_isLoading)

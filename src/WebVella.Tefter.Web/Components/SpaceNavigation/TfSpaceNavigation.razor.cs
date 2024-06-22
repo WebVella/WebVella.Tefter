@@ -193,5 +193,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		search = value;
 		GenerateSpaceDataMenu(search);
+		await InvokeAsync(StateHasChanged);
 	}
 }
