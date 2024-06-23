@@ -14,6 +14,15 @@ builder.Services.AddFluxor(options =>
 #endif
 });
 
+//because components are not disposed for about 10 min after page is left by browser
+//maybe 5 seconds is too low ???
+//https://stackoverflow.com/questions/78451698/dispose-is-never-called-for-any-server-side-blazor-components
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options =>
+{
+	options.DetailedErrors = true;
+	options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(5);
+});
+
 builder.Services.AddFluentUIComponents();
 builder.Services.AddTefter();
 
