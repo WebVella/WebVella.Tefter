@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Web.Components.UserNavigation;
 public partial class TfUserNavigation
 {
 	[Inject] protected IState<UserState> UserState { get; set; }
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IState<ThemeState> ThemeState { get; set; }
 
 	private bool _visible = false;
 	private bool _isAdmin = false;
@@ -59,7 +59,7 @@ public partial class TfUserNavigation
 
 	private async Task _setTheme()
 	{
-		var themeSettings = new ThemeSettings { ThemeMode = SessionState.Value.ThemeMode, ThemeColor = SessionState.Value.ThemeColor };
+		var themeSettings = new ThemeSettings { ThemeMode = ThemeState.Value.ThemeMode, ThemeColor = ThemeState.Value.ThemeColor };
 		var dialog = await DialogService.ShowDialogAsync<TfThemeSetDialog>(themeSettings, new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -69,15 +69,11 @@ public partial class TfUserNavigation
 		if (!result.Cancelled && result.Data != null)
 		{
 			var response = (ThemeSettings)result.Data;
-			Dispatcher.Dispatch(new SetUIAction(
-				userId: SessionState.Value.UserId,
-				spaceId: SessionState.Value.SpaceRouteId,
-				spaceDataId: SessionState.Value.SpaceDataRouteId,
-				spaceViewId: SessionState.Value.SpaceViewRouteId,
-				mode: response.ThemeMode,
-				color: response.ThemeColor,
-				sidebarExpanded: SessionState.Value.SidebarExpanded,
-				cultureOption: SessionState.Value.CultureOption
+			Dispatcher.Dispatch(new SetThemeAction(
+				userId: UserState.Value.User.Id,
+				themeMode: response.ThemeMode,
+				themeColor: response.ThemeColor,
+				persist:true
 		));
 
 		}
@@ -88,7 +84,7 @@ public partial class TfUserNavigation
 	}
 	private async Task _logout()
 	{
-		await IdentityManager.LogoutAsync(JSRuntimeSrv);
+		await IdentityManager.LogoutAsync(JSRuntime);
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}

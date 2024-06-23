@@ -1,14 +1,8 @@
 ﻿@inherits FluxorLayout
 
-<TfStateProvider LoadingChange="_onLoadingChange" />
-@if (_isLoading)
-{
-	<TfLoadingPane ShowTop="true" />
-}
-else
-{
-	<FluentDesignTheme Mode="@SessionState.Value.ThemeMode" OfficeColor="@SessionState.Value.ThemeColor" />
-	<FluentLayout Class="@(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
+<TfStateInitializer>
+	<FluentDesignTheme Mode="@ThemeState.Value.ThemeMode" OfficeColor="@ThemeState.Value.ThemeColor" />
+	<FluentLayout Class="@(ScreenStateSidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
 			<TfSidebarToggle />
 			<TfLocation />
@@ -19,9 +13,9 @@ else
 			<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
 				<TfNavigation />
 			</FluentStack>
-			<FluentBodyContent Class="content" style="@($"border-top-color:{SessionState.Value.SpaceColor}")">
+			<FluentBodyContent Class="content" style="@($"border-top-color:{SessionSpaceColor.Value}")">
 				@Body
 			</FluentBodyContent>
 		</FluentStack>
 	</FluentLayout>
-}
+</TfStateInitializer>

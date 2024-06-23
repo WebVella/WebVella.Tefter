@@ -44,7 +44,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 				IsSidebarOpen = Content.Settings.IsSidebarOpen,
 			};
 
-			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureCode);
+			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
 			if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];
 		}
 		base.InitForm(_form);

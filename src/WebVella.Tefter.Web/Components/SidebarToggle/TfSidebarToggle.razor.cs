@@ -1,17 +1,40 @@
 ﻿namespace WebVella.Tefter.Web.Components.SidebarToggle;
 public partial class TfSidebarToggle : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IStateSelection<UserState, Guid> UserIdState { get; set; }
+	[Inject] protected IStateSelection<ScreenState, bool> ScreenSidebarState { get; set; }
+	[Inject] private IKeyCodeService KeyCodeService { get; set; }
+
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			KeyCodeService.UnregisterListener(OnKeyDownAsync);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		ScreenSidebarState.Select(x => x?.SidebarExpanded ?? true);
+		UserIdState.Select(x => x?.User?.Id ?? Guid.Empty);
+		KeyCodeService.RegisterListener(OnKeyDownAsync);
+	}
+
+
 	private void _toggle()
 	{
-		Dispatcher.Dispatch(new SetUIAction(
-		userId: SessionState.Value.UserId,
-		spaceId: SessionState.Value.SpaceRouteId,
-		spaceDataId: SessionState.Value.SpaceDataRouteId,
-		spaceViewId: SessionState.Value.SpaceViewRouteId,
-		mode:SessionState.Value.ThemeMode,
-		color: SessionState.Value.ThemeColor,
-		sidebarExpanded:!SessionState.Value.SidebarExpanded,
-		cultureOption: SessionState.Value.CultureOption));
+		Dispatcher.Dispatch(new SetSidebarAction(
+			userId: UserIdState.Value,
+			sidebarExpanded: !ScreenSidebarState.Value,
+			persist: true));
+	}
+
+	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
+	{
+		if (args.CtrlKey && args.Key == KeyCode.Function11)
+			_toggle();
+
+		return Task.CompletedTask;
 	}
 }

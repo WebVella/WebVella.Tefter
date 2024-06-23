@@ -4,9 +4,6 @@ public partial record SessionState
 {
 	public bool IsDataLoading { get; init; }
 	public string DataHashId { get; init; }
-	public Guid? SpaceRouteId { get; init; }
-	public Guid? SpaceDataRouteId { get; init; }
-	public Guid? SpaceViewRouteId { get; init; }
 	public Space Space { get; init; }
 	public SpaceData SpaceData { get; init; }
 	public SpaceView SpaceView { get; init; }
@@ -17,7 +14,7 @@ public partial record SessionState
 	{
 		get
 		{
-			if (SpaceRouteId is null || Space is null) return ThemeColor.ToAttributeValue();
+			if (RouteSpaceId is null || Space is null) return ThemeColor.ToAttributeValue();
 
 			return Space.Color.ToAttributeValue();
 		}

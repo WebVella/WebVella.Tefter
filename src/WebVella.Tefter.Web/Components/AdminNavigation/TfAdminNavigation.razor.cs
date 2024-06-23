@@ -18,7 +18,7 @@ public partial class TfAdminNavigation: TfBaseComponent
 		menuItems.Add(new MenuItem(){ 
 			Id = "tf-dashboard-link",
 			Icon = TfConstants.AdminDashboardIcon,
-			IconColor = TfConstants.AdminOfficeColor,
+			IconColor = TfConstants.DefaultThemeColor,
 			Match = NavLinkMatch.All,
 			Url = "/admin",
 			Title = TfConstants.AdminDashboardMenuTitle
@@ -28,7 +28,7 @@ public partial class TfAdminNavigation: TfBaseComponent
 		{
 			Id = "tf-users-link",
 			Icon = TfConstants.AdminUsersIcon,
-			IconColor = TfConstants.AdminOfficeColor,
+			IconColor = TfConstants.DefaultThemeColor,
 			Match = NavLinkMatch.Prefix,
 			Url = "/admin/users",
 			Title = TfConstants.AdminUsersMenuTitle
@@ -38,7 +38,7 @@ public partial class TfAdminNavigation: TfBaseComponent
 		{
 			Id = "tf-data-providers-link",
 			Icon = TfConstants.AdminDataProvidersIcon,
-			IconColor = TfConstants.AdminOfficeColor,
+			IconColor = TfConstants.DefaultThemeColor,
 			Match = NavLinkMatch.Prefix,
 			Url = "/admin/data-providers",
 			Title = TfConstants.AdminDataProvidersMenuTitle

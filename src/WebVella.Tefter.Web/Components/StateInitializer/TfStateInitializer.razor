@@ -1,0 +1,10 @@
+﻿@inherits TfBaseComponent
+
+@if (_isLoading)
+{
+	<TfLoadingPane ShowTop="true" />
+}
+else
+{
+	@ChildContent
+}

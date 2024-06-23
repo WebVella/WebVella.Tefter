@@ -37,7 +37,7 @@ public class UserBuilder
 			_themeMode = user.Settings.ThemeMode;
 			_themeColor = user.Settings.ThemeColor;
 			_sidebarOpen = (user?.Settings?.IsSidebarOpen) ?? true;
-			_cultureCode = (user?.Settings?.CultureCode) ?? string.Empty;
+			_cultureCode = (user?.Settings?.CultureName) ?? string.Empty;
 			_roles = user.Roles.ToList();
 		}
 	}
@@ -156,7 +156,7 @@ public class UserBuilder
 				IsSidebarOpen = _sidebarOpen,
 				ThemeColor = _themeColor,
 				ThemeMode = _themeMode,
-				CultureCode = _cultureCode
+				CultureName = _cultureCode
 			}
 		};
 	}

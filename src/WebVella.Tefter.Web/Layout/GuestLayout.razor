@@ -1,13 +1,12 @@
 ﻿@inherits FluxorLayout
 
-<FluentDesignTheme Mode="@DesignThemeModes.System" OfficeColor="@OfficeColor.Excel" />
 @if (_isLoading)
 {
 	<TfLoadingPane ShowTop="true" />
 }
 else
 {
-
+	<FluentDesignTheme Mode="@DesignThemeModes.System" OfficeColor="@OfficeColor.Excel" />
 	<FluentLayout>
 		<FluentStack Orientation="Orientation.Vertical" HorizontalAlignment="@HorizontalAlignment.Center" Style="padding-top:30px;">
 			@Body

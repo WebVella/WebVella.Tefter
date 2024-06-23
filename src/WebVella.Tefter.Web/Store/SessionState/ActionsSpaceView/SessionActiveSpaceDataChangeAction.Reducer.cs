@@ -7,9 +7,9 @@ public static partial class SessionStateReducers
 	{
 		return state with
 		{
-			SpaceRouteId = action.SpaceRouteId,
-			SpaceDataRouteId = action.SpaceDataRouteId,
-			SpaceViewRouteId = action.SpaceViewRouteId,
+			RouteSpaceId = action.SpaceRouteId,
+			RouteSpaceDataId = action.SpaceDataRouteId,
+			RouteSpaceViewId = action.SpaceViewRouteId,
 			Space = action.Space,
 			SpaceData = action.SpaceData,
 			SpaceView = action.SpaceView

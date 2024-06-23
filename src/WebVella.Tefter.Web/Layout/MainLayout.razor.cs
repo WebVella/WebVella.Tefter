@@ -4,13 +4,14 @@ using WebVella.Tefter.Web.Store.UserState;
 namespace WebVella.Tefter.Web.Layout;
 public partial class MainLayout : FluxorLayout
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
-	private bool _isLoading = true;
+	[Inject] protected IState<ThemeState> ThemeState { get; set; }
+	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<SessionState,string> SessionSpaceColor { get; set; }
 
-
-	private void _onLoadingChange(bool value)
+	protected override void OnInitialized()
 	{
-		_isLoading = value;
-		StateHasChanged();
+		base.OnInitialized();
+		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
+		SessionSpaceColor.Select(x=> x.SpaceColor);
 	}
 }

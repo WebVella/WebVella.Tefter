@@ -54,6 +54,8 @@ public class CookieService
 	public async Task SetAsync(string key, string value, DateTimeOffset? expiration, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(key)) throw new Exception("Key is required when setting a cookie.");
+		//Remove if exist to avoid multiple cookies scenario
+		await RemoveAsync(key,cancellationToken);
 		await JSRuntime.InvokeVoidAsync("eval", $"document.cookie = \"{key}={value}; expires={expiration:R}; path=/\"");
 	}
 

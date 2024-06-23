@@ -23,7 +23,7 @@ public class IdentityCircuitHandler : CircuitHandler
 			authState.User.Identity.IsAuthenticated )
 		{
 			var user = ((TfIdentity)authState.User.Identity).User;
-			CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureCode);
+			CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureName);
 			CultureInfo.CurrentCulture = cultureInfo;
 			CultureInfo.CurrentUICulture = cultureInfo;
 		}
@@ -37,7 +37,7 @@ public class IdentityCircuitHandler : CircuitHandler
 			authState.User.Identity.IsAuthenticated)
 		{
 			var user = ((TfIdentity)authState.User.Identity).User;
-			CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureCode);
+			CultureInfo cultureInfo = CultureInfo.GetCultureInfo(user.Settings.CultureName);
 			CultureInfo.CurrentCulture = cultureInfo;
 			CultureInfo.CurrentUICulture = cultureInfo;
 		}
