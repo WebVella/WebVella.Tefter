@@ -9,12 +9,15 @@ global using System.Drawing;
 global using System.Text.Json;
 global using System.Text.RegularExpressions;
 global using System.Threading.Tasks;
+global using System.Threading.Channels; 
 global using System.Text.Json.Serialization;
 global using System.Collections.ObjectModel;
 global using System.Security.Cryptography;
 global using System.Net.Mail;
 global using System.Security.Claims;
 
+global using Microsoft.AspNetCore.Components.Authorization;
+global using Microsoft.Extensions.Hosting; 
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.DataProtection;
 global using Microsoft.AspNetCore.Hosting;

@@ -40,7 +40,7 @@ public class CookieService
 		return result;
 	}
 
-	public async Task<Cookie?> GetAsync(string key)
+	public async Task<Cookie> GetAsync(string key)
 	{
 		var cookies = await GetAllAsync();
 		return cookies.FirstOrDefault(x => x.Key == key);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using WebVella.Tefter.Messaging;
 using WebVella.Tefter.Utility;
 
 namespace WebVella.Tefter;
@@ -23,7 +24,7 @@ public static class DependencyInjection
 		//	.AddAuthentication(TfAuthenticationOptions.DefaultScheme)
 		//	.AddScheme<TfAuthenticationOptions, TfAuthenticationHandler>(
 		//		TfAuthenticationOptions.DefaultScheme, options => { });
-		
+
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
 
 		services.AddSingleton<ILogger, NullLogger>();
@@ -34,6 +35,12 @@ public static class DependencyInjection
 				.AddJsonFile($"appsettings.{Environment.MachineName}.json".ToApplicationPath(), true)
 		   .Build());
 		});
+
+		//messaging
+		services.AddSingleton<IChannelEventRouter, ChannelEventRouter>();
+		services.AddTransient<ITfEventBus, TfEventBus>();
+		services.AddTransient<UserEventProvider, UserEventProvider>();
+		services.AddTransient<GlobalEventProvider, GlobalEventProvider>();
 
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
