@@ -30,7 +30,7 @@ public class UserSettings
 
 	public bool IsSidebarOpen { get; init; } = true;
 
-	public string CultureCode { get; init; } = string.Empty;
+	public string CultureName { get; init; } = string.Empty;
 }
 
 

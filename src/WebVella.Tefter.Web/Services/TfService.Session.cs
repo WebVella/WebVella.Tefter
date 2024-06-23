@@ -99,7 +99,7 @@ public partial class TfService : ITfService
 			SpaceDataDict = spaceDataDict,
 			SpaceViewDict = spaceViewDict,
 			SpaceNav = spaceNav,
-			CultureCode = user.Settings.CultureCode
+			CultureCode = user.Settings.CultureName
 		});
 	}
 

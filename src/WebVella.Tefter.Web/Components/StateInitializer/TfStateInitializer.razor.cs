@@ -86,7 +86,9 @@ public partial class TfStateInitializer : TfBaseComponent
 
 		var cultureCookie = await new CookieService(JSRuntime).GetAsync(CookieRequestCultureProvider.DefaultCookieName);
 		CultureInfo cookieCultureInfo = null;
-		ProviderCultureResult cultureCookieValue = CookieRequestCultureProvider.ParseCookieValue(cultureCookie.Value);
+		ProviderCultureResult cultureCookieValue = null;
+		if (cultureCookie is not null)
+			cultureCookieValue = CookieRequestCultureProvider.ParseCookieValue(cultureCookie.Value);
 		if (cultureCookieValue != null && cultureCookieValue.UICultures.Count > 0)
 		{
 			try
@@ -100,9 +102,9 @@ public partial class TfStateInitializer : TfBaseComponent
 			//in case there is unrecognized culture in the cookie
 			catch { }
 		}
-		var culture = String.IsNullOrWhiteSpace(user.Settings.CultureCode)
+		var culture = String.IsNullOrWhiteSpace(user.Settings.CultureName)
 				? TfConstants.CultureOptions[0].CultureInfo
-				: CultureInfo.GetCultureInfo(user.Settings.CultureCode);
+				: CultureInfo.GetCultureInfo(user.Settings.CultureName);
 
 		if (cookieCultureInfo is null || cookieCultureInfo.Name != culture.Name)
 		{
