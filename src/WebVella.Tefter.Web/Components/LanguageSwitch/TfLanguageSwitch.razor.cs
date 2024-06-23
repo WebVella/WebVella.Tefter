@@ -1,25 +1,35 @@
 ﻿
 
+using Microsoft.AspNetCore.Localization;
+
 namespace WebVella.Tefter.Web.Components.LanguageSwitch;
 public partial class TfLanguageSwitch : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IState<CultureState> CultureState { get; set; }
+	[Inject] protected IStateSelection<UserState, Guid> UserIdState { get; set; }
 
-	internal bool _visible = false;
+	private bool _visible = false;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		UserIdState.Select(x => x?.User?.Id ?? Guid.Empty);
+	}
 
 	private async Task _select(CultureOption option)
 	{
-		Dispatcher.Dispatch(new SetUIAction(
-		userId: SessionState.Value.UserId,
-		spaceId: SessionState.Value.SpaceRouteId,
-		spaceDataId: SessionState.Value.SpaceDataRouteId,
-		spaceViewId: SessionState.Value.SpaceViewRouteId,
-		mode: SessionState.Value.ThemeMode,
-		color: SessionState.Value.ThemeColor,
-		sidebarExpanded: SessionState.Value.SidebarExpanded,
-		cultureOption: option));
+		Dispatcher.Dispatch(new SetCultureAction(
+		userId:UserIdState.Value,
+		culture: option,
+		persist: true));
+		var culture = CultureInfo.GetCultureInfo(option.CultureCode);
 
-		await Task.Delay(5);
+		await new CookieService(JSRuntime).SetAsync(CookieRequestCultureProvider.DefaultCookieName,
+				CookieRequestCultureProvider.MakeCookieValue(
+					new RequestCulture(
+						culture,
+						culture)), DateTimeOffset.Now.AddYears(30));
+
 		NavigatorExt.ReloadCurrentUrl(Navigator);
 	}
 }

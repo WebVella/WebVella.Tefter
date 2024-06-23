@@ -4,15 +4,13 @@ namespace WebVella.Tefter.Web.Layout;
 public partial class GuestLayout : FluxorLayout
 {
 	[Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
-	[Inject] private ICryptoService CryptoService { get; set; }
-    [Inject] private IJSRuntime JSRuntime { get; set; }
-    [Inject] protected ITfService TfService { get; set; }
-    [Inject] protected NavigationManager Navigator { get; set; }
-    [Inject] protected IState<UserState> UserState { get; set; }
-    [Inject] protected IDispatcher dispatcher { get; set; }
 
-    private bool _firstRender = true;
+    [Inject] private IJSRuntime JSRuntime { get; set; }
+    [Inject] protected NavigationManager Navigator { get; set; }
+
+
     private bool _isLoading = true;
+    private bool _firstRender = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -31,7 +29,6 @@ public partial class GuestLayout : FluxorLayout
 			}
 			_isLoading = false;
 			await InvokeAsync(StateHasChanged);
-
 		}
     }
 

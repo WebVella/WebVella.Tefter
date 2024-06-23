@@ -25,7 +25,7 @@ public partial class TfLogin : TfFormBaseComponent
 			await InvokeAsync(StateHasChanged);
 
 			var result = await IdentityManager.AuthenticateAsync(
-				JSRuntimeSrv, _form.Email, _form.Password, _form.RememberMe);
+				JSRuntime, _form.Email, _form.Password, _form.RememberMe);
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)

@@ -333,7 +333,7 @@ public class NavigatorExt
 		throw new Exception("Not found");
 	}
 
-	public static UrlData GetUrlData(NavigationManager navigator)
+	public static Models.RouteData GetUrlData(NavigationManager navigator)
 	{
 		Guid? spaceId = null;
 		Guid? spaceDataId = null;
@@ -364,7 +364,7 @@ public class NavigatorExt
 			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) userId = outGuid;
 		}
 
-			return new UrlData
+			return new Models.RouteData
 		{
 			SpaceId = spaceId,
 			SpaceDataId = spaceDataId,

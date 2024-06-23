@@ -2,8 +2,13 @@
 using SystemColor = System.Drawing.Color;
 public partial class TfConstants
 {
-	public static OfficeColor AdminOfficeColor { get; set; } = OfficeColor.Office;
-	public static string AdminColor { get => AdminOfficeColor.ToAttributeValue(); }
+	public static DesignThemeModes DefaultThemeMode { get; set; } = DesignThemeModes.System;
+	public static OfficeColor DefaultThemeColor { get; set; } = OfficeColor.Excel;
+
+	public static DesignThemeModes AdminThemeMode { get; set; } = DesignThemeModes.System;
+	public static OfficeColor AdminThemeColor { get; set; } = OfficeColor.Office;
+
+	public static string AdminColor { get => AdminThemeColor.ToAttributeValue(); }
 
 	public static SystemColor AdminColorObject
 	{

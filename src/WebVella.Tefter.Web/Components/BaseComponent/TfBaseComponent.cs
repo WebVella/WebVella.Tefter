@@ -9,7 +9,7 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
-	[Inject] protected IJSRuntime JSRuntimeSrv { get; set; }
+	[Inject] protected IJSRuntime JSRuntime { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }

@@ -1,6 +1,6 @@
 ﻿@inherits TfBaseComponent
 
-<div class="@($"tf-appbar {(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")"
+<div class="@($"tf-appbar {(ScreenStateSidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")"
 	style="@Style">
 	<FluentAppBar PopoverShowSearch="@true" Style="height:100%">
 		@foreach (var item in Items)

@@ -3,7 +3,7 @@
 <div class="language-switch">
 	<FluentButton Id="language-switch-btn"
 		Appearance="@Appearance.Stealth" OnClick="@(() => _visible = !_visible)" Title="@LOC("Exit Admin")">
-		<img src="@SessionState.Value.CultureOption?.IconUrl" />
+		<img src="@CultureState.Value.Culture?.IconUrl" />
 	</FluentButton>
 </div>
 <FluentMenu Width="200" @bind-Open="_visible" Anchor="language-switch-btn">
