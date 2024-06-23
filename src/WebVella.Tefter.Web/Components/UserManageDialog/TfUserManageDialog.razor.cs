@@ -116,7 +116,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 					.WithThemeMode(_form.ThemeMode)
 					.WithThemeColor(_form.ThemeColor)
 					.WithOpenSidebar(true)
-					.WithCultureCode(_form.Culture.CultureCode)
+					.WithCultureCode(_form.Culture.CultureInfo.Name)
 					.WithRoles(_form.Roles.ToArray());
 			}
 			else
@@ -129,7 +129,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 					.Enabled(_form.Enabled)
 					.WithThemeMode(_form.ThemeMode)
 					.WithThemeColor(_form.ThemeColor)
-					.WithCultureCode(_form.Culture.CultureCode)
+					.WithCultureCode(_form.Culture.CultureInfo.Name)
 					.WithRoles(_form.Roles.ToArray());
 			}
 

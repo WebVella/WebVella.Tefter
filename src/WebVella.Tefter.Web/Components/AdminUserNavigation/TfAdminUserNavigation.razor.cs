@@ -1,7 +1,7 @@
 ﻿using WebVella.Tefter.Web.Components.UserManageDialog;
 
 namespace WebVella.Tefter.Web.Components.AdminUserNavigation;
-public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
+public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
@@ -34,14 +34,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
 		if (firstRender)
 		{
 			await GenerateSpaceDataMenu();
-			ActionSubscriber.SubscribeToAction<SetCurrentAdminUser>(this, (action) =>
-			{
-				InvokeAsync(async () =>
-				{
-					await GenerateSpaceDataMenu(search);
-					await InvokeAsync(StateHasChanged);
-				});
-			});
+			ActionSubscriber.SubscribeToAction<GetUserDetailsActionResult>(this, On_GetUserDetailsActionResult);
 			_menuLoading = false;
 			StateHasChanged();
 		}
@@ -53,10 +46,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
 		_menuItems.Clear();
 		var userResult = await IdentityManager.GetUsersAsync();
 		if (userResult.IsFailed) return;
-
 		var users = userResult.Value.OrderBy(x => x.FirstName).ThenBy(x => x.LastName).ToList();
-
-
 		foreach (var item in users)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !item.FirstName.ToLowerInvariant().Contains(search)
@@ -71,7 +61,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
 				Match = NavLinkMatch.Prefix,
 				Title = String.Join(" ", new List<string> { item.FirstName, item.LastName }),
 				Url = $"/admin/users/{item.Id}",
-				Active = SessionState.Value.CurrentAdminUser?.Id == item.Id,
+				Active = Navigator.GetUrlData().UserId == item.Id,
 
 			};
 			SetMenuItemActions(menu);
@@ -106,7 +96,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
 		{
 			var user = (User)result.Data;
 			ToastService.ShowSuccess("User successfully created!");
-			Dispatcher.Dispatch(new SetCurrentAdminUser(user));
+			Dispatcher.Dispatch(new SetUserDetailsAction(user));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
 		}
 	}
@@ -122,7 +112,6 @@ public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
 		if (item.Active && item.Data is not null)
 		{
 			var user = (User)item.Data;
-			Dispatcher.Dispatch(new SetCurrentAdminUser(user));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
 		}
 	}
@@ -132,5 +121,14 @@ public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
 		search = value;
 		await GenerateSpaceDataMenu(search);
 		await InvokeAsync(StateHasChanged);
+	}
+
+	private void On_GetUserDetailsActionResult(GetUserDetailsActionResult action)
+	{
+		InvokeAsync(async () =>
+		{
+			await GenerateSpaceDataMenu(search);
+			await InvokeAsync(StateHasChanged);
+		});
 	}
 }

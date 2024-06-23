@@ -3,10 +3,10 @@
 namespace WebVella.Tefter.Web.Components.AdminUserDetailsActions;
 public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IState<UserDetailsState> UserDetailsState { get; set; }
 
 	private async Task _editUser(){
-		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(SessionState.Value.CurrentAdminUser, 
+		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(UserDetailsState.Value.User, 
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -18,7 +18,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 		{
 			var user = (User)result.Data;
 			ToastService.ShowSuccess("User successfully updated!");
-			Dispatcher.Dispatch(new SetCurrentAdminUser(user));
+			Dispatcher.Dispatch(new SetUserDetailsAction(user));
 		}
 	}
 }

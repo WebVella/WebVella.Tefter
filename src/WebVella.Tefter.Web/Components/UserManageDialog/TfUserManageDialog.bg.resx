@@ -126,6 +126,9 @@
   <data name="Create user" xml:space="preserve">
     <value>Създай потребител</value>
   </data>
+  <data name="Created On" xml:space="preserve">
+    <value>Създаден на</value>
+  </data>
   <data name="Email" xml:space="preserve">
     <value>Имейл</value>
   </data>

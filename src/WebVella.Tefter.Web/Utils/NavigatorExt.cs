@@ -1,7 +1,49 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-public class NavigatorExt
+public static class NavigatorExt
 {
+	public static Models.RouteData GetUrlData(this NavigationManager navigator)
+	{
+		Guid? spaceId = null;
+		Guid? spaceDataId = null;
+		Guid? spaceViewId = null;
+		Guid? userId = null;
+		var uri = new Uri(navigator.Uri);
+		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+		if (uri.LocalPath.StartsWith("/space/"))
+		{
+			if (nodes.Length >= 2)
+			{
+				if (Guid.TryParse(nodes[1], out Guid outGuid)) spaceId = outGuid;
+			}
+
+			if (nodes.Length >= 4)
+			{
+				if (Guid.TryParse(nodes[3], out Guid outGuid)) spaceDataId = outGuid;
+			}
+
+			if (nodes.Length >= 6)
+			{
+				if (Guid.TryParse(nodes[5], out Guid outGuid)) spaceViewId = outGuid;
+			}
+
+		}
+
+		if (uri.LocalPath.StartsWith("/admin/users/"))
+		{
+			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) userId = outGuid;
+		}
+
+		return new Models.RouteData
+		{
+			SpaceId = spaceId,
+			SpaceDataId = spaceDataId,
+			SpaceViewId = spaceViewId,
+			UserId = userId,
+		};
+	}
+
+
 	public static async Task ApplyChangeToUrlQuery(NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
 	{
 		var currentUrl = navigator.Uri;
@@ -333,42 +375,5 @@ public class NavigatorExt
 		throw new Exception("Not found");
 	}
 
-	public static Models.RouteData GetUrlData(NavigationManager navigator)
-	{
-		Guid? spaceId = null;
-		Guid? spaceDataId = null;
-		Guid? spaceViewId = null;
-		Guid? userId = null;
-		var uri = new Uri(navigator.Uri);
-		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-		if (uri.LocalPath.StartsWith("/space/"))
-		{
-			if (nodes.Length >= 2)
-			{
-				if (Guid.TryParse(nodes[1], out Guid outGuid)) spaceId = outGuid;
-			}
 
-			if (nodes.Length >= 4)
-			{
-				if (Guid.TryParse(nodes[3], out Guid outGuid)) spaceDataId = outGuid;
-			}
-
-			if (nodes.Length >= 6)
-			{
-				if (Guid.TryParse(nodes[5], out Guid outGuid)) spaceViewId = outGuid;
-			}
-
-		}
-
-		if (uri.LocalPath.StartsWith("/admin/users/")){
-			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) userId = outGuid;
-		}
-
-			return new Models.RouteData
-		{
-			SpaceId = spaceId,
-			SpaceDataId = spaceDataId,
-			SpaceViewId = spaceViewId,
-		};
-	}
 }

@@ -1,57 +1,58 @@
-﻿using WebVella.Tefter.Web.Components.UserManageDialog;
-
+﻿
 namespace WebVella.Tefter.Web.Components.AdminUserDetailsNav;
 public partial class TfAdminUserDetailsNav : TfBaseComponent
 {
-	[Parameter]
-	public Guid UserId { get; set;}
-
 	private List<MenuItem> menu = new();
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
 			ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
-		await base.DisposeAsyncCore(disposing);
+		return base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnInitialized()
+
+	protected override void OnAfterRender(bool firstRender)
 	{
-		base.OnInitialized();
-		GenerateMenu(UserId);
-		ActionSubscriber.SubscribeToAction<SetCurrentAdminUser>(this, (action) =>
+		base.OnAfterRender(firstRender);
+		if (firstRender)
 		{
-			GenerateMenu(action.User is null ? UserId : action.User.Id);
-			StateHasChanged();
-		});
-
-
+			GenerateMenu();
+			ActionSubscriber.SubscribeToAction<GetUserDetailsActionResult>(this, On_GetUserDetailsActionResult);
+		}
 	}
-
-	private void GenerateMenu(Guid _userId){
+	private void GenerateMenu()
+	{
 		menu.Clear();
+		var userId = Navigator.GetUrlData().UserId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, _userId),
+			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, userId),
 			Match = NavLinkMatch.All,
 			Icon = new Icons.Regular.Size20.PersonInfo(),
 			Title = LOC("Details")
 		});
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.AdminUserAccessPageUrl, _userId),
+			Url = String.Format(TfConstants.AdminUserAccessPageUrl, userId),
 			Match = NavLinkMatch.All,
 			Icon = new Icons.Regular.Size20.Key(),
 			Title = LOC("Access")
 		});
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.AdminUserSavesViewsPageUrl, _userId),
+			Url = String.Format(TfConstants.AdminUserSavesViewsPageUrl, userId),
 			Match = NavLinkMatch.All,
 			Icon = new Icons.Regular.Size20.Save(),
 			Title = LOC("Saved Views")
 		});
+	}
+
+	private void On_GetUserDetailsActionResult(GetUserDetailsActionResult action)
+	{
+		GenerateMenu();
+		StateHasChanged();
 	}
 }

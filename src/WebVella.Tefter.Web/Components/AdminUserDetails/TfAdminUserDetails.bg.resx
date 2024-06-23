@@ -135,6 +135,9 @@
   <data name="Roles" xml:space="preserve">
     <value>Роли</value>
   </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
   <data name="Theme Color" xml:space="preserve">
     <value>Интерфейс Цвят</value>
   </data>
