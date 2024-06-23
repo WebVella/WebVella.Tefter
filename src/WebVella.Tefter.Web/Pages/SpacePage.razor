@@ -39,7 +39,7 @@ else if (SessionState.Value.SpaceView is null)
 }
 else
 {
-	@if (SessionState.Value.SidebarExpanded)
+	@if (ScreenStateSidebarExpanded.Value)
 	{
 		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SessionState.Value.SpaceSidebarStyle">
 			<TfSpaceNavigation />

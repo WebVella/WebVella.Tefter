@@ -1,6 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Store.UserState;
+﻿namespace WebVella.Tefter.Web.Store.Base;
 
-public partial class UserStateEffects
+public partial class StateEffect
 {
     [EffectMethod]
     public async Task HandleGetUserAction(GetUserAction action, IDispatcher dispatcher)

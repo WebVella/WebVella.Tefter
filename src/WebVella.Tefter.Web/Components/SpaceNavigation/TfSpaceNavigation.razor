@@ -1,6 +1,6 @@
 ﻿@inherits TfBaseComponent
 
-<div class="@($"sidebar-nav {(SessionState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
+<div class="@($"sidebar-nav {(ScreenStateSidebarExpanded.Value ? "expanded" : "collapsed")}")">
 	<div class="sidebar-toolbar">
 		<div class="sidebar-toolbar-mode">
 			<FluentToolbar Class="modebar">

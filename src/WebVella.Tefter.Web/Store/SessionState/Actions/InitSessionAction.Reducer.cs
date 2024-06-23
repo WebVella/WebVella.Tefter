@@ -8,12 +8,9 @@ public static partial class SessionStateReducers
 		return state with
 		{
 			UserId = action.UserSession.UserId,
-			ThemeColor = action.UserSession.ThemeColor,
-			ThemeMode = action.UserSession.ThemeMode,
 			RouteSpaceId = action.RouteSpaceId,
 			RouteSpaceDataId = action.RouteSpaceDataId,
 			RouteSpaceViewId = action.RouteSpaceViewId,
-			SidebarExpanded = action.UserSession.SidebarExpanded,
 			Space = action.UserSession.Space,
 			SpaceData = action.UserSession.SpaceData,
 			SpaceView = action.UserSession.SpaceView,

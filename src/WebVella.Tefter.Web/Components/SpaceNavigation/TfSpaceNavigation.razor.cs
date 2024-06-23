@@ -4,6 +4,7 @@ namespace WebVella.Tefter.Web.Components.SpaceNavigation;
 public partial class TfSpaceNavigation : TfBaseComponent
 {
 	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	private bool _menuLoading = true;
 	private string _renderedDataHashId = string.Empty;
@@ -31,7 +32,11 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
-
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
+	}
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);

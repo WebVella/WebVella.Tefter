@@ -3,8 +3,10 @@
 public partial class StateEffect
 {
 	private readonly ITfService TefterService;
-	public StateEffect(ITfService tfService)
+	private readonly IIdentityManager IdentityManager;
+	public StateEffect(ITfService tfService, IIdentityManager identityManager)
 	{
 		this.TefterService = tfService;
+		IdentityManager = identityManager;
 	}
 }

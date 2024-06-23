@@ -1,9 +1,10 @@
 ﻿using WebVella.Tefter.Web.Components.UserManageDialog;
 
 namespace WebVella.Tefter.Web.Components.AdminUserNavigation;
-public partial class TfAdminUserNavigation : TfBaseComponent
+public partial class TfAdminUserNavigation : TfBaseComponent,IAsyncDisposable
 {
 	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	private bool _menuLoading = true;
 	private List<MenuItem> _menuItems = new();
@@ -22,7 +23,11 @@ public partial class TfAdminUserNavigation : TfBaseComponent
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
-
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
+	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);

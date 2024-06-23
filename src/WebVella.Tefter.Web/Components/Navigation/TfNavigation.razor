@@ -1,6 +1,6 @@
 ﻿@inherits TfBaseComponent
 
-<div class="@($"spacenav-nav {(SessionState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+<div class="@($"spacenav-nav {(ScreenStateSidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")">
 	<FluentNavMenu>
 		<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.DashboardIcon"
 					   Href="/" Match="@NavLinkMatch.All" />

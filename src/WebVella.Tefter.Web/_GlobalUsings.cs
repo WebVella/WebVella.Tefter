@@ -31,6 +31,7 @@ global using WebVella.Tefter.Web.Store.UserState;
 global using WebVella.Tefter.Web.Store.ScreenState;
 global using WebVella.Tefter.Web.Store.SessionState;
 global using WebVella.Tefter.Web.Store.ThemeState;
+global using WebVella.Tefter.Web.Store.UserDetailsState;
 global using WebVella.Tefter.Web.Components.BaseComponent;
 global using WebVella.Tefter.Web.Components.BaseColumn;
 global using WebVella.Tefter.Web.Components.BasePage;
