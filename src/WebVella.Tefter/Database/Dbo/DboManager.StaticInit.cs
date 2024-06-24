@@ -63,14 +63,15 @@ internal partial class DboManager
 					if (propTypeConverterAttributes.Length == 1)
 						propMeta.Converter = ((DboTypeConverterAttribute)propTypeConverterAttributes[0]).Converter;
 
+					var autoIncrAttributes = property.GetCustomAttributes(typeof(DboAutoIncrementModelAttribute), true);
+					propMeta.IsAutoIncrement = autoIncrAttributes.Length == 1;
+
 					meta.Properties.Add(propMeta);
 				}
-
-
 			}
 
 			List<string> columnNames = meta.Properties.Select(x => x.ColumnName).ToList();
-			List<string> upsertColumnNames = meta.Properties.Select(x => x.ColumnName).ToList();
+			List<string> upsertColumnNames = meta.Properties.Where(x => !x.IsAutoIncrement).Select(x => x.ColumnName).ToList();
 
 			meta.GetSql = $"SELECT {string.Join(", ", columnNames)} FROM \"{meta.TableName}\" ";
 			meta.GetRecordSql = $"SELECT {string.Join(",", columnNames)} FROM \"{meta.TableName}\" WHERE $$$WHERE$$$ ";

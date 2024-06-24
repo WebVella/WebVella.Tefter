@@ -2,7 +2,7 @@
 
 internal abstract class TefterSystemMigration
 {
-	public abstract void MigrateStructure(DatabaseBuilder dbBuilder);
+	public virtual void MigrateStructure(DatabaseBuilder dbBuilder) { }
 
-	public abstract Task MigrateDataAsync(IServiceProvider serviceProvider);	
+	public virtual Task MigrateDataAsync(IServiceProvider serviceProvider) {  return Task.CompletedTask; }
 }

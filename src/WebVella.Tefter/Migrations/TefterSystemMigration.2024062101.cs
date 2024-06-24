@@ -5,10 +5,6 @@ namespace WebVella.Tefter.Migrations;
 [TefterSystemMigration("2024.6.21.1")]
 internal class TefterSystemMigration2024062101 : TefterSystemMigration
 {
-	public override void MigrateStructure(DatabaseBuilder dbBuilder)
-	{
-	}
-
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)
 	{
 		//adds users for developers
