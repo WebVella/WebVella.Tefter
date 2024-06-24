@@ -18,15 +18,7 @@ public static class DependencyInjection
 		services.AddAuthorizationCore();
 		services.AddAuthenticationCore();
 
-		//used by authentication
-		//services.AddSingleton<TfTempStorageSessionStoreService>();
-		//services
-		//	.AddAuthentication(TfAuthenticationOptions.DefaultScheme)
-		//	.AddScheme<TfAuthenticationOptions, TfAuthenticationHandler>(
-		//		TfAuthenticationOptions.DefaultScheme, options => { });
-
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
-
 		services.AddSingleton<ILogger, NullLogger>();
 		services.AddSingleton<IDbConfigurationService, DatabaseConfigurationService>((Context) =>
 		{
@@ -42,6 +34,7 @@ public static class DependencyInjection
 		services.AddTransient<UserEventProvider, UserEventProvider>();
 		services.AddTransient<GlobalEventProvider, GlobalEventProvider>();
 
+		services.AddSingleton<IDataProviderManager, DataProviderManager>();
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
@@ -57,6 +50,16 @@ public static class DependencyInjection
 
 	public static IServiceProvider UseTefterDI(this IServiceProvider serviceProvider)
 	{
+		//because application domain does not get assemblies with no instances yet
+		//we for load of all assemblies (its workaround)
+		{
+			var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+			var loadedPaths = loadedAssemblies.Select(a => a.Location).ToArray();
+			var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
+			var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
+			toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
+		}
+
 		var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
 		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
 		return serviceProvider;

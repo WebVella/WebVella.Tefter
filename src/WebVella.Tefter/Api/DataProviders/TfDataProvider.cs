@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Api.DataProviders;
+﻿namespace WebVella.Tefter;
 
 internal class TfDataProvider
 {
@@ -7,6 +7,6 @@ internal class TfDataProvider
 	public int Index { get; set; }
 	public string CompositeKeyPrefix { get; set; }
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; set; }
-	public ITfDataProvider Instance { get; set; }
+	public ITfDataProviderType ProviderType { get; set; }
 	
 }

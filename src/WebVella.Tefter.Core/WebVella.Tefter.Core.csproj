@@ -6,7 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Assets\BooleanIcon.png" />
+    <EmbeddedResource Include="Assets\Icon.png" />
     <EmbeddedResource Include="Assets\TextIcon.png" />
     <EmbeddedResource Include="Assets\DateTimeIcon.png" />
     <EmbeddedResource Include="Assets\DateIcon.png" />
@@ -17,10 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DataProviders\" />
   </ItemGroup>
 
 </Project>

@@ -15,6 +15,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\WebVella.Tefter.Core\WebVella.Tefter.Core.csproj" />
+	  <ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
 	</ItemGroup>
 	
 </Project>

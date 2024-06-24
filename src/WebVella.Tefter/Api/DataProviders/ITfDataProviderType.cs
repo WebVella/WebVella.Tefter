@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-public interface ITfDataProvider
+public interface ITfDataProviderType
 {
 	Guid Id { get; }
 	string Name { get; }
