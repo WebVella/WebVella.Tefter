@@ -25,7 +25,7 @@ public partial class TfConstants
 	public static string AdminBackgroundAccentColor => $"{AdminColor}35";
 
 	public static string AdminSidebarStyle => $"background-color:{AdminBackgkroundColor} !important; border-color:{AdminBorderColor} !important";
-	public static string AdminPagebarStyle => $"background-color:{AdminBorderColor} !important;";
+	public static string AdminPagebarStyle => $"background-color:{AdminBackgkroundColor} !important;";
 
 	public static string DialogWidthDefault = $"500px";
 	public static string DialogWidthSmall = $"300px";

@@ -3,6 +3,6 @@
 public static partial class UserDetailsStateReducers
 {
 	[ReducerMethod()]
-	public static UserDetailsState GetUserDetailsActionResultReducer(UserDetailsState state, GetUserDetailsActionResult action)
+	public static UserDetailsState GetUserDetailsActionResultReducer(UserDetailsState state, UserDetailsChangedAction action)
 		=> state with { IsBusy = false, User = action.User };
 }

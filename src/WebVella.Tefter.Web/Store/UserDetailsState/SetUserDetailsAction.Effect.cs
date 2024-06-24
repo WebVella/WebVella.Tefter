@@ -5,7 +5,7 @@ public partial class StateEffect
 	[EffectMethod]
 	public Task SetUserDetailsActionEffect(SetUserDetailsAction action, IDispatcher dispatcher)
 	{
-		dispatcher.Dispatch(new GetUserDetailsActionResult(action.User));
+		dispatcher.Dispatch(new UserDetailsChangedAction(action.User));
 		return Task.CompletedTask;
 	}
 }

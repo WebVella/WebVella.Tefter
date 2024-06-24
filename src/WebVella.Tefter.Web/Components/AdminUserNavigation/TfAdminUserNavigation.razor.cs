@@ -34,7 +34,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		if (firstRender)
 		{
 			await GenerateSpaceDataMenu();
-			ActionSubscriber.SubscribeToAction<GetUserDetailsActionResult>(this, On_GetUserDetailsActionResult);
+			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
 			_menuLoading = false;
 			StateHasChanged();
 		}
@@ -123,7 +123,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void On_GetUserDetailsActionResult(GetUserDetailsActionResult action)
+	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)
 	{
 		InvokeAsync(async () =>
 		{

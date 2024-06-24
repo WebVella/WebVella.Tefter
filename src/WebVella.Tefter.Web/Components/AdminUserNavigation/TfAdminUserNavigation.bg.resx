@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Create new user" xml:space="preserve">
+    <value>Добави нов потребител</value>
+  </data>
+  <data name="Load more" xml:space="preserve">
+    <value>Зареди още</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Нов</value>
+  </data>
   <data name="search..." xml:space="preserve">
     <value>търси...</value>
-  </data>
-  <data name="User" xml:space="preserve">
-    <value>Потребител</value>
   </data>
 </root>

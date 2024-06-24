@@ -120,6 +120,9 @@
   <data name="Admin Panel" xml:space="preserve">
     <value>Админ Панел</value>
   </data>
+  <data name="Data Providers" xml:space="preserve">
+    <value>Източници на Данни</value>
+  </data>
   <data name="Users" xml:space="preserve">
     <value>Потребители</value>
   </data>

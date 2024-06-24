@@ -20,7 +20,8 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 		if (firstRender)
 		{
 			GenerateMenu();
-			ActionSubscriber.SubscribeToAction<GetUserDetailsActionResult>(this, On_GetUserDetailsActionResult);
+			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
+			StateHasChanged();
 		}
 	}
 	private void GenerateMenu()
@@ -50,7 +51,7 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 		});
 	}
 
-	private void On_GetUserDetailsActionResult(GetUserDetailsActionResult action)
+	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)
 	{
 		GenerateMenu();
 		StateHasChanged();

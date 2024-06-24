@@ -50,7 +50,7 @@ public partial class TfAdminLocation : TfBaseComponent
 				Url = "/admin"
 			});
 		}
-		else if (localPath == "/admin/data-providers")
+		else if (localPath.StartsWith("/admin/data-providers"))
 		{
 			_bcMenu.Add(new MenuItem
 			{
@@ -58,7 +58,7 @@ public partial class TfAdminLocation : TfBaseComponent
 				Url = "/admin/data-providers"
 			});
 		}
-		else if (localPath == "/admin/users")
+		else if (localPath.StartsWith("/admin/users"))
 		{
 			_bcMenu.Add(new MenuItem
 			{

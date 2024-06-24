@@ -27,7 +27,7 @@ public partial class TfAdminUserDetails : TfBaseComponent
 		}
 	}
 
-	private void On_GetUserDetailsActionResult(GetUserDetailsActionResult action)
+	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)
 	{
 		StateHasChanged();
 	}
@@ -42,7 +42,7 @@ public partial class TfAdminUserDetails : TfBaseComponent
 		var urlData = Navigator.GetUrlData();
 		if (urlData.UserId is not null)
 		{
-			ActionSubscriber.SubscribeToAction<GetUserDetailsActionResult>(this, On_GetUserDetailsActionResult);
+			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
 			Dispatcher.Dispatch(new GetUserDetailsAction(urlData.UserId.Value));
 		}
 	}
