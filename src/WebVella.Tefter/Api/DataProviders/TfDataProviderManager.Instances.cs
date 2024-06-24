@@ -11,6 +11,8 @@ public partial interface ITfDataProviderManager
 	public Result<ReadOnlyCollection<TfDataProvider>> GetProviders();
 
 	public Result<TfDataProvider> CreateDataProvider(TfDataProviderModel providerModel);
+
+	public Result<TfDataProvider> UpdateDataProvider(TfDataProviderModel providerModel);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
@@ -152,14 +154,85 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				TypeName = providerModel.ProviderType.GetType().FullName,
 			};
 
-			var success = _dboManager.Insert<TfDataProviderDbo>(dataProviderDbo);
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+
+				var success = _dboManager.Insert<TfDataProviderDbo>(dataProviderDbo);
+
+				if (!success)
+					return Result.Fail(new DboManagerError("Insert", dataProviderDbo));
+
+				var providerResult = GetProvider(providerModel.Id);
+				if(providerResult.IsFailed)
+					return Result.Fail(new Error("Failed to create new data provider")
+						.CausedBy(providerResult.Errors));
+
+				var provider = providerResult.Value;
+				string providerTableName = $"dp{provider.Index}";
+
+				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				dbBuilder.NewTableBuilder(Guid.NewGuid(),providerTableName)
+					.WithDataProviderId(provider.Id)
+					.WithColumns(columns =>
+					{
+						columns
+							.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+							.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+							.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); });
+					})
+					.WithConstraints(constraints =>
+					{
+						constraints
+							.AddPrimaryKeyConstraintBuilder($"pk_{providerTableName}", c => { c.WithColumns("tf_id"); });
+					})
+					.WithIndexes( indexes =>
+					{
+						indexes
+							.AddBTreeIndex($"ix_{providerTableName}_tf_id", c => { c.WithColumns("tf_id"); })
+							.AddGinIndex($"ix_{providerTableName}_tf_search", c => { c.WithColumns("tf_search"); });
+					});
+
+				_dbManager.SaveChanges(dbBuilder);
+
+				scope.Complete();
+
+				return Result.Ok(provider);
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create new data provider.").CausedBy(ex));
+		}
+	}
+
+	public Result<TfDataProvider> UpdateDataProvider(TfDataProviderModel providerModel)
+	{
+		try
+		{
+			TfDataProviderUpdateValidator validator =
+				new TfDataProviderUpdateValidator(_dboManager, this);
+
+			var validationResult = validator.Validate(providerModel);
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
+
+			TfDataProviderDbo dataProviderDbo = new TfDataProviderDbo
+			{
+				Id = providerModel.Id,
+				CompositeKeyPrefix = providerModel.CompositeKeyPrefix,
+				Name = providerModel.Name,
+				SettingsJson = providerModel.SettingsJson,
+				TypeId = providerModel.ProviderType.Id,
+				TypeName = providerModel.ProviderType.GetType().FullName,
+			};
+
+			var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo);
 
 			if (!success)
-				return Result.Fail(new DboManagerError("Insert", dataProviderDbo));
+				return Result.Fail(new DboManagerError("Update", dataProviderDbo));
 
-			var provider = GetProviders().Value.Single(x => x.Id == dataProviderDbo.Id);
-
-			return Result.Ok(provider);
+			return Result.Ok(GetProvider(providerModel.Id).Value);
 		}
 		catch (Exception ex)
 		{
