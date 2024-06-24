@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-internal class TfDataProviderColumn
+public class TfDataProviderColumn
 {
 	public Guid Id { get; set; }
 	public bool IsRowKey { get; set; }

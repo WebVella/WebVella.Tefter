@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-public interface IDataProviderSettings
+public interface ITfDataProviderSettings
 {
 	string Value { get; set; }
 	List<ValidationError> Validate();

@@ -168,7 +168,16 @@ public partial class DboManagerTests : BaseTest
 				var obj = await dboManager.GetAsync<DateTimeTestModel>(idKey);
 				obj.Should().NotBeNull();
 
-				obj.Date.Should().Be(original.Date);
+				//loading datetime from database sometime result with 
+				//few micro seconds difference, so we compare to milliseconds
+				obj.Date.Year.Should().Be(original.Date.Year);
+				obj.Date.Month.Should().Be(original.Date.Month);
+				obj.Date.Day.Should().Be(original.Date.Day);
+				obj.Date.Hour.Should().Be(original.Date.Hour);
+				obj.Date.Minute.Should().Be(original.Date.Minute);
+				obj.Date.Second.Should().Be(original.Date.Second);
+				obj.Date.Millisecond.Should().Be(original.Date.Millisecond);
+
 				obj.DateNull.Should().Be(original.DateNull);
 				obj.DateNull.Should().BeNull();
 				obj.Date.Kind.Should().Be(DateTimeKind.Local);

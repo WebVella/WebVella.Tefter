@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.DataProviders.Csv.Components;
 
-public class CsvDataProviderSettingsComponent : ComponentBase, IDataProviderSettings
+public class CsvDataProviderSettingsComponent : ComponentBase, ITfDataProviderSettings
 {
 	public string Value { get; set; }
 

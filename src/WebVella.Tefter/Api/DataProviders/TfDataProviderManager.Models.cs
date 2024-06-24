@@ -1,8 +1,22 @@
 ﻿namespace WebVella.Tefter;
 
+public record TfDataProviderModel
+{
+	public Guid Id { get; set; }
+
+	public string Name { get; set; }
+
+	public ITfDataProviderType ProviderType { get; set; }
+
+	public string CompositeKeyPrefix { get; set; } = null;
+
+	public string SettingsJson { get; set; } = null;
+}
+
+
 [DboCacheModel]
 [DboModel("data_provider")]
-internal record DataProviderDbo
+internal record TfDataProviderDbo
 {
 	[DboModelProperty("id")]
 	public Guid Id { get; set; }

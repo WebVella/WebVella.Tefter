@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.Circuits;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using WebVella.Tefter.Messaging;
-using WebVella.Tefter.Utility;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public static class DependencyInjection
 {
@@ -34,7 +25,7 @@ public static class DependencyInjection
 		services.AddTransient<UserEventProvider, UserEventProvider>();
 		services.AddTransient<GlobalEventProvider, GlobalEventProvider>();
 
-		services.AddSingleton<IDataProviderManager, DataProviderManager>();
+		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
@@ -54,7 +45,7 @@ public static class DependencyInjection
 		//we for load of all assemblies (its workaround)
 		{
 			var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
-			var loadedPaths = loadedAssemblies.Select(a => a.Location).ToArray();
+			var loadedPaths = loadedAssemblies.Select(a => a.Location).ToHashSet();
 			var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
 			var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
 			toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));

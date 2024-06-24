@@ -45,5 +45,6 @@ global using WebVella.Tefter.Database.Dbo;
 global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Identity;
 global using WebVella.Tefter.Utility;
+global using WebVella.Tefter.Messaging;
 
 

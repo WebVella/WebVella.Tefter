@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-internal class TfDataProvider
+public class TfDataProvider
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
