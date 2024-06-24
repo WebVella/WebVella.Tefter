@@ -10,7 +10,7 @@ public partial record SessionState
 	public SpaceView SpaceView { get; init; }
 	public IDictionary<Guid, SpaceData> SpaceDataDict { get; init; }
 	public IDictionary<Guid, SpaceView> SpaceViewDict { get; init; }
-	public List<MenuItem> SpaceNav { get; init; }
+	public List<MenuItem> SpaceNav { get; init; } = new();
 
 	public string SpaceColor
 	{
