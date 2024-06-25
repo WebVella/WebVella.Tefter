@@ -6,6 +6,7 @@ public class TfDataProvider
 	public string Name { get; set; }
 	public int Index { get; set; }
 	public string CompositeKeyPrefix { get; set; }
+	public string Settings { get; set; }
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; set; }
 	public ITfDataProviderType ProviderType { get; set; }
 	
