@@ -8,5 +8,6 @@ public record RouteData
 	public Guid? SpaceDataId { get; set; }
 	public Guid? SpaceViewId { get; set; }
 	public Guid? UserId { get; set; }
+	public Guid? DataProviderId { get; set; }
 
 }

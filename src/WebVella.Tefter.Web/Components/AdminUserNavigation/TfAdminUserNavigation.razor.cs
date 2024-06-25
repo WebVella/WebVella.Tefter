@@ -3,7 +3,6 @@
 namespace WebVella.Tefter.Web.Components.AdminUserNavigation;
 public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	private bool _menuLoading = true;
@@ -13,7 +12,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 	private string search = null;
 	private bool hasMore = true;
 	private int page = 1;
-	private int pageSize = 30;
+	private int pageSize = TfConstants.PageSize;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -34,7 +33,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		if (firstRender)
 		{
 			await GenerateSpaceDataMenu();
-			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
+			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_UserDetailsChangedAction);
 			_menuLoading = false;
 			StateHasChanged();
 		}
@@ -60,7 +59,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = String.Join(" ", new List<string> { item.FirstName, item.LastName }),
-				Url = $"/admin/users/{item.Id}",
+				Url = String.Format(TfConstants.AdminUserDetailsPageUrl,item.Id),
 				Active = Navigator.GetUrlData().UserId == item.Id,
 
 			};
@@ -95,7 +94,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		if (!result.Cancelled && result.Data != null)
 		{
 			var user = (User)result.Data;
-			ToastService.ShowSuccess("User successfully created!");
+			ToastService.ShowSuccess(LOC("User successfully created!"));
 			Dispatcher.Dispatch(new SetUserDetailsAction(user));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
 		}
@@ -123,7 +122,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)
+	private void On_UserDetailsChangedAction(UserDetailsChangedAction action)
 	{
 		InvokeAsync(async () =>
 		{

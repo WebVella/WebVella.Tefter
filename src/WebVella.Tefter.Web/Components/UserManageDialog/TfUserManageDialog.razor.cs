@@ -15,7 +15,6 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 	private TfUserManageDialogModel _form = new();
 	private List<Role> _allRoles = new();
 
-
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
@@ -23,31 +22,12 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		{
 			_title = LC["Create user"];
 			_icon = new Icons.Regular.Size20.Add();
-			_form.Culture = TfConstants.CultureOptions[0];
 		}
 		else
 		{
 			_title = LC["Manage user"];
 			_icon = new Icons.Regular.Size20.Edit();
-			_form = new TfUserManageDialogModel()
-			{
-				ConfirmPassword = null,
-				Password = null,
-				Email = Content.Email,
-				Enabled = Content.Enabled,
-				FirstName = Content.FirstName,
-				LastName = Content.LastName,
-				Id = Content.Id,
-				Roles = Content.Roles.ToList(),
-				ThemeMode = Content.Settings.ThemeMode,
-				ThemeColor = Content.Settings.ThemeColor,
-				IsSidebarOpen = Content.Settings.IsSidebarOpen,
-			};
-
-			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
-			if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];
 		}
-		base.InitForm(_form);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -56,7 +36,8 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		if (firstRender)
 		{
 			await _loadDataAsync();
-
+			_isBusy = false;
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -69,15 +50,38 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			var rolesResult = await IdentityManager.GetRolesAsync();
 			if (rolesResult.IsSuccess)
 				_allRoles = rolesResult.Value.ToList();
+
+			if (Content is null)
+			{
+
+				_form.Culture = TfConstants.CultureOptions[0];
+			}
+			else
+			{
+
+				_form = new TfUserManageDialogModel()
+				{
+					ConfirmPassword = null,
+					Password = null,
+					Email = Content.Email,
+					Enabled = Content.Enabled,
+					FirstName = Content.FirstName,
+					LastName = Content.LastName,
+					Id = Content.Id,
+					Roles = Content.Roles.ToList(),
+					ThemeMode = Content.Settings.ThemeMode,
+					ThemeColor = Content.Settings.ThemeColor,
+					IsSidebarOpen = Content.Settings.IsSidebarOpen,
+				};
+
+				_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
+				if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];
+			}
+			base.InitForm(_form);
 		}
 		catch (Exception ex)
 		{
 			_error = ProcessException(ex);
-		}
-		finally
-		{
-			_isBusy = false;
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 

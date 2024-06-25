@@ -8,6 +8,7 @@ public static class NavigatorExt
 		Guid? spaceDataId = null;
 		Guid? spaceViewId = null;
 		Guid? userId = null;
+		Guid? dataProviderId = null;
 		var uri = new Uri(navigator.Uri);
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		if (uri.LocalPath.StartsWith("/space/"))
@@ -29,9 +30,14 @@ public static class NavigatorExt
 
 		}
 
-		if (uri.LocalPath.StartsWith("/admin/users/"))
+		else if (uri.LocalPath.StartsWith("/admin/users/"))
 		{
 			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) userId = outGuid;
+		}
+
+		if (uri.LocalPath.StartsWith("/admin/data-providers/"))
+		{
+			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) dataProviderId = outGuid;
 		}
 
 		return new Models.RouteData
@@ -40,6 +46,7 @@ public static class NavigatorExt
 			SpaceDataId = spaceDataId,
 			SpaceViewId = spaceViewId,
 			UserId = userId,
+			DataProviderId = dataProviderId
 		};
 	}
 

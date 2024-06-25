@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Create new user" xml:space="preserve">
-    <value>Добави нов потребител</value>
+  <data name="Create new data provider" xml:space="preserve">
+    <value>Добави нов източник на данни</value>
+  </data>
+  <data name="Data provider successfully created!" xml:space="preserve">
+    <value>Източникът на данни е успешно създаден!</value>
   </data>
   <data name="Load more" xml:space="preserve">
     <value>Зареди още</value>
@@ -126,10 +129,13 @@
   <data name="New" xml:space="preserve">
     <value>Нов</value>
   </data>
+  <data name="No data providers created yet" xml:space="preserve">
+    <value>Все още няма създадени източници на данни</value>
+  </data>
+  <data name="No data providers match search criteria" xml:space="preserve">
+    <value>Нито един източник на данни не отговаря на търсенето</value>
+  </data>
   <data name="search..." xml:space="preserve">
     <value>търси...</value>
-  </data>
-  <data name="User successfully created!" xml:space="preserve">
-    <value>Потребителят е успешно създаден</value>
   </data>
 </root>

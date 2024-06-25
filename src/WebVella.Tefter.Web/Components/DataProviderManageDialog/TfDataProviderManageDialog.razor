@@ -1,0 +1,81 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentStack VerticalAlignment="VerticalAlignment.Center">
+		<FluentIcon Value="@_icon" />
+		<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+	</FluentStack>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_icon"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">Save</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">Cancel</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (_isBusy)
+	{
+		<TfLoadingPane />
+	}
+	else if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentEditForm @bind-EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+									 Label="@LC["Name"]" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.CompositeKeyPrefix
+									 Label="@LC["Composite Key Prefix"]" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.CompositeKeyPrefix)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+									 Label="@LC["Name"]" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentValidationMessage For="@(() => _form.CompositeKeyPrefix)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentSelect @bind-SelectedOption="@_form.ProviderType" TOption="ITfDataProviderType"
+								  Items="@_allTypes" Style="width:100%"
+								  OptionText="@(p => p.Name.ToString())" Label="@LC["Type"]"></FluentSelect>
+					<FluentValidationMessage For="@(() => _form.ProviderType)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentInputLabel Label="@LC["Selected type settings"]" />
+					@if (_form.ProviderType.SettingsComponentType is not null)
+					{
+						<TfCard>
+							<DynamicComponent Type="_form.ProviderType.SettingsComponentType" Parameters="@(new Dictionary<string,object>())" @ref="typeSettingsComponent"></DynamicComponent>
+						</TfCard>
+					}
+					<FluentValidationMessage For="@(() => _form.SettingsJson)" />
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

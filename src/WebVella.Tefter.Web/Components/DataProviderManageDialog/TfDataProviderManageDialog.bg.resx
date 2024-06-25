@@ -117,19 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Create new user" xml:space="preserve">
-    <value>Добави нов потребител</value>
+  <data name="Composite Key Prefix" xml:space="preserve">
+    <value>Префикс на композитния ключ</value>
   </data>
-  <data name="Load more" xml:space="preserve">
-    <value>Зареди още</value>
+  <data name="Create" xml:space="preserve">
+    <value>Създай</value>
   </data>
-  <data name="New" xml:space="preserve">
-    <value>Нов</value>
+  <data name="Create data provider" xml:space="preserve">
+    <value>Създай източник на данни</value>
   </data>
-  <data name="search..." xml:space="preserve">
-    <value>търси...</value>
+  <data name="Manage data provider" xml:space="preserve">
+    <value>Редактирай източник на данни</value>
   </data>
-  <data name="User successfully created!" xml:space="preserve">
-    <value>Потребителят е успешно създаден</value>
+  <data name="Save" xml:space="preserve">
+    <value>Запомни</value>
+  </data>
+  <data name="Selected type settings" xml:space="preserve">
+    <value>Настройки на избрания тип</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
   </data>
 </root>

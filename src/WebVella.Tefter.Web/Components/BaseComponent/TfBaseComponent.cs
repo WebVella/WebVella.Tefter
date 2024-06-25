@@ -18,6 +18,7 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected ITfService TfSrv { get; set; }
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
 	[Inject] protected IIdentityManager IdentityManager { get; set; }
+	[Inject] protected ITfDataProviderManager DataProviderManager { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
