@@ -1,6 +1,4 @@
-﻿using FluentResults;
-
-namespace WebVella.Tefter.Migrations;
+﻿namespace WebVella.Tefter.Migrations;
 
 [TefterSystemMigration("2024.6.24.1")]
 internal class TefterSystemMigration2024062401 : TefterSystemMigration
@@ -55,7 +53,7 @@ internal class TefterSystemMigration2024062401 : TefterSystemMigration
 				constraints
 					.AddPrimaryKeyConstraint("pk_data_provider_column_id", c => { c.WithColumns("id"); })
 					.AddUniqueKeyConstraint("ux_data_provider_column_index", c => { c.WithColumns("index"); })
-					.AddForeignKeyConstraint("fk_data_provider_data_provider_column", c => 
+					.AddForeignKeyConstraint("fk_data_provider_data_provider_column", c =>
 					{
 						c
 						.WithColumns("data_provider_id")

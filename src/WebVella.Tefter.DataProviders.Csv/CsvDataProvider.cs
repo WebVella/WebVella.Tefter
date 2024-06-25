@@ -10,7 +10,7 @@ public class CsvDataProvider : ITfDataProviderType
 
 	public Stream Icon => GetType().Assembly.GetManifestResourceStream(Constants.CSV_DATA_PROVIDER_ICON);
 
-	public Type OptionsComponentType => typeof(CsvDataProviderSettingsComponent);
+	public Type SettingsComponentType => typeof(CsvDataProviderSettingsComponent);
 
 	internal CsvDataProviderSettings Settings { get; private set; }
 
