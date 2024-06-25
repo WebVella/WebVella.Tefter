@@ -21,8 +21,10 @@ public partial class GuestLayout : FluxorLayout
 			var user = authState.User;
             var cookie = await new CookieService(JSRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
 
-            //Temp fix
-            if (cookie is not null && user.Identity is not null && user.Identity.IsAuthenticated)
+			//Temp fix
+			if( !( cookie is null || user.Identity is null || !user.Identity.IsAuthenticated ||
+				(user.Identity as TfIdentity) is null ||
+				(user.Identity as TfIdentity).User is null) )
 			{
 				Navigator.NavigateTo(TfConstants.HomePageUrl,true);
                 return;

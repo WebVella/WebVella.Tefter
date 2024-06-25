@@ -17,11 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{FBDDD2A3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Tests", "tests\WebVella.Tefter.Tests\WebVella.Tefter.Tests.csproj", "{4FCDA882-507F-4677-B756-EBEBD464F5D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Web", "src\WebVella.Tefter.Web\WebVella.Tefter.Web.csproj", "{2AB1A637-0C0C-47C3-BE1F-77C34552D532}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Core", "src\WebVella.Tefter.Core\WebVella.Tefter.Core.csproj", "{965D84C1-1DF2-4D59-8ACB-70E9C00B15D5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.DataProviders.Csv", "src\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj", "{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Site", "src\WebVella.Tefter.Site\WebVella.Tefter.Site.csproj", "{3C109BF7-F4DA-44D8-AEF4-92F54326D559}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,18 +35,14 @@ Global
 		{4FCDA882-507F-4677-B756-EBEBD464F5D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FCDA882-507F-4677-B756-EBEBD464F5D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FCDA882-507F-4677-B756-EBEBD464F5D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2AB1A637-0C0C-47C3-BE1F-77C34552D532}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2AB1A637-0C0C-47C3-BE1F-77C34552D532}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2AB1A637-0C0C-47C3-BE1F-77C34552D532}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2AB1A637-0C0C-47C3-BE1F-77C34552D532}.Release|Any CPU.Build.0 = Release|Any CPU
-		{965D84C1-1DF2-4D59-8ACB-70E9C00B15D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{965D84C1-1DF2-4D59-8ACB-70E9C00B15D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{965D84C1-1DF2-4D59-8ACB-70E9C00B15D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{965D84C1-1DF2-4D59-8ACB-70E9C00B15D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3850FB75-0FDA-4AF0-B63A-FCB9DBB502D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

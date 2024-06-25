@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components.UserManageDialog;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.Web.Components.UserManageDialog;
 public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<User>
 {
 	[Parameter]

@@ -28,8 +28,9 @@ public partial class TfStateInitializer : TfBaseComponent
 
 			//Temporary fix for multitab logout- we check the cookie as well
 			var cookie = await new CookieService(JSRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
-			if (cookie is null
-			|| user.Identity is null || !user.Identity.IsAuthenticated)
+			if (cookie is null || user.Identity is null || !user.Identity.IsAuthenticated ||
+				(user.Identity as TfIdentity) is null ||
+				(user.Identity as TfIdentity).User is null )
 			{
 				Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 				return;

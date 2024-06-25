@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components.DataProviderManageDialog;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.Web.Components.DataProviderManageDialog;
 public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProvider>
 {
 	[Parameter]

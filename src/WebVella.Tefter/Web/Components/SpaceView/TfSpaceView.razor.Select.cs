@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceView;
+﻿using Color = Microsoft.FluentUI.AspNetCore.Components.Color;
+
+namespace WebVella.Tefter.Web.Components.SpaceView;
 public partial class TfSpaceView : TfBaseComponent
 {
 	private Icon _iconUnselected = new Icons.Regular.Size20.CheckboxUnchecked().WithColor(Color.FillInverse);

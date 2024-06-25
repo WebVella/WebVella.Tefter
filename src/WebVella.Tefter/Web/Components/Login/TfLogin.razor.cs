@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components.Login;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.Web.Components.Login;
 public partial class TfLogin : TfFormBaseComponent
 {
 	[Inject] internal IState<UserState> UserState { get; set; }
