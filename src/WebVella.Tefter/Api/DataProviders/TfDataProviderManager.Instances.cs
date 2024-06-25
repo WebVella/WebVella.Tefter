@@ -39,7 +39,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				{
 					Id = providerDbo.Id,
 					Name = providerDbo.Name,
-					Settings = providerDbo.SettingsJson,
+					SettingsJson = providerDbo.SettingsJson,
 					CompositeKeyPrefix = providerDbo.CompositeKeyPrefix,
 					Index = providerDbo.Index,
 					ProviderType = providerType
@@ -75,7 +75,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			{
 				Id = providerDbo.Id,
 				Name = providerDbo.Name,
-				Settings = providerDbo.SettingsJson,
+				SettingsJson = providerDbo.SettingsJson,
 				CompositeKeyPrefix = providerDbo.CompositeKeyPrefix,
 				Index = providerDbo.Index,
 				ProviderType = providerType
@@ -116,7 +116,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				{
 					Id = dbo.Id,
 					Name = dbo.Name,
-					Settings = dbo.SettingsJson,
+					SettingsJson = dbo.SettingsJson,
 					CompositeKeyPrefix = dbo.CompositeKeyPrefix,
 					Index = dbo.Index,
 					ProviderType = providerType
