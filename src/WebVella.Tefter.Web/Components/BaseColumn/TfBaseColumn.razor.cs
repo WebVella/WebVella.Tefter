@@ -5,7 +5,7 @@ public partial class TfBaseColumn : TfBaseComponent
 	public SpaceViewColumn Meta { get; set; }
 
 	[Parameter]
-	public DataRow Data { get; set; }
+	public DemoDataRow Data { get; set; }
 
 	[Parameter]
 	public Action<(string,object)> ValueChanged { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-public record DataRow
+public record DemoDataRow
 {
 	public Guid Id { get; init; }
 	public string StringId { get; init; }

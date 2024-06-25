@@ -38,7 +38,7 @@ public record SpaceViewColumn
 
 	public object CellProperties { get; set; }
 
-	public IDictionary<string, object> GetComponentParameters(DataRow context)
+	public IDictionary<string, object> GetComponentParameters(DemoDataRow context)
 	{
 		var result = new Dictionary<string, object>();
 		result["Data"] = context;

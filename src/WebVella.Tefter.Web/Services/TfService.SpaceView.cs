@@ -1,14 +1,14 @@
 ﻿namespace WebVella.Tefter.Web.Services;
 
 public partial interface ITfService{
-	ValueTask<List<DataRow>> GetSpaceViewData(Guid spaceViewId);
+	ValueTask<List<DemoDataRow>> GetSpaceViewData(Guid spaceViewId);
 	ValueTask<SpaceView> SetSpaceViewBookmarkState(Guid spaceViewId, bool isBookmarked);
 	ValueTask<List<SpaceView>> GetBookmaredByUserId(string search, Guid userId, int page, int pageSize);
 }
 
 public partial class TfService
 {
-	public async ValueTask<List<DataRow>> GetSpaceViewData(Guid spaceViewId)
+	public async ValueTask<List<DemoDataRow>> GetSpaceViewData(Guid spaceViewId)
 	{
 		await Task.Delay(300);
 		return await dataBroker.GetDataAsync();

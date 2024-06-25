@@ -2,23 +2,23 @@
 
 public partial interface IDataBroker
 {
-	ValueTask<List<DataRow>> GetDataAsync();
+	ValueTask<List<DemoDataRow>> GetDataAsync();
 }
 
 public partial class DataBroker : IDataBroker
 {
-	private static List<DataRow> _data = null;
-	private static Dictionary<Guid, DataRow> _dataDict = null;
-	public async ValueTask<List<DataRow>> GetDataAsync()
+	private static List<DemoDataRow> _data = null;
+	private static Dictionary<Guid, DemoDataRow> _dataDict = null;
+	public async ValueTask<List<DemoDataRow>> GetDataAsync()
 	{
 		if (_data is not null) return _data;
 		if (_dataDict is null) _dataDict = new(); else _dataDict.Clear();
 
-		var result = new List<DataRow>();
+		var result = new List<DemoDataRow>();
 
 		for (int i = 0; i < 35; i++)
 		{
-			var item = new DataRow
+			var item = new DemoDataRow
 			{
 				Id = Guid.NewGuid(),
 				CreatedOn = DateTime.Now,
@@ -59,7 +59,7 @@ public partial class DataBroker : IDataBroker
 		return _data;
 	}
 
-	public async ValueTask<DataRow> GetDataById(Guid id)
+	public async ValueTask<DemoDataRow> GetDataById(Guid id)
 	{
 		if (_dataDict is null) await GetDataAsync();
 		return _dataDict.ContainsKey(id) ? _dataDict[id] : null;

@@ -5,7 +5,7 @@ public partial class TfSpaceView : TfBaseComponent
 	private Icon _iconSelected = new Icons.Filled.Size20.CheckboxChecked();
 	private Icon _iconSelectedIndeterminete = new Icons.Filled.Size20.CheckboxIndeterminate();
 
-	private List<DataRow> _selectedItems = new();
+	private List<DemoDataRow> _selectedItems = new();
 
 	private void _onMultipleSelect()
 	{
@@ -20,7 +20,7 @@ public partial class TfSpaceView : TfBaseComponent
 		Dispatcher.Dispatch(new SetSelectedDataRowsAction(_selectedItems.Select(x=> x.Id).ToList()));
 	}
 
-	private void onRowSelect(DataRow row)
+	private void onRowSelect(DemoDataRow row)
 	{
 		if (_selectedItems.Contains(row))
 		{

@@ -3,7 +3,7 @@ public partial class TfSpaceView : TfBaseComponent
 {
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
-	private IQueryable<DataRow> _data = Enumerable.Empty<DataRow>().AsQueryable();
+	private IQueryable<DemoDataRow> _data = Enumerable.Empty<DemoDataRow>().AsQueryable();
 	private bool _isGridLoading = true;
 	private bool _isMoreLoading = false;
 	private Guid? _loadedSpaceViewId = null;
@@ -66,7 +66,7 @@ public partial class TfSpaceView : TfBaseComponent
 		var alldata = await TfSrv.GetSpaceViewData(SessionState.Value.SpaceView.Id);
 		if (page == 1)
 		{
-			_data = Enumerable.Empty<DataRow>().AsQueryable();
+			_data = Enumerable.Empty<DemoDataRow>().AsQueryable();
 			_allLoaded = false;
 		}
 		var skip = RenderUtils.CalcSkip(_pageSize, page);
@@ -81,7 +81,7 @@ public partial class TfSpaceView : TfBaseComponent
 		_loadedSpaceViewId = SessionState.Value.SpaceView.Id;
 	}
 
-	private void addActions(DataRow row)
+	private void addActions(DemoDataRow row)
 	{
 		row.OnSelect = () => { onRowSelect(row); };
 	}
