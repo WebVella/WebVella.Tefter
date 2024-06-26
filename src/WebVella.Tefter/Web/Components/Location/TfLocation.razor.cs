@@ -15,17 +15,11 @@ public partial class TfLocation : TfBaseComponent
 		await base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-
-			_namedLocation = generateNamedLocation();
-			StateHasChanged();
-
-			Navigator.LocationChanged += Navigator_LocationChanged;
-		}
+		base.OnInitialized();
+		_namedLocation = generateNamedLocation();
+		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
 	protected void Navigator_LocationChanged(object sender, LocationChangedEventArgs args)

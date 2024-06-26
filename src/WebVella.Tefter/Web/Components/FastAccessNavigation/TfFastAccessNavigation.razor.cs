@@ -6,7 +6,7 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 
-	private bool _menuLoading = true;
+	private bool _menuLoading = false;
 	private string _renderedDataHashId = string.Empty;
 	private Guid? _renderedSpaceId = null;
 
@@ -31,16 +31,11 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 		await base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			GenerateSpaceDataMenu();
-			SessionState.StateChanged += SessionState_StateChanged;
-			_menuLoading = false;
-			StateHasChanged();
-		}
+		base.OnInitialized();
+		GenerateSpaceDataMenu();
+		SessionState.StateChanged += SessionState_StateChanged;
 	}
 
 	private void SessionState_StateChanged(object sender, EventArgs e)

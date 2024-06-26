@@ -9,44 +9,58 @@ public static class NavigatorExt
 		Guid? spaceViewId = null;
 		Guid? userId = null;
 		Guid? dataProviderId = null;
+		Dictionary<int, string> pathDict = new();
 		var uri = new Uri(navigator.Uri);
+		var boz = uri.Segments;
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+		var dictIndex = 0;
+		foreach (var item in nodes)
+		{
+			pathDict[dictIndex] = item;
+			dictIndex++;
+		}
+
 		if (uri.LocalPath.StartsWith("/space/"))
 		{
-			if (nodes.Length >= 2)
+			if (pathDict.ContainsKey(1))
 			{
-				if (Guid.TryParse(nodes[1], out Guid outGuid)) spaceId = outGuid;
+				if (Guid.TryParse(pathDict[1], out Guid outGuid)) spaceId = outGuid;
 			}
 
-			if (nodes.Length >= 4)
+			if (pathDict.ContainsKey(3))
 			{
-				if (Guid.TryParse(nodes[3], out Guid outGuid)) spaceDataId = outGuid;
+				if (Guid.TryParse(pathDict[3], out Guid outGuid)) spaceDataId = outGuid;
 			}
 
-			if (nodes.Length >= 6)
+			if (pathDict.ContainsKey(5))
 			{
-				if (Guid.TryParse(nodes[5], out Guid outGuid)) spaceViewId = outGuid;
+				if (Guid.TryParse(pathDict[5], out Guid outGuid)) spaceViewId = outGuid;
 			}
 
 		}
 
 		else if (uri.LocalPath.StartsWith("/admin/users/"))
 		{
-			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) userId = outGuid;
+			if (pathDict.ContainsKey(2)
+				&& Guid.TryParse(pathDict[2], out Guid outGuid))
+				userId = outGuid;
 		}
 
 		if (uri.LocalPath.StartsWith("/admin/data-providers/"))
 		{
-			if (nodes.Length >= 3 && Guid.TryParse(nodes[2], out Guid outGuid)) dataProviderId = outGuid;
+			if (pathDict.ContainsKey(2)
+				&& Guid.TryParse(pathDict[2], out Guid outGuid))
+				dataProviderId = outGuid;
 		}
 
 		return new Models.RouteData
 		{
+			SegmentsByIndexDict = pathDict,
 			SpaceId = spaceId,
 			SpaceDataId = spaceDataId,
 			SpaceViewId = spaceViewId,
 			UserId = userId,
-			DataProviderId = dataProviderId
+			DataProviderId = dataProviderId,
 		};
 	}
 

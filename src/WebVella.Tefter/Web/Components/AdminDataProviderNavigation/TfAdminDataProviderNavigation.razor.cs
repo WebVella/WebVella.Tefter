@@ -27,17 +27,9 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	{
 		base.OnInitialized();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
-	}
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			GenerateSpaceDataMenu();
-			_menuLoading = false;
-			StateHasChanged();
-			ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_DataProviderDetailsChangedAction);
-		}
+		GenerateSpaceDataMenu();
+		_menuLoading = false;
+		ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_DataProviderDetailsChangedAction);
 	}
 
 	private void GenerateSpaceDataMenu(string search = null)
@@ -46,6 +38,16 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		_menuItems.Clear();
 		var getResult = DataProviderManager.GetProviders();
 		if (getResult.IsFailed) return;
+
+		Console.WriteLine(Navigator.Uri.ToString());
+
+		var pathSuffix = "";
+		var urlData = Navigator.GetUrlData();
+		if (urlData.SegmentsByIndexDict.ContainsKey(3))
+		{
+			pathSuffix = $"/{urlData.SegmentsByIndexDict[3]}";
+		}
+
 		var records = getResult.Value.OrderBy(x => x.Name).ToList();
 		foreach (var item in records)
 		{
@@ -59,7 +61,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = item.Name,
-				Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id),
+				Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id) + pathSuffix,
 				Active = Navigator.GetUrlData().DataProviderId == item.Id,
 
 			};
@@ -111,7 +113,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		if (item.Active && item.Data is not null)
 		{
 			var provider = (TfDataProvider)item.Data;
-			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
+			Navigator.NavigateTo(item.Url);
 		}
 	}
 

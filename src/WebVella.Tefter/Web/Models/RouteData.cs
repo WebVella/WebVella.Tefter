@@ -4,6 +4,7 @@ namespace WebVella.Tefter.Web.Models;
 
 public record RouteData
 {
+	public Dictionary<int,string> SegmentsByIndexDict { get; set; }
 	public Guid? SpaceId { get; set; }
 	public Guid? SpaceDataId { get; set; }
 	public Guid? SpaceViewId { get; set; }

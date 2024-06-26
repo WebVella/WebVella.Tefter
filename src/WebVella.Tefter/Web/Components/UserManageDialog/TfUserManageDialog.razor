@@ -2,20 +2,17 @@
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
-	<FluentStack VerticalAlignment="VerticalAlignment.Center">
-		<FluentIcon Value="@_icon" />
-		<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
-	</FluentStack>
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
 <FluentDialogFooter>
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
-		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_icon"
-					  Loading="_isSubmitting" Disabled="_isSubmitting">Save</FluentButton>
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	}
-	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">Cancel</FluentButton>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 
 @* Body *@

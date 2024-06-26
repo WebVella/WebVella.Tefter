@@ -6,21 +6,18 @@ public partial class BozCommentColumn : TfBaseColumn
 	private int _value = 0;
 	private IDialogReference? _dialog;
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-		if(firstRender){
-            _value = 0;
-            if (Data is not null && Data.Fields is not null && Data.Fields.ContainsKey(Meta.ColumnName))
-            {
-                if (Data.Fields[Meta.ColumnName].Type == DataFieldType.Number)
-                {
-                    _value = (int)(decimal)Data.Fields[Meta.ColumnName].Value;
-                }
-            }
-			StateHasChanged();
-        }
-    }
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		_value = 0;
+		if (Data is not null && Data.Fields is not null && Data.Fields.ContainsKey(Meta.ColumnName))
+		{
+			if (Data.Fields[Meta.ColumnName].Type == DataFieldType.Number)
+			{
+				_value = (int)(decimal)Data.Fields[Meta.ColumnName].Value;
+			}
+		}
+	}
 
     private async Task OpenPanelRightAsync()
 	{

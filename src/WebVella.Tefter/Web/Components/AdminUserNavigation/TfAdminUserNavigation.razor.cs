@@ -22,21 +22,14 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
-	protected override void OnInitialized()
+
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
-	}
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await GenerateSpaceDataMenu();
-			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_UserDetailsChangedAction);
-			_menuLoading = false;
-			StateHasChanged();
-		}
+		await GenerateSpaceDataMenu();
+		ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_UserDetailsChangedAction);
+		_menuLoading = false;
 	}
 
 	private async Task GenerateSpaceDataMenu(string search = null)
@@ -45,6 +38,13 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		_menuItems.Clear();
 		var userResult = await IdentityManager.GetUsersAsync();
 		if (userResult.IsFailed) return;
+
+		var pathSuffix = "";
+		var urlData = Navigator.GetUrlData();
+		if(urlData.SegmentsByIndexDict.ContainsKey(3)){
+			pathSuffix = $"/{urlData.SegmentsByIndexDict[3]}";
+		}
+
 		var users = userResult.Value.OrderBy(x => x.FirstName).ThenBy(x => x.LastName).ToList();
 		foreach (var item in users)
 		{
@@ -59,7 +59,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = String.Join(" ", new List<string> { item.FirstName, item.LastName }),
-				Url = String.Format(TfConstants.AdminUserDetailsPageUrl,item.Id),
+				Url = String.Format(TfConstants.AdminUserDetailsPageUrl,item.Id) + pathSuffix,
 				Active = Navigator.GetUrlData().UserId == item.Id,
 
 			};
@@ -111,7 +111,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		if (item.Active && item.Data is not null)
 		{
 			var user = (User)item.Data;
-			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
+			Navigator.NavigateTo(item.Url);
 		}
 	}
 

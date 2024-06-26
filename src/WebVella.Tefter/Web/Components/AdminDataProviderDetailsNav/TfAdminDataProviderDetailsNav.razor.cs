@@ -1,4 +1,5 @@
 ﻿
+
 namespace WebVella.Tefter.Web.Components.AdminDataProviderDetailsNav;
 public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 {
@@ -8,22 +9,21 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 	{
 		if (disposing)
 		{
+			Navigator.LocationChanged -= Navigator_LocationChanged;
 			ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
 
-
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			GenerateMenu();
-			ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_GetDataProviderDetailsActionResult);
-			StateHasChanged();
-		}
+		base.OnInitialized();
+		GenerateMenu();
+		ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_GetDataProviderDetailsActionResult);
+		Navigator.LocationChanged += Navigator_LocationChanged;
+		StateHasChanged();
 	}
+
 	private void GenerateMenu()
 	{
 		menu.Clear();
@@ -64,4 +64,11 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		GenerateMenu();
 		StateHasChanged();
 	}
+
+	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	{
+		GenerateMenu();
+		StateHasChanged();
+	}
+
 }

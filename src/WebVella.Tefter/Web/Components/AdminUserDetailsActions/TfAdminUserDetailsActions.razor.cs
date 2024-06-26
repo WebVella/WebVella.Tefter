@@ -5,6 +5,15 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
 	[Inject] protected IState<UserDetailsState> UserDetailsState { get; set; }
 
+	private string menu = "details";
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		var urlData = Navigator.GetUrlData();
+		if (urlData.SegmentsByIndexDict.ContainsKey(3))
+			menu = urlData.SegmentsByIndexDict[3];
+	}
+
 	private async Task _editUser(){
 		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(UserDetailsState.Value.User, 
 		new DialogParameters()

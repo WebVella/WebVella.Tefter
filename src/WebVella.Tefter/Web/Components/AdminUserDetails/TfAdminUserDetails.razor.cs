@@ -16,15 +16,11 @@ public partial class TfAdminUserDetails : TfBaseComponent
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
-
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			_getUser();
-			Navigator.LocationChanged += Navigator_LocationChanged;
-		}
+		base.OnInitialized();
+		_getUser();
+		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
 	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)

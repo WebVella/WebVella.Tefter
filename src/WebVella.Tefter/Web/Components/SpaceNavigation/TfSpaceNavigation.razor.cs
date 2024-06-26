@@ -6,7 +6,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	[Inject] protected IState<SessionState> SessionState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
-	private bool _menuLoading = true;
+	private bool _menuLoading = false;
 	private string _renderedDataHashId = string.Empty;
 	private Guid? _renderedSpaceId = null;
 
@@ -36,19 +36,9 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		base.OnInitialized();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
+		GenerateSpaceDataMenu();
+		SessionState.StateChanged += SessionState_StateChanged;
 	}
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			GenerateSpaceDataMenu();
-			SessionState.StateChanged += SessionState_StateChanged;
-			_menuLoading = false;
-			StateHasChanged();
-		}
-	}
-
 	private void SessionState_StateChanged(object sender, EventArgs e)
 	{
 		InvokeAsync(async () =>

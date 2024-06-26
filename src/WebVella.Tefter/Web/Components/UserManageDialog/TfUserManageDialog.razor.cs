@@ -13,7 +13,8 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
-	private Icon _icon;
+	private string _btnText = "";
+	private Icon _iconBtn;
 	private TfUserManageDialogModel _form = new();
 	private List<Role> _allRoles = new();
 
@@ -22,14 +23,17 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		base.OnInitialized();
 		if (Content is null)
 		{
-			_title = LC["Create user"];
-			_icon = new Icons.Regular.Size20.Add();
+			_title = LOC("Create user");
+			_btnText = LOC("Create");
+			_iconBtn = new Icons.Regular.Size20.Add();
 		}
 		else
 		{
-			_title = LC["Manage user"];
-			_icon = new Icons.Regular.Size20.Edit();
+			_title = LOC("Manage user");
+			_btnText = LOC("Save");
+			_iconBtn = new Icons.Regular.Size20.Save();
 		}
+		base.InitForm(_form);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)

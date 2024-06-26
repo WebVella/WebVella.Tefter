@@ -5,12 +5,10 @@ public partial class TfAdminNavigation: TfBaseComponent
 
 	private List<MenuItem> menuItems = new List<MenuItem>();
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		if(firstRender){
-			generateMenu();
-			StateHasChanged();
-		}
+		base.OnInitialized();
+		generateMenu();
 	}
 
 	private void generateMenu(){ 
