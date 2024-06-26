@@ -139,14 +139,14 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new Error("Failed to delete provider column.")
 						.CausedBy(providerResult.Errors));
 
-				var provider = providerResult.Value;
-				string providerTableName = $"dp{provider.Index}";
+				//var provider = providerResult.Value;
+				//string providerTableName = $"dp{provider.Index}";
 
-				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				//DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
-				dbBuilder.WithTableBuilder(providerTableName).WithColumns(columns=>columns.Remove(column.DbName));
+				//dbBuilder.WithTableBuilder(providerTableName).WithColumns(columns=>columns.Remove(column.DbName));
 
-				_dbManager.SaveChanges(dbBuilder);
+				//_dbManager.SaveChanges(dbBuilder);
 
 				scope.Complete();
 
