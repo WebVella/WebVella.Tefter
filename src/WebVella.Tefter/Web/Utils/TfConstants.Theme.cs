@@ -6,7 +6,7 @@ public partial class TfConstants
 	public static OfficeColor DefaultThemeColor { get; set; } = OfficeColor.Excel;
 
 	public static DesignThemeModes AdminThemeMode { get; set; } = DesignThemeModes.System;
-	public static OfficeColor AdminThemeColor { get; set; } = OfficeColor.Office;
+	public static OfficeColor AdminThemeColor { get; set; } = OfficeColor.Access;
 
 	public static string AdminColor { get => AdminThemeColor.ToAttributeValue(); }
 

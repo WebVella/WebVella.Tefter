@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Edit User" xml:space="preserve">
+  <data name="Edit Provider" xml:space="preserve">
     <value>Редактирай</value>
   </data>
   <data name="Provider successfully updated" xml:space="preserve">
