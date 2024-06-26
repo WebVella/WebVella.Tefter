@@ -8,8 +8,8 @@ public class TfDataProviderColumn
 	[DboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("is_row_key")]
-	public bool IsRowKey { get; set; }
+	[DboModelProperty("is_part_of_composite_key")]
+	public bool IsCompositeKeyPart { get; set; }
 
 	[DboModelProperty("source_name")]
 	public string SourceName { get; set; }
@@ -40,6 +40,10 @@ public class TfDataProviderColumn
 
 	[DboModelProperty("is_nullable")]
 	public bool IsNullable { get; set; }
+
+	[DboModelProperty("is_unique")]
+	public bool IsUnique { get; set; }
+
 
 	[DboModelProperty("is_sortable")]
 	public bool IsSortable { get; set; }
