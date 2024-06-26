@@ -220,7 +220,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						return dbName.Length > Constants.DB_MIN_OBJECT_NAME_LENGTH;
+						return dbName.Length >= Constants.DB_MIN_OBJECT_NAME_LENGTH;
 					})
 					.WithMessage($"The database name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
 
@@ -231,7 +231,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							return true;
 						
 						
-						return dbName.Length < Constants.DB_MAX_OBJECT_NAME_LENGTH;
+						return dbName.Length <= Constants.DB_MAX_OBJECT_NAME_LENGTH;
 					})
 					.WithMessage($"The length of database name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
 
