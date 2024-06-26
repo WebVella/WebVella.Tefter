@@ -1,5 +1,5 @@
 ﻿@namespace WebVella.Tefter.Web.Pages
-@page "/admin/data-providers/{*Path}"
+@page "/admin/data-providers/{ProviderId:guid}/records"
 @layout AdminLayout
 @inherits TfBasePage
 
@@ -9,11 +9,13 @@
 		<TfAdminDataProviderNavigation />
 	</FluentStack>
 }
+
 <FluentBodyContent Class="content-body with-toolbar">
-	<TfSpaceViewToolbar />
-	<div class="content-inner">
-		<TfSpaceView />
+	<TfAdminDataProviderDetailsNav />
+	<div class="content-inner with-toolbar">
+		<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+						  Intent="@MessageIntent.Info">
+			<div>TBD: Records and Syncronization statistics</div>
+		</FluentMessageBar>
 	</div>
 </FluentBodyContent>
-
-

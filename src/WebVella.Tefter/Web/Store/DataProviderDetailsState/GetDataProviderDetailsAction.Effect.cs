@@ -3,12 +3,13 @@
 public partial class StateEffect
 {
 	[EffectMethod]
-	public async Task GetDataProviderDetailsActionEffect(GetDataProviderDetailsAction action, IDispatcher dispatcher)
+	public Task GetDataProviderDetailsActionEffect(GetDataProviderDetailsAction action, IDispatcher dispatcher)
 	{
-		if(action.RecordId == Guid.Empty) return;
-		User user = null;
-		var result = await IdentityManager.GetUserAsync(action.RecordId);
-		if (result.IsSuccess) user = result.Value;
-		dispatcher.Dispatch(new DataProviderDetailsChangedAction(user));
+		if(action.RecordId == Guid.Empty) return Task.CompletedTask;
+		TfDataProvider provider = null;
+		var result = DataPrividerManager.GetProvider(action.RecordId);
+		if (result.IsSuccess) provider = result.Value;
+		dispatcher.Dispatch(new DataProviderDetailsChangedAction(provider));
+		return Task.CompletedTask;
 	}
 }

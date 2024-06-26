@@ -20,7 +20,7 @@
 <TfCard>
 	<FluentGrid>
 		<FluentGridItem xs="1">
-			<FluentInputLabel>@LC["Status"]</FluentInputLabel>
+			<FluentInputLabel>@LOC("Status")</FluentInputLabel>
 			@if (UserDetailsState.Value?.User?.Enabled ?? false)
 			{
 				<FluentBadge Appearance="Appearance.Accent">ON</FluentBadge>
@@ -32,11 +32,11 @@
 		</FluentGridItem>
 		<FluentGridItem xs="5">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.Email"
-							 ReadOnly="true" Label="@LC["Email"]" Style="width:100%" />
+							 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="3">
 			<FluentDatePicker Value="@UserDetailsState.Value?.User?.CreatedOn"
-							  ReadOnly="true" Label="@LC["Created On"]" Style="width:100%" />
+							  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="3">
 			<FluentTimePicker Value="@UserDetailsState.Value?.User?.CreatedOn"
@@ -46,21 +46,21 @@
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.FirstName"
-							 ReadOnly="true" Label="@LC["First Name"]" Style="width:100%" />
+							 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.LastName"
-							 ReadOnly="true" Label="@LC["Last Name"]" Style="width:100%" />
+							 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.Settings?.ThemeMode.ToString()"
-							 ReadOnly="true" Label="@LC["Theme Mode"]" Style="width:100%" />
+							 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.Settings?.ThemeColor.ToString()"
-							 ReadOnly="true" Label="@LC["Theme Color"]" Style="width:100%">
+							 ReadOnly="true" Label="@LOC("Theme Color")" Style="width:100%">
 				<FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())"
 							Color="Color.Custom" Slot="start"
 							CustomColor="@(UserDetailsState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() != "default" ? UserDetailsState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
@@ -70,7 +70,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@cultureInfo.Name"
-							 ReadOnly="true" Label="@LC["Localization"]" Style="width:100%" />
+							 ReadOnly="true" Label="@LOC("Localization")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 		</FluentGridItem>
@@ -78,7 +78,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@rolesString"
-							 ReadOnly="true" Label="@LC["Roles"]" Style="width:100%" />
+							 ReadOnly="true" Label="@LOC("Roles")" Style="width:100%" />
 		</FluentGridItem>
 	</FluentGrid>
 </TfCard>

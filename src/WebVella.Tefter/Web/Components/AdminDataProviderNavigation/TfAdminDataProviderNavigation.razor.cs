@@ -34,9 +34,9 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		if (firstRender)
 		{
 			GenerateSpaceDataMenu();
-			ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_DataProviderDetailsChangedAction);
 			_menuLoading = false;
 			StateHasChanged();
+			ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_DataProviderDetailsChangedAction);
 		}
 	}
 
@@ -44,10 +44,10 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	{
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
-		var userResult = DataProviderManager.GetProviders();
-		if (userResult.IsFailed) return;
-		var users = userResult.Value.OrderBy(x => x.Name).ToList();
-		foreach (var item in users)
+		var getResult = DataProviderManager.GetProviders();
+		if (getResult.IsFailed) return;
+		var records = getResult.Value.OrderBy(x => x.Name).ToList();
+		foreach (var item in records)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !item.Name.ToLowerInvariant().Contains(search))
 				continue;
@@ -93,10 +93,10 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var user = (User)result.Data;
+			var provider = (TfDataProvider)result.Data;
 			ToastService.ShowSuccess("Data provider successfully created!");
-			Dispatcher.Dispatch(new SetUserDetailsAction(user));
-			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
+			Dispatcher.Dispatch(new SetDataProviderDetailsAction(provider));
+			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
 		}
 	}
 
@@ -110,8 +110,8 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		item.Active = selected;
 		if (item.Active && item.Data is not null)
 		{
-			var user = (User)item.Data;
-			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, user.Id));
+			var provider = (TfDataProvider)item.Data;
+			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
 		}
 	}
 

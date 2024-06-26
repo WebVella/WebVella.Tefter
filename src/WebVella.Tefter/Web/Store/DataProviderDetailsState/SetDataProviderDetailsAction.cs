@@ -2,10 +2,10 @@
 
 public record SetDataProviderDetailsAction
 {
-	public User User { get; }
+	public TfDataProvider Provider { get; }
 
-	public SetDataProviderDetailsAction(User user)
+	public SetDataProviderDetailsAction(TfDataProvider provider)
 	{
-		User = user;
+		Provider = provider;
 	}
 }

@@ -133,7 +133,7 @@
     <value>Все още няма създадени източници на данни</value>
   </data>
   <data name="No data providers match search criteria" xml:space="preserve">
-    <value>Нито един източник на данни не отговаря на търсенето</value>
+    <value>Няма източници на данни отговарящи на критерия за търсене</value>
   </data>
   <data name="search..." xml:space="preserve">
     <value>търси...</value>

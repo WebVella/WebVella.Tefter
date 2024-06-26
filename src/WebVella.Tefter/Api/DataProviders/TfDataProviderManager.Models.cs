@@ -1,11 +1,14 @@
-﻿namespace WebVella.Tefter;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter;
 
 public record TfDataProviderModel
 {
+	[Required]
 	public Guid Id { get; set; }
-
+	[Required]
 	public string Name { get; set; }
-
+	[Required]
 	public ITfDataProviderType ProviderType { get; set; }
 
 	public string CompositeKeyPrefix { get; set; } = null;

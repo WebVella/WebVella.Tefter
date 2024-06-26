@@ -1,0 +1,39 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/admin/data-providers"
+@page "/admin/data-providers/{ProviderId:guid}"
+@layout AdminLayout
+@inherits TfBasePage
+
+@if (ScreenStateSidebarExpanded.Value)
+{
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
+		<TfAdminDataProviderNavigation />
+	</FluentStack>
+}
+@if (ProviderId != Guid.Empty)
+{
+	<FluentBodyContent Class="content-body with-toolbar">
+		<TfAdminDataProviderDetailsNav />
+		<div class="content-inner with-toolbar">
+			<TfAdminDataProviderDetails />
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+							  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+				<div>TBD: Data Provider dashboard with various height level overview information</div>
+			</FluentMessageBar>
+			<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
+							  Intent="@MessageIntent.Warning">
+				<div>Select provider from the list to review and manage it</div>
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+
+}
+
+

@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/admin/data-providers/{ProviderId:guid}/schema"
+@layout AdminLayout
+@inherits TfBasePage
+
+@if (ScreenStateSidebarExpanded.Value)
+{
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
+		<TfAdminDataProviderNavigation />
+	</FluentStack>
+}
+
+<FluentBodyContent Class="content-body with-toolbar">
+	<TfAdminDataProviderDetailsNav />
+	<div class="content-inner with-toolbar">
+		<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+						  Intent="@MessageIntent.Info">
+			<div>TBD: Data Provider schema management</div>
+		</FluentMessageBar>
+	</div>
+</FluentBodyContent>

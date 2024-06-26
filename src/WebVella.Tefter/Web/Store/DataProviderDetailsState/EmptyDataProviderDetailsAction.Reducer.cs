@@ -4,5 +4,5 @@ public static partial class DataProviderDetailsStateReducers
 {
 	[ReducerMethod()]
 	public static DataProviderDetailsState EmptyDataProviderDetailsActionReducer(DataProviderDetailsState state, EmptyDataProviderDetailsAction action) 
-		=> state with { User = null};
+		=> state with { Provider = null};
 }

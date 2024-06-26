@@ -117,28 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Composite Key Prefix" xml:space="preserve">
-    <value>Префикс на композитния ключ</value>
+  <data name="'csv' file extension is required" xml:space="preserve">
+    <value>изисква се 'csv' разширение на файла</value>
   </data>
-  <data name="Create" xml:space="preserve">
-    <value>Създай</value>
+  <data name="CSV File with full access path" xml:space="preserve">
+    <value>CSV файл с пълен път за достъп</value>
   </data>
-  <data name="Create data provider" xml:space="preserve">
-    <value>Създай източник на данни</value>
-  </data>
-  <data name="Manage data provider" xml:space="preserve">
-    <value>Редактирай източник на данни</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Запомни</value>
-  </data>
-  <data name="Selected type settings" xml:space="preserve">
-    <value>Настройки на избрания тип</value>
-  </data>
-  <data name="Type" xml:space="preserve">
-    <value>Тип</value>
-  </data>
-  <data name="Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
-    <value>Внимание: Компонентът за настройки на източника на данни не имплементира ITfDataProviderSettings и не може да бъде показан!</value>
+  <data name="required" xml:space="preserve">
+    <value>задължително</value>
   </data>
 </root>
