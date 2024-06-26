@@ -44,7 +44,7 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.CompositeKeyPrefix
-									 Label="@LOC("Composite Key Prefix")" Style="width:100%" />
+									 Label="@LOC("Composite Key Prefix")" Style="width:100%" Disabled="_form.Id != Guid.Empty" />
 					<FluentValidationMessage For="@(() => _form.CompositeKeyPrefix)" />
 				</FluentGridItem>
 			</FluentGrid>
@@ -52,7 +52,7 @@
 				<FluentGridItem xs="6">
 					<FluentSelect Required="true"
 								  @bind-SelectedOption="@_form.ProviderType" TOption="ITfDataProviderType"
-								  Items="@_allTypes" Style="width:100%"
+								  Items="@_allTypes" Style="width:100%" Disabled="_form.Id != Guid.Empty"
 								  OptionText="@(p => p.Name.ToString())" Label="@LOC("Type")"></FluentSelect>
 					<FluentValidationMessage For="@(() => _form.ProviderType)" />
 				</FluentGridItem>
