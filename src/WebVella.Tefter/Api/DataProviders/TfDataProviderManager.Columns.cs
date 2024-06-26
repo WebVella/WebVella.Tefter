@@ -248,30 +248,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						$"not include spaces, not end with an underscore, and not contain two consecutive underscores");
 
 			});
-/*
- * public static bool IsValidDbObjectName(string name, out string error)
-				{
-					error = null;
-
-					if (string.IsNullOrEmpty(name))
-					{
-						error = "Name is required and cannot be empty";
-						return false;
-					}
-
-					if (name.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
-						error = $"The name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long";
-
-					if (name.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
-						error = $"The length of name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters";
-
-					Match match = Regex.Match(name, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
-					if (!match.Success || match.Value != name.Trim())
-						error = $"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
-							$"not include spaces, not end with an underscore, and not contain two consecutive underscores";
-
-					return string.IsNullOrWhiteSpace(error);
-				}*/
 
 			RuleSet("create", () =>
 			{
