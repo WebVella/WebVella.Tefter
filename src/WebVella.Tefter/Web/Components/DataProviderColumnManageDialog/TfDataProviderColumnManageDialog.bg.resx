@@ -117,25 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add Column" xml:space="preserve">
-    <value>Добави колона</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отказ</value>
   </data>
-  <data name="Are you sure that you need this data provider deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете този източник на данни?</value>
+  <data name="Composite Key Prefix" xml:space="preserve">
+    <value>Префикс на композитния ключ</value>
   </data>
-  <data name="Column successfully created!" xml:space="preserve">
-    <value>Колоната е успешно създадена</value>
+  <data name="Create" xml:space="preserve">
+    <value>Създай</value>
   </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Изтрий</value>
+  <data name="Create data provider" xml:space="preserve">
+    <value>Създай източник на данни</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Редактирай</value>
+  <data name="Manage data provider" xml:space="preserve">
+    <value>Редактирай източник на данни</value>
   </data>
-  <data name="Provider successfully updated" xml:space="preserve">
-    <value>Източникът е успешно редактиран</value>
+  <data name="Save" xml:space="preserve">
+    <value>Запомни</value>
   </data>
-  <data name="Will proceeed only if there are not existing columns attached" xml:space="preserve">
-    <value>Ще бъде изтрит само ако няма асоциирани колони</value>
+  <data name="Selected type settings" xml:space="preserve">
+    <value>Настройки на избрания тип</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
+    <value>Внимание: Компонентът за настройки на източника на данни не имплементира ITfDataProviderSettings и не може да бъде показан!</value>
   </data>
 </root>

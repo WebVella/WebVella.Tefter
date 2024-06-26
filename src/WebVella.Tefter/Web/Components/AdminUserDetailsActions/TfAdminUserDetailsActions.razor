@@ -1,7 +1,9 @@
 ﻿@inherits TfBaseComponent
 
-
-<FluentButton Appearance="@Appearance.Outline" OnClick="_editUser">
-	@LOC("Edit")
-	<FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="@Color.Accent" Slot="start"/>
-</FluentButton>
+@if (menu == "details")
+{
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_editUser">
+		@LOC("Edit")
+		<FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="@Color.Accent" Slot="start" />
+	</FluentButton>
+}

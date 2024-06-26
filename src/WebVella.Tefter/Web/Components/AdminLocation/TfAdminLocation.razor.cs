@@ -13,17 +13,11 @@ public partial class TfAdminLocation : TfBaseComponent
 		await base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-
-			generateNamedLocation(null);
-			StateHasChanged();
-
-			Navigator.LocationChanged += Navigator_LocationChanged;
-		}
+		base.OnInitialized();
+		generateNamedLocation(null);
+		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
 	protected void Navigator_LocationChanged(object sender, LocationChangedEventArgs args)
@@ -46,7 +40,7 @@ public partial class TfAdminLocation : TfBaseComponent
 		{
 			_bcMenu.Add(new MenuItem
 			{
-				Title = TfConstants.AdminDashboardMenuTitle,
+				Title = LOC(TfConstants.AdminDashboardMenuTitle),
 				Url = "/admin"
 			});
 		}
@@ -54,7 +48,7 @@ public partial class TfAdminLocation : TfBaseComponent
 		{
 			_bcMenu.Add(new MenuItem
 			{
-				Title = TfConstants.AdminDataProvidersMenuTitle,
+				Title = LOC(TfConstants.AdminDataProvidersMenuTitle),
 				Url = "/admin/data-providers"
 			});
 		}
@@ -62,7 +56,7 @@ public partial class TfAdminLocation : TfBaseComponent
 		{
 			_bcMenu.Add(new MenuItem
 			{
-				Title = TfConstants.AdminUsersMenuTitle,
+				Title = LOC(TfConstants.AdminUsersMenuTitle),
 				Url = "/admin/users"
 			});
 		}

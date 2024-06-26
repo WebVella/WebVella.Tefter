@@ -3,6 +3,8 @@
 	align-items: start;
 	position: relative;
 	justify-content:space-between;
+	flex-wrap:nowrap;
+	overflow:hidden;
 }
 
 	.content-toolbar:before {

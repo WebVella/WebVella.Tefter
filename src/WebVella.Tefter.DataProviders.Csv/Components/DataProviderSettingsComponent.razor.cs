@@ -33,16 +33,6 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 		base.InitForm(_form);
 	}
 
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			base.InitForm(_form);
-		}
-	}
-
-
 	public List<ValidationError> Validate()
 	{
 		MessageStore.Clear();

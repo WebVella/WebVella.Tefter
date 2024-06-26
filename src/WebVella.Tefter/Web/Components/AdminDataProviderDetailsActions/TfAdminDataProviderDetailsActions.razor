@@ -1,12 +1,22 @@
 ﻿@inherits TfBaseComponent
 
-<FluentStack>
-	<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
-		@LOC("Delete")
-		<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="@Color.Error" Slot="start" />
+@if (menu == "details")
+{
+	<FluentStack>
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
+			@LOC("Delete")
+			<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="@Color.Error" Slot="start" />
+		</FluentButton>
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
+			@LOC("Edit")
+			<FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="@Color.Accent" Slot="start" />
+		</FluentButton>
+	</FluentStack>
+}
+else if(menu == "schema")
+{
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
+		@LOC("Add Column")
+		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
-	<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
-		@LOC("Edit")
-		<FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="@Color.Accent" Slot="start" />
-	</FluentButton>
-</FluentStack>
+}

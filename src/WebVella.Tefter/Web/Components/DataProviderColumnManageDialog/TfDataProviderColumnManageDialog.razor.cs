@@ -1,8 +1,8 @@
-﻿namespace WebVella.Tefter.Web.Components.DataProviderManageDialog;
-public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProvider>
+﻿namespace WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
+public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderColumn>
 {
 	[Parameter]
-	public TfDataProvider Content { get; set; }
+	public TfDataProviderColumn Content { get; set; }
 
 	[CascadingParameter]
 	public FluentDialog Dialog { get; set; }
@@ -13,7 +13,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-	private TfDataProviderModel _form = new();
+	private TfDataProviderColumn _form = new();
 	private List<ITfDataProviderType> _allTypes = new();
 	private DynamicComponent typeSettingsComponent;
 
@@ -60,20 +60,20 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			//Setup form
 			if (Content is null)
 			{
-				_form = new TfDataProviderModel()
+				_form = new TfDataProviderColumn()
 				{
-					ProviderType = _allTypes[0]
+					//ProviderType = _allTypes[0]
 				};
 			}
 			else
 			{
-				_form = new TfDataProviderModel()
+				_form = new TfDataProviderColumn()
 				{
 					Id = Content.Id,
-					Name = Content.Name,
-					ProviderType = Content.ProviderType,
-					CompositeKeyPrefix = Content.CompositeKeyPrefix,
-					SettingsJson = Content.SettingsJson
+					//Name = Content.Name,
+					//ProviderType = Content.ProviderType,
+					//CompositeKeyPrefix = Content.CompositeKeyPrefix,
+					//SettingsJson = Content.SettingsJson
 				};
 			}
 			base.InitForm(_form);
@@ -101,35 +101,35 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			MessageStore.Clear();
 
 			//Get dynamic settings component errors
-			List<ValidationError> settingsErrors = new();
-			if (_form.ProviderType.SettingsComponentType is not null
-				&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
-			{
-				settingsErrors = (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate();
-			}
+			//List<ValidationError> settingsErrors = new();
+			//if (_form.ProviderType.SettingsComponentType is not null
+			//	&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+			//{
+			//	settingsErrors = (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate();
+			//}
 
-			//Check form
-			var isValid = EditContext.Validate();
-			if (!isValid || settingsErrors.Count > 0) return;
+			////Check form
+			//var isValid = EditContext.Validate();
+			//if (!isValid || settingsErrors.Count > 0) return;
 
-			_isSubmitting = true;
-			await InvokeAsync(StateHasChanged);
-			Result<TfDataProvider> submitResult;
-			_form.SettingsJson = (typeSettingsComponent.Instance as ITfDataProviderSettings).Value;
-			if (_form.Id == Guid.Empty)
-			{
-				submitResult = DataProviderManager.CreateDataProvider(_form);
-			}
-			else
-			{
-				submitResult = DataProviderManager.UpdateDataProvider(_form);
-			}
+			//_isSubmitting = true;
+			//await InvokeAsync(StateHasChanged);
+			//Result<TfDataProvider> submitResult;
+			//_form.SettingsJson = (typeSettingsComponent.Instance as ITfDataProviderSettings).Value;
+			//if (_form.Id == Guid.Empty)
+			//{
+			//	submitResult = DataProviderManager.CreateDataProvider(_form);
+			//}
+			//else
+			//{
+			//	submitResult = DataProviderManager.UpdateDataProvider(_form);
+			//}
 
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			//ProcessFormSubmitResponse(submitResult);
+			//if (submitResult.IsSuccess)
+			//{
+			//	await Dialog.CloseAsync(submitResult.Value);
+			//}
 		}
 		catch (Exception ex)
 		{
@@ -149,8 +149,8 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private Dictionary<string, object> _getDynamicComponentParams()
 	{
 		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = ComponentDisplayMode.Form;
-		dict["Value"] = _form.SettingsJson;
+		//dict["DisplayMode"] = ComponentDisplayMode.Form;
+		//dict["Value"] = _form.SettingsJson;
 		return dict;
 	}
 

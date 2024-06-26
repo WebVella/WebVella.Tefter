@@ -20,16 +20,11 @@ public partial class TfUserNavigation
 		await base.DisposeAsyncCore(disposing);
 	}
 
-
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			initAdmin(null);
-			StateHasChanged();
-			Navigator.LocationChanged += Navigator_LocationChanged;
-		}
+		base.OnInitialized();
+		initAdmin(null);
+		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)

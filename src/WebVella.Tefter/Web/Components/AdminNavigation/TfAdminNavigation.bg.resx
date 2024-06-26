@@ -117,25 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Add Column" xml:space="preserve">
-    <value>Добави колона</value>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Табло</value>
   </data>
-  <data name="Are you sure that you need this data provider deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете този източник на данни?</value>
+  <data name="Data providers" xml:space="preserve">
+    <value>Източници на данни</value>
   </data>
-  <data name="Column successfully created!" xml:space="preserve">
-    <value>Колоната е успешно създадена</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Изтрий</value>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Редактирай</value>
-  </data>
-  <data name="Provider successfully updated" xml:space="preserve">
-    <value>Източникът е успешно редактиран</value>
-  </data>
-  <data name="Will proceeed only if there are not existing columns attached" xml:space="preserve">
-    <value>Ще бъде изтрит само ако няма асоциирани колони</value>
+  <data name="Users" xml:space="preserve">
+    <value>Потребители</value>
   </data>
 </root>

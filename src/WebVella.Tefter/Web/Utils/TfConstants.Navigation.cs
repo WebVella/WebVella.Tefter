@@ -21,7 +21,7 @@ public partial class TfConstants
 	public static string AdminDashboardMenuTitle = "Dashboard";
 
 	public static Icon AdminDataProvidersIcon = new Icons.Regular.Size20.Connector();
-	public static string AdminDataProvidersMenuTitle = "Data Providers";
+	public static string AdminDataProvidersMenuTitle = "Data providers";
 
 	public static Icon AdminUsersIcon = new Icons.Regular.Size20.People();
 	public static string AdminUsersMenuTitle = "Users";

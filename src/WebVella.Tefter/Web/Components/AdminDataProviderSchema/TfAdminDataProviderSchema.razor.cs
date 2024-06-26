@@ -1,6 +1,6 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.AdminDataProviderDetails;
-public partial class TfAdminDataProviderDetails : TfBaseComponent
+namespace WebVella.Tefter.Web.Components.AdminDataProviderSchema;
+public partial class TfAdminDataProviderSchema : TfBaseComponent
 {
 	[Inject] protected IState<DataProviderDetailsState> DataProviderDetailsState { get; set; }
 
@@ -14,14 +14,12 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
-
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		_getProvider();
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
-
 	private void On_GetDataProviderDetailsActionResult(DataProviderDetailsChangedAction action)
 	{
 		StateHasChanged();
@@ -42,12 +40,5 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 		}
 	}
 
-	private Dictionary<string, object> _getDynamicComponentParams()
-	{
-		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = ComponentDisplayMode.ReadOnly;
-		dict["Value"] = DataProviderDetailsState.Value?.Provider?.SettingsJson;
-		return dict;
-	}
 
 }

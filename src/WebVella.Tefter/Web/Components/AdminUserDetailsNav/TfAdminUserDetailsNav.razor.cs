@@ -8,22 +8,20 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 	{
 		if (disposing)
 		{
+			Navigator.LocationChanged -= Navigator_LocationChanged;
 			ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
 
-
-	protected override void OnAfterRender(bool firstRender)
+	protected override void OnInitialized()
 	{
-		base.OnAfterRender(firstRender);
-		if (firstRender)
-		{
-			GenerateMenu();
-			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
-			StateHasChanged();
-		}
+		base.OnInitialized();
+		GenerateMenu();
+		ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
+		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
+
 	private void GenerateMenu()
 	{
 		menu.Clear();
@@ -52,6 +50,12 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 	}
 
 	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)
+	{
+		GenerateMenu();
+		StateHasChanged();
+	}
+
+	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
 		GenerateMenu();
 		StateHasChanged();
