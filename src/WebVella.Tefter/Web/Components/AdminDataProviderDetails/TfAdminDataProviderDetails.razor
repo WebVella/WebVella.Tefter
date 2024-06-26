@@ -3,7 +3,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@DataProviderDetailsState.Value?.Provider?.Name"
-							 Label="@LOC("Name")" Style="width:100%" ReadOnly="true"/>
+							 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@DataProviderDetailsState.Value?.Provider?.CompositeKeyPrefix"
@@ -23,13 +23,36 @@
 			@if (DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType is null) { }
 			else if (DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 			{
-				<DynamicComponent Type="DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"/>
+				<DynamicComponent Type="DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
 			}
 			else
 			{
-				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">
-					<div>@LOC("Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
+				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
+					<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
 				</FluentMessageBar>
+			}
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
+			@{
+				var supportedDataTypes = DataProviderDetailsState.Value?.Provider?.ProviderType?.GetSupportedSourceDataTypes();
+			}
+			@if (supportedDataTypes is null || supportedDataTypes.Count == 0)
+			{
+				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
+					<div>@LOC("The data provider does not support any  type of source data!")</div>
+				</FluentMessageBar>
+			}
+			else
+			{
+				<FluentStack Orientation="@Orientation.Horizontal">
+					@foreach (var item in supportedDataTypes.OrderBy(x=>x))
+					{
+						<FluentBadge Appearance="Appearance.Accent">@item</FluentBadge>
+					}
+				</FluentStack>
 			}
 		</FluentGridItem>
 	</FluentGrid>

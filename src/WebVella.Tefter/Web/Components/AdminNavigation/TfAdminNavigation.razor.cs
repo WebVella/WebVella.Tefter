@@ -21,7 +21,7 @@ public partial class TfAdminNavigation: TfBaseComponent
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.All,
 			Url = "/admin",
-			Title = TfConstants.AdminDashboardMenuTitle
+			Title = LOC(TfConstants.AdminDashboardMenuTitle)
 		});
 
 		menuItems.Add(new MenuItem()
@@ -31,7 +31,7 @@ public partial class TfAdminNavigation: TfBaseComponent
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.Prefix,
 			Url = "/admin/users",
-			Title = TfConstants.AdminUsersMenuTitle
+			Title = LOC(TfConstants.AdminUsersMenuTitle)
 		});
 
 		menuItems.Add(new MenuItem()
@@ -41,7 +41,7 @@ public partial class TfAdminNavigation: TfBaseComponent
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.Prefix,
 			Url = "/admin/data-providers",
-			Title = TfConstants.AdminDataProvidersMenuTitle
+			Title = LOC(TfConstants.AdminDataProvidersMenuTitle)
 		});
 	}
 

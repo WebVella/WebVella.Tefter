@@ -120,13 +120,22 @@
   <data name="Composite Key Prefix" xml:space="preserve">
     <value>Префикс на композитния ключ</value>
   </data>
+  <data name="Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
+    <value>Компонентът за настройки на източника на данни не имплементира ITfDataProviderSettings и не може да бъде показан!</value>
+  </data>
   <data name="Selected type settings" xml:space="preserve">
     <value>Настройки на избрания тип</value>
+  </data>
+  <data name="Supported Source data types" xml:space="preserve">
+    <value>Поддържани типове данни при източника</value>
+  </data>
+  <data name="The data provider does not support any  type of source data!" xml:space="preserve">
+    <value>Източника на данни не поддържа нито един тип изходни данни!</value>
   </data>
   <data name="Type" xml:space="preserve">
     <value>Тип</value>
   </data>
-  <data name="Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
-    <value>Внимание: Компонентът за настройки на източника на данни не имплементира ITfDataProviderSettings и не може да бъде показан!</value>
+  <data name="Warning" xml:space="preserve">
+    <value>Внимание</value>
   </data>
 </root>

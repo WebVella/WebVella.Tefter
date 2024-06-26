@@ -46,7 +46,7 @@ public partial class TfAdminLocation : TfBaseComponent
 		{
 			_bcMenu.Add(new MenuItem
 			{
-				Title = TfConstants.AdminDashboardMenuTitle,
+				Title = LOC(TfConstants.AdminDashboardMenuTitle),
 				Url = "/admin"
 			});
 		}
@@ -54,7 +54,7 @@ public partial class TfAdminLocation : TfBaseComponent
 		{
 			_bcMenu.Add(new MenuItem
 			{
-				Title = TfConstants.AdminDataProvidersMenuTitle,
+				Title = LOC(TfConstants.AdminDataProvidersMenuTitle),
 				Url = "/admin/data-providers"
 			});
 		}
@@ -62,7 +62,7 @@ public partial class TfAdminLocation : TfBaseComponent
 		{
 			_bcMenu.Add(new MenuItem
 			{
-				Title = TfConstants.AdminUsersMenuTitle,
+				Title = LOC(TfConstants.AdminUsersMenuTitle),
 				Url = "/admin/users"
 			});
 		}
