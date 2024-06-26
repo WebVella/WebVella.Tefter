@@ -9,5 +9,6 @@ public class TfDataProvider
 	public string SettingsJson { get; set; }
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; set; }
 	public ITfDataProviderType ProviderType { get; set; }
-	
+	ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();
+
 }
