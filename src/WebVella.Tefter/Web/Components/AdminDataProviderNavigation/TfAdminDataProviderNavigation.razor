@@ -14,27 +14,18 @@
 	<div class="sidebar-inner">
 		@if (_menuLoading)
 		{
-			<TfLoadingPane />
+			<TfLoadingPane ShowTop="true" />
 		}
 		else
 		{
 			<FluentTreeView>
 				@foreach (var item in _visibleMenuItems)
 				{
-					<FluentTreeItem Class="@item.LevelClass" Text="@item.Title" Selected="@item.Active" SelectedChanged="@item.OnSelect"
-									Data="item" Id="@item.Id" @bind-Expanded="@item.Expanded"
-									InitiallyExpanded="@item.Expanded"
+					<FluentTreeItem Class="@item.LevelClass" Text="@item.Title"
+									Selected="@item.Active" SelectedChanged="@item.OnSelect"
+									Data="item" Id="@item.Id"
 									InitiallySelected="@item.Active">
 						<FluentIcon Value="@item.Icon" Color="@Color.Neutral" Slot="start" />
-						@foreach (var node in item.Nodes)
-						{
-							<FluentTreeItem Class="@node.LevelClass" Text="@node.Title"
-											Data="node" Id="@node.Id"
-											@bind-Expanded="@node.Expanded" InitiallyExpanded="@node.Expanded"
-											Selected="@node.Active" SelectedChanged="@node.OnSelect">
-								<FluentIcon Value="@node.Icon" Color="@Color.Neutral" Slot="start" />
-							</FluentTreeItem>
-						}
 					</FluentTreeItem>
 				}
 			</FluentTreeView>
@@ -42,13 +33,13 @@
 			{
 				<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="loadMoreClick">@LOC("Load more")</FluentButton>
 			}
-			@if (_menuItems.Count == 0)
-			{
-				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data providers created yet")</FluentMessageBar>
-			}
-			else if(_visibleMenuItems.Count == 0)
+			@if (!String.IsNullOrWhiteSpace(search) && _menuItems.Count == 0)
 			{
 				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data providers match search criteria")</FluentMessageBar>
+			}
+			else if (_menuItems.Count == 0)
+			{
+				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No data providers created yet")</FluentMessageBar>
 			}
 		}
 	</div>

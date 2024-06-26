@@ -16,6 +16,9 @@ public static class DependencyInjection
 		///Adds localization for components
 		services.AddLocalization();
 
+		//Add Fluent UI which is our component library
+		//https://www.fluentui-blazor.net/
+		services.AddFluentUIComponents();
 
 		//register dependencies from WebVella.Tefter
 		services.AddTefterDI(unitTestModeOn);

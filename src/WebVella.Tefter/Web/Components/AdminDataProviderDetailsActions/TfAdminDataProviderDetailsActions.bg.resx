@@ -117,13 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="'csv' file extension is required" xml:space="preserve">
-    <value>изисква се 'csv' разширение на файла</value>
+  <data name="Edit User" xml:space="preserve">
+    <value>Редактирай</value>
   </data>
-  <data name="CSV File with full access path" xml:space="preserve">
-    <value>CSV файл с пълен път за достъп</value>
-  </data>
-  <data name="required" xml:space="preserve">
-    <value>задължително</value>
+  <data name="Provider successfully updated" xml:space="preserve">
+    <value>Източникът е успешно редактиран</value>
   </data>
 </root>

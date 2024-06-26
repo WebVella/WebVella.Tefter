@@ -37,7 +37,8 @@
 
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text"
+									 @bind-Value=_form.Name
 									 Label="@LOC("Name")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
@@ -49,22 +50,20 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect @bind-SelectedOption="@_form.ProviderType" TOption="ITfDataProviderType"
+					<FluentSelect Required="true"
+								  @bind-SelectedOption="@_form.ProviderType" TOption="ITfDataProviderType"
 								  Items="@_allTypes" Style="width:100%"
 								  OptionText="@(p => p.Name.ToString())" Label="@LOC("Type")"></FluentSelect>
 					<FluentValidationMessage For="@(() => _form.ProviderType)" />
 				</FluentGridItem>
 			</FluentGrid>
-			<FluentGrid>
+			<FluentGrid Style="margin-top:3px;">
 				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Selected type settings")" />
 					@if (_form.ProviderType.SettingsComponentType is null) { }
 					else if (_form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 					{
-						<TfCard Title="@LOC("Selected type settings")">
-							<DynamicComponent Type="_form.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
-											  @ref="typeSettingsComponent"></DynamicComponent>
-						</TfCard>
+						<DynamicComponent Type="_form.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
+										  @ref="typeSettingsComponent"></DynamicComponent>
 					}
 					else
 					{

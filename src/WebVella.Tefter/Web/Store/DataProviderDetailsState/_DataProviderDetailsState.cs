@@ -4,5 +4,5 @@
 public record DataProviderDetailsState
 {
 	public bool IsBusy { get; init; }
-	public User User { get; init; }
+	public TfDataProvider Provider { get; init; }
 }

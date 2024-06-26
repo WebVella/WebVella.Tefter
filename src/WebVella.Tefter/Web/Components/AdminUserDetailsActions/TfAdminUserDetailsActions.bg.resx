@@ -120,4 +120,7 @@
   <data name="Edit User" xml:space="preserve">
     <value>Редактирай</value>
   </data>
+  <data name="User successfully updated" xml:space="preserve">
+    <value>Потребителят е успешно редактиран</value>
+  </data>
 </root>

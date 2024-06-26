@@ -2,10 +2,10 @@
 
 public record DataProviderDetailsChangedAction
 {
-	public User User { get;}
+	public TfDataProvider Provider { get;}
 
-	public DataProviderDetailsChangedAction(User user)
+	public DataProviderDetailsChangedAction(TfDataProvider provider)
 	{
-		User = user;
+		Provider = provider;
 	}
 }

@@ -4,9 +4,13 @@ public partial class StateEffect
 {
 	private readonly ITfService TefterService;
 	private readonly IIdentityManager IdentityManager;
-	public StateEffect(ITfService tfService, IIdentityManager identityManager)
+	private readonly ITfDataProviderManager DataPrividerManager;
+	public StateEffect(ITfService tfService, 
+		IIdentityManager identityManager,
+		ITfDataProviderManager dataPrividerManager)
 	{
 		this.TefterService = tfService;
 		IdentityManager = identityManager;
+		DataPrividerManager = dataPrividerManager;
 	}
 }

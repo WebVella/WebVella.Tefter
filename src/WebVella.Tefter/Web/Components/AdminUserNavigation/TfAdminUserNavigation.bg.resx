@@ -126,6 +126,9 @@
   <data name="New" xml:space="preserve">
     <value>Нов</value>
   </data>
+  <data name="No users match search criteria" xml:space="preserve">
+    <value>Няма потребители отговарящи на критерия за търсене</value>
+  </data>
   <data name="search..." xml:space="preserve">
     <value>търси...</value>
   </data>

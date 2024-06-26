@@ -17,7 +17,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var user = (User)result.Data;
-			ToastService.ShowSuccess("User successfully updated!");
+			ToastService.ShowSuccess(LOC("User successfully updated!"));
 			Dispatcher.Dispatch(new SetUserDetailsAction(user));
 		}
 	}

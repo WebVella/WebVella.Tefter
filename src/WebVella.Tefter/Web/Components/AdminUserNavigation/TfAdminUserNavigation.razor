@@ -33,6 +33,10 @@
 			{
 				<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="loadMoreClick">@LOC("Load more")</FluentButton>
 			}
+			@if (_menuItems.Count == 0)
+			{
+				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No users match search criteria")</FluentMessageBar>
+			}
 		}
 	</div>
 </div>
