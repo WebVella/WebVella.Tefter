@@ -32,28 +32,28 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		{
 			Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId),
 			Match = NavLinkMatch.All,
-			Icon = new Icons.Regular.Size20.Info(),
+			//Icon = new Icons.Regular.Size20.Info(),
 			Title = LOC("Details")
 		});
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId),
 			Match = NavLinkMatch.All,
-			Icon = new Icons.Regular.Size20.Table(),
+			//Icon = new Icons.Regular.Size20.Table(),
 			Title = LOC("Schema")
 		});
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
 			Match = NavLinkMatch.All,
-			Icon = new Icons.Regular.Size20.TableAdd(),
+			//Icon = new Icons.Regular.Size20.TableAdd(),
 			Title = LOC("Additional Columns")
 		});
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminDataProviderRecordsPageUrl, providerId),
 			Match = NavLinkMatch.All,
-			Icon = new Icons.Regular.Size20.Database(),
+			//Icon = new Icons.Regular.Size20.Database(),
 			Title = LOC("Data")
 		});
 

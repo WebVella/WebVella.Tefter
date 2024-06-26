@@ -32,21 +32,21 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 		{
 			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, userId),
 			Match = NavLinkMatch.All,
-			Icon = new Icons.Regular.Size20.PersonInfo(),
+			//Icon = new Icons.Regular.Size20.PersonInfo(),
 			Title = LOC("Details")
 		});
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserAccessPageUrl, userId),
 			Match = NavLinkMatch.All,
-			Icon = new Icons.Regular.Size20.Key(),
+			//Icon = new Icons.Regular.Size20.Key(),
 			Title = LOC("Access")
 		});
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserSavesViewsPageUrl, userId),
 			Match = NavLinkMatch.All,
-			Icon = new Icons.Regular.Size20.Save(),
+			//Icon = new Icons.Regular.Size20.Save(),
 			Title = LOC("Saved Views")
 		});
 	}
