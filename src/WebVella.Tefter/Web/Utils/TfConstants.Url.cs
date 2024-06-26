@@ -9,6 +9,7 @@ public partial class TfConstants
 	public static string AdminUserDetailsPageUrl { get; set; } = "/admin/users/{0}";
 	public static string AdminUserAccessPageUrl { get; set; } = "/admin/users/{0}/access";
 	public static string AdminUserSavesViewsPageUrl { get; set; } = "/admin/users/{0}/saves";
+	public static string AdminDataProvidersPageUrl { get; set; } = "/admin/data-providers";
 	public static string AdminDataProviderDetailsPageUrl { get; set; } = "/admin/data-providers/{0}";
 	public static string AdminDataProviderSchemaPageUrl { get; set; } = "/admin/data-providers/{0}/schema";
 	public static string AdminDataProviderAuxColumnsPageUrl { get; set; } = "/admin/data-providers/{0}/aux";
