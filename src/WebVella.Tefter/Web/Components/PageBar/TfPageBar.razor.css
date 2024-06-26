@@ -83,10 +83,10 @@
 
 ::deep .fluent-nav-item a.active .positioning-region:before {
 	flex: 0 0 auto;
-	left: 0;
-	right: 0;
-	margin: 0;
-	bottom: -3px;
-	height: 2px;
-	width: auto;
+	left: 0 !important;
+	right: 0 !important;
+	margin: 0 !important;
+	bottom: -3px !important;
+	height: 2px !important;
+	width: auto !important;
 }

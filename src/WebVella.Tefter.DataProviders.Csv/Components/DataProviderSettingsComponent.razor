@@ -1,0 +1,13 @@
+﻿@inherits TfFormBaseComponent
+<FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
+	<FluentGrid Spacing="10">
+		<FluentGridItem xs="6">
+			<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Filepath
+							 Label="@LOC("CSV File with full access path")" Style="width:100%" />
+			<FluentValidationMessage For="@(() => _form.Filepath)" />
+		</FluentGridItem>
+		<FluentGridItem xs="6"></FluentGridItem>
+	</FluentGrid>
+</FluentEditForm>
+
+

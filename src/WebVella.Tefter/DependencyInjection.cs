@@ -4,6 +4,19 @@ public static class DependencyInjection
 {
 	public static IServiceCollection AddTefter(this IServiceCollection services, bool unitTestModeOn = false)
 	{
+		//because server render components are not disposed for about 10 min after page is left by browser
+		//maybe 5 seconds is too low ???
+		//https://stackoverflow.com/questions/78451698/dispose-is-never-called-for-any-server-side-blazor-components
+		services.AddServerSideBlazor().AddCircuitOptions(options =>
+		{
+			options.DetailedErrors = true;
+			options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(5);
+		});
+
+		///Adds localization for components
+		services.AddLocalization();
+
+
 		//register dependencies from WebVella.Tefter
 		services.AddTefterDI(unitTestModeOn);
 

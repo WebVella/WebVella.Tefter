@@ -12,17 +12,17 @@
 
 
 				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email 
-					Label="@LC["Email"]" Id="email" Name="email" Autofocus="true"/>
+					Label="@LOC("Email")" Id="email" Name="email" Autofocus="true"/>
 				<FluentValidationMessage For="@(() => _form.Email)" />
 				<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password
-								 Label="@LC["Password"]" Id="password" Name="password"/>
+								 Label="@LOC("Password")" Id="password" Name="password"/>
 				<FluentValidationMessage For="@(() => _form.Password)" />
-				<FluentCheckbox @bind-Value=_form.RememberMe Style="margin-top:1rem;">@LC["Remember Me"]</FluentCheckbox>
+				<FluentCheckbox @bind-Value=_form.RememberMe Style="margin-top:1rem;">@LOC("Remember Me")</FluentCheckbox>
 			</div>
 			<div class="login-btn">
 				<FluentButton Type="ButtonType.Submit" Appearance="@Appearance.Accent"
 							  IconStart="@(new Icons.Regular.Size20.Key())"
-							  Loading="@_submitting" Disabled="@_submitting">@LC["Login"]</FluentButton>
+							  Loading="@_submitting" Disabled="@_submitting">@LOC("Login")</FluentButton>
 			</div>
 		</FluentEditForm>
 	</FluentStack>

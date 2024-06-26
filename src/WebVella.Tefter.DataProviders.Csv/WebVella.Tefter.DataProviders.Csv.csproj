@@ -17,4 +17,10 @@
 	  <ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Update="Components\DataProviderSettingsComponent.bg.resx">
+	    <Generator></Generator>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

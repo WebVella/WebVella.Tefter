@@ -71,7 +71,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 					Name = Content.Name,
 					ProviderType = Content.ProviderType,
 					CompositeKeyPrefix = Content.CompositeKeyPrefix,
-					SettingsJson =Content.SettingsJson
+					SettingsJson = Content.SettingsJson
 				};
 			}
 			base.InitForm(_form);
@@ -96,9 +96,19 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			//on enter click without blur
 			await Task.Delay(10);
 
+			MessageStore.Clear();
+			if (_form.ProviderType.SettingsComponentType is not null
+				&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+			{
+				foreach (ValidationError error in (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate())
+				{
+					MessageStore.Add(EditContext.Field(nameof(_form.SettingsJson)), error.Reason);
+				}
 
-			var isValid = EditContext.Validate();
-			if (!isValid) return;
+			}
+			MessageStore.Add(EditContext.Field(nameof(_form.SettingsJson)), "dedede");
+
+			if (!EditContext.Validate()) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
@@ -157,12 +167,17 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 		await Dialog.CancelAsync();
 	}
 
+	private Dictionary<string, object> _getDynamicComponentParams()
+	{
+		var dict = new Dictionary<string, object>();
+		return dict;
+	}
 
 }
 
 public class TfDataProviderDialogModel
 {
-	[Required]
+	//[Required]
 	public Guid Id { get; set; }
 
 	[Required]

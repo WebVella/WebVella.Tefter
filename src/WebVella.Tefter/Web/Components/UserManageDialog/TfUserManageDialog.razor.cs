@@ -95,15 +95,15 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			//Workaround to wait for the form to be bound 
 			//on enter click without blur
 			await Task.Delay(10);
-			if(String.IsNullOrWhiteSpace(_form.Password))
+
+			MessageStore.Clear();
+			if (String.IsNullOrWhiteSpace(_form.Password))
 				_form.Password = null; //fixes a case when password was touched
 			if (_form.Password != _form.ConfirmPassword)
 			{
 				MessageStore.Add(EditContext.Field(nameof(_form.Password)), LOC("Passwords do not match"));
-				return;
 			}
-			var isValid = EditContext.Validate();
-			if (!isValid) return;
+			if (!EditContext.Validate()) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);

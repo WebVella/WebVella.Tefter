@@ -8,28 +8,19 @@ using WebVella.Tefter.Web.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//Enable Blazor Interactive Server
+//NOTE: Currently tested and developed only in InteractiveServer mode
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
-builder.Services.AddLocalization();
+
+//Add Fluxor State Managements
+//NOTE: Register your assemblies if you need states
 builder.Services.AddFluxor(options =>
 {
 	options.ScanAssemblies(typeof(IIdentityManager).Assembly);
-#if DEBUG
-	//options.UseReduxDevTools();
-#endif
 });
 
-//because components are not disposed for about 10 min after page is left by browser
-//maybe 5 seconds is too low ???
-//https://stackoverflow.com/questions/78451698/dispose-is-never-called-for-any-server-side-blazor-components
-builder.Services.AddServerSideBlazor().AddCircuitOptions(options =>
-{
-	options.DetailedErrors = true;
-	options.DisconnectedCircuitRetentionPeriod = TimeSpan.FromSeconds(5);
-});
-
-builder.Services.AddFluentUIComponents();
+//IMPORTANT: Do not remove. Required for the application to work
 builder.Services.AddTefter();
 
 var app = builder.Build();
@@ -44,21 +35,29 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+//NOTE: if you want to have routable components in your own addon
+//You need to register your Assembly here to be scanned
+//IMPORTANT: to not forget to add it in the <Route> AdditionalAssemblies 
+//parameter also
 app.MapRazorComponents<App>()
 	.AddAdditionalAssemblies(new[] { typeof(IIdentityManager).Assembly })
 	.AddInteractiveServerRenderMode();
 
-app.Services.UseTefter();
-
+//This setups the localization of the Application. 
+//It currently support only a selection of languages/cultures. 
+//Contact us if you want to help with the translation in other languages
 string[] supportedCultures = TfConstants.CultureOptions.Select(x => x.CultureCode).ToArray();
 var localizationOptions = new RequestLocalizationOptions()
 	.SetDefaultCulture(supportedCultures[0])
 	.AddSupportedCultures(supportedCultures)
 	.AddSupportedUICultures(supportedCultures);
-
 app.UseRequestLocalization(localizationOptions);
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(supportedCultures[0]);
 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(supportedCultures[0]);
+
+//IMPORTANT: Do not remove. Required for the application to work
+app.Services.UseTefter();
 
 app.Run();
 

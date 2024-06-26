@@ -4,6 +4,10 @@
 @using WebVella.Tefter.Web.Layout;
 
 <Fluxor.Blazor.Web.StoreInitializer />
+@*
+	IMPORANT: If you want to have your own routable components in your addon
+	do not forget to added them also in the Program.cs
+*@
 <Router AppAssembly="typeof(WebVella.Tefter.Site.Components.App).Assembly"
 		AdditionalAssemblies = "new[] { typeof(IIdentityManager).Assembly }">
 	<Found Context="routeData">
