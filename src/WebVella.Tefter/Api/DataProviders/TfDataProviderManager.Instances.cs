@@ -279,6 +279,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			Id = dbo.Id,
 			CompositeKeyPrefix = dbo.CompositeKeyPrefix,
 			Name = dbo.Name,
+			Index = dbo.Index,
 			SettingsJson = dbo.SettingsJson,
 			ProviderType = providerType,
 			Columns = columns.AsReadOnly()
@@ -389,10 +390,21 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			IDboManager dboManager,
 			ITfDataProviderManager providerManager)
 		{
-		
+
+			/*	.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+							.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+							.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); });*/
+
 			RuleFor(provider => provider.Columns)
-					.NotEmpty()
-					.WithMessage("The data provider contains columns and cannot be deleted.");
+					.Must((provider, columns) =>
+					{
+						if (columns.Count > 0)
+							return false;
+
+						return true;
+					})
+					.WithMessage("The data provider contains columns be deleted.");
 		}
 
 		public ValidationResult ValidateDelete(TfDataProvider provider)

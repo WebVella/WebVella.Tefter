@@ -31,6 +31,37 @@ public partial class TfDataProviderManagerTests : BaseTest
 	}
 
 	[Fact]
+	public async Task TestDeleteDataProvider()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value.First();
+
+				Guid id = Guid.NewGuid();
+				TfDataProviderModel model = new TfDataProviderModel
+				{
+					Name = "test csv data provider",
+					CompositeKeyPrefix = "pre_",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(model);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var deleteResult = providerManager.DeleteDataProvider(providerResult.Value.Id);
+				deleteResult.IsSuccess.Should().BeTrue();	
+			}
+		}
+	}
+
+	[Fact]
 	public async Task TestCreateProviderWithNoProviderType()
 	{
 		using (await locker.LockAsync())

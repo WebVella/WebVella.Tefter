@@ -199,6 +199,15 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				RuleFor(column => column.DbName)
 					.NotEmpty()
 					.WithMessage("The data provider column database name is required.");
+				RuleFor(column => column.DbName)
+					.Must( (column,dbName) => 
+					{
+						if (string.IsNullOrWhiteSpace(dbName))
+							return true;
+
+						return !dbName.StartsWith("tf_");
+					})
+					.WithMessage("The data provider column database name cannot start with 'tf_'.");
 			});
 
 
