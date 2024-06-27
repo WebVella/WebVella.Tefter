@@ -17,6 +17,8 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private TfDataProviderColumn _form = new();
 	private TfDataProvider _provider = new();
 	private List<ITfDataProviderType> _allTypes = new();
+	private List<DatabaseColumnTypeInfo> _columnTypes = new();
+	private DatabaseColumnTypeInfo _selectedColumnType = null;
 
 	private string value1 = "1";
 
@@ -66,6 +68,10 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 			if (!typesResult.IsSuccess) throw new Exception("Cannot load data provider types");
 			_allTypes = typesResult.Value.ToList();
 			if (!_allTypes.Any()) throw new Exception("No Data provider types found in application");
+			var columnTypes = DataProviderManager.GetDatabaseColumnTypeInfos();
+			if (!columnTypes.IsSuccess) throw new Exception("Cannot load data provider column types");
+			_columnTypes = columnTypes.Value.Where(x=> x.CanBeProviderDataType).ToList();
+			if (!_columnTypes.Any()) throw new Exception("No Data provider column types found in application");
 			//Setup form
 			if (Content.Item1.Id == Guid.Empty)
 			{
@@ -76,7 +82,9 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 					DataProviderId = Content.Item2.Id,
 					SourceType = Content.Item2.SupportedSourceDataTypes.First(),
 					CreatedOn = DateTime.Now,
+					DbType = _columnTypes.First().Type,
 				};
+				_selectedColumnType = _columnTypes.First();
 			}
 			else
 			{
@@ -98,6 +106,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 					SourceName = Content.Item1.SourceName,
 					SourceType = Content.Item1.SourceType
 				};
+				_selectedColumnType = _columnTypes.FirstOrDefault(x=> x.Type == _form.DbType);
 			}
 			base.InitForm(_form);
 		}
@@ -131,6 +140,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 			else if(_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue)){
 				_form.DefaultValue = null;
 			}
+			_form.DbType = _selectedColumnType.Type;
 			if (_isCreate)
 			{
 				submitResult = DataProviderManager.CreateDataProviderColumn(_form);

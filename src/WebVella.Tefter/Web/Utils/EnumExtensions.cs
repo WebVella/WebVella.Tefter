@@ -34,8 +34,9 @@ public static class EnumExtensions
 
 	public static TEnum ConvertStringToEnum<TEnum>(string value, TEnum defaultValue) where TEnum : IConvertible
 	{
-		if(String.IsNullOrEmpty(value)) return defaultValue;
-		if(int.TryParse(value, out var n)){ 
+		if (String.IsNullOrEmpty(value)) return defaultValue;
+		if (int.TryParse(value, out var n))
+		{
 			return ConvertIntToEnum(n, defaultValue);
 		}
 		return defaultValue;

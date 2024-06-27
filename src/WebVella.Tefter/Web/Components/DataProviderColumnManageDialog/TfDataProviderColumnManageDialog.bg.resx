@@ -177,9 +177,6 @@
   <data name="SOURCE column type" xml:space="preserve">
     <value>ИЗТОЧНИК тип данни</value>
   </data>
-  <data name="type 'NULL' or leave empty for 'empty string'" xml:space="preserve">
-    <value>напиши 'NULL' или остави празно за 'empty string'</value>
-  </data>
   <data name="Unique" xml:space="preserve">
     <value>Уникалност</value>
   </data>
