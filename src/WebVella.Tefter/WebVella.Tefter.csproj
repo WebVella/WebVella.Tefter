@@ -63,4 +63,10 @@
 	<ItemGroup>
 	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Web\Pages\PageNotFound.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	</ItemGroup>
 </Project>

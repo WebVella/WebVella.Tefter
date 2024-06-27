@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Missing Synchronization Key" xml:space="preserve">
+    <value>Липсващ ключ за синхронизация</value>
+  </data>
   <data name="No columns" xml:space="preserve">
     <value>Няма колони</value>
   </data>
   <data name="No columns are created yet for this data source" xml:space="preserve">
     <value>Все още няма създадени колони за този източник на данни</value>
+  </data>
+  <data name="This data source is missing its syncronization key. No data syncronization is possible until this key is created. Once you have added the schema columns, you can do that in the next 'Shared Keys' tab." xml:space="preserve">
+    <value>За този източник на данни все още няма създаден синхронизационен ключ. Синхронизацията на данни е невъзможно без него. Щом добавите колони в схемата, може да го създадете в следващото меню 'Споделени ключове'.</value>
   </data>
 </root>

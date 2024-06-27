@@ -44,6 +44,13 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		});
 		menu.Add(new MenuItem
 		{
+			Url = String.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.Table(),
+			Title = LOC("Share Keys")
+		});
+		menu.Add(new MenuItem
+		{
 			Url = String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.TableAdd(),

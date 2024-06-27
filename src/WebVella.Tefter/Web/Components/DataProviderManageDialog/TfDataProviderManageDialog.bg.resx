@@ -120,9 +120,6 @@
   <data name="Cancel" xml:space="preserve">
     <value>Откажи</value>
   </data>
-  <data name="Composite Key Prefix" xml:space="preserve">
-    <value>Префикс на композитния ключ</value>
-  </data>
   <data name="Create" xml:space="preserve">
     <value>Създай</value>
   </data>
