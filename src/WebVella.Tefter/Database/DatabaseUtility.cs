@@ -147,7 +147,12 @@ internal class DatabaseUtility
             if (string.IsNullOrWhiteSpace(defaultValue))
                 return null;
 
-            if (decimal.TryParse(defaultValue, CultureInfo.InvariantCulture, out var decimalValue))
+
+			var processedDefaultValue = defaultValue
+				.Replace("::numeric", "")
+				.Replace("'", "");
+
+			if (decimal.TryParse(processedDefaultValue, CultureInfo.InvariantCulture, out var decimalValue))
                 return decimalValue;
         }
         else if (columnType == typeof(BooleanDatabaseColumn))
@@ -242,7 +247,11 @@ internal class DatabaseUtility
 			if (string.IsNullOrWhiteSpace(defaultValue))
 				return null;
 
-			if (long.TryParse(defaultValue, out var longValue))
+			var processedDefaultValue = defaultValue
+				 .Replace("::bigint", "")
+				 .Replace("'", "");
+
+			if (long.TryParse(processedDefaultValue, out var longValue))
 				return longValue;
 		}
 

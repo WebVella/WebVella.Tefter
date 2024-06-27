@@ -18,8 +18,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -46,8 +45,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -78,7 +76,6 @@ public partial class TfDataProviderManagerTests : BaseTest
 				TfDataProviderModel model = new TfDataProviderModel
 				{
 					Name = "test",
-					CompositeKeyPrefix = "pre_",
 					ProviderType = null,
 					SettingsJson = null
 				};
@@ -111,7 +108,6 @@ public partial class TfDataProviderManagerTests : BaseTest
 				TfDataProviderModel model = new TfDataProviderModel
 				{
 					Name = "",
-					CompositeKeyPrefix = "pre_",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -144,8 +140,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -183,8 +178,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -192,7 +186,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				providerResult.IsSuccess.Should().BeTrue();
 				providerResult.Value.Should().BeOfType<TfDataProvider>();
 
-				model.Name = "test csv data provider 1";
+				model.Name = "test data provider 1";
 				providerResult = providerManager.UpdateDataProvider(model);
 				providerResult.IsSuccess.Should().BeTrue();
 				providerResult.Value.Should().BeOfType<TfDataProvider>();
@@ -216,8 +210,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -228,7 +221,6 @@ public partial class TfDataProviderManagerTests : BaseTest
 				TfDataProviderModel model2 = new TfDataProviderModel
 				{
 					Name = "test csv data provider 2",
-					CompositeKeyPrefix = "pre_",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -264,8 +256,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -302,8 +293,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -342,8 +332,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -361,7 +350,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "text",
 					DbType = DatabaseColumnType.Text,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
 					IsNullable = false,
@@ -382,7 +371,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "short_text",
 					DbType = DatabaseColumnType.ShortText,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "SHORT TEXT",
 					IncludeInTableSearch = true,
 					IsNullable = false,
@@ -403,7 +392,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "short_int",
 					DbType = DatabaseColumnType.ShortInteger,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "SHORT INT",
 					IncludeInTableSearch = true,
 					IsNullable = true,
@@ -424,7 +413,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "int",
 					DbType = DatabaseColumnType.Integer,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "INT",
 					IncludeInTableSearch = true,
 					IsNullable = true,
@@ -445,7 +434,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "long_int",
 					DbType = DatabaseColumnType.LongInteger,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "SHORT INT",
 					IncludeInTableSearch = true,
 					IsNullable = true,
@@ -466,7 +455,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "number",
 					DbType = DatabaseColumnType.Number,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "SHORT INT",
 					IncludeInTableSearch = true,
 					IsNullable = true,
@@ -487,7 +476,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "date",
 					DbType = DatabaseColumnType.Date,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "DATE",
 					IncludeInTableSearch = true,
 					IsNullable = true,
@@ -508,7 +497,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "datetime",
 					DbType = DatabaseColumnType.DateTime,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "DATE",
 					IncludeInTableSearch = true,
 					IsNullable = true,
@@ -540,8 +529,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -559,7 +547,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "textOwa colona",
 					DbType = DatabaseColumnType.Text,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
 					IsNullable = false,
@@ -618,8 +606,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -637,7 +624,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = provider.Id,
 					DbName = "textcolona",
 					DbType = DatabaseColumnType.Text,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
 					IsNullable = false,
@@ -670,8 +657,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -689,7 +675,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DataProviderId = Guid.Empty,
 					DbName = "textcolona",
 					DbType = DatabaseColumnType.Text,
-					SourceName = "testova colona",
+					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
 					IsNullable = false,
@@ -707,7 +693,6 @@ public partial class TfDataProviderManagerTests : BaseTest
 		}
 	}
 
-
 	[Fact]
 	public async Task Column_SourceName_Empty()
 	{
@@ -724,8 +709,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -753,7 +737,6 @@ public partial class TfDataProviderManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				//empty id
 				var result = providerManager.CreateDataProviderColumn(column);
 				result.IsSuccess.Should().BeFalse();
 				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.SourceName));
@@ -777,8 +760,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
 				{
-					Name = "test csv data provider",
-					CompositeKeyPrefix = "pre_",
+					Name = "test data provider",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -806,11 +788,208 @@ public partial class TfDataProviderManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				//empty id
 				var result = providerManager.CreateDataProviderColumn(column);
 				result.IsSuccess.Should().BeFalse();
 				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.SourceType));
 			}
 		}
 	}
+
+	[Fact]
+	public async Task Column_DefaultValue()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value.First();
+
+				Guid id = Guid.NewGuid();
+				TfDataProviderModel model = new TfDataProviderModel
+				{
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(model);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var provider = providerResult.Value;
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = Guid.NewGuid().ToString(),
+					DataProviderId = provider.Id,
+					DbName = "text",
+					DbType = DatabaseColumnType.Text,
+					SourceName = "source_column",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				var result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = string.Empty,
+					DataProviderId = provider.Id,
+					DbName = "short_text",
+					DbType = DatabaseColumnType.ShortText,
+					SourceName = "source_column",
+					SourceType = "SHORT TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = short.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "short_int",
+					DbType = DatabaseColumnType.ShortInteger,
+					SourceName = "source_column",
+					SourceType = "SHORT INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = int.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "int",
+					DbType = DatabaseColumnType.Integer,
+					SourceName = "source_column",
+					SourceType = "INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = long.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "long_int",
+					DbType = DatabaseColumnType.LongInteger,
+					SourceName = "source_column",
+					SourceType = "SHORT INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = decimal.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "number",
+					DbType = DatabaseColumnType.Number,
+					SourceName = "source_column",
+					SourceType = "SHORT INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27",
+					DataProviderId = provider.Id,
+					DbName = "date",
+					DbType = DatabaseColumnType.Date,
+					SourceName = "source_column",
+					SourceType = "DATE",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27 12:01",
+					DataProviderId = provider.Id,
+					DbName = "datetime",
+					DbType = DatabaseColumnType.DateTime,
+					SourceName = "source_column",
+					SourceType = "DATE",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+			}
+		}
+	}
+
 }
