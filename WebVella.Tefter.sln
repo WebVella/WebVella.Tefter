@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.DataProvide
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Site", "src\WebVella.Tefter.Site\WebVella.Tefter.Site.csproj", "{3C109BF7-F4DA-44D8-AEF4-92F54326D559}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Web.Tests", "tests\WebVella.Tefter.Web.Tests\WebVella.Tefter.Web.Tests.csproj", "{AE410F01-BB1F-45D4-AA01-9FA762B958E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,12 +45,17 @@ Global
 		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C109BF7-F4DA-44D8-AEF4-92F54326D559}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE410F01-BB1F-45D4-AA01-9FA762B958E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4FCDA882-507F-4677-B756-EBEBD464F5D3} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
+		{AE410F01-BB1F-45D4-AA01-9FA762B958E8} = {FBDDD2A3-E610-424E-B64E-58B4662A4583}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C1A4AC87-0ABF-4D69-AB37-06B038019BBB}

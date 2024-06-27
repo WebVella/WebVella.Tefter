@@ -17,3 +17,7 @@
 	::deep fluent-text-field[readonly]::after {
 		display:none;
 	}
+
+	::deep.tf-card--small fluent-card {
+		padding:7px;
+	}

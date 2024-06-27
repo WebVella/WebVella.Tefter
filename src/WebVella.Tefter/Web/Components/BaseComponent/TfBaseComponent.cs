@@ -16,7 +16,6 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected IMessageService MessageService { get; set; }
 	[Inject] protected IConfigurationService ConfigurationService { get; set; }
 	[Inject] protected ITfService TfSrv { get; set; }
-	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
 	[Inject] protected IIdentityManager IdentityManager { get; set; }
 	[Inject] protected ITfDataProviderManager DataProviderManager { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
@@ -40,8 +39,8 @@ public class TfBaseComponent : FluxorComponent
 
 	protected string LOC(string key, params object[] arguments)
 	{
-		if (LC[key, arguments] != key) return LC[key, arguments];
-		if (GL[key, arguments] != key) return GL[key, arguments];
+		if (LC is not null && LC[key, arguments] != key) return LC[key, arguments];
+		if (GL is not null && GL[key, arguments] != key) return GL[key, arguments];
 		return key;
 	}
 

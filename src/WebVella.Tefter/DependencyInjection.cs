@@ -20,12 +20,13 @@ public static class DependencyInjection
 		//https://www.fluentui-blazor.net/
 		services.AddFluentUIComponents();
 
-		//register dependencies from WebVella.Tefter
-		services.AddTefterDI(unitTestModeOn);
-
 		services.AddScoped<IDataBroker, DataBroker>();
 		services.AddScoped<ITfService, TfService>();
 		services.AddSingleton<IConfigurationService, ConfigurationService>();
+
+		//register dependencies from WebVella.Tefter
+		services.AddTefterDI(unitTestModeOn);
+
 		return services;
 	}
 
