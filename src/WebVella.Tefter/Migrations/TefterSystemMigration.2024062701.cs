@@ -165,8 +165,6 @@ internal class TefterSystemMigration2024062701 : TefterSystemMigration
 					});
 			}); 
 		#endregion
-
-
 	}
 
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)
