@@ -125,6 +125,12 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			Result<TfDataProvider> submitResult;
+			if(!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue)){
+				_form.DefaultValue = String.Empty;
+			}
+			else if(_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue)){
+				_form.DefaultValue = null;
+			}
 			if (_isCreate)
 			{
 				submitResult = DataProviderManager.CreateDataProviderColumn(_form);
