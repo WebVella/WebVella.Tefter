@@ -56,7 +56,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				providerResult.Value.Should().BeOfType<TfDataProvider>();
 
 				var deleteResult = providerManager.DeleteDataProvider(providerResult.Value.Id);
-				deleteResult.IsSuccess.Should().BeTrue();	
+				deleteResult.IsSuccess.Should().BeTrue();
 			}
 		}
 	}
@@ -153,7 +153,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				providerResult.IsSuccess.Should().BeTrue();
 				providerResult.Value.Should().BeOfType<TfDataProvider>();
 
-				model.Id= Guid.NewGuid();
+				model.Id = Guid.NewGuid();
 
 				providerResult = providerManager.CreateDataProvider(model);
 				providerResult.IsFailed.Should().BeTrue();
@@ -327,7 +327,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 
 	[Fact]
-	public async Task Column_Text()
+	public async Task Column_AllTypesCreate()
 	{
 		using (await locker.LockAsync())
 		{
@@ -359,7 +359,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = null,
 					DataProviderId = provider.Id,
-					DbName = "test_text_column",
+					DbName = "text",
 					DbType = DatabaseColumnType.Text,
 					SourceName = "testova colona",
 					SourceType = "TEXT",
@@ -373,9 +373,444 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 				var result = providerManager.CreateDataProviderColumn(column);
 				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = string.Empty,
+					DataProviderId = provider.Id,
+					DbName = "short_text",
+					DbType = DatabaseColumnType.ShortText,
+					SourceName = "testova colona",
+					SourceType = "SHORT TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = "123",
+					DataProviderId = provider.Id,
+					DbName = "short_int",
+					DbType = DatabaseColumnType.ShortInteger,
+					SourceName = "testova colona",
+					SourceType = "SHORT INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = "123",
+					DataProviderId = provider.Id,
+					DbName = "int",
+					DbType = DatabaseColumnType.Integer,
+					SourceName = "testova colona",
+					SourceType = "INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = "123",
+					DataProviderId = provider.Id,
+					DbName = "long_int",
+					DbType = DatabaseColumnType.LongInteger,
+					SourceName = "testova colona",
+					SourceType = "SHORT INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = "123.1233",
+					DataProviderId = provider.Id,
+					DbName = "number",
+					DbType = DatabaseColumnType.Number,
+					SourceName = "testova colona",
+					SourceType = "SHORT INT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27",
+					DataProviderId = provider.Id,
+					DbName = "date",
+					DbType = DatabaseColumnType.Date,
+					SourceName = "testova colona",
+					SourceType = "DATE",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27 12:01",
+					DataProviderId = provider.Id,
+					DbName = "datetime",
+					DbType = DatabaseColumnType.DateTime,
+					SourceName = "testova colona",
+					SourceType = "DATE",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Column_DbName_Invalid()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value.First();
+
+				Guid id = Guid.NewGuid();
+				TfDataProviderModel model = new TfDataProviderModel
+				{
+					Name = "test csv data provider",
+					CompositeKeyPrefix = "pre_",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(model);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var provider = providerResult.Value;
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textOwa colona",
+					DbType = DatabaseColumnType.Text,
+					SourceName = "testova colona",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//name format invalid
+				var result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+
+				//empty name
+				column.DbName = string.Empty;
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+
+				//start with tf_
+				column.DbName = "tf_test";
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+
+				//too short
+				column.DbName = "a";
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+
+				//too long
+				column.DbName = "rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt" +
+					"rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt";
+				result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Column_Id_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value.First();
+
+				Guid id = Guid.NewGuid();
+				TfDataProviderModel model = new TfDataProviderModel
+				{
+					Name = "test csv data provider",
+					CompositeKeyPrefix = "pre_",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(model);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var provider = providerResult.Value;
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.Empty,
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textcolona",
+					DbType = DatabaseColumnType.Text,
+					SourceName = "testova colona",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//empty id, but internaly we set new id
+				var result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Column_DataProviderId_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value.First();
+
+				Guid id = Guid.NewGuid();
+				TfDataProviderModel model = new TfDataProviderModel
+				{
+					Name = "test csv data provider",
+					CompositeKeyPrefix = "pre_",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(model);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var provider = providerResult.Value;
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = Guid.Empty,
+					DbName = "textcolona",
+					DbType = DatabaseColumnType.Text,
+					SourceName = "testova colona",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//empty id
+				var result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DataProviderId));
 			}
 		}
 	}
 
 
+	[Fact]
+	public async Task Column_SourceName_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value.First();
+
+				Guid id = Guid.NewGuid();
+				TfDataProviderModel model = new TfDataProviderModel
+				{
+					Name = "test csv data provider",
+					CompositeKeyPrefix = "pre_",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(model);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var provider = providerResult.Value;
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textcolona",
+					DbType = DatabaseColumnType.Text,
+					SourceName = "",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//empty id
+				var result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.SourceName));
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Column_SourceType_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value.First();
+
+				Guid id = Guid.NewGuid();
+				TfDataProviderModel model = new TfDataProviderModel
+				{
+					Name = "test csv data provider",
+					CompositeKeyPrefix = "pre_",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(model);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var provider = providerResult.Value;
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textcolona",
+					DbType = DatabaseColumnType.Text,
+					SourceName = "source",
+					SourceType = "",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//empty id
+				var result = providerManager.CreateDataProviderColumn(column);
+				result.IsSuccess.Should().BeFalse();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.SourceType));
+			}
+		}
+	}
 }

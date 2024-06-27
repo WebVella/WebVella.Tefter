@@ -23,7 +23,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	public List<TfDataProviderColumn> GetDataProviderColumns(Guid providerId)
 	{
 		var orderSettings = new OrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
-		return _dboManager.GetList<TfDataProviderColumn>(providerId, nameof(TfDataProviderColumn.DataProviderId),order: orderSettings);
+		return _dboManager.GetList<TfDataProviderColumn>(providerId, nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
 	}
 
 	public Result<TfDataProvider> CreateDataProviderColumn(TfDataProviderColumn column)
@@ -169,6 +169,23 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						}
 					}
 					break;
+				case DatabaseColumnType.ShortText:
+					{
+						columnsBuilder.AddShortTextColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							c.WithDefaultValue(column.DefaultValue);
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
 				case DatabaseColumnType.Guid:
 					{
 						columnsBuilder.AddGuidColumn(column.DbName, c =>
@@ -183,7 +200,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							}
 						});
 
-						if (column.IsSearchable || column.IsSortable )
+						if (column.IsSearchable || column.IsSortable)
 						{
 							tableBuilder.WithIndexes(indexes =>
 							{
@@ -203,7 +220,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							{
 								if (column.DefaultValue is not null)
 								{
-									var datetime = DateTime.Parse(column.DefaultValue);
+									var datetime = DateTime.Parse(column.DefaultValue,CultureInfo.InvariantCulture);
 									DateOnly date = DateOnly.FromDateTime(datetime);
 									c.WithDefaultValue(date);
 								}
@@ -230,7 +247,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							{
 								if (column.DefaultValue is not null)
 								{
-									var datetime = DateTime.Parse(column.DefaultValue);
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
 									c.WithDefaultValue(datetime);
 								}
 							}
@@ -252,7 +269,67 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							if (column.IsNullable) c.Nullable(); else c.NotNullable();
 							if (column.DefaultValue is not null)
 							{
-								var number = Convert.ToDecimal(column.DefaultValue);
+								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+								c.WithDefaultValue(number);
+							}
+						});
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				case DatabaseColumnType.ShortInteger:
+					{
+						columnsBuilder.AddShortIntegerColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = short.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				case DatabaseColumnType.Integer:
+					{
+						columnsBuilder.AddIntegerColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = int.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				case DatabaseColumnType.LongInteger:
+					{
+						columnsBuilder.AddLongIntegerColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = long.Parse(column.DefaultValue);
 								c.WithDefaultValue(number);
 							}
 						});
@@ -371,6 +448,90 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					})
 					.WithMessage($"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
 						$"not include spaces, not end with an underscore, and not contain two consecutive underscores");
+
+				RuleFor(column => column.DefaultValue)
+					.Must((column, defaultValue) =>
+					{
+						if (string.IsNullOrWhiteSpace(defaultValue))
+							return true;
+
+						try
+						{
+							switch (column.DbType)
+							{
+								case DatabaseColumnType.Text:
+								case DatabaseColumnType.ShortText:
+									break;
+								case DatabaseColumnType.Guid:
+									{
+										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
+										{
+											var guid = Guid.Parse(column.DefaultValue);
+										}
+									}
+									break;
+								case DatabaseColumnType.Date:
+									{
+										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
+										{
+											var date = DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+										}
+									}
+									break;
+								case DatabaseColumnType.DateTime:
+									{
+										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
+										{
+											var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+										}
+									}
+									break;
+								case DatabaseColumnType.Number:
+									{
+										if (column.DefaultValue is not null)
+										{
+											var number = Convert.ToDecimal(column.DefaultValue,CultureInfo.InvariantCulture);
+										}
+									}
+									break;
+								case DatabaseColumnType.ShortInteger:
+									{
+										if (column.DefaultValue is not null)
+										{
+											short number = Convert.ToInt16(column.DefaultValue);
+										}
+
+									}
+									break;
+								case DatabaseColumnType.Integer:
+									{
+										if (column.DefaultValue is not null)
+										{
+											int number = Convert.ToInt32(column.DefaultValue);
+										}
+
+									}
+									break;
+								case DatabaseColumnType.LongInteger:
+									{
+										if (column.DefaultValue is not null)
+										{
+											long number = Convert.ToInt64(column.DefaultValue);
+										}
+
+									}
+									break;
+								default:
+									throw new Exception("Not supported database column type while validate default value.");
+							}
+							return true;
+						}
+						catch(Exception ex)
+						{
+							return false;
+						}
+					})
+					.WithMessage($"Specified default value is not correct for selected database column type.");
 
 			});
 

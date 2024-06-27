@@ -33,7 +33,7 @@ internal class DatabaseUtility
             if (column.DefaultValue is null)
                 return "NULL";
             else
-                return ((decimal)column.DefaultValue).ToString();
+                return ((decimal)column.DefaultValue).ToString(CultureInfo.InvariantCulture);
         };
 
 		Func<ShortIntegerDatabaseColumn, string> shortIntegerDefaultValueFunc = (column) =>
@@ -147,7 +147,7 @@ internal class DatabaseUtility
             if (string.IsNullOrWhiteSpace(defaultValue))
                 return null;
 
-            if (decimal.TryParse(defaultValue, out var decimalValue))
+            if (decimal.TryParse(defaultValue, CultureInfo.InvariantCulture, out var decimalValue))
                 return decimalValue;
         }
         else if (columnType == typeof(BooleanDatabaseColumn))

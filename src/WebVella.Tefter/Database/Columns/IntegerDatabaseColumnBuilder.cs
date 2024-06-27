@@ -11,7 +11,7 @@ public class IntegerDatabaseColumnBuilder : DatabaseColumnBuilder
     {
     }
 
-    public IntegerDatabaseColumnBuilder WithDefaultValue(decimal? defaultValue )
+    public IntegerDatabaseColumnBuilder WithDefaultValue(int? defaultValue )
     {
         _defaultValue = defaultValue;
         return this;
