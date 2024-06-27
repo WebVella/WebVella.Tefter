@@ -926,7 +926,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							if (existingColumn is null)
 								return true;
 
-							return existingColumn.DataProviderId != providerId;
+							return existingColumn.DataProviderId == providerId;
 						})
 						.WithMessage("There data provider cannot be changed for data provider column.");
 
@@ -938,7 +938,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							if (existingColumn is null)
 								return true;
 
-							return existingColumn.DbName != dbName;
+							return existingColumn.DbName == dbName;
 						})
 						.WithMessage("There database name of column cannot be changed.");
 
@@ -950,7 +950,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						if (existingColumn is null)
 							return true;
 
-						return existingColumn.DbType != dbType;
+						return existingColumn.DbType == dbType;
 					})
 					.WithMessage("There database type of column cannot be changed.");
 
