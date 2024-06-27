@@ -21,7 +21,8 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Content is null)
+		if (Content is null) throw new Exception("Content is null");
+		if (Content.Id == Guid.Empty)
 		{
 			_title = LOC("Create user");
 			_btnText = LOC("Create");
@@ -57,7 +58,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			if (rolesResult.IsSuccess)
 				_allRoles = rolesResult.Value.ToList();
 
-			if (Content is null)
+			if (Content.Id == Guid.Empty)
 			{
 
 				_form.Culture = TfConstants.CultureOptions[0];
@@ -113,7 +114,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			await InvokeAsync(StateHasChanged);
 
 			UserBuilder userBuilder;
-			if (Content is null)
+			if (_form.Id == Guid.Empty)
 			{
 				userBuilder = IdentityManager.CreateUserBuilder(null);
 				userBuilder

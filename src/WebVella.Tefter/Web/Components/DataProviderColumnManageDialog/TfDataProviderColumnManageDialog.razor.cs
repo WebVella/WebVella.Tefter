@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
-public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderColumn>
+public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<Tuple<TfDataProviderColumn,TfDataProvider>>
 {
 	[Parameter]
-	public TfDataProviderColumn Content { get; set; }
+	public Tuple<TfDataProviderColumn, TfDataProvider> Content { get; set; }
 
 	[CascadingParameter]
 	public FluentDialog Dialog { get; set; }
@@ -14,25 +14,33 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private TfDataProviderColumn _form = new();
+	private TfDataProvider _provider = new();
 	private List<ITfDataProviderType> _allTypes = new();
-	private DynamicComponent typeSettingsComponent;
+	
+	private string value1 = "1";
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Content is null)
+		if(Content is null) throw new Exception("Content is null");
+		if(Content.Item1 is null ) throw new Exception("DataProviderColumn not provided");
+		if(Content.Item2 is null ) throw new Exception("DataProvider not provided");
+		if(Content.Item2.SupportedSourceDataTypes is null 
+		|| !Content.Item2.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+		if (Content.Item1.Id == Guid.Empty)
 		{
-			_title = LOC("Create data provider");
+			_title = LOC("Create column");
 			_btnText = LOC("Create");
 			_iconBtn = new Icons.Regular.Size20.Add();
 		}
 		else
 		{
-			_title = LOC("Manage data provider");
+			_title = LOC("Manage column");
 			_btnText = LOC("Save");
 			_iconBtn = new Icons.Regular.Size20.Save();
 		}
 		base.InitForm(_form);
+		_provider = Content.Item2;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -58,18 +66,19 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 			_allTypes = typesResult.Value.ToList();
 			if (!_allTypes.Any()) throw new Exception("No Data provider types found in application");
 			//Setup form
-			if (Content is null)
+			if (Content.Item1.Id == Guid.Empty)
 			{
 				_form = new TfDataProviderColumn()
 				{
-					//ProviderType = _allTypes[0]
+					DataProviderId = Content.Item2.Id,
+					SourceType = Content.Item2.SupportedSourceDataTypes.First()
 				};
 			}
 			else
 			{
 				_form = new TfDataProviderColumn()
 				{
-					Id = Content.Id,
+					Id = Content.Item1.Id,
 					//Name = Content.Name,
 					//ProviderType = Content.ProviderType,
 					//CompositeKeyPrefix = Content.CompositeKeyPrefix,

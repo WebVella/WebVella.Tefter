@@ -12,7 +12,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 	{
 		base.OnInitialized();
 		var urlData = Navigator.GetUrlData();
-		if(urlData.SegmentsByIndexDict.ContainsKey(3))
+		if (urlData.SegmentsByIndexDict.ContainsKey(3))
 			menu = urlData.SegmentsByIndexDict[3];
 	}
 
@@ -34,8 +34,10 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		}
 	}
 
-	private async Task _addColumn(){
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(null,
+	private async Task _addColumn()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
+		new Tuple<TfDataProviderColumn, TfDataProvider>(new TfDataProviderColumn(), DataProviderDetailsState.Value.Provider),
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -63,7 +65,8 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 			var result = DataProviderManager.DeleteDataProvider(DataProviderDetailsState.Value.Provider.Id);
 			ProcessServiceResponse(result);
-			if(result.IsSuccess) {
+			if (result.IsSuccess)
+			{
 				Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl);
 			}
 		}

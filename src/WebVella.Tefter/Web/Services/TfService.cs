@@ -9,17 +9,16 @@ public partial interface ITfService{
 
 public partial class TfService : ITfService
 {
-	private ProtectedLocalStorage browserStorage;
+	//private ProtectedLocalStorage browserStorage;
 	private IDataBroker dataBroker;
 	private IIdentityManager identityManager;
 	private readonly IJSRuntime _jsRuntime;
 
-	public TfService(ProtectedLocalStorage protectedLocalStorage, 
-		IDataBroker dataBroker,
+	public TfService(IDataBroker dataBroker,
 		IIdentityManager identityManager,
 		IJSRuntime jsRuntime)
 	{
-		this.browserStorage = protectedLocalStorage;
+		//this.browserStorage = protectedLocalStorage;
 		this.dataBroker = dataBroker;
 		this.identityManager = identityManager;
 		_jsRuntime = jsRuntime;

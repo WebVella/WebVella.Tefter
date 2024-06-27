@@ -20,7 +20,8 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Content is null)
+		if (Content is null) throw new Exception("Content is null");
+		if (Content.Id == Guid.Empty)
 		{
 			_title = LOC("Create data provider");
 			_btnText = LOC("Create");
@@ -58,7 +59,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			_allTypes = typesResult.Value.ToList();
 			if (!_allTypes.Any()) throw new Exception("No Data provider types found in application");
 			//Setup form
-			if (Content is null)
+			if (Content.Id == Guid.Empty)
 			{
 				_form = new TfDataProviderModel()
 				{
