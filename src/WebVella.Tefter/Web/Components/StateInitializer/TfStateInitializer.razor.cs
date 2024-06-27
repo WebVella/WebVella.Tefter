@@ -162,8 +162,14 @@ public partial class TfStateInitializer : TfBaseComponent
 	/// <param name="action"></param>
 	private void initThemeStateResult(SetThemeActionResult action)
 	{
+		if (!_isLoading)
+		{
+			NavigatorExt.ReloadCurrentUrl(Navigator);
+			return;
+		}
 		context.ThemeStateInited = true;
 		CheckAllInited();
+
 	}
 
 	/// <summary>

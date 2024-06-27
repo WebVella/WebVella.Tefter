@@ -31,8 +31,8 @@ else
 							<div>
 								<FluentButton Appearance="@Appearance.Outline" IconStart="@(new Icons.Regular.Size20.Edit())" 
 									Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))"/>
-								<FluentButton Appearance="@Appearance.Outline">
-									<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.Delete())" Title="@LOC("Delete column")" />
+								<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
+									<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.Delete())" />
 								</FluentButton>
 							</div>
 						</td>

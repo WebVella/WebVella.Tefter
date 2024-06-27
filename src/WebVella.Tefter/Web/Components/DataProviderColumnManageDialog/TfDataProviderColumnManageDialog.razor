@@ -90,15 +90,15 @@
 						<FluentValidationMessage For="@(() => _form.IsSearchable)" />
 					</FluentGridItem>
 					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Global search")" />
+						<FluentSwitch @bind-Value=_form.IncludeInTableSearch>@LOC("included")</FluentSwitch>
+						<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
+					</FluentGridItem>
+					<FluentGridItem xs="4">
 						<FluentSelect @bind-SelectedOption="@_form.PreferredSearchType" TOption="TfDataProviderColumnSearchType"
 									  Items="@(Enum.GetValues<TfDataProviderColumnSearchType>())" Style="width:100%"
 									  OptionText="@(p => p.ToString())" Label="@LOC("Preferred search type")"></FluentSelect>
 						<FluentValidationMessage For="@(() => _form.PreferredSearchType)" />
-					</FluentGridItem>
-					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Global search")" />
-						<FluentSwitch @bind-Value=_form.IncludeInTableSearch>@LOC("include in global search")</FluentSwitch>
-						<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid Style="margin-top:15px;">

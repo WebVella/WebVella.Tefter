@@ -60,4 +60,24 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		}
 	}
 
+	private async Task _deleteColumn(TfDataProviderColumn column)
+	{
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
+			return;
+		try
+		{
+			Result<TfDataProvider> result = DataProviderManager.DeleteDataProviderColumn(column.Id);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
+				Dispatcher.Dispatch(new SetDataProviderDetailsAction(result.Value));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		
+	}
 }

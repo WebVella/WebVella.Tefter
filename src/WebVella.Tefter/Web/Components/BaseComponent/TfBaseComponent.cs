@@ -50,7 +50,7 @@ public class TfBaseComponent : FluxorComponent
 	/// Validation messages will not be processed by this method
 	/// </summary>
 	/// <param name="ex"></param>
-	protected void ProcessServiceResponse(Result response)
+	protected void ProcessServiceResponse(Result<object> response)
 	{
 		if (response.IsSuccess) return;
 		var generalErrors = new List<string>();

@@ -141,8 +141,8 @@
   <data name="Global search" xml:space="preserve">
     <value>Глобално търсене</value>
   </data>
-  <data name="include in global search" xml:space="preserve">
-    <value>участва в глобалното търсене</value>
+  <data name="included" xml:space="preserve">
+    <value>участва</value>
   </data>
   <data name="Manage column" xml:space="preserve">
     <value>Редактирай колона</value>
