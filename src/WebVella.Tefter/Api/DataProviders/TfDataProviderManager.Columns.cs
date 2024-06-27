@@ -37,6 +37,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				new TfDataProviderColumnValidator(_dboManager, this);
 
 			var validationResult = validator.ValidateCreate(column);
+
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
@@ -49,6 +50,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new DboManagerError("Insert", column));
 
 				var providerResult = GetProvider(column.DataProviderId);
+
 				if (providerResult.IsFailed)
 					return Result.Fail(new Error("Failed to create new data provider column")
 						.CausedBy(providerResult.Errors));
@@ -56,6 +58,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				var provider = providerResult.Value;
 
 				var result = CreateDatabaseColumn(provider, column);
+
 				if (result.IsFailed)
 					return Result.Fail(new Error("Failed to create new data provider column.")
 						.CausedBy(result.Errors));
@@ -79,19 +82,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				new TfDataProviderColumnValidator(_dboManager, this);
 
 			var validationResult = validator.ValidateUpdate(column);
+
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
 			var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
-
-			//default value
-			//auto default value
-			//nullable
-			//sortable
-			//unique 
-			//searchable
-			//prefered search type
-
 
 			var success = _dboManager.Update<TfDataProviderColumn>(column);
 
@@ -99,6 +94,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				return Result.Fail(new DboManagerError("Update", column));
 
 			var providerResult = GetProvider(column.DataProviderId);
+			
 			if (providerResult.IsFailed)
 				return Result.Fail(new Error("Failed to update data provider column")
 					.CausedBy(providerResult.Errors));
@@ -127,6 +123,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				var column = GetDataProviderColumn(id);
 
 				var validationResult = validator.ValidateDelete(column);
+				
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
@@ -136,11 +133,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new DboManagerError("Delete", id));
 
 				var providerResult = GetProvider(id);
+				
 				if (providerResult.IsFailed)
 					return Result.Fail(new Error("Failed to delete provider column.")
 						.CausedBy(providerResult.Errors));
 
 				var provider = providerResult.Value;
+				
 				string providerTableName = $"dp{provider.Index}";
 
 				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
