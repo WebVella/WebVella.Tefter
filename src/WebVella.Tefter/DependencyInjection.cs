@@ -22,7 +22,7 @@ public static class DependencyInjection
 
 		services.AddScoped<IDataBroker, DataBroker>();
 		services.AddScoped<ITfService, TfService>();
-		services.AddSingleton<IConfigurationService, ConfigurationService>();
+		services.AddSingleton<IWebConfigurationService, WebConfigurationService>();
 
 		//register dependencies from WebVella.Tefter
 		services.AddTefterDI(unitTestModeOn);

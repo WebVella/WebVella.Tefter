@@ -9,6 +9,7 @@ using System;
 using WebVella.Tefter.Identity;
 using WebVella.Tefter.Web.Components.Login;
 using WebVella.Tefter.Web.Services;
+using WebVella.Tefter.Web.Store.ScreenState;
 using WebVella.Tefter.Web.Store.UserState;
 
 
@@ -18,6 +19,10 @@ public class BaseTest
 	public static IServiceProvider ServiceProvider;
 	public static IStore Store;
 	public static IState<UserState> UserState;
+	public static IState<ScreenState> ScreenState;
+	public static IStateSelection<UserState, Guid> UserIdState;
+	public static IStateSelection<ScreenState, bool> ScreenSidebarState;
+	public static Mock<IKeyCodeService> KeyCodeServiceMock;
 	public static Mock<ITfService> TfServiceMock;
 	public static Mock<IIdentityManager> IdentityManagerMock;
 	public static Mock<ITfDataProviderManager> TfDataProviderManagerMock;
@@ -36,7 +41,9 @@ public class BaseTest
 		Context.Services.AddScoped(typeof(IIdentityManager), Services => IdentityManagerMock.Object);
 		TfDataProviderManagerMock = new Mock<ITfDataProviderManager>();
 		Context.Services.AddScoped(typeof(ITfDataProviderManager), Services => TfDataProviderManagerMock.Object);
-		Context.Services.AddScoped<IDispatcher, Dispatcher>();
+		KeyCodeServiceMock = new Mock<IKeyCodeService>();
+		Context.Services.AddScoped(typeof(IKeyCodeService), Services => KeyCodeServiceMock.Object);
+
 		Context.Services.AddScoped<IToastService, ToastService>();
 		Context.Services.AddScoped<IDialogService, DialogService>();
 		Context.Services.AddScoped<IMessageService, MessageService>();
@@ -44,7 +51,7 @@ public class BaseTest
 			.AddJsonFile("appsettings.json".ToApplicationPath(), optional: false)
 			.Build();
 		Context.Services.AddSingleton<IConfiguration>(configuration);
-		Context.Services.AddScoped<IConfigurationService, ConfigurationService>();
+		Context.Services.AddScoped<IWebConfigurationService, WebConfigurationService>();
 
 		StringLocalizerFactoryMock = new Mock<IStringLocalizerFactory>();
 		Context.Services.AddScoped(typeof(IStringLocalizerFactory), Services => StringLocalizerFactoryMock.Object);
@@ -57,7 +64,14 @@ public class BaseTest
 		ServiceProvider = Context.Services.BuildServiceProvider();
 
 		Store = ServiceProvider.GetRequiredService<IStore>();
-		UserState = ServiceProvider.GetRequiredService<IState<UserState>>();
 		Store.InitializeAsync().Wait();
+
+		UserState = ServiceProvider.GetRequiredService<IState<UserState>>();
+		ScreenState = ServiceProvider.GetRequiredService<IState<ScreenState>>();
+		//UserIdState = ServiceProvider.GetRequiredService<IStateSelection<UserState,Guid>>();
+		//UserIdState.Select(x => x?.User?.Id ?? Guid.Empty);
+		//ScreenSidebarState = ServiceProvider.GetRequiredService<IStateSelection<ScreenState, bool>>();
+		//ScreenSidebarState.Select(x => x?.SidebarExpanded ?? true);
+
 	}
 }

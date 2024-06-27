@@ -71,13 +71,6 @@
 
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("Composite key")" />
-					<FluentCheckbox @bind-Value=_form.IsCompositeKeyPart Label="@LOC("part of the composite key")" Style="margin-top:5px;" />
-					<FluentValidationMessage For="@(() => _form.IsCompositeKeyPart)" />
-				</FluentGridItem>
-			</FluentGrid>
-			<FluentGrid>
-				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.DefaultValue
 									 Label="@LOC("Default value")" Style="width:100%" Placeholder="Type 'NULL' or leave empty for 'empty string''" />
 					<FluentValidationMessage For="@(() => _form.DefaultValue)" />
@@ -123,11 +116,6 @@
 					<FluentInputLabel Label="@LOC("Global search")" />
 					<FluentCheckbox @bind-Value=_form.IncludeInTableSearch Label="@LOC("include in global table search")" Style="margin-top:5px;" />
 					<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentInputLabel Label="@LOC("System")" />
-					<FluentCheckbox @bind-Value=_form.IsSystem Label="@LOC("system column")" Style="margin-top:5px;" />
-					<FluentValidationMessage For="@(() => _form.IsSystem)" />
 				</FluentGridItem>
 			</FluentGrid>
 		</FluentEditForm>
