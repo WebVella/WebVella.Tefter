@@ -47,9 +47,9 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TfDataProviderColumn)result.Data;
+			var record = (TfDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
-			//Dispatcher.Dispatch(new SetDataProviderDetailsAction(record));
+			Dispatcher.Dispatch(new SetDataProviderDetailsAction(record));
 		}
 	}
 

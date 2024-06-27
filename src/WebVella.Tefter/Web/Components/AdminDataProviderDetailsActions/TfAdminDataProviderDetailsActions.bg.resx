@@ -121,7 +121,7 @@
     <value>Добави колона</value>
   </data>
   <data name="Are you sure that you need this data provider deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете този източник на данни?</value>
+    <value>Сигурни ли сте, че искате да изтриете този доставчик на данни?</value>
   </data>
   <data name="Column successfully created!" xml:space="preserve">
     <value>Колоната е успешно създадена</value>
@@ -133,7 +133,7 @@
     <value>Редактирай</value>
   </data>
   <data name="Provider successfully updated" xml:space="preserve">
-    <value>Източникът е успешно редактиран</value>
+    <value>Доставчикът на данни е успешно редактиран</value>
   </data>
   <data name="Will proceeed only if there are not existing columns attached" xml:space="preserve">
     <value>Ще бъде изтрит само ако няма асоциирани колони</value>

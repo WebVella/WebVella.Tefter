@@ -1,4 +1,6 @@
 ﻿
+using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
+
 namespace WebVella.Tefter.Web.Components.AdminDataProviderSchema;
 public partial class TfAdminDataProviderSchema : TfBaseComponent
 {
@@ -39,6 +41,23 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 			Dispatcher.Dispatch(new GetDataProviderDetailsAction(urlData.DataProviderId.Value));
 		}
 	}
-
+	private async Task _editColumn(TfDataProviderColumn column)
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
+				new Tuple<TfDataProviderColumn, TfDataProvider>(column, DataProviderDetailsState.Value.Provider),
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var record = (TfDataProvider)result.Data;
+			ToastService.ShowSuccess(LOC("Column successfully updated!"));
+			Dispatcher.Dispatch(new SetDataProviderDetailsAction(record));
+		}
+	}
 
 }

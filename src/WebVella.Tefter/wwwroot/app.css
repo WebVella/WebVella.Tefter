@@ -191,7 +191,10 @@ body {
 .tf-grid-tbody > .tf-grid-tr > .tf-grid-td a:hover {
 	text-decoration:underline;
 }
-
+	.tf-grid-tbody > .tf-grid-tr > .tf-grid-td .td-description {
+		font-size:var(--type-ramp-minus-1-font-size);
+		color:var(--neutral-foreground-hint);
+	}
 
 /* width */
 ::-webkit-scrollbar {
@@ -222,6 +225,10 @@ fluent-data-grid-row:has([row-selected]) {
 
 fluent-select::part(listbox) {
 	max-height: 200px;
+}
+
+.tf-input-label {
+	color:var(--neutral-foreground-hover) !important;
 }
 
 /* General */

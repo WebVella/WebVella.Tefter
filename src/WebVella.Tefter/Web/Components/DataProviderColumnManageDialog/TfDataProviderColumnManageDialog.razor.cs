@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
-public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<Tuple<TfDataProviderColumn,TfDataProvider>>
+public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<Tuple<TfDataProviderColumn, TfDataProvider>>
 {
 	[Parameter]
 	public Tuple<TfDataProviderColumn, TfDataProvider> Content { get; set; }
@@ -7,6 +7,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	[CascadingParameter]
 	public FluentDialog Dialog { get; set; }
 
+	private bool _isCreate = false;
 	private bool _isBusy = true;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -16,16 +17,16 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private TfDataProviderColumn _form = new();
 	private TfDataProvider _provider = new();
 	private List<ITfDataProviderType> _allTypes = new();
-	
+
 	private string value1 = "1";
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if(Content is null) throw new Exception("Content is null");
-		if(Content.Item1 is null ) throw new Exception("DataProviderColumn not provided");
-		if(Content.Item2 is null ) throw new Exception("DataProvider not provided");
-		if(Content.Item2.SupportedSourceDataTypes is null 
+		if (Content is null) throw new Exception("Content is null");
+		if (Content.Item1 is null) throw new Exception("DataProviderColumn not provided");
+		if (Content.Item2 is null) throw new Exception("DataProvider not provided");
+		if (Content.Item2.SupportedSourceDataTypes is null
 		|| !Content.Item2.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
 		if (Content.Item1.Id == Guid.Empty)
 		{
@@ -68,10 +69,13 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 			//Setup form
 			if (Content.Item1.Id == Guid.Empty)
 			{
+				_isCreate = true;
 				_form = new TfDataProviderColumn()
 				{
+					Id = Guid.NewGuid(),
 					DataProviderId = Content.Item2.Id,
-					SourceType = Content.Item2.SupportedSourceDataTypes.First()
+					SourceType = Content.Item2.SupportedSourceDataTypes.First(),
+					CreatedOn = DateTime.Now,
 				};
 			}
 			else
@@ -79,10 +83,20 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 				_form = new TfDataProviderColumn()
 				{
 					Id = Content.Item1.Id,
-					//Name = Content.Name,
-					//ProviderType = Content.ProviderType,
-					//CompositeKeyPrefix = Content.CompositeKeyPrefix,
-					//SettingsJson = Content.SettingsJson
+					DataProviderId = Content.Item1.DataProviderId,
+					AutoDefaultValue = Content.Item1.AutoDefaultValue,
+					CreatedOn = Content.Item1.CreatedOn,
+					DbName = Content.Item1.DbName,
+					DbType = Content.Item1.DbType,
+					DefaultValue = Content.Item1.DefaultValue,
+					IncludeInTableSearch = Content.Item1.IncludeInTableSearch,
+					IsNullable = Content.Item1.IsNullable,
+					IsSearchable = Content.Item1.IsSearchable,
+					IsSortable = Content.Item1.IsSortable,
+					IsUnique = Content.Item1.IsUnique,
+					PreferredSearchType = Content.Item1.PreferredSearchType,
+					SourceName = Content.Item1.SourceName,
+					SourceType = Content.Item1.SourceType
 				};
 			}
 			base.InitForm(_form);
@@ -90,11 +104,6 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		catch (Exception ex)
 		{
 			_error = ProcessException(ex);
-		}
-		finally
-		{
-
-
 		}
 	}
 
@@ -109,36 +118,27 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			MessageStore.Clear();
 
-			//Get dynamic settings component errors
-			//List<ValidationError> settingsErrors = new();
-			//if (_form.ProviderType.SettingsComponentType is not null
-			//	&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
-			//{
-			//	settingsErrors = (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate();
-			//}
-
 			////Check form
-			//var isValid = EditContext.Validate();
-			//if (!isValid || settingsErrors.Count > 0) return;
+			var isValid = EditContext.Validate();
+			if (!isValid) return;
 
-			//_isSubmitting = true;
-			//await InvokeAsync(StateHasChanged);
-			//Result<TfDataProvider> submitResult;
-			//_form.SettingsJson = (typeSettingsComponent.Instance as ITfDataProviderSettings).Value;
-			//if (_form.Id == Guid.Empty)
-			//{
-			//	submitResult = DataProviderManager.CreateDataProvider(_form);
-			//}
-			//else
-			//{
-			//	submitResult = DataProviderManager.UpdateDataProvider(_form);
-			//}
+			_isSubmitting = true;
+			await InvokeAsync(StateHasChanged);
+			Result<TfDataProvider> submitResult;
+			if (_isCreate)
+			{
+				submitResult = DataProviderManager.CreateDataProviderColumn(_form);
+			}
+			else
+			{
+				submitResult = DataProviderManager.UpdateDataProviderColumn(_form);
+			}
 
-			//ProcessFormSubmitResponse(submitResult);
-			//if (submitResult.IsSuccess)
-			//{
-			//	await Dialog.CloseAsync(submitResult.Value);
-			//}
+			ProcessFormSubmitResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				await Dialog.CloseAsync(submitResult.Value);
+			}
 		}
 		catch (Exception ex)
 		{

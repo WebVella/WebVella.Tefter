@@ -47,7 +47,8 @@
 					<FluentValidationMessage For="@(() => _form.ProviderType)" />
 				</FluentGridItem>
 			</FluentGrid>
-			<div style="margin-top:3px">
+			<FluentDivider Style="margin:15px 0" />
+			<div>
 				@if (_form.ProviderType.SettingsComponentType is null) { }
 				else if (_form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 				{

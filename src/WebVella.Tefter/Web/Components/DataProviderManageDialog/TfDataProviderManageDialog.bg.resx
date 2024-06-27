@@ -124,10 +124,10 @@
     <value>Създай</value>
   </data>
   <data name="Create data provider" xml:space="preserve">
-    <value>Създай източник на данни</value>
+    <value>Създай доставчик на данни</value>
   </data>
   <data name="Manage data provider" xml:space="preserve">
-    <value>Редактирай източник на данни</value>
+    <value>Редактирай доставчика на данни</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Запомни</value>
@@ -139,6 +139,6 @@
     <value>Тип</value>
   </data>
   <data name="Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
-    <value>Внимание: Компонентът за настройки на източника на данни не имплементира ITfDataProviderSettings и не може да бъде показан!</value>
+    <value>Внимание: Компонентът за настройки на доставчика на данни не имплементира ITfDataProviderSettings и не може да бъде показан!</value>
   </data>
 </root>

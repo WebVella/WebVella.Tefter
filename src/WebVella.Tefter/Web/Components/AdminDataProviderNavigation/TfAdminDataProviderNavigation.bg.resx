@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Create new data provider" xml:space="preserve">
-    <value>Добави нов източник на данни</value>
+    <value>Добави нов доставчик на данни</value>
   </data>
   <data name="Data provider successfully created!" xml:space="preserve">
-    <value>Източникът на данни е успешно създаден!</value>
+    <value>Доставчикът на данни е успешно създаден!</value>
   </data>
   <data name="Load more" xml:space="preserve">
     <value>Зареди още</value>
@@ -130,10 +130,10 @@
     <value>Нов</value>
   </data>
   <data name="No data providers created yet" xml:space="preserve">
-    <value>Все още няма създадени източници на данни</value>
+    <value>Все още няма създадени доставчици на данни</value>
   </data>
   <data name="No data providers match search criteria" xml:space="preserve">
-    <value>Няма източници на данни отговарящи на критерия за търсене</value>
+    <value>Няма доставчици на данни отговарящи на критерия за търсене</value>
   </data>
   <data name="search..." xml:space="preserve">
     <value>търси...</value>
