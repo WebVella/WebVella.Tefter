@@ -132,7 +132,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				if (!success)
 					return Result.Fail(new DboManagerError("Delete", id));
 
-				var providerResult = GetProvider(id);
+				var providerResult = GetProvider(column.DataProviderId);
 				
 				if (providerResult.IsFailed)
 					return Result.Fail(new Error("Failed to delete provider column.")
