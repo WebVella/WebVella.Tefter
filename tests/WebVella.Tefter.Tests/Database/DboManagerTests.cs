@@ -289,6 +289,8 @@ CREATE TABLE IF NOT EXISTS public.test_table
     datetime timestamp with time zone NOT NULL DEFAULT now(),
     number_null numeric,
     ""number"" numeric NOT NULL DEFAULT 0,
+	short_null SMALLINT,
+    ""short"" SMALLINT NOT NULL DEFAULT 0,
     guid_null uuid,
     guid uuid NOT NULL DEFAULT '00000000-0000-0000-0000-000000000000'::uuid,
     text text COLLATE pg_catalog.""default"" NOT NULL DEFAULT ''::text,

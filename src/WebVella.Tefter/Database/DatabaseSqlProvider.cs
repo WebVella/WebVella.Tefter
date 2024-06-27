@@ -264,7 +264,11 @@ $$ LANGUAGE plpgsql;
             DateTimeDatabaseColumn c => generalFunc(c),
             GuidDatabaseColumn c => generalFunc(c),
             TextDatabaseColumn c => generalFunc(c),
-            _ => throw new Exception($"Not supported DbColumn type {dbColumn.GetType()}")
+			ShortTextDatabaseColumn c => generalFunc(c),
+			ShortIntegerDatabaseColumn c => generalFunc(c),
+			IntegerDatabaseColumn c => generalFunc(c),
+			LongIntegerDatabaseColumn c => generalFunc(c),
+			_ => throw new Exception($"Not supported DbColumn type {dbColumn.GetType()}")
         };
 
         return createSql + $" COMMENT ON COLUMN \"{difference.TableName}\".\"{dbColumn.Name}\" IS '{dbColumn.GetMetaJson(DateTime.Now)}';";
@@ -443,14 +447,13 @@ $$ LANGUAGE plpgsql;
         return $"DROP INDEX \"{index.Name}\";";
     }
 
-    #endregion
+	#endregion
 
-    #endregion
+	#endregion
 
+	#region <=== GetTablesMetaSql ===>
 
-    #region <=== GetTablesMetaSql ===>
-
-    public static string GetTablesMetaSql()
+	public static string GetTablesMetaSql()
     {
         return @"
 SELECT t.table_name, pg_catalog.obj_description(pgc.oid, 'pg_class') as meta

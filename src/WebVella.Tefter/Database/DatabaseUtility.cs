@@ -36,7 +36,31 @@ internal class DatabaseUtility
                 return ((decimal)column.DefaultValue).ToString();
         };
 
-        Func<BooleanDatabaseColumn, string> booleanDefaultValueFunc = (column) =>
+		Func<ShortIntegerDatabaseColumn, string> shortIntegerDefaultValueFunc = (column) =>
+		{
+			if (column.DefaultValue is null)
+				return "NULL";
+			else
+				return ((short)column.DefaultValue).ToString();
+		};
+
+		Func<IntegerDatabaseColumn, string> integerDefaultValueFunc = (column) =>
+		{
+			if (column.DefaultValue is null)
+				return "NULL";
+			else
+				return ((int)column.DefaultValue).ToString();
+		};
+
+		Func<LongIntegerDatabaseColumn, string> longIntegerDefaultValueFunc = (column) =>
+		{
+			if (column.DefaultValue is null)
+				return "NULL";
+			else
+				return ((long)column.DefaultValue).ToString();
+		};
+
+		Func<BooleanDatabaseColumn, string> booleanDefaultValueFunc = (column) =>
         {
             if (column.DefaultValue is null)
                 return "NULL";
@@ -87,7 +111,15 @@ internal class DatabaseUtility
                 return $"'{column.DefaultValue}'";
         };
 
-        return column switch
+		Func<ShortTextDatabaseColumn, string> shortTextDefaultValueFunc = (column) =>
+		{
+			if (column.DefaultValue is null)
+				return "NULL";
+			else
+				return $"'{column.DefaultValue}'";
+		};
+
+		return column switch
         {
             AutoIncrementDatabaseColumn c => null,
             NumberDatabaseColumn c => numberDefaultValueFunc(c),
@@ -96,7 +128,11 @@ internal class DatabaseUtility
             DateTimeDatabaseColumn c => dateTimeDefaultValueFunc(c),
             GuidDatabaseColumn c => guidDefaultValueFunc(c),
             TextDatabaseColumn c => textDefaultValueFunc(c),
-            _ => throw new Exception($"Not supported DbColumn type {column.GetType()} while trying to extract default value")
+			ShortTextDatabaseColumn c => shortTextDefaultValueFunc(c),
+			ShortIntegerDatabaseColumn c => shortIntegerDefaultValueFunc(c),
+			IntegerDatabaseColumn c => integerDefaultValueFunc(c),
+			LongIntegerDatabaseColumn c => longIntegerDefaultValueFunc(c),
+			_ => throw new Exception($"Not supported DbColumn type {column.GetType()} while trying to extract default value")
         };
     }
 
@@ -176,7 +212,40 @@ internal class DatabaseUtility
                  .Replace("::text", "")
                  .Replace("'", "");
         }
+		else if (columnType == typeof(ShortTextDatabaseColumn))
+		{
+			if (string.IsNullOrWhiteSpace(defaultValue))
+				return null;
 
-        throw new Exception($"Not supported default value \"{defaultValue}\" for column '{columnName}'");
+			return defaultValue
+				 .Replace("::character varying", "")
+				 .Replace("'", "");
+		}
+		else if (columnType == typeof(ShortIntegerDatabaseColumn))
+		{
+			if (string.IsNullOrWhiteSpace(defaultValue))
+				return null;
+
+			if (short.TryParse(defaultValue, out var shortValue))
+				return shortValue;
+		}
+		else if (columnType == typeof(IntegerDatabaseColumn))
+		{
+			if (string.IsNullOrWhiteSpace(defaultValue))
+				return null;
+
+			if (int.TryParse(defaultValue, out var intValue))
+				return intValue;
+		}
+		else if (columnType == typeof(LongIntegerDatabaseColumn))
+		{
+			if (string.IsNullOrWhiteSpace(defaultValue))
+				return null;
+
+			if (long.TryParse(defaultValue, out var longValue))
+				return longValue;
+		}
+
+		throw new Exception($"Not supported default value \"{defaultValue}\" for column '{columnName}'");
     }
 }

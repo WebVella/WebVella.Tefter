@@ -6,11 +6,11 @@ public abstract record DatabaseColumn : DatabaseObject
 
     private DatabaseColumnMeta _meta = new();
     public Guid Id { get { return _meta.Id; } init { _meta.Id = value; } }
-    internal DateTime LastCommited { get { return _meta.LastCommited; } set { _meta.LastCommited= value; } }
+	public DatabaseColumnType Type { get { return _meta.ColumnType; } init { _meta.ColumnType = value; } }
+	internal DateTime LastCommited { get { return _meta.LastCommited; } set { _meta.LastCommited= value; } }
 
     #endregion
 
-    public virtual DatabaseColumnType Type { get; set; }
     public virtual object DefaultValue { get; set; } = null;
     public virtual bool IsNullable { get; set; } = false;
     internal virtual string DatabaseColumnType { get; set; }

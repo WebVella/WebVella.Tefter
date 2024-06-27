@@ -633,8 +633,12 @@ internal static class DatabaseComparer
             case DateTimeDatabaseColumn: return "DateTime column";
             case GuidDatabaseColumn: return "Guid column";
             case NumberDatabaseColumn: return "number column";
-            case TextDatabaseColumn: return "text column";
-            case DatabaseForeignKeyConstraint: return "foreign key constraint";
+			case ShortIntegerDatabaseColumn: return "short integer column";
+			case IntegerDatabaseColumn: return "integer column";
+			case LongIntegerDatabaseColumn: return "long integer column";
+			case TextDatabaseColumn: return "text column";
+			case ShortTextDatabaseColumn: return "short text column";
+			case DatabaseForeignKeyConstraint: return "foreign key constraint";
             case DatabasePrimaryKeyConstraint: return "primary key constraint";
             case DatabaseUniqueKeyConstraint: return "unique key constraint";
             case BTreeDatabaseIndex: return "btree index";

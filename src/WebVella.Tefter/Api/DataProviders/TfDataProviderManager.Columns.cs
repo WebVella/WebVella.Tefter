@@ -1,8 +1,4 @@
-﻿using Bogus.DataSets;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public partial interface ITfDataProviderManager
 {
@@ -26,7 +22,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 	public List<TfDataProviderColumn> GetDataProviderColumns(Guid providerId)
 	{
-		return _dboManager.GetList<TfDataProviderColumn>(providerId, nameof(TfDataProviderColumn.DataProviderId));
+		var orderSettings = new OrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
+		return _dboManager.GetList<TfDataProviderColumn>(providerId, nameof(TfDataProviderColumn.DataProviderId),order: orderSettings);
 	}
 
 	public Result<TfDataProvider> CreateDataProviderColumn(TfDataProviderColumn column)
@@ -57,31 +54,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						.CausedBy(providerResult.Errors));
 
 				var provider = providerResult.Value;
-				string providerTableName = $"dp{provider.Index}";
 
-				//DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-				//dbBuilder.WithTableBuilder(providerTableName)
-				//	.WithColumns(columns =>
-				//	{
-				//		columns
-				//			.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-				//			.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-				//			.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-				//			.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); });
-				//	})
-				//	.WithConstraints(constraints =>
-				//	{
-				//		constraints
-				//			.AddPrimaryKeyConstraintBuilder($"pk_{providerTableName}", c => { c.WithColumns("tf_id"); });
-				//	})
-				//	.WithIndexes(indexes =>
-				//	{
-				//		indexes
-				//			.AddBTreeIndex($"ix_{providerTableName}_tf_id", c => { c.WithColumns("tf_id"); })
-				//			.AddGinIndex($"ix_{providerTableName}_tf_search", c => { c.WithColumns("tf_search"); });
-				//	});
-
-				//_dbManager.SaveChanges(dbBuilder);
+				var result = CreateDatabaseColumn(provider, column);
+				if (result.IsFailed)
+					return Result.Fail(new Error("Failed to create new data provider column.")
+						.CausedBy(result.Errors));
 
 				scope.Complete();
 
@@ -163,6 +140,154 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	private Result CreateDatabaseColumn(TfDataProvider provider, TfDataProviderColumn column)
+	{
+		try
+		{
+			string providerTableName = $"dp{provider.Index}";
+
+			DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+			var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
+			var columnsBuilder = tableBuilder.WithColumnsBuilder();
+
+			switch (column.DbType)
+			{
+				case DatabaseColumnType.Text:
+					{
+						columnsBuilder.AddTextColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							c.WithDefaultValue(column.DefaultValue);
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddGinIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				case DatabaseColumnType.Guid:
+					{
+						columnsBuilder.AddGuidColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+									c.WithDefaultValue(new Guid(column.DefaultValue));
+							}
+						});
+
+						if (column.IsSearchable || column.IsSortable )
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				case DatabaseColumnType.Date:
+					{
+						columnsBuilder.AddDateColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue);
+									DateOnly date = DateOnly.FromDateTime(datetime);
+									c.WithDefaultValue(date);
+								}
+							}
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				case DatabaseColumnType.DateTime:
+					{
+						columnsBuilder.AddDateTimeColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue);
+									c.WithDefaultValue(datetime);
+								}
+							}
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				case DatabaseColumnType.Number:
+					{
+						columnsBuilder.AddNumberColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = Convert.ToDecimal(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+					}
+					break;
+				default:
+					throw new Exception("Not supported database column type");
+			}
+
+			if (column.IsUnique)
+			{
+				tableBuilder.WithConstraints(constraints =>
+				{
+					constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
+						c => { c.WithColumns(column.DbName); });
+				});
+			}
+
+			_dbManager.SaveChanges(dbBuilder);
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create database column.").CausedBy(ex));
+		}
+	}
+
 	#region <--- Validator --->
 
 	internal class TfDataProviderColumnValidator
@@ -203,9 +328,9 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				RuleFor(column => column.DbName)
 					.NotEmpty()
 					.WithMessage("The data provider column database name is required.");
-				
+
 				RuleFor(column => column.DbName)
-					.Must( (column,dbName) => 
+					.Must((column, dbName) =>
 					{
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
@@ -229,8 +354,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					{
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
-						
-						
+
+
 						return dbName.Length <= Constants.DB_MAX_OBJECT_NAME_LENGTH;
 					})
 					.WithMessage($"The length of database name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
@@ -321,7 +446,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		public ValidationResult ValidateCreate(TfDataProviderColumn column)
 		{
 			if (column == null)
-				return new ValidationResult(new[] { new ValidationFailure("", 
+				return new ValidationResult(new[] { new ValidationFailure("",
 					"The data provider column is null.") });
 
 			return this.Validate(column, options =>
@@ -333,7 +458,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		public ValidationResult ValidateUpdate(TfDataProviderColumn column)
 		{
 			if (column == null)
-				return new ValidationResult(new[] { new ValidationFailure("", 
+				return new ValidationResult(new[] { new ValidationFailure("",
 					"The data provider column is null.") });
 
 			return this.Validate(column, options =>
@@ -345,7 +470,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		public ValidationResult ValidateDelete(TfDataProviderColumn column)
 		{
 			if (column == null)
-				return new ValidationResult(new[] { new ValidationFailure("", 
+				return new ValidationResult(new[] { new ValidationFailure("",
 					"The data provider column with specified identifier is not found.") });
 
 			return this.Validate(column, options =>

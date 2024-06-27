@@ -64,9 +64,9 @@ public partial class DatabaseManager : IDatabaseManager
 
 				var columnCollectionBuilder = tableBuilder.WithColumnsBuilder();
 
-				switch (dbType)
+				switch (meta.ColumnType)
 				{
-					case "uuid":
+					case DatabaseColumnType.Guid:
 						{
 							Guid? guidDefaultValue = (Guid?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(GuidDatabaseColumn), defaultValue);
 
@@ -88,7 +88,7 @@ public partial class DatabaseManager : IDatabaseManager
 								columnBuider.WithoutAutoDefaultValue();
 						}
 						break;
-					case "integer":
+					case DatabaseColumnType.AutoIncrement:
 						{
 							var columnBuider = columnCollectionBuilder
 								.AddAutoIncrementColumnBuilder(meta.Id, columnName)
@@ -96,7 +96,7 @@ public partial class DatabaseManager : IDatabaseManager
 								.WithLastCommited(meta.LastCommited);
 						}
 						break;
-					case "boolean":
+					case DatabaseColumnType.Boolean:
 						{
 							bool? columnDefaultValue = (bool?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(BooleanDatabaseColumn), defaultValue);
 
@@ -111,7 +111,7 @@ public partial class DatabaseManager : IDatabaseManager
 								columnBuider.NotNullable();
 						}
 						break;
-					case "numeric":
+					case DatabaseColumnType.Number:
 						{
 							decimal? columnDefaultValue = (decimal?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(NumberDatabaseColumn), defaultValue);
 
@@ -127,7 +127,7 @@ public partial class DatabaseManager : IDatabaseManager
 							columnBuider.WithLastCommited(meta.LastCommited);
 						}
 						break;
-					case "date":
+					case DatabaseColumnType.Date:
 						{
 							DateOnly? columnDefaultValue = (DateOnly?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DateDatabaseColumn), defaultValue);
 
@@ -149,7 +149,7 @@ public partial class DatabaseManager : IDatabaseManager
 								columnBuider.WithoutAutoDefaultValue();
 						}
 						break;
-					case "timestamp with time zone":
+					case DatabaseColumnType.DateTime:
 						{
 							DateTime? columnDefaultValue = (DateTime?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(DateTimeDatabaseColumn), defaultValue);
 
@@ -171,7 +171,7 @@ public partial class DatabaseManager : IDatabaseManager
 								columnBuider.WithoutAutoDefaultValue();
 						}
 						break;
-					case "text":
+					case DatabaseColumnType.Text:
 						{
 							string columnDefaultValue = (string)DatabaseUtility
 								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TextDatabaseColumn), defaultValue);
@@ -185,6 +185,73 @@ public partial class DatabaseManager : IDatabaseManager
 								columnBuider.Nullable();
 							else
 								columnBuider.NotNullable();
+						}
+						break;
+					case DatabaseColumnType.ShortText:
+						{
+							string columnDefaultValue = (string)DatabaseUtility
+								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(ShortTextDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddShortTextColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+						}
+						break;
+					case DatabaseColumnType.ShortInteger:
+						{
+							short? columnDefaultValue = (short?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, 
+								typeof(ShortIntegerDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddShortIntegerColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							columnBuider.WithLastCommited(meta.LastCommited);
+						}
+						break;
+					case DatabaseColumnType.Integer:
+						{
+							int? columnDefaultValue = (int?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+								typeof(IntegerDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddIntegerColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							columnBuider.WithLastCommited(meta.LastCommited);
+						}
+						break;
+					case DatabaseColumnType.LongInteger:
+						{
+							long? columnDefaultValue = (long?)DatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+								typeof(LongIntegerDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddLongIntegerColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							columnBuider.WithLastCommited(meta.LastCommited);
 						}
 						break;
 					default:

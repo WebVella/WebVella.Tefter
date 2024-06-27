@@ -655,6 +655,93 @@ public partial class DatabaseBuilderTests : BaseTest
 	}
 
 	[Fact]
+	public void Column_CRUD_ShortInteger()
+	{
+		var databaseBuilder = DatabaseBuilder.New();
+		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
+
+		Guid columnId = Guid.NewGuid();
+		const string columnName = "test_short_integer";
+		short defaultValue = 10;
+
+		DatabaseTable table = null;
+		var task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddShortIntegerColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					});
+			})
+			.Build();
+		});
+		var exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(1);
+		var columnById = table.Columns.Find(columnId);
+		var columnByName = table.Columns.Find(columnName);
+
+		columnById.Should().NotBeNull();
+		columnByName.Should().NotBeNull();
+		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
+		columnById.Should().BeOfType<ShortIntegerDatabaseColumn>();
+
+		columnById.IsNullable.Should().BeTrue();
+		columnById.DefaultValue.Should().Be(defaultValue);
+
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.WithShortIntegerColumn(columnName, column =>
+					{
+						column
+							.WithDefaultValue(null)
+							.NotNullable();
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(1);
+		columnById = table.Columns.Find(columnId);
+		columnByName = table.Columns.Find(columnName);
+		columnById.Should().BeOfType<ShortIntegerDatabaseColumn>();
+
+		columnById.Should().NotBeNull();
+		columnByName.Should().NotBeNull();
+		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
+
+		columnById.IsNullable.Should().BeFalse();
+		columnById.DefaultValue.Should().Be(null);
+
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.Remove(columnName);
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(0);
+	}
+
+	[Fact]
 	public void Column_CRUD_Boolean()
 	{
 		var databaseBuilder = DatabaseBuilder.New();
@@ -804,6 +891,93 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
 		columnById.Should().BeOfType<TextDatabaseColumn>();
+
+		columnById.Should().NotBeNull();
+		columnByName.Should().NotBeNull();
+		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
+
+		columnById.IsNullable.Should().BeFalse();
+		columnById.DefaultValue.Should().Be(null);
+
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.Remove(columnName);
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(0);
+	}
+
+	[Fact]
+	public void Column_CRUD_ShortText()
+	{
+		var databaseBuilder = DatabaseBuilder.New();
+		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
+
+		Guid columnId = Guid.NewGuid();
+		const string columnName = "test_short_text";
+		string defaultValue = "def";
+
+		DatabaseTable table = null;
+		var task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.AddShortTextColumn(columnId, columnName, column =>
+					{
+						column
+							.WithDefaultValue(defaultValue)
+							.Nullable();
+					});
+			})
+			.Build();
+		});
+		var exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(1);
+		var columnById = table.Columns.Find(columnId);
+		var columnByName = table.Columns.Find(columnName);
+
+		columnById.Should().NotBeNull();
+		columnByName.Should().NotBeNull();
+		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
+		columnById.Should().BeOfType<ShortTextDatabaseColumn>();
+
+		columnById.IsNullable.Should().BeTrue();
+		columnById.DefaultValue.Should().Be(defaultValue);
+
+		task = Task.Run(() =>
+		{
+			table = tableBuilder.WithColumns(columns =>
+			{
+				columns
+					.WithShortTextColumn(columnName, column =>
+					{
+						column
+							.WithDefaultValue(null)
+							.NotNullable();
+					});
+			})
+			.Build();
+		});
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+
+		table.Should().NotBeNull();
+		table.Columns.Should().HaveCount(1);
+		columnById = table.Columns.Find(columnId);
+		columnByName = table.Columns.Find(columnName);
+		columnById.Should().BeOfType<ShortTextDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();

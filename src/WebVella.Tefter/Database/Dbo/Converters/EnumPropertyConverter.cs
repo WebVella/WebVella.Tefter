@@ -4,12 +4,7 @@ internal class EnumPropertyConverter<T> : IDboPropertyValueConverter where T : s
 {
     public bool CanConvert(Type type)
     {
-        bool t1 = type == typeof(T);
-        bool t2 = type == typeof(T?);
-        bool t3 = type == typeof(decimal);
-        bool t4 = type == typeof(decimal?);
-
-        return type == typeof(T) || type == typeof(T?) || type == typeof(decimal) || type == typeof(decimal?);
+        return type == typeof(T) || type == typeof(T?) || type == typeof(short) || type == typeof(short?);
     }
 
     public object ConvertFromDatabaseType(object obj)
@@ -17,19 +12,19 @@ internal class EnumPropertyConverter<T> : IDboPropertyValueConverter where T : s
         if (obj == null)
             return null;
 
-        if (obj is decimal)
+        if (obj is short)
         {
             int intValue = Convert.ToInt32(obj);
             return Enum.ToObject(typeof(T), intValue);
         }
 
-        if (obj is decimal?)
+        if (obj is short?)
         {
-            int intValue = Convert.ToInt32(((decimal?)obj).Value);
+            int intValue = Convert.ToInt32(((short?)obj).Value);
             return Enum.ToObject(typeof(T?), intValue);
         }
 
-        throw new Exception("EnumPropertyConverter: argument is not decimal");
+        throw new Exception("EnumPropertyConverter: argument is not short");
     }
 
     public object ConvertToDatabaseType(object obj)
@@ -39,10 +34,10 @@ internal class EnumPropertyConverter<T> : IDboPropertyValueConverter where T : s
 
         if (obj is T)
         {
-            int intValue = (int)obj;
-            return Convert.ToDecimal(intValue);
+            short intValue = (short)(int)obj;
+            return Convert.ToInt16(intValue);
         }
 
-        throw new Exception($"EnumPropertyConverte: argument is not from defined enum type {typeof(T)}");
+        throw new Exception($"EnumPropertyConverter: argument is not from defined enum type {typeof(T)}");
     }
 }

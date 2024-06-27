@@ -8,8 +8,9 @@ public class TfDataProviderColumn
 	[DboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("is_part_of_composite_key")]
-	public bool IsCompositeKeyPart { get; set; }
+	[DboModelProperty("data_provider_id")]
+	public Guid DataProviderId { get; set; }
+
 
 	[DboModelProperty("source_name")]
 	public string SourceName { get; set; }
@@ -17,13 +18,10 @@ public class TfDataProviderColumn
 	[DboModelProperty("source_type")]
 	public string SourceType { get; set; }
 
+	[DboTypeConverter(typeof(DateTimePropertyConverter))]
+	[DboModelProperty("created_on")]
+	public DateTime CreatedOn { get; set; }
 
-	[DboModelProperty("data_provider_id")]
-	public Guid DataProviderId { get; set; }
-
-	[DboAutoIncrementModel]
-	[DboModelProperty("index")]
-	public int Index { get; set; }
 
 	[DboModelProperty("db_name")]
 	public string DbName { get; set; }
@@ -55,9 +53,6 @@ public class TfDataProviderColumn
 	[DboModelProperty("preferred_search_type")]
 	public TfDataProviderColumnSearchType PreferredSearchType { get; set; }
 
-	[DboModelProperty("include_table_search")]
+	[DboModelProperty("include_in_table_search")]
 	public bool IncludeInTableSearch { get; set; }
-
-	[DboModelProperty("is_system")]
-	public bool IsSystem { get; set; }
 }

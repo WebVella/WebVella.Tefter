@@ -50,7 +50,7 @@ public class DateTimeDatabaseColumnBuilder : DatabaseColumnBuilder
         return new DateTimeDatabaseColumn
         {
             Id = _id,
-            DefaultValue = _defaultValue,
+			DefaultValue = _defaultValue,
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,

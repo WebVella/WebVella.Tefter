@@ -498,6 +498,302 @@ public class DatabaseColumnCollectionBuilder
 
 	#endregion
 
+	#region <--- short text --->
+
+	public DatabaseColumnCollectionBuilder AddShortTextColumn(string name, Action<ShortTextDatabaseColumnBuilder> action)
+	{
+		return AddShortTextColumn(Guid.NewGuid(), name, action);
+	}
+
+	internal ShortTextDatabaseColumnBuilder AddShortTextColumnBuilder(string name, Action<ShortTextDatabaseColumnBuilder> action = null)
+	{
+		return AddShortTextColumnBuilder(Guid.NewGuid(), name, action);
+	}
+
+	public DatabaseColumnCollectionBuilder AddShortTextColumn(Guid id, string name, Action<ShortTextDatabaseColumnBuilder> action)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		ShortTextDatabaseColumnBuilder builder = new ShortTextDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return this;
+	}
+
+	internal ShortTextDatabaseColumnBuilder AddShortTextColumnBuilder(Guid id, string name, Action<ShortTextDatabaseColumnBuilder> action = null)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		ShortTextDatabaseColumnBuilder builder = new ShortTextDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return builder;
+	}
+
+	public DatabaseColumnCollectionBuilder WithShortTextColumn(string name, Action<ShortTextDatabaseColumnBuilder> action)
+	{
+		var builder = (ShortTextDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(ShortTextDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type ShortText and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return this;
+	}
+
+	internal ShortTextDatabaseColumnBuilder WithShortTextColumnBuilder(string name, Action<ShortTextDatabaseColumnBuilder> action = null)
+	{
+		var builder = (ShortTextDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(ShortTextDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type ShortText and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return builder;
+	}
+
+	#endregion
+
+	#region <--- short integer --->
+
+	public DatabaseColumnCollectionBuilder AddShortIntegerColumn(string name, Action<ShortIntegerDatabaseColumnBuilder> action)
+	{
+		return AddShortIntegerColumn(Guid.NewGuid(), name, action);
+	}
+
+	internal ShortIntegerDatabaseColumnBuilder AddShortIntegerColumnBuilder(string name, Action<ShortIntegerDatabaseColumnBuilder> action = null)
+	{
+		return AddShortIntegerColumnBuilder(Guid.NewGuid(), name, action);
+	}
+
+	public DatabaseColumnCollectionBuilder AddShortIntegerColumn(Guid id, string name, Action<ShortIntegerDatabaseColumnBuilder> action)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		ShortIntegerDatabaseColumnBuilder builder = new ShortIntegerDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return this;
+	}
+
+	internal ShortIntegerDatabaseColumnBuilder AddShortIntegerColumnBuilder(Guid id, string name, Action<ShortIntegerDatabaseColumnBuilder> action = null)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		ShortIntegerDatabaseColumnBuilder builder = new ShortIntegerDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return builder;
+	}
+
+	public DatabaseColumnCollectionBuilder WithShortIntegerColumn(string name, Action<ShortIntegerDatabaseColumnBuilder> action)
+	{
+		var builder = (ShortIntegerDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(ShortIntegerDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type ShortInteger and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return this;
+	}
+
+	internal ShortIntegerDatabaseColumnBuilder WithShortIntegerColumnBuilder(string name, Action<ShortIntegerDatabaseColumnBuilder> action = null)
+	{
+		var builder = (ShortIntegerDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(ShortIntegerDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type ShortInteger and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return builder;
+	}
+
+	#endregion
+
+	#region <--- integer --->
+
+	public DatabaseColumnCollectionBuilder AddIntegerColumn(string name, Action<IntegerDatabaseColumnBuilder> action)
+	{
+		return AddIntegerColumn(Guid.NewGuid(), name, action);
+	}
+
+	internal IntegerDatabaseColumnBuilder AddIntegerColumnBuilder(string name, Action<IntegerDatabaseColumnBuilder> action = null)
+	{
+		return AddIntegerColumnBuilder(Guid.NewGuid(), name, action);
+	}
+
+	public DatabaseColumnCollectionBuilder AddIntegerColumn(Guid id, string name, Action<IntegerDatabaseColumnBuilder> action)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		IntegerDatabaseColumnBuilder builder = new IntegerDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return this;
+	}
+
+	internal IntegerDatabaseColumnBuilder AddIntegerColumnBuilder(Guid id, string name, Action<IntegerDatabaseColumnBuilder> action = null)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		IntegerDatabaseColumnBuilder builder = new IntegerDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return builder;
+	}
+
+	public DatabaseColumnCollectionBuilder WithIntegerColumn(string name, Action<IntegerDatabaseColumnBuilder> action)
+	{
+		var builder = (IntegerDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(IntegerDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type Integer and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return this;
+	}
+
+	internal IntegerDatabaseColumnBuilder WithIntegerColumnBuilder(string name, Action<IntegerDatabaseColumnBuilder> action = null)
+	{
+		var builder = (IntegerDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(IntegerDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type Integer and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return builder;
+	}
+
+	#endregion
+
+	#region <--- long integer --->
+
+	public DatabaseColumnCollectionBuilder AddLongIntegerColumn(string name, Action<LongIntegerDatabaseColumnBuilder> action)
+	{
+		return AddLongIntegerColumn(Guid.NewGuid(), name, action);
+	}
+
+	internal LongIntegerDatabaseColumnBuilder AddLongIntegerColumnBuilder(string name, Action<LongIntegerDatabaseColumnBuilder> action = null)
+	{
+		return AddLongIntegerColumnBuilder(Guid.NewGuid(), name, action);
+	}
+
+	public DatabaseColumnCollectionBuilder AddLongIntegerColumn(Guid id, string name, Action<LongIntegerDatabaseColumnBuilder> action)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		LongIntegerDatabaseColumnBuilder builder = new LongIntegerDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return this;
+	}
+
+	internal LongIntegerDatabaseColumnBuilder AddLongIntegerColumnBuilder(Guid id, string name, Action<LongIntegerDatabaseColumnBuilder> action = null)
+	{
+		_databaseBuilder.RegisterId(id);
+
+		_databaseBuilder.RegisterColumnName(_tableName, name);
+
+		LongIntegerDatabaseColumnBuilder builder = new LongIntegerDatabaseColumnBuilder(id, name, _databaseBuilder);
+
+		if (action != null)
+			action(builder);
+
+		_builders.Add(builder);
+
+		return builder;
+	}
+
+	public DatabaseColumnCollectionBuilder WithLongIntegerColumn(string name, Action<LongIntegerDatabaseColumnBuilder> action)
+	{
+		var builder = (LongIntegerDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(LongIntegerDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type LongInteger and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return this;
+	}
+
+	internal LongIntegerDatabaseColumnBuilder WithLongIntegerColumnBuilder(string name, Action<LongIntegerDatabaseColumnBuilder> action = null)
+	{
+		var builder = (LongIntegerDatabaseColumnBuilder)_builders
+			.SingleOrDefault(x => x.Name == name && x.GetType() == typeof(LongIntegerDatabaseColumnBuilder));
+
+		if (builder is null)
+			throw new DatabaseBuilderException($"Column of type LongInteger and name '{name}' for table '{_tableName}' is not found.");
+
+		if (action != null)
+			action(builder);
+
+		return builder;
+	}
+
+	#endregion
+
 	#region <=== remove ===>
 
 	public DatabaseColumnCollectionBuilder Remove(string name)

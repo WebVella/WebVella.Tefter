@@ -37,9 +37,6 @@ internal record TfDataProviderDbo
 	[DboModelProperty("type_name")]
 	public string TypeName { get; set; }
 
-	[DboModelProperty("composite_key_prefix")]
-	public string CompositeKeyPrefix { get; set; } = null;
-
 	[DboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = null;
 }

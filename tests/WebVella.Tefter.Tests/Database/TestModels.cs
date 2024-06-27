@@ -87,11 +87,11 @@ public class EnumTestModel
 	[DboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("number")]
+	[DboModelProperty("short")]
 	[DboTypeConverter(typeof(EnumPropertyConverter<SampleEnumType>))]
 	public SampleEnumType Sample { get; set; }
 
-	[DboModelProperty("number_null")]
+	[DboModelProperty("short_null")]
 	[DboTypeConverter(typeof(EnumPropertyConverter<SampleEnumType>))]
 	public SampleEnumType? SampleNull { get; set; }
 }

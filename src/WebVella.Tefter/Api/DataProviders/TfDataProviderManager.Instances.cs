@@ -254,7 +254,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		return new TfDataProviderDbo
 		{
 			Id = providerModel.Id,
-			CompositeKeyPrefix = providerModel.CompositeKeyPrefix,
 			Name = providerModel.Name,
 			SettingsJson = providerModel.SettingsJson,
 			TypeId = providerModel.ProviderType.Id,
@@ -277,7 +276,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		return new TfDataProvider
 		{
 			Id = dbo.Id,
-			CompositeKeyPrefix = dbo.CompositeKeyPrefix,
 			Name = dbo.Name,
 			Index = dbo.Index,
 			SettingsJson = dbo.SettingsJson,
