@@ -135,4 +135,7 @@
   <data name="Schema" xml:space="preserve">
     <value>Схема</value>
   </data>
+  <data name="Share Keys" xml:space="preserve">
+    <value>Споделени ключове</value>
+  </data>
 </root>

@@ -73,7 +73,6 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 					Id = Content.Id,
 					Name = Content.Name,
 					ProviderType = Content.ProviderType,
-					CompositeKeyPrefix = Content.CompositeKeyPrefix,
 					SettingsJson = Content.SettingsJson
 				};
 			}

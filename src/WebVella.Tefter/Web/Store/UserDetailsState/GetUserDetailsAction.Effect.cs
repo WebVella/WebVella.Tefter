@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Store.Base;
+﻿using Fluxor.Blazor.Web.Middlewares.Routing;
+
+namespace WebVella.Tefter.Web.Store.Base;
 
 public partial class StateEffect
 {
@@ -9,6 +11,11 @@ public partial class StateEffect
 		User user = null;
 		var result = await IdentityManager.GetUserAsync(action.RecordId);
 		if (result.IsSuccess) user = result.Value;
+		if(user is null) { 
+			dispatcher.Dispatch(new GoAction(TfConstants.NotFoundPageUrl, true));
+			return;
+		}
+
 		dispatcher.Dispatch(new UserDetailsChangedAction(user));
 	}
 }

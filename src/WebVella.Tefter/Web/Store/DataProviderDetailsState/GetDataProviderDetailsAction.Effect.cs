@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Store.Base;
+﻿using Fluxor.Blazor.Web.Middlewares.Routing;
+
+namespace WebVella.Tefter.Web.Store.Base;
 
 public partial class StateEffect
 {
@@ -9,6 +11,12 @@ public partial class StateEffect
 		TfDataProvider provider = null;
 		var result = DataPrividerManager.GetProvider(action.RecordId);
 		if (result.IsSuccess) provider = result.Value;
+		if (provider is null)
+		{
+			dispatcher.Dispatch(new GoAction(TfConstants.NotFoundPageUrl, true));
+			return Task.CompletedTask;
+		}
+
 		dispatcher.Dispatch(new DataProviderDetailsChangedAction(provider));
 		return Task.CompletedTask;
 	}

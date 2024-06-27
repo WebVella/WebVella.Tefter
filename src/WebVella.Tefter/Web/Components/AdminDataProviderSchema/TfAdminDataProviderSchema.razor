@@ -1,11 +1,15 @@
 ﻿@inherits TfBaseComponent
 
 @if (DataProviderDetailsState.Value.Provider is null || DataProviderDetailsState.Value.Provider.Columns is null
-											|| DataProviderDetailsState.Value.Provider.Columns.Count == 0)
+													|| DataProviderDetailsState.Value.Provider.Columns.Count == 0)
 {
-
 	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>
 }
-
+else
+{
+	<FluentMessageBar Intent="@MessageIntent.Warning" Title="@LOC("Missing Synchronization Key")">
+		@LOC("This data source is missing its syncronization key. No data syncronization is possible until this key is created. Once you have added the schema columns, you can do that in the next 'Shared Keys' tab.")
+	</FluentMessageBar>
+}
 

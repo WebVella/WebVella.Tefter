@@ -1,14 +1,14 @@
-﻿@page "/Error"
+﻿@page "/404"
 @layout SystemLayout
 
-<PageTitle>Error</PageTitle>
+<PageTitle>Page Not found</PageTitle>
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
+<h1 class="text-danger">Page not found</h1>
+<p>This page or record does not exist!</p>
 
 <FluentButton OnClick="_goHome">Home Page</FluentButton>
 
-@code {
+@code{
 	[Inject] protected NavigationManager Navigator { get; set; }
 
 	private void _goHome()

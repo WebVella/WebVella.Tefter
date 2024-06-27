@@ -17,6 +17,7 @@ builder.Services.AddRazorComponents()
 //NOTE: Register your assemblies if you need states
 builder.Services.AddFluxor(options =>
 {
+	options.UseRouting();
 	options.ScanAssemblies(typeof(IIdentityManager).Assembly);
 });
 
