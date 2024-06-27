@@ -82,16 +82,36 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
+			var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
+
+			//default value
+			//auto default value
+			//nullable
+			//sortable
+			//unique 
+			//searchable
+			//prefered search type
+
+
 			var success = _dboManager.Update<TfDataProviderColumn>(column);
 
 			if (!success)
 				return Result.Fail(new DboManagerError("Update", column));
 
+			var providerResult = GetProvider(column.DataProviderId);
+			if (providerResult.IsFailed)
+				return Result.Fail(new Error("Failed to update data provider column")
+					.CausedBy(providerResult.Errors));
+
+			var provider = providerResult.Value;
+
+			UpdateDatabaseColumn(provider, column, existingColumn);
+
 			return Result.Ok(GetProvider(column.DataProviderId).Value);
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to create new data provider column.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to update data provider column.").CausedBy(ex));
 		}
 	}
 
@@ -220,7 +240,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							{
 								if (column.DefaultValue is not null)
 								{
-									var datetime = DateTime.Parse(column.DefaultValue,CultureInfo.InvariantCulture);
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
 									DateOnly date = DateOnly.FromDateTime(datetime);
 									c.WithDefaultValue(date);
 								}
@@ -365,6 +385,335 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	private Result UpdateDatabaseColumn(TfDataProvider provider, TfDataProviderColumn column, TfDataProviderColumn existingColumn)
+	{
+		try
+		{
+			string providerTableName = $"dp{provider.Index}";
+
+			DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+			var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
+			var columnsBuilder = tableBuilder.WithColumnsBuilder();
+
+			switch (column.DbType)
+			{
+				case DatabaseColumnType.Text:
+					{
+						columnsBuilder.WithTextColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+							{
+								c.WithDefaultValue(column.DefaultValue);
+							}
+						});
+
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+
+					}
+					break;
+				case DatabaseColumnType.ShortText:
+					{
+						columnsBuilder.WithShortTextColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+							{
+								c.WithDefaultValue(column.DefaultValue);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+
+					}
+					break;
+				case DatabaseColumnType.Guid:
+					{
+						columnsBuilder.WithGuidColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+									c.WithDefaultValue(new Guid(column.DefaultValue));
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+					}
+					break;
+				case DatabaseColumnType.Date:
+					{
+						columnsBuilder.WithDateColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+									DateOnly date = DateOnly.FromDateTime(datetime);
+									c.WithDefaultValue(date);
+								}
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+					}
+					break;
+				case DatabaseColumnType.DateTime:
+					{
+						columnsBuilder.WithDateTimeColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.AutoDefaultValue)
+								c.WithAutoDefaultValue();
+							else
+							{
+								if (column.DefaultValue is not null)
+								{
+									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+									c.WithDefaultValue(datetime);
+								}
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+					}
+					break;
+				case DatabaseColumnType.Number:
+					{
+						columnsBuilder.WithNumberColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+					}
+					break;
+				case DatabaseColumnType.ShortInteger:
+					{
+						columnsBuilder.WithShortIntegerColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = short.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+					}
+					break;
+				case DatabaseColumnType.Integer:
+					{
+						columnsBuilder.WithIntegerColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = int.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+					}
+					break;
+				case DatabaseColumnType.LongInteger:
+					{
+						columnsBuilder.WithLongIntegerColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+							if (column.DefaultValue is not null)
+							{
+								var number = long.Parse(column.DefaultValue);
+								c.WithDefaultValue(number);
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+					}
+					break;
+				default:
+					throw new Exception("Not supported database column type");
+			}
+
+			if (column.IsUnique && !existingColumn.IsUnique)
+			{
+				tableBuilder.WithConstraints(constraints =>
+				{
+					constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
+						c => { c.WithColumns(column.DbName); });
+				});
+			}
+
+			if (!column.IsUnique && existingColumn.IsUnique)
+			{
+				tableBuilder.WithConstraints(constraints =>
+				{
+					constraints.Remove($"ux_{providerTableName}_{column.DbName}");
+				});
+			}
+
+			_dbManager.SaveChanges(dbBuilder);
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create database column.").CausedBy(ex));
+		}
+	}
+
 	#region <--- Validator --->
 
 	internal class TfDataProviderColumnValidator
@@ -490,7 +839,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 									{
 										if (column.DefaultValue is not null)
 										{
-											var number = Convert.ToDecimal(column.DefaultValue,CultureInfo.InvariantCulture);
+											var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
 										}
 									}
 									break;
@@ -526,7 +875,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							}
 							return true;
 						}
-						catch(Exception ex)
+						catch (Exception ex)
 						{
 							return false;
 						}
@@ -592,6 +941,18 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							return existingColumn.DbName != dbName;
 						})
 						.WithMessage("There database name of column cannot be changed.");
+
+				RuleFor(column => column.DbType)
+					.Must((column, dbType) =>
+					{
+
+						var existingColumn = providerManager.GetDataProviderColumn(column.Id);
+						if (existingColumn is null)
+							return true;
+
+						return existingColumn.DbType != dbType;
+					})
+					.WithMessage("There database type of column cannot be changed.");
 
 			});
 
