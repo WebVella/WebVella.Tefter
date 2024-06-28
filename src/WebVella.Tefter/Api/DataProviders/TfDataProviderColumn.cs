@@ -8,53 +8,53 @@ namespace WebVella.Tefter;
 public class TfDataProviderColumn
 {
 	[DboModelProperty("id")]
-	public Guid Id { get; set; }
+	public Guid Id { get; internal set; }
 
 	[DboModelProperty("data_provider_id")]
-	public Guid DataProviderId { get; set; }
+	public Guid DataProviderId { get; internal set; }
 
 	[Required]
 	[DboModelProperty("source_name")]
-	public string SourceName { get; set; }
+	public string SourceName { get; internal set; }
 
 	[DboModelProperty("source_type")]
-	public string SourceType { get; set; }
+	public string SourceType { get; internal set; }
 
 	[DboTypeConverter(typeof(DateTimePropertyConverter))]
 	[DboModelProperty("created_on")]
-	public DateTime CreatedOn { get; set; }
+	public DateTime CreatedOn { get; internal set; }
 
 	[Required]
 	[DboModelProperty("db_name")]
-	public string DbName { get; set; }
+	public string DbName { get; internal set; }
 
 	[DboTypeConverter(typeof(EnumPropertyConverter<DatabaseColumnType>))]
 	[DboModelProperty("db_type")]
-	public DatabaseColumnType DbType { get; set; }
+	public DatabaseColumnType DbType { get; internal set; }
 
 	[DboModelProperty("default_value")]
-	public string DefaultValue { get; set; }
+	public string DefaultValue { get; internal set; }
 
 	[DboModelProperty("auto_default_value")]
-	public bool AutoDefaultValue { get; set; }
+	public bool AutoDefaultValue { get; internal set; }
 
 	[DboModelProperty("is_nullable")]
-	public bool IsNullable { get; set; }
+	public bool IsNullable { get; internal set; }
 
 	[DboModelProperty("is_unique")]
-	public bool IsUnique { get; set; }
+	public bool IsUnique { get; internal set; }
 
 
 	[DboModelProperty("is_sortable")]
-	public bool IsSortable { get; set; }
+	public bool IsSortable { get; internal set; }
 
 	[DboModelProperty("is_searchable")]
-	public bool IsSearchable { get; set; }
+	public bool IsSearchable { get; internal set; }
 
 	[DboTypeConverter(typeof(EnumPropertyConverter<TfDataProviderColumnSearchType>))]
 	[DboModelProperty("preferred_search_type")]
-	public TfDataProviderColumnSearchType PreferredSearchType { get; set; }
+	public TfDataProviderColumnSearchType PreferredSearchType { get; internal set; }
 
 	[DboModelProperty("include_in_table_search")]
-	public bool IncludeInTableSearch { get; set; }
+	public bool IncludeInTableSearch { get; internal set; }
 }

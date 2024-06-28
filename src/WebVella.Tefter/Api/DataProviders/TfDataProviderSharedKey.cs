@@ -2,21 +2,19 @@
 
 public record TfDataProviderSharedKey
 {
-	public Guid Id { get; init; }
+	public Guid Id { get; internal set; }
 
-	public Guid DataProviderId { get; init; }
+	public Guid DataProviderId { get; internal set; }
 
-	public string DbName { get; init; }
+	public string DbName { get; internal set; }
 
-	public bool IsSynchronizationKey { get; init; }
+	public string Description { get; internal set; }
 
-	public string Description { get; init; }
+	public List<TfDataProviderColumn> Columns { get; internal set; } = new();
 
-	public List<TfDataProviderColumn> Columns { get; init; } = new();
+	public int Version { get; internal set; }
 
-	public int Version { get; init; }
-
-	public DateTime LastModified { get; init; }
+	public DateTime LastModified { get; internal set; }
 }
 
 
@@ -32,9 +30,6 @@ internal record TfDataProviderSharedKeyDbo
 
 	[DboModelProperty("db_name")]
 	public string DbName { get; set; }
-
-	[DboModelProperty("is_synchronization_key")]
-	public bool IsSynchronizationKey { get; set; }
 
 	[DboModelProperty("description")]
 	public string Description { get; set; }

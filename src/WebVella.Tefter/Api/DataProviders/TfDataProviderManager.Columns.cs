@@ -30,7 +30,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	{
 		try
 		{
-			if (column.Id == Guid.Empty)
+			if (column != null && column.Id == Guid.Empty)
 				column.Id = Guid.NewGuid();
 
 			TfDataProviderColumnValidator validator =
@@ -118,7 +118,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				TfDataProviderColumnValidator validator =
-				new TfDataProviderColumnValidator(_dboManager, this);
+						new TfDataProviderColumnValidator(_dboManager, this);
 
 				var column = GetDataProviderColumn(id);
 
@@ -948,16 +948,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						.Must((column, id) => { return providerManager.GetDataProviderColumn(id) == null; })
 						.WithMessage("There is already existing data provider column with specified identifier.");
 
-				//RuleFor(column => column.SourceName)
-				//		.Must( (column,sourceName) => {
-				//			if (string.IsNullOrEmpty(sourceName))
-				//				return true;
-
-				//			var columns = providerManager.GetDataProviderColumns(column.DataProviderId);
-				//			return !columns.Any(x => x.SourceName.ToLowerInvariant()?.Trim() == sourceName.ToLowerInvariant().Trim());
-				//		})
-				//		.WithMessage("There is already existing data provider column with specified source name.");
-
 				RuleFor(column => column.DbName)
 						.Must((column, dbName) =>
 						{
@@ -1017,8 +1007,14 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 			RuleSet("delete", () =>
 			{
-				// Add more check when available
-
+				RuleFor(column => column.Id)
+						.Must((column, id) =>
+						{
+							var sharedKeys = providerManager.GetDataProviderSharedKeys(column.DataProviderId);
+							var found = sharedKeys.Any( x=> x.Columns.Any(c=>c.Id == id));
+							return !true;
+						})
+						.WithMessage("There data provider column cannot be deleted, because it is part of shared key.");
 			});
 
 		}

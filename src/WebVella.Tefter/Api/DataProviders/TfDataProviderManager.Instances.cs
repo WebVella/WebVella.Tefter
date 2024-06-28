@@ -133,7 +133,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	{
 		try
 		{
-			if (providerModel.Id == Guid.Empty)
+			if (providerModel != null && providerModel.Id == Guid.Empty)
 				providerModel.Id = Guid.NewGuid();
 
 			TfDataProviderCreateValidator validator =
@@ -170,7 +170,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 							.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 							.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); });
+							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); })
+							.AddIntegerColumn("tf_row_index", c => { c.NotNullable(); });
 					})
 					.WithConstraints(constraints =>
 					{
@@ -220,7 +221,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to create new data provider.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to update data provider.").CausedBy(ex));
 		}
 	}
 
@@ -244,7 +245,17 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
-				var success = _dboManager.Delete<TfDataProviderDbo>(id);
+				bool success = true;
+
+				foreach(var column in providerResult.Value.Columns )
+				{
+					success = _dboManager.Delete<TfDataProviderColumn>(column.Id);
+
+					if (!success)
+						return Result.Fail(new DboManagerError("Delete", column));
+				}
+
+				success = _dboManager.Delete<TfDataProviderDbo>(id);
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Delete", id));
@@ -266,7 +277,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to create new data provider.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to delete data provider.").CausedBy(ex));
 		}
 	}
 
@@ -437,7 +448,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			if (provider == null)
 				return new ValidationResult(new[] { new ValidationFailure("", "The data provider is null.") });
 
-			return this.Validate(provider);
+			return new ValidationResult();
 		}
 	}
 

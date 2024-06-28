@@ -4,15 +4,15 @@ namespace WebVella.Tefter;
 
 public class TfDataProvider
 {
-	public Guid Id { get; set; }
+	public Guid Id { get; internal set; }
 
 	[Required]
-	public string Name { get; set; }
-	public int Index { get; set; }
-	public string SettingsJson { get; set; }
-	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; set; }
-	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; set; }
-	public ITfDataProviderType ProviderType { get; set; }
+	public string Name { get; internal set; }
+	public int Index { get; internal set; }
+	public string SettingsJson { get; internal set; }
+	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; internal set; }
+	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
+	public ITfDataProviderType ProviderType { get; internal set; }
 	public ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();
 
 }
@@ -20,13 +20,13 @@ public class TfDataProvider
 public record TfDataProviderModel
 {
 	[Required]
-	public Guid Id { get; set; }
+	public Guid Id { get; internal set; }
 	[Required]
-	public string Name { get; set; }
+	public string Name { get; internal set; }
 	[Required]
-	public ITfDataProviderType ProviderType { get; set; }
+	public ITfDataProviderType ProviderType { get; internal set; }
 
-	public string SettingsJson { get; set; } = null;
+	public string SettingsJson { get; internal set; } = null;
 }
 
 
