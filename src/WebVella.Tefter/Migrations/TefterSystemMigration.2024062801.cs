@@ -18,7 +18,7 @@ internal class TefterSystemMigration2024062801 : TefterSystemMigration
 					.AddBooleanColumn("is_synchronization_key", c => { c.NotNullable().WithDefaultValue(false); })
 					.AddTextColumn("column_ids_json", c => { c.NotNullable().WithDefaultValue("[]"); })
 					.AddShortIntegerColumn("version", c => { c.NotNullable().WithDefaultValue(1); })
-					.AddDateTimeColumn("last_updated", c => { c.NotNullable().WithAutoDefaultValue(); });
+					.AddDateTimeColumn("last_modified_on", c => { c.NotNullable().WithAutoDefaultValue(); });
 			})
 			.WithConstraints(constraints =>
 			{

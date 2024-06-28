@@ -1,7 +1,5 @@
 ﻿namespace WebVella.Tefter;
 
-public partial interface ITfDataProviderManager { }
-
 public partial class TfDataProviderManager : ITfDataProviderManager
 {
 	public static List<ITfDataProviderType> _providerTypes { get; internal set; } 

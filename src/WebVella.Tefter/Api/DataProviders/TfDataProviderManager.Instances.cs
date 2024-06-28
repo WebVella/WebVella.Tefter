@@ -1,25 +1,29 @@
-﻿using FluentValidation;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public partial interface ITfDataProviderManager
 {
-	public Result<TfDataProvider> GetProvider(Guid id);
+	public Result<TfDataProvider> GetProvider(
+		Guid id);
 
-	public Result<TfDataProvider> GetProvider(string name);
+	public Result<TfDataProvider> GetProvider(
+		string name);
 
 	public Result<ReadOnlyCollection<TfDataProvider>> GetProviders();
 
-	public Result<TfDataProvider> CreateDataProvider(TfDataProviderModel providerModel);
+	internal Result<TfDataProvider> CreateDataProvider(
+		TfDataProviderModel providerModel);
 
-	public Result<TfDataProvider> UpdateDataProvider(TfDataProviderModel providerModel);
-	
-	public Result DeleteDataProvider(Guid id);
+	internal Result<TfDataProvider> UpdateDataProvider(
+		TfDataProviderModel providerModel);
+
+	internal Result DeleteDataProvider(
+		Guid id);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
 {
-	public Result<TfDataProvider> GetProvider(Guid id)
+	public Result<TfDataProvider> GetProvider(
+		Guid id)
 	{
 		try
 		{
@@ -37,7 +41,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			if (providerType == null)
 				return Result.Fail(new Error("Unable to find provider type for specified provider instance."));
 
-			var provider = FromDbo(providerDbo, GetDataProviderColumns(id), providerType);
+			var provider = DataProviderFromDbo(
+					providerDbo,
+					GetDataProviderColumns(id),
+					GetDataProviderSharedKeys(id),
+					providerType);
 
 			return Result.Ok(provider);
 		}
@@ -47,7 +55,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	public Result<TfDataProvider> GetProvider(string name)
+	public Result<TfDataProvider> GetProvider(
+		string name)
 	{
 		try
 		{
@@ -65,7 +74,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			if (providerType == null)
 				return Result.Fail(new Error("Unable to find provider type for specified provider instance."));
 
-			var provider = FromDbo(providerDbo, GetDataProviderColumns(providerDbo.Id), providerType);
+			var provider = DataProviderFromDbo(
+					providerDbo,
+					GetDataProviderColumns(providerDbo.Id),
+					GetDataProviderSharedKeys(providerDbo.Id),
+					providerType);
 
 			return Result.Ok(provider);
 		}
@@ -98,7 +111,12 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new Error($"Failed to get data providers, because " +
 						$"provider type {dbo.TypeName} with id = '{dbo.TypeId}' is not found."));
 
-				var provider = FromDbo(dbo, GetDataProviderColumns(dbo.Id), providerType);
+				var provider = DataProviderFromDbo(
+						dbo,
+						GetDataProviderColumns(dbo.Id),
+						GetDataProviderSharedKeys(dbo.Id),
+						providerType);
+
 				providers.Add(provider);
 			}
 
@@ -110,7 +128,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	public Result<TfDataProvider> CreateDataProvider(TfDataProviderModel providerModel)
+	public Result<TfDataProvider> CreateDataProvider(
+		TfDataProviderModel providerModel)
 	{
 		try
 		{
@@ -127,7 +146,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 
-				TfDataProviderDbo dataProviderDbo = ToDbo(providerModel);
+				TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
 
 				var success = _dboManager.Insert<TfDataProviderDbo>(dataProviderDbo);
 
@@ -178,7 +197,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	public Result<TfDataProvider> UpdateDataProvider(TfDataProviderModel providerModel)
+	public Result<TfDataProvider> UpdateDataProvider(
+		TfDataProviderModel providerModel)
 	{
 		try
 		{
@@ -189,7 +209,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			TfDataProviderDbo dataProviderDbo = ToDbo(providerModel);
+			TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
+			
 			var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo);
 
 			if (!success)
@@ -203,7 +224,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	public Result DeleteDataProvider(Guid id)
+	public Result DeleteDataProvider(
+		Guid id)
 	{
 		try
 		{
@@ -218,6 +240,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					new TfDataProviderDeleteValidator(_dboManager, this);
 
 				var validationResult = validator.ValidateDelete(providerResult.Value);
+				
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
@@ -227,10 +250,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new DboManagerError("Delete", id));
 
 				var provider = providerResult.Value;
+				
 				string providerTableName = $"dp{provider.Index}";
 
 				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-				
+
 				dbBuilder.Remove(providerTableName);
 
 				_dbManager.SaveChanges(dbBuilder);
@@ -246,7 +270,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	private static TfDataProviderDbo ToDbo(TfDataProviderModel providerModel)
+	private static TfDataProviderDbo DataProviderToDbo(
+		TfDataProviderModel providerModel)
 	{
 		if (providerModel == null)
 			throw new ArgumentException(nameof(providerModel));
@@ -261,14 +286,20 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		};
 	}
 
-	private static TfDataProvider FromDbo(TfDataProviderDbo dbo,
-		List<TfDataProviderColumn> columns, ITfDataProviderType providerType)
+	private static TfDataProvider DataProviderFromDbo(
+		TfDataProviderDbo dbo,
+		List<TfDataProviderColumn> columns,
+		List<TfDataProviderSharedKey> sharedKeys,
+		ITfDataProviderType providerType)
 	{
 		if (dbo == null)
 			throw new ArgumentException(nameof(dbo));
 
 		if (columns == null)
 			throw new ArgumentException(nameof(columns));
+
+		if (sharedKeys == null)
+			throw new ArgumentException(nameof(sharedKeys));
 
 		if (providerType == null)
 			throw new ArgumentException(nameof(providerType));
@@ -280,7 +311,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			Index = dbo.Index,
 			SettingsJson = dbo.SettingsJson,
 			ProviderType = providerType,
-			Columns = columns.AsReadOnly()
+			Columns = columns.AsReadOnly(),
+			SharedKeys = sharedKeys.AsReadOnly()
 		};
 	}
 
@@ -389,11 +421,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			ITfDataProviderManager providerManager)
 		{
 
-			/*	.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); });*/
-
 			RuleFor(provider => provider.Columns)
 					.Must((provider, columns) =>
 					{
@@ -413,5 +440,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			return this.Validate(provider);
 		}
 	}
+
 	#endregion
 }
