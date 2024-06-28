@@ -50,7 +50,6 @@ public class UnitTestDataProvider : ITfDataProviderType
 
 	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{
-		//sample only
 		return new List<string> { 
 			"TEXT", 
 			"SHORT_TEXT",
