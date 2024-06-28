@@ -1,6 +1,6 @@
 ﻿using WebVella.Tefter.Web.Services;
 
-namespace WebVella.Tefter.Tests;
+namespace WebVella.Tefter.Tests.DataProviders;
 
 public partial class TfDataProviderManagerTests : BaseTest
 {
@@ -17,7 +17,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -44,7 +45,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -74,7 +76,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -106,7 +109,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -139,7 +143,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -177,7 +182,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -210,7 +216,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
@@ -224,7 +231,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 				TfDataProviderModel model2 = new TfDataProviderModel
 				{
-					Name = "test csv data provider 2",
+					Name = "test data provider 2",
 					ProviderType = providerType,
 					SettingsJson = null
 				};
@@ -256,7 +263,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
@@ -293,7 +301,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
@@ -334,7 +343,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -411,7 +421,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -462,7 +473,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -514,7 +526,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -565,7 +578,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -616,7 +630,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value.First();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -661,7 +676,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DbName = "short_text",
 					DbType = DatabaseColumnType.ShortText,
 					SourceName = "source_column",
-					SourceType = "SHORT TEXT",
+					SourceType = "SHORT_TEXT",
 					IncludeInTableSearch = true,
 					IsNullable = false,
 					IsSearchable = true,
@@ -682,7 +697,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DbName = "short_int",
 					DbType = DatabaseColumnType.ShortInteger,
 					SourceName = "source_column",
-					SourceType = "SHORT INT",
+					SourceType = "SHORT_INTEGER",
 					IncludeInTableSearch = true,
 					IsNullable = true,
 					IsSearchable = false,
@@ -703,7 +718,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DbName = "int",
 					DbType = DatabaseColumnType.Integer,
 					SourceName = "source_column",
-					SourceType = "INT",
+					SourceType = "INTEGER",
 					IncludeInTableSearch = true,
 					IsNullable = true,
 					IsSearchable = false,
@@ -724,7 +739,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DbName = "long_int",
 					DbType = DatabaseColumnType.LongInteger,
 					SourceName = "source_column",
-					SourceType = "SHORT INT",
+					SourceType = "LONG_INTEGER",
 					IncludeInTableSearch = true,
 					IsNullable = true,
 					IsSearchable = false,
@@ -745,7 +760,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DbName = "number",
 					DbType = DatabaseColumnType.Number,
 					SourceName = "source_column",
-					SourceType = "SHORT INT",
+					SourceType = "NUMBER",
 					IncludeInTableSearch = true,
 					IsNullable = true,
 					IsSearchable = false,
@@ -787,7 +802,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					DbName = "datetime",
 					DbType = DatabaseColumnType.DateTime,
 					SourceName = "source_column",
-					SourceType = "DATE",
+					SourceType = "DATETIME",
 					IncludeInTableSearch = true,
 					IsNullable = true,
 					IsSearchable = false,
@@ -807,7 +822,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Text, "test def value");
+			CreateAndUpdateColumnType(DatabaseColumnType.Text, "TEXT", "test def value");
 		}
 	}
 
@@ -816,7 +831,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.ShortText, "test def value");
+			CreateAndUpdateColumnType(DatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
 		}
 	}
 
@@ -826,7 +841,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Number, "123.456");
+			CreateAndUpdateColumnType(DatabaseColumnType.Number, "NUMBER", "123.456");
 		}
 	}
 
@@ -835,7 +850,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.ShortInteger, "1");
+			CreateAndUpdateColumnType(DatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
 		}
 	}
 
@@ -844,7 +859,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Integer, "1");
+			CreateAndUpdateColumnType(DatabaseColumnType.Integer, "INTEGER", "1");
 		}
 	}
 
@@ -853,7 +868,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.LongInteger, "1");
+			CreateAndUpdateColumnType(DatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
 		}
 	}
 
@@ -862,7 +877,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Date, "1975-10-25");
+			CreateAndUpdateColumnType(DatabaseColumnType.Date, "DATE", "1975-10-25");
 		}
 	}
 
@@ -871,7 +886,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.DateTime, "1975-10-25 20:25:45.123");
+			CreateAndUpdateColumnType(DatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
 		}
 	}
 
@@ -880,7 +895,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Boolean, "true");
+			CreateAndUpdateColumnType(DatabaseColumnType.Boolean, "BOOLEAN", "true");
 		}
 	}
 
@@ -889,13 +904,14 @@ public partial class TfDataProviderManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Guid, Guid.NewGuid().ToString());
+			CreateAndUpdateColumnType(DatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
 		}
 	}
 
 
 	private void CreateAndUpdateColumnType(
 		DatabaseColumnType type,
+		string sourceType,
 		string defaultValue)
 	{
 		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
@@ -904,7 +920,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 		using (var scope = dbService.CreateTransactionScope())
 		{
 			var providerTypesResult = providerManager.GetProviderTypes();
-			var providerType = providerTypesResult.Value.First();
+			var providerType = providerTypesResult.Value
+				.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 			Guid id = Guid.NewGuid();
 			TfDataProviderModel model = new TfDataProviderModel
@@ -928,7 +945,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				DbName = "db_column",
 				DbType = type,
 				SourceName = "source_column",
-				SourceType = "source_type",
+				SourceType = sourceType,
 				IncludeInTableSearch = false,
 				IsNullable = false,
 				IsSearchable = true,
@@ -959,7 +976,6 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 			column.DefaultValue = defaultValue;
 			column.SourceName = "source_column_updated";
-			column.SourceName = "source_type_updated";
 			column.IncludeInTableSearch = !column.IncludeInTableSearch;
 			column.AutoDefaultValue = !column.AutoDefaultValue;
 			column.IsNullable = !column.IsNullable;
@@ -1011,7 +1027,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 						DataProviderId = provider.Id,
 						DbName = "testing1",
 						Columns = new() { provider.Columns[0] }
-						
+
 					};
 
 				var providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
@@ -1021,10 +1037,11 @@ public partial class TfDataProviderManagerTests : BaseTest
 	}
 
 	private TfDataProvider CreateSharedKeysStructure(
-		ITfDataProviderManager providerManager )
+		ITfDataProviderManager providerManager)
 	{
 		var providerTypesResult = providerManager.GetProviderTypes();
-		var providerType = providerTypesResult.Value.First();
+		var providerType = providerTypesResult.Value
+			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 		Guid id = Guid.NewGuid();
 		TfDataProviderModel model = new TfDataProviderModel

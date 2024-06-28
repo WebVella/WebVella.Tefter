@@ -7,7 +7,6 @@ public interface ITfDataProviderType
 	string Description { get; }
 	Stream Icon { get; }
 	Type SettingsComponentType { get; }
-	public abstract void LoadSettings(string settingJson);
 	public abstract ReadOnlyCollection<string> GetSupportedSourceDataTypes();
 	public abstract ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(string dataType);
 	public abstract ReadOnlyCollection<TfDataProviderDataRow> GetSourceData();

@@ -12,8 +12,6 @@ public class CsvDataProvider : ITfDataProviderType
 
 	public Type SettingsComponentType => typeof(DataProviderSettingsComponent);
 
-	internal CsvDataProviderSettings Settings { get; private set; }
-
 	public ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(string dataType)
 	{
 		switch(dataType)
@@ -40,13 +38,5 @@ public class CsvDataProvider : ITfDataProviderType
 	{
 		//sample only
 		return new List<string> { "TEXT", "DATE", "DATETIME", "NUMBER" }.AsReadOnly();
-	}
-
-	public void LoadSettings(string settingJson)
-	{
-		if (string.IsNullOrWhiteSpace(settingJson))
-			Settings = new CsvDataProviderSettings();
-
-		Settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(settingJson);
 	}
 }

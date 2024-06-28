@@ -884,6 +884,8 @@ TfDataProviderColumn column)
 							return true;
 
 						var provider = providerResult.Value;
+						if(provider is null) 
+							return true;
 
 						var supportedSourceTypes = provider.ProviderType.GetSupportedSourceDataTypes();
 
@@ -903,6 +905,8 @@ TfDataProviderColumn column)
 							return true;
 
 						var provider = providerResult.Value;
+						if (provider is null)
+							return true;
 
 						var supportedDatabaseColumnTypes =
 							provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(sourceType);
@@ -923,6 +927,8 @@ TfDataProviderColumn column)
 							return true;
 
 						var provider = providerResult.Value;
+						if (provider is null)
+							return true;
 
 						var supportedDatabaseColumnTypes =
 							provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(sourceType);
