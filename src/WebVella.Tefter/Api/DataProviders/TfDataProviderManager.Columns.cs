@@ -94,7 +94,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				return Result.Fail(new DboManagerError("Update", column));
 
 			var providerResult = GetProvider(column.DataProviderId);
-			
+
 			if (providerResult.IsFailed)
 				return Result.Fail(new Error("Failed to update data provider column")
 					.CausedBy(providerResult.Errors));
@@ -123,7 +123,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				var column = GetDataProviderColumn(id);
 
 				var validationResult = validator.ValidateDelete(column);
-				
+
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
@@ -133,13 +133,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new DboManagerError("Delete", id));
 
 				var providerResult = GetProvider(column.DataProviderId);
-				
+
 				if (providerResult.IsFailed)
 					return Result.Fail(new Error("Failed to delete provider column.")
 						.CausedBy(providerResult.Errors));
 
 				var provider = providerResult.Value;
-				
+
 				string providerTableName = $"dp{provider.Index}";
 
 				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
@@ -171,6 +171,26 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 			switch (column.DbType)
 			{
+				case DatabaseColumnType.Boolean:
+					{
+						columnsBuilder.AddBooleanColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (column.DefaultValue is not null)
+								c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
+						});
+
+						if (column.IsSearchable || column.IsSortable)
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+					}
+					break;
 				case DatabaseColumnType.Text:
 					{
 						columnsBuilder.AddTextColumn(column.DbName, c =>
@@ -396,6 +416,37 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 			switch (column.DbType)
 			{
+				case DatabaseColumnType.Boolean:
+					{
+						columnsBuilder.WithBooleanColumn(column.DbName, c =>
+						{
+							if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+							{
+								c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
+							}
+						});
+
+						string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+							(column.IsSearchable || column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes =>
+							{
+								indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+							});
+						}
+
+						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+							(!column.IsSearchable && !column.IsSortable))
+						{
+							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+						}
+
+					}
+					break;
 				case DatabaseColumnType.Text:
 					{
 						columnsBuilder.WithTextColumn(column.DbName, c =>
@@ -807,6 +858,14 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						{
 							switch (column.DbType)
 							{
+								case DatabaseColumnType.Boolean:
+									{
+										if (column.DefaultValue is not null)
+										{
+											var booleanValue = Convert.ToBoolean(column.DefaultValue);
+										}
+									}
+									break;
 								case DatabaseColumnType.Text:
 								case DatabaseColumnType.ShortText:
 									break;

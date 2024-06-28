@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Errors;
-
-namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests;
 
 public partial class IdentityManagerTests : BaseTest
 {
@@ -94,7 +92,7 @@ public partial class IdentityManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async Task GetUserWithNoEmailAndPassword()
+	public async Task User_GetWithNoEmailAndPassword()
 	{
 		using (await locker.LockAsync())
 		{
@@ -115,7 +113,7 @@ public partial class IdentityManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async Task Roles_RemoveAll()
+	public async Task User_RemoveAllRoles()
 	{
 		using (await locker.LockAsync())
 		{
@@ -152,7 +150,7 @@ public partial class IdentityManagerTests : BaseTest
 				userResult.IsSuccess.Should().BeTrue();
 				userResult.Value.Should().NotBeNull();
 
-			
+
 				user = identityManager
 					.CreateUserBuilder(user)
 					.WithEmail("test1@test.com")
@@ -166,7 +164,7 @@ public partial class IdentityManagerTests : BaseTest
 				userResult = await identityManager.SaveUserAsync(user);
 				userResult.Should().NotBeNull();
 				userResult.Value.Roles.Count.Should().Be(0);
-			
+
 			}
 		}
 	}
