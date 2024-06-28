@@ -133,16 +133,19 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 				string providerTableName = $"dp{provider.Index}";
 
-				string newColumnName = $"tf_sk_{sharedKey.DbName}";
 
 				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
 				dbBuilder
 					.WithTableBuilder(providerTableName)
 					.WithColumnsBuilder()
-					.AddGuidColumn(newColumnName, c =>
+					.AddGuidColumn($"tf_sk_{sharedKey.DbName}_id", c =>
 					{
 						c.WithDefaultValue(Guid.Empty);
+					})
+					.AddShortIntegerColumn($"tf_sk_{sharedKey.DbName}_version", c =>
+					{
+						c.WithDefaultValue(0);
 					});
 
 				_dbManager.SaveChanges(dbBuilder);
@@ -259,14 +262,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 				string providerTableName = $"dp{provider.Index}";
 
-				string sharedKeyDbColumnName = $"tf_sk_{sharedKey.DbName}";
-
 				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
 				dbBuilder
 					.WithTableBuilder(providerTableName)
 					.WithColumnsBuilder()
-					.Remove(sharedKeyDbColumnName);
+					.Remove($"tf_sk_{sharedKey.DbName}_id")
+					.Remove($"tf_sk_{sharedKey.DbName}_version");
 
 				_dbManager.SaveChanges(dbBuilder);
 

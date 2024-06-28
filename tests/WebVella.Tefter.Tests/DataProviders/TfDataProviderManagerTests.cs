@@ -1014,6 +1014,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -1035,6 +1036,12 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 				provider = providerResult.Value;
 				provider.SharedKeys.Count().Should().Be(1);
+
+				var tables = dbManager.GetDatabaseBuilder().Build();
+				var table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
+				table.Should().NotBeNull();
+				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey.DbName}_id").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey.DbName}_version").Should().BeTrue();
 
 				var sharedKey1Created = provider.SharedKeys.Single(x => x.Id == sharedKey.Id);
 
@@ -1075,6 +1082,14 @@ public partial class TfDataProviderManagerTests : BaseTest
 				provider = providerResult.Value;
 				provider.SharedKeys.Count().Should().Be(2);
 
+				tables = dbManager.GetDatabaseBuilder().Build();
+				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
+				table.Should().NotBeNull();
+				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_id").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_version").Should().BeTrue();
+
+
+
 				var sharedKey2Update = provider.SharedKeys.Single(x => x.Id == sharedKey2Created.Id);
 				sharedKey2Update.DataProviderId.Should().Be(sharedKey2.DataProviderId);
 				sharedKey2Update.DbName.Should().Be(sharedKey2.DbName);
@@ -1085,6 +1100,13 @@ public partial class TfDataProviderManagerTests : BaseTest
 				providerResult = providerManager.DeleteDataProviderSharedKey(sharedKey2Created.Id);
 				providerResult.IsSuccess.Should().BeTrue();
 				providerResult.Value.SharedKeys.Count().Should().Be(1);
+
+				tables = dbManager.GetDatabaseBuilder().Build();
+				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
+				table.Should().NotBeNull();
+				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_id").Should().BeFalse();
+				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_version").Should().BeFalse();
+
 			}
 		}
 	}
