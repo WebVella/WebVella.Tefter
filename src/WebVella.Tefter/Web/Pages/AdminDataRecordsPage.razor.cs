@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Pages;
-public partial class AdminDataRecordsColumnsPage : TfBasePage
+public partial class AdminDataRecordsPage : TfBasePage
 {
 	[Parameter] public Guid ProviderId { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }

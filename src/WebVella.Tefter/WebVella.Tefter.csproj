@@ -74,7 +74,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Update="Web\Components\AdminDataProviderData\TfAdminDataProviderData.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\AdminDataProviderKeys\TfAdminDataProviderKeys.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\AdminDataProviderAux\AdminDataProviderAux.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	</ItemGroup>

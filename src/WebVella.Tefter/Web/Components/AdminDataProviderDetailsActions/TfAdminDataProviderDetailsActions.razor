@@ -20,3 +20,10 @@ else if(menu == "schema")
 		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }
+else if (menu == "aux")
+{
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
+		@LOC("Add Aux Column")
+		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+	</FluentButton>
+}
