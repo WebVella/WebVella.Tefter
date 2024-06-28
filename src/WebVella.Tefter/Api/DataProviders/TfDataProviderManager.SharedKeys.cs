@@ -54,6 +54,9 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		Guid id)
 	{
 		var dbo = _dboManager.Get<TfDataProviderSharedKeyDbo>(id);
+		
+		if (dbo == null)
+			return null;
 
 		var allColumns = GetDataProviderColumns(dbo.DataProviderId);
 
@@ -288,7 +291,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 		string columnIdsJson = "[]";
 		if (sharedKey.Columns is not null)
-			columnIdsJson = JsonSerializer.Serialize(sharedKey.Columns);
+			columnIdsJson = JsonSerializer.Serialize(
+				sharedKey.Columns.Select(x=>x.Id));
 
 		return new TfDataProviderSharedKeyDbo
 		{

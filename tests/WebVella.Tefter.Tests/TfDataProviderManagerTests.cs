@@ -1,7 +1,11 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿using WebVella.Tefter.Web.Services;
+
+namespace WebVella.Tefter.Tests;
 
 public partial class TfDataProviderManagerTests : BaseTest
 {
+	#region <--- Providers --->
+
 	[Fact]
 	public async Task TestCreateDataProvider()
 	{
@@ -314,6 +318,10 @@ public partial class TfDataProviderManagerTests : BaseTest
 			}
 		}
 	}
+
+	#endregion
+
+	#region <--- Columns --->
 
 	[Fact]
 	public async Task Column_DbName_Invalid()
@@ -794,7 +802,6 @@ public partial class TfDataProviderManagerTests : BaseTest
 		}
 	}
 
-
 	[Fact]
 	public async Task Column_CreateUpdate_TEXT()
 	{
@@ -887,7 +894,9 @@ public partial class TfDataProviderManagerTests : BaseTest
 	}
 
 
-	private void CreateAndUpdateColumnType(	DatabaseColumnType type, string defaultValue)
+	private void CreateAndUpdateColumnType(
+		DatabaseColumnType type,
+		string defaultValue)
 	{
 		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 		IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
@@ -978,4 +987,102 @@ public partial class TfDataProviderManagerTests : BaseTest
 			exColumn.DefaultValue.Should().Be(column.DefaultValue);
 		}
 	}
+	#endregion
+
+	#region <--- SharedKeys --->
+
+	[Fact]
+	public async Task SharedKey_CreateUpdate()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateSharedKeysStructure(providerManager);
+
+				TfDataProviderSharedKey sharedKey =
+					new TfDataProviderSharedKey
+					{
+						Id = Guid.NewGuid(),
+						Description = "testing1",
+						DataProviderId = provider.Id,
+						DbName = "testing1",
+						Columns = new() { provider.Columns[0] }
+						
+					};
+
+				var providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
+				providerResult.IsSuccess.Should().BeTrue();
+			}
+		}
+	}
+
+	private TfDataProvider CreateSharedKeysStructure(
+		ITfDataProviderManager providerManager )
+	{
+		var providerTypesResult = providerManager.GetProviderTypes();
+		var providerType = providerTypesResult.Value.First();
+
+		Guid id = Guid.NewGuid();
+		TfDataProviderModel model = new TfDataProviderModel
+		{
+			Name = "test data provider",
+			ProviderType = providerType,
+			SettingsJson = null
+		};
+		var providerResult = providerManager.CreateDataProvider(model);
+		providerResult.IsSuccess.Should().BeTrue();
+		providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+		var provider = providerResult.Value;
+
+		TfDataProviderColumn column = new TfDataProviderColumn
+		{
+			Id = Guid.NewGuid(),
+			AutoDefaultValue = true,
+			DefaultValue = null,
+			DataProviderId = provider.Id,
+			DbName = "db_column",
+			DbType = DatabaseColumnType.Text,
+			SourceName = "source_column",
+			SourceType = "TEXT",
+			IncludeInTableSearch = false,
+			IsNullable = false,
+			IsSearchable = true,
+			IsSortable = true,
+			IsUnique = true,
+			PreferredSearchType = TfDataProviderColumnSearchType.Contains
+		};
+
+		var result = providerManager.CreateDataProviderColumn(column);
+		result.IsSuccess.Should().BeTrue();
+
+		TfDataProviderColumn column2 = new TfDataProviderColumn
+		{
+			Id = Guid.NewGuid(),
+			AutoDefaultValue = true,
+			DefaultValue = null,
+			DataProviderId = provider.Id,
+			DbName = "db_column2",
+			DbType = DatabaseColumnType.Text,
+			SourceName = "source_column2",
+			SourceType = "TEXT",
+			IncludeInTableSearch = false,
+			IsNullable = false,
+			IsSearchable = true,
+			IsSortable = true,
+			IsUnique = true,
+			PreferredSearchType = TfDataProviderColumnSearchType.Contains
+		};
+
+		result = providerManager.CreateDataProviderColumn(column2);
+		result.IsSuccess.Should().BeTrue();
+
+		return result.Value;
+	}
+
+	#endregion
 }
