@@ -191,7 +191,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				}
 
 				var dbo = SharedKeyToDbo(sharedKey);
-				
+
 				//only increment version if columns or columns order is changed
 				if (columnsChange)
 					dbo.Version = existingSharedKey.Version + 1;
@@ -278,8 +278,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	#region <--- utility --->
+
 	private static TfDataProviderSharedKeyDbo SharedKeyToDbo(
-		TfDataProviderSharedKey sharedKey)
+	TfDataProviderSharedKey sharedKey)
 	{
 		if (sharedKey == null)
 			throw new ArgumentException(nameof(sharedKey));
@@ -326,11 +328,12 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		};
 	}
 
+	#endregion
 
-	#region <--- Validator --->
+	#region <--- validation --->
 
 	internal class TfDataProviderSharedKeyValidator
-	: AbstractValidator<TfDataProviderSharedKey>
+		: AbstractValidator<TfDataProviderSharedKey>
 	{
 		private readonly IDboManager _dboManager;
 		private readonly ITfDataProviderManager _providerManager;
@@ -368,7 +371,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 						return dbName.Length >= Constants.DB_MIN_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The database name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
+					.WithMessage($"The database name must be at least " +
+								$"{Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
 
 				RuleFor(sharedKey => sharedKey.DbName)
 					.Must((sharedKey, dbName) =>
@@ -378,7 +382,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 						return dbName.Length <= Constants.DB_MAX_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The length of database name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
+					.WithMessage($"The length of database name must be less or equal " +
+								$"than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
 
 				RuleFor(sharedKey => sharedKey.DbName)
 					.Must((sharedKey, dbName) =>
@@ -386,11 +391,20 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
+						//other validation will trigger
+						if (dbName.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
+							return true;
+
+						//other validation will trigger
+						if (dbName.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
+							return true;
+
 						Match match = Regex.Match(dbName, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
 						return match.Success && match.Value == dbName.Trim();
 					})
-					.WithMessage($"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
-						$"not include spaces, not end with an underscore, and not contain two consecutive underscores");
+					.WithMessage($"Name can only contains underscores and lowercase alphanumeric characters." +
+						$" It must begin with a letter, not include spaces, not end with an underscore," +
+						$" and not contain two consecutive underscores");
 
 				RuleFor(sharedKey => sharedKey.Columns)
 					.NotEmpty()
@@ -419,51 +433,57 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			RuleSet("create", () =>
 			{
 				RuleFor(sharedKey => sharedKey.Id)
-						.Must((sharedKey, id) => { return providerManager.GetDataProviderSharedKey(id) == null; })
-						.WithMessage("There is already existing shared key with specified identifier.");
+					.Must((sharedKey, id) =>
+					{
+						return providerManager.GetDataProviderSharedKey(id) == null;
+					})
+					.WithMessage("There is already existing shared key with specified identifier.");
 
 
 				RuleFor(sharedKey => sharedKey.DbName)
-						.Must((sharedKey, dbName) =>
-						{
-							if (string.IsNullOrEmpty(dbName))
-								return true;
+					.Must((sharedKey, dbName) =>
+					{
+						if (string.IsNullOrEmpty(dbName))
+							return true;
 
-							var sharedKeys = providerManager.GetDataProviderSharedKeys(sharedKey.DataProviderId);
-							return !sharedKeys.Any(x => x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim());
-						})
-						.WithMessage("There is already existing shared key with specified database name.");
+						var sharedKeys = providerManager.GetDataProviderSharedKeys(sharedKey.DataProviderId);
+						return !sharedKeys.Any(x => x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim());
+					})
+					.WithMessage("There is already existing shared key with specified database name.");
 			});
 
 			RuleSet("update", () =>
 			{
 				RuleFor(sharedKey => sharedKey.Id)
-						.Must((sharedKey, id) => { return providerManager.GetDataProviderSharedKey(id) != null; })
-						.WithMessage("There is not existing shared key with specified identifier.");
+					.Must((sharedKey, id) =>
+					{
+						return providerManager.GetDataProviderSharedKey(id) != null;
+					})
+					.WithMessage("There is not existing shared key with specified identifier.");
 
 				RuleFor(sharedKey => sharedKey.DataProviderId)
-						.Must((sharedKey, providerId) =>
-						{
+					.Must((sharedKey, providerId) =>
+					{
 
-							var existingSharedKey = providerManager.GetDataProviderSharedKey(sharedKey.Id);
-							if (existingSharedKey is null)
-								return true;
+						var existingSharedKey = providerManager.GetDataProviderSharedKey(sharedKey.Id);
+						if (existingSharedKey is null)
+							return true;
 
-							return existingSharedKey.DataProviderId == providerId;
-						})
-						.WithMessage("There data provider cannot be changed for shared key.");
+						return existingSharedKey.DataProviderId == providerId;
+					})
+					.WithMessage("There data provider cannot be changed for shared key.");
 
 				RuleFor(sharedKey => sharedKey.DbName)
-						.Must((sharedKey, dbName) =>
-						{
+					.Must((sharedKey, dbName) =>
+					{
 
-							var existingSharedKey = providerManager.GetDataProviderSharedKey(sharedKey.Id);
-							if (existingSharedKey is null)
-								return true;
+						var existingSharedKey = providerManager.GetDataProviderSharedKey(sharedKey.Id);
+						if (existingSharedKey is null)
+							return true;
 
-							return existingSharedKey.DbName == dbName;
-						})
-						.WithMessage("There database name of shared key cannot be changed.");
+						return existingSharedKey.DbName == dbName;
+					})
+					.WithMessage("There database name of shared key cannot be changed.");
 			});
 
 
@@ -473,7 +493,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 		}
 
-		public ValidationResult ValidateCreate(TfDataProviderSharedKey sharedKey)
+		public ValidationResult ValidateCreate(
+			TfDataProviderSharedKey sharedKey)
 		{
 			if (sharedKey == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -485,7 +506,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			});
 		}
 
-		public ValidationResult ValidateUpdate(TfDataProviderSharedKey sharedKey)
+		public ValidationResult ValidateUpdate(
+			TfDataProviderSharedKey sharedKey)
 		{
 			if (sharedKey == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -497,7 +519,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			});
 		}
 
-		public ValidationResult ValidateDelete(TfDataProviderSharedKey sharedKey)
+		public ValidationResult ValidateDelete(
+			TfDataProviderSharedKey sharedKey)
 		{
 			if (sharedKey == null)
 				return new ValidationResult(new[] { new ValidationFailure("",

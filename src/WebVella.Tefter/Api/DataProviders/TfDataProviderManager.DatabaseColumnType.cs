@@ -9,7 +9,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 {
 	public Result<ReadOnlyCollection<DatabaseColumnTypeInfo>> GetDatabaseColumnTypeInfos()
 	{
-		List<DatabaseColumnTypeInfo> databaseColumnTypeInfos = new List<DatabaseColumnTypeInfo>();
+		List<DatabaseColumnTypeInfo> databaseColumnTypeInfos =
+			new List<DatabaseColumnTypeInfo>();
 		
 		databaseColumnTypeInfos.Add(
 			new DatabaseColumnTypeInfo
@@ -117,8 +118,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 public record DatabaseColumnTypeInfo
 {
-	public string Name { get; set; }
-	public DatabaseColumnType Type { get; set; }
-	public bool CanBeProviderDataType { get; set; }
-	public bool SupportAutoDefaultValue { get; set; }
+	public string Name { get; init; }
+	public DatabaseColumnType Type { get; init; }
+	public bool CanBeProviderDataType { get; init; }
+	public bool SupportAutoDefaultValue { get; init; }
 }

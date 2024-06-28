@@ -2,31 +2,80 @@
 
 public partial interface ITfDataProviderManager
 {
-	internal TfDataProviderColumn GetDataProviderColumn(Guid id);
+	/// <summary>
+	/// Gets data provider column instance for specified identifier
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	internal TfDataProviderColumn GetDataProviderColumn(
+		Guid id);
 
-	internal List<TfDataProviderColumn> GetDataProviderColumns(Guid providerId);
+	/// <summary>
+	/// Gets list of data provider columns for specified provider identifier
+	/// </summary>
+	/// <param name="providerId"></param>
+	/// <returns></returns>
+	internal List<TfDataProviderColumn> GetDataProviderColumns(
+		Guid providerId);
 
-	public Result<TfDataProvider> CreateDataProviderColumn(TfDataProviderColumn column);
+	/// <summary>
+	/// Creates new data provider column
+	/// </summary>
+	/// <param name="column"></param>
+	/// <returns></returns>
+	public Result<TfDataProvider> CreateDataProviderColumn(
+		TfDataProviderColumn column);
 
-	public Result<TfDataProvider> UpdateDataProviderColumn(TfDataProviderColumn column);
+	/// <summary>
+	/// Updates existing data provider column
+	/// </summary>
+	/// <param name="column"></param>
+	/// <returns></returns>
+	public Result<TfDataProvider> UpdateDataProviderColumn(
+		TfDataProviderColumn column);
 
-	public Result<TfDataProvider> DeleteDataProviderColumn(Guid id);
+	/// <summary>
+	/// Deletes existing data provider column
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	public Result<TfDataProvider> DeleteDataProviderColumn(
+		Guid id);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
 {
-	public TfDataProviderColumn GetDataProviderColumn(Guid id)
+	/// <summary>
+	/// Gets data provider column instance for specified identifier
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	public TfDataProviderColumn GetDataProviderColumn(
+		Guid id)
 	{
 		return _dboManager.Get<TfDataProviderColumn>(id);
 	}
 
-	public List<TfDataProviderColumn> GetDataProviderColumns(Guid providerId)
+	/// <summary>
+	/// Gets list of data provider columns for specified provider identifier
+	/// </summary>
+	/// <param name="providerId"></param>
+	/// <returns></returns>
+	public List<TfDataProviderColumn> GetDataProviderColumns(
+		Guid providerId)
 	{
 		var orderSettings = new OrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
 		return _dboManager.GetList<TfDataProviderColumn>(providerId, nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
 	}
 
-	public Result<TfDataProvider> CreateDataProviderColumn(TfDataProviderColumn column)
+	/// <summary>
+	/// Creates new data provider column
+	/// </summary>
+	/// <param name="column"></param>
+	/// <returns></returns>
+
+	public Result<TfDataProvider> CreateDataProviderColumn(
+		TfDataProviderColumn column)
 	{
 		try
 		{
@@ -74,7 +123,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	public Result<TfDataProvider> UpdateDataProviderColumn(TfDataProviderColumn column)
+	/// <summary>
+	/// Updates existing data provider column
+	/// </summary>
+	/// <param name="column"></param>
+	/// <returns></returns>
+	public Result<TfDataProvider> UpdateDataProviderColumn(
+		TfDataProviderColumn column)
 	{
 		try
 		{
@@ -111,7 +166,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	public Result<TfDataProvider> DeleteDataProviderColumn(Guid id)
+	/// <summary>
+	/// Deletes existing data provider column
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	public Result<TfDataProvider> DeleteDataProviderColumn(
+		Guid id)
 	{
 		try
 		{
@@ -159,7 +220,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	private Result CreateDatabaseColumn(TfDataProvider provider, TfDataProviderColumn column)
+	#region <--- utility --->
+
+	private Result CreateDatabaseColumn(
+TfDataProvider provider,
+TfDataProviderColumn column)
 	{
 		try
 		{
@@ -404,7 +469,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
-	private Result UpdateDatabaseColumn(TfDataProvider provider, TfDataProviderColumn column, TfDataProviderColumn existingColumn)
+	private Result UpdateDatabaseColumn(
+		TfDataProvider provider,
+		TfDataProviderColumn column,
+		TfDataProviderColumn existingColumn)
 	{
 		try
 		{
@@ -762,9 +830,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		{
 			return Result.Fail(new Error("Failed to create database column.").CausedBy(ex));
 		}
-	}
+	} 
+	#endregion
 
-	#region <--- Validator --->
+	#region <--- validation --->
 
 	internal class TfDataProviderColumnValidator
 	: AbstractValidator<TfDataProviderColumn>
@@ -790,9 +859,9 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					.WithMessage("The data provider id is required.");
 
 				RuleFor(column => column.DataProviderId)
-					.Must(providerId => 
-					{ 
-						return providerManager.GetProvider(providerId).Value != null; 
+					.Must(providerId =>
+					{
+						return providerManager.GetProvider(providerId).Value != null;
 					})
 					.WithMessage("There is no existing data provider for specified provider id.");
 
@@ -920,7 +989,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
-						if ( defaultValue == null )
+						if (defaultValue == null)
 							return true;
 
 						try
@@ -1033,8 +1102,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			{
 				RuleFor(column => column.Id)
 						.Must((column, id) =>
-						{ 
-							return providerManager.GetDataProviderColumn(id) != null; 
+						{
+							return providerManager.GetDataProviderColumn(id) != null;
 						})
 						.WithMessage("There is not existing data provider column with specified identifier.");
 
@@ -1090,7 +1159,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 		}
 
-		public ValidationResult ValidateCreate(TfDataProviderColumn column)
+		public ValidationResult ValidateCreate(
+			TfDataProviderColumn column)
 		{
 			if (column == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -1102,7 +1172,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			});
 		}
 
-		public ValidationResult ValidateUpdate(TfDataProviderColumn column)
+		public ValidationResult ValidateUpdate(
+			TfDataProviderColumn column)
 		{
 			if (column == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -1114,7 +1185,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			});
 		}
 
-		public ValidationResult ValidateDelete(TfDataProviderColumn column)
+		public ValidationResult ValidateDelete(
+			TfDataProviderColumn column)
 		{
 			if (column == null)
 				return new ValidationResult(new[] { new ValidationFailure("",

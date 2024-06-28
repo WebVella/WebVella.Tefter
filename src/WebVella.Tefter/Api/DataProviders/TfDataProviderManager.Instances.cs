@@ -2,26 +2,61 @@
 
 public partial interface ITfDataProviderManager
 {
+	/// <summary>
+	/// Gets data provider instance for specified identifier
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
 	public Result<TfDataProvider> GetProvider(
 		Guid id);
 
+	/// <summary>
+	/// Gets data provider instance for specified name
+	/// </summary>
+	/// <param name="name"></param>
+	/// <returns></returns>
 	public Result<TfDataProvider> GetProvider(
 		string name);
 
+	/// <summary>
+	/// Gets list of available data providers
+	/// </summary>
+	/// <returns></returns>
 	public Result<ReadOnlyCollection<TfDataProvider>> GetProviders();
 
+	/// <summary>
+	/// Creates new data provider 
+	/// </summary>
+	/// <param name="providerModel"></param>
+	/// <returns></returns>
 	internal Result<TfDataProvider> CreateDataProvider(
 		TfDataProviderModel providerModel);
 
+	/// <summary>
+	/// Update existing data provider
+	/// </summary>
+	/// <param name="providerModel"></param>
+	/// <returns></returns>
 	internal Result<TfDataProvider> UpdateDataProvider(
 		TfDataProviderModel providerModel);
 
+	/// <summary>
+	/// Deletes existing data provider
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
 	internal Result DeleteDataProvider(
 		Guid id);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
 {
+
+	/// <summary>
+	/// Gets data provider instance for specified identifier
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
 	public Result<TfDataProvider> GetProvider(
 		Guid id)
 	{
@@ -55,12 +90,19 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+
+	/// <summary>
+	/// Gets data provider instance for specified name
+	/// </summary>
+	/// <param name="name"></param>
+	/// <returns></returns>
 	public Result<TfDataProvider> GetProvider(
 		string name)
 	{
 		try
 		{
-			var providerDbo = _dboManager.Get<TfDataProviderDbo>(name, nameof(TfDataProviderDbo.Name));
+			var providerDbo = _dboManager
+				.Get<TfDataProviderDbo>(name, nameof(TfDataProviderDbo.Name));
 
 			if (providerDbo == null)
 				return Result.Ok();
@@ -72,7 +114,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 			var providerType = providerTypeResult.Value;
 			if (providerType == null)
-				return Result.Fail(new Error("Unable to find provider type for specified provider instance."));
+				return Result.Fail("Unable to find provider type" +
+					" for specified provider instance.");
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
@@ -88,6 +131,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	/// <summary>
+	/// Gets list of available data providers
+	/// </summary>
+	/// <returns></returns>
 	public Result<ReadOnlyCollection<TfDataProvider>> GetProviders()
 	{
 		try
@@ -128,6 +175,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	/// <summary>
+	/// Creates new data provider 
+	/// </summary>
+	/// <param name="providerModel"></param>
+	/// <returns></returns>
 	public Result<TfDataProvider> CreateDataProvider(
 		TfDataProviderModel providerModel)
 	{
@@ -198,6 +250,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	/// <summary>
+	/// Update existing data provider
+	/// </summary>
+	/// <param name="providerModel"></param>
+	/// <returns></returns>
 	public Result<TfDataProvider> UpdateDataProvider(
 		TfDataProviderModel providerModel)
 	{
@@ -225,6 +282,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	/// <summary>
+	/// Deletes existing data provider
+	/// </summary>
+	/// <param name="id"></param>
+	/// <returns></returns>
 	public Result DeleteDataProvider(
 		Guid id)
 	{
@@ -281,8 +343,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	#region <--- utility --->
+
 	private static TfDataProviderDbo DataProviderToDbo(
-		TfDataProviderModel providerModel)
+	TfDataProviderModel providerModel)
 	{
 		if (providerModel == null)
 			throw new ArgumentException(nameof(providerModel));
@@ -325,10 +389,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			Columns = columns.AsReadOnly(),
 			SharedKeys = sharedKeys.AsReadOnly()
 		};
-	}
+	} 
 
+	#endregion
 
-	#region <--- Validators --->
+	#region <--- validation --->
 
 	internal class TfDataProviderCreateValidator
 	: AbstractValidator<TfDataProviderModel>
