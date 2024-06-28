@@ -80,9 +80,6 @@ try
 
 		//IMPORTANT: Do not remove. Required for the application to work
 		app.Services.UseTefter();
-
-		throw new Exception("test");
-
 		app.Run();
 	}
 }
