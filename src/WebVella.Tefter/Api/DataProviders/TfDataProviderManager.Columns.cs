@@ -789,8 +789,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					.NotEmpty()
 					.WithMessage("The data provider id is required.");
 
-				RuleFor(provider => provider.DataProviderId)
-					.Must(providerId => { return providerManager.GetProvider(providerId).Value != null; })
+				RuleFor(column => column.DataProviderId)
+					.Must(providerId => 
+					{ 
+						return providerManager.GetProvider(providerId).Value != null; 
+					})
 					.WithMessage("There is no existing data provider for specified provider id.");
 
 				RuleFor(column => column.SourceName)
@@ -800,6 +803,65 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				RuleFor(column => column.SourceType)
 					.NotEmpty()
 					.WithMessage("The data provider column source type is required.");
+
+				RuleFor(column => column.SourceType)
+					.Must((column, sourceType) =>
+					{
+						if (string.IsNullOrWhiteSpace(sourceType))
+							return true;
+
+						var providerResult = providerManager.GetProvider(column.DataProviderId);
+						if (providerResult.IsFailed)
+							return true;
+
+						var provider = providerResult.Value;
+
+						var supportedSourceTypes = provider.ProviderType.GetSupportedSourceDataTypes();
+
+						return supportedSourceTypes.Any(x => x == sourceType);
+
+					})
+					.WithMessage($"Selected source type is not in the list of provider supported source types.");
+
+				RuleFor(column => column.SourceType)
+					.Must((column, sourceType) =>
+					{
+						if (string.IsNullOrWhiteSpace(sourceType))
+							return true;
+
+						var providerResult = providerManager.GetProvider(column.DataProviderId);
+						if (providerResult.IsFailed)
+							return true;
+
+						var provider = providerResult.Value;
+
+						var supportedDatabaseColumnTypes =
+							provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(sourceType);
+
+						return supportedDatabaseColumnTypes.Any();
+
+					})
+					.WithMessage($"Selected source type does not provide any supported provider data type.");
+
+				RuleFor(column => column.SourceType)
+					.Must((column, sourceType) =>
+					{
+						if (string.IsNullOrWhiteSpace(sourceType))
+							return true;
+
+						var providerResult = providerManager.GetProvider(column.DataProviderId);
+						if (providerResult.IsFailed)
+							return true;
+
+						var provider = providerResult.Value;
+
+						var supportedDatabaseColumnTypes =
+							provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(sourceType);
+
+						return supportedDatabaseColumnTypes.Any(x => x == column.DbType);
+
+					})
+					.WithMessage($"The selected source type is not supported for use with selected provider data type.");
 
 				RuleFor(column => column.DbName)
 					.NotEmpty()
@@ -831,7 +893,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-
 						return dbName.Length <= Constants.DB_MAX_OBJECT_NAME_LENGTH;
 					})
 					.WithMessage($"The length of database name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
@@ -840,6 +901,14 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					.Must((column, dbName) =>
 					{
 						if (string.IsNullOrWhiteSpace(dbName))
+							return true;
+
+						//other validation will trigger
+						if (dbName.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
+							return true;
+
+						//other validation will trigger
+						if (dbName.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
 							return true;
 
 						Match match = Regex.Match(dbName, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
@@ -851,7 +920,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
-						if (string.IsNullOrWhiteSpace(defaultValue))
+						if ( defaultValue == null )
 							return true;
 
 						try
@@ -938,7 +1007,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 							return false;
 						}
 					})
-					.WithMessage($"Specified default value is not correct for selected database column type.");
+					.WithMessage($"Specified default value is not correct for selected provider data type.");
 
 			});
 
@@ -963,7 +1032,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			RuleSet("update", () =>
 			{
 				RuleFor(column => column.Id)
-						.Must((column, id) => { return providerManager.GetDataProviderColumn(id) != null; })
+						.Must((column, id) =>
+						{ 
+							return providerManager.GetDataProviderColumn(id) != null; 
+						})
 						.WithMessage("There is not existing data provider column with specified identifier.");
 
 				RuleFor(column => column.DataProviderId)
@@ -1010,7 +1082,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						.Must((column, id) =>
 						{
 							var sharedKeys = providerManager.GetDataProviderSharedKeys(column.DataProviderId);
-							var found = sharedKeys.Any( x=> x.Columns.Any(c=>c.Id == id));
+							var found = sharedKeys.Any(x => x.Columns.Any(c => c.Id == id));
 							return !found;
 						})
 						.WithMessage("There data provider column cannot be deleted, because it is part of shared key.");
