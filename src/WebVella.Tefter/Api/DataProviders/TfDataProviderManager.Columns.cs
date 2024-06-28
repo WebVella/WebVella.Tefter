@@ -1004,7 +1004,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 			});
 
-
 			RuleSet("delete", () =>
 			{
 				RuleFor(column => column.Id)
@@ -1012,7 +1011,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						{
 							var sharedKeys = providerManager.GetDataProviderSharedKeys(column.DataProviderId);
 							var found = sharedKeys.Any( x=> x.Columns.Any(c=>c.Id == id));
-							return !true;
+							return !found;
 						})
 						.WithMessage("There data provider column cannot be deleted, because it is part of shared key.");
 			});
