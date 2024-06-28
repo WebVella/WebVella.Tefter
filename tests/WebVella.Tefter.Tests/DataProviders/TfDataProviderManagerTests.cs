@@ -1008,7 +1008,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 	#region <--- SharedKeys --->
 
 	[Fact]
-	public async Task SharedKey_CreateUpdate()
+	public async Task SharedKey_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -1032,6 +1032,59 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 				var providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
 				providerResult.IsSuccess.Should().BeTrue();
+
+				provider = providerResult.Value;
+				provider.SharedKeys.Count().Should().Be(1);
+
+				var sharedKey1Created = provider.SharedKeys.Single(x => x.Id == sharedKey.Id);
+
+				sharedKey1Created.DataProviderId.Should().Be(sharedKey.DataProviderId);
+				sharedKey1Created.DbName.Should().Be(sharedKey.DbName);
+				sharedKey1Created.Description.Should().Be(sharedKey.Description);
+				sharedKey1Created.Version.Should().Be(0);
+				sharedKey1Created.Columns[0].Id.Should().Be(provider.Columns[0].Id);
+
+				var sharedKey2 = new TfDataProviderSharedKey
+				{
+					Id = Guid.NewGuid(),
+					Description = "testing2",
+					DataProviderId = provider.Id,
+					DbName = "testing2",
+					Columns = new() { provider.Columns[1] }
+				};
+
+				providerResult = providerManager.CreateDataProviderSharedKey(sharedKey2);
+				providerResult.IsSuccess.Should().BeTrue();
+
+				provider = providerResult.Value;
+				provider.SharedKeys.Count().Should().Be(2);
+
+				var sharedKey2Created = provider.SharedKeys.Single(x => x.Id == sharedKey2.Id);
+
+				sharedKey2Created.DataProviderId.Should().Be(sharedKey2.DataProviderId);
+				sharedKey2Created.DbName.Should().Be(sharedKey2.DbName);
+				sharedKey2Created.Description.Should().Be(sharedKey2.Description);
+				sharedKey2Created.Version.Should().Be(0);
+				sharedKey2Created.Columns[0].Id.Should().Be(provider.Columns[1].Id);
+
+				sharedKey2Created.Columns.Add(provider.Columns[0]);
+
+				providerResult = providerManager.UpdateDataProviderSharedKey(sharedKey2Created);
+				providerResult.IsSuccess.Should().BeTrue();
+
+				provider = providerResult.Value;
+				provider.SharedKeys.Count().Should().Be(2);
+
+				var sharedKey2Update = provider.SharedKeys.Single(x => x.Id == sharedKey2Created.Id);
+				sharedKey2Update.DataProviderId.Should().Be(sharedKey2.DataProviderId);
+				sharedKey2Update.DbName.Should().Be(sharedKey2.DbName);
+				sharedKey2Update.Description.Should().Be(sharedKey2.Description);
+				sharedKey2Update.Version.Should().Be(1);
+				sharedKey2Update.Columns.Count().Should().Be(2);
+
+				providerResult = providerManager.DeleteDataProviderSharedKey(sharedKey2Created.Id);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.SharedKeys.Count().Should().Be(1);
 			}
 		}
 	}

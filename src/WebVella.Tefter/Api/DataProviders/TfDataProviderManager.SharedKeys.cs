@@ -300,7 +300,9 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			DataProviderId = sharedKey.DataProviderId,
 			DbName = sharedKey.DbName,
 			Description = sharedKey.Description,
-			ColumnIdsJson = columnIdsJson
+			ColumnIdsJson = columnIdsJson,
+			Version = sharedKey.Version,
+			LastModifiedOn = sharedKey.LastModifiedOn,
 		};
 	}
 
@@ -328,7 +330,9 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			DataProviderId = dbo.DataProviderId,
 			DbName = dbo.DbName,
 			Description = dbo.Description,
-			Columns = columns
+			Columns = columns,
+			Version = dbo.Version,
+			LastModifiedOn= dbo.LastModifiedOn
 		};
 	}
 

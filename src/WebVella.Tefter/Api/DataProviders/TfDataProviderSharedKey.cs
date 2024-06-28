@@ -14,7 +14,7 @@ public record TfDataProviderSharedKey
 
 	public int Version { get; internal set; }
 
-	public DateTime LastModified { get; internal set; }
+	public DateTime LastModifiedOn { get; internal set; }
 }
 
 
