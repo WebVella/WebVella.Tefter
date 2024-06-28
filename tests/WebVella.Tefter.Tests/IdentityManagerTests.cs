@@ -113,4 +113,61 @@ public partial class IdentityManagerTests : BaseTest
 			}
 		}
 	}
+
+	[Fact]
+	public async Task Roles_RemoveAll()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var role = identityManager
+					.CreateRoleBuilder()
+					.WithName("UnitTester")
+					.Build();
+
+				var roleResult = await identityManager.SaveRoleAsync(role);
+				roleResult.Should().NotBeNull();
+				roleResult.IsSuccess.Should().BeTrue();
+				roleResult.Value.Should().NotBeNull();
+
+				role = roleResult.Value;
+
+				var user = identityManager
+					.CreateUserBuilder()
+					.WithEmail("test@test.com")
+					.WithPassword("password")
+					.WithFirstName("firstname")
+					.WithLastName("lastname")
+					.CreatedOn(DateTime.Now)
+					.Enabled(true)
+					.WithRoles(role)
+					.Build();
+
+				var userResult = await identityManager.SaveUserAsync(user);
+				userResult.Should().NotBeNull();
+				userResult.IsSuccess.Should().BeTrue();
+				userResult.Value.Should().NotBeNull();
+
+			
+				user = identityManager
+					.CreateUserBuilder(user)
+					.WithEmail("test1@test.com")
+					.WithPassword("password1")
+					.WithFirstName("firstname1")
+					.WithLastName("lastname1")
+					.Enabled(true)
+					.WithRoles()
+					.Build();
+
+				userResult = await identityManager.SaveUserAsync(user);
+				userResult.Should().NotBeNull();
+				userResult.Value.Roles.Count.Should().Be(0);
+			
+			}
+		}
+	}
 }

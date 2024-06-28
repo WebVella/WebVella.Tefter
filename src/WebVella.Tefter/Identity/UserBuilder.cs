@@ -111,12 +111,24 @@ public class UserBuilder
 	public UserBuilder WithRoles(params Role[] roles)
 	{
 		if (roles == null || roles.Length == 0)
+		{
+			_roles.Clear();
 			return this;
+		}
 
+		
 		foreach (Role role in roles)
 		{
 			if (!_roles.Any(x => x.Id == role.Id))
 				_roles.Add(role);
+		}
+
+		HashSet<Guid> newRolesHs = roles.Select(x=>x.Id).Distinct().ToHashSet();
+		var existingRoles = _roles.ToList();
+		foreach (var role in existingRoles)
+		{
+			if (!newRolesHs.Contains(role.Id))
+				_roles.Remove(role);
 		}
 
 		return this;
