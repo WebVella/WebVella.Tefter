@@ -25,14 +25,31 @@ public class FailedModeHost
 		StringBuilder sb = new StringBuilder();
 		sb.AppendLine("TEFTER FAILED TO START NORMAL");
 
-		if (ex is DatabaseUpdateException)
+		if (ex.InnerException is DatabaseUpdateException)
 		{
-			var dbUpdateException = ex as DatabaseUpdateException;
+			var dbUpdateException = ex.InnerException as DatabaseUpdateException;
 			sb.AppendLine("========== MIGRATION DATABASE UPDATE FAILED ============");
+
+			if(dbUpdateException.Result.Log.Any(x=>x.Success))
+				sb.AppendLine("========== SUCCEEDED ============");
 
 			foreach (var log in dbUpdateException.Result.Log)
 			{
-				sb.AppendLine($"STATEMENT: {log.Statement} - SUCCESS: {log.Success}");
+				var sqlStatement = log.Statement;
+
+				//cut comments on sql
+				var indexOfComment = log.Statement.IndexOf("COMMENT ON");
+				if(indexOfComment != -1)
+					sqlStatement = sqlStatement.Substring(0, indexOfComment);
+				
+				if(log.Success)
+					sb.AppendLine($"STATEMENT: {sqlStatement}");
+				else
+				{
+					sb.AppendLine("========== FAILED ============");
+					sb.AppendLine($"STATEMENT: {sqlStatement}");
+					sb.AppendLine($"SQL ERROR: {log.SqlError}");
+				}
 			}
 		}
 		else
