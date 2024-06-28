@@ -117,22 +117,43 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="'csv' file extension is required" xml:space="preserve">
-    <value>изисква се 'csv' разширение на файла</value>
+  <data name="Are you sure that you need this key deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете този ключ?</value>
   </data>
-  <data name="Comma" xml:space="preserve">
-    <value>Запетая</value>
+  <data name="Delete key" xml:space="preserve">
+    <value>Изтриване на ключ</value>
   </data>
-  <data name="CSV File with full access path" xml:space="preserve">
-    <value>CSV файл с пълен път за достъп</value>
+  <data name="Edit key" xml:space="preserve">
+    <value>Редакция на ключ</value>
   </data>
-  <data name="Delimiter" xml:space="preserve">
-    <value>Разделител</value>
+  <data name="Missing Synchronization Key" xml:space="preserve">
+    <value>Липсващ ключ за синхронизация</value>
   </data>
-  <data name="required" xml:space="preserve">
-    <value>задължително</value>
+  <data name="No columns" xml:space="preserve">
+    <value>Няма колони</value>
   </data>
-  <data name="Tab" xml:space="preserve">
-    <value>Табулация</value>
+  <data name="No columns are created yet for this data source" xml:space="preserve">
+    <value>Все още няма създадени колони за този доставчик на данни</value>
+  </data>
+  <data name="No shared keys are created yet for this data source" xml:space="preserve">
+    <value>Все още няма създадени споделени ключове за този доставчик на данни</value>
+  </data>
+  <data name="Shared key" xml:space="preserve">
+    <value>Споделен ключ</value>
+  </data>
+  <data name="Shared keys" xml:space="preserve">
+    <value>Споделени ключове</value>
+  </data>
+  <data name="Synchronization key" xml:space="preserve">
+    <value>Ключ за синхронизация</value>
+  </data>
+  <data name="The key is successfully deleted!" xml:space="preserve">
+    <value>Ключът е успешно изтрит!</value>
+  </data>
+  <data name="The key was successfully updated!" xml:space="preserve">
+    <value>Ключът е редактиран успешно!</value>
+  </data>
+  <data name="without this key, data cannot be synchronized by this provider" xml:space="preserve">
+    <value>без този ключ, доставчикът не може да получава данни</value>
   </data>
 </root>

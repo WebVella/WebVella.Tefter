@@ -8,9 +8,7 @@
 				<div class="login-logo-image"><img src="@ConfigurationService.CompanyLogoUrl" /></div>
 				<div class="login-logo-text">@ConfigurationService.CompanyName</div>
 			</div>
-			<div class="login-form" aria-autocomplete="none">
-
-
+			<div class="login-form">
 				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email 
 					Label="@LOC("Email")" Id="email" Name="email" Autofocus="true"/>
 				<FluentValidationMessage For="@(() => _form.Email)" />

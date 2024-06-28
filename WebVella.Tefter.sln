@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{45AE6C67-9
 		docs\column_type.bpmn = docs\column_type.bpmn
 		docs\create_test_structure_and_data.sql = docs\create_test_structure_and_data.sql
 		docs\dataset.bpmn = docs\dataset.bpmn
+		docs\notes.txt = docs\notes.txt
 		docs\view.bpmn = docs\view.bpmn
 	EndProjectSection
 EndProject
@@ -21,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.DataProvide
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Site", "src\WebVella.Tefter.Site\WebVella.Tefter.Site.csproj", "{3C109BF7-F4DA-44D8-AEF4-92F54326D559}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Web.Tests", "tests\WebVella.Tefter.Web.Tests\WebVella.Tefter.Web.Tests.csproj", "{AE410F01-BB1F-45D4-AA01-9FA762B958E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Web.Tests", "tests\WebVella.Tefter.Web.Tests\WebVella.Tefter.Web.Tests.csproj", "{AE410F01-BB1F-45D4-AA01-9FA762B958E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

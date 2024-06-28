@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter;
 
 
 [DboCacheModel]
@@ -11,7 +13,7 @@ public class TfDataProviderColumn
 	[DboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-
+	[Required]
 	[DboModelProperty("source_name")]
 	public string SourceName { get; set; }
 
@@ -22,7 +24,7 @@ public class TfDataProviderColumn
 	[DboModelProperty("created_on")]
 	public DateTime CreatedOn { get; set; }
 
-
+	[Required]
 	[DboModelProperty("db_name")]
 	public string DbName { get; set; }
 

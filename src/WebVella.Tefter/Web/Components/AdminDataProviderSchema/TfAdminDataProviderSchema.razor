@@ -1,7 +1,7 @@
 ﻿@inherits TfBaseComponent
 
 @if (DataProviderDetailsState.Value.Provider is null || DataProviderDetailsState.Value.Provider.Columns is null
-																													|| DataProviderDetailsState.Value.Provider.Columns.Count == 0)
+		|| DataProviderDetailsState.Value.Provider.Columns.Count == 0)
 {
 	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>

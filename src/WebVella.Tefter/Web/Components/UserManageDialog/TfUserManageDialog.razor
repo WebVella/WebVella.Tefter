@@ -34,7 +34,7 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email
-									 Label="@LOC("Email")" Style="width:100%" AutoComplete="off" />
+									 Label="@LOC("Email")" Style="width:100%" AutoComplete="new-password" />
 					<FluentValidationMessage For="@(() => _form.Email)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
@@ -46,19 +46,19 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.FirstName
-									 Label="@LOC("First Name")" Style="width:100%" AutoComplete="off" />
+									 Label="@LOC("First Name")" Style="width:100%" AutoComplete="new-password" />
 					<FluentValidationMessage For="@(() => _form.FirstName)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.LastName
-									 Label="@LOC("Last Name")" Style="width:100%" AutoComplete="off" />
+									 Label="@LOC("Last Name")" Style="width:100%" AutoComplete="new-password" />
 					<FluentValidationMessage For="@(() => _form.LastName)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password
-									 Label="@LOC("Password")" Style="width:100%" AutoComplete="off" />
+									 Label="@LOC("Password")" Style="width:100%" AutoComplete="new-password" />
 					<FluentValidationMessage For="@(() => _form.Password)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
@@ -71,7 +71,7 @@
 					else
 					{
 						<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.ConfirmPassword
-								 Label="@LOC("ConfirmPassword")" AutoComplete="off" Style="width:100%" />
+										 Label="@LOC("ConfirmPassword")" AutoComplete="new-password" Style="width:100%" />
 					}
 					<FluentValidationMessage For="@(() => _form.ConfirmPassword)" />
 				</FluentGridItem>
@@ -114,7 +114,7 @@
 					<FluentStack Style="margin-top:10px;">
 						@foreach (var role in _allRoles)
 						{
-							<FluentCheckbox Value="@_form.Roles.Contains(role)" Label="@role.Name" ValueChanged="@(()=>_roleChanged(role))" />
+							<FluentCheckbox Value="@_form.Roles.Any(x=> x.Id == role.Id)" Label="@role.Name" ValueChanged="@(()=>_roleChanged(role))" />
 						}
 					</FluentStack>
 					<FluentValidationMessage For="@(() => _form.Roles)" />

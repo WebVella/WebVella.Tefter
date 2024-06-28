@@ -6,7 +6,7 @@ public partial class TfConstants
 	public static OfficeColor DefaultThemeColor { get; set; } = OfficeColor.Excel;
 
 	public static DesignThemeModes AdminThemeMode { get; set; } = DesignThemeModes.System;
-	public static OfficeColor AdminThemeColor { get; set; } = OfficeColor.PowerApps;
+	public static OfficeColor AdminThemeColor { get; set; } = OfficeColor.Office;
 
 	public static string AdminColor { get => AdminThemeColor.ToAttributeValue(); }
 
@@ -18,12 +18,13 @@ public partial class TfConstants
 		}
 	}
 
-	public static string AdminBackgkroundColor => $"{AdminColor}15";
+	public static string AdminBackgkroundColor => $"{AdminColor}25";
 
-	public static string AdminBorderColor => $"{AdminColor}50";
+	public static string AdminBorderColor => $"{AdminColor}75";
 
-	public static string AdminBackgroundAccentColor => $"{AdminColor}35";
+	public static string AdminBackgroundAccentColor => $"{AdminColor}30";
 
+	public static string AdminContentStyle => $"border-left-color:{AdminBorderColor}; border-top-color:{AdminBorderColor} !important";
 	public static string AdminSidebarStyle => $"background-color:{AdminBackgkroundColor} !important; border-color:{AdminBorderColor} !important";
 	public static string AdminPagebarStyle => $"background-color:{AdminBackgkroundColor} !important;";
 

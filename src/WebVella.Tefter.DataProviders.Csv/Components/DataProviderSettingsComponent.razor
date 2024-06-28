@@ -4,10 +4,36 @@
 <FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
 	<FluentGrid>
 		<FluentGridItem xs="12">
-			<FluentTextField Required="DisplayMode == Web.Models.ComponentDisplayMode.Form" TextFieldType="@TextFieldType.Text"
-							 @bind-Value=_form.Filepath ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.ReadOnly"
+			<FluentTextField Required="DisplayMode == Web.Models.ComponentDisplayMode.Form"
+							 ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.ReadOnly"
+							 TextFieldType="@TextFieldType.Text"
+							 @bind-Value=_form.Filepath AutoComplete="new-password"
 							 Label="@LOC("CSV File with full access path")" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.Filepath)" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			@if (DisplayMode == Web.Models.ComponentDisplayMode.Form)
+			{
+				<FluentRadioGroup Required="true"
+								  @bind-Value=_form.Delimter
+								  TValue="CsvDataProviderSettingsDelimter"
+								  Label="@LOC("Delimiter")" Style="width:100%">
+					@foreach (var item in Enum.GetValues<CsvDataProviderSettingsDelimter>())
+					{
+						<FluentRadio Value="@item">@LOC(item.ToString())</FluentRadio>
+					}
+				</FluentRadioGroup>
+				<FluentValidationMessage For="@(() => _form.Delimter)" />
+			}
+			else
+			{
+				<FluentInputLabel Label="@LOC("Delimiter")" />
+				<div>
+					<FluentBadge Appearance="Appearance.Accent">@LOC(_form.Delimter.ToString())</FluentBadge>
+				</div>
+			}
 		</FluentGridItem>
 	</FluentGrid>
 </FluentEditForm>

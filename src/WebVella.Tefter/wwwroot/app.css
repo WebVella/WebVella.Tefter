@@ -84,6 +84,7 @@ body {
 	/*padding-right: 5px;*/
 	border-radius: var(--tf-content-border-radius);
 	border-top: var(--tf-content-border-top-width) solid transparent;
+	border-left: var(--tf-content-border-top-width) solid transparent;
 	display: flex;
 
 }
@@ -116,7 +117,7 @@ body {
 }
 
 .tf-grid-thead {
-	background: var(--fill-color);
+	background: var(--neutral-layer-2);
 	position: sticky;
 	top: 0px;
 	z-index:2;
@@ -229,6 +230,9 @@ fluent-select::part(listbox) {
 
 .tf-input-label {
 	color:var(--neutral-foreground-hover) !important;
+}
+.fluent-messagebar-message .title {
+	display:block;
 }
 
 /* General */

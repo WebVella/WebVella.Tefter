@@ -30,9 +30,9 @@ public partial record SessionState
 		}
 	}
 
-	public string SpaceBackgkroundColor => $"{SpaceColor}15";
+	public string SpaceBackgkroundColor => $"{SpaceColor}25";
 
-	public string SpaceBorderColor => $"{SpaceColor}50";
+	public string SpaceBorderColor => $"{SpaceColor}75";
 
 	public string SpaceBackgroundAccentColor => $"{SpaceColor}35";
 

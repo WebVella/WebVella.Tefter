@@ -169,9 +169,9 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 
 	private void _roleChanged(Role role)
 	{
-		if (_form.Roles.Contains(role))
+		if (_form.Roles.Any(x=> x.Id == role.Id))
 		{
-			_form.Roles.Remove(role);
+			_form.Roles = _form.Roles.Where(x=> x.Id != role.Id).ToList();
 		}
 		else
 		{

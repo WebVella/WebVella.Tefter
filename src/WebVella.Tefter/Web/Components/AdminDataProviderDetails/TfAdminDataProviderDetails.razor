@@ -5,31 +5,12 @@
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@DataProviderDetailsState.Value?.Provider?.Name"
 							 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 		</FluentGridItem>
-		<FluentGridItem xs="6"></FluentGridItem>
-	</FluentGrid>
-	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@DataProviderDetailsState.Value?.Provider?.ProviderType.Name"
 							 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
 		</FluentGridItem>
-		<FluentGridItem xs="6">
-		</FluentGridItem>
 	</FluentGrid>
-	<FluentGrid Style="margin-top:3px;">
-		<FluentGridItem xs="12">
-			@if (DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType is null) { }
-			else if (DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
-			{
-				<DynamicComponent Type="DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
-			}
-			else
-			{
-				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
-					<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
-				</FluentMessageBar>
-			}
-		</FluentGridItem>
-	</FluentGrid>
+
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
@@ -45,11 +26,27 @@
 			else
 			{
 				<FluentStack Orientation="@Orientation.Horizontal">
-					@foreach (var item in supportedDataTypes.OrderBy(x=>x))
+					@foreach (var item in supportedDataTypes.OrderBy(x => x))
 					{
 						<FluentBadge Appearance="Appearance.Accent">@item</FluentBadge>
 					}
 				</FluentStack>
+			}
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentDivider Style="margin:15px 0"/>
+	<FluentGrid Style="margin-top:3px;">
+		<FluentGridItem xs="12">
+			@if (DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType is null) { }
+			else if (DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+			{
+				<DynamicComponent Type="DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+			}
+			else
+			{
+				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
+					<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
+				</FluentMessageBar>
 			}
 		</FluentGridItem>
 	</FluentGrid>

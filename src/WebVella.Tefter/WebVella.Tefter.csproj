@@ -38,7 +38,7 @@
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.6" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.8.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.8.1" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.8.0" />
 	
 		<PackageReference Include="Npgsql" Version="8.0.3" />
@@ -47,7 +47,7 @@
 		<PackageReference Include="Serilog" Version="4.0.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Context" Version="4.6.5" />
-		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
@@ -55,7 +55,7 @@
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.1" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.Email" Version="4.0.0" />
-		<PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="8.0.6" />
 	</ItemGroup>
@@ -65,8 +65,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Web\Components\AdminDataProviderKeys\TfAdminDataProviderKeys.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	  <Content Update="Web\Pages\PageNotFound.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Web\Components\AdminDataProviderKeys\TfAdminDataProviderKeys.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	</ItemGroup>
 </Project>
