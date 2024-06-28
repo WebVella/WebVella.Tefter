@@ -147,13 +147,13 @@
   <data name="Synchronization key" xml:space="preserve">
     <value>Ключ за синхронизация</value>
   </data>
+  <data name="Synchronization Key is not yet created. Without this key, data cannot be synchronized by this provider." xml:space="preserve">
+    <value>Все още не е създаден ключ за синхронизация. Без този ключ доставчикът не може да получава данни.</value>
+  </data>
   <data name="The key is successfully deleted!" xml:space="preserve">
     <value>Ключът е успешно изтрит!</value>
   </data>
   <data name="The key was successfully updated!" xml:space="preserve">
     <value>Ключът е редактиран успешно!</value>
-  </data>
-  <data name="without this key, data cannot be synchronized by this provider" xml:space="preserve">
-    <value>без този ключ, доставчикът не може да получава данни</value>
   </data>
 </root>

@@ -123,7 +123,16 @@
   <data name="Details" xml:space="preserve">
     <value>Детайли</value>
   </data>
+  <data name="Error" xml:space="preserve">
+    <value>Грешка</value>
+  </data>
   <data name="Saved Views" xml:space="preserve">
     <value>Запазени Изгледи</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Успех</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Внимание</value>
   </data>
 </root>

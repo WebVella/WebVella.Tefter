@@ -11,7 +11,7 @@ public partial class StateEffect
 		if (setResult.IsSuccess)
 		{
 			roles = setResult.Value.Roles.ToList();
-			columnTypes = setResult.Value.DataProviderColumnTypes.ToList();
+			columnTypes = setResult.Value.DataProviderColumnTypes.Where(x=> x.CanBeProviderDataType).ToList();
 		}
 		dispatcher.Dispatch(new GetSystemStateActionResult(
 			isSuccess: setResult.IsSuccess,

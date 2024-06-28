@@ -1,7 +1,7 @@
 ﻿@inherits TfBaseComponent
 
 @if (DataProviderDetailsState.Value.Provider is null || DataProviderDetailsState.Value.Provider.Columns is null
-										|| DataProviderDetailsState.Value.Provider.Columns.Count == 0)
+												|| DataProviderDetailsState.Value.Provider.Columns.Count == 0)
 {
 	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>
@@ -9,62 +9,55 @@
 else
 {
 	<FluentLabel Typo="Typography.H4" Style="margin:0 0 15px 0">@LOC("Synchronization key")</FluentLabel>
-	<div class="tf-grid-wrapper">
-		<table class="tf-grid">
-			<thead class="tf-grid-thead">
-				<tr class="tf-grid-tr">
-					<th class="tf-grid-th" style="width:50px;"></th>
-					<th class="tf-grid-th" style="width:250px;">name</th>
-					<th class="tf-grid-th">details</th>
-				</tr>
-			</thead>
-			<tbody class="tf-grid-tbody">
-				@if (false)
-				{
+	@if (false)
+	{
+		<div class="tf-grid-wrapper">
+			<table class="tf-grid">
+				<thead class="tf-grid-thead">
 					<tr class="tf-grid-tr">
-						<td class="tf-grid-td">
-							<div>
-								<FluentButton Appearance="@Appearance.Outline" IconStart="@(new Icons.Regular.Size20.Edit())"
-											  Title="@LOC("Edit key")" />
-								<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete key")">
-									<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.Delete())" />
-								</FluentButton>
-							</div>
-						</td>
-						<td class="tf-grid-td"><div>dasd</div></td>
-						<td class="tf-grid-td">
-							<div>
-								<FluentStack>
-									<FluentBadge Appearance="Appearance.Accent">Column1</FluentBadge>
-									<span>+</span>
-									<FluentBadge Appearance="Appearance.Accent">Column2</FluentBadge>
-									<span>+</span>
-									<FluentBadge Appearance="Appearance.Accent">Column3</FluentBadge>
-								</FluentStack>
-							</div>
-						</td>
+						<th class="tf-grid-th" style="width:50px;"></th>
+						<th class="tf-grid-th" style="width:250px;">name</th>
+						<th class="tf-grid-th">details</th>
 					</tr>
-				}
-			</tbody>
-			<tfoot class="tf-grid-tfoot">
-				<tr class="tf-grid-tr">
-					<td class="tf-grid-td" colspan="2">
-						<div>
-							<FluentButton Appearance="@Appearance.Outline">
-								@LOC("Synchronization key")
-								<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
-							</FluentButton>
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div style="color:var(--accent-fill-rest)">
-							@LOC("without this key, data cannot be synchronized by this provider")
-						</div>
-					</td>
-				</tr>
-			</tfoot>
-		</table>
-	</div>
+				</thead>
+				<tbody class="tf-grid-tbody">
+					@if (false)
+					{
+						<tr class="tf-grid-tr">
+							<td class="tf-grid-td">
+								<div>
+									<FluentButton Appearance="@Appearance.Outline" IconStart="@(new Icons.Regular.Size20.Edit())"
+												  Title="@LOC("Edit key")" />
+									<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete key")">
+										<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.Delete())" />
+									</FluentButton>
+								</div>
+							</td>
+							<td class="tf-grid-td"><div>dasd</div></td>
+							<td class="tf-grid-td">
+								<div>
+									<FluentStack>
+										<FluentBadge Appearance="Appearance.Accent">Column1</FluentBadge>
+										<span>+</span>
+										<FluentBadge Appearance="Appearance.Accent">Column2</FluentBadge>
+										<span>+</span>
+										<FluentBadge Appearance="Appearance.Accent">Column3</FluentBadge>
+									</FluentStack>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+	else
+	{
+		<FluentMessageBar Intent="@MessageIntent.Warning" Title="@LOC("Warning")" AllowDismiss="false">
+			@LOC("Synchronization Key is not yet created. Without this key, data cannot be synchronized by this provider.")
+		</FluentMessageBar>
+
+	}
 	<FluentStack Orientation="@Orientation.Horizontal" Style="justify-content:space-between;">
 		<FluentLabel Typo="Typography.H4" Style="margin:15px 0 15px 0">@LOC("Shared keys")</FluentLabel>
 
@@ -145,10 +138,7 @@ else
 				<tr class="tf-grid-tr">
 					<td class="tf-grid-td" colspan="5">
 						<div>
-							<FluentButton Appearance="@Appearance.Outline">
-								@LOC("Shared key")
-								<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
-							</FluentButton>
+							<TfEmpty />
 						</div>
 					</td>
 				</tr>

@@ -13,7 +13,7 @@
 		</FluentButton>
 	</FluentStack>
 }
-else if(menu == "schema")
+else if (menu == "schema")
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 		@LOC("Add Column")
@@ -26,4 +26,17 @@ else if (menu == "aux")
 		@LOC("Add Aux Column")
 		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
+}
+else if (menu == "keys")
+{
+	<FluentStack>
+		<FluentButton Appearance="@Appearance.Outline">
+			@LOC("Synchronization key")
+			<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+		</FluentButton>
+		<FluentButton Appearance="@Appearance.Outline">
+			@LOC("Shared key")
+			<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+		</FluentButton>
+	</FluentStack>
 }
