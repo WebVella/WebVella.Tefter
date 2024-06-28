@@ -5,7 +5,9 @@ namespace WebVella.Tefter.Web.Components.AdminDataProviderSchema;
 public partial class TfAdminDataProviderSchema : TfBaseComponent
 {
 	[Inject] protected IState<DataProviderDetailsState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<SystemState> SystemState { get; set; }
 
+	private Dictionary<DatabaseColumnType, string> _typeNameDict = new();
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -20,6 +22,11 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 	{
 		base.OnInitialized();
 		_getProvider();
+		foreach (var item in SystemState.Value.DataProviderColumnTypes)
+		{
+			_typeNameDict[item.Type] = item.Name;
+		}
+
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 	private void On_GetDataProviderDetailsActionResult(DataProviderDetailsChangedAction action)

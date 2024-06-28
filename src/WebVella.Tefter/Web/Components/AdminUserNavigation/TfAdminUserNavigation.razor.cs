@@ -84,7 +84,9 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 
 	private async Task onAddClick()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(new User(), new DialogParameters()
+		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(
+		new User(),
+		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

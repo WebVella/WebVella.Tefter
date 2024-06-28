@@ -14,8 +14,10 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 			menu = urlData.SegmentsByIndexDict[3];
 	}
 
-	private async Task _editUser(){
-		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(UserDetailsState.Value.User, 
+	private async Task _editUser()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(
+		UserDetailsState.Value.User,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

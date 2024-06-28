@@ -42,6 +42,7 @@ public partial class TfStateInitializer : TfBaseComponent
 			ActionSubscriber.SubscribeToAction<SetCultureActionResult>(this, initCultureStateResult);
 			ActionSubscriber.SubscribeToAction<SetThemeActionResult>(this, initThemeStateResult);
 			ActionSubscriber.SubscribeToAction<SetSidebarActionResult>(this, initSidebarStateResult);
+			ActionSubscriber.SubscribeToAction<GetSystemStateActionResult>(this, initSystemStateResult);
 
 			//Setup states
 			var tfUser = ((TfIdentity)user.Identity).User;
@@ -49,6 +50,7 @@ public partial class TfStateInitializer : TfBaseComponent
 			await initCultureState(tfUser);
 			initThemeState(tfUser);
 			initSidebarState(tfUser);
+			initSystemState();
 
 			//For the logout fix
 			Navigator.LocationChanged += Navigator_LocationChanged;
@@ -195,6 +197,28 @@ public partial class TfStateInitializer : TfBaseComponent
 		CheckAllInited();
 	}
 
+
+	/// <summary>
+	/// Inits the sidebar state from user
+	/// </summary>
+	/// <param name="user"></param>
+	private void initSystemState()
+	{
+		Dispatcher.Dispatch(new GetSystemStateAction());
+	}
+
+	/// <summary>
+	/// Processes the sidebar state init action result
+	/// </summary>
+	/// <param name="action"></param>
+	private void initSystemStateResult(GetSystemStateActionResult action)
+	{
+		context.SystemStateInited = true;
+		CheckAllInited();
+	}
+
+
+	
 	/// <summary>
 	/// If all inited, removes the loading state
 	/// </summary>
@@ -239,12 +263,14 @@ public class TfStateInitializerContext
 	public bool CultureStateInited { get; set; } = false;
 	public bool ThemeStateInited { get; set; } = false;
 	public bool SidebarStateInited { get; set; } = false;
+	public bool SystemStateInited { get; set; } = false;
 
 	public bool AllInited
 	{
 		get => UserStateInited
 		&& CultureStateInited
 		&& ThemeStateInited
-		&& SidebarStateInited;
+		&& SidebarStateInited
+		&& SystemStateInited;
 	}
 }
