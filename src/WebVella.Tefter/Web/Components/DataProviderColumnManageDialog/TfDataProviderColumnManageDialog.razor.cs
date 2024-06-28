@@ -1,6 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
 public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<Tuple<TfDataProviderColumn, TfDataProvider>>
 {
+	[Inject] private IState<SystemState> SystemState { get; set; }
+
 	[Parameter]
 	public Tuple<TfDataProviderColumn, TfDataProvider> Content { get; set; }
 
@@ -16,7 +18,6 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private Icon _iconBtn;
 	private TfDataProviderColumn _form = new();
 	private TfDataProvider _provider = new();
-	private List<ITfDataProviderType> _allTypes = new();
 	private List<DatabaseColumnTypeInfo> _columnTypes = new();
 	private DatabaseColumnTypeInfo _selectedColumnType = null;
 
@@ -64,13 +65,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		try
 		{
 			//Init type options
-			var typesResult = DataProviderManager.GetProviderTypes();
-			if (!typesResult.IsSuccess) throw new Exception("Cannot load data provider types");
-			_allTypes = typesResult.Value.ToList();
-			if (!_allTypes.Any()) throw new Exception("No Data provider types found in application");
-			var columnTypes = DataProviderManager.GetDatabaseColumnTypeInfos();
-			if (!columnTypes.IsSuccess) throw new Exception("Cannot load data provider column types");
-			_columnTypes = columnTypes.Value.Where(x=> x.CanBeProviderDataType).ToList();
+			_columnTypes = SystemState.Value.DataProviderColumnTypes;
 			if (!_columnTypes.Any()) throw new Exception("No Data provider column types found in application");
 			//Setup form
 			if (Content.Item1.Id == Guid.Empty)

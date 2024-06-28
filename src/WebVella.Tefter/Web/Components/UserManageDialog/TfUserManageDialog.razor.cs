@@ -3,8 +3,8 @@
 namespace WebVella.Tefter.Web.Components.UserManageDialog;
 public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<User>
 {
-	[Parameter]
-	public User Content { get; set; }
+	[Inject] private IState<SystemState> SystemState {  get; set; }
+	[Parameter] public User Content { get; set; }
 
 	[CascadingParameter]
 	public FluentDialog Dialog { get; set; }
@@ -17,23 +17,16 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 	private Icon _iconBtn;
 	private TfUserManageDialogModel _form = new();
 	private List<Role> _allRoles = new();
+	private bool _isCreate = false;
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		if (Content is null) throw new Exception("Content is null");
-		if (Content.Id == Guid.Empty)
-		{
-			_title = LOC("Create user");
-			_btnText = LOC("Create");
-			_iconBtn = new Icons.Regular.Size20.Add();
-		}
-		else
-		{
-			_title = LOC("Manage user");
-			_btnText = LOC("Save");
-			_iconBtn = new Icons.Regular.Size20.Save();
-		}
+		if (Content.Id == Guid.Empty) _isCreate = true;
+		_title = _isCreate ? LOC("Create user") : LOC("Manage user");
+		_btnText = _isCreate ? LOC("Create") : LOC("Save");
+		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
 		base.InitForm(_form);
 	}
 
@@ -54,11 +47,9 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			var rolesResult = await IdentityManager.GetRolesAsync();
-			if (rolesResult.IsSuccess)
-				_allRoles = rolesResult.Value.ToList();
+			_allRoles = SystemState.Value.Roles;
 
-			if (Content.Id == Guid.Empty)
+			if (_isCreate)
 			{
 
 				_form.Culture = TfConstants.CultureOptions[0];
@@ -114,7 +105,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			await InvokeAsync(StateHasChanged);
 
 			UserBuilder userBuilder;
-			if (_form.Id == Guid.Empty)
+			if (_isCreate)
 			{
 				userBuilder = IdentityManager.CreateUserBuilder(null);
 				userBuilder
@@ -169,9 +160,9 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 
 	private void _roleChanged(Role role)
 	{
-		if (_form.Roles.Any(x=> x.Id == role.Id))
+		if (_form.Roles.Any(x => x.Id == role.Id))
 		{
-			_form.Roles = _form.Roles.Where(x=> x.Id != role.Id).ToList();
+			_form.Roles = _form.Roles.Where(x => x.Id != role.Id).ToList();
 		}
 		else
 		{
