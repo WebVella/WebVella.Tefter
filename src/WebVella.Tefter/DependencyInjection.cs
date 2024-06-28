@@ -24,20 +24,7 @@ public static class DependencyInjection
 		services.AddScoped<ITfService, TfService>();
 		services.AddSingleton<IWebConfigurationService, WebConfigurationService>();
 
-		//register dependencies from WebVella.Tefter
-		services.AddTefterDI(unitTestModeOn);
 
-		return services;
-	}
-
-	public static IServiceProvider UseTefter(this IServiceProvider serviceProvider)
-	{
-		serviceProvider.UseTefterDI();
-		return serviceProvider;
-	}
-
-	public static IServiceCollection AddTefterDI(this IServiceCollection services, bool unitTestModeOn = false)
-	{
 		services.AddHttpContextAccessor();
 		services.AddCascadingAuthenticationState();
 		services.AddAuthorizationCore();
@@ -70,10 +57,11 @@ public static class DependencyInjection
 		services.AddSingleton<IIdentityManager, IdentityManager>();
 
 
+
 		return services;
 	}
 
-	public static IServiceProvider UseTefterDI(this IServiceProvider serviceProvider)
+	public static IServiceProvider UseTefter(this IServiceProvider serviceProvider)
 	{
 		//because application domain does not get assemblies with no instances yet
 		//we for load of all assemblies (its workaround)
