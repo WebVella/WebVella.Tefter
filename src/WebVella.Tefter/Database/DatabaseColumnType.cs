@@ -2,15 +2,15 @@
 
 public enum DatabaseColumnType
 {
-	AutoIncrement = 1,
-	ShortInteger = 2,
-	Integer = 3,
-	LongInteger = 4,
-	Number = 5,
-	Boolean = 6,
-	Date = 7,
-	DateTime = 8,
-	ShortText = 9,
-	Text = 10,
-	Guid = 11
+	ShortInteger = 0,
+	Integer = 1,
+	LongInteger = 2,
+	Number = 3,
+	Boolean = 4,
+	Date = 5,
+	DateTime = 6,
+	ShortText = 7,
+	Text = 8,
+	Guid = 9,
+	AutoIncrement = 10
 }
