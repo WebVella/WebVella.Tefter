@@ -13,9 +13,9 @@ public class BaseTest
     static BaseTest()
     {
         Context = new TestContext();
-		Context.Services.AddTefterDI();
+		Context.Services.AddTefter();
         ServiceProvider = Context.Services.BuildServiceProvider();
-		ServiceProvider.UseTefterDI();
+		ServiceProvider.UseTefter();
     }
 
     protected DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters)

@@ -36,7 +36,6 @@ global using Microsoft.AspNetCore.Components.Routing;
 global using Microsoft.FluentUI.AspNetCore.Components.Extensions;
 global using Microsoft.Extensions.Localization;
 
-
 global using Npgsql;
 global using Nito.AsyncEx;
 global using Fluxor;
