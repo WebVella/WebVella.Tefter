@@ -148,6 +148,19 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						c.WithDefaultValue(0);
 					});
 
+				dbBuilder
+					.WithTableBuilder(providerTableName)
+					.WithConstraints(constraints =>
+					{
+						constraints
+							.AddForeignKeyConstraint($"fk_{providerTableName}_{sharedKey.DbName}_id_dict", c =>
+							{
+								c.WithColumns($"tf_sk_{sharedKey.DbName}_id")
+								.WithForeignTable("id_dict")
+								.WithForeignColumns("id");
+							});
+					});
+
 				_dbManager.SaveChanges(dbBuilder);
 
 				scope.Complete();

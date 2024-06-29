@@ -193,6 +193,31 @@ internal class TefterSystemMigration2024062701 : TefterSystemMigration
 			});
 
 		#endregion
+
+		#region  TABLE: ID_DICT
+
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "id_dict")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
+					.AddTextColumn("text_id", c => { c.NotNullable().WithDefaultValue(""); });
+
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_id_dict", c => { c.WithColumns("id"); });
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes
+					.AddBTreeIndex("ix_id_dict_id", i => { i.WithColumns("id"); })
+					.AddHashIndex("ux_id_dict_text_id", c => { c.WithColumn("text_id"); });
+			});
+
+		#endregion
 	}
 
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)

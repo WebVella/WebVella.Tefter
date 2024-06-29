@@ -2,14 +2,49 @@
 
 internal static class DatabaseSqlProvider
 {
-    #region <=== GenerateCreateExtensionsScript ===>
+    #region <=== CREATE SYSTEM REQUIREMENTS ===>
 
-    private const string CREATE_EXTENSIONS_SQL = "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"; " +
-                                                 "CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";";
-
-    public static string GenerateCreateExtensionsScript()
+    public static string GenerateSystemRequirementsScript()
     {
-        return CREATE_EXTENSIONS_SQL;
+		StringBuilder sb = new StringBuilder();
+		sb.AppendLine("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
+		sb.AppendLine();
+
+		sb.AppendLine("CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";");
+		sb.AppendLine();
+
+		sb.AppendLine("CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";");
+		sb.AppendLine();
+
+		sb.AppendLine(@"
+CREATE OR REPLACE FUNCTION _tefter_id_dict_insert_select(text)
+RETURNS uuid AS $$
+DECLARE 
+	result_id uuid;
+BEGIN
+	result_id := (SELECT id_dict.id FROM id_dict WHERE id_dict.text_id = $1 LIMIT 1);
+	IF result_id IS NULL THEN
+		BEGIN
+			PERFORM pg_advisory_lock(1975);	
+			result_id := (SELECT id_dict.id FROM id_dict WHERE id_dict.text_id = $1 LIMIT 1);
+			IF result_id IS NULL THEN
+				result_id = uuid_generate_v1();
+				INSERT INTO id_dict(id,text_id) VALUES(result_id,$1);
+			END IF;
+		EXCEPTION WHEN OTHERS THEN
+			PERFORM pg_advisory_unlock(1975);	
+			RAISE EXCEPTION '%', SQLERRM;
+		END;
+		PERFORM pg_advisory_unlock(1975);
+	END IF;
+
+	RETURN result_id;	
+END;
+$$ LANGUAGE plpgsql;
+");
+		sb.AppendLine();
+
+		return sb.ToString(); ;
     }
 
     #endregion
@@ -522,7 +557,7 @@ ORDER BY t.relname,ix.conname,array_position(ix.conkey, a.attnum);";
 
     #endregion
 
-    #region <=== GetConstraintsMetaSql ===>
+    #region <=== GetIndexesMetaSql ===>
 
     public static string GetIndexesMetaSql()
     {

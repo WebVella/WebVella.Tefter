@@ -29,7 +29,7 @@ internal partial class MigrationManager : IMigrationManager
 		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
 			//checks and creates required postgres database extensions
-			_dbService.ExecuteSqlNonQueryCommand(DatabaseSqlProvider.GenerateCreateExtensionsScript());
+			_dbService.ExecuteSqlNonQueryCommand(DatabaseSqlProvider.GenerateSystemRequirementsScript());
 
 			var dbBuilder = _dbManager.GetDatabaseBuilder();
 

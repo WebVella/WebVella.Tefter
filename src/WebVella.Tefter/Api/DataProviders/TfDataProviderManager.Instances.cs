@@ -228,7 +228,14 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					.WithConstraints(constraints =>
 					{
 						constraints
-							.AddPrimaryKeyConstraintBuilder($"pk_{providerTableName}", c => { c.WithColumns("tf_id"); });
+							.AddPrimaryKeyConstraint($"pk_{providerTableName}", c => { c.WithColumns("tf_id"); })
+							.AddForeignKeyConstraint($"fk_{providerTableName}_id_dict", c =>
+							{
+								c.WithColumns("tf_id")
+								.WithForeignTable("id_dict")
+								.WithForeignColumns("id");
+							});
+
 					})
 					.WithIndexes(indexes =>
 					{
