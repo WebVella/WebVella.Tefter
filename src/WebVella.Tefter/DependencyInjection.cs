@@ -55,6 +55,7 @@ public static class DependencyInjection
 		services.AddSingleton<IDboManager, DboManager>();
 		services.AddSingleton<IMigrationManager, MigrationManager>();
 		services.AddSingleton<IIdentityManager, IdentityManager>();
+		services.AddSingleton<IIdManager, IdManager>();
 
 
 

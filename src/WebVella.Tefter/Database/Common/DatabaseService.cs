@@ -9,10 +9,12 @@ public interface IDatabaseService
     DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters);
     int ExecuteSqlNonQueryCommand(string sql, params NpgsqlParameter[] parameters);
     int ExecuteSqlNonQueryCommand(string sql, List<NpgsqlParameter> parameters);
-    ValueTask<DataTable> ExecuteSqlQueryCommandAsync(string sql, params NpgsqlParameter[] parameters);
-    ValueTask<DataTable> ExecuteSqlQueryCommandAsync(string sql, List<NpgsqlParameter> parameters);
-    ValueTask<int> ExecuteSqlNonQueryCommandAsync(string sql, params NpgsqlParameter[] parameters);
-    ValueTask<int> ExecuteSqlNonQueryCommandAsync(string sql, List<NpgsqlParameter> parameters);
+	NpgsqlDataReader GetReader(string sql, params NpgsqlParameter[] parameters);
+	Task<DataTable> ExecuteSqlQueryCommandAsync(string sql, params NpgsqlParameter[] parameters);
+    Task<DataTable> ExecuteSqlQueryCommandAsync(string sql, List<NpgsqlParameter> parameters);
+    Task<int> ExecuteSqlNonQueryCommandAsync(string sql, params NpgsqlParameter[] parameters);
+    Task<int> ExecuteSqlNonQueryCommandAsync(string sql, List<NpgsqlParameter> parameters);
+	Task<NpgsqlDataReader> GetReaderAsync(string sql, params NpgsqlParameter[] parameters);
 }
 
 
@@ -66,7 +68,36 @@ public class DatabaseService : IDatabaseService
         }
     }
 
-    public int ExecuteSqlNonQueryCommand(string sql, params NpgsqlParameter[] parameters)
+	public NpgsqlDataReader GetReader(string sql, params NpgsqlParameter[] parameters)
+	{
+		ProcessNpgsqlParameters(parameters);
+		using (var dbCon = CreateConnection())
+		{
+			NpgsqlCommand cmd;
+			if (parameters != null && parameters.Length > 0)
+				cmd = dbCon.CreateCommand(sql, CommandType.Text, new List<NpgsqlParameter>(parameters));
+			else
+				cmd = dbCon.CreateCommand(sql, CommandType.Text);
+			return cmd.ExecuteReader();
+		}
+	}
+
+	public async Task<NpgsqlDataReader> GetReaderAsync(string sql, params NpgsqlParameter[] parameters)
+	{
+		ProcessNpgsqlParameters(parameters);
+		using (var dbCon = CreateConnection())
+		{
+			NpgsqlCommand cmd;
+			if (parameters != null && parameters.Length > 0)
+				cmd = dbCon.CreateCommand(sql, CommandType.Text, new List<NpgsqlParameter>(parameters));
+			else
+				cmd = dbCon.CreateCommand(sql, CommandType.Text);
+			
+			return await cmd.ExecuteReaderAsync();
+		}
+	}
+
+	public int ExecuteSqlNonQueryCommand(string sql, params NpgsqlParameter[] parameters)
     {
         return ExecuteSqlNonQueryCommand(sql, new List<NpgsqlParameter>(parameters));
     }
@@ -80,13 +111,13 @@ public class DatabaseService : IDatabaseService
         }
     }
 
-    public async ValueTask<DataTable> ExecuteSqlQueryCommandAsync(string sql, params NpgsqlParameter[] parameters)
+    public async Task<DataTable> ExecuteSqlQueryCommandAsync(string sql, params NpgsqlParameter[] parameters)
     {
         return await ExecuteSqlQueryCommandAsync(sql, new List<NpgsqlParameter>(parameters));
     }
 
 #pragma warning disable 1998
-    public async ValueTask<DataTable> ExecuteSqlQueryCommandAsync(string sql, List<NpgsqlParameter> parameters)
+    public async Task<DataTable> ExecuteSqlQueryCommandAsync(string sql, List<NpgsqlParameter> parameters)
     {
         ProcessNpgsqlParameters(parameters);
         //we are not using postgres driver for async operation because of transaction wrapper library
@@ -101,13 +132,13 @@ public class DatabaseService : IDatabaseService
     }
 #pragma warning restore 1998
 
-    public async ValueTask<int> ExecuteSqlNonQueryCommandAsync(string sql, params NpgsqlParameter[] parameters)
+    public async Task<int> ExecuteSqlNonQueryCommandAsync(string sql, params NpgsqlParameter[] parameters)
     {
         return await ExecuteSqlNonQueryCommandAsync(sql, new List<NpgsqlParameter>(parameters));
     }
 
 #pragma warning disable 1998
-    public async ValueTask<int> ExecuteSqlNonQueryCommandAsync(string sql, List<NpgsqlParameter> parameters)
+    public async Task<int> ExecuteSqlNonQueryCommandAsync(string sql, List<NpgsqlParameter> parameters)
     {
 
         ProcessNpgsqlParameters(parameters);
