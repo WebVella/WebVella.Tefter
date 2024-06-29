@@ -230,7 +230,7 @@ internal class TefterSystemMigration2024062701 : TefterSystemMigration
 		//this entry is required because data provider shared keys default
 		//values are Guid.Empty and they have foreign key to id_dict
 	
-		dbService.ExecuteSqlNonQueryCommand("INSERT id_dict(id,text_id) VALUES(@id,@text_id)",
+		dbService.ExecuteSqlNonQueryCommand("INSERT INTO id_dict(id,text_id) VALUES(@id,@text_id)",
 			new NpgsqlParameter("id", Guid.Empty), new NpgsqlParameter("text_id", Guid.Empty.ToString()));
 
 		// CREATES INITIAL ADMINISTRATOR USER AND ROLE 
