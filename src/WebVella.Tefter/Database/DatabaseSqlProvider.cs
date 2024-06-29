@@ -17,7 +17,7 @@ internal static class DatabaseSqlProvider
 		sb.AppendLine();
 
 		sb.AppendLine(@"
-CREATE OR REPLACE FUNCTION _tefter_id_dict_insert_select(text)
+CREATE OR REPLACE FUNCTION _tefter_id_dict_insert_select(text,uuid)
 RETURNS uuid AS $$
 DECLARE 
 	result_id uuid;
@@ -28,7 +28,11 @@ BEGIN
 			PERFORM pg_advisory_lock(1975);	
 			result_id := (SELECT id_dict.id FROM id_dict WHERE id_dict.text_id = $1 LIMIT 1);
 			IF result_id IS NULL THEN
-				result_id = uuid_generate_v1();
+				IF $2 IS NOT NULL THEN
+					result_id := $2;
+				ELSE
+					result_id = uuid_generate_v1();
+				END IF;
 				INSERT INTO id_dict(id,text_id) VALUES(result_id,$1);
 			END IF;
 		EXCEPTION WHEN OTHERS THEN
