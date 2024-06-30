@@ -3,19 +3,8 @@ public partial interface ITfService
 {
 	Task<Result<UserSession>> GetUserSession(Guid userId, Guid? spaceId,
 		Guid? spaceDataId, Guid? spaceViewId);
-	Task<Result<UserSession>> SetSessionUI(Guid userId,
-		Guid? spaceId, Guid? spaceDataId, Guid? spaceViewId,
-		DesignThemeModes themeMode, OfficeColor themeColor,
-		bool sidebarExpanded, string cultureCode);
 
-	Task<Result<bool>> SetUserTheme(Guid userId,
-		DesignThemeModes themeMode, OfficeColor themeColor);
 
-	Task<Result<bool>> SetUserSidebarExpanded(Guid userId,
-		bool sidebarExpanded);
-
-	Task<Result<bool>> SetUserCulture(Guid userId,
-		string cultureCode);
 }
 
 public partial class TfService : ITfService
@@ -113,70 +102,5 @@ public partial class TfService : ITfService
 	/// <param name="cultureCode"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async Task<Result<UserSession>> SetSessionUI(Guid userId,
-		Guid? spaceId, Guid? spaceDataId, Guid? spaceViewId,
-		DesignThemeModes themeMode, OfficeColor themeColor,
-		bool sidebarExpanded, string cultureCode)
-	{
-		Result<User> userResult = await GetUserWithChecks(userId);
-		var userBld = identityManager.CreateUserBuilder(userResult.Value);
-		userBld.WithThemeMode(themeMode);
-		userBld.WithThemeColor(themeColor);
-		userBld.WithOpenSidebar(sidebarExpanded);
-		userBld.WithCultureCode(cultureCode);
-		var saveResult = await identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(userResult.Errors));
-		return await GetUserSession(userId, spaceId, spaceDataId, spaceViewId);
-	}
-
-	public async Task<Result<bool>> SetUserTheme(Guid userId,
-		DesignThemeModes themeMode, OfficeColor themeColor)
-	{
-		Result<User> userResult = await GetUserWithChecks(userId);
-		var userBld = identityManager.CreateUserBuilder(userResult.Value);
-		userBld
-		.WithThemeMode(themeMode)
-		.WithThemeColor(themeColor);
-		var saveResult = await identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(userResult.Errors));
-		return Result.Ok(true);
-	}
-
-	public async Task<Result<bool>> SetUserSidebarExpanded(Guid userId,
-		bool sidebarOpen)
-	{
-		Result<User> userResult = await GetUserWithChecks(userId);
-		var userBld = identityManager.CreateUserBuilder(userResult.Value);
-		userBld
-		.WithOpenSidebar(sidebarOpen);
-		var saveResult = await identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(userResult.Errors));
-		return Result.Ok(true);
-	}
-
-	public async Task<Result<bool>> SetUserCulture(Guid userId,
-		string cultureCode)
-	{
-		Result<User> userResult = await GetUserWithChecks(userId);
-		var userBld = identityManager.CreateUserBuilder(userResult.Value);
-		userBld
-		.WithCultureCode(cultureCode);
-		var saveResult = await identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(userResult.Errors));
-		return Result.Ok(true);
-	}
-
-	internal async Task<Result<User>> GetUserWithChecks(Guid userId)
-	{
-		Result<User> userResult = await identityManager.GetUserAsync(userId);
-		if (userResult.IsFailed)
-			return Result.Fail(new Error("GetUserAsync failed").CausedBy(userResult.Errors));
-		if (userResult.Value is null)
-			return Result.Fail(new Error("User not found").CausedBy(userResult.Errors));
-		return userResult;
-	}
+	
 }

@@ -1,8 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿namespace WebVella.Tefter.UseCases.Models;
 
-namespace WebVella.Tefter.Web.Models;
-
-public record ThemeSettings
+public record TucThemeSettings
 {
 	[JsonIgnore]
 	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;

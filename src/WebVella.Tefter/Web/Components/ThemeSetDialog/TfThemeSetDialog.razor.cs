@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components.ThemeSetDialog;
-public partial class TfThemeSetDialog : IDialogContentComponent<ThemeSettings>
+public partial class TfThemeSetDialog : IDialogContentComponent<TucThemeSettings>
 {
     [Parameter]
-    public ThemeSettings Content { get; set; }
+    public TucThemeSettings Content { get; set; }
 
     [CascadingParameter]
     public FluentDialog Dialog { get; set; }
@@ -26,7 +26,7 @@ public partial class TfThemeSetDialog : IDialogContentComponent<ThemeSettings>
 
     private async Task _save()
     {
-        await Dialog.CloseAsync(new ThemeSettings{ ThemeMode = _themeMode, ThemeColor = _themeColor });
+        await Dialog.CloseAsync(new TucThemeSettings{ ThemeMode = _themeMode, ThemeColor = _themeColor });
     }
     private async Task _cancel()
     {

@@ -2,9 +2,6 @@
 
 namespace WebVella.Tefter.Web.Services;
 public partial interface ITfService{
-	Task SetUnprotectedLocalStorage(string key, string value);
-	Task RemoveUnprotectedLocalStorage(string key);
-	Task<string> GetUnprotectedLocalStorage(string key);
 }
 
 public partial class TfService : ITfService
@@ -27,18 +24,4 @@ public partial class TfService : ITfService
 		_jsRuntime = jsRuntime;
 	}
 
-	public async Task SetUnprotectedLocalStorage(string key, string value)
-	{
-		await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, value);
-	}
-
-	public async Task RemoveUnprotectedLocalStorage(string key)
-	{
-		await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
-	}
-
-	public async Task<string> GetUnprotectedLocalStorage(string key)
-	{
-		return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
-	}
 }

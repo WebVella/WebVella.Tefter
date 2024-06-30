@@ -54,7 +54,7 @@ public partial class TfUserNavigation
 
 	private async Task _setTheme()
 	{
-		var themeSettings = new ThemeSettings { ThemeMode = ThemeState.Value.ThemeMode, ThemeColor = ThemeState.Value.ThemeColor };
+		var themeSettings = new TucThemeSettings { ThemeMode = ThemeState.Value.ThemeMode, ThemeColor = ThemeState.Value.ThemeColor };
 		var dialog = await DialogService.ShowDialogAsync<TfThemeSetDialog>(themeSettings, new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -63,12 +63,11 @@ public partial class TfUserNavigation
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var response = (ThemeSettings)result.Data;
+			var response = (TucThemeSettings)result.Data;
 			Dispatcher.Dispatch(new SetThemeAction(
 				userId: UserState.Value.User.Id,
 				themeMode: response.ThemeMode,
-				themeColor: response.ThemeColor,
-				persist:true
+				themeColor: response.ThemeColor
 		));
 
 		}

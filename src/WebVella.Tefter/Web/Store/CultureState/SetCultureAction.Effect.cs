@@ -9,7 +9,14 @@ public partial class StateEffect
 			userId: action.UserId,
 			cultureCode: action.Culture.CultureCode
 		);
-		if(result.IsFailed) return;
+		ResultUtils.ProcessServiceResponse(
+			response: result,
+			toastErrorMessage: "",
+			notificationErrorTitle: "",
+			toastService: ToastService,
+			messageService: MessageService
+		);
+		if (result.IsFailed) return;
 		dispatcher.Dispatch(new SetCultureActionResult());
 	}
 }

@@ -66,32 +66,14 @@ public class TfFormBaseComponent : TfBaseComponent
 	/// <param name="result"></param>
 	protected void ProcessFormSubmitResponse(Result<object> result)
 	{
-		var generalErrors = new List<string>();
-		if (result is null || EditContext is null || MessageStore is null) return;
-		if (result.IsSuccess) return;
-
-		foreach (IError iError in result.Errors)
-		{
-			if (iError is ValidationError)
-			{
-				var error = (ValidationError)iError;
-				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					generalErrors.Add(error.Reason);
-				else
-					MessageStore.Add(EditContext.Field(error.PropertyName), error.Reason);
-			}
-			else
-			{
-				var error = (IError)iError;
-				generalErrors.Add(error.Message);
-			}
-
-		}
-		EditContext.NotifyValidationStateChanged();
-		if (generalErrors.Count > 0)
-		{
-			ToastService.ShowToast(ToastIntent.Error, LOC("Unexpected Error! Check Notifications for details"));
-			SendErrorsToNotifications(LOC("Unexpected Error!"), generalErrors);
-		}
+		ResultUtils.ProcessFormSubmitResponse(
+			result: result,
+			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
+			notificationErrorTitle: LOC("Unexpected Error!"),
+			editContext: EditContext,
+			messageStore: MessageStore,
+			toastService: ToastService,
+			messageService: MessageService
+		);
 	}
 }

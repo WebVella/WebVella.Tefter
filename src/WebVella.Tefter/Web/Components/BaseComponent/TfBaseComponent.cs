@@ -52,28 +52,13 @@ public class TfBaseComponent : FluxorComponent
 	/// <param name="ex"></param>
 	protected void ProcessServiceResponse(Result<object> response)
 	{
-		if (response.IsSuccess) return;
-		var generalErrors = new List<string>();
-		foreach (IError iError in response.Errors)
-		{
-			if (iError is ValidationError)
-			{
-				var error = (ValidationError)iError;
-				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					generalErrors.Add(error.Reason);
-			}
-			else
-			{
-				var error = (IError)iError;
-				generalErrors.Add(error.Message);
-			}
-
-		}
-		if (generalErrors.Count > 0)
-		{
-			ToastService.ShowToast(ToastIntent.Error, LOC("Unexpected Error! Check Notifications for details"));
-			SendErrorsToNotifications(LOC("Unexpected Error!"), generalErrors);
-		}
+		ResultUtils.ProcessServiceResponse(
+			response:response,
+			toastErrorMessage:LOC("Unexpected Error! Check Notifications for details"),
+			notificationErrorTitle:LOC("Unexpected Error!"),
+			toastService:ToastService,
+			messageService:MessageService
+		);
 	}
 
 
@@ -83,36 +68,14 @@ public class TfBaseComponent : FluxorComponent
 	/// <param name="ex"></param>
 	protected string ProcessException(Exception ex)
 	{
-		string errorMessage = LOC("Unexpected Error! Check Notifications for details");
-		ToastService.ShowToast(ToastIntent.Error, errorMessage);
-		SendErrorsToNotifications(LOC("Unexpected Error!"), new List<string> { ex.Message });
-
-		return errorMessage;
+		return ResultUtils.ProcessException(
+			exception:ex,
+			toastErrorMessage:LOC("Unexpected Error! Check Notifications for details"),
+			notificationErrorTitle:LOC("Unexpected Error!"),
+			toastService:ToastService,
+			messageService: MessageService
+		);
 	}
-	/// <summary>
-	/// Send error details to notification center
-	/// </summary>
-	/// <param name="message"></param>
-	/// <param name="errors"></param>
-	protected void SendErrorsToNotifications(string message, List<string> errors)
-	{
-		var divHtml = "<ul class='notification-list'>";
-		foreach (var error in errors)
-		{
-			divHtml += $"<li>{error}</li>";
-		}
-		divHtml += "</ul>";
-
-		MessageService.ShowMessageBar(options =>
-		{
-			options.Intent = MessageIntent.Error;
-			options.Title = message;
-			options.Body = divHtml;
-			options.Timestamp = DateTime.Now;
-			options.Timeout = 15000;
-			options.AllowDismiss = true;
-			options.Section = TfConstants.MESSAGES_NOTIFICATION_CENTER;
-		});
-	}
+	
 
 }
