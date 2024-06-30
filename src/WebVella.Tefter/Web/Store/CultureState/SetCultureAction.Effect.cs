@@ -3,13 +3,13 @@
 public partial class StateEffect
 {
 	[EffectMethod]
-	public Task SetCultureActionEffect(SetCultureAction action, IDispatcher dispatcher)
+	public async Task SetCultureActionEffect(SetCultureAction action, IDispatcher dispatcher)
 	{
-		action.UseCase.SetUserCulture(
+		var result = await UseCase.SetUserCulture(
 			userId: action.UserId,
 			cultureCode: action.Culture.CultureCode
 		);
+		if(result.IsFailed) return;
 		dispatcher.Dispatch(new SetCultureActionResult());
-		return Task.CompletedTask;
 	}
 }

@@ -5,6 +5,6 @@ public static partial class ScreenStateReducers
 	[ReducerMethod()]
 	public static ScreenState InitScreenStateActionReducer(ScreenState state, InitScreenStateAction action)
 	{
-		return state with {UseCase = action.UseCase, SidebarExpanded = action.SidebarExpanded};
+		return state with {SidebarExpanded = action.SidebarExpanded};
 	}
 }

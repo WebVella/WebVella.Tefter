@@ -1,15 +1,15 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-public static class DateOnlyUtils
+internal static class DateOnlyUtils
 {
-	public static string ToString(DateOnly? date) => date?.ToString(TfConstants.DateFormatUrl);
-	public static string ForView(DateOnly? date) => date?.ToString(TfConstants.DateFormat, CultureInfo.CurrentCulture);
-	public static string FromStringForView(string dateString)
+	internal static string ToString(DateOnly? date) => date?.ToString(TfConstants.DateFormatUrl);
+	internal static string ForView(DateOnly? date) => date?.ToString(TfConstants.DateFormat, CultureInfo.CurrentCulture);
+	internal static string FromStringForView(string dateString)
 	{
 		var date = FromString(dateString);
 		return ForView(date);
 	}
-	public static DateOnly? FromString(string dateString)
+	internal static DateOnly? FromString(string dateString)
 	{
 		if (string.IsNullOrWhiteSpace(dateString))
 			return null;
@@ -20,14 +20,14 @@ public static class DateOnlyUtils
 		throw new Exception($"Date only string \"{dateString}\" not in proper format: {TfConstants.DateFormatUrl}");
 	}
 
-	public static string ToUrlString(DateOnly? date)
+	internal static string ToUrlString(DateOnly? date)
 	{
 		if (date is null)
 			return null;
 		return date.Value.ToString(TfConstants.DateFormatUrl, CultureInfo.InvariantCulture);
 	}
 
-	public static DateOnly? FromUrlString(string dateString)
+	internal static DateOnly? FromUrlString(string dateString)
 	{
 		if (String.IsNullOrWhiteSpace(dateString))
 			return null;

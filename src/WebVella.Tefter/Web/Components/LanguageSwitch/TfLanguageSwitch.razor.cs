@@ -19,7 +19,6 @@ public partial class TfLanguageSwitch : TfBaseComponent
 	private async Task _select(TucCultureOption option)
 	{
 		Dispatcher.Dispatch(new SetCultureAction(
-		useCase:CultureState.Value.UseCase,
 		userId:UserIdState.Value,
 		culture: option));
 		var culture = CultureInfo.GetCultureInfo(option.CultureCode);

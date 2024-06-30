@@ -9,15 +9,16 @@ public partial class StateEffect
 	{
 		if(action.RecordId == Guid.Empty) return Task.CompletedTask;
 		TfDataProvider provider = null;
-		var result = DataPrividerManager.GetProvider(action.RecordId);
-		if (result.IsSuccess) provider = result.Value;
-		if (provider is null)
-		{
-			dispatcher.Dispatch(new GoAction(TfConstants.NotFoundPageUrl, true));
-			return Task.CompletedTask;
-		}
+		throw new NotImplementedException();
+		//var result = DataPrividerManager.GetProvider(action.RecordId);
+		//if (result.IsSuccess) provider = result.Value;
+		//if (provider is null)
+		//{
+		//	dispatcher.Dispatch(new GoAction(TfConstants.NotFoundPageUrl, true));
+		//	return Task.CompletedTask;
+		//}
 
-		dispatcher.Dispatch(new DataProviderAdminChangedAction(provider));
-		return Task.CompletedTask;
+		//dispatcher.Dispatch(new DataProviderAdminChangedAction(provider));
+		//return Task.CompletedTask;
 	}
 }

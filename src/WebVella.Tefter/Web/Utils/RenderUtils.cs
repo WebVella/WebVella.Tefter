@@ -1,16 +1,16 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-public static class RenderUtils
+internal static class RenderUtils
 {
 	private static string conversionPrefix = "tf-";
 
-	public static string ConvertGuidToHtmlElementId(Guid? guid)
+	internal static string ConvertGuidToHtmlElementId(Guid? guid)
 	{
 		if (guid == null) return null;
 		return $"{conversionPrefix}{guid}";
 	}
 
-	public static Guid? ConvertHtmlElementIdToGuid(string htmlId)
+	internal static Guid? ConvertHtmlElementIdToGuid(string htmlId)
 	{
 		if (String.IsNullOrWhiteSpace(htmlId)) return null;
 		var match = htmlId.Trim().ToLowerInvariant();
@@ -23,15 +23,15 @@ public static class RenderUtils
 		return null;
 	}
 
-	public static string StringOverflow(string input, int charCount)
+	internal static string StringOverflow(string input, int charCount)
 	{
 		if (input.Length <= charCount) return input;
 		return input.Substring(0, charCount) + "...";
 	}
 
-	public static int CalcSkip(int pageSize, int page) => (page - 1) * pageSize;
+	internal static int CalcSkip(int pageSize, int page) => (page - 1) * pageSize;
 
-	public static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
+	internal static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
 	{
 		float red = (float)color.R;
 		float green = (float)color.G;
@@ -54,7 +54,7 @@ public static class RenderUtils
 		return System.Drawing.Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
 	}
 
-	public static System.Drawing.Color ChangeColorDarkness(System.Drawing.Color color, float correctionFactor)
+	internal static System.Drawing.Color ChangeColorDarkness(System.Drawing.Color color, float correctionFactor)
 	{
 		float red = (float)color.R;
 		float green = (float)color.G;
@@ -77,24 +77,24 @@ public static class RenderUtils
 		return System.Drawing.Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
 	}
 
-	public static string ChangeColorBrightnessHex(System.Drawing.Color color, float correctionFactor)
+	internal static string ChangeColorBrightnessHex(System.Drawing.Color color, float correctionFactor)
 	{
 		return ColorToHex(ChangeColorBrightness(color, correctionFactor));
 	}
 
-	public static string ChangeColorDarknessHex(System.Drawing.Color color, float correctionFactor)
+	internal static string ChangeColorDarknessHex(System.Drawing.Color color, float correctionFactor)
 	{
 		return ColorToHex(ChangeColorDarkness(color, correctionFactor));
 	}
 
-	public static String ColorToHex(System.Drawing.Color c)
+	internal static String ColorToHex(System.Drawing.Color c)
 		=> $"#{c.R:X2}{c.G:X2}{c.B:X2}";
 
-	public static String ColorToRGB(System.Drawing.Color c)
+	internal static String ColorToRGB(System.Drawing.Color c)
 		=> $"RGB({c.R},{c.G},{c.B})";
 
 
-	public static string GetUserInitions(TucUser user)
+	internal static string GetUserInitions(TucUser user)
 	{
 		var list = new List<string>();
 		if (!String.IsNullOrWhiteSpace(user.FirstName))

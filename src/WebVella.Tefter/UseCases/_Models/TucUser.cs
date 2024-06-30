@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UseCases.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.UseCases.Models;
 
 public record TucUser
 {
@@ -7,6 +9,8 @@ public record TucUser
 	public string FirstName { get; init; }
 	public string LastName { get; init; }
 	public string Password { get; init; }
+	[Required]
+	
 	public bool Enabled { get; init; }
 	public DateTime CreatedOn { get; init; }
 	public TucUserSettings Settings { get; init; } = new();

@@ -2,19 +2,14 @@
 
 public record SetSidebarAction
 {
-
 	public Guid UserId { get; }
 	public bool SidebarExpanded { get; }
 
-	public bool Persist { get; } = true;
-
-	public SetSidebarAction(
+	internal SetSidebarAction(
 		Guid userId,
-		bool sidebarExpanded,
-		bool persist)
+		bool sidebarExpanded)
 	{
 		UserId = userId;
 		SidebarExpanded = sidebarExpanded;
-		Persist = persist;
 	}
 }

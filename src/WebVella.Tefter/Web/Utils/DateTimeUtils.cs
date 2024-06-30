@@ -1,15 +1,15 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-public static class DateTimeUtils
+internal static class DateTimeUtils
 {
-	public static string ToUrlString(DateTime? date)
+	internal static string ToUrlString(DateTime? date)
 	{
 		if (date is null)
 			return null;
 		return date.Value.ToString(TfConstants.DateFormatUrl, CultureInfo.InvariantCulture);
 	}
 
-	public static DateTime? FromUrlString(string dateString)
+	internal static DateTime? FromUrlString(string dateString)
 	{
 		if (String.IsNullOrWhiteSpace(dateString))
 			return null;

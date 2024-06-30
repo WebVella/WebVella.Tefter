@@ -2,6 +2,7 @@
 public partial class TfSidebarToggle : TfBaseComponent
 {
 	[Inject] protected IStateSelection<UserState, Guid> UserIdState { get; set; }
+	[Inject] protected IState<ScreenState> ScreenState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenSidebarState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 
@@ -26,8 +27,7 @@ public partial class TfSidebarToggle : TfBaseComponent
 	{
 		Dispatcher.Dispatch(new SetSidebarAction(
 			userId: UserIdState.Value,
-			sidebarExpanded: !ScreenSidebarState.Value,
-			persist: true));
+			sidebarExpanded: !ScreenSidebarState.Value));
 	}
 
 	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)

@@ -58,8 +58,9 @@ public static class DependencyInjection
 		services.AddSingleton<IIdManager, IdManager>();
 
 		//use cases
+		services.AddScoped<StateEffectsUseCase,StateEffectsUseCase>();
 		services.AddTransient<AppStartUseCase,AppStartUseCase>();
-		services.AddTransient<StateUseCase,StateUseCase>();
+		
 
 		return services;
 	}

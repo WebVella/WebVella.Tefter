@@ -5,12 +5,7 @@ public partial class StateEffect
 	[EffectMethod]
 	public async Task SetSidebarActionEffect(SetSidebarAction action, IDispatcher dispatcher)
 	{
-		if (!action.Persist)
-		{
-			dispatcher.Dispatch(new SetSidebarActionResult());
-			return;
-		}
-		var setResult = await TefterService.SetUserSidebarExpanded(
+		var setResult = await UseCase.SetSidebarState(
 					userId: action.UserId,
 					sidebarExpanded: action.SidebarExpanded
 				);

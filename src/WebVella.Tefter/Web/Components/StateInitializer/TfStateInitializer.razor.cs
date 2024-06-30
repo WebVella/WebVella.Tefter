@@ -2,7 +2,6 @@
 public partial class TfStateInitializer : TfBaseComponent
 {
 	[Inject] private AppStartUseCase UseCase { get; set; }
-	[Inject] private StateUseCase StateUseCase { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -31,20 +30,16 @@ public partial class TfStateInitializer : TfBaseComponent
 
 			//Setup states
 			Dispatcher.Dispatch(new InitUserStateAction(
-				useCase:StateUseCase,
 				user:UseCase.User
 			));
 			Dispatcher.Dispatch(new InitCultureStateAction(
-				useCase: StateUseCase,
 				culture: UseCase.CultureOption
 			));
 			Dispatcher.Dispatch(new InitThemeStateAction(
-				useCase: StateUseCase,
 				themeMode: UseCase.User.Settings?.ThemeMode ?? TfConstants.DefaultThemeMode,
 				themeColor: UseCase.User.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor
 			));
 			Dispatcher.Dispatch(new InitScreenStateAction(
-				useCase: StateUseCase,
 				sidebarExpanded: UseCase.User.Settings?.IsSidebarOpen ?? true
 			));
 

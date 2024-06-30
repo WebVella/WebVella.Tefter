@@ -60,6 +60,7 @@ global using WebVella.Tefter.Web.Services;
 global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Web.Models;
 
+global using WebVella.Tefter.Web.Store.Base;
 global using WebVella.Tefter.Web.Store.CultureState;
 global using WebVella.Tefter.Web.Store.DataProviderAdminState;
 global using WebVella.Tefter.Web.Store.UserAdminState;
@@ -69,7 +70,7 @@ global using WebVella.Tefter.Web.Store.SessionState;
 global using WebVella.Tefter.Web.Store.ThemeState;
 
 global using WebVella.Tefter.UseCases.AppStart;
-global using WebVella.Tefter.UseCases.State;
+global using WebVella.Tefter.UseCases.StateEffects;
 
 global using WebVella.Tefter.Web.Components.BaseComponent;
 global using WebVella.Tefter.Web.Components.BaseColumn;

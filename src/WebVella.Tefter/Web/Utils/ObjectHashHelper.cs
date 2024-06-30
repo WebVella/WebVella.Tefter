@@ -2,9 +2,9 @@
 
 namespace WebVella.Tefter.Web.Utils;
 
-public static class ObjectHashHelper
+internal static class ObjectHashHelper
 {
-	public static string CalculateHash<T>(T obj)
+	internal static string CalculateHash<T>(T obj)
 	{
 		if (obj == null)
 		{

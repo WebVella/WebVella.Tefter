@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-public static class NavigatorExt
+internal static class NavigatorExt
 {
-	public static Models.RouteData GetUrlData(this NavigationManager navigator)
+	internal static Models.RouteData GetUrlData(this NavigationManager navigator)
 	{
 		Guid? spaceId = null;
 		Guid? spaceDataId = null;
@@ -65,7 +65,7 @@ public static class NavigatorExt
 	}
 
 
-	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
+	internal static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
 	{
 		var currentUrl = navigator.Uri;
 		var uri = new System.Uri(currentUrl);
@@ -178,7 +178,7 @@ public static class NavigatorExt
 
 	}
 
-	public static Dictionary<string, string> GetQueryDictionaryFromUrl(string url)
+	internal static Dictionary<string, string> GetQueryDictionaryFromUrl(string url)
 	{
 		var uri = new Uri(url);
 		var queryDictionary = HttpUtility.ParseQueryString(uri.Query);
@@ -194,20 +194,20 @@ public static class NavigatorExt
 		return newQueryDictionary;
 	}
 
-	public static async Task SetParamToUrlQuery(this NavigationManager navigator, string paramName, object value, bool forceLoad = false)
+	internal static async Task SetParamToUrlQuery(this NavigationManager navigator, string paramName, object value, bool forceLoad = false)
 	{
 		var queryDict = new Dictionary<string, object>();
 		queryDict[paramName] = value;
 		await navigator.ApplyChangeToUrlQuery(queryDict, forceLoad);
 	}
 
-	public static Dictionary<string, string> ParseQueryString(string queryString)
+	internal static Dictionary<string, string> ParseQueryString(string queryString)
 	{
 		var nvc = HttpUtility.ParseQueryString(queryString);
 		return nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
 	}
 
-	public static string GetStringFromQuery(this NavigationManager navigator, string paramName, string defaultValue = null)
+	internal static string GetStringFromQuery(this NavigationManager navigator, string paramName, string defaultValue = null)
 	{
 		var urlAbsolute = navigator.ToAbsoluteUri(navigator.Uri);
 		var queryDict = ParseQueryString(urlAbsolute.Query);
@@ -216,7 +216,7 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static List<string> GetStringListFromQuery(this NavigationManager navigator, string paramName, List<string> defaultValue = null)
+	internal static List<string> GetStringListFromQuery(this NavigationManager navigator, string paramName, List<string> defaultValue = null)
 	{
 		//We use comma separated before encoding
 		var paramValue = navigator.GetStringFromQuery(paramName, null);
@@ -226,7 +226,7 @@ public static class NavigatorExt
 		return paramValue.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
 	}
 
-	public static Guid? GetGuidFromQuery(this NavigationManager navigator, string paramName, Guid? defaultValue = null)
+	internal static Guid? GetGuidFromQuery(this NavigationManager navigator, string paramName, Guid? defaultValue = null)
 	{
 		if (Guid.TryParse(navigator.GetStringFromQuery(paramName), out Guid outGuid))
 		{
@@ -235,7 +235,7 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static bool? GetBooleanFromQuery(this NavigationManager navigator, string paramName, bool? defaultValue = null)
+	internal static bool? GetBooleanFromQuery(this NavigationManager navigator, string paramName, bool? defaultValue = null)
 	{
 		if (Boolean.TryParse(navigator.GetStringFromQuery(paramName), out bool outBool))
 		{
@@ -243,7 +243,7 @@ public static class NavigatorExt
 		}
 		return defaultValue;
 	}
-	public static DateTime? GetDateFromQuery(this NavigationManager navigator, string paramName, DateTime? defaultValue = null)
+	internal static DateTime? GetDateFromQuery(this NavigationManager navigator, string paramName, DateTime? defaultValue = null)
 	{
 		var urlValue = navigator.GetStringFromQuery(paramName, null);
 
@@ -258,7 +258,7 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static DateOnly? GetDateOnlyFromQuery(this NavigationManager navigator, string paramName, DateOnly? defaultValue = null)
+	internal static DateOnly? GetDateOnlyFromQuery(this NavigationManager navigator, string paramName, DateOnly? defaultValue = null)
 	{
 		var urlValue = navigator.GetStringFromQuery(paramName, null);
 
@@ -273,7 +273,7 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static int? GetIntFromQuery(this NavigationManager navigator, string paramName, int? defaultValue = null)
+	internal static int? GetIntFromQuery(this NavigationManager navigator, string paramName, int? defaultValue = null)
 	{
 		if (int.TryParse(navigator.GetStringFromQuery(paramName), out int outInt))
 		{
@@ -282,7 +282,7 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static TEnum? GetEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, TEnum? defaultValue = null) where TEnum : struct
+	internal static TEnum? GetEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, TEnum? defaultValue = null) where TEnum : struct
 	{
 		var stringValue = navigator.GetStringFromQuery(paramName);
 
@@ -293,7 +293,7 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static List<int> GetListIntFromQuery(this NavigationManager navigator, string paramName, List<int> defaultValue = null)
+	internal static List<int> GetListIntFromQuery(this NavigationManager navigator, string paramName, List<int> defaultValue = null)
 	{
 
 		var stringValues = navigator.GetStringListFromQuery(paramName, null);
@@ -314,7 +314,7 @@ public static class NavigatorExt
 		return result;
 	}
 
-	public static List<TEnum> GetListEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, List<TEnum> defaultValue = null) where TEnum : struct
+	internal static List<TEnum> GetListEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, List<TEnum> defaultValue = null) where TEnum : struct
 	{
 
 		var stringValues = navigator.GetStringListFromQuery(paramName, null);
@@ -335,7 +335,7 @@ public static class NavigatorExt
 		return result;
 	}
 
-	public static string ProcessQueryValueFromUrl(string queryValue)
+	internal static string ProcessQueryValueFromUrl(string queryValue)
 	{
 		if (String.IsNullOrWhiteSpace(queryValue))
 			return null;
@@ -343,7 +343,7 @@ public static class NavigatorExt
 		return UrlUndoReplaceSpecialCharacters(HttpUtility.UrlDecode(queryValue));
 
 	}
-	public static string ProcessQueryValueForUrl(string queryValue)
+	internal static string ProcessQueryValueForUrl(string queryValue)
 	{
 		var processedValue = queryValue?.Trim();
 		if (String.IsNullOrWhiteSpace(processedValue))
@@ -352,16 +352,16 @@ public static class NavigatorExt
 		return HttpUtility.UrlEncode(UrlReplaceSpecialCharacters(processedValue));
 
 	}
-	public static string UrlReplaceSpecialCharacters(string inputValue)
+	internal static string UrlReplaceSpecialCharacters(string inputValue)
 	{
 		return inputValue.Replace("/", "~");
 	}
-	public static string UrlUndoReplaceSpecialCharacters(string inputValue)
+	internal static string UrlUndoReplaceSpecialCharacters(string inputValue)
 	{
 		return inputValue.Replace("~", "/");
 	}
 
-	public static string GetLocalUrl(this NavigationManager navigator)
+	internal static string GetLocalUrl(this NavigationManager navigator)
 	{
 		var uri = new Uri(navigator.Uri);
 		var localUrl = uri.LocalPath;
@@ -371,7 +371,7 @@ public static class NavigatorExt
 		return localUrl;
 	}
 
-	public static void ReloadCurrentUrl(this NavigationManager navigator)
+	internal static void ReloadCurrentUrl(this NavigationManager navigator)
 	{
 		navigator.NavigateTo(navigator.Uri, true);
 	}
@@ -391,7 +391,7 @@ public static class NavigatorExt
 			   o.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>));
 	}
 
-	public static void NotFound(this NavigationManager navigator)
+	internal static void NotFound(this NavigationManager navigator)
 	{
 		throw new Exception("Not found");
 	}
