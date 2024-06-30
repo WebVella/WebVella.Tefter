@@ -8,7 +8,20 @@ public class CsvDataProvider : ITfDataProviderType
 
 	public string Description => "Provide data from CSV formated file.";
 
-	public Stream Icon => GetType().Assembly.GetManifestResourceStream(Constants.CSV_DATA_PROVIDER_ICON);
+	public string IconBase64 
+	{
+		get
+		{
+			var stream = GetType().Assembly.GetManifestResourceStream(Constants.CSV_DATA_PROVIDER_ICON);
+			byte[] bytes;
+			using (var memoryStream = new MemoryStream())
+			{
+				stream.CopyTo(memoryStream);
+				bytes = memoryStream.ToArray();
+			}
+			return Convert.ToBase64String(bytes);
+		}
+	}
 
 	public Type SettingsComponentType => typeof(DataProviderSettingsComponent);
 
