@@ -101,7 +101,7 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect @bind-SelectedOption="@_form.Culture" TOption="CultureOption"
+					<FluentSelect @bind-SelectedOption="@_form.Culture" TOption="TucCultureOption"
 								  OptionValue="@(p => p.CultureCode)"
 								  Items="@TfConstants.CultureOptions" Style="width:100%"
 							  OptionText="@(p => p.Name)" Label="@LOC("Localization")" />

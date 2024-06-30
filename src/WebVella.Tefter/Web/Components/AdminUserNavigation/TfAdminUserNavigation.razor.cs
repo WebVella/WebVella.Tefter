@@ -28,7 +28,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await base.OnInitializedAsync();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		await GenerateSpaceDataMenu();
-		ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_UserDetailsChangedAction);
+		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_UserDetailsChangedAction);
 		_menuLoading = false;
 	}
 
@@ -95,9 +95,9 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var user = (User)result.Data;
+			var user = (TucUser)result.Data;
 			ToastService.ShowSuccess(LOC("User successfully created!"));
-			Dispatcher.Dispatch(new SetUserDetailsAction(user));
+			Dispatcher.Dispatch(new SetUserAdminAction(user));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
 		}
 	}
@@ -124,7 +124,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void On_UserDetailsChangedAction(UserDetailsChangedAction action)
+	private void On_UserDetailsChangedAction(UserAdminChangedAction action)
 	{
 		InvokeAsync(async () =>
 		{

@@ -3,7 +3,6 @@
 namespace WebVella.Tefter.Web.Components.UserManageDialog;
 public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<User>
 {
-	[Inject] private IState<SystemState> SystemState {  get; set; }
 	[Parameter] public User Content { get; set; }
 
 	[CascadingParameter]
@@ -47,7 +46,8 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			_allRoles = SystemState.Value.Roles;
+			throw new NotImplementedException();
+			//_allRoles = SystemState.Value.Roles;
 
 			if (_isCreate)
 			{
@@ -192,7 +192,7 @@ public class TfUserManageDialogModel
 	public OfficeColor ThemeColor { get; set; } = OfficeColor.Excel;
 	[Required]
 	public bool IsSidebarOpen { get; set; } = true;
-	public CultureOption Culture { get; set; }
+	public TucCultureOption Culture { get; set; }
 	public List<Role> Roles { get; set; } = new();
 
 }

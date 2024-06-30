@@ -1,20 +1,20 @@
 ﻿namespace WebVella.Tefter.Web.Services;
 public partial interface ITfService
 {
-	ValueTask<Result<UserSession>> GetUserSession(Guid userId, Guid? spaceId,
+	Task<Result<UserSession>> GetUserSession(Guid userId, Guid? spaceId,
 		Guid? spaceDataId, Guid? spaceViewId);
-	ValueTask<Result<UserSession>> SetSessionUI(Guid userId,
+	Task<Result<UserSession>> SetSessionUI(Guid userId,
 		Guid? spaceId, Guid? spaceDataId, Guid? spaceViewId,
 		DesignThemeModes themeMode, OfficeColor themeColor,
 		bool sidebarExpanded, string cultureCode);
 
-	ValueTask<Result<bool>> SetUserTheme(Guid userId,
+	Task<Result<bool>> SetUserTheme(Guid userId,
 		DesignThemeModes themeMode, OfficeColor themeColor);
 
-	ValueTask<Result<bool>> SetUserSidebarExpanded(Guid userId,
+	Task<Result<bool>> SetUserSidebarExpanded(Guid userId,
 		bool sidebarExpanded);
 
-	ValueTask<Result<bool>> SetUserCulture(Guid userId,
+	Task<Result<bool>> SetUserCulture(Guid userId,
 		string cultureCode);
 }
 
@@ -29,7 +29,7 @@ public partial class TfService : ITfService
 	/// <param name="spaceViewId"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<Result<UserSession>> GetUserSession(Guid userId, Guid? spaceId,
+	public async Task<Result<UserSession>> GetUserSession(Guid userId, Guid? spaceId,
 			Guid? spaceDataId, Guid? spaceViewId)
 	{
 		if (userId == Guid.Empty) throw new Exception("userId not provided");
@@ -113,7 +113,7 @@ public partial class TfService : ITfService
 	/// <param name="cultureCode"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<Result<UserSession>> SetSessionUI(Guid userId,
+	public async Task<Result<UserSession>> SetSessionUI(Guid userId,
 		Guid? spaceId, Guid? spaceDataId, Guid? spaceViewId,
 		DesignThemeModes themeMode, OfficeColor themeColor,
 		bool sidebarExpanded, string cultureCode)
@@ -130,7 +130,7 @@ public partial class TfService : ITfService
 		return await GetUserSession(userId, spaceId, spaceDataId, spaceViewId);
 	}
 
-	public async ValueTask<Result<bool>> SetUserTheme(Guid userId,
+	public async Task<Result<bool>> SetUserTheme(Guid userId,
 		DesignThemeModes themeMode, OfficeColor themeColor)
 	{
 		Result<User> userResult = await GetUserWithChecks(userId);
@@ -144,7 +144,7 @@ public partial class TfService : ITfService
 		return Result.Ok(true);
 	}
 
-	public async ValueTask<Result<bool>> SetUserSidebarExpanded(Guid userId,
+	public async Task<Result<bool>> SetUserSidebarExpanded(Guid userId,
 		bool sidebarOpen)
 	{
 		Result<User> userResult = await GetUserWithChecks(userId);
@@ -157,7 +157,7 @@ public partial class TfService : ITfService
 		return Result.Ok(true);
 	}
 
-	public async ValueTask<Result<bool>> SetUserCulture(Guid userId,
+	public async Task<Result<bool>> SetUserCulture(Guid userId,
 		string cultureCode)
 	{
 		Result<User> userResult = await GetUserWithChecks(userId);
@@ -170,7 +170,7 @@ public partial class TfService : ITfService
 		return Result.Ok(true);
 	}
 
-	internal async ValueTask<Result<User>> GetUserWithChecks(Guid userId)
+	internal async Task<Result<User>> GetUserWithChecks(Guid userId)
 	{
 		Result<User> userResult = await identityManager.GetUserAsync(userId);
 		if (userResult.IsFailed)

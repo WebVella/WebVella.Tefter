@@ -1,19 +1,20 @@
-﻿namespace WebVella.Tefter.Web.Store.CultureState;
+﻿using WebVella.Tefter.UseCases.State;
+
+namespace WebVella.Tefter.Web.Store.CultureState;
 
 public record SetCultureAction
 {
-
+	internal StateUseCase  UseCase { get;}
 	public Guid UserId { get; }
-	public CultureOption Culture { get; }
-	public bool Persist { get; } = true;
+	public TucCultureOption Culture { get; }
 
-	public SetCultureAction(
+	internal SetCultureAction(
+		StateUseCase  useCase,
 		Guid userId,
-		CultureOption culture,
-		bool persist)
+		TucCultureOption culture)
 	{
+		UseCase = useCase;
 		UserId = userId;
 		Culture = culture;
-		Persist = persist;
 	}
 }

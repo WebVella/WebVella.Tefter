@@ -1,8 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Services;
 public partial interface ITfService
 {
-	ValueTask<Result<SystemStateObject>> GetSystemState();
-
+	Task<Result<SystemStateObject>> GetSystemState();
 }
 
 public partial class TfService : ITfService
@@ -16,7 +15,7 @@ public partial class TfService : ITfService
 	/// <param name="spaceViewId"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async ValueTask<Result<SystemStateObject>> GetSystemState()
+	public async Task<Result<SystemStateObject>> GetSystemState()
 	{
 		var result = new SystemStateObject();
 		var rolesResult = await identityManager.GetRolesAsync();

@@ -4,7 +4,7 @@ using WebVella.Tefter.Web.Components.DataProviderManageDialog;
 namespace WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions;
 public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 {
-	[Inject] protected IState<DataProviderDetailsState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 	private bool _isDeleting = false;
 	private string menu = "details";
 
@@ -30,14 +30,14 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TfDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderDetailsAction(record));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
 		}
 	}
 
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
-		new Tuple<TfDataProviderColumn, TfDataProvider>(new TfDataProviderColumn(), DataProviderDetailsState.Value.Provider),
+		new TfDataProviderColumn(),
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -49,7 +49,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TfDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
-			Dispatcher.Dispatch(new SetDataProviderDetailsAction(record));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
 		}
 	}
 

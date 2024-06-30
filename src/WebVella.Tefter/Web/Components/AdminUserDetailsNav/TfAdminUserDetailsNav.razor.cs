@@ -18,7 +18,7 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 	{
 		base.OnInitialized();
 		GenerateMenu();
-		ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
+		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
@@ -49,7 +49,7 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 		});
 	}
 
-	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)
+	private void On_GetUserDetailsActionResult(UserAdminChangedAction action)
 	{
 		GenerateMenu();
 		StateHasChanged();

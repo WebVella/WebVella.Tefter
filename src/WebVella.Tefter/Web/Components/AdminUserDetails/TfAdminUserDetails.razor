@@ -2,9 +2,9 @@
 @{
 	CultureInfo cultureInfo = null;
 
-	if (!String.IsNullOrWhiteSpace(UserDetailsState.Value?.User?.Settings?.CultureName))
+	if (!String.IsNullOrWhiteSpace(UserAdminState.Value?.User?.Settings?.CultureName))
 	{
-		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == UserDetailsState.Value?.User?.Settings?.CultureName)?.CultureInfo;
+		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == UserAdminState.Value?.User?.Settings?.CultureName)?.CultureInfo;
 	}
 	if (cultureInfo is null)
 	{
@@ -16,7 +16,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="1">
 			<FluentInputLabel>@LOC("Status")</FluentInputLabel>
-			@if (UserDetailsState.Value?.User?.Enabled ?? false)
+			@if (UserAdminState.Value?.User?.Enabled ?? false)
 			{
 				<FluentBadge Appearance="Appearance.Accent">ON</FluentBadge>
 			}
@@ -26,39 +26,39 @@
 			}
 		</FluentGridItem>
 		<FluentGridItem xs="5">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.Email"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.Email"
 							 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="3">
-			<FluentDatePicker Value="@UserDetailsState.Value?.User?.CreatedOn"
+			<FluentDatePicker Value="@UserAdminState.Value?.User?.CreatedOn"
 							  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="3">
-			<FluentTimePicker Value="@UserDetailsState.Value?.User?.CreatedOn"
+			<FluentTimePicker Value="@UserAdminState.Value?.User?.CreatedOn"
 							  ReadOnly="true" Label="&nbsp;" Style="width:100%" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.FirstName"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.FirstName"
 							 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.LastName"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.LastName"
 							 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.Settings?.ThemeMode.ToString()"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.Settings?.ThemeMode.ToString()"
 							 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserDetailsState.Value?.User?.Settings?.ThemeColor.ToString()"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.Settings?.ThemeColor.ToString()"
 							 ReadOnly="true" Label="@LOC("Theme Color")" Style="width:100%">
 				<FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())"
 							Color="Color.Custom" Slot="start"
-							CustomColor="@(UserDetailsState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() != "default" ? UserDetailsState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
+							CustomColor="@(UserAdminState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() != "default" ? UserAdminState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
 			</FluentTextField>
 		</FluentGridItem>
 	</FluentGrid>
@@ -74,7 +74,7 @@
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Roles")" />
 			<FluentStack Orientation="@Orientation.Horizontal">
-				@foreach (var role in (UserDetailsState.Value?.User?.Roles?.ToList() ?? new List<Role>()))
+				@foreach (var role in (UserAdminState.Value?.User?.Roles?.ToList() ?? new List<TucRole>()))
 				{
 					<FluentBadge Appearance="Appearance.Accent">@role.Name</FluentBadge>
 				}

@@ -9,18 +9,18 @@
 				<div class="login-logo-text">@ConfigurationService.CompanyName</div>
 			</div>
 			<div class="login-form">
-				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email 
-					Label="@LOC("Email")" Id="email" Name="email" Autofocus="true"/>
-				<FluentValidationMessage For="@(() => _form.Email)" />
-				<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password
+				<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_useCase.Form.Email
+								 Label="@LOC("Email")" Id="email" Name="email" Autofocus="true"/>
+				<FluentValidationMessage For="@(() => _useCase.Form.Email)" />
+				<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_useCase.Form.Password
 								 Label="@LOC("Password")" Id="password" Name="password"/>
-				<FluentValidationMessage For="@(() => _form.Password)" />
-				<FluentCheckbox @bind-Value=_form.RememberMe Style="margin-top:1rem;">@LOC("Remember Me")</FluentCheckbox>
+				<FluentValidationMessage For="@(() => _useCase.Form.Password)" />
+				<FluentCheckbox @bind-Value=_useCase.Form.RememberMe Style="margin-top:1rem;">@LOC("Remember Me")</FluentCheckbox>
 			</div>
 			<div class="login-btn">
 				<FluentButton Type="ButtonType.Submit" Appearance="@Appearance.Accent"
 							  IconStart="@(new Icons.Regular.Size20.Key())"
-							  Loading="@_submitting" Disabled="@_submitting">@LOC("Login")</FluentButton>
+							  Loading="@_useCase.IsSubmitting" Disabled="@_useCase.IsSubmitting">@LOC("Login")</FluentButton>
 			</div>
 		</FluentEditForm>
 	</FluentStack>

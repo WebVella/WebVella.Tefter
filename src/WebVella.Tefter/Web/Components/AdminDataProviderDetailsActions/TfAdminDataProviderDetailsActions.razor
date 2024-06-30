@@ -29,14 +29,8 @@ else if (menu == "aux")
 }
 else if (menu == "keys")
 {
-	<FluentStack>
-		<FluentButton Appearance="@Appearance.Outline">
-			@LOC("Synchronization key")
-			<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
-		</FluentButton>
-		<FluentButton Appearance="@Appearance.Outline">
-			@LOC("Shared key")
-			<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
-		</FluentButton>
-	</FluentStack>
+	<FluentButton Appearance="@Appearance.Outline">
+		@LOC("Shared key")
+		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+	</FluentButton>
 }

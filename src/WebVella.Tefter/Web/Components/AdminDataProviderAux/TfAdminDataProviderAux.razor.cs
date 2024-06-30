@@ -4,14 +4,14 @@ using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
 namespace WebVella.Tefter.Web.Components.AdminDataProviderAux;
 public partial class TfAdminDataProviderAux : TfBaseComponent
 {
-	[Inject] protected IState<DataProviderDetailsState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
 			ActionSubscriber.UnsubscribeFromAllActions(this);
-			Dispatcher.Dispatch(new EmptyDataProviderDetailsAction());
+			Dispatcher.Dispatch(new EmptyDataProviderAdminAction());
 			Navigator.LocationChanged -= Navigator_LocationChanged;
 		}
 		return base.DisposeAsyncCore(disposing);
@@ -22,7 +22,7 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 		_getProvider();
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
-	private void On_GetDataProviderDetailsActionResult(DataProviderDetailsChangedAction action)
+	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
 	{
 		StateHasChanged();
 	}
@@ -37,14 +37,14 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 		var urlData = Navigator.GetUrlData();
 		if (urlData.DataProviderId is not null)
 		{
-			ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_GetDataProviderDetailsActionResult);
-			Dispatcher.Dispatch(new GetDataProviderDetailsAction(urlData.DataProviderId.Value));
+			ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+			Dispatcher.Dispatch(new GetDataProviderAdminAction(urlData.DataProviderId.Value));
 		}
 	}
 	private async Task _editColumn(TfDataProviderColumn column)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
-				new Tuple<TfDataProviderColumn, TfDataProvider>(column, DataProviderDetailsState.Value.Provider),
+				column,
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -56,7 +56,7 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 		{
 			var record = (TfDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderDetailsAction(record));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
 		}
 	}
 
@@ -71,7 +71,7 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-				Dispatcher.Dispatch(new SetDataProviderDetailsAction(result.Value));
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
 			}
 		}
 		catch (Exception ex)

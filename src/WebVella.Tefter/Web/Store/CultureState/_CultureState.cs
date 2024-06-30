@@ -3,5 +3,8 @@
 [FeatureState]
 public record CultureState
 {
-	public CultureOption Culture { get; init; }
+	[JsonIgnore]
+	internal StateUseCase UseCase { get; init; }
+	public TucCultureOption Culture { get; init; }
+
 }

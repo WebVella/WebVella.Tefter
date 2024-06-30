@@ -4,14 +4,14 @@
 namespace WebVella.Tefter.Web.Components.AdminUserDetails;
 public partial class TfAdminUserDetails : TfBaseComponent
 {
-	[Inject] protected IState<UserDetailsState> UserDetailsState { get; set; }
+	[Inject] protected IState<UserAdminState> UserAdminState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
 			ActionSubscriber.UnsubscribeFromAllActions(this);
-			Dispatcher.Dispatch(new EmptyUserDetailsAction());
+			Dispatcher.Dispatch(new EmptyUserAdminAction());
 			Navigator.LocationChanged -= Navigator_LocationChanged;
 		}
 		return base.DisposeAsyncCore(disposing);
@@ -23,7 +23,7 @@ public partial class TfAdminUserDetails : TfBaseComponent
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
-	private void On_GetUserDetailsActionResult(UserDetailsChangedAction action)
+	private void On_GetUserDetailsActionResult(UserAdminChangedAction action)
 	{
 		StateHasChanged();
 	}
@@ -38,8 +38,8 @@ public partial class TfAdminUserDetails : TfBaseComponent
 		var urlData = Navigator.GetUrlData();
 		if (urlData.UserId is not null)
 		{
-			ActionSubscriber.SubscribeToAction<UserDetailsChangedAction>(this, On_GetUserDetailsActionResult);
-			Dispatcher.Dispatch(new GetUserDetailsAction(urlData.UserId.Value));
+			ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
+			Dispatcher.Dispatch(new GetUserAdminAction(urlData.UserId.Value));
 		}
 	}
 }

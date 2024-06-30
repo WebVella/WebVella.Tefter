@@ -2,14 +2,14 @@
 namespace WebVella.Tefter.Web.Components.AdminDataProviderData;
 public partial class TfAdminDataProviderData : TfBaseComponent
 {
-	[Inject] protected IState<DataProviderDetailsState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
 			ActionSubscriber.UnsubscribeFromAllActions(this);
-			Dispatcher.Dispatch(new EmptyDataProviderDetailsAction());
+			Dispatcher.Dispatch(new EmptyDataProviderAdminAction());
 			Navigator.LocationChanged -= Navigator_LocationChanged;
 		}
 		return base.DisposeAsyncCore(disposing);
@@ -20,7 +20,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		_getProvider();
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
-	private void On_GetDataProviderDetailsActionResult(DataProviderDetailsChangedAction action)
+	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
 	{
 		StateHasChanged();
 	}
@@ -35,8 +35,8 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		var urlData = Navigator.GetUrlData();
 		if (urlData.DataProviderId is not null)
 		{
-			ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_GetDataProviderDetailsActionResult);
-			Dispatcher.Dispatch(new GetDataProviderDetailsAction(urlData.DataProviderId.Value));
+			ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+			Dispatcher.Dispatch(new GetDataProviderAdminAction(urlData.DataProviderId.Value));
 		}
 	}
 	private async Task _editKey(TfDataProviderColumn column)
@@ -69,7 +69,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
-				Dispatcher.Dispatch(new SetDataProviderDetailsAction(result.Value));
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
 			}
 		}
 		catch (Exception ex)

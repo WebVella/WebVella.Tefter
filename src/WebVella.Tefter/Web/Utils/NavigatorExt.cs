@@ -65,7 +65,7 @@ public static class NavigatorExt
 	}
 
 
-	public static async Task ApplyChangeToUrlQuery(NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
+	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
 	{
 		var currentUrl = navigator.Uri;
 		var uri = new System.Uri(currentUrl);
@@ -194,11 +194,11 @@ public static class NavigatorExt
 		return newQueryDictionary;
 	}
 
-	public static async Task SetParamToUrlQuery(NavigationManager navigator, string paramName, object value, bool forceLoad = false)
+	public static async Task SetParamToUrlQuery(this NavigationManager navigator, string paramName, object value, bool forceLoad = false)
 	{
 		var queryDict = new Dictionary<string, object>();
 		queryDict[paramName] = value;
-		await NavigatorExt.ApplyChangeToUrlQuery(navigator, queryDict, forceLoad);
+		await navigator.ApplyChangeToUrlQuery(queryDict, forceLoad);
 	}
 
 	public static Dictionary<string, string> ParseQueryString(string queryString)
@@ -207,7 +207,7 @@ public static class NavigatorExt
 		return nvc.AllKeys.ToDictionary(k => k, k => nvc[k]);
 	}
 
-	public static string GetStringFromQuery(NavigationManager navigator, string paramName, string defaultValue = null)
+	public static string GetStringFromQuery(this NavigationManager navigator, string paramName, string defaultValue = null)
 	{
 		var urlAbsolute = navigator.ToAbsoluteUri(navigator.Uri);
 		var queryDict = ParseQueryString(urlAbsolute.Query);
@@ -216,36 +216,36 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static List<string> GetStringListFromQuery(NavigationManager navigator, string paramName, List<string> defaultValue = null)
+	public static List<string> GetStringListFromQuery(this NavigationManager navigator, string paramName, List<string> defaultValue = null)
 	{
 		//We use comma separated before encoding
-		var paramValue = GetStringFromQuery(navigator, paramName, null);
+		var paramValue = navigator.GetStringFromQuery(paramName, null);
 		if (String.IsNullOrWhiteSpace(paramValue))
 			return defaultValue;
 
 		return paramValue.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
 	}
 
-	public static Guid? GetGuidFromQuery(NavigationManager navigator, string paramName, Guid? defaultValue = null)
+	public static Guid? GetGuidFromQuery(this NavigationManager navigator, string paramName, Guid? defaultValue = null)
 	{
-		if (Guid.TryParse(NavigatorExt.GetStringFromQuery(navigator, paramName), out Guid outGuid))
+		if (Guid.TryParse(navigator.GetStringFromQuery(paramName), out Guid outGuid))
 		{
 			return outGuid;
 		}
 		return defaultValue;
 	}
 
-	public static bool? GetBooleanFromQuery(NavigationManager navigator, string paramName, bool? defaultValue = null)
+	public static bool? GetBooleanFromQuery(this NavigationManager navigator, string paramName, bool? defaultValue = null)
 	{
-		if (Boolean.TryParse(NavigatorExt.GetStringFromQuery(navigator, paramName), out bool outBool))
+		if (Boolean.TryParse(navigator.GetStringFromQuery(paramName), out bool outBool))
 		{
 			return outBool;
 		}
 		return defaultValue;
 	}
-	public static DateTime? GetDateFromQuery(NavigationManager navigator, string paramName, DateTime? defaultValue = null)
+	public static DateTime? GetDateFromQuery(this NavigationManager navigator, string paramName, DateTime? defaultValue = null)
 	{
-		var urlValue = NavigatorExt.GetStringFromQuery(navigator, paramName, null);
+		var urlValue = navigator.GetStringFromQuery(paramName, null);
 
 		if (urlValue == "null")
 		{
@@ -258,9 +258,9 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static DateOnly? GetDateOnlyFromQuery(NavigationManager navigator, string paramName, DateOnly? defaultValue = null)
+	public static DateOnly? GetDateOnlyFromQuery(this NavigationManager navigator, string paramName, DateOnly? defaultValue = null)
 	{
-		var urlValue = NavigatorExt.GetStringFromQuery(navigator, paramName, null);
+		var urlValue = navigator.GetStringFromQuery(paramName, null);
 
 		if (urlValue == "null")
 		{
@@ -273,18 +273,18 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static int? GetIntFromQuery(NavigationManager navigator, string paramName, int? defaultValue = null)
+	public static int? GetIntFromQuery(this NavigationManager navigator, string paramName, int? defaultValue = null)
 	{
-		if (int.TryParse(NavigatorExt.GetStringFromQuery(navigator, paramName), out int outInt))
+		if (int.TryParse(navigator.GetStringFromQuery(paramName), out int outInt))
 		{
 			return outInt;
 		}
 		return defaultValue;
 	}
 
-	public static TEnum? GetEnumFromQuery<TEnum>(NavigationManager navigator, string paramName, TEnum? defaultValue = null) where TEnum : struct
+	public static TEnum? GetEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, TEnum? defaultValue = null) where TEnum : struct
 	{
-		var stringValue = NavigatorExt.GetStringFromQuery(navigator, paramName);
+		var stringValue = navigator.GetStringFromQuery(paramName);
 
 		if (Enum.TryParse<TEnum>(stringValue, out TEnum outInt))
 		{
@@ -293,10 +293,10 @@ public static class NavigatorExt
 		return defaultValue;
 	}
 
-	public static List<int> GetListIntFromQuery(NavigationManager navigator, string paramName, List<int> defaultValue = null)
+	public static List<int> GetListIntFromQuery(this NavigationManager navigator, string paramName, List<int> defaultValue = null)
 	{
 
-		var stringValues = NavigatorExt.GetStringListFromQuery(navigator, paramName, null);
+		var stringValues = navigator.GetStringListFromQuery(paramName, null);
 		if (stringValues is null)
 			return defaultValue;
 
@@ -314,10 +314,10 @@ public static class NavigatorExt
 		return result;
 	}
 
-	public static List<TEnum> GetListEnumFromQuery<TEnum>(NavigationManager navigator, string paramName, List<TEnum> defaultValue = null) where TEnum : struct
+	public static List<TEnum> GetListEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, List<TEnum> defaultValue = null) where TEnum : struct
 	{
 
-		var stringValues = NavigatorExt.GetStringListFromQuery(navigator, paramName, null);
+		var stringValues = navigator.GetStringListFromQuery(paramName, null);
 		if (stringValues is null)
 			return defaultValue;
 
@@ -361,7 +361,7 @@ public static class NavigatorExt
 		return inputValue.Replace("~", "/");
 	}
 
-	public static string GetLocalUrl(NavigationManager navigator)
+	public static string GetLocalUrl(this NavigationManager navigator)
 	{
 		var uri = new Uri(navigator.Uri);
 		var localUrl = uri.LocalPath;
@@ -371,7 +371,7 @@ public static class NavigatorExt
 		return localUrl;
 	}
 
-	public static void ReloadCurrentUrl(NavigationManager navigator)
+	public static void ReloadCurrentUrl(this NavigationManager navigator)
 	{
 		navigator.NavigateTo(navigator.Uri, true);
 	}
@@ -391,7 +391,7 @@ public static class NavigatorExt
 			   o.GetType().GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>));
 	}
 
-	public static void NotFound(NavigationManager navigator)
+	public static void NotFound(this NavigationManager navigator)
 	{
 		throw new Exception("Not found");
 	}

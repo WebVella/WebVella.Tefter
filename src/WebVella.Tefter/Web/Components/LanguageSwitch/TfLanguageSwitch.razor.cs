@@ -16,12 +16,12 @@ public partial class TfLanguageSwitch : TfBaseComponent
 		UserIdState.Select(x => x?.User?.Id ?? Guid.Empty);
 	}
 
-	private async Task _select(CultureOption option)
+	private async Task _select(TucCultureOption option)
 	{
 		Dispatcher.Dispatch(new SetCultureAction(
+		useCase:CultureState.Value.UseCase,
 		userId:UserIdState.Value,
-		culture: option,
-		persist: true));
+		culture: option));
 		var culture = CultureInfo.GetCultureInfo(option.CultureCode);
 
 		await new CookieService(JSRuntime).SetAsync(CookieRequestCultureProvider.DefaultCookieName,
@@ -30,6 +30,6 @@ public partial class TfLanguageSwitch : TfBaseComponent
 						culture,
 						culture)), DateTimeOffset.Now.AddYears(30));
 
-		NavigatorExt.ReloadCurrentUrl(Navigator);
+		Navigator.ReloadCurrentUrl();
 	}
 }

@@ -94,7 +94,7 @@ public static class RenderUtils
 		=> $"RGB({c.R},{c.G},{c.B})";
 
 
-	public static string GetUserInitions(User user)
+	public static string GetUserInitions(TucUser user)
 	{
 		var list = new List<string>();
 		if (!String.IsNullOrWhiteSpace(user.FirstName))

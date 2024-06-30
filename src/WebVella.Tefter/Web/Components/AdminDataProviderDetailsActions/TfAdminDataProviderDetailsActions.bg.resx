@@ -135,6 +135,9 @@
   <data name="Provider successfully updated" xml:space="preserve">
     <value>Доставчикът на данни е успешно редактиран</value>
   </data>
+  <data name="Shared key" xml:space="preserve">
+    <value>Споделен ключ</value>
+  </data>
   <data name="Will proceeed only if there are not existing columns attached" xml:space="preserve">
     <value>Ще бъде изтрит само ако няма асоциирани колони</value>
   </data>

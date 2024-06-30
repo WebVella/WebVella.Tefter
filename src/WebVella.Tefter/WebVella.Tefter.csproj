@@ -83,5 +83,12 @@
 	  <EmbeddedResource Update="Web\Components\AdminDataProviderAux\AdminDataProviderAux.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\DataProviderKeyManageDialog\TfDataProviderKeyManageDialog.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="UseCases\DataProviderAdmin\" />
 	</ItemGroup>
 </Project>

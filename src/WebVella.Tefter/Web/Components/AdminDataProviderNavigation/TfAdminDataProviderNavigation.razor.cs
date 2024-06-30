@@ -29,7 +29,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		GenerateSpaceDataMenu();
 		_menuLoading = false;
-		ActionSubscriber.SubscribeToAction<DataProviderDetailsChangedAction>(this, On_DataProviderDetailsChangedAction);
+		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_DataProviderDetailsChangedAction);
 	}
 
 	private void GenerateSpaceDataMenu(string search = null)
@@ -37,9 +37,10 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
 		var getResult = DataProviderManager.GetProviders();
-		if (getResult.IsFailed) return;
-
-		Console.WriteLine(Navigator.Uri.ToString());
+		if (getResult.IsFailed) {
+			hasMore = false;
+			return;
+		}
 
 		var pathSuffix = "";
 		var urlData = Navigator.GetUrlData();
@@ -49,6 +50,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		}
 
 		var records = getResult.Value.OrderBy(x => x.Name).ToList();
+
 		foreach (var item in records)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !item.Name.ToLowerInvariant().Contains(search))
@@ -97,7 +99,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		{
 			var provider = (TfDataProvider)result.Data;
 			ToastService.ShowSuccess("Data provider successfully created!");
-			Dispatcher.Dispatch(new SetDataProviderDetailsAction(provider));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(provider));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
 		}
 	}
@@ -124,7 +126,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void On_DataProviderDetailsChangedAction(DataProviderDetailsChangedAction action)
+	private void On_DataProviderDetailsChangedAction(DataProviderAdminChangedAction action)
 	{
 		InvokeAsync(async () =>
 		{

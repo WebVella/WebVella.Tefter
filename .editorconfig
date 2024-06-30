@@ -1,0 +1,6 @@
+[*.{cs,razor,txt}]
+charset = utf-8-bom
+[*.{html,css,js,less,scss}]
+charset = utf-8
+indent_style = tab
+tab_width = 4

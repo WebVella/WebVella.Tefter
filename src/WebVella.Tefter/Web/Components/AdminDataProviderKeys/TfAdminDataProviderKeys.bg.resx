@@ -126,9 +126,6 @@
   <data name="Edit key" xml:space="preserve">
     <value>Редакция на ключ</value>
   </data>
-  <data name="Missing Synchronization Key" xml:space="preserve">
-    <value>Липсващ ключ за синхронизация</value>
-  </data>
   <data name="No columns" xml:space="preserve">
     <value>Няма колони</value>
   </data>
@@ -140,15 +137,6 @@
   </data>
   <data name="Shared key" xml:space="preserve">
     <value>Споделен ключ</value>
-  </data>
-  <data name="Shared keys" xml:space="preserve">
-    <value>Споделени ключове</value>
-  </data>
-  <data name="Synchronization key" xml:space="preserve">
-    <value>Ключ за синхронизация</value>
-  </data>
-  <data name="Synchronization Key is not yet created. Without this key, data cannot be synchronized by this provider." xml:space="preserve">
-    <value>Все още не е създаден ключ за синхронизация. Без този ключ доставчикът не може да получава данни.</value>
   </data>
   <data name="The key is successfully deleted!" xml:space="preserve">
     <value>Ключът е успешно изтрит!</value>

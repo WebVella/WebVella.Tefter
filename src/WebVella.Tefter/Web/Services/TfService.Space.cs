@@ -1,18 +1,18 @@
 ﻿namespace WebVella.Tefter.Web.Services;
 
 public partial interface ITfService{
-	ValueTask<List<Space>> GetSpacesAsync();
+	Task<List<Space>> GetSpacesAsync();
 
-	ValueTask<List<Space>> GetSpacesForUserAsync(Guid userId);
+	Task<List<Space>> GetSpacesForUserAsync(Guid userId);
 }
 
 public partial class TfService
 {
-	public async ValueTask<List<Space>> GetSpacesAsync(){ 
+	public async Task<List<Space>> GetSpacesAsync(){ 
 		return await dataBroker.GetSpacesAsync();
 	}
 
-	public async ValueTask<List<Space>> GetSpacesForUserAsync(Guid userId)
+	public async Task<List<Space>> GetSpacesForUserAsync(Guid userId)
 	{
 		return await dataBroker.GetSpacesForUserAsync(userId);
 	}
