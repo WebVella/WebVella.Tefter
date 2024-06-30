@@ -20,7 +20,7 @@ public partial class TfStateInitializer : TfBaseComponent
 		if (firstRender)
 		{
 			await UseCase.InitializeAsync();
-
+			if(UseCase.User is null) return;
 			//Subscribe for state set results
 			//so we can know when all states are inited
 			ActionSubscriber.SubscribeToAction<SetUserActionResult>(this, initUserStateResult);
