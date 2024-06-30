@@ -33,6 +33,18 @@ public partial class IdManagerTests : BaseTest
 
 				idResult3.Value.Should().NotBe(idResult4.Value);
 				idResult.Value.Should().Be(idResult4.Value);
+
+				var id = Guid.NewGuid();
+				
+				var idResult5 = await idMan.GetAsync(id);
+				idResult5.Should().NotBeNull();
+				idResult5.IsSuccess.Should().BeTrue();
+				idResult5.Value.Should().Be(id);
+
+				var idResult6 = idMan.Get(id);
+				idResult6.Should().NotBeNull();
+				idResult6.IsSuccess.Should().BeTrue();
+				idResult6.Value.Should().Be(id);
 			}
 		}
 	}

@@ -37,7 +37,7 @@ internal interface IIdManager
 
 internal class IdManager : IIdManager
 {
-	private const string SQL = "SELECT * FROM _tefter_id_dict_insert_select( @text_id )";
+	private const string SQL = "SELECT * FROM _tefter_id_dict_insert_select( @text_id, @id )";
 	private readonly IDatabaseService _dbService;
 
 	public IdManager(
@@ -59,7 +59,8 @@ internal class IdManager : IIdManager
 		{
 			Guid id = Guid.Empty;
 			using var sqlReader = _dbService.GetReader(SQL,
-				new NpgsqlParameter("text_id", textId ?? string.Empty));
+				new NpgsqlParameter("text_id", textId ?? string.Empty),
+				new NpgsqlParameter("id", DBNull.Value));
 
 			sqlReader.Read();
 
@@ -86,8 +87,9 @@ internal class IdManager : IIdManager
 		try
 		{
 			Guid id = Guid.Empty;
-			using var sqlReader = await _dbService.GetReaderAsync(SQL,
-				new NpgsqlParameter("text_id", textId ?? string.Empty));
+			using var sqlReader = _dbService.GetReader(SQL,
+				new NpgsqlParameter("text_id", textId ?? string.Empty),
+				new NpgsqlParameter("id", DBNull.Value));
 
 			sqlReader.Read();
 
@@ -111,7 +113,25 @@ internal class IdManager : IIdManager
 	public Result<Guid> Get(
 		Guid guidId)
 	{
-		return Get(guidId.ToString());
+		try
+		{
+			Guid id = Guid.Empty;
+			using var sqlReader = _dbService.GetReader(SQL,
+				new NpgsqlParameter("text_id", guidId.ToString()),
+				new NpgsqlParameter("id", guidId));
+
+			sqlReader.Read();
+
+			id = sqlReader.GetGuid(0);
+
+			sqlReader.Close();
+
+			return Result.Ok(id);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get GUID for specified text identifier.").CausedBy(ex));
+		}
 	}
 
 	/// <summary>
@@ -122,6 +142,24 @@ internal class IdManager : IIdManager
 	public async Task<Result<Guid>> GetAsync(
 		Guid guidId)
 	{
-		return await GetAsync(guidId.ToString());
+		try
+		{
+			Guid id = Guid.Empty;
+			using var sqlReader = await _dbService.GetReaderAsync(SQL,
+				new NpgsqlParameter("text_id", guidId.ToString()),
+				new NpgsqlParameter("id", guidId));
+
+			sqlReader.Read();
+
+			id = sqlReader.GetGuid(0);
+
+			sqlReader.Close();
+
+			return Result.Ok(id);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get GUID for specified text identifier.").CausedBy(ex));
+		}
 	}
 }
