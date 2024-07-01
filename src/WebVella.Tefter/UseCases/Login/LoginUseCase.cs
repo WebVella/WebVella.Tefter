@@ -1,16 +1,15 @@
 ﻿namespace WebVella.Tefter.UseCases.Login;
 
-internal class LoginUseCase
+public class LoginUseCase
 {
 	private readonly IIdentityManager _identityManager;
-	internal LoginUseCase(IIdentityManager identityManager)
+	public LoginUseCase(IIdentityManager identityManager)
 	{
 		_identityManager = identityManager;
 	}
-	public LoginUseCase Initialize()
+	internal void OnInitialized()
 	{
 		Form = new TucLoginForm();
-		return this;
 	}
 
 	internal TucLoginForm Form { get; set; }

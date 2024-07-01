@@ -2,6 +2,7 @@
 namespace WebVella.Tefter.Web.Components.AdminDataProviderDetails;
 public partial class TfAdminDataProviderDetails : TfBaseComponent
 {
+	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
@@ -37,8 +38,10 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 		var urlData = Navigator.GetUrlData();
 		if (urlData.DataProviderId is not null)
 		{
-			ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
-			Dispatcher.Dispatch(new GetDataProviderAdminAction(urlData.DataProviderId.Value));
+			var result = UC.GetProvider(urlData.DataProviderId.Value);
+			ProcessServiceResponse(result);
+			if(result.IsSuccess && result.Value is not null)
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
 		}
 	}
 

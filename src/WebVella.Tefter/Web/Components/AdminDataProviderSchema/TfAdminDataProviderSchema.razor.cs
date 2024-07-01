@@ -4,9 +4,10 @@ using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
 namespace WebVella.Tefter.Web.Components.AdminDataProviderSchema;
 public partial class TfAdminDataProviderSchema : TfBaseComponent
 {
+	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 
-	private Dictionary<DatabaseColumnType, string> _typeNameDict = new();
+	private Dictionary<TucDatabaseColumnTypeInfo, string> _typeNameDict = new();
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -44,11 +45,13 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		var urlData = Navigator.GetUrlData();
 		if (urlData.DataProviderId is not null)
 		{
-			ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
-			Dispatcher.Dispatch(new GetDataProviderAdminAction(urlData.DataProviderId.Value));
+			var result = UC.GetProvider(urlData.DataProviderId.Value);
+			ProcessServiceResponse(result);
+			if(result.IsSuccess && result.Value is not null)
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
 		}
 	}
-	private async Task _editColumn(TfDataProviderColumn column)
+	private async Task _editColumn(TucDataProviderColumn column)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
 				column,
@@ -61,30 +64,30 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TfDataProvider)result.Data;
+			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully updated!"));
 			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
 		}
 	}
 
-	private async Task _deleteColumn(TfDataProviderColumn column)
+	private async Task _deleteColumn(TucDataProviderColumn column)
 	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
-			return;
-		try
-		{
-			Result<TfDataProvider> result = DataProviderManager.DeleteDataProviderColumn(column.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-				Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
-			}
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
+		//if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
+		//	return;
+		//try
+		//{
+		//	Result<TucDataProvider> result = DataProviderManager.DeleteDataProviderColumn(column.Id);
+		//	ProcessServiceResponse(result);
+		//	if (result.IsSuccess)
+		//	{
+		//		ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
+		//		Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
+		//	}
+		//}
+		//catch (Exception ex)
+		//{
+		//	ProcessException(ex);
+		//}
 		
 	}
 }

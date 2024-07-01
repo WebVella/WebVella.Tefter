@@ -21,6 +21,7 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
+	private bool hasLogging = false;
 	protected IStringLocalizer LC;
 	protected static IStringLocalizer GL = null;
 	private static AsyncLock _lock = new();
@@ -35,6 +36,18 @@ public class TfBaseComponent : FluxorComponent
 				GL = StringLocalizerFactory.Create(this.GetType().BaseType);
 			}
 		}
+
+		#if DEBUG
+		if(hasLogging) Console.WriteLine($"+++++++ Initialized {this.GetType().Name}");
+		#endif
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		#if DEBUG
+		if(hasLogging) Console.WriteLine($"+++++++ Render {this.GetType().Name}");
+		#endif
 	}
 
 	protected string LOC(string key, params object[] arguments)

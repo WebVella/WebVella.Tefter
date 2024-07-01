@@ -10,7 +10,7 @@ public record TucUser
 	public string LastName { get; init; }
 	public string Password { get; init; }
 	[Required]
-	
+
 	public bool Enabled { get; init; }
 	public DateTime CreatedOn { get; init; }
 	public TucUserSettings Settings { get; init; } = new();
@@ -27,7 +27,7 @@ public record TucUser
 		Enabled = model.Enabled;
 		CreatedOn = model.CreatedOn;
 		Settings = new TucUserSettings(model.Settings);
-		Roles = model.Roles.Select(x => new TucRole(x)).ToList().AsReadOnly();
+		Roles = model.Roles is null ? null : model.Roles.Select(x => new TucRole(x)).ToList().AsReadOnly();
 	}
 
 	public User ToModel()
@@ -42,7 +42,7 @@ public record TucUser
 			Enabled = Enabled,
 			CreatedOn = CreatedOn,
 			Settings = Settings.ToModel(),
-			Roles = Roles.Select(x=> x.ToModel()).ToList().AsReadOnly()
+			Roles = Roles is null ? null : Roles.Select(x => x.ToModel()).ToList().AsReadOnly()
 		};
 	}
 }

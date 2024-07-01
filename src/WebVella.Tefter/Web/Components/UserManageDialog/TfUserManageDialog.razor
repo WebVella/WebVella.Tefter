@@ -33,36 +33,36 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=_form.Email
+					<FluentTextField TextFieldType="@TextFieldType.Email" @bind-Value=UC.Form.Email
 									 Label="@LOC("Email")" Style="width:100%" AutoComplete="new-password" />
-					<FluentValidationMessage For="@(() => _form.Email)" />
+					<FluentValidationMessage For="@(() => UC.Form.Email)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Status")" />
-					<FluentCheckbox @bind-Value=_form.Enabled Label="@LOC("Enabled")" Style="margin-top:5px;" />
-					<FluentValidationMessage For="@(() => _form.Enabled)" />
+					<FluentCheckbox @bind-Value=UC.Form.Enabled Label="@LOC("Enabled")" Style="margin-top:5px;" />
+					<FluentValidationMessage For="@(() => UC.Form.Enabled)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.FirstName
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.Form.FirstName
 									 Label="@LOC("First Name")" Style="width:100%" AutoComplete="new-password" />
-					<FluentValidationMessage For="@(() => _form.FirstName)" />
+					<FluentValidationMessage For="@(() => UC.Form.FirstName)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.LastName
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.Form.LastName
 									 Label="@LOC("Last Name")" Style="width:100%" AutoComplete="new-password" />
-					<FluentValidationMessage For="@(() => _form.LastName)" />
+					<FluentValidationMessage For="@(() => UC.Form.LastName)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.Password
+					<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=UC.Form.Password
 									 Label="@LOC("Password")" Style="width:100%" AutoComplete="new-password" />
-					<FluentValidationMessage For="@(() => _form.Password)" />
+					<FluentValidationMessage For="@(() => UC.Form.Password)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					@if (String.IsNullOrWhiteSpace(_form.Password))
+					@if (!_isCreate && String.IsNullOrWhiteSpace(UC.Form.Password))
 					{
 						<FluentTextField TextFieldType="@TextFieldType.Text" Value="@LOC("leave empty too keep the password")"
 								 Label="@LOC("Confirm Password")" Disabled="true"
@@ -70,21 +70,21 @@
 					}
 					else
 					{
-						<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=_form.ConfirmPassword
+						<FluentTextField TextFieldType="@TextFieldType.Password" @bind-Value=UC.Form.ConfirmPassword
 										 Label="@LOC("ConfirmPassword")" AutoComplete="new-password" Style="width:100%" />
 					}
-					<FluentValidationMessage For="@(() => _form.ConfirmPassword)" />
+					<FluentValidationMessage For="@(() => UC.Form.ConfirmPassword)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect @bind-SelectedOption="@_form.ThemeMode" TOption="DesignThemeModes"
+					<FluentSelect @bind-SelectedOption="@UC.Form.ThemeMode" TOption="DesignThemeModes"
 								  Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
 							  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"></FluentSelect>
-					<FluentValidationMessage For="@(() => _form.ThemeMode)" />
+					<FluentValidationMessage For="@(() => UC.Form.ThemeMode)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentSelect @bind-SelectedOption="@_form.ThemeColor" TOption="OfficeColor"
+					<FluentSelect @bind-SelectedOption="@UC.Form.ThemeColor" TOption="OfficeColor"
 								  Items="@(Enum.GetValues<OfficeColor>())" Style="width:100%"
 							  OptionText="@(p => p.ToString())" Label="@LOC("Theme Color")" Context="option">
 						<OptionTemplate>
@@ -96,16 +96,16 @@
 							</FluentStack>
 						</OptionTemplate>
 					</FluentSelect>
-					<FluentValidationMessage For="@(() => _form.ThemeColor)" />
+					<FluentValidationMessage For="@(() => UC.Form.ThemeColor)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect @bind-SelectedOption="@_form.Culture" TOption="TucCultureOption"
+					<FluentSelect @bind-SelectedOption="@UC.Form.Culture" TOption="TucCultureOption"
 								  OptionValue="@(p => p.CultureCode)"
 								  Items="@TfConstants.CultureOptions" Style="width:100%"
 							  OptionText="@(p => p.Name)" Label="@LOC("Localization")" />
-					<FluentValidationMessage For="@(() => _form.Culture)" />
+					<FluentValidationMessage For="@(() => UC.Form.Culture)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
@@ -114,10 +114,11 @@
 					<FluentStack Style="margin-top:10px;">
 						@foreach (var role in _allRoles)
 						{
-							<FluentCheckbox Value="@_form.Roles.Any(x=> x.Id == role.Id)" Label="@role.Name" ValueChanged="@(()=>_roleChanged(role))" />
+							<FluentCheckbox Value="@UC.Form.Roles.Any(x=> x.Id == role.Id)" Label="@role.Name" 
+									ValueChanged="@(()=>_roleChanged(role))" />
 						}
 					</FluentStack>
-					<FluentValidationMessage For="@(() => _form.Roles)" />
+					<FluentValidationMessage For="@(() => UC.Form.Roles)" />
 				</FluentGridItem>
 			</FluentGrid>
 		</FluentEditForm>

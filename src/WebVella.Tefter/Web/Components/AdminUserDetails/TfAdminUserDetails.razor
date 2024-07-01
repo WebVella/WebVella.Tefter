@@ -73,12 +73,19 @@
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Roles")" />
-			<FluentStack Orientation="@Orientation.Horizontal">
-				@foreach (var role in (UserAdminState.Value?.User?.Roles?.ToList() ?? new List<TucRole>()))
-				{
-					<FluentBadge Appearance="Appearance.Accent">@role.Name</FluentBadge>
-				}
-			</FluentStack>
+			@if (UserAdminState.Value?.User?.Roles is null || !UserAdminState.Value.User.Roles.Any())
+			{
+				<div>@LOC("No roles assigned")</div>
+			}
+			else
+			{
+				<FluentStack Orientation="@Orientation.Horizontal">
+					@foreach (var role in (UserAdminState.Value?.User?.Roles?.ToList() ?? new List<TucRole>()))
+					{
+						<FluentBadge Appearance="Appearance.Accent">@role.Name</FluentBadge>
+					}
+				</FluentStack>
+			}
 		</FluentGridItem>
 	</FluentGrid>
 </TfCard>

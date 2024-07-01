@@ -87,8 +87,4 @@
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="UseCases\DataProviderAdmin\" />
-	</ItemGroup>
 </Project>

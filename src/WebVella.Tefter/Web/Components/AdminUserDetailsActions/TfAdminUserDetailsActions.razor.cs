@@ -6,12 +6,32 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 	[Inject] protected IState<UserAdminState> UserAdminState { get; set; }
 
 	private string menu = "details";
+
+	protected override ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if(disposing) Navigator.LocationChanged -= Navigator_LocationChanged;
+		return base.DisposeAsyncCore(disposing);
+	}
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		var urlData = Navigator.GetUrlData();
+		_setMenu(null);
+		Navigator.LocationChanged += Navigator_LocationChanged;
+	}
+
+	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	{
+		_setMenu(e.Location);
+		StateHasChanged();
+	}
+
+	private void _setMenu(string url)
+	{
+		var urlData = Navigator.GetUrlData(url);
 		if (urlData.SegmentsByIndexDict.ContainsKey(3))
 			menu = urlData.SegmentsByIndexDict[3];
+		else
+			menu = "details";
 	}
 
 	private async Task _editUser()
@@ -29,7 +49,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 		{
 			var user = (TucUser)result.Data;
 			ToastService.ShowSuccess(LOC("User successfully updated!"));
-			Dispatcher.Dispatch(new SetUserAdminAction(user));
+			Dispatcher.Dispatch(new SetUserAdminAction(false, user));
 		}
 	}
 }

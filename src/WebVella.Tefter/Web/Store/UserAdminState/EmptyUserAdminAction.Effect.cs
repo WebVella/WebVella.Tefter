@@ -5,7 +5,7 @@ public partial class StateEffect
 	[EffectMethod]
 	public Task EmptyUserAdminActionEffect(EmptyUserAdminAction action, IDispatcher dispatcher)
 	{
-		dispatcher.Dispatch(new UserAdminChangedAction(null));
+		dispatcher.Dispatch(new UserAdminChangedAction(false,null));
 		return Task.CompletedTask;
 	}
 }

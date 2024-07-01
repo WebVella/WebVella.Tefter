@@ -1,0 +1,62 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/admin/users"
+@page "/admin/users/{UserId:guid}/{*Path}"
+@layout AdminLayout
+@inherits TfBasePage
+
+<TfAdminUserStateManager/>
+
+@if (ScreenStateSidebarExpanded.Value)
+{
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
+		<TfAdminUserNavigation />
+	</FluentStack>
+}
+@if (UserId == Guid.Empty)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+			Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+				<div>TBD: Users dashboard with various height level overview information</div>
+			</FluentMessageBar>
+			<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
+			Intent="@MessageIntent.Warning">
+				<div>Select user from the list to review and manage it</div>
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	var urlData = Navigator.GetUrlData();
+	<FluentBodyContent Class="content-body with-toolbar">
+		<TfAdminUserDetailsNav />
+		<div class="content-inner with-toolbar">
+			@if (!urlData.SegmentsByIndexDict.ContainsKey(3))
+			{
+				<TfAdminUserDetails />
+			}
+			else if (urlData.SegmentsByIndexDict[3] == "access")
+			{
+				<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+								  Intent="@MessageIntent.Info">
+					<div>TBD: List of user's accessible views, so admin can check for permission  problems</div>
+				</FluentMessageBar>
+			}
+			else if (urlData.SegmentsByIndexDict[3] == "saves")
+			{
+				<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+								  Intent="@MessageIntent.Info">
+					<div>TBD: List of user's saved views so admin can maintain</div>
+				</FluentMessageBar>
+			}
+			
+		</div>
+	</FluentBodyContent>
+
+}
+
+
+
+

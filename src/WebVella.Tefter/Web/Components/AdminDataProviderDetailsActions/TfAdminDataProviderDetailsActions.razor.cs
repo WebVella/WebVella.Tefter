@@ -28,7 +28,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TfDataProvider)result.Data;
+			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
 			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
 		}
@@ -37,7 +37,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
-		new TfDataProviderColumn(),
+		new TucDataProviderColumn(),
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -47,7 +47,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TfDataProvider)result.Data;
+			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
 			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
 		}

@@ -3,16 +3,12 @@
 namespace WebVella.Tefter.Web.Components.Login;
 public partial class TfLogin : TfFormBaseComponent
 {
-	internal LoginUseCase _useCase;
-
+	[Inject] private LoginUseCase UC { get; set; }
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_useCase = new LoginUseCase(
-			identityManager:IdentityManager
-		).Initialize();
-
-		base.InitForm(_useCase.Form);
+		UC.OnInitialized();
+		base.InitForm(UC.Form);
 	}
 
 	internal async Task _submit()
@@ -24,10 +20,10 @@ public partial class TfLogin : TfFormBaseComponent
 			await Task.Delay(10);
 			var isValid = EditContext.Validate();
 			if (!isValid) return;
-			_useCase.IsSubmitting = true;
+			UC.IsSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = await _useCase.AuthenticateAsync(JSRuntime);
+			var result = await UC.AuthenticateAsync(JSRuntime);
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
@@ -39,7 +35,7 @@ public partial class TfLogin : TfFormBaseComponent
 		}
 		finally
 		{
-			_useCase.IsSubmitting = false;
+			UC.IsSubmitting = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

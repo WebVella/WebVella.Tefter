@@ -132,6 +132,9 @@
   <data name="Localization" xml:space="preserve">
     <value>Локализация</value>
   </data>
+  <data name="No roles assigned" xml:space="preserve">
+    <value>Няма дадени роли</value>
+  </data>
   <data name="Roles" xml:space="preserve">
     <value>Роли</value>
   </data>

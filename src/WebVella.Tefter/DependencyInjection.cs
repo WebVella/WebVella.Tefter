@@ -60,7 +60,10 @@ public static class DependencyInjection
 		//use cases
 		services.AddScoped<StateEffectsUseCase,StateEffectsUseCase>();
 		services.AddTransient<AppStartUseCase,AppStartUseCase>();
-		
+		services.AddTransient<DataProviderAdminUseCase,DataProviderAdminUseCase>();
+		services.AddTransient<LoginUseCase,LoginUseCase>();
+		services.AddTransient<UserAdminUseCase,UserAdminUseCase>();
+				
 
 		return services;
 	}

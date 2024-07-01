@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebVella.Tefter.Web.Components.UserManageDialog;
-public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<User>
+public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<TucUser>
 {
-	[Parameter] public User Content { get; set; }
+	[Inject] private UserAdminUseCase UC { get; set; }
+	[Parameter] public TucUser Content { get; set; }
 
 	[CascadingParameter]
 	public FluentDialog Dialog { get; set; }
@@ -14,19 +15,22 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-	private TfUserManageDialogModel _form = new();
-	private List<Role> _allRoles = new();
+	private List<TucRole> _allRoles = new();
 	private bool _isCreate = false;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
+		await UC.OnInitializedAsync(
+			initForm: true,
+			initMenu: false
+			);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create user") : LOC("Manage user");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
-		base.InitForm(_form);
+		base.InitForm(UC.Form);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -35,8 +39,6 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		if (firstRender)
 		{
 			await _loadDataAsync();
-			_isBusy = false;
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -46,18 +48,20 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			throw new NotImplementedException();
-			//_allRoles = SystemState.Value.Roles;
+			var rolesResult = await UC.GetUserRolesAsync();
+			ProcessServiceResponse(rolesResult);
+			if (rolesResult.IsFailed) return;
+			_allRoles = rolesResult.Value;
 
 			if (_isCreate)
 			{
 
-				_form.Culture = TfConstants.CultureOptions[0];
+				UC.Form.Culture = TfConstants.CultureOptions[0];
 			}
 			else
 			{
 
-				_form = new TfUserManageDialogModel()
+				UC.Form = new TucUserAdminManageForm()
 				{
 					ConfirmPassword = null,
 					Password = null,
@@ -72,14 +76,19 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 					IsSidebarOpen = Content.Settings.IsSidebarOpen,
 				};
 
-				_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
-				if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];
+				UC.Form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
+				if (UC.Form.Culture is null) UC.Form.Culture = TfConstants.CultureOptions[0];
 			}
-			base.InitForm(_form);
+			base.InitForm(UC.Form);
 		}
 		catch (Exception ex)
 		{
 			_error = ProcessException(ex);
+		}
+		finally
+		{
+			_isBusy = false;
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -93,50 +102,27 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			await Task.Delay(10);
 
 			MessageStore.Clear();
-			if (String.IsNullOrWhiteSpace(_form.Password))
-				_form.Password = null; //fixes a case when password was touched
-			if (_form.Password != _form.ConfirmPassword)
+			if (String.IsNullOrWhiteSpace(UC.Form.Password))
+				UC.Form.Password = null; //fixes a case when password was touched
+			if (UC.Form.Password != UC.Form.ConfirmPassword)
 			{
-				MessageStore.Add(EditContext.Field(nameof(_form.Password)), LOC("Passwords do not match"));
+				MessageStore.Add(EditContext.Field(nameof(UC.Form.Password)), LOC("Passwords do not match"));
 			}
 			if (!EditContext.Validate()) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			UserBuilder userBuilder;
+			var result = new Result<TucUser>();
 			if (_isCreate)
 			{
-				userBuilder = IdentityManager.CreateUserBuilder(null);
-				userBuilder
-					.WithEmail(_form.Email)
-					.WithFirstName(_form.FirstName)
-					.WithLastName(_form.LastName)
-					.WithPassword(_form.Password)
-					.Enabled(_form.Enabled)
-					.CreatedOn(DateTime.Now)
-					.WithThemeMode(_form.ThemeMode)
-					.WithThemeColor(_form.ThemeColor)
-					.WithOpenSidebar(true)
-					.WithCultureCode(_form.Culture.CultureInfo.Name)
-					.WithRoles(_form.Roles.ToArray());
+				result = await UC.CreateUserWithFormAsync();
 			}
 			else
 			{
-				userBuilder = IdentityManager.CreateUserBuilder(Content);
-				userBuilder
-					.WithEmail(_form.Email)
-					.WithFirstName(_form.FirstName)
-					.WithLastName(_form.LastName)
-					.Enabled(_form.Enabled)
-					.WithThemeMode(_form.ThemeMode)
-					.WithThemeColor(_form.ThemeColor)
-					.WithCultureCode(_form.Culture.CultureInfo.Name)
-					.WithRoles(_form.Roles.ToArray());
+				result = await UC.UpdateUserWithFormAsync();
 			}
 
-			var user = userBuilder.Build();
-			var result = await IdentityManager.SaveUserAsync(user);
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
 			{
@@ -158,41 +144,15 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		await Dialog.CancelAsync();
 	}
 
-	private void _roleChanged(Role role)
+	private void _roleChanged(TucRole role)
 	{
-		if (_form.Roles.Any(x => x.Id == role.Id))
+		if (UC.Form.Roles.Any(x => x.Id == role.Id))
 		{
-			_form.Roles = _form.Roles.Where(x => x.Id != role.Id).ToList();
+			UC.Form.Roles = UC.Form.Roles.Where(x => x.Id != role.Id).ToList();
 		}
 		else
 		{
-			_form.Roles.Add(role);
+			UC.Form.Roles.Add(role);
 		}
 	}
-}
-
-public class TfUserManageDialogModel
-{
-	[Required]
-	public Guid Id { get; set; }
-	[Required]
-	[EmailAddress]
-	public string Email { get; set; }
-	[Required]
-	public string FirstName { get; set; }
-	[Required]
-	public string LastName { get; set; }
-	internal string Password { get; set; }
-	internal string ConfirmPassword { get; set; }
-	[Required]
-	public bool Enabled { get; set; } = true;
-	[Required]
-	public DesignThemeModes ThemeMode { get; set; } = DesignThemeModes.System;
-	[Required]
-	public OfficeColor ThemeColor { get; set; } = OfficeColor.Excel;
-	[Required]
-	public bool IsSidebarOpen { get; set; } = true;
-	public TucCultureOption Culture { get; set; }
-	public List<Role> Roles { get; set; } = new();
-
 }

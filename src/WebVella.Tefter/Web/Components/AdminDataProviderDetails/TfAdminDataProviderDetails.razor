@@ -15,7 +15,7 @@
 		<FluentGridItem xs="12">
 			<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
 			@{
-				var supportedDataTypes = DataProviderDetailsState.Value?.Provider?.SupportedSourceDataTypes;
+				var supportedDataTypes = DataProviderDetailsState.Value?.Provider?.ProviderType.SupportedSourceDataTypes;
 			}
 			@if (supportedDataTypes is null || supportedDataTypes.Count == 0)
 			{

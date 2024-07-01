@@ -1,5 +1,6 @@
 ﻿#region <--- USING DIRECTIVES --->
 using Fluxor;
+using Fluxor.Blazor.Web.ReduxDevTools;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Serilog;
 using System.Globalization;
@@ -8,6 +9,7 @@ using WebVella.Tefter;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Identity;
 using WebVella.Tefter.Site.Components;
+using WebVella.Tefter.Utility;
 using WebVella.Tefter.Web.Utils;
 #endregion
 
@@ -37,8 +39,10 @@ try
 		//NOTE: Register your assemblies if you need states
 		builder.Services.AddFluxor(options =>
 		{
-			options.UseRouting();
+			//options.UseRouting();
 			options.ScanAssemblies(typeof(IIdentityManager).Assembly);
+			//options.AddMiddleware<LoggingMiddleware>();
+			options.UseReduxDevTools();
 		});
 
 		//IMPORTANT: Do not remove. Required for the application to work

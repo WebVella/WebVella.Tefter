@@ -31,12 +31,12 @@ internal static class ResultUtils
 		if (generalErrors.Count > 0)
 		{
 			toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
-			SendErrorsToNotifications(notificationErrorTitle, generalErrors,messageService);
+			SendErrorsToNotifications(notificationErrorTitle, generalErrors, messageService);
 		}
 	}
 
 	internal static void SendErrorsToNotifications(
-		string message, 
+		string message,
 		List<string> errors,
 		IMessageService messageService)
 	{
@@ -69,7 +69,7 @@ internal static class ResultUtils
 	{
 		string errorMessage = toastErrorMessage;
 		toastService.ShowToast(ToastIntent.Error, errorMessage);
-		SendErrorsToNotifications(notificationErrorTitle, new List<string> { exception.Message },messageService);
+		SendErrorsToNotifications(notificationErrorTitle, new List<string> { exception.Message }, messageService);
 
 		return errorMessage;
 	}
@@ -81,35 +81,63 @@ internal static class ResultUtils
 		EditContext editContext,
 		ValidationMessageStore messageStore,
 		IToastService toastService,
-		IMessageService messageService		
-		){
-		
-	var generalErrors = new List<string>();
+		IMessageService messageService
+		)
+	{
+
+		var generalErrors = new List<string>();
+		var validationErrors = new List<ValidationError>();
 		if (result is null || editContext is null || messageStore is null) return;
 		if (result.IsSuccess) return;
 
 		foreach (IError iError in result.Errors)
 		{
-			if (iError is ValidationError)
-			{
-				var error = (ValidationError)iError;
-				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					generalErrors.Add(error.Reason);
-				else
-					messageStore.Add(editContext.Field(error.PropertyName), error.Reason);
-			}
-			else
-			{
-				var error = (IError)iError;
-				generalErrors.Add(error.Message);
-			}
-
+			PressessFormResponseError(iError, validationErrors, generalErrors);
 		}
+
+		foreach (var valError in validationErrors)
+		{
+			messageStore.Add(editContext.Field(valError.PropertyName), valError.Reason);
+		}
+
 		editContext.NotifyValidationStateChanged();
-		if (generalErrors.Count > 0)
+		if (generalErrors.Count > 0 && validationErrors.Count == 0)
 		{
 			toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
-			SendErrorsToNotifications(notificationErrorTitle, generalErrors,messageService);
-		}	
+			SendErrorsToNotifications(notificationErrorTitle, generalErrors, messageService);
 		}
+	}
+
+	internal static void PressessFormResponseError(
+		IError iError,
+		List<ValidationError> validationErrors,
+		List<string> generalErrors)
+	{
+		if (iError is null) return;
+
+		if (iError is ValidationError)
+		{
+			var error = (ValidationError)iError;
+			if (String.IsNullOrWhiteSpace(error.PropertyName))
+				generalErrors.Add(error.Reason);
+			else
+			{
+				validationErrors.Add(error);
+			}
+		}
+		else
+		{
+			var error = (IError)iError;
+			generalErrors.Add(error.Message);
+		}
+
+		if (iError.Reasons is not null)
+		{
+			foreach (IError iReason in iError.Reasons)
+			{
+				PressessFormResponseError(iReason, validationErrors, generalErrors);
+			}
+		}
+
+	}
 }

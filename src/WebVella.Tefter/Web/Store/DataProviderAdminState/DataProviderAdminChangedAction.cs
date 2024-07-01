@@ -2,9 +2,9 @@
 
 public record DataProviderAdminChangedAction
 {
-	public TfDataProvider Provider { get;}
+	public TucDataProvider Provider { get;}
 
-	public DataProviderAdminChangedAction(TfDataProvider provider)
+	public DataProviderAdminChangedAction(TucDataProvider provider)
 	{
 		Provider = provider;
 	}

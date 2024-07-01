@@ -18,11 +18,10 @@ internal partial class AppStartUseCase
 		_navigationManager = navigationManager;
 	}
 
-	internal async Task<AppStartUseCase> InitializeAsync()
+	internal async Task OnAfterRenderAsync()
 	{
 		await UserInitializeAsync();
 		await CultureInitializeAsync();
-		return this;
 	}
 	internal bool IsLoading { get; set; } = true;
 	internal TucUser User { get; set; }

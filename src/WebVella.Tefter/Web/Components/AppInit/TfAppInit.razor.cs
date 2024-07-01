@@ -1,7 +1,7 @@
-﻿namespace WebVella.Tefter.Web.Components.StateInitializer;
-public partial class TfStateInitializer : TfBaseComponent
+﻿namespace WebVella.Tefter.Web.Components.AppInit;
+public partial class TfAppInit : TfBaseComponent
 {
-	[Inject] private AppStartUseCase UseCase { get; set; }
+	[Inject] private AppStartUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -19,8 +19,8 @@ public partial class TfStateInitializer : TfBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			await UseCase.InitializeAsync();
-			if(UseCase.User is null) return;
+			await UC.OnAfterRenderAsync();
+			if(UC.User is null) return;
 			//Subscribe for state set results
 			//so we can know when all states are inited
 			ActionSubscriber.SubscribeToAction<SetUserActionResult>(this, initUserStateResult);
@@ -30,17 +30,17 @@ public partial class TfStateInitializer : TfBaseComponent
 
 			//Setup states
 			Dispatcher.Dispatch(new InitUserStateAction(
-				user:UseCase.User
+				user:UC.User
 			));
 			Dispatcher.Dispatch(new InitCultureStateAction(
-				culture: UseCase.CultureOption
+				culture: UC.CultureOption
 			));
 			Dispatcher.Dispatch(new InitThemeStateAction(
-				themeMode: UseCase.User.Settings?.ThemeMode ?? TfConstants.DefaultThemeMode,
-				themeColor: UseCase.User.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor
+				themeMode: UC.User.Settings?.ThemeMode ?? TfConstants.DefaultThemeMode,
+				themeColor: UC.User.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor
 			));
 			Dispatcher.Dispatch(new InitScreenStateAction(
-				sidebarExpanded: UseCase.User.Settings?.IsSidebarOpen ?? true
+				sidebarExpanded: UC.User.Settings?.IsSidebarOpen ?? true
 			));
 
 			//For the logout fix
@@ -57,7 +57,7 @@ public partial class TfStateInitializer : TfBaseComponent
 	/// <param name="action"></param>
 	private void initUserStateResult(SetUserActionResult action)
 	{
-		UseCase.UserStateInited = true;
+		UC.UserStateInited = true;
 		CheckAllInited();
 	}
 
@@ -67,7 +67,7 @@ public partial class TfStateInitializer : TfBaseComponent
 	/// <param name="action"></param>
 	private void initCultureStateResult(SetCultureActionResult action)
 	{
-		UseCase.CultureStateInited = true;
+		UC.CultureStateInited = true;
 		CheckAllInited();
 	}
 
@@ -77,12 +77,12 @@ public partial class TfStateInitializer : TfBaseComponent
 	/// <param name="action"></param>
 	private void initThemeStateResult(SetThemeActionResult action)
 	{
-		if (!UseCase.IsLoading)
+		if (!UC.IsLoading)
 		{
 			Navigator.ReloadCurrentUrl();
 			return;
 		}
-		UseCase.ThemeStateInited = true;
+		UC.ThemeStateInited = true;
 		CheckAllInited();
 
 	}
@@ -93,7 +93,7 @@ public partial class TfStateInitializer : TfBaseComponent
 	/// <param name="action"></param>
 	private void initSidebarStateResult(SetSidebarActionResult action)
 	{
-		UseCase.SidebarStateInited = true;
+		UC.SidebarStateInited = true;
 		CheckAllInited();
 	}
 
@@ -102,9 +102,9 @@ public partial class TfStateInitializer : TfBaseComponent
 	/// </summary>
 	private void CheckAllInited()
 	{
-		if (UseCase.AllInited)
+		if (UC.AllInited)
 		{
-			UseCase.IsLoading = false;
+			UC.IsLoading = false;
 			StateHasChanged();
 		}
 	}
@@ -119,7 +119,7 @@ public partial class TfStateInitializer : TfBaseComponent
 	{
 		InvokeAsync(async () =>
 		{
-			await UseCase.OnLocationChange();
+			await UC.OnLocationChange();
 		});
 	}
 

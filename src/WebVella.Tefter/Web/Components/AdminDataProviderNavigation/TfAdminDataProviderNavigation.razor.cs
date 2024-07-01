@@ -97,7 +97,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var provider = (TfDataProvider)result.Data;
+			var provider = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess("Data provider successfully created!");
 			Dispatcher.Dispatch(new SetDataProviderAdminAction(provider));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));

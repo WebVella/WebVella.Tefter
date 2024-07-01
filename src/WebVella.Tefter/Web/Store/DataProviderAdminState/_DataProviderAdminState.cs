@@ -4,5 +4,5 @@
 public record DataProviderAdminState
 {
 	public bool IsBusy { get; init; }
-	public TfDataProvider Provider { get; init; }
+	public TucDataProvider Provider { get; init; }
 }

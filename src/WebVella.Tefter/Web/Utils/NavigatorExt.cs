@@ -2,7 +2,7 @@
 
 internal static class NavigatorExt
 {
-	internal static Models.RouteData GetUrlData(this NavigationManager navigator)
+	internal static Models.RouteData GetUrlData(this NavigationManager navigator, string url = null)
 	{
 		Guid? spaceId = null;
 		Guid? spaceDataId = null;
@@ -10,7 +10,12 @@ internal static class NavigatorExt
 		Guid? userId = null;
 		Guid? dataProviderId = null;
 		Dictionary<int, string> pathDict = new();
-		var uri = new Uri(navigator.Uri);
+		Uri uri = null;
+		if (String.IsNullOrWhiteSpace(url))
+			uri = new Uri(navigator.Uri);
+		else
+			uri = new Uri(url);
+
 		var boz = uri.Segments;
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		var dictIndex = 0;
@@ -393,7 +398,7 @@ internal static class NavigatorExt
 
 	internal static void NotFound(this NavigationManager navigator)
 	{
-		throw new Exception("Not found");
+		navigator.NavigateTo(TfConstants.NotFoundPageUrl, true);
 	}
 
 

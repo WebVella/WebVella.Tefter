@@ -19,7 +19,7 @@ public partial class StateEffectsUseCase
 		_jsRuntime = jsRuntime;
 	}
 
-	public async Task<User> GetUserWithChecks(Guid userId)
+	private async Task<User> GetUserWithChecks(Guid userId)
 	{
 		Result<User> userResult = await _identityManager.GetUserAsync(userId);
 		if(userResult.IsFailed) throw new Exception("GetUserAsync failed");

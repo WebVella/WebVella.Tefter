@@ -2,10 +2,14 @@
 
 public record UserAdminChangedAction
 {
-	public TucUser User { get;}
+	public bool IsBusy { get; }
+	public TucUser User { get; }
 
-	public UserAdminChangedAction(TucUser user)
+	public UserAdminChangedAction(
+	bool isBusy,
+	TucUser user)
 	{
+		IsBusy = isBusy;
 		User = user;
 	}
 }
