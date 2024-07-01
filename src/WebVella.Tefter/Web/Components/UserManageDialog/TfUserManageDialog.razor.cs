@@ -51,11 +51,17 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 					FirstName = Content.FirstName,
 					LastName = Content.LastName,
 					Id = Content.Id,
-					Roles = Content.Roles.ToList(),
 					ThemeMode = Content.Settings.ThemeMode,
 					ThemeColor = Content.Settings.ThemeColor,
 					IsSidebarOpen = Content.Settings.IsSidebarOpen,
 				};
+				if(Content.Roles is not null){
+					foreach (var role in Content.Roles)
+					{
+						var listIndex = UC.AllRoles.FindIndex(x=> x.Id == role.Id);
+						if(listIndex != -1) UC.Form.Roles.Add(UC.AllRoles[listIndex]);
+					}
+				}
 
 				UC.Form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
 				if (UC.Form.Culture is null) UC.Form.Culture = TfConstants.CultureOptions[0];

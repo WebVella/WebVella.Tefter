@@ -1,7 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components.DataProviderManageDialog;
 public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProvider>
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] 
+	private DataProviderAdminUseCase UC { get; set; }
 	[Parameter] public TucDataProvider Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
@@ -24,8 +25,6 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			initForm: true,
 			initMenu: false
 			);
-		ConsoleExt.WriteLine("Init");
-		ConsoleExt.WriteLine(UC.Form.GetHashCode().ToString());
 		base.InitForm(UC.Form);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
@@ -40,17 +39,11 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			ConsoleExt.WriteLine("Render 0");
-			ConsoleExt.WriteLine(UC.Form.GetHashCode().ToString());
 			if (_isCreate)
 			{
 				UC.Form = UC.Form with
 				{
-					ProviderType = UC.AllProviderTypes.First()
-				};
-				_form = new TucDataProviderForm()
-				{
-					ProviderType = UC.AllProviderTypes.First()
+					ProviderType = UC.AllProviderTypes.First(),
 				};
 			}
 			else
@@ -59,22 +52,13 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 				{
 					Id = Content.Id,
 					Name = Content.Name,
-					ProviderType = Content.ProviderType,
-					SettingsJson = Content.SettingsJson
+					SettingsJson = Content.SettingsJson,
 				};
-				_form = new TucDataProviderForm()
-				{
-					Id = Content.Id,
-					Name = Content.Name,
-					ProviderType = Content.ProviderType,
-					SettingsJson = Content.SettingsJson
-				};
+				if(Content.ProviderType is not null){ 
+					UC.Form.ProviderType = UC.AllProviderTypes.FirstOrDefault(x=> x.Id == Content.ProviderType.Id);
+				}
 			}
-			ConsoleExt.WriteLine("Render 1");
-			ConsoleExt.WriteLine(UC.Form.GetHashCode().ToString());
 			base.InitForm(UC.Form);
-			ConsoleExt.WriteLine("Render 2");
-			ConsoleExt.WriteLine(UC.Form.GetHashCode().ToString());
 			await InvokeAsync(StateHasChanged);
 		}
 
@@ -143,12 +127,6 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 		dict["DisplayMode"] = ComponentDisplayMode.Form;
 		dict["Value"] = UC.Form.SettingsJson;
 		return dict;
-	}
-
-	private void _optionChanged(TucDataProviderTypeInfo? type)
-	{
-		UC.Form.ProviderType = type;
-
 	}
 
 }

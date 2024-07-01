@@ -41,11 +41,8 @@ public partial class TfAdminDataProviderStateManager : TfBaseComponent
 						provider: serviceResult.Value));
 					return;
 				}
-				else
-				{
-					Navigator.NotFound();
-				}
 			}
+			Navigator.NotFound();
 		}
 		else
 		{

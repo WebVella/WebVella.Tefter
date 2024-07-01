@@ -40,11 +40,8 @@ public partial class TfAdminUserStateManager : TfBaseComponent
 					Dispatcher.Dispatch(new SetUserAdminAction(false, userResult.Value));
 					return;
 				}
-				else
-				{
-					Navigator.NotFound();
-				}
 			}
+			Navigator.NotFound();
 		}
 		else
 		{

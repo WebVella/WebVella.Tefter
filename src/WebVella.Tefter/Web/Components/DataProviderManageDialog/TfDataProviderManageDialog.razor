@@ -7,7 +7,7 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	@if (String.IsNullOrWhiteSpace(_error) && !_isBusy)
+	@if (String.IsNullOrWhiteSpace(_error))
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
 					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
@@ -20,7 +20,6 @@
 	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
 	}
 	else
 	{
@@ -37,8 +36,7 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentSelect Required="true"
-								  SelectedOption="@UC.Form.ProviderType" TOption="TucDataProviderTypeInfo"
-								  SelectedOptionChanged="_optionChanged"
+								  @bind-SelectedOption="@UC.Form.ProviderType" TOption="TucDataProviderTypeInfo"
 								  Items="@UC.AllProviderTypes" Style="width:100%" Disabled="!_isCreate"
 								  OptionText="@(p => p.Name.ToString())" Label="@LOC("Type")"></FluentSelect>
 					<FluentValidationMessage For="@(() => UC.Form.ProviderType)" />
@@ -46,10 +44,6 @@
 			</FluentGrid>
 			<FluentDivider Style="margin:15px 0" />
 			<div>
-				<div>@(System.Text.Json.JsonSerializer.Serialize(_form))</div>
-				<div>@(System.Text.Json.JsonSerializer.Serialize(_form?.ProviderType))</div>
-				<div>@(System.Text.Json.JsonSerializer.Serialize(_form?.ProviderType?.SettingsComponentType?.Name))</div>
-
 				@if (UC.Form?.ProviderType?.SettingsComponentType is null) { }
 				else if (UC.Form?.ProviderType?.SettingsComponentType?.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 				{

@@ -2,7 +2,7 @@
 public partial class DataProviderAdminUseCase
 {
 
-	internal IEnumerable<TucDataProviderTypeInfo> AllProviderTypes { get; set; } = Enumerable.Empty<TucDataProviderTypeInfo>();
+	internal List<TucDataProviderTypeInfo> AllProviderTypes { get; set; } = new();
 	internal TucDataProviderForm Form
 	{
 		get
@@ -25,7 +25,7 @@ public partial class DataProviderAdminUseCase
 		if (serviceResult.IsFailed) throw new Exception("GetProviderTypes failed");
 		if (serviceResult.Value is not null)
 		{
-			AllProviderTypes = serviceResult.Value.Select(t => new TucDataProviderTypeInfo(t)).AsEnumerable();
+			AllProviderTypes = serviceResult.Value.Select(t => new TucDataProviderTypeInfo(t)).ToList();
 		}
 	}
 

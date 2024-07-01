@@ -4,6 +4,7 @@ using WebVella.Tefter.Web.Components.DataProviderManageDialog;
 namespace WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions;
 public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 {
+	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 	private bool _isDeleting = false;
 	private string menu = "details";
@@ -63,11 +64,11 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = DataProviderManager.DeleteDataProvider(DataProviderDetailsState.Value.Provider.Id);
+			var result = UC.DeleteDataProvider(DataProviderDetailsState.Value.Provider.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
-				Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl);
+				Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl,true);
 			}
 		}
 		catch (Exception ex)
