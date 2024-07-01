@@ -4,12 +4,12 @@ namespace WebVella.Tefter.UseCases.Models;
 
 public record TucDataProviderForm
 {
-	public Guid Id { get; init; }
+	public Guid Id { get; set; }
 	[Required]
-	public string Name { get; init; }
-	public string SettingsJson { get; init; }
+	public string Name { get; set; }
+	public string SettingsJson { get; set; }
 	[Required]
-	public TucDataProviderTypeInfo ProviderType { get; init; }
+	public TucDataProviderTypeInfo ProviderType { get; set; }
 
 	public TucDataProviderForm() { }
 	public TucDataProviderForm(TfDataProviderModel model)

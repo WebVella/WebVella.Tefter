@@ -12,10 +12,13 @@ public partial class DataProviderAdminUseCase
 	}
 
 	public void OnInitialized(
+		bool initForm,
 		bool initMenu
 	)
 	{
+		if(initForm) Form = new TucDataProviderForm();
 		if (initMenu) InitMenu();
 	}
 
+	internal TucDataProviderForm Form { get; set;}
 }

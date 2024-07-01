@@ -18,7 +18,9 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		UC.OnInitialized(initMenu: true);
+		UC.OnInitialized(
+			initForm:false,
+			initMenu: true);
 		_setMenuItemActions();
 		UC.MenuLoading = false;
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);

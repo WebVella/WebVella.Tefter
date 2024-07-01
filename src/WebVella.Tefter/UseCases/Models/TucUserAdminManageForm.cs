@@ -26,4 +26,16 @@ public record TucUserAdminManageForm
 	public TucCultureOption Culture { get; set; }
 	public List<TucRole> Roles { get; set; } = new();
 
+	public void OnRoleChange(TucRole role)
+	{
+		if (Roles.Any(x => x.Id == role.Id))
+		{
+			Roles = Roles.Where(x => x.Id != role.Id).ToList();
+		}
+		else
+		{
+			Roles.Add(role);
+		}
+	}
+
 }

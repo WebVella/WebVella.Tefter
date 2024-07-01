@@ -17,7 +17,9 @@ public partial class TfAdminDataProviderStateManager : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		UC.OnInitialized(initMenu:false);
+		UC.OnInitialized(
+			initForm:false,
+			initMenu:false);
 		_initState(null);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}

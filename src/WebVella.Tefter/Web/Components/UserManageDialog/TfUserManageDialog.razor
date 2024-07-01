@@ -17,11 +17,7 @@
 
 @* Body *@
 <FluentDialogBody>
-	@if (_isBusy)
-	{
-		<TfLoadingPane />
-	}
-	else if (!string.IsNullOrWhiteSpace(_error))
+	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
 
@@ -65,7 +61,7 @@
 					@if (!_isCreate && String.IsNullOrWhiteSpace(UC.Form.Password))
 					{
 						<FluentTextField TextFieldType="@TextFieldType.Text" Value="@LOC("leave empty too keep the password")"
-								 Label="@LOC("Confirm Password")" Disabled="true"
+										 Label="@LOC("Confirm Password")" Disabled="true"
 										 Style="width:100%" />
 					}
 					else
@@ -80,13 +76,13 @@
 				<FluentGridItem xs="6">
 					<FluentSelect @bind-SelectedOption="@UC.Form.ThemeMode" TOption="DesignThemeModes"
 								  Items="@(Enum.GetValues<DesignThemeModes>())" Style="width:100%"
-							  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"></FluentSelect>
+								  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"></FluentSelect>
 					<FluentValidationMessage For="@(() => UC.Form.ThemeMode)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentSelect @bind-SelectedOption="@UC.Form.ThemeColor" TOption="OfficeColor"
 								  Items="@(Enum.GetValues<OfficeColor>())" Style="width:100%"
-							  OptionText="@(p => p.ToString())" Label="@LOC("Theme Color")" Context="option">
+								  OptionText="@(p => p.ToString())" Label="@LOC("Theme Color")" Context="option">
 						<OptionTemplate>
 							<FluentStack>
 								<FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())"
@@ -104,18 +100,18 @@
 					<FluentSelect @bind-SelectedOption="@UC.Form.Culture" TOption="TucCultureOption"
 								  OptionValue="@(p => p.CultureCode)"
 								  Items="@TfConstants.CultureOptions" Style="width:100%"
-							  OptionText="@(p => p.Name)" Label="@LOC("Localization")" />
+								  OptionText="@(p => p.Name)" Label="@LOC("Localization")" />
 					<FluentValidationMessage For="@(() => UC.Form.Culture)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-				<FluentInputLabel Label="@LOC("Roles")" />
+					<FluentInputLabel Label="@LOC("Roles")" />
 					<FluentStack Style="margin-top:10px;">
-						@foreach (var role in _allRoles)
+						@foreach (var role in UC.AllRoles)
 						{
-							<FluentCheckbox Value="@UC.Form.Roles.Any(x=> x.Id == role.Id)" Label="@role.Name" 
-									ValueChanged="@(()=>_roleChanged(role))" />
+							<FluentCheckbox Value="@UC.Form.Roles.Any(x=> x.Id == role.Id)" Label="@role.Name"
+											ValueChanged="@(()=>UC.Form.OnRoleChange(role))" />
 						}
 					</FluentStack>
 					<FluentValidationMessage For="@(() => UC.Form.Roles)" />

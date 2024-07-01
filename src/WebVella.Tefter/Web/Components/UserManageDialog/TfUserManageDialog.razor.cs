@@ -5,17 +5,13 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
 	[Parameter] public TucUser Content { get; set; }
+	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
-	[CascadingParameter]
-	public FluentDialog Dialog { get; set; }
-
-	private bool _isBusy = true;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-	private List<TucRole> _allRoles = new();
 	private bool _isCreate = false;
 
 	protected override async Task OnInitializedAsync()
@@ -25,12 +21,12 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			initForm: true,
 			initMenu: false
 			);
+		base.InitForm(UC.Form);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create user") : LOC("Manage user");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
-		base.InitForm(UC.Form);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -38,21 +34,6 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await _loadDataAsync();
-		}
-	}
-
-	private async Task _loadDataAsync()
-	{
-		_isBusy = true;
-		await InvokeAsync(StateHasChanged);
-		try
-		{
-			var rolesResult = await UC.GetUserRolesAsync();
-			ProcessServiceResponse(rolesResult);
-			if (rolesResult.IsFailed) return;
-			_allRoles = rolesResult.Value;
-
 			if (_isCreate)
 			{
 
@@ -80,15 +61,6 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 				if (UC.Form.Culture is null) UC.Form.Culture = TfConstants.CultureOptions[0];
 			}
 			base.InitForm(UC.Form);
-		}
-		catch (Exception ex)
-		{
-			_error = ProcessException(ex);
-		}
-		finally
-		{
-			_isBusy = false;
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -144,15 +116,4 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		await Dialog.CancelAsync();
 	}
 
-	private void _roleChanged(TucRole role)
-	{
-		if (UC.Form.Roles.Any(x => x.Id == role.Id))
-		{
-			UC.Form.Roles = UC.Form.Roles.Where(x => x.Id != role.Id).ToList();
-		}
-		else
-		{
-			UC.Form.Roles.Add(role);
-		}
-	}
 }

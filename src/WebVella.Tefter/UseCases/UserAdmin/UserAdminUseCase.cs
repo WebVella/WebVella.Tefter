@@ -14,10 +14,10 @@ public partial class UserAdminUseCase
 		bool initMenu
 	)
 	{
-		if(initForm) Form = new TucUserAdminManageForm();
+		if(initForm) await InitForm();
 		if(initMenu) await InitMenuAsync();
 	}
 
-	internal TucUserAdminManageForm Form { get; set; }
+
 
 }
