@@ -17,11 +17,7 @@
 
 @* Body *@
 <FluentDialogBody>
-	@if (_isBusy)
-	{
-		<TfLoadingPane />
-	}
-	else if (!string.IsNullOrWhiteSpace(_error))
+	@if (!string.IsNullOrWhiteSpace(_error))
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
 
@@ -40,17 +36,22 @@
 					<FluentValidationMessage For="@(() => UC.Form.Name)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-@* 					<FluentSelect Required="true"
-								  @bind-SelectedOption="@UC.Form.ProviderType" TOption="TucDataProviderTypeInfo"
-								  Items="@_allTypes" Style="width:100%" Disabled="!_isCreate"
-								  OptionText="@(p => p.Name.ToString())" Label="@LOC("Type")"></FluentSelect> *@
+					<FluentSelect Required="true"
+								  SelectedOption="@UC.Form.ProviderType" TOption="TucDataProviderTypeInfo"
+								  SelectedOptionChanged="_optionChanged"
+								  Items="@UC.AllProviderTypes" Style="width:100%" Disabled="!_isCreate"
+								  OptionText="@(p => p.Name.ToString())" Label="@LOC("Type")"></FluentSelect>
 					<FluentValidationMessage For="@(() => UC.Form.ProviderType)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:15px 0" />
 			<div>
-				@if (UC.Form.ProviderType.SettingsComponentType is null) { }
-				else if (UC.Form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+				<div>@(System.Text.Json.JsonSerializer.Serialize(_form))</div>
+				<div>@(System.Text.Json.JsonSerializer.Serialize(_form?.ProviderType))</div>
+				<div>@(System.Text.Json.JsonSerializer.Serialize(_form?.ProviderType?.SettingsComponentType?.Name))</div>
+
+				@if (UC.Form?.ProviderType?.SettingsComponentType is null) { }
+				else if (UC.Form?.ProviderType?.SettingsComponentType?.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 				{
 					<DynamicComponent Type="UC.Form.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
 									  @ref="typeSettingsComponent"></DynamicComponent>

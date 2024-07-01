@@ -4,7 +4,10 @@ public record TucDataProviderTypeInfo
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
+	[JsonIgnore]
 	public string IconBase64 { get; init; }
+
+	[JsonIgnore]
 	public Type SettingsComponentType { get; init; }
 	public List<string> SupportedSourceDataTypes { get; init; }
 	public TucDataProviderTypeInfo() { }

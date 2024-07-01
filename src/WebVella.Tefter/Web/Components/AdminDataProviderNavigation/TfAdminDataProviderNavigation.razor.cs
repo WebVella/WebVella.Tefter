@@ -48,7 +48,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 
 	private async Task onAddClick()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(new TfDataProvider(), new DialogParameters()
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(new TucDataProvider(), new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,

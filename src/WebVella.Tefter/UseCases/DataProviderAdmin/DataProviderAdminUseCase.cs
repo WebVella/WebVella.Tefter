@@ -16,9 +16,10 @@ public partial class DataProviderAdminUseCase
 		bool initMenu
 	)
 	{
-		if(initForm) Form = new TucDataProviderForm();
+		if(initForm) InitForm();
 		if (initMenu) InitMenu();
 	}
 
-	internal TucDataProviderForm Form { get; set;}
+	internal Guid Id { get; private set; } = Guid.NewGuid();
+
 }

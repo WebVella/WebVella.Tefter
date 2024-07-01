@@ -61,6 +61,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 				if (UC.Form.Culture is null) UC.Form.Culture = TfConstants.CultureOptions[0];
 			}
 			base.InitForm(UC.Form);
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
