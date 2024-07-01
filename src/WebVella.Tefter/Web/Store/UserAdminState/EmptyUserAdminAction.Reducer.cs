@@ -4,5 +4,5 @@ public static partial class UserAdminStateReducers
 {
 	[ReducerMethod()]
 	public static UserAdminState EmptyUserAdminActionReducer(UserAdminState state, EmptyUserAdminAction action) 
-		=> state with { IsBusy = false, User = null};
+		=> state with { IsBusy = action.IsBusy, User = action.User};
 }

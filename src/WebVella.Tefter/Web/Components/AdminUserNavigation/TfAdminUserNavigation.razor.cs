@@ -41,7 +41,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		UC.LoadMoreLoading = true;
 		await InvokeAsync(StateHasChanged);
 		UC.MenuPage++;
-		await UC.SetUserMenuAsync();
+		await UC.InitMenuAsync();
 		_setMenuItemActions();
 		UC.LoadMoreLoading = false;
 		await InvokeAsync(StateHasChanged);
@@ -66,22 +66,10 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private void OnTreeMenuSelect(TucMenuItem item, bool selected)
-	{
-		item.Active = selected;
-		if (item.Active && item.Data is not null)
-		{
-			var user = (TucUser)item.Data;
-			ConsoleExt.WriteLine($"OnTreeMenuSelect {user.Id} {selected}");
-			Navigator.NavigateTo(item.Url);
-		}
-	}
-
 	private void OnTreeMenuClick(TucMenuItem item)
 	{
 		if (item.Data is null) return;
 		item.Active = true;
-		var user = (TucUser)item.Data;
 		Navigator.NavigateTo(item.Url);
 	}
 
@@ -102,7 +90,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 
 	private void On_UserDetailsChangedAction(UserAdminChangedAction action)
 	{
-		UC.OnUserDetailsChanged(action.User);
+		UC.OnStateChanged(action.User);
 		StateHasChanged();
 	}
 }

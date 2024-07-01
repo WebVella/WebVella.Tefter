@@ -129,9 +129,6 @@
   <data name="New" xml:space="preserve">
     <value>Нов</value>
   </data>
-  <data name="No data providers created yet" xml:space="preserve">
-    <value>Все още няма създадени доставчици на данни</value>
-  </data>
   <data name="No data providers match search criteria" xml:space="preserve">
     <value>Няма доставчици на данни отговарящи на критерия за търсене</value>
   </data>

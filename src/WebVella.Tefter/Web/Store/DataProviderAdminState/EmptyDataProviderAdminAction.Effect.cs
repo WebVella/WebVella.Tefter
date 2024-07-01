@@ -5,7 +5,7 @@ public partial class StateEffect
 	[EffectMethod]
 	public Task DataProviderAdminActionEffect(EmptyDataProviderAdminAction action, IDispatcher dispatcher)
 	{
-		dispatcher.Dispatch(new DataProviderAdminChangedAction(null));
+		dispatcher.Dispatch(new DataProviderAdminChangedAction(action.IsBusy,action.Provider));
 		return Task.CompletedTask;
 	}
 }

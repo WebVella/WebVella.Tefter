@@ -30,7 +30,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false,record));
 		}
 	}
 
@@ -49,7 +49,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(record));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
 		}
 	}
 

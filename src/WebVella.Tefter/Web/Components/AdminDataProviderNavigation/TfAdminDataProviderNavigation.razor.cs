@@ -3,17 +3,9 @@
 namespace WebVella.Tefter.Web.Components.AdminDataProviderNavigation;
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
+	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
-
-	private bool _menuLoading = true;
-	private List<MenuItem> _menuItems = new();
-	private List<MenuItem> _visibleMenuItems = new();
-
-	private string search = null;
-	private bool hasMore = true;
-	private int page = 1;
-	private int pageSize = TfConstants.PageSize;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -26,64 +18,30 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		UC.OnInitialized(initMenu: true);
+		_setMenuItemActions();
+		UC.MenuLoading = false;
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
-		GenerateSpaceDataMenu();
-		_menuLoading = false;
 		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_DataProviderDetailsChangedAction);
 	}
 
-	private void GenerateSpaceDataMenu(string search = null)
+	private void _setMenuItemActions()
 	{
-		search = search?.Trim().ToLowerInvariant();
-		_menuItems.Clear();
-		var getResult = DataProviderManager.GetProviders();
-		if (getResult.IsFailed) {
-			hasMore = false;
-			return;
-		}
-
-		var pathSuffix = "";
-		var urlData = Navigator.GetUrlData();
-		if (urlData.SegmentsByIndexDict.ContainsKey(3))
+		foreach (var item in UC.MenuItems)
 		{
-			pathSuffix = $"/{urlData.SegmentsByIndexDict[3]}";
+			item.OnClick = () => OnTreeMenuClick(item);
 		}
-
-		var records = getResult.Value.OrderBy(x => x.Name).ToList();
-
-		foreach (var item in records)
-		{
-			if (!String.IsNullOrWhiteSpace(search) && !item.Name.ToLowerInvariant().Contains(search))
-				continue;
-			var menu = new MenuItem
-			{
-				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
-				Data = item,
-				Icon = new Icons.Regular.Size20.Connector(),
-				Level = 0,
-				Match = NavLinkMatch.Prefix,
-				Title = item.Name,
-				Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id) + pathSuffix,
-				Active = Navigator.GetUrlData().DataProviderId == item.Id,
-
-			};
-			SetMenuItemActions(menu);
-			_menuItems.Add(menu);
-
-		}
-
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
-		if (batch.Count < pageSize) hasMore = false;
-		_visibleMenuItems = batch;
 	}
 
-	private async Task loadMoreClick()
+	private void loadMoreClick()
 	{
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page + 1)).Take(pageSize).ToList();
-		if (batch.Count < pageSize) hasMore = false;
-		_visibleMenuItems.AddRange(batch);
-		page++;
-		await InvokeAsync(StateHasChanged);
+		UC.LoadMoreLoading = true;
+		StateHasChanged();
+		UC.MenuPage++;
+		UC.InitMenu();
+		_setMenuItemActions();
+		UC.LoadMoreLoading = false;
+		StateHasChanged();
 	}
 
 	private async Task onAddClick()
@@ -99,39 +57,36 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		{
 			var provider = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess("Data provider successfully created!");
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(provider));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, provider));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
 		}
 	}
 
-	private void SetMenuItemActions(MenuItem item)
+	private void OnTreeMenuClick(TucMenuItem item)
 	{
-		item.OnSelect = (selected) => OnTreeMenuSelect(item, selected);
+		if (item.Data is null) return;
+		item.Active = true;
+		Navigator.NavigateTo(item.Url);
 	}
 
-	private void OnTreeMenuSelect(MenuItem item, bool selected)
+	private void onSearch(string search)
 	{
-		item.Active = selected;
-		if (item.Active && item.Data is not null)
-		{
-			var provider = (TfDataProvider)item.Data;
-			Navigator.NavigateTo(item.Url);
-		}
-	}
+		if (search == UC.MenuSearch) return;
 
-	private async Task onSearch(string value)
-	{
-		search = value;
-		GenerateSpaceDataMenu(search);
-		await InvokeAsync(StateHasChanged);
+		UC.MenuLoading = true;
+		StateHasChanged();
+
+		UC.MenuSearch = search;
+		UC.OnSearchChanged();
+		_setMenuItemActions();
+
+		UC.MenuLoading = false;
+		StateHasChanged();
 	}
 
 	private void On_DataProviderDetailsChangedAction(DataProviderAdminChangedAction action)
 	{
-		InvokeAsync(async () =>
-		{
-			GenerateSpaceDataMenu(search);
-			await InvokeAsync(StateHasChanged);
-		});
+		UC.OnStateChanged(action.Provider);
+		StateHasChanged();
 	}
 }

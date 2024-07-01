@@ -5,5 +5,5 @@ public static partial class DataProviderAdminStateReducers
 	[ReducerMethod()]
 	public static DataProviderAdminState SetDataProviderAdminActionReducer(DataProviderAdminState state, 
 		SetDataProviderAdminAction action) 
-		=> state with { IsBusy = false, Provider = action.Provider};
+		=> state with { IsBusy = action.IsBusy, Provider = action.Provider};
 }

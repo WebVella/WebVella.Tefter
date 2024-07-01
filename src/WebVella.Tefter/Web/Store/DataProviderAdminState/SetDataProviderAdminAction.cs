@@ -2,10 +2,15 @@
 
 public record SetDataProviderAdminAction
 {
+	public bool IsBusy { get; }
 	public TucDataProvider Provider { get; }
 
-	public SetDataProviderAdminAction(TucDataProvider provider)
+	public SetDataProviderAdminAction(
+		bool isBusy,
+		TucDataProvider provider
+		)
 	{
+		IsBusy = isBusy;
 		Provider = provider;
 	}
 }

@@ -1,5 +1,5 @@
-﻿namespace WebVella.Tefter.UseCases.UserAdmin;
-public partial class UserAdminUseCase
+﻿namespace WebVella.Tefter.UseCases.DataProviderAdmin;
+public partial class DataProviderAdminUseCase
 {
 	internal bool MenuLoading { get; set; } = true;
 	internal bool LoadMoreLoading { get; set; } = false;
@@ -9,22 +9,21 @@ public partial class UserAdminUseCase
 	internal int MenuPage { get; set; } = 1;
 	internal int MenuPageSize { get; set; } = TfConstants.PageSize;
 
-	internal async Task InitMenuAsync()
+	internal void InitMenu()
 	{
 		if (MenuPage == 1)
 		{
 			MenuItems.Clear();
 			MenuHasMore = true;
 		}
-		var userResult = await _identityManager.GetUsersAsync();
-		if (userResult.IsFailed) throw new Exception("GetUsersAsync failed");
-		if (userResult.Value is null) return;
+		var providerResult = _dataProviderManager.GetProviders();
+		if (providerResult.IsFailed) throw new Exception("GetUsersAsync failed");
+		if (providerResult.Value is null) return;
 
 		var search = MenuSearch?.Trim().ToLowerInvariant();
-		var users = userResult.Value
+		var providers = providerResult.Value
 			.Where(x => String.IsNullOrWhiteSpace(search)
-				|| x.FirstName.ToLowerInvariant().Contains(search)
-				|| x.LastName.ToLowerInvariant().Contains(search))
+				|| x.Name.ToLowerInvariant().Contains(search))
 			.Skip(RenderUtils.CalcSkip(MenuPageSize, MenuPage))
 			.Take(MenuPageSize).ToList();
 
@@ -35,38 +34,38 @@ public partial class UserAdminUseCase
 			menuPathSuffix = $"/{urlData.SegmentsByIndexDict[3]}";
 		}
 
-		foreach (var item in users)
+		foreach (var item in providers)
 		{
 			var menu = new TucMenuItem
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
-				Data = new TucUser(item),
-				Icon = new Icons.Regular.Size20.Person(),
+				Data = new TucDataProvider(item),
+				Icon = new Icons.Regular.Size20.Connector(),
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
-				Title = String.Join(" ", new List<string> { item.FirstName, item.LastName }),
-				Url = String.Format(TfConstants.AdminUserDetailsPageUrl, item.Id) + menuPathSuffix,
-				Active = urlData.UserId == item.Id,
+				Title = item.Name,
+				Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, item.Id) + menuPathSuffix,
+				Active = urlData.DataProviderId == item.Id,
 
 			};
 			MenuItems.Add(menu);
 		}
 		MenuItems = MenuItems.OrderBy(x => x.Title).ToList();
-		if (users.Count < MenuPageSize) MenuHasMore = false;
+		if (providers.Count < MenuPageSize) MenuHasMore = false;
 
 	}
-	internal void OnStateChanged(TucUser user)
+	internal void OnStateChanged(TucDataProvider provider)
 	{
-		if (user == null) return;
+		if (provider == null) return;
 		var urlData = _navigationManager.GetUrlData();
-		var userIndex = MenuItems.FindIndex(x => ((TucUser)x.Data).Id == user.Id);
+		var userIndex = MenuItems.FindIndex(x => ((TucDataProvider)x.Data).Id == provider.Id);
 
 		if (userIndex > -1)
 		{
 			MenuItems[userIndex] = MenuItems[userIndex] with
 			{
-				Data = user,
-				Title = String.Join(" ", new List<string> { user.FirstName, user.LastName })
+				Data = provider,
+				Title = provider.Name
 			};
 		}
 		else
@@ -75,12 +74,12 @@ public partial class UserAdminUseCase
 
 			var menu = new TucMenuItem
 			{
-				Id = RenderUtils.ConvertGuidToHtmlElementId(user.Id),
-				Data = user,
-				Icon = new Icons.Regular.Size20.Person(),
+				Id = RenderUtils.ConvertGuidToHtmlElementId(provider.Id),
+				Data = provider,
+				Icon = new Icons.Regular.Size20.Connector(),
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
-				Title = String.Join(" ", new List<string> { user.FirstName, user.LastName })
+				Title = provider.Name
 			};
 			MenuItems.Add(menu);
 		}
@@ -93,15 +92,16 @@ public partial class UserAdminUseCase
 		}
 		foreach (var menu in MenuItems)
 		{
-			var tucUser = (TucUser)menu.Data;
-			menu.Active = urlData.UserId == tucUser.Id;
-			menu.Url = String.Format(TfConstants.AdminUserDetailsPageUrl, tucUser.Id) + menuPathSuffix;
+			var tucProvider = (TucDataProvider)menu.Data;
+			menu.Active = urlData.DataProviderId == tucProvider.Id;
+			menu.Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, tucProvider.Id) + menuPathSuffix;
 		}
 	}
 
-	internal async Task OnSearchChanged()
+	internal void OnSearchChanged()
 	{
 		MenuPage = 1;
-		await InitMenuAsync();
+		InitMenu();
 	}
+	
 }

@@ -15,7 +15,7 @@ public partial class UserAdminUseCase
 	)
 	{
 		if(initForm) Form = new TucUserAdminManageForm();
-		if(initMenu) await SetUserMenuAsync();
+		if(initMenu) await InitMenuAsync();
 	}
 
 	internal TucUserAdminManageForm Form { get; set; }

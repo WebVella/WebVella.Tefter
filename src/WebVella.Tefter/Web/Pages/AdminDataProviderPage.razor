@@ -1,8 +1,10 @@
 ﻿@namespace WebVella.Tefter.Web.Pages
 @page "/admin/data-providers"
-@page "/admin/data-providers/{ProviderId:guid}"
+@page "/admin/data-providers/{ProviderId:guid}/{*Path}"
 @layout AdminLayout
 @inherits TfBasePage
+
+<TfAdminDataProviderStateManager />
 
 @if (ScreenStateSidebarExpanded.Value)
 {
@@ -10,16 +12,7 @@
 		<TfAdminDataProviderNavigation />
 	</FluentStack>
 }
-@if (ProviderId != Guid.Empty)
-{
-	<FluentBodyContent Class="content-body with-toolbar">
-		<TfAdminDataProviderDetailsNav />
-		<div class="content-inner with-toolbar">
-			<TfAdminDataProviderDetails />
-		</div>
-	</FluentBodyContent>
-}
-else
+@if (ProviderId == Guid.Empty)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -31,6 +24,35 @@ else
 							  Intent="@MessageIntent.Warning">
 				<div>Select provider from the list to review and manage it</div>
 			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	var urlData = Navigator.GetUrlData();
+	<FluentBodyContent Class="content-body with-toolbar">
+		<TfAdminDataProviderDetailsNav />
+		<div class="content-inner with-toolbar">
+			@if (!urlData.SegmentsByIndexDict.ContainsKey(3))
+			{
+				<TfAdminDataProviderDetails />
+			}
+			else if (urlData.SegmentsByIndexDict[3] == "schema")
+			{
+				<TfAdminDataProviderSchema/>
+			}
+			else if (urlData.SegmentsByIndexDict[3] == "keys")
+			{
+				<TfAdminDataProviderKeys />
+			}
+			else if (urlData.SegmentsByIndexDict[3] == "aux")
+			{
+				<TfAdminDataProviderAux />
+			}
+			else if (urlData.SegmentsByIndexDict[3] == "records")
+			{
+				<TfAdminDataProviderData />
+			}
 		</div>
 	</FluentBodyContent>
 
