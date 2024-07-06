@@ -10,8 +10,8 @@ public partial class StateEffect
 					sidebarExpanded: action.SidebarExpanded
 				);
 
-		ResultUtils.ProcessServiceResponse(
-			response: result,
+		ResultUtils.ProcessServiceResult(
+			result: result,
 			toastErrorMessage: "",
 			notificationErrorTitle: "",
 			toastService: ToastService,

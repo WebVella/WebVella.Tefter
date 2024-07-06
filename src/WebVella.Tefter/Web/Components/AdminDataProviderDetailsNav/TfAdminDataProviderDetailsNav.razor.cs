@@ -40,7 +40,14 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 			Url = String.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
-			Title = LOC("Schema")
+			Title = LOC("Columns in source")
+		});
+		menu.Add(new MenuItem
+		{
+			Url = String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.TableAdd(),
+			Title = LOC("Addon columns")
 		});
 		menu.Add(new MenuItem
 		{
@@ -48,13 +55,6 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Title = LOC("Share Keys")
-		});
-		menu.Add(new MenuItem
-		{
-			Url = String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.TableAdd(),
-			Title = LOC("Additional Columns")
 		});
 		menu.Add(new MenuItem
 		{

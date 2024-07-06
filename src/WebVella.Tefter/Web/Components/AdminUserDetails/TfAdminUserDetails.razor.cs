@@ -19,10 +19,7 @@ public partial class TfAdminUserDetails : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.OnInitializedAsync(
-			initForm:false,
-			initMenu:false
-		);
+		await UC.Init(this.GetType());
 
 		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
 	}

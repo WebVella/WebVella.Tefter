@@ -87,6 +87,12 @@ public record TucDatabaseColumnTypeInfo
 				throw new Exception($"DatabaseColumnType: '{model}' not supported by use case");
 		}
 	}
+	public TucDatabaseColumnTypeInfo(DatabaseColumnTypeInfo model){
+		TypeValue = (int)model.Type;
+		Name = model.Name;
+		CanBeProviderDataType = model.CanBeProviderDataType;
+		SupportAutoDefaultValue = model.SupportAutoDefaultValue;
+	}
 	public DatabaseColumnType ToModel()
 	{
 		return (DatabaseColumnType)TypeValue;

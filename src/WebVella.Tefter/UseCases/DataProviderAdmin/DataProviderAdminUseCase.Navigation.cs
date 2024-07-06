@@ -9,6 +9,13 @@ public partial class DataProviderAdminUseCase
 	internal int MenuPage { get; set; } = 1;
 	internal int MenuPageSize { get; set; } = TfConstants.PageSize;
 
+	internal Task InitForNavigation()
+	{
+		MenuLoading = false;
+		InitMenu();
+		return Task.CompletedTask;
+	}
+
 	internal void InitMenu()
 	{
 		if (MenuPage == 1)
@@ -17,7 +24,17 @@ public partial class DataProviderAdminUseCase
 			MenuHasMore = true;
 		}
 		var providerResult = _dataProviderManager.GetProviders();
-		if (providerResult.IsFailed) throw new Exception("GetUsersAsync failed");
+		if (providerResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProviders failed").CausedBy(providerResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return;
+		}
 		if (providerResult.Value is null) return;
 
 		var search = MenuSearch?.Trim().ToLowerInvariant();
@@ -70,8 +87,6 @@ public partial class DataProviderAdminUseCase
 		}
 		else
 		{
-
-
 			var menu = new TucMenuItem
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(provider.Id),
@@ -103,5 +118,5 @@ public partial class DataProviderAdminUseCase
 		MenuPage = 1;
 		InitMenu();
 	}
-	
+
 }

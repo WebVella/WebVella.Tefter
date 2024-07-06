@@ -14,6 +14,13 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 		return base.DisposeAsyncCore(disposing);
 	}
 
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
+		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+	}
+
 	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
 	{
 		StateHasChanged();

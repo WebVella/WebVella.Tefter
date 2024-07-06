@@ -3,35 +3,27 @@
 namespace WebVella.Tefter.Web.Components.AdminUserDetailsActions;
 public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
+	[Inject] private UserAdminUseCase UC { get; set; }
 	[Inject] protected IState<UserAdminState> UserAdminState { get; set; }
-
-	private string menu = "details";
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if(disposing) Navigator.LocationChanged -= Navigator_LocationChanged;
 		return base.DisposeAsyncCore(disposing);
 	}
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		_setMenu(null);
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		_setMenu(e.Location);
-		StateHasChanged();
-	}
-
-	private void _setMenu(string url)
-	{
-		var urlData = Navigator.GetUrlData(url);
-		if (urlData.SegmentsByIndexDict.ContainsKey(3))
-			menu = urlData.SegmentsByIndexDict[3];
-		else
-			menu = "details";
+		InvokeAsync(async()=>{ 
+			await UC.InitActionsMenu(e.Location);
+			await InvokeAsync(StateHasChanged);
+		});
 	}
 
 	private async Task _editUser()

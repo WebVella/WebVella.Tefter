@@ -5,8 +5,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 	[Parameter]
 	public Tuple<TfDataProviderColumn, TfDataProvider> Content { get; set; }
 
-	[CascadingParameter]
-	public FluentDialog Dialog { get; set; }
+	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private bool _isCreate = false;
 	private bool _isBusy = true;

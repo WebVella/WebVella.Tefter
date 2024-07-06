@@ -1,14 +1,12 @@
 ﻿namespace WebVella.Tefter.Web.Components.DataProviderManageDialog;
 public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProvider>
 {
-	[Inject] 
+	[Inject]
 	private DataProviderAdminUseCase UC { get; set; }
 	[Parameter] public TucDataProvider Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
-	private TucDataProviderForm _form = new();
-	private bool _isBusy = true;
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
@@ -18,14 +16,11 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private DynamicComponent typeSettingsComponent;
 	private bool _isCreate = false;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		UC.OnInitialized(
-			initForm: true,
-			initMenu: false
-			);
-		base.InitForm(UC.Form);
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
+		base.InitForm(UC.ProviderForm);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create data provider") : LOC("Manage data provider");
@@ -41,24 +36,25 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 		{
 			if (_isCreate)
 			{
-				UC.Form = UC.Form with
+				UC.ProviderForm = UC.ProviderForm with
 				{
 					ProviderType = UC.AllProviderTypes.First(),
 				};
 			}
 			else
 			{
-				UC.Form = UC.Form with
+				UC.ProviderForm = UC.ProviderForm with
 				{
 					Id = Content.Id,
 					Name = Content.Name,
 					SettingsJson = Content.SettingsJson,
 				};
-				if(Content.ProviderType is not null){ 
-					UC.Form.ProviderType = UC.AllProviderTypes.FirstOrDefault(x=> x.Id == Content.ProviderType.Id);
+				if (Content.ProviderType is not null)
+				{
+					UC.ProviderForm.ProviderType = UC.AllProviderTypes.FirstOrDefault(x => x.Id == Content.ProviderType.Id);
 				}
 			}
-			base.InitForm(UC.Form);
+			base.InitForm(UC.ProviderForm);
 			await InvokeAsync(StateHasChanged);
 		}
 
@@ -77,8 +73,8 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 
 			//Get dynamic settings component errors
 			List<ValidationError> settingsErrors = new();
-			if (UC.Form.ProviderType.SettingsComponentType is not null
-				&& UC.Form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+			if (UC.ProviderForm.ProviderType.SettingsComponentType is not null
+				&& UC.ProviderForm.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 			{
 				settingsErrors = (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate();
 			}
@@ -90,7 +86,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			Result<TucDataProvider> submitResult;
-			UC.Form.SettingsJson = (typeSettingsComponent.Instance as ITfDataProviderSettings).Value;
+			UC.ProviderForm.SettingsJson = (typeSettingsComponent.Instance as ITfDataProviderSettings).Value;
 			if (_isCreate)
 			{
 				submitResult = UC.CreateDataProviderWithForm();
@@ -125,7 +121,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = ComponentDisplayMode.Form;
-		dict["Value"] = UC.Form.SettingsJson;
+		dict["Value"] = UC.ProviderForm.SettingsJson;
 		return dict;
 	}
 

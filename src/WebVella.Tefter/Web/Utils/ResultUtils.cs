@@ -4,16 +4,16 @@ namespace WebVella.Tefter.Web.Utils;
 
 internal static class ResultUtils
 {
-	internal static void ProcessServiceResponse(
-		Result<object> response,
+	internal static void ProcessServiceResult(
+		Result<object> result,
 		string toastErrorMessage,
 		string notificationErrorTitle,
 		IToastService toastService,
 		IMessageService messageService)
 	{
-		if (response.IsSuccess) return;
+		if (result.IsSuccess) return;
 		var generalErrors = new List<string>();
-		foreach (IError iError in response.Errors)
+		foreach (IError iError in result.Errors)
 		{
 			if (iError is ValidationError)
 			{
@@ -31,13 +31,14 @@ internal static class ResultUtils
 		if (generalErrors.Count > 0)
 		{
 			toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
-			SendErrorsToNotifications(notificationErrorTitle, generalErrors, messageService);
+			SendErrorsToNotifications(notificationErrorTitle, generalErrors, null, messageService);
 		}
 	}
 
 	internal static void SendErrorsToNotifications(
 		string message,
 		List<string> errors,
+		string stackTrace,
 		IMessageService messageService)
 	{
 		var divHtml = "<ul class='notification-list'>";
@@ -47,13 +48,20 @@ internal static class ResultUtils
 		}
 		divHtml += "</ul>";
 
+		if (stackTrace is not null)
+		{
+			divHtml += "<textarea style='width:100%;' readonly rows='4'>";
+			divHtml += stackTrace;//.Replace(Environment.NewLine,"<br/>");
+			divHtml += "</textarea>";
+		}
+
 		messageService.ShowMessageBar(options =>
 		{
 			options.Intent = MessageIntent.Error;
 			options.Title = message;
 			options.Body = divHtml;
 			options.Timestamp = DateTime.Now;
-			options.Timeout = 15000;
+			options.Timeout = null;
 			options.AllowDismiss = true;
 			options.Section = TfConstants.MESSAGES_NOTIFICATION_CENTER;
 		});
@@ -69,12 +77,12 @@ internal static class ResultUtils
 	{
 		string errorMessage = toastErrorMessage;
 		toastService.ShowToast(ToastIntent.Error, errorMessage);
-		SendErrorsToNotifications(notificationErrorTitle, new List<string> { exception.Message }, messageService);
+		SendErrorsToNotifications(notificationErrorTitle, new List<string> { exception.Message }, exception.StackTrace, messageService);
 
 		return errorMessage;
 	}
 
-	internal static void ProcessFormSubmitResponse(
+	internal static void ProcessFormSubmitResult(
 		Result<object> result,
 		string toastErrorMessage,
 		string notificationErrorTitle,
@@ -92,7 +100,7 @@ internal static class ResultUtils
 
 		foreach (IError iError in result.Errors)
 		{
-			PressessFormResponseError(iError, validationErrors, generalErrors);
+			ProssessFormResultError(iError, validationErrors, generalErrors);
 		}
 
 		foreach (var valError in validationErrors)
@@ -104,11 +112,11 @@ internal static class ResultUtils
 		if (generalErrors.Count > 0 && validationErrors.Count == 0)
 		{
 			toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
-			SendErrorsToNotifications(notificationErrorTitle, generalErrors, messageService);
+			SendErrorsToNotifications(notificationErrorTitle, generalErrors, null, messageService);
 		}
 	}
 
-	internal static void PressessFormResponseError(
+	internal static void ProssessFormResultError(
 		IError iError,
 		List<ValidationError> validationErrors,
 		List<string> generalErrors)
@@ -135,7 +143,7 @@ internal static class ResultUtils
 		{
 			foreach (IError iReason in iError.Reasons)
 			{
-				PressessFormResponseError(iReason, validationErrors, generalErrors);
+				ProssessFormResultError(iReason, validationErrors, generalErrors);
 			}
 		}
 

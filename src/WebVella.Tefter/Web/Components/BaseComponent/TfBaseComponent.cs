@@ -65,8 +65,8 @@ public class TfBaseComponent : FluxorComponent
 	/// <param name="ex"></param>
 	protected void ProcessServiceResponse(Result<object> response)
 	{
-		ResultUtils.ProcessServiceResponse(
-			response:response,
+		ResultUtils.ProcessServiceResult(
+			result:response,
 			toastErrorMessage:LOC("Unexpected Error! Check Notifications for details"),
 			notificationErrorTitle:LOC("Unexpected Error!"),
 			toastService:ToastService,

@@ -1,14 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
-public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TfDataProviderColumn>
+public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderColumn>
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] private IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
-
-	[Parameter]
-	public TfDataProviderColumn Content { get; set; }
-
-	[CascadingParameter]
-	public FluentDialog Dialog { get; set; }
+	[Parameter] public TucDataProviderColumn Content { get; set; }
+	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private bool _isCreate = false;
 	private bool _isBusy = true;
@@ -17,7 +13,6 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-	private TfDataProviderColumnManageDialogForm _form = new();
 
 	private List<string> _providerTypeOptions = new();
 	private List<DatabaseColumnType> _dbTypeOptions = new();
@@ -29,13 +24,16 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 	private string value1 = "1";
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
+
 		if (Content is null) throw new Exception("Content is null");
 		if (DataProviderDetailsState.Value.Provider is null) throw new Exception("DataProvider not provided");
 		if (DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
 		|| !DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+		
 		if (Content.Id == Guid.Empty)
 		{
 			_isCreate = true;
@@ -60,7 +58,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 		}
 
-		base.InitForm(_form);
+		base.InitForm(UC.ColumnForm);
 
 	}
 
@@ -82,31 +80,29 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		try
 		{
 			//Init type options
-			throw new NotImplementedException();
-			//_dbTypeInfoDict = SystemState.Value.DataProviderColumnTypes.ToDictionary(x => x.Type);
+			_dbTypeInfoDict = UC.ColumnTypeDict;
 
-			////Setup form
-			//if (_isCreate)
-			//{
-			//	_providerTypeOptions = DataProviderDetailsState.Value.Provider.ProviderType.GetSupportedSourceDataTypes().ToList();
-			//	_form = new TfDataProviderColumnManageDialogForm()
-			//	{
-			//		Id = Guid.NewGuid(),
-			//		DataProviderId = DataProviderDetailsState.Value.Provider.Id,
-			//		CreatedOn = DateTime.Now,
-			//		SourceType = _providerTypeOptions[0]
-			//	};
-			//	_dbTypeOptions = _providerTypeToDbTypes[_form.SourceType];
+			//Setup form
+			if (_isCreate)
+			{
+				//_providerTypeOptions = DataProviderDetailsState.Value.Provider.ProviderType.GetSupportedSourceDataTypes().ToList();
+				UC.ColumnForm = new TucDataProviderColumnForm{ 
+					Id = Guid.NewGuid(),
+					DataProviderId = DataProviderDetailsState.Value.Provider.Id,
+					CreatedOn = DateTime.Now,
+					SourceType = _providerTypeOptions[0]
+				};
+				//_dbTypeOptions = _providerTypeToDbTypes[_form.SourceType];
 
-			//}
-			//else
-			//{
-			//	_form = TfDataProviderColumnManageDialogForm.FromModel(Content);
-			//	_dbTypeOptions = new();
-			//	_dbTypeOptions.Add(_form.DbType);
-			//	_providerTypeOptions = _dbTypeToProviderTypes[_form.DbType];
-			//}
-			//base.InitForm(_form);
+			}
+			else
+			{
+				UC.ColumnForm = new TucDataProviderColumnForm(Content);
+				_dbTypeOptions = new();
+				//_dbTypeOptions.Add(_form.DbType);
+				//_providerTypeOptions = _dbTypeToProviderTypes[_form.DbType];
+			}
+			base.InitForm(UC.ColumnForm);
 		}
 		catch (Exception ex)
 		{
@@ -132,16 +128,16 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			Result<TfDataProvider> submitResult;
-			if (!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
+			if (!UC.ColumnForm.IsNullable && String.IsNullOrWhiteSpace(UC.ColumnForm.DefaultValue))
 			{
-				_form.DefaultValue = String.Empty;
+				UC.ColumnForm.DefaultValue = String.Empty;
 			}
-			else if (_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
+			else if (UC.ColumnForm.IsNullable && String.IsNullOrWhiteSpace(UC.ColumnForm.DefaultValue))
 			{
-				_form.DefaultValue = null;
+				UC.ColumnForm.DefaultValue = null;
 			}
 
-			var submit = TfDataProviderColumnManageDialogForm.ToModel(_form);
+			var submit = UC.ColumnForm.ToModel();
 
 			if (_isCreate)
 			{
@@ -185,84 +181,3 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	}
 
 }
-
-public class TfDataProviderColumnManageDialogForm
-{
-	public Guid Id { get; set; }
-
-	public Guid DataProviderId { get; set; }
-
-	public string SourceName { get; set; }
-
-	public string SourceType { get; set; }
-
-	public DateTime CreatedOn { get; set; }
-
-	public string DbName { get; set; }
-
-	public DatabaseColumnType DbType { get; set; } = DatabaseColumnType.Text;
-
-	public string DefaultValue { get; set; }
-
-	public bool AutoDefaultValue { get; set; }
-
-	public bool IsNullable { get; set; }
-
-	public bool IsUnique { get; set; }
-
-	public bool IsSortable { get; set; }
-
-	public bool IsSearchable { get; set; }
-
-	public TfDataProviderColumnSearchType PreferredSearchType { get; set; }
-
-	public bool IncludeInTableSearch { get; set; }
-
-	public static TfDataProviderColumnManageDialogForm FromModel(TfDataProviderColumn model)
-	{
-		var form = new TfDataProviderColumnManageDialogForm
-		{
-			AutoDefaultValue = model.AutoDefaultValue,
-			IsNullable = model.IsNullable,
-			DbName = model.DbName,
-			SourceName = model.SourceName,
-			SourceType = model.SourceType,
-			DefaultValue = model.DefaultValue,
-			CreatedOn = model.CreatedOn,
-			DataProviderId = model.DataProviderId,
-			DbType = model.DbType,
-			Id = model.Id,
-			IncludeInTableSearch = model.IncludeInTableSearch,
-			IsSearchable = model.IsSearchable,
-			IsSortable = model.IsSortable,
-			IsUnique = model.IsUnique,
-			PreferredSearchType = model.PreferredSearchType,
-		};
-
-		return form;
-	}
-	public static TfDataProviderColumn ToModel(TfDataProviderColumnManageDialogForm form)
-	{
-		var model = new TfDataProviderColumn()
-		{
-			Id = form.Id,
-			AutoDefaultValue = form.AutoDefaultValue,
-			IsNullable = form.IsNullable,
-			PreferredSearchType = form.PreferredSearchType,
-			IsUnique = form.IsUnique,
-			IsSortable = form.IsSortable,
-			IsSearchable = form.IsSearchable,
-			IncludeInTableSearch = form.IncludeInTableSearch,
-			CreatedOn = form.CreatedOn,
-			DataProviderId = form.DataProviderId,
-			DbName = form.DbName,
-			DbType = form.DbType,
-			DefaultValue = form.DefaultValue,
-			SourceName = form.SourceName,
-			SourceType = form.SourceType,
-		};
-
-		return model;
-	}
-}
-

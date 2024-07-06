@@ -1,6 +1,6 @@
 ﻿@inherits TfBaseComponent
 
-@if (menu == "details")
+@if (UC.ActionsMenu == "details")
 {
 	<FluentStack>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
@@ -13,21 +13,21 @@
 		</FluentButton>
 	</FluentStack>
 }
-else if (menu == "schema")
+else if (UC.ActionsMenu == "schema")
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 		@LOC("Add Column")
 		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }
-else if (menu == "aux")
+else if (UC.ActionsMenu == "aux")
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 		@LOC("Add Aux Column")
 		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }
-else if (menu == "keys")
+else if (UC.ActionsMenu == "keys")
 {
 	<FluentButton Appearance="@Appearance.Outline">
 		@LOC("Shared key")

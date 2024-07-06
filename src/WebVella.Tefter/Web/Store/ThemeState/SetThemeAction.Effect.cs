@@ -11,8 +11,8 @@ public partial class StateEffect
 			themeMode: action.ThemeMode,
 			themeColor: action.ThemeColor
 		);
-		ResultUtils.ProcessServiceResponse(
-			response: result,
+		ResultUtils.ProcessServiceResult(
+			result: result,
 			toastErrorMessage: "",
 			notificationErrorTitle: "",
 			toastService: ToastService,

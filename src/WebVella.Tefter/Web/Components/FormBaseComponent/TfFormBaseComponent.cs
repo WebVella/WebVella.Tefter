@@ -66,7 +66,7 @@ public class TfFormBaseComponent : TfBaseComponent
 	/// <param name="result"></param>
 	protected void ProcessFormSubmitResponse(Result<object> result)
 	{
-		ResultUtils.ProcessFormSubmitResponse(
+		ResultUtils.ProcessFormSubmitResult(
 			result: result,
 			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
 			notificationErrorTitle: LOC("Unexpected Error!"),

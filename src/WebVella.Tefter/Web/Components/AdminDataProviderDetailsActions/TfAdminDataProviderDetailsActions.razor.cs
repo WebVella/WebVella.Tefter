@@ -7,15 +7,26 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 	private bool _isDeleting = false;
-	private string menu = "details";
-
-	protected override void OnInitialized()
+	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
-		base.OnInitialized();
-		var urlData = Navigator.GetUrlData();
-		if (urlData.SegmentsByIndexDict.ContainsKey(3))
-			menu = urlData.SegmentsByIndexDict[3];
+		if (disposing) Navigator.LocationChanged -= Navigator_LocationChanged;
+		return base.DisposeAsyncCore(disposing);
 	}
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
+		Navigator.LocationChanged += Navigator_LocationChanged;
+	}
+
+	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	{
+		InvokeAsync(async()=>{ 
+			await UC.InitActionsMenu(e.Location);
+			await InvokeAsync(StateHasChanged);
+		});
+	}
+
 
 	private async Task _editProvider()
 	{
@@ -31,7 +42,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(false,record));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
 		}
 	}
 
@@ -68,7 +79,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
-				Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl,true);
+				Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);
 			}
 		}
 		catch (Exception ex)

@@ -18,12 +18,8 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.OnInitializedAsync(
-		initForm: false,
-		initMenu: true
-		);
+		await UC.Init(this.GetType());
 		_setMenuItemActions();
-		UC.MenuLoading = false;
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_UserDetailsChangedAction);
 	}
@@ -81,7 +77,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await InvokeAsync(StateHasChanged);
 
 		UC.MenuSearch = search;
-		await UC.OnSearchChanged();
+		await UC.NavigationOnSearchChanged();
 		_setMenuItemActions();
 
 		UC.MenuLoading = false;
@@ -90,7 +86,8 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 
 	private void On_UserDetailsChangedAction(UserAdminChangedAction action)
 	{
-		UC.OnStateChanged(action.User);
+		UC.NavigationOnStateChanged(action.User);
+		_setMenuItemActions();
 		StateHasChanged();
 	}
 }

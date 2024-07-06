@@ -6,7 +6,6 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
 
-	private Dictionary<TucDatabaseColumnTypeInfo, string> _typeNameDict = new();
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -15,14 +14,12 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		throw new NotImplementedException();
-		//foreach (var item in SystemState.Value.DataProviderColumnTypes)
-		//{
-		//	_typeNameDict[item.Type] = item.Name;
-		//}
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
+		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+
 	}
 	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
 	{

@@ -8,6 +8,11 @@ public partial class UserAdminUseCase
 	internal bool MenuHasMore { get; set; } = true;
 	internal int MenuPage { get; set; } = 1;
 	internal int MenuPageSize { get; set; } = TfConstants.PageSize;
+	internal async Task InitForNavigationAsync()
+	{
+		MenuLoading = false;
+		await InitMenuAsync();
+	}
 
 	internal async Task InitMenuAsync()
 	{
@@ -17,7 +22,17 @@ public partial class UserAdminUseCase
 			MenuHasMore = true;
 		}
 		var userResult = await _identityManager.GetUsersAsync();
-		if (userResult.IsFailed) throw new Exception("GetUsersAsync failed");
+		if (userResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetUsersAsync failed").CausedBy(userResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return;
+		}
 		if (userResult.Value is null) return;
 
 		var search = MenuSearch?.Trim().ToLowerInvariant();
@@ -55,7 +70,7 @@ public partial class UserAdminUseCase
 		if (users.Count < MenuPageSize) MenuHasMore = false;
 
 	}
-	internal void OnStateChanged(TucUser user)
+	internal void NavigationOnStateChanged(TucUser user)
 	{
 		if (user == null) return;
 		var urlData = _navigationManager.GetUrlData();
@@ -98,8 +113,7 @@ public partial class UserAdminUseCase
 			menu.Url = String.Format(TfConstants.AdminUserDetailsPageUrl, tucUser.Id) + menuPathSuffix;
 		}
 	}
-
-	internal async Task OnSearchChanged()
+	internal async Task NavigationOnSearchChanged()
 	{
 		MenuPage = 1;
 		await InitMenuAsync();

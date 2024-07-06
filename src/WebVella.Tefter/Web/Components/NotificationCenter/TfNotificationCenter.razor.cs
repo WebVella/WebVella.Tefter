@@ -31,7 +31,8 @@ public partial class TfNotificationCenter : TfBaseComponent
             Title = $"Notifications",
             PrimaryAction = null,
             SecondaryAction = null,
-            ShowDismiss = true
+            ShowDismiss = true,
+			Width = "90%"
         });
         DialogResult result = await _dialog.Result;
         HandlePanel(result);

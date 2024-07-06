@@ -14,46 +14,18 @@ public partial class TfAdminDataProviderStateManager : TfBaseComponent
 		return base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		UC.OnInitialized(
-			initForm:false,
-			initMenu:false);
-		_initState(null);
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
-	private void _initState(string url)
-	{
-		var urlData = Navigator.GetUrlData(url);
-		if (urlData.DataProviderId is not null)
-		{
-			var serviceResult = UC.GetProvider(urlData.DataProviderId.Value);
-			ProcessServiceResponse(serviceResult);
-
-			if (serviceResult.IsSuccess)
-			{
-				if (serviceResult.Value is not null)
-				{
-					Dispatcher.Dispatch(new SetDataProviderAdminAction(
-						isBusy: false,
-						provider: serviceResult.Value));
-					return;
-				}
-			}
-			Navigator.NotFound();
-		}
-		else
-		{
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(
-						isBusy: false,
-						provider: null));
-		}
-	}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		_initState(e.Location);
+		InvokeAsync(async()=>{ 
+			await UC.InitState(e.Location);
+		});
 	}
 }

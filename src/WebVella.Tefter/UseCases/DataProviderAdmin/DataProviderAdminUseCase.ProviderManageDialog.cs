@@ -3,37 +3,35 @@ public partial class DataProviderAdminUseCase
 {
 
 	internal List<TucDataProviderTypeInfo> AllProviderTypes { get; set; } = new();
-	internal TucDataProviderForm Form
+	internal TucDataProviderForm ProviderForm { get; set; } = new();
+	internal Task InitForProviderManageDialog()
 	{
-		get
-		{
-			return form;
-		}
-		set
-		{
-			form = value;
-			ConsoleExt.WriteLine(System.Text.Json.JsonSerializer.Serialize(form));
-		}
-	}
-
-
-	private TucDataProviderForm form;
-	internal void InitForm()
-	{
-		Form = new TucDataProviderForm();
+		ProviderForm = new TucDataProviderForm();
 		var serviceResult = _dataProviderManager.GetProviderTypes();
-		if (serviceResult.IsFailed) throw new Exception("GetProviderTypes failed");
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProviderTypes failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.CompletedTask;
+		}
 		if (serviceResult.Value is not null)
 		{
 			AllProviderTypes = serviceResult.Value.Select(t => new TucDataProviderTypeInfo(t)).ToList();
 		}
+		InitColumnTypeDict();
+		return Task.CompletedTask;
 	}
 
 	internal Result<TucDataProvider> CreateDataProviderWithForm()
 	{
 		var providerTypesResult = _dataProviderManager.GetProviderTypes();
 		if (providerTypesResult.IsFailed) return Result.Fail(new Error("GetProviderTypes failed").CausedBy(providerTypesResult.Errors));
-		var submitForm = Form.ToModel(providerTypesResult.Value);
+		var submitForm = ProviderForm.ToModel(providerTypesResult.Value);
 		var createResult = _dataProviderManager.CreateDataProvider(submitForm);
 		if (createResult.IsFailed) return Result.Fail(new Error("CreateDataProvider failed").CausedBy(createResult.Errors));
 		if (createResult.Value is null) return Result.Fail(new Error("CreateDataProvider returned null object").CausedBy(createResult.Errors));
@@ -44,7 +42,7 @@ public partial class DataProviderAdminUseCase
 	{
 		var providerTypesResult = _dataProviderManager.GetProviderTypes();
 		if (providerTypesResult.IsFailed) return Result.Fail(new Error("GetProviderTypes failed").CausedBy(providerTypesResult.Errors));
-		var submitForm = Form.ToModel(providerTypesResult.Value);
+		var submitForm = ProviderForm.ToModel(providerTypesResult.Value);
 		var updateResult = _dataProviderManager.UpdateDataProvider(submitForm);
 		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateDataProvider failed").CausedBy(updateResult.Errors));
 		if (updateResult.Value is null) return Result.Fail(new Error("UpdateDataProvider returned null object").CausedBy(updateResult.Errors));

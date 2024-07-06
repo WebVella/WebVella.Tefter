@@ -5,7 +5,7 @@
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": true,
-			"launchUrl": "admin/data-providers/745539e2-a7c1-4f7e-acae-7328950b6abc",
+			"launchUrl": "admin/data-providers/e43c7cca-f0d3-44b3-958e-35297a72d189/schema",
 			"applicationUrl": "https://localhost:5000;http://localhost:5001",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development"

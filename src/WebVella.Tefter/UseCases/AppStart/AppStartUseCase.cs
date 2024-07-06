@@ -6,6 +6,7 @@ internal partial class AppStartUseCase
 	private readonly IJSRuntime _jsRuntime;
 	private readonly IIdentityManager _identityManager;
 	private readonly NavigationManager _navigationManager;
+
 	public AppStartUseCase(
 		AuthenticationStateProvider authenticationStateProvider,
 		IJSRuntime jsRuntime,

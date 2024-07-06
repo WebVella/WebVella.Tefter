@@ -4,13 +4,14 @@ public partial class UserAdminUseCase
 	internal TucUserAdminManageForm Form { get; set; }
 	internal List<TucRole> AllRoles { get; set; } = new();
 
-	internal async Task InitForm()
+	internal async Task InitForManageDialogAsync()
 	{
 		Form = new TucUserAdminManageForm();
-		var rolesResult = await GetUserRolesAsync();
+		var rolesResult = await _identityManager.GetRolesAsync();
 		if (rolesResult.IsFailed) throw new Exception("GetUserRolesAsync failed");
-		if(rolesResult.Value is not null) AllRoles = rolesResult.Value.ToList();
+		if (rolesResult.Value is not null) AllRoles = rolesResult.Value.Select(x => new TucRole(x)).ToList();
 	}
+
 	internal async Task<Result<TucUser>> CreateUserWithFormAsync()
 	{
 		UserBuilder userBuilder = _identityManager.CreateUserBuilder(null);
@@ -30,7 +31,7 @@ public partial class UserAdminUseCase
 		var user = userBuilder.Build();
 		var result = await _identityManager.SaveUserAsync(user);
 		if (result.IsFailed) return Result.Fail(new Error("SaveUserAsync failed").CausedBy(result.Errors));
-		if (result.Value is null) return Result.Fail(new Error("SaveUserAsync - no user was created"));
+		
 		return Result.Ok(new TucUser(result.Value));
 	}
 
@@ -57,7 +58,6 @@ public partial class UserAdminUseCase
 		var user = userBuilder.Build();
 		var result = await _identityManager.SaveUserAsync(user);
 		if (result.IsFailed) return Result.Fail(new Error("SaveUserAsync failed").CausedBy(result.Errors));
-		if (result.Value is null) return Result.Fail(new Error("SaveUserAsync - no user was created"));
 		return Result.Ok(new TucUser(result.Value));
 	}
 }

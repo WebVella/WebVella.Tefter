@@ -13,10 +13,10 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
 	}
 	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
 	{

@@ -2,7 +2,7 @@
 namespace WebVella.Tefter.Web.Components.AdminUserDetailsNav;
 public partial class TfAdminUserDetailsNav : TfBaseComponent
 {
-	private List<MenuItem> menu = new();
+	[Inject] private UserAdminUseCase UC { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -14,50 +14,23 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 		return base.DisposeAsyncCore(disposing);
 	}
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		GenerateMenu();
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
 		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
-	private void GenerateMenu()
+	private async void On_GetUserDetailsActionResult(UserAdminChangedAction action)
 	{
-		menu.Clear();
-		var userId = Navigator.GetUrlData().UserId ?? Guid.Empty;
-		menu.Add(new MenuItem
-		{
-			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, userId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.PersonInfo(),
-			Title = LOC("Details")
-		});
-		menu.Add(new MenuItem
-		{
-			Url = String.Format(TfConstants.AdminUserAccessPageUrl, userId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.Key(),
-			Title = LOC("Access")
-		});
-		menu.Add(new MenuItem
-		{
-			Url = String.Format(TfConstants.AdminUserSavesViewsPageUrl, userId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.Save(),
-			Title = LOC("Saved Views")
-		});
-	}
-
-	private void On_GetUserDetailsActionResult(UserAdminChangedAction action)
-	{
-		GenerateMenu();
+		UC.InitDetailsNavMenu();
 		StateHasChanged();
 	}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		GenerateMenu();
+		UC.InitDetailsNavMenu();
 		StateHasChanged();
 	}
 }

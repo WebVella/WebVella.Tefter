@@ -15,12 +15,10 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		UC.OnInitialized(
-			initForm:false,
-			initMenu: true);
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
 		_setMenuItemActions();
 		UC.MenuLoading = false;
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
@@ -89,6 +87,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	private void On_DataProviderDetailsChangedAction(DataProviderAdminChangedAction action)
 	{
 		UC.OnStateChanged(action.Provider);
+		_setMenuItemActions();
 		StateHasChanged();
 	}
 }

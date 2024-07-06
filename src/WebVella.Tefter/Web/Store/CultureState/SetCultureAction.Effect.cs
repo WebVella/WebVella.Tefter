@@ -9,8 +9,8 @@ public partial class StateEffect
 			userId: action.UserId,
 			cultureCode: action.Culture.CultureCode
 		);
-		ResultUtils.ProcessServiceResponse(
-			response: result,
+		ResultUtils.ProcessServiceResult(
+			result: result,
 			toastErrorMessage: "",
 			notificationErrorTitle: "",
 			toastService: ToastService,

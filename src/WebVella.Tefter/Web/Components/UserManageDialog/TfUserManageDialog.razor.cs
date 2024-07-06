@@ -17,10 +17,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.OnInitializedAsync(
-			initForm: true,
-			initMenu: false
-			);
+		await UC.Init(this.GetType());
 		base.InitForm(UC.Form);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
