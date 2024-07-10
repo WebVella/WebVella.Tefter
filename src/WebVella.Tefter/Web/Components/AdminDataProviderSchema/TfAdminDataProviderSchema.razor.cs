@@ -47,22 +47,22 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 
 	private async Task _deleteColumn(TucDataProviderColumn column)
 	{
-		//if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
-		//	return;
-		//try
-		//{
-		//	Result<TucDataProvider> result = DataProviderManager.DeleteDataProviderColumn(column.Id);
-		//	ProcessServiceResponse(result);
-		//	if (result.IsSuccess)
-		//	{
-		//		ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-		//		Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
-		//	}
-		//}
-		//catch (Exception ex)
-		//{
-		//	ProcessException(ex);
-		//}
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
+			return;
+		try
+		{
+			Result<TucDataProvider> result = UC.DeleteDataProviderColumn(column.Id);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(false,result.Value));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
 
 	}
 }

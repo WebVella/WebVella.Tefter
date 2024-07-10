@@ -6,10 +6,9 @@ public record TucDataProviderTypeInfo
 	public string Description { get; init; }
 	[JsonIgnore]
 	public string IconBase64 { get; init; }
-
 	[JsonIgnore]
 	public Type SettingsComponentType { get; init; }
-	public List<string> SupportedSourceDataTypes { get; init; }
+	public List<TucDataProviderTypeDataTypeInfo> SupportedSourceDataTypes { get; init; } = new();
 	public TucDataProviderTypeInfo() { }
 	public TucDataProviderTypeInfo(ITfDataProviderType model)
 	{
@@ -18,7 +17,19 @@ public record TucDataProviderTypeInfo
 		Description = model.Description;
 		IconBase64 = model.IconBase64;
 		SettingsComponentType = model.SettingsComponentType;
-		SupportedSourceDataTypes = model.GetSupportedSourceDataTypes().ToList();
+		foreach (var sourceDataType in model.GetSupportedSourceDataTypes())
+		{
+			var supportedDbTypes = new List<TucDatabaseColumnTypeInfo>();
+			foreach (var item in model.GetDatabaseColumnTypesForSourceDataType(sourceDataType))
+			{
+				supportedDbTypes.Add(new TucDatabaseColumnTypeInfo(item));
+			}
+			SupportedSourceDataTypes.Add(new TucDataProviderTypeDataTypeInfo{ 
+				Name = sourceDataType,
+				SupportedDatabaseColumnTypes = supportedDbTypes
+			});
+		}
+		
 	}
 	public ITfDataProviderType ToModel(ReadOnlyCollection<ITfDataProviderType> type)
 	{

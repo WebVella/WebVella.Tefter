@@ -26,9 +26,9 @@
 			else
 			{
 				<FluentStack Orientation="@Orientation.Horizontal">
-					@foreach (var item in supportedDataTypes.OrderBy(x => x))
+					@foreach (var item in supportedDataTypes.OrderBy(x => x.Name))
 					{
-						<FluentBadge Appearance="Appearance.Accent">@item</FluentBadge>
+						<FluentBadge Appearance="Appearance.Accent">@item.Name</FluentBadge>
 					}
 				</FluentStack>
 			}

@@ -23,7 +23,6 @@ public partial class DataProviderAdminUseCase
 		{
 			AllProviderTypes = serviceResult.Value.Select(t => new TucDataProviderTypeInfo(t)).ToList();
 		}
-		InitColumnTypeDict();
 		return Task.CompletedTask;
 	}
 

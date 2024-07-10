@@ -49,7 +49,8 @@ public partial class DataProviderAdminUseCase
 
 	}
 
-	public Result<TucDataProvider> GetProvider(Guid providerId)
+	//provider
+	internal Result<TucDataProvider> GetProvider(Guid providerId)
 	{
 		var result = _dataProviderManager.GetProvider(providerId);
 		if (result.IsFailed)
@@ -59,7 +60,7 @@ public partial class DataProviderAdminUseCase
 
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
-	public Result DeleteDataProvider(Guid providerId)
+	internal Result DeleteDataProvider(Guid providerId)
 	{
 		var result = _dataProviderManager.DeleteDataProvider(providerId);
 		if (result.IsFailed)
@@ -67,7 +68,7 @@ public partial class DataProviderAdminUseCase
 
 		return Result.Ok();
 	}
-	public Result<List<TucDatabaseColumnTypeInfo>> GetDbTypesForProviderSourceDataTable(Guid providerId, string dataType)
+	internal Result<List<TucDatabaseColumnTypeInfo>> GetDbTypesForProviderSourceDataTable(Guid providerId, string dataType)
 	{
 		var allProviders = _dataProviderManager.GetProviderTypes();
 		if (allProviders.IsFailed) return Result.Fail(new Error("GetProviderTypes failed"));
@@ -79,4 +80,58 @@ public partial class DataProviderAdminUseCase
 
 	}
 
+	//column
+	internal List<TucDatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos()
+	{
+		var result = new List<TucDatabaseColumnTypeInfo>();
+		var resultColumnType = _dataProviderManager.GetDatabaseColumnTypeInfos();
+		if (resultColumnType.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetDatabaseColumnTypeInfos failed").CausedBy(resultColumnType.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return result;
+		}
+
+		if (resultColumnType.Value is not null)
+		{
+			foreach (DatabaseColumnTypeInfo item in resultColumnType.Value)
+			{
+				result.Add(new TucDatabaseColumnTypeInfo(item));
+			}
+		}
+		return result;
+
+	}
+
+	internal Result<TucDataProvider> CreateDataProviderColumn(TucDataProviderColumnForm form)
+	{
+		var result = _dataProviderManager.CreateDataProviderColumn(form.ToModel());
+		if (result.IsFailed)
+			return Result.Fail(new Error("CreateDataProviderColumn failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
+	internal Result<TucDataProvider> UpdateDataProviderColumn(TucDataProviderColumnForm form)
+	{
+		var result = _dataProviderManager.UpdateDataProviderColumn(form.ToModel());
+		if (result.IsFailed)
+			return Result.Fail(new Error("UpdateDataProviderColumn failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
+	internal Result<TucDataProvider> DeleteDataProviderColumn(Guid columnId)
+	{
+		var result = _dataProviderManager.DeleteDataProviderColumn(columnId);
+		if (result.IsFailed)
+			return Result.Fail(new Error("DeleteDataProviderColumn failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
 }

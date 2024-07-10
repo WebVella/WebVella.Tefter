@@ -14,13 +14,10 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private string _btnText = "";
 	private Icon _iconBtn;
 
-	private List<string> _providerTypeOptions = new();
-	private List<DatabaseColumnType> _dbTypeOptions = new();
+	private TucDataProviderTypeDataTypeInfo _selectedProviderType = new();
+	private List<TucDataProviderTypeDataTypeInfo> _providerTypeOptions = new();
 
-
-	private Dictionary<int, List<string>> _dbTypeToProviderTypes = new();
-	private Dictionary<string, List<TucDatabaseColumnTypeInfo>> _providerTypeToDbTypes = new();
-	private Dictionary<int, TucDatabaseColumnTypeInfo> _dbTypeInfoDict = new();
+	private TucDatabaseColumnTypeInfo _selectedDbType = new();
 
 	private string value1 = "1";
 
@@ -33,7 +30,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		if (DataProviderDetailsState.Value.Provider is null) throw new Exception("DataProvider not provided");
 		if (DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
 		|| !DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
-		
+
 		if (Content.Id == Guid.Empty)
 		{
 			_isCreate = true;
@@ -41,22 +38,6 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		_title = _isCreate ? LOC("Create column") : LOC("Manage column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
-
-		foreach (var providerType in DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes)
-		{
-			if (!_providerTypeToDbTypes.ContainsKey(providerType)) _providerTypeToDbTypes[providerType] = new();
-
-			var dbTypesResult = UC.GetDbTypesForProviderSourceDataTable(DataProviderDetailsState.Value.Provider.ProviderType.Id,providerType);
-
-			foreach (var dbType in dbTypesResult.Value)
-			{
-				if (!_dbTypeToProviderTypes.ContainsKey(dbType.TypeValue)) _dbTypeToProviderTypes[dbType.TypeValue] = new();
-
-				_dbTypeToProviderTypes[dbType.TypeValue].Add(providerType);
-				_providerTypeToDbTypes[providerType].Add(dbType);
-			}
-
-		}
 
 		base.InitForm(UC.ColumnForm);
 
@@ -79,28 +60,34 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			//Init type options
-			_dbTypeInfoDict = UC.ColumnTypeDict;
-
 			//Setup form
+			_providerTypeOptions = DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes;
 			if (_isCreate)
 			{
-				//_providerTypeOptions = DataProviderDetailsState.Value.Provider.ProviderType.GetSupportedSourceDataTypes().ToList();
-				UC.ColumnForm = new TucDataProviderColumnForm{ 
+				_selectedProviderType = null;
+				_selectedDbType = null;
+				if (_providerTypeOptions.Any())
+				{
+					_selectedProviderType = _providerTypeOptions[0];
+					if (_selectedProviderType.SupportedDatabaseColumnTypes.Any())
+						_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[0];
+				}
+
+				UC.ColumnForm = new TucDataProviderColumnForm
+				{
 					Id = Guid.NewGuid(),
 					DataProviderId = DataProviderDetailsState.Value.Provider.Id,
 					CreatedOn = DateTime.Now,
-					SourceType = _providerTypeOptions[0]
+					PreferredSearchType = UC.SearchTypes.First()
 				};
-				//_dbTypeOptions = _providerTypeToDbTypes[_form.SourceType];
-
 			}
 			else
 			{
 				UC.ColumnForm = new TucDataProviderColumnForm(Content);
-				_dbTypeOptions = new();
-				//_dbTypeOptions.Add(_form.DbType);
-				//_providerTypeOptions = _dbTypeToProviderTypes[_form.DbType];
+				//DbType is readonly so only provider types that support it can be selected
+				_selectedDbType = UC.ColumnForm.DbType;
+				_selectedProviderType = _providerTypeOptions.FirstOrDefault(x => x.Name == UC.ColumnForm.SourceType);
+				_providerTypeOptions = _providerTypeOptions.Where(x => x.SupportedDatabaseColumnTypes.Contains(_selectedDbType)).ToList();
 			}
 			base.InitForm(UC.ColumnForm);
 		}
@@ -127,7 +114,6 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<TfDataProvider> submitResult;
 			if (!UC.ColumnForm.IsNullable && String.IsNullOrWhiteSpace(UC.ColumnForm.DefaultValue))
 			{
 				UC.ColumnForm.DefaultValue = String.Empty;
@@ -137,15 +123,19 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 				UC.ColumnForm.DefaultValue = null;
 			}
 
-			var submit = UC.ColumnForm.ToModel();
-
+			var submit = UC.ColumnForm with
+			{
+				SourceType = _selectedProviderType.Name,
+				DbType = _selectedDbType
+			};
+			Result<TucDataProvider> submitResult;
 			if (_isCreate)
 			{
-				submitResult = DataProviderManager.CreateDataProviderColumn(submit);
+				submitResult = UC.CreateDataProviderColumn(submit);
 			}
 			else
 			{
-				submitResult = DataProviderManager.UpdateDataProviderColumn(submit);
+				submitResult = UC.UpdateDataProviderColumn(submit);
 			}
 
 			ProcessFormSubmitResponse(submitResult);
@@ -169,15 +159,13 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		await Dialog.CancelAsync();
 	}
 
-	private void _selectionSourceTypeChanged(string option)
+	private void _selectionSourceTypeChanged(TucDataProviderTypeDataTypeInfo option)
 	{
-		//var dbTypes = _providerTypeToDbTypes[option];
-		//if(!dbTypes.Contains(_form.DbType)) 
-		//{
-		//	_form.DbType = dbTypes[0];
-		//}
-
-		//StateHasChanged();
+		_selectedProviderType = option;
+		_selectedDbType = null;
+		if (_selectedProviderType.SupportedDatabaseColumnTypes.Any())
+			_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[0];
+		StateHasChanged();
 	}
 
 }
