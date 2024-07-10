@@ -1111,6 +1111,36 @@ public partial class TfDataProviderManagerTests : BaseTest
 		}
 	}
 
+	[Fact]
+	public async Task SharedKey_WithDuplicateColumns()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateSharedKeysStructure(providerManager);
+
+				TfDataProviderSharedKey sharedKey =
+					new TfDataProviderSharedKey
+					{
+						Id = Guid.NewGuid(),
+						Description = "testing1",
+						DataProviderId = provider.Id,
+						DbName = "testing1",
+						Columns = new() { provider.Columns[0], provider.Columns[0] }
+
+					};
+
+				var providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
+				providerResult.IsSuccess.Should().BeFalse();
+			}
+		}
+	}
+
 	private TfDataProvider CreateSharedKeysStructure(
 		ITfDataProviderManager providerManager)
 	{

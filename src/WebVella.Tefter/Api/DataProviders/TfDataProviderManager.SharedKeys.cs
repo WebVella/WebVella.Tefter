@@ -451,6 +451,29 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						return true;
 					})
 					.WithMessage($"Some of the selected columns cannot be found in data provider columns list.");
+
+				RuleFor(sharedKey => sharedKey.Columns)
+					.Must((sharedKey, columns) =>
+					{
+						if (columns == null)
+							return true;
+
+						var providerColumns = _providerManager.GetDataProviderColumns(sharedKey.DataProviderId);
+
+						HashSet<Guid> columnIds = new HashSet<Guid>();
+						
+						foreach (var column in columns)
+						{
+							var exists = columnIds.Contains(column.Id);
+							if (exists)
+								return false;
+
+							columnIds.Add(column.Id);
+						}
+
+						return true;
+					})
+					.WithMessage($"There are same columns added more than once in the key. Its not allowed.");
 			});
 
 			RuleSet("create", () =>
