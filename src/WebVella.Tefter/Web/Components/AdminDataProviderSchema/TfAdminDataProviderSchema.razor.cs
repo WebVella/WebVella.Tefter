@@ -39,9 +39,8 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, (TucDataProvider)result.Data));
 		}
 	}
 

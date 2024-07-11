@@ -19,8 +19,6 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 	private TucDatabaseColumnTypeInfo _selectedDbType = new();
 
-	private string value1 = "1";
-
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();

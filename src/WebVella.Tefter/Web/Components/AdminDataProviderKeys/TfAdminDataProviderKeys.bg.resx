@@ -126,13 +126,10 @@
   <data name="Edit key" xml:space="preserve">
     <value>Редакция на ключ</value>
   </data>
-  <data name="No columns" xml:space="preserve">
-    <value>Няма колони</value>
+  <data name="No keys" xml:space="preserve">
+    <value>Няма ключове</value>
   </data>
-  <data name="No columns are created yet for this data source" xml:space="preserve">
-    <value>Все още няма създадени колони за този доставчик на данни</value>
-  </data>
-  <data name="No shared keys are created yet for this data source" xml:space="preserve">
+  <data name="No shared keys are created yet for this data provider" xml:space="preserve">
     <value>Все още няма създадени споделени ключове за този доставчик на данни</value>
   </data>
   <data name="Shared key" xml:space="preserve">

@@ -1,4 +1,6 @@
 ﻿
+using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
+
 namespace WebVella.Tefter.Web.Components.AdminDataProviderKeys;
 public partial class TfAdminDataProviderKeys : TfBaseComponent
 {
@@ -24,43 +26,42 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 	}
 
 
-	private async Task _editKey(TucDataProviderColumn column)
+	private async Task _editKey(TucDataProviderSharedKey key)
 	{
-		//var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
-		//		new Tuple<TfDataProviderColumn, TfDataProvider>(column, DataProviderDetailsState.Value.Provider),
-		//		new DialogParameters()
-		//		{
-		//			PreventDismissOnOverlayClick = true,
-		//			PreventScroll = true,
-		//			Width = TfConstants.DialogWidthLarge
-		//		});
-		//var result = await dialog.Result;
-		//if (!result.Cancelled && result.Data != null)
-		//{
-		//	var record = (TfDataProvider)result.Data;
-		//	ToastService.ShowSuccess(LOC("The key was successfully updated!"));
-		//	Dispatcher.Dispatch(new SetDataProviderDetailsAction(record));
-		//}
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(
+				key,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			ToastService.ShowSuccess(LOC("The key was successfully updated!"));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false,(TucDataProvider)result.Data));
+		}
 	}
 
-	private async Task _deleteKey(TucDataProviderColumn column)
+	private async Task _deleteKey(TucDataProviderSharedKey key)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this key deleted?")))
 			return;
-		//try
-		//{
-		//	Result<TfDataProvider> result = DataProviderManager.DeleteDataProviderColumn(column.Id);
-		//	ProcessServiceResponse(result);
-		//	if (result.IsSuccess)
-		//	{
-		//		ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
-		//		Dispatcher.Dispatch(new SetDataProviderAdminAction(result.Value));
-		//	}
-		//}
-		//catch (Exception ex)
-		//{
-		//	ProcessException(ex);
-		//}
-		
+		try
+		{
+			Result<TucDataProvider> result = UC.DeleteDataProviderSharedKey(key.Id);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(false,(TucDataProvider)result.Value));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+
 	}
 }
