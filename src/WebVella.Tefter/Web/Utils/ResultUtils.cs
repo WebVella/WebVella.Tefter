@@ -105,7 +105,8 @@ internal static class ResultUtils
 
 		foreach (var valError in validationErrors)
 		{
-			messageStore.Add(editContext.Field(valError.PropertyName), valError.Reason);
+			var field = editContext.Field(valError.PropertyName);
+			messageStore.Add(field, valError.Reason);
 		}
 
 		editContext.NotifyValidationStateChanged();

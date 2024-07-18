@@ -1,9 +1,9 @@
 ﻿namespace WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
-public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<Tuple<TfDataProviderColumn, TfDataProvider>>
+public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSharedKey>
 {
-
-	[Parameter]
-	public Tuple<TfDataProviderColumn, TfDataProvider> Content { get; set; }
+	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
+	[Parameter] public TucDataProviderSharedKey Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -14,35 +14,29 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-	private TfDataProviderColumn _form = new();
-	private TfDataProvider _provider = new();
-	private List<DatabaseColumnTypeInfo> _columnTypes = new();
-	private DatabaseColumnTypeInfo _selectedColumnType = null;
 
-	private string value1 = "1";
+	private List<TucDataProviderColumn> _providerColumns = new();
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
+
 		if (Content is null) throw new Exception("Content is null");
-		if (Content.Item1 is null) throw new Exception("DataProviderColumn not provided");
-		if (Content.Item2 is null) throw new Exception("DataProvider not provided");
-		if (Content.Item2.SupportedSourceDataTypes is null
-		|| !Content.Item2.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
-		if (Content.Item1.Id == Guid.Empty)
+		if (DataProviderDetailsState.Value.Provider is null) throw new Exception("DataProvider not provided");
+		if (DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
+		|| !DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+
+		if (Content.Id == Guid.Empty)
 		{
-			_title = LOC("Create column");
-			_btnText = LOC("Create");
-			_iconBtn = new Icons.Regular.Size20.Add();
+			_isCreate = true;
 		}
-		else
-		{
-			_title = LOC("Manage column");
-			_btnText = LOC("Save");
-			_iconBtn = new Icons.Regular.Size20.Save();
-		}
-		base.InitForm(_form);
-		_provider = Content.Item2;
+		_title = _isCreate ? LOC("Create key") : LOC("Manage key");
+		_btnText = _isCreate ? LOC("Create") : LOC("Save");
+		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
+
+		base.InitForm(UC.KeyForm);
+
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -62,47 +56,22 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			//Init type options
-			throw new NotImplementedException();
-			//_columnTypes = SystemState.Value.DataProviderColumnTypes;
-			if (!_columnTypes.Any()) throw new Exception("No Data provider column types found in application");
+			_providerColumns = DataProviderDetailsState.Value.Provider.Columns.OrderBy(x => x.DbName).ToList();
 			//Setup form
-			if (Content.Item1.Id == Guid.Empty)
+			if (_isCreate)
 			{
-				_isCreate = true;
-				_form = new TfDataProviderColumn()
+				UC.KeyForm = new TucDataProviderSharedKeyForm
 				{
 					Id = Guid.NewGuid(),
-					DataProviderId = Content.Item2.Id,
-					SourceType = Content.Item2.SupportedSourceDataTypes.First(),
-					CreatedOn = DateTime.Now,
-					DbType = _columnTypes.First().Type,
+					DataProviderId = DataProviderDetailsState.Value.Provider.Id,
 				};
-				_selectedColumnType = _columnTypes.First();
 			}
 			else
 			{
-				_form = new TfDataProviderColumn()
-				{
-					Id = Content.Item1.Id,
-					DataProviderId = Content.Item1.DataProviderId,
-					AutoDefaultValue = Content.Item1.AutoDefaultValue,
-					CreatedOn = Content.Item1.CreatedOn,
-					DbName = Content.Item1.DbName,
-					DbType = Content.Item1.DbType,
-					DefaultValue = Content.Item1.DefaultValue,
-					IncludeInTableSearch = Content.Item1.IncludeInTableSearch,
-					IsNullable = Content.Item1.IsNullable,
-					IsSearchable = Content.Item1.IsSearchable,
-					IsSortable = Content.Item1.IsSortable,
-					IsUnique = Content.Item1.IsUnique,
-					PreferredSearchType = Content.Item1.PreferredSearchType,
-					SourceName = Content.Item1.SourceName,
-					SourceType = Content.Item1.SourceType
-				};
-				_selectedColumnType = _columnTypes.FirstOrDefault(x=> x.Type == _form.DbType);
+				UC.KeyForm = new TucDataProviderSharedKeyForm(Content);
+				_providerColumns = _providerColumns.Where(x=> !UC.KeyForm.Columns.Any(y=> y.Id == x.Id)).ToList();
 			}
-			base.InitForm(_form);
+			base.InitForm(UC.KeyForm);
 		}
 		catch (Exception ex)
 		{
@@ -127,25 +96,22 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<TfDataProvider> submitResult;
-			if(!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue)){
-				_form.DefaultValue = String.Empty;
-			}
-			else if(_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue)){
-				_form.DefaultValue = null;
-			}
-			_form.DbType = _selectedColumnType.Type;
+			Result<TucDataProvider> submitResult;
+			var submit = UC.KeyForm with
+			{
+				Id = UC.KeyForm.Id
+			};
 			if (_isCreate)
 			{
-				submitResult = DataProviderManager.CreateDataProviderColumn(_form);
+				submitResult = UC.CreateDataProviderKey(submit);
 			}
 			else
 			{
-				submitResult = DataProviderManager.UpdateDataProviderColumn(_form);
+				submitResult = UC.UpdateDataProviderKey(submit);
 			}
 
 			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
+			  if (submitResult.IsSuccess)
 			{
 				await Dialog.CloseAsync(submitResult.Value);
 			}
@@ -165,12 +131,59 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		await Dialog.CancelAsync();
 	}
 
-	private Dictionary<string, object> _getDynamicComponentParams()
+	private void onSelectionUpdate(FluentSortableListEventArgs args)
 	{
-		var dict = new Dictionary<string, object>();
-		//dict["DisplayMode"] = ComponentDisplayMode.Form;
-		//dict["Value"] = _form.SettingsJson;
-		return dict;
+		if (args is null || args.OldIndex == args.NewIndex)
+		{
+			return;
+		}
+
+		var oldIndex = args.OldIndex;
+		var newIndex = args.NewIndex;
+
+		var items = this.UC.KeyForm.Columns;
+		var itemToMove = items[oldIndex];
+		items.RemoveAt(oldIndex);
+
+		if (newIndex < items.Count)
+		{
+			items.Insert(newIndex, itemToMove);
+		}
+		else
+		{
+			items.Add(itemToMove);
+		}
+	}
+	private void onSelectionRemove(FluentSortableListEventArgs args)
+	{
+		if (args is null)
+		{
+			return;
+		}
+		// get the item at the old index in list 2
+		var item = UC.KeyForm.Columns[args.OldIndex];
+
+		// add it to the new index in list 1
+		_providerColumns.Insert(args.NewIndex, item);
+
+		// remove the item from the old index in list 2
+		UC.KeyForm.Columns.Remove(UC.KeyForm.Columns[args.OldIndex]);
+	}
+
+	private void onProviderRemove(FluentSortableListEventArgs args)
+	{
+		if (args is null)
+		{
+			return;
+		}
+		// get the item at the old index in list 2
+		var item = _providerColumns[args.OldIndex];
+
+		// add it to the new index in list 1
+		UC.KeyForm.Columns.Insert(args.NewIndex, item);
+
+		// remove the item from the old index in list 2
+		_providerColumns.Remove(_providerColumns[args.OldIndex]);
 	}
 
 }

@@ -7,6 +7,7 @@ using WebVella.Tefter.Web.Components.AdminDataProviderNavigation;
 using WebVella.Tefter.Web.Components.AdminDataProviderSchema;
 using WebVella.Tefter.Web.Components.AdminDataProviderStateManager;
 using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
+using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
 using WebVella.Tefter.Web.Components.DataProviderManageDialog;
 
 namespace WebVella.Tefter.UseCases.DataProviderAdmin;
@@ -44,6 +45,7 @@ public partial class DataProviderAdminUseCase
 		else if (type == typeof(TfAdminDataProviderKeys)) await InitForKeys();
 		else if (type == typeof(TfAdminDataProviderSchema)) await InitForSchema();
 		else if (type == typeof(TfDataProviderColumnManageDialog)) await InitForColumnManageDialog();
+		else if (type == typeof(TfDataProviderKeyManageDialog)) await InitForKeyManageDialog();
 
 		else throw new Exception($"Type: {type.Name} not supported in DataProviderAdminUseCase");
 
@@ -125,7 +127,6 @@ public partial class DataProviderAdminUseCase
 
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
-
 	internal Result<TucDataProvider> DeleteDataProviderColumn(Guid columnId)
 	{
 		var result = _dataProviderManager.DeleteDataProviderColumn(columnId);
@@ -134,4 +135,33 @@ public partial class DataProviderAdminUseCase
 
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
+
+	//Key
+
+	internal Result<TucDataProvider> CreateDataProviderKey(TucDataProviderSharedKeyForm form)
+	{
+		var result = _dataProviderManager.CreateDataProviderSharedKey(form.ToModel());
+		if (result.IsFailed)
+			return Result.Fail(new Error("CreateDataProviderSharedKey failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
+	internal Result<TucDataProvider> UpdateDataProviderKey(TucDataProviderSharedKeyForm form)
+	{
+		var result = _dataProviderManager.UpdateDataProviderSharedKey(form.ToModel());
+		if (result.IsFailed)
+			return Result.Fail(new Error("UpdateDataProviderColumn failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+	internal Result<TucDataProvider> DeleteDataProviderSharedKey(Guid keyId)
+	{
+		var result = _dataProviderManager.DeleteDataProviderSharedKey(keyId);
+		if (result.IsFailed)
+			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
 }

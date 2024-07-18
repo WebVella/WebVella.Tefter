@@ -1,4 +1,5 @@
 ﻿using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
+using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
 using WebVella.Tefter.Web.Components.DataProviderManageDialog;
 
 namespace WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions;
@@ -64,7 +65,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
 		}
 	}
-
+	
 	private async Task _deleteProvider()
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))
@@ -92,5 +93,24 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 
+	}
+
+	private async Task _addKey()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(
+		new TucDataProviderSharedKey(),
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var record = (TucDataProvider)result.Data;
+			ToastService.ShowSuccess(LOC("Key successfully created!"));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
+		}
 	}
 }

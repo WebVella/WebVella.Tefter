@@ -29,7 +29,7 @@ else if (UC.ActionsMenu == "aux")
 }
 else if (UC.ActionsMenu == "keys")
 {
-	<FluentButton Appearance="@Appearance.Outline">
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
 		@LOC("Shared key")
 		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
