@@ -9,6 +9,7 @@ global using Microsoft.Extensions.Localization;
 global using Microsoft.FluentUI.AspNetCore.Components;
 global using Microsoft.FluentUI.AspNetCore.Components.Extensions;
 global using Microsoft.JSInterop;
+global using Microsoft.Extensions.Hosting; 
 global using Nito.AsyncEx;
 global using Npgsql;
 global using System.ComponentModel;
@@ -17,6 +18,7 @@ global using System.Net.Mail;
 global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.Web;
+
 
 
 global using WebVella.Tefter.Database.Dbo;

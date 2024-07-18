@@ -14,6 +14,10 @@ public class TfDataProvider
 	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
 	public ITfDataProviderType ProviderType { get; internal set; }
 	public ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();
+	public ReadOnlyCollection<TfDataProviderDataRow> GetSourceData()
+	{
+		return ProviderType.GetSourceData(SettingsJson);
+	}
 
 }
 

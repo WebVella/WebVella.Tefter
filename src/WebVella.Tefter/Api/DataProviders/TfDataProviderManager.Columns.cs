@@ -65,7 +65,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		Guid providerId)
 	{
 		var orderSettings = new OrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
-		return _dboManager.GetList<TfDataProviderColumn>(providerId, nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
+		return _dboManager.GetList<TfDataProviderColumn>(providerId, 
+			nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
 	}
 
 	/// <summary>
@@ -73,7 +74,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="column"></param>
 	/// <returns></returns>
-
 	public Result<TfDataProvider> CreateDataProviderColumn(
 		TfDataProviderColumn column)
 	{
@@ -864,10 +864,6 @@ TfDataProviderColumn column)
 						return providerManager.GetProvider(providerId).Value != null;
 					})
 					.WithMessage("There is no existing data provider for specified provider id.");
-
-				RuleFor(column => column.SourceName)
-					.NotEmpty()
-					.WithMessage("The data provider column source name is required.");
 
 				RuleFor(column => column.SourceType)
 					.NotEmpty()

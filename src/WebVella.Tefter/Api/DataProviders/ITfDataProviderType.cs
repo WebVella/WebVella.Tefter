@@ -9,5 +9,5 @@ public interface ITfDataProviderType
 	Type SettingsComponentType { get; }
 	public abstract ReadOnlyCollection<string> GetSupportedSourceDataTypes();
 	public abstract ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(string dataType);
-	public abstract ReadOnlyCollection<TfDataProviderDataRow> GetSourceData();
+	public abstract ReadOnlyCollection<TfDataProviderDataRow> GetSourceData(string settingsJson);
 }

@@ -54,7 +54,7 @@ public class CsvDataProvider : ITfDataProviderType
 		return new List<DatabaseColumnType>().AsReadOnly();
 	}
 
-	public ReadOnlyCollection<TfDataProviderDataRow> GetSourceData()
+	public ReadOnlyCollection<TfDataProviderDataRow> GetSourceData(string settingsJson)
 	{
 		return new List<TfDataProviderDataRow>().AsReadOnly();
 	}

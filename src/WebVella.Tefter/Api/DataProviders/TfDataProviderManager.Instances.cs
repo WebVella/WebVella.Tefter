@@ -47,6 +47,12 @@ public partial interface ITfDataProviderManager
 	/// <returns></returns>
 	internal Result DeleteDataProvider(
 		Guid id);
+	
+	/// <summary>
+	/// Queue provider for synchronization
+	/// </summary>
+	/// <param name="id"></param>
+	void QueueForSynchronization(Guid id);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
@@ -348,6 +354,17 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		{
 			return Result.Fail(new Error("Failed to delete data provider.").CausedBy(ex));
 		}
+	}
+
+
+	/// <summary>
+	/// Queue provider for synchronization
+	/// </summary>
+	/// <param name="id"></param>
+	public void QueueForSynchronization(Guid id)
+	{
+		var providerResult = GetProvider(id);
+		_syncTaskList.AddTask(providerResult.Value);
 	}
 
 	#region <--- utility --->

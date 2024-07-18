@@ -46,7 +46,11 @@ public static class DependencyInjection
 		services.AddTransient<UserEventProvider, UserEventProvider>();
 		services.AddTransient<GlobalEventProvider, GlobalEventProvider>();
 
+		//data providers
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
+		services.AddHostedService<TfDataProviderSynchronizeJob>();
+		services.AddSingleton<ITfDataProviderSynchronizeTaskList, TfDataProviderSynchronizeTaskList>();
+
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();

@@ -331,13 +331,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		if (allColumns == null)
 			throw new ArgumentException(nameof(allColumns));
 
-		var columnIdsHS = JsonSerializer
+		var columnIds = JsonSerializer
 			.Deserialize<List<Guid>>(dbo.ColumnIdsJson ?? "[]")
-			.ToHashSet();
-
-		var columns = allColumns
-			.Where(x => columnIdsHS.Contains(x.Id))
 			.ToList();
+
+		var columns = new List<TfDataProviderColumn>();
+		foreach (var id in columnIds)
+			columns.Add(allColumns.Single(x => x.Id == id));
 
 		return new TfDataProviderSharedKey
 		{

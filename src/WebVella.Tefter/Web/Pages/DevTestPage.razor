@@ -4,3 +4,14 @@
 @inherits TfBasePage
 
 <PageTitle>This is developers test page</PageTitle>
+
+@* @{ int counter = 0; }
+@foreach(var row in data)
+{
+	counter++;
+	<b>@counter  - @row["id"] - @row["transfer_id"] - @row["item_id"] - @row["added_on"] - @row["result_code"] - @row["quantity"]  </b>
+	if( counter % 1000 == 0)
+	{
+		<br />
+	}
+} *@
