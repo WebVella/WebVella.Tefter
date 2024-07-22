@@ -47,12 +47,6 @@ public partial interface ITfDataProviderManager
 	/// <returns></returns>
 	internal Result DeleteDataProvider(
 		Guid id);
-	
-	/// <summary>
-	/// Queue provider for synchronization
-	/// </summary>
-	/// <param name="id"></param>
-	void QueueForSynchronization(Guid id);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
@@ -281,11 +275,23 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				return validationResult.ToResult();
 
 			TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
-			
+
 			var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo);
 
 			if (!success)
 				return Result.Fail(new DboManagerError("Update", dataProviderDbo));
+
+			//TESTING
+			if (providerModel.Name == "Products CSV Data Provider" ||
+				providerModel.Name == "People CSV")
+			{
+				CreateSynchronizationTask(
+					providerModel.Id,
+					new TfSynchronizationPolicy
+					{
+						ComparisonType = TfSynchronizationPolicyComparisonType.ByRowOrder
+					});
+			}
 
 			return Result.Ok(GetProvider(providerModel.Id).Value);
 		}
@@ -316,13 +322,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					new TfDataProviderDeleteValidator(_dboManager, this);
 
 				var validationResult = validator.ValidateDelete(providerResult.Value);
-				
+
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
 				bool success = true;
 
-				foreach(var column in providerResult.Value.Columns )
+				foreach (var column in providerResult.Value.Columns)
 				{
 					success = _dboManager.Delete<TfDataProviderColumn>(column.Id);
 
@@ -336,7 +342,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new DboManagerError("Delete", id));
 
 				var provider = providerResult.Value;
-				
+
 				string providerTableName = $"dp{provider.Index}";
 
 				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
@@ -357,15 +363,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	}
 
 
-	/// <summary>
-	/// Queue provider for synchronization
-	/// </summary>
-	/// <param name="id"></param>
-	public void QueueForSynchronization(Guid id)
-	{
-		var providerResult = GetProvider(id);
-		_syncTaskList.AddTask(providerResult.Value);
-	}
 
 	#region <--- utility --->
 
@@ -413,7 +410,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			Columns = columns.AsReadOnly(),
 			SharedKeys = sharedKeys.AsReadOnly()
 		};
-	} 
+	}
 
 	#endregion
 

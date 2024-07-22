@@ -14,11 +14,10 @@ public class TfDataProvider
 	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
 	public ITfDataProviderType ProviderType { get; internal set; }
 	public ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();
-	public ReadOnlyCollection<TfDataProviderDataRow> GetSourceData()
+	public ReadOnlyCollection<TfDataProviderDataRow> GetRows()
 	{
-		return ProviderType.GetSourceData(SettingsJson);
+		return ProviderType.GetRows(this);
 	}
-
 }
 
 public record TfDataProviderModel

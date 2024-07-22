@@ -15,12 +15,29 @@ public class UnitTestDataProvider : ITfDataProviderType
 
 	public Type SettingsComponentType => typeof(UnitTestDataProviderSettingsComponent);
 
-	public ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(string dataType)
+	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{
-		switch(dataType)
+		return new List<string> {
+			"TEXT",
+			"SHORT_TEXT",
+			"BOOLEAN",
+			"DATE",
+			"DATETIME",
+			"NUMBER",
+			"SHORT_INTEGER",
+			"INTEGER",
+			"LONG_INTEGER",
+			"GUID"
+		}.AsReadOnly();
+	}
+
+	public ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
+		string dataType)
+	{
+		switch (dataType)
 		{
 			case "TEXT":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Text}.AsReadOnly();
+				return new List<DatabaseColumnType> { DatabaseColumnType.Text }.AsReadOnly();
 			case "SHORT_TEXT":
 				return new List<DatabaseColumnType> { DatabaseColumnType.ShortText }.AsReadOnly();
 			case "BOOLEAN":
@@ -44,24 +61,9 @@ public class UnitTestDataProvider : ITfDataProviderType
 		return new List<DatabaseColumnType>().AsReadOnly();
 	}
 
-	public ReadOnlyCollection<TfDataProviderDataRow> GetSourceData(string settingsJson)
+	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
+		TfDataProvider provider)
 	{
 		return new List<TfDataProviderDataRow>().AsReadOnly();
-	}
-
-	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
-	{
-		return new List<string> { 
-			"TEXT", 
-			"SHORT_TEXT",
-			"BOOLEAN",
-			"DATE", 
-			"DATETIME",
-			"NUMBER",
-			"SHORT_INTEGER",
-			"INTEGER",
-			"LONG_INTEGER",
-			"GUID"
-		}.AsReadOnly();
 	}
 }

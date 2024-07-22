@@ -49,7 +49,6 @@ public static class DependencyInjection
 		//data providers
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
-		services.AddSingleton<ITfDataProviderSynchronizeTaskList, TfDataProviderSynchronizeTaskList>();
 
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
@@ -59,7 +58,7 @@ public static class DependencyInjection
 		services.AddSingleton<IDboManager, DboManager>();
 		services.AddSingleton<IMigrationManager, MigrationManager>();
 		services.AddSingleton<IIdentityManager, IdentityManager>();
-		services.AddSingleton<IIdManager, IdManager>();
+		services.AddSingleton<IDataManager, DataManager>();
 
 		//use cases
 		services.AddScoped<StateEffectsUseCase,StateEffectsUseCase>();

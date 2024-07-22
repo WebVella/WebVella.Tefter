@@ -7,7 +7,10 @@ public interface ITfDataProviderType
 	string Description { get; }
 	string IconBase64 { get; }
 	Type SettingsComponentType { get; }
-	public abstract ReadOnlyCollection<string> GetSupportedSourceDataTypes();
-	public abstract ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(string dataType);
-	public abstract ReadOnlyCollection<TfDataProviderDataRow> GetSourceData(string settingsJson);
+	abstract ReadOnlyCollection<string> GetSupportedSourceDataTypes();
+	abstract ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
+		string dataType);
+	abstract ReadOnlyCollection<TfDataProviderDataRow> GetRows(
+		TfDataProvider provider);
+
 }

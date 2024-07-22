@@ -314,7 +314,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			Id = sharedKey.Id,
 			DataProviderId = sharedKey.DataProviderId,
 			DbName = sharedKey.DbName,
-			Description = sharedKey.Description,
+			Description = sharedKey.Description??string.Empty,
 			ColumnIdsJson = columnIdsJson,
 			Version = sharedKey.Version,
 			LastModifiedOn = sharedKey.LastModifiedOn,

@@ -48,4 +48,5 @@ public record TfSynchronizationPolicy
 	public TfSynchronizationPolicyComparisonType ComparisonType { get; set; } = TfSynchronizationPolicyComparisonType.ByRowOrder;
 	public string SharedKeyName { get; set; } = null;
 	public TfSynchronizationPolicyDuplicateResolution DuplicateResolution { get; set; } = TfSynchronizationPolicyDuplicateResolution.UpdateFirstDeleteOthers;
+	public bool WriteInfoResults { get; set; } = false;
 }
