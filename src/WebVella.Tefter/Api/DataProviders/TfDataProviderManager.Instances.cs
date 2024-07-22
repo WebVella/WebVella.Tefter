@@ -281,18 +281,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			if (!success)
 				return Result.Fail(new DboManagerError("Update", dataProviderDbo));
 
-			//TESTING
-			if (providerModel.Name == "Products CSV Data Provider" ||
-				providerModel.Name == "People CSV")
-			{
-				CreateSynchronizationTask(
-					providerModel.Id,
-					new TfSynchronizationPolicy
-					{
-						ComparisonType = TfSynchronizationPolicyComparisonType.ByRowOrder
-					});
-			}
-
 			return Result.Ok(GetProvider(providerModel.Id).Value);
 		}
 		catch (Exception ex)

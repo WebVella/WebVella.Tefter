@@ -5,6 +5,10 @@ public partial interface ITfDataProviderManager
 	internal Result<TfDataProviderSynchronizeTask> GetSynchronizationTask(
 		Guid taskId);
 
+	Result<List<TfDataProviderSynchronizeTaskExtended>> GetSynchronizationTasksExtended(
+		Guid? providerId = null,
+		TfSynchronizationStatus? status = null);
+
 	internal Result<List<TfDataProviderSynchronizeTask>> GetSynchronizationTasks(
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null);
@@ -19,6 +23,9 @@ public partial interface ITfDataProviderManager
 		DateTime? startedOn = null,
 		DateTime? completedOn = null);
 
+	internal Result<List<TfDataProviderSynchronizeResultInfo>> GetSynchronizationTaskResultInfos(
+		Guid taskId);
+
 	internal Result CreateSynchronizationResultInfo(
 		Guid syncTaskId,
 		int? tfRowIndex,
@@ -26,8 +33,8 @@ public partial interface ITfDataProviderManager
 		string info = null,
 		string warning = null,
 		string error = null);
-
-	public void Synchronize(
+	
+	internal void Synchronize(
 		TfDataProviderSynchronizeTask task);
 }
 
@@ -128,6 +135,143 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	public Result<List<TfDataProviderSynchronizeTaskExtended>> GetSynchronizationTasksExtended(
+		Guid? providerId = null,
+		TfSynchronizationStatus? status = null)
+	{
+		try
+		{
+			List<TfDataProviderSynchronizeTaskExtended> dbos = null;
+			if (providerId is not null && status is not null)
+			{
+				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+@"SELECT 
+	st.id, 
+	st.data_provider_id, 
+	st.policy_json, 
+	st.status, 
+	st.created_on,
+	st.started_on,
+	st.completed_on,
+	COUNT( sri_info.id ) AS info_count,
+	COUNT( sri_warning.id ) AS warning_count,
+	COUNT( sri_error.id ) AS error_count
+FROM data_provider_synchronize_task st
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
+WHERE data_provider_id = @data_provider_id AND status = @status
+GROUP BY 
+	st.id, 
+	st.data_provider_id, 
+	st.policy_json, 
+	st.status, 
+	st.created_on,
+	st.started_on,
+	st.completed_on
+ORDER BY st.created_on DESC",
+					new NpgsqlParameter("@data_provider_id", providerId.Value),
+					new NpgsqlParameter("@status", (short)status.Value));
+
+			}
+			else if (providerId is not null)
+			{
+				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+@"SELECT
+	st.id,
+	st.data_provider_id,
+	st.policy_json,
+	st.status,
+	st.created_on,
+	st.started_on,
+	st.completed_on,
+	COUNT(sri_info.id) AS info_count,
+	COUNT(sri_warning.id) AS warning_count,
+	COUNT(sri_error.id) AS error_count
+FROM data_provider_synchronize_task st
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
+WHERE data_provider_id = @data_provider_id 
+GROUP BY
+	st.id,
+	st.data_provider_id,
+	st.policy_json,
+	st.status,
+	st.created_on,
+	st.started_on,
+	st.completed_on
+ORDER BY st.created_on DESC",
+					new NpgsqlParameter("@data_provider_id", providerId.Value));
+
+			}
+			else if (status is not null)
+			{
+				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+@"SELECT 
+	st.id, 
+	st.data_provider_id, 
+	st.policy_json, 
+	st.status, 
+	st.created_on,
+	st.started_on,
+	st.completed_on,
+	COUNT( sri_info.id ) AS info_count,
+	COUNT( sri_warning.id ) AS warning_count,
+	COUNT( sri_error.id ) AS error_count
+FROM data_provider_synchronize_task st
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
+WHERE status = @status
+GROUP BY 
+	st.id, 
+	st.data_provider_id, 
+	st.policy_json, 
+	st.status, 
+	st.created_on,
+	st.started_on,
+	st.completed_on
+ORDER BY st.created_on DESC",
+					new NpgsqlParameter("@status", (short)status.Value));
+			}
+			else
+			{
+				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+@"SELECT 
+	st.id, 
+	st.data_provider_id, 
+	st.policy_json, 
+	st.status, 
+	st.created_on,
+	st.started_on,
+	st.completed_on,
+	COUNT( sri_info.id ) AS info_count,
+	COUNT( sri_warning.id ) AS warning_count,
+	COUNT( sri_error.id ) AS error_count
+FROM data_provider_synchronize_task st
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
+GROUP BY 
+	st.id, 
+	st.data_provider_id, 
+	st.policy_json, 
+	st.status, 
+	st.created_on,
+	st.started_on,
+	st.completed_on
+ORDER BY st.created_on DESC");
+			}
+
+			return Result.Ok(dbos);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get list of synchronization tasks").CausedBy(ex));
+		}
+	}
+
 	public Result CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy)
@@ -190,6 +334,46 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	#endregion
 
 	#region <--- Synchronization Result Info --->
+
+	public Result<List<TfDataProviderSynchronizeResultInfo>> GetSynchronizationTaskResultInfos(
+		Guid taskId)
+	{
+		try
+		{
+			var orderSettings = new OrderSettings(
+			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
+			OrderDirection.ASC);
+			
+			var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
+					"WHERE task_id = @task_id",
+					orderSettings,
+					new NpgsqlParameter("@task_id", taskId));
+			
+			var result = new List<TfDataProviderSynchronizeResultInfo>();
+
+			foreach (var dbo in dbos)
+			{
+				var task = new TfDataProviderSynchronizeResultInfo
+				{
+					Id = dbo.Id,
+					TaskId = dbo.TaskId,
+					TfId = dbo.TfId,
+					TfRowIndex = dbo.TfRowIndex,
+					CreatedOn = dbo.CreatedOn,
+					Info = dbo.Info,
+					Error = dbo.Error,
+					Warning = dbo.Warning
+				};
+				result.Add(task);
+			}
+
+			return Result.Ok(result);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get list of synchronization result for task").CausedBy(ex));
+		}
+	}
 
 	public Result CreateSynchronizationResultInfo(
 		Guid taskId,
