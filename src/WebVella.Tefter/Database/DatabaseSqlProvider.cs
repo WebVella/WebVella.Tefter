@@ -356,7 +356,11 @@ $$ LANGUAGE plpgsql;
             DateTimeDatabaseColumn c => generalFunc(c),
             GuidDatabaseColumn c => generalFunc(c),
             TextDatabaseColumn c => generalFunc(c),
-            _ => throw new Exception($"Not supported DbColumn type {dbColumn.GetType()}")
+			ShortTextDatabaseColumn c => generalFunc(c),
+			ShortIntegerDatabaseColumn c => generalFunc(c),
+			IntegerDatabaseColumn c => generalFunc(c),
+			LongIntegerDatabaseColumn c => generalFunc(c),
+			_ => throw new Exception($"Not supported DbColumn type {dbColumn.GetType()}")
         };
 
         return createSql + $" COMMENT ON COLUMN \"{difference.TableName}\".\"{dbColumn.Name}\" IS '{dbColumn.GetMetaJson(DateTime.Now)}';";

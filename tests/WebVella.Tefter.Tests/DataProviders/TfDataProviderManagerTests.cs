@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Web.Services;
+﻿using WebVella.Tefter.Api;
+using WebVella.Tefter.Web.Services;
 
 namespace WebVella.Tefter.Tests.DataProviders;
 
@@ -448,7 +449,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
-					IsNullable = false,
+					IsNullable = true,
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
@@ -553,7 +554,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 					SourceName = "",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
-					IsNullable = false,
+					IsNullable = true,
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
@@ -561,8 +562,8 @@ public partial class TfDataProviderManagerTests : BaseTest
 				};
 
 				var result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.SourceName));
+				result.IsSuccess.Should().BeTrue();
+				//we allow this now
 			}
 		}
 	}
@@ -947,7 +948,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 				SourceName = "source_column",
 				SourceType = sourceType,
 				IncludeInTableSearch = false,
-				IsNullable = false,
+				IsNullable = true,
 				IsSearchable = true,
 				IsSortable = true,
 				IsUnique = true,
@@ -1172,7 +1173,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 			SourceName = "source_column",
 			SourceType = "TEXT",
 			IncludeInTableSearch = false,
-			IsNullable = false,
+			IsNullable = true,
 			IsSearchable = true,
 			IsSortable = true,
 			IsUnique = true,
@@ -1193,7 +1194,7 @@ public partial class TfDataProviderManagerTests : BaseTest
 			SourceName = "source_column2",
 			SourceType = "TEXT",
 			IncludeInTableSearch = false,
-			IsNullable = false,
+			IsNullable = true,
 			IsSearchable = true,
 			IsSortable = true,
 			IsUnique = true,

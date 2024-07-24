@@ -188,9 +188,9 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						return !dbName.StartsWith("sk_");
+						return dbName.StartsWith("sk_");
 					})
-					.WithMessage("The shared column database name cannot start with 'tf_'.");
+					.WithMessage("The shared column database name should start with 'sk_'.");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>
