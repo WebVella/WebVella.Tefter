@@ -42,7 +42,8 @@ public class TfDataProviderSynchronizeTask
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }
-	public TfSynchronizationPolicy Policy { get; set; }
+	//temp initialized here, later will be in provider
+	public TfSynchronizationPolicy Policy { get; set; } = new TfSynchronizationPolicy();
 	public TfSynchronizationStatus Status { get; set; } = TfSynchronizationStatus.Pending;
 	public DateTime CreatedOn { get; set; } = DateTime.Now;
 	public DateTime? StartedOn { get; set; } = null;

@@ -5,7 +5,7 @@ public partial interface ITfDataProviderManager
 	internal Result<TfDataProviderSynchronizeTask> GetSynchronizationTask(
 		Guid taskId);
 
-	Result<List<TfDataProviderSynchronizeTaskExtended>> GetSynchronizationTasksExtended(
+	internal Result<List<TfDataProviderSynchronizeTaskExtended>> GetSynchronizationTasksExtended(
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null);
 
