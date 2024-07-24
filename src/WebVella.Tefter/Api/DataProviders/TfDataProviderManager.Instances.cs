@@ -82,6 +82,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					GetDataProviderSharedKeys(id),
 					providerType);
 
+			InitDataProviderSharedColumns(provider);
+
 			return Result.Ok(provider);
 		}
 		catch (Exception ex)
@@ -123,6 +125,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					GetDataProviderSharedKeys(providerDbo.Id),
 					providerType);
 
+			InitDataProviderSharedColumns(provider);
+
 			return Result.Ok(provider);
 		}
 		catch (Exception ex)
@@ -163,6 +167,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						GetDataProviderColumns(dbo.Id),
 						GetDataProviderSharedKeys(dbo.Id),
 						providerType);
+
+				InitDataProviderSharedColumns(provider);
 
 				providers.Add(provider);
 			}
@@ -353,6 +359,31 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 
 	#region <--- utility --->
+
+	private void InitDataProviderSharedColumns(
+		TfDataProvider provider)
+	{
+		if (provider.SharedKeys.Count == 0)
+			return;
+		
+		var sharedColumnsResult = _sharedColumnManager.GetSharedColumns();
+
+		if (!sharedColumnsResult.IsSuccess)
+			throw new Exception("Failed to get shared columns while initializing data provider.");
+
+		var sharedColumns = sharedColumnsResult.Value;
+
+		List<TfSharedColumn> columns = new List<TfSharedColumn>();
+
+		foreach (var sharedColumn in sharedColumns )
+		{
+			var sharedKey = provider.SharedKeys.SingleOrDefault(x=>x.DbName == sharedColumn.SharedKeyDbName);
+			if (sharedKey is not null && !columns.Contains(sharedColumn))
+				columns.Add(sharedColumn);
+		}
+
+		provider.SharedColumns = columns.AsReadOnly();
+	}
 
 	private static TfDataProviderDbo DataProviderToDbo(
 	TfDataProviderModel providerModel)

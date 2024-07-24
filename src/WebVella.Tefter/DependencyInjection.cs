@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using WebVella.Tefter.Api;
+
+namespace WebVella.Tefter;
 
 public static class DependencyInjection
 {
@@ -45,11 +47,7 @@ public static class DependencyInjection
 		services.AddTransient<ITfEventBus, TfEventBus>();
 		services.AddTransient<UserEventProvider, UserEventProvider>();
 		services.AddTransient<GlobalEventProvider, GlobalEventProvider>();
-
-		//data providers
-		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
-		services.AddHostedService<TfDataProviderSynchronizeJob>();
-
+		
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
@@ -59,6 +57,8 @@ public static class DependencyInjection
 		services.AddSingleton<IMigrationManager, MigrationManager>();
 		services.AddSingleton<IIdentityManager, IdentityManager>();
 		services.AddSingleton<IDataManager, DataManager>();
+		services.AddSingleton<ITfSharedColumnsManager, TfSharedColumnsManager>();
+		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 
 		//use cases
 		services.AddScoped<StateEffectsUseCase,StateEffectsUseCase>();
@@ -66,7 +66,10 @@ public static class DependencyInjection
 		services.AddTransient<DataProviderAdminUseCase,DataProviderAdminUseCase>();
 		services.AddTransient<LoginUseCase,LoginUseCase>();
 		services.AddTransient<UserAdminUseCase,UserAdminUseCase>();
-				
+
+		//hosted services
+		services.AddHostedService<TfDataProviderSynchronizeJob>();
+
 
 		return services;
 	}

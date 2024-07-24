@@ -991,6 +991,16 @@ TfDataProviderColumn column)
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
+						if ( !column.IsNullable && defaultValue is null)
+							return false;
+
+						return true;
+					})
+					.WithMessage($"Column is marked as not nullable, but no default value is specified.");
+
+				RuleFor(column => column.DefaultValue)
+					.Must((column, defaultValue) =>
+					{
 						if (defaultValue == null)
 							return true;
 
@@ -1073,12 +1083,12 @@ TfDataProviderColumn column)
 							}
 							return true;
 						}
-						catch (Exception ex)
+						catch
 						{
 							return false;
 						}
 					})
-					.WithMessage($"Specified default value is not correct for selected provider data type.");
+					.WithMessage($"Column is marked not nullable. Default value is required. Specified default value is empty or not correct for selected provider data type.");
 
 			});
 

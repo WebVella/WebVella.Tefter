@@ -11,6 +11,7 @@ public class TfDataProvider
 	public int Index { get; internal set; }
 	public string SettingsJson { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; internal set; }
+	public ReadOnlyCollection<TfSharedColumn> SharedColumns { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
 	public ITfDataProviderType ProviderType { get; internal set; }
 	public ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();

@@ -327,14 +327,18 @@ $$ LANGUAGE plpgsql;
         Func<DatabaseColumn, string> generalFunc = (column) =>
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"ALTER TABLE \"{tableName}\" ALTER COLUMN \"{column.Name}\" {column.DatabaseColumnType}");
-            if (!column.IsNullable)
-                sb.Append(" NOT NULL");
-            var defaultValue = DatabaseUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
-            if (defaultValue != null)
-                sb.Append($" DEFAULT {defaultValue}");
+			sb.Append($"ALTER TABLE \"{tableName}\" ");
+			if (!column.IsNullable)
+				sb.Append($" ALTER COLUMN \"{column.Name}\" SET NOT NULL , ");
+			else
+				sb.Append($" ALTER COLUMN \"{column.Name}\" DROP NOT NULL , ");
 
-            sb.Append(";");
+			var defaultValue = DatabaseUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
+            if (defaultValue != null)
+				sb.Append($" ALTER COLUMN \"{column.Name}\" SET DEFAULT {defaultValue}; ");
+			else
+				sb.Append($" ALTER COLUMN \"{column.Name}\" DROP DEFAULT; ");
+
             return sb.ToString();
         };
 
