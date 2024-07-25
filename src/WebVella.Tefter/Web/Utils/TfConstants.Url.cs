@@ -15,6 +15,7 @@ public partial class TfConstants
 	public static string AdminDataProviderSchemaPageUrl { get; set; } = "/admin/data-providers/{0}/schema";
 	public static string AdminDataProviderKeysPageUrl { get; set; } = "/admin/data-providers/{0}/keys";
 	public static string AdminDataProviderAuxColumnsPageUrl { get; set; } = "/admin/data-providers/{0}/aux";
-	public static string AdminDataProviderRecordsPageUrl { get; set; } = "/admin/data-providers/{0}/records";
+	public static string AdminDataProviderSynchronizationPageUrl { get; set; } = "/admin/data-providers/{0}/synchronization";
+	public static string AdminDataProviderDataPageUrl { get; set; } = "/admin/data-providers/{0}/data";
 
 }

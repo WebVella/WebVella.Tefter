@@ -1,8 +1,8 @@
 ﻿
 using WebVella.Tefter.Web.Components.DataProviderSyncLogDialog;
 
-namespace WebVella.Tefter.Web.Components.AdminDataProviderData;
-public partial class TfAdminDataProviderData : TfBaseComponent
+namespace WebVella.Tefter.Web.Components.AdminDataProviderSynchronization;
+public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
@@ -29,7 +29,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		{
 			UC.IsBusy = true;
 			await InvokeAsync(StateHasChanged);
-			await Task.Delay(2000);
+			await UC.LoadDataProviderDataObjects(action.Provider.Id);
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
 		});
@@ -41,12 +41,28 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await Task.Delay(2000);
+			await UC.LoadDataProviderDataObjects(DataProviderDetailsState.Value.Provider.Id);
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
+	private async Task _onViewInfosClick()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderSyncLogDialog>(
+				new TucDataProviderSyncLog(),
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
 
+		}
+
+	}
 
 }

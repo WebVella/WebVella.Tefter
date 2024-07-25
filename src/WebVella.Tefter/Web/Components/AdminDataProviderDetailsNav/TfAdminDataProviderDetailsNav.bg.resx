@@ -120,9 +120,6 @@
   <data name="Access" xml:space="preserve">
     <value>Достъп</value>
   </data>
-  <data name="Addon columns" xml:space="preserve">
-    <value>Допълнителни колони</value>
-  </data>
   <data name="Columns in source" xml:space="preserve">
     <value>Колони от източника</value>
   </data>
@@ -135,7 +132,13 @@
   <data name="Saved Views" xml:space="preserve">
     <value>Запомнени Изгледи</value>
   </data>
+  <data name="Shared Columns" xml:space="preserve">
+    <value>Споделени колони</value>
+  </data>
   <data name="Shared Keys" xml:space="preserve">
     <value>Споделени ключове</value>
+  </data>
+  <data name="Synchronization" xml:space="preserve">
+    <value>Синхронизация</value>
   </data>
 </root>

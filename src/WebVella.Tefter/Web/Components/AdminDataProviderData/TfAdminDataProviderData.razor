@@ -1,4 +1,12 @@
 ﻿@inherits TfBaseComponent
 
-<div>TBD</div>
+@if (UC.IsBusy)
+{
+	<TfLoadingPane />
+}
+else
+{
+	<div>data</div>
+
+}
 

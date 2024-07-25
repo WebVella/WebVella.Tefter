@@ -1,6 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Pages
 @page "/admin/data-providers"
 @page "/admin/data-providers/{ProviderId:guid}/{*Path}"
+
 @layout AdminLayout
 @inherits TfBasePage
 
@@ -49,7 +50,11 @@ else
 			{
 				<TfAdminDataProviderAux />
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "records")
+			else if (urlData.SegmentsByIndexDict[3] == "synchronization")
+			{
+				<TfAdminDataProviderSynchronization />
+			}
+			else if (urlData.SegmentsByIndexDict[3] == "data")
 			{
 				<TfAdminDataProviderData />
 			}

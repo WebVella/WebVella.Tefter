@@ -6,10 +6,12 @@ using WebVella.Tefter.Web.Components.AdminDataProviderKeys;
 using WebVella.Tefter.Web.Components.AdminDataProviderNavigation;
 using WebVella.Tefter.Web.Components.AdminDataProviderSchema;
 using WebVella.Tefter.Web.Components.AdminDataProviderStateManager;
+using WebVella.Tefter.Web.Components.AdminDataProviderSynchronization;
 using WebVella.Tefter.Web.Components.DataProviderAuxColumnManageDialog;
 using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
 using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
 using WebVella.Tefter.Web.Components.DataProviderManageDialog;
+using WebVella.Tefter.Web.Components.DataProviderSyncLogDialog;
 
 namespace WebVella.Tefter.UseCases.DataProviderAdmin;
 public partial class DataProviderAdminUseCase
@@ -34,11 +36,14 @@ public partial class DataProviderAdminUseCase
 		_dispatcher = dispatcher;
 	}
 
+	internal bool IsBusy { get; set; } = false;
+
 	internal async Task Init(Type type)
 	{
 		if (type == typeof(TfAdminDataProviderAux)) await InitForAuxColumns();
 		else if (type == typeof(TfAdminDataProviderDetails)) await InitForDetails();
 		else if (type == typeof(TfAdminDataProviderData)) await InitForData();
+		else if (type == typeof(TfAdminDataProviderSynchronization)) await InitForSynchronization();
 		else if (type == typeof(TfDataProviderManageDialog)) await InitForProviderManageDialog();
 		else if (type == typeof(TfAdminDataProviderNavigation)) await InitForNavigation();
 		else if (type == typeof(TfAdminDataProviderStateManager)) await InitForState();
@@ -48,6 +53,7 @@ public partial class DataProviderAdminUseCase
 		else if (type == typeof(TfDataProviderColumnManageDialog)) await InitForColumnManageDialog();
 		else if (type == typeof(TfDataProviderKeyManageDialog)) await InitForKeyManageDialog();
 		else if (type == typeof(TfDataProviderAuxColumnManageDialog)) await InitForAuxColumnManageDialog();
+		else if (type == typeof(TfDataProviderSyncLogDialog)) await InitSyncLogDialog();
 		else throw new Exception($"Type: {type.Name} not supported in DataProviderAdminUseCase");
 
 	}
@@ -137,35 +143,11 @@ public partial class DataProviderAdminUseCase
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
 
-	//aux column
+	//shared column
 
-	internal Result<TucDataProvider> CreateDataProviderAuxColumn(TucDataProviderAuxColumnForm form)
+	internal Result<bool> GetDataProviderSharedColumns()
 	{
-		throw new NotImplementedException();
-		var result = _dataProviderManager.CreateDataProviderColumn(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("CreateDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
-	}
-
-	internal Result<TucDataProvider> UpdateDataProviderAuxColumn(TucDataProviderAuxColumnForm form)
-	{
-		throw new NotImplementedException();
-		var result = _dataProviderManager.UpdateDataProviderColumn(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("UpdateDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
-	}
-	internal Result<TucDataProvider> DeleteDataProviderAuxColumn(Guid columnId)
-	{
-		throw new NotImplementedException();
-		var result = _dataProviderManager.DeleteDataProviderColumn(columnId);
-		if (result.IsFailed)
-			return Result.Fail(new Error("DeleteDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return Result.Ok(true);
 	}
 
 	//Key
@@ -195,5 +177,7 @@ public partial class DataProviderAdminUseCase
 
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
+
+
 
 }

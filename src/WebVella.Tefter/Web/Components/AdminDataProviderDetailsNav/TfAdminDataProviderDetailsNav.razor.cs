@@ -44,13 +44,6 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		});
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.TableAdd(),
-			Title = LOC("Addon columns")
-		});
-		menu.Add(new MenuItem
-		{
 			Url = String.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
@@ -58,7 +51,21 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		});
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderRecordsPageUrl, providerId),
+			Url = String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.TableAdd(),
+			Title = LOC("Shared Columns")
+		});
+		menu.Add(new MenuItem
+		{
+			Url = String.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.Database(),
+			Title = LOC("Synchronization")
+		});
+		menu.Add(new MenuItem
+		{
+			Url = String.Format(TfConstants.AdminDataProviderDataPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Database(),
 			Title = LOC("Data")

@@ -1,0 +1,25 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Log details")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+		@if (UC.IsBusy)
+		{
+			<TfLoadingPane />
+		}
+		else
+		{
+			
+		}
+	</div>
+</FluentDialogBody>

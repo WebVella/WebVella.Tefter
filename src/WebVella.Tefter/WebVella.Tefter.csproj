@@ -74,6 +74,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Update="Web\Components\AdminDataProviderSynchronization\TfAdminDataProviderSynchronization.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\AdminDataProviderData\TfAdminDataProviderData.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
@@ -84,6 +87,9 @@
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\DataProviderAuxColumnManageDialog\TfDataProviderAuxColumnManageDialog.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\DataProviderSyncLogDialog\TfDataProviderSyncLogDialog.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\DataProviderKeyManageDialog\TfDataProviderKeyManageDialog.bg.resx">
