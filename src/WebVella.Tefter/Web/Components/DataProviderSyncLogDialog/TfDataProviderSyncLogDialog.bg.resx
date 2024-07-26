@@ -117,73 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Completed" xml:space="preserve">
-    <value>Приключила успешно</value>
-  </data>
-  <data name="Completed on" xml:space="preserve">
-    <value>Приключила на</value>
-  </data>
-  <data name="Current synchronization" xml:space="preserve">
-    <value>Текуща синхронизация</value>
-  </data>
-  <data name="Errors" xml:space="preserve">
-    <value>Грешки</value>
-  </data>
-  <data name="Failed" xml:space="preserve">
-    <value>Приключила неуспешно</value>
-  </data>
-  <data name="In Progress" xml:space="preserve">
-    <value>Изпълнява се в момента</value>
-  </data>
-  <data name="Last synchronization" xml:space="preserve">
-    <value>Последна синхронизация</value>
-  </data>
-  <data name="no errors" xml:space="preserve">
-    <value>няма грешки</value>
-  </data>
-  <data name="no informations" xml:space="preserve">
-    <value>няма информации</value>
-  </data>
-  <data name="no warnings" xml:space="preserve">
-    <value>няма предупреждения</value>
-  </data>
-  <data name="not completed" xml:space="preserve">
-    <value>не е приключила</value>
-  </data>
-  <data name="not started" xml:space="preserve">
-    <value>не е стартирала</value>
-  </data>
-  <data name="Pending" xml:space="preserve">
-    <value>Предстоящо изпълнение</value>
-  </data>
-  <data name="Started on" xml:space="preserve">
-    <value>Стартирала на</value>
-  </data>
-  <data name="Status" xml:space="preserve">
-    <value>Статус</value>
-  </data>
-  <data name="Synchronization triggered yet" xml:space="preserve">
-    <value>Все още не е правена синхронизация</value>
-  </data>
-  <data name="Synchronize now" xml:space="preserve">
-    <value>Синхронизирай сега</value>
-  </data>
-  <data name="There are no synchronization tasks were created by the system or the user" xml:space="preserve">
-    <value>Не са създаване задачи за синхронизация от потребителя или системата</value>
-  </data>
-  <data name="There is no synchronization task running" xml:space="preserve">
-    <value>Няма изпълнявана задача за синхронизация</value>
-  </data>
-  <data name="Triggered on" xml:space="preserve">
-    <value>Създадена на</value>
-  </data>
-  <data name="view {0} errors" xml:space="preserve">
-    <value>виж {0} грешки</value>
-  </data>
-  <data name="view {0} informations" xml:space="preserve">
-    <value>виж {0} информации</value>
-  </data>
-  <data name="view {0} warnings" xml:space="preserve">
-    <value>виж {0} предупреждения</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Отказ</value>
   </data>
 </root>

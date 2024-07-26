@@ -2,12 +2,10 @@
 public partial class DataProviderAdminUseCase
 {
 
-	internal Task InitForData()
+	internal Task InitSyncLogDialog()
 	{
-		IsBusy = true;
 		return Task.CompletedTask;
 	}
-
 
 
 }

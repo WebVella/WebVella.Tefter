@@ -25,7 +25,7 @@ internal partial class AppStartUseCase
 			catch { }
 		}
 
-		var userCultureInfo = String.IsNullOrWhiteSpace(User.Settings.CultureName)
+		var userCultureInfo = User is null || User.Settings is null || String.IsNullOrWhiteSpace(User.Settings.CultureName)
 						? TfConstants.CultureOptions[0].CultureInfo
 						: CultureInfo.GetCultureInfo(User.Settings.CultureName);
 

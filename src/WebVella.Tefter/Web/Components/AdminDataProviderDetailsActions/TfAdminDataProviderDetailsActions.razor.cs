@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
+﻿using WebVella.Tefter.Web.Components.DataProviderAuxColumnManageDialog;
+using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
 using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
 using WebVella.Tefter.Web.Components.DataProviderManageDialog;
 
@@ -51,6 +52,25 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
 		new TucDataProviderColumn(),
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var record = (TucDataProvider)result.Data;
+			ToastService.ShowSuccess(LOC("Column successfully created!"));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
+		}
+	}
+	
+	private async Task _addAuxColumn()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderAuxColumnManageDialog>(
+		new TucDataProviderAuxColumn(),
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

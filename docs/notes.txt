@@ -1,2 +1,5 @@
 ﻿Sample data source
 https://www.datablist.com/learn/csv/download-sample-csv-files
+
+Diagram
+https://dbdiagram.io/d/sample-tefter-structure-66680acf6bc9d447b160a62c
