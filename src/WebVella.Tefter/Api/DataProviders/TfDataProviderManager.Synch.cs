@@ -13,7 +13,7 @@ public partial interface ITfDataProviderManager
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null);
 
-	internal Result CreateSynchronizationTask(
+	internal Result<Guid> CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy);
 
@@ -272,7 +272,7 @@ ORDER BY st.created_on DESC");
 		}
 	}
 
-	public Result CreateSynchronizationTask(
+	public Result<Guid> CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy)
 	{
@@ -293,7 +293,7 @@ ORDER BY st.created_on DESC");
 			if (!success)
 				throw new DatabaseException("Failed to insert synchronization task.");
 
-			return Result.Ok();
+			return Result.Ok(task.Id);
 		}
 		catch (Exception ex)
 		{
