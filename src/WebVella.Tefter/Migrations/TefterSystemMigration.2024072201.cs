@@ -174,7 +174,7 @@ internal class TefterSystemMigration2024072201 : TefterSystemMigration
 				columns
 					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
-					.AddBooleanColumn("value", c => { c.Nullable(); });
+					.AddGuidColumn("value", c => { c.Nullable(); });
 			})
 			.WithConstraints(constraints =>
 			{

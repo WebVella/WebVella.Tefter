@@ -153,13 +153,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	COUNT(sri_info.id) AS info_count,
-	COUNT(sri_warning.id) AS warning_count,
-	COUNT(sri_error.id) AS error_count
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
 FROM data_provider_synchronize_task st
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
 WHERE st.id = @task_id 
 GROUP BY
 	st.id,
@@ -190,21 +187,18 @@ ORDER BY st.created_on DESC",
 			if (providerId is not null && status is not null)
 			{
 				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-@"SELECT 
-	st.id, 
-	st.data_provider_id, 
-	st.policy_json, 
-	st.status, 
+@"SELECT
+	st.id,
+	st.data_provider_id,
+	st.policy_json,
+	st.status,
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	COUNT( sri_info.id ) AS info_count,
-	COUNT( sri_warning.id ) AS warning_count,
-	COUNT( sri_error.id ) AS error_count
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
 FROM data_provider_synchronize_task st
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
 WHERE data_provider_id = @data_provider_id AND status = @status
 GROUP BY 
 	st.id, 
@@ -230,13 +224,10 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	COUNT(sri_info.id) AS info_count,
-	COUNT(sri_warning.id) AS warning_count,
-	COUNT(sri_error.id) AS error_count
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
 FROM data_provider_synchronize_task st
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
 WHERE data_provider_id = @data_provider_id 
 GROUP BY
 	st.id,
@@ -283,21 +274,18 @@ ORDER BY st.created_on DESC",
 			else
 			{
 				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-@"SELECT 
-	st.id, 
-	st.data_provider_id, 
-	st.policy_json, 
-	st.status, 
+@"SELECT
+	st.id,
+	st.data_provider_id,
+	st.policy_json,
+	st.status,
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	COUNT( sri_info.id ) AS info_count,
-	COUNT( sri_warning.id ) AS warning_count,
-	COUNT( sri_error.id ) AS error_count
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
 FROM data_provider_synchronize_task st
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
 GROUP BY 
 	st.id, 
 	st.data_provider_id, 
@@ -468,6 +456,9 @@ ORDER BY st.created_on DESC");
 
 		var provider = providerResult.Value;
 
+		bool warningsFound = false;
+		bool errorsFound = false;
+
 		var rows = provider.GetRows();
 
 		if (task.Policy.ComparisonType == TfSynchronizationPolicyComparisonType.ByRowOrder)
@@ -479,12 +470,16 @@ ORDER BY st.created_on DESC");
 			int currentRowIndex = 0;
 			var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 
+			
+
 			foreach (var row in rows)
 			{
 				currentRowIndex++;
 
 				foreach (var warning in row.Warnings)
 				{
+					warningsFound = true;
+
 					var result = CreateSynchronizationResultInfo(
 						taskId: task.Id,
 						tfRowIndex: currentRowIndex,
@@ -499,6 +494,8 @@ ORDER BY st.created_on DESC");
 				{
 					foreach (var error in row.Errors)
 					{
+						errorsFound = true;
+
 						var result = CreateSynchronizationResultInfo(
 							taskId: task.Id,
 							tfRowIndex: currentRowIndex,
@@ -548,6 +545,8 @@ ORDER BY st.created_on DESC");
 					{
 						if (!row.ColumnNames.Contains(column.DbName))
 						{
+							errorsFound = true;
+
 							string error = $"Column {column.DbName} is not found.";
 							row.AddError(error);
 
@@ -619,13 +618,23 @@ ORDER BY st.created_on DESC");
 		else
 			throw new Exception("Policy not implemented yet.");
 
-		//final sych result value
+		//final synchronization process result value
 		{
+			string infoMessage = string.Empty;
+			if(warningsFound && errorsFound)
+				infoMessage = "The process of synchronization completed with some warnings and errors.";
+			else if (warningsFound)
+				infoMessage = "The process of synchronization completed with some warnings.";
+			else if (errorsFound)
+				infoMessage = "The process of synchronization completed with some errors.";
+			else
+				infoMessage = "The process of synchronization completed successfully.";
+
 			var result = CreateSynchronizationResultInfo(
 								taskId: task.Id,
 								tfRowIndex: null,
 								tfId: null,
-								info: "Synchronization executed successfully.");
+								info: infoMessage );
 
 			if (!result.IsSuccess)
 				throw new Exception("Unable to write synchronization result info.");
