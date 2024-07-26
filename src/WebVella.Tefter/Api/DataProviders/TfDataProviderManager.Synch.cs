@@ -5,6 +5,9 @@ public partial interface ITfDataProviderManager
 	internal Result<TfDataProviderSynchronizeTask> GetSynchronizationTask(
 		Guid taskId);
 
+	internal Result<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTaskExtended(
+		Guid taskId);
+
 	internal Result<List<TfDataProviderSynchronizeTaskExtended>> GetSynchronizationTasksExtended(
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null);
@@ -128,6 +131,48 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			}
 
 			return Result.Ok(result);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get list of synchronization tasks").CausedBy(ex));
+		}
+	}
+
+	public Result<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTaskExtended(
+		Guid taskId)
+	{
+		try
+		{
+			TfDataProviderSynchronizeTaskExtended dbo = 
+				_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
+@"SELECT
+	st.id,
+	st.data_provider_id,
+	st.policy_json,
+	st.status,
+	st.created_on,
+	st.started_on,
+	st.completed_on,
+	COUNT(sri_info.id) AS info_count,
+	COUNT(sri_warning.id) AS warning_count,
+	COUNT(sri_error.id) AS error_count
+FROM data_provider_synchronize_task st
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
+	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
+WHERE st.id = @task_id 
+GROUP BY
+	st.id,
+	st.data_provider_id,
+	st.policy_json,
+	st.status,
+	st.created_on,
+	st.started_on,
+	st.completed_on
+ORDER BY st.created_on DESC",
+					new NpgsqlParameter("@task_id", taskId));
+
+			return Result.Ok(dbo);
 		}
 		catch (Exception ex)
 		{
