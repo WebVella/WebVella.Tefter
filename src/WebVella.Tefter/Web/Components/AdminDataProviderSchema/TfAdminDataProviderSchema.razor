@@ -20,7 +20,7 @@ else
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
-				@foreach (var context in DataProviderDetailsState.Value.Provider.Columns)
+				@foreach (var context in DataProviderDetailsState.Value.Provider.Columns.OrderBy(x=> x.DbName))
 				{
 					<tr @key=context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">
@@ -60,7 +60,7 @@ else
 									}
 									@if (context.IsSearchable)
 									{
-										<FluentBadge Appearance="@Appearance.Accent">searchable [@context.PreferredSearchType]</FluentBadge>
+										<FluentBadge Appearance="@Appearance.Accent">searchable [@context.PreferredSearchType.Name]</FluentBadge>
 									}
 									@if (context.IncludeInTableSearch)
 									{

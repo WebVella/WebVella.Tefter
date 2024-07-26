@@ -6,87 +6,58 @@
 }
 else
 {
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom:1rem">@LOC("Current synchronization")</FluentLabel>
-	<TfCard>
-		<FluentGrid>
-			<FluentGridItem xs="9">
-				@if (UC.LastNotCompletedSyncTask is null)
-				{
-					<div>@LOC("There is no synchronization task running")</div>	
-				}
-			</FluentGridItem>
-			<FluentGridItem xs="3" Justify="@JustifyContent.FlexEnd">
-				<FluentButton Appearance="@Appearance.Accent">@LOC("Synchronize now")</FluentButton>
-			</FluentGridItem>
-		</FluentGrid>
-	</TfCard>
+	<div style="display:flex;justify-content:space-between;align-items:center;">
+		<FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom:1rem">@LOC("Synchronization tasks")</FluentLabel>
+		<FluentButton Appearance="@Appearance.Accent" OnClick="_synchronizeNow" Disabled="@(UC.IsSynchronizing)">@LOC("Synchronize now")</FluentButton>
+	</div>
 
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom:1rem; margin-top:2rem">@LOC("Last synchronization")</FluentLabel>
-	if (UC.LastCompletedSyncTask is null)
-	{
-		<FluentMessageBar Title="@LOC("Synchronization triggered yet")" AllowDismiss="false"
-						  Intent="@MessageIntent.Info">@LOC("There are no synchronization tasks were created by the system or the user")</FluentMessageBar>
-	}
-	else
-	{
-		<TfCard>
-			<FluentGrid>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@LOC(UC.LastCompletedSyncTask.CreatedOnString)"
-									 Label="@LOC("Triggered on")" Style="width:100%" ReadOnly="true" />
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@LOC(UC.LastCompletedSyncTask.Status.ToDescriptionString())"
-									 Label="@LOC("Status")" Style="width:100%" ReadOnly="true" />
-				</FluentGridItem>
-			</FluentGrid>
-			<FluentGrid>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@LOC(UC.LastCompletedSyncTask.StartedOnString)"
-									 Label="@LOC("Started on")" Style="width:100%" ReadOnly="true" />
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@LOC(UC.LastCompletedSyncTask.CompletedOnString)"
-									 Label="@LOC("Completed on")" Style="width:100%" ReadOnly="true" />
-				</FluentGridItem>
-			</FluentGrid>
-			<FluentGrid>
-				<FluentGridItem>
-					<FluentInputLabel Label="@LOC("Errors")" />
-					@if (UC.LastCompletedSyncTask.ErrorCount > 0)
-					{
-						<FluentButton>@LOC("view {0} errors", UC.LastCompletedSyncTask.ErrorCount)</FluentButton>
-					}
-					else
-					{
-						<FluentButton Disabled="true">@LOC("no errors")</FluentButton>
-					}
-				</FluentGridItem>
-				<FluentGridItem>
-					<FluentInputLabel Label="@LOC("Warnings")" />
-					@if (UC.LastCompletedSyncTask.WarningCount > 0)
-					{
-						<FluentButton>@LOC("view {0} warnings", UC.LastCompletedSyncTask.WarningCount)</FluentButton>
-					}
-					else
-					{
-						<FluentButton Disabled="true">@LOC("no warnings")</FluentButton>
-					}
-				</FluentGridItem>
-				<FluentGridItem>
-					<FluentInputLabel Label="@LOC("Informations")" />
-					@if (UC.LastCompletedSyncTask.InfoCount > 0)
-					{
-						<FluentButton OnClick="_onViewInfosClick">@LOC("view {0} informations", UC.LastCompletedSyncTask.InfoCount)</FluentButton>
-					}
-					else
-					{
-						<FluentButton Disabled="true">@LOC("no informations")</FluentButton>
-					}
-				</FluentGridItem>
-			</FluentGrid>
-		</TfCard>
-	}
+
+	<FluentDataGrid Items="@UC.SyncTasks"
+					Pagination="_pagination"
+					TGridItem="TucDataProviderSyncTask">
+		<PropertyColumn Property="@(p => p.CreatedOn)" Title="created on" Format="yyyy-MM-dd HH:mm" Width="140px" />
+		<TemplateColumn Title="status">
+			@context.Status.ToDescriptionString()
+		</TemplateColumn>
+		<PropertyColumn Property="@(p => p.StartedOn)" Title="started on" Format="yyyy-MM-dd HH:mm" Width="140px" />
+		<PropertyColumn Property="@(p => p.CompletedOn)" Title="completed on" Format="yyyy-MM-dd HH:mm" Width="140px" />
+		<TemplateColumn Title="infos" Width="160px">
+			@if (context.InfoCount > 0)
+			{
+				<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Info))">
+					@LOC("{0} infos", context.InfoCount)
+				</FluentButton>
+			}
+			else
+			{
+				<FluentButton Disabled="true">@LOC("no infos")</FluentButton>
+			}
+		</TemplateColumn>
+		<TemplateColumn Title="warnings" Width="160px">
+			@if (context.WarningCount > 0)
+			{
+				<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Warning))">
+					@LOC("{0} warnings", context.WarningCount)
+				</FluentButton>
+			}
+			else
+			{
+				<FluentButton Disabled="true">@LOC("no warnings")</FluentButton>
+			}
+		</TemplateColumn>
+		<TemplateColumn Title="warnings" Width="160px">
+			@if (context.ErrorCount > 0)
+			{
+				<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Error))">
+					@LOC("{0} errors", context.ErrorCount)
+				</FluentButton>
+			}
+			else
+			{
+				<FluentButton Disabled="true">@LOC("no errors")</FluentButton>
+			}
+		</TemplateColumn>
+	</FluentDataGrid>
 
 }
 

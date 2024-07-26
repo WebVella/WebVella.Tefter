@@ -7,6 +7,7 @@ public record TucDataProvider
 	public int Index { get; init; }
 	public string SettingsJson { get; init; }
 	public List<TucDataProviderColumn> Columns { get; init; }
+	public List<TucSharedColumn> SharedColumns { get; init; } = new();
 	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
 
@@ -18,6 +19,7 @@ public record TucDataProvider
 		Index = model.Index;
 		SettingsJson = model.SettingsJson;
 		Columns = model.Columns is null ? null : model.Columns.Select(x=> new TucDataProviderColumn(x)).ToList();
+		SharedColumns = model.SharedColumns is null ? null : model.SharedColumns.Select(x=> new TucSharedColumn(x)).ToList();
 		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x=> new TucDataProviderSharedKey(x)).ToList();
 		ProviderType = new TucDataProviderTypeInfo(model.ProviderType);
 	}
@@ -30,6 +32,7 @@ public record TucDataProvider
 			Index = Index,
 			SettingsJson = SettingsJson,
 			Columns = Columns is null ? null : Columns.Select(x=> x.ToModel()).ToList().AsReadOnly(),
+			SharedColumns = SharedColumns is null ? null : SharedColumns.Select(x=> x.ToModel()).ToList().AsReadOnly(),
 			SharedKeys = SharedKeys is null ? null : SharedKeys.Select(x=> x.ToModel()).ToList().AsReadOnly(),
 			ProviderType = ProviderType.ToModel(providerTypes),
 		};

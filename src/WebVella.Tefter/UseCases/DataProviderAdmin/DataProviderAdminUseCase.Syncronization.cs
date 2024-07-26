@@ -1,8 +1,10 @@
 ﻿namespace WebVella.Tefter.UseCases.DataProviderAdmin;
 public partial class DataProviderAdminUseCase
 {
-	internal TucDataProviderSyncTask LastNotCompletedSyncTask { get; set; } = null;
-	internal TucDataProviderSyncTask LastCompletedSyncTask { get; set; } = null;
+	internal bool IsSynchronizing { get; set; } = false;
+	internal IQueryable<TucDataProviderSyncTask> SyncTasks { get; set; } = Enumerable.Empty<TucDataProviderSyncTask>().AsQueryable();
+	internal int SyncLogPageSize { get; set; } = 15;
+
 
 	internal Task InitForSynchronization()
 	{
@@ -25,11 +27,24 @@ public partial class DataProviderAdminUseCase
 			return Task.CompletedTask;
 		}
 		var tasks = allTasksResult.Value.OrderByDescending(x => x.CreatedOn);
-		var lastNotCompleted = tasks.FirstOrDefault(x=> x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress);
-		var lastCompleted = tasks.FirstOrDefault(x=> x.Status == TfSynchronizationStatus.Completed || x.Status == TfSynchronizationStatus.Failed);
-		LastNotCompletedSyncTask = lastNotCompleted is null ? null : new TucDataProviderSyncTask(lastNotCompleted);
-		LastCompletedSyncTask = lastCompleted is null ? null : new TucDataProviderSyncTask(lastCompleted);
+		SyncTasks = tasks.Select(x => new TucDataProviderSyncTask(x)).AsQueryable();
+		return Task.CompletedTask;
+	}
 
+	internal Task TriggerSynchronization(Guid dataProviderId)
+	{
+		var createResult = _dataProviderManager.CreateSynchronizationTask(dataProviderId, new TfSynchronizationPolicy());
+		if (createResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("CreateSynchronizationTask failed").CausedBy(createResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.CompletedTask;
+		}
 		return Task.CompletedTask;
 	}
 

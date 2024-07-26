@@ -2,7 +2,7 @@
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
-	<FluentLabel Typo="Typography.PaneHeader">@LOC("Log details")</FluentLabel>
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
@@ -19,7 +19,31 @@
 		}
 		else
 		{
-			
+			<FluentDataGrid Items="@UC.TaskSyncLogRecords"
+							Pagination="_pagination"
+							TGridItem="TucDataProviderSyncTaskInfo">
+				<PropertyColumn Property="@(p => p.CreatedOn)" Title="created on" Format="yyyy-MM-dd HH:mm" Width="140px" />
+				<PropertyColumn Property="@(p => p.TfId)" Title="id" Width="300px" />
+				<PropertyColumn Property="@(p => p.TfRowIndex)" Title="row" Width="80px" />
+				@if (Content.Type == TucDataProviderSyncTaskInfoType.Info)
+				{
+					<PropertyColumn Property="@(p => p.Info)" Title="info" />
+				}
+				else if (Content.Type == TucDataProviderSyncTaskInfoType.Warning)
+				{
+					<PropertyColumn Property="@(p => p.Warning)" Title="warning" />
+				}
+				else
+				{
+					<PropertyColumn Property="@(p => p.Error)" Title="error" />
+				}
+			</FluentDataGrid>
+			<FluentPaginator State="@_pagination">
+				<SummaryTemplate>
+					@LOC("{0} rows", _pagination.TotalItemCount ?? 0)
+				</SummaryTemplate>
+				<PaginationTextTemplate>@(_pagination.CurrentPageIndex + 1) / @(_pagination.LastPageIndex + 1)</PaginationTextTemplate>
+			</FluentPaginator>
 		}
 	</div>
 </FluentDialogBody>

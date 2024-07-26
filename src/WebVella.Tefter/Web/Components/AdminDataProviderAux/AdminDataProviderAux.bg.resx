@@ -132,11 +132,11 @@
   <data name="Missing Synchronization Key" xml:space="preserve">
     <value>Липсващ ключ за синхронизация</value>
   </data>
-  <data name="No columns" xml:space="preserve">
-    <value>Няма колони</value>
+  <data name="No shared columns are matching any of the shared keys for this data source" xml:space="preserve">
+    <value>Няма споделени колони, които да използват споделен ключ на този източник</value>
   </data>
-  <data name="No columns are created yet for this data source" xml:space="preserve">
-    <value>Все още няма създадени колони за този доставчик на данни</value>
+  <data name="No shared columns matched" xml:space="preserve">
+    <value>Няма споделени колони</value>
   </data>
   <data name="The column is successfully deleted!" xml:space="preserve">
     <value>Колоната е успешно изтрита!</value>
