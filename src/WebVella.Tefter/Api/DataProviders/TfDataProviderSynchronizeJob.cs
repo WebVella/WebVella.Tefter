@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using FluentResults;
+
+namespace WebVella.Tefter;
 
 internal class TfDataProviderSynchronizeJob : BackgroundService
 {
@@ -48,7 +50,17 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 
 						if (!result.IsSuccess)
 							throw new Exception("Unable to update synchronization tasks");
-					}
+
+						result = _providerManager.CreateSynchronizationResultInfo(
+							syncTaskId: taskInProgress.Id,
+							tfRowIndex: null,
+							tfId: null,
+							warning: null,
+							error: "Application was stopped during synchronization process");
+
+						if (!result.IsSuccess)
+							throw new Exception("Unable to update synchronization tasks");
+
 				}
 
 				var pendingTasksResult = _providerManager.GetSynchronizationTasks(
