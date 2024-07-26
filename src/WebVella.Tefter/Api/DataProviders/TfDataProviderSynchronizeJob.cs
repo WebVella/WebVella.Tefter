@@ -61,7 +61,6 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 						if (!result.IsSuccess)
 							throw new Exception("Unable to update synchronization tasks");
 					}
-
 				}
 
 				var pendingTasksResult = _providerManager.GetSynchronizationTasks(
