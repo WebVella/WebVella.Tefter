@@ -21,13 +21,16 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 {
 	private readonly IDatabaseService _dbService;
 	private readonly IDboManager _dboManager;
+	private readonly IDataManager _dataManager;
 
 	public TfSharedColumnsManager(
 		IServiceProvider serviceProvider,
-		IDatabaseService dbService)
+		IDatabaseService dbService,
+		IDataManager dataManager)
 	{
 		_dbService = dbService;
 		_dboManager = serviceProvider.GetService<IDboManager>();
+		_dataManager = dataManager;
 	}
 
 	public Result<TfSharedColumn> GetSharedColumn(
@@ -139,10 +142,24 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 	{
 		try
 		{
+			var columnResult = GetSharedColumn(columnId);
+			if (!columnResult.IsSuccess)
+				throw new Exception("Error while trying to get shared column for delete");
+
+			var column = columnResult.Value;
+
+			TfSharedColumnValidator validator =
+			new TfSharedColumnValidator(_dboManager, this);
+
+			var validationResult = validator.ValidateDelete(column);
+
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
 
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-
+				_dataManager.DeleteSharedColumnData(column);
+				
 				var success = _dboManager.Delete<TfSharedColumn>(columnId);
 
 				if (!success)
@@ -272,6 +289,11 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 						})
 						.WithMessage("There is already existing shared column with specified database name.");
 			});
+
+			//no rules for delete
+			RuleSet("delete", () =>
+			{
+			});
 		}
 
 		public ValidationResult ValidateCreate(
@@ -297,6 +319,19 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 			return this.Validate(column, options =>
 			{
 				options.IncludeRuleSets("general", "update");
+			});
+		}
+
+		public ValidationResult ValidateDelete(
+			TfSharedColumn column)
+		{
+			if (column == null)
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The shared column object is null.") });
+
+			return this.Validate(column, options =>
+			{
+				options.IncludeRuleSets("delete");
 			});
 		}
 	}

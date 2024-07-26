@@ -1,7 +1,6 @@
 ﻿using WebVella.Tefter.Api;
-using WebVella.Tefter.Web.Services;
 
-namespace WebVella.Tefter.Tests.DataProviders;
+namespace WebVella.Tefter.Tests;
 
 public partial class TfSharedColumnsManagerTests : BaseTest
 {
@@ -27,7 +26,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				var result = sharedColumnManager.CreateSharedColumn(sharedColumn);
 				result.IsSuccess.Should().BeTrue();
 
-				var sharedColumnsResult =sharedColumnManager.GetSharedColumns();
+				var sharedColumnsResult = sharedColumnManager.GetSharedColumns();
 				sharedColumnsResult.IsSuccess.Should().BeTrue();
 
 				var sharedColumns = sharedColumnsResult.Value;
