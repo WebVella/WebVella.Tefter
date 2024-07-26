@@ -7,6 +7,33 @@ public partial class TfDataProviderManagerTests : BaseTest
 {
 	#region <--- Providers --->
 
+	//[Fact]
+	//public async Task _Provider_Lists()
+	//{
+	//	using (await locker.LockAsync())
+	//	{
+	//		IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+	//		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+	//		IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+
+	//		using (var scope = dbService.CreateTransactionScope())
+	//		{
+	//			var providerTypesResult = providerManager.GetProviderTypes();
+	//			var providerType = providerTypesResult.Value
+	//				.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+	//			var providerResult = providerManager.GetProvider(new Guid("a5bcbc2a-c983-45d8-a1e5-897468b3266f"));
+	//			providerResult.IsSuccess.Should().BeTrue();
+	//			providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+	//			var provider = providerResult.Value;
+
+	//			var result = dataManager.GetProviderRows(provider, "test", page: -1, pageSize: 4);
+
+	//		}
+	//	}
+	//}
+
 	[Fact]
 	public async Task TestCreateDataProvider()
 	{
