@@ -3,7 +3,7 @@ using WebVella.Tefter.Web.Services;
 
 namespace WebVella.Tefter.Tests.DataProviders;
 
-public partial class TfDataProviderManagerTests : BaseTest
+public partial class TfDataManagerTests : BaseTest
 {
 	#region <--- Providers --->
 
@@ -28,7 +28,9 @@ public partial class TfDataProviderManagerTests : BaseTest
 
 	//			var provider = providerResult.Value;
 
-	//			var result = dataManager.GetProviderRows(provider, "test", page: -1, pageSize: 4);
+	//			var dataResult = dataManager.GetProviderRows(provider, search: null, page: -1, pageSize: 4);
+	//			dataResult.IsSuccess.Should().BeTrue();
+	//			dataResult.Value.Should().BeOfType<TfDataTable>();
 
 	//		}
 	//	}

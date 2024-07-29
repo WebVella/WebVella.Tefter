@@ -13,4 +13,4 @@ public partial class DataManager : IDataManager
 	{
 		_dbService = dbService;
 	}
-}
+} 

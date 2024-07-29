@@ -2,12 +2,6 @@
 
 public partial interface IDataManager
 {
-	internal Result<TfDataProviderRowList> GetProviderRows(
-		TfDataProvider provider,
-		string search = null,
-		int? page = null,
-		int? pageSize = null);
-
 	internal Result<TfDataProviderDataRow> GetProviderRow(
 		TfDataProvider provider,
 		Guid id);
@@ -30,91 +24,6 @@ public partial interface IDataManager
 
 public partial class DataManager
 {
-	private const int DEFAULT_PAGE = 1;
-	private const int DEFAULT_PAGE_SIZE = 10;
-
-	public Result<TfDataProviderRowList> GetProviderRows(
-		TfDataProvider provider,
-		string search = null,
-		int? page = null,
-		int? pageSize = null)
-	{
-		try
-		{
-			var resultList = new TfDataProviderRowList();
-			resultList.Page = page;
-			resultList.PageSize = pageSize;
-
-			List<NpgsqlParameter> parameters;
-
-			if (page.HasValue && page.Value < 0)
-			{
-				string countSql = BuildSelectCountRowsSql(provider, search,	out parameters);
-				var dtCount = _dbService.ExecuteSqlQueryCommand(countSql, parameters);
-				var rowsCount = (long)dtCount.Rows[0][0];
-				var pageSizeForCalc = pageSize.HasValue?pageSize.Value:DEFAULT_PAGE_SIZE;
-
-				if (rowsCount == 0)
-				{
-					resultList.Page = 1;
-					resultList.PageSize = pageSizeForCalc;
-					
-					return Result.Ok(resultList);
-				}
-				else
-				{
-					page = (int)(rowsCount / pageSizeForCalc) + 1;
-					
-					if (rowsCount % pageSizeForCalc == 0)
-						page--;
-					
-					resultList.Page = page;
-				}
-			}
-
-			parameters = null;
-			string sql = BuildSelectRowsSql(
-				provider, search,
-				page, pageSize,
-				out parameters);
-
-			var dt = _dbService.ExecuteSqlQueryCommand(sql, parameters);
-
-		
-
-			if (dt.Rows.Count == 0)
-				return Result.Ok(resultList);
-
-			foreach (DataRow row in dt.Rows)
-			{
-				TfDataProviderDataRow resultRow = new TfDataProviderDataRow();
-				foreach (DataColumn column in dt.Columns)
-				{
-					object value = dt.Rows[0][column.ColumnName];
-					if (value == DBNull.Value)
-						value = null;
-					else
-					{
-						var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == column.ColumnName);
-						if (providerColumn is not null && providerColumn.DbType == DatabaseColumnType.Date)
-						{
-							value = DateOnly.FromDateTime((DateTime)value);
-						}
-					}
-
-					resultRow[column.ColumnName] = value;
-				}
-				resultList.Add(resultRow);
-			}
-
-			return Result.Ok(resultList);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get data provider rows").CausedBy(ex));
-		}
-	}
-
 	public Result<TfDataProviderDataRow> GetProviderRow(
 		TfDataProvider provider,
 		Guid id)
@@ -292,57 +201,6 @@ public partial class DataManager
 		{
 			return Result.Fail(new Error("Failed to delete data provider row after index").CausedBy(ex));
 		}
-	}
-
-	private string BuildSelectRowsSql(
-		TfDataProvider provider,
-		string search,
-		int? page,
-		int? pageSize,
-		out List<NpgsqlParameter> parameters)
-	{
-		parameters = new List<NpgsqlParameter>();
-		StringBuilder sql = new StringBuilder();
-
-		sql.AppendLine($"SELECT * FROM dp{provider.Index} ");
-
-		if (!string.IsNullOrWhiteSpace(search))
-		{
-			parameters.Add(new NpgsqlParameter("@tf_search", search));
-			sql.AppendLine($" WHERE tf_search ILIKE CONCAT ('%', @tf_search , '%') ");
-		}
-
-		if (page.HasValue || pageSize.HasValue)
-		{
-			if (page == null && pageSize.HasValue)
-				page = DEFAULT_PAGE;
-			if (page.HasValue && pageSize == null)
-				pageSize = DEFAULT_PAGE_SIZE;
-
-			int offset = (page.Value - 1) * pageSize.Value;
-			int limit = pageSize.Value;
-			sql.AppendLine($"OFFSET {offset} LIMIT {limit}");
-		}
-
-		return sql.ToString();
-	}
-
-	private string BuildSelectCountRowsSql(
-		TfDataProvider provider,
-		string search,
-		out List<NpgsqlParameter> parameters)
-	{
-		parameters = new List<NpgsqlParameter>();
-		StringBuilder sql = new StringBuilder();
-
-		sql.AppendLine($"SELECT COUNT(*) FROM dp{provider.Index}");
-		if (!string.IsNullOrWhiteSpace(search))
-		{
-			parameters.Add(new NpgsqlParameter("@tf_search", search));
-			sql.AppendLine($"WHERE tf_search ILIKE CONCAT ('%', @tf_search, '%') ");
-			sql.AppendLine();
-		}
-		return sql.ToString();
 	}
 
 	private string BuildSelectRowSql(
