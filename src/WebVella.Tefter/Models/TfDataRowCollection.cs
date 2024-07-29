@@ -6,6 +6,12 @@ public class TfDataRowCollection : IEnumerable
 
 	public TfDataTable DataTable { get; init; }
 
+	public TfDataRow this[int rowIndex]
+	{
+		get { return _rows[rowIndex]; }
+	}
+
+
 	public TfDataRowCollection(TfDataTable table)
 	{
 		_rows = new List<TfDataRow>();

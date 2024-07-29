@@ -8,7 +8,7 @@ public class TfDataRow : IEnumerable
 
 	public object this[int columnIndex]
 	{
-		get { return this[columnIndex]; }
+		get { return _values[columnIndex]; }
 	}
 
 	public object this[string columnName]
