@@ -1,0 +1,15 @@
+﻿.paginator-nav {
+	display:flex;
+	align-items:center;
+	height:100%;
+}
+
+	::deep.paginator-nav > * {
+		margin-right:calc(var(--design-unit) * 1px);
+	}
+
+.pagination-pager {
+	flex:0 0 100px;
+	height:calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+}
+

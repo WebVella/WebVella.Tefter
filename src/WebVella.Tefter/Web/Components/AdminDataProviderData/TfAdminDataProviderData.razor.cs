@@ -29,8 +29,9 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		{
 			UC.IsBusy = true;
 			await InvokeAsync(StateHasChanged);
-			await Task.Delay(2000);
+			await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
 			UC.IsBusy = false;
+			UC.IsListBusy = false;
 			await InvokeAsync(StateHasChanged);
 		});
 
@@ -41,12 +42,84 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await Task.Delay(2000);
+			await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
 			UC.IsBusy = false;
+			UC.IsListBusy = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
+	private void _toggleSystemColumns()
+	{
+		UC.ShowSystemColumns = !UC.ShowSystemColumns;
+		StateHasChanged();
+	}
+	private void _toggleSharedKeyColumns()
+	{
+		UC.ShowSharedKeyColumns = !UC.ShowSharedKeyColumns;
+		StateHasChanged();
+	}
+	private void _toggleCustomColumns()
+	{
+		UC.ShowCustomColumns = !UC.ShowCustomColumns;
+		StateHasChanged();
+	}
 
+	private async Task _searchChanged(string? search)
+	{
+		UC.Search = search;
+		UC.IsListBusy = true;
+		await InvokeAsync(StateHasChanged);
+		await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
+		UC.IsListBusy = false;
+		await InvokeAsync(StateHasChanged);
+	}
+	private async Task _goFirstPage()
+	{
+		if (UC.IsListBusy) return;
+		UC.IsListBusy = true;
+		await InvokeAsync(StateHasChanged);
+		await UC.DataProviderDataTableGoFirstPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		UC.IsListBusy = false;
+		await InvokeAsync(StateHasChanged);
+	}
+	private async Task _goPreviousPage()
+	{
+		if (UC.IsListBusy) return;
+		UC.IsListBusy = true;
+		await InvokeAsync(StateHasChanged);
+		await UC.DataProviderDataTableGoPreviousPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		UC.IsListBusy = false;
+		await InvokeAsync(StateHasChanged);
+	}
+	private async Task _goNextPage()
+	{
+		if (UC.IsListBusy) return;
+		UC.IsListBusy = true;
+		await InvokeAsync(StateHasChanged);
+		await UC.DataProviderDataTableGoNextPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		UC.IsListBusy = false;
+		await InvokeAsync(StateHasChanged);
+	}
+	private async Task _goLastPage()
+	{
+		if (UC.IsListBusy) return;
+		UC.IsListBusy = true;
+		await InvokeAsync(StateHasChanged);
+		await UC.DataProviderDataTableGoLastPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		UC.IsListBusy = false;
+		await InvokeAsync(StateHasChanged);
+	}
 
+	private async Task _goOnPage(int page)
+	{
+		if (UC.IsListBusy) return;
+		UC.IsListBusy = true;
+		await InvokeAsync(StateHasChanged);
+		UC.Page = page;
+		await UC.DataProviderDataTableGoOnPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		UC.IsListBusy = false;
+		await InvokeAsync(StateHasChanged);
+	}
+	
 }

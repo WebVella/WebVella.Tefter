@@ -95,5 +95,8 @@
 	  <EmbeddedResource Update="Web\Components\DataProviderKeyManageDialog\TfDataProviderKeyManageDialog.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Pager\TfPager.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	</ItemGroup>
 </Project>

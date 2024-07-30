@@ -103,6 +103,7 @@ body {
 	padding-right: var(--tf-content-margin-bottom);
 	padding-top: var(--tf-content-padding);
 	/*overflow-x: scroll !important;*/
+	position: relative;
 }
 
 .content-body.with-toolbar .content-inner {
@@ -198,6 +199,53 @@ body {
 	font-size: var(--type-ramp-minus-1-font-size);
 	color: var(--neutral-foreground-hint);
 }
+/*datagrid*/
+.tfdt {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	flex-flow: column;
+}
+
+.tfdt__toolbar {
+	flex: 0 0 40px;
+	padding-left: var(--tf-content-padding);
+	padding-right: var(--tf-content-margin-bottom);
+	display: flex;
+	align-items: center;
+}
+
+.tfdt__content {
+	flex: 1 1 auto;
+	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important;
+	overflow-y: scroll !important;
+	padding-left: var(--tf-content-padding);
+	padding-right: var(--tf-content-margin-bottom);
+	padding-top: var(--tf-content-padding);
+}
+
+.tfdt__pager {
+	position: relative;
+	flex: 0 0 40px;
+	padding-left: var(--tf-content-padding);
+	padding-right: var(--tf-content-margin-bottom);
+}
+
+	.tfdt__pager:before {
+		background: var(--neutral-stroke-active);
+		position:absolute;
+		left:0;
+		right:0;
+		top:0;
+		width:100%;
+		height:1px;
+		content:"";
+		display:block;
+	}
+
 
 /* width */
 ::-webkit-scrollbar {

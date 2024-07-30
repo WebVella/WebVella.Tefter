@@ -1,0 +1,25 @@
+﻿@inherits TfBaseComponent
+
+
+<nav role="navigation" class="paginator-nav tfpager">
+	<FluentStack>
+		<FluentButton @onclick="GoFirst" Disabled="@(Page == 1)" title="@LOC("Go to first page")">
+			<FluentIcon Value="@(new Icons.Regular.Size20.ChevronDoubleLeft())" Width="20px" />
+		</FluentButton>
+		<FluentButton @onclick="GoPrevious" Disabled="@(Page == 1)" title="@LOC("Go to previous page")">
+			<FluentIcon Value="@(new Icons.Regular.Size24.ChevronLeft())" Width="20px" />
+		</FluentButton>
+		<div class="pagination-pager">
+			<FluentNumberField TValue="int" Value="@Page" ValueChanged="GoOnPage"/>
+		</div>
+		<FluentButton @onclick="GoNext" title="@LOC("Go to next page")">
+			<FluentIcon Value="@(new Icons.Regular.Size24.ChevronRight())" Width="20px" />
+		</FluentButton>
+		<FluentButton @onclick="GoLast" title="@LOC("Go to last page")">
+			<FluentIcon Value="@(new Icons.Regular.Size20.ChevronDoubleRight())" Width="20px" />
+		</FluentButton>
+	</FluentStack>
+</nav>
+
+
+

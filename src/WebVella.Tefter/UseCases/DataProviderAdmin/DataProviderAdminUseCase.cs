@@ -17,12 +17,14 @@ namespace WebVella.Tefter.UseCases.DataProviderAdmin;
 public partial class DataProviderAdminUseCase
 {
 	private readonly ITfDataProviderManager _dataProviderManager;
+	private readonly IDataManager _dataManager;
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
 	private readonly IDispatcher _dispatcher;
 	public DataProviderAdminUseCase(
 		ITfDataProviderManager dataProviderManager,
+		IDataManager dataManager,
 		NavigationManager navigationManager,
 		IToastService toastService,
 		IMessageService messageService,
@@ -30,6 +32,7 @@ public partial class DataProviderAdminUseCase
 	)
 	{
 		_dataProviderManager = dataProviderManager;
+		_dataManager = dataManager;
 		_navigationManager = navigationManager;
 		_toastService = toastService;
 		_messageService = messageService;
@@ -178,6 +181,31 @@ public partial class DataProviderAdminUseCase
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
 
+	//Data
+	internal Result<TfDataTable> GetProviderRows(
+		Guid providerId,
+		string search = null,
+		int? page = null,
+		int? pageSize = null
+	)
+	{
+		var result = _dataProviderManager.GetProvider(providerId);
+		if (result.IsFailed)
+			return Result.Fail(new Error("GetProvider failed").CausedBy(result.Errors));
 
+		if (result.Value is null)
+			return Result.Fail(new Error("Provider not found"));
+
+		var dtResult = _dataManager.GetProviderRows(
+			provider: result.Value,
+			search: search,
+			page: page,
+			pageSize: pageSize);
+
+		if (dtResult.IsFailed)
+			return Result.Fail(new Error("GetProviderRows failed").CausedBy(dtResult.Errors));
+
+		return dtResult;
+	}
 
 }

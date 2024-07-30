@@ -6,7 +6,85 @@
 }
 else
 {
-	<div>data</div>
+
+	<div class="tfdt">
+		<div class="tfdt__toolbar">
+			<FluentStack>
+				<FluentSearch Value="@UC.Search" ValueChanged="_searchChanged" />
+				<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
+							  Appearance="@(UC.ShowSystemColumns ? Appearance.Accent : Appearance.Outline)">
+					<span>system</span>
+					<FluentBadge Appearance="Appearance.Neutral">@UC.SystemColumns.Count</FluentBadge>
+				</FluentButton>
+				<FluentButton Id="view-filter-selector" Title="toggle shared key columns" OnClick="_toggleSharedKeyColumns"
+							  Appearance="@(UC.ShowSharedKeyColumns ? Appearance.Accent : Appearance.Outline)">
+					<span>shared key</span>
+					<FluentBadge Appearance="Appearance.Neutral">@UC.SharedKeyColumns.Count</FluentBadge>
+				</FluentButton>
+				<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
+							  Appearance="@(UC.ShowCustomColumns ? Appearance.Accent : Appearance.Outline)">
+					<span>custom</span>
+					<FluentBadge Appearance="Appearance.Neutral">@UC.Columns.Count</FluentBadge>
+				</FluentButton>
+			</FluentStack>
+		</div>
+		<div class="tfdt__content">
+			<div class="tf-grid-wrapper">
+				<table class="tf-grid">
+					<thead class="tf-grid-thead">
+						<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+						<tr class="tf-grid-tr">
+							@foreach (var column in UC.DataTable.Columns)
+							{
+								if (!UC.ShowSystemColumns && column.IsSystem && !column.IsShared) { continue; }
+								if (!UC.ShowSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+								if (!UC.ShowCustomColumns && !column.IsSystem) { continue; }
+								<th class="tf-grid-th">@column.Name</th>
+							}
+						</tr>
+					</thead>
+					<tbody class="tf-grid-tbody">
+						@if (UC.IsListBusy)
+						{
+							<tr class="tf-grid-tr">
+								<td class="tf-grid-td" colspan="@UC.VisibleColumnsCount">Loading...</td>
+							</tr>
+						}
+						else
+						{
+							foreach (TfDataRow row in UC.DataTable.Rows)
+							{
+								<tr @key=@row["tf_id"] class="tf-grid-tr">
+									@foreach (var column in UC.DataTable.Columns)
+									{
+										if (!UC.ShowSystemColumns && column.IsSystem && !column.IsShared) { continue; }
+										if (!UC.ShowSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+										if (!UC.ShowCustomColumns && !column.IsSystem) { continue; }
+										<td class="tf-grid-td">
+											<div>@row[column.Name]</div>
+										</td>
+									}
+								</tr>
+							}
+							@if (UC.DataTable.Rows.Count == 0)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@UC.VisibleColumnsCount">No records found</td>
+								</tr>
+							}
+						}
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+		<div class="tfdt__pager">
+			<TfPager Page="@UC.Page" GoLast="@_goLastPage" GoNext="@_goNextPage"
+				GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"/>
+		</div>
+	</div>
+
+
 
 }
 
