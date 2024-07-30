@@ -10,4 +10,6 @@ public class TfDataTableQuery
 	public int? PageSize { get; set; } = null;
 	public string Search { get; set; } = null;
 	public bool ExcludeSharedColumns { get; set; } = false;
+
+	
 }

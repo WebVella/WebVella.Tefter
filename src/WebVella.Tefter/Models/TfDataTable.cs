@@ -123,4 +123,9 @@ public sealed class TfDataTable
 
 		return columns;
 	}
+
+	public override string ToString()
+	{
+		return $"{Rows}  {Columns}  {QueryInfo}";
+	}
 }

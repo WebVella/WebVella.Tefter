@@ -25,4 +25,11 @@ public class TfDataTableQueryInfo
 		Search = search;
 		ExcludeSharedColumns = excludeSharedColumns;
 	}
+
+	public override string ToString()
+	{
+		return $"Page:{(Page==null?"n/s":Page)} " +
+			$"PageSize:{(PageSize is null?"n/s":PageSize)} " +
+			$"Search:{(Search is null?"n/s":"'"+Search+"'")}";
+	}
 }

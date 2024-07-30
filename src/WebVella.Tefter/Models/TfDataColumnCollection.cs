@@ -86,4 +86,9 @@ public class TfDataColumnCollection : IEnumerable
 	{
 		return _columns.GetEnumerator();
 	}
+
+	public override string ToString()
+	{
+		return $"{Count} column(s)";
+	}
 }

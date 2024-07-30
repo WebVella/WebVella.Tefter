@@ -6,6 +6,8 @@ public class TfDataRowCollection : IEnumerable
 
 	public TfDataTable DataTable { get; init; }
 
+	public int Count => _rows.Count;
+
 	public TfDataRow this[int rowIndex]
 	{
 		get { return _rows[rowIndex]; }
@@ -39,14 +41,14 @@ public class TfDataRowCollection : IEnumerable
 		_rows.Remove(row);
 	}
 
-	public int Count()
-	{
-		return _rows.Count;
-	}
-
 	public IEnumerator GetEnumerator()
 	{
 		return _rows.GetEnumerator();
+	}
+
+	public override string ToString()
+	{
+		return $"{Count} row(s)";
 	}
 
 }
