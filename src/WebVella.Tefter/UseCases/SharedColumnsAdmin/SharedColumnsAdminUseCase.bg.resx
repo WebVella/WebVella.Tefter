@@ -117,19 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Admin Panel" xml:space="preserve">
-    <value>Админ панел</value>
-  </data>
-  <data name="Dashboard" xml:space="preserve">
-    <value>Табло</value>
-  </data>
-  <data name="Data providers" xml:space="preserve">
-    <value>Доставчици на данни</value>
-  </data>
-  <data name="Shared Columns" xml:space="preserve">
-    <value>Споделени колони</value>
-  </data>
-  <data name="Users" xml:space="preserve">
-    <value>Потребители</value>
-  </data>
 </root>

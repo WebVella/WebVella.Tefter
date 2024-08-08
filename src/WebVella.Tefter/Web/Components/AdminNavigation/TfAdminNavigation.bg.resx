@@ -123,6 +123,9 @@
   <data name="Data providers" xml:space="preserve">
     <value>Доставчици на данни</value>
   </data>
+  <data name="Shared Columns" xml:space="preserve">
+    <value>Споделени колони</value>
+  </data>
   <data name="Users" xml:space="preserve">
     <value>Потребители</value>
   </data>

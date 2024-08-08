@@ -117,19 +117,31 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Admin Panel" xml:space="preserve">
-    <value>Админ панел</value>
+  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете тази колона?</value>
   </data>
-  <data name="Dashboard" xml:space="preserve">
-    <value>Табло</value>
+  <data name="Column successfully created!" xml:space="preserve">
+    <value>Колоната е успешно създадена!</value>
   </data>
-  <data name="Data providers" xml:space="preserve">
-    <value>Доставчици на данни</value>
+  <data name="Column successfully updated!" xml:space="preserve">
+    <value>Колоната е успешно обновена!</value>
   </data>
-  <data name="Shared Columns" xml:space="preserve">
-    <value>Споделени колони</value>
+  <data name="No columns" xml:space="preserve">
+    <value>Няма колони</value>
   </data>
-  <data name="Users" xml:space="preserve">
-    <value>Потребители</value>
+  <data name="No shared columns are created yet" xml:space="preserve">
+    <value>Все още не са създадени споделени колони</value>
+  </data>
+  <data name="Shared column" xml:space="preserve">
+    <value>Споделена колона</value>
+  </data>
+  <data name="shared key name ..." xml:space="preserve">
+    <value>споделен ключ име ...</value>
+  </data>
+  <data name="The column is successfully deleted!" xml:space="preserve">
+    <value>Колоната е успешно изтрита!</value>
+  </data>
+  <data name="This will delete all related data too!" xml:space="preserve">
+    <value>Това ще изтрие и всички свързани данни!</value>
   </data>
 </root>

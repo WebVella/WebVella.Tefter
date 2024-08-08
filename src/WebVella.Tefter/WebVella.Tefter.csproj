@@ -68,12 +68,18 @@
 	  <Content Update="Web\Components\AdminDataProviderKeys\TfAdminDataProviderKeys.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
+	  <Content Update="Web\Pages\AdminSharedColumnsPage.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	  <Content Update="Web\Pages\PageNotFound.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Update="Web\Components\AdminSharedColumns\TfAdminSharedColumns.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\AdminDataProviderSynchronization\TfAdminDataProviderSynchronization.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
@@ -87,6 +93,9 @@
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\DataProviderAuxColumnManageDialog\TfDataProviderAuxColumnManageDialog.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\SharedColumnManageDialog\TfSharedColumnManageDialog.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\DataProviderSyncLogDialog\TfDataProviderSyncLogDialog.bg.resx">

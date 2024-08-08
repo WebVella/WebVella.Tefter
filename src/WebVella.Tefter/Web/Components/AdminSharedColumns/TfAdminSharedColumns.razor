@@ -1,0 +1,97 @@
+﻿@inherits TfBaseComponent
+
+<div style="display:flex;justify-content:space-between;margin-bottom:1rem;">
+	<div>
+		<FluentSearch Placeholder="@LOC("shared key...")" ValueChanged="_searchValueChanged" Value="@UC.Search" />
+	</div>
+	<div>
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
+			@LOC("Shared column")
+			<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+		</FluentButton>
+	</div>
+</div>
+@if (UC.IsBusy)
+{
+	<TfLoadingPane />
+}
+else if (UC.SharedColumns is null
+			|| UC.SharedColumns.Count == 0)
+{
+	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
+					  Intent="@MessageIntent.Info">@LOC("No shared columns are created yet")</FluentMessageBar>
+}
+else
+{
+	<div class="tf-grid-wrapper">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th" style="width:50px;"></th>
+					<th class="tf-grid-th">name</th>
+					<th class="tf-grid-th">data type</th>
+					<th class="tf-grid-th">shared key</th>
+					<th class="tf-grid-th">options</th>
+					<th class="tf-grid-th">creator</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in UC.SharedColumns)
+				{
+					<tr @key=context.Id class="tf-grid-tr">
+						<td class="tf-grid-td">
+							<div>
+								<FluentButton Appearance="@Appearance.Outline" IconStart="@(new Icons.Regular.Size20.Edit())"
+											  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
+								<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
+											  OnClick="@(() => _deleteColumn(context))">
+									<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.Delete())" />
+								</FluentButton>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@context.DbName
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@context.DbType.Name
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@context.SharedKeyDbName
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								<FluentStack>
+									@if (context.IncludeInTableSearch)
+									{
+										<FluentBadge Appearance="@Appearance.Accent">global search</FluentBadge>
+									}
+								</FluentStack>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@if (context.AddonId is not null)
+								{
+									<span>application</span>
+								}
+								else
+								{
+									<span>user</span>
+								}
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+
+}
+

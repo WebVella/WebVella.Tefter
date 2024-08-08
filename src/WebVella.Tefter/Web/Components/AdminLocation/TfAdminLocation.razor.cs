@@ -60,6 +60,14 @@ public partial class TfAdminLocation : TfBaseComponent
 				Url = "/admin/users"
 			});
 		}
+		else if (localPath.StartsWith("/admin/aux-columns"))
+		{
+			_bcMenu.Add(new MenuItem
+			{
+				Title = LOC(TfConstants.AdminAuxColumnsMenuTitle),
+				Url = "/admin/aux-columns"
+			});
+		}
 	}
 
 

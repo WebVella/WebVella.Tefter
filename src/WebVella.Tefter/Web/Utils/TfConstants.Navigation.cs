@@ -25,4 +25,7 @@ public partial class TfConstants
 
 	public static Icon AdminUsersIcon = new Icons.Regular.Size20.People();
 	public static string AdminUsersMenuTitle = "Users";
+
+	public static Icon AdminAuxColumnsIcon = new Icons.Regular.Size20.Column();
+	public static string AdminAuxColumnsMenuTitle = "Shared Columns";
 }
