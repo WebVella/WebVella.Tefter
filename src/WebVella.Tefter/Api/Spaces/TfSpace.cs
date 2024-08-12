@@ -3,7 +3,7 @@ public class TfSpace
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
-	public int Position { get; set; }
+	public short Position { get; set; }
 	public bool IsPrivate { get; set; }
 	public string Icon { get; set; }
 	public short Color { get; set; }
@@ -20,8 +20,7 @@ internal class TfSpaceDbo
 	public string Name { get; set; }
 
 	[DboModelProperty("position")]
-	[DboTypeConverter(typeof(IntegerPropertyConverter))]
-	public int Position { get; set; }
+	public short Position { get; set; }
 
 	[DboModelProperty("is_private")]
 	public bool IsPrivate { get; set; }

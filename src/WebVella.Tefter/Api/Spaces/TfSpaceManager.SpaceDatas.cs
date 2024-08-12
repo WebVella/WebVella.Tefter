@@ -85,7 +85,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				var spaceDataList = GetSpaceDataList(spaceData.SpaceId).Value;
 
 				var dbo = Convert(spaceData);
-				dbo.Position = spaceDataList.Count + 1;
+				dbo.Position = (short)(spaceDataList.Count + 1);
 
 				var success = _dboManager.Insert<TfSpaceDataDbo>(dbo);
 
@@ -206,8 +206,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				var prevSpaceData = spaceDataList.Single(x => x.Position == (spaceData.Position - 1));
 
-				spaceData.Position = spaceData.Position - 1;
-				prevSpaceData.Position = prevSpaceData.Position + 1;
+				spaceData.Position = (short)(spaceData.Position - 1);
+				prevSpaceData.Position = (short)(prevSpaceData.Position + 1);
 
 				var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
 
@@ -252,8 +252,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				var nextSpaceData = spaceDataList.Single(x => x.Position == (spaceData.Position + 1));
 
-				spaceData.Position = spaceData.Position + 1;
-				nextSpaceData.Position = nextSpaceData.Position - 1;
+				spaceData.Position = (short)(spaceData.Position + 1);
+				nextSpaceData.Position = (short)(nextSpaceData.Position - 1);
 
 				var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
 
@@ -344,7 +344,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			RuleSet("create", () =>
 			{
 				RuleFor(spaceData => spaceData.Id)
-						.Must((spaceData, id) => { return spaceManager.GetSpaceData(id) == null; })
+						.Must((spaceData, id) => { return spaceManager.GetSpaceData(id).Value == null; })
 						.WithMessage("There is already existing space data with specified identifier.");
 
 				RuleFor(spaceData => spaceData.Name)

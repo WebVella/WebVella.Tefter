@@ -80,7 +80,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				//position is ignored - space is added at last place
 				var dbo = Convert(space);
-				dbo.Position = spaces.Count + 1;
+				dbo.Position = (short)(spaces.Count + 1);
 
 				var success = _dboManager.Insert<TfSpaceDbo>(dbo);
 
@@ -152,8 +152,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				var prevSpace = spaces.Single(x => x.Position == (space.Position - 1));
 
-				space.Position = space.Position - 1;
-				prevSpace.Position = prevSpace.Position + 1;
+				space.Position = (short)(space.Position - 1);
+				prevSpace.Position = (short)(prevSpace.Position + 1);
 
 				var success = _dboManager.Update<TfSpaceDbo>(Convert(space));
 
@@ -197,8 +197,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				var nextSpace = spaces.Single(x => x.Position == (space.Position + 1));
 
-				space.Position = space.Position + 1;
-				nextSpace.Position = nextSpace.Position - 1;
+				space.Position = (short)(space.Position + 1);
+				nextSpace.Position = (short)(nextSpace.Position - 1);
 
 				var success = _dboManager.Update<TfSpaceDbo>(Convert(space));
 
@@ -342,7 +342,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			RuleSet("create", () =>
 			{
 				RuleFor(space => space.Id)
-						.Must((space, id) => { return spaceManager.GetSpace(id) == null; })
+						.Must((space, id) => { return spaceManager.GetSpace(id).Value == null; })
 						.WithMessage("There is already existing space with specified identifier.");
 
 				RuleFor(space => space.Name)

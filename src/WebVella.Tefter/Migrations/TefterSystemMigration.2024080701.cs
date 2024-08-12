@@ -17,7 +17,7 @@ internal class TefterSystemMigration2024080701 : TefterSystemMigration
 					.AddShortIntegerColumn("position", c => { c.NotNullable(); })
 					.AddBooleanColumn("is_private", c => { c.NotNullable().WithDefaultValue(false); })
 					.AddShortTextColumn("icon", c => { c.Nullable(); })
-					.AddShortTextColumn("color", c => { c.Nullable(); });
+					.AddShortIntegerColumn("color", c => { c.Nullable(); });
 			})
 			.WithConstraints(constraints =>
 			{

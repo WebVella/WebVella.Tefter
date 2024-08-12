@@ -5,7 +5,7 @@ public class TfSpaceData
 	public Guid Id { get; set; }
 	public Guid SpaceId { get; set; }
 	public string Name { get; set; }
-	public int Position { get; set; }
+	public short Position { get; set; }
 	public List<TfFilterBase> Filters { get; set; }
 }
 
@@ -24,8 +24,7 @@ internal class TfSpaceDataDbo
 	public string Name { get; set; }
 
 	[DboModelProperty("position")]
-	[DboTypeConverter(typeof(IntegerPropertyConverter))]
-	public int Position { get; set; }
+	public short Position { get; set; }
 
 	[DboModelProperty("filters_json")]
 	public string FiltersJson { get; set; }
