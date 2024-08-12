@@ -111,7 +111,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			var existingSpace = _dboManager.Get<TfSpace>(space.Id);
+			var existingSpace = _dboManager.Get<TfSpaceDbo>(space.Id);
 
 			//position is not updated
 			var dbo = Convert(space);
@@ -143,27 +143,31 @@ public partial class TfSpaceManager : ITfSpaceManager
 				var space = spaces.SingleOrDefault(x => x.Id == id);
 
 				if (space == null)
-					Result.Fail(new ValidationError(
+					return Result.Fail(new ValidationError(
 						nameof(id),
 						"Found no space for specified identifier."));
 
 				if (space.Position == 1)
-					Result.Ok();
+					return Result.Ok();
 
-				var prevSpace = spaces.Single(x => x.Position == (space.Position - 1));
-
+				var prevSpace = spaces.SingleOrDefault(x => x.Position == (space.Position - 1));
 				space.Position = (short)(space.Position - 1);
-				prevSpace.Position = (short)(prevSpace.Position + 1);
+
+				if (prevSpace != null)
+					prevSpace.Position = (short)(prevSpace.Position + 1);
 
 				var success = _dboManager.Update<TfSpaceDbo>(Convert(space));
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Update", space));
 
-				success = _dboManager.Update<TfSpaceDbo>(Convert(prevSpace));
+				if (prevSpace != null)
+				{
+					success = _dboManager.Update<TfSpaceDbo>(Convert(prevSpace));
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", space));
+					if (!success)
+						return Result.Fail(new DboManagerError("Update", prevSpace));
+				}
 
 				scope.Complete();
 
@@ -185,30 +189,35 @@ public partial class TfSpaceManager : ITfSpaceManager
 			{
 				var spaces = GetSpacesList().Value;
 
-				var space = spaces.Single(x => x.Id == id);
+				var space = spaces.SingleOrDefault(x => x.Id == id);
 
 				if (space == null)
-					Result.Fail(new ValidationError(
+					return Result.Fail(new ValidationError(
 						nameof(id),
 						"Found no space for specified identifier."));
 
 				if (space.Position == spaces.Count)
-					Result.Ok();
+					return Result.Ok();
 
-				var nextSpace = spaces.Single(x => x.Position == (space.Position + 1));
 
+				var nextSpace = spaces.SingleOrDefault(x => x.Position == (space.Position + 1));
 				space.Position = (short)(space.Position + 1);
-				nextSpace.Position = (short)(nextSpace.Position - 1);
+								
+				if (nextSpace != null)
+					nextSpace.Position = (short)(nextSpace.Position - 1);
 
 				var success = _dboManager.Update<TfSpaceDbo>(Convert(space));
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Update", space));
 
-				success = _dboManager.Update<TfSpaceDbo>(Convert(nextSpace));
+				if (nextSpace != null)
+				{
+					success = _dboManager.Update<TfSpaceDbo>(Convert(nextSpace));
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", space));
+					if (!success)
+						return Result.Fail(new DboManagerError("Update", nextSpace));
+				}
 
 				scope.Complete();
 

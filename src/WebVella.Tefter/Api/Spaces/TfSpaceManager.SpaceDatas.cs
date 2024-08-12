@@ -30,16 +30,16 @@ public partial interface ITfSpaceManager
 public partial class TfSpaceManager : ITfSpaceManager
 {
 	public Result<List<TfSpaceData>> GetSpaceDataList(
-		Guid spaceId )
+		Guid spaceId)
 	{
 		try
 		{
 			var orderSettings = new OrderSettings(
-				nameof(TfSpaceData.Position), 
+				nameof(TfSpaceData.Position),
 				OrderDirection.ASC);
-			
-			var dbos = _dboManager.GetList<TfSpaceDataDbo>( 
-				spaceId, 
+
+			var dbos = _dboManager.GetList<TfSpaceDataDbo>(
+				spaceId,
 				nameof(TfSpaceData.SpaceId), order: orderSettings);
 
 			return Result.Ok(dbos.Select(x => Convert(x)).ToList());
@@ -118,7 +118,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
-				var existingSpaceData = _dboManager.Get<TfSpaceData>(spaceData.Id);
+				var existingSpaceData = _dboManager.Get<TfSpaceDataDbo>(spaceData.Id);
 
 				var dbo = Convert(spaceData);
 				dbo.Position = existingSpaceData.Position;
@@ -160,7 +160,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				var spaceDatasForSpace = GetSpaceDataList(spaceData.SpaceId).Value;
 
 				//update positions for spaces after the one being deleted
-				foreach(var sd in spaceDatasForSpace.Where(x=>x.Position > spaceData.Position))
+				foreach (var sd in spaceDatasForSpace.Where(x => x.Position > spaceData.Position))
 				{
 					sd.Position--;
 					var successUpdatePosition = _dboManager.Update<TfSpaceDataDbo>(Convert(sd));
@@ -195,29 +195,34 @@ public partial class TfSpaceManager : ITfSpaceManager
 			{
 				var spaceData = GetSpaceData(id).Value;
 				if (spaceData == null)
-					Result.Fail(new ValidationError(
+					return Result.Fail(new ValidationError(
 						nameof(id),
 						"Found no space data for specified identifier."));
 
 				var spaceDataList = GetSpaceDataList(spaceData.SpaceId).Value;
 
 				if (spaceData.Position == 1)
-					Result.Ok();
+					return Result.Ok();
 
-				var prevSpaceData = spaceDataList.Single(x => x.Position == (spaceData.Position - 1));
+				var prevSpaceData = spaceDataList.SingleOrDefault(x => x.Position == (spaceData.Position - 1));
 
 				spaceData.Position = (short)(spaceData.Position - 1);
-				prevSpaceData.Position = (short)(prevSpaceData.Position + 1);
+
+				if (prevSpaceData != null)
+					prevSpaceData.Position = (short)(prevSpaceData.Position + 1);
 
 				var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Update", spaceData));
 
-				success = _dboManager.Update<TfSpaceDataDbo>(Convert(prevSpaceData));
+				if (prevSpaceData != null)
+				{
+					success = _dboManager.Update<TfSpaceDataDbo>(Convert(prevSpaceData));
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", prevSpaceData));
+					if (!success)
+						return Result.Fail(new DboManagerError("Update", prevSpaceData));
+				}
 
 				scope.Complete();
 
@@ -240,7 +245,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				var spaceData = GetSpaceData(id).Value;
 
 				if (spaceData == null)
-					Result.Fail(new ValidationError(
+					return Result.Fail(new ValidationError(
 						nameof(id),
 						"Found no space data for specified identifier."));
 
@@ -248,22 +253,27 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 
 				if (spaceData.Position == spaceDataList.Count)
-					Result.Ok();
+					return Result.Ok();
 
-				var nextSpaceData = spaceDataList.Single(x => x.Position == (spaceData.Position + 1));
+				var nextSpaceData = spaceDataList.SingleOrDefault(x => x.Position == (spaceData.Position + 1));
 
 				spaceData.Position = (short)(spaceData.Position + 1);
-				nextSpaceData.Position = (short)(nextSpaceData.Position - 1);
+
+				if(nextSpaceData != null)
+					nextSpaceData.Position = (short)(nextSpaceData.Position - 1);
 
 				var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Update", spaceData));
 
-				success = _dboManager.Update<TfSpaceDataDbo>(Convert(nextSpaceData));
+				if (nextSpaceData != null)
+				{
+					success = _dboManager.Update<TfSpaceDataDbo>(Convert(nextSpaceData));
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", nextSpaceData));
+					if (!success)
+						return Result.Fail(new DboManagerError("Update", nextSpaceData));
+				}
 
 				scope.Complete();
 
@@ -303,7 +313,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Name = model.Name,
 			Position = model.Position,
 			SpaceId = model.SpaceId,
-			FiltersJson = JsonSerializer.Serialize(model.Filters??new List<TfFilterBase>())
+			FiltersJson = JsonSerializer.Serialize(model.Filters ?? new List<TfFilterBase>())
 		};
 	}
 
