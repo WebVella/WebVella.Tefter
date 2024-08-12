@@ -41,6 +41,15 @@ public partial class TfAdminNavigation: TfBaseComponent
 			Url = "/admin/data-providers",
 			Title = LOC(TfConstants.AdminDataProvidersMenuTitle)
 		});
+		menuItems.Add(new MenuItem()
+		{
+			Id = "tf-aux-columns-link",
+			Icon = TfConstants.AdminAuxColumnsIcon,
+			IconColor = TfConstants.AdminThemeColor,
+			Match = NavLinkMatch.Prefix,
+			Url = "/admin/aux-columns",
+			Title = LOC(TfConstants.AdminAuxColumnsMenuTitle)
+		});
 	}
 
 	private void _addSpaceHandler(){

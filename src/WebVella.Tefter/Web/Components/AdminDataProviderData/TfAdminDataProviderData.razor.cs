@@ -22,6 +22,18 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
 	}
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
+			UC.IsBusy = false;
+			UC.IsListBusy = false;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
 	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
 	{
 		if (action.Provider is null) return;
@@ -37,17 +49,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 
 	}
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
-			UC.IsBusy = false;
-			UC.IsListBusy = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
+
 
 	private void _toggleSystemColumns()
 	{

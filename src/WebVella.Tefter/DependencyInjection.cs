@@ -47,7 +47,7 @@ public static class DependencyInjection
 		services.AddTransient<ITfEventBus, TfEventBus>();
 		services.AddTransient<UserEventProvider, UserEventProvider>();
 		services.AddTransient<GlobalEventProvider, GlobalEventProvider>();
-		
+
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
@@ -61,11 +61,12 @@ public static class DependencyInjection
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 
 		//use cases
-		services.AddScoped<StateEffectsUseCase,StateEffectsUseCase>();
-		services.AddTransient<AppStartUseCase,AppStartUseCase>();
-		services.AddTransient<DataProviderAdminUseCase,DataProviderAdminUseCase>();
-		services.AddTransient<LoginUseCase,LoginUseCase>();
-		services.AddTransient<UserAdminUseCase,UserAdminUseCase>();
+		services.AddScoped<StateEffectsUseCase, StateEffectsUseCase>();
+		services.AddTransient<AppStartUseCase, AppStartUseCase>();
+		services.AddTransient<DataProviderAdminUseCase, DataProviderAdminUseCase>();
+		services.AddTransient<SharedColumnsAdminUseCase, SharedColumnsAdminUseCase>();
+		services.AddTransient<LoginUseCase, LoginUseCase>();
+		services.AddTransient<UserAdminUseCase, UserAdminUseCase>();
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();

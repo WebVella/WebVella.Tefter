@@ -117,19 +117,49 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Admin Panel" xml:space="preserve">
-    <value>Админ панел</value>
+  <data name="Addon Id" xml:space="preserve">
+    <value>Идентификатор на разширение</value>
   </data>
-  <data name="Dashboard" xml:space="preserve">
-    <value>Табло</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Откажи</value>
   </data>
-  <data name="Data providers" xml:space="preserve">
-    <value>Доставчици на данни</value>
+  <data name="Create" xml:space="preserve">
+    <value>Създай</value>
   </data>
-  <data name="Shared Columns" xml:space="preserve">
-    <value>Споделени колони</value>
+  <data name="Create shared column" xml:space="preserve">
+    <value>Създай споделена колона</value>
   </data>
-  <data name="Users" xml:space="preserve">
-    <value>Потребители</value>
+  <data name="data type" xml:space="preserve">
+    <value>тип данни</value>
+  </data>
+  <data name="Global search" xml:space="preserve">
+    <value>Глобално търсене</value>
+  </data>
+  <data name="included" xml:space="preserve">
+    <value>участва</value>
+  </data>
+  <data name="Manage shared column" xml:space="preserve">
+    <value>Редактирай споделена колона</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>име</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Запомни</value>
+  </data>
+  <data name="Selected type settings" xml:space="preserve">
+    <value>Настройки на избрания тип</value>
+  </data>
+  <data name="Target shared key" xml:space="preserve">
+    <value>Целеви споделен ключ</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="user created" xml:space="preserve">
+    <value>създадена от потребител</value>
+  </data>
+  <data name="Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!" xml:space="preserve">
+    <value>Внимание: Компонентът за настройки на доставчика на данни не имплементира ITfDataProviderSettings и не може да бъде показан!</value>
   </data>
 </root>
