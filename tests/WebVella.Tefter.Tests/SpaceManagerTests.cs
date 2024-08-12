@@ -179,4 +179,66 @@ public partial class SpaceManagerTests : BaseTest
 			}
 		}
 	}
+
+	[Fact]
+	public async Task SpaceData_TryToChangeSpaceId()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var space = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+				spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+
+				var space2 = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space2",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+				spaceManager.CreateSpace(space2).IsSuccess.Should().BeTrue();
+
+				var spaceData1 = new TfSpaceData
+				{
+					Id = Guid.NewGuid(),
+					Name = "data1",
+					SpaceId = space.Id,
+				};
+
+				var result = spaceManager.CreateSpaceData(spaceData1);
+				result.IsSuccess.Should().BeTrue();
+				result.Value.Should().NotBeNull();
+				result.Value.Id.Should().Be(spaceData1.Id);
+				result.Value.Name.Should().Be(spaceData1.Name);
+				result.Value.SpaceId.Should().Be(space.Id);
+				result.Value.Position.Should().Be(1);
+				result.Value.Filters.Should().NotBeNull();
+				result.Value.Filters.Count().Should().Be(0);
+			
+
+				spaceData1.SpaceId = space2.Id;
+				result = spaceManager.UpdateSpaceData(spaceData1);
+				result.IsSuccess.Should().BeFalse();
+				result.Errors.Count().Should().Be(1);
+				result.Errors[0].Should().BeOfType<ValidationError>();
+				((ValidationError)result.Errors[0]).PropertyName.Should().Be("SpaceId");
+				((ValidationError)result.Errors[0]).Reason.Should()
+					.Be("Space cannot be changed for space data.");
+			}
+		}
+	}
 }

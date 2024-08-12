@@ -378,6 +378,17 @@ public partial class TfSpaceManager : ITfSpaceManager
 						})
 						.WithMessage("There is not existing space data with specified identifier.");
 
+				RuleFor(spaceData => spaceData.SpaceId)
+					.Must( (spaceData,spaceId) =>
+					{
+						var existingSpaceData = spaceManager.GetSpaceData(spaceData.Id).Value;
+						if (existingSpaceData == null)
+							return true;
+
+						return existingSpaceData.SpaceId == spaceId;
+					})
+					.WithMessage("Space cannot be changed for space data.");
+
 			});
 
 			RuleSet("delete", () =>
