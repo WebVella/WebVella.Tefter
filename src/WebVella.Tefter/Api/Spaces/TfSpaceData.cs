@@ -6,7 +6,7 @@ public class TfSpaceData
 	public Guid SpaceId { get; set; }
 	public string Name { get; set; }
 	public short Position { get; set; }
-	public List<TfFilterBase> Filters { get; set; }
+	public List<TfFilterBase> Filters { get; set; } = new List<TfFilterBase>();
 }
 
 
