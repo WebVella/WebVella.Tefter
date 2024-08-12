@@ -59,6 +59,7 @@ public static class DependencyInjection
 		services.AddSingleton<IDataManager, DataManager>();
 		services.AddSingleton<ITfSharedColumnsManager, TfSharedColumnsManager>();
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
+		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
 
 		//use cases
 		services.AddScoped<StateEffectsUseCase, StateEffectsUseCase>();
