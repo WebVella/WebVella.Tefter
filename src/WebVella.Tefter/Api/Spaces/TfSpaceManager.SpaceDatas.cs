@@ -42,7 +42,32 @@ public partial class TfSpaceManager : ITfSpaceManager
 				spaceId,
 				nameof(TfSpaceData.SpaceId), order: orderSettings);
 
-			return Result.Ok(dbos.Select(x => Convert(x)).ToList());
+			var spaceDataList = dbos.Select(x => Convert(x)).ToList();
+			foreach (var spaceData in spaceDataList)
+			{
+				try
+				{
+					List<TfSpaceDataColumn> columns = new List<TfSpaceDataColumn>();	
+					var availableColumns = GetSpaceDataAvailableColumns(spaceData.Id);
+					foreach (var column in availableColumns)
+					{
+						var selected = spaceData.Columns.Any(x => x.DbName == column.DbName && x.Selected);
+						columns.Add(new TfSpaceDataColumn
+						{
+							DbName = column.DbName,
+							DbType = column.DbType,
+							Selected = selected
+						});
+					}
+					spaceData.Columns = columns;
+				}
+				catch
+				{
+					//ignore exception of missing provider
+				}
+			}
+
+			return Result.Ok(spaceDataList);
 		}
 		catch (Exception ex)
 		{
@@ -56,12 +81,89 @@ public partial class TfSpaceManager : ITfSpaceManager
 		try
 		{
 			var dbo = _dboManager.Get<TfSpaceDataDbo>(id);
-			return Result.Ok(Convert(dbo));
+			var spaceData = Convert(dbo);
+
+			if(spaceData != null)
+			{
+				try
+				{
+					List<TfSpaceDataColumn> columns = new List<TfSpaceDataColumn>();
+					var availableColumns = GetSpaceDataAvailableColumns(spaceData.Id);
+					foreach (var column in availableColumns)
+					{
+						var selected = spaceData.Columns.Any(x => x.DbName == column.DbName && x.Selected);
+						columns.Add(new TfSpaceDataColumn
+						{
+							DbName = column.DbName,
+							DbType = column.DbType,
+							Selected = selected
+						});
+					}
+					spaceData.Columns = columns;
+				}
+				catch
+				{
+					//ignore exception of missing provider
+				}
+			}
+
+			return Result.Ok(spaceData);
 		}
 		catch (Exception ex)
 		{
 			return Result.Fail(new Error("Failed to get space data by id").CausedBy(ex));
 		}
+	}
+
+	private List<TfSpaceDataColumn> GetSpaceDataAvailableColumns(
+		Guid spaceDataId)
+	{
+		List<TfSpaceDataColumn> columns = new List<TfSpaceDataColumn>();
+
+		var dbo = _dboManager.Get<TfSpaceDataDbo>(spaceDataId);
+		var spaceData = Convert(dbo);
+
+		if (spaceData == null)
+			return columns;
+
+		var providerResult = _providerManager.GetProvider(spaceData.DataProviderId);
+		if (!providerResult.IsSuccess)
+			throw new Exception("Unable to get specified data provider");
+
+		if (providerResult.Value == null)
+			throw new Exception("Not found specified data provider");
+
+		foreach (var column in providerResult.Value.Columns)
+		{
+			columns.Add(new TfSpaceDataColumn
+			{
+				DbName = column.DbName,
+				DbType = column.DbType,
+				Selected = false
+			});
+		}
+
+		foreach (var sharedKey in providerResult.Value.SharedKeys)
+		{
+			columns.Add(new TfSpaceDataColumn
+			{
+				DbName = sharedKey.DbName,
+				DbType =  DatabaseColumnType.Guid,
+				Selected = false
+			});
+		}
+
+		foreach (var column in providerResult.Value.SharedColumns)
+		{
+			columns.Add(new TfSpaceDataColumn
+			{
+				DbName = column.DbName,
+				DbType = column.DbType,
+				Selected = false
+			});
+		}
+
+		return columns;
 	}
 
 	public Result<TfSpaceData> CreateSpaceData(
@@ -75,7 +177,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 					spaceData.Id = Guid.NewGuid();
 
 				TfSpaceDataValidator validator =
-					new TfSpaceDataValidator(_dboManager, this);
+					new TfSpaceDataValidator(_dboManager, this, _providerManager);
 
 				var validationResult = validator.ValidateCreate(spaceData);
 
@@ -111,7 +213,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				TfSpaceDataValidator validator =
-				new TfSpaceDataValidator(_dboManager, this);
+				new TfSpaceDataValidator(_dboManager, this, _providerManager);
 
 				var validationResult = validator.ValidateUpdate(spaceData);
 
@@ -148,7 +250,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				TfSpaceDataValidator validator =
-						new TfSpaceDataValidator(_dboManager, this);
+						new TfSpaceDataValidator(_dboManager, this, _providerManager);
 
 				var spaceData = GetSpaceData(id).Value;
 
@@ -259,7 +361,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				spaceData.Position = (short)(spaceData.Position + 1);
 
-				if(nextSpaceData != null)
+				if (nextSpaceData != null)
 					nextSpaceData.Position = (short)(nextSpaceData.Position - 1);
 
 				var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
@@ -294,10 +396,12 @@ public partial class TfSpaceManager : ITfSpaceManager
 		return new TfSpaceData
 		{
 			Id = dbo.Id,
+			DataProviderId = dbo.DataProviderId,
 			Name = dbo.Name,
 			Position = dbo.Position,
 			SpaceId = dbo.SpaceId,
-			Filters = JsonSerializer.Deserialize<List<TfFilterBase>>(dbo.FiltersJson)
+			Filters = JsonSerializer.Deserialize<List<TfFilterBase>>(dbo.FiltersJson),
+			Columns = JsonSerializer.Deserialize<List<TfSpaceDataColumn>>(dbo.ColumnsJson)
 		};
 
 	}
@@ -310,10 +414,12 @@ public partial class TfSpaceManager : ITfSpaceManager
 		return new TfSpaceDataDbo
 		{
 			Id = model.Id,
+			DataProviderId = model.DataProviderId,
 			Name = model.Name,
 			Position = model.Position,
 			SpaceId = model.SpaceId,
-			FiltersJson = JsonSerializer.Serialize(model.Filters ?? new List<TfFilterBase>())
+			FiltersJson = JsonSerializer.Serialize(model.Filters ?? new List<TfFilterBase>()),
+			ColumnsJson = JsonSerializer.Serialize(model.Columns ?? new List<TfSpaceDataColumn>())
 		};
 	}
 
@@ -325,7 +431,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		public TfSpaceDataValidator(
 			IDboManager dboManager,
-			ITfSpaceManager spaceManager)
+			ITfSpaceManager spaceManager,
+			ITfDataProviderManager providerManager)
 		{
 
 			RuleSet("general", () =>
@@ -349,6 +456,16 @@ public partial class TfSpaceManager : ITfSpaceManager
 					})
 					.WithMessage("There is no existing space for specified space id.");
 
+				RuleFor(spaceData => spaceData.DataProviderId)
+					.NotEmpty()
+					.WithMessage("The data provider is required.");
+
+				RuleFor(spaceData => spaceData.DataProviderId)
+					.Must(providerId =>
+					{
+						return providerManager.GetProvider(providerId).Value != null;
+					})
+					.WithMessage("There is no existing data provider for specified provider id.");
 			});
 
 			RuleSet("create", () =>
@@ -379,7 +496,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 						.WithMessage("There is not existing space data with specified identifier.");
 
 				RuleFor(spaceData => spaceData.SpaceId)
-					.Must( (spaceData,spaceId) =>
+					.Must((spaceData, spaceId) =>
 					{
 						var existingSpaceData = spaceManager.GetSpaceData(spaceData.Id).Value;
 						if (existingSpaceData == null)

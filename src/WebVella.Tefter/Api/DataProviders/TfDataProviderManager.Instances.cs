@@ -363,8 +363,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	private void InitDataProviderSharedColumns(
 		TfDataProvider provider)
 	{
+		List<TfSharedColumn> columns = new List<TfSharedColumn>();
+
 		if (provider.SharedKeys.Count == 0)
+		{
+			provider.SharedColumns = columns.AsReadOnly();
 			return;
+		}
 		
 		var sharedColumnsResult = _sharedColumnManager.GetSharedColumns();
 
@@ -373,7 +378,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 		var sharedColumns = sharedColumnsResult.Value;
 
-		List<TfSharedColumn> columns = new List<TfSharedColumn>();
+	
 
 		foreach (var sharedColumn in sharedColumns )
 		{

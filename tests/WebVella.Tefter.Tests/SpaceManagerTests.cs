@@ -12,6 +12,8 @@ public partial class SpaceManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
+				
+
 				var space1 = new TfSpace
 				{
 					Id = Guid.NewGuid(),
@@ -96,9 +98,25 @@ public partial class SpaceManagerTests : BaseTest
 		{
 			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+				TfDataProviderModel providerModel = new TfDataProviderModel
+				{
+					Id = Guid.NewGuid(),
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(providerModel);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
 				var space = new TfSpace
 				{
 					Id = Guid.NewGuid(),
@@ -114,6 +132,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceData1 = new TfSpaceData
 				{
 					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
 					Name = "data1",
 					SpaceId = space.Id,
 				};
@@ -132,6 +151,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceData2 = new TfSpaceData
 				{
 					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
 					Name = "data2",
 					SpaceId = space.Id,
 				};
@@ -187,9 +207,26 @@ public partial class SpaceManagerTests : BaseTest
 		{
 			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+				TfDataProviderModel providerModel = new TfDataProviderModel
+				{
+					Id = Guid.NewGuid(),
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(providerModel);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+
 				var space = new TfSpace
 				{
 					Id = Guid.NewGuid(),
@@ -215,6 +252,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceData1 = new TfSpaceData
 				{
 					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
 					Name = "data1",
 					SpaceId = space.Id,
 				};
@@ -238,6 +276,116 @@ public partial class SpaceManagerTests : BaseTest
 				((ValidationError)result.Errors[0]).PropertyName.Should().Be("SpaceId");
 				((ValidationError)result.Errors[0]).Reason.Should()
 					.Be("Space cannot be changed for space data.");
+			}
+		}
+	}
+
+	[Fact]
+	public async Task SpaceData_ColumnsManage()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+				TfDataProviderModel providerModel = new TfDataProviderModel
+				{
+					Id = Guid.NewGuid(),
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(providerModel);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.Empty,
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = providerModel.Id,
+					DbName = "textcolona",
+					DbType = DatabaseColumnType.Text,
+					SourceName = "source_column",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//empty id, but internaly we set new id
+				providerManager.CreateDataProviderColumn(column).IsSuccess.Should().BeTrue();
+
+				var provider = providerManager.GetProvider(providerModel.Id).Value;
+
+				TfDataProviderSharedKey sharedKey =
+					new TfDataProviderSharedKey
+					{
+						Id = Guid.NewGuid(),
+						Description = "testing1",
+						DataProviderId = provider.Id,
+						DbName = "testing1",
+						Columns = new() { provider.Columns[0] }
+
+					};
+
+				providerManager.CreateDataProviderSharedKey(sharedKey).IsSuccess.Should().BeTrue();
+
+				provider = providerManager.GetProvider(providerModel.Id).Value;
+				provider.SharedKeys.Count().Should().Be(1);
+
+
+				var space = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+				spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+
+				var spaceData = new TfSpaceData
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
+					Name = "data1",
+					SpaceId = space.Id,
+				};
+
+				var result = spaceManager.CreateSpaceData(spaceData);
+				result.IsSuccess.Should().BeTrue();
+				result.Value.Should().NotBeNull();
+				result.Value.Columns.Count().Should().Be(2);
+
+				result.Value.Columns[0].Selected = true;
+				result.Value.Columns[1].Selected = true;
+				spaceManager.UpdateSpaceData(spaceData);
+
+				spaceData = spaceManager.GetSpaceData(spaceData.Id).Value;
+				result.Value.Columns.Count().Should().Be(2);
+				result.Value.Columns[0].Selected.Should().BeTrue();
+				result.Value.Columns[1].Selected.Should().BeTrue();
+
+				result.Value.Columns[1].Selected = false;
+				spaceManager.UpdateSpaceData(spaceData);
+
+				spaceData = spaceManager.GetSpaceData(spaceData.Id).Value;
+				result.Value.Columns.Count().Should().Be(2);
+				result.Value.Columns[0].Selected.Should().BeTrue();
+				result.Value.Columns[1].Selected.Should().BeFalse();
 			}
 		}
 	}
