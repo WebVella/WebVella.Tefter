@@ -35,7 +35,7 @@
 		<PackageReference Include="Fluxor" Version="6.0.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.0.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.8" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.9.3" />
@@ -45,7 +45,7 @@
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 		
 		<PackageReference Include="Serilog" Version="4.0.1" />
-		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
 		<PackageReference Include="Serilog.Enrichers.Context" Version="4.6.5" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
@@ -57,7 +57,7 @@
 		<PackageReference Include="Serilog.Sinks.Email" Version="4.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="8.0.0" />
-		<PackageReference Include="System.Drawing.Common" Version="8.0.7" />
+		<PackageReference Include="System.Drawing.Common" Version="8.0.8" />
 	</ItemGroup>
 
 	<ItemGroup>

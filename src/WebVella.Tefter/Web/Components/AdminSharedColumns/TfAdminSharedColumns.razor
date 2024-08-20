@@ -2,7 +2,7 @@
 
 <div style="display:flex;justify-content:space-between;margin-bottom:1rem;">
 	<div>
-		<FluentSearch Placeholder="@LOC("shared key...")" ValueChanged="_searchValueChanged" Value="@UC.Search" />
+		<FluentSearch Placeholder="@LOC("column shared key...")" ValueChanged="_searchValueChanged" Value="@UC.Search" />
 	</div>
 	<div>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
@@ -15,11 +15,15 @@
 {
 	<TfLoadingPane />
 }
-else if (UC.SharedColumns is null
-			|| UC.SharedColumns.Count == 0)
+else if (String.IsNullOrWhiteSpace(UC.Search) && (UC.SharedColumns is null || UC.SharedColumns.Count == 0))
 {
 	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No shared columns are created yet")</FluentMessageBar>
+}
+else if (!String.IsNullOrWhiteSpace(UC.Search) && (UC.SharedColumns is null || UC.SharedColumns.Count == 0))
+{
+	<FluentMessageBar Title="@LOC("No columns found")" AllowDismiss="false"
+					  Intent="@MessageIntent.Info">@LOC("No shared columns are found for this search")</FluentMessageBar>
 }
 else
 {

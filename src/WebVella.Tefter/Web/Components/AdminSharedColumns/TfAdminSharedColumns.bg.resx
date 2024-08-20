@@ -120,6 +120,9 @@
   <data name="Are you sure that you need this column deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете тази колона?</value>
   </data>
+  <data name="column shared key..." xml:space="preserve">
+    <value>колона споделен ключ ...</value>
+  </data>
   <data name="Column successfully created!" xml:space="preserve">
     <value>Колоната е успешно създадена!</value>
   </data>
@@ -129,14 +132,17 @@
   <data name="No columns" xml:space="preserve">
     <value>Няма колони</value>
   </data>
+  <data name="No columns found" xml:space="preserve">
+    <value>Няма намерени колони</value>
+  </data>
   <data name="No shared columns are created yet" xml:space="preserve">
     <value>Все още не са създадени споделени колони</value>
   </data>
+  <data name="No shared columns are found for this search" xml:space="preserve">
+    <value>Няма колони, които да отговарят на търсенето</value>
+  </data>
   <data name="Shared column" xml:space="preserve">
     <value>Споделена колона</value>
-  </data>
-  <data name="shared key name ..." xml:space="preserve">
-    <value>споделен ключ име ...</value>
   </data>
   <data name="The column is successfully deleted!" xml:space="preserve">
     <value>Колоната е успешно изтрита!</value>
