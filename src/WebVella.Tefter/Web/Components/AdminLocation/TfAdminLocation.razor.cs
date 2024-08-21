@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components.AdminLocation;
 public partial class TfAdminLocation : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
 	private List<MenuItem> _bcMenu = new();
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)

@@ -31,16 +31,22 @@ global using WebVella.Tefter.Utility;
 global using WebVella.Tefter.UseCases.AppStart;
 global using WebVella.Tefter.UseCases.SharedColumnsAdmin;
 global using WebVella.Tefter.UseCases.DataProviderAdmin;
+global using WebVella.Tefter.UseCases.Dashboard;
+global using WebVella.Tefter.UseCases.FastAccess;
 global using WebVella.Tefter.UseCases.Login;
 global using WebVella.Tefter.UseCases.Models;
 global using WebVella.Tefter.UseCases.StateEffects;
 global using WebVella.Tefter.UseCases.UserAdmin;
+global using WebVella.Tefter.UseCases.Space;
 
 //State
 global using WebVella.Tefter.Web.Store.CultureState;
 global using WebVella.Tefter.Web.Store.DataProviderAdminState;
+global using WebVella.Tefter.Web.Store.DashboardState;
+global using WebVella.Tefter.Web.Store.FastAccessState;
 global using WebVella.Tefter.Web.Store.ScreenState;
 global using WebVella.Tefter.Web.Store.SessionState;
+global using WebVella.Tefter.Web.Store.SpaceState;
 global using WebVella.Tefter.Web.Store.ThemeState;
 global using WebVella.Tefter.Web.Store.UserAdminState;
 global using WebVella.Tefter.Web.Store.UserState;

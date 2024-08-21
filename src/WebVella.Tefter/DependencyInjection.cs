@@ -68,6 +68,9 @@ public static class DependencyInjection
 		services.AddTransient<SharedColumnsAdminUseCase, SharedColumnsAdminUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();
 		services.AddTransient<UserAdminUseCase, UserAdminUseCase>();
+		services.AddTransient<DashboardUseCase, DashboardUseCase>();
+		services.AddTransient<FastAccessUseCase, FastAccessUseCase>();
+		services.AddTransient<SpaceUseCase, SpaceUseCase>();
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();

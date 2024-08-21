@@ -1,7 +1,7 @@
 ﻿@page "/space/{*Path}"
 @inherits TfBasePage
-
-@if (SessionState.Value.Space is null)
+<TfSpaceStateManager/>
+@* @if (SessionState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<FluentMessageBar Title="No space found"
@@ -51,5 +51,5 @@ else
 			<TfSpaceView />
 		</div>
 	</FluentBodyContent>
-}
+} *@
 

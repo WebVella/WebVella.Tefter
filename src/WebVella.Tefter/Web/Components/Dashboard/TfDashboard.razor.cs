@@ -2,6 +2,37 @@
 namespace WebVella.Tefter.Web.Components.Dashboard;
 public partial class TfDashboard : TfBaseComponent
 {
+	[Inject] private DashboardUseCase UC { get; set; }
+	[Inject] protected IState<DashboardState> DashboardState { get; set; }
+
+
+	protected override ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		return base.DisposeAsyncCore(disposing);
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		await UC.Init(this.GetType());
+		ActionSubscriber.SubscribeToAction<DashboardStateChangedAction>(this, On_DashboardStateChangedAction);
+	}
+
+	private void On_DashboardStateChangedAction(DashboardStateChangedAction action)
+	{
+		base.InvokeAsync(async () =>
+		{
+			UC.IsBusy = DashboardState.Value.IsBusy;
+			await InvokeAsync(StateHasChanged);
+		});
+
+	}
+
+
 	void AddInNotificationCenter()
 	{
 		MessageService.ShowMessageBar(options =>

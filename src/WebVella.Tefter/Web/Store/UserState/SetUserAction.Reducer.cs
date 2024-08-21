@@ -11,5 +11,5 @@ public static partial class UserStateReducers
 
 	[ReducerMethod()]
 	public static UserState SetUserReducer(UserState state, SetUserAction action) 
-		=> state with {Loading = false, User = action.User};
+		=> state with {IsBusy = false, User = action.User};
 }

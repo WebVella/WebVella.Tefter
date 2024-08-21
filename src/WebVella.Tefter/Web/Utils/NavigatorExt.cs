@@ -16,7 +16,6 @@ internal static class NavigatorExt
 		else
 			uri = new Uri(url);
 
-		var boz = uri.Segments;
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		var dictIndex = 0;
 		foreach (var item in nodes)

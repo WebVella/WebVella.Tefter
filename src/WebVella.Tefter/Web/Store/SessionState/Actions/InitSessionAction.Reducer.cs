@@ -14,7 +14,7 @@ public static partial class SessionStateReducers
 			Space = action.UserSession.Space,
 			SpaceData = action.UserSession.SpaceData,
 			SpaceView = action.UserSession.SpaceView,
-			IsLoading = false,
+			IsBusy = false,
 			DataHashId = action.UserSession.DataHashId,
 			IsDataLoading = false,
 			SpaceDataDict = action.UserSession.SpaceDataDict,

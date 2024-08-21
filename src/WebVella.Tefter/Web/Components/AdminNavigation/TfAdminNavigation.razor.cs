@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components.AdminNavigation;
 public partial class TfAdminNavigation: TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
 
 	private List<MenuItem> menuItems = new List<MenuItem>();
 

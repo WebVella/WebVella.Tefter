@@ -4,6 +4,6 @@
 public partial record SessionState
 {
 	public Guid UserId { get; init; }
-	public bool IsLoading { get; init; } = true;
+	public bool IsBusy { get; init; } = true;
 
 }
