@@ -1,9 +1,12 @@
 ﻿namespace WebVella.Tefter.UseCases.Dashboard;
 public partial class DashboardUseCase
 {
+
+	internal TucDashboard Dashboard { get; set; } = null;
 	internal Task InitDashboard()
 	{
-		 return Task.CompletedTask;
+		Dashboard = null;
+		return Task.CompletedTask;
 	}
 
 

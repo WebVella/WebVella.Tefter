@@ -1,7 +1,7 @@
 ﻿@inherits FluxorLayout
 
 <TfAppInit>
-	<FluentDesignTheme Mode="@ThemeState.Value.ThemeMode" OfficeColor="@ThemeState.Value.ThemeColor" />
+	<FluentDesignTheme Mode="@ThemeState.Value.ThemeMode" OfficeColor="@SpaceState.Value.SpaceColor" />
 	<FluentLayout Class="@(ScreenStateSidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
 			<TfSidebarToggle />
@@ -13,7 +13,7 @@
 			<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
 				<TfNavigation />
 			</FluentStack>
-			<FluentBodyContent Class="content" style="@($"border-top-color:{ThemeState.Value.ThemeColorString}")">
+			<FluentBodyContent Class="content" style="@($"border-top-color:{SpaceState.Value.SpaceColorString}")">
 				@Body
 			</FluentBodyContent>
 		</FluentStack>

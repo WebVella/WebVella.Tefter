@@ -1,7 +1,13 @@
 ﻿@inherits TfBaseComponent
 
+<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info" Title="@LOC("Not Implemented Yet")">
+	<div>@LOC("This page will present various widgets that will help the user to track easier all changes of intereset")</div>
+</FluentMessageBar>
+
+<h2 style="margin-top:3rem">Debug Info</h2>
 <div>@LOC("Test")</div>
-<div>Solve the problem between admin and dashboarad with localization</div>
 <div>@CultureInfo.CurrentCulture</div>
 <div>@CultureInfo.CurrentUICulture</div>
-<FluentButton OnClick="AddInNotificationCenter">test</FluentButton>
+<div style="margin-top:1rem">
+	<FluentButton Appearance="@Appearance.Accent" OnClick="AddInNotificationCenter">Add Notifcation Test</FluentButton>
+</div>

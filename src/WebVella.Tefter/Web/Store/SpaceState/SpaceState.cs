@@ -4,4 +4,5 @@
 public partial record SpaceState
 {
 	public bool IsBusy { get; init; } = true;
+	public Space Space { get; init; }
 }
