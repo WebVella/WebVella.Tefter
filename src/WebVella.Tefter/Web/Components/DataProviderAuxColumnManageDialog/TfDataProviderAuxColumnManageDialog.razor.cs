@@ -35,7 +35,7 @@ public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, 
 		}
 		_title = _isCreate ? LOC("Create column") : LOC("Manage column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
+		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 
 		base.InitForm(UC.AuxColumnForm);
 

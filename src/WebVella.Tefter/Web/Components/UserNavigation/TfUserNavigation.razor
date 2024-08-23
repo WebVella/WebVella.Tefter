@@ -6,7 +6,7 @@
 			@if (_isAdmin)
 			{
 				<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminExitClick" Title="@LOC("Exit Admin")">
-					<FluentIcon Value="@(new Icons.Regular.Size20.ArrowExit())" Color="@Color.Neutral" Slot="start"/>
+					<FluentIcon Value="@TfConstants.GetIcon("ArrowExit")" Color="@Color.Neutral" Slot="start" />
 					@LOC("Exit Admin")
 				</FluentButton>
 				<TfLanguageSwitch />
@@ -17,10 +17,10 @@
 				<TfLanguageSwitch/>
 				<TfNotificationCenter/>
 				<FluentButton Appearance="@Appearance.Stealth" OnClick="_adminClick" Title="Administration">
-					<FluentIcon Value="@(new Icons.Regular.Size20.AppFolder())" Color="@Color.Neutral" />
+					<FluentIcon Value="@TfConstants.GetIcon("AppFolder")" Color="@Color.Neutral" />
 				</FluentButton>
 				<FluentButton Appearance="@Appearance.Stealth" OnClick="_helpClick" Title="Help">
-					<FluentIcon Value="@(new Icons.Regular.Size20.QuestionCircle())" Color="@Color.Neutral" />
+					<FluentIcon Value="@TfConstants.GetIcon("QuestionCircle")" Color="@Color.Neutral" />
 				</FluentButton>
 
 			}
@@ -33,21 +33,21 @@
 			<FluentMenuItem Disabled="true">
 				@UserState.Value.User.FirstName @UserState.Value.User.LastName
 				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Person())" Slot="start" />
+					<FluentIcon Value="@TfConstants.GetIcon("Person")" Slot="start" />
 				</span>
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
 			<FluentMenuItem OnClick="_setTheme">
 				@LOC("Change Theme")
 				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Color())" Slot="start" />
+					<FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start" />
 				</span>
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
 			<FluentMenuItem OnClick="_logout">
 				@LOC("Logout")
 				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.SignOut())" Slot="start" />
+					<FluentIcon Value="@TfConstants.GetIcon("SignOut")" Slot="start" />
 				</span>
 			</FluentMenuItem>
 		</FluentMenu>

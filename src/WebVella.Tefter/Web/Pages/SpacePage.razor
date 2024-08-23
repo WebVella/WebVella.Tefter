@@ -2,9 +2,10 @@
 @layout SpaceLayout
 @inherits TfBasePage
 <TfSpaceStateManager/>
-@* @if (SessionState.Value.Space is null)
+@if (SessionState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
 		<FluentMessageBar Title="No space found"
 						  Style="border: 1px solid var(--neutral-base-color)"
 						  Intent="MessageIntent.Info"
@@ -12,11 +13,13 @@
 						  AllowDismiss="false">
 			No spaces found yet notification
 		</FluentMessageBar>
+		</div>
 	</FluentBodyContent>
 }
 else if (SessionState.Value.SpaceData is null)
 {
 	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
 		<FluentMessageBar Title="No space data found"
 						  Style="border: 1px solid var(--neutral-base-color)"
 						  Intent="MessageIntent.Info"
@@ -24,11 +27,13 @@ else if (SessionState.Value.SpaceData is null)
 						  AllowDismiss="false">
 			No space data found yet notification
 		</FluentMessageBar>
+		</div>
 	</FluentBodyContent>
 }
 else if (SessionState.Value.SpaceView is null)
 {
 	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
 		<FluentMessageBar Title="No space data found"
 						  Style="border: 1px solid var(--neutral-base-color)"
 						  Intent="MessageIntent.Info"
@@ -36,6 +41,7 @@ else if (SessionState.Value.SpaceView is null)
 						  AllowDismiss="false">
 			No space data found yet notification
 		</FluentMessageBar>
+		</div>
 	</FluentBodyContent>
 }
 else
@@ -52,5 +58,5 @@ else
 			<TfSpaceView />
 		</div>
 	</FluentBodyContent>
-} *@
+}
 

@@ -4,15 +4,15 @@
 	<div class="content-toolbar-left">
 		<FluentSearch />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@(new Icons.Regular.Size20.Filter())" Slot="start" />
+			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@(new Icons.Regular.Size20.ArrowSort())" Slot="start" />
+			<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@(new Icons.Regular.Size20.TableSettings())"/>
+			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" />
 		</FluentButton>
 	</div>
 	<div class="content-toolbar-right">
@@ -30,14 +30,14 @@
 			}
 			else
 			{
-				<FluentIcon Value="@(new Icons.Regular.Size20.Connector())" Slot="start" />
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" />
 			}
 		</FluentButton>
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@(new Icons.Regular.Size20.ShareAndroid())" />
+			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" />
 		</FluentButton>
 		<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@(new Icons.Regular.Size20.Options())" />
+			<FluentIcon Value="@TfConstants.GetIcon("Options")" />
 		</FluentButton>
 	</div>
 </div>

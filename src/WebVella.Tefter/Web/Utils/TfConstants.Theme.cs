@@ -2,11 +2,13 @@
 using SystemColor = System.Drawing.Color;
 public partial class TfConstants
 {
-	public static DesignThemeModes DefaultThemeMode { get; set; } = DesignThemeModes.System;
-	public static OfficeColor DefaultThemeColor { get; set; } = OfficeColor.Excel;
+	public static DesignThemeModes DefaultThemeMode { get; } = DesignThemeModes.System;
+	public static OfficeColor DefaultThemeColor { get; } = OfficeColor.Excel;
 
-	public static DesignThemeModes AdminThemeMode { get; set; } = DesignThemeModes.System;
-	public static OfficeColor AdminThemeColor { get; set; } = OfficeColor.Office;
+	public static DesignThemeModes AdminThemeMode { get; } = DesignThemeModes.System;
+	public static OfficeColor AdminThemeColor { get; } = OfficeColor.Office;
+	public static IconSize IconSize { get; } = IconSize.Size20;
+	public static IconVariant IconVariant { get; } = IconVariant.Regular;
 
 	public static string AdminColor { get => AdminThemeColor.ToAttributeValue(); }
 

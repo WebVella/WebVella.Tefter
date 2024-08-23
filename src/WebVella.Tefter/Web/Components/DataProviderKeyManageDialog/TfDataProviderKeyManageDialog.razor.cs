@@ -33,7 +33,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		}
 		_title = _isCreate ? LOC("Create key") : LOC("Manage key");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
+		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 
 		base.InitForm(UC.KeyForm);
 

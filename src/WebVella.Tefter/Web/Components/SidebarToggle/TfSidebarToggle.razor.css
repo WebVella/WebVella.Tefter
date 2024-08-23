@@ -9,3 +9,11 @@
 ::deep .stealth:hover::part(control) {
 	background: var(--neutral-fill-stealth-hover);
 }
+
+::deep .stealth:hover::part(control) {
+	background: var(--neutral-fill-stealth-hover);
+}
+
+::deep .stealth svg{
+	fill:var(--neutral-base-color) !important;
+}

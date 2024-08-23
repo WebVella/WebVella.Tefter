@@ -6,13 +6,13 @@
 			<FluentToolbar Class="modebar">
 				<FluentButton Class="btn tree active" Title="show tree" BackgroundColor="@SessionState.Value.SpaceColor"
 							  Style="@($"border-color:{SessionState.Value.SpaceBorderColor} !important")">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Branch())" />
+					<FluentIcon Value="@TfConstants.GetIcon("Branch")" />
 				</FluentButton>
 				<FluentButton Class="btn bookmark" Title="show bookmarked" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Star())" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
 				</FluentButton>
 				<FluentButton Class="btn save" Title="show saved" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@(new Icons.Regular.Size20.Save())" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+					<FluentIcon Value="@TfConstants.SaveIcon" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
 				</FluentButton>
 			</FluentToolbar>
 		</div>
@@ -22,50 +22,50 @@
 		<div class="sidebar-toolbar-actions">
 			<FluentButton Id="space-settings" Title="space actions"
 						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
-				<FluentIcon Value="@(new Icons.Regular.Size20.Settings())" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
 			</FluentButton>
 			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
 				<FluentMenuItem OnClick="onDetailsClick">
 					Space Details
 					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.Info())" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("Info")" Slot="start" />
 					</span>
 				</FluentMenuItem>
 				<FluentMenuItem OnClick="onRenameClick">
 					Rename Space
 					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.ClipboardPaste())" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("ClipboardPaste")" Slot="start" />
 					</span>
 				</FluentMenuItem>
 				<FluentMenuItem OnClick="onRemoveClick">
 					Delete Space
 					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Slot="start" />
+						<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" />
 					</span>
 				</FluentMenuItem>
 				<FluentMenuItem OnClick="onRemoveClick">
 					Manage Access
 					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.KeyMultiple())" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("KeyMultiple")" Slot="start" />
 					</span>
 				</FluentMenuItem>
 				<FluentMenuItem OnClick="onRemoveClick">
 					Invite User
 					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.PersonAdd())" Slot="start" />
+						<FluentIcon Value="@TfConstants.GetIcon("PersonAdd")" Slot="start" />
 					</span>
 				</FluentMenuItem>
 				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onAddClick">
 					Add Space
 					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+						<FluentIcon Value="@TfConstants.AddIcon" Slot="start" />
 					</span>
 				</FluentMenuItem>
 				<FluentMenuItem OnClick="onAddClick">
 					Add Space Data
 					<span slot="start">
-						<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Slot="start" />
+						<FluentIcon Value="@TfConstants.AddIcon" Slot="start" />
 					</span>
 				</FluentMenuItem>
 

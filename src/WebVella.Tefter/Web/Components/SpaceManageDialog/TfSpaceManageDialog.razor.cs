@@ -1,12 +1,8 @@
-﻿using WebVella.Tefter.UseCases.SharedColumnsAdmin;
-
-namespace WebVella.Tefter.Web.Components.SharedColumnManageDialog;
-public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSharedColumn>
+﻿namespace WebVella.Tefter.Web.Components.SpaceManageDialog;
+public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpace>
 {
-	[Inject]
-	private SharedColumnsAdminUseCase UC { get; set; }
-	[Parameter] public TucSharedColumn Content { get; set; }
-
+	[Inject] private SpaceUseCase UC { get; set; }
+	[Parameter] public TucSpace Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private string _error = string.Empty;
@@ -14,21 +10,18 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-
-	private DynamicComponent typeSettingsComponent;
 	private bool _isCreate = false;
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		base.InitForm(UC.SharedColumnForm);
+		base.InitForm(UC.SpaceManageForm);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-		_title = _isCreate ? LOC("Create shared column") : LOC("Manage shared column");
+		_title = _isCreate ? LOC("Create space") : LOC("Manage space");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
-
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -38,30 +31,24 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 		{
 			if (_isCreate)
 			{
+				UC.SpaceManageForm = UC.SpaceManageForm with { Id = Guid.NewGuid() };
 			}
 			else
 			{
-				var dbName = Content.DbName;
-				if(dbName.StartsWith("sk_")){ 
-					dbName = dbName.Substring(3);
-				}
 
-				UC.SharedColumnForm = UC.SharedColumnForm with
+				UC.SpaceManageForm = new TucSpace()
 				{
 					Id = Content.Id,
-					DbName = dbName,
-					DbType = Content.DbType,
-					AddonId = Content.AddonId,
-					IncludeInTableSearch = Content.IncludeInTableSearch,
-					SharedKeyDbName = Content.SharedKeyDbName,
+					Name = Content.Name,
+					Position = Content.Position,
+					IsPrivate = Content.IsPrivate,
+					Color = Content.Color,
+					IconString = Content.IconString,
 				};
 			}
-			base.InitForm(UC.SharedColumnForm);
-			await UC.LoadDataTypeInfoList();
-			UC.IsBusy = false;
+			base.InitForm(UC.SpaceManageForm);
 			await InvokeAsync(StateHasChanged);
 		}
-
 	}
 
 	private async Task _save()
@@ -75,27 +62,25 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 
 			MessageStore.Clear();
 
-			//Check form
-			var isValid = EditContext.Validate();
-			if (!isValid) return;
+			if (!EditContext.Validate()) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<TucSharedColumn> submitResult;
-			var submit = UC.SharedColumnForm with { DbName = "sk_" + UC.SharedColumnForm.DbName};
+
+			var result = new Result<TucSpace>();
 			if (_isCreate)
 			{
-				submitResult = UC.CreateSharedColumn(submit);
+				result = UC.CreateSpaceWithForm(UC.SpaceManageForm);
 			}
 			else
 			{
-				submitResult = UC.UpdateSharedColumn(submit);
+				result = UC.UpdateSpaceWithForm(UC.SpaceManageForm);
 			}
 
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
+			ProcessFormSubmitResponse(result);
+			if (result.IsSuccess)
 			{
-				await Dialog.CloseAsync(submitResult.Value);
+				await Dialog.CloseAsync(result.Value);
 			}
 		}
 		catch (Exception ex)
@@ -114,4 +99,3 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 	}
 
 }
-

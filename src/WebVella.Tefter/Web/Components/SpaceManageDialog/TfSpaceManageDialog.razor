@@ -1,0 +1,86 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceManageForm.Name
+									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => UC.SpaceManageForm.Name)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Accessibility")" />
+					<FluentCheckbox @bind-Value=UC.SpaceManageForm.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;" />
+					<FluentValidationMessage For="@(() => UC.SpaceManageForm.IsPrivate)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Color")" />
+					<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
+						<FluentIcon Value="@TfConstants.RectangleIcon"
+									Color="Color.Custom" Style="height:100%;"
+									CustomColor="@(UC.SpaceManageForm.Color.ToAttributeValue() != "default" ? UC.SpaceManageForm.Color.ToAttributeValue() : "#036ac4" )" />
+						<FluentSelect @bind-SelectedOption="@UC.SpaceManageForm.Color" TOption="OfficeColor"
+									  Items="@(Enum.GetValues<OfficeColor>())"
+									  Style="width:100%;"
+									  OptionText="@(p => p.ToString())">
+							<OptionTemplate Context="color">
+								<FluentStack>
+									<FluentIcon Value="@TfConstants.RectangleIcon"
+												Color="Color.Custom"
+												CustomColor="@(color.ToAttributeValue() != "default" ? color.ToAttributeValue() : "#036ac4" )" />
+									<FluentLabel>@color</FluentLabel>
+								</FluentStack>
+							</OptionTemplate>
+						</FluentSelect>
+					</FluentStack>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Icon")" />
+					<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
+						@if (UC.SpaceManageForm.Icon is not null)
+						{
+							<FluentIcon Value="@Icons.GetInstance(UC.SpaceManageForm.Icon)" />
+						}
+						<FluentSelect @bind-SelectedOption="@UC.SpaceManageForm.IconString" TOption="string"
+									  Items="@UC.AllIcons"
+									  Style="width:100%;">
+							<OptionTemplate Context="icon">
+								<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+									<FluentIcon Value="@TfConstants.GetIcon(icon)" />
+									<FluentLabel>@icon</FluentLabel>
+								</FluentStack>
+							</OptionTemplate>
+						</FluentSelect>
+					</FluentStack>
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

@@ -22,12 +22,12 @@ public record SpaceView
 		{
 			switch (Type)
 			{
-				case SpaceViewType.Report: return new Icons.Regular.Size20.Table();
-				case SpaceViewType.Dashboard: return new Icons.Regular.Size20.Board();
-				case SpaceViewType.Chart: return new Icons.Regular.Size20.ChartMultiple();
-				case SpaceViewType.Form: return new Icons.Regular.Size20.Form();
+				case SpaceViewType.Report: return TfConstants.GetIcon("Table");
+				case SpaceViewType.Dashboard: return TfConstants.GetIcon("Board");
+				case SpaceViewType.Chart: return TfConstants.GetIcon("ChartMultiple");
+				case SpaceViewType.Form: return TfConstants.GetIcon("Form");
 
-				default: return new Icons.Regular.Size20.Table();
+				default: return TfConstants.GetIcon("Table");
 			}
 		}
 	}
@@ -35,8 +35,8 @@ public record SpaceView
 	{
 		get
 		{
-			if (IsBookmarked) return new Icons.Filled.Size20.Star();
-			return new Icons.Regular.Size20.Star();
+			if (IsBookmarked) return TfConstants.BookmarkONIcon;
+			return TfConstants.BookmarkOFFIcon;
 		}
 	}
 

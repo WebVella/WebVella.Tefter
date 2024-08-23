@@ -56,7 +56,7 @@
 											Items="@UC.KeyForm.Columns" Context="item">
 							<ItemTemplate>
 								<div class="sortable-grab">
-									<FluentIcon Value="@(new Icons.Regular.Size20.ArrowMove())" />
+									<FluentIcon Value="@TfConstants.GetIcon("ArrowMove")" />
 								</div>
 								<div class="sortable-item-content" style="flex-grow: 1;">@item.DbName</div>
 							</ItemTemplate>
@@ -73,7 +73,7 @@
 											Items="@_providerColumns" Context="item">
 							<ItemTemplate>
 								<div class="sortable-grab">
-									<FluentIcon Value="@(new Icons.Regular.Size20.ArrowMove())" />
+									<FluentIcon Value="@TfConstants.GetIcon("ArrowMove")" />
 								</div>
 								<div class="sortable-item-content" style="flex-grow: 1;">@item.DbName</div>
 							</ItemTemplate>

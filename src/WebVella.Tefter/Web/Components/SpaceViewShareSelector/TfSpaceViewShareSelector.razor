@@ -6,7 +6,7 @@
 			<FluentMenuItem Disabled="@(_selectedItems.Count == 0)">
 				Export Selection
 				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+					<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" />
 				</span>
 				@if (_selectedItems.Count > 0)
 				{
@@ -18,7 +18,7 @@
 			<FluentMenuItem>
 				Export All data
 				<span slot="start">
-					<FluentIcon Value="@(new Icons.Regular.Size20.CloudArrowDown())" Slot="start" />
+					<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" />
 				</span>
 			</FluentMenuItem>
 		</FluentMenu>

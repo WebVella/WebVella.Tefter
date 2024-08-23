@@ -56,7 +56,7 @@
 		<FluentGridItem xs="6">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.Settings?.ThemeColor.ToString()"
 							 ReadOnly="true" Label="@LOC("Theme Color")" Style="width:100%">
-				<FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())"
+				<FluentIcon Value="@TfConstants.RectangleIcon"
 							Color="Color.Custom" Slot="start"
 							CustomColor="@(UserAdminState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() != "default" ? UserAdminState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
 			</FluentTextField>

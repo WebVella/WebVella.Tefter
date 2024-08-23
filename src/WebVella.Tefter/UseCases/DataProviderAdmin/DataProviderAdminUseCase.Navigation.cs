@@ -57,7 +57,7 @@ public partial class DataProviderAdminUseCase
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
 				Data = new TucDataProvider(item),
-				Icon = new Icons.Regular.Size20.Connector(),
+				Icon = TfConstants.AdminDataProvidersIcon,
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = item.Name,
@@ -91,7 +91,7 @@ public partial class DataProviderAdminUseCase
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(provider.Id),
 				Data = provider,
-				Icon = new Icons.Regular.Size20.Connector(),
+				Icon = TfConstants.AdminDataProvidersIcon,
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = provider.Name

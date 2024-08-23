@@ -85,7 +85,7 @@
 								  OptionText="@(p => p.ToString())" Label="@LOC("Theme Color")" Context="option">
 						<OptionTemplate>
 							<FluentStack>
-								<FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())"
+								<FluentIcon Value="@TfConstants.RectangleIcon"
 											Color="Color.Custom"
 											CustomColor="@(option.ToAttributeValue() != "default" ? option.ToAttributeValue() : "#036ac4" )" />
 								<FluentLabel>@option</FluentLabel>

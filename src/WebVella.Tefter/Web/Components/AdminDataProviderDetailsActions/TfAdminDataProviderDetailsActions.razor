@@ -5,11 +5,11 @@
 	<FluentStack>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
 			@LOC("Delete")
-			<FluentIcon Value="@(new Icons.Regular.Size20.Delete())" Color="@Color.Error" Slot="start" />
+			<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
 		</FluentButton>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_editProvider">
 			@LOC("Edit")
-			<FluentIcon Value="@(new Icons.Regular.Size20.Edit())" Color="@Color.Accent" Slot="start" />
+			<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
 		</FluentButton>
 	</FluentStack>
 }
@@ -17,7 +17,7 @@ else if (UC.ActionsMenu == "schema")
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 		@LOC("Add Column")
-		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+		<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }
 else if (UC.ActionsMenu == "aux")
@@ -27,6 +27,6 @@ else if (UC.ActionsMenu == "keys")
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
 		@LOC("Shared key")
-		<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+		<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }

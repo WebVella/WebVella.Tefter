@@ -6,28 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="Core\Assets\AutoIncrementIcon.png" />
-	  <None Remove="Core\Assets\BooleanIcon.png" />
-	  <None Remove="Core\Assets\DateIcon.png" />
-	  <None Remove="Core\Assets\DateTimeIcon.png" />
-	  <None Remove="Core\Assets\GuidIcon.png" />
-	  <None Remove="Core\Assets\Icon.png" />
-	  <None Remove="Core\Assets\NumberIcon.png" />
-	  <None Remove="Core\Assets\TextIcon.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="Core\Assets\AutoIncrementIcon.png" />
-	  <EmbeddedResource Include="Core\Assets\BooleanIcon.png" />
-	  <EmbeddedResource Include="Core\Assets\DateIcon.png" />
-	  <EmbeddedResource Include="Core\Assets\DateTimeIcon.png" />
-	  <EmbeddedResource Include="Core\Assets\GuidIcon.png" />
-	  <EmbeddedResource Include="Core\Assets\Icon.png" />
-	  <EmbeddedResource Include="Core\Assets\NumberIcon.png" />
-	  <EmbeddedResource Include="Core\Assets\TextIcon.png" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="FluentResults" Version="3.16.0" />
 		<PackageReference Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -64,48 +42,5 @@
 	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="Web\Components\AdminDataProviderKeys\TfAdminDataProviderKeys.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Web\Pages\AdminSharedColumnsPage.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Web\Pages\PageNotFound.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="Web\Components\AdminSharedColumns\TfAdminSharedColumns.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\AdminDataProviderSynchronization\TfAdminDataProviderSynchronization.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\AdminDataProviderData\TfAdminDataProviderData.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\AdminDataProviderKeys\TfAdminDataProviderKeys.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\AdminDataProviderAux\AdminDataProviderAux.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\DataProviderAuxColumnManageDialog\TfDataProviderAuxColumnManageDialog.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\SharedColumnManageDialog\TfSharedColumnManageDialog.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\DataProviderSyncLogDialog\TfDataProviderSyncLogDialog.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\DataProviderKeyManageDialog\TfDataProviderKeyManageDialog.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Pager\TfPager.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	</ItemGroup>
+	
 </Project>

@@ -6,12 +6,12 @@
 		border-radius: 50%;
 		width: 42px;
 		height: 42px;
-		min-height:unset !important;
-		min-width:unset !important;
+		min-height: unset !important;
+		min-width: unset !important;
 		display: inline-flex !important;
 		justify-content: center !important;
 		align-items: center !important;
-		flex:0 0 auto !important;
+		flex: 0 0 auto !important;
 	}
 
 		::deep.spacenav-nav .fluent-nav-item .positioning-region::before {
@@ -22,8 +22,8 @@
 		display: flex;
 		justify-content: center !important;
 		align-items: center !important;
-		margin-inline-start:unset !important;
-		width:auto !important;
+		margin-inline-start: unset !important;
+		width: auto !important;
 	}
 
 	::deep.spacenav-nav .fluent-nav-item .fluent-nav-icon {
@@ -31,16 +31,16 @@
 		height: 23px !important;
 		min-width: unset !important;
 		min-height: unset !important;
-
 	}
+
 	::deep.spacenav-nav .fluent-nav-item .fluent-nav-text {
-		display:none;
+		display: none;
 	}
-		
 
-		::deep.spacenav-nav .nav-divider {
-			margin: 1rem 0;
-		}
+
+::deep.spacenav-nav .nav-divider {
+	margin: 1rem 0;
+}
 
 ::deep.spacenav-nav.sidebar-collapsed .fluent-nav-item .fluent-nav-icon {
 	width: 16px !important;
@@ -56,3 +56,21 @@
 		left: -10px;
 		width: 2px;
 	}
+
+::deep.spacenav-nav .fluent-nav-item.accent a .positioning-region {
+	background-color: var(--accent-fill-rest);
+}
+
+	::deep.spacenav-nav .fluent-nav-item.accent a .positioning-region svg {
+		fill: var(--foreground-on-accent-rest) !important;
+	}
+
+/*Fix for onclick click zone to small bug*/
+::deep.spacenav-nav .fluent-nav-item.accent .fluent-nav-link {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	justify-content: center;
+}

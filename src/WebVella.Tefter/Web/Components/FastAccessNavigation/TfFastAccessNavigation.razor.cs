@@ -60,7 +60,7 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 		var menu = new MenuItem
 		{
 			Id = "bookmarks",
-			Icon = new Icons.Regular.Size20.Star(),
+			Icon = TfConstants.BookmarkOFFIcon,
 			Level = 0,
 			Match = NavLinkMatch.Prefix,
 			Title = "Bookmarks",
@@ -74,7 +74,7 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 		var menu2 = new MenuItem
 		{
 			Id = "saved",
-			Icon = new Icons.Regular.Size20.Save(),
+			Icon = TfConstants.SaveIcon,
 			Level = 0,
 			Match = NavLinkMatch.Prefix,
 			Title = "Saved Views",

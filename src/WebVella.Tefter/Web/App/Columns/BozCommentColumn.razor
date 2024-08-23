@@ -4,7 +4,7 @@
 <div>
 	<a href="#" @onclick=OpenPanelRightAsync @onclick:preventDefault class="tf-comment-column-component">
 		<span class="tf-comment-column-component__icon">
-			<FluentIcon Value="@(new Icons.Regular.Size20.Comment())"></FluentIcon>
+			<FluentIcon Value="@TfConstants.GetIcon("Comment")"></FluentIcon>
 		</span>
 		<span class="tf-comment-column-component__value">@_value</span>
 	</a>

@@ -7,7 +7,7 @@
 	<div>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 			@LOC("Shared column")
-			<FluentIcon Value="@(new Icons.Regular.Size20.Add())" Color="@Color.Accent" Slot="start" />
+			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 		</FluentButton>
 	</div>
 </div>
@@ -46,11 +46,11 @@ else
 					<tr @key=context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">
 							<div>
-								<FluentButton Appearance="@Appearance.Outline" IconStart="@(new Icons.Regular.Size20.Edit())"
+								<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
 											  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
 								<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
 											  OnClick="@(() => _deleteColumn(context))">
-									<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.Delete())" />
+									<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
 								</FluentButton>
 							</div>
 						</td>

@@ -1,9 +1,9 @@
 ﻿namespace WebVella.Tefter.Web.Components.SpaceView;
 public partial class TfSpaceView : TfBaseComponent
 {
-	private Icon _iconUnselected = new Icons.Regular.Size20.CheckboxUnchecked().WithColor(Color.FillInverse);
-	private Icon _iconSelected = new Icons.Filled.Size20.CheckboxChecked();
-	private Icon _iconSelectedIndeterminete = new Icons.Filled.Size20.CheckboxIndeterminate();
+	private Icon _iconUnselected = TfConstants.GetIcon("CheckboxUnchecked").WithColor(Color.FillInverse);
+	private Icon _iconSelected = TfConstants.GetIcon("CheckboxChecked");
+	private Icon _iconSelectedIndeterminete = TfConstants.GetIcon("CheckboxIndeterminate");
 
 	private List<DemoDataRow> _selectedItems = new();
 

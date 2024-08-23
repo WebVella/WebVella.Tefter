@@ -26,10 +26,10 @@ else
 					<tr @key=context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">
 							<div>
-								<FluentButton Appearance="@Appearance.Outline" IconStart="@(new Icons.Regular.Size20.Edit())" 
+								<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" 
 									Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))"/>
 								<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
-									<FluentIcon Color="@Color.Error" Value="@(new Icons.Regular.Size20.Delete())" />
+									<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
 								</FluentButton>
 							</div>
 						</td>

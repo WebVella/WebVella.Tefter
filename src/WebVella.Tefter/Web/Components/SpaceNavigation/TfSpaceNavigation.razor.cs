@@ -60,6 +60,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
+
 		if (SessionState.Value.Space is not null)
 		{
 			foreach (var item in SessionState.Value.Space.Data)
@@ -73,7 +74,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 					var viewMenu = new MenuItem
 					{
 						Id = RenderUtils.ConvertGuidToHtmlElementId(view.Id),
-						Icon = new Icons.Regular.Size20.Grid(),
+						Icon = TfConstants.SpaceViewIcon,
 						Match = NavLinkMatch.Prefix,
 						Level = 1,
 						Title = view.Name,
@@ -97,7 +98,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 				var dataMenu = new MenuItem
 				{
 					Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
-					Icon = new Icons.Regular.Size20.Database(),
+					Icon = TfConstants.SpaceDataIcon,
 					Level = 0,
 					Match = NavLinkMatch.Prefix,
 					Title = item.Name,

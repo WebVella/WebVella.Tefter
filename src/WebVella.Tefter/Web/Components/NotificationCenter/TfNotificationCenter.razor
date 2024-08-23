@@ -1,7 +1,7 @@
 ﻿@inherits TfBaseComponent
 @code {
 	private RenderFragment NotificationIcon() =>
-        @<FluentIcon Value="@(new Icons.Regular.Size20.Alert())" Color="Color.Neutral" Title="Notification center" />;
+        @<FluentIcon Value="@TfConstants.GetIcon("Alert")" Color="Color.Neutral" Title="Notification center" />;
 }
 <FluentButton BackgroundColor="var(--neutral-layer-4)" OnClick="OpenNotificationCenterAsync"
 			  Title="Notification center" Appearance="Appearance.Stealth">

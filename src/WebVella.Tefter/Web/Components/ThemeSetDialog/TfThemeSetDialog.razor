@@ -3,7 +3,7 @@
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
     <FluentStack VerticalAlignment="VerticalAlignment.Center">
-        <FluentIcon Value="@(new Icons.Regular.Size24.WindowApps())" />
+        <FluentIcon Value="@TfConstants.GetIcon("WindowApps")" />
         <FluentLabel Typo="Typography.PaneHeader">
             Theme Configuration
         </FluentLabel>
@@ -27,7 +27,7 @@
                       OptionText="@(p => p.ToString())" Label="Theme Color">
             <OptionTemplate>
                 <FluentStack>
-                    <FluentIcon Value="@(new Icons.Filled.Size20.RectangleLandscape())"
+                    <FluentIcon Value="@TfConstants.RectangleIcon"
                                 Color="Color.Custom"
                                 CustomColor="@(@context.ToAttributeValue() != "default" ? context.ToAttributeValue() : "#036ac4" )"/>
                     <FluentLabel>@context</FluentLabel>

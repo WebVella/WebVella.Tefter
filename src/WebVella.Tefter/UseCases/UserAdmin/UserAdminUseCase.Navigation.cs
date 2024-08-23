@@ -49,14 +49,14 @@ public partial class UserAdminUseCase
 		{
 			menuPathSuffix = $"/{urlData.SegmentsByIndexDict[3]}";
 		}
-
+		var userIcon = TfConstants.GetIcon("Person");
 		foreach (var item in users)
 		{
 			var menu = new TucMenuItem
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
 				Data = new TucUser(item),
-				Icon = new Icons.Regular.Size20.Person(),
+				Icon = userIcon,
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = String.Join(" ", new List<string> { item.FirstName, item.LastName }),
@@ -86,13 +86,11 @@ public partial class UserAdminUseCase
 		}
 		else
 		{
-
-
 			var menu = new TucMenuItem
 			{
 				Id = RenderUtils.ConvertGuidToHtmlElementId(user.Id),
 				Data = user,
-				Icon = new Icons.Regular.Size20.Person(),
+				Icon = TfConstants.GetIcon("Person"),
 				Level = 0,
 				Match = NavLinkMatch.Prefix,
 				Title = String.Join(" ", new List<string> { user.FirstName, user.LastName })

@@ -25,7 +25,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create data provider") : LOC("Manage data provider");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
+		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 
 	}
 
