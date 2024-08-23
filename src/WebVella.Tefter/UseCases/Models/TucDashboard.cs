@@ -2,7 +2,7 @@
 
 public record TucDashboard
 {
-	public string Test { get; init; }
+	public bool Test { get; init; } = false;
 
 
 }

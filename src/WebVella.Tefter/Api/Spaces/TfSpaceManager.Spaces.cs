@@ -3,6 +3,7 @@
 public partial interface ITfSpaceManager
 {
 	public Result<List<TfSpace>> GetSpacesList();
+	public Result<List<TfSpace>> GetSpacesListForUser(Guid userId);
 
 	public Result<TfSpace> GetSpace(
 		Guid id);
@@ -43,6 +44,14 @@ public partial class TfSpaceManager : ITfSpaceManager
 			return Result.Fail(new Error("Failed to get list of spaces").CausedBy(ex));
 		}
 	}
+
+	/// <summary>
+	/// This is a placeholder method. In the future there will be private spaces with limitted access
+	/// and the user will not be able to access all of them, so spaces from the UI should be get with the userId
+	/// </summary>
+	/// <param name="userId"></param>
+	/// <returns></returns>
+	public Result<List<TfSpace>> GetSpacesListForUser(Guid userId) => GetSpacesList();
 
 	public Result<TfSpace> GetSpace(
 		Guid id)

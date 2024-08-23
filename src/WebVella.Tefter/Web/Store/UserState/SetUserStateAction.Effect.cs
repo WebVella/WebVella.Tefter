@@ -3,7 +3,7 @@
 public partial class UserStateEffects
 {
 	[EffectMethod]
-	public Task HandleInitUserStateAction(InitUserStateAction action, IDispatcher dispatcher)
+	public Task HandleSetUserStateAction(SetUserStateAction action, IDispatcher dispatcher)
 	{
 		dispatcher.Dispatch(new SetUserActionResult());
 		return Task.CompletedTask;

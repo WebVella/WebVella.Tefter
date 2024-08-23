@@ -16,5 +16,8 @@ internal partial class AppStartUseCase
 		var tfUser = ((TfIdentity)user.Identity).User;
 		if(tfUser is null) return;
 		User = new TucUser(tfUser);	
+
+		UserSpaces = _spaceManager.GetSpacesListForUser(User.Id).Value.Select(s=> new TucSpace(s)).OrderBy(x=> x.Position).ToList();
 	}
+
 }

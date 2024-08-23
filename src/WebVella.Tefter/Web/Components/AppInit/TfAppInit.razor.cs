@@ -29,8 +29,9 @@ public partial class TfAppInit : TfBaseComponent
 			ActionSubscriber.SubscribeToAction<SetSidebarActionResult>(this, initSidebarStateResult);
 
 			//Setup states
-			Dispatcher.Dispatch(new InitUserStateAction(
-				user:UC.User
+			Dispatcher.Dispatch(new SetUserStateAction(
+				user:UC.User,
+				userSpaces:UC.UserSpaces
 			));
 			Dispatcher.Dispatch(new InitCultureStateAction(
 				culture: UC.CultureOption
