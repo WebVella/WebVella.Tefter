@@ -3,9 +3,9 @@
 public partial class SpaceStateEffects
 {
 	[EffectMethod]
-	public Task HandleSetSpaceAction(SetSpaceAction action, IDispatcher dispatcher)
+	public Task HandleSetSpaceAction(SetSpaceStateAction action, IDispatcher dispatcher)
 	{
-		dispatcher.Dispatch(new SpaceChangedAction());
+		dispatcher.Dispatch(new SpaceStateChangedAction());
 		return Task.CompletedTask;
 	}
 

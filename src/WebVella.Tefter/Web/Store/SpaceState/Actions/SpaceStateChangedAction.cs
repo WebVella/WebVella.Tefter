@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Store.SpaceState;
 
-public record SpaceChangedAction
+public record SpaceStateChangedAction
 {
 
 }

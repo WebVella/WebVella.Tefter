@@ -27,9 +27,25 @@ public partial class SpaceUseCase
 
 			if (serviceResult.Value is not null)
 			{
-				_dispatcher.Dispatch(new SetSpaceAction(
+				TucSpace space = new TucSpace(serviceResult.Value);
+				TucSpaceData spaceData = null;
+				TucSpaceView spaceView = null;
+				if(urlData.SpaceDataId is not null) {
+					var reqItem = _spaceManager.GetSpaceData(urlData.SpaceDataId.Value);
+					if(reqItem.IsSuccess && reqItem.Value.SpaceId == space.Id) 
+						spaceData = new TucSpaceData(reqItem.Value);
+					
+				}
+				if(urlData.SpaceViewId is not null) {
+					//TODO
+				}
+
+
+				_dispatcher.Dispatch(new SetSpaceStateAction(
 					isBusy: false,
-						space: new TucSpace(serviceResult.Value),
+						space: space,
+						spaceData: spaceData,
+						spaceView: spaceView,
 						routeSpaceId:urlData.SpaceId,
 						routeSpaceDataId:urlData.SpaceDataId,
 						routeSpaceViewId:urlData.SpaceViewId));
@@ -40,9 +56,11 @@ public partial class SpaceUseCase
 		}
 		else
 		{
-			_dispatcher.Dispatch(new SetSpaceAction(
+			_dispatcher.Dispatch(new SetSpaceStateAction(
 						isBusy: false,
 						space: null,
+						spaceData: null,
+						spaceView: null,
 						routeSpaceId:urlData.SpaceId,
 						routeSpaceDataId:urlData.SpaceDataId,
 						routeSpaceViewId:urlData.SpaceViewId));

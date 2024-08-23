@@ -21,7 +21,7 @@ public partial class TfLocation : TfBaseComponent
 		base.OnInitialized();
 		_namedLocation = generateNamedLocation();
 		Navigator.LocationChanged += Navigator_LocationChanged;
-		ActionSubscriber.SubscribeToAction<SpaceChangedAction>(this, On_SpaceChangedAction);
+		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_SpaceChangedAction);
 	}
 
 	protected void Navigator_LocationChanged(object sender, LocationChangedEventArgs args)
@@ -34,7 +34,7 @@ public partial class TfLocation : TfBaseComponent
 		});
 	}
 
-	private void On_SpaceChangedAction(SpaceChangedAction action)
+	private void On_SpaceChangedAction(SpaceStateChangedAction action)
 	{
 		base.InvokeAsync(async () =>
 		{
