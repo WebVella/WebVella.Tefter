@@ -2,5 +2,5 @@
 
 public partial record SpaceState
 {
-	internal TucSpaceView SpaceView { get; init; }
+	internal TucSpaceData SpaceData { get; init; }
 }

@@ -10,16 +10,16 @@
 		<FluentTooltip Anchor="tf-fast-access-link" Position="@TooltipPosition.Right">@TfConstants.FastAccesMenuTitle</FluentTooltip>
 	</FluentNavMenu>
 	<FluentDivider Class="nav-divider"></FluentDivider>
-	@if (SpaceState.Value.Space is null)
-	{
+</div>
+
+
+ <TfAppBar Items="SpaceNav" Style="max-height:calc(100vh - 250px)" />
+
+ <div class="@($"spacenav-nav end {(ScreenStateSidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")">
 		<FluentNavMenu>
 			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon" class="accent"
 						   OnClick="_addSpaceHandler" />
 			<FluentTooltip Anchor="tf-create-space-link" Position="@TooltipPosition.Right">@LOC("Create Space")</FluentTooltip>
 		</FluentNavMenu>
-	}
-</div>
-
-
-@* <TfAppBar Items="SpaceState.Value.SpaceNav" Style="max-height:calc(100vh - 250px)" /> *@
+	 </div>
 

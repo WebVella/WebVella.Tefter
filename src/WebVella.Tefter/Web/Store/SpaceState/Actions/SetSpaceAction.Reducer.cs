@@ -16,6 +16,7 @@ public static partial class SpaceStateReducers
 			IsBusy = action.IsBusy,
 			Space = action.Space,
 			RouteSpaceId = action.RouteSpaceId,
+			RouteSpaceDataId = action.RouteSpaceDataId,
 			RouteSpaceViewId = action.RouteSpaceViewId
 		};
 }

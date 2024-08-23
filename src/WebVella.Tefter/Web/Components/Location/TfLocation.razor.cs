@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components.Location;
 public partial class TfLocation : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IState<SpaceState> SpaceState { get; set; }
 	private bool _settingsMenuVisible = false;
 	private int _ellipsisCount = 30;
 	private MenuItem _namedLocation = null;
@@ -10,6 +10,7 @@ public partial class TfLocation : TfBaseComponent
 	{
 		if (disposing)
 		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
 			Navigator.LocationChanged -= Navigator_LocationChanged;
 		}
 		await base.DisposeAsyncCore(disposing);
@@ -20,6 +21,7 @@ public partial class TfLocation : TfBaseComponent
 		base.OnInitialized();
 		_namedLocation = generateNamedLocation();
 		Navigator.LocationChanged += Navigator_LocationChanged;
+		ActionSubscriber.SubscribeToAction<SpaceChangedAction>(this, On_SpaceChangedAction);
 	}
 
 	protected void Navigator_LocationChanged(object sender, LocationChangedEventArgs args)
@@ -28,6 +30,14 @@ public partial class TfLocation : TfBaseComponent
 		base.InvokeAsync(async () =>
 		{
 			_namedLocation = generateNamedLocation();
+			await InvokeAsync(StateHasChanged);
+		});
+	}
+
+	private void On_SpaceChangedAction(SpaceChangedAction action)
+	{
+		base.InvokeAsync(async () =>
+		{
 			await InvokeAsync(StateHasChanged);
 		});
 	}

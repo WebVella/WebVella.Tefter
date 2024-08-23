@@ -2,7 +2,7 @@
 @layout SpaceLayout
 @inherits TfBasePage
 <TfSpaceStateManager/>
-@if (SessionState.Value.Space is null)
+@if (SpaceState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -16,7 +16,7 @@
 		</div>
 	</FluentBodyContent>
 }
-else if (SessionState.Value.SpaceData is null)
+else if (SpaceState.Value.SpaceData is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -30,7 +30,7 @@ else if (SessionState.Value.SpaceData is null)
 		</div>
 	</FluentBodyContent>
 }
-else if (SessionState.Value.SpaceView is null)
+else if (SpaceState.Value.SpaceView is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -48,7 +48,7 @@ else
 {
 	@if (ScreenStateSidebarExpanded.Value)
 	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SessionState.Value.SpaceSidebarStyle">
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SpaceState.Value.SpaceSidebarStyle">
 			<TfSpaceNavigation />
 		</FluentStack>
 	}

@@ -14,17 +14,20 @@
 			</div>
 		</div>
 	}
-	else if (SessionState.Value.SpaceData is not null)
+	else if (SpaceState.Value.Space is not null)
 	{
 		<div class="title">
 			<div class="label">
 				<FluentBreadcrumb>
-					<FluentBreadcrumbItem title="@SessionState.Value.SpaceData.Name">
-						@RenderUtils.StringOverflow(SessionState.Value.SpaceData.Name, _ellipsisCount)
+					<FluentBreadcrumbItem title="@SpaceState.Value.Space.Name">
+						@RenderUtils.StringOverflow(SpaceState.Value.Space.Name, _ellipsisCount)
 					</FluentBreadcrumbItem>
-					<FluentBreadcrumbItem title="@SessionState.Value.SpaceView.Name">
-						@RenderUtils.StringOverflow(SessionState.Value.SpaceView.Name, _ellipsisCount)
-					</FluentBreadcrumbItem>
+					@if (SpaceState.Value.SpaceView is not null)
+					{
+						<FluentBreadcrumbItem title="@SpaceState.Value.SpaceView.Name">
+							@RenderUtils.StringOverflow(SpaceState.Value.SpaceView.Name, _ellipsisCount)
+						</FluentBreadcrumbItem>
+					}
 				</FluentBreadcrumb>
 			</div>
 		</div>

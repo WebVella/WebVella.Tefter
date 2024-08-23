@@ -24,7 +24,7 @@ public record TucSpace
 		Name = model.Name;
 		Position = model.Position;
 		IsPrivate = model.IsPrivate;
-		IconString = model.Name;
+		IconString = model.Icon;
 		Color = Web.Utils.EnumExtensions.ConvertIntToEnum<OfficeColor>(model.Color, OfficeColor.Default);
 	}
 

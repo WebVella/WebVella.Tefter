@@ -11,35 +11,41 @@ public partial class SpaceUseCase
 		var urlData = _navigationManager.GetUrlData(url);
 		if (urlData.SpaceId is not null)
 		{
-			//var serviceResult = _dataProviderManager.GetProvider(urlData.DataProviderId.Value);
-			//if (serviceResult.IsFailed)
-			//{
-			//	ResultUtils.ProcessServiceResult(
-			//		result: Result.Fail(new Error("GetProvider failed").CausedBy(serviceResult.Errors)),
-			//		toastErrorMessage: "Unexpected Error",
-			//		notificationErrorTitle: "Unexpected Error",
-			//		toastService: _toastService,
-			//		messageService: _messageService
-			//	);
-			//	return Task.CompletedTask;
-			//}
+			var serviceResult = _spaceManager.GetSpace(urlData.SpaceId.Value);
+			if (serviceResult.IsFailed)
+			{
+				ResultUtils.ProcessServiceResult(
+					result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
+					toastErrorMessage: "Unexpected Error",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+				return Task.CompletedTask;
+			}
 
 
-			//if (serviceResult.Value is not null)
-			//{
-			//	_dispatcher.Dispatch(new SetDataProviderAdminAction(
-			//		isBusy: false,
-			//		provider: new TucDataProvider(serviceResult.Value)));
-			//	return Task.CompletedTask;
-			//}
+			if (serviceResult.Value is not null)
+			{
+				_dispatcher.Dispatch(new SetSpaceAction(
+					isBusy: false,
+						space: new TucSpace(serviceResult.Value),
+						routeSpaceId:urlData.SpaceId,
+						routeSpaceDataId:urlData.SpaceDataId,
+						routeSpaceViewId:urlData.SpaceViewId));
+				return Task.CompletedTask;
+			}
 
-			//_navigationManager.NotFound();
+			_navigationManager.NotFound();
 		}
 		else
 		{
-			_dispatcher.Dispatch(new SetDataProviderAdminAction(
+			_dispatcher.Dispatch(new SetSpaceAction(
 						isBusy: false,
-						provider: null));
+						space: null,
+						routeSpaceId:urlData.SpaceId,
+						routeSpaceDataId:urlData.SpaceDataId,
+						routeSpaceViewId:urlData.SpaceViewId));
 		}
 		return Task.CompletedTask;
 	}

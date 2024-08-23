@@ -1,4 +1,14 @@
-﻿::deep.spacenav-nav .fluent-nav-item {
+﻿::deep.spacenav-nav {
+	flex:0 0 auto;
+}
+
+::deep.spacenav-nav.end {
+	flex:1 1 auto;
+	display:flex;
+	align-items:end;
+}
+
+::deep.spacenav-nav .fluent-nav-item {
 	margin-bottom: 10px;
 }
 

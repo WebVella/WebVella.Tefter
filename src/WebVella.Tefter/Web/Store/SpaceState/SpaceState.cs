@@ -7,6 +7,7 @@ public partial record SpaceState
 {
 	public bool IsBusy { get; init; } = true;
 	public Guid? RouteSpaceId { get; init; }
+	public Guid? RouteSpaceDataId { get; init; }
 	public Guid? RouteSpaceViewId { get; init; }
 	public TucSpace Space { get; init; }
 
