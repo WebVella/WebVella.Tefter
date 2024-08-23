@@ -33,20 +33,98 @@ public partial class SpaceUseCase
 
 	internal async Task Init(Type type)
 	{
-		if(type == typeof(TfSpaceStateManager)) await InitForState();
-		else if(type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
+		if (type == typeof(TfSpaceStateManager)) await InitForState();
+		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
 		else throw new Exception($"Type: {type.Name} not supported in SpaceUseCase");
 	}
 
-	internal Result<TucSpace> CreateSpaceWithForm(TucSpace space) {
+	internal Result<TucSpace> CreateSpaceWithForm(TucSpace space)
+	{
 		var result = _spaceManager.CreateSpace(space.ToModel());
 		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceWithFormAsync failed").CausedBy(result.Errors));
 		return Result.Ok(new TucSpace(result.Value));
 	}
 
-	internal Result<TucSpace> UpdateSpaceWithForm(TucSpace space) {
+	internal Result<TucSpace> UpdateSpaceWithForm(TucSpace space)
+	{
 		var result = _spaceManager.UpdateSpace(space.ToModel());
 		if (result.IsFailed) return Result.Fail(new Error("UpdateSpaceWithForm failed").CausedBy(result.Errors));
 		return Result.Ok(new TucSpace(result.Value));
+	}
+
+	internal TucSpace GetSpace(Guid spaceId)
+	{
+		var serviceResult = _spaceManager.GetSpace(spaceId);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		if(serviceResult.Value is null) return null;
+
+		return new TucSpace(serviceResult.Value);
+	}
+
+	internal TucSpaceData GetSpaceData(Guid spaceDataId)
+	{
+		var serviceResult = _spaceManager.GetSpaceData(spaceDataId);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpaceData failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		if(serviceResult.Value is null) return null;
+
+		return new TucSpaceData(serviceResult.Value);
+	}
+
+	internal List<TucSpaceData> GetSpaceDataList(Guid spaceId)
+	{
+		var serviceResult = _spaceManager.GetSpaceDataList(spaceId);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpaceDataList failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		if(serviceResult.Value is null) return new();
+
+		return serviceResult.Value.Select(x=> new TucSpaceData(x)).ToList();
+	}
+	internal List<TucSpaceView> GetSpaceViewList(Guid spaceId)
+	{
+		return new List<TucSpaceView>();
+		//var serviceResult = _spaceManager.GetSpaceViewList(spaceId);
+		//if (serviceResult.IsFailed)
+		//{
+		//	ResultUtils.ProcessServiceResult(
+		//		result: Result.Fail(new Error("GetSpaceDataList failed").CausedBy(serviceResult.Errors)),
+		//		toastErrorMessage: "Unexpected Error",
+		//		notificationErrorTitle: "Unexpected Error",
+		//		toastService: _toastService,
+		//		messageService: _messageService
+		//	);
+		//	return null;
+		//}
+		//if(serviceResult.Value is null) return new();
+
+		//return serviceResult.Value.Select(x=> new TucSpaceData(x)).ToList();
 	}
 }

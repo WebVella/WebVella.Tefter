@@ -1,4 +1,4 @@
-﻿@page "/space/{SpaceId:guid}"
+﻿@page "/space/{SpaceId:guid}/view/{SpaceViewId:guid}"
 @layout SpaceLayout
 @inherits TfBasePage
 <TfSpaceStateManager/>
@@ -16,21 +16,7 @@
 		</div>
 	</FluentBodyContent>
 }
-else if (SpaceState.Value.SpaceDataList.Count == 0)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-		<FluentMessageBar Title="No space data found"
-						  Style="border: 1px solid var(--neutral-base-color)"
-						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
-						  AllowDismiss="false">
-			No space data found yet notification
-		</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else if (SpaceState.Value.SpaceViewList.Count == 0)
+else if (SpaceState.Value.SpaceView is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -46,20 +32,7 @@ else if (SpaceState.Value.SpaceViewList.Count == 0)
 }
 else
 {
-
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="Missing redirect"
-							  Style="border: 1px solid var(--neutral-base-color)"
-							  Intent="MessageIntent.Warning"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				Should redirect to the first view
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-
-@* 	@if (ScreenStateSidebarExpanded.Value)
+	@if (ScreenStateSidebarExpanded.Value)
 	{
 		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SpaceState.Value.SpaceSidebarStyle">
 			<TfSpaceNavigation />
@@ -70,6 +43,6 @@ else
 		<div class="content-inner">
 			<TfSpaceView />
 		</div>
-	</FluentBodyContent> *@
+	</FluentBodyContent>
 }
 

@@ -1,7 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Pages;
-public partial class SpacePage : TfBasePage
+public partial class SpaceDataPage : TfBasePage
 {
 	[Parameter] public Guid SpaceId { get; set; }
+	[Parameter] public Guid SpaceDataId { get; set; }
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
 
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
