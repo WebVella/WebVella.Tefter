@@ -15,7 +15,7 @@ public partial class SpaceUseCase
 					AllIcons.Add(item.Name);
 			}
 		}
-
+		AllIcons = AllIcons.Take(100).ToList();
 		SpaceManageForm = new();
 		return Task.CompletedTask;
 	}

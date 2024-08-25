@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.SpaceManageDialog;
+﻿using WebVella.Tefter.Web.Components.SearchSpaceDialog;
+using WebVella.Tefter.Web.Components.SpaceManageDialog;
 
 namespace WebVella.Tefter.Web.Components.Navigation;
 public partial class TfNavigation : TfBaseComponent
@@ -76,6 +77,18 @@ public partial class TfNavigation : TfBaseComponent
 			ToastService.ShowSuccess(LOC("Space successfully created!"));
 			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
 		}
+	}
+
+	private async Task _searchSpaceHandler()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfSearchSpaceDialog>(
+		true,
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
 	}
 
 }

@@ -67,16 +67,8 @@
 		width: 2px;
 	}
 
-::deep.spacenav-nav .fluent-nav-item.accent a .positioning-region {
-	background-color: var(--accent-fill-rest);
-}
-
-	::deep.spacenav-nav .fluent-nav-item.accent a .positioning-region svg {
-		fill: var(--foreground-on-accent-rest) !important;
-	}
-
 /*Fix for onclick click zone to small bug*/
-::deep.spacenav-nav .fluent-nav-item.accent .fluent-nav-link {
+::deep.spacenav-nav .fluent-nav-item .content-region > .fluent-nav-link {
 	position: absolute;
 	top: 0;
 	bottom: 0;

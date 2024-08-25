@@ -13,11 +13,14 @@
 </div>
 
 
- <TfAppBar Items="SpaceNav" Style="max-height:calc(100vh - 250px)" />
+ <TfAppBar Items="SpaceNav" />
 
  <div class="@($"spacenav-nav end {(ScreenStateSidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")">
 		<FluentNavMenu>
-			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon" class="accent"
+		<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon" 
+					   OnClick="_searchSpaceHandler" />
+		<FluentTooltip Anchor="tf-space-search-link" Position="@TooltipPosition.Right">@LOC("Search Spaces")</FluentTooltip>
+			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon"
 						   OnClick="_addSpaceHandler" />
 			<FluentTooltip Anchor="tf-create-space-link" Position="@TooltipPosition.Right">@LOC("Create Space")</FluentTooltip>
 		</FluentNavMenu>

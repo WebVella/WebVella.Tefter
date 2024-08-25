@@ -16,30 +16,16 @@
 		</div>
 	</FluentBodyContent>
 }
-else if (SpaceState.Value.SpaceDataList.Count == 0)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-		<FluentMessageBar Title="No space data found"
-						  Style="border: 1px solid var(--neutral-base-color)"
-						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
-						  AllowDismiss="false">
-			No space data found yet notification
-		</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
 else if (SpaceState.Value.SpaceViewList.Count == 0)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
-		<FluentMessageBar Title="No space data found"
+		<FluentMessageBar Title="No space views found"
 						  Style="border: 1px solid var(--neutral-base-color)"
 						  Intent="MessageIntent.Info"
 						  Type="@MessageType.Notification"
 						  AllowDismiss="false">
-			No space data found yet notification
+				<div><FluentButton IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">Create view</FluentButton></div>
 		</FluentMessageBar>
 		</div>
 	</FluentBodyContent>

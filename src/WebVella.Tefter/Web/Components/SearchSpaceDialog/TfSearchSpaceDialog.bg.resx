@@ -117,10 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Create Space" xml:space="preserve">
-    <value>Създай Зона</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Откажи</value>
   </data>
-  <data name="Search Spaces" xml:space="preserve">
-    <value>Търси Зона</value>
+  <data name="Search for a space" xml:space="preserve">
+    <value>Търсене на зона</value>
   </data>
 </root>

@@ -1,0 +1,16 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Search for a space")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+<div>TBD: will present a list of existing spaces the user has access to with a search. In the navigation only pinned spaces by the user will be presented, but here will be all</div>
+</FluentDialogBody>

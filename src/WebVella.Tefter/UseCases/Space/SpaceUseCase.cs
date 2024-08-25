@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.SpaceManageDialog;
+﻿using WebVella.Tefter.Web.Components.SearchSpaceDialog;
+using WebVella.Tefter.Web.Components.SpaceManageDialog;
 using WebVella.Tefter.Web.Components.SpaceStateManager;
 
 namespace WebVella.Tefter.UseCases.Space;
@@ -35,6 +36,7 @@ public partial class SpaceUseCase
 	{
 		if (type == typeof(TfSpaceStateManager)) await InitForState();
 		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
+		else if (type == typeof(TfSearchSpaceDialog)) await InitForSearchSpace();
 		else throw new Exception($"Type: {type.Name} not supported in SpaceUseCase");
 	}
 
