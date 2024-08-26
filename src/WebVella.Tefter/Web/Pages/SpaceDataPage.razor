@@ -1,48 +1,10 @@
 ﻿@page "/space/{SpaceId:guid}/data/{SpaceDataId:guid}"
 @layout SpaceLayout
 @inherits TfBasePage
-<TfSpaceStateManager/>
-@if (SpaceState.Value.Space is null)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-		<FluentMessageBar Title="No space found"
-						  Style="border: 1px solid var(--neutral-base-color)"
-						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
-						  AllowDismiss="false">
-			No spaces found yet notification
-		</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else if (SpaceState.Value.SpaceData is null)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-		<FluentMessageBar Title="No space data found"
-						  Style="border: 1px solid var(--neutral-base-color)"
-						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
-						  AllowDismiss="false">
-			No space data found yet notification
-		</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else
-{
-	@if (ScreenStateSidebarExpanded.Value)
-	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SpaceState.Value.SpaceSidebarStyle">
-			<TfSpaceNavigation />
-		</FluentStack>
-	}
-	<FluentBodyContent Class="content-body with-toolbar">
-		<TfSpaceViewToolbar />
-		<div class="content-inner">
-			<TfSpaceView />
-		</div>
-	</FluentBodyContent>
-}
+<TfSpaceStateManager />
+<FluentBodyContent Class="content-body">
+	<div class="content-inner">
+		<TfSpaceDataManage Form="@(new TucSpaceData())" />
+	</div>
+</FluentBodyContent>
 

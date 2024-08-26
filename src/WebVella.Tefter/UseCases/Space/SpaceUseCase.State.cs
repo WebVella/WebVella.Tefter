@@ -18,20 +18,21 @@ public partial class SpaceUseCase
 				TucSpaceView spaceView = null;
 				if (urlData.SpaceDataId is not null)
 				{
-					var reqItem = GetSpaceData(urlData.SpaceDataId.Value);
-					if (reqItem.SpaceId == space.Id)
-						spaceData = reqItem;
-					else
-					{
-						ResultUtils.ProcessServiceResult(
-							result: Result.Fail(new Error("The requested space data is not part of the current space")),
-							toastErrorMessage: "Unexpected Error",
-							notificationErrorTitle: "Unexpected Error",
-							toastService: _toastService,
-							messageService: _messageService
-						);
-						return Task.CompletedTask;
-					}
+					spaceData = new TucSpaceData();
+					//var reqItem = GetSpaceData(urlData.SpaceDataId.Value);
+					//if (reqItem.SpaceId == space.Id)
+					//	spaceData = reqItem;
+					//else
+					//{
+					//	ResultUtils.ProcessServiceResult(
+					//		result: Result.Fail(new Error("The requested space data is not part of the current space")),
+					//		toastErrorMessage: "Unexpected Error",
+					//		notificationErrorTitle: "Unexpected Error",
+					//		toastService: _toastService,
+					//		messageService: _messageService
+					//	);
+					//	return Task.CompletedTask;
+					//}
 
 				}
 				if (urlData.SpaceViewId is not null)

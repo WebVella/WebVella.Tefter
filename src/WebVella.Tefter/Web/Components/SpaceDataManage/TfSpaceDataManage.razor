@@ -1,0 +1,39 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits TfFormBaseComponent
+@if (!string.IsNullOrWhiteSpace(_error))
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+}
+else
+{
+	<TfCard>
+		<FluentEditForm EditContext="EditContext"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=Form.Name
+									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => Form.Name)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentSelect SelectedOption="@_selectedProvider" SelectedOptionChanged="_dataProviderSelected"
+								  TOption="TucDataProvider"
+								  Items="@UC.AllDataProviders" Style="width:100%"
+								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
+					<FluentValidationMessage For="@(() => Form.Name)" />
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
+	</TfCard>
+	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
+	<TfCard>
+		<FluentButton OnClick="_addFilter" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">@LOC("Add new")</FluentButton>
+	</TfCard>
+	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
+	<TfCard>
+		<div>Columns</div>
+	</TfCard>
+}
+

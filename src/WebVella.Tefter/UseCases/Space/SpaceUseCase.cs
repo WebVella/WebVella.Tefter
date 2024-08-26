@@ -1,12 +1,16 @@
 ﻿using WebVella.Tefter.Web.Components.SearchSpaceDialog;
+using WebVella.Tefter.Web.Components.SpaceDataFilterManageDialog;
+using WebVella.Tefter.Web.Components.SpaceDataManage;
 using WebVella.Tefter.Web.Components.SpaceManageDialog;
 using WebVella.Tefter.Web.Components.SpaceStateManager;
+using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
 
 namespace WebVella.Tefter.UseCases.Space;
 public partial class SpaceUseCase
 {
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfSpaceManager _spaceManager;
+	private readonly ITfDataProviderManager _dataProviderManager;
 	private readonly NavigationManager _navigationManager;
 	private readonly IDispatcher _dispatcher;
 	private readonly IToastService _toastService;
@@ -16,6 +20,7 @@ public partial class SpaceUseCase
 	public SpaceUseCase(
 			IIdentityManager identityManager,
 			ITfSpaceManager spaceManager,
+			ITfDataProviderManager dataProviderManager,
 			NavigationManager navigationManager,
 			IDispatcher dispatcher,
 			IToastService toastService,
@@ -25,6 +30,7 @@ public partial class SpaceUseCase
 	{
 		_identityManager = identityManager;
 		_spaceManager = spaceManager;
+		_dataProviderManager = dataProviderManager;
 		_navigationManager = navigationManager;
 		_dispatcher = dispatcher;
 		_toastService = toastService;
@@ -36,7 +42,10 @@ public partial class SpaceUseCase
 	{
 		if (type == typeof(TfSpaceStateManager)) await InitForState();
 		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
+		else if (type == typeof(TfSpaceDataManage)) await InitSpaceDataManage();
+		else if (type == typeof(TfSpaceViewManageDialog)) await InitSpaceViewManageDialog();
 		else if (type == typeof(TfSearchSpaceDialog)) await InitForSearchSpace();
+		else if (type == typeof(TfSpaceDataFilterManageDialog)) await InitSpaceDataFilterManageDialog();
 		else throw new Exception($"Type: {type.Name} not supported in SpaceUseCase");
 	}
 
@@ -128,5 +137,24 @@ public partial class SpaceUseCase
 		//if(serviceResult.Value is null) return new();
 
 		//return serviceResult.Value.Select(x=> new TucSpaceData(x)).ToList();
+	}
+
+	internal List<TucDataProvider> GetDataProviderList()
+	{
+		var serviceResult = _dataProviderManager.GetProviders();
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProviders failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		if (serviceResult.Value is null) return new();
+
+		return serviceResult.Value.Select(x => new TucDataProvider(x)).ToList();
 	}
 }

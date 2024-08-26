@@ -13,7 +13,7 @@ public record TucSpaceData
 	public string Name { get; set; }
 	public short Position { get; set; }
 	public List<TucFilterBase> Filters { get; set; } = new ();
-	public List<TucSpaceDataColumn> Columns { get; set; } = new();
+	public List<string> Columns { get; set; } = new();
 
 	public TucSpaceData() { }
 
@@ -25,7 +25,7 @@ public record TucSpaceData
 		Name = model.Name;
 		Position = model.Position;
 		Filters = model.Filters.Select(x=> TucFilterBase.FromModel(x)).ToList();
-		Columns = model.Columns.Select(x=> new TucSpaceDataColumn(x)).ToList();
+		Columns = model.Columns;
 		
 	}
 
@@ -39,7 +39,7 @@ public record TucSpaceData
 			Name = Name,
 			Position = Position,
 			Filters = Filters.Select(x=> TucFilterBase.ToModel(x)).ToList(),
-			Columns = Columns.Select(x=> x.ToModel()).ToList()
+			Columns = Columns
 		};
 	}
 }

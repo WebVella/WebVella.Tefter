@@ -1,23 +1,23 @@
-﻿::deep {
+﻿
+.tf-card {
+	padding: calc(var(--design-unit)* 5px);
+	border: calc(var(--stroke-width)* 1px) solid var(--neutral-stroke-rest);
+	border-radius: calc(var(--layer-corner-radius)* 1px);
+	/*	box-shadow: var(--elevation-shadow-card-rest);*/
 }
 
-::deep fluent-card {
-	height: unset !important;
-	background:transparent;
-	box-shadow:none;
-	border-width:1px;
+::deep fluent-text-field[readonly]::part(root) {
+	border: 1px solid var(--neutral-fill-input-alt-active) !important;
 }
-	::deep fluent-text-field[readonly]::part(root) {
-		border:1px solid var(--neutral-fill-input-alt-active) !important;
-	}
-	::deep fluent-text-field[readonly]::part(control) {
-		border:none !important;
-	}
 
-	::deep fluent-text-field[readonly]::after {
-		display:none;
-	}
+::deep fluent-text-field[readonly]::part(control) {
+	border: none !important;
+}
 
-	::deep.tf-card--small fluent-card {
-		padding:7px;
-	}
+::deep fluent-text-field[readonly]::after {
+	display: none;
+}
+
+.tf-card.tf-card--small {
+	padding: 7px;
+}
