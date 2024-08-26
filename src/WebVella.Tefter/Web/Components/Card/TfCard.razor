@@ -1,11 +1,17 @@
 ﻿@inherits TfBaseComponent
 
-<div class="@Class" style="@Style">
-	@if (!String.IsNullOrWhiteSpace(Title))
+<div class="@_class" style="@Style">
+	@if (TitleTemplate is not null)
 	{
-		<div class="card-title">@Title</div>
+		<div class="tf-card-title" style="@TitleStyle">
+			@TitleTemplate
+		</div>
 	}
-	<div class="card-content">
+	else if (!String.IsNullOrWhiteSpace(Title))
+	{
+		<div class="tf-card-title" style="@TitleStyle">@Title</div>
+	}
+	<div class="tf-card-content">
 		@ChildContent
 	</div>
 </div>

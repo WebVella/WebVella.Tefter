@@ -57,23 +57,35 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 	}
 
-	private async Task _addFilter()
+	public void AddFilter(Type type, Guid? parentId)
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfSpaceDataFilterManageDialog>(
-		new TucFilterBase(),
-		new DialogParameters()
+		if (parentId is null)
 		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			//var item = (TucSpace)result.Data;
-			//ToastService.ShowSuccess(LOC("Space view successfully created!"));
-			//Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
+			if (type == typeof(TucFilterAnd))
+			{
+				Form.Filters.Add(new TucFilterAnd());
+			}
+			else if (type == typeof(TucFilterOr))
+			{
+				Form.Filters.Add(new TucFilterOr());
+			}
 		}
+		//var dialog = await DialogService.ShowDialogAsync<TfSpaceDataFilterManageDialog>(
+		//new TucFilterBase(),
+		//new DialogParameters()
+		//{
+		//	PreventDismissOnOverlayClick = true,
+		//	PreventScroll = true,
+		//	Width = TfConstants.DialogWidthLarge
+		//});
+		//var result = await dialog.Result;
+		//if (!result.Cancelled && result.Data != null)
+		//{
+		//	//var item = (TucSpace)result.Data;
+		//	//ToastService.ShowSuccess(LOC("Space view successfully created!"));
+		//	//Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
+		//}
+		StateHasChanged();
 	}
 
 	private void _deleteColumn(string column)

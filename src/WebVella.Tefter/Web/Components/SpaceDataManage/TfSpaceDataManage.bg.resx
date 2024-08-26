@@ -144,6 +144,9 @@
   <data name="Name" xml:space="preserve">
     <value>Име</value>
   </data>
+  <data name="No filters added yet" xml:space="preserve">
+    <value>Все още няма добавени филтри</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Запомни</value>
   </data>

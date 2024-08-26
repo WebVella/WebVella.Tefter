@@ -28,11 +28,48 @@ else
 		</FluentEditForm>
 	</TfCard>
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
-	<TfCard>
-		<FluentButton OnClick="_addFilter" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">@LOC("Add new")</FluentButton>
-	</TfCard>
+	<CascadingValue IsFixed="true" Name="TfSpaceDataManage" Value="this" TValue="TfSpaceDataManage">
+		<TfCard Small="true">
+			<TitleTemplate>
+				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+					<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
+						<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">AND</FluentLabel>
+						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+					</FluentStack>
+					<div>
+						<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
+							<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+							<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterOr),null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+							<FluentSelect @bind-SelectedOption="@_selectedColumn"
+										  TOption="string" Required="false"
+										  Items="@_columnOptions" Style="width:200px"
+										  Placeholder="@LOC("select...")"></FluentSelect>
+							<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+						</FluentStack>
+					</div>
+				</FluentStack>
+			</TitleTemplate>
+			<ChildContent>
+				@if (Form.Filters.Count == 0)
+				{
+					<div>@LOC("No filters added yet")</div>
+				}
+				@foreach (var item in Form.Filters)
+				{
+					<TfFilterManage Item="item" />
+				}
+			</ChildContent>
+		</TfCard>
+	</CascadingValue>
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
 	<TfCard>
+		<FluentStack Orientation="@Orientation.Horizontal" Style="margin-bottom:1rem;">
+			<FluentSelect @bind-SelectedOption="@_selectedColumn"
+						  TOption="string" Required="false"
+						  Items="@_columnOptions" Style="width:200px"
+						  Placeholder="@LOC("select provider column")"></FluentSelect>
+			<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">@LOC("Add new")</FluentButton>
+		</FluentStack>
 		@if (Form.Columns.Count == 0)
 		{
 			<FluentMessageBar Title="@LOC("Use all data provider columns")"
@@ -69,13 +106,6 @@ else
 				</table>
 			</div>
 		}
-		<FluentStack Orientation="@Orientation.Horizontal" Style="margin-top:1rem;">
-			<FluentSelect @bind-SelectedOption="@_selectedColumn" 
-						  TOption="string" Required="false"
-						  Items="@_columnOptions" Style="width:200px"
-						  Placeholder="@LOC("select provider column")"></FluentSelect>
-			<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">@LOC("Add new")</FluentButton>
-		</FluentStack>
 	</TfCard>
 }
 
