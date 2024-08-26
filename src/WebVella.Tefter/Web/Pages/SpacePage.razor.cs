@@ -16,7 +16,7 @@ public partial class SpacePage : TfBasePage
 	private async Task _createViewHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
-		new TucSpaceView(),
+		new TucSpaceView() with { SpaceId = SpaceId },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

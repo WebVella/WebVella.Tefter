@@ -33,7 +33,49 @@ else
 	</TfCard>
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
 	<TfCard>
-		<div>Columns</div>
+		@if (Form.Columns.Count == 0)
+		{
+			<FluentMessageBar Title="@LOC("Use all data provider columns")"
+							  Style="border: 1px solid var(--neutral-base-color)"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				@LOC("This dataset will return all data provider columns. If you need to limit that, select only the columns you need provided.")
+			</FluentMessageBar>
+		}
+		else
+		{
+			<div class="tf-grid-wrapper">
+				<table class="tf-grid">
+					<tbody class="tf-grid-tbody">
+						@foreach (var context in Form.Columns)
+						{
+							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+								<td class="tf-grid-td" style="width:30px;">
+									<div>
+										<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
+											<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+										</FluentButton>
+									</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>
+										<div>@context</div>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+		<FluentStack Orientation="@Orientation.Horizontal" Style="margin-top:1rem;">
+			<FluentSelect @bind-SelectedOption="@_selectedColumn" 
+						  TOption="string" Required="false"
+						  Items="@_columnOptions" Style="width:200px"
+						  Placeholder="@LOC("select provider column")"></FluentSelect>
+			<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">@LOC("Add new")</FluentButton>
+		</FluentStack>
 	</TfCard>
 }
 

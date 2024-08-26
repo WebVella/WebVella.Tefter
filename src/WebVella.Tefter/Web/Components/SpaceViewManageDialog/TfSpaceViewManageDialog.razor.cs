@@ -4,7 +4,6 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	[Inject] private SpaceUseCase UC { get; set; }
 	[Parameter] public TucSpaceView Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
-
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
@@ -12,14 +11,18 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	private Icon _iconBtn;
 	private bool _isCreate = false;
 
+	private TucDataProvider _selectedDataProvider = null;
+	private TucSpaceData _selectedDataset = null;
+	private List<string> _generatedColumns = new();
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
+		await UC.Init(this.GetType(),Content.SpaceId);
 		base.InitForm(UC.SpaceViewManageForm);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-		_title = _isCreate ? LOC("Create view") : LOC("Manage view");
+		_title = _isCreate ? LOC("Create view in {0}", UC.SpaceName) : LOC("Manage view in {0}", UC.SpaceName);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 	}
@@ -40,8 +43,13 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 				{
 					Id = Content.Id,
 					Name = Content.Name,
+					DataProviderId = Content.DataProviderId,
+					SpaceDataId = Content.SpaceDataId,
+					DataSetType = Content.DataSetType,
+					SpaceDataName = Content.SpaceDataName
 				};
 			}
+			_generatedColumnsListInit();
 			base.InitForm(UC.SpaceViewManageForm);
 			await InvokeAsync(StateHasChanged);
 		}
@@ -94,4 +102,31 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		await Dialog.CancelAsync();
 	}
 
+	private void _dataProviderSelected(TucDataProvider provider)
+	{
+		_selectedDataProvider = provider;
+		_generatedColumnsListInit();
+	}
+
+	private void _generationTypeSelected(TucSpaceViewDataSetColumnGenerationType type)
+	{
+		UC.SpaceViewManageForm.ColumnGenerationType = type;
+		_generatedColumnsListInit();
+	}
+
+	private void _datasetSelected(TucSpaceData dataset)
+	{
+		_selectedDataset = dataset;
+	}
+
+	private void _generatedColumnsListInit(){ 
+		_generatedColumns.Clear();
+		if(_selectedDataProvider is null || UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.NoColumns)
+			return;
+
+		if(UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.AllNonSystem)
+			_generatedColumns = _selectedDataProvider.Columns.Select(x=> x.DbName).Order().ToList();
+		if(UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.AllColumns)
+			_generatedColumns = _selectedDataProvider.Columns.Select(x=> x.DbName).Order().ToList();
+	}
 }

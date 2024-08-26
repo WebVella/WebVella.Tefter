@@ -8,6 +8,17 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	internal TucDataProvider _selectedProvider = null;
 
+	internal List<string> _allColumnOptions = new List<string> { "Boz", "Boz2", "Boz3" };
+	internal List<string> _columnOptions
+	{
+		get
+		{
+			if (Form is null || Form.Columns is null) return _allColumnOptions;
+			return _allColumnOptions.Where(x => !Form.Columns.Contains(x)).ToList();
+		}
+	}
+	internal string _selectedColumn = null;
+
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
@@ -23,10 +34,27 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		if (Form is null) throw new Exception("Form is null");
 	}
 
-	private void _dataProviderSelected(TucDataProvider provider){ 
-		if(provider is null) return;
+	private void _dataProviderSelected(TucDataProvider provider)
+	{
+		if (provider is null) return;
 		_selectedProvider = provider;
 		Form.DataProviderId = _selectedProvider.Id;
+	}
+
+
+	private void _addColumn()
+	{
+		try
+		{
+			if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
+			if (Form.Columns.Contains(_selectedColumn)) return;
+			Form.Columns.Add(_selectedColumn);
+			Form.Columns = Form.Columns.Order().ToList();
+		}
+		finally
+		{
+			_selectedColumn = null;
+		}
 	}
 
 	private async Task _addFilter()
@@ -48,4 +76,10 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 	}
 
+	private void _deleteColumn(string column)
+	{
+		if (String.IsNullOrWhiteSpace(column)) return;
+		if (!Form.Columns.Contains(column)) return;
+		Form.Columns.Remove(column);
+	}
 }
