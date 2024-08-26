@@ -26,7 +26,7 @@ public partial interface ITfSpaceManager
 	public Result MoveSpaceDataDown(
 		Guid id);
 
-	List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
+	public List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
 		Guid spaceDataId);
 }
 
