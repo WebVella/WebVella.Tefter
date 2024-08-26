@@ -8,14 +8,13 @@ public class TfSpaceData
 	public string Name { get; set; }
 	public short Position { get; set; }
 	public List<TfFilterBase> Filters { get; set; } = new ();
-	public List<TfSpaceDataColumn> Columns { get; set; } = new();
+	public List<string> Columns { get; set; } = new();
 }
 
-public class TfSpaceDataColumn
+public class TfAvailableSpaceDataColumn
 {
 	public string DbName { get; set; }
 	public DatabaseColumnType DbType { get; init; }
-	public bool Selected { get; set; } = false;
 }
 
 

@@ -25,6 +25,9 @@ public partial interface ITfSpaceManager
 
 	public Result MoveSpaceDataDown(
 		Guid id);
+
+	List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
+		Guid spaceDataId);
 }
 
 public partial class TfSpaceManager : ITfSpaceManager
@@ -42,32 +45,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				spaceId,
 				nameof(TfSpaceData.SpaceId), order: orderSettings);
 
-			var spaceDataList = dbos.Select(x => Convert(x)).ToList();
-			foreach (var spaceData in spaceDataList)
-			{
-				try
-				{
-					List<TfSpaceDataColumn> columns = new List<TfSpaceDataColumn>();	
-					var availableColumns = GetSpaceDataAvailableColumns(spaceData.Id);
-					foreach (var column in availableColumns)
-					{
-						var selected = spaceData.Columns.Any(x => x.DbName == column.DbName && x.Selected);
-						columns.Add(new TfSpaceDataColumn
-						{
-							DbName = column.DbName,
-							DbType = column.DbType,
-							Selected = selected
-						});
-					}
-					spaceData.Columns = columns;
-				}
-				catch
-				{
-					//ignore exception of missing provider
-				}
-			}
-
-			return Result.Ok(spaceDataList);
+			return Result.Ok(dbos.Select(x => Convert(x)).ToList());
 		}
 		catch (Exception ex)
 		{
@@ -81,33 +59,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 		try
 		{
 			var dbo = _dboManager.Get<TfSpaceDataDbo>(id);
-			var spaceData = Convert(dbo);
-
-			if(spaceData != null)
-			{
-				try
-				{
-					List<TfSpaceDataColumn> columns = new List<TfSpaceDataColumn>();
-					var availableColumns = GetSpaceDataAvailableColumns(spaceData.Id);
-					foreach (var column in availableColumns)
-					{
-						var selected = spaceData.Columns.Any(x => x.DbName == column.DbName && x.Selected);
-						columns.Add(new TfSpaceDataColumn
-						{
-							DbName = column.DbName,
-							DbType = column.DbType,
-							Selected = selected
-						});
-					}
-					spaceData.Columns = columns;
-				}
-				catch
-				{
-					//ignore exception of missing provider
-				}
-			}
-
-			return Result.Ok(spaceData);
+			return Result.Ok(Convert(dbo));
 		}
 		catch (Exception ex)
 		{
@@ -115,10 +67,10 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
-	private List<TfSpaceDataColumn> GetSpaceDataAvailableColumns(
+	private List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
 		Guid spaceDataId)
 	{
-		List<TfSpaceDataColumn> columns = new List<TfSpaceDataColumn>();
+		List<TfAvailableSpaceDataColumn> columns = new List<TfAvailableSpaceDataColumn>();
 
 		var dbo = _dboManager.Get<TfSpaceDataDbo>(spaceDataId);
 		var spaceData = Convert(dbo);
@@ -135,31 +87,28 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 		foreach (var column in providerResult.Value.Columns)
 		{
-			columns.Add(new TfSpaceDataColumn
+			columns.Add(new TfAvailableSpaceDataColumn
 			{
 				DbName = column.DbName,
-				DbType = column.DbType,
-				Selected = false
+				DbType = column.DbType
 			});
 		}
 
 		foreach (var sharedKey in providerResult.Value.SharedKeys)
 		{
-			columns.Add(new TfSpaceDataColumn
+			columns.Add(new TfAvailableSpaceDataColumn
 			{
 				DbName = sharedKey.DbName,
-				DbType =  DatabaseColumnType.Guid,
-				Selected = false
+				DbType = DatabaseColumnType.Guid,
 			});
 		}
 
 		foreach (var column in providerResult.Value.SharedColumns)
 		{
-			columns.Add(new TfSpaceDataColumn
+			columns.Add(new TfAvailableSpaceDataColumn
 			{
 				DbName = column.DbName,
 				DbType = column.DbType,
-				Selected = false
 			});
 		}
 
@@ -401,7 +350,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Position = dbo.Position,
 			SpaceId = dbo.SpaceId,
 			Filters = JsonSerializer.Deserialize<List<TfFilterBase>>(dbo.FiltersJson),
-			Columns = JsonSerializer.Deserialize<List<TfSpaceDataColumn>>(dbo.ColumnsJson)
+			Columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnsJson)
 		};
 
 	}
@@ -419,7 +368,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Position = model.Position,
 			SpaceId = model.SpaceId,
 			FiltersJson = JsonSerializer.Serialize(model.Filters ?? new List<TfFilterBase>()),
-			ColumnsJson = JsonSerializer.Serialize(model.Columns ?? new List<TfSpaceDataColumn>())
+			ColumnsJson = JsonSerializer.Serialize(model.Columns ?? new List<string>())
 		};
 	}
 
