@@ -26,7 +26,7 @@ public partial interface ITfSpaceManager
 	public Result MoveSpaceDataDown(
 		Guid id);
 
-	public List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
+	public Result<List<TfAvailableSpaceDataColumn>> GetSpaceDataAvailableColumns(
 		Guid spaceDataId);
 }
 
@@ -67,7 +67,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
-	private List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
+	public Result<List<TfAvailableSpaceDataColumn>> GetSpaceDataAvailableColumns(
 		Guid spaceDataId)
 	{
 		List<TfAvailableSpaceDataColumn> columns = new List<TfAvailableSpaceDataColumn>();
@@ -112,7 +112,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			});
 		}
 
-		return columns;
+		return Result.Ok(columns);
 	}
 
 	public Result<TfSpaceData> CreateSpaceData(
