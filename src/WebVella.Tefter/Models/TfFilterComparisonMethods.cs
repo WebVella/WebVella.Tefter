@@ -9,7 +9,7 @@ public enum TfFilterNumericComparisonMethod
 	Lower = 8,
 	LowerOrEqual = 16,
 	HasValue = 32,
-	NasNoValue = 64
+	HasNoValue = 64
 }
 
 public enum TfFilterTextComparisonMethod
@@ -21,7 +21,7 @@ public enum TfFilterTextComparisonMethod
 	Contains = 8,
 	Fts = 16,
 	HasValue = 32,
-	NasNoValue = 64
+	HasNoValue = 64
 }
 
 public enum TfFilterBooleanComparisonMethod
@@ -31,7 +31,7 @@ public enum TfFilterBooleanComparisonMethod
 	IsTrue = 2,
 	IsFalse = 4,
 	HasValue = 8,
-	NasNoValue = 16
+	HasNoValue = 16
 }
 
 public enum TfFilterGuidComparisonMethod
@@ -41,7 +41,7 @@ public enum TfFilterGuidComparisonMethod
 	IsEmpty = 2,
 	IsNotEmpty = 4,
 	HasValue = 8,
-	NasNoValue = 16
+	HasNoValue = 16
 }
 
 public enum TfFilterDateTimeComparisonMethod
@@ -53,5 +53,5 @@ public enum TfFilterDateTimeComparisonMethod
 	Lower = 8,
 	LowerOrEqual = 16,
 	HasValue = 32,
-	NasNoValue = 64
+	HasNoValue = 64
 }
