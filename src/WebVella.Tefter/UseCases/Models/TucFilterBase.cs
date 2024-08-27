@@ -113,7 +113,7 @@ public record TucFilterBase
 			var item = (TucFilterOr)model;
 			return item.Filters;
 		}
-		else 
+		else
 		{
 			return new List<TucFilterBase>();
 		}
@@ -276,13 +276,16 @@ public record TucFilterBoolean : TucFilterBase
 	{
 		get
 		{
-			if (ComparisonMethod == TfFilterBooleanComparisonMethod.Equal
-			|| ComparisonMethod == TfFilterBooleanComparisonMethod.NotEqual) return true;
+			if (ComparisonMethod == TfFilterBooleanComparisonMethod.IsTrue) return false;
+			if (ComparisonMethod == TfFilterBooleanComparisonMethod.IsFalse) return false;
+			if (ComparisonMethod == TfFilterBooleanComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterBooleanComparisonMethod.HasNoValue) return false;
 
-			return false;
+
+			return true;
 		}
 	}
-
+	[JsonIgnore]
 	public IEnumerable<Option<string>> ValueOptions
 	{
 		get => new List<Option<string>>{
@@ -299,8 +302,10 @@ public record TucFilterBoolean : TucFilterBase
 	public void ValueOptionChanged(Option<string> option)
 	{
 		if (option.Value == "null") Value = null;
-		else if (Boolean.TryParse(option.Value, out bool outBool))
-			Value = outBool;
+		else if (Boolean.TryParse(option.Value, out bool outVal))
+			Value = outVal;
+		else
+			Value = null;
 	}
 
 	public TucFilterBoolean() { }
@@ -336,6 +341,28 @@ public record TucFilterDateOnly : TucFilterBase
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "dateonly";
+	public bool RequiresValue
+	{
+		get
+		{
+			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasNoValue) return false;
+			return true;
+		}
+	}
+	public string ValueString
+	{
+		get => Value?.ToString(TfConstants.DateOnlyFormatInput);
+	}
+	public void ValueStringChanged(string value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) Value = null;
+		else if (DateOnly.TryParse(value, out DateOnly outVal))
+			Value = outVal;
+		else
+			Value = null;
+	}
+
 
 	public TucFilterDateOnly() { }
 
@@ -369,7 +396,27 @@ public record TucFilterDateTime : TucFilterBase
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "datetime";
-
+	public bool RequiresValue
+	{
+		get
+		{
+			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasNoValue) return false;
+			return true;
+		}
+	}
+	public string ValueString
+	{
+		get => Value?.ToString(TfConstants.DateTimeFormatInput);
+	}
+	public void ValueStringChanged(string value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) Value = null;
+		else if (DateTime.TryParse(value, out DateTime outVal))
+			Value = outVal;
+		else
+			Value = null;
+	}
 	public TucFilterDateTime() { }
 
 	public TucFilterDateTime(TfFilterBase model)
@@ -403,6 +450,29 @@ public record TucFilterGuid : TucFilterBase
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "guid";
 
+	public bool RequiresValue
+	{
+		get
+		{
+			if (ComparisonMethod == TfFilterGuidComparisonMethod.IsEmpty) return false;
+			if (ComparisonMethod == TfFilterGuidComparisonMethod.IsNotEmpty) return false;
+			if (ComparisonMethod == TfFilterGuidComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterGuidComparisonMethod.HasNoValue) return false;
+			return true;
+		}
+	}
+	public string ValueString
+	{
+		get => Value?.ToString();
+	}
+	public void ValueStringChanged(string value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) Value = null;
+		else if (Guid.TryParse(value, out Guid outVal))
+			Value = outVal;
+		else
+			Value = null;
+	}
 	public TucFilterGuid() { }
 
 	public TucFilterGuid(TfFilterBase model)
@@ -435,6 +505,19 @@ public record TucFilterNumeric : TucFilterBase
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "numeric";
+	public bool RequiresValue
+	{
+		get
+		{
+			if (ComparisonMethod == TfFilterNumericComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterNumericComparisonMethod.HasNoValue) return false;
+			return true;
+		}
+	}
+	public void ValueChanged(decimal? value)
+	{
+		Value = value;
+	}
 
 	public TucFilterNumeric() { }
 
@@ -469,6 +552,19 @@ public record TucFilterText : TucFilterBase
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "text";
 
+	public bool RequiresValue
+	{
+		get
+		{
+			if (ComparisonMethod == TfFilterTextComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TfFilterTextComparisonMethod.HasNoValue) return false;
+			return true;
+		}
+	}
+	public void ValueChanged(string value)
+	{
+		Value = value;
+	}
 	public TucFilterText() { }
 
 	public TucFilterText(TfFilterBase model)

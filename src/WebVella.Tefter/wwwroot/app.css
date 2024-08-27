@@ -294,6 +294,14 @@ fluent-button.accent svg {
 	fill:var(--neutral-layer-1) !important;
 }
 
+.fluent-messagebar-notification-message:empty {
+	display:none;
+}
+
+.fluent-messagebar-notification-content:empty {
+	display:none;
+}
+
 /* General */
 #blazor-error-ui {
 	background: #F3D6D8;

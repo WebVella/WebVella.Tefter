@@ -15,4 +15,6 @@ public partial class TfConstants
 	public const string DateHourFormat = "dd MMM yyyy HH:mm";
 	public const string DateTimeFormat = "dd MMM yyyy HH:mm:ss";
 	public const string NumberFormat = "G0";
+	public const string DateOnlyFormatInput = "yyyy-MM-dd";
+	public const string DateTimeFormatInput = "yyyy-MM-dd HH:mm";
 }
