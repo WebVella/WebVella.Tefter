@@ -33,7 +33,96 @@
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
 					<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.Name)" />
 				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.SpaceViewManageForm.Type.ToDescriptionString()
+									 Label="@LOC("Type")" Style="width:100%" Disabled="true" />
+				</FluentGridItem>
 			</FluentGrid>
+			<FluentDivider Style="margin:1rem 0" />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentSelect @bind-SelectedOption="@UC.SpaceViewManageForm.DataSetType"
+								  TOption="TucSpaceViewDataSetType"
+								  Items="@(Enum.GetValues<TucSpaceViewDataSetType>())" Style="width:100%"
+								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"></FluentSelect>
+					<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.DataSetType)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				@if (UC.SpaceViewManageForm.DataSetType == TucSpaceViewDataSetType.New)
+				{
+					<FluentGridItem xs="6">
+						<FluentSelect SelectedOption="@_selectedDataProvider" SelectedOptionChanged="_dataProviderSelected"
+									  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
+									  Items="@UC.AllDataProviders" Style="width:100%"
+									  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
+						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.DataProviderId)" />
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceViewManageForm.SpaceDataName
+										 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="new-password" />
+						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.SpaceDataName)" />
+					</FluentGridItem>
+				}
+				else
+				{
+					<FluentGridItem xs="6">
+						@if (UC.SpaceDataList.Count == 0)
+						{
+							<FluentTextField Disabled="true" TextFieldType="@TextFieldType.Text"
+											 Label="@LOC("Dataset")" Style="width:100%" Placeholder="@LOC("No dataset create in this space yet")" />
+						}
+						else
+						{
+							<FluentSelect SelectedOption="@_selectedDataset" SelectedOptionChanged="_datasetSelected"
+										  TOption="TucSpaceData"
+										  Items="@UC.SpaceDataList" Style="width:100%"
+										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"></FluentSelect>
+							<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.SpaceDataId)" />
+						}
+					</FluentGridItem>
+				}
+
+			</FluentGrid>
+			@if (_selectedDataProvider is not null)
+			{
+				<FluentDivider Style="margin:1rem 0" />
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentSelect SelectedOption="@UC.SpaceViewManageForm.ColumnGenerationType"
+									  SelectedOptionChanged="_generationTypeSelected"
+									  TOption="TucSpaceViewDataSetColumnGenerationType"
+									  Items="@(Enum.GetValues<TucSpaceViewDataSetColumnGenerationType>())" Style="width:100%"
+									  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Automatic column generation")"></FluentSelect>
+						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.ColumnGenerationType)" />
+					</FluentGridItem>
+				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentInputLabel Label="@LOC("Generated Culumns")" />
+						@if (UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.AllColumns)
+						{
+							<div>@LOC("No columns will be generated")</div>
+						}
+						else if(_generatedColumns.Count > 0)
+						{
+							foreach (var item in _generatedColumns.Take(UC.GeneratedColumnCountLimit))
+							{
+								<FluentBadge Appearance="Appearance.Accent" Style="margin-right:0.5rem;margin-bottom:0.5rem">@item</FluentBadge>
+							}
+							@if (_generatedColumns.Count > UC.GeneratedColumnCountLimit)
+							{
+								<FluentTooltip Anchor="tf-columns-more" Position="@TooltipPosition.Bottom">@(String.Join(", ", _generatedColumns.Skip(UC.GeneratedColumnCountLimit)))</FluentTooltip>
+								<FluentBadge Id="tf-columns-more" Appearance="Appearance.Neutral">@LOC("+ {0} more", _generatedColumns.Count - UC.GeneratedColumnCountLimit)</FluentBadge>
+							}
+						}
+						else
+						{
+							<div>@LOC("No columns found in data provider")</div>
+						}
+					</FluentGridItem>
+				</FluentGrid>
+			}
 		</FluentEditForm>
 	}
 </FluentDialogBody>

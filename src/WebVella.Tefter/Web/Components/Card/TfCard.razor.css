@@ -1,9 +1,35 @@
 ﻿
 .tf-card {
-	padding: calc(var(--design-unit)* 5px);
 	border: calc(var(--stroke-width)* 1px) solid var(--neutral-stroke-rest);
 	border-radius: calc(var(--layer-corner-radius)* 1px);
 	/*	box-shadow: var(--elevation-shadow-card-rest);*/
+}
+
+.tf-card-title {
+	padding:calc(var(--design-unit)* 2.5px) calc(var(--design-unit)* 5px);	
+	background:var(--neutral-fill-layer-hover);
+	border-radius: calc(var(--layer-corner-radius)* 1px) calc(var(--layer-corner-radius)* 1px) 0 0;
+}
+
+.tf-card-content {
+	padding: calc(var(--design-unit)* 5px);	
+}
+
+.tf-card.tf-card--small .tf-card-title{
+	padding: 3px 7px;
+}
+
+.tf-card.tf-card--small .tf-card-content{
+	padding: 7px;
+}
+
+.tf-card.tf-card--no-body .tf-card-title{
+	border-radius: calc(var(--layer-corner-radius)* 1px);
+}
+
+
+.tf-card.tf-card--no-body .tf-card-content{
+	display:none;
 }
 
 ::deep fluent-text-field[readonly]::part(root) {
@@ -16,8 +42,4 @@
 
 ::deep fluent-text-field[readonly]::after {
 	display: none;
-}
-
-.tf-card.tf-card--small {
-	padding: 7px;
 }

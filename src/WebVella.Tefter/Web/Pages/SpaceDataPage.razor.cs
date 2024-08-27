@@ -12,6 +12,8 @@ public partial class SpaceDataPage : TfBasePage
 	{
 		base.OnInitialized();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
+
+		SpaceData.Filters.Add(new TucFilterBoolean { ColumnName = "boz", ComparisonMethod = TfFilterBooleanComparisonMethod.Equal, Value = true });
 	}
 
 

@@ -8,6 +8,17 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	internal TucDataProvider _selectedProvider = null;
 
+	internal List<string> _allColumnOptions = new List<string> { "Boz", "Boz2", "Boz3" };
+	internal List<string> _columnOptions
+	{
+		get
+		{
+			if (Form is null || Form.Columns is null) return _allColumnOptions;
+			return _allColumnOptions.Where(x => !Form.Columns.Contains(x)).ToList();
+		}
+	}
+	internal string _selectedColumn = null;
+
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
@@ -23,29 +34,64 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		if (Form is null) throw new Exception("Form is null");
 	}
 
-	private void _dataProviderSelected(TucDataProvider provider){ 
-		if(provider is null) return;
+	private void _dataProviderSelected(TucDataProvider provider)
+	{
+		if (provider is null) return;
 		_selectedProvider = provider;
 		Form.DataProviderId = _selectedProvider.Id;
 	}
 
-	private async Task _addFilter()
+
+	private void _addColumn()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfSpaceDataFilterManageDialog>(
-		new TucFilterBase(),
-		new DialogParameters()
+		try
 		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
+			if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
+			if (Form.Columns.Contains(_selectedColumn)) return;
+			Form.Columns.Add(_selectedColumn);
+			Form.Columns = Form.Columns.Order().ToList();
+		}
+		finally
 		{
-			//var item = (TucSpace)result.Data;
-			//ToastService.ShowSuccess(LOC("Space view successfully created!"));
-			//Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
+			_selectedColumn = null;
 		}
 	}
 
+	public void AddFilter(Type type, Guid? parentId)
+	{
+		if (parentId is null)
+		{
+			if (type == typeof(TucFilterAnd))
+			{
+				Form.Filters.Add(new TucFilterAnd());
+			}
+			else if (type == typeof(TucFilterOr))
+			{
+				Form.Filters.Add(new TucFilterOr());
+			}
+		}
+		//var dialog = await DialogService.ShowDialogAsync<TfSpaceDataFilterManageDialog>(
+		//new TucFilterBase(),
+		//new DialogParameters()
+		//{
+		//	PreventDismissOnOverlayClick = true,
+		//	PreventScroll = true,
+		//	Width = TfConstants.DialogWidthLarge
+		//});
+		//var result = await dialog.Result;
+		//if (!result.Cancelled && result.Data != null)
+		//{
+		//	//var item = (TucSpace)result.Data;
+		//	//ToastService.ShowSuccess(LOC("Space view successfully created!"));
+		//	//Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
+		//}
+		StateHasChanged();
+	}
+
+	private void _deleteColumn(string column)
+	{
+		if (String.IsNullOrWhiteSpace(column)) return;
+		if (!Form.Columns.Contains(column)) return;
+		Form.Columns.Remove(column);
+	}
 }

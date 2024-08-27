@@ -1,7 +1,17 @@
 ﻿namespace WebVella.Tefter.UseCases.Models;
 
+[JsonDerivedType(typeof(TucFilterBase), typeDiscriminator: "base")]
+[JsonDerivedType(typeof(TucFilterAnd), typeDiscriminator: "and")]
+[JsonDerivedType(typeof(TucFilterOr), typeDiscriminator: "or")]
+[JsonDerivedType(typeof(TucFilterBoolean), typeDiscriminator: "boolean")]
+[JsonDerivedType(typeof(TucFilterDateOnly), typeDiscriminator: "dateonly")]
+[JsonDerivedType(typeof(TucFilterDateTime), typeDiscriminator: "datetime")]
+[JsonDerivedType(typeof(TucFilterGuid), typeDiscriminator: "guid")]
+[JsonDerivedType(typeof(TucFilterNumeric), typeDiscriminator: "numeric")]
+[JsonDerivedType(typeof(TucFilterText), typeDiscriminator: "text")]
 public record TucFilterBase
 {
+	public Guid Id { get; set; } = Guid.NewGuid();
 	public string ColumnName { get; set; }
 	public static TucFilterBase FromModel(TfFilterBase model)
 	{

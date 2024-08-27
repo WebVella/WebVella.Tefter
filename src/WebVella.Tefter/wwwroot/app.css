@@ -111,6 +111,7 @@ body {
 	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-toolbar-height) - var(--tf-content-toolbar-margin-bottom) - var(--tf-content-toolbar-margin-top)) !important;
 }
 
+
 .tf-grid {
 	table-layout: fixed;
 	min-width: 100%;
@@ -286,6 +287,12 @@ fluent-select::part(listbox) {
 	display: block;
 }
 
+div[class ^='fluent-messagebar']{
+	animation:none !important;
+}
+fluent-button.accent svg {
+	fill:var(--neutral-layer-1) !important;
+}
 
 /* General */
 #blazor-error-ui {

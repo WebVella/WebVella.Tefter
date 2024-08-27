@@ -37,13 +37,13 @@ public partial class SpaceUseCase
 		_messageService = messageService;
 		_loc = loc;
 	}
-
-	internal async Task Init(Type type)
+	internal List<TucDataProvider> AllDataProviders { get; set; } = new();
+	internal async Task Init(Type type,Guid? spaceId = null)
 	{
 		if (type == typeof(TfSpaceStateManager)) await InitForState();
 		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
 		else if (type == typeof(TfSpaceDataManage)) await InitSpaceDataManage();
-		else if (type == typeof(TfSpaceViewManageDialog)) await InitSpaceViewManageDialog();
+		else if (type == typeof(TfSpaceViewManageDialog)) await InitSpaceViewManageDialog(spaceId.Value);
 		else if (type == typeof(TfSearchSpaceDialog)) await InitForSearchSpace();
 		else if (type == typeof(TfSpaceDataFilterManageDialog)) await InitSpaceDataFilterManageDialog();
 		else throw new Exception($"Type: {type.Name} not supported in SpaceUseCase");
@@ -77,7 +77,7 @@ public partial class SpaceUseCase
 			);
 			return null;
 		}
-		if(serviceResult.Value is null) return null;
+		if (serviceResult.Value is null) return null;
 
 		return new TucSpace(serviceResult.Value);
 	}
@@ -96,7 +96,7 @@ public partial class SpaceUseCase
 			);
 			return null;
 		}
-		if(serviceResult.Value is null) return null;
+		if (serviceResult.Value is null) return null;
 
 		return new TucSpaceData(serviceResult.Value);
 	}
@@ -115,9 +115,9 @@ public partial class SpaceUseCase
 			);
 			return null;
 		}
-		if(serviceResult.Value is null) return new();
+		if (serviceResult.Value is null) return new();
 
-		return serviceResult.Value.Select(x=> new TucSpaceData(x)).ToList();
+		return serviceResult.Value.Select(x => new TucSpaceData(x)).ToList();
 	}
 	internal List<TucSpaceView> GetSpaceViewList(Guid spaceId)
 	{
