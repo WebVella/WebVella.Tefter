@@ -1,14 +1,14 @@
 ﻿namespace WebVella.Tefter.UseCases.Models;
 public record TucDatabaseColumnTypeInfo
 {
-	public int TypeValue { get; init; }
+	public DatabaseColumnType TypeValue { get; init; }
 	public string Name { get; init; }
 	public bool CanBeProviderDataType { get; init; }
 	public bool SupportAutoDefaultValue { get; init; }
 	public TucDatabaseColumnTypeInfo() { }
 	public TucDatabaseColumnTypeInfo(DatabaseColumnType model)
 	{
-		TypeValue = (int)model;
+		TypeValue = model;
 		switch (model)
 		{
 			case DatabaseColumnType.ShortInteger:
@@ -88,7 +88,7 @@ public record TucDatabaseColumnTypeInfo
 		}
 	}
 	public TucDatabaseColumnTypeInfo(DatabaseColumnTypeInfo model){
-		TypeValue = (int)model.Type;
+		TypeValue = model.Type;
 		Name = model.Name;
 		CanBeProviderDataType = model.CanBeProviderDataType;
 		SupportAutoDefaultValue = model.SupportAutoDefaultValue;

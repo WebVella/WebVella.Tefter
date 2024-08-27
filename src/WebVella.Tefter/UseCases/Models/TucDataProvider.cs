@@ -8,6 +8,22 @@ public record TucDataProvider
 	public string SettingsJson { get; init; }
 	public List<TucDataProviderColumn> Columns { get; init; }
 	public List<TucSharedColumn> SharedColumns { get; init; } = new();
+	public List<TucColumn> ColumnsTotal
+	{
+		get
+		{
+			var result = new List<TucColumn>();
+			if (Columns is not null)
+			{
+				foreach (var item in Columns) result.Add(new TucColumn(item));
+			}
+			if (SharedColumns is not null)
+			{
+				foreach (var item in SharedColumns) result.Add(new TucColumn(item));
+			}
+			return result.OrderBy(x=> x.DbName).ToList();
+		}
+	}
 	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
 
@@ -18,9 +34,9 @@ public record TucDataProvider
 		Name = model.Name;
 		Index = model.Index;
 		SettingsJson = model.SettingsJson;
-		Columns = model.Columns is null ? null : model.Columns.Select(x=> new TucDataProviderColumn(x)).ToList();
-		SharedColumns = model.SharedColumns is null ? null : model.SharedColumns.Select(x=> new TucSharedColumn(x)).ToList();
-		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x=> new TucDataProviderSharedKey(x)).ToList();
+		Columns = model.Columns is null ? null : model.Columns.Select(x => new TucDataProviderColumn(x)).ToList();
+		SharedColumns = model.SharedColumns is null ? null : model.SharedColumns.Select(x => new TucSharedColumn(x)).ToList();
+		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x => new TucDataProviderSharedKey(x)).ToList();
 		ProviderType = new TucDataProviderTypeInfo(model.ProviderType);
 	}
 	public TfDataProvider ToModel(ReadOnlyCollection<ITfDataProviderType> providerTypes)
@@ -31,9 +47,9 @@ public record TucDataProvider
 			Name = Name,
 			Index = Index,
 			SettingsJson = SettingsJson,
-			Columns = Columns is null ? null : Columns.Select(x=> x.ToModel()).ToList().AsReadOnly(),
-			SharedColumns = SharedColumns is null ? null : SharedColumns.Select(x=> x.ToModel()).ToList().AsReadOnly(),
-			SharedKeys = SharedKeys is null ? null : SharedKeys.Select(x=> x.ToModel()).ToList().AsReadOnly(),
+			Columns = Columns is null ? null : Columns.Select(x => x.ToModel()).ToList().AsReadOnly(),
+			SharedColumns = SharedColumns is null ? null : SharedColumns.Select(x => x.ToModel()).ToList().AsReadOnly(),
+			SharedKeys = SharedKeys is null ? null : SharedKeys.Select(x => x.ToModel()).ToList().AsReadOnly(),
 			ProviderType = ProviderType.ToModel(providerTypes),
 		};
 	}

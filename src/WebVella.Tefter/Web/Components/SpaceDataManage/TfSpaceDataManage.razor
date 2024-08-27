@@ -18,8 +18,9 @@ else
 					<FluentValidationMessage For="@(() => Form.Name)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentSelect SelectedOption="@_selectedProvider" SelectedOptionChanged="_dataProviderSelected"
-								  TOption="TucDataProvider"
+					<FluentSelect SelectedOption="@SelectedProvider" SelectedOptionChanged="_dataProviderSelected"
+								  TOption="TucDataProvider" Required="false"
+								  Placeholder="@LOC("select...")"
 								  Items="@UC.AllDataProviders" Style="width:100%"
 								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
 					<FluentValidationMessage For="@(() => Form.Name)" />
@@ -28,7 +29,7 @@ else
 		</FluentEditForm>
 	</TfCard>
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
-	<CascadingValue IsFixed="true" Name="TfSpaceDataManage" Value="this" TValue="TfSpaceDataManage">
+	<CascadingValue IsFixed="false" Name="TfSpaceDataManage" Value="this" TValue="TfSpaceDataManage">
 		<TfCard Small="true">
 			<TitleTemplate>
 				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
@@ -36,17 +37,26 @@ else
 						<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">AND</FluentLabel>
 						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
 					</FluentStack>
-					<div>
-						<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
-							<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-							<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterOr),null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
-							<FluentSelect @bind-SelectedOption="@_selectedColumn"
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
+						@if (SelectedProvider is null)
+						{
+							<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
+						}
+						else if (SelectedProvider.ColumnsTotal.Count == 0)
+						{
+							<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
+						}
+						else
+						{
+							<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
 										  TOption="string" Required="false"
-										  Items="@_columnOptions" Style="width:200px"
+										  Items="@AllColumnOptions" Style="width:140px"
 										  Placeholder="@LOC("select...")"></FluentSelect>
-							<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
-						</FluentStack>
-					</div>
+							<FluentButton Class="" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+						}
+						<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+						<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterOr),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+					</FluentStack>
 				</FluentStack>
 			</TitleTemplate>
 			<ChildContent>

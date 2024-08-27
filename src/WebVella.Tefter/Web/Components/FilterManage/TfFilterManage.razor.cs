@@ -3,24 +3,26 @@
 namespace WebVella.Tefter.Web.Components.FilterManage;
 public partial class TfFilterManage : TfBaseComponent
 {
-	[CascadingParameter (Name ="TfSpaceDataManage")]
-	public TfSpaceDataManage TfSpaceDataManage { get; set;}
+	[CascadingParameter(Name = "TfSpaceDataManage")]
+	public TfSpaceDataManage TfSpaceDataManage { get; set; }
 
 	[Parameter]
-	public TucFilterBase Item
+	public TucFilterBase Item { get; set;}
+	private string _selectedFilterColumn = null;
+
+	private void _addColumnFilterHandler()
 	{
-		get => _item;
-		set => _item = JsonSerializer.Deserialize<TucFilterBase>(JsonSerializer.Serialize(value));
-	}
-	private TucFilterBase _item = null;
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
+		if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;
+		if (Item is null) return;
+		TfSpaceDataManage.AddColumnFilter(_selectedFilterColumn, Item.Id);
+		//_selectedFilterColumn = null; //do not clear for convenience
 	}
 
-	private void _addFilter()
+	private void _deleteFilterHandler()
 	{
-		TfSpaceDataManage.AddFilter(typeof(TucFilterAnd),null);
+		TfSpaceDataManage.RemoveColumnFilter(Item.Id);
 	}
+
+
 
 }

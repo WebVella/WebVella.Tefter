@@ -1,30 +1,48 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @inherits TfBaseComponent
 
-@if (_item is TucFilterAnd || _item is TucFilterOr)
+@if (Item is TucFilterAnd || Item is TucFilterOr)
 {
 	<TfCard Small="true" Style="margin-bottom:7px">
 		<TitleTemplate>
 			<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 				<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-					<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">AND</FluentLabel>
-					<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+					<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">@TucFilterBase.GetColumnName(Item)</FluentLabel>
+					<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@TucFilterBase.GetFieldType(Item)</FluentLabel>
 				</FluentStack>
-				<div>
-					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
-						<FluentButton Class="" OnClick="_addFilter" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-						<FluentButton Class="" OnClick="_addFilter" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
-						@* 					<FluentSelect @bind-SelectedOption="@_selectedColumn"
-					TOption="string" Required="false"
-					Items="@_columnOptions" Style="width:200px"
-					Placeholder="@LOC("select...")"></FluentSelect> *@
-						<FluentButton Class="" OnClick="_addFilter" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
-					</FluentStack>
-				</div>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
+					@if (TfSpaceDataManage.SelectedProvider is null)
+					{
+						<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
+					}
+					else if (TfSpaceDataManage.SelectedProvider.ColumnsTotal.Count == 0)
+					{
+						<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
+					}
+					else
+					{
+						<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
+									  TOption="string" Required="false"
+									  Items="@TfSpaceDataManage.AllColumnOptions" Style="width:140px"
+									  Placeholder="@LOC("select...")"></FluentSelect>
+						<FluentButton Class="" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+					}
+					<FluentButton Class="" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterAnd),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+					<FluentButton Class="" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterOr),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+					<FluentButton Class="" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+								  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
+				</FluentStack>
 			</FluentStack>
 		</TitleTemplate>
 		<ChildContent>
-
+			@if (TucFilterBase.GetChildFilters(Item).Count == 0)
+			{
+				<div>@LOC("No filters added yet")</div>
+			}
+			@foreach (var item in TucFilterBase.GetChildFilters(Item))
+			{
+				<TfFilterManage Item="item" />
+			}
 		</ChildContent>
 	</TfCard>
 }
@@ -33,21 +51,34 @@ else
 	<TfCard Small="true" Style="margin-bottom:7px">
 		<TitleTemplate>
 			<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-				<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-					<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">tf_boz</FluentLabel>
-					<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">boolean</FluentLabel>
+				<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left" VerticalAlignment="@VerticalAlignment.Center">
+					<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">@TucFilterBase.GetColumnName(Item)</FluentLabel>
+					<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@TucFilterBase.GetFieldType(Item)</FluentLabel>
+
+					<div style="padding-left:3rem;">
+						@if (Item is TucFilterBoolean)
+						{
+							var context = (TucFilterBoolean)Item;
+							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+										  TOption="TfFilterBooleanComparisonMethod" Required="true"
+										  Items="@(Enum.GetValues<TfFilterBooleanComparisonMethod>())" Style="width:140px"
+										  OptionText="@((p)=> p.ToString())"></FluentSelect>
+							@if (context.RequiresValue)
+							{
+								<FluentSelect Value="@context.ValueString" SelectedOptionChanged="@context.ValueOptionChanged"
+											  TOption="Option<string>" Required="false"
+											  OptionText="@((p)=> p.Text)"
+											  OptionValue="@((p)=> p.Value)"
+											  Items="@context.ValueOptions" Style="width:140px"></FluentSelect>
+							}
+						}
+
+					</div>
 				</FluentStack>
-				<div>
-					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
-						<FluentButton Class="" OnClick="_addFilter" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-						<FluentButton Class="" OnClick="_addFilter" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
-						@* 					<FluentSelect @bind-SelectedOption="@_selectedColumn"
-					TOption="string" Required="false"
-					Items="@_columnOptions" Style="width:200px"
-					Placeholder="@LOC("select...")"></FluentSelect> *@
-						<FluentButton Class="" OnClick="_addFilter" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
-					</FluentStack>
-				</div>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
+					<FluentButton Class="" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+								  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
+				</FluentStack>
 			</FluentStack>
 		</TitleTemplate>
 	</TfCard>
