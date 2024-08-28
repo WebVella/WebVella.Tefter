@@ -46,7 +46,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 					DataProviderId = Content.DataProviderId,
 					SpaceDataId = Content.SpaceDataId,
 					DataSetType = Content.DataSetType,
-					SpaceDataName = Content.SpaceDataName
+					NewSpaceDataName = Content.NewSpaceDataName
 				};
 			}
 			_generatedColumnsListInit();
@@ -108,12 +108,6 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		_generatedColumnsListInit();
 	}
 
-	private void _generationTypeSelected(TucSpaceViewDataSetColumnGenerationType type)
-	{
-		UC.SpaceViewManageForm.ColumnGenerationType = type;
-		_generatedColumnsListInit();
-	}
-
 	private void _datasetSelected(TucSpaceData dataset)
 	{
 		_selectedDataset = dataset;
@@ -121,12 +115,14 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 
 	private void _generatedColumnsListInit(){ 
 		_generatedColumns.Clear();
-		if(_selectedDataProvider is null || UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.NoColumns)
+		if(_selectedDataProvider is null || !UC.SpaceViewManageForm.AddsColumns)
 			return;
 
-		if(UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.AllNonSystem)
-			_generatedColumns = _selectedDataProvider.Columns.Select(x=> x.DbName).Order().ToList();
-		if(UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.AllColumns)
-			_generatedColumns = _selectedDataProvider.Columns.Select(x=> x.DbName).Order().ToList();
+		if(UC.SpaceViewManageForm.AddProviderColumns)
+			_generatedColumns.AddRange(_selectedDataProvider.Columns.Select(x=> x.DbName));
+		if(UC.SpaceViewManageForm.AddSystemColumns)
+			_generatedColumns.AddRange(_selectedDataProvider.SystemColumns.Select(x=> x.DbName));
+		if(UC.SpaceViewManageForm.AddSharedColumns)
+			_generatedColumns.AddRange(_selectedDataProvider.SharedColumns.Select(x=> x.DbName));
 	}
 }

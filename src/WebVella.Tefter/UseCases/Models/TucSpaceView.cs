@@ -17,11 +17,17 @@ public record TucSpaceView
 	[Required]
 	public TucSpaceViewDataSetType DataSetType { get; set; } = TucSpaceViewDataSetType.New;
 	public Guid? DataProviderId { get; set; } = null;
-	public string SpaceDataName { get; set; } = null;
+	public string NewSpaceDataName { get; set; } = null;
 	public Guid? SpaceDataId { get; set; } = null;
-
+	public short Position { get; set; }
 	[Required]
-	public TucSpaceViewDataSetColumnGenerationType ColumnGenerationType { get; set; } = TucSpaceViewDataSetColumnGenerationType.AllNonSystem;
+	public bool AddSystemColumns { get; set; } = false;
+	[Required]
+	public bool AddProviderColumns { get; set; } = true;
+	[Required]
+	public bool AddSharedColumns { get; set; } = true;
+
+	public bool AddsColumns{ get => AddSystemColumns || AddProviderColumns || AddSharedColumns; }
 
 	public TucSpaceView() { }
 
@@ -30,36 +36,48 @@ public record TucSpaceView
 		Id = model.Id;
 		Name = model.Name;
 		SpaceId = model.SpaceId;
+		Type = model.Type.ConvertSafeToEnum<TfSpaceViewType,TucSpaceViewType>();
 		SpaceDataId = model.SpaceDataId;
-		//Type = 
+		Position = model.Position;
 	}
 
-	public TfSpace ToModel()
+	public TfSpaceView ToModel()
 	{
-		return new TfSpace
+		return new TfSpaceView
 		{
 			Id = Id,
 			Name = Name,
-			//Position = Position,
-			//IsPrivate = IsPrivate,
-			//Icon = IconString,
-			//Color = (short)Color
+			SpaceId = SpaceId,
+			Type = Type.ConvertSafeToEnum<TucSpaceViewType,TfSpaceViewType>(),
+			SpaceDataId = SpaceDataId ?? Guid.Empty,
+			Position = Position,
+		};
+	}
+
+	public TfCreateSpaceViewExtended ToModelExtended()
+	{
+		return new TfCreateSpaceViewExtended
+		{
+			Id = Id,
+			Name = Name,
+			SpaceId = SpaceId,
+			Type = Type.ConvertSafeToEnum<TucSpaceViewType,TfSpaceViewType>(),
+			SpaceDataId = SpaceDataId ?? Guid.Empty,
+			Position = Position,
+			AddProviderColumns = AddProviderColumns,
+			AddSharedColumns = AddSharedColumns,
+			AddSystemColumns = AddSystemColumns,
+			DataProviderId = DataProviderId,
+			NewSpaceDataName = NewSpaceDataName
 		};
 	}
 }
 
-public enum TucSpaceViewDataSetType { 
+public enum TucSpaceViewDataSetType
+{
 	[Description("new dataset")]
 	New = 0,
 	[Description("existing dataset")]
 	Existing = 1
 }
 
-public enum TucSpaceViewDataSetColumnGenerationType { 
-	[Description("add all non-system provider columns")]
-	AllNonSystem = 0,
-	[Description("add all provider columns (incl.system)")]
-	AllColumns = 1,
-	[Description("do not generate columns, to be added later")]
-	NoColumns = 2,
-}

@@ -30,19 +30,15 @@ public class TfCreateSpaceViewExtended
 {
 	public Guid Id { get; set; }
 	public Guid SpaceId { get; set; }
-	public SpaceViewType Type { get; set; } = SpaceViewType.Report;
+	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.Report;
+	public short Position { get; set; }
 	public string Name { get; set; }
 	public Guid? SpaceDataId { get; set; } = null;
 	public string NewSpaceDataName { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
-	public TfSpaceViewColumnGenerationType ColumnsGenerationType { get; set; } =  TfSpaceViewColumnGenerationType.AllNonSystem;
-}
-
-public enum TfSpaceViewColumnGenerationType
-{
-	AllNonSystem = 0,
-	AllColumns = 1,
-	NoColumns = 2,
+	public bool AddSystemColumns { get; set; } = false;
+	public bool AddProviderColumns { get; set; } = true;
+	public bool AddSharedColumns { get; set; } = true;
 }
 
 public enum TfSpaceViewType

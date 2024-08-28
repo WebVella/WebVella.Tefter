@@ -6,6 +6,7 @@ public record TucDataProvider
 	public string Name { get; init; }
 	public int Index { get; init; }
 	public string SettingsJson { get; init; }
+	public List<TucDataProviderSystemColumn> SystemColumns { get; internal set; }
 	public List<TucDataProviderColumn> Columns { get; init; }
 	public List<TucSharedColumn> SharedColumns { get; init; } = new();
 	public List<TucColumn> ColumnsTotal
@@ -34,6 +35,7 @@ public record TucDataProvider
 		Name = model.Name;
 		Index = model.Index;
 		SettingsJson = model.SettingsJson;
+		SystemColumns = model.SystemColumns is null ? null : model.SystemColumns.Select(x => new TucDataProviderSystemColumn(x)).ToList();
 		Columns = model.Columns is null ? null : model.Columns.Select(x => new TucDataProviderColumn(x)).ToList();
 		SharedColumns = model.SharedColumns is null ? null : model.SharedColumns.Select(x => new TucSharedColumn(x)).ToList();
 		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x => new TucDataProviderSharedKey(x)).ToList();

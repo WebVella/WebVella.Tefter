@@ -59,9 +59,9 @@
 						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.DataProviderId)" />
 					</FluentGridItem>
 					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceViewManageForm.SpaceDataName
+						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceViewManageForm.NewSpaceDataName
 										 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="new-password" />
-						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.SpaceDataName)" />
+						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.NewSpaceDataName)" />
 					</FluentGridItem>
 				}
 				else
@@ -89,18 +89,13 @@
 				<FluentDivider Style="margin:1rem 0" />
 				<FluentGrid>
 					<FluentGridItem xs="12">
-						<FluentSelect SelectedOption="@UC.SpaceViewManageForm.ColumnGenerationType"
-									  SelectedOptionChanged="_generationTypeSelected"
-									  TOption="TucSpaceViewDataSetColumnGenerationType"
-									  Items="@(Enum.GetValues<TucSpaceViewDataSetColumnGenerationType>())" Style="width:100%"
-									  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Automatic column generation")"></FluentSelect>
-						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.ColumnGenerationType)" />
+
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="12">
 						<FluentInputLabel Label="@LOC("Generated Culumns")" />
-						@if (UC.SpaceViewManageForm.ColumnGenerationType == TucSpaceViewDataSetColumnGenerationType.AllColumns)
+						@if (!UC.SpaceViewManageForm.AddsColumns)
 						{
 							<div>@LOC("No columns will be generated")</div>
 						}
