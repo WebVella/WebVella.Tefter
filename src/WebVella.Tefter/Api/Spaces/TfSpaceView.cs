@@ -35,14 +35,5 @@ public class TfCreateSpaceViewExtended
 	public Guid? SpaceDataId { get; set; } = null;
 	public string NewSpaceDataName { get; set; } = null;
 	public Guid? DataProviderId { get; set; } = null;
-	public TfSpaceViewSpaceDataColumnGenerationType? ColumnGenerationType { get; set; } = null;
-}
-
-public enum TfSpaceViewSpaceDataColumnGenerationType
-{
-	AllNonSystem = 0,
-
-	AllColumns = 1,
-
-	NoColumns = 2,
+	public bool? GenerateSpaceDataWithAllColumns { get; set; } = null;
 }
