@@ -14,7 +14,7 @@ public class TfSpaceView
 	public Guid SpaceId { get; set; }
 
 	[DboModelProperty("type")]
-	[DboTypeConverter(typeof(EnumPropertyConverter<SpaceViewType>))]
+	[DboTypeConverter(typeof(EnumPropertyConverter<TfSpaceViewType>))]
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.Report;
 
 	[DboModelProperty("name")]
