@@ -76,11 +76,15 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			if (providerType == null)
 				return Result.Fail(new Error("Unable to find provider type for specified provider instance."));
 
+			var sharedKeys = GetDataProviderSharedKeys(id);
+
 			var provider = DataProviderFromDbo(
 					providerDbo,
+					GetDataProviderSystemColumns(sharedKeys),
 					GetDataProviderColumns(id),
-					GetDataProviderSharedKeys(id),
+					sharedKeys,
 					providerType);
+
 
 			InitDataProviderSharedColumns(provider);
 
@@ -119,10 +123,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				return Result.Fail("Unable to find provider type" +
 					" for specified provider instance.");
 
+			var sharedKeys = GetDataProviderSharedKeys(providerDbo.Id);
+
 			var provider = DataProviderFromDbo(
 					providerDbo,
+					GetDataProviderSystemColumns(sharedKeys),
 					GetDataProviderColumns(providerDbo.Id),
-					GetDataProviderSharedKeys(providerDbo.Id),
+					sharedKeys,
 					providerType);
 
 			InitDataProviderSharedColumns(provider);
@@ -162,10 +169,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					return Result.Fail(new Error($"Failed to get data providers, because " +
 						$"provider type {dbo.TypeName} with id = '{dbo.TypeId}' is not found."));
 
+				var sharedKeys = GetDataProviderSharedKeys(dbo.Id);
+
 				var provider = DataProviderFromDbo(
 						dbo,
+						GetDataProviderSystemColumns(sharedKeys),
 						GetDataProviderColumns(dbo.Id),
-						GetDataProviderSharedKeys(dbo.Id),
+						sharedKeys,
 						providerType);
 
 				InitDataProviderSharedColumns(provider);
@@ -408,6 +418,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 	private static TfDataProvider DataProviderFromDbo(
 		TfDataProviderDbo dbo,
+		List<TfDataProviderSystemColumn> systemColumns,
 		List<TfDataProviderColumn> columns,
 		List<TfDataProviderSharedKey> sharedKeys,
 		ITfDataProviderType providerType)
@@ -431,6 +442,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			Index = dbo.Index,
 			SettingsJson = dbo.SettingsJson,
 			ProviderType = providerType,
+			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
 			SharedKeys = sharedKeys.AsReadOnly()
 		};

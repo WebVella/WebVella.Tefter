@@ -69,6 +69,59 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
 	}
 
+	private List<TfDataProviderSystemColumn> GetDataProviderSystemColumns(
+		List<TfDataProviderSharedKey> sharedKeys )
+	{
+		var systemColumns = new List<TfDataProviderSystemColumn>();
+
+		systemColumns.Add(new TfDataProviderSystemColumn
+		{
+			DbName = "tf_id",
+			DbType = DatabaseColumnType.Guid
+		});
+
+		systemColumns.Add(new TfDataProviderSystemColumn
+		{
+			DbName = "tf_row_index",
+			DbType = DatabaseColumnType.Integer
+		});
+
+		systemColumns.Add(new TfDataProviderSystemColumn
+		{
+			DbName = "tf_created_on",
+			DbType = DatabaseColumnType.DateTime
+		});
+
+		systemColumns.Add(new TfDataProviderSystemColumn
+		{
+			DbName = "tf_updated_on",
+			DbType = DatabaseColumnType.DateTime
+		});
+
+		systemColumns.Add(new TfDataProviderSystemColumn
+		{
+			DbName = "tf_search",
+			DbType = DatabaseColumnType.Text
+		});
+
+		foreach (var sharedKey in sharedKeys)
+		{
+			systemColumns.Add(new TfDataProviderSystemColumn
+			{
+				DbName = $"tf_sk_{sharedKey.DbName}_id",
+				DbType = DatabaseColumnType.Guid
+			});
+
+			systemColumns.Add(new TfDataProviderSystemColumn
+			{
+				DbName = $"tf_sk_{sharedKey.DbName}_version",
+				DbType = DatabaseColumnType.ShortInteger
+			});
+		}
+
+		return systemColumns;
+	}
+
 	/// <summary>
 	/// Creates new data provider column
 	/// </summary>

@@ -10,6 +10,7 @@ public class TfDataProvider
 	public string Name { get; internal set; }
 	public int Index { get; internal set; }
 	public string SettingsJson { get; internal set; }
+	public ReadOnlyCollection<TfDataProviderSystemColumn> SystemColumns { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; internal set; }
 	public ReadOnlyCollection<TfSharedColumn> SharedColumns { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
