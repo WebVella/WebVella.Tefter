@@ -15,7 +15,7 @@ public class TfSpaceView
 
 	[DboModelProperty("type")]
 	[DboTypeConverter(typeof(EnumPropertyConverter<SpaceViewType>))]
-	public SpaceViewType Type { get; set; } = SpaceViewType.Report;
+	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.Report;
 
 	[DboModelProperty("name")]
 	public string Name { get; set; }
@@ -43,4 +43,12 @@ public enum TfSpaceViewColumnGenerationType
 	AllNonSystem = 0,
 	AllColumns = 1,
 	NoColumns = 2,
+}
+
+public enum TfSpaceViewType
+{
+	Report = 0,
+	Form = 1,
+	Chart = 2,
+	Dashboard = 3
 }
