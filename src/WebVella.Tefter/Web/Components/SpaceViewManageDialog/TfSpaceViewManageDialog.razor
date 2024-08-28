@@ -86,24 +86,42 @@
 			</FluentGrid>
 			@if (_selectedDataProvider is not null)
 			{
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentInputLabel Label="@LOC("Automatic column generation")" />
+						<FluentStack>
+							<FluentCheckbox Value="@UC.SpaceViewManageForm.AddProviderColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddProviderColumns)))"
+											Label="@LOC("data provided columns")" />
+							<FluentCheckbox Value="@UC.SpaceViewManageForm.AddSystemColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddSystemColumns)))"
+											Label="@LOC("system columns")" />
+							<FluentCheckbox Value="@UC.SpaceViewManageForm.AddSharedColumns"
+											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddSharedColumns)))"
+											Label="@LOC("shared columns")" />
+						</FluentStack>
+					</FluentGridItem>
+				</FluentGrid>
 				<FluentDivider Style="margin:1rem 0" />
 				<FluentGrid>
 					<FluentGridItem xs="12">
-
-					</FluentGridItem>
-				</FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="12">
-						<FluentInputLabel Label="@LOC("Generated Culumns")" />
+						<FluentInputLabel>
+							<FluentStack>
+								<span>@LOC("Generated Culumns")</span>
+								<FluentBadge Appearance="Appearance.Neutral">
+									@_generatedColumns.Count
+								</FluentBadge>
+							</FluentStack>
+						</FluentInputLabel>
 						@if (!UC.SpaceViewManageForm.AddsColumns)
 						{
 							<div>@LOC("No columns will be generated")</div>
 						}
-						else if(_generatedColumns.Count > 0)
+						else if (_generatedColumns.Count > 0)
 						{
 							foreach (var item in _generatedColumns.Take(UC.GeneratedColumnCountLimit))
 							{
-								<FluentBadge Appearance="Appearance.Accent" Style="margin-right:0.5rem;margin-bottom:0.5rem">@item</FluentBadge>
+								<FluentBadge Appearance="Appearance.Neutral" Style="margin-right:0.5rem;margin-bottom:0.5rem">@item</FluentBadge>
 							}
 							@if (_generatedColumns.Count > UC.GeneratedColumnCountLimit)
 							{

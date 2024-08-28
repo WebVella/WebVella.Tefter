@@ -348,3 +348,4 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/src/WebVella.Tefter.Site/appsettings.DESKTOP-KU8LRG2.json

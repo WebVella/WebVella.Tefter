@@ -55,11 +55,11 @@
 							@foreach (var column in columns)
 							{
 								<td class="tf-grid-td">
-									@if (column.CellType is null) { }
+@* 									@if (column.RenderComponentAsType is null) { }
 									else
 									{
-										<DynamicComponent Type="@column.CellType" Parameters="@column.GetComponentParameters(context)" />
-									}
+										<DynamicComponent Type="@column.RenderComponentAsType" Parameters="@column.GetComponentParameters(context)" />
+									} *@
 								</td>
 							}
 						</tr>

@@ -18,7 +18,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType(),Content.SpaceId);
+		await UC.Init(this.GetType(), Content.SpaceId);
 		base.InitForm(UC.SpaceViewManageForm);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
@@ -113,16 +113,35 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		_selectedDataset = dataset;
 	}
 
-	private void _generatedColumnsListInit(){ 
+	private void _columnGeneratorSettingChanged(bool value, string field)
+	{
+
+		if (field == nameof(UC.SpaceViewManageForm.AddProviderColumns))
+		{
+			UC.SpaceViewManageForm.AddProviderColumns = value;
+		}
+		else if (field == nameof(UC.SpaceViewManageForm.AddSharedColumns))
+		{
+			UC.SpaceViewManageForm.AddSharedColumns = value;
+		}
+		else if (field == nameof(UC.SpaceViewManageForm.AddSystemColumns))
+		{
+			UC.SpaceViewManageForm.AddSystemColumns = value;
+		}
+		_generatedColumnsListInit();
+	}
+
+	private void _generatedColumnsListInit()
+	{
 		_generatedColumns.Clear();
-		if(_selectedDataProvider is null || !UC.SpaceViewManageForm.AddsColumns)
+		if (_selectedDataProvider is null || !UC.SpaceViewManageForm.AddsColumns)
 			return;
 
-		if(UC.SpaceViewManageForm.AddProviderColumns)
-			_generatedColumns.AddRange(_selectedDataProvider.Columns.Select(x=> x.DbName));
-		if(UC.SpaceViewManageForm.AddSystemColumns)
-			_generatedColumns.AddRange(_selectedDataProvider.SystemColumns.Select(x=> x.DbName));
-		if(UC.SpaceViewManageForm.AddSharedColumns)
-			_generatedColumns.AddRange(_selectedDataProvider.SharedColumns.Select(x=> x.DbName));
+		if (UC.SpaceViewManageForm.AddProviderColumns)
+			_generatedColumns.AddRange(_selectedDataProvider.Columns.Select(x => x.DbName));
+		if (UC.SpaceViewManageForm.AddSystemColumns)
+			_generatedColumns.AddRange(_selectedDataProvider.SystemColumns.Select(x => x.DbName));
+		if (UC.SpaceViewManageForm.AddSharedColumns)
+			_generatedColumns.AddRange(_selectedDataProvider.SharedColumns.Select(x => x.DbName));
 	}
 }
