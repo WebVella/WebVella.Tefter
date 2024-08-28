@@ -115,36 +115,36 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 		switch (column.DbType.TypeValue)
 		{
-			case DatabaseColumnType.ShortInteger:
-			case DatabaseColumnType.Integer:
-			case DatabaseColumnType.LongInteger:
-			case DatabaseColumnType.Number:
+			case TucDatabaseColumnType.ShortInteger:
+			case TucDatabaseColumnType.Integer:
+			case TucDatabaseColumnType.LongInteger:
+			case TucDatabaseColumnType.Number:
 				{
 					AddFilter(typeof(TucFilterNumeric), dbColumn, parentId);
 				}
 				break;
-			case DatabaseColumnType.Boolean:
+			case TucDatabaseColumnType.Boolean:
 				{
 					AddFilter(typeof(TucFilterBoolean), dbColumn, parentId);
 				}
 				break;
-			case DatabaseColumnType.Date:
+			case TucDatabaseColumnType.Date:
 				{
 					AddFilter(typeof(TucFilterDateOnly), dbColumn, parentId);
 				}
 				break;
-			case DatabaseColumnType.DateTime:
+			case TucDatabaseColumnType.DateTime:
 				{
 					AddFilter(typeof(TucFilterDateTime), dbColumn, parentId);
 				}
 				break;
-			case DatabaseColumnType.ShortText:
-			case DatabaseColumnType.Text:
+			case TucDatabaseColumnType.ShortText:
+			case TucDatabaseColumnType.Text:
 				{
 					AddFilter(typeof(TucFilterText), dbColumn, parentId);
 				}
 				break;
-			case DatabaseColumnType.Guid:
+			case TucDatabaseColumnType.Guid:
 				{
 					AddFilter(typeof(TucFilterGuid), dbColumn, parentId);
 				}

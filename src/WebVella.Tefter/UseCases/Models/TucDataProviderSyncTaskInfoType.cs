@@ -1,5 +1,6 @@
 ﻿namespace WebVella.Tefter.UseCases.Models;
 
+
 public enum TucDataProviderSyncTaskInfoType
 {
 	Info = 0,

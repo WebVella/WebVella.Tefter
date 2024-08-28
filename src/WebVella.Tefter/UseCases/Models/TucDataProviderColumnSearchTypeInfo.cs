@@ -1,13 +1,13 @@
 ﻿namespace WebVella.Tefter.UseCases.Models;
 public record TucDataProviderColumnSearchTypeInfo
 {
-	public int TypeValue { get; init; }
+	public TucDataProviderColumnSearchType TypeValue { get; init; }
 	public string Name { get; init; }
 
 	public TucDataProviderColumnSearchTypeInfo() { }
 	public TucDataProviderColumnSearchTypeInfo(TfDataProviderColumnSearchType model)
 	{
-		TypeValue = (int)model;
+		TypeValue = model.ConvertSafeToEnum<TfDataProviderColumnSearchType,TucDataProviderColumnSearchType>();
 		switch (model)
 		{
 			case TfDataProviderColumnSearchType.Equals:
@@ -23,6 +23,6 @@ public record TucDataProviderColumnSearchTypeInfo
 	}
 	public TfDataProviderColumnSearchType ToModel()
 	{
-		return (TfDataProviderColumnSearchType)TypeValue;
+		return TypeValue.ConvertSafeToEnum<TucDataProviderColumnSearchType,TfDataProviderColumnSearchType>();
 	}
 }

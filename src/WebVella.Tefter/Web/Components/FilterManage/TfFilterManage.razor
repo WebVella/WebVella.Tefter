@@ -64,8 +64,8 @@ else
 						{
 							var context = (TucFilterBoolean)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
-										  TOption="TfFilterBooleanComparisonMethod" Required="true"
-										  Items="@(Enum.GetValues<TfFilterBooleanComparisonMethod>())" Style="width:140px"
+										  TOption="TucFilterBooleanComparisonMethod" Required="true"
+										  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
@@ -80,8 +80,8 @@ else
 						{
 							var context = (TucFilterDateOnly)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
-										  TOption="TfFilterDateTimeComparisonMethod" Required="true"
-										  Items="@(Enum.GetValues<TfFilterDateTimeComparisonMethod>())" Style="width:140px"
+										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
+										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
@@ -93,8 +93,8 @@ else
 						{
 							var context = (TucFilterDateTime)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
-										  TOption="TfFilterDateTimeComparisonMethod" Required="true"
-										  Items="@(Enum.GetValues<TfFilterDateTimeComparisonMethod>())" Style="width:140px"
+										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
+										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
@@ -106,8 +106,8 @@ else
 						{
 							var context = (TucFilterGuid)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
-										  TOption="TfFilterGuidComparisonMethod" Required="true"
-										  Items="@(Enum.GetValues<TfFilterGuidComparisonMethod>())" Style="width:140px"
+										  TOption="TucFilterGuidComparisonMethod" Required="true"
+										  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
@@ -119,8 +119,8 @@ else
 						{
 							var context = (TucFilterNumeric)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
-										  TOption="TfFilterNumericComparisonMethod" Required="true"
-										  Items="@(Enum.GetValues<TfFilterNumericComparisonMethod>())" Style="width:140px"
+										  TOption="TucFilterNumericComparisonMethod" Required="true"
+										  Items="@(Enum.GetValues<TucFilterNumericComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
@@ -132,8 +132,8 @@ else
 						{
 							var context = (TucFilterText)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
-										  TOption="TfFilterTextComparisonMethod" Required="true"
-										  Items="@(Enum.GetValues<TfFilterTextComparisonMethod>())" Style="width:140px"
+										  TOption="TucFilterTextComparisonMethod" Required="true"
+										  Items="@(Enum.GetValues<TucFilterTextComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{

@@ -39,19 +39,5 @@ public record TucDataProvider
 		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x => new TucDataProviderSharedKey(x)).ToList();
 		ProviderType = new TucDataProviderTypeInfo(model.ProviderType);
 	}
-	public TfDataProvider ToModel(ReadOnlyCollection<ITfDataProviderType> providerTypes)
-	{
-		return new TfDataProvider
-		{
-			Id = Id,
-			Name = Name,
-			Index = Index,
-			SettingsJson = SettingsJson,
-			Columns = Columns is null ? null : Columns.Select(x => x.ToModel()).ToList().AsReadOnly(),
-			SharedColumns = SharedColumns is null ? null : SharedColumns.Select(x => x.ToModel()).ToList().AsReadOnly(),
-			SharedKeys = SharedKeys is null ? null : SharedKeys.Select(x => x.ToModel()).ToList().AsReadOnly(),
-			ProviderType = ProviderType.ToModel(providerTypes),
-		};
-	}
 
 }

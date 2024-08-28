@@ -42,4 +42,14 @@ internal static class EnumExtensions
 		return defaultValue;
 	}
 
+	public static TEnum2 ConvertSafeToEnum<TEnum, TEnum2>(this TEnum value) where TEnum : struct, IConvertible
+																							 where TEnum2 : struct, IConvertible
+	{
+		if (Enum.TryParse<TEnum2>(value.ToString(), out TEnum2 result) && result.ToInt16(null) == value.ToInt16(null))
+			return result;
+
+		throw new Exception("Cannot be safely converted");
+
+	}
+
 }

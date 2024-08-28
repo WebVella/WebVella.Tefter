@@ -1,14 +1,14 @@
 ﻿namespace WebVella.Tefter.UseCases.Models;
 public record TucDatabaseColumnTypeInfo
 {
-	public DatabaseColumnType TypeValue { get; init; }
+	public TucDatabaseColumnType TypeValue { get; init; }
 	public string Name { get; init; }
 	public bool CanBeProviderDataType { get; init; }
 	public bool SupportAutoDefaultValue { get; init; }
 	public TucDatabaseColumnTypeInfo() { }
 	public TucDatabaseColumnTypeInfo(DatabaseColumnType model)
 	{
-		TypeValue = model;
+		TypeValue = model.ConvertSafeToEnum<DatabaseColumnType,TucDatabaseColumnType>();
 		switch (model)
 		{
 			case DatabaseColumnType.ShortInteger:
@@ -88,13 +88,13 @@ public record TucDatabaseColumnTypeInfo
 		}
 	}
 	public TucDatabaseColumnTypeInfo(DatabaseColumnTypeInfo model){
-		TypeValue = model.Type;
+		TypeValue = model.Type.ConvertSafeToEnum<DatabaseColumnType,TucDatabaseColumnType>();
 		Name = model.Name;
 		CanBeProviderDataType = model.CanBeProviderDataType;
 		SupportAutoDefaultValue = model.SupportAutoDefaultValue;
 	}
 	public DatabaseColumnType ToModel()
 	{
-		return (DatabaseColumnType)TypeValue;
+		return TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,DatabaseColumnType>();
 	}
 }

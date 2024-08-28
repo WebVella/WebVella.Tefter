@@ -1,4 +1,6 @@
 ﻿namespace WebVella.Tefter.UseCases.Models;
+
+[TucEnumMatch(typeof(TfSynchronizationStatus))]
 public enum TucSynchronizationStatus
 {
 	[Description("Pending")]

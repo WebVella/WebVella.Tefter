@@ -12,7 +12,7 @@ public record TucSpaceView
 	public Guid SpaceId { get; set; }
 
 	[Required]
-	public SpaceViewType Type { get; init; } = SpaceViewType.Report;
+	public TucSpaceViewType Type { get; init; } = TucSpaceViewType.Report;
 
 	[Required]
 	public TucSpaceViewDataSetType DataSetType { get; set; } = TucSpaceViewDataSetType.New;
@@ -25,28 +25,27 @@ public record TucSpaceView
 
 	public TucSpaceView() { }
 
-	//public TucSpaceView(TfSpaceView model)
-	//{
-	//	Id = model.Id;
-	//	Name = model.Name;
-	//	Position = model.Position;
-	//	IsPrivate = model.IsPrivate;
-	//	IconString = model.Icon;
-	//	Color = Web.Utils.EnumExtensions.ConvertIntToEnum<OfficeColor>(model.Color, OfficeColor.Default);
-	//}
+	public TucSpaceView(TfSpaceView model)
+	{
+		Id = model.Id;
+		Name = model.Name;
+		SpaceId = model.SpaceId;
+		SpaceDataId = model.SpaceDataId;
+		//Type = 
+	}
 
-	//public TfSpace ToModel()
-	//{
-	//	return new TfSpace
-	//	{
-	//		Id = Id,
-	//		Name = Name,
-	//		Position = Position,
-	//		IsPrivate = IsPrivate,
-	//		Icon = IconString,
-	//		Color = (short)Color
-	//	};
-	//}
+	public TfSpace ToModel()
+	{
+		return new TfSpace
+		{
+			Id = Id,
+			Name = Name,
+			//Position = Position,
+			//IsPrivate = IsPrivate,
+			//Icon = IconString,
+			//Color = (short)Color
+		};
+	}
 }
 
 public enum TucSpaceViewDataSetType { 

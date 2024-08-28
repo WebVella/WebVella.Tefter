@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UseCases.Models;
+﻿using WebVella.Tefter.Web.Utils;
+
+namespace WebVella.Tefter.UseCases.Models;
 
 [JsonDerivedType(typeof(TucFilterBase), typeDiscriminator: "base")]
 [JsonDerivedType(typeof(TucFilterAnd), typeDiscriminator: "and")]
@@ -269,17 +271,17 @@ public record TucFilterOr : TucFilterBase
 public record TucFilterBoolean : TucFilterBase
 {
 	public bool? Value { get; set; } = null;
-	public TfFilterBooleanComparisonMethod ComparisonMethod { get; set; } = TfFilterBooleanComparisonMethod.Equal;
+	public TucFilterBooleanComparisonMethod ComparisonMethod { get; set; } = TucFilterBooleanComparisonMethod.Equal;
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "boolean";
 	public bool RequiresValue
 	{
 		get
 		{
-			if (ComparisonMethod == TfFilterBooleanComparisonMethod.IsTrue) return false;
-			if (ComparisonMethod == TfFilterBooleanComparisonMethod.IsFalse) return false;
-			if (ComparisonMethod == TfFilterBooleanComparisonMethod.HasValue) return false;
-			if (ComparisonMethod == TfFilterBooleanComparisonMethod.HasNoValue) return false;
+			if (ComparisonMethod == TucFilterBooleanComparisonMethod.IsTrue) return false;
+			if (ComparisonMethod == TucFilterBooleanComparisonMethod.IsFalse) return false;
+			if (ComparisonMethod == TucFilterBooleanComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TucFilterBooleanComparisonMethod.HasNoValue) return false;
 
 
 			return true;
@@ -318,7 +320,7 @@ public record TucFilterBoolean : TucFilterBase
 		{
 			var item = (TfFilterBoolean)model;
 			Value = item.Value;
-			ComparisonMethod = item.ComparisonMethod;
+			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterBooleanComparisonMethod,TucFilterBooleanComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterBoolean");
 	}
@@ -327,7 +329,7 @@ public record TucFilterBoolean : TucFilterBase
 	{
 		return new TfFilterBoolean(
 			columnName: ColumnName,
-			comparisonMethod: ComparisonMethod,
+			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterBooleanComparisonMethod,TfFilterBooleanComparisonMethod>(),
 			value: Value
 		);
 
@@ -337,7 +339,7 @@ public record TucFilterBoolean : TucFilterBase
 public record TucFilterDateOnly : TucFilterBase
 {
 	public DateOnly? Value { get; set; } = null;
-	public TfFilterDateTimeComparisonMethod ComparisonMethod { get; set; } = TfFilterDateTimeComparisonMethod.Equal;
+	public TucFilterDateTimeComparisonMethod ComparisonMethod { get; set; } = TucFilterDateTimeComparisonMethod.Equal;
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "dateonly";
@@ -345,8 +347,8 @@ public record TucFilterDateOnly : TucFilterBase
 	{
 		get
 		{
-			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasValue) return false;
-			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasNoValue) return false;
+			if (ComparisonMethod == TucFilterDateTimeComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TucFilterDateTimeComparisonMethod.HasNoValue) return false;
 			return true;
 		}
 	}
@@ -374,7 +376,7 @@ public record TucFilterDateOnly : TucFilterBase
 		{
 			var item = (TfFilterDateOnly)model;
 			Value = item.Value;
-			ComparisonMethod = item.ComparisonMethod;
+			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod,TucFilterDateTimeComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterDateOnly");
 	}
@@ -383,7 +385,7 @@ public record TucFilterDateOnly : TucFilterBase
 	{
 		return new TfFilterDateOnly(
 			columnName: ColumnName,
-			comparisonMethod: ComparisonMethod,
+			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterDateTimeComparisonMethod,TfFilterDateTimeComparisonMethod>(),
 			value: Value
 		);
 	}
@@ -392,7 +394,7 @@ public record TucFilterDateOnly : TucFilterBase
 public record TucFilterDateTime : TucFilterBase
 {
 	public DateTime? Value { get; set; } = null;
-	public TfFilterDateTimeComparisonMethod ComparisonMethod { get; set; } = TfFilterDateTimeComparisonMethod.Equal;
+	public TucFilterDateTimeComparisonMethod ComparisonMethod { get; set; } = TucFilterDateTimeComparisonMethod.Equal;
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "datetime";
@@ -400,8 +402,8 @@ public record TucFilterDateTime : TucFilterBase
 	{
 		get
 		{
-			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasValue) return false;
-			if (ComparisonMethod == TfFilterDateTimeComparisonMethod.HasNoValue) return false;
+			if (ComparisonMethod == TucFilterDateTimeComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TucFilterDateTimeComparisonMethod.HasNoValue) return false;
 			return true;
 		}
 	}
@@ -427,7 +429,7 @@ public record TucFilterDateTime : TucFilterBase
 		{
 			var item = (TfFilterDateTime)model;
 			Value = item.Value;
-			ComparisonMethod = item.ComparisonMethod;
+			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod,TucFilterDateTimeComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterDateTime");
 	}
@@ -436,7 +438,7 @@ public record TucFilterDateTime : TucFilterBase
 	{
 		return new TfFilterDateTime(
 			columnName: ColumnName,
-			comparisonMethod: ComparisonMethod,
+			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterDateTimeComparisonMethod,TfFilterDateTimeComparisonMethod>(),
 			value: Value
 		);
 	}
@@ -445,7 +447,7 @@ public record TucFilterDateTime : TucFilterBase
 public record TucFilterGuid : TucFilterBase
 {
 	public Guid? Value { get; set; } = null;
-	public TfFilterGuidComparisonMethod ComparisonMethod { get; set; } = TfFilterGuidComparisonMethod.Equal;
+	public TucFilterGuidComparisonMethod ComparisonMethod { get; set; } = TucFilterGuidComparisonMethod.Equal;
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "guid";
@@ -454,10 +456,10 @@ public record TucFilterGuid : TucFilterBase
 	{
 		get
 		{
-			if (ComparisonMethod == TfFilterGuidComparisonMethod.IsEmpty) return false;
-			if (ComparisonMethod == TfFilterGuidComparisonMethod.IsNotEmpty) return false;
-			if (ComparisonMethod == TfFilterGuidComparisonMethod.HasValue) return false;
-			if (ComparisonMethod == TfFilterGuidComparisonMethod.HasNoValue) return false;
+			if (ComparisonMethod == TucFilterGuidComparisonMethod.IsEmpty) return false;
+			if (ComparisonMethod == TucFilterGuidComparisonMethod.IsNotEmpty) return false;
+			if (ComparisonMethod == TucFilterGuidComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TucFilterGuidComparisonMethod.HasNoValue) return false;
 			return true;
 		}
 	}
@@ -483,7 +485,7 @@ public record TucFilterGuid : TucFilterBase
 		{
 			var item = (TfFilterGuid)model;
 			Value = item.Value;
-			ComparisonMethod = item.ComparisonMethod;
+			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterGuidComparisonMethod,TucFilterGuidComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterGuid");
 	}
@@ -492,7 +494,7 @@ public record TucFilterGuid : TucFilterBase
 	{
 		return new TfFilterGuid(
 			columnName: ColumnName,
-			comparisonMethod: ComparisonMethod,
+			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterGuidComparisonMethod,TfFilterGuidComparisonMethod>(),
 			value: Value
 		);
 	}
@@ -501,7 +503,7 @@ public record TucFilterGuid : TucFilterBase
 public record TucFilterNumeric : TucFilterBase
 {
 	public decimal? Value { get; set; } = null;
-	public TfFilterNumericComparisonMethod ComparisonMethod { get; set; } = TfFilterNumericComparisonMethod.Equal;
+	public TucFilterNumericComparisonMethod ComparisonMethod { get; set; } = TucFilterNumericComparisonMethod.Equal;
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "numeric";
@@ -509,8 +511,8 @@ public record TucFilterNumeric : TucFilterBase
 	{
 		get
 		{
-			if (ComparisonMethod == TfFilterNumericComparisonMethod.HasValue) return false;
-			if (ComparisonMethod == TfFilterNumericComparisonMethod.HasNoValue) return false;
+			if (ComparisonMethod == TucFilterNumericComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TucFilterNumericComparisonMethod.HasNoValue) return false;
 			return true;
 		}
 	}
@@ -529,7 +531,7 @@ public record TucFilterNumeric : TucFilterBase
 		{
 			var item = (TfFilterNumeric)model;
 			Value = item.Value;
-			ComparisonMethod = item.ComparisonMethod;
+			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterNumericComparisonMethod,TucFilterNumericComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterNumeric");
 	}
@@ -538,7 +540,7 @@ public record TucFilterNumeric : TucFilterBase
 	{
 		return new TfFilterNumeric(
 			columnName: ColumnName,
-			comparisonMethod: ComparisonMethod,
+			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterNumericComparisonMethod,TfFilterNumericComparisonMethod>(),
 			value: Value
 		);
 	}
@@ -547,7 +549,7 @@ public record TucFilterNumeric : TucFilterBase
 public record TucFilterText : TucFilterBase
 {
 	public string Value { get; set; } = null;
-	public TfFilterTextComparisonMethod ComparisonMethod { get; set; } = TfFilterTextComparisonMethod.Equal;
+	public TucFilterTextComparisonMethod ComparisonMethod { get; set; } = TucFilterTextComparisonMethod.Equal;
 
 	public string GetColumnName() => ColumnName;
 	public string GetFilterType() => "text";
@@ -556,8 +558,8 @@ public record TucFilterText : TucFilterBase
 	{
 		get
 		{
-			if (ComparisonMethod == TfFilterTextComparisonMethod.HasValue) return false;
-			if (ComparisonMethod == TfFilterTextComparisonMethod.HasNoValue) return false;
+			if (ComparisonMethod == TucFilterTextComparisonMethod.HasValue) return false;
+			if (ComparisonMethod == TucFilterTextComparisonMethod.HasNoValue) return false;
 			return true;
 		}
 	}
@@ -575,7 +577,7 @@ public record TucFilterText : TucFilterBase
 		{
 			var item = (TfFilterText)model;
 			Value = item.Value;
-			ComparisonMethod = item.ComparisonMethod;
+			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterTextComparisonMethod,TucFilterTextComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterText");
 	}
@@ -584,7 +586,7 @@ public record TucFilterText : TucFilterBase
 	{
 		return new TfFilterText(
 			columnName: ColumnName,
-			comparisonMethod: ComparisonMethod,
+			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterTextComparisonMethod,TfFilterTextComparisonMethod>(),
 			value: Value
 		);
 	}

@@ -47,14 +47,14 @@ public record TucDataProviderAuxColumn
 			SourceType = SourceType,
 			CreatedOn = CreatedOn,
 			DbName = DbName,
-			DbType = (DatabaseColumnType)DbType.TypeValue,
+			DbType = DbType.TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,DatabaseColumnType>(),
 			DefaultValue = DefaultValue,
 			AutoDefaultValue = AutoDefaultValue,
 			IsNullable = IsNullable,
 			IsUnique = IsUnique,
 			IsSortable = IsSortable,
 			IsSearchable = IsSearchable,
-			PreferredSearchType = (TfDataProviderColumnSearchType)PreferredSearchType.TypeValue,
+			PreferredSearchType = PreferredSearchType.TypeValue.ConvertSafeToEnum<TucDataProviderColumnSearchType,TfDataProviderColumnSearchType>(),
 			IncludeInTableSearch= IncludeInTableSearch,
 		};
 	}
