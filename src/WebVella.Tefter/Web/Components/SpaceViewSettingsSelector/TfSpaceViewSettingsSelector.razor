@@ -7,47 +7,33 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector">
 			<FluentMenuItem>
 				Bookmark
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem Disabled="true">
 				Save view
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.SaveIcon" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.SaveIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem>
 				Save view as
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.GetIcon("SaveCopy")" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.GetIcon("SaveCopy")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentDivider />
 			<FluentMenuItem>
 				Rename View
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem>
 				Delete View
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem>
 				Manage Access
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.GetIcon("KeyMultiple")" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.GetIcon("KeyMultiple")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentDivider />
 			<FluentMenuItem Disabled="true">
 				Copy link
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 		</FluentMenu>
 	</div>

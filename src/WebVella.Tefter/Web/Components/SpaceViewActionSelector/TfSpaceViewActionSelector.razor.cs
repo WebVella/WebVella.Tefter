@@ -2,7 +2,7 @@
 namespace WebVella.Tefter.Web.Components.SpaceViewActionSelector;
 public partial class TfSpaceViewActionSelector : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState {  get; set; }
+    [Inject] protected IState<SpaceState> SpaceState { get; set; }
 
 	
 	private bool _open = false;
@@ -16,7 +16,7 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 	{
 		if (disposing)
 		{
-			SessionState.StateChanged -= SessionState_StateChanged;
+			ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -24,19 +24,19 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		SessionState.StateChanged += SessionState_StateChanged;
+		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
 	}
 
-	private void SessionState_StateChanged(object sender, EventArgs e)
+	private void On_StateChanged(SpaceStateChangedAction action)
 	{
-		base.InvokeAsync(async () =>
+		InvokeAsync(async () =>
 		{
-			//Do something
-			_selectedItems = SessionState.Value.SelectedDataRows.ToList();
+			_selectedItems = SpaceState.Value.SelectedDataRows.ToList();
 			await InvokeAsync(StateHasChanged);
 		});
-		
+
 	}
+
 
 	private void _init(){ }
 

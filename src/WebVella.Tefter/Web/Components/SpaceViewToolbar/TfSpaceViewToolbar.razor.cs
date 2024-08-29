@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components.SpaceViewToolbar;
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
-    [Inject] protected IState<SessionState> SessionState { get; set; }
+    [Inject] protected IState<SpaceState> SpaceState { get; set; }
 
     private List<Guid> _selectedRows = new();
 
@@ -11,7 +11,7 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
     {
         if (disposing)
         {
-            SessionState.StateChanged -= SessionState_StateChanged;
+            ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
         await base.DisposeAsyncCore(disposing);
     }
@@ -19,16 +19,18 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		SessionState.StateChanged += SessionState_StateChanged;
+		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
 	}
 
-    private void SessionState_StateChanged(object sender, EventArgs e)
-    {
-        base.InvokeAsync(async () =>
-        {
-            _selectedRows = SessionState.Value.SelectedDataRows;
+	private void On_StateChanged(SpaceStateChangedAction action)
+	{
+		InvokeAsync(async () =>
+		{
+            _selectedRows = SpaceState.Value.SelectedDataRows;
             await InvokeAsync(StateHasChanged);
-        });
-    }
+		});
+
+	}
+
 
 }

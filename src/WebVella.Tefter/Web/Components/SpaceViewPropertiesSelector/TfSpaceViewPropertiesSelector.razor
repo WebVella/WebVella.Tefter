@@ -5,22 +5,16 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="grid-properties-selector">
 			<FluentMenuItem>
 				Freeze Columns
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.GetIcon("TableFreezeColumn")" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.GetIcon("TableFreezeColumn")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem>
 				Conditional Format
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.GetIcon("PaintBucket")" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.GetIcon("PaintBucket")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentDivider />
 			<FluentMenuItem>
 				Manage Columns
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.GetIcon("Column")" Slot="start" />
-				</span>
+				<FluentIcon Value="@TfConstants.GetIcon("Column")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 		</FluentMenu>
 	</div>

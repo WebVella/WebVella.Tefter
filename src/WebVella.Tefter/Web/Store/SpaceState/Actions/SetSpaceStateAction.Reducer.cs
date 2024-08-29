@@ -15,10 +15,10 @@ public static partial class SpaceStateReducers
 		{
 			IsBusy = action.IsBusy,
 			Space = action.Space,
-			SpaceData = action.SpaceData,
 			SpaceView = action.SpaceView,
+			SpaceViewList = action.SpaceViewList,
 			RouteSpaceId = action.RouteSpaceId,
-			RouteSpaceDataId = action.RouteSpaceDataId,
-			RouteSpaceViewId = action.RouteSpaceViewId
+			RouteSpaceViewId = action.RouteSpaceViewId,
+			
 		};
 }

@@ -31,14 +31,9 @@ internal static class NavigatorExt
 				if (Guid.TryParse(pathDict[1], out Guid outGuid)) spaceId = outGuid;
 			}
 
-			if (pathDict.ContainsKey(3))
+			if (pathDict.ContainsKey(2) && pathDict[2] == "view")
 			{
-				if (Guid.TryParse(pathDict[3], out Guid outGuid)) spaceDataId = outGuid;
-			}
-
-			if (pathDict.ContainsKey(5))
-			{
-				if (Guid.TryParse(pathDict[5], out Guid outGuid)) spaceViewId = outGuid;
+				if (Guid.TryParse(pathDict[3], out Guid outGuid)) spaceViewId = outGuid;
 			}
 
 		}

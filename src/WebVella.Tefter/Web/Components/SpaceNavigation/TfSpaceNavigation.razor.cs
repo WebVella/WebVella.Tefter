@@ -1,13 +1,16 @@
-﻿using WebVella.Tefter.Web.Components.SpaceSelector;
+﻿using WebVella.Tefter.Web.Components.SpaceManageDialog;
+using WebVella.Tefter.Web.Components.SpaceSelector;
+using WebVella.Tefter.Web.Components.SpaceViewCreateDialog;
 
 namespace WebVella.Tefter.Web.Components.SpaceNavigation;
 public partial class TfSpaceNavigation : TfBaseComponent
 {
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IState<SpaceState> SpaceState { get; set; }
+	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	private bool _menuLoading = false;
-	private string _renderedDataHashId = string.Empty;
+	private Guid? _renderedViewId = null;
 	private Guid? _renderedSpaceId = null;
 
 
@@ -28,7 +31,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		if (disposing)
 		{
-			SessionState.StateChanged -= SessionState_StateChanged;
+			ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -36,89 +39,59 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		base.OnInitialized();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
-		GenerateSpaceDataMenu();
-		SessionState.StateChanged += SessionState_StateChanged;
+		GenerateMenu();
+		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
 	}
-	private void SessionState_StateChanged(object sender, EventArgs e)
+	private void On_StateChanged(SpaceStateChangedAction action)
 	{
 		InvokeAsync(async () =>
 		{
-			if (SessionState.Value.DataHashId == _renderedDataHashId
-				&& SessionState.Value.Space?.Id == _renderedSpaceId) return;
+			if (SpaceState.Value.RouteSpaceViewId == _renderedViewId
+				&& SpaceState.Value.RouteSpaceId == _renderedSpaceId) return;
 
 			_menuLoading = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
-			GenerateSpaceDataMenu();
+			GenerateMenu();
 			_menuLoading = false;
 			await InvokeAsync(StateHasChanged);
 		});
 
 	}
 
-	private void GenerateSpaceDataMenu(string search = null)
+	private void GenerateMenu(string search = null)
 	{
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
-
-		if (SessionState.Value.Space is not null)
+		_renderedViewId = SpaceState.Value.RouteSpaceViewId;
+		_renderedSpaceId = SpaceState.Value.RouteSpaceId;
+		var nodes = new List<MenuItem>();
+		foreach (var view in SpaceState.Value.SpaceViewList)
 		{
-			foreach (var item in SessionState.Value.Space.Data)
+			if (!String.IsNullOrWhiteSpace(search) && !view.Name.ToLowerInvariant().Contains(search))
+				continue;
+
+			var viewMenu = new MenuItem
 			{
-				var nodes = new List<MenuItem>();
-				var hasSelected = false;
-				foreach (var view in item.Views)
-				{
-					if (!String.IsNullOrWhiteSpace(search) && !view.Name.ToLowerInvariant().Contains(search))
-						continue;
-					var viewMenu = new MenuItem
-					{
-						Id = RenderUtils.ConvertGuidToHtmlElementId(view.Id),
-						Icon = TfConstants.SpaceViewIcon,
-						Match = NavLinkMatch.Prefix,
-						Level = 1,
-						Title = view.Name,
-						Url = $"/space/{SessionState.Value.Space.Id}/data/{item.Id}/view/{view.Id}",
-						SpaceId = SessionState.Value.Space.Id,
-						SpaceDataId = item.Id,
-						SpaceViewId = view.Id,
-						Active = view.Id == SessionState.Value.SpaceView?.Id,
-						Expanded = false
-					};
-					if (viewMenu.Active)
-					{
-						hasSelected = true;
-					}
-					SetMenuItemActions(viewMenu);
-					if (String.IsNullOrWhiteSpace(search))
-						nodes.Add(viewMenu);
-					else
-						_menuItems.Add(viewMenu);
-				}
-				var dataMenu = new MenuItem
-				{
-					Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
-					Icon = TfConstants.SpaceDataIcon,
-					Level = 0,
-					Match = NavLinkMatch.Prefix,
-					Title = item.Name,
-					Url = $"/space/{SessionState.Value.Space.Id}/data/{item.Id}",
-					Nodes = nodes,
-					Expanded = hasSelected,
-					Active = false
+				Id = RenderUtils.ConvertGuidToHtmlElementId(view.Id),
+				Icon = TfConstants.SpaceViewIcon,
+				Match = NavLinkMatch.Prefix,
+				Level = 0,
+				Title = view.Name,
+				Url = String.Format(TfConstants.SpaceViewPageUrl, view.SpaceId, view.Id),
+				SpaceId = view.SpaceId,
+				SpaceViewId = view.Id,
+				Active = view.Id == _renderedViewId,
+				Expanded = false
+			};
+			SetMenuItemActions(viewMenu);
+			_menuItems.Add(viewMenu);
 
-				};
-				SetMenuItemActions(dataMenu);
-				if (String.IsNullOrWhiteSpace(search))
-					_menuItems.Add(dataMenu);
-
-			}
 		}
+
 		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
 		if (batch.Count < pageSize) hasMore = false;
 		_visibleMenuItems = batch;
-		_renderedDataHashId = SessionState.Value.DataHashId;
-		_renderedSpaceId = SessionState.Value.Space?.Id;
 	}
 
 	private async Task loadMoreClick()
@@ -132,34 +105,41 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 	private async Task onAddClick()
 	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for space creation");
-
-		var spaces = await TfSrv.GetSpacesForUserAsync(SessionState.Value.UserId);
-		Navigator.NavigateTo($"/space/{spaces[0].Id}/data/{spaces[0].Data[0].Id}");
-	}
-	private void onDetailsClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for details about the space");
-	}
-	private void onRemoveClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for removing space");
-	}
-	private void onRenameClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for renaming");
-	}
-
-	private async Task onSpaceSelectorClick()
-	{
-		await _selectorEl.ToggleSelector();
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewCreateDialog>(
+		new TucSpaceView() with { SpaceId = SpaceState.Value.RouteSpaceId.Value },
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var item = (TucSpaceView)result.Data;
+			ToastService.ShowSuccess(LOC("Space view successfully created!"));
+			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.Id));
+		}
 	}
 
-	private async Task SpaceChanged(Space space)
+	private async Task onManageSpaceClick()
 	{
-		Navigator.NavigateTo($"/space/{space.Id}/data/{space.Data[0].Id}");
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(
+		SpaceState.Value.Space,
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var item = (TucSpace)result.Data;
+			ToastService.ShowSuccess(LOC("Space successfully updated!"));
+			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
+		}
 	}
-
 	private void SetMenuItemActions(MenuItem item)
 	{
 		item.OnSelect = (selected) => OnTreeMenuSelect(item, selected);
@@ -167,28 +147,18 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 	private void OnTreeMenuSelect(MenuItem item, bool selected)
 	{
-		if (item.Level == 0)
-		{
-			item.Expanded = !item.Expanded;
-			item.Active = false;
-			return;
-		}
 		item.Active = selected;
 		if (item.Active)
 		{
-			if (item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;
-			Dispatcher.Dispatch(new GetSessionAction(
-				userId: SessionState.Value.UserId,
-				spaceId: item.SpaceId.Value,
-				spaceDataId: item.SpaceDataId.Value,
-				spaceViewId: item.SpaceViewId.Value));
+			if (item.SpaceId is null || item.SpaceViewId is null) return;
+			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.SpaceViewId));
 		}
 	}
 
 	private async Task onSearch(string value)
 	{
 		search = value;
-		GenerateSpaceDataMenu(search);
+		GenerateMenu(search);
 		await InvokeAsync(StateHasChanged);
 	}
 }

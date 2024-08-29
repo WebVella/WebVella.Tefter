@@ -7,7 +7,6 @@ public partial record SpaceState
 {
 	public bool IsBusy { get; init; } = true;
 	public Guid? RouteSpaceId { get; init; }
-	public Guid? RouteSpaceDataId { get; init; }
 	public Guid? RouteSpaceViewId { get; init; }
 	public TucSpace Space { get; init; }
 
@@ -29,6 +28,11 @@ public partial record SpaceState
 
 			return Space.Color.ToAttributeValue();
 		}
+	}
+
+	public string SpaceIconColorString
+	{
+		get => RenderUtils.ChangeColorDarknessHex(SpaceColorObject,(float)0.25);
 	}
 
 	public SystemColor SpaceColorObject

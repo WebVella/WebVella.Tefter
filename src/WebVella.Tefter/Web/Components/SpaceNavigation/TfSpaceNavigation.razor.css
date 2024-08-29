@@ -69,20 +69,15 @@
 
 
 ::deep.sidebar-nav fluent-tree-item.level-0::part(content-region) {
-	margin-left: 25px;
+	margin-left: 15px !important;
 }
 
-::deep.sidebar-nav fluent-tree-item.level-1::part(content-region) {
-	margin-left: 15px;
-}
 
 ::deep.sidebar-nav fluent-tree-item::part(positioning-region) {
 	background: transparent !important;
 }
 
-::deep.sidebar-nav fluent-tree-item.level-0::after {
-	display: none !important;
-}
+
 ::deep.sidebar-nav fluent-tree-item svg {
 	pointer-events: none;
 }

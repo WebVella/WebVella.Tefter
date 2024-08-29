@@ -75,7 +75,7 @@
 						else
 						{
 							<FluentSelect SelectedOption="@_selectedDataset" SelectedOptionChanged="_datasetSelected"
-										  TOption="TucSpaceData"
+										  TOption="TucSpaceData" Placeholder="@LOC("select...")"
 										  Items="@UC.SpaceDataList" Style="width:100%"
 										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"></FluentSelect>
 							<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.SpaceDataId)" />

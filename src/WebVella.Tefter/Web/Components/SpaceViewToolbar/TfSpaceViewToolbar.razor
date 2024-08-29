@@ -4,15 +4,15 @@
 	<div class="content-toolbar-left">
 		<FluentSearch />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" />
+			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" />
+			<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" />
+			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 		</FluentButton>
 	</div>
 	<div class="content-toolbar-right">
@@ -30,14 +30,14 @@
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" />
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			}
 		</FluentButton>
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" />
+			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 		</FluentButton>
 		<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("Options")" />
+			<FluentIcon Value="@TfConstants.GetIcon("Options")" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 		</FluentButton>
 	</div>
 </div>

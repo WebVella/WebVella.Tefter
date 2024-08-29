@@ -7,7 +7,7 @@
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
 		<FluentMessageBar Title="No space found"
-						  Style="border: 1px solid var(--neutral-base-color)"
+						  Style="@("border: 1px solid var(--neutral-base-color)")"
 						  Intent="MessageIntent.Info"
 						  Type="@MessageType.Notification"
 						  AllowDismiss="false">
@@ -20,8 +20,8 @@ else if (SpaceState.Value.SpaceView is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
-		<FluentMessageBar Title="No space data found"
-						  Style="border: 1px solid var(--neutral-base-color)"
+		<FluentMessageBar Title="No space view found"
+						  Style="@("border: 1px solid var(--neutral-base-color)")"
 						  Intent="MessageIntent.Info"
 						  Type="@MessageType.Notification"
 						  AllowDismiss="false">

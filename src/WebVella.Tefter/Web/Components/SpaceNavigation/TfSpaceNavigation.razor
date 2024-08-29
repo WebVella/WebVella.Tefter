@@ -4,69 +4,35 @@
 	<div class="sidebar-toolbar">
 		<div class="sidebar-toolbar-mode">
 			<FluentToolbar Class="modebar">
-				<FluentButton Class="btn tree active" Title="show tree" BackgroundColor="@SessionState.Value.SpaceColor"
-							  Style="@($"border-color:{SessionState.Value.SpaceBorderColor} !important")">
-					<FluentIcon Value="@TfConstants.GetIcon("Branch")" />
+				<FluentButton Class="btn tree active" Title="show tree" BackgroundColor="@SpaceState.Value.SpaceColorString"
+							  Style="@($"border-color:{SpaceState.Value.SpaceBorderColor} !important")">
+					<FluentIcon Value="@TfConstants.GetIcon("AppsList")" />
 				</FluentButton>
 				<FluentButton Class="btn bookmark" Title="show bookmarked" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 				</FluentButton>
 				<FluentButton Class="btn save" Title="show saved" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.SaveIcon" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+					<FluentIcon Value="@TfConstants.SaveIcon" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 				</FluentButton>
 			</FluentToolbar>
 		</div>
 		<div class="sidebar-toolbar-search">
-			<FluentTextField Class="search" Placeholder="search..." Immediate="true" ImmediateDelay="500" Value=@search ValueChanged="onSearch"/>
+			<FluentTextField Class="search" Placeholder="search..." Immediate="true" ImmediateDelay="500" Value=@search ValueChanged="onSearch" />
 		</div>
 		<div class="sidebar-toolbar-actions">
 			<FluentButton Id="space-settings" Title="space actions"
 						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
-				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@SessionState.Value.SpaceColor" />
+				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentButton>
 			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
-				<FluentMenuItem OnClick="onDetailsClick">
-					Space Details
-					<span slot="start">
-						<FluentIcon Value="@TfConstants.GetIcon("Info")" Slot="start" />
-					</span>
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onRenameClick">
-					Rename Space
-					<span slot="start">
-						<FluentIcon Value="@TfConstants.GetIcon("ClipboardPaste")" Slot="start" />
-					</span>
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onRemoveClick">
-					Delete Space
-					<span slot="start">
-						<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" />
-					</span>
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onRemoveClick">
-					Manage Access
-					<span slot="start">
-						<FluentIcon Value="@TfConstants.GetIcon("KeyMultiple")" Slot="start" />
-					</span>
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onRemoveClick">
-					Invite User
-					<span slot="start">
-						<FluentIcon Value="@TfConstants.GetIcon("PersonAdd")" Slot="start" />
-					</span>
+				<FluentMenuItem OnClick="onManageSpaceClick" >
+					@LOC("Manage Space")
+					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onAddClick">
-					Add Space
-					<span slot="start">
-						<FluentIcon Value="@TfConstants.AddIcon" Slot="start" />
-					</span>
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onAddClick">
-					Add Space Data
-					<span slot="start">
-						<FluentIcon Value="@TfConstants.AddIcon" Slot="start" />
-					</span>
+					@LOC("Create View")
+					<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 
 			</FluentMenu>
@@ -83,19 +49,8 @@
 				@foreach (var item in _visibleMenuItems)
 				{
 					<FluentTreeItem Class="@item.LevelClass" Text="@item.Title" Selected="@item.Active" SelectedChanged="@item.OnSelect"
-									Data="item" Id="@item.Id" @bind-Expanded="@item.Expanded"
-									InitiallyExpanded="@item.Expanded"
-									InitiallySelected="@item.Active">
-						<FluentIcon Value="@item.Icon" Color="@Color.Neutral" Slot="start" />
-						@foreach (var node in item.Nodes)
-						{
-							<FluentTreeItem Class="@node.LevelClass" Text="@node.Title"
-											Data="node" Id="@node.Id"
-											@bind-Expanded="@node.Expanded" InitiallyExpanded="@node.Expanded"
-											Selected="@node.Active" SelectedChanged="@node.OnSelect">
-								<FluentIcon Value="@node.Icon" Color="@Color.Neutral" Slot="start" />
-							</FluentTreeItem>
-						}
+									Data="item" Id="@item.Id" InitiallySelected="@item.Active">
+						<FluentIcon Value="@item.Icon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 					</FluentTreeItem>
 				}
 			</FluentTreeView>

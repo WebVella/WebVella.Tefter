@@ -1,5 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceViewManageDialog;
-public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceView>
+﻿namespace WebVella.Tefter.Web.Components.SpaceViewCreateDialog;
+public partial class TfSpaceViewCreateDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceView>
 {
 	[Inject] private SpaceUseCase UC { get; set; }
 	[Parameter] public TucSpaceView Content { get; set; }
@@ -18,6 +18,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		if(Content.SpaceId == Guid.Empty) throw new Exception("SpaceId is required");
 		await UC.Init(this.GetType(), Content.SpaceId);
 		base.InitForm(UC.SpaceViewManageForm);
 		if (Content is null) throw new Exception("Content is null");
@@ -32,23 +33,12 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			if (_isCreate)
+			//if presets are available
+			UC.SpaceViewManageForm = new TucSpaceView()
 			{
-				UC.SpaceViewManageForm = UC.SpaceViewManageForm with { Id = Guid.NewGuid() };
-			}
-			else
-			{
-
-				UC.SpaceViewManageForm = new TucSpaceView()
-				{
-					Id = Content.Id,
-					Name = Content.Name,
-					DataProviderId = Content.DataProviderId,
-					SpaceDataId = Content.SpaceDataId,
-					DataSetType = Content.DataSetType,
-					NewSpaceDataName = Content.NewSpaceDataName
-				};
-			}
+				Id = Guid.NewGuid(),
+				SpaceId = Content.SpaceId,
+			};
 			_generatedColumnsListInit();
 			base.InitForm(UC.SpaceViewManageForm);
 			await InvokeAsync(StateHasChanged);
@@ -71,15 +61,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<TucSpace>();
-			//if (_isCreate)
-			//{
-			//	result = UC.CreateSpaceWithForm(UC.SpaceViewManageForm);
-			//}
-			//else
-			//{
-			//	result = UC.UpdateSpaceWithForm(UC.SpaceViewManageForm);
-			//}
+			var result = UC.CreateSpaceViewWithForm(UC.SpaceViewManageForm);
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
@@ -105,12 +87,14 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	private void _dataProviderSelected(TucDataProvider provider)
 	{
 		_selectedDataProvider = provider;
+		UC.SpaceViewManageForm.DataProviderId = provider is null ? null : provider.Id;
 		_generatedColumnsListInit();
 	}
 
 	private void _datasetSelected(TucSpaceData dataset)
 	{
 		_selectedDataset = dataset;
+		UC.SpaceViewManageForm.SpaceDataId = dataset is null ? null : dataset.Id;
 	}
 
 	private void _columnGeneratorSettingChanged(bool value, string field)
