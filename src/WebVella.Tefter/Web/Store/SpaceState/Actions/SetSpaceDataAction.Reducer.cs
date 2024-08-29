@@ -10,18 +10,11 @@ public static partial class SpaceStateReducers
 	/// <returns></returns>
 
 	[ReducerMethod()]
-	public static SpaceState SetSpaceReducer(SpaceState state, SetSpaceStateAction action)
+	public static SpaceState SetSpaceDataReducer(SpaceState state, SetSpaceDataAction action)
 		=> state with
 		{
-			IsBusy = action.IsBusy,
-			Space = action.Space,
-			SpaceView = action.SpaceView,
-			SpaceViewList = action.SpaceViewList,
 			SpaceData = action.SpaceData,
 			SpaceDataList = action.SpaceDataList,
-			RouteSpaceId = action.RouteSpaceId,
-			RouteSpaceViewId = action.RouteSpaceViewId,
-			RouteSpaceDataId = action.RouteSpaceDataId,
-			
+		
 		};
 }

@@ -120,25 +120,25 @@
   <data name="Access" xml:space="preserve">
     <value>Достъп</value>
   </data>
+  <data name="Columns in source" xml:space="preserve">
+    <value>Колони от източника</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Данни</value>
+  </data>
   <data name="Details" xml:space="preserve">
     <value>Детайли</value>
   </data>
-  <data name="Error" xml:space="preserve">
-    <value>Грешка</value>
-  </data>
   <data name="Saved Views" xml:space="preserve">
-    <value>Запазени Изгледи</value>
+    <value>Запомнени Изгледи</value>
   </data>
-  <data name="search..." xml:space="preserve">
-    <value>търси...</value>
+  <data name="Shared Columns" xml:space="preserve">
+    <value>Споделени колони</value>
   </data>
-  <data name="select..." xml:space="preserve">
-    <value>избери...</value>
+  <data name="Shared Keys" xml:space="preserve">
+    <value>Споделени ключове</value>
   </data>
-  <data name="Success" xml:space="preserve">
-    <value>Успех</value>
-  </data>
-  <data name="Warning" xml:space="preserve">
-    <value>Внимание</value>
+  <data name="Synchronization" xml:space="preserve">
+    <value>Синхронизация</value>
   </data>
 </root>

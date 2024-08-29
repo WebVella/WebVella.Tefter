@@ -1,5 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceViewCreateDialog;
-public partial class TfSpaceViewCreateDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceView>
+﻿namespace WebVella.Tefter.Web.Components.SpaceViewManageDialog;
+public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceView>
 {
 	[Inject] private SpaceUseCase UC { get; set; }
 	[Parameter] public TucSpaceView Content { get; set; }

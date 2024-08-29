@@ -1,0 +1,42 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits TfFormBaseComponent
+@if (_items.Count == 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This dataset does not provide data to views")</FluentMessageBar>
+
+}
+else
+{
+	<div class="tf-grid-wrapper">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{SpaceState.Value.SpaceBackgkroundColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th" style="width:30px;"></th>
+					<th class="tf-grid-th">view name</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in _items)
+				{
+					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+						<td class="tf-grid-td" style="width:30px;">
+							<div>
+								<FluentButton Appearance="@Appearance.Outline" Title="@LOC("view details")" OnClick="@context.OnClick">
+									<FluentIcon Value="@TfConstants.ViewIcon" />
+								</FluentButton>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@context.Name
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+

@@ -24,8 +24,16 @@
 					</FluentBreadcrumbItem>
 					@if (SpaceState.Value.SpaceView is not null)
 					{
+						<FluentBreadcrumbItem>views</FluentBreadcrumbItem>
 						<FluentBreadcrumbItem title="@SpaceState.Value.SpaceView.Name">
 							@RenderUtils.StringOverflow(SpaceState.Value.SpaceView.Name, _ellipsisCount)
+						</FluentBreadcrumbItem>
+					}
+					@if (SpaceState.Value.SpaceData is not null)
+					{
+						<FluentBreadcrumbItem>data</FluentBreadcrumbItem>
+						<FluentBreadcrumbItem title="@SpaceState.Value.SpaceData.Name">
+							@RenderUtils.StringOverflow(SpaceState.Value.SpaceData.Name, _ellipsisCount)
 						</FluentBreadcrumbItem>
 					}
 				</FluentBreadcrumb>

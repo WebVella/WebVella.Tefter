@@ -35,7 +35,10 @@ internal static class NavigatorExt
 			{
 				if (Guid.TryParse(pathDict[3], out Guid outGuid)) spaceViewId = outGuid;
 			}
-
+			if (pathDict.ContainsKey(2) && pathDict[2] == "data")
+			{
+				if (Guid.TryParse(pathDict[3], out Guid outGuid)) spaceDataId = outGuid;
+			}
 		}
 
 		else if (uri.LocalPath.StartsWith("/admin/users/"))

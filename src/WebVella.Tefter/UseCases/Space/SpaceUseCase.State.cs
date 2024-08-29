@@ -15,6 +15,7 @@ public partial class SpaceUseCase
 			if (space is not null)
 			{
 				TucSpaceView spaceView = null;
+				TucSpaceData spaceData = null;
 				if (urlData.SpaceViewId is not null)
 				{
 					var reqItem = GetSpaceView(urlData.SpaceViewId.Value);
@@ -45,13 +46,47 @@ public partial class SpaceUseCase
 				}
 				List<TucSpaceView> spaceViewList = GetSpaceViewList(space.Id);
 
+				if (urlData.SpaceDataId is not null)
+				{
+					var reqItem = GetSpaceData(urlData.SpaceDataId.Value);
+					if (reqItem is null)
+					{
+						ResultUtils.ProcessServiceResult(
+							result: Result.Fail(new Error("Space data not found")),
+							toastErrorMessage: "Unexpected Error",
+							notificationErrorTitle: "Unexpected Error",
+							toastService: _toastService,
+							messageService: _messageService
+						);
+						return Task.CompletedTask;
+					}
+					if (reqItem.SpaceId == space.Id)
+						spaceData = reqItem;
+					else
+					{
+						ResultUtils.ProcessServiceResult(
+							result: Result.Fail(new Error("The requested space data is not part of the current space")),
+							toastErrorMessage: "Unexpected Error",
+							notificationErrorTitle: "Unexpected Error",
+							toastService: _toastService,
+							messageService: _messageService
+						);
+						return Task.CompletedTask;
+					}
+				}
+
+				List<TucSpaceData> spaceDataList = GetSpaceDataList(space.Id);
+
 				_dispatcher.Dispatch(new SetSpaceStateAction(
 					isBusy: false,
 						space: space,
 						spaceView: spaceView,
 						spaceViewList: spaceViewList,
+						spaceData: spaceData,
+						spaceDataList: spaceDataList,
 						routeSpaceId: urlData.SpaceId,
-						routeSpaceViewId: urlData.SpaceViewId));
+						routeSpaceViewId: urlData.SpaceViewId,
+						routeSpaceDataId: urlData.SpaceDataId));
 				return Task.CompletedTask;
 			}
 
@@ -64,8 +99,11 @@ public partial class SpaceUseCase
 						space: null,
 						spaceView: null,
 						spaceViewList: new(),
+						spaceData: null,
+						spaceDataList: new(),
 						routeSpaceId: urlData.SpaceId,
-						routeSpaceViewId: urlData.SpaceViewId));
+						routeSpaceViewId: urlData.SpaceViewId,
+						routeSpaceDataId: urlData.SpaceDataId));
 		}
 		return Task.CompletedTask;
 	}

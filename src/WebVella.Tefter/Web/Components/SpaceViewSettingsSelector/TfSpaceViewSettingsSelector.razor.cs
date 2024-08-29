@@ -22,4 +22,7 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+	private void _manageData(){ 
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl,SpaceState.Value.Space.Id,SpaceState.Value.SpaceView.SpaceDataId));
+	}
 }

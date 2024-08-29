@@ -1,18 +1,15 @@
 ﻿using WebVella.Tefter.Web.Components.SpaceManageDialog;
 using WebVella.Tefter.Web.Components.SpaceSelector;
-using WebVella.Tefter.Web.Components.SpaceViewCreateDialog;
+using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
 
-namespace WebVella.Tefter.Web.Components.SpaceNavigation;
-public partial class TfSpaceNavigation : TfBaseComponent
+namespace WebVella.Tefter.Web.Components.SpaceViewNavigation;
+public partial class TfSpaceViewNavigation : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
 	[Inject] protected IState<UserState> UserState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	private bool _menuLoading = false;
-	private Guid? _renderedViewId = null;
-	private Guid? _renderedSpaceId = null;
-
 
 	private List<MenuItem> _menuItems = new();
 	private List<MenuItem> _visibleMenuItems = new();
@@ -46,9 +43,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		InvokeAsync(async () =>
 		{
-			if (SpaceState.Value.RouteSpaceViewId == _renderedViewId
-				&& SpaceState.Value.RouteSpaceId == _renderedSpaceId) return;
-
 			_menuLoading = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
@@ -63,8 +57,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
-		_renderedViewId = SpaceState.Value.RouteSpaceViewId;
-		_renderedSpaceId = SpaceState.Value.RouteSpaceId;
 		var nodes = new List<MenuItem>();
 		foreach (var view in SpaceState.Value.SpaceViewList)
 		{
@@ -81,7 +73,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 				Url = String.Format(TfConstants.SpaceViewPageUrl, view.SpaceId, view.Id),
 				SpaceId = view.SpaceId,
 				SpaceViewId = view.Id,
-				Active = view.Id == _renderedViewId,
+				Active = view.Id == SpaceState.Value.RouteSpaceViewId,
 				Expanded = false
 			};
 			SetMenuItemActions(viewMenu);
@@ -105,7 +97,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 	private async Task onAddClick()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewCreateDialog>(
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
 		new TucSpaceView() with { SpaceId = SpaceState.Value.RouteSpaceId.Value },
 		new DialogParameters()
 		{

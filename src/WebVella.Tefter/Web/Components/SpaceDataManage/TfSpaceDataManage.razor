@@ -13,17 +13,13 @@ else
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=Form.Name
-									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
-					<FluentValidationMessage For="@(() => Form.Name)" />
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.SpaceDataManageForm.Name
+									 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentSelect SelectedOption="@SelectedProvider" SelectedOptionChanged="_dataProviderSelected"
-								  TOption="TucDataProvider" Required="false"
-								  Placeholder="@LOC("select...")"
-								  Items="@UC.AllDataProviders" Style="width:100%"
-								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
-					<FluentValidationMessage For="@(() => Form.Name)" />
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
+									 Label="@LOC("Data provider")" Style="width:100%" ReadOnly="true" />
 				</FluentGridItem>
 			</FluentGrid>
 		</FluentEditForm>
@@ -40,7 +36,7 @@ else
 			</FluentStack>
 		</TitleTemplate>
 		<ChildContent>
-			@if (Form.Columns.Count == 0)
+			@if (UC.SpaceDataManageForm.Columns.Count == 0)
 			{
 				@LOC("This dataset will return all data provider columns. Select columns for limitation.")
 			}
@@ -49,7 +45,7 @@ else
 				<div class="tf-grid-wrapper">
 					<table class="tf-grid">
 						<tbody class="tf-grid-tbody">
-							@foreach (var context in Form.Columns)
+							@foreach (var context in UC.SpaceDataManageForm.Columns.Order())
 							{
 								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 									<td class="tf-grid-td" style="width:30px;">
@@ -62,6 +58,18 @@ else
 									<td class="tf-grid-td">
 										<div>
 											<div>@context</div>
+										</div>
+									</td>
+									<td class="tf-grid-td" style="width:100px;">
+										<div>
+											@if (AllColumnOptions.Contains(context))
+											{
+												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Success.ToAttributeValue()">found in provider</FluentBadge>
+											}
+											else
+											{
+												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Error.ToAttributeValue()">not in provider</FluentBadge>
+											}
 										</div>
 									</td>
 								</tr>
@@ -104,11 +112,11 @@ else
 				</FluentStack>
 			</TitleTemplate>
 			<ChildContent>
-				@if (Form.Filters.Count == 0)
+				@if (UC.SpaceDataManageForm.Filters.Count == 0)
 				{
 					<div>@LOC("No filters added yet")</div>
 				}
-				@foreach (var item in Form.Filters)
+				@foreach (var item in UC.SpaceDataManageForm.Filters)
 				{
 					<TfFilterManage Item="item" />
 				}

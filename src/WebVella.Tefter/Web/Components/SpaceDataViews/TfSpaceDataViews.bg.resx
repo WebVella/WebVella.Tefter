@@ -117,28 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Access" xml:space="preserve">
-    <value>Достъп</value>
-  </data>
-  <data name="Details" xml:space="preserve">
-    <value>Детайли</value>
-  </data>
-  <data name="Error" xml:space="preserve">
-    <value>Грешка</value>
-  </data>
-  <data name="Saved Views" xml:space="preserve">
-    <value>Запазени Изгледи</value>
-  </data>
-  <data name="search..." xml:space="preserve">
-    <value>търси...</value>
-  </data>
-  <data name="select..." xml:space="preserve">
-    <value>избери...</value>
-  </data>
-  <data name="Success" xml:space="preserve">
-    <value>Успех</value>
-  </data>
-  <data name="Warning" xml:space="preserve">
-    <value>Внимание</value>
-  </data>
 </root>

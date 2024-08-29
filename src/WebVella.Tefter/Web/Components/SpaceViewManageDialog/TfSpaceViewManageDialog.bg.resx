@@ -117,28 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Access" xml:space="preserve">
-    <value>Достъп</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Откажи</value>
   </data>
-  <data name="Details" xml:space="preserve">
-    <value>Детайли</value>
+  <data name="Create" xml:space="preserve">
+    <value>Създай</value>
   </data>
-  <data name="Error" xml:space="preserve">
-    <value>Грешка</value>
+  <data name="Create view" xml:space="preserve">
+    <value>Създай изглед</value>
   </data>
-  <data name="Saved Views" xml:space="preserve">
-    <value>Запазени Изгледи</value>
+  <data name="Manage view" xml:space="preserve">
+    <value>Редактирай изглед</value>
   </data>
-  <data name="search..." xml:space="preserve">
-    <value>търси...</value>
+  <data name="Name" xml:space="preserve">
+    <value>Име</value>
   </data>
-  <data name="select..." xml:space="preserve">
-    <value>избери...</value>
+  <data name="Save" xml:space="preserve">
+    <value>Запомни</value>
   </data>
-  <data name="Success" xml:space="preserve">
-    <value>Успех</value>
-  </data>
-  <data name="Warning" xml:space="preserve">
-    <value>Внимание</value>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
   </data>
 </root>

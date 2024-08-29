@@ -3,8 +3,8 @@
 namespace WebVella.Tefter.Web.Components.SpaceDataManage;
 public partial class TfSpaceDataManage : TfFormBaseComponent
 {
+	[Inject] protected IState<SpaceState> SpaceState { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
-	[Parameter] public TucSpaceData Form { get; set; }
 
 	public TucDataProvider SelectedProvider = null;
 	public List<string> AllColumnOptions
@@ -19,8 +19,8 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		get
 		{
-			if (Form is null || Form.Columns is null) return AllColumnOptions;
-			return AllColumnOptions.Where(x => !Form.Columns.Contains(x)).ToList();
+			if (UC.SpaceDataManageForm is null || UC.SpaceDataManageForm.Columns is null) return AllColumnOptions;
+			return AllColumnOptions.Where(x => !UC.SpaceDataManageForm.Columns.Contains(x)).ToList();
 		}
 	}
 
@@ -34,22 +34,45 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private Icon _iconBtn;
 	private bool _isCreate = false;
 
+	protected override ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			//Navigator.LocationChanged -= Navigator_LocationChanged;
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		return base.DisposeAsyncCore(disposing);
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		base.InitForm(Form);
-		if (Form is null) throw new Exception("Form is null");
-		if(Form.DataProviderId != Guid.Empty){ 
-			SelectedProvider = UC.AllDataProviders.FirstOrDefault(x=> x.Id == Form.DataProviderId);
+		_init();
+		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
+	}
+
+	private void _init()
+	{
+		UC.SpaceDataManageForm = SpaceState.Value.SpaceData with { Id = SpaceState.Value.SpaceData.Id };
+		base.InitForm(UC.SpaceDataManageForm);
+		if (UC.SpaceDataManageForm.DataProviderId != Guid.Empty)
+		{
+			SelectedProvider = UC.AllDataProviders.FirstOrDefault(x => x.Id == UC.SpaceDataManageForm.DataProviderId);
 		}
 	}
 
-	private async Task _dataProviderSelected(TucDataProvider provider)
+	private void On_StateChanged(SpaceStateChangedAction action)
+	{
+		_init();
+		StateHasChanged();
+	}
+
+	private void _dataProviderSelected(TucDataProvider provider)
 	{
 		if (provider is null) return;
 		SelectedProvider = provider;
-		Form.DataProviderId = SelectedProvider.Id;
+		UC.SpaceDataManageForm.DataProviderId = SelectedProvider.Id;
 	}
 
 
@@ -58,9 +81,9 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		try
 		{
 			if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
-			if (Form.Columns.Contains(_selectedColumn)) return;
-			Form.Columns.Add(_selectedColumn);
-			Form.Columns = Form.Columns.Order().ToList();
+			if (UC.SpaceDataManageForm.Columns.Contains(_selectedColumn)) return;
+			UC.SpaceDataManageForm.Columns.Add(_selectedColumn);
+			UC.SpaceDataManageForm.Columns = UC.SpaceDataManageForm.Columns.Order().ToList();
 		}
 		finally
 		{
@@ -71,24 +94,24 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	public void AddFilter(Type type, string dbName, Guid? parentId)
 	{
 		TucFilterBase filter = null;
-		if (type == typeof(TucFilterAnd)) filter = new TucFilterAnd(){ColumnName = dbName};
-		else if (type == typeof(TucFilterOr)) filter = new TucFilterOr(){ColumnName = dbName};
-		else if (type == typeof(TucFilterBoolean)) filter = new TucFilterBoolean(){ColumnName = dbName};
-		else if (type == typeof(TucFilterDateOnly)) filter = new TucFilterDateOnly(){ColumnName = dbName};
-		else if (type == typeof(TucFilterDateTime)) filter = new TucFilterDateTime(){ColumnName = dbName};
-		else if (type == typeof(TucFilterGuid)) filter = new TucFilterGuid(){ColumnName = dbName};
-		else if (type == typeof(TucFilterNumeric)) filter = new TucFilterNumeric(){ColumnName = dbName};
-		else if (type == typeof(TucFilterText)) filter = new TucFilterText(){ColumnName = dbName};
+		if (type == typeof(TucFilterAnd)) filter = new TucFilterAnd() { ColumnName = dbName };
+		else if (type == typeof(TucFilterOr)) filter = new TucFilterOr() { ColumnName = dbName };
+		else if (type == typeof(TucFilterBoolean)) filter = new TucFilterBoolean() { ColumnName = dbName };
+		else if (type == typeof(TucFilterDateOnly)) filter = new TucFilterDateOnly() { ColumnName = dbName };
+		else if (type == typeof(TucFilterDateTime)) filter = new TucFilterDateTime() { ColumnName = dbName };
+		else if (type == typeof(TucFilterGuid)) filter = new TucFilterGuid() { ColumnName = dbName };
+		else if (type == typeof(TucFilterNumeric)) filter = new TucFilterNumeric() { ColumnName = dbName };
+		else if (type == typeof(TucFilterText)) filter = new TucFilterText() { ColumnName = dbName };
 		else throw new Exception("Filter type not supported");
 
 		if (parentId is null)
 		{
-			Form.Filters.Add(filter);
+			UC.SpaceDataManageForm.Filters.Add(filter);
 		}
 		else
 		{
 			TucFilterBase parentFilter = null;
-			foreach (var item in Form.Filters)
+			foreach (var item in UC.SpaceDataManageForm.Filters)
 			{
 				var (result, resultParent) = FindFilter(item, parentId.Value, null);
 				if (result is not null)
@@ -109,7 +132,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	public void AddColumnFilter(string dbColumn, Guid? parentId)
 	{
 		if (String.IsNullOrWhiteSpace(dbColumn)) return;
-		if(SelectedProvider is null) return;
+		if (SelectedProvider is null) return;
 		var column = SelectedProvider.ColumnsTotal.FirstOrDefault(x => x.DbName == dbColumn);
 		if (column is null) return;
 
@@ -160,7 +183,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		TucFilterBase filter = null;
 		TucFilterBase parentFilter = null;
-		foreach (var item in Form.Filters)
+		foreach (var item in UC.SpaceDataManageForm.Filters)
 		{
 			var (result, resultParent) = FindFilter(item, filterId, null);
 			if (result is not null)
@@ -173,7 +196,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 		if (filter is not null)
 		{
-			if (parentFilter is null) Form.Filters.Remove(filter);
+			if (parentFilter is null) UC.SpaceDataManageForm.Filters.Remove(filter);
 			else if (parentFilter is TucFilterAnd) ((TucFilterAnd)parentFilter).Filters.Remove(filter);
 			else if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Remove(filter);
 			StateHasChanged();
@@ -190,8 +213,8 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private void _deleteColumn(string column)
 	{
 		if (String.IsNullOrWhiteSpace(column)) return;
-		if (!Form.Columns.Contains(column)) return;
-		Form.Columns.Remove(column);
+		if (!UC.SpaceDataManageForm.Columns.Contains(column)) return;
+		UC.SpaceDataManageForm.Columns.Remove(column);
 	}
 
 	private (TucFilterBase, TucFilterBase) FindFilter(TucFilterBase filter, Guid matchId, TucFilterBase parent)

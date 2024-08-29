@@ -1,4 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SpaceViewCreateDialog;
+﻿using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
 
 namespace WebVella.Tefter.Web.Components.SpaceDetails;
 public partial class TfSpaceDetails : TfBaseComponent
@@ -34,7 +34,7 @@ public partial class TfSpaceDetails : TfBaseComponent
 
 	private async Task _createViewHandler()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewCreateDialog>(
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
 		new TucSpaceView() with { SpaceId = SpaceState.Value.RouteSpaceId.Value },
 		new DialogParameters()
 		{

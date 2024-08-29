@@ -49,6 +49,7 @@ public partial class TfConstants
 	public static Icon AddIcon = GetIcon("Add");
 	public static Icon EditIcon = GetIcon("Edit");
 	public static Icon DeleteIcon = GetIcon("Delete");
+	public static Icon ViewIcon = GetIcon("Eye");
 	public static Icon RectangleIcon = GetIcon("RectangleLandscape",variant:IconVariant.Filled);
 }
 

@@ -8,4 +8,9 @@ public partial class SpaceUseCase
 		return Task.CompletedTask;
 	}
 
+	internal Task InitSpaceDataManageViews()
+	{
+		return Task.CompletedTask;
+	}
+
 }

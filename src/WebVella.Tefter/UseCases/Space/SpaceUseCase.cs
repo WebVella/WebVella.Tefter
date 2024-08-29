@@ -4,7 +4,9 @@ using WebVella.Tefter.Web.Components.SpaceDataManage;
 using WebVella.Tefter.Web.Components.SpaceDetails;
 using WebVella.Tefter.Web.Components.SpaceManageDialog;
 using WebVella.Tefter.Web.Components.SpaceStateManager;
-using WebVella.Tefter.Web.Components.SpaceViewCreateDialog;
+using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
+using WebVella.Tefter.Web.Components.SpaceDataManageDialog;
+using WebVella.Tefter.Web.Components.SpaceDataViews;
 
 namespace WebVella.Tefter.UseCases.Space;
 public partial class SpaceUseCase
@@ -44,10 +46,12 @@ public partial class SpaceUseCase
 		if (type == typeof(TfSpaceStateManager)) await InitForState();
 		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
 		else if (type == typeof(TfSpaceDataManage)) await InitSpaceDataManage();
-		else if (type == typeof(TfSpaceViewCreateDialog)) await InitSpaceViewManageDialog(spaceId.Value);
+		else if (type == typeof(TfSpaceDataViews)) await InitSpaceDataManageViews();
+		else if (type == typeof(TfSpaceViewManageDialog)) await InitSpaceViewManageDialog(spaceId.Value);
+		else if (type == typeof(TfSpaceDataManageDialog)) await InitSpaceDataManageDialog(spaceId.Value);
 		else if (type == typeof(TfSearchSpaceDialog)) await InitForSearchSpace();
 		else if (type == typeof(TfSpaceDataFilterManageDialog)) await InitSpaceDataFilterManageDialog();
-		else if (type == typeof(TfSpaceDetails)) {}
+		else if (type == typeof(TfSpaceDetails)) { }
 		else throw new Exception($"Type: {type.Name} not supported in SpaceUseCase");
 	}
 
@@ -124,6 +128,107 @@ public partial class SpaceUseCase
 		return serviceResult.Value.Select(x => new TucSpaceData(x)).ToList();
 	}
 
+	internal Result<TucSpaceData> CreateSpaceDataWithForm(TucSpaceData form)
+	{
+		TfSpace space = null;
+		TfDataProvider dataprovider = null;
+		#region << Validate>>
+		var validationErrors = new List<ValidationError>();
+		//args
+		if (String.IsNullOrWhiteSpace(form.Name)) validationErrors.Add(new ValidationError(nameof(form.Name), "name is required"));
+		if (form.SpaceId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "space is required"));
+		if (form.DataProviderId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "dataprovider is required"));
+
+		//Space
+		var spaceResult = _spaceManager.GetSpace(form.SpaceId);
+		if (spaceResult.IsFailed) return Result.Fail(new Error("GetSpace failed").CausedBy(spaceResult.Errors));
+		if (spaceResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "space is not found"));
+		space = spaceResult.Value;
+
+		//DataProvider
+		if (form.DataProviderId != Guid.Empty)
+		{
+			var providerResult = _dataProviderManager.GetProvider(form.DataProviderId);
+			if (providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
+			if (providerResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "data provider is not found"));
+			dataprovider = providerResult.Value;
+		}
+
+		if (validationErrors.Count > 0)
+			return Result.Fail(validationErrors);
+
+		#endregion
+
+		var spaceDataObj = new TfSpaceData()
+		{
+			Id = Guid.NewGuid(),
+			Name = form.Name,
+			Filters = new(),//filters will not be added at this point
+			Columns = new(), // columns will be added later
+			DataProviderId = dataprovider.Id,
+			SpaceId = space.Id,
+			Position = 1 //position is overrided in the creation
+		};
+
+		var tfResult = _spaceManager.CreateSpaceData(spaceDataObj);
+		if (tfResult.IsFailed) return Result.Fail(new Error("CreateSpaceData failed").CausedBy(tfResult.Errors));
+		if (tfResult.Value is null) return Result.Fail("CreateSpaceData failed to return value");
+
+		//Should commit transaction
+		return Result.Ok(new TucSpaceData(tfResult.Value));
+	}
+
+	internal Result<TucSpaceData> UpdateSpaceDataWithForm(TucSpaceData form)
+	{
+		TfSpace space = null;
+		TfSpaceData spaceData = null;
+		TfDataProvider dataprovider = null;
+		#region << Validate>>
+		var validationErrors = new List<ValidationError>();
+		//args
+		if (form.Id == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.Id), "required"));
+		if (String.IsNullOrWhiteSpace(form.Name)) validationErrors.Add(new ValidationError(nameof(form.Name), "required"));
+		if (form.SpaceId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "required"));
+		if (form.DataProviderId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "required"));
+
+		//Space
+		var spaceResult = _spaceManager.GetSpace(form.SpaceId);
+		if (spaceResult.IsFailed) return Result.Fail(new Error("GetSpace failed").CausedBy(spaceResult.Errors));
+		if (spaceResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "space is not found"));
+		space = spaceResult.Value;
+
+		//DataProvider
+		if (form.DataProviderId != Guid.Empty)
+		{
+			var providerResult = _dataProviderManager.GetProvider(form.DataProviderId);
+			if (providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
+			if (providerResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "data provider is not found"));
+			dataprovider = providerResult.Value;
+		}
+
+		//SpaceData
+		var spaceDataResult = _spaceManager.GetSpaceData(form.Id);
+		if (spaceDataResult.IsFailed) return Result.Fail(new Error("GetSpaceData failed").CausedBy(spaceDataResult.Errors));
+		if (spaceDataResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.Id), "dataset is not found"));
+		spaceData = spaceDataResult.Value;
+
+
+
+		if (validationErrors.Count > 0)
+			return Result.Fail(validationErrors);
+
+		#endregion
+		spaceData.Name = form.Name;
+		spaceData.DataProviderId = form.DataProviderId;
+
+		var tfResult = _spaceManager.UpdateSpaceData(spaceData);
+		if (tfResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(tfResult.Errors));
+		if (tfResult.Value is null) return Result.Fail("UpdateSpaceData failed to return value");
+
+		//Should commit transaction
+		return Result.Ok(new TucSpaceData(tfResult.Value));
+	}
+
 	//Space view
 	internal TucSpaceView GetSpaceView(Guid viewId)
 	{
@@ -172,15 +277,15 @@ public partial class SpaceUseCase
 		#region << Validate>>
 		var validationErrors = new List<ValidationError>();
 		//args
-		if (String.IsNullOrWhiteSpace(view.Name)) validationErrors.Add(new ValidationError(nameof(view.Name), "name is required"));
-		if (view.SpaceId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(view.SpaceId), "space is required"));
+		if (String.IsNullOrWhiteSpace(view.Name)) validationErrors.Add(new ValidationError(nameof(view.Name), "required"));
+		if (view.SpaceId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(view.SpaceId), "required"));
 		if (view.DataSetType == TucSpaceViewDataSetType.New)
 		{
-			if (String.IsNullOrWhiteSpace(view.NewSpaceDataName)) validationErrors.Add(new ValidationError(nameof(view.NewSpaceDataName), "dataset name is required"));
-			if (view.DataProviderId is null) validationErrors.Add(new ValidationError(nameof(view.DataProviderId), "dataprovider is required"));
+			if (String.IsNullOrWhiteSpace(view.NewSpaceDataName)) validationErrors.Add(new ValidationError(nameof(view.NewSpaceDataName), "required"));
+			if (view.DataProviderId is null) validationErrors.Add(new ValidationError(nameof(view.DataProviderId), "required"));
 		}
 		else if (view.DataSetType == TucSpaceViewDataSetType.Existing)
-			if (view.SpaceDataId is null) validationErrors.Add(new ValidationError(nameof(view.SpaceDataId), "existing dataset is required"));
+			if (view.SpaceDataId is null) validationErrors.Add(new ValidationError(nameof(view.SpaceDataId), "required"));
 
 		//Space
 		var spaceResult = _spaceManager.GetSpace(view.SpaceId);
@@ -217,8 +322,13 @@ public partial class SpaceUseCase
 		{
 			List<string> selectedColumns = new();
 			//system columns are always selected so we should not add them in the space data
-			if (view.AddProviderColumns) selectedColumns.AddRange(dataprovider.Columns.Select(x => x.DbName).ToList());
-			if (view.AddSharedColumns) selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
+			if (view.AddProviderColumns && view.AddSharedColumns)
+			{
+				//all columns are requested from the provider, so send empty column list, which will apply newly added columns
+				//to the provider dynamically
+			}
+			else if (view.AddProviderColumns) selectedColumns.AddRange(dataprovider.Columns.Select(x => x.DbName).ToList());
+			else if (view.AddSharedColumns) selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
 
 			var spaceDataObj = new TfSpaceData()
 			{

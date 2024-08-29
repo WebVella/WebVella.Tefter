@@ -19,7 +19,7 @@
 			</FluentMenuItem>
 			<FluentDivider />
 			<FluentMenuItem>
-				Rename View
+				Manage View
 				<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem>
@@ -29,6 +29,11 @@
 			<FluentMenuItem>
 				Manage Access
 				<FluentIcon Value="@TfConstants.GetIcon("KeyMultiple")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentDivider />
+			<FluentMenuItem OnClick="_manageData">
+				Manage Data
+				<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentDivider />
 			<FluentMenuItem Disabled="true">

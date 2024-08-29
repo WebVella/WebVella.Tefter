@@ -29,6 +29,9 @@ public record TucSpaceView
 
 	public bool AddsColumns{ get => AddSystemColumns || AddProviderColumns || AddSharedColumns; }
 
+	[JsonIgnore]
+	public Action OnClick { get;set;}
+
 	public TucSpaceView() { }
 
 	public TucSpaceView(TfSpaceView model)
