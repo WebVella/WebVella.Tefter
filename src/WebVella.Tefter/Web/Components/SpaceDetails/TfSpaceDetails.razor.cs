@@ -10,14 +10,14 @@ public partial class TfSpaceDetails : TfBaseComponent
 	{
 		if (disposing)
 		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
+			ActionSubscriber?.UnsubscribeFromAllActions(this);
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
 		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanedResult);
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
