@@ -1,62 +1,7 @@
-﻿@page "/space/{SpaceId:guid}/view/{SpaceViewId:guid}"
+﻿@page "/space/{SpaceId:guid}/view"
+@page "/space/{SpaceId:guid}/view/{SpaceViewId:guid}"
 @layout SpaceLayout
 @inherits TfBasePage
-<TfSpaceStateManager/>
-@if (SpaceState.Value.Space is null)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-		<FluentMessageBar Title="No space found"
-						  Style="@("border: 1px solid var(--neutral-base-color)")"
-						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
-						  AllowDismiss="false">
-			No spaces found yet notification
-		</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else if (SpaceState.Value.SpaceViewList.Count == 0)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="No existing views"
-							  Style="@("border: 1px solid var(--neutral-base-color)")"
-							  Intent="MessageIntent.Info"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				Space view created yet
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else if (SpaceState.Value.SpaceView is null && SpaceState.Value.RouteSpaceViewId is not null)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-		<FluentMessageBar Title="No space view found"
-						  Style="@("border: 1px solid var(--neutral-base-color)")"
-						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
-						  AllowDismiss="false">
-			Space view not found
-		</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else
-{
-	@if (ScreenStateSidebarExpanded.Value)
-	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SpaceState.Value.SpaceSidebarStyle">
-			<TfSpaceViewNavigation />
-		</FluentStack>
-	}
-	<FluentBodyContent Class="content-body with-toolbar">
-		<TfSpaceViewToolbar />
-		<div class="content-inner">
-			<TfSpaceView />
-		</div>
-	</FluentBodyContent>
-}
+<TfSpaceStateManager />
+<TfSpaceViewDetails />
 

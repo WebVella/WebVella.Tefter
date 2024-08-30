@@ -9,6 +9,7 @@ internal static class NavigatorExt
 		Guid? spaceViewId = null;
 		Guid? userId = null;
 		Guid? dataProviderId = null;
+		string spaceSection = null;
 		Dictionary<int, string> pathDict = new();
 		Uri uri = null;
 		if (String.IsNullOrWhiteSpace(url))
@@ -33,11 +34,13 @@ internal static class NavigatorExt
 
 			if (pathDict.ContainsKey(2) && pathDict[2] == "view")
 			{
-				if (Guid.TryParse(pathDict[3], out Guid outGuid)) spaceViewId = outGuid;
+				spaceSection = "view";
+				if (pathDict.ContainsKey(3) && Guid.TryParse(pathDict[3], out Guid outGuid)) spaceViewId = outGuid;
 			}
 			if (pathDict.ContainsKey(2) && pathDict[2] == "data")
 			{
-				if (Guid.TryParse(pathDict[3], out Guid outGuid)) spaceDataId = outGuid;
+				spaceSection = "data";
+				if (pathDict.ContainsKey(3) && Guid.TryParse(pathDict[3], out Guid outGuid)) spaceDataId = outGuid;
 			}
 		}
 
@@ -63,6 +66,7 @@ internal static class NavigatorExt
 			SpaceViewId = spaceViewId,
 			UserId = userId,
 			DataProviderId = dataProviderId,
+			SpaceSection = spaceSection
 		};
 	}
 

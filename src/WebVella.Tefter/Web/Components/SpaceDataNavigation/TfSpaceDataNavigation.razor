@@ -15,6 +15,10 @@
 					@LOC("Manage Space")
 					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
+				<FluentMenuItem OnClick="onViewsListClick">
+					@LOC("Views List")
+					<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+				</FluentMenuItem>
 				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onAddClick">
 					@LOC("Create Dataset")

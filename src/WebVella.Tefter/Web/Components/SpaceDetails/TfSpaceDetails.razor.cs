@@ -19,18 +19,18 @@ public partial class TfSpaceDetails : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanedResult);
+		//ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanedResult);
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 	}
 
-	private void On_StateChanedResult(SpaceStateChangedAction action)
-	{
-		if(SpaceState.Value.RouteSpaceViewId is null && SpaceState.Value.SpaceViewList.Count > 0){ 
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, SpaceState.Value.RouteSpaceId, SpaceState.Value.SpaceViewList[0].Id));
-		}
+	//private void On_StateChanedResult(SpaceStateChangedAction action)
+	//{
+	//	if(SpaceState.Value.RouteSpaceViewId is null && SpaceState.Value.SpaceViewList.Count > 0){ 
+	//		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, SpaceState.Value.RouteSpaceId, SpaceState.Value.SpaceViewList[0].Id));
+	//	}
 
-		StateHasChanged();
-	}
+	//	StateHasChanged();
+	//}
 
 	private async Task _createViewHandler()
 	{

@@ -1,0 +1,80 @@
+﻿@inherits TfBaseComponent
+@if (SpaceState.Value.Space is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No space found"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				No spaces found yet notification
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else if (SpaceState.Value.SpaceDataList.Count == 0)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No existing datasets"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				Space datasets created yet
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else if (SpaceState.Value.RouteSpaceDataId is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="Missing redirect"
+							  Style="border: 1px solid var(--neutral-base-color)"
+							  Intent="MessageIntent.Warning"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				Should redirect to the first data
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else if (SpaceState.Value.SpaceData is null && SpaceState.Value.RouteSpaceDataId is not null)
+{
+
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No space data found"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				No space data found
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	@if (ScreenStateSidebarExpanded.Value)
+	{
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SpaceState.Value.SpaceSidebarStyle">
+			<TfSpaceDataNavigation />
+		</FluentStack>
+	}
+	<FluentBodyContent Class="content-body with-toolbar">
+		<TfSpaceDataDetailsNav />
+		<div class="content-inner">
+			@if (Menu == "views")
+			{
+				<TfSpaceDataViews />
+			}
+			else
+			{
+				<TfSpaceDataManage />
+			}
+		</div>
+	</FluentBodyContent>
+}

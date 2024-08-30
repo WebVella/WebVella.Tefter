@@ -129,7 +129,22 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		{
 			var item = (TucSpace)result.Data;
 			ToastService.ShowSuccess(LOC("Space successfully updated!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
+			//Change user state > spaces
+			var userSpaces = UserState.Value.UserSpaces.ToList();
+			var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
+			if (itemIndex > -1)
+			{
+				userSpaces[itemIndex] = item;
+				Dispatcher.Dispatch(new SetUserStateAction(
+					user: UserState.Value.User,
+					userSpaces: userSpaces
+				));
+			}
+
+			//change space state
+			Dispatcher.Dispatch(new SetSpaceOnlyAction(
+				space: item
+			));
 		}
 	}
 	private void SetMenuItemActions(MenuItem item)
@@ -147,6 +162,9 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		}
 	}
 
+	private void onDataListClick(){ 
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, SpaceState.Value.Space.Id, null));
+	}
 	private async Task onSearch(string value)
 	{
 		search = value;

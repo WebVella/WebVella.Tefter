@@ -23,7 +23,7 @@ public partial class TfAppInit : TfBaseComponent
 			if(UC.User is null) return;
 			//Subscribe for state set results
 			//so we can know when all states are inited
-			ActionSubscriber.SubscribeToAction<SetUserActionResult>(this, initUserStateResult);
+			ActionSubscriber.SubscribeToAction<UserStateChangedAction>(this, initUserStateResult);
 			ActionSubscriber.SubscribeToAction<SetCultureActionResult>(this, initCultureStateResult);
 			ActionSubscriber.SubscribeToAction<SetThemeActionResult>(this, initThemeStateResult);
 			ActionSubscriber.SubscribeToAction<SetSidebarActionResult>(this, initSidebarStateResult);
@@ -56,7 +56,7 @@ public partial class TfAppInit : TfBaseComponent
 	/// Processes the user state init action result
 	/// </summary>
 	/// <param name="action"></param>
-	private void initUserStateResult(SetUserActionResult action)
+	private void initUserStateResult(UserStateChangedAction action)
 	{
 		UC.UserStateInited = true;
 		CheckAllInited();

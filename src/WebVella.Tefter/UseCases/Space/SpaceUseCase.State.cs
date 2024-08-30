@@ -45,7 +45,6 @@ public partial class SpaceUseCase
 					}
 				}
 				List<TucSpaceView> spaceViewList = GetSpaceViewList(space.Id);
-
 				if (urlData.SpaceDataId is not null)
 				{
 					var reqItem = GetSpaceData(urlData.SpaceDataId.Value);
@@ -74,8 +73,33 @@ public partial class SpaceUseCase
 						return Task.CompletedTask;
 					}
 				}
-
 				List<TucSpaceData> spaceDataList = GetSpaceDataList(space.Id);
+
+				#region << Redirects >>
+				{
+					//redirect to the first view
+					if (
+						(String.IsNullOrWhiteSpace(urlData.SpaceSection) || urlData.SpaceSection == "view")
+						&& urlData.SpaceViewId is null
+						&& spaceViewList.Count > 0
+						)
+					{
+						_navigationManager.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, space.Id, spaceViewList[0].Id));
+						return Task.CompletedTask;
+					}
+					//redirect to the first data
+					if (
+						urlData.SpaceSection == "data"
+						&& urlData.SpaceDataId is null
+						&& spaceDataList.Count > 0
+						)
+					{
+						_navigationManager.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, space.Id, spaceDataList[0].Id));
+						return Task.CompletedTask;
+					}
+				}
+				#endregion
+
 
 				_dispatcher.Dispatch(new SetSpaceStateAction(
 					isBusy: false,
