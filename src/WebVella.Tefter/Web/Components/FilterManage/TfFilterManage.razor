@@ -52,25 +52,28 @@ else
 		<TitleTemplate>
 			<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" VerticalAlignment="@VerticalAlignment.Center">
-					<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false" Width="400px"
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false" Style="flex:0 0 300px"
 								 VerticalAlignment="@VerticalAlignment.Center">
 						<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">@TucFilterBase.GetColumnName(Item)</FluentLabel>
 						<FluentLabel Typo="@Typography.Body" Style="color:var(--neutral-foreground-rest);opacity:0.5">@TucFilterBase.GetFieldType(Item)</FluentLabel>
 					</FluentStack>
-					<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false" 
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" Wrap="false"
+								 Style="flex:1 1 auto"
 								 VerticalAlignment="@VerticalAlignment.Center">
 
 						@if (Item is TucFilterBoolean)
 						{
 							var context = (TucFilterBoolean)Item;
-							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
-											Disabled="@Disabled"
+							<FluentSelect SelectedOption="@context.ComparisonMethod"
+										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
+										  Disabled="@Disabled"
 										  TOption="TucFilterBooleanComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
-										  OptionText="@((p)=> p.ToString())"></FluentSelect>
+										  OptionText="@((p)=> p.ToDescriptionString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentSelect Value="@context.ValueString" SelectedOptionChanged="@context.ValueOptionChanged"
+								<FluentSelect Value="@context.ValueString"
+											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 											  Disabled="@Disabled"
 											  TOption="Option<string>" Required="false"
 											  OptionText="@((p)=> p.Text)"
@@ -81,74 +84,86 @@ else
 						else if (Item is TucFilterDateOnly)
 						{
 							var context = (TucFilterDateOnly)Item;
-							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+							<FluentSelect SelectedOption="@context.ComparisonMethod"
+										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 										  Disabled="@Disabled"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentTextField Value="@context.ValueString" ValueChanged="@context.ValueStringChanged"
-												 Disabled="@Disabled"
-												 Placeholder="@($"eg. {TfConstants.DateOnlyFormatInput}")" Style="width:300px"/>
+								<FluentTextField Value="@context.ValueString"
+												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+												 Disabled="@Disabled" AutoComplete="new-password"
+												 Placeholder="@($"eg. {TfConstants.DateOnlyFormatInput}")" Style="width:300px" />
 							}
 						}
 						else if (Item is TucFilterDateTime)
 						{
 							var context = (TucFilterDateTime)Item;
-							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+							<FluentSelect SelectedOption="@context.ComparisonMethod"
+										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 										  Disabled="@Disabled"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentTextField Value="@context.ValueString" ValueChanged="@context.ValueStringChanged"
-												 Disabled="@Disabled"
+								<FluentTextField Value="@context.ValueString"
+												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+												 Disabled="@Disabled" AutoComplete="new-password"
 												 Placeholder="@($"eg. {TfConstants.DateTimeFormatInput}")" Style="width:300px" />
 							}
 						}
 						else if (Item is TucFilterGuid)
 						{
 							var context = (TucFilterGuid)Item;
-							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+							<FluentSelect SelectedOption="@context.ComparisonMethod"
+										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 										  Disabled="@Disabled"
 										  TOption="TucFilterGuidComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentTextField Value="@context.ValueString" ValueChanged="@context.ValueStringChanged"
-												 Disabled="@Disabled"
+								<FluentTextField Value="@context.ValueString"
+												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+												 Disabled="@Disabled" AutoComplete="new-password"
 												 Placeholder="@LOC("enter valid GUID")" Style="width:300px" />
 							}
 						}
 						else if (Item is TucFilterNumeric)
 						{
 							var context = (TucFilterNumeric)Item;
-							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+							<FluentSelect SelectedOption="@context.ComparisonMethod"
+										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 										  Disabled="@Disabled"
 										  TOption="TucFilterNumericComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterNumericComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentNumberField TValue="decimal?" Value="@context.Value" ValueChanged="@context.ValueChanged"
+								<FluentNumberField TValue="decimal?" Value="@context.Value"
+												   ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 												   Disabled="@Disabled"
-												 Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
+												   Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
 							}
 						}
 						else if (Item is TucFilterText)
 						{
 							var context = (TucFilterText)Item;
-							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+							<FluentSelect SelectedOption="@context.ComparisonMethod"
+										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 										  Disabled="@Disabled"
 										  TOption="TucFilterTextComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterTextComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentTextField Disabled="@Disabled" Value="@context.Value" ValueChanged="@context.ValueChanged" Style="width:300px" Placeholder="@LOC("no value")" />
+								<FluentTextField Disabled="@Disabled" AutoComplete="new-password"
+												 Value="@context.Value"
+												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+												 Style="width:300px" Placeholder="@LOC("no value")" />
 							}
 						}
 					</FluentStack>
