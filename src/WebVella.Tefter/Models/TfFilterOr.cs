@@ -2,8 +2,10 @@
 
 public class TfFilterOr : TfFilterBase
 {
+	[JsonPropertyName("_filters")]
 	private readonly List<TfFilterBase> _filters;
 
+	[JsonIgnore]
 	public ReadOnlyCollection<TfFilterBase> Filters => _filters.AsReadOnly();
 
 	public TfFilterOr() 

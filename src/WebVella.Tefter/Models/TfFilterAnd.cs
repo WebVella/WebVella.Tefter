@@ -2,8 +2,10 @@
 
 public class TfFilterAnd : TfFilterBase
 {
+	[JsonPropertyName("_filters")]
 	private readonly List<TfFilterBase> _filters;
 
+	[JsonIgnore]
 	public ReadOnlyCollection<TfFilterBase> Filters => _filters.AsReadOnly();
 
 	public TfFilterAnd()
@@ -13,10 +15,10 @@ public class TfFilterAnd : TfFilterBase
 	}
 
 	public TfFilterAnd(
-		params TfFilterBase[] filters) 
+		params TfFilterBase[] filters)
 		: this()
 	{
-		if(filters is null) 
+		if (filters is null)
 			throw new ArgumentNullException(nameof(filters));
 
 		_filters.AddRange(filters);
@@ -25,7 +27,7 @@ public class TfFilterAnd : TfFilterBase
 	public void Add(
 		TfFilterBase filter)
 	{
-		if(filter is null) 
+		if (filter is null)
 			throw new ArgumentNullException(nameof(filter));
 
 		_filters.Add(filter);
