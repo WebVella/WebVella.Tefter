@@ -1,4 +1,6 @@
-﻿using WebVella.Tefter.Database.Dbo;
+﻿using System.Text.Json.Serialization.Metadata;
+using WebVella.Tefter.Database.Dbo;
+using WebVella.Tefter.Utility;
 using static WebVella.Tefter.TfDataProviderManager;
 
 namespace WebVella.Tefter;
@@ -342,6 +344,14 @@ public partial class TfSpaceManager : ITfSpaceManager
 		if (dbo == null)
 			return null;
 
+		var jsonOptions = new JsonSerializerOptions
+		{
+			TypeInfoResolver = new DefaultJsonTypeInfoResolver
+			{
+				Modifiers = { JsonExtensions.AddPrivateProperties<JsonIncludePrivatePropertyAttribute>() },
+			},
+		};
+
 		return new TfSpaceData
 		{
 			Id = dbo.Id,
@@ -349,8 +359,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Name = dbo.Name,
 			Position = dbo.Position,
 			SpaceId = dbo.SpaceId,
-			Filters = JsonSerializer.Deserialize<List<TfFilterBase>>(dbo.FiltersJson),
-			Columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnsJson)
+			Filters = JsonSerializer.Deserialize<List<TfFilterBase>>(dbo.FiltersJson, jsonOptions),
+			Columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnsJson, jsonOptions)
 		};
 
 	}
@@ -360,6 +370,14 @@ public partial class TfSpaceManager : ITfSpaceManager
 		if (model == null)
 			return null;
 
+		var jsonOptions = new JsonSerializerOptions
+		{
+			TypeInfoResolver = new DefaultJsonTypeInfoResolver
+			{
+				Modifiers = { JsonExtensions.AddPrivateProperties<JsonIncludePrivatePropertyAttribute>() },
+			},
+		};
+
 		return new TfSpaceDataDbo
 		{
 			Id = model.Id,
@@ -367,8 +385,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Name = model.Name,
 			Position = model.Position,
 			SpaceId = model.SpaceId,
-			FiltersJson = JsonSerializer.Serialize(model.Filters ?? new List<TfFilterBase>()),
-			ColumnsJson = JsonSerializer.Serialize(model.Columns ?? new List<string>())
+			FiltersJson = JsonSerializer.Serialize(model.Filters ?? new List<TfFilterBase>(), jsonOptions),
+			ColumnsJson = JsonSerializer.Serialize(model.Columns ?? new List<string>(), jsonOptions)
 		};
 	}
 

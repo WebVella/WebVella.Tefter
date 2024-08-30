@@ -2,8 +2,8 @@
 
 public class TfFilterAnd : TfFilterBase
 {
-	[JsonPropertyName("_filters")]
-	private readonly List<TfFilterBase> _filters;
+	[JsonIncludePrivateProperty]
+	private List<TfFilterBase> _filters { get; set; }
 
 	[JsonIgnore]
 	public ReadOnlyCollection<TfFilterBase> Filters => _filters.AsReadOnly();
