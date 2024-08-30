@@ -229,6 +229,52 @@ public partial class SpaceUseCase
 		return Result.Ok(new TucSpaceData(tfResult.Value));
 	}
 
+	internal Result<TucSpaceData> AddColumnToSpaceData(Guid spaceDataId,string columnDbName)
+	{
+		if(spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if(String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
+		var spaceData = GetSpaceData(spaceDataId);
+		if(spaceData is null) return Result.Fail("spaceData not found");
+		if(spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
+
+		spaceData.Columns.Add(columnDbName);
+		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		if (updateResult.IsFailed)return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+
+		return Result.Ok(new TucSpaceData(updateResult.Value));
+
+	}
+
+	internal Result<TucSpaceData> RemoveColumnFromSpaceData(Guid spaceDataId,string columnDbName)
+	{
+		if(spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if(String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
+		var spaceData = GetSpaceData(spaceDataId);
+		if(spaceData is null) return Result.Fail("spaceData not found");
+		if(!spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
+
+		spaceData.Columns.Remove(columnDbName);
+		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		if (updateResult.IsFailed)return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+
+		return Result.Ok(new TucSpaceData(updateResult.Value));
+
+	}
+
+	internal Result<TucSpaceData>UpdateSpaceDataFilters(Guid spaceDataId, List<TucFilterBase> filters)
+	{
+		if(spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		var spaceData = GetSpaceData(spaceDataId);
+		if(spaceData is null) return Result.Fail("spaceData not found");
+		spaceData.Filters = filters;
+		var model = spaceData.ToModel();
+		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		if (updateResult.IsFailed)return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+
+		return Result.Ok(new TucSpaceData(updateResult.Value));
+
+	}
+
 	//Space view
 	internal TucSpaceView GetSpaceView(Guid viewId)
 	{

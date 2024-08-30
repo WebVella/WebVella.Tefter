@@ -79,38 +79,73 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	private async Task _addColumn()
 	{
+		if (_isSubmitting) return;
 		try
 		{
 			if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
 			if (UC.SpaceDataManageForm.Columns.Contains(_selectedColumn)) return;
-			UC.SpaceDataManageForm.Columns.Add(_selectedColumn);
-			UC.SpaceDataManageForm.Columns = UC.SpaceDataManageForm.Columns.Order().ToList();
 
-			_submitting = true;
-			StateHasChanged();
-			await Task.Delay(1000);
-			_submitting = false;
-			StateHasChanged();
 
+
+			Result<TucSpaceData> submitResult = UC.AddColumnToSpaceData(SpaceState.Value.SpaceData.Id, _selectedColumn);
+			ProcessFormSubmitResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess("Dataset updated!");
+				submitResult.Value.Columns = submitResult.Value.Columns.Order().ToList();
+				var spaceDataList = SpaceState.Value.SpaceDataList.ToList();
+				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
+				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
+
+				Dispatcher.Dispatch(new SetSpaceDataAction(
+					spaceData: submitResult.Value,
+					spaceDataList: spaceDataList
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
 		}
 		finally
 		{
+			_isSubmitting = false;
 			_selectedColumn = null;
+			await InvokeAsync(StateHasChanged);
 		}
+
 	}
 
 
 	private async Task _deleteColumn(string column)
 	{
-		if (String.IsNullOrWhiteSpace(column)) return;
-		if (!UC.SpaceDataManageForm.Columns.Contains(column)) return;
-		UC.SpaceDataManageForm.Columns.Remove(column);
+		if (_isSubmitting) return;
+		try
+		{
+			Result<TucSpaceData> submitResult = UC.RemoveColumnFromSpaceData(SpaceState.Value.SpaceData.Id, column);
+			ProcessFormSubmitResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess("Dataset updated!");
+				var spaceDataList = SpaceState.Value.SpaceDataList.ToList();
+				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
+				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
 
-		_submitting = true;
-		StateHasChanged();
-		await Task.Delay(1000);
-		_submitting = false;
-		StateHasChanged();
+				Dispatcher.Dispatch(new SetSpaceDataAction(
+					spaceData: submitResult.Value,
+					spaceDataList: spaceDataList
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isSubmitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 	public async Task AddFilter(Type type, string dbName, Guid? parentId)
@@ -149,13 +184,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			}
 		}
 
-
-		_submitting = true;
-		StateHasChanged();
-		await Task.Delay(1000);
-		_submitting = false;
-		StateHasChanged();
-
+		await _saveFilters();
 	}
 
 	public async Task AddColumnFilter(string dbColumn, Guid? parentId)
@@ -204,7 +233,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			default: throw new Exception("Unsupported column data type");
 
 		}
-		StateHasChanged();
+		await InvokeAsync(StateHasChanged);
 	}
 
 	public async Task RemoveColumnFilter(Guid filterId)
@@ -227,13 +256,52 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			if (parentFilter is null) UC.SpaceDataManageForm.Filters.Remove(filter);
 			else if (parentFilter is TucFilterAnd) ((TucFilterAnd)parentFilter).Filters.Remove(filter);
 			else if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Remove(filter);
-
-			_submitting = true;
-			StateHasChanged();
-			await Task.Delay(1000);
-			_submitting = false;
-			StateHasChanged();
+			await InvokeAsync(StateHasChanged);
+			await _saveFilters();
 		}
+	}
+
+	public async Task UpdateColumnFilter(TucFilterBase filter)
+	{
+		var filterIndex = UC.SpaceDataManageForm.Filters.FindIndex(x => x.Id == filter.Id);
+		if (filterIndex > -1)
+		{
+			UC.SpaceDataManageForm.Filters[filterIndex] = filter;
+			await InvokeAsync(StateHasChanged);
+			await _saveFilters();
+		}
+	}
+
+	public async Task _saveFilters()
+	{
+		if (_isSubmitting) return;
+		try
+		{
+			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataFilters(SpaceState.Value.SpaceData.Id, UC.SpaceDataManageForm.Filters);
+			ProcessFormSubmitResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess("Dataset updated!");
+				var spaceDataList = SpaceState.Value.SpaceDataList.ToList();
+				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
+				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
+
+				Dispatcher.Dispatch(new SetSpaceDataAction(
+					spaceData: submitResult.Value,
+					spaceDataList: spaceDataList
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isSubmitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
+
 	}
 
 	public async Task _addColumnFilterHandler()

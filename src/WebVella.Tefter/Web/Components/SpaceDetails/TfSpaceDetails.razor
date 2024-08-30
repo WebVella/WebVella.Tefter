@@ -22,7 +22,6 @@ else if (SpaceState.Value.SpaceViewList.Count == 0)
 							  Intent="MessageIntent.Info"
 							  Type="@MessageType.Notification"
 							  AllowDismiss="false">
-				<p><a href="@($"/space/{SpaceState.Value.Space.Id}/data/{Guid.NewGuid()}")">space data</a></p>
 				<div><FluentButton OnClick="_createViewHandler" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">Create view</FluentButton></div>
 			</FluentMessageBar>
 		</div>

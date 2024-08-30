@@ -2,15 +2,15 @@
 
 namespace WebVella.Tefter.UseCases.Models;
 
-[JsonDerivedType(typeof(TucFilterBase), typeDiscriminator: "base")]
-[JsonDerivedType(typeof(TucFilterAnd), typeDiscriminator: "and")]
-[JsonDerivedType(typeof(TucFilterOr), typeDiscriminator: "or")]
-[JsonDerivedType(typeof(TucFilterBoolean), typeDiscriminator: "boolean")]
-[JsonDerivedType(typeof(TucFilterDateOnly), typeDiscriminator: "dateonly")]
-[JsonDerivedType(typeof(TucFilterDateTime), typeDiscriminator: "datetime")]
-[JsonDerivedType(typeof(TucFilterGuid), typeDiscriminator: "guid")]
-[JsonDerivedType(typeof(TucFilterNumeric), typeDiscriminator: "numeric")]
-[JsonDerivedType(typeof(TucFilterText), typeDiscriminator: "text")]
+[JsonDerivedType(typeof(TucFilterBase))]
+[JsonDerivedType(typeof(TucFilterAnd))]
+[JsonDerivedType(typeof(TucFilterOr))]
+[JsonDerivedType(typeof(TucFilterBoolean))]
+[JsonDerivedType(typeof(TucFilterDateOnly))]
+[JsonDerivedType(typeof(TucFilterDateTime))]
+[JsonDerivedType(typeof(TucFilterGuid))]
+[JsonDerivedType(typeof(TucFilterNumeric))]
+[JsonDerivedType(typeof(TucFilterText))]
 public record TucFilterBase
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
