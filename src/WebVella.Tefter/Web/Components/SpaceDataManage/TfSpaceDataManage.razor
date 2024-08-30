@@ -28,11 +28,19 @@ else
 	<TfCard Small="true">
 		<TitleTemplate>
 			<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-				<FluentSelect @bind-SelectedOption="@_selectedColumn"
-							  TOption="string" Required="false"
-							  Items="@_columnOptions" Style="width:200px"
-							  Placeholder="@LOC("select provider column")"></FluentSelect>
-				<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline">@LOC("Add new")</FluentButton>
+				@if (_columnOptions.Count > 0)
+				{
+					<FluentSelect @bind-SelectedOption="@_selectedColumn"
+								  Disabled="_submitting"
+								  TOption="string" Required="false"
+								  Items="@_columnOptions" Style="width:200px"
+								  Placeholder="@LOC("select provider column")"></FluentSelect>
+				}
+				else
+				{
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+				}
+				<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
 			</FluentStack>
 		</TitleTemplate>
 		<ChildContent>
@@ -50,7 +58,8 @@ else
 								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 									<td class="tf-grid-td" style="width:30px;">
 										<div>
-											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
+											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+														  Disabled="_submitting">
 												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
 											</FluentButton>
 										</div>
@@ -104,10 +113,10 @@ else
 										  TOption="string" Required="false"
 										  Items="@AllColumnOptions" Style="width:140px"
 										  Placeholder="@LOC("select...")"></FluentSelect>
-							<FluentButton Class="" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+							<FluentButton Disabled="_submitting" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 						}
-						<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-						<FluentButton Class="" OnClick="@(() => AddFilter(typeof(TucFilterOr),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+						<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+						<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TucFilterOr),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
 					</FluentStack>
 				</FluentStack>
 			</TitleTemplate>
@@ -118,13 +127,13 @@ else
 				}
 				@foreach (var item in UC.SpaceDataManageForm.Filters)
 				{
-					<TfFilterManage Item="item" />
+					<TfFilterManage Item="item" Disabled="_submitting" />
 				}
 			</ChildContent>
 		</TfCard>
 	</CascadingValue>
 
-@* 	<textarea style="height:1000px;width:100%">
+	@* 	<textarea style="height:1000px;width:100%">
 		@JsonSerializer.Serialize(Form, new JsonSerializerOptions() { WriteIndented = true })
 	</textarea> *@
 }

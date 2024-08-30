@@ -8,19 +8,23 @@ public partial class TfFilterManage : TfBaseComponent
 
 	[Parameter]
 	public TucFilterBase Item { get; set;}
+
+	[Parameter]
+	public bool Disabled { get; set;} = false;
+
 	private string _selectedFilterColumn = null;
 
-	private void _addColumnFilterHandler()
+	private async Task _addColumnFilterHandler()
 	{
 		if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;
 		if (Item is null) return;
-		TfSpaceDataManage.AddColumnFilter(_selectedFilterColumn, Item.Id);
+		await TfSpaceDataManage.AddColumnFilter(_selectedFilterColumn, Item.Id);
 		//_selectedFilterColumn = null; //do not clear for convenience
 	}
 
-	private void _deleteFilterHandler()
+	private async Task _deleteFilterHandler()
 	{
-		TfSpaceDataManage.RemoveColumnFilter(Item.Id);
+		await TfSpaceDataManage.RemoveColumnFilter(Item.Id);
 	}
 
 

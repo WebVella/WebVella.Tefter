@@ -25,11 +25,11 @@
 									  TOption="string" Required="false"
 									  Items="@TfSpaceDataManage.AllColumnOptions" Style="width:140px"
 									  Placeholder="@LOC("select...")"></FluentSelect>
-						<FluentButton Class="" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+						<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 					}
-					<FluentButton Class="" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterAnd),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-					<FluentButton Class="" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterOr),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
-					<FluentButton Class="" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+					<FluentButton Disabled="@Disabled" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterAnd),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+					<FluentButton Disabled="@Disabled" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterOr),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+					<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
 								  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
 				</FluentStack>
 			</FluentStack>
@@ -41,7 +41,7 @@
 			}
 			@foreach (var item in TucFilterBase.GetChildFilters(Item))
 			{
-				<TfFilterManage Item="item" />
+				<TfFilterManage Item="item" Disabled="@Disabled" />
 			}
 		</ChildContent>
 	</TfCard>
@@ -64,12 +64,14 @@ else
 						{
 							var context = (TucFilterBoolean)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+											Disabled="@Disabled"
 										  TOption="TucFilterBooleanComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentSelect Value="@context.ValueString" SelectedOptionChanged="@context.ValueOptionChanged"
+											  Disabled="@Disabled"
 											  TOption="Option<string>" Required="false"
 											  OptionText="@((p)=> p.Text)"
 											  OptionValue="@((p)=> p.Value)"
@@ -80,12 +82,14 @@ else
 						{
 							var context = (TucFilterDateOnly)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+										  Disabled="@Disabled"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentTextField Value="@context.ValueString" ValueChanged="@context.ValueStringChanged"
+												 Disabled="@Disabled"
 												 Placeholder="@($"eg. {TfConstants.DateOnlyFormatInput}")" Style="width:300px"/>
 							}
 						}
@@ -93,12 +97,14 @@ else
 						{
 							var context = (TucFilterDateTime)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+										  Disabled="@Disabled"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentTextField Value="@context.ValueString" ValueChanged="@context.ValueStringChanged"
+												 Disabled="@Disabled"
 												 Placeholder="@($"eg. {TfConstants.DateTimeFormatInput}")" Style="width:300px" />
 							}
 						}
@@ -106,12 +112,14 @@ else
 						{
 							var context = (TucFilterGuid)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+										  Disabled="@Disabled"
 										  TOption="TucFilterGuidComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentTextField Value="@context.ValueString" ValueChanged="@context.ValueStringChanged"
+												 Disabled="@Disabled"
 												 Placeholder="@LOC("enter valid GUID")" Style="width:300px" />
 							}
 						}
@@ -119,12 +127,14 @@ else
 						{
 							var context = (TucFilterNumeric)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+										  Disabled="@Disabled"
 										  TOption="TucFilterNumericComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterNumericComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentNumberField TValue="decimal?" Value="@context.Value" ValueChanged="@context.ValueChanged"
+												   Disabled="@Disabled"
 												 Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
 							}
 						}
@@ -132,18 +142,19 @@ else
 						{
 							var context = (TucFilterText)Item;
 							<FluentSelect @bind-SelectedOption="@context.ComparisonMethod"
+										  Disabled="@Disabled"
 										  TOption="TucFilterTextComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterTextComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> p.ToString())"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentTextField Value="@context.Value" ValueChanged="@context.ValueChanged" Style="width:300px" Placeholder="@LOC("no value")" />
+								<FluentTextField Disabled="@Disabled" Value="@context.Value" ValueChanged="@context.ValueChanged" Style="width:300px" Placeholder="@LOC("no value")" />
 							}
 						}
 					</FluentStack>
 				</FluentStack>
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
-					<FluentButton Class="" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+					<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
 								  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
 				</FluentStack>
 			</FluentStack>

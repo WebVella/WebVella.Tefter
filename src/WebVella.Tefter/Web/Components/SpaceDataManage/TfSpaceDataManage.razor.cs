@@ -7,6 +7,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	[Inject] private SpaceUseCase UC { get; set; }
 
 	public TucDataProvider SelectedProvider = null;
+	public bool _submitting = false;
 	public List<string> AllColumnOptions
 	{
 		get
@@ -76,7 +77,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	}
 
 
-	private void _addColumn()
+	private async Task _addColumn()
 	{
 		try
 		{
@@ -84,6 +85,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			if (UC.SpaceDataManageForm.Columns.Contains(_selectedColumn)) return;
 			UC.SpaceDataManageForm.Columns.Add(_selectedColumn);
 			UC.SpaceDataManageForm.Columns = UC.SpaceDataManageForm.Columns.Order().ToList();
+
+			_submitting = true;
+			StateHasChanged();
+			await Task.Delay(1000);
+			_submitting = false;
+			StateHasChanged();
+
 		}
 		finally
 		{
@@ -91,7 +99,21 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 	}
 
-	public void AddFilter(Type type, string dbName, Guid? parentId)
+
+	private async Task _deleteColumn(string column)
+	{
+		if (String.IsNullOrWhiteSpace(column)) return;
+		if (!UC.SpaceDataManageForm.Columns.Contains(column)) return;
+		UC.SpaceDataManageForm.Columns.Remove(column);
+
+		_submitting = true;
+		StateHasChanged();
+		await Task.Delay(1000);
+		_submitting = false;
+		StateHasChanged();
+	}
+
+	public async Task AddFilter(Type type, string dbName, Guid? parentId)
 	{
 		TucFilterBase filter = null;
 		if (type == typeof(TucFilterAnd)) filter = new TucFilterAnd() { ColumnName = dbName };
@@ -126,10 +148,17 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Add(filter);
 			}
 		}
+
+
+		_submitting = true;
 		StateHasChanged();
+		await Task.Delay(1000);
+		_submitting = false;
+		StateHasChanged();
+
 	}
 
-	public void AddColumnFilter(string dbColumn, Guid? parentId)
+	public async Task AddColumnFilter(string dbColumn, Guid? parentId)
 	{
 		if (String.IsNullOrWhiteSpace(dbColumn)) return;
 		if (SelectedProvider is null) return;
@@ -143,43 +172,42 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			case TucDatabaseColumnType.LongInteger:
 			case TucDatabaseColumnType.Number:
 				{
-					AddFilter(typeof(TucFilterNumeric), dbColumn, parentId);
+					await AddFilter(typeof(TucFilterNumeric), dbColumn, parentId);
 				}
 				break;
 			case TucDatabaseColumnType.Boolean:
 				{
-					AddFilter(typeof(TucFilterBoolean), dbColumn, parentId);
+					await AddFilter(typeof(TucFilterBoolean), dbColumn, parentId);
 				}
 				break;
 			case TucDatabaseColumnType.Date:
 				{
-					AddFilter(typeof(TucFilterDateOnly), dbColumn, parentId);
+					await AddFilter(typeof(TucFilterDateOnly), dbColumn, parentId);
 				}
 				break;
 			case TucDatabaseColumnType.DateTime:
 				{
-					AddFilter(typeof(TucFilterDateTime), dbColumn, parentId);
+					await AddFilter(typeof(TucFilterDateTime), dbColumn, parentId);
 				}
 				break;
 			case TucDatabaseColumnType.ShortText:
 			case TucDatabaseColumnType.Text:
 				{
-					AddFilter(typeof(TucFilterText), dbColumn, parentId);
+					await AddFilter(typeof(TucFilterText), dbColumn, parentId);
 				}
 				break;
 			case TucDatabaseColumnType.Guid:
 				{
-					AddFilter(typeof(TucFilterGuid), dbColumn, parentId);
+					await AddFilter(typeof(TucFilterGuid), dbColumn, parentId);
 				}
 				break;
 			default: throw new Exception("Unsupported column data type");
 
 		}
-
 		StateHasChanged();
 	}
 
-	public void RemoveColumnFilter(Guid filterId)
+	public async Task RemoveColumnFilter(Guid filterId)
 	{
 		TucFilterBase filter = null;
 		TucFilterBase parentFilter = null;
@@ -199,23 +227,22 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			if (parentFilter is null) UC.SpaceDataManageForm.Filters.Remove(filter);
 			else if (parentFilter is TucFilterAnd) ((TucFilterAnd)parentFilter).Filters.Remove(filter);
 			else if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Remove(filter);
+
+			_submitting = true;
+			StateHasChanged();
+			await Task.Delay(1000);
+			_submitting = false;
 			StateHasChanged();
 		}
 	}
 
-	public void _addColumnFilterHandler()
+	public async Task _addColumnFilterHandler()
 	{
 		if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;
-		AddColumnFilter(_selectedFilterColumn, null);
+		await AddColumnFilter(_selectedFilterColumn, null);
 		//_selectedFilterColumn = null; //do not clear for convenience
 	}
 
-	private void _deleteColumn(string column)
-	{
-		if (String.IsNullOrWhiteSpace(column)) return;
-		if (!UC.SpaceDataManageForm.Columns.Contains(column)) return;
-		UC.SpaceDataManageForm.Columns.Remove(column);
-	}
 
 	private (TucFilterBase, TucFilterBase) FindFilter(TucFilterBase filter, Guid matchId, TucFilterBase parent)
 	{
