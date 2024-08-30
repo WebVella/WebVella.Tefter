@@ -1,5 +1,6 @@
 ﻿@inherits TfBaseComponent
-@if (SpaceState.Value.Space is null)
+@if (SpaceState.Value.IsBusy) { }
+else if (SpaceState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">

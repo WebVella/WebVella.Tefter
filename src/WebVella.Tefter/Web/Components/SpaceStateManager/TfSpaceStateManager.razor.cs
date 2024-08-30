@@ -2,9 +2,7 @@
 namespace WebVella.Tefter.Web.Components.SpaceStateManager;
 public partial class TfSpaceStateManager : TfBaseComponent
 {
-	[Parameter] public RenderFragment ChildContent { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
-
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -22,11 +20,11 @@ public partial class TfSpaceStateManager : TfBaseComponent
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
-
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
 		InvokeAsync(async()=>{ 
 			await UC.InitState(e.Location);
+					
 		});
 	}
 }

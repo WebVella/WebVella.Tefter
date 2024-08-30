@@ -111,6 +111,7 @@ public partial class TfFilterManage : TfBaseComponent
 				item.ValueStringChanged(value);
 				if (item.Value == original.Value) return;
 				updateObj = item;
+				////70efbe52-033f-43b8-a8b9-65f62ca0080f
 			}
 			else throw new Exception("propName not supported");
 		}

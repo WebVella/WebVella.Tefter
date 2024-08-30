@@ -117,10 +117,46 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="contains" xml:space="preserve">
+    <value>съдържа</value>
+  </data>
   <data name="delete filter" xml:space="preserve">
     <value>изтрий филтъра</value>
   </data>
+  <data name="ends with" xml:space="preserve">
+    <value>завършва с</value>
+  </data>
+  <data name="equal" xml:space="preserve">
+    <value>равен</value>
+  </data>
+  <data name="full text search" xml:space="preserve">
+    <value>съвпадение по цял текст</value>
+  </data>
+  <data name="greater" xml:space="preserve">
+    <value>по-голям</value>
+  </data>
+  <data name="greater or equal" xml:space="preserve">
+    <value>по-голям или равен</value>
+  </data>
+  <data name="has value" xml:space="preserve">
+    <value>има стойност</value>
+  </data>
+  <data name="is empty" xml:space="preserve">
+    <value>e Guid.Empty</value>
+  </data>
+  <data name="is true" xml:space="preserve">
+    <value>е TRUE</value>
+  </data>
+  <data name="lower" xml:space="preserve">
+    <value>по-малък</value>
+  </data>
+  <data name="lower or equal" xml:space="preserve">
+    <value>по-малък или равен</value>
+  </data>
   <data name="No filters added yet" xml:space="preserve">
     <value>Все още няма добавени филтри</value>
+  </data>
+  <data name="starts with" xml:space="preserve">
+    <value>започва с</value>
   </data>
 </root>

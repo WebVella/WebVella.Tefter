@@ -69,7 +69,7 @@ else
 										  Disabled="@Disabled"
 										  TOption="TucFilterBooleanComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
-										  OptionText="@((p)=> p.ToDescriptionString())"></FluentSelect>
+										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentSelect Value="@context.ValueString"
@@ -89,7 +89,7 @@ else
 										  Disabled="@Disabled"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
-										  OptionText="@((p)=> p.ToString())"></FluentSelect>
+										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentTextField Value="@context.ValueString"
@@ -106,7 +106,7 @@ else
 										  Disabled="@Disabled"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
-										  OptionText="@((p)=> p.ToString())"></FluentSelect>
+										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentTextField Value="@context.ValueString"
@@ -123,7 +123,7 @@ else
 										  Disabled="@Disabled"
 										  TOption="TucFilterGuidComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
-										  OptionText="@((p)=> p.ToString())"></FluentSelect>
+										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentTextField Value="@context.ValueString"
@@ -140,7 +140,7 @@ else
 										  Disabled="@Disabled"
 										  TOption="TucFilterNumericComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterNumericComparisonMethod>())" Style="width:140px"
-										  OptionText="@((p)=> p.ToString())"></FluentSelect>
+										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentNumberField TValue="decimal?" Value="@context.Value"
@@ -157,7 +157,7 @@ else
 										  Disabled="@Disabled"
 										  TOption="TucFilterTextComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterTextComparisonMethod>())" Style="width:140px"
-										  OptionText="@((p)=> p.ToString())"></FluentSelect>
+										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 							@if (context.RequiresValue)
 							{
 								<FluentTextField Disabled="@Disabled" AutoComplete="new-password"

@@ -16,6 +16,8 @@ public record TucSpace
 
 	public Icon Icon { get => TfConstants.GetIcon(IconString); }
 
+	public Guid? DefaultViewId { get; set; } = null;
+
 	public TucSpace() { }
 
 	public TucSpace(TfSpace model)
