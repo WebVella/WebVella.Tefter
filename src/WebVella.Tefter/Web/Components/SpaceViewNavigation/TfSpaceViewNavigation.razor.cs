@@ -68,17 +68,10 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 				Id = RenderUtils.ConvertGuidToHtmlElementId(view.Id),
 				Icon = TfConstants.SpaceViewIcon,
 				Match = NavLinkMatch.Prefix,
-				Level = 0,
 				Title = view.Name,
 				Url = String.Format(TfConstants.SpaceViewPageUrl, view.SpaceId, view.Id),
-				SpaceId = view.SpaceId,
-				SpaceViewId = view.Id,
-				Active = view.Id == SpaceState.Value.RouteSpaceViewId,
-				Expanded = false
 			};
-			SetMenuItemActions(viewMenu);
 			_menuItems.Add(viewMenu);
-
 		}
 
 		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
@@ -145,20 +138,6 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			Dispatcher.Dispatch(new SetSpaceOnlyAction(
 				space: item
 			));
-		}
-	}
-	private void SetMenuItemActions(MenuItem item)
-	{
-		item.OnSelect = (selected) => OnTreeMenuSelect(item, selected);
-	}
-
-	private void OnTreeMenuSelect(MenuItem item, bool selected)
-	{
-		item.Active = selected;
-		if (item.Active)
-		{
-			if (item.SpaceId is null || item.SpaceViewId is null) return;
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.SpaceViewId));
 		}
 	}
 

@@ -68,20 +68,8 @@
 }
 
 
-::deep.sidebar-nav fluent-tree-item.level-0::part(content-region) {
-	margin-left: 25px;
-}
-
-::deep.sidebar-nav fluent-tree-item.level-1::part(content-region) {
-	margin-left: 15px;
-}
-
-::deep.sidebar-nav fluent-tree-item::part(positioning-region) {
+::deep.sidebar-nav .fluent-nav-link .positioning-region {
 	background: transparent !important;
-}
-
-::deep.sidebar-nav fluent-tree-item svg {
-	pointer-events: none;
 }
 
 

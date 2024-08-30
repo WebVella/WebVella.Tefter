@@ -69,17 +69,10 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 				Id = RenderUtils.ConvertGuidToHtmlElementId(dataItem.Id),
 				Icon = TfConstants.SpaceDataIcon,
 				Match = NavLinkMatch.Prefix,
-				Level = 0,
 				Title = dataItem.Name,
 				Url = String.Format(TfConstants.SpaceDataPageUrl, dataItem.SpaceId, dataItem.Id),
-				SpaceId = dataItem.SpaceId,
-				SpaceDataId = dataItem.Id,
-				Active = dataItem.Id == SpaceState.Value.RouteSpaceDataId,
-				Expanded = false
 			};
-			SetMenuItemActions(menuItem);
 			_menuItems.Add(menuItem);
-
 		}
 
 		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
@@ -130,21 +123,22 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		{
 			var item = (TucSpace)result.Data;
 			ToastService.ShowSuccess(LOC("Space successfully updated!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
-		}
-	}
-	private void SetMenuItemActions(MenuItem item)
-	{
-		item.OnSelect = (selected) => OnTreeMenuSelect(item, selected);
-	}
+			//Change user state > spaces
+			var userSpaces = UserState.Value.UserSpaces.ToList();
+			var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
+			if (itemIndex > -1)
+			{
+				userSpaces[itemIndex] = item;
+				Dispatcher.Dispatch(new SetUserStateAction(
+					user: UserState.Value.User,
+					userSpaces: userSpaces
+				));
+			}
 
-	private void OnTreeMenuSelect(MenuItem item, bool selected)
-	{
-		item.Active = selected;
-		if (item.Active)
-		{
-			if (item.SpaceId is null || item.SpaceDataId is null) return;
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, item.SpaceId, item.SpaceDataId));
+			//change space state
+			Dispatcher.Dispatch(new SetSpaceOnlyAction(
+				space: item
+			));
 		}
 	}
 

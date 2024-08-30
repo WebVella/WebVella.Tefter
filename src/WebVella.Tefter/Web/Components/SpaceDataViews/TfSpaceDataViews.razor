@@ -22,9 +22,9 @@ else
 					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 						<td class="tf-grid-td" style="width:30px;">
 							<div>
-								<FluentButton Appearance="@Appearance.Outline" Title="@LOC("view details")" OnClick="@context.OnClick">
+								<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")" Href="@String.Format(TfConstants.SpaceViewPageUrl,context.SpaceId,context.Id)">
 									<FluentIcon Value="@TfConstants.ViewIcon" />
-								</FluentButton>
+								</FluentAnchor>
 							</div>
 						</td>
 						<td class="tf-grid-td">

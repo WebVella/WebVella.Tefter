@@ -19,18 +19,13 @@
 		}
 		else
 		{
-			<FluentTreeView>
+			<FluentNavMenu Style="width:100%">
 				@foreach (var item in UC.MenuItems)
 				{
-					<FluentTreeItem @key=@item.Id Class="@item.LevelClass" Text="@item.Title"
-									@onclick="@item.OnClick"
-									@bind-Selected="@item.Active" 
-									Data="item" 
-									InitiallySelected="@item.Active">
-						<FluentIcon Value="@item.Icon" Color="@Color.Neutral" Slot="start" />
-					</FluentTreeItem>
+					<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
+								   Icon="item.Icon" IconColor="@Color.Neutral">@item.Title</FluentNavLink>
 				}
-			</FluentTreeView>
+			</FluentNavMenu>
 			@if (UC.MenuHasMore)
 			{
 				<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="loadMoreClick">@LOC("Load more")</FluentButton>

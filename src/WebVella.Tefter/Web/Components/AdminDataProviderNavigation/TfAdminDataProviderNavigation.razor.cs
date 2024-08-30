@@ -19,18 +19,9 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		_setMenuItemActions();
 		UC.MenuLoading = false;
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_DataProviderDetailsChangedAction);
-	}
-
-	private void _setMenuItemActions()
-	{
-		foreach (var item in UC.MenuItems)
-		{
-			item.OnClick = () => OnTreeMenuClick(item);
-		}
 	}
 
 	private void loadMoreClick()
@@ -39,7 +30,6 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		StateHasChanged();
 		UC.MenuPage++;
 		UC.InitMenu();
-		_setMenuItemActions();
 		UC.LoadMoreLoading = false;
 		StateHasChanged();
 	}
@@ -62,12 +52,6 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		}
 	}
 
-	private void OnTreeMenuClick(TucMenuItem item)
-	{
-		if (item.Data is null) return;
-		item.Active = true;
-		Navigator.NavigateTo(item.Url);
-	}
 
 	private void onSearch(string search)
 	{
@@ -78,7 +62,6 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 
 		UC.MenuSearch = search;
 		UC.OnSearchChanged();
-		_setMenuItemActions();
 
 		UC.MenuLoading = false;
 		StateHasChanged();
@@ -87,7 +70,6 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 	private void On_DataProviderDetailsChangedAction(DataProviderAdminChangedAction action)
 	{
 		UC.OnStateChanged(action.Provider);
-		_setMenuItemActions();
 		StateHasChanged();
 	}
 }

@@ -29,6 +29,9 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 	{
 		try
 		{
+			if(_contextAccessor is null || _contextAccessor.HttpContext is null)
+				return await Task.FromResult(new AuthenticationState(_anonymous));
+
 			var cookieEncryptedText = _contextAccessor.HttpContext.Request.Cookies[Constants.TEFTER_AUTH_COOKIE_NAME];
 			if (!string.IsNullOrWhiteSpace(cookieEncryptedText))
 			{

@@ -19,17 +19,8 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		_setMenuItemActions();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_UserDetailsChangedAction);
-	}
-
-	private void _setMenuItemActions()
-	{
-		foreach (var item in UC.MenuItems)
-		{
-			item.OnClick = () => OnTreeMenuClick(item);
-		}
 	}
 
 	private async Task loadMoreClick()
@@ -38,7 +29,6 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await InvokeAsync(StateHasChanged);
 		UC.MenuPage++;
 		await UC.InitMenuAsync();
-		_setMenuItemActions();
 		UC.LoadMoreLoading = false;
 		await InvokeAsync(StateHasChanged);
 	}
@@ -78,7 +68,6 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 
 		UC.MenuSearch = search;
 		await UC.NavigationOnSearchChanged();
-		_setMenuItemActions();
 
 		UC.MenuLoading = false;
 		await InvokeAsync(StateHasChanged);
@@ -87,7 +76,6 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 	private void On_UserDetailsChangedAction(UserAdminChangedAction action)
 	{
 		UC.NavigationOnStateChanged(action.User);
-		_setMenuItemActions();
 		StateHasChanged();
 	}
 }

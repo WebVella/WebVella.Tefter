@@ -2,6 +2,7 @@
 namespace WebVella.Tefter.Web.Components.SpaceStateManager;
 public partial class TfSpaceStateManager : TfBaseComponent
 {
+	[Parameter] public RenderFragment ChildContent { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
