@@ -6,6 +6,7 @@ public class MenuItem
 	public string Title { get; set; }
 	public Icon Icon { get; set; }
 	public OfficeColor IconColor { get; set; }
+	public string OnClickUrl { get; set; }
 	public string Url { get; set; }
 	public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 	public bool Expanded { get; set; } = false;

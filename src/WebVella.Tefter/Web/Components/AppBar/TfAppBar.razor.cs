@@ -10,4 +10,5 @@ public partial class TfAppBar : TfBaseComponent
 		base.OnInitialized();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 	}
+
 }
