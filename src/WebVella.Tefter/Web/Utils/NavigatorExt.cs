@@ -35,6 +35,11 @@ internal static class NavigatorExt
 			if (pathDict.ContainsKey(2) && pathDict[2] == "view")
 			{
 				spaceSection = "view";
+				if (pathDict.Keys.Count >= 5 && pathDict[4] == "manage")
+				{
+					spaceSection = "manage";
+				}
+
 				if (pathDict.ContainsKey(3) && Guid.TryParse(pathDict[3], out Guid outGuid)) spaceViewId = outGuid;
 			}
 			if (pathDict.ContainsKey(2) && pathDict[2] == "data")

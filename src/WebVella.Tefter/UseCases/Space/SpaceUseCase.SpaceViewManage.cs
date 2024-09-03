@@ -1,0 +1,24 @@
+﻿namespace WebVella.Tefter.UseCases.Space;
+public partial class SpaceUseCase
+{
+	internal TucSpaceData ViewData = null;
+	internal TucDataProvider DataProvider = null;
+	internal List<TucSpaceViewColumn> ViewColumns = new();
+
+	internal Task InitSpaceViewManage()
+	{
+		AllDataProviders = GetDataProviderList();
+		return Task.CompletedTask;
+	}
+
+	internal Task InitSpaceViewManageAfterRender(SpaceState state)
+	{
+		if (state.SpaceView.SpaceDataId is not null)
+			ViewData = state.SpaceDataList.FirstOrDefault(x => x.Id == state.SpaceView.SpaceDataId);
+		if (ViewData is not null)
+			DataProvider = AllDataProviders.FirstOrDefault(x => x.Id == ViewData.DataProviderId);
+
+		ViewColumns = GetViewColumns(state.SpaceView.Id);
+		return Task.CompletedTask;
+	}
+}
