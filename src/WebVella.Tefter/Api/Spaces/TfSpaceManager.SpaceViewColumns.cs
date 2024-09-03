@@ -317,6 +317,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 			ComponentType = componentType,
 			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson),
 			CustomOptionsJson = dbo.CustomOptionsJson,
+			FullTypeName = dbo.FullTypeName,
+			FullComponentTypeName = dbo.FullComponentTypeName
 		};
 
 	}

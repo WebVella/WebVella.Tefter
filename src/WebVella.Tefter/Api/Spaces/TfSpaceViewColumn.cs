@@ -12,6 +12,9 @@ public class TfSpaceViewColumn
 	public Type ComponentType { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
+	public string FullTypeName { get; set; }
+	public string FullComponentTypeName { get; set; }
+
 }
 
 [DboCacheModel]
