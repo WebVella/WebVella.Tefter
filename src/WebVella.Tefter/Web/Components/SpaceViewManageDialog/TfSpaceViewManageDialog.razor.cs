@@ -18,7 +18,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		if(Content.SpaceId == Guid.Empty) throw new Exception("SpaceId is required");
+		if (Content.SpaceId == Guid.Empty) throw new Exception("SpaceId is required");
 		await UC.Init(this.GetType(), Content.SpaceId);
 		base.InitForm(UC.SpaceViewManageForm);
 		if (Content is null) throw new Exception("Content is null");
@@ -26,24 +26,25 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create view in {0}", UC.SpaceName) : LOC("Manage view in {0}", UC.SpaceName);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
-	}
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
+		if (_isCreate)
 		{
-			//if presets are available
 			UC.SpaceViewManageForm = new TucSpaceView()
 			{
 				Id = Guid.NewGuid(),
 				SpaceId = Content.SpaceId,
 			};
 			_generatedColumnsListInit();
-			base.InitForm(UC.SpaceViewManageForm);
-			await InvokeAsync(StateHasChanged);
 		}
+		else
+		{
+			UC.SpaceViewManageForm = Content with { Id = Content.Id, DataSetType = TucSpaceViewDataSetType.Existing };
+			_selectedDataset = UC.SpaceDataList.Single(x=> x.Id == Content.SpaceDataId);
+		}
+
+		base.InitForm(UC.SpaceViewManageForm);
 	}
+
 
 	private async Task _save()
 	{
@@ -53,15 +54,21 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 			//Workaround to wait for the form to be bound 
 			//on enter click without blur
 			await Task.Delay(10);
-
+			//Columns should not be generated on edit
 			MessageStore.Clear();
+
+
 
 			if (!EditContext.Validate()) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = UC.CreateSpaceViewWithForm(UC.SpaceViewManageForm);
+			Result<TucSpaceView> result = null;
+			if (_isCreate)
+				result = UC.CreateSpaceViewWithForm(UC.SpaceViewManageForm);
+			else
+				result = UC.UpdateSpaceViewWithForm(UC.SpaceViewManageForm);
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)

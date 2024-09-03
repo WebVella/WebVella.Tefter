@@ -5,6 +5,7 @@ public partial class TfLocation : TfBaseComponent
 	private bool _settingsMenuVisible = false;
 	private int _ellipsisCount = 30;
 	private MenuItem _namedLocation = null;
+	private Models.RouteData _urlData = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -20,6 +21,7 @@ public partial class TfLocation : TfBaseComponent
 	{
 		base.OnInitialized();
 		_namedLocation = generateNamedLocation();
+		_urlData = NavigatorExt.GetUrlData(Navigator);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_SpaceChangedAction);
 	}
@@ -29,6 +31,7 @@ public partial class TfLocation : TfBaseComponent
 
 		base.InvokeAsync(async () =>
 		{
+			_urlData = NavigatorExt.GetUrlData(Navigator);
 			_namedLocation = generateNamedLocation();
 			await InvokeAsync(StateHasChanged);
 		});

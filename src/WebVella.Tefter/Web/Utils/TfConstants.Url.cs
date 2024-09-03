@@ -19,6 +19,7 @@ public partial class TfConstants
 	public static string AdminDataProviderDataPageUrl { get; set; } = "/admin/data-providers/{0}/data";
 	public static string SpacePageUrl { get; set; } = "/space/{0}";
 	public static string SpaceViewPageUrl { get; set; } = "/space/{0}/view/{1}";
+	public static string SpaceViewManagePageUrl { get; set; } = "/space/{0}/view/{1}/manage";
 	public static string SpaceDataPageUrl { get; set; } = "/space/{0}/data/{1}";
 
 }

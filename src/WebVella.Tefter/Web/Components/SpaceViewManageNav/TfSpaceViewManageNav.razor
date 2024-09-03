@@ -1,0 +1,12 @@
+﻿@inherits TfBaseComponent
+<TfPageBar Items="menu">
+	<Actions>
+		<FluentStack>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
+				@LOC("Edit")
+				<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+			</FluentButton>
+		</FluentStack>
+	</Actions>
+</TfPageBar>
+

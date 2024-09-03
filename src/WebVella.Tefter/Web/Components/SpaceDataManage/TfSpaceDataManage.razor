@@ -8,21 +8,17 @@
 else
 {
 	<TfCard>
-		<FluentEditForm EditContext="EditContext"
-						FormName="submit-form" class="tf-form" novalidate>
-			<DataAnnotationsValidator />
-			<FluentGrid>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.SpaceDataManageForm.Name
-									 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.SpaceDataManageForm.Name
+								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 
-				</FluentGridItem>
-				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
-									 Label="@LOC("Data provider")" Style="width:100%" ReadOnly="true"  />
-				</FluentGridItem>
-			</FluentGrid>
-		</FluentEditForm>
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
+								 Label="@LOC("Data provider")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+		</FluentGrid>
 	</TfCard>
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
 	<TfCard Small="true">

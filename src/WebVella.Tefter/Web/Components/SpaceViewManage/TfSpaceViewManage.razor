@@ -1,0 +1,134 @@
+﻿@inherits TfBaseComponent
+@if (SpaceState.Value.Space is null || SpaceState.Value.SpaceView is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No view found"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				The requested view was not found
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	@if (ScreenStateSidebarExpanded.Value)
+	{
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SpaceState.Value.SpaceSidebarStyle">
+			<TfSpaceViewNavigation />
+		</FluentStack>
+	}
+	<FluentBodyContent Class="content-body">
+		<TfSpaceViewManageNav />
+		<div class="content-inner">
+			<TfCard>
+
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SpaceState.Value.SpaceView.Name
+										 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SpaceState.Value.SpaceView.Type.ToDescriptionString()
+										 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
+					</FluentGridItem>
+				</FluentGrid>
+
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Dataset")" />
+						@if (UC.ViewData is not null)
+						{
+							<FluentStack>
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.ViewData.Name
+												 ReadOnly="true" Style="flex:1 1 auto" />
+								<FluentAnchor Style="flex:0 0 auto" Appearance="@Appearance.Outline" Href="@(String.Format(TfConstants.SpaceDataPageUrl,SpaceState.Value.RouteSpaceId,SpaceState.Value.SpaceView.SpaceDataId))" IconStart="@TfConstants.ViewIcon" Target="_blank">@LOC("view dataset")</FluentAnchor>
+							</FluentStack>
+						}
+						else
+						{
+							<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the dataset no longer exists")</FluentMessageBar>
+						}
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						@if (UC.ViewData is not null)
+						{
+							<FluentInputLabel Label="@LOC("Data provider")" />
+							@if (UC.DataProvider is not null)
+							{
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.DataProvider.Name
+												 Style="width:100%" ReadOnly="true" />
+							}
+							else
+							{
+								<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the data provider no longer exists")</FluentMessageBar>
+							}
+						}
+					</FluentGridItem>
+				</FluentGrid>
+			</TfCard>
+			<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
+			<TfCard Small="true">
+				<TitleTemplate>
+					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+						@* @if (_columnOptions.Count > 0)
+					{
+					<FluentSelect @bind-SelectedOption="@_selectedColumn"
+					Disabled="_submitting"
+					TOption="string" Required="false"
+					Items="@_columnOptions" Style="width:200px"
+					Placeholder="@LOC("select provider column")"></FluentSelect>
+					}
+					else
+					{
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+					}
+					<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton> *@
+					</FluentStack>
+				</TitleTemplate>
+				<ChildContent>
+					@if (UC.ViewColumns.Count == 0)
+					{
+						@LOC("This view has no columns yet.")
+					}
+					else
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in UC.ViewColumns.OrderBy(x=> x.Title))
+									{
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td" style="width:30px;">
+												<div>
+						@* 							<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+																  Disabled="_submitting">
+														<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+													</FluentButton> *@
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													<div>@context.Title</div>
+												</div>
+											</td>
+											<td class="tf-grid-td" style="width:100px;">
+												<div>
+													
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</ChildContent>
+			</TfCard>
+		</div>
+	</FluentBodyContent>
+}

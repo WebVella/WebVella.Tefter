@@ -7,6 +7,7 @@ using WebVella.Tefter.Web.Components.SpaceStateManager;
 using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
 using WebVella.Tefter.Web.Components.SpaceDataManageDialog;
 using WebVella.Tefter.Web.Components.SpaceDataViews;
+using WebVella.Tefter.Web.Components.SpaceViewManage;
 
 namespace WebVella.Tefter.UseCases.Space;
 public partial class SpaceUseCase
@@ -40,6 +41,7 @@ public partial class SpaceUseCase
 		_messageService = messageService;
 		_loc = loc;
 	}
+	internal bool IsBusy { get; set; } = true;
 	internal List<TucDataProvider> AllDataProviders { get; set; } = new();
 	internal async Task Init(Type type, Guid? spaceId = null)
 	{
@@ -47,6 +49,7 @@ public partial class SpaceUseCase
 		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
 		else if (type == typeof(TfSpaceDataManage)) await InitSpaceDataManage();
 		else if (type == typeof(TfSpaceDataViews)) await InitSpaceDataManageViews();
+		else if (type == typeof(TfSpaceViewManage)) await InitSpaceViewManage();
 		else if (type == typeof(TfSpaceViewManageDialog)) await InitSpaceViewManageDialog(spaceId.Value);
 		else if (type == typeof(TfSpaceDataManageDialog)) await InitSpaceDataManageDialog(spaceId.Value);
 		else if (type == typeof(TfSearchSpaceDialog)) await InitForSearchSpace();
@@ -314,8 +317,11 @@ public partial class SpaceUseCase
 		return serviceResult.Value.Select(x => new TucSpaceView(x)).ToList();
 	}
 
+
 	internal Result<TucSpaceView> CreateSpaceViewWithForm(TucSpaceView view)
 	{
+		//TODO RUMEN: big part of this needs to be created as a service and be in transaction
+
 		TfSpace space = null;
 		TfSpaceData spaceData = null;
 		TfSpaceView spaceView = null;
@@ -421,6 +427,130 @@ public partial class SpaceUseCase
 
 		return Result.Ok(new TucSpaceView(spaceView));
 	}
+
+	internal Result<TucSpaceView> UpdateSpaceViewWithForm(TucSpaceView view)
+	{
+		//TODO RUMEN: big part of this needs to be created as a service and be in transaction
+		TfSpace space = null;
+		TfSpaceData spaceData = null;
+		TfSpaceView spaceView = null;
+		TfDataProvider dataprovider = null;
+		#region << Validate>>
+		var validationErrors = new List<ValidationError>();
+		//args
+		if (String.IsNullOrWhiteSpace(view.Name)) validationErrors.Add(new ValidationError(nameof(view.Name), "required"));
+		if (view.SpaceId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(view.SpaceId), "required"));
+		if (view.DataSetType == TucSpaceViewDataSetType.New)
+		{
+			if (String.IsNullOrWhiteSpace(view.NewSpaceDataName)) validationErrors.Add(new ValidationError(nameof(view.NewSpaceDataName), "required"));
+			if (view.DataProviderId is null) validationErrors.Add(new ValidationError(nameof(view.DataProviderId), "required"));
+		}
+		else if (view.DataSetType == TucSpaceViewDataSetType.Existing)
+			if (view.SpaceDataId is null) validationErrors.Add(new ValidationError(nameof(view.SpaceDataId), "required"));
+
+		//Space
+		var spaceResult = _spaceManager.GetSpace(view.SpaceId);
+		if (spaceResult.IsFailed) return Result.Fail(new Error("GetSpace failed").CausedBy(spaceResult.Errors));
+		if (spaceResult.Value is null) validationErrors.Add(new ValidationError(nameof(view.SpaceId), "space is not found"));
+		space = spaceResult.Value;
+
+		//DataProvider
+		if (view.DataProviderId is not null)
+		{
+			var providerResult = _dataProviderManager.GetProvider(view.DataProviderId.Value);
+			if (providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
+			if (providerResult.Value is null) validationErrors.Add(new ValidationError(nameof(view.DataProviderId), "data provider is not found"));
+			dataprovider = providerResult.Value;
+		}
+
+		//SpaceData
+		if (view.SpaceDataId is not null)
+		{
+			var spaceDataResult = _spaceManager.GetSpaceData(view.SpaceDataId.Value);
+			if (spaceDataResult.IsFailed) return Result.Fail(new Error("GetSpaceData failed").CausedBy(spaceDataResult.Errors));
+			if (spaceDataResult.Value is null) validationErrors.Add(new ValidationError(nameof(view.SpaceDataId), "dataset is not found"));
+			spaceData = spaceDataResult.Value;
+		}
+
+		if (validationErrors.Count > 0)
+			return Result.Fail(validationErrors);
+
+		#endregion
+
+		//Should start transaction
+		#region << create space data if needed >>
+		if (spaceData is null)
+		{
+			List<string> selectedColumns = new();
+			//system columns are always selected so we should not add them in the space data
+			if (view.AddProviderColumns && view.AddSharedColumns)
+			{
+				//all columns are requested from the provider, so send empty column list, which will apply newly added columns
+				//to the provider dynamically
+			}
+			else if (view.AddProviderColumns) selectedColumns.AddRange(dataprovider.Columns.Select(x => x.DbName).ToList());
+			else if (view.AddSharedColumns) selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
+
+			var spaceDataObj = new TfSpaceData()
+			{
+				Id = Guid.NewGuid(),
+				Name = view.NewSpaceDataName,
+				Filters = new(),//filters will not be added at this point
+				Columns = selectedColumns,
+				DataProviderId = dataprovider.Id,
+				SpaceId = space.Id,
+				Position = 1 //position is overrided in the creation
+			};
+
+			var tfResult = _spaceManager.CreateSpaceData(spaceDataObj);
+			if (tfResult.IsFailed) return Result.Fail(new Error("CreateSpaceData failed").CausedBy(tfResult.Errors));
+			if (tfResult.Value is null) return Result.Fail("CreateSpaceData failed to return value");
+			spaceData = tfResult.Value;
+		}
+		#endregion
+
+		#region << update view>>
+		{
+			var spaceViewObj = new TfSpaceView()
+			{
+				Id = view.Id,
+				Name = view.Name,
+				Position = 1,//will be overrided later
+				SpaceDataId = spaceData.Id,
+				SpaceId = space.Id,
+				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>()
+			};
+			var tfResult = _spaceManager.UpdateSpaceView(spaceViewObj);
+			if (tfResult.IsFailed) return Result.Fail(new Error("UpdateSpaceView failed").CausedBy(tfResult.Errors));
+			if (tfResult.Value is null) return Result.Fail("UpdateSpaceView failed to return value");
+			spaceView = tfResult.Value;
+		}
+		#endregion
+
+		//Should commit transaction
+
+		return Result.Ok(new TucSpaceView(spaceView));
+	}
+
+	internal List<TucSpaceViewColumn> GetViewColumns(Guid viewId){ 
+		var serviceResult = _spaceManager.GetSpaceViewColumnsList(viewId);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpaceViewColumnsList failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return new();
+		}
+		if (serviceResult.Value is null) return new();
+
+		return serviceResult.Value.Select(x => new TucSpaceViewColumn(x)).ToList();		
+	
+	}
+
 
 	//Data provider
 	internal List<TucDataProvider> GetDataProviderList()

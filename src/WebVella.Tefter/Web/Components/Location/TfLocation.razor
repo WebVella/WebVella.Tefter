@@ -27,6 +27,11 @@
 						<FluentBreadcrumbItem title="@SpaceState.Value.SpaceView.Name">
 							@RenderUtils.StringOverflow(SpaceState.Value.SpaceView.Name, _ellipsisCount)
 						</FluentBreadcrumbItem>
+						@if (_urlData.SpaceSection == "manage")
+						
+						{
+							<FluentBreadcrumbItem>@LOC("Manage")</FluentBreadcrumbItem>
+						}
 					}
 					@if (SpaceState.Value.SpaceData is not null)
 					{
