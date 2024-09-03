@@ -27,4 +27,3 @@ global using Microsoft.Extensions.Logging;
 global using WebVella.Tefter;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Migrations;
-global using WebVella.Tefter.Core.Components;

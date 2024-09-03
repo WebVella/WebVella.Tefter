@@ -1,4 +1,8 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿using System.Net.WebSockets;
+using WebVella.Tefter.Core;
+using WebVella.Tefter.Web.Models;
+
+namespace WebVella.Tefter.Tests;
 
 public partial class SpaceManagerTests : BaseTest
 {
@@ -12,7 +16,7 @@ public partial class SpaceManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				
+
 
 				var space1 = new TfSpace
 				{
@@ -266,7 +270,7 @@ public partial class SpaceManagerTests : BaseTest
 				result.Value.Position.Should().Be(1);
 				result.Value.Filters.Should().NotBeNull();
 				result.Value.Filters.Count().Should().Be(0);
-			
+
 
 				spaceData1.SpaceId = space2.Id;
 				result = spaceManager.UpdateSpaceData(spaceData1);
@@ -391,4 +395,194 @@ public partial class SpaceManagerTests : BaseTest
 			}
 		}
 	}
+
+	[Fact]
+	public async Task CRUD_SpaceView()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+				TfDataProviderModel providerModel = new TfDataProviderModel
+				{
+					Id = Guid.NewGuid(),
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(providerModel);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var space = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+
+				var spaceResult = spaceManager.CreateSpace(space);
+				spaceResult.IsSuccess.Should().BeTrue();
+				spaceResult.Value.Should().NotBeNull();
+
+				var spaceData = new TfSpaceData
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
+					Name = "data1",
+					SpaceId = space.Id,
+				};
+
+				var spaceDataResult = spaceManager.CreateSpaceData(spaceData);
+				spaceDataResult.IsSuccess.Should().BeTrue();
+				spaceDataResult.Value.Should().NotBeNull();
+
+
+				TfSpaceView view = new TfSpaceView
+				{
+					Id = Guid.NewGuid(),
+					Name = "view",
+					Position = 1,
+					SpaceDataId = spaceData.Id,
+					SpaceId = space.Id,
+					Type = TfSpaceViewType.Report
+				};
+
+				var spaceViewResult = spaceManager.CreateSpaceView(view);
+				spaceViewResult.IsSuccess.Should().BeTrue();
+				spaceViewResult.Value.Should().NotBeNull();
+				spaceViewResult.Value.Id.Should().Be(view.Id);
+				spaceViewResult.Value.Name.Should().Be(view.Name);
+				spaceViewResult.Value.Position.Should().Be(view.Position);
+				spaceViewResult.Value.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceViewResult.Value.SpaceId.Should().Be(view.SpaceId);
+				spaceViewResult.Value.Type.Should().Be(view.Type);
+
+
+				view.Name = "view1";
+				view.Type = TfSpaceViewType.Chart;
+
+				spaceViewResult = spaceManager.UpdateSpaceView(view);
+				spaceViewResult.IsSuccess.Should().BeTrue();
+				spaceViewResult.Value.Should().NotBeNull();
+				spaceViewResult.Value.Id.Should().Be(view.Id);
+				spaceViewResult.Value.Name.Should().Be(view.Name);
+				spaceViewResult.Value.Position.Should().Be(view.Position);
+				spaceViewResult.Value.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceViewResult.Value.SpaceId.Should().Be(view.SpaceId);
+				spaceViewResult.Value.Type.Should().Be(view.Type);
+
+				spaceViewResult = spaceManager.DeleteSpaceView(view.Id);
+				spaceViewResult.IsSuccess.Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task CRUD_SpaceViewColumn()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+				TfDataProviderModel providerModel = new TfDataProviderModel
+				{
+					Id = Guid.NewGuid(),
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(providerModel);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var space = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+
+				var spaceResult = spaceManager.CreateSpace(space);
+				spaceResult.IsSuccess.Should().BeTrue();
+				spaceResult.Value.Should().NotBeNull();
+
+				var spaceData = new TfSpaceData
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
+					Name = "data1",
+					SpaceId = space.Id,
+				};
+
+				var spaceDataResult = spaceManager.CreateSpaceData(spaceData);
+				spaceDataResult.IsSuccess.Should().BeTrue();
+				spaceDataResult.Value.Should().NotBeNull();
+
+
+				TfSpaceView view = new TfSpaceView
+				{
+					Id = Guid.NewGuid(),
+					Name = "view",
+					Position = 1,
+					SpaceDataId = spaceData.Id,
+					SpaceId = space.Id,
+					Type = TfSpaceViewType.Report
+				};
+
+				var spaceViewResult = spaceManager.CreateSpaceView(view);
+				spaceViewResult.IsSuccess.Should().BeTrue();
+				spaceViewResult.Value.Should().NotBeNull();
+
+				var availableColumnTypes = spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+				Type componentType = typeof(TfGeneralViewColumnComponent);
+
+				foreach (var availableColumnType in availableColumnTypes)
+				{
+					TfSpaceViewColumn column = new TfSpaceViewColumn
+					{
+						Id = Guid.NewGuid(),
+						ColumnType = availableColumnType,
+						QueryName = availableColumnType.Name,
+						Title = availableColumnType.Name,
+						ComponentType = componentType,
+						SelectedAddonId = null,
+						SpaceViewId = view.Id,
+						CustomOptionsJson = "{}",
+						DataMapping = new Dictionary<string, string> { { "Value", "test" } }
+					};
+
+					var columnResult = spaceManager.CreateSpaceViewColumn(column);
+					columnResult.IsSuccess.Should().BeTrue();
+					columnResult.Value.Should().NotBeNull();
+				}
+
+				var columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
+				columns.Count.Should().Be(availableColumnTypes.Count);
+			}
+		}
+	}
+
 }
