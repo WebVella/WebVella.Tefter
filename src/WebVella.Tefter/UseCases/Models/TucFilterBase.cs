@@ -211,7 +211,7 @@ public record TucFilterAnd : TucFilterBase
 			var item = (TfFilterAnd)model;
 			foreach (var filter in item.Filters)
 			{
-				Filters.Add(FromModel(model));
+				Filters.Add(FromModel(filter));
 			}
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterAnd");
@@ -248,7 +248,7 @@ public record TucFilterOr : TucFilterBase
 			var item = (TfFilterOr)model;
 			foreach (var filter in item.Filters)
 			{
-				Filters.Add(FromModel(model));
+				Filters.Add(FromModel(filter));
 			}
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterOr");

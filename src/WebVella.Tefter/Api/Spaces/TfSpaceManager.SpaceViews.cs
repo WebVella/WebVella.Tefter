@@ -2,6 +2,8 @@
 
 public partial interface ITfSpaceManager
 {
+
+	public Result<List<TfSpaceView>> GetAllSpaceViews();
 	public Result<List<TfSpaceView>> GetSpaceViewsList(
 		Guid spaceId);
 
@@ -29,6 +31,19 @@ public partial interface ITfSpaceManager
 
 public partial class TfSpaceManager : ITfSpaceManager
 {
+	public Result<List<TfSpaceView>> GetAllSpaceViews()
+	{
+		try
+		{
+			var spaceViews = _dboManager.GetList<TfSpaceView>();
+
+			return Result.Ok(spaceViews);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get list of space views").CausedBy(ex));
+		}
+	}
 	public Result<List<TfSpaceView>> GetSpaceViewsList(
 		Guid spaceId)
 	{

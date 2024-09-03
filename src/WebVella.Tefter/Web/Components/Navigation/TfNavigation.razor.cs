@@ -57,7 +57,7 @@ public partial class TfNavigation : TfBaseComponent
 				Icon = item.Icon,
 				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
 				Match = NavLinkMatch.Prefix,
-				Url = String.Format(TfConstants.SpacePageUrl, item.Id),
+				Url = String.Format(TfConstants.SpacePageUrl, item.Id), //item.DefaultViewId - active menu issues
 				Title = item.Name,
 				IconColor = item.Color,
 			});

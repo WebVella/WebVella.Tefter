@@ -32,26 +32,14 @@ else
 
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
-			<FluentMessageBar Title="Missing redirect"
+@* 			<FluentMessageBar Title="Missing redirect"
 							  Style="border: 1px solid var(--neutral-base-color)"
 							  Intent="MessageIntent.Warning"
 							  Type="@MessageType.Notification"
 							  AllowDismiss="false">
 				Should redirect to the first view
-			</FluentMessageBar>
+			</FluentMessageBar> *@
 		</div>
 	</FluentBodyContent>
 
-	@* 	@if (ScreenStateSidebarExpanded.Value)
-	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@SpaceState.Value.SpaceSidebarStyle">
-			<TfSpaceNavigation />
-		</FluentStack>
-	}
-	<FluentBodyContent Class="content-body with-toolbar">
-		<TfSpaceViewToolbar />
-		<div class="content-inner">
-			<TfSpaceView />
-		</div>
-	</FluentBodyContent> *@
 }

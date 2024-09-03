@@ -143,7 +143,9 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	}
 
 	private void onViewsListClick(){ 
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, SpaceState.Value.Space.Id, null));
+		Guid? spaceViewId = null;
+		if(SpaceState.Value.SpaceViewList.Count > 0) spaceViewId = SpaceState.Value.SpaceViewList[0].Id;
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, SpaceState.Value.Space.Id, spaceViewId));
 	}
 
 	private async Task onSearch(string value)

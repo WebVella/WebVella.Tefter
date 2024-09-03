@@ -8,6 +8,7 @@
 .tf-card-title {
 	padding:calc(var(--design-unit)* 2.5px) calc(var(--design-unit)* 5px);	
 	background:var(--neutral-fill-layer-hover);
+	background:var(--neutral-fill-secondary-rest);
 	border-radius: calc(var(--layer-corner-radius)* 1px) calc(var(--layer-corner-radius)* 1px) 0 0;
 }
 

@@ -287,20 +287,15 @@ fluent-select::part(listbox) {
 	display: block;
 }
 
-div[class ^='fluent-messagebar']{
+div[class ^='fluent-messagebar'],
+.fluent-messagebar-notification,
+.fluent-messagebar-message{
 	animation:none !important;
 }
 fluent-button.accent svg {
 	fill:var(--neutral-layer-1) !important;
 }
 
-.fluent-messagebar-notification-message:empty {
-	display:none;
-}
-
-.fluent-messagebar-notification-content:empty {
-	display:none;
-}
 
 /* General */
 #blazor-error-ui {
