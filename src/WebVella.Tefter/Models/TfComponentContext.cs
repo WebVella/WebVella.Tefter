@@ -8,4 +8,5 @@ public class TfComponentContext
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
 	public TfComponentMode Mode { get; set; } = TfComponentMode.Display;
+	public Dictionary<string,object> Data { get; set; } = new();
 }
