@@ -13,7 +13,7 @@ public class CsvDataProvider : ITfDataProviderType
 
 	public string Description => "Provide data from CSV formated file.";
 
-	public string IconBase64
+	public string ImageBase64
 	{
 		get
 		{
@@ -79,7 +79,7 @@ public class CsvDataProvider : ITfDataProviderType
 
 
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
-		TfDataProvider provider )
+		TfDataProvider provider)
 	{
 		var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson);
 
@@ -116,14 +116,14 @@ public class CsvDataProvider : ITfDataProviderType
 
 			while (csvReader.Read())
 			{
-				
-				Dictionary<string,string> sourceRow = new Dictionary<string,string>();
+
+				Dictionary<string, string> sourceRow = new Dictionary<string, string>();
 				foreach (var column in csvReader.HeaderRecord)
 					sourceRow[column] = csvReader.GetField(column);
 
 
 				TfDataProviderDataRow row = new TfDataProviderDataRow();
-				foreach (var providerColumnWithSource in sourceColumns )
+				foreach (var providerColumnWithSource in sourceColumns)
 				{
 					try
 					{
@@ -220,7 +220,7 @@ public class CsvDataProvider : ITfDataProviderType
 
 					throw new Exception("Cannot convert value to LongInteger value");
 				}
-			
+
 			case DatabaseColumnType.Number:
 				{
 					if (decimal.TryParse(value?.ToString(), out decimal parsedValue))
@@ -234,5 +234,5 @@ public class CsvDataProvider : ITfDataProviderType
 		}
 	}
 
-	
+
 }

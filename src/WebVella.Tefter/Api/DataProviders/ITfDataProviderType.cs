@@ -5,7 +5,7 @@ public interface ITfDataProviderType
 	Guid Id { get; }
 	string Name { get; }
 	string Description { get; }
-	string IconBase64 { get; }
+	string ImageBase64 { get; }
 	Type SettingsComponentType { get; }
 	abstract ReadOnlyCollection<string> GetSupportedSourceDataTypes();
 	abstract ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(

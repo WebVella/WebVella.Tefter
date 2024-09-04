@@ -10,7 +10,7 @@ public class UnitTestDataProvider : ITfDataProviderType
 
 	public string Description => "Used for unit test only";
 
-	public string IconBase64 => "";
+	public string ImageBase64 => "";
 	public Stream Icon => GetType().Assembly.GetManifestResourceStream("WebVella.Tefter.Tests.DataProviders.Csv.Assets.Icon.png");
 
 	public Type SettingsComponentType => typeof(UnitTestDataProviderSettingsComponent);

@@ -15,7 +15,7 @@ public record TucDataProviderTypeInfo
 		Id = model.Id;
 		Name = model.Name;
 		Description = model.Description;
-		IconBase64 = model.IconBase64;
+		IconBase64 = model.ImageBase64;
 		SettingsComponentType = model.SettingsComponentType;
 		foreach (var sourceDataType in model.GetSupportedSourceDataTypes())
 		{
