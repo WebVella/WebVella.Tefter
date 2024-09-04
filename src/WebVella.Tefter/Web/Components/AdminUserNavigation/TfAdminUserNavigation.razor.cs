@@ -1,6 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.UserManageDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminUserNavigation;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserNavigation.TfAdminUserNavigation","WebVella.Tefter")]
 public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] private UserAdminUseCase UC { get; set; }

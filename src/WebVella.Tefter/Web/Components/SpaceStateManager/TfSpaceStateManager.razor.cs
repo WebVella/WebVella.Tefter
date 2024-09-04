@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.SpaceStateManager;
+namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceStateManager : TfBaseComponent
 {
 	[Inject] private SpaceUseCase UC { get; set; }

@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebVella.Tefter.Web.Components.SearchSpaceDialog;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SearchSpaceDialog.TfSearchSpaceDialog","WebVella.Tefter")]
 public partial class TfSearchSpaceDialog : TfFormBaseComponent, IDialogContentComponent<bool>
 {
 	[Inject] private SpaceUseCase UC { get; set; }
@@ -18,7 +17,7 @@ public partial class TfSearchSpaceDialog : TfFormBaseComponent, IDialogContentCo
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-	
+
 
 			await InvokeAsync(StateHasChanged);
 		}

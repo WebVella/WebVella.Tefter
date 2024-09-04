@@ -1,4 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components.AdminLocation;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminLocation.TfAdminLocation","WebVella.Tefter")]
 public partial class TfAdminLocation : TfBaseComponent
 {
 	private List<MenuItem> _bcMenu = new();

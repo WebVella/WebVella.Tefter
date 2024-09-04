@@ -1,4 +1,5 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
@@ -41,7 +42,7 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="short?" @bind-Value=UC.SpaceViewColumnForm.Position
+					<FluentNumberField TValue="short?" @bind-Value=UC.SpaceViewColumnForm.Position AutoComplete="new-password"
 									   Label="@LOC("Position")" Style="width:100%" Placeholder="@LOC("leave empty for last")" />
 					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.Position)" />
 				</FluentGridItem>
@@ -49,8 +50,9 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect Label="@LOC("Type")" Style="width:100%" Placeholder="@LOC("select...")"
+					<FluentSelect Label="@LOC("Column Type")" Style="width:100%" Placeholder="@LOC("select...")"
 								  TOption="TucSpaceViewColumnType" SelectedOption="UC.SpaceViewColumnForm.ColumnType"
+								  SelectedOptionChanged="_columnTypeChangeHandler"
 								  Items="UC.AvailableColumnTypes">
 						<OptionTemplate Context="option">
 							<FluentStack>
@@ -61,23 +63,59 @@
 					</FluentSelect>
 					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.ColumnType)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6"></FluentGridItem>
+				<FluentGridItem xs="6">
+					@if (UC.SpaceViewColumnForm.ColumnType is not null)
+					{
+						<FluentSelect Label="@LOC("Presentation Component")" Style="width:100%" Placeholder="@LOC("select...")"
+									  TOption="Type" SelectedOption="UC.SpaceViewColumnComponent"
+									  SelectedOptionChanged="_columnComponentChangeHandler"
+									  Items="UC.SpaceViewColumnForm.ColumnType.SupportedComponentTypes">
+							<OptionTemplate Context="option">
+								<FluentStack>
+									@option.ToDescriptionString()
+								</FluentStack>
+							</OptionTemplate>
+						</FluentSelect>
+						<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.ColumnType)" />
+					}
+				</FluentGridItem>
 			</FluentGrid>
 			@if (UC.SpaceViewColumnForm.ColumnType is not null)
 			{
 				<FluentDivider Style="margin:15px 0" />
+				<FluentLabel Typo="Typography.H5" Style="margin:1rem 0">@LOC("Data mapping")</FluentLabel>
+				@if (UC.SpaceViewColumnForm.ColumnType.DataMapping is not null
+						&& UC.SpaceViewColumnForm.ColumnType.DataMapping.Count > 0)
+				{
+					foreach (var item in UC.SpaceViewColumnForm.ColumnType.DataMapping)
+					{
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias
+												 Disabled="true" Label="@LOC("Component Alias")" Style="width:100%" AutoComplete="new-password" />
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_getDataMappingValue(item.Alias)
+												 Required="true"
+												 Label="@LOC("Data column name")" Style="width:100%" AutoComplete="new-password" />
+							</FluentGridItem>
+						</FluentGrid>
+						<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.DataMapping)" />
+					}
+				}
+				<FluentLabel Typo="Typography.H5" Style="margin:1rem 0">@LOC("Component options")</FluentLabel>
 				<FluentGrid>
 					<FluentGridItem xs="12">
-@* 						@if (UC.SpaceViewColumnForm.ColumnType. is not null)
+						@if (UC.SpaceViewColumnComponent is not null)
 						{
-							<DynamicComponent Type="DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+							<DynamicComponent Type="UC.SpaceViewColumnComponent" Parameters="@_getColumnComponentContext()" />
 						}
 						else
 						{
 							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
 								<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
 							</FluentMessageBar>
-						} *@
+						}
 					</FluentGridItem>
 				</FluentGrid>
 			}

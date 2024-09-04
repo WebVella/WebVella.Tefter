@@ -1,6 +1,5 @@
-﻿using WebVella.Tefter.UseCases.SharedColumnsAdmin;
-
-namespace WebVella.Tefter.Web.Components.SharedColumnManageDialog;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SharedColumnManageDialog.TfSharedColumnManageDialog","WebVella.Tefter")]
 public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSharedColumn>
 {
 	[Inject]
@@ -42,7 +41,8 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 			else
 			{
 				var dbName = Content.DbName;
-				if(dbName.StartsWith("sk_")){ 
+				if (dbName.StartsWith("sk_"))
+				{
 					dbName = dbName.Substring(3);
 				}
 
@@ -82,7 +82,7 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			Result<TucSharedColumn> submitResult;
-			var submit = UC.SharedColumnForm with { DbName = "sk_" + UC.SharedColumnForm.DbName};
+			var submit = UC.SharedColumnForm with { DbName = "sk_" + UC.SharedColumnForm.DbName };
 			if (_isCreate)
 			{
 				submitResult = UC.CreateSharedColumn(submit);

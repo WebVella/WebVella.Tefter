@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
-
-namespace WebVella.Tefter.Web.Components.SpaceDetails;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceDetails : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }

@@ -1,6 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.UserManageDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminUserDetailsActions;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserDetailsActions.TfAdminUserDetailsActions","WebVella.Tefter")]
 public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
@@ -8,7 +7,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
-		if(disposing) Navigator.LocationChanged -= Navigator_LocationChanged;
+		if (disposing) Navigator.LocationChanged -= Navigator_LocationChanged;
 		return base.DisposeAsyncCore(disposing);
 	}
 	protected override async Task OnInitializedAsync()
@@ -20,7 +19,8 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		InvokeAsync(async()=>{ 
+		InvokeAsync(async () =>
+		{
 			await UC.InitActionsMenu(e.Location);
 			await InvokeAsync(StateHasChanged);
 		});

@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.ThemeSetDialog;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfThemeSetDialog : IDialogContentComponent<TucThemeSettings>
 {
     [Parameter]

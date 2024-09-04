@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.FastAccessStateManager;
+namespace WebVella.Tefter.Web.Components;
 public partial class TfFastAccessStateManager : TfBaseComponent
 {
 	[Inject] private FastAccessUseCase UC { get; set; }

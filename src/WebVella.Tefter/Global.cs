@@ -26,6 +26,7 @@ global using WebVella.Tefter.Errors;
 global using WebVella.Tefter.Identity;
 global using WebVella.Tefter.Messaging;
 global using WebVella.Tefter.Utility;
+global using WebVella.Tefter.Models;
 
 /// Use cases
 global using WebVella.Tefter.UseCases.AppStart;
@@ -53,10 +54,7 @@ global using WebVella.Tefter.Web.Store.UserState;
 
 /// Components
 global using WebVella.Tefter.Web.Brokers;
-global using WebVella.Tefter.Web.Components.BaseColumn;
-global using WebVella.Tefter.Web.Components.BaseComponent;
-global using WebVella.Tefter.Web.Components.BasePage;
-global using WebVella.Tefter.Web.Components.FormBaseComponent;
+global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Models;
 global using WebVella.Tefter.Web.Services;
 global using WebVella.Tefter.Web.Utils;

@@ -1,7 +1,5 @@
-﻿using Fluxor;
-using System.Globalization;
-using WebVella.Tefter.Web.Components.Login;
-using WebVella.Tefter.Web.Store.UserState;
+﻿using System.Globalization;
+using WebVella.Tefter.Web.Components;
 
 namespace WebVella.Tefter.Web.Tests.Components.Login;
 

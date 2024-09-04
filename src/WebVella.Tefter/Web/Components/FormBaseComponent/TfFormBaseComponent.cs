@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using WebVella.Tefter.Errors;
 
-namespace WebVella.Tefter.Web.Components.FormBaseComponent;
+namespace WebVella.Tefter.Web.Components;
 
 public class TfFormBaseComponent : TfBaseComponent
 {

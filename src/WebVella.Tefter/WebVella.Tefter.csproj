@@ -49,6 +49,9 @@
 	  <EmbeddedResource Update="Web\Components\SpaceDataDetailsNav\TfSpaceDataDetailsNav.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\ViewColumns\GuidViewColumn\TfGuidViewColumn.bg.resx">
+	    <CustomToolNamespace></CustomToolNamespace>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 	

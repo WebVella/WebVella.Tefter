@@ -7,5 +7,4 @@ global using Microsoft.Extensions.Localization;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.DataProviders.Csv.Components;
 global using WebVella.Tefter.Errors;
-global using WebVella.Tefter.Web.Components.BaseComponent;
-global using WebVella.Tefter.Web.Components.FormBaseComponent;
+

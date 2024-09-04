@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceViewFilterSelector;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewFilterSelector : TfBaseComponent
 {
 	private bool _open = false;

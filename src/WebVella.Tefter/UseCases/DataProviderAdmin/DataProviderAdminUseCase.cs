@@ -1,19 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.AdminDataProviderAux;
-using WebVella.Tefter.Web.Components.AdminDataProviderData;
-using WebVella.Tefter.Web.Components.AdminDataProviderDetails;
-using WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions;
-using WebVella.Tefter.Web.Components.AdminDataProviderKeys;
-using WebVella.Tefter.Web.Components.AdminDataProviderNavigation;
-using WebVella.Tefter.Web.Components.AdminDataProviderSchema;
-using WebVella.Tefter.Web.Components.AdminDataProviderStateManager;
-using WebVella.Tefter.Web.Components.AdminDataProviderSynchronization;
-using WebVella.Tefter.Web.Components.DataProviderAuxColumnManageDialog;
-using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
-using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
-using WebVella.Tefter.Web.Components.DataProviderManageDialog;
-using WebVella.Tefter.Web.Components.DataProviderSyncLogDialog;
-
-namespace WebVella.Tefter.UseCases.DataProviderAdmin;
+﻿namespace WebVella.Tefter.UseCases.DataProviderAdmin;
 public partial class DataProviderAdminUseCase
 {
 	private readonly ITfDataProviderManager _dataProviderManager;

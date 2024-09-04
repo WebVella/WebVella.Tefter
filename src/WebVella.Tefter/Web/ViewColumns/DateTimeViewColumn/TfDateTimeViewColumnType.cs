@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Core;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 {
@@ -46,9 +46,9 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfGeneralViewColumnComponent);
+		DefaultComponentType = typeof(TfDateTimeViewColumn);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfGeneralViewColumnComponent) };
+		SupportedComponentTypes = new List<Type> { typeof(TfDateTimeViewColumn), typeof(TfTextViewColumn) };
 	}
 }
 

@@ -1,8 +1,4 @@
-﻿
-using WebVella.Tefter.Web.Components.Dashboard;
-using WebVella.Tefter.Web.Components.DashboardStateManager;
-
-namespace WebVella.Tefter.UseCases.Dashboard;
+﻿namespace WebVella.Tefter.UseCases.Dashboard;
 public partial class DashboardUseCase
 {
 	private readonly IIdentityManager _identityManager;
@@ -11,9 +7,9 @@ public partial class DashboardUseCase
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
 	private readonly IStringLocalizer<DashboardUseCase> _loc;
-	
+
 	internal bool IsBusy { get; set; } = false;
-	
+
 	public DashboardUseCase(
 			IIdentityManager identityManager,
 			NavigationManager navigationManager,
@@ -34,8 +30,8 @@ public partial class DashboardUseCase
 
 	internal async Task Init(Type type)
 	{
-		if(type == typeof(TfDashboardStateManager)) await InitForState();
-		else if(type == typeof(TfDashboard)) await InitDashboard();
+		if (type == typeof(TfDashboardStateManager)) await InitForState();
+		else if (type == typeof(TfDashboard)) await InitDashboard();
 		else throw new Exception($"Type: {type.Name} not supported in DashboardUseCase");
 	}
 

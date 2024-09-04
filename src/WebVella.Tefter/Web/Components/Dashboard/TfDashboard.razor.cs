@@ -1,5 +1,6 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.Dashboard;
+namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.Dashboard.TfDashboard","WebVella.Tefter")]
 public partial class TfDashboard : TfBaseComponent
 {
 	[Inject] private DashboardUseCase UC { get; set; }

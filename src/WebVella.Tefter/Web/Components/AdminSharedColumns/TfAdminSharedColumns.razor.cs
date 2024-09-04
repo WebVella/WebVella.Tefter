@@ -1,7 +1,5 @@
-﻿using WebVella.Tefter.UseCases.SharedColumnsAdmin;
-using WebVella.Tefter.Web.Components.SharedColumnManageDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminSharedColumns;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminSharedColumns.TfAdminSharedColumns","WebVella.Tefter")]
 public partial class TfAdminSharedColumns : TfBaseComponent
 {
 	[Inject] private SharedColumnsAdminUseCase UC { get; set; }

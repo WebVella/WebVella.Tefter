@@ -1,15 +1,13 @@
-﻿
+﻿using RouteData = WebVella.Tefter.Web.Models.RouteData;
 
-using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
-using RouteData = WebVella.Tefter.Web.Models.RouteData;
-
-namespace WebVella.Tefter.Web.Components.SpaceViewManageNav;
+namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageNav.TfSpaceViewManageNav","WebVella.Tefter")]
 public partial class TfSpaceViewManageNav : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
 
 	private List<MenuItem> menu = new();
-	
+
 	private RouteData _urlData = new();
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)

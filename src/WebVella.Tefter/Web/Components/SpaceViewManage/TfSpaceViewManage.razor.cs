@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog;
-
-namespace WebVella.Tefter.Web.Components.SpaceViewManage;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewManage : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }

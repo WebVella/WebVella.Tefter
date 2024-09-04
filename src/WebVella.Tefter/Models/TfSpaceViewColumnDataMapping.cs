@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter.Models;
 
 public record TfSpaceViewColumnDataMapping
 {

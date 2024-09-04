@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Localization;
 
-namespace WebVella.Tefter.Web.Components.LanguageSwitch;
+namespace WebVella.Tefter.Web.Components;
 public partial class TfLanguageSwitch : TfBaseComponent
 {
 	[Inject] protected IState<CultureState> CultureState { get; set; }

@@ -1,9 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.DataProviderAuxColumnManageDialog;
-using WebVella.Tefter.Web.Components.DataProviderColumnManageDialog;
-using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
-using WebVella.Tefter.Web.Components.DataProviderManageDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions.TfAdminDataProviderDetailsActions","WebVella.Tefter")]
 public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
@@ -23,7 +19,8 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		InvokeAsync(async()=>{ 
+		InvokeAsync(async () =>
+		{
 			await UC.InitActionsMenu(e.Location);
 			await InvokeAsync(StateHasChanged);
 		});
@@ -66,7 +63,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
 		}
 	}
-	
+
 	private async Task _addAuxColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderAuxColumnManageDialog>(
@@ -85,7 +82,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, record));
 		}
 	}
-	
+
 	private async Task _deleteProvider()
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))

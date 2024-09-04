@@ -1,11 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.AdminUserDetails;
-using WebVella.Tefter.Web.Components.AdminUserDetailsActions;
-using WebVella.Tefter.Web.Components.AdminUserDetailsNav;
-using WebVella.Tefter.Web.Components.AdminUserNavigation;
-using WebVella.Tefter.Web.Components.AdminUserStateManager;
-using WebVella.Tefter.Web.Components.UserManageDialog;
-
-namespace WebVella.Tefter.UseCases.UserAdmin;
+﻿namespace WebVella.Tefter.UseCases.UserAdmin;
 public partial class UserAdminUseCase
 {
 	private readonly IIdentityManager _identityManager;
@@ -64,7 +57,7 @@ public partial class UserAdminUseCase
 		var user = userBuilder.Build();
 		var result = await _identityManager.SaveUserAsync(user);
 		if (result.IsFailed) return Result.Fail(new Error("SaveUserAsync failed").CausedBy(result.Errors));
-		
+
 		return Result.Ok(new TucUser(result.Value));
 	}
 

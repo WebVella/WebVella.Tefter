@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Core;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 public class TfNumberViewColumnType : ITfSpaceViewColumnType
 {
@@ -48,9 +48,9 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnType
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfGeneralViewColumnComponent);
+		DefaultComponentType = typeof(TfNumberViewColumn);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfGeneralViewColumnComponent) };
+		SupportedComponentTypes = new List<Type> { typeof(TfNumberViewColumn), typeof(TfTextViewColumn) };
 	}
 }
 

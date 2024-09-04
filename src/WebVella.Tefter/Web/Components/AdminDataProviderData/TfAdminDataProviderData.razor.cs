@@ -1,7 +1,5 @@
-﻿
-using WebVella.Tefter.Web.Components.DataProviderSyncLogDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminDataProviderData;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderData.TfAdminDataProviderData","WebVella.Tefter")]
 public partial class TfAdminDataProviderData : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
@@ -123,5 +121,5 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		UC.IsListBusy = false;
 		await InvokeAsync(StateHasChanged);
 	}
-	
+
 }

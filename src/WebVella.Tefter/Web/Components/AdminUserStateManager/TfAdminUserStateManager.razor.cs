@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.AdminUserStateManager;
+namespace WebVella.Tefter.Web.Components;
 public partial class TfAdminUserStateManager : TfBaseComponent
 {
 	[Inject] private UserAdminUseCase UC { get; set; }

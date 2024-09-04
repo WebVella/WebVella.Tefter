@@ -1,5 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SpaceViewFilterSelector;
-namespace WebVella.Tefter.Web.Components.SpaceViewToolbar;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 	private TfSpaceViewFilterSelector _filterSelector;

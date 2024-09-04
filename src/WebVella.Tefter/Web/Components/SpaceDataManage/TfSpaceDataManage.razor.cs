@@ -1,6 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.SpaceDataFilterManageDialog;
-
-namespace WebVella.Tefter.Web.Components.SpaceDataManage;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataManage.TfSpaceDataManage","WebVella.Tefter")]
 public partial class TfSpaceDataManage : TfFormBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }

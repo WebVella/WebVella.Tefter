@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using WebVella.Tefter.Web.Components.SidebarToggle;
+using WebVella.Tefter.Web.Components;
 
 namespace WebVella.Tefter.Web.Tests.Components.SidebarToggle;
 

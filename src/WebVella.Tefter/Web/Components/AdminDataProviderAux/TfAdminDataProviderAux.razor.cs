@@ -1,7 +1,5 @@
-﻿
-using WebVella.Tefter.Web.Components.DataProviderAuxColumnManageDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminDataProviderAux;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderAux.TfAdminDataProviderAux","WebVella.Tefter")]
 public partial class TfAdminDataProviderAux : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
@@ -26,5 +24,5 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 		StateHasChanged();
 	}
 
-	
+
 }

@@ -1,4 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog.TfSpaceViewColumnManageDialog","WebVella.Tefter")]
 public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceViewColumn>
 {
 	[Inject] private SpaceUseCase UC { get; set; }
@@ -11,6 +12,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private bool _isCreate = false;
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -90,4 +92,54 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		await Dialog.CancelAsync();
 	}
 
+	private async Task _columnTypeChangeHandler(TucSpaceViewColumnType option)
+	{
+		UC.SpaceViewColumnForm.ColumnType = option;
+		if (option is null)
+		{
+			UC.SpaceViewColumnComponent = null;
+		}
+		else if (UC.SpaceViewColumnComponent is not null)
+		{
+			if (!option.SupportedComponentTypes.Contains(UC.SpaceViewColumnComponent))
+			{
+				UC.SpaceViewColumnComponent = option.DefaultComponentType;
+			}
+		}
+		else
+		{
+			UC.SpaceViewColumnComponent = option.DefaultComponentType;
+		}
+
+		await InvokeAsync(StateHasChanged);
+	}
+	private async Task _columnComponentChangeHandler(Type option)
+	{
+		UC.SpaceViewColumnComponent = option;
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private string _getDataMappingValue(string alias)
+	{
+		if (UC.SpaceViewColumnForm.DataMapping.ContainsKey(alias))
+			return UC.SpaceViewColumnForm.DataMapping[alias];
+
+		return null;
+	}
+
+	private Dictionary<string,object> _getColumnComponentContext(){ 
+		var componentData = new Dictionary<string,object>();
+
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfComponentContext{ 
+			Mode = TfComponentMode.Options,
+			CustomOptionsJson = UC.SpaceViewColumnForm.CustomOptionsJson,
+			DataMapping = UC.SpaceViewColumnForm.DataMapping,
+			DataTable = null,
+			RowIndex = -1,
+			QueryName = UC.SpaceViewColumnForm.QueryName,
+			SelectedAddonId = UC.SpaceViewColumnForm.SelectedAddonId,
+			SpaceViewId = UC.SpaceViewColumnForm.SpaceViewId
+		};
+		return componentData;
+	}
 }

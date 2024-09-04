@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.BaseColumn;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfBaseColumn : TfBaseComponent
 {
 	[Parameter]

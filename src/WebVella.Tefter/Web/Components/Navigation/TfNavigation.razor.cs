@@ -1,7 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.SearchSpaceDialog;
-using WebVella.Tefter.Web.Components.SpaceManageDialog;
-
-namespace WebVella.Tefter.Web.Components.Navigation;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.Navigation.TfNavigation","WebVella.Tefter")]
 public partial class TfNavigation : TfBaseComponent
 {
 	[Inject] protected IState<UserState> UserState { get; set; }

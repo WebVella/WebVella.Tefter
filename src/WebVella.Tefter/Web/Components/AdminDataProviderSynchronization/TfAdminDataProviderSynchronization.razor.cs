@@ -1,12 +1,10 @@
-﻿
-using WebVella.Tefter.Web.Components.DataProviderSyncLogDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminDataProviderSynchronization;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderSynchronization.TfAdminDataProviderSynchronization","WebVella.Tefter")]
 public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
 	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
-	
+
 	PaginationState _pagination = new PaginationState { ItemsPerPage = 15 };
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)

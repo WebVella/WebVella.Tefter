@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceViewPropertiesSelector;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewPropertiesSelector : TfBaseComponent
 {
 	//[Parameter]

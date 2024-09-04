@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.Bookmarks;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfBookmarks : TfBaseComponent
 {
 

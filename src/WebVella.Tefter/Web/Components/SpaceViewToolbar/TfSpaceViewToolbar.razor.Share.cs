@@ -1,5 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SpaceViewShareSelector;
-namespace WebVella.Tefter.Web.Components.SpaceViewToolbar;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 

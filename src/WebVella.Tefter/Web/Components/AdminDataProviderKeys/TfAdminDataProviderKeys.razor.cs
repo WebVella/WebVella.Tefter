@@ -1,7 +1,5 @@
-﻿
-using WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminDataProviderKeys;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderKeys.TfAdminDataProviderKeys","WebVella.Tefter")]
 public partial class TfAdminDataProviderKeys : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
@@ -40,7 +38,7 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			ToastService.ShowSuccess(LOC("The key was successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(false,(TucDataProvider)result.Data));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, (TucDataProvider)result.Data));
 		}
 	}
 
@@ -55,7 +53,7 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
-				Dispatcher.Dispatch(new SetDataProviderAdminAction(false,(TucDataProvider)result.Value));
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(false, (TucDataProvider)result.Value));
 			}
 		}
 		catch (Exception ex)

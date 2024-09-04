@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceDataDetails;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceDataDetails : TfBaseComponent
 {
 	[Parameter] public string Menu { get; set; } = "";
