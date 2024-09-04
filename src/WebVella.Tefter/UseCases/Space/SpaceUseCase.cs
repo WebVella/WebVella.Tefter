@@ -8,6 +8,7 @@ using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
 using WebVella.Tefter.Web.Components.SpaceDataManageDialog;
 using WebVella.Tefter.Web.Components.SpaceDataViews;
 using WebVella.Tefter.Web.Components.SpaceViewManage;
+using WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog;
 
 namespace WebVella.Tefter.UseCases.Space;
 public partial class SpaceUseCase
@@ -54,6 +55,7 @@ public partial class SpaceUseCase
 		else if (type == typeof(TfSpaceDataManageDialog)) await InitSpaceDataManageDialog(spaceId.Value);
 		else if (type == typeof(TfSearchSpaceDialog)) await InitForSearchSpace();
 		else if (type == typeof(TfSpaceDataFilterManageDialog)) await InitSpaceDataFilterManageDialog();
+		else if (type == typeof(TfSpaceViewColumnManageDialog)) await InitSpaceViewColumnManage();
 		else if (type == typeof(TfSpaceDetails)) { }
 		else throw new Exception($"Type: {type.Name} not supported in SpaceUseCase");
 	}
