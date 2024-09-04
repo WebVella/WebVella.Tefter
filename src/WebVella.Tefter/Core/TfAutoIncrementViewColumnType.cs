@@ -5,7 +5,7 @@ public class TfAutoIncrementViewColumnType : ITfSpaceViewColumnType
 	const string TF_COLUMN_AUTO_INCREMENT_ID = "4f5a38e2-4f8b-4d6f-a7bb-3e4d07a6f25c";
 	const string TF_COLUMN_AUTO_INCREMENT_NAME = "Auto increment number";
 	const string TF_COLUMN_AUTO_INCREMENT_DESCRIPTION = "If you need an automatically incremented number with each new record, this is the column you need.";
-	const string TF_COLUMN_AUTO_INCREMENT_ICON = "WebVella.Tefter.Core.Assets.AutoIncrementIcon.png";
+	const string TF_COLUMN_AUTO_INCREMENT_ICON = "TextSortAscending";
 
 	public Guid Id { get; init; }
 	public string Name { get; init; }

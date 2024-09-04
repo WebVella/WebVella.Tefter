@@ -5,7 +5,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 	const string TF_COLUMN_TEXT_ID = "f061a3ce-7813-4fd6-98cb-a10cccea4797";
 	const string TF_COLUMN_TEXT_NAME = "Text";
 	const string TF_COLUMN_TEXT_DESCRIPTION = "A text column";
-	const string TF_COLUMN_TEXT_ICON = "WebVella.Tefter.Core.Assets.TextIcon.png";
+	const string TF_COLUMN_TEXT_ICON = "TextCaseTitle";
 	const string ALIAS = "Value";
 
 	public Guid Id { get; init; }

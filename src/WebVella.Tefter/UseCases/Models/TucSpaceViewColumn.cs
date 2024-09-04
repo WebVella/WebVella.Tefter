@@ -9,11 +9,14 @@ public record TucSpaceViewColumn
 	public Guid? SelectedAddonId { get; set; } = null;
 	public string QueryName { get; set; }
 	public string Title { get; set; }
-	public short Position { get; set; }
+	public short? Position { get; set; }
 	public TucSpaceViewColumnType ColumnType { get; set; }
 	public Type ComponentType { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
+
+	public string FullTypeName { get; set; }
+	public string FullComponentTypeName { get; set; }
 
 	public TucSpaceViewColumn() { }
 
@@ -29,6 +32,8 @@ public record TucSpaceViewColumn
 		ComponentType = model.ComponentType;
 		DataMapping = model.DataMapping;
 		CustomOptionsJson = model.CustomOptionsJson;
+		FullTypeName = model.FullTypeName;
+		FullComponentTypeName = model.FullComponentTypeName;
 	}
 
 	//Column type should be get from GetAvailableSpaceViewColumnTypes()
@@ -42,11 +47,13 @@ public record TucSpaceViewColumn
 			SelectedAddonId= SelectedAddonId,
 			QueryName = QueryName,
 			Title = Title,
-			Position = Position,
+			Position = Position ?? 1,
 			ColumnType = columnType,
 			ComponentType = ComponentType,
 			DataMapping = DataMapping,
 			CustomOptionsJson = CustomOptionsJson,
+			FullTypeName = FullTypeName,
+			FullComponentTypeName = FullComponentTypeName,
 		};
 	}
 

@@ -5,7 +5,7 @@ public record TucSpaceViewColumnType
 	public Guid Id { get; set; }
 	public string Name { get; set; }
 	public string Description { get; set; }
-	public string Icon { get; set; }
+	public Icon Icon { get; set; }
 	public List<TucSpaceViewColumnDataMapping> DataMapping { get; set; }
 	public Type DefaultComponentType { get; set; }
 	public List<Type> SupportedComponentTypes { get; set; }
@@ -19,7 +19,7 @@ public record TucSpaceViewColumnType
 		Id = model.Id;
 		Name = model.Name;
 		Description = model.Description;
-		Icon = model.Icon;
+		Icon = TfConstants.GetIcon(model.Icon);
 		DataMapping = model.DataMapping.Select(x => new TucSpaceViewColumnDataMapping(x)).ToList();
 		DefaultComponentType = model.DefaultComponentType;
 		SupportedComponentTypes = model.SupportedComponentTypes;

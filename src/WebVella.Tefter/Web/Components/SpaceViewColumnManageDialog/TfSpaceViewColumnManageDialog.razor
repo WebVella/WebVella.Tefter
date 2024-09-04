@@ -1,0 +1,86 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceViewColumnForm.QueryName
+									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.QueryName)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceViewColumnForm.Title
+									 Label="@LOC("Title")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.Title)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentNumberField TValue="short?" @bind-Value=UC.SpaceViewColumnForm.Position
+									   Label="@LOC("Position")" Style="width:100%" Placeholder="@LOC("leave empty for last")" />
+					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.Position)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6"></FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentSelect Label="@LOC("Type")" Style="width:100%" Placeholder="@LOC("select...")"
+								  TOption="TucSpaceViewColumnType" SelectedOption="UC.SpaceViewColumnForm.ColumnType"
+								  Items="UC.AvailableColumnTypes">
+						<OptionTemplate Context="option">
+							<FluentStack>
+								<FluentIcon Value="@option.Icon" Color="@Color.Accent" />
+								@option.Name
+							</FluentStack>
+						</OptionTemplate>
+					</FluentSelect>
+					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.ColumnType)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6"></FluentGridItem>
+			</FluentGrid>
+			@if (UC.SpaceViewColumnForm.ColumnType is not null)
+			{
+				<FluentDivider Style="margin:15px 0" />
+				<FluentGrid>
+					<FluentGridItem xs="12">
+@* 						@if (UC.SpaceViewColumnForm.ColumnType. is not null)
+						{
+							<DynamicComponent Type="DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+						}
+						else
+						{
+							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
+								<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
+							</FluentMessageBar>
+						} *@
+					</FluentGridItem>
+				</FluentGrid>
+			}
+		</FluentEditForm>
+	}
+</FluentDialogBody>

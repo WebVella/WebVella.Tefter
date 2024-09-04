@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceViewManage;
+﻿using WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog;
+
+namespace WebVella.Tefter.Web.Components.SpaceViewManage;
 public partial class TfSpaceViewManage : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
@@ -41,5 +43,25 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		});
 
 	}
+
+	private async Task _addColumn()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewColumnManageDialog>(
+				new TucSpaceViewColumn() with { SpaceViewId = SpaceState.Value.RouteSpaceViewId.Value },
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			UC.ViewColumns = (List<TucSpaceViewColumn>)result.Data;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+
 
 }

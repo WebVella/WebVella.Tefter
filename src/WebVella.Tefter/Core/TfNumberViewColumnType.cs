@@ -5,7 +5,7 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnType
 	const string TF_COLUMN_NUMBER_ID = "5d246be4-d202-434c-961e-204e44ee0450";
 	const string TF_COLUMN_NUMBER_NAME = "Number";
 	const string TF_COLUMN_NUMBER_DESCRIPTION = "Holds all kind of numbers.";
-	const string TF_COLUMN_NUMBER_ICON = "WebVella.Tefter.Core.Assets.NumberIcon.png";
+	const string TF_COLUMN_NUMBER_ICON = "NumberSymbol";
 	const string ALIAS = "Value";
 
 	public Guid Id { get; init; }
