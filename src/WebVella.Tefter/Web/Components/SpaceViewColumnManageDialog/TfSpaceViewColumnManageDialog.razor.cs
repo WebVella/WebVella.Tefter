@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog.TfSpaceViewColumnManageDialog","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog.TfSpaceViewColumnManageDialog", "WebVella.Tefter")]
 public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceViewColumn>
 {
 	[Inject] private SpaceUseCase UC { get; set; }
@@ -127,10 +127,12 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		return null;
 	}
 
-	private Dictionary<string,object> _getColumnComponentContext(){ 
-		var componentData = new Dictionary<string,object>();
+	private Dictionary<string, object> _getColumnComponentContext()
+	{
+		var componentData = new Dictionary<string, object>();
 
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfComponentContext{ 
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfComponentContext
+		{
 			Mode = TfComponentMode.Options,
 			CustomOptionsJson = UC.SpaceViewColumnForm.CustomOptionsJson,
 			DataMapping = UC.SpaceViewColumnForm.DataMapping,
@@ -140,6 +142,23 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			SelectedAddonId = UC.SpaceViewColumnForm.SelectedAddonId,
 			SpaceViewId = UC.SpaceViewColumnForm.SpaceViewId
 		};
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_VALUE_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler);
 		return componentData;
 	}
+
+	private async Task _customOptionsChangedHandler(string value)
+	{
+		if (String.IsNullOrWhiteSpace(value)) UC.SpaceViewColumnForm.CustomOptionsJson = null;
+
+		if (!(value.StartsWith("{") && value.StartsWith("{"))
+		|| (value.StartsWith("[") && value.StartsWith("]")))
+		{
+			ToastService.ShowError("custom options value needs to be json");
+			return;
+		}
+
+		UC.SpaceViewColumnForm.CustomOptionsJson = value;
+		await InvokeAsync(StateHasChanged);
+	}
+
 }

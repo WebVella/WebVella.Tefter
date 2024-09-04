@@ -5,6 +5,9 @@ public class TfBaseViewColumn : ComponentBase
 	[Parameter]
 	public TfComponentContext Context { get; set; }
 
+	[Parameter]
+	public EventCallback<string> ValueChanged { get; set; }
+
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 
 	protected IStringLocalizer LC;
@@ -13,14 +16,16 @@ public class TfBaseViewColumn : ComponentBase
 	{
 		base.OnInitialized();
 		var type = this.GetType();
-		var (resourceBaseName,resourceLocation) = type.GetLocalizationResourceInfo();
-		if(!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation)) {
-			LC = StringLocalizerFactory.Create(resourceBaseName,resourceLocation);
+		var (resourceBaseName, resourceLocation) = type.GetLocalizationResourceInfo();
+		if (!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation))
+		{
+			LC = StringLocalizerFactory.Create(resourceBaseName, resourceLocation);
 		}
-		else{ 
+		else
+		{
 			LC = StringLocalizerFactory.Create(type);
 		}
-		
+
 	}
 
 	protected string LOC(string key, params object[] arguments)

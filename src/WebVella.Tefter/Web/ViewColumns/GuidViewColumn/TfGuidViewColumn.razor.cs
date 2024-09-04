@@ -9,4 +9,10 @@ public partial class TfGuidViewColumn : TfBaseViewColumn
 	{
 		base.OnInitialized();
 	}
+
+	private async Task _changeValue()
+	{
+		if (!ValueChanged.HasDelegate) return;
+		await ValueChanged.InvokeAsync("{time:'" + DateTime.Now.ToString()+ "'}");
+	}
 }

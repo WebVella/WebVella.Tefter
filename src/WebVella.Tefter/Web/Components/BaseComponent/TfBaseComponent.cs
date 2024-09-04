@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.UserNavigation.TfUserNavigation","WebVella.Tefter")]
+
 public class TfBaseComponent : FluxorComponent
 {
 	[Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
