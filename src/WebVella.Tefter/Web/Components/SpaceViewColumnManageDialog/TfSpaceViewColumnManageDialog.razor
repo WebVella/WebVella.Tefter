@@ -64,18 +64,15 @@
 					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.ColumnType)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					@if (UC.SpaceViewColumnForm.ColumnType is not null)
+					@if (UC.SpaceViewColumnForm.ColumnType is not null && _showBuggySelect)
 					{
-						<FluentSelect Label="@LOC("Presentation component")" Style="width:100%" Placeholder="@LOC("select...")"
-									  TOption="Type" SelectedOption="UC.SpaceViewColumnComponent"
+						<FluentSelect Label="@LOC("Presentation component")"
+									  Style="width:100%" Required=true
+									  SelectedOption="@UC.SpaceViewColumnForm.ComponentType"
 									  SelectedOptionChanged="_columnComponentChangeHandler"
-									  Items="UC.SpaceViewColumnForm.ColumnType.SupportedComponentTypes">
-							<OptionTemplate Context="option">
-								<FluentStack>
-									@option.ToDescriptionString()
-								</FluentStack>
-							</OptionTemplate>
-						</FluentSelect>
+									  TOption="Type"
+									  OptionText="((x)=> x.ToDescriptionString())"
+									  Items="UC.SpaceViewColumnForm.ColumnType.SupportedComponentTypes" />
 						<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.ColumnType)" />
 					}
 				</FluentGridItem>
@@ -106,9 +103,9 @@
 				<FluentLabel Typo="Typography.H5" Style="margin:1rem 0">@LOC("Component options")</FluentLabel>
 				<FluentGrid>
 					<FluentGridItem xs="12">
-						@if (UC.SpaceViewColumnComponent is not null)
+						@if (UC.SpaceViewColumnForm.ComponentType is not null)
 						{
-							<DynamicComponent Type="UC.SpaceViewColumnComponent" Parameters="@_getColumnComponentContext()" />
+							<DynamicComponent Type="UC.SpaceViewColumnForm.ComponentType" Parameters="@_getColumnComponentContext()" />
 							<div>@UC.SpaceViewColumnForm.CustomOptionsJson</div>
 						}
 						else

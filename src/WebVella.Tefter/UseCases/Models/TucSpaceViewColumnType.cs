@@ -9,6 +9,22 @@ public record TucSpaceViewColumnType
 	public List<TucSpaceViewColumnDataMapping> DataMapping { get; set; }
 	public Type DefaultComponentType { get; set; }
 	public List<Type> SupportedComponentTypes { get; set; }
+	public List<Option<string>> SupportedComponentTypeOptions
+	{
+		get
+		{
+			var result = new List<Option<string>>();
+			if (SupportedComponentTypes is not null)
+			{
+				foreach (var item in SupportedComponentTypes)
+				{
+					result.Add(new Option<string> { Text = item.ToDescriptionString(), Value = item.FullName });
+				}
+			}
+
+			return result;
+		}
+	}
 	public List<string> FilterAliases { get; set; }
 	public List<string> SortAliases { get; set; }
 	public List<Guid> SupportedAddonTypes { get; set; }

@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.Space;
 public partial class SpaceUseCase
 {
-	internal Type SpaceViewColumnComponent { get; set; }
+
 	internal TucSpaceViewColumn SpaceViewColumnForm { get; set; }
 	internal List<TucSpaceViewColumnType> AvailableColumnTypes { get; set; }
 	internal Task InitSpaceViewColumnManage()

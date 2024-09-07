@@ -12,6 +12,8 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private bool _isCreate = false;
+	private string _componentFullName = null;
+	private bool _showBuggySelect = true;
 
 
 	protected override async Task OnInitializedAsync()
@@ -97,26 +99,39 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		UC.SpaceViewColumnForm.ColumnType = option;
 		if (option is null)
 		{
-			UC.SpaceViewColumnComponent = null;
+			UC.SpaceViewColumnForm.ComponentType = null;
 		}
-		else if (UC.SpaceViewColumnComponent is not null)
+		else if (UC.SpaceViewColumnForm.ComponentType is not null)
 		{
-			if (!option.SupportedComponentTypes.Contains(UC.SpaceViewColumnComponent))
+			bool selectedTypeSupported = false;
+			foreach (var supType in option.SupportedComponentTypes)
 			{
-				UC.SpaceViewColumnComponent = option.DefaultComponentType;
+				if (supType.FullName == UC.SpaceViewColumnForm.ComponentType.FullName)
+				{
+					selectedTypeSupported = true;
+					break;
+				}
+			}
+			if (!selectedTypeSupported)
+			{
+				UC.SpaceViewColumnForm.ComponentType = option.DefaultComponentType;
 			}
 		}
 		else
 		{
-			UC.SpaceViewColumnComponent = option.DefaultComponentType;
+			UC.SpaceViewColumnForm.ComponentType = option.DefaultComponentType;
 		}
-
+		_componentFullName = UC.SpaceViewColumnForm.ComponentType?.FullName;
+		//There is a bug when updating the Items of the select so we will make this small hack
+		_showBuggySelect = false;
+		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1);
+		_showBuggySelect = true;
 		await InvokeAsync(StateHasChanged);
 	}
-	private async Task _columnComponentChangeHandler(Type option)
+	private void _columnComponentChangeHandler(Type componentType)
 	{
-		UC.SpaceViewColumnComponent = option;
-		await InvokeAsync(StateHasChanged);
+		UC.SpaceViewColumnForm.ComponentType = componentType;
 	}
 
 	private string _getDataMappingValue(string alias)
@@ -159,6 +174,20 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 		UC.SpaceViewColumnForm.CustomOptionsJson = value;
 		await InvokeAsync(StateHasChanged);
+	}
+
+	private List<Option<string>> _getTypeListAsOptions(List<Type> typeList)
+	{
+		var result = new List<Option<string>>();
+		if (typeList is null) return result;
+
+		foreach (var item in typeList)
+		{
+			result.Add(new Option<string> { Text = item.ToDescriptionString(), Value = item.Name });
+		}
+
+		return result;
+
 	}
 
 }
