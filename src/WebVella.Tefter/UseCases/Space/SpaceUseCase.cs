@@ -522,6 +522,7 @@ public partial class SpaceUseCase
 		return Result.Ok(new TucSpaceView(spaceView));
 	}
 
+	//View columns
 	internal List<TucSpaceViewColumn> GetViewColumns(Guid viewId)
 	{
 		var serviceResult = _spaceManager.GetSpaceViewColumnsList(viewId);
@@ -540,6 +541,28 @@ public partial class SpaceUseCase
 
 		return serviceResult.Value.Select(x => new TucSpaceViewColumn(x)).ToList();
 
+	}
+
+	internal Result<TucSpaceViewColumn> CreateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	{
+		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+		var selectedType = availableTypes.FirstOrDefault(x=> x.Id == column.ColumnType.Id);
+		if(selectedType is null) return Result.Fail("Column selected type not found");
+		var result = _spaceManager.CreateSpaceViewColumn(column.ToModel(selectedType));
+
+		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceViewColumn failed").CausedBy(result.Errors));
+		return Result.Ok(new TucSpaceViewColumn(result.Value));
+	}
+
+	internal Result<TucSpaceViewColumn> UpdateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	{
+		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+		var selectedType = availableTypes.FirstOrDefault(x=> x.Id == column.ColumnType.Id);
+		if(selectedType is null) return Result.Fail("Column selected type not found");
+		var result = _spaceManager.UpdateSpaceViewColumn(column.ToModel(selectedType));
+
+		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceViewColumn failed").CausedBy(result.Errors));
+		return Result.Ok(new TucSpaceViewColumn(result.Value));
 	}
 
 

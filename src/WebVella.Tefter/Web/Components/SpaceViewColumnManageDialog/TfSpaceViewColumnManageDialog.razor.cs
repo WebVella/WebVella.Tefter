@@ -35,12 +35,12 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		{
 			if (_isCreate)
 			{
-				UC.SpaceViewColumnForm = UC.SpaceViewColumnForm with { Id = Guid.NewGuid() };
+				UC.SpaceViewColumnForm = UC.SpaceViewColumnForm with { Id = Guid.NewGuid(), SpaceViewId = Content.SpaceViewId };
 			}
 			else
 			{
 
-				UC.SpaceViewColumnForm = Content with { Id = Guid.NewGuid() };
+				UC.SpaceViewColumnForm = Content with { Id = Content.Id };
 			}
 			base.InitForm(UC.SpaceViewColumnForm);
 			await InvokeAsync(StateHasChanged);
@@ -64,14 +64,14 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			await InvokeAsync(StateHasChanged);
 
 			var result = new Result<TucSpaceViewColumn>();
-			//if (_isCreate)
-			//{
-			//	result = UC.CreateSpaceWithForm(UC.SpaceManageForm);
-			//}
-			//else
-			//{
-			//	result = UC.UpdateSpaceWithForm(UC.SpaceManageForm);
-			//}
+			if (_isCreate)
+			{
+				result = UC.CreateSpaceViewColumnWithForm(UC.SpaceViewColumnForm);
+			}
+			else
+			{
+				result = UC.UpdateSpaceViewColumnWithForm(UC.SpaceViewColumnForm);
+			}
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
