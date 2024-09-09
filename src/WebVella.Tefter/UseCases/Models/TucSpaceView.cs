@@ -27,7 +27,8 @@ public record TucSpaceView
 	[Required]
 	public bool AddSharedColumns { get; set; } = true;
 
-	public bool AddsColumns{ get => AddSystemColumns || AddProviderColumns || AddSharedColumns; }
+	[Required]
+	public bool AddDatasetColumns { get; set; } = true;
 
 	[JsonIgnore]
 	public Action OnClick { get;set;}

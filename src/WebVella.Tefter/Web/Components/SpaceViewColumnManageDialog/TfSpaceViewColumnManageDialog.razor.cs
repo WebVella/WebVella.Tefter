@@ -40,7 +40,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				TucSpaceViewColumnType defaultColumnType = null;
 				if (UC.AvailableColumnTypes is not null && UC.AvailableColumnTypes.Any())
 				{
-					defaultColumnType = UC.AvailableColumnTypes.FirstOrDefault(x => x.Id == TfConstants.DefaultColumnTypeId);
+					defaultColumnType = UC.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 					if (defaultColumnType is null) defaultColumnType = UC.AvailableColumnTypes[0];
 				}
 				UC.SpaceViewColumnForm = UC.SpaceViewColumnForm with
@@ -118,7 +118,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			UC.SpaceViewColumnForm.ColumnType = UC.AvailableColumnTypes.FirstOrDefault(x => x.Id.ToString() == columnTypeId);
 
 		if (UC.SpaceViewColumnForm.ColumnType is null)
-			UC.SpaceViewColumnForm.ColumnType = UC.AvailableColumnTypes.FirstOrDefault(x => x.Id == TfConstants.DefaultColumnTypeId);
+			UC.SpaceViewColumnForm.ColumnType = UC.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(1);
 

@@ -339,15 +339,6 @@ public partial class SpaceUseCase
 		if (spaceResult.Value is null) validationErrors.Add(new ValidationError(nameof(view.SpaceId), "space is not found"));
 		space = spaceResult.Value;
 
-		//DataProvider
-		if (view.DataProviderId is not null)
-		{
-			var providerResult = _dataProviderManager.GetProvider(view.DataProviderId.Value);
-			if (providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
-			if (providerResult.Value is null) validationErrors.Add(new ValidationError(nameof(view.DataProviderId), "data provider is not found"));
-			dataprovider = providerResult.Value;
-		}
-
 		//SpaceData
 		if (view.SpaceDataId is not null)
 		{
@@ -355,6 +346,18 @@ public partial class SpaceUseCase
 			if (spaceDataResult.IsFailed) return Result.Fail(new Error("GetSpaceData failed").CausedBy(spaceDataResult.Errors));
 			if (spaceDataResult.Value is null) validationErrors.Add(new ValidationError(nameof(view.SpaceDataId), "dataset is not found"));
 			spaceData = spaceDataResult.Value;
+		}
+
+		//DataProvider
+		Guid? dataProviderId = null;
+		if (view.DataProviderId is not null) dataProviderId = view.DataProviderId.Value;
+		else if (spaceData is not null) dataProviderId = spaceData.DataProviderId;
+		if (dataProviderId is not null)
+		{
+			var providerResult = _dataProviderManager.GetProvider(dataProviderId.Value);
+			if (providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
+			if (providerResult.Value is null) validationErrors.Add(new ValidationError(nameof(dataProviderId), "data provider is not found"));
+			dataprovider = providerResult.Value;
 		}
 
 		if (validationErrors.Count > 0)
@@ -414,7 +417,170 @@ public partial class SpaceUseCase
 
 		#region << create view columns>>
 		{
-			//TBD
+			var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+			var columnsToCreate = new List<TfSpaceViewColumn>();
+			short position = 1;
+			if (view.DataSetType == TucSpaceViewDataSetType.New)
+			{
+				if (view.AddProviderColumns)
+				{
+					foreach (var column in dataprovider.Columns)
+					{
+						var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
+						var tfColumn = new TfSpaceViewColumn
+						{
+							Id = Guid.NewGuid(),
+							SpaceViewId = spaceView.Id,
+							Position = position,
+							Title = column.DbName,
+							QueryName = column.DbName,
+							CustomOptionsJson = "{}",
+							DataMapping = new(),
+							ColumnType = null,
+							ComponentType = null,
+							FullComponentTypeName = null,
+							FullTypeName = null,
+							SelectedAddonId = null
+						};
+
+						if (columnType is not null)
+						{
+							tfColumn.ColumnType = columnType;
+							tfColumn.ComponentType = columnType.DefaultComponentType;
+							tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
+							tfColumn.FullTypeName = columnType.Name;
+							foreach (var mapper in columnType.DataMapping)
+							{
+								tfColumn.DataMapping[mapper.Alias] = column.DbName;
+							}
+						}
+						columnsToCreate.Add(tfColumn);
+						position++;
+					}
+				}
+				if (view.AddSharedColumns)
+				{
+					foreach (var column in dataprovider.SharedColumns)
+					{
+						var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
+						var tfColumn = new TfSpaceViewColumn
+						{
+							Id = Guid.NewGuid(),
+							SpaceViewId = spaceView.Id,
+							Position = position,
+							Title = column.DbName,
+							QueryName = column.DbName,
+							CustomOptionsJson = "{}",
+							DataMapping = new(),
+							ColumnType = null,
+							ComponentType = null,
+							FullComponentTypeName = null,
+							FullTypeName = null,
+							SelectedAddonId = null
+						};
+
+						if (columnType is not null)
+						{
+							tfColumn.ColumnType = columnType;
+							tfColumn.ComponentType = columnType.DefaultComponentType;
+							tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
+							tfColumn.FullTypeName = columnType.Name;
+							foreach (var mapper in columnType.DataMapping)
+							{
+								tfColumn.DataMapping[mapper.Alias] = column.DbName;
+							}
+						}
+						columnsToCreate.Add(tfColumn);
+						position++;
+					}
+				}
+				if (view.AddSystemColumns)
+				{
+					foreach (var column in dataprovider.SystemColumns)
+					{
+						var columnType = ModelHelpers.GetColumnTypeForDbType(column.DbType, availableTypes);
+						var tfColumn = new TfSpaceViewColumn
+						{
+							Id = Guid.NewGuid(),
+							SpaceViewId = spaceView.Id,
+							Position = position,
+							Title = column.DbName,
+							QueryName = column.DbName,
+							CustomOptionsJson = "{}",
+							DataMapping = new(),
+							ColumnType = null,
+							ComponentType = null,
+							FullComponentTypeName = null,
+							FullTypeName = null,
+							SelectedAddonId = null
+						};
+
+						if (columnType is not null)
+						{
+							tfColumn.ColumnType = columnType;
+							tfColumn.ComponentType = columnType.DefaultComponentType;
+							tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
+							tfColumn.FullTypeName = columnType.Name;
+							foreach (var mapper in columnType.DataMapping)
+							{
+								tfColumn.DataMapping[mapper.Alias] = column.DbName;
+							}
+						}
+						columnsToCreate.Add(tfColumn);
+						position++;
+					}
+				}
+			}
+			else if (view.DataSetType == TucSpaceViewDataSetType.Existing)
+			{
+				if (view.AddDatasetColumns)
+				{
+					foreach (var dbName in spaceData.Columns)
+					{
+						DatabaseColumnType? dbType = dataprovider.Columns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
+						if (dbType is null) dbType = dataprovider.SharedColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
+						if (dbType is null) dbType = dataprovider.SystemColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
+						if (dbType is null) continue;
+
+						var columnType = ModelHelpers.GetColumnTypeForDbType(dbType.Value, availableTypes);
+						var tfColumn = new TfSpaceViewColumn
+						{
+							Id = Guid.NewGuid(),
+							SpaceViewId = spaceView.Id,
+							Position = position,
+							Title = dbName,
+							QueryName = dbName,
+							CustomOptionsJson = "{}",
+							DataMapping = new(),
+							ColumnType = null,
+							ComponentType = null,
+							FullComponentTypeName = null,
+							FullTypeName = null,
+							SelectedAddonId = null
+						};
+
+						if (columnType is not null)
+						{
+							tfColumn.ColumnType = columnType;
+							tfColumn.ComponentType = columnType.DefaultComponentType;
+							tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
+							tfColumn.FullTypeName = columnType.Name;
+							foreach (var mapper in columnType.DataMapping)
+							{
+								tfColumn.DataMapping[mapper.Alias] = dbName;
+							}
+						}
+						columnsToCreate.Add(tfColumn);
+						position++;
+					}
+				}
+			}
+			foreach (var tfColumn in columnsToCreate)
+			{
+				var tfResult = _spaceManager.CreateSpaceViewColumn(tfColumn);
+				if (tfResult.IsFailed) return Result.Fail(new Error("CreateSpaceViewColumn failed").CausedBy(tfResult.Errors));
+				if (tfResult.Value is null) return Result.Fail("CreateSpaceViewColumn failed to return value");
+			}
 		}
 		#endregion
 		//Should commit transaction
@@ -526,6 +692,13 @@ public partial class SpaceUseCase
 		return Result.Ok(new TucSpaceView(spaceView));
 	}
 
+	internal Result DeleteSpaceView(Guid viewId)
+	{
+		var tfResult = _spaceManager.DeleteSpaceView(viewId);
+		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
+
+		return Result.Ok();
+	}
 
 	//View columns
 	internal TucSpaceViewColumn GetViewColumn(Guid columnId)

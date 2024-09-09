@@ -2,7 +2,7 @@
 
 public class TfTextViewColumnType : ITfSpaceViewColumnType
 {
-	const string TF_COLUMN_TEXT_ID = Constants.TF_COLUMN_TEXT_ID;
+	const string TF_COLUMN_TEXT_ID = Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID;
 	const string TF_COLUMN_TEXT_NAME = "Text";
 	const string TF_COLUMN_TEXT_DESCRIPTION = "A text column";
 	const string TF_COLUMN_TEXT_ICON = "TextCaseTitle";

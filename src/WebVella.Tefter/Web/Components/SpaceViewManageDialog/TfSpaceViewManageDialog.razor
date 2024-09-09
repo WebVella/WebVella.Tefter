@@ -42,7 +42,8 @@
 			<FluentDivider Style="margin:1rem 0" />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect @bind-SelectedOption="@UC.SpaceViewManageForm.DataSetType"
+					<FluentSelect SelectedOption="@UC.SpaceViewManageForm.DataSetType"
+								  SelectedOptionChanged="_dataSetTypeChangeHandler"
 								  TOption="TucSpaceViewDataSetType"
 								  Items="@(Enum.GetValues<TucSpaceViewDataSetType>())" Style="width:100%"
 								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"></FluentSelect>
@@ -53,9 +54,11 @@
 				@if (UC.SpaceViewManageForm.DataSetType == TucSpaceViewDataSetType.New)
 				{
 					<FluentGridItem xs="6">
-						<FluentSelect SelectedOption="@_selectedDataProvider" SelectedOptionChanged="_dataProviderSelected"
+						<FluentSelect Value="@_selectedDataProvider?.Id.ToString()"
+									  ValueChanged="_dataProviderSelectedHandler"
 									  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
 									  Items="@UC.AllDataProviders" Style="width:100%"
+									  OptionValue="@(p => p.Id.ToString())"
 									  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
 						<FluentValidationMessage For="@(() => UC.SpaceViewManageForm.DataProviderId)" />
 					</FluentGridItem>
@@ -75,7 +78,8 @@
 						}
 						else
 						{
-							<FluentSelect SelectedOption="@_selectedDataset" SelectedOptionChanged="_datasetSelected"
+							<FluentSelect SelectedOption="@_selectedDataset"
+										  SelectedOptionChanged="_datasetSelected"
 										  TOption="TucSpaceData" Placeholder="@LOC("select...")"
 										  Items="@UC.SpaceDataList" Style="width:100%"
 										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"></FluentSelect>
@@ -85,21 +89,30 @@
 				}
 
 			</FluentGrid>
-			@if (_selectedDataProvider is not null && _isCreate)
+			@if ((_selectedDataProvider is not null || _selectedDataset is not null) && _isCreate)
 			{
 				<FluentGrid>
 					<FluentGridItem xs="12">
 						<FluentInputLabel Label="@LOC("Automatic column generation")" />
 						<FluentStack>
-							<FluentCheckbox Value="@UC.SpaceViewManageForm.AddProviderColumns"
-											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddProviderColumns)))"
-											Label="@LOC("data provided columns")" />
-							<FluentCheckbox Value="@UC.SpaceViewManageForm.AddSystemColumns"
-											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddSystemColumns)))"
-											Label="@LOC("system columns")" />
-							<FluentCheckbox Value="@UC.SpaceViewManageForm.AddSharedColumns"
-											ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddSharedColumns)))"
-											Label="@LOC("shared columns")" />
+							@if (_selectedDataProvider is not null)
+							{
+								<FluentCheckbox Value="@UC.SpaceViewManageForm.AddProviderColumns"
+												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddProviderColumns)))"
+												Label="@LOC("data provided columns")" />
+								<FluentCheckbox Value="@UC.SpaceViewManageForm.AddSharedColumns"
+												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddSharedColumns)))"
+												Label="@LOC("shared columns")" />
+								<FluentCheckbox Value="@UC.SpaceViewManageForm.AddSystemColumns"
+												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddSystemColumns)))"
+												Label="@LOC("system columns")" />
+							}
+							else if (_selectedDataset is not null)
+							{
+								<FluentCheckbox Value="@UC.SpaceViewManageForm.AddDatasetColumns"
+												ValueChanged="@((x)=> _columnGeneratorSettingChanged(x,nameof(UC.SpaceViewManageForm.AddDatasetColumns)))"
+												Label="@LOC("add dateset columns")" />
+							}
 						</FluentStack>
 					</FluentGridItem>
 				</FluentGrid>
@@ -114,7 +127,7 @@
 								</FluentBadge>
 							</FluentStack>
 						</FluentInputLabel>
-						@if (!UC.SpaceViewManageForm.AddsColumns)
+						@if (_generatedColumns.Count == 0)
 						{
 							<div>@LOC("No columns will be generated")</div>
 						}

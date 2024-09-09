@@ -2,7 +2,7 @@
 
 public class TfGuidViewColumnType : ITfSpaceViewColumnType
 {
-	const string TF_COLUMN_GUID_ID = "b736b4f9-2138-44d2-a5d5-4a320b6556db";
+	const string TF_COLUMN_GUID_ID = Constants.TF_GENERIC_GUID_COLUMN_TYPE_ID;
 	const string TF_COLUMN_GUID_NAME = "Unique identifier (GUID)";
 	const string TF_COLUMN_GUID_DESCRIPTION = "if you need an identifier value. The Guid is a unique 128-bit identifier generated to ensure global uniqueness.";
 	const string TF_COLUMN_GUID_ICON = "Key";

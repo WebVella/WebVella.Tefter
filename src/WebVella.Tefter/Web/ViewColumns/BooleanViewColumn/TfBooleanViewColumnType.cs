@@ -2,7 +2,7 @@
 
 public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 {
-	const string TF_COLUMN_BOOLEAN_ID = "c28e933b-6800-4819-b22f-e091e3e3c961";
+	const string TF_COLUMN_BOOLEAN_ID = Constants.TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID;
 	const string TF_COLUMN_BOOLEAN_NAME = "Boolean";
 	const string TF_COLUMN_BOOLEAN_DESCRIPTION = "A boolean column";
 	const string TF_COLUMN_BOOLEAN_ICON = "CircleMultipleSubtractCheckmark";

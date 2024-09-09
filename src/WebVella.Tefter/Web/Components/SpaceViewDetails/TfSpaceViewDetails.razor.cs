@@ -30,8 +30,14 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	{
 		InvokeAsync(async () =>
 		{
-			//await UC.InitSpaceViewManageAfterRender(SpaceState.Value);
+			UC.IsBusy = true;
 			await InvokeAsync(StateHasChanged);
+			await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+			UC.IsBusy = false;
+			await InvokeAsync(StateHasChanged);
+			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+				spaceViewColumns: UC.ViewColumns
+			));
 		});
 
 	}
@@ -40,7 +46,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	{
 		InvokeAsync(async () =>
 		{
-			//await UC.InitSpaceViewManageAfterRender(SpaceState.Value);
 			await InvokeAsync(StateHasChanged);
 		});
 

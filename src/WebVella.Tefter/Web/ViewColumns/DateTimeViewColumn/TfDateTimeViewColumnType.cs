@@ -2,7 +2,7 @@
 
 public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 {
-	const string TF_COLUMN_DATETIME_ID = "d41752c3-e356-4c51-83ed-7e1a4e5e5183";
+	const string TF_COLUMN_DATETIME_ID = Constants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID;
 	const string TF_COLUMN_DATETIME_NAME = "DateTime";
 	const string TF_COLUMN_DATETIME_DESCRIPTION = "A date\\datetime column";
 	const string TF_COLUMN_DATETIME_ICON = "CalendarMonth";
