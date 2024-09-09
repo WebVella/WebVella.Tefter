@@ -3,7 +3,7 @@ public partial class SpaceUseCase
 {
 	internal TucSpaceData ViewData = null;
 	internal TucDataProvider DataProvider = null;
-	internal List<TucSpaceViewColumn> ViewColumns = new();
+
 
 	internal Task InitSpaceViewManage()
 	{

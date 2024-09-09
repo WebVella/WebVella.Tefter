@@ -32,12 +32,16 @@ public partial class SpaceUseCase
 	}
 	internal bool IsBusy { get; set; } = true;
 	internal List<TucDataProvider> AllDataProviders { get; set; } = new();
+
+	internal List<TucSpaceViewColumn> ViewColumns = new();
+
 	internal async Task Init(Type type, Guid? spaceId = null)
 	{
 		if (type == typeof(TfSpaceStateManager)) await InitForState();
 		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
 		else if (type == typeof(TfSpaceDataManage)) await InitSpaceDataManage();
 		else if (type == typeof(TfSpaceDataViews)) await InitSpaceDataManageViews();
+		else if (type == typeof(TfSpaceViewDetails)) await InitSpaceViewDetails();
 		else if (type == typeof(TfSpaceViewManage)) await InitSpaceViewManage();
 		else if (type == typeof(TfSpaceViewManageDialog)) await InitSpaceViewManageDialog(spaceId.Value);
 		else if (type == typeof(TfSpaceDataManageDialog)) await InitSpaceDataManageDialog(spaceId.Value);

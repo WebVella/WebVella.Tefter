@@ -38,7 +38,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 			Url = String.Format(TfConstants.SpaceViewManagePageUrl, SpaceState.Value.RouteSpaceId, SpaceState.Value.RouteSpaceViewId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
-			Title = LOC("Details")
+			Title = LOC("View Management")
 		});
 		_urlData = Navigator.GetUrlData();
 	}
