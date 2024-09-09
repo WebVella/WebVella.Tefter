@@ -301,6 +301,17 @@ public partial class TfSpaceManager : ITfSpaceManager
 							" during delete space process", spaceAfter));
 				}
 
+				var spaceViewColumns = GetSpaceViewColumnsList(spaceView.Id).Value;
+
+				foreach(var column in spaceViewColumns )
+				{
+					var columnDeleteResult = DeleteSpaceViewColumn(column.Id);
+
+					if (!columnDeleteResult.IsSuccess)
+						return Result.Fail(new DboManagerError("Failed to delete view column", id));
+
+				}
+
 				var success = _dboManager.Delete<TfSpaceView>(id);
 
 				if (!success)

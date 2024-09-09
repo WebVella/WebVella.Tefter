@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using WebVella.Tefter.Web.Models;
+
+namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
@@ -256,7 +258,15 @@ public partial class TfSpaceManager : ITfSpaceManager
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
-				//TODO DELETE VIEWS WHEN IMPLEMENTED
+				var spaceViews = GetSpaceViewsList(space.Id).Value;
+				foreach (var spaceView in spaceViews)
+				{
+					var result = DeleteSpaceView(spaceView.Id);
+					if (!result.IsSuccess)
+						return Result.Fail(new Error("Failed to delete space view.")
+												.CausedBy(result.Errors));
+				}
+
 
 				var spaceDataListResult = GetSpaceDataList(id);
 				if (!spaceDataListResult.IsSuccess)

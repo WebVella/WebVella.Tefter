@@ -609,6 +609,11 @@ public partial class SpaceManagerTests : BaseTest
 					var column = columns.Single(x => x.Id == last.Id);
 					column.Position.Should().Be((short)(columns.Count - i));
 				}
+
+				//test delete the entire space
+				var deleteSpaceResult = spaceManager.DeleteSpace(space.Id);
+				deleteSpaceResult.IsSuccess.Should().BeTrue();
+
 			}
 		}
 	}
