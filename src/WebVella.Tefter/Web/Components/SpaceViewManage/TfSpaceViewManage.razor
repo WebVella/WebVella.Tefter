@@ -112,9 +112,9 @@ else
 															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
 														</FluentButton>
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,true))" Title="@LOC("Move up")"
-																	  Disabled="@(_isSubmitting || SpaceState.Value.SpaceViewColumnList.First().Id == context.Id)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
+																	  Disabled="@(_isSubmitting || context.Position == 1)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,false))" Title="@LOC("Move down")"
-																	  Disabled="@(_isSubmitting || SpaceState.Value.SpaceViewColumnList.Last().Id == context.Id)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
+																	  Disabled="@(_isSubmitting || context.Position == SpaceState.Value.SpaceViewColumnList.Count)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
 													</FluentStack>
 												</div>
 											</td>
