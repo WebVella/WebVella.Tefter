@@ -7,7 +7,7 @@ public class TfSpaceViewColumn
 	public Guid? SelectedAddonId { get; set; } = null;
 	public string QueryName { get; set; }
 	public string Title { get; set; }
-	public short Position { get; set; }
+	public short? Position { get; set; }
 	public ITfSpaceViewColumnType ColumnType { get; set; }
 	public Type ComponentType { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();

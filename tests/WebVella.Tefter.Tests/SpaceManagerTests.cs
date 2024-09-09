@@ -1,6 +1,4 @@
-﻿using System.Net.WebSockets;
-using WebVella.Tefter.Core;
-using WebVella.Tefter.Web.Models;
+﻿using WebVella.Tefter.Core;
 
 namespace WebVella.Tefter.Tests;
 
@@ -559,6 +557,8 @@ public partial class SpaceManagerTests : BaseTest
 				var availableColumnTypes = spaceManager.GetAvailableSpaceViewColumnTypes().Value;
 				Type componentType = typeof(TfGeneralViewColumnComponent);
 
+				List<TfSpaceViewColumn> createdColums = new List<TfSpaceViewColumn>();
+
 				foreach (var availableColumnType in availableColumnTypes)
 				{
 					TfSpaceViewColumn column = new TfSpaceViewColumn
@@ -577,10 +577,36 @@ public partial class SpaceManagerTests : BaseTest
 					var columnResult = spaceManager.CreateSpaceViewColumn(column);
 					columnResult.IsSuccess.Should().BeTrue();
 					columnResult.Value.Should().NotBeNull();
+					createdColums.Add(columnResult.Value);
 				}
 
 				var columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
 				columns.Count.Should().Be(availableColumnTypes.Count);
+
+				var first = createdColums[0];
+				var last = createdColums[createdColums.Count-1];
+
+				first.Position = (short)(createdColums.Count);
+
+				var updateResult = spaceManager.UpdateSpaceViewColumn(first);
+				updateResult.IsSuccess.Should().BeTrue();
+				updateResult.Value.Should().NotBeNull();
+
+				columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
+				columns.Single(x=>x.Id == first.Id).Position.Should().Be((short)(createdColums.Count));
+				columns.Single(x => x.Id == last.Id).Position.Should().Be((short)(createdColums.Count-1));
+
+				last = columns.Single(x => x.Id == first.Id);
+
+				for (int i = 1; i < columns.Count; i++)
+				{
+					var upResult = spaceManager.MoveSpaceViewColumnUp(last.Id);
+					updateResult.IsSuccess.Should().BeTrue();
+
+					columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
+					var column = columns.Single(x => x.Id == last.Id);
+					column.Position.Should().Be((short)(columns.Count - i));
+				}
 			}
 		}
 	}
