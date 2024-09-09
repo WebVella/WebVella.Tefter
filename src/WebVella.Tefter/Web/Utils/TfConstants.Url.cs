@@ -2,24 +2,24 @@
 
 public partial class TfConstants
 {
-	public static string NotFoundPageUrl { get; set; } = "/404";
-	public static string LoginPageUrl { get; set; } = "/login";
-	public static string HomePageUrl { get; set; } = "/";
-	public static string AdminPageUrl { get; set; } = "/admin";
-	public static string AdminUsersPageUrl { get; set; } = "/admin/users";
-	public static string AdminUserDetailsPageUrl { get; set; } = "/admin/users/{0}";
-	public static string AdminUserAccessPageUrl { get; set; } = "/admin/users/{0}/access";
-	public static string AdminUserSavesViewsPageUrl { get; set; } = "/admin/users/{0}/saves";
-	public static string AdminDataProvidersPageUrl { get; set; } = "/admin/data-providers";
-	public static string AdminDataProviderDetailsPageUrl { get; set; } = "/admin/data-providers/{0}";
-	public static string AdminDataProviderSchemaPageUrl { get; set; } = "/admin/data-providers/{0}/schema";
-	public static string AdminDataProviderKeysPageUrl { get; set; } = "/admin/data-providers/{0}/keys";
-	public static string AdminDataProviderAuxColumnsPageUrl { get; set; } = "/admin/data-providers/{0}/aux";
-	public static string AdminDataProviderSynchronizationPageUrl { get; set; } = "/admin/data-providers/{0}/synchronization";
-	public static string AdminDataProviderDataPageUrl { get; set; } = "/admin/data-providers/{0}/data";
-	public static string SpacePageUrl { get; set; } = "/space/{0}";
-	public static string SpaceViewPageUrl { get; set; } = "/space/{0}/view/{1}";
-	public static string SpaceViewManagePageUrl { get; set; } = "/space/{0}/view/{1}/manage";
-	public static string SpaceDataPageUrl { get; set; } = "/space/{0}/data/{1}";
+	public static string NotFoundPageUrl = "/404";
+	public static string LoginPageUrl  = "/login";
+	public static string HomePageUrl  = "/";
+	public static string AdminPageUrl  = "/admin";
+	public static string AdminUsersPageUrl  = "/admin/users";
+	public static string AdminUserDetailsPageUrl  = "/admin/users/{0}";
+	public static string AdminUserAccessPageUrl  = "/admin/users/{0}/access";
+	public static string AdminUserSavesViewsPageUrl  = "/admin/users/{0}/saves";
+	public static string AdminDataProvidersPageUrl  = "/admin/data-providers";
+	public static string AdminDataProviderDetailsPageUrl  = "/admin/data-providers/{0}";
+	public static string AdminDataProviderSchemaPageUrl  = "/admin/data-providers/{0}/schema";
+	public static string AdminDataProviderKeysPageUrl  = "/admin/data-providers/{0}/keys";
+	public static string AdminDataProviderAuxColumnsPageUrl  = "/admin/data-providers/{0}/aux";
+	public static string AdminDataProviderSynchronizationPageUrl  = "/admin/data-providers/{0}/synchronization";
+	public static string AdminDataProviderDataPageUrl  = "/admin/data-providers/{0}/data";
+	public static string SpacePageUrl  = "/space/{0}";
+	public static string SpaceViewPageUrl  = "/space/{0}/view/{1}";
+	public static string SpaceViewManagePageUrl  = "/space/{0}/view/{1}/manage";
+	public static string SpaceDataPageUrl  = "/space/{0}/data/{1}";
 
 }

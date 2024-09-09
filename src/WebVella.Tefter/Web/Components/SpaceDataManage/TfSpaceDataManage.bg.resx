@@ -120,6 +120,9 @@
   <data name="Accessibility" xml:space="preserve">
     <value>Достъп</value>
   </data>
+  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете колоната?</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Откажи</value>
   </data>

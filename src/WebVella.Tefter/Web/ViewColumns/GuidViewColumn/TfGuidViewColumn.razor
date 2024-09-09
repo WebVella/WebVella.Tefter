@@ -1,0 +1,20 @@
+﻿@namespace WebVella.Tefter.Web.ViewColumns
+@inherits TfBaseViewColumn
+@if (Context.Mode == TfComponentMode.Display)
+{
+	<div>Guid Display</div>
+	<div style="color:red">@LOC("test")</div>
+
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+	<div>Guid Display</div>
+	<div>Translated: @LOC("test")</div>
+	<FluentButton OnClick="_changeValue">Change Value</FluentButton>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

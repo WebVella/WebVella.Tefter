@@ -1,7 +1,4 @@
-﻿
-using WebVella.Tefter.Web.Components.FastAccessStateManager;
-
-namespace WebVella.Tefter.UseCases.FastAccess;
+﻿namespace WebVella.Tefter.UseCases.FastAccess;
 public partial class FastAccessUseCase
 {
 	private readonly IIdentityManager _identityManager;
@@ -30,7 +27,7 @@ public partial class FastAccessUseCase
 
 	internal async Task Init(Type type)
 	{
-		if(type == typeof(TfFastAccessStateManager)) await InitForState();
+		if (type == typeof(TfFastAccessStateManager)) await InitForState();
 		else throw new Exception($"Type: {type.Name} not supported in SpaceUseCase");
 	}
 

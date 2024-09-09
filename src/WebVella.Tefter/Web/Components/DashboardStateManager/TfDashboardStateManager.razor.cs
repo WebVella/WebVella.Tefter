@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.DashboardStateManager;
+namespace WebVella.Tefter.Web.Components;
 public partial class TfDashboardStateManager : TfBaseComponent
 {
 	[Inject] private DashboardUseCase UC { get; set; }

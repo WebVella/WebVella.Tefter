@@ -1,8 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.SpaceManageDialog;
-using WebVella.Tefter.Web.Components.SpaceSelector;
-using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
-
-namespace WebVella.Tefter.Web.Components.SpaceViewNavigation;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewNavigation.TfSpaceViewNavigation","WebVella.Tefter")]
 public partial class TfSpaceViewNavigation : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
@@ -141,9 +138,10 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		}
 	}
 
-	private void onDataListClick(){ 
+	private void onDataListClick()
+	{
 		Guid? spaceDataId = null;
-		if(SpaceState.Value.SpaceDataList.Count > 0) spaceDataId = SpaceState.Value.SpaceDataList[0].Id;
+		if (SpaceState.Value.SpaceDataList.Count > 0) spaceDataId = SpaceState.Value.SpaceDataList[0].Id;
 		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, SpaceState.Value.Space.Id, spaceDataId));
 	}
 	private async Task onSearch(string value)

@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.AdminDataProviderStateManager;
+namespace WebVella.Tefter.Web.Components;
 public partial class TfAdminDataProviderStateManager : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }

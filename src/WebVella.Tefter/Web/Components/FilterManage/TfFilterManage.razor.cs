@@ -1,6 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.SpaceDataManage;
-
-namespace WebVella.Tefter.Web.Components.FilterManage;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.FilterManage.TfFilterManage","WebVella.Tefter")]
 public partial class TfFilterManage : TfBaseComponent
 {
 	[CascadingParameter(Name = "TfSpaceDataManage")]
@@ -33,8 +32,8 @@ public partial class TfFilterManage : TfBaseComponent
 		TucFilterBase updateObj = null;
 		if (model is TucFilterBoolean)
 		{
-			var original = (TucFilterBoolean)model with {Id = model.Id};
-			var item = (TucFilterBoolean)model with {Id = model.Id};
+			var original = (TucFilterBoolean)model with { Id = model.Id };
+			var item = (TucFilterBoolean)model with { Id = model.Id };
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterBooleanComparisonMethod)valueObj;
@@ -53,8 +52,8 @@ public partial class TfFilterManage : TfBaseComponent
 		}
 		else if (model is TucFilterDateOnly)
 		{
-			var original = (TucFilterDateOnly)model with {Id = model.Id};
-			var item = (TucFilterDateOnly)model with {Id = model.Id};
+			var original = (TucFilterDateOnly)model with { Id = model.Id };
+			var item = (TucFilterDateOnly)model with { Id = model.Id };
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterDateTimeComparisonMethod)valueObj;
@@ -73,8 +72,8 @@ public partial class TfFilterManage : TfBaseComponent
 		}
 		else if (model is TucFilterDateTime)
 		{
-			var original = (TucFilterDateTime)model with {Id = model.Id};
-			var item = (TucFilterDateTime)model with {Id = model.Id};
+			var original = (TucFilterDateTime)model with { Id = model.Id };
+			var item = (TucFilterDateTime)model with { Id = model.Id };
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterDateTimeComparisonMethod)valueObj;
@@ -93,8 +92,8 @@ public partial class TfFilterManage : TfBaseComponent
 		}
 		else if (model is TucFilterGuid)
 		{
-			var original = (TucFilterGuid)model with {Id = model.Id};
-			var item = (TucFilterGuid)model with {Id = model.Id};
+			var original = (TucFilterGuid)model with { Id = model.Id };
+			var item = (TucFilterGuid)model with { Id = model.Id };
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterGuidComparisonMethod)valueObj;
@@ -117,8 +116,8 @@ public partial class TfFilterManage : TfBaseComponent
 		}
 		else if (model is TucFilterNumeric)
 		{
-			var original = (TucFilterNumeric)model with {Id = model.Id};
-			var item = (TucFilterNumeric)model with {Id = model.Id};
+			var original = (TucFilterNumeric)model with { Id = model.Id };
+			var item = (TucFilterNumeric)model with { Id = model.Id };
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterNumericComparisonMethod)valueObj;
@@ -138,8 +137,8 @@ public partial class TfFilterManage : TfBaseComponent
 		}
 		else if (model is TucFilterText)
 		{
-			var original = (TucFilterText)model with {Id = model.Id};
-			var item = (TucFilterText)model with {Id = model.Id};
+			var original = (TucFilterText)model with { Id = model.Id };
+			var item = (TucFilterText)model with { Id = model.Id };
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterTextComparisonMethod)valueObj;

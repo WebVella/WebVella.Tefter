@@ -1,4 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceDataViews;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataViews.TfSpaceDataViews","WebVella.Tefter")]
 public partial class TfSpaceDataViews : TfFormBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }

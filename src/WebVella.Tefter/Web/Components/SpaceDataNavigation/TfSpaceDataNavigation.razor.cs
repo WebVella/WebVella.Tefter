@@ -1,8 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SpaceManageDialog;
-using WebVella.Tefter.Web.Components.SpaceSelector;
-using WebVella.Tefter.Web.Components.SpaceDataManageDialog;
-
-namespace WebVella.Tefter.Web.Components.SpaceDataNavigation;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceDataNavigation : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
@@ -92,7 +88,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private async Task onAddClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceDataManageDialog>(
-		new TucSpaceData{ SpaceId = SpaceState.Value.Space.Id},
+		new TucSpaceData { SpaceId = SpaceState.Value.Space.Id },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -104,7 +100,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		{
 			var item = (TucSpaceData)result.Data;
 			ToastService.ShowSuccess(LOC("Space dataset successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl,item.SpaceId, item.Id));
+			Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, item.SpaceId, item.Id));
 		}
 	}
 
@@ -142,9 +138,10 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		}
 	}
 
-	private void onViewsListClick(){ 
+	private void onViewsListClick()
+	{
 		Guid? spaceViewId = null;
-		if(SpaceState.Value.SpaceViewList.Count > 0) spaceViewId = SpaceState.Value.SpaceViewList[0].Id;
+		if (SpaceState.Value.SpaceViewList.Count > 0) spaceViewId = SpaceState.Value.SpaceViewList[0].Id;
 		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, SpaceState.Value.Space.Id, spaceViewId));
 	}
 

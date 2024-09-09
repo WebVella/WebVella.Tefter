@@ -1,6 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfTextColumn : TfBaseColumn
 {
+
+
 	private string _value = string.Empty;
 
 	protected override void OnInitialized()

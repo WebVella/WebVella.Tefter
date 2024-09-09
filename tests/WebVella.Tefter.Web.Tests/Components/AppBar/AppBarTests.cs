@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Globalization;
-using WebVella.Tefter.Web.Components.AppBar;
+using WebVella.Tefter.Web.Components;
 
-namespace WebVella.Tefter.Web.Tests.Components.SidebarToggle;
+namespace WebVella.Tefter.Web.Tests.Components;
 
 
 public class AppBarComponentTests : BaseTest

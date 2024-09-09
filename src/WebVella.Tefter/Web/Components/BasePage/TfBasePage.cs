@@ -1,7 +1,7 @@
 ﻿
 using Nito.AsyncEx;
 
-namespace WebVella.Tefter.Web.Components.BasePage;
+namespace WebVella.Tefter.Web.Components;
 
 public class TfBasePage : FluxorComponent
 {

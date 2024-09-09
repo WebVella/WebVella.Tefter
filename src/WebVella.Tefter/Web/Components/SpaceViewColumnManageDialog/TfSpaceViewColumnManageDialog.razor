@@ -1,4 +1,5 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
@@ -22,7 +23,7 @@
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
 
 	}
-	else
+	else if (!UC.IsBusy)
 	{
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
 						FormName="submit-form" class="tf-form" novalidate>
@@ -41,16 +42,20 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="short?" @bind-Value=UC.SpaceViewColumnForm.Position
-									   Label="@LOC("Position")" Style="width:100%" Placeholder="@LOC("leave empty for last")" />
+					<FluentNumberField TValue="short?" @bind-Value=UC.SpaceViewColumnForm.Position AutoComplete="new-password"
+									   Label="@LOC("Insert in position")" Style="width:100%" Placeholder="@LOC("leave empty for last")" />
 					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.Position)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6"></FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect Label="@LOC("Type")" Style="width:100%" Placeholder="@LOC("select...")"
-								  TOption="TucSpaceViewColumnType" SelectedOption="UC.SpaceViewColumnForm.ColumnType"
+					<FluentSelect Label="@LOC("Column type")" Style="width:100%"
+								  TOption="TucSpaceViewColumnType" Required="true"
+								  Value="@(UC.SpaceViewColumnForm.ColumnType?.Id.ToString())"
+								  ValueChanged="_columnTypeChangeHandler"
+								  OptionText="((x)=> x.Name)"
+								  OptionValue="((x)=> x.Id.ToString())"
 								  Items="UC.AvailableColumnTypes">
 						<OptionTemplate Context="option">
 							<FluentStack>
@@ -61,23 +66,86 @@
 					</FluentSelect>
 					<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.ColumnType)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6"></FluentGridItem>
+				<FluentGridItem xs="6">
+					@if (_renderComponentTypeSelect)
+					{
+						<FluentSelect Label="@LOC("Presentation component")"
+									  Style="width:100%" Required=true
+									  Value="@UC.SpaceViewColumnForm.ComponentType.FullName"
+									  ValueChanged="_columnComponentChangeHandler"
+									  TOption="Type"
+									  OptionText="((x)=> x.ToDescriptionString())"
+									  OptionValue="((x)=> x.FullName)"
+									  Items="UC.SpaceViewColumnForm.ColumnType?.SupportedComponentTypes" />
+
+						<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.ColumnType)" />
+					}
+				</FluentGridItem>
 			</FluentGrid>
-			@if (UC.SpaceViewColumnForm.ColumnType is not null)
+			@if (UC.SpaceViewColumnForm.ColumnType is not null && UC.SpaceViewColumnForm.ComponentType is not null)
 			{
 				<FluentDivider Style="margin:15px 0" />
+				<FluentLabel Typo="Typography.H5" Style="margin:1rem 0">@LOC("Data mapping")</FluentLabel>
+				@if (UC.SpaceViewColumnForm.ColumnType.DataMapping is not null
+						&& UC.SpaceViewColumnForm.ColumnType.DataMapping.Count > 0)
+				{
+					foreach (var item in UC.SpaceViewColumnForm.ColumnType.DataMapping)
+					{
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias Immediate ImmediateDelay="500"
+												 Disabled="true" Label="@LOC("Component alias")" Style="width:100%" AutoComplete="new-password" />
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_getDataMappingValue(item.Alias)
+												 Immediate ImmediateDelay="500"
+												 Label="@LOC("Data column name")" Style="width:100%" AutoComplete="new-password" />
+							</FluentGridItem>
+						</FluentGrid>
+						<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.DataMapping)" />
+					}
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Sort by alias")" />
+							<div>
+								@foreach (var item in UC.SpaceViewColumnForm.ColumnType.SortAliases)
+								{
+									<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
+								}
+								@if (UC.SpaceViewColumnForm.ColumnType.SortAliases.Count == 0)
+								{
+									<FluentLabel Color="@Color.Disabled" Typo="@Typography.Body">@LOC("column cannot be sorted")</FluentLabel>
+								}
+							</div>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Filter by alias")" />
+							<div>
+								@foreach (var item in UC.SpaceViewColumnForm.ColumnType.FilterAliases)
+								{
+									<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
+								}
+								@if (UC.SpaceViewColumnForm.ColumnType.FilterAliases.Count == 0)
+								{
+									<FluentLabel Color="@Color.Disabled" Typo="@Typography.Body">@LOC("column cannot be filtered")</FluentLabel>
+								}
+							</div>
+						</FluentGridItem>
+					</FluentGrid>
+				}
+				<FluentLabel Typo="Typography.H5" Style="margin:1rem 0">@LOC("Component options")</FluentLabel>
 				<FluentGrid>
 					<FluentGridItem xs="12">
-@* 						@if (UC.SpaceViewColumnForm.ColumnType. is not null)
+						@if (UC.SpaceViewColumnForm.ComponentType is not null)
 						{
-							<DynamicComponent Type="DataProviderDetailsState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+							<DynamicComponent Type="UC.SpaceViewColumnForm.ComponentType" Parameters="@_getColumnComponentContext()" />
 						}
 						else
 						{
 							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
 								<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
 							</FluentMessageBar>
-						} *@
+						}
 					</FluentGridItem>
 				</FluentGrid>
 			}

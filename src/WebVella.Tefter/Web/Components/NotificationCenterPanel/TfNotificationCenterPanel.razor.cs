@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.NotificationCenterPanel;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContentComponent<GlobalState>
 {
 	[Parameter]

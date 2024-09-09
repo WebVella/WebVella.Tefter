@@ -1,6 +1,5 @@
-﻿
-
-namespace WebVella.Tefter.Web.Components.AdminDataProviderDetailsNav;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderDetailsNav.TfAdminDataProviderDetailsNav","WebVella.Tefter")]
 public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 {
 	private List<MenuItem> menu = new();

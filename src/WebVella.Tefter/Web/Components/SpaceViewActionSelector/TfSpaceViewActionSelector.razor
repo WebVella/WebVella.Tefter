@@ -1,8 +1,9 @@
-﻿@inherits TfBaseComponent
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
 @if (_open)
 {
 	<div class="view-export-selector-menu">
-		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
 			@foreach (var comp in _regionComponents)
 			{
 				<DynamicComponent Type="comp.ComponentType" />

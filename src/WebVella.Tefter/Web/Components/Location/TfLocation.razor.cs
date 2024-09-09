@@ -1,4 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components.Location;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.Location.TfLocation","WebVella.Tefter")]
 public partial class TfLocation : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }

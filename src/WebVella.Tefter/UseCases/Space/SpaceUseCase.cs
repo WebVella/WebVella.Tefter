@@ -1,16 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SearchSpaceDialog;
-using WebVella.Tefter.Web.Components.SpaceDataFilterManageDialog;
-using WebVella.Tefter.Web.Components.SpaceDataManage;
-using WebVella.Tefter.Web.Components.SpaceDetails;
-using WebVella.Tefter.Web.Components.SpaceManageDialog;
-using WebVella.Tefter.Web.Components.SpaceStateManager;
-using WebVella.Tefter.Web.Components.SpaceViewManageDialog;
-using WebVella.Tefter.Web.Components.SpaceDataManageDialog;
-using WebVella.Tefter.Web.Components.SpaceDataViews;
-using WebVella.Tefter.Web.Components.SpaceViewManage;
-using WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog;
-
-namespace WebVella.Tefter.UseCases.Space;
+﻿namespace WebVella.Tefter.UseCases.Space;
 public partial class SpaceUseCase
 {
 	private readonly IIdentityManager _identityManager;
@@ -234,47 +222,47 @@ public partial class SpaceUseCase
 		return Result.Ok(new TucSpaceData(tfResult.Value));
 	}
 
-	internal Result<TucSpaceData> AddColumnToSpaceData(Guid spaceDataId,string columnDbName)
+	internal Result<TucSpaceData> AddColumnToSpaceData(Guid spaceDataId, string columnDbName)
 	{
-		if(spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
-		if(String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
+		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if (String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
 		var spaceData = GetSpaceData(spaceDataId);
-		if(spaceData is null) return Result.Fail("spaceData not found");
-		if(spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
+		if (spaceData is null) return Result.Fail("spaceData not found");
+		if (spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
 
 		spaceData.Columns.Add(columnDbName);
 		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed)return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
 		return Result.Ok(new TucSpaceData(updateResult.Value));
 
 	}
 
-	internal Result<TucSpaceData> RemoveColumnFromSpaceData(Guid spaceDataId,string columnDbName)
+	internal Result<TucSpaceData> RemoveColumnFromSpaceData(Guid spaceDataId, string columnDbName)
 	{
-		if(spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
-		if(String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
+		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if (String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
 		var spaceData = GetSpaceData(spaceDataId);
-		if(spaceData is null) return Result.Fail("spaceData not found");
-		if(!spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
+		if (spaceData is null) return Result.Fail("spaceData not found");
+		if (!spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
 
 		spaceData.Columns.Remove(columnDbName);
 		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed)return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
 		return Result.Ok(new TucSpaceData(updateResult.Value));
 
 	}
 
-	internal Result<TucSpaceData>UpdateSpaceDataFilters(Guid spaceDataId, List<TucFilterBase> filters)
+	internal Result<TucSpaceData> UpdateSpaceDataFilters(Guid spaceDataId, List<TucFilterBase> filters)
 	{
-		if(spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
 		var spaceData = GetSpaceData(spaceDataId);
-		if(spaceData is null) return Result.Fail("spaceData not found");
+		if (spaceData is null) return Result.Fail("spaceData not found");
 		spaceData.Filters = filters;
 		var model = spaceData.ToModel();
 		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed)return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
 		return Result.Ok(new TucSpaceData(updateResult.Value));
 
@@ -534,7 +522,30 @@ public partial class SpaceUseCase
 		return Result.Ok(new TucSpaceView(spaceView));
 	}
 
-	internal List<TucSpaceViewColumn> GetViewColumns(Guid viewId){ 
+
+	//View columns
+	internal TucSpaceViewColumn GetViewColumn(Guid columnId)
+	{
+		var serviceResult = _spaceManager.GetSpaceViewColumn(columnId);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpaceViewColumn failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return new();
+		}
+		if (serviceResult.Value is null) return new();
+
+		return new TucSpaceViewColumn(serviceResult.Value);
+
+	}
+
+	internal List<TucSpaceViewColumn> GetViewColumns(Guid viewId)
+	{
 		var serviceResult = _spaceManager.GetSpaceViewColumnsList(viewId);
 		if (serviceResult.IsFailed)
 		{
@@ -549,8 +560,53 @@ public partial class SpaceUseCase
 		}
 		if (serviceResult.Value is null) return new();
 
-		return serviceResult.Value.Select(x => new TucSpaceViewColumn(x)).ToList();		
-	
+		return serviceResult.Value.Select(x => new TucSpaceViewColumn(x)).ToList();
+
+	}
+
+	internal Result<TucSpaceViewColumn> CreateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	{
+		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType.Id);
+		if (selectedType is null) return Result.Fail("Column selected type not found");
+		var result = _spaceManager.CreateSpaceViewColumn(column.ToModel(selectedType));
+
+		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceViewColumn failed").CausedBy(result.Errors));
+		return Result.Ok(new TucSpaceViewColumn(result.Value));
+	}
+
+	internal Result<TucSpaceViewColumn> UpdateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	{
+		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType.Id);
+		if (selectedType is null) return Result.Fail("Column selected type not found");
+		var result = _spaceManager.UpdateSpaceViewColumn(column.ToModel(selectedType));
+
+		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceViewColumn failed").CausedBy(result.Errors));
+		return Result.Ok(new TucSpaceViewColumn(result.Value));
+	}
+
+	internal Result RemoveSpaceViewColumn(Guid columnId)
+	{
+		if (columnId == Guid.Empty) return Result.Fail("columnId is required");
+		var updateResult = _spaceManager.DeleteSpaceViewColumn(columnId);
+		if (updateResult.IsFailed) return Result.Fail(new Error("DeleteSpaceViewColumn failed").CausedBy(updateResult.Errors));
+		return Result.Ok();
+
+	}
+
+	internal Result<List<TucSpaceViewColumn>> MoveSpaceViewColumn(Guid viewId, Guid columnId, bool isUp)
+	{
+		if (columnId == Guid.Empty) return Result.Fail("columnId is required");
+		Result updateResult = null;
+		if (isUp)
+			updateResult = _spaceManager.MoveSpaceViewColumnUp(columnId);
+		else
+			updateResult = _spaceManager.MoveSpaceViewColumnDown(columnId);
+
+		if (updateResult.IsFailed) return Result.Fail(new Error("MoveSpaceViewColumn failed").CausedBy(updateResult.Errors));
+		return Result.Ok(GetViewColumns(viewId));
+
 	}
 
 

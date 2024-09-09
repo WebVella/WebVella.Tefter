@@ -1,4 +1,5 @@
-﻿@inherits TfBaseComponent
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
 @if (UC.IsBusy)
 {
 	<FluentBodyContent Class="content-body">
@@ -83,13 +84,13 @@ else
 				<TitleTemplate>
 					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 						<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
-							<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start"/>
+							<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 							@LOC("Add new")
 						</FluentButton>
 					</FluentStack>
 				</TitleTemplate>
 				<ChildContent>
-					@if (UC.ViewColumns.Count == 0)
+					@if (SpaceState.Value.SpaceViewColumnList.Count == 0)
 					{
 						@LOC("This view has no columns yet.")
 					}
@@ -98,24 +99,44 @@ else
 						<div class="tf-grid-wrapper">
 							<table class="tf-grid">
 								<tbody class="tf-grid-tbody">
-									@foreach (var context in UC.ViewColumns.OrderBy(x => x.Title))
+									@foreach (var context in SpaceState.Value.SpaceViewColumnList.OrderBy(x => x.Position))
 									{
 										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-											<td class="tf-grid-td" style="width:30px;">
+											<td class="tf-grid-td" style="width:1%;">
 												<div>
-													@* 							<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
-										Disabled="_submitting">
-										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-										</FluentButton> *@
+													<FluentStack Wrap="false">
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _editColumn(context))" Title="@LOC("Edit column")"
+																	  Disabled="_isSubmitting" IconStart="@TfConstants.EditIcon" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+																	  Disabled="_isSubmitting">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+														</FluentButton>
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,true))" Title="@LOC("Move up")"
+																	  Disabled="@(_isSubmitting || SpaceState.Value.SpaceViewColumnList.First().Id == context.Id)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,false))" Title="@LOC("Move down")"
+																	  Disabled="@(_isSubmitting || SpaceState.Value.SpaceViewColumnList.Last().Id == context.Id)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
+													</FluentStack>
+												</div>
+											</td>
+											<td class="tf-grid-td" style="width:20px;">
+												<div>@context.Position</div>
+											</td>
+											<td class="tf-grid-td" style="width:100px;">
+												<div>
+													<div>@context.Title</div>
+													<div class="td-description">@context.QueryName</div>
 												</div>
 											</td>
 											<td class="tf-grid-td">
 												<div>
-													<div>@context.Title</div>
+													<div>@context.ColumnType.Name</div>
+													<div class="td-description">@context.ColumnType.Description</div>
 												</div>
 											</td>
-											<td class="tf-grid-td" style="width:100px;">
+											<td class="tf-grid-td">
 												<div>
+													<div>@context.ComponentType.Name</div>
+													<div class="td-description">@context.ComponentType.FullName</div>
 												</div>
 											</td>
 										</tr>

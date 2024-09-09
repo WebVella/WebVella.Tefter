@@ -1,4 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components.DataProviderKeyManageDialog;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderKeyManageDialog.TfDataProviderKeyManageDialog","WebVella.Tefter")]
 public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSharedKey>
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }

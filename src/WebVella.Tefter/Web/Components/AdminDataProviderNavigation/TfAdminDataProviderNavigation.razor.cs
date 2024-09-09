@@ -1,6 +1,5 @@
-﻿using WebVella.Tefter.Web.Components.DataProviderManageDialog;
-
-namespace WebVella.Tefter.Web.Components.AdminDataProviderNavigation;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderNavigation.TfAdminDataProviderNavigation","WebVella.Tefter")]
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }

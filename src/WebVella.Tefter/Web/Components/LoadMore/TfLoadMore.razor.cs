@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.LoadMore;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfLoadMore : ComponentBase
 {
 	[Parameter]

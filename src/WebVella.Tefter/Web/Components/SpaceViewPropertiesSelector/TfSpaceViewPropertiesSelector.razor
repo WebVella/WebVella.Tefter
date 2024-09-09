@@ -1,8 +1,9 @@
-﻿@inherits TfBaseComponent
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
 @if (_open)
 {
 	<div class="grid-properties-selector-menu">
-		<FluentMenu Width="200" @bind-Open="_open" Anchor="grid-properties-selector">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="grid-properties-selector" UseMenuService="false">
 			<FluentMenuItem>
 				Freeze Columns
 				<FluentIcon Value="@TfConstants.GetIcon("TableFreezeColumn")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />

@@ -1,4 +1,6 @@
 ﻿using WebVella.Tefter.Core;
+using WebVella.Tefter.Web.Models;
+using WebVella.Tefter.Web.ViewColumns;
 
 namespace WebVella.Tefter.Tests;
 
@@ -555,7 +557,7 @@ public partial class SpaceManagerTests : BaseTest
 				spaceViewResult.Value.Should().NotBeNull();
 
 				var availableColumnTypes = spaceManager.GetAvailableSpaceViewColumnTypes().Value;
-				Type componentType = typeof(TfGeneralViewColumnComponent);
+				Type componentType = typeof(TfTextViewColumn);
 
 				List<TfSpaceViewColumn> createdColums = new List<TfSpaceViewColumn>();
 

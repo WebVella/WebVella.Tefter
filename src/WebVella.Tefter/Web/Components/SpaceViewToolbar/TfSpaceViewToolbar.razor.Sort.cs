@@ -1,5 +1,4 @@
-﻿using WebVella.Tefter.Web.Components.SpaceViewSortSelector;
-namespace WebVella.Tefter.Web.Components.SpaceViewToolbar;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 

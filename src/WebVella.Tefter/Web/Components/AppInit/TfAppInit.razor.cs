@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.AppInit;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfAppInit : TfBaseComponent
 {
 	[Inject] private AppStartUseCase UC { get; set; }

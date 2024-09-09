@@ -1,13 +1,11 @@
-﻿using WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog;
-
-namespace WebVella.Tefter.Web.Components.SpaceViewManage;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewManage : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	[Inject] private SpaceUseCase UC { get; set; }
-
+	private bool _isSubmitting = false;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -21,7 +19,6 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -32,9 +29,24 @@ public partial class TfSpaceViewManage : TfBaseComponent
 			await UC.InitSpaceViewManageAfterRender(SpaceState.Value);
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
+			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+				spaceViewColumns: UC.ViewColumns
+			));
+			ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
+			ActionSubscriber.SubscribeToAction<SpaceViewMetaChangedAction>(this, On_StateViewMetaChanged);
 		}
 	}
 	private void On_StateChanged(SpaceStateChangedAction action)
+	{
+		InvokeAsync(async () =>
+		{
+			await UC.InitSpaceViewManageAfterRender(SpaceState.Value);
+			await InvokeAsync(StateHasChanged);
+		});
+
+	}
+
+	private void On_StateViewMetaChanged(SpaceViewMetaChangedAction action)
 	{
 		InvokeAsync(async () =>
 		{
@@ -57,11 +69,102 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			UC.ViewColumns = (List<TucSpaceViewColumn>)result.Data;
+			var updatedColumn = (TucSpaceViewColumn)result.Data;
+			UC.ViewColumns.Add(updatedColumn);
+			UC.ViewColumns = UC.ViewColumns.OrderBy(x => x.QueryName).ToList();
+
+			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+				spaceViewColumns: UC.ViewColumns
+			));
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
+	private async Task _editColumn(TucSpaceViewColumn column)
+	{
 
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewColumnManageDialog>(
+				column,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var updatedColumn = (TucSpaceViewColumn)result.Data;
+			var columnIndex = UC.ViewColumns.FindIndex(x => x.Id == updatedColumn.Id);
+			if (columnIndex > -1) UC.ViewColumns[columnIndex] = updatedColumn;
+			UC.ViewColumns = UC.ViewColumns.OrderBy(x => x.QueryName).ToList();
+			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+				spaceViewColumns: UC.ViewColumns
+			));
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _deleteColumn(TucSpaceViewColumn column)
+	{
+		if (_isSubmitting) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?")))
+			return;
+
+		try
+		{
+			_isSubmitting = true;
+			Result submitResult = UC.RemoveSpaceViewColumn(column.Id);
+			ProcessServiceResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Space View updated!"));
+				var columnIndex = UC.ViewColumns.FindIndex(x => x.Id == column.Id);
+				if (columnIndex > -1) UC.ViewColumns.RemoveAt(columnIndex);
+
+				Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+					spaceViewColumns: UC.ViewColumns
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isSubmitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
+
+	private async Task _moveColumn(TucSpaceViewColumn column, bool isUp)
+	{
+		if (_isSubmitting) return;
+		try
+		{
+			Result<List<TucSpaceViewColumn>> submitResult = UC.MoveSpaceViewColumn(viewId: SpaceState.Value.SpaceView.Id, columnId: column.Id, isUp: isUp);
+			ProcessServiceResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Space View updated!"));
+
+				Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+					spaceViewColumns: submitResult.Value
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isSubmitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
 
 }

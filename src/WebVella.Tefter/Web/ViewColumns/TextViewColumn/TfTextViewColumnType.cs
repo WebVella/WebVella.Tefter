@@ -1,8 +1,8 @@
-﻿namespace WebVella.Tefter.Core;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 public class TfTextViewColumnType : ITfSpaceViewColumnType
 {
-	const string TF_COLUMN_TEXT_ID = "f061a3ce-7813-4fd6-98cb-a10cccea4797";
+	const string TF_COLUMN_TEXT_ID = Constants.TF_COLUMN_TEXT_ID;
 	const string TF_COLUMN_TEXT_NAME = "Text";
 	const string TF_COLUMN_TEXT_DESCRIPTION = "A text column";
 	const string TF_COLUMN_TEXT_ICON = "TextCaseTitle";
@@ -49,9 +49,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfGeneralViewColumnComponent);
+		DefaultComponentType = typeof(TfTextViewColumn);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfGeneralViewColumnComponent) };
+		SupportedComponentTypes = new List<Type> { typeof(TfTextViewColumn) };
 	}
 }
 

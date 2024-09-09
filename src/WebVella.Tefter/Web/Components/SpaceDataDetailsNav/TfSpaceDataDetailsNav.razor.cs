@@ -1,9 +1,7 @@
-﻿
+﻿using RouteData = WebVella.Tefter.Web.Models.RouteData;
 
-using WebVella.Tefter.Web.Components.SpaceDataManageDialog;
-using RouteData = WebVella.Tefter.Web.Models.RouteData;
-
-namespace WebVella.Tefter.Web.Components.SpaceDataDetailsNav;
+namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataDetailsNav.TfSpaceDataDetailsNav","WebVella.Tefter")]
 public partial class TfSpaceDataDetailsNav : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }

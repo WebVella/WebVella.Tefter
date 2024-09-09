@@ -1,4 +1,5 @@
-﻿@inherits TfBaseComponent
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
 
 <div class="@($"sidebar-nav {(ScreenStateSidebarExpanded.Value ? "expanded" : "collapsed")}")">
 	<div class="sidebar-toolbar">
@@ -10,7 +11,7 @@
 						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
 				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
 			</FluentButton>
-			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px">
+			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
 				<FluentMenuItem OnClick="onManageSpaceClick" >
 					@LOC("Manage Space")
 					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />

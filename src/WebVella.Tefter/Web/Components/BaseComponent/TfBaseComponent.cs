@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using Nito.AsyncEx;
-using WebVella.Tefter.Errors;
-
-namespace WebVella.Tefter.Web.Components.BaseComponent;
+﻿namespace WebVella.Tefter.Web.Components;
 
 public class TfBaseComponent : FluxorComponent
 {
@@ -28,26 +24,35 @@ public class TfBaseComponent : FluxorComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		LC = StringLocalizerFactory.Create(this.GetType());
+		var type = this.GetType();
+		var (resourceBaseName, resourceLocation) = type.GetLocalizationResourceInfo();
+		if (!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation))
+		{
+			LC = StringLocalizerFactory.Create(resourceBaseName, resourceLocation);
+		}
+		else
+		{
+			LC = StringLocalizerFactory.Create(type);
+		}
 		if (GL is null)
 		{
 			using (_lock.Lock())
 			{
-				GL = StringLocalizerFactory.Create(this.GetType().BaseType);
+				GL = StringLocalizerFactory.Create(type.BaseType);
 			}
 		}
 
-		#if DEBUG
-		if(hasLogging) Console.WriteLine($"+++++++ Initialized {this.GetType().Name}");
-		#endif
+#if DEBUG
+		if (hasLogging) Console.WriteLine($"+++++++ Initialized {type.Name}");
+#endif
 	}
 
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-		#if DEBUG
-		if(hasLogging) Console.WriteLine($"+++++++ Render {this.GetType().Name}");
-		#endif
+#if DEBUG
+		if (hasLogging) Console.WriteLine($"+++++++ Render {this.GetType().Name}");
+#endif
 	}
 
 	protected string LOC(string key, params object[] arguments)
@@ -66,11 +71,11 @@ public class TfBaseComponent : FluxorComponent
 	protected void ProcessServiceResponse(Result<object> response)
 	{
 		ResultUtils.ProcessServiceResult(
-			result:response,
-			toastErrorMessage:LOC("Unexpected Error! Check Notifications for details"),
-			notificationErrorTitle:LOC("Unexpected Error!"),
-			toastService:ToastService,
-			messageService:MessageService
+			result: response,
+			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
+			notificationErrorTitle: LOC("Unexpected Error!"),
+			toastService: ToastService,
+			messageService: MessageService
 		);
 	}
 
@@ -82,13 +87,13 @@ public class TfBaseComponent : FluxorComponent
 	protected string ProcessException(Exception ex)
 	{
 		return ResultUtils.ProcessException(
-			exception:ex,
-			toastErrorMessage:LOC("Unexpected Error! Check Notifications for details"),
-			notificationErrorTitle:LOC("Unexpected Error!"),
-			toastService:ToastService,
+			exception: ex,
+			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
+			notificationErrorTitle: LOC("Unexpected Error!"),
+			toastService: ToastService,
 			messageService: MessageService
 		);
 	}
-	
+
 
 }

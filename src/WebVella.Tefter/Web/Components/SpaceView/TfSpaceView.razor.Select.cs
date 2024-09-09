@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components.SpaceView;
+﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceView : TfBaseComponent
 {
 	private Icon _iconUnselected = TfConstants.GetIcon("CheckboxUnchecked").WithColor(Color.FillInverse);
@@ -17,7 +17,7 @@ public partial class TfSpaceView : TfBaseComponent
 		{
 			_selectedItems.AddRange(_data);
 		}
-		Dispatcher.Dispatch(new SetSelectedDataRowsAction(_selectedItems.Select(x=> x.Id).ToList()));
+		Dispatcher.Dispatch(new SetSelectedDataRowsAction(_selectedItems.Select(x => x.Id).ToList()));
 	}
 
 	private void onRowSelect(DemoDataRow row)

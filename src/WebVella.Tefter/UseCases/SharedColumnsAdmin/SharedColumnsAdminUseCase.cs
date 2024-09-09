@@ -1,7 +1,4 @@
 ﻿using WebVella.Tefter.Api;
-using WebVella.Tefter.Web.Components.AdminSharedColumns;
-using WebVella.Tefter.Web.Components.SharedColumnManageDialog;
-
 
 namespace WebVella.Tefter.UseCases.SharedColumnsAdmin;
 public partial class SharedColumnsAdminUseCase

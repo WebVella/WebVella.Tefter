@@ -1,4 +1,5 @@
-﻿@inherits TfBaseComponent
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
 
 <div class="language-switch">
 	<FluentButton Id="language-switch-btn"
@@ -6,7 +7,7 @@
 		<img src="@CultureState.Value.Culture?.IconUrl" />
 	</FluentButton>
 </div>
-<FluentMenu Width="200" @bind-Open="_visible" Anchor="language-switch-btn">
+<FluentMenu Width="200" @bind-Open="_visible" Anchor="language-switch-btn" UseMenuService="false">
 	@foreach (var item in TfConstants.CultureOptions)
 	{
 		<FluentMenuItem OnClick="@(()=> _select(item))">

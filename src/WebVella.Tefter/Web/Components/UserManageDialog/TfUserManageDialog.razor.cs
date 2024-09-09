@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebVella.Tefter.Web.Components.UserManageDialog;
+﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.UserManageDialog.TfUserManageDialog","WebVella.Tefter")]
 public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<TucUser>
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
@@ -52,11 +51,12 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 					ThemeColor = Content.Settings.ThemeColor,
 					IsSidebarOpen = Content.Settings.IsSidebarOpen,
 				};
-				if(Content.Roles is not null){
+				if (Content.Roles is not null)
+				{
 					foreach (var role in Content.Roles)
 					{
-						var listIndex = UC.AllRoles.FindIndex(x=> x.Id == role.Id);
-						if(listIndex != -1) UC.Form.Roles.Add(UC.AllRoles[listIndex]);
+						var listIndex = UC.AllRoles.FindIndex(x => x.Id == role.Id);
+						if (listIndex != -1) UC.Form.Roles.Add(UC.AllRoles[listIndex]);
 					}
 				}
 

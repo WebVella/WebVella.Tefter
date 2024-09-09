@@ -1,13 +1,10 @@
 ﻿using Fluxor;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Microsoft.JSInterop;
 using Moq;
 using System;
 using WebVella.Tefter.Identity;
-using WebVella.Tefter.Web.Components.Login;
 using WebVella.Tefter.Web.Services;
 using WebVella.Tefter.Web.Store.ScreenState;
 using WebVella.Tefter.Web.Store.UserState;

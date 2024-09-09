@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Web.Components.AdminUserDetailsNav;
+namespace WebVella.Tefter.Web.Components;
 public partial class TfAdminUserDetailsNav : TfBaseComponent
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
