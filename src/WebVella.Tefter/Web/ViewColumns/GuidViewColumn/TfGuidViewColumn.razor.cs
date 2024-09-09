@@ -1,18 +1,27 @@
 ﻿
+using Microsoft.AspNetCore.Components.Forms;
+
 namespace WebVella.Tefter.Web.ViewColumns;
 
 [Description("Tefter GUID")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.GuidViewColumn.TfGuidViewColumn","WebVella.Tefter")]
-public partial class TfGuidViewColumn : TfBaseViewColumn
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.GuidViewColumn.TfGuidViewColumn", "WebVella.Tefter")]
+public partial class TfGuidViewColumn : TfBaseViewColumn<TfGuidViewColumnOptions>
 {
-	protected override void OnInitialized()
+
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
 	}
 
-	private async Task _changeValue()
+	protected override void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
 	{
-		if (!ValueChanged.HasDelegate) return;
-		await ValueChanged.InvokeAsync("{time:'" + DateTime.Now.ToString()+ "'}");
+		base.OnValidationRequested(sender,e);
+		//Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "problem with json");
+
 	}
+}
+
+public class TfGuidViewColumnOptions
+{
+
 }

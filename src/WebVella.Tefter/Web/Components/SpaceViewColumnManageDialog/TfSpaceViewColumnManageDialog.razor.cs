@@ -185,11 +185,13 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			Mode = TfComponentMode.Options,
 			CustomOptionsJson = UC.SpaceViewColumnForm.CustomOptionsJson,
 			DataMapping = UC.SpaceViewColumnForm.DataMapping,
-			DataTable = null,
+			DataRow = null,
 			RowIndex = -1,
 			QueryName = UC.SpaceViewColumnForm.QueryName,
 			SelectedAddonId = UC.SpaceViewColumnForm.SelectedAddonId,
-			SpaceViewId = UC.SpaceViewColumnForm.SpaceViewId
+			SpaceViewId = UC.SpaceViewColumnForm.SpaceViewId,
+			EditContext = EditContext,
+			ValidationMessageStore = MessageStore
 		};
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_VALUE_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _customOptionsChangedHandler);
 		return componentData;

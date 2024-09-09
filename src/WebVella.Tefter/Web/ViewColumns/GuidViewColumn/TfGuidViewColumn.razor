@@ -1,16 +1,12 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn
+@inherits TfBaseViewColumn<TfGuidViewColumnOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>Guid Display</div>
-	<div style="color:red">@LOC("test")</div>
-
+	<span>@((GetData<Guid>("Value")).ToString())</span>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
-	<div>Guid Display</div>
-	<div>Translated: @LOC("test")</div>
-	<FluentButton OnClick="_changeValue">Change Value</FluentButton>
+	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false"/>
 }
 else
 {

@@ -1,36 +1,21 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿using Microsoft.AspNetCore.Components.Forms;
+
+namespace WebVella.Tefter.Web.ViewColumns;
 
 [Description("Tefter Boolean")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.BooleanViewColumn.TfBooleanViewColumn", "WebVella.Tefter")]
-public partial class TfBooleanViewColumn : TfBaseViewColumn
+public partial class TfBooleanViewColumn : TfBaseViewColumn<TfBooleanViewColumnOptions>
 {
-	private TfBooleanViewColumnOptions options { get; set; }
-	private string optionsSerialized = null;
-
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		options = new();
-		optionsSerialized = JsonSerializer.Serialize(options);
+		await base.OnInitializedAsync();
 	}
-	protected override void OnParametersSet()
+
+	protected override void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
 	{
-		base.OnParametersSet();
-		if (String.IsNullOrWhiteSpace(Context.CustomOptionsJson))
-		{
-			options = new();
-			optionsSerialized = JsonSerializer.Serialize(options);
-		}
-		else if (Context.CustomOptionsJson != optionsSerialized)
-		{
-			try
-			{
-				options = JsonSerializer.Deserialize<TfBooleanViewColumnOptions>(Context.CustomOptionsJson);
-			}
-			catch (Exception ex) {
-				
-			}
-		}
+		base.OnValidationRequested(sender,e);
+		//Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "problem with json");
+
 	}
 
 	private async Task _optionsTextValueChanged(string value, string propName)
@@ -95,6 +80,8 @@ public partial class TfBooleanViewColumn : TfBaseViewColumn
 		}
 
 	}
+
+
 }
 
 public class TfBooleanViewColumnOptions

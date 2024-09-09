@@ -1,6 +1,10 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn
-@if (Context.Mode == TfComponentMode.Options)
+@inherits TfBaseViewColumn<TfBooleanViewColumnOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	<span>@((GetData<Guid>("Value")).ToString())</span>
+}
+else if (Context.Mode == TfComponentMode.Options)
 {
 
 	<FluentInputLabel Label="TRUE value" />
@@ -30,9 +34,8 @@
 		</FluentGridItem>
 	</FluentGrid>
 }
-else if (Context.Mode == TfComponentMode.Display)
+else
 {
-
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
 }
-
 

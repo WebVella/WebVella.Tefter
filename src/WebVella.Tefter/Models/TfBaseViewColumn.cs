@@ -1,6 +1,9 @@
-﻿namespace WebVella.Tefter.Models;
+﻿
+using Microsoft.AspNetCore.Components.Forms;
 
-public class TfBaseViewColumn : ComponentBase
+namespace WebVella.Tefter.Models;
+
+public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 {
 	[Parameter]
 	public TfComponentContext Context { get; set; }
@@ -12,9 +15,21 @@ public class TfBaseViewColumn : ComponentBase
 
 	protected IStringLocalizer LC;
 
-	protected override void OnInitialized()
+	protected virtual TItem options { get; set; }
+	protected string optionsSerialized = null;
+
+	public ValueTask DisposeAsync()
 	{
-		base.OnInitialized();
+		if (Context.EditContext is not null)
+		{
+			Context.EditContext.OnValidationRequested -= OnValidationRequested;
+		}
+		return ValueTask.CompletedTask;
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
 		var type = this.GetType();
 		var (resourceBaseName, resourceLocation) = type.GetLocalizationResourceInfo();
 		if (!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation))
@@ -25,7 +40,22 @@ public class TfBaseViewColumn : ComponentBase
 		{
 			LC = StringLocalizerFactory.Create(type);
 		}
+		Context.EditContext.OnValidationRequested += OnValidationRequested;
 
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (String.IsNullOrWhiteSpace(Context.CustomOptionsJson))
+		{
+			options = default;
+			optionsSerialized = JsonSerializer.Serialize(options);
+		}
+		else if (Context.CustomOptionsJson != optionsSerialized)
+		{
+			options = JsonSerializer.Deserialize<TItem>(Context.CustomOptionsJson);
+		}
 	}
 
 	protected string LOC(string key, params object[] arguments)
@@ -34,4 +64,37 @@ public class TfBaseViewColumn : ComponentBase
 		return key;
 	}
 
+	/// <summary>
+	/// Called when EditContext.Validate is triggered by the parent component
+	/// Override in child component
+	/// Add possible validation errors with:
+	/// Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "your message here");
+	/// Note: in the above change only the message text
+	/// </summary>
+	/// <param name="sender"></param>
+	/// <param name="e"></param>
+	protected virtual void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
+	{
+		//Should be overrided in child component if needed
+	}
+
+	/// <summary>
+	/// Used to get data by alias and type from the child components
+	/// </summary>
+	/// <typeparam name="TItem2">result data type</typeparam>
+	/// <param name="alias">case sensetive alias as defined in data mapping</param>
+	/// <returns></returns>
+	protected object GetData<TItem2>(string alias) 
+	{
+		string dbName = null;
+		if(Context.DataMapping.ContainsKey(alias)){ 
+			dbName = Context.DataMapping[alias];
+		}
+
+		if(String.IsNullOrWhiteSpace(dbName)){ 
+			return null;
+		}
+
+		return JsonSerializer.Deserialize<TItem2>(Context.DataRow[dbName].ToString());
+	}
 }

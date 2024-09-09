@@ -138,6 +138,7 @@
 					<FluentGridItem xs="12">
 						@if (UC.SpaceViewColumnForm.ComponentType is not null)
 						{
+							<FluentValidationMessage For="@(() => UC.SpaceViewColumnForm.CustomOptionsJson)" />
 							<DynamicComponent Type="UC.SpaceViewColumnForm.ComponentType" Parameters="@_getColumnComponentContext()" />
 						}
 						else
