@@ -3,9 +3,8 @@
 public partial class SpaceStateEffects
 {
 	[EffectMethod]
-	public Task HandleSetSpaceViewAction(SetSpaceViewAction action, IDispatcher dispatcher)
+	public Task HandleSetSpaceMetaViewAction(SetSpaceViewMetaAction action, IDispatcher dispatcher)
 	{
-		dispatcher.Dispatch(new SpaceStateChangedAction());
 		dispatcher.Dispatch(new SpaceViewMetaChangedAction());
 		return Task.CompletedTask;
 	}

@@ -5,7 +5,7 @@
 @if (_open)
 {
 	<div class="view-setting-selector-menu">
-		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector" UseMenuService="false">
 			<FluentMenuItem>
 				Bookmark
 				<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />

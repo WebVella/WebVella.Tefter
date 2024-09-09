@@ -2,8 +2,8 @@
 
 public partial class TfConstants
 {
-	public static string UIThemeLocalKey { get; set; } = "tf-theme";
-	public static string UserLocalKey { get; set; } = "tf-user";
-	public static string TefterCultureLocalKey { get; set; } = "tf-culture";
+	public static string UIThemeLocalKey  = "tf-theme";
+	public static string UserLocalKey  = "tf-user";
+	public static string TefterCultureLocalKey  = "tf-culture";
 
 }

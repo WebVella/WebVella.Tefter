@@ -119,6 +119,8 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private async Task _deleteColumn(string column)
 	{
 		if (_isSubmitting) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?")))
+			return;
 		try
 		{
 			Result<TucSpaceData> submitResult = UC.RemoveColumnFromSpaceData(SpaceState.Value.SpaceData.Id, column);

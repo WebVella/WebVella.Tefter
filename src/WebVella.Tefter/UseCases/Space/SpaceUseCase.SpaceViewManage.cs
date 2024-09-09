@@ -7,7 +7,7 @@ public partial class SpaceUseCase
 
 	internal Task InitSpaceViewManage()
 	{
-		AllDataProviders = GetDataProviderList();
+		AllDataProviders = GetDataProviderList();//should be in memory already
 		return Task.CompletedTask;
 	}
 

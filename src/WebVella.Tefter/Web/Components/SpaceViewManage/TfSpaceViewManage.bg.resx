@@ -117,40 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Accessibility" xml:space="preserve">
-    <value>Достъп</value>
-  </data>
   <data name="Are you sure that you need this column deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете колоната?</value>
   </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Откажи</value>
-  </data>
-  <data name="Color" xml:space="preserve">
-    <value>Цвят</value>
-  </data>
-  <data name="Create" xml:space="preserve">
-    <value>Създай</value>
-  </data>
-  <data name="Create view" xml:space="preserve">
-    <value>Създай изглед</value>
-  </data>
-  <data name="Icon" xml:space="preserve">
-    <value>Икона</value>
-  </data>
-  <data name="limited access" xml:space="preserve">
-    <value>ограничен достъп</value>
-  </data>
-  <data name="Manage view" xml:space="preserve">
-    <value>Редактирай изглед</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Име</value>
-  </data>
-  <data name="No filters added yet" xml:space="preserve">
-    <value>Все още няма добавени филтри</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Запомни</value>
+  <data name="Space View updated" xml:space="preserve">
+    <value>Изгледа е обновен</value>
   </data>
 </root>
