@@ -47,7 +47,7 @@ public record TucSpaceViewColumn
 			SelectedAddonId= SelectedAddonId,
 			QueryName = QueryName,
 			Title = Title,
-			Position = Position ?? 1,
+			Position = Position,
 			ColumnType = columnType,
 			ComponentType = ComponentType,
 			DataMapping = DataMapping,
