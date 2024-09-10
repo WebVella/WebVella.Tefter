@@ -15,7 +15,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	//NOTE: this changes the Items of the component type select
 	//there is a bug and the component needs to be rerendered when both value and items ara changed
 	private bool _renderComponentTypeSelect = false;
-
+	private string _activeTab = "data";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -174,6 +174,11 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			return UC.SpaceViewColumnForm.DataMapping[alias];
 
 		return null;
+	}
+
+	private void _dataMappingValueChanged(string value, string alias)
+	{
+		UC.SpaceViewColumnForm.DataMapping[alias] = value;
 	}
 
 	private Dictionary<string, object> _getColumnComponentContext()

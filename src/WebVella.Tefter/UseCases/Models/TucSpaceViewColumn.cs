@@ -7,13 +7,21 @@ public record TucSpaceViewColumn
 	public Guid Id { get; set; }
 	public Guid SpaceViewId { get; set; }
 	public Guid? SelectedAddonId { get; set; } = null;
+
+	[Required(ErrorMessage = "required")]
 	public string QueryName { get; set; }
+	[Required(ErrorMessage = "required")]
 	public string Title { get; set; }
 	public short? Position { get; set; }
+	
+	[Required(ErrorMessage = "required")]
 	public TucSpaceViewColumnType ColumnType { get; set; }
+
+	[Required(ErrorMessage = "required")]
 	public Type ComponentType { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
+	public TucSpaceViewColumnSettings Settings { get; set; } = new TucSpaceViewColumnSettings();
 
 	public string FullTypeName { get; set; }
 	public string FullComponentTypeName { get; set; }
@@ -34,6 +42,11 @@ public record TucSpaceViewColumn
 		CustomOptionsJson = model.CustomOptionsJson;
 		FullTypeName = model.FullTypeName;
 		FullComponentTypeName = model.FullComponentTypeName;
+		Settings = new TucSpaceViewColumnSettings();
+		if(!String.IsNullOrWhiteSpace(model.SettingsJson) && model.SettingsJson.StartsWith("{")
+		 && model.SettingsJson.EndsWith("}")){ 
+			Settings = JsonSerializer.Deserialize<TucSpaceViewColumnSettings>(model.SettingsJson);
+		 }
 	}
 
 	//Column type should be get from GetAvailableSpaceViewColumnTypes()
@@ -43,8 +56,8 @@ public record TucSpaceViewColumn
 		return new TfSpaceViewColumn
 		{
 			Id = Id,
-			SpaceViewId= SpaceViewId,
-			SelectedAddonId= SelectedAddonId,
+			SpaceViewId = SpaceViewId,
+			SelectedAddonId = SelectedAddonId,
 			QueryName = QueryName,
 			Title = Title,
 			Position = Position,
@@ -54,6 +67,7 @@ public record TucSpaceViewColumn
 			CustomOptionsJson = CustomOptionsJson,
 			FullTypeName = FullTypeName,
 			FullComponentTypeName = FullComponentTypeName,
+			SettingsJson = JsonSerializer.Serialize(Settings)
 		};
 	}
 

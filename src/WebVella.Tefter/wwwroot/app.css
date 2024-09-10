@@ -233,9 +233,13 @@ body {
 	flex: 0 0 40px;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
+    margin-left: var(--tf-content-padding);
+    margin-right: var(--tf-content-margin-bottom);
+	background: var(--neutral-stroke-active);
+	border-radius:var(--tf-content-border-radius) var(--tf-content-border-radius) 0 0;
 }
 
-	.tfdt__pager:before {
+/*	.tfdt__pager:before {
 		background: var(--neutral-stroke-active);
 		position:absolute;
 		left:0;
@@ -245,7 +249,7 @@ body {
 		height:1px;
 		content:"";
 		display:block;
-	}
+	}*/
 
 
 /* width */
