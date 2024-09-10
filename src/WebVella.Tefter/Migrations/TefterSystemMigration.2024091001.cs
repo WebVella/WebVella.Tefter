@@ -13,7 +13,7 @@ internal class TefterSystemMigration2024091001 : TefterSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddTextColumn("sort_orders_json", c => { c.NotNullable().WithDefaultValue("[]g"); });
+					.AddTextColumn("sort_orders_json", c => { c.NotNullable().WithDefaultValue("[]"); });
 			});
 
 		#endregion
