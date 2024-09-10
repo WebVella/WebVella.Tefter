@@ -45,6 +45,11 @@ body {
 
 .sidebar-collapsed .spacenav {
 	width: 40px !important;
+	width: var(--tf-content-margin-bottom) !important;
+}
+
+.sidebar-collapsed .spacenav > div{
+	display:none !important;
 }
 
 .sidebar {
