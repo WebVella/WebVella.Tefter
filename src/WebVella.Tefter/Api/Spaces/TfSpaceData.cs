@@ -9,6 +9,7 @@ public class TfSpaceData
 	public short Position { get; set; }
 	public List<TfFilterBase> Filters { get; set; } = new ();
 	public List<string> Columns { get; set; } = new();
+	public List<TfSort> SortOrders { get; set; } = new();
 }
 
 public class TfAvailableSpaceDataColumn
@@ -42,4 +43,7 @@ internal class TfSpaceDataDbo
 
 	[DboModelProperty("columns_json")]
 	public string ColumnsJson { get; set; }
+
+	[DboModelProperty("sort_orders_json")]
+	public string SortOrdersJson { get; set; } 
 }

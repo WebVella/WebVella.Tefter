@@ -563,11 +563,17 @@ public partial class SpaceManagerTests : BaseTest
 
 				foreach (var availableColumnType in availableColumnTypes)
 				{
+
 					TfSpaceViewColumn column = new TfSpaceViewColumn
 					{
 						Id = Guid.NewGuid(),
 						ColumnType = availableColumnType,
-						QueryName = availableColumnType.Name,
+						QueryName = availableColumnType.Name
+											.ToLower()
+											.Replace(".","")
+											.Replace(" ", "")
+											.Replace("(", "")
+											.Replace(")", ""),
 						Title = availableColumnType.Name,
 						ComponentType = componentType,
 						SelectedAddonId = null,

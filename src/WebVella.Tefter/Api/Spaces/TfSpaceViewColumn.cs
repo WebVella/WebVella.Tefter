@@ -12,6 +12,7 @@ public class TfSpaceViewColumn
 	public Type ComponentType { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
+	public string SettingsJson { get; set; } = "{}";
 	public string FullTypeName { get; set; }
 	public string FullComponentTypeName { get; set; }
 
@@ -50,7 +51,11 @@ internal class TfSpaceViewColumnDbo
 
 	[DboModelProperty("custom_options_json")]
 	public string CustomOptionsJson { get; set; } = "{}";
+
+	[DboModelProperty("settings_json")]
+	public string SettingsJson { get; set; } = "{}";
 }
+
 
 
 

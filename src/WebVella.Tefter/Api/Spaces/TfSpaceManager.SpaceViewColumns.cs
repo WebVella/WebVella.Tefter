@@ -392,6 +392,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			ComponentType = componentType,
 			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson),
 			CustomOptionsJson = dbo.CustomOptionsJson,
+			SettingsJson = dbo.SettingsJson,
 			FullTypeName = dbo.FullTypeName,
 			FullComponentTypeName = dbo.FullComponentTypeName
 		};
@@ -414,6 +415,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			FullComponentTypeName = model.ComponentType.FullName,
 			DataMappingJson = JsonSerializer.Serialize(model.DataMapping ?? new Dictionary<string, string>()),
 			CustomOptionsJson = model.CustomOptionsJson,
+			SettingsJson = model.SettingsJson,
 		};
 	}
 
@@ -453,7 +455,45 @@ public partial class TfSpaceManager : ITfSpaceManager
 					.NotEmpty()
 					.WithMessage("The space view id is required.");
 
+				RuleFor(column => column.QueryName)
+				.Must((column, QueryName) =>
+				{
+					if (string.IsNullOrWhiteSpace(QueryName))
+						return true;
 
+					return QueryName.Length >= Constants.DB_MIN_OBJECT_NAME_LENGTH;
+				})
+				.WithMessage($"The query name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
+
+				RuleFor(column => column.QueryName)
+					.Must((column, QueryName) =>
+					{
+						if (string.IsNullOrWhiteSpace(QueryName))
+							return true;
+
+						return QueryName.Length <= Constants.DB_MAX_OBJECT_NAME_LENGTH;
+					})
+					.WithMessage($"The length of query name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
+
+				RuleFor(column => column.QueryName)
+					.Must((column, QueryName) =>
+					{
+						if (string.IsNullOrWhiteSpace(QueryName))
+							return true;
+
+						//other validation will trigger
+						if (QueryName.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
+							return true;
+
+						//other validation will trigger
+						if (QueryName.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
+							return true;
+
+						Match match = Regex.Match(QueryName, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
+						return match.Success && match.Value == QueryName.Trim();
+					})
+					.WithMessage($"The query name can only contains underscores and lowercase alphanumeric characters. It must beggin with a letter, " +
+						$"not include spaces, not end with an underscore, and not contain two consecutive underscores");
 
 			});
 

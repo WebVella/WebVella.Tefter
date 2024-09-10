@@ -360,7 +360,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Position = dbo.Position,
 			SpaceId = dbo.SpaceId,
 			Filters = JsonSerializer.Deserialize<List<TfFilterBase>>(dbo.FiltersJson, jsonOptions),
-			Columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnsJson, jsonOptions)
+			Columns = JsonSerializer.Deserialize<List<string>>(dbo.ColumnsJson, jsonOptions),
+			SortOrders = JsonSerializer.Deserialize<List<TfSort>>(dbo.SortOrdersJson, jsonOptions)
 		};
 
 	}
@@ -386,7 +387,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Position = model.Position,
 			SpaceId = model.SpaceId,
 			FiltersJson = JsonSerializer.Serialize(model.Filters ?? new List<TfFilterBase>(), jsonOptions),
-			ColumnsJson = JsonSerializer.Serialize(model.Columns ?? new List<string>(), jsonOptions)
+			ColumnsJson = JsonSerializer.Serialize(model.Columns ?? new List<string>(), jsonOptions),
+			SortOrdersJson = JsonSerializer.Serialize(model.SortOrders ?? new List<TfSort>(), jsonOptions)
 		};
 	}
 
