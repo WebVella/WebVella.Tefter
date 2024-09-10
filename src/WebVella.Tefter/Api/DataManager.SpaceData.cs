@@ -1,162 +1,169 @@
-﻿//using WebVella.Tefter.Models;
+﻿using Microsoft.FluentUI.AspNetCore.Components;
 
-//namespace WebVella.Tefter;
+namespace WebVella.Tefter;
 
-//public partial interface IDataManager
-//{
-//	internal Result<TfDataTable> QuerySpaceData(
-//		TfSpaceData spaceData,
-//		List<TfFilterBase> additionalFilters = null,
-//		List<TfSort> sortOverrides = null,
-//		string search = null,
-//		int? page = null,
-//		int? pageSize = null);
-//}
+public partial interface IDataManager
+{
+	internal Result<TfDataTable> QuerySpaceData(
+		Guid spaceDataId,
+		List<TfFilterBase> additionalFilters = null,
+		List<TfSort> sortOverrides = null,
+		string search = null,
+		int? page = null,
+		int? pageSize = null);
+}
 
-//public partial class DataManager
-//{
-//	public Result<TfDataTable> QuerySpaceData(
-//		TfSpaceData spaceData,
-//		List<TfFilterBase> additionalFilters = null,
-//		List<TfSort> sortOverrides = null,
-//		string search = null,
-//		int? page = null,
-//		int? pageSize = null)
-//	{
-//		try
-//		{
-//			var resultPage = page;
-//			var resultPageSize = pageSize;
+public partial class DataManager
+{
+	public Result<TfDataTable> QuerySpaceData(
+		Guid spaceDataId,
+		List<TfFilterBase> additionalFilters = null,
+		List<TfSort> sortOverrides = null,
+		string search = null,
+		int? page = null,
+		int? pageSize = null)
+	{
+		try
+		{
+			var spaceDataResult = _spaceManager.GetSpaceData(spaceDataId);
+			if (!spaceDataResult.IsSuccess || spaceDataResult.Value == null)
+			{
+				return Result.Fail(new ValidationError(
+						nameof(spaceDataId),
+						"Found no space data for specified identifier."));
+			}
 
-//			List<NpgsqlParameter> parameters;
+			var spaceData = spaceDataResult.Value;
 
-//			if (page.HasValue && page.Value < 0)
-//			{
-//				string countSql = BuildSelectCountRowsSql(
-//					provider,
-//					search,
-//					out parameters);
+			var providerResult = _providerManager.GetProvider(spaceData.DataProviderId);
+			if (!providerResult.IsSuccess || providerResult.Value == null)
+			{
+				return Result.Fail(new ValidationError(
+						nameof(spaceDataId),
+						"Found no data provider for specified space data."));
+			}
 
-//				var dtCount = _dbService.ExecuteSqlQueryCommand(countSql, parameters);
-//				var rowsCount = (long)dtCount.Rows[0][0];
+			var provider = providerResult.Value;
 
-//				resultPage = 1;
-//				resultPageSize = pageSize.HasValue ? pageSize.Value : TfDataTableQuery.DEFAULT_PAGE_SIZE;
+			var sqlBuilder = new SqlBuilder(
+			 	tableName: $"dp{provider.Index}",
+				filters: spaceData.Filters,
+				additionalFilters: additionalFilters,
+				sortOrders: sortOverrides ?? spaceData.SortOrders,
+				search: search,
+				page: page,
+				pageSize: pageSize);
 
-//				if (rowsCount > 0)
-//				{
-//					page = (int)(rowsCount / resultPageSize) + 1;
+			HashSet<string> addedColumns = new HashSet<string>();
 
-//					if (rowsCount % resultPageSize == 0)
-//						page--;
+			foreach (var systemColumn in provider.SystemColumns)
+			{
+				sqlBuilder.AddColumn(Guid.Empty, systemColumn.DbName, systemColumn.DbType);
+				addedColumns.Add(systemColumn.DbName);
+				continue;
+			}
 
-//					resultPage = page;
-//				}
-//			}
+			foreach (var columnName in spaceData.Columns)
+			{
+				if (addedColumns.Contains(columnName))
+					continue;
 
-//			parameters = null;
-//			string sql = BuildSelectRowsSql(
-//				provider,
-//				search,
-//				resultPage,
-//				resultPageSize,
-//				out parameters);
+				var column = provider.Columns.SingleOrDefault(x => x.DbName == columnName);
+				if (column != null)
+				{
+					sqlBuilder.AddColumn(column.Id, column.DbName, column.DbType);
+					addedColumns.Add(columnName);
+					continue;
+				}
 
-//			var dt = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+				var sharedColumn = provider.SharedColumns.SingleOrDefault(x => x.DbName == columnName);
+				if (sharedColumn != null)
+				{
+					sqlBuilder.AddColumn(sharedColumn.Id, sharedColumn.DbName, sharedColumn.DbType, sharedColumn.SharedKeyDbName);
+					addedColumns.Add(columnName);
+					continue;
+				}
 
-//			TfDataTableQuery query = new TfDataTableQuery();
-//			query.Search = search;
-//			query.Page = resultPage;
-//			query.PageSize = resultPageSize;
-//			query.DataProviderId = provider.Id;
-//			query.ExcludeSharedColumns = true;
+				//ignore missing columns
+			}
 
-//			TfDataTable resultTable = new TfDataTable(provider, query);
+			//used to calculate if page is negative and need to count data
+			sqlBuilder.CalculatePaging(_dbService);
 
-//			if (dt.Rows.Count == 0)
-//				return Result.Ok(resultTable);
+			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
-//			HashSet<string> dateOnlyColumns = provider.Columns
-//				.Where(x=>x.DbType == DatabaseColumnType.Date)
-//				.Select(x=>x.DbName)
-//				.ToHashSet();
+			var dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
 
-//			foreach (DataRow row in dt.Rows)
-//			{
-//				object[] values = new object[resultTable.Columns.Count];
+			return Result.Ok(ProcessSqlResult(
+				provider,
+				new TfDataTableQuery
+				{
+					Search = search,
+					Page = usedPage,
+					PageSize = usedPageSize,
+					DataProviderId = provider.Id,
+					ExcludeSharedColumns = false
+				},
+				dataTable
+			));
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get data provider rows").CausedBy(ex));
+		}
+	}
 
-//				int valuesCounter = 0;
-//				foreach(var column in resultTable.Columns)
-//				{
-//					object value = row[column.Name];
-//					if (value == DBNull.Value)
-//						value = null;
-//					else
-//						if (dateOnlyColumns.Contains(column.Name))
-//							value = DateOnly.FromDateTime((DateTime)value);
+	private TfDataTable ProcessSqlResult(
+		TfDataProvider provider,
+		TfDataTableQuery query,
+		DataTable dataTable)
+	{
+		TfDataTable resultTable = new TfDataTable(provider, query);
 
-//					values[valuesCounter++] = value;
-//				}
-//				resultTable.Rows.Add(new TfDataRow(resultTable,values));
-//			}
+		if (dataTable.Rows.Count == 0)
+			return resultTable;
 
-//			return Result.Ok(resultTable);
-//		}
-//		catch (Exception ex)
-//		{
-//			return Result.Fail(new Error("Failed to get data provider rows").CausedBy(ex));
-//		}
-//	}
+		HashSet<string> dateOnlyColumns = new HashSet<string>();
+
+		foreach (var column in provider.Columns)
+		{
+			if (column.DbType == DatabaseColumnType.Date)
+				dateOnlyColumns.Add(column.DbName);
+		}
+
+		foreach (var column in provider.SharedColumns)
+		{
+			if (column.DbType == DatabaseColumnType.Date)
+				dateOnlyColumns.Add(column.DbName);
+		}
 
 
-//	private string BuildSelectRowsSql(
-//		TfDataProvider provider,
-//		string search,
-//		int? page,
-//		int? pageSize,
-//		out List<NpgsqlParameter> parameters)
-//	{
-//		parameters = new List<NpgsqlParameter>();
-//		StringBuilder sql = new StringBuilder();
+		foreach (DataRow row in dataTable.Rows)
+		{
+			object[] values = new object[resultTable.Columns.Count];
 
-//		sql.AppendLine($"SELECT * FROM dp{provider.Index} ");
+			int valuesCounter = 0;
+			foreach (var column in resultTable.Columns)
+			{
+				object value = row[column.Name];
 
-//		if (!string.IsNullOrWhiteSpace(search))
-//		{
-//			parameters.Add(new NpgsqlParameter("@tf_search", search));
-//			sql.AppendLine($" WHERE tf_search ILIKE CONCAT ('%', @tf_search , '%') ");
-//		}
+				if (value == DBNull.Value)
+				{
+					value = null;
+				}
+				else if (dateOnlyColumns.Contains(column.Name))
+				{
+					value = DateOnly.FromDateTime((DateTime)value);
+				}
 
-//		if (page.HasValue || pageSize.HasValue)
-//		{
-//			if (page == null && pageSize.HasValue)
-//				page = TfDataTableQuery.DEFAULT_PAGE;
-//			if (page.HasValue && pageSize == null)
-//				pageSize = TfDataTableQuery.DEFAULT_PAGE_SIZE;
+				values[valuesCounter++] = value;
+			}
+			resultTable.Rows.Add(new TfDataRow(resultTable, values));
+		}
 
-//			int offset = (page.Value - 1) * pageSize.Value;
-//			int limit = pageSize.Value;
-//			sql.AppendLine($"OFFSET {offset} LIMIT {limit}");
-//		}
+		return resultTable;
+	}
 
-//		return sql.ToString();
-//	}
 
-//	private string BuildSelectCountRowsSql(
-//		TfDataProvider provider,
-//		string search,
-//		out List<NpgsqlParameter> parameters)
-//	{
-//		parameters = new List<NpgsqlParameter>();
-//		StringBuilder sql = new StringBuilder();
 
-//		sql.AppendLine($"SELECT COUNT(*) FROM dp{provider.Index}");
-//		if (!string.IsNullOrWhiteSpace(search))
-//		{
-//			parameters.Add(new NpgsqlParameter("@tf_search", search));
-//			sql.AppendLine($"WHERE tf_search ILIKE CONCAT ('%', @tf_search, '%') ");
-//			sql.AppendLine();
-//		}
-//		return sql.ToString();
-//	}
-//}
+}

@@ -120,7 +120,7 @@ public partial class DataManager
 			row["tf_id"] = idResult.Value;
 			row["tf_created_on"] = DateTime.Now;
 			row["tf_updated_on"] = DateTime.Now;
-			row["tf_search"] = string.Empty;
+			//row["tf_search"] = string.Empty;
 
 			foreach (var sharedKey in provider.SharedKeys)
 			{
@@ -157,7 +157,7 @@ public partial class DataManager
 		try
 		{
 			row["tf_updated_on"] = DateTime.Now;
-			row["tf_search"] = string.Empty;
+			//row["tf_search"] = string.Empty;
 			foreach (var sharedKey in provider.SharedKeys)
 			{
 				List<string> keys = new List<string>();

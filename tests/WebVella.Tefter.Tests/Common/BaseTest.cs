@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Tests.Common;
+﻿using FluentAssertions.Common;
+
+namespace WebVella.Tefter.Tests.Common;
 
 public class BaseTest
 {
@@ -14,7 +16,8 @@ public class BaseTest
     {
         Context = new TestContext();
 		Context.Services.AddTefter();
-        ServiceProvider = Context.Services.BuildServiceProvider();
+		Context.Services.AddSingleton<TfDataProviderSynchronizeJob>();
+		ServiceProvider = Context.Services.BuildServiceProvider();
 		ServiceProvider.UseTefter();
     }
 

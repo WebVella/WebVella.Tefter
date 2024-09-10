@@ -13,44 +13,10 @@ public partial class DataManager
 	{
 		try
 		{
-			string tableName = "";
-			switch(sharedColumn.DbType)
-			{
-				case DatabaseColumnType.ShortText:
-					tableName = "shared_column_short_text_value";
-					break;
-				case DatabaseColumnType.Text:
-					tableName = "shared_column_text_value";
-					break;
-				case DatabaseColumnType.Boolean:
-					tableName = "shared_column_boolean_value";
-					break;
-				case DatabaseColumnType.Guid:
-					tableName = "shared_column_guid_value";
-					break;
-				case DatabaseColumnType.ShortInteger:
-					tableName = "shared_column_short_integer_value";
-					break;
-				case DatabaseColumnType.Integer:
-					tableName = "shared_column_integer_value";
-					break;
-				case DatabaseColumnType.LongInteger:
-					tableName = "shared_column_long_integer_value";
-					break;
-				case DatabaseColumnType.Number:
-					tableName = "shared_column_number_value";
-					break;
-				case DatabaseColumnType.Date:
-					tableName = "shared_column_date_value";
-					break;
-				case DatabaseColumnType.DateTime:
-					tableName = "shared_column_datetime_value";
-					break;
-				default:
-					throw new Exception("Not supported column type.");
-			}
+			string tableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType);
 
 			string sql = $"DELETE FROM {tableName} WHERE shared_column_id = @shared_column_id";
+
 			_dbService.ExecuteSqlNonQueryCommand(sql, new NpgsqlParameter("@shared_column_id", sharedColumn.Id));
 
 			return Result.Ok();
@@ -59,5 +25,35 @@ public partial class DataManager
 		{
 			return Result.Fail(new Error("Failed to delete data provider row after index").CausedBy(ex));
 		}
+	}
+
+	private static string GetSharedColumnValueTableNameByType(DatabaseColumnType dbColumnType)
+	{
+		switch (dbColumnType)
+		{
+			case DatabaseColumnType.ShortText:
+				return "shared_column_short_text_value";
+			case DatabaseColumnType.Text:
+				return "shared_column_text_value";
+			case DatabaseColumnType.Boolean:
+				return "shared_column_boolean_value";
+			case DatabaseColumnType.Guid:
+				return "shared_column_guid_value";
+			case DatabaseColumnType.ShortInteger:
+				return "shared_column_short_integer_value";
+			case DatabaseColumnType.Integer:
+				return "shared_column_integer_value";
+			case DatabaseColumnType.LongInteger:
+				return "shared_column_long_integer_value";
+			case DatabaseColumnType.Number:
+				return "shared_column_number_value";
+			case DatabaseColumnType.Date:
+				return "shared_column_date_value";
+			case DatabaseColumnType.DateTime:
+				return "shared_column_datetime_value";
+			default:
+				throw new Exception("Not supported column type.");
+		}
+
 	}
 }

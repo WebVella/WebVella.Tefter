@@ -61,6 +61,14 @@ public static class DependencyInjection
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
 
+		//lazy services
+		services.AddSingleton<Lazy<IDatabaseService>>(provider => 
+				new Lazy<IDatabaseService>(() => provider.GetRequiredService<IDatabaseService>()));
+		services.AddSingleton<Lazy<ITfSpaceManager>>(provider => 
+				new Lazy<ITfSpaceManager>(() => provider.GetRequiredService<ITfSpaceManager>()));
+		services.AddSingleton<Lazy<ITfDataProviderManager>>(provider => 
+				new Lazy<ITfDataProviderManager>(() => provider.GetRequiredService<ITfDataProviderManager>()));
+
 		//use cases
 		services.AddScoped<StateEffectsUseCase, StateEffectsUseCase>();
 		services.AddTransient<AppStartUseCase, AppStartUseCase>();

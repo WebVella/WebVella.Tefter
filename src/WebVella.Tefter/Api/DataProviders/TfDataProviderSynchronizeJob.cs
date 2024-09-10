@@ -1,6 +1,4 @@
-﻿using FluentResults;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 internal class TfDataProviderSynchronizeJob : BackgroundService
 {
@@ -159,5 +157,114 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 	{
 		_logger.LogInformation($"{this.GetType().Name} is stopping.");
 		await base.StopAsync(stoppingToken);
+	}
+
+
+	//this method is used to fill data in unit tests
+	internal void StartManualProcessTasks()
+	{
+		var inprogresTasksResult = _providerManager.GetSynchronizationTasks(
+			status: TfSynchronizationStatus.InProgress);
+
+		if (!inprogresTasksResult.IsSuccess)
+			throw new Exception("Unable to get in progress synchronization tasks");
+
+		foreach (var taskInProgress in inprogresTasksResult.Value)
+		{
+			var result = _providerManager.UpdateSychronizationTask(
+				taskInProgress.Id,
+				TfSynchronizationStatus.Failed,
+				completedOn: DateTime.Now);
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to update synchronization tasks");
+
+			result = _providerManager.CreateSynchronizationResultInfo(
+				syncTaskId: taskInProgress.Id,
+				tfRowIndex: null,
+				tfId: null,
+				warning: null,
+				error: "Application was stopped during synchronization process");
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to update synchronization tasks");
+		}
+
+
+		var pendingTasksResult = _providerManager.GetSynchronizationTasks(
+		status: TfSynchronizationStatus.Pending);
+
+		if (!pendingTasksResult.IsSuccess)
+			throw new Exception("Unable to get pending synchronization tasks");
+
+		if (pendingTasksResult.Value.Count() == 0)
+			return;
+
+		var task = pendingTasksResult.Value
+			.OrderBy(x => x.CreatedOn).FirstOrDefault();
+
+		try
+		{
+			var result = _providerManager.UpdateSychronizationTask(
+				task.Id,
+				TfSynchronizationStatus.InProgress,
+				startedOn: DateTime.Now);
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to update synchronization tasks");
+
+			_providerManager.Synchronize(task);
+
+			result = _providerManager.UpdateSychronizationTask(
+				task.Id,
+				TfSynchronizationStatus.Completed,
+				completedOn: DateTime.Now);
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to update synchronization tasks");
+		}
+		catch (OperationCanceledException ex)
+		{
+			var result = _providerManager.UpdateSychronizationTask(
+				task.Id,
+				TfSynchronizationStatus.Failed,
+				completedOn: DateTime.Now);
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to update synchronization tasks");
+
+			result = _providerManager.CreateSynchronizationResultInfo(
+				syncTaskId: task.Id,
+				tfRowIndex: null,
+				tfId: null,
+				warning: null,
+				error: ex.Message);
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to write synchronization result info.");
+
+			// Prevent throwing if stoppingToken was signaled
+			_logger.LogError($"Task canceled {task.GetType().Name}", ex);
+		}
+		catch (Exception ex)
+		{
+			var result = _providerManager.UpdateSychronizationTask(
+				task.Id,
+				TfSynchronizationStatus.Failed,
+				completedOn: DateTime.Now);
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to update synchronization tasks");
+
+			result = _providerManager.CreateSynchronizationResultInfo(
+				syncTaskId: task.Id,
+				tfRowIndex: null,
+				tfId: null,
+				warning: null,
+				error: ex.Message);
+
+			if (!result.IsSuccess)
+				throw new Exception("Unable to write synchronization result info.");
+		}
 	}
 }

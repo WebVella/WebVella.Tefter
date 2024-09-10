@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Bogus;
+using System.Collections.ObjectModel;
 
 namespace WebVella.Tefter.Tests.DataProviders;
 
@@ -64,6 +65,55 @@ public class UnitTestDataProvider : ITfDataProviderType
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
 		TfDataProvider provider)
 	{
-		return new List<TfDataProviderDataRow>().AsReadOnly();
+		List<Tuple<string, DatabaseColumnType, string>> columns = new List<Tuple<string, DatabaseColumnType, string>>();
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("guid_column", DatabaseColumnType.Guid, "GUID"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_test_column", DatabaseColumnType.ShortText, "SHORT_TEXT"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("test_column", DatabaseColumnType.Text, "TEXT"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("date_column", DatabaseColumnType.Date, "DATE"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("datetime_column", DatabaseColumnType.DateTime, "DATETIME"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_int_column", DatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("int_column", DatabaseColumnType.Integer, "INTEGER"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("long_int_column", DatabaseColumnType.LongInteger, "LONG_INTEGER"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("number_column", DatabaseColumnType.Number, "NUMBER"));
+
+		var rows = new List<TfDataProviderDataRow>();
+		for ( int i = 0; i < 100; i++ )
+		{
+			TfDataProviderDataRow tfDataProviderDataRow = new TfDataProviderDataRow();
+			foreach (var column in columns)
+			{
+				tfDataProviderDataRow[column.Item1] = GetRandomValueForDbColumnType(column.Item2);
+			}
+			rows.Add(tfDataProviderDataRow);
+		}
+		return rows.AsReadOnly();
+	}
+
+	private object GetRandomValueForDbColumnType(DatabaseColumnType dbType)
+	{
+		var faker = new Faker("en");
+		switch (dbType)
+		{
+			case DatabaseColumnType.Guid:
+				return faker.Random.Guid();
+			case DatabaseColumnType.ShortText:
+				return faker.Lorem.Sentence();
+			case DatabaseColumnType.Text:
+				return faker.Lorem.Lines();
+			case DatabaseColumnType.ShortInteger:
+				return faker.Random.Short(0, 100);
+			case DatabaseColumnType.Integer:
+				return faker.Random.Number(100, 1000);
+			case DatabaseColumnType.LongInteger:
+				return faker.Random.Long(1000, 10000);
+			case DatabaseColumnType.Number:
+				return faker.Random.Decimal(100000, 1000000);
+			case DatabaseColumnType.Date:
+				return faker.Date.PastDateOnly();
+			case DatabaseColumnType.DateTime:
+				return faker.Date.Future();
+			default:
+				throw new Exception("Type is not supported");
+		}
 	}
 }
