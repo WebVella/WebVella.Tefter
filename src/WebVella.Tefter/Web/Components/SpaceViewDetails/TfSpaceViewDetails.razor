@@ -76,7 +76,7 @@ else
 								<tr class="tf-grid-tr">
 									@foreach (var column in SpaceState.Value.SpaceViewColumnList.OrderBy(x=> x.Position))
 									{
-										<th class="tf-grid-th" data-query-name="@column.QueryName">@column.Title</th>
+										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.Style">@column.Title</th>
 									}
 								</tr>
 							</thead>

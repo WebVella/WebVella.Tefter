@@ -13,7 +13,7 @@ public record TucSpaceViewColumn
 	[Required(ErrorMessage = "required")]
 	public string Title { get; set; }
 	public short? Position { get; set; }
-	
+
 	[Required(ErrorMessage = "required")]
 	public TucSpaceViewColumnType ColumnType { get; set; }
 
@@ -22,6 +22,23 @@ public record TucSpaceViewColumn
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
 	public TucSpaceViewColumnSettings Settings { get; set; } = new TucSpaceViewColumnSettings();
+
+	public string Style
+	{
+		get
+		{
+			var sb = new StringBuilder();
+			if (Settings is not null)
+			{
+				if (Settings.Width is not null)
+				{
+					sb.Append($"width:{Settings.Width}px");
+				}
+			}
+
+			return sb.ToString();
+		}
+	}
 
 	public string FullTypeName { get; set; }
 	public string FullComponentTypeName { get; set; }
@@ -43,10 +60,11 @@ public record TucSpaceViewColumn
 		FullTypeName = model.FullTypeName;
 		FullComponentTypeName = model.FullComponentTypeName;
 		Settings = new TucSpaceViewColumnSettings();
-		if(!String.IsNullOrWhiteSpace(model.SettingsJson) && model.SettingsJson.StartsWith("{")
-		 && model.SettingsJson.EndsWith("}")){ 
+		if (!String.IsNullOrWhiteSpace(model.SettingsJson) && model.SettingsJson.StartsWith("{")
+		 && model.SettingsJson.EndsWith("}"))
+		{
 			Settings = JsonSerializer.Deserialize<TucSpaceViewColumnSettings>(model.SettingsJson);
-		 }
+		}
 	}
 
 	//Column type should be get from GetAvailableSpaceViewColumnTypes()
