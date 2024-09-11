@@ -12,6 +12,10 @@ public partial class SpaceUseCase
 	{
 		ViewColumns = GetViewColumns(state.SpaceView.Id);
 		if(state.SpaceView is null || state.SpaceView.SpaceDataId is null) return null;
-		return GetSpaceViewData(state.SpaceView.SpaceDataId.Value);
+		return GetSpaceViewData(
+			spaceDataId:state.SpaceView.SpaceDataId.Value,
+			page:Page,
+			pageSize: PageSize
+			);
 	}
 }

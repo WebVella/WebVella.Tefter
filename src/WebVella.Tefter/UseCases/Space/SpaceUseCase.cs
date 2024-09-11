@@ -703,7 +703,10 @@ public partial class SpaceUseCase
 		return Result.Ok();
 	}
 
-	internal TfDataTable GetSpaceViewData(Guid spaceDataId){ 
+	internal TfDataTable GetSpaceViewData(
+		Guid spaceDataId,
+		int? page = null,
+		int? pageSize= null){ 
 		if(spaceDataId == Guid.Empty)
 		{
 			ResultUtils.ProcessServiceResult(
@@ -716,7 +719,11 @@ public partial class SpaceUseCase
 			return null;
 		}
 
-		var serviceResult = _dataManager.QuerySpaceData(spaceDataId);
+		var serviceResult = _dataManager.QuerySpaceData(
+			spaceDataId:spaceDataId,
+			page: page, 
+			pageSize: pageSize
+		);
 		if (serviceResult.IsFailed)
 		{
 			ResultUtils.ProcessServiceResult(

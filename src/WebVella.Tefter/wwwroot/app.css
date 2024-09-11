@@ -154,6 +154,16 @@ body {
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th {
 	border-top: none;
 }
+.tf-grid-thead > .tf-grid-tr > .tf-grid-th.tf-grid-th--check {
+	width:35px;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check > div{
+	padding-left:5px;
+	padding-right:5px;
+}
 
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th,
 .tf-grid-tfoot > .tf-grid-tr > .tf-grid-td {
@@ -185,13 +195,6 @@ body {
 		white-space: break-spaces;
 	}
 
-.tf-grid-thead > .tf-grid-tr > .tf-grid-th.tf-selection {
-	width: 50px;
-}
-
-.tf-selection {
-	cursor: pointer;
-}
 
 .tf-grid-tbody > .tf-grid-tr > .tf-grid-td a {
 	text-decoration: none;
@@ -220,6 +223,7 @@ body {
 	flex: 0 0 40px;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
+	padding-bottom: var(--tf-content-padding);
 	display: flex;
 	align-items: center;
 }
@@ -230,7 +234,7 @@ body {
 	overflow-y: scroll !important;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
-	padding-top: var(--tf-content-padding);
+	
 }
 
 .tfdt__pager {

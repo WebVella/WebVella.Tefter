@@ -40,7 +40,8 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			LC = StringLocalizerFactory.Create(type);
 		}
-		Context.EditContext.OnValidationRequested += OnValidationRequested;
+		if (Context.EditContext is not null)
+			Context.EditContext.OnValidationRequested += OnValidationRequested;
 
 	}
 
@@ -84,17 +85,20 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <typeparam name="TItem2">result data type</typeparam>
 	/// <param name="alias">case sensetive alias as defined in data mapping</param>
 	/// <returns></returns>
-	protected object GetData<TItem2>(string alias) 
+	protected object GetDataObjectByAlias(string alias)
 	{
 		string dbName = null;
-		if(Context.DataMapping.ContainsKey(alias)){ 
+		if (Context.DataMapping.ContainsKey(alias))
+		{
 			dbName = Context.DataMapping[alias];
 		}
 
-		if(String.IsNullOrWhiteSpace(dbName)){ 
+		if (String.IsNullOrWhiteSpace(dbName))
+		{
 			return null;
 		}
+		if (Context.DataTable.Rows.Count < Context.RowIndex+1) return null;
 
-		return JsonSerializer.Deserialize<TItem2>(Context.DataRow[dbName].ToString());
+		return Context.DataTable.Rows[Context.RowIndex][dbName];
 	}
 }

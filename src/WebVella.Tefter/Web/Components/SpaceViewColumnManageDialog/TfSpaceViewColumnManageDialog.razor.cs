@@ -190,7 +190,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			Mode = TfComponentMode.Options,
 			CustomOptionsJson = UC.SpaceViewColumnForm.CustomOptionsJson,
 			DataMapping = UC.SpaceViewColumnForm.DataMapping,
-			DataRow = null,
+			DataTable = null,
 			RowIndex = -1,
 			QueryName = UC.SpaceViewColumnForm.QueryName,
 			SelectedAddonId = UC.SpaceViewColumnForm.SelectedAddonId,
