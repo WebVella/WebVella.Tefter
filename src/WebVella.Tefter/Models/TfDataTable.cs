@@ -8,7 +8,8 @@ public sealed class TfDataTable
 
 	internal TfDataTable(
 		TfDataProvider dataProvider,
-		TfDataTableQuery query)
+		TfDataTableQuery query, 
+		List<string> onlyColumns = null )
 	{
 		if (dataProvider is null)
 			throw new ArgumentNullException(nameof(dataProvider));
@@ -23,6 +24,7 @@ public sealed class TfDataTable
 
 		Columns = InitColumns(
 			dataProvider,
+			onlyColumns,
 			query.ExcludeSharedColumns);
 
 		Rows = new TfDataRowCollection(this);
@@ -30,6 +32,7 @@ public sealed class TfDataTable
 
 	private TfDataColumnCollection InitColumns(
 		TfDataProvider dataProvider,
+		List<string> onlyColumns,
 		bool excludeSharedColumns)
 	{
 		var columns = new TfDataColumnCollection(this);
@@ -98,6 +101,9 @@ public sealed class TfDataTable
 
 		foreach (var providerColumn in dataProvider.Columns)
 		{
+			if (onlyColumns != null && !onlyColumns.Contains(providerColumn.DbName))
+				continue;
+
 			columns.Add(new TfDataColumn(
 			this,
 			providerColumn.DbName,
@@ -111,6 +117,9 @@ public sealed class TfDataTable
 		{
 			foreach (var providerColumn in dataProvider.SharedColumns)
 			{
+				if (onlyColumns != null && !onlyColumns.Contains(providerColumn.DbName))
+					continue;
+
 				columns.Add(new TfDataColumn(
 				this,
 				providerColumn.DbName,

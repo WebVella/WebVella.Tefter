@@ -67,6 +67,8 @@ public partial class DataManager
 			{
 				if (addedColumns.Contains(columnName))
 					continue;
+				
+				addedColumns.Add(columnName);
 
 				var column = provider.Columns.SingleOrDefault(x => x.DbName == columnName);
 				if (column != null)
@@ -104,7 +106,8 @@ public partial class DataManager
 					DataProviderId = provider.Id,
 					ExcludeSharedColumns = false
 				},
-				dataTable
+				dataTable,
+				addedColumns.ToList()
 			));
 		}
 		catch (Exception ex)
@@ -116,9 +119,10 @@ public partial class DataManager
 	private TfDataTable ProcessSqlResult(
 		TfDataProvider provider,
 		TfDataTableQuery query,
-		DataTable dataTable)
+		DataTable dataTable,
+		List<string> onlyColumns )
 	{
-		TfDataTable resultTable = new TfDataTable(provider, query);
+		TfDataTable resultTable = new TfDataTable(provider, query, onlyColumns);
 
 		if (dataTable.Rows.Count == 0)
 			return resultTable;
