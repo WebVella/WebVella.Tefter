@@ -8,9 +8,10 @@ public partial class SpaceUseCase
 		return Task.CompletedTask;
 	}
 
-	internal Task IInitSpaceViewDetailsAfterRender(SpaceState state)
+	internal async Task<TfDataTable> IInitSpaceViewDetailsAfterRender(SpaceState state)
 	{
 		ViewColumns = GetViewColumns(state.SpaceView.Id);
-		return Task.CompletedTask;
+		if(state.SpaceView is null || state.SpaceView.SpaceDataId is null) return null;
+		return GetSpaceViewData(state.SpaceView.SpaceDataId.Value);
 	}
 }

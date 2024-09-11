@@ -15,14 +15,18 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+			var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
 			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
 				spaceViewColumns: UC.ViewColumns
 			));
+			Dispatcher.Dispatch(new SetSpaceViewDataAction(
+				spaceViewData: viewData
+			));
 			ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
 			ActionSubscriber.SubscribeToAction<SpaceViewMetaChangedAction>(this, On_StateViewMetaChanged);
+			ActionSubscriber.SubscribeToAction<SpaceViewDataChangedAction>(this, On_StateViewDataChanged);
 		}
 	}
 
@@ -32,17 +36,27 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		{
 			UC.IsBusy = true;
 			await InvokeAsync(StateHasChanged);
-			await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+			var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
 			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
 				spaceViewColumns: UC.ViewColumns
+			));
+			Dispatcher.Dispatch(new SetSpaceViewDataAction(
+				spaceViewData: viewData
 			));
 		});
 
 	}
 
 	private void On_StateViewMetaChanged(SpaceViewMetaChangedAction action)
+	{
+		InvokeAsync(async () =>
+		{
+			await InvokeAsync(StateHasChanged);
+		});
+	}
+	private void On_StateViewDataChanged(SpaceViewDataChangedAction action)
 	{
 		InvokeAsync(async () =>
 		{

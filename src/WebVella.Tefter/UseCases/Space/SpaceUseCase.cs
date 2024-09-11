@@ -3,6 +3,7 @@ public partial class SpaceUseCase
 {
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfSpaceManager _spaceManager;
+	private readonly IDataManager _dataManager;
 	private readonly ITfDataProviderManager _dataProviderManager;
 	private readonly NavigationManager _navigationManager;
 	private readonly IDispatcher _dispatcher;
@@ -13,6 +14,7 @@ public partial class SpaceUseCase
 	public SpaceUseCase(
 			IIdentityManager identityManager,
 			ITfSpaceManager spaceManager,
+			IDataManager dataManager,
 			ITfDataProviderManager dataProviderManager,
 			NavigationManager navigationManager,
 			IDispatcher dispatcher,
@@ -23,6 +25,7 @@ public partial class SpaceUseCase
 	{
 		_identityManager = identityManager;
 		_spaceManager = spaceManager;
+		_dataManager = dataManager;
 		_dataProviderManager = dataProviderManager;
 		_navigationManager = navigationManager;
 		_dispatcher = dispatcher;
@@ -698,6 +701,35 @@ public partial class SpaceUseCase
 		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
 
 		return Result.Ok();
+	}
+
+	internal TfDataTable GetSpaceViewData(Guid spaceDataId){ 
+		if(spaceDataId == Guid.Empty)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("spaceDataId not provided"),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+		var serviceResult = _dataManager.QuerySpaceData(spaceDataId);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+		return serviceResult.Value;	
 	}
 
 	//View columns

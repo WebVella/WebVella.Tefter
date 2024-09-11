@@ -74,9 +74,11 @@ else
 							<thead class="tf-grid-thead">
 								<tr class="tf-grid-thead-bkg" style="@($"background-color:{SpaceState.Value.SpaceBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
-									@foreach (var column in SpaceState.Value.SpaceViewColumnList.OrderBy(x=> x.Position))
+									@foreach (var column in SpaceState.Value.SpaceViewColumnList.OrderBy(x => x.Position))
 									{
-										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.Style">@column.Title</th>
+										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.Style">
+											<div>@column.Title</div>
+										</th>
 									}
 								</tr>
 							</thead>
@@ -84,31 +86,34 @@ else
 								@if (UC.IsBusy)
 								{
 									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@SpaceState.Value.SpaceViewColumnList.Count">Loading...</td>
+										<td class="tf-grid-td" colspan="@SpaceState.Value.SpaceViewColumnList.Count"><div>@LOC("Loading...")</div></td>
+									</tr>
+								}
+								else if (SpaceState.Value.SpaceViewData is null)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@SpaceState.Value.SpaceViewColumnList.Count"><div>@LOC("Space data not found")</div></td>
+									</tr>
+								}
+								else if (SpaceState.Value.SpaceViewData.Rows.Count == 0)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@SpaceState.Value.SpaceViewColumnList.Count"><div>@LOC("No data")</div></td>
 									</tr>
 								}
 								else
 								{
-@* 									foreach (TfDataRow row in UC.DataTable.Rows)
+									foreach (TfDataRow row in SpaceState.Value.SpaceViewData.Rows)
 									{
 										<tr @key=@row["tf_id"] class="tf-grid-tr">
-											@foreach (var column in UC.DataTable.Columns)
+											@foreach (var column in SpaceState.Value.SpaceViewColumnList)
 											{
-												if (!UC.ShowSystemColumns && column.IsSystem && !column.IsShared) { continue; }
-												if (!UC.ShowSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
-												if (!UC.ShowCustomColumns && !column.IsSystem) { continue; }
 												<td class="tf-grid-td">
-													<div>@row[column.Name]</div>
+													<div>@row[column.QueryName]</div>
 												</td>
 											}
 										</tr>
 									}
-									@if (UC.DataTable.Rows.Count == 0)
-									{
-										<tr class="tf-grid-tr">
-											<td class="tf-grid-td" colspan="@UC.VisibleColumnsCount">No records found</td>
-										</tr>
-									} *@
 								}
 							</tbody>
 						</table>
