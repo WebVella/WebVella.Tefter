@@ -20,7 +20,8 @@ public class TfDataRow : IEnumerable
 
 			int index = DataTable.Columns.IndexOf(x => x.Name == columnName);
 			if (index == -1)
-				throw new Exception($"A column with name {columnName} is not found in DataTable object.");
+				return null; 
+				//throw new Exception($"A column with name {columnName} is not found in DataTable object.");
 
 			return _values[index];
 		}
