@@ -275,6 +275,39 @@ public partial class SpaceUseCase
 
 	}
 
+	internal Result<TucSpaceData> AddSortColumnToSpaceData(Guid spaceDataId, TucSort sort)
+	{
+		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if (sort is null || String.IsNullOrWhiteSpace(sort.DbName)) return Result.Fail("sort is required");
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null) return Result.Fail("spaceData not found");
+		if (spaceData.SortOrders.Any(x=> x.DbName == sort.DbName)) return Result.Ok(spaceData);
+
+		spaceData.SortOrders.Add(sort);
+		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+
+		return Result.Ok(new TucSpaceData(updateResult.Value));
+
+	}
+
+	internal Result<TucSpaceData> RemoveSortColumnFromSpaceData(Guid spaceDataId, TucSort sort)
+	{
+		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if (sort is null || String.IsNullOrWhiteSpace(sort.DbName)) return Result.Fail("sort is required");
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null) return Result.Fail("spaceData not found");
+		if (!spaceData.SortOrders.Any(x=> x.DbName == sort.DbName)) return Result.Ok(spaceData);
+
+		spaceData.SortOrders = spaceData.SortOrders.Where(x=> x.DbName != sort.DbName).ToList();
+		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+
+		return Result.Ok(new TucSpaceData(updateResult.Value));
+
+	}
+
+
 	//Space view
 	internal TucSpaceView GetSpaceView(Guid viewId)
 	{

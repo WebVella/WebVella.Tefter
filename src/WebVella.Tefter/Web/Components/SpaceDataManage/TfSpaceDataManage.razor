@@ -130,8 +130,75 @@ else
 		</TfCard>
 	</CascadingValue>
 
-	@* 	<textarea style="height:1000px;width:100%">
-		@JsonSerializer.Serialize(Form, new JsonSerializerOptions() { WriteIndented = true })
-	</textarea> *@
+	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Default Sort")</FluentLabel>
+	<TfCard Small="true">
+		<TitleTemplate>
+			<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+				@if (_columnSortOptions.Count > 0)
+				{
+					<FluentSelect @bind-SelectedOption="@_selectedSort.DbName"
+								  Disabled="_submitting"
+								  TOption="string" Required="false"
+								  Items="@_columnSortOptions" Style="width:200px"
+								  Placeholder="@LOC("select provider column")"></FluentSelect>
+					<FluentSelect @bind-SelectedOption="@_selectedSort.Direction"
+								  Disabled="_submitting"
+								  TOption="TucSortDirection" 
+								  Items="@(Enum.GetValues<TucSortDirection>())" Style="width:100px"></FluentSelect>
+				}
+				else
+				{
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+				}
+				<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnSortOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+			</FluentStack>
+		</TitleTemplate>
+		<ChildContent>
+			@if (UC.SpaceDataManageForm.SortOrders.Count == 0)
+			{
+				@LOC("This dataset will return all data without any sorting.")
+			}
+			else
+			{
+				<div class="tf-grid-wrapper">
+					<table class="tf-grid">
+						<tbody class="tf-grid-tbody">
+							@foreach (var context in UC.SpaceDataManageForm.SortOrders.Order())
+							{
+								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+									<td class="tf-grid-td" style="width:30px;">
+										<div>
+											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteSortColumn(context))" Title="@LOC("Delete sort order")"
+														  Disabled="_submitting">
+												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+											</FluentButton>
+										</div>
+									</td>
+									<td class="tf-grid-td" style="width:140px;">
+										<div>@context.Direction.ToDescriptionString()</div>
+									</td>
+									<td class="tf-grid-td">
+											<div>@context.DbName</div>
+									</td>
+									<td class="tf-grid-td" style="width:100px;">
+										<div>
+											@if (AllColumnOptions.Contains(context.DbName))
+											{
+												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Success.ToAttributeValue()">found in provider</FluentBadge>
+											}
+											else
+											{
+												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Error.ToAttributeValue()">not in provider</FluentBadge>
+											}
+										</div>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+		</ChildContent>
+	</TfCard>
 }
 
