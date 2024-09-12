@@ -8,6 +8,6 @@ public class TfSort
 
 public enum TfSortDirection
 {
-	ASC = 1,
-	DESC = 2
+	ASC = 0,
+	DESC = 1
 }
