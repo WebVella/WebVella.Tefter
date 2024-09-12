@@ -36,8 +36,15 @@ else
 
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SpaceState.Value.SpaceView.Name
-										 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+						<FluentInputLabel Label="@LOC("Name")" />
+						<FluentStack>
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SpaceState.Value.SpaceView.Name
+											 Style="flex:1 1 auto" ReadOnly="true" />
+							<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
+								Href="@(String.Format(TfConstants.SpaceViewPageUrl,SpaceState.Value.RouteSpaceId,SpaceState.Value.SpaceView.Id))" 
+								IconStart="@TfConstants.ViewIcon"/>
+						</FluentStack>
+
 
 					</FluentGridItem>
 					<FluentGridItem xs="6">
@@ -54,7 +61,9 @@ else
 							<FluentStack>
 								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.ViewData.Name
 												 ReadOnly="true" Style="flex:1 1 auto" />
-								<FluentAnchor Style="flex:0 0 auto" Appearance="@Appearance.Outline" Href="@(String.Format(TfConstants.SpaceDataPageUrl,SpaceState.Value.RouteSpaceId,SpaceState.Value.SpaceView.SpaceDataId))" IconStart="@TfConstants.ViewIcon" Target="_blank">@LOC("view dataset")</FluentAnchor>
+								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
+											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,SpaceState.Value.RouteSpaceId,SpaceState.Value.SpaceView.SpaceDataId))" 
+									IconStart="@TfConstants.ViewIcon" Target="_blank"/>
 							</FluentStack>
 						}
 						else

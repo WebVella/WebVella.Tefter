@@ -53,12 +53,16 @@ else
 							@foreach (var context in UC.SpaceDataManageForm.Columns.Order())
 							{
 								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-									<td class="tf-grid-td" style="width:30px;">
+									<td class="tf-grid-td" style="width:1%;vertical-align:middle">
 										<div>
-											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
-														  Disabled="_submitting">
-												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-											</FluentButton>
+											@if (AllColumnOptions.Contains(context))
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
+											}
+											else
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
+											}
 										</div>
 									</td>
 									<td class="tf-grid-td">
@@ -66,16 +70,12 @@ else
 											<div>@context</div>
 										</div>
 									</td>
-									<td class="tf-grid-td" style="width:100px;">
+									<td class="tf-grid-td" style="width:1%;">
 										<div>
-											@if (AllColumnOptions.Contains(context))
-											{
-												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Success.ToAttributeValue()">found in provider</FluentBadge>
-											}
-											else
-											{
-												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Error.ToAttributeValue()">not in provider</FluentBadge>
-											}
+											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+														  Disabled="_submitting">
+												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+											</FluentButton>
 										</div>
 									</td>
 								</tr>
@@ -92,7 +92,7 @@ else
 			<TitleTemplate>
 				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 					<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-						<FluentLabel Typo="@Typography.Body" Color="@Color.Accent">AND</FluentLabel>
+						<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
 						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
 					</FluentStack>
 					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
@@ -124,7 +124,7 @@ else
 				}
 				@foreach (var item in UC.SpaceDataManageForm.Filters)
 				{
-					<TfFilterManage Item="item" Disabled="_submitting" />
+					<TfFilterManage Item="item" Disabled="_submitting" ProviderColumns="AllColumnOptions" />
 				}
 			</ChildContent>
 		</TfCard>
@@ -143,7 +143,7 @@ else
 								  Placeholder="@LOC("select provider column")"></FluentSelect>
 					<FluentSelect @bind-SelectedOption="@_selectedSort.Direction"
 								  Disabled="_submitting"
-								  TOption="TucSortDirection" 
+								  TOption="TucSortDirection"
 								  Items="@(Enum.GetValues<TucSortDirection>())" Style="width:100px"></FluentSelect>
 				}
 				else
@@ -166,30 +166,30 @@ else
 							@foreach (var context in UC.SpaceDataManageForm.SortOrders.Order())
 							{
 								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-									<td class="tf-grid-td" style="width:30px;">
+									<td class="tf-grid-td" style="width:1%;vertical-align:middle">
+										<div>
+											@if (AllColumnOptions.Contains(context.DbName))
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
+											}
+											else
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
+											}
+										</div>
+									</td>
+									<td class="tf-grid-td" style="width:300px;">
+										<div>@context.DbName</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>@context.Direction.ToDescriptionString()</div>
+									</td>
+									<td class="tf-grid-td" style="width:1%;">
 										<div>
 											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteSortColumn(context))" Title="@LOC("Delete sort order")"
 														  Disabled="_submitting">
 												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
 											</FluentButton>
-										</div>
-									</td>
-									<td class="tf-grid-td" style="width:140px;">
-										<div>@context.Direction.ToDescriptionString()</div>
-									</td>
-									<td class="tf-grid-td">
-											<div>@context.DbName</div>
-									</td>
-									<td class="tf-grid-td" style="width:100px;">
-										<div>
-											@if (AllColumnOptions.Contains(context.DbName))
-											{
-												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Success.ToAttributeValue()">found in provider</FluentBadge>
-											}
-											else
-											{
-												<FluentBadge Fill="somevalue" Color="white" BackgroundColor="@Color.Error.ToAttributeValue()">not in provider</FluentBadge>
-											}
 										</div>
 									</td>
 								</tr>
