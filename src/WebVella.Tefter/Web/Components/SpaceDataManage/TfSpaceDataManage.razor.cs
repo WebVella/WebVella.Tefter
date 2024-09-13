@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataManage.TfSpaceDataManage","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataManage.TfSpaceDataManage", "WebVella.Tefter")]
 public partial class TfSpaceDataManage : TfFormBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
@@ -29,7 +29,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		get
 		{
 			if (UC.SpaceDataManageForm is null || UC.SpaceDataManageForm.SortOrders is null) return AllColumnOptions;
-			return AllColumnOptions.Where(x => !UC.SpaceDataManageForm.SortOrders.Any(y=> y.DbName == x)).ToList();
+			return AllColumnOptions.Where(x => !UC.SpaceDataManageForm.SortOrders.Any(y => y.DbName == x)).ToList();
 		}
 	}
 
@@ -274,14 +274,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	public async Task UpdateColumnFilter(TucFilterBase filter)
 	{
-		//check when in another filter
-		var filterIndex = UC.SpaceDataManageForm.Filters.FindIndex(x => x.Id == filter.Id);
-		if (filterIndex > -1)
-		{
-			UC.SpaceDataManageForm.Filters[filterIndex] = filter;
-			await InvokeAsync(StateHasChanged);
-			await _saveFilters();
-		}
+		await _saveFilters();
 	}
 
 	private async Task _saveFilters()
@@ -329,7 +322,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		try
 		{
 			if (_selectedSort is null || String.IsNullOrWhiteSpace(_selectedSort.DbName)) return;
-			if (UC.SpaceDataManageForm.SortOrders.Any(x=> x.DbName == _selectedSort.DbName)) return;
+			if (UC.SpaceDataManageForm.SortOrders.Any(x => x.DbName == _selectedSort.DbName)) return;
 
 
 

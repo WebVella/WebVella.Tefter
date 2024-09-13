@@ -35,73 +35,62 @@ public partial class TfFilterManage : TfBaseComponent
 		TucFilterBase updateObj = null;
 		if (model is TucFilterBoolean)
 		{
-			var original = (TucFilterBoolean)model with { Id = model.Id };
-			var item = (TucFilterBoolean)model with { Id = model.Id };
+			var item = (TucFilterBoolean)model;
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterBooleanComparisonMethod)valueObj;
 				item.ComparisonMethod = value;
-				if (item.ComparisonMethod == original.ComparisonMethod) return;
 				updateObj = item;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				var value = (Option<string>)valueObj;
 				item.ValueOptionChanged(value);
-				if (item.Value == original.Value) return;
 				updateObj = item;
 			}
 			else throw new Exception("propName not supported");
 		}
 		else if (model is TucFilterDateOnly)
 		{
-			var original = (TucFilterDateOnly)model with { Id = model.Id };
-			var item = (TucFilterDateOnly)model with { Id = model.Id };
+			var item = (TucFilterDateOnly)model;
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterDateTimeComparisonMethod)valueObj;
 				item.ComparisonMethod = value;
-				if (item.ComparisonMethod == original.ComparisonMethod) return;
 				updateObj = item;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				var value = (string)valueObj;
 				item.ValueStringChanged(value);
-				if (item.Value == original.Value) return;
 				updateObj = item;
 			}
 			else throw new Exception("propName not supported");
 		}
 		else if (model is TucFilterDateTime)
 		{
-			var original = (TucFilterDateTime)model with { Id = model.Id };
-			var item = (TucFilterDateTime)model with { Id = model.Id };
+			var item = (TucFilterDateTime)model;
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterDateTimeComparisonMethod)valueObj;
 				item.ComparisonMethod = value;
-				if (item.ComparisonMethod == original.ComparisonMethod) return;
 				updateObj = item;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				var value = (string)valueObj;
 				item.ValueStringChanged(value);
-				if (item.Value == original.Value) return;
 				updateObj = item;
 			}
 			else throw new Exception("propName not supported");
 		}
 		else if (model is TucFilterGuid)
 		{
-			var original = (TucFilterGuid)model with { Id = model.Id };
-			var item = (TucFilterGuid)model with { Id = model.Id };
+			var item = (TucFilterGuid)model;
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterGuidComparisonMethod)valueObj;
 				item.ComparisonMethod = value;
-				if (item.ComparisonMethod == original.ComparisonMethod) return;
 				updateObj = item;
 			}
 			else if (propName == nameof(item.Value))
@@ -111,7 +100,6 @@ public partial class TfFilterManage : TfBaseComponent
 					ToastService.ShowError(LOC("Invalid GUID value"));
 
 				item.ValueStringChanged(value);
-				if (item.Value == original.Value) return;
 				updateObj = item;
 				////70efbe52-033f-43b8-a8b9-65f62ca0080f
 			}
@@ -119,41 +107,35 @@ public partial class TfFilterManage : TfBaseComponent
 		}
 		else if (model is TucFilterNumeric)
 		{
-			var original = (TucFilterNumeric)model with { Id = model.Id };
-			var item = (TucFilterNumeric)model with { Id = model.Id };
+			var item = (TucFilterNumeric)model;
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterNumericComparisonMethod)valueObj;
 				updateObj = item with { ComparisonMethod = value };
 				item.ComparisonMethod = value;
-				if (item.ComparisonMethod == original.ComparisonMethod) return;
 				updateObj = item;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				var value = (decimal?)valueObj;
 				item.ValueChanged(value);
-				if (item.Value == original.Value) return;
 				updateObj = item;
 			}
 			else throw new Exception("propName not supported");
 		}
 		else if (model is TucFilterText)
 		{
-			var original = (TucFilterText)model with { Id = model.Id };
-			var item = (TucFilterText)model with { Id = model.Id };
+			var item = (TucFilterText)model;
 			if (propName == nameof(item.ComparisonMethod))
 			{
 				var value = (TucFilterTextComparisonMethod)valueObj;
 				item.ComparisonMethod = value;
-				if (item.ComparisonMethod == original.ComparisonMethod) return;
 				updateObj = item;
 			}
 			else if (propName == nameof(item.Value))
 			{
 				var value = (string)valueObj;
 				item.ValueChanged(value);
-				if (item.Value == original.Value) return;
 				updateObj = item;
 			}
 			else throw new Exception("propName not supported");

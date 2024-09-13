@@ -13,7 +13,7 @@ public partial record SpaceState
 	{
 		get
 		{
-			if(SpaceViewData is null) return false;
+			if(SpaceViewData is null || SpaceViewData.Rows.Count == 0) return false;
 			var allSelected = true;
 			for (int i = 0; i < SpaceViewData.Rows.Count; i++)
 			{
