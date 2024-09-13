@@ -11,33 +11,9 @@ public static partial class SpaceStateReducers
 
 	[ReducerMethod()]
 	public static SpaceState ToggleSpaceViewItemSelectionActionReducer(SpaceState state, ToggleSpaceViewItemSelectionAction action)
+	=> state with
 	{
-		if (action.IsSelected)
-		{
-			var list = state.SelectedDataRows.ToList();
-			foreach (var tfId in action.IdList)
-			{
-				if (list.Contains(tfId)) continue;
-				list.Add(tfId);
-			}
-			return state with
-			{
-				SelectedDataRows = list
-			};
-		}
-		else
-		{
-			var list = state.SelectedDataRows.ToList();
-			foreach (var tfId in action.IdList)
-			{
-				if (!list.Contains(tfId)) continue;
-				list = state.SelectedDataRows.Where(x => x != tfId).ToList();
-			}
-			return state with
-			{
-				SelectedDataRows = list
-			};
-		}
-	}
+		SelectedDataRows = action.IdList
+	};
 
 }

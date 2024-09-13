@@ -3,14 +3,10 @@
 public record ToggleSpaceViewItemSelectionAction
 {
 	public List<Guid> IdList { get; }
-	public bool IsSelected { get; }
-
 	internal ToggleSpaceViewItemSelectionAction(
-		List<Guid> idList,
-		bool isSelected
+		List<Guid> idList
 		)
 	{
 		IdList = idList;
-		IsSelected = isSelected;
 	}
 }

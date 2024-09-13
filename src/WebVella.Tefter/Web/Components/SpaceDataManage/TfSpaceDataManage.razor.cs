@@ -274,6 +274,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	public async Task UpdateColumnFilter(TucFilterBase filter)
 	{
+		//check when in another filter
 		var filterIndex = UC.SpaceDataManageForm.Filters.FindIndex(x => x.Id == filter.Id);
 		if (filterIndex > -1)
 		{

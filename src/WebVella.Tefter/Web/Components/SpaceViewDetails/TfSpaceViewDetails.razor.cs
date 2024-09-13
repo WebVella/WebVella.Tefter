@@ -130,7 +130,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private bool _getItemSelection(int rowIndex)
 	{
-		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];	
+		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];
 		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 		if (rowId is not null)
 		{
@@ -141,16 +141,42 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private void _toggleItemSelection(int rowIndex, bool isChecked)
 	{
-		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];	
-		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-		if (rowId is not null)
+		Guid rowId = (Guid)SpaceState.Value.SpaceViewData.Rows[rowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+		var selectedItems = SpaceState.Value.SelectedDataRows.ToList();
+		if (isChecked)
 		{
-			Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
-				idList: new List<Guid>{(Guid)rowId},
-				isSelected:isChecked
-			));
+			if (!selectedItems.Contains(rowId)) selectedItems.Add(rowId);
+		}
+		else
+		{
+			selectedItems.RemoveAll(x => x == rowId);
+		}
+		Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+			idList: selectedItems
+		));
+
+	}
+
+	private void _toggleSelectAll(bool isChecked)
+	{
+		var selectedItems = SpaceState.Value.SelectedDataRows.ToList();
+		for (int i = 0; i < SpaceState.Value.SpaceViewData.Rows.Count; i++)
+		{
+			var rowId = (Guid)SpaceState.Value.SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+			if (!isChecked)
+			{
+				selectedItems.RemoveAll(x => x == rowId);
+			}
+			else if(!selectedItems.Any(x=> x == rowId))
+			{
+				selectedItems.Add(rowId);
+
+			}
 		}
 
+		Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+			idList: selectedItems
+		));
 	}
 
 

@@ -9,19 +9,23 @@ public partial record SpaceState
 	internal List<TucSpaceViewColumn> SpaceViewColumnList { get; init; } = new();
 
 	public List<Guid> SelectedDataRows { get; init; } = new();
-	public bool? SelectionState
+	public bool AllDataRowsSelected
 	{
 		get
 		{
 			if(SpaceViewData is null) return false;
-			var atLeastOneSelected = false;
-			var atLeastOnNotSelected = false;
-			foreach (var row in SpaceViewData.Rows)
+			var allSelected = true;
+			for (int i = 0; i < SpaceViewData.Rows.Count; i++)
 			{
-				
+				var rowId = (Guid)SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+				if(!SelectedDataRows.Contains(rowId))
+				{ 
+					allSelected = false;
+					break;
+				}
 			}
 
-			return false;
+			return allSelected;
 		}
 	}
 }

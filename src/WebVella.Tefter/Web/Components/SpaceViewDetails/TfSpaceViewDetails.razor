@@ -74,7 +74,10 @@ else
 							<thead class="tf-grid-thead">
 								<tr class="tf-grid-thead-bkg" style="@($"background-color:{SpaceState.Value.SpaceBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
-									<th class="tf-grid-th tf-grid-th--check"><FluentCheckbox/></th>
+									<th class="tf-grid-th tf-grid-th--check">
+										<FluentCheckbox Value="SpaceState.Value.AllDataRowsSelected" 
+											ValueChanged="_toggleSelectAll"/>
+									</th>
 									@foreach (var column in SpaceState.Value.SpaceViewColumnList.OrderBy(x => x.Position))
 									{
 										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.HeaderStyle">
