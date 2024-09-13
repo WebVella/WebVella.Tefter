@@ -35,8 +35,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 				spaceViewData: viewData
 			));
 			ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-			ActionSubscriber.SubscribeToAction<SpaceViewMetaChangedAction>(this, On_StateViewMetaChanged);
-			ActionSubscriber.SubscribeToAction<SpaceViewDataChangedAction>(this, On_StateViewDataChanged);
 			KeyCodeService.RegisterListener(OnKeyDownAsync);
 		}
 	}
@@ -68,21 +66,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	}
 
-	private void On_StateViewMetaChanged(SpaceViewMetaChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			await InvokeAsync(StateHasChanged);
-		});
-	}
-	private void On_StateViewDataChanged(SpaceViewDataChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			await InvokeAsync(StateHasChanged);
-		});
-
-	}
 	private async Task _goFirstPage()
 	{
 		UC.Page = 1;
@@ -144,4 +127,31 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		};
 		return componentData;
 	}
+
+	private bool _getItemSelection(int rowIndex)
+	{
+		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];	
+		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+		if (rowId is not null)
+		{
+			return SpaceState.Value.SelectedDataRows.Contains((Guid)rowId);
+		}
+		return false;
+	}
+
+	private void _toggleItemSelection(int rowIndex, bool isChecked)
+	{
+		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];	
+		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+		if (rowId is not null)
+		{
+			Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+				idList: new List<Guid>{(Guid)rowId},
+				isSelected:isChecked
+			));
+		}
+
+	}
+
+
 }
