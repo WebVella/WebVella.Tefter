@@ -8,22 +8,19 @@ public class TfDataTableQueryInfo
 	public int? Page { get; init; } = null;
 	public int? PageSize { get; init; } = null;
 	public string Search { get; init; } = null;
-	public bool ExcludeSharedColumns { get; set; } = false;
 
 	public TfDataTableQueryInfo(
 		TfDataTable dataTable,
 		Guid dataProviderId,
 		int? page,
 		int? pageSize,
-		string search,
-		bool excludeSharedColumns )
+		string search )
 	{
 		DataTable = dataTable;
 		DataProviderId = dataProviderId;
 		Page = page;
 		PageSize = pageSize;
 		Search = search;
-		ExcludeSharedColumns = excludeSharedColumns;
 	}
 
 	public override string ToString()

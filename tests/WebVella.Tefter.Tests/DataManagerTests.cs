@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Api;
+﻿using Bogus;
+using WebVella.Tefter.Api;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;
@@ -12,27 +13,42 @@ public partial class DataManagerTests : BaseTest
 		{
 			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
-			
+
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var (provider, spaceData) = CreateTestStructureAndData();
+				var (provider, spaceData) = CreateTestStructureAndData(dbService);
 				var result = dataManager.QuerySpaceData(spaceData.Id,
 					search: "10",
 					page: 1,
 					pageSize: 5,
-					sortOverrides: new List<TfSort> { 
-						new TfSort { 
-							DbName ="guid_column", 
+					additionalFilters: new List<TfFilterBase>
+					{
+						new TfFilterOr(new[]
+							{
+								(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
+								(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
+								(TfFilterBase)new TfFilterText("sk_shared_key_text", TfFilterTextComparisonMethod.Contains, "a"),
+								(TfFilterBase)new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Equal, 5 )
+							})
+
+					},
+					sortOverrides: new List<TfSort> {
+						new TfSort {
+							DbName ="missing_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName ="tf_id",
+							DbName ="guid_column",
+							Direction=TfSortDirection.DESC} ,
+						new TfSort {
+							DbName ="sk_shared_key_int",
 							Direction=TfSortDirection.ASC}
 					});
 			}
 		}
 	}
 
-	private (TfDataProvider, TfSpaceData) CreateTestStructureAndData()
+	private (TfDataProvider, TfSpaceData) CreateTestStructureAndData(
+		IDatabaseService dbService)
 	{
 		ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 		IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
@@ -59,8 +75,8 @@ public partial class DataManagerTests : BaseTest
 
 		List<Tuple<string, DatabaseColumnType, string>> columns = new List<Tuple<string, DatabaseColumnType, string>>();
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("guid_column", DatabaseColumnType.Guid, "GUID"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_test_column", DatabaseColumnType.ShortText, "SHORT_TEXT"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("test_column", DatabaseColumnType.Text, "TEXT"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_text_column", DatabaseColumnType.ShortText, "SHORT_TEXT"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("text_column", DatabaseColumnType.Text, "TEXT"));
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("date_column", DatabaseColumnType.Date, "DATE"));
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("datetime_column", DatabaseColumnType.DateTime, "DATETIME"));
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_int_column", DatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
@@ -81,7 +97,7 @@ public partial class DataManagerTests : BaseTest
 						Description = "will be used for integer shared column",
 						DataProviderId = provider.Id,
 						DbName = "shared_key_int",
-						Columns = new() { provider.Columns.Single(x=>x.DbType == DatabaseColumnType.Integer ) }
+						Columns = new() { provider.Columns.Single(x => x.DbType == DatabaseColumnType.Integer) }
 					};
 
 		providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
@@ -131,7 +147,22 @@ public partial class DataManagerTests : BaseTest
 		var createResult = providerManager.CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy());
 
 		backgroundSync.StartManualProcessTasks();
-		
+
+		//insert data for shared keys
+		DataTable dt = dbService.ExecuteSqlQueryCommand($"SELECT * FROM dp{provider.Index}");
+		foreach (DataRow dr in dt.Rows)
+		{
+			var textSharedKeyId = (Guid)dr["tf_sk_shared_key_text_id"];
+			int insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO shared_column_short_text_value(shared_key_id,shared_column_id,value) " +
+				$"VALUES ('{textSharedKeyId}','{sharedColumn1.Id}', @value) ", new NpgsqlParameter("value", new Faker("en").Lorem.Sentence()));
+			insertResult.Should().Be(1);
+
+			var intSharedKeyId = (Guid)dr["tf_sk_shared_key_int_id"];
+			insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO shared_column_integer_value(shared_key_id,shared_column_id,value) " +
+				$"VALUES ('{textSharedKeyId}','{sharedColumn2.Id}', @value) ", new NpgsqlParameter("value", new Faker("en").Random.Int()));
+			insertResult.Should().Be(1);
+		}
+
 		var space = new TfSpace
 		{
 			Id = Guid.NewGuid(),
@@ -145,7 +176,7 @@ public partial class DataManagerTests : BaseTest
 
 		var spaceColumns = columns.Select(x => x.Item1).ToList();
 		spaceColumns.Add(sharedColumn1.DbName);
-		spaceColumns.Add(sharedColumn2.DbName);
+		//spaceColumns.Add(sharedColumn2.DbName); this one will be used for sort to check sort join
 		var spaceData = new TfSpaceData
 		{
 			Id = Guid.NewGuid(),
@@ -154,6 +185,10 @@ public partial class DataManagerTests : BaseTest
 			SpaceId = space.Id,
 			Columns = spaceColumns
 		};
+
+		List<TfFilterBase> filters = new List<TfFilterBase>();
+
+		spaceData.Filters.Add(new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Greater, 5));
 
 		var result = spaceManager.CreateSpaceData(spaceData);
 		result.IsSuccess.Should().BeTrue();

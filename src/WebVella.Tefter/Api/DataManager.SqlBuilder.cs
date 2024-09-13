@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter;
+﻿using FluentResults;
+using System.Reflection.Metadata.Ecma335;
+
+namespace WebVella.Tefter;
 
 public partial class DataManager
 {
@@ -8,71 +11,213 @@ public partial class DataManager
 		private short _tableAliasCounter = 1;
 		private string _tableAlias = "t1";
 
-		private List<SqlBuilderColumn> _columns = new();
-		private List<TfFilterBase> _filters = null;
-		private List<TfFilterBase> _additionalFilters = null;
+		private IDatabaseService _dbService = null;
+		private List<SqlBuilderColumn> _availableColumns = new();
+		private List<SqlBuilderColumn> _selectColumns = new();
+		private List<SqlBuilderColumn> _filterColumns = new();
+		private List<SqlBuilderColumn> _sortColumns = new();
+
+		private TfFilterAnd _mainFilter;
+		private List<TfFilterBase> _filters = new();
+		private List<TfFilterBase> _additionalFilters = new();
 		private List<TfSort> _sortOrders = null;
 		private string _search = null;
 		private int? _page = null;
 		private int? _pageSize = null;
 
-
 		public SqlBuilder(
-			string tableName,
-			List<TfFilterBase> filters = null,
+			IDatabaseService dbService,
+			TfDataProvider dataProvider,
+			TfSpaceData spaceData = null,
 			List<TfFilterBase> additionalFilters = null,
 			List<TfSort> sortOrders = null,
 			string search = null,
 			int? page = null,
 			int? pageSize = null)
 		{
-			if (string.IsNullOrWhiteSpace(tableName))
-				throw new ArgumentNullException(nameof(tableName));
+			if (dbService is null)
+				throw new ArgumentNullException(nameof(dbService));
 
-			_tableName = tableName;
-			_filters = filters;
-			_additionalFilters = additionalFilters;
+			if (dataProvider is null)
+				throw new ArgumentNullException(nameof(dataProvider));
+
+			if (spaceData is not null && spaceData.Filters is not null)
+				_filters = spaceData.Filters;
+
+			if (additionalFilters is not null)
+				_additionalFilters = additionalFilters;
+
 			_sortOrders = sortOrders;
+
 			_search = search;
+
 			_page = page;
+
 			_pageSize = pageSize;
+
+			_dbService = dbService;
+
+			_tableName = $"dp{dataProvider.Index}";
+
+			InitColumns(dataProvider, spaceData);
+
+			if (spaceData is not null && spaceData.Filters is not null)
+				_filters = spaceData.Filters;
 		}
 
-		public void AddColumn(
+		private void InitColumns(
+			TfDataProvider dataProvider,
+			TfSpaceData spaceData)
+		{
+			foreach (var column in dataProvider.SystemColumns)
+				AddAvailableColumn(Guid.Empty, column.DbName, column.DbType, isSystem: true);
+
+			foreach (var column in dataProvider.Columns)
+				AddAvailableColumn(column.Id, column.DbName, column.DbType);
+
+			foreach (var column in dataProvider.SharedColumns)
+				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.SharedKeyDbName);
+
+
+			if (spaceData is null)
+			{
+				_selectColumns = _availableColumns.ToList();
+
+				if (_sortOrders is not null && _sortOrders.Count >= 0)
+				{
+					foreach (var sortOrder in _sortOrders)
+					{
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						if (column is not null)
+							_sortColumns.Add(column);
+
+						//ignore missing columns
+					}
+				}
+			}
+			else
+			{
+				foreach (var column in _availableColumns.Where(x => x.IsSystem))
+					_selectColumns.Add(column);
+
+				foreach (var columnName in spaceData.Columns)
+				{
+					if (_selectColumns.Any(x => x.DbName == columnName))
+						continue;
+
+					var column = _availableColumns.SingleOrDefault(x => x.DbName == columnName);
+					if (column is not null)
+						_selectColumns.Add(column);
+
+					//ignore missing columns
+				}
+
+				if (spaceData.SortOrders is not null && spaceData.SortOrders.Any())
+				{
+					foreach (var sortOrder in spaceData.SortOrders)
+					{
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						if (column is not null)
+							_sortColumns.Add(column);
+					}
+				}
+				else if (_sortOrders is not null && _sortOrders.Count > 0)
+				{
+					foreach (var sortOrder in _sortOrders)
+					{
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						if (column is not null)
+							_sortColumns.Add(column);
+					}
+				}
+			}
+
+			//extract filter columns used later for validation if column exists and its alias			
+			var spaceDataFilter = new TfFilterAnd(_filters.ToArray());
+			var additionalFilter = new TfFilterAnd(_additionalFilters.ToArray());
+			_mainFilter = new TfFilterAnd(new[] { spaceDataFilter, additionalFilter });
+			ExtractColumnsFromFilter(_mainFilter);
+		}
+
+		private void AddAvailableColumn(
 			Guid id,
 			string dbName,
 			DatabaseColumnType dbType,
-			string sharedKeyDbName = null)
+			string sharedKeyDbName = null,
+			bool isSystem = false)
 		{
 			if (sharedKeyDbName == null)
 			{
-				_columns.Add(new SqlBuilderColumn
+				_availableColumns.Add(new SqlBuilderColumn
 				{
 					Id = id,
 					TableName = _tableName,
 					TableAlias = _tableAlias,
 					DbName = dbName,
 					DbType = dbType,
-					SharedKeyDbName = sharedKeyDbName
+					SharedKeyDbName = sharedKeyDbName,
+					IsSystem = isSystem
 				});
 			}
 			else
 			{
 				_tableAliasCounter++;
 
-				_columns.Add(new SqlBuilderColumn
+				_availableColumns.Add(new SqlBuilderColumn
 				{
 					Id = id,
 					TableName = GetSharedColumnValueTableNameByType(dbType),
 					TableAlias = $"t{_tableAliasCounter}",
 					DbName = dbName,
 					DbType = dbType,
-					SharedKeyDbName = sharedKeyDbName
+					SharedKeyDbName = sharedKeyDbName,
+					IsSystem = isSystem
 				});
 			}
 		}
 
-		public void CalculatePaging(IDatabaseService dbService)
+		private void ExtractColumnsFromFilter(
+			TfFilterBase filter)
+		{
+			if (_filterColumns is null)
+				_filterColumns = new List<SqlBuilderColumn>();
+
+			if (filter is null)
+				return;
+
+			var childFilters = new List<TfFilterBase>().AsReadOnly();
+
+			if (filter is TfFilterAnd && (((TfFilterAnd)filter).Filters) != null)
+				childFilters = (((TfFilterAnd)filter).Filters);
+
+			if (filter is TfFilterOr && ((((TfFilterOr)filter).Filters) != null))
+				childFilters = (((TfFilterOr)filter).Filters);
+
+
+			if (childFilters.Any())
+			{
+				foreach (var childFilter in childFilters)
+				{
+					if (childFilter == null)
+						continue;
+
+					ExtractColumnsFromFilter(childFilter);
+				}
+			}
+
+			if (string.IsNullOrWhiteSpace(filter.ColumnName))
+				return;
+
+			var filterColumn = _filterColumns.FirstOrDefault(x => x.DbName == filter.ColumnName);
+			if (filterColumn is null)
+			{
+				var availableColumn = _availableColumns.FirstOrDefault(x => x.DbName == filter.ColumnName);
+				if (availableColumn is not null)
+					_filterColumns.Add(availableColumn);
+			}
+		}
+
+		private void CalculatePaging()
 		{
 			if (_pageSize.HasValue && _page.HasValue && _page.Value < 0)
 			{
@@ -84,7 +229,7 @@ public partial class DataManager
 				if (!string.IsNullOrWhiteSpace(filterSql.Trim()))
 					sb.Append($"{Environment.NewLine}{filterSql}");
 
-				var dtCount = dbService.ExecuteSqlQueryCommand(sb.ToString(), parameters);
+				var dtCount = _dbService.ExecuteSqlQueryCommand(sb.ToString(), parameters);
 				var rowsCount = (long)dtCount.Rows[0][0];
 
 				_page = 1;
@@ -100,14 +245,23 @@ public partial class DataManager
 
 		public (string, List<NpgsqlParameter>, int?, int?) Build()
 		{
+			CalculatePaging();
+
 			string columns = string.Join($",{Environment.NewLine}\t",
-				_columns.Select(x => x.GetSelectString()).ToList());
+				_selectColumns.Select(x => x.GetSelectString()).ToList());
 
 			StringBuilder sb = new StringBuilder();
 			sb.Append($"SELECT {columns} {Environment.NewLine}FROM {_tableName} {_tableAlias}");
 
-			string joins = string.Join(Environment.NewLine, _columns
+			//joins are created for select columns, filter columns and sort columns
+			var columnsToJoin = _selectColumns
 					.Where(x => x.SharedKeyDbName != null)
+					.Union(_sortColumns
+						.Where(x => x.SharedKeyDbName != null)
+					)
+					.Distinct().ToList();
+
+			string joins = string.Join(Environment.NewLine, columnsToJoin
 					.Select(x => $"	LEFT OUTER JOIN {x.TableName} {x.TableAlias} ON " +
 					$"{x.TableAlias}.shared_key_id = {_tableAlias}.tf_sk_{x.SharedKeyDbName}_id AND " +
 					$"{x.TableAlias}.shared_column_id = '{x.Id}'").ToList());
@@ -140,22 +294,31 @@ public partial class DataManager
 			if (_sortOrders != null && _sortOrders.Any())
 			{
 				StringBuilder sortSb = new StringBuilder();
-				sortSb.Append("ORDER BY ");
+
 				bool first = true;
 				foreach (var sort in _sortOrders)
 				{
+					var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.DbName);
+
+					//ignore columns not found in data provider
+					if (column is null)
+						continue;
+
 					string comma = first ? " " : ", ";
 					string direction = sort.Direction == TfSortDirection.ASC ? "ASC" : "DESC";
-					var column = _columns.SingleOrDefault(x => x.DbName == sort.DbName);
-					var aliasAndDbName = column == null ? $"{column.TableAlias}.{column.DbName}" : $"{_tableAlias}.{column.DbName}";
-					sortSb.Append($"{comma}{aliasAndDbName} {direction}");
+					if (string.IsNullOrWhiteSpace(column.SharedKeyDbName))
+						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
+					else
+						sortSb.Append($"{comma}{column.TableAlias}.value {direction}");
 					first = false;
 				}
-				sb.Append(Environment.NewLine);
 				sb.Append(sortSb.ToString());
 			}
 
-			return sb.ToString();
+			if (sb.Length == 0)
+				return string.Empty;
+
+			return "ORDER BY " + sb.ToString();
 		}
 
 		private (string, List<NpgsqlParameter>) GenerateFiltersAndSearchSql()
@@ -164,14 +327,294 @@ public partial class DataManager
 
 			StringBuilder sb = new StringBuilder();
 
-			//TODO filters
-			if (!string.IsNullOrWhiteSpace(_search))
+			if (!string.IsNullOrWhiteSpace(_search?.Trim()))
 			{
-				parameters.Add(new NpgsqlParameter("@tf_search", _search));
-				sb.AppendLine($"WHERE {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_search , '%') ");
+				parameters.Add(new NpgsqlParameter("@tf_search", _search?.Trim()));
+				sb.Append(Environment.NewLine);
+				sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_search , '%') )");
 			}
 
-			return (sb.ToString(), parameters);
+
+			var filterSql = GenerateFiltersSql(_mainFilter, parameters);
+			if (!string.IsNullOrWhiteSpace(filterSql))
+			{
+				if (sb.Length > 0)
+					sb.Append($" AND {Environment.NewLine}");
+
+				sb.Append($"\t{filterSql} ");
+			}
+
+			if (sb.Length == 0)
+				return (string.Empty, parameters);
+
+			return ("WHERE " + sb.ToString(), parameters);
+		}
+
+		private string GenerateFiltersSql(TfFilterBase filter, List<NpgsqlParameter> parameters)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if (filter is TfFilterAnd)
+			{
+				TfFilterAnd andFilter = (TfFilterAnd)filter;
+				if (andFilter.Filters != null && andFilter.Filters.Count > 0)
+				{
+					List<string> childFiltersSql = new List<string>();
+					foreach (var childFilter in andFilter.Filters)
+					{
+						var childFilterSql = GenerateFiltersSql(childFilter, parameters);
+						if (!string.IsNullOrWhiteSpace(childFilterSql))
+							childFiltersSql.Add(childFilterSql);
+					}
+					if (childFiltersSql.Count > 1)
+						return $" ( " + string.Join($" AND ", childFiltersSql.ToArray()) + " ) ";
+					else if (childFiltersSql.Count == 1)
+						return childFiltersSql[0];
+				}
+				return string.Empty;
+			}
+			else if (filter is TfFilterOr)
+			{
+				TfFilterOr orFilter = (TfFilterOr)filter;
+				if (orFilter.Filters != null && orFilter.Filters.Count > 0)
+				{
+					List<string> childFiltersSql = new List<string>();
+					foreach (var childFilter in orFilter.Filters)
+					{
+						var childFilterSql = GenerateFiltersSql(childFilter, parameters);
+						if (!string.IsNullOrWhiteSpace(childFilterSql))
+							childFiltersSql.Add(childFilterSql);
+					}
+					if (childFiltersSql.Count > 1)
+						return $" ( " + string.Join($" OR ", childFiltersSql.ToArray()) + " ) ";
+					else if (childFiltersSql.Count == 1)
+						return childFiltersSql[0];
+				}
+				return string.Empty;
+			}
+
+			var column = _filterColumns.SingleOrDefault(x => x.DbName == filter.ColumnName);
+			if (column is null)
+				return string.Empty;
+
+			var columnName = $"{column.TableAlias}.{filter.ColumnName}";
+			if (!string.IsNullOrWhiteSpace(column.SharedKeyDbName))
+				columnName = $"{column.TableAlias}.value";
+
+			var parameterName = "filter_par_" + Guid.NewGuid().ToString().Replace("-", string.Empty);
+
+			if (filter is TfFilterBoolean)
+			{
+				if (column.DbType == DatabaseColumnType.Boolean)
+					return string.Empty;
+
+				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Boolean);
+				object value = ((TfFilterBoolean)filter).Value;
+				if (value is null) value = DBNull.Value;
+				parameter.Value = value;
+				parameters.Add(parameter);
+
+				switch (((TfFilterBoolean)filter).ComparisonMethod)
+				{
+					case TfFilterBooleanComparisonMethod.Equal:
+						return $" {columnName} = @{parameterName} ";
+					case TfFilterBooleanComparisonMethod.NotEqual:
+						return $" {columnName} <> @{parameterName} ";
+					case TfFilterBooleanComparisonMethod.IsTrue:
+						return $" {columnName} = TRUE ";
+					case TfFilterBooleanComparisonMethod.IsFalse:
+						return $" {columnName} = FALSE ";
+					case TfFilterBooleanComparisonMethod.HasValue:
+						return $" {columnName} IS NOT NULL ";
+					case TfFilterBooleanComparisonMethod.HasNoValue:
+						return $" {columnName} IS NULL ";
+					default:
+						throw new Exception("Not supported filter comparison method");
+				}
+			}
+			else if (filter is TfFilterDateOnly)
+			{
+				if (!(column.DbType == DatabaseColumnType.Date ||
+					 column.DbType == DatabaseColumnType.DateTime))
+				{
+					return string.Empty;
+				}
+
+				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Date);
+				object value = ((TfFilterDateOnly)filter).Value;
+				if (value is null) value = DBNull.Value;
+				parameter.Value = value;
+				parameters.Add(parameter);
+
+				switch (((TfFilterDateOnly)filter).ComparisonMethod)
+				{
+					case TfFilterDateTimeComparisonMethod.Equal:
+						return $" {columnName} = @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.NotEqual:
+						return $" {columnName} <> @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.GreaterOrEqual:
+						return $" {columnName} >= @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.Greater:
+						return $" {columnName} > @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.LowerOrEqual:
+						return $" {columnName} <= @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.Lower:
+						return $" {columnName} < @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.HasValue:
+						return $" {columnName} IS NOT NULL ";
+					case TfFilterDateTimeComparisonMethod.HasNoValue:
+						return $" {columnName} IS NULL ";
+					default:
+						throw new Exception("Not supported filter comparison method");
+				}
+			}
+			else if (filter is TfFilterDateTime)
+			{
+				if (!(column.DbType == DatabaseColumnType.Date ||
+					 column.DbType == DatabaseColumnType.DateTime))
+				{
+					return string.Empty;
+				}
+
+				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.DateTime2);
+				object value = ((TfFilterDateTime)filter).Value;
+				if (value is null) value = DBNull.Value;
+				parameter.Value = value;
+				parameters.Add(parameter);
+
+				switch (((TfFilterDateTime)filter).ComparisonMethod)
+				{
+					case TfFilterDateTimeComparisonMethod.Equal:
+						return $" {columnName} = @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.NotEqual:
+						return $" {columnName} <> @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.GreaterOrEqual:
+						return $" {columnName} >= @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.Greater:
+						return $" {columnName} > @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.LowerOrEqual:
+						return $" {columnName} <= @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.Lower:
+						return $" {columnName} < @{parameterName} ";
+					case TfFilterDateTimeComparisonMethod.HasValue:
+						return $" {columnName} IS NOT NULL ";
+					case TfFilterDateTimeComparisonMethod.HasNoValue:
+						return $" {columnName} IS NULL ";
+					default:
+						throw new Exception("Not supported filter comparison method");
+				}
+			}
+			else if (filter is TfFilterGuid)
+			{
+				if (column.DbType != DatabaseColumnType.Guid)
+					return string.Empty;
+
+				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Guid);
+				object value = ((TfFilterGuid)filter).Value;
+				if (value is null) value = DBNull.Value;
+				parameter.Value = value;
+				parameters.Add(parameter);
+
+				switch (((TfFilterGuid)filter).ComparisonMethod)
+				{
+					case TfFilterGuidComparisonMethod.Equal:
+						return $" {columnName} = @{parameterName} ";
+					case TfFilterGuidComparisonMethod.NotEqual:
+						return $" {columnName} <> @{parameterName} ";
+					case TfFilterGuidComparisonMethod.IsEmpty:
+						return $" {columnName} = @{parameterName} ";
+					case TfFilterGuidComparisonMethod.IsNotEmpty:
+						return $" {columnName} <> @{parameterName} ";
+					case TfFilterGuidComparisonMethod.HasValue:
+						return $" {columnName} IS NOT NULL ";
+					case TfFilterGuidComparisonMethod.HasNoValue:
+						return $" {columnName} IS NULL ";
+					default:
+						throw new Exception("Not supported filter comparison method");
+				}
+			}
+			else if (filter is TfFilterNumeric)
+			{
+				if (!(column.DbType == DatabaseColumnType.Number ||
+					 column.DbType == DatabaseColumnType.ShortInteger ||
+					 column.DbType == DatabaseColumnType.Integer ||
+					 column.DbType == DatabaseColumnType.LongInteger ||
+					 column.DbType == DatabaseColumnType.AutoIncrement))
+				{
+					return string.Empty;
+				}
+
+				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.VarNumeric);
+				object value = ((TfFilterNumeric)filter).Value;
+				if (value is null)	value = DBNull.Value;
+				parameter.Value = value;
+				parameters.Add(parameter);
+
+				switch (((TfFilterNumeric)filter).ComparisonMethod)
+				{
+					case TfFilterNumericComparisonMethod.Equal:
+						return $" {columnName} = @{parameterName} ";
+					case TfFilterNumericComparisonMethod.NotEqual:
+						return $" {columnName} <> @{parameterName} ";
+					case TfFilterNumericComparisonMethod.GreaterOrEqual:
+						return $" {columnName} >= @{parameterName} ";
+					case TfFilterNumericComparisonMethod.Greater:
+						return $" {columnName} > @{parameterName} ";
+					case TfFilterNumericComparisonMethod.LowerOrEqual:
+						return $" {columnName} <= @{parameterName} ";
+					case TfFilterNumericComparisonMethod.Lower:
+						return $" {columnName} < @{parameterName} ";
+					case TfFilterNumericComparisonMethod.HasValue:
+						return $" {columnName} IS NOT NULL ";
+					case TfFilterNumericComparisonMethod.HasNoValue:
+						return $" {columnName} IS NULL ";
+					default:
+						throw new Exception("Not supported filter comparison method");
+				}
+			}
+			else if (filter is TfFilterText)
+			{
+				if (!(column.DbType == DatabaseColumnType.ShortText ||
+					 column.DbType == DatabaseColumnType.Text))
+				{
+					return string.Empty;
+				}
+
+				DbType dbType = DbType.String;
+				if (column.DbType == DatabaseColumnType.ShortText)
+					dbType = DbType.StringFixedLength;
+
+				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, dbType);
+				object value = ((TfFilterText)filter).Value;
+				if(value is null )
+					value = DBNull.Value;
+				parameter.Value = value;
+				parameters.Add(parameter);
+
+				switch (((TfFilterText)filter).ComparisonMethod)
+				{
+					case TfFilterTextComparisonMethod.Equal:
+						return $" {columnName} = @{parameterName} ";
+					case TfFilterTextComparisonMethod.NotEqual:
+						return $" {columnName} <> @{parameterName} ";
+					case TfFilterTextComparisonMethod.StartsWith:
+						return $" {columnName} ILIKE CONCAT ( @{parameterName} , '%') ";
+					case TfFilterTextComparisonMethod.EndsWith:
+						return $" {columnName} ILIKE CONCAT ('%', @{parameterName} ) ";
+					case TfFilterTextComparisonMethod.Contains:
+						return $" {columnName} ILIKE CONCAT ('%', @{parameterName} , '%') ";
+					case TfFilterTextComparisonMethod.Fts:
+						return $" to_tsvector( {columnName} ) @@ to_tsquery('english', @{parameterName} ) ";
+					case TfFilterTextComparisonMethod.HasValue:
+						return $" {columnName} IS NOT NULL ";
+					case TfFilterTextComparisonMethod.HasNoValue:
+						return $" {columnName} IS NULL ";
+					default:
+						throw new Exception("Not supported filter comparison method");
+				}
+			}
+
+			return sb.ToString();
 		}
 	}
 
@@ -183,6 +626,8 @@ public partial class DataManager
 		public DatabaseColumnType DbType { get; set; }
 		public string TableName { get; set; }
 		public string TableAlias { get; set; }
+
+		public bool IsSystem { get; set; } = false;
 
 		public string GetSelectString()
 		{

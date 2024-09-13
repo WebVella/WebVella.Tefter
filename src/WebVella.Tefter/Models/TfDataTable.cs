@@ -2,14 +2,18 @@
 
 public sealed class TfDataTable
 {
+	public string Sql { get; init; }
+	public ReadOnlyCollection<NpgsqlParameter> SqlParameters { get; init; }
 	public TfDataTableQueryInfo QueryInfo { get; set; }
 	public TfDataColumnCollection Columns { get; init; }
 	public TfDataRowCollection Rows { get; init; }
 
 	internal TfDataTable(
 		TfDataProvider dataProvider,
-		TfDataTableQuery query, 
-		List<string> onlyColumns = null )
+		TfDataTableQuery query,
+		string sql,
+		List<NpgsqlParameter> sqlParameters,
+		List<string> onlyColumns = null)
 	{
 		if (dataProvider is null)
 			throw new ArgumentNullException(nameof(dataProvider));
@@ -19,21 +23,22 @@ public sealed class TfDataTable
 			query.DataProviderId,
 			query.Page,
 			query.PageSize,
-			query.Search,
-			query.ExcludeSharedColumns);
+			query.Search);
 
 		Columns = InitColumns(
 			dataProvider,
-			onlyColumns,
-			query.ExcludeSharedColumns);
+			onlyColumns );
+
+		Sql = sql;
+
+		SqlParameters = sqlParameters.AsReadOnly();
 
 		Rows = new TfDataRowCollection(this);
 	}
 
 	private TfDataColumnCollection InitColumns(
 		TfDataProvider dataProvider,
-		List<string> onlyColumns,
-		bool excludeSharedColumns)
+		List<string> onlyColumns)
 	{
 		var columns = new TfDataColumnCollection(this);
 
@@ -113,21 +118,19 @@ public sealed class TfDataTable
 			isSystem: false));
 		}
 
-		if (!excludeSharedColumns)
-		{
-			foreach (var providerColumn in dataProvider.SharedColumns)
-			{
-				if (onlyColumns != null && !onlyColumns.Contains(providerColumn.DbName))
-					continue;
 
-				columns.Add(new TfDataColumn(
-				this,
-				providerColumn.DbName,
-				providerColumn.DbType,
-				isNullable: true,
-				isShared: true,
-				isSystem: false));
-			}
+		foreach (var providerColumn in dataProvider.SharedColumns)
+		{
+			if (onlyColumns != null && !onlyColumns.Contains(providerColumn.DbName))
+				continue;
+
+			columns.Add(new TfDataColumn(
+			this,
+			providerColumn.DbName,
+			providerColumn.DbType,
+			isNullable: true,
+			isShared: true,
+			isSystem: false));
 		}
 
 		return columns;

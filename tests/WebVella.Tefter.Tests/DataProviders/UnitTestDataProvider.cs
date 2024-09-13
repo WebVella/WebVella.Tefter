@@ -67,8 +67,8 @@ public class UnitTestDataProvider : ITfDataProviderType
 	{
 		List<Tuple<string, DatabaseColumnType, string>> columns = new List<Tuple<string, DatabaseColumnType, string>>();
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("guid_column", DatabaseColumnType.Guid, "GUID"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_test_column", DatabaseColumnType.ShortText, "SHORT_TEXT"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("test_column", DatabaseColumnType.Text, "TEXT"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_text_column", DatabaseColumnType.ShortText, "SHORT_TEXT"));
+		columns.Add(new Tuple<string, DatabaseColumnType, string>("text_column", DatabaseColumnType.Text, "TEXT"));
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("date_column", DatabaseColumnType.Date, "DATE"));
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("datetime_column", DatabaseColumnType.DateTime, "DATETIME"));
 		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_int_column", DatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
