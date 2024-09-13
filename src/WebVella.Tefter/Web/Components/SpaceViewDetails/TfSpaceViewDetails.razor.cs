@@ -3,7 +3,17 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 {
 	[Inject] protected IState<SpaceState> SpaceState { get; set; }
 	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
+
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			KeyCodeService.UnregisterListener(OnKeyDownAsync);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -25,9 +35,16 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 				spaceViewData: viewData
 			));
 			ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-			ActionSubscriber.SubscribeToAction<SpaceViewMetaChangedAction>(this, On_StateViewMetaChanged);
-			ActionSubscriber.SubscribeToAction<SpaceViewDataChangedAction>(this, On_StateViewDataChanged);
+			KeyCodeService.RegisterListener(OnKeyDownAsync);
 		}
+	}
+
+	public async Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
+	{
+		if (args.Key == KeyCode.PageUp) await _goNextPage();
+		else if (args.Key == KeyCode.PageDown) await _goPreviousPage();
+
+
 	}
 
 	private void On_StateChanged(SpaceStateChangedAction action)
@@ -49,66 +66,92 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	}
 
-	private void On_StateViewMetaChanged(SpaceViewMetaChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			await InvokeAsync(StateHasChanged);
-		});
-	}
-	private void On_StateViewDataChanged(SpaceViewDataChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			await InvokeAsync(StateHasChanged);
-		});
-
-	}
 	private async Task _goFirstPage()
 	{
-		if (UC.IsBusy) return;
-		UC.IsBusy = true;
-		await InvokeAsync(StateHasChanged);
-		//await UC.DataProviderDataTableGoFirstPage(providerId: DataProviderDetailsState.Value.Provider.Id);
-		UC.IsBusy = false;
-		await InvokeAsync(StateHasChanged);
+		UC.Page = 1;
+		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+		Dispatcher.Dispatch(new SetSpaceViewDataAction(
+			spaceViewData: viewData
+		));
 	}
 	private async Task _goPreviousPage()
 	{
-		if (UC.IsBusy) return;
-		UC.IsBusy = true;
-		await InvokeAsync(StateHasChanged);
-		//await UC.DataProviderDataTableGoPreviousPage(providerId: DataProviderDetailsState.Value.Provider.Id);
-		UC.IsBusy = false;
-		await InvokeAsync(StateHasChanged);
+		UC.Page--;
+		if (UC.Page < 1) UC.Page = 1;
+		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+		Dispatcher.Dispatch(new SetSpaceViewDataAction(
+			spaceViewData: viewData
+		));
 	}
 	private async Task _goNextPage()
 	{
-		if (UC.IsBusy) return;
-		UC.IsBusy = true;
-		await InvokeAsync(StateHasChanged);
-		//await UC.DataProviderDataTableGoNextPage(providerId: DataProviderDetailsState.Value.Provider.Id);
-		UC.IsBusy = false;
-		await InvokeAsync(StateHasChanged);
+		UC.Page++;
+		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+		Dispatcher.Dispatch(new SetSpaceViewDataAction(
+			spaceViewData: viewData
+		));
 	}
 	private async Task _goLastPage()
 	{
-		if (UC.IsBusy) return;
-		UC.IsBusy = true;
-		await InvokeAsync(StateHasChanged);
-		//await UC.DataProviderDataTableGoLastPage(providerId: DataProviderDetailsState.Value.Provider.Id);
-		UC.IsBusy = false;
-		await InvokeAsync(StateHasChanged);
+		UC.Page = -1;
+		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+		Dispatcher.Dispatch(new SetSpaceViewDataAction(
+			spaceViewData: viewData
+		));
 	}
 
 	private async Task _goOnPage(int page)
 	{
-		if (UC.IsBusy) return;
-		UC.IsBusy = true;
-		await InvokeAsync(StateHasChanged);
 		UC.Page = page;
-		//await UC.DataProviderDataTableGoOnPage(providerId: DataProviderDetailsState.Value.Provider.Id);
-		UC.IsBusy = false;
-		await InvokeAsync(StateHasChanged);
+		if (UC.Page < 1) UC.Page = 1;
+		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
+		Dispatcher.Dispatch(new SetSpaceViewDataAction(
+			spaceViewData: viewData
+		));
 	}
+
+	private Dictionary<string, object> _getColumnComponentContext(TucSpaceViewColumn column, TfDataTable dataTable, int rowIndex)
+	{
+		var componentData = new Dictionary<string, object>();
+
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfComponentContext
+		{
+			Mode = TfComponentMode.Display,
+			CustomOptionsJson = column.CustomOptionsJson,
+			DataMapping = column.DataMapping,
+			DataTable = dataTable,
+			RowIndex = rowIndex,
+			QueryName = column.QueryName,
+			SelectedAddonId = column.SelectedAddonId,
+			SpaceViewId = column.SpaceViewId,
+		};
+		return componentData;
+	}
+
+	private bool _getItemSelection(int rowIndex)
+	{
+		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];	
+		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+		if (rowId is not null)
+		{
+			return SpaceState.Value.SelectedDataRows.Contains((Guid)rowId);
+		}
+		return false;
+	}
+
+	private void _toggleItemSelection(int rowIndex, bool isChecked)
+	{
+		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];	
+		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+		if (rowId is not null)
+		{
+			Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+				idList: new List<Guid>{(Guid)rowId},
+				isSelected:isChecked
+			));
+		}
+
+	}
+
+
 }

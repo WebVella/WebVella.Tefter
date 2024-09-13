@@ -24,8 +24,18 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 	}
 
+	internal List<string> _columnSortOptions
+	{
+		get
+		{
+			if (UC.SpaceDataManageForm is null || UC.SpaceDataManageForm.SortOrders is null) return AllColumnOptions;
+			return AllColumnOptions.Where(x => !UC.SpaceDataManageForm.SortOrders.Any(y=> y.DbName == x)).ToList();
+		}
+	}
+
 	internal string _selectedColumn = null;
 	internal string _selectedFilterColumn = null;
+	internal TucSort _selectedSort = new TucSort();
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
@@ -273,7 +283,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 	}
 
-	public async Task _saveFilters()
+	private async Task _saveFilters()
 	{
 		if (_isSubmitting) return;
 		try
@@ -305,11 +315,84 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	}
 
-	public async Task _addColumnFilterHandler()
+	private async Task _addColumnFilterHandler()
 	{
 		if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;
 		await AddColumnFilter(_selectedFilterColumn, null);
 		//_selectedFilterColumn = null; //do not clear for convenience
+	}
+
+	private async Task _addSortColumn()
+	{
+		if (_isSubmitting) return;
+		try
+		{
+			if (_selectedSort is null || String.IsNullOrWhiteSpace(_selectedSort.DbName)) return;
+			if (UC.SpaceDataManageForm.SortOrders.Any(x=> x.DbName == _selectedSort.DbName)) return;
+
+
+
+			Result<TucSpaceData> submitResult = UC.AddSortColumnToSpaceData(SpaceState.Value.SpaceData.Id, _selectedSort);
+			ProcessFormSubmitResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess("Dataset updated!");
+				submitResult.Value.Columns = submitResult.Value.Columns.Order().ToList();
+				var spaceDataList = SpaceState.Value.SpaceDataList.ToList();
+				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
+				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
+
+				Dispatcher.Dispatch(new SetSpaceDataAction(
+					spaceData: submitResult.Value,
+					spaceDataList: spaceDataList
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isSubmitting = false;
+			_selectedColumn = null;
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
+
+
+	private async Task _deleteSortColumn(TucSort sort)
+	{
+		if (_isSubmitting) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this sort order removed?")))
+			return;
+		try
+		{
+			Result<TucSpaceData> submitResult = UC.RemoveSortColumnFromSpaceData(SpaceState.Value.SpaceData.Id, sort);
+			ProcessFormSubmitResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess("Dataset updated!");
+				var spaceDataList = SpaceState.Value.SpaceDataList.ToList();
+				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
+				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
+
+				Dispatcher.Dispatch(new SetSpaceDataAction(
+					spaceData: submitResult.Value,
+					spaceDataList: spaceDataList
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isSubmitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 

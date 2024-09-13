@@ -11,8 +11,11 @@ public static partial class SpaceStateReducers
 
 	[ReducerMethod()]
 	public static SpaceState SetSpaceViewDataReducer(SpaceState state, SetSpaceViewDataAction action)
-		=> state with
+	{
+		Console.WriteLine("SetSpaceViewDataReducer");
+		return state with
 		{
 			SpaceViewData = action.SpaceViewData,
 		};
+	}
 }

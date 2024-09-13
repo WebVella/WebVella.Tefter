@@ -74,9 +74,10 @@ else
 							<thead class="tf-grid-thead">
 								<tr class="tf-grid-thead-bkg" style="@($"background-color:{SpaceState.Value.SpaceBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
+									<th class="tf-grid-th tf-grid-th--check"><FluentCheckbox/></th>
 									@foreach (var column in SpaceState.Value.SpaceViewColumnList.OrderBy(x => x.Position))
 									{
-										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.Style">
+										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.HeaderStyle">
 											<div>@column.Title</div>
 										</th>
 									}
@@ -86,30 +87,37 @@ else
 								@if (UC.IsBusy)
 								{
 									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@SpaceState.Value.SpaceViewColumnList.Count"><div>@LOC("Loading...")</div></td>
+										<td class="tf-grid-td" colspan="@(SpaceState.Value.SpaceViewColumnList.Count + 1)"><div>@LOC("Loading...")</div></td>
 									</tr>
 								}
 								else if (SpaceState.Value.SpaceViewData is null)
 								{
 									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@SpaceState.Value.SpaceViewColumnList.Count"><div>@LOC("Space data not found")</div></td>
+										<td class="tf-grid-td" colspan="@(SpaceState.Value.SpaceViewColumnList.Count + 1)"><div>@LOC("Space data not found")</div></td>
 									</tr>
 								}
 								else if (SpaceState.Value.SpaceViewData.Rows.Count == 0)
 								{
 									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@SpaceState.Value.SpaceViewColumnList.Count"><div>@LOC("No data")</div></td>
+										<td class="tf-grid-td" colspan="@(SpaceState.Value.SpaceViewColumnList.Count + 1)"><div>@LOC("No data")</div></td>
 									</tr>
 								}
 								else
 								{
-									foreach (TfDataRow row in SpaceState.Value.SpaceViewData.Rows)
+									for (int i = 0; i < SpaceState.Value.SpaceViewData.Rows.Count; i++)
 									{
-										<tr @key=@row["tf_id"] class="tf-grid-tr">
+										var index = i;
+										<tr @key=@index class="tf-grid-tr">
+											<td class="tf-grid-td tf-grid-td--check">
+												<div>
+													<FluentCheckbox Value="_getItemSelection(index)"
+																	ValueChanged="@((x) =>_toggleItemSelection(index,x))" />
+												</div>
+											</td>
 											@foreach (var column in SpaceState.Value.SpaceViewColumnList)
 											{
-												<td class="tf-grid-td">
-													<div>@row[column.QueryName]</div>
+												<td class="tf-grid-td" style="@column.BodyStyle">
+													<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, SpaceState.Value.SpaceViewData,index)" />
 												</td>
 											}
 										</tr>
@@ -117,7 +125,6 @@ else
 								}
 							</tbody>
 						</table>
-
 					</div>
 				</div>
 				<div class="tfdt__pager">

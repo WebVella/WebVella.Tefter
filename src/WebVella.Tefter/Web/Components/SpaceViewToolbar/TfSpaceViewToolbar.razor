@@ -23,10 +23,10 @@
 		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			Actions
-			@if (_selectedRows.Count > 0)
+			@if (SpaceState.Value.SelectedDataRows.Count > 0)
 			{
 				<span slot="start">
-					<FluentBadge Appearance="Appearance.Accent">@_selectedRows.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Accent">@SpaceState.Value.SelectedDataRows.Count</FluentBadge>
 				</span>
 			}
 			else

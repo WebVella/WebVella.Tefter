@@ -23,7 +23,7 @@ public record TucSpaceViewColumn
 	public string CustomOptionsJson { get; set; } = "{}";
 	public TucSpaceViewColumnSettings Settings { get; set; } = new TucSpaceViewColumnSettings();
 
-	public string Style
+	public string HeaderStyle
 	{
 		get
 		{
@@ -33,6 +33,22 @@ public record TucSpaceViewColumn
 				if (Settings.Width is not null)
 				{
 					sb.Append($"width:{Settings.Width}px");
+				}
+			}
+
+			return sb.ToString();
+		}
+	}
+
+	public string BodyStyle
+	{
+		get
+		{
+			var sb = new StringBuilder();
+			if (Settings is not null)
+			{
+				if(Settings.Color != OfficeColor.Default){ 
+					sb.Append($"background-color:{Settings.Color.ToAttributeValue()}25");
 				}
 			}
 

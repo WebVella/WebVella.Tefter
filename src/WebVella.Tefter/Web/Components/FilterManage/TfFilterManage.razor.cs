@@ -9,6 +9,9 @@ public partial class TfFilterManage : TfBaseComponent
 	public TucFilterBase Item { get; set; }
 
 	[Parameter]
+	public List<string> ProviderColumns { get; set; }
+
+	[Parameter]
 	public bool Disabled { get; set; } = false;
 
 	private string _selectedFilterColumn = null;

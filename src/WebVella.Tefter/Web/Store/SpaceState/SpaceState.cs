@@ -33,7 +33,7 @@ public partial record SpaceState
 
 	public string SpaceIconColorString
 	{
-		get => RenderUtils.ChangeColorDarknessHex(SpaceColorObject,(float)0.25);
+		get => RenderUtils.ChangeColorDarknessHex(SpaceColorObject, (float)0.25);
 	}
 
 	public SystemColor SpaceColorObject

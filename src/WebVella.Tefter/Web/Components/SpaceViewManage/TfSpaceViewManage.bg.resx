@@ -120,6 +120,12 @@
   <data name="Are you sure that you need this column deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете колоната?</value>
   </data>
+  <data name="open dataset" xml:space="preserve">
+    <value>отвори данните</value>
+  </data>
+  <data name="open view" xml:space="preserve">
+    <value>отвори изгледа</value>
+  </data>
   <data name="Space View updated" xml:space="preserve">
     <value>Изгледа е обновен</value>
   </data>

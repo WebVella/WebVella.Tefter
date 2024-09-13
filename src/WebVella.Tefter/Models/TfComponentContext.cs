@@ -10,7 +10,7 @@ public class TfComponentContext
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
 	public TfComponentMode Mode { get; set; } = TfComponentMode.Display;
-	public TfDataRow DataRow { get; set; } = null;
+	public TfDataTable DataTable { get; set; } = null;
 	public int RowIndex { get; set; } = -1;
 	public EditContext EditContext { get; set; } = null;
 	public ValidationMessageStore ValidationMessageStore { get; set; } = null;
