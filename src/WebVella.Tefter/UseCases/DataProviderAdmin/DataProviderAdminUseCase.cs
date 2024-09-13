@@ -181,7 +181,7 @@ public partial class DataProviderAdminUseCase
 		if (result.Value is null)
 			return Result.Fail(new Error("Provider not found"));
 
-		var dtResult = _dataManager.GetProviderRows(
+		var dtResult = _dataManager.QueryDataProvider(
 			provider: result.Value,
 			search: search,
 			page: page,
