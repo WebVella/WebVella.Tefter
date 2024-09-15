@@ -28,6 +28,7 @@ public partial class TfAppInit : TfBaseComponent
 			Dispatcher.Dispatch(new InitStateAction(
 				component: this,
 				user: initResult.User,
+				userSpaces: initResult.UserSpaces,
 				culture: initResult.CultureOption,
 				themeMode: initResult.User.Settings?.ThemeMode ?? TfConstants.DefaultThemeMode,
 				themeColor: initResult.User.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor,

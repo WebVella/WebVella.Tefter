@@ -1,9 +1,6 @@
 ﻿namespace WebVella.Tefter.UseCases.UserAdmin;
 public partial class UserAdminUseCase
 {
-	internal TucUserAdminManageForm Form { get; set; }
-	internal List<TucRole> AllRoles { get; set; } = new();
-
 	internal async Task InitForManageDialogAsync()
 	{
 		Form = new TucUserAdminManageForm();

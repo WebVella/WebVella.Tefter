@@ -8,6 +8,7 @@ public static partial class StateReducers
 		{
 			CurrentUser = action.User,
 			Culture = action.Culture,
+			CurrentUserSpaces = action.UserSpaces,
 			ThemeMode = action.ThemeMode,
 			ThemeColor = action.ThemeColor,
 			SidebarExpanded = action.SidebarExpanded,

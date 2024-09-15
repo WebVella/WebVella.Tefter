@@ -23,6 +23,15 @@ public partial class UserAdminUseCase
 		_messageService = messageService;
 		_loc = loc;
 	}
+	internal TucUserAdminManageForm Form { get; set; }
+	internal List<TucRole> AllRoles { get; set; } = new();
+	internal bool MenuLoading { get; set; } = true;
+	internal bool LoadMoreLoading { get; set; } = false;
+	internal List<TucMenuItem> MenuItems { get; set; } = new();
+	internal string MenuSearch { get; set; }
+	internal bool MenuHasMore { get; set; } = true;
+	internal int MenuPage { get; set; } = 1;
+	internal int MenuPageSize { get; set; } = TfConstants.PageSize;
 
 	internal async Task Init(Type type)
 	{
@@ -36,7 +45,6 @@ public partial class UserAdminUseCase
 		else throw new Exception($"Type: {type.Name} not supported in UserAdminUseCase");
 
 	}
-
 
 	internal async Task<Result<TucUser>> CreateUserWithFormAsync()
 	{

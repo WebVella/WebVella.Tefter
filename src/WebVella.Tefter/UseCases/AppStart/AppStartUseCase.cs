@@ -33,6 +33,13 @@ internal partial class AppStartUseCase
 		//Init Culture
 		result.CultureOption = await InitCulture(result.User);
 		if(result.CultureOption is null) return null;
+
+		//Init User spaces
+		var uri = new Uri(_navigationManager.Uri);
+		if(!uri.LocalPath.StartsWith("/admin")){ 
+			result.UserSpaces = await InitUserSpaces(result.User);
+		}
+
 		return result;
 	}
 

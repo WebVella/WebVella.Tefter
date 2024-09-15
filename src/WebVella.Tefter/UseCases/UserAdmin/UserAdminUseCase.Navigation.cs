@@ -1,13 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.UserAdmin;
 public partial class UserAdminUseCase
 {
-	internal bool MenuLoading { get; set; } = true;
-	internal bool LoadMoreLoading { get; set; } = false;
-	internal List<TucMenuItem> MenuItems { get; set; } = new();
-	internal string MenuSearch { get; set; }
-	internal bool MenuHasMore { get; set; } = true;
-	internal int MenuPage { get; set; } = 1;
-	internal int MenuPageSize { get; set; } = TfConstants.PageSize;
+
 	internal async Task InitForNavigationAsync()
 	{
 		MenuLoading = false;
