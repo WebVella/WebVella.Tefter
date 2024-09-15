@@ -1,9 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 
-[LocalizationResource("WebVella.Tefter.Web.Components.UserNavigation.TfUserNavigation","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.UserNavigation.TfUserNavigation", "WebVella.Tefter")]
 public partial class TfUserNavigation
 {
 	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] private StateEffectsUseCase UC { get; set; }
 
 	private bool _visible = false;
 	private bool _isAdmin = false;
@@ -62,11 +63,28 @@ public partial class TfUserNavigation
 		if (!result.Cancelled && result.Data != null)
 		{
 			var response = (TucThemeSettings)result.Data;
-			Dispatcher.Dispatch(new SetThemeAction(
-				userId: TfState.Value.CurrentUser.Id,
-				themeMode: response.ThemeMode,
-				themeColor: response.ThemeColor
-		));
+			try
+			{
+				var resultSrv = await UC.SetUserTheme(
+							userId: TfState.Value.CurrentUser.Id,
+							themeMode: response.ThemeMode,
+							themeColor: response.ThemeColor
+						);
+				ProcessServiceResponse(resultSrv);
+				if (resultSrv.IsSuccess)
+				{
+					ToastService.ShowSuccess(LOC("The theme configurations were successfully changed!"));
+					Dispatcher.Dispatch(new SetThemeAction(
+						userId: TfState.Value.CurrentUser.Id,
+						themeMode: response.ThemeMode,
+						themeColor: response.ThemeColor));
+				}
+			}
+			catch (Exception ex)
+			{
+				ProcessException(ex);
+			}
+
 
 		}
 	}

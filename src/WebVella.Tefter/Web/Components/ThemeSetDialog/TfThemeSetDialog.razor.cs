@@ -1,5 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfThemeSetDialog : IDialogContentComponent<TucThemeSettings>
+[LocalizationResource("WebVella.Tefter.Web.Components.ThemeSetDialog.TfThemeSetDialog","WebVella.Tefter")]
+public partial class TfThemeSetDialog : TfFormBaseComponent, IDialogContentComponent<TucThemeSettings>
 {
     [Parameter]
     public TucThemeSettings Content { get; set; }

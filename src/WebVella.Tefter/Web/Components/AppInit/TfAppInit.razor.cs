@@ -4,16 +4,15 @@ public partial class TfAppInit : TfBaseComponent
 	[Inject] private AppStartUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-			Navigator.LocationChanged -= Navigator_LocationChanged;
-		}
+	//protected override async ValueTask DisposeAsyncCore(bool disposing)
+	//{
+	//	if (disposing)
+	//	{
+	//		Navigator.LocationChanged -= Navigator_LocationChanged;
+	//	}
 
-		await base.DisposeAsyncCore(disposing);
-	}
+	//	await base.DisposeAsyncCore(disposing);
+	//}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
@@ -35,8 +34,10 @@ public partial class TfAppInit : TfBaseComponent
 				themeColor: initResult.User.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor,
 				sidebarExpanded: initResult.User.Settings?.IsSidebarOpen ?? true
 			));
-			//For the logout fix
-			Navigator.LocationChanged += Navigator_LocationChanged;
+			//For the logout fix - Not needed anymore
+			//Navigator.LocationChanged += Navigator_LocationChanged;
+			UC.IsBusy = false;
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -46,13 +47,12 @@ public partial class TfAppInit : TfBaseComponent
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
-	{
-		InvokeAsync(async () =>
-		{
-			//TODO BOZ: check if something needs doing
-			//await UC.OnLocationChange();
-		});
-	}
+	//private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	//{
+	//	InvokeAsync(async () =>
+	//	{
+	//		//await UC.OnLocationChange();
+	//	});
+	//}
 
 }

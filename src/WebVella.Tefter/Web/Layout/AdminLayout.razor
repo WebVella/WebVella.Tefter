@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Layout
 @inherits FluxorLayout
 <TfAppInit>
-	<FluentDesignTheme Mode="@TfConstants.AdminThemeMode" OfficeColor="@TfConstants.AdminThemeColor" />
+	<FluentDesignTheme Mode="@TfState.Value.ThemeMode" OfficeColor="@TfConstants.AdminThemeColor" />
 	<FluentLayout Class="@(ScreenStateSidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
 			<TfSidebarToggle />

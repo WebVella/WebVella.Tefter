@@ -1,19 +1,20 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
     <FluentStack VerticalAlignment="VerticalAlignment.Center">
         <FluentIcon Value="@TfConstants.GetIcon("WindowApps")" />
         <FluentLabel Typo="Typography.PaneHeader">
-            Theme Configuration
+            @LOC("Theme Configuration")
         </FluentLabel>
     </FluentStack>
 </FluentDialogHeader>
 
 @* Footer *@
 <FluentDialogFooter>
-    <FluentButton Appearance="Appearance.Accent" OnClick="@_save">Save</FluentButton>
-    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">Cancel</FluentButton>
+    <FluentButton Appearance="Appearance.Accent" OnClick="@_save">@LOC("Save")</FluentButton>
+    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 
 @* Body *@
@@ -21,10 +22,10 @@
     <FluentStack Orientation="@Orientation.Vertical">
         <FluentSelect @bind-SelectedOption="@_themeMode" TOption="DesignThemeModes"
                       Items="@(Enum.GetValues<DesignThemeModes>())"
-                      OptionText="@(p => p.ToString())" Label="Theme Mode"></FluentSelect>
+                      OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"></FluentSelect>
         <FluentSelect @bind-SelectedOption="@_themeColor" TOption="OfficeColor"
                       Items="@(Enum.GetValues<OfficeColor>())"
-                      OptionText="@(p => p.ToString())" Label="Theme Color">
+                      OptionText="@(p => p.ToString())" Label="@LOC("Theme Color")">
             <OptionTemplate>
                 <FluentStack>
                     <FluentIcon Value="@TfConstants.RectangleIcon"

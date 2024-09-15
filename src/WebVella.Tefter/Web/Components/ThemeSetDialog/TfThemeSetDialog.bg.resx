@@ -117,16 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Change Theme" xml:space="preserve">
-    <value>Смени Тема</value>
+  <data name="Theme Color" xml:space="preserve">
+    <value>Цвят на темата</value>
   </data>
-  <data name="Exit Admin" xml:space="preserve">
-    <value>Излез от Админ</value>
+  <data name="Theme Configuration" xml:space="preserve">
+    <value>Конфигурация на тема</value>
   </data>
-  <data name="Logout" xml:space="preserve">
-    <value>Излез</value>
-  </data>
-  <data name="The theme configurations were successfully changed!" xml:space="preserve">
-    <value>Конфигурацията на темата бе успешно променена!</value>
+  <data name="Theme Mode" xml:space="preserve">
+    <value>Режим на темата</value>
   </data>
 </root>
