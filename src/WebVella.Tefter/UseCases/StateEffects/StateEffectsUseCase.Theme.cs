@@ -2,7 +2,7 @@
 
 public partial class StateEffectsUseCase
 {
-	public async Task<Result<bool>> SetUserTheme(Guid userId,
+	public async Task<Result<TucUser>> SetUserTheme(Guid userId,
 		DesignThemeModes themeMode, OfficeColor themeColor)
 	{
 		var user = await GetUserWithChecks(userId);
@@ -17,7 +17,7 @@ public partial class StateEffectsUseCase
 		await RemoveUnprotectedLocalStorage(TfConstants.UIThemeLocalKey);
 		var themeSetting = new TucThemeSettings { ThemeMode = themeMode, ThemeColor = themeColor };
 		await SetUnprotectedLocalStorage(TfConstants.UIThemeLocalKey, JsonSerializer.Serialize(themeSetting));
-
-		return Result.Ok(true);
+		user = await GetUserWithChecks(userId);
+		return Result.Ok(new TucUser(user));
 	}
 }

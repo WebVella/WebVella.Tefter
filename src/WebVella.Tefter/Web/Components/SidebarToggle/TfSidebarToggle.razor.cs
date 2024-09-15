@@ -1,11 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SidebarToggle.TfSidebarToggle","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SidebarToggle.TfSidebarToggle", "WebVella.Tefter")]
 public partial class TfSidebarToggle : TfBaseComponent
 {
-	[Inject] protected IStateSelection<TfState, Guid> UserIdState { get; set; }
 	[Inject] protected IState<TfState> TfState { get; set; }
-	[Inject] protected IStateSelection<TfState, bool> ScreenSidebarState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
+	[Inject] private StateEffectsUseCase UC { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -18,24 +17,36 @@ public partial class TfSidebarToggle : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		ScreenSidebarState.Select(x => x?.SidebarExpanded ?? true);
-		UserIdState.Select(x => x?.CurrentUser?.Id ?? Guid.Empty);
 		KeyCodeService.RegisterListener(OnKeyDownAsync);
 	}
 
 
-	private void _toggle()
+	private async Task _toggle()
 	{
-		Dispatcher.Dispatch(new SetSidebarAction(
-			userId: UserIdState.Value,
-			sidebarExpanded: !ScreenSidebarState.Value));
+		try
+		{
+			var resultSrv = await UC.SetSidebarState(
+						userId: TfState.Value.CurrentUser.Id,
+						sidebarExpanded: !TfState.Value.SidebarExpanded);
+
+			ProcessServiceResponse(resultSrv);
+
+			if (resultSrv.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetSidebarAction(
+					sidebarExpanded: resultSrv.Value));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+
+
 	}
 
-	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
+	public async Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
-		if (args.CtrlKey && args.Key == KeyCode.Function11)
-			_toggle();
-
-		return Task.CompletedTask;
+		if (args.CtrlKey && args.Key == KeyCode.Function11) await _toggle();
 	}
 }

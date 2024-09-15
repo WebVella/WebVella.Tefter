@@ -9,6 +9,7 @@ public partial class StateEffectsUseCase
 		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
 		if (saveResult.IsFailed)
 			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
-		return Result.Ok(true);
+		user = await GetUserWithChecks(userId);
+		return Result.Ok(user.Settings?.IsSidebarOpen ?? true);
 	}
 }

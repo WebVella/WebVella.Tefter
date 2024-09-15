@@ -2,15 +2,15 @@
 
 public record SetThemeAction
 {
-	public Guid UserId { get; }
 	public DesignThemeModes ThemeMode { get; } = DesignThemeModes.System;
 	public OfficeColor ThemeColor { get; } = OfficeColor.Excel;
+	public TucUser CurrentUser { get; }
 
-	public SetThemeAction(Guid userId,
+	public SetThemeAction(TucUser currentUser,
 		DesignThemeModes themeMode, 
 		OfficeColor themeColor)
 	{
-		UserId = userId;
+		CurrentUser = currentUser;
 		ThemeMode = themeMode;
 		ThemeColor = themeColor;
 	}

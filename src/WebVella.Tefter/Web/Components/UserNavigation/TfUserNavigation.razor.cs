@@ -75,7 +75,7 @@ public partial class TfUserNavigation
 				{
 					ToastService.ShowSuccess(LOC("The theme configurations were successfully changed!"));
 					Dispatcher.Dispatch(new SetThemeAction(
-						userId: TfState.Value.CurrentUser.Id,
+						currentUser: resultSrv.Value,
 						themeMode: response.ThemeMode,
 						themeColor: response.ThemeColor));
 				}
