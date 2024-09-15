@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 <div class="usernav">
-	@if (UserState.Value is not null && UserState.Value.User is not null)
+	@if (TfState.Value is not null && TfState.Value.CurrentUser is not null)
 	{
 		<div class="actions">
 			@if (_isAdmin)
@@ -27,12 +27,12 @@
 			}
 		</div>
 		<div class="avatar">
-			<FluentPersona Id="user-menu-toggle" Initials="@RenderUtils.GetUserInitions(UserState.Value.User)"
+			<FluentPersona Id="user-menu-toggle" Initials="@RenderUtils.GetUserInitions(TfState.Value.CurrentUser)"
 						   ImageSize="24px" OnClick="() => _visible = !_visible"></FluentPersona>
 		</div>
 		<FluentMenu Width="200" @bind-Open="_visible" Anchor="user-menu-toggle" UseMenuService="false">
 			<FluentMenuItem Disabled="true">
-				@UserState.Value.User.FirstName @UserState.Value.User.LastName
+				@TfState.Value.CurrentUser.FirstName @TfState.Value.CurrentUser.LastName
 				<span slot="start">
 					<FluentIcon Value="@TfConstants.GetIcon("Person")" Slot="start" />
 				</span>

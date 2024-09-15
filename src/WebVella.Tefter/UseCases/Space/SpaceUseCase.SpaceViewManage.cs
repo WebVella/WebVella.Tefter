@@ -11,14 +11,13 @@ public partial class SpaceUseCase
 		return Task.CompletedTask;
 	}
 
-	internal Task InitSpaceViewManageAfterRender(SpaceState state)
+	internal Task<List<TucSpaceViewColumn>> InitSpaceViewManageAfterRender(TfState state)
 	{
 		if (state.SpaceView.SpaceDataId is not null)
 			ViewData = state.SpaceDataList.FirstOrDefault(x => x.Id == state.SpaceView.SpaceDataId);
 		if (ViewData is not null)
 			DataProvider = AllDataProviders.FirstOrDefault(x => x.Id == ViewData.DataProviderId);
 
-		ViewColumns = GetViewColumns(state.SpaceView.Id);
-		return Task.CompletedTask;
+		return Task.FromResult(GetViewColumns(state.SpaceView.Id));
 	}
 }

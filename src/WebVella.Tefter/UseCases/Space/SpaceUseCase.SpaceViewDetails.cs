@@ -2,20 +2,24 @@
 public partial class SpaceUseCase
 {
 	internal int Page { get; set; } = 1;
-	internal int PageSize { get; set; } = TfConstants.PageSize;
+
 	internal Task InitSpaceViewDetails()
 	{
 		return Task.CompletedTask;
 	}
 
-	internal async Task<TfDataTable> IInitSpaceViewDetailsAfterRender(SpaceState state)
+	internal Task<TfDataTable> IInitSpaceViewDetailsAfterRender(TfState state)
 	{
-		ViewColumns = GetViewColumns(state.SpaceView.Id);
 		if(state.SpaceView is null || state.SpaceView.SpaceDataId is null) return null;
-		return GetSpaceViewData(
+		var dt = GetSpaceViewData(
 			spaceDataId:state.SpaceView.SpaceDataId.Value,
-			page:Page,
-			pageSize: PageSize
+			additionalFilters:state.Filters,
+			sortOverrides:state.Sorts,
+			search:state.SearchQuery,
+			page:state.Page,
+			pageSize: state.PageSize
 			);
+		return Task.FromResult(dt);
+
 	}
 }

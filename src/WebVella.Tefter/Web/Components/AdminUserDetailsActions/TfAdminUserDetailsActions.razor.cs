@@ -3,7 +3,7 @@
 public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
-	[Inject] protected IState<UserAdminState> UserAdminState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -29,7 +29,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 	private async Task _editUser()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(
-		UserAdminState.Value.User,
+		TfState.Value.CurrentUser,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -41,7 +41,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 		{
 			var user = (TucUser)result.Data;
 			ToastService.ShowSuccess(LOC("User successfully updated!"));
-			Dispatcher.Dispatch(new SetUserAdminAction(false, user));
+			Dispatcher.Dispatch(new SetUserAdminAction(user));
 		}
 	}
 }

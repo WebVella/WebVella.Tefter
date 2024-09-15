@@ -3,7 +3,7 @@
 public partial class TfAdminUserDetails : TfBaseComponent
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
-	[Inject] protected IState<UserAdminState> UserAdminState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{

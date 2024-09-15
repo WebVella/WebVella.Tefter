@@ -4,7 +4,7 @@ namespace WebVella.Tefter.UseCases.AppStart;
 
 internal partial class AppStartUseCase
 {
-	internal async Task CultureInitializeAsync()
+	internal async Task<TucCultureOption> InitCulture(TucUser user)
 	{
 		var cultureCookie = await new CookieService(_jsRuntime).GetAsync(CookieRequestCultureProvider.DefaultCookieName);
 		CultureInfo cookieCultureInfo = null;
@@ -25,9 +25,9 @@ internal partial class AppStartUseCase
 			catch { }
 		}
 
-		var userCultureInfo = User is null || User.Settings is null || String.IsNullOrWhiteSpace(User.Settings.CultureName)
+		var userCultureInfo = user is null || user.Settings is null || String.IsNullOrWhiteSpace(user.Settings.CultureName)
 						? TfConstants.CultureOptions[0].CultureInfo
-						: CultureInfo.GetCultureInfo(User.Settings.CultureName);
+						: CultureInfo.GetCultureInfo(user.Settings.CultureName);
 
 		if (cookieCultureInfo is null || cookieCultureInfo.Name != userCultureInfo.Name)
 		{
@@ -41,11 +41,13 @@ internal partial class AppStartUseCase
 							userCultureInfo)), DateTimeOffset.Now.AddYears(30));
 
 			_navigationManager.ReloadCurrentUrl();
+			return null;
 		}
 		else
 		{
-			CultureOption = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == userCultureInfo.Name);
-			if (CultureOption is null) CultureOption = TfConstants.CultureOptions[0];
+			var cultureOption = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == userCultureInfo.Name);
+			if (cultureOption is null) cultureOption = TfConstants.CultureOptions[0];
+			return cultureOption;
 		}
 	}
 }

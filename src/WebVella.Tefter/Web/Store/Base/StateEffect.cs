@@ -1,11 +1,11 @@
-﻿namespace WebVella.Tefter.Web.Store.Base;
-public partial class StateEffect
+﻿namespace WebVella.Tefter.Web.Store;
+public partial class TfStateEffect
 {
 	public readonly StateEffectsUseCase UseCase;
 	public readonly IToastService ToastService;
 	public readonly IMessageService MessageService;
 
-	public StateEffect(
+	public TfStateEffect(
 		StateEffectsUseCase useCase, 
 		IToastService toastService, 
 		IMessageService messageService)

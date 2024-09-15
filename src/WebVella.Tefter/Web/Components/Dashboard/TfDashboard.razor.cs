@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 public partial class TfDashboard : TfBaseComponent
 {
 	[Inject] private DashboardUseCase UC { get; set; }
-	[Inject] protected IState<DashboardState> DashboardState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
@@ -27,7 +27,7 @@ public partial class TfDashboard : TfBaseComponent
 	{
 		base.InvokeAsync(async () =>
 		{
-			UC.IsBusy = DashboardState.Value.IsBusy;
+			UC.IsBusy = TfState.Value.IsBusy;
 			await InvokeAsync(StateHasChanged);
 		});
 

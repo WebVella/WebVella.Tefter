@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceDetails : TfBaseComponent
 {
-	[Inject] protected IState<SpaceState> SpaceState { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -33,7 +33,7 @@ public partial class TfSpaceDetails : TfBaseComponent
 	private async Task _createViewHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
-		new TucSpaceView() with { SpaceId = SpaceState.Value.RouteSpaceId.Value },
+		new TucSpaceView() with { SpaceId = TfState.Value.RouteSpaceId.Value },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

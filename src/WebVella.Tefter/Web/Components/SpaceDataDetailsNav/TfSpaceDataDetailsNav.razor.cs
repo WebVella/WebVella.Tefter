@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataDetailsNav.TfSpaceDataDetailsNav","WebVella.Tefter")]
 public partial class TfSpaceDataDetailsNav : TfBaseComponent
 {
-	[Inject] protected IState<SpaceState> SpaceState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	private List<MenuItem> menu = new();
 	private List<TucSpaceView> viewList = new();
@@ -36,14 +36,14 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 		var providerId = Navigator.GetUrlData().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataPageUrl, SpaceState.Value.RouteSpaceId, SpaceState.Value.RouteSpaceDataId),
+			Url = String.Format(TfConstants.SpaceDataPageUrl, TfState.Value.RouteSpaceId, TfState.Value.RouteSpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Title = LOC("Details")
 		});
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataPageUrl, SpaceState.Value.RouteSpaceId, SpaceState.Value.RouteSpaceDataId) + "\\views",
+			Url = String.Format(TfConstants.SpaceDataPageUrl, TfState.Value.RouteSpaceId, TfState.Value.RouteSpaceDataId) + "\\views",
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Title = LOC("Used in Views")
@@ -68,7 +68,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 	{
 
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceDataManageDialog>(
-		SpaceState.Value.SpaceData,
+		TfState.Value.SpaceData,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -79,7 +79,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TucSpaceData)result.Data;
-			var itemList = SpaceState.Value.SpaceDataList.ToList();
+			var itemList = TfState.Value.SpaceDataList.ToList();
 			var itemIndex = itemList.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{
@@ -90,6 +90,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 
 
 			Dispatcher.Dispatch(new SetSpaceDataAction(
+						component:this,
 						spaceData: item,
 						spaceDataList: itemList));
 		}

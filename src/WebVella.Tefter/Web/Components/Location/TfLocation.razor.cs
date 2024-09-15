@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Location.TfLocation","WebVella.Tefter")]
 public partial class TfLocation : TfBaseComponent
 {
-	[Inject] protected IState<SpaceState> SpaceState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 	private bool _settingsMenuVisible = false;
 	private int _ellipsisCount = 30;
 	private MenuItem _namedLocation = null;

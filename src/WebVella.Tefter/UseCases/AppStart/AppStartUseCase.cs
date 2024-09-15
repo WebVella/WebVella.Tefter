@@ -22,38 +22,24 @@ internal partial class AppStartUseCase
 		_navigationManager = navigationManager;
 	}
 
-	internal async Task OnAfterRenderAsync()
-	{
-		await UserInitializeAsync();
-		await CultureInitializeAsync();
-	}
-	internal bool IsLoading { get; set; } = true;
-	internal TucUser User { get; set; }
-	internal List<TucSpace> UserSpaces { get; set; } = new();
-	internal TucCultureOption CultureOption { get; set; }
-	internal bool UserStateInited { get; set; } = false;
-	internal bool CultureStateInited { get; set; } = false;
-	internal bool ThemeStateInited { get; set; } = false;
-	internal bool SidebarStateInited { get; set; } = false;
-	internal bool AllInited
-	{
-		get => UserStateInited
-		&& CultureStateInited
-		&& ThemeStateInited
-		&& SidebarStateInited;
-	}
-	internal async Task OnLocationChange()
-	{
-		var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-		var user = authState.User;
-		//Temporary fix for multitab logout
-		var cookie = await new CookieService(_jsRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
+	internal bool IsBusy { get; set; } = true;
+	internal async Task<TucInitState> InitState(){ 
+		var result = new TucInitState();
 
-		if (cookie is null
-		|| user.Identity is null || !user.Identity.IsAuthenticated)
-		{
-			_navigationManager.NavigateTo(TfConstants.LoginPageUrl, true);
-			return;
+		//Init User
+		result.User = await InitUserAsync();	
+		if(result.User is null) return null;
+
+		//Init Culture
+		result.CultureOption = await InitCulture(result.User);
+		if(result.CultureOption is null) return null;
+
+		//Init UserSpaces
+		var uri = new Uri(_navigationManager.Uri);
+		if(!uri.LocalPath.StartsWith("/admin")){ 
+			result.UserSpaces = await InitUserSpaces(result.User);
 		}
+
+		return result;
 	}
 }

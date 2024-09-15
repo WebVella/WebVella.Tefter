@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewDetails : TfBaseComponent
 {
-	[Inject] protected IState<SpaceState> SpaceState { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 
@@ -25,88 +25,100 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
-			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-				spaceViewColumns: UC.ViewColumns
-			));
-			Dispatcher.Dispatch(new SetSpaceViewDataAction(
+			var viewData = await UC.IInitSpaceViewDetailsAfterRender(TfState.Value);
+			Dispatcher.Dispatch(new InitSpaceViewDetailsAction(
+				component: this,
+				page:TfState.Value.Page,
+				pageSize:TfState.Value.PageSize,
+				search:TfState.Value.SearchQuery,
+				filters:TfState.Value.Filters,
+				sorts:TfState.Value.Sorts,
+				selectedDataRows:TfState.Value.SelectedDataRows,
 				spaceViewData: viewData
 			));
+			UC.IsBusy = false;
+			await InvokeAsync(StateHasChanged);
 			ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
 			KeyCodeService.RegisterListener(OnKeyDownAsync);
 		}
 	}
 
-	public async Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
+	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
-		if (args.Key == KeyCode.PageUp) await _goNextPage();
-		else if (args.Key == KeyCode.PageDown) await _goPreviousPage();
-
-
+		if (args.Key == KeyCode.PageUp) _goNextPage();
+		else if (args.Key == KeyCode.PageDown) _goPreviousPage();
+		return Task.CompletedTask;
 	}
 
 	private void On_StateChanged(SpaceStateChangedAction action)
 	{
+		if (action.Component == this) return;
 		InvokeAsync(async () =>
 		{
 			UC.IsBusy = true;
 			await InvokeAsync(StateHasChanged);
-			var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
-			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-				spaceViewColumns: UC.ViewColumns
-			));
-			Dispatcher.Dispatch(new SetSpaceViewDataAction(
+			var viewData = await UC.IInitSpaceViewDetailsAfterRender(TfState.Value);
+			Dispatcher.Dispatch(new InitSpaceViewDetailsAction(
+				component: this,
+				page:TfState.Value.Page,
+				pageSize:TfState.Value.PageSize,
+				search:TfState.Value.SearchQuery,
+				filters:TfState.Value.Filters,
+				sorts:TfState.Value.Sorts,
+				selectedDataRows:TfState.Value.SelectedDataRows,
 				spaceViewData: viewData
 			));
+			UC.IsBusy = false;
+			await InvokeAsync(StateHasChanged);
 		});
 
 	}
 
-	private async Task _goFirstPage()
+	private void _goFirstPage()
 	{
-		UC.Page = 1;
-		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
-		Dispatcher.Dispatch(new SetSpaceViewDataAction(
-			spaceViewData: viewData
+		Dispatcher.Dispatch(new SetSpacePagingAction(
+			component: this,
+			page: 1,
+			pageSize: TfState.Value.PageSize
 		));
 	}
-	private async Task _goPreviousPage()
+	private void _goPreviousPage()
 	{
-		UC.Page--;
-		if (UC.Page < 1) UC.Page = 1;
-		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
-		Dispatcher.Dispatch(new SetSpaceViewDataAction(
-			spaceViewData: viewData
+		var page = TfState.Value.Page - 1;
+		if (page < 1) page = 1;
+		Dispatcher.Dispatch(new SetSpacePagingAction(
+			component: this,
+			page: page,
+			pageSize: TfState.Value.PageSize
 		));
 	}
-	private async Task _goNextPage()
+	private void _goNextPage()
 	{
-		UC.Page++;
-		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
-		Dispatcher.Dispatch(new SetSpaceViewDataAction(
-			spaceViewData: viewData
-		));
-	}
-	private async Task _goLastPage()
-	{
-		UC.Page = -1;
-		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
-		Dispatcher.Dispatch(new SetSpaceViewDataAction(
-			spaceViewData: viewData
-		));
-	}
+		if (TfState.Value.SpaceViewData is null
+		|| TfState.Value.SpaceViewData.Rows.Count == 0)
+			return;
 
-	private async Task _goOnPage(int page)
+		Dispatcher.Dispatch(new SetSpacePagingAction(
+			component: this,
+			page: TfState.Value.Page + 1,
+			pageSize: TfState.Value.PageSize
+		));
+	}
+	private void _goLastPage()
 	{
-		UC.Page = page;
-		if (UC.Page < 1) UC.Page = 1;
-		var viewData = await UC.IInitSpaceViewDetailsAfterRender(SpaceState.Value);
-		Dispatcher.Dispatch(new SetSpaceViewDataAction(
-			spaceViewData: viewData
+		Dispatcher.Dispatch(new SetSpacePagingAction(
+			component: this,
+			page: -1,
+			pageSize: TfState.Value.PageSize
+		));
+	}
+	private void _goOnPage(int page)
+	{
+		if (page < 1) page = 1;
+		Dispatcher.Dispatch(new SetSpacePagingAction(
+			component: this,
+			page: page,
+			pageSize: TfState.Value.PageSize
 		));
 	}
 
@@ -130,19 +142,19 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private bool _getItemSelection(int rowIndex)
 	{
-		var row = SpaceState.Value.SpaceViewData.Rows[rowIndex];
+		var row = TfState.Value.SpaceViewData.Rows[rowIndex];
 		object rowId = row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 		if (rowId is not null)
 		{
-			return SpaceState.Value.SelectedDataRows.Contains((Guid)rowId);
+			return TfState.Value.SelectedDataRows.Contains((Guid)rowId);
 		}
 		return false;
 	}
 
 	private void _toggleItemSelection(int rowIndex, bool isChecked)
 	{
-		Guid rowId = (Guid)SpaceState.Value.SpaceViewData.Rows[rowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-		var selectedItems = SpaceState.Value.SelectedDataRows.ToList();
+		Guid rowId = (Guid)TfState.Value.SpaceViewData.Rows[rowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+		var selectedItems = TfState.Value.SelectedDataRows.ToList();
 		if (isChecked)
 		{
 			if (!selectedItems.Contains(rowId)) selectedItems.Add(rowId);
@@ -152,6 +164,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			selectedItems.RemoveAll(x => x == rowId);
 		}
 		Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+			component: this,
 			idList: selectedItems
 		));
 
@@ -159,15 +172,15 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private void _toggleSelectAll(bool isChecked)
 	{
-		var selectedItems = SpaceState.Value.SelectedDataRows.ToList();
-		for (int i = 0; i < SpaceState.Value.SpaceViewData.Rows.Count; i++)
+		var selectedItems = TfState.Value.SelectedDataRows.ToList();
+		for (int i = 0; i < TfState.Value.SpaceViewData.Rows.Count; i++)
 		{
-			var rowId = (Guid)SpaceState.Value.SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+			var rowId = (Guid)TfState.Value.SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 			if (!isChecked)
 			{
 				selectedItems.RemoveAll(x => x == rowId);
 			}
-			else if(!selectedItems.Any(x=> x == rowId))
+			else if (!selectedItems.Any(x => x == rowId))
 			{
 				selectedItems.Add(rowId);
 
@@ -175,6 +188,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		}
 
 		Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+			component: this,
 			idList: selectedItems
 		));
 	}

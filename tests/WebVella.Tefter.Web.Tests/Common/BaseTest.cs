@@ -6,8 +6,7 @@ using Moq;
 using System;
 using WebVella.Tefter.Identity;
 using WebVella.Tefter.Web.Services;
-using WebVella.Tefter.Web.Store.ScreenState;
-using WebVella.Tefter.Web.Store.UserState;
+using WebVella.Tefter.Web.Store;
 
 
 namespace WebVella.Tefter.Web.Tests.Common;
@@ -15,10 +14,9 @@ public class BaseTest
 {
 	public static IServiceProvider ServiceProvider;
 	public static IStore Store;
-	public static IState<UserState> UserState;
-	public static IState<ScreenState> ScreenState;
-	public static IStateSelection<UserState, Guid> UserIdState;
-	public static IStateSelection<ScreenState, bool> ScreenSidebarState;
+	public static IState<TfState> TfState;
+	public static IStateSelection<TfState, Guid> UserIdState;
+	public static IStateSelection<TfState, bool> ScreenSidebarState;
 	public static Mock<IKeyCodeService> KeyCodeServiceMock;
 	public static Mock<ITfService> TfServiceMock;
 	public static Mock<IIdentityManager> IdentityManagerMock;
@@ -63,8 +61,7 @@ public class BaseTest
 		Store = ServiceProvider.GetRequiredService<IStore>();
 		Store.InitializeAsync().Wait();
 
-		UserState = ServiceProvider.GetRequiredService<IState<UserState>>();
-		ScreenState = ServiceProvider.GetRequiredService<IState<ScreenState>>();
+		TfState = ServiceProvider.GetRequiredService<IState<TfState>>();
 		//UserIdState = ServiceProvider.GetRequiredService<IStateSelection<UserState,Guid>>();
 		//UserIdState.Select(x => x?.User?.Id ?? Guid.Empty);
 		//ScreenSidebarState = ServiceProvider.GetRequiredService<IStateSelection<ScreenState, bool>>();

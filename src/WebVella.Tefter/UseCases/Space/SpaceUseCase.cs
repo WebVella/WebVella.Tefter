@@ -36,8 +36,6 @@ public partial class SpaceUseCase
 	internal bool IsBusy { get; set; } = true;
 	internal List<TucDataProvider> AllDataProviders { get; set; } = new();
 
-	internal List<TucSpaceViewColumn> ViewColumns = new();
-
 	internal async Task Init(Type type, Guid? spaceId = null)
 	{
 		if (type == typeof(TfSpaceStateManager)) await InitForState();
@@ -281,7 +279,7 @@ public partial class SpaceUseCase
 		if (sort is null || String.IsNullOrWhiteSpace(sort.DbName)) return Result.Fail("sort is required");
 		var spaceData = GetSpaceData(spaceDataId);
 		if (spaceData is null) return Result.Fail("spaceData not found");
-		if (spaceData.SortOrders.Any(x=> x.DbName == sort.DbName)) return Result.Ok(spaceData);
+		if (spaceData.SortOrders.Any(x => x.DbName == sort.DbName)) return Result.Ok(spaceData);
 
 		spaceData.SortOrders.Add(sort);
 		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
@@ -297,9 +295,9 @@ public partial class SpaceUseCase
 		if (sort is null || String.IsNullOrWhiteSpace(sort.DbName)) return Result.Fail("sort is required");
 		var spaceData = GetSpaceData(spaceDataId);
 		if (spaceData is null) return Result.Fail("spaceData not found");
-		if (!spaceData.SortOrders.Any(x=> x.DbName == sort.DbName)) return Result.Ok(spaceData);
+		if (!spaceData.SortOrders.Any(x => x.DbName == sort.DbName)) return Result.Ok(spaceData);
 
-		spaceData.SortOrders = spaceData.SortOrders.Where(x=> x.DbName != sort.DbName).ToList();
+		spaceData.SortOrders = spaceData.SortOrders.Where(x => x.DbName != sort.DbName).ToList();
 		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
 		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
@@ -738,9 +736,13 @@ public partial class SpaceUseCase
 
 	internal TfDataTable GetSpaceViewData(
 		Guid spaceDataId,
+		List<TucFilterBase> additionalFilters = null,
+		List<TucSort> sortOverrides = null,
+		string search = null,
 		int? page = null,
-		int? pageSize= null){ 
-		if(spaceDataId == Guid.Empty)
+		int? pageSize = null)
+	{
+		if (spaceDataId == Guid.Empty)
 		{
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("spaceDataId not provided"),
@@ -751,10 +753,17 @@ public partial class SpaceUseCase
 			);
 			return null;
 		}
+		List<TfFilterBase> filters = null;
+		List<TfSort> sorts = null;
+		if (additionalFilters is not null) filters = additionalFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+		if (sortOverrides is not null) sorts = sortOverrides.Select(x => x.ToModel()).ToList();
 
 		var serviceResult = _dataManager.QuerySpaceData(
-			spaceDataId:spaceDataId,
-			page: page, 
+			spaceDataId: spaceDataId,
+			additionalFilters: filters,
+			sortOverrides: sorts,
+			search: search,
+			page: page,
 			pageSize: pageSize
 		);
 		if (serviceResult.IsFailed)
@@ -769,7 +778,7 @@ public partial class SpaceUseCase
 			return null;
 		}
 
-		return serviceResult.Value;	
+		return serviceResult.Value;
 	}
 
 	//View columns

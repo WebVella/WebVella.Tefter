@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewManage : TfBaseComponent
 {
-	[Inject] protected IState<SpaceState> SpaceState { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	[Inject] private SpaceUseCase UC { get; set; }
 	private bool _isSubmitting = false;
@@ -26,40 +26,19 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await UC.InitSpaceViewManageAfterRender(SpaceState.Value);
+			var columns = await UC.InitSpaceViewManageAfterRender(TfState.Value);
+			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+				component: this,
+				spaceViewColumns: columns
+			));
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
-			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-				spaceViewColumns: UC.ViewColumns
-			));
-			ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-			ActionSubscriber.SubscribeToAction<SpaceViewMetaChangedAction>(this, On_StateViewMetaChanged);
 		}
 	}
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			await UC.InitSpaceViewManageAfterRender(SpaceState.Value);
-			await InvokeAsync(StateHasChanged);
-		});
-
-	}
-
-	private void On_StateViewMetaChanged(SpaceViewMetaChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			await UC.InitSpaceViewManageAfterRender(SpaceState.Value);
-			await InvokeAsync(StateHasChanged);
-		});
-
-	}
-
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewColumnManageDialog>(
-				new TucSpaceViewColumn() with { SpaceViewId = SpaceState.Value.RouteSpaceViewId.Value },
+				new TucSpaceViewColumn() with { SpaceViewId = TfState.Value.RouteSpaceViewId.Value },
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -70,11 +49,13 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var updatedColumn = (TucSpaceViewColumn)result.Data;
-			UC.ViewColumns.Add(updatedColumn);
-			UC.ViewColumns = UC.ViewColumns.OrderBy(x => x.QueryName).ToList();
+			var columns = TfState.Value.SpaceViewColumns.ToList();
+			columns.Add(updatedColumn);
+			columns = columns.OrderBy(x => x.QueryName).ToList();
 
 			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-				spaceViewColumns: UC.ViewColumns
+			component: this,
+			spaceViewColumns: columns
 			));
 			await InvokeAsync(StateHasChanged);
 		}
@@ -95,11 +76,14 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var updatedColumn = (TucSpaceViewColumn)result.Data;
-			var columnIndex = UC.ViewColumns.FindIndex(x => x.Id == updatedColumn.Id);
-			if (columnIndex > -1) UC.ViewColumns[columnIndex] = updatedColumn;
-			UC.ViewColumns = UC.ViewColumns.OrderBy(x => x.QueryName).ToList();
+			var columns = TfState.Value.SpaceViewColumns.ToList();
+
+			var columnIndex = columns.FindIndex(x => x.Id == updatedColumn.Id);
+			if (columnIndex > -1) columns[columnIndex] = updatedColumn;
+			columns = columns.OrderBy(x => x.QueryName).ToList();
 			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-				spaceViewColumns: UC.ViewColumns
+			component: this,
+			spaceViewColumns: columns
 			));
 			await InvokeAsync(StateHasChanged);
 		}
@@ -119,12 +103,16 @@ public partial class TfSpaceViewManage : TfBaseComponent
 			if (submitResult.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space View updated!"));
-				var columnIndex = UC.ViewColumns.FindIndex(x => x.Id == column.Id);
-				if (columnIndex > -1) UC.ViewColumns.RemoveAt(columnIndex);
-
-				Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-					spaceViewColumns: UC.ViewColumns
-				));
+				var columns = TfState.Value.SpaceViewColumns.ToList();
+				var columnIndex = columns.FindIndex(x => x.Id == column.Id);
+				if (columnIndex > -1)
+				{
+					columns.RemoveAt(columnIndex);
+					Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+					component: this,
+					spaceViewColumns: columns
+					));
+				}
 			}
 		}
 		catch (Exception ex)
@@ -144,14 +132,15 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (_isSubmitting) return;
 		try
 		{
-			Result<List<TucSpaceViewColumn>> submitResult = UC.MoveSpaceViewColumn(viewId: SpaceState.Value.SpaceView.Id, columnId: column.Id, isUp: isUp);
+			Result<List<TucSpaceViewColumn>> submitResult = UC.MoveSpaceViewColumn(viewId: TfState.Value.SpaceView.Id, columnId: column.Id, isUp: isUp);
 			ProcessServiceResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space View updated!"));
 
 				Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-					spaceViewColumns: submitResult.Value
+				component: this,
+				spaceViewColumns: submitResult.Value
 				));
 			}
 		}

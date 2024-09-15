@@ -19,94 +19,24 @@ public partial class TfAppInit : TfBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			await UC.OnAfterRenderAsync();
-			if(UC.User is null) return;
-			//Subscribe for state set results
-			//so we can know when all states are inited
-			ActionSubscriber.SubscribeToAction<UserStateChangedAction>(this, initUserStateResult);
-			ActionSubscriber.SubscribeToAction<SetCultureActionResult>(this, initCultureStateResult);
-			ActionSubscriber.SubscribeToAction<SetThemeActionResult>(this, initThemeStateResult);
-			ActionSubscriber.SubscribeToAction<SetSidebarActionResult>(this, initSidebarStateResult);
+			var initResult = await UC.InitState();
+			if(initResult is null 
+				|| initResult.User is null 
+				|| initResult.CultureOption is null) 
+				return;
 
 			//Setup states
-			Dispatcher.Dispatch(new SetUserStateAction(
-				user:UC.User,
-				userSpaces:UC.UserSpaces
+			Dispatcher.Dispatch(new InitStateAction(
+				component: this,
+				user: initResult.User,
+				userSpaces: initResult.UserSpaces,
+				culture: initResult.CultureOption,
+				themeMode: initResult.User.Settings?.ThemeMode ?? TfConstants.DefaultThemeMode,
+				themeColor: initResult.User.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor,
+				sidebarExpanded: initResult.User.Settings?.IsSidebarOpen ?? true
 			));
-			Dispatcher.Dispatch(new InitCultureStateAction(
-				culture: UC.CultureOption
-			));
-			Dispatcher.Dispatch(new InitThemeStateAction(
-				themeMode: UC.User.Settings?.ThemeMode ?? TfConstants.DefaultThemeMode,
-				themeColor: UC.User.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor
-			));
-			Dispatcher.Dispatch(new InitScreenStateAction(
-				sidebarExpanded: UC.User.Settings?.IsSidebarOpen ?? true
-			));
-
 			//For the logout fix
 			Navigator.LocationChanged += Navigator_LocationChanged;
-
-			//_isLoading = false;
-			//await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	/// <summary>
-	/// Processes the user state init action result
-	/// </summary>
-	/// <param name="action"></param>
-	private void initUserStateResult(UserStateChangedAction action)
-	{
-		UC.UserStateInited = true;
-		CheckAllInited();
-	}
-
-	/// <summary>
-	/// Processes the culture state init action result
-	/// </summary>
-	/// <param name="action"></param>
-	private void initCultureStateResult(SetCultureActionResult action)
-	{
-		UC.CultureStateInited = true;
-		CheckAllInited();
-	}
-
-	/// <summary>
-	/// Processes the theme state init action result
-	/// </summary>
-	/// <param name="action"></param>
-	private void initThemeStateResult(SetThemeActionResult action)
-	{
-		if (!UC.IsLoading)
-		{
-			Navigator.ReloadCurrentUrl();
-			return;
-		}
-		UC.ThemeStateInited = true;
-		CheckAllInited();
-
-	}
-
-	/// <summary>
-	/// Processes the sidebar state init action result
-	/// </summary>
-	/// <param name="action"></param>
-	private void initSidebarStateResult(SetSidebarActionResult action)
-	{
-		UC.SidebarStateInited = true;
-		CheckAllInited();
-	}
-
-	/// <summary>
-	/// If all inited, removes the loading state
-	/// </summary>
-	private void CheckAllInited()
-	{
-		if (UC.AllInited)
-		{
-			UC.IsLoading = false;
-			StateHasChanged();
 		}
 	}
 
@@ -120,7 +50,8 @@ public partial class TfAppInit : TfBaseComponent
 	{
 		InvokeAsync(async () =>
 		{
-			await UC.OnLocationChange();
+			//TODO BOZ: check if something needs doing
+			//await UC.OnLocationChange();
 		});
 	}
 

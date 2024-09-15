@@ -3,7 +3,7 @@
 public partial class TfAdminSharedColumns : TfBaseComponent
 {
 	[Inject] private SharedColumnsAdminUseCase UC { get; set; }
-	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{

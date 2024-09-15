@@ -1,8 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfFastAccessNavigation : TfBaseComponent
 {
-	[Inject] protected IState<UserState> UserState { get; set; }
-	[Inject] protected IState<SessionState> SessionState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	private bool _menuLoading = false;
 	private string _renderedDataHashId = string.Empty;
@@ -20,29 +19,16 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 	private int page = 1;
 	private int pageSize = 30;
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			SessionState.StateChanged -= SessionState_StateChanged;
-		}
-		await base.DisposeAsyncCore(disposing);
-	}
-
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		GenerateSpaceDataMenu();
-		SessionState.StateChanged += SessionState_StateChanged;
 	}
 
 	private void SessionState_StateChanged(object sender, EventArgs e)
 	{
 		InvokeAsync(async () =>
 		{
-			if (SessionState.Value.DataHashId == _renderedDataHashId
-				&& SessionState.Value.Space?.Id == _renderedSpaceId) return;
-
 			_menuLoading = true;
 			await InvokeAsync(StateHasChanged);
 			GenerateSpaceDataMenu();
@@ -82,8 +68,8 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 		_menuItems.Add(menu2);
 
 		_visibleMenuItems = _menuItems;
-		_renderedDataHashId = SessionState.Value.DataHashId;
-		_renderedSpaceId = SessionState.Value.Space?.Id;
+		//_renderedDataHashId = SessionState.Value.DataHashId;
+		//_renderedSpaceId = SessionState.Value.Space?.Id;
 	}
 
 	private async Task loadMoreClick()
@@ -99,8 +85,8 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will show a dialog for space creation");
 
-		var spaces = await TfSrv.GetSpacesForUserAsync(UserState.Value.User.Id);
-		Navigator.NavigateTo($"/space/{spaces[0].Id}/data/{spaces[0].Data[0].Id}");
+		var spaces = TfState.Value.CurrentUserSpaces;
+		//Navigator.NavigateTo($"/space/{spaces[0].Id}/data/{spaces[0].Data[0].Id}");
 	}
 	private void onDetailsClick()
 	{
@@ -142,11 +128,11 @@ public partial class TfFastAccessNavigation : TfBaseComponent
 		if (item.Active)
 		{
 			if (item.SpaceId is null || item.SpaceDataId is null || item.SpaceViewId is null) return;
-			Dispatcher.Dispatch(new GetSessionAction(
-				userId: UserState.Value.User.Id,
-				spaceId: item.SpaceId.Value,
-				spaceDataId: item.SpaceDataId.Value,
-				spaceViewId: item.SpaceViewId.Value));
+			//Dispatcher.Dispatch(new GetSessionAction(
+			//	userId: TfState.Value.User.Id,
+			//	spaceId: item.SpaceId.Value,
+			//	spaceDataId: item.SpaceDataId.Value,
+			//	spaceViewId: item.SpaceViewId.Value));
 		}
 	}
 

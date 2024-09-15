@@ -3,8 +3,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.UserNavigation.TfUserNavigation","WebVella.Tefter")]
 public partial class TfUserNavigation
 {
-	[Inject] protected IState<UserState> UserState { get; set; }
-	[Inject] protected IState<ThemeState> ThemeState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	private bool _visible = false;
 	private bool _isAdmin = false;
@@ -53,7 +52,7 @@ public partial class TfUserNavigation
 
 	private async Task _setTheme()
 	{
-		var themeSettings = new TucThemeSettings { ThemeMode = ThemeState.Value.ThemeMode, ThemeColor = ThemeState.Value.ThemeColor };
+		var themeSettings = new TucThemeSettings { ThemeMode = TfState.Value.ThemeMode, ThemeColor = TfState.Value.ThemeColor };
 		var dialog = await DialogService.ShowDialogAsync<TfThemeSetDialog>(themeSettings, new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -64,7 +63,7 @@ public partial class TfUserNavigation
 		{
 			var response = (TucThemeSettings)result.Data;
 			Dispatcher.Dispatch(new SetThemeAction(
-				userId: UserState.Value.User.Id,
+				userId: TfState.Value.CurrentUser.Id,
 				themeMode: response.ThemeMode,
 				themeColor: response.ThemeColor
 		));

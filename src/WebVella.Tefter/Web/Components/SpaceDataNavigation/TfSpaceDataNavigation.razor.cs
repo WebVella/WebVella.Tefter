@@ -1,9 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceDataNavigation : TfBaseComponent
 {
-	[Inject] protected IState<SpaceState> SpaceState { get; set; }
-	[Inject] protected IState<UserState> UserState { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	private bool _menuLoading = false;
 
@@ -55,7 +54,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
 		var nodes = new List<MenuItem>();
-		foreach (var dataItem in SpaceState.Value.SpaceDataList)
+		foreach (var dataItem in TfState.Value.SpaceDataList)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !dataItem.Name.ToLowerInvariant().Contains(search))
 				continue;
@@ -88,7 +87,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private async Task onAddClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceDataManageDialog>(
-		new TucSpaceData { SpaceId = SpaceState.Value.Space.Id },
+		new TucSpaceData { SpaceId = TfState.Value.Space.Id },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -107,7 +106,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private async Task onManageSpaceClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(
-		SpaceState.Value.Space,
+		TfState.Value.Space,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -120,19 +119,20 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 			var item = (TucSpace)result.Data;
 			ToastService.ShowSuccess(LOC("Space successfully updated!"));
 			//Change user state > spaces
-			var userSpaces = UserState.Value.UserSpaces.ToList();
+			var userSpaces = TfState.Value.CurrentUserSpaces.ToList();
 			var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{
 				userSpaces[itemIndex] = item;
 				Dispatcher.Dispatch(new SetUserStateAction(
-					user: UserState.Value.User,
+					user: TfState.Value.CurrentUser,
 					userSpaces: userSpaces
 				));
 			}
 
 			//change space state
 			Dispatcher.Dispatch(new SetSpaceOnlyAction(
+				component:this,
 				space: item
 			));
 		}
@@ -141,8 +141,8 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private void onViewsListClick()
 	{
 		Guid? spaceViewId = null;
-		if (SpaceState.Value.SpaceViewList.Count > 0) spaceViewId = SpaceState.Value.SpaceViewList[0].Id;
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, SpaceState.Value.Space.Id, spaceViewId));
+		if (TfState.Value.SpaceViewList.Count > 0) spaceViewId = TfState.Value.SpaceViewList[0].Id;
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfState.Value.Space.Id, spaceViewId));
 	}
 
 	private async Task onSearch(string value)

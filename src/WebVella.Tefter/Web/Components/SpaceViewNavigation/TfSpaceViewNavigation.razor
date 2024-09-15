@@ -5,15 +5,15 @@
 	<div class="sidebar-toolbar">
 		<div class="sidebar-toolbar-mode">
 			<FluentToolbar Class="modebar">
-				<FluentButton Class="btn tree active" Title="show tree" BackgroundColor="@SpaceState.Value.SpaceColorString"
-							  Style="@($"border-color:{SpaceState.Value.SpaceBorderColor} !important")">
+				<FluentButton Class="btn tree active" Title="show tree" BackgroundColor="@TfState.Value.SpaceColorString"
+							  Style="@($"border-color:{TfState.Value.SpaceBorderColor} !important")">
 					<FluentIcon Value="@TfConstants.GetIcon("AppsList")" />
 				</FluentButton>
 				<FluentButton Class="btn bookmark" Title="show bookmarked" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				</FluentButton>
 				<FluentButton Class="btn save" Title="show saved" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.SaveIcon" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.SaveIcon" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				</FluentButton>
 			</FluentToolbar>
 		</div>
@@ -23,21 +23,21 @@
 		<div class="sidebar-toolbar-actions">
 			<FluentButton Id="space-settings" Title="space actions"
 						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
-				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 			</FluentButton>
 			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
 				<FluentMenuItem OnClick="onManageSpaceClick">
 					@LOC("Manage Space")
-					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 				<FluentMenuItem OnClick="onDataListClick">
 					@LOC("Space Data")
-					<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onAddClick">
 					@LOC("Create View")
-					<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 
 			</FluentMenu>
@@ -54,7 +54,7 @@
 				@foreach (var item in _visibleMenuItems)
 				{
 					<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
-								   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
+								   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
 				}
 			</FluentNavMenu>
 			@if (hasMore)

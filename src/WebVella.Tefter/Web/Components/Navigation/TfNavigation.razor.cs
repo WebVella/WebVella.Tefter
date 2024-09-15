@@ -2,8 +2,8 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Navigation.TfNavigation","WebVella.Tefter")]
 public partial class TfNavigation : TfBaseComponent
 {
-	[Inject] protected IState<UserState> UserState { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 	private List<MenuItem> SpaceNav { get; set; } = new();
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
@@ -47,8 +47,8 @@ public partial class TfNavigation : TfBaseComponent
 	private void _generateSpaceNav()
 	{
 		SpaceNav.Clear();
-		if (UserState.Value.UserSpaces is null) return;
-		foreach (var item in UserState.Value.UserSpaces)
+		if (TfState.Value.CurrentUserSpaces is null) return;
+		foreach (var item in TfState.Value.CurrentUserSpaces)
 		{
 			SpaceNav.Add(new MenuItem
 			{

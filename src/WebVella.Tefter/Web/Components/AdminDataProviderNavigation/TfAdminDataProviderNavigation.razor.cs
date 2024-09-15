@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)

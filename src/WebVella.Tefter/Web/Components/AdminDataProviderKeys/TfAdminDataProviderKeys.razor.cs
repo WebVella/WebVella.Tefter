@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderKeys : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{

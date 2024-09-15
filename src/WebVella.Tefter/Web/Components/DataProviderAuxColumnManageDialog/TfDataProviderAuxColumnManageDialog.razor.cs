@@ -3,7 +3,7 @@
 public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderAuxColumn>
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] private IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
+	[Inject] private IState<TfState> TfState { get; set; }
 	[Parameter] public TucDataProviderAuxColumn Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -26,9 +26,9 @@ public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, 
 		await UC.Init(this.GetType());
 
 		if (Content is null) throw new Exception("Content is null");
-		if (DataProviderDetailsState.Value.Provider is null) throw new Exception("DataProvider not provided");
-		if (DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
-		|| !DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+		if (TfState.Value.Provider is null) throw new Exception("DataProvider not provided");
+		if (TfState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
+		|| !TfState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
 
 		if (Content.Id == Guid.Empty)
 		{
@@ -60,7 +60,7 @@ public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, 
 		try
 		{
 			//Setup form
-			_providerTypeOptions = DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes;
+			_providerTypeOptions = TfState.Value.Provider.ProviderType.SupportedSourceDataTypes;
 			if (_isCreate)
 			{
 				_selectedProviderType = null;
@@ -75,7 +75,7 @@ public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, 
 				UC.AuxColumnForm = new TucDataProviderAuxColumnForm
 				{
 					Id = Guid.NewGuid(),
-					DataProviderId = DataProviderDetailsState.Value.Provider.Id,
+					DataProviderId = TfState.Value.Provider.Id,
 					CreatedOn = DateTime.Now,
 					PreferredSearchType = UC.SearchTypes.First()
 				};

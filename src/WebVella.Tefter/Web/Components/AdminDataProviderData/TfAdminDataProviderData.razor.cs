@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderData : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -25,7 +25,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
+			await UC.LoadDataProviderDataTable(providerId: TfState.Value.Provider.Id);
 			UC.IsBusy = false;
 			UC.IsListBusy = false;
 			await InvokeAsync(StateHasChanged);
@@ -39,7 +39,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		{
 			UC.IsBusy = true;
 			await InvokeAsync(StateHasChanged);
-			await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
+			await UC.LoadDataProviderDataTable(providerId: TfState.Value.Provider.Id);
 			UC.IsBusy = false;
 			UC.IsListBusy = false;
 			await InvokeAsync(StateHasChanged);
@@ -70,7 +70,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		UC.Search = search;
 		UC.IsListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.LoadDataProviderDataTable(providerId: DataProviderDetailsState.Value.Provider.Id);
+		await UC.LoadDataProviderDataTable(providerId: TfState.Value.Provider.Id);
 		UC.IsListBusy = false;
 		await InvokeAsync(StateHasChanged);
 	}
@@ -79,7 +79,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (UC.IsListBusy) return;
 		UC.IsListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoFirstPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		await UC.DataProviderDataTableGoFirstPage(providerId: TfState.Value.Provider.Id);
 		UC.IsListBusy = false;
 		await InvokeAsync(StateHasChanged);
 	}
@@ -88,7 +88,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (UC.IsListBusy) return;
 		UC.IsListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoPreviousPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		await UC.DataProviderDataTableGoPreviousPage(providerId: TfState.Value.Provider.Id);
 		UC.IsListBusy = false;
 		await InvokeAsync(StateHasChanged);
 	}
@@ -97,7 +97,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (UC.IsListBusy) return;
 		UC.IsListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoNextPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		await UC.DataProviderDataTableGoNextPage(providerId: TfState.Value.Provider.Id);
 		UC.IsListBusy = false;
 		await InvokeAsync(StateHasChanged);
 	}
@@ -106,7 +106,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (UC.IsListBusy) return;
 		UC.IsListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoLastPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		await UC.DataProviderDataTableGoLastPage(providerId: TfState.Value.Provider.Id);
 		UC.IsListBusy = false;
 		await InvokeAsync(StateHasChanged);
 	}
@@ -117,7 +117,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		UC.IsListBusy = true;
 		await InvokeAsync(StateHasChanged);
 		UC.Page = page;
-		await UC.DataProviderDataTableGoOnPage(providerId: DataProviderDetailsState.Value.Provider.Id);
+		await UC.DataProviderDataTableGoOnPage(providerId: TfState.Value.Provider.Id);
 		UC.IsListBusy = false;
 		await InvokeAsync(StateHasChanged);
 	}

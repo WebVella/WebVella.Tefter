@@ -2,9 +2,9 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SidebarToggle.TfSidebarToggle","WebVella.Tefter")]
 public partial class TfSidebarToggle : TfBaseComponent
 {
-	[Inject] protected IStateSelection<UserState, Guid> UserIdState { get; set; }
-	[Inject] protected IState<ScreenState> ScreenState { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenSidebarState { get; set; }
+	[Inject] protected IStateSelection<TfState, Guid> UserIdState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenSidebarState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -19,7 +19,7 @@ public partial class TfSidebarToggle : TfBaseComponent
 	{
 		base.OnInitialized();
 		ScreenSidebarState.Select(x => x?.SidebarExpanded ?? true);
-		UserIdState.Select(x => x?.User?.Id ?? Guid.Empty);
+		UserIdState.Select(x => x?.CurrentUser?.Id ?? Guid.Empty);
 		KeyCodeService.RegisterListener(OnKeyDownAsync);
 	}
 

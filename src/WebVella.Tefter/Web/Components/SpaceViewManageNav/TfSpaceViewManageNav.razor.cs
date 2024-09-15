@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageNav.TfSpaceViewManageNav","WebVella.Tefter")]
 public partial class TfSpaceViewManageNav : TfBaseComponent
 {
-	[Inject] protected IState<SpaceState> SpaceState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 
 	private List<MenuItem> menu = new();
 
@@ -35,7 +35,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 		var providerId = Navigator.GetUrlData().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.SpaceViewManagePageUrl, SpaceState.Value.RouteSpaceId, SpaceState.Value.RouteSpaceViewId),
+			Url = String.Format(TfConstants.SpaceViewManagePageUrl, TfState.Value.RouteSpaceId, TfState.Value.RouteSpaceViewId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Title = LOC("View Management")
@@ -60,7 +60,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 	{
 
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
-		SpaceState.Value.SpaceView,
+		TfState.Value.SpaceView,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -71,7 +71,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TucSpaceView)result.Data;
-			var itemList = SpaceState.Value.SpaceViewList.ToList();
+			var itemList = TfState.Value.SpaceViewList.ToList();
 			var itemIndex = itemList.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{
@@ -82,6 +82,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 
 
 			Dispatcher.Dispatch(new SetSpaceViewAction(
+						component:this,
 						spaceView: item,
 						spaceViewList: itemList));
 		}

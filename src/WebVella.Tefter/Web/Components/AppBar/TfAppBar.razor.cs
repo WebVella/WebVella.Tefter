@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfAppBar : TfBaseComponent
 {
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 	[Parameter] public List<MenuItem> Items { get; set; } = new();
 	[Parameter] public string Style { get; set; }
 

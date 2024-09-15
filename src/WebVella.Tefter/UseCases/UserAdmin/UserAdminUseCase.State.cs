@@ -26,14 +26,14 @@ public partial class UserAdminUseCase
 
 			if (userResult.Value is not null)
 			{
-				_dispatcher.Dispatch(new SetUserAdminAction(false, new TucUser(userResult.Value)));
+				_dispatcher.Dispatch(new SetUserAdminAction(new TucUser(userResult.Value)));
 				return;
 			}
 			_navigationManager.NotFound();
 		}
 		else
 		{
-			_dispatcher.Dispatch(new SetUserAdminAction(false, null));
+			_dispatcher.Dispatch(new SetUserAdminAction(null));
 		}
 
 	}

@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
+	[Inject] protected IState<TfState> TfState { get; set; }
 	private bool _isDeleting = false;
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -29,7 +29,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 
 	private async Task _editProvider()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(DataProviderDetailsState.Value.Provider,
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(TfState.Value.Provider,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -88,12 +88,12 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))
 			return;
 
-		if (DataProviderDetailsState.Value is null || DataProviderDetailsState.Value.Provider is null) return;
+		if (TfState.Value is null || TfState.Value.Provider is null) return;
 		try
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = UC.DeleteDataProvider(DataProviderDetailsState.Value.Provider.Id);
+			var result = UC.DeleteDataProvider(TfState.Value.Provider.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{

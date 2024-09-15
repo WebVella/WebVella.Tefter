@@ -3,9 +3,9 @@
 @{
 	CultureInfo cultureInfo = null;
 
-	if (!String.IsNullOrWhiteSpace(UserAdminState.Value?.User?.Settings?.CultureName))
+	if (!String.IsNullOrWhiteSpace(TfState.Value?.ManagedUser?.Settings?.CultureName))
 	{
-		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == UserAdminState.Value?.User?.Settings?.CultureName)?.CultureInfo;
+		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == TfState.Value?.ManagedUser?.Settings?.CultureName)?.CultureInfo;
 	}
 	if (cultureInfo is null)
 	{
@@ -17,7 +17,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="1">
 			<FluentInputLabel>@LOC("Status")</FluentInputLabel>
-			@if (UserAdminState.Value?.User?.Enabled ?? false)
+			@if (TfState.Value?.ManagedUser?.Enabled ?? false)
 			{
 				<FluentBadge Appearance="Appearance.Accent">ON</FluentBadge>
 			}
@@ -27,39 +27,39 @@
 			}
 		</FluentGridItem>
 		<FluentGridItem xs="5">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.Email"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.Email"
 							 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="3">
-			<FluentDatePicker Value="@UserAdminState.Value?.User?.CreatedOn"
+			<FluentDatePicker Value="@TfState.Value?.ManagedUser?.CreatedOn"
 							  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="3">
-			<FluentTimePicker Value="@UserAdminState.Value?.User?.CreatedOn"
+			<FluentTimePicker Value="@TfState.Value?.ManagedUser?.CreatedOn"
 							  ReadOnly="true" Label="&nbsp;" Style="width:100%" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.FirstName"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.FirstName"
 							 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.LastName"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.LastName"
 							 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.Settings?.ThemeMode.ToString()"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.Settings?.ThemeMode.ToString()"
 							 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@UserAdminState.Value?.User?.Settings?.ThemeColor.ToString()"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.Settings?.ThemeColor.ToString()"
 							 ReadOnly="true" Label="@LOC("Theme Color")" Style="width:100%">
 				<FluentIcon Value="@TfConstants.RectangleIcon"
 							Color="Color.Custom" Slot="start"
-							CustomColor="@(UserAdminState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() != "default" ? UserAdminState.Value?.User?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
+							CustomColor="@(TfState.Value?.ManagedUser?.Settings?.ThemeColor.ToAttributeValue() != "default" ? TfState.Value?.ManagedUser?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
 			</FluentTextField>
 		</FluentGridItem>
 	</FluentGrid>
@@ -74,14 +74,14 @@
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Roles")" />
-			@if (UserAdminState.Value?.User?.Roles is null || !UserAdminState.Value.User.Roles.Any())
+			@if (TfState.Value?.ManagedUser?.Roles is null || !TfState.Value.ManagedUser.Roles.Any())
 			{
 				<div>@LOC("No roles assigned")</div>
 			}
 			else
 			{
 				<FluentStack Orientation="@Orientation.Horizontal">
-					@foreach (var role in (UserAdminState.Value?.User?.Roles?.ToList() ?? new List<TucRole>()))
+					@foreach (var role in (TfState.Value?.ManagedUser?.Roles?.ToList() ?? new List<TucRole>()))
 					{
 						<FluentBadge Appearance="Appearance.Accent">@role.Name</FluentBadge>
 					}

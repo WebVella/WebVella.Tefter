@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Layout;
 public partial class AdminLayout : FluxorLayout
 {
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	protected override void OnInitialized()
 	{

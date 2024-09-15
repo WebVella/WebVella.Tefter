@@ -3,7 +3,7 @@
 public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
-	[Inject] protected IStateSelection<ScreenState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{

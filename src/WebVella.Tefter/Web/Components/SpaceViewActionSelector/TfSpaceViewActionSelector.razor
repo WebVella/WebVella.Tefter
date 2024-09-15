@@ -10,7 +10,7 @@
 			}
 			<FluentMenuItem Disabled="@(_selectedItems.Count == 0)">
 				Comment Selected
-				<FluentIcon Value="@TfConstants.GetIcon("Comment")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Comment")" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				@if (_selectedItems.Count > 0)
 				{
 					<span slot="end">
@@ -20,7 +20,7 @@
 			</FluentMenuItem>
 			<FluentMenuItem Disabled="@(_selectedItems.Count == 0)">
 				Email Selected
-				<FluentIcon Value="@TfConstants.GetIcon("Mail")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Mail")" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				@if (_selectedItems.Count > 0)
 				{
 					<span slot="end">

@@ -3,7 +3,7 @@
 public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSharedKey>
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] private IState<DataProviderAdminState> DataProviderDetailsState { get; set; }
+	[Inject] private IState<TfState> TfState { get; set; }
 	[Parameter] public TucDataProviderSharedKey Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
@@ -24,9 +24,9 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		await UC.Init(this.GetType());
 
 		if (Content is null) throw new Exception("Content is null");
-		if (DataProviderDetailsState.Value.Provider is null) throw new Exception("DataProvider not provided");
-		if (DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
-		|| !DataProviderDetailsState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+		if (TfState.Value.Provider is null) throw new Exception("DataProvider not provided");
+		if (TfState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
+		|| !TfState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
 
 		if (Content.Id == Guid.Empty)
 		{
@@ -57,14 +57,14 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			_providerColumns = DataProviderDetailsState.Value.Provider.Columns.OrderBy(x => x.DbName).ToList();
+			_providerColumns = TfState.Value.Provider.Columns.OrderBy(x => x.DbName).ToList();
 			//Setup form
 			if (_isCreate)
 			{
 				UC.KeyForm = new TucDataProviderSharedKeyForm
 				{
 					Id = Guid.NewGuid(),
-					DataProviderId = DataProviderDetailsState.Value.Provider.Id,
+					DataProviderId = TfState.Value.Provider.Id,
 				};
 			}
 			else

@@ -1,8 +1,8 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (DataProviderDetailsState.Value.Provider is null || DataProviderDetailsState.Value.Provider.SharedKeys is null
-																|| DataProviderDetailsState.Value.Provider.SharedKeys.Count == 0)
+@if (TfState.Value.Provider is null || TfState.Value.Provider.SharedKeys is null
+																|| TfState.Value.Provider.SharedKeys.Count == 0)
 {
 	<FluentMessageBar Title="@LOC("No keys")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No shared keys are created yet for this data provider")</FluentMessageBar>
@@ -20,7 +20,7 @@ else
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
-				@foreach (var context in DataProviderDetailsState.Value.Provider.SharedKeys)
+				@foreach (var context in TfState.Value.Provider.SharedKeys)
 				{
 					<tr @key=context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">

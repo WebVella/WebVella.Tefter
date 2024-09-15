@@ -6,7 +6,7 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
 			<FluentMenuItem Disabled="@(_selectedItems.Count == 0)">
 				Export Selection
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 				@if (_selectedItems.Count > 0)
 				{
 					<span slot="end">
@@ -16,7 +16,7 @@
 			</FluentMenuItem>
 			<FluentMenuItem>
 				Export All data
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@SpaceState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 		</FluentMenu>
 	</div>

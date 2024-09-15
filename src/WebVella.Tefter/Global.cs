@@ -41,16 +41,7 @@ global using WebVella.Tefter.UseCases.UserAdmin;
 global using WebVella.Tefter.UseCases.Space;
 
 //State
-global using WebVella.Tefter.Web.Store.CultureState;
-global using WebVella.Tefter.Web.Store.DataProviderAdminState;
-global using WebVella.Tefter.Web.Store.DashboardState;
-global using WebVella.Tefter.Web.Store.FastAccessState;
-global using WebVella.Tefter.Web.Store.ScreenState;
-global using WebVella.Tefter.Web.Store.SessionState;
-global using WebVella.Tefter.Web.Store.SpaceState;
-global using WebVella.Tefter.Web.Store.ThemeState;
-global using WebVella.Tefter.Web.Store.UserAdminState;
-global using WebVella.Tefter.Web.Store.UserState;
+global using WebVella.Tefter.Web.Store;
 
 /// Components
 global using WebVella.Tefter.Web.Brokers;
