@@ -21,17 +21,7 @@ public partial class TfNavigation : TfBaseComponent
 		base.OnInitialized();
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		_generateSpaceNav();
-		ActionSubscriber.SubscribeToAction<UserStateChangedAction>(this, On_UserStateChangedAction);
 		Navigator.LocationChanged += Navigator_LocationChanged;
-	}
-
-	private void On_UserStateChangedAction(UserStateChangedAction action)
-	{
-		base.InvokeAsync(async () =>
-		{
-			_generateSpaceNav();
-			await InvokeAsync(StateHasChanged);
-		});
 	}
 
 	protected void Navigator_LocationChanged(object sender, LocationChangedEventArgs args)

@@ -17,7 +17,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -32,20 +32,20 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		}
 	}
 
-	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	{
-		if (action.Provider is null) return;
-		base.InvokeAsync(async () =>
-		{
-			UC.IsBusy = true;
-			await InvokeAsync(StateHasChanged);
-			await UC.LoadDataProviderDataTable(providerId: TfState.Value.Provider.Id);
-			UC.IsBusy = false;
-			UC.IsListBusy = false;
-			await InvokeAsync(StateHasChanged);
-		});
+	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
+	//{
+	//	if (action.Provider is null) return;
+	//	base.InvokeAsync(async () =>
+	//	{
+	//		UC.IsBusy = true;
+	//		await InvokeAsync(StateHasChanged);
+	//		await UC.LoadDataProviderDataTable(providerId: TfState.Value.Provider.Id);
+	//		UC.IsBusy = false;
+	//		UC.IsListBusy = false;
+	//		await InvokeAsync(StateHasChanged);
+	//	});
 
-	}
+	//}
 
 
 

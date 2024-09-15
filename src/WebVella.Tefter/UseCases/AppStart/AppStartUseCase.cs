@@ -33,28 +33,22 @@ internal partial class AppStartUseCase
 		//Init Culture
 		result.CultureOption = await InitCulture(result.User);
 		if(result.CultureOption is null) return null;
-
-		//Init UserSpaces
-		var uri = new Uri(_navigationManager.Uri);
-		if(!uri.LocalPath.StartsWith("/admin")){ 
-			result.UserSpaces = await InitUserSpaces(result.User);
-		}
-
 		return result;
 	}
 
-	internal async Task OnLocationChange()
-	{
-		var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
-		var user = authState.User;
-		//Temporary fix for multitab logout
-		var cookie = await new CookieService(_jsRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
+	//Was fix for logout but not needed anymore
+	//internal async Task OnLocationChange()
+	//{
+	//	var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+	//	var user = authState.User;
+	//	//Temporary fix for multitab logout
+	//	var cookie = await new CookieService(_jsRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
 
-		if (cookie is null
-		|| user.Identity is null || !user.Identity.IsAuthenticated)
-		{
-			_navigationManager.NavigateTo(TfConstants.LoginPageUrl, true);
-			return;
-		}
-	}
+	//	if (cookie is null
+	//	|| user.Identity is null || !user.Identity.IsAuthenticated)
+	//	{
+	//		_navigationManager.NavigateTo(TfConstants.LoginPageUrl, true);
+	//		return;
+	//	}
+	//}
 }

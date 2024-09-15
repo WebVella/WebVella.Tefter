@@ -19,7 +19,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
-		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_UserDetailsChangedAction);
+		//ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_UserDetailsChangedAction);
 	}
 
 	private async Task loadMoreClick()
@@ -72,9 +72,9 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void On_UserDetailsChangedAction(UserAdminChangedAction action)
-	{
-		UC.NavigationOnStateChanged(action.User);
-		StateHasChanged();
-	}
+	//private void On_UserDetailsChangedAction(UserAdminChangedAction action)
+	//{
+	//	UC.NavigationOnStateChanged(action.User);
+	//	StateHasChanged();
+	//}
 }

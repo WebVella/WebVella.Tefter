@@ -20,22 +20,22 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
 		_pagination.ItemsPerPage = UC.SyncLogPageSize;
-		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
 	}
 
-	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	{
-		if (action.Provider is null) return;
-		base.InvokeAsync(async () =>
-		{
-			UC.IsBusy = true;
-			await InvokeAsync(StateHasChanged);
-			await UC.LoadDataProviderDataObjects(action.Provider.Id);
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
-		});
+	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
+	//{
+	//	if (action.Provider is null) return;
+	//	base.InvokeAsync(async () =>
+	//	{
+	//		UC.IsBusy = true;
+	//		await InvokeAsync(StateHasChanged);
+	//		await UC.LoadDataProviderDataObjects(action.Provider.Id);
+	//		UC.IsBusy = false;
+	//		await InvokeAsync(StateHasChanged);
+	//	});
 
-	}
+	//}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{

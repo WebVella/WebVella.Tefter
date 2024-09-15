@@ -17,12 +17,12 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
 	}
-	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	{
-		StateHasChanged();
-	}
+	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
+	//{
+	//	StateHasChanged();
+	//}
 
 
 }

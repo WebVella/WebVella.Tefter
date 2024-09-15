@@ -9,7 +9,7 @@ public partial class TfAdminUserStateManager : TfBaseComponent
 		if (disposing)
 		{
 			Navigator.LocationChanged -= Navigator_LocationChanged;
-			Dispatcher.Dispatch(new EmptyUserAdminAction());
+			Dispatcher.Dispatch(new SetUserAdminAction(component:this,userDetails:null));
 		}
 		return base.DisposeAsyncCore(disposing);
 	}
@@ -18,6 +18,7 @@ public partial class TfAdminUserStateManager : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
+		Dispatcher.Dispatch(new SetUserAdminAction(component:this,userDetails:await UC.GetUserFromUrl(Navigator.Uri)));
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
@@ -25,7 +26,7 @@ public partial class TfAdminUserStateManager : TfBaseComponent
 	{
 		base.InvokeAsync(async () =>
 		{
-			await UC.InitState(e.Location);
+			Dispatcher.Dispatch(new SetUserAdminAction(component:this,userDetails:await UC.GetUserFromUrl(e.Location)));
 		});
 	}
 }

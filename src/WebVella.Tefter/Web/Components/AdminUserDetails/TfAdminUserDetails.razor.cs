@@ -19,13 +19,13 @@ public partial class TfAdminUserDetails : TfBaseComponent
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
 
-		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
+		//ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
 	}
 
-	private void On_GetUserDetailsActionResult(UserAdminChangedAction action)
-	{
-		StateHasChanged();
-	}
+	//private void On_GetUserDetailsActionResult(UserAdminChangedAction action)
+	//{
+	//	StateHasChanged();
+	//}
 
 	
 }

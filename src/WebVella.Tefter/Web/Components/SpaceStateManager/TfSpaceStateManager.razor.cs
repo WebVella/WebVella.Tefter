@@ -8,7 +8,7 @@ public partial class TfSpaceStateManager : TfBaseComponent
 		if (disposing)
 		{
 			Navigator.LocationChanged -= Navigator_LocationChanged;
-			Dispatcher.Dispatch(new EmptyDataProviderAdminAction());
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this,provider:null));
 		}
 		return base.DisposeAsyncCore(disposing);
 	}

@@ -9,7 +9,6 @@ public partial class TfDashboardStateManager : TfBaseComponent
 		if (disposing)
 		{
 			Navigator.LocationChanged -= Navigator_LocationChanged;
-			Dispatcher.Dispatch(new EmptyDashboardStateAction());
 		}
 		return base.DisposeAsyncCore(disposing);
 	}

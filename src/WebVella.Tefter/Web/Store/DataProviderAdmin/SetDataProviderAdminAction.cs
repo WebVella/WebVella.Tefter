@@ -1,16 +1,15 @@
 ﻿namespace WebVella.Tefter.Web.Store;
 
-public record SetDataProviderAdminAction
+public record SetDataProviderAdminAction : TfBaseAction
 {
-	public bool IsBusy { get; }
 	public TucDataProvider Provider { get; }
 
 	public SetDataProviderAdminAction(
-		bool isBusy,
+		TfBaseComponent component,
 		TucDataProvider provider
 		)
 	{
-		IsBusy = isBusy;
+		Component = component;
 		Provider = provider;
 	}
 }

@@ -1,12 +1,12 @@
 ﻿namespace WebVella.Tefter.UseCases.UserAdmin;
 public partial class UserAdminUseCase
 {
-	internal async Task InitForStateAsync()
+	internal Task InitForStateAsync()
 	{
-		await InitState(null);
+		return Task.CompletedTask;
 	}
 
-	internal async Task InitState(string url)
+	internal async Task<TucUser> GetUserFromUrl(string url)
 	{
 		var urlData = _navigationManager.GetUrlData(url);
 		if (urlData.UserId is not null)
@@ -21,20 +21,15 @@ public partial class UserAdminUseCase
 					toastService: _toastService,
 					messageService: _messageService
 				);
-				return;
+				return null;
 			}
 
 			if (userResult.Value is not null)
 			{
-				_dispatcher.Dispatch(new SetUserAdminAction(new TucUser(userResult.Value)));
-				return;
+				return new TucUser(userResult.Value);
 			}
 			_navigationManager.NotFound();
 		}
-		else
-		{
-			_dispatcher.Dispatch(new SetUserAdminAction(null));
-		}
-
+		return null;
 	}
 }

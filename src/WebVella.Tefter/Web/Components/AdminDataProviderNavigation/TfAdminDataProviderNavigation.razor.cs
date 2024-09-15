@@ -20,7 +20,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		await UC.Init(this.GetType());
 		UC.MenuLoading = false;
 		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
-		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_DataProviderDetailsChangedAction);
+		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_DataProviderDetailsChangedAction);
 	}
 
 	private void loadMoreClick()
@@ -46,7 +46,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		{
 			var provider = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess("Data provider successfully created!");
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, provider));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this,provider: provider));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
 		}
 	}
@@ -66,9 +66,9 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		StateHasChanged();
 	}
 
-	private void On_DataProviderDetailsChangedAction(DataProviderAdminChangedAction action)
-	{
-		UC.OnStateChanged(action.Provider);
-		StateHasChanged();
-	}
+	//private void On_DataProviderDetailsChangedAction(DataProviderAdminChangedAction action)
+	//{
+	//	UC.OnStateChanged(action.Provider);
+	//	StateHasChanged();
+	//}
 }

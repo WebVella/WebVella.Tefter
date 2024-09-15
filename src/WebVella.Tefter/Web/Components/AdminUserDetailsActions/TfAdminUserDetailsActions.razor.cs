@@ -41,7 +41,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 		{
 			var user = (TucUser)result.Data;
 			ToastService.ShowSuccess(LOC("User successfully updated!"));
-			Dispatcher.Dispatch(new SetUserAdminAction(user));
+			Dispatcher.Dispatch(new SetUserAdminAction(component:this,userDetails:user));
 		}
 	}
 }

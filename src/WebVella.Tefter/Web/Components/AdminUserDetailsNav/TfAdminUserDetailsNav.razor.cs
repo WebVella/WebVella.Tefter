@@ -18,15 +18,15 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
+		//ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
-	private async void On_GetUserDetailsActionResult(UserAdminChangedAction action)
-	{
-		UC.InitDetailsNavMenu();
-		StateHasChanged();
-	}
+	//private async void On_GetUserDetailsActionResult(UserAdminChangedAction action)
+	//{
+	//	UC.InitDetailsNavMenu();
+	//	StateHasChanged();
+	//}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{

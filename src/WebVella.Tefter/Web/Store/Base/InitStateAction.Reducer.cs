@@ -7,7 +7,6 @@ public static partial class StateReducers
 		=> state with
 		{
 			CurrentUser = action.User,
-			CurrentUserSpaces = action.UserSpaces,
 			Culture = action.Culture,
 			ThemeMode = action.ThemeMode,
 			ThemeColor = action.ThemeColor,

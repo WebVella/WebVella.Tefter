@@ -18,7 +18,7 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 	{
 		base.OnInitialized();
 		GenerateMenu();
-		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 		StateHasChanged();
 	}
@@ -72,11 +72,11 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 
 	}
 
-	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	{
-		GenerateMenu();
-		StateHasChanged();
-	}
+	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
+	//{
+	//	GenerateMenu();
+	//	StateHasChanged();
+	//}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{

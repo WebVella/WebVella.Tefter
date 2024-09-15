@@ -125,6 +125,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			{
 				userSpaces[itemIndex] = item;
 				Dispatcher.Dispatch(new SetUserStateAction(
+					component:this,
 					user: TfState.Value.CurrentUser,
 					userSpaces: userSpaces
 				));

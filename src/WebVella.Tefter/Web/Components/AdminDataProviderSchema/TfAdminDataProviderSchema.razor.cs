@@ -17,13 +17,13 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
+		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
 
 	}
-	private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	{
-		StateHasChanged();
-	}
+	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
+	//{
+	//	StateHasChanged();
+	//}
 
 	private async Task _editColumn(TucDataProviderColumn column)
 	{
@@ -39,7 +39,7 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			ToastService.ShowSuccess(LOC("Column successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(false, (TucDataProvider)result.Data));
+			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this, provider: (TucDataProvider)result.Data));
 		}
 	}
 
@@ -54,7 +54,7 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-				Dispatcher.Dispatch(new SetDataProviderAdminAction(false, result.Value));
+				Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this, provider: result.Value));
 			}
 		}
 		catch (Exception ex)

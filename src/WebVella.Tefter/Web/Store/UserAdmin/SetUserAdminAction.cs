@@ -1,12 +1,14 @@
 ﻿namespace WebVella.Tefter.Web.Store;
 
-public record SetUserAdminAction
+public record SetUserAdminAction : TfBaseAction
 {
-	public TucUser User { get; }
+	public TucUser ManagedUser { get; }
 
 	public SetUserAdminAction(
-		TucUser user)
+		TfBaseComponent component,
+		TucUser userDetails)
 	{
-		User = user;
+		Component = component;
+		ManagedUser = userDetails;
 	}
 }

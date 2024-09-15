@@ -20,18 +20,18 @@ public partial class TfDashboard : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		ActionSubscriber.SubscribeToAction<DashboardStateChangedAction>(this, On_DashboardStateChangedAction);
+		//ActionSubscriber.SubscribeToAction<DashboardStateChangedAction>(this, On_DashboardStateChangedAction);
 	}
 
-	private void On_DashboardStateChangedAction(DashboardStateChangedAction action)
-	{
-		base.InvokeAsync(async () =>
-		{
-			UC.IsBusy = TfState.Value.IsBusy;
-			await InvokeAsync(StateHasChanged);
-		});
+	//private void On_DashboardStateChangedAction(DashboardStateChangedAction action)
+	//{
+	//	base.InvokeAsync(async () =>
+	//	{
+	//		UC.IsBusy = TfState.Value.IsBusy;
+	//		await InvokeAsync(StateHasChanged);
+	//	});
 
-	}
+	//}
 
 
 	void AddInNotificationCenter()
