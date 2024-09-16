@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Store;
 
 [FeatureState]
-public partial record TfState
+public partial record TfAppState
 {
 
 }

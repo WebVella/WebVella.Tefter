@@ -10,7 +10,7 @@ public static partial class SpaceStateReducers
 	/// <returns></returns>
 
 	[ReducerMethod()]
-	public static TfState SetSpaceViewMetaReducer(TfState state, SetSpaceViewMetaAction action)
+	public static TfAppState SetSpaceViewMetaReducer(TfAppState state, SetSpaceViewMetaAction action)
 		=> state with
 		{
 			SpaceViewColumns = action.SpaceViewColumns,

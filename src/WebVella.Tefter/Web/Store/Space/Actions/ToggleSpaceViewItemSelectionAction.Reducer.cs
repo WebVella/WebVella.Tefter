@@ -10,7 +10,7 @@ public static partial class SpaceStateReducers
 	/// <returns></returns>
 
 	[ReducerMethod()]
-	public static TfState ToggleSpaceViewItemSelectionActionReducer(TfState state, ToggleSpaceViewItemSelectionAction action)
+	public static TfAppState ToggleSpaceViewItemSelectionActionReducer(TfAppState state, ToggleSpaceViewItemSelectionAction action)
 	=> state with
 	{
 		SelectedDataRows = action.IdList

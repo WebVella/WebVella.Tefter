@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageNav.TfSpaceViewManageNav","WebVella.Tefter")]
 public partial class TfSpaceViewManageNav : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 
 	private List<MenuItem> menu = new();
 

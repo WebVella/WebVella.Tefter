@@ -54,10 +54,5 @@
 	  </EmbeddedResource>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Web\Store\Dashboard\Actions\" />
-	  <Folder Include="Web\Store\FastAccess\Actions\" />
-	</ItemGroup>
-
 	
 </Project>

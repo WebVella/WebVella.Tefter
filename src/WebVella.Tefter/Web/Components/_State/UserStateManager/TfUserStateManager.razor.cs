@@ -4,7 +4,7 @@ public partial class TfUserStateManager : FluxorComponent
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
-	[Inject] private StateInitUseCase UC { get; set; }
+	[Inject] private UserStateUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
 

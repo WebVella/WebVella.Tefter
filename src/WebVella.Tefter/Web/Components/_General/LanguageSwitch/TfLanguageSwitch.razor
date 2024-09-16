@@ -4,7 +4,7 @@
 <div class="language-switch">
 	<FluentButton Id="language-switch-btn"
 		Appearance="@Appearance.Stealth" OnClick="@(() => _visible = !_visible)" Title="@LOC("Switch Language")">
-		<img src="@TfState.Value.Culture?.IconUrl" />
+		<img src="@TfUserState.Value.Culture?.IconUrl" />
 	</FluentButton>
 </div>
 <FluentMenu Width="200" @bind-Open="_visible" Anchor="language-switch-btn" UseMenuService="false">

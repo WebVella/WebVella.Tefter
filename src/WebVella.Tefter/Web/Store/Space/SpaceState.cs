@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Store;
 using SystemColor = System.Drawing.Color;
 
-public partial record TfState
+public partial record TfAppState
 {
 	public bool IsBusy { get; init; } = true;
 	public Guid? RouteSpaceId { get; init; }

@@ -11,7 +11,7 @@ public partial class SpaceUseCase
 		return Task.CompletedTask;
 	}
 
-	internal Task<List<TucSpaceViewColumn>> InitSpaceViewManageAfterRender(TfState state)
+	internal Task<List<TucSpaceViewColumn>> InitSpaceViewManageAfterRender(TfAppState state)
 	{
 		if (state.SpaceView.SpaceDataId is not null)
 			ViewData = state.SpaceDataList.FirstOrDefault(x => x.Id == state.SpaceView.SpaceDataId);

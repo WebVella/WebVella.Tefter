@@ -8,7 +8,7 @@ public partial class SpaceUseCase
 		return Task.CompletedTask;
 	}
 
-	internal Task<TfDataTable> IInitSpaceViewDetailsAfterRender(TfState state)
+	internal Task<TfDataTable> IInitSpaceViewDetailsAfterRender(TfAppState state)
 	{
 		if(state.SpaceView is null || state.SpaceView.SpaceDataId is null) return null;
 		var dt = GetSpaceViewData(

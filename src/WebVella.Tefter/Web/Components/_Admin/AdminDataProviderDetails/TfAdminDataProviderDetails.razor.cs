@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 public partial class TfAdminDataProviderDetails : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{

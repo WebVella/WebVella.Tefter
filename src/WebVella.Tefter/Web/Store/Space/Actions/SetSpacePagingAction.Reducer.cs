@@ -10,7 +10,7 @@ public static partial class SpaceStateReducers
 	/// <returns></returns>
 
 	[ReducerMethod()]
-	public static TfState SetSpacePagingActionReducer(TfState state, SetSpacePagingAction action)
+	public static TfAppState SetSpacePagingActionReducer(TfAppState state, SetSpacePagingAction action)
 		=> state with
 		{
 			Page = action.Page,

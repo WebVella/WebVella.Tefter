@@ -2,7 +2,8 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Navigation.TfNavigation","WebVella.Tefter")]
 public partial class TfNavigation : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 	private List<MenuItem> SpaceNav { get; set; } = new();
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
@@ -35,19 +36,19 @@ public partial class TfNavigation : TfBaseComponent
 	private void _generateSpaceNav()
 	{
 		SpaceNav.Clear();
-		if (TfState.Value.CurrentUserSpaces is null) return;
-		foreach (var item in TfState.Value.CurrentUserSpaces)
-		{
-			SpaceNav.Add(new MenuItem
-			{
-				Icon = item.Icon,
-				Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
-				Match = NavLinkMatch.Prefix,
-				Url = String.Format(TfConstants.SpacePageUrl, item.Id), //item.DefaultViewId - active menu issues
-				Title = item.Name,
-				IconColor = item.Color,
-			});
-		}
+		//if (TfState.Value.CurrentUserSpaces is null) return;
+		//foreach (var item in TfState.Value.CurrentUserSpaces)
+		//{
+		//	SpaceNav.Add(new MenuItem
+		//	{
+		//		Icon = item.Icon,
+		//		Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
+		//		Match = NavLinkMatch.Prefix,
+		//		Url = String.Format(TfConstants.SpacePageUrl, item.Id), //item.DefaultViewId - active menu issues
+		//		Title = item.Name,
+		//		IconColor = item.Color,
+		//	});
+		//}
 	}
 
 	private async Task _addSpaceHandler()

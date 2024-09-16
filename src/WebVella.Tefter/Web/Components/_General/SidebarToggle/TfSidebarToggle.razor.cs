@@ -4,7 +4,7 @@ public partial class TfSidebarToggle : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
-	[Inject] private StateEffectsUseCase UC { get; set; }
+	[Inject] private UserStateUseCase UC { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{

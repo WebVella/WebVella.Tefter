@@ -3,7 +3,7 @@
 public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -29,7 +29,7 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 	private async Task _editUser()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(
-		TfState.Value.CurrentUser,
+		TfState.Value.ManagedUser,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -19,7 +19,6 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
 		UC.MenuLoading = false;
-		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_DataProviderDetailsChangedAction);
 	}
 

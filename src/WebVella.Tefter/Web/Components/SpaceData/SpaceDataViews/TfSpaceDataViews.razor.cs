@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataViews.TfSpaceDataViews","WebVella.Tefter")]
 public partial class TfSpaceDataViews : TfFormBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 
 	private List<TucSpaceView> _items = new();

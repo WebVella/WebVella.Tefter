@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataDetailsNav.TfSpaceDataDetailsNav","WebVella.Tefter")]
 public partial class TfSpaceDataDetailsNav : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 
 	private List<MenuItem> menu = new();
 	private List<TucSpaceView> viewList = new();

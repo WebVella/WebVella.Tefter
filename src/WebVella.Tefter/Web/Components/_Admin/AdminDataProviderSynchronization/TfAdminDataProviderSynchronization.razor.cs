@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 
 	PaginationState _pagination = new PaginationState { ItemsPerPage = 15 };
 

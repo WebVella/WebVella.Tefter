@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 	private bool _open = false;
 	private bool _selectorLoading = false;

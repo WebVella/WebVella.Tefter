@@ -4,7 +4,7 @@
 public partial class TfUserNavigation
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-	[Inject] private StateEffectsUseCase UC { get; set; }
+	[Inject] private UserStateUseCase UC { get; set; }
 
 	private bool _visible = false;
 	private bool _isAdmin = false;
@@ -25,13 +25,6 @@ public partial class TfUserNavigation
 		initAdmin(null);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
-
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-		Console.WriteLine("============ TfUserNavigation RERENDER");
-	}
-
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
 		initAdmin(e.Location);

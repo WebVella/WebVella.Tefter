@@ -3,7 +3,7 @@
 public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] private UserAdminUseCase UC { get; set; }
-	[Inject] protected IStateSelection<TfState, bool> ScreenStateSidebarExpanded { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -18,7 +18,6 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 	{
 		await base.OnInitializedAsync();
 		await UC.Init(this.GetType());
-		ScreenStateSidebarExpanded.Select(x => x?.SidebarExpanded ?? true);
 		//ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_UserDetailsChangedAction);
 	}
 

@@ -6,7 +6,7 @@
 
 <TfAdminUserStateManager/>
 
-@if (ScreenStateSidebarExpanded.Value)
+@if (TfUserState.Value.SidebarExpanded)
 {
 	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
 		<TfAdminUserNavigation />

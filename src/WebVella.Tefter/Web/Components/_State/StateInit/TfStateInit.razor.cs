@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfStateInit : TfBaseComponent
 {
-	[Inject] private StateInitUseCase UC { get; set; }
+	[Inject] private UserStateUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
 	//protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -19,28 +19,8 @@ public partial class TfStateInit : TfBaseComponent
 		if (firstRender)
 		{
 			var state = await UC.InitState();
-			if (state.CurrentUser is null)
-			{
-				Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
-				return;
-			}
-			else if (state.Culture is null)
-			{
-				Navigator.ReloadCurrentUrl();
-				return;
-			}
-			state = state with
-			{
-				ThemeMode = state.CurrentUser.Settings?.ThemeMode ?? TfConstants.DefaultThemeMode,
-				ThemeColor = state.CurrentUser.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor,
-				SidebarExpanded = state.CurrentUser.Settings?.IsSidebarOpen ?? true
-			};
 
-			//Setup states
-			Dispatcher.Dispatch(new InitStateAction(
-				component: this,
-				state: state
-			));
+
 			//For the logout fix - Not needed anymore
 			//Navigator.LocationChanged += Navigator_LocationChanged;
 			UC.IsBusy = false;

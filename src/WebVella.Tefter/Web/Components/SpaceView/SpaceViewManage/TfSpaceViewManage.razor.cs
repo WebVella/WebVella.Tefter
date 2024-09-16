@@ -1,7 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewManage : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	[Inject] private SpaceUseCase UC { get; set; }
 	private bool _isSubmitting = false;
@@ -24,7 +25,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			var columns = await UC.InitSpaceViewManageAfterRender(TfState.Value);
+			var columns = await UC.InitSpaceViewManageAfterRender(TfAppState.Value);
 			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
 				component: this,
 				spaceViewColumns: columns
@@ -36,7 +37,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewColumnManageDialog>(
-				new TucSpaceViewColumn() with { SpaceViewId = TfState.Value.RouteSpaceViewId.Value },
+				new TucSpaceViewColumn() with { SpaceViewId = TfAppState.Value.RouteSpaceViewId.Value },
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -47,7 +48,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var updatedColumn = (TucSpaceViewColumn)result.Data;
-			var columns = TfState.Value.SpaceViewColumns.ToList();
+			var columns = TfAppState.Value.SpaceViewColumns.ToList();
 			columns.Add(updatedColumn);
 			columns = columns.OrderBy(x => x.QueryName).ToList();
 
@@ -74,7 +75,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var updatedColumn = (TucSpaceViewColumn)result.Data;
-			var columns = TfState.Value.SpaceViewColumns.ToList();
+			var columns = TfAppState.Value.SpaceViewColumns.ToList();
 
 			var columnIndex = columns.FindIndex(x => x.Id == updatedColumn.Id);
 			if (columnIndex > -1) columns[columnIndex] = updatedColumn;
@@ -101,7 +102,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 			if (submitResult.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space View updated!"));
-				var columns = TfState.Value.SpaceViewColumns.ToList();
+				var columns = TfAppState.Value.SpaceViewColumns.ToList();
 				var columnIndex = columns.FindIndex(x => x.Id == column.Id);
 				if (columnIndex > -1)
 				{
@@ -130,7 +131,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (_isSubmitting) return;
 		try
 		{
-			Result<List<TucSpaceViewColumn>> submitResult = UC.MoveSpaceViewColumn(viewId: TfState.Value.SpaceView.Id, columnId: column.Id, isUp: isUp);
+			Result<List<TucSpaceViewColumn>> submitResult = UC.MoveSpaceViewColumn(viewId: TfAppState.Value.SpaceView.Id, columnId: column.Id, isUp: isUp);
 			ProcessServiceResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{

@@ -10,7 +10,7 @@ public static partial class SpaceStateReducers
 	/// <returns></returns>
 
 	[ReducerMethod()]
-	public static TfState SetSpaceDataReducer(TfState state, SetSpaceDataAction action)
+	public static TfAppState SetSpaceDataReducer(TfAppState state, SetSpaceDataAction action)
 		=> state with
 		{
 			SpaceData = action.SpaceData,

@@ -3,7 +3,7 @@
 public static partial class DataProviderAdminStateReducers
 {
 	[ReducerMethod()]
-	public static TfState SetDataProviderAdminActionReducer(TfState state, 
+	public static TfAppState SetDataProviderAdminActionReducer(TfAppState state, 
 		SetDataProviderAdminAction action) 
 		=> state with { Provider = action.Provider};
 }

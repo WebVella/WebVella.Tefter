@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfState.Value.IsBusy) { }
-else if (TfState.Value.Space is null)
+@if (TfAppState.Value.IsBusy) { }
+else if (TfAppState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -15,7 +15,7 @@ else if (TfState.Value.Space is null)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfState.Value.SpaceDataList.Count == 0)
+else if (TfAppState.Value.SpaceDataList.Count == 0)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -29,7 +29,7 @@ else if (TfState.Value.SpaceDataList.Count == 0)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfState.Value.RouteSpaceDataId is null)
+else if (TfAppState.Value.RouteSpaceDataId is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -43,7 +43,7 @@ else if (TfState.Value.RouteSpaceDataId is null)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfState.Value.SpaceData is null && TfState.Value.RouteSpaceDataId is not null)
+else if (TfAppState.Value.SpaceData is null && TfAppState.Value.RouteSpaceDataId is not null)
 {
 
 	<FluentBodyContent Class="content-body">
@@ -60,9 +60,9 @@ else if (TfState.Value.SpaceData is null && TfState.Value.RouteSpaceDataId is no
 }
 else
 {
-	@if (TfState.Value.SidebarExpanded)
+	@if (TfUserState.Value.SidebarExpanded)
 	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfState.Value.SpaceSidebarStyle">
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
 			<TfSpaceDataNavigation />
 		</FluentStack>
 	}

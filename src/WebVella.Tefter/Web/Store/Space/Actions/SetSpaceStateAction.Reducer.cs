@@ -10,7 +10,7 @@ public static partial class SpaceStateReducers
 	/// <returns></returns>
 
 	[ReducerMethod()]
-	public static TfState SetSpaceReducer(TfState state, SetSpaceStateAction action)
+	public static TfAppState SetSpaceReducer(TfAppState state, SetSpaceStateAction action)
 		=> state with
 		{
 			IsBusy = action.IsBusy,

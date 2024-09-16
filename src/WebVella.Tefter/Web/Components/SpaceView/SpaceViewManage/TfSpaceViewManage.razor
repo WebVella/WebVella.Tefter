@@ -7,7 +7,7 @@
 	</FluentBodyContent>
 
 }
-else if (TfState.Value.Space is null || TfState.Value.SpaceView is null)
+else if (TfAppState.Value.Space is null || TfAppState.Value.SpaceView is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -23,9 +23,9 @@ else if (TfState.Value.Space is null || TfState.Value.SpaceView is null)
 }
 else
 {
-	@if (TfState.Value.SidebarExpanded)
+	@if (TfUserState.Value.SidebarExpanded)
 	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfState.Value.SpaceSidebarStyle">
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
 			<TfSpaceViewNavigation />
 		</FluentStack>
 	}
@@ -38,17 +38,17 @@ else
 					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("Name")" />
 						<FluentStack>
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfState.Value.SpaceView.Name
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceView.Name
 											 Style="flex:1 1 auto" ReadOnly="true" />
 							<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
-								Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfState.Value.RouteSpaceId,TfState.Value.SpaceView.Id))" 
+								Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfAppState.Value.RouteSpaceId,TfAppState.Value.SpaceView.Id))" 
 								IconStart="@TfConstants.ViewIcon"/>
 						</FluentStack>
 
 
 					</FluentGridItem>
 					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfState.Value.SpaceView.Type.ToDescriptionString()
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceView.Type.ToDescriptionString()
 										 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
 					</FluentGridItem>
 				</FluentGrid>
@@ -62,7 +62,7 @@ else
 								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.ViewData.Name
 												 ReadOnly="true" Style="flex:1 1 auto" />
 								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
-											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfState.Value.RouteSpaceId,TfState.Value.SpaceView.SpaceDataId))" 
+											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfAppState.Value.RouteSpaceId,TfAppState.Value.SpaceView.SpaceDataId))" 
 									IconStart="@TfConstants.ViewIcon" Target="_blank"/>
 							</FluentStack>
 						}
@@ -99,7 +99,7 @@ else
 					</FluentStack>
 				</TitleTemplate>
 				<ChildContent>
-					@if (TfState.Value.SpaceViewColumns.Count == 0)
+					@if (TfAppState.Value.SpaceViewColumns.Count == 0)
 					{
 						@LOC("This view has no columns yet.")
 					}
@@ -108,7 +108,7 @@ else
 						<div class="tf-grid-wrapper">
 							<table class="tf-grid">
 								<tbody class="tf-grid-tbody">
-									@foreach (var context in TfState.Value.SpaceViewColumns.OrderBy(x => x.Position))
+									@foreach (var context in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 									{
 										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 											<td class="tf-grid-td" style="width:1%;">
@@ -123,7 +123,7 @@ else
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,true))" Title="@LOC("Move up")"
 																	  Disabled="@(_isSubmitting || context.Position == 1)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
 														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,false))" Title="@LOC("Move down")"
-																	  Disabled="@(_isSubmitting || context.Position == TfState.Value.SpaceViewColumns.Count)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
+																	  Disabled="@(_isSubmitting || context.Position == TfAppState.Value.SpaceViewColumns.Count)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
 													</FluentStack>
 												</div>
 											</td>

@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<div class="@($"spacenav-nav {(TfState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+<div class="@($"spacenav-nav {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
 	<FluentNavMenu>
 		<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.DashboardIcon"
 					   Href="/" Match="@NavLinkMatch.All" />
@@ -16,7 +16,7 @@
 
  <TfAppBar Items="SpaceNav" />
 
-<div class="@($"spacenav-nav end {(TfState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+<div class="@($"spacenav-nav end {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
 		<FluentNavMenu>
 		<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon" 
 					   OnClick="_searchSpaceHandler" />

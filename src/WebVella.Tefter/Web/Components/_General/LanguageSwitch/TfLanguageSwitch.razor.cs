@@ -4,8 +4,8 @@ namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.LanguageSwitch.TfLanguageSwitch", "WebVella.Tefter")]
 public partial class TfLanguageSwitch : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
-	[Inject] private StateEffectsUseCase UC { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] private UserStateUseCase UC { get; set; }
 
 	private bool _visible = false;
 
@@ -14,7 +14,7 @@ public partial class TfLanguageSwitch : TfBaseComponent
 		try
 		{
 			var resultSrv = await UC.SetUserCulture(
-						userId: TfState.Value.CurrentUser.Id,
+						userId: TfUserState.Value.CurrentUser.Id,
 						cultureCode: option.CultureCode);
 
 			ProcessServiceResponse(resultSrv);

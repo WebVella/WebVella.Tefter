@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<div class="@($"sidebar-nav {(TfState.Value.CurrentUser.Settings.IsSidebarOpen ? "expanded" : "collapsed")}")">
+<div class="@($"sidebar-nav {(TfUserState.Value.CurrentUser.Settings.IsSidebarOpen ? "expanded" : "collapsed")}")">
 	<div class="sidebar-toolbar">
 		<div class="sidebar-toolbar-search">
 			<FluentTextField Class="search" Placeholder="search..." />

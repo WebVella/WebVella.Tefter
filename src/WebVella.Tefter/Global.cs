@@ -36,7 +36,6 @@ global using WebVella.Tefter.UseCases.Dashboard;
 global using WebVella.Tefter.UseCases.FastAccess;
 global using WebVella.Tefter.UseCases.Login;
 global using WebVella.Tefter.UseCases.Models;
-global using WebVella.Tefter.UseCases.StateEffects;
 global using WebVella.Tefter.UseCases.UserAdmin;
 global using WebVella.Tefter.UseCases.Space;
 

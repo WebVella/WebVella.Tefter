@@ -10,7 +10,7 @@ public static partial class SpaceStateReducers
 	/// <returns></returns>
 
 	[ReducerMethod()]
-	public static TfState InitSpaceViewDetailsActionReducer(TfState state, InitSpaceViewDetailsAction action)
+	public static TfAppState InitSpaceViewDetailsActionReducer(TfAppState state, InitSpaceViewDetailsAction action)
 	{
 		return state with
 		{

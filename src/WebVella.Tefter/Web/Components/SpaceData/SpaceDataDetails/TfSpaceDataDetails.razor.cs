@@ -2,10 +2,7 @@
 public partial class TfSpaceDataDetails : TfBaseComponent
 {
 	[Parameter] public string Menu { get; set; } = "";
-	[Inject] protected IState<TfState> TfState { get; set; }
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-	}
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 
 }

@@ -1,7 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceDataNavigation : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfAppState> TfState { get; set; }
 
 	private bool _menuLoading = false;
 
@@ -115,17 +116,18 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 			var item = (TucSpace)result.Data;
 			ToastService.ShowSuccess(LOC("Space successfully updated!"));
 			//Change user state > spaces
-			var userSpaces = TfState.Value.CurrentUserSpaces.ToList();
-			var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
-			if (itemIndex > -1)
-			{
-				userSpaces[itemIndex] = item;
-				Dispatcher.Dispatch(new SetCurrentUserStateAction(
-					component:this,
-					user: TfState.Value.CurrentUser,
-					userSpaces: userSpaces
-				));
-			}
+
+			ToastService.ShowError(LOC("BOZ: not fully implemented!"));
+			//var userSpaces = TfState.Value.CurrentUserSpaces.ToList();
+			//var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
+			//if (itemIndex > -1)
+			//{
+			//	userSpaces[itemIndex] = item;
+			//	Dispatcher.Dispatch(new SetCurrentUserStateAction(
+			//		component:this,
+			//		userSpaces: userSpaces
+			//	));
+			//}
 
 			//change space state
 			Dispatcher.Dispatch(new SetSpaceOnlyAction(

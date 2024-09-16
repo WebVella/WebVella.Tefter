@@ -3,7 +3,7 @@
 public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderColumn>
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] private IState<TfState> TfState { get; set; }
+	[Inject] private IState<TfAppState> TfState { get; set; }
 	[Parameter] public TucDataProviderColumn Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
