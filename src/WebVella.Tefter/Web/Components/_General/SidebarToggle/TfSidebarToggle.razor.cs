@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SidebarToggle.TfSidebarToggle", "WebVella.Tefter")]
 public partial class TfSidebarToggle : TfBaseComponent
 {
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private StateEffectsUseCase UC { get; set; }
 
@@ -26,15 +26,16 @@ public partial class TfSidebarToggle : TfBaseComponent
 		try
 		{
 			var resultSrv = await UC.SetSidebarState(
-						userId: TfState.Value.CurrentUser.Id,
-						sidebarExpanded: !TfState.Value.SidebarExpanded);
+						userId: TfUserState.Value.CurrentUser.Id,
+						sidebarExpanded: !TfUserState.Value.SidebarExpanded);
 
 			ProcessServiceResponse(resultSrv);
 
 			if (resultSrv.IsSuccess)
 			{
-				Dispatcher.Dispatch(new SetSidebarAction(
-					sidebarExpanded: resultSrv.Value));
+				Dispatcher.Dispatch(new SetUserStateAction(
+					component: this,
+					state: TfUserState.Value with { CurrentUser = resultSrv.Value }));
 			}
 		}
 		catch (Exception ex)

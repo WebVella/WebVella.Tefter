@@ -17,8 +17,6 @@ public class TfBasePage : FluxorComponent
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; } //To trigger rerender on each page
-
 	protected IStringLocalizer LC;
 	protected static IStringLocalizer GL = null;
 	private static AsyncLock _lock = new();
@@ -35,7 +33,6 @@ public class TfBasePage : FluxorComponent
 			}
 		}
 	}
-
 	protected string LOC(string key, params object[] arguments)
 	{
 		if (LC[key, arguments] != key) return LC[key, arguments];

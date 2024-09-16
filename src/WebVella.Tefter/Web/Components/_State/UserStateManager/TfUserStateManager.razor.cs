@@ -8,7 +8,7 @@ public partial class TfUserStateManager : FluxorComponent
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
 
-	public Guid _currentRenderLock = Guid.NewGuid();
+	public Guid _currentRenderLock = Guid.Empty;
 	public Guid _oldRenderLock = Guid.Empty;
 
 	protected override bool ShouldRender()
@@ -17,9 +17,6 @@ public partial class TfUserStateManager : FluxorComponent
 
 		base.ShouldRender();
 		_oldRenderLock = _currentRenderLock;
-#if DEBUG
-		Console.WriteLine($"================== TfUserStateManager ReRender  ================");
-#endif
 		return true;
 	}
 
@@ -55,12 +52,18 @@ public partial class TfUserStateManager : FluxorComponent
 			));
 			UC.IsBusy = false;
 			ActionSubscriber.SubscribeToAction<SetUserStateAction>(this, On_StateChanged);
+			ActionSubscriber.SubscribeToAction<SetRouteStateAction>(this, On_RouteChanged);
 			_currentRenderLock = Guid.NewGuid();
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
 	private void On_StateChanged(SetUserStateAction action)
+	{
+		_currentRenderLock = Guid.NewGuid();
+		StateHasChanged();
+	}
+	private void On_RouteChanged(SetRouteStateAction action)
 	{
 		_currentRenderLock = Guid.NewGuid();
 		StateHasChanged();

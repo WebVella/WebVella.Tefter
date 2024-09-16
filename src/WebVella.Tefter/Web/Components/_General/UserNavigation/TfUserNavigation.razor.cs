@@ -26,6 +26,12 @@ public partial class TfUserNavigation
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		Console.WriteLine("============ TfUserNavigation RERENDER");
+	}
+
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
 		initAdmin(e.Location);

@@ -2,54 +2,18 @@
 @inherits TfBaseComponent
 
 <div class="location">
-	@if (_namedLocation is not null)
+	@foreach (var item in generateLocations())
 	{
 		<div class="title">
 			<div class="label">
 				<FluentBreadcrumb>
-					<FluentBreadcrumbItem title="@_namedLocation.Title">
-						@_namedLocation.Title
-						@* <FluentIcon Color="@Color.Neutral" Value="@_namedLocation.Icon" Slot="start" /> *@
+					<FluentBreadcrumbItem title="@item.Title">
+						@item.Title
 					</FluentBreadcrumbItem>
 				</FluentBreadcrumb>
 			</div>
 		</div>
 	}
-	else if (TfState.Value.Space is not null)
-	{
-		<div class="title">
-			<div class="label">
-				<FluentBreadcrumb>
-					<FluentBreadcrumbItem title="@TfState.Value.Space.Name" Href="@(String.Format(TfConstants.SpacePageUrl,TfState.Value.Space.Id))">
-						@RenderUtils.StringOverflow(TfState.Value.Space.Name, _ellipsisCount)
-					</FluentBreadcrumbItem>
-					@if (TfState.Value.SpaceView is not null)
-					{
-						<FluentBreadcrumbItem title="@TfState.Value.SpaceView.Name" Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfState.Value.Space.Id,TfState.Value.SpaceView.Id))">
-							@RenderUtils.StringOverflow(TfState.Value.SpaceView.Name, _ellipsisCount)
-						</FluentBreadcrumbItem>
-						@if (_urlData.ThirdNode == RouteDataThirdNode.Manage)
-
-						{
-							<FluentBreadcrumbItem>@LOC("Manage")</FluentBreadcrumbItem>
-						}
-					}
-					@if (TfState.Value.SpaceData is not null)
-					{
-						<FluentBreadcrumbItem>
-							<FluentIcon Value="TfConstants.SpaceDataIcon" />
-						</FluentBreadcrumbItem>
-						<FluentBreadcrumbItem title="@TfState.Value.SpaceData.Name" Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfState.Value.Space.Id,TfState.Value.SpaceData.Id))">
-							@RenderUtils.StringOverflow(TfState.Value.SpaceData.Name, _ellipsisCount)
-						</FluentBreadcrumbItem>
-						<FluentBreadcrumbItem>@LOC("Manage")</FluentBreadcrumbItem>
-
-					}
-				</FluentBreadcrumb>
-			</div>
-		</div>
-	}
-
 </div>
 
 
