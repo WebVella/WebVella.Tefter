@@ -79,7 +79,7 @@ public partial class SpaceUseCase
 				{
 					//redirect to the first view
 					if (
-						(String.IsNullOrWhiteSpace(urlData.SpaceSection) || urlData.SpaceSection == "view")
+						urlData.SecondNode != RouteDataSecondNode.SpaceData
 						&& urlData.SpaceViewId is null
 						&& spaceViewList.Count > 0
 						)
@@ -89,7 +89,7 @@ public partial class SpaceUseCase
 					}
 					//redirect to the first data
 					if (
-						urlData.SpaceSection == "data"
+						urlData.SecondNode == RouteDataSecondNode.SpaceData
 						&& urlData.SpaceDataId is null
 						&& spaceDataList.Count > 0
 						)

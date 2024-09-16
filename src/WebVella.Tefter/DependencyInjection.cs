@@ -71,7 +71,7 @@ public static class DependencyInjection
 
 		//use cases
 		services.AddScoped<StateEffectsUseCase, StateEffectsUseCase>();
-		services.AddTransient<AppStartUseCase, AppStartUseCase>();
+		services.AddTransient<StateInitUseCase, StateInitUseCase>();
 		services.AddTransient<DataProviderAdminUseCase, DataProviderAdminUseCase>();
 		services.AddTransient<SharedColumnsAdminUseCase, SharedColumnsAdminUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();

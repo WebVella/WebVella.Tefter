@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 public partial class TfDashboard : TfBaseComponent
 {
 	[Inject] private DashboardUseCase UC { get; set; }
-	[Inject] protected IState<TfState> TfState { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)

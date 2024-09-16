@@ -43,10 +43,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="Web\Components\SpaceViewManageNav\TfSpaceViewManageNav.bg.resx">
+	  <EmbeddedResource Update="Web\Components\SpaceView\SpaceViewManageNav\TfSpaceViewManageNav.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\SpaceDataDetailsNav\TfSpaceDataDetailsNav.bg.resx">
+	  <EmbeddedResource Update="Web\Components\SpaceData\SpaceDataDetailsNav\TfSpaceDataDetailsNav.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\ViewColumns\GuidViewColumn\TfGuidViewColumn.bg.resx">

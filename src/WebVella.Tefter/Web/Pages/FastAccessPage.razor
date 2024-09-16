@@ -1,9 +1,9 @@
-﻿@page "/fast-access/{*Path}"
+﻿@page "/fast-access"
 @inherits TfBasePage
 <TfFastAccessStateManager />
-@if (ScreenStateSidebarExpanded.Value)
+@if (TfUserState.Value.SidebarExpanded)
 {
-	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfState.Value.ThemeSidebarStyle">
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfUserState.Value.ThemeSidebarStyle">
 		<TfFastAccessNavigation />
 	</FluentStack>
 }

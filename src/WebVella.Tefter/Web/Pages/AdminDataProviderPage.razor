@@ -34,27 +34,27 @@ else
 	<FluentBodyContent Class="content-body with-toolbar">
 		<TfAdminDataProviderDetailsNav />
 		<div class="content-inner with-toolbar">
-			@if (!urlData.SegmentsByIndexDict.ContainsKey(3))
+			@if (!urlData.NodesDict.ContainsKey(3))
 			{
 				<TfAdminDataProviderDetails />
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "schema")
+			else if (urlData.NodesDict[3] == "schema")
 			{
 				<TfAdminDataProviderSchema/>
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "keys")
+			else if (urlData.NodesDict[3] == "keys")
 			{
 				<TfAdminDataProviderKeys />
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "aux")
+			else if (urlData.NodesDict[3] == "aux")
 			{
 				<TfAdminDataProviderAux />
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "synchronization")
+			else if (urlData.NodesDict[3] == "synchronization")
 			{
 				<TfAdminDataProviderSynchronization />
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "data")
+			else if (urlData.NodesDict[3] == "data")
 			{
 				<TfAdminDataProviderData />
 			}

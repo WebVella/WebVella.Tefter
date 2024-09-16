@@ -1,78 +1,158 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
-
+using WebVella.Tefter.Web.Models;
 internal static class NavigatorExt
 {
-	internal static Models.RouteData GetUrlData(this NavigationManager navigator, string url = null)
+	internal static TfRouteState GetUrlData(this NavigationManager navigator, string url = null)
 	{
-		Guid? spaceId = null;
-		Guid? spaceDataId = null;
-		Guid? spaceViewId = null;
-		Guid? userId = null;
-		Guid? dataProviderId = null;
-		string spaceSection = null;
-		Dictionary<int, string> pathDict = new();
 		Uri uri = null;
 		if (String.IsNullOrWhiteSpace(url))
 			uri = new Uri(navigator.Uri);
 		else
 			uri = new Uri(url);
+		return GetNodeData(uri);
+	}
+
+	internal static TfRouteState GetNodeData(Uri uri)
+	{
+		var result = new TfRouteState();
 
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		var dictIndex = 0;
 		foreach (var item in nodes)
 		{
-			pathDict[dictIndex] = item;
+			result.NodesDict[dictIndex] = item;
 			dictIndex++;
 		}
-
-		if (uri.LocalPath.StartsWith("/space/"))
+		if (result.NodesDict.Count == 0)
 		{
-			if (pathDict.ContainsKey(1))
+			result = result with { FirstNode = RouteDataFirstNode.Home };
+			result = result with { SecondNode = RouteDataSecondNode.Dashboard };
+		}
+		else if (result.NodesDict[0] == TfConstants.RouteNameAdmin)
+		{
+			result = result with { FirstNode = RouteDataFirstNode.Admin };
+			result = result with { SecondNode = RouteDataSecondNode.Dashboard };
+			//Process 2
+			if (result.NodesDict.Count >= 2)
 			{
-				if (Guid.TryParse(pathDict[1], out Guid outGuid)) spaceId = outGuid;
-			}
-
-			if (pathDict.ContainsKey(2) && pathDict[2] == "view")
-			{
-				spaceSection = "view";
-				if (pathDict.Keys.Count >= 5 && pathDict[4] == "manage")
+				if (result.NodesDict[1] == TfConstants.RouteNameUsers)
 				{
-					spaceSection = "manage";
+					result = result with { SecondNode = RouteDataSecondNode.Users };
+				}
+				else if (result.NodesDict[1] == TfConstants.RouteNameDataProviders)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.DataProviders };
+				}
+				else if (result.NodesDict[1] == TfConstants.RouteNameSharedColumns)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.SharedColumns };
+				}
+				//Process 3
+				if (result.NodesDict.Count >= 3)
+				{
+					if (result.SecondNode == RouteDataSecondNode.Users)
+					{
+						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { UserId = outGuid };
+					}
+					else if (result.SecondNode == RouteDataSecondNode.DataProviders)
+					{
+						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { DataProviderId = outGuid };
+					}
 				}
 
-				if (pathDict.ContainsKey(3) && Guid.TryParse(pathDict[3], out Guid outGuid)) spaceViewId = outGuid;
+				//Process 4
+				if (result.NodesDict.Count >= 4)
+				{
+					if (result.NodesDict[3] == TfConstants.RouteNameAccess)
+					{
+						result = result with { ThirdNode = RouteDataThirdNode.Access};
+					}
+					else if (result.NodesDict[3] == TfConstants.RouteNameSaves)
+					{
+						result = result with { ThirdNode = RouteDataThirdNode.Saves};
+					}
+					else if (result.NodesDict[3] == TfConstants.RouteNameSchema)
+					{
+						result = result with { ThirdNode = RouteDataThirdNode.Schema};
+					}
+					else if (result.NodesDict[3] == TfConstants.RouteNameKeys)
+					{
+						result = result with { ThirdNode = RouteDataThirdNode.SharedKeys };
+					}
+					else if (result.NodesDict[3] == TfConstants.RouteNameAux)
+					{
+						result = result with { ThirdNode = RouteDataThirdNode.AuxColumns};
+					}
+					else if (result.NodesDict[3] == TfConstants.RouteNameSynchronization)
+					{
+						result = result with { ThirdNode = RouteDataThirdNode.Synchronization };
+					}
+					else if (result.NodesDict[3] == TfConstants.RouteNameData)
+					{
+						result = result with { ThirdNode = RouteDataThirdNode.Data };
+					}
+				}
 			}
-			if (pathDict.ContainsKey(2) && pathDict[2] == "data")
+
+		}
+		else if (result.NodesDict[0] == TfConstants.RouteNameFastAccess)
+		{
+			result = result with { FirstNode = RouteDataFirstNode.FastAccess };
+			if (result.NodesDict.Count == 1)
 			{
-				spaceSection = "data";
-				if (pathDict.ContainsKey(3) && Guid.TryParse(pathDict[3], out Guid outGuid)) spaceDataId = outGuid;
+				result = result with { SecondNode = RouteDataSecondNode.Dashboard };
+			}
+		}
+		else if (result.NodesDict[0] == TfConstants.RouteNameSpace)
+		{
+			result = result with { FirstNode = RouteDataFirstNode.Space};
+			//Process 2
+			if (result.NodesDict.Count >= 2)
+			{
+				result = result with { SecondNode = RouteDataSecondNode.Dashboard };
+				if (Guid.TryParse(result.NodesDict[1], out Guid outGuid)) result = result with { SpaceId = outGuid };
+			}
+			//Process 3
+			if (result.NodesDict.Count >= 3)
+			{
+				if (result.NodesDict[2] == TfConstants.RouteNameSpaceView)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.SpaceView};
+					result = result with { ThirdNode = RouteDataThirdNode.Details };
+				}
+				else if (result.NodesDict[2] == TfConstants.RouteNameSpaceData)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.SpaceData };
+					result = result with { ThirdNode = RouteDataThirdNode.Details };
+				}
+			}
+			//Process 4
+			if (result.NodesDict.Count >= 4)
+			{
+				if (result.SecondNode == RouteDataSecondNode.SpaceView)
+				{
+					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpaceViewId = outGuid };
+				}
+				else if (result.SecondNode == RouteDataSecondNode.SpaceData)
+				{
+					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpaceDataId = outGuid };
+				}
+			}
+			//process 5
+			if (result.NodesDict.Count >= 5)
+			{
+				if (result.NodesDict[4] == TfConstants.RouteNameManage)
+				{
+					result = result with { ThirdNode = RouteDataThirdNode.Manage };
+				}
+				else if (result.NodesDict[4] == TfConstants.RouteNameViews)
+				{
+					result = result with { ThirdNode = RouteDataThirdNode.Views};
+				}
 			}
 		}
 
-		else if (uri.LocalPath.StartsWith("/admin/users/"))
-		{
-			if (pathDict.ContainsKey(2)
-				&& Guid.TryParse(pathDict[2], out Guid outGuid))
-				userId = outGuid;
-		}
-
-		if (uri.LocalPath.StartsWith("/admin/data-providers/"))
-		{
-			if (pathDict.ContainsKey(2)
-				&& Guid.TryParse(pathDict[2], out Guid outGuid))
-				dataProviderId = outGuid;
-		}
-
-		return new Models.RouteData
-		{
-			SegmentsByIndexDict = pathDict,
-			SpaceId = spaceId,
-			SpaceDataId = spaceDataId,
-			SpaceViewId = spaceViewId,
-			UserId = userId,
-			DataProviderId = dataProviderId,
-			SpaceSection = spaceSection
-		};
+		return result;
 	}
 
 

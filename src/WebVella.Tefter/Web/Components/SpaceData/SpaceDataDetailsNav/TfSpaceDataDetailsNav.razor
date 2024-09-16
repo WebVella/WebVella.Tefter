@@ -1,0 +1,17 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<TfPageBar Items="menu">
+	<Actions>
+		<FluentStack>
+			@if (_urlData.NodesDict.Keys.Count < 5)
+			{
+				<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceData">
+					@LOC("Edit")
+					<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+				</FluentButton>
+			}
+		</FluentStack>
+	</Actions>
+</TfPageBar>
+

@@ -1,0 +1,140 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (TfState.Value.Space is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No space found"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				No spaces found yet notification
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else if (TfState.Value.SpaceViewList.Count == 0)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No existing views"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				Space view created yet
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else if (TfState.Value.RouteSpaceViewId is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			@* 			<FluentMessageBar Title="Missing redirect"
+		Style="border: 1px solid var(--neutral-base-color)"
+		Intent="MessageIntent.Warning"
+		Type="@MessageType.Notification"
+		AllowDismiss="false">
+		Should redirect to the first view
+		</FluentMessageBar> *@
+		</div>
+	</FluentBodyContent>
+}
+else if (TfState.Value.SpaceView is null && TfState.Value.RouteSpaceViewId is not null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No space view found"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				Space view not found
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	@if (TfState.Value.SidebarExpanded)
+	{
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfState.Value.SpaceSidebarStyle">
+			<TfSpaceViewNavigation />
+		</FluentStack>
+	}
+	<FluentBodyContent Class="content-body with-toolbar">
+		<TfSpaceViewToolbar />
+		<div class="content-inner">
+			<div class="tfdt">
+				<div class="tfdt__content">
+					<div class="tf-grid-wrapper">
+						<table class="tf-grid">
+							<thead class="tf-grid-thead">
+								<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfState.Value.SpaceBackgkroundColor}")"></tr>
+								<tr class="tf-grid-tr">
+									<th class="tf-grid-th tf-grid-th--check">
+										<FluentCheckbox Value="TfState.Value.AllDataRowsSelected" 
+											ValueChanged="_toggleSelectAll"/>
+									</th>
+									@foreach (var column in TfState.Value.SpaceViewColumns.OrderBy(x => x.Position))
+									{
+										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.HeaderStyle">
+											<div>@column.Title</div>
+										</th>
+									}
+								</tr>
+							</thead>
+							<tbody class="tf-grid-tbody">
+								@if (UC.IsBusy)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@(TfState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Loading...")</div></td>
+									</tr>
+								}
+								else if (TfState.Value.SpaceViewData is null)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@(TfState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Space data not found")</div></td>
+									</tr>
+								}
+								else if (TfState.Value.SpaceViewData.Rows.Count == 0)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@(TfState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("No data")</div></td>
+									</tr>
+								}
+								else
+								{
+									for (int i = 0; i < TfState.Value.SpaceViewData.Rows.Count; i++)
+									{
+										var index = i;
+										<tr @key=@index class="tf-grid-tr">
+											<td class="tf-grid-td tf-grid-td--check">
+												<div>
+													<FluentCheckbox Value="_getItemSelection(index)"
+																	ValueChanged="@((x) =>_toggleItemSelection(index,x))" />
+												</div>
+											</td>
+											@foreach (var column in TfState.Value.SpaceViewColumns)
+											{
+												<td class="tf-grid-td" style="@column.BodyStyle">
+													<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfState.Value.SpaceViewData,index)" />
+												</td>
+											}
+										</tr>
+									}
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="tfdt__pager">
+					<TfPager Page="@TfState.Value.Page" GoLast="@_goLastPage" GoNext="@_goNextPage"
+							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
+				</div>
+			</div>
+		</div>
+	</FluentBodyContent>
+}

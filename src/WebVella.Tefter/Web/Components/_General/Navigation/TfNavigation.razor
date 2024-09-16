@@ -1,0 +1,29 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="@($"spacenav-nav {(TfState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+	<FluentNavMenu>
+		<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.DashboardIcon"
+					   Href="/" Match="@NavLinkMatch.All" />
+		<FluentTooltip Anchor="tf-dashboard-link" Position="@TooltipPosition.Right">@TfConstants.DashboardMenuTitle</FluentTooltip>
+		<FluentNavLink Id="tf-fast-access-link" Icon="@TfConstants.FastAccessIcon"
+					   Href="/fast-access" Match="@NavLinkMatch.Prefix" />
+		<FluentTooltip Anchor="tf-fast-access-link" Position="@TooltipPosition.Right">@TfConstants.FastAccesMenuTitle</FluentTooltip>
+	</FluentNavMenu>
+	<FluentDivider Class="nav-divider"></FluentDivider>
+</div>
+
+
+ <TfAppBar Items="SpaceNav" />
+
+<div class="@($"spacenav-nav end {(TfState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+		<FluentNavMenu>
+		<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon" 
+					   OnClick="_searchSpaceHandler" />
+		<FluentTooltip Anchor="tf-space-search-link" Position="@TooltipPosition.Right">@LOC("Search Spaces")</FluentTooltip>
+			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon"
+						   OnClick="_addSpaceHandler" />
+			<FluentTooltip Anchor="tf-create-space-link" Position="@TooltipPosition.Right">@LOC("Create Space")</FluentTooltip>
+		</FluentNavMenu>
+	 </div>
+

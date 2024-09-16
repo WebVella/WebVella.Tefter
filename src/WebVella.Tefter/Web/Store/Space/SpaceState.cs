@@ -51,8 +51,8 @@ public partial record TfState
 	public TucSpaceView SpaceView { get; init; }
 	public TfDataTable SpaceViewData { get; init; }
 	public List<TucSpaceViewColumn> SpaceViewColumns { get; init; } = new();
-	public int Page { get; init; }
-	public int PageSize { get; init; }
+	public int Page { get; init; } = 1;
+	public int PageSize { get; init; } = TfConstants.PageSize;
 	public string SearchQuery { get; init; }
 	public List<TucFilterBase> Filters { get; init; }
 	public List<TucSort> Sorts { get; init; }

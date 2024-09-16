@@ -39,9 +39,9 @@ public partial class UserAdminUseCase
 
 		var menuPathSuffix = "";
 		var urlData = _navigationManager.GetUrlData();
-		if (urlData.SegmentsByIndexDict.ContainsKey(3))
+		if (urlData.NodesDict.ContainsKey(3))
 		{
-			menuPathSuffix = $"/{urlData.SegmentsByIndexDict[3]}";
+			menuPathSuffix = $"/{urlData.NodesDict[3]}";
 		}
 		var userIcon = TfConstants.GetIcon("Person");
 		foreach (var item in users)
@@ -94,9 +94,9 @@ public partial class UserAdminUseCase
 
 		MenuItems = MenuItems.OrderBy(x => x.Title).ToList();
 		var menuPathSuffix = "";
-		if (urlData.SegmentsByIndexDict.ContainsKey(3))
+		if (urlData.NodesDict.ContainsKey(3))
 		{
-			menuPathSuffix = $"/{urlData.SegmentsByIndexDict[3]}";
+			menuPathSuffix = $"/{urlData.NodesDict[3]}";
 		}
 		foreach (var menu in MenuItems)
 		{

@@ -33,18 +33,18 @@ else
 	<FluentBodyContent Class="content-body with-toolbar">
 		<TfAdminUserDetailsNav />
 		<div class="content-inner with-toolbar">
-			@if (!urlData.SegmentsByIndexDict.ContainsKey(3))
+			@if (!urlData.NodesDict.ContainsKey(3))
 			{
 				<TfAdminUserDetails />
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "access")
+			else if (urlData.NodesDict[3] == "access")
 			{
 				<FluentMessageBar Title="Under Construction" AllowDismiss="false"
 								  Intent="@MessageIntent.Info">
 					<div>TBD: List of user's accessible views, so admin can check for permission  problems</div>
 				</FluentMessageBar>
 			}
-			else if (urlData.SegmentsByIndexDict[3] == "saves")
+			else if (urlData.NodesDict[3] == "saves")
 			{
 				<FluentMessageBar Title="Under Construction" AllowDismiss="false"
 								  Intent="@MessageIntent.Info">

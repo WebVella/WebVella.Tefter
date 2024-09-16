@@ -1,0 +1,161 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (UC.IsBusy)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner"></div>
+	</FluentBodyContent>
+
+}
+else if (TfState.Value.Space is null || TfState.Value.SpaceView is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No view found"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				The requested view was not found
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	@if (TfState.Value.SidebarExpanded)
+	{
+		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfState.Value.SpaceSidebarStyle">
+			<TfSpaceViewNavigation />
+		</FluentStack>
+	}
+	<FluentBodyContent Class="content-body">
+		<TfSpaceViewManageNav />
+		<div class="content-inner">
+			<TfCard>
+
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Name")" />
+						<FluentStack>
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfState.Value.SpaceView.Name
+											 Style="flex:1 1 auto" ReadOnly="true" />
+							<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
+								Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfState.Value.RouteSpaceId,TfState.Value.SpaceView.Id))" 
+								IconStart="@TfConstants.ViewIcon"/>
+						</FluentStack>
+
+
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfState.Value.SpaceView.Type.ToDescriptionString()
+										 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
+					</FluentGridItem>
+				</FluentGrid>
+
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Dataset")" />
+						@if (UC.ViewData is not null)
+						{
+							<FluentStack>
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.ViewData.Name
+												 ReadOnly="true" Style="flex:1 1 auto" />
+								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
+											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfState.Value.RouteSpaceId,TfState.Value.SpaceView.SpaceDataId))" 
+									IconStart="@TfConstants.ViewIcon" Target="_blank"/>
+							</FluentStack>
+						}
+						else
+						{
+							<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the dataset no longer exists")</FluentMessageBar>
+						}
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						@if (UC.ViewData is not null)
+						{
+							<FluentInputLabel Label="@LOC("Data provider")" />
+							@if (UC.DataProvider is not null)
+							{
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.DataProvider.Name
+												 Style="width:100%" ReadOnly="true" />
+							}
+							else
+							{
+								<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the data provider no longer exists")</FluentMessageBar>
+							}
+						}
+					</FluentGridItem>
+				</FluentGrid>
+			</TfCard>
+			<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
+			<TfCard Small="true">
+				<TitleTemplate>
+					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+						<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
+							<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
+							@LOC("Add new")
+						</FluentButton>
+					</FluentStack>
+				</TitleTemplate>
+				<ChildContent>
+					@if (TfState.Value.SpaceViewColumns.Count == 0)
+					{
+						@LOC("This view has no columns yet.")
+					}
+					else
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in TfState.Value.SpaceViewColumns.OrderBy(x => x.Position))
+									{
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td" style="width:1%;">
+												<div>
+													<FluentStack Wrap="false">
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _editColumn(context))" Title="@LOC("Edit column")"
+																	  Disabled="_isSubmitting" IconStart="@TfConstants.EditIcon" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+																	  Disabled="_isSubmitting">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+														</FluentButton>
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,true))" Title="@LOC("Move up")"
+																	  Disabled="@(_isSubmitting || context.Position == 1)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,false))" Title="@LOC("Move down")"
+																	  Disabled="@(_isSubmitting || context.Position == TfState.Value.SpaceViewColumns.Count)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
+													</FluentStack>
+												</div>
+											</td>
+											<td class="tf-grid-td" style="width:20px;">
+												<div>@context.Position</div>
+											</td>
+											<td class="tf-grid-td" style="width:100px;">
+												<div>
+													<div>@context.Title</div>
+													<div class="td-description">@context.QueryName</div>
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													<div>@context.ColumnType.Name</div>
+													<div class="td-description">@context.ColumnType.Description</div>
+												</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													<div>@context.ComponentType.Name</div>
+													<div class="td-description">@context.ComponentType.FullName</div>
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</ChildContent>
+			</TfCard>
+		</div>
+	</FluentBodyContent>
+}

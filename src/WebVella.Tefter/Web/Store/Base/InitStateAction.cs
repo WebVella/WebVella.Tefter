@@ -2,28 +2,21 @@
 
 public record InitStateAction : TfBaseAction
 {
-	public TucUser User { get; }
-	public TucCultureOption Culture { get; }
-	public List<TucSpace> UserSpaces { get; }
-	public DesignThemeModes ThemeMode { get; }
-	public OfficeColor ThemeColor { get; }
-	public bool SidebarExpanded { get; }
-
+	public TfState State { get; }
 	internal InitStateAction(
 		TfBaseComponent component,
-		TucUser user,
-		TucCultureOption culture,
-		List<TucSpace> userSpaces,
-		DesignThemeModes themeMode,
-		OfficeColor themeColor,
-		bool sidebarExpanded)
+		TfState state)
 	{
 		Component = component;
-		User = user;
-		UserSpaces = userSpaces;
-		Culture = culture;
-		ThemeMode = themeMode;
-		ThemeColor = themeColor;
-		SidebarExpanded = sidebarExpanded;
+		State = state;
+	}
+}
+
+public static partial class StateReducers
+{
+	[ReducerMethod()]
+	public static TfState InitStateActionReducer(TfState state, InitStateAction action){ 
+		state = action.State with { ThemeColor = action.State.ThemeColor}; //if no prop provided will not copy object
+		return state;
 	}
 }

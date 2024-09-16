@@ -12,8 +12,8 @@ public partial class DataProviderAdminUseCase
 	internal Task InitActionsMenu(string url)
 	{
 		var urlData = _navigationManager.GetUrlData(url);
-		if (urlData.SegmentsByIndexDict.ContainsKey(3))
-			ActionsMenu = urlData.SegmentsByIndexDict[3];
+		if (urlData.NodesDict.ContainsKey(3))
+			ActionsMenu = urlData.NodesDict[3];
 		else
 			ActionsMenu = "details";
 
