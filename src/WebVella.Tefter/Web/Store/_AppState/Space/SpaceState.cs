@@ -42,6 +42,31 @@ public partial record TfAppState
 	public string SpaceBackgroundAccentColor => $"{SpaceColorString}35";
 	public string SpaceSidebarStyle => $"background-color:{SpaceBackgkroundColor} !important; border-color:{SpaceBorderColor} !important";
 
+	//Navigation
+	public List<TucSpace> CurrentUserSpaces { get; init; } = new();
+
+	public List<MenuItem> SpacesNav
+	{
+		get
+		{
+			var result = new List<MenuItem>();
+			if (CurrentUserSpaces is null || CurrentUserSpaces.Count == 0) return result;
+			foreach (var item in CurrentUserSpaces)
+			{
+				result.Add(new MenuItem
+				{
+					Icon = item.Icon,
+					Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
+					Match = NavLinkMatch.Prefix,
+					Url = String.Format(TfConstants.SpacePageUrl, item.Id), //item.DefaultViewId - active menu issues
+					Title = item.Name,
+					IconColor = item.Color,
+				});
+			}
+			return result;
+		}
+	}
+
 	//Space Data
 	public List<TucSpaceData> SpaceDataList { get; init; } = new();
 	public TucSpaceData SpaceData { get; init; }
@@ -61,13 +86,13 @@ public partial record TfAppState
 	{
 		get
 		{
-			if(SpaceViewData is null || SpaceViewData.Rows.Count == 0) return false;
+			if (SpaceViewData is null || SpaceViewData.Rows.Count == 0) return false;
 			var allSelected = true;
 			for (int i = 0; i < SpaceViewData.Rows.Count; i++)
 			{
 				var rowId = (Guid)SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-				if(!SelectedDataRows.Contains(rowId))
-				{ 
+				if (!SelectedDataRows.Contains(rowId))
+				{
 					allSelected = false;
 					break;
 				}

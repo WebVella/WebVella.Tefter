@@ -8,7 +8,7 @@ public partial class SpaceUseCase
 
 	internal Task InitState(string url)
 	{
-		var urlData = _navigationManager.GetUrlData(url);
+		var urlData = _navigationManager.GetRouteState(url);
 		if (urlData.SpaceId is not null)
 		{
 			TucSpace space = GetSpace(urlData.SpaceId.Value);

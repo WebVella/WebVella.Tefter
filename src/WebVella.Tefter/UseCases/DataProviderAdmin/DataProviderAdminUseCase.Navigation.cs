@@ -45,7 +45,7 @@ public partial class DataProviderAdminUseCase
 			.Take(MenuPageSize).ToList();
 
 		var menuPathSuffix = "";
-		var urlData = _navigationManager.GetUrlData();
+		var urlData = _navigationManager.GetRouteState();
 		if (urlData.NodesDict.ContainsKey(3))
 		{
 			menuPathSuffix = $"/{urlData.NodesDict[3]}";
@@ -74,7 +74,7 @@ public partial class DataProviderAdminUseCase
 	internal void OnStateChanged(TucDataProvider provider)
 	{
 		if (provider == null) return;
-		var urlData = _navigationManager.GetUrlData();
+		var urlData = _navigationManager.GetRouteState();
 		var userIndex = MenuItems.FindIndex(x => ((TucDataProvider)x.Data).Id == provider.Id);
 
 		if (userIndex > -1)

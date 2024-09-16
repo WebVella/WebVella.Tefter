@@ -8,7 +8,7 @@ public partial class UserAdminUseCase
 
 	internal async Task<TucUser> GetUserFromUrl(string url)
 	{
-		var urlData = _navigationManager.GetUrlData(url);
+		var urlData = _navigationManager.GetRouteState(url);
 		if (urlData.UserId is not null)
 		{
 			var userResult = await _identityManager.GetUserAsync(urlData.UserId.Value);

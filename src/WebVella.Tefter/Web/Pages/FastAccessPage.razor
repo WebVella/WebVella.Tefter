@@ -1,6 +1,5 @@
 ﻿@page "/fast-access"
 @inherits TfBasePage
-<TfFastAccessStateManager />
 @if (TfUserState.Value.SidebarExpanded)
 {
 	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfUserState.Value.ThemeSidebarStyle">

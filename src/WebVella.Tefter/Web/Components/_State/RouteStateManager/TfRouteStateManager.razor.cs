@@ -32,7 +32,7 @@ public partial class TfRouteStateManager : FluxorComponent
 #endif
 		Dispatcher.Dispatch(new SetRouteStateAction(
 			component: this,
-			state: Navigator.GetUrlData(url)
+			state: Navigator.GetRouteState(url)
 		));
 	}
 

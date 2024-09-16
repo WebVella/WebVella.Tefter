@@ -10,21 +10,8 @@
 		line-height: 1em;
 		display: flex;
 		align-items: center;
+		padding-right:10px;
 	}
-
-		.location .title .label {
-			flex: 0 0 auto;
-			display: flex;
-			align-items: center;
-		}
-
-
-		.location .title .actions {
-			flex: 0 0 auto;
-			padding-left: 10px;
-		}
-
-
 
 ::deep.location .stealth::part(control) {
 	background: var(--neutral-layer-3);

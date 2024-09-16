@@ -38,7 +38,7 @@ public partial class UserAdminUseCase
 			.Take(MenuPageSize).ToList();
 
 		var menuPathSuffix = "";
-		var urlData = _navigationManager.GetUrlData();
+		var urlData = _navigationManager.GetRouteState();
 		if (urlData.NodesDict.ContainsKey(3))
 		{
 			menuPathSuffix = $"/{urlData.NodesDict[3]}";
@@ -67,7 +67,7 @@ public partial class UserAdminUseCase
 	internal void NavigationOnStateChanged(TucUser user)
 	{
 		if (user == null) return;
-		var urlData = _navigationManager.GetUrlData();
+		var urlData = _navigationManager.GetRouteState();
 		var userIndex = MenuItems.FindIndex(x => ((TucUser)x.Data).Id == user.Id);
 
 		if (userIndex > -1)

@@ -26,7 +26,7 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 	private void GenerateMenu()
 	{
 		menu.Clear();
-		var providerId = Navigator.GetUrlData().DataProviderId ?? Guid.Empty;
+		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId),

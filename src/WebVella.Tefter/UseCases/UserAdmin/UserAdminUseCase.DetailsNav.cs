@@ -12,7 +12,7 @@ public partial class UserAdminUseCase
 	internal void InitDetailsNavMenu()
 	{
 		DetailsNavMenu.Clear();
-		var userId = _navigationManager.GetUrlData().UserId ?? Guid.Empty;
+		var userId = _navigationManager.GetRouteState().UserId ?? Guid.Empty;
 		DetailsNavMenu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, userId),

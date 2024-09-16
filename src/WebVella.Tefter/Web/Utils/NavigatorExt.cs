@@ -2,7 +2,7 @@
 using WebVella.Tefter.Web.Models;
 internal static class NavigatorExt
 {
-	internal static TfRouteState GetUrlData(this NavigationManager navigator, string url = null)
+	internal static TfRouteState GetRouteState(this NavigationManager navigator, string url = null)
 	{
 		Uri uri = null;
 		if (String.IsNullOrWhiteSpace(url))

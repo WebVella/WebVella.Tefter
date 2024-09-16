@@ -8,7 +8,7 @@ public partial class DataProviderAdminUseCase
 
 	internal Task InitState(string url)
 	{
-		var urlData = _navigationManager.GetUrlData(url);
+		var urlData = _navigationManager.GetRouteState(url);
 		if (urlData.DataProviderId is not null)
 		{
 			var serviceResult = _dataProviderManager.GetProvider(urlData.DataProviderId.Value);

@@ -70,13 +70,12 @@ public static class DependencyInjection
 				new Lazy<ITfDataProviderManager>(() => provider.GetRequiredService<ITfDataProviderManager>()));
 
 		//use cases
+		services.AddTransient<AppStateUseCase, AppStateUseCase>();
 		services.AddTransient<UserStateUseCase, UserStateUseCase>();
 		services.AddTransient<DataProviderAdminUseCase, DataProviderAdminUseCase>();
 		services.AddTransient<SharedColumnsAdminUseCase, SharedColumnsAdminUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();
 		services.AddTransient<UserAdminUseCase, UserAdminUseCase>();
-		services.AddTransient<DashboardUseCase, DashboardUseCase>();
-		services.AddTransient<FastAccessUseCase, FastAccessUseCase>();
 		services.AddTransient<SpaceUseCase, SpaceUseCase>();
 
 		//hosted services

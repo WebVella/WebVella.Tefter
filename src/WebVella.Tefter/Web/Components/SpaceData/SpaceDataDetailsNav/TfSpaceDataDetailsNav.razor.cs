@@ -31,7 +31,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 	private void GenerateMenu()
 	{
 		menu.Clear();
-		var providerId = Navigator.GetUrlData().DataProviderId ?? Guid.Empty;
+		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.SpaceDataPageUrl, TfState.Value.RouteSpaceId, TfState.Value.RouteSpaceDataId),
@@ -46,7 +46,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 			//Icon = new Icons.Regular.Size20.Table(),
 			Title = LOC("Used in Views")
 		});
-		_urlData = Navigator.GetUrlData();
+		_urlData = Navigator.GetRouteState();
 	}
 
 

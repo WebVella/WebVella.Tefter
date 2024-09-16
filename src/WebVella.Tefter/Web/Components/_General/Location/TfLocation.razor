@@ -1,18 +1,31 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
+@{
+	var bcMenu = generateLocations();
+}
 <div class="location">
-	@foreach (var item in generateLocations())
+	@if (TfRouteState.Value.FirstNode == RouteDataFirstNode.Admin)
 	{
 		<div class="title">
-			<div class="label">
-				<FluentBreadcrumb>
-					<FluentBreadcrumbItem title="@item.Title">
-						@item.Title
-					</FluentBreadcrumbItem>
-				</FluentBreadcrumb>
-			</div>
+			<FluentBadge Fill="somevalue" BackgroundColor="@TfConstants.AdminColor" Color="#ffffff">@LOC("Admin Panel")</FluentBadge>
 		</div>
+	}
+	else if (TfRouteState.Value.SpaceId is not null)
+	{
+		<div class="title">
+			<FluentBadge Appearance="@Appearance.Neutral">@LOC("Space")</FluentBadge>
+		</div>
+	}
+	@if (bcMenu is not null && bcMenu.Count > 0)
+	{
+		<FluentBreadcrumb>
+			@foreach (var item in bcMenu)
+			{
+				<FluentBreadcrumbItem title="@item.Title">
+					@item.Title
+				</FluentBreadcrumbItem>
+			}
+		</FluentBreadcrumb>
 	}
 </div>
 

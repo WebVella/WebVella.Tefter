@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @layout StateLayout
-<TfStateInit>
+
 	<FluentDesignTheme Mode="@TfUserState.Value.ThemeMode" OfficeColor="@TfUserState.Value.ThemeColor" />
 	<FluentLayout Class="@(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
 		<FluentHeader Class="header">
@@ -18,5 +18,5 @@
 			</FluentBodyContent>
 		</FluentStack>
 	</FluentLayout>
-</TfStateInit>
+
 

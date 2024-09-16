@@ -10,7 +10,7 @@ public partial class UserAdminUseCase
 
 	internal Task InitActionsMenu(string url)
 	{
-		var urlData = _navigationManager.GetUrlData(url);
+		var urlData = _navigationManager.GetRouteState(url);
 		if (urlData.NodesDict.ContainsKey(3))
 			ActionsMenu = urlData.NodesDict[3];
 		else

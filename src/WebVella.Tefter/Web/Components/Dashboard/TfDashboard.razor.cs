@@ -3,7 +3,6 @@ namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Dashboard.TfDashboard","WebVella.Tefter")]
 public partial class TfDashboard : TfBaseComponent
 {
-	[Inject] private DashboardUseCase UC { get; set; }
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 
 
@@ -19,7 +18,6 @@ public partial class TfDashboard : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
 		//ActionSubscriber.SubscribeToAction<DashboardStateChangedAction>(this, On_DashboardStateChangedAction);
 	}
 
