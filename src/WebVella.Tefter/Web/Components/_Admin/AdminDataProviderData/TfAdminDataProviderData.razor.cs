@@ -1,125 +1,249 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderData.TfAdminDataProviderData","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderData.TfAdminDataProviderData", "WebVella.Tefter")]
 public partial class TfAdminDataProviderData : TfBaseComponent
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await UC.LoadDataProviderDataTable(providerId: TfAppState.Value.AdminManagedDataProvider.Id);
-			UC.IsBusy = false;
-			UC.IsListBusy = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	//{
-	//	if (action.Provider is null) return;
-	//	base.InvokeAsync(async () =>
-	//	{
-	//		UC.IsBusy = true;
-	//		await InvokeAsync(StateHasChanged);
-	//		await UC.LoadDataProviderDataTable(providerId: TfState.Value.Provider.Id);
-	//		UC.IsBusy = false;
-	//		UC.IsListBusy = false;
-	//		await InvokeAsync(StateHasChanged);
-	//	});
-
-	//}
-
-
+	private bool _isListBusy = false;
+	private bool _showSystemColumns = false;
+	private bool _showSharedKeyColumns = false;
+	private bool _showCustomColumns = true;
+	private string _search = null;
 
 	private void _toggleSystemColumns()
 	{
-		UC.ShowSystemColumns = !UC.ShowSystemColumns;
+		_showSystemColumns = !_showSystemColumns;
 		StateHasChanged();
 	}
 	private void _toggleSharedKeyColumns()
 	{
-		UC.ShowSharedKeyColumns = !UC.ShowSharedKeyColumns;
+		_showSharedKeyColumns = !_showSharedKeyColumns;
 		StateHasChanged();
 	}
 	private void _toggleCustomColumns()
 	{
-		UC.ShowCustomColumns = !UC.ShowCustomColumns;
+		_showCustomColumns = !_showCustomColumns;
 		StateHasChanged();
 	}
 
 	private async Task _searchChanged(string? search)
 	{
-		UC.Search = search;
-		UC.IsListBusy = true;
+		_search = search;
+		_isListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.LoadDataProviderDataTable(providerId: TfAppState.Value.AdminManagedDataProvider.Id);
-		UC.IsListBusy = false;
-		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var page = 1;
+			var result = UC.GetDataProviderDataResult(
+				providerId: TfAppState.Value.AdminDataProvider.Id,
+				search: _search,
+				page: page,
+				pageSize: TfConstants.PageSize
+			);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						AdminDataProviderData = result.Value,
+						AdminDataProviderDataPage = page
+					}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isListBusy = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 	private async Task _goFirstPage()
 	{
-		if (UC.IsListBusy) return;
-		UC.IsListBusy = true;
+		_isListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoFirstPage(providerId: TfAppState.Value.AdminManagedDataProvider.Id);
-		UC.IsListBusy = false;
-		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var page = 1;
+			var result = UC.GetDataProviderDataResult(
+				providerId: TfAppState.Value.AdminDataProvider.Id,
+				search: _search,
+				page: page,
+				pageSize: TfConstants.PageSize
+			);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						AdminDataProviderData = result.Value,
+						AdminDataProviderDataPage = page
+					}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isListBusy = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 	private async Task _goPreviousPage()
 	{
-		if (UC.IsListBusy) return;
-		UC.IsListBusy = true;
+		_isListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoPreviousPage(providerId: TfAppState.Value.AdminManagedDataProvider.Id);
-		UC.IsListBusy = false;
-		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var page = TfAppState.Value.AdminDataProviderDataPage - 1;
+			if(page <= 0) page = 1;
+			var result = UC.GetDataProviderDataResult(
+				providerId: TfAppState.Value.AdminDataProvider.Id,
+				search: _search,
+				page: page,
+				pageSize: TfConstants.PageSize
+			);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						AdminDataProviderData = result.Value,
+						AdminDataProviderDataPage = page
+					}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isListBusy = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 	private async Task _goNextPage()
 	{
-		if (UC.IsListBusy) return;
-		UC.IsListBusy = true;
+		_isListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoNextPage(providerId: TfAppState.Value.AdminManagedDataProvider.Id);
-		UC.IsListBusy = false;
-		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var page = TfAppState.Value.AdminDataProviderDataPage + 1;
+			var result = UC.GetDataProviderDataResult(
+				providerId: TfAppState.Value.AdminDataProvider.Id,
+				search: _search,
+				page: page,
+				pageSize: TfConstants.PageSize
+			);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						AdminDataProviderData = result.Value,
+						AdminDataProviderDataPage = page
+					}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isListBusy = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 	private async Task _goLastPage()
 	{
-		if (UC.IsListBusy) return;
-		UC.IsListBusy = true;
+		_isListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.DataProviderDataTableGoLastPage(providerId: TfAppState.Value.AdminManagedDataProvider.Id);
-		UC.IsListBusy = false;
-		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var page = -1;
+			var result = UC.GetDataProviderDataResult(
+				providerId: TfAppState.Value.AdminDataProvider.Id,
+				search: _search,
+				page: page,
+				pageSize: TfConstants.PageSize
+			);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						AdminDataProviderData = result.Value,
+						AdminDataProviderDataPage = page
+					}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isListBusy = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 	private async Task _goOnPage(int page)
 	{
-		if (UC.IsListBusy) return;
-		UC.IsListBusy = true;
+		_isListBusy = true;
 		await InvokeAsync(StateHasChanged);
-		UC.Page = page;
-		await UC.DataProviderDataTableGoOnPage(providerId: TfAppState.Value.AdminManagedDataProvider.Id);
-		UC.IsListBusy = false;
-		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var result = UC.GetDataProviderDataResult(
+				providerId: TfAppState.Value.AdminDataProvider.Id,
+				search: _search,
+				page: page,
+				pageSize: TfConstants.PageSize
+			);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						AdminDataProviderData = result.Value,
+						AdminDataProviderDataPage = page
+					}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isListBusy = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 }

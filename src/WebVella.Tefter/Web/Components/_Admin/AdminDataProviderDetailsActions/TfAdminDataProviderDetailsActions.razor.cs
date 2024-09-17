@@ -8,7 +8,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 	private bool _isDeleting = false;
 	private async Task _editProvider()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(TfAppState.Value.AdminManagedDataProvider,
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(TfAppState.Value.AdminDataProvider,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -21,7 +21,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminManagedDataProvider = record }));
+				state: TfAppState.Value with { AdminDataProvider = record }));
 		}
 	}
 
@@ -41,7 +41,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminManagedDataProvider = record }));
+				state: TfAppState.Value with { AdminDataProvider = record }));
 		}
 	}
 
@@ -61,7 +61,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminManagedDataProvider = record }));
+				state: TfAppState.Value with { AdminDataProvider = record }));
 		}
 	}
 
@@ -70,12 +70,12 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))
 			return;
 
-		if (TfAppState.Value is null || TfAppState.Value.AdminManagedDataProvider is null) return;
+		if (TfAppState.Value is null || TfAppState.Value.AdminDataProvider is null) return;
 		try
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = await UC.DeleteDataProviderAsync(TfAppState.Value.AdminManagedDataProvider.Id);
+			var result = await UC.DeleteDataProviderAsync(TfAppState.Value.AdminDataProvider.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
@@ -110,7 +110,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Key successfully created!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminManagedDataProvider = record }));
+				state: TfAppState.Value with { AdminDataProvider = record }));
 		}
 	}
 }

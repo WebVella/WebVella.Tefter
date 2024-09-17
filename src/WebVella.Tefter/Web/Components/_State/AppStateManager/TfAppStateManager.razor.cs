@@ -32,6 +32,8 @@ public partial class TfAppStateManager : FluxorComponent
 	private async Task _init(string url)
 	{
 		if (TfUserState.Value.CurrentUser is null) return;
+		Console.WriteLine("++++++++++++++++++++++++++ _init");
+
 		var state = await UC.InitState(TfUserState.Value.CurrentUser, url);
 		Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,

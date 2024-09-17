@@ -2,22 +2,8 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderKeys.TfAdminDataProviderKeys", "WebVella.Tefter")]
 public partial class TfAdminDataProviderKeys : TfBaseComponent
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-	}
 
 	private async Task _editKey(TucDataProviderSharedKey key)
 	{
@@ -34,7 +20,7 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 		{
 			ToastService.ShowSuccess(LOC("The key was successfully updated!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminManagedDataProvider = (TucDataProvider)result.Data }));
+				state: TfAppState.Value with { AdminDataProvider = (TucDataProvider)result.Data }));
 		}
 	}
 
@@ -50,7 +36,7 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 			{
 				ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
 				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminManagedDataProvider = (TucDataProvider)result.Value }));
+					state: TfAppState.Value with { AdminDataProvider = (TucDataProvider)result.Value }));
 
 			}
 		}

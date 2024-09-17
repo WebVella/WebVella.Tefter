@@ -2,52 +2,9 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderSynchronization.TfAdminDataProviderSynchronization","WebVella.Tefter")]
 public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-
-	PaginationState _pagination = new PaginationState { ItemsPerPage = 15 };
-
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		_pagination.ItemsPerPage = UC.SyncLogPageSize;
-		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
-	}
-
-	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	//{
-	//	if (action.Provider is null) return;
-	//	base.InvokeAsync(async () =>
-	//	{
-	//		UC.IsBusy = true;
-	//		await InvokeAsync(StateHasChanged);
-	//		await UC.LoadDataProviderDataObjects(action.Provider.Id);
-	//		UC.IsBusy = false;
-	//		await InvokeAsync(StateHasChanged);
-	//	});
-
-	//}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await UC.LoadDataProviderDataObjects(TfAppState.Value.AdminManagedDataProvider.Id);
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
+	private bool _isSynchronizing = false;
 	private async Task _onViewLogClick(Guid taskId, TucDataProviderSyncTaskInfoType type)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderSyncLogDialog>(
@@ -73,12 +30,8 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 
 	private async Task _synchronizeNow()
 	{
-		if (UC.IsSynchronizing) return;
-		UC.IsSynchronizing = true;
-		await InvokeAsync(StateHasChanged);
-		await UC.TriggerSynchronization(TfAppState.Value.AdminManagedDataProvider.Id);
-		await UC.LoadDataProviderDataObjects(TfAppState.Value.AdminManagedDataProvider.Id);
-		await InvokeAsync(StateHasChanged);
-
+		await UC.TriggerSynchronization(TfAppState.Value.AdminDataProvider.Id);
+		ToastService.ShowSuccess(LOC("Synchronization task created!"));
+		Navigator.ReloadCurrentUrl();
 	}
 }

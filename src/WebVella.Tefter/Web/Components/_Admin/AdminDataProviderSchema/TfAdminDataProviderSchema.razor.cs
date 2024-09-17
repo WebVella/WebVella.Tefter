@@ -4,7 +4,6 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-
 	private async Task _editColumn(TucDataProviderColumn column)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
@@ -20,7 +19,7 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		{
 			ToastService.ShowSuccess(LOC("Column successfully updated!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminManagedDataProvider = (TucDataProvider)result.Data }));
+				state: TfAppState.Value with { AdminDataProvider = (TucDataProvider)result.Data }));
 
 		}
 	}
@@ -37,7 +36,7 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 			{
 				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
 				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminManagedDataProvider = result.Value }));
+					state: TfAppState.Value with { AdminDataProvider = result.Value }));
 
 			}
 		}

@@ -11,9 +11,12 @@ internal partial class AppStateUseCase
 			result = result with
 			{
 				AdminDataProviders = new(),
-				AdminDataProvidersPage = 1,
-				AdminManagedDataProvider = null,
-				DataProviderTypes = new()
+				AdminDataProvidersPage = 0,
+				AdminDataProvider = null,
+				DataProviderTypes = new(),
+				DataProviderSyncTasks = new(),
+				AdminDataProviderData = null,
+				AdminDataProviderDataPage = 0
 			};
 			return result;
 		};
@@ -21,13 +24,17 @@ internal partial class AppStateUseCase
 
 		//AdminDataProviders, AdminDataProvidersPage
 		if (result.AdminDataProviders.Count == 0)
-			result = result with { AdminDataProviders = await GetDataProvidersAsync(null, 1, TfConstants.PageSize), AdminDataProvidersPage = 2 };
+			result = result with
+			{
+				AdminDataProviders = await GetDataProvidersAsync(null, 1, TfConstants.PageSize),
+				AdminDataProvidersPage = 1
+			};
 
-		//AdminManagedUser, DataProviderTypes
+		//AdminManagedUser, DataProviderTypes, DataProviderSyncTasks, DataProviderSyncTasks, 
 		if (routeState.DataProviderId.HasValue)
 		{
 			var adminProvider = await GetDataProviderAsync(routeState.DataProviderId.Value);
-			result = result with { AdminManagedDataProvider = adminProvider };
+			result = result with { AdminDataProvider = adminProvider };
 			if (adminProvider is not null)
 			{
 				if (!result.AdminDataProviders.Any(x => x.Id == adminProvider.Id))
@@ -47,7 +54,29 @@ internal partial class AppStateUseCase
 			}
 
 			result = result with { DataProviderTypes = await GetProviderTypesAsync() };
+
+			if (routeState.ThirdNode == RouteDataThirdNode.Synchronization)
+			{
+				result = result with { DataProviderSyncTasks = await GetDataProviderSynchronizationTasks(routeState.DataProviderId.Value) };
+			}
+			else
+			{
+				result = result with { DataProviderSyncTasks = new() };
+			}
+			if (routeState.ThirdNode == RouteDataThirdNode.Data)
+			{
+				result = result with
+				{
+					AdminDataProviderData = await GetDataProviderData(routeState.DataProviderId.Value, null, 1, TfConstants.PageSize),
+					AdminDataProviderDataPage = 1
+				};
+			}
+			else
+			{
+				result = result with { AdminDataProviderData = null, AdminDataProviderDataPage = 0 };
+			}
 		}
+
 
 		return result;
 	}
@@ -167,7 +196,6 @@ internal partial class AppStateUseCase
 
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
-
 	internal Result<TucDataProvider> UpdateDataProviderColumn(TucDataProviderColumnForm form)
 	{
 		var result = _dataProviderManager.UpdateDataProviderColumn(form.ToModel());
@@ -183,5 +211,127 @@ internal partial class AppStateUseCase
 			return Result.Fail(new Error("DeleteDataProviderColumn failed").CausedBy(result.Errors));
 
 		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
+	//Data provider key
+
+	internal Result<TucDataProvider> CreateDataProviderKey(TucDataProviderSharedKeyForm form)
+	{
+		var result = _dataProviderManager.CreateDataProviderSharedKey(form.ToModel());
+		if (result.IsFailed)
+			return Result.Fail(new Error("CreateDataProviderSharedKey failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
+	internal Result<TucDataProvider> UpdateDataProviderKey(TucDataProviderSharedKeyForm form)
+	{
+		var result = _dataProviderManager.UpdateDataProviderSharedKey(form.ToModel());
+		if (result.IsFailed)
+			return Result.Fail(new Error("UpdateDataProviderColumn failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+	internal Result<TucDataProvider> DeleteDataProviderSharedKey(Guid keyId)
+	{
+		var result = _dataProviderManager.DeleteDataProviderSharedKey(keyId);
+		if (result.IsFailed)
+			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(result.Errors));
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
+	//Data synchronization
+	internal Task<List<TucDataProviderSyncTask>> GetDataProviderSynchronizationTasks(Guid providerId)
+	{
+		var srvResult = _dataProviderManager.GetSynchronizationTasksExtended(providerId);
+		if (srvResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSynchronizationTasksExtended failed").CausedBy(srvResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucDataProviderSyncTask>());
+		}
+		if (srvResult.Value is null) return Task.FromResult(new List<TucDataProviderSyncTask>());
+
+		var tasks = srvResult.Value.OrderByDescending(x => x.CreatedOn).Take(TfConstants.PageSize).Select(x => new TucDataProviderSyncTask(x)).ToList();
+		return Task.FromResult(tasks);
+	}
+	internal Task TriggerSynchronization(Guid dataProviderId)
+	{
+		var createResult = _dataProviderManager.CreateSynchronizationTask(dataProviderId, new TfSynchronizationPolicy());
+		if (createResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("CreateSynchronizationTask failed").CausedBy(createResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.CompletedTask;
+		}
+		return Task.CompletedTask;
+	}
+
+	//Data
+	internal Result<TfDataTable> GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)
+	{
+		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
+		if (srvProviderResult.IsFailed)
+			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(srvProviderResult.Errors));
+		
+		if (srvProviderResult.Value is null) return Result.Fail("Provider not found");
+
+		var dtResult = _dataManager.QueryDataProvider(
+			provider: srvProviderResult.Value,
+			search: search,
+			page: page,
+			pageSize: pageSize);
+
+		if (dtResult.IsFailed)
+			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(dtResult.Errors));
+
+		return Result.Ok(dtResult.Value);
+	}
+	internal Task<TfDataTable> GetDataProviderData(Guid providerId, string search = null, int? page = null, int? pageSize = null)
+	{
+		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
+		if (srvProviderResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProvider failed").CausedBy(srvProviderResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult((TfDataTable)null);
+		}
+
+		if (srvProviderResult.Value is null) return Task.FromResult((TfDataTable)null);
+
+		var dtResult = _dataManager.QueryDataProvider(
+			provider: srvProviderResult.Value,
+			search: search,
+			page: page,
+			pageSize: pageSize);
+
+		if (dtResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("QueryDataProvider failed").CausedBy(srvProviderResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult((TfDataTable)null);
+		}
+		return Task.FromResult(dtResult.Value);
 	}
 }

@@ -1,31 +1,29 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (UC.IsBusy)
-{
-	<TfLoadingPane />
+@{
+	var columnCount = 0;
 }
-else
+@if (TfAppState.Value.AdminDataProviderData is not null)
 {
-
 	<div class="tfdt">
 		<div class="tfdt__toolbar">
 			<FluentStack>
-				<FluentSearch Value="@UC.Search" ValueChanged="_searchChanged" />
+				<FluentSearch Value="@_search" ValueChanged="_searchChanged" />
 				<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
-							  Appearance="@(UC.ShowSystemColumns ? Appearance.Accent : Appearance.Outline)">
+							  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
 					<span>system</span>
-					<FluentBadge Appearance="Appearance.Neutral">@UC.SystemColumns.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SystemColumns.Count</FluentBadge>
 				</FluentButton>
 				<FluentButton Id="view-filter-selector" Title="toggle shared key columns" OnClick="_toggleSharedKeyColumns"
-							  Appearance="@(UC.ShowSharedKeyColumns ? Appearance.Accent : Appearance.Outline)">
+							  Appearance="@(_showSharedKeyColumns ? Appearance.Accent : Appearance.Outline)">
 					<span>shared key</span>
-					<FluentBadge Appearance="Appearance.Neutral">@UC.SharedKeyColumns.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SharedColumns.Count</FluentBadge>
 				</FluentButton>
 				<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
-							  Appearance="@(UC.ShowCustomColumns ? Appearance.Accent : Appearance.Outline)">
+							  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
 					<span>custom</span>
-					<FluentBadge Appearance="Appearance.Neutral">@UC.Columns.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.Columns.Count</FluentBadge>
 				</FluentButton>
 			</FluentStack>
 		</div>
@@ -35,42 +33,43 @@ else
 					<thead class="tf-grid-thead">
 						<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
 						<tr class="tf-grid-tr">
-							@foreach (var column in UC.DataTable.Columns)
+							@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
 							{
-								if (!UC.ShowSystemColumns && column.IsSystem && !column.IsShared) { continue; }
-								if (!UC.ShowSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
-								if (!UC.ShowCustomColumns && !column.IsSystem) { continue; }
+								if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
+								if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+								if (!_showCustomColumns && !column.IsSystem) { continue; }
 								<th class="tf-grid-th">@column.Name</th>
+								columnCount++;
 							}
 						</tr>
 					</thead>
 					<tbody class="tf-grid-tbody">
-						@if (UC.IsListBusy)
+						@if (_isListBusy)
 						{
 							<tr class="tf-grid-tr">
-								<td class="tf-grid-td" colspan="@UC.VisibleColumnsCount">Loading...</td>
+								<td class="tf-grid-td" colspan="@columnCount">Loading...</td>
 							</tr>
 						}
 						else
 						{
-							foreach (TfDataRow row in UC.DataTable.Rows)
+							foreach (TfDataRow row in TfAppState.Value.AdminDataProviderData.Rows)
 							{
 								<tr @key=@row["tf_id"] class="tf-grid-tr">
-									@foreach (var column in UC.DataTable.Columns)
+									@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
 									{
-										if (!UC.ShowSystemColumns && column.IsSystem && !column.IsShared) { continue; }
-										if (!UC.ShowSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
-										if (!UC.ShowCustomColumns && !column.IsSystem) { continue; }
+										if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
+										if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+										if (!_showCustomColumns && !column.IsSystem) { continue; }
 										<td class="tf-grid-td">
 											<div>@row[column.Name]</div>
 										</td>
 									}
 								</tr>
 							}
-							@if (UC.DataTable.Rows.Count == 0 )
+							@if (TfAppState.Value.AdminDataProviderData.Rows.Count == 0)
 							{
 								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="@UC.VisibleColumnsCount">No records found</td>
+									<td class="tf-grid-td" colspan="@columnCount">No records found</td>
 								</tr>
 							}
 						}
@@ -80,12 +79,11 @@ else
 			</div>
 		</div>
 		<div class="tfdt__pager">
-			<TfPager Page="@UC.Page" GoLast="@_goLastPage" GoNext="@_goNextPage"
-				GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"/>
+			<TfPager Page="@TfAppState.Value.AdminDataProviderDataPage" GoLast="@_goLastPage" GoNext="@_goNextPage"
+					 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
 		</div>
 	</div>
-
-
-
 }
+
+
 

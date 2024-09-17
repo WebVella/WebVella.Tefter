@@ -162,6 +162,9 @@
   <data name="Status" xml:space="preserve">
     <value>Статус</value>
   </data>
+  <data name="Synchronization task created!" xml:space="preserve">
+    <value>Успешно е създадена задача за синхронизация!</value>
+  </data>
   <data name="Synchronization tasks" xml:space="preserve">
     <value>Задачи за синхронизация</value>
   </data>

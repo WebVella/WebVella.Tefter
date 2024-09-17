@@ -1,8 +1,8 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (TfAppState.Value.AdminManagedDataProvider is null || TfAppState.Value.AdminManagedDataProvider.Columns is null
-		|| TfAppState.Value.AdminManagedDataProvider.Columns.Count == 0)
+@if (TfAppState.Value.AdminDataProvider is null || TfAppState.Value.AdminDataProvider.Columns is null
+		|| TfAppState.Value.AdminDataProvider.Columns.Count == 0)
 {
 	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>
@@ -22,7 +22,7 @@ else
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
-				@foreach (var context in TfAppState.Value.AdminManagedDataProvider.Columns.OrderBy(x=> x.DbName))
+				@foreach (var context in TfAppState.Value.AdminDataProvider.Columns.OrderBy(x=> x.DbName))
 				{
 					<tr @key=context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">

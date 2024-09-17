@@ -24,9 +24,9 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		await UC.Init(this.GetType());
 
 		if (Content is null) throw new Exception("Content is null");
-		if (TfAppState.Value.AdminManagedDataProvider is null) throw new Exception("DataProvider not provided");
-		if (TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes is null
-		|| !TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+		if (TfAppState.Value.AdminDataProvider is null) throw new Exception("DataProvider not provided");
+		if (TfAppState.Value.AdminDataProvider.ProviderType.SupportedSourceDataTypes is null
+		|| !TfAppState.Value.AdminDataProvider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
 
 		if (Content.Id == Guid.Empty)
 		{
@@ -57,14 +57,14 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			_providerColumns = TfAppState.Value.AdminManagedDataProvider.Columns.OrderBy(x => x.DbName).ToList();
+			_providerColumns = TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName).ToList();
 			//Setup form
 			if (_isCreate)
 			{
 				UC.KeyForm = new TucDataProviderSharedKeyForm
 				{
 					Id = Guid.NewGuid(),
-					DataProviderId = TfAppState.Value.AdminManagedDataProvider.Id,
+					DataProviderId = TfAppState.Value.AdminDataProvider.Id,
 				};
 			}
 			else

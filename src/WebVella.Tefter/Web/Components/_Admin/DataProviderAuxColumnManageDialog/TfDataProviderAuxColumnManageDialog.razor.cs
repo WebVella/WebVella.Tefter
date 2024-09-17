@@ -26,9 +26,9 @@ public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, 
 		await UC.Init(this.GetType());
 
 		if (Content is null) throw new Exception("Content is null");
-		if (TfAppState.Value.AdminManagedDataProvider is null) throw new Exception("DataProvider not provided");
-		if (TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes is null
-		|| !TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+		if (TfAppState.Value.AdminDataProvider is null) throw new Exception("DataProvider not provided");
+		if (TfAppState.Value.AdminDataProvider.ProviderType.SupportedSourceDataTypes is null
+		|| !TfAppState.Value.AdminDataProvider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
 
 		if (Content.Id == Guid.Empty)
 		{
@@ -60,7 +60,7 @@ public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, 
 		try
 		{
 			//Setup form
-			_providerTypeOptions = TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes;
+			_providerTypeOptions = TfAppState.Value.AdminDataProvider.ProviderType.SupportedSourceDataTypes;
 			if (_isCreate)
 			{
 				_selectedProviderType = null;
@@ -75,7 +75,7 @@ public partial class TfDataProviderAuxColumnManageDialog : TfFormBaseComponent, 
 				UC.AuxColumnForm = new TucDataProviderAuxColumnForm
 				{
 					Id = Guid.NewGuid(),
-					DataProviderId = TfAppState.Value.AdminManagedDataProvider.Id,
+					DataProviderId = TfAppState.Value.AdminDataProvider.Id,
 					CreatedOn = DateTime.Now,
 					PreferredSearchType = UC.SearchTypes.First()
 				};
