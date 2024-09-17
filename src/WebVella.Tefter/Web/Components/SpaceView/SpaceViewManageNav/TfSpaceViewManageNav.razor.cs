@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageNav.TfSpaceViewManageNav","WebVella.Tefter")]
 public partial class TfSpaceViewManageNav : TfBaseComponent
 {
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
 	private List<MenuItem> menu = new();
@@ -59,7 +59,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 	{
 
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
-		TfState.Value.SpaceView,
+		TfAppState.Value.SpaceView,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -70,7 +70,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TucSpaceView)result.Data;
-			var itemList = TfState.Value.SpaceViewList.ToList();
+			var itemList = TfAppState.Value.SpaceViewList.ToList();
 			var itemIndex = itemList.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{

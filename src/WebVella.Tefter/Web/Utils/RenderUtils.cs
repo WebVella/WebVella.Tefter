@@ -29,7 +29,7 @@ internal static class RenderUtils
 		return input.Substring(0, charCount) + "...";
 	}
 
-	internal static int CalcSkip(int pageSize, int page) => (page - 1) * pageSize;
+	internal static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
 
 	internal static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
 	{

@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderKeys : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -33,10 +33,8 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			ToastService.ShowSuccess(LOC("The key was successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(
-				component: this,
-				provider: (TucDataProvider)result.Data)
-				);
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminManagedDataProvider = (TucDataProvider)result.Data }));
 		}
 	}
 
@@ -51,9 +49,9 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
-				Dispatcher.Dispatch(new SetDataProviderAdminAction(
-					component: this, 
-					provider:(TucDataProvider)result.Value));
+				Dispatcher.Dispatch(new SetAppStateAction(component: this,
+					state: TfAppState.Value with { AdminManagedDataProvider = (TucDataProvider)result.Value }));
+
 			}
 		}
 		catch (Exception ex)

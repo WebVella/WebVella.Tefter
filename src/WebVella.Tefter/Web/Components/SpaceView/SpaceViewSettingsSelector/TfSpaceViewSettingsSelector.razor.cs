@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 {
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 	private bool _open = false;
 	private bool _selectorLoading = false;
@@ -26,11 +26,11 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 
 	private void _manageView()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewManagePageUrl, TfState.Value.Space.Id, TfState.Value.SpaceView.Id));
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewManagePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.Id));
 	}
 	private void _manageData()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfState.Value.Space.Id, TfState.Value.SpaceView.SpaceDataId));
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.SpaceDataId));
 	}
 
 	private async Task _deleteView()
@@ -40,12 +40,12 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 		try
 		{
 
-			Result result = UC.DeleteSpaceView(TfState.Value.SpaceView.Id);
+			Result result = UC.DeleteSpaceView(TfAppState.Value.SpaceView.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space view deleted"));
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfState.Value.Space.Id), true);
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
 			}
 		}
 		catch (Exception ex)

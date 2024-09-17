@@ -197,6 +197,6 @@ public partial class DataBroker : IDataBroker
 			if (view.IsBookmarked)
 				result.Add(view);
 		}
-		return result.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
+		return result.Skip(RenderUtils.CalcSkip(page, pageSize)).Take(pageSize).ToList();
 	}
 }

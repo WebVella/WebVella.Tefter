@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfState.Value.Space is null)
+@if (TfAppState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -14,7 +14,7 @@
 		</div>
 	</FluentBodyContent>
 }
-else if (TfState.Value.SpaceViewList.Count == 0)
+else if (TfAppState.Value.SpaceViewList.Count == 0)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">

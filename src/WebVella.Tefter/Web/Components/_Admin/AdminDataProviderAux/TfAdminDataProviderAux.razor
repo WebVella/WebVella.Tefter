@@ -1,8 +1,8 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (TfState.Value.Provider is null || TfState.Value.Provider.SharedColumns is null
-						|| TfState.Value.Provider.SharedColumns.Count == 0)
+@if (TfAppState.Value.AdminManagedDataProvider is null || TfAppState.Value.AdminManagedDataProvider.SharedColumns is null
+						|| TfAppState.Value.AdminManagedDataProvider.SharedColumns.Count == 0)
 {
 	<FluentMessageBar Title="@LOC("No shared columns matched")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No shared columns are matching any of the shared keys for this data source")</FluentMessageBar>
@@ -22,7 +22,7 @@ else
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
-				@foreach (var context in TfState.Value.Provider.SharedColumns)
+				@foreach (var context in TfAppState.Value.AdminManagedDataProvider.SharedColumns)
 				{
 					<tr @key=context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">

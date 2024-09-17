@@ -29,31 +29,29 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		_isLoading = true;
 		await InvokeAsync(StateHasChanged);
 
-		var users = await UC.GetUsersAsync(
+		var records = await UC.GetUsersAsync(
 			search: _search,
 			page: page,
 			pageSize: _pageSize
 		);
-		var aggrUsers = TfAppState.Value.AdminUsers;
+		var aggrRecords = TfAppState.Value.AdminUsers;
 
 		if (!resetList)
 		{
-			aggrUsers.AddRange(users);
+			aggrRecords.AddRange(records);
 		}
 		else
 		{
-			aggrUsers = users;
+			aggrRecords = records;
 		}
 
-
-		Dispatcher.Dispatch(new SetAdminUsersStateAction(
+		Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
-			adminUsers: aggrUsers,
-			adminUsersPage: page
+			state: TfAppState.Value with {AdminUsers = aggrRecords, AdminUsersPage = page }
 		));
 
 		_isLoading = false;
-		if (users.Count < _pageSize) _endIsReached = true;
+		if (records.Count < _pageSize) _endIsReached = true;
 		await InvokeAsync(StateHasChanged);
 	}
 

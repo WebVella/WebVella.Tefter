@@ -69,14 +69,14 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			_menuItems.Add(viewMenu);
 		}
 
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page, pageSize)).Take(pageSize).ToList();
 		if (batch.Count < pageSize) hasMore = false;
 		_visibleMenuItems = batch;
 	}
 
 	private async Task loadMoreClick()
 	{
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page + 1)).Take(pageSize).ToList();
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1,pageSize)).Take(pageSize).ToList();
 		if (batch.Count < pageSize) hasMore = false;
 		_visibleMenuItems.AddRange(batch);
 		page++;

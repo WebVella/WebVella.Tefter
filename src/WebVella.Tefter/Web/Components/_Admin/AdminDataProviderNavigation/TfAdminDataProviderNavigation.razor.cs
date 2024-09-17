@@ -2,34 +2,58 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderNavigation.TfAdminDataProviderNavigation","WebVella.Tefter")]
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
+	private bool _endIsReached = false;
+	private bool _isLoading = false;
+	private string _search = null;
+	private int _stringLimit = 30;
+	private int _pageSize = TfConstants.PageSize;
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	protected override void OnInitialized()
 	{
-		if (disposing)
+		base.OnInitialized();
+		if (TfAppState.Value.AdminDataProviders.Count < _pageSize)
+			_endIsReached = true;
+	}
+
+	private async Task loadMoreClick(bool resetList = false)
+	{
+		var page = TfAppState.Value.AdminDataProvidersPage + 1;
+		if (resetList)
 		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
+			page = 1;
+			_endIsReached = false;
 		}
-		await base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		UC.MenuLoading = false;
-		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_DataProviderDetailsChangedAction);
-	}
+		_isLoading = true;
+		await InvokeAsync(StateHasChanged);
 
-	private void loadMoreClick()
-	{
-		UC.LoadMoreLoading = true;
-		StateHasChanged();
-		UC.MenuPage++;
-		UC.InitMenu();
-		UC.LoadMoreLoading = false;
-		StateHasChanged();
+		var records = await UC.GetDataProvidersAsync(
+			search: _search,
+			page: page,
+			pageSize: _pageSize
+		);
+		var aggrRecords = TfAppState.Value.AdminDataProviders;
+
+		if (!resetList)
+		{
+			aggrRecords.AddRange(records);
+		}
+		else
+		{
+			aggrRecords = records;
+		}
+
+		Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with {AdminDataProviders = aggrRecords, AdminDataProvidersPage = page }
+		));
+
+		_isLoading = false;
+		if (records.Count < _pageSize) _endIsReached = true;
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task onAddClick()
@@ -44,30 +68,13 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var provider = (TucDataProvider)result.Data;
-			ToastService.ShowSuccess("Data provider successfully created!");
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this,provider: provider));
 			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
 		}
 	}
 
-
-	private void onSearch(string search)
+	private async Task onSearch(string search)
 	{
-		if (search == UC.MenuSearch) return;
-
-		UC.MenuLoading = true;
-		StateHasChanged();
-
-		UC.MenuSearch = search;
-		UC.OnSearchChanged();
-
-		UC.MenuLoading = false;
-		StateHasChanged();
+		_search = search;
+		await loadMoreClick(true);
 	}
-
-	//private void On_DataProviderDetailsChangedAction(DataProviderAdminChangedAction action)
-	//{
-	//	UC.OnStateChanged(action.Provider);
-	//	StateHasChanged();
-	//}
 }

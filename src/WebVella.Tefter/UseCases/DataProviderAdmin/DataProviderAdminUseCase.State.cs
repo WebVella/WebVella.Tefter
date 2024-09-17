@@ -27,9 +27,9 @@ public partial class DataProviderAdminUseCase
 
 			if (serviceResult.Value is not null)
 			{
-				_dispatcher.Dispatch(new SetDataProviderAdminAction(
-					component:null,
-					provider: new TucDataProvider(serviceResult.Value)));
+				//_dispatcher.Dispatch(new SetDataProviderAdminAction(
+				//	component:null,
+				//	provider: new TucDataProvider(serviceResult.Value)));
 				return Task.CompletedTask;
 			}
 
@@ -37,9 +37,9 @@ public partial class DataProviderAdminUseCase
 		}
 		else
 		{
-			_dispatcher.Dispatch(new SetDataProviderAdminAction(
-						component:null,
-						provider: null));
+			//_dispatcher.Dispatch(new SetDataProviderAdminAction(
+			//			component:null,
+			//			provider: null));
 		}
 		return Task.CompletedTask;
 	}

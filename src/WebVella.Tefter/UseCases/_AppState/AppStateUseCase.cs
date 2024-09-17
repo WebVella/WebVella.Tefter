@@ -7,6 +7,7 @@ internal partial class AppStateUseCase
 	private readonly AuthenticationStateProvider _authenticationStateProvider;
 	private readonly IJSRuntime _jsRuntime;
 	private readonly IIdentityManager _identityManager;
+	private readonly ITfDataProviderManager _dataProviderManager;
 	private readonly ITfSpaceManager _spaceManager;
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
@@ -18,6 +19,7 @@ internal partial class AppStateUseCase
 		AuthenticationStateProvider authenticationStateProvider,
 		IJSRuntime jsRuntime,
 		IIdentityManager identityManager,
+		ITfDataProviderManager dataProviderManager,
 		ITfSpaceManager spaceManager,
 		NavigationManager navigationManager,
 		IToastService toastService,
@@ -28,6 +30,7 @@ internal partial class AppStateUseCase
 		_authenticationStateProvider = authenticationStateProvider;
 		_jsRuntime = jsRuntime;
 		_identityManager = identityManager;
+		_dataProviderManager = dataProviderManager;
 		_spaceManager = spaceManager;
 		_navigationManager = navigationManager;
 		_toastService = toastService;
@@ -44,6 +47,7 @@ internal partial class AppStateUseCase
 
 		result = await InitAdminUsers(currentUser, routeState,result);
 		result = await InitSpace(currentUser, routeState,result);
+		result = await InitAdminDataProvider(currentUser, routeState,result);
 
 		return result;
 	}

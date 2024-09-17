@@ -2,31 +2,12 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderDetailsNav.TfAdminDataProviderDetailsNav","WebVella.Tefter")]
 public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 {
-	private List<MenuItem> menu = new();
+	[Inject] private IState<TfRouteState> TfRouteState { get; set; }
 
-	protected override ValueTask DisposeAsyncCore(bool disposing)
+	private List<MenuItem> _getMenu()
 	{
-		if (disposing)
-		{
-			Navigator.LocationChanged -= Navigator_LocationChanged;
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		GenerateMenu();
-		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
-		Navigator.LocationChanged += Navigator_LocationChanged;
-		StateHasChanged();
-	}
-
-	private void GenerateMenu()
-	{
-		menu.Clear();
-		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
+		var menu = new List<MenuItem>();
+		var providerId = TfRouteState.Value.DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId),
@@ -69,19 +50,7 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 			//Icon = new Icons.Regular.Size20.Database(),
 			Title = LOC("Data")
 		});
-
-	}
-
-	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	//{
-	//	GenerateMenu();
-	//	StateHasChanged();
-	//}
-
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
-	{
-		GenerateMenu();
-		StateHasChanged();
+		return menu;
 	}
 
 }

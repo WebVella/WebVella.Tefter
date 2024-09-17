@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceDetails : TfBaseComponent
 {
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 	protected override async ValueTask DisposeAsyncCore(bool disposing)

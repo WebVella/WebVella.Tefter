@@ -8,7 +8,6 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 	internal List<MenuItem> _getMenu()
 	{
 		var menu = new List<MenuItem>();
-		menu.Clear();
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, TfRouteState.Value.UserId),

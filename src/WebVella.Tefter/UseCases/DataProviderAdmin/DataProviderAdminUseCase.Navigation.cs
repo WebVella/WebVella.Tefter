@@ -41,7 +41,7 @@ public partial class DataProviderAdminUseCase
 		var providers = providerResult.Value
 			.Where(x => String.IsNullOrWhiteSpace(search)
 				|| x.Name.ToLowerInvariant().Contains(search))
-			.Skip(RenderUtils.CalcSkip(MenuPageSize, MenuPage))
+			.Skip(RenderUtils.CalcSkip(MenuPage,MenuPageSize))
 			.Take(MenuPageSize).ToList();
 
 		var menuPathSuffix = "";

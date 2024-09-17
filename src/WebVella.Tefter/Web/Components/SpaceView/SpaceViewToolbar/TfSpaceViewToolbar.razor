@@ -5,15 +5,15 @@
 	<div class="content-toolbar-left">
 		<FluentSearch />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+			<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton>
 	</div>
 	<div class="content-toolbar-right">
@@ -23,22 +23,22 @@
 		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			@LOC("Actions")
-			@if (TfState.Value.SelectedDataRows.Count > 0)
+			@if (TfAppState.Value.SelectedDataRows.Count > 0)
 			{
 				<span slot="start">
-					<FluentBadge Appearance="Appearance.Accent">@TfState.Value.SelectedDataRows.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
 				</span>
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 		</FluentButton>
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton>
 		<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+			<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton>
 	</div>
 </div>

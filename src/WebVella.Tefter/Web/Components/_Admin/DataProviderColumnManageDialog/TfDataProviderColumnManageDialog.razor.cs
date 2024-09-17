@@ -3,7 +3,7 @@
 public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderColumn>
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] private IState<TfAppState> TfState { get; set; }
+	[Inject] private IState<TfAppState> TfAppState { get; set; }
 	[Parameter] public TucDataProviderColumn Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -26,9 +26,9 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		await UC.Init(this.GetType());
 
 		if (Content is null) throw new Exception("Content is null");
-		if (TfState.Value.Provider is null) throw new Exception("DataProvider not provided");
-		if (TfState.Value.Provider.ProviderType.SupportedSourceDataTypes is null
-		|| !TfState.Value.Provider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
+		if (TfAppState.Value.AdminManagedDataProvider is null) throw new Exception("DataProvider not provided");
+		if (TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes is null
+		|| !TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes.Any()) throw new Exception("DataProvider does not have source supported types");
 
 		if (Content.Id == Guid.Empty)
 		{
@@ -60,7 +60,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		try
 		{
 			//Setup form
-			_providerTypeOptions = TfState.Value.Provider.ProviderType.SupportedSourceDataTypes;
+			_providerTypeOptions = TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes;
 			if (_isCreate)
 			{
 				_selectedProviderType = null;
@@ -75,7 +75,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 				UC.ColumnForm = new TucDataProviderColumnForm
 				{
 					Id = Guid.NewGuid(),
-					DataProviderId = TfState.Value.Provider.Id,
+					DataProviderId = TfAppState.Value.AdminManagedDataProvider.Id,
 					CreatedOn = DateTime.Now,
 					PreferredSearchType = UC.SearchTypes.First()
 				};

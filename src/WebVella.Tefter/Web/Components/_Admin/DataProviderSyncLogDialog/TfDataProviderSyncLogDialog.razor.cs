@@ -3,7 +3,7 @@
 public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSyncTaskInfoLog>
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] private IState<TfAppState> TfState { get; set; }
+	[Inject] private IState<TfAppState> TfAppState { get; set; }
 	[Parameter] public TucDataProviderSyncTaskInfoLog Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }

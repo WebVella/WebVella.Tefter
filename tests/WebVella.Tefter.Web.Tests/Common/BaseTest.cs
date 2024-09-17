@@ -14,7 +14,7 @@ public class BaseTest
 {
 	public static IServiceProvider ServiceProvider;
 	public static IStore Store;
-	public static IState<TfAppState> TfState;
+	public static IState<TfAppState> TfAppState;
 	public static IStateSelection<TfAppState, Guid> UserIdState;
 	public static IStateSelection<TfAppState, bool> ScreenSidebarState;
 	public static Mock<IKeyCodeService> KeyCodeServiceMock;
@@ -61,7 +61,7 @@ public class BaseTest
 		Store = ServiceProvider.GetRequiredService<IStore>();
 		Store.InitializeAsync().Wait();
 
-		TfState = ServiceProvider.GetRequiredService<IState<TfAppState>>();
+		TfAppState = ServiceProvider.GetRequiredService<IState<TfAppState>>();
 		//UserIdState = ServiceProvider.GetRequiredService<IStateSelection<UserState,Guid>>();
 		//UserIdState.Select(x => x?.User?.Id ?? Guid.Empty);
 		//ScreenSidebarState = ServiceProvider.GetRequiredService<IStateSelection<ScreenState, bool>>();

@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataViews.TfSpaceDataViews","WebVella.Tefter")]
 public partial class TfSpaceDataViews : TfFormBaseComponent
 {
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }
 
 	private List<TucSpaceView> _items = new();
@@ -31,7 +31,7 @@ public partial class TfSpaceDataViews : TfFormBaseComponent
 
 	private void _generateItems()
 	{
-		_items = TfState.Value.SpaceViewList.Where(x => x.SpaceDataId == TfState.Value.SpaceData.Id).ToList();
+		_items = TfAppState.Value.SpaceViewList.Where(x => x.SpaceDataId == TfAppState.Value.SpaceData.Id).ToList();
 		foreach (var item in _items)
 		{
 			item.OnClick = () => _navigateToView(item);

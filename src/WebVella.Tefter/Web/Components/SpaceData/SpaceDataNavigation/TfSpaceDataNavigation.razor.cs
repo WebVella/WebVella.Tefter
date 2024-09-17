@@ -2,7 +2,7 @@
 public partial class TfSpaceDataNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private bool _menuLoading = false;
 
@@ -51,7 +51,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		search = search?.Trim().ToLowerInvariant();
 		_menuItems.Clear();
 		var nodes = new List<MenuItem>();
-		foreach (var dataItem in TfState.Value.SpaceDataList)
+		foreach (var dataItem in TfAppState.Value.SpaceDataList)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !dataItem.Name.ToLowerInvariant().Contains(search))
 				continue;
@@ -67,14 +67,14 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 			_menuItems.Add(menuItem);
 		}
 
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page)).Take(pageSize).ToList();
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page, pageSize)).Take(pageSize).ToList();
 		if (batch.Count < pageSize) hasMore = false;
 		_visibleMenuItems = batch;
 	}
 
 	private async Task loadMoreClick()
 	{
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(pageSize, page + 1)).Take(pageSize).ToList();
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1,pageSize)).Take(pageSize).ToList();
 		if (batch.Count < pageSize) hasMore = false;
 		_visibleMenuItems.AddRange(batch);
 		page++;
@@ -84,7 +84,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private async Task onAddClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceDataManageDialog>(
-		new TucSpaceData { SpaceId = TfState.Value.Space.Id },
+		new TucSpaceData { SpaceId = TfAppState.Value.Space.Id },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -103,7 +103,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private async Task onManageSpaceClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(
-		TfState.Value.Space,
+		TfAppState.Value.Space,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -140,8 +140,8 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private void onViewsListClick()
 	{
 		Guid? spaceViewId = null;
-		if (TfState.Value.SpaceViewList.Count > 0) spaceViewId = TfState.Value.SpaceViewList[0].Id;
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfState.Value.Space.Id, spaceViewId));
+		if (TfAppState.Value.SpaceViewList.Count > 0) spaceViewId = TfAppState.Value.SpaceViewList[0].Id;
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, spaceViewId));
 	}
 
 	private async Task onSearch(string value)

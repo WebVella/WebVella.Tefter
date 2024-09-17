@@ -19,11 +19,10 @@ internal partial class AppStateUseCase
 		//AdminManagedUser, UserRoles
 		if (routeState.UserId.HasValue)
 		{
-			var adminUser = await GetUser(routeState.UserId.Value);
+			var adminUser = await GetUserAsync(routeState.UserId.Value);
 			result = result with { AdminManagedUser = adminUser };
 			if (adminUser is not null)
 			{
-				result = result with { AdminManagedUser = adminUser };
 				if (!result.AdminUsers.Any(x => x.Id == adminUser.Id))
 				{
 					var users = result.AdminUsers.ToList();
@@ -31,7 +30,7 @@ internal partial class AppStateUseCase
 					result = result with { AdminUsers = users };
 				}
 
-				var roles = await GetUserRoles();
+				var roles = await GetUserRolesAsync();
 				result = result with { UserRoles = roles ?? new List<TucRole>() };
 
 				//check for the other tabs
@@ -48,11 +47,11 @@ internal partial class AppStateUseCase
 
 	internal async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
 	{
-		var userResult = await _identityManager.GetUsersAsync(search: search, page: page, pageSize: pageSize);
-		if (userResult.IsFailed)
+		var srvResult = await _identityManager.GetUsersAsync();
+		if (srvResult.IsFailed)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetUsersAsync failed").CausedBy(userResult.Errors)),
+				result: Result.Fail(new Error("GetUsersAsync failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
@@ -61,11 +60,28 @@ internal partial class AppStateUseCase
 			return new List<TucUser>();
 		}
 
-		if (userResult.Value is null) return new List<TucUser>();
+		if (srvResult.Value is null) return new List<TucUser>();
+		var records = new List<User>();
+		if (!String.IsNullOrWhiteSpace(search))
+		{
+			var searchProcessed = search.Trim().ToLowerInvariant();
+			foreach (var item in srvResult.Value)
+			{
+				bool hasMatch = false;
+				if(item.Email.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+				if(item.FirstName.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+				if(item.LastName.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+				if(hasMatch) records.Add(item);
+			}
+		}
+		else records = srvResult.Value.ToList();
 
-		return userResult.Value.Select(x => new TucUser(x)).ToList();
+		if (page is null || pageSize is null) return records.Select(x => new TucUser(x)).ToList();
+
+		return records.Skip(RenderUtils.CalcSkip(page.Value,pageSize.Value)).Take(pageSize.Value).Select(x => new TucUser(x)).ToList();
+
 	}
-	internal async Task<TucUser> GetUser(Guid userId)
+	internal async Task<TucUser> GetUserAsync(Guid userId)
 	{
 		var srvResult = await _identityManager.GetUserAsync(userId);
 		if (srvResult.IsFailed)
@@ -82,7 +98,7 @@ internal partial class AppStateUseCase
 		if (srvResult.Value is null) return null;
 		return new TucUser(srvResult.Value);
 	}
-	internal async Task<List<TucRole>> GetUserRoles()
+	internal async Task<List<TucRole>> GetUserRolesAsync()
 	{
 		var srvResult = await _identityManager.GetRolesAsync();
 		if (srvResult.IsFailed)

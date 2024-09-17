@@ -2,5 +2,7 @@
 
 public partial record TfAppState
 {
-	public TucDataProvider Provider { get; init; }
+	public List<TucDataProvider> AdminDataProviders { get; init; } = new();
+	public int AdminDataProvidersPage { get; init; }
+	public TucDataProvider AdminManagedDataProvider { get; init; }
 }

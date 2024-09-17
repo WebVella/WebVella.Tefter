@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (UC.ActionsMenu == "details")
+@if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Details)
 {
 	<FluentStack>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
@@ -14,20 +14,28 @@
 		</FluentButton>
 	</FluentStack>
 }
-else if (UC.ActionsMenu == "schema")
+else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Schema)
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 		@LOC("Add Column")
 		<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }
-else if (UC.ActionsMenu == "aux")
+else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.AuxColumns)
 {
 }
-else if (UC.ActionsMenu == "keys")
+else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.SharedKeys)
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
 		@LOC("Shared key")
 		<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
+}
+else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Synchronization)
+{
+
+}
+else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Data)
+{
+
 }

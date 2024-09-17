@@ -4,7 +4,7 @@ public partial class TfSpaceViewPropertiesSelector : TfBaseComponent
 	//[Parameter]
 	//public EventCallback<GridPropertiesChangedEventArgs> ColumnChanged { get; set; }
 
-    [Inject] protected IState<TfAppState> TfState { get; set; }
+    [Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private bool _open = false;
 	private bool _selectorLoading = false;

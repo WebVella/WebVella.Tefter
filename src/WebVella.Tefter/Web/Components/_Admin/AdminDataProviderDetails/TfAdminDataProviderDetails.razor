@@ -3,11 +3,11 @@
 <TfCard>
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.Provider?.Name"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedDataProvider?.Name"
 							 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.Provider?.ProviderType.Name"
+			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedDataProvider?.ProviderType.Name"
 							 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
 		</FluentGridItem>
 	</FluentGrid>
@@ -16,7 +16,7 @@
 		<FluentGridItem xs="12">
 			<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
 			@{
-				var supportedDataTypes = TfState.Value?.Provider?.ProviderType.SupportedSourceDataTypes;
+				var supportedDataTypes = TfAppState.Value?.AdminManagedDataProvider?.ProviderType.SupportedSourceDataTypes;
 			}
 			@if (supportedDataTypes is null || supportedDataTypes.Count == 0)
 			{
@@ -38,10 +38,10 @@
 	<FluentDivider Style="margin:15px 0"/>
 	<FluentGrid Style="margin-top:3px;">
 		<FluentGridItem xs="12">
-			@if (TfState.Value?.Provider?.ProviderType.SettingsComponentType is null) { }
-			else if (TfState.Value?.Provider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+			@if (TfAppState.Value?.AdminManagedDataProvider?.ProviderType.SettingsComponentType is null) { }
+			else if (TfAppState.Value?.AdminManagedDataProvider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 			{
-				<DynamicComponent Type="TfState.Value?.Provider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+				<DynamicComponent Type="TfAppState.Value?.AdminManagedDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
 			}
 			else
 			{

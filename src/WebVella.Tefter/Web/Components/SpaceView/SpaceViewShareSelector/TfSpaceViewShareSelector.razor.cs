@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewShareSelector : TfBaseComponent
 {
-    [Inject] protected IState<TfAppState> TfState { get; set; }
+    [Inject] protected IState<TfAppState> TfAppState { get; set; }
 	private bool _open = false;
 	private bool _selectorLoading = false;
 
@@ -26,7 +26,7 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 	{
 		InvokeAsync(async () =>
 		{
-			_selectedItems = TfState.Value.SelectedDataRows.ToList();
+			_selectedItems = TfAppState.Value.SelectedDataRows.ToList();
 			await InvokeAsync(StateHasChanged);
 		});
 

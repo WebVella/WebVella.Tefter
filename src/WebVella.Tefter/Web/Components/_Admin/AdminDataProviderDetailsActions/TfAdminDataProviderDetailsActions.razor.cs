@@ -1,35 +1,14 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions.TfAdminDataProviderDetailsActions","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderDetailsActions.TfAdminDataProviderDetailsActions", "WebVella.Tefter")]
 public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	private bool _isDeleting = false;
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing) Navigator.LocationChanged -= Navigator_LocationChanged;
-		return base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		Navigator.LocationChanged += Navigator_LocationChanged;
-	}
-
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
-	{
-		InvokeAsync(async () =>
-		{
-			await UC.InitActionsMenu(e.Location);
-			await InvokeAsync(StateHasChanged);
-		});
-	}
-
-
 	private async Task _editProvider()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(TfState.Value.Provider,
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderManageDialog>(TfAppState.Value.AdminManagedDataProvider,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -41,7 +20,8 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this, provider: record));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminManagedDataProvider = record }));
 		}
 	}
 
@@ -60,7 +40,8 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this, provider: record));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminManagedDataProvider = record }));
 		}
 	}
 
@@ -79,7 +60,8 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this, provider: record));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminManagedDataProvider = record }));
 		}
 	}
 
@@ -88,12 +70,12 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))
 			return;
 
-		if (TfState.Value is null || TfState.Value.Provider is null) return;
+		if (TfAppState.Value is null || TfAppState.Value.AdminManagedDataProvider is null) return;
 		try
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = UC.DeleteDataProvider(TfState.Value.Provider.Id);
+			var result = await UC.DeleteDataProvider(TfAppState.Value.AdminManagedDataProvider.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
@@ -127,7 +109,8 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			var record = (TucDataProvider)result.Data;
 			ToastService.ShowSuccess(LOC("Key successfully created!"));
-			Dispatcher.Dispatch(new SetDataProviderAdminAction(component:this, provider:  record));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminManagedDataProvider = record }));
 		}
 	}
 }

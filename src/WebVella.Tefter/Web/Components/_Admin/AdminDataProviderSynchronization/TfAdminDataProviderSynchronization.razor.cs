@@ -3,7 +3,7 @@
 public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 {
 	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	PaginationState _pagination = new PaginationState { ItemsPerPage = 15 };
 
@@ -42,7 +42,7 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await UC.LoadDataProviderDataObjects(TfState.Value.Provider.Id);
+			await UC.LoadDataProviderDataObjects(TfAppState.Value.AdminManagedDataProvider.Id);
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
 		}
@@ -76,8 +76,8 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		if (UC.IsSynchronizing) return;
 		UC.IsSynchronizing = true;
 		await InvokeAsync(StateHasChanged);
-		await UC.TriggerSynchronization(TfState.Value.Provider.Id);
-		await UC.LoadDataProviderDataObjects(TfState.Value.Provider.Id);
+		await UC.TriggerSynchronization(TfAppState.Value.AdminManagedDataProvider.Id);
+		await UC.LoadDataProviderDataObjects(TfAppState.Value.AdminManagedDataProvider.Id);
 		await InvokeAsync(StateHasChanged);
 
 	}

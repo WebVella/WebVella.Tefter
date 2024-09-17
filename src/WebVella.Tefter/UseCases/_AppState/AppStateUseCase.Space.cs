@@ -15,13 +15,13 @@ internal partial class AppStateUseCase
 
 		//CurrentUserSpaces
 		if (result.CurrentUserSpaces.Count == 0) //Fill in only if not already loaded
-			result = result with { CurrentUserSpaces = await GetUserSpaces(currentUser) };
+			result = result with { CurrentUserSpaces = await GetUserSpacesAsync(currentUser) };
 
 
 		return result;
 	}
 
-	internal Task<List<TucSpace>> GetUserSpaces(TucUser user)
+	internal Task<List<TucSpace>> GetUserSpacesAsync(TucUser user)
 	{
 
 		var userSpaces = _spaceManager.GetSpacesListForUser(user.Id).Value.Select(s => new TucSpace(s)).OrderBy(x => x.Position).ToList();

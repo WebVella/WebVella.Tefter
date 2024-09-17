@@ -9,21 +9,21 @@
 		<div class="sidebar-toolbar-actions">
 			<FluentButton Id="space-settings" Title="space actions"
 						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
-				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentButton>
 			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
 				<FluentMenuItem OnClick="onManageSpaceClick" >
 					@LOC("Manage Space")
-					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 				<FluentMenuItem OnClick="onViewsListClick">
 					@LOC("Views List")
-					<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onAddClick">
 					@LOC("Create Dataset")
-					<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString" />
+					<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 
 			</FluentMenu>
@@ -40,7 +40,7 @@
 				@foreach (var item in _visibleMenuItems)
 				{
 					<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
-								   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
+								   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
 				}
 			</FluentNavMenu>
 			@if (hasMore)
