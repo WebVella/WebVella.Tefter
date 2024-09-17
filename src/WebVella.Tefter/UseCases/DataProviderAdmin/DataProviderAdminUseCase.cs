@@ -34,7 +34,6 @@ public partial class DataProviderAdminUseCase
 		else if (type == typeof(TfAdminDataProviderSynchronization)) await InitForSynchronization();
 		else if (type == typeof(TfDataProviderManageDialog)) await InitForProviderManageDialog();
 		else if (type == typeof(TfAdminDataProviderNavigation)) await InitForNavigation();
-		else if (type == typeof(TfAdminDataProviderStateManager)) await InitForState();
 		else if (type == typeof(TfAdminDataProviderDetailsActions)) await InitForDetailsActions();
 		else if (type == typeof(TfAdminDataProviderKeys)) await InitForKeys();
 		else if (type == typeof(TfAdminDataProviderSchema)) await InitForSchema();

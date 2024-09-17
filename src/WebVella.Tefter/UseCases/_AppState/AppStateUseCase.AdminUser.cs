@@ -1,7 +1,52 @@
 ﻿namespace WebVella.Tefter.UseCases.AppStart;
 internal partial class AppStateUseCase
 {
-	public async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
+	internal async Task<TfAppState> InitAdminUsers(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	{
+		if (
+			!(routeState.FirstNode == RouteDataFirstNode.Admin
+			&& routeState.SecondNode == RouteDataSecondNode.Users)
+			)
+		{
+			result = result with { AdminUsers = new(), AdminUsersPage = 1, AdminManagedUser = null, UserRoles = new() };
+			return result;
+		};
+
+		//AdminUsers, AdminUsersPage
+		if (result.AdminUsers.Count == 0)
+			result = result with { AdminUsers = await GetUsersAsync(null, 1, TfConstants.PageSize), AdminUsersPage = 2 };
+
+		//AdminManagedUser, UserRoles
+		if (routeState.UserId.HasValue)
+		{
+			var adminUser = await GetUser(routeState.UserId.Value);
+			result = result with { AdminManagedUser = adminUser };
+			if (adminUser is not null)
+			{
+				result = result with { AdminManagedUser = adminUser };
+				if (!result.AdminUsers.Any(x => x.Id == adminUser.Id))
+				{
+					var users = result.AdminUsers.ToList();
+					users.Add(adminUser);
+					result = result with { AdminUsers = users };
+				}
+
+				var roles = await GetUserRoles();
+				result = result with { UserRoles = roles ?? new List<TucRole>() };
+
+				//check for the other tabs
+				if (routeState.ThirdNode == RouteDataThirdNode.Access)
+				{
+				}
+				else if (routeState.ThirdNode == RouteDataThirdNode.Saves)
+				{
+				}
+			}
+		}
+		return result;
+	}
+
+	internal async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
 	{
 		var userResult = await _identityManager.GetUsersAsync(search: search, page: page, pageSize: pageSize);
 		if (userResult.IsFailed)
@@ -20,7 +65,7 @@ internal partial class AppStateUseCase
 
 		return userResult.Value.Select(x => new TucUser(x)).ToList();
 	}
-	public async Task<TucUser> GetUser(Guid userId)
+	internal async Task<TucUser> GetUser(Guid userId)
 	{
 		var srvResult = await _identityManager.GetUserAsync(userId);
 		if (srvResult.IsFailed)
@@ -37,7 +82,7 @@ internal partial class AppStateUseCase
 		if (srvResult.Value is null) return null;
 		return new TucUser(srvResult.Value);
 	}
-	public async Task<List<TucRole>> GetUserRoles()
+	internal async Task<List<TucRole>> GetUserRoles()
 	{
 		var srvResult = await _identityManager.GetRolesAsync();
 		if (srvResult.IsFailed)

@@ -34,7 +34,6 @@ global using WebVella.Tefter.UseCases.SharedColumnsAdmin;
 global using WebVella.Tefter.UseCases.DataProviderAdmin;
 global using WebVella.Tefter.UseCases.Login;
 global using WebVella.Tefter.UseCases.Models;
-global using WebVella.Tefter.UseCases.UserAdmin;
 global using WebVella.Tefter.UseCases.Space;
 
 //State

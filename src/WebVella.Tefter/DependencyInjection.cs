@@ -75,7 +75,6 @@ public static class DependencyInjection
 		services.AddTransient<DataProviderAdminUseCase, DataProviderAdminUseCase>();
 		services.AddTransient<SharedColumnsAdminUseCase, SharedColumnsAdminUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();
-		services.AddTransient<UserAdminUseCase, UserAdminUseCase>();
 		services.AddTransient<SpaceUseCase, SpaceUseCase>();
 
 		//hosted services
