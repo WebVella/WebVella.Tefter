@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Localization;
+using WebVella.Tefter.Api;
 
 namespace WebVella.Tefter.UseCases.AppStart;
 
@@ -8,6 +9,7 @@ internal partial class AppStateUseCase
 	private readonly IJSRuntime _jsRuntime;
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfDataProviderManager _dataProviderManager;
+	private readonly ITfSharedColumnsManager _sharedColumnsManager;
 	private readonly IDataManager _dataManager;
 	private readonly ITfSpaceManager _spaceManager;
 	private readonly NavigationManager _navigationManager;
@@ -21,6 +23,7 @@ internal partial class AppStateUseCase
 		IJSRuntime jsRuntime,
 		IIdentityManager identityManager,
 		ITfDataProviderManager dataProviderManager,
+		ITfSharedColumnsManager sharedColumnsManager,
 		IDataManager dataManager,
 		ITfSpaceManager spaceManager,
 		NavigationManager navigationManager,
@@ -33,6 +36,7 @@ internal partial class AppStateUseCase
 		_jsRuntime = jsRuntime;
 		_identityManager = identityManager;
 		_dataProviderManager = dataProviderManager;
+		_sharedColumnsManager = sharedColumnsManager;
 		_dataManager = dataManager;
 		_spaceManager = spaceManager;
 		_navigationManager = navigationManager;
@@ -51,6 +55,7 @@ internal partial class AppStateUseCase
 		result = await InitAdminUsers(currentUser, routeState, result);
 		result = await InitSpace(currentUser, routeState, result);
 		result = await InitAdminDataProvider(currentUser, routeState, result);
+		result = await InitAdminSharedColumns(currentUser, routeState, result);
 
 		return result;
 	}

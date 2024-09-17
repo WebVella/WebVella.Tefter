@@ -8,79 +8,64 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	@if (String.IsNullOrWhiteSpace(_error))
-	{
-		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
-					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
-	}
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+				  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 
 @* Body *@
 <FluentDialogBody>
 	<div>
-		@if (UC.IsBusy)
-		{
-			<TfLoadingPane />
-		}
-		else if (!string.IsNullOrWhiteSpace(_error))
-		{
-			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
-		}
-		else
-		{
-			<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
-							FormName="submit-form" class="tf-form" novalidate>
-				<DataAnnotationsValidator />
-				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SharedColumnForm.DbName
-										 Label="@LOC("name")" Style="width:100%"
-										 Disabled="!_isCreate" AutoComplete="new-password">
-							<span slot="start">sk_</span>
-						</FluentTextField>
-						<FluentValidationMessage For="@(() => UC.SharedColumnForm.DbName)" />
-					</FluentGridItem>
-					<FluentGridItem xs="6">
-						<FluentSelect @bind-SelectedOption="UC.SharedColumnForm.DbType"
-									  TOption="TucDatabaseColumnTypeInfo"
-									  Items="@UC.SharedColumnDataTypes" Style="width:100%"
-									  OptionText="@(p => p.Name)" Label="@LOC("data type")" Disabled="!_isCreate"></FluentSelect>
-						<FluentValidationMessage For="@(() => UC.SharedColumnForm.DbType)" />
-					</FluentGridItem>
-				</FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SharedColumnForm.SharedKeyDbName
-										 Label="@LOC("Target shared key")" Style="width:100%" AutoComplete="new-password" />
-						<FluentValidationMessage For="@(() => UC.SharedColumnForm.SharedKeyDbName)" />
-					</FluentGridItem>
-				</FluentGrid>
-				<FluentDivider Style="margin:15px 0" />
-				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentInputLabel Label="@LOC("Global search")" />
-						<FluentSwitch @bind-Value=UC.SharedColumnForm.IncludeInTableSearch>@LOC("included")</FluentSwitch>
-						<FluentValidationMessage For="@(() => UC.SharedColumnForm.IncludeInTableSearch)" />
-					</FluentGridItem>
-					<FluentGridItem xs="6">
-						@if (UC.SharedColumnForm.AddonId is null)
-						{
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("user created")
-											 Label="@LOC("Addon Id")" Style="width:100%"
-											 Disabled="true" AutoComplete="new-password" />
-						}
-						else
-						{
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value=UC.SharedColumnForm.AddonId?.ToString()
-											 Label="@LOC("Addon Id")" Style="width:100%"
-											 Disabled="true" AutoComplete="new-password" />
-						}
-						<FluentValidationMessage For="@(() => UC.SharedColumnForm.AddonId)" />
-					</FluentGridItem>
-				</FluentGrid>
-			</FluentEditForm>
-		}
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.DbName
+									 Label="@LOC("name")" Style="width:100%"
+									 Disabled="!_isCreate" AutoComplete="new-password">
+						<span slot="start" style="margin-right:-7px;">sk_</span>
+					</FluentTextField>
+					<FluentValidationMessage For="@(() => _form.DbName)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentSelect @bind-SelectedOption="_form.DbType"
+								  TOption="TucDatabaseColumnTypeInfo"
+								  Items="@TfAppState.Value.AdminSharedColumnDataTypes" Style="width:100%"
+								  OptionText="@(p => p.Name)" Label="@LOC("data type")" Disabled="!_isCreate"></FluentSelect>
+					<FluentValidationMessage For="@(() => _form.DbType)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.SharedKeyDbName
+									 Label="@LOC("Target shared key")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => _form.SharedKeyDbName)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentDivider Style="margin:15px 0" />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Global search")" />
+					<FluentSwitch @bind-Value=_form.IncludeInTableSearch>@LOC("included")</FluentSwitch>
+					<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					@if (_form.AddonId is null)
+					{
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("user created")
+										 Label="@LOC("Addon Id")" Style="width:100%"
+										 Disabled="true" AutoComplete="new-password" />
+					}
+					else
+					{
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=_form.AddonId?.ToString()
+										 Label="@LOC("Addon Id")" Style="width:100%"
+										 Disabled="true" AutoComplete="new-password" />
+					}
+					<FluentValidationMessage For="@(() => _form.AddonId)" />
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
 	</div>
 </FluentDialogBody>

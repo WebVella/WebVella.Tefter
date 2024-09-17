@@ -1,51 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminSharedColumns.TfAdminSharedColumns","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminSharedColumns.TfAdminSharedColumns", "WebVella.Tefter")]
 public partial class TfAdminSharedColumns : TfBaseComponent
 {
-	[Inject] private SharedColumnsAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await UC.LoadSharedColumnList();
-			UC.IsBusy = false;
-			UC.IsListBusy = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	private void On_SharedColumnAdminChanged(TucSharedColumn column, Guid columnId)
-	{
-		var columnIndex = UC.SharedColumns.FindIndex(x => x.Id == columnId);
-		//Create
-		if (column is not null && columnIndex == -1)
-		{
-			UC.SharedColumns.Add(column);
-			UC.SharedColumns = UC.SharedColumns.OrderBy(x => x.DbName).ToList();
-		}
-		//Edit
-		else if (column is not null && columnIndex > -1)
-		{
-			UC.SharedColumns[columnIndex] = column;
-		}
-		//Delete
-		else
-		{
-			UC.SharedColumns.RemoveAt(columnIndex);
-		}
-
-		StateHasChanged();
-	}
-
+	private string _search = null;
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSharedColumnManageDialog>(
@@ -59,9 +18,9 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TucSharedColumn)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully created!"));
-			On_SharedColumnAdminChanged(record, record.Id);
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminSharedColumns = (List<TucSharedColumn>)result.Data }));
 		}
 	}
 
@@ -78,9 +37,9 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (TucSharedColumn)result.Data;
 			ToastService.ShowSuccess(LOC("Column successfully updated!"));
-			On_SharedColumnAdminChanged(record, record.Id);
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminSharedColumns = (List<TucSharedColumn>)result.Data }));
 		}
 	}
 
@@ -90,12 +49,13 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 			return;
 		try
 		{
-			Result<TucDataProvider> result = UC.DeleteSharedColumn(column.Id);
+			Result<List<TucSharedColumn>> result = UC.DeleteSharedColumn(column.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-				On_SharedColumnAdminChanged(null, column.Id);
+				Dispatcher.Dispatch(new SetAppStateAction(component: this,
+					state: TfAppState.Value with { AdminSharedColumns = (List<TucSharedColumn>)result.Value }));
 			}
 		}
 		catch (Exception ex)
@@ -107,14 +67,27 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 
 	private async Task _searchValueChanged(string search)
 	{
-		search = search?.Trim();
-		if (String.IsNullOrWhiteSpace(search)) search = null;
-
-		await Navigator.SetParamToUrlQuery(TfConstants.WvSearchQuery, search);
-		UC.Search = search;
-		UC.IsListBusy = true;
-		await UC.LoadSharedColumnList();
-		UC.IsListBusy = false;
+		_search = search?.Trim();
 		await InvokeAsync(StateHasChanged);
+	}
+
+	private List<TucSharedColumn> _getColumns()
+	{
+		string searchProcessed = null;
+		if (!String.IsNullOrWhiteSpace(_search))
+			searchProcessed = _search.Trim().ToLowerInvariant();
+
+		if (!String.IsNullOrWhiteSpace(searchProcessed))
+		{
+			return TfAppState.Value.AdminSharedColumns.Where(x=> 
+				x.DbName.ToLowerInvariant().Contains(searchProcessed)
+				|| x.SharedKeyDbName.ToLowerInvariant().Contains(searchProcessed)
+			).ToList();
+		}
+		else
+		{
+			return TfAppState.Value.AdminSharedColumns;
+		}
+
 	}
 }
