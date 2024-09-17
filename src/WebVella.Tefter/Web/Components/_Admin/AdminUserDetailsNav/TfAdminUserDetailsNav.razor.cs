@@ -1,36 +1,36 @@
 ﻿
 namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserDetailsNav.TfAdminUserDetailsNav","WebVella.Tefter")]
 public partial class TfAdminUserDetailsNav : TfBaseComponent
 {
-	[Inject] private UserAdminUseCase UC { get; set; }
+	[Inject] private IState<TfRouteState> TfRouteState { get; set; }
 
-	protected override ValueTask DisposeAsyncCore(bool disposing)
+	internal List<MenuItem> _getMenu()
 	{
-		if (disposing)
+		var menu = new List<MenuItem>();
+		menu.Clear();
+		menu.Add(new MenuItem
 		{
-			Navigator.LocationChanged -= Navigator_LocationChanged;
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
+			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, TfRouteState.Value.UserId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.PersonInfo(),
+			Title = LOC("Details")
+		});
+		menu.Add(new MenuItem
+		{
+			Url = String.Format(TfConstants.AdminUserAccessPageUrl, TfRouteState.Value.UserId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.Key(),
+			Title = LOC("Access")
+		});
+		menu.Add(new MenuItem
+		{
+			Url = String.Format(TfConstants.AdminUserSavesViewsPageUrl, TfRouteState.Value.UserId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.Save(),
+			Title = LOC("Saved Views")
+		});
 
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		//ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_GetUserDetailsActionResult);
-		Navigator.LocationChanged += Navigator_LocationChanged;
-	}
-
-	//private async void On_GetUserDetailsActionResult(UserAdminChangedAction action)
-	//{
-	//	UC.InitDetailsNavMenu();
-	//	StateHasChanged();
-	//}
-
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
-	{
-		UC.InitDetailsNavMenu();
-		StateHasChanged();
+		return menu;
 	}
 }

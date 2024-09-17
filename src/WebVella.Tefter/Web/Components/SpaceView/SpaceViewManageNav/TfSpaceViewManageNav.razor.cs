@@ -3,6 +3,7 @@
 public partial class TfSpaceViewManageNav : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
 	private List<MenuItem> menu = new();
 
@@ -33,7 +34,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.SpaceViewManagePageUrl, TfState.Value.RouteSpaceId, TfState.Value.RouteSpaceViewId),
+			Url = String.Format(TfConstants.SpaceViewManagePageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceViewId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Title = LOC("View Management")

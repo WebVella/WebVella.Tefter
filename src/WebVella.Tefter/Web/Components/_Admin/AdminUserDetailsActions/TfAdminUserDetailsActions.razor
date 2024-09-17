@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (UC.ActionsMenu == "details")
+@if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Details)
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_editUser">
 		@LOC("Edit")

@@ -2,7 +2,6 @@
 
 public record SetSpaceStateAction : TfBaseAction
 {
-	public bool IsBusy { get; }
 	public TucSpace Space { get; }
 	public TucSpaceView SpaceView { get; }
 	public List<TucSpaceView> SpaceViewList { get; }
@@ -14,7 +13,6 @@ public record SetSpaceStateAction : TfBaseAction
 
 	internal SetSpaceStateAction(
 		TfBaseComponent component,
-		bool isBusy,
 		TucSpace space,
 		TucSpaceView spaceView,
 		List<TucSpaceView> spaceViewList,
@@ -26,7 +24,6 @@ public record SetSpaceStateAction : TfBaseAction
 		)
 	{
 		Component = component;
-		IsBusy = isBusy;
 		Space = space;
 		SpaceView = spaceView;
 		SpaceViewList = spaceViewList;

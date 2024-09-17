@@ -1,33 +1,59 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserNavigation.TfAdminUserNavigation","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserNavigation.TfAdminUserNavigation", "WebVella.Tefter")]
 public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 {
-	[Inject] private UserAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	private bool _endIsReached = false;
+	private bool _isLoading = false;
+	private string _search = null;
+	private int _stringLimit = 30;
+	private int _pageSize = TfConstants.PageSize;
+
+	protected override void OnInitialized()
 	{
-		if (disposing)
+		base.OnInitialized();
+		if (TfAppState.Value.AdminUsers.Count < _pageSize)
+			_endIsReached = true;
+	}
+	private async Task loadMoreClick(bool resetList = false)
+	{
+		var page = TfAppState.Value.AdminUsersPage + 1;
+		if (resetList)
 		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
+			page = 1;
+			_endIsReached = false;
 		}
-		await base.DisposeAsyncCore(disposing);
-	}
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		//ActionSubscriber.SubscribeToAction<UserAdminChangedAction>(this, On_UserDetailsChangedAction);
-	}
-
-	private async Task loadMoreClick()
-	{
-		UC.LoadMoreLoading = true;
+		_isLoading = true;
 		await InvokeAsync(StateHasChanged);
-		UC.MenuPage++;
-		await UC.InitMenuAsync();
-		UC.LoadMoreLoading = false;
+
+		var users = await UC.GetUsersAsync(
+			search: _search,
+			page: page,
+			pageSize: _pageSize
+		);
+		var aggrUsers = TfAppState.Value.AdminUsers;
+
+		if (!resetList)
+		{
+			aggrUsers.AddRange(users);
+		}
+		else
+		{
+			aggrUsers = users;
+		}
+
+
+		Dispatcher.Dispatch(new SetAdminUsersStateAction(
+			component: this,
+			adminUsers: aggrUsers,
+			adminUsersPage: page
+		));
+
+		_isLoading = false;
+		if (users.Count < _pageSize) _endIsReached = true;
 		await InvokeAsync(StateHasChanged);
 	}
 
@@ -50,30 +76,10 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private void OnTreeMenuClick(TucMenuItem item)
-	{
-		if (item.Data is null) return;
-		item.Active = true;
-		Navigator.NavigateTo(item.Url);
-	}
-
 	private async Task onSearch(string search)
 	{
-		if (search == UC.MenuSearch) return;
-
-		UC.MenuLoading = true;
-		await InvokeAsync(StateHasChanged);
-
-		UC.MenuSearch = search;
-		await UC.NavigationOnSearchChanged();
-
-		UC.MenuLoading = false;
-		await InvokeAsync(StateHasChanged);
+		_search = search;
+		await loadMoreClick(true);
 	}
 
-	//private void On_UserDetailsChangedAction(UserAdminChangedAction action)
-	//{
-	//	UC.NavigationOnStateChanged(action.User);
-	//	StateHasChanged();
-	//}
 }

@@ -28,7 +28,7 @@ else if (TfAppState.Value.SpaceViewList.Count == 0)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfAppState.Value.RouteSpaceViewId is null)
+else if (TfRouteState.Value.SpaceViewId is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -42,7 +42,7 @@ else if (TfAppState.Value.RouteSpaceViewId is null)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfAppState.Value.SpaceView is null && TfAppState.Value.RouteSpaceViewId is not null)
+else if (TfAppState.Value.SpaceView is null && TfRouteState.Value.SpaceViewId is not null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">

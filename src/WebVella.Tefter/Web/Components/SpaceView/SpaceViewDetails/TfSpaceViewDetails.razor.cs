@@ -2,6 +2,7 @@
 public partial class TfSpaceViewDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private SpaceUseCase UC { get; set; }

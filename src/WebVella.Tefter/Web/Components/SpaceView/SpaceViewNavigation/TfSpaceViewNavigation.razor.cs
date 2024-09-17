@@ -3,6 +3,7 @@
 public partial class TfSpaceViewNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private bool _menuLoading = false;
@@ -85,7 +86,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	private async Task onAddClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
-		new TucSpaceView() with { SpaceId = TfAppState.Value.RouteSpaceId.Value },
+		new TucSpaceView() with { SpaceId = TfRouteState.Value.SpaceId.Value },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

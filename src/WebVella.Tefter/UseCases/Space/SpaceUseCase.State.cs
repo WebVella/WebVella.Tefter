@@ -103,7 +103,6 @@ public partial class SpaceUseCase
 
 				_dispatcher.Dispatch(new SetSpaceStateAction(
 						component:null,
-						isBusy: false,
 						space: space,
 						spaceView: spaceView,
 						spaceViewList: spaceViewList,
@@ -121,7 +120,6 @@ public partial class SpaceUseCase
 		{
 			_dispatcher.Dispatch(new SetSpaceStateAction(
 						component:null,
-						isBusy: false,
 						space: null,
 						spaceView: null,
 						spaceViewList: new(),

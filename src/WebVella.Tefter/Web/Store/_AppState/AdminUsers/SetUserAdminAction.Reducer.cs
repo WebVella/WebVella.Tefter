@@ -4,5 +4,5 @@ public static partial class UserAdminStateReducers
 {
 	[ReducerMethod()]
 	public static TfAppState SetUserAdminActionReducer(TfAppState state, SetUserAdminAction action) 
-		=> state with {ManagedUser = action.ManagedUser};
+		=> state with {AdminManagedUser = action.ManagedUser};
 }

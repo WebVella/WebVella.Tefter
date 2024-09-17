@@ -9,42 +9,100 @@ internal partial class AppStateUseCase
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfSpaceManager _spaceManager;
 	private readonly NavigationManager _navigationManager;
+	private readonly IToastService _toastService;
+	private readonly IMessageService _messageService;
+	private readonly IStringLocalizer<AppStateUseCase> LOC;
+
 
 	public AppStateUseCase(
 		AuthenticationStateProvider authenticationStateProvider,
 		IJSRuntime jsRuntime,
 		IIdentityManager identityManager,
 		ITfSpaceManager spaceManager,
-		NavigationManager navigationManager)
+		NavigationManager navigationManager,
+		IToastService toastService,
+		IMessageService messageService,
+		IStringLocalizer<AppStateUseCase> loc
+		)
 	{
 		_authenticationStateProvider = authenticationStateProvider;
 		_jsRuntime = jsRuntime;
 		_identityManager = identityManager;
 		_spaceManager = spaceManager;
 		_navigationManager = navigationManager;
+		_toastService = toastService;
+		_messageService = messageService;
+		LOC = loc;
 	}
 
 	internal bool IsBusy { get; set; } = true;
 
-	internal async Task<TfAppState> InitState(TucUser user, string url)
+	internal async Task<TfAppState> InitState(TucUser currentUser, string url)
 	{
 		var result = new TfAppState();
 		var routeState = _navigationManager.GetRouteState(url);
 
-		if (routeState.FirstNode == RouteDataFirstNode.Home
-		|| routeState.FirstNode == RouteDataFirstNode.FastAccess
-		|| routeState.FirstNode == RouteDataFirstNode.Space)
+		#region << Admin users >>
 		{
-			result = result with { CurrentUserSpaces = await GetUserSpaces(user) };
+			if (routeState.FirstNode == RouteDataFirstNode.Admin
+			&& routeState.SecondNode == RouteDataSecondNode.Users)
+			{
+				if (result.AdminUsers.Count == 0) //Fill in only if not already loaded
+					result = result with { AdminUsers = await GetUsersAsync(null, 1, TfConstants.PageSize), AdminUsersPage = 2 };
+
+				if (routeState.UserId.HasValue)
+				{
+					var adminUser = await GetUser(routeState.UserId.Value);
+					result = result with { AdminManagedUser = adminUser };
+					if (adminUser is not null)
+					{
+						result = result with { AdminManagedUser = adminUser };
+						if (!result.AdminUsers.Any(x => x.Id == adminUser.Id))
+						{
+							var users = result.AdminUsers.ToList();
+							users.Add(adminUser);
+							result = result with { AdminUsers = users };
+						}
+
+						var roles = await GetUserRoles();
+						result = result with { UserRoles = roles ?? new List<TucRole>() };
+
+						//check for the other tabs
+						if (routeState.ThirdNode == RouteDataThirdNode.Access)
+						{
+						}
+						else if (routeState.ThirdNode == RouteDataThirdNode.Saves)
+						{
+						}
+					}
+				}
+			}
+			else
+			{
+				result = result with { AdminUsers = new(), AdminUsersPage = 1 };
+			}
 		}
-		else
+		#endregion
+
+
+		#region << User spaces >>
 		{
-			result = result with { CurrentUserSpaces = new() };
+			if (routeState.FirstNode == RouteDataFirstNode.Home
+			|| routeState.FirstNode == RouteDataFirstNode.FastAccess
+			|| routeState.FirstNode == RouteDataFirstNode.Space)
+			{
+				if (result.CurrentUserSpaces.Count == 0) //Fill in only if not already loaded
+					result = result with { CurrentUserSpaces = await GetUserSpaces(currentUser) };
+			}
+			else
+			{
+				result = result with { CurrentUserSpaces = new() };
+			}
 		}
+		#endregion
 
 		return result;
 	}
-
 	internal Task<List<TucSpace>> GetUserSpaces(TucUser user)
 	{
 

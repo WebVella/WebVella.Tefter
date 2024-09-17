@@ -13,15 +13,11 @@ public static partial class SpaceStateReducers
 	public static TfAppState SetSpaceReducer(TfAppState state, SetSpaceStateAction action)
 		=> state with
 		{
-			IsBusy = action.IsBusy,
 			Space = action.Space,
 			SpaceView = action.SpaceView,
 			SpaceViewList = action.SpaceViewList,
 			SpaceData = action.SpaceData,
 			SpaceDataList = action.SpaceDataList,
-			RouteSpaceId = action.RouteSpaceId,
-			RouteSpaceViewId = action.RouteSpaceViewId,
-			RouteSpaceDataId = action.RouteSpaceDataId,
-			
+		
 		};
 }

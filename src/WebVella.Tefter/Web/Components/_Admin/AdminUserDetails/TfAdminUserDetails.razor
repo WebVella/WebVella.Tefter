@@ -1,94 +1,98 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@{
+@if (TfAppState.Value?.AdminManagedUser is not null)
+{
 	CultureInfo cultureInfo = null;
 
-	if (!String.IsNullOrWhiteSpace(TfState.Value?.ManagedUser?.Settings?.CultureName))
+	if (!String.IsNullOrWhiteSpace(TfAppState.Value?.AdminManagedUser?.Settings?.CultureName))
 	{
-		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == TfState.Value?.ManagedUser?.Settings?.CultureName)?.CultureInfo;
+		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == TfAppState.Value?.AdminManagedUser?.Settings?.CultureName)?.CultureInfo;
 	}
 	if (cultureInfo is null)
 	{
 		cultureInfo = TfConstants.CultureOptions[0].CultureInfo;
 
 	}
+	<TfCard>
+		<FluentGrid>
+			<FluentGridItem xs="1">
+				<FluentInputLabel>@LOC("Status")</FluentInputLabel>
+				@if (TfAppState.Value?.AdminManagedUser?.Enabled ?? false)
+				{
+					<FluentBadge Appearance="Appearance.Accent">ON</FluentBadge>
+				}
+				else
+				{
+					<FluentBadge Appearance="Appearance.Neutral">OFF</FluentBadge>
+				}
+			</FluentGridItem>
+			<FluentGridItem xs="5">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.Email"
+								 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
+			</FluentGridItem>
+			<FluentGridItem xs="3">
+				<FluentDatePicker Value="@TfAppState.Value?.AdminManagedUser?.CreatedOn"
+								  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
+			</FluentGridItem>
+			<FluentGridItem xs="3">
+				<FluentTimePicker Value="@TfAppState.Value?.AdminManagedUser?.CreatedOn"
+								  ReadOnly="true" Label="&nbsp;" Style="width:100%" />
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.FirstName"
+								 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.LastName"
+								 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.Settings?.ThemeMode.ToString()"
+								 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor.ToString()"
+								 ReadOnly="true" Label="@LOC("Theme Color")" Style="width:100%">
+					<FluentIcon Value="@TfConstants.RectangleIcon"
+								Color="Color.Custom" Slot="start"
+								CustomColor="@(TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor.ToAttributeValue() != "default" ? TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
+				</FluentTextField>
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@cultureInfo.Name"
+								 ReadOnly="true" Label="@LOC("Localization")" Style="width:100%" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="12">
+				<FluentInputLabel Label="@LOC("Roles")" />
+				@if (TfAppState.Value?.AdminManagedUser?.Roles is null || !TfAppState.Value.AdminManagedUser.Roles.Any())
+				{
+					<div>@LOC("No roles assigned")</div>
+				}
+				else
+				{
+					<FluentStack Orientation="@Orientation.Horizontal">
+						@foreach (var role in (TfAppState.Value?.AdminManagedUser?.Roles?.ToList() ?? new List<TucRole>()))
+						{
+							<FluentBadge Appearance="Appearance.Accent">@role.Name</FluentBadge>
+						}
+					</FluentStack>
+				}
+			</FluentGridItem>
+		</FluentGrid>
+	</TfCard>
 }
-<TfCard>
-	<FluentGrid>
-		<FluentGridItem xs="1">
-			<FluentInputLabel>@LOC("Status")</FluentInputLabel>
-			@if (TfState.Value?.ManagedUser?.Enabled ?? false)
-			{
-				<FluentBadge Appearance="Appearance.Accent">ON</FluentBadge>
-			}
-			else
-			{
-				<FluentBadge Appearance="Appearance.Neutral">OFF</FluentBadge>
-			}
-		</FluentGridItem>
-		<FluentGridItem xs="5">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.Email"
-							 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
-		</FluentGridItem>
-		<FluentGridItem xs="3">
-			<FluentDatePicker Value="@TfState.Value?.ManagedUser?.CreatedOn"
-							  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
-		</FluentGridItem>
-		<FluentGridItem xs="3">
-			<FluentTimePicker Value="@TfState.Value?.ManagedUser?.CreatedOn"
-							  ReadOnly="true" Label="&nbsp;" Style="width:100%" />
-		</FluentGridItem>
-	</FluentGrid>
-	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.FirstName"
-							 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
-		</FluentGridItem>
-		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.LastName"
-							 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
-		</FluentGridItem>
-	</FluentGrid>
-	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.Settings?.ThemeMode.ToString()"
-							 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
-		</FluentGridItem>
-		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfState.Value?.ManagedUser?.Settings?.ThemeColor.ToString()"
-							 ReadOnly="true" Label="@LOC("Theme Color")" Style="width:100%">
-				<FluentIcon Value="@TfConstants.RectangleIcon"
-							Color="Color.Custom" Slot="start"
-							CustomColor="@(TfState.Value?.ManagedUser?.Settings?.ThemeColor.ToAttributeValue() != "default" ? TfState.Value?.ManagedUser?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
-			</FluentTextField>
-		</FluentGridItem>
-	</FluentGrid>
-	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@cultureInfo.Name"
-							 ReadOnly="true" Label="@LOC("Localization")" Style="width:100%" />
-		</FluentGridItem>
-		<FluentGridItem xs="6">
-		</FluentGridItem>
-	</FluentGrid>
-	<FluentGrid>
-		<FluentGridItem xs="12">
-			<FluentInputLabel Label="@LOC("Roles")" />
-			@if (TfState.Value?.ManagedUser?.Roles is null || !TfState.Value.ManagedUser.Roles.Any())
-			{
-				<div>@LOC("No roles assigned")</div>
-			}
-			else
-			{
-				<FluentStack Orientation="@Orientation.Horizontal">
-					@foreach (var role in (TfState.Value?.ManagedUser?.Roles?.ToList() ?? new List<TucRole>()))
-					{
-						<FluentBadge Appearance="Appearance.Accent">@role.Name</FluentBadge>
-					}
-				</FluentStack>
-			}
-		</FluentGridItem>
-	</FluentGrid>
-</TfCard>
-
+else
+{
+	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("User not found")</FluentMessageBar>
+}
 

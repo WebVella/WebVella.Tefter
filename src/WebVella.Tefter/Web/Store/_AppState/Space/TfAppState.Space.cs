@@ -1,12 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Store;
 using SystemColor = System.Drawing.Color;
-
 public partial record TfAppState
 {
-	public bool IsBusy { get; init; } = true;
-	public Guid? RouteSpaceId { get; init; }
-	public Guid? RouteSpaceDataId { get; init; }
-	public Guid? RouteSpaceViewId { get; init; }
 	public TucSpace Space { get; init; }
 	public OfficeColor SpaceColor
 	{
@@ -21,7 +16,7 @@ public partial record TfAppState
 	{
 		get
 		{
-			if (RouteSpaceId is null || Space is null) return TfConstants.DefaultThemeColor.ToAttributeValue();
+			if (Space is null) return TfConstants.DefaultThemeColor.ToAttributeValue();
 
 			return Space.Color.ToAttributeValue();
 		}
@@ -44,7 +39,6 @@ public partial record TfAppState
 
 	//Navigation
 	public List<TucSpace> CurrentUserSpaces { get; init; } = new();
-
 	public List<MenuItem> SpacesNav
 	{
 		get
@@ -64,41 +58,6 @@ public partial record TfAppState
 				});
 			}
 			return result;
-		}
-	}
-
-	//Space Data
-	public List<TucSpaceData> SpaceDataList { get; init; } = new();
-	public TucSpaceData SpaceData { get; init; }
-
-	//Space view
-	public List<TucSpaceView> SpaceViewList { get; init; } = new();
-	public TucSpaceView SpaceView { get; init; }
-	public TfDataTable SpaceViewData { get; init; }
-	public List<TucSpaceViewColumn> SpaceViewColumns { get; init; } = new();
-	public int Page { get; init; } = 1;
-	public int PageSize { get; init; } = TfConstants.PageSize;
-	public string SearchQuery { get; init; }
-	public List<TucFilterBase> Filters { get; init; }
-	public List<TucSort> Sorts { get; init; }
-	public List<Guid> SelectedDataRows { get; init; } = new();
-	public bool AllDataRowsSelected
-	{
-		get
-		{
-			if (SpaceViewData is null || SpaceViewData.Rows.Count == 0) return false;
-			var allSelected = true;
-			for (int i = 0; i < SpaceViewData.Rows.Count; i++)
-			{
-				var rowId = (Guid)SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-				if (!SelectedDataRows.Contains(rowId))
-				{
-					allSelected = false;
-					break;
-				}
-			}
-
-			return allSelected;
 		}
 	}
 }

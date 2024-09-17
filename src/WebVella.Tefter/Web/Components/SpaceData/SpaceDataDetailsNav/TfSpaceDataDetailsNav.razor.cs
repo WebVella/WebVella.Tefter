@@ -3,6 +3,7 @@
 public partial class TfSpaceDataDetailsNav : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfState { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
 	private List<MenuItem> menu = new();
 	private List<TucSpaceView> viewList = new();
@@ -34,14 +35,14 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataPageUrl, TfState.Value.RouteSpaceId, TfState.Value.RouteSpaceDataId),
+			Url = String.Format(TfConstants.SpaceDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Title = LOC("Details")
 		});
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataPageUrl, TfState.Value.RouteSpaceId, TfState.Value.RouteSpaceDataId) + "\\views",
+			Url = String.Format(TfConstants.SpaceDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId) + "\\views",
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Title = LOC("Used in Views")

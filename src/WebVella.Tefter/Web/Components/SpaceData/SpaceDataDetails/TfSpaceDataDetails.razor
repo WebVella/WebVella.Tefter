@@ -1,7 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfAppState.Value.IsBusy) { }
-else if (TfAppState.Value.Space is null)
+@if (TfAppState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -29,7 +28,7 @@ else if (TfAppState.Value.SpaceDataList.Count == 0)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfAppState.Value.RouteSpaceDataId is null)
+else if (TfRouteState.Value.SpaceDataId is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -43,7 +42,7 @@ else if (TfAppState.Value.RouteSpaceDataId is null)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfAppState.Value.SpaceData is null && TfAppState.Value.RouteSpaceDataId is not null)
+else if (TfAppState.Value.SpaceData is null && TfRouteState.Value.SpaceDataId is not null)
 {
 
 	<FluentBodyContent Class="content-body">

@@ -41,8 +41,8 @@ else
 							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceView.Name
 											 Style="flex:1 1 auto" ReadOnly="true" />
 							<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
-								Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfAppState.Value.RouteSpaceId,TfAppState.Value.SpaceView.Id))" 
-								IconStart="@TfConstants.ViewIcon"/>
+										  Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfRouteState.Value.SpaceId,TfAppState.Value.SpaceView.Id))"
+										  IconStart="@TfConstants.ViewIcon"/>
 						</FluentStack>
 
 
@@ -62,8 +62,8 @@ else
 								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.ViewData.Name
 												 ReadOnly="true" Style="flex:1 1 auto" />
 								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
-											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfAppState.Value.RouteSpaceId,TfAppState.Value.SpaceView.SpaceDataId))" 
-									IconStart="@TfConstants.ViewIcon" Target="_blank"/>
+											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfRouteState.Value.SpaceId,TfAppState.Value.SpaceView.SpaceDataId))"
+											  IconStart="@TfConstants.ViewIcon" Target="_blank"/>
 							</FluentStack>
 						}
 						else

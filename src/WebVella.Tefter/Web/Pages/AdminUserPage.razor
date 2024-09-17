@@ -4,8 +4,6 @@
 @layout AdminLayout
 @inherits TfBasePage
 
-<TfAdminUserStateManager/>
-
 @if (TfUserState.Value.SidebarExpanded)
 {
 	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">

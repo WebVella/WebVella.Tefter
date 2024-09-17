@@ -9,6 +9,17 @@ public record TucUser
 	public string FirstName { get; init; }
 	public string LastName { get; init; }
 	public string Password { get; init; }
+	public string Title
+	{
+		get
+		{
+			var sb = new List<string>();
+			if(!String.IsNullOrWhiteSpace(FirstName)) sb.Add(FirstName);
+			if(!String.IsNullOrWhiteSpace(LastName)) sb.Add(LastName);
+
+			return String.Join(" ",sb);
+		}
+	}
 	[Required]
 
 	public bool Enabled { get; init; }
