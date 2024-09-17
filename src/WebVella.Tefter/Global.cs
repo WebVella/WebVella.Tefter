@@ -30,7 +30,6 @@ global using WebVella.Tefter.Models;
 
 /// Use cases
 global using WebVella.Tefter.UseCases.AppStart;
-global using WebVella.Tefter.UseCases.SharedColumnsAdmin;
 global using WebVella.Tefter.UseCases.Login;
 global using WebVella.Tefter.UseCases.Models;
 global using WebVella.Tefter.UseCases.Space;
