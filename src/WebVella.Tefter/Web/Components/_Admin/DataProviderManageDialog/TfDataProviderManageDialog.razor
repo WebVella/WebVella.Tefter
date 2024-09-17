@@ -31,24 +31,24 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text"
-									 @bind-Value=UC.ProviderForm.Name AutoComplete="new-password"
+									 @bind-Value=_form.Name AutoComplete="new-password"
 									 Label="@LOC("Name")" Style="width:100%" />
-					<FluentValidationMessage For="@(() => UC.ProviderForm.Name)" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentSelect Required="true"
-								  @bind-SelectedOption="@UC.ProviderForm.ProviderType" TOption="TucDataProviderTypeInfo"
-								  Items="@UC.AllProviderTypes" Style="width:100%" Disabled="!_isCreate"
+								  @bind-SelectedOption="@_form.ProviderType" TOption="TucDataProviderTypeInfo"
+								  Items="@TfAppState.Value.DataProviderTypes" Style="width:100%" Disabled="!_isCreate"
 								  OptionText="@(p => p.Name.ToString())" Label="@LOC("Type")"></FluentSelect>
-					<FluentValidationMessage For="@(() => UC.ProviderForm.ProviderType)" />
+					<FluentValidationMessage For="@(() => _form.ProviderType)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:15px 0" />
 			<div>
-				@if (UC.ProviderForm?.ProviderType?.SettingsComponentType is null) { }
-				else if (UC.ProviderForm?.ProviderType?.SettingsComponentType?.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+				@if (_form?.ProviderType?.SettingsComponentType is null) { }
+				else if (_form?.ProviderType?.SettingsComponentType?.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 				{
-					<DynamicComponent Type="UC.ProviderForm.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
+					<DynamicComponent Type="_form.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
 									  @ref="typeSettingsComponent"></DynamicComponent>
 				}
 				else
@@ -57,7 +57,7 @@
 						<div>@LOC("Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
 					</FluentMessageBar>
 				}
-				<FluentValidationMessage For="@(() => UC.ProviderForm.SettingsJson)" />
+				<FluentValidationMessage For="@(() => _form.SettingsJson)" />
 			</div>
 		</FluentEditForm>
 	}

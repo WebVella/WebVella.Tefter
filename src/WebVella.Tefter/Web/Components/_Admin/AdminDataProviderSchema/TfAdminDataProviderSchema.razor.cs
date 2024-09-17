@@ -2,28 +2,8 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderSchema.TfAdminDataProviderSchema", "WebVella.Tefter")]
 public partial class TfAdminDataProviderSchema : TfBaseComponent
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		//ActionSubscriber.SubscribeToAction<DataProviderAdminChangedAction>(this, On_GetDataProviderDetailsActionResult);
-
-	}
-	//private void On_GetDataProviderDetailsActionResult(DataProviderAdminChangedAction action)
-	//{
-	//	StateHasChanged();
-	//}
 
 	private async Task _editColumn(TucDataProviderColumn column)
 	{

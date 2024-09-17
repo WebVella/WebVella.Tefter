@@ -20,7 +20,7 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 			Url = String.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
-			Title = LOC("Columns in source")
+			Title = LOC("Columns")
 		});
 		menu.Add(new MenuItem
 		{

@@ -75,7 +75,7 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = await UC.DeleteDataProvider(TfAppState.Value.AdminManagedDataProvider.Id);
+			var result = await UC.DeleteDataProviderAsync(TfAppState.Value.AdminManagedDataProvider.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{

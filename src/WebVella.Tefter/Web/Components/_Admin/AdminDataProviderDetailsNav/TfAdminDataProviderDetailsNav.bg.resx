@@ -120,8 +120,8 @@
   <data name="Access" xml:space="preserve">
     <value>Достъп</value>
   </data>
-  <data name="Columns in source" xml:space="preserve">
-    <value>Колони от източника</value>
+  <data name="Columns" xml:space="preserve">
+    <value>Колони</value>
   </data>
   <data name="Data" xml:space="preserve">
     <value>Данни</value>

@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderColumnManageDialog.TfDataProviderColumnManageDialog","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderColumnManageDialog.TfDataProviderColumnManageDialog", "WebVella.Tefter")]
 public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderColumn>
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
 	[Parameter] public TucDataProviderColumn Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
@@ -14,17 +14,16 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-
+	private TucDataProviderColumnForm _form = new();
 	private TucDataProviderTypeDataTypeInfo _selectedProviderType = new();
 	private List<TucDataProviderTypeDataTypeInfo> _providerTypeOptions = new();
+	private List<TucDataProviderColumnSearchTypeInfo> _searchTypes = new();
 
 	private TucDatabaseColumnTypeInfo _selectedDbType = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-
 		if (Content is null) throw new Exception("Content is null");
 		if (TfAppState.Value.AdminManagedDataProvider is null) throw new Exception("DataProvider not provided");
 		if (TfAppState.Value.AdminManagedDataProvider.ProviderType.SupportedSourceDataTypes is null
@@ -37,8 +36,11 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		_title = _isCreate ? LOC("Create column") : LOC("Manage column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
-
-		base.InitForm(UC.ColumnForm);
+		foreach (TfDataProviderColumnSearchType item in Enum.GetValues<TfDataProviderColumnSearchType>())
+		{
+			_searchTypes.Add(new TucDataProviderColumnSearchTypeInfo(item));
+		}
+		base.InitForm(_form);
 
 	}
 
@@ -72,23 +74,23 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 						_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[0];
 				}
 
-				UC.ColumnForm = new TucDataProviderColumnForm
+				_form = new TucDataProviderColumnForm
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = TfAppState.Value.AdminManagedDataProvider.Id,
 					CreatedOn = DateTime.Now,
-					PreferredSearchType = UC.SearchTypes.First()
+					PreferredSearchType = _searchTypes.First()
 				};
 			}
 			else
 			{
-				UC.ColumnForm = new TucDataProviderColumnForm(Content);
+				_form = new TucDataProviderColumnForm(Content);
 				//DbType is readonly so only provider types that support it can be selected
-				_selectedDbType = UC.ColumnForm.DbType;
-				_selectedProviderType = _providerTypeOptions.FirstOrDefault(x => x.Name == UC.ColumnForm.SourceType);
+				_selectedDbType = _form.DbType;
+				_selectedProviderType = _providerTypeOptions.FirstOrDefault(x => x.Name == _form.SourceType);
 				_providerTypeOptions = _providerTypeOptions.Where(x => x.SupportedDatabaseColumnTypes.Contains(_selectedDbType)).ToList();
 			}
-			base.InitForm(UC.ColumnForm);
+			base.InitForm(_form);
 		}
 		catch (Exception ex)
 		{
@@ -113,16 +115,16 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			if (!UC.ColumnForm.IsNullable && String.IsNullOrWhiteSpace(UC.ColumnForm.DefaultValue))
+			if (!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
 			{
-				UC.ColumnForm.DefaultValue = String.Empty;
+				_form.DefaultValue = String.Empty;
 			}
-			else if (UC.ColumnForm.IsNullable && String.IsNullOrWhiteSpace(UC.ColumnForm.DefaultValue))
+			else if (_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
 			{
-				UC.ColumnForm.DefaultValue = null;
+				_form.DefaultValue = null;
 			}
 
-			var submit = UC.ColumnForm with
+			var submit = _form with
 			{
 				SourceType = _selectedProviderType.Name,
 				DbType = _selectedDbType
