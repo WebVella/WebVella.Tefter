@@ -14,37 +14,68 @@
 @* Body *@
 <FluentDialogBody>
 	<div>
-		@if (UC.IsBusy)
+		@if (_isBusy)
 		{
 			<TfLoadingPane />
 		}
 		else
 		{
-			<FluentDataGrid Items="@UC.TaskSyncLogRecords"
-							Pagination="_pagination"
-							TGridItem="TucDataProviderSyncTaskInfo">
-				<PropertyColumn Property="@(p => p.CreatedOn)" Title="created on" Format="yyyy-MM-dd HH:mm" Width="140px" />
-				<PropertyColumn Property="@(p => p.TfId)" Title="id" Width="300px" />
-				<PropertyColumn Property="@(p => p.TfRowIndex)" Title="row" Width="80px" />
-				@if (Content.Type == TucDataProviderSyncTaskInfoType.Info)
-				{
-					<PropertyColumn Property="@(p => p.Info)" Title="info" />
-				}
-				else if (Content.Type == TucDataProviderSyncTaskInfoType.Warning)
-				{
-					<PropertyColumn Property="@(p => p.Warning)" Title="warning" />
-				}
-				else
-				{
-					<PropertyColumn Property="@(p => p.Error)" Title="error" />
-				}
-			</FluentDataGrid>
-			<FluentPaginator State="@_pagination">
-				<SummaryTemplate>
-					@LOC("{0} rows", _pagination.TotalItemCount ?? 0)
-				</SummaryTemplate>
-				<PaginationTextTemplate>@(_pagination.CurrentPageIndex + 1) / @(_pagination.LastPageIndex + 1)</PaginationTextTemplate>
-			</FluentPaginator>
+			<div class="tf-grid-wrapper">
+				<table class="tf-grid">
+					<thead class="tf-grid-thead">
+						<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
+						<tr class="tf-grid-tr">
+							<th class="tf-grid-th" style="width:140px;">created on</th>
+							<th class="tf-grid-th" style="width:300px;">id</th>
+							<th class="tf-grid-th" style="width:80px;">row</th>
+							<th class="tf-grid-th">
+								@if (Content.Type == TucDataProviderSyncTaskInfoType.Info)
+								{
+									<span>info</span>
+								}
+								else if (Content.Type == TucDataProviderSyncTaskInfoType.Warning)
+								{
+									<span>warning</span>
+								}
+								else
+								{
+									<span>error</span>
+								}
+							</th>
+						</tr>
+					</thead>
+					<tbody class="tf-grid-tbody">
+						@foreach (var context in _items)
+						{
+							<tr @key=context.Id class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>@context.CreatedOn.ToString("yyyy-MM-dd HH:mm")</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@context.TfId</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@context.TfRowIndex</div>
+								</td>
+								<td class="tf-grid-td">
+									@if (Content.Type == TucDataProviderSyncTaskInfoType.Info)
+									{
+										<span>@context.Info</span>
+									}
+									else if (Content.Type == TucDataProviderSyncTaskInfoType.Warning)
+									{
+										<span>@context.Warning</span>
+									}
+									else
+									{
+										<span>@context.Error</span>
+									}
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 		}
 	</div>
 </FluentDialogBody>

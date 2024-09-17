@@ -278,13 +278,40 @@ internal partial class AppStateUseCase
 		return Task.CompletedTask;
 	}
 
+	internal Result<List<TucDataProviderSyncTaskInfo>> GetSynchronizationTaskLogRecords(Guid taskId,
+			TucDataProviderSyncTaskInfoType type)
+	{
+		var allTasksResult = _dataProviderManager.GetSynchronizationTaskResultInfos(taskId);
+		if (allTasksResult.IsFailed)
+			return Result.Fail(new Error("GetSynchronizationTaskResultInfos failed").CausedBy(allTasksResult.Errors));
+		var result = new List<TucDataProviderSyncTaskInfo>();
+		switch (type)
+		{
+			case TucDataProviderSyncTaskInfoType.Info:
+				result = allTasksResult.Value.Where(x => !String.IsNullOrWhiteSpace(x.Info))
+				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
+				break;
+			case TucDataProviderSyncTaskInfoType.Warning:
+				result = allTasksResult.Value.Where(x => !String.IsNullOrWhiteSpace(x.Warning))
+				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
+				break;
+			case TucDataProviderSyncTaskInfoType.Error:
+				result = allTasksResult.Value.Where(x => !String.IsNullOrWhiteSpace(x.Error))
+				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
+				break;
+			default:
+				return Result.Fail("Not supported TucDataProviderSyncTaskInfoType");
+		}
+		return Result.Ok(result);
+	}
+
 	//Data
 	internal Result<TfDataTable> GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	{
 		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
 		if (srvProviderResult.IsFailed)
 			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(srvProviderResult.Errors));
-		
+
 		if (srvProviderResult.Value is null) return Result.Fail("Provider not found");
 
 		var dtResult = _dataManager.QueryDataProvider(

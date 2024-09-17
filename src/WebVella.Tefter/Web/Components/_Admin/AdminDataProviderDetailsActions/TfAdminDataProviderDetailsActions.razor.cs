@@ -45,26 +45,6 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		}
 	}
 
-	private async Task _addAuxColumn()
-	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderAuxColumnManageDialog>(
-		new TucDataProviderAuxColumn(),
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var record = (TucDataProvider)result.Data;
-			ToastService.ShowSuccess(LOC("Column successfully created!"));
-			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminDataProvider = record }));
-		}
-	}
-
 	private async Task _deleteProvider()
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this data provider deleted?") + "\r\n" + LOC("Will proceeed only if there are not existing columns attached")))

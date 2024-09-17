@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderKeyManageDialog.TfDataProviderKeyManageDialog","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderKeyManageDialog.TfDataProviderKeyManageDialog", "WebVella.Tefter")]
 public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSharedKey>
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
 	[Parameter] public TucDataProviderSharedKey Content { get; set; }
 
@@ -10,18 +10,16 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 
 	private bool _isCreate = false;
 	private bool _isBusy = true;
-	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
 
 	private List<TucDataProviderColumn> _providerColumns = new();
-
+	private TucDataProviderSharedKeyForm _form = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
 
 		if (Content is null) throw new Exception("Content is null");
 		if (TfAppState.Value.AdminDataProvider is null) throw new Exception("DataProvider not provided");
@@ -36,32 +34,11 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 
-		base.InitForm(UC.KeyForm);
-
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await _loadDataAsync();
-			_isBusy = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	private async Task _loadDataAsync()
-	{
-		_isBusy = true;
-		await InvokeAsync(StateHasChanged);
-		try
-		{
-			_providerColumns = TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName).ToList();
+		_providerColumns = TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName).ToList();
 			//Setup form
 			if (_isCreate)
 			{
-				UC.KeyForm = new TucDataProviderSharedKeyForm
+				_form = new TucDataProviderSharedKeyForm
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = TfAppState.Value.AdminDataProvider.Id,
@@ -69,15 +46,11 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			}
 			else
 			{
-				UC.KeyForm = new TucDataProviderSharedKeyForm(Content);
-				_providerColumns = _providerColumns.Where(x=> !UC.KeyForm.Columns.Any(y=> y.Id == x.Id)).ToList();
+				_form = new TucDataProviderSharedKeyForm(Content);
+				_providerColumns = _providerColumns.Where(x => !_form.Columns.Any(y => y.Id == x.Id)).ToList();
 			}
-			base.InitForm(UC.KeyForm);
-		}
-		catch (Exception ex)
-		{
-			_error = ProcessException(ex);
-		}
+			base.InitForm(_form);
+
 	}
 
 	private async Task _save()
@@ -98,9 +71,9 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			Result<TucDataProvider> submitResult;
-			var submit = UC.KeyForm with
+			var submit = _form with
 			{
-				Id = UC.KeyForm.Id
+				Id = _form.Id
 			};
 			if (_isCreate)
 			{
@@ -112,7 +85,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			}
 
 			ProcessFormSubmitResponse(submitResult);
-			  if (submitResult.IsSuccess)
+			if (submitResult.IsSuccess)
 			{
 				await Dialog.CloseAsync(submitResult.Value);
 			}
@@ -142,7 +115,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		var oldIndex = args.OldIndex;
 		var newIndex = args.NewIndex;
 
-		var items = this.UC.KeyForm.Columns;
+		var items = this._form.Columns;
 		var itemToMove = items[oldIndex];
 		items.RemoveAt(oldIndex);
 
@@ -162,13 +135,13 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			return;
 		}
 		// get the item at the old index in list 2
-		var item = UC.KeyForm.Columns[args.OldIndex];
+		var item = _form.Columns[args.OldIndex];
 
 		// add it to the new index in list 1
 		_providerColumns.Insert(args.NewIndex, item);
 
 		// remove the item from the old index in list 2
-		UC.KeyForm.Columns.Remove(UC.KeyForm.Columns[args.OldIndex]);
+		_form.Columns.Remove(_form.Columns[args.OldIndex]);
 	}
 
 	private void onProviderRemove(FluentSortableListEventArgs args)
@@ -181,7 +154,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		var item = _providerColumns[args.OldIndex];
 
 		// add it to the new index in list 1
-		UC.KeyForm.Columns.Insert(args.NewIndex, item);
+		_form.Columns.Insert(args.NewIndex, item);
 
 		// remove the item from the old index in list 2
 		_providerColumns.Remove(_providerColumns[args.OldIndex]);

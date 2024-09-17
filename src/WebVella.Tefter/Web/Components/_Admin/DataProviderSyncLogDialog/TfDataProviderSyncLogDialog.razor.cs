@@ -1,23 +1,19 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderSyncLogDialog.TfDataProviderSyncLogDialog","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderSyncLogDialog.TfDataProviderSyncLogDialog", "WebVella.Tefter")]
 public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSyncTaskInfoLog>
 {
-	[Inject] private DataProviderAdminUseCase UC { get; set; }
-	[Inject] private IState<TfAppState> TfAppState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TucDataProviderSyncTaskInfoLog Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
-	PaginationState _pagination = new PaginationState { ItemsPerPage = 10 };
-
 	private string _title = "";
+	private bool _isBusy = true;
+	private List<TucDataProviderSyncTaskInfo> _items = new();
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		UC.IsBusy = true;
-		_pagination.ItemsPerPage = UC.TaskSyncLogPageSize;
+		base.OnInitialized();
 		if (Content is null) throw new Exception("Content is null");
 
 		switch (Content.Type)
@@ -40,9 +36,22 @@ public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogC
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await UC.SetSynchronizationTaskLogRecords(Content.TaskId, Content.Type);
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
+			try
+			{
+				var result = UC.GetSynchronizationTaskLogRecords(Content.TaskId, Content.Type);
+				ProcessServiceResponse(result);
+				if (result.IsSuccess)
+					_items = result.Value;
+			}
+			catch (Exception ex)
+			{
+				ProcessException(ex);
+			}
+			finally
+			{
+				_isBusy = false;
+				await InvokeAsync(StateHasChanged);
+			}
 		}
 	}
 
