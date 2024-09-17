@@ -74,7 +74,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 
 	private async Task loadMoreClick()
 	{
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1,pageSize)).Take(pageSize).ToList();
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1, pageSize)).Take(pageSize).ToList();
 		if (batch.Count < pageSize) hasMore = false;
 		_visibleMenuItems.AddRange(batch);
 		page++;
@@ -116,23 +116,22 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 			var item = (TucSpace)result.Data;
 			ToastService.ShowSuccess(LOC("Space successfully updated!"));
 			//Change user state > spaces
+			var userSpaces = TfAppState.Value.CurrentUserSpaces.ToList();
+			var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
+			if (itemIndex > -1)
+			{
+				userSpaces[itemIndex] = item;
+			}
+			var state = TfAppState.Value with { CurrentUserSpaces = userSpaces };
+			if (TfAppState.Value.Space is not null
+				&& TfAppState.Value.Space.Id == item.Id)
+			{
+				state = state with { Space = item };
+			}
 
-			ToastService.ShowError(LOC("BOZ: not fully implemented!"));
-			//var userSpaces = TfState.Value.CurrentUserSpaces.ToList();
-			//var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
-			//if (itemIndex > -1)
-			//{
-			//	userSpaces[itemIndex] = item;
-			//	Dispatcher.Dispatch(new SetCurrentUserStateAction(
-			//		component:this,
-			//		userSpaces: userSpaces
-			//	));
-			//}
-
-			//change space state
-			Dispatcher.Dispatch(new SetSpaceOnlyAction(
-				component:this,
-				space: item
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: state
 			));
 		}
 	}

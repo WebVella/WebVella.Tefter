@@ -38,8 +38,7 @@ public partial class SpaceUseCase
 
 	internal async Task Init(Type type, Guid? spaceId = null)
 	{
-		if (type == typeof(TfSpaceStateManager)) await InitForState();
-		else if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
+		if (type == typeof(TfSpaceManageDialog)) await InitSpaceManageDialog();
 		else if (type == typeof(TfSpaceDataManage)) await InitSpaceDataManage();
 		else if (type == typeof(TfSpaceDataViews)) await InitSpaceDataManageViews();
 		else if (type == typeof(TfSpaceViewDetails)) await InitSpaceViewDetails();

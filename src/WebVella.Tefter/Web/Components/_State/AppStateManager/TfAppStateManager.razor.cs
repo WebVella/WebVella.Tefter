@@ -5,6 +5,7 @@ public partial class TfAppStateManager : FluxorComponent
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] private IState<TfUserState> TfUserState { get; set; }
+	[Inject] private IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
@@ -22,19 +23,17 @@ public partial class TfAppStateManager : FluxorComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			await _init(null);
+			await _init(null, new TfAppState());
 			Navigator.LocationChanged += Navigator_LocationChanged;
 			UC.IsBusy = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-	private async Task _init(string url)
+	private async Task _init(string url,TfAppState oldState)
 	{
 		if (TfUserState.Value.CurrentUser is null) return;
-		Console.WriteLine("++++++++++++++++++++++++++ _init");
-
-		var state = await UC.InitState(TfUserState.Value.CurrentUser, url);
+		var state = await UC.InitState(TfUserState.Value.CurrentUser, url, oldState);
 		Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
 			state: state
@@ -45,7 +44,7 @@ public partial class TfAppStateManager : FluxorComponent
 	{
 		InvokeAsync(async () =>
 		{
-			await _init(e.Location);
+			await _init(e.Location,TfAppState.Value);
 			await InvokeAsync(StateHasChanged);
 		});
 

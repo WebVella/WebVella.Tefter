@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewNavigation.TfSpaceViewNavigation","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewNavigation.TfSpaceViewNavigation", "WebVella.Tefter")]
 public partial class TfSpaceViewNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
@@ -76,7 +76,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 
 	private async Task loadMoreClick()
 	{
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1,pageSize)).Take(pageSize).ToList();
+		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1, pageSize)).Take(pageSize).ToList();
 		if (batch.Count < pageSize) hasMore = false;
 		_visibleMenuItems.AddRange(batch);
 		page++;
@@ -117,23 +117,23 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		{
 			var item = (TucSpace)result.Data;
 			ToastService.ShowSuccess(LOC("Space successfully updated!"));
-			ToastService.ShowError(LOC("BOZ: Not fully implemented!"));
 			//Change user state > spaces
-			//var userSpaces = TfState.Value.CurrentUserSpaces.ToList();
-			//var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
-			//if (itemIndex > -1)
-			//{
-			//	userSpaces[itemIndex] = item;
-			//	Dispatcher.Dispatch(new SetCurrentUserStateAction(
-			//		component:this,
-			//		userSpaces: userSpaces
-			//	));
-			//}
+			var userSpaces = TfAppState.Value.CurrentUserSpaces.ToList();
+			var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
+			if (itemIndex > -1)
+			{
+				userSpaces[itemIndex] = item;
+			}
+			var state = TfAppState.Value with { CurrentUserSpaces = userSpaces };
+			if (TfAppState.Value.Space is not null
+				&& TfAppState.Value.Space.Id == item.Id)
+			{
+				state = state with { Space = item };
+			}
 
-			//change space state
-			Dispatcher.Dispatch(new SetSpaceOnlyAction(
-				component:this,
-				space: item
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: state
 			));
 		}
 	}

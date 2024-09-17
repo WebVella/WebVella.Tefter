@@ -3,32 +3,6 @@ public partial class TfSpaceDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
-	[Inject] private SpaceUseCase UC { get; set; }
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber?.UnsubscribeFromAllActions(this);
-		}
-		await base.DisposeAsyncCore(disposing);
-	}
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		//ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanedResult);
-	}
-
-	//private void On_StateChanedResult(SpaceStateChangedAction action)
-	//{
-	//	if(SpaceState.Value.RouteSpaceViewId is null && SpaceState.Value.SpaceViewList.Count > 0){ 
-	//		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, SpaceState.Value.RouteSpaceId, SpaceState.Value.SpaceViewList[0].Id));
-	//	}
-
-	//	StateHasChanged();
-	//}
-
 	private async Task _createViewHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(

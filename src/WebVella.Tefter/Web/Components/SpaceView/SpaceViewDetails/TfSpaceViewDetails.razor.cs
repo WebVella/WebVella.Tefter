@@ -5,73 +5,15 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			KeyCodeService.UnregisterListener(OnKeyDownAsync);
-		}
-		await base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-	}
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			var viewData = await UC.IInitSpaceViewDetailsAfterRender(TfAppState.Value);
-			Dispatcher.Dispatch(new InitSpaceViewDetailsAction(
-				component: this,
-				page:TfAppState.Value.Page,
-				pageSize:TfAppState.Value.PageSize,
-				search:TfAppState.Value.SearchQuery,
-				filters:TfAppState.Value.Filters,
-				sorts:TfAppState.Value.Sorts,
-				selectedDataRows:TfAppState.Value.SelectedDataRows,
-				spaceViewData: viewData
-			));
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
-			ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-			KeyCodeService.RegisterListener(OnKeyDownAsync);
-		}
-	}
+	private bool _isDataLoading = true;
 
 	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
 		if (args.Key == KeyCode.PageUp) _goNextPage();
 		else if (args.Key == KeyCode.PageDown) _goPreviousPage();
 		return Task.CompletedTask;
-	}
-
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		if (action.Component == this) return;
-		InvokeAsync(async () =>
-		{
-			UC.IsBusy = true;
-			await InvokeAsync(StateHasChanged);
-			var viewData = await UC.IInitSpaceViewDetailsAfterRender(TfAppState.Value);
-			Dispatcher.Dispatch(new InitSpaceViewDetailsAction(
-				component: this,
-				page:TfAppState.Value.Page,
-				pageSize:TfAppState.Value.PageSize,
-				search:TfAppState.Value.SearchQuery,
-				filters:TfAppState.Value.Filters,
-				sorts:TfAppState.Value.Sorts,
-				selectedDataRows:TfAppState.Value.SelectedDataRows,
-				spaceViewData: viewData
-			));
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
-		});
-
 	}
 
 	private void _goFirstPage()

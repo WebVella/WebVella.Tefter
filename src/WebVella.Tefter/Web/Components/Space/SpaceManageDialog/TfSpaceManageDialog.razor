@@ -30,14 +30,14 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceManageForm.Name
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
-					<FluentValidationMessage For="@(() => UC.SpaceManageForm.Name)" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Accessibility")" />
-					<FluentCheckbox @bind-Value=UC.SpaceManageForm.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;" />
-					<FluentValidationMessage For="@(() => UC.SpaceManageForm.IsPrivate)" />
+					<FluentCheckbox @bind-Value=_form.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;" />
+					<FluentValidationMessage For="@(() => _form.IsPrivate)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
@@ -46,8 +46,8 @@
 					<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
 						<FluentIcon Value="@TfConstants.RectangleIcon"
 									Color="Color.Custom" Style="height:100%;"
-									CustomColor="@(UC.SpaceManageForm.Color.ToAttributeValue() != "default" ? UC.SpaceManageForm.Color.ToAttributeValue() : "#036ac4" )" />
-						<FluentSelect @bind-SelectedOption="@UC.SpaceManageForm.Color" TOption="OfficeColor"
+									CustomColor="@(_form.Color.ToAttributeValue() != "default" ? _form.Color.ToAttributeValue() : "#036ac4" )" />
+						<FluentSelect @bind-SelectedOption="@_form.Color" TOption="OfficeColor"
 									  Items="@(Enum.GetValues<OfficeColor>())"
 									  Style="width:100%;"
 									  OptionText="@(p => p.ToString())">
@@ -65,12 +65,12 @@
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Icon")" />
 					<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-						@if (UC.SpaceManageForm.Icon is not null)
+						@if (_form.Icon is not null)
 						{
-							<FluentIcon Value="@Icons.GetInstance(UC.SpaceManageForm.Icon)" />
+							<FluentIcon Value="@Icons.GetInstance(_form.Icon)" />
 						}
-						<FluentSelect @bind-SelectedOption="@UC.SpaceManageForm.IconString" TOption="string"
-									  Items="@UC.AllIcons"
+						<FluentSelect @bind-SelectedOption="@_form.IconString" TOption="string"
+									  Items="@RenderUtils.GetSpaceIconLibrary()"
 									  Style="width:100%;">
 							<OptionTemplate Context="icon">
 								<FluentStack VerticalAlignment="@VerticalAlignment.Center">

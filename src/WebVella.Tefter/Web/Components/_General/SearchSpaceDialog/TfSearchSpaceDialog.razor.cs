@@ -2,26 +2,9 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SearchSpaceDialog.TfSearchSpaceDialog","WebVella.Tefter")]
 public partial class TfSearchSpaceDialog : TfFormBaseComponent, IDialogContentComponent<bool>
 {
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public bool Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-
-
-			await InvokeAsync(StateHasChanged);
-		}
-	}
 
 	private async Task _cancel()
 	{

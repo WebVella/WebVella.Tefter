@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfAppState.Value.Space is null)
+@if (TfRouteState.Value.SpaceId is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -30,17 +30,5 @@ else if (TfAppState.Value.SpaceViewList.Count == 0)
 }
 else
 {
-
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-@* 			<FluentMessageBar Title="Missing redirect"
-							  Style="border: 1px solid var(--neutral-base-color)"
-							  Intent="MessageIntent.Warning"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				Should redirect to the first view
-			</FluentMessageBar> *@
-		</div>
-	</FluentBodyContent>
-
+	Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfRouteState.Value.SpaceId, TfAppState.Value.SpaceViewList[0].Id));
 }

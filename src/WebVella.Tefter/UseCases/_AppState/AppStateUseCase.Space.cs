@@ -9,7 +9,7 @@ internal partial class AppStateUseCase
 			|| routeState.FirstNode == RouteDataFirstNode.Space)
 			)
 		{
-			result = result with { CurrentUserSpaces = new() };
+			result = result with { CurrentUserSpaces = new(), Space = null };
 			return result;
 		}
 
@@ -17,8 +17,31 @@ internal partial class AppStateUseCase
 		if (result.CurrentUserSpaces.Count == 0) //Fill in only if not already loaded
 			result = result with { CurrentUserSpaces = await GetUserSpacesAsync(currentUser) };
 
+		if (routeState.SpaceId is not null)
+		{
+			result = result with { Space = GetSpace(routeState.SpaceId.Value) };
+		}
 
 		return result;
+	}
+
+	internal TucSpace GetSpace(Guid spaceId)
+	{
+		var serviceResult = _spaceManager.GetSpace(spaceId);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		if (serviceResult.Value is null) return null;
+
+		return new TucSpace(serviceResult.Value);
 	}
 
 	internal Task<List<TucSpace>> GetUserSpacesAsync(TucUser user)
@@ -49,4 +72,17 @@ internal partial class AppStateUseCase
 
 	}
 
+	internal Result<TucSpace> CreateSpaceWithForm(TucSpace space)
+	{
+		var result = _spaceManager.CreateSpace(space.ToModel());
+		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceWithFormAsync failed").CausedBy(result.Errors));
+		return Result.Ok(new TucSpace(result.Value));
+	}
+
+	internal Result<TucSpace> UpdateSpaceWithForm(TucSpace space)
+	{
+		var result = _spaceManager.UpdateSpace(space.ToModel());
+		if (result.IsFailed) return Result.Fail(new Error("UpdateSpaceWithForm failed").CausedBy(result.Errors));
+		return Result.Ok(new TucSpace(result.Value));
+	}
 }

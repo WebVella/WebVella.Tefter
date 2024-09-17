@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceManageDialog.TfSpaceManageDialog","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceManageDialog.TfSpaceManageDialog", "WebVella.Tefter")]
 public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpace>
 {
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TucSpace Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -12,46 +12,34 @@ public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentCo
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private bool _isCreate = false;
-
+	private TucSpace _form = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		base.InitForm(UC.SpaceManageForm);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create space") : LOC("Manage space");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
+		if (_isCreate)
 		{
-			if (_isCreate)
-			{
-				UC.SpaceManageForm = UC.SpaceManageForm with { Id = Guid.NewGuid() };
-			}
-			else
-			{
-
-				UC.SpaceManageForm = new TucSpace()
-				{
-					Id = Content.Id,
-					Name = Content.Name,
-					Position = Content.Position,
-					IsPrivate = Content.IsPrivate,
-					Color = Content.Color,
-					IconString = Content.IconString,
-				};
-			}
-			base.InitForm(UC.SpaceManageForm);
-			await InvokeAsync(StateHasChanged);
+			_form = _form with { Id = Guid.NewGuid() };
 		}
-	}
+		else
+		{
 
+			_form = new TucSpace()
+			{
+				Id = Content.Id,
+				Name = Content.Name,
+				Position = Content.Position,
+				IsPrivate = Content.IsPrivate,
+				Color = Content.Color,
+				IconString = Content.IconString,
+			};
+		}
+		base.InitForm(_form);
+	}
 	private async Task _save()
 	{
 		if (_isSubmitting) return;
@@ -71,11 +59,11 @@ public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentCo
 			var result = new Result<TucSpace>();
 			if (_isCreate)
 			{
-				result = UC.CreateSpaceWithForm(UC.SpaceManageForm);
+				result = UC.CreateSpaceWithForm(_form);
 			}
 			else
 			{
-				result = UC.UpdateSpaceWithForm(UC.SpaceManageForm);
+				result = UC.UpdateSpaceWithForm(_form);
 			}
 
 			ProcessFormSubmitResponse(result);

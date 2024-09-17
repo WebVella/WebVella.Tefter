@@ -111,4 +111,16 @@ internal static class RenderUtils
 		return String.Join("", list).ToUpperInvariant();
 	}
 
+	internal static List<string> GetSpaceIconLibrary()
+	{
+		var result = new List<string>();
+		foreach (var item in Icons.AllIcons)
+		{
+			if (item.Size == TfConstants.IconSize
+			&& item.Variant == TfConstants.IconVariant
+			&& item.Name.Length <= 5)
+				result.Add(item.Name);
+		}
+		return result.Take(50).ToList();
+	}
 }
