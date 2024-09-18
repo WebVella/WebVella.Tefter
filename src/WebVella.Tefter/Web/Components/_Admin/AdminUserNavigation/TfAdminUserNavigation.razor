@@ -1,37 +1,36 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (!TfAppState.Value.IsBusy)
-{
-	<div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
-		<div class="sidebar-toolbar">
-			<div class="sidebar-toolbar-search">
-				<FluentTextField Class="search" Placeholder="@LOC("search...")" Immediate="true" ImmediateDelay="700" Value=@_search
-								 ValueChanged="onSearch" AutoComplete="new-password" />
-			</div>
-			<div class="sidebar-toolbar-actions">
-				<FluentButton Title="@LOC("Create new user")"
-							  IconStart="@TfConstants.AddIcon"
-							  OnClick="onAddClick" Appearance="@Appearance.Outline">@LOC("New")</FluentButton>
-			</div>
+
+<div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
+	<div class="sidebar-toolbar">
+		<div class="sidebar-toolbar-search">
+			<FluentTextField Class="search" Placeholder="@LOC("search...")" Immediate="true" ImmediateDelay="700" Value=@_search
+							 ValueChanged="onSearch" AutoComplete="new-password" />
 		</div>
-		<div class="sidebar-inner">
-			<FluentNavMenu Style="width:100%">
-				@foreach (var item in TfAppState.Value.AdminUsers)
-				{
-					<FluentNavLink Href="@(string.Format(TfConstants.AdminUserDetailsPageUrl,item.Id))" Match="@NavLinkMatch.Prefix"
-								   @key="@item.Id" Icon="@TfConstants.AdminUsersIcon" IconColor="@Color.Neutral">
-						@RenderUtils.StringOverflow(item.Title, _stringLimit)
-					</FluentNavLink>
-				}
-			</FluentNavMenu>
-			@if (!_endIsReached)
-			{
-				<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="@(() => loadMoreClick())" Loading="_isLoading">@LOC("Load more")</FluentButton>
-			}
-			@if (TfAppState.Value.AdminUsers.Count == 0)
-			{
-				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No users match search criteria")</FluentMessageBar>
-			}
+		<div class="sidebar-toolbar-actions">
+			<FluentButton Title="@LOC("Create new user")"
+						  IconStart="@TfConstants.AddIcon"
+						  OnClick="onAddClick" Appearance="@Appearance.Outline">@LOC("New")</FluentButton>
 		</div>
 	</div>
-}
+	<div class="sidebar-inner">
+		<FluentNavMenu Style="width:100%">
+			@foreach (var item in TfAppState.Value.AdminUsers)
+			{
+				<FluentNavLink Href="@(string.Format(TfConstants.AdminUserDetailsPageUrl,item.Id))" Match="@NavLinkMatch.Prefix"
+							   @key="@item.Id" Icon="@TfConstants.AdminUsersIcon" IconColor="@Color.Neutral">
+					@RenderUtils.StringOverflow(item.Title, _stringLimit)
+				</FluentNavLink>
+			}
+		</FluentNavMenu>
+		@if (!_endIsReached)
+		{
+			<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="@(() => loadMoreClick())" Loading="_isLoading">@LOC("Load more")</FluentButton>
+		}
+		@if (TfAppState.Value.AdminUsers.Count == 0)
+		{
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No users match search criteria")</FluentMessageBar>
+		}
+	</div>
+</div>
+

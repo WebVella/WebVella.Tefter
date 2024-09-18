@@ -1,10 +1,13 @@
 ﻿
 namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Dashboard.TfDashboard","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Dashboard.TfDashboard", "WebVella.Tefter")]
 public partial class TfDashboard : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	private int counterINT = 0;
+	private int counter = 0;
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -15,21 +18,18 @@ public partial class TfDashboard : TfBaseComponent
 		return base.DisposeAsyncCore(disposing);
 	}
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
-		await base.OnInitializedAsync();
-		//ActionSubscriber.SubscribeToAction<DashboardStateChangedAction>(this, On_DashboardStateChangedAction);
+		base.OnInitialized();
+		counterINT++;
+		Console.WriteLine($"+****************** OnInitialized {counterINT} {TfRouteState.Value.SpaceId} {TfAppState.Value.SpaceViewList.Count}");
 	}
-
-	//private void On_DashboardStateChangedAction(DashboardStateChangedAction action)
-	//{
-	//	base.InvokeAsync(async () =>
-	//	{
-	//		UC.IsBusy = TfState.Value.IsBusy;
-	//		await InvokeAsync(StateHasChanged);
-	//	});
-
-	//}
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		counter++;
+		Console.WriteLine($"+****************** TfDashboard Render {counter}");
+	}
 
 
 	void AddInNotificationCenter()

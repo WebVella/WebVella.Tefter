@@ -1,8 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits FluxorComponent
 
-@if (_isBusy)
+@if (!_isBusy)
 {
-	<TfLoadingPane ShowTop="true" />
+	@ChildContent
 }
-@ChildContent

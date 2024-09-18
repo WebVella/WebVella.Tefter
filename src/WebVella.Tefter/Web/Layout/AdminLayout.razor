@@ -1,21 +1,20 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits FluxorLayout
 @layout StateLayout
-
-	<FluentDesignTheme Mode="@TfUserState.Value.ThemeMode" OfficeColor="@TfConstants.AdminThemeColor" />
-	<FluentLayout Class="@(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
-		<FluentHeader Class="header">
-			<TfSidebarToggle />
-			<TfLocation />
-			<FluentSpacer />
-			<TfUserNavigation />
-		</FluentHeader>
-		<FluentStack Orientation="Orientation.Horizontal" Class="wrapper" HorizontalGap="0" VerticalGap="0">
-			<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
-				<TfAdminNavigation />
-			</FluentStack>
-			<FluentBodyContent Class="content" style="@TfConstants.AdminContentStyle">
-				@Body
-			</FluentBodyContent>
+<FluentDesignTheme Mode="@TfUserState.Value.ThemeMode" OfficeColor="@TfConstants.AdminThemeColor" />
+<FluentLayout Class="@(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
+	<FluentHeader Class="header">
+		<TfSidebarToggle />
+		<TfLocation />
+		<FluentSpacer />
+		<TfUserNavigation />
+	</FluentHeader>
+	<FluentStack Orientation="Orientation.Horizontal" Class="wrapper" HorizontalGap="0" VerticalGap="0">
+		<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
+			<TfAdminNavigation />
 		</FluentStack>
-	</FluentLayout>
+		<FluentBodyContent Class="content" style="@TfConstants.AdminContentStyle">
+			@Body
+		</FluentBodyContent>
+	</FluentStack>
+</FluentLayout>
 

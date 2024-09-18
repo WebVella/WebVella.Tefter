@@ -17,5 +17,5 @@ public static partial class UserStateReducers
 {
 	[ReducerMethod()]
 	public static TfUserState SetUserStateReducer(TfUserState state, SetUserStateAction action)
-		=> action.State with { Culture = action.State.Culture };
+		=> action.State with { Hash = Guid.NewGuid() };
 }

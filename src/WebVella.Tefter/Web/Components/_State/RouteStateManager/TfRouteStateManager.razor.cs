@@ -26,20 +26,19 @@ public partial class TfRouteStateManager : FluxorComponent
 	{
 		InvokeAsync(async () =>
 		{
-			using (await locker.LockAsync())
-			{
-				await _init(e.Location);
-			}
+			await _init(e.Location);
 		});
 	}
 
-	private Task _init(string url)
+	private async Task _init(string url)
 	{
-		Dispatcher.Dispatch(new SetRouteStateAction(
-			component: this,
-			state: Navigator.GetRouteState(url)
-		));
-		return Task.CompletedTask;
+		using (await locker.LockAsync())
+		{
+			Dispatcher.Dispatch(new SetRouteStateAction(
+				component: this,
+				state: Navigator.GetRouteState(url)
+			));
+		}
 	}
 
 }

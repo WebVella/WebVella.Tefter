@@ -5,21 +5,31 @@ public partial class TfAppStateManager : FluxorComponent
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] private IState<TfUserState> TfUserState { get; set; }
+	[Inject] private IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
+
 	private readonly AsyncLock locker = new AsyncLock();
+	private Guid _renderedUserStateHash = Guid.Empty;
+	private Guid _renderedAppStateHash = Guid.Empty;
 	private bool _isBusy = true;
-
-	private Guid _oldRenderLock = Guid.Empty;
-	private Guid _newRenderLock = Guid.Empty;
-
-	protected override ValueTask DisposeAsyncCore(bool disposing)
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
-			Navigator.LocationChanged -= Navigator_LocationChanged;
+			ActionSubscriber.UnsubscribeFromAllActions(this);
 		}
-		return base.DisposeAsyncCore(disposing);
+		await base.DisposeAsyncCore(disposing);
+	}
+
+	protected override bool ShouldRender()
+	{
+		if (_renderedUserStateHash == TfUserState.Value.Hash
+			&& _renderedAppStateHash == TfAppState.Value.Hash) return false;
+		_renderedUserStateHash = TfUserState.Value.Hash;
+		_renderedAppStateHash = TfAppState.Value.Hash;
+		base.ShouldRender();
+		return true;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -28,19 +38,12 @@ public partial class TfAppStateManager : FluxorComponent
 		if (firstRender)
 		{
 			await _init(null, new TfAppState());
-			Navigator.LocationChanged += Navigator_LocationChanged;
+			_isBusy = false;
+			_renderedUserStateHash = Guid.NewGuid(); //force rerender
+			await InvokeAsync(StateHasChanged);
+			ActionSubscriber.SubscribeToAction<SetRouteStateAction>(this, On_RouteChanged);
 		}
-
 	}
-
-	protected override bool ShouldRender()
-	{
-		if(_oldRenderLock == _newRenderLock) return false;
-		_oldRenderLock = _newRenderLock;
-
-		return true;
-	}
-
 
 	private async Task _init(string url, TfAppState oldState)
 	{
@@ -49,24 +52,21 @@ public partial class TfAppStateManager : FluxorComponent
 			if (TfUserState.Value.CurrentUser is null) return;
 			var state = await UC.InitState(TfUserState.Value.CurrentUser, url, oldState);
 			Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: state with { IsBusy = false }
+				component: null,
+				state: state
 			));
-			RegenRenderLock();
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	private void On_RouteChanged(SetRouteStateAction action)
 	{
 		InvokeAsync(async () =>
 		{
-			await _init(e.Location, null);
+			await _init(null, TfAppState.Value);
+			//the change in the user state should triggger rerender later
 		});
 
 
 	}
-
-	private void RegenRenderLock() => _newRenderLock = Guid.NewGuid();
 
 }

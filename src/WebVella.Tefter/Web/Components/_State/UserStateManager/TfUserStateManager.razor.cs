@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfUserStateManager : FluxorComponent
 {
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
@@ -8,16 +9,8 @@ public partial class TfUserStateManager : FluxorComponent
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
 	private readonly AsyncLock locker = new AsyncLock();
+	private Guid _renderedUserStateHash = Guid.Empty;
 	private bool _isBusy = true;
-	protected override bool ShouldRender()
-	{
-		Console.WriteLine($"*-ShouldRender********************* {DateTime.Now}");
-		//if (_renderedStateHash == TfUserState.Value.Hash) return false;
-
-		//base.ShouldRender();
-		//_renderedStateHash = TfUserState.Value.Hash;
-		return true;
-	}
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -27,15 +20,21 @@ public partial class TfUserStateManager : FluxorComponent
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
-
+	protected override bool ShouldRender()
+	{
+		if (_renderedUserStateHash == TfUserState.Value.Hash) return false;
+		_renderedUserStateHash = TfUserState.Value.Hash;
+		base.ShouldRender();
+		return true;
+	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			Console.WriteLine($"*-OnAfterRenderAsync********************");
 			await _init();
 			_isBusy = false;
+			_renderedUserStateHash = Guid.NewGuid();//to force rerender
 			await InvokeAsync(StateHasChanged);
 			ActionSubscriber.SubscribeToAction<SetUserStateAction>(this, On_StateChanged);
 		}
@@ -43,7 +42,6 @@ public partial class TfUserStateManager : FluxorComponent
 
 	private async Task _init()
 	{
-		Console.WriteLine($"*-_init*********************");
 		using (await locker.LockAsync())
 		{
 			var state = await UC.InitUserState();
@@ -62,17 +60,14 @@ public partial class TfUserStateManager : FluxorComponent
 				component: this,
 				state: state
 			));
-			Console.WriteLine($"*-_init*********************");
 		}
 	}
 
 	private void On_StateChanged(SetUserStateAction action)
 	{
 		if (action.StateComponent == this) return;
-		Console.WriteLine($"1-On_StateChanged******************");
 		InvokeAsync(async () =>
 		{
-			await _init();
 			await InvokeAsync(StateHasChanged);
 		});
 	}
