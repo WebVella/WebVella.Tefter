@@ -45,17 +45,17 @@ internal partial class AppStateUseCase
 		LOC = loc;
 	}
 
-	internal bool IsBusy { get; set; } = true;
-
 	internal async Task<TfAppState> InitState(TucUser currentUser, string url, TfAppState result)
 	{
+		if(result == null) result = new TfAppState();
 		var routeState = _navigationManager.GetRouteState(url);
 
-		result = await InitAdminUsers(currentUser, routeState, result);
-		result = await InitSpace(currentUser, routeState, result);
-		result = await InitAdminDataProvider(currentUser, routeState, result);
-		result = await InitAdminSharedColumns(currentUser, routeState, result);
-		result = await InitSpaceView(currentUser, routeState, result);
+		result = await InitAdminUsersAsync(currentUser, routeState, result);
+		result = await InitSpaceAsync(currentUser, routeState, result);
+		result = await InitAdminDataProviderAsync(currentUser, routeState, result);
+		result = await InitAdminSharedColumnsAsync(currentUser, routeState, result);
+		result = await InitSpaceViewAsync(currentUser, routeState, result);
+		result = await InitSpaceDataAsync(currentUser, routeState, result);
 
 		return result;
 	}

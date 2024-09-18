@@ -7,16 +7,15 @@ public partial class TfUserStateManager : FluxorComponent
 	[Inject] private UserStateUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
-
-	public Guid _currentRenderLock = Guid.Empty;
-	public Guid _oldRenderLock = Guid.Empty;
-
+	private readonly AsyncLock locker = new AsyncLock();
+	private bool _isBusy = true;
 	protected override bool ShouldRender()
 	{
-		if (_currentRenderLock == _oldRenderLock) return false;
+		Console.WriteLine($"*-ShouldRender********************* {DateTime.Now}");
+		//if (_renderedStateHash == TfUserState.Value.Hash) return false;
 
-		base.ShouldRender();
-		_oldRenderLock = _currentRenderLock;
+		//base.ShouldRender();
+		//_renderedStateHash = TfUserState.Value.Hash;
 		return true;
 	}
 
@@ -34,8 +33,21 @@ public partial class TfUserStateManager : FluxorComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
+			Console.WriteLine($"*-OnAfterRenderAsync********************");
+			await _init();
+			_isBusy = false;
+			await InvokeAsync(StateHasChanged);
+			ActionSubscriber.SubscribeToAction<SetUserStateAction>(this, On_StateChanged);
+		}
+	}
+
+	private async Task _init()
+	{
+		Console.WriteLine($"*-_init*********************");
+		using (await locker.LockAsync())
+		{
 			var state = await UC.InitUserState();
-			if (state.CurrentUser is null)
+			if (state is null || state.CurrentUser is null)
 			{
 				Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 				return;
@@ -50,23 +62,19 @@ public partial class TfUserStateManager : FluxorComponent
 				component: this,
 				state: state
 			));
-			UC.IsBusy = false;
-			ActionSubscriber.SubscribeToAction<SetUserStateAction>(this, On_StateChanged);
-			ActionSubscriber.SubscribeToAction<SetRouteStateAction>(this, On_RouteChanged);
-			_currentRenderLock = Guid.NewGuid();
-			await InvokeAsync(StateHasChanged);
+			Console.WriteLine($"*-_init*********************");
 		}
 	}
 
 	private void On_StateChanged(SetUserStateAction action)
 	{
-		_currentRenderLock = Guid.NewGuid();
-		StateHasChanged();
-	}
-	private void On_RouteChanged(SetRouteStateAction action)
-	{
-		_currentRenderLock = Guid.NewGuid();
-		StateHasChanged();
+		if (action.StateComponent == this) return;
+		Console.WriteLine($"1-On_StateChanged******************");
+		InvokeAsync(async () =>
+		{
+			await _init();
+			await InvokeAsync(StateHasChanged);
+		});
 	}
 
 }

@@ -3,6 +3,17 @@ public partial class TfSpaceDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
+
+	private bool visible = false;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		if (TfRouteState.Value.SpaceId is not null && TfAppState.Value.SpaceViewList.Count > 0)
+		{
+			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfRouteState.Value.SpaceId, TfAppState.Value.SpaceViewList[0].Id));
+		}
+	}
 	private async Task _createViewHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(

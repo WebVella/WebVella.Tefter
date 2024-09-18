@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfAppState.Value.Space is null)
+@if (TfRouteState.Value.SpaceId is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -28,21 +28,7 @@ else if (TfAppState.Value.SpaceViewList.Count == 0)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfRouteState.Value.SpaceViewId is null)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			@* 			<FluentMessageBar Title="Missing redirect"
-		Style="border: 1px solid var(--neutral-base-color)"
-		Intent="MessageIntent.Warning"
-		Type="@MessageType.Notification"
-		AllowDismiss="false">
-		Should redirect to the first view
-		</FluentMessageBar> *@
-		</div>
-	</FluentBodyContent>
-}
-else if (TfAppState.Value.SpaceView is null && TfRouteState.Value.SpaceViewId is not null)
+else if (TfAppState.Value.SpaceView is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -75,8 +61,8 @@ else
 								<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfAppState.Value.SpaceBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
 									<th class="tf-grid-th tf-grid-th--check">
-										<FluentCheckbox Value="TfAppState.Value.AllDataRowsSelected" 
-											ValueChanged="_toggleSelectAll"/>
+										<FluentCheckbox Value="TfAppState.Value.AllDataRowsSelected"
+														ValueChanged="_toggleSelectAll" />
 									</th>
 									@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 									{
@@ -87,7 +73,7 @@ else
 								</tr>
 							</thead>
 							<tbody class="tf-grid-tbody">
-								@if (UC.IsBusy)
+								@if (_isDataLoading)
 								{
 									<tr class="tf-grid-tr">
 										<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Loading...")</div></td>

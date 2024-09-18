@@ -3,7 +3,10 @@ public partial class TfRouteStateManager : FluxorComponent
 {
 	[Inject] protected NavigationManager Navigator { get; set; }
 	[Inject] public IDispatcher Dispatcher { get; set; }
+
+	private readonly AsyncLock locker = new AsyncLock();
 	protected override bool ShouldRender() => false;
+
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -12,28 +15,31 @@ public partial class TfRouteStateManager : FluxorComponent
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		_init(null);
+		await base.OnInitializedAsync();
+		await _init(null);
 		Navigator.LocationChanged += Navigator_LocationChanged;
 	}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		_init(e.Location);
-		StateHasChanged();
+		InvokeAsync(async () =>
+		{
+			using (await locker.LockAsync())
+			{
+				await _init(e.Location);
+			}
+		});
 	}
 
-	private void _init(string url)
+	private Task _init(string url)
 	{
-#if DEBUG
-		Console.WriteLine($"================== TfRouteStateManager INIT  ================");
-#endif
 		Dispatcher.Dispatch(new SetRouteStateAction(
 			component: this,
 			state: Navigator.GetRouteState(url)
 		));
+		return Task.CompletedTask;
 	}
 
 }

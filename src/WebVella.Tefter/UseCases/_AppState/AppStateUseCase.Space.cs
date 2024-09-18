@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppStart;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitSpace(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	internal async Task<TfAppState> InitSpaceAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Home
@@ -20,6 +20,10 @@ internal partial class AppStateUseCase
 		if (routeState.SpaceId is not null)
 		{
 			result = result with { Space = GetSpace(routeState.SpaceId.Value) };
+		}
+		else
+		{
+			result = result with { Space = null };
 		}
 
 		return result;

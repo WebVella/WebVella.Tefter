@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppStart;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitAdminSharedColumns(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	internal Task<TfAppState> InitAdminSharedColumnsAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Admin

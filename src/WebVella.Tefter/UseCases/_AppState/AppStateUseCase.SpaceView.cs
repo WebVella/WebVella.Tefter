@@ -1,12 +1,12 @@
 ﻿namespace WebVella.Tefter.UseCases.AppStart;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitSpaceView(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)
 	{
 		if (routeState.SpaceId is null)
 		{
 			result = result with { SpaceViewList = new(), SpaceView = null };
-			return result;
+			return Task.FromResult(result);
 		}
 
 		//SpaceViewList
@@ -14,13 +14,18 @@ internal partial class AppStateUseCase
 			|| !result.SpaceViewList.Any(x => x.SpaceId == routeState.SpaceId)
 			)
 			result = result with { SpaceViewList = GetSpaceViewList(routeState.SpaceId.Value) };
+
 		//Space View
 		if (routeState.SpaceViewId is not null)
 		{
 			result = result with { SpaceView = GetSpaceView(routeState.SpaceViewId.Value) };
 		}
+		else
+		{
+			result = result with { SpaceView = null };
+		}
 
-		return result;
+		return Task.FromResult(result);
 	}
 
 	internal TucSpaceView GetSpaceView(Guid viewId)

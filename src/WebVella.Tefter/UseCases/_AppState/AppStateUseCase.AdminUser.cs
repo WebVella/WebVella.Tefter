@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppStart;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitAdminUsers(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	internal async Task<TfAppState> InitAdminUsersAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Admin
