@@ -73,7 +73,6 @@ public static class DependencyInjection
 		services.AddTransient<AppStateUseCase, AppStateUseCase>();
 		services.AddTransient<UserStateUseCase, UserStateUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();
-		services.AddTransient<SpaceUseCase, SpaceUseCase>();
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();

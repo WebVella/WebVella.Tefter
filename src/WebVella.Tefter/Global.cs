@@ -32,7 +32,7 @@ global using WebVella.Tefter.Models;
 global using WebVella.Tefter.UseCases.AppStart;
 global using WebVella.Tefter.UseCases.Login;
 global using WebVella.Tefter.UseCases.Models;
-global using WebVella.Tefter.UseCases.Space;
+
 
 //State
 global using WebVella.Tefter.Web.Store;
