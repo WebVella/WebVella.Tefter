@@ -18,7 +18,6 @@ public class BaseTest
 	public static IStateSelection<TfAppState, Guid> UserIdState;
 	public static IStateSelection<TfAppState, bool> ScreenSidebarState;
 	public static Mock<IKeyCodeService> KeyCodeServiceMock;
-	public static Mock<ITfService> TfServiceMock;
 	public static Mock<IIdentityManager> IdentityManagerMock;
 	public static Mock<ITfDataProviderManager> TfDataProviderManagerMock;
 	public static Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
@@ -30,8 +29,6 @@ public class BaseTest
 		Context.Services.AddFluxor(x =>
 					x.ScanAssemblies(typeof(IIdentityManager).Assembly));
 
-		TfServiceMock = new Mock<ITfService>();
-		Context.Services.AddScoped(typeof(ITfService), Services => TfServiceMock.Object);
 		IdentityManagerMock = new Mock<IIdentityManager>();
 		Context.Services.AddScoped(typeof(IIdentityManager), Services => IdentityManagerMock.Object);
 		TfDataProviderManagerMock = new Mock<ITfDataProviderManager>();
