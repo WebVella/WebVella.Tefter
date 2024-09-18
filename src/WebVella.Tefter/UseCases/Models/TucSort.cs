@@ -22,5 +22,19 @@ public record TucSort
 			Direction = Direction.ConvertSafeToEnum<TucSortDirection, TfSortDirection>()
 		};
 	}
+
+	public TucSort(TucSortQuery model)
+	{
+		DbName = model.Name;
+		Direction = (TucSortDirection)model.Direction;
+	}
+	public TucSortQuery ToQuery()
+	{
+		return new TucSortQuery
+		{
+			Name = DbName,
+			Direction = (int)Direction
+		};
+	}
 }
 

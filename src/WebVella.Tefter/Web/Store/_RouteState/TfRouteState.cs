@@ -18,6 +18,8 @@ public partial record TfRouteState
 	public int? Page { get; init;} = 1;
 	public int? PageSize { get; init;} = TfConstants.PageSize;
 	public string Search { get; init;} = null;
+	public List<TucFilterBase> Filters { get; init;} = null;
+	public List<TucSort> Sorts { get; init;} = null;
 }
 
 public enum RouteDataFirstNode
