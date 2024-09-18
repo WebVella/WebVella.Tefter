@@ -69,6 +69,15 @@ internal partial class AppStateUseCase
 		return serviceResult.Value.Select(x => new TucSpaceData(x)).ToList();
 	}
 
+	internal Result DeleteSpaceData(Guid dataId)
+	{
+		var tfResult = _spaceManager.DeleteSpaceData(dataId);
+		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
+
+		return Result.Ok();
+	}
+
+
 	internal Result<TucSpaceData> CreateSpaceDataWithForm(TucSpaceData form)
 	{
 		TfSpace space = null;

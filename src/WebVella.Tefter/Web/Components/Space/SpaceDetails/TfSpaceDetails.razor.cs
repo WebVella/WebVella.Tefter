@@ -5,22 +5,17 @@ public partial class TfSpaceDetails : TfBaseComponent
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
 	private bool visible = false;
-	private int counterINT = 0;
-	private int counter = 0;
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		counterINT++;
-		Console.WriteLine($"+****************** OnInitialized {counterINT} {TfRouteState.Value.SpaceId} {TfAppState.Value.SpaceViewList.Count}");
+
 	}
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
 		if (TfRouteState.Value.SpaceId is not null && TfAppState.Value.SpaceViewList.Count > 0)
 		{
-			counter++;
-			Console.WriteLine($"+****************** NavigateTo {counter}");
 			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfRouteState.Value.SpaceId, TfAppState.Value.SpaceViewList[0].Id));
 		}
 		else

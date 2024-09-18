@@ -120,6 +120,9 @@
   <data name="Access" xml:space="preserve">
     <value>Достъп</value>
   </data>
+  <data name="Are you sure that you need this dataset deleted?" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да изтриеш източника на данни?</value>
+  </data>
   <data name="Columns in source" xml:space="preserve">
     <value>Колони от източника</value>
   </data>

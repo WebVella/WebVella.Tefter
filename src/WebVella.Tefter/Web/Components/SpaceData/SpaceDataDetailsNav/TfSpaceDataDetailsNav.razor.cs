@@ -1,9 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataDetailsNav.TfSpaceDataDetailsNav","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataDetailsNav.TfSpaceDataDetailsNav", "WebVella.Tefter")]
 public partial class TfSpaceDataDetailsNav : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 
 	private List<MenuItem> menu = new();
 	private List<TucSpaceView> viewList = new();
@@ -63,6 +64,34 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 		StateHasChanged();
 	}
 
+	private async Task _deleteSpaceData()
+	{
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this dataset deleted?")))
+			return;
+		try
+		{
+
+			Result result = UC.DeleteSpaceData(TfAppState.Value.SpaceData.Id);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Space data deleted"));
+				if(TfAppState.Value.SpaceDataList.Count > 0)
+					Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceDataList[0].Id), true);
+				else
+					Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
 	private async Task _editSpaceData()
 	{
 
@@ -89,7 +118,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 
 
 			Dispatcher.Dispatch(new SetSpaceDataAction(
-						component:this,
+						component: this,
 						spaceData: item,
 						spaceDataList: itemList));
 		}

@@ -6,6 +6,10 @@
 		<FluentStack>
 			@if (_urlData.NodesDict.Keys.Count < 5)
 			{
+				<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceData">
+					@LOC("Delete")
+					<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
+				</FluentButton>
 				<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceData">
 					@LOC("Edit")
 					<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />

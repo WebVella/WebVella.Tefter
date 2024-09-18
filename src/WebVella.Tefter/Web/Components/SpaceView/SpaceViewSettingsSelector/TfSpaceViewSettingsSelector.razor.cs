@@ -45,7 +45,10 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space view deleted"));
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
+				if (TfAppState.Value.SpaceViewList.Count > 0)
+					Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
+				else
+					Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
 			}
 		}
 		catch (Exception ex)
