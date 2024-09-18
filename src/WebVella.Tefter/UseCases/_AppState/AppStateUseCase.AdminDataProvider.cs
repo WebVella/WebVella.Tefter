@@ -11,7 +11,6 @@ internal partial class AppStateUseCase
 			result = result with
 			{
 				AdminDataProviders = new(),
-				AdminDataProvidersPage = 0,
 				AdminDataProvider = null,
 				DataProviderTypes = new(),
 				DataProviderSyncTasks = new(),
@@ -23,11 +22,13 @@ internal partial class AppStateUseCase
 
 
 		//AdminDataProviders, AdminDataProvidersPage
-		if (result.AdminDataProviders.Count == 0)
+		if (
+			result.AdminDataProviders.Count == 0
+			|| (routeState.DataProviderId is not null && !result.AdminDataProviders.Any(x => x.Id == routeState.DataProviderId))
+			)
 			result = result with
 			{
-				AdminDataProviders = await GetDataProvidersAsync(null, 1, TfConstants.PageSize),
-				AdminDataProvidersPage = 1
+				AdminDataProviders = await GetDataProvidersAsync()
 			};
 
 		//AdminManagedUser, DataProviderTypes, DataProviderSyncTasks, DataProviderSyncTasks, 

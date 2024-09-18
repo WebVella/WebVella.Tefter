@@ -6,53 +6,28 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	private bool _endIsReached = false;
-	private bool _isLoading = false;
-	private string _search = null;
+	private string search = null;
 	private int _stringLimit = 30;
-	private int _pageSize = TfConstants.PageSize;
 
-	protected override void OnInitialized()
+	private List<TucUser> _getUsers()
 	{
-		base.OnInitialized();
-		if (TfAppState.Value.AdminUsers.Count < _pageSize)
-			_endIsReached = true;
-	}
-	private async Task loadMoreClick(bool resetList = false)
-	{
-		var page = TfAppState.Value.AdminUsersPage + 1;
-		if (resetList)
+		search = search?.Trim().ToLowerInvariant();
+		var menuItems = new List<TucUser>();
+		foreach (var user in TfAppState.Value.AdminUsers)
 		{
-			page = 1;
-			_endIsReached = false;
-		}
-		_isLoading = true;
-		await InvokeAsync(StateHasChanged);
+			if (!String.IsNullOrWhiteSpace(search) &&
+				!(
+					user.FirstName.ToLowerInvariant().Contains(search)
+					|| user.LastName.ToLowerInvariant().Contains(search)
+					|| user.Email.ToLowerInvariant().Contains(search)
+				)
+				)
+				continue;
 
-		var records = await UC.GetUsersAsync(
-			search: _search,
-			page: page,
-			pageSize: _pageSize
-		);
-		var aggrRecords = TfAppState.Value.AdminUsers;
-
-		if (!resetList)
-		{
-			aggrRecords.AddRange(records);
-		}
-		else
-		{
-			aggrRecords = records;
+			menuItems.Add(user);
 		}
 
-		Dispatcher.Dispatch(new SetAppStateAction(
-			component: this,
-			state: TfAppState.Value with {AdminUsers = aggrRecords, AdminUsersPage = page }
-		));
-
-		_isLoading = false;
-		if (records.Count < _pageSize) _endIsReached = true;
-		await InvokeAsync(StateHasChanged);
+		return menuItems;
 	}
 
 	private async Task onAddClick()
@@ -74,10 +49,9 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		}
 	}
 
-	private async Task onSearch(string search)
+	private void onSearch(string search)
 	{
-		_search = search;
-		await loadMoreClick(true);
+		this.search = search;
 	}
 
 }

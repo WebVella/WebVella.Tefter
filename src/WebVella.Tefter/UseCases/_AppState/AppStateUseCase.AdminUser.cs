@@ -8,13 +8,16 @@ internal partial class AppStateUseCase
 			&& routeState.SecondNode == RouteDataSecondNode.Users)
 			)
 		{
-			result = result with { AdminUsers = new(), AdminUsersPage = 1, AdminManagedUser = null, UserRoles = new() };
+			result = result with { AdminUsers = new(), AdminManagedUser = null, UserRoles = new() };
 			return result;
 		};
 
 		//AdminUsers, AdminUsersPage
-		if (result.AdminUsers.Count == 0)
-			result = result with { AdminUsers = await GetUsersAsync(null, 1, TfConstants.PageSize), AdminUsersPage = 2 };
+		if (
+			result.AdminUsers.Count == 0
+			|| (routeState.UserId is not null && !result.AdminUsers.Any(x => x.Id == routeState.UserId))
+			)
+			result = result with { AdminUsers = await GetUsersAsync()};
 
 		//AdminManagedUser, UserRoles
 		if (routeState.UserId.HasValue)
