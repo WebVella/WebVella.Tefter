@@ -1,13 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (UC.IsBusy)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner"></div>
-	</FluentBodyContent>
-
-}
-else if (TfAppState.Value.Space is null || TfAppState.Value.SpaceView is null)
+@if (TfAppState.Value.Space is null || TfAppState.Value.SpaceView is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -56,10 +49,10 @@ else
 				<FluentGrid>
 					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("Dataset")" />
-						@if (UC.ViewData is not null)
+						@if (_spaceData is not null)
 						{
 							<FluentStack>
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.ViewData.Name
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceData.Name
 												 ReadOnly="true" Style="flex:1 1 auto" />
 								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
 											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfRouteState.Value.SpaceId,TfAppState.Value.SpaceView.SpaceDataId))"
@@ -72,12 +65,12 @@ else
 						}
 					</FluentGridItem>
 					<FluentGridItem xs="6">
-						@if (UC.ViewData is not null)
+						@if (_spaceData is not null)
 						{
 							<FluentInputLabel Label="@LOC("Data provider")" />
-							@if (UC.DataProvider is not null)
+							@if (_dataProvider is not null)
 							{
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@UC.DataProvider.Name
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_dataProvider.Name
 												 Style="width:100%" ReadOnly="true" />
 							}
 							else

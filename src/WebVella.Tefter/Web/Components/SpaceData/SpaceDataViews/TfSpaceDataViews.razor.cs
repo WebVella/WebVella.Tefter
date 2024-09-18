@@ -3,9 +3,6 @@
 public partial class TfSpaceDataViews : TfFormBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] private SpaceUseCase UC { get; set; }
-
-	private List<TucSpaceView> _items = new();
 
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -16,26 +13,14 @@ public partial class TfSpaceDataViews : TfFormBaseComponent
 		return base.DisposeAsyncCore(disposing);
 	}
 
-	protected override async Task OnInitializedAsync()
+	private List<TucSpaceView> _generateItems()
 	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
-		_generateItems();
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-	}
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		_generateItems();
-		StateHasChanged();
-	}
-
-	private void _generateItems()
-	{
-		_items = TfAppState.Value.SpaceViewList.Where(x => x.SpaceDataId == TfAppState.Value.SpaceData.Id).ToList();
-		foreach (var item in _items)
+		var items = TfAppState.Value.SpaceViewList.Where(x => x.SpaceDataId == TfAppState.Value.SpaceData.Id).ToList();
+		foreach (var item in items)
 		{
 			item.OnClick = () => _navigateToView(item);
 		}
+		return items;
 	}
 
 	private void _navigateToView(TucSpaceView view){ 

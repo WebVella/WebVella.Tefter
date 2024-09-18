@@ -4,81 +4,30 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	private bool _menuLoading = false;
-
-
-	private List<MenuItem> _menuItems = new();
-	private List<MenuItem> _visibleMenuItems = new();
-
-	private bool _selectorMenuVisible = false;
 	private bool _settingsMenuVisible = false;
-
 	private string search = null;
-	private bool hasMore = true;
-	private int page = 1;
-	private int pageSize = 30;
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		await base.DisposeAsyncCore(disposing);
-	}
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		GenerateMenu();
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-	}
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			_menuLoading = true;
-			await InvokeAsync(StateHasChanged);
-			await Task.Delay(1);
-			GenerateMenu();
-			_menuLoading = false;
-			await InvokeAsync(StateHasChanged);
-		});
-
-	}
-
-	private void GenerateMenu(string search = null)
+	private List<MenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
-		_menuItems.Clear();
-		var nodes = new List<MenuItem>();
-		foreach (var dataItem in TfAppState.Value.SpaceDataList)
+		var menuItems = new List<MenuItem>();
+		foreach (var spaceData in TfAppState.Value.SpaceDataList)
 		{
-			if (!String.IsNullOrWhiteSpace(search) && !dataItem.Name.ToLowerInvariant().Contains(search))
+			if (!String.IsNullOrWhiteSpace(search) && !spaceData.Name.ToLowerInvariant().Contains(search))
 				continue;
 
-			var menuItem = new MenuItem
+			var menu = new MenuItem
 			{
-				Id = RenderUtils.ConvertGuidToHtmlElementId(dataItem.Id),
+				Id = RenderUtils.ConvertGuidToHtmlElementId(spaceData.Id),
 				Icon = TfConstants.SpaceDataIcon,
 				Match = NavLinkMatch.Prefix,
-				Title = dataItem.Name,
-				Url = String.Format(TfConstants.SpaceDataPageUrl, dataItem.SpaceId, dataItem.Id),
+				Title = spaceData.Name,
+				Url = String.Format(TfConstants.SpaceDataPageUrl, spaceData.SpaceId, spaceData.Id),
 			};
-			_menuItems.Add(menuItem);
+			menuItems.Add(menu);
 		}
 
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page, pageSize)).Take(pageSize).ToList();
-		if (batch.Count < pageSize) hasMore = false;
-		_visibleMenuItems = batch;
-	}
-
-	private async Task loadMoreClick()
-	{
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1, pageSize)).Take(pageSize).ToList();
-		if (batch.Count < pageSize) hasMore = false;
-		_visibleMenuItems.AddRange(batch);
-		page++;
-		await InvokeAsync(StateHasChanged);
+		return menuItems;
 	}
 
 	private async Task onAddClick()
@@ -143,10 +92,8 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, spaceViewId));
 	}
 
-	private async Task onSearch(string value)
+	private void onSearch(string value)
 	{
 		search = value;
-		GenerateMenu(search);
-		await InvokeAsync(StateHasChanged);
 	}
 }

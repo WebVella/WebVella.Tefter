@@ -1,6 +1,4 @@
 ﻿namespace WebVella.Tefter.Web.Store;
-using SystemColor = System.Drawing.Color;
-
 public partial record TfAppState
 {
 	public List<TucSpaceView> SpaceViewList { get; init; } = new();
@@ -33,4 +31,5 @@ public partial record TfAppState
 		}
 	}
 
+	public List<TucSpaceViewColumnType> AvailableColumnTypes { get; init; }
 }

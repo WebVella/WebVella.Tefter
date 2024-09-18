@@ -5,7 +5,6 @@ public partial record TfAppState
 {
 	public List<TucSpaceData> SpaceDataList { get; init; } = new();
 	public TucSpaceData SpaceData { get; init; }
-
-
+	internal List<TucDataProvider> AllDataProviders { get; set; } = new();
 
 }

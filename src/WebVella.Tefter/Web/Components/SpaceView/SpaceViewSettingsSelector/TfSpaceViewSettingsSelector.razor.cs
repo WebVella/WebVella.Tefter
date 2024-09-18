@@ -2,7 +2,7 @@
 public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	private bool _open = false;
 	private bool _selectorLoading = false;
 

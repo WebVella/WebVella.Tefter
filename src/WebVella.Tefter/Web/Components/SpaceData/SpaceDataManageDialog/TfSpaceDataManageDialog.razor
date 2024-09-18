@@ -30,16 +30,16 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=UC.SpaceDataManageForm.Name
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
-					<FluentValidationMessage For="@(() => UC.SpaceDataManageForm.Name)" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentSelect SelectedOption="@_selectedDataProvider" SelectedOptionChanged="_dataProviderSelected"
 								  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
-								  Items="@UC.AllDataProviders" Style="width:100%"
+								  Items="@TfAppState.Value.AllDataProviders" Style="width:100%"
 								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
-					<FluentValidationMessage For="@(() => UC.SpaceDataManageForm.DataProviderId)" />
+					<FluentValidationMessage For="@(() => _form.DataProviderId)" />
 				</FluentGridItem>
 			</FluentGrid>
 		</FluentEditForm>

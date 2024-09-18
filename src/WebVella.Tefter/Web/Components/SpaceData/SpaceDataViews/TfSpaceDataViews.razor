@@ -1,6 +1,9 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @namespace WebVella.Tefter.Web.Components
 @inherits TfFormBaseComponent
+@{
+	var _items = _generateItems();
+}
 @if (_items.Count == 0)
 {
 	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This dataset does not provide data to views")</FluentMessageBar>

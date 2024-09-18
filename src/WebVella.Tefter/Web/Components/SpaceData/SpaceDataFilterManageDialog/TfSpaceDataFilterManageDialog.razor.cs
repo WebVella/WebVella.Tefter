@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataFilterManageDialog.TfSpaceDataFilterManageDialog","WebVella.Tefter")]
 public partial class TfSpaceDataFilterManageDialog : TfFormBaseComponent, IDialogContentComponent<TucFilterBase>
 {
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TucFilterBase Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -16,7 +16,6 @@ public partial class TfSpaceDataFilterManageDialog : TfFormBaseComponent, IDialo
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
 		if (Content is null) Content = new();
 		base.InitForm(Content);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");

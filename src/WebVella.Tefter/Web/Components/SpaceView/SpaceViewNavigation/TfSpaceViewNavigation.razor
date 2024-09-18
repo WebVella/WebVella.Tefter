@@ -44,24 +44,13 @@
 		</div>
 	</div>
 	<div class="sidebar-inner">
-		@if (_menuLoading)
-		{
-			<TfLoadingPane />
-		}
-		else
-		{
-			<FluentNavMenu Style="width:100%">
-				@foreach (var item in _visibleMenuItems)
-				{
-					<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
-								   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
-				}
-			</FluentNavMenu>
-			@if (hasMore)
+		<FluentNavMenu Style="width:100%">
+			@foreach (var item in _getMenu())
 			{
-				<FluentButton Class="load-more" Appearance="@Appearance.Outline" OnClick="loadMoreClick">Load more</FluentButton>
+				<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
+							   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
 			}
-		}
+		</FluentNavMenu>
 	</div>
 </div>
 

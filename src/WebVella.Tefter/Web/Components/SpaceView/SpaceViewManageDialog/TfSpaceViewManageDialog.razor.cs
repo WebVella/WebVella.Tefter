@@ -2,7 +2,8 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageDialog.TfSpaceViewManageDialog", "WebVella.Tefter")]
 public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceView>
 {
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TucSpaceView Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 	private string _error = string.Empty;
@@ -15,40 +16,39 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	private TucDataProvider _selectedDataProvider = null;
 	private TucSpaceData _selectedDataset = null;
 	private List<string> _generatedColumns = new();
-
+	private int _generatedColumnCountLimit = 20;
+	private TucSpaceView _form = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content.SpaceId == Guid.Empty) throw new Exception("SpaceId is required");
-		await UC.Init(this.GetType(), Content.SpaceId);
-		base.InitForm(UC.SpaceViewManageForm);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-		_title = _isCreate ? LOC("Create view in {0}", UC.SpaceName) : LOC("Manage view in {0}", UC.SpaceName);
+		_title = _isCreate ? LOC("Create view in {0}", TfAppState.Value.Space.Name) : LOC("Manage view in {0}", TfAppState.Value.Space.Name);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 
 		if (_isCreate)
 		{
-			UC.SpaceViewManageForm = new TucSpaceView()
+			_form = new TucSpaceView()
 			{
 				Id = Guid.NewGuid(),
 				SpaceId = Content.SpaceId,
 			};
-			if (UC.AllDataProviders.Any())
+			if (TfAppState.Value.AllDataProviders.Any())
 			{
-				UC.SpaceViewManageForm.DataProviderId = UC.AllDataProviders[0].Id;
-				_selectedDataProvider = UC.AllDataProviders[0];
+				_form.DataProviderId = TfAppState.Value.AllDataProviders[0].Id;
+				_selectedDataProvider = TfAppState.Value.AllDataProviders[0];
 			}
 			_generatedColumnsListInit();
 		}
 		else
 		{
-			UC.SpaceViewManageForm = Content with { Id = Content.Id, DataSetType = TucSpaceViewDataSetType.Existing };
-			_selectedDataset = UC.SpaceDataList.Single(x => x.Id == Content.SpaceDataId);
+			_form = Content with { Id = Content.Id, DataSetType = TucSpaceViewDataSetType.Existing };
+			_selectedDataset = TfAppState.Value.SpaceDataList.Single(x => x.Id == Content.SpaceDataId);
 		}
 
-		base.InitForm(UC.SpaceViewManageForm);
+		base.InitForm(_form);
 	}
 
 
@@ -72,9 +72,9 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 
 			Result<TucSpaceView> result = null;
 			if (_isCreate)
-				result = UC.CreateSpaceViewWithForm(UC.SpaceViewManageForm);
+				result = UC.CreateSpaceViewWithForm(_form);
 			else
-				result = UC.UpdateSpaceViewWithForm(UC.SpaceViewManageForm);
+				result = UC.UpdateSpaceViewWithForm(_form);
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
@@ -100,27 +100,27 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	private void _dataSetTypeChangeHandler(TucSpaceViewDataSetType type)
 	{
 		_selectedDataProvider = null;
-		UC.SpaceViewManageForm.DataProviderId = null;
+		_form.DataProviderId = null;
 		_selectedDataset = null;
-		UC.SpaceViewManageForm.SpaceDataId = null;
-		UC.SpaceViewManageForm.DataSetType = TucSpaceViewDataSetType.New;
+		_form.SpaceDataId = null;
+		_form.DataSetType = TucSpaceViewDataSetType.New;
 
 		if (type == TucSpaceViewDataSetType.New)
 		{
-			if (UC.AllDataProviders.Any())
+			if (TfAppState.Value.AllDataProviders.Any())
 			{
-				UC.SpaceViewManageForm.DataProviderId = UC.AllDataProviders[0].Id;
-				_selectedDataProvider = UC.AllDataProviders[0];
+				_form.DataProviderId = TfAppState.Value.AllDataProviders[0].Id;
+				_selectedDataProvider = TfAppState.Value.AllDataProviders[0];
 			}
-			UC.SpaceViewManageForm.DataSetType = type;
+			_form.DataSetType = type;
 		}
 		else if (type == TucSpaceViewDataSetType.Existing)
 		{
-			if (UC.SpaceDataList.Any()){ 
-				UC.SpaceViewManageForm.SpaceDataId = UC.SpaceDataList[0].Id;
-				_selectedDataset = UC.SpaceDataList[0];			
+			if (TfAppState.Value.SpaceDataList.Any()){ 
+				_form.SpaceDataId = TfAppState.Value.SpaceDataList[0].Id;
+				_selectedDataset = TfAppState.Value.SpaceDataList[0];			
 			}
-			UC.SpaceViewManageForm.DataSetType = type;
+			_form.DataSetType = type;
 		}
 		_generatedColumnsListInit();
 	}
@@ -128,43 +128,43 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 	private void _dataProviderSelectedHandler(string providerIdString)
 	{
 		_selectedDataProvider = null;
-		UC.SpaceViewManageForm.DataProviderId = null;
+		_form.DataProviderId = null;
 		Guid providerId = Guid.Empty;
 		if (!String.IsNullOrWhiteSpace(providerIdString) && Guid.TryParse(providerIdString, out providerId)) ;
 		if (providerId == Guid.Empty) return;
 
-		var provider = UC.AllDataProviders.FirstOrDefault(x => x.Id == providerId);
+		var provider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == providerId);
 		if (provider is null) return;
 		_selectedDataProvider = provider;
-		UC.SpaceViewManageForm.DataProviderId = provider.Id;
+		_form.DataProviderId = provider.Id;
 		_generatedColumnsListInit();
 	}
 
 	private void _datasetSelected(TucSpaceData dataset)
 	{
 		_selectedDataset = dataset;
-		UC.SpaceViewManageForm.SpaceDataId = dataset is null ? null : dataset.Id;
+		_form.SpaceDataId = dataset is null ? null : dataset.Id;
 		_generatedColumnsListInit();
 	}
 
 	private void _columnGeneratorSettingChanged(bool value, string field)
 	{
 
-		if (field == nameof(UC.SpaceViewManageForm.AddProviderColumns))
+		if (field == nameof(_form.AddProviderColumns))
 		{
-			UC.SpaceViewManageForm.AddProviderColumns = value;
+			_form.AddProviderColumns = value;
 		}
-		else if (field == nameof(UC.SpaceViewManageForm.AddSharedColumns))
+		else if (field == nameof(_form.AddSharedColumns))
 		{
-			UC.SpaceViewManageForm.AddSharedColumns = value;
+			_form.AddSharedColumns = value;
 		}
-		else if (field == nameof(UC.SpaceViewManageForm.AddSystemColumns))
+		else if (field == nameof(_form.AddSystemColumns))
 		{
-			UC.SpaceViewManageForm.AddSystemColumns = value;
+			_form.AddSystemColumns = value;
 		}
-		else if (field == nameof(UC.SpaceViewManageForm.AddDatasetColumns))
+		else if (field == nameof(_form.AddDatasetColumns))
 		{
-			UC.SpaceViewManageForm.AddDatasetColumns = value;
+			_form.AddDatasetColumns = value;
 		}
 		_generatedColumnsListInit();
 	}
@@ -175,16 +175,16 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 
 		if (_selectedDataProvider is not null)
 		{
-			if (UC.SpaceViewManageForm.AddProviderColumns)
+			if (_form.AddProviderColumns)
 				_generatedColumns.AddRange(_selectedDataProvider.Columns.Select(x => x.DbName));
-			if (UC.SpaceViewManageForm.AddSystemColumns)
+			if (_form.AddSystemColumns)
 				_generatedColumns.AddRange(_selectedDataProvider.SystemColumns.Select(x => x.DbName));
-			if (UC.SpaceViewManageForm.AddSharedColumns)
+			if (_form.AddSharedColumns)
 				_generatedColumns.AddRange(_selectedDataProvider.SharedColumns.Select(x => x.DbName));
 		}
 		else if (_selectedDataset is not null)
 		{
-			if (UC.SpaceViewManageForm.AddDatasetColumns)
+			if (_form.AddDatasetColumns)
 				_generatedColumns.AddRange(_selectedDataset.Columns.Select(x => x));
 		}
 	}

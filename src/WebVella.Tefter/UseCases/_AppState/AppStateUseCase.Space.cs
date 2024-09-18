@@ -14,7 +14,10 @@ internal partial class AppStateUseCase
 		}
 
 		//CurrentUserSpaces
-		if (result.CurrentUserSpaces.Count == 0) //Fill in only if not already loaded
+		if (
+			result.CurrentUserSpaces.Count == 0
+			|| (routeState.SpaceId is not null && !result.CurrentUserSpaces.Any(x => x.Id == routeState.SpaceId))
+			) //Fill in only if not already loaded
 			result = result with { CurrentUserSpaces = await GetUserSpacesAsync(currentUser) };
 
 		if (routeState.SpaceId is not null)

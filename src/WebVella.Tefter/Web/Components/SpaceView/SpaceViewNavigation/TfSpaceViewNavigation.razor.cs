@@ -6,53 +6,14 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	private bool _menuLoading = false;
-
-	private List<MenuItem> _menuItems = new();
-	private List<MenuItem> _visibleMenuItems = new();
-
-	private bool _selectorMenuVisible = false;
 	private bool _settingsMenuVisible = false;
-
-
 	private string search = null;
-	private bool hasMore = true;
-	private int page = 1;
-	private int pageSize = 30;
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		await base.DisposeAsyncCore(disposing);
-	}
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		GenerateMenu();
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-	}
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			_menuLoading = true;
-			await InvokeAsync(StateHasChanged);
-			await Task.Delay(1);
-			GenerateMenu();
-			_menuLoading = false;
-			await InvokeAsync(StateHasChanged);
-		});
 
-	}
-
-	private void GenerateMenu(string search = null)
+	private List<MenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
-		_menuItems.Clear();
-		var nodes = new List<MenuItem>();
+		var menuItems = new List<MenuItem>();
 		foreach (var view in TfAppState.Value.SpaceViewList)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !view.Name.ToLowerInvariant().Contains(search))
@@ -66,21 +27,10 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 				Title = view.Name,
 				Url = String.Format(TfConstants.SpaceViewPageUrl, view.SpaceId, view.Id),
 			};
-			_menuItems.Add(viewMenu);
+			menuItems.Add(viewMenu);
 		}
 
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page, pageSize)).Take(pageSize).ToList();
-		if (batch.Count < pageSize) hasMore = false;
-		_visibleMenuItems = batch;
-	}
-
-	private async Task loadMoreClick()
-	{
-		var batch = _menuItems.Skip(RenderUtils.CalcSkip(page + 1, pageSize)).Take(pageSize).ToList();
-		if (batch.Count < pageSize) hasMore = false;
-		_visibleMenuItems.AddRange(batch);
-		page++;
-		await InvokeAsync(StateHasChanged);
+		return menuItems;
 	}
 
 	private async Task onAddClick()
@@ -144,10 +94,8 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		if (TfAppState.Value.SpaceDataList.Count > 0) spaceDataId = TfAppState.Value.SpaceDataList[0].Id;
 		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, spaceDataId));
 	}
-	private async Task onSearch(string value)
+	private void onSearch(string value)
 	{
 		search = value;
-		GenerateMenu(search);
-		await InvokeAsync(StateHasChanged);
 	}
 }

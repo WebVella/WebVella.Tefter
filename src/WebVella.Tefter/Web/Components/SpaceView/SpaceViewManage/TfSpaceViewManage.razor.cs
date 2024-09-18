@@ -4,37 +4,18 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	private bool _isSubmitting = false;
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	private TucSpaceData _spaceData = null;
+	private TucDataProvider _dataProvider = null;
+	protected override void OnInitialized()
 	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		await base.DisposeAsyncCore(disposing);
-	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
+		base.OnInitialized();
+		_spaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId);
+		_dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
+
 	}
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			var columns = await UC.InitSpaceViewManageAfterRender(TfAppState.Value);
-			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-				component: this,
-				spaceViewColumns: columns
-			));
-			UC.IsBusy = false;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewColumnManageDialog>(
@@ -48,16 +29,11 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var updatedColumn = (TucSpaceViewColumn)result.Data;
-			var columns = TfAppState.Value.SpaceViewColumns.ToList();
-			columns.Add(updatedColumn);
-			columns = columns.OrderBy(x => x.QueryName).ToList();
-
-			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+			var updatedResult = (List<TucSpaceViewColumn>)result.Data;
+			Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
-			spaceViewColumns: columns
+			state: TfAppState.Value with { SpaceViewColumns = updatedResult }
 			));
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -75,17 +51,11 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var updatedColumn = (TucSpaceViewColumn)result.Data;
-			var columns = TfAppState.Value.SpaceViewColumns.ToList();
-
-			var columnIndex = columns.FindIndex(x => x.Id == updatedColumn.Id);
-			if (columnIndex > -1) columns[columnIndex] = updatedColumn;
-			columns = columns.OrderBy(x => x.QueryName).ToList();
-			Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+			var updatedResult = (List<TucSpaceViewColumn>)result.Data;
+			Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
-			spaceViewColumns: columns
+			state: TfAppState.Value with { SpaceViewColumns = updatedResult }
 			));
-			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -98,21 +68,16 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		try
 		{
 			_isSubmitting = true;
-			Result submitResult = UC.RemoveSpaceViewColumn(column.Id);
+			Result<List<TucSpaceViewColumn>> submitResult = UC.RemoveSpaceViewColumn(column.Id);
 			ProcessServiceResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space View updated!"));
-				var columns = TfAppState.Value.SpaceViewColumns.ToList();
-				var columnIndex = columns.FindIndex(x => x.Id == column.Id);
-				if (columnIndex > -1)
-				{
-					columns.RemoveAt(columnIndex);
-					Dispatcher.Dispatch(new SetSpaceViewMetaAction(
-					component: this,
-					spaceViewColumns: columns
-					));
-				}
+
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with { SpaceViewColumns = submitResult.Value }
+				));
 			}
 		}
 		catch (Exception ex)

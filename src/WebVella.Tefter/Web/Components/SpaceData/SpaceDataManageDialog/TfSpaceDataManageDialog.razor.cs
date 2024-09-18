@@ -1,8 +1,9 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataManageDialog.TfSpaceDataManageDialog","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataManageDialog.TfSpaceDataManageDialog", "WebVella.Tefter")]
 public partial class TfSpaceDataManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceData>
 {
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TucSpaceData Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 	private string _error = string.Empty;
@@ -13,37 +14,25 @@ public partial class TfSpaceDataManageDialog : TfFormBaseComponent, IDialogConte
 	private bool _isCreate = false;
 
 	private TucDataProvider _selectedDataProvider = null;
-
+	private TucSpaceData _form = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content.SpaceId == Guid.Empty) throw new Exception("SpaceId is required");
-		await UC.Init(this.GetType(), Content.SpaceId);
-		base.InitForm(UC.SpaceDataManageForm);
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
-		_title = _isCreate ? LOC("Create dataset in {0}", UC.SpaceName) : LOC("Manage dataset in {0}", UC.SpaceName);
+		_title = _isCreate ? LOC("Create dataset in {0}", TfAppState.Value.Space.Name) : LOC("Manage dataset in {0}", TfAppState.Value.Space.Name);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
-	}
+		if (_isCreate)
+			_form = Content with { Id = Guid.NewGuid() };
+		else
+			_form = Content with { Id = Content.Id };
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			//space id is in conntent
-			if (_isCreate)
-				UC.SpaceDataManageForm = Content with { Id = Guid.NewGuid() };
-			else
-				UC.SpaceDataManageForm = Content with { Id = Content.Id };
+		if (_form.DataProviderId != Guid.Empty)
+			_selectedDataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _form.DataProviderId);
 
-			if (UC.SpaceDataManageForm.DataProviderId != Guid.Empty)
-				_selectedDataProvider = UC.AllDataProviders.FirstOrDefault(x => x.Id == UC.SpaceDataManageForm.DataProviderId);
-
-			base.InitForm(UC.SpaceDataManageForm);
-			await InvokeAsync(StateHasChanged);
-		}
+		base.InitForm(_form);
 	}
 
 	private async Task _save()
@@ -64,9 +53,9 @@ public partial class TfSpaceDataManageDialog : TfFormBaseComponent, IDialogConte
 
 			Result<TucSpaceData> result = null;
 			if (_isCreate)
-				result = UC.CreateSpaceDataWithForm(UC.SpaceDataManageForm);
+				result = UC.CreateSpaceDataWithForm(_form);
 			else
-				result = UC.UpdateSpaceDataWithForm(UC.SpaceDataManageForm);
+				result = UC.UpdateSpaceDataWithForm(_form);
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
@@ -93,6 +82,6 @@ public partial class TfSpaceDataManageDialog : TfFormBaseComponent, IDialogConte
 	{
 		if (provider == null) return;
 		_selectedDataProvider = provider;
-		UC.SpaceDataManageForm.DataProviderId = provider.Id;
+		_form.DataProviderId = provider.Id;
 	}
 }

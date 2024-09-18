@@ -5,29 +5,33 @@ internal partial class AppStateUseCase
 	{
 		if (routeState.SpaceId is null)
 		{
-			result = result with { SpaceData = null, SpaceDataList = new() };
+			result = result with { SpaceData = null, SpaceDataList = new(), AllDataProviders = new() };
 			return Task.FromResult(result);
 		}
 
 		//SpaceDataList
 		if (result.SpaceDataList.Count == 0
 			|| !result.SpaceDataList.Any(x => x.SpaceId == routeState.SpaceId)
+			|| (routeState.SpaceDataId is not null && !result.SpaceDataList.Any(x => x.Id == routeState.SpaceDataId))
 			)
 			result = result with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
 		//SpaceData
 		if (routeState.SpaceDataId is not null)
 		{
 			result = result with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
+
 		}
 		else
 		{
 			result = result with { SpaceData = null };
 		}
 
+		result = result with { AllDataProviders = GetDataProviderList() };
+
 
 		return Task.FromResult(result);
 	}
-internal TucSpaceData GetSpaceData(Guid spaceDataId)
+	internal TucSpaceData GetSpaceData(Guid spaceDataId)
 	{
 		var serviceResult = _spaceManager.GetSpaceData(spaceDataId);
 		if (serviceResult.IsFailed)
@@ -244,4 +248,23 @@ internal TucSpaceData GetSpaceData(Guid spaceDataId)
 
 	}
 
+	//Data provider
+	internal List<TucDataProvider> GetDataProviderList()
+	{
+		var serviceResult = _dataProviderManager.GetProviders();
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProviders failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		if (serviceResult.Value is null) return new();
+
+		return serviceResult.Value.Select(x => new TucDataProvider(x)).ToList();
+	}
 }

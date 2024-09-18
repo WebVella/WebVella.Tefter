@@ -3,9 +3,10 @@
 public partial class TfSpaceDataManage : TfFormBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] private SpaceUseCase UC { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 
 	public TucDataProvider SelectedProvider = null;
+	public TucSpaceData _form = new();
 	public bool _submitting = false;
 	public List<string> AllColumnOptions
 	{
@@ -19,8 +20,8 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		get
 		{
-			if (UC.SpaceDataManageForm is null || UC.SpaceDataManageForm.Columns is null) return AllColumnOptions;
-			return AllColumnOptions.Where(x => !UC.SpaceDataManageForm.Columns.Contains(x)).ToList();
+			if (_form?.Columns is null) return AllColumnOptions;
+			return AllColumnOptions.Where(x => !_form.Columns.Contains(x)).ToList();
 		}
 	}
 
@@ -28,8 +29,8 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		get
 		{
-			if (UC.SpaceDataManageForm is null || UC.SpaceDataManageForm.SortOrders is null) return AllColumnOptions;
-			return AllColumnOptions.Where(x => !UC.SpaceDataManageForm.SortOrders.Any(y => y.DbName == x)).ToList();
+			if (_form?.SortOrders is null) return AllColumnOptions;
+			return AllColumnOptions.Where(x => !_form.SortOrders.Any(y => y.DbName == x)).ToList();
 		}
 	}
 
@@ -57,18 +58,17 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await UC.Init(this.GetType());
 		_init();
 		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
 	}
 
 	private void _init()
 	{
-		UC.SpaceDataManageForm = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
-		base.InitForm(UC.SpaceDataManageForm);
-		if (UC.SpaceDataManageForm.DataProviderId != Guid.Empty)
+		_form = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
+		base.InitForm(_form);
+		if (_form.DataProviderId != Guid.Empty)
 		{
-			SelectedProvider = UC.AllDataProviders.FirstOrDefault(x => x.Id == UC.SpaceDataManageForm.DataProviderId);
+			SelectedProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _form.DataProviderId);
 		}
 	}
 
@@ -82,7 +82,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		if (provider is null) return;
 		SelectedProvider = provider;
-		UC.SpaceDataManageForm.DataProviderId = SelectedProvider.Id;
+		_form.DataProviderId = SelectedProvider.Id;
 	}
 
 
@@ -92,7 +92,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		try
 		{
 			if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
-			if (UC.SpaceDataManageForm.Columns.Contains(_selectedColumn)) return;
+			if (_form.Columns.Contains(_selectedColumn)) return;
 
 
 
@@ -107,7 +107,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
 
 				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component:this,
+					component: this,
 					spaceData: submitResult.Value,
 					spaceDataList: spaceDataList
 				));
@@ -144,7 +144,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
 
 				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component:this,
+					component: this,
 					spaceData: submitResult.Value,
 					spaceDataList: spaceDataList
 				));
@@ -176,12 +176,12 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 		if (parentId is null)
 		{
-			UC.SpaceDataManageForm.Filters.Add(filter);
+			_form.Filters.Add(filter);
 		}
 		else
 		{
 			TucFilterBase parentFilter = null;
-			foreach (var item in UC.SpaceDataManageForm.Filters)
+			foreach (var item in _form.Filters)
 			{
 				var (result, resultParent) = FindFilter(item, parentId.Value, null);
 				if (result is not null)
@@ -253,7 +253,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		TucFilterBase filter = null;
 		TucFilterBase parentFilter = null;
-		foreach (var item in UC.SpaceDataManageForm.Filters)
+		foreach (var item in _form.Filters)
 		{
 			var (result, resultParent) = FindFilter(item, filterId, null);
 			if (result is not null)
@@ -266,7 +266,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 		if (filter is not null)
 		{
-			if (parentFilter is null) UC.SpaceDataManageForm.Filters.Remove(filter);
+			if (parentFilter is null) _form.Filters.Remove(filter);
 			else if (parentFilter is TucFilterAnd) ((TucFilterAnd)parentFilter).Filters.Remove(filter);
 			else if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Remove(filter);
 			await InvokeAsync(StateHasChanged);
@@ -284,7 +284,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		if (_isSubmitting) return;
 		try
 		{
-			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataFilters(TfAppState.Value.SpaceData.Id, UC.SpaceDataManageForm.Filters);
+			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataFilters(TfAppState.Value.SpaceData.Id, _form.Filters);
 			ProcessFormSubmitResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
@@ -294,7 +294,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
 
 				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component:this,
+					component: this,
 					spaceData: submitResult.Value,
 					spaceDataList: spaceDataList
 				));
@@ -325,7 +325,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		try
 		{
 			if (_selectedSort is null || String.IsNullOrWhiteSpace(_selectedSort.DbName)) return;
-			if (UC.SpaceDataManageForm.SortOrders.Any(x => x.DbName == _selectedSort.DbName)) return;
+			if (_form.SortOrders.Any(x => x.DbName == _selectedSort.DbName)) return;
 
 
 
@@ -340,7 +340,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
 
 				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component:this,
+					component: this,
 					spaceData: submitResult.Value,
 					spaceDataList: spaceDataList
 				));
@@ -377,7 +377,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
 
 				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component:this,
+					component: this,
 					spaceData: submitResult.Value,
 					spaceDataList: spaceDataList
 				));
