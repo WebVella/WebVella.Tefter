@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.UseCases.AppStart;
+﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
 	internal async Task<TfAppState> InitAdminDataProviderAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)

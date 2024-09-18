@@ -11,7 +11,6 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
 	[Inject] protected IWebConfigurationService ConfigurationService { get; set; }
-	[Inject] protected ITfService TfSrv { get; set; }
 	[Inject] protected IIdentityManager IdentityManager { get; set; }
 	[Inject] protected ITfDataProviderManager DataProviderManager { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }

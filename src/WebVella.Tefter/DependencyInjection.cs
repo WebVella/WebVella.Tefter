@@ -22,8 +22,6 @@ public static class DependencyInjection
 		//https://www.fluentui-blazor.net/
 		services.AddFluentUIComponents();
 
-		services.AddScoped<IDataBroker, DataBroker>();
-		services.AddScoped<ITfService, TfService>();
 		services.AddSingleton<IWebConfigurationService, WebConfigurationService>();
 
 

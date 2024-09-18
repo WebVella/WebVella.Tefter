@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Localization;
-using WebVella.Tefter.Api;
+﻿using WebVella.Tefter.Api;
 
-namespace WebVella.Tefter.UseCases.AppStart;
+namespace WebVella.Tefter.UseCases.AppState;
 
 internal partial class AppStateUseCase
 {
@@ -47,7 +46,7 @@ internal partial class AppStateUseCase
 
 	internal async Task<TfAppState> InitState(TucUser currentUser, string url, TfAppState result)
 	{
-		if(result == null) result = new TfAppState();
+		if (result == null) result = new TfAppState();
 		var routeState = _navigationManager.GetRouteState(url);
 
 		result = await InitAdminUsersAsync(currentUser, routeState, result);

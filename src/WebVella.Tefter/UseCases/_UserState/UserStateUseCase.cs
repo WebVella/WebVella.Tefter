@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Localization;
 
-namespace WebVella.Tefter.UseCases.AppStart;
+namespace WebVella.Tefter.UseCases.UserState;
 
 internal partial class UserStateUseCase
 {
