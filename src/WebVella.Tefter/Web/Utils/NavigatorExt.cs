@@ -65,15 +65,15 @@ internal static class NavigatorExt
 				{
 					if (result.NodesDict[3] == TfConstants.RouteNameAccess)
 					{
-						result = result with { ThirdNode = RouteDataThirdNode.Access};
+						result = result with { ThirdNode = RouteDataThirdNode.Access };
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameSaves)
 					{
-						result = result with { ThirdNode = RouteDataThirdNode.Saves};
+						result = result with { ThirdNode = RouteDataThirdNode.Saves };
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameSchema)
 					{
-						result = result with { ThirdNode = RouteDataThirdNode.Schema};
+						result = result with { ThirdNode = RouteDataThirdNode.Schema };
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameKeys)
 					{
@@ -81,7 +81,7 @@ internal static class NavigatorExt
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameAux)
 					{
-						result = result with { ThirdNode = RouteDataThirdNode.AuxColumns};
+						result = result with { ThirdNode = RouteDataThirdNode.AuxColumns };
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameSynchronization)
 					{
@@ -105,7 +105,7 @@ internal static class NavigatorExt
 		}
 		else if (result.NodesDict[0] == TfConstants.RouteNameSpace)
 		{
-			result = result with { FirstNode = RouteDataFirstNode.Space};
+			result = result with { FirstNode = RouteDataFirstNode.Space };
 			//Process 2
 			if (result.NodesDict.Count >= 2)
 			{
@@ -117,7 +117,7 @@ internal static class NavigatorExt
 			{
 				if (result.NodesDict[2] == TfConstants.RouteNameSpaceView)
 				{
-					result = result with { SecondNode = RouteDataSecondNode.SpaceView};
+					result = result with { SecondNode = RouteDataSecondNode.SpaceView };
 					result = result with { ThirdNode = RouteDataThirdNode.Details };
 				}
 				else if (result.NodesDict[2] == TfConstants.RouteNameSpaceData)
@@ -147,7 +147,7 @@ internal static class NavigatorExt
 				}
 				else if (result.NodesDict[4] == TfConstants.RouteNameViews)
 				{
-					result = result with { ThirdNode = RouteDataThirdNode.Views};
+					result = result with { ThirdNode = RouteDataThirdNode.Views };
 				}
 			}
 		}
@@ -250,6 +250,18 @@ internal static class NavigatorExt
 				var value = (bool?)queryValue;
 				if (value is not null)
 					newQueryDictionary[key] = value.ToString();
+			}
+			else if (queryValue is List<TucFilterBase>)
+			{
+				var value = (List<TucFilterBase>)queryValue;
+				if (value is not null)
+					newQueryDictionary[key] = SerializeFiltersForUrl(value);
+			}
+			else if (queryValue is List<TucSort>)
+			{
+				var value = (List<TucSort>)queryValue;
+				if (value is not null)
+					newQueryDictionary[key] = SerializeSortsForUrl(value);
 			}
 			else
 				throw new Exception("Query type not supported by utility method");
@@ -445,11 +457,42 @@ internal static class NavigatorExt
 	}
 	internal static string UrlReplaceSpecialCharacters(string inputValue)
 	{
-		return inputValue.Replace("/", "~");
+		return inputValue.Replace("/", "~~~");
 	}
 	internal static string UrlUndoReplaceSpecialCharacters(string inputValue)
 	{
-		return inputValue.Replace("~", "/");
+		return inputValue.Replace("~~~", "/");
+	}
+
+	internal static string SerializeFiltersForUrl(List<TucFilterBase> filters)
+	{
+		var queryObject = new List<TucFilterQuery>();
+		foreach (var item in filters)
+		{
+			queryObject.Add(TucFilterBase.ToQuery(item));
+		}
+		return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
+	}
+
+	internal static List<TucFilterBase> DeserializeFiltersForUrl(string queryValue)
+	{
+		var items = JsonSerializer.Deserialize<List<TucFilterQuery>>(ProcessQueryValueFromUrl(queryValue));
+		var result = new List<TucFilterBase>();
+		foreach (var item in items)
+		{
+			result.Add(TucFilterBase.FromQuery(item));
+		}
+		return result;
+	}
+
+	internal static string SerializeSortsForUrl(List<TucSort> sorts)
+	{
+		return ProcessQueryValueForUrl(JsonSerializer.Serialize(sorts));
+	}
+
+	internal static List<TucSort> DeserializeSortsForUrl(string queryValue)
+	{
+		return JsonSerializer.Deserialize<List<TucSort>>(ProcessQueryValueFromUrl(queryValue));
 	}
 
 	internal static string GetLocalUrl(this NavigationManager navigator)

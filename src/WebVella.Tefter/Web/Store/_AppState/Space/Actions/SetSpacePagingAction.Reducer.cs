@@ -13,7 +13,7 @@ public static partial class SpaceStateReducers
 	public static TfAppState SetSpacePagingActionReducer(TfAppState state, SetSpacePagingAction action)
 		=> state with
 		{
-			Page = action.Page,
-			PageSize = action.PageSize,
+			SpaceViewPage = action.Page,
+			SpaceViewPageSize = action.PageSize,
 		};
 }

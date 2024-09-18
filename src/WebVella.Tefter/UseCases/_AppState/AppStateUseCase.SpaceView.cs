@@ -10,7 +10,8 @@ internal partial class AppStateUseCase
 				SpaceViewList = new(),
 				SpaceView = null,
 				AvailableColumnTypes = new(),
-				SpaceViewColumns = new()
+				SpaceViewColumns = new(),
+				SpaceViewData = null
 			};
 			return Task.FromResult(result);
 		}
@@ -29,12 +30,43 @@ internal partial class AppStateUseCase
 			result = result with
 			{
 				SpaceView = GetSpaceView(routeState.SpaceViewId.Value),
-				SpaceViewColumns = GetViewColumns(routeState.SpaceViewId.Value)
+				SpaceViewColumns = GetViewColumns(routeState.SpaceViewId.Value),
+				SpaceViewPage = 1, //should be from query
+				SpaceViewPageSize = TfConstants.PageSize
 			};
+			if (result.SpaceView is not null && result.SpaceView.SpaceDataId.HasValue)
+			{
+				result = result with
+				{
+					SpaceViewData = GetSpaceViewData(
+						spaceDataId:result.SpaceView.SpaceDataId.Value,
+						additionalFilters:result.SpaceViewFilters,
+						sortOverrides:result.SpaceViewSorts,
+						search:result.SpaceViewSearch,
+						page:result.SpaceViewPage,
+						pageSize:result.SpaceViewPageSize
+					)
+				};
+			}
+			else
+			{
+				result = result with { SpaceViewData = null };
+			}
 		}
 		else
 		{
-			result = result with { SpaceView = null, SpaceViewColumns = new() };
+			result = result with
+			{
+				SpaceView = null,
+				SpaceViewColumns = new(),
+				SpaceViewData = null,
+				SpaceViewPage = 0,
+				SpaceViewPageSize = TfConstants.PageSize,
+				SpaceViewSearch = null,
+				SpaceViewFilters = new(),
+				SpaceViewSorts = new(),
+				SelectedDataRows = new()
+			};
 		}
 		result = result with { AvailableColumnTypes = GetAvailableSpaceViewColumnTypes() };
 
@@ -578,7 +610,7 @@ internal partial class AppStateUseCase
 	{
 		if (columnId == Guid.Empty) return Result.Fail("columnId is required");
 		var column = GetViewColumn(columnId);
-		if(column is null) return Result.Fail("column not found");
+		if (column is null) return Result.Fail("column not found");
 		var updateResult = _spaceManager.DeleteSpaceViewColumn(columnId);
 		if (updateResult.IsFailed) return Result.Fail(new Error("DeleteSpaceViewColumn failed").CausedBy(updateResult.Errors));
 		return Result.Ok(GetViewColumns(column.SpaceViewId));

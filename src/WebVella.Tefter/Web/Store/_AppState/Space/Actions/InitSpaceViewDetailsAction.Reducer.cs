@@ -14,11 +14,11 @@ public static partial class SpaceStateReducers
 	{
 		return state with
 		{
-			Page = action.Page,
-			PageSize = action.PageSize,
-			SearchQuery = action.SearchQuery,
-			Filters = action.Filters,
-			Sorts = action.Sorts,
+			SpaceViewPage = action.Page,
+			SpaceViewPageSize = action.PageSize,
+			SpaceViewSearch = action.SearchQuery,
+			SpaceViewFilters = action.Filters,
+			SpaceViewSorts = action.Sorts,
 			SelectedDataRows = action.SelectedDataRows,
 			SpaceViewData = action.SpaceViewData,
 		};

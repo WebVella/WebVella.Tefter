@@ -7,7 +7,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
-	private bool _isDataLoading = true;
+	private bool _isDataLoading = false;
 
 	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
@@ -21,17 +21,17 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		Dispatcher.Dispatch(new SetSpacePagingAction(
 			component: this,
 			page: 1,
-			pageSize: TfAppState.Value.PageSize
+			pageSize: TfAppState.Value.SpaceViewPageSize
 		));
 	}
 	private void _goPreviousPage()
 	{
-		var page = TfAppState.Value.Page - 1;
+		var page = TfAppState.Value.SpaceViewPage - 1;
 		if (page < 1) page = 1;
 		Dispatcher.Dispatch(new SetSpacePagingAction(
 			component: this,
 			page: page,
-			pageSize: TfAppState.Value.PageSize
+			pageSize: TfAppState.Value.SpaceViewPageSize
 		));
 	}
 	private void _goNextPage()
@@ -42,8 +42,8 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 		Dispatcher.Dispatch(new SetSpacePagingAction(
 			component: this,
-			page: TfAppState.Value.Page + 1,
-			pageSize: TfAppState.Value.PageSize
+			page: TfAppState.Value.SpaceViewPage + 1,
+			pageSize: TfAppState.Value.SpaceViewPageSize
 		));
 	}
 	private void _goLastPage()
@@ -51,7 +51,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		Dispatcher.Dispatch(new SetSpacePagingAction(
 			component: this,
 			page: -1,
-			pageSize: TfAppState.Value.PageSize
+			pageSize: TfAppState.Value.SpaceViewPageSize
 		));
 	}
 	private void _goOnPage(int page)
@@ -60,7 +60,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		Dispatcher.Dispatch(new SetSpacePagingAction(
 			component: this,
 			page: page,
-			pageSize: TfAppState.Value.PageSize
+			pageSize: TfAppState.Value.SpaceViewPageSize
 		));
 	}
 
