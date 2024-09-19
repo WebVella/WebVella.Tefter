@@ -3,8 +3,8 @@
 namespace WebVella.Tefter.Web.ViewColumns;
 
 [Description("Tefter Boolean")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.BooleanViewColumn.TfBooleanViewColumn", "WebVella.Tefter")]
-public partial class TfBooleanViewColumn : TfBaseViewColumn<TfBooleanViewColumnOptions>
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanDisplayColumnComponent.TfBooleanDisplayColumnComponent", "WebVella.Tefter")]
+public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 {
 	protected override async Task OnInitializedAsync()
 	{
@@ -23,7 +23,7 @@ public partial class TfBooleanViewColumn : TfBaseViewColumn<TfBooleanViewColumnO
 		var valueChanged = false;
 		switch (propName)
 		{
-			case nameof(TfBooleanViewColumnOptions.TrueValueOverrideText):
+			case nameof(TfBooleanDisplayColumnComponentOptions.TrueValueOverrideText):
 				{
 					if (options.TrueValueOverrideText != value)
 					{
@@ -32,7 +32,7 @@ public partial class TfBooleanViewColumn : TfBaseViewColumn<TfBooleanViewColumnO
 					}
 				}
 				break;
-			case nameof(TfBooleanViewColumnOptions.FalseValueOverrideText):
+			case nameof(TfBooleanDisplayColumnComponentOptions.FalseValueOverrideText):
 				{
 					if (options.FalseValueOverrideText != value)
 					{
@@ -54,7 +54,7 @@ public partial class TfBooleanViewColumn : TfBaseViewColumn<TfBooleanViewColumnO
 		var valueChanged = false;
 		switch (propName)
 		{
-			case nameof(TfBooleanViewColumnOptions.TrueValueShowAsIcon):
+			case nameof(TfBooleanDisplayColumnComponentOptions.TrueValueShowAsIcon):
 				{
 					if (value.HasValue && options.TrueValueShowAsIcon != value.Value)
 					{
@@ -63,7 +63,7 @@ public partial class TfBooleanViewColumn : TfBaseViewColumn<TfBooleanViewColumnO
 					}
 				}
 				break;
-			case nameof(TfBooleanViewColumnOptions.FalseValueShowAsIcon):
+			case nameof(TfBooleanDisplayColumnComponentOptions.FalseValueShowAsIcon):
 				{
 					if (value.HasValue && options.FalseValueShowAsIcon != value.Value)
 					{
@@ -84,7 +84,7 @@ public partial class TfBooleanViewColumn : TfBaseViewColumn<TfBooleanViewColumnO
 
 }
 
-public class TfBooleanViewColumnOptions
+public class TfBooleanDisplayColumnComponentOptions
 {
 	[JsonPropertyName("TrueValueOverrideText")]
 	public string TrueValueOverrideText { get; set; }

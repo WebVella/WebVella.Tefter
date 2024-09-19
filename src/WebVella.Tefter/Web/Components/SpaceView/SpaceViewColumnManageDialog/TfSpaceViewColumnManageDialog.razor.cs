@@ -140,7 +140,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		//}
 		else
 		{
-			_form.ComponentType = _form.ColumnType.DefaultComponentType;
+			_form.ComponentType = _form.ColumnType?.DefaultComponentType;
 		}
 		_renderComponentTypeSelect = true;
 		await InvokeAsync(StateHasChanged);
@@ -151,10 +151,10 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		if (_form.ColumnType is not null)
 		{
 			if (!String.IsNullOrWhiteSpace(componentTypeFullName))
-				_form.ComponentType = _form.ColumnType.SupportedComponentTypes.FirstOrDefault(x => x.FullName == componentTypeFullName);
+				_form.ComponentType = _form.ColumnType?.SupportedComponentTypes.FirstOrDefault(x => x.FullName == componentTypeFullName);
 
 			if (_form.ComponentType is null)
-				_form.ComponentType = _form.ColumnType.DefaultComponentType;
+				_form.ComponentType = _form.ColumnType?.DefaultComponentType;
 		}
 	}
 

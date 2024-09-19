@@ -49,9 +49,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfTextViewColumn);
+		DefaultComponentType = typeof(TfTextDisplayColumnComponent);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfTextViewColumn), typeof(TfTextEditColumnComponent) };
+		SupportedComponentTypes = new List<Type> { typeof(TfTextDisplayColumnComponent), typeof(TfTextEditColumnComponent) };
 	}
 }
 

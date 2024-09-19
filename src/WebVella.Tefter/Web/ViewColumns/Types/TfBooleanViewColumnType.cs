@@ -44,9 +44,9 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfBooleanViewColumn);
+		DefaultComponentType = typeof(TfBooleanDisplayColumnComponent);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfBooleanViewColumn), typeof(TfTextViewColumn) };
+		SupportedComponentTypes = new List<Type> { typeof(TfBooleanDisplayColumnComponent), typeof(TfTextDisplayColumnComponent) };
 	}
 }
 

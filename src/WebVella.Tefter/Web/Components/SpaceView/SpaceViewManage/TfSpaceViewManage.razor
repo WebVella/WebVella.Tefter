@@ -35,7 +35,7 @@ else
 											 Style="flex:1 1 auto" ReadOnly="true" />
 							<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
 										  Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfAppState.Value.Space.Id,TfAppState.Value.SpaceView.Id))"
-										  IconStart="@TfConstants.ViewIcon"/>
+										  IconStart="@TfConstants.ViewIcon" />
 						</FluentStack>
 
 
@@ -56,7 +56,7 @@ else
 												 ReadOnly="true" Style="flex:1 1 auto" />
 								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
 											  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfAppState.Value.Space.Id,TfAppState.Value.SpaceView.SpaceDataId))"
-											  IconStart="@TfConstants.ViewIcon" Target="_blank"/>
+											  IconStart="@TfConstants.ViewIcon" Target="_blank" />
 							</FluentStack>
 						}
 						else
@@ -130,16 +130,30 @@ else
 												</div>
 											</td>
 											<td class="tf-grid-td">
-												<div>
-													<div>@context.ColumnType.Name</div>
-													<div class="td-description">@context.ColumnType.Description</div>
-												</div>
+												@if (context.ColumnType is not null)
+												{
+													<div>
+														<div>@context.ColumnType.Name</div>
+														<div class="td-description">@context.ColumnType.Description</div>
+													</div>
+												}
+												else
+												{
+													<div style="color:red">@LOC("unknown")</div>
+												}
 											</td>
 											<td class="tf-grid-td">
-												<div>
-													<div>@context.ComponentType.Name</div>
-													<div class="td-description">@context.ComponentType.FullName</div>
-												</div>
+												@if (context.ComponentType is not null)
+												{
+													<div>
+														<div>@context.ComponentType.Name</div>
+														<div class="td-description">@context.ComponentType.FullName</div>
+													</div>
+												}
+												else
+												{
+													<div style="color:red">@LOC("unknown")</div>
+												}
 											</td>
 										</tr>
 									}

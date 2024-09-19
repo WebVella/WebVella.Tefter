@@ -117,19 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете колоната?</value>
-  </data>
-  <data name="open dataset" xml:space="preserve">
-    <value>отвори данните</value>
-  </data>
-  <data name="open view" xml:space="preserve">
-    <value>отвори изгледа</value>
-  </data>
-  <data name="Space View updated" xml:space="preserve">
-    <value>Изгледа е обновен</value>
-  </data>
-  <data name="unknown" xml:space="preserve">
-    <value>непознат</value>
-  </data>
 </root>

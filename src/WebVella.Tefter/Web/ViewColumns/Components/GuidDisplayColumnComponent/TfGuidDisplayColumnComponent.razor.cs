@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Components.Forms;
 namespace WebVella.Tefter.Web.ViewColumns;
 
 [Description("Tefter GUID")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.GuidViewColumn.TfGuidViewColumn", "WebVella.Tefter")]
-public partial class TfGuidViewColumn : TfBaseViewColumn<TfGuidViewColumnOptions>
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.GuidDisplayColumnComponent.TfGuidDisplayColumnComponent", "WebVella.Tefter")]
+public partial class TfGuidDisplayColumnComponent : TfBaseViewColumn<TfGuidDisplayColumnComponentOptions>
 {
 
 	protected override async Task OnInitializedAsync()
@@ -21,7 +21,7 @@ public partial class TfGuidViewColumn : TfBaseViewColumn<TfGuidViewColumnOptions
 	}
 }
 
-public class TfGuidViewColumnOptions
+public class TfGuidDisplayColumnComponentOptions
 {
 
 }

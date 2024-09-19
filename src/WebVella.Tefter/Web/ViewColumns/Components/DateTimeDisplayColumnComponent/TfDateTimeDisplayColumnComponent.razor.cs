@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
 namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Text Edit")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.TextEditColumnComponent.TfTextEditColumnComponent","WebVella.Tefter")]
-public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColumnComponentOptions>
+
+[Description("Tefter DateTime")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateTimeDisplayColumnComponent.TfDateTimeDisplayColumnComponent","WebVella.Tefter")]
+public partial class TfDateTimeDisplayColumnComponent : TfBaseViewColumn<TfDateTimeDisplayColumnComponentOptions>
 {
 	protected override async Task OnInitializedAsync()
 	{
@@ -16,11 +17,8 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		//Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "problem with json");
 
 	}
-
-	private async Task _valueChanged(string value) => await ValueChanged.InvokeAsync(value);
 }
 
-public class TfTextEditColumnComponentOptions
+public class TfDateTimeDisplayColumnComponentOptions
 {
-
 }

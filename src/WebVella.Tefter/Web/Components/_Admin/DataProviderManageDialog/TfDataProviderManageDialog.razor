@@ -48,8 +48,10 @@
 				@if (_form?.ProviderType?.SettingsComponentType is null) { }
 				else if (_form?.ProviderType?.SettingsComponentType?.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 				{
-					<DynamicComponent Type="_form.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
-									  @ref="typeSettingsComponent"></DynamicComponent>
+					<TfErrorBoundry>
+						<DynamicComponent Type="_form.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
+										  @ref="typeSettingsComponent"></DynamicComponent>
+					</TfErrorBoundry>
 				}
 				else
 				{

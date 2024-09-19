@@ -1,5 +1,5 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfBooleanViewColumnOptions>
+@inherits TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>@((GetDataObjectByAlias("Value"))?.ToString())</div>

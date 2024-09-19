@@ -46,9 +46,9 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfDateTimeViewColumn);
+		DefaultComponentType = typeof(TfDateTimeDisplayColumnComponent);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfDateTimeViewColumn), typeof(TfTextViewColumn) };
+		SupportedComponentTypes = new List<Type> { typeof(TfDateTimeDisplayColumnComponent), typeof(TfTextDisplayColumnComponent) };
 	}
 }
 

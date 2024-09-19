@@ -46,9 +46,9 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnType
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfGuidViewColumn);
+		DefaultComponentType = typeof(TfGuidDisplayColumnComponent);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfGuidViewColumn), typeof(TfTextViewColumn) };
+		SupportedComponentTypes = new List<Type> { typeof(TfGuidDisplayColumnComponent), typeof(TfTextDisplayColumnComponent) };
 	}
 }
 

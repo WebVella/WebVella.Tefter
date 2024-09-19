@@ -590,7 +590,7 @@ internal partial class AppStateUseCase
 	internal Result<List<TucSpaceViewColumn>> CreateSpaceViewColumnWithForm(TucSpaceViewColumn column)
 	{
 		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
-		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType.Id);
+		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
 		if (selectedType is null) return Result.Fail("Column selected type not found");
 		var result = _spaceManager.CreateSpaceViewColumn(column.ToModel(selectedType));
 
@@ -601,7 +601,7 @@ internal partial class AppStateUseCase
 	internal Result<List<TucSpaceViewColumn>> UpdateSpaceViewColumnWithForm(TucSpaceViewColumn column)
 	{
 		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
-		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType.Id);
+		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
 		if (selectedType is null) return Result.Fail("Column selected type not found");
 		var result = _spaceManager.UpdateSpaceViewColumn(column.ToModel(selectedType));
 

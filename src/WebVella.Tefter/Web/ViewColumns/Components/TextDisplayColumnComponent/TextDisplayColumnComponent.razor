@@ -1,5 +1,5 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfDateTimeViewColumnOptions>
+@inherits TfBaseViewColumn<TfTextDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>@((GetDataObjectByAlias("Value"))?.ToString())</div>
@@ -12,4 +12,5 @@ else
 {
 	<div style="color:red">@LOC("Component Mode Not implemented")</div>
 }
+
 

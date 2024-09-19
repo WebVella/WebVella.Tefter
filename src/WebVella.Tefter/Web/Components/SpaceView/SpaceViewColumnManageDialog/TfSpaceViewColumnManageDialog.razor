@@ -36,7 +36,8 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentSelect Label="@LOC("Column type")" Style="width:100%"
-								  TOption="TucSpaceViewColumnType" Required="true"
+								  TOption="TucSpaceViewColumnType"
+								  Placeholder="@LOC("select...")"
 								  Value="@(_form.ColumnType?.Id.ToString())"
 								  ValueChanged="_columnTypeChangeHandler"
 								  OptionText="((x)=> x.Name)"
@@ -56,14 +57,14 @@
 					{
 						<FluentSelect Label="@LOC("Presentation component")"
 									  Style="width:100%" Required=true
-									  Value="@_form.ComponentType.FullName"
+									  Value="@_form.ComponentType?.FullName"
 									  ValueChanged="_columnComponentChangeHandler"
 									  TOption="Type"
 									  OptionText="((x)=> x.ToDescriptionString())"
 									  OptionValue="((x)=> x.FullName)"
 									  Items="_form.ColumnType?.SupportedComponentTypes" />
 
-						<FluentValidationMessage For="@(() => _form.ColumnType)" />
+						<FluentValidationMessage For="@(() => _form.ComponentType)" />
 					}
 				</FluentGridItem>
 			</FluentGrid>
@@ -135,7 +136,9 @@
 							<FluentGridItem xs="12">
 								@if (_form.ComponentType is not null)
 								{
-									<DynamicComponent Type="_form.ComponentType" Parameters="@_getColumnComponentContext()" />
+									<TfErrorBoundry>
+										<DynamicComponent Type="_form.ComponentType" Parameters="@_getColumnComponentContext()" />
+									</TfErrorBoundry>
 								}
 								else
 								{

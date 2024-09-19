@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
 namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Number")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.NumberViewColumn.TfNumberViewColumn","WebVella.Tefter")]
-public partial class TfNumberViewColumn : TfBaseViewColumn<TfNumberViewColumnOptions>
+
+[Description("Tefter Date")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateOnlyDisplayColumnComponent.TfDateOnlyDisplayColumnComponent","WebVella.Tefter")]
+public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
 {
 	protected override async Task OnInitializedAsync()
 	{
@@ -18,7 +19,6 @@ public partial class TfNumberViewColumn : TfBaseViewColumn<TfNumberViewColumnOpt
 	}
 }
 
-public class TfNumberViewColumnOptions
+public class TfDateOnlyDisplayColumnComponentOptions
 {
-
 }

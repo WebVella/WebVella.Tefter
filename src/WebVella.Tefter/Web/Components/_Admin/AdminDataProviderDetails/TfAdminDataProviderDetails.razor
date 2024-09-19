@@ -35,13 +35,15 @@
 			}
 		</FluentGridItem>
 	</FluentGrid>
-	<FluentDivider Style="margin:15px 0"/>
+	<FluentDivider Style="margin:15px 0" />
 	<FluentGrid Style="margin-top:3px;">
 		<FluentGridItem xs="12">
 			@if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType is null) { }
 			else if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 			{
-				<DynamicComponent Type="TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+				<TfErrorBoundry>
+					<DynamicComponent Type="TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+				</TfErrorBoundry>
 			}
 			else
 			{

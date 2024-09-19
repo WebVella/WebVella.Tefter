@@ -51,7 +51,7 @@ else
 		</FluentStack>
 	}
 	<FluentBodyContent Class="content-body with-toolbar">
-		<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort"/>
+		<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" />
 		<div class="content-inner">
 			<div class="tfdt">
 				<div class="tfdt__content">
@@ -106,7 +106,9 @@ else
 											@foreach (var column in TfAppState.Value.SpaceViewColumns)
 											{
 												<td class="tf-grid-td" style="@column.BodyStyle">
-													<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
+													<TfErrorBoundry>
+														<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
+													</TfErrorBoundry>
 												</td>
 											}
 										</tr>

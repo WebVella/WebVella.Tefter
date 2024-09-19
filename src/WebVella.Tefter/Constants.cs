@@ -28,6 +28,7 @@ internal class Constants
 
 	public const string TF_GENERIC_TEXT_COLUMN_TYPE_ID = "f061a3ce-7813-4fd6-98cb-a10cccea4797"; //used as default in view column creation, for convenience
 	public const string TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID = "c28e933b-6800-4819-b22f-e091e3e3c961";
+	public const string TF_GENERIC_DATEONLY_COLUMN_TYPE_ID = "59037088-e8b7-4ec6-858c-016f4eacf58a";
 	public const string TF_GENERIC_DATETIME_COLUMN_TYPE_ID = "d41752c3-e356-4c51-83ed-7e1a4e5e5183";
 	public const string TF_GENERIC_GUID_COLUMN_TYPE_ID = "b736b4f9-2138-44d2-a5d5-4a320b6556db";
 	public const string TF_GENERIC_NUMBER_COLUMN_TYPE_ID = "5d246be4-d202-434c-961e-204e44ee0450";
