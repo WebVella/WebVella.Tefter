@@ -18,50 +18,59 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private void _goFirstPage()
 	{
-		Dispatcher.Dispatch(new SetSpacePagingAction(
-			component: this,
-			page: 1,
-			pageSize: TfAppState.Value.SpaceViewPageSize
-		));
+		Dispatcher.Dispatch(new SetAppStateAction(
+		component: this,
+		state: TfAppState.Value with
+		{
+			SpaceViewPage = 1,
+			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
+		}));
 	}
 	private void _goPreviousPage()
 	{
 		var page = TfAppState.Value.SpaceViewPage - 1;
 		if (page < 1) page = 1;
-		Dispatcher.Dispatch(new SetSpacePagingAction(
-			component: this,
-			page: page,
-			pageSize: TfAppState.Value.SpaceViewPageSize
-		));
+		Dispatcher.Dispatch(new SetAppStateAction(
+		component: this,
+		state: TfAppState.Value with
+		{
+			SpaceViewPage = page,
+			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
+		}));
 	}
 	private void _goNextPage()
 	{
 		if (TfAppState.Value.SpaceViewData is null
 		|| TfAppState.Value.SpaceViewData.Rows.Count == 0)
 			return;
-
-		Dispatcher.Dispatch(new SetSpacePagingAction(
-			component: this,
-			page: TfAppState.Value.SpaceViewPage + 1,
-			pageSize: TfAppState.Value.SpaceViewPageSize
-		));
+		Dispatcher.Dispatch(new SetAppStateAction(
+		component: this,
+		state: TfAppState.Value with
+		{
+			SpaceViewPage = TfAppState.Value.SpaceViewPage + 1,
+			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
+		}));
 	}
 	private void _goLastPage()
 	{
-		Dispatcher.Dispatch(new SetSpacePagingAction(
-			component: this,
-			page: -1,
-			pageSize: TfAppState.Value.SpaceViewPageSize
-		));
+		Dispatcher.Dispatch(new SetAppStateAction(
+		component: this,
+		state: TfAppState.Value with
+		{
+			SpaceViewPage = -1,
+			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
+		}));
 	}
 	private void _goOnPage(int page)
 	{
 		if (page < 1) page = 1;
-		Dispatcher.Dispatch(new SetSpacePagingAction(
-			component: this,
-			page: page,
-			pageSize: TfAppState.Value.SpaceViewPageSize
-		));
+		Dispatcher.Dispatch(new SetAppStateAction(
+		component: this,
+		state: TfAppState.Value with
+		{
+			SpaceViewPage = page,
+			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
+		}));
 	}
 
 	private Dictionary<string, object> _getColumnComponentContext(TucSpaceViewColumn column, TfDataTable dataTable, int rowIndex)
@@ -105,11 +114,12 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		{
 			selectedItems.RemoveAll(x => x == rowId);
 		}
-		Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+		Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
-			idList: selectedItems
+			state: TfAppState.Value with { 
+				SelectedDataRows = selectedItems
+			}
 		));
-
 	}
 
 	private void _toggleSelectAll(bool isChecked)
@@ -128,10 +138,11 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 			}
 		}
-
-		Dispatcher.Dispatch(new ToggleSpaceViewItemSelectionAction(
+		Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
-			idList: selectedItems
+			state: TfAppState.Value with { 
+				SelectedDataRows = selectedItems
+			}
 		));
 	}
 

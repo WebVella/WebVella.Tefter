@@ -6,38 +6,10 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 	
 	private bool _open = false;
 	private bool _selectorLoading = false;
-	private List<Guid> _selectedItems = new List<Guid>();
 
 	private List<ScreenRegionComponent> _regionComponents = new();
 	private long _lastRegionRenderedTimestamp = 0;
 
-	protected override async ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		await base.DisposeAsyncCore(disposing);
-	}
-
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-	}
-
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			_selectedItems = TfAppState.Value.SelectedDataRows.ToList();
-			await InvokeAsync(StateHasChanged);
-		});
-
-	}
-
-
-	private void _init(){ }
 
 	public async Task ToggleSelector()
 	{
@@ -46,8 +18,7 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 		{
 			_selectorLoading = true;
 			await InvokeAsync(StateHasChanged);
-			_init();
-
+			await Task.Delay(1000); //load components with actions?
 			_selectorLoading = false;
 			await InvokeAsync(StateHasChanged);
 		}

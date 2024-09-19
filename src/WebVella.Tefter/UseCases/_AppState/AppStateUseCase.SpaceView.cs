@@ -31,8 +31,11 @@ internal partial class AppStateUseCase
 			{
 				SpaceView = GetSpaceView(routeState.SpaceViewId.Value),
 				SpaceViewColumns = GetViewColumns(routeState.SpaceViewId.Value),
-				SpaceViewPage = 1, //should be from query
-				SpaceViewPageSize = TfConstants.PageSize
+				SpaceViewPage = routeState.Page ?? 1,
+				SpaceViewPageSize = routeState.PageSize ?? TfConstants.PageSize,
+				SpaceViewSearch = routeState.Search,
+				SpaceViewFilters = routeState.Filters,
+				SpaceViewSorts = routeState.Sorts,
 			};
 			if (result.SpaceView is not null && result.SpaceView.SpaceDataId.HasValue)
 			{

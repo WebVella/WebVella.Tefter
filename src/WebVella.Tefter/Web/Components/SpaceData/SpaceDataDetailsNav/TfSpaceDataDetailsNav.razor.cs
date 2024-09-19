@@ -6,33 +6,12 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
-	private List<MenuItem> menu = new();
 	private List<TucSpaceView> viewList = new();
 
-	private TfRouteState _urlData = new();
 
-	protected override ValueTask DisposeAsyncCore(bool disposing)
+	private List<MenuItem> _generateMenu()
 	{
-		if (disposing)
-		{
-			Navigator.LocationChanged -= Navigator_LocationChanged;
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		GenerateMenu();
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-		Navigator.LocationChanged += Navigator_LocationChanged;
-		StateHasChanged();
-	}
-
-	private void GenerateMenu()
-	{
-		menu.Clear();
+		var menu = new List<MenuItem>();
 		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
@@ -48,20 +27,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 			//Icon = new Icons.Regular.Size20.Table(),
 			Title = LOC("Used in Views")
 		});
-		_urlData = Navigator.GetRouteState();
-	}
-
-
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		GenerateMenu();
-		StateHasChanged();
-	}
-
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
-	{
-		GenerateMenu();
-		StateHasChanged();
+		return menu;
 	}
 
 	private async Task _deleteSpaceData()
@@ -76,7 +42,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space data deleted"));
-				if(TfAppState.Value.SpaceDataList.Count > 0)
+				if (TfAppState.Value.SpaceDataList.Count > 0)
 					Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceDataList[0].Id), true);
 				else
 					Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
@@ -116,11 +82,13 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 
 			ToastService.ShowSuccess(LOC("Space dataset successfully updated!"));
 
-
-			Dispatcher.Dispatch(new SetSpaceDataAction(
-						component: this,
-						spaceData: item,
-						spaceDataList: itemList));
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
+			{
+				SpaceData = item,
+				SpaceDataList = itemList
+			}));
 		}
 	}
 }

@@ -45,37 +45,15 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private Icon _iconBtn;
 	private bool _isCreate = false;
 
-	protected override ValueTask DisposeAsyncCore(bool disposing)
-	{
-		if (disposing)
-		{
-			//Navigator.LocationChanged -= Navigator_LocationChanged;
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_init();
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-	}
-
-	private void _init()
-	{
 		_form = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
 		base.InitForm(_form);
 		if (_form.DataProviderId != Guid.Empty)
 		{
 			SelectedProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _form.DataProviderId);
 		}
-	}
-
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		_init();
-		StateHasChanged();
 	}
 
 	private void _dataProviderSelected(TucDataProvider provider)
@@ -105,12 +83,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
 				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-
-				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component: this,
-					spaceData: submitResult.Value,
-					spaceDataList: spaceDataList
-				));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceData = submitResult.Value,
+					SpaceDataList = spaceDataList
+				}));
 			}
 		}
 		catch (Exception ex)
@@ -142,12 +121,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
 				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-
-				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component: this,
-					spaceData: submitResult.Value,
-					spaceDataList: spaceDataList
-				));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceData = submitResult.Value,
+					SpaceDataList = spaceDataList
+				}));
 			}
 		}
 		catch (Exception ex)
@@ -292,12 +272,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
 				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-
-				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component: this,
-					spaceData: submitResult.Value,
-					spaceDataList: spaceDataList
-				));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceData = submitResult.Value,
+					SpaceDataList = spaceDataList
+				}));
 			}
 		}
 		catch (Exception ex)
@@ -339,11 +320,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
 
-				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component: this,
-					spaceData: submitResult.Value,
-					spaceDataList: spaceDataList
-				));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceData = submitResult.Value,
+					SpaceDataList = spaceDataList
+				}));
 			}
 		}
 		catch (Exception ex)
@@ -375,12 +358,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
 				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
 				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-
-				Dispatcher.Dispatch(new SetSpaceDataAction(
-					component: this,
-					spaceData: submitResult.Value,
-					spaceDataList: spaceDataList
-				));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceData = submitResult.Value,
+					SpaceDataList = spaceDataList
+				}));
 			}
 		}
 		catch (Exception ex)

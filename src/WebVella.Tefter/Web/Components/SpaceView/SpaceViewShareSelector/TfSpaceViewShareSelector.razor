@@ -4,13 +4,13 @@
 {
 	<div class="view-export-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
-			<FluentMenuItem Disabled="@(_selectedItems.Count == 0)">
+			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
 				Export Selection
 				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				@if (_selectedItems.Count > 0)
+				@if (TfAppState.Value.SelectedDataRows.Count > 0)
 				{
 					<span slot="end">
-						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@_selectedItems.Count</FluentBadge>
+						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
 					</span>
 				}
 			</FluentMenuItem>

@@ -1,36 +1,14 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageNav.TfSpaceViewManageNav","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageNav.TfSpaceViewManageNav", "WebVella.Tefter")]
 public partial class TfSpaceViewManageNav : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
-	private List<MenuItem> menu = new();
-
-	private TfRouteState _urlData = new();
-
-	protected override ValueTask DisposeAsyncCore(bool disposing)
+	
+	private List<MenuItem> _generateMenu()
 	{
-		if (disposing)
-		{
-			Navigator.LocationChanged -= Navigator_LocationChanged;
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-		}
-		return base.DisposeAsyncCore(disposing);
-	}
-
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-		GenerateMenu();
-		ActionSubscriber.SubscribeToAction<SpaceStateChangedAction>(this, On_StateChanged);
-		Navigator.LocationChanged += Navigator_LocationChanged;
-		StateHasChanged();
-	}
-
-	private void GenerateMenu()
-	{
-		menu.Clear();
+		List<MenuItem> menu = new();
 		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
@@ -39,20 +17,7 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 			//Icon = new Icons.Regular.Size20.Info(),
 			Title = LOC("View Management")
 		});
-		_urlData = Navigator.GetRouteState();
-	}
-
-
-	private void On_StateChanged(SpaceStateChangedAction action)
-	{
-		GenerateMenu();
-		StateHasChanged();
-	}
-
-	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
-	{
-		GenerateMenu();
-		StateHasChanged();
+		return menu;
 	}
 
 	private async Task _editSpaceView()
@@ -80,10 +45,13 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 			ToastService.ShowSuccess(LOC("Space view successfully updated!"));
 
 
-			Dispatcher.Dispatch(new SetSpaceViewAction(
-						component:this,
-						spaceView: item,
-						spaceViewList: itemList));
+			Dispatcher.Dispatch(new SetAppStateAction(
+						component: this,
+						state: TfAppState.Value with
+						{
+							SpaceView = item,
+							SpaceViewList = itemList
+						}));
 		}
 	}
 }

@@ -102,10 +102,12 @@ public partial class TfSpaceViewManage : TfBaseComponent
 			if (submitResult.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space View updated!"));
-
-				Dispatcher.Dispatch(new SetSpaceViewMetaAction(
+				Dispatcher.Dispatch(new SetAppStateAction(
 				component: this,
-				spaceViewColumns: submitResult.Value
+				state: TfAppState.Value with
+				{
+					SpaceViewColumns = submitResult.Value
+				}
 				));
 			}
 		}
