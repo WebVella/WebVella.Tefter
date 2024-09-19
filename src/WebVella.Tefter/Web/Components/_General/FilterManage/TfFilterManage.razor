@@ -11,29 +11,33 @@
 					<FluentLabel Typo="@Typography.Body">@TucFilterBase.GetColumnName(Item)</FluentLabel>
 					<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@TucFilterBase.GetFieldType(Item)</FluentLabel>
 				</FluentStack>
-				<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
-					@if (TfSpaceDataManage.SelectedProvider is null)
-					{
-						<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
-					}
-					else if (TfSpaceDataManage.SelectedProvider.ColumnsTotal.Count == 0)
-					{
-						<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
-					}
-					else
-					{
-						<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
-									  TOption="string" Required="false"
-									  Items="@TfSpaceDataManage.AllColumnOptions" Style="width:140px"
-									  Placeholder="@LOC("select...")"></FluentSelect>
-						<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
-					}
-					<FluentButton Disabled="@Disabled" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterAnd),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-					<FluentButton Disabled="@Disabled" OnClick="@(() => TfSpaceDataManage.AddFilter(typeof(TucFilterOr),null,Item.Id))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
-					<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
-								  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
-				</FluentStack>
+				@if (!ReadOnly)
+				{
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
+						@if (SelectedProvider is null)
+						{
+							<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
+						}
+						else if (SelectedProvider.ColumnsTotal.Count == 0)
+						{
+							<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
+						}
+						else
+						{
+							<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
+										  TOption="string" Required="false"
+										  Items="@AllColumnOptions" Style="width:140px"
+										  Placeholder="@LOC("select...")"></FluentSelect>
+							<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+						}
+						<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TucFilterAnd),null,Item.Id)))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+						<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TucFilterOr),null,Item.Id)))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+						<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+									  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
+					</FluentStack>
+				}
 			</FluentStack>
+
 		</TitleTemplate>
 		<ChildContent>
 			@if (TucFilterBase.GetChildFilters(Item).Count == 0)
@@ -42,7 +46,12 @@
 			}
 			@foreach (var item in TucFilterBase.GetChildFilters(Item))
 			{
-				<TfFilterManage Item="item" Disabled="@Disabled" ProviderColumns="ProviderColumns" />
+				<TfFilterManage Item="item" Disabled="@Disabled"
+								SelectedProvider="SelectedProvider"
+								AddFilter="@((x) => AddFilter.InvokeAsync((x.Item1,x.Item2,x.Item3)))"
+								AddColumnFilter="@((x) => AddColumnFilter.InvokeAsync((x.Item1,x.Item2)))"
+								RemoveColumnFilter="@((x) => RemoveColumnFilter.InvokeAsync(x))"
+								UpdateColumnFilter="@((x) => UpdateColumnFilter.InvokeAsync(x))" ReadOnly="ReadOnly" />
 			}
 		</ChildContent>
 	</TfCard>
@@ -53,8 +62,8 @@ else
 		<TitleTemplate>
 			<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" VerticalAlignment="@VerticalAlignment.Center">
-					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
-						@if (ProviderColumns is not null && ProviderColumns.Contains(Item.ColumnName))
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="flex:0 0 20px">
+						@if (AllColumnOptions is not null && AllColumnOptions.Contains(Item.ColumnName))
 						{
 							<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
 						}
@@ -77,7 +86,7 @@ else
 							var context = (TucFilterBoolean)Item;
 							<FluentSelect SelectedOption="@context.ComparisonMethod"
 										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
-										  Disabled="@Disabled"
+										  Disabled="@(Disabled || ReadOnly)"
 										  TOption="TucFilterBooleanComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
@@ -85,7 +94,7 @@ else
 							{
 								<FluentSelect Value="@context.ValueString"
 											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
-											  Disabled="@Disabled"
+											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="Option<string>" Required="false"
 											  OptionText="@((p)=> p.Text)"
 											  OptionValue="@((p)=> p.Value)"
@@ -97,7 +106,7 @@ else
 							var context = (TucFilterDateOnly)Item;
 							<FluentSelect SelectedOption="@context.ComparisonMethod"
 										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
-										  Disabled="@Disabled"
+										  Disabled="@(Disabled || ReadOnly)"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
@@ -105,7 +114,8 @@ else
 							{
 								<FluentTextField Value="@context.ValueString"
 												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
-												 Disabled="@Disabled" AutoComplete="new-password"
+												 Disabled="@Disabled" ReadOnly="ReadOnly"
+												 AutoComplete="new-password"
 												 Placeholder="@($"eg. {TfConstants.DateOnlyFormatInput}")" Style="width:300px" />
 							}
 						}
@@ -114,7 +124,7 @@ else
 							var context = (TucFilterDateTime)Item;
 							<FluentSelect SelectedOption="@context.ComparisonMethod"
 										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
-										  Disabled="@Disabled"
+										  Disabled="@(Disabled || ReadOnly)"
 										  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
@@ -122,7 +132,8 @@ else
 							{
 								<FluentTextField Value="@context.ValueString"
 												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
-												 Disabled="@Disabled" AutoComplete="new-password"
+												 Disabled="@Disabled" ReadOnly="ReadOnly"
+												 AutoComplete="new-password"
 												 Placeholder="@($"eg. {TfConstants.DateTimeFormatInput}")" Style="width:300px" />
 							}
 						}
@@ -131,7 +142,7 @@ else
 							var context = (TucFilterGuid)Item;
 							<FluentSelect SelectedOption="@context.ComparisonMethod"
 										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
-										  Disabled="@Disabled"
+										  Disabled="@(Disabled || ReadOnly)"
 										  TOption="TucFilterGuidComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
@@ -139,7 +150,8 @@ else
 							{
 								<FluentTextField Value="@context.ValueString"
 												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
-												 Disabled="@Disabled" AutoComplete="new-password"
+												 Disabled="@Disabled" ReadOnly="ReadOnly"
+												 AutoComplete="new-password"
 												 Placeholder="@LOC("enter valid GUID")" Style="width:300px" />
 							}
 						}
@@ -148,7 +160,7 @@ else
 							var context = (TucFilterNumeric)Item;
 							<FluentSelect SelectedOption="@context.ComparisonMethod"
 										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
-										  Disabled="@Disabled"
+										  Disabled="@(Disabled || ReadOnly)"
 										  TOption="TucFilterNumericComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterNumericComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
@@ -156,7 +168,7 @@ else
 							{
 								<FluentNumberField TValue="decimal?" Value="@context.Value"
 												   ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
-												   Disabled="@Disabled"
+												   Disabled="@Disabled" ReadOnly="ReadOnly"
 												   Placeholder="@LOC("enter valid decimal")" Style="width:300px" />
 							}
 						}
@@ -165,14 +177,15 @@ else
 							var context = (TucFilterText)Item;
 							<FluentSelect SelectedOption="@context.ComparisonMethod"
 										  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
-										  Disabled="@Disabled"
+										  Disabled="@(Disabled || ReadOnly)"
 										  TOption="TucFilterTextComparisonMethod" Required="true"
 										  Items="@(Enum.GetValues<TucFilterTextComparisonMethod>())" Style="width:140px"
 										  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 							@if (context.RequiresValue)
 							{
-								<FluentTextField Disabled="@Disabled" AutoComplete="new-password"
+								<FluentTextField AutoComplete="new-password"
 												 Value="@context.Value"
+												 Disabled="@Disabled" ReadOnly="ReadOnly"
 												 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 												 Style="width:300px" Placeholder="@LOC("no value")" />
 							}
@@ -180,8 +193,11 @@ else
 					</FluentStack>
 				</FluentStack>
 				<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
-					<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
-								  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
+					@if (!ReadOnly)
+					{
+						<FluentButton Disabled="@Disabled" OnClick="_deleteFilterHandler" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+									  Appearance="@Appearance.Outline" Title="@LOC("delete filter")" />
+					}
 				</FluentStack>
 			</FluentStack>
 		</TitleTemplate>

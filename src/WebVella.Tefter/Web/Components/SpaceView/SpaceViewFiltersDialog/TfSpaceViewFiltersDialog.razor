@@ -14,5 +14,39 @@
 
 @* Body *@
 <FluentDialogBody>
-	<div>TBD</div>
+	@if (_spaceData is not null)
+	{
+		<FluentTabs @bind-ActiveTabId="@_activeTab">
+			<FluentTab Label="@LOC("Current")" Id="current">
+				<TfCard Small="true" Style="margin-top:1rem">
+				</TfCard>
+			</FluentTab>
+			<FluentTab Label="@LOC("Always applied")" Id="default">
+				<TfCard Small="true" Style="margin-top:1rem">
+					<TitleTemplate>
+						<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+							<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
+								<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
+								<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+							</FluentStack>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+						@foreach (var item in _spaceData.Filters)
+						{
+							<TfFilterManage Item="item" SelectedProvider="_dataProvider" ReadOnly="true" />
+						}
+						@if (_spaceData.Filters.Count == 0)
+						{
+							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("There are no filters that are always applied")</FluentMessageBar>
+						}
+					</ChildContent>
+				</TfCard>
+			</FluentTab>
+		</FluentTabs>
+	}
+	else
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("This view's related data source is missing")</FluentMessageBar>
+	}
 </FluentDialogBody>

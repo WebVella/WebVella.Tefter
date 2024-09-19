@@ -52,3 +52,7 @@
 ::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid .tf-grid-tbody .tf-grid-tr:last-child td{
 	border-bottom:none;
 }
+
+::deep .tf-card .tf-card-content .tf-card:last-child {
+	margin-bottom:0 !important;
+}

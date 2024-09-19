@@ -1,32 +1,55 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.FilterManage.TfFilterManage","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.FilterManage.TfFilterManage", "WebVella.Tefter")]
 public partial class TfFilterManage : TfBaseComponent
 {
-	[CascadingParameter(Name = "TfSpaceDataManage")]
-	public TfSpaceDataManage TfSpaceDataManage { get; set; }
 
 	[Parameter]
 	public TucFilterBase Item { get; set; }
 
 	[Parameter]
-	public List<string> ProviderColumns { get; set; }
+	public TucDataProvider SelectedProvider { get; set; }
+
+	[Parameter]
+	public EventCallback<(Type, string, Guid?)> AddFilter { get; set; }
+
+	[Parameter]
+	public EventCallback<(string, Guid?)> AddColumnFilter { get; set; }
+
+	[Parameter]
+	public EventCallback<Guid> RemoveColumnFilter { get; set; }
+
+	[Parameter]
+	public EventCallback<TucFilterBase> UpdateColumnFilter { get; set; }
 
 	[Parameter]
 	public bool Disabled { get; set; } = false;
 
-	private string _selectedFilterColumn = null;
+	[Parameter]
+	public bool ReadOnly { get; set; } = false;
 
+	private string _selectedFilterColumn = null;
+	public List<string> AllColumnOptions
+	{
+		get
+		{
+			if (SelectedProvider is null) return new List<string>();
+			return SelectedProvider.ColumnsTotal.Select(x => x.DbName).ToList();
+		}
+	}
 	private async Task _addColumnFilterHandler()
 	{
 		if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;
 		if (Item is null) return;
-		await TfSpaceDataManage.AddColumnFilter(_selectedFilterColumn, Item.Id);
+		await AddColumnFilter.InvokeAsync((_selectedFilterColumn, Item.Id));
+		//await TfSpaceDataManage.AddColumnFilter(_selectedFilterColumn, Item.Id);
+
 		//_selectedFilterColumn = null; //do not clear for convenience
 	}
 
 	private async Task _deleteFilterHandler()
 	{
-		await TfSpaceDataManage.RemoveColumnFilter(Item.Id);
+		await RemoveColumnFilter.InvokeAsync(Item.Id);
+		//await TfSpaceDataManage.RemoveColumnFilter(Item.Id);
 	}
 
 	private async Task _valueChanged(TucFilterBase model, string propName, object valueObj)
@@ -142,7 +165,8 @@ public partial class TfFilterManage : TfBaseComponent
 		}
 		else throw new Exception("Unsupported TucFilterBase in _valueChanged");
 
-		await TfSpaceDataManage.UpdateColumnFilter(updateObj);
+		await UpdateColumnFilter.InvokeAsync(updateObj);
+		//await TfSpaceDataManage.UpdateColumnFilter(updateObj);
 		await InvokeAsync(StateHasChanged);
 	}
 

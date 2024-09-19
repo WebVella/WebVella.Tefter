@@ -133,7 +133,12 @@ else
 				}
 				@foreach (var item in TfAppState.Value.SpaceData.Filters)
 				{
-					<TfFilterManage Item="item" Disabled="_submitting" ProviderColumns="AllColumnOptions" />
+					<TfFilterManage Item="item" Disabled="_submitting" 
+						SelectedProvider="SelectedProvider" 
+						AddFilter="@((x) => AddFilter(x.Item1,x.Item2,x.Item3))" 
+						AddColumnFilter="@((x) => AddColumnFilter(x.Item1,x.Item2))"
+						RemoveColumnFilter="@((x) => RemoveColumnFilter(x))"
+						UpdateColumnFilter="@((x) => UpdateColumnFilter(x))"/>
 				}
 			</ChildContent>
 		</TfCard>
