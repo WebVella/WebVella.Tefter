@@ -19,9 +19,12 @@
 	<div class="content-toolbar-right">
 		@foreach (var comp in _regionComponents)
 		{
-			<TfErrorBoundry>
-				<DynamicComponent Type="comp.ComponentType" @key=@comp.Id />
-			</TfErrorBoundry>
+			if (comp.ComponentType is not null)
+			{
+				<TfErrorBoundry>
+					<DynamicComponent Type="comp.ComponentType" @key=@comp.Id />
+				</TfErrorBoundry>
+			}
 		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			@LOC("Row Actions")

@@ -106,9 +106,12 @@ else
 											@foreach (var column in TfAppState.Value.SpaceViewColumns)
 											{
 												<td class="tf-grid-td" style="@column.BodyStyle">
-													<TfErrorBoundry>
-														<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
-													</TfErrorBoundry>
+													@if (column.ComponentType is not null)
+													{
+														<TfErrorBoundry>
+															<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
+														</TfErrorBoundry>
+													}
 												</td>
 											}
 										</tr>

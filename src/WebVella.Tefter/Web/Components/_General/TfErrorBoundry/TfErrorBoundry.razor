@@ -5,6 +5,9 @@
     </ChildContent>
     <ErrorContent>
         <span style="color:red" title="@context.Message">render error</span>
+@*         @{
+        ConsoleExt.WriteLine(context.StackTrace);
+        } *@
     </ErrorContent>
 </ErrorBoundary>
 

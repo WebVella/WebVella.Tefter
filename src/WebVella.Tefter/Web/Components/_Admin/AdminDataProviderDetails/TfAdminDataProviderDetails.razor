@@ -41,9 +41,12 @@
 			@if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType is null) { }
 			else if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 			{
-				<TfErrorBoundry>
-					<DynamicComponent Type="TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
-				</TfErrorBoundry>
+				if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType is not null)
+				{
+					<TfErrorBoundry>
+						<DynamicComponent Type="TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+					</TfErrorBoundry>
+				}
 			}
 			else
 			{

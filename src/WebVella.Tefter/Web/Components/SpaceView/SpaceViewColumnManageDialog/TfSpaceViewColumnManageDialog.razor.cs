@@ -27,28 +27,30 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		if (_isCreate)
+		{
+			TucSpaceViewColumnType defaultColumnType = null;
+			if (TfAppState.Value.AvailableColumnTypes is not null && TfAppState.Value.AvailableColumnTypes.Any())
 			{
-				TucSpaceViewColumnType defaultColumnType = null;
-				if (TfAppState.Value.AvailableColumnTypes is not null && TfAppState.Value.AvailableColumnTypes.Any())
-				{
-					defaultColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
-					if (defaultColumnType is null) defaultColumnType = TfAppState.Value.AvailableColumnTypes[0];
-				}
-				_form = _form with
-				{
-					Id = Guid.NewGuid(),
-					SpaceViewId = Content.SpaceViewId,
-					ColumnType = defaultColumnType,
-					ComponentType = defaultColumnType?.DefaultComponentType
-				};
+				defaultColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+				if (defaultColumnType is null) defaultColumnType = TfAppState.Value.AvailableColumnTypes[0];
 			}
-			else
+			_form = _form with
 			{
+				Id = Guid.NewGuid(),
+				SpaceViewId = Content.SpaceViewId,
+				ColumnType = defaultColumnType,
+				ComponentType = defaultColumnType?.DefaultComponentType
+			};
+		}
+		else
+		{
 
-				_form = Content with { Id = Content.Id };
-			}
-			base.InitForm(_form);
-			_renderComponentTypeSelect = true;
+			_form = Content with { Id = Content.Id };
+		}
+		if (_form.ComponentType is null && _form.ColumnType is not null)
+			_form.ComponentType = _form.ColumnType.DefaultComponentType;
+		base.InitForm(_form);
+		_renderComponentTypeSelect = true;
 	}
 
 
