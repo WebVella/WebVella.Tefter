@@ -79,13 +79,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		//Should be overrided in child component if needed
 	}
 
-	/// <summary>
-	/// Used to get data by alias and type from the child components
-	/// </summary>
-	/// <typeparam name="TItem2">result data type</typeparam>
-	/// <param name="alias">case sensetive alias as defined in data mapping</param>
-	/// <returns></returns>
-	protected object GetDataObjectByAlias(string alias)
+	protected string GetDataObjectByAlias(string alias, string defaultValue= null)
 	{
 		string dbName = null;
 		if (Context.DataMapping.ContainsKey(alias))
@@ -95,10 +89,87 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
+			return defaultValue;
+		}
+		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return defaultValue;
+		if(Context.DataTable.Rows[Context.RowIndex][dbName] is null) return defaultValue;
+
+		return Context.DataTable.Rows[Context.RowIndex][dbName]?.ToString();
+	}
+
+	protected Nullable<T> GetDataObjectByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
+	{
+		string dbName = null;
+		if (Context.DataMapping.ContainsKey(alias))
+		{
+			dbName = Context.DataMapping[alias];
+		}
+		if (String.IsNullOrWhiteSpace(dbName))
+		{
 			return null;
 		}
-		if (Context.DataTable.Rows.Count < Context.RowIndex+1) return null;
+		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return null;
+		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
+		object value = Context.DataTable.Rows[Context.RowIndex][dbName];
+		if (value is null) return null;
 
-		return Context.DataTable.Rows[Context.RowIndex][dbName];
+		if (typeof(T) == typeof(String)) return (T)value;
+		else if (typeof(T) == typeof(Boolean))
+		{
+			if (value is Boolean) return (T)value;
+			if (Boolean.TryParse(value.ToString(), out Boolean outVal))
+			{
+				return (T)(object)outVal;
+			}
+			return null;
+		}
+		else if (typeof(T) == typeof(DateOnly))
+		{
+			if (value is DateOnly) return (T)value;
+			if (DateOnly.TryParse(value.ToString(), out DateOnly outVal))
+			{
+				return (T)(object)outVal;
+			}
+			return null;
+		}
+		else if (typeof(T) == typeof(DateTime))
+		{
+			if (value is DateTime) return (T)value;
+			if (DateTime.TryParse(value.ToString(), out DateTime outVal))
+			{
+				return (T)(object)outVal;
+			}
+			return null;
+		}
+		else if (typeof(T) == typeof(decimal))
+		{
+			if (value is decimal) return (T)value;
+			if (decimal.TryParse(value.ToString(), out decimal outVal))
+			{
+				return (T)(object)outVal;
+			}
+			return null;
+		}
+		else if (typeof(T) == typeof(int))
+		{
+			if (value is int) return (T)value;
+			if (int.TryParse(value.ToString(), out int outVal))
+			{
+				return (T)(object)outVal;
+			}
+			return null;
+		}
+		else if (typeof(T) == typeof(Guid))
+		{
+			if (value is Guid) return (T)value;
+			if (Guid.TryParse(value.ToString(), out Guid outVal))
+			{
+				return (T)(object)outVal;
+			}
+			return null;
+		}
+
+		return null;
 	}
+
 }

@@ -2,7 +2,8 @@
 @inherits TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>@((GetDataObjectByAlias("Value"))?.ToString())</div>
+	var value = GetDataObjectByAlias<bool>("Value", null);
+	<div>@value</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {

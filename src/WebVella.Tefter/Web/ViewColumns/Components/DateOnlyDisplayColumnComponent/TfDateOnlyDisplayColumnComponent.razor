@@ -2,7 +2,8 @@
 @inherits TfBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>@((GetDataObjectByAlias("Value"))?.ToString())</div>
+	var value = GetDataObjectByAlias<DateOnly>("Value", null);
+	<div>@value</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {

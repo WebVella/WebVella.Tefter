@@ -63,6 +63,9 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		_form.DataProviderId = SelectedProvider.Id;
 	}
 
+	private TucColumn _getProviderColumnByName(string dbName){ 
+		return SelectedProvider?.ColumnsTotal.FirstOrDefault(x=> x.DbName == dbName);
+	}
 
 	private async Task _addColumn()
 	{

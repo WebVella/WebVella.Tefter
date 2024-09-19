@@ -61,10 +61,11 @@ else
 						<tbody class="tf-grid-tbody">
 							@foreach (var context in _form.Columns.Order())
 							{
+								var column = _getProviderColumnByName(context);
 								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 									<td class="tf-grid-td" style="width:1%;vertical-align:middle">
 										<div>
-											@if (AllColumnOptions.Contains(context))
+											@if (column is not null)
 											{
 												<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
 											}
@@ -75,9 +76,10 @@ else
 										</div>
 									</td>
 									<td class="tf-grid-td">
-										<div>
-											<div>@context</div>
-										</div>
+										<div>@context</div>
+									</td>
+									<td class="tf-grid-td">
+										<div>@(column is null ? null : column.DbType.Name)</div>
 									</td>
 									<td class="tf-grid-td" style="width:1%;">
 										<div>

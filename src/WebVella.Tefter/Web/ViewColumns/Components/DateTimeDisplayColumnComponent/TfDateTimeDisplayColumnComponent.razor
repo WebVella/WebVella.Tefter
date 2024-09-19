@@ -2,11 +2,19 @@
 @inherits TfBaseViewColumn<TfDateTimeDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>@((GetDataObjectByAlias("Value"))?.ToString())</div>
+	var value = GetDataObjectByAlias<DateTime>("Value", null);
+	<div>@value</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
-	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@options.DateTimeFormat" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> _optionsTextValueChanged(x, nameof(options.DateTimeFormat)))
+							 Placeholder="eg. 'dd MMM yyyy HH:mm:ss'" />
+		</FluentGridItem>
+		<FluentGridItem xs="6"></FluentGridItem>
+	</FluentGrid>
 }
 else
 {
