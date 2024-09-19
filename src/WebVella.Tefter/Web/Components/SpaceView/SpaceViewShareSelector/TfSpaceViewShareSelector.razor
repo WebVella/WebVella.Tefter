@@ -4,6 +4,10 @@
 {
 	<div class="view-export-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
+			<FluentMenuItem OnClick="_copyLinkToClipboard">
+				Copy link
+				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
 			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
 				Export Selection
 				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />

@@ -19,4 +19,9 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
+	private async Task _copyLinkToClipboard(){ 
+		await JSRuntime.InvokeVoidAsync("Tefter.copyToClipboard", Navigator.Uri);
+		ToastService.ShowSuccess(LOC("Link copied"));
+	}
+	
 }

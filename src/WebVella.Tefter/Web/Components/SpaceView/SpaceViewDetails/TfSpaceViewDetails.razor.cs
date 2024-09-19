@@ -119,7 +119,10 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (_isDataLoading) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.FiltersQueryName] = NavigatorExt.SerializeFiltersForUrl(filters,false);
+		if (filters is null || filters.Count == 0)
+			queryDict[TfConstants.FiltersQueryName] = null;
+		else
+			queryDict[TfConstants.FiltersQueryName] = NavigatorExt.SerializeFiltersForUrl(filters, false);
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
@@ -128,7 +131,10 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (_isDataLoading) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.SortsQueryName] = NavigatorExt.SerializeSortsForUrl(sorts,false);
+		if (sorts is null || sorts.Count == 0)
+			queryDict[TfConstants.SortsQueryName] = null;
+		else
+			queryDict[TfConstants.SortsQueryName] = NavigatorExt.SerializeSortsForUrl(sorts, false);
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 

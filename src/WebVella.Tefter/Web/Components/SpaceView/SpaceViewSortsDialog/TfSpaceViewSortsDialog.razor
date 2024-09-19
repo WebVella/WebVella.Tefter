@@ -3,7 +3,7 @@
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
-	<FluentLabel Typo="Typography.PaneHeader">@LOC("Sort")</FluentLabel>
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Sort order")</FluentLabel>
 </FluentDialogHeader>
 
 @* Footer *@
@@ -14,5 +14,115 @@
 
 @* Body *@
 <FluentDialogBody>
-	<div>TBD</div>
+	@if (_spaceData is not null)
+	{
+		<FluentTabs @bind-ActiveTabId="@_activeTab">
+			<FluentTab Label="@LOC("Current")" Id="current">
+				<TfCard Small="true" Style="margin-top:1rem">
+					<TitleTemplate>
+						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+							@if (_columnOptions.Count > 0)
+							{
+								<FluentSelect @bind-SelectedOption="@_selectedSort.DbName"
+											  TOption="string" Required="false"
+											  Items="@_columnOptions" Style="width:200px"
+											  Placeholder="@LOC("select column")"></FluentSelect>
+								<FluentSelect @bind-SelectedOption="@_selectedSort.Direction"
+											  TOption="TucSortDirection"
+											  Items="@(Enum.GetValues<TucSortDirection>())" Style="width:100px"></FluentSelect>
+							}
+							else
+							{
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+							}
+							<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
+										  Disabled="@(_columnOptions.Count == 0)">@LOC("Add new")</FluentButton>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+						@if (_items.Count == 0)
+						{
+							@LOC("The default sort will be applied")
+						}
+						else
+						{
+							<div class="tf-grid-wrapper">
+								<table class="tf-grid">
+									<tbody class="tf-grid-tbody">
+										@foreach (var context in _items)
+										{
+											<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+												<td class="tf-grid-td" style="width:1%;vertical-align:middle">
+													<div>
+														@if (_spaceData.Columns.Contains(context.DbName))
+														{
+															<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
+														}
+														else
+														{
+															<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
+														}
+													</div>
+												</td>
+												<td class="tf-grid-td" style="width:300px;">
+													<div>@context.DbName</div>
+												</td>
+												<td class="tf-grid-td">
+													<div>@context.Direction.ToDescriptionString()</div>
+												</td>
+												<td class="tf-grid-td" style="width:1%;">
+													<div>
+														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteSortColumn(context))" Title="@LOC("Delete sort order")">
+															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+														</FluentButton>
+													</div>
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						}
+					</ChildContent>
+				</TfCard>
+			</FluentTab>
+			<FluentTab Label="@LOC("Default")" Id="default">
+				<TfCard Small="true" Style="margin-top:1rem">
+					@if (_spaceData.SortOrders.Count > 0)
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _spaceData.SortOrders)
+									{
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td" style="width:1%;vertical-align:middle">
+												<div>
+													<FluentIcon Value="@TfConstants.SpaceDataIcon" Color="@Color.Accent"></FluentIcon>
+												</div>
+											</td>
+											<td class="tf-grid-td" style="width:300px;">
+												<div>@context.DbName</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.Direction.ToDescriptionString()</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+					else
+					{
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No default sort is applied in data source")</FluentMessageBar>
+					}
+				</TfCard>
+			</FluentTab>
+		</FluentTabs>
+	}
+	else
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("This view's related data source is missing")</FluentMessageBar>
+	}
 </FluentDialogBody>

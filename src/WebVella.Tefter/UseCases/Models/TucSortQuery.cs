@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Web.Utils;
-
-namespace WebVella.Tefter.UseCases.Models;
+﻿namespace WebVella.Tefter.UseCases.Models;
 
 public record TucSortQuery
 {

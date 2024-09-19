@@ -11,7 +11,7 @@ else
 	<TfCard>
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.Name
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceData.Name
 								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 
 			</FluentGridItem>
@@ -50,7 +50,7 @@ else
 			</FluentStack>
 		</TitleTemplate>
 		<ChildContent>
-			@if (_form.Columns.Count == 0)
+			@if (TfAppState.Value.SpaceData.Columns.Count == 0)
 			{
 				@LOC("This dataset will return all data provider columns. Select columns for limitation.")
 			}
@@ -59,7 +59,7 @@ else
 				<div class="tf-grid-wrapper">
 					<table class="tf-grid">
 						<tbody class="tf-grid-tbody">
-							@foreach (var context in _form.Columns.Order())
+							@foreach (var context in TfAppState.Value.SpaceData.Columns.Order())
 							{
 								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 									<td class="tf-grid-td" style="width:1%;vertical-align:middle">
@@ -127,11 +127,11 @@ else
 				</FluentStack>
 			</TitleTemplate>
 			<ChildContent>
-				@if (_form.Filters.Count == 0)
+				@if (TfAppState.Value.SpaceData.Filters.Count == 0)
 				{
 					<div>@LOC("No filters added yet")</div>
 				}
-				@foreach (var item in _form.Filters)
+				@foreach (var item in TfAppState.Value.SpaceData.Filters)
 				{
 					<TfFilterManage Item="item" Disabled="_submitting" ProviderColumns="AllColumnOptions" />
 				}
@@ -163,7 +163,7 @@ else
 			</FluentStack>
 		</TitleTemplate>
 		<ChildContent>
-			@if (_form.SortOrders.Count == 0)
+			@if (TfAppState.Value.SpaceData.SortOrders.Count == 0)
 			{
 				@LOC("This dataset will return all data without any sorting.")
 			}
@@ -172,7 +172,7 @@ else
 				<div class="tf-grid-wrapper">
 					<table class="tf-grid">
 						<tbody class="tf-grid-tbody">
-							@foreach (var context in _form.SortOrders)
+							@foreach (var context in TfAppState.Value.SpaceData.SortOrders)
 							{
 								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 									<td class="tf-grid-td" style="width:1%;vertical-align:middle">

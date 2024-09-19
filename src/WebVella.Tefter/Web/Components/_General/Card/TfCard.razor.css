@@ -44,3 +44,11 @@
 ::deep fluent-text-field[readonly]::after {
 	display: none;
 }
+
+::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid {
+	margin-bottom:0;
+}
+
+::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid .tf-grid-tbody .tf-grid-tr:last-child td{
+	border-bottom:none;
+}

@@ -6,11 +6,11 @@
 		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+			<FluentBadge Appearance="Appearance.Neutral">@(TfAppState.Value.SpaceViewFilters?.Count ?? 0)</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			<FluentBadge Appearance="Appearance.Neutral">12</FluentBadge>
+			<FluentBadge Appearance="Appearance.Neutral">@(TfAppState.Value.SpaceViewSorts?.Count ?? 0)</FluentBadge>
 		</FluentButton>
 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
@@ -22,7 +22,7 @@
 			<DynamicComponent Type="comp.ComponentType" @key=@comp.Id/>
 		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
-			@LOC("Actions")
+			@LOC("Row Actions")
 			@if (TfAppState.Value.SelectedDataRows.Count > 0)
 			{
 				<span slot="start">
