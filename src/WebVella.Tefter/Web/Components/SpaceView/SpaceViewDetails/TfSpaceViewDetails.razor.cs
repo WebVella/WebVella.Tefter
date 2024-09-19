@@ -16,61 +16,46 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		return Task.CompletedTask;
 	}
 
-	private void _goFirstPage()
+	private async Task _goFirstPage()
 	{
-		Dispatcher.Dispatch(new SetAppStateAction(
-		component: this,
-		state: TfAppState.Value with
-		{
-			SpaceViewPage = 1,
-			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
-		}));
+		var queryDict = new Dictionary<string,object>();
+		queryDict[TfConstants.PageQueryName] = 1;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-	private void _goPreviousPage()
+	private async Task _goPreviousPage()
 	{
 		var page = TfAppState.Value.SpaceViewPage - 1;
 		if (page < 1) page = 1;
-		Dispatcher.Dispatch(new SetAppStateAction(
-		component: this,
-		state: TfAppState.Value with
-		{
-			SpaceViewPage = page,
-			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
-		}));
+
+		var queryDict = new Dictionary<string,object>();
+		queryDict[TfConstants.PageQueryName] = page;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-	private void _goNextPage()
+	private async Task _goNextPage()
 	{
 		if (TfAppState.Value.SpaceViewData is null
 		|| TfAppState.Value.SpaceViewData.Rows.Count == 0)
 			return;
-		Dispatcher.Dispatch(new SetAppStateAction(
-		component: this,
-		state: TfAppState.Value with
-		{
-			SpaceViewPage = TfAppState.Value.SpaceViewPage + 1,
-			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
-		}));
+
+		var page = TfAppState.Value.SpaceViewPage + 1;
+		if(page < 1) page = 1;
+		var queryDict = new Dictionary<string,object>();
+		queryDict[TfConstants.PageQueryName] = page;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
+
 	}
-	private void _goLastPage()
+	private async Task _goLastPage()
 	{
-		Dispatcher.Dispatch(new SetAppStateAction(
-		component: this,
-		state: TfAppState.Value with
-		{
-			SpaceViewPage = -1,
-			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
-		}));
+		var queryDict = new Dictionary<string,object>();
+		queryDict[TfConstants.PageQueryName] = -1;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-	private void _goOnPage(int page)
+	private async Task _goOnPage(int page)
 	{
 		if (page < 1) page = 1;
-		Dispatcher.Dispatch(new SetAppStateAction(
-		component: this,
-		state: TfAppState.Value with
-		{
-			SpaceViewPage = page,
-			SpaceViewPageSize = TfAppState.Value.SpaceViewPageSize
-		}));
+		var queryDict = new Dictionary<string,object>();
+		queryDict[TfConstants.PageQueryName] = page;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
 	private Dictionary<string, object> _getColumnComponentContext(TucSpaceViewColumn column, TfDataTable dataTable, int rowIndex)

@@ -14,10 +14,10 @@ public record TucUser
 		get
 		{
 			var sb = new List<string>();
-			if(!String.IsNullOrWhiteSpace(FirstName)) sb.Add(FirstName);
-			if(!String.IsNullOrWhiteSpace(LastName)) sb.Add(LastName);
+			if (!String.IsNullOrWhiteSpace(FirstName)) sb.Add(FirstName);
+			if (!String.IsNullOrWhiteSpace(LastName)) sb.Add(LastName);
 
-			return String.Join(" ",sb);
+			return String.Join(" ", sb);
 		}
 	}
 	[Required]
@@ -26,6 +26,16 @@ public record TucUser
 	public DateTime CreatedOn { get; init; }
 	public TucUserSettings Settings { get; init; } = new();
 	public ReadOnlyCollection<TucRole> Roles { get; init; }
+
+	public bool IsAdmin
+	{
+		get
+		{
+			if (Roles is not null && Roles.Any(x => x.Id == TfConstants.TEFTER_USER_ROLE_ADMINISTRATORS_ID))
+				return true;
+			return false;
+		}
+	}
 	public TucUser() { }
 
 	public TucUser(User model)
