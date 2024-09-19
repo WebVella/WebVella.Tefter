@@ -18,6 +18,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	private bool _renderComponentTypeSelect = false;
 	private string _activeTab = "data";
 	private TucSpaceViewColumn _form = new();
+	private List<string> _options = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -51,6 +52,11 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			_form.ComponentType = _form.ColumnType.DefaultComponentType;
 		base.InitForm(_form);
 		_renderComponentTypeSelect = true;
+		TucSpaceData selectedSpaceData = null;
+		if(TfAppState.Value.SpaceDataList is not null){ 
+			selectedSpaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x=> x.Id == TfAppState.Value.SpaceView.SpaceDataId);
+		}
+		if(selectedSpaceData is not null) _options = selectedSpaceData.Columns;
 	}
 
 
@@ -170,6 +176,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 	private void _dataMappingValueChanged(string value, string alias)
 	{
+		ConsoleExt.WriteLine(value);
 		_form.DataMapping[alias] = value;
 	}
 

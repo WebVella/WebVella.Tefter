@@ -88,9 +88,11 @@
 														 Disabled="true" Label="@LOC("Component alias")" Style="width:100%" AutoComplete="new-password" />
 									</FluentGridItem>
 									<FluentGridItem xs="6">
-										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_getDataMappingValue(item.Alias)
-														 Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(x,item.Alias))"
-														 Label="@LOC("Data column name")" Style="width:100%" AutoComplete="new-password" />
+										<FluentCombobox TOption="string"
+															Items="_options"
+															Value=@_getDataMappingValue(item.Alias)
+															Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(x,item.Alias))"
+															Label="@LOC("Data column name")" Style="width:100%" />
 									</FluentGridItem>
 								</FluentGrid>
 							}
