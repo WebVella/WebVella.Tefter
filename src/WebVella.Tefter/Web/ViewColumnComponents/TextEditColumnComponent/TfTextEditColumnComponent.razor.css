@@ -1,0 +1,5 @@
+﻿
+
+::deep fluent-text-field::part(root) {
+	background: var(--neutral-fill-input-alt-rest);
+}

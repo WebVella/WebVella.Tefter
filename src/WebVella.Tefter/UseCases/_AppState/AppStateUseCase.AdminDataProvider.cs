@@ -100,18 +100,20 @@ internal partial class AppStateUseCase
 
 		if (srvResult.Value is null) return Task.FromResult(new List<TucDataProvider>());
 
+		var orderedResults = srvResult.Value.OrderBy(x=> x.Name);
+
 		var records = new List<TfDataProvider>();
 		if (!String.IsNullOrWhiteSpace(search))
 		{
 			var searchProcessed = search.Trim().ToLowerInvariant();
-			foreach (var item in srvResult.Value)
+			foreach (var item in orderedResults)
 			{
 				bool hasMatch = false;
 				if (item.Name.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
 				if (hasMatch) records.Add(item);
 			}
 		}
-		else records = srvResult.Value.ToList();
+		else records = orderedResults.ToList();
 
 		if (page is null || pageSize is null) return Task.FromResult(records.Select(x => new TucDataProvider(x)).ToList());
 

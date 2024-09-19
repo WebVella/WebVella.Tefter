@@ -17,6 +17,7 @@ else
 					<th class="tf-grid-th" style="width:50px;"></th>
 					<th class="tf-grid-th">name</th>
 					<th class="tf-grid-th">columns</th>
+					<th class="tf-grid-th" style="width:220px;">details</th>
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
@@ -46,6 +47,12 @@ else
 										<FluentBadge Appearance="@Appearance.Accent">@item.DbName</FluentBadge>
 									}
 								</FluentStack>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								<div>@context.Id</div>
+								<div class="td-description">ver. @context.Version</div>
 							</div>
 						</td>
 					</tr>

@@ -20,7 +20,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 	public ValueTask DisposeAsync()
 	{
-		if (Context.EditContext is not null)
+		if (Context is not null && Context.EditContext is not null)
 		{
 			Context.EditContext.OnValidationRequested -= OnValidationRequested;
 		}

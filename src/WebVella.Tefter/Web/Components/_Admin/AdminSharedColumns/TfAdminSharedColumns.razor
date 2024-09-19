@@ -30,7 +30,7 @@ else
 				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
 				<tr class="tf-grid-tr">
 					<th class="tf-grid-th" style="width:50px;"></th>
-					<th class="tf-grid-th">name</th>
+					<th class="tf-grid-th" style="width:220px">name</th>
 					<th class="tf-grid-th">data type</th>
 					<th class="tf-grid-th">shared key</th>
 					<th class="tf-grid-th">options</th>
@@ -53,7 +53,8 @@ else
 						</td>
 						<td class="tf-grid-td">
 							<div>
-								@context.DbName
+								<div>@context.DbName</div>
+								<div class="td-description">@context.Id</div>
 							</div>
 						</td>
 						<td class="tf-grid-td">

@@ -51,7 +51,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 
 		DefaultComponentType = typeof(TfTextViewColumn);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfTextViewColumn) };
+		SupportedComponentTypes = new List<Type> { typeof(TfTextViewColumn), typeof(TfTextEditColumnComponent) };
 	}
 }
 
