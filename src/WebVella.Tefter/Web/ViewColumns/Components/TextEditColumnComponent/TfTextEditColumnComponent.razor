@@ -2,10 +2,10 @@
 @inherits TfBaseViewColumn<TfTextEditColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>
-		<FluentTextField Value="@((GetDataObjectByAlias("Value"))?.ToString())"
-						 ValueChanged="_valueChanged"
-						 Style="width:100%;min-width:80px;" />
+	<div style="display:flex;align-items:center;">
+	<FluentTextField Value="@((GetDataObjectByAlias("Value"))?.ToString())"
+					 ValueChanged="_valueChanged"
+					 Style="width:100%;min-width:80px;" />
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)

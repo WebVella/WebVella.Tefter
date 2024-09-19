@@ -1,0 +1,9 @@
+﻿
+::deep .tf-grid-tbody > .tf-grid-tr.tf-grid-tr--selected {
+	background:var(--tf-grid-row-selected);
+}
+
+::deep .tf-grid fluent-text-field::part(root) {
+	/*background: var(--neutral-fill-input-active);*/
+	border:1px solid var(--neutral-fill-input-alt-active);
+}
