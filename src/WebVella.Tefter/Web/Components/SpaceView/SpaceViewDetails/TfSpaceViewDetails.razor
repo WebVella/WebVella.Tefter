@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfRouteState.Value.SpaceId is null)
+@if (TfAppState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
@@ -51,7 +51,7 @@ else
 		</FluentStack>
 	}
 	<FluentBodyContent Class="content-body with-toolbar">
-		<TfSpaceViewToolbar />
+		<TfSpaceViewToolbar OnSearch="_onSearch"/>
 		<div class="content-inner">
 			<div class="tfdt">
 				<div class="tfdt__content">

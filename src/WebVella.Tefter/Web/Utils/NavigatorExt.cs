@@ -153,16 +153,17 @@ internal static class NavigatorExt
 		}
 
 		//Query
-		var page = GetIntFromQuery(uri,TfConstants.PageQueryName,1);
-		var pageSize = GetIntFromQuery(uri,TfConstants.PageSizeQueryName,TfConstants.PageSize);
-		var search = GetStringFromQuery(uri,TfConstants.SearchQueryName,null);
+		var page = GetIntFromQuery(uri, TfConstants.PageQueryName, 1);
+		var pageSize = GetIntFromQuery(uri, TfConstants.PageSizeQueryName, TfConstants.PageSize);
+		var search = GetStringFromQuery(uri, TfConstants.SearchQueryName, null);
 		List<TucFilterBase> filters = null;
-		var filtersString = GetStringFromQuery(uri,TfConstants.FiltersQueryName,null);
-		if(!String.IsNullOrWhiteSpace(filtersString)) filters = DeserializeFiltersFromUrl(filtersString,true);
+		var filtersString = GetStringFromQuery(uri, TfConstants.FiltersQueryName, null);
+		if (!String.IsNullOrWhiteSpace(filtersString)) filters = DeserializeFiltersFromUrl(filtersString, true);
 		List<TucSort> sorts = null;
-		var sortString = GetStringFromQuery(uri,TfConstants.SortsQueryName,null);
-		if(!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString,true);
-		result = result with { 
+		var sortString = GetStringFromQuery(uri, TfConstants.SortsQueryName, null);
+		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
+		result = result with
+		{
 			Page = page,
 			PageSize = pageSize,
 			Search = search,
@@ -331,7 +332,7 @@ internal static class NavigatorExt
 	//string
 	internal static string GetStringFromQuery(this NavigationManager navigator, string paramName, string defaultValue = null)
 	{
-		return GetStringFromQuery(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetStringFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static string GetStringFromQuery(Uri uri, string paramName, string defaultValue = null)
 	{
@@ -343,7 +344,7 @@ internal static class NavigatorExt
 	//list<string>
 	internal static List<string> GetStringListFromQuery(this NavigationManager navigator, string paramName, List<string> defaultValue = null)
 	{
-		return GetStringListFromQuery(new Uri(navigator.Uri),paramName, defaultValue);
+		return GetStringListFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static List<string> GetStringListFromQuery(Uri uri, string paramName, List<string> defaultValue = null)
 	{
@@ -357,11 +358,11 @@ internal static class NavigatorExt
 	//guid
 	internal static Guid? GetGuidFromQuery(this NavigationManager navigator, string paramName, Guid? defaultValue = null)
 	{
-		return GetGuidFromQuery(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetGuidFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static Guid? GetGuidFromQuery(Uri uri, string paramName, Guid? defaultValue = null)
 	{
-		if (Guid.TryParse(GetStringFromQuery(uri,paramName), out Guid outGuid))
+		if (Guid.TryParse(GetStringFromQuery(uri, paramName), out Guid outGuid))
 		{
 			return outGuid;
 		}
@@ -371,11 +372,11 @@ internal static class NavigatorExt
 	//boolean
 	internal static bool? GetBooleanFromQuery(this NavigationManager navigator, string paramName, bool? defaultValue = null)
 	{
-		return GetBooleanFromQuery(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetBooleanFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static bool? GetBooleanFromQuery(Uri uri, string paramName, bool? defaultValue = null)
 	{
-		if (Boolean.TryParse(GetStringFromQuery(uri,paramName), out bool outBool))
+		if (Boolean.TryParse(GetStringFromQuery(uri, paramName), out bool outBool))
 		{
 			return outBool;
 		}
@@ -385,11 +386,11 @@ internal static class NavigatorExt
 	//dateTime
 	internal static DateTime? GetDateTimeFromQuery(this NavigationManager navigator, string paramName, DateTime? defaultValue = null)
 	{
-		return GetDateTimeFromQuery(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetDateTimeFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static DateTime? GetDateTimeFromQuery(Uri uri, string paramName, DateTime? defaultValue = null)
 	{
-		var urlValue = GetStringFromQuery(uri,paramName, null);
+		var urlValue = GetStringFromQuery(uri, paramName, null);
 
 		if (urlValue == "null")
 		{
@@ -405,11 +406,11 @@ internal static class NavigatorExt
 	//dateOnly
 	internal static DateOnly? GetDateOnlyFromQuery(this NavigationManager navigator, string paramName, DateOnly? defaultValue = null)
 	{
-		return GetDateOnlyFromQuery(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetDateOnlyFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static DateOnly? GetDateOnlyFromQuery(Uri uri, string paramName, DateOnly? defaultValue = null)
 	{
-		var urlValue = GetStringFromQuery(uri,paramName, null);
+		var urlValue = GetStringFromQuery(uri, paramName, null);
 
 		if (urlValue == "null")
 		{
@@ -425,11 +426,11 @@ internal static class NavigatorExt
 	//int
 	internal static int? GetIntFromQuery(this NavigationManager navigator, string paramName, int? defaultValue = null)
 	{
-		return GetIntFromQuery(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetIntFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static int? GetIntFromQuery(Uri uri, string paramName, int? defaultValue = null)
 	{
-		if (int.TryParse(GetStringFromQuery(uri,paramName), out int outInt))
+		if (int.TryParse(GetStringFromQuery(uri, paramName), out int outInt))
 		{
 			return outInt;
 		}
@@ -439,11 +440,11 @@ internal static class NavigatorExt
 	//enum
 	internal static TEnum? GetEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, TEnum? defaultValue = null) where TEnum : struct
 	{
-		return GetEnumFromQuery<TEnum>(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetEnumFromQuery<TEnum>(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static TEnum? GetEnumFromQuery<TEnum>(Uri uri, string paramName, TEnum? defaultValue = null) where TEnum : struct
 	{
-		var stringValue = GetStringFromQuery(uri,paramName);
+		var stringValue = GetStringFromQuery(uri, paramName);
 
 		if (Enum.TryParse<TEnum>(stringValue, out TEnum outInt))
 		{
@@ -455,12 +456,12 @@ internal static class NavigatorExt
 	//List<int>
 	internal static List<int> GetListIntFromQuery(this NavigationManager navigator, string paramName, List<int> defaultValue = null)
 	{
-		return GetListIntFromQuery(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetListIntFromQuery(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static List<int> GetListIntFromQuery(Uri uri, string paramName, List<int> defaultValue = null)
 	{
 
-		var stringValues = GetStringListFromQuery(uri,paramName, null);
+		var stringValues = GetStringListFromQuery(uri, paramName, null);
 		if (stringValues is null)
 			return defaultValue;
 
@@ -481,12 +482,12 @@ internal static class NavigatorExt
 	//List<Enum>
 	internal static List<TEnum> GetListEnumFromQuery<TEnum>(this NavigationManager navigator, string paramName, List<TEnum> defaultValue = null) where TEnum : struct
 	{
-		return GetListEnumFromQuery<TEnum>(new Uri(navigator.Uri),paramName,defaultValue);
+		return GetListEnumFromQuery<TEnum>(new Uri(navigator.Uri), paramName, defaultValue);
 	}
 	internal static List<TEnum> GetListEnumFromQuery<TEnum>(Uri uri, string paramName, List<TEnum> defaultValue = null) where TEnum : struct
 	{
 
-		var stringValues = GetStringListFromQuery(uri,paramName, null);
+		var stringValues = GetStringListFromQuery(uri, paramName, null);
 		if (stringValues is null)
 			return defaultValue;
 
@@ -531,20 +532,23 @@ internal static class NavigatorExt
 		return inputValue.Replace("§", "/");
 	}
 
-	internal static string SerializeFiltersForUrl(List<TucFilterBase> filters)
+	internal static string SerializeFiltersForUrl(List<TucFilterBase> filters, bool shouldProcess = true)
 	{
 		var queryObject = new List<TucFilterQuery>();
 		foreach (var item in filters)
 		{
 			queryObject.Add(TucFilterBase.ToQuery(item));
 		}
-		return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
+		if (shouldProcess)
+			return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
+
+		return JsonSerializer.Serialize(queryObject);
 	}
 
 	internal static List<TucFilterBase> DeserializeFiltersFromUrl(string queryValue, bool isProcessed = false)
 	{
 		var items = JsonSerializer.Deserialize<List<TucFilterQuery>>(isProcessed ? queryValue : ProcessQueryValueFromUrl(queryValue));
-		if(items == null) return null;
+		if (items == null) return null;
 		var result = new List<TucFilterBase>();
 		foreach (var item in items)
 		{
@@ -553,20 +557,23 @@ internal static class NavigatorExt
 		return result;
 	}
 
-	internal static string SerializeSortsForUrl(List<TucSort> sorts)
+	internal static string SerializeSortsForUrl(List<TucSort> sorts, bool shouldProcess = true)
 	{
 		var queryObject = new List<TucSortQuery>();
 		foreach (var item in sorts)
 		{
 			queryObject.Add(item.ToQuery());
 		}
-		return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
+		if (shouldProcess)
+			return ProcessQueryValueForUrl(JsonSerializer.Serialize(queryObject));
+
+		return JsonSerializer.Serialize(queryObject);
 	}
 
 	internal static List<TucSort> DeserializeSortsFromUrl(string queryValue, bool isProcessed = false)
 	{
 		var items = JsonSerializer.Deserialize<List<TucSortQuery>>(isProcessed ? queryValue : ProcessQueryValueFromUrl(queryValue));
-		if(items == null) return null;
+		if (items == null) return null;
 		var result = new List<TucSort>();
 		foreach (var item in items)
 		{

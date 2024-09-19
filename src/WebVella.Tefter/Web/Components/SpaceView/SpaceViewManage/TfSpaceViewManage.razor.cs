@@ -2,7 +2,6 @@
 public partial class TfSpaceViewManage : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	private bool _isSubmitting = false;
@@ -19,7 +18,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	private async Task _addColumn()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewColumnManageDialog>(
-				new TucSpaceViewColumn() with { SpaceViewId = TfRouteState.Value.SpaceViewId.Value },
+				new TucSpaceViewColumn() with { SpaceViewId = TfAppState.Value.SpaceView.Id },
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,

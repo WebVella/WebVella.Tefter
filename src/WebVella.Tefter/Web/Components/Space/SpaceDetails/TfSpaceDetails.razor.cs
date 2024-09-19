@@ -2,7 +2,6 @@
 public partial class TfSpaceDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
 	private bool visible = false;
 
@@ -14,9 +13,9 @@ public partial class TfSpaceDetails : TfBaseComponent
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-		if (TfRouteState.Value.SpaceId is not null && TfAppState.Value.SpaceViewList.Count > 0)
+		if (TfAppState.Value.Space is not null && TfAppState.Value.SpaceViewList.Count > 0)
 		{
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfRouteState.Value.SpaceId, TfAppState.Value.SpaceViewList[0].Id));
+			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id));
 		}
 		else
 		{
@@ -28,7 +27,7 @@ public partial class TfSpaceDetails : TfBaseComponent
 	private async Task _createViewHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
-		new TucSpaceView() with { SpaceId = TfRouteState.Value.SpaceId.Value },
+		new TucSpaceView() with { SpaceId = TfAppState.Value.Space.Id },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

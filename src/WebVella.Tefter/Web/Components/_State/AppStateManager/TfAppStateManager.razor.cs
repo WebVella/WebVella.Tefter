@@ -65,8 +65,6 @@ public partial class TfAppStateManager : FluxorComponent
 			await _init(null, TfAppState.Value);
 			//the change in the user state should triggger rerender later
 		});
-
-
 	}
 
 }

@@ -2,12 +2,44 @@
 public partial class TfSpaceViewDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
-	private bool _isDataLoading = false;
+	private bool _isDataLoading = true;
+
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
+			_isDataLoading = false;
+			await InvokeAsync(StateHasChanged);
+			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
+		}
+	}
+	protected override bool ShouldRender()
+	{
+		if (_isDataLoading) return false;
+		return base.ShouldRender();
+	}
+
+	private void On_AppChanged(SetAppStateAction action)
+	{
+		InvokeAsync(async () =>
+		{
+			_isDataLoading = false;
+			await InvokeAsync(StateHasChanged);
+		});
+	}
 
 	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
@@ -18,43 +50,85 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private async Task _goFirstPage()
 	{
-		var queryDict = new Dictionary<string,object>();
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		if (TfAppState.Value.SpaceViewPage == 1) return;
+		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = 1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goPreviousPage()
 	{
+		if (_isDataLoading) return;
+		_isDataLoading = true;
 		var page = TfAppState.Value.SpaceViewPage - 1;
 		if (page < 1) page = 1;
-
-		var queryDict = new Dictionary<string,object>();
+		if (TfAppState.Value.SpaceViewPage == page) return;
+		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goNextPage()
 	{
+		if (_isDataLoading) return;
+		_isDataLoading = true;
 		if (TfAppState.Value.SpaceViewData is null
 		|| TfAppState.Value.SpaceViewData.Rows.Count == 0)
 			return;
 
 		var page = TfAppState.Value.SpaceViewPage + 1;
-		if(page < 1) page = 1;
-		var queryDict = new Dictionary<string,object>();
+		if (page < 1) page = 1;
+		if (TfAppState.Value.SpaceViewPage == page) return;
+
+		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 
 	}
 	private async Task _goLastPage()
 	{
-		var queryDict = new Dictionary<string,object>();
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		if (TfAppState.Value.SpaceViewPage == -1) return;
+		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = -1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goOnPage(int page)
 	{
-		if (page < 1) page = 1;
-		var queryDict = new Dictionary<string,object>();
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		if (page < 1 && page != -1) page = 1;
+		if (TfAppState.Value.SpaceViewPage == page) return;
+		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+
+	private async Task _onSearch(string value)
+	{
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		var queryDict = new Dictionary<string, object>();
+		queryDict[TfConstants.SearchQueryName] = value;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+
+	private async Task _onFilter(List<TucFilterBase> filters)
+	{
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		var queryDict = new Dictionary<string, object>();
+		queryDict[TfConstants.FiltersQueryName] = NavigatorExt.SerializeFiltersForUrl(filters,false);
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+
+	private async Task _onSort(List<TucSort> sorts)
+	{
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		var queryDict = new Dictionary<string, object>();
+		queryDict[TfConstants.SortsQueryName] = NavigatorExt.SerializeSortsForUrl(sorts,false);
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
@@ -101,7 +175,8 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		}
 		Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
-			state: TfAppState.Value with { 
+			state: TfAppState.Value with
+			{
 				SelectedDataRows = selectedItems
 			}
 		));
@@ -125,7 +200,8 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		}
 		Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
-			state: TfAppState.Value with { 
+			state: TfAppState.Value with
+			{
 				SelectedDataRows = selectedItems
 			}
 		));

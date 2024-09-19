@@ -1,16 +1,22 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
-
-	private TfSpaceViewSortSelector _sortSelector;
+	[Parameter] public EventCallback<List<TucSort>> OnSort { get; set; }
 	private async Task OnSortClick()
 	{
-		await _sortSelector.ToggleSelector();
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewSortsDialog>(
+						true,
+						new DialogParameters()
+						{
+							PreventDismissOnOverlayClick = true,
+							PreventScroll = true,
+							Width = TfConstants.DialogWidthLarge
+						});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			await OnSort.InvokeAsync((List<TucSort>)result.Data);
+		}
 	}
-	//private void OnSortChange(SpaceViewSortChangedEventArgs args)
-	//{
-
-	//}
-
 
 }

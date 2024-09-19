@@ -28,21 +28,7 @@ else if (TfAppState.Value.SpaceDataList.Count == 0)
 		</div>
 	</FluentBodyContent>
 }
-else if (TfRouteState.Value.SpaceDataId is null)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-@* 			<FluentMessageBar Title="Missing redirect"
-							  Style="border: 1px solid var(--neutral-base-color)"
-							  Intent="MessageIntent.Warning"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				Should redirect to the first data
-			</FluentMessageBar> *@
-		</div>
-	</FluentBodyContent>
-}
-else if (TfAppState.Value.SpaceData is null && TfRouteState.Value.SpaceDataId is not null)
+else if (TfAppState.Value.SpaceData is null)
 {
 
 	<FluentBodyContent Class="content-body">
