@@ -3,8 +3,21 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace WebVella.Tefter.Models;
 
-public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
+public interface ITfExportableViewColumn
 {
+	TfBaseViewColumnExportData GetExportData();
+}
+
+public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExportableViewColumn
+{
+	public TfBaseViewColumn()
+	{
+	}
+	public TfBaseViewColumn(TfComponentContext context)
+	{
+		Context = context;
+	}
+
 	[Parameter]
 	public TfComponentContext Context { get; set; }
 
@@ -79,7 +92,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		//Should be overrided in child component if needed
 	}
 
-	protected string GetDataObjectByAlias(string alias, string defaultValue= null)
+	protected string GetDataObjectByAlias(string alias, string defaultValue = null)
 	{
 		string dbName = null;
 		if (Context.DataMapping.ContainsKey(alias))
@@ -92,7 +105,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 			return defaultValue;
 		}
 		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return defaultValue;
-		if(Context.DataTable.Rows[Context.RowIndex][dbName] is null) return defaultValue;
+		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return defaultValue;
 
 		return Context.DataTable.Rows[Context.RowIndex][dbName]?.ToString();
 	}
@@ -171,5 +184,16 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		return null;
 	}
-
+	public TItem GetOptions()
+	{
+		if (String.IsNullOrWhiteSpace(Context.CustomOptionsJson))
+		{
+			return (TItem)default;
+		}
+		return JsonSerializer.Deserialize<TItem>(Context.CustomOptionsJson);
+	}
+	public virtual TfBaseViewColumnExportData GetExportData()
+	{
+		return new TfBaseViewColumnExportData();
+	}
 }

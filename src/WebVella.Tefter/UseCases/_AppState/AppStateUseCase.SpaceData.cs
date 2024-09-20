@@ -9,7 +9,6 @@ internal partial class AppStateUseCase
 			newState = newState with { SpaceData = null, SpaceDataList = new(), AllDataProviders = new() };
 			return Task.FromResult(newState);
 		}
-
 		//SpaceDataList
 		if (newState.Space?.Id != oldState.Space?.Id)
 			newState = newState with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
@@ -17,16 +16,12 @@ internal partial class AppStateUseCase
 		if (routeState.SpaceDataId is not null)
 		{
 			newState = newState with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
-
 		}
 		else
 		{
 			newState = newState with { SpaceData = null };
 		}
-
 		newState = newState with { AllDataProviders = GetDataProviderList() };
-
-
 		return Task.FromResult(newState);
 	}
 	internal TucSpaceData GetSpaceData(Guid spaceDataId)

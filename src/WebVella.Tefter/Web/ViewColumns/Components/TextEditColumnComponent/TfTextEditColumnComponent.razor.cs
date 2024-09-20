@@ -5,6 +5,13 @@ namespace WebVella.Tefter.Web.ViewColumns;
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextEditColumnComponent.TfTextEditColumnComponent","WebVella.Tefter")]
 public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColumnComponentOptions>
 {
+	public TfTextEditColumnComponent()
+	{
+	}
+	public TfTextEditColumnComponent(TfComponentContext context)
+	{
+		Context = context;
+	}
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -15,6 +22,14 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		base.OnValidationRequested(sender,e);
 		//Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "problem with json");
 
+	}
+
+	public override TfBaseViewColumnExportData GetExportData(){ 
+		return new TfBaseViewColumnExportData
+		{
+			Value = GetDataObjectByAlias("Value"),
+			Format = null
+		};
 	}
 
 	private async Task _valueChanged(string value) => await ValueChanged.InvokeAsync(value);

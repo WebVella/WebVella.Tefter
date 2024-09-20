@@ -6,6 +6,20 @@ namespace WebVella.Tefter.Web.ViewColumns;
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanDisplayColumnComponent.TfBooleanDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 {
+	public TfBooleanDisplayColumnComponent()
+	{
+	}
+	public TfBooleanDisplayColumnComponent(TfComponentContext context)
+	{
+		Context = context;
+	}
+	public override TfBaseViewColumnExportData GetExportData(){ 
+		return new TfBaseViewColumnExportData{
+			Value = GetDataObjectByAlias<DateTime>("Value")?.ToString(),
+			Format = null
+		};
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();

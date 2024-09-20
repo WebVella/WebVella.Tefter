@@ -35,6 +35,8 @@ try
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
+		builder.Services.AddControllers();
+
 		//Add Fluxor State Managements
 		//NOTE: Register your assemblies if you need states
 		builder.Services.AddFluxor(options =>
@@ -61,7 +63,7 @@ try
 		app.UseHttpsRedirection();
 		app.UseStaticFiles();
 		app.UseAntiforgery();
-
+		app.MapControllers();
 		//NOTE: if you want to have routable components in your own addon
 		//You need to register your Assembly here to be scanned
 		//IMPORTANT: to not forget to add it in the <Route> AdditionalAssemblies 

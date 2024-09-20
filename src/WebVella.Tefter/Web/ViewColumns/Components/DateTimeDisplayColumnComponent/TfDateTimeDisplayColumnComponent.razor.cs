@@ -6,6 +6,26 @@ namespace WebVella.Tefter.Web.ViewColumns;
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateTimeDisplayColumnComponent.TfDateTimeDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfDateTimeDisplayColumnComponent : TfBaseViewColumn<TfDateTimeDisplayColumnComponentOptions>
 {
+	public TfDateTimeDisplayColumnComponent()
+	{
+	}
+	public TfDateTimeDisplayColumnComponent(TfComponentContext context)
+	{
+		Context = context;
+	}
+	public override TfBaseViewColumnExportData GetExportData()
+	{
+		var options = GetOptions();
+		var format = "dd MMM yyyy HH:mm";
+		if (options is not null && !String.IsNullOrWhiteSpace(options.DateTimeFormat))
+			format = options.DateTimeFormat;
+		return new TfBaseViewColumnExportData
+		{
+			Value = GetDataObjectByAlias<DateTime>("Value")?.ToString(format),
+			Format = format
+		};
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();

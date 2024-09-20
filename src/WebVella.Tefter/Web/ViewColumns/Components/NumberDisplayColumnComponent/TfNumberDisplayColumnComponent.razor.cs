@@ -5,6 +5,22 @@ namespace WebVella.Tefter.Web.ViewColumns;
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.NumberDisplayColumnComponent.TfNumberDisplayColumnComponent","WebVella.Tefter")]
 public partial class TfNumberDisplayColumnComponent : TfBaseViewColumn<TfNumberDisplayColumnComponentOptions>
 {
+	public TfNumberDisplayColumnComponent()
+	{
+	}
+	public TfNumberDisplayColumnComponent(TfComponentContext context)
+	{
+		Context = context;
+	}
+
+	public override TfBaseViewColumnExportData GetExportData(){ 
+		return new TfBaseViewColumnExportData
+		{
+			Value = GetDataObjectByAlias<decimal>("Value")?.ToString("N"),
+			Format = "0.000"
+		};
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();

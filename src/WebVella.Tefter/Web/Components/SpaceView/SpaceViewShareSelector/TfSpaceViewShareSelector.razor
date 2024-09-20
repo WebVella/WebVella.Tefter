@@ -8,7 +8,7 @@
 				Copy link
 				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
-			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
+			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_exportSelection">
 				Export Selection
 				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				@if (TfAppState.Value.SelectedDataRows.Count > 0)
@@ -18,11 +18,22 @@
 					</span>
 				}
 			</FluentMenuItem>
-			<FluentMenuItem>
+			<FluentMenuItem OnClick="_exportAll">
 				Export All data
 				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 		</FluentMenu>
+		<div style="display:none">
+			<form method="post" name="ExportSelection" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+				<input type="hidden" name="data" value="@_getExportSelectionData()" />
+				<button type="submit" id="@_exportSelectionBtnId"></button>
+			</form>
+			<form method="post" name="ExportAll" action="@_exportExcelUrl" class="ant-form ant-form-vertical">
+				<input type="hidden" name="data" value="@_getExportAllData()" />
+				<button type="submit" id="@_exportAllBtnId"></button>
+			</form>
+		</div>
 	</div>
+
 }
 

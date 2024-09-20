@@ -70,6 +70,7 @@ public static class DependencyInjection
 		//use cases
 		services.AddTransient<AppStateUseCase, AppStateUseCase>();
 		services.AddTransient<UserStateUseCase, UserStateUseCase>();
+		services.AddTransient<ExportUseCase, ExportUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();
 
 		//hosted services

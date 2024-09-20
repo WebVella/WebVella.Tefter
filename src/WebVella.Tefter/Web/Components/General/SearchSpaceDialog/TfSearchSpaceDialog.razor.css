@@ -9,7 +9,7 @@
 
 ::deep fluent-anchor::part(control){
 	display:flex;
-	min-height:42px;
+	min-height:36px;
 }
 
 ::deep fluent-anchor::part(content){

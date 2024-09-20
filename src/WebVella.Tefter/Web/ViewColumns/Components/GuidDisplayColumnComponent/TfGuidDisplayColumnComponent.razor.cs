@@ -7,6 +7,21 @@ namespace WebVella.Tefter.Web.ViewColumns;
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.GuidDisplayColumnComponent.TfGuidDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfGuidDisplayColumnComponent : TfBaseViewColumn<TfGuidDisplayColumnComponentOptions>
 {
+	public TfGuidDisplayColumnComponent()
+	{
+	}
+	public TfGuidDisplayColumnComponent(TfComponentContext context)
+	{
+		Context = context;
+	}
+	public override TfBaseViewColumnExportData GetExportData(){ 
+		return new TfBaseViewColumnExportData
+		{
+			Value = GetDataObjectByAlias<Guid>("Value")?.ToString(),
+			Format = null
+		};
+	}
+
 
 	protected override async Task OnInitializedAsync()
 	{

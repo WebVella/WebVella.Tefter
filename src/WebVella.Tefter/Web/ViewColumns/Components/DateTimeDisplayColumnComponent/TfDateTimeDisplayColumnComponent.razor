@@ -3,7 +3,15 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 	var value = GetDataObjectByAlias<DateTime>("Value", null);
-	<div>@value</div>
+	var options = GetOptions();
+	if (!String.IsNullOrWhiteSpace(options.DateTimeFormat))
+	{
+		<div>@value?.ToString(options.DateTimeFormat)</div>
+	}
+	else
+	{
+		<div>@value</div>
+	}
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
