@@ -1,25 +1,19 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@{
-	var isBookmarked = TfAppState.Value.CurrentUserBookmarks.Any(x => x.SpaceViewId == TfAppState.Value.SpaceView.Id);
-	var uri = new Uri(Navigator.Uri);
-	var isSaveActive = TfAppState.Value.CurrentUserSaves.Any(x => x.Id == TfAppState.Value.ActiveSaveId);
-}
-
 @if (_open)
 {
 	<div class="view-setting-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector" UseMenuService="false">
-			@if (!isBookmarked || !isSaveActive)
+			@if (TfAppState.Value.ActiveSpaceViewBookmark is null || TfAppState.Value.ActiveSpaceViewSavedUrl is null)
 			{
-				@if (!isBookmarked)
+				@if (TfAppState.Value.ActiveSpaceViewBookmark is null)
 				{
 					<FluentMenuItem OnClick="_bookmarkView">
 						@LOC("Bookmark View")
 						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 					</FluentMenuItem>
 				}
-				@if (!isSaveActive)
+				@if (TfAppState.Value.ActiveSpaceViewSavedUrl is null)
 				{
 					<FluentMenuItem OnClick="_saveViewUrl">
 						@LOC("Save URL")

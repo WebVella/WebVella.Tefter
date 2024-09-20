@@ -9,6 +9,40 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 		_open = !_open;
 		await InvokeAsync(StateHasChanged);
 	}
+	private async Task _updateUrl()
+	{
+		try
+		{
+			var submit = TfAppState.Value.ActiveSpaceViewSavedUrl with
+			{
+				Url = new Uri(Navigator.Uri).PathAndQuery
+			};
+			var result = await UC.UpdateBookmarkAsync(submit);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("URL updated"));
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						CurrentUserBookmarks = result.Value.Item1,
+						CurrentUserSaves = result.Value.Item2,
+						ActiveSpaceViewSavedUrl = submit
+					}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
 	private async Task _editUrl()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
@@ -43,9 +77,8 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 	{
 		try
 		{
-			var save = TfAppState.Value.CurrentUserSaves.FirstOrDefault(x => x.Id == TfAppState.Value.ActiveSaveId);
-			if (save is null) return;
-			var result = await UC.DeleteBookmark(save);
+			if (TfAppState.Value.ActiveSpaceViewSavedUrl is null) return;
+			var result = await UC.DeleteBookmarkAsync(TfAppState.Value.ActiveSpaceViewSavedUrl);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
@@ -56,7 +89,7 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 					{
 						CurrentUserBookmarks = result.Value.Item1,
 						CurrentUserSaves = result.Value.Item2,
-						ActiveSaveId = null
+						ActiveSpaceViewSavedUrl = null
 					}
 				));
 				var query = new Dictionary<string, object>();

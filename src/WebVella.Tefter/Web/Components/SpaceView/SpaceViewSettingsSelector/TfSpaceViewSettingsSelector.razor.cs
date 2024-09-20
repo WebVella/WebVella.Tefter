@@ -125,7 +125,7 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 					{
 						CurrentUserBookmarks = result.Value.Item1,
 						CurrentUserSaves = result.Value.Item2,
-						ActiveSaveId = submit.Id
+						ActiveSpaceViewSavedUrl = submit
 					}
 				));
 				var query = new Dictionary<string,object>();

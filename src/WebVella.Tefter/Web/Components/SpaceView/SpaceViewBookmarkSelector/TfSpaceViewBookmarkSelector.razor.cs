@@ -32,7 +32,7 @@ public partial class TfSpaceViewBookmarkSelector : TfBaseComponent
 		{
 			var bookmark = TfAppState.Value.CurrentUserBookmarks.FirstOrDefault(x=> x.SpaceViewId == TfAppState.Value.SpaceView.Id);
 			if(bookmark is null) return;
-			var result = await UC.DeleteBookmark(bookmark);
+			var result = await UC.DeleteBookmarkAsync(bookmark);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{

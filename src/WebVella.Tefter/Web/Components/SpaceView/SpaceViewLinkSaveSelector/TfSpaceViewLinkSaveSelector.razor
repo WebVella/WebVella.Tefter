@@ -4,6 +4,14 @@
 {
 	<div class="view-export-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
+			@if (Navigator.IsSpaceViewSavedUrlChanged(TfAppState.Value.ActiveSpaceViewSavedUrl.Url))
+			{
+				<FluentMenuItem OnClick="_updateUrl">
+					Save URL change
+					<FluentIcon Value="@TfConstants.GetIcon("Save")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				</FluentMenuItem>
+
+			}
 			<FluentMenuItem OnClick="_editUrl">
 				Edit saved URL
 				<FluentIcon Value="@TfConstants.GetIcon("LinkEdit")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />

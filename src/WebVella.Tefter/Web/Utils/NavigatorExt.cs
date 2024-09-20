@@ -162,9 +162,9 @@ internal static class NavigatorExt
 		List<TucSort> sorts = null;
 		var sortString = GetStringFromQuery(uri, TfConstants.SortsQueryName, null);
 		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
-		
-		Guid? activeSaveId = GetGuidFromQuery(uri,TfConstants.ActiveSaveQueryName,null);
-		
+
+		Guid? activeSaveId = GetGuidFromQuery(uri, TfConstants.ActiveSaveQueryName, null);
+
 		result = result with
 		{
 			Page = page,
@@ -621,5 +621,36 @@ internal static class NavigatorExt
 		navigator.NavigateTo(TfConstants.NotFoundPageUrl, true);
 	}
 
+	//TODO BOZ
+	internal static bool IsSpaceViewSavedUrlChanged(this NavigationManager navigator, string url)
+	{
+		var savedUri = new Uri($"http://localhost{url}");
+		var currentUri = new Uri(navigator.Uri);
+		
+		//if(savedUri.LocalPath != currentUri.LocalPath) return true;
+
+		//var savedQueryDict = HttpUtility.ParseQueryString(currentUri.Query);
+		//var currentQueryDict = HttpUtility.ParseQueryString(currentUri.Query);
+
+		//foreach (string key in savedQueryDict.AllKeys)
+		//{
+		//	var valueInOtherDict = currentQueryDict[key];
+		//	if(valueInOtherDict is null || valueInOtherDict != savedQueryDict[key]) return true;
+		//}
+		
+		//foreach (string key in currentQueryDict.AllKeys)
+		//{
+		//	var valueInOtherDict = savedQueryDict[key];
+		//	if(valueInOtherDict is null || valueInOtherDict != currentQueryDict[key]) return true;
+		//}
+		var boz1 = new Uri($"http://localhost{url}?boz1=1&boz2=1");
+		var boz2 = new Uri($"http://localhost{url}?boz1=1&boz2=1");
+		var boz3 = new Uri($"http://localhost{url}?boz2=1&boz1=1");
+
+		var  result = Uri.Compare(boz1,boz2,UriComponents.Query,UriFormat.UriEscaped,StringComparison.InvariantCulture);
+		var  result2 = Uri.Compare(boz1,boz3,UriComponents.Query,UriFormat.UriEscaped,StringComparison.InvariantCulture);
+
+		return false;
+	}
 
 }

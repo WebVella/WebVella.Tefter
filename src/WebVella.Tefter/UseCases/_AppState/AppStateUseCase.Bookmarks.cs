@@ -9,7 +9,8 @@ internal partial class AppStateUseCase
 			|| routeState.FirstNode == RouteDataFirstNode.Space)
 			)
 		{
-			newState = newState with { CurrentUserBookmarks = null, CurrentUserSaves = null, ActiveSaveId = null };
+			newState = newState with { CurrentUserBookmarks = null, CurrentUserSaves = null, 
+				ActiveSpaceViewSavedUrl = null, ActiveSpaceViewBookmark = null };
 			return newState;
 		}
 		if (newState.CurrentUserBookmarks == null || newState.CurrentUserSaves == null)
@@ -21,10 +22,12 @@ internal partial class AppStateUseCase
 				CurrentUserSaves = saves
 			};
 		}
-
+		var activeSave = newState.CurrentUserSaves.FirstOrDefault(x=> x.Id == routeState.ActiveSaveId);
+		var activeBookmark = newState.CurrentUserBookmarks.FirstOrDefault(x=> x.SpaceViewId == routeState.SpaceViewId);
 		newState = newState with
 		{
-			ActiveSaveId = routeState.ActiveSaveId
+			ActiveSpaceViewSavedUrl = activeSave,
+			ActiveSpaceViewBookmark = activeBookmark
 		};
 
 		return newState;
@@ -87,14 +90,14 @@ internal partial class AppStateUseCase
 		return Result.Ok(await GetUserBookmarksAsync(bookmark.UserId));
 	}
 
-	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> UpdateBookmark(TucBookmark bookmark)
+	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> UpdateBookmarkAsync(TucBookmark bookmark)
 	{
 		var serviceResult = _spaceManager.UpdateBookmark(bookmark.ToModel());
 		if (serviceResult.IsFailed) return Result.Fail(new Error("UpdateBookmark failed").CausedBy(serviceResult.Errors));
 		return Result.Ok(await GetUserBookmarksAsync(bookmark.UserId));
 	}
 
-	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> DeleteBookmark(TucBookmark bookmark)
+	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> DeleteBookmarkAsync(TucBookmark bookmark)
 	{
 		var serviceResult = _spaceManager.DeleteBookmark(bookmark.Id);
 		if (serviceResult.IsFailed) return Result.Fail(new Error("DeleteBookmark failed").CausedBy(serviceResult.Errors));
