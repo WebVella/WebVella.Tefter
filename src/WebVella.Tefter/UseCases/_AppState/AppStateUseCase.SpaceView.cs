@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser, TfRouteState routeState, 
+	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser, TfRouteState routeState,
 		TfAppState newState, TfAppState oldState)
 	{
 		if (newState.Space is null)
@@ -41,12 +41,12 @@ internal partial class AppStateUseCase
 				newState = newState with
 				{
 					SpaceViewData = GetSpaceViewData(
-						spaceDataId:newState.SpaceView.SpaceDataId.Value,
-						additionalFilters:newState.SpaceViewFilters,
-						sortOverrides:newState.SpaceViewSorts,
-						search:newState.SpaceViewSearch,
-						page:newState.SpaceViewPage,
-						pageSize:newState.SpaceViewPageSize
+						spaceDataId: newState.SpaceView.SpaceDataId.Value,
+						additionalFilters: newState.SpaceViewFilters,
+						sortOverrides: newState.SpaceViewSorts,
+						search: newState.SpaceViewSearch,
+						page: newState.SpaceViewPage,
+						pageSize: newState.SpaceViewPageSize
 					)
 				};
 			}
@@ -73,8 +73,8 @@ internal partial class AppStateUseCase
 		newState = newState with { AvailableColumnTypes = GetAvailableSpaceViewColumnTypes() };
 
 		//SelectedDataRows
-		if(oldState.SpaceView?.Id != newState.SpaceView?.Id)
-			newState = newState with { SelectedDataRows = new()};
+		if (oldState.SpaceView?.Id != newState.SpaceView?.Id)
+			newState = newState with { SelectedDataRows = new() };
 
 
 		return Task.FromResult(newState);
@@ -501,6 +501,26 @@ internal partial class AppStateUseCase
 		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
 
 		return Result.Ok();
+	}
+
+	internal Task<List<TucSpaceView>> GetAllSpaceViews()
+	{
+
+		var serviceResult = _spaceManager.GetAllSpaceViews();
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpaceView>());
+		}
+		if(serviceResult.Value is null) return Task.FromResult(new List<TucSpaceView>());
+		return Task.FromResult(serviceResult.Value.Select(x=> new TucSpaceView(x)).ToList());
+
 	}
 
 	internal TfDataTable GetSpaceViewData(
