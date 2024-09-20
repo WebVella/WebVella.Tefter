@@ -20,6 +20,7 @@ public partial record TfRouteState
 	public string Search { get; init;} = null;
 	public List<TucFilterBase> Filters { get; init;} = null;
 	public List<TucSort> Sorts { get; init;} = null;
+	public Guid? ActiveSaveId { get; init;} = null;
 }
 
 public enum RouteDataFirstNode

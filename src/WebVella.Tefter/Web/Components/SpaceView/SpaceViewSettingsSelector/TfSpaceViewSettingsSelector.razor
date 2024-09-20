@@ -1,47 +1,40 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
+@{
+	var isBookmarked = TfAppState.Value.CurrentUserBookmarks.Any(x => x.SpaceViewId == TfAppState.Value.SpaceView.Id);
+	var uri = new Uri(Navigator.Uri);
+	var isSaveActive = TfAppState.Value.CurrentUserSaves.Any(x => x.Id == TfAppState.Value.ActiveSaveId);
+}
 
 @if (_open)
 {
 	<div class="view-setting-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector" UseMenuService="false">
-			<FluentMenuItem OnClick="_bookmarkView">
-				Bookmark view
-				<FluentIcon Value="@TfConstants.BookmarkONIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="_bookmarkView">
-				Edit Bookmark
-				<FluentIcon Value="@TfConstants.BookmarkEditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="_bookmarkView">
-				Remove Bookmark
-				<FluentIcon Value="@TfConstants.BookmarkRemoveIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="_saveViewUrl">
-				Save URL
-				<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="_saveViewUrl">
-				Edit saved URL
-				<FluentIcon Value="@TfConstants.GetIcon("LinkEdit")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="_saveViewUrlAs">
-				Save URL as
-				<FluentIcon Value="@TfConstants.GetIcon("LinkMultiple")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem OnClick="_saveViewUrl">
-				Remove URL save
-				<FluentIcon Value="@TfConstants.GetIcon("LinkDismiss")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentDivider />
+			@if (!isBookmarked || !isSaveActive)
+			{
+				@if (!isBookmarked)
+				{
+					<FluentMenuItem OnClick="_bookmarkView">
+						@LOC("Bookmark View")
+						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+					</FluentMenuItem>
+				}
+				@if (!isSaveActive)
+				{
+					<FluentMenuItem OnClick="_saveViewUrl">
+						@LOC("Save URL")
+						<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+					</FluentMenuItem>
+				}
+				<FluentDivider />
+			}
 			<FluentMenuItem OnClick="_manageView">
 				Manage View
 				<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_deleteView">
 				Delete View
-				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error"/>
+				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
 			</FluentMenuItem>
 			<FluentMenuItem>
 				Manage Access

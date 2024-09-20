@@ -162,13 +162,17 @@ internal static class NavigatorExt
 		List<TucSort> sorts = null;
 		var sortString = GetStringFromQuery(uri, TfConstants.SortsQueryName, null);
 		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
+		
+		Guid? activeSaveId = GetGuidFromQuery(uri,TfConstants.ActiveSaveQueryName,null);
+		
 		result = result with
 		{
 			Page = page,
 			PageSize = pageSize,
 			Search = search,
 			Filters = filters,
-			Sorts = sorts
+			Sorts = sorts,
+			ActiveSaveId = activeSaveId,
 		};
 
 		return result;

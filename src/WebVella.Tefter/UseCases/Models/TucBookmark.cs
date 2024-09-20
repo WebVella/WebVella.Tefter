@@ -13,6 +13,7 @@ public record TucBookmark
 	public string SpaceName { get; init; }
 	public OfficeColor SpaceColor { get; set; } = OfficeColor.Default;
 	public Icon SpaceIcon { get; set; } = null;
+	public Guid SpaceId { get; set; }
 	public List<TucTag> Tags { get; init; } = new();
 
 	public TucBookmark() { }

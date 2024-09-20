@@ -51,15 +51,15 @@
 			margin-left: 0;
 		}
 
-		::deep .sidebar-toolbar-mode .modebar .btn.tree {
+		::deep .sidebar-toolbar-mode .modebar .btn.views {
 			border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
 		}
 
-		::deep .sidebar-toolbar-mode .modebar .btn.bookmark {
+		::deep .sidebar-toolbar-mode .modebar .btn.bookmarks {
 			border-radius: 0;
 		}
 
-		::deep .sidebar-toolbar-mode .modebar .btn.save {
+		::deep .sidebar-toolbar-mode .modebar .btn.saves {
 			border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
 		}
 

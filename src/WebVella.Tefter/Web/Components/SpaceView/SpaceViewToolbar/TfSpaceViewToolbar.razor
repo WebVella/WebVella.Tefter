@@ -1,6 +1,10 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
+@{
+	var isBookmarked = TfAppState.Value.CurrentUserBookmarks.Any(x => x.SpaceViewId == TfAppState.Value.SpaceView.Id);
+	var uri = new Uri(Navigator.Uri);
+	var isSaveActive = TfAppState.Value.CurrentUserSaves.Any(x => x.Id == TfAppState.Value.ActiveSaveId);
+}
 <div class="content-toolbar">
 	<div class="content-toolbar-left">
 		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
@@ -38,12 +42,18 @@
 			}
 
 		</FluentButton>
-		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.BookmarkONIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-		</FluentButton>
-		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-		</FluentButton>
+		@if (isBookmarked)
+		{
+			<FluentButton Id="view-bookmark-selector" OnClick="OnBookmarkClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentButton>
+		}
+		@if (isSaveActive)
+		{
+			<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentButton>
+		}
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton>
@@ -56,5 +66,7 @@
 <TfSpaceViewSettingsSelector @ref="_settingSelector" />
 <TfSpaceViewActionSelector @ref="_actionSelector" />
 <TfSpaceViewShareSelector @ref="_shareSelector" />
+<TfSpaceViewBookmarkSelector @ref="_bookmarkSelector" />
+<TfSpaceViewLinkSaveSelector @ref="_saveSelector" />
 
 

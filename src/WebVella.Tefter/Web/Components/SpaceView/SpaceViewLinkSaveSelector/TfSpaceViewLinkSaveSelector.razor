@@ -1,0 +1,23 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (_open)
+{
+	<div class="view-export-selector-menu">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
+			<FluentMenuItem OnClick="_editUrl">
+				Edit saved URL
+				<FluentIcon Value="@TfConstants.GetIcon("LinkEdit")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_saveUrlAs">
+				Save URL as
+				<FluentIcon Value="@TfConstants.GetIcon("LinkMultiple")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_removeUrl">
+				Remove URL save
+				<FluentIcon Value="@TfConstants.GetIcon("LinkDismiss")" Slot="start" Color="@Color.Error" />
+			</FluentMenuItem>
+		</FluentMenu>
+	</div>
+
+}
+

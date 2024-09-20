@@ -44,6 +44,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Web\Components\SpaceView\SpaceViewBookmarkSelector\TfSpaceViewBookmarkSelector.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Update="Web\Components\SpaceView\SpaceViewManageNav\TfSpaceViewManageNav.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>

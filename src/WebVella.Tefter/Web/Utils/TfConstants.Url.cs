@@ -7,6 +7,7 @@ public partial class TfConstants
 	public static string SearchQueryName = "sch";
 	public static string FiltersQueryName = "flt";
 	public static string SortsQueryName = "srt";
+	public static string ActiveSaveQueryName = "svid";
 
 	public static string NotFoundPageUrl = "/404";
 	public static string LoginPageUrl  = "/login";

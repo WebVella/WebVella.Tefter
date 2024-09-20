@@ -9,22 +9,31 @@ internal partial class AppStateUseCase
 			|| routeState.FirstNode == RouteDataFirstNode.Space)
 			)
 		{
-			newState = newState with { CurrentUserBookmarks = null, CurrentUserSaves = null };
+			newState = newState with { CurrentUserBookmarks = null, CurrentUserSaves = null, ActiveSaveId = null };
 			return newState;
 		}
 		if (newState.CurrentUserBookmarks == null || newState.CurrentUserSaves == null)
 		{
-			var (bookmarks, saves) = await GetUserBookmarksAsync(currentUser);
-			newState = newState with { CurrentUserBookmarks = bookmarks, CurrentUserSaves = saves };
+			var (bookmarks, saves) = await GetUserBookmarksAsync(currentUser.Id);
+			newState = newState with
+			{
+				CurrentUserBookmarks = bookmarks,
+				CurrentUserSaves = saves
+			};
 		}
+
+		newState = newState with
+		{
+			ActiveSaveId = routeState.ActiveSaveId
+		};
 
 		return newState;
 	}
 
-	internal async Task<(List<TucBookmark>, List<TucBookmark>)> GetUserBookmarksAsync(TucUser user)
+	internal async Task<(List<TucBookmark>, List<TucBookmark>)> GetUserBookmarksAsync(Guid userId)
 	{
 
-		var serviceResult = _spaceManager.GetUserBookmarksList(user.Id);
+		var serviceResult = _spaceManager.GetUserBookmarksList(userId);
 		if (serviceResult.IsFailed)
 		{
 			ResultUtils.ProcessServiceResult(
@@ -58,9 +67,10 @@ internal partial class AppStateUseCase
 					SpaceName = space.Name,
 					SpaceColor = space.Color,
 					SpaceIcon = space.Icon,
+					SpaceId = space.Id,
 				};
 			}
-			if (String.IsNullOrWhiteSpace(item.Url))
+			if (!String.IsNullOrWhiteSpace(item.Url))
 				saves.Add(record);
 			else
 				bookmarks.Add(record);
@@ -68,6 +78,28 @@ internal partial class AppStateUseCase
 
 		return (bookmarks, saves);
 
+	}
+
+	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> CreateBookmarkAsync(TucBookmark bookmark)
+	{
+		var serviceResult = _spaceManager.CreateBookmark(bookmark.ToModel());
+		if (serviceResult.IsFailed) return Result.Fail(new Error("CreateBookmark failed").CausedBy(serviceResult.Errors));
+		return Result.Ok(await GetUserBookmarksAsync(bookmark.UserId));
+	}
+
+	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> UpdateBookmark(TucBookmark bookmark)
+	{
+		var serviceResult = _spaceManager.UpdateBookmark(bookmark.ToModel());
+		if (serviceResult.IsFailed) return Result.Fail(new Error("UpdateBookmark failed").CausedBy(serviceResult.Errors));
+		return Result.Ok(await GetUserBookmarksAsync(bookmark.UserId));
+	}
+
+	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> DeleteBookmark(TucBookmark bookmark)
+	{
+		var serviceResult = _spaceManager.DeleteBookmark(bookmark.Id);
+		if (serviceResult.IsFailed) return Result.Fail(new Error("DeleteBookmark failed").CausedBy(serviceResult.Errors));
+
+		return Result.Ok(await GetUserBookmarksAsync(bookmark.UserId));
 	}
 
 }
