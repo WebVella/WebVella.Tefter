@@ -285,6 +285,17 @@ public partial class TfSpaceManager : ITfSpaceManager
 				if (!validationResult.IsValid)
 					return validationResult.ToResult();
 
+				bool success = false;
+
+				var bookmarks = GetSpaceViewBookmarksList(id).Value;
+				foreach (var bookmark in bookmarks)
+				{
+					var result = DeleteBookmark(bookmark.Id);
+
+					if (!result.IsSuccess)
+						return Result.Fail(new DboManagerError("Failed to delete space view bookmark, " +
+							"before deleting space view", bookmark));
+				}
 
 				var spacesAfter = GetSpaceViewsList(spaceView.SpaceId)
 					.Value
@@ -303,7 +314,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				var spaceViewColumns = GetSpaceViewColumnsList(spaceView.Id).Value;
 
-				foreach(var column in spaceViewColumns )
+				foreach (var column in spaceViewColumns)
 				{
 					var columnDeleteResult = DeleteSpaceViewColumn(column.Id);
 
@@ -312,7 +323,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				}
 
-				var success = _dboManager.Delete<TfSpaceView>(id);
+				success = _dboManager.Delete<TfSpaceView>(id);
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Delete", id));

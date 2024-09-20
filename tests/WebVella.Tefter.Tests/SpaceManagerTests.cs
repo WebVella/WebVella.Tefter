@@ -397,6 +397,145 @@ public partial class SpaceManagerTests : BaseTest
 	}
 
 	[Fact]
+	public async Task CRUD_Bookmark()
+	{
+		using (await locker.LockAsync())
+		{
+			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+
+
+				var role = identityManager
+						.CreateRoleBuilder()
+						.WithName("UnitTester")
+						.Build();
+
+				var roleResult = await identityManager.SaveRoleAsync(role);
+				roleResult.Should().NotBeNull();
+				roleResult.IsSuccess.Should().BeTrue();
+				roleResult.Value.Should().NotBeNull();
+
+				role = roleResult.Value;
+
+				var user = identityManager
+					.CreateUserBuilder()
+					.WithEmail("test@test.com")
+					.WithPassword("password")
+					.WithFirstName("firstname")
+					.WithLastName("lastname")
+					.CreatedOn(DateTime.Now)
+					.Enabled(true)
+					.WithRoles(role)
+					.Build();
+
+				var userResult = await identityManager.SaveUserAsync(user);
+				userResult.Should().NotBeNull();
+				userResult.IsSuccess.Should().BeTrue();
+				userResult.Value.Should().NotBeNull();
+
+				userResult = await identityManager.GetUserAsync("test@test.com", "password");
+				userResult.Should().NotBeNull();
+				userResult.IsSuccess.Should().BeTrue();
+				userResult.Value.Should().NotBeNull();
+
+				user = userResult.Value;
+
+
+				var providerTypesResult = providerManager.GetProviderTypes();
+				var providerType = providerTypesResult.Value
+					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+				TfDataProviderModel providerModel = new TfDataProviderModel
+				{
+					Id = Guid.NewGuid(),
+					Name = "test data provider",
+					ProviderType = providerType,
+					SettingsJson = null
+				};
+				var providerResult = providerManager.CreateDataProvider(providerModel);
+				providerResult.IsSuccess.Should().BeTrue();
+				providerResult.Value.Should().BeOfType<TfDataProvider>();
+
+				var space = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+
+				var spaceResult = spaceManager.CreateSpace(space);
+				spaceResult.IsSuccess.Should().BeTrue();
+				spaceResult.Value.Should().NotBeNull();
+
+				var spaceData = new TfSpaceData
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = providerModel.Id,
+					Name = "data1",
+					SpaceId = space.Id,
+				};
+
+				var spaceDataResult = spaceManager.CreateSpaceData(spaceData);
+				spaceDataResult.IsSuccess.Should().BeTrue();
+				spaceDataResult.Value.Should().NotBeNull();
+
+
+				TfSpaceView view = new TfSpaceView
+				{
+					Id = Guid.NewGuid(),
+					Name = "view",
+					Position = 1,
+					SpaceDataId = spaceData.Id,
+					SpaceId = space.Id,
+					Type = TfSpaceViewType.Report
+				};
+
+				var spaceViewResult = spaceManager.CreateSpaceView(view);
+				spaceViewResult.IsSuccess.Should().BeTrue();
+				spaceViewResult.Value.Should().NotBeNull();
+				spaceViewResult.Value.Id.Should().Be(view.Id);
+				spaceViewResult.Value.Name.Should().Be(view.Name);
+				spaceViewResult.Value.Position.Should().Be(view.Position);
+				spaceViewResult.Value.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceViewResult.Value.SpaceId.Should().Be(view.SpaceId);
+				spaceViewResult.Value.Type.Should().Be(view.Type);
+
+
+				var bookmarkList = spaceManager.GetUserBookmarksList(user.Id);
+
+				var bookmarkModel = new TfBookmark
+				{
+					Id = Guid.NewGuid(),
+					Name = "test1",
+					Description = " test with #tag1 #tAg2 #Tag3",
+					SpaceViewId = view.Id,
+					Url = null,
+					UserId = user.Id,
+					CreatedOn = DateTime.UtcNow
+				};
+
+				var bookmark = spaceManager.CreateBookmark(bookmarkModel).Value;
+				bookmark.Description = " test with #tag_1 #tAg_2 #Tag3";
+				bookmark = spaceManager.UpdateBookmark(bookmark).Value;
+
+				spaceManager.GetUserBookmarksList(user.Id).Value.Count.Should().Be(1);
+				spaceManager.DeleteBookmark(bookmark.Id).IsSuccess.Should().BeTrue();
+				spaceManager.GetUserBookmarksList(user.Id).Value.Count.Should().Be(0);
+
+			}
+		}
+	}
+
+
+	[Fact]
 	public async Task CRUD_SpaceView()
 	{
 		using (await locker.LockAsync())
