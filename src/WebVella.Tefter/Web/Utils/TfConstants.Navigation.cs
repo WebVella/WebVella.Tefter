@@ -20,8 +20,10 @@ public partial class TfConstants
 	public static Icon FastAccessIcon = GetIcon("VideoPersonStar");
 	public static string FastAccesMenuTitle = "Fast Access";
 
-	public static Icon BookmarkONIcon = GetIcon("Star", variant: IconVariant.Filled);
-	public static Icon BookmarkOFFIcon = GetIcon("Star");
+	public static Icon BookmarkONIcon = GetIcon("Bookmark", variant: IconVariant.Filled);
+	public static Icon BookmarkOFFIcon = GetIcon("Bookmark");
+	public static Icon BookmarkRemoveIcon = GetIcon("BookmarkOff");
+	public static Icon BookmarkEditIcon = GetIcon("BookmarkSearch");
 
 	public static Icon SpaceIcon = GetIcon("VideoPersonStar");
 	public static Icon SpaceViewIcon = GetIcon("Grid");

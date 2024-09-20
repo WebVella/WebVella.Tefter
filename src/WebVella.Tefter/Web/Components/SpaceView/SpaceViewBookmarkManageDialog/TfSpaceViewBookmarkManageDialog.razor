@@ -1,0 +1,49 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.Name
+									 ValueChanged="@((x) => _form = _form with{Name = x})"
+									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextArea Value=@_form.Description ValueChanged="@((x) => _form = _form with{Description = x})"
+									Label="@LOC("Description")" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.Description)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentDivider Style="margin:1rem 0" />
+		</FluentEditForm>
+	}
+</FluentDialogBody>

@@ -52,8 +52,10 @@ else
 	}
 	<FluentBodyContent Class="content-body with-toolbar">
 		<style>
-			:root {
+			:root .tfdt{
 				--tf-grid-row-selected: @TfAppState.Value.SpaceGridBackgkroundColor;
+				--accent-base-color: @TfAppState.Value.SpaceColorString;
+				--accent-fill-rest: @TfAppState.Value.SpaceColorString;
 			}
 		</style>
 		<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" />

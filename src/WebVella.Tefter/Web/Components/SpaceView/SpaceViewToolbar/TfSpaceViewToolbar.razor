@@ -3,7 +3,7 @@
 
 <div class="content-toolbar">
 	<div class="content-toolbar-left">
-		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")"/>
+		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">@(TfAppState.Value.SpaceViewFilters?.Count ?? 0)</FluentBadge>
@@ -27,17 +27,22 @@
 			}
 		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
-			@LOC("Row Actions")
 			@if (TfAppState.Value.SelectedDataRows.Count > 0)
 			{
-				<span slot="start">
-					<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
-				</span>
+				<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
+
+		</FluentButton>
+		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@TfConstants.BookmarkONIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+		</FluentButton>
+		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton>
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />

@@ -6,17 +6,33 @@
 {
 	<div class="view-setting-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector" UseMenuService="false">
-			<FluentMenuItem>
-				Bookmark
-				<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			<FluentMenuItem OnClick="_bookmarkView">
+				Bookmark view
+				<FluentIcon Value="@TfConstants.BookmarkONIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
-			<FluentMenuItem Disabled="true">
-				Save view
-				<FluentIcon Value="@TfConstants.SaveIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			<FluentMenuItem OnClick="_bookmarkView">
+				Edit Bookmark
+				<FluentIcon Value="@TfConstants.BookmarkEditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
-			<FluentMenuItem>
-				Save view as
-				<FluentIcon Value="@TfConstants.GetIcon("SaveCopy")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			<FluentMenuItem OnClick="_bookmarkView">
+				Remove Bookmark
+				<FluentIcon Value="@TfConstants.BookmarkRemoveIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_saveViewUrl">
+				Save URL
+				<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_saveViewUrl">
+				Edit saved URL
+				<FluentIcon Value="@TfConstants.GetIcon("LinkEdit")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_saveViewUrlAs">
+				Save URL as
+				<FluentIcon Value="@TfConstants.GetIcon("LinkMultiple")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_saveViewUrl">
+				Remove URL save
+				<FluentIcon Value="@TfConstants.GetIcon("LinkDismiss")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentDivider />
 			<FluentMenuItem OnClick="_manageView">

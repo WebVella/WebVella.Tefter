@@ -59,6 +59,51 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 		{
 			await InvokeAsync(StateHasChanged);
 		}
+	}
+	private async Task _bookmarkView()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
+				new TucBookmark() with { SpaceViewId = TfAppState.Value.SpaceView.Id, Url = null },
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+	}
 
+	private async Task _saveViewUrl()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
+				new TucBookmark() with { SpaceViewId = TfAppState.Value.SpaceView.Id, Url = new Uri(Navigator.Uri).LocalPath },
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
+	}
+	private async Task _saveViewUrlAs()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
+				new TucBookmark() with { SpaceViewId = TfAppState.Value.SpaceView.Id, Url = new Uri(Navigator.Uri).LocalPath },
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+		}
 	}
 }
