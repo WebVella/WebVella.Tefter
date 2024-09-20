@@ -10,7 +10,7 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 						{
 							PreventDismissOnOverlayClick = true,
 							PreventScroll = true,
-							Width = TfConstants.DialogWidthLarge
+							Width = TfConstants.DialogWidthExtraLarge
 						});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)

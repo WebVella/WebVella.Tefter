@@ -69,7 +69,7 @@ public record TucSpaceViewColumn
 		QueryName = model.QueryName;
 		Title = model.Title;
 		Position = model.Position;
-		ColumnType = new TucSpaceViewColumnType(model.ColumnType);
+		ColumnType = model.ColumnType is not null ? new TucSpaceViewColumnType(model.ColumnType) : null;
 		ComponentType = model.ComponentType;
 		DataMapping = model.DataMapping;
 		CustomOptionsJson = model.CustomOptionsJson;

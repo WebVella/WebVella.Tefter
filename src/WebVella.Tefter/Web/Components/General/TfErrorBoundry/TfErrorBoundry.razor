@@ -1,0 +1,17 @@
+﻿@namespace WebVella.Tefter.Web.Components
+<ErrorBoundary>
+    <ChildContent>
+        @ChildContent
+    </ChildContent>
+    <ErrorContent>
+        <span style="color:red" title="@context.Message">render error</span>
+@*         @{
+        ConsoleExt.WriteLine(context.StackTrace);
+        } *@
+    </ErrorContent>
+</ErrorBoundary>
+
+
+@code {
+	[Parameter] public RenderFragment ChildContent { get; set; }
+}

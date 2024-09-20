@@ -14,5 +14,82 @@
 
 @* Body *@
 <FluentDialogBody>
-	<div>TBD</div>
+	@if (_spaceData is not null)
+	{
+		<FluentTabs @bind-ActiveTabId="@_activeTab">
+			<FluentTab Label="@LOC("Current")" Id="current">
+				<TfCard Small="true" Style="margin-top:1rem">
+					<TitleTemplate>
+						<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+							<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
+								<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
+								<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+							</FluentStack>
+							<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
+								@if (_dataProvider is null)
+								{
+									<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
+								}
+								else if (_dataProvider.ColumnsTotal.Count == 0)
+								{
+									<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
+								}
+								else
+								{
+									<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
+												  TOption="string" Required="false"
+												  Items="@_dataProvider.ColumnsTotal.Select(x=> x.DbName)" Style="width:140px"
+												  Placeholder="@LOC("select...")"></FluentSelect>
+									<FluentButton Disabled="_submitting" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
+								}
+								<FluentButton Disabled="_submitting" OnClick="@(() => _addFilter(typeof(TucFilterAnd),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
+								<FluentButton Disabled="_submitting" OnClick="@(() => _addFilter(typeof(TucFilterOr),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
+							</FluentStack>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+						@foreach (var item in _items)
+						{
+							<TfFilterManage Item="item"
+											SelectedProvider="_dataProvider"
+											AddFilter="@((x) => _addFilter(x.Item1,x.Item2,x.Item3))"
+											AddColumnFilter="@((x) => _addColumnFilter(x.Item1,x.Item2))"
+											RemoveColumnFilter="@((x) => _removeColumnFilter(x))"
+											UpdateColumnFilter="@((x) => _updateColumnFilter(x))" />
+						}
+						@if (_items.Count == 0)
+						{
+							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("There are no current filters")</FluentMessageBar>
+						}
+					</ChildContent>
+				</TfCard>
+			</FluentTab>
+			<FluentTab Label="@LOC("Always applied")" Id="default">
+				<TfCard Small="true" Style="margin-top:1rem">
+					<TitleTemplate>
+						<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+							<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
+								<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
+								<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+							</FluentStack>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+						@foreach (var item in _spaceData.Filters)
+						{
+							<TfFilterManage Item="item" SelectedProvider="_dataProvider" ReadOnly="true" />
+						}
+						@if (_spaceData.Filters.Count == 0)
+						{
+							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("There are no filters that are always applied")</FluentMessageBar>
+						}
+					</ChildContent>
+				</TfCard>
+			</FluentTab>
+		</FluentTabs>
+	}
+	else
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("This view's related data source is missing")</FluentMessageBar>
+	}
 </FluentDialogBody>

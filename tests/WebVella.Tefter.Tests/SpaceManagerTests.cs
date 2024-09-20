@@ -557,7 +557,7 @@ public partial class SpaceManagerTests : BaseTest
 				spaceViewResult.Value.Should().NotBeNull();
 
 				var availableColumnTypes = spaceManager.GetAvailableSpaceViewColumnTypes().Value;
-				Type componentType = typeof(TfTextViewColumn);
+				Type componentType = typeof(TfTextDisplayColumnComponent);
 
 				List<TfSpaceViewColumn> createdColums = new List<TfSpaceViewColumn>();
 

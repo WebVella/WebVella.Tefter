@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewColumnManageDialog.TfSpaceViewColumnManageDialog", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewColumnManageDialog.TfSpaceViewColumnManageDialog", "WebVella.Tefter")]
 public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceViewColumn>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -18,6 +18,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	private bool _renderComponentTypeSelect = false;
 	private string _activeTab = "data";
 	private TucSpaceViewColumn _form = new();
+	private List<string> _options = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -27,28 +28,35 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		if (_isCreate)
+		{
+			TucSpaceViewColumnType defaultColumnType = null;
+			if (TfAppState.Value.AvailableColumnTypes is not null && TfAppState.Value.AvailableColumnTypes.Any())
 			{
-				TucSpaceViewColumnType defaultColumnType = null;
-				if (TfAppState.Value.AvailableColumnTypes is not null && TfAppState.Value.AvailableColumnTypes.Any())
-				{
-					defaultColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
-					if (defaultColumnType is null) defaultColumnType = TfAppState.Value.AvailableColumnTypes[0];
-				}
-				_form = _form with
-				{
-					Id = Guid.NewGuid(),
-					SpaceViewId = Content.SpaceViewId,
-					ColumnType = defaultColumnType,
-					ComponentType = defaultColumnType?.DefaultComponentType
-				};
+				defaultColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+				if (defaultColumnType is null) defaultColumnType = TfAppState.Value.AvailableColumnTypes[0];
 			}
-			else
+			_form = _form with
 			{
+				Id = Guid.NewGuid(),
+				SpaceViewId = Content.SpaceViewId,
+				ColumnType = defaultColumnType,
+				ComponentType = defaultColumnType?.DefaultComponentType
+			};
+		}
+		else
+		{
 
-				_form = Content with { Id = Content.Id };
-			}
-			base.InitForm(_form);
-			_renderComponentTypeSelect = true;
+			_form = Content with { Id = Content.Id };
+		}
+		if (_form.ComponentType is null && _form.ColumnType is not null)
+			_form.ComponentType = _form.ColumnType.DefaultComponentType;
+		base.InitForm(_form);
+		_renderComponentTypeSelect = true;
+		TucSpaceData selectedSpaceData = null;
+		if(TfAppState.Value.SpaceDataList is not null){ 
+			selectedSpaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x=> x.Id == TfAppState.Value.SpaceView.SpaceDataId);
+		}
+		if(selectedSpaceData is not null) _options = selectedSpaceData.Columns;
 	}
 
 
@@ -140,7 +148,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		//}
 		else
 		{
-			_form.ComponentType = _form.ColumnType.DefaultComponentType;
+			_form.ComponentType = _form.ColumnType?.DefaultComponentType;
 		}
 		_renderComponentTypeSelect = true;
 		await InvokeAsync(StateHasChanged);
@@ -151,10 +159,10 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		if (_form.ColumnType is not null)
 		{
 			if (!String.IsNullOrWhiteSpace(componentTypeFullName))
-				_form.ComponentType = _form.ColumnType.SupportedComponentTypes.FirstOrDefault(x => x.FullName == componentTypeFullName);
+				_form.ComponentType = _form.ColumnType?.SupportedComponentTypes.FirstOrDefault(x => x.FullName == componentTypeFullName);
 
 			if (_form.ComponentType is null)
-				_form.ComponentType = _form.ColumnType.DefaultComponentType;
+				_form.ComponentType = _form.ColumnType?.DefaultComponentType;
 		}
 	}
 
@@ -168,6 +176,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 	private void _dataMappingValueChanged(string value, string alias)
 	{
+		ConsoleExt.WriteLine(value);
 		_form.DataMapping[alias] = value;
 	}
 

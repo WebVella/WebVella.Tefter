@@ -1,0 +1,69 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text"
+									 @bind-Value=_form.Name AutoComplete="new-password"
+									 Label="@LOC("Name")" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentSelect Required="true"
+								  @bind-SelectedOption="@_form.ProviderType" TOption="TucDataProviderTypeInfo"
+								  Items="@TfAppState.Value.DataProviderTypes" Style="width:100%" Disabled="!_isCreate"
+								  OptionText="@(p => p.Name.ToString())" Label="@LOC("Type")"></FluentSelect>
+					<FluentValidationMessage For="@(() => _form.ProviderType)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentDivider Style="margin:15px 0" />
+			<div>
+				@if (_form?.ProviderType?.SettingsComponentType is null) { }
+				else if (_form?.ProviderType?.SettingsComponentType?.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+				{
+					if (_form.ProviderType.SettingsComponentType is not null)
+					{
+						<TfErrorBoundry>
+							<DynamicComponent Type="_form.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()"
+											  @ref="typeSettingsComponent"></DynamicComponent>
+						</TfErrorBoundry>
+					}
+				}
+				else
+				{
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">
+						<div>@LOC("Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
+					</FluentMessageBar>
+				}
+				<FluentValidationMessage For="@(() => _form.SettingsJson)" />
+			</div>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

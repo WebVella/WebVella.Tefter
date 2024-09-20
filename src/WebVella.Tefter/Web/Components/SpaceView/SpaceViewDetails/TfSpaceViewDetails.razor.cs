@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewDetails.TfSpaceViewDetails", "WebVella.Tefter")]
 public partial class TfSpaceViewDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
@@ -138,10 +139,15 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
+	private Task _valueChangeTest(string value){ 
+		ToastService.ShowInfo(value);
+		return Task.CompletedTask;
+	}
+
 	private Dictionary<string, object> _getColumnComponentContext(TucSpaceViewColumn column, TfDataTable dataTable, int rowIndex)
 	{
 		var componentData = new Dictionary<string, object>();
-
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_VALUE_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<string>(this, _valueChangeTest);
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfComponentContext
 		{
 			Mode = TfComponentMode.Display,

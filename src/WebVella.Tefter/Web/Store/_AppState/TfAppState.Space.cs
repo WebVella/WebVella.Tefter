@@ -33,6 +33,7 @@ public partial record TfAppState
 		}
 	}
 	public string SpaceBackgkroundColor => $"{SpaceColorString}25";
+	public string SpaceGridBackgkroundColor => $"{SpaceColorString}20";
 	public string SpaceBorderColor => $"{SpaceColorString}75";
 	public string SpaceBackgroundAccentColor => $"{SpaceColorString}35";
 	public string SpaceSidebarStyle => $"background-color:{SpaceBackgkroundColor} !important; border-color:{SpaceBorderColor} !important";

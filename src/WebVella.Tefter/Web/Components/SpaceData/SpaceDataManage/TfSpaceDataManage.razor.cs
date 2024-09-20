@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceDataManage.TfSpaceDataManage", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceData.SpaceDataManage.TfSpaceDataManage", "WebVella.Tefter")]
 public partial class TfSpaceDataManage : TfFormBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -24,7 +24,6 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			return AllColumnOptions.Where(x => !TfAppState.Value.SpaceData.Columns.Contains(x)).ToList();
 		}
 	}
-
 	internal List<string> _columnSortOptions
 	{
 		get
@@ -44,14 +43,16 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private bool _isCreate = false;
+	private TucSpaceData _form = new();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		base.InitForm(TfAppState.Value.SpaceData);
-		if (TfAppState.Value.SpaceData.DataProviderId != Guid.Empty)
+		_form = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
+		base.InitForm(_form);
+		if (_form.DataProviderId != Guid.Empty)
 		{
-			SelectedProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceData.DataProviderId);
+			SelectedProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _form.DataProviderId);
 		}
 	}
 
@@ -59,9 +60,12 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		if (provider is null) return;
 		SelectedProvider = provider;
-		TfAppState.Value.SpaceData.DataProviderId = SelectedProvider.Id;
+		_form.DataProviderId = SelectedProvider.Id;
 	}
 
+	private TucColumn _getProviderColumnByName(string dbName){ 
+		return SelectedProvider?.ColumnsTotal.FirstOrDefault(x=> x.DbName == dbName);
+	}
 
 	private async Task _addColumn()
 	{
@@ -69,7 +73,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		try
 		{
 			if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
-			if (TfAppState.Value.SpaceData.Columns.Contains(_selectedColumn)) return;
+			if (_form.Columns.Contains(_selectedColumn)) return;
 
 
 
@@ -89,6 +93,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 					SpaceData = submitResult.Value,
 					SpaceDataList = spaceDataList
 				}));
+				_form = submitResult.Value with { Id = submitResult.Value.Id };
 			}
 		}
 		catch (Exception ex)
@@ -103,8 +108,6 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 
 	}
-
-
 	private async Task _deleteColumn(string column)
 	{
 		if (_isSubmitting) return;
@@ -127,6 +130,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 					SpaceData = submitResult.Value,
 					SpaceDataList = spaceDataList
 				}));
+				_form = submitResult.Value with { Id = submitResult.Value.Id };
 			}
 		}
 		catch (Exception ex)
@@ -152,15 +156,14 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		else if (type == typeof(TucFilterNumeric)) filter = new TucFilterNumeric() { ColumnName = dbName };
 		else if (type == typeof(TucFilterText)) filter = new TucFilterText() { ColumnName = dbName };
 		else throw new Exception("Filter type not supported");
-
 		if (parentId is null)
 		{
-			TfAppState.Value.SpaceData.Filters.Add(filter);
+			_form.Filters.Add(filter);
 		}
 		else
 		{
 			TucFilterBase parentFilter = null;
-			foreach (var item in TfAppState.Value.SpaceData.Filters)
+			foreach (var item in _form.Filters)
 			{
 				var (result, resultParent) = FindFilter(item, parentId.Value, null);
 				if (result is not null)
@@ -225,14 +228,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			default: throw new Exception("Unsupported column data type");
 
 		}
-		await InvokeAsync(StateHasChanged);
 	}
 
 	public async Task RemoveColumnFilter(Guid filterId)
 	{
 		TucFilterBase filter = null;
 		TucFilterBase parentFilter = null;
-		foreach (var item in TfAppState.Value.SpaceData.Filters)
+		foreach (var item in _form.Filters)
 		{
 			var (result, resultParent) = FindFilter(item, filterId, null);
 			if (result is not null)
@@ -245,7 +247,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 		if (filter is not null)
 		{
-			if (parentFilter is null) TfAppState.Value.SpaceData.Filters.Remove(filter);
+			if (parentFilter is null) _form.Filters.Remove(filter);
 			else if (parentFilter is TucFilterAnd) ((TucFilterAnd)parentFilter).Filters.Remove(filter);
 			else if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Remove(filter);
 			await InvokeAsync(StateHasChanged);
@@ -263,7 +265,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		if (_isSubmitting) return;
 		try
 		{
-			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataFilters(TfAppState.Value.SpaceData.Id, TfAppState.Value.SpaceData.Filters);
+			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataFilters(TfAppState.Value.SpaceData.Id, _form.Filters);
 			ProcessFormSubmitResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
@@ -278,6 +280,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 					SpaceData = submitResult.Value,
 					SpaceDataList = spaceDataList
 				}));
+				_form = submitResult.Value with {Id = submitResult.Value.Id};
 			}
 		}
 		catch (Exception ex)
@@ -326,6 +329,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 					SpaceData = submitResult.Value,
 					SpaceDataList = spaceDataList
 				}));
+				_form = submitResult.Value with { Id = submitResult.Value.Id };
 			}
 		}
 		catch (Exception ex)
@@ -364,6 +368,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 					SpaceData = submitResult.Value,
 					SpaceDataList = spaceDataList
 				}));
+				_form = submitResult.Value with { Id = submitResult.Value.Id };
 			}
 		}
 		catch (Exception ex)

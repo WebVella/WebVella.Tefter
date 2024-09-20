@@ -1,0 +1,42 @@
+﻿@namespace WebVella.Tefter.Web.ViewColumns
+@inherits TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	var value = GetDataObjectByAlias<bool>("Value", null);
+	<div>@value</div>
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+
+	<FluentInputLabel Label="TRUE value" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@options.TrueValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> _optionsTextValueChanged(x, nameof(options.TrueValueOverrideText)))
+							 Placeholder="fill to override default value" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentCheckbox Value="@options.TrueValueShowAsIcon" 
+							ValueChanged=@((x)=> _optionsBooleanValueChanged(x, nameof(options.TrueValueShowAsIcon)))
+							Label="render as icon" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentInputLabel Label="FALSE value" style="margin-top:1rem;"/>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@options.FalseValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> _optionsTextValueChanged(x, nameof(options.FalseValueOverrideText)))
+							 Placeholder="fill to override default value" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentCheckbox Value="@options.FalseValueShowAsIcon" 
+							ValueChanged=@((x)=> _optionsBooleanValueChanged(x, nameof(options.FalseValueShowAsIcon)))
+							Label="render as icon" />
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+

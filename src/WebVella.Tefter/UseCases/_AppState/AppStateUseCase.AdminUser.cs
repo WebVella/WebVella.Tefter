@@ -64,11 +64,13 @@ internal partial class AppStateUseCase
 		}
 
 		if (srvResult.Value is null) return new List<TucUser>();
+		var orderedResults = srvResult.Value.OrderBy(x=> x.FirstName).ThenBy(x=> x.LastName);
+
 		var records = new List<User>();
 		if (!String.IsNullOrWhiteSpace(search))
 		{
 			var searchProcessed = search.Trim().ToLowerInvariant();
-			foreach (var item in srvResult.Value)
+			foreach (var item in orderedResults)
 			{
 				bool hasMatch = false;
 				if(item.Email.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
@@ -77,7 +79,7 @@ internal partial class AppStateUseCase
 				if(hasMatch) records.Add(item);
 			}
 		}
-		else records = srvResult.Value.ToList();
+		else records = orderedResults.ToList();
 
 		if (page is null || pageSize is null) return records.Select(x => new TucUser(x)).ToList();
 

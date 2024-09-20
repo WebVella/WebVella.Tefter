@@ -1,0 +1,81 @@
+﻿::deep.tf-appbar {
+	flex: 1 1 auto;
+	width: 100%;
+	overflow: auto;
+	padding-top: 4px;
+	height:calc(100vh - 300px);
+}
+
+	::deep.tf-appbar .nav-menu-container {
+		height: 100%;
+	}
+
+	::deep.tf-appbar .fluent-appbar-item:not(.popover) {
+		margin-bottom: 10px;
+		border-radius: 50%;
+		width: 42px;
+		height: 42px;
+		min-height: unset !important;
+		min-width: unset !important;
+		display: inline-flex;
+		justify-content: center !important;
+		align-items: center !important;
+		flex: 0 0 auto !important;
+		background: var(--neutral-fill-stealth-rest);
+		border: calc(var(--stroke-width) * 1px) solid transparent;
+		cursor: pointer;
+	}
+
+		::deep.tf-appbar .fluent-appbar-item:not(.popover):hover {
+			background: var(--neutral-fill-secondary-rest);
+		}
+
+		::deep.tf-appbar .fluent-appbar-item[overflow] {
+			display: none !important;
+		}
+
+		::deep.tf-appbar .fluent-appbar-item:not(.popover) div[part="label"] {
+			display:none;
+		}
+
+		::deep.tf-appbar .fluent-appbar-item:not(.popover) a.active::before {
+			left: -10px;
+			width: 3px;
+			height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+			margin: 0 2px;
+			top: 12px;
+		}
+
+		::deep.tf-appbar .fluent-appbar-item:not(.popover) svg {
+			width: 23px !important;
+			height: 23px !important;
+			min-width: unset !important;
+			min-height: unset !important;
+			fill: inherit !important;
+		}
+
+	::deep.tf-appbar.sidebar-collapsed .fluent-appbar-item:not(.popover) svg {
+		width: 16px !important;
+		height: 16px !important;
+	}
+
+	::deep.tf-appbar.sidebar-collapsed .fluent-appbar-item:not(.popover) {
+		width: 24px !important;
+		height: 24px !important;
+	}
+
+		::deep.tf-appbar.sidebar-collapsed .fluent-appbar-item:not(.popover) a.active::before {
+			left: -4px;
+			width: 2px;
+			top: 3px;
+		}
+
+::deep fluent-anchored-region svg {
+			width: 23px !important;
+			height: 23px !important;
+			min-width: unset !important;
+			min-height: unset !important;
+}
+
+
+

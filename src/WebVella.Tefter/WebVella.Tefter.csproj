@@ -49,7 +49,7 @@
 	  <EmbeddedResource Update="Web\Components\SpaceData\SpaceDataDetailsNav\TfSpaceDataDetailsNav.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\ViewColumns\GuidViewColumn\TfGuidViewColumn.bg.resx">
+	  <EmbeddedResource Update="Web\ViewColumns\Components\GuidDisplayColumnComponent\TfGuidDisplayColumnComponent.bg.resx">
 	    <CustomToolNamespace></CustomToolNamespace>
 	  </EmbeddedResource>
 	</ItemGroup>

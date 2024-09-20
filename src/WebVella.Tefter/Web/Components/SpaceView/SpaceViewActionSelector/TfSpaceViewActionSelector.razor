@@ -6,7 +6,12 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
 			@foreach (var comp in _regionComponents)
 			{
-				<DynamicComponent Type="comp.ComponentType" />
+				if (comp.ComponentType is not null)
+				{
+					<TfErrorBoundry>
+						<DynamicComponent Type="comp.ComponentType" />
+					</TfErrorBoundry>
+				}
 			}
 			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
 				Comment Selected

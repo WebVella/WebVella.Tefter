@@ -1,0 +1,23 @@
+﻿@namespace WebVella.Tefter.Web.ViewColumns
+@inherits TfBaseViewColumn<TfDateTimeDisplayColumnComponentOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	var value = GetDataObjectByAlias<DateTime>("Value", null);
+	<div>@value</div>
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@options.DateTimeFormat" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> _optionsTextValueChanged(x, nameof(options.DateTimeFormat)))
+							 Placeholder="eg. 'dd MMM yyyy HH:mm:ss'" />
+		</FluentGridItem>
+		<FluentGridItem xs="6"></FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
