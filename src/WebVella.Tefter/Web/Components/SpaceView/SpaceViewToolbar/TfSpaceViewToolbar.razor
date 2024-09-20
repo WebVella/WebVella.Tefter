@@ -3,7 +3,7 @@
 
 <div class="content-toolbar">
 	<div class="content-toolbar-left">
-		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" />
+		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")"/>
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">@(TfAppState.Value.SpaceViewFilters?.Count ?? 0)</FluentBadge>

@@ -120,7 +120,7 @@
   <data name="Cancel" xml:space="preserve">
     <value>Откажи</value>
   </data>
-  <data name="Search for a space" xml:space="preserve">
-    <value>Търсене на зона</value>
+  <data name="search in spaces..." xml:space="preserve">
+    <value>търсене в зони...</value>
   </data>
 </root>

@@ -3,7 +3,7 @@
 }
 
 ::deep.spacenav-nav.end {
-	flex:1 1 auto;
+	flex:0 0 auto;
 	display:flex;
 	align-items:end;
 }

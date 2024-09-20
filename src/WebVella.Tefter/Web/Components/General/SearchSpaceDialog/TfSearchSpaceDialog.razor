@@ -1,0 +1,41 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="false" Visible="false">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Search for a space")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+		@if (_isBusy)
+		{
+			<TfLoadingPane />
+		}
+		else
+		{
+			<FluentSearch Value="@_search" ValueChanged="_onSearch" Placeholder="@LOC("search in spaces...")"
+						  Immediate="true" ImmediateDelay="500" AutoComplete="off" Autofocus="true"/>
+			<FluentGrid>
+				@foreach (var item in _items)
+				{
+					<FluentGridItem sm="4" @key=@item.Id>
+						<FluentAnchor Href="@item.Url">
+							<div class="tf-space-icon">
+								<FluentIcon Value="@item.Icon" Style="@($"fill: {item.Color.ToAttributeValue()}")" />
+							</div>
+							<div class="tf-space-title">@item.Name</div>
+						</FluentAnchor>
+					</FluentGridItem>
+				}
+			</FluentGrid>
+		}
+	</div>
+
+</FluentDialogBody>

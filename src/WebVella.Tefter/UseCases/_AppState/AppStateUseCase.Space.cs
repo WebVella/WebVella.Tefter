@@ -54,11 +54,36 @@ internal partial class AppStateUseCase
 	internal Task<List<TucSpace>> GetUserSpacesAsync(TucUser user)
 	{
 
-		var userSpaces = _spaceManager.GetSpacesListForUser(user.Id).Value.Select(s => new TucSpace(s)).OrderBy(x => x.Position).ToList();
-		var spacesHS = userSpaces.Select(x => x.Id).Distinct().ToHashSet();
-		var allViews = _spaceManager.GetAllSpaceViews().Value;
+		var serviceResult = _spaceManager.GetSpacesListForUser(user.Id);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpace>());
+		}
+		var allSpaces = serviceResult.Value.Select(s => new TucSpace(s)).OrderBy(x => x.Position).ToList();
+		var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
+
+		var viewSrvResult = _spaceManager.GetAllSpaceViews();
+		if (viewSrvResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpace>());
+		}
+
 		var spaceViewsDict = new Dictionary<Guid, List<TfSpaceView>>();
-		foreach (var item in allViews)
+		foreach (var item in viewSrvResult.Value)
 		{
 			if (!spacesHS.Contains(item.SpaceId)) continue;
 			if (!spaceViewsDict.ContainsKey(item.SpaceId)) spaceViewsDict[item.SpaceId] = new();
@@ -70,14 +95,68 @@ internal partial class AppStateUseCase
 			spaceViewsDict[spaceId] = spaceViewsDict[spaceId].OrderBy(x => x.Position).ToList();
 		}
 
-		foreach (var space in userSpaces)
+		foreach (var space in allSpaces)
 		{
 			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
 				space.DefaultViewId = spaceViewsDict[space.Id][0].Id;
 		}
-		return Task.FromResult(userSpaces);
+		return Task.FromResult(allSpaces);
 
 	}
+
+	internal Task<List<TucSpace>> GetAllSpaces()
+	{
+
+		var serviceResult = _spaceManager.GetSpacesList();
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpace>());
+		}
+		var allSpaces = serviceResult.Value.Select(s => new TucSpace(s)).OrderBy(x => x.Position).ToList();
+		var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
+
+		var viewSrvResult = _spaceManager.GetAllSpaceViews();
+		if (viewSrvResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpace>());
+		}
+
+		var spaceViewsDict = new Dictionary<Guid, List<TfSpaceView>>();
+		foreach (var item in viewSrvResult.Value)
+		{
+			if (!spacesHS.Contains(item.SpaceId)) continue;
+			if (!spaceViewsDict.ContainsKey(item.SpaceId)) spaceViewsDict[item.SpaceId] = new();
+			spaceViewsDict[item.SpaceId].Add(item);
+		}
+
+		foreach (var spaceId in spaceViewsDict.Keys)
+		{
+			spaceViewsDict[spaceId] = spaceViewsDict[spaceId].OrderBy(x => x.Position).ToList();
+		}
+
+		foreach (var space in allSpaces)
+		{
+			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
+				space.DefaultViewId = spaceViewsDict[space.Id][0].Id;
+		}
+		return Task.FromResult(allSpaces);
+
+	}
+
 
 	internal Result<TucSpace> CreateSpaceWithForm(TucSpace space)
 	{

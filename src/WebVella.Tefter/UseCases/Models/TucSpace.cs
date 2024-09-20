@@ -18,6 +18,16 @@ public record TucSpace
 
 	public Guid? DefaultViewId { get; set; } = null;
 
+	public string Url
+	{
+		get
+		{
+			if(DefaultViewId is null) return String.Format(TfConstants.SpacePageUrl,Id);
+
+			return String.Format(TfConstants.SpaceViewPageUrl,Id,DefaultViewId.Value);
+		}
+	}
+
 	public TucSpace() { }
 
 	public TucSpace(TfSpace model)
