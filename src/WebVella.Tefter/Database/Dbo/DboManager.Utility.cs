@@ -357,6 +357,9 @@ internal partial class DboManager
 
         foreach (var par in parameters)
         {
+			if (par is null)
+				continue;
+
             if (par.DbType == DbType.DateTime)
             {
                 DateTime? value = (DateTime?)par.Value;
