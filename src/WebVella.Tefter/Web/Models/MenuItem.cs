@@ -10,10 +10,9 @@ public class MenuItem
 	public string Url { get; set; }
 	public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
 	public bool Expanded { get; set; } = false;
-	public bool Active { get; set; } = false;
+	public bool Active { get; set; } = true;
 	public int Level { get; set; } = 0;
 	public string LevelClass { get => $"level-{Level}"; }
-
 	public object Data { get; set; }
 	public Guid? SpaceId { get; set; }
 	public Guid? SpaceDataId { get; set; }
@@ -29,4 +28,5 @@ public class MenuItem
 
 	[JsonIgnore]
 	public Action OnExpand { get; set; }
+
 }

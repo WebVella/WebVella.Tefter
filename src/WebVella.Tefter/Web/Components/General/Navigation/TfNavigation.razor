@@ -1,29 +1,32 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
-<div class="@($"spacenav-nav {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
-	<FluentNavMenu>
-		<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.DashboardIcon"
-					   Href="/" Match="@NavLinkMatch.All" />
-		<FluentTooltip Anchor="tf-dashboard-link" Position="@TooltipPosition.Right">@TfConstants.DashboardMenuTitle</FluentTooltip>
-		<FluentNavLink Id="tf-fast-access-link" Icon="@TfConstants.FastAccessIcon"
-					   Href="/fast-access" Match="@NavLinkMatch.Prefix" />
-		<FluentTooltip Anchor="tf-fast-access-link" Position="@TooltipPosition.Right">@TfConstants.FastAccesMenuTitle</FluentTooltip>
-	</FluentNavMenu>
-	<FluentDivider Class="nav-divider"></FluentDivider>
-</div>
-
-
- <TfAppBar Items="TfAppState.Value.SpacesNav" />
-
-<div class="@($"spacenav-nav end {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+<div>
+	<div class="@($"spacenav-nav {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
 		<FluentNavMenu>
-		<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon" 
-					   OnClick="_searchSpaceHandler" />
-		<FluentTooltip Anchor="tf-space-search-link" Position="@TooltipPosition.Right">@LOC("Search Spaces")</FluentTooltip>
-			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon"
-						   OnClick="_addSpaceHandler" />
-			<FluentTooltip Anchor="tf-create-space-link" Position="@TooltipPosition.Right">@LOC("Create Space")</FluentTooltip>
+			<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.DashboardIcon"
+						   Href="/" Match="@NavLinkMatch.All" title="@TfConstants.DashboardMenuTitle" />
+			<FluentNavLink Id="tf-fast-access-link" Icon="@TfConstants.FastAccessIcon"
+						   Href="/fast-access" Match="@NavLinkMatch.Prefix" title="@TfConstants.FastAccesMenuTitle" />
 		</FluentNavMenu>
-	 </div>
+		<FluentDivider Class="nav-divider"></FluentDivider>
+	</div>
+	<div class="@($"spacenav-nav spacenav-nav--appbar  {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+		<FluentNavMenu>
+			@foreach (var item in TfAppState.Value.SpacesNav)
+			{
+				<FluentNavLink Href="@item.Url" title="@item.Title" Class="@_spaceSelectedClass(item.SpaceId)"
+							   Icon="@item.Icon.WithColor(item.IconColor.ToAttributeValue())" IconColor="Color.Custom" />
+			}
+		</FluentNavMenu>
+	</div>
 
+	@* <TfAppBar Items="TfAppState.Value.SpacesNav" /> *@
+	<div class="@($"spacenav-nav end {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+		<FluentNavMenu>
+			<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon"
+						   OnClick="_searchSpaceHandler" title="@LOC("Search Spaces")" />
+			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon"
+						   OnClick="_addSpaceHandler" title="@LOC("Create Space")" />
+		</FluentNavMenu>
+	</div>
+</div>

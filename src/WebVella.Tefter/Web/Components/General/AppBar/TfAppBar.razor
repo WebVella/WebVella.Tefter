@@ -6,7 +6,7 @@
 		@foreach (var item in Items)
 		{
 			<FluentAppBarItem Href="@item.Url"
-							  Match="@item.Match"
+							  Class="@(item.Active ? "selected" : "")"
 							  Style="@($"fill: {item.IconColor.ToAttributeValue()}")"
 							  IconRest="@item.Icon"
 							  IconActive="@item.Icon"

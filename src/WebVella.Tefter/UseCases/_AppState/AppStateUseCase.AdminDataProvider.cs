@@ -1,14 +1,15 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitAdminDataProviderAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	internal async Task<TfAppState> InitAdminDataProviderAsync(TucUser currentUser, TfRouteState routeState, 
+		TfAppState newState, TfAppState oldState)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Admin
 			&& routeState.SecondNode == RouteDataSecondNode.DataProviders)
 			)
 		{
-			result = result with
+			newState = newState with
 			{
 				AdminDataProviders = new(),
 				AdminDataProvider = null,
@@ -17,16 +18,16 @@ internal partial class AppStateUseCase
 				AdminDataProviderData = null,
 				AdminDataProviderDataPage = 0
 			};
-			return result;
+			return newState;
 		};
 
 
 		//AdminDataProviders, AdminDataProvidersPage
 		if (
-			result.AdminDataProviders.Count == 0
-			|| (routeState.DataProviderId is not null && !result.AdminDataProviders.Any(x => x.Id == routeState.DataProviderId))
+			newState.AdminDataProviders.Count == 0
+			|| (routeState.DataProviderId is not null && !newState.AdminDataProviders.Any(x => x.Id == routeState.DataProviderId))
 			)
-			result = result with
+			newState = newState with
 			{
 				AdminDataProviders = await GetDataProvidersAsync()
 			};
@@ -35,14 +36,14 @@ internal partial class AppStateUseCase
 		if (routeState.DataProviderId.HasValue)
 		{
 			var adminProvider = await GetDataProviderAsync(routeState.DataProviderId.Value);
-			result = result with { AdminDataProvider = adminProvider };
+			newState = newState with { AdminDataProvider = adminProvider };
 			if (adminProvider is not null)
 			{
-				if (!result.AdminDataProviders.Any(x => x.Id == adminProvider.Id))
+				if (!newState.AdminDataProviders.Any(x => x.Id == adminProvider.Id))
 				{
-					var adminProviders = result.AdminDataProviders.ToList();
+					var adminProviders = newState.AdminDataProviders.ToList();
 					adminProviders.Add(adminProvider);
-					result = result with { AdminDataProviders = adminProviders };
+					newState = newState with { AdminDataProviders = adminProviders };
 				}
 
 				//check for the other tabs
@@ -54,19 +55,19 @@ internal partial class AppStateUseCase
 				}
 			}
 
-			result = result with { DataProviderTypes = await GetProviderTypesAsync() };
+			newState = newState with { DataProviderTypes = await GetProviderTypesAsync() };
 
 			if (routeState.ThirdNode == RouteDataThirdNode.Synchronization)
 			{
-				result = result with { DataProviderSyncTasks = await GetDataProviderSynchronizationTasks(routeState.DataProviderId.Value) };
+				newState = newState with { DataProviderSyncTasks = await GetDataProviderSynchronizationTasks(routeState.DataProviderId.Value) };
 			}
 			else
 			{
-				result = result with { DataProviderSyncTasks = new() };
+				newState = newState with { DataProviderSyncTasks = new() };
 			}
 			if (routeState.ThirdNode == RouteDataThirdNode.Data)
 			{
-				result = result with
+				newState = newState with
 				{
 					AdminDataProviderData = await GetDataProviderData(routeState.DataProviderId.Value, null, 1, TfConstants.PageSize),
 					AdminDataProviderDataPage = 1
@@ -74,12 +75,12 @@ internal partial class AppStateUseCase
 			}
 			else
 			{
-				result = result with { AdminDataProviderData = null, AdminDataProviderDataPage = 0 };
+				newState = newState with { AdminDataProviderData = null, AdminDataProviderDataPage = 0 };
 			}
 		}
 
 
-		return result;
+		return newState;
 	}
 
 	//Data Provider

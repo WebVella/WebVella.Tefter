@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.Navigation.TfNavigation","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.General.Navigation.TfNavigation", "WebVella.Tefter")]
 public partial class TfNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
@@ -37,4 +37,13 @@ public partial class TfNavigation : TfBaseComponent
 		});
 	}
 
+	private string _spaceSelectedClass(Guid? spaceId)
+	{
+		if (spaceId is null) return "";
+		var uri = new Uri(Navigator.Uri);
+		if (uri.LocalPath.StartsWith(String.Format(TfConstants.SpacePageUrl, spaceId.Value)))
+			return "selected";
+
+		return "";
+	}
 }
