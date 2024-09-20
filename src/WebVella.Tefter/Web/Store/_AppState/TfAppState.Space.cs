@@ -53,9 +53,11 @@ public partial record TfAppState
 					Icon = item.Icon,
 					Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
 					Match = NavLinkMatch.Prefix,
-					Url = String.Format(TfConstants.SpacePageUrl, item.Id), //item.DefaultViewId - active menu issues
+					Url = item.Url,
+					SpaceId = item.Id,
+					//Url = String.Format(TfConstants.SpacePageUrl, item.Id), //item.DefaultViewId - active menu issues
 					Title = item.Name,
-					IconColor = item.Color,
+					IconColor = item.Color
 				});
 			}
 			return result;

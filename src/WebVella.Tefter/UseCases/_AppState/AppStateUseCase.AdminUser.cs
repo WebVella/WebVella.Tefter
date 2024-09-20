@@ -1,40 +1,40 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitAdminUsersAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	internal async Task<TfAppState> InitAdminUsersAsync(TucUser currentUser, TfRouteState routeState, TfAppState newState, TfAppState oldState)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Admin
 			&& routeState.SecondNode == RouteDataSecondNode.Users)
 			)
 		{
-			result = result with { AdminUsers = new(), AdminManagedUser = null, UserRoles = new() };
-			return result;
+			newState = newState with { AdminUsers = new(), AdminManagedUser = null, UserRoles = new() };
+			return newState;
 		};
 
 		//AdminUsers, AdminUsersPage
 		if (
-			result.AdminUsers.Count == 0
-			|| (routeState.UserId is not null && !result.AdminUsers.Any(x => x.Id == routeState.UserId))
+			newState.AdminUsers.Count == 0
+			|| (routeState.UserId is not null && !newState.AdminUsers.Any(x => x.Id == routeState.UserId))
 			)
-			result = result with { AdminUsers = await GetUsersAsync()};
+			newState = newState with { AdminUsers = await GetUsersAsync()};
 
 		//AdminManagedUser, UserRoles
 		if (routeState.UserId.HasValue)
 		{
 			var adminUser = await GetUserAsync(routeState.UserId.Value);
-			result = result with { AdminManagedUser = adminUser };
+			newState = newState with { AdminManagedUser = adminUser };
 			if (adminUser is not null)
 			{
-				if (!result.AdminUsers.Any(x => x.Id == adminUser.Id))
+				if (!newState.AdminUsers.Any(x => x.Id == adminUser.Id))
 				{
-					var users = result.AdminUsers.ToList();
+					var users = newState.AdminUsers.ToList();
 					users.Add(adminUser);
-					result = result with { AdminUsers = users };
+					newState = newState with { AdminUsers = users };
 				}
 
 				var roles = await GetUserRolesAsync();
-				result = result with { UserRoles = roles ?? new List<TucRole>() };
+				newState = newState with { UserRoles = roles ?? new List<TucRole>() };
 
 				//check for the other tabs
 				if (routeState.ThirdNode == RouteDataThirdNode.Access)
@@ -45,7 +45,7 @@ internal partial class AppStateUseCase
 				}
 			}
 		}
-		return result;
+		return newState;
 	}
 
 	internal async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)

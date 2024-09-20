@@ -48,13 +48,13 @@ internal partial class AppStateUseCase
 	{
 		if (result == null) result = new TfAppState();
 		var routeState = _navigationManager.GetRouteState(url);
-
-		result = await InitAdminUsersAsync(currentUser, routeState, result);
-		result = await InitSpaceAsync(currentUser, routeState, result);
-		result = await InitAdminDataProviderAsync(currentUser, routeState, result);
-		result = await InitAdminSharedColumnsAsync(currentUser, routeState, result);
-		result = await InitSpaceViewAsync(currentUser, routeState, result);
-		result = await InitSpaceDataAsync(currentUser, routeState, result);
+		var oldState = result with { Hash = result.Hash };
+		result = await InitAdminUsersAsync(currentUser, routeState, result,oldState);
+		result = await InitSpaceAsync(currentUser, routeState, result,oldState);
+		result = await InitAdminDataProviderAsync(currentUser, routeState, result,oldState);
+		result = await InitAdminSharedColumnsAsync(currentUser, routeState, result,oldState);
+		result = await InitSpaceViewAsync(currentUser, routeState, result,oldState);
+		result = await InitSpaceDataAsync(currentUser, routeState, result,oldState);
 
 		return result;
 	}

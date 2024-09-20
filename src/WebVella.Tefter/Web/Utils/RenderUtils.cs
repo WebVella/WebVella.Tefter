@@ -31,6 +31,13 @@ internal static class RenderUtils
 
 	internal static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
 
+	internal static System.Drawing.Color OfficeColorToColor(OfficeColor? color){ 
+		if(color is null || color == OfficeColor.Default){ 
+			return new System.Drawing.Color();
+		}
+		return System.Drawing.ColorTranslator.FromHtml(color.ToAttributeValue());
+	}
+
 	internal static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
 	{
 		float red = (float)color.R;

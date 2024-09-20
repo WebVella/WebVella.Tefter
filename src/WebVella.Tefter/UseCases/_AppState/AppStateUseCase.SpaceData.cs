@@ -1,35 +1,33 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitSpaceDataAsync(TucUser currentUser, TfRouteState routeState, TfAppState result)
+	internal Task<TfAppState> InitSpaceDataAsync(TucUser currentUser, TfRouteState routeState, 
+		TfAppState newState, TfAppState oldState)
 	{
-		if (routeState.SpaceId is null)
+		if (newState.Space is null)
 		{
-			result = result with { SpaceData = null, SpaceDataList = new(), AllDataProviders = new() };
-			return Task.FromResult(result);
+			newState = newState with { SpaceData = null, SpaceDataList = new(), AllDataProviders = new() };
+			return Task.FromResult(newState);
 		}
 
 		//SpaceDataList
-		if (result.SpaceDataList.Count == 0
-			|| !result.SpaceDataList.Any(x => x.SpaceId == routeState.SpaceId)
-			|| (routeState.SpaceDataId is not null && !result.SpaceDataList.Any(x => x.Id == routeState.SpaceDataId))
-			)
-			result = result with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
+		if (newState.Space?.Id != oldState.Space?.Id)
+			newState = newState with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
 		//SpaceData
 		if (routeState.SpaceDataId is not null)
 		{
-			result = result with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
+			newState = newState with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
 
 		}
 		else
 		{
-			result = result with { SpaceData = null };
+			newState = newState with { SpaceData = null };
 		}
 
-		result = result with { AllDataProviders = GetDataProviderList() };
+		newState = newState with { AllDataProviders = GetDataProviderList() };
 
 
-		return Task.FromResult(result);
+		return Task.FromResult(newState);
 	}
 	internal TucSpaceData GetSpaceData(Guid spaceDataId)
 	{

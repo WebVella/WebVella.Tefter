@@ -3,7 +3,7 @@
 	width: 100%;
 	overflow: auto;
 	padding-top: 4px;
-	height:calc(100vh - 300px);
+	height: calc(100vh - 300px);
 }
 
 	::deep.tf-appbar .nav-menu-container {
@@ -30,29 +30,45 @@
 			background: var(--neutral-fill-secondary-rest);
 		}
 
-		::deep.tf-appbar .fluent-appbar-item[overflow] {
-			display: none !important;
-		}
+	::deep.tf-appbar .fluent-appbar-item[overflow] {
+		display: none !important;
+	}
 
-		::deep.tf-appbar .fluent-appbar-item:not(.popover) div[part="label"] {
-			display:none;
-		}
+	::deep.tf-appbar .fluent-appbar-item:not(.popover) div[part="label"] {
+		display: none;
+	}
 
-		::deep.tf-appbar .fluent-appbar-item:not(.popover) a.active::before {
-			left: -10px;
-			width: 3px;
-			height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
-			margin: 0 2px;
-			top: 12px;
-		}
+	/*::deep.tf-appbar .fluent-appbar-item:not(.popover) a.active::before {
+		display:none;
+		left: -10px;
+		width: 3px;
+		height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+		margin: 0 2px;
+		top: 12px;
+	}*/
+	::deep.tf-appbar .fluent-appbar-item:not(.selected) a.active::before {
+		display:none;
+	}
+	::deep.tf-appbar .fluent-appbar-item:not(.popover).selected a::before {
+		content: "";
+		position: absolute;
+		background-color: var(--accent-fill-rest);
+		border-radius: calc(var(--control-corner-radius)* 1px);
+		right: unset;
+		left: -10px;
+		width: 3px;
+		height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+		margin: 0 2px;
+		top: 12px;
+	}
 
-		::deep.tf-appbar .fluent-appbar-item:not(.popover) svg {
-			width: 23px !important;
-			height: 23px !important;
-			min-width: unset !important;
-			min-height: unset !important;
-			fill: inherit !important;
-		}
+	::deep.tf-appbar .fluent-appbar-item:not(.popover) svg {
+		width: 23px !important;
+		height: 23px !important;
+		min-width: unset !important;
+		min-height: unset !important;
+		fill: inherit !important;
+	}
 
 	::deep.tf-appbar.sidebar-collapsed .fluent-appbar-item:not(.popover) svg {
 		width: 16px !important;
@@ -71,11 +87,8 @@
 		}
 
 ::deep fluent-anchored-region svg {
-			width: 23px !important;
-			height: 23px !important;
-			min-width: unset !important;
-			min-height: unset !important;
+	width: 23px !important;
+	height: 23px !important;
+	min-width: unset !important;
+	min-height: unset !important;
 }
-
-
-
