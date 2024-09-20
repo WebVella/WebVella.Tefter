@@ -8,12 +8,12 @@ public partial interface IIdentityManager
 	Result<User> GetUser(Guid id);
 	Result<User> GetUser(string email);
 	Result<User> GetUser(string email, string password);
-	Result<ReadOnlyCollection<User>> GetUsers(string search = null, int? page = null, int? pageSize = null);
+	Result<ReadOnlyCollection<User>> GetUsers();
 	Result<User> SaveUser(User user);
 	Task<Result<User>> GetUserAsync(Guid id);
 	Task<Result<User>> GetUserAsync(string email);
 	Task<Result<User>> GetUserAsync(string email, string password);
-	Task<Result<ReadOnlyCollection<User>>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null);
+	Task<Result<ReadOnlyCollection<User>>> GetUsersAsync();
 	Task<Result<User>> SaveUserAsync(User user);
 }
 
@@ -145,12 +145,12 @@ public partial class IdentityManager : IIdentityManager
 		return Result.Ok(userBuilder.Build());
 	}
 
-	public Result<ReadOnlyCollection<User>> GetUsers(string search = null, int? page = null, int? pageSize = null)
+	public Result<ReadOnlyCollection<User>> GetUsers()
 	{
 		var orderSettings = new OrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
 				.Add(nameof(UserDbo.FirstName), OrderDirection.ASC);
 
-		var usersDbo = _dboManager.GetList<UserDbo>(page, pageSize, orderSettings, search);
+		var usersDbo = _dboManager.GetList<UserDbo>(order: orderSettings);
 
 		var roles = GetRoles().Value;
 		var userRolesDict = new Dictionary<Guid, List<Role>>();
@@ -433,12 +433,12 @@ public partial class IdentityManager : IIdentityManager
 		return Result.Ok(userBuilder.Build());
 	}
 
-	public async Task<Result<ReadOnlyCollection<User>>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
+	public async Task<Result<ReadOnlyCollection<User>>> GetUsersAsync()
 	{
 		var orderSettings = new OrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
 				.Add(nameof(UserDbo.FirstName), OrderDirection.ASC);
 
-		var usersDbo = await _dboManager.GetListAsync<UserDbo>(page, pageSize, orderSettings, search);
+		var usersDbo = await _dboManager.GetListAsync<UserDbo>(order: orderSettings);
 
 		var roles = (await GetRolesAsync()).Value;
 		var userRolesDict = new Dictionary<Guid, List<Role>>();
