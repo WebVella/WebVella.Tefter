@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewManageNav.TfSpaceViewManageNav", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewManageNav.TfSpaceViewManageNav", "WebVella.Tefter")]
 public partial class TfSpaceViewManageNav : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }

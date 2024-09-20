@@ -1,6 +1,6 @@
 ﻿
 namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderDetails.TfAdminDataProviderDetails","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminDataProviderDetails.TfAdminDataProviderDetails","WebVella.Tefter")]
 public partial class TfAdminDataProviderDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }

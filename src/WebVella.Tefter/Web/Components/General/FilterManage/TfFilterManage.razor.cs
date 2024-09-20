@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.FilterManage.TfFilterManage", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.General.FilterManage.TfFilterManage", "WebVella.Tefter")]
 public partial class TfFilterManage : TfBaseComponent
 {
 

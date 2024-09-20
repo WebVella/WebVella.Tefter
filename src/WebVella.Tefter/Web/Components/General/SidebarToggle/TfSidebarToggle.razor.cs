@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SidebarToggle.TfSidebarToggle", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.General.SidebarToggle.TfSidebarToggle", "WebVella.Tefter")]
 public partial class TfSidebarToggle : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }

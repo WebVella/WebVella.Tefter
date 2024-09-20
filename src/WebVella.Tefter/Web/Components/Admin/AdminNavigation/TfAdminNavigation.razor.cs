@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminNavigation.TfAdminNavigation","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminNavigation.TfAdminNavigation","WebVella.Tefter")]
 public partial class TfAdminNavigation: TfBaseComponent
 {
 

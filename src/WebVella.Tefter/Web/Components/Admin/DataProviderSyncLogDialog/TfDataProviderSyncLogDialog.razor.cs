@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.DataProviderSyncLogDialog.TfDataProviderSyncLogDialog", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderSyncLogDialog.TfDataProviderSyncLogDialog", "WebVella.Tefter")]
 public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSyncTaskInfoLog>
 {
 	[Inject] private AppStateUseCase UC { get; set; }

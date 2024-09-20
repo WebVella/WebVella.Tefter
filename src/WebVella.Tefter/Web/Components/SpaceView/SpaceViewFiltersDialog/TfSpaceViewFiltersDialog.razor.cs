@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceViewFiltersDialog.TfSpaceViewFiltersDialog", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewFiltersDialog.TfSpaceViewFiltersDialog", "WebVella.Tefter")]
 public partial class TfSpaceViewFiltersDialog : TfFormBaseComponent, IDialogContentComponent<bool>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }

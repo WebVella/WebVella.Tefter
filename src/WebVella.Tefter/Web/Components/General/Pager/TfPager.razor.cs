@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Pager.TfPager","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.General.Pager.TfPager","WebVella.Tefter")]
 public partial class TfPager : TfBaseComponent
 {
 	[Parameter] public int Page { get; set; }

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminSharedColumns.TfAdminSharedColumns", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminSharedColumns.TfAdminSharedColumns", "WebVella.Tefter")]
 public partial class TfAdminSharedColumns : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminDataProviderData.TfAdminDataProviderData", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminDataProviderData.TfAdminDataProviderData", "WebVella.Tefter")]
 public partial class TfAdminDataProviderData : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }

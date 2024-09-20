@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Navigation.TfNavigation","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.General.Navigation.TfNavigation","WebVella.Tefter")]
 public partial class TfNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }

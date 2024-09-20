@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserNavigation.TfAdminUserNavigation", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminUserNavigation.TfAdminUserNavigation", "WebVella.Tefter")]
 public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] private AppStateUseCase UC { get; set; }

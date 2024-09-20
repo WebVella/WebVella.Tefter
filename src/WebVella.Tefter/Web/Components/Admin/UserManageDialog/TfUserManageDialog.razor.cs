@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.UserManageDialog.TfUserManageDialog", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.UserManageDialog.TfUserManageDialog", "WebVella.Tefter")]
 public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentComponent<TucUser>
 {
 	[Inject] private AppStateUseCase UC { get; set; }

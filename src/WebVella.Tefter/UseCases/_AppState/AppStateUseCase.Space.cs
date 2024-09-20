@@ -100,7 +100,7 @@ internal partial class AppStateUseCase
 			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
 				space.DefaultViewId = spaceViewsDict[space.Id][0].Id;
 		}
-		return Task.FromResult(allSpaces);
+		return Task.FromResult(allSpaces.OrderBy(x=> x.Position).Take(10).ToList());
 
 	}
 

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Login.TfLogin", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.General.Login.TfLogin", "WebVella.Tefter")]
 public partial class TfLogin : TfFormBaseComponent
 {
 	[Inject] private LoginUseCase UC { get; set; }

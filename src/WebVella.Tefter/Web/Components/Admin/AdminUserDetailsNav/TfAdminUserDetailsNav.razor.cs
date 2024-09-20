@@ -1,6 +1,6 @@
 ﻿
 namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserDetailsNav.TfAdminUserDetailsNav","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminUserDetailsNav.TfAdminUserDetailsNav","WebVella.Tefter")]
 public partial class TfAdminUserDetailsNav : TfBaseComponent
 {
 	[Inject] private IState<TfRouteState> TfRouteState { get; set; }

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.AdminUserDetailsActions.TfAdminUserDetailsActions", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminUserDetailsActions.TfAdminUserDetailsActions", "WebVella.Tefter")]
 public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }

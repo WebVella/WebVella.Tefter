@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SharedColumnManageDialog.TfSharedColumnManageDialog", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.SharedColumnManageDialog.TfSharedColumnManageDialog", "WebVella.Tefter")]
 public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSharedColumn>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
