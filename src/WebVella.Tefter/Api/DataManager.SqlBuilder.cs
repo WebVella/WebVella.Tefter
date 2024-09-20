@@ -100,16 +100,32 @@ public partial class DataManager
 				foreach (var column in _availableColumns.Where(x => x.IsSystem))
 					_selectColumns.Add(column);
 
-				foreach (var columnName in spaceData.Columns)
+				bool spaceDataHasAtLeastOneValidColumn = false;
+				if (spaceData.Columns.Any())
 				{
-					if (_selectColumns.Any(x => x.DbName == columnName))
-						continue;
+					foreach (var columnName in spaceData.Columns)
+					{
+						if (_selectColumns.Any(x => x.DbName == columnName))
+						{
+							spaceDataHasAtLeastOneValidColumn = true;
+							continue;
+						}
 
-					var column = _availableColumns.SingleOrDefault(x => x.DbName == columnName);
-					if (column is not null)
-						_selectColumns.Add(column);
+						var column = _availableColumns.SingleOrDefault(x => x.DbName == columnName);
+						if (column is not null)
+						{
+							spaceDataHasAtLeastOneValidColumn = true;
+							_selectColumns.Add(column);
+						}
 
-					//ignore missing columns
+						//ignore missing columns
+					}
+				}
+
+				//add all provider columns if there is no valid column in space data
+				if(!spaceDataHasAtLeastOneValidColumn)
+				{
+					_selectColumns = _availableColumns.ToList();
 				}
 
 				if (spaceData.SortOrders is not null && spaceData.SortOrders.Any())
