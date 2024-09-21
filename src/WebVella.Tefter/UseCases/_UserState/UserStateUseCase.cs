@@ -39,7 +39,6 @@ internal partial class UserStateUseCase
 		var uri = new Uri(_navigationManager.Uri);
 		if (
 			urlData.FirstNode == RouteDataFirstNode.Home
-			|| urlData.FirstNode == RouteDataFirstNode.FastAccess
 			|| urlData.FirstNode == RouteDataFirstNode.Space
 			)
 		{

@@ -95,14 +95,6 @@ internal static class NavigatorExt
 			}
 
 		}
-		else if (result.NodesDict[0] == TfConstants.RouteNameFastAccess)
-		{
-			result = result with { FirstNode = RouteDataFirstNode.FastAccess };
-			if (result.NodesDict.Count == 1)
-			{
-				result = result with { SecondNode = RouteDataSecondNode.Dashboard };
-			}
-		}
 		else if (result.NodesDict[0] == TfConstants.RouteNameSpace)
 		{
 			result = result with { FirstNode = RouteDataFirstNode.Space };

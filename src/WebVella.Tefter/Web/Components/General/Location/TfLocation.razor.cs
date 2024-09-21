@@ -25,14 +25,6 @@ public partial class TfLocation : TfBaseComponent
 				Url = String.Format(TfConstants.AdminPageUrl)
 			});
 		}
-		else if (TfRouteState.Value.FirstNode == RouteDataFirstNode.FastAccess)
-		{
-			result.Add(new MenuItem
-			{
-				Title = RenderUtils.StringOverflow("Fast Access", _ellipsisCount),
-				Url = String.Format(TfConstants.FastAccessPageUrl)
-			});
-		}
 		else if (TfRouteState.Value.FirstNode == RouteDataFirstNode.Space)
 		{
 			if (TfAppState.Value.Space is not null)

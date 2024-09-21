@@ -5,7 +5,6 @@ internal partial class AppStateUseCase
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Home
-			|| routeState.FirstNode == RouteDataFirstNode.FastAccess
 			|| routeState.FirstNode == RouteDataFirstNode.Space)
 			)
 		{

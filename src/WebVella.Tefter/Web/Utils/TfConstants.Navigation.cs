@@ -14,11 +14,8 @@ public partial class TfConstants
 		}
 	}
 
-	public static Icon DashboardIcon = GetIcon("Board");
-	public static string DashboardMenuTitle = "Dashboard";
-
-	public static Icon FastAccessIcon = GetIcon("VideoPersonStar");
-	public static string FastAccesMenuTitle = "Fast Access";
+	public static Icon HomeIcon = GetIcon("Home");
+	public static string HomeMenuTitle = "Home";
 
 	public static Icon BookmarkONIcon = GetIcon("Bookmark", variant: IconVariant.Filled);
 	public static Icon BookmarkOFFIcon = GetIcon("Bookmark");

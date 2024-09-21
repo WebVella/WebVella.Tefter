@@ -26,9 +26,8 @@ public partial record TfRouteState
 public enum RouteDataFirstNode
 {
 	Home = 0,
-	FastAccess = 1,
-	Space = 2,
-	Admin
+	Space = 1,
+	Admin = 2
 }
 
 public enum RouteDataSecondNode

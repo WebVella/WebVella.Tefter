@@ -39,10 +39,6 @@ public partial class TfConstants
 	public static string AdminDataProviderDataPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameData}";
 	public static string AdminSharedColumnsPageUrl  = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";
 
-
-	public static string RouteNameFastAccess  = "fast-access";
-	public static string FastAccessPageUrl  = $"/{RouteNameFastAccess}";
-
 	public static string RouteNameSpace  = "space";
 	public static string RouteNameSpaceView  = "view";
 	public static string RouteNameSpaceData  = "data";
