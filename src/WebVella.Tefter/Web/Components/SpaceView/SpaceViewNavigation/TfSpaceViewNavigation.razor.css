@@ -98,3 +98,15 @@
 	margin: 0 2px;
 	z-index:5;
 }
+
+::deep fluent-switch:not(.checked)::part(switch) {
+	border-color:var(--tf-space-border-color);
+}
+
+::deep fluent-switch.checked::part(switch) {
+	background:var(--tf-space-color);
+}
+/*
+::deep fluent-switch::part(switch) {
+	background:var(--tf-space-color);
+}*/

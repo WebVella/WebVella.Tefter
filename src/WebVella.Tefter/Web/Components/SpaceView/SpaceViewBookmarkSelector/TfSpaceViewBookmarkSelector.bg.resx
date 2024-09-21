@@ -117,16 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="all views" xml:space="preserve">
-    <value>всички изгледи</value>
+  <data name="Bookmark removed" xml:space="preserve">
+    <value>Отметката е махната</value>
   </data>
-  <data name="Create View" xml:space="preserve">
-    <value>Създай изглед</value>
-  </data>
-  <data name="Manage Space" xml:space="preserve">
-    <value>Редактирай зоната</value>
-  </data>
-  <data name="Space Data" xml:space="preserve">
-    <value>Използвани данни</value>
+  <data name="Bookmark saved" xml:space="preserve">
+    <value>Отметката е запомнена</value>
   </data>
 </root>

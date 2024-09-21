@@ -30,20 +30,26 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.Name
-									 ValueChanged="@((x) => _form = _form with{Name = x})"
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextArea Value=@_form.Description ValueChanged="@((x) => _form = _form with{Description = x})"
-									Label="@LOC("Description")" Style="width:100%" />
+					<FluentTextArea Value=@_form.Description ValueChanged="@_onDescriptionChanged" Rows="5"
+									Immediate="true" ImmediateDelay="200" Resize="TextAreaResize.Vertical"
+									Label="@LOC("Description")" Style="width:100%" Placeholder="@LOC("Your notes with the ability to used hashtags. (eg. #budget)")"/>
 					<FluentValidationMessage For="@(() => _form.Description)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:1rem 0" />
+			<FluentStack Orientation="@Orientation.Horizontal" Style="min-height:24px;">
+				@foreach (var item in _form.Tags.OrderBy(x => x.Label))
+				{
+					<FluentBadge Appearance="Appearance.Accent">#@item.Label</FluentBadge>
+				}
+			</FluentStack>
 		</FluentEditForm>
 	}
 </FluentDialogBody>

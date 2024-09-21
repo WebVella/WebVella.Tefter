@@ -86,6 +86,7 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 					{
 						CurrentUserBookmarks = result.Value.Item1,
 						CurrentUserSaves = result.Value.Item2,
+						ActiveSpaceViewBookmark = submit
 					}
 				));
 			}

@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewLinkSaveSelector.TfSpaceViewLinkSaveSelector", "WebVella.Tefter")]
 public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -46,31 +47,53 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 	private async Task _editUrl()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
-				new TucBookmark() with { SpaceViewId = TfAppState.Value.SpaceView.Id, Url = null },
-				new DialogParameters()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge
-				});
+						TfAppState.Value.ActiveSpaceViewSavedUrl,
+						new DialogParameters()
+						{
+							PreventDismissOnOverlayClick = true,
+							PreventScroll = true,
+							Width = TfConstants.DialogWidthLarge
+						});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			var resultObj = (Tuple<TucBookmark,List<TucBookmark>,List<TucBookmark>>)result.Data;
+			ToastService.ShowSuccess(LOC("URL saved"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					CurrentUserBookmarks = resultObj.Item2,
+					CurrentUserSaves = resultObj.Item3,
+					ActiveSpaceViewSavedUrl = resultObj.Item1
+				}
+			));
 		}
 	}
 	private async Task _saveUrlAs()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
-				new TucBookmark() with { SpaceViewId = TfAppState.Value.SpaceView.Id, Url = null },
-				new DialogParameters()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge
-				});
+						TfAppState.Value.ActiveSpaceViewSavedUrl with { Id = Guid.Empty},
+						new DialogParameters()
+						{
+							PreventDismissOnOverlayClick = true,
+							PreventScroll = true,
+							Width = TfConstants.DialogWidthLarge
+						});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+			var resultObj = (Tuple<TucBookmark,List<TucBookmark>,List<TucBookmark>>)result.Data;
+			ToastService.ShowSuccess(LOC("URL saved"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					CurrentUserBookmarks = resultObj.Item2,
+					CurrentUserSaves = resultObj.Item3,
+					//ActiveSpaceViewSavedUrl = resultObj.Item1 //should leave the old as it is
+				}
+			));
 		}
 	}
 	private async Task _removeUrl()

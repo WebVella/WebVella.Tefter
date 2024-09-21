@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 <style>
-	.sidebar-nav{
+	.sidebar-nav {
 		--tf-space-color: @TfAppState.Value.SpaceColorString;
 		--tf-space-border-color: @TfAppState.Value.SpaceBorderColor;
 	}
@@ -10,17 +10,17 @@
 	<div class="sidebar-toolbar">
 		<div class="sidebar-toolbar-mode">
 			<FluentToolbar Class="modebar">
-				<FluentButton @ref=_viewsBtn Class="@($"btn views {_getActiveClass(TfSpaceViewNavigationActiveTab.Views)}")" Title="views"
+				<FluentButton Class="@($"btn views {_getActiveClass(TfSpaceViewNavigationActiveTab.Views)}")" Title="views"
 							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Views))"
 							  Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.SpaceViewIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentButton>
-				<FluentButton @ref=_bookmarksBtn Class="@($"btn bookmarks {_getActiveClass(TfSpaceViewNavigationActiveTab.Bookmarks)}")" Title="bookmarks"
+				<FluentButton Class="@($"btn bookmarks {_getActiveClass(TfSpaceViewNavigationActiveTab.Bookmarks)}")" Title="bookmarks"
 							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Bookmarks))"
 							  Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentButton>
-				<FluentButton @ref=_savesBtn Class="@($"btn saves {_getActiveClass(TfSpaceViewNavigationActiveTab.Saves)}")" Title="saved URLs"
+				<FluentButton Class="@($"btn saves {_getActiveClass(TfSpaceViewNavigationActiveTab.Saves)}")" Title="saved URLs"
 							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Saves))"
 							  Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
@@ -56,6 +56,12 @@
 	<div class="sidebar-inner">
 		@{
 			var menuItems = _getMenu();
+		}
+		@if (_activeTab == TfSpaceViewNavigationActiveTab.Saves)
+		{
+			<div style="text-align:right">
+				<FluentSwitch @bind-Value=_linksFromAllViews Label="@LOC("all views")" />
+			</div>
 		}
 		<FluentNavMenu Style="width:100%">
 			@foreach (var item in menuItems)

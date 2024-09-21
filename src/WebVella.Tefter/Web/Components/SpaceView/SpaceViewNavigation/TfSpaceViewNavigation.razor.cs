@@ -9,10 +9,8 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	private bool _settingsMenuVisible = false;
 	private string search = null;
 	private TfSpaceViewNavigationActiveTab _activeTab = TfSpaceViewNavigationActiveTab.Views;
-	private FluentButton _viewsBtn;
-	private FluentButton _bookmarksBtn;
-	private FluentButton _savesBtn;
 	private bool _isLoading = false;
+	private bool _linksFromAllViews = false;
 	private List<MenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
@@ -41,7 +39,8 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			foreach (var record in TfAppState.Value.CurrentUserBookmarks
 				.Where(x => x.SpaceId == TfAppState.Value.Space.Id).OrderBy(x => x.Name))
 			{
-				if (!String.IsNullOrWhiteSpace(search) && !record.Name.ToLowerInvariant().Contains(search))
+				if (!String.IsNullOrWhiteSpace(search) 
+					&& !(record.Name.ToLowerInvariant().Contains(search) || record.Description.ToLowerInvariant().Contains(search)))
 					continue;
 
 				var viewMenu = new MenuItem
@@ -61,8 +60,11 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			foreach (var record in TfAppState.Value.CurrentUserSaves
 				.Where(x => x.SpaceId == TfAppState.Value.Space.Id).OrderBy(x => x.Name))
 			{
-				if (!String.IsNullOrWhiteSpace(search) && !record.Name.ToLowerInvariant().Contains(search))
+				if (!String.IsNullOrWhiteSpace(search) 
+					&& !(record.Name.ToLowerInvariant().Contains(search) || record.Description.ToLowerInvariant().Contains(search)))
 					continue;
+
+				if(!_linksFromAllViews && record.SpaceViewId != TfAppState.Value.SpaceView.Id) continue;
 
 				var uri = new Uri($"http://localhost{record.Url}");
 				var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);

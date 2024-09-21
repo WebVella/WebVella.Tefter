@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.TfSpaceViewBookmarkManageDialog.SpaceViewBookmarkManageDialog", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewBookmarkManageDialog.TfSpaceViewBookmarkManageDialog", "WebVella.Tefter")]
 public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDialogContentComponent<TucBookmark>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -11,30 +11,19 @@ public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDia
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-	private bool _isCreate = false;
+	private bool _isBookmark = true;
 	private TucBookmark _form = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content.SpaceViewId == Guid.Empty) throw new Exception("SpaceId is required");
 		if (Content is null) throw new Exception("Content is null");
-		if (Content.Id == Guid.Empty) _isCreate = true;
-		_title = _isCreate ? LOC("Create Bookmark in {0}", TfAppState.Value.SpaceView.Name) : LOC("Manage Bookmark in {0}", TfAppState.Value.Space.Name);
-		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		if (!String.IsNullOrWhiteSpace(Content.Url)) _isBookmark = false;
+		_title = _isBookmark ? LOC("Bookmark for {0}", TfAppState.Value.SpaceView.Name) : LOC("Saved URL in {0}", TfAppState.Value.Space.Name);
+		_btnText = LOC("Save");
+		_iconBtn = TfConstants.SaveIcon;
 
-		if (_isCreate)
-		{
-			_form = new TucBookmark()
-			{
-				Id = Guid.NewGuid(),
-				SpaceViewId = Content.SpaceViewId,
-			};
-		}
-		else
-		{
-			_form = Content with { Id = Content.Id };
-		}
+		_form = Content with { Id = Content.Id };
 
 		base.InitForm(_form);
 	}
@@ -55,17 +44,22 @@ public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDia
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-
-			Result<TucBookmark> result = null;
-			//if (_isCreate)
-			//	result = UC.CreateSpaceViewWithForm(_form);
-			//else
-			//	result = UC.UpdateSpaceViewWithForm(_form);
+			var result = new Result<(List<TucBookmark>, List<TucBookmark>)>();
+			if (_form.Id == Guid.Empty)
+			{
+				_form.Id = Guid.NewGuid();
+				result = await UC.CreateBookmarkAsync(_form);
+			}
+			else
+			{
+				result = await UC.UpdateBookmarkAsync(_form);
+			}
 
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
 			{
-				await Dialog.CloseAsync(result.Value);
+				var resultObj = new Tuple<TucBookmark, List<TucBookmark>, List<TucBookmark>>(_form, result.Value.Item1, result.Value.Item2);
+				await Dialog.CloseAsync(resultObj);
 			}
 		}
 		catch (Exception ex)
@@ -81,6 +75,19 @@ public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDia
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
+	}
+
+	private void _onDescriptionChanged(string description)
+	{
+		_form.Description = description;
+		_form.Tags = new List<TucTag>();
+		if (!String.IsNullOrWhiteSpace(description))
+		{
+			foreach (var item in RenderUtils.GetUniqueTagsFromText(description))
+			{
+				_form.Tags.Add(new TucTag { Id = Guid.NewGuid(), Label = item });
+			}
+		}
 	}
 
 }

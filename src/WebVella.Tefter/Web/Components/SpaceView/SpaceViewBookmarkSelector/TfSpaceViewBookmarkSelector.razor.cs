@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewBookmarkSelector.TfSpaceViewBookmarkSelector", "WebVella.Tefter")]
 public partial class TfSpaceViewBookmarkSelector : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -13,7 +14,7 @@ public partial class TfSpaceViewBookmarkSelector : TfBaseComponent
 	private async Task _bookmarkEdit()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
-				new TucBookmark() with { SpaceViewId = TfAppState.Value.SpaceView.Id, Url = null },
+				TfAppState.Value.ActiveSpaceViewBookmark,
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,
@@ -23,6 +24,17 @@ public partial class TfSpaceViewBookmarkSelector : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
+				var resultObj = (Tuple<TucBookmark,List<TucBookmark>,List<TucBookmark>>)result.Data;
+				ToastService.ShowSuccess(LOC("Bookmark saved"));
+				Dispatcher.Dispatch(new SetAppStateAction(
+					component: this,
+					state: TfAppState.Value with
+					{
+						CurrentUserBookmarks = resultObj.Item2,
+						CurrentUserSaves = resultObj.Item3,
+						ActiveSpaceViewBookmark = resultObj.Item1
+					}
+				));
 		}
 	}
 
@@ -43,6 +55,7 @@ public partial class TfSpaceViewBookmarkSelector : TfBaseComponent
 					{
 						CurrentUserBookmarks = result.Value.Item1,
 						CurrentUserSaves = result.Value.Item2,
+						ActiveSpaceViewBookmark = null
 					}
 				));
 			}
