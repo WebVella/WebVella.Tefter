@@ -24,7 +24,6 @@ public partial record TfRouteState
 	public bool SearchInBookmarks { get; init;} = true;
 	public bool SearchInSaves { get; init;} = true;
 	public bool SearchInViews { get; init;} = true;
-	public bool SearchInSpaces { get; init;} = true;
 }
 
 public enum RouteDataFirstNode

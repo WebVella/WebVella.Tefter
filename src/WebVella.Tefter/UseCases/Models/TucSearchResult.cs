@@ -7,7 +7,7 @@ public record TucSearchResult
 	public Guid Id { get; set; }
 	public string Title { get; set; }
 	public string Description { get; set; }
-	public TucSearchResultType Type { get; set; } = TucSearchResultType.Space;
+	public TucSearchResultType Type { get; set; } = TucSearchResultType.SpaceView;
 	public DateTime? CreatedOn { get; set; }
 	public Guid? SpaceViewId { get; set; }
 	public Guid? SpaceId { get; set; }
@@ -43,7 +43,7 @@ public record TucSearchResult
 	{
 		Id = model.Id;
 		Title = model.Name;
-		Description = null;
+		Description = "";
 		Type = TucSearchResultType.SpaceView;
 		CreatedOn = null;
 		SpaceViewId = model.Id;
@@ -54,32 +54,14 @@ public record TucSearchResult
 		SpaceIcon = space.Icon;
 		Url = String.Format(TfConstants.SpaceViewPageUrl, model.SpaceId, model.Id);
 	}
-
-	public TucSearchResult(TucSpace model)
-	{
-		Id = model.Id;
-		Title = model.Name;
-		Description = null;
-		Type = TucSearchResultType.Space;
-		CreatedOn = null;
-		SpaceViewId = null;
-		SpaceId = model.Id;
-		SpaceName = model.Name;
-		SpaceViewName = model.Name;
-		SpaceColor = model.Color;
-		SpaceIcon = model.Icon;
-		Url = String.Format(TfConstants.SpacePageUrl, model.Id);
-	}
 }
 
 public enum TucSearchResultType
 {
-	[Description("space")]
-	Space = 0,
-	[Description("view")]
-	SpaceView = 1,
+	[Description("space view")]
+	SpaceView = 0,
 	[Description("bookmark")]
-	Bookmark = 2,
-	[Description("saved url")]
-	UrlSave = 3
+	Bookmark = 1,
+	[Description("url save")]
+	UrlSave = 2
 }

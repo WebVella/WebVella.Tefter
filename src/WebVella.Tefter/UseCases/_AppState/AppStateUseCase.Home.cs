@@ -12,7 +12,6 @@ internal partial class AppStateUseCase
 				HomeSearchInBookmarks = true,
 				HomeSearchInSaves = true,
 				HomeSearchInViews = true,
-				HomeSearchInSpaces = true,
 				HomeTags = new(),
 				HomeBookmarks = new(),
 				HomeSaves = new(),
@@ -35,7 +34,6 @@ internal partial class AppStateUseCase
 			searchInBookmarks: routeState.SearchInBookmarks,
 			searchInSaves: routeState.SearchInSaves,
 			searchInViews: routeState.SearchInViews,
-			searchInSpaces: routeState.SearchInSpaces,
 			bookmarks:bookmarks,
 			saves:saves
 		);
@@ -46,7 +44,6 @@ internal partial class AppStateUseCase
 			HomeSearchInBookmarks = routeState.SearchInBookmarks,
 			HomeSearchInSaves = routeState.SearchInSaves,
 			HomeSearchInViews = routeState.SearchInViews,
-			HomeSearchInSpaces = routeState.SearchInSpaces,
 			HomeTags = homeTags,
 			HomeBookmarks = homeBookmarks,
 			HomeSaves = homeSaves,
@@ -60,7 +57,7 @@ internal partial class AppStateUseCase
 
 	internal async Task<List<TucSearchResult>> GetHomeSearchResultsAsync(Guid userId, string search = null,
 		bool searchInBookmarks = true, bool searchInSaves = true,
-		bool searchInViews = true, bool searchInSpaces = true,
+		bool searchInViews = true, 
 		List<TucBookmark> bookmarks = null, List<TucBookmark> saves = null)
 	{
 		var results = new List<TucSearchResult>();
@@ -69,18 +66,7 @@ internal partial class AppStateUseCase
 		var allSpaceViews = await GetAllSpaceViews();
 		var spaceDict = allSpaces.ToDictionary(x => x.Id);
 		var spaceViewDict = allSpaceViews.ToDictionary(x => x.Id);
-		if (String.IsNullOrWhiteSpace(search) || searchInSpaces)
-		{
-			foreach (var record in allSpaces)
-			{
-				if (!String.IsNullOrWhiteSpace(search)
-						&& !record.Name.ToLowerInvariant().Contains(search))
-					continue;
-
-				results.Add(new TucSearchResult(record));
-			}
-		}
-		if (String.IsNullOrWhiteSpace(search) || searchInViews)
+		if (searchInViews)
 		{
 			foreach (var record in allSpaceViews)
 			{
@@ -92,8 +78,7 @@ internal partial class AppStateUseCase
 			}
 		}
 
-
-		if (String.IsNullOrWhiteSpace(search) || searchInBookmarks || searchInSaves)
+		if (searchInBookmarks || searchInSaves)
 		{
 			if(bookmarks is null || saves is null)
 				(bookmarks, saves) = await GetUserBookmarksAsync(userId);

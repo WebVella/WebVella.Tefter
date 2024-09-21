@@ -4,47 +4,72 @@
 	<div class="content-inner">
 		<FluentGrid Spacing="0">
 			<FluentGridItem xs="12" md="9" lg="10" Style="padding-right:1rem">
-				<TfHomeToolbar />
+				<TfHomeToolbar OnSearch="_onSearch" OnFilterToggle="_onToggleFilter" />
 				@if (TfAppState.Value.HomeSearchResults.Count == 0)
 				{
 					<div>no items match your query</div>
 				}
-				@foreach (var item in TfAppState.Value.HomeSearchResults)
+				else
 				{
-					<TfCard Small="true" Class="tf-search-card">
-						<div class="tf-search-card__type">
-							<div class="tf-search-card__type__icon">
-								<FluentIcon Value="@item.SpaceIcon.WithColor(item.SpaceColor.ToDescriptionString())" />
-							</div>
-							<div class="tf-search-card__type__badge">
-								<FluentBadge>@item.Type.ToDescriptionString()</FluentBadge>
-							</div>
-						</div>
-						<div class="tf-search-card__meta">
-							<div class="tf-search-card__title">
-								@item.Title
-							</div>
-							<div class="tf-search-card__title">
-								@item.Description
-							</div>
-						</div>
-						<div class="tf-search-card__actions">
-						</div>
-					</TfCard>
+					<div class="tf-grid-wrapper">
+						<table class="tf-grid">
+							<thead class="tf-grid-thead">
+								<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfUserState.Value.ThemeBackgkroundColor}")"></tr>
+								<tr class="tf-grid-tr">
+									<th class="tf-grid-th" colspan="2">@LOC("name")</th>
+									<th class="tf-grid-th" style="width:80px">@LOC("type")</th>
+									<th class="tf-grid-th" style="width:200px">@LOC("view/space")</th>
+								</tr>
+							</thead>
+							<tbody class="tf-grid-tbody">
+								@foreach (var item in TfAppState.Value.HomeSearchResults)
+								{
+									<tr class="tf-grid-tr" style="cursor:pointer" onclick="@(()=>_onClick(item))">
+
+										<td class="tf-grid-td" style="width:1%;">
+											<div style="padding-right:0">
+												<FluentIcon Style="width:24px;" Value="@item.SpaceIcon.WithColor(item.SpaceColor.ToDescriptionString())" />
+											</div>
+										</td>
+										<td class="tf-grid-td">
+											<div>
+												<div>
+													<FluentLabel Typo="@Typography.Body">@item.Title</FluentLabel>
+												</div>
+												<div class="td-description">@RenderUtils.StringOverflow(item.Description, 150)</div>
+											</div>
+										</td>
+										<td class="tf-grid-td">
+											<div>
+												<div><FluentBadge Appearance="@Appearance.Neutral">@item.Type.ToDescriptionString()</FluentBadge></div>
+											</div>
+										</td>
+										<td class="tf-grid-td">
+											<div>
+												<div title="@item.SpaceViewName">@RenderUtils.StringOverflow(item.SpaceViewName, 30)</div>
+												<div class="td-description" title="@item.SpaceName">@RenderUtils.StringOverflow(item.SpaceName, 30)</div>
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
 				}
 			</FluentGridItem>
 			<FluentGridItem xs="12" md="3" lg="2">
-				<TfCard Title="@LOC("My Tags")" Small="true">
+				<TfCard Title="@LOC("My Tags")" Small="true" Style="overflow:hidden">
 					@if (TfAppState.Value.HomeTags.Count == 0)
 					{
 						<div>no items yet</div>
 					}
 					else
 					{
-						<FluentStack>
+						<FluentStack Wrap="true" HorizontalGap="3" VerticalGap="3">
 							@foreach (var item in TfAppState.Value.HomeTags)
 							{
-								<FluentAnchor Appearance="@Appearance.Outline" Href="/">#@item.Label</FluentAnchor>
+								<FluentButton Appearance="@Appearance.Stealth" OnClick="@(()=>_tagClick(item))">#@item.Label</FluentButton>
 							}
 						</FluentStack>
 					}

@@ -7,7 +7,6 @@ public partial record TfAppState
 	public bool HomeSearchInBookmarks { get; init; } = true;
 	public bool HomeSearchInSaves { get; init; } = true;
 	public bool HomeSearchInViews { get; init; } = true;
-	public bool HomeSearchInSpaces { get; init; } = true;
 	public List<TucTag> HomeTags { get; init; } = new();
 	public List<TucBookmark> HomeBookmarks { get; init; } = new();
 	public List<TucBookmark> HomeSaves { get; init; } = new();

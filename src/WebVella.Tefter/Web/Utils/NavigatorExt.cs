@@ -159,7 +159,6 @@ internal static class NavigatorExt
 		bool searchInBookmarks = GetBooleanFromQuery(uri, TfConstants.SearchInBookmarksQueryName, true).Value;
 		bool searchInSaves = GetBooleanFromQuery(uri, TfConstants.SearchInSavesQueryName, true).Value;
 		bool searchInViews = GetBooleanFromQuery(uri, TfConstants.SearchInViewsQueryName, true).Value;
-		bool searchInSpaces = GetBooleanFromQuery(uri, TfConstants.SearchInSpacesQueryName, true).Value;
 
 		result = result with
 		{
@@ -171,8 +170,7 @@ internal static class NavigatorExt
 			ActiveSaveId = activeSaveId,
 			SearchInBookmarks = searchInBookmarks,
 			SearchInSaves = searchInSaves,
-			SearchInViews = searchInViews,
-			SearchInSpaces = searchInSpaces
+			SearchInViews = searchInViews
 		};
 
 		return result;
