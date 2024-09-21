@@ -1,6 +1,6 @@
 ﻿
 namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Home.TfHome", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Home.Home.TfHome", "WebVella.Tefter")]
 public partial class TfHome : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }

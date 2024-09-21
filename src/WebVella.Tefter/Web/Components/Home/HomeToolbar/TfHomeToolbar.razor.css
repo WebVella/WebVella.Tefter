@@ -1,0 +1,18 @@
+﻿::deep.home-toolbar {
+	display: flex;
+	justify-content: start;
+	margin-bottom:1rem;
+}
+
+::deep.home-toolbar > * {
+	margin-right: 5px;
+}
+
+.content-toolbar-right {
+	justify-content: end;
+}
+
+::deep fluent-search::part(root) {
+	border-color: var(--neutral-stroke-rest);
+	width:400px;
+}

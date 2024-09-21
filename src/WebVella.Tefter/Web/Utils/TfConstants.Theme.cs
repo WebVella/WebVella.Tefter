@@ -3,7 +3,7 @@ using SystemColor = System.Drawing.Color;
 public partial class TfConstants
 {
 	public static DesignThemeModes DefaultThemeMode { get; } = DesignThemeModes.System;
-	public static OfficeColor DefaultThemeColor { get; } = OfficeColor.Excel;
+	public static OfficeColor DefaultThemeColor { get; } = OfficeColor.Booking;
 
 	public static DesignThemeModes AdminThemeMode { get; } = DesignThemeModes.System;
 	public static OfficeColor AdminThemeColor { get; } = OfficeColor.Office;

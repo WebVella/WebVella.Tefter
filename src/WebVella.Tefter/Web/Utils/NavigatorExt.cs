@@ -156,6 +156,10 @@ internal static class NavigatorExt
 		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
 
 		Guid? activeSaveId = GetGuidFromQuery(uri, TfConstants.ActiveSaveQueryName, null);
+		bool searchInBookmarks = GetBooleanFromQuery(uri, TfConstants.SearchInBookmarksQueryName, true).Value;
+		bool searchInSaves = GetBooleanFromQuery(uri, TfConstants.SearchInSavesQueryName, true).Value;
+		bool searchInViews = GetBooleanFromQuery(uri, TfConstants.SearchInViewsQueryName, true).Value;
+		bool searchInSpaces = GetBooleanFromQuery(uri, TfConstants.SearchInSpacesQueryName, true).Value;
 
 		result = result with
 		{
@@ -165,11 +169,14 @@ internal static class NavigatorExt
 			Filters = filters,
 			Sorts = sorts,
 			ActiveSaveId = activeSaveId,
+			SearchInBookmarks = searchInBookmarks,
+			SearchInSaves = searchInSaves,
+			SearchInViews = searchInViews,
+			SearchInSpaces = searchInSpaces
 		};
 
 		return result;
 	}
-
 
 	internal static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
 	{
@@ -501,6 +508,14 @@ internal static class NavigatorExt
 		return result;
 	}
 
+	internal static string AddQueryValueToUri(string url, string paramName, string value)
+	{
+		var uri = new Uri($"http://localhost{url}");
+		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
+		queryDictionary[paramName] = value;
+
+		return uri.LocalPath + "?" + queryDictionary.ToString();
+	}
 
 	internal static string ProcessQueryValueFromUrl(string queryValue)
 	{
@@ -628,12 +643,12 @@ internal static class NavigatorExt
 
 		foreach (string key in savedQueryDict.AllKeys)
 		{
-			if(key == TfConstants.ActiveSaveQueryName) continue;
+			if (key == TfConstants.ActiveSaveQueryName) continue;
 			savedSortedDict[key] = savedQueryDict[key];
 		}
 		foreach (string key in currentQueryDict.AllKeys)
 		{
-			if(key == TfConstants.ActiveSaveQueryName) continue;
+			if (key == TfConstants.ActiveSaveQueryName) continue;
 			currentSortedDict[key] = currentQueryDict[key];
 		}
 		if (savedSortedDict.Keys.Count != currentSortedDict.Keys.Count) return true;

@@ -66,16 +66,13 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 
 				if(!_linksFromAllViews && record.SpaceViewId != TfAppState.Value.SpaceView.Id) continue;
 
-				var uri = new Uri($"http://localhost{record.Url}");
-				var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
-				queryDictionary[TfConstants.ActiveSaveQueryName] = record.Id.ToString();
 				var viewMenu = new MenuItem
 				{
 					Id = RenderUtils.ConvertGuidToHtmlElementId(record.Id),
 					Icon = TfConstants.GetIcon("Link"),
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
-					Url = uri.LocalPath + "?" + queryDictionary.ToString(),
+					Url = NavigatorExt.AddQueryValueToUri(record.Url, TfConstants.ActiveSaveQueryName,record.Id.ToString()),
 					Active = record.Id == TfRouteState.Value.ActiveSaveId
 				};
 				menuItems.Add(viewMenu);

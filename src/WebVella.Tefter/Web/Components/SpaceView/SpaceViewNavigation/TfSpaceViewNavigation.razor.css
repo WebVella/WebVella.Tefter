@@ -40,9 +40,10 @@
 		margin: 0;
 	}
 
-		::deep .sidebar-toolbar-mode .modebar .btn.active {
+		::deep .sidebar-toolbar-mode .modebar .btn.active,
+		::deep .sidebar-toolbar-mode .modebar fluent-button.active::part(control){
 			background:var(--tf-space-color);
-			border-color:var(--tf-space-border-color);
+			border-color:var(--tf-space-color);
 		}
 
 		::deep .sidebar-toolbar-mode .modebar .btn.active, 

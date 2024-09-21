@@ -56,6 +56,7 @@ internal partial class AppStateUseCase
 		result = await InitSpaceViewAsync(currentUser, routeState, result,oldState);
 		result = await InitSpaceDataAsync(currentUser, routeState, result,oldState);
 		result = await InitBookmarksAsync(currentUser, routeState, result,oldState);
+		result = await InitHomeAsync(currentUser, routeState, result,oldState);
 
 		return result;
 	}

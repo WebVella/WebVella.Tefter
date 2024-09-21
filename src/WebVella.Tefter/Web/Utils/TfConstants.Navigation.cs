@@ -22,8 +22,8 @@ public partial class TfConstants
 	public static Icon BookmarkRemoveIcon = GetIcon("BookmarkOff");
 	public static Icon BookmarkEditIcon = GetIcon("BookmarkSearch");
 
-	public static Icon SpaceIcon = GetIcon("VideoPersonStar");
-	public static Icon SpaceViewIcon = GetIcon("Grid");
+	public static Icon SpaceIcon = GetIcon("Folder");
+	public static Icon SpaceViewIcon = GetIcon("Table");
 	public static Icon SpaceDataIcon = GetIcon("Database");
 
 

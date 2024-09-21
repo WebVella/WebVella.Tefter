@@ -9,6 +9,12 @@ public partial class TfConstants
 	public static string SortsQueryName = "srt";
 	public static string ActiveSaveQueryName = "svid";
 
+	public static string SearchInBookmarksQueryName = "sbkm";
+	public static string SearchInSavesQueryName = "ssvs";
+	public static string SearchInViewsQueryName = "svws";
+	public static string SearchInSpacesQueryName = "ssps";
+
+
 	public static string NotFoundPageUrl = "/404";
 	public static string LoginPageUrl  = "/login";
 	public static string HomePageUrl  = "/";
