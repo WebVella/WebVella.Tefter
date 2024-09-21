@@ -18,11 +18,13 @@
 	background: var(--neutral-base-color) !important;
 }
 
-::deep.usernav .stealth::part(control) {
+::deep.usernav .actions > .stealth::part(control),
+::deep.usernav .actions .language-switch > .stealth::part(control){
 	background: var(--neutral-layer-3) !important;
 }
 
-::deep.usernav .stealth:hover::part(control) {
+::deep.usernav .actions > .stealth:hover::part(control),
+::deep.usernav .actions .language-switch > .stealth:hover::part(control) {
 	background: var(--neutral-fill-stealth-hover) !important;
 }
 /*::deep.usernav .stealth svg {

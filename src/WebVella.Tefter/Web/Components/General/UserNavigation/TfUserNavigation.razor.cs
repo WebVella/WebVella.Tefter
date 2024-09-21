@@ -7,6 +7,7 @@ public partial class TfUserNavigation
 	[Inject] private UserStateUseCase UC { get; set; }
 
 	private bool _visible = false;
+	private bool _helpVisible = false;
 	private bool _isAdmin = false;
 	private bool _auxLoaded = false;
 
@@ -93,11 +94,5 @@ public partial class TfUserNavigation
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}
-
-	private void _helpClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Dropdown with menu to help section, license and about Tefter.bg");
-	}
-
 
 }
