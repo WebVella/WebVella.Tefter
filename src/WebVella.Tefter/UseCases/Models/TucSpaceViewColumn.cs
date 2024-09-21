@@ -48,13 +48,17 @@ public record TucSpaceViewColumn
 			if (Settings is not null)
 			{
 				if(Settings.Color != OfficeColor.Default){ 
-					sb.Append($"background-color:{Settings.Color.ToAttributeValue()}25");
+					sb.Append($"color:{Settings.Color.ToAttributeValue()};");
+				}
+				if(Settings.BackgroundColor != OfficeColor.Default){ 
+					sb.Append($"background-color:{Settings.BackgroundColor.ToAttributeValue()}25;");
 				}
 			}
 
 			return sb.ToString();
 		}
 	}
+
 
 	public string FullTypeName { get; set; }
 	public string FullComponentTypeName { get; set; }

@@ -3,34 +3,64 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 	var value = GetDataObjectByAlias<bool>("Value", null);
-	<div>@value</div>
+	if (value is null) { }
+	else if (value.Value)
+	{
+		if (!String.IsNullOrWhiteSpace(options.TrueValueOverrideText))
+		{
+			<span>@options.TrueValueOverrideText</span>
+		}
+		else if (options.TrueValueShowAsIcon)
+		{
+			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Checkmark")" Color="@Color.Success" /></div>
+		}
+		else
+		{
+			<span>@value.Value.ToString()</span>
+		}
+	}
+	else
+	{
+		if (!String.IsNullOrWhiteSpace(options.FalseValueOverrideText))
+		{
+			<span>@options.FalseValueOverrideText</span>
+		}
+		else if (options.FalseValueShowAsIcon)
+		{
+			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
+		}
+		else
+		{
+			<span>@value.Value.ToString()</span>
+		}
+	}
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
 
-	<FluentInputLabel Label="TRUE value" />
+	<FluentInputLabel Label="TRUE value (text with priority)" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Value="@options.TrueValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
-							 ValueChanged=@((x)=> _optionsTextValueChanged(x, nameof(options.TrueValueOverrideText)))
+							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.TrueValueOverrideText),x))
 							 Placeholder="fill to override default value" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.TrueValueShowAsIcon" 
-							ValueChanged=@((x)=> _optionsBooleanValueChanged(x, nameof(options.TrueValueShowAsIcon)))
+			<FluentCheckbox Value="@options.TrueValueShowAsIcon"
+							ValueChanged=@((x)=> OptionsValueChanged(nameof(options.TrueValueShowAsIcon),x))
 							Label="render as icon" />
 		</FluentGridItem>
 	</FluentGrid>
-	<FluentInputLabel Label="FALSE value" style="margin-top:1rem;"/>
+	<FluentInputLabel Label="FALSE value (text with priority)" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Value="@options.FalseValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
-							 ValueChanged=@((x)=> _optionsTextValueChanged(x, nameof(options.FalseValueOverrideText)))
+							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.FalseValueOverrideText),x))
 							 Placeholder="fill to override default value" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.FalseValueShowAsIcon" 
-							ValueChanged=@((x)=> _optionsBooleanValueChanged(x, nameof(options.FalseValueShowAsIcon)))
+			<FluentCheckbox Value="@options.FalseValueShowAsIcon"
+							ValueChanged=@((x)=> OptionsValueChanged(nameof(options.FalseValueShowAsIcon),x))
 							Label="render as icon" />
 		</FluentGridItem>
 	</FluentGrid>

@@ -10,8 +10,9 @@ internal partial class AppStateUseCase
 			return Task.FromResult(newState);
 		}
 		//SpaceDataList
-		if (newState.Space?.Id != oldState.Space?.Id)
-			newState = newState with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
+		//if (newState.Space?.Id != oldState.Space?.Id) //commented - there is a case when creating a new view which creates
+		//also a space data - the used data is not filled in, which this rule prevents
+		newState = newState with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
 		//SpaceData
 		if (routeState.SpaceDataId is not null)
 		{

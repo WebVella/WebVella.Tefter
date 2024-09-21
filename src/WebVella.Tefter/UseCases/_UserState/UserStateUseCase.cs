@@ -174,6 +174,20 @@ internal partial class UserStateUseCase
 		return Result.Ok(new TucUser(user));
 	}
 
+	public async Task<Result<TucUser>> SetStartUpUrl(Guid userId,
+		string url)
+	{
+		var user = await GetUserWithChecks(userId);
+		var userBld = _identityManager.CreateUserBuilder(user);
+		userBld
+		.WithStartUpUrl(url);
+		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
+		if (saveResult.IsFailed)
+			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
+		user = await GetUserWithChecks(userId);
+		return Result.Ok(new TucUser(user));
+	}
+
 	internal async Task SetUnprotectedLocalStorage(string key, string value)
 	{
 		await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, value);

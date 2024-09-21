@@ -31,6 +31,7 @@ public class UserSettings
 	public bool IsSidebarOpen { get; init; } = true;
 
 	public string CultureName { get; init; } = string.Empty;
+	public string StartUpUrl { get; init; } = null;
 }
 
 

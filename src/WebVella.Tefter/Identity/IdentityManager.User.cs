@@ -55,7 +55,8 @@ public partial class IdentityManager : IIdentityManager
 				.WithThemeMode(userDbo.Settings.ThemeMode)
 				.WithThemeColor(userDbo.Settings.ThemeColor)
 				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-				.WithCultureCode(userDbo.Settings.CultureName);
+				.WithCultureCode(userDbo.Settings.CultureName)
+				.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -94,7 +95,8 @@ public partial class IdentityManager : IIdentityManager
 				.WithThemeMode(userDbo.Settings.ThemeMode)
 				.WithThemeColor(userDbo.Settings.ThemeColor)
 				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-				.WithCultureCode(userDbo.Settings.CultureName);
+				.WithCultureCode(userDbo.Settings.CultureName)
+				.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -139,7 +141,8 @@ public partial class IdentityManager : IIdentityManager
 				.WithThemeMode(userDbo.Settings.ThemeMode)
 				.WithThemeColor(userDbo.Settings.ThemeColor)
 				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-				.WithCultureCode(userDbo.Settings.CultureName);
+				.WithCultureCode(userDbo.Settings.CultureName)
+				.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -179,7 +182,8 @@ public partial class IdentityManager : IIdentityManager
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-					.WithCultureCode(userDbo.Settings.CultureName);
+					.WithCultureCode(userDbo.Settings.CultureName)
+					.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 			}
 
 			if (userRolesDict.ContainsKey(userDbo.Id))
@@ -343,7 +347,8 @@ public partial class IdentityManager : IIdentityManager
 				.WithThemeMode(userDbo.Settings.ThemeMode)
 				.WithThemeColor(userDbo.Settings.ThemeColor)
 				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-				.WithCultureCode(userDbo.Settings.CultureName);
+				.WithCultureCode(userDbo.Settings.CultureName)
+				.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -382,7 +387,8 @@ public partial class IdentityManager : IIdentityManager
 				.WithThemeMode(userDbo.Settings.ThemeMode)
 				.WithThemeColor(userDbo.Settings.ThemeColor)
 				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-				.WithCultureCode(userDbo.Settings.CultureName);
+				.WithCultureCode(userDbo.Settings.CultureName)
+				.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -427,7 +433,8 @@ public partial class IdentityManager : IIdentityManager
 				.WithThemeMode(userDbo.Settings.ThemeMode)
 				.WithThemeColor(userDbo.Settings.ThemeColor)
 				.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-				.WithCultureCode(userDbo.Settings.CultureName);
+				.WithCultureCode(userDbo.Settings.CultureName)
+				.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 		}
 
 		return Result.Ok(userBuilder.Build());
@@ -467,7 +474,8 @@ public partial class IdentityManager : IIdentityManager
 					.WithThemeMode(userDbo.Settings.ThemeMode)
 					.WithThemeColor(userDbo.Settings.ThemeColor)
 					.WithOpenSidebar(userDbo.Settings.IsSidebarOpen)
-					.WithCultureCode(userDbo.Settings.CultureName);
+					.WithCultureCode(userDbo.Settings.CultureName)
+					.WithStartUpUrl(userDbo.Settings.StartUpUrl);
 			}
 
 			if (userRolesDict.ContainsKey(userDbo.Id))

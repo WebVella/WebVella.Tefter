@@ -126,6 +126,9 @@
   <data name="Logout" xml:space="preserve">
     <value>Излез</value>
   </data>
+  <data name="Startup URL was successfully changed!" xml:space="preserve">
+    <value>Стартиращият адрес е успешно променен!</value>
+  </data>
   <data name="The theme configurations were successfully changed!" xml:space="preserve">
     <value>Конфигурацията на темата бе успешно променена!</value>
   </data>

@@ -89,10 +89,10 @@
 									</FluentGridItem>
 									<FluentGridItem xs="6">
 										<FluentCombobox TOption="string"
-															Items="_options"
-															Value=@_getDataMappingValue(item.Alias)
-															Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(x,item.Alias))"
-															Label="@LOC("Data column name")" Style="width:100%" />
+														Items="_options"
+														Value=@_getDataMappingValue(item.Alias)
+														Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(x,item.Alias))"
+														Label="@LOC("Data column name")" Style="width:100%" />
 									</FluentGridItem>
 								</FluentGrid>
 							}
@@ -163,12 +163,37 @@
 											   Label="@LOC("Width, px")" Style="width:100%" Placeholder="@LOC("auto")" />
 						</FluentGridItem>
 						<FluentGridItem xs="6">
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentGrid>
+						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Color")" />
 							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
 								<FluentIcon Value="@TfConstants.RectangleIcon"
 											Color="Color.Custom" Style="height:100%;"
 											CustomColor="@(_form.Settings.Color.ToAttributeValue() != "default" ? _form.Settings.Color.ToAttributeValue() : "#036ac4" )" />
 								<FluentSelect @bind-SelectedOption="@_form.Settings.Color" TOption="OfficeColor"
+											  Items="@(Enum.GetValues<OfficeColor>())"
+											  Style="width:100%;"
+											  OptionText="@(p => p.ToString())">
+									<OptionTemplate Context="color">
+										<FluentStack>
+											<FluentIcon Value="@TfConstants.RectangleIcon"
+														Color="Color.Custom"
+														CustomColor="@(color.ToAttributeValue() != "default" ? color.ToAttributeValue() : "#036ac4" )" />
+											<FluentLabel>@color</FluentLabel>
+										</FluentStack>
+									</OptionTemplate>
+								</FluentSelect>
+							</FluentStack>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Background Color")" />
+							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
+								<FluentIcon Value="@TfConstants.RectangleIcon"
+											Color="Color.Custom" Style="height:100%;"
+											CustomColor="@(_form.Settings.BackgroundColor.ToAttributeValue() != "default" ? _form.Settings.BackgroundColor.ToAttributeValue() : "#036ac4" )" />
+								<FluentSelect @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="OfficeColor"
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionText="@(p => p.ToString())">

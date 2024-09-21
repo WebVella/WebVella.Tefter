@@ -3,11 +3,19 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 	var value = GetDataObjectByAlias<DateOnly>("Value", null);
-	<div>@value</div>
+	var options = GetOptions();
+	<span>@value?.ToString(options.Format)</span>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
-	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@options.Format" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.Format),x))
+							 Placeholder="eg. 'dd MMM yyyy'" />
+		</FluentGridItem>
+		<FluentGridItem xs="6"></FluentGridItem>
+	</FluentGrid>
 }
 else
 {

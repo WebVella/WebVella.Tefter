@@ -36,4 +36,6 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 
 public class TfDateOnlyDisplayColumnComponentOptions
 {
+	[JsonPropertyName("Format")]
+	public string Format { get; set; }
 }

@@ -96,6 +96,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		{
 			var item = (TucSpaceView)result.Data;
 			ToastService.ShowSuccess(LOC("Space view successfully created!"));
+
 			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.Id));
 		}
 	}

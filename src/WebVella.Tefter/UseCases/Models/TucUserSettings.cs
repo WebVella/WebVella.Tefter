@@ -9,6 +9,7 @@ public record TucUserSettings
 	public bool IsSidebarOpen { get; init; } = true;
 
 	public string CultureName { get; init; } = string.Empty;
+	public string StartUpUrl { get; init; } = string.Empty;
 
 	public TucUserSettings(){}
 	public TucUserSettings(UserSettings model){
@@ -16,6 +17,7 @@ public record TucUserSettings
 		ThemeColor = model.ThemeColor;
 		IsSidebarOpen = model.IsSidebarOpen;
 		CultureName = model.CultureName;
+		StartUpUrl = model.StartUpUrl;
 	}
 
 	public UserSettings ToModel()
@@ -26,6 +28,7 @@ public record TucUserSettings
 			ThemeMode = ThemeMode,
 			IsSidebarOpen = IsSidebarOpen,
 			ThemeColor = ThemeColor,
+			StartUpUrl = StartUpUrl
 		};
 	}
 }
