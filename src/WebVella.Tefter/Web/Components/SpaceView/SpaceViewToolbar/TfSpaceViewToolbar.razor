@@ -47,8 +47,8 @@
 		{
 			@if (Navigator.IsSpaceViewSavedUrlChanged(TfAppState.Value.ActiveSpaceViewSavedUrl.Url))
 			{
-				<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" BackgroundColor="@OfficeColor.PowerPoint.ToDescriptionString()" Color="white">
-					<FluentIcon Value="@TfConstants.GetIcon("Link")"/>
+				<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning"/>
 				</FluentButton>
 			}
 			else

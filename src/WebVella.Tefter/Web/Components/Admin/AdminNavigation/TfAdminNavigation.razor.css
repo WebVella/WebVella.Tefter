@@ -56,3 +56,26 @@
 		left: -10px;
 		width: 2px;
 	}
+
+.spacenav-nav--appbar {
+	max-height:calc(100vh - 100px);
+}
+
+::deep.spacenav-nav--appbar .fluent-nav-item a.active .positioning-region::before {
+	display: none;
+}
+
+::deep.spacenav-nav--appbar .fluent-nav-item.selected .positioning-region::before {
+	display:block !important;
+	content: "";
+	position: absolute;
+	background-color: var(--accent-fill-rest);
+	border-radius: calc(var(--control-corner-radius)* 1px);
+	right: unset;
+	left: -10px;
+	width: 3px;
+	height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+	margin: 0 2px;
+	/*top: 12px;*/
+	z-index:5;
+}

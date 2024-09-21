@@ -621,35 +621,36 @@ internal static class NavigatorExt
 		navigator.NavigateTo(TfConstants.NotFoundPageUrl, true);
 	}
 
-	//TODO BOZ
 	internal static bool IsSpaceViewSavedUrlChanged(this NavigationManager navigator, string url)
 	{
 		var savedUri = new Uri($"http://localhost{url}");
 		var currentUri = new Uri(navigator.Uri);
-		
-		//if(savedUri.LocalPath != currentUri.LocalPath) return true;
 
-		//var savedQueryDict = HttpUtility.ParseQueryString(currentUri.Query);
-		//var currentQueryDict = HttpUtility.ParseQueryString(currentUri.Query);
+		if (savedUri.LocalPath != currentUri.LocalPath) return true;
 
-		//foreach (string key in savedQueryDict.AllKeys)
-		//{
-		//	var valueInOtherDict = currentQueryDict[key];
-		//	if(valueInOtherDict is null || valueInOtherDict != savedQueryDict[key]) return true;
-		//}
-		
-		//foreach (string key in currentQueryDict.AllKeys)
-		//{
-		//	var valueInOtherDict = savedQueryDict[key];
-		//	if(valueInOtherDict is null || valueInOtherDict != currentQueryDict[key]) return true;
-		//}
-		var boz1 = new Uri($"http://localhost{url}?boz1=1&boz2=1");
-		var boz2 = new Uri($"http://localhost{url}?boz1=1&boz2=1");
-		var boz3 = new Uri($"http://localhost{url}?boz2=1&boz1=1");
+		var savedQueryDict = HttpUtility.ParseQueryString(savedUri.Query);
+		var currentQueryDict = HttpUtility.ParseQueryString(currentUri.Query);
 
-		var  result = Uri.Compare(boz1,boz2,UriComponents.Query,UriFormat.UriEscaped,StringComparison.InvariantCulture);
-		var  result2 = Uri.Compare(boz1,boz3,UriComponents.Query,UriFormat.UriEscaped,StringComparison.InvariantCulture);
+		var savedSortedDict = new SortedDictionary<string, string>();
+		var currentSortedDict = new SortedDictionary<string, string>();
 
+		foreach (string key in savedQueryDict.AllKeys)
+		{
+			if(key == TfConstants.ActiveSaveQueryName) continue;
+			savedSortedDict[key] = savedQueryDict[key];
+		}
+		foreach (string key in currentQueryDict.AllKeys)
+		{
+			if(key == TfConstants.ActiveSaveQueryName) continue;
+			currentSortedDict[key] = currentQueryDict[key];
+		}
+		if (savedSortedDict.Keys.Count != currentSortedDict.Keys.Count) return true;
+
+		foreach (var key in savedSortedDict.Keys)
+		{
+			if (!currentSortedDict.ContainsKey(key) || savedSortedDict[key] != currentSortedDict[key])
+				return true;
+		}
 		return false;
 	}
 

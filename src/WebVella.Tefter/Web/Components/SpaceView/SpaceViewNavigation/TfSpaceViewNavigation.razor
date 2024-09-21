@@ -1,5 +1,11 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
+<style>
+	.sidebar-nav{
+		--tf-space-color: @TfAppState.Value.SpaceColorString;
+		--tf-space-border-color: @TfAppState.Value.SpaceBorderColor;
+	}
+</style>
 <div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
 	<div class="sidebar-toolbar">
 		<div class="sidebar-toolbar-mode">
@@ -54,7 +60,7 @@
 		<FluentNavMenu Style="width:100%">
 			@foreach (var item in menuItems)
 			{
-				<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
+				<FluentNavLink Href="@item.Url" Class="@(item.Active ? "selected" : "")" Data="item" Id="@item.Id"
 							   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
 			}
 		</FluentNavMenu>

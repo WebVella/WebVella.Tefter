@@ -72,7 +72,7 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 				UserId = TfUserState.Value.CurrentUser.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
-				Name = TfAppState.Value.SpaceView.Name,
+				Name = TfAppState.Value.SpaceView.Name + " "+ DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 				Url = null
 			};
 			var result = await UC.CreateBookmarkAsync(submit);
@@ -111,7 +111,7 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 				UserId = TfUserState.Value.CurrentUser.Id,
 				CreatedOn = DateTime.Now,
 				Description = String.Empty,//initially nothing is added for convenience
-				Name = TfAppState.Value.SpaceView.Name,
+				Name = TfAppState.Value.SpaceView.Name + " "+ DateTime.Now.ToString("dd-MM-yyyy HH:mm"),
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
 			var result = await UC.CreateBookmarkAsync(submit);

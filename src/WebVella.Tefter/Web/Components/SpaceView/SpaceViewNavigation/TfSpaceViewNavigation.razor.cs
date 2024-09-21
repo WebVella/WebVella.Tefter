@@ -31,6 +31,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
 					Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id),
+					Active = record.Id == TfRouteState.Value.SpaceViewId
 				};
 				menuItems.Add(viewMenu);
 			}
@@ -50,6 +51,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
 					Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.SpaceViewId),
+					Active = record.SpaceViewId == TfRouteState.Value.SpaceViewId
 				};
 				menuItems.Add(viewMenu);
 			}
@@ -72,6 +74,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
 					Url = uri.LocalPath + "?" + queryDictionary.ToString(),
+					Active = record.Id == TfRouteState.Value.ActiveSaveId
 				};
 				menuItems.Add(viewMenu);
 			}

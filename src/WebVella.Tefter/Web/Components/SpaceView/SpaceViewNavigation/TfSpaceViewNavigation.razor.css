@@ -40,6 +40,11 @@
 		margin: 0;
 	}
 
+		::deep .sidebar-toolbar-mode .modebar .btn.active {
+			background:var(--tf-space-color);
+			border-color:var(--tf-space-border-color);
+		}
+
 		::deep .sidebar-toolbar-mode .modebar .btn.active, 
 		::deep .sidebar-toolbar-mode .modebar .btn.active svg {
 			color: var(--neutral-foreground-rest) !important;
@@ -75,4 +80,21 @@
 ::deep.sidebar-nav .load-more {
 	width: 100%;
 	margin-top: 1rem;
+}
+
+::deep .fluent-nav-menu .fluent-nav-item a.active .positioning-region::before {
+	display: none;
+}
+
+::deep .fluent-nav-menu .fluent-nav-item.selected a .positioning-region::before {
+	display:block !important;
+	content: "";
+	position: absolute;
+	background-color: var(--accent-fill-rest);
+	border-radius: calc(var(--control-corner-radius)* 1px);
+	right: unset;
+	width: 3px;
+	height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+	margin: 0 2px;
+	z-index:5;
 }
