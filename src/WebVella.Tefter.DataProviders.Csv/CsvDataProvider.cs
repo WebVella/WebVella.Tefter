@@ -81,68 +81,87 @@ public class CsvDataProvider : ITfDataProviderType
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
 		TfDataProvider provider)
 	{
-		var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson);
 
-		var config = new CsvConfiguration(CultureInfo.InvariantCulture)
-		{
-			PrepareHeaderForMatch = args => args.Header.ToLower(),
-			Encoding = Encoding.UTF8,
-			IgnoreBlankLines = true,
-			BadDataFound = null,
-			TrimOptions = TrimOptions.Trim,
-			HasHeaderRecord = true,
-			MissingFieldFound = null
-		};
-
-		switch (settings.Delimter)
-		{
-			case CsvDataProviderSettingsDelimter.Tab:
-				config.Delimiter = "\t";
-				break;
-			default:
-				break;
-		}
+		var currentCulture = Thread.CurrentThread.CurrentCulture;
+		var currentUICulture = Thread.CurrentThread.CurrentUICulture;
 
 		var result = new List<TfDataProviderDataRow>();
 
-		using (var reader = new StreamReader(settings.Filepath))
-		using (var csvReader = new CsvReader(reader, config))
+		try
 		{
+			var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson);
+			var culture = new CultureInfo(settings.CultureName);
 
-			csvReader.Read();
-			csvReader.ReadHeader();
+			Thread.CurrentThread.CurrentCulture = culture;
+			Thread.CurrentThread.CurrentCulture = culture;
 
-			var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
+			var config = new CsvConfiguration(culture)
+			{
+				PrepareHeaderForMatch = args => args.Header.ToLower(),
+				Encoding = Encoding.UTF8,
+				IgnoreBlankLines = true,
+				BadDataFound = null,
+				TrimOptions = TrimOptions.Trim,
+				HasHeaderRecord = true,
+				MissingFieldFound = null
+			};
 
-			while (csvReader.Read())
+			switch (settings.Delimter)
+			{
+				case CsvDataProviderSettingsDelimter.Tab:
+					config.Delimiter = "\t";
+					break;
+				default:
+					break;
+			}
+			
+
+			using (var reader = new StreamReader(settings.Filepath))
+			using (var csvReader = new CsvReader(reader, config))
 			{
 
-				Dictionary<string, string> sourceRow = new Dictionary<string, string>();
-				foreach (var column in csvReader.HeaderRecord)
-					sourceRow[column] = csvReader.GetField(column);
+				csvReader.Read();
+				csvReader.ReadHeader();
 
+				var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 
-				TfDataProviderDataRow row = new TfDataProviderDataRow();
-				foreach (var providerColumnWithSource in sourceColumns)
+				while (csvReader.Read())
 				{
-					try
+
+					Dictionary<string, string> sourceRow = new Dictionary<string, string>();
+					foreach (var column in csvReader.HeaderRecord)
+						sourceRow[column] = csvReader.GetField(column);
+
+
+					TfDataProviderDataRow row = new TfDataProviderDataRow();
+					foreach (var providerColumnWithSource in sourceColumns)
 					{
-						if (!sourceRow.ContainsKey(providerColumnWithSource.SourceName))
+						try
 						{
-							row.AddError($"Source column '{providerColumnWithSource.SourceName}' is not found in csv.");
-							continue;
+							if (!sourceRow.ContainsKey(providerColumnWithSource.SourceName))
+							{
+								row.AddError($"Source column '{providerColumnWithSource.SourceName}' is not found in csv.");
+								continue;
+							}
+
+							row[providerColumnWithSource.DbName] = ConvertValue(
+								providerColumnWithSource, 
+								sourceRow[providerColumnWithSource.SourceName]);
+
 						}
-
-						row[providerColumnWithSource.DbName] = ConvertValue(providerColumnWithSource, sourceRow[providerColumnWithSource.SourceName]);
-
+						catch (Exception ex)
+						{
+							row.AddError($"Exception while processing source row: {ex.Message}");
+						}
 					}
-					catch (Exception ex)
-					{
-						row.AddError($"Exception while processing source row: {ex.Message}");
-					}
+					result.Add(row);
 				}
-				result.Add(row);
 			}
+		}
+		finally
+		{
+			Thread.CurrentThread.CurrentCulture = currentCulture;
+			Thread.CurrentThread.CurrentUICulture = currentUICulture;
 		}
 
 		return result.AsReadOnly();
