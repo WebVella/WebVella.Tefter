@@ -3,10 +3,8 @@
 <div>
 	<div class="@($"spacenav-nav {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
 		<FluentNavMenu>
-			<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.DashboardIcon"
-						   Href="/" Match="@NavLinkMatch.All" title="@TfConstants.DashboardMenuTitle" />
-			<FluentNavLink Id="tf-fast-access-link" Icon="@TfConstants.FastAccessIcon"
-						   Href="/fast-access" Match="@NavLinkMatch.Prefix" title="@TfConstants.FastAccesMenuTitle" />
+			<FluentNavLink Id="tf-dashboard-link" Icon="@TfConstants.HomeIcon"
+						   Href="/" Match="@NavLinkMatch.All" title="@TfConstants.HomeMenuTitle" />
 		</FluentNavMenu>
 		<FluentDivider Class="nav-divider"></FluentDivider>
 	</div>

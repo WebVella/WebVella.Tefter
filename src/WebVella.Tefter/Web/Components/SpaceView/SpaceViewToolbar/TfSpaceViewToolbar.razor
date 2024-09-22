@@ -1,9 +1,8 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
 <div class="content-toolbar">
 	<div class="content-toolbar-left">
-		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")"/>
+		<FluentSearch Value="@TfAppState.Value.SpaceViewSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">@(TfAppState.Value.SpaceViewFilters?.Count ?? 0)</FluentBadge>
@@ -27,18 +26,38 @@
 			}
 		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
-			@LOC("Row Actions")
 			@if (TfAppState.Value.SelectedDataRows.Count > 0)
 			{
-				<span slot="start">
-					<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
-				</span>
+				<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
+
 		</FluentButton>
+		@if (TfAppState.Value.ActiveSpaceViewBookmark is not null)
+		{
+			<FluentButton Id="view-bookmark-selector" OnClick="OnBookmarkClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentButton>
+		}
+		@if (TfAppState.Value.ActiveSpaceViewSavedUrl is not null)
+		{
+			@if (Navigator.IsSpaceViewSavedUrlChanged(TfAppState.Value.ActiveSpaceViewSavedUrl.Url))
+			{
+				<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning"/>
+				</FluentButton>
+			}
+			else
+			{
+				<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				</FluentButton>
+			}
+		}
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton>
@@ -51,5 +70,7 @@
 <TfSpaceViewSettingsSelector @ref="_settingSelector" />
 <TfSpaceViewActionSelector @ref="_actionSelector" />
 <TfSpaceViewShareSelector @ref="_shareSelector" />
+<TfSpaceViewBookmarkSelector @ref="_bookmarkSelector" />
+<TfSpaceViewLinkSaveSelector @ref="_saveSelector" />
 
 

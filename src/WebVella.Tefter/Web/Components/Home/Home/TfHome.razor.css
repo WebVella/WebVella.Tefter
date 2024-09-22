@@ -1,0 +1,14 @@
+﻿::deep .tf-card + .tf-card {
+	margin-top:1rem;
+}
+::deep .tf-grid-td fluent-badge {
+	margin-right:5px;
+	width:70px;
+}
+::deep .tf-grid-td fluent-badge::part(control) {
+	background:var(--neutral-stroke-rest);
+}
+
+::deep .tf-grid-td .td-description {
+	margin-top:5px;
+}

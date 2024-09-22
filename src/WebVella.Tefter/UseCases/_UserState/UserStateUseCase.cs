@@ -39,7 +39,6 @@ internal partial class UserStateUseCase
 		var uri = new Uri(_navigationManager.Uri);
 		if (
 			urlData.FirstNode == RouteDataFirstNode.Home
-			|| urlData.FirstNode == RouteDataFirstNode.FastAccess
 			|| urlData.FirstNode == RouteDataFirstNode.Space
 			)
 		{
@@ -171,6 +170,20 @@ internal partial class UserStateUseCase
 		await RemoveUnprotectedLocalStorage(TfConstants.UIThemeLocalKey);
 		var themeSetting = new TucThemeSettings { ThemeMode = themeMode, ThemeColor = themeColor };
 		await SetUnprotectedLocalStorage(TfConstants.UIThemeLocalKey, JsonSerializer.Serialize(themeSetting));
+		user = await GetUserWithChecks(userId);
+		return Result.Ok(new TucUser(user));
+	}
+
+	public async Task<Result<TucUser>> SetStartUpUrl(Guid userId,
+		string url)
+	{
+		var user = await GetUserWithChecks(userId);
+		var userBld = _identityManager.CreateUserBuilder(user);
+		userBld
+		.WithStartUpUrl(url);
+		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
+		if (saveResult.IsFailed)
+			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
 		user = await GetUserWithChecks(userId);
 		return Result.Ok(new TucUser(user));
 	}

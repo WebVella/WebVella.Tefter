@@ -14,17 +14,16 @@ public partial class TfConstants
 		}
 	}
 
-	public static Icon DashboardIcon = GetIcon("Board");
-	public static string DashboardMenuTitle = "Dashboard";
+	public static Icon HomeIcon = GetIcon("Home");
+	public static string HomeMenuTitle = "Home";
 
-	public static Icon FastAccessIcon = GetIcon("VideoPersonStar");
-	public static string FastAccesMenuTitle = "Fast Access";
+	public static Icon BookmarkONIcon = GetIcon("Bookmark", variant: IconVariant.Filled);
+	public static Icon BookmarkOFFIcon = GetIcon("Bookmark");
+	public static Icon BookmarkRemoveIcon = GetIcon("BookmarkOff");
+	public static Icon BookmarkEditIcon = GetIcon("BookmarkSearch");
 
-	public static Icon BookmarkONIcon = GetIcon("Star", variant: IconVariant.Filled);
-	public static Icon BookmarkOFFIcon = GetIcon("Star");
-
-	public static Icon SpaceIcon = GetIcon("VideoPersonStar");
-	public static Icon SpaceViewIcon = GetIcon("Grid");
+	public static Icon SpaceIcon = GetIcon("Folder");
+	public static Icon SpaceViewIcon = GetIcon("Table");
 	public static Icon SpaceDataIcon = GetIcon("Database");
 
 

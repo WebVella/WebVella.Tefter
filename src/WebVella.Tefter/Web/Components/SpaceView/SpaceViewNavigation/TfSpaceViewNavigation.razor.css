@@ -40,6 +40,12 @@
 		margin: 0;
 	}
 
+		::deep .sidebar-toolbar-mode .modebar .btn.active,
+		::deep .sidebar-toolbar-mode .modebar fluent-button.active::part(control){
+			background:var(--tf-space-color);
+			border-color:var(--tf-space-color);
+		}
+
 		::deep .sidebar-toolbar-mode .modebar .btn.active, 
 		::deep .sidebar-toolbar-mode .modebar .btn.active svg {
 			color: var(--neutral-foreground-rest) !important;
@@ -51,15 +57,15 @@
 			margin-left: 0;
 		}
 
-		::deep .sidebar-toolbar-mode .modebar .btn.tree {
+		::deep .sidebar-toolbar-mode .modebar .btn.views {
 			border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
 		}
 
-		::deep .sidebar-toolbar-mode .modebar .btn.bookmark {
+		::deep .sidebar-toolbar-mode .modebar .btn.bookmarks {
 			border-radius: 0;
 		}
 
-		::deep .sidebar-toolbar-mode .modebar .btn.save {
+		::deep .sidebar-toolbar-mode .modebar .btn.saves {
 			border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
 		}
 
@@ -76,3 +82,32 @@
 	width: 100%;
 	margin-top: 1rem;
 }
+
+::deep .fluent-nav-menu .fluent-nav-item a.active .positioning-region::before {
+	display: none;
+}
+
+::deep .fluent-nav-menu .fluent-nav-item.selected a .positioning-region::before {
+	display:block !important;
+	content: "";
+	position: absolute;
+	background-color: var(--accent-fill-rest);
+	border-radius: calc(var(--control-corner-radius)* 1px);
+	right: unset;
+	width: 3px;
+	height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+	margin: 0 2px;
+	z-index:5;
+}
+
+::deep fluent-switch:not(.checked)::part(switch) {
+	border-color:var(--tf-space-border-color);
+}
+
+::deep fluent-switch.checked::part(switch) {
+	background:var(--tf-space-color);
+}
+/*
+::deep fluent-switch::part(switch) {
+	background:var(--tf-space-color);
+}*/

@@ -1,8 +1,9 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminNavigation.TfAdminNavigation","WebVella.Tefter")]
-public partial class TfAdminNavigation: TfBaseComponent
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminNavigation.TfAdminNavigation", "WebVella.Tefter")]
+public partial class TfAdminNavigation : TfBaseComponent
 {
-
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	private List<MenuItem> menuItems = new List<MenuItem>();
 
 	protected override void OnInitialized()
@@ -11,9 +12,11 @@ public partial class TfAdminNavigation: TfBaseComponent
 		generateMenu();
 	}
 
-	private void generateMenu(){ 
+	private void generateMenu()
+	{
 		menuItems.Clear();
-		menuItems.Add(new MenuItem(){ 
+		menuItems.Add(new MenuItem()
+		{
 			Id = "tf-dashboard-link",
 			Icon = TfConstants.AdminDashboardIcon,
 			IconColor = TfConstants.AdminThemeColor,
@@ -52,8 +55,27 @@ public partial class TfAdminNavigation: TfBaseComponent
 		});
 	}
 
-	private void _addSpaceHandler(){
+	private void _addSpaceHandler()
+	{
 		ToastService.ShowToast(ToastIntent.Warning, "Will open add new space modal");
+	}
+
+	private string _spaceSelectedClass(string url)
+	{
+		var uri = new Uri(Navigator.Uri);
+		if (url == TfConstants.AdminPageUrl)
+		{
+			if (uri.LocalPath == url)
+				return "selected";
+			else
+				return "";
+		}
+
+
+		if (uri.LocalPath.StartsWith(url))
+			return "selected";
+
+		return "";
 	}
 
 }

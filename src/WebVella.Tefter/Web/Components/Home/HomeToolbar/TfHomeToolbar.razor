@@ -1,0 +1,18 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="home-toolbar">
+	<FluentSearch Value="@TfAppState.Value.HomeSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
+	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInBookmarks ? Appearance.Accent : Appearance.Outline)"
+				  OnClick="@(() => _toggleFilter("HomeSearchInBookmarks"))">
+		<FluentIcon Value="@TfConstants.BookmarkONIcon" />
+	</FluentButton>
+	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInSaves ? Appearance.Accent : Appearance.Outline)"
+				  OnClick="@(() => _toggleFilter("HomeSearchInSaves"))">
+		<FluentIcon Value="@TfConstants.SaveIcon" />
+	</FluentButton>
+	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInViews ? Appearance.Accent : Appearance.Outline)"
+				  OnClick="@(() => _toggleFilter("HomeSearchInViews"))">
+		<FluentIcon Value="@TfConstants.SpaceViewIcon"/>
+	</FluentButton>
+</div>

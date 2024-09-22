@@ -1,31 +1,34 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
-
 @if (_open)
 {
 	<div class="view-setting-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector" UseMenuService="false">
-			<FluentMenuItem>
-				Bookmark
-				<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem Disabled="true">
-				Save view
-				<FluentIcon Value="@TfConstants.SaveIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentMenuItem>
-				Save view as
-				<FluentIcon Value="@TfConstants.GetIcon("SaveCopy")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentDivider />
+			@if (TfAppState.Value.ActiveSpaceViewBookmark is null || TfAppState.Value.ActiveSpaceViewSavedUrl is null)
+			{
+				@if (TfAppState.Value.ActiveSpaceViewBookmark is null)
+				{
+					<FluentMenuItem OnClick="_bookmarkView">
+						@LOC("Bookmark View")
+						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+					</FluentMenuItem>
+				}
+				@if (TfAppState.Value.ActiveSpaceViewSavedUrl is null)
+				{
+					<FluentMenuItem OnClick="_saveViewUrl">
+						@LOC("Save URL")
+						<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+					</FluentMenuItem>
+				}
+				<FluentDivider />
+			}
 			<FluentMenuItem OnClick="_manageView">
 				Manage View
 				<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_deleteView">
 				Delete View
-				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error"/>
+				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
 			</FluentMenuItem>
 			<FluentMenuItem>
 				Manage Access

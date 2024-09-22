@@ -63,7 +63,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		base.OnParametersSet();
 		if (String.IsNullOrWhiteSpace(Context.CustomOptionsJson))
 		{
-			options = default;
+			options = Activator.CreateInstance<TItem>();
 			optionsSerialized = JsonSerializer.Serialize(options);
 		}
 		else if (Context.CustomOptionsJson != optionsSerialized)
@@ -139,9 +139,10 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		else if (typeof(T) == typeof(DateOnly))
 		{
 			if (value is DateOnly) return (T)value;
-			if (DateOnly.TryParse(value.ToString(), out DateOnly outVal))
+			//safer to cast to datetime and then get dateonly
+			if (DateTime.TryParse(value.ToString(), out DateTime outVal))
 			{
-				return (T)(object)outVal;
+				return (T)(object)(new DateOnly(outVal.Year, outVal.Month, outVal.Day));
 			}
 			return null;
 		}
@@ -184,6 +185,16 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 
 		return null;
 	}
+
+	protected async Task OptionsValueChanged(string propName, object value){ 
+		
+		PropertyInfo propertyInfo = typeof(TItem).GetProperty(propName);
+		if(propertyInfo is null) return;
+		propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+		if (!ValueChanged.HasDelegate) return;
+		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(options));
+	}
+
 	public TItem GetOptions()
 	{
 		if (String.IsNullOrWhiteSpace(Context.CustomOptionsJson))

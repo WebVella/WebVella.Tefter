@@ -45,6 +45,7 @@ public partial class TfUserStateManager : FluxorComponent
 		using (await locker.LockAsync())
 		{
 			var state = await UC.InitUserState();
+			var uri = new Uri(Navigator.Uri);
 			if (state is null || state.CurrentUser is null)
 			{
 				Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
@@ -54,6 +55,10 @@ public partial class TfUserStateManager : FluxorComponent
 			{
 				Navigator.ReloadCurrentUrl();
 				return;
+			}
+			else if(uri.LocalPath == "/" && !String.IsNullOrWhiteSpace(state.CurrentUser.Settings.StartUpUrl)){ 
+
+				Navigator.NavigateTo(state.CurrentUser.Settings.StartUpUrl);
 			}
 			//Setup states
 			Dispatcher.Dispatch(new SetUserStateAction(

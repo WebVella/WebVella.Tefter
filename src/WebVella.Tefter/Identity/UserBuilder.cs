@@ -15,6 +15,7 @@ public class UserBuilder
 	private OfficeColor _themeColor;
 	private bool _sidebarOpen;
 	private string _cultureCode;
+	private string _startUpUrl;
 
 	private List<Role> _roles = new();
 
@@ -38,6 +39,7 @@ public class UserBuilder
 			_themeColor = user.Settings.ThemeColor;
 			_sidebarOpen = (user?.Settings?.IsSidebarOpen) ?? true;
 			_cultureCode = (user?.Settings?.CultureName) ?? string.Empty;
+			_startUpUrl = (user?.Settings?.StartUpUrl) ?? string.Empty;
 			_roles = user.Roles.ToList();
 		}
 	}
@@ -108,6 +110,12 @@ public class UserBuilder
 		return this;
 	}
 
+	public UserBuilder WithStartUpUrl(string url)
+	{
+		_startUpUrl = url;
+		return this;
+	}
+
 	public UserBuilder WithRoles(params Role[] roles)
 	{
 		if (roles == null || roles.Length == 0)
@@ -168,7 +176,8 @@ public class UserBuilder
 				IsSidebarOpen = _sidebarOpen,
 				ThemeColor = _themeColor,
 				ThemeMode = _themeMode,
-				CultureName = _cultureCode
+				CultureName = _cultureCode,
+				StartUpUrl = _startUpUrl
 			}
 		};
 	}

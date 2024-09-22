@@ -3,7 +3,7 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 	var value = GetDataObjectByAlias<Guid>("Value", null);
-	<div>@value</div>
+	<span>@value</span>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {

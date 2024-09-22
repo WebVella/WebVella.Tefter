@@ -7,6 +7,12 @@ public partial class TfConstants
 	public static string SearchQueryName = "sch";
 	public static string FiltersQueryName = "flt";
 	public static string SortsQueryName = "srt";
+	public static string ActiveSaveQueryName = "svid";
+
+	public static string SearchInBookmarksQueryName = "sbkm";
+	public static string SearchInSavesQueryName = "ssvs";
+	public static string SearchInViewsQueryName = "svws";
+
 
 	public static string NotFoundPageUrl = "/404";
 	public static string LoginPageUrl  = "/login";
@@ -37,10 +43,6 @@ public partial class TfConstants
 	public static string AdminDataProviderSynchronizationPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSynchronization}";
 	public static string AdminDataProviderDataPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameData}";
 	public static string AdminSharedColumnsPageUrl  = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";
-
-
-	public static string RouteNameFastAccess  = "fast-access";
-	public static string FastAccessPageUrl  = $"/{RouteNameFastAccess}";
 
 	public static string RouteNameSpace  = "space";
 	public static string RouteNameSpaceView  = "view";

@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitAdminDataProviderAsync(TucUser currentUser, TfRouteState routeState, 
+	internal async Task<TfAppState> InitAdminDataProviderAsync(TucUser currentUser, TfRouteState routeState,
 		TfAppState newState, TfAppState oldState)
 	{
 		if (
@@ -32,6 +32,8 @@ internal partial class AppStateUseCase
 				AdminDataProviders = await GetDataProvidersAsync()
 			};
 
+		newState = newState with { DataProviderTypes = await GetProviderTypesAsync() };
+
 		//AdminManagedUser, DataProviderTypes, DataProviderSyncTasks, DataProviderSyncTasks, 
 		if (routeState.DataProviderId.HasValue)
 		{
@@ -54,8 +56,6 @@ internal partial class AppStateUseCase
 				{
 				}
 			}
-
-			newState = newState with { DataProviderTypes = await GetProviderTypesAsync() };
 
 			if (routeState.ThirdNode == RouteDataThirdNode.Synchronization)
 			{
@@ -101,7 +101,7 @@ internal partial class AppStateUseCase
 
 		if (srvResult.Value is null) return Task.FromResult(new List<TucDataProvider>());
 
-		var orderedResults = srvResult.Value.OrderBy(x=> x.Name);
+		var orderedResults = srvResult.Value.OrderBy(x => x.Name);
 
 		var records = new List<TfDataProvider>();
 		if (!String.IsNullOrWhiteSpace(search))

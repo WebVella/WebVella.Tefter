@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (_open)
+{
+	<div class="view-export-selector-menu">
+		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-bookmark-selector" UseMenuService="false">
+			<FluentMenuItem OnClick="_bookmarkEdit">
+				@LOC("Edit Bookmark")
+				<FluentIcon Value="@TfConstants.BookmarkEditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_bookmarkRemove">
+				@LOC("Remove Bookmark")
+				<FluentIcon Value="@TfConstants.BookmarkRemoveIcon" Slot="start" Color="@Color.Error"  />
+			</FluentMenuItem>
+		</FluentMenu>
+	</div>
+
+}
+

@@ -7,6 +7,7 @@ public partial class TfUserNavigation
 	[Inject] private UserStateUseCase UC { get; set; }
 
 	private bool _visible = false;
+	private bool _helpVisible = false;
 	private bool _isAdmin = false;
 	private bool _auxLoaded = false;
 
@@ -74,8 +75,8 @@ public partial class TfUserNavigation
 				{
 					ToastService.ShowSuccess(LOC("The theme configurations were successfully changed!"));
 					Dispatcher.Dispatch(new SetUserStateAction(
-						component:this,
-						state: TfUserState.Value with { CurrentUser = resultSrv.Value}));
+						component: this,
+						state: TfUserState.Value with { CurrentUser = resultSrv.Value }));
 				}
 			}
 			catch (Exception ex)
@@ -87,17 +88,35 @@ public partial class TfUserNavigation
 		}
 	}
 
+	private async Task _setUrlAsStartup()
+	{
+		var uri = new Uri(Navigator.Uri);
+		try
+		{
+			var resultSrv = await UC.SetStartUpUrl(
+						userId: TfUserState.Value.CurrentUser.Id,
+						url: uri.PathAndQuery
+					);
+			ProcessServiceResponse(resultSrv);
+			if (resultSrv.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
+				Dispatcher.Dispatch(new SetUserStateAction(
+					component: this,
+					state: TfUserState.Value with { CurrentUser = resultSrv.Value }));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}
+
 	private async Task _logout()
 	{
 		await IdentityManager.LogoutAsync(JSRuntime);
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}
-
-	private void _helpClick()
-	{
-		ToastService.ShowToast(ToastIntent.Warning, "Dropdown with menu to help section, license and about Tefter.bg");
-	}
-
 
 }

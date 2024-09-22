@@ -2,12 +2,18 @@
 @inherits TfBaseViewColumn<TfNumberDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataObjectByAlias<decimal>("Value", null);
-	<div>@value</div>
+	<span>@_getCastedValue()</span>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
-	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@options.Format" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.Format),x))
+							 Placeholder="eg. 'N3'" />
+		</FluentGridItem>
+		<FluentGridItem xs="6"></FluentGridItem>
+	</FluentGrid>
 }
 else
 {

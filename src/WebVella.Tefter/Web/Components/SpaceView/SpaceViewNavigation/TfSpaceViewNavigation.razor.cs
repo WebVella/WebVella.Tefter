@@ -8,28 +8,76 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 
 	private bool _settingsMenuVisible = false;
 	private string search = null;
-
-
+	private TfSpaceViewNavigationActiveTab _activeTab = TfSpaceViewNavigationActiveTab.Views;
+	private bool _isLoading = false;
+	private bool _linksFromAllViews = false;
 	private List<MenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
 		var menuItems = new List<MenuItem>();
-		foreach (var view in TfAppState.Value.SpaceViewList)
+		if (_activeTab == TfSpaceViewNavigationActiveTab.Views)
 		{
-			if (!String.IsNullOrWhiteSpace(search) && !view.Name.ToLowerInvariant().Contains(search))
-				continue;
-
-			var viewMenu = new MenuItem
+			foreach (var record in TfAppState.Value.SpaceViewList.OrderBy(x => x.Name))
 			{
-				Id = RenderUtils.ConvertGuidToHtmlElementId(view.Id),
-				Icon = TfConstants.SpaceViewIcon,
-				Match = NavLinkMatch.Prefix,
-				Title = view.Name,
-				Url = String.Format(TfConstants.SpaceViewPageUrl, view.SpaceId, view.Id),
-			};
-			menuItems.Add(viewMenu);
-		}
+				if (!String.IsNullOrWhiteSpace(search) && !record.Name.ToLowerInvariant().Contains(search))
+					continue;
 
+				var viewMenu = new MenuItem
+				{
+					Id = RenderUtils.ConvertGuidToHtmlElementId(record.Id),
+					Icon = TfConstants.SpaceViewIcon,
+					Match = NavLinkMatch.Prefix,
+					Title = record.Name,
+					Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id),
+					Active = record.Id == TfRouteState.Value.SpaceViewId
+				};
+				menuItems.Add(viewMenu);
+			}
+		}
+		else if (_activeTab == TfSpaceViewNavigationActiveTab.Bookmarks)
+		{
+			foreach (var record in TfAppState.Value.CurrentUserBookmarks
+				.Where(x => x.SpaceId == TfAppState.Value.Space.Id).OrderBy(x => x.Name))
+			{
+				if (!String.IsNullOrWhiteSpace(search) 
+					&& !(record.Name.ToLowerInvariant().Contains(search) || record.Description.ToLowerInvariant().Contains(search)))
+					continue;
+
+				var viewMenu = new MenuItem
+				{
+					Id = RenderUtils.ConvertGuidToHtmlElementId(record.Id),
+					Icon = TfConstants.BookmarkOFFIcon,
+					Match = NavLinkMatch.Prefix,
+					Title = record.Name,
+					Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.SpaceViewId),
+					Active = record.SpaceViewId == TfRouteState.Value.SpaceViewId
+				};
+				menuItems.Add(viewMenu);
+			}
+		}
+		else if (_activeTab == TfSpaceViewNavigationActiveTab.Saves)
+		{
+			foreach (var record in TfAppState.Value.CurrentUserSaves
+				.Where(x => x.SpaceId == TfAppState.Value.Space.Id).OrderBy(x => x.Name))
+			{
+				if (!String.IsNullOrWhiteSpace(search) 
+					&& !(record.Name.ToLowerInvariant().Contains(search) || record.Description.ToLowerInvariant().Contains(search)))
+					continue;
+
+				if(!_linksFromAllViews && record.SpaceViewId != TfAppState.Value.SpaceView.Id) continue;
+
+				var viewMenu = new MenuItem
+				{
+					Id = RenderUtils.ConvertGuidToHtmlElementId(record.Id),
+					Icon = TfConstants.GetIcon("Link"),
+					Match = NavLinkMatch.Prefix,
+					Title = record.Name,
+					Url = NavigatorExt.AddQueryValueToUri(record.Url, TfConstants.ActiveSaveQueryName,record.Id.ToString()),
+					Active = record.Id == TfRouteState.Value.ActiveSaveId
+				};
+				menuItems.Add(viewMenu);
+			}
+		}
 		return menuItems;
 	}
 
@@ -48,6 +96,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		{
 			var item = (TucSpaceView)result.Data;
 			ToastService.ShowSuccess(LOC("Space view successfully created!"));
+
 			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.Id));
 		}
 	}
@@ -98,4 +147,24 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	{
 		search = value;
 	}
+
+	private void _setActiveTab(TfSpaceViewNavigationActiveTab tab)
+	{
+		if (_activeTab == tab) return;
+		_activeTab = tab;
+		_getMenu();
+	}
+
+	private string _getActiveClass(TfSpaceViewNavigationActiveTab tab)
+	{
+		return _activeTab == tab ? "active" : "";
+	}
 }
+
+public enum TfSpaceViewNavigationActiveTab
+{
+	Views = 0,
+	Bookmarks = 1,
+	Saves = 2
+}
+

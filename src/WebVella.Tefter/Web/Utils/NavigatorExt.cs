@@ -95,14 +95,6 @@ internal static class NavigatorExt
 			}
 
 		}
-		else if (result.NodesDict[0] == TfConstants.RouteNameFastAccess)
-		{
-			result = result with { FirstNode = RouteDataFirstNode.FastAccess };
-			if (result.NodesDict.Count == 1)
-			{
-				result = result with { SecondNode = RouteDataSecondNode.Dashboard };
-			}
-		}
 		else if (result.NodesDict[0] == TfConstants.RouteNameSpace)
 		{
 			result = result with { FirstNode = RouteDataFirstNode.Space };
@@ -162,18 +154,27 @@ internal static class NavigatorExt
 		List<TucSort> sorts = null;
 		var sortString = GetStringFromQuery(uri, TfConstants.SortsQueryName, null);
 		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
+
+		Guid? activeSaveId = GetGuidFromQuery(uri, TfConstants.ActiveSaveQueryName, null);
+		bool searchInBookmarks = GetBooleanFromQuery(uri, TfConstants.SearchInBookmarksQueryName, true).Value;
+		bool searchInSaves = GetBooleanFromQuery(uri, TfConstants.SearchInSavesQueryName, true).Value;
+		bool searchInViews = GetBooleanFromQuery(uri, TfConstants.SearchInViewsQueryName, true).Value;
+
 		result = result with
 		{
 			Page = page,
 			PageSize = pageSize,
 			Search = search,
 			Filters = filters,
-			Sorts = sorts
+			Sorts = sorts,
+			ActiveSaveId = activeSaveId,
+			SearchInBookmarks = searchInBookmarks,
+			SearchInSaves = searchInSaves,
+			SearchInViews = searchInViews
 		};
 
 		return result;
 	}
-
 
 	internal static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
 	{
@@ -505,6 +506,14 @@ internal static class NavigatorExt
 		return result;
 	}
 
+	internal static string AddQueryValueToUri(string url, string paramName, string value)
+	{
+		var uri = new Uri($"http://localhost{url}");
+		var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
+		queryDictionary[paramName] = value;
+
+		return uri.LocalPath + "?" + queryDictionary.ToString();
+	}
 
 	internal static string ProcessQueryValueFromUrl(string queryValue)
 	{
@@ -617,5 +626,37 @@ internal static class NavigatorExt
 		navigator.NavigateTo(TfConstants.NotFoundPageUrl, true);
 	}
 
+	internal static bool IsSpaceViewSavedUrlChanged(this NavigationManager navigator, string url)
+	{
+		var savedUri = new Uri($"http://localhost{url}");
+		var currentUri = new Uri(navigator.Uri);
+
+		if (savedUri.LocalPath != currentUri.LocalPath) return true;
+
+		var savedQueryDict = HttpUtility.ParseQueryString(savedUri.Query);
+		var currentQueryDict = HttpUtility.ParseQueryString(currentUri.Query);
+
+		var savedSortedDict = new SortedDictionary<string, string>();
+		var currentSortedDict = new SortedDictionary<string, string>();
+
+		foreach (string key in savedQueryDict.AllKeys)
+		{
+			if (key == TfConstants.ActiveSaveQueryName) continue;
+			savedSortedDict[key] = savedQueryDict[key];
+		}
+		foreach (string key in currentQueryDict.AllKeys)
+		{
+			if (key == TfConstants.ActiveSaveQueryName) continue;
+			currentSortedDict[key] = currentQueryDict[key];
+		}
+		if (savedSortedDict.Keys.Count != currentSortedDict.Keys.Count) return true;
+
+		foreach (var key in savedSortedDict.Keys)
+		{
+			if (!currentSortedDict.ContainsKey(key) || savedSortedDict[key] != currentSortedDict[key])
+				return true;
+		}
+		return false;
+	}
 
 }

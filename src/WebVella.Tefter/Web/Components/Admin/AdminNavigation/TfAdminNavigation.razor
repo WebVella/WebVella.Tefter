@@ -1,5 +1,13 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<TfAppBar Items="menuItems" Style="max-height:calc(100vh - 100px)" />
+<div class="@($"spacenav-nav spacenav-nav--appbar  {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+	<FluentNavMenu>
+		@foreach (var item in menuItems)
+		{
+			<FluentNavLink Href="@item.Url" title="@item.Title" Class="@_spaceSelectedClass(item.Url)"
+						   Icon="@item.Icon.WithColor(item.IconColor.ToAttributeValue())" IconColor="Color.Custom" />
+		}
+	</FluentNavMenu>
+</div>
 

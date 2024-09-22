@@ -1,19 +1,23 @@
-﻿namespace WebVella.Tefter.UseCases.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.UseCases.Models;
 
 public record TucBookmark
 {
-	public Guid Id { get; init; }
-	public string Name { get; init; }
-	public string Description { get; init; }
-	public string Url { get; init; }
-	public DateTime CreatedOn { get; init; }
-	public Guid UserId { get; init; }
-	public Guid SpaceViewId { get; init; }
-	public string SpaceViewName { get; init; }
-	public string SpaceName { get; init; }
+	public Guid Id { get; set; }
+	[Required(ErrorMessage = "required")]
+	public string Name { get; set; }
+	public string Description { get; set; }
+	public string Url { get; set; }
+	public DateTime CreatedOn { get; set; }
+	public Guid UserId { get; set; }
+	public Guid SpaceViewId { get; set; }
+	public string SpaceViewName { get; set; }
+	public string SpaceName { get; set; }
 	public OfficeColor SpaceColor { get; set; } = OfficeColor.Default;
 	public Icon SpaceIcon { get; set; } = null;
-	public List<TucTag> Tags { get; init; } = new();
+	public Guid SpaceId { get; set; }
+	public List<TucTag> Tags { get; set; } = new();
 
 	public TucBookmark() { }
 	public TucBookmark(TfBookmark model)

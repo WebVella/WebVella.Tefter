@@ -15,12 +15,12 @@
 			}
 			else
 			{
-				<TfLanguageSwitch/>
-				<TfNotificationCenter/>
+				<TfLanguageSwitch />
+				<TfNotificationCenter />
 				<FluentAnchor Appearance="@Appearance.Stealth" Href="@TfConstants.AdminPageUrl" Title="Administration">
 					<FluentIcon Value="@TfConstants.GetIcon("AppFolder")" Color="@Color.Neutral" />
 				</FluentAnchor>
-				<FluentButton Appearance="@Appearance.Stealth" OnClick="_helpClick" Title="Help">
+				<FluentButton Appearance="@Appearance.Stealth" OnClick="@(() => _helpVisible = !_helpVisible)" Title="Help" Id="help-switch-btn">
 					<FluentIcon Value="@TfConstants.GetIcon("QuestionCircle")" Color="@Color.Neutral" />
 				</FluentButton>
 
@@ -38,6 +38,12 @@
 				</span>
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
+			<FluentMenuItem OnClick="_setUrlAsStartup">
+				@LOC("Set as Startup URL")
+				<span slot="start">
+					<FluentIcon Value="@TfConstants.GetIcon("Pin")" Slot="start" />
+				</span>
+			</FluentMenuItem>
 			<FluentMenuItem OnClick="_setTheme">
 				@LOC("Change Theme")
 				<span slot="start">
@@ -51,6 +57,13 @@
 					<FluentIcon Value="@TfConstants.GetIcon("SignOut")" Slot="start" />
 				</span>
 			</FluentMenuItem>
+		</FluentMenu>
+
+		<FluentMenu Width="200" @bind-Open="_helpVisible" Anchor="help-switch-btn" UseMenuService="false">
+			<FluentMenuItem Href="https://tefter.bg/docs">Online Documentation</FluentMenuItem>
+			<FluentMenuItem Href="https://tefter.bg">Tefter website</FluentMenuItem>
+			<FluentMenuItem Disabled>Non commercial use license</FluentMenuItem>
+			<FluentMenuItem Disabled>Tefter v1.23</FluentMenuItem>
 		</FluentMenu>
 	}
 </div>

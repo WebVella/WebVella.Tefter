@@ -1,19 +1,29 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
+<style>
+	.sidebar-nav {
+		--tf-space-color: @TfAppState.Value.SpaceColorString;
+		--tf-space-border-color: @TfAppState.Value.SpaceBorderColor;
+	}
+</style>
 <div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
 	<div class="sidebar-toolbar">
 		<div class="sidebar-toolbar-mode">
 			<FluentToolbar Class="modebar">
-				<FluentButton Class="btn tree active" Title="show tree" BackgroundColor="@TfAppState.Value.SpaceColorString"
-							  Style="@($"border-color:{TfAppState.Value.SpaceBorderColor} !important")">
-					<FluentIcon Value="@TfConstants.SpaceViewIcon" />
+				<FluentButton Class="@($"btn views {_getActiveClass(TfSpaceViewNavigationActiveTab.Views)}")" Title="views"
+							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Views))"
+							  Appearance="Appearance.Outline">
+					<FluentIcon Value="@TfConstants.SpaceViewIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentButton>
-				<FluentButton Class="btn bookmark" Title="show bookmarked" Appearance="@Appearance.Outline">
+				<FluentButton Class="@($"btn bookmarks {_getActiveClass(TfSpaceViewNavigationActiveTab.Bookmarks)}")" Title="bookmarks"
+							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Bookmarks))"
+							  Appearance="Appearance.Outline">
 					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentButton>
-				<FluentButton Class="btn save" Title="show saved" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.SaveIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentButton Class="@($"btn saves {_getActiveClass(TfSpaceViewNavigationActiveTab.Saves)}")" Title="saved URLs"
+							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Saves))"
+							  Appearance="Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentButton>
 			</FluentToolbar>
 		</div>
@@ -44,13 +54,26 @@
 		</div>
 	</div>
 	<div class="sidebar-inner">
+		@{
+			var menuItems = _getMenu();
+		}
+		@if (_activeTab == TfSpaceViewNavigationActiveTab.Saves)
+		{
+			<div style="text-align:right">
+				<FluentSwitch @bind-Value=_linksFromAllViews Label="@LOC("all views")" />
+			</div>
+		}
 		<FluentNavMenu Style="width:100%">
-			@foreach (var item in _getMenu())
+			@foreach (var item in menuItems)
 			{
-				<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
+				<FluentNavLink Href="@item.Url" Class="@(item.Active ? "selected" : "")" Data="item" Id="@item.Id"
 							   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
 			}
 		</FluentNavMenu>
+		@if (menuItems.Count == 0)
+		{
+			<div style="padding-left:5px;padding-top:5px">@LOC("No records")</div>
+		}
 	</div>
 </div>
 

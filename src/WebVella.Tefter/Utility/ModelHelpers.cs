@@ -24,6 +24,8 @@ public static class ModelHelpers
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_GUID_COLUMN_TYPE_ID));
 				break;
 			case DatabaseColumnType.Date:
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_DATEONLY_COLUMN_TYPE_ID));
+				break;
 			case DatabaseColumnType.DateTime:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID));
 				break;

@@ -4,21 +4,14 @@
 {
 	var value = GetDataObjectByAlias<DateTime>("Value", null);
 	var options = GetOptions();
-	if (!String.IsNullOrWhiteSpace(options.DateTimeFormat))
-	{
-		<div>@value?.ToString(options.DateTimeFormat)</div>
-	}
-	else
-	{
-		<div>@value</div>
-	}
+	<span>@value?.ToString(options.Format)</span>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.DateTimeFormat" Style="width:100%" Immediate ImmediateDelay="500"
-							 ValueChanged=@((x)=> _optionsTextValueChanged(x, nameof(options.DateTimeFormat)))
+			<FluentTextField Value="@options.Format" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.Format),x))
 							 Placeholder="eg. 'dd MMM yyyy HH:mm:ss'" />
 		</FluentGridItem>
 		<FluentGridItem xs="6"></FluentGridItem>
