@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
+
+namespace WebVella.Tefter;
 
 public partial interface IDataManager
 {
@@ -26,6 +28,9 @@ public partial interface IDataManager
 		Guid rowId,
 		string dbName,
 		object value);
+
+	internal Result DeleteAllProviderRows(
+		TfDataProvider provider);
 }
 
 public partial class DataManager
@@ -402,7 +407,7 @@ public partial class DataManager
 	}
 
 
-	public Result UpdateValue(
+	internal Result UpdateValue(
 		TfDataProvider provider,
 		Guid rowId,
 		string dbName,
@@ -421,6 +426,20 @@ public partial class DataManager
 
 			return UpdateProviderRow(provider, row);
 
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to update cell value").CausedBy(ex));
+		}
+	}
+
+	internal Result DeleteAllProviderRows(
+		TfDataProvider provider)
+	{
+		try
+		{
+			_dbService.ExecuteSqlNonQueryCommand($"DELETE FROM dp{provider.Index}");
+			return Result.Ok();
 		}
 		catch (Exception ex)
 		{
