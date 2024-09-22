@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public partial interface IDataManager
 {
@@ -184,7 +182,7 @@ public partial class DataManager
 		try
 		{
 			row["tf_updated_on"] = DateTime.Now;
-			
+
 			//generate search
 			var searchSb = new StringBuilder();
 			foreach (var column in provider.Columns)
@@ -411,13 +409,13 @@ public partial class DataManager
 		TfDataProvider provider,
 		Guid rowId,
 		string dbName,
-		object value )
+		object value)
 	{
 		try
 		{
 			var rowResult = GetProviderRow(provider, rowId);
-			
-			if(!rowResult.IsSuccess || rowResult.Value is null )
+
+			if (!rowResult.IsSuccess || rowResult.Value is null)
 				throw new Exception("Failed to find row for specified id");
 
 			var row = rowResult.Value;
