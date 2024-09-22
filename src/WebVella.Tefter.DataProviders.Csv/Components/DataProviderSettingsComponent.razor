@@ -18,9 +18,9 @@
 			{
 				<FluentRadioGroup Required="true"
 								  @bind-Value=_form.Delimter
-								  TValue="CsvDataProviderSettingsDelimter"
+								  TValue="CsvDataProviderSettingsDelimiter"
 								  Label="@LOC("Delimiter")" Style="width:100%">
-					@foreach (var item in Enum.GetValues<CsvDataProviderSettingsDelimter>())
+					@foreach (var item in Enum.GetValues<CsvDataProviderSettingsDelimiter>())
 					{
 						<FluentRadio Value="@item">@LOC(item.ToString())</FluentRadio>
 					}
@@ -34,6 +34,22 @@
 					<FluentBadge Appearance="Appearance.Accent">@LOC(_form.Delimter.ToString())</FluentBadge>
 				</div>
 			}
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Locale")" />
+			<FluentStack>
+				<FluentTextField ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.ReadOnly"
+								 TextFieldType="@TextFieldType.Text"
+								 @bind-Value=_form.CultureName AutoComplete="new-password"
+								 Style="width:100%"
+								 Placeholder="@LOC("empty uses culture invariant")" />
+				@if (DisplayMode == Web.Models.ComponentDisplayMode.Form)
+				{
+					<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from server")"
+								  OnClick="_getCultureFromServer" Appearance="@Appearance.Outline" />
+				}
+			</FluentStack>
+			<FluentValidationMessage For="@(() => _form.CultureName)" />
 		</FluentGridItem>
 	</FluentGrid>
 </FluentEditForm>

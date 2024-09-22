@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using System.Globalization;
 using WebVella.Tefter.Web.Components;
 using WebVella.Tefter.Web.Models;
 
@@ -49,6 +50,13 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 			}
 		}
 
+		if(!String.IsNullOrWhiteSpace(_form.CultureName)){ 
+			CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures & ~CultureTypes.NeutralCultures);
+			var culture = cultures.FirstOrDefault(c => c.Name.Equals(_form.CultureName, StringComparison.OrdinalIgnoreCase));
+			if (culture == null)
+				errors.Add(new ValidationError(nameof(CsvDataProviderSettings.CultureName), LOC("invalid. format like 'en-US'")));
+		}
+
 		foreach (var item in errors)
 		{
 			MessageStore.Add(EditContext.Field(item.PropertyName), item.Reason);
@@ -56,5 +64,9 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 		var isValid = EditContext.Validate();
 		StateHasChanged();
 		return errors;
+	}
+
+	private void _getCultureFromServer(){ 
+		_form.CultureName = Thread.CurrentThread.CurrentCulture.Name;
 	}
 }

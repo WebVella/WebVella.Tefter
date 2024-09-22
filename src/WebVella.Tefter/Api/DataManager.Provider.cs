@@ -407,7 +407,7 @@ public partial class DataManager
 	}
 
 
-	internal Result UpdateValue(
+	public Result UpdateValue(
 		TfDataProvider provider,
 		Guid rowId,
 		string dbName,
@@ -433,7 +433,7 @@ public partial class DataManager
 		}
 	}
 
-	internal Result DeleteAllProviderRows(
+	public Result DeleteAllProviderRows(
 		TfDataProvider provider)
 	{
 		try

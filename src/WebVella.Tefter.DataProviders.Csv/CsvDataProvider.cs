@@ -108,13 +108,16 @@ public class CsvDataProvider : ITfDataProviderType
 
 			switch (settings.Delimter)
 			{
-				case CsvDataProviderSettingsDelimter.Tab:
+				case CsvDataProviderSettingsDelimiter.Semicolon:
+					config.Delimiter = ";";
+					break;
+				case CsvDataProviderSettingsDelimiter.Tab:
 					config.Delimiter = "\t";
 					break;
 				default:
 					break;
 			}
-			
+
 
 			using (var reader = new StreamReader(settings.Filepath))
 			using (var csvReader = new CsvReader(reader, config))
@@ -145,7 +148,7 @@ public class CsvDataProvider : ITfDataProviderType
 							}
 
 							row[providerColumnWithSource.DbName] = ConvertValue(
-								providerColumnWithSource, 
+								providerColumnWithSource,
 								sourceRow[providerColumnWithSource.SourceName]);
 
 						}

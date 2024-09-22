@@ -9,14 +9,15 @@ internal class CsvDataProviderSettings
 	public string Filepath { get; set; }
 
 	[Required]
-	public CsvDataProviderSettingsDelimter Delimter { get; set; } = CsvDataProviderSettingsDelimter.Comma;
+	public CsvDataProviderSettingsDelimiter Delimter { get; set; } = CsvDataProviderSettingsDelimiter.Comma;
 
 	[Required]
-	public string CultureName { get; init; } = string.Empty;
+	public string CultureName { get; set; } = Thread.CurrentThread.CurrentCulture.Name;
 }
 
-internal enum CsvDataProviderSettingsDelimter
+internal enum CsvDataProviderSettingsDelimiter
 {
 	Comma = 0,
-	Tab = 1
+	Semicolon = 1,
+	Tab = 2
 }
