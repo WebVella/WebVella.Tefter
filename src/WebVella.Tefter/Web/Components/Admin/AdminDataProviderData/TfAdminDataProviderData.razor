@@ -7,25 +7,33 @@
 @if (TfAppState.Value.AdminDataProviderData is not null)
 {
 	<div class="tfdt">
-		<div class="tfdt__toolbar">
-			<FluentStack>
-				<FluentSearch Value="@_search" ValueChanged="_searchChanged" />
-				<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
-							  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
-					<span>system</span>
-					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SystemColumns.Count</FluentBadge>
+		<div class="tfdt__toolbar" style="flex:1 1 auto;display:flex;justify-content:space-between;">
+			<div style="flex:1 1 auto">
+				<FluentStack>
+					<FluentSearch Value="@_search" ValueChanged="_searchChanged" />
+					<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
+								  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
+						<span>system</span>
+						<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SystemColumns.Count</FluentBadge>
+					</FluentButton>
+					<FluentButton Id="view-filter-selector" Title="toggle shared key columns" OnClick="_toggleSharedKeyColumns"
+								  Appearance="@(_showSharedKeyColumns ? Appearance.Accent : Appearance.Outline)">
+						<span>shared key</span>
+						<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SharedColumns.Count</FluentBadge>
+					</FluentButton>
+					<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
+								  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
+						<span>custom</span>
+						<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.Columns.Count</FluentBadge>
+					</FluentButton>
+				</FluentStack>
+			</div>
+			<div style="flex:0 0 auto">
+				<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+					@LOC("delete all data")
 				</FluentButton>
-				<FluentButton Id="view-filter-selector" Title="toggle shared key columns" OnClick="_toggleSharedKeyColumns"
-							  Appearance="@(_showSharedKeyColumns ? Appearance.Accent : Appearance.Outline)">
-					<span>shared key</span>
-					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SharedColumns.Count</FluentBadge>
-				</FluentButton>
-				<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
-							  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
-					<span>custom</span>
-					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.Columns.Count</FluentBadge>
-				</FluentButton>
-			</FluentStack>
+			</div>
 		</div>
 		<div class="tfdt__content">
 			<div class="tf-grid-wrapper">

@@ -129,6 +129,9 @@
   <data name="Synchronization warnings" xml:space="preserve">
     <value>Предупреждения при синхронизацията</value>
   </data>
+  <data name="this screen shows only up to {0} rows" xml:space="preserve">
+    <value>този екран показва само до {0} записа</value>
+  </data>
   <data name="{0} rows" xml:space="preserve">
     <value>{0} реда</value>
   </data>

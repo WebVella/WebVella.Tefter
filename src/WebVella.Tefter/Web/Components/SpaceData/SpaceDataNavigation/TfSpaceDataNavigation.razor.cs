@@ -11,7 +11,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	{
 		search = search?.Trim().ToLowerInvariant();
 		var menuItems = new List<MenuItem>();
-		foreach (var spaceData in TfAppState.Value.SpaceDataList)
+		foreach (var spaceData in TfAppState.Value.SpaceDataList.OrderBy(x=> x.Name))
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !spaceData.Name.ToLowerInvariant().Contains(search))
 				continue;
@@ -45,6 +45,18 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		{
 			var item = (TucSpaceData)result.Data;
 			ToastService.ShowSuccess(LOC("Space dataset successfully created!"));
+
+			var itemList = TfAppState.Value.SpaceDataList.ToList();
+			itemList.Add(item);
+
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
+			{
+				SpaceData = item,
+				SpaceDataList = itemList.OrderBy(x => x.Position).ToList()
+			}));
+
 			Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, item.SpaceId, item.Id));
 		}
 	}

@@ -115,7 +115,7 @@ internal partial class AppStateUseCase
 
 		return serviceResult.Value.Select(x => new TucSpaceView(x)).ToList();
 	}
-	internal Result<TucSpaceView> CreateSpaceViewWithForm(TucSpaceView view)
+	internal Result<Tuple<TucSpaceView,TucSpaceData>> CreateSpaceViewWithForm(TucSpaceView view)
 	{
 		//TODO RUMEN: big part of this needs to be created as a service and be in transaction
 
@@ -388,10 +388,10 @@ internal partial class AppStateUseCase
 		#endregion
 		//Should commit transaction
 
-		return Result.Ok(new TucSpaceView(spaceView));
+		return Result.Ok(new Tuple<TucSpaceView,TucSpaceData>(new TucSpaceView(spaceView),new TucSpaceData(spaceData)));
 	}
 
-	internal Result<TucSpaceView> UpdateSpaceViewWithForm(TucSpaceView view)
+	internal Result<Tuple<TucSpaceView,TucSpaceData>> UpdateSpaceViewWithForm(TucSpaceView view)
 	{
 		//TODO RUMEN: big part of this needs to be created as a service and be in transaction
 		TfSpace space = null;
@@ -491,8 +491,7 @@ internal partial class AppStateUseCase
 		#endregion
 
 		//Should commit transaction
-
-		return Result.Ok(new TucSpaceView(spaceView));
+		return Result.Ok(new Tuple<TucSpaceView,TucSpaceData>(new TucSpaceView(spaceView),new TucSpaceData(spaceData)));
 	}
 
 	internal Result DeleteSpaceView(Guid viewId)

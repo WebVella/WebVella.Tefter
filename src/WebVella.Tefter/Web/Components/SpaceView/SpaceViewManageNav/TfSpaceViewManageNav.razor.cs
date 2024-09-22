@@ -34,24 +34,36 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var item = (TucSpaceView)result.Data;
-			var itemList = TfAppState.Value.SpaceViewList.ToList();
-			var itemIndex = itemList.FindIndex(x => x.Id == item.Id);
-			if (itemIndex > -1)
+			var resultObj = (Tuple<TucSpaceView,TucSpaceData>)result.Data;
+			var spaceView = resultObj.Item1;
+			var spaceData = resultObj.Item2;
+			var viewList = TfAppState.Value.SpaceViewList.ToList();
+			var dataList = TfAppState.Value.SpaceDataList.ToList();
+			var viewIndex = viewList.FindIndex(x => x.Id == spaceView.Id);
+			if (viewIndex > -1)
 			{
-				itemList[itemIndex] = item;
+				viewList[viewIndex] = spaceView;
 			}
 
-			ToastService.ShowSuccess(LOC("Space view successfully updated!"));
-
+			var dataIndex = dataList.FindIndex(x => x.Id == spaceData.Id);
+			if (dataIndex > -1)
+			{
+				dataList[dataIndex] = spaceData;
+			}
+			else{ 
+				dataList.Add(spaceData);
+			}
 
 			Dispatcher.Dispatch(new SetAppStateAction(
 						component: this,
 						state: TfAppState.Value with
 						{
-							SpaceView = item,
-							SpaceViewList = itemList
+							SpaceView = spaceView,
+							SpaceViewList = viewList.OrderBy(x=> x.Position).ToList(),
+							SpaceDataList = dataList.OrderBy(x=> x.Position).ToList()
 						}));
+
+			ToastService.ShowSuccess(LOC("Space view successfully updated!"));
 		}
 	}
 }

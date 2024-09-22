@@ -45,7 +45,7 @@
 						</tr>
 					</thead>
 					<tbody class="tf-grid-tbody">
-						@foreach (var context in _items)
+						@foreach (var context in _items.Take(_limit))
 						{
 							<tr @key=context.Id class="tf-grid-tr">
 								<td class="tf-grid-td">
@@ -72,6 +72,10 @@
 									}
 								</td>
 							</tr>
+						}
+						@if (_items.Count > _limit)
+						{
+							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("this screen shows only up to {0} rows", _limit)</FluentMessageBar>
 						}
 					</tbody>
 				</table>

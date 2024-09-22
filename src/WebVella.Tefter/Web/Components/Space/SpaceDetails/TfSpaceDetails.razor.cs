@@ -37,9 +37,34 @@ public partial class TfSpaceDetails : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var item = (TucSpaceView)result.Data;
+			var resultObj = (Tuple<TucSpaceView, TucSpaceData>)result.Data;
+			var spaceView = resultObj.Item1;
+			var spaceData = resultObj.Item2;
+			var viewList = TfAppState.Value.SpaceViewList.ToList();
+			var dataList = TfAppState.Value.SpaceDataList.ToList();
+			viewList.Add(spaceView);
+
+			var dataIndex = dataList.FindIndex(x => x.Id == spaceData.Id);
+			if (dataIndex > -1)
+			{
+				dataList[dataIndex] = spaceData;
+			}
+			else
+			{
+				dataList.Add(spaceData);
+			}
+
+			Dispatcher.Dispatch(new SetAppStateAction(
+						component: this,
+						state: TfAppState.Value with
+						{
+							SpaceView = spaceView,
+							SpaceViewList = viewList.OrderBy(x => x.Position).ToList(),
+							SpaceDataList = dataList.OrderBy(x => x.Position).ToList()
+						}));
+
 			ToastService.ShowSuccess(LOC("Space view successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.Id));
+			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
 		}
 	}
 

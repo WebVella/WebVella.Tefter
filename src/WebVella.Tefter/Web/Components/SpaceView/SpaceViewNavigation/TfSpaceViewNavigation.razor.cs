@@ -39,7 +39,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			foreach (var record in TfAppState.Value.CurrentUserBookmarks
 				.Where(x => x.SpaceId == TfAppState.Value.Space.Id).OrderBy(x => x.Name))
 			{
-				if (!String.IsNullOrWhiteSpace(search) 
+				if (!String.IsNullOrWhiteSpace(search)
 					&& !(record.Name.ToLowerInvariant().Contains(search) || record.Description.ToLowerInvariant().Contains(search)))
 					continue;
 
@@ -60,11 +60,11 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			foreach (var record in TfAppState.Value.CurrentUserSaves
 				.Where(x => x.SpaceId == TfAppState.Value.Space.Id).OrderBy(x => x.Name))
 			{
-				if (!String.IsNullOrWhiteSpace(search) 
+				if (!String.IsNullOrWhiteSpace(search)
 					&& !(record.Name.ToLowerInvariant().Contains(search) || record.Description.ToLowerInvariant().Contains(search)))
 					continue;
 
-				if(!_linksFromAllViews && record.SpaceViewId != TfAppState.Value.SpaceView.Id) continue;
+				if (!_linksFromAllViews && record.SpaceViewId != TfAppState.Value.SpaceView.Id) continue;
 
 				var viewMenu = new MenuItem
 				{
@@ -72,7 +72,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 					Icon = TfConstants.GetIcon("Link"),
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
-					Url = NavigatorExt.AddQueryValueToUri(record.Url, TfConstants.ActiveSaveQueryName,record.Id.ToString()),
+					Url = NavigatorExt.AddQueryValueToUri(record.Url, TfConstants.ActiveSaveQueryName, record.Id.ToString()),
 					Active = record.Id == TfRouteState.Value.ActiveSaveId
 				};
 				menuItems.Add(viewMenu);
@@ -94,10 +94,34 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var item = (TucSpaceView)result.Data;
-			ToastService.ShowSuccess(LOC("Space view successfully created!"));
+			var resultObj = (Tuple<TucSpaceView, TucSpaceData>)result.Data;
+			var spaceView = resultObj.Item1;
+			var spaceData = resultObj.Item2;
+			var viewList = TfAppState.Value.SpaceViewList.ToList();
+			var dataList = TfAppState.Value.SpaceDataList.ToList();
+			viewList.Add(spaceView);
 
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.Id));
+			var dataIndex = dataList.FindIndex(x => x.Id == spaceData.Id);
+			if (dataIndex > -1)
+			{
+				dataList[dataIndex] = spaceData;
+			}
+			else
+			{
+				dataList.Add(spaceData);
+			}
+
+			Dispatcher.Dispatch(new SetAppStateAction(
+						component: this,
+						state: TfAppState.Value with
+						{
+							SpaceView = spaceView,
+							SpaceViewList = viewList.OrderBy(x => x.Position).ToList(),
+							SpaceDataList = dataList.OrderBy(x => x.Position).ToList()
+						}));
+
+			ToastService.ShowSuccess(LOC("Space view successfully created!"));
+			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
 		}
 	}
 

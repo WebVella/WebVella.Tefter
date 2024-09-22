@@ -282,6 +282,34 @@ internal partial class AppStateUseCase
 		return Task.CompletedTask;
 	}
 
+	internal Task DeleteAllProviderData(Guid dataProviderId)
+	{
+		var provider = _dataProviderManager.GetProvider(dataProviderId);
+		if(provider is null){ 
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("Provider not found"),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.CompletedTask;		
+		}
+		var createResult = _dataManager.DeleteAllProviderRows(provider.Value);
+		if (createResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("DeleteAllProviderRows failed").CausedBy(createResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.CompletedTask;
+		}
+		return Task.CompletedTask;
+	}
+
 	internal Result<List<TucDataProviderSyncTaskInfo>> GetSynchronizationTaskLogRecords(Guid taskId,
 			TucDataProviderSyncTaskInfoType type)
 	{

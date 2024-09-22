@@ -3,13 +3,19 @@
 
 <FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
 	<FluentGrid>
-		<FluentGridItem xs="12">
+		<FluentGridItem xs="9">
 			<FluentTextField Required="DisplayMode == Web.Models.ComponentDisplayMode.Form"
 							 ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.ReadOnly"
 							 TextFieldType="@TextFieldType.Text"
 							 @bind-Value=_form.Filepath AutoComplete="new-password"
 							 Label="@LOC("CSV File with full access path")" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.Filepath)" />
+		</FluentGridItem>
+		<FluentGridItem xs="3">
+			<FluentTextField Disabled="true"
+							 TextFieldType="@TextFieldType.Text"
+							 Value="UTF-8"
+							 Label="@LOC("File encoding")" Style="width:100%" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>

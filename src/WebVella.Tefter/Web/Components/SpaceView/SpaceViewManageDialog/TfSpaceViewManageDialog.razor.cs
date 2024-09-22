@@ -70,7 +70,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			Result<TucSpaceView> result = null;
+			Result<Tuple<TucSpaceView,TucSpaceData>> result = null;
 			if (_isCreate)
 				result = UC.CreateSpaceViewWithForm(_form);
 			else

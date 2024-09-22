@@ -10,7 +10,7 @@ public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogC
 	private string _title = "";
 	private bool _isBusy = true;
 	private List<TucDataProviderSyncTaskInfo> _items = new();
-
+	private int _limit = 1000;
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();

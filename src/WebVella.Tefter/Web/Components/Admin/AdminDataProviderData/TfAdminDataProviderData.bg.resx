@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Are you sure that you need all data deleted? This operation can take minutes!" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да изтриеш всички данни? Тази операция може да отнеме минути!</value>
+  </data>
   <data name="Completed" xml:space="preserve">
     <value>Приключила успешно</value>
   </data>
@@ -125,6 +128,12 @@
   </data>
   <data name="Current synchronization" xml:space="preserve">
     <value>Текуща синхронизация</value>
+  </data>
+  <data name="Data provider data deletion is triggered!" xml:space="preserve">
+    <value>Изтриването на данни на източника започна!</value>
+  </data>
+  <data name="delete all data" xml:space="preserve">
+    <value>изтрий всички данни</value>
   </data>
   <data name="Errors" xml:space="preserve">
     <value>Грешки</value>

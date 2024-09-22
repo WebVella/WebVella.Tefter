@@ -132,6 +132,9 @@
   <data name="empty uses culture invariant" xml:space="preserve">
     <value>празно ще ползва базова култура</value>
   </data>
+  <data name="File encoding" xml:space="preserve">
+    <value>Файл кодировка</value>
+  </data>
   <data name="get from server" xml:space="preserve">
     <value>вземи от сървъра</value>
   </data>
