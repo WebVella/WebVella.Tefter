@@ -20,6 +20,12 @@ public partial interface IDataManager
 	internal Result DeleteProviderRowsAfterIndex(
 		TfDataProvider provider,
 		int index);
+
+	internal Result UpdateValue(
+		TfDataProvider provider,
+		Guid rowId,
+		string dbName,
+		object value);
 }
 
 public partial class DataManager
@@ -120,7 +126,23 @@ public partial class DataManager
 			row["tf_id"] = idResult.Value;
 			row["tf_created_on"] = DateTime.Now;
 			row["tf_updated_on"] = DateTime.Now;
-			//row["tf_search"] = string.Empty;
+
+			//generate search
+			var searchSb = new StringBuilder();
+			foreach (var column in provider.Columns)
+			{
+				if (column.IncludeInTableSearch)
+				{
+					var index = row.ColumnNames.IndexOf(column.DbName);
+					if (index > 0)
+					{
+						object value = row[column.DbName];
+						if (value is not null)
+							searchSb.Append($" {value}");
+					}
+				}
+			}
+			row["tf_search"] = searchSb.ToString();
 
 			foreach (var sharedKey in provider.SharedKeys)
 			{
@@ -157,7 +179,24 @@ public partial class DataManager
 		try
 		{
 			row["tf_updated_on"] = DateTime.Now;
-			//row["tf_search"] = string.Empty;
+			
+			//generate search
+			var searchSb = new StringBuilder();
+			foreach (var column in provider.Columns)
+			{
+				if (column.IncludeInTableSearch)
+				{
+					var index = row.ColumnNames.IndexOf(column.DbName);
+					if (index > 0)
+					{
+						object value = row[column.DbName];
+						if (value is not null)
+							searchSb.Append($" {value}");
+					}
+				}
+			}
+			row["tf_search"] = searchSb.ToString();
+
 			foreach (var sharedKey in provider.SharedKeys)
 			{
 				List<string> keys = new List<string>();
@@ -360,5 +399,32 @@ public partial class DataManager
 		return sql.ToString();
 
 
+	}
+
+
+	public Result UpdateValue(
+		TfDataProvider provider,
+		Guid rowId,
+		string dbName,
+		object value )
+	{
+		try
+		{
+			var rowResult = GetProviderRow(provider, rowId);
+			
+			if(!rowResult.IsSuccess || rowResult.Value is null )
+				throw new Exception("Failed to find row for specified id");
+
+			var row = rowResult.Value;
+
+			row[dbName] = value;
+
+			return UpdateProviderRow(provider, row);
+
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to update cell value").CausedBy(ex));
+		}
 	}
 }

@@ -163,6 +163,20 @@ public partial class DataManagerTests : BaseTest
 			insertResult.Should().Be(1);
 		}
 
+
+		//testing update value
+		//foreach (DataRow dr in dt.Rows)
+		//{
+		//	foreach(var column in provider.Columns)
+		//	{
+		//		Guid id = (Guid)dr["tf_id"];
+		//		var value = dr[column.DbName];
+		//		var updateResult = dataManager.UpdateValue(provider, id, column.DbName, value);
+		//		updateResult.IsSuccess.Should().BeTrue();	
+		//	}
+			
+		//}
+
 		var space = new TfSpace
 		{
 			Id = Guid.NewGuid(),

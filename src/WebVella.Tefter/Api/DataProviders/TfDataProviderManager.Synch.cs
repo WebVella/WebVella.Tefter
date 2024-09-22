@@ -522,23 +522,6 @@ ORDER BY st.created_on DESC");
 					//we init only row index here
 					row["tf_row_index"] = currentRowIndex;
 
-					//generate search
-					var searchSb = new StringBuilder();
-					foreach (var column in provider.Columns)
-					{
-						if (column.IncludeInTableSearch)
-						{
-							var index = row.ColumnNames.IndexOf(column.DbName);
-							if (index > 0)
-							{
-								object value = row[column.DbName];
-								if (value is not null)
-									searchSb.Append($" {value}");
-							}
-						}
-					}
-					row["tf_search"] = searchSb.ToString();
-
 					var insertResult = _dataManager.InsertNewProviderRow(
 						provider,
 						row);
@@ -613,23 +596,6 @@ ORDER BY st.created_on DESC");
 
 						//set only row index here
 						providerRow["tf_row_index"] = currentRowIndex;
-
-						//generate search
-						var searchSb = new StringBuilder();
-						foreach (var column in provider.Columns)
-						{
-							if (column.IncludeInTableSearch)
-							{
-								var index = row.ColumnNames.IndexOf(column.DbName);
-								if (index > 0)
-								{
-									object value = row[column.DbName];
-									if (value is not null)
-										searchSb.Append($" {value}");
-								}
-							}
-						}
-						row["tf_search"] = searchSb.ToString();
 
 						var result = _dataManager.UpdateProviderRow(
 							provider,
