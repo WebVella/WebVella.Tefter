@@ -8,7 +8,7 @@
 	{
 		if (!String.IsNullOrWhiteSpace(options.TrueValueOverrideText))
 		{
-			<span>@options.TrueValueOverrideText</span>
+			<div>@options.TrueValueOverrideText</div>
 		}
 		else if (options.TrueValueShowAsIcon)
 		{
@@ -16,14 +16,14 @@
 		}
 		else
 		{
-			<span>@value.Value.ToString()</span>
+			<div>@value.Value.ToString()</div>
 		}
 	}
 	else
 	{
 		if (!String.IsNullOrWhiteSpace(options.FalseValueOverrideText))
 		{
-			<span>@options.FalseValueOverrideText</span>
+			<div>@options.FalseValueOverrideText</div>
 		}
 		else if (options.FalseValueShowAsIcon)
 		{
@@ -31,7 +31,7 @@
 		}
 		else
 		{
-			<span>@value.Value.ToString()</span>
+			<div>@value.Value.ToString()</div>
 		}
 	}
 }

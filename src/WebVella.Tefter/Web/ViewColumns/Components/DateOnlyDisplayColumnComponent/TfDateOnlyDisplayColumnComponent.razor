@@ -4,7 +4,7 @@
 {
 	var value = GetDataObjectByAlias<DateOnly>("Value", null);
 	var options = GetOptions();
-	<span>@value?.ToString(options.Format)</span>
+	<div>@value?.ToString(options.Format)</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
