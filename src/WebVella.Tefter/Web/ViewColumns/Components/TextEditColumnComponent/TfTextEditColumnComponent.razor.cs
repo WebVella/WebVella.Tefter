@@ -59,6 +59,22 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
+		if (options.ChangeRequiresConfirmation)
+		{
+			var message = options.ChangeConfirmationMessage;
+			if (String.IsNullOrWhiteSpace(message))
+				message = LOC("Please confirm the data change!");
+
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", message))
+			{
+				await InvokeAsync(StateHasChanged);
+				await Task.Delay(10);
+				_initValues();
+				await InvokeAsync(StateHasChanged);
+				return;
+			};
+		}
+
 		try
 		{
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
@@ -82,5 +98,9 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 public class TfTextEditColumnComponentOptions
 {
+	[JsonPropertyName("ChangeRequiresConfirmation")]
+	public bool ChangeRequiresConfirmation { get; set; } = false;
 
+	[JsonPropertyName("ChangeConfirmationMessage")]
+	public string ChangeConfirmationMessage { get; set; }
 }

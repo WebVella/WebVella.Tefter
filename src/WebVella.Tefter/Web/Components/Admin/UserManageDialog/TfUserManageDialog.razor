@@ -36,7 +36,7 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Status")" />
-					<FluentCheckbox @bind-Value=_form.Enabled Label="@LOC("Enabled")" Style="margin-top:5px;" />
+					<FluentCheckbox @bind-Value=_form.Enabled Label="@LOC("Enabled")" Style="height:32px;" />
 					<FluentValidationMessage For="@(() => _form.Enabled)" />
 				</FluentGridItem>
 			</FluentGrid>
@@ -112,7 +112,7 @@
 						@foreach (var role in TfAppState.Value.UserRoles)
 						{
 							<FluentCheckbox Value="@_form.Roles.Any(x=> x.Id == role.Id)" Label="@role.Name"
-											ValueChanged="@(()=>_form.OnRoleChange(role))" />
+											ValueChanged="@(()=>_form.OnRoleChange(role))" Style="height:32px;" />
 						}
 					</FluentStack>
 					<FluentValidationMessage For="@(() => _form.Roles)" />

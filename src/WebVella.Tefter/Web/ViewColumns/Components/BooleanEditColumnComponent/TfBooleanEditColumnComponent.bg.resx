@@ -120,13 +120,28 @@
   <data name="change applied" xml:space="preserve">
     <value>промяната е приложена</value>
   </data>
+  <data name="Change confirmation" xml:space="preserve">
+    <value>Потвърждаване на промяната</value>
+  </data>
   <data name="Component Mode Not implemented" xml:space="preserve">
     <value>Режимът на компонента не е имплементиран</value>
+  </data>
+  <data name="Confirmation message" xml:space="preserve">
+    <value>Съобщение за потвърждение</value>
+  </data>
+  <data name="empty shows a system one" xml:space="preserve">
+    <value>празно показва системно</value>
   </data>
   <data name="Label text" xml:space="preserve">
     <value>Текст на етикета</value>
   </data>
   <data name="Label visibility" xml:space="preserve">
     <value>Видимост на етиката</value>
+  </data>
+  <data name="Please confirm the data change!" xml:space="preserve">
+    <value>Моля потвърдете промяната на данните!</value>
+  </data>
+  <data name="requires confirmation" xml:space="preserve">
+    <value>изисква потвърждение</value>
   </data>
 </root>

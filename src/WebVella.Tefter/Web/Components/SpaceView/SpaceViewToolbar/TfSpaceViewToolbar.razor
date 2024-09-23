@@ -11,9 +11,9 @@
 			<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			<FluentBadge Appearance="Appearance.Neutral">@(TfAppState.Value.SpaceViewSorts?.Count ?? 0)</FluentBadge>
 		</FluentButton>
-		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
+@* 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-		</FluentButton>
+		</FluentButton> *@
 	</div>
 	<div class="content-toolbar-right">
 		@foreach (var comp in _regionComponents)
@@ -66,7 +66,7 @@
 		</FluentButton>
 	</div>
 </div>
-<TfSpaceViewPropertiesSelector @ref="_propertiesSelector" />
+@* <TfSpaceViewPropertiesSelector @ref="_propertiesSelector" /> *@
 <TfSpaceViewSettingsSelector @ref="_settingSelector" />
 <TfSpaceViewActionSelector @ref="_actionSelector" />
 <TfSpaceViewShareSelector @ref="_shareSelector" />

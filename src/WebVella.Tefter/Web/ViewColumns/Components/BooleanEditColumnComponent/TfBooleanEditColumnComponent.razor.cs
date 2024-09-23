@@ -54,6 +54,22 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 
 	private async Task _onValueChange()
 	{
+		if (options.ChangeRequiresConfirmation)
+		{
+			var message = options.ChangeConfirmationMessage;
+			if (String.IsNullOrWhiteSpace(message))
+				message = LOC("Please confirm the data change!");
+
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", message))
+			{
+				await InvokeAsync(StateHasChanged);
+				await Task.Delay(10);
+				_initValues();
+				await InvokeAsync(StateHasChanged);
+				return;
+			};
+		}
+
 		try
 		{
 			bool? value = _value;
@@ -123,5 +139,11 @@ public class TfBooleanEditColumnComponentOptions
 
 	[JsonPropertyName("NullLabel")]
 	public string NullLabel { get; set; }
+
+	[JsonPropertyName("ChangeRequiresConfirmation")]
+	public bool ChangeRequiresConfirmation { get; set; } = false;
+
+	[JsonPropertyName("ChangeConfirmationMessage")]
+	public string ChangeConfirmationMessage { get; set; }
 
 }
