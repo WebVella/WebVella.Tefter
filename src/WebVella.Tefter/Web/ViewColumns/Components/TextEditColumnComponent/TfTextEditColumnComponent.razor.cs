@@ -30,6 +30,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		_value = GetDataObjectByAlias(_valueAlias);
 	}
 
 	protected override void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
@@ -46,6 +47,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
+	private string _value = null;
 
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
@@ -56,26 +58,34 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		return GetDataObjectByAlias(_valueAlias);
 	}
 
-	private async Task _valueChanged(string value)
+	private async Task _valueChanged()
 	{
-		if(!RowChanged.HasDelegate) return;
-
-		var dt = Context.DataTable.NewTable(Context.RowIndex);
-		if (dt.Rows.Count == 0)
+		if (!RowChanged.HasDelegate) return;
+		try
 		{
-			ToastService.ShowError(LOC("Row with index {0} is not found",Context.RowIndex));
-			return;
-		}
-		var colName = GetColumnNameFromAlias(_valueAlias);
-		if (String.IsNullOrWhiteSpace(colName))
-		{
-			ToastService.ShowError(LOC("Column for the alias {0} is not found",_valueAlias));
-			return;
-		}
-		dt.Rows[0][colName] = value;
+			var dt = Context.DataTable.NewTable(Context.RowIndex);
+			if (dt.Rows.Count == 0)
+			{
+				ToastService.ShowError(LOC("Row with index {0} is not found", Context.RowIndex));
+				return;
+			}
+			var colName = GetColumnNameFromAlias(_valueAlias);
+			if (String.IsNullOrWhiteSpace(colName))
+			{
+				ToastService.ShowError(LOC("Column for the alias {0} is not found", _valueAlias));
+				return;
+			}
+			dt.Rows[0][colName] = _value;
 
-		await OnRowChanged(dt);
-
+			await OnRowChanged(dt);
+		}
+		catch(Exception ex){ 
+			ToastService.ShowError(ex.Message);
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(10);
+			_value = GetDataObjectByAlias(_valueAlias);
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 }
 
