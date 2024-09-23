@@ -222,8 +222,6 @@ internal static class TfConverters
 
 		try
 		{
-			//Add relative URL support
-			if (url.StartsWith("/")) url = "http://localhost" + url;
 			Uri uriResult;
 			return Uri.TryCreate(url, UriKind.Absolute, out uriResult)
 				&& (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);

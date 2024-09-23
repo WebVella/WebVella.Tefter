@@ -50,6 +50,7 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnType
 
 		SupportedComponentTypes = new List<Type> {
 			typeof(TfGuidDisplayColumnComponent),
+			typeof(TfGuidEditColumnComponent),
 			typeof(TfTextDisplayColumnComponent)
 			};
 	}

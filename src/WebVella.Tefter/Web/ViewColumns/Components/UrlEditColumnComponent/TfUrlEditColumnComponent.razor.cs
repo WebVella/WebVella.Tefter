@@ -6,14 +6,14 @@ namespace WebVella.Tefter.Web.ViewColumns;
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Text Edit")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextEditColumnComponent.TfTextEditColumnComponent", "WebVella.Tefter")]
-public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColumnComponentOptions>
+[Description("Tefter URL Edit")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.UrlEditColumnComponent.TfUrlEditColumnComponent", "WebVella.Tefter")]
+public partial class TfUrlEditColumnComponent : TfBaseViewColumn<TfUrlEditColumnComponentOptions>
 {
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
-	public TfTextEditColumnComponent()
+	public TfUrlEditColumnComponent()
 	{
 	}
 
@@ -23,7 +23,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfTextEditColumnComponent(TfComponentContext context)
+	public TfUrlEditColumnComponent(TfComponentContext context)
 	{
 		Context = context;
 	}
@@ -42,13 +42,14 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	private string _valueAlias = "Value";
 	private string _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
+
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		return GetDataObjectByAlias<Guid>(_valueAlias)?.ToString();
 	}
 
 	/// <summary>
@@ -59,6 +60,15 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
+		if (!String.IsNullOrWhiteSpace(_value))
+		{
+			if (!TfConverters.IsValidURL(_value))
+			{
+				ToastService.ShowError(LOC("Invalid URL format"));
+				await _resetValue();
+				return;
+			}
+		}
 		if (options.ChangeRequiresConfirmation)
 		{
 			var message = options.ChangeConfirmationMessage;
@@ -67,10 +77,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 			if (!await JSRuntime.InvokeAsync<bool>("confirm", message))
 			{
-				await InvokeAsync(StateHasChanged);
-				await Task.Delay(10);
-				_initValues();
-				await InvokeAsync(StateHasChanged);
+				await _resetValue();
 				return;
 			};
 		}
@@ -84,10 +91,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		catch (Exception ex)
 		{
 			ToastService.ShowError(ex.Message);
-			await InvokeAsync(StateHasChanged);
-			await Task.Delay(10);
-			_initValues();
-			await InvokeAsync(StateHasChanged);
+			await _resetValue();
 		}
 	}
 
@@ -95,9 +99,17 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	{
 		_value = GetDataObjectByAlias(_valueAlias);
 	}
+
+	private async Task _resetValue()
+	{
+		await InvokeAsync(StateHasChanged);
+		await Task.Delay(10);
+		_initValues();
+		await InvokeAsync(StateHasChanged);
+	}
 }
 
-public class TfTextEditColumnComponentOptions
+public class TfUrlEditColumnComponentOptions
 {
 	[JsonPropertyName("ChangeRequiresConfirmation")]
 	public bool ChangeRequiresConfirmation { get; set; } = false;

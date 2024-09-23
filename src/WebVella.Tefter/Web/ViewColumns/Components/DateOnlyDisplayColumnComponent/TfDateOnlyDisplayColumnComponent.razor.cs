@@ -41,7 +41,10 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 	public override object GetData()
 	{
 		//dateonly is not generally supported so we return datetime
-		return GetDataObjectByAlias<DateTime>(_valueAlias); 
+		var dateOnly = GetDataObjectByAlias<DateOnly>(_valueAlias, null);
+		if (dateOnly is null) return null;
+
+		return dateOnly.Value.ToDateTime();
 	}
 }
 

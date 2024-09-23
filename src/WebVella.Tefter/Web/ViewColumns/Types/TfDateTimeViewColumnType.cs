@@ -49,8 +49,8 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 		DefaultComponentType = typeof(TfDateTimeDisplayColumnComponent);
 
 		SupportedComponentTypes = new List<Type> {
-			typeof(TfDateOnlyDisplayColumnComponent), 
 			typeof(TfDateTimeDisplayColumnComponent),
+			typeof(TfDateTimeEditColumnComponent),
 			typeof(TfTextDisplayColumnComponent)
 			};
 	}

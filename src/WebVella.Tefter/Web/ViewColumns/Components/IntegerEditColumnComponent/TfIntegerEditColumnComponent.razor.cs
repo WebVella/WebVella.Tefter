@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Text Edit")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextEditColumnComponent.TfTextEditColumnComponent", "WebVella.Tefter")]
-public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColumnComponentOptions>
+[Description("Tefter Integer Edit")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.IntegerEditColumnComponent.TfIntegerEditColumnComponent", "WebVella.Tefter")]
+public partial class TfIntegerEditColumnComponent : TfBaseViewColumn<TfIntegerEditColumnComponentOptions>
 {
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
-	public TfTextEditColumnComponent()
+	public TfIntegerEditColumnComponent()
 	{
 	}
 
@@ -23,7 +21,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfTextEditColumnComponent(TfComponentContext context)
+	public TfIntegerEditColumnComponent(TfComponentContext context)
 	{
 		Context = context;
 	}
@@ -40,7 +38,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
-	private string _value = null;
+	private int? _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
@@ -48,7 +46,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		return GetDataObjectByAlias<int>(_valueAlias, null);
 	}
 
 	/// <summary>
@@ -79,7 +77,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		{
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
-			await JSRuntime.InvokeAsync<string>("Tefter.blurElement",_valueInputId);
+			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);
 		}
 		catch (Exception ex)
 		{
@@ -93,11 +91,11 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias(_valueAlias);
+		_value = GetDataObjectByAlias<int>(_valueAlias, null);
 	}
 }
 
-public class TfTextEditColumnComponentOptions
+public class TfIntegerEditColumnComponentOptions
 {
 	[JsonPropertyName("ChangeRequiresConfirmation")]
 	public bool ChangeRequiresConfirmation { get; set; } = false;

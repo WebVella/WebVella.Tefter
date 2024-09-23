@@ -50,6 +50,7 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnType
 
 		SupportedComponentTypes = new List<Type> {
 			typeof(TfShortIntegerDisplayColumnComponent),
+			typeof(TfShortIntegerEditColumnComponent),
 			typeof(TfTextDisplayColumnComponent)
 			};
 	}

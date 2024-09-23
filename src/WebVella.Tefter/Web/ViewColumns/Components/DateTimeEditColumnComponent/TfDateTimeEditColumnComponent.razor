@@ -1,12 +1,19 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfTextEditColumnComponentOptions>
+@inherits TfBaseViewColumn<TfDateTimeEditColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>
-		<FluentTextField Id="@_valueInputId"
-						 @bind-Value="@_value"
-						 @bind-Value:after="_valueChanged"
-						 Style="width:100%;min-width:80px;" />
+		<FluentStack Wrap="false">
+			<FluentDatePicker Id="@_valueInputId"
+							  @bind-Value="@_value"
+							  @bind-Value:after="_valueChanged"
+							  View="@CalendarViews.Days"
+							  Style="width:120px;" />
+			<FluentTimePicker Id="@_valueTimeInputId"
+							  @bind-Value="@_value"
+							  @bind-Value:after="_valueChanged"
+							  Style="width:110px;" />
+		</FluentStack>
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)

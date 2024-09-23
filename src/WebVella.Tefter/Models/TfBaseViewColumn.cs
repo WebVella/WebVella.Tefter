@@ -133,6 +133,8 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		{
 			return null;
 		}
+		if(Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+
 		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return null;
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
 		object value = Context.DataTable.Rows[Context.RowIndex][dbName];

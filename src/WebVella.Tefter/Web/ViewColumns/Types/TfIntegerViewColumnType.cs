@@ -51,7 +51,7 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnType
 
 		SupportedComponentTypes = new List<Type> {
 			typeof(TfIntegerDisplayColumnComponent),
-			typeof(TfNumberDisplayColumnComponent),
+			typeof(TfIntegerEditColumnComponent),
 			typeof(TfTextDisplayColumnComponent)
 			};
 	}

@@ -1,12 +1,13 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfTextEditColumnComponentOptions>
+@inherits TfBaseViewColumn<TfNumberEditColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>
-		<FluentTextField Id="@_valueInputId"
-						 @bind-Value="@_value"
-						 @bind-Value:after="_valueChanged"
-						 Style="width:100%;min-width:80px;" />
+		<FluentNumberField TValue="decimal?"
+						   Id="@_valueInputId"
+						   @bind-Value="@_value"
+						   @bind-Value:after="_valueChanged"
+						   Style="width:100%;min-width:80px;" />
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
