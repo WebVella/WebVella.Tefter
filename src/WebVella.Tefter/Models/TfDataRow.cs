@@ -81,7 +81,7 @@ public class TfDataRow : IEnumerable
 					break;
 				case DatabaseColumnType.ShortText:
 				case DatabaseColumnType.Text:
-					if (value is not decimal)
+					if (value is not string)
 						throw new Exception($"Trying to set non text value as value to Text or ShortText column.");
 					break;
 				case DatabaseColumnType.AutoIncrement:
