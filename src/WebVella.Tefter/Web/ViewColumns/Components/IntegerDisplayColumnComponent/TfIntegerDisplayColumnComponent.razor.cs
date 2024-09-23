@@ -4,7 +4,7 @@
 /// </summary>
 
 namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Integer")]
+[Description("Tefter Integer Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.IntegerDisplayColumnComponent.TfIntegerDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfIntegerDisplayColumnComponent : TfBaseViewColumn<TfIntegerDisplayColumnComponentOptions>
 {

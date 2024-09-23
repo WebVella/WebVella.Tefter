@@ -4,7 +4,7 @@
 /// </summary>
 
 namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Long integer")]
+[Description("Tefter Long Integer Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.LongIntegerDisplayColumnComponent.TfLongIntegerDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfLongIntegerDisplayColumnComponent : TfBaseViewColumn<TfLongIntegerDisplayColumnComponentOptions>
 {

@@ -38,7 +38,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	{
 		if (Context is not null && Context.EditContext is not null)
 		{
-			Context.EditContext.OnValidationRequested -= OnValidationRequested;
+			Context.EditContext.OnValidationRequested -= OnOptionsValidationRequested;
 		}
 		return ValueTask.CompletedTask;
 	}
@@ -56,7 +56,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 			LC = StringLocalizerFactory.Create(type);
 		}
 		if (Context.EditContext is not null)
-			Context.EditContext.OnValidationRequested += OnValidationRequested;
+			Context.EditContext.OnValidationRequested += OnOptionsValidationRequested;
 
 	}
 	protected override void OnParametersSet()
@@ -81,24 +81,13 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		return key;
 	}
 
-	/// <summary>
-	/// Called when EditContext.Validate is triggered by the parent component. Such cases are when component options needs to be saved
-	/// or when a component value needs to be updated in the datatable of the component updates it.
-	/// Override in child component. Add possible validation errors with:
-	/// Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "your message here");
-	/// Note: in the above change only the message text
-	/// </summary>
-	protected virtual void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
+	protected virtual string GetColumnNameFromAlias(string alias)
 	{
-		//Should be overrided in child component if needed
-	}
-
-	protected virtual string GetColumnNameFromAlias(string alias){ 
 		string colName = null;
 		if (Context.DataMapping.ContainsKey(alias))
 		{
 			colName = Context.DataMapping[alias];
-		}		
+		}
 
 		return colName;
 	}
@@ -181,6 +170,31 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	}
 
 	/// <summary>
+	/// Called when EditContext.Validate is triggered by the parent component 
+	/// when component options needs to be saved
+	/// Override in child component. Add possible validation errors with:
+	/// Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "your message here");
+	/// Note: in the above change only the message text
+	/// </summary>
+	protected virtual void OnOptionsValidationRequested(object sender, ValidationRequestedEventArgs e)
+	{
+		//Should be overrided in child component if needed
+	}
+
+	/// <summary>
+	/// This method needs to be overriden in the implementing component,
+	/// and will be called by various export services as Excel export in example
+	/// </summary>
+	public virtual TfDataColumn GetColumnInfoByAlias(string alias)
+	{
+		var columnName = GetColumnNameFromAlias(alias);
+		if (String.IsNullOrWhiteSpace(columnName)) return null;
+		if (Context.DataTable is null) return null;
+		return Context.DataTable.Columns[columnName];
+	}
+
+
+	/// <summary>
 	/// This method needs to be overriden in the implementing component,
 	/// and will be called by various export services as Excel export in example
 	/// </summary>
@@ -200,5 +214,32 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		await RowChanged.InvokeAsync(dt);
 	}
 
-	
+	/// <summary>
+	/// This method expects a datatable with a single row (in most cases) 
+	/// with the updated data for that row
+	/// </summary>
+	/// <param name="dt"></param>
+	/// <returns></returns>
+	protected virtual async Task OnRowColumnChangedByAlias(string alias, object value)
+	{
+		if (!RowChanged.HasDelegate) return;
+
+		var dt = Context.DataTable.NewTable(Context.RowIndex);
+		if (dt.Rows.Count == 0)
+		{
+			ToastService.ShowError(LOC("Row with index {0} is not found", Context.RowIndex));
+			return;
+		}
+		var colName = GetColumnNameFromAlias(alias);
+		if (String.IsNullOrWhiteSpace(colName))
+		{
+			ToastService.ShowError(LOC("Column for the alias {0} is not found", alias));
+			return;
+		}
+		dt.Rows[0][colName] = value;
+
+		await OnRowChanged(dt);
+
+	}
+
 }

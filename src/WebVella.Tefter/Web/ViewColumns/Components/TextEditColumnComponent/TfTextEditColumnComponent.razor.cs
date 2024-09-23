@@ -30,14 +30,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_value = GetDataObjectByAlias(_valueAlias);
-	}
-
-	protected override void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
-	{
-		base.OnValidationRequested(sender, e);
-		//Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "problem with json");
-
+		_initValues();
 	}
 
 	/// <summary>
@@ -58,34 +51,32 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		return GetDataObjectByAlias(_valueAlias);
 	}
 
+	/// <summary>
+	/// process the value change event from the components view
+	/// by design if any kind of error occurs the old value should be set back
+	/// so the user is notified that the change is aborted
+	/// </summary>
+	/// <returns></returns>
 	private async Task _valueChanged()
 	{
-		if (!RowChanged.HasDelegate) return;
 		try
 		{
-			var dt = Context.DataTable.NewTable(Context.RowIndex);
-			if (dt.Rows.Count == 0)
-			{
-				ToastService.ShowError(LOC("Row with index {0} is not found", Context.RowIndex));
-				return;
-			}
-			var colName = GetColumnNameFromAlias(_valueAlias);
-			if (String.IsNullOrWhiteSpace(colName))
-			{
-				ToastService.ShowError(LOC("Column for the alias {0} is not found", _valueAlias));
-				return;
-			}
-			dt.Rows[0][colName] = _value;
-
-			await OnRowChanged(dt);
+			await OnRowColumnChangedByAlias(_valueAlias, _value);
+			ToastService.ShowSuccess(LOC("change applied"));
 		}
-		catch(Exception ex){ 
+		catch (Exception ex)
+		{
 			ToastService.ShowError(ex.Message);
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(10);
-			_value = GetDataObjectByAlias(_valueAlias);
+			_initValues();
 			await InvokeAsync(StateHasChanged);
 		}
+	}
+
+	private void _initValues()
+	{
+		_value = GetDataObjectByAlias(_valueAlias);
 	}
 }
 

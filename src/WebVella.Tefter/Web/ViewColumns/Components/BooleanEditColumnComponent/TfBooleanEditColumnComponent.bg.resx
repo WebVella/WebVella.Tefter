@@ -123,10 +123,10 @@
   <data name="Component Mode Not implemented" xml:space="preserve">
     <value>Режимът на компонента не е имплементиран</value>
   </data>
-  <data name="Row with index {0} is not found" xml:space="preserve">
-    <value>Не е намерен ред с този индекс {0}</value>
+  <data name="Label text" xml:space="preserve">
+    <value>Текст на етикета</value>
   </data>
-  <data name="The selected component has no options" xml:space="preserve">
-    <value>Избраният компонент няма опции</value>
+  <data name="Label visibility" xml:space="preserve">
+    <value>Видимост на етиката</value>
   </data>
 </root>

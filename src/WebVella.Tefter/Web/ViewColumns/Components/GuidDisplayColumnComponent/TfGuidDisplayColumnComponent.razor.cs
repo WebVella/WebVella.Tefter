@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter GUID")]
+[Description("Tefter GUID Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.GuidDisplayColumnComponent.TfGuidDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfGuidDisplayColumnComponent : TfBaseViewColumn<TfGuidDisplayColumnComponentOptions>
 {

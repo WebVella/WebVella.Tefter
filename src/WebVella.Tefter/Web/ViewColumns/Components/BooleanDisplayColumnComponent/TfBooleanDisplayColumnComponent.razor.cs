@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Boolean")]
+[Description("Tefter Boolean Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanDisplayColumnComponent.TfBooleanDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 {
@@ -70,4 +70,10 @@ public class TfBooleanDisplayColumnComponentOptions
 
 	[JsonPropertyName("FalseValueShowAsIcon")]
 	public bool FalseValueShowAsIcon { get; set; }
+
+	[JsonPropertyName("NullValueOverrideText")]
+	public string NullValueOverrideText { get; set; }
+
+	[JsonPropertyName("NullValueShowAsIcon")]
+	public bool NullValueShowAsIcon { get; set; }
 }
