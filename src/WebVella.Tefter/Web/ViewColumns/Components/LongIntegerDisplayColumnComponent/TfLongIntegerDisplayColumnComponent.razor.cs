@@ -4,7 +4,7 @@
 /// </summary>
 
 namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Long integer")]
+[Description("Tefter Long Integer Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.LongIntegerDisplayColumnComponent.TfLongIntegerDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfLongIntegerDisplayColumnComponent : TfBaseViewColumn<TfLongIntegerDisplayColumnComponentOptions>
 {
@@ -26,12 +26,20 @@ public partial class TfLongIntegerDisplayColumnComponent : TfBaseViewColumn<TfLo
 	}
 
 	/// <summary>
+	/// The alias of the column name that stores the value.
+	/// Depends on the ITfSpaceViewColumnType that renders this component
+	/// by default it is 'Value'. The alias<>column name mapping is set by the user
+	/// upon space view column configuration
+	/// </summary>
+	private string _valueAlias = "Value";
+
+	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<long>("Value");
+		return GetDataObjectByAlias<long>(_valueAlias);
 	}
 }
 

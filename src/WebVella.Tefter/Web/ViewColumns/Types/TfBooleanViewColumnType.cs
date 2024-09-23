@@ -48,6 +48,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 
 		SupportedComponentTypes = new List<Type> {
 			typeof(TfBooleanDisplayColumnComponent),
+			typeof(TfBooleanEditColumnComponent),
 			typeof(TfTextDisplayColumnComponent)
 			};
 	}

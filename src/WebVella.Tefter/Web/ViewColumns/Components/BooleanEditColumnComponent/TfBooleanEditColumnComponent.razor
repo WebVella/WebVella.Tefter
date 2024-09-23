@@ -1,0 +1,57 @@
+﻿@namespace WebVella.Tefter.Web.ViewColumns
+@inherits TfBaseViewColumn<TfBooleanEditColumnComponentOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	var value = GetDataObjectByAlias<bool>(_valueAlias, null);
+	<div>
+		@if (_isThreeState)
+		{
+			<FluentCheckbox ThreeState="true" @bind-Value="@_value" @bind-CheckState="_state"
+							@bind-CheckState:after=_onValueChange
+							Label="@_getLabel()" />
+		}
+		else
+		{
+			<FluentCheckbox ThreeState="false" @bind-Value="@_value"
+							@bind-Value:after=_onValueChange
+							Label="@_getLabel()" />
+		}
+	</div>
+
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="4">
+			<FluentInputLabel Label="@LOC("TRUE Label")" />
+			<FluentCheckbox Value="@options.ShowLabel"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ShowLabel),x))
+							Label="@LOC("show label")" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="4">
+			<FluentTextField Label="@LOC("TRUE Label")"
+							 Value="@options.TrueLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueLabel),x))
+							 Placeholder="@LOC("empty shows 'true'")" />
+		</FluentGridItem>
+		<FluentGridItem xs="4">
+			<FluentTextField Label="@LOC("FALSE Label")"
+							 Value="@options.FalseLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseLabel),x))
+							 Placeholder="@LOC("empty shows 'false'")" />
+		</FluentGridItem>
+		<FluentGridItem xs="4">
+			<FluentTextField Label="@LOC("NULL Label")"
+							 Value="@options.NullLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullLabel),x))
+							 Placeholder="@LOC("empty shows 'null'")" />
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+

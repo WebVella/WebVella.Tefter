@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Boolean")]
+[Description("Tefter Boolean Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanDisplayColumnComponent.TfBooleanDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 {
@@ -26,13 +26,21 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 	}
 
 	/// <summary>
+	/// The alias of the column name that stores the value.
+	/// Depends on the ITfSpaceViewColumnType that renders this component
+	/// by default it is 'Value'. The alias<>column name mapping is set by the user
+	/// upon space view column configuration
+	/// </summary>
+	private string _valueAlias = "Value";
+
+	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
 		//options are not inited yet as the component is not rendered
-		bool? value = GetDataObjectByAlias<bool>("Value", null);
+		bool? value = GetDataObjectByAlias<bool>(_valueAlias, null);
 		
 		if (value is null) return null;
 
@@ -62,4 +70,10 @@ public class TfBooleanDisplayColumnComponentOptions
 
 	[JsonPropertyName("FalseValueShowAsIcon")]
 	public bool FalseValueShowAsIcon { get; set; }
+
+	[JsonPropertyName("NullValueOverrideText")]
+	public string NullValueOverrideText { get; set; }
+
+	[JsonPropertyName("NullValueShowAsIcon")]
+	public bool NullValueShowAsIcon { get; set; }
 }

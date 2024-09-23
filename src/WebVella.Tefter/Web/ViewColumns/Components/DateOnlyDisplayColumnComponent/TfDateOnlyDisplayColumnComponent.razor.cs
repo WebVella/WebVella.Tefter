@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Date")]
+[Description("Tefter Date Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateOnlyDisplayColumnComponent.TfDateOnlyDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
 {
@@ -24,6 +24,14 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 		Context = context;
 	}
 
+	/// <summary>
+	/// The alias of the column name that stores the value.
+	/// Depends on the ITfSpaceViewColumnType that renders this component
+	/// by default it is 'Value'. The alias<>column name mapping is set by the user
+	/// upon space view column configuration
+	/// </summary>
+	private string _valueAlias = "Value";
+
 	private string _defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
 
 	/// <summary>
@@ -33,7 +41,7 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 	public override object GetData()
 	{
 		//dateonly is not generally supported so we return datetime
-		return GetDataObjectByAlias<DateTime>("Value"); 
+		return GetDataObjectByAlias<DateTime>(_valueAlias); 
 	}
 }
 

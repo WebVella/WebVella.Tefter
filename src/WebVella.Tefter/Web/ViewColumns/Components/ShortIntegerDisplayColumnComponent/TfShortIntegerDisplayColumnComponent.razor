@@ -2,7 +2,7 @@
 @inherits TfBaseViewColumn<TfShortIntegerDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>@(GetDataObjectByAlias<long>("Value", null)?.ToString(options.Format))</div>
+	<div>@(GetDataObjectByAlias<long>(_valueAlias, null)?.ToString(options.Format))</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
@@ -10,7 +10,7 @@ else if (Context.Mode == TfComponentMode.Options)
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Format")"
 							 Value="@options.Format" Style="width:100%" Immediate ImmediateDelay="500"
-							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.Format),x))
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.Format),x))
 							 Placeholder="@LOC("eg. 'N3'")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6"></FluentGridItem>
