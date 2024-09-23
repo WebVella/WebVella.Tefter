@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Web.Models;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public partial interface IDataManager
 {
@@ -8,7 +6,8 @@ public partial interface IDataManager
 		TfDataProvider provider,
 		string search = null,
 		int? page = null,
-		int? pageSize = null);
+		int? pageSize = null,
+		bool noRows = false);
 
 	internal Result<TfDataTable> QuerySpaceData(
 		Guid spaceDataId,
@@ -16,7 +15,11 @@ public partial interface IDataManager
 		List<TfSort> sortOverrides = null,
 		string search = null,
 		int? page = null,
-		int? pageSize = null);
+		int? pageSize = null,
+		bool noRows = false);
+
+	internal Result<TfDataTable> SaveDataTable(
+		TfDataTable table);
 }
 
 public partial class DataManager
@@ -26,7 +29,8 @@ public partial class DataManager
 		TfDataProvider provider,
 		string search = null,
 		int? page = null,
-		int? pageSize = null)
+		int? pageSize = null,
+		bool noRows = false)
 	{
 		try
 		{
@@ -50,7 +54,12 @@ public partial class DataManager
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
-			var dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+			//do not make sql request if no rows are required
+			DataTable dataTable = null;
+			if (!noRows)
+				dataTable = new DataTable();
+			else
+				dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
 
 			return Result.Ok(ProcessSqlResult(
 				sql,
@@ -79,7 +88,8 @@ public partial class DataManager
 		List<TfSort> sortOverrides = null,
 		string search = null,
 		int? page = null,
-		int? pageSize = null)
+		int? pageSize = null,
+		bool noRows = false)
 	{
 		try
 		{
@@ -115,7 +125,12 @@ public partial class DataManager
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
-			var dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+			//do not make sql request if no rows are required
+			DataTable dataTable = null;
+			if (!noRows)
+				dataTable = new DataTable();
+			else
+				dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
 
 			return Result.Ok(ProcessSqlResult(
 				sql,
@@ -193,5 +208,12 @@ public partial class DataManager
 		}
 
 		return resultTable;
+	}
+
+	public Result<TfDataTable> SaveDataTable(
+		TfDataTable table)
+	{
+		return Result.Fail(new ValidationError(string.Empty,
+				"Not implemented yet"));
 	}
 }

@@ -8,6 +8,47 @@ public sealed class TfDataTable
 	public TfDataColumnCollection Columns { get; init; }
 	public TfDataRowCollection Rows { get; init; }
 
+	private TfDataTable(
+		TfDataTable table,
+		params int[] rowIndexes)
+	{
+		Sql = string.Empty;
+		SqlParameters = new List<NpgsqlParameter>().AsReadOnly();
+		QueryInfo = new TfDataTableQueryInfo(
+			this,
+			table.QueryInfo.DataProviderId,
+			table.QueryInfo.Page,
+			table.QueryInfo.PageSize,
+			table.QueryInfo.Search);
+
+		Columns = new TfDataColumnCollection(this);
+
+		foreach (var column in table.Columns)
+		{
+			Columns.Add(new TfDataColumn(
+				this,
+				column.Name,
+				column.DbType,
+				column.IsNullable,
+				column.IsShared,
+				column.IsSystem
+			));
+		}
+
+		Rows = new TfDataRowCollection(this);
+		if (rowIndexes is not null)
+		{
+			foreach (var rowIndex in rowIndexes)
+			{
+				Rows.Add(
+					new TfDataRow(
+					this,
+					table.Rows[rowIndex].GetValues())
+				);
+			}
+		}
+	}
+
 	internal TfDataTable(
 		TfDataProvider dataProvider,
 		TfDataTableQuery query,
@@ -27,7 +68,7 @@ public sealed class TfDataTable
 
 		Columns = InitColumns(
 			dataProvider,
-			onlyColumns );
+			onlyColumns);
 
 		Sql = sql;
 
@@ -134,6 +175,18 @@ public sealed class TfDataTable
 		}
 
 		return columns;
+	}
+
+	public TfDataTable NewTable(
+		params int[] rows)
+	{
+		return new TfDataTable(this, rows);
+	}
+
+	public TfDataRow NewRow()
+	{
+		object[] values = new object[this.Columns.Count];
+		return new TfDataRow(this,values);
 	}
 
 	public override string ToString()

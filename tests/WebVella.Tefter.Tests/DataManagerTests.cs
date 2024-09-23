@@ -18,6 +18,7 @@ public partial class DataManagerTests : BaseTest
 			{
 				var (provider, spaceData) = CreateTestStructureAndData(dbService);
 				var result = dataManager.QuerySpaceData(spaceData.Id,
+					noRows: true,
 					search: "10",
 					page: 1,
 					pageSize: 5,
@@ -43,6 +44,8 @@ public partial class DataManagerTests : BaseTest
 							DbName ="sk_shared_key_int",
 							Direction=TfSortDirection.ASC}
 					});
+
+				var dt = result.Value.NewTable();
 			}
 		}
 	}
