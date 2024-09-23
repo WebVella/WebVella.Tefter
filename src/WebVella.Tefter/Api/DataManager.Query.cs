@@ -56,7 +56,7 @@ public partial class DataManager
 
 			//do not make sql request if no rows are required
 			DataTable dataTable = null;
-			if (!noRows)
+			if (noRows)
 				dataTable = new DataTable();
 			else
 				dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
@@ -127,7 +127,7 @@ public partial class DataManager
 
 			//do not make sql request if no rows are required
 			DataTable dataTable = null;
-			if (!noRows)
+			if (noRows)
 				dataTable = new DataTable();
 			else
 				dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
