@@ -45,7 +45,6 @@ public partial class DataManagerTests : BaseTest
 							Direction=TfSortDirection.ASC}
 					});
 
-				var dt = result.Value.NewTable();
 			}
 		}
 	}

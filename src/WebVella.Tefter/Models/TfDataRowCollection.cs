@@ -13,6 +13,10 @@ public class TfDataRowCollection : IEnumerable
 		get { return _rows[rowIndex]; }
 	}
 
+	public TfDataRow this[Guid tfId]
+	{
+		get { return _rows.SingleOrDefault(x=> (Guid)x["tf_id"] == tfId) }
+	}
 
 	public TfDataRowCollection(TfDataTable table)
 	{
