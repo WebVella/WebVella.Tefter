@@ -1,37 +1,37 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿/// <summary>
+/// Description attribute is needed when presenting the component to the user as a select option
+/// Localization attributes is needed to strongly type the location of the components translation resource
+/// </summary>
 
 namespace WebVella.Tefter.Web.ViewColumns;
 [Description("Tefter Number")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.NumberDisplayColumnComponent.TfNumberDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfNumberDisplayColumnComponent : TfBaseViewColumn<TfNumberDisplayColumnComponentOptions>
 {
+	/// <summary>
+	/// Needed because of the custom constructor
+	/// </summary>
 	public TfNumberDisplayColumnComponent()
 	{
 	}
+	
+	/// <summary>
+	/// The custom constructor is needed because in varoius cases we need to instance the component without
+	/// rendering. The export to excel is one of those cases.
+	/// </summary>
+	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>	
 	public TfNumberDisplayColumnComponent(TfComponentContext context)
 	{
 		Context = context;
 	}
 
-	public override TfBaseViewColumnExportData GetExportData()
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override object GetData()
 	{
-		return new TfBaseViewColumnExportData
-		{
-			Value = GetDataObjectByAlias<decimal>("Value")?.ToString("N"),
-			Format = "0.000"
-		};
-	}
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-	}
-
-	protected override void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
-	{
-		base.OnValidationRequested(sender, e);
-		//Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "problem with json");
-
+		return GetDataObjectByAlias<decimal>("Value");
 	}
 
 	private string _getCastedValue()
@@ -62,6 +62,10 @@ public partial class TfNumberDisplayColumnComponent : TfBaseViewColumn<TfNumberD
 	}
 }
 
+/// <summary>
+/// The options used by the system to serialize and restore the components option
+/// from the database
+/// </summary>
 public class TfNumberDisplayColumnComponentOptions
 {
 	[JsonPropertyName("Format")]

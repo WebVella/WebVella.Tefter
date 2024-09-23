@@ -117,4 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Component Mode Not implemented" xml:space="preserve">
+    <value>Режимът на компонента не е имплементиран</value>
+  </data>
+  <data name="defaults to the system's short date format" xml:space="preserve">
+    <value>по подразбиране ще използва системната кратка дата</value>
+  </data>
+  <data name="eg. 'dd MMM yyyy'" xml:space="preserve">
+    <value>напр. 'dd MMM yyyy'</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Формат</value>
+  </data>
 </root>

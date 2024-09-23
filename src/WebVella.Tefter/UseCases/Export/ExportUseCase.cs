@@ -107,21 +107,14 @@ public class ExportUseCase
 					var endColumn = currentExcelColumn + rangeColumns - 1;
 					var cellRange = ws.Range(currentExcelRow, currentExcelColumn, currentExcelRow, endColumn);
 					if (rangeColumns > 1) cellRange.Merge();
-					cellRange.Style.NumberFormat.Format = null;
-					cellRange.Value = "";
-					currentExcelColumn = currentExcelColumn + rangeColumns;
 
 					if (column.ComponentType is not null
 						&& column.ComponentType.GetInterface(nameof(ITfExportableViewColumn)) != null)
 					{
 						var component = (ITfExportableViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
-						var exportData = component.GetExportData();
-						cellRange.Style.NumberFormat.Format = exportData.Format;
-						cellRange.Value = exportData.Value;
+						cellRange.SetValue(XLCellValue.FromObject(component.GetData()));
 					}
-
-
-
+					currentExcelColumn = currentExcelColumn + rangeColumns;
 				}
 				currentExcelRow++;
 			}

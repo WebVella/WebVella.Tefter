@@ -117,4 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Component Mode Not implemented" xml:space="preserve">
+    <value>Режимът на компонента не е имплементиран</value>
+  </data>
+  <data name="on FALSE (text with priority)" xml:space="preserve">
+    <value>при НЕВЯРНО (текста е с приоритет)</value>
+  </data>
+  <data name="on TRUE (text with priority)" xml:space="preserve">
+    <value>при ВЯРНО (текста е с приоритет)</value>
+  </data>
+  <data name="render as icon" xml:space="preserve">
+    <value>покажи като икона</value>
+  </data>
 </root>

@@ -1,40 +1,38 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
-namespace WebVella.Tefter.Web.ViewColumns;
+/// <summary>
+/// Description attribute is needed when presenting the component to the user as a select option
+/// Localization attributes is needed to strongly type the location of the components translation resource
+/// </summary>
 [Description("Tefter Text Display")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextDisplayColumnComponent.TfTextDisplayColumnComponent","WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextDisplayColumnComponent.TfTextDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfTextDisplayColumnComponent : TfBaseViewColumn<TfTextDisplayColumnComponentOptions>
 {
+	/// <summary>
+	/// Needed because of the custom constructor
+	/// </summary>
 	public TfTextDisplayColumnComponent()
 	{
 	}
+
+	/// <summary>
+	/// The custom constructor is needed because in varoius cases we need to instance the component without
+	/// rendering. The export to excel is one of those cases.
+	/// </summary>
+	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
 	public TfTextDisplayColumnComponent(TfComponentContext context)
 	{
 		Context = context;
 	}
-	
-	public override TfBaseViewColumnExportData GetExportData(){ 
-		return new TfBaseViewColumnExportData
-		{
-			Value = GetDataObjectByAlias("Value"),
-			Format = null
-		};
-	}
 
-	protected override async Task OnInitializedAsync()
+	/// <summary>
+	/// Overrides the default export method in order to apply its own options
+	/// </summary>
+	/// <returns></returns>
+	public override object GetData()
 	{
-		await base.OnInitializedAsync();
+		return GetDataObjectByAlias("Value");
 	}
-	protected override void OnValidationRequested(object sender, ValidationRequestedEventArgs e)
-	{
-		base.OnValidationRequested(sender,e);
-		//Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "problem with json");
-
-	}
-
 }
 
-public class TfTextDisplayColumnComponentOptions
-{
-
-}
+public class TfTextDisplayColumnComponentOptions { }

@@ -3,7 +3,7 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div style="display:flex;align-items:center;">
-	<FluentTextField Value="@((GetDataObjectByAlias("Value"))?.ToString())"
+	<FluentTextField Value="@((GetDataObjectByAlias("Value")))"
 					 ValueChanged="_valueChanged"
 					 Style="width:100%;min-width:80px;" />
 	</div>
