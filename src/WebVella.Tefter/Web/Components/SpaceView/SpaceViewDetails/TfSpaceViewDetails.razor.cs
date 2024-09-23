@@ -6,6 +6,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
+	[Inject] private UserStateUseCase UserUC { get; set; }
 
 	private bool _isDataLoading = true;
 
@@ -106,6 +107,33 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
+	private async Task _pageSizeChange(int pageSize)
+	{
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		if (pageSize < 0) pageSize = TfConstants.PageSize;
+		if (TfAppState.Value.SpaceViewPageSize == pageSize) return;
+		try
+		{
+			var resultSrv = await UserUC.SetPageSize(
+						userId: TfUserState.Value.CurrentUser.Id,
+						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
+					);
+			if (resultSrv.IsSuccess)
+			{
+				Dispatcher.Dispatch(new SetUserStateAction(
+					component: this,
+					state: TfUserState.Value with { CurrentUser = resultSrv.Value }));
+			}
+		}
+		catch { }
+
+
+		var queryDict = new Dictionary<string, object>();
+		queryDict[TfConstants.PageSizeQueryName] = pageSize;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+
 	private async Task _onSearch(string value)
 	{
 		if (_isDataLoading) return;
@@ -139,7 +167,8 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
-	private Task _onRowChanged(TfDataTable value){ 
+	private Task _onRowChanged(TfDataTable value)
+	{
 		//ToastService.ShowInfo(value);
 		return Task.CompletedTask;
 	}

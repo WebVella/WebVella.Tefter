@@ -16,6 +16,7 @@ public class UserBuilder
 	private bool _sidebarOpen;
 	private string _cultureCode;
 	private string _startUpUrl;
+	private int? _pageSize;
 
 	private List<Role> _roles = new();
 
@@ -40,6 +41,7 @@ public class UserBuilder
 			_sidebarOpen = (user?.Settings?.IsSidebarOpen) ?? true;
 			_cultureCode = (user?.Settings?.CultureName) ?? string.Empty;
 			_startUpUrl = (user?.Settings?.StartUpUrl) ?? string.Empty;
+			_pageSize = user?.Settings?.PageSize;
 			_roles = user.Roles.ToList();
 		}
 	}
@@ -116,6 +118,12 @@ public class UserBuilder
 		return this;
 	}
 
+	public UserBuilder WithPageSize(int? pageSize)
+	{
+		_pageSize = pageSize;
+		return this;
+	}
+
 	public UserBuilder WithRoles(params Role[] roles)
 	{
 		if (roles == null || roles.Length == 0)
@@ -177,7 +185,8 @@ public class UserBuilder
 				ThemeColor = _themeColor,
 				ThemeMode = _themeMode,
 				CultureName = _cultureCode,
-				StartUpUrl = _startUpUrl
+				StartUpUrl = _startUpUrl,
+				PageSize = _pageSize,
 			}
 		};
 	}

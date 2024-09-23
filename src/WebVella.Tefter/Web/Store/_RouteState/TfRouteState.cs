@@ -16,7 +16,7 @@ public partial record TfRouteState
 	public RouteDataThirdNode ThirdNode { get; init; } = default!;
 
 	public int? Page { get; init;} = 1;
-	public int? PageSize { get; init;} = TfConstants.PageSize;
+	public int? PageSize { get; init;} = null;
 	public string Search { get; init;} = null;
 	public List<TucFilterBase> Filters { get; init;} = null;
 	public List<TucSort> Sorts { get; init;} = null;

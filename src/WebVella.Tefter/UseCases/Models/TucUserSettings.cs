@@ -10,6 +10,7 @@ public record TucUserSettings
 
 	public string CultureName { get; init; } = string.Empty;
 	public string StartUpUrl { get; init; } = string.Empty;
+	public int? PageSize { get; init; } = null;
 
 	public TucUserSettings(){}
 	public TucUserSettings(UserSettings model){
@@ -18,6 +19,7 @@ public record TucUserSettings
 		IsSidebarOpen = model.IsSidebarOpen;
 		CultureName = model.CultureName;
 		StartUpUrl = model.StartUpUrl;
+		PageSize = model.PageSize;
 	}
 
 	public UserSettings ToModel()
@@ -28,7 +30,8 @@ public record TucUserSettings
 			ThemeMode = ThemeMode,
 			IsSidebarOpen = IsSidebarOpen,
 			ThemeColor = ThemeColor,
-			StartUpUrl = StartUpUrl
+			StartUpUrl = StartUpUrl,
+			PageSize = PageSize,
 		};
 	}
 }
