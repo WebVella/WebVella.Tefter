@@ -70,7 +70,7 @@
 							<FluentIcon Value="@Icons.GetInstance(_form.Icon)" />
 						}
 						<FluentSelect @bind-SelectedOption="@_form.IconString" TOption="string"
-									  Items="@RenderUtils.GetSpaceIconLibrary()"
+									  Items="@TfConverters.GetSpaceIconLibrary()"
 									  Style="width:100%;">
 							<OptionTemplate Context="icon">
 								<FluentStack VerticalAlignment="@VerticalAlignment.Center">

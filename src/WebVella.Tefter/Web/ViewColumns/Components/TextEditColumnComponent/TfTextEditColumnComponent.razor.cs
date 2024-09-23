@@ -24,12 +24,8 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 	}
 
-	public override TfBaseViewColumnExportData GetExportData(){ 
-		return new TfBaseViewColumnExportData
-		{
-			Value = GetDataObjectByAlias("Value"),
-			Format = null
-		};
+	public override object GetData(){ 
+		return GetDataObjectByAlias("Value");
 	}
 
 	private async Task _valueChanged(string value) => await ValueChanged.InvokeAsync(value);

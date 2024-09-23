@@ -4,7 +4,7 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnType
 {
 	const string TF_COLUMN_DATETIME_ID = Constants.TF_GENERIC_DATEONLY_COLUMN_TYPE_ID;
 	const string TF_COLUMN_DATETIME_NAME = "Date";
-	const string TF_COLUMN_DATETIME_DESCRIPTION = "A date column";
+	const string TF_COLUMN_DATETIME_DESCRIPTION = "displays a date";
 	const string TF_COLUMN_DATETIME_ICON = "CalendarMonth";
 	const string ALIAS = "Value";
 
@@ -34,7 +34,7 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnType
 			new TfSpaceViewColumnDataMapping
 				{
 					Alias = ALIAS,
-					Description = "This column works with Date or DateTime database column.",
+					Description = "this column is compatible with the all Date and DateTime database column types, but its intented use is with Date",
 					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
 						DatabaseColumnType.Date,
 						DatabaseColumnType.DateTime 

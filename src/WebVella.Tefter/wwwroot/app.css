@@ -48,9 +48,9 @@ body {
 	width: var(--tf-content-margin-bottom) !important;
 }
 
-.sidebar-collapsed .spacenav > div{
-	display:none !important;
-}
+	.sidebar-collapsed .spacenav > div {
+		display: none !important;
+	}
 
 .sidebar {
 	position: relative;
@@ -154,15 +154,16 @@ body {
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th {
 	border-top: none;
 }
-.tf-grid-thead > .tf-grid-tr > .tf-grid-th.tf-grid-th--check {
-	width:35px;
-	padding-left:5px;
-	padding-right:5px;
-}
 
-.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check > div{
-	padding-left:5px;
-	padding-right:5px;
+	.tf-grid-thead > .tf-grid-tr > .tf-grid-th.tf-grid-th--check {
+		width: 35px;
+		padding-left: 5px;
+		padding-right: 5px;
+	}
+
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check > div {
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th,
@@ -196,19 +197,19 @@ body {
 	}
 
 
-.tf-grid-tbody > .tf-grid-tr > .tf-grid-td a {
-	text-decoration: none;
-}
-
-	.tf-grid-tbody > .tf-grid-tr > .tf-grid-td a:hover {
-		text-decoration: underline;
+	.tf-grid-tbody > .tf-grid-tr > .tf-grid-td a {
+		text-decoration: none;
 	}
 
-.tf-grid-tbody > .tf-grid-tr > .tf-grid-td .td-description {
-	font-size: var(--type-ramp-minus-1-font-size);
-	color: var(--neutral-foreground-hint);
-	white-space:initial;
-}
+		.tf-grid-tbody > .tf-grid-tr > .tf-grid-td a:hover {
+			text-decoration: underline;
+		}
+
+	.tf-grid-tbody > .tf-grid-tr > .tf-grid-td .td-description {
+		font-size: var(--type-ramp-minus-1-font-size);
+		color: var(--neutral-foreground-hint);
+		white-space: initial;
+	}
 /*datagrid*/
 .tfdt {
 	position: absolute;
@@ -235,7 +236,6 @@ body {
 	overflow-y: scroll !important;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
-	
 }
 
 .tfdt__pager {
@@ -243,10 +243,10 @@ body {
 	flex: 0 0 40px;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
-    margin-left: var(--tf-content-padding);
-    margin-right: var(--tf-content-margin-bottom);
+	margin-left: var(--tf-content-padding);
+	margin-right: var(--tf-content-margin-bottom);
 	background: var(--neutral-stroke-active);
-	border-radius:var(--tf-content-border-radius) var(--tf-content-border-radius) 0 0;
+	border-radius: var(--tf-content-border-radius) var(--tf-content-border-radius) 0 0;
 }
 
 /*	.tfdt__pager:before {
@@ -303,13 +303,18 @@ fluent-select::part(listbox) {
 
 div[class ^='fluent-messagebar'],
 .fluent-messagebar-notification,
-.fluent-messagebar-message{
-	animation:none !important;
-}
-fluent-button.accent svg {
-	fill:var(--neutral-layer-1) !important;
+.fluent-messagebar-message {
+	animation: none !important;
 }
 
+fluent-button.accent svg {
+	fill: var(--neutral-layer-1) !important;
+}
+
+.tf-input-description {
+	color: var(--neutral-foreground-active);
+	font-size: 11px;
+}
 
 /* General */
 #blazor-error-ui {

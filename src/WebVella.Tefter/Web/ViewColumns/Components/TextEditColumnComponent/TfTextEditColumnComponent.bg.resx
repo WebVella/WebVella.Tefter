@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Component Mode Not implemented" xml:space="preserve">
+    <value>Режимът на компонента не е имплементиран</value>
+  </data>
+  <data name="The selected component has no options" xml:space="preserve">
+    <value>Избраният компонент няма опции</value>
+  </data>
 </root>

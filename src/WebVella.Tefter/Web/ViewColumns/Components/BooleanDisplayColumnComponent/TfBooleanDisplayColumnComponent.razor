@@ -38,7 +38,7 @@
 else if (Context.Mode == TfComponentMode.Options)
 {
 
-	<FluentInputLabel Label="TRUE value (text with priority)" />
+	<FluentInputLabel Label="@LOC("on TRUE (text with priority)")" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Value="@options.TrueValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
@@ -48,10 +48,10 @@ else if (Context.Mode == TfComponentMode.Options)
 		<FluentGridItem xs="6">
 			<FluentCheckbox Value="@options.TrueValueShowAsIcon"
 							ValueChanged=@((x)=> OptionsValueChanged(nameof(options.TrueValueShowAsIcon),x))
-							Label="render as icon" />
+							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
-	<FluentInputLabel Label="FALSE value (text with priority)" style="margin-top:1rem;" />
+	<FluentInputLabel Label="@LOC("on FALSE (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Value="@options.FalseValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
@@ -61,7 +61,7 @@ else if (Context.Mode == TfComponentMode.Options)
 		<FluentGridItem xs="6">
 			<FluentCheckbox Value="@options.FalseValueShowAsIcon"
 							ValueChanged=@((x)=> OptionsValueChanged(nameof(options.FalseValueShowAsIcon),x))
-							Label="render as icon" />
+							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
 }

@@ -13,7 +13,7 @@ public partial class TfLocation : TfBaseComponent
 		{
 			result.Add(new MenuItem
 			{
-				Title = RenderUtils.StringOverflow("Home", _ellipsisCount),
+				Title = TfConverters.StringOverflow("Home", _ellipsisCount),
 				Url = "/"
 			});
 		}
@@ -21,7 +21,7 @@ public partial class TfLocation : TfBaseComponent
 		{
 			result.Add(new MenuItem
 			{
-				Title = RenderUtils.StringOverflow("Administration", _ellipsisCount),
+				Title = TfConverters.StringOverflow("Administration", _ellipsisCount),
 				Url = String.Format(TfConstants.AdminPageUrl)
 			});
 		}

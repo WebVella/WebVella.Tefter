@@ -10,8 +10,11 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_spaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId);
-		_dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
+		if (TfAppState.Value.SpaceView is not null)
+		{
+			_spaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId);
+			_dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
+		}
 
 	}
 

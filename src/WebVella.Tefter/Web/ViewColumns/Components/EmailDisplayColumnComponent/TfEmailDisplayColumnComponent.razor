@@ -1,12 +1,17 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfTextEditColumnComponentOptions>
+@inherits TfBaseViewColumn<TfEmailDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div style="display:flex;align-items:center;">
-	<FluentTextField Value="@((GetDataObjectByAlias("Value")))"
-					 ValueChanged="_valueChanged"
-					 Style="width:100%;min-width:80px;" />
-	</div>
+	var value = GetDataObjectByAlias("Value",null);
+	if (!String.IsNullOrWhiteSpace(value) && TfConverters.IsValidEmail(value))
+	{
+		<div><a href="mailto:@value">@value</a></div>
+	}
+	else
+	{
+		<div>@value</div>
+	}
+	
 }
 else if (Context.Mode == TfComponentMode.Options)
 {

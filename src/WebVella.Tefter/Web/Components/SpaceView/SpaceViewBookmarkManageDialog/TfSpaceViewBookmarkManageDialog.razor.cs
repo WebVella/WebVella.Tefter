@@ -83,7 +83,7 @@ public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDia
 		_form.Tags = new List<TucTag>();
 		if (!String.IsNullOrWhiteSpace(description))
 		{
-			foreach (var item in RenderUtils.GetUniqueTagsFromText(description))
+			foreach (var item in TfConverters.GetUniqueTagsFromText(description))
 			{
 				_form.Tags.Add(new TucTag { Id = Guid.NewGuid(), Label = item });
 			}

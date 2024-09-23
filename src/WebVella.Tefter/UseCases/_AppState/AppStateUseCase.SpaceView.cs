@@ -569,6 +569,24 @@ internal partial class AppStateUseCase
 		return serviceResult.Value;
 	}
 
+	internal Result<TfDataProviderDataRow> ChangeViewData(Guid spaceDataId,Guid rowId, string dbName, object value){ 
+		var spaceData = GetSpaceData(spaceDataId);
+		if(spaceData is null) return Result.Fail("Space data no longer existing");
+
+		var providerResult = _dataProviderManager.GetProvider(spaceData.DataProviderId);
+		if(providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
+		var provider = providerResult.Value;
+		if(provider is null) return Result.Fail("Data provider no longer existing");
+		var upResult = _dataManager.UpdateValue(provider,rowId,dbName,value);
+		if(upResult.IsFailed) return Result.Fail(new Error("UpdateValue failed").CausedBy(upResult.Errors));
+
+		var providerRow = _dataManager.GetProviderRow(provider,rowId);
+		if(providerRow.IsFailed) return Result.Fail(new Error("GetProviderRow failed").CausedBy(providerRow.Errors));
+
+		return Result.Ok(providerRow.Value);
+	}
+
+
 	//View columns
 	internal TucSpaceViewColumn GetViewColumn(Guid columnId)
 	{
@@ -587,7 +605,6 @@ internal partial class AppStateUseCase
 		if (serviceResult.Value is null) return new();
 
 		return new TucSpaceViewColumn(serviceResult.Value);
-
 	}
 
 	internal List<TucSpaceViewColumn> GetViewColumns(Guid viewId)

@@ -1,11 +1,11 @@
 ﻿namespace WebVella.Tefter.Web.ViewColumns;
 
-public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
+public class TfLongIntegerViewColumnType : ITfSpaceViewColumnType
 {
-	const string TF_COLUMN_DATETIME_ID = Constants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID;
-	const string TF_COLUMN_DATETIME_NAME = "DateTime";
-	const string TF_COLUMN_DATETIME_DESCRIPTION = "displays date and time";
-	const string TF_COLUMN_DATETIME_ICON = "CalendarMonth";
+	const string TF_COLUMN_NUMBER_ID = Constants.TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID;
+	const string TF_COLUMN_NUMBER_NAME = "Long integer";
+	const string TF_COLUMN_NUMBER_DESCRIPTION = "displays very big integer numbers.";
+	const string TF_COLUMN_NUMBER_ICON = "NumberSymbol";
 	const string ALIAS = "Value";
 
 	public Guid Id { get; init; }
@@ -19,38 +19,39 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
 
-	public TfDateTimeViewColumnType()
+	public TfLongIntegerViewColumnType()
 	{
-		Id = new Guid(TF_COLUMN_DATETIME_ID);
 
-		Name = TF_COLUMN_DATETIME_NAME;
+		Id = new Guid(TF_COLUMN_NUMBER_ID);
 
-		Description = TF_COLUMN_DATETIME_DESCRIPTION;
+		Name = TF_COLUMN_NUMBER_NAME;
 
-		Icon = TF_COLUMN_DATETIME_ICON;
+		Description = TF_COLUMN_NUMBER_DESCRIPTION;
+
+		Icon = TF_COLUMN_NUMBER_ICON;
 
 		DataMapping = new List<TfSpaceViewColumnDataMapping>
 		{
 			new TfSpaceViewColumnDataMapping
 				{
 					Alias = ALIAS,
-					Description = "this column is compatible with the all Date and DateTime database column types, but its intented use is with DateTime",
+					Description = "this column is compatible with all integer database column types",
 					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
-						DatabaseColumnType.Date,
-						DatabaseColumnType.DateTime
-					}
-				}
+						DatabaseColumnType.ShortInteger,
+						DatabaseColumnType.Integer,
+						DatabaseColumnType.LongInteger }
+			}
 		};
 
 		FilterAliases = new List<string>() { ALIAS };
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfDateTimeDisplayColumnComponent);
+		DefaultComponentType = typeof(TfLongIntegerDisplayColumnComponent);
 
 		SupportedComponentTypes = new List<Type> {
-			typeof(TfDateOnlyDisplayColumnComponent), 
-			typeof(TfDateTimeDisplayColumnComponent),
+			typeof(TfLongIntegerDisplayColumnComponent),
+			typeof(TfNumberDisplayColumnComponent),
 			typeof(TfTextDisplayColumnComponent)
 			};
 	}

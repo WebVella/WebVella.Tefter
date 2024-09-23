@@ -24,7 +24,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 
 				var viewMenu = new MenuItem
 				{
-					Id = RenderUtils.ConvertGuidToHtmlElementId(record.Id),
+					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
 					Icon = TfConstants.SpaceViewIcon,
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
@@ -45,7 +45,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 
 				var viewMenu = new MenuItem
 				{
-					Id = RenderUtils.ConvertGuidToHtmlElementId(record.Id),
+					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
 					Icon = TfConstants.BookmarkOFFIcon,
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
@@ -68,7 +68,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 
 				var viewMenu = new MenuItem
 				{
-					Id = RenderUtils.ConvertGuidToHtmlElementId(record.Id),
+					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
 					Icon = TfConstants.GetIcon("Link"),
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
