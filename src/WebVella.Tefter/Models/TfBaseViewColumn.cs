@@ -114,7 +114,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 
 		return Context.DataTable.Rows[Context.RowIndex][dbName]?.ToString();
 	}
-	
+
 	/// <summary>
 	/// The implementing components are referencing data based on the Data Mapping provided by the user, 
 	/// which maps value needed by the component and its corresponding datatable comlumn name.
@@ -141,63 +141,8 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		if (value is null) return null;
 
 		if (typeof(T) == typeof(String)) return (T)value;
-		else if (typeof(T) == typeof(Boolean))
-		{
-			if (value is Boolean) return (T)value;
-			if (Boolean.TryParse(value.ToString(), out Boolean outVal))
-			{
-				return (T)(object)outVal;
-			}
-			return null;
-		}
-		else if (typeof(T) == typeof(DateOnly))
-		{
-			if (value is DateOnly) return (T)value;
-			//safer to cast to datetime and then get dateonly
-			if (DateTime.TryParse(value.ToString(), out DateTime outVal))
-			{
-				return (T)(object)(new DateOnly(outVal.Year, outVal.Month, outVal.Day));
-			}
-			return null;
-		}
-		else if (typeof(T) == typeof(DateTime))
-		{
-			if (value is DateTime) return (T)value;
-			if (DateTime.TryParse(value.ToString(), out DateTime outVal))
-			{
-				return (T)(object)outVal;
-			}
-			return null;
-		}
-		else if (typeof(T) == typeof(decimal))
-		{
-			if (value is decimal) return (T)value;
-			if (decimal.TryParse(value.ToString(), out decimal outVal))
-			{
-				return (T)(object)outVal;
-			}
-			return null;
-		}
-		else if (typeof(T) == typeof(int))
-		{
-			if (value is int) return (T)value;
-			if (int.TryParse(value.ToString(), out int outVal))
-			{
-				return (T)(object)outVal;
-			}
-			return null;
-		}
-		else if (typeof(T) == typeof(Guid))
-		{
-			if (value is Guid) return (T)value;
-			if (Guid.TryParse(value.ToString(), out Guid outVal))
-			{
-				return (T)(object)outVal;
-			}
-			return null;
-		}
-
-		return null;
+		else if (value is T) return (T)value;
+		return TfConverters.Convert<T>(value.ToString());
 	}
 
 	/// <summary>
@@ -237,4 +182,6 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	{
 		return null;
 	}
+
+	
 }

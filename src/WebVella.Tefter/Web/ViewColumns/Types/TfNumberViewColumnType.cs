@@ -4,7 +4,7 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnType
 {
 	const string TF_COLUMN_NUMBER_ID = Constants.TF_GENERIC_NUMBER_COLUMN_TYPE_ID;
 	const string TF_COLUMN_NUMBER_NAME = "Number";
-	const string TF_COLUMN_NUMBER_DESCRIPTION = "Holds all kind of numbers.";
+	const string TF_COLUMN_NUMBER_DESCRIPTION = "displays decimal numbers";
 	const string TF_COLUMN_NUMBER_ICON = "NumberSymbol";
 	const string ALIAS = "Value";
 
@@ -35,7 +35,7 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnType
 			new TfSpaceViewColumnDataMapping
 				{
 					Alias = ALIAS,
-					Description = "This column works with Number database column.",
+					Description = "this column is compatible with all number and integer database column types",
 					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
 						DatabaseColumnType.ShortInteger,
 						DatabaseColumnType.Integer,
@@ -50,7 +50,10 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnType
 
 		DefaultComponentType = typeof(TfNumberDisplayColumnComponent);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfNumberDisplayColumnComponent), typeof(TfTextDisplayColumnComponent) };
+		SupportedComponentTypes = new List<Type> {
+			typeof(TfNumberDisplayColumnComponent),
+			typeof(TfTextDisplayColumnComponent)
+			};
 	}
 }
 

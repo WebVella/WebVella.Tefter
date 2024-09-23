@@ -4,7 +4,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 {
 	const string TF_COLUMN_BOOLEAN_ID = Constants.TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID;
 	const string TF_COLUMN_BOOLEAN_NAME = "Boolean";
-	const string TF_COLUMN_BOOLEAN_DESCRIPTION = "A boolean column";
+	const string TF_COLUMN_BOOLEAN_DESCRIPTION = "displays a boolean";
 	const string TF_COLUMN_BOOLEAN_ICON = "CircleMultipleSubtractCheckmark";
 	const string ALIAS = "Value";
 
@@ -35,7 +35,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 			new TfSpaceViewColumnDataMapping
 				{
 					Alias = ALIAS,
-					Description = "This column works with Boolean database column.",
+					Description = "this column is compatible with the Boolean database column type",
 					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> { DatabaseColumnType.Boolean }
 				}
 		};
@@ -46,7 +46,10 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 
 		DefaultComponentType = typeof(TfBooleanDisplayColumnComponent);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfBooleanDisplayColumnComponent), typeof(TfTextDisplayColumnComponent) };
+		SupportedComponentTypes = new List<Type> {
+			typeof(TfBooleanDisplayColumnComponent),
+			typeof(TfTextDisplayColumnComponent)
+			};
 	}
 }
 

@@ -18,7 +18,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 
 			var menu = new MenuItem
 			{
-				Id = RenderUtils.ConvertGuidToHtmlElementId(spaceData.Id),
+				Id = TfConverters.ConvertGuidToHtmlElementId(spaceData.Id),
 				Icon = TfConstants.SpaceDataIcon,
 				Match = NavLinkMatch.Prefix,
 				Title = spaceData.Name,

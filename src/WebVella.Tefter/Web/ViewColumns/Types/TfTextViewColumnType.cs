@@ -4,7 +4,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 {
 	const string TF_COLUMN_TEXT_ID = Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID;
 	const string TF_COLUMN_TEXT_NAME = "Text";
-	const string TF_COLUMN_TEXT_DESCRIPTION = "A text column";
+	const string TF_COLUMN_TEXT_DESCRIPTION = "displays text";
 	const string TF_COLUMN_TEXT_ICON = "TextCaseTitle";
 	const string ALIAS = "Value";
 
@@ -37,7 +37,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 			new TfSpaceViewColumnDataMapping
 				{
 					Alias = ALIAS,
-					Description = "This column works with Text database column.",
+					Description = "this column is compatible with all column types, but its intended use is with text",
 					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
 						DatabaseColumnType.ShortText,
 						DatabaseColumnType.Text
@@ -51,7 +51,12 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 
 		DefaultComponentType = typeof(TfTextDisplayColumnComponent);
 
-		SupportedComponentTypes = new List<Type> { typeof(TfTextDisplayColumnComponent), typeof(TfTextEditColumnComponent) };
+		SupportedComponentTypes = new List<Type> {
+			typeof(TfTextDisplayColumnComponent),
+			typeof(TfEmailDisplayColumnComponent),
+			typeof(TfUrlDisplayColumnComponent),
+			typeof(TfTextEditColumnComponent)
+			};
 	}
 }
 

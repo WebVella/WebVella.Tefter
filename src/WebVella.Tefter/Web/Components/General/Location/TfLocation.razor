@@ -22,7 +22,7 @@
 			@foreach (var item in bcMenu)
 			{
 				<FluentBreadcrumbItem title="@item.Title">
-					@RenderUtils.StringOverflow(item.Title,_ellipsisCount)
+					@TfConverters.StringOverflow(item.Title,_ellipsisCount)
 				</FluentBreadcrumbItem>
 			}
 		</FluentBreadcrumb>

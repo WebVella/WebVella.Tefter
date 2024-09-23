@@ -83,7 +83,7 @@ internal partial class AppStateUseCase
 
 		if (page is null || pageSize is null) return records.Select(x => new TucUser(x)).ToList();
 
-		return records.Skip(RenderUtils.CalcSkip(page.Value,pageSize.Value)).Take(pageSize.Value).Select(x => new TucUser(x)).ToList();
+		return records.Skip(TfConverters.CalcSkip(page.Value,pageSize.Value)).Take(pageSize.Value).Select(x => new TucUser(x)).ToList();
 
 	}
 	internal async Task<TucUser> GetUserAsync(Guid userId)

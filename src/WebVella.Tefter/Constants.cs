@@ -32,4 +32,7 @@ internal class Constants
 	public const string TF_GENERIC_DATETIME_COLUMN_TYPE_ID = "d41752c3-e356-4c51-83ed-7e1a4e5e5183";
 	public const string TF_GENERIC_GUID_COLUMN_TYPE_ID = "b736b4f9-2138-44d2-a5d5-4a320b6556db";
 	public const string TF_GENERIC_NUMBER_COLUMN_TYPE_ID = "5d246be4-d202-434c-961e-204e44ee0450";
+	public const string TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID = "22d5436c-1dec-4d1d-bb4d-f197f19c9d12";
+	public const string TF_GENERIC_INTEGER_COLUMN_TYPE_ID = "a0708248-ebfc-4ba9-84e9-3f959c06989c";
+	public const string TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID = "e8a52dfe-fcb8-4fd2-8011-bd9e0a5a81d9";
 }

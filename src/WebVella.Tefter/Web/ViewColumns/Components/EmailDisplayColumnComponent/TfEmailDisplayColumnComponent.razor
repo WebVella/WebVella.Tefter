@@ -1,0 +1,25 @@
+﻿@namespace WebVella.Tefter.Web.ViewColumns
+@inherits TfBaseViewColumn<TfEmailDisplayColumnComponentOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	var value = GetDataObjectByAlias("Value",null);
+	if (!String.IsNullOrWhiteSpace(value) && TfConverters.IsValidEmail(value))
+	{
+		<div><a href="mailto:@value">@value</a></div>
+	}
+	else
+	{
+		<div>@value</div>
+	}
+	
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

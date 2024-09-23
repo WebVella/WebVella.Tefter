@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-internal static class RenderUtils
+internal static class TfConverters
 {
 	private static string conversionPrefix = "tf-";
 
@@ -31,8 +31,10 @@ internal static class RenderUtils
 
 	internal static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
 
-	internal static System.Drawing.Color OfficeColorToColor(OfficeColor? color){ 
-		if(color is null || color == OfficeColor.Default){ 
+	internal static System.Drawing.Color OfficeColorToColor(OfficeColor? color)
+	{
+		if (color is null || color == OfficeColor.Default)
+		{
 			return new System.Drawing.Color();
 		}
 		return System.Drawing.ColorTranslator.FromHtml(color.ToAttributeValue());
@@ -149,5 +151,86 @@ internal static class RenderUtils
 		}
 
 		return result;
+	}
+
+	internal static T Convert<T>(string input)
+	{
+		try
+		{
+			var converter = TypeDescriptor.GetConverter(typeof(T));
+			if (converter != null)
+			{
+				// Cast ConvertFromString(string text) : object to (T)
+				return (T)converter.ConvertFromString(input);
+			}
+			return default(T);
+		}
+		catch (NotSupportedException)
+		{
+			return default(T);
+		}
+	}
+
+	internal static bool IsValidEmail(string email)
+	{
+		if (string.IsNullOrWhiteSpace(email))
+			return false;
+
+		try
+		{
+			// Normalize the domain
+			email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
+								  RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+			// Examines the domain part of the email and normalizes it.
+			string DomainMapper(Match match)
+			{
+				// Use IdnMapping class to convert Unicode domain names.
+				var idn = new IdnMapping();
+
+				// Pull out and process domain name (throws ArgumentException on invalid)
+				string domainName = idn.GetAscii(match.Groups[2].Value);
+
+				return match.Groups[1].Value + domainName;
+			}
+		}
+		catch (RegexMatchTimeoutException e)
+		{
+			return false;
+		}
+		catch (ArgumentException e)
+		{
+			return false;
+		}
+
+		try
+		{
+			return Regex.IsMatch(email,
+				@"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+				RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
+		}
+		catch (RegexMatchTimeoutException)
+		{
+			return false;
+		}
+	}
+
+	internal static bool IsValidURL(string url)
+	{
+		if (string.IsNullOrWhiteSpace(url))
+			return false;
+
+		try
+		{
+			//Add relative URL support
+			if (url.StartsWith("/")) url = "http://localhost" + url;
+			Uri uriResult;
+			return Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+				&& (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+		}
+		catch (ArgumentException e)
+		{
+			return false;
+		}
 	}
 }

@@ -36,7 +36,7 @@
 												<div>
 													<FluentLabel Typo="@Typography.Body">@item.Title</FluentLabel>
 												</div>
-												<div class="td-description">@RenderUtils.StringOverflow(item.Description, 150)</div>
+												<div class="td-description">@TfConverters.StringOverflow(item.Description, 150)</div>
 											</div>
 										</td>
 										<td class="tf-grid-td">
@@ -46,8 +46,8 @@
 										</td>
 										<td class="tf-grid-td">
 											<div>
-												<div title="@item.SpaceViewName">@RenderUtils.StringOverflow(item.SpaceViewName, 30)</div>
-												<div class="td-description" title="@item.SpaceName">@RenderUtils.StringOverflow(item.SpaceName, 30)</div>
+												<div title="@item.SpaceViewName">@TfConverters.StringOverflow(item.SpaceViewName, 30)</div>
+												<div class="td-description" title="@item.SpaceName">@TfConverters.StringOverflow(item.SpaceName, 30)</div>
 											</div>
 										</td>
 									</tr>

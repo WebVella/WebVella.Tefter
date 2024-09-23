@@ -6,10 +6,16 @@ public static class ModelHelpers
 		ITfSpaceViewColumnType selectedType = null;
 		switch (dbType)
 		{
-			case DatabaseColumnType.AutoIncrement:
 			case DatabaseColumnType.ShortInteger:
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID));
+				break;
+			case DatabaseColumnType.AutoIncrement:
 			case DatabaseColumnType.Integer:
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_INTEGER_COLUMN_TYPE_ID));
+				break;
 			case DatabaseColumnType.LongInteger:
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID));
+				break;
 			case DatabaseColumnType.Number:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_NUMBER_COLUMN_TYPE_ID));
 				break;

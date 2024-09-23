@@ -1,8 +1,8 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfNumberDisplayColumnComponentOptions>
+@inherits TfBaseViewColumn<TfShortIntegerDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>@(GetDataObjectByAlias<decimal>("Value", null)?.ToString(options.Format))</div>
+	<div>@(GetDataObjectByAlias<long>("Value", null)?.ToString(options.Format))</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {

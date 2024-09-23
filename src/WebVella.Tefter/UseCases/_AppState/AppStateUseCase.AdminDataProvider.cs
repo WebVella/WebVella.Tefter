@@ -118,7 +118,7 @@ internal partial class AppStateUseCase
 
 		if (page is null || pageSize is null) return Task.FromResult(records.Select(x => new TucDataProvider(x)).ToList());
 
-		return Task.FromResult(records.Skip(RenderUtils.CalcSkip(page.Value, pageSize.Value)).Take(pageSize.Value).Select(x => new TucDataProvider(x)).ToList());
+		return Task.FromResult(records.Skip(TfConverters.CalcSkip(page.Value, pageSize.Value)).Take(pageSize.Value).Select(x => new TucDataProvider(x)).ToList());
 	}
 	internal Task<TucDataProvider> GetDataProviderAsync(Guid providerId)
 	{

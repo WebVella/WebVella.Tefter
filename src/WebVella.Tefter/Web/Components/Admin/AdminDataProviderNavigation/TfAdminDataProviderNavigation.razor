@@ -20,7 +20,7 @@
 			{
 				<FluentNavLink Href="@(string.Format(TfConstants.AdminDataProviderDetailsPageUrl,item.Id))" Match="@NavLinkMatch.Prefix"
 							   @key="@item.Id" Icon="@TfConstants.AdminDataProvidersIcon" IconColor="@Color.Neutral">
-					@RenderUtils.StringOverflow(item.Name, _stringLimit)
+					@TfConverters.StringOverflow(item.Name, _stringLimit)
 				</FluentNavLink>
 			}
 		</FluentNavMenu>

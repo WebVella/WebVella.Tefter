@@ -23,7 +23,7 @@ public partial record TfAppState
 	}
 	public string SpaceIconColorString
 	{
-		get => RenderUtils.ChangeColorDarknessHex(SpaceColorObject, (float)0.25);
+		get => TfConverters.ChangeColorDarknessHex(SpaceColorObject, (float)0.25);
 	}
 	public SystemColor SpaceColorObject
 	{
@@ -51,7 +51,7 @@ public partial record TfAppState
 				result.Add(new MenuItem
 				{
 					Icon = item.Icon,
-					Id = RenderUtils.ConvertGuidToHtmlElementId(item.Id),
+					Id = TfConverters.ConvertGuidToHtmlElementId(item.Id),
 					Match = NavLinkMatch.Prefix,
 					Url = item.Url,
 					SpaceId = item.Id,
