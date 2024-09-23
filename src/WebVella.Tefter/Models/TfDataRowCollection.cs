@@ -15,7 +15,7 @@ public class TfDataRowCollection : IEnumerable
 
 	public TfDataRow this[Guid tfId]
 	{
-		get { return _rows.SingleOrDefault(x=> (Guid)x["tf_id"] == tfId) }
+		get { return _rows.SingleOrDefault(x => (Guid)x["tf_id"] == tfId); }
 	}
 
 	public TfDataRowCollection(TfDataTable table)
