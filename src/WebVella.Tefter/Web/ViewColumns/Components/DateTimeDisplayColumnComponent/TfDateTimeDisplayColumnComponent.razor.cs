@@ -25,6 +25,14 @@ public partial class TfDateTimeDisplayColumnComponent : TfBaseViewColumn<TfDateT
 		Context = context;
 	}
 
+	/// <summary>
+	/// The alias of the column name that stores the value.
+	/// Depends on the ITfSpaceViewColumnType that renders this component
+	/// by default it is 'Value'. The alias<>column name mapping is set by the user
+	/// upon space view column configuration
+	/// </summary>
+	private string _valueAlias = "Value";
+
 	private string _defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern + " "
 	+ Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
 
@@ -34,7 +42,7 @@ public partial class TfDateTimeDisplayColumnComponent : TfBaseViewColumn<TfDateT
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<DateTime>("Value"); 
+		return GetDataObjectByAlias<DateTime>(_valueAlias); 
 	}
 
 }

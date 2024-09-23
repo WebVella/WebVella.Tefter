@@ -11,8 +11,12 @@ public interface ITfExportableViewColumn
 public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExportableViewColumn
 {
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
+	[Inject] protected IToastService ToastService { get; set; }
+	[Inject] protected IDialogService DialogService { get; set; }
+	[Inject] protected IMessageService MessageService { get; set; }
 	[Parameter] public TfComponentContext Context { get; set; }
-	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
+	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 
 	public TfBaseViewColumn()
 	{
@@ -89,6 +93,16 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		//Should be overrided in child component if needed
 	}
 
+	protected virtual string GetColumnNameFromAlias(string alias){ 
+		string colName = null;
+		if (Context.DataMapping.ContainsKey(alias))
+		{
+			colName = Context.DataMapping[alias];
+		}		
+
+		return colName;
+	}
+
 	/// <summary>
 	/// The implementing components are referencing data based on the Data Mapping provided by the user, 
 	/// which maps value needed by the component and its corresponding datatable comlumn name.
@@ -99,11 +113,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// <returns></returns>
 	protected virtual string GetDataObjectByAlias(string alias, string defaultValue = null)
 	{
-		string dbName = null;
-		if (Context.DataMapping.ContainsKey(alias))
-		{
-			dbName = Context.DataMapping[alias];
-		}
+		string dbName = GetColumnNameFromAlias(alias);
 
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
@@ -126,11 +136,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// <returns></returns>
 	protected virtual Nullable<T> GetDataObjectByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
 	{
-		string dbName = null;
-		if (Context.DataMapping.ContainsKey(alias))
-		{
-			dbName = Context.DataMapping[alias];
-		}
+		string dbName = GetColumnNameFromAlias(alias);
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
 			return null;
@@ -164,14 +170,14 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// <param name="propName"></param>
 	/// <param name="value"></param>
 	/// <returns></returns>
-	protected virtual async Task OptionsValueChanged(string propName, object value)
+	protected virtual async Task OnOptionsChanged(string propName, object value)
 	{
 
 		PropertyInfo propertyInfo = typeof(TItem).GetProperty(propName);
 		if (propertyInfo is null) return;
 		propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType), null);
-		if (!ValueChanged.HasDelegate) return;
-		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(options));
+		if (!OptionsChanged.HasDelegate) return;
+		await OptionsChanged.InvokeAsync(JsonSerializer.Serialize(options));
 	}
 
 	/// <summary>
@@ -181,6 +187,17 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	public virtual object GetData()
 	{
 		return null;
+	}
+
+	/// <summary>
+	/// This method expects a datatable with a single row (in most cases) 
+	/// with the updated data for that row
+	/// </summary>
+	/// <param name="dt"></param>
+	/// <returns></returns>
+	protected virtual async Task OnRowChanged(TfDataTable dt)
+	{
+		await RowChanged.InvokeAsync(dt);
 	}
 
 	

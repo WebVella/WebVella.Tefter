@@ -250,6 +250,14 @@ internal partial class AppStateUseCase
 
 	}
 
+
+	internal Result<TfDataTable> ChangeViewData(TfDataTable dt)
+	{
+		var saveResult = _dataManager.SaveDataTable(dt);
+		if (saveResult.IsFailed) return Result.Fail(new Error("SaveDataTable failed").CausedBy(saveResult.Errors));
+		return Result.Ok(saveResult.Value);
+	}
+
 	//Data provider
 	internal List<TucDataProvider> GetDataProviderList()
 	{

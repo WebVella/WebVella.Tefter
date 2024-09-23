@@ -26,12 +26,20 @@ public partial class TfEmailDisplayColumnComponent : TfBaseViewColumn<TfEmailDis
 	}
 
 	/// <summary>
+	/// The alias of the column name that stores the value.
+	/// Depends on the ITfSpaceViewColumnType that renders this component
+	/// by default it is 'Value'. The alias<>column name mapping is set by the user
+	/// upon space view column configuration
+	/// </summary>
+	private string _valueAlias = "Value";
+
+	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias("Value");
+		return GetDataObjectByAlias(_valueAlias);
 	}
 }
 

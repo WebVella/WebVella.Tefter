@@ -2,7 +2,7 @@
 @inherits TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataObjectByAlias<bool>("Value", null);
+	var value = GetDataObjectByAlias<bool>(_valueAlias, null);
 	if (value is null) { }
 	else if (value.Value)
 	{
@@ -42,12 +42,12 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Value="@options.TrueValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
-							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.TrueValueOverrideText),x))
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueValueOverrideText),x))
 							 Placeholder="fill to override default value" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentCheckbox Value="@options.TrueValueShowAsIcon"
-							ValueChanged=@((x)=> OptionsValueChanged(nameof(options.TrueValueShowAsIcon),x))
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
@@ -55,12 +55,12 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Value="@options.FalseValueOverrideText" Style="width:100%" Immediate ImmediateDelay="500"
-							 ValueChanged=@((x)=> OptionsValueChanged(nameof(options.FalseValueOverrideText),x))
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseValueOverrideText),x))
 							 Placeholder="fill to override default value" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentCheckbox Value="@options.FalseValueShowAsIcon"
-							ValueChanged=@((x)=> OptionsValueChanged(nameof(options.FalseValueShowAsIcon),x))
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
