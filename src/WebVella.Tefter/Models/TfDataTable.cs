@@ -177,10 +177,20 @@ public sealed class TfDataTable
 		return columns;
 	}
 
-	public TfDataTable NewTable(
+	private TfDataTable NewTable(
 		params int[] rows)
 	{
 		return new TfDataTable(this, rows);
+	}
+
+	public TfDataTable Clone()
+	{
+		int[] indexes = new int[this.Rows.Count];
+		
+		for (int i = 0; i < this.Rows.Count; i++)
+			indexes[i] = i;
+
+		return new TfDataTable(this, indexes);
 	}
 
 	public TfDataRow NewRow()
