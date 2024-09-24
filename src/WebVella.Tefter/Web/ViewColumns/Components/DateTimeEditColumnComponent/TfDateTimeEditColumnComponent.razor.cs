@@ -25,12 +25,6 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	{
 		Context = context;
 	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		_initValues();
-	}
-
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -41,6 +35,26 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	private DateTime? _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
 	private string _valueTimeInputId = "input-" + Guid.NewGuid();
+
+	/// <summary>
+	/// Each state has an unique hash and this is set in the component context under the Hash property value
+	/// </summary>
+	private Guid? _renderedHash = null;
+
+	/// <summary>
+	/// When data needs to be inited, parameter set is the best place as Initialization is 
+	/// done only once
+	/// </summary>
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (Context.Hash != _renderedHash)
+		{
+			_initValues();
+		}
+	}
+
+
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>

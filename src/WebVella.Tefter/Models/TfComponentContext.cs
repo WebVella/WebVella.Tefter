@@ -4,6 +4,7 @@ namespace WebVella.Tefter.Models;
 
 public class TfComponentContext
 {
+	public Guid Hash { get; set; }
 	public Guid SpaceViewId { get; set; }
 	public Guid? SelectedAddonId { get; set; } = null;
 	public string QueryName { get; set; }

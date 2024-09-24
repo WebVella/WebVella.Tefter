@@ -120,6 +120,7 @@ body {
 .tf-grid {
 	table-layout: fixed;
 	min-width: 100%;
+	border:none !important;
 }
 
 .tf-grid-thead {
@@ -157,6 +158,8 @@ body {
 	font-variation-settings: var(--type-ramp-base-font-variations);
 	border: transparent calc(var(--stroke-width) * 1px) solid;
 }
+
+
 
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th {
 	border-top: none;
@@ -217,6 +220,26 @@ body {
 		color: var(--neutral-foreground-hint);
 		white-space: initial;
 	}
+
+.tf-grid > .tf-grid-thead > .tf-grid-tr > .tf-grid-th:first-child,
+.tf-grid > .tf-grid-tbody > .tf-grid-tr > .tf-grid-td:first-child{
+	border-left:none;
+}
+
+.tf-grid > .tf-grid-thead > .tf-grid-tr:not(.tf-grid-thead-bkg):first-child > .tf-grid-th{
+	border-top:none;
+}
+
+.tf-grid-th--sticky,
+.tf-grid-td--sticky {
+	position:sticky;
+	background: var(--neutral-fill-layer-rest);
+	z-index:2;
+	border-right:3px solid var(--neutral-layer-1);
+}
+
+
+
 /*datagrid*/
 .tfdt {
 	position: absolute;
@@ -242,8 +265,8 @@ body {
 	box-sizing: content-box;
 	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width - 10px)) !important;
 	overflow-y: scroll !important;
-	padding-left: var(--tf-content-padding);
-	padding-right: var(--tf-content-margin-bottom);
+	margin-left: var(--tf-content-padding);
+	margin-right: var(--tf-content-margin-bottom);
 }
 
 .tfdt__pager {

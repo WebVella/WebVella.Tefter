@@ -25,11 +25,6 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	{
 		Context = context;
 	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		_initValues();
-	}
 
 	/// <summary>
 	/// The alias of the column name that stores the value.
@@ -40,6 +35,26 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	private string _valueAlias = "Value";
 	private DateTime? _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
+
+	/// <summary>
+	/// Each state has an unique hash and this is set in the component context under the Hash property value
+	/// </summary>
+	private Guid? _renderedHash = null;
+
+	/// <summary>
+	/// When data needs to be inited, parameter set is the best place as Initialization is 
+	/// done only once
+	/// </summary>
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (Context.Hash != _renderedHash)
+		{
+			_initValues();
+		}
+	}
+
+
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
@@ -80,7 +95,7 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 		try
 		{
 			DateOnly? doValue = null;
-			if(_value is not null) doValue = new DateOnly(_value.Value.Year,_value.Value.Month,_value.Value.Day);
+			if (_value is not null) doValue = new DateOnly(_value.Value.Year, _value.Value.Month, _value.Value.Day);
 			await OnRowColumnChangedByAlias(_valueAlias, doValue);
 			ToastService.ShowSuccess(LOC("change applied"));
 			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);

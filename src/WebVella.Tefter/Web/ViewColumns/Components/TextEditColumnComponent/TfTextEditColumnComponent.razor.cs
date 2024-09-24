@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
@@ -27,11 +25,6 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	{
 		Context = context;
 	}
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-		_initValues();
-	}
 
 	/// <summary>
 	/// The alias of the column name that stores the value.
@@ -42,6 +35,25 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	private string _valueAlias = "Value";
 	private string _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
+
+	/// <summary>
+	/// Each state has an unique hash and this is set in the component context under the Hash property value
+	/// </summary>
+	private Guid? _renderedHash = null;
+
+	/// <summary>
+	/// When data needs to be inited, parameter set is the best place as Initialization is 
+	/// done only once
+	/// </summary>
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (Context.Hash != _renderedHash)
+		{
+			_initValues();
+		}
+	}
+
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
@@ -79,7 +91,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		{
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
-			await JSRuntime.InvokeAsync<string>("Tefter.blurElement",_valueInputId);
+			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);
 		}
 		catch (Exception ex)
 		{

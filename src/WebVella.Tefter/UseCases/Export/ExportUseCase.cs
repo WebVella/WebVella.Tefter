@@ -77,6 +77,7 @@ public class ExportUseCase
 			var typeDict = new Dictionary<string, object>();
 			var compContext = new TfComponentContext()
 			{
+				Hash = Guid.NewGuid(),
 				DataTable = viewData,
 				Mode = TfComponentMode.Display, //ignored here
 				SpaceViewId = view.Id,

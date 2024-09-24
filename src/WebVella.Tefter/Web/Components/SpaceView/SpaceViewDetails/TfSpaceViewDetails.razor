@@ -68,7 +68,7 @@ else
 							<thead class="tf-grid-thead">
 								<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfAppState.Value.SpaceGridBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
-									<th class="tf-grid-th tf-grid-th--check" style="padding:0;text-align:center;">
+									<th class="tf-grid-th tf-grid-th--check  tf-grid-th--sticky" style="padding:0;text-align:center;width:60px;left:0;">
 										@if (TfAppState.Value.AllDataRowsSelected)
 										{
 											<FluentButton OnClick="@(() =>_toggleSelectAll(false))" BackgroundColor="transparent" Color="transparent">
@@ -87,7 +87,7 @@ else
 										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.HeaderStyle">
 											@if (column.Title.StartsWith("icon:"))
 											{
-												<div>
+												<div style="display:flex;">
 													<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))"/>
 												</div>
 											}
@@ -125,7 +125,7 @@ else
 										var index = i;
 										var selected = _getItemSelection(index);
 										<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
-											<td class="tf-grid-td tf-grid-td--check">
+											<td class="tf-grid-td tf-grid-td--check tf-grid-td--sticky" style="width:60px;left:0;">
 												<div style="padding:1px;">
 													@if (selected)
 													{
