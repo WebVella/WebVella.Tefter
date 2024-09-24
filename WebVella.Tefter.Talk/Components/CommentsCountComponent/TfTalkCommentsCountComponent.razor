@@ -1,0 +1,22 @@
+﻿@namespace WebVella.Tefter.Talk.Components
+
+@inherits TfBaseViewColumn<TfTalkCommentsCountComponentOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	<div>
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
+			<FluentIcon Value="@TfConstants.GetIcon("Comment")" />
+		</FluentButton>
+	</div>
+
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

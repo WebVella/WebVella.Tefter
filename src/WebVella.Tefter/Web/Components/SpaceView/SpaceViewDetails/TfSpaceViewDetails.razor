@@ -85,7 +85,16 @@ else
 									@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 									{
 										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.HeaderStyle">
-											<div>@column.Title</div>
+											@if (column.Title.StartsWith("icon:"))
+											{
+												<div>
+													<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))"/>
+												</div>
+											}
+											else
+											{
+												<div>@column.Title</div>
+											}
 										</th>
 									}
 								</tr>
@@ -151,8 +160,8 @@ else
 					</div>
 				</div>
 				<div class="tfdt__pager">
-					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize" 
-							GoLast="@_goLastPage" GoNext="@_goNextPage"
+					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize"
+							 GoLast="@_goLastPage" GoNext="@_goNextPage"
 							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
 				</div>
 			</div>
