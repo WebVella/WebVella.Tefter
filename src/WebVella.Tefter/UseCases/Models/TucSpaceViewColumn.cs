@@ -32,7 +32,7 @@ public record TucSpaceViewColumn
 			{
 				if (Settings.Width is not null)
 				{
-					sb.Append($"width:{Settings.Width}px");
+					sb.Append($"min-width:{Settings.Width}px");
 				}
 			}
 

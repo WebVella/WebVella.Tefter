@@ -36,10 +36,22 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 	private bool _value = false;
 	private bool? _state = false;
 
-	protected override void OnInitialized()
+	/// <summary>
+	/// Each state has an unique hash and this is set in the component context under the Hash property value
+	/// </summary>
+	private Guid? _renderedHash = null;
+
+	/// <summary>
+	/// When data needs to be inited, parameter set is the best place as Initialization is 
+	/// done only once
+	/// </summary>
+	protected override void OnParametersSet()
 	{
-		base.OnInitialized();
-		_initValues();
+		base.OnParametersSet();
+		if (Context.Hash != _renderedHash)
+		{
+			_initValues();
+		}
 	}
 
 

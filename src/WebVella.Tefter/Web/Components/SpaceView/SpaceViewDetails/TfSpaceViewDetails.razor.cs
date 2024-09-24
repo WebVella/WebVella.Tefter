@@ -211,6 +211,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_ROW_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<TfDataTable>(this, _onRowChanged);
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfComponentContext
 		{
+			Hash = TfAppState.Value.Hash,
 			Mode = TfComponentMode.Display,
 			CustomOptionsJson = column.CustomOptionsJson,
 			DataMapping = column.DataMapping,

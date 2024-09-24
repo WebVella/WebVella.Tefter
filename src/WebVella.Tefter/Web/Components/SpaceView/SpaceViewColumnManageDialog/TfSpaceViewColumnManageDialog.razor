@@ -63,7 +63,7 @@
 									  TOption="Type"
 									  OptionText="((x)=> x.ToDescriptionString())"
 									  OptionValue="((x)=> x.FullName)"
-									  Items="_form.ColumnType?.SupportedComponentTypes" />
+									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)" />
 
 						<FluentValidationMessage For="@(() => _form.ComponentType)" />
 					}
