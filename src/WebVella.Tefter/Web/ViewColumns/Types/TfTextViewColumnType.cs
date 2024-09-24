@@ -54,7 +54,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 		SupportedComponentTypes = new List<Type> {
 			typeof(TfTextDisplayColumnComponent),
 			typeof(TfEmailDisplayColumnComponent),
+			typeof(TfEmailEditColumnComponent),
 			typeof(TfUrlDisplayColumnComponent),
+			typeof(TfUrlEditColumnComponent),
 			typeof(TfTextEditColumnComponent)
 			};
 	}

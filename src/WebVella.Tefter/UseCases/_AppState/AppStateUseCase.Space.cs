@@ -97,7 +97,7 @@ internal partial class AppStateUseCase
 		foreach (var space in allSpaces)
 		{
 			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
-				space.DefaultViewId = spaceViewsDict[space.Id][0].Id;
+				space.DefaultViewId = spaceViewsDict[space.Id].OrderBy(x=> x.Name).First().Id;
 		}
 		return Task.FromResult(allSpaces.OrderBy(x=> x.Position).Take(10).ToList());
 
@@ -150,7 +150,7 @@ internal partial class AppStateUseCase
 		foreach (var space in allSpaces)
 		{
 			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
-				space.DefaultViewId = spaceViewsDict[space.Id][0].Id;
+				space.DefaultViewId = spaceViewsDict[space.Id].OrderBy(x=> x.Name).First().Id;
 		}
 		return Task.FromResult(allSpaces);
 

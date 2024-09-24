@@ -76,4 +76,5 @@ public class TfBooleanDisplayColumnComponentOptions
 
 	[JsonPropertyName("NullValueShowAsIcon")]
 	public bool NullValueShowAsIcon { get; set; }
+
 }

@@ -1,15 +1,32 @@
 ﻿.paginator-nav {
-	display:flex;
-	align-items:center;
-	height:100%;
+	display: flex;
+	align-items: center;
+	height: 100%;
+	justify-content: space-between;
 }
 
-	::deep.paginator-nav > * {
-		margin-right:calc(var(--design-unit) * 1px);
+	.paginator-nav .paginator-nav__left {
+		flex: 0 0 auto;
 	}
 
-.pagination-pager {
-	flex:0 0 100px;
-	height:calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+	.paginator-nav .paginator-nav__right {
+		flex: 0 0 auto;
+	}
+
+::deep.paginator-nav .paginator-nav__left > * {
+	margin-right: calc(var(--design-unit) * 1px);
 }
 
+.pagination-pager {
+	flex: 0 0 100px;
+	height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+}
+
+.pagination-pagesize {
+	width:80px;
+	height: calc((var(--base-height-multiplier) + var(--density)) * var(--design-unit) * 1px);
+}
+
+.paginator-nav-description {
+	color: var(--neutral-foreground-active);
+}

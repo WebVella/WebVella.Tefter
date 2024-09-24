@@ -25,13 +25,11 @@ public class Role
 public class UserSettings
 {
 	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
-
 	public OfficeColor ThemeColor { get; init; } = OfficeColor.Excel;
-
 	public bool IsSidebarOpen { get; init; } = true;
-
 	public string CultureName { get; init; } = string.Empty;
 	public string StartUpUrl { get; init; } = null;
+	public int? PageSize { get; init; } = null;
 }
 
 

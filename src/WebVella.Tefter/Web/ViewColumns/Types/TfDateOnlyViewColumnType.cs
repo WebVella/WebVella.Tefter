@@ -50,7 +50,7 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnType
 
 		SupportedComponentTypes = new List<Type> { 
 			typeof(TfDateOnlyDisplayColumnComponent), 
-			typeof(TfDateTimeDisplayColumnComponent), 
+			typeof(TfDateOnlyEditColumnComponent), 
 			typeof(TfTextDisplayColumnComponent) 
 		};
 	}

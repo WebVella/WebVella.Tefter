@@ -60,7 +60,7 @@ else if (Context.Mode == TfComponentMode.Options)
 							 Placeholder="fill to override default value" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.TrueValueShowAsIcon"
+			<FluentCheckbox Value="@options.TrueValueShowAsIcon" Style="height:32px;"
 							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
@@ -73,7 +73,7 @@ else if (Context.Mode == TfComponentMode.Options)
 							 Placeholder="fill to override default value" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.FalseValueShowAsIcon"
+			<FluentCheckbox Value="@options.FalseValueShowAsIcon" Style="height:32px;"
 							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
@@ -86,7 +86,7 @@ else if (Context.Mode == TfComponentMode.Options)
 							 Placeholder="fill to override default value" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.NullValueShowAsIcon"
+			<FluentCheckbox Value="@options.NullValueShowAsIcon" Style="height:32px;"
 							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>

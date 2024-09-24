@@ -2,15 +2,29 @@
 @inherits TfBaseViewColumn<TfTextEditColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div style="display:flex;align-items:center;">
-		<FluentTextField @bind-Value="@_value"
+	<div>
+		<FluentTextField Id="@_valueInputId"
+						 @bind-Value="@_value"
 						 @bind-Value:after="_valueChanged"
-					 Style="width:100%;min-width:80px;" />
+						 Style="width:100%;min-width:80px;" />
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
-	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+	<FluentGrid>
+		<FluentGridItem xs="4">
+			<FluentInputLabel Label="@LOC("Change confirmation")" />
+			<FluentCheckbox Value="@options.ChangeRequiresConfirmation"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeRequiresConfirmation),x))
+							Label="@LOC("requires confirmation")" />
+		</FluentGridItem>
+		<FluentGridItem xs="8">
+			<FluentTextField Label="@LOC("Confirmation message")"
+							 Value="@options.ChangeConfirmationMessage" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeConfirmationMessage),x))
+							 Placeholder="@LOC("empty shows a system one")" />
+		</FluentGridItem>
+	</FluentGrid>
 }
 else
 {

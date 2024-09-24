@@ -41,7 +41,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// </summary>
 	private string _valueAlias = "Value";
 	private string _value = null;
-
+	private string _valueInputId = "input-" + Guid.NewGuid();
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
@@ -59,10 +59,27 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
+		if (options.ChangeRequiresConfirmation)
+		{
+			var message = options.ChangeConfirmationMessage;
+			if (String.IsNullOrWhiteSpace(message))
+				message = LOC("Please confirm the data change!");
+
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", message))
+			{
+				await InvokeAsync(StateHasChanged);
+				await Task.Delay(10);
+				_initValues();
+				await InvokeAsync(StateHasChanged);
+				return;
+			};
+		}
+
 		try
 		{
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
+			await JSRuntime.InvokeAsync<string>("Tefter.blurElement",_valueInputId);
 		}
 		catch (Exception ex)
 		{
@@ -82,5 +99,9 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 public class TfTextEditColumnComponentOptions
 {
+	[JsonPropertyName("ChangeRequiresConfirmation")]
+	public bool ChangeRequiresConfirmation { get; set; } = false;
 
+	[JsonPropertyName("ChangeConfirmationMessage")]
+	public string ChangeConfirmationMessage { get; set; }
 }

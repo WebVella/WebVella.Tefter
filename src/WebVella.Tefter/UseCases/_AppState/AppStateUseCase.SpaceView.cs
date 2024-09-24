@@ -26,12 +26,14 @@ internal partial class AppStateUseCase
 		//Space View
 		if (routeState.SpaceViewId is not null)
 		{
+			int defaultPageSize = TfConstants.PageSize;
+			if(currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
 			newState = newState with
 			{
 				SpaceView = GetSpaceView(routeState.SpaceViewId.Value),
 				SpaceViewColumns = GetViewColumns(routeState.SpaceViewId.Value),
 				SpaceViewPage = routeState.Page ?? 1,
-				SpaceViewPageSize = routeState.PageSize ?? TfConstants.PageSize,
+				SpaceViewPageSize = routeState.PageSize ?? defaultPageSize,
 				SpaceViewSearch = routeState.Search,
 				SpaceViewFilters = routeState.Filters,
 				SpaceViewSorts = routeState.Sorts,

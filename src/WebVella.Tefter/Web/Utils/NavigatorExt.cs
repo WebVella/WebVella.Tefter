@@ -146,7 +146,7 @@ internal static class NavigatorExt
 
 		//Query
 		var page = GetIntFromQuery(uri, TfConstants.PageQueryName, 1);
-		var pageSize = GetIntFromQuery(uri, TfConstants.PageSizeQueryName, TfConstants.PageSize);
+		var pageSize = GetIntFromQuery(uri, TfConstants.PageSizeQueryName, null);
 		var search = GetStringFromQuery(uri, TfConstants.SearchQueryName, null);
 		List<TucFilterBase> filters = null;
 		var filtersString = GetStringFromQuery(uri, TfConstants.FiltersQueryName, null);

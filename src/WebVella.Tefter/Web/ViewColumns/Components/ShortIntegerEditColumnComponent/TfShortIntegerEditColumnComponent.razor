@@ -1,0 +1,36 @@
+﻿@namespace WebVella.Tefter.Web.ViewColumns
+@inherits TfBaseViewColumn<TfShortIntegerEditColumnComponentOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	<div>
+		<FluentNumberField TValue="short?"
+						   Id="@_valueInputId"
+						   @bind-Value="@_value"
+						   @bind-Value:after="_valueChanged"
+						   Step="1"
+						   Style="width:100%;min-width:80px;" />
+	</div>
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="4">
+			<FluentInputLabel Label="@LOC("Change confirmation")" />
+			<FluentCheckbox Value="@options.ChangeRequiresConfirmation"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeRequiresConfirmation),x))
+							Label="@LOC("requires confirmation")" />
+		</FluentGridItem>
+		<FluentGridItem xs="8">
+			<FluentTextField Label="@LOC("Confirmation message")"
+							 Value="@options.ChangeConfirmationMessage" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeConfirmationMessage),x))
+							 Placeholder="@LOC("empty shows a system one")" />
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

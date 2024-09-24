@@ -10,6 +10,7 @@ public interface ITfExportableViewColumn
 
 public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExportableViewColumn
 {
+	[Inject] protected IJSRuntime JSRuntime { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
@@ -108,6 +109,8 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		{
 			return defaultValue;
 		}
+		if(Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+
 		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return defaultValue;
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return defaultValue;
 
@@ -130,6 +133,8 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		{
 			return null;
 		}
+		if(Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+
 		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return null;
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
 		object value = Context.DataTable.Rows[Context.RowIndex][dbName];

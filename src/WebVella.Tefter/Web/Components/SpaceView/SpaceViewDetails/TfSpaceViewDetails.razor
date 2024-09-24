@@ -150,8 +150,9 @@ else
 					</div>
 				</div>
 				<div class="tfdt__pager">
-					<TfPager Page="@TfAppState.Value.SpaceViewPage" GoLast="@_goLastPage" GoNext="@_goNextPage"
-							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
+					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize" 
+							GoLast="@_goLastPage" GoNext="@_goNextPage"
+							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
 				</div>
 			</div>
 		</div>
