@@ -17,6 +17,7 @@
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Title
 									 Label="@LOC("Title")" Style="width:100%" AutoComplete="new-password" />
+					<div class="tf-input-description">@LOC("for icon type 'icon:[FLUENT_UI_ICON_NAME]' eg. icon:Comment")</div>
 					<FluentValidationMessage For="@(() => _form.Title)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">

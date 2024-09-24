@@ -4,6 +4,6 @@
 }
 
 ::deep .tf-grid fluent-text-field::part(root) {
-	/*background: var(--neutral-fill-input-active);*/
+	background: var(--neutral-fill-input-active);
 	border:1px solid var(--neutral-stroke-input-active);
 }

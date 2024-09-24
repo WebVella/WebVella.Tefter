@@ -52,7 +52,8 @@ else
 	}
 	<FluentBodyContent Class="content-body with-toolbar">
 		<style>
-			:root .tfdt{
+			:root .tfdt,
+			:root .content-toolbar {
 				--tf-grid-row-selected: @TfAppState.Value.SpaceGridBackgkroundColor;
 				--accent-base-color: @TfAppState.Value.SpaceColorString;
 				--accent-fill-rest: @TfAppState.Value.SpaceColorString;
@@ -65,7 +66,7 @@ else
 					<div class="tf-grid-wrapper">
 						<table class="tf-grid">
 							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfAppState.Value.SpaceBackgkroundColor}")"></tr>
+								<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfAppState.Value.SpaceGridBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
 									<th class="tf-grid-th tf-grid-th--check" style="padding:0;text-align:center;">
 										@if (TfAppState.Value.AllDataRowsSelected)
@@ -84,7 +85,16 @@ else
 									@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 									{
 										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.HeaderStyle">
-											<div>@column.Title</div>
+											@if (column.Title.StartsWith("icon:"))
+											{
+												<div>
+													<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))"/>
+												</div>
+											}
+											else
+											{
+												<div>@column.Title</div>
+											}
 										</th>
 									}
 								</tr>
@@ -150,8 +160,8 @@ else
 					</div>
 				</div>
 				<div class="tfdt__pager">
-					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize" 
-							GoLast="@_goLastPage" GoNext="@_goNextPage"
+					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize"
+							 GoLast="@_goLastPage" GoNext="@_goNextPage"
 							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
 				</div>
 			</div>

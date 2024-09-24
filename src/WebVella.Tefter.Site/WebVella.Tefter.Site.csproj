@@ -5,6 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\..\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj" />
 	  <ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
 	  <ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 	</ItemGroup>

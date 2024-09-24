@@ -27,3 +27,8 @@
 ::deep fluent-search::part(root) {
 	border-color: var(--neutral-stroke-rest);
 }
+
+::deep fluent-badge::part(control) {
+	background:var(--accent-base-color);
+	color:rgba(255,255,255,0.75);
+}
