@@ -336,78 +336,84 @@ public partial class DataManager
 					"Table object is null"));
 		}
 
-		var providerResult = _providerManager.GetProvider(table.QueryInfo.DataProviderId);
-		var provider = providerResult.Value;
 
-		if (!providerResult.IsSuccess || provider is null)
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			return Result.Fail(new ValidationError(
-					nameof(provider),
-					"Provider associated to data table query is not found"));
-		}
+			var providerResult = _providerManager.GetProvider(table.QueryInfo.DataProviderId);
+			var provider = providerResult.Value;
 
-		foreach (TfDataRow row in table.Rows)
-		{
-			if ((Guid?)row["tf_id"] == null)
-				InsertRow(provider, row);
-			else
+			if (!providerResult.IsSuccess || provider is null)
 			{
-				TfDataRow existingRow = null;
-				if (table.QueryInfo.SpaceDataId is null)
-				{
-					var existingRowResult = QueryDataProvider(provider, new List<Guid> { (Guid)row["tf_id"] });
+				return Result.Fail(new ValidationError(
+						nameof(provider),
+						"Provider associated to data table query is not found"));
+			}
 
-					if (!existingRowResult.IsSuccess)
-					{
-						return Result.Fail(new ValidationError(
-								nameof(table),
-								"Failed to get existing row by id from data provider table"));
-					}
-
-					if (existingRowResult.Value.Rows.Count != 1)
-					{
-						return Result.Fail(new ValidationError(
-								nameof(table),
-								"Row for update not found in provider table"));
-					}
-
-					existingRow = existingRowResult.Value.Rows[0];
-				}
+			foreach (TfDataRow row in table.Rows)
+			{
+				if ((Guid?)row["tf_id"] == null)
+					InsertRow(provider, row);
 				else
 				{
-					var existingRowResult = QuerySpaceData(
-						table.QueryInfo.SpaceDataId.Value,
-						new List<Guid> { (Guid)row["tf_id"] });
-
-					if (!existingRowResult.IsSuccess)
+					TfDataRow existingRow = null;
+					if (table.QueryInfo.SpaceDataId is null)
 					{
-						return Result.Fail(new ValidationError(
-								nameof(table),
-								"Failed to get existing row by id from space data"));
+						var existingRowResult = QueryDataProvider(provider, new List<Guid> { (Guid)row["tf_id"] });
+
+						if (!existingRowResult.IsSuccess)
+						{
+							return Result.Fail(new ValidationError(
+									nameof(table),
+									"Failed to get existing row by id from data provider table"));
+						}
+
+						if (existingRowResult.Value.Rows.Count != 1)
+						{
+							return Result.Fail(new ValidationError(
+									nameof(table),
+									"Row for update not found in provider table"));
+						}
+
+						existingRow = existingRowResult.Value.Rows[0];
+					}
+					else
+					{
+						var existingRowResult = QuerySpaceData(
+							table.QueryInfo.SpaceDataId.Value,
+							new List<Guid> { (Guid)row["tf_id"] });
+
+						if (!existingRowResult.IsSuccess)
+						{
+							return Result.Fail(new ValidationError(
+									nameof(table),
+									"Failed to get existing row by id from space data"));
+						}
+
+						if (existingRowResult.Value.Rows.Count != 1)
+						{
+							return Result.Fail(new ValidationError(
+									nameof(table),
+									"Row for update not found in space data"));
+						}
+
+						existingRow = existingRowResult.Value.Rows[0];
 					}
 
-					if (existingRowResult.Value.Rows.Count != 1)
-					{
-						return Result.Fail(new ValidationError(
-								nameof(table),
-								"Row for update not found in space data"));
-					}
-
-					existingRow = existingRowResult.Value.Rows[0];
+					UpdateRow(provider, existingRow, row);
 				}
-
-				UpdateRow(provider, existingRow, row);
 			}
+
+			scope.Complete();
+
+			List<Guid> rowIds = new List<Guid>();
+			foreach (TfDataRow row in table.Rows)
+				rowIds.Add((Guid)row["tf_id"]);
+
+			if (table.QueryInfo.SpaceDataId is null)
+				return QueryDataProvider(provider, rowIds);
+			else
+				return QuerySpaceData(table.QueryInfo.SpaceDataId.Value, rowIds);
 		}
-
-		List<Guid> rowIds = new List<Guid>();
-		foreach (TfDataRow row in table.Rows)
-			rowIds.Add((Guid)row["tf_id"]);
-
-		if (table.QueryInfo.SpaceDataId is null)
-			return QueryDataProvider(provider, rowIds);
-		else
-			return QuerySpaceData(table.QueryInfo.SpaceDataId.Value, rowIds);
 	}
 
 	#region <--- insert / update row --->
