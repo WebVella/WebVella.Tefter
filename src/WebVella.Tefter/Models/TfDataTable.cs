@@ -177,7 +177,7 @@ public sealed class TfDataTable
 		return columns;
 	}
 
-	private TfDataTable NewTable(
+	public TfDataTable NewTable(
 		params int[] rows)
 	{
 		return new TfDataTable(this, rows);
