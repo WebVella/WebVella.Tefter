@@ -149,4 +149,38 @@ internal static class ResultUtils
 		}
 
 	}
+
+	internal static Exception ConvertResultToException(Result<object> result, string message = null)
+	{
+		if (String.IsNullOrWhiteSpace(message))
+		{
+			message = "System error";
+			if (result.Errors.Count > 0)
+			{
+				message = result.Errors[0].Message;
+			}
+		}
+		var ex = new Exception(message);
+		foreach (IError error in result.Errors)
+		{
+			if (error is null) continue;
+			if (error is ValidationError)
+			{
+				var errorObj = (ValidationError)error;
+				if (!String.IsNullOrWhiteSpace(errorObj.PropertyName))
+					ex.Data.Add(errorObj.PropertyName,errorObj.Reason);
+				else
+				{
+					ex.Data.Add("",errorObj.Reason);
+				}
+			}
+			else
+			{
+				ex.Data.Add("",error.Message);
+			}
+		
+		}
+
+		return ex;
+	}
 }

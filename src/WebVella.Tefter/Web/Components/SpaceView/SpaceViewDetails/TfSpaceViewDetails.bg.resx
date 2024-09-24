@@ -129,6 +129,9 @@
   <data name="Create column" xml:space="preserve">
     <value>Създай колона</value>
   </data>
+  <data name="Data change failed!" xml:space="preserve">
+    <value>промяната на данни е неуспешна!</value>
+  </data>
   <data name="Insert in position" xml:space="preserve">
     <value>Вмъкни на позиция</value>
   </data>

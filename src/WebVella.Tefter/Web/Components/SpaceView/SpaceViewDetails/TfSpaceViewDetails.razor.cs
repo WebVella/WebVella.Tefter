@@ -169,7 +169,39 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private Task _onRowChanged(TfDataTable value)
 	{
-		//ToastService.ShowInfo(value);
+		
+		try
+		{
+			var result = UC.ChangeViewData(value);
+			//ProcessServiceResponse(result); //should be handled by the component
+			if (result.IsSuccess)
+			{
+				//Apply changed to the datatable
+				var viewData = TfAppState.Value.SpaceViewData.Clone();
+				if(viewData is null || viewData.Rows.Count == 0 || result.Value.Rows.Count == 0) return Task.CompletedTask;
+				for (int i = 0; i < result.Value.Rows.Count; i++)
+				{
+					TfDataRow row = result.Value.Rows[i];
+					Guid tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+					var currentRow = viewData.Rows[tfId];
+
+					for (int j = 0; j < result.Value.Columns.Count; j++)
+					{
+						TfDataColumn column = result.Value.Columns[j];
+						currentRow[column.Name] = row[column.Name];
+					}
+				}
+				Dispatcher.Dispatch(new SetAppStateAction(component: this,
+					state: TfAppState.Value with { SpaceViewData = viewData }));
+			}
+			else{ 
+				throw ResultUtils.ConvertResultToException(result,LOC("Data change failed!"));
+			}
+		}
+		catch
+		{
+			throw;
+		}
 		return Task.CompletedTask;
 	}
 
