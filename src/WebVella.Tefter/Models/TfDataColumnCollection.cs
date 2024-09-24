@@ -24,6 +24,10 @@ public class TfDataColumnCollection : IEnumerable
 			return column;
 		}
 	}
+	public TfDataColumn this[int index]
+	{
+		get { return _columns[index]; }
+	}
 
 	public TfDataColumnCollection(TfDataTable dataTable)
 	{
