@@ -136,6 +136,9 @@ public class DatabaseService : IDatabaseService
 
 		foreach (var par in parameters)
 		{
+			if (par.Value == DBNull.Value)
+				continue;
+
 			if (par.DbType == System.Data.DbType.DateTime)
 			{
 				DateTime? value = (DateTime?)par.Value;

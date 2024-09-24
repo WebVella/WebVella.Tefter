@@ -22,6 +22,7 @@ public partial class DataManagerTests : BaseTest
 				var (provider, spaceData) = CreateTestStructureAndData(dbService);
 				//var result = dataManager.QuerySpaceData(spaceData.Id);
 				var result = dataManager.QueryDataProvider(provider);
+				result.IsSuccess.Should().BeTrue();
 
 				dataManager.DeleteAllProviderRows(provider);
 
@@ -48,9 +49,11 @@ public partial class DataManagerTests : BaseTest
 				}
 
 				result = dataManager.SaveDataTable(newTable);
+				result.IsSuccess.Should().BeTrue();
 
 				//result = dataManager.QuerySpaceData(spaceData.Id);
 				result = dataManager.QueryDataProvider(provider);
+				result.IsSuccess.Should().BeTrue();
 
 				var tableToUpdate = result.Value;
 
@@ -73,9 +76,38 @@ public partial class DataManagerTests : BaseTest
 				}
 
 				result = dataManager.SaveDataTable(tableToUpdate);
+				result.IsSuccess.Should().BeTrue();
 
 				//result = dataManager.QuerySpaceData(spaceData.Id);
 				result = dataManager.QueryDataProvider(provider);
+				result.IsSuccess.Should().BeTrue();
+
+				tableToUpdate = result.Value;
+
+				for (var i = 0; i < 10; i++)
+				{
+					var row = tableToUpdate.Rows[i];
+
+					row["guid_column"] = null;
+					row["short_text_column"] = null;
+					row["text_column"] = null;
+					row["date_column"] = null;
+					row["datetime_column"] = null;
+					row["short_int_column"] = null;
+					row["int_column"] = null;
+					row["long_int_column"] = null;
+					row["number_column"] = null;
+
+					row["sk_shared_key_text"] = null;
+					row["sk_shared_key_int"] = null;
+				}
+
+				result = dataManager.SaveDataTable(tableToUpdate);
+				result.IsSuccess.Should().BeTrue();
+
+				//result = dataManager.QuerySpaceData(spaceData.Id);
+				result = dataManager.QueryDataProvider(provider);
+				result.IsSuccess.Should().BeTrue();
 			}
 		}
 	}

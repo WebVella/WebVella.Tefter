@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using System.Data;
+
+namespace WebVella.Tefter;
 
 public partial interface IDataManager
 {
@@ -113,7 +115,9 @@ public partial class DataManager
 
 			var sqlBuilder = new SqlBuilder(
 				dbService: _dbService,
-				dataProvider: provider);
+				dataProvider: provider,
+				spaceData: null,
+				tfIds: tfIds );
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -532,15 +536,12 @@ public partial class DataManager
 		sql += $"{Environment.NewLine}INSERT INTO {tableName}(shared_key_id, shared_column_id, value) " +
 			$"VALUES( @shared_key_id, @shared_column_id, @value );";
 
-		var count = _dbService.ExecuteSqlNonQueryCommand(sql,
+		_dbService.ExecuteSqlNonQueryCommand(sql,
 			new List<NpgsqlParameter> {
 				valueParameter,
 				sharedColumnIdParameter,
 				sharedKeyIdParameter
 			});
-
-		if (count != 1)
-			throw new Exception("Failed to insert/update shared column value");
 	}
 
 	private string BuildInsertNewRowSql(
@@ -562,9 +563,16 @@ public partial class DataManager
 
 			columnNames.Add(tableColumn.Name);
 
-			parameters.Add(new NpgsqlParameter(
-				$"@{tableColumn.Name}",
-				row[tableColumn.Name]));
+			var parameterType = GetDbTypeForDatabaseColumnType(tableColumn.DbType);
+
+			NpgsqlParameter parameter = new NpgsqlParameter($"@{tableColumn.Name}", parameterType);
+
+			if (row[tableColumn.Name] is null)
+				parameter.Value = DBNull.Value;
+			else
+				parameter.Value = row[tableColumn.Name];
+
+			parameters.Add(parameter);
 
 		}
 
@@ -616,7 +624,7 @@ public partial class DataManager
 			List<string> keys = new List<string>();
 
 			foreach (var column in sharedKey.Columns)
-				keys.Add(row[column.DbName].ToString());
+				keys.Add(row[column.DbName]?.ToString());
 
 			var newId = GetId(keys.ToArray()).Value;
 
@@ -745,9 +753,16 @@ public partial class DataManager
 
 			columnNames.Add(tableColumn.Name);
 
-			parameters.Add(new NpgsqlParameter(
-				$"@{tableColumn.Name}",
-				row[tableColumn.Name]));
+			var parameterType = GetDbTypeForDatabaseColumnType(tableColumn.DbType);
+
+			NpgsqlParameter parameter = new NpgsqlParameter($"@{tableColumn.Name}", parameterType);
+
+			if (row[tableColumn.Name] is null)
+				parameter.Value = DBNull.Value;
+			else
+				parameter.Value = row[tableColumn.Name];
+
+			parameters.Add(parameter);
 		}
 
 		StringBuilder sql = new StringBuilder();
