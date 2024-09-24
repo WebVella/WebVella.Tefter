@@ -145,9 +145,7 @@ body {
 	z-index: 2;
 }
 
-.tf-grid-thead .tf-grid-th {
-	color: rgba(255,255,255,0.5) !important;
-}
+
 
 .tf-grid-td,
 .tf-grid-th {
@@ -249,6 +247,7 @@ body {
 }
 
 .tfdt__pager {
+	margin-top:5px;
 	position: relative;
 	flex: 0 0 40px;
 	padding-left: var(--tf-content-padding);
