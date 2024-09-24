@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using Org.BouncyCastle.Crypto.Modes.Gcm;
+
+namespace WebVella.Tefter;
 
 public sealed class TfDataTable
 {
@@ -17,6 +19,7 @@ public sealed class TfDataTable
 		QueryInfo = new TfDataTableQueryInfo(
 			this,
 			table.QueryInfo.DataProviderId,
+			table.QueryInfo.SpaceDataId,
 			table.QueryInfo.Page,
 			table.QueryInfo.PageSize,
 			table.QueryInfo.Search);
@@ -62,6 +65,7 @@ public sealed class TfDataTable
 		QueryInfo = new TfDataTableQueryInfo(
 			this,
 			query.DataProviderId,
+			query.SpaceDataId,
 			query.Page,
 			query.PageSize,
 			query.Search);

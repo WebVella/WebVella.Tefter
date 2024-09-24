@@ -6,6 +6,80 @@ namespace WebVella.Tefter.Tests;
 
 public partial class DataManagerTests : BaseTest
 {
+
+	[Fact]
+	public async Task SpaceData_DebugInsertUpdateTableTest()
+	{
+		using (await locker.LockAsync())
+		{
+			var faker = new Faker("en");
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var (provider, spaceData) = CreateTestStructureAndData(dbService);
+				//var result = dataManager.QuerySpaceData(spaceData.Id);
+				var result = dataManager.QueryDataProvider(provider);
+
+				dataManager.DeleteAllProviderRows(provider);
+
+				var newTable = result.Value.NewTable();
+
+				for (var i = 0; i < 10; i++)
+				{
+					var newRow = newTable.NewRow();
+
+					newRow["guid_column"] = Guid.NewGuid();
+					newRow["short_text_column"] = i + faker.Lorem.Sentence();
+					newRow["text_column"] =  i + faker.Lorem.Lines();
+					newRow["date_column"] = faker.Date.PastDateOnly(); 
+					newRow["datetime_column"] = faker.Date.Future();
+					newRow["short_int_column"] = faker.Random.Short(0, 100);
+					newRow["int_column"] = faker.Random.Number(100, 1000);
+					newRow["long_int_column"] = faker.Random.Long(1000, 10000);
+					newRow["number_column"] = faker.Random.Decimal(100000, 1000000);
+
+					newRow["sk_shared_key_text"] = "this is shared key text test " + i;
+					newRow["sk_shared_key_int"] =  i;
+
+					newTable.Rows.Add(newRow);
+				}
+
+				result = dataManager.SaveDataTable(newTable);
+
+				//result = dataManager.QuerySpaceData(spaceData.Id);
+				result = dataManager.QueryDataProvider(provider);
+
+				var tableToUpdate = result.Value;
+
+				for (var i = 0; i < 10; i++)
+				{
+					var row = tableToUpdate.Rows[i];
+
+					row["guid_column"] = Guid.NewGuid();
+					row["short_text_column"] = i + faker.Lorem.Sentence() + "upd";
+					row["text_column"] = i + faker.Lorem.Lines() + "upd";
+					row["date_column"] = faker.Date.PastDateOnly();
+					row["datetime_column"] = faker.Date.Future();
+					row["short_int_column"] = faker.Random.Short(0, 100);
+					row["int_column"] = faker.Random.Number(100, 1000);
+					row["long_int_column"] = faker.Random.Long(1000, 10000);
+					row["number_column"] = faker.Random.Decimal(100000, 1000000);
+
+					row["sk_shared_key_text"] = "this is shared key text test " + i + "update";
+					row["sk_shared_key_int"] = i + i;
+				}
+
+				result = dataManager.SaveDataTable(tableToUpdate);
+
+				//result = dataManager.QuerySpaceData(spaceData.Id);
+				result = dataManager.QueryDataProvider(provider);
+			}
+		}
+	}
+
 	[Fact]
 	public async Task SpaceData_DebugTest()
 	{
@@ -192,7 +266,8 @@ public partial class DataManagerTests : BaseTest
 
 		var spaceColumns = columns.Select(x => x.Item1).ToList();
 		spaceColumns.Add(sharedColumn1.DbName);
-		//spaceColumns.Add(sharedColumn2.DbName); this one will be used for sort to check sort join
+		spaceColumns.Add(sharedColumn2.DbName); //this one will be used for sort to check sort join
+		
 		var spaceData = new TfSpaceData
 		{
 			Id = Guid.NewGuid(),
@@ -204,7 +279,7 @@ public partial class DataManagerTests : BaseTest
 
 		List<TfFilterBase> filters = new List<TfFilterBase>();
 
-		spaceData.Filters.Add(new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Greater, 5));
+		//spaceData.Filters.Add(new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Greater, 5));
 
 		var result = spaceManager.CreateSpaceData(spaceData);
 		result.IsSuccess.Should().BeTrue();

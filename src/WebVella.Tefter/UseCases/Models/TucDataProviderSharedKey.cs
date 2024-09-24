@@ -7,7 +7,7 @@ public record TucDataProviderSharedKey
 	public string DbName { get; init; }
 	public string Description { get; init; }
 	public List<TucDataProviderColumn> Columns { get; init; } = new();
-	public int Version { get; init; }
+	public short Version { get; init; }
 	public DateTime LastModifiedOn { get; init; }
 	
 	public TucDataProviderSharedKey() { }

@@ -213,7 +213,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 				//only increment version if columns or columns order is changed
 				if (columnsChange)
-					dbo.Version = existingSharedKey.Version + 1;
+					dbo.Version = (short)(existingSharedKey.Version + 1);
 
 				dbo.LastModifiedOn = DateTime.Now;
 

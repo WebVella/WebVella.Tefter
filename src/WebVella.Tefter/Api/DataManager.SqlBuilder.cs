@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using NpgsqlTypes;
 using System.Reflection.Metadata.Ecma335;
 
 namespace WebVella.Tefter;
@@ -24,6 +25,7 @@ public partial class DataManager
 		private string _search = null;
 		private int? _page = null;
 		private int? _pageSize = null;
+		private List<Guid> _tfIds = null;
 
 		public SqlBuilder(
 			IDatabaseService dbService,
@@ -63,6 +65,43 @@ public partial class DataManager
 
 			if (spaceData is not null && spaceData.Filters is not null)
 				_filters = spaceData.Filters;
+		}
+
+		public SqlBuilder(
+			IDatabaseService dbService,
+			TfDataProvider dataProvider,
+			TfSpaceData spaceData,
+			List<Guid> tfIds
+			)
+		{
+			if (dbService is null)
+				throw new ArgumentNullException(nameof(dbService));
+
+			if (dataProvider is null)
+				throw new ArgumentNullException(nameof(dataProvider));
+
+			if (tfIds is null)
+				throw new ArgumentNullException(nameof(tfIds));
+
+			_tfIds = tfIds;
+
+			_filters = new List<TfFilterBase>();
+
+			_additionalFilters = new List<TfFilterBase>();
+
+			_sortOrders = new List<TfSort>();
+
+			_search = null;
+
+			_page = null;
+
+			_pageSize = null;
+
+			_dbService = dbService;
+
+			_tableName = $"dp{dataProvider.Index}";
+
+			InitColumns(dataProvider, spaceData);
 		}
 
 		private void InitColumns(
@@ -272,6 +311,9 @@ public partial class DataManager
 			//joins are created for select columns, filter columns and sort columns
 			var columnsToJoin = _selectColumns
 					.Where(x => x.SharedKeyDbName != null)
+					.Union(_filterColumns
+						.Where(x => x.SharedKeyDbName != null)
+					)
 					.Union(_sortColumns
 						.Where(x => x.SharedKeyDbName != null)
 					)
@@ -343,21 +385,32 @@ public partial class DataManager
 
 			StringBuilder sb = new StringBuilder();
 
-			if (!string.IsNullOrWhiteSpace(_search?.Trim()))
+			if (_tfIds is not null)
 			{
-				parameters.Add(new NpgsqlParameter("@tf_search", _search?.Trim()));
+				var arrayParam = new NpgsqlParameter("@ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+				arrayParam.Value = _tfIds.ToArray();
+				parameters.Add(arrayParam);
 				sb.Append(Environment.NewLine);
-				sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_search , '%') )");
+				sb.Append($"\t{_tableAlias}.tf_id = ANY(@ids)");
 			}
-
-
-			var filterSql = GenerateFiltersSql(_mainFilter, parameters);
-			if (!string.IsNullOrWhiteSpace(filterSql))
+			else
 			{
-				if (sb.Length > 0)
-					sb.Append($" AND {Environment.NewLine}");
+				if (!string.IsNullOrWhiteSpace(_search?.Trim()))
+				{
+					parameters.Add(new NpgsqlParameter("@tf_search", _search?.Trim()));
+					sb.Append(Environment.NewLine);
+					sb.Append($"\t( {_tableAlias}.tf_search ILIKE CONCAT ('%', @tf_search , '%') )");
+				}
 
-				sb.Append($"\t{filterSql} ");
+
+				var filterSql = GenerateFiltersSql(_mainFilter, parameters);
+				if (!string.IsNullOrWhiteSpace(filterSql))
+				{
+					if (sb.Length > 0)
+						sb.Append($" AND {Environment.NewLine}");
+
+					sb.Append($"\t{filterSql} ");
+				}
 			}
 
 			if (sb.Length == 0)

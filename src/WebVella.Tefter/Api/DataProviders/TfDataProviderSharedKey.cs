@@ -12,7 +12,7 @@ public record TfDataProviderSharedKey
 
 	public List<TfDataProviderColumn> Columns { get; internal set; } = new();
 
-	public int Version { get; internal set; }
+	public short Version { get; internal set; }
 
 	public DateTime LastModifiedOn { get; internal set; }
 }
@@ -38,7 +38,7 @@ internal record TfDataProviderSharedKeyDbo
 	public string ColumnIdsJson { get; set; } = "[]";
 
 	[DboModelProperty("version")]
-	public int Version { get; set; }
+	public short Version { get; set; }
 
 	[DboTypeConverter(typeof(DateTimePropertyConverter))]
 	[DboModelProperty("last_modified_on")]
