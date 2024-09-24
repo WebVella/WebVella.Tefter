@@ -140,6 +140,15 @@ body {
 	pointer-events: none;
 }
 
+.tf-grid-thead > tr:not(.tf-grid-thead-bkg) {
+	position: relative;
+	z-index: 2;
+}
+
+.tf-grid-thead .tf-grid-th {
+	color: rgba(255,255,255,0.5) !important;
+}
+
 .tf-grid-td,
 .tf-grid-th {
 	color: var(--neutral-foreground-rest);
@@ -232,7 +241,8 @@ body {
 
 .tfdt__content {
 	flex: 1 1 auto;
-	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important;
+	box-sizing: content-box;
+	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width - 10px)) !important;
 	overflow-y: scroll !important;
 	padding-left: var(--tf-content-padding);
 	padding-right: var(--tf-content-margin-bottom);
@@ -263,12 +273,12 @@ body {
 
 /* width */
 ::-webkit-scrollbar {
-	width: 7px;
+	width: 10px;
+	height: 10px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-	/*background: var(--neutral-fill-layer-rest) !important;*/
 	background: transparent !important;
 }
 
@@ -282,6 +292,10 @@ body {
 		background: var(--neutral-base-color) !important;
 	}
 
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-corner{
+	display: none;
+}
 
 /*Overrides*/
 fluent-data-grid-row:has([row-selected]) {
