@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+
+namespace WebVella.Tefter;
 
 public partial interface IDataManager
 {
@@ -339,7 +341,17 @@ public partial class DataManager
 
 		foreach (var column in provider.Columns)
 		{
-			parameters.Add(new NpgsqlParameter($"@{column.DbName}", row[column.DbName]));
+			var parameterType = GetDbTypeForDatabaseColumnType(column.DbType);
+
+			NpgsqlParameter parameter = new NpgsqlParameter($"@{column.DbName}", parameterType);
+
+			if (row[column.DbName] is null)
+				parameter.Value = DBNull.Value;
+			else
+				parameter.Value = row[column.DbName];
+
+			parameters.Add(parameter);
+
 			sql.AppendLine("@" + column.DbName);
 			sql.AppendLine(",");
 		}
@@ -383,7 +395,17 @@ public partial class DataManager
 
 		foreach (var column in provider.Columns)
 		{
-			parameters.Add(new NpgsqlParameter($"@{column.DbName}", row[column.DbName]));
+			var parameterType = GetDbTypeForDatabaseColumnType(column.DbType);
+
+			NpgsqlParameter parameter = new NpgsqlParameter($"@{column.DbName}", parameterType);
+
+			if (row[column.DbName] is null)
+				parameter.Value = DBNull.Value;
+			else
+				parameter.Value = row[column.DbName];
+
+			parameters.Add(parameter);
+
 			sql.Append($"{column.DbName}=@{column.DbName}");
 			sql.AppendLine(",");
 		}

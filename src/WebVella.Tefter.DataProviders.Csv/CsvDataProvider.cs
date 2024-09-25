@@ -118,8 +118,8 @@ public class CsvDataProvider : ITfDataProviderType
 					break;
 			}
 
-
-			using (var reader = new StreamReader(settings.Filepath))
+			using( var stream = new FileStream(settings.Filepath, FileMode.Open,FileAccess.Read, FileShare.ReadWrite))
+			using (var reader = new StreamReader(stream))
 			using (var csvReader = new CsvReader(reader, config))
 			{
 
