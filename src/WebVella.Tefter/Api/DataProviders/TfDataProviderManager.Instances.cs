@@ -340,6 +340,14 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						return Result.Fail(new DboManagerError("Delete", column));
 				}
 
+				foreach (var sharedKey in providerResult.Value.SharedKeys )
+				{
+					success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
+
+					if (!success)
+						return Result.Fail(new DboManagerError("Delete", sharedKey));
+				}
+
 				success = _dboManager.Delete<TfDataProviderDbo>(id);
 
 				if (!success)
