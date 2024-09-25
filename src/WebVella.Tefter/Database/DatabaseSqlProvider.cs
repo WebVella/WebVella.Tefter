@@ -74,7 +74,7 @@ DROP TABLE IF EXISTS _tefter_update_log;";
 DROP FUNCTION IF EXISTS _tefter_database_update_func;
 DROP TABLE IF EXISTS _tefter_update_log;
 CREATE TABLE _tefter_update_log (
-	created_on TIMESTAMP WITH TIME ZONE DEFAULT clock_timestamp(),
+	created_on TIMESTAMP WITHOUT TIME ZONE DEFAULT clock_timestamp(),
 	statement TEXT,
     success BOOLEAN,
 	sql_error TEXT

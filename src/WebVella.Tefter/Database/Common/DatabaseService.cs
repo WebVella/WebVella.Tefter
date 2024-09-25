@@ -131,56 +131,56 @@ public class DatabaseService : IDatabaseService
 
 	private void ProcessNpgsqlParameters(List<NpgsqlParameter> parameters)
 	{
-		if (parameters == null)
-			return;
+		//if (parameters == null)
+		//	return;
 
-		foreach (var par in parameters)
-		{
-			if (par.Value == DBNull.Value)
-				continue;
+		//foreach (var par in parameters)
+		//{
+		//	if (par.Value == DBNull.Value)
+		//		continue;
 
-			if (par.DbType == System.Data.DbType.DateTime)
-			{
-				DateTime? value = (DateTime?)par.Value;
-				if (value.HasValue)
-				{
-					switch (value.Value.Kind)
-					{
-						case DateTimeKind.Unspecified:
-							par.Value = DateTime.SpecifyKind(value.Value, DateTimeKind.Local);
-							break;
-						case DateTimeKind.Utc:
-							par.Value = value.Value.ToLocalTime();
-							break;
-						default:
-							break;
-					}
-				}
-			}
-			else if (par.DbType == System.Data.DbType.DateTime2)
-			{
-				DateTime? value = (DateTime?)par.Value;
-				if (value.HasValue)
-				{
-					switch (value.Value.Kind)
-					{
-						case DateTimeKind.Unspecified:
-							par.Value = DateTime.SpecifyKind(value.Value, DateTimeKind.Local);
-							break;
-						case DateTimeKind.Utc:
-							par.Value = value.Value.ToLocalTime();
-							break;
-						default:
-							break;
-					}
-				}
-			}
-			else if (par.DbType == System.Data.DbType.DateTimeOffset)
-			{
-				DateTimeOffset? value = (DateTimeOffset?)par.Value;
-				if (value.HasValue)
-					par.Value = value.Value.ToLocalTime();
-			}
-		}
+		//	if (par.DbType == System.Data.DbType.DateTime)
+		//	{
+		//		DateTime? value = (DateTime?)par.Value;
+		//		if (value.HasValue)
+		//		{
+		//			switch (value.Value.Kind)
+		//			{
+		//				case DateTimeKind.Unspecified:
+		//					par.Value = DateTime.SpecifyKind(value.Value, DateTimeKind.Local);
+		//					break;
+		//				case DateTimeKind.Utc:
+		//					par.Value = value.Value.ToLocalTime();
+		//					break;
+		//				default:
+		//					break;
+		//			}
+		//		}
+		//	}
+		//	else if (par.DbType == System.Data.DbType.DateTime2)
+		//	{
+		//		DateTime? value = (DateTime?)par.Value;
+		//		if (value.HasValue)
+		//		{
+		//			switch (value.Value.Kind)
+		//			{
+		//				case DateTimeKind.Unspecified:
+		//					par.Value = DateTime.SpecifyKind(value.Value, DateTimeKind.Local);
+		//					break;
+		//				case DateTimeKind.Utc:
+		//					par.Value = value.Value.ToLocalTime();
+		//					break;
+		//				default:
+		//					break;
+		//			}
+		//		}
+		//	}
+		//	else if (par.DbType == System.Data.DbType.DateTimeOffset)
+		//	{
+		//		DateTimeOffset? value = (DateTimeOffset?)par.Value;
+		//		if (value.HasValue)
+		//			par.Value = value.Value.ToLocalTime();
+		//	}
+		//}
 	}
 }

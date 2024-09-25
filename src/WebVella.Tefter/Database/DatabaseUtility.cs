@@ -187,7 +187,7 @@ internal class DatabaseUtility
                 return null;
 
             var processedDefaultValue = defaultValue
-                .Replace("::timestamp with time zone", "")
+                .Replace("::timestamp without time zone", "")
                 .Replace("'", "");
 
             if (DateTime.TryParse(processedDefaultValue, out var dateTimeValue))
