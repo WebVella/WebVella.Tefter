@@ -33,7 +33,9 @@
 	display:none;
 }
 
-::deep fluent-text-field[readonly]::part(root) {
+::deep fluent-text-field[readonly]::part(root),
+::deep fluent-text-area[readonly]::part(root),
+::deep fluent-number-field[readonly]::part(root){
 	border: 1px solid var(--neutral-fill-input-alt-active) !important;
 }
 
@@ -41,7 +43,9 @@
 	border: none !important;
 }
 
-::deep fluent-text-field[readonly]::after {
+::deep fluent-text-field[readonly]::after,
+::deep fluent-text-area[readonly]::after,
+::deep fluent-number-field[readonly]::after{
 	display: none;
 }
 

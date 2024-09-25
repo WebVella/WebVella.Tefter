@@ -2,13 +2,17 @@
 @inherits TfBaseComponent
 <TfCard>
 	<FluentGrid>
-		<FluentGridItem xs="6">
+		<FluentGridItem xs="5">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminDataProvider?.Name"
 							 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 		</FluentGridItem>
-		<FluentGridItem xs="6">
+		<FluentGridItem xs="5">
 			<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminDataProvider?.ProviderType.Name"
 							 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
+		</FluentGridItem>
+		<FluentGridItem xs="2">
+			<FluentNumberField TValue="int?" Value="@TfAppState.Value?.AdminDataProvider?.Index"
+							 Label="@LOC("Index")" Style="width:100%" ReadOnly="true" Disabled="true" />
 		</FluentGridItem>
 	</FluentGrid>
 

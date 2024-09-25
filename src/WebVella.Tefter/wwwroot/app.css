@@ -308,6 +308,9 @@ body {
 	bottom: 0;
 	display: flex;
 	flex-flow: column;
+	align-items:center;
+	padding-left: var(--tf-content-padding);
+	padding-right: var(--tf-content-margin-bottom);
 }
 
 .tfdt__toolbar {
@@ -317,15 +320,15 @@ body {
 	padding-bottom: var(--tf-content-padding);
 	display: flex;
 	align-items: center;
+	width:100%;
 }
 
 .tfdt__content {
 	flex: 1 1 auto;
 	box-sizing: content-box;
-	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width - 10px)) !important;
+	height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - 10px) !important;
 	overflow-y: scroll !important;
-	margin-left: var(--tf-content-padding);
-	margin-right: var(--tf-content-margin-bottom);
+	width:100%;
 }
 
 .tfdt__pager {

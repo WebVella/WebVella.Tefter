@@ -23,6 +23,23 @@ public record TucSpaceViewColumn
 	public string CustomOptionsJson { get; set; } = "{}";
 	public TucSpaceViewColumnSettings Settings { get; set; } = new TucSpaceViewColumnSettings();
 
+	public string HeaderStyle
+	{
+		get
+		{
+			var sb = new StringBuilder();
+			//if (Settings is not null)
+			//{
+			//	if(Settings.BackgroundColor != OfficeColor.Default){ 
+			//		sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}35, {Settings.BackgroundColor.ToAttributeValue()}35)," +
+			//		$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
+			//	}
+			//}
+
+			return sb.ToString();
+		}
+	}
+
 	public string BodyStyle
 	{
 		get
@@ -34,8 +51,7 @@ public record TucSpaceViewColumn
 					sb.Append($"color:{Settings.Color.ToAttributeValue()};");
 				}
 				if(Settings.BackgroundColor != OfficeColor.Default){ 
-					//sb.Append($"background:linear-gradient(red),linear-gradient({Settings.BackgroundColor.ToAttributeValue()}35);");
-					sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}35, {Settings.BackgroundColor.ToAttributeValue()}35)," +
+					sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}50, {Settings.BackgroundColor.ToAttributeValue()}50)," +
 					$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
 				}
 				else{ 

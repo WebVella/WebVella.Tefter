@@ -126,6 +126,18 @@
   <data name="Create view" xml:space="preserve">
     <value>Създай изглед</value>
   </data>
+  <data name="Freeze Final Columns" xml:space="preserve">
+    <value>Замрази последние колони</value>
+  </data>
+  <data name="Freeze Starting Columns" xml:space="preserve">
+    <value>Замрази първите колони</value>
+  </data>
+  <data name="how many columns from the end to freeze" xml:space="preserve">
+    <value>колко колони от края да замрази</value>
+  </data>
+  <data name="how many columns from the start to freeze, not counting the checkbox column" xml:space="preserve">
+    <value>колко колони от началото да замрази, без да брои чек колоната</value>
+  </data>
   <data name="Manage view" xml:space="preserve">
     <value>Редактирай изглед</value>
   </data>

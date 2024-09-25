@@ -35,61 +35,76 @@
 				</FluentButton>
 			</div>
 		</div>
-		<div class="tfdt__content">
-			<div class="tf-grid-wrapper">
-				<table class="tf-grid">
-					<thead class="tf-grid-thead">
-						<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
-						<tr class="tf-grid-tr">
-							@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
-							{
-								if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
-								if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
-								if (!_showCustomColumns && !column.IsSystem) { continue; }
-								<th class="tf-grid-th">@column.Name</th>
-								columnCount++;
-							}
-						</tr>
-					</thead>
-					<tbody class="tf-grid-tbody">
-						@if (_isListBusy)
-						{
+		@if (TfAppState.Value.AdminDataProviderData.Rows.Count > 0 || TfAppState.Value.AdminDataProviderDataPage != 1)
+		{
+			<div class="tfdt__content">
+				<div class="tf-grid-wrapper">
+					<table class="tf-grid">
+						<thead class="tf-grid-thead">
+							<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
 							<tr class="tf-grid-tr">
-								<td class="tf-grid-td" colspan="@columnCount">Loading...</td>
+								@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
+								{
+									if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
+									if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+									if (!_showCustomColumns && !column.IsSystem) { continue; }
+									<th class="tf-grid-th">@column.Name</th>
+									columnCount++;
+								}
 							</tr>
-						}
-						else
-						{
-							foreach (TfDataRow row in TfAppState.Value.AdminDataProviderData.Rows)
-							{
-								<tr @key=@row["tf_id"] class="tf-grid-tr">
-									@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
-									{
-										if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
-										if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
-										if (!_showCustomColumns && !column.IsSystem) { continue; }
-										<td class="tf-grid-td">
-											<div>@row[column.Name]</div>
-										</td>
-									}
-								</tr>
-							}
-							@if (TfAppState.Value.AdminDataProviderData.Rows.Count == 0)
+						</thead>
+						<tbody class="tf-grid-tbody">
+							@if (_isListBusy)
 							{
 								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="@columnCount">No records found</td>
+									<td class="tf-grid-td" colspan="@columnCount">Loading...</td>
 								</tr>
 							}
-						}
-					</tbody>
-				</table>
+							else
+							{
+								foreach (TfDataRow row in TfAppState.Value.AdminDataProviderData.Rows)
+								{
+									<tr @key=@row["tf_id"] class="tf-grid-tr">
+										@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
+										{
+											if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
+											if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+											if (!_showCustomColumns && !column.IsSystem) { continue; }
+											<td class="tf-grid-td">
+												<div>@row[column.Name]</div>
+											</td>
+										}
+									</tr>
+								}
+								@if (TfAppState.Value.AdminDataProviderData.Rows.Count == 0)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="@columnCount">No records found</td>
+									</tr>
+								}
+							}
+						</tbody>
+					</table>
 
+				</div>
 			</div>
-		</div>
-		<div class="tfdt__pager">
-			<TfPager Page="@TfAppState.Value.AdminDataProviderDataPage" GoLast="@_goLastPage" GoNext="@_goNextPage"
-					 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
-		</div>
+			<div class="tfdt__pager">
+				<TfPager Page="@TfAppState.Value.AdminDataProviderDataPage" GoLast="@_goLastPage" GoNext="@_goNextPage"
+						 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
+			</div>
+		}
+		else if (TfAppState.Value.AdminDataProviderData.Columns.Count == 0)
+		{
+			<div class="tfdt__content">
+				<FluentMessageBar AllowDismiss="false">@LOC("No columns are created for this data provider yet")</FluentMessageBar>
+			</div>
+		}
+		else
+		{
+			<div class="tfdt__content">
+				<FluentMessageBar AllowDismiss="false">@LOC("No records")</FluentMessageBar>
+			</div>
+		}
 	</div>
 }
 

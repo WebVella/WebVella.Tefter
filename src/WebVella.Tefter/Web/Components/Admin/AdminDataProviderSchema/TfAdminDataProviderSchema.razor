@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 
 @if (TfAppState.Value.AdminDataProvider is null || TfAppState.Value.AdminDataProvider.Columns is null
-		|| TfAppState.Value.AdminDataProvider.Columns.Count == 0)
+				|| TfAppState.Value.AdminDataProvider.Columns.Count == 0)
 {
 	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>
@@ -14,24 +14,26 @@ else
 			<thead class="tf-grid-thead">
 				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
 				<tr class="tf-grid-tr">
-					<th class="tf-grid-th" style="width:50px;"></th>
+					<th class="tf-grid-th" style="min-width:110px;width:110px;"></th>
 					<th class="tf-grid-th">name</th>
 					<th class="tf-grid-th">type</th>
-					<th class="tf-grid-th" style="width:120px;">created on</th>
+					<th class="tf-grid-th" style="min-width:120px;width:120px;">created on</th>
 					<th class="tf-grid-th">details</th>
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
-				@foreach (var context in TfAppState.Value.AdminDataProvider.Columns.OrderBy(x=> x.DbName))
+				@foreach (var context in TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName))
 				{
 					<tr @key=context.Id class="tf-grid-tr">
 						<td class="tf-grid-td">
 							<div>
-								<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" 
-									Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))"/>
-								<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
-									<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-								</FluentButton>
+								<FluentStack Wrap="false">
+									<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+												  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
+									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
+										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+									</FluentButton>
+								</FluentStack>
 							</div>
 						</td>
 						<td class="tf-grid-td">

@@ -6,8 +6,8 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private bool _isListBusy = false;
-	private bool _showSystemColumns = false;
-	private bool _showSharedKeyColumns = false;
+	private bool _showSystemColumns = true;
+	private bool _showSharedKeyColumns = true;
 	private bool _showCustomColumns = true;
 	private string _search = null;
 

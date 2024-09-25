@@ -28,5 +28,5 @@
 }
 
 .paginator-nav-description {
-	color: var(--neutral-foreground-active);
+	color: var(--neutral-foreground-hover);
 }

@@ -94,7 +94,7 @@ else
 									</th>
 									@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 									{
-										<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{_gridHeadBackgroundStyle}{configCss[columnIndex].Item3}")">
+										<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{_gridHeadBackgroundStyle}{column.HeaderStyle}{configCss[columnIndex].Item3}")">
 											@if (column.Title.StartsWith("icon:"))
 											{
 												<div style="display:flex;">

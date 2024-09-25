@@ -107,6 +107,8 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	private void _initValues()
 	{
 		_value = GetDataObjectByAlias<DateTime>(_valueAlias, null);
+		if(_value is not null)
+			_value = DateTime.SpecifyKind(_value.Value, DateTimeKind.Utc);
 	}
 }
 

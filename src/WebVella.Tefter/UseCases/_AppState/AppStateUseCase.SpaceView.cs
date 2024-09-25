@@ -27,7 +27,7 @@ internal partial class AppStateUseCase
 		if (routeState.SpaceViewId is not null)
 		{
 			int defaultPageSize = TfConstants.PageSize;
-			if(currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
+			if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
 			newState = newState with
 			{
 				SpaceView = GetSpaceView(routeState.SpaceViewId.Value),
@@ -40,16 +40,18 @@ internal partial class AppStateUseCase
 			};
 			if (newState.SpaceView is not null && newState.SpaceView.SpaceDataId.HasValue)
 			{
+				var viewData = GetSpaceViewData(
+							spaceDataId: newState.SpaceView.SpaceDataId.Value,
+							additionalFilters: newState.SpaceViewFilters,
+							sortOverrides: newState.SpaceViewSorts,
+							search: newState.SpaceViewSearch,
+							page: newState.SpaceViewPage,
+							pageSize: newState.SpaceViewPageSize
+						);
 				newState = newState with
 				{
-					SpaceViewData = GetSpaceViewData(
-						spaceDataId: newState.SpaceView.SpaceDataId.Value,
-						additionalFilters: newState.SpaceViewFilters,
-						sortOverrides: newState.SpaceViewSorts,
-						search: newState.SpaceViewSearch,
-						page: newState.SpaceViewPage,
-						pageSize: newState.SpaceViewPageSize
-					)
+					SpaceViewData = viewData,
+					SpaceViewPage = viewData.QueryInfo.Page ?? newState.SpaceViewPage,
 				};
 			}
 			else
@@ -117,7 +119,7 @@ internal partial class AppStateUseCase
 
 		return serviceResult.Value.Select(x => new TucSpaceView(x)).ToList();
 	}
-	internal Result<Tuple<TucSpaceView,TucSpaceData>> CreateSpaceViewWithForm(TucSpaceView view)
+	internal Result<Tuple<TucSpaceView, TucSpaceData>> CreateSpaceViewWithForm(TucSpaceView view)
 	{
 		//TODO RUMEN: big part of this needs to be created as a service and be in transaction
 
@@ -390,10 +392,10 @@ internal partial class AppStateUseCase
 		#endregion
 		//Should commit transaction
 
-		return Result.Ok(new Tuple<TucSpaceView,TucSpaceData>(new TucSpaceView(spaceView),new TucSpaceData(spaceData)));
+		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(new TucSpaceView(spaceView), new TucSpaceData(spaceData)));
 	}
 
-	internal Result<Tuple<TucSpaceView,TucSpaceData>> UpdateSpaceViewWithForm(TucSpaceView view)
+	internal Result<Tuple<TucSpaceView, TucSpaceData>> UpdateSpaceViewWithForm(TucSpaceView view)
 	{
 		//TODO RUMEN: big part of this needs to be created as a service and be in transaction
 		TfSpace space = null;
@@ -483,7 +485,8 @@ internal partial class AppStateUseCase
 				Position = 1,//will be overrided later
 				SpaceDataId = spaceData.Id,
 				SpaceId = space.Id,
-				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>()
+				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
+				SettingsJson = JsonSerializer.Serialize(view.Settings)
 			};
 			var tfResult = _spaceManager.UpdateSpaceView(spaceViewObj);
 			if (tfResult.IsFailed) return Result.Fail(new Error("UpdateSpaceView failed").CausedBy(tfResult.Errors));
@@ -493,7 +496,7 @@ internal partial class AppStateUseCase
 		#endregion
 
 		//Should commit transaction
-		return Result.Ok(new Tuple<TucSpaceView,TucSpaceData>(new TucSpaceView(spaceView),new TucSpaceData(spaceData)));
+		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(new TucSpaceView(spaceView), new TucSpaceData(spaceData)));
 	}
 
 	internal Result DeleteSpaceView(Guid viewId)
@@ -519,8 +522,8 @@ internal partial class AppStateUseCase
 			);
 			return Task.FromResult(new List<TucSpaceView>());
 		}
-		if(serviceResult.Value is null) return Task.FromResult(new List<TucSpaceView>());
-		return Task.FromResult(serviceResult.Value.Select(x=> new TucSpaceView(x)).ToList());
+		if (serviceResult.Value is null) return Task.FromResult(new List<TucSpaceView>());
+		return Task.FromResult(serviceResult.Value.Select(x => new TucSpaceView(x)).ToList());
 
 	}
 

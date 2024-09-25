@@ -52,27 +52,26 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	private async Task _goFirstPage()
 	{
 		if (_isDataLoading) return;
-		_isDataLoading = true;
 		if (TfAppState.Value.SpaceViewPage == 1) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = 1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		_isDataLoading = true;
 	}
 	private async Task _goPreviousPage()
 	{
 		if (_isDataLoading) return;
-		_isDataLoading = true;
 		var page = TfAppState.Value.SpaceViewPage - 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.SpaceViewPage == page) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		_isDataLoading = true;
 	}
 	private async Task _goNextPage()
 	{
 		if (_isDataLoading) return;
-		_isDataLoading = true;
 		if (TfAppState.Value.SpaceViewData is null
 		|| TfAppState.Value.SpaceViewData.Rows.Count == 0)
 			return;
@@ -84,26 +83,26 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-
+		_isDataLoading = true;
 	}
 	private async Task _goLastPage()
 	{
 		if (_isDataLoading) return;
-		_isDataLoading = true;
 		if (TfAppState.Value.SpaceViewPage == -1) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = -1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		_isDataLoading = true;
 	}
 	private async Task _goOnPage(int page)
 	{
 		if (_isDataLoading) return;
-		_isDataLoading = true;
 		if (page < 1 && page != -1) page = 1;
 		if (TfAppState.Value.SpaceViewPage == page) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		_isDataLoading = true;
 	}
 
 	private async Task _pageSizeChange(int pageSize)
@@ -283,9 +282,9 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private Dictionary<int, Tuple<int?, string, string>> _generateColumnConfigurationCss(TucSpaceView view, List<TucSpaceViewColumn> columns)
 	{
-		int _freezeLeftColumnsCount = 2;
+		int _freezeLeftColumnsCount = TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns;
 		int _freezeLeftWidth = 0;
-		int _freezeRightColumnsCount = 1;
+		int _freezeRightColumnsCount = TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns;
 		int _freezeRightWidth = 0;
 		var result = new Dictionary<int, Tuple<int?, string, string>>();
 

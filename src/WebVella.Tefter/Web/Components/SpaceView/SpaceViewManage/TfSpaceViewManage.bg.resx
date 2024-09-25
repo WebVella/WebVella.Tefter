@@ -120,6 +120,12 @@
   <data name="Are you sure that you need this column deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете колоната?</value>
   </data>
+  <data name="Freeze Final Columns" xml:space="preserve">
+    <value>Замрази последние колони</value>
+  </data>
+  <data name="Freeze Starting Columns" xml:space="preserve">
+    <value>Замрази първите колони</value>
+  </data>
   <data name="open dataset" xml:space="preserve">
     <value>отвори данните</value>
   </data>

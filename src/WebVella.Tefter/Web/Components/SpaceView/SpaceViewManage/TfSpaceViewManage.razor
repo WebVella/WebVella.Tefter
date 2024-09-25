@@ -80,6 +80,18 @@ else
 						}
 					</FluentGridItem>
 				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Freeze Starting Columns")" />
+						<FluentNumberField TValue="int" Value=@TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns
+										 ReadOnly="true" Style="width:100%" />
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Freeze Final Columns")" />
+						<FluentNumberField TValue="int" Value=@TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns
+										   ReadOnly="true" Style="width:100%" />
+					</FluentGridItem>
+				</FluentGrid>
 			</TfCard>
 			<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
 			<TfCard Small="true">

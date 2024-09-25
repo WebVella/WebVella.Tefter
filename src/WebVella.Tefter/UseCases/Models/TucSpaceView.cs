@@ -27,12 +27,12 @@ public record TucSpaceView
 	public bool AddProviderColumns { get; set; } = true;
 	[Required]
 	public bool AddSharedColumns { get; set; } = true;
-
 	[Required]
 	public bool AddDatasetColumns { get; set; } = true;
+	public TucSpaceViewSettings Settings { get; set; } = new TucSpaceViewSettings();
 
 	[JsonIgnore]
-	public Action OnClick { get;set;}
+	public Action OnClick { get; set; }
 
 	public TucSpaceView() { }
 
@@ -41,9 +41,15 @@ public record TucSpaceView
 		Id = model.Id;
 		Name = model.Name;
 		SpaceId = model.SpaceId;
-		Type = model.Type.ConvertSafeToEnum<TfSpaceViewType,TucSpaceViewType>();
+		Type = model.Type.ConvertSafeToEnum<TfSpaceViewType, TucSpaceViewType>();
 		SpaceDataId = model.SpaceDataId;
 		Position = model.Position;
+		Settings = new TucSpaceViewSettings();
+		if (!String.IsNullOrWhiteSpace(model.SettingsJson) && model.SettingsJson.StartsWith("{")
+		 && model.SettingsJson.EndsWith("}"))
+		{
+			Settings = JsonSerializer.Deserialize<TucSpaceViewSettings>(model.SettingsJson);
+		}
 	}
 
 	public TfSpaceView ToModel()
@@ -53,9 +59,10 @@ public record TucSpaceView
 			Id = Id,
 			Name = Name,
 			SpaceId = SpaceId,
-			Type = Type.ConvertSafeToEnum<TucSpaceViewType,TfSpaceViewType>(),
+			Type = Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
 			SpaceDataId = SpaceDataId ?? Guid.Empty,
 			Position = Position,
+			SettingsJson = JsonSerializer.Serialize(Settings)
 		};
 	}
 
@@ -66,7 +73,7 @@ public record TucSpaceView
 			Id = Id,
 			Name = Name,
 			SpaceId = SpaceId,
-			Type = Type.ConvertSafeToEnum<TucSpaceViewType,TfSpaceViewType>(),
+			Type = Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
 			SpaceDataId = SpaceDataId ?? Guid.Empty,
 			Position = Position,
 			AddProviderColumns = AddProviderColumns,
@@ -74,6 +81,7 @@ public record TucSpaceView
 			AddSystemColumns = AddSystemColumns,
 			DataProviderId = DataProviderId,
 			NewSpaceDataName = NewSpaceDataName
+			//SettingsJson = JsonSerializer.Serialize(Settings)
 		};
 	}
 }
