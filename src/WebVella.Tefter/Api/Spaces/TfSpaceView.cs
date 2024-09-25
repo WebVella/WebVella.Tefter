@@ -23,6 +23,9 @@ public class TfSpaceView
 
 	[DboModelProperty("position")]
 	public short Position { get; set; }
+
+	[DboModelProperty("settings_json")]
+	public string SettingsJson { get; set; } = "{}";
 }
 
 
