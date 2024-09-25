@@ -9,7 +9,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	[Inject] private UserStateUseCase UserUC { get; set; }
 
 	private bool _isDataLoading = true;
-
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -169,7 +168,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private Task _onRowChanged(TfDataTable value)
 	{
-		
+
 		try
 		{
 			var result = UC.ChangeViewData(value);
@@ -178,7 +177,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			{
 				//Apply changed to the datatable
 				var viewData = TfAppState.Value.SpaceViewData.Clone();
-				if(viewData is null || viewData.Rows.Count == 0 || result.Value.Rows.Count == 0) return Task.CompletedTask;
+				if (viewData is null || viewData.Rows.Count == 0 || result.Value.Rows.Count == 0) return Task.CompletedTask;
 				for (int i = 0; i < result.Value.Rows.Count; i++)
 				{
 					TfDataRow row = result.Value.Rows[i];
@@ -194,8 +193,9 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 				Dispatcher.Dispatch(new SetAppStateAction(component: this,
 					state: TfAppState.Value with { SpaceViewData = viewData }));
 			}
-			else{ 
-				throw ResultUtils.ConvertResultToException(result,LOC("Data change failed!"));
+			else
+			{
+				throw ResultUtils.ConvertResultToException(result, LOC("Data change failed!"));
 			}
 		}
 		catch
@@ -281,5 +281,54 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		));
 	}
 
+	private Dictionary<int, Tuple<int?, string, string>> _generateColumnConfigurationCss(TucSpaceView view, List<TucSpaceViewColumn> columns)
+	{
+		int _freezeLeftColumnsCount = 2;
+		int _freezeLeftWidth = 0;
+		int _freezeRightColumnsCount = 1;
+		int _freezeRightWidth = 0;
+		var result = new Dictionary<int, Tuple<int?, string, string>>();
 
+		//Position 0 is always the checkbox , width 40
+		result[0] = new Tuple<int?, string, string>(40, "tf--sticky", "left:0");
+		_freezeLeftWidth += 40;
+		for (int i = 0; i < columns.Count; i++)
+		{
+			var column = columns[i];
+			var position = i + 1;
+			if (position > _freezeLeftColumnsCount && position <= (columns.Count - _freezeRightColumnsCount))
+			{
+				result[position] = new Tuple<int?, string, string>(column.Settings.Width, "", "");
+			}
+			else if (position <= _freezeLeftColumnsCount)
+			{
+				var width = column.Settings.Width ?? 140;
+				var lastLeftSticyClass = position == _freezeLeftColumnsCount ? "tf--sticky-last" : "";
+				result[position] = new Tuple<int?, string, string>(width, $"tf--sticky {lastLeftSticyClass}", $"left:{(_freezeLeftWidth)}px;");
+				_freezeLeftWidth += width;
+			}
+			else
+			{
+				result[position] = new Tuple<int?, string, string>(column.Settings.Width, "", "");
+			}
+
+		}
+
+		for (int i = columns.Count - 1; i >= 0; i--)
+		{
+			var column = columns[i];
+			var position = i + 1;
+			if (position > (columns.Count - _freezeRightColumnsCount))
+			{
+				var width = column.Settings.Width ?? 140;
+				var firstRightSticyClass = position == (columns.Count - _freezeRightColumnsCount + 1) ? "tf--sticky-first" : "";
+				result[position] = new Tuple<int?, string, string>(width, $"tf--sticky {firstRightSticyClass}", $"right:{(_freezeRightWidth)}px;");
+				_freezeRightWidth += width;
+
+			}
+		}
+
+		return result;
+
+	}
 }

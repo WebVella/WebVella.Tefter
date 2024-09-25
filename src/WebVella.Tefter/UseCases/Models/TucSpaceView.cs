@@ -20,6 +20,7 @@ public record TucSpaceView
 	public string NewSpaceDataName { get; set; } = null;
 	public Guid? SpaceDataId { get; set; } = null;
 	public short Position { get; set; }
+
 	[Required]
 	public bool AddSystemColumns { get; set; } = false;
 	[Required]

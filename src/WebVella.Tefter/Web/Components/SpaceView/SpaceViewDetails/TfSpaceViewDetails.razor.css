@@ -3,7 +3,9 @@
 	background:var(--tf-grid-row-selected);
 }
 
-::deep .tf-grid fluent-text-field::part(root) {
+::deep .tf-grid fluent-text-area::part(root),
+::deep .tf-grid fluent-text-field::part(root),
+::deep .tf-grid fluent-number-field::part(root) {
 	background: var(--neutral-fill-input-active);
 	border:1px solid var(--neutral-stroke-input-active);
 }

@@ -51,6 +51,11 @@ else
 		</FluentStack>
 	}
 	<FluentBodyContent Class="content-body with-toolbar">
+		@{
+			var configCss = _generateColumnConfigurationCss(TfAppState.Value.SpaceView, TfAppState.Value.SpaceViewColumns);
+			var columnIndex = 1;
+			var _gridHeadBackgroundStyle = $"background:linear-gradient(to right, {TfAppState.Value.SpaceGridBackgkroundColor}, {TfAppState.Value.SpaceGridBackgkroundColor}),linear-gradient(to right, var(--neutral-layer-2),var(--neutral-layer-2));";
+		}
 		<style>
 			:root .tfdt,
 			:root .content-toolbar {
@@ -65,10 +70,15 @@ else
 				<div class="tfdt__content">
 					<div class="tf-grid-wrapper">
 						<table class="tf-grid">
+							<colgroup>
+								@foreach (var index in configCss.Keys)
+								{
+									<col span="1" style="@(configCss[index].Item1 is null ? "" : $"width:{configCss[index].Item1.Value}px;min-width:{configCss[index].Item1.Value}px" )">
+								}
+							</colgroup>
 							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfAppState.Value.SpaceGridBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
-									<th class="tf-grid-th tf-grid-th--check  tf-grid-th--sticky" style="padding:0;text-align:center;width:60px;left:0;">
+									<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{_gridHeadBackgroundStyle}{configCss[0].Item3}")">
 										@if (TfAppState.Value.AllDataRowsSelected)
 										{
 											<FluentButton OnClick="@(() =>_toggleSelectAll(false))" BackgroundColor="transparent" Color="transparent">
@@ -84,11 +94,11 @@ else
 									</th>
 									@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 									{
-										<th class="tf-grid-th" data-query-name="@column.QueryName" style="@column.HeaderStyle">
+										<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{_gridHeadBackgroundStyle}{configCss[columnIndex].Item3}")">
 											@if (column.Title.StartsWith("icon:"))
 											{
 												<div style="display:flex;">
-													<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))"/>
+													<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))" />
 												</div>
 											}
 											else
@@ -96,6 +106,7 @@ else
 												<div>@column.Title</div>
 											}
 										</th>
+										columnIndex++;
 									}
 								</tr>
 							</thead>
@@ -123,9 +134,10 @@ else
 									for (int i = 0; i < TfAppState.Value.SpaceViewData.Rows.Count; i++)
 									{
 										var index = i;
+										columnIndex = 1;
 										var selected = _getItemSelection(index);
 										<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
-											<td class="tf-grid-td tf-grid-td--check tf-grid-td--sticky" style="width:60px;left:0;">
+											<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"background:var(--neutral-fill-layer-rest);{configCss[0].Item3}")">
 												<div style="padding:1px;">
 													@if (selected)
 													{
@@ -143,7 +155,7 @@ else
 											</td>
 											@foreach (var column in TfAppState.Value.SpaceViewColumns)
 											{
-												<td class="tf-grid-td" style="@column.BodyStyle">
+												<td class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{column.BodyStyle} {configCss[columnIndex].Item3}")">
 													@if (column.ComponentType is not null)
 													{
 														<TfErrorBoundry>
@@ -151,6 +163,7 @@ else
 														</TfErrorBoundry>
 													}
 												</td>
+												columnIndex++;
 											}
 										</tr>
 									}

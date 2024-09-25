@@ -113,7 +113,11 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	private void _initValues()
 	{
 		var dateOnly = GetDataObjectByAlias<DateOnly>(_valueAlias, null);
-		if (dateOnly is null) _value = null;
+		if (dateOnly is null)
+		{
+			_value = null;
+			return;
+		}
 
 		_value = dateOnly.Value.ToDateTime();
 	}
