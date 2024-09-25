@@ -53,6 +53,20 @@
 					<FluentValidationMessage For="@(() => _form.Settings.FreezeFinalNColumns)" />
 				</FluentGridItem>
 			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("New Rows")" />
+					<FluentCheckbox @bind-Value="@_form.Settings.CanCreateRows" Style="height:32px;"
+									Label="@LOC("can create new rows")" />
+					<FluentValidationMessage For="@(() => _form.Settings.CanCreateRows)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Delete Rows")" />
+					<FluentCheckbox @bind-Value="@_form.Settings.CanDeleteRows" Style="height:32px;"
+									Label="@LOC("can delete rows")" />
+					<FluentValidationMessage For="@(() => _form.Settings.CanDeleteRows)" />
+				</FluentGridItem>
+			</FluentGrid>
 			<FluentDivider Style="margin:1rem 0" />
 			<FluentGrid>
 				<FluentGridItem xs="6">

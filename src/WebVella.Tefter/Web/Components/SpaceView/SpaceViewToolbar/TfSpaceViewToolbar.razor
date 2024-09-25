@@ -6,28 +6,28 @@
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			@if ((TfAppState.Value.SpaceViewFilters?.Count ?? 0) > 0)
 			{
-					<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-					<FluentBadge Appearance="Appearance.Accent">@(TfAppState.Value.SpaceViewFilters?.Count ?? 0)</FluentBadge>
+				<FluentIcon Value="@TfConstants.GetIcon("Filter")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentBadge Appearance="Appearance.Accent">@(TfAppState.Value.SpaceViewFilters?.Count ?? 0)</FluentBadge>
 			}
 			else
 			{
-					<FluentIcon Value="@TfConstants.GetIcon("Filter")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />	
+				<FluentIcon Value="@TfConstants.GetIcon("Filter")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 		</FluentButton>
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
 
 			@if ((TfAppState.Value.SpaceViewSorts?.Count ?? 0) > 0)
 			{
-					<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-					<FluentBadge Appearance="Appearance.Accent">@(TfAppState.Value.SpaceViewSorts?.Count ?? 0)</FluentBadge>
+				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentBadge Appearance="Appearance.Accent">@(TfAppState.Value.SpaceViewSorts?.Count ?? 0)</FluentBadge>
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />	
+				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 		</FluentButton>
 		@* 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+		<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton> *@
 	</div>
 	<div class="content-toolbar-right">
@@ -35,45 +35,48 @@
 		{
 			if (comp.ComponentType is not null)
 			{
-						<TfErrorBoundry>
-							<DynamicComponent Type="comp.ComponentType" @key=@comp.Id />
-						</TfErrorBoundry>
+				<TfErrorBoundry>
+					<DynamicComponent Type="comp.ComponentType" @key=@comp.Id />
+				</TfErrorBoundry>
 			}
 		}
-		<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-		</FluentButton>
+		@if (TfAppState.Value.SpaceView.Settings.CanCreateRows)
+		{
+			<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentButton>
+		}
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			@if (TfAppState.Value.SelectedDataRows.Count > 0)
 			{
-					<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
-					<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 			else
 			{
-					<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Connector")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 
 		</FluentButton>
 		@if (TfAppState.Value.ActiveSpaceViewBookmark is not null)
 		{
-				<FluentButton Id="view-bookmark-selector" OnClick="OnBookmarkClick" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentButton>
+			<FluentButton Id="view-bookmark-selector" OnClick="OnBookmarkClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			</FluentButton>
 		}
 		@if (TfAppState.Value.ActiveSpaceViewSavedUrl is not null)
 		{
 			@if (Navigator.IsSpaceViewSavedUrlChanged(TfAppState.Value.ActiveSpaceViewSavedUrl.Url))
 			{
-						<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
-							<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning"/>
-						</FluentButton>
+				<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Warning" />
+				</FluentButton>
 			}
 			else
 			{
-						<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
-							<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-						</FluentButton>
+				<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
+					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				</FluentButton>
 			}
 		}
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
