@@ -1,11 +1,15 @@
 ﻿
 ::deep .tf-grid .tf-grid-thead .tf-grid-th {
-	color:rgba(255,255,255,0.5);
+	color:var(--neutral-foreground-hover);
 }
 
-::deep .tf-grid-tbody > .tf-grid-tr.tf-grid-tr--selected .tf-grid-td {
-	background:var(--tf-grid-row-selected) !important;
+::deep .tf-grid-tbody > .tf-grid-tr.tf-grid-tr--selected .tf-grid-td > div {
+	background: var(--tf-grid-row-selected);
 }
+
+/*::deep .tf-grid-tbody > .tf-grid-tr.tf-grid-tr--selected .tf-grid-td.tf--sticky {
+	background: linear-gradient(var(--tf-grid-row-selected)), linear-gradient(var(--tf-grid-row-selected)) !important;
+}*/
 
 ::deep .tf-grid fluent-text-area::part(root),
 ::deep .tf-grid fluent-text-field::part(root),

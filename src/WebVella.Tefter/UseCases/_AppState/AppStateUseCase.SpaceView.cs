@@ -587,7 +587,12 @@ internal partial class AppStateUseCase
 		return serviceResult.Value;
 	}
 
-
+	internal Result<TfDataTable> SaveViewData(TfDataTable dt)
+	{
+		var saveResult = _dataManager.SaveDataTable(dt);
+		if (saveResult.IsFailed) return Result.Fail(new Error("SaveDataTable failed").CausedBy(saveResult.Errors));
+		return Result.Ok(saveResult.Value);
+	}
 
 
 	//View columns

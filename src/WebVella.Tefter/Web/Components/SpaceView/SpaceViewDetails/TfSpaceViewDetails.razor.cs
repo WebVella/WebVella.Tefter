@@ -170,7 +170,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 		try
 		{
-			var result = UC.ChangeViewData(value);
+			var result = UC.SaveViewData(value);
 			//ProcessServiceResponse(result); //should be handled by the component
 			if (result.IsSuccess)
 			{

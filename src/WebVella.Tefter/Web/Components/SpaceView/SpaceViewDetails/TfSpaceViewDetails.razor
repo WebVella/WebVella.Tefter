@@ -23,7 +23,7 @@ else
 		</FluentStack>
 	}
 
-	@if(TfAppState.Value.SpaceViewList.Count == 0)
+	@if (TfAppState.Value.SpaceViewList.Count == 0)
 	{
 		<FluentBodyContent Class="content-body">
 			<div class="content-inner">
@@ -62,9 +62,10 @@ else
 			<style>
 				:root .tfdt,
 				:root .content-toolbar {
-					--tf-grid-row-selected: @TfAppState.Value.SpaceGridBackgkroundColor;
+					--tf-grid-row-selected: @TfAppState.Value.SpaceGridSelectedColor;
 					--accent-base-color: @TfAppState.Value.SpaceColorString;
 					--accent-fill-rest: @TfAppState.Value.SpaceColorString;
+					--tf-grid-border-color: @TfAppState.Value.SpaceBorderColor;
 				}
 			</style>
 			<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" />
@@ -142,17 +143,20 @@ else
 											<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
 												<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"background:var(--neutral-fill-layer-rest);{configCss[0].Item3}")">
 													<div style="padding:1px;">
-														@if (selected)
+														@if (TfAppState.Value.SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME] is not null)
 														{
-															<FluentButton OnClick="@(() =>_toggleItemSelection(index,false))" BackgroundColor="transparent" Color="transparent">
-																<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked",variant:IconVariant.Filled)" Color="@Color.Accent" />
-															</FluentButton>
-														}
-														else
-														{
-															<FluentButton OnClick="@(() =>_toggleItemSelection(index,true))" BackgroundColor="transparent" Color="transparent">
-																<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
-															</FluentButton>
+															@if (selected)
+															{
+																<FluentButton OnClick="@(() =>_toggleItemSelection(index,false))" BackgroundColor="transparent" Color="transparent">
+																	<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked",variant:IconVariant.Filled)" Color="@Color.Accent" />
+																</FluentButton>
+															}
+															else
+															{
+																<FluentButton OnClick="@(() =>_toggleItemSelection(index,true))" BackgroundColor="transparent" Color="transparent">
+																	<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
+																</FluentButton>
+															}
 														}
 													</div>
 												</td>

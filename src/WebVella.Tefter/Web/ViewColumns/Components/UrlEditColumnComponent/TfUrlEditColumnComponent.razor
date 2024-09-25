@@ -3,10 +3,10 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>
-		<FluentTextField Id="@_valueInputId"
+		<FluentTextField Id="@_valueInputId" TextFieldType="@TextFieldType.Url"
 						 @bind-Value="@_value"
 						 @bind-Value:after="_valueChanged"
-						 Style="width:100%;" />
+						 Style="width:100%;" AutoComplete="off" />
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)

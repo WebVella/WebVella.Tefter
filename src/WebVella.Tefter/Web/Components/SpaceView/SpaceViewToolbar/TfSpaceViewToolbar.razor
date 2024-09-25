@@ -40,6 +40,9 @@
 						</TfErrorBoundry>
 			}
 		}
+		<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+		</FluentButton>
 		<FluentButton Id="view-action-selector" OnClick="OnActionClick" Appearance="@Appearance.Outline">
 			@if (TfAppState.Value.SelectedDataRows.Count > 0)
 			{
