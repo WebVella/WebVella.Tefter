@@ -14,13 +14,15 @@ internal class DatePropertyConverter : IDboPropertyValueConverter
         if (obj is DateTime)
         {
             var value = Convert.ToDateTime(obj);
-            return DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
+			return value;
+            //return DateTime.SpecifyKind(value, DateTimeKind.Local);
         }
 
         if (obj is DateTime?)
         {
             var value = (DateTime?)Convert.ToDateTime(obj);
-            return DateTime.SpecifyKind(value.Value, DateTimeKind.Unspecified);
+			return value;
+            //return DateTime.SpecifyKind(value.Value, DateTimeKind.Local);
         }
         
         throw new Exception("DatePropertyConverter: invalid object to convert");
