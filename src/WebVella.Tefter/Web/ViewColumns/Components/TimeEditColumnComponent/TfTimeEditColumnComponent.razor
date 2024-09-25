@@ -1,14 +1,12 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfLongIntegerEditColumnComponentOptions>
+@inherits TfBaseViewColumn<TfTimeEditColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>
-		<FluentNumberField TValue="long?"
-						   Id="@_valueInputId"
-						   Value="@_value"
-						   ValueChanged="@((x) => _valueChanged(x))"
-						   Step="1"
-						   Style="width:100%;" />
+		<FluentTimePicker Id="@_valueTimeInputId"
+						  Value="@_value"
+						  ValueChanged="@((x) => _valueChanged(x))"
+						  Style="width:100%;"/>
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)

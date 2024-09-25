@@ -5,8 +5,8 @@
 	<div>
 		<FluentNumberField TValue="decimal?"
 						   Id="@_valueInputId"
-						   @bind-Value="@_value"
-						   @bind-Value:after="_valueChanged"
+						   Value="@_value"
+						   ValueChanged="@((x) => _valueChanged(x))"
 						   Style="width:100%;" />
 	</div>
 }

@@ -158,7 +158,7 @@ else
 												@if (context.ComponentType is not null)
 												{
 													<div>
-														<div>@context.ComponentType.Name</div>
+														<div>@context.ComponentType.ToDescriptionString()</div>
 														<div class="td-description">@context.ComponentType.FullName</div>
 													</div>
 												}

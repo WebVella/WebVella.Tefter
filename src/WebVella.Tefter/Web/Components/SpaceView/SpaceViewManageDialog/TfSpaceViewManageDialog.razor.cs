@@ -45,7 +45,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		else
 		{
 			_form = Content with { Id = Content.Id, DataSetType = TucSpaceViewDataSetType.Existing };
-			_selectedDataset = TfAppState.Value.SpaceDataList.Single(x => x.Id == Content.SpaceDataId);
+			_selectedDataset = TfAppState.Value.SpaceDataList.SingleOrDefault(x => x.Id == Content.SpaceDataId);
 		}
 
 		base.InitForm(_form);
