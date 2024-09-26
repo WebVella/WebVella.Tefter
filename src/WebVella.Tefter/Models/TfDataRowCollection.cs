@@ -32,6 +32,14 @@ public class TfDataRowCollection : IEnumerable
 		_rows.Add(row);
 	}
 
+	public void Insert(int index,TfDataRow row)
+	{
+		if (row is null)
+			throw new ArgumentNullException(nameof(row));
+
+		_rows.Insert(index,row);
+	}
+
 	public void Remove(TfDataRow row)
 	{
 		if (row is null)
