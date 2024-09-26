@@ -1,0 +1,241 @@
+﻿
+.tf-grid {
+	table-layout: fixed;
+	min-width: 100%;
+	border: none !important;
+	border-collapse: separate !important;
+	border-spacing: 0;
+}
+/*head*/
+.tf-grid-thead-bkg {
+	position: absolute;
+	content: "";
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	pointer-events: none;
+}
+
+.tf-grid .tf-grid-thead {
+	background: var(--neutral-layer-2);
+	position: sticky;
+	top: 0px;
+	z-index: 3;
+
+	& > tr:not(.tf-grid-thead-bkg) {
+		position: relative;
+		z-index: 2;
+	}
+
+	& tr > .tf-grid-th,
+	& tr > .tf-grid-td {
+		border-top: none;
+		border-bottom-width: 0;
+	}
+
+	& tr > .tf-grid-th,
+	& tr > .tf-grid-td {
+		border-left-width: 0;
+		color: var(--neutral-foreground-hover);
+	}
+}
+
+.tf-grid .tf-grid-tbody {
+	& tr {
+		& > .tf-grid-th,
+		& > .tf-grid-td {
+			border-bottom-width: 0;
+			border-left-width: 0;
+			border-right-width: 1px;
+			border-top-width: 1px;
+			position: relative;
+
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				right: 0;
+				left: 0;
+				bottom: 0;
+				background: var(--neutral-fill-layer-rest);
+				z-index: 0;
+				border-radius: 0;
+			}
+
+			& > * {
+				z-index: 1;
+				position: relative;
+			}
+
+			& > .tf-grid-td-color {
+				content: "";
+				position: absolute;
+				top: 0;
+				right: 0;
+				left: 0;
+				bottom: 0;
+				z-index: 0;
+				border-radius: 0;
+			}
+
+			& > .tf-grid-td-selection {
+				display: none;
+				content: "";
+				position: absolute;
+				top: 0;
+				right: 0;
+				left: 0;
+				bottom: 0;
+				z-index: 0;
+				border-radius: 0;
+				background: var(--tf-grid-row-selected);
+			}
+
+			& > .tf-grid-td-hover {
+				display: none;
+				content: "";
+				position: absolute;
+				top: 0;
+				right: 0;
+				left: 0;
+				bottom: 0;
+				z-index: 0;
+				border-radius: 0;
+				background: rgba(180,180,180,0.05);
+			}
+
+			& > div {
+				border-radius: calc(var(--control-corner-radius) * 1px);
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+			}
+
+			&.multiline-text {
+				white-space: break-spaces;
+			}
+
+			& a {
+				text-decoration: none;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+
+			& .td-description {
+				font-size: var(--type-ramp-minus-1-font-size);
+				color: var(--neutral-foreground-hint);
+				white-space: initial;
+			}
+		}
+
+		&.tf-grid-tr--selected .tf-grid-td-selection {
+			display: block;
+		}
+
+		&:hover .tf-grid-td-hover {
+			display: block;
+		}
+
+		&:last-child > .tf-grid-th,
+		&:last-child > .tf-grid-td {
+			border-bottom-width: 1px;
+		}
+	}
+}
+
+
+.tf-grid-td,
+.tf-grid-th {
+	color: var(--neutral-foreground-rest);
+	font-family: var(--body-font);
+	font-size: var(--type-ramp-base-font-size);
+	line-height: var(--type-ramp-base-line-height);
+	font-weight: initial;
+	font-variation-settings: var(--type-ramp-base-font-variations);
+	border: 1px solid var(--neutral-stroke-divider-rest);
+
+	& > div {
+		display: flex;
+		justify-content: center;
+		align-items: start;
+		flex-flow: column;
+	}
+}
+
+.tf-grid-thead > .tf-grid-tr > .tf-grid-th.tf-grid-th--check,
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check {
+	padding: 0;
+	text-align: center;
+	width: 40px;
+	min-width: 40px;
+}
+
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check .check-content {
+	padding: 0;
+	display: flex;
+	flex-flow: row;
+	justify-content: center;
+}
+
+.tf-grid-thead > .tf-grid-tr > .tf-grid-th,
+.tf-grid-tfoot > .tf-grid-tr > .tf-grid-td {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
+}
+
+/*Border override*/
+.tf-grid > .tf-grid-thead > .tf-grid-tr > .tf-grid-th:first-child,
+.tf-grid > .tf-grid-tbody > .tf-grid-tr > .tf-grid-td:first-child {
+	border-left: none;
+}
+
+.tf-grid > .tf-grid-thead > .tf-grid-tr > .tf-grid-th:last-child,
+.tf-grid > .tf-grid-tbody > .tf-grid-tr > .tf-grid-td:last-child {
+	border-right: none;
+}
+
+.tf-grid > .tf-grid-thead > .tf-grid-tr:not(.tf-grid-thead-bkg):first-child > .tf-grid-th {
+	border-top: none;
+}
+
+/*Sticky*/
+
+.tf-grid .tf-grid-thead .tf-grid-th.tf--sticky,
+.tf-grid .tf-grid-thead .tf-grid-td.tf--sticky {
+	position: sticky;
+	z-index: 2;
+}
+
+.tf-grid .tf-grid-tbody .tf-grid-th.tf--sticky,
+.tf-grid .tf-grid-tbody .tf-grid-td.tf--sticky {
+	position: sticky;
+	z-index: 2;
+}
+
+.tf-grid .tf-grid-tr .tf--sticky-last::after {
+	content: "";
+	display: block;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	box-shadow: 5px 0 5px rgba(0,0,0,0.15);
+	position: absolute;
+}
+
+.tf-grid .tf-grid-tr .tf--sticky-first::after {
+	content: "";
+	display: block;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	box-shadow: -5px 0 5px rgba(0,0,0,0.15);
+	position: absolute;
+}

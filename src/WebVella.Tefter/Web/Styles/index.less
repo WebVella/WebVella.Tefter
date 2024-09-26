@@ -1,0 +1,26 @@
+﻿@import 'grid.less';
+@import 'grid-layout.less';
+@import 'layout.less';
+@import 'override.less';
+
+:root {
+	--tf-content-padding: 15px;
+	--tf-header-height: 48px;
+	--tf-content-border-radius: 8px;
+	--tf-content-border-top-width: 3px;
+	--tf-content-margin-bottom: 5px;
+	--tf-content-toolbar-height: 40px;
+	--tf-content-toolbar-margin-bottom: 10px;
+	--tf-content-toolbar-margin-top: 7px;
+	--tf-sidebar-toolbar-height: 40px;
+	--tf-sidebar-toolbar-margin-top-bottom: 10px;
+	--tf-sidebar-padding: 5px;
+	--tf-grid-padding-top: calc(var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width));
+	--tf-grid-padding-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1);
+	--tf-grid-negative-margin-top: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
+	--tf-grid-negative-margin-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
+}
+
+body {
+	background: var(--neutral-layer-3) !important;
+}

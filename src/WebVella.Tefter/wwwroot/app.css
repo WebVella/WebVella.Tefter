@@ -124,7 +124,7 @@ body {
 	border-collapse: separate !important;
 	border-spacing: 0;
 }
-
+/*head*/
 .tf-grid-thead {
 	background: var(--neutral-layer-2);
 	position: sticky;
@@ -148,9 +148,7 @@ body {
 	z-index: 2;
 }
 
-
-
-.tf-grid-td,
+.tf-grid-td
 .tf-grid-th {
 	color: var(--neutral-foreground-rest);
 	font-family: var(--body-font);
@@ -180,32 +178,15 @@ body {
 	border-left-width: 0;
 }
 
-
 .tf-grid-td > div,
 .tf-grid-th > div {
 	display: flex;
-	justify-content: center;
-	align-items: start;
-	flex-flow: column;
 }
-
 
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th {
 	border-top: none;
 }
 
-	.tf-grid-thead > .tf-grid-tr > .tf-grid-th.tf-grid-th--check,
-	.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check {
-		padding: 0;
-		text-align: center;
-		width: 40px;
-		min-width: 40px;
-	}
-
-		.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check > div {
-			padding-left: 5px;
-			padding-right: 5px;
-		}
 
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th,
 .tf-grid-tfoot > .tf-grid-tr > .tf-grid-td {
@@ -214,8 +195,8 @@ body {
 	padding: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * 1px) calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1px);
 }
 
-.tf-grid-tbody > .tf-grid-tr:hover {
-	background: var(--datagrid-hover-color, var(--neutral-fill-stealth-hover));
+.tf-grid-tbody > .tf-grid-tr:hover .tf-grid-td{
+	background: var(--datagrid-hover-color);
 }
 
 .tf-grid-tbody > .tf-grid-tr > .tf-grid-td {

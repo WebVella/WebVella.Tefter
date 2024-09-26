@@ -40,7 +40,7 @@ public record TucSpaceViewColumn
 		}
 	}
 
-	public string BodyStyle
+	public string CellColorStyle
 	{
 		get
 		{
@@ -54,11 +54,8 @@ public record TucSpaceViewColumn
 					sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}50, {Settings.BackgroundColor.ToAttributeValue()}50)," +
 					$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
 				}
-				else{ 
-					sb.Append($"background:var(--neutral-fill-layer-rest);");
-				}
 			}
-			
+			if(sb.Length == 0) sb.Append("display:none;");
 
 			return sb.ToString();
 		}
