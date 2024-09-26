@@ -54,6 +54,7 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -63,7 +64,7 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<Guid>(_valueAlias)?.ToString();
+		return GetDataStructByAlias<Guid>(_valueAlias)?.ToString();
 	}
 
 	/// <summary>
@@ -116,7 +117,7 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 
 	private void _initValues()
 	{
-		_valueString = GetDataObjectByAlias<Guid>(_valueAlias)?.ToString();
+		_valueString = GetDataStructByAlias<Guid>(_valueAlias)?.ToString();
 	}
 
 	private async Task _resetValue()

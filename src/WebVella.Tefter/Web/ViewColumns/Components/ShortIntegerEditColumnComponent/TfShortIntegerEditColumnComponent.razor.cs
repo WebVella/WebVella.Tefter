@@ -54,6 +54,7 @@ public partial class TfShortIntegerEditColumnComponent : TfBaseViewColumn<TfShor
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -63,7 +64,7 @@ public partial class TfShortIntegerEditColumnComponent : TfBaseViewColumn<TfShor
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<short>(_valueAlias, null);
+		return GetDataStructByAlias<short>(_valueAlias, null);
 	}
 
 	/// <summary>
@@ -122,7 +123,7 @@ public partial class TfShortIntegerEditColumnComponent : TfBaseViewColumn<TfShor
 	}
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias<short>(_valueAlias, null);
+		_value = GetDataStructByAlias<short>(_valueAlias, null);
 	}
 }
 

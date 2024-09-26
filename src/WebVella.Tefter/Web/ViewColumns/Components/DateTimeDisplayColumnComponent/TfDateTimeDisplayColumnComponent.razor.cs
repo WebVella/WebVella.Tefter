@@ -42,7 +42,7 @@ public partial class TfDateTimeDisplayColumnComponent : TfBaseViewColumn<TfDateT
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<DateTime>(_valueAlias); 
+		return GetDataStructByAlias<DateTime>(_valueAlias); 
 	}
 
 }

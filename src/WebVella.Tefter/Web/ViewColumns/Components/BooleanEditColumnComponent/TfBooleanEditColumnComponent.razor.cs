@@ -51,6 +51,7 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -61,7 +62,7 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<bool>(_valueAlias, null);
+		return GetDataStructByAlias<bool>(_valueAlias, null);
 	}
 
 	private async Task _onValueChange()
@@ -105,7 +106,7 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 		if (column is not null)
 		{
 			_isThreeState = column.IsNullable;
-			var value = GetDataObjectByAlias<bool>(_valueAlias, null);
+			var value = GetDataStructByAlias<bool>(_valueAlias, null);
 			_value = value is null ? false : value.Value;
 			_state = value;
 		}

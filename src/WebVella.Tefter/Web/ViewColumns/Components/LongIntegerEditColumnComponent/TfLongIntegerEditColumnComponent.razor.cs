@@ -51,6 +51,7 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -60,7 +61,7 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<long>(_valueAlias, null);
+		return GetDataStructByAlias<long>(_valueAlias, null);
 	}
 
 	/// <summary>
@@ -119,7 +120,7 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias<long>(_valueAlias, null);
+		_value = GetDataStructByAlias<long>(_valueAlias, null);
 	}
 }
 

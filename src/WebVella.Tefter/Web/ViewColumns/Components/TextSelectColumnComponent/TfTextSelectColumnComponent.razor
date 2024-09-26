@@ -1,0 +1,50 @@
+﻿@namespace WebVella.Tefter.Web.ViewColumns
+@inherits TfBaseViewColumn<TfTextSelectColumnComponentOptions>
+@if (Context.Mode == TfComponentMode.Display)
+{
+	<div>
+		<FluentButton Id="@_valueInputId" Style="width:100%"
+					  Appearance="@Appearance.Outline"
+					  OnClick="@(() => _open = !_open)">@_selectedOptions?.Item2</FluentButton>
+		<FluentMenu UseMenuService="true"
+					HorizontalScaling="AxisScalingMode.Anchor"
+					Anchor="@_valueInputId"
+					@bind-Open="_open">
+			@foreach (var option in _options)
+			{
+				<FluentMenuItem OnClick="@(()=> _optionChanged(option))">@option.Item2</FluentMenuItem>
+			}
+		</FluentMenu>
+	</div>
+}
+else if (Context.Mode == TfComponentMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Change confirmation")" />
+			<FluentCheckbox Value="@options.ChangeRequiresConfirmation"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeRequiresConfirmation),x))
+							Label="@LOC("requires confirmation")" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentTextField Label="@LOC("Confirmation message")"
+							 Value="@options.ChangeConfirmationMessage" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeConfirmationMessage),x))
+							 Placeholder="@LOC("empty shows a system one")" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextArea Label="@LOC("Options")" Resize="@TextAreaResize.Vertical"
+							Value="@options.OptionsString" Style="width:100%;" Rows="7"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.OptionsString),x)) />
+			<div class="tf-input-description">@LOC("Options separated by new line. Each options supports comma separated value,label")</div>
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

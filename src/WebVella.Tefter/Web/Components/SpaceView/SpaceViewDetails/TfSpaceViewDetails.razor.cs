@@ -282,9 +282,9 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private Dictionary<int, Tuple<int?, string, string>> _generateColumnConfigurationCss(TucSpaceView view, List<TucSpaceViewColumn> columns)
 	{
-		int _freezeLeftColumnsCount = TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns;
+		int _freezeLeftColumnsCount = TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns ?? 0;
 		int _freezeLeftWidth = 0;
-		int _freezeRightColumnsCount = TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns;
+		int _freezeRightColumnsCount = TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns ?? 0;
 		int _freezeRightWidth = 0;
 		var result = new Dictionary<int, Tuple<int?, string, string>>();
 

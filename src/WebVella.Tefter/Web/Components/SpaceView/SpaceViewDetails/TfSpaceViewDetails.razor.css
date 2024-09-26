@@ -5,3 +5,10 @@
 	background: var(--neutral-fill-input-active);
 	border:1px solid var(--neutral-stroke-input-active);
 }
+
+
+::deep .tf-grid fluent-text-area:hover::part(root),
+::deep .tf-grid fluent-text-field:hover::part(root),
+::deep .tf-grid fluent-number-field:hover::part(root) {
+	border:1px solid var(--neutral-stroke-strong-hover);
+}

@@ -83,12 +83,12 @@ else
 				<FluentGrid>
 					<FluentGridItem xs="3">
 						<FluentInputLabel Label="@LOC("Freeze Starting Columns")" />
-						<FluentNumberField TValue="int" Value=@TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns
+						<FluentNumberField TValue="int?" Value=@TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns
 										   ReadOnly="true" Style="width:100%" />
 					</FluentGridItem>
 					<FluentGridItem xs="3">
 						<FluentInputLabel Label="@LOC("Freeze Final Columns")" />
-						<FluentNumberField TValue="int" Value=@TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns
+						<FluentNumberField TValue="int?" Value=@TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns
 										   ReadOnly="true" Style="width:100%" />
 					</FluentGridItem>
 					<FluentGridItem xs="3">

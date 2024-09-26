@@ -51,6 +51,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 

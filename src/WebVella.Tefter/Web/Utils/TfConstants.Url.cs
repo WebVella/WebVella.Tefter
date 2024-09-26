@@ -54,5 +54,6 @@ public partial class TfConstants
 	public static string SpaceViewManagePageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameManage}";
 	public static string SpaceDataPageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}";
 	public static string SpaceDataViewsPageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameViews}";
+	public static string SpaceDataDataPageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameData}";
 
 }

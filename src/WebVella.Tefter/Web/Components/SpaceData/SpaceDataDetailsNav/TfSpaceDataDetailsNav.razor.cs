@@ -12,7 +12,7 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 	private List<MenuItem> _generateMenu()
 	{
 		var menu = new List<MenuItem>();
-		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
+		var providerId = TfRouteState.Value.DataProviderId ?? Guid.Empty;
 		menu.Add(new MenuItem
 		{
 			Url = String.Format(TfConstants.SpaceDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
@@ -22,10 +22,17 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 		});
 		menu.Add(new MenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId) + "\\views",
+			Url = String.Format(TfConstants.SpaceDataViewsPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Title = LOC("Used in Views")
+		});
+		menu.Add(new MenuItem
+		{
+			Url = String.Format(TfConstants.SpaceDataDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
+			Match = NavLinkMatch.All,
+			//Icon = new Icons.Regular.Size20.Table(),
+			Title = LOC("Data")
 		});
 		return menu;
 	}

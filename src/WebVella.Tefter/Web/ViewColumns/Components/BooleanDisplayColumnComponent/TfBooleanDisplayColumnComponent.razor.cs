@@ -40,7 +40,7 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 	public override object GetData()
 	{
 		//options are not inited yet as the component is not rendered
-		bool? value = GetDataObjectByAlias<bool>(_valueAlias, null);
+		bool? value = GetDataStructByAlias<bool>(_valueAlias, null);
 		
 		if (value is null) return null;
 

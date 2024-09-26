@@ -13,16 +13,19 @@
 					</TfErrorBoundry>
 				}
 			}
-			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_deleteSelectedRecords">
-				Delete Selected
-				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
-				@if (TfAppState.Value.SelectedDataRows.Count > 0)
-				{
-					<span slot="end">
-						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
-					</span>
-				}
-			</FluentMenuItem>
+			@if (TfAppState.Value.SpaceView.Settings.CanDeleteRows)
+			{
+				<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_deleteSelectedRecords">
+					Delete Selected
+					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+					@if (TfAppState.Value.SelectedDataRows.Count > 0)
+					{
+						<span slot="end">
+							<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+						</span>
+					}
+				</FluentMenuItem>
+			}
 			@* 			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
 		Comment Selected
 		<FluentIcon Value="@TfConstants.GetIcon("Comment")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />

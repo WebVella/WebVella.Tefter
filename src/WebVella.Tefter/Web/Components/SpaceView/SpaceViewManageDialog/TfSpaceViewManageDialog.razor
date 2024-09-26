@@ -41,13 +41,13 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="int" @bind-Value=_form.Settings.FreezeStartingNColumns
+					<FluentNumberField TValue="int?" @bind-Value=_form.Settings.FreezeStartingNColumns
 									   Label="@LOC("Freeze Starting Columns")" Style="width:100%" />
 					<div class="tf-input-description">@LOC("how many columns from the start to freeze, not counting the checkbox column")</div>
 					<FluentValidationMessage For="@(() => _form.Settings.FreezeStartingNColumns)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="int" @bind-Value=_form.Settings.FreezeFinalNColumns
+					<FluentNumberField TValue="int?" @bind-Value=_form.Settings.FreezeFinalNColumns
 									   Label="@LOC("Freeze Final Columns")" Style="width:100%" />
 					<div class="tf-input-description">@LOC("how many columns from the end to freeze")</div>
 					<FluentValidationMessage For="@(() => _form.Settings.FreezeFinalNColumns)" />

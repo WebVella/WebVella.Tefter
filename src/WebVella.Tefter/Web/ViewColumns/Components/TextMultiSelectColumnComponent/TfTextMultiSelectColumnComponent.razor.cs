@@ -1,19 +1,17 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Email Edit")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.EmailEditColumnComponent.TfEmailEditColumnComponent", "WebVella.Tefter")]
-public partial class TfEmailEditColumnComponent : TfBaseViewColumn<TfEmailEditColumnComponentOptions>
+[Description("Tefter Text MultiSelect")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextMultiSelectColumnComponent.TfTextMultiSelectColumnComponent", "WebVella.Tefter")]
+public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextMultiSelectColumnComponentOptions>
 {
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
-	public TfEmailEditColumnComponent()
+	public TfTextMultiSelectColumnComponent()
 	{
 	}
 
@@ -23,7 +21,7 @@ public partial class TfEmailEditColumnComponent : TfBaseViewColumn<TfEmailEditCo
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfEmailEditColumnComponent(TfComponentContext context)
+	public TfTextMultiSelectColumnComponent(TfComponentContext context)
 	{
 		Context = context;
 	}
@@ -35,9 +33,11 @@ public partial class TfEmailEditColumnComponent : TfBaseViewColumn<TfEmailEditCo
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
-	private string _value = null;
+	private List<string> _value = new List<string>();
 	private string _valueInputId = "input-" + Guid.NewGuid();
-
+	private List<Tuple<string, string>> _options = new();
+	private List<Tuple<string, string>> _selectedOptions = new();
+	private bool _open = false;
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
@@ -63,7 +63,7 @@ public partial class TfEmailEditColumnComponent : TfBaseViewColumn<TfEmailEditCo
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataStructByAlias<Guid>(_valueAlias)?.ToString();
+		return GetDataObjectByAlias(_valueAlias);
 	}
 
 	/// <summary>
@@ -74,15 +74,6 @@ public partial class TfEmailEditColumnComponent : TfBaseViewColumn<TfEmailEditCo
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
-		if (!String.IsNullOrWhiteSpace(_value))
-		{
-			if (!TfConverters.IsValidEmail(_value))
-			{
-				ToastService.ShowError(LOC("Invalid email format"));
-				await _resetValue();
-				return;
-			}
-		}
 		if (options.ChangeRequiresConfirmation)
 		{
 			var message = options.ChangeConfirmationMessage;
@@ -91,43 +82,97 @@ public partial class TfEmailEditColumnComponent : TfBaseViewColumn<TfEmailEditCo
 
 			if (!await JSRuntime.InvokeAsync<bool>("confirm", message))
 			{
-				await _resetValue();
+				await InvokeAsync(StateHasChanged);
+				await Task.Delay(10);
+				_initValues();
+				await InvokeAsync(StateHasChanged);
 				return;
 			};
 		}
 
 		try
 		{
-			await OnRowColumnChangedByAlias(_valueAlias, _value);
+			if(_value is not null && _value.Count == 0) _value = null;
+			string stringValue = null;
+			if(_value is not null) stringValue = JsonSerializer.Serialize(_value);
+
+			await OnRowColumnChangedByAlias(_valueAlias, stringValue);
 			ToastService.ShowSuccess(LOC("change applied"));
 			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);
 		}
 		catch (Exception ex)
 		{
 			ToastService.ShowError(ex.Message);
-			await _resetValue();
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(10);
+			_initValues();
+			await InvokeAsync(StateHasChanged);
 		}
 	}
-
+	private async Task _optionChanged(Tuple<string, string> option)
+	{
+		if (option is null && (_value is null || _value.Count == 0)) return;
+		if (_value is null) _value = new List<string>();
+		var optionIndex = _value.FindIndex(x => x == option.Item1);
+		if (optionIndex > -1) _value.RemoveAt(optionIndex);
+		else _value.Add(option.Item1);
+		await _valueChanged();
+	}
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias(_valueAlias);
-	}
+		_value = GetDataObjectByAlias<List<string>>(_valueAlias, new List<string>());
 
-	private async Task _resetValue()
-	{
-		await InvokeAsync(StateHasChanged);
-		await Task.Delay(10);
-		_initValues();
-		await InvokeAsync(StateHasChanged);
+		_options.Clear();
+		_selectedOptions.Clear();
+		if (!String.IsNullOrWhiteSpace(options.OptionsString))
+		{
+			var rows = options.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+			foreach (var row in rows)
+			{
+				var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+				if (items.Count == 1)
+				{
+					_options.Add(new Tuple<string, string>(items[0], items[0]));
+				}
+				else if (items.Count > 1)
+				{
+					_options.Add(new Tuple<string, string>(items[0], items[1]));
+				}
+
+			}
+		}
+
+
+		if (_value is null || _value.Count == 0)
+		{
+			_selectedOptions = new();
+			return;
+		}
+		foreach (var value in _value)
+		{
+			if (_options.Any(x => x.Item1 == value))
+			{
+				_selectedOptions.Add(_options.First(x => x.Item1 == value));
+			}
+			else
+			{
+				_options.Insert(0, new Tuple<string, string>(value, value));
+				_selectedOptions.Add(_options[0]);
+			}
+		}
+
+
 	}
 }
 
-public class TfEmailEditColumnComponentOptions
+public class TfTextMultiSelectColumnComponentOptions
 {
 	[JsonPropertyName("ChangeRequiresConfirmation")]
 	public bool ChangeRequiresConfirmation { get; set; } = false;
 
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string ChangeConfirmationMessage { get; set; }
+
+	[JsonPropertyName("OptionsString")]
+	public string OptionsString { get; set; }
 }
