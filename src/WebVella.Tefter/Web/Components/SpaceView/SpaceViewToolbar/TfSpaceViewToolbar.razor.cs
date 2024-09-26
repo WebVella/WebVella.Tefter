@@ -2,6 +2,7 @@
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public EventCallback<string> OnSearch { get; set; }
 
 	private List<ScreenRegionComponent> _regionComponents = new();
@@ -9,4 +10,28 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 
 	private async Task _searchChanged(string value) => await OnSearch.InvokeAsync(value);
 
+	private async Task _onAddRowClick()
+	{
+		if (TfAppState.Value.SpaceViewData is null) return;
+		try
+		{
+			var newDt = TfAppState.Value.SpaceViewData.NewTable();
+			newDt.Rows.Add(newDt.NewRow());
+
+			var result = UC.SaveViewData(newDt);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				var clone = TfAppState.Value.SpaceViewData.Clone();
+				clone.Rows.Add(result.Value.Rows[0]);
+				Dispatcher.Dispatch(new SetAppStateAction(component: this,
+					state: TfAppState.Value with { SpaceViewData = clone }));
+			}
+
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+	}
 }

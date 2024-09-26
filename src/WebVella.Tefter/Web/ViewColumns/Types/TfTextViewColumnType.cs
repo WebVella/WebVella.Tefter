@@ -57,6 +57,8 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 			typeof(TfEmailEditColumnComponent),
 			typeof(TfUrlDisplayColumnComponent),
 			typeof(TfUrlEditColumnComponent),
+			typeof(TfPhoneDisplayColumnComponent),
+			typeof(TfPhoneEditColumnComponent),
 			typeof(TfTextEditColumnComponent)
 			};
 	}

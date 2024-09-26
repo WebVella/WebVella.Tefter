@@ -1,12 +1,4 @@
 ﻿
-::deep .tf-grid .tf-grid-thead .tf-grid-th {
-	color:rgba(255,255,255,0.5);
-}
-
-::deep .tf-grid-tbody > .tf-grid-tr.tf-grid-tr--selected .tf-grid-td {
-	background:var(--tf-grid-row-selected) !important;
-}
-
 ::deep .tf-grid fluent-text-area::part(root),
 ::deep .tf-grid fluent-text-field::part(root),
 ::deep .tf-grid fluent-number-field::part(root) {

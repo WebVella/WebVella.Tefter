@@ -4,41 +4,12 @@
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
-			<FluentMessageBar Title="No space found 3"
+			<FluentMessageBar Title="No space found"
 							  Style="@("border: 1px solid var(--neutral-base-color)")"
 							  Intent="MessageIntent.Info"
 							  Type="@MessageType.Notification"
 							  AllowDismiss="false">
 				No spaces found yet notification
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else if (TfAppState.Value.SpaceDataList.Count == 0)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="No existing datasets 33"
-							  Style="@("border: 1px solid var(--neutral-base-color)")"
-							  Intent="MessageIntent.Info"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				Space datasets created yet
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else if (TfAppState.Value.SpaceData is null)
-{
-
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="No space data found"
-							  Style="@("border: 1px solid var(--neutral-base-color)")"
-							  Intent="MessageIntent.Info"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				No space data found
 			</FluentMessageBar>
 		</div>
 	</FluentBodyContent>
@@ -51,17 +22,49 @@ else
 			<TfSpaceDataNavigation />
 		</FluentStack>
 	}
-	<FluentBodyContent Class="content-body with-toolbar">
-		<TfSpaceDataDetailsNav />
-		<div class="content-inner">
-			@if (Menu == "views")
-			{
-				<TfSpaceDataViews />
-			}
-			else
-			{
-				<TfSpaceDataManage />
-			}
-		</div>
-	</FluentBodyContent>
+	@if (TfAppState.Value.SpaceDataList.Count == 0)
+	{
+		<FluentBodyContent Class="content-body">
+			<div class="content-inner">
+				<FluentMessageBar Title="No existing datasets"
+								  Style="@("border: 1px solid var(--neutral-base-color)")"
+								  Intent="MessageIntent.Info"
+								  Type="@MessageType.Notification"
+								  AllowDismiss="false">
+					Space datasets created yet
+				</FluentMessageBar>
+			</div>
+		</FluentBodyContent>
+	}
+	else if (TfAppState.Value.SpaceData is null)
+	{
+		<FluentBodyContent Class="content-body">
+			<div class="content-inner">
+				<FluentMessageBar Title="No space data found"
+								  Style="@("border: 1px solid var(--neutral-base-color)")"
+								  Intent="MessageIntent.Info"
+								  Type="@MessageType.Notification"
+								  AllowDismiss="false">
+					No space data found
+				</FluentMessageBar>
+			</div>
+		</FluentBodyContent>
+
+	}
+	else
+	{
+		<FluentBodyContent Class="content-body with-toolbar">
+			<TfSpaceDataDetailsNav />
+			<div class="content-inner">
+				@if (Menu == "views")
+				{
+					<TfSpaceDataViews />
+				}
+				else
+				{
+					<TfSpaceDataManage />
+				}
+			</div>
+		</FluentBodyContent>
+	}
 }

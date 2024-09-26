@@ -51,7 +51,7 @@ internal partial class AppStateUseCase
 				newState = newState with
 				{
 					SpaceViewData = viewData,
-					SpaceViewPage = viewData.QueryInfo.Page ?? newState.SpaceViewPage,
+					SpaceViewPage = viewData?.QueryInfo.Page ?? newState.SpaceViewPage,
 				};
 			}
 			else
@@ -546,6 +546,19 @@ internal partial class AppStateUseCase
 			);
 			return null;
 		}
+		var spaceData = GetSpaceData(spaceDataId);
+		if(spaceData is null){
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("Space Data is not found"),
+				toastErrorMessage: "Space Data is not found",
+				notificationErrorTitle: "Space Data is not found",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+
 		List<TfFilterBase> filters = null;
 		List<TfSort> sorts = null;
 		if (additionalFilters is not null) filters = additionalFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
@@ -574,7 +587,12 @@ internal partial class AppStateUseCase
 		return serviceResult.Value;
 	}
 
-
+	internal Result<TfDataTable> SaveViewData(TfDataTable dt)
+	{
+		var saveResult = _dataManager.SaveDataTable(dt);
+		if (saveResult.IsFailed) return Result.Fail(new Error("SaveDataTable failed").CausedBy(saveResult.Errors));
+		return Result.Ok(saveResult.Value);
+	}
 
 
 	//View columns

@@ -4,14 +4,14 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Long Integer Edit")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.LongIntegerEditColumnComponent.TfLongIntegerEditColumnComponent", "WebVella.Tefter")]
-public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongIntegerEditColumnComponentOptions>
+[Description("Tefter DateTime Edit")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TimeEditColumnComponent.TfTimeEditColumnComponent", "WebVella.Tefter")]
+public partial class TfTimeEditColumnComponent : TfBaseViewColumn<TfTimeEditColumnComponentOptions>
 {
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
-	public TfLongIntegerEditColumnComponent()
+	public TfTimeEditColumnComponent()
 	{
 	}
 
@@ -21,11 +21,10 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfLongIntegerEditColumnComponent(TfComponentContext context)
+	public TfTimeEditColumnComponent(TfComponentContext context)
 	{
 		Context = context;
 	}
-
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -33,13 +32,15 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
-	private long? _value = null;
+	private DateTime? _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
+	private string _valueTimeInputId = "input-" + Guid.NewGuid();
 	private CancellationTokenSource inputThrottleCancalationToken = new();
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+
 
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
@@ -54,13 +55,14 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 		}
 	}
 
+
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<long>(_valueAlias, null);
+		return GetDataObjectByAlias<DateTime>(_valueAlias, null);
 	}
 
 	/// <summary>
@@ -69,7 +71,7 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 	/// </summary>
 	/// <param name="value"></param>
 	/// <returns></returns>
-	private async Task _valueChanged(long? value)
+	private async Task _valueChanged(DateTime? value)
 	{
 		_value = value;
 		inputThrottleCancalationToken.Cancel();
@@ -103,6 +105,7 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 
 		try
 		{
+			ConsoleExt.WriteLine(_value?.ToString());
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
 			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);
@@ -112,18 +115,18 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 			ToastService.ShowError(ex.Message);
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(10);
-			_initValues();
+			//_initValues();
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias<long>(_valueAlias, null);
+		_value = GetDataObjectByAlias<DateTime>(_valueAlias, null);
 	}
 }
 
-public class TfLongIntegerEditColumnComponentOptions
+public class TfTimeEditColumnComponentOptions
 {
 	[JsonPropertyName("ChangeRequiresConfirmation")]
 	public bool ChangeRequiresConfirmation { get; set; } = false;

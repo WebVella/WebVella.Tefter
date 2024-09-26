@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter DateTime Edit")]
+[Description("Tefter Time Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateTimeEditColumnComponent.TfDateTimeEditColumnComponent", "WebVella.Tefter")]
 public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTimeEditColumnComponentOptions>
 {
@@ -35,6 +35,7 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	private DateTime? _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
 	private string _valueTimeInputId = "input-" + Guid.NewGuid();
+	private CancellationTokenSource inputThrottleCancalationToken = new();
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
@@ -65,12 +66,26 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	}
 
 	/// <summary>
+	/// Because of the wheel functionality, user can initiate changes very quickly
+	/// This throttle will submit only after 1 second of inactivity
+	/// </summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	private async Task _valueChanged(DateTime? value)
+	{
+		_value = value;
+		inputThrottleCancalationToken.Cancel();
+		inputThrottleCancalationToken = new();
+		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(async (task) => { await InvokeAsync(_submitChange); }, inputThrottleCancalationToken.Token);
+	}
+
+	/// <summary>
 	/// process the value change event from the components view
 	/// by design if any kind of error occurs the old value should be set back
 	/// so the user is notified that the change is aborted
 	/// </summary>
 	/// <returns></returns>
-	private async Task _valueChanged()
+	private async Task _submitChange()
 	{
 		if (options.ChangeRequiresConfirmation)
 		{
@@ -107,8 +122,6 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	private void _initValues()
 	{
 		_value = GetDataObjectByAlias<DateTime>(_valueAlias, null);
-		if(_value is not null)
-			_value = DateTime.SpecifyKind(_value.Value, DateTimeKind.Utc);
 	}
 }
 

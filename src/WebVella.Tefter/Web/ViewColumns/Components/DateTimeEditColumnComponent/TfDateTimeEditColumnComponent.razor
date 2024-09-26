@@ -5,13 +5,13 @@
 	<div>
 		<FluentStack Wrap="false">
 			<FluentDatePicker Id="@_valueInputId"
-							  @bind-Value="@_value"
-							  @bind-Value:after="_valueChanged"
+							  Value="@_value"
+							  ValueChanged="@((x) => _valueChanged(x))"
 							  View="@CalendarViews.Days"
 							  Style="width:60%;" />
 			<FluentTimePicker Id="@_valueTimeInputId"
-							  @bind-Value="@_value"
-							  @bind-Value:after="_valueChanged"
+							  Value="@_value"
+							  ValueChanged="@((x) => _valueChanged(x))"
 							  Style="width:40%;" />
 		</FluentStack>
 	</div>

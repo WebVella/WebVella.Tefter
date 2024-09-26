@@ -38,16 +38,17 @@
 				</span>
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>
-			<FluentMenuItem OnClick="_setUrlAsStartup">
-				@LOC("Set as Startup URL")
-				<span slot="start">
-					<FluentIcon Value="@TfConstants.GetIcon("Pin")" Slot="start" />
-				</span>
-			</FluentMenuItem>
+
 			<FluentMenuItem OnClick="_setTheme">
 				@LOC("Change Theme")
 				<span slot="start">
 					<FluentIcon Value="@TfConstants.GetIcon("Color")" Slot="start" />
+				</span>
+			</FluentMenuItem>
+			<FluentMenuItem OnClick="_setUrlAsStartup">
+				@LOC("Set as Startup URL")
+				<span slot="start">
+					<FluentIcon Value="@TfConstants.GetIcon("Pin")" Slot="start" />
 				</span>
 			</FluentMenuItem>
 			<FluentDivider></FluentDivider>

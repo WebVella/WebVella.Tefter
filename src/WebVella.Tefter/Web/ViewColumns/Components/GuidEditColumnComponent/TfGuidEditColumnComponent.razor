@@ -6,7 +6,7 @@
 		<FluentTextField Id="@_valueInputId"
 			@bind-Value="@_valueString"
 						 @bind-Value:after="_valueChanged"
-						 Style="width:100%;" />
+						 Style="width:100%;" AutoComplete="off" />
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)

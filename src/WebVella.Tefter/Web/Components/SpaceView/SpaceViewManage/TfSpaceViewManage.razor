@@ -81,15 +81,27 @@ else
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
-					<FluentGridItem xs="6">
+					<FluentGridItem xs="3">
 						<FluentInputLabel Label="@LOC("Freeze Starting Columns")" />
 						<FluentNumberField TValue="int" Value=@TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns
-										 ReadOnly="true" Style="width:100%" />
+										   ReadOnly="true" Style="width:100%" />
 					</FluentGridItem>
-					<FluentGridItem xs="6">
+					<FluentGridItem xs="3">
 						<FluentInputLabel Label="@LOC("Freeze Final Columns")" />
 						<FluentNumberField TValue="int" Value=@TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns
 										   ReadOnly="true" Style="width:100%" />
+					</FluentGridItem>
+					<FluentGridItem xs="3">
+						<FluentInputLabel Label="@LOC("New Rows")" />
+						<FluentCheckbox Value="@TfAppState.Value.SpaceView.Settings.CanCreateRows"
+										Style="height:32px" ReadOnly="true"
+										Label="@LOC("can create new rows")" />
+					</FluentGridItem>
+					<FluentGridItem xs="3">
+						<FluentInputLabel Label="@LOC("Delete Rows")" />
+						<FluentCheckbox Value="@TfAppState.Value.SpaceView.Settings.CanDeleteRows"
+										Style="height:32px" ReadOnly="true"
+										Label="@LOC("can delete rows")" />
 					</FluentGridItem>
 				</FluentGrid>
 			</TfCard>
@@ -158,7 +170,7 @@ else
 												@if (context.ComponentType is not null)
 												{
 													<div>
-														<div>@context.ComponentType.Name</div>
+														<div>@context.ComponentType.ToDescriptionString()</div>
 														<div class="td-description">@context.ComponentType.FullName</div>
 													</div>
 												}

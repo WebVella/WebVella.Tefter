@@ -5,10 +5,10 @@
 	<div>
 		<FluentNumberField TValue="int?"
 						   Id="@_valueInputId"
-						   @bind-Value="@_value"
-						   @bind-Value:after="_valueChanged"
+						   Value="@_value"
+						   ValueChanged="@((x) => _valueChanged(x))"
 						   Step="1"
-						   Style="width:100%;" />
+						   Style="width:100%;" AutoComplete="off" />
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)

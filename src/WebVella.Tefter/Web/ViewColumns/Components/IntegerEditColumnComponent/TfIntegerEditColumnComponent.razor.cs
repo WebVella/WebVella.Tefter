@@ -35,7 +35,7 @@ public partial class TfIntegerEditColumnComponent : TfBaseViewColumn<TfIntegerEd
 	private string _valueAlias = "Value";
 	private int? _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
-
+	private CancellationTokenSource inputThrottleCancalationToken = new();
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
@@ -64,12 +64,26 @@ public partial class TfIntegerEditColumnComponent : TfBaseViewColumn<TfIntegerEd
 	}
 
 	/// <summary>
+	/// Because of the wheel functionality, user can initiate changes very quickly
+	/// This throttle will submit only after 1 second of inactivity
+	/// </summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
+	private async Task _valueChanged(int? value)
+	{
+		_value = value;
+		inputThrottleCancalationToken.Cancel();
+		inputThrottleCancalationToken = new();
+		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(async (task) => { await InvokeAsync(_submitChange); }, inputThrottleCancalationToken.Token);
+	}
+
+	/// <summary>
 	/// process the value change event from the components view
 	/// by design if any kind of error occurs the old value should be set back
 	/// so the user is notified that the change is aborted
 	/// </summary>
 	/// <returns></returns>
-	private async Task _valueChanged()
+	private async Task _submitChange()
 	{
 		if (options.ChangeRequiresConfirmation)
 		{

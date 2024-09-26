@@ -470,7 +470,8 @@ public partial class DataManager
 			List<string> keys = new List<string>();
 
 			foreach (var column in sharedKey.Columns)
-				keys.Add(row[column.DbName].ToString());
+				keys.Add(row[column.DbName]?.ToString()); //Boz: columns could be nullable
+
 
 			row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray()).Value;
 
