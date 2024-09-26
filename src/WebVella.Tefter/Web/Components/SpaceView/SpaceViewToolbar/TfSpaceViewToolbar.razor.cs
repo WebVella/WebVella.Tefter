@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewToolbar.TfSpaceViewToolbar", "WebVella.Tefter")]
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -23,9 +24,11 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				var clone = TfAppState.Value.SpaceViewData.Clone();
-				clone.Rows.Add(result.Value.Rows[0]);
+				clone.Rows.Insert(0,result.Value.Rows[0]);
 				Dispatcher.Dispatch(new SetAppStateAction(component: this,
 					state: TfAppState.Value with { SpaceViewData = clone }));
+
+				ToastService.ShowSuccess(LOC("Row added"));
 			}
 
 		}

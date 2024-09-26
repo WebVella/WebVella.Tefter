@@ -1,9 +1,9 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceViewActionSelector : TfBaseComponent
 {
-    [Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 
-	
 	private bool _open = false;
 	private bool _selectorLoading = false;
 
@@ -21,6 +21,26 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 			await Task.Delay(1000); //load components with actions?
 			_selectorLoading = false;
 			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _deleteSelectedRecords()
+	{
+		if (TfAppState.Value.SelectedDataRows.Count == 0
+		|| TfAppState.Value.SpaceView.SpaceDataId is null) return;
+		try
+		{
+			var result = UC.DeleteSpaceViewDataRows(
+				spaceDataId:TfAppState.Value.SpaceView.SpaceDataId.Value,
+				tfIdList:TfAppState.Value.SelectedDataRows
+			);
+			ProcessServiceResponse(result);
+			if(result.IsSuccess)
+				Navigator.ReloadCurrentUrl();
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
 		}
 	}
 }
