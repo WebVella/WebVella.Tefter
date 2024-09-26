@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using System.Data;
 
 namespace WebVella.Tefter;
 
@@ -31,6 +32,9 @@ public partial interface IDataManager
 
 	internal Result<TfDataTable> SaveDataTable(
 		TfDataTable table);
+
+	internal Result DeleteDataProviderRowByTfId(
+		Guid tfId);
 }
 
 public partial class DataManager
@@ -117,7 +121,7 @@ public partial class DataManager
 				dbService: _dbService,
 				dataProvider: provider,
 				spaceData: null,
-				tfIds: tfIds );
+				tfIds: tfIds);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -782,6 +786,40 @@ public partial class DataManager
 	}
 
 	#endregion
+
+
+	public Result DeleteDataProviderRowByTfId(
+		TfDataProvider provider,
+		Guid tfId)
+	{
+
+		try
+		{
+			if (provider is null)
+			{
+				return Result.Fail(new ValidationError(
+						nameof(provider),
+						"Provider object is null"));
+			}
+
+			var count = _dbService.ExecuteSqlNonQueryCommand(
+				$"DELETE FROM dp{provider.Index} WHERE tf_id = @tf_id",
+				new NpgsqlParameter("@tf_id", tfId));
+
+			if(count != 0)
+			{
+				return Result.Fail(new ValidationError(
+						nameof(provider),
+						"Data row not found in provider table."));
+			}
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to delete data provider row").CausedBy(ex));
+		}
+	}
 
 	private int GetProviderNextRowIndex(
 		TfDataProvider provider)
