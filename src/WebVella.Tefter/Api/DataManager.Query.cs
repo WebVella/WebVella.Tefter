@@ -34,6 +34,7 @@ public partial interface IDataManager
 		TfDataTable table);
 
 	internal Result DeleteDataProviderRowByTfId(
+		TfDataProvider provider,
 		Guid tfId);
 }
 
