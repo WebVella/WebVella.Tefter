@@ -23,7 +23,7 @@ else if (Context.Mode == TfComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="4">
-			<FluentInputLabel Label="@LOC("TRUE Label")" />
+			<FluentInputLabel Label="@LOC("Label")" />
 			<FluentCheckbox Value="@options.ShowLabel" Style="height:32px;"
 							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ShowLabel),x))
 							Label="@LOC("show label")" />
@@ -31,22 +31,22 @@ else if (Context.Mode == TfComponentMode.Options)
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="4">
-			<FluentTextField Label="@LOC("TRUE Label")"
+			<FluentTextField Label="@LOC("TRUE label")"
 							 Value="@options.TrueLabel" Style="width:100%"
 							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueLabel),x))
-							 Placeholder="@LOC("empty shows 'true'")" />
+							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 		<FluentGridItem xs="4">
-			<FluentTextField Label="@LOC("FALSE Label")"
+			<FluentTextField Label="@LOC("FALSE label")"
 							 Value="@options.FalseLabel" Style="width:100%"
 							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseLabel),x))
-							 Placeholder="@LOC("empty shows 'false'")" />
+							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 		<FluentGridItem xs="4">
-			<FluentTextField Label="@LOC("NULL Label")"
+			<FluentTextField Label="@LOC("NULL label")"
 							 Value="@options.NullLabel" Style="width:100%"
 							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullLabel),x))
-							 Placeholder="@LOC("empty shows 'null'")" />
+							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>

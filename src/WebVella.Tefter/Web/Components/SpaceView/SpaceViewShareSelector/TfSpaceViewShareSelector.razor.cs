@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewShareSelector.TfSpaceViewShareSelector", "WebVella.Tefter")]
 public partial class TfSpaceViewShareSelector : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }

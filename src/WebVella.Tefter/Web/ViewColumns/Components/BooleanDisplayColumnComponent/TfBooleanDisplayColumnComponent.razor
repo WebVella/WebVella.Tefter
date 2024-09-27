@@ -2,12 +2,11 @@
 @inherits TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataStructByAlias<bool>(_valueAlias, null);
-	if (value is null)
+	if (_value is null)
 	{
-		if (!String.IsNullOrWhiteSpace(options.NullValueOverrideText))
+		if (!String.IsNullOrWhiteSpace(options.NullLabel))
 		{
-			<div>@options.NullValueOverrideText</div>
+			<div>@options.NullLabel</div>
 		}
 		else if (options.NullValueShowAsIcon)
 		{
@@ -18,11 +17,11 @@
 			<div></div>
 		}
 	}
-	else if (value.Value)
+	else if (_value.Value)
 	{
-		if (!String.IsNullOrWhiteSpace(options.TrueValueOverrideText))
+		if (!String.IsNullOrWhiteSpace(options.TrueLabel))
 		{
-			<div>@options.TrueValueOverrideText</div>
+			<div>@options.TrueLabel</div>
 		}
 		else if (options.TrueValueShowAsIcon)
 		{
@@ -30,14 +29,14 @@
 		}
 		else
 		{
-			<div>@value.Value.ToString()</div>
+			<div>@_value.Value.ToString()</div>
 		}
 	}
 	else
 	{
-		if (!String.IsNullOrWhiteSpace(options.FalseValueOverrideText))
+		if (!String.IsNullOrWhiteSpace(options.FalseLabel))
 		{
-			<div>@options.FalseValueOverrideText</div>
+			<div>@options.FalseLabel</div>
 		}
 		else if (options.FalseValueShowAsIcon)
 		{
@@ -45,7 +44,7 @@
 		}
 		else
 		{
-			<div>@value.Value.ToString()</div>
+			<div>@_value.Value.ToString()</div>
 		}
 	}
 }
@@ -55,9 +54,9 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentInputLabel Label="@LOC("on TRUE (text with priority)")" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.TrueValueOverrideText" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueValueOverrideText),x))
-							 Placeholder="fill to override default value" />
+			<FluentTextField Value="@options.TrueLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueLabel),x))
+							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentCheckbox Value="@options.TrueValueShowAsIcon" Style="height:32px;"
@@ -68,9 +67,9 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentInputLabel Label="@LOC("on FALSE (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.FalseValueOverrideText" Style="width:100%" 
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseValueOverrideText),x))
-							 Placeholder="fill to override default value" />
+			<FluentTextField Value="@options.FalseLabel" Style="width:100%" 
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseLabel),x))
+							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentCheckbox Value="@options.FalseValueShowAsIcon" Style="height:32px;"
@@ -81,9 +80,9 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentInputLabel Label="@LOC("on NULL (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.NullValueOverrideText" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullValueOverrideText),x))
-							 Placeholder="fill to override default value" />
+			<FluentTextField Value="@options.NullLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullLabel),x))
+							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
 			<FluentCheckbox Value="@options.NullValueShowAsIcon" Style="height:32px;"

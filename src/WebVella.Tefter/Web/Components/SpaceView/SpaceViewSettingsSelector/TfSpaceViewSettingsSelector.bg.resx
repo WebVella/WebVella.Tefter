@@ -117,46 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="change applied" xml:space="preserve">
-    <value>промяната е приложена</value>
+  <data name="Bookmark View" xml:space="preserve">
+    <value>Сложи отметка на изгледа</value>
   </data>
-  <data name="Change confirmation" xml:space="preserve">
-    <value>Потвърждаване на промяната</value>
+  <data name="Copy link" xml:space="preserve">
+    <value>Копиране на адрес</value>
   </data>
-  <data name="Component Mode Not implemented" xml:space="preserve">
-    <value>Режимът на компонента не е имплементиран</value>
+  <data name="Delete view" xml:space="preserve">
+    <value>Изтриване на изглед</value>
   </data>
-  <data name="Confirmation message" xml:space="preserve">
-    <value>Съобщение за потвърждение</value>
+  <data name="Manage data" xml:space="preserve">
+    <value>Редакция на данни</value>
   </data>
-  <data name="empty shows a system one" xml:space="preserve">
-    <value>празно показва системно</value>
+  <data name="Manage view" xml:space="preserve">
+    <value>Редакция на изглед</value>
   </data>
-  <data name="FALSE label" xml:space="preserve">
-    <value>Етикет НЕВЯРНО</value>
-  </data>
-  <data name="Label" xml:space="preserve">
-    <value>Етикет</value>
-  </data>
-  <data name="Label text" xml:space="preserve">
-    <value>Текст на етикета</value>
-  </data>
-  <data name="Label visibility" xml:space="preserve">
-    <value>Видимост на етиката</value>
-  </data>
-  <data name="NULL label" xml:space="preserve">
-    <value>Етикет НЯМА</value>
-  </data>
-  <data name="Please confirm the data change!" xml:space="preserve">
-    <value>Моля потвърдете промяната на данните!</value>
-  </data>
-  <data name="requires confirmation" xml:space="preserve">
-    <value>изисква потвърждение</value>
-  </data>
-  <data name="show label" xml:space="preserve">
-    <value>показвай етикет</value>
-  </data>
-  <data name="TRUE label" xml:space="preserve">
-    <value>Етикет ВЯРНО</value>
+  <data name="Save URL" xml:space="preserve">
+    <value>Запомни адреса</value>
   </data>
 </root>

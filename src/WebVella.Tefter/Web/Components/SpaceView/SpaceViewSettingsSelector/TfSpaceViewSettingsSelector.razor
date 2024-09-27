@@ -23,26 +23,21 @@
 				<FluentDivider />
 			}
 			<FluentMenuItem OnClick="_manageView">
-				Manage View
+				@LOC("Manage view")
 				<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_deleteView">
-				Delete View
+				@LOC("Delete view")
 				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
 			</FluentMenuItem>
-			<FluentMenuItem>
+@* 			<FluentMenuItem>
 				Manage Access
 				<FluentIcon Value="@TfConstants.GetIcon("KeyMultiple")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
+			</FluentMenuItem> *@
 			<FluentDivider />
 			<FluentMenuItem OnClick="_manageData">
-				Manage Data
+				@LOC("Manage data")
 				<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentMenuItem>
-			<FluentDivider />
-			<FluentMenuItem Disabled="true">
-				Copy link
-				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 		</FluentMenu>
 	</div>

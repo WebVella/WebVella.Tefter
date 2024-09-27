@@ -4,10 +4,7 @@
         @ChildContent
     </ChildContent>
     <ErrorContent>
-        <span style="color:red" title="@context.Message">render error</span>
-@*         @{
-        ConsoleExt.WriteLine(context.StackTrace);
-        } *@
+        <FluentIcon Value="TfConstants.ErrorIcon" Title="@context.Message"/>
     </ErrorContent>
 </ErrorBoundary>
 

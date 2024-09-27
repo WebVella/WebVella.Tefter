@@ -5,21 +5,21 @@
 	<div class="view-export-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
 			<FluentMenuItem OnClick="_copyLinkToClipboard">
-				Copy link
+				@LOC("Copy link")
 				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_exportSelection">
-				Export Selection
+				@LOC("Export Selection")
 				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				@if (TfAppState.Value.SelectedDataRows.Count > 0)
 				{
 					<span slot="end">
-						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+						<FluentBadge Appearance="@Appearance.Accent" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
 					</span>
 				}
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_exportAll">
-				Export All data
+				@LOC("Export All")
 				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			</FluentMenuItem>
 		</FluentMenu>

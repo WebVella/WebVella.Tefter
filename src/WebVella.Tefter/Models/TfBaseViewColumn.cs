@@ -111,10 +111,16 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// <returns></returns>
 	protected virtual TucDatabaseColumnType? GetColumnDatabaseTypeByAlias(string alias)
 	{
+		if(Context.DataTable is null) return null;
 		var colName = GetColumnNameFromAlias(alias);
 		if (colName == null) return null;
 
-		var column = Context.DataTable.Columns[colName];
+		TfDataColumn column = null;
+		try
+		{
+			column = Context.DataTable.Columns[colName];
+		}
+		catch { }
 		if (column == null) return null;
 
 		return column.DbType.ConvertSafeToEnum<DatabaseColumnType, TucDatabaseColumnType>();
@@ -205,7 +211,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		else if (value is T) return (T)value;
 		return TfConverters.Convert<T>(value.ToString());
 	}
-	
+
 	/// <summary>
 	/// Gets more complex object data which is in JSOn format
 	/// </summary>
