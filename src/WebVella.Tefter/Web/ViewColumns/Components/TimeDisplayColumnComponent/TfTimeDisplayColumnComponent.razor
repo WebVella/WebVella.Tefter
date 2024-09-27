@@ -2,11 +2,9 @@
 @inherits TfBaseViewColumn<TfTimeDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataStructByAlias<DateTime>(_valueAlias, null);
-	var options = GetOptions();
-	var format = options.Format;
+	var format = componentOptions.Format;
 	if (string.IsNullOrWhiteSpace(format)) format = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
-	<div>@value?.ToString(format)</div>
+	<div>@_value?.ToString(format)</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
