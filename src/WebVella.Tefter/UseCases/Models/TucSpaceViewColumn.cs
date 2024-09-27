@@ -6,6 +6,8 @@ public record TucSpaceViewColumn
 {
 	public Guid Id { get; set; }
 	public Guid SpaceViewId { get; set; }
+
+	//TODO remove
 	public Guid? SelectedAddonId { get; set; } = null;
 
 	[Required(ErrorMessage = "required")]
@@ -72,7 +74,6 @@ public record TucSpaceViewColumn
 	{
 		Id = model.Id;
 		SpaceViewId = model.SpaceViewId;
-		SelectedAddonId = model.SelectedAddonId;
 		QueryName = model.QueryName;
 		Title = model.Title;
 		Position = model.Position;
@@ -98,7 +99,6 @@ public record TucSpaceViewColumn
 		{
 			Id = Id,
 			SpaceViewId = SpaceViewId,
-			SelectedAddonId = SelectedAddonId,
 			QueryName = QueryName,
 			Title = Title,
 			Position = Position,

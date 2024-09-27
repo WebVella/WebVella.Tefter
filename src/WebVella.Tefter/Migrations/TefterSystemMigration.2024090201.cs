@@ -14,7 +14,6 @@ internal class TefterSystemMigration2024090201 : TefterSystemMigration
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddGuidColumn("space_view_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("selected_addon_id", c => { c.WithoutAutoDefaultValue().Nullable(); })
 					.AddShortTextColumn("query_name", c => { c.NotNullable(); })
 					.AddShortTextColumn("title", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("position", c => { c.NotNullable(); })

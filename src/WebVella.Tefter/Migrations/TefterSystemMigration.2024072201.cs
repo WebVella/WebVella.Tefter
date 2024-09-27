@@ -16,8 +16,7 @@ internal class TefterSystemMigration2024072201 : TefterSystemMigration
 					.AddShortTextColumn("shared_key_db_name", c => { c.NotNullable(); })
 					.AddShortTextColumn("db_name", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("db_type", c => { c.NotNullable(); })
-					.AddBooleanColumn("include_table_search", c => { c.NotNullable().WithDefaultValue(false); })
-					.AddGuidColumn("addon_id", c => { c.Nullable(); });
+					.AddBooleanColumn("include_table_search", c => { c.NotNullable().WithDefaultValue(false); });
 			})
 			.WithConstraints(constraints =>
 			{

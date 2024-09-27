@@ -228,7 +228,6 @@ public partial class DataManagerTests : BaseTest
 		TfSharedColumn sharedColumn1 = new TfSharedColumn
 		{
 			Id = Guid.NewGuid(),
-			AddonId = null,
 			DbName = "sk_shared_key_text",
 			DbType = DatabaseColumnType.ShortText,
 			IncludeInTableSearch = false,
@@ -240,7 +239,6 @@ public partial class DataManagerTests : BaseTest
 		TfSharedColumn sharedColumn2 = new TfSharedColumn
 		{
 			Id = Guid.NewGuid(),
-			AddonId = null,
 			DbName = "sk_shared_key_int",
 			DbType = DatabaseColumnType.Integer,
 			IncludeInTableSearch = false,

@@ -715,7 +715,6 @@ public partial class SpaceManagerTests : BaseTest
 											.Replace(")", ""),
 						Title = availableColumnType.Name,
 						ComponentType = componentType,
-						SelectedAddonId = null,
 						SpaceViewId = view.Id,
 						CustomOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }

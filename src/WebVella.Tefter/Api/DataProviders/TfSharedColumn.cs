@@ -19,7 +19,4 @@ public record TfSharedColumn
 
 	[DboModelProperty("include_table_search")]
 	public bool IncludeInTableSearch { get; set; }
-
-	[DboModelProperty("addon_id")]
-	public Guid? AddonId { get; set; }
 }

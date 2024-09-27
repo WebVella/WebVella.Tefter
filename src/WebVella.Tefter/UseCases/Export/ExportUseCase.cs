@@ -101,7 +101,6 @@ public class ExportUseCase
 				{
 					compContext.CustomOptionsJson = column.CustomOptionsJson;
 					compContext.DataMapping = column.DataMapping;
-					compContext.SelectedAddonId = column.SelectedAddonId;
 					compContext.QueryName = column.QueryName;
 
 					var rangeColumns = 1;

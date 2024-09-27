@@ -18,7 +18,6 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				TfSharedColumn sharedColumn = new TfSharedColumn
 				{
 					Id = Guid.NewGuid(),
-					AddonId = null,
 					DbName = "sk_test",
 					DbType = DatabaseColumnType.Text,
 					IncludeInTableSearch = false,
@@ -33,13 +32,11 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				var sharedColumns = sharedColumnsResult.Value;
 				sharedColumns.Count().Should().Be(1);
 				sharedColumns[0].Id.Should().Be(sharedColumn.Id);
-				sharedColumns[0].AddonId.Should().Be(sharedColumn.AddonId);
 				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
 				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
 				sharedColumns[0].SharedKeyDbName.Should().Be(sharedColumn.SharedKeyDbName);
 
-				sharedColumn.AddonId = Guid.NewGuid();
 				sharedColumn.DbName = "sk_test1";
 				sharedColumn.DbType = DatabaseColumnType.Integer;
 				sharedColumn.IncludeInTableSearch = !sharedColumn.IncludeInTableSearch;
@@ -54,7 +51,6 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				sharedColumns = sharedColumnsResult.Value;
 				sharedColumns.Count().Should().Be(1);
 				sharedColumns[0].Id.Should().Be(sharedColumn.Id);
-				sharedColumns[0].AddonId.Should().Be(sharedColumn.AddonId);
 				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
 				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
@@ -148,7 +144,6 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				TfSharedColumn sharedColumn = new TfSharedColumn
 				{
 					Id = Guid.NewGuid(),
-					AddonId = null,
 					DbName = "sk_test1",
 					DbType = DatabaseColumnType.Text,
 					IncludeInTableSearch = false,

@@ -247,7 +247,6 @@ internal partial class AppStateUseCase
 							ComponentType = null,
 							FullComponentTypeName = null,
 							FullTypeName = null,
-							SelectedAddonId = null
 						};
 
 						if (columnType is not null)
@@ -282,8 +281,7 @@ internal partial class AppStateUseCase
 							ColumnType = null,
 							ComponentType = null,
 							FullComponentTypeName = null,
-							FullTypeName = null,
-							SelectedAddonId = null
+							FullTypeName = null
 						};
 
 						if (columnType is not null)
@@ -319,7 +317,6 @@ internal partial class AppStateUseCase
 							ComponentType = null,
 							FullComponentTypeName = null,
 							FullTypeName = null,
-							SelectedAddonId = null
 						};
 
 						if (columnType is not null)
@@ -363,7 +360,6 @@ internal partial class AppStateUseCase
 							ComponentType = null,
 							FullComponentTypeName = null,
 							FullTypeName = null,
-							SelectedAddonId = null
 						};
 
 						if (columnType is not null)

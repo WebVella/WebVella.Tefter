@@ -7,6 +7,7 @@ public record TucSharedColumnForm
 	public string DbName { get; set; }
 	public TucDatabaseColumnTypeInfo DbType { get; set; }
 	public bool IncludeInTableSearch { get; set; }
+	//TODO remove
 	public Guid? AddonId { get; set; }
 
 	public TfSharedColumn ToModel()
@@ -18,7 +19,6 @@ public record TucSharedColumnForm
 			DbName = DbName,
 			DbType = DbType.ToModel(),
 			IncludeInTableSearch = IncludeInTableSearch,
-			AddonId = AddonId
 		};
 	}
 }

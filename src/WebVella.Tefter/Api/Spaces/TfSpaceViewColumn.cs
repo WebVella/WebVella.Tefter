@@ -4,7 +4,6 @@ public class TfSpaceViewColumn
 {
 	public Guid Id { get; set; }
 	public Guid SpaceViewId { get; set; }
-	public Guid? SelectedAddonId { get; set; } = null;
 	public string QueryName { get; set; }
 	public string Title { get; set; }
 	public short? Position { get; set; }
@@ -28,9 +27,6 @@ internal class TfSpaceViewColumnDbo
 	[DboModelProperty("space_view_id")]
 	public Guid SpaceViewId { get; set; }
 	
-	[DboModelProperty("selected_addon_id")]
-	public Guid? SelectedAddonId { get; set; } = null;
-
 	[DboModelProperty("query_name")]
 	public string QueryName { get; set; }
 
