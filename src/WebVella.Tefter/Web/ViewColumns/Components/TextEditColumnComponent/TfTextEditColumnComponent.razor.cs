@@ -61,7 +61,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		return GetDataStringByAlias(_valueAlias);
 	}
 
 	/// <summary>
@@ -106,7 +106,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias(_valueAlias);
+		_value = GetDataStringByAlias(_valueAlias);
 	}
 }
 

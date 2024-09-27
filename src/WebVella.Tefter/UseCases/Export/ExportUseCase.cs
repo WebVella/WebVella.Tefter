@@ -86,7 +86,6 @@ public class ExportUseCase
 				RowIndex = 0,//set in row loop
 				CustomOptionsJson = null, //set in column loop
 				DataMapping = null,//set in column loop
-				SelectedAddonId = null,//set in column loop
 				QueryName = null,//set in column loop
 			};
 			for (int i = 0; i < viewData.Rows.Count; i++)

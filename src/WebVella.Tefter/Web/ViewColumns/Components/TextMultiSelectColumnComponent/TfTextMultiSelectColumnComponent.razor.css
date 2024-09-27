@@ -4,6 +4,7 @@
 
 ::deep fluent-button::part(control) {
 	border:1px solid var(--neutral-stroke-input-active);
+	justify-content: start;
 }
 
 ::deep fluent-button {

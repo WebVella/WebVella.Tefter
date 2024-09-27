@@ -31,7 +31,7 @@ public partial class TfUrlDisplayColumnComponent : TfBaseViewColumn<TfUrlDisplay
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias("Value");
+		return GetDataStringByAlias("Value");
 	}
 }
 

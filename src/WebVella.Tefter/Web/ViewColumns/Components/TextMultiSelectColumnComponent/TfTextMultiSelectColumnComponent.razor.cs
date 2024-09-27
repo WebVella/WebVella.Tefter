@@ -63,7 +63,7 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		return GetDataStringByAlias(_valueAlias);
 	}
 
 	/// <summary>
@@ -120,7 +120,7 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	}
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias<List<string>>(_valueAlias, new List<string>());
+		_value = GetDataObjectFromJsonByAlias<List<string>>(_valueAlias, new List<string>());
 
 		_options.Clear();
 		_selectedOptions.Clear();

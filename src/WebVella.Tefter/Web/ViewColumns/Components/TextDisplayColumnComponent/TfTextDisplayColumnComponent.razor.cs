@@ -40,7 +40,7 @@ public partial class TfTextDisplayColumnComponent : TfBaseViewColumn<TfTextDispl
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		return GetDataStringByAlias(_valueAlias);
 	}
 }
 

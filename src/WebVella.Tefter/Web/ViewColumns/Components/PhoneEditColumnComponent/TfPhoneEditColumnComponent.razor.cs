@@ -102,7 +102,7 @@ public partial class TfPhoneEditColumnComponent : TfBaseViewColumn<TfPhoneEditCo
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias(_valueAlias);
+		_value = GetDataStringByAlias(_valueAlias);
 	}
 
 	private async Task _resetValue()

@@ -193,7 +193,6 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			DataTable = null,
 			RowIndex = -1,
 			QueryName = _form.QueryName,
-			SelectedAddonId = _form.SelectedAddonId,
 			SpaceViewId = _form.SpaceViewId,
 			EditContext = EditContext,
 			ValidationMessageStore = MessageStore

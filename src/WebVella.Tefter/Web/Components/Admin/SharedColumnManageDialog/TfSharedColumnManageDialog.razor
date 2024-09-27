@@ -50,21 +50,7 @@
 					<FluentSwitch @bind-Value=_form.IncludeInTableSearch>@LOC("included")</FluentSwitch>
 					<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6">
-					@if (_form.AddonId is null)
-					{
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("user created")
-										 Label="@LOC("Addon Id")" Style="width:100%"
-										 Disabled="true" AutoComplete="new-password" />
-					}
-					else
-					{
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=_form.AddonId?.ToString()
-										 Label="@LOC("Addon Id")" Style="width:100%"
-										 Disabled="true" AutoComplete="new-password" />
-					}
-					<FluentValidationMessage For="@(() => _form.AddonId)" />
-				</FluentGridItem>
+				<FluentGridItem xs="6"></FluentGridItem>
 			</FluentGrid>
 		</FluentEditForm>
 	</div>

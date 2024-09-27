@@ -2,7 +2,7 @@
 @inherits TfBaseViewColumn<TfUrlDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataObjectByAlias("Value",null);
+	var value = GetDataStringByAlias("Value",null);
 	if (!String.IsNullOrWhiteSpace(value) && TfConverters.IsValidURL(value))
 	{
 		<div><a href="@value">@value</a></div>

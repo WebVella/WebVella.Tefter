@@ -39,7 +39,7 @@ public partial class TfEmailDisplayColumnComponent : TfBaseViewColumn<TfEmailDis
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		return GetDataStringByAlias(_valueAlias);
 	}
 }
 

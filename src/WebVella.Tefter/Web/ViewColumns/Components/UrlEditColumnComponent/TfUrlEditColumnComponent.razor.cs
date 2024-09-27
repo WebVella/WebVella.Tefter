@@ -111,7 +111,7 @@ public partial class TfUrlEditColumnComponent : TfBaseViewColumn<TfUrlEditColumn
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias(_valueAlias);
+		_value = GetDataStringByAlias(_valueAlias);
 	}
 
 	private async Task _resetValue()

@@ -7,9 +7,6 @@ public record TucSpaceViewColumn
 	public Guid Id { get; set; }
 	public Guid SpaceViewId { get; set; }
 
-	//TODO remove
-	public Guid? SelectedAddonId { get; set; } = null;
-
 	[Required(ErrorMessage = "required")]
 	public string QueryName { get; set; }
 	[Required(ErrorMessage = "required")]

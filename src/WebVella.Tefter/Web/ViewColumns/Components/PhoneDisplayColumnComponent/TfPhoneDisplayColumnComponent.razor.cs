@@ -31,7 +31,7 @@ public partial class TfPhoneDisplayColumnComponent : TfBaseViewColumn<TfPhoneDis
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias("Value");
+		return GetDataStringByAlias("Value");
 	}
 }
 

@@ -34,7 +34,6 @@ else
 					<th class="tf-grid-th">data type</th>
 					<th class="tf-grid-th">shared key</th>
 					<th class="tf-grid-th">options</th>
-					<th class="tf-grid-th">creator</th>
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
@@ -77,18 +76,6 @@ else
 										<FluentBadge Appearance="@Appearance.Accent">global search</FluentBadge>
 									}
 								</FluentStack>
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div>
-								@if (context.AddonId is not null)
-								{
-									<span>application</span>
-								}
-								else
-								{
-									<span>user</span>
-								}
 							</div>
 						</td>
 					</tr>

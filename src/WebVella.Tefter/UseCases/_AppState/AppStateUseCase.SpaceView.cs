@@ -58,6 +58,33 @@ internal partial class AppStateUseCase
 			{
 				newState = newState with { SpaceViewData = null };
 			}
+
+			//Aux Data Hook
+			var compContext = new TfComponentContext()
+			{
+				Hash = newState.Hash,
+				DataTable = newState.SpaceViewData,
+				Mode = TfComponentMode.Display, //ignored here
+				SpaceViewId = newState.SpaceView.Id,
+				EditContext = null, //ignored here
+				ValidationMessageStore = null, //ignored here
+				RowIndex = 0,///ignored here
+				CustomOptionsJson = null, //set in column loop
+				DataMapping = null,//set in column loop
+				QueryName = null,//set in column loop
+			};
+			foreach (TucSpaceViewColumn column in newState.SpaceViewColumns)
+			{
+				if (column.ComponentType is not null
+					&& column.ComponentType.GetInterface(nameof(ITfAuxDataUseViewColumn)) != null)
+				{
+					compContext.CustomOptionsJson = column.CustomOptionsJson;
+					compContext.DataMapping = column.DataMapping;
+					compContext.QueryName = column.QueryName;
+					var component = (ITfAuxDataUseViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
+					component.OnSpaceViewStateInited(newState);
+				}
+			}
 		}
 		else
 		{
@@ -632,7 +659,7 @@ internal partial class AppStateUseCase
 		foreach (var tfId in tfIdList)
 		{
 			var result = _dataManager.DeleteDataProviderRowByTfId(dataProviderResult.Value, tfId);
-			if(result.IsFailed) return Result.Fail("Deleting a record failed");
+			if (result.IsFailed) return Result.Fail("Deleting a record failed");
 		}
 		return Result.Ok();
 	}
