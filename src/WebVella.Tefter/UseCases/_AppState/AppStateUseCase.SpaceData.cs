@@ -2,11 +2,12 @@
 internal partial class AppStateUseCase
 {
 	internal Task<TfAppState> InitSpaceDataAsync(TucUser currentUser, TfRouteState routeState,
-		TfAppState newState, TfAppState oldState)
+		TfAppState newAppState, TfAppState oldAppState, 
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (newState.Space is null)
+		if (newAppState.Space is null)
 		{
-			newState = newState with { 
+			newAppState = newAppState with { 
 				SpaceData = null, 
 				SpaceDataList = new(), 
 				AllDataProviders = new(),
@@ -14,27 +15,27 @@ internal partial class AppStateUseCase
 				SpaceDataPage = 1,
 				SpaceDataPageSize = TfConstants.PageSize,
 				SpaceDataSearch = null};
-			return Task.FromResult(newState);
+			return Task.FromResult(newAppState);
 		}
 		//SpaceDataList
-		if (newState.Space?.Id != oldState.Space?.Id)
-			newState = newState with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
+		if (newAppState.Space?.Id != oldAppState.Space?.Id)
+			newAppState = newAppState with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
 		//SpaceData
 		if (routeState.SpaceDataId is not null)
 		{
-			newState = newState with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
+			newAppState = newAppState with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
 
 			//Space Data data
 			if(routeState.ThirdNode == RouteDataThirdNode.Data){ 
 				var viewData = GetSpaceViewData(
-							spaceDataId: newState.SpaceData.Id,
+							spaceDataId: newAppState.SpaceData.Id,
 							additionalFilters: null,
 							sortOverrides: null,
 							search: routeState.Search,
 							page: routeState.Page,
 							pageSize: routeState.PageSize ?? TfConstants.PageSize
 						);			
-				newState = newState with
+				newAppState = newAppState with
 				{
 					SpaceDataData = viewData,
 					SpaceDataPage = viewData?.QueryInfo.Page ?? (routeState.Page ?? 1),
@@ -46,12 +47,12 @@ internal partial class AppStateUseCase
 		}
 		else
 		{
-			newState = newState with { SpaceData = null };
+			newAppState = newAppState with { SpaceData = null };
 		}
-		newState = newState with { AllDataProviders = GetDataProviderList() };
+		newAppState = newAppState with { AllDataProviders = GetDataProviderList() };
 
 
-		return Task.FromResult(newState);
+		return Task.FromResult(newAppState);
 	}
 	internal TucSpaceData GetSpaceData(Guid spaceDataId)
 	{

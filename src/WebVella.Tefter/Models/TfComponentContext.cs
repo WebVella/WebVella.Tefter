@@ -6,6 +6,7 @@ public class TfComponentContext
 {
 	public Guid Hash { get; set; }
 	public Guid SpaceViewId { get; set; }
+	public Guid SpaceViewColumnId { get; set; }
 	public string QueryName { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";

@@ -21,14 +21,14 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentGrid>
 		<FluentGridItem xs="4">
 			<FluentInputLabel Label="@LOC("Change confirmation")" />
-			<FluentCheckbox Value="@options.ChangeRequiresConfirmation"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeRequiresConfirmation),x))
+			<FluentCheckbox Value="@componentOptions.ChangeRequiresConfirmation"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeRequiresConfirmation),x))
 							Label="@LOC("requires confirmation")" />
 		</FluentGridItem>
 		<FluentGridItem xs="8">
 			<FluentTextField Label="@LOC("Confirmation message")"
-							 Value="@options.ChangeConfirmationMessage" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeConfirmationMessage),x))
+							 Value="@componentOptions.ChangeConfirmationMessage" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeConfirmationMessage),x))
 							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 	</FluentGrid>

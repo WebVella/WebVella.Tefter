@@ -2,14 +2,15 @@
 internal partial class AppStateUseCase
 {
 	internal async Task<TfAppState> InitAdminDataProviderAsync(TucUser currentUser, TfRouteState routeState,
-		TfAppState newState, TfAppState oldState)
+		TfAppState newAppState, TfAppState oldAppState, 
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Admin
 			&& routeState.SecondNode == RouteDataSecondNode.DataProviders)
 			)
 		{
-			newState = newState with
+			newAppState = newAppState with
 			{
 				AdminDataProviders = new(),
 				AdminDataProvider = null,
@@ -18,34 +19,34 @@ internal partial class AppStateUseCase
 				AdminDataProviderData = null,
 				AdminDataProviderDataPage = 0
 			};
-			return newState;
+			return newAppState;
 		};
 
 
 		//AdminDataProviders, AdminDataProvidersPage
 		if (
-			newState.AdminDataProviders.Count == 0
-			|| (routeState.DataProviderId is not null && !newState.AdminDataProviders.Any(x => x.Id == routeState.DataProviderId))
+			newAppState.AdminDataProviders.Count == 0
+			|| (routeState.DataProviderId is not null && !newAppState.AdminDataProviders.Any(x => x.Id == routeState.DataProviderId))
 			)
-			newState = newState with
+			newAppState = newAppState with
 			{
 				AdminDataProviders = await GetDataProvidersAsync()
 			};
 
-		newState = newState with { DataProviderTypes = await GetProviderTypesAsync() };
+		newAppState = newAppState with { DataProviderTypes = await GetProviderTypesAsync() };
 
 		//AdminManagedUser, DataProviderTypes, DataProviderSyncTasks, DataProviderSyncTasks, 
 		if (routeState.DataProviderId.HasValue)
 		{
 			var adminProvider = await GetDataProviderAsync(routeState.DataProviderId.Value);
-			newState = newState with { AdminDataProvider = adminProvider };
+			newAppState = newAppState with { AdminDataProvider = adminProvider };
 			if (adminProvider is not null)
 			{
-				if (!newState.AdminDataProviders.Any(x => x.Id == adminProvider.Id))
+				if (!newAppState.AdminDataProviders.Any(x => x.Id == adminProvider.Id))
 				{
-					var adminProviders = newState.AdminDataProviders.ToList();
+					var adminProviders = newAppState.AdminDataProviders.ToList();
 					adminProviders.Add(adminProvider);
-					newState = newState with { AdminDataProviders = adminProviders };
+					newAppState = newAppState with { AdminDataProviders = adminProviders };
 				}
 
 				//check for the other tabs
@@ -59,15 +60,15 @@ internal partial class AppStateUseCase
 
 			if (routeState.ThirdNode == RouteDataThirdNode.Synchronization)
 			{
-				newState = newState with { DataProviderSyncTasks = await GetDataProviderSynchronizationTasks(routeState.DataProviderId.Value) };
+				newAppState = newAppState with { DataProviderSyncTasks = await GetDataProviderSynchronizationTasks(routeState.DataProviderId.Value) };
 			}
 			else
 			{
-				newState = newState with { DataProviderSyncTasks = new() };
+				newAppState = newAppState with { DataProviderSyncTasks = new() };
 			}
 			if (routeState.ThirdNode == RouteDataThirdNode.Data)
 			{
-				newState = newState with
+				newAppState = newAppState with
 				{
 					AdminDataProviderData = await GetDataProviderData(routeState.DataProviderId.Value, null, 1, TfConstants.PageSize),
 					AdminDataProviderDataPage = 1
@@ -75,12 +76,12 @@ internal partial class AppStateUseCase
 			}
 			else
 			{
-				newState = newState with { AdminDataProviderData = null, AdminDataProviderDataPage = 0 };
+				newAppState = newAppState with { AdminDataProviderData = null, AdminDataProviderDataPage = 0 };
 			}
 		}
 
 
-		return newState;
+		return newAppState;
 	}
 
 	//Data Provider

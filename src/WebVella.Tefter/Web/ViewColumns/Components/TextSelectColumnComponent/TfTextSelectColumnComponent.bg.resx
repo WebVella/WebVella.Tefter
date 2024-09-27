@@ -123,6 +123,9 @@
   <data name="Component Mode Not implemented" xml:space="preserve">
     <value>Режимът на компонента не е имплементиран</value>
   </data>
+  <data name="no value" xml:space="preserve">
+    <value>без стойност</value>
+  </data>
   <data name="Row with index {0} is not found" xml:space="preserve">
     <value>Не е намерен ред с този индекс {0}</value>
   </data>

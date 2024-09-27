@@ -89,9 +89,9 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 				return;
 			}
 		}
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 

@@ -86,9 +86,9 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 	#region << Private logic >>
 	private async Task _onValueChange()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -135,21 +135,21 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 
 	private string _getLabel()
 	{
-		if (!options.ShowLabel) return null;
+		if (!componentOptions.ShowLabel) return null;
 
 		if (_isThreeState && _state is null)
 		{
-			if (!string.IsNullOrWhiteSpace(options.NullLabel)) return options.NullLabel;
+			if (!string.IsNullOrWhiteSpace(componentOptions.NullLabel)) return componentOptions.NullLabel;
 			return "null";
 		}
 		else if (_value)
 		{
-			if (!string.IsNullOrWhiteSpace(options.TrueLabel)) return options.TrueLabel;
+			if (!string.IsNullOrWhiteSpace(componentOptions.TrueLabel)) return componentOptions.TrueLabel;
 			return "true";
 		}
 		else
 		{
-			if (!string.IsNullOrWhiteSpace(options.FalseLabel)) return options.FalseLabel;
+			if (!string.IsNullOrWhiteSpace(componentOptions.FalseLabel)) return componentOptions.FalseLabel;
 			return "false";
 		}
 	}

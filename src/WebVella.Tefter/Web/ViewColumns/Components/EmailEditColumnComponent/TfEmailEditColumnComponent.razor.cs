@@ -83,9 +83,9 @@ public partial class TfEmailEditColumnComponent : TfBaseViewColumn<TfEmailEditCo
 				return;
 			}
 		}
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 

@@ -8,14 +8,19 @@
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextSelectColumnComponent.TfTextSelectColumnComponent", "WebVella.Tefter")]
 public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelectColumnComponentOptions>
 {
+	#region << Injects >>
+	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
+	#endregion
+
+	#region << Constructor >>
+
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
 	public TfTextSelectColumnComponent()
 	{
 	}
-
 
 	/// <summary>
 	/// The custom constructor is needed because in varoius cases we need to instance the component without
@@ -26,7 +31,9 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -36,13 +43,22 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	private string _valueAlias = "Value";
 	private object _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
-	private List<Tuple<object, string>> _options = new();
-	private Tuple<object, string> _selectedOptions = null;
+	private List<Tuple<object, string>> _selectOptionsList = new();
+	private Tuple<object, string> _selectedOption = null;
 	private bool _open = false;
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+	private string _storageKey = "";
+	#endregion
+
+	#region << Lifecycle >>
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		_initStorageKeys();
+	}
 
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
@@ -57,7 +73,9 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 			_renderedHash = Context.Hash;
 		}
 	}
+	#endregion
 
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
@@ -67,12 +85,50 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 		return GetDataStringByAlias(_valueAlias);
 	}
 
-	public override async Task OnSpaceViewStateInited(TfAppState appState)
+	public override async Task OnSpaceViewStateInited(TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		await base.OnSpaceViewStateInited(appState);
+		await base.OnSpaceViewStateInited(
+			currentUser: currentUser,
+			routeState: routeState,
+			newAppState: newAppState,
+			oldAppState: oldAppState,
+			newAuxDataState: newAuxDataState,
+			oldAuxDataState: oldAuxDataState
+		);
+		_initStorageKeys();
+		var options = new List<Tuple<object, string>>();
+		var componentOptions = GetOptions();
+		if (!String.IsNullOrWhiteSpace(componentOptions.OptionsString))
+		{
+			var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+			foreach (var row in rows)
+			{
+				var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+				if (items.Count == 0) continue;
+				var valueObj = ConvertStringToColumnObjectByAlias(_valueAlias, items[0]);
+
+				if (items.Count == 1)
+				{
+					options.Add(new Tuple<object, string>(valueObj, items[0]));
+				}
+				else if (items.Count > 1)
+				{
+					options.Add(new Tuple<object, string>(valueObj, items[1]));
+				}
+
+			}
+		}
+
+		newAuxDataState.Data[_storageKey] = options;
+
 
 	}
+	#endregion
 
+	#region << Private logic >>
 	/// <summary>
 	/// process the value change event from the components view
 	/// by design if any kind of error occurs the old value should be set back
@@ -81,9 +137,9 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -122,43 +178,34 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	}
 	private void _initValues()
 	{
-		_value = GetDataStringByAlias(_valueAlias);
+		_value = GetColumnDataByAlias(_valueAlias);
 
-		//_options.Clear();
-		//_options.Add(new Tuple<string, string>(null,""));
-		//if (!String.IsNullOrWhiteSpace(options.OptionsString))
-		//{
-		//	var rows = options.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-		//	foreach (var row in rows)
-		//	{
-		//		var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-		//		if (items.Count == 1)
-		//		{
-		//			_options.Add(new Tuple<string, string>(items[0], items[0]));
-		//		}
-		//		else if (items.Count > 1)
-		//		{
-		//			_options.Add(new Tuple<string, string>(items[0], items[1]));
-		//		}
+		_selectOptionsList = ((List<Tuple<object, string>>)TfAuxDataState.Value.Data[_storageKey]).ToList();
+		var column = GetColumnInfoByAlias(_valueAlias);
+		if (column.IsNullable)
+		{
+			_selectOptionsList.Insert(0,new Tuple<object, string>(null, LOC("no value")));
+		}
 
-		//	}
-		//}
-		//_selectedOptions = null;
-		//if (String.IsNullOrWhiteSpace(_value))
-		//{
-		//	_selectedOptions = null;
-		//	return;
-		//}
-		//if (_options.Any(x => x.Item1 == _value))
-		//{
-		//	_selectedOptions = _options.First(x => x.Item1 == _value);
-		//}
-		//else
-		//{
-		//	_options.Insert(1, new Tuple<string, string>(_value, _value));
-		//	_selectedOptions = _options[0];
-		//}
+		_selectedOption = null;
+		var valueJson = JsonSerializer.Serialize(_value);
+		var optionIndex = _selectOptionsList.FindIndex(x => JsonSerializer.Serialize(x.Item1) == valueJson);
+		if (optionIndex > -1)
+		{
+			_selectedOption = _selectOptionsList[optionIndex];
+		}
+		else if (_value is not null)
+		{
+			_selectOptionsList.Insert(0, new Tuple<object, string>(_value, _value.ToString()));
+			_selectedOption = _selectOptionsList[0];
+		}
 	}
+
+	private void _initStorageKeys()
+	{
+		_storageKey = this.GetType().Name + "_" + Context.SpaceViewColumnId;
+	}
+	#endregion
 }
 
 public class TfTextSelectColumnComponentOptions

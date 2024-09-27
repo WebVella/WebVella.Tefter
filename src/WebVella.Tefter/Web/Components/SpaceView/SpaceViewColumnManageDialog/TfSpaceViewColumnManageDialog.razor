@@ -90,7 +90,9 @@
 									</FluentGridItem>
 									<FluentGridItem xs="6">
 										<FluentCombobox TOption="string"
+														Autocomplete="ComboboxAutocomplete.Both"
 														Items="_options"
+														Height="@TfConstants.ComboPanelHeight"
 														Value=@_getDataMappingValue(item.Alias)
 														Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(x,item.Alias))"
 														Label="@LOC("Data column name")" Style="width:100%" />

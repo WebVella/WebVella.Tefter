@@ -7,5 +7,6 @@ public partial class TfConstants
 	public static int HomeSearchMaxResults  = 50;
 	public static int HomeTagsMaxResult  = 50;
 	public static int HomeSubListsMaxResult  = 5;
+	public static string ComboPanelHeight  = "140px";
 
 }

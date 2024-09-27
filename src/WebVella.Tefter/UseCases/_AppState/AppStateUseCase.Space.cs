@@ -1,34 +1,36 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitSpaceAsync(TucUser currentUser, TfRouteState routeState, TfAppState newState, TfAppState oldState)
+	internal async Task<TfAppState> InitSpaceAsync(TucUser currentUser, TfRouteState routeState, 
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Home
 			|| routeState.FirstNode == RouteDataFirstNode.Space)
 			)
 		{
-			newState = newState with { CurrentUserSpaces = new(), Space = null };
-			return newState;
+			newAppState = newAppState with { CurrentUserSpaces = new(), Space = null };
+			return newAppState;
 		}
 
 		//CurrentUserSpaces
 		if (
-			newState.CurrentUserSpaces.Count == 0
-			|| (routeState.SpaceId is not null && !newState.CurrentUserSpaces.Any(x => x.Id == routeState.SpaceId))
+			newAppState.CurrentUserSpaces.Count == 0
+			|| (routeState.SpaceId is not null && !newAppState.CurrentUserSpaces.Any(x => x.Id == routeState.SpaceId))
 			) //Fill in only if not already loaded
-			newState = newState with { CurrentUserSpaces = await GetUserSpacesAsync(currentUser) };
+			newAppState = newAppState with { CurrentUserSpaces = await GetUserSpacesAsync(currentUser) };
 
 		if (routeState.SpaceId is not null)
 		{
-			newState = newState with { Space = GetSpace(routeState.SpaceId.Value) };
+			newAppState = newAppState with { Space = GetSpace(routeState.SpaceId.Value) };
 		}
 		else
 		{
-			newState = newState with { Space = null };
+			newAppState = newAppState with { Space = null };
 		}
 
-		return newState;
+		return newAppState;
 	}
 
 	internal TucSpace GetSpace(Guid spaceId)

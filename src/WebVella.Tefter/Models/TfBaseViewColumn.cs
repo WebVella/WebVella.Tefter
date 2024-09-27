@@ -10,11 +10,15 @@ public interface ITfExportableViewColumn
 
 public interface ITfAuxDataUseViewColumn
 {
-	Task OnSpaceViewStateInited(TfAppState appState);
+	Task OnSpaceViewStateInited(TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState);
 }
 
 public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExportableViewColumn, ITfAuxDataUseViewColumn
 {
+	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Inject] protected IToastService ToastService { get; set; }
@@ -23,7 +27,9 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	[Parameter] public TfComponentContext Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
+	#endregion
 
+	#region << Constructor >>
 	public TfBaseViewColumn()
 	{
 	}
@@ -31,11 +37,15 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	protected IStringLocalizer LC;
-	protected virtual TItem options { get; set; } = Activator.CreateInstance<TItem>();
+	protected virtual TItem componentOptions { get; set; }
 	protected string optionsSerialized = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// If overrided do not forget to call it
 	/// </summary>
@@ -51,6 +61,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		componentOptions = Activator.CreateInstance<TItem>();
 		var type = this.GetType();
 		var (resourceBaseName, resourceLocation) = type.GetLocalizationResourceInfo();
 		if (!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation))
@@ -71,10 +82,12 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		if (Context.CustomOptionsJson != optionsSerialized)
 		{
 			optionsSerialized = Context.CustomOptionsJson;
-			options = GetOptions();
+			componentOptions = GetOptions();
 		}
 	}
+	#endregion
 
+	#region << Base methods >>
 	/// <summary>
 	/// Base method for dealing with localization, based on localization resources provided in the implementing component
 	/// </summary>
@@ -111,7 +124,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// <returns></returns>
 	protected virtual TucDatabaseColumnType? GetColumnDatabaseTypeByAlias(string alias)
 	{
-		if(Context.DataTable is null) return null;
+		if (Context.DataTable is null) return null;
 		var colName = GetColumnNameFromAlias(alias);
 		if (colName == null) return null;
 
@@ -154,6 +167,72 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 				return GetDataStringByAlias(alias);
 			case TucDatabaseColumnType.Guid:
 				return GetDataStructByAlias<Guid>(alias);
+			default:
+				throw new Exception("colDbType not supported");
+		}
+	}
+
+	protected virtual Type GetColumnObjectTypeByAlias(string alias)
+	{
+		var colName = GetColumnNameFromAlias(alias);
+		var colDbType = GetColumnDatabaseTypeByAlias(alias);
+		if (colName is null || colDbType is null) return null;
+
+		switch (colDbType)
+		{
+			case TucDatabaseColumnType.ShortInteger:
+				return typeof(short);
+			case TucDatabaseColumnType.AutoIncrement:
+			case TucDatabaseColumnType.Integer:
+				return typeof(int);
+			case TucDatabaseColumnType.LongInteger:
+				return typeof(long);
+			case TucDatabaseColumnType.Number:
+				return typeof(decimal);
+			case TucDatabaseColumnType.Boolean:
+				return typeof(bool);
+			case TucDatabaseColumnType.Date:
+				return typeof(DateOnly);
+			case TucDatabaseColumnType.DateTime:
+				return typeof(DateTime);
+			case TucDatabaseColumnType.ShortText:
+			case TucDatabaseColumnType.Text:
+				return typeof(string);
+			case TucDatabaseColumnType.Guid:
+				return typeof(Guid);
+			default:
+				throw new Exception("colDbType not supported");
+		}
+	}
+
+	protected virtual object ConvertStringToColumnObjectByAlias(string alias,string stringValue)
+	{
+		var colName = GetColumnNameFromAlias(alias);
+		var colDbType = GetColumnDatabaseTypeByAlias(alias);
+		if (colName is null || colDbType is null) return null;
+
+		switch (colDbType)
+		{
+			case TucDatabaseColumnType.ShortInteger:
+				return TfConverters.Convert<short>(stringValue);
+			case TucDatabaseColumnType.AutoIncrement:
+			case TucDatabaseColumnType.Integer:
+				return TfConverters.Convert<int>(stringValue);
+			case TucDatabaseColumnType.LongInteger:
+				return TfConverters.Convert<long>(stringValue);
+			case TucDatabaseColumnType.Number:
+				return TfConverters.Convert<decimal>(stringValue);
+			case TucDatabaseColumnType.Boolean:
+				return TfConverters.Convert<bool>(stringValue);
+			case TucDatabaseColumnType.Date:
+				return TfConverters.Convert<DateOnly>(stringValue);
+			case TucDatabaseColumnType.DateTime:
+				return TfConverters.Convert<DateTime>(stringValue);
+			case TucDatabaseColumnType.ShortText:
+			case TucDatabaseColumnType.Text:
+				return stringValue;
+			case TucDatabaseColumnType.Guid:
+				return TfConverters.Convert<Guid>(stringValue);;
 			default:
 				throw new Exception("colDbType not supported");
 		}
@@ -244,8 +323,6 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 
 	}
 
-
-
 	/// <summary>
 	/// Base methods for dealing with options
 	/// </summary>
@@ -253,8 +330,8 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	{
 		if (!String.IsNullOrWhiteSpace(Context.CustomOptionsJson))
 		{
-			options = JsonSerializer.Deserialize<TItem>(Context.CustomOptionsJson);
-			if (options is not null) return options;
+			componentOptions = JsonSerializer.Deserialize<TItem>(Context.CustomOptionsJson);
+			if (componentOptions is not null) return componentOptions;
 		}
 		return Activator.CreateInstance<TItem>();
 	}
@@ -270,9 +347,9 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 
 		PropertyInfo propertyInfo = typeof(TItem).GetProperty(propName);
 		if (propertyInfo is null) return;
-		propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+		propertyInfo.SetValue(componentOptions, Convert.ChangeType(value, propertyInfo.PropertyType), null);
 		if (!OptionsChanged.HasDelegate) return;
-		await OptionsChanged.InvokeAsync(JsonSerializer.Serialize(options));
+		await OptionsChanged.InvokeAsync(JsonSerializer.Serialize(componentOptions));
 	}
 
 	/// <summary>
@@ -354,8 +431,12 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// The usual context with all the view meta and data is available when this method is called
 	/// </summary>
 	/// <param name="appState">the most current complete appState reference</param>
-	public virtual Task OnSpaceViewStateInited(TfAppState appState)
+	public virtual Task OnSpaceViewStateInited(TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		return Task.CompletedTask;
 	}
+	#endregion
 }

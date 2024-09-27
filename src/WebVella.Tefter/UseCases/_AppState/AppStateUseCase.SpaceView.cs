@@ -1,12 +1,14 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser, TfRouteState routeState,
-		TfAppState newState, TfAppState oldState)
+	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (newState.Space is null)
+		if (newAppState.Space is null)
 		{
-			newState = newState with
+			newAppState = newAppState with
 			{
 				SpaceViewList = new(),
 				SpaceView = null,
@@ -15,20 +17,20 @@ internal partial class AppStateUseCase
 				SpaceViewData = null,
 				SelectedDataRows = new()
 			};
-			return Task.FromResult(newState);
+			return Task.FromResult(newAppState);
 		}
 
 		//SpaceViewList
 
-		if (newState.Space?.Id != oldState.Space?.Id)
-			newState = newState with { SpaceViewList = GetSpaceViewList(routeState.SpaceId.Value) };
+		if (newAppState.Space?.Id != oldAppState.Space?.Id)
+			newAppState = newAppState with { SpaceViewList = GetSpaceViewList(routeState.SpaceId.Value) };
 
 		//Space View
 		if (routeState.SpaceViewId is not null)
 		{
 			int defaultPageSize = TfConstants.PageSize;
 			if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
-			newState = newState with
+			newAppState = newAppState with
 			{
 				SpaceView = GetSpaceView(routeState.SpaceViewId.Value),
 				SpaceViewColumns = GetViewColumns(routeState.SpaceViewId.Value),
@@ -38,57 +40,66 @@ internal partial class AppStateUseCase
 				SpaceViewFilters = routeState.Filters,
 				SpaceViewSorts = routeState.Sorts,
 			};
-			if (newState.SpaceView is not null && newState.SpaceView.SpaceDataId.HasValue)
+			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue)
 			{
 				var viewData = GetSpaceViewData(
-							spaceDataId: newState.SpaceView.SpaceDataId.Value,
-							additionalFilters: newState.SpaceViewFilters,
-							sortOverrides: newState.SpaceViewSorts,
-							search: newState.SpaceViewSearch,
-							page: newState.SpaceViewPage,
-							pageSize: newState.SpaceViewPageSize
+							spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
+							additionalFilters: newAppState.SpaceViewFilters,
+							sortOverrides: newAppState.SpaceViewSorts,
+							search: newAppState.SpaceViewSearch,
+							page: newAppState.SpaceViewPage,
+							pageSize: newAppState.SpaceViewPageSize
 						);
-				newState = newState with
+				newAppState = newAppState with
 				{
 					SpaceViewData = viewData,
-					SpaceViewPage = viewData?.QueryInfo.Page ?? newState.SpaceViewPage,
+					SpaceViewPage = viewData?.QueryInfo.Page ?? newAppState.SpaceViewPage,
 				};
 			}
 			else
 			{
-				newState = newState with { SpaceViewData = null };
+				newAppState = newAppState with { SpaceViewData = null };
 			}
 
 			//Aux Data Hook
 			var compContext = new TfComponentContext()
 			{
-				Hash = newState.Hash,
-				DataTable = newState.SpaceViewData,
+				Hash = newAppState.Hash,
+				DataTable = newAppState.SpaceViewData,
 				Mode = TfComponentMode.Display, //ignored here
-				SpaceViewId = newState.SpaceView.Id,
+				SpaceViewId = newAppState.SpaceView.Id,
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here
 				RowIndex = 0,///ignored here
 				CustomOptionsJson = null, //set in column loop
 				DataMapping = null,//set in column loop
 				QueryName = null,//set in column loop
+				SpaceViewColumnId = Guid.Empty, //set in column loop
 			};
-			foreach (TucSpaceViewColumn column in newState.SpaceViewColumns)
+			foreach (TucSpaceViewColumn column in newAppState.SpaceViewColumns)
 			{
 				if (column.ComponentType is not null
 					&& column.ComponentType.GetInterface(nameof(ITfAuxDataUseViewColumn)) != null)
 				{
+					compContext.SpaceViewColumnId = column.Id;
 					compContext.CustomOptionsJson = column.CustomOptionsJson;
 					compContext.DataMapping = column.DataMapping;
 					compContext.QueryName = column.QueryName;
 					var component = (ITfAuxDataUseViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
-					component.OnSpaceViewStateInited(newState);
+					component.OnSpaceViewStateInited(
+							currentUser: currentUser,
+							routeState: routeState,
+							newAppState: newAppState,
+							oldAppState: oldAppState,
+							newAuxDataState: newAuxDataState,
+							oldAuxDataState: oldAuxDataState
+					);
 				}
 			}
 		}
 		else
 		{
-			newState = newState with
+			newAppState = newAppState with
 			{
 				SpaceView = null,
 				SpaceViewColumns = new(),
@@ -101,14 +112,14 @@ internal partial class AppStateUseCase
 				SelectedDataRows = new()
 			};
 		}
-		newState = newState with { AvailableColumnTypes = GetAvailableSpaceViewColumnTypes() };
+		newAppState = newAppState with { AvailableColumnTypes = GetAvailableSpaceViewColumnTypes() };
 
 		//SelectedDataRows
-		if (oldState.SpaceView?.Id != newState.SpaceView?.Id)
-			newState = newState with { SelectedDataRows = new() };
+		if (oldAppState.SpaceView?.Id != newAppState.SpaceView?.Id)
+			newAppState = newAppState with { SelectedDataRows = new() };
 
 
-		return Task.FromResult(newState);
+		return Task.FromResult(newAppState);
 	}
 	internal TucSpaceView GetSpaceView(Guid viewId)
 	{

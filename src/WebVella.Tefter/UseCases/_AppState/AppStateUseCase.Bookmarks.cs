@@ -1,35 +1,37 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitBookmarksAsync(TucUser currentUser, TfRouteState routeState, TfAppState newState, TfAppState oldState)
+	internal async Task<TfAppState> InitBookmarksAsync(TucUser currentUser, TfRouteState routeState, 
+		TfAppState newAppState, TfAppState oldAppState, 
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Home
 			|| routeState.FirstNode == RouteDataFirstNode.Space)
 			)
 		{
-			newState = newState with { CurrentUserBookmarks = null, CurrentUserSaves = null, 
+			newAppState = newAppState with { CurrentUserBookmarks = null, CurrentUserSaves = null, 
 				ActiveSpaceViewSavedUrl = null, ActiveSpaceViewBookmark = null };
-			return newState;
+			return newAppState;
 		}
-		if (newState.CurrentUserBookmarks == null || newState.CurrentUserSaves == null)
+		if (newAppState.CurrentUserBookmarks == null || newAppState.CurrentUserSaves == null)
 		{
 			var (bookmarks, saves) = await GetUserBookmarksAsync(currentUser.Id);
-			newState = newState with
+			newAppState = newAppState with
 			{
 				CurrentUserBookmarks = bookmarks,
 				CurrentUserSaves = saves
 			};
 		}
-		var activeSave = newState.CurrentUserSaves.FirstOrDefault(x=> x.Id == routeState.ActiveSaveId);
-		var activeBookmark = newState.CurrentUserBookmarks.FirstOrDefault(x=> x.SpaceViewId == routeState.SpaceViewId);
-		newState = newState with
+		var activeSave = newAppState.CurrentUserSaves.FirstOrDefault(x=> x.Id == routeState.ActiveSaveId);
+		var activeBookmark = newAppState.CurrentUserBookmarks.FirstOrDefault(x=> x.SpaceViewId == routeState.SpaceViewId);
+		newAppState = newAppState with
 		{
 			ActiveSpaceViewSavedUrl = activeSave,
 			ActiveSpaceViewBookmark = activeBookmark
 		};
 
-		return newState;
+		return newAppState;
 	}
 
 	internal async Task<(List<TucBookmark>, List<TucBookmark>)> GetUserBookmarksAsync(Guid userId)

@@ -87,6 +87,7 @@ public class ExportUseCase
 				CustomOptionsJson = null, //set in column loop
 				DataMapping = null,//set in column loop
 				QueryName = null,//set in column loop
+				SpaceViewColumnId = Guid.Empty
 			};
 			for (int i = 0; i < viewData.Rows.Count; i++)
 			{
@@ -98,6 +99,7 @@ public class ExportUseCase
 					&& !data.SelectedRows.Contains(rowId)) continue;
 				foreach (TfSpaceViewColumn column in viewColumns)
 				{
+					compContext.SpaceViewColumnId = column.Id;
 					compContext.CustomOptionsJson = column.CustomOptionsJson;
 					compContext.DataMapping = column.DataMapping;
 					compContext.QueryName = column.QueryName;

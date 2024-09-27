@@ -207,6 +207,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			RowIndex = -1,
 			QueryName = _form.QueryName,
 			SpaceViewId = _form.SpaceViewId,
+			SpaceViewColumnId = _form.Id,
 			EditContext = EditContext,
 			ValidationMessageStore = MessageStore
 		};

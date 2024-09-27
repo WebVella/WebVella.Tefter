@@ -24,42 +24,42 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentGrid>
 		<FluentGridItem xs="4">
 			<FluentInputLabel Label="@LOC("Label")" />
-			<FluentCheckbox Value="@options.ShowLabel" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ShowLabel),x))
+			<FluentCheckbox Value="@componentOptions.ShowLabel" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ShowLabel),x))
 							Label="@LOC("show label")" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="4">
 			<FluentTextField Label="@LOC("TRUE label")"
-							 Value="@options.TrueLabel" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueLabel),x))
+							 Value="@componentOptions.TrueLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.TrueLabel),x))
 							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 		<FluentGridItem xs="4">
 			<FluentTextField Label="@LOC("FALSE label")"
-							 Value="@options.FalseLabel" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseLabel),x))
+							 Value="@componentOptions.FalseLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseLabel),x))
 							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 		<FluentGridItem xs="4">
 			<FluentTextField Label="@LOC("NULL label")"
-							 Value="@options.NullLabel" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullLabel),x))
+							 Value="@componentOptions.NullLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.NullLabel),x))
 							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="4">
 			<FluentInputLabel Label="@LOC("Change confirmation")" />
-			<FluentCheckbox Value="@options.ChangeRequiresConfirmation" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeRequiresConfirmation),x))
+			<FluentCheckbox Value="@componentOptions.ChangeRequiresConfirmation" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeRequiresConfirmation),x))
 							Label="@LOC("requires confirmation")" />
 		</FluentGridItem>
 		<FluentGridItem xs="8">
 			<FluentTextField Label="@LOC("Confirmation message")"
-							 Value="@options.ChangeConfirmationMessage" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.ChangeConfirmationMessage),x))
+							 Value="@componentOptions.ChangeConfirmationMessage" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeConfirmationMessage),x))
 							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 	</FluentGrid>

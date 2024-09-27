@@ -4,11 +4,11 @@
 {
 	if (_value is null)
 	{
-		if (!String.IsNullOrWhiteSpace(options.NullLabel))
+		if (!String.IsNullOrWhiteSpace(componentOptions.NullLabel))
 		{
-			<div>@options.NullLabel</div>
+			<div>@componentOptions.NullLabel</div>
 		}
-		else if (options.NullValueShowAsIcon)
+		else if (componentOptions.NullValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("SubtractSquare")" Color="@Color.FillInverse" /></div>
 		}
@@ -19,11 +19,11 @@
 	}
 	else if (_value.Value)
 	{
-		if (!String.IsNullOrWhiteSpace(options.TrueLabel))
+		if (!String.IsNullOrWhiteSpace(componentOptions.TrueLabel))
 		{
-			<div>@options.TrueLabel</div>
+			<div>@componentOptions.TrueLabel</div>
 		}
-		else if (options.TrueValueShowAsIcon)
+		else if (componentOptions.TrueValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Checkmark")" Color="@Color.Success" /></div>
 		}
@@ -34,11 +34,11 @@
 	}
 	else
 	{
-		if (!String.IsNullOrWhiteSpace(options.FalseLabel))
+		if (!String.IsNullOrWhiteSpace(componentOptions.FalseLabel))
 		{
-			<div>@options.FalseLabel</div>
+			<div>@componentOptions.FalseLabel</div>
 		}
-		else if (options.FalseValueShowAsIcon)
+		else if (componentOptions.FalseValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
 		}
@@ -54,39 +54,39 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentInputLabel Label="@LOC("on TRUE (text with priority)")" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.TrueLabel" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueLabel),x))
+			<FluentTextField Value="@componentOptions.TrueLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.TrueLabel),x))
 							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.TrueValueShowAsIcon" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueValueShowAsIcon),x))
+			<FluentCheckbox Value="@componentOptions.TrueValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.TrueValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentInputLabel Label="@LOC("on FALSE (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.FalseLabel" Style="width:100%" 
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseLabel),x))
+			<FluentTextField Value="@componentOptions.FalseLabel" Style="width:100%" 
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseLabel),x))
 							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.FalseValueShowAsIcon" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseValueShowAsIcon),x))
+			<FluentCheckbox Value="@componentOptions.FalseValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentInputLabel Label="@LOC("on NULL (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.NullLabel" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullLabel),x))
+			<FluentTextField Value="@componentOptions.NullLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.NullLabel),x))
 							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.NullValueShowAsIcon" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullValueShowAsIcon),x))
+			<FluentCheckbox Value="@componentOptions.NullValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.NullValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>

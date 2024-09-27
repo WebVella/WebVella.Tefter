@@ -218,6 +218,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			RowIndex = rowIndex,
 			QueryName = column.QueryName,
 			SpaceViewId = column.SpaceViewId,
+			SpaceViewColumnId = column.Id,
 		};
 		return componentData;
 	}

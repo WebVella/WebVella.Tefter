@@ -74,9 +74,9 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -124,9 +124,9 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 
 		_options.Clear();
 		_selectedOptions.Clear();
-		if (!String.IsNullOrWhiteSpace(options.OptionsString))
+		if (!String.IsNullOrWhiteSpace(componentOptions.OptionsString))
 		{
-			var rows = options.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+			var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 			foreach (var row in rows)
 			{
 				var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
