@@ -2,7 +2,7 @@
 @inherits TfBaseViewColumn<TfNumberDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>@(GetDataObjectByAlias<decimal>(_valueAlias, null)?.ToString(options.Format))</div>
+	<div>@(GetDataStructByAlias<decimal>(_valueAlias, null)?.ToString(options.Format))</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {

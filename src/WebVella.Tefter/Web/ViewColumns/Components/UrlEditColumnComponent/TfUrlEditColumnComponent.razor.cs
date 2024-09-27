@@ -53,6 +53,7 @@ public partial class TfUrlEditColumnComponent : TfBaseViewColumn<TfUrlEditColumn
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -62,7 +63,7 @@ public partial class TfUrlEditColumnComponent : TfBaseViewColumn<TfUrlEditColumn
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<Guid>(_valueAlias)?.ToString();
+		return GetDataStructByAlias<Guid>(_valueAlias)?.ToString();
 	}
 
 	/// <summary>

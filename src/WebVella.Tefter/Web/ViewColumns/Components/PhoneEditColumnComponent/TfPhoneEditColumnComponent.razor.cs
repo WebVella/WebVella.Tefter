@@ -53,6 +53,7 @@ public partial class TfPhoneEditColumnComponent : TfBaseViewColumn<TfPhoneEditCo
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -62,7 +63,7 @@ public partial class TfPhoneEditColumnComponent : TfBaseViewColumn<TfPhoneEditCo
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<Guid>(_valueAlias)?.ToString();
+		return GetDataStructByAlias<Guid>(_valueAlias)?.ToString();
 	}
 
 	/// <summary>

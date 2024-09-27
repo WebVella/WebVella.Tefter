@@ -62,7 +62,7 @@ public partial class TfNumberEditColumnComponent : TfBaseViewColumn<TfNumberEdit
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<decimal>(_valueAlias, null);
+		return GetDataStructByAlias<decimal>(_valueAlias, null);
 	}
 
 	/// <summary>
@@ -122,7 +122,7 @@ public partial class TfNumberEditColumnComponent : TfBaseViewColumn<TfNumberEdit
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias<decimal>(_valueAlias, null);
+		_value = GetDataStructByAlias<decimal>(_valueAlias, null);
 	}
 }
 

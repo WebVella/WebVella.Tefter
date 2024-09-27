@@ -51,6 +51,7 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -62,7 +63,7 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	public override object GetData()
 	{
 		//dateonly is not generally supported so we return datetime
-		var dateOnly = GetDataObjectByAlias<DateOnly>(_valueAlias, null);
+		var dateOnly = GetDataStructByAlias<DateOnly>(_valueAlias, null);
 		if (dateOnly is null) return null;
 
 		return dateOnly.Value.ToDateTime();
@@ -112,7 +113,7 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 
 	private void _initValues()
 	{
-		var dateOnly = GetDataObjectByAlias<DateOnly>(_valueAlias, null);
+		var dateOnly = GetDataStructByAlias<DateOnly>(_valueAlias, null);
 		if (dateOnly is null)
 		{
 			_value = null;

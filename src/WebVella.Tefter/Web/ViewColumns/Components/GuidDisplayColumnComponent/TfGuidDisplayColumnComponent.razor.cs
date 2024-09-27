@@ -39,7 +39,7 @@ public partial class TfGuidDisplayColumnComponent : TfBaseViewColumn<TfGuidDispl
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<Guid>(_valueAlias);
+		return GetDataStructByAlias<Guid>(_valueAlias);
 	}
 }
 /// <summary>

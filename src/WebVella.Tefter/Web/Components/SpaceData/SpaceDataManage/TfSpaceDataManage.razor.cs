@@ -45,16 +45,49 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private bool _isCreate = false;
 	private TucSpaceData _form = new();
 
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		_init();
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
+			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
+		}
+	}
+
+	private void On_AppChanged(SetAppStateAction action)
+	{
+		_init();
+		StateHasChanged();
+	}
+
+	private void _init()
+	{
 		_form = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
 		base.InitForm(_form);
 		if (_form.DataProviderId != Guid.Empty)
 		{
 			SelectedProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _form.DataProviderId);
 		}
+		else
+		{
+			SelectedProvider = null;
+		}
 	}
+
 
 	private void _dataProviderSelected(TucDataProvider provider)
 	{
@@ -63,8 +96,9 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		_form.DataProviderId = SelectedProvider.Id;
 	}
 
-	private TucColumn _getProviderColumnByName(string dbName){ 
-		return SelectedProvider?.ColumnsTotal.FirstOrDefault(x=> x.DbName == dbName);
+	private TucColumn _getProviderColumnByName(string dbName)
+	{
+		return SelectedProvider?.ColumnsTotal.FirstOrDefault(x => x.DbName == dbName);
 	}
 
 	private async Task _addColumn()
@@ -280,7 +314,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 					SpaceData = submitResult.Value,
 					SpaceDataList = spaceDataList
 				}));
-				_form = submitResult.Value with {Id = submitResult.Value.Id};
+				_form = submitResult.Value with { Id = submitResult.Value.Id };
 			}
 		}
 		catch (Exception ex)

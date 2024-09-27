@@ -109,13 +109,31 @@ internal static class NavigatorExt
 			{
 				if (result.NodesDict[2] == TfConstants.RouteNameSpaceView)
 				{
-					result = result with { SecondNode = RouteDataSecondNode.SpaceView };
-					result = result with { ThirdNode = RouteDataThirdNode.Details };
+					result = result with
+					{
+						SecondNode = RouteDataSecondNode.SpaceView,
+						ThirdNode = RouteDataThirdNode.Details
+					};
 				}
 				else if (result.NodesDict[2] == TfConstants.RouteNameSpaceData)
 				{
-					result = result with { SecondNode = RouteDataSecondNode.SpaceData };
-					result = result with { ThirdNode = RouteDataThirdNode.Details };
+					result = result with
+					{
+						SecondNode = RouteDataSecondNode.SpaceData,
+						ThirdNode = RouteDataThirdNode.Details
+					};
+					if(result.NodesDict.Count >= 5){ 
+						if(result.NodesDict[4] == TfConstants.RouteNameViews){ 
+							result = result with { 
+								ThirdNode = RouteDataThirdNode.Views
+							};
+						}
+						else if(result.NodesDict[4] == TfConstants.RouteNameData){ 
+							result = result with { 
+								ThirdNode = RouteDataThirdNode.Data
+							};
+						}
+					}
 				}
 			}
 			//Process 4

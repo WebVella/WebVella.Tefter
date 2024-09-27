@@ -543,7 +543,8 @@ internal partial class AppStateUseCase
 			return null;
 		}
 		var spaceData = GetSpaceData(spaceDataId);
-		if(spaceData is null){
+		if (spaceData is null)
+		{
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("Space Data is not found"),
 				toastErrorMessage: "Space Data is not found",
@@ -590,6 +591,51 @@ internal partial class AppStateUseCase
 		return Result.Ok(saveResult.Value);
 	}
 
+	internal Result DeleteSpaceViewDataRows(Guid spaceDataId, List<Guid> tfIdList)
+	{
+		if (spaceDataId == Guid.Empty)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("spaceDataId not provided"),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("Space Data is not found"),
+				toastErrorMessage: "Space Data is not found",
+				notificationErrorTitle: "Space Data is not found",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var dataProviderResult = _dataProviderManager.GetProvider(spaceData.DataProviderId);
+		if (dataProviderResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProvider failed").CausedBy(dataProviderResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+		foreach (var tfId in tfIdList)
+		{
+			var result = _dataManager.DeleteDataProviderRowByTfId(dataProviderResult.Value, tfId);
+			if(result.IsFailed) return Result.Fail("Deleting a record failed");
+		}
+		return Result.Ok();
+	}
 
 	//View columns
 	internal TucSpaceViewColumn GetViewColumn(Guid columnId)

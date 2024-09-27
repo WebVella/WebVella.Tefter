@@ -1,0 +1,55 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+@if (TfAppState.Value.SpaceDataData is not null)
+{
+	<div class="tfdt">
+		<div class="tfdt__toolbar" style="display:flex;justify-content:space-between;">
+			<div style="flex:1 1 auto">
+				<FluentStack>
+					<FluentSearch Value="@TfAppState.Value.SpaceDataSearch" ValueChanged="_onSearch" />
+				</FluentStack>
+			</div>
+		</div>
+		<div class="tfdt__content">
+			<div class="tf-grid-wrapper">
+				<table class="tf-grid">
+					<thead class="tf-grid-thead">
+						<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
+						<tr class="tf-grid-tr">
+							@foreach (var column in TfAppState.Value.SpaceData.Columns)
+							{
+								<th class="tf-grid-th">@column</th>
+							}
+						</tr>
+					</thead>
+					<tbody class="tf-grid-tbody">
+						@foreach (TfDataRow row in TfAppState.Value.SpaceDataData.Rows)
+						{
+							<tr @key=@row["tf_id"] class="tf-grid-tr">
+								@foreach (var column in TfAppState.Value.SpaceData.Columns)
+								{
+									<td class="tf-grid-td">
+										<div>@row[column]</div>
+									</td>
+								}
+							</tr>
+						}
+						@if (TfAppState.Value.SpaceDataData.Rows.Count == 0)
+						{
+							<tr class="tf-grid-tr">
+								<td class="tf-grid-td">No records found</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+		<div class="tfdt__pager">
+			<TfPager Page="@TfAppState.Value.SpaceDataPage" GoLast="@_goLastPage" GoNext="@_goNextPage"
+					 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
+		</div>
+	</div>
+}

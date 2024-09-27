@@ -808,7 +808,7 @@ public partial class DataManager
 				$"DELETE FROM dp{provider.Index} WHERE tf_id = @tf_id",
 				new NpgsqlParameter("@tf_id", tfId));
 
-			if(count != 0)
+			if(count == 0)
 			{
 				return Result.Fail(new ValidationError(
 						nameof(provider),

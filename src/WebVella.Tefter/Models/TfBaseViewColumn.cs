@@ -109,7 +109,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		{
 			return defaultValue;
 		}
-		if(Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+		if (Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
 
 		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return defaultValue;
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return defaultValue;
@@ -126,14 +126,14 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual Nullable<T> GetDataObjectByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
+	protected virtual Nullable<T> GetDataStructByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
 	{
 		string dbName = GetColumnNameFromAlias(alias);
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
 			return null;
 		}
-		if(Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+		if (Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
 
 		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return null;
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
@@ -144,6 +144,30 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		else if (value is T) return (T)value;
 		return TfConverters.Convert<T>(value.ToString());
 	}
+	protected virtual T? GetDataObjectByAlias<T>(string alias, T? defaultValue = null) where T : class
+	{
+		string dbName = GetColumnNameFromAlias(alias);
+		if (String.IsNullOrWhiteSpace(dbName))
+		{
+			return null;
+		}
+		if (Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+
+		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return null;
+		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
+		object value = Context.DataTable.Rows[Context.RowIndex][dbName];
+		if (value is null) return null;
+
+		if (value is T) return (T)value;
+
+		try{
+			return JsonSerializer.Deserialize<T>(value.ToString());
+		}
+		catch { throw new Exception("Value cannot be parsed"); }
+		
+	}
+
+
 
 	/// <summary>
 	/// Base methods for dealing with options

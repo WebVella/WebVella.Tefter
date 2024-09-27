@@ -6,7 +6,14 @@ internal partial class AppStateUseCase
 	{
 		if (newState.Space is null)
 		{
-			newState = newState with { SpaceData = null, SpaceDataList = new(), AllDataProviders = new() };
+			newState = newState with { 
+				SpaceData = null, 
+				SpaceDataList = new(), 
+				AllDataProviders = new(),
+				SpaceDataData = null,
+				SpaceDataPage = 1,
+				SpaceDataPageSize = TfConstants.PageSize,
+				SpaceDataSearch = null};
 			return Task.FromResult(newState);
 		}
 		//SpaceDataList
@@ -16,12 +23,34 @@ internal partial class AppStateUseCase
 		if (routeState.SpaceDataId is not null)
 		{
 			newState = newState with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
+
+			//Space Data data
+			if(routeState.ThirdNode == RouteDataThirdNode.Data){ 
+				var viewData = GetSpaceViewData(
+							spaceDataId: newState.SpaceData.Id,
+							additionalFilters: null,
+							sortOverrides: null,
+							search: routeState.Search,
+							page: routeState.Page,
+							pageSize: routeState.PageSize ?? TfConstants.PageSize
+						);			
+				newState = newState with
+				{
+					SpaceDataData = viewData,
+					SpaceDataPage = viewData?.QueryInfo.Page ?? (routeState.Page ?? 1),
+					SpaceDataPageSize = routeState.PageSize ?? TfConstants.PageSize,
+					SpaceDataSearch = routeState.Search
+				};
+			}
+
 		}
 		else
 		{
 			newState = newState with { SpaceData = null };
 		}
 		newState = newState with { AllDataProviders = GetDataProviderList() };
+
+
 		return Task.FromResult(newState);
 	}
 	internal TucSpaceData GetSpaceData(Guid spaceDataId)

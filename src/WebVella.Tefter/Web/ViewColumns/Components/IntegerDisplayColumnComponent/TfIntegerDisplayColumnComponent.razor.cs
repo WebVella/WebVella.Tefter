@@ -39,7 +39,7 @@ public partial class TfIntegerDisplayColumnComponent : TfBaseViewColumn<TfIntege
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<int>(_valueAlias);
+		return GetDataStructByAlias<int>(_valueAlias);
 	}
 }
 

@@ -2,7 +2,7 @@
 @inherits TfBaseViewColumn<TfBooleanEditColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataObjectByAlias<bool>(_valueAlias, null);
+	var value = GetDataStructByAlias<bool>(_valueAlias, null);
 	<div>
 		@if (_isThreeState)
 		{

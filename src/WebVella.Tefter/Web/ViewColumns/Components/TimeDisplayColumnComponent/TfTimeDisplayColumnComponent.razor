@@ -2,7 +2,7 @@
 @inherits TfBaseViewColumn<TfTimeDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataObjectByAlias<DateTime>(_valueAlias, null);
+	var value = GetDataStructByAlias<DateTime>(_valueAlias, null);
 	var options = GetOptions();
 	var format = options.Format;
 	if (string.IsNullOrWhiteSpace(format)) format = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;

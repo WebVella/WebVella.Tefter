@@ -39,7 +39,7 @@ public partial class TfLongIntegerDisplayColumnComponent : TfBaseViewColumn<TfLo
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<long>(_valueAlias);
+		return GetDataStructByAlias<long>(_valueAlias);
 	}
 }
 

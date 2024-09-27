@@ -52,6 +52,7 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
+			_renderedHash = Context.Hash;
 		}
 	}
 
@@ -62,7 +63,7 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias<DateTime>(_valueAlias, null);
+		return GetDataStructByAlias<DateTime>(_valueAlias, null);
 	}
 
 	/// <summary>
@@ -121,7 +122,7 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias<DateTime>(_valueAlias, null);
+		_value = GetDataStructByAlias<DateTime>(_valueAlias, null);
 	}
 }
 
