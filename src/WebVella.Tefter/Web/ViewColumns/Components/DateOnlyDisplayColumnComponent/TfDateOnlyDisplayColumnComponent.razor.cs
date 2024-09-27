@@ -8,6 +8,7 @@
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateOnlyDisplayColumnComponent.TfDateOnlyDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
@@ -23,7 +24,9 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -38,7 +41,9 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
@@ -52,8 +57,9 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 			_renderedHash = Context.Hash;
 		}
 	}
+	#endregion
 
-
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
@@ -67,13 +73,16 @@ public partial class TfDateOnlyDisplayColumnComponent : TfBaseViewColumn<TfDateO
 
 		return _value?.ToDateTime();
 	}
+	#endregion
 
+	#region << Private logic >>
 	private void _initValues()
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if(columnData is not null && columnData is not DateOnly) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
 		_value = (DateOnly?)columnData;
 	}
+	#endregion
 }
 
 /// <summary>

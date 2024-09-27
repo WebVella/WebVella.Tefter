@@ -143,6 +143,8 @@ else
 										var selected = _getItemSelection(index);
 										<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
 											<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"background:var(--neutral-fill-layer-rest);{configCss[0].Item3}")">
+												<div class="tf-grid-td-selection"></div>
+												<div class="tf-grid-td-hover"></div>
 												<div class="check-content">
 													@if (TfAppState.Value.SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME] is not null)
 													{
@@ -160,21 +162,20 @@ else
 														}
 													}
 												</div>
-												<div class="tf-grid-td-selection"></div>
-												<div class="tf-grid-td-hover"></div>
+
 											</td>
 											@foreach (var column in TfAppState.Value.SpaceViewColumns)
 											{
 												<td class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{configCss[columnIndex].Item3}")">
 													<div class="tf-grid-td-color" style="@column.CellColorStyle"></div>
+													<div class="tf-grid-td-selection"></div>
+													<div class="tf-grid-td-hover"></div>
 													@if (column.ComponentType is not null)
 													{
 														<TfErrorBoundry>
 															<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
 														</TfErrorBoundry>
 													}
-													<div class="tf-grid-td-selection"></div>
-													<div class="tf-grid-td-hover"></div>
 												</td>
 												columnIndex++;
 											}
