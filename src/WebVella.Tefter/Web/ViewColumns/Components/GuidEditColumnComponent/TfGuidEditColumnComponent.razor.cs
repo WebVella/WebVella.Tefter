@@ -10,6 +10,7 @@ namespace WebVella.Tefter.Web.ViewColumns;
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.GuidEditColumnComponent.TfGuidEditColumnComponent", "WebVella.Tefter")]
 public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
@@ -27,8 +28,9 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 	{
 		Context = context;
 	}
-	
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -36,6 +38,7 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
+	private Guid? _value = null;
 	private string _valueString = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
 
@@ -43,7 +46,9 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
@@ -57,16 +62,23 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 			_renderedHash = Context.Hash;
 		}
 	}
+	#endregion
 
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataStructByAlias<Guid>(_valueAlias)?.ToString();
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not Guid) 
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
+		return (Guid?)columnData;
 	}
+	#endregion
 
+	#region << Private logic >>
 	/// <summary>
 	/// process the value change event from the components view
 	/// by design if any kind of error occurs the old value should be set back
@@ -117,7 +129,11 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 
 	private void _initValues()
 	{
-		_valueString = GetDataStructByAlias<Guid>(_valueAlias)?.ToString();
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not Guid) 
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
+		_value = (Guid?)columnData;
+		_valueString = _value?.ToString();
 	}
 
 	private async Task _resetValue()
@@ -127,6 +143,7 @@ public partial class TfGuidEditColumnComponent : TfBaseViewColumn<TfGuidEditColu
 		_initValues();
 		await InvokeAsync(StateHasChanged);
 	}
+	#endregion
 }
 
 public class TfGuidEditColumnComponentOptions

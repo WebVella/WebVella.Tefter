@@ -67,7 +67,8 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 	public override object GetData()
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
-		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'");
+		if (columnData is not null && columnData is not bool) 
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'");
 
 		bool? value = (bool?)columnData;
 		if (value is null) return null;
@@ -86,7 +87,8 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 	private void _initValues()
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
-		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
+		if (columnData is not null && columnData is not bool) 
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
 		_value = (bool?)columnData;
 	}
 	#endregion

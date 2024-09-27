@@ -68,10 +68,10 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	public override object GetData()
 	{
 		//dateonly is not generally supported so we return datetime
-		var dateOnly = GetDataStructByAlias<DateOnly>(_valueAlias, null);
-		if (dateOnly is null) return null;
-
-		return dateOnly.Value.ToDateTime();
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not DateOnly)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
+		return ((DateOnly?)columnData)?.ToDateTime();
 	}
 	#endregion
 
@@ -120,14 +120,10 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 
 	private void _initValues()
 	{
-		var dateOnly = GetDataStructByAlias<DateOnly>(_valueAlias, null);
-		if (dateOnly is null)
-		{
-			_value = null;
-			return;
-		}
-
-		_value = dateOnly.Value.ToDateTime();
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not DateOnly)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
+		_value = ((DateOnly?)columnData)?.ToDateTime();
 	}
 	#endregion
 }

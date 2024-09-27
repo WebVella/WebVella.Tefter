@@ -3,7 +3,7 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 
-	<div>@(GetDataStructByAlias<Guid>(_valueAlias, null))</div>
+	<div>@_value</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {

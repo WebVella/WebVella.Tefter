@@ -2,14 +2,13 @@
 @inherits TfBaseViewColumn<TfEmailDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataStringByAlias(_valueAlias,null);
-	if (!String.IsNullOrWhiteSpace(value) && TfConverters.IsValidEmail(value))
+	if (!String.IsNullOrWhiteSpace(_value) && TfConverters.IsValidEmail(_value))
 	{
-		<div><a href="mailto:@value">@value</a></div>
+		<div><a href="@($"mailto:{_value}")">@_value</a></div>
 	}
 	else
 	{
-		<div>@value</div>
+		<div>@_value</div>
 	}
 	
 }

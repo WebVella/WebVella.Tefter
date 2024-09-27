@@ -2,7 +2,7 @@
 @inherits TfBaseViewColumn<TfLongIntegerDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	<div>@(GetDataStructByAlias<long>(_valueAlias, null)?.ToString(componentOptions.Format))</div>
+	<div>@_value?.ToString(componentOptions.Format))</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
