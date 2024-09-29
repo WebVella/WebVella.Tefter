@@ -17,9 +17,10 @@ public class TfDataColumnCollection : IEnumerable
 
 			var column = _columns.SingleOrDefault(x => x.Name == columnName);
 
-			if (column == null)
-				throw new Exception($"A column with " +
-					$"name {columnName} is not found in collection.");
+			//BOZ: it is more practical to return null and leave the caller to deal with the result
+			if (column == null) return null;
+				//throw new Exception($"A column with " +
+				//	$"name {columnName} is not found in collection.");
 
 			return column;
 		}

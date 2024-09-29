@@ -49,9 +49,9 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
@@ -101,6 +101,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 		try
 		{
+			ConsoleExt.WriteLine($"TfTextEditColumnComponent {_value}");
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
 			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);

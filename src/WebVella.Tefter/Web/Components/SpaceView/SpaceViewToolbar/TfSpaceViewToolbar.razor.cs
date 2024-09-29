@@ -19,7 +19,7 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 			var newDt = TfAppState.Value.SpaceViewData.NewTable();
 			newDt.Rows.Add(newDt.NewRow());
 
-			var result = UC.SaveViewData(newDt);
+			var result = UC.SaveDataDataTable(newDt);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{

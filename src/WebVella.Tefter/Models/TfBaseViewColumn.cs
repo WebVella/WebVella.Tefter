@@ -10,7 +10,10 @@ public interface ITfExportableViewColumn
 
 public interface ITfAuxDataUseViewColumn
 {
-	Task OnSpaceViewStateInited(TucUser currentUser,
+	Task OnSpaceViewStateInited(
+		IDataManager dataManager,
+		ITfSpaceManager spaceManager,
+		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState);
@@ -76,9 +79,10 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 			Context.EditContext.OnValidationRequested += OnOptionsValidationRequested;
 
 	}
-	protected override void OnParametersSet()
+
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.CustomOptionsJson != optionsSerialized)
 		{
 			optionsSerialized = Context.CustomOptionsJson;
@@ -205,7 +209,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		}
 	}
 
-	protected virtual object ConvertStringToColumnObjectByAlias(string alias,string stringValue)
+	protected virtual object ConvertStringToColumnObjectByAlias(string alias, string stringValue)
 	{
 		var colName = GetColumnNameFromAlias(alias);
 		var colDbType = GetColumnDatabaseTypeByAlias(alias);
@@ -232,7 +236,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 			case TucDatabaseColumnType.Text:
 				return stringValue;
 			case TucDatabaseColumnType.Guid:
-				return TfConverters.Convert<Guid>(stringValue);;
+				return TfConverters.Convert<Guid>(stringValue); ;
 			default:
 				throw new Exception("colDbType not supported");
 		}
@@ -312,7 +316,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
 		object value = Context.DataTable.Rows[Context.RowIndex][dbName];
 		if (value is null) return null;
-		if(value is string && String.IsNullOrWhiteSpace((string)value)) return null;
+		if (value is string && String.IsNullOrWhiteSpace((string)value)) return null;
 		if (value is T) return (T)value;
 
 		try
@@ -431,7 +435,10 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// The usual context with all the view meta and data is available when this method is called
 	/// </summary>
 	/// <param name="appState">the most current complete appState reference</param>
-	public virtual Task OnSpaceViewStateInited(TucUser currentUser,
+	public virtual Task OnSpaceViewStateInited(
+		IDataManager dataManager,
+		ITfSpaceManager spaceManager,
+		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)

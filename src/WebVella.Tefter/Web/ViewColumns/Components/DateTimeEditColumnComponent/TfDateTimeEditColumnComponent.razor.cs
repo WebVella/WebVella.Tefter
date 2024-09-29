@@ -52,9 +52,9 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();

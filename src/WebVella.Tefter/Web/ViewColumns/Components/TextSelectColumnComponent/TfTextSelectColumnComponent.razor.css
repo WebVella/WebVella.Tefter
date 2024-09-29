@@ -4,9 +4,17 @@
 
 ::deep fluent-button::part(control) {
 	border:1px solid var(--neutral-stroke-input-active);
-	justify-content: start;
+	justify-content: space-between;
+}
+
+::deep fluent-button::part(start) {
+	display:none;
 }
 
 ::deep fluent-button {
 	background:var(--neutral-fill-input-active) !important;
 }
+	::deep fluent-button svg {
+		fill:var(--neutral-stroke-input-active) !important;
+	}
+ 

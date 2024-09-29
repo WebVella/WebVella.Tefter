@@ -44,36 +44,33 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	private string _valueAlias = "Value";
 	private object _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
-	private List<Tuple<object, string>> _selectOptionsList = new();
-	private Tuple<object, string> _selectedOption = null;
+	private List<TucSelectOption> _selectOptionsList = new();
+	private TucSelectOption _selectedOption = null;
 	private bool _open = false;
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
 	private string _storageKey = "";
-	private TucSpaceData _selectedSpaceData = null;
 	#endregion
 
 	#region << Lifecycle >>
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
 		_initStorageKeys();
-		if (TfAppState.Value.SpaceDataList is not null && TfAppState.Value.SpaceDataList.Count > 0)
-			_selectedSpaceData = TfAppState.Value.SpaceDataList[0];
 	}
 
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
-			_initValues();
+			await _initValues();
 			_renderedHash = Context.Hash;
 		}
 	}
@@ -89,12 +86,17 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 		return GetDataStringByAlias(_valueAlias);
 	}
 
-	public override async Task OnSpaceViewStateInited(TucUser currentUser,
+	public override async Task OnSpaceViewStateInited(
+		IDataManager dataManager,
+		ITfSpaceManager spaceManager,
+		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		await base.OnSpaceViewStateInited(
+			dataManager: dataManager,
+			spaceManager: spaceManager,
 			currentUser: currentUser,
 			routeState: routeState,
 			newAppState: newAppState,
@@ -103,31 +105,78 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 			oldAuxDataState: oldAuxDataState
 		);
 		_initStorageKeys();
-		var options = new List<Tuple<object, string>>();
+		var options = new List<TucSelectOption>();
 		var componentOptions = GetOptions();
-		if (!String.IsNullOrWhiteSpace(componentOptions.OptionsString))
+		if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.ManuallySet)
 		{
-			var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-			foreach (var row in rows)
+			if (!String.IsNullOrWhiteSpace(componentOptions.OptionsString))
 			{
-				var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-				if (items.Count == 0) continue;
-				var valueObj = ConvertStringToColumnObjectByAlias(_valueAlias, items[0]);
-
-				if (items.Count == 1)
+				var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+				foreach (var row in rows)
 				{
-					options.Add(new Tuple<object, string>(valueObj, items[0]));
-				}
-				else if (items.Count > 1)
-				{
-					options.Add(new Tuple<object, string>(valueObj, items[1]));
-				}
+					var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+					if (items.Count == 0) continue;
+					var valueObj = ConvertStringToColumnObjectByAlias(_valueAlias, items[0]);
 
+					if (items.Count == 1)
+					{
+						options.Add(new TucSelectOption(valueObj, items[0]));
+					}
+					else if (items.Count > 1)
+					{
+						options.Add(new TucSelectOption(valueObj, items[1]));
+					}
+
+				}
+			}
+
+		}
+		else if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.SpaceData)
+		{
+			if (componentOptions.SpaceDataId != Guid.Empty)
+			{
+				var optionsDTResult = dataManager.QuerySpaceData(
+					spaceDataId: componentOptions.SpaceDataId,
+					additionalFilters: null,
+					sortOverrides: null,
+					search: null,
+					page: 1,
+					pageSize: TfConstants.SelectOptionsMaxLimit
+				);
+				var optionsDT = optionsDTResult.Value;
+				for (int i = 0; i < optionsDT.Rows.Count; i++)
+				{
+					object value = null;
+					string label = null;
+					string color = null;
+					string backgroundColor = null;
+					string iconName = null;
+
+					if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataValueColumnName))
+					{
+						var columnName = componentOptions.SpaceDataValueColumnName.Trim().ToLowerInvariant();
+						var column = optionsDT.Columns[columnName];
+						if (column is not null)
+						{
+							value = optionsDT.Rows[i][columnName];
+						}
+					}
+					if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataLabelColumnName))
+					{
+						var columnName = componentOptions.SpaceDataLabelColumnName.Trim().ToLowerInvariant();
+						var column = optionsDT.Columns[columnName];
+						if (column is not null)
+						{
+							if (optionsDT.Rows[i][columnName] is not null)
+								label = optionsDT.Rows[i][columnName].ToString();
+						}
+					}
+
+					options.Add(new TucSelectOption(value, label));
+				}
 			}
 		}
-
 		newAuxDataState.Data[_storageKey] = options;
-
 
 	}
 	#endregion
@@ -151,7 +200,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 			{
 				await InvokeAsync(StateHasChanged);
 				await Task.Delay(10);
-				_initValues();
+				await _initValues();
 				await InvokeAsync(StateHasChanged);
 				return;
 			};
@@ -168,46 +217,66 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 			ToastService.ShowError(ex.Message);
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(10);
-			_initValues();
+			await _initValues();
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	private async Task _optionChanged(Tuple<object, string> option)
+	private async Task _optionChanged(TucSelectOption option)
 	{
 		if (option is null && _value is null
-		|| (option is not null && option.Item1 == _value)) return;
+		|| (option is not null && option.Value == _value)) return;
 		if (option is null) _value = null;
-		else _value = option.Item1;
+		else _value = option.Value;
 		await _valueChanged();
 	}
-	private void _initValues()
+	private async Task _initValues()
 	{
 		_value = GetColumnDataByAlias(_valueAlias);
 		if (!TfAuxDataState.Value.Data.ContainsKey(_storageKey)) return;
-		_selectOptionsList = ((List<Tuple<object, string>>)TfAuxDataState.Value.Data[_storageKey]).ToList();
+		_selectOptionsList = ((List<TucSelectOption>)TfAuxDataState.Value.Data[_storageKey]).ToList();
 		var column = GetColumnInfoByAlias(_valueAlias);
 		if (column is not null && column.IsNullable)
 		{
-			_selectOptionsList.Insert(0, new Tuple<object, string>(null, LOC("no value")));
+			_selectOptionsList.Insert(0, new TucSelectOption(null, LOC("no value")));
 		}
 
 		_selectedOption = null;
 		var valueJson = JsonSerializer.Serialize(_value);
-		var optionIndex = _selectOptionsList.FindIndex(x => JsonSerializer.Serialize(x.Item1) == valueJson);
+		var optionIndex = _selectOptionsList.FindIndex(x => JsonSerializer.Serialize(x.Value) == valueJson);
 		if (optionIndex > -1)
 		{
 			_selectedOption = _selectOptionsList[optionIndex];
 		}
 		else if (_value is not null)
 		{
-			_selectOptionsList.Insert(0, new Tuple<object, string>(_value, _value.ToString()));
+			_selectOptionsList.Insert(0, new TucSelectOption(_value, _value.ToString()));
 			_selectedOption = _selectOptionsList[0];
 		}
+
+		if (Context.Mode == TfComponentMode.Options)
+		{
+			var spaceDataIndex = TfAppState.Value.SpaceDataList?.FindIndex(x => x.Id == componentOptions.SpaceDataId);
+
+			if (spaceDataIndex == -1 && TfAppState.Value.SpaceDataList is not null && TfAppState.Value.SpaceDataList.Count > 0)
+			{
+				await OnOptionsChanged(nameof(componentOptions.SpaceDataId), TfAppState.Value.SpaceDataList[0].Id);
+			}
+		}
+		//_assignActions();
 	}
 
 	private void _initStorageKeys()
 	{
 		_storageKey = this.GetType().Name + "_" + Context.SpaceViewColumnId;
+	}
+
+	private void _assignActions()
+	{
+		if (_selectOptionsList is null) return;
+		foreach (var option in _selectOptionsList)
+		{
+			option.OnClick = async () => await _optionChanged(option);
+		}
 	}
 	#endregion
 }
@@ -243,6 +312,9 @@ public class TfTextSelectColumnComponentOptions
 
 	[JsonPropertyName("SpaceDataBackgroundColorColumnName")]
 	public string SpaceDataBackgroundColorColumnName { get; set; }
+
+	[JsonPropertyName("SpaceDataIconColumnName")]
+	public string SpaceDataIconColumnName { get; set; }
 }
 
 public enum TfTextSelectColumnComponentOptionsSourceType

@@ -27,7 +27,7 @@ internal partial class AppStateUseCase
 
 			//Space Data data
 			if(routeState.ThirdNode == RouteDataThirdNode.Data){ 
-				var viewData = GetSpaceViewData(
+				var viewData = GetSpaceDataDataTable(
 							spaceDataId: newAppState.SpaceData.Id,
 							additionalFilters: null,
 							sortOverrides: null,
@@ -278,6 +278,121 @@ internal partial class AppStateUseCase
 
 		return Result.Ok(new TucSpaceData(updateResult.Value));
 
+	}
+
+	//Data
+	internal TfDataTable GetSpaceDataDataTable(
+		Guid spaceDataId,
+		List<TucFilterBase> additionalFilters = null,
+		List<TucSort> sortOverrides = null,
+		string search = null,
+		int? page = null,
+		int? pageSize = null)
+	{
+		if (spaceDataId == Guid.Empty)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("spaceDataId not provided"),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("Space Data is not found"),
+				toastErrorMessage: "Space Data is not found",
+				notificationErrorTitle: "Space Data is not found",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+
+		List<TfFilterBase> filters = null;
+		List<TfSort> sorts = null;
+		if (additionalFilters is not null) filters = additionalFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+		if (sortOverrides is not null) sorts = sortOverrides.Select(x => x.ToModel()).ToList();
+
+		var serviceResult = _dataManager.QuerySpaceData(
+			spaceDataId: spaceDataId,
+			additionalFilters: filters,
+			sortOverrides: sorts,
+			search: search,
+			page: page,
+			pageSize: pageSize
+		);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+		return serviceResult.Value;
+	}
+
+	internal Result<TfDataTable> SaveDataDataTable(TfDataTable dt)
+	{
+		var saveResult = _dataManager.SaveDataTable(dt);
+		if (saveResult.IsFailed) return Result.Fail(new Error("SaveDataTable failed").CausedBy(saveResult.Errors));
+		return Result.Ok(saveResult.Value);
+	}
+
+	internal Result DeleteSpaceDataRows(Guid spaceDataId, List<Guid> tfIdList)
+	{
+		if (spaceDataId == Guid.Empty)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("spaceDataId not provided"),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("Space Data is not found"),
+				toastErrorMessage: "Space Data is not found",
+				notificationErrorTitle: "Space Data is not found",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var dataProviderResult = _dataProviderManager.GetProvider(spaceData.DataProviderId);
+		if (dataProviderResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProvider failed").CausedBy(dataProviderResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+		foreach (var tfId in tfIdList)
+		{
+			var result = _dataManager.DeleteDataProviderRowByTfId(dataProviderResult.Value, tfId);
+			if (result.IsFailed) return Result.Fail("Deleting a record failed");
+		}
+		return Result.Ok();
 	}
 
 	//Data provider
