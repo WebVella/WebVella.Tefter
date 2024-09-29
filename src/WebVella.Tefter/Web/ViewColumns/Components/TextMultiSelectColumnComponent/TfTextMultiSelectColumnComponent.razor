@@ -3,25 +3,15 @@
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>
-		<FluentButton Id="@_valueInputId" Style="width:100%"
-					  Appearance="@Appearance.Outline"
-					  OnClick="@(() => _open = !_open)">
-			@if (_selectedOptions is null) { }
-			else
-			{
-				@String.Join(",", _selectedOptions.Select(x => x.Item2))
-			}
-		</FluentButton>
-		<FluentMenu UseMenuService="true"
-					HorizontalScaling="AxisScalingMode.Anchor"
-					Anchor="@_valueInputId"
-					@bind-Open="_open">
-			@foreach (var option in _options)
-			{
-				<FluentMenuItem OnClick="@(()=> _optionChanged(option))">@option.Item2</FluentMenuItem>
-			}
-
-		</FluentMenu>
+		<FluentAutocomplete Id="@_valueInputId" Style="width:100%"
+					  AutoComplete="off"
+					  TOption="Tuple<object,string>"
+					  Items="_options"
+					  Height="@TfConstants.ComboPanelHeight"
+					  OptionText="((x)=> x.Item2)"
+					  SelectedOptions="_selectedOptions"
+					  SelectedOptionsChanged="_optionChanged"
+					  Multiple="true"/>
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)

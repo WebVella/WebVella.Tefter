@@ -312,7 +312,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
 		object value = Context.DataTable.Rows[Context.RowIndex][dbName];
 		if (value is null) return null;
-
+		if(value is string && String.IsNullOrWhiteSpace((string)value)) return null;
 		if (value is T) return (T)value;
 
 		try

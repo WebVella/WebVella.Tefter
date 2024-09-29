@@ -33,10 +33,10 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
-	private List<string> _value = new List<string>();
+	private List<object> _value = new List<object>();
 	private string _valueInputId = "input-" + Guid.NewGuid();
-	private List<Tuple<string, string>> _options = new();
-	private List<Tuple<string, string>> _selectedOptions = new();
+	private List<Tuple<object, string>> _options = new();
+	private List<Tuple<object, string>> _selectedOptions = new();
 	private bool _open = false;
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
@@ -109,18 +109,18 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	private async Task _optionChanged(Tuple<string, string> option)
+	private async Task _optionChanged(IEnumerable<Tuple<object, string>> options)
 	{
-		if (option is null && (_value is null || _value.Count == 0)) return;
-		if (_value is null) _value = new List<string>();
-		var optionIndex = _value.FindIndex(x => x == option.Item1);
-		if (optionIndex > -1) _value.RemoveAt(optionIndex);
-		else _value.Add(option.Item1);
-		await _valueChanged();
+		if (options is null && (_value is null || _value.Count == 0)) return;
+		if (_value is null) _value = new List<object>();
+		//var optionIndex = _value.FindIndex(x => x == option.Item1);
+		//if (optionIndex > -1) _value.RemoveAt(optionIndex);
+		//else _value.Add(option.Item1);
+		//await _valueChanged();
 	}
 	private void _initValues()
 	{
-		_value = GetDataObjectFromJsonByAlias<List<string>>(_valueAlias, new List<string>());
+		_value = GetDataObjectFromJsonByAlias<List<object>>(_valueAlias, new List<object>());
 
 		_options.Clear();
 		_selectedOptions.Clear();
@@ -132,11 +132,11 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 				var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
 				if (items.Count == 1)
 				{
-					_options.Add(new Tuple<string, string>(items[0], items[0]));
+					_options.Add(new Tuple<object, string>(items[0], items[0]));
 				}
 				else if (items.Count > 1)
 				{
-					_options.Add(new Tuple<string, string>(items[0], items[1]));
+					_options.Add(new Tuple<object, string>(items[0], items[1]));
 				}
 
 			}
@@ -156,7 +156,7 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 			}
 			else
 			{
-				_options.Insert(0, new Tuple<string, string>(value, value));
+				_options.Insert(0, new Tuple<object, string>(value, value.ToString()));
 				_selectedOptions.Add(_options[0]);
 			}
 		}

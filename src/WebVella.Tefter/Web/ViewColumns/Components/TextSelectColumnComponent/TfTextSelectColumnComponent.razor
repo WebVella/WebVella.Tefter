@@ -29,14 +29,55 @@ else if (Context.Mode == TfComponentMode.Options)
 							 Placeholder="@LOC("empty shows a system one")" />
 		</FluentGridItem>
 	</FluentGrid>
+	<FluentDivider Style="margin:1rem 0" />
 	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentTextArea Label="@LOC("Options")" Resize="@TextAreaResize.Vertical"
-							Value="@componentOptions.OptionsString" Style="width:100%;" Rows="7"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.OptionsString),x)) />
-			<div class="tf-input-description">@LOC("Options separated by new line. Each options supports comma separated value,label")</div>
+		<FluentGridItem xs="12">
+			<FluentInputLabel Label="@LOC("Options source type")" />
+			<FluentRadioGroup Name="source" @bind-Value=@componentOptions.Source TValue="TfTextSelectColumnComponentOptionsSourceType">
+				<FluentRadio Value="@TfTextSelectColumnComponentOptionsSourceType.ManuallySet">
+					@TfTextSelectColumnComponentOptionsSourceType.ManuallySet.ToDescriptionString()
+				</FluentRadio>
+				<FluentRadio Value="@TfTextSelectColumnComponentOptionsSourceType.SpaceData">
+					@TfTextSelectColumnComponentOptionsSourceType.SpaceData.ToDescriptionString()
+				</FluentRadio>
+			</FluentRadioGroup>
 		</FluentGridItem>
 	</FluentGrid>
+	@if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.ManuallySet)
+	{
+		<FluentGrid>
+			<FluentGridItem xs="12">
+				<FluentTextArea Label="@LOC("Options")" Resize="@TextAreaResize.Vertical"
+								Value="@componentOptions.OptionsString" Style="width:100%;" Rows="7"
+								ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.OptionsString),x)) />
+				<div class="tf-input-description">
+					@((MarkupString)LOC(@"Options separated by new line. Each option supports comma separated settings:
+			<br/>value - required, text, converted automatically to column data type,
+			<br/>label - text,
+			<br/>iconName - text,fluent icon name,
+			<br/>color - int, converted to enum of fluent OfficeColor,
+			<br/>backgroundColor - int, converted to enum of fluent OfficeColor,
+			<br/>hideIcon - text, converted to boolean"))
+				</div>
+			</FluentGridItem>
+		</FluentGrid>
+	}
+	else if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.SpaceData)
+	{
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentSelect TOption="TucSpaceData" Required=true
+							  @bind-SelectedOption=@_selectedSpaceData
+							  OptionText="((x)=> x.Name)" Items="@TfAppState.Value.SpaceDataList" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentInputLabel Label="@LOC("Hide Label")" />
+				<FluentCheckbox Value="@componentOptions.ChangeRequiresConfirmation"
+								ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeRequiresConfirmation),x))
+								Label="@LOC("requires confirmation")" />
+			</FluentGridItem>
+		</FluentGrid>
+	}
 }
 else
 {

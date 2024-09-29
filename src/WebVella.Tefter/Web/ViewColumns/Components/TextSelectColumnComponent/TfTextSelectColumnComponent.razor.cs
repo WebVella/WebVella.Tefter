@@ -10,6 +10,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 {
 	#region << Injects >>
 	[Inject] public IDispatcher Dispatcher { get; set; }
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
 	#endregion
 
@@ -51,6 +52,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	/// </summary>
 	private Guid? _renderedHash = null;
 	private string _storageKey = "";
+	private TucSpaceData _selectedSpaceData = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -58,6 +60,8 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	{
 		base.OnInitialized();
 		_initStorageKeys();
+		if (TfAppState.Value.SpaceDataList is not null && TfAppState.Value.SpaceDataList.Count > 0)
+			_selectedSpaceData = TfAppState.Value.SpaceDataList[0];
 	}
 
 	/// <summary>
@@ -179,12 +183,12 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	private void _initValues()
 	{
 		_value = GetColumnDataByAlias(_valueAlias);
-
+		if (!TfAuxDataState.Value.Data.ContainsKey(_storageKey)) return;
 		_selectOptionsList = ((List<Tuple<object, string>>)TfAuxDataState.Value.Data[_storageKey]).ToList();
 		var column = GetColumnInfoByAlias(_valueAlias);
-		if (column.IsNullable)
+		if (column is not null && column.IsNullable)
 		{
-			_selectOptionsList.Insert(0,new Tuple<object, string>(null, LOC("no value")));
+			_selectOptionsList.Insert(0, new Tuple<object, string>(null, LOC("no value")));
 		}
 
 		_selectedOption = null;
@@ -216,6 +220,35 @@ public class TfTextSelectColumnComponentOptions
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string ChangeConfirmationMessage { get; set; }
 
+	[JsonPropertyName("Source")]
+	public TfTextSelectColumnComponentOptionsSourceType Source { get; set; } = TfTextSelectColumnComponentOptionsSourceType.ManuallySet;
+
 	[JsonPropertyName("OptionsString")]
 	public string OptionsString { get; set; }
+
+	[JsonPropertyName("SpaceDataId")]
+	public Guid SpaceDataId { get; set; }
+
+	[JsonPropertyName("SpaceDataHideLabel")]
+	public bool SpaceDataHideLabel { get; set; } = false;
+
+	[JsonPropertyName("SpaceDataValueColumnName")]
+	public string SpaceDataValueColumnName { get; set; }
+
+	[JsonPropertyName("SpaceDataLabelColumnName")]
+	public string SpaceDataLabelColumnName { get; set; }
+
+	[JsonPropertyName("SpaceDataColorColumnName")]
+	public string SpaceDataColorColumnName { get; set; }
+
+	[JsonPropertyName("SpaceDataBackgroundColorColumnName")]
+	public string SpaceDataBackgroundColorColumnName { get; set; }
+}
+
+public enum TfTextSelectColumnComponentOptionsSourceType
+{
+	[Description("manually set")]
+	ManuallySet = 0,
+	[Description("space data")]
+	SpaceData = 1,
 }
