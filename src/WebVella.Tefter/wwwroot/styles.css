@@ -450,6 +450,24 @@ fluent-button.accent svg {
   color: var(--neutral-foreground-active);
   font-size: 11px;
 }
+fluent-anchored-region fluent-menu {
+  min-width: 100%;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+.tf-menu-item-selected {
+  position: relative;
+}
+.tf-menu-item-selected::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 25%;
+  left: 0;
+  bottom: 25%;
+  width: 3px;
+  background: var(--accent-fill-rest);
+}
 :root {
   --tf-content-padding: 15px;
   --tf-header-height: 48px;
@@ -469,4 +487,7 @@ fluent-button.accent svg {
 }
 body {
   background: var(--neutral-layer-3) !important;
+}
+.go-accent {
+  color: var(--accent-foreground-rest);
 }

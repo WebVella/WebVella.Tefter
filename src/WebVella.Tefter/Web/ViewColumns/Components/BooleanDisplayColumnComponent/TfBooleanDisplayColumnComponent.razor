@@ -2,14 +2,13 @@
 @inherits TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataStructByAlias<bool>(_valueAlias, null);
-	if (value is null)
+	if (_value is null)
 	{
-		if (!String.IsNullOrWhiteSpace(options.NullValueOverrideText))
+		if (!String.IsNullOrWhiteSpace(componentOptions.NullLabel))
 		{
-			<div>@options.NullValueOverrideText</div>
+			<div>@componentOptions.NullLabel</div>
 		}
-		else if (options.NullValueShowAsIcon)
+		else if (componentOptions.NullValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("SubtractSquare")" Color="@Color.FillInverse" /></div>
 		}
@@ -18,34 +17,34 @@
 			<div></div>
 		}
 	}
-	else if (value.Value)
+	else if (_value.Value)
 	{
-		if (!String.IsNullOrWhiteSpace(options.TrueValueOverrideText))
+		if (!String.IsNullOrWhiteSpace(componentOptions.TrueLabel))
 		{
-			<div>@options.TrueValueOverrideText</div>
+			<div>@componentOptions.TrueLabel</div>
 		}
-		else if (options.TrueValueShowAsIcon)
+		else if (componentOptions.TrueValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Checkmark")" Color="@Color.Success" /></div>
 		}
 		else
 		{
-			<div>@value.Value.ToString()</div>
+			<div>@_value.Value.ToString()</div>
 		}
 	}
 	else
 	{
-		if (!String.IsNullOrWhiteSpace(options.FalseValueOverrideText))
+		if (!String.IsNullOrWhiteSpace(componentOptions.FalseLabel))
 		{
-			<div>@options.FalseValueOverrideText</div>
+			<div>@componentOptions.FalseLabel</div>
 		}
-		else if (options.FalseValueShowAsIcon)
+		else if (componentOptions.FalseValueShowAsIcon)
 		{
 			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
 		}
 		else
 		{
-			<div>@value.Value.ToString()</div>
+			<div>@_value.Value.ToString()</div>
 		}
 	}
 }
@@ -55,39 +54,39 @@ else if (Context.Mode == TfComponentMode.Options)
 	<FluentInputLabel Label="@LOC("on TRUE (text with priority)")" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.TrueValueOverrideText" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueValueOverrideText),x))
-							 Placeholder="fill to override default value" />
+			<FluentTextField Value="@componentOptions.TrueLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.TrueLabel),x))
+							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.TrueValueShowAsIcon" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.TrueValueShowAsIcon),x))
+			<FluentCheckbox Value="@componentOptions.TrueValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.TrueValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentInputLabel Label="@LOC("on FALSE (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.FalseValueOverrideText" Style="width:100%" 
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseValueOverrideText),x))
-							 Placeholder="fill to override default value" />
+			<FluentTextField Value="@componentOptions.FalseLabel" Style="width:100%" 
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseLabel),x))
+							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.FalseValueShowAsIcon" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.FalseValueShowAsIcon),x))
+			<FluentCheckbox Value="@componentOptions.FalseValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>
 	<FluentInputLabel Label="@LOC("on NULL (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@options.NullValueOverrideText" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullValueOverrideText),x))
-							 Placeholder="fill to override default value" />
+			<FluentTextField Value="@componentOptions.NullLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.NullLabel),x))
+							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentCheckbox Value="@options.NullValueShowAsIcon" Style="height:32px;"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(options.NullValueShowAsIcon),x))
+			<FluentCheckbox Value="@componentOptions.NullValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.NullValueShowAsIcon),x))
 							Label="@LOC("render as icon")" />
 		</FluentGridItem>
 	</FluentGrid>

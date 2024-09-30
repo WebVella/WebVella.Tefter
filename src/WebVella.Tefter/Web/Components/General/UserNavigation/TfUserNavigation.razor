@@ -27,7 +27,7 @@
 			}
 		</div>
 		<div class="avatar">
-			<FluentPersona Id="user-menu-toggle" Initials="@TfConverters.GetUserInitions(TfUserState.Value.CurrentUser)"
+			<FluentPersona Id="user-menu-toggle" Initials="@TfConverters.GetUserInitials(TfUserState.Value.CurrentUser)"
 						   ImageSize="24px" OnClick="() => _visible = !_visible"></FluentPersona>
 		</div>
 		<FluentMenu Width="200" @bind-Open="_visible" Anchor="user-menu-toggle" UseMenuService="false">

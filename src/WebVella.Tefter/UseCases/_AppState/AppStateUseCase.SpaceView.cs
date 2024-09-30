@@ -1,12 +1,14 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser, TfRouteState routeState,
-		TfAppState newState, TfAppState oldState)
+	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (newState.Space is null)
+		if (newAppState.Space is null)
 		{
-			newState = newState with
+			newAppState = newAppState with
 			{
 				SpaceViewList = new(),
 				SpaceView = null,
@@ -15,20 +17,20 @@ internal partial class AppStateUseCase
 				SpaceViewData = null,
 				SelectedDataRows = new()
 			};
-			return Task.FromResult(newState);
+			return Task.FromResult(newAppState);
 		}
 
 		//SpaceViewList
 
-		if (newState.Space?.Id != oldState.Space?.Id)
-			newState = newState with { SpaceViewList = GetSpaceViewList(routeState.SpaceId.Value) };
+		if (newAppState.Space?.Id != oldAppState.Space?.Id)
+			newAppState = newAppState with { SpaceViewList = GetSpaceViewList(routeState.SpaceId.Value) };
 
 		//Space View
 		if (routeState.SpaceViewId is not null)
 		{
 			int defaultPageSize = TfConstants.PageSize;
 			if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
-			newState = newState with
+			newAppState = newAppState with
 			{
 				SpaceView = GetSpaceView(routeState.SpaceViewId.Value),
 				SpaceViewColumns = GetViewColumns(routeState.SpaceViewId.Value),
@@ -38,30 +40,68 @@ internal partial class AppStateUseCase
 				SpaceViewFilters = routeState.Filters,
 				SpaceViewSorts = routeState.Sorts,
 			};
-			if (newState.SpaceView is not null && newState.SpaceView.SpaceDataId.HasValue)
+			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue)
 			{
-				var viewData = GetSpaceViewData(
-							spaceDataId: newState.SpaceView.SpaceDataId.Value,
-							additionalFilters: newState.SpaceViewFilters,
-							sortOverrides: newState.SpaceViewSorts,
-							search: newState.SpaceViewSearch,
-							page: newState.SpaceViewPage,
-							pageSize: newState.SpaceViewPageSize
+				var viewData = GetSpaceDataDataTable(
+							spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
+							additionalFilters: newAppState.SpaceViewFilters,
+							sortOverrides: newAppState.SpaceViewSorts,
+							search: newAppState.SpaceViewSearch,
+							page: newAppState.SpaceViewPage,
+							pageSize: newAppState.SpaceViewPageSize
 						);
-				newState = newState with
+				newAppState = newAppState with
 				{
 					SpaceViewData = viewData,
-					SpaceViewPage = viewData?.QueryInfo.Page ?? newState.SpaceViewPage,
+					SpaceViewPage = viewData?.QueryInfo.Page ?? newAppState.SpaceViewPage,
 				};
 			}
 			else
 			{
-				newState = newState with { SpaceViewData = null };
+				newAppState = newAppState with { SpaceViewData = null };
+			}
+
+			//Aux Data Hook
+			var compContext = new TfComponentContext()
+			{
+				Hash = newAppState.Hash,
+				DataTable = newAppState.SpaceViewData,
+				Mode = TfComponentMode.Display, //ignored here
+				SpaceViewId = newAppState.SpaceView.Id,
+				EditContext = null, //ignored here
+				ValidationMessageStore = null, //ignored here
+				RowIndex = 0,///ignored here
+				CustomOptionsJson = null, //set in column loop
+				DataMapping = null,//set in column loop
+				QueryName = null,//set in column loop
+				SpaceViewColumnId = Guid.Empty, //set in column loop
+			};
+			foreach (TucSpaceViewColumn column in newAppState.SpaceViewColumns)
+			{
+				if (column.ComponentType is not null
+					&& column.ComponentType.GetInterface(nameof(ITfAuxDataUseViewColumn)) != null)
+				{
+					compContext.SpaceViewColumnId = column.Id;
+					compContext.CustomOptionsJson = column.CustomOptionsJson;
+					compContext.DataMapping = column.DataMapping;
+					compContext.QueryName = column.QueryName;
+					var component = (ITfAuxDataUseViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
+					component.OnSpaceViewStateInited(
+							dataManager:_dataManager,
+							spaceManager:_spaceManager,
+							currentUser: currentUser,
+							routeState: routeState,
+							newAppState: newAppState,
+							oldAppState: oldAppState,
+							newAuxDataState: newAuxDataState,
+							oldAuxDataState: oldAuxDataState
+					);
+				}
 			}
 		}
 		else
 		{
-			newState = newState with
+			newAppState = newAppState with
 			{
 				SpaceView = null,
 				SpaceViewColumns = new(),
@@ -74,14 +114,14 @@ internal partial class AppStateUseCase
 				SelectedDataRows = new()
 			};
 		}
-		newState = newState with { AvailableColumnTypes = GetAvailableSpaceViewColumnTypes() };
+		newAppState = newAppState with { AvailableColumnTypes = GetAvailableSpaceViewColumnTypes() };
 
 		//SelectedDataRows
-		if (oldState.SpaceView?.Id != newState.SpaceView?.Id)
-			newState = newState with { SelectedDataRows = new() };
+		if (oldAppState.SpaceView?.Id != newAppState.SpaceView?.Id)
+			newAppState = newAppState with { SelectedDataRows = new() };
 
 
-		return Task.FromResult(newState);
+		return Task.FromResult(newAppState);
 	}
 	internal TucSpaceView GetSpaceView(Guid viewId)
 	{
@@ -523,119 +563,7 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal TfDataTable GetSpaceViewData(
-		Guid spaceDataId,
-		List<TucFilterBase> additionalFilters = null,
-		List<TucSort> sortOverrides = null,
-		string search = null,
-		int? page = null,
-		int? pageSize = null)
-	{
-		if (spaceDataId == Guid.Empty)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("spaceDataId not provided"),
-				toastErrorMessage: "Unexpected Error",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("Space Data is not found"),
-				toastErrorMessage: "Space Data is not found",
-				notificationErrorTitle: "Space Data is not found",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
 
-
-		List<TfFilterBase> filters = null;
-		List<TfSort> sorts = null;
-		if (additionalFilters is not null) filters = additionalFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
-		if (sortOverrides is not null) sorts = sortOverrides.Select(x => x.ToModel()).ToList();
-
-		var serviceResult = _dataManager.QuerySpaceData(
-			spaceDataId: spaceDataId,
-			additionalFilters: filters,
-			sortOverrides: sorts,
-			search: search,
-			page: page,
-			pageSize: pageSize
-		);
-		if (serviceResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-
-		return serviceResult.Value;
-	}
-
-	internal Result<TfDataTable> SaveViewData(TfDataTable dt)
-	{
-		var saveResult = _dataManager.SaveDataTable(dt);
-		if (saveResult.IsFailed) return Result.Fail(new Error("SaveDataTable failed").CausedBy(saveResult.Errors));
-		return Result.Ok(saveResult.Value);
-	}
-
-	internal Result DeleteSpaceViewDataRows(Guid spaceDataId, List<Guid> tfIdList)
-	{
-		if (spaceDataId == Guid.Empty)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("spaceDataId not provided"),
-				toastErrorMessage: "Unexpected Error",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("Space Data is not found"),
-				toastErrorMessage: "Space Data is not found",
-				notificationErrorTitle: "Space Data is not found",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-		var dataProviderResult = _dataProviderManager.GetProvider(spaceData.DataProviderId);
-		if (dataProviderResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProvider failed").CausedBy(dataProviderResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-
-		foreach (var tfId in tfIdList)
-		{
-			var result = _dataManager.DeleteDataProviderRowByTfId(dataProviderResult.Value, tfId);
-			if(result.IsFailed) return Result.Fail("Deleting a record failed");
-		}
-		return Result.Ok();
-	}
 
 	//View columns
 	internal TucSpaceViewColumn GetViewColumn(Guid columnId)

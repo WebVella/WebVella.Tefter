@@ -170,7 +170,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 		try
 		{
-			var result = UC.SaveViewData(value);
+			var result = UC.SaveDataDataTable(value);
 			//ProcessServiceResponse(result); //should be handled by the component
 			if (result.IsSuccess)
 			{
@@ -217,8 +217,8 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			DataTable = dataTable,
 			RowIndex = rowIndex,
 			QueryName = column.QueryName,
-			SelectedAddonId = column.SelectedAddonId,
 			SpaceViewId = column.SpaceViewId,
+			SpaceViewColumnId = column.Id,
 		};
 		return componentData;
 	}

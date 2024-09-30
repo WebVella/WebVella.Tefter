@@ -8,6 +8,7 @@
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanEditColumnComponent.TfBooleanEditColumnComponent", "WebVella.Tefter")]
 public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEditColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
@@ -24,7 +25,9 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -40,36 +43,52 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
 			_renderedHash = Context.Hash;
 		}
 	}
+	#endregion
 
-
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataStructByAlias<bool>(_valueAlias, null);
-	}
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
+		bool? value = (bool?)columnData;
+		if (value is null) return null;
 
+		//options are not inited yet as the component is not rendered
+		var options = GetOptions();
+
+		if (value.Value && !String.IsNullOrWhiteSpace(options.TrueLabel)) return options.TrueLabel;
+		else if (!value.Value && !String.IsNullOrWhiteSpace(options.FalseLabel)) return options.FalseLabel;
+
+		return value;
+	}
+	#endregion
+
+	#region << Private logic >>
 	private async Task _onValueChange()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -106,7 +125,9 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 		if (column is not null)
 		{
 			_isThreeState = column.IsNullable;
-			var value = GetDataStructByAlias<bool>(_valueAlias, null);
+			object columnData = GetColumnDataByAlias(_valueAlias);
+			if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'");
+			var value = (bool?)columnData;
 			_value = value is null ? false : value.Value;
 			_state = value;
 		}
@@ -114,24 +135,25 @@ public partial class TfBooleanEditColumnComponent : TfBaseViewColumn<TfBooleanEd
 
 	private string _getLabel()
 	{
-		if (!options.ShowLabel) return null;
+		if (!componentOptions.ShowLabel) return null;
 
 		if (_isThreeState && _state is null)
 		{
-			if (!string.IsNullOrWhiteSpace(options.NullLabel)) return options.NullLabel;
+			if (!string.IsNullOrWhiteSpace(componentOptions.NullLabel)) return componentOptions.NullLabel;
 			return "null";
 		}
 		else if (_value)
 		{
-			if (!string.IsNullOrWhiteSpace(options.TrueLabel)) return options.TrueLabel;
+			if (!string.IsNullOrWhiteSpace(componentOptions.TrueLabel)) return componentOptions.TrueLabel;
 			return "true";
 		}
 		else
 		{
-			if (!string.IsNullOrWhiteSpace(options.FalseLabel)) return options.FalseLabel;
+			if (!string.IsNullOrWhiteSpace(componentOptions.FalseLabel)) return componentOptions.FalseLabel;
 			return "false";
 		}
 	}
+	#endregion
 }
 
 /// <summary>

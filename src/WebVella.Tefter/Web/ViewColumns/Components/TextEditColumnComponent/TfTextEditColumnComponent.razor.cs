@@ -8,13 +8,13 @@
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextEditColumnComponent.TfTextEditColumnComponent", "WebVella.Tefter")]
 public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
 	public TfTextEditColumnComponent()
 	{
 	}
-
 
 	/// <summary>
 	/// The custom constructor is needed because in varoius cases we need to instance the component without
@@ -25,7 +25,9 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -40,30 +42,39 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
 			_renderedHash = Context.Hash;
 		}
 	}
+	#endregion
 
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not string)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
+		return (string)columnData;
 	}
+	#endregion
 
+	#region << Private logic >>
 	/// <summary>
 	/// process the value change event from the components view
 	/// by design if any kind of error occurs the old value should be set back
@@ -72,9 +83,9 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -90,6 +101,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 		try
 		{
+			ConsoleExt.WriteLine($"TfTextEditColumnComponent {_value}");
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
 			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);
@@ -106,8 +118,12 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias(_valueAlias);
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not string)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
+		_value = (string)columnData;
 	}
+	#endregion
 }
 
 public class TfTextEditColumnComponentOptions

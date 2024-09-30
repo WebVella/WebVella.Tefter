@@ -120,6 +120,9 @@
   <data name="Component Mode Not implemented" xml:space="preserve">
     <value>Режимът на компонента не е имплементиран</value>
   </data>
+  <data name="default value" xml:space="preserve">
+    <value>стойност по подразбиране</value>
+  </data>
   <data name="on FALSE (text with priority)" xml:space="preserve">
     <value>при НЕВЯРНО (текста е с приоритет)</value>
   </data>

@@ -8,6 +8,7 @@
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanDisplayColumnComponent.TfBooleanDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
@@ -24,7 +25,9 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -32,25 +35,63 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
+	private bool? _value = null;
 
+	/// <summary>
+	/// Each state has an unique hash and this is set in the component context under the Hash property value
+	/// </summary>
+	private Guid? _renderedHash = null;
+	#endregion
+
+	#region << Lifecycle >>
+	/// <summary>
+	/// When data needs to be inited, parameter set is the best place as Initialization is 
+	/// done only once
+	/// </summary>
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		if (Context.Hash != _renderedHash)
+		{
+			_initValues();
+			_renderedHash = Context.Hash;
+		}
+	}
+	#endregion
+
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		//options are not inited yet as the component is not rendered
-		bool? value = GetDataStructByAlias<bool>(_valueAlias, null);
-		
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not bool) 
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'");
+
+		bool? value = (bool?)columnData;
 		if (value is null) return null;
 
+		//options are not inited yet as the component is not rendered
 		var options = GetOptions();
 
-		if (value.Value && !String.IsNullOrWhiteSpace(options.TrueValueOverrideText)) return options.TrueValueOverrideText;
-		else if (!value.Value && !String.IsNullOrWhiteSpace(options.FalseValueOverrideText)) return options.FalseValueOverrideText;
-		
+		if (value.Value && !String.IsNullOrWhiteSpace(options.TrueLabel)) return options.TrueLabel;
+		else if (!value.Value && !String.IsNullOrWhiteSpace(options.FalseLabel)) return options.FalseLabel;
+
 		return value;
 	}
+	#endregion
+
+	#region << Private logic >>
+	private void _initValues()
+	{
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not bool) 
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
+		_value = (bool?)columnData;
+	}
+	#endregion
 }
 
 /// <summary>
@@ -59,20 +100,20 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 /// </summary>
 public class TfBooleanDisplayColumnComponentOptions
 {
-	[JsonPropertyName("TrueValueOverrideText")]
-	public string TrueValueOverrideText { get; set; }
+	[JsonPropertyName("TrueLabel")]
+	public string TrueLabel { get; set; }
 
 	[JsonPropertyName("TrueValueShowAsIcon")]
 	public bool TrueValueShowAsIcon { get; set; }
 
-	[JsonPropertyName("FalseValueOverrideText")]
-	public string FalseValueOverrideText { get; set; }
+	[JsonPropertyName("FalseLabel")]
+	public string FalseLabel { get; set; }
 
 	[JsonPropertyName("FalseValueShowAsIcon")]
 	public bool FalseValueShowAsIcon { get; set; }
 
-	[JsonPropertyName("NullValueOverrideText")]
-	public string NullValueOverrideText { get; set; }
+	[JsonPropertyName("NullLabel")]
+	public string NullLabel { get; set; }
 
 	[JsonPropertyName("NullValueShowAsIcon")]
 	public bool NullValueShowAsIcon { get; set; }

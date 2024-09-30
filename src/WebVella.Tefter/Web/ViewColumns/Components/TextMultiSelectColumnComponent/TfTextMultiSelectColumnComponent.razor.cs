@@ -33,10 +33,10 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
-	private List<string> _value = new List<string>();
+	private List<object> _value = new List<object>();
 	private string _valueInputId = "input-" + Guid.NewGuid();
-	private List<Tuple<string, string>> _options = new();
-	private List<Tuple<string, string>> _selectedOptions = new();
+	private List<Tuple<object, string>> _options = new();
+	private List<Tuple<object, string>> _selectedOptions = new();
 	private bool _open = false;
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
@@ -47,9 +47,9 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
@@ -63,7 +63,7 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		return GetDataStringByAlias(_valueAlias);
 	}
 
 	/// <summary>
@@ -74,9 +74,9 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -109,34 +109,34 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	private async Task _optionChanged(Tuple<string, string> option)
+	private async Task _optionChanged(IEnumerable<Tuple<object, string>> options)
 	{
-		if (option is null && (_value is null || _value.Count == 0)) return;
-		if (_value is null) _value = new List<string>();
-		var optionIndex = _value.FindIndex(x => x == option.Item1);
-		if (optionIndex > -1) _value.RemoveAt(optionIndex);
-		else _value.Add(option.Item1);
-		await _valueChanged();
+		if (options is null && (_value is null || _value.Count == 0)) return;
+		if (_value is null) _value = new List<object>();
+		//var optionIndex = _value.FindIndex(x => x == option.Item1);
+		//if (optionIndex > -1) _value.RemoveAt(optionIndex);
+		//else _value.Add(option.Item1);
+		//await _valueChanged();
 	}
 	private void _initValues()
 	{
-		_value = GetDataObjectByAlias<List<string>>(_valueAlias, new List<string>());
+		_value = GetDataObjectFromJsonByAlias<List<object>>(_valueAlias, new List<object>());
 
 		_options.Clear();
 		_selectedOptions.Clear();
-		if (!String.IsNullOrWhiteSpace(options.OptionsString))
+		if (!String.IsNullOrWhiteSpace(componentOptions.OptionsString))
 		{
-			var rows = options.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+			var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 			foreach (var row in rows)
 			{
 				var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
 				if (items.Count == 1)
 				{
-					_options.Add(new Tuple<string, string>(items[0], items[0]));
+					_options.Add(new Tuple<object, string>(items[0], items[0]));
 				}
 				else if (items.Count > 1)
 				{
-					_options.Add(new Tuple<string, string>(items[0], items[1]));
+					_options.Add(new Tuple<object, string>(items[0], items[1]));
 				}
 
 			}
@@ -156,7 +156,7 @@ public partial class TfTextMultiSelectColumnComponent : TfBaseViewColumn<TfTextM
 			}
 			else
 			{
-				_options.Insert(0, new Tuple<string, string>(value, value));
+				_options.Insert(0, new Tuple<object, string>(value, value.ToString()));
 				_selectedOptions.Add(_options[0]);
 			}
 		}

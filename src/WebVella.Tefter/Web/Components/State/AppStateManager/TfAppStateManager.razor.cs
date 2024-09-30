@@ -6,6 +6,7 @@ public partial class TfAppStateManager : FluxorComponent
 	[Inject] public IDispatcher Dispatcher { get; set; }
 	[Inject] private IState<TfUserState> TfUserState { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
+	[Inject] private IState<TfAuxDataState> TfAuxDataState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
@@ -37,7 +38,7 @@ public partial class TfAppStateManager : FluxorComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			await _init(null, new TfAppState());
+			await _init(null, new TfAppState(), new TfAuxDataState());
 			_isBusy = false;
 			_renderedUserStateHash = Guid.NewGuid(); //force rerender
 			await InvokeAsync(StateHasChanged);
@@ -45,15 +46,19 @@ public partial class TfAppStateManager : FluxorComponent
 		}
 	}
 
-	private async Task _init(string url, TfAppState oldState)
+	private async Task _init(string url, TfAppState oldState, TfAuxDataState oldAuxState)
 	{
 		using (await locker.LockAsync())
 		{
 			if (TfUserState.Value.CurrentUser is null) return;
-			var state = await UC.InitState(TfUserState.Value.CurrentUser, url, oldState);
+			var (appState,auxDataState) = await UC.InitState(TfUserState.Value.CurrentUser, url, oldState, oldAuxState);
 			Dispatcher.Dispatch(new SetAppStateAction(
 				component: null,
-				state: state
+				state: appState
+			));
+			Dispatcher.Dispatch(new SetAuxDataStateAction(
+				component: null,
+				state: auxDataState
 			));
 		}
 	}
@@ -62,7 +67,7 @@ public partial class TfAppStateManager : FluxorComponent
 	{
 		InvokeAsync(async () =>
 		{
-			await _init(null, TfAppState.Value);
+			await _init(null, TfAppState.Value, TfAuxDataState.Value);
 			//the change in the user state should triggger rerender later
 		});
 	}

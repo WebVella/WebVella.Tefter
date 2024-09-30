@@ -30,7 +30,7 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 		|| TfAppState.Value.SpaceView.SpaceDataId is null) return;
 		try
 		{
-			var result = UC.DeleteSpaceViewDataRows(
+			var result = UC.DeleteSpaceDataRows(
 				spaceDataId:TfAppState.Value.SpaceView.SpaceDataId.Value,
 				tfIdList:TfAppState.Value.SelectedDataRows
 			);

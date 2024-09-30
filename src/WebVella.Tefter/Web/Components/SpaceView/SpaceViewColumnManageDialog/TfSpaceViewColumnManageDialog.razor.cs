@@ -53,10 +53,23 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		base.InitForm(_form);
 		_renderComponentTypeSelect = true;
 		TucSpaceData selectedSpaceData = null;
-		if(TfAppState.Value.SpaceDataList is not null){ 
-			selectedSpaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x=> x.Id == TfAppState.Value.SpaceView.SpaceDataId);
+		if (TfAppState.Value.SpaceDataList is not null)
+		{
+			selectedSpaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId);
 		}
-		if(selectedSpaceData is not null) _options = selectedSpaceData.Columns;
+		if (selectedSpaceData is not null)
+		{
+			if (selectedSpaceData.Columns.Count > 0)
+				_options = selectedSpaceData.Columns;
+			else
+			{
+				//This space data uses all the columns from the data provider
+				var dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x=> x.Id == selectedSpaceData.DataProviderId);
+				if(dataProvider is not null){ 
+					_options.AddRange(dataProvider.ColumnsTotal.Select(x=> x.DbName));
+				}
+			}
+		}
 	}
 
 
@@ -193,8 +206,8 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			DataTable = null,
 			RowIndex = -1,
 			QueryName = _form.QueryName,
-			SelectedAddonId = _form.SelectedAddonId,
 			SpaceViewId = _form.SpaceViewId,
+			SpaceViewColumnId = _form.Id,
 			EditContext = EditContext,
 			ValidationMessageStore = MessageStore
 		};

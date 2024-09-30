@@ -90,7 +90,9 @@
 									</FluentGridItem>
 									<FluentGridItem xs="6">
 										<FluentCombobox TOption="string"
+														Autocomplete="ComboboxAutocomplete.Both"
 														Items="_options"
+														Height="@TfConstants.ComboPanelHeight"
 														Value=@_getDataMappingValue(item.Alias)
 														Immediate ImmediateDelay="500" ValueChanged="@((x) => _dataMappingValueChanged(x,item.Alias))"
 														Label="@LOC("Data column name")" Style="width:100%" />
@@ -170,18 +172,32 @@
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Color")" />
 							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								<FluentIcon Value="@TfConstants.RectangleIcon"
-											Color="Color.Custom" Style="height:100%;"
-											CustomColor="@(_form.Settings.Color.ToAttributeValue() != "default" ? _form.Settings.Color.ToAttributeValue() : "transparent" )" />
+								@if (_form.Settings.Color.ToAttributeValue() != "default")
+								{
+									<FluentIcon Value="@TfConstants.RectangleIcon"
+												Color="Color.Custom" Style="height:100%;"
+												CustomColor="@_form.Settings.Color.ToAttributeValue()" />
+								}
+								else
+								{
+									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
+								}
 								<FluentSelect @bind-SelectedOption="@_form.Settings.Color" TOption="OfficeColor"
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
-											<FluentIcon Value="@TfConstants.RectangleIcon"
-														Color="Color.Custom"
-														CustomColor="@(color.ToAttributeValue() != "default" ? color.ToAttributeValue() : "transparent" )" />
+											@if (color.ToAttributeValue() != "default")
+											{
+												<FluentIcon Value="@TfConstants.RectangleIcon"
+															Color="Color.Custom"
+															CustomColor="@color.ToAttributeValue()" />
+											}
+											else
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
+											}
 											<FluentLabel>@color</FluentLabel>
 										</FluentStack>
 									</OptionTemplate>
@@ -191,18 +207,32 @@
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Background Color")" />
 							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								<FluentIcon Value="@TfConstants.RectangleIcon"
-											Color="Color.Custom" Style="height:100%;"
-											CustomColor="@(_form.Settings.BackgroundColor.ToAttributeValue() != "default" ? _form.Settings.BackgroundColor.ToAttributeValue() : "transparent" )" />
+								@if (_form.Settings.BackgroundColor.ToAttributeValue() != "default")
+								{
+									<FluentIcon Value="@TfConstants.RectangleIcon"
+												Color="Color.Custom" Style="height:100%;"
+												CustomColor="@_form.Settings.BackgroundColor.ToAttributeValue()" />
+								}
+								else
+								{
+									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
+								}
 								<FluentSelect @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="OfficeColor"
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
-											<FluentIcon Value="@TfConstants.RectangleIcon"
-														Color="Color.Custom"
-														CustomColor="@(color.ToAttributeValue() != "default" ? color.ToAttributeValue() : "transparent" )" />
+											@if (color.ToAttributeValue() != "default")
+											{
+												<FluentIcon Value="@TfConstants.RectangleIcon"
+															Color="Color.Custom"
+															CustomColor="@color.ToAttributeValue()" />
+											}
+											else
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
+											}
 											<FluentLabel>@color</FluentLabel>
 										</FluentStack>
 									</OptionTemplate>

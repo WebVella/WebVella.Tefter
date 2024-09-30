@@ -2,19 +2,17 @@
 @inherits TfBaseViewColumn<TfTimeDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataStructByAlias<DateTime>(_valueAlias, null);
-	var options = GetOptions();
-	var format = options.Format;
+	var format = componentOptions.Format;
 	if (string.IsNullOrWhiteSpace(format)) format = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
-	<div>@value?.ToString(format)</div>
+	<div>@_value?.ToString(format)</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Format")"
-							 Value="@options.Format" Style="width:100%" Immediate ImmediateDelay="500"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.Format),x))
+							 Value="@componentOptions.Format" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.Format),x))
 							 Placeholder="@LOC("eg. 'HH:mm:ss'")" />
 			<div class="tf-input-description">@LOC("defaults to the system's short time format")</div>
 		</FluentGridItem>

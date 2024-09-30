@@ -24,4 +24,12 @@ public record TucColumn
 		IsShared = true;
 	}
 
+	public TucColumn(TucDataProviderSystemColumn model)
+	{
+		Id = Guid.Empty;
+		DbName = model.DbName;
+		DbType = model.DbType;
+		IsShared = true;
+	}
+	
 }

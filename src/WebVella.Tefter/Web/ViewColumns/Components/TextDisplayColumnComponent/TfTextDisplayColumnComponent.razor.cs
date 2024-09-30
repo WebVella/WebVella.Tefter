@@ -8,6 +8,7 @@
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextDisplayColumnComponent.TfTextDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfTextDisplayColumnComponent : TfBaseViewColumn<TfTextDisplayColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
@@ -24,7 +25,9 @@ public partial class TfTextDisplayColumnComponent : TfBaseViewColumn<TfTextDispl
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -32,16 +35,53 @@ public partial class TfTextDisplayColumnComponent : TfBaseViewColumn<TfTextDispl
 	/// upon space view column configuration
 	/// </summary>
 	private string _valueAlias = "Value";
+	private string _value = null;
 
+	/// <summary>
+	/// Each state has an unique hash and this is set in the component context under the Hash property value
+	/// </summary>
+	private Guid? _renderedHash = null;
+	#endregion
 
+	#region << Lifecycle >>
+	/// <summary>
+	/// When data needs to be inited, parameter set is the best place as Initialization is 
+	/// done only once
+	/// </summary>
+	protected override async Task OnParametersSetAsync()
+	{
+		await base.OnParametersSetAsync();
+		if (Context.Hash != _renderedHash)
+		{
+			_initValues();
+			_renderedHash = Context.Hash;
+		}
+	}
+	#endregion
+
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataObjectByAlias(_valueAlias);
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not string)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
+		return (string)columnData;
 	}
+	#endregion
+
+	#region << Private logic >>
+	private void _initValues()
+	{
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not string)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
+		_value = (string)columnData;
+	}
+	#endregion
 }
 
 public class TfTextDisplayColumnComponentOptions { }

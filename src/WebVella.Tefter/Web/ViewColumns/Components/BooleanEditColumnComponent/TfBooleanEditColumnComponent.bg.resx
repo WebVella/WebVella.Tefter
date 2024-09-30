@@ -132,16 +132,31 @@
   <data name="empty shows a system one" xml:space="preserve">
     <value>празно показва системно</value>
   </data>
+  <data name="FALSE label" xml:space="preserve">
+    <value>Етикет НЕВЯРНО</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Етикет</value>
+  </data>
   <data name="Label text" xml:space="preserve">
     <value>Текст на етикета</value>
   </data>
   <data name="Label visibility" xml:space="preserve">
     <value>Видимост на етиката</value>
   </data>
+  <data name="NULL label" xml:space="preserve">
+    <value>Етикет НЯМА</value>
+  </data>
   <data name="Please confirm the data change!" xml:space="preserve">
     <value>Моля потвърдете промяната на данните!</value>
   </data>
   <data name="requires confirmation" xml:space="preserve">
     <value>изисква потвърждение</value>
+  </data>
+  <data name="show label" xml:space="preserve">
+    <value>показвай етикет</value>
+  </data>
+  <data name="TRUE label" xml:space="preserve">
+    <value>Етикет ВЯРНО</value>
   </data>
 </root>

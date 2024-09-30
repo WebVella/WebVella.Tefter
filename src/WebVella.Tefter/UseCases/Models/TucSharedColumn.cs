@@ -7,9 +7,6 @@ public record TucSharedColumn
 	public string DbName { get; init; }
 	public TucDatabaseColumnTypeInfo DbType { get; init; }
 	public bool IncludeInTableSearch { get; init; }
-	//TODO remove
-	public Guid? AddonId { get; init; }
-
 	public TucSharedColumn() { }
 	public TucSharedColumn(TfSharedColumn model)
 	{

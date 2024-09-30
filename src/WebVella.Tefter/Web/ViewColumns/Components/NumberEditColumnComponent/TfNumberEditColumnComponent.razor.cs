@@ -10,13 +10,13 @@ namespace WebVella.Tefter.Web.ViewColumns;
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.NumberEditColumnComponent.TfNumberEditColumnComponent", "WebVella.Tefter")]
 public partial class TfNumberEditColumnComponent : TfBaseViewColumn<TfNumberEditColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
 	public TfNumberEditColumnComponent()
 	{
 	}
-
 
 	/// <summary>
 	/// The custom constructor is needed because in varoius cases we need to instance the component without
@@ -27,7 +27,9 @@ public partial class TfNumberEditColumnComponent : TfBaseViewColumn<TfNumberEdit
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -42,29 +44,38 @@ public partial class TfNumberEditColumnComponent : TfBaseViewColumn<TfNumberEdit
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
 		}
 	}
+	#endregion
 
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
 	public override object GetData()
 	{
-		return GetDataStructByAlias<decimal>(_valueAlias, null);
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not decimal)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
+		return (decimal?)columnData;
 	}
+	#endregion
 
+	#region << Private logic >>
 	/// <summary>
 	/// Because of the wheel functionality, user can initiate changes very quickly
 	/// This throttle will submit only after 1 second of inactivity
@@ -88,9 +99,9 @@ public partial class TfNumberEditColumnComponent : TfBaseViewColumn<TfNumberEdit
 	/// <returns></returns>
 	private async Task _submitChange()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -122,8 +133,12 @@ public partial class TfNumberEditColumnComponent : TfBaseViewColumn<TfNumberEdit
 
 	private void _initValues()
 	{
-		_value = GetDataStructByAlias<decimal>(_valueAlias, null);
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not decimal)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
+		_value = (decimal?)columnData;
 	}
+	#endregion
 }
 
 public class TfNumberEditColumnComponentOptions

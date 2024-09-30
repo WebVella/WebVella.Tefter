@@ -18,7 +18,6 @@ else
 					<th class="tf-grid-th">type</th>
 					<th class="tf-grid-th">key</th>
 					<th class="tf-grid-th" style="width:80px">in search</th>
-					<th class="tf-grid-th">from app</th>
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
@@ -37,18 +36,6 @@ else
 						<td class="tf-grid-td">
 							<div>
 								@if (context.IncludeInTableSearch)
-								{
-									<FluentBadge Appearance="@Appearance.Accent">yes</FluentBadge>
-								}
-								else
-								{
-									<FluentBadge>no</FluentBadge>
-								}
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div>
-								@if (context.AddonId.HasValue)
 								{
 									<FluentBadge Appearance="@Appearance.Accent">yes</FluentBadge>
 								}

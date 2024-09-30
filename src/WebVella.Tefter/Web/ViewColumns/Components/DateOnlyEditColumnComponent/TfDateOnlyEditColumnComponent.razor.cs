@@ -8,13 +8,13 @@
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateOnlyEditColumnComponent.TfDateOnlyEditColumnComponent", "WebVella.Tefter")]
 public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnlyEditColumnComponentOptions>
 {
+	#region << Constructor >>
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
 	public TfDateOnlyEditColumnComponent()
 	{
 	}
-
 
 	/// <summary>
 	/// The custom constructor is needed because in varoius cases we need to instance the component without
@@ -25,7 +25,9 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -40,22 +42,25 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.Hash != _renderedHash)
 		{
 			_initValues();
 			_renderedHash = Context.Hash;
 		}
 	}
+	#endregion
 
-
+	#region << Non rendered methods >>
 	/// <summary>
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
@@ -63,12 +68,14 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	public override object GetData()
 	{
 		//dateonly is not generally supported so we return datetime
-		var dateOnly = GetDataStructByAlias<DateOnly>(_valueAlias, null);
-		if (dateOnly is null) return null;
-
-		return dateOnly.Value.ToDateTime();
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not DateOnly)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
+		return ((DateOnly?)columnData)?.ToDateTime();
 	}
+	#endregion
 
+	#region << Private logic >>
 	/// <summary>
 	/// process the value change event from the components view
 	/// by design if any kind of error occurs the old value should be set back
@@ -77,9 +84,9 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 	/// <returns></returns>
 	private async Task _valueChanged()
 	{
-		if (options.ChangeRequiresConfirmation)
+		if (componentOptions.ChangeRequiresConfirmation)
 		{
-			var message = options.ChangeConfirmationMessage;
+			var message = componentOptions.ChangeConfirmationMessage;
 			if (String.IsNullOrWhiteSpace(message))
 				message = LOC("Please confirm the data change!");
 
@@ -113,15 +120,12 @@ public partial class TfDateOnlyEditColumnComponent : TfBaseViewColumn<TfDateOnly
 
 	private void _initValues()
 	{
-		var dateOnly = GetDataStructByAlias<DateOnly>(_valueAlias, null);
-		if (dateOnly is null)
-		{
-			_value = null;
-			return;
-		}
-
-		_value = dateOnly.Value.ToDateTime();
+		object columnData = GetColumnDataByAlias(_valueAlias);
+		if (columnData is not null && columnData is not DateOnly)
+			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
+		_value = ((DateOnly?)columnData)?.ToDateTime();
 	}
+	#endregion
 }
 
 public class TfDateOnlyEditColumnComponentOptions

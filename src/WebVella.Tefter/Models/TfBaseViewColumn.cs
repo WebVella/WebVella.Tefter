@@ -8,8 +8,20 @@ public interface ITfExportableViewColumn
 	object GetData();
 }
 
-public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExportableViewColumn
+public interface ITfAuxDataUseViewColumn
 {
+	Task OnSpaceViewStateInited(
+		IDataManager dataManager,
+		ITfSpaceManager spaceManager,
+		TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState);
+}
+
+public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExportableViewColumn, ITfAuxDataUseViewColumn
+{
+	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Inject] protected IToastService ToastService { get; set; }
@@ -18,7 +30,9 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	[Parameter] public TfComponentContext Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
+	#endregion
 
+	#region << Constructor >>
 	public TfBaseViewColumn()
 	{
 	}
@@ -26,11 +40,15 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	{
 		Context = context;
 	}
+	#endregion
 
+	#region << Properties >>
 	protected IStringLocalizer LC;
-	protected virtual TItem options { get; set; } = Activator.CreateInstance<TItem>();
+	protected virtual TItem componentOptions { get; set; }
 	protected string optionsSerialized = null;
+	#endregion
 
+	#region << Lifecycle >>
 	/// <summary>
 	/// If overrided do not forget to call it
 	/// </summary>
@@ -46,6 +64,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		componentOptions = Activator.CreateInstance<TItem>();
 		var type = this.GetType();
 		var (resourceBaseName, resourceLocation) = type.GetLocalizationResourceInfo();
 		if (!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation))
@@ -60,16 +79,19 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 			Context.EditContext.OnValidationRequested += OnOptionsValidationRequested;
 
 	}
-	protected override void OnParametersSet()
+
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		if (Context.CustomOptionsJson != optionsSerialized)
 		{
 			optionsSerialized = Context.CustomOptionsJson;
-			options = GetOptions();
+			componentOptions = GetOptions();
 		}
 	}
+	#endregion
 
+	#region << Base methods >>
 	/// <summary>
 	/// Base method for dealing with localization, based on localization resources provided in the implementing component
 	/// </summary>
@@ -82,6 +104,12 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		return key;
 	}
 
+	/// <summary>
+	/// Gets the data provider column name from component alias data mapping
+	/// </summary>
+	/// <param name="alias">the name that the component uses to get data. 
+	/// Needs to be mapped in configuration to a real data column</param>
+	/// <returns></returns>
 	protected virtual string GetColumnNameFromAlias(string alias)
 	{
 		string colName = null;
@@ -94,6 +122,128 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	}
 
 	/// <summary>
+	/// gets the database column type of the mapped column to the alias
+	/// </summary>
+	/// <param name="alias"></param>
+	/// <returns></returns>
+	protected virtual TucDatabaseColumnType? GetColumnDatabaseTypeByAlias(string alias)
+	{
+		if (Context.DataTable is null) return null;
+		var colName = GetColumnNameFromAlias(alias);
+		if (colName == null) return null;
+
+		TfDataColumn column = null;
+		try
+		{
+			column = Context.DataTable.Columns[colName];
+		}
+		catch { }
+		if (column == null) return null;
+
+		return column.DbType.ConvertSafeToEnum<DatabaseColumnType, TucDatabaseColumnType>();
+	}
+
+	protected virtual object GetColumnDataByAlias(string alias)
+	{
+		var colName = GetColumnNameFromAlias(alias);
+		var colDbType = GetColumnDatabaseTypeByAlias(alias);
+		if (colName is null || colDbType is null) return null;
+
+		switch (colDbType)
+		{
+			case TucDatabaseColumnType.ShortInteger:
+				return GetDataStructByAlias<short>(alias);
+			case TucDatabaseColumnType.AutoIncrement:
+			case TucDatabaseColumnType.Integer:
+				return GetDataStructByAlias<int>(alias);
+			case TucDatabaseColumnType.LongInteger:
+				return GetDataStructByAlias<long>(alias);
+			case TucDatabaseColumnType.Number:
+				return GetDataStructByAlias<decimal>(alias);
+			case TucDatabaseColumnType.Boolean:
+				return GetDataStructByAlias<bool>(alias);
+			case TucDatabaseColumnType.Date:
+				return GetDataStructByAlias<DateOnly>(alias);
+			case TucDatabaseColumnType.DateTime:
+				return GetDataStructByAlias<DateTime>(alias);
+			case TucDatabaseColumnType.ShortText:
+			case TucDatabaseColumnType.Text:
+				return GetDataStringByAlias(alias);
+			case TucDatabaseColumnType.Guid:
+				return GetDataStructByAlias<Guid>(alias);
+			default:
+				throw new Exception("colDbType not supported");
+		}
+	}
+
+	protected virtual Type GetColumnObjectTypeByAlias(string alias)
+	{
+		var colName = GetColumnNameFromAlias(alias);
+		var colDbType = GetColumnDatabaseTypeByAlias(alias);
+		if (colName is null || colDbType is null) return null;
+
+		switch (colDbType)
+		{
+			case TucDatabaseColumnType.ShortInteger:
+				return typeof(short);
+			case TucDatabaseColumnType.AutoIncrement:
+			case TucDatabaseColumnType.Integer:
+				return typeof(int);
+			case TucDatabaseColumnType.LongInteger:
+				return typeof(long);
+			case TucDatabaseColumnType.Number:
+				return typeof(decimal);
+			case TucDatabaseColumnType.Boolean:
+				return typeof(bool);
+			case TucDatabaseColumnType.Date:
+				return typeof(DateOnly);
+			case TucDatabaseColumnType.DateTime:
+				return typeof(DateTime);
+			case TucDatabaseColumnType.ShortText:
+			case TucDatabaseColumnType.Text:
+				return typeof(string);
+			case TucDatabaseColumnType.Guid:
+				return typeof(Guid);
+			default:
+				throw new Exception("colDbType not supported");
+		}
+	}
+
+	protected virtual object ConvertStringToColumnObjectByAlias(string alias, string stringValue)
+	{
+		var colName = GetColumnNameFromAlias(alias);
+		var colDbType = GetColumnDatabaseTypeByAlias(alias);
+		if (colName is null || colDbType is null) return null;
+
+		switch (colDbType)
+		{
+			case TucDatabaseColumnType.ShortInteger:
+				return TfConverters.Convert<short>(stringValue);
+			case TucDatabaseColumnType.AutoIncrement:
+			case TucDatabaseColumnType.Integer:
+				return TfConverters.Convert<int>(stringValue);
+			case TucDatabaseColumnType.LongInteger:
+				return TfConverters.Convert<long>(stringValue);
+			case TucDatabaseColumnType.Number:
+				return TfConverters.Convert<decimal>(stringValue);
+			case TucDatabaseColumnType.Boolean:
+				return TfConverters.Convert<bool>(stringValue);
+			case TucDatabaseColumnType.Date:
+				return TfConverters.Convert<DateOnly>(stringValue);
+			case TucDatabaseColumnType.DateTime:
+				return TfConverters.Convert<DateTime>(stringValue);
+			case TucDatabaseColumnType.ShortText:
+			case TucDatabaseColumnType.Text:
+				return stringValue;
+			case TucDatabaseColumnType.Guid:
+				return TfConverters.Convert<Guid>(stringValue); ;
+			default:
+				throw new Exception("colDbType not supported");
+		}
+	}
+
+
+	/// <summary>
 	/// The implementing components are referencing data based on the Data Mapping provided by the user, 
 	/// which maps value needed by the component and its corresponding datatable comlumn name.
 	/// This method deals when the value needs to be returned as a string
@@ -101,7 +251,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual string GetDataObjectByAlias(string alias, string defaultValue = null)
+	protected virtual string GetDataStringByAlias(string alias, string defaultValue = null)
 	{
 		string dbName = GetColumnNameFromAlias(alias);
 
@@ -144,7 +294,16 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		else if (value is T) return (T)value;
 		return TfConverters.Convert<T>(value.ToString());
 	}
-	protected virtual T? GetDataObjectByAlias<T>(string alias, T? defaultValue = null) where T : class
+
+	/// <summary>
+	/// Gets more complex object data which is in JSOn format
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="alias"></param>
+	/// <param name="defaultValue"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	protected virtual T? GetDataObjectFromJsonByAlias<T>(string alias, T? defaultValue = null) where T : class
 	{
 		string dbName = GetColumnNameFromAlias(alias);
 		if (String.IsNullOrWhiteSpace(dbName))
@@ -157,17 +316,16 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
 		object value = Context.DataTable.Rows[Context.RowIndex][dbName];
 		if (value is null) return null;
-
+		if (value is string && String.IsNullOrWhiteSpace((string)value)) return null;
 		if (value is T) return (T)value;
 
-		try{
+		try
+		{
 			return JsonSerializer.Deserialize<T>(value.ToString());
 		}
 		catch { throw new Exception("Value cannot be parsed"); }
-		
+
 	}
-
-
 
 	/// <summary>
 	/// Base methods for dealing with options
@@ -176,8 +334,8 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	{
 		if (!String.IsNullOrWhiteSpace(Context.CustomOptionsJson))
 		{
-			options = JsonSerializer.Deserialize<TItem>(Context.CustomOptionsJson);
-			if (options is not null) return options;
+			componentOptions = JsonSerializer.Deserialize<TItem>(Context.CustomOptionsJson);
+			if (componentOptions is not null) return componentOptions;
 		}
 		return Activator.CreateInstance<TItem>();
 	}
@@ -193,9 +351,9 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 
 		PropertyInfo propertyInfo = typeof(TItem).GetProperty(propName);
 		if (propertyInfo is null) return;
-		propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+		propertyInfo.SetValue(componentOptions, Convert.ChangeType(value, propertyInfo.PropertyType), null);
 		if (!OptionsChanged.HasDelegate) return;
-		await OptionsChanged.InvokeAsync(JsonSerializer.Serialize(options));
+		await OptionsChanged.InvokeAsync(JsonSerializer.Serialize(componentOptions));
 	}
 
 	/// <summary>
@@ -247,8 +405,6 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	/// This method expects a datatable with a single row (in most cases) 
 	/// with the updated data for that row
 	/// </summary>
-	/// <param name="dt"></param>
-	/// <returns></returns>
 	protected virtual async Task OnRowColumnChangedByAlias(string alias, object value)
 	{
 		if (!RowChanged.HasDelegate) return;
@@ -271,4 +427,23 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 
 	}
 
+	/// <summary>
+	/// This method will be called after all the baseline space view state
+	/// is initialized in TfAppState.
+	/// Usually used for space view column component initialization of initial data
+	/// in TfAuxDataState.
+	/// The usual context with all the view meta and data is available when this method is called
+	/// </summary>
+	/// <param name="appState">the most current complete appState reference</param>
+	public virtual Task OnSpaceViewStateInited(
+		IDataManager dataManager,
+		ITfSpaceManager spaceManager,
+		TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
+	{
+		return Task.CompletedTask;
+	}
+	#endregion
 }

@@ -117,13 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="change applied" xml:space="preserve">
-    <value>промяната е приложена</value>
+  <data name="Bookmark View" xml:space="preserve">
+    <value>Сложи отметка на изгледа</value>
   </data>
-  <data name="Component Mode Not implemented" xml:space="preserve">
-    <value>Режимът на компонента не е имплементиран</value>
+  <data name="Copy link" xml:space="preserve">
+    <value>Копиране на адрес</value>
   </data>
-  <data name="Row with index {0} is not found" xml:space="preserve">
-    <value>Не е намерен ред с този индекс {0}</value>
+  <data name="Delete view" xml:space="preserve">
+    <value>Изтриване на изглед</value>
+  </data>
+  <data name="Manage data" xml:space="preserve">
+    <value>Редакция на данни</value>
+  </data>
+  <data name="Manage view" xml:space="preserve">
+    <value>Редакция на изглед</value>
+  </data>
+  <data name="Save URL" xml:space="preserve">
+    <value>Запомни адреса</value>
   </data>
 </root>

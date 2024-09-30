@@ -1,39 +1,40 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitAdminSharedColumnsAsync(TucUser currentUser, TfRouteState routeState, 
-	TfAppState newState, TfAppState oldState)
+	internal Task<TfAppState> InitAdminSharedColumnsAsync(TucUser currentUser, TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
 			!(routeState.FirstNode == RouteDataFirstNode.Admin
 			&& routeState.SecondNode == RouteDataSecondNode.SharedColumns)
 			)
 		{
-			newState = newState with
+			newAppState = newAppState with
 			{
 				AdminSharedColumns = new(),
 				AdminSharedColumnDataTypes = new()
 			};
-			return Task.FromResult(newState);
+			return Task.FromResult(newAppState);
 		};
 
 
 		//SharedColumns
-		if (newState.AdminSharedColumns.Count == 0)
-			newState = newState with
+		if (newAppState.AdminSharedColumns.Count == 0)
+			newAppState = newAppState with
 			{
 				AdminSharedColumns = GetSharedColumns()
 			};
 
 		//SharedColumns
-		if (newState.AdminSharedColumnDataTypes.Count == 0)
-			newState = newState with
+		if (newAppState.AdminSharedColumnDataTypes.Count == 0)
+			newAppState = newAppState with
 			{
 				AdminSharedColumnDataTypes = GetDatabaseColumnTypeInfos()
 			};
 
 
-		return Task.FromResult(newState);
+		return Task.FromResult(newAppState);
 	}
 
 	internal List<TucSharedColumn> GetSharedColumns()

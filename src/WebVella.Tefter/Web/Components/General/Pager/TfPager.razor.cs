@@ -16,9 +16,9 @@ public partial class TfPager : TfBaseComponent
 	private int _page = 1;
 	private int _pageSize = TfConstants.PageSize;
 
-	protected override void OnParametersSet()
+	protected override async Task OnParametersSetAsync()
 	{
-		base.OnParametersSet();
+		await base.OnParametersSetAsync();
 		_page = Page;
 		_pageSize = PageSize;
 	}

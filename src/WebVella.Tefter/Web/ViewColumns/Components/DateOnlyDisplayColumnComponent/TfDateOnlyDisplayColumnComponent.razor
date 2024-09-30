@@ -2,17 +2,16 @@
 @inherits TfBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
-	var value = GetDataStructByAlias<DateOnly>(_valueAlias, null);
-	var format = !String.IsNullOrWhiteSpace(options.Format) ? options.Format : _defaultFormat;
-	<div>@value?.ToString(format)</div>
+	var format = !String.IsNullOrWhiteSpace(componentOptions.Format) ? componentOptions.Format : _defaultFormat;
+	<div>@_value?.ToString(format)</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentTextField Label="@LOC("Format")"
-							 Value="@options.Format" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(options.Format),x))
+							 Value="@componentOptions.Format" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.Format),x))
 							 Placeholder="@LOC("eg. 'dd MMM yyyy'")" />
 			<div class="tf-input-description">@LOC("defaults to the system's short date format")</div>
 		</FluentGridItem>

@@ -1,6 +1,4 @@
 ﻿namespace WebVella.Tefter.Web.Store;
-using SystemColor = System.Drawing.Color;
-
 [FeatureState]
 public partial record TfRouteState
 {
@@ -15,15 +13,15 @@ public partial record TfRouteState
 	public RouteDataSecondNode SecondNode { get; init; } = default!;
 	public RouteDataThirdNode ThirdNode { get; init; } = default!;
 
-	public int? Page { get; init;} = 1;
-	public int? PageSize { get; init;} = null;
-	public string Search { get; init;} = null;
-	public List<TucFilterBase> Filters { get; init;} = null;
-	public List<TucSort> Sorts { get; init;} = null;
-	public Guid? ActiveSaveId { get; init;} = null;
-	public bool SearchInBookmarks { get; init;} = true;
-	public bool SearchInSaves { get; init;} = true;
-	public bool SearchInViews { get; init;} = true;
+	public int? Page { get; init; } = 1;
+	public int? PageSize { get; init; } = null;
+	public string Search { get; init; } = null;
+	public List<TucFilterBase> Filters { get; init; } = null;
+	public List<TucSort> Sorts { get; init; } = null;
+	public Guid? ActiveSaveId { get; init; } = null;
+	public bool SearchInBookmarks { get; init; } = true;
+	public bool SearchInSaves { get; init; } = true;
+	public bool SearchInViews { get; init; } = true;
 }
 
 public enum RouteDataFirstNode

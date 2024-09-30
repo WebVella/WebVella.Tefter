@@ -22,6 +22,10 @@ public record TucDataProvider
 			{
 				foreach (var item in SharedColumns) result.Add(new TucColumn(item));
 			}
+			if (SystemColumns is not null)
+			{
+				foreach (var item in SystemColumns) result.Add(new TucColumn(item));
+			}
 			return result.OrderBy(x=> x.DbName).ToList();
 		}
 	}

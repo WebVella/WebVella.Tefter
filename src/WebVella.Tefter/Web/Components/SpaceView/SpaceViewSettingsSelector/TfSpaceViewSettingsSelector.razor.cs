@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewSettingsSelector.TfSpaceViewSettingsSelector", "WebVella.Tefter")]
 public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
