@@ -19,6 +19,8 @@
 ::deep fluent-button {
 	background:var(--neutral-fill-input-active);
 }
-	::deep fluent-button svg::slotted(.end) {
+	::deep fluent-button::slotted(.end) svg {
 		fill:var(--neutral-stroke-input-active) !important;
+		fill:red !important;
 	}
+
