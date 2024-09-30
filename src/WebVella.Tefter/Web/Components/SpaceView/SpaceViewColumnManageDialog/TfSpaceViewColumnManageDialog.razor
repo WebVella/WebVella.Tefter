@@ -36,21 +36,32 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect Label="@LOC("Column type")" Style="width:100%"
-								  TOption="TucSpaceViewColumnType"
-								  Placeholder="@LOC("select...")"
-								  Value="@(_form.ColumnType?.Id.ToString())"
-								  ValueChanged="_columnTypeChangeHandler"
-								  OptionText="((x)=> x.Name)"
-								  OptionValue="((x)=> x.Id.ToString())"
-								  Items="TfAppState.Value.AvailableColumnTypes">
-						<OptionTemplate Context="option">
-							<FluentStack>
-								<FluentIcon Value="@option.Icon" Color="@Color.Accent" />
-								@option.Name
-							</FluentStack>
-						</OptionTemplate>
-					</FluentSelect>
+					<FluentInputLabel Label="@LOC("Column type")" />
+					<FluentStack HorizontalGap="5">
+						@if (_form.ColumnType?.Icon is null)
+						{
+							<FluentButton Appearance="@Appearance.Outline"/>
+						}
+						else
+						{
+							<FluentButton Appearance="@Appearance.Outline" IconStart="@_form.ColumnType?.Icon" />
+						}
+						<FluentSelect Style="width:100%"
+									  TOption="TucSpaceViewColumnType"
+									  Placeholder="@LOC("select...")"
+									  Value="@(_form.ColumnType?.Id.ToString())"
+									  ValueChanged="_columnTypeChangeHandler"
+									  OptionText="((x)=> x.Name)"
+									  OptionValue="((x)=> x.Id.ToString())"
+									  Items="TfAppState.Value.AvailableColumnTypes">
+							<OptionTemplate Context="option">
+								<FluentStack>
+									<FluentIcon Value="@option.Icon" Color="@Color.Accent" />
+									@option.Name
+								</FluentStack>
+							</OptionTemplate>
+						</FluentSelect>
+					</FluentStack>
 					<FluentValidationMessage For="@(() => _form.ColumnType)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">

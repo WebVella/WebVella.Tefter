@@ -157,7 +157,12 @@ else
 												@if (context.ColumnType is not null)
 												{
 													<div>
-														<div>@context.ColumnType.Name</div>
+														<div>
+															<FluentStack>
+																<FluentIcon Value="@context.ColumnType.Icon" Color="@Color.Accent" />
+																<div>@context.ColumnType.Name</div>
+															</FluentStack>
+														</div>
 														<div class="td-description">@context.ColumnType.Description</div>
 													</div>
 												}
