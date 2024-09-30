@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Talk;
 
 public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnType
 {
@@ -24,7 +24,7 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnType
 
 		Description = "displays related comments count";
 
-		Icon = "TextCaseTitle";
+		Icon = "CommentMultiple";
 
 		DataMapping = new List<TfSpaceViewColumnDataMapping>
 		{

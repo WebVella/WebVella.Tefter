@@ -5,7 +5,7 @@
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
 [Description("Talk Comments Count Display")]
-[LocalizationResource("WebVella.Tefter.Talk.Components.Components.TalkCommentsCountComponent.TfTalkCommentsCountComponent", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Talk.ViewColumns.Components.TalkCommentsCountComponent.TfTalkCommentsCountComponent", "WebVella.Tefter")]
 public partial class TfTalkCommentsCountComponent : TfBaseViewColumn<TfTalkCommentsCountComponentOptions>
 {
 	/// <summary>
