@@ -60,6 +60,8 @@ public static class DependencyInjection
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
 		services.AddSingleton<ITfApplicationManager, TfApplicationManager>();
+		services.AddSingleton<ITfScreenRegionComponentManager, TfScreenRegionComponentManager>();
+		
 
 		//lazy services
 		services.AddSingleton<Lazy<IDatabaseService>>(provider => 

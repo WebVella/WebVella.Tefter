@@ -1,8 +1,9 @@
 ﻿namespace WebVella.Tefter;
 
-public interface ITfApplicationManager 
-{ 
-	public TfApplicationBase GetApplication(Guid appId);
+public interface ITfApplicationManager
+{
+	public TfApplicationBase GetApplication(
+		Guid appId);
 }
 
 public class TfApplicationManager : ITfApplicationManager
@@ -24,12 +25,13 @@ public class TfApplicationManager : ITfApplicationManager
 		}
 	}
 
-	private static void ScanAndRegisterApplicationType(Type type)
+	private static void ScanAndRegisterApplicationType(
+		Type type)
 	{
 		if (!type.IsClass || type.GetTypeInfo().IsAbstract)
 			return;
 
-		if (type.IsAssignableTo(typeof(TfApplicationBase) ))
+		if (type.IsAssignableTo(typeof(TfApplicationBase)))
 		{
 			var instance = (TfApplicationBase)Activator.CreateInstance(type);
 			_applications.Add(instance);
@@ -41,9 +43,10 @@ public class TfApplicationManager : ITfApplicationManager
 		return _applications.ToList();
 	}
 
-	public TfApplicationBase GetApplication(Guid appId)
+	public TfApplicationBase GetApplication(
+		Guid appId)
 	{
-		return _applications.SingleOrDefault(x=>x.Id == appId);
+		return _applications.SingleOrDefault(x => x.Id == appId);
 	}
 
 
