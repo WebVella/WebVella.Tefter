@@ -2,16 +2,25 @@
 
 internal partial interface ITfScreenRegionComponentManager
 {
-	public List<TfScreenRegionComponentMeta> GetComponentMeta(ScreenRegion? region);
+	public List<TfScreenRegionComponentMeta> GetComponentMeta(
+		ScreenRegion? region);
 }
 
 internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponentManager
 {
-	public new List<TfScreenRegionComponentMeta> GetComponentMeta(ScreenRegion? region)
+	public new List<TfScreenRegionComponentMeta> GetComponentMeta(
+		ScreenRegion? region)
 	{
 		if (region == null)
-			return _meta.ToList();
+		{
+			return _meta
+				.OrderBy(x => x.Position)
+				.ToList();
+		}
 
-		return _meta.Where(x => x.ScreenRegion == region).ToList();
+		return _meta
+			.Where(x => x.ScreenRegion == region)
+			.OrderBy(x => x.Position)
+			.ToList();
 	}
 }

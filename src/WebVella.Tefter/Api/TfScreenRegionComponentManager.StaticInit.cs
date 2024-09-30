@@ -19,7 +19,8 @@ internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponent
 		}
 	}
 
-	private static void ScanAndRegisterScreenRegionComponentTypes(Type type)
+	private static void ScanAndRegisterScreenRegionComponentTypes(
+		Type type)
 	{
 		if (!type.IsClass || type.GetTypeInfo().IsAbstract)
 			return;
