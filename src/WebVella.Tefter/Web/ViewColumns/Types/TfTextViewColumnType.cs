@@ -60,7 +60,8 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 			typeof(TfPhoneDisplayColumnComponent),
 			typeof(TfPhoneEditColumnComponent),
 			typeof(TfTextEditColumnComponent),
-			typeof(TfTextSelectColumnComponent),
+			typeof(TfSelectDisplayColumnComponent),
+			typeof(TfSelectEditColumnComponent),
 			typeof(TfTextMultiSelectColumnComponent),
 			};
 	}

@@ -1,65 +1,39 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfTextSelectColumnComponentOptions>
+@inherits TfBaseViewColumn<TfSelectDisplayColumnComponentOptions>
 @if (Context.Mode == TfComponentMode.Display)
 {
 	<div>
-		<FluentButton Id="@_valueInputId" Style="width:100%"
-					  OnClick="@(() => _open = !_open)"
-					  Color="@_selectedOption?.Color" BackgroundColor="@_selectedOption?.BackgroundColor">
-			@if (!_selectedOption.HideLabel)
-			{
-				<span>@_selectedOption?.Label</span>
-			}
+		<div style="@_getStyle()" class="tf-select-btn">
 			@if (!String.IsNullOrWhiteSpace(_selectedOption.IconName))
 			{
-				<FluentIcon Slot="start" Value="@TfConstants.GetIcon(_selectedOption.IconName)"
-							Color="Color.Custom" CustomColor="@_selectedOption?.Color" />
+				<div class="tf-select-btn__start">
+					<FluentIcon Value="@TfConstants.GetIcon(_selectedOption.IconName)"
+								Color="Color.Custom" CustomColor="@_selectedOption?.Color" />
+				</div>
 			}
-			<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-stroke-input-active)" Color="@Color.Custom" />
-		</FluentButton>
-		<FluentMenu UseMenuService="true"
-					Style="max-height:300px"
-					HorizontalScaling="AxisScalingMode.Anchor"
-					Class="tf-btn-menu"
-					Anchor="@_valueInputId"
-					@bind-Open="_open">
-			<Virtualize TItem="TucSelectOption" Items="_selectOptionsList" Context="option" ItemSize="32">
-				<FluentMenuItem @key=@option.Id OnClick="@(()=> _optionChanged(option))">@option.Label</FluentMenuItem>
-			</Virtualize>
-		</FluentMenu>
+			@if (!_selectedOption.HideLabel)
+			{
+				<div class="tf-select-btn__content">@_selectedOption?.Label</div>
+			}
+		</div>
 	</div>
 }
 else if (Context.Mode == TfComponentMode.Options)
 {
 	<FluentGrid>
-		<FluentGridItem xs="6">
-			<FluentInputLabel Label="@LOC("Change confirmation")" />
-			<FluentCheckbox Value="@componentOptions.ChangeRequiresConfirmation"
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeRequiresConfirmation),x))
-							Label="@LOC("requires confirmation")" />
-		</FluentGridItem>
-		<FluentGridItem xs="6">
-			<FluentTextField Label="@LOC("Confirmation message")"
-							 Value="@componentOptions.ChangeConfirmationMessage" Style="width:100%"
-							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeConfirmationMessage),x))
-							 Placeholder="@LOC("empty shows a system one")" />
-		</FluentGridItem>
-	</FluentGrid>
-	<FluentDivider Style="margin:1rem 0" />
-	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Options source type")" />
-			<FluentRadioGroup Name="source" @bind-Value=@componentOptions.Source TValue="TfTextSelectColumnComponentOptionsSourceType">
-				<FluentRadio Value="@TfTextSelectColumnComponentOptionsSourceType.ManuallySet">
-					@TfTextSelectColumnComponentOptionsSourceType.ManuallySet.ToDescriptionString()
+			<FluentRadioGroup Name="source" @bind-Value=@componentOptions.Source TValue="TfSelectDisplayColumnComponentOptionsSourceType">
+				<FluentRadio Value="@TfSelectDisplayColumnComponentOptionsSourceType.ManuallySet">
+					@TfSelectDisplayColumnComponentOptionsSourceType.ManuallySet.ToDescriptionString()
 				</FluentRadio>
-				<FluentRadio Value="@TfTextSelectColumnComponentOptionsSourceType.SpaceData">
-					@TfTextSelectColumnComponentOptionsSourceType.SpaceData.ToDescriptionString()
+				<FluentRadio Value="@TfSelectDisplayColumnComponentOptionsSourceType.SpaceData">
+					@TfSelectDisplayColumnComponentOptionsSourceType.SpaceData.ToDescriptionString()
 				</FluentRadio>
 			</FluentRadioGroup>
 		</FluentGridItem>
 	</FluentGrid>
-	@if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.ManuallySet)
+	@if (componentOptions.Source == TfSelectDisplayColumnComponentOptionsSourceType.ManuallySet)
 	{
 		<FluentGrid>
 			<FluentGridItem xs="12">
@@ -78,7 +52,7 @@ else if (Context.Mode == TfComponentMode.Options)
 			</FluentGridItem>
 		</FluentGrid>
 	}
-	else if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.SpaceData)
+	else if (componentOptions.Source == TfSelectDisplayColumnComponentOptionsSourceType.SpaceData)
 	{
 		<FluentGrid>
 			<FluentGridItem xs="6">

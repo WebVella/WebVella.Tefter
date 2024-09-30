@@ -50,7 +50,7 @@
 	  <Content Update="Web\ViewColumns\Components\GuidEditColumnComponent\TfGuidEditColumnComponent.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
-	  <Content Update="Web\ViewColumns\Components\TextSelectColumnComponent\TfTextSelectColumnComponent.razor">
+	  <Content Update="Web\ViewColumns\Components\SelectEditColumnComponent\TfSelectEditColumnComponent.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
 	</ItemGroup>

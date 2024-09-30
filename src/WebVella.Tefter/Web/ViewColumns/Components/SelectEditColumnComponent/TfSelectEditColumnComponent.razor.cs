@@ -4,9 +4,9 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Text Select")]
-[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextSelectColumnComponent.TfTextSelectColumnComponent", "WebVella.Tefter")]
-public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelectColumnComponentOptions>
+[Description("Tefter Select Edit")]
+[LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.SelectEditColumnComponent.TfSelectEditColumnComponent", "WebVella.Tefter")]
+public partial class TfSelectEditColumnComponent : TfBaseViewColumn<TfSelectEditColumnComponentOptions>
 {
 	#region << Injects >>
 	[Inject] public IDispatcher Dispatcher { get; set; }
@@ -19,7 +19,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
-	public TfTextSelectColumnComponent()
+	public TfSelectEditColumnComponent()
 	{
 	}
 
@@ -28,7 +28,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfTextSelectColumnComponent(TfComponentContext context)
+	public TfSelectEditColumnComponent(TfComponentContext context)
 	{
 		Context = context;
 	}
@@ -107,11 +107,11 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 		_initStorageKeys();
 		var options = new List<TucSelectOption>();
 		var componentOptions = GetOptions();
-		if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.ManuallySet)
+		if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.ManuallySet)
 		{
 			options = _getOptionsFromString(componentOptions.OptionsString);
 		}
-		else if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.SpaceData)
+		else if (componentOptions.Source == TfSelectEditColumnComponentOptionsSourceType.SpaceData)
 		{
 			if (componentOptions.SpaceDataId != Guid.Empty)
 			{
@@ -169,7 +169,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 						if (column is not null)
 						{
 							if (optionsDT.Rows[i][columnName] is not null){
-								color = _getCssColorFromString(optionsDT.Rows[i][columnName].ToString());
+								color = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
 							}
 						}
 					}
@@ -180,7 +180,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 						if (column is not null)
 						{
 							if (optionsDT.Rows[i][columnName] is not null){
-								backgroundColor = _getCssColorFromString(optionsDT.Rows[i][columnName].ToString());
+								backgroundColor = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
 							}
 						}
 					}
@@ -319,11 +319,11 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 			}
 			if (items.Count >= 4 && !String.IsNullOrWhiteSpace(items[3]))
 			{
-				color = _getCssColorFromString(items[3]);
+				color = TfConverters.GetCssColorFromString(items[3]);
 			}
 			if (items.Count >= 5 && !String.IsNullOrWhiteSpace(items[4]))
 			{
-				backgroundColor = _getCssColorFromString(items[4]);
+				backgroundColor = TfConverters.GetCssColorFromString(items[4]);
 			}
 			if (items.Count >= 6 && !String.IsNullOrWhiteSpace(items[5]))
 			{
@@ -344,35 +344,12 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 		}
 		return result;
 	}
-
-	private string _getCssColorFromString(string colorString)
-	{
-		if (String.IsNullOrWhiteSpace(colorString)) return null;
-		colorString = colorString.Trim().ToLowerInvariant();
-		//Check if css code color
-		if (colorString.StartsWith("#") || colorString.StartsWith("rgb")
-		|| colorString.StartsWith("hsl") || colorString.StartsWith("hwb"))
-			return colorString;
-
-		//Check if OfficeColor int
-		if (int.TryParse(colorString, out int value)
-		&& Enum.IsDefined(typeof(OfficeColor), value))
-		{
-			return ((OfficeColor)value).ToAttributeValue();
-		}
-		//Check if OfficeColor string
-		if (Enum.TryParse<OfficeColor>(colorString, true, out OfficeColor outColor))
-		{
-			return outColor.ToAttributeValue();
-		}
-		//named color
-		return colorString;
-	}
+	
 
 	#endregion
 }
 
-public class TfTextSelectColumnComponentOptions
+public class TfSelectEditColumnComponentOptions
 {
 	[JsonPropertyName("ChangeRequiresConfirmation")]
 	public bool ChangeRequiresConfirmation { get; set; } = false;
@@ -381,7 +358,7 @@ public class TfTextSelectColumnComponentOptions
 	public string ChangeConfirmationMessage { get; set; }
 
 	[JsonPropertyName("Source")]
-	public TfTextSelectColumnComponentOptionsSourceType Source { get; set; } = TfTextSelectColumnComponentOptionsSourceType.ManuallySet;
+	public TfSelectEditColumnComponentOptionsSourceType Source { get; set; } = TfSelectEditColumnComponentOptionsSourceType.ManuallySet;
 
 	[JsonPropertyName("OptionsString")]
 	public string OptionsString { get; set; }
@@ -408,7 +385,7 @@ public class TfTextSelectColumnComponentOptions
 	public string SpaceDataIconColumnName { get; set; }
 }
 
-public enum TfTextSelectColumnComponentOptionsSourceType
+public enum TfSelectEditColumnComponentOptionsSourceType
 {
 	[Description("manually set")]
 	ManuallySet = 0,
