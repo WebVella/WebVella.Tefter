@@ -3,13 +3,13 @@
 internal partial interface ITfScreenRegionComponentManager
 {
 	public List<TfScreenRegionComponentMeta> GetComponentMeta(
-		ScreenRegion? region);
+		ScreenRegion? region = null);
 }
 
 internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponentManager
 {
 	public new List<TfScreenRegionComponentMeta> GetComponentMeta(
-		ScreenRegion? region)
+		ScreenRegion? region = null)
 	{
 		if (region == null)
 		{
