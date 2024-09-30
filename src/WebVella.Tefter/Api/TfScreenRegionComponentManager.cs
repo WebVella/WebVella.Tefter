@@ -1,17 +1,17 @@
-﻿namespace WebVella.Tefter.Api;
+﻿namespace WebVella.Tefter;
 
-internal class ITfScreenRegionComponentManager
+internal partial interface ITfScreenRegionComponentManager
 {
+	public List<TfScreenRegionComponentMeta> GetComponentMeta(ScreenRegion? region);
 }
 
-internal class TfScreenRegionComponentManager : ITfScreenRegionComponentManager
+internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponentManager
 {
-}
+	public new List<TfScreenRegionComponentMeta> GetComponentMeta(ScreenRegion? region)
+	{
+		if (region == null)
+			return _meta.ToList();
 
-
-internal class TfScreenRegionComponentMeta
-{
-	public ScreenRegion ScreenRegion { get; init; }
-	public Type ComponentType { get; init; }
-	public int Position { get; init; }
+		return _meta.Where(x => x.ScreenRegion == region).ToList();
+	}
 }
