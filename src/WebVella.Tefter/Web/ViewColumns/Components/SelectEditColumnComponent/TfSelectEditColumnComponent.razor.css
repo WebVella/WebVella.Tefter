@@ -22,4 +22,3 @@
 	::deep fluent-button svg::slotted(.end) {
 		fill:var(--neutral-stroke-input-active) !important;
 	}
- 

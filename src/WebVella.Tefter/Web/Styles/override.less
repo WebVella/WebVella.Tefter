@@ -36,3 +36,18 @@ fluent-anchored-region fluent-menu {
 	max-height:300px;
 	overflow-y:scroll;
 }
+
+.tf-menu-item-selected{
+	position:relative;
+}
+
+.tf-menu-item-selected::before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 25%;
+	left: 0;
+	bottom: 25%;
+	width: 3px;
+	background: var(--accent-fill-rest);
+}
