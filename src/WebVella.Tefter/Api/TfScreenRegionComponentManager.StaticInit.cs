@@ -34,6 +34,7 @@ internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponent
 			{
 				Position = attr.Position,
 				ScreenRegion = attr.ScreenRegion,
+				UrlSlug = attr.UrlSlug,
 				ComponentType = type
 			};
 

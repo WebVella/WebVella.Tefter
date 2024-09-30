@@ -8,11 +8,15 @@ public class TfScreenRegionComponentAttribute : Attribute
 
 	public int Position { get; init; }
 
+	public string UrlSlug { get; init; } = null;
+
 	public TfScreenRegionComponentAttribute(
 		ScreenRegion ScreenRegion,
-		int Position)
+		int Position,
+		string UrlSlug = null )
 	{
 		this.ScreenRegion = ScreenRegion;
 		this.Position = Position;
+		this.UrlSlug = UrlSlug;
 	}
 }
