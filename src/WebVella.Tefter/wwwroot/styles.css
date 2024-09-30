@@ -452,7 +452,7 @@ fluent-button.accent svg {
 }
 fluent-anchored-region fluent-menu {
   min-width: 100%;
-  max-height: 140px;
+  max-height: 300px;
   overflow-y: scroll;
 }
 :root {

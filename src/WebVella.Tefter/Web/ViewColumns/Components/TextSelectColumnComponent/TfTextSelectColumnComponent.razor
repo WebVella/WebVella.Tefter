@@ -4,9 +4,19 @@
 {
 	<div>
 		<FluentButton Id="@_valueInputId" Style="width:100%"
-					  Appearance="@Appearance.Outline"
 					  OnClick="@(() => _open = !_open)"
-					  IconEnd="@TfConstants.GetIcon("ChevronDown")">@_selectedOption?.Label</FluentButton>
+					  Color="@_selectedOption?.Color" BackgroundColor="@_selectedOption?.BackgroundColor">
+			@if (!_selectedOption.HideLabel)
+			{
+				<span>@_selectedOption?.Label</span>
+			}
+			@if (!String.IsNullOrWhiteSpace(_selectedOption.IconName))
+			{
+				<FluentIcon Slot="start" Value="@TfConstants.GetIcon(_selectedOption.IconName)"
+							Color="Color.Custom" CustomColor="@_selectedOption?.Color" />
+			}
+			<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-stroke-input-active)" Color="@Color.Custom" />
+		</FluentButton>
 		<FluentMenu UseMenuService="true"
 					Style="max-height:300px"
 					HorizontalScaling="AxisScalingMode.Anchor"
@@ -58,12 +68,12 @@ else if (Context.Mode == TfComponentMode.Options)
 								ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.OptionsString),x)) />
 				<div class="tf-input-description">
 					@((MarkupString)LOC(@"Options separated by new line. Each option supports comma separated settings:
-			<br/>value - required, text, converted automatically to column data type
-			<br/>label - text
-			<br/>iconName - text,fluent icon name
-			<br/>color - string or int. String is css color value. Int is converted to enum of fluent OfficeColor
-			<br/>backgroundColor - string or int. String is css color value. Int is converted to enum of fluent OfficeColor
-			<br/>hideIcon - text, converted to boolean"))
+			<br/>*value - required, text, converted automatically to column data type
+			<br/>*label - text
+			<br/>*iconName - text,fluent icon name
+			<br/>*color - string or int. String is css color value, named color or fluent OfficeColor value as string. Int is converted to enum of fluent OfficeColor
+			<br/>*backgroundColor - string or int. String is css color value, named color or fluent OfficeColor value as string. Int is converted to enum of fluent OfficeColor
+			<br/>*hideLabel - text, converted to boolean"))
 				</div>
 			</FluentGridItem>
 		</FluentGrid>

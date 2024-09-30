@@ -4,17 +4,22 @@
 
 ::deep fluent-button::part(control) {
 	border:1px solid var(--neutral-stroke-input-active);
-	justify-content: space-between;
+	justify-content: start;
+	display:flex;
 }
-
-::deep fluent-button::part(start) {
-	display:none;
+::deep fluent-button::part(start),
+::deep fluent-button::part(end){
+	flex:0 0 auto;
+}
+::deep fluent-button::part(content){
+	flex:1 1 auto;
+	text-align:left;
 }
 
 ::deep fluent-button {
-	background:var(--neutral-fill-input-active) !important;
+	background:var(--neutral-fill-input-active);
 }
-	::deep fluent-button svg {
+	::deep fluent-button svg::slotted(.end) {
 		fill:var(--neutral-stroke-input-active) !important;
 	}
  

@@ -109,27 +109,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 		var componentOptions = GetOptions();
 		if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.ManuallySet)
 		{
-			if (!String.IsNullOrWhiteSpace(componentOptions.OptionsString))
-			{
-				var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
-				foreach (var row in rows)
-				{
-					var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
-					if (items.Count == 0) continue;
-					var valueObj = ConvertStringToColumnObjectByAlias(_valueAlias, items[0]);
-
-					if (items.Count == 1)
-					{
-						options.Add(new TucSelectOption(valueObj, items[0]));
-					}
-					else if (items.Count > 1)
-					{
-						options.Add(new TucSelectOption(valueObj, items[1]));
-					}
-
-				}
-			}
-
+			options = _getOptionsFromString(componentOptions.OptionsString);
 		}
 		else if (componentOptions.Source == TfTextSelectColumnComponentOptionsSourceType.SpaceData)
 		{
@@ -151,6 +131,7 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 					string color = null;
 					string backgroundColor = null;
 					string iconName = null;
+					bool hideLabel = componentOptions.SpaceDataHideLabel;
 
 					if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataValueColumnName))
 					{
@@ -171,8 +152,47 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 								label = optionsDT.Rows[i][columnName].ToString();
 						}
 					}
+					if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataIconColumnName))
+					{
+						var columnName = componentOptions.SpaceDataIconColumnName.Trim().ToLowerInvariant();
+						var column = optionsDT.Columns[columnName];
+						if (column is not null)
+						{
+							if (optionsDT.Rows[i][columnName] is not null)
+								iconName = optionsDT.Rows[i][columnName].ToString();
+						}
+					}
+					if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataColorColumnName))
+					{
+						var columnName = componentOptions.SpaceDataColorColumnName.Trim().ToLowerInvariant();
+						var column = optionsDT.Columns[columnName];
+						if (column is not null)
+						{
+							if (optionsDT.Rows[i][columnName] is not null){
+								color = _getCssColorFromString(optionsDT.Rows[i][columnName].ToString());
+							}
+						}
+					}
+					if (!String.IsNullOrWhiteSpace(componentOptions.SpaceDataBackgroundColorColumnName))
+					{
+						var columnName = componentOptions.SpaceDataBackgroundColorColumnName.Trim().ToLowerInvariant();
+						var column = optionsDT.Columns[columnName];
+						if (column is not null)
+						{
+							if (optionsDT.Rows[i][columnName] is not null){
+								backgroundColor = _getCssColorFromString(optionsDT.Rows[i][columnName].ToString());
+							}
+						}
+					}
 
-					options.Add(new TucSelectOption(value, label));
+					options.Add(new TucSelectOption(
+						value: value,
+						label: label,
+						iconName: iconName,
+						color: color,
+						backgroundColor: backgroundColor,
+						hideLabel: hideLabel
+					));
 				}
 			}
 		}
@@ -262,22 +282,93 @@ public partial class TfTextSelectColumnComponent : TfBaseViewColumn<TfTextSelect
 				await OnOptionsChanged(nameof(componentOptions.SpaceDataId), TfAppState.Value.SpaceDataList[0].Id);
 			}
 		}
-		//_assignActions();
 	}
-
 	private void _initStorageKeys()
 	{
 		_storageKey = this.GetType().Name + "_" + Context.SpaceViewColumnId;
 	}
-
-	private void _assignActions()
+	private List<TucSelectOption> _getOptionsFromString(string optionsString)
 	{
-		if (_selectOptionsList is null) return;
-		foreach (var option in _selectOptionsList)
+		var result = new List<TucSelectOption>();
+		if (String.IsNullOrWhiteSpace(componentOptions.OptionsString)) return result;
+
+		var rows = componentOptions.OptionsString.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+		foreach (var row in rows)
 		{
-			option.OnClick = async () => await _optionChanged(option);
+			object value = null;
+			string label = null;
+			string iconName = null;
+			string color = null;
+			string backgroundColor = null;
+			bool hideLabel = false;
+			var items = row.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList();
+			if (items.Count == 0) continue;
+			var valueObj = ConvertStringToColumnObjectByAlias(_valueAlias, items[0]);
+
+			if (items.Count >= 1)
+			{
+				value = valueObj;
+			}
+			if (items.Count >= 2 && !String.IsNullOrWhiteSpace(items[1]))
+			{
+				label = items[1];
+			}
+			if (items.Count >= 3 && !String.IsNullOrWhiteSpace(items[2]))
+			{
+				iconName = items[2];
+			}
+			if (items.Count >= 4 && !String.IsNullOrWhiteSpace(items[3]))
+			{
+				color = _getCssColorFromString(items[3]);
+			}
+			if (items.Count >= 5 && !String.IsNullOrWhiteSpace(items[4]))
+			{
+				backgroundColor = _getCssColorFromString(items[4]);
+			}
+			if (items.Count >= 6 && !String.IsNullOrWhiteSpace(items[5]))
+			{
+				if (bool.TryParse(items[5], out bool outBool))
+				{
+					hideLabel = outBool;
+				}
+			}
+
+			result.Add(new TucSelectOption(
+				value: value,
+				label: label,
+				iconName: iconName,
+				color: color,
+				backgroundColor: backgroundColor,
+				hideLabel: hideLabel
+			));
 		}
+		return result;
 	}
+
+	private string _getCssColorFromString(string colorString)
+	{
+		if (String.IsNullOrWhiteSpace(colorString)) return null;
+		colorString = colorString.Trim().ToLowerInvariant();
+		//Check if css code color
+		if (colorString.StartsWith("#") || colorString.StartsWith("rgb")
+		|| colorString.StartsWith("hsl") || colorString.StartsWith("hwb"))
+			return colorString;
+
+		//Check if OfficeColor int
+		if (int.TryParse(colorString, out int value)
+		&& Enum.IsDefined(typeof(OfficeColor), value))
+		{
+			return ((OfficeColor)value).ToAttributeValue();
+		}
+		//Check if OfficeColor string
+		if (Enum.TryParse<OfficeColor>(colorString, true, out OfficeColor outColor))
+		{
+			return outColor.ToAttributeValue();
+		}
+		//named color
+		return colorString;
+	}
+
 	#endregion
 }
 
