@@ -12,8 +12,8 @@ internal partial class MigrationManager : IMigrationManager
 		[DboModelProperty("id")]
 		public Guid Id { get; init; }
 
-		[DboModelProperty("addon_id")]
-		public Guid? AddOnId { get; init; }
+		[DboModelProperty("application_id")]
+		public Guid? ApplicationId { get; init; }
 
 		[DboModelProperty("migration_class_name")]
 		public string MigrationClassName { get; init; }

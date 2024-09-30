@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Migrations;
 
-[TefterSystemMigration("2024.6.27.1")]
-internal class TefterSystemMigration2024062701 : TefterSystemMigration
+[TfSystemMigration("2024.6.27.1")]
+internal class TefterSystemMigration2024062701 : TfSystemMigration
 {
 	public override void MigrateStructure(DatabaseBuilder dbBuilder)
 	{
@@ -12,7 +12,7 @@ internal class TefterSystemMigration2024062701 : TefterSystemMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("addon_id", c => { c.WithoutAutoDefaultValue().Nullable(); })
+					.AddGuidColumn("application_id", c => { c.WithoutAutoDefaultValue().Nullable(); })
 					.AddTextColumn("migration_class_name", c => { c.NotNullable(); })
 					.AddDateTimeColumn("executed_on", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddNumberColumn("major_ver", c => { c.NotNullable(); })

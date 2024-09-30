@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Migrations;
 
-[TefterSystemMigration("2024.8.27.1")]
-internal class TefterSystemMigration2024082701 : TefterSystemMigration
+[TfSystemMigration("2024.8.27.1")]
+internal class TefterSystemMigration2024082701 : TfSystemMigration
 {
 	public override void MigrateStructure(DatabaseBuilder dbBuilder)
 	{

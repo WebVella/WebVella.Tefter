@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Core;
-using WebVella.Tefter.Web.Models;
-using WebVella.Tefter.Web.ViewColumns;
+﻿using WebVella.Tefter.Web.ViewColumns;
 
 namespace WebVella.Tefter.Tests;
 
@@ -709,7 +707,7 @@ public partial class SpaceManagerTests : BaseTest
 						ColumnType = availableColumnType,
 						QueryName = availableColumnType.Name
 											.ToLower()
-											.Replace(".","")
+											.Replace(".", "")
 											.Replace(" ", "")
 											.Replace("(", "")
 											.Replace(")", ""),
@@ -730,7 +728,7 @@ public partial class SpaceManagerTests : BaseTest
 				columns.Count.Should().Be(availableColumnTypes.Count);
 
 				var first = createdColums[0];
-				var last = createdColums[createdColums.Count-1];
+				var last = createdColums[createdColums.Count - 1];
 
 				first.Position = (short)(createdColums.Count);
 
@@ -739,8 +737,8 @@ public partial class SpaceManagerTests : BaseTest
 				updateResult.Value.Should().NotBeNull();
 
 				columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
-				columns.Single(x=>x.Id == first.Id).Position.Should().Be((short)(createdColums.Count));
-				columns.Single(x => x.Id == last.Id).Position.Should().Be((short)(createdColums.Count-1));
+				columns.Single(x => x.Id == first.Id).Position.Should().Be((short)(createdColums.Count));
+				columns.Single(x => x.Id == last.Id).Position.Should().Be((short)(createdColums.Count - 1));
 
 				last = columns.Single(x => x.Id == first.Id);
 

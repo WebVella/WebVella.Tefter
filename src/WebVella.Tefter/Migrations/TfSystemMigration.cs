@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Migrations;
 
-internal abstract class TefterSystemMigration
+internal abstract class TfSystemMigration
 {
 	public virtual void MigrateStructure(DatabaseBuilder dbBuilder) { }
 

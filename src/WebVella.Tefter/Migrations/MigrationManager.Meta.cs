@@ -10,15 +10,15 @@ internal partial class MigrationManager : IMigrationManager
 	{
 		public Version Version { get; set; }
 		public string MigrationClassName { get; set; }
-		public TefterSystemMigration Instance { get; set; }
+		public TfSystemMigration Instance { get; set; }
 
 	}
 
 	private record AddOnMigrationMeta
 	{
 		public Version Version { get; set; }
-		public Guid AddOnTypeId { get; set; }
+		public Guid ApplicationId { get; set; }
 		public string MigrationClassName { get; set; }
-		public ITefterAddOnMigration Instance { get; set; }
+		public ITfApplicationMigration Instance { get; set; }
 	}
 }

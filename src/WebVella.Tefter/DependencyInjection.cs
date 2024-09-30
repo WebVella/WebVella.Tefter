@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Api;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using WebVella.Tefter.Api;
 
 namespace WebVella.Tefter;
 
@@ -58,6 +59,7 @@ public static class DependencyInjection
 		services.AddSingleton<ITfSharedColumnsManager, TfSharedColumnsManager>();
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
+		services.AddSingleton<ITfApplicationManager, TfApplicationManager>();
 
 		//lazy services
 		services.AddSingleton<Lazy<IDatabaseService>>(provider => 
@@ -75,6 +77,11 @@ public static class DependencyInjection
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
+
+		//inject classes from applications
+		var applications = TfApplicationManager.GetApplicationsInternal();
+		foreach(var app in applications)
+			app.OnRegisterDependencyInjections(services);
 
 
 		return services;
@@ -94,6 +101,12 @@ public static class DependencyInjection
 
 		var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
 		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
+
+		//execute application on start methods
+		var applications = TfApplicationManager.GetApplicationsInternal();
+		foreach (var app in applications)
+			app.OnStart();
+
 		return serviceProvider;
 	}
 }
