@@ -44,6 +44,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Web\Components\General\Editor\TfEditor.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	  <Content Update="Web\Components\SpaceView\SpaceViewBookmarkSelector\TfSpaceViewBookmarkSelector.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
