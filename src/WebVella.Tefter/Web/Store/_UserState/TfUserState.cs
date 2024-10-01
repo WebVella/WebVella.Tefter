@@ -53,11 +53,12 @@ public partial record TfUserState
 		}
 	}
 
-	public string ThemeBackgkroundColor => $"{ThemeColorString}25";
+	public string ThemeBackgkroundColor => ThemeColor != OfficeColor.Default ? $"{ThemeColorString}25" : "transparent";
 
-	public string ThemeBorderColor => $"{ThemeColorString}75";
+	public string ThemeBorderColor => ThemeColor != OfficeColor.Default ? $"{ThemeColorString}75" : "transparent";
 
-	public string ThemeBackgroundAccentColor => $"{ThemeColorString}35";
+	public string ThemeBackgroundAccentColor => ThemeColor != OfficeColor.Default ? $"{ThemeColorString}35" : "transparent";
 
-	public string ThemeSidebarStyle => $"background-color:{ThemeBackgkroundColor} !important; border-color:{ThemeBorderColor} !important";
+	public string ThemeSidebarStyle => ThemeColor != OfficeColor.Default ? $"background-color:{ThemeBackgkroundColor} !important; border-color:{ThemeBorderColor} !important" :
+		$"background-color:transparent !important; border-color:transparent !important";
 }

@@ -41,15 +41,15 @@ public partial record TfAppState
 
 	//Navigation
 	public List<TucSpace> CurrentUserSpaces { get; init; } = new();
-	public List<MenuItem> SpacesNav
+	public List<TucMenuItem> SpacesNav
 	{
 		get
 		{
-			var result = new List<MenuItem>();
+			var result = new List<TucMenuItem>();
 			if (CurrentUserSpaces is null || CurrentUserSpaces.Count == 0) return result;
-			foreach (var item in CurrentUserSpaces)
+			foreach (var item in CurrentUserSpaces.OrderBy(x=> x.Position).Take(TfConstants.NavSpacesMax))
 			{
-				result.Add(new MenuItem
+				result.Add(new TucMenuItem
 				{
 					Icon = item.Icon,
 					Id = TfConverters.ConvertGuidToHtmlElementId(item.Id),

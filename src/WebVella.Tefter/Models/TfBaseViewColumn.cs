@@ -27,7 +27,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-	[Parameter] public TfComponentContext Context { get; set; }
+	[Parameter] public TfViewColumnComponentContext Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 	#endregion
@@ -36,7 +36,7 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	public TfBaseViewColumn()
 	{
 	}
-	public TfBaseViewColumn(TfComponentContext context)
+	public TfBaseViewColumn(TfViewColumnComponentContext context)
 	{
 		Context = context;
 	}

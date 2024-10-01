@@ -28,8 +28,10 @@ public partial class TfConstants
 	public static string RouteNameAux  = "aux";
 	public static string RouteNameSynchronization  = "synchronization";
 	public static string RouteNameData  = "data";
+	public static string RouteNamePages  = "pages";
 	public static string RouteNameSharedColumns  = "aux-columns";
-	public static string AdminPageUrl  = $"/{RouteNameAdmin}";
+	public static string AdminDashboardUrl  = $"/{RouteNameAdmin}";
+	public static string AdminPagesUrl  = $"/{RouteNameAdmin}/{RouteNamePages}";
 	public static string AdminUsersPageUrl  = $"/{RouteNameAdmin}/{RouteNameUsers}";
 	public static string AdminUserDetailsPageUrl  = $"/{RouteNameAdmin}/{RouteNameUsers}/{{0}}";
 	public static string AdminUserAccessPageUrl  = $"/{RouteNameAdmin}/{RouteNameUsers}/{{0}}/{RouteNameAccess}";
@@ -49,6 +51,8 @@ public partial class TfConstants
 	public static string RouteNameSpaceData  = "data";
 	public static string RouteNameManage  = "manage";
 	public static string RouteNameViews  = "views";
+	public static string PagesPageUrl  = $"/{RouteNamePages}";
+	public static string PagesSinglePageUrl  = $"/{RouteNamePages}/{{0}}";
 	public static string SpacePageUrl  = $"/{RouteNameSpace}/{{0}}";
 	public static string SpaceViewPageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}";
 	public static string SpaceViewManagePageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameManage}";

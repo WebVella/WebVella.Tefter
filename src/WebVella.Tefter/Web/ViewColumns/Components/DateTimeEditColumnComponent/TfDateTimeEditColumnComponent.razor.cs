@@ -22,7 +22,7 @@ public partial class TfDateTimeEditColumnComponent : TfBaseViewColumn<TfDateTime
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfDateTimeEditColumnComponent(TfComponentContext context)
+	public TfDateTimeEditColumnComponent(TfViewColumnComponentContext context)
 	{
 		Context = context;
 	}

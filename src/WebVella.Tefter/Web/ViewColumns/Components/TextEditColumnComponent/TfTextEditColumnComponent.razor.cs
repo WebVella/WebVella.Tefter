@@ -21,7 +21,7 @@ public partial class TfTextEditColumnComponent : TfBaseViewColumn<TfTextEditColu
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfTextEditColumnComponent(TfComponentContext context)
+	public TfTextEditColumnComponent(TfViewColumnComponentContext context)
 	{
 		Context = context;
 	}

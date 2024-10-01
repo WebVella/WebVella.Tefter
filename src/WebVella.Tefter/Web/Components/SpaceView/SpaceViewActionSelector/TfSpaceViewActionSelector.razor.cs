@@ -7,7 +7,7 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 	private bool _open = false;
 	private bool _selectorLoading = false;
 
-	private List<ScreenRegionComponent> _regionComponents = new();
+	private List<TucScreenRegionComponentMeta> _regionComponents = new();
 	private long _lastRegionRenderedTimestamp = 0;
 
 

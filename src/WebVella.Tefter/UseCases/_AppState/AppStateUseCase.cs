@@ -11,6 +11,7 @@ internal partial class AppStateUseCase
 	private readonly ITfSharedColumnsManager _sharedColumnsManager;
 	private readonly IDataManager _dataManager;
 	private readonly ITfSpaceManager _spaceManager;
+	private readonly ITfScreenRegionComponentManager _screenRegionComponentManager;
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
@@ -25,6 +26,7 @@ internal partial class AppStateUseCase
 		ITfSharedColumnsManager sharedColumnsManager,
 		IDataManager dataManager,
 		ITfSpaceManager spaceManager,
+		ITfScreenRegionComponentManager screenRegionComponentManager,
 		NavigationManager navigationManager,
 		IToastService toastService,
 		IMessageService messageService,
@@ -38,6 +40,7 @@ internal partial class AppStateUseCase
 		_sharedColumnsManager = sharedColumnsManager;
 		_dataManager = dataManager;
 		_spaceManager = spaceManager;
+		_screenRegionComponentManager = screenRegionComponentManager;
 		_navigationManager = navigationManager;
 		_toastService = toastService;
 		_messageService = messageService;
@@ -59,6 +62,7 @@ internal partial class AppStateUseCase
 		appState = await InitSpaceViewAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
 		appState = await InitBookmarksAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
 		appState = await InitHomeAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitPagesAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
 
 		return (appState,auxDataState);
 	}

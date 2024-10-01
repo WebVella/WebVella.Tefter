@@ -4,7 +4,7 @@ public partial class TfNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	private List<MenuItem> SpaceNav { get; set; } = new();
+	private List<TucMenuItem> SpaceNav { get; set; } = new();
 
 	private async Task _addSpaceHandler()
 	{

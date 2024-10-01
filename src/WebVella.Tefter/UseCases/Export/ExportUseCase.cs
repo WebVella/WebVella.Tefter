@@ -75,7 +75,7 @@ public class ExportUseCase
 			currentExcelRow++;
 
 			var typeDict = new Dictionary<string, object>();
-			var compContext = new TfComponentContext()
+			var compContext = new TfViewColumnComponentContext()
 			{
 				Hash = Guid.NewGuid(),
 				DataTable = viewData,

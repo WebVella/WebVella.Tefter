@@ -26,7 +26,7 @@ internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponent
 			return;
 
 		var attrs = type.GetCustomAttributes(typeof(TfScreenRegionComponentAttribute), false);
-		if (attrs.Length == 1 && type.IsClass && type.IsAssignableTo(typeof(TfScreenRegionComponentBase)))
+		if (attrs.Length == 1 && type.IsClass && type.IsAssignableTo(typeof(ComponentBase)))
 		{
 			var attr = (TfScreenRegionComponentAttribute)attrs[0];
 
@@ -35,6 +35,7 @@ internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponent
 				Position = attr.Position,
 				ScreenRegion = attr.ScreenRegion,
 				UrlSlug = attr.UrlSlug,
+				Name = attr.Name,
 				ComponentType = type
 			};
 

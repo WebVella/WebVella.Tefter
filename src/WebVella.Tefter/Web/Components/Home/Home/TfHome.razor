@@ -14,11 +14,10 @@
 					<div class="tf-grid-wrapper">
 						<table class="tf-grid">
 							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfUserState.Value.ThemeBackgkroundColor}")"></tr>
 								<tr class="tf-grid-tr">
-									<th class="tf-grid-th" colspan="2">@LOC("name")</th>
-									<th class="tf-grid-th" style="width:80px">@LOC("type")</th>
-									<th class="tf-grid-th" style="width:200px">@LOC("view/space")</th>
+									<th class="tf-grid-th" colspan="2" style="@($"background-color:{TfUserState.Value.ThemeBackgkroundColor}")">@LOC("name")</th>
+									<th class="tf-grid-th" style="@($"width:80px;background-color:{TfUserState.Value.ThemeBackgkroundColor}")">@LOC("type")</th>
+									<th class="tf-grid-th" style="@($"width:200px;background-color:{TfUserState.Value.ThemeBackgkroundColor}")">@LOC("view/space")</th>
 								</tr>
 							</thead>
 							<tbody class="tf-grid-tbody">

@@ -2,6 +2,7 @@
 
 public partial class TfConstants
 {
+	public static int NavSpacesMax  = 7;
 	public static int PageSize  = 15;
 	public static int SelectOptionsMaxLimit  = 1000;
 	public static int CardPageSize  = 15;

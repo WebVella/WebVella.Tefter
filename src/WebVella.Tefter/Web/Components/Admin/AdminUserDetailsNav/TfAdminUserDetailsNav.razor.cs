@@ -5,24 +5,24 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 {
 	[Inject] private IState<TfRouteState> TfRouteState { get; set; }
 
-	internal List<MenuItem> _getMenu()
+	internal List<TucMenuItem> _getMenu()
 	{
-		var menu = new List<MenuItem>();
-		menu.Add(new MenuItem
+		var menu = new List<TucMenuItem>();
+		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, TfRouteState.Value.UserId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.PersonInfo(),
 			Title = LOC("Details")
 		});
-		menu.Add(new MenuItem
+		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserAccessPageUrl, TfRouteState.Value.UserId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Key(),
 			Title = LOC("Access")
 		});
-		menu.Add(new MenuItem
+		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserSavesViewsPageUrl, TfRouteState.Value.UserId),
 			Match = NavLinkMatch.All,

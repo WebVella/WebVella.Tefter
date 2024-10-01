@@ -62,7 +62,7 @@ internal partial class AppStateUseCase
 			}
 
 			//Aux Data Hook
-			var compContext = new TfComponentContext()
+			var compContext = new TfViewColumnComponentContext()
 			{
 				Hash = newAppState.Hash,
 				DataTable = newAppState.SpaceViewData,

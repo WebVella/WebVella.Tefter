@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using System;
 using System.Collections.Generic;
-using WebVella.Tefter.UseCases.Models;
+using WebVella.Tefter.Web.Models;
 using WebVella.Tefter.Web.Store;
 using WebVella.Tefter.Web.Utils;
 
@@ -30,7 +30,7 @@ public class NavigatorExtTests
 		result.SecondNode.Should().Be(default);
 		result.ThirdNode.Should().Be(default);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminPageUrl)}");
+		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDashboardUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(1);

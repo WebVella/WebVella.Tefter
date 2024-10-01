@@ -6,11 +6,11 @@ public partial class TfSpaceViewManageNav : TfBaseComponent
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
 	
-	private List<MenuItem> _generateMenu()
+	private List<TucMenuItem> _generateMenu()
 	{
-		List<MenuItem> menu = new();
+		List<TucMenuItem> menu = new();
 		var providerId = Navigator.GetRouteState().DataProviderId ?? Guid.Empty;
-		menu.Add(new MenuItem
+		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.SpaceViewManagePageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceViewId),
 			Match = NavLinkMatch.All,

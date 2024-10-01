@@ -4,7 +4,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
-	private List<MenuItem> menuItems = new List<MenuItem>();
+	private List<TucMenuItem> menuItems = new List<TucMenuItem>();
 
 	protected override void OnInitialized()
 	{
@@ -15,7 +15,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 	private void generateMenu()
 	{
 		menuItems.Clear();
-		menuItems.Add(new MenuItem()
+		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-dashboard-link",
 			Icon = TfConstants.AdminDashboardIcon,
@@ -25,7 +25,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Title = LOC(TfConstants.AdminDashboardMenuTitle)
 		});
 
-		menuItems.Add(new MenuItem()
+		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-users-link",
 			Icon = TfConstants.AdminUsersIcon,
@@ -35,7 +35,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Title = LOC(TfConstants.AdminUsersMenuTitle)
 		});
 
-		menuItems.Add(new MenuItem()
+		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-data-providers-link",
 			Icon = TfConstants.AdminDataProvidersIcon,
@@ -44,7 +44,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Url = "/admin/data-providers",
 			Title = LOC(TfConstants.AdminDataProvidersMenuTitle)
 		});
-		menuItems.Add(new MenuItem()
+		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-aux-columns-link",
 			Icon = TfConstants.AdminAuxColumnsIcon,
@@ -63,7 +63,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 	private string _spaceSelectedClass(string url)
 	{
 		var uri = new Uri(Navigator.Uri);
-		if (url == TfConstants.AdminPageUrl)
+		if (url == TfConstants.AdminDashboardUrl)
 		{
 			if (uri.LocalPath == url)
 				return "selected";

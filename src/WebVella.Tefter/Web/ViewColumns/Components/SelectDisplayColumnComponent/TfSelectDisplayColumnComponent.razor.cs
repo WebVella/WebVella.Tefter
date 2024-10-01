@@ -28,7 +28,7 @@ public partial class TfSelectDisplayColumnComponent : TfBaseViewColumn<TfSelectD
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfSelectDisplayColumnComponent(TfComponentContext context)
+	public TfSelectDisplayColumnComponent(TfViewColumnComponentContext context)
 	{
 		Context = context;
 	}

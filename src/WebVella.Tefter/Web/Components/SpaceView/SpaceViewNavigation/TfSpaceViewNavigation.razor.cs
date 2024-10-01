@@ -11,10 +11,10 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	private TfSpaceViewNavigationActiveTab _activeTab = TfSpaceViewNavigationActiveTab.Views;
 	private bool _isLoading = false;
 	private bool _linksFromAllViews = false;
-	private List<MenuItem> _getMenu()
+	private List<TucMenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
-		var menuItems = new List<MenuItem>();
+		var menuItems = new List<TucMenuItem>();
 		if (_activeTab == TfSpaceViewNavigationActiveTab.Views)
 		{
 			foreach (var record in TfAppState.Value.SpaceViewList.OrderBy(x => x.Name))
@@ -22,7 +22,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 				if (!String.IsNullOrWhiteSpace(search) && !record.Name.ToLowerInvariant().Contains(search))
 					continue;
 
-				var viewMenu = new MenuItem
+				var viewMenu = new TucMenuItem
 				{
 					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
 					Icon = TfConstants.SpaceViewIcon,
@@ -43,7 +43,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 					&& !(record.Name.ToLowerInvariant().Contains(search) || record.Description.ToLowerInvariant().Contains(search)))
 					continue;
 
-				var viewMenu = new MenuItem
+				var viewMenu = new TucMenuItem
 				{
 					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
 					Icon = TfConstants.BookmarkOFFIcon,
@@ -66,7 +66,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 
 				if (!_linksFromAllViews && record.SpaceViewId != TfAppState.Value.SpaceView.Id) continue;
 
-				var viewMenu = new MenuItem
+				var viewMenu = new TucMenuItem
 				{
 					Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
 					Icon = TfConstants.GetIcon("Link"),

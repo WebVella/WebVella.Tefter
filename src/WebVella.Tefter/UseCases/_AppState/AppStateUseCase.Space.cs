@@ -5,10 +5,7 @@ internal partial class AppStateUseCase
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (
-			!(routeState.FirstNode == RouteDataFirstNode.Home
-			|| routeState.FirstNode == RouteDataFirstNode.Space)
-			)
+		if (routeState.FirstNode == RouteDataFirstNode.Admin)
 		{
 			newAppState = newAppState with { CurrentUserSpaces = new(), Space = null };
 			return newAppState;

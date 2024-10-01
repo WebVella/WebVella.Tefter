@@ -21,7 +21,7 @@ public partial class TfNumberDisplayColumnComponent : TfBaseViewColumn<TfNumberD
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>	
-	public TfNumberDisplayColumnComponent(TfComponentContext context)
+	public TfNumberDisplayColumnComponent(TfViewColumnComponentContext context)
 	{
 		Context = context;
 	}

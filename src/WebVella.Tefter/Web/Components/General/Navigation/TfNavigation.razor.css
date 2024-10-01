@@ -1,4 +1,10 @@
-﻿::deep .spacenav-nav {
+﻿::deep.spacenav-nav-wrapper {
+	height:calc(100vh - 48px - 7px);
+	display:flex;
+	flex-flow:column;
+}
+
+::deep .spacenav-nav {
 	flex: 0 0 auto;
 	width:60px;
 	padding:0 9px;
@@ -79,12 +85,21 @@
 		justify-content: center;
 	}
 
+::deep .spacenav-nav--secondary {
+	display:flex;
+	flex-flow:column;
+	justify-content:space-between;
+	flex:1 1 auto;
+}
+
 	::deep .spacenav-nav.spacenav-nav--appbar {
 		flex: 1 1 auto;
 		width: 100%;
 		overflow: auto;
-		height: calc(100vh - 240px);
+		max-height:calc(100vh - 340px);
 	}
+
+
 
 ::deep .spacenav-nav--appbar .fluent-nav-item a.active .positioning-region::before {
 	display: none;
@@ -103,4 +118,9 @@
 	margin: 0 2px;
 	/*top: 12px;*/
 	z-index:5;
+}
+
+::deep ::-webkit-scrollbar {
+	width: 3px;
+	height: 3px;
 }

@@ -2,7 +2,7 @@
 public partial class TfAppBar : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-	[Parameter] public List<MenuItem> Items { get; set; } = new();
+	[Parameter] public List<TucMenuItem> Items { get; set; } = new();
 	[Parameter] public string Style { get; set; }
 
 }

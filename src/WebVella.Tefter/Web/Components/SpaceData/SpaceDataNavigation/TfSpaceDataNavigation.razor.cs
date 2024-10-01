@@ -7,16 +7,16 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	private bool _settingsMenuVisible = false;
 	private string search = null;
 
-	private List<MenuItem> _getMenu()
+	private List<TucMenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
-		var menuItems = new List<MenuItem>();
+		var menuItems = new List<TucMenuItem>();
 		foreach (var spaceData in TfAppState.Value.SpaceDataList.OrderBy(x=> x.Name))
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !spaceData.Name.ToLowerInvariant().Contains(search))
 				continue;
 
-			var menu = new MenuItem
+			var menu = new TucMenuItem
 			{
 				Id = TfConverters.ConvertGuidToHtmlElementId(spaceData.Id),
 				Icon = TfConstants.SpaceDataIcon,

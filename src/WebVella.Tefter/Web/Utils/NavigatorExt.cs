@@ -122,14 +122,19 @@ internal static class NavigatorExt
 						SecondNode = RouteDataSecondNode.SpaceData,
 						ThirdNode = RouteDataThirdNode.Details
 					};
-					if(result.NodesDict.Count >= 5){ 
-						if(result.NodesDict[4] == TfConstants.RouteNameViews){ 
-							result = result with { 
+					if (result.NodesDict.Count >= 5)
+					{
+						if (result.NodesDict[4] == TfConstants.RouteNameViews)
+						{
+							result = result with
+							{
 								ThirdNode = RouteDataThirdNode.Views
 							};
 						}
-						else if(result.NodesDict[4] == TfConstants.RouteNameData){ 
-							result = result with { 
+						else if (result.NodesDict[4] == TfConstants.RouteNameData)
+						{
+							result = result with
+							{
 								ThirdNode = RouteDataThirdNode.Data
 							};
 						}
@@ -161,7 +166,10 @@ internal static class NavigatorExt
 				}
 			}
 		}
-
+		else if (result.NodesDict[0] == TfConstants.RouteNamePages)
+		{
+			result = result with { FirstNode = RouteDataFirstNode.Pages };
+		}
 		//Query
 		var page = GetIntFromQuery(uri, TfConstants.PageQueryName, 1);
 		var pageSize = GetIntFromQuery(uri, TfConstants.PageSizeQueryName, null);

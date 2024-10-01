@@ -28,7 +28,8 @@ public enum RouteDataFirstNode
 {
 	Home = 0,
 	Space = 1,
-	Admin = 2
+	Admin = 2,
+	Pages = 3,
 }
 
 public enum RouteDataSecondNode
@@ -38,7 +39,8 @@ public enum RouteDataSecondNode
 	DataProviders = 2,
 	SharedColumns = 3,
 	SpaceView = 4,
-	SpaceData = 5
+	SpaceData = 5,
+	Pages = 6
 }
 
 public enum RouteDataThirdNode

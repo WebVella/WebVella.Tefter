@@ -15,7 +15,9 @@ public partial class TfConstants
 	}
 
 	public static Icon HomeIcon = GetIcon("Home");
+	public static Icon ApplicationIcon = GetIcon("AppFolder");
 	public static string HomeMenuTitle = "Home";
+	public static string PagesMenuTitle = "Application Pages";
 
 	public static Icon BookmarkONIcon = GetIcon("Bookmark", variant: IconVariant.Filled);
 	public static Icon BookmarkOFFIcon = GetIcon("Bookmark");

@@ -2,6 +2,8 @@
 
 public enum ScreenRegion
 {
-	SpaceViewActions = 0,
-	SpaceViewMenuItems = 1
+	AdminPages = 0,
+	Pages = 1,
+	SpaceViewActions = 2,
+	SpaceViewSelectorActions = 3
 }

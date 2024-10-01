@@ -30,6 +30,16 @@ public partial class TfConstants
 	public static string AdminSidebarStyle => $"background-color:{AdminBackgkroundColor} !important; border-color:{AdminBorderColor} !important";
 	public static string AdminPagebarStyle => $"background-color:{AdminBackgkroundColor} !important;";
 
+	public static string DefaultThemeBackgkroundColor => $"{DefaultThemeColor}25";
+
+	public static string DefaultThemeBorderColor => $"{DefaultThemeColor}75";
+
+	public static string DefaultThemeBackgroundAccentColor => $"{DefaultThemeColor}30";
+
+	public static string DefaultThemeContentStyle => $"border-left-color:{DefaultThemeBorderColor}; border-top-color:{DefaultThemeBorderColor} !important";
+	public static string DefaultThemeSidebarStyle => $"background-color:{DefaultThemeBackgkroundColor} !important; border-color:{DefaultThemeBorderColor} !important";
+	public static string DefaultThemePagebarStyle => $"background-color:{DefaultThemeBackgkroundColor} !important;";
+
 	public static string DialogWidthDefault = $"500px";
 	public static string DialogWidthSmall = $"300px";
 	public static string DialogWidthLarge = $"800px";
