@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfSelectEditColumnComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfSelectEditColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	<div>
 		<FluentButton Id="@_valueInputId" Style="width:100%"
@@ -29,7 +29,7 @@
 		</FluentMenu>
 	</div>
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">

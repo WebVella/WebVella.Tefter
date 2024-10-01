@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter Select Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.SelectEditColumnComponent.TfSelectEditColumnComponent", "WebVella.Tefter")]
-public partial class TfSelectEditColumnComponent : TfBaseViewColumn<TfSelectEditColumnComponentOptions>
+public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEditColumnComponentOptions>
 {
 	#region << Injects >>
 	[Inject] public IDispatcher Dispatcher { get; set; }
@@ -28,7 +28,7 @@ public partial class TfSelectEditColumnComponent : TfBaseViewColumn<TfSelectEdit
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfSelectEditColumnComponent(TfViewColumnComponentContext context)
+	public TfSelectEditColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}
@@ -273,7 +273,7 @@ public partial class TfSelectEditColumnComponent : TfBaseViewColumn<TfSelectEdit
 			_selectedOption = _selectOptionsList[0];
 		}
 
-		if (Context.Mode == TfComponentMode.Options)
+		if (Context.Mode == TucComponentMode.Options)
 		{
 			var spaceDataIndex = TfAppState.Value.SpaceDataList?.FindIndex(x => x.Id == componentOptions.SpaceDataId);
 

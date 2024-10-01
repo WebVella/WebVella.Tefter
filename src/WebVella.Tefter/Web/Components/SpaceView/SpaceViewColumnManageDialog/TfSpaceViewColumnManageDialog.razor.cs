@@ -197,10 +197,10 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	{
 		var componentData = new Dictionary<string, object>();
 
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfViewColumnComponentContext
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TucViewColumnComponentContext
 		{
 			Hash = TfAppState.Value.Hash,
-			Mode = TfComponentMode.Options,
+			Mode = TucComponentMode.Options,
 			CustomOptionsJson = _form.CustomOptionsJson,
 			DataMapping = _form.DataMapping,
 			DataTable = null,

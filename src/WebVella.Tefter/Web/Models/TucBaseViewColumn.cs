@@ -1,14 +1,14 @@
 ﻿
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace WebVella.Tefter.Models;
+namespace WebVella.Tefter.Web.Models;
 
-public interface ITfExportableViewColumn
+public interface ITucExportableViewColumn
 {
 	object GetData();
 }
 
-public interface ITfAuxDataUseViewColumn
+public interface ITucAuxDataUseViewColumn
 {
 	Task OnSpaceViewStateInited(
 		IDataManager dataManager,
@@ -19,7 +19,7 @@ public interface ITfAuxDataUseViewColumn
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState);
 }
 
-public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExportableViewColumn, ITfAuxDataUseViewColumn
+public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExportableViewColumn, ITucAuxDataUseViewColumn
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
@@ -27,16 +27,16 @@ public class TfBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfExpor
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-	[Parameter] public TfViewColumnComponentContext Context { get; set; }
+	[Parameter] public TucViewColumnComponentContext Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 	#endregion
 
 	#region << Constructor >>
-	public TfBaseViewColumn()
+	public TucBaseViewColumn()
 	{
 	}
-	public TfBaseViewColumn(TfViewColumnComponentContext context)
+	public TucBaseViewColumn(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

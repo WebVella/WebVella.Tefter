@@ -25,7 +25,7 @@ internal partial class AppStateUseCase
 	internal List<TucScreenRegionComponentMeta> GetAppPages()
 	{
 		var results = new List<TucScreenRegionComponentMeta>();
-		var componentMeta = _screenRegionComponentManager.GetComponentMeta(ScreenRegion.Pages);
+		var componentMeta = _screenRegionComponentManager.GetComponentMeta(TfScreenRegion.Pages);
 		foreach (var meta in componentMeta)
 		{
 			results.Add(new TucScreenRegionComponentMeta

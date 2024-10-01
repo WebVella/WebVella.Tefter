@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public enum ScreenRegion
+public enum TfScreenRegion
 {
 	AdminPages = 0,
 	Pages = 1,

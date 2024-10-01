@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter DateTime Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateTimeDisplayColumnComponent.TfDateTimeDisplayColumnComponent", "WebVella.Tefter")]
-public partial class TfDateTimeDisplayColumnComponent : TfBaseViewColumn<TfDateTimeDisplayColumnComponentOptions>
+public partial class TfDateTimeDisplayColumnComponent : TucBaseViewColumn<TfDateTimeDisplayColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfDateTimeDisplayColumnComponent : TfBaseViewColumn<TfDateT
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfDateTimeDisplayColumnComponent(TfViewColumnComponentContext context)
+	public TfDateTimeDisplayColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

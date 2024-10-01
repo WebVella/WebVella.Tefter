@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfEmailDisplayColumnComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfEmailDisplayColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	if (!String.IsNullOrWhiteSpace(_value) && TfConverters.IsValidEmail(_value))
 	{
@@ -12,7 +12,7 @@
 	}
 	
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
 }

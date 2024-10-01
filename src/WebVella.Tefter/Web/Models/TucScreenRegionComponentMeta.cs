@@ -2,7 +2,7 @@
 
 public record TucScreenRegionComponentMeta
 {
-	public ScreenRegion Region { get; init; } = ScreenRegion.Pages;
+	public TfScreenRegion Region { get; init; } = TfScreenRegion.Pages;
 	public int Position { get; init; }
 	public string Name { get; init; }
 	public string Slug { get; init; }

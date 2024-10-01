@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter Boolean Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanDisplayColumnComponent.TfBooleanDisplayColumnComponent", "WebVella.Tefter")]
-public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
+public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfBooleanDisplayColumnComponent : TfBaseViewColumn<TfBoolea
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfBooleanDisplayColumnComponent(TfViewColumnComponentContext context)
+	public TfBooleanDisplayColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

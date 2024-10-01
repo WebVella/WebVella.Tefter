@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Talk.Components
 
-@inherits TfBaseViewColumn<TfTalkCommentsCountComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfTalkCommentsCountComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	<div>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
@@ -10,7 +10,7 @@
 	</div>
 
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
 }

@@ -62,11 +62,11 @@ internal partial class AppStateUseCase
 			}
 
 			//Aux Data Hook
-			var compContext = new TfViewColumnComponentContext()
+			var compContext = new TucViewColumnComponentContext()
 			{
 				Hash = newAppState.Hash,
 				DataTable = newAppState.SpaceViewData,
-				Mode = TfComponentMode.Display, //ignored here
+				Mode = TucComponentMode.Display, //ignored here
 				SpaceViewId = newAppState.SpaceView.Id,
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here
@@ -79,13 +79,13 @@ internal partial class AppStateUseCase
 			foreach (TucSpaceViewColumn column in newAppState.SpaceViewColumns)
 			{
 				if (column.ComponentType is not null
-					&& column.ComponentType.GetInterface(nameof(ITfAuxDataUseViewColumn)) != null)
+					&& column.ComponentType.GetInterface(nameof(ITucAuxDataUseViewColumn)) != null)
 				{
 					compContext.SpaceViewColumnId = column.Id;
 					compContext.CustomOptionsJson = column.CustomOptionsJson;
 					compContext.DataMapping = column.DataMapping;
 					compContext.QueryName = column.QueryName;
-					var component = (ITfAuxDataUseViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
+					var component = (ITucAuxDataUseViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
 					component.OnSpaceViewStateInited(
 							dataManager:_dataManager,
 							spaceManager:_spaceManager,

@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfDateTimeEditColumnComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfDateTimeEditColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	<div>
 		<FluentStack Wrap="false">
@@ -16,7 +16,7 @@
 		</FluentStack>
 	</div>
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="4">

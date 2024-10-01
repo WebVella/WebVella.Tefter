@@ -1,11 +1,11 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	var format = !String.IsNullOrWhiteSpace(componentOptions.Format) ? componentOptions.Format : _defaultFormat;
 	<div>@_value?.ToString(format)</div>
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">

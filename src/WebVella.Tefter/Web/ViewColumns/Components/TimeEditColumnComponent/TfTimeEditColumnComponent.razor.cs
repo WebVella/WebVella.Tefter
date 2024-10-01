@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter DateTime Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TimeEditColumnComponent.TfTimeEditColumnComponent", "WebVella.Tefter")]
-public partial class TfTimeEditColumnComponent : TfBaseViewColumn<TfTimeEditColumnComponentOptions>
+public partial class TfTimeEditColumnComponent : TucBaseViewColumn<TfTimeEditColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfTimeEditColumnComponent : TfBaseViewColumn<TfTimeEditColu
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfTimeEditColumnComponent(TfViewColumnComponentContext context)
+	public TfTimeEditColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

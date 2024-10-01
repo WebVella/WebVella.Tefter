@@ -8,7 +8,7 @@ namespace WebVella.Tefter.Web.ViewColumns;
 /// </summary>
 [Description("Tefter Short Integer Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.ShortIntegerEditColumnComponent.TfShortIntegerEditColumnComponent", "WebVella.Tefter")]
-public partial class TfShortIntegerEditColumnComponent : TfBaseViewColumn<TfShortIntegerEditColumnComponentOptions>
+public partial class TfShortIntegerEditColumnComponent : TucBaseViewColumn<TfShortIntegerEditColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -23,7 +23,7 @@ public partial class TfShortIntegerEditColumnComponent : TfBaseViewColumn<TfShor
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfShortIntegerEditColumnComponent(TfViewColumnComponentContext context)
+	public TfShortIntegerEditColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

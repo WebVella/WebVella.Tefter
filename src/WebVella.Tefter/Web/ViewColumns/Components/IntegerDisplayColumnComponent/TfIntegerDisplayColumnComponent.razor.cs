@@ -6,7 +6,7 @@
 namespace WebVella.Tefter.Web.ViewColumns;
 [Description("Tefter Integer Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.IntegerDisplayColumnComponent.TfIntegerDisplayColumnComponent", "WebVella.Tefter")]
-public partial class TfIntegerDisplayColumnComponent : TfBaseViewColumn<TfIntegerDisplayColumnComponentOptions>
+public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfIntegerDisplayColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfIntegerDisplayColumnComponent : TfBaseViewColumn<TfIntege
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>	
-	public TfIntegerDisplayColumnComponent(TfViewColumnComponentContext context)
+	public TfIntegerDisplayColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter Long Integer Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.LongIntegerEditColumnComponent.TfLongIntegerEditColumnComponent", "WebVella.Tefter")]
-public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongIntegerEditColumnComponentOptions>
+public partial class TfLongIntegerEditColumnComponent : TucBaseViewColumn<TfLongIntegerEditColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfLongIntegerEditColumnComponent : TfBaseViewColumn<TfLongI
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfLongIntegerEditColumnComponent(TfViewColumnComponentContext context)
+	public TfLongIntegerEditColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

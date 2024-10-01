@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter Select Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.SelectDisplayColumnComponent.TfSelectDisplayColumnComponent", "WebVella.Tefter")]
-public partial class TfSelectDisplayColumnComponent : TfBaseViewColumn<TfSelectDisplayColumnComponentOptions>
+public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelectDisplayColumnComponentOptions>
 {
 	#region << Injects >>
 	[Inject] public IDispatcher Dispatcher { get; set; }
@@ -28,7 +28,7 @@ public partial class TfSelectDisplayColumnComponent : TfBaseViewColumn<TfSelectD
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfSelectDisplayColumnComponent(TfViewColumnComponentContext context)
+	public TfSelectDisplayColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}
@@ -225,7 +225,7 @@ public partial class TfSelectDisplayColumnComponent : TfBaseViewColumn<TfSelectD
 			_selectedOption = _selectOptionsList[0];
 		}
 
-		if (Context.Mode == TfComponentMode.Options)
+		if (Context.Mode == TucComponentMode.Options)
 		{
 			var spaceDataIndex = TfAppState.Value.SpaceDataList?.FindIndex(x => x.Id == componentOptions.SpaceDataId);
 

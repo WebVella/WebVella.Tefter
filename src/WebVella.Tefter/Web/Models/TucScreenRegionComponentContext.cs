@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfScreenRegionComponentContext
+public class TucScreenRegionComponentContext
 {
 	public Guid Hash { get; set; }
 }

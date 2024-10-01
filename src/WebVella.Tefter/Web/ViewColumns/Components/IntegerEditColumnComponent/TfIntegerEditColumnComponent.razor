@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfIntegerEditColumnComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfIntegerEditColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	<div>
 		<FluentNumberField TValue="int?"
@@ -11,7 +11,7 @@
 						   Style="width:100%;" AutoComplete="off" />
 	</div>
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="4">

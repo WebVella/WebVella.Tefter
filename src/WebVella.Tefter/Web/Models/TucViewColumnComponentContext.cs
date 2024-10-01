@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
-namespace WebVella.Tefter.Models;
+namespace WebVella.Tefter.Web.Models;
 
-public class TfViewColumnComponentContext
+public class TucViewColumnComponentContext
 {
 	public Guid Hash { get; set; }
 	public Guid SpaceViewId { get; set; }
@@ -10,7 +10,7 @@ public class TfViewColumnComponentContext
 	public string QueryName { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
-	public TfComponentMode Mode { get; set; } = TfComponentMode.Display;
+	public TucComponentMode Mode { get; set; } = TucComponentMode.Display;
 	public TfDataTable DataTable { get; set; } = null;
 	public int RowIndex { get; set; } = -1;
 	public EditContext EditContext { get; set; } = null;

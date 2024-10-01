@@ -8,7 +8,7 @@ public partial class TfPagesContent : TfBaseComponent
 	private Dictionary<string, object> _getComponentContext()
 	{
 		var componentData = new Dictionary<string, object>();
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfScreenRegionComponentContext{
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TucScreenRegionComponentContext{
 			Hash = Guid.NewGuid(),
 		};
 

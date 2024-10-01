@@ -75,11 +75,11 @@ public class ExportUseCase
 			currentExcelRow++;
 
 			var typeDict = new Dictionary<string, object>();
-			var compContext = new TfViewColumnComponentContext()
+			var compContext = new TucViewColumnComponentContext()
 			{
 				Hash = Guid.NewGuid(),
 				DataTable = viewData,
-				Mode = TfComponentMode.Display, //ignored here
+				Mode = TucComponentMode.Display, //ignored here
 				SpaceViewId = view.Id,
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here
@@ -110,9 +110,9 @@ public class ExportUseCase
 					if (rangeColumns > 1) cellRange.Merge();
 
 					if (column.ComponentType is not null
-						&& column.ComponentType.GetInterface(nameof(ITfExportableViewColumn)) != null)
+						&& column.ComponentType.GetInterface(nameof(ITucExportableViewColumn)) != null)
 					{
-						var component = (ITfExportableViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
+						var component = (ITucExportableViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
 						cellRange.SetValue(XLCellValue.FromObject(component.GetData()));
 					}
 					currentExcelColumn = currentExcelColumn + rangeColumns;

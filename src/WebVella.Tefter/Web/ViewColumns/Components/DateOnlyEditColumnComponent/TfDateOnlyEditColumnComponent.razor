@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfDateOnlyEditColumnComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfDateOnlyEditColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	<div>
 		<FluentDatePicker Id="@_valueInputId"
@@ -10,7 +10,7 @@
 						   Style="width:100%;" />
 	</div>
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="4">

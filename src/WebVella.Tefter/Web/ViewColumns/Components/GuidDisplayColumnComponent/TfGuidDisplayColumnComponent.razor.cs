@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter GUID Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.GuidDisplayColumnComponent.TfGuidDisplayColumnComponent", "WebVella.Tefter")]
-public partial class TfGuidDisplayColumnComponent : TfBaseViewColumn<TfGuidDisplayColumnComponentOptions>
+public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisplayColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfGuidDisplayColumnComponent : TfBaseViewColumn<TfGuidDispl
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfGuidDisplayColumnComponent(TfViewColumnComponentContext context)
+	public TfGuidDisplayColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

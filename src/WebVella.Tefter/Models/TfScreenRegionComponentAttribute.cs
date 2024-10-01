@@ -4,14 +4,14 @@
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 public class TfScreenRegionComponentAttribute : Attribute
 {
-	public ScreenRegion ScreenRegion { get; init; }
+	public TfScreenRegion ScreenRegion { get; init; }
 
 	public int Position { get; init; }
 	public string Name { get; init; } = null;
 	public string UrlSlug { get; init; } = null;
 
 	public TfScreenRegionComponentAttribute(
-		ScreenRegion ScreenRegion,
+		TfScreenRegion ScreenRegion,
 		int Position,
 		string Name = null,
 		string UrlSlug = null )

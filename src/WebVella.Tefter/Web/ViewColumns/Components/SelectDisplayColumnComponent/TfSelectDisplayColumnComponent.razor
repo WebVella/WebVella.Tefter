@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.ViewColumns
-@inherits TfBaseViewColumn<TfSelectDisplayColumnComponentOptions>
-@if (Context.Mode == TfComponentMode.Display)
+@inherits TucBaseViewColumn<TfSelectDisplayColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
 {
 	<div>
 		<div style="@_getStyle()" class="tf-select-btn">
@@ -18,7 +18,7 @@
 		</div>
 	</div>
 }
-else if (Context.Mode == TfComponentMode.Options)
+else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="12">

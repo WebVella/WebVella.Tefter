@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter Phone Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.PhoneDisplayColumnComponent.TfPhoneDisplayColumnComponent", "WebVella.Tefter")]
-public partial class TfPhoneDisplayColumnComponent : TfBaseViewColumn<TfPhoneDisplayColumnComponentOptions>
+public partial class TfPhoneDisplayColumnComponent : TucBaseViewColumn<TfPhoneDisplayColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfPhoneDisplayColumnComponent : TfBaseViewColumn<TfPhoneDis
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfPhoneDisplayColumnComponent(TfViewColumnComponentContext context)
+	public TfPhoneDisplayColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

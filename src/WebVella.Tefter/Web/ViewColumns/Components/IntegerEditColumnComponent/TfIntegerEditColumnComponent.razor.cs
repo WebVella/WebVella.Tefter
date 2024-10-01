@@ -6,7 +6,7 @@
 /// </summary>
 [Description("Tefter Integer Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.IntegerEditColumnComponent.TfIntegerEditColumnComponent", "WebVella.Tefter")]
-public partial class TfIntegerEditColumnComponent : TfBaseViewColumn<TfIntegerEditColumnComponentOptions>
+public partial class TfIntegerEditColumnComponent : TucBaseViewColumn<TfIntegerEditColumnComponentOptions>
 {
 	#region << Constructor >>
 	/// <summary>
@@ -21,7 +21,7 @@ public partial class TfIntegerEditColumnComponent : TfBaseViewColumn<TfIntegerEd
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfIntegerEditColumnComponent(TfViewColumnComponentContext context)
+	public TfIntegerEditColumnComponent(TucViewColumnComponentContext context)
 	{
 		Context = context;
 	}

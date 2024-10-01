@@ -1,7 +1,7 @@
 ﻿
-namespace WebVella.Tefter.Models;
+namespace WebVella.Tefter.Web.Models;
 
-public class TfBaseScreenRegionComponent : ComponentBase, IAsyncDisposable
+public class TucBaseScreenRegionComponent : ComponentBase, IAsyncDisposable
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
@@ -9,7 +9,7 @@ public class TfBaseScreenRegionComponent : ComponentBase, IAsyncDisposable
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-	[Parameter] public TfScreenRegionComponentContext Context { get; set; }
+	[Parameter] public TucScreenRegionComponentContext Context { get; set; }
 	#endregion
 
 	#region << Properties >>
