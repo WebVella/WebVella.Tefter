@@ -87,8 +87,11 @@ internal partial class AppStateUseCase
 					compContext.QueryName = column.QueryName;
 					var component = (ITucAuxDataUseViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
 					component.OnSpaceViewStateInited(
-							dataManager:_dataManager,
-							spaceManager:_spaceManager,
+							identityManager: _identityManager,
+							dataProviderManager: _dataProviderManager,
+							sharedColumnsManager: _sharedColumnsManager,
+							dataManager: _dataManager,
+							spaceManager: _spaceManager,
 							currentUser: currentUser,
 							routeState: routeState,
 							newAppState: newAppState,
@@ -100,7 +103,7 @@ internal partial class AppStateUseCase
 			}
 
 			//Addon Components
-			var addonComponents = GetAddonComponents(null).Where(x=> x.Region == TfScreenRegion.SpaceViewToolbarActions 
+			var addonComponents = GetAddonComponents(null).Where(x => x.Region == TfScreenRegion.SpaceViewToolbarActions
 				|| x.Region == TfScreenRegion.SpaceViewSelectorActions).ToList();
 			newAppState = newAppState with { SpaceViewAddonComponents = addonComponents };
 		}

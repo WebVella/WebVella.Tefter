@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.Api;
 
 namespace WebVella.Tefter.Web.Models;
 
@@ -11,6 +12,9 @@ public interface ITucExportableViewColumn
 public interface ITucAuxDataUseViewColumn
 {
 	Task OnSpaceViewStateInited(
+		IIdentityManager identityManager,
+		ITfDataProviderManager dataProviderManager,
+		ITfSharedColumnsManager sharedColumnsManager,
 		IDataManager dataManager,
 		ITfSpaceManager spaceManager,
 		TucUser currentUser,
@@ -436,6 +440,9 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	/// </summary>
 	/// <param name="appState">the most current complete appState reference</param>
 	public virtual Task OnSpaceViewStateInited(
+		IIdentityManager identityManager,
+		ITfDataProviderManager dataProviderManager,
+		ITfSharedColumnsManager sharedColumnsManager,
 		IDataManager dataManager,
 		ITfSpaceManager spaceManager,
 		TucUser currentUser,
