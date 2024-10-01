@@ -31,12 +31,12 @@
 		</FluentButton> *@
 	</div>
 	<div class="content-toolbar-right">
-		@foreach (var comp in _regionComponents)
+		@foreach (var comp in TfAppState.Value.SpaceViewAddonComponents.Where(x => x.Region == TfScreenRegion.SpaceViewToolbarActions))
 		{
 			if (comp.ComponentType is not null)
 			{
 				<TfErrorBoundry>
-					<DynamicComponent Type="comp.ComponentType"/>
+					<DynamicComponent Type="comp.ComponentType" />
 				</TfErrorBoundry>
 			}
 		}

@@ -6,14 +6,11 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public EventCallback<string> OnSearch { get; set; }
 
-	private List<TucScreenRegionComponentMeta> _regionComponents = new();
-	private long _lastRegionRenderedTimestamp = 0;
-
 	private async Task _searchChanged(string value) => await OnSearch.InvokeAsync(value);
 
-	private async Task _onAddRowClick()
+	private Task _onAddRowClick()
 	{
-		if (TfAppState.Value.SpaceViewData is null) return;
+		if (TfAppState.Value.SpaceViewData is null) return Task.CompletedTask;
 		try
 		{
 			var newDt = TfAppState.Value.SpaceViewData.NewTable();
@@ -36,5 +33,6 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 		{
 			ProcessException(ex);
 		}
+		return Task.CompletedTask;
 	}
 }

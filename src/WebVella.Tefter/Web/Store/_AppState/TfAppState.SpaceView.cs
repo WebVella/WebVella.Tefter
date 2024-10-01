@@ -30,6 +30,6 @@ public partial record TfAppState
 			return allSelected;
 		}
 	}
-
 	public List<TucSpaceViewColumnType> AvailableColumnTypes { get; init; }
+	public List<TucScreenRegionComponentMeta> SpaceViewAddonComponents { get; init; }
 }

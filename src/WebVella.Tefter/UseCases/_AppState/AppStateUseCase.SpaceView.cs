@@ -98,6 +98,11 @@ internal partial class AppStateUseCase
 					);
 				}
 			}
+
+			//Addon Components
+			var addonComponents = GetAddonComponents(null).Where(x=> x.Region == TfScreenRegion.SpaceViewToolbarActions 
+				|| x.Region == TfScreenRegion.SpaceViewSelectorActions).ToList();
+			newAppState = newAppState with { SpaceViewAddonComponents = addonComponents };
 		}
 		else
 		{

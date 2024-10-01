@@ -1,0 +1,12 @@
+﻿@namespace WebVella.Tefter.Talk.Components
+@inherits TucBaseScreenRegionComponent
+<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
+	Comment Selected
+	<FluentIcon Value="@TfConstants.GetIcon("Comment")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+	@if (TfAppState.Value.SelectedDataRows.Count > 0)
+	{
+		<span slot="end">
+			<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+		</span>
+	}
+</FluentMenuItem>

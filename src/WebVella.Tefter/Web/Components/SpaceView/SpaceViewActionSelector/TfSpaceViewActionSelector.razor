@@ -4,15 +4,6 @@
 {
 	<div class="view-export-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
-			@foreach (var comp in _regionComponents)
-			{
-				if (comp.ComponentType is not null)
-				{
-					<TfErrorBoundry>
-						<DynamicComponent Type="comp.ComponentType" />
-					</TfErrorBoundry>
-				}
-			}
 			@if (TfAppState.Value.SpaceView.Settings.CanDeleteRows)
 			{
 				<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_deleteSelectedRecords">
@@ -26,26 +17,15 @@
 					}
 				</FluentMenuItem>
 			}
-			@* 			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
-		Comment Selected
-		<FluentIcon Value="@TfConstants.GetIcon("Comment")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-		@if (TfAppState.Value.SelectedDataRows.Count > 0)
-		{
-		<span slot="end">
-		<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
-		</span>
-		}
-		</FluentMenuItem>
-		<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)">
-		Email Selected
-		<FluentIcon Value="@TfConstants.GetIcon("Mail")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-		@if (TfAppState.Value.SelectedDataRows.Count > 0)
-		{
-		<span slot="end">
-		<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
-		</span>
-		}
-		</FluentMenuItem> *@
+			@foreach (var comp in TfAppState.Value.SpaceViewAddonComponents.Where(x => x.Region == TfScreenRegion.SpaceViewSelectorActions))
+			{
+				if (comp.ComponentType is not null)
+				{
+					<TfErrorBoundry>
+						<DynamicComponent Type="comp.ComponentType" />
+					</TfErrorBoundry>
+				}
+			}
 		</FluentMenu>
 	</div>
 }

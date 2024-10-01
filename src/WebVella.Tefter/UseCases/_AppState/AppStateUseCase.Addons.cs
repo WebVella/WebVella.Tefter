@@ -9,20 +9,20 @@ internal partial class AppStateUseCase
 		{
 			newAppState = newAppState with
 			{
-				Pages = GetAppPages(TfScreenRegion.AdminPages)
+				Pages = GetAddonComponents(TfScreenRegion.AdminPages)
 			};
 		}
 		else
 		{
 			newAppState = newAppState with
 			{
-				Pages = GetAppPages(TfScreenRegion.Pages)
+				Pages = GetAddonComponents(TfScreenRegion.Pages)
 			};
 		}
 		return Task.FromResult(newAppState);
 	}
 
-	internal List<TucScreenRegionComponentMeta> GetAppPages(TfScreenRegion? region = null)
+	internal List<TucScreenRegionComponentMeta> GetAddonComponents(TfScreenRegion? region = null)
 	{
 		var results = new List<TucScreenRegionComponentMeta>();
 		var componentMeta = _screenRegionComponentManager.GetComponentMeta(region);
