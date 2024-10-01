@@ -12,7 +12,19 @@
 }
 else if (Context.Mode == TucComponentMode.Options)
 {
-	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentCombobox TOption="TucSelectOption"
+							Autocomplete="ComboboxAutocomplete.Both"
+							Items="_sharedKeyOptions"
+							OptionText="@((x)=> x.Label)"
+							OptionValue="@((x)=> x.Value.ToString())"
+							Height="@TfConstants.ComboPanelHeight"
+							Value=@componentOptions.SharedKeyName
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.SharedKeyName),x))
+							Label="@LOC("Shared key name")" Style="width:100%" />
+		</FluentGridItem>
+	</FluentGrid>
 }
 else
 {

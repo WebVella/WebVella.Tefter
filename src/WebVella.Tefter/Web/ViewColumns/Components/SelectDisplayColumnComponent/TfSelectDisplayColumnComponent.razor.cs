@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿using WebVella.Tefter.Api;
+
+namespace WebVella.Tefter.Web.ViewColumns;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
@@ -86,6 +88,9 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	}
 
 	public override async Task OnSpaceViewStateInited(
+		IIdentityManager identityManager,
+		ITfDataProviderManager dataProviderManager,
+		ITfSharedColumnsManager sharedColumnsManager,
 		IDataManager dataManager,
 		ITfSpaceManager spaceManager,
 		TucUser currentUser,
@@ -94,6 +99,9 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		await base.OnSpaceViewStateInited(
+			identityManager:identityManager,
+			dataProviderManager:dataProviderManager,
+			sharedColumnsManager:sharedColumnsManager,
 			dataManager: dataManager,
 			spaceManager: spaceManager,
 			currentUser: currentUser,
