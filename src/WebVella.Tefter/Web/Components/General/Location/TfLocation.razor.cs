@@ -17,6 +17,14 @@ public partial class TfLocation : TfBaseComponent
 				Url = "/"
 			});
 		}
+		if (TfRouteState.Value.FirstNode == RouteDataFirstNode.Pages)
+		{
+			result.Add(new TucMenuItem
+			{
+				Title = TfConverters.StringOverflow("Pages", _ellipsisCount),
+				Url = String.Format(TfConstants.PagesPageUrl)
+			});
+		}
 		else if (TfRouteState.Value.FirstNode == RouteDataFirstNode.Admin)
 		{
 			result.Add(new TucMenuItem

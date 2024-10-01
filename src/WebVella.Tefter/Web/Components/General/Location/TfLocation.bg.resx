@@ -129,6 +129,9 @@
   <data name="Manage" xml:space="preserve">
     <value>Редакция</value>
   </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Страници</value>
+  </data>
   <data name="Shared Columns" xml:space="preserve">
     <value>Споделени колони</value>
   </data>

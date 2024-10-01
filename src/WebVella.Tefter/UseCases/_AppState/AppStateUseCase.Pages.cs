@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitPagesAsync(TucUser currentUser, TfRouteState routeState,
+	internal Task<TfAppState> InitPagesAsync(TucUser currentUser, TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
@@ -9,23 +9,23 @@ internal partial class AppStateUseCase
 		{
 			newAppState = newAppState with
 			{
-				Pages = new()
+				Pages = GetAppPages(TfScreenRegion.AdminPages)
 			};
-			return newAppState;
 		}
-		newAppState = newAppState with
+		else
 		{
-			Pages = GetAppPages()
-		};
-
-
-		return newAppState;
+			newAppState = newAppState with
+			{
+				Pages = GetAppPages(TfScreenRegion.Pages)
+			};
+		}
+		return Task.FromResult(newAppState);
 	}
 
-	internal List<TucScreenRegionComponentMeta> GetAppPages()
+	internal List<TucScreenRegionComponentMeta> GetAppPages(TfScreenRegion? region = null)
 	{
 		var results = new List<TucScreenRegionComponentMeta>();
-		var componentMeta = _screenRegionComponentManager.GetComponentMeta(TfScreenRegion.Pages);
+		var componentMeta = _screenRegionComponentManager.GetComponentMeta(region);
 		foreach (var meta in componentMeta)
 		{
 			results.Add(new TucScreenRegionComponentMeta

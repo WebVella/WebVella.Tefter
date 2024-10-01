@@ -32,6 +32,7 @@ public partial class TfConstants
 	public static string RouteNameSharedColumns  = "aux-columns";
 	public static string AdminDashboardUrl  = $"/{RouteNameAdmin}";
 	public static string AdminPagesUrl  = $"/{RouteNameAdmin}/{RouteNamePages}";
+	public static string AdminPagesSingleUrl  = $"/{RouteNameAdmin}/{RouteNamePages}/{{0}}";
 	public static string AdminUsersPageUrl  = $"/{RouteNameAdmin}/{RouteNameUsers}";
 	public static string AdminUserDetailsPageUrl  = $"/{RouteNameAdmin}/{RouteNameUsers}/{{0}}";
 	public static string AdminUserAccessPageUrl  = $"/{RouteNameAdmin}/{RouteNameUsers}/{{0}}/{RouteNameAccess}";

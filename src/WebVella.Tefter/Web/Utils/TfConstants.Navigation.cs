@@ -32,6 +32,7 @@ public partial class TfConstants
 	//Admin
 	public static Icon AdminDashboardIcon = GetIcon("Board");
 	public static string AdminDashboardMenuTitle = "Dashboard";
+	public static string AdminPagesMenuTitle = "Pages";
 
 	public static Icon AdminDataProvidersIcon = GetIcon("Connector");
 	public static string AdminDataProvidersMenuTitle = "Data providers";
