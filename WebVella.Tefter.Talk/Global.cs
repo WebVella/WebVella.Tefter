@@ -12,3 +12,11 @@ global using WebVella.Tefter.Web.Services;
 global using WebVella.Tefter.Web.Utils;
 
 global using WebVella.Tefter.Talk.Components;
+global using WebVella.Tefter.Talk.Models;
+global using WebVella.Tefter.Talk.Services;
+
+global using FluentResults;
+global using FluentValidation;
+global using FluentValidation.Results;
+global using Npgsql;
+global using System.Data;
