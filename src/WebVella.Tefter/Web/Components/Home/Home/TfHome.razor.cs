@@ -6,6 +6,7 @@ public partial class TfHome : TfBaseComponent
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	private bool _isDataLoading = false;
+	private string _editor = null;
 	void AddInNotificationCenter()
 	{
 		MessageService.ShowMessageBar(options =>
@@ -48,5 +49,10 @@ public partial class TfHome : TfBaseComponent
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.SearchQueryName] = "#" + tag.Label;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+
+	private async Task _editorChanged(string value){ 
+		_editor = value;
+		await InvokeAsync(StateHasChanged);
 	}
 }
