@@ -26,7 +26,7 @@
 		if (!element) return;
 		element.blur();
 	},
-	createQuill: function (quillElement, editorId) {
+	createQuill: function (quillElement, editorId, dotNetHelper, methodName) {
 		var options = {
 			modules: {
 				toolbar: {
@@ -49,22 +49,24 @@
 		// set quill at the object we can call
 		// methods on later
 		Tefter.HtmlEditors[editorId] = new Quill(quillElement, options);
+		Tefter.addEditorTextChangeListener(dotNetHelper, editorId, methodName);
+
 		Tefter.HtmlEditors[editorId].on('text-change', (delta, oldDelta, source) => {
 			if (source == 'api') {
-				console.log('An API call triggered this change.');
-				Tefter.executeEditorTextChangeListenerCallbacks(delta, oldDelta, source)
+				/*console.log('An API call triggered this change.');*/
 			} else if (source == 'user') {
-				console.log('A user action triggered this change.');
+				/*console.log('A user action triggered this change.');*/
+				Tefter.executeEditorTextChangeListenerCallbacks(delta, oldDelta, source)
 			}
 		});
 	},
 	addEditorTextChangeListener: function (dotNetHelper, editorId, methodName) {
-		Tefter.HtmlEditorsChangeListeners[listenerId] = { dotNetHelper: dotNetHelper, methodName: methodName };
+		Tefter.HtmlEditorsChangeListeners[editorId] = { dotNetHelper: dotNetHelper, methodName: methodName };
 		return true;
 	},
-	removeEditorTextChangeListener: function (dotNetHelper, editorId, methodName) {
-		if (Tefter.HtmlEditorsChangeListeners[listenerId]) {
-			delete Tefter.HtmlEditorsChangeListeners[listenerId];
+	removeEditorTextChangeListener: function (editorId) {
+		if (Tefter.HtmlEditorsChangeListeners[editorId]) {
+			delete Tefter.HtmlEditorsChangeListeners[editorId];
 		}
 		return true;
 	},
@@ -80,4 +82,17 @@
 		}
 		return true;
 	},
+	getQuillHtml:function(editorId){
+		if(Tefter.HtmlEditors[editorId]){
+			return Tefter.HtmlEditors[editorId].getSemanticHTML();
+		}
+		return null;
+	},
+	setQuillHtml:function(editorId,html){
+		if(Tefter.HtmlEditors[editorId]){
+			Tefter.HtmlEditors[editorId].clipboard.dangerouslyPasteHTML(html,'silent');
+		}
+		return true;
+	}
+
 }
