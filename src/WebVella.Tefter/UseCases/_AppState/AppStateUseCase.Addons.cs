@@ -19,6 +19,29 @@ internal partial class AppStateUseCase
 				Pages = GetAddonComponents(TfScreenRegion.Pages)
 			};
 		}
+
+		foreach (TucScreenRegionComponentMeta addonComponent in newAppState.Pages)
+		{
+			if (addonComponent.ComponentType is not null
+				&& addonComponent.ComponentType.GetInterface(nameof(ITucAuxDataUseComponent)) != null)
+			{
+				var component = (ITucAuxDataUseComponent)Activator.CreateInstance(addonComponent.ComponentType);
+				component.OnSpaceViewStateInited(
+						identityManager: _identityManager,
+						dataProviderManager: _dataProviderManager,
+						sharedColumnsManager: _sharedColumnsManager,
+						dataManager: _dataManager,
+						spaceManager: _spaceManager,
+						currentUser: currentUser,
+						routeState: routeState,
+						newAppState: newAppState,
+						oldAppState: oldAppState,
+						newAuxDataState: newAuxDataState,
+						oldAuxDataState: oldAuxDataState
+				);
+			}
+		}
+
 		return Task.FromResult(newAppState);
 	}
 

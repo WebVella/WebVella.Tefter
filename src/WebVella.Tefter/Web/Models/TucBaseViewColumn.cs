@@ -9,21 +9,8 @@ public interface ITucExportableViewColumn
 	object GetData();
 }
 
-public interface ITucAuxDataUseViewColumn
-{
-	Task OnSpaceViewStateInited(
-		IIdentityManager identityManager,
-		ITfDataProviderManager dataProviderManager,
-		ITfSharedColumnsManager sharedColumnsManager,
-		IDataManager dataManager,
-		ITfSpaceManager spaceManager,
-		TucUser currentUser,
-		TfRouteState routeState,
-		TfAppState newAppState, TfAppState oldAppState,
-		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState);
-}
 
-public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExportableViewColumn, ITucAuxDataUseViewColumn
+public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExportableViewColumn, ITucAuxDataUseComponent
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }

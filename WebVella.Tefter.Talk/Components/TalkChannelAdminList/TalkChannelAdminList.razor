@@ -1,0 +1,18 @@
+﻿@namespace WebVella.Tefter.Talk.Components
+@inherits TfBaseComponent
+@{
+	var channels = new List<TalkChannel>();
+	if (TfAuxDataState.Value.Data.ContainsKey(Constants.TALK_APP_CHANNEL_LIST_DATA_KEY))
+		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+}
+@if (channels.Count == 0)
+{
+	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No channels created yet")</FluentMessageBar>
+}
+else
+{
+	@foreach (var channel in channels)
+	{
+
+	}
+}
