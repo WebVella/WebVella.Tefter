@@ -5,6 +5,7 @@ namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
 	private readonly AuthenticationStateProvider _authenticationStateProvider;
+	private readonly IServiceProvider _serviceProvider;
 	private readonly IJSRuntime _jsRuntime;
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfDataProviderManager _dataProviderManager;
@@ -20,6 +21,7 @@ internal partial class AppStateUseCase
 
 	public AppStateUseCase(
 		AuthenticationStateProvider authenticationStateProvider,
+		IServiceProvider serviceProvider,
 		IJSRuntime jsRuntime,
 		IIdentityManager identityManager,
 		ITfDataProviderManager dataProviderManager,
@@ -34,6 +36,7 @@ internal partial class AppStateUseCase
 		)
 	{
 		_authenticationStateProvider = authenticationStateProvider;
+		_serviceProvider = serviceProvider;
 		_jsRuntime = jsRuntime;
 		_identityManager = identityManager;
 		_dataProviderManager = dataProviderManager;
