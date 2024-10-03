@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Talk.Models;
 
-internal class TalkChannel
+public class TalkChannel
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }

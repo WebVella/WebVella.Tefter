@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Talk.Models;
 
-internal class TalkRelatedSK
+public class TalkRelatedSK
 {
 }

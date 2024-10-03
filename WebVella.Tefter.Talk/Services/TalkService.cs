@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Talk.Services;
 
-internal partial interface ITalkService
+public partial interface ITalkService
 {
 }
 
