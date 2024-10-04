@@ -12,7 +12,7 @@
 
 ::deep .talk-panel__left__header {
 	flex: 0 0 50px;
-	background: red;
+	border-bottom: 1px solid var(--neutral-stroke-rest);
 }
 
 ::deep .talk-panel__left__body {
@@ -28,8 +28,8 @@
 }
 
 ::deep .talk-panel__right {
-	background: blue;
 	flex: 0 0 35%;
+	border-left:1px solid var(--neutral-stroke-rest);
 }
 
 ::deep .talk-panel__right__header {

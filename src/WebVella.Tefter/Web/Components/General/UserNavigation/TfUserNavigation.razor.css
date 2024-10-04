@@ -14,9 +14,9 @@
 	font-size: 12px;
 }
 
-::deep .fluent-persona .initials {
+/*::deep .fluent-persona .initials {
 	background: var(--neutral-base-color) !important;
-}
+}*/
 
 ::deep.usernav .actions > .stealth::part(control),
 ::deep.usernav .actions .language-switch > .stealth::part(control){

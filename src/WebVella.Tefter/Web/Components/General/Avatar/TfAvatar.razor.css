@@ -1,0 +1,10 @@
+﻿::deep {
+	display: inline-flex;
+	justify-content:center;
+	align-items:center;
+	height: 24px;
+	width: 24px;
+	border-radius: 50%;
+	font-size: 12px;
+	font-weight: 600;
+}
