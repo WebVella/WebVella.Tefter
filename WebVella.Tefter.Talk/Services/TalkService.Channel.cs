@@ -10,7 +10,7 @@ public partial interface ITalkService
 	Result<TalkChannel> CreateChannel(
 		TalkChannel channel);
 
-	Result UpdateChannel(
+	Result<TalkChannel> UpdateChannel(
 		TalkChannel channel);
 
 	Result DeleteChannel(
@@ -99,7 +99,7 @@ internal partial class TalkService : ITalkService
 
 			var countSharedColumnNamePar = TalkUtility.CreateParameter(
 				"count_shared_column_name",
-				channel.SharedKey,
+				channel.CountSharedColumnName,
 				DbType.StringFixedLength);
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
@@ -126,7 +126,7 @@ internal partial class TalkService : ITalkService
 		}
 	}
 
-	public Result UpdateChannel(
+	public Result<TalkChannel> UpdateChannel(
 		TalkChannel channel)
 	{
 		try
@@ -164,7 +164,7 @@ internal partial class TalkService : ITalkService
 
 			var countSharedColumnNamePar = TalkUtility.CreateParameter(
 				"count_shared_column_name",
-				channel.SharedKey,
+				channel.CountSharedColumnName,
 				DbType.StringFixedLength);
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
@@ -177,7 +177,7 @@ internal partial class TalkService : ITalkService
 			if (dbResult != 1)
 				throw new Exception("Failed to update row in database for channel object");
 
-			return Result.Ok();
+			return Result.Ok(GetChannel(channel.Id).Value);
 
 		}
 		catch (Exception ex)

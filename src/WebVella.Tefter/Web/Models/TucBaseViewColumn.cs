@@ -6,7 +6,7 @@ namespace WebVella.Tefter.Web.Models;
 
 public interface ITucExportableViewColumn
 {
-	object GetData();
+	object GetData(IServiceProvider serviceProvider);
 }
 
 
@@ -376,7 +376,7 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	/// This method needs to be overriden in the implementing component,
 	/// and will be called by various export services as Excel export in example
 	/// </summary>
-	public virtual object GetData()
+	public virtual object GetData(IServiceProvider serviceProvider)
 	{
 		return null;
 	}
@@ -427,11 +427,7 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	/// </summary>
 	/// <param name="appState">the most current complete appState reference</param>
 	public virtual Task OnSpaceViewStateInited(
-		IIdentityManager identityManager,
-		ITfDataProviderManager dataProviderManager,
-		ITfSharedColumnsManager sharedColumnsManager,
-		IDataManager dataManager,
-		ITfSpaceManager spaceManager,
+		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,

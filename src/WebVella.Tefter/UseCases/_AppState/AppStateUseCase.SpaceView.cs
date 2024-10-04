@@ -1,7 +1,9 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitSpaceViewAsync(TucUser currentUser,
+	internal Task<TfAppState> InitSpaceViewAsync(
+		IServiceProvider serviceProvider,
+		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
@@ -87,11 +89,7 @@ internal partial class AppStateUseCase
 					compContext.QueryName = column.QueryName;
 					var component = (ITucAuxDataUseComponent)Activator.CreateInstance(column.ComponentType, compContext);
 					component.OnSpaceViewStateInited(
-							identityManager: _identityManager,
-							dataProviderManager: _dataProviderManager,
-							sharedColumnsManager: _sharedColumnsManager,
-							dataManager: _dataManager,
-							spaceManager: _spaceManager,
+							serviceProvider: serviceProvider,
 							currentUser: currentUser,
 							routeState: routeState,
 							newAppState: newAppState,

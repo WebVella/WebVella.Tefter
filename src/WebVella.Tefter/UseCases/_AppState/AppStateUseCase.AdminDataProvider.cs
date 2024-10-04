@@ -1,8 +1,10 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitAdminDataProviderAsync(TucUser currentUser, TfRouteState routeState,
-		TfAppState newAppState, TfAppState oldAppState, 
+	internal async Task<TfAppState> InitAdminDataProviderAsync(
+		IServiceProvider serviceProvider,
+		TucUser currentUser, TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
@@ -286,7 +288,8 @@ internal partial class AppStateUseCase
 	internal Task DeleteAllProviderData(Guid dataProviderId)
 	{
 		var provider = _dataProviderManager.GetProvider(dataProviderId);
-		if(provider is null){ 
+		if (provider is null)
+		{
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("Provider not found"),
 				toastErrorMessage: "Unexpected Error",
@@ -294,7 +297,7 @@ internal partial class AppStateUseCase
 				toastService: _toastService,
 				messageService: _messageService
 			);
-			return Task.CompletedTask;		
+			return Task.CompletedTask;
 		}
 		var createResult = _dataManager.DeleteAllProviderRows(provider.Value);
 		if (createResult.IsFailed)

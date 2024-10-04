@@ -5,14 +5,55 @@
 	if (TfAuxDataState.Value.Data.ContainsKey(Constants.TALK_APP_CHANNEL_LIST_DATA_KEY))
 		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 }
-@if (channels.Count == 0)
-{
-	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No channels created yet")</FluentMessageBar>
-}
-else
-{
-	@foreach (var channel in channels)
-	{
-
-	}
-}
+<FluentBodyContent Class="content-body with-toolbar">
+	<TfPageBar>
+		<Actions>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
+				Create Channel
+			</FluentButton>
+		</Actions>
+	</TfPageBar>
+	<div class="content-inner">
+		@if (channels.Count == 0)
+		{
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No channels created yet")</FluentMessageBar>
+		}
+		else
+		{
+			<table class="tf-grid">
+				<thead class="tf-grid-thead">
+					<tr class="tf-grid-tr">
+						<th class="tf-grid-th" style="width:40px;"></th>
+						<th class="tf-grid-th">@LOC("name")</th>
+						<th class="tf-grid-th">@LOC("shared key")</th>
+						<th class="tf-grid-th">@LOC("count column")</th>
+					</tr>
+				</thead>
+				<tbody class="tf-grid-tbody">
+					@foreach (var context in channels)
+					{
+						<tr @key=@context.Id class="tf-grid-tr">
+							<td class="tf-grid-td">
+								<div>
+									<FluentStack>
+										<FluentButton OnClick="@(_=> _editChannelHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
+										<FluentButton OnClick="@(_=> _deleteChannelHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+									</FluentStack>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>@context.Name</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>@context.SharedKey</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>@context.CountSharedColumnName</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+	</div>
+</FluentBodyContent>

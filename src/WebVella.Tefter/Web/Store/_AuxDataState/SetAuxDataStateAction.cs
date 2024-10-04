@@ -3,7 +3,7 @@
 public record SetAuxDataStateAction : TfBaseAction
 {
 	public TfAuxDataState State { get; }
-	internal SetAuxDataStateAction(
+	public SetAuxDataStateAction(
 		FluxorComponent component,
 		TfAuxDataState state
 		)

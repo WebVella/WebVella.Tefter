@@ -64,7 +64,7 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData()
+	public override object GetData(IServiceProvider serviceProvider)
 	{
 		//dateonly is not generally supported so we return datetime
 		object columnData = GetColumnDataByAlias(_valueAlias);

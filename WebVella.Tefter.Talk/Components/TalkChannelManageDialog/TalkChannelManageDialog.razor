@@ -1,0 +1,58 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@_btnText</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6"></FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.SharedKey
+									 Label="@LOC("Shared Key")" Style="width:100%" AutoComplete="new-password" />
+					<FluentValidationMessage For="@(() => _form.SharedKey)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentCombobox TOption="string"
+									Autocomplete="ComboboxAutocomplete.Both"
+									Items="_sharedColumnsOptions"
+									Height="@TfConstants.ComboPanelHeight"
+									@bind-Value=_form.CountSharedColumnName
+									Label="@LOC("Shared column for count")" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.CountSharedColumnName)" />
+				</FluentGridItem>
+
+			</FluentGrid>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

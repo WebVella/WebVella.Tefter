@@ -1,8 +1,12 @@
-﻿namespace WebVella.Tefter.Talk.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class TalkChannel
+namespace WebVella.Tefter.Talk.Models;
+
+public record TalkChannel
 {
+	[Required]
 	public Guid Id { get; set; }
+	[Required]
 	public string Name { get; set; }
 	public string? SharedKey { get; set; } = null;
 	public string? CountSharedColumnName { get; set; } = null;

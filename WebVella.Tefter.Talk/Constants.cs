@@ -6,4 +6,5 @@ internal class Constants
 	public static string TALK_APP_NAME = "Talk Application";
 	public static string TALK_APP_DECRIPTION = "Talk Application Description";
 	public static string TALK_APP_CHANNEL_LIST_DATA_KEY = $"{TALK_APP_ID}-channels-list";
+	public static string TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY = $"{TALK_APP_ID}-shared-columns-list";
 }

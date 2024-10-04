@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
@@ -67,7 +65,7 @@ public partial class TfUrlEditColumnComponent : TucBaseViewColumn<TfUrlEditColum
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData()
+	public override object GetData(IServiceProvider serviceProvider)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not string)

@@ -1,20 +1,23 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitSpaceDataAsync(TucUser currentUser, TfRouteState routeState,
-		TfAppState newAppState, TfAppState oldAppState, 
+	internal Task<TfAppState> InitSpaceDataAsync(IServiceProvider serviceProvider,
+		TucUser currentUser, TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (newAppState.Space is null)
 		{
-			newAppState = newAppState with { 
-				SpaceData = null, 
-				SpaceDataList = new(), 
+			newAppState = newAppState with
+			{
+				SpaceData = null,
+				SpaceDataList = new(),
 				AllDataProviders = new(),
 				SpaceDataData = null,
 				SpaceDataPage = 1,
 				SpaceDataPageSize = TfConstants.PageSize,
-				SpaceDataSearch = null};
+				SpaceDataSearch = null
+			};
 			return Task.FromResult(newAppState);
 		}
 		//SpaceDataList
@@ -26,7 +29,8 @@ internal partial class AppStateUseCase
 			newAppState = newAppState with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
 
 			//Space Data data
-			if(routeState.ThirdNode == RouteDataThirdNode.Data){ 
+			if (routeState.ThirdNode == RouteDataThirdNode.Data)
+			{
 				var viewData = GetSpaceDataDataTable(
 							spaceDataId: newAppState.SpaceData.Id,
 							additionalFilters: null,
@@ -34,7 +38,7 @@ internal partial class AppStateUseCase
 							search: routeState.Search,
 							page: routeState.Page,
 							pageSize: routeState.PageSize ?? TfConstants.PageSize
-						);			
+						);
 				newAppState = newAppState with
 				{
 					SpaceDataData = viewData,

@@ -5,11 +5,7 @@ namespace WebVella.Tefter.Web.Models;
 public interface ITucAuxDataUseComponent
 {
 	Task OnSpaceViewStateInited(
-		IIdentityManager identityManager,
-		ITfDataProviderManager dataProviderManager,
-		ITfSharedColumnsManager sharedColumnsManager,
-		IDataManager dataManager,
-		ITfSpaceManager spaceManager,
+		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,

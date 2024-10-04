@@ -57,15 +57,15 @@ internal partial class AppStateUseCase
 		var routeState = _navigationManager.GetRouteState(url);
 		var appState = oldAppState with { Hash = oldAppState.Hash };
 		var auxDataState = oldAuxDataState with { Hash = oldAuxDataState.Hash };
-		appState = await InitAdminUsersAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitSpaceAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitAdminDataProviderAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitAdminSharedColumnsAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitSpaceDataAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitSpaceViewAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitBookmarksAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitHomeAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitPagesAsync(currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitAdminUsersAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitSpaceAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitAdminDataProviderAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitAdminSharedColumnsAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitSpaceDataAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitSpaceViewAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitBookmarksAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitHomeAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitPagesAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
 
 		return (appState,auxDataState);
 	}

@@ -1,7 +1,9 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitSpaceAsync(TucUser currentUser, TfRouteState routeState, 
+	internal async Task<TfAppState> InitSpaceAsync(
+		IServiceProvider serviceProvider,
+		TucUser currentUser, TfRouteState routeState, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{

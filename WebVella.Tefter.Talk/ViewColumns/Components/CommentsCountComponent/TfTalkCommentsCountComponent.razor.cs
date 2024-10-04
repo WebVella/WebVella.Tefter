@@ -1,10 +1,4 @@
-﻿using Fluxor;
-using Microsoft.AspNetCore.Components;
-using WebVella.Tefter.Api;
-using WebVella.Tefter.Identity;
-using WebVella.Tefter.Web.Store;
-
-namespace WebVella.Tefter.Talk.Components;
+﻿namespace WebVella.Tefter.Talk.Components;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
@@ -74,17 +68,13 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData()
+	public override object GetData(IServiceProvider serviceProvider)
 	{
 		return null;
 	}
 
 	public override async Task OnSpaceViewStateInited(
-		IIdentityManager identityManager,
-		ITfDataProviderManager dataProviderManager,
-		ITfSharedColumnsManager sharedColumnsManager,
-		IDataManager dataManager,
-		ITfSpaceManager spaceManager,
+		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
@@ -94,16 +84,21 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 		var options = new List<TucSelectOption>();
 		if (newAppState.SpaceView.SpaceDataId is not null)
 		{
+			var spaceManager = serviceProvider.GetRequiredService<ITfSpaceManager>();
+			var dataProviderManager = serviceProvider.GetRequiredService<ITfDataProviderManager>();
 			var spaceDataResult = spaceManager.GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
-			if(spaceDataResult.IsSuccess && spaceDataResult.Value is not null){ 
+			if (spaceDataResult.IsSuccess && spaceDataResult.Value is not null)
+			{
 				var dataProviderResult = dataProviderManager.GetProvider(spaceDataResult.Value.DataProviderId);
-				if(dataProviderResult.IsSuccess && dataProviderResult.Value is not null){
+				if (dataProviderResult.IsSuccess && dataProviderResult.Value is not null)
+				{
 					foreach (var key in dataProviderResult.Value.SharedKeys)
 					{
-					options.Add(new TucSelectOption{ 
-						Value = key.DbName,
-						Label = key.DbName
-					});
+						options.Add(new TucSelectOption
+						{
+							Value = key.DbName,
+							Label = key.DbName
+						});
 					}
 				}
 			}

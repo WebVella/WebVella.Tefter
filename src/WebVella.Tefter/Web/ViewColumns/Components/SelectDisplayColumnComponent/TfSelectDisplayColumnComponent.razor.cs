@@ -82,28 +82,20 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData()
+	public override object GetData(IServiceProvider serviceProvider)
 	{
 		return GetDataStringByAlias(_valueAlias);
 	}
 
 	public override async Task OnSpaceViewStateInited(
-		IIdentityManager identityManager,
-		ITfDataProviderManager dataProviderManager,
-		ITfSharedColumnsManager sharedColumnsManager,
-		IDataManager dataManager,
-		ITfSpaceManager spaceManager,
+		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		await base.OnSpaceViewStateInited(
-			identityManager:identityManager,
-			dataProviderManager:dataProviderManager,
-			sharedColumnsManager:sharedColumnsManager,
-			dataManager: dataManager,
-			spaceManager: spaceManager,
+			serviceProvider:serviceProvider,
 			currentUser: currentUser,
 			routeState: routeState,
 			newAppState: newAppState,
@@ -122,6 +114,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 		{
 			if (componentOptions.SpaceDataId != Guid.Empty)
 			{
+				var dataManager = serviceProvider.GetService<IDataManager>();
 				var optionsDTResult = dataManager.QuerySpaceData(
 					spaceDataId: componentOptions.SpaceDataId,
 					additionalFilters: null,

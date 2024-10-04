@@ -4,15 +4,18 @@ namespace WebVella.Tefter.UseCases.Login;
 
 public class ExportUseCase
 {
+	private readonly IServiceProvider _serviceProvider;
 	private readonly IIdentityManager _identityManager;
 	private readonly IDataManager _dataManager;
 	private readonly ITfSpaceManager _spaceManager;
 	public ExportUseCase(
+		IServiceProvider serviceProvider,
 		IIdentityManager identityManager,
 		IDataManager dataManager,
 		ITfSpaceManager spaceManager
 		)
 	{
+		_serviceProvider = serviceProvider;
 		_identityManager = identityManager;
 		_dataManager = dataManager;
 		_spaceManager = spaceManager;
@@ -113,7 +116,7 @@ public class ExportUseCase
 						&& column.ComponentType.GetInterface(nameof(ITucExportableViewColumn)) != null)
 					{
 						var component = (ITucExportableViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
-						cellRange.SetValue(XLCellValue.FromObject(component.GetData()));
+						cellRange.SetValue(XLCellValue.FromObject(component.GetData(_serviceProvider)));
 					}
 					currentExcelColumn = currentExcelColumn + rangeColumns;
 				}

@@ -7,11 +7,11 @@
 		<TfPagesNavigation />
 	</FluentStack>
 }
-<FluentBodyContent Class="content-body">
 
-	<div class="content-inner">
-		@if (String.IsNullOrWhiteSpace(Slug))
-		{
+@if (String.IsNullOrWhiteSpace(Slug))
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
 			<FluentMessageBar Title="No page selected"
 							  Style="@("border: 1px solid var(--neutral-base-color)")"
 							  Intent="MessageIntent.Info"
@@ -19,12 +19,16 @@
 							  AllowDismiss="false">
 				Select a page from the menu
 			</FluentMessageBar>
-		}
-		else
-		{
-			TucScreenRegionComponentMeta componentMeta = TfAppState.Value.Pages.FirstOrDefault(x => x.Slug.ToLowerInvariant() == Slug.ToLowerInvariant());
-			if (componentMeta is null)
-			{
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	TucScreenRegionComponentMeta componentMeta = TfAppState.Value.Pages.FirstOrDefault(x => x.Slug.ToLowerInvariant() == Slug.ToLowerInvariant());
+	if (componentMeta is null)
+	{
+		<FluentBodyContent Class="content-body">
+			<div class="content-inner">
 				<FluentMessageBar Title="Page Not Found"
 								  Style="@("border: 1px solid var(--neutral-base-color)")"
 								  Intent="MessageIntent.Info"
@@ -32,13 +36,14 @@
 								  AllowDismiss="false">
 					No page was found on this URL
 				</FluentMessageBar>
-			}
-			else
-			{
-				<TfErrorBoundry>
-					<DynamicComponent Type="@componentMeta.ComponentType" Parameters="@_getComponentContext()" />
-				</TfErrorBoundry>
-			}
-		}
-	</div>
-</FluentBodyContent>
+			</div>
+		</FluentBodyContent>
+	}
+	else
+	{
+		<TfErrorBoundry>
+			<DynamicComponent Type="@componentMeta.ComponentType" Parameters="@_getComponentContext()" />
+		</TfErrorBoundry>
+	}
+}
+

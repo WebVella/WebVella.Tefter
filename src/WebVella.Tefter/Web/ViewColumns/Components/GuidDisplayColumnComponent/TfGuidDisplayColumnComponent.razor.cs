@@ -64,7 +64,7 @@ public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisp
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData()
+	public override object GetData(IServiceProvider serviceProvider)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not Guid) 
