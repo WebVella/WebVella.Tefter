@@ -8,7 +8,7 @@ internal class TalkUtility
 		if (value is null)
 			par.Value = DBNull.Value;
 		else
-			par.Value = null;
+			par.Value = value;
 
 		return par;
 	}
