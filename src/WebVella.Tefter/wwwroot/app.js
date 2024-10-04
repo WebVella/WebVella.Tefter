@@ -81,6 +81,11 @@
 			delete Tefter.HtmlEditorsEnterListeners[editorId];
 		}
 	},
+	focusQuill: function (editorId) {
+		if (Tefter.HtmlEditors[editorId]) {
+			Tefter.HtmlEditors[editorId].focus();
+		}
+	},
 	addEditorTextChangeListener: function (dotNetHelper, editorId, methodName) {
 		Tefter.HtmlEditorsChangeListeners[editorId] = { dotNetHelper: dotNetHelper, methodName: methodName };
 		return true;
@@ -123,7 +128,6 @@
 					dotNetHelper.invokeMethodAsync(methodName);
 				}
 			}
-			debugger;
 			if (Tefter.HtmlEditorsEnterListeners || Object.keys(Tefter.HtmlEditorsEnterListeners).length > 0) {
 				return false;
 			}

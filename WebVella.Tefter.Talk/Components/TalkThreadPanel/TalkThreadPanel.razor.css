@@ -13,11 +13,17 @@
 ::deep .talk-panel__left__header {
 	flex: 0 0 50px;
 	border-bottom: 1px solid var(--neutral-stroke-rest);
+	padding: 0 10px;
+	display: flex;
+	align-items: center;
 }
 
 ::deep .talk-panel__left__body {
 	flex: 1 1 auto;
+	position: relative;
+	overflow: hidden;
 }
+
 
 ::deep .talk-panel__left__footer {
 	flex: 0 0 auto;
@@ -29,7 +35,7 @@
 
 ::deep .talk-panel__right {
 	flex: 0 0 35%;
-	border-left:1px solid var(--neutral-stroke-rest);
+	border-left: 1px solid var(--neutral-stroke-rest);
 }
 
 ::deep .talk-panel__right__header {
@@ -44,15 +50,63 @@
 
 
 ::deep .talk-panel__left__footer__actions {
-	flex:0 0 45px;
-	padding-top:5px;
+	flex: 0 0 45px;
+	padding-top: 5px;
 	display: flex;
-	justify-content:space-between;
-	align-items:center;
+	justify-content: space-between;
+	align-items: center;
 }
 
 
 ::deep .text-muted {
-	color:var(--neutral-base-color);
+	color: var(--neutral-base-color);
 	font-size: 0.85em;
+}
+
+
+::deep .talk-panel__left__body__messages {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden scroll;
+	display: flex;
+	flex-flow: column-reverse;
+	justify-content: end;
+}
+
+::deep .talk-panel__left__body__messages__message {
+	flex: 0 0 auto;
+	width:100%;
+	display: flex;
+	padding: 0 10px;
+	padding-bottom: 1rem;
+}
+
+::deep .talk-panel__left__body__messages__message--last {
+	margin-bottom: 1rem;
+}
+
+::deep .talk-panel__left__body__messages__message__left {
+	flex: 0 0 40px;
+	padding-top: 4px;
+}
+
+::deep .talk-panel__left__body__messages__message__right {
+	flex: 1 1 auto;
+}
+
+::deep .talk-sender {
+	font-weight: bold;
+}
+
+::deep .talk-timestamp {
+	color: var(--neutral-base-color);
+}
+
+::deep .talk-channel-label {
+	font-weight: bold;
+	font-size: 1.15rem;
+	color: var(--neutral-base-color);
 }

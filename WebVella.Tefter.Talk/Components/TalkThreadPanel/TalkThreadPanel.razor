@@ -13,11 +13,35 @@
 		{
 			<div class="talk-panel">
 				<div class="talk-panel__left">
-					<div class="talk-panel__left__header"></div>
-					<div class="talk-panel__left__body"></div>
+					<div class="talk-panel__left__header">
+						<div class="talk-panel__left__header__left">
+							<div class="talk-channel-label">#General</div>
+						</div>
+					</div>
+					<div class="talk-panel__left__body">
+						<div class="talk-panel__left__body__messages">
+							@for (int i = 0; i < 3; i++)
+							{
+								<div class="talk-panel__left__body__messages__message">
+									<div class="talk-panel__left__body__messages__message__left">
+										<TfAvatar User="TfUserState.Value.CurrentUser" />
+									</div>
+									<div class="talk-panel__left__body__messages__message__right">
+										<div class="talk-panel__left__body__messages__message__right__top">
+											<span class="talk-sender">Bozhidar Zashev</span>
+											<span class="talk-timestamp" title="@DateTime.Now.ToString("dd MMM yyyy HH:mm")">@DateTime.Now.ToString("HH:mm")</span>
+										</div>
+										<div class="talk-panel__left__body__messages__message__right__bottom">
+											Facer congue sit quis erat et accumsan eirmod labore vel ut. Gubergren tempor et labore sanctus cum dolor. Invidunt takimata esse iriure sit eum aliquyam takimata eleifend feugait eos ipsum accusam. Aliquyam vel ut duo lorem ut stet voluptua diam sea erat ipsum assum eirmod. Sea assum magna elitr justo takimata kasd stet commodo dolor lorem dolores praesent liber quod vero et sit. Takimata aliquyam ipsum eirmod lorem justo rebum gubergren. Nulla eleifend nisl est voluptua. Takimata accusam dolore augue. Aliquyam amet magna justo lorem amet qui dolore possim sit labore aliquyam dolor ipsum eu elitr erat sit sadipscing. Lorem ea sit aliquip sit in commodo et dolore stet laoreet dolore accusam amet tation placerat eu erat. No amet eirmod possim eos consetetur accusam sanctus.
+										</div>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
 					<div class="talk-panel__left__footer">
 						<div class="talk-panel__left__footer__editor">
-							<TfEditor Placeholder="Type a message in #general" OnEnter="_sendMessage"/>
+							<TfEditor @ref=_mainEditor Placeholder="Type a message in #general" OnEnter="_sendMessage" />
 						</div>
 						<div class="talk-panel__left__footer__actions">
 							<div class="talk-panel__left__footer__actions__left">

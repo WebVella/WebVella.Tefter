@@ -46,7 +46,6 @@ public partial class TfEditor : TfBaseComponent
 
 	protected override bool ShouldRender() => _value != Value;
 
-
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
@@ -56,7 +55,6 @@ public partial class TfEditor : TfBaseComponent
 			await JSRuntime.InvokeAsync<object>("Tefter.setQuillHtml", _componentId.ToString(), _value);
 		}
 	}
-
 	private async Task _valueChanged(string value)
 	{
 		inputThrottleCancalationToken.Cancel();
@@ -66,6 +64,11 @@ public partial class TfEditor : TfBaseComponent
 		{
 			await ValueChanged.InvokeAsync(value);
 		}, inputThrottleCancalationToken.Token);
+	}
+
+	public async Task Focus(){ 
+			await JSRuntime.InvokeAsync<object>(
+				"Tefter.focusQuill", _componentId.ToString());	
 	}
 
 	[JSInvokable("OnEditorChange")]

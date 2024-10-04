@@ -53,6 +53,7 @@
 	border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
 	outline: none;
 	padding: 5px 10px;
+	max-height:200px;
 }
 
 	::deep .ql-editor:active,
