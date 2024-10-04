@@ -9,7 +9,7 @@
 	<TfPageBar>
 		<Actions>
 			<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
-				Create Channel
+				@LOC("Create channel")
 			</FluentButton>
 		</Actions>
 	</TfPageBar>
@@ -26,7 +26,7 @@
 						<th class="tf-grid-th" style="width:40px;"></th>
 						<th class="tf-grid-th">@LOC("name")</th>
 						<th class="tf-grid-th">@LOC("shared key")</th>
-						<th class="tf-grid-th">@LOC("count column")</th>
+						<th class="tf-grid-th">@LOC("comments count column")</th>
 					</tr>
 				</thead>
 				<tbody class="tf-grid-tbody">
@@ -36,8 +36,9 @@
 							<td class="tf-grid-td">
 								<div>
 									<FluentStack>
-										<FluentButton OnClick="@(_=> _editChannelHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
-										<FluentButton OnClick="@(_=> _deleteChannelHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+										<FluentButton Title="@LOC("edit channel")" OnClick="@(_=> _editChannelHandler(context))" 
+											Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
+										<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteChannelHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
 									</FluentStack>
 								</div>
 							</td>

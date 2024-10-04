@@ -43,32 +43,4 @@
 	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="Web\Components\General\Editor\TfEditor.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Web\Components\SpaceView\SpaceViewBookmarkSelector\TfSpaceViewBookmarkSelector.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Web\ViewColumns\Components\GuidEditColumnComponent\TfGuidEditColumnComponent.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Web\ViewColumns\Components\SelectEditColumnComponent\TfSelectEditColumnComponent.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="Web\Components\SpaceView\SpaceViewManageNav\TfSpaceViewManageNav.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\SpaceData\SpaceDataDetailsNav\TfSpaceDataDetailsNav.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\ViewColumns\Components\GuidDisplayColumnComponent\TfGuidDisplayColumnComponent.bg.resx">
-	    <CustomToolNamespace></CustomToolNamespace>
-	  </EmbeddedResource>
-	</ItemGroup>
-
-	
 </Project>

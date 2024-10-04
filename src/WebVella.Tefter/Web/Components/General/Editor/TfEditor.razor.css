@@ -5,7 +5,8 @@
 	::deep .toolbar button {
 		border-radius: calc(var(--control-corner-radius)* 1px);
 		background: transparent;
-		border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
+		/*border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);*/
+		border:calc(var(--stroke-width) * 1px) solid transparent;
 		line-height: var(--type-ramp-base-line-height);
 		height: calc((var(--base-height-multiplier) + var(--density))* var(--design-unit)* 1px);
 		min-width: calc((var(--base-height-multiplier) + var(--density))* var(--design-unit)* 1px);
@@ -20,14 +21,19 @@
 		::deep .toolbar button:hover {
 			border-color: var(--neutral-stroke-hover);
 		}
+			::deep .toolbar button svg {
+				fill: var(--neutral-base-color) !important;
+				
+			}
 
 		::deep .toolbar button.ql-active {
 			color: var(--foreground-on-accent-rest) !important;
-			background: padding-box linear-gradient(var(--accent-fill-rest),var(--accent-fill-rest)),border-box var(--accent-stroke-control-rest);
+			background: var(--neutral-base-color);
 		}
 
 			::deep .toolbar button.ql-active svg {
 				fill: var(--foreground-on-accent-rest) !important;
+				
 			}
 
 	::deep .toolbar .separator {
@@ -64,6 +70,11 @@
 			content: '\2022';
 			padding-right: 5px;
 		}*/
+
+			::deep .editor-area .ql-editor.ql-blank::before {
+				color: var(--neutral-stroke-rest);
+				padding-left:12px;
+			}
 
 
 

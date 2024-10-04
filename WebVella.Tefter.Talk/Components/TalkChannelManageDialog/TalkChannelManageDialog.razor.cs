@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Talk.Components.TalkChannelManageDialog.TalkChannelManageDialog", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Talk.Components.TalkChannelManageDialog.TalkChannelManageDialog", "WebVella.Tefter.Talk")]
 public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogContentComponent<TalkChannel>
 {
 	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }

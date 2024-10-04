@@ -39,6 +39,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	/// </summary>
 	private Guid? _renderedHash = null;
 	private string _storageKey = "";
+	private IDialogReference? _dialog;
 	#endregion
 
 	#region << Lifecycle >>
@@ -107,10 +108,20 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	}
 	#endregion
 	#region << Private logic >>
-	private Task _onClick()
+	private async Task _onClick()
 	{
-		ToastService.ShowInfo("clicked");
-		return Task.CompletedTask;
+		_dialog = await DialogService.ShowPanelAsync<TalkThreadPanel>(
+		null,
+		new DialogParameters()
+		{
+			DialogType = DialogType.Panel,
+			Alignment = HorizontalAlignment.Right,
+			ShowTitle = false,
+			ShowDismiss = false,
+			PrimaryAction = null,
+			SecondaryAction = null,
+			Width = "75vw"
+		});
 	}
 
 	private void _initValues()

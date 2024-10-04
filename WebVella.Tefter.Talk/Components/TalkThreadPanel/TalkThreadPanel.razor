@@ -1,0 +1,39 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+<FluentDialogHeader Style="display:none" />
+<FluentDialogFooter Style="display:none" />
+<FluentDialogBody>
+	<div>
+		@if (_isLoading)
+		{
+			<TfLoadingPane />
+		}
+		else
+		{
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header"></div>
+					<div class="talk-panel__left__body"></div>
+					<div class="talk-panel__left__footer">
+						<div class="talk-panel__left__footer__editor">
+							<TfEditor Placeholder="Type a message in #general" OnEnter="_sendMessage"/>
+						</div>
+						<div class="talk-panel__left__footer__actions">
+							<div class="talk-panel__left__footer__actions__left">
+								<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
+							</div>
+							<div class="talk-panel__left__footer__actions__right">
+								<FluentButton IconStart="@TfConstants.GetIcon("Send")">Send</FluentButton>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="talk-panel__right">
+					<div class="talk-panel__right__header"></div>
+					<div class="talk-panel__right__body"></div>
+				</div>
+			</div>
+		}
+	</div>
+</FluentDialogBody>

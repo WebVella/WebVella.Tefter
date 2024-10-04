@@ -950,6 +950,10 @@ fluent-anchored-region fluent-menu {
   width: 3px;
   background: var(--accent-fill-rest);
 }
+.fluent-dialog-main.right::part(control),
+.fluent-dialog-main.left::part(control) {
+  --dialog-padding: 0px;
+}
 :root {
   --tf-content-padding: 15px;
   --tf-header-height: 48px;

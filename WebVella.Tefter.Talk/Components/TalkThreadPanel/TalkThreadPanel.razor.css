@@ -1,0 +1,58 @@
+﻿::deep .talk-panel {
+	height: 100vh;
+	width: 75vw;
+	display: flex;
+}
+
+::deep .talk-panel__left {
+	flex: 1 1 auto;
+	display: flex;
+	flex-flow: column;
+}
+
+::deep .talk-panel__left__header {
+	flex: 0 0 50px;
+	background: red;
+}
+
+::deep .talk-panel__left__body {
+	flex: 1 1 auto;
+}
+
+::deep .talk-panel__left__footer {
+	flex: 0 0 auto;
+	padding: 5px 10px;
+	border-top: 1px solid var(--neutral-stroke-rest);
+	display: flex;
+	flex-flow: column;
+}
+
+::deep .talk-panel__right {
+	background: blue;
+	flex: 0 0 35%;
+}
+
+::deep .talk-panel__right__header {
+}
+
+::deep .talk-panel__right__body {
+}
+
+::deep .talk-panel__left__footer__editor {
+	flex: 1 1 auto;
+}
+
+
+::deep .talk-panel__left__footer__actions {
+	flex:0 0 45px;
+	padding-top:5px;
+	display: flex;
+	justify-content:space-between;
+	align-items:center;
+}
+
+
+::deep .text-muted {
+	color:var(--neutral-base-color);
+	font-size: 0.85em;
+}

@@ -1,7 +1,7 @@
 ﻿using Microsoft.JSInterop;
 
 namespace WebVella.Tefter.Talk.Components;
-[LocalizationResource("WebVella.Tefter.Talk.Components.TalkChannelAdminList.TalkChannelAdminList", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Talk.Components.TalkChannelAdminList.TalkChannelAdminList", "WebVella.Tefter.Talk")]
 public partial class TalkChannelAdminList : TfBaseComponent
 {
 	[Inject] public ITalkService TalkService { get; set; }

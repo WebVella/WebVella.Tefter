@@ -3,7 +3,9 @@
 public partial class TfEditor : TfBaseComponent
 {
 	[Parameter] public string Value { get; set; }
+	[Parameter] public string Placeholder { get; set; } = String.Empty;
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public EventCallback OnEnter { get; set; }
 
 	private CancellationTokenSource inputThrottleCancalationToken = new();
 	private DotNetObjectReference<TfEditor> _objectRef;
@@ -19,7 +21,7 @@ public partial class TfEditor : TfBaseComponent
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		await JSRuntime.InvokeAsync<object>(
-			"Tefter.removeEditorTextChangeListener", _componentId.ToString());
+			"Tefter.removeQuill", _componentId.ToString());
 		_objectRef?.Dispose();
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -34,19 +36,22 @@ public partial class TfEditor : TfBaseComponent
 	{
 		if (firstRender)
 		{
+			var textChangeMethodName = "OnEditorChange";
+			var onEnterMethodName = OnEnter.HasDelegate ? "OnEnterHandler" : null;
 			await JSRuntime.InvokeAsync<object>(
-				"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, "OnEditorChange");
+				"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, onEnterMethodName, Placeholder);
 			_editorInited = true;
 		}
 	}
 
 	protected override bool ShouldRender() => _value != Value;
-	
+
 
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if(_editorInited && Value != _value){ 
+		if (_editorInited && Value != _value)
+		{
 			_value = Value;
 			await JSRuntime.InvokeAsync<object>("Tefter.setQuillHtml", _componentId.ToString(), _value);
 		}
@@ -69,5 +74,11 @@ public partial class TfEditor : TfBaseComponent
 		var content = await JSRuntime.InvokeAsync<string>(
 					"Tefter.getQuillHtml", _componentId.ToString());
 		await _valueChanged(content);
+	}
+
+	[JSInvokable("OnEnterHandler")]
+	public async Task OnEnterHandler()
+	{
+		await OnEnter.InvokeAsync();
 	}
 }
