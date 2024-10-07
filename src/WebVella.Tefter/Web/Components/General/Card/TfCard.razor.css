@@ -1,14 +1,13 @@
 ﻿
 .tf-card {
-	border: calc(var(--stroke-width)* 1px) solid var(--neutral-stroke-rest);
+	border: calc(var(--stroke-width)* 1px) solid var(--neutral-stroke-active);
 	border-radius: calc(var(--layer-corner-radius)* 1px);
 	/*	box-shadow: var(--elevation-shadow-card-rest);*/
 }
 
 .tf-card-title {
 	padding:calc(var(--design-unit)* 2.5px) calc(var(--design-unit)* 5px);	
-	background:var(--neutral-fill-layer-hover);
-	background:var(--neutral-fill-secondary-rest);
+	background: var(--neutral-layer-1);
 	border-radius: calc(var(--layer-corner-radius)* 1px) calc(var(--layer-corner-radius)* 1px) 0 0;
 }
 

@@ -25,7 +25,7 @@
 
 ::deep .search::part(root) {
 	border-color: var(--neutral-stroke-rest);
-	background:var(--neutral-fill-input-active);
+	background:var(--neutral-fill-input-focus);
 }
 
 .sidebar-toolbar-mode {

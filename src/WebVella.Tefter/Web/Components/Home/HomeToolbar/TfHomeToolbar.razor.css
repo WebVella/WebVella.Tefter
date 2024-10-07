@@ -14,5 +14,6 @@
 
 ::deep fluent-search::part(root) {
 	border-color: var(--neutral-stroke-rest);
+	background:var(--neutral-fill-input-focus);
 	width:400px;
 }

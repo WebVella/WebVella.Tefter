@@ -3,7 +3,7 @@
 ::deep .tf-grid fluent-text-field::part(root),
 ::deep .tf-grid fluent-select::part(control),
 ::deep .tf-grid fluent-number-field::part(root) {
-	background: var(--neutral-fill-input-active);
+	background: var(--neutral-fill-input-focus);
 	border:1px solid var(--neutral-stroke-input-active);
 }
 

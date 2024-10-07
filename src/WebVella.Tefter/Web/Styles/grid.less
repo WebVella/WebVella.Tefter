@@ -38,7 +38,7 @@
 	& tr > .tf-grid-th,
 	& tr > .tf-grid-td {
 		border-left-width: 0;
-		color: var(--neutral-foreground-hover);
+		color: var(--space-color);
 	}
 }
 
@@ -59,8 +59,7 @@
 				right: 0;
 				left: 0;
 				bottom: 0;
-				/*background: var(--neutral-fill-layer-rest);*/
-				background: var(--neutral-layer-1);
+				background: var(--neutral-layer-2);
 				z-index: 0;
 				border-radius: 0;
 			}
@@ -104,7 +103,7 @@
 				bottom: 0;
 				z-index: 0;
 				border-radius: 0;
-				background: rgba(180,180,180,0.05);
+				background: var(--neutral-layer-3);
 			}
 
 			& > div {
@@ -157,7 +156,7 @@
 	line-height: var(--type-ramp-base-line-height);
 	font-weight: initial;
 	font-variation-settings: var(--type-ramp-base-font-variations);
-	border: 1px solid var(--neutral-stroke-divider-rest);
+	border: 1px solid var(--neutral-stroke-rest);
 
 	& > div {
 		display: flex;
