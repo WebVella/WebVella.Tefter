@@ -82,6 +82,7 @@
 
 ::deep .fluent-nav-item a .positioning-region {
 	border-radius: calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0 0 !important;
+	background: var(--neutral-fill-layer-rest);
 	position:relative;
 }
 

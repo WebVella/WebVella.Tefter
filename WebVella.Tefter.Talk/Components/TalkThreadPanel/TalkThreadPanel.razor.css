@@ -1,6 +1,6 @@
 ﻿::deep .talk-panel {
 	height: 100vh;
-	width: 75vw;
+	width: 100%;
 	display: flex;
 }
 
@@ -34,7 +34,7 @@
 }
 
 ::deep .talk-panel__right {
-	flex: 0 0 35%;
+	flex: 0 0 25vw;
 	border-left: 1px solid var(--neutral-stroke-rest);
 }
 
@@ -80,9 +80,13 @@
 	flex: 0 0 auto;
 	width:100%;
 	display: flex;
-	padding: 0 10px;
-	padding-bottom: 1rem;
+	padding: 10px;
+	position:relative;
 }
+	::deep .talk-panel__left__body__messages__message:hover {
+		background:rgba(180, 180, 180, 0.05);
+	}
+
 
 ::deep .talk-panel__left__body__messages__message--last {
 	margin-bottom: 1rem;
@@ -95,6 +99,37 @@
 
 ::deep .talk-panel__left__body__messages__message__right {
 	flex: 1 1 auto;
+}
+
+::deep .talk-panel__left__body__messages__message__actions {
+	display:none;
+	flex-wrap:nowrap;
+	position:absolute;
+	top:-15px;
+	right:0px;
+	height:42px;
+	width:auto;
+	padding:5px;
+	background:var(--neutral-fill-input-active);
+	border:1px solid var(--neutral-stroke-rest);
+	border-radius:calc(var(--control-corner-radius) * 1px);
+}
+
+::deep .talk-panel__left__body__messages__message:hover
+.talk-panel__left__body__messages__message__actions {
+	display:flex;
+}
+
+::deep .talk-panel__left__body__messages__message__actions fluent-button::part(control) {
+	background:transparent;
+}
+
+::deep .talk-panel__left__body__messages__message__actions fluent-button svg {
+	fill:var(--neutral-base-color) !important;
+}
+
+::deep .talk-panel__left__body__messages__message__actions fluent-button:hover svg {
+	fill:white !important;
 }
 
 ::deep .talk-sender {

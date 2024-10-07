@@ -12,6 +12,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private bool _isLoading = false;
 	private TfEditor _mainEditor = null;
 	private TfEditor _subEditor = null;
+	private Guid? _activeThreadId = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -32,6 +33,9 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private async Task _sendMessage()
 	{
 		ToastService.ShowInfo("send");
+		_activeThreadId = _activeThreadId is null ? Guid.Empty : null;
+		
 	}
+
 
 }

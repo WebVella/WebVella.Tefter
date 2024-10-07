@@ -120,7 +120,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 			ShowDismiss = false,
 			PrimaryAction = null,
 			SecondaryAction = null,
-			Width = "75vw"
+			Width = "35vw"
 		});
 	}
 
