@@ -180,17 +180,17 @@ ORDER BY tt.created_on ASC";
 			var createdOnPar = TalkUtility.CreateParameter(
 				"@created_on",
 				DateTime.Now,
-				DbType.DateTime);
+				DbType.DateTime2);
 
 			var lastUpdatedOnPar = TalkUtility.CreateParameter(
 				"@last_updated_on",
 				null,
-				DbType.DateTime);
+				DbType.DateTime2);
 
 			var deletedOnPar = TalkUtility.CreateParameter(
 				"@deleted_on",
 				null,
-				DbType.DateTime);
+				DbType.DateTime2);
 
 			using (var scope = _dbService.CreateTransactionScope())
 			{
@@ -265,7 +265,7 @@ ORDER BY tt.created_on ASC";
 			var lastUpdatedPar = TalkUtility.CreateParameter(
 				"@last_updated_on",
 				DateTime.Now,
-				DbType.DateTime);
+				DbType.DateTime2);
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 				SQL,
@@ -311,7 +311,7 @@ ORDER BY tt.created_on ASC";
 			var deletedOnPar = TalkUtility.CreateParameter(
 				"@deleted_on",
 				DateTime.Now,
-				DbType.DateTime);
+				DbType.DateTime2);
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 				SQL,

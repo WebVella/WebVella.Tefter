@@ -19,7 +19,7 @@ public class TalkThread
 public class CreateTalkThread
 {
 	public Guid ChannelId { get; set; }
-	public Guid ThreadId { get; set; }
+	public Guid? ThreadId { get; set; }
 	public TalkThreadType Type { get; set; }
 	public string Content { get; set; }
 	public Guid UserId { get; set; }
