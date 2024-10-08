@@ -425,7 +425,8 @@ ORDER BY tt.created_on ASC";
 
 			if (string.IsNullOrWhiteSpace(thread.Content))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("content",
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateTalkThread.Content),
 					"The content is empty.") });
 			}
 
@@ -443,7 +444,8 @@ ORDER BY tt.created_on ASC";
 
 			if (string.IsNullOrWhiteSpace(content))
 			{
-				return new ValidationResult(new[] { new ValidationFailure("content",
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateTalkThread.Content),
 					"The content is empty.") });
 			}
 

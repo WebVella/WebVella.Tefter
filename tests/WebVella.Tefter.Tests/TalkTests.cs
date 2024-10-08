@@ -76,13 +76,13 @@ public partial class TalkTests : BaseTest
 				{
 					ChannelId = channel.Id,
 					ThreadId = id1,
-					Content = "sub thread content3",
+					Content = null,
 					Type = TalkThreadType.Comment,
 					UserId = user.Id,
 					VisibleInChannel = true
 				};
 
-				var (id4, threads4) = talkService.CreateThread(thread4).Value;
+				var result = talkService.CreateThread(thread4);
 			}
 
 
