@@ -71,6 +71,18 @@ public partial class TalkTests : BaseTest
 				var (id3, threads3) = talkService.CreateThread(thread3).Value;
 
 				var threadList = talkService.GetThreads(channel.Id, skId).Value;
+
+				CreateTalkThread thread4 = new CreateTalkThread
+				{
+					ChannelId = channel.Id,
+					ThreadId = id1,
+					Content = "sub thread content3",
+					Type = TalkThreadType.Comment,
+					UserId = user.Id,
+					VisibleInChannel = true
+				};
+
+				var (id4, threads4) = talkService.CreateThread(thread4).Value;
 			}
 
 

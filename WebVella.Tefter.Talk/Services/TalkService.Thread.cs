@@ -370,7 +370,9 @@ ORDER BY tt.created_on ASC";
 			};
 
 			var relatedSharedKeysJson = dr.Field<string>("related_shared_key_json");
-			if (!String.IsNullOrWhiteSpace(relatedSharedKeysJson) && relatedSharedKeysJson.StartsWith("["))
+			if (!String.IsNullOrWhiteSpace(relatedSharedKeysJson) &&
+				relatedSharedKeysJson.StartsWith("[") &&
+				relatedSharedKeysJson != "[null]" )
 			{
 				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedSharedKeysJson);
 				foreach (var item in items)
