@@ -49,11 +49,12 @@
 ::deep .ql-editor {
 	min-height: 60px;
 	border-radius: calc(var(--control-corner-radius)* 1px);
-	background: transparent;
+	background: var(--neutral-layer-2);
 	border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
 	outline: none;
 	padding: 5px 10px;
 	max-height:200px;
+	position:relative;
 }
 
 	::deep .ql-editor:active,
@@ -74,7 +75,6 @@
 
 			::deep .editor-area .ql-editor.ql-blank::before {
 				color: var(--neutral-stroke-rest);
-				padding-left:12px;
 			}
 
 

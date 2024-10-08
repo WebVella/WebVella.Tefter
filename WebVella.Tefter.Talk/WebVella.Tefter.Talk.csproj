@@ -14,4 +14,10 @@
     <Folder Include="UseCases\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Components\TalkThreadModal\TalkThreadModal.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

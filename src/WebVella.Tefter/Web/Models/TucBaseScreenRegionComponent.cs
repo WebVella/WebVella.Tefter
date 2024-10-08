@@ -1,7 +1,7 @@
 ﻿
 namespace WebVella.Tefter.Web.Models;
 
-public class TucBaseScreenRegionComponent : ComponentBase, IAsyncDisposable
+public class TucBaseScreenRegionComponent : FluxorComponent, IAsyncDisposable
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
@@ -21,10 +21,6 @@ public class TucBaseScreenRegionComponent : ComponentBase, IAsyncDisposable
 	/// If overrided do not forget to call it
 	/// </summary>
 	/// <returns></returns>
-	public virtual ValueTask DisposeAsync()
-	{
-		return ValueTask.CompletedTask;
-	}
 	protected override Task OnInitializedAsync()
 	{
 		var type = this.GetType();

@@ -220,21 +220,22 @@
 .tf-grid .tf-grid-tr .tf--sticky-last::after {
 	content: "";
 	display: block;
-	right: 0;
+	width:10px;
+	right: -10px;
 	top: 0;
 	bottom: 0;
-	left: 0;
-	box-shadow: 5px 0 5px rgba(0,0,0,0.15);
+	box-shadow: inset 5px 0 5px rgba(0,0,0,0.1);
 	position: absolute;
 }
 
 .tf-grid .tf-grid-tr .tf--sticky-first::after {
+	border-right: 1px solid var(--neutral-stroke-rest);
 	content: "";
 	display: block;
-	right: 0;
+	width: 10px;
 	top: 0;
 	bottom: 0;
-	left: 0;
-	box-shadow: -5px 0 5px rgba(0,0,0,0.15);
+	left: -11px;
+	box-shadow: inset -5px 0 5px var(--neutral-layer-2);
 	position: absolute;
 }

@@ -1,0 +1,34 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+@if (_activeThreadId is not null)
+{
+	<style>
+		::part(control) {
+			--dialog-width: 60vw;
+		}
+	</style>
+}
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<div class="talk-modal-footer">
+		<div class="talk-modal-footer__left">
+			<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
+		</div>
+		<div class="talk-modal-footer__right">
+			<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Send")"
+						  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Send")</FluentButton>
+			<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+		</div>
+	</div>
+</FluentDialogFooter>
+<FluentDialogBody>
+	<div>
+		<TfEditor @ref=_mainEditor Placeholder="Type a message in #general" OnEnter="_save" />
+	</div>
+</FluentDialogBody>
