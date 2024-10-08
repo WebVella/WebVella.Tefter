@@ -51,8 +51,8 @@ public partial class DataManagerTests : BaseTest
 				result = dataManager.SaveDataTable(newTable);
 				result.IsSuccess.Should().BeTrue();
 
-				Guid skIntValue = result.Value.Rows[0].GetSharedKeyValue("shared_key_int");
-				Guid skTextValue = result.Value.Rows[0].GetSharedKeyValue("shared_key_text");
+				Guid? skIntValue = result.Value.Rows[0].GetSharedKeyValue("test");
+				Guid? skTextValue = result.Value.Rows[0].GetSharedKeyValue("shared_key_text");
 
 				//result = dataManager.QuerySpaceData(spaceData.Id);
 				result = dataManager.QueryDataProvider(provider);
