@@ -117,10 +117,10 @@ public class TfDataRow : IEnumerable
 		return values;
 	}
 
-	public Guid GetSharedKeyValue(string sharedKeyName)
+	public Guid? GetSharedKeyValue(string sharedKeyName)
 	{
-		if(string.IsNullOrEmpty(sharedKeyName))
-			throw new ArgumentNullException(nameof(sharedKeyName));
+		if (string.IsNullOrEmpty(sharedKeyName))
+			return null;
 
 		try
 		{
@@ -128,7 +128,7 @@ public class TfDataRow : IEnumerable
 		}
 		catch
 		{
-			throw new Exception($"Shared key with name '{sharedKeyName}' not found.");
+			return null;
 		}
 	}
 
