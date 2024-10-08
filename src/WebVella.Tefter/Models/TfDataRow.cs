@@ -117,6 +117,21 @@ public class TfDataRow : IEnumerable
 		return values;
 	}
 
+	public Guid GetSharedKeyValue(string sharedKeyName)
+	{
+		if(string.IsNullOrEmpty(sharedKeyName))
+			throw new ArgumentNullException(nameof(sharedKeyName));
+
+		try
+		{
+			return (Guid)this[$"tf_sk_{sharedKeyName}_id"];
+		}
+		catch
+		{
+			throw new Exception($"Shared key with name '{sharedKeyName}' not found.");
+		}
+	}
+
 	private static class UnboxT<T>
 	{
 		internal static readonly Converter<object, T> Unbox = Create(typeof(T));
