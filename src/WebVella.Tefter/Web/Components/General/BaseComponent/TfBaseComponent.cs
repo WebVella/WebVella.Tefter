@@ -72,6 +72,7 @@ public class TfBaseComponent : FluxorComponent
 		ResultUtils.ProcessServiceResult(
 			result: response,
 			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
+			toastValidationMessage:"Invalid Data",
 			notificationErrorTitle: LOC("Unexpected Error!"),
 			toastService: ToastService,
 			messageService: MessageService

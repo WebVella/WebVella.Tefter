@@ -7,19 +7,23 @@ internal static class ResultUtils
 	internal static void ProcessServiceResult(
 		Result<object> result,
 		string toastErrorMessage,
+		string toastValidationMessage,
 		string notificationErrorTitle,
 		IToastService toastService,
 		IMessageService messageService)
 	{
 		if (result.IsSuccess) return;
 		var generalErrors = new List<string>();
+		var validationErrors = new List<string>();
 		foreach (IError iError in result.Errors)
 		{
 			if (iError is ValidationError)
 			{
 				var error = (ValidationError)iError;
 				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					generalErrors.Add(error.Reason);
+					validationErrors.Add(error.Reason);
+				else
+					validationErrors.Add($"{error.PropertyName}: {error.Reason}");
 			}
 			else
 			{
@@ -32,6 +36,18 @@ internal static class ResultUtils
 		{
 			toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
 			SendErrorsToNotifications(notificationErrorTitle, generalErrors, null, messageService);
+		}
+		else if (validationErrors.Count > 0)
+		{
+			toastService.ShowCommunicationToast(new ToastParameters<CommunicationToastContent>()
+			{
+				Intent = ToastIntent.Warning,
+				Title = toastValidationMessage,
+				Content = new CommunicationToastContent
+				{
+					Details = String.Join(Environment.NewLine,validationErrors)
+				}
+			});
 		}
 	}
 
@@ -168,17 +184,17 @@ internal static class ResultUtils
 			{
 				var errorObj = (ValidationError)error;
 				if (!String.IsNullOrWhiteSpace(errorObj.PropertyName))
-					ex.Data.Add(errorObj.PropertyName,errorObj.Reason);
+					ex.Data.Add(errorObj.PropertyName, errorObj.Reason);
 				else
 				{
-					ex.Data.Add("",errorObj.Reason);
+					ex.Data.Add("", errorObj.Reason);
 				}
 			}
 			else
 			{
-				ex.Data.Add("",error.Message);
+				ex.Data.Add("", error.Message);
 			}
-		
+
 		}
 
 		return ex;

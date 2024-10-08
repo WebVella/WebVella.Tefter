@@ -66,6 +66,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceData failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -85,6 +86,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceDataList failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -298,6 +300,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("spaceDataId not provided"),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -310,6 +313,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("Space Data is not found"),
 				toastErrorMessage: "Space Data is not found",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Space Data is not found",
 				toastService: _toastService,
 				messageService: _messageService
@@ -336,6 +340,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -360,6 +365,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("spaceDataId not provided"),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -372,6 +378,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("Space Data is not found"),
 				toastErrorMessage: "Space Data is not found",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Space Data is not found",
 				toastService: _toastService,
 				messageService: _messageService
@@ -384,6 +391,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProvider failed").CausedBy(dataProviderResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -408,6 +416,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProviders failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService

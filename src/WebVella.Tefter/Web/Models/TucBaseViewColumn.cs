@@ -55,7 +55,7 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		componentOptions = Activator.CreateInstance<TItem>();
+		componentOptions = GetOptions();
 		var type = this.GetType();
 		var (resourceBaseName, resourceLocation) = type.GetLocalizationResourceInfo();
 		if (!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation))
@@ -342,7 +342,11 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 
 		PropertyInfo propertyInfo = typeof(TItem).GetProperty(propName);
 		if (propertyInfo is null) return;
-		propertyInfo.SetValue(componentOptions, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+		if (value is IConvertible)
+			propertyInfo.SetValue(componentOptions, Convert.ChangeType(value, propertyInfo.PropertyType), null);
+		else if (value is Guid)
+			propertyInfo.SetValue(componentOptions, (Guid?)value, null);
+		else throw new Exception("Not supported object value type");
 		if (!OptionsChanged.HasDelegate) return;
 		await OptionsChanged.InvokeAsync(JsonSerializer.Serialize(componentOptions));
 	}

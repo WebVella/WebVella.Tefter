@@ -14,16 +14,13 @@ else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentCombobox TOption="TucSelectOption"
-							Autocomplete="ComboboxAutocomplete.Both"
-							Items="_sharedKeyOptions"
-							OptionText="@((x)=> x.Label)"
-							OptionValue="@((x)=> x.Value.ToString())"
-							Height="@TfConstants.ComboPanelHeight"
-							Value=@componentOptions.SharedKeyName
-							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.SharedKeyName),x))
-							Label="@LOC("Shared key name")" Style="width:100%" />
+			<FluentSelect TOption="TalkChannel"
+						  Items="_channels"
+						  OptionText="(x=> x.Name)"
+						  SelectedOption="_selectedChannel"
+						  SelectedOptionChanged="_channelSelectHandler" />
 		</FluentGridItem>
+
 	</FluentGrid>
 }
 else

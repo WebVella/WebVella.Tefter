@@ -48,6 +48,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSharedColumns failed").CausedBy(tfResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -94,6 +95,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetDatabaseColumnTypeInfos failed").CausedBy(result.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -113,6 +115,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetDatabaseColumnTypeInfos failed").CausedBy(resultColumnType.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService

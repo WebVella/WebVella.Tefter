@@ -9,6 +9,7 @@
 public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommentsCountComponentOptions>, ITucAuxDataUseComponent
 {
 	#region << Injects >>
+	[Inject] protected ITalkService TalkService { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
 	#endregion
 
@@ -40,6 +41,8 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	private Guid? _renderedHash = null;
 	private string _storageKey = "";
 	private IDialogReference? _dialog;
+	private List<TalkChannel> _channels = new();
+	private TalkChannel _selectedChannel = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -47,6 +50,39 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	{
 		await base.OnInitializedAsync();
 		_initStorageKeys();
+		if (Context.Mode == TucComponentMode.Options)
+		{
+			var resultSM = TalkService.GetChannels();
+			if (resultSM.IsSuccess && resultSM.Value is not null)
+				_channels = resultSM.Value;
+
+
+			if (componentOptions.ChannelId is not null)
+			{
+				if (_channels.Count > 0)
+				{
+					var selectedIndex = _channels.FindIndex(x => x.Id == componentOptions.ChannelId);
+					if (selectedIndex == -1)
+					{
+						//This channel was probably deleted
+						componentOptions.ChannelId = null;
+						await OnOptionsChanged(nameof(TfTalkCommentsCountComponentOptions.ChannelId), (Guid?)null);
+					}
+					else
+					{
+						_selectedChannel = _channels[selectedIndex];
+					}
+				}
+			}
+			else
+			{
+				if (_channels.Count > 0)
+				{
+					await OnOptionsChanged(nameof(TfTalkCommentsCountComponentOptions.ChannelId), _channels[0].Id);
+					_selectedChannel = _channels[0];
+				}
+			}
+		}
 	}
 
 	/// <summary>
@@ -110,8 +146,15 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	#region << Private logic >>
 	private async Task _onClick()
 	{
+		var panelContext = new TalkThreadPanelContext
+		{
+			ChannelId = componentOptions.ChannelId,
+			DataTable = Context.DataTable,
+			RowIndex = Context.RowIndex
+		};
+
 		_dialog = await DialogService.ShowPanelAsync<TalkThreadPanel>(
-		null,
+		panelContext,
 		new DialogParameters()
 		{
 			DialogType = DialogType.Panel,
@@ -134,11 +177,17 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	{
 		_storageKey = this.GetType().Name + "_" + Context.SpaceViewColumnId;
 	}
+
+	private async Task _channelSelectHandler(TalkChannel channel)
+	{
+		_selectedChannel = channel;
+		await OnOptionsChanged(nameof(TfTalkCommentsCountComponentOptions.ChannelId), channel?.Id);
+	}
 	#endregion
 
 }
 
 public class TfTalkCommentsCountComponentOptions
 {
-	public string SharedKeyName { get; set; }
+	public Guid? ChannelId { get; set; } = null;
 }

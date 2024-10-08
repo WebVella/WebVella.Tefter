@@ -142,7 +142,10 @@
 	},
 	setQuillHtml: function (editorId, html) {
 		if (Tefter.HtmlEditors[editorId]) {
-			Tefter.HtmlEditors[editorId].clipboard.dangerouslyPasteHTML(html, 'silent');
+			Tefter.HtmlEditors[editorId].setContents(null, 'silent');
+			if (html && html !== '') {
+				Tefter.HtmlEditors[editorId].clipboard.dangerouslyPasteHTML(html, 'silent');
+			}
 		}
 		return true;
 	}

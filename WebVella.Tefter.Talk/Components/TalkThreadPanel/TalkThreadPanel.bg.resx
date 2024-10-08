@@ -117,34 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Accessibility" xml:space="preserve">
-    <value>Достъп</value>
+  <data name="Message is sent" xml:space="preserve">
+    <value>Съобщението е изпратено</value>
   </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Откажи</value>
+  <data name="No messages in this thread yet" xml:space="preserve">
+    <value>Все още няма съобщения за тази дискусия</value>
   </data>
-  <data name="Color" xml:space="preserve">
-    <value>Цвят</value>
+  <data name="No talk channel is selected for this view column!" xml:space="preserve">
+    <value>Не е избран дискусионен канал за тази колона!</value>
   </data>
-  <data name="Create" xml:space="preserve">
-    <value>Създай</value>
+  <data name="The selected dataset does not support the shared key '{0}' of channel '{1}'!" xml:space="preserve">
+    <value>Избраните изходни данни не поддържат споделения ключ '{0}' на канала '{1}'!</value>
   </data>
-  <data name="Create space" xml:space="preserve">
-    <value>Създай зона</value>
+  <data name="The selected shared key '{0}' value is not yet generated for this row of the dataset!" xml:space="preserve">
+    <value>Стойността на споделения ключ '{0}' все още не е генерирана за този ред на изходните данни!</value>
   </data>
-  <data name="Icon" xml:space="preserve">
-    <value>Икона</value>
-  </data>
-  <data name="limited access" xml:space="preserve">
-    <value>ограничен достъп</value>
-  </data>
-  <data name="Manage space" xml:space="preserve">
-    <value>Редактирай зона</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Име</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Запомни</value>
+  <data name="The talk channel has no shared key set!" xml:space="preserve">
+    <value>Дискусионният канал няма зададен споделен ключ!</value>
   </data>
 </root>

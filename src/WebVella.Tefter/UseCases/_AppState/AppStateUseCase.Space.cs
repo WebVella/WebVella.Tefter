@@ -40,6 +40,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -60,6 +61,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -75,6 +77,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -113,6 +116,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -128,6 +132,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
