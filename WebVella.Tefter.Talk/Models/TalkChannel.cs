@@ -8,8 +8,8 @@ public record TalkChannel
 	public Guid Id { get; set; }
 	[Required]
 	public string Name { get; set; }
-	public string? SharedKey { get; set; } = null;
-	public string? CountSharedColumnName { get; set; } = null;
+	public string SharedKey { get; set; } = null;
+	public string CountSharedColumnName { get; set; } = null;
 
 	public TalkChannel() :
 		this(Guid.Empty, string.Empty)
@@ -19,8 +19,8 @@ public record TalkChannel
 	public TalkChannel(
 		Guid id,
 		string name,
-		string? sharedKey = null,
-		string? countSharedColumnName = null)
+		string sharedKey = null,
+		string countSharedColumnName = null)
 	{
 		Id = id;
 		Name = name;

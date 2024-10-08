@@ -2,7 +2,7 @@
 
 public partial interface ITalkService
 {
-	Result<TalkChannel?> GetChannel(
+	Result<TalkChannel> GetChannel(
 		Guid channelId);
 
 	Result<List<TalkChannel>> GetChannels();
@@ -36,7 +36,7 @@ internal partial class TalkService : ITalkService
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to create new channel.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to get channel.").CausedBy(ex));
 		}
 	}
 
@@ -57,7 +57,7 @@ internal partial class TalkService : ITalkService
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to create new channel.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to get channels.").CausedBy(ex));
 		}
 	}
 

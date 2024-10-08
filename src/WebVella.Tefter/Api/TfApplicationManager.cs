@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using System.Diagnostics;
+
+namespace WebVella.Tefter;
 
 public interface ITfApplicationManager
 {
@@ -8,9 +10,9 @@ public interface ITfApplicationManager
 
 public class TfApplicationManager : ITfApplicationManager
 {
-	private static readonly List<TfApplicationBase> _applications;
+	private static List<TfApplicationBase> _applications;
 
-	static TfApplicationManager()
+	internal static void Init()
 	{
 		_applications = new List<TfApplicationBase>();
 
@@ -30,6 +32,9 @@ public class TfApplicationManager : ITfApplicationManager
 	{
 		if (!type.IsClass || type.GetTypeInfo().IsAbstract)
 			return;
+
+		if(type.FullName.StartsWith("WebVella.Tefter.Talk"))
+			Debug.WriteLine(type.FullName);
 
 		if (type.IsAssignableTo(typeof(TfApplicationBase)))
 		{

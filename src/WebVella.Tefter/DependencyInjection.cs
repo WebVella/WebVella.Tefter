@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using WebVella.Tefter.Api;
+﻿using WebVella.Tefter.Api;
 
 namespace WebVella.Tefter;
 
@@ -7,6 +6,8 @@ public static class DependencyInjection
 {
 	public static IServiceCollection AddTefter(this IServiceCollection services, bool unitTestModeOn = false)
 	{
+		LoadAllAssemblies();
+
 		//because server render components are not disposed for about 10 min after page is left by browser
 		//maybe 5 seconds is too low ???
 		//https://stackoverflow.com/questions/78451698/dispose-is-never-called-for-any-server-side-blazor-components
@@ -61,14 +62,14 @@ public static class DependencyInjection
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
 		services.AddSingleton<ITfApplicationManager, TfApplicationManager>();
 		services.AddSingleton<ITfScreenRegionComponentManager, TfScreenRegionComponentManager>();
-		
+
 
 		//lazy services
-		services.AddSingleton<Lazy<IDatabaseService>>(provider => 
+		services.AddSingleton<Lazy<IDatabaseService>>(provider =>
 				new Lazy<IDatabaseService>(() => provider.GetRequiredService<IDatabaseService>()));
-		services.AddSingleton<Lazy<ITfSpaceManager>>(provider => 
+		services.AddSingleton<Lazy<ITfSpaceManager>>(provider =>
 				new Lazy<ITfSpaceManager>(() => provider.GetRequiredService<ITfSpaceManager>()));
-		services.AddSingleton<Lazy<ITfDataProviderManager>>(provider => 
+		services.AddSingleton<Lazy<ITfDataProviderManager>>(provider =>
 				new Lazy<ITfDataProviderManager>(() => provider.GetRequiredService<ITfDataProviderManager>()));
 
 		//use cases
@@ -80,16 +81,32 @@ public static class DependencyInjection
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
 
+		//we don't use static constructor here, 
+		//because no control on assemblies order loading
+		TfApplicationManager.Init();
+
 		//inject classes from applications
 		var applications = TfApplicationManager.GetApplicationsInternal();
-		foreach(var app in applications)
+		foreach (var app in applications)
 			app.OnRegisterDependencyInjections(services);
-
 
 		return services;
 	}
 
 	public static IServiceProvider UseTefter(this IServiceProvider serviceProvider)
+	{
+		var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
+		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
+
+		//execute application on start methods
+		var applications = TfApplicationManager.GetApplicationsInternal();
+		foreach (var app in applications)
+			app.OnStart();
+
+		return serviceProvider;
+	}
+
+	private static void LoadAllAssemblies()
 	{
 		//because application domain does not get assemblies with no instances yet
 		//we for load of all assemblies (its workaround)
@@ -100,15 +117,5 @@ public static class DependencyInjection
 			var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
 			toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
 		}
-
-		var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
-		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
-
-		//execute application on start methods
-		var applications = TfApplicationManager.GetApplicationsInternal();
-		foreach (var app in applications)
-			app.OnStart();
-
-		return serviceProvider;
 	}
 }

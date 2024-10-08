@@ -5,6 +5,8 @@ global using Microsoft.Extensions.Hosting;
 global using Microsoft.Extensions.Logging;
 global using Fluxor;
 global using Microsoft.AspNetCore.Components;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
 
 global using WebVella.Tefter.Api;
 global using WebVella.Tefter.Identity;
