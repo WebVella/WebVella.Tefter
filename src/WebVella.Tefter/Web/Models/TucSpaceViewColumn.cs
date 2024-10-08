@@ -50,7 +50,7 @@ public record TucSpaceViewColumn
 					sb.Append($"color:{Settings.Color.ToAttributeValue()};");
 				}
 				if(Settings.BackgroundColor != OfficeColor.Default){ 
-					sb.Append($"background: {Settings.BackgroundColor.ToAttributeValue()}15");
+					sb.Append($"background: {Settings.BackgroundColor.ToAttributeValue()}25");
 					//sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}50, {Settings.BackgroundColor.ToAttributeValue()}50)," +
 					//$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
 				}

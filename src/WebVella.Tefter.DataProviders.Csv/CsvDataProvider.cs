@@ -115,10 +115,11 @@ public class CsvDataProvider : ITfDataProviderType
 					config.Delimiter = "\t";
 					break;
 				default:
+					config.Delimiter = ",";
 					break;
 			}
 
-			using( var stream = new FileStream(settings.Filepath, FileMode.Open,FileAccess.Read, FileShare.ReadWrite))
+			using (var stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 			using (var reader = new StreamReader(stream))
 			using (var csvReader = new CsvReader(reader, config))
 			{
@@ -139,21 +140,23 @@ public class CsvDataProvider : ITfDataProviderType
 					TfDataProviderDataRow row = new TfDataProviderDataRow();
 					foreach (var providerColumnWithSource in sourceColumns)
 					{
+						var sourceName = providerColumnWithSource.SourceName.Trim();
 						try
 						{
-							if (!sourceRow.ContainsKey(providerColumnWithSource.SourceName))
+							if (!sourceRow.ContainsKey(sourceName))
 							{
-								row.AddError($"Source column '{providerColumnWithSource.SourceName}' is not found in csv.");
+								row.AddError($"Source column '{sourceName}' is not found in csv.");
 								continue;
 							}
 
 							row[providerColumnWithSource.DbName] = ConvertValue(
 								providerColumnWithSource,
-								sourceRow[providerColumnWithSource.SourceName]);
+								sourceRow[sourceName]);
 
 						}
 						catch (Exception ex)
 						{
+							var value = sourceRow[sourceName];
 							row.AddError($"Exception while processing source row: {ex.Message}");
 						}
 					}

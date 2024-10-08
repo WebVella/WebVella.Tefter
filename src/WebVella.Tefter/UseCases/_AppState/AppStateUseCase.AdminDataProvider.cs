@@ -346,7 +346,7 @@ internal partial class AppStateUseCase
 	{
 		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
 		if (srvProviderResult.IsFailed)
-			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(srvProviderResult.Errors));
+			return Result.Fail(new Error("GetProvider failed").CausedBy(srvProviderResult.Errors));
 
 		if (srvProviderResult.Value is null) return Result.Fail("Provider not found");
 
@@ -357,7 +357,7 @@ internal partial class AppStateUseCase
 			pageSize: pageSize);
 
 		if (dtResult.IsFailed)
-			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(dtResult.Errors));
+			return Result.Fail(new Error("QueryDataProvider failed").CausedBy(dtResult.Errors));
 
 		return Result.Ok(dtResult.Value);
 	}
