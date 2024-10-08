@@ -173,4 +173,14 @@ internal static partial class TfConverters
 			return false;
 		}
 	}
+
+	internal static string GenerateDbNameFromText(string text){ 
+		if(String.IsNullOrEmpty(text)) return text;
+		text = text.Trim().ToLowerInvariant();
+		text = text.Replace("№","no");
+		Regex rgx = new Regex("[^a-zA-Z0-9]");
+		text = rgx.Replace(text, "_");
+		text = Regex.Replace(text, @"_+", "_");
+		return text;
+	}
 }

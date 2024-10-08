@@ -33,7 +33,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		{
 			_isCreate = true;
 		}
-		_title = _isCreate ? LOC("Create column 1") : LOC("Manage column 1");
+		_title = _isCreate ? LOC("Create column") : LOC("Manage column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		foreach (TfDataProviderColumnSearchType item in Enum.GetValues<TfDataProviderColumnSearchType>())
@@ -167,6 +167,12 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		if (_selectedProviderType.SupportedDatabaseColumnTypes.Any())
 			_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[0];
 		StateHasChanged();
+	}
+
+	private void _sourceColumnNameChanged(string text){ 
+		_form.SourceName = text;
+		if(String.IsNullOrWhiteSpace(_form.DbName))
+			_form.DbName = TfConverters.GenerateDbNameFromText(text);
 	}
 
 }
