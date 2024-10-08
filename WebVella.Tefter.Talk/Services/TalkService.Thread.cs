@@ -1,11 +1,10 @@
-﻿
-
-using System.Threading;
-
-namespace WebVella.Tefter.Talk.Services;
+﻿namespace WebVella.Tefter.Talk.Services;
 
 public partial interface ITalkService
 {
+	Result<TalkThread> GetThread(
+		Guid id);
+
 	Result<List<TalkThread>> GetThreads(
 		Guid channelId,
 		Guid? skId);
@@ -23,6 +22,56 @@ public partial interface ITalkService
 
 internal partial class TalkService : ITalkService
 {
+	public Result<TalkThread> GetThread(
+		Guid id)
+	{
+		try
+		{
+			var SQL = @"SELECT 
+	tt.id,
+	tt.channel_id,
+	tt.thread_id,
+	tt.type,
+	tt.content,
+	tt.user_id,
+	tt.created_on,
+	tt.last_updated_on,
+	tt.deleted_on,
+	JSON_AGG(idd.*) AS related_shared_key_json
+FROM talk_thread tt
+	LEFT OUTER JOIN talk_related_sk trs ON tt.id = trs.thread_id
+	LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+WHERE tt.id = @id 
+GROUP BY tt.id,
+	tt.channel_id,
+	tt.thread_id,
+	tt.type,
+	tt.content,
+	tt.user_id,
+	tt.created_on,
+	tt.last_updated_on,
+	tt.deleted_on
+ORDER BY tt.created_on ASC";
+
+			var threadIdPar = TalkUtility.CreateParameter(
+				"id",
+				id,
+				DbType.Guid);
+
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, threadIdPar);
+			var threads = ToThreadList(dt);
+
+			if (threads.Count == 0)
+				return Result.Ok((TalkThread)null);
+
+			return Result.Ok(threads[0]);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get threads.").CausedBy(ex));
+		}
+	}
+
 	public Result<List<TalkThread>> GetThreads(
 		Guid channelId,
 		Guid? skId)
@@ -85,12 +134,12 @@ ORDER BY tt.created_on ASC";
 
 			Guid id = Guid.NewGuid();
 
-			TalkChannelValidator validator = new TalkChannelValidator(this);
+			TalkThreadValidator validator = new TalkThreadValidator(this);
 
-			//var validationResult = validator.ValidateCreate(channel);
+			var validationResult = validator.ValidateCreate(thread, id);
 
-			//if (!validationResult.IsValid)
-			//	return validationResult.ToResult();
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
 
 			var SQL = @"INSERT INTO talk_thread
 						(id, channel_id, thread_id, type, content, user_id,
@@ -161,7 +210,7 @@ ORDER BY tt.created_on ASC";
 					{
 						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
 							"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
-								new NpgsqlParameter("@id", skId ),
+								new NpgsqlParameter("@id", skId),
 								new NpgsqlParameter("@thread_id", id));
 
 						if (skDbResult != 1)
@@ -188,12 +237,15 @@ ORDER BY tt.created_on ASC";
 	{
 		try
 		{
-			//TalkChannelValidator validator = new TalkChannelValidator(this);
 
-			//var validationResult = validator.ValidateUpdate(channel);
+			var existingThread = GetThread(threadId).Value;
 
-			//if (!validationResult.IsValid)
-			//	return validationResult.ToResult();
+			TalkThreadValidator validator = new TalkThreadValidator(this);
+
+			var validationResult = validator.ValidateUpdate(existingThread, content);
+
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
 
 			var SQL = "UPDATE talk_thread SET " +
 				"content=@content, " +
@@ -238,14 +290,14 @@ ORDER BY tt.created_on ASC";
 	{
 		try
 		{
-			//var existingChannel = GetChannel(channelId).Value;
+			var existingThread = GetThread(threadId).Value;
 
-			//TalkChannelValidator validator = new TalkChannelValidator(this);
+			TalkThreadValidator validator = new TalkThreadValidator(this);
 
-			//var validationResult = validator.ValidateDelete(existingChannel);
+			var validationResult = validator.ValidateDelete(existingThread);
 
-			//if (!validationResult.IsValid)
-			//	return validationResult.ToResult();
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
 
 			var SQL = "UPDATE talk_thread SET " +
 				"deleted_on = @deleted_on " +
@@ -345,112 +397,73 @@ ORDER BY tt.created_on ASC";
 	{
 		public TalkThreadValidator(ITalkService service)
 		{
+		}
 
-			//RuleSet("general", () =>
-			//{
-			//	RuleFor(channel => channel.Id)
-			//		.NotEmpty()
-			//		.WithMessage("The channel id is required.");
+		public ValidationResult ValidateCreate(
+			CreateTalkThread thread, Guid id)
+		{
+			if (thread == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The channel object is null.") });
+			}
 
-			//	RuleFor(channel => channel.Name)
-			//		.NotEmpty()
-			//		.WithMessage("The channel name is required.");
+			if (string.IsNullOrWhiteSpace(thread.Content))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("content",
+					"The content is empty.") });
+			}
 
-			//});
+			return new ValidationResult();
+		}
 
-			//RuleSet("create", () =>
-			//{
-			//	RuleFor(channel => channel.Id)
-			//			.Must((channel, id) => { return service.GetChannel(id).Value == null; })
-			//			.WithMessage("There is already existing channel with specified identifier.");
+		public ValidationResult ValidateUpdate(
+			TalkThread thread, string content)
+		{
+			if (thread == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The thread object is null.") });
+			}
 
-			//	RuleFor(channel => channel.Name)
-			//			.Must((channel, name) =>
-			//			{
-			//				if (string.IsNullOrEmpty(name))
-			//					return true;
+			if (string.IsNullOrWhiteSpace(content))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("content",
+					"The content is empty.") });
+			}
 
-			//				var channels = service.GetChannels().Value;
-			//				return !channels.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
-			//			})
-			//			.WithMessage("There is already existing channel with same name.");
-			//});
+			if (thread.DeletedOn.HasValue)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The thread is already deleted") });
+			}
 
-			//RuleSet("update", () =>
-			//{
-			//	RuleFor(channnel => channnel.Id)
-			//			.Must((channel, id) =>
-			//			{
-			//				return service.GetChannel(id).Value != null;
-			//			})
-			//			.WithMessage("There is not existing channel with specified identifier.");
 
-			//	RuleFor(channel => channel.Name)
-			//			.Must((channel, name) =>
-			//			{
-			//				if (string.IsNullOrEmpty(name))
-			//					return true;
-
-			//				var channels = service.GetChannels().Value;
-			//				return !channels.Any(x =>
-			//					x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim() &&
-			//					x.Id != channel.Id
-			//				);
-			//			})
-			//			.WithMessage("There is already existing another channel with same name.");
-
-			//});
-
-			//RuleSet("delete", () =>
-			//{
-			//	RuleFor(channnel => channnel.Id)
-			//		.Must((channel, id) =>
-			//		{
-			//			return service.GetChannel(id).Value != null;
-			//		})
-			//		.WithMessage("There is not existing channel with specified identifier.");
-			//});
+			return new ValidationResult();
 
 		}
 
-		//public ValidationResult ValidateCreate(
-		//	TalkChannel? channel)
-		//{
-		//	if (channel == null)
-		//		return new ValidationResult(new[] { new ValidationFailure("",
-		//			"The channel object is null.") });
+		public ValidationResult ValidateDelete(
+			TalkThread thread)
+		{
+			if (thread == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The thread object is null.") });
+			}
 
-		//	return this.Validate(channel, options =>
-		//	{
-		//		options.IncludeRuleSets("general", "create");
-		//	});
-		//}
+			if (thread.DeletedOn.HasValue)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The thread is already deleted") });
+			}
 
-		//public ValidationResult ValidateUpdate(
-		//	TalkChannel? channel)
-		//{
-		//	if (channel == null)
-		//		return new ValidationResult(new[] { new ValidationFailure("",
-		//			"The channel object is null.") });
 
-		//	return this.Validate(channel, options =>
-		//	{
-		//		options.IncludeRuleSets("general", "update");
-		//	});
-		//}
-
-		//public ValidationResult ValidateDelete(
-		//	TalkChannel? channel)
-		//{
-		//	if (channel == null)
-		//		return new ValidationResult(new[] { new ValidationFailure("",
-		//			"A channel with specified identifier is not found.") });
-
-		//	return this.Validate(channel, options =>
-		//	{
-		//		options.IncludeRuleSets("delete");
-		//	});
-		//}
+			return this.Validate(thread, options =>
+			{
+				options.IncludeRuleSets("delete");
+			});
+		}
 	}
 
 	#endregion
