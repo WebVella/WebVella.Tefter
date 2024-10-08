@@ -52,7 +52,7 @@ GROUP BY tt.id,
 	tt.created_on,
 	tt.last_updated_on,
 	tt.deleted_on
-ORDER BY tt.created_on ASC";
+ORDER BY tt.created_on DESC";
 
 			var threadIdPar = TalkUtility.CreateParameter(
 				"id",
@@ -104,7 +104,7 @@ GROUP BY tt.id,
 	tt.created_on,
 	tt.last_updated_on,
 	tt.deleted_on
-ORDER BY tt.created_on ASC";
+ORDER BY tt.created_on DESC";
 
 			var channelIdPar = TalkUtility.CreateParameter(
 				"channel_id",
@@ -384,7 +384,7 @@ ORDER BY tt.created_on ASC";
 		}
 
 		//fill sub thread
-		foreach (var thread in threadList)
+		foreach (var thread in threadList.OrderBy(x=>x.CreatedOn))
 		{
 			if (thread.ThreadId is not null)
 			{
