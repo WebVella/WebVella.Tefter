@@ -7,6 +7,7 @@ public class TalkThread
 	public Guid? ThreadId { get; set; }
 	public TalkThreadType Type { get; set; }
 	public string Content { get; set; }
+	public bool VisibleInChannel { get; set; }	
 	public  User User { get; set; }
 	public DateTime CreatedOn { get; set; }
 	public DateTime? LastUpdatedOn { get; set; } = null;
@@ -21,6 +22,7 @@ public class CreateTalkThread
 	public Guid ChannelId { get; set; }
 	public Guid? ThreadId { get; set; }
 	public TalkThreadType Type { get; set; }
+	public bool VisibleInChannel { get; set; }
 	public string Content { get; set; }
 	public Guid UserId { get; set; }
 	public List<Guid> RelatedSK { get; set; }

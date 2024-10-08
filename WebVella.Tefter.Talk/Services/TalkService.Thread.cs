@@ -36,6 +36,7 @@ internal partial class TalkService : ITalkService
 	tt.user_id,
 	tt.created_on,
 	tt.last_updated_on,
+	tt.visible_in_channel,
 	tt.deleted_on,
 	JSON_AGG(idd.*) AS related_shared_key_json
 FROM talk_thread tt
@@ -87,6 +88,7 @@ ORDER BY tt.created_on ASC";
 	tt.user_id,
 	tt.created_on,
 	tt.last_updated_on,
+	tt.visible_in_channel,
 	tt.deleted_on,
 	JSON_AGG(idd.*) AS related_shared_key_json
 FROM talk_thread tt
@@ -141,11 +143,15 @@ ORDER BY tt.created_on ASC";
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
+			//threads which are not sub threads are always visible in channel
+			if(thread.ThreadId is null)
+				thread.VisibleInChannel = true;
+
 			var SQL = @"INSERT INTO talk_thread
 						(id, channel_id, thread_id, type, content, user_id,
-						created_on, last_updated_on, deleted_on)
+						created_on, last_updated_on, deleted_on, visible_in_channel)
 					VALUES(@id, @channel_id, @thread_id, @type, @content, @user_id,
-						@created_on, @last_updated_on, @deleted_on); ";
+						@created_on, @last_updated_on, @deleted_on,@visible_in_channel); ";
 
 			var idPar = TalkUtility.CreateParameter(
 				"@id",
@@ -171,6 +177,11 @@ ORDER BY tt.created_on ASC";
 				"@content",
 				thread.Content,
 				DbType.String);
+
+			var visibleInChannelPar = TalkUtility.CreateParameter(
+				"@visible_in_channel",
+				thread.VisibleInChannel,
+				DbType.Boolean);
 
 			var userIdPar = TalkUtility.CreateParameter(
 				"@user_id",
@@ -198,7 +209,8 @@ ORDER BY tt.created_on ASC";
 					SQL,
 					idPar, channelIdPar, threadIdPar,
 					typePar, contentPar, userIdPar,
-					createdOnPar, lastUpdatedOnPar, deletedOnPar);
+					createdOnPar, lastUpdatedOnPar,
+					deletedOnPar, visibleInChannelPar);
 
 				if (dbResult != 1)
 					throw new Exception("Failed to insert new row in database for thread object");
@@ -348,6 +360,7 @@ ORDER BY tt.created_on ASC";
 				ThreadId = dr.Field<Guid?>("thread_id"),
 				Content = dr.Field<string>("content"),
 				Type = (TalkThreadType)dr.Field<short>("type"),
+				VisibleInChannel = dr.Field<bool>("visible_in_channel"),
 				User = user,
 				CreatedOn = dr.Field<DateTime>("created_on"),
 				LastUpdatedOn = dr.Field<DateTime?>("last_updated_on"),
@@ -378,7 +391,7 @@ ORDER BY tt.created_on ASC";
 			}
 		}
 
-		return threadList;
+		return threadList.Where(x=>x.VisibleInChannel).ToList();
 	}
 
 	private class IdDictModel

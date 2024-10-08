@@ -43,9 +43,34 @@ public partial class TalkTests : BaseTest
 					RelatedSK = new List<Guid> { skId }
 				};
 
-				var (id,threads) = talkService.CreateThread(thread);
+				var (id1,threads) = talkService.CreateThread(thread).Value;
 
+				CreateTalkThread thread2 = new CreateTalkThread
+				{
+					ChannelId = channel.Id,
+					ThreadId = id1,
+					Content = "sub thread content2",
+					Type = TalkThreadType.Comment,
+					UserId = user.Id,
+					RelatedSK = new List<Guid> { skId }
+				};
 
+				var (id2, threads2) = talkService.CreateThread(thread2).Value;
+
+				CreateTalkThread thread3 = new CreateTalkThread
+				{
+					ChannelId = channel.Id,
+					ThreadId = id1,
+					Content = "sub thread content3",
+					Type = TalkThreadType.Comment,
+					UserId = user.Id,
+					RelatedSK = new List<Guid> { skId },
+					VisibleInChannel = true
+				};
+
+				var (id3, threads3) = talkService.CreateThread(thread3).Value;
+
+				var threadList = talkService.GetThreads(channel.Id, skId).Value;
 			}
 
 
