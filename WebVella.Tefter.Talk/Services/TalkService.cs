@@ -7,11 +7,11 @@ public partial interface ITalkService
 internal partial class TalkService : ITalkService
 {
 	public readonly IDatabaseService _dbService;
-	public readonly IdentityManager _identityManager;
+	public readonly IIdentityManager _identityManager;
 
 	public TalkService(
 		IDatabaseService dbService,
-		IdentityManager identityManager)
+		IIdentityManager identityManager)
 	{
 		_dbService = dbService;
 		_identityManager = identityManager;
