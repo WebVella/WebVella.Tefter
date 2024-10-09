@@ -19,7 +19,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private TfEditor _mainEditor = null;
 	private TfEditor _mainEditEditor = null;
 	private TfEditor _subEditor = null;
-	private Guid? _activeThreadId = null;
+	private TalkThread _activeThread = null;
 	private TalkChannel _channel = null;
 	private Guid? _skValue = null;
 	private Guid _rowId = Guid.Empty;
@@ -55,6 +55,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				await Task.Delay(100);
 				await _mainEditor.Focus();
 			}
+			else{ 
+				_isLoading = false;
+				await InvokeAsync(StateHasChanged);			
+			}
 
 		}
 
@@ -80,6 +84,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				ThreadId = null,
 				Type = TalkThreadType.Comment,
 				UserId = TfUserState.Value.CurrentUser.Id,
+				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
 				RowIds = new List<Guid> { _rowId }
 			};
 			var result = TalkService.CreateThread(submit);
@@ -117,18 +122,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			var prevMain = isFirst ? null : threadsReversed[mainIndex - 1];
 			var nextMain = isLast ? null : threadsReversed[mainIndex + 1];
 			var cssList = new List<string>();
-			if (message.Content == "<p>saSas</p>")
-			{
-				var boz = 0;
-				var boz2 = (message.CreatedOn - prevMain.CreatedOn).TotalMinutes;
-			}
-			if (message.Content == "<p>dedweddeded</p>")
-			{
-				var boz = 0;
-				var boz2 = (message.CreatedOn - prevMain.CreatedOn).TotalMinutes;
-			}
-			if (prevMain is not null
+			if (
+				prevMain is not null && !prevMain.DeletedOn.HasValue
 				&& prevMain.User.Id == message.User.Id
+				&& !message.DeletedOn.HasValue
 				&& (message.CreatedOn - prevMain.CreatedOn).TotalMinutes <= 5)
 			{
 				cssList.Add("talk-followup");
@@ -156,7 +153,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	private async Task _replyToThread(TalkThread thread)
 	{
-		_activeThreadId = _activeThreadId != thread.Id ? thread.Id : null;
+		_activeThread = _activeThread?.Id != thread.Id ? thread : null;
 	}
 
 	private async Task _editThread(TalkThread thread)
@@ -184,6 +181,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Message deleted"));
+				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
+				if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
+				else throw new Exception("GetThreads failed");
+				_generateThreadClassDict();
 			}
 		}
 		catch (Exception ex)
@@ -197,14 +198,14 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	}
 
-	private async Task _saveMessage(TalkThread thread)
+	private async Task _saveMessage(TalkThread thread, string content)
 	{
 		if (_threadIdUpdateSaving is not null) return;
 		_threadIdUpdateSaving = thread.Id;
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			var result = TalkService.UpdateThread(thread.Id, thread.Content);
+			var result = TalkService.UpdateThread(thread.Id, content);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
@@ -219,6 +220,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		{
 			_threadIdUpdateSaving = null;
 			_threadEditedId = null;
+			thread.Content = content;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
