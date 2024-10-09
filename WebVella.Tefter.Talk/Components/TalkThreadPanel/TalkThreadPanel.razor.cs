@@ -17,13 +17,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private Guid? _activeThreadId = null;
 	private TalkChannel _channel = null;
 	private Guid? _skValue = null;
+	private Guid _rowId = Guid.Empty;
 	private List<TalkThread> _threads = new();
 	private string _primaryContent = null;
 	private Dictionary<Guid, string> _threadClassDict = new();
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -37,6 +34,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				else throw new Exception("GetChannel failed");
 				if (_channel is not null && !String.IsNullOrWhiteSpace(_channel.SharedKey) && Content.RowIndex > -1)
 				{
+					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 					_skValue = Content.DataTable.Rows[Content.RowIndex].GetSharedKeyValue(_channel.SharedKey);
 					if (_skValue is not null)
 					{
@@ -76,7 +74,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				ThreadId = null,
 				Type = TalkThreadType.Comment,
 				UserId = TfUserState.Value.CurrentUser.Id,
-				RelatedSK = new List<Guid> { _skValue.Value }
+				RowIds = new List<Guid> { _rowId }
 			};
 			var result = TalkService.CreateThread(submit);
 			ProcessServiceResponse(result);

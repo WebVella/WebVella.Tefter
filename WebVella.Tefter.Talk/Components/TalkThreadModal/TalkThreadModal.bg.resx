@@ -117,34 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Accessibility" xml:space="preserve">
-    <value>Достъп</value>
-  </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Откажи</value>
+    <value>Отказ</value>
   </data>
-  <data name="Color" xml:space="preserve">
-    <value>Цвят</value>
+  <data name="No compatible talk channels found for this dataset" xml:space="preserve">
+    <value>Не са намерени съвместими дискусионни канали за тези данни</value>
   </data>
-  <data name="Create" xml:space="preserve">
-    <value>Създай</value>
+  <data name="No data provided" xml:space="preserve">
+    <value>Няма предоставени данни</value>
   </data>
-  <data name="Create space" xml:space="preserve">
-    <value>Създай зона</value>
+  <data name="select" xml:space="preserve">
+    <value>избери</value>
   </data>
-  <data name="Icon" xml:space="preserve">
-    <value>Икона</value>
+  <data name="Select a channel" xml:space="preserve">
+    <value>Избери канал</value>
   </data>
-  <data name="limited access" xml:space="preserve">
-    <value>ограничен достъп</value>
-  </data>
-  <data name="Manage space" xml:space="preserve">
-    <value>Редактирай зона</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Име</value>
-  </data>
-  <data name="Save" xml:space="preserve">
-    <value>Запомни</value>
+  <data name="Send" xml:space="preserve">
+    <value>Изпрати</value>
   </data>
 </root>

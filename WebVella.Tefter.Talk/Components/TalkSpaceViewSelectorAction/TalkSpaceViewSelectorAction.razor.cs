@@ -7,8 +7,13 @@ public partial class TalkSpaceViewSelectorAction : TucBaseScreenRegionComponent
 	private IDialogReference? _dialog;
 	private async Task _onClick()
 	{
+		var context = new TalkThreadModalContext
+		{
+			DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
+			SelectedRowIds = TfAppState.Value.SelectedDataRows,
+		};
 		_dialog = await DialogService.ShowDialogAsync<TalkThreadModal>(
-				null,
+				context,
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,

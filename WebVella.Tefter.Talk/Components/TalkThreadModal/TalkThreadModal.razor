@@ -1,14 +1,6 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @namespace WebVella.Tefter.Web.Components
 @inherits TfFormBaseComponent
-@if (_activeThreadId is not null)
-{
-	<style>
-		::part(control) {
-			--dialog-width: 60vw;
-		}
-	</style>
-}
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
 	<FluentLabel Typo="Typography.PaneHeader">@_title</FluentLabel>
@@ -16,19 +8,66 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	<div class="talk-modal-footer">
-		<div class="talk-modal-footer__left">
-			<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
+	@if (_selectedChannel is not null)
+	{
+		<div class="talk-modal-footer">
+			<div class="talk-modal-footer__left">
+				<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
+			</div>
+			<div class="talk-modal-footer__right">
+				<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Send")"
+							  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Send")</FluentButton>
+				<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+			</div>
 		</div>
-		<div class="talk-modal-footer__right">
-			<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Send")"
-						  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Send")</FluentButton>
-			<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
-		</div>
-	</div>
+	}
+	else
+	{
+		<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+	}
 </FluentDialogFooter>
 <FluentDialogBody>
-	<div>
-		<TfEditor @ref=_mainEditor Placeholder="Type a message in #general" OnEnter="_save" />
-	</div>
+	@if (_isLoading)
+	{
+		<TfLoadingPane />
+	}
+@* 	else if (Content.DataTable is null || Content.DataTable.Rows.Count == 0)
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No data provided")</FluentMessageBar>
+	} *@
+	else if (_channels.Count == 0)
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No compatible talk channels found for this dataset")</FluentMessageBar>
+	}
+	else if (_selectedChannel is null)
+	{
+		<table class="tf-grid">
+			<colgroup>
+				<col style="width:60px;"/>
+				<col/>
+			</colgroup>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in _channels)
+				{
+					<tr @key=@context.Id class="tf-grid-tr">
+						<td class="tf-grid-td">
+							<div>
+								<FluentButton Title="@LOC("select")" OnClick="@(_=> _selectChannelHandler(context))"
+											  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Pin")">@LOC("select")</FluentButton>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.Name</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+	else
+	{
+		<div>
+			<TfEditor @ref=_editor Placeholder="Type a message in #general" OnEnter="_save" @bind-Value="_content" />
+		</div>
+	}
 </FluentDialogBody>
