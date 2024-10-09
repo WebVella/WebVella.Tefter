@@ -1,91 +1,137 @@
-﻿//namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests;
 
-//using System.Drawing;
-//using WebVella.Tefter.Talk.Models;
-//using WebVella.Tefter.Talk.Services;
-
-
-//public partial class TalkTests : BaseTest
-//{
-//	[Fact]
-//	public async Task Talk_Channel()
-//	{
-//		using (await locker.LockAsync())
-//		{
-//			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-//			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
-//			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-//			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+using WebVella.Tefter.Talk.Models;
+using WebVella.Tefter.Talk.Services;
 
 
-//			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-//			{
-//				var user = identityManager.GetUser("rumen@webvella.com").Value;
-
-//				TalkChannel channel = new TalkChannel
-//				{
-//					Id = Guid.NewGuid(),
-//					Name = "Test Channel",
-//					SharedKey = "talk_shared_key",
-//					CountSharedColumnName = ""
-//				};
-//				var channelCreated =  talkService.CreateChannel(channel);
-
-//				Guid skId = dataManager.GetId("shared_key_value", "1").Value;
-
-//				CreateTalkThread thread = new CreateTalkThread
-//				{
-//					ChannelId = channel.Id,
-//					ThreadId = null,
-//					Content = "content",
-//					Type = TalkThreadType.Comment,
-//					UserId = user.Id,
-//					RelatedSK = new List<Guid> { skId }
-//				};
-
-//				var (id1,threads) = talkService.CreateThread(thread).Value;
-
-//				CreateTalkThread thread2 = new CreateTalkThread
-//				{
-//					ChannelId = channel.Id,
-//					ThreadId = id1,
-//					Content = "sub thread content2",
-//					Type = TalkThreadType.Comment,
-//					UserId = user.Id,
-//					RelatedSK = new List<Guid> { skId }
-//				};
-
-//				var (id2, threads2) = talkService.CreateThread(thread2).Value;
-
-//				CreateTalkThread thread3 = new CreateTalkThread
-//				{
-//					ChannelId = channel.Id,
-//					ThreadId = id1,
-//					Content = "sub thread content3",
-//					Type = TalkThreadType.Comment,
-//					UserId = user.Id,
-//					RelatedSK = new List<Guid> { skId },
-//					VisibleInChannel = true
-//				};
-
-//				var (id3, threads3) = talkService.CreateThread(thread3).Value;
-
-//				var threadList = talkService.GetThreads(channel.Id, skId).Value;
-
-//				CreateTalkThread thread4 = new CreateTalkThread
-//				{
-//					ChannelId = channel.Id,
-//					ThreadId = id1,
-//					Content = null,
-//					Type = TalkThreadType.Comment,
-//					UserId = user.Id,
-//					VisibleInChannel = true
-//				};
-
-//				var result = talkService.CreateThread(thread4);
-//			}
+public partial class TalkTests : BaseTest
+{
+	[Fact]
+	public async Task Talk_Channel_CRUD()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
+			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
 
 
-//		}
-//	}
-//}
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var user = identityManager.GetUser("rumen@webvella.com").Value;
+
+				TalkChannel channel = new TalkChannel
+				{
+					Id = Guid.NewGuid(),
+					Name = "Test Channel",
+					SharedKey = "talk_shared_key",
+					CountSharedColumnName = ""
+				};
+
+				var channelResult = talkService.CreateChannel(channel);
+				channelResult.IsSuccess.Should().BeTrue();
+
+				channel = channelResult.Value;
+				channel.Should().NotBeNull();
+
+				channel.Name = "Test channel 1";
+				channelResult = talkService.UpdateChannel(channel);
+				channelResult.IsSuccess.Should().BeTrue();
+
+				channel.Name.Should().Be("Test channel 1");
+
+				channelResult = talkService.DeleteChannel(channel.Id);
+				channelResult.IsSuccess.Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Talk_Thread_CRUD()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
+			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var (provider, spaceData) = SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
+				var dataTable = dataManager.QueryDataProvider(provider).Value;
+
+				List<Guid> rowIds = new List<Guid>();
+				for(int i = 0; i < 5 ; i++)
+					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
+
+				var user = identityManager.GetUser("rumen@webvella.com").Value;
+
+				TalkChannel channel = new TalkChannel
+				{
+					Id = Guid.NewGuid(),
+					Name = "Test Channel",
+					SharedKey = "shared_key_text",
+					CountSharedColumnName = ""
+				};
+				var channelCreated = talkService.CreateChannel(channel);
+
+				Guid skId = dataManager.GetId("shared_key_value", "1").Value;
+
+				CreateTalkThread thread = new CreateTalkThread
+				{
+					ChannelId = channel.Id,
+					ThreadId = null,
+					Content = "content",
+					Type = TalkThreadType.Comment,
+					UserId = user.Id,
+					RowIds = rowIds.ToList(),
+					DataProviderId = provider.Id,
+				};
+
+				var id1 = talkService.CreateThread(thread).Value;
+				var threads = talkService.GetThreads(channel.Id, null).Value;
+				threads.Count.Should().Be(1);
+
+				var relSKId = threads[0].RelatedSK.Keys.First();
+
+				threads = talkService.GetThreads(channel.Id, relSKId).Value;
+				threads.Count.Should().Be(1);
+
+				CreateTalkThread thread2 = new CreateTalkThread
+				{
+					ChannelId = channel.Id,
+					ThreadId = id1,
+					Content = "sub thread content2",
+					Type = TalkThreadType.Comment,
+					UserId = user.Id,
+					RowIds = rowIds.ToList(),
+					DataProviderId = provider.Id,
+				};
+
+				var id2 = talkService.CreateThread(thread2).Value;
+				threads = talkService.GetThreads(channel.Id, relSKId).Value;
+				threads.Count.Should().Be(1);
+				threads[0].SubThread.Count.Should().Be(2);
+
+				CreateTalkThread thread3 = new CreateTalkThread
+				{
+					ChannelId = channel.Id,
+					ThreadId = id1,
+					Content = "sub thread content3",
+					Type = TalkThreadType.Comment,
+					UserId = user.Id,
+					RowIds = rowIds.ToList(),
+					DataProviderId = provider.Id,
+					VisibleInChannel = true
+				};
+
+				var id3 = talkService.CreateThread(thread3).Value;
+				threads = talkService.GetThreads(channel.Id, relSKId).Value;
+				threads.Count.Should().Be(2);
+			}
+		}
+	}
+}

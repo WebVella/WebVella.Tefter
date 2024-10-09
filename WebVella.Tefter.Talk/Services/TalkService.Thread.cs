@@ -2,21 +2,21 @@
 
 public partial interface ITalkService
 {
-	Result<TalkThread> GetThread(
+	internal Result<TalkThread> GetThread(
 		Guid id);
 
-	Result<List<TalkThread>> GetThreads(
+	public Result<List<TalkThread>> GetThreads(
 		Guid channelId,
 		Guid? skId);
 
-	Result<(Guid, List<TalkThread>)> CreateThread(
+	public Result<Guid> CreateThread(
 		CreateTalkThread thread);
 
-	Result UpdateThread(
+	public Result UpdateThread(
 		Guid threadid,
 		string content);
 
-	Result DeleteThread(
+	public Result DeleteThread(
 		Guid threadId);
 }
 
@@ -27,7 +27,14 @@ internal partial class TalkService : ITalkService
 	{
 		try
 		{
-			var SQL = @"SELECT 
+			const string SQL = @"
+WITH sk_info AS (
+	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
+	FROM talk_related_sk trs
+		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+	GROUP BY trs.thread_id
+)
+SELECT 
 	tt.id,
 	tt.channel_id,
 	tt.thread_id,
@@ -38,21 +45,10 @@ internal partial class TalkService : ITalkService
 	tt.last_updated_on,
 	tt.visible_in_channel,
 	tt.deleted_on,
-	JSON_AGG(idd.*) AS related_shared_key_json
+	sk_info.json_result AS related_shared_key_json
 FROM talk_thread tt
-	LEFT OUTER JOIN talk_related_sk trs ON tt.id = trs.thread_id
-	LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
-WHERE tt.id = @id 
-GROUP BY tt.id,
-	tt.channel_id,
-	tt.thread_id,
-	tt.type,
-	tt.content,
-	tt.user_id,
-	tt.created_on,
-	tt.last_updated_on,
-	tt.deleted_on
-ORDER BY tt.created_on DESC";
+	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
+WHERE tt.id = @id";
 
 			var threadIdPar = TalkUtility.CreateParameter(
 				"id",
@@ -69,7 +65,7 @@ ORDER BY tt.created_on DESC";
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to get threads.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to get thread.").CausedBy(ex));
 		}
 	}
 
@@ -79,7 +75,14 @@ ORDER BY tt.created_on DESC";
 	{
 		try
 		{
-			var SQL = @"SELECT 
+			const string SQL_NO_SK = 
+@"WITH sk_info AS (
+	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
+	FROM talk_related_sk trs
+		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+	GROUP BY trs.thread_id
+)
+SELECT 
 	tt.id,
 	tt.channel_id,
 	tt.thread_id,
@@ -90,12 +93,19 @@ ORDER BY tt.created_on DESC";
 	tt.last_updated_on,
 	tt.visible_in_channel,
 	tt.deleted_on,
-	JSON_AGG(idd.*) AS related_shared_key_json
+	sk_info.json_result AS related_shared_key_json
 FROM talk_thread tt
-	LEFT OUTER JOIN talk_related_sk trs ON tt.id = trs.thread_id
-	LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
-WHERE tt.channel_id = @channel_id AND ( idd.id = @sk_id OR @sk_id IS NULL )
-GROUP BY tt.id,
+	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
+ORDER BY tt.created_on DESC";
+
+const string SQL_WITH_SK = @"WITH sk_info AS (
+	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
+	FROM talk_related_sk trs
+		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+	GROUP BY trs.thread_id
+)
+SELECT 
+	tt.id,
 	tt.channel_id,
 	tt.thread_id,
 	tt.type,
@@ -103,20 +113,50 @@ GROUP BY tt.id,
 	tt.user_id,
 	tt.created_on,
 	tt.last_updated_on,
-	tt.deleted_on
+	tt.visible_in_channel,
+	tt.deleted_on,
+	sk_info.json_result AS related_shared_key_json
+FROM talk_thread tt
+	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
+	LEFT OUTER JOIN talk_related_sk sk ON sk.thread_id = tt.id AND sk.id = @sk_id
+WHERE sk.id is not null
 ORDER BY tt.created_on DESC";
 
-			var channelIdPar = TalkUtility.CreateParameter(
-				"channel_id",
-				channelId,
-				DbType.Guid);
+			string sql = string.Empty;
 
-			var skIdPar = TalkUtility.CreateParameter(
-				"sk_id",
-				skId,
-				DbType.Guid);
+			List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, channelIdPar, skIdPar);
+			if (skId is not null)
+			{
+				sql = SQL_WITH_SK;
+
+				var channelIdPar = TalkUtility.CreateParameter(
+					"channel_id",
+					channelId,
+					DbType.Guid);
+				
+				parameters.Add(channelIdPar);
+				
+				var skIdPar = TalkUtility.CreateParameter(
+					"sk_id",
+					skId,
+					DbType.Guid);
+
+				parameters.Add(skIdPar);
+			}
+			else
+			{
+				sql = SQL_NO_SK;
+
+				var channelIdPar = TalkUtility.CreateParameter(
+					"channel_id",
+					channelId,
+					DbType.Guid);
+
+				parameters.Add(channelIdPar);
+			}
+
+			var dt = _dbService.ExecuteSqlQueryCommand(sql, parameters);
 
 			return Result.Ok(ToThreadList(dt));
 		}
@@ -126,7 +166,7 @@ ORDER BY tt.created_on DESC";
 		}
 	}
 
-	public Result<(Guid, List<TalkThread>)> CreateThread(
+	public Result<Guid> CreateThread(
 		CreateTalkThread thread)
 	{
 		try
@@ -248,11 +288,11 @@ ORDER BY tt.created_on DESC";
 					}
 				}
 
-				scope.Complete();
+				scope.Complete(); 
 
 				var threads = GetThreads(thread.ChannelId, null);
 
-				return Result.Ok((id, threads.Value));
+				return Result.Ok(id);
 			}
 		}
 		catch (Exception ex)
