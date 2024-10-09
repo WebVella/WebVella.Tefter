@@ -1,8 +1,11 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿
+
+namespace WebVella.Tefter.Web.Components;
 
 [LocalizationResource("WebVella.Tefter.Talk.Components.TalkThreadPanel.TalkThreadPanel", "WebVella.Tefter.Talk")]
 public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentComponent<TalkThreadPanelContext>
 {
+	[Inject] public IState<TfAppState> TfAppState { get; set; }
 	[Inject] public IState<TfUserState> TfUserState { get; set; }
 	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }
 	[Inject] public ITalkService TalkService { get; set; }
@@ -12,7 +15,9 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private string _error = string.Empty;
 	private bool _isLoading = true;
 	private bool _primarySending = false;
+
 	private TfEditor _mainEditor = null;
+	private TfEditor _mainEditEditor = null;
 	private TfEditor _subEditor = null;
 	private Guid? _activeThreadId = null;
 	private TalkChannel _channel = null;
@@ -21,7 +26,8 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private List<TalkThread> _threads = new();
 	private string _primaryContent = null;
 	private Dictionary<Guid, string> _threadClassDict = new();
-
+	private Guid? _threadEditedId = null;
+	private Guid? _threadIdUpdateSaving = null;
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
@@ -39,7 +45,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 					if (_skValue is not null)
 					{
 						var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
-						if (getChannelResult.IsSuccess) _threads = getThreadsResult.Value;
+						if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
 						else throw new Exception("GetThreads failed");
 						_generateThreadClassDict();
 					}
@@ -82,7 +88,9 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			{
 				ToastService.ShowSuccess(LOC("Message is sent"));
 				_primaryContent = null;
-				_threads = result.Value.Item2;
+				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
+				if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
+				else throw new Exception("GetThreads failed");
 				_generateThreadClassDict();
 			}
 		}
@@ -109,11 +117,13 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			var prevMain = isFirst ? null : threadsReversed[mainIndex - 1];
 			var nextMain = isLast ? null : threadsReversed[mainIndex + 1];
 			var cssList = new List<string>();
-			if(message.Content == "<p>saSas</p>"){ 
+			if (message.Content == "<p>saSas</p>")
+			{
 				var boz = 0;
 				var boz2 = (message.CreatedOn - prevMain.CreatedOn).TotalMinutes;
 			}
-			if(message.Content == "<p>dedweddeded</p>"){ 
+			if (message.Content == "<p>dedweddeded</p>")
+			{
 				var boz = 0;
 				var boz2 = (message.CreatedOn - prevMain.CreatedOn).TotalMinutes;
 			}
@@ -142,6 +152,82 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 			mainIndex++;
 		}
+	}
+
+	private async Task _replyToThread(TalkThread thread)
+	{
+		_activeThreadId = _activeThreadId != thread.Id ? thread.Id : null;
+	}
+
+	private async Task _editThread(TalkThread thread)
+	{
+		if (_threadEditedId is not null)
+		{
+			if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("You will loose any unsaved changes on your previous edit. Do you want to continue?")))
+				return;
+		}
+
+		if (_threadEditedId == thread.Id) _threadEditedId = null;
+		else _threadEditedId = thread.Id;
+	}
+
+	private async Task _deleteThread(TalkThread thread)
+	{
+
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this thread deleted?")))
+			return;
+
+		try
+		{
+			var result = TalkService.DeleteThread(thread.Id);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Message deleted"));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
+
+	private async Task _saveMessage(TalkThread thread)
+	{
+		if (_threadIdUpdateSaving is not null) return;
+		_threadIdUpdateSaving = thread.Id;
+		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var result = TalkService.UpdateThread(thread.Id, thread.Content);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Message saved"));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_threadIdUpdateSaving = null;
+			_threadEditedId = null;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private Task _cancelSaveMessage()
+	{
+
+		_threadEditedId = null;
+		return Task.CompletedTask;
 	}
 }
 

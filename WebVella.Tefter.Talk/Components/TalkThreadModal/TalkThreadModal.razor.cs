@@ -17,6 +17,7 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 	private TalkChannel _selectedChannel = null;
 	private string _content = null;
 	private List<Guid> _sharedKeyValueIds = new();
+	private TfDataProvider _dataProvider = null;
 
 
 
@@ -25,39 +26,38 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			if (Content is null) return;
-			//if (Content.DataTable.Rows.Count > 0)
-			//{
-			//	foreach (var tfId in Content.SelectedRowIds)
-			//	{
-					
-			//	}
+			if (Content is null
+			|| Content.DataProviderId == Guid.Empty
+			|| Content.SelectedRowIds is null || Content.SelectedRowIds.Count == 0) return;
+
+			var getDataProviderResult = DataProviderManager.GetProvider(Content.DataProviderId);
+			if (getDataProviderResult.IsSuccess) _dataProvider = getDataProviderResult.Value;
+			else throw new Exception("GetProvider failed");
 
 
-			//	var allChannels = new List<TalkChannel>();
-			//	var getChannelsResult = TalkService.GetChannels();
-			//	if (getChannelsResult.IsSuccess) allChannels = getChannelsResult.Value;
-			//	else throw new Exception("GetChannels failed");
+			var allChannels = new List<TalkChannel>();
+			var getChannelsResult = TalkService.GetChannels();
+			if (getChannelsResult.IsSuccess) allChannels = getChannelsResult.Value;
+			else throw new Exception("GetChannels failed");
 
-			//	//Select only channels that are compatible with this DataProvider
-			//	foreach (var channel in allChannels)
-			//	{
-			//		if (String.IsNullOrWhiteSpace(channel.SharedKey)) continue;
-			//		var keyValue = Content.DataTable.Rows[0].GetSharedKeyValue(channel.SharedKey);
-			//		if (keyValue is null) continue;
-			//		_channels.Add(channel);
-			//	}
+			//Select only channels that are compatible with this DataProvider
+			foreach (var channel in allChannels)
+			{
+				if (String.IsNullOrWhiteSpace(channel.SharedKey)) continue;
+				if (!_dataProvider.SharedKeys.Any(x => x.DbName == channel.SharedKey)) continue;
+				_channels.Add(channel);
+			}
 
-			//	if (_channels.Count == 1)
-			//	{
-			//		await _selectChannelHandler(_channels[0]);
-			//	}
-			//	else if (_channels.Count > 1)
-			//	{
-			//		_title = LOC("Select a channel");
-			//	}
+			if (_channels.Count == 1)
+			{
+				await _selectChannelHandler(_channels[0]);
+			}
+			else if (_channels.Count > 1)
+			{
+				_title = LOC("Select a channel");
+			}
 
-			//}
+
 			_isLoading = false;
 			await InvokeAsync(StateHasChanged);
 		}

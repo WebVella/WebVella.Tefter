@@ -135,38 +135,38 @@
 	display: none;
 	flex-wrap: nowrap;
 	position: absolute;
-	top: -15px;
-	right: 5px;
+	top: -3px;
+	right: 0;
 	height: auto;
 	width: auto;
 	padding: 5px;
-	background: var(--neutral-fill-input-active);
 	background: var(--neutral-layer-2);
-/*	border: 1px solid var(--neutral-stroke-rest);*/
+	/*	border: 1px solid var(--neutral-stroke-rest);*/
 	border-radius: calc(var(--control-corner-radius) * 1px);
 }
 
-::deep .talk-panel__left__body__messages__message:hover
-.talk-panel__left__body__messages__message__actions {
+	::deep .talk-panel__left__body__messages__message__actions fluent-menu {
+		background: var(--neutral-layer-2);
+	}
+
+::deep .talk-panel__left__body__messages__message:hover .talk-panel__left__body__messages__message__actions {
 	display: flex;
 }
+
 ::deep .talk-panel__left__body__messages__message__actions fluent-button {
-	height:24px;
-	min-width:28px;
-}
-::deep .talk-panel__left__body__messages__message__actions fluent-button::part(control) {
-	background: transparent;
-	
+	height: 24px;
+	min-width: 28px;
 }
 
-::deep .talk-panel__left__body__messages__message__actions fluent-button svg {
-	fill: var(--neutral-base-color) !important;
-	width: 1rem !important;
-}
+	::deep .talk-panel__left__body__messages__message__actions fluent-button:not(:hover)::part(control) {
+		background: transparent;
+	}
 
-::deep .talk-panel__left__body__messages__message__actions fluent-button:hover svg {
-	fill: white !important;
-}
+	::deep .talk-panel__left__body__messages__message__actions fluent-button svg {
+		width: 1rem !important;
+	}
+
+
 
 ::deep .talk-sender {
 	font-weight: bold;
@@ -180,4 +180,37 @@
 	font-weight: bold;
 	font-size: 1.15rem;
 	color: var(--neutral-base-color);
+}
+
+::deep .talk-panel__left__body__messages__message.editor-active {
+	background: var(--message-editor-background);
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+::deep .tf_message_editor_actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top:10px;
+}
+
+::deep .tf_message_editor_actions_left {
+	flex: 0 0 auto;
+}
+
+::deep .tf_message_editor_actions_right {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+}
+
+	::deep .tf_message_editor_actions_right fluent-button + fluent-button {
+		margin-left:10px;
+	}
+
+
+::deep .tf_message_editor_actions  fluent-button {
+	height: 24px;
+	min-width: 28px;
 }

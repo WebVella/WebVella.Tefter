@@ -135,4 +135,10 @@
   <data name="The talk channel has no shared key set!" xml:space="preserve">
     <value>Дискусионният канал няма зададен споделен ключ!</value>
   </data>
+  <data name="updated" xml:space="preserve">
+    <value>обновено</value>
+  </data>
+  <data name="You will loose any unsaved changes on your previous edit. Do you want to continue?" xml:space="preserve">
+    <value>Ще загубиш всички незапомнени промени в предишната редакция. Сигурен ли си, че искаш да продължиш?</value>
+  </data>
 </root>

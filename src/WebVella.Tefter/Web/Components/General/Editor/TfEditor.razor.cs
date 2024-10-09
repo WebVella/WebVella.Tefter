@@ -20,8 +20,13 @@ public partial class TfEditor : TfBaseComponent
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
-		await JSRuntime.InvokeAsync<object>(
-			"Tefter.removeQuill", _componentId.ToString());
+		try
+		{
+			await JSRuntime.InvokeAsync<object>("Tefter.removeQuill", _componentId.ToString());
+		}
+		catch{ 
+			//In rare ocasions the item is disposed after the JSRuntime is no longer avaible
+		}
 		_objectRef?.Dispose();
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -30,6 +35,7 @@ public partial class TfEditor : TfBaseComponent
 	{
 		await base.OnInitializedAsync();
 		_objectRef = DotNetObjectReference.Create(this);
+		_value = Value;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)

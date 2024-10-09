@@ -31,10 +31,14 @@
 	{
 		<TfLoadingPane />
 	}
-@* 	else if (Content.DataTable is null || Content.DataTable.Rows.Count == 0)
+	else if (Content.DataProviderId == Guid.Empty)
 	{
-		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No data provided")</FluentMessageBar>
-	} *@
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No data provider is selected")</FluentMessageBar>
+	}
+	else if (Content.SelectedRowIds is null || Content.SelectedRowIds.Count == 0)
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No rows are selected")</FluentMessageBar>
+	}
 	else if (_channels.Count == 0)
 	{
 		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No compatible talk channels found for this dataset")</FluentMessageBar>
@@ -43,8 +47,8 @@
 	{
 		<table class="tf-grid">
 			<colgroup>
-				<col style="width:60px;"/>
-				<col/>
+				<col style="width:60px;" />
+				<col />
 			</colgroup>
 			<tbody class="tf-grid-tbody">
 				@foreach (var context in _channels)

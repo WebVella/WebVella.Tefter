@@ -123,8 +123,11 @@
   <data name="No compatible talk channels found for this dataset" xml:space="preserve">
     <value>Не са намерени съвместими дискусионни канали за тези данни</value>
   </data>
-  <data name="No data provided" xml:space="preserve">
-    <value>Няма предоставени данни</value>
+  <data name="No data provider is selected" xml:space="preserve">
+    <value>Няма избран източник на данни</value>
+  </data>
+  <data name="No rows are selected" xml:space="preserve">
+    <value>Няма избрани редове</value>
   </data>
   <data name="select" xml:space="preserve">
     <value>избери</value>
