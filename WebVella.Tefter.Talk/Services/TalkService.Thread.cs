@@ -216,18 +216,18 @@ ORDER BY tt.created_on DESC";
 					throw new Exception("Failed to insert new row in database for thread object");
 
 
-				if (thread.RelatedSK != null && thread.RelatedSK.Count > 0)
+				if (thread.RowIds != null && thread.RowIds.Count > 0)
 				{
-					foreach (var skId in thread.RelatedSK)
-					{
-						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-							"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
-								new NpgsqlParameter("@id", skId),
-								new NpgsqlParameter("@thread_id", id));
+					//foreach (var skId in thread.RelatedSK)
+					//{
+					//	var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+					//		"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
+					//			new NpgsqlParameter("@id", skId),
+					//			new NpgsqlParameter("@thread_id", id));
 
-						if (skDbResult != 1)
-							throw new Exception("Failed to insert new row in database for related shared key object");
-					}
+					//	if (skDbResult != 1)
+					//		throw new Exception("Failed to insert new row in database for related shared key object");
+					//}
 				}
 
 				scope.Complete();

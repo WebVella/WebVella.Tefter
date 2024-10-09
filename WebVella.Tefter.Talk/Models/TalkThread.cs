@@ -25,5 +25,5 @@ public class CreateTalkThread
 	public bool VisibleInChannel { get; set; }
 	public string Content { get; set; }
 	public Guid UserId { get; set; }
-	public List<Guid> RelatedSK { get; set; }
+	public List<Guid> RowIds { get; set; }
 }
