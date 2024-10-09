@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using Microsoft.FluentUI.AspNetCore.Components;
+
+namespace WebVella.Tefter;
 
 public class TfDataRow : IEnumerable
 {
@@ -48,7 +50,7 @@ public class TfDataRow : IEnumerable
 			switch (column.DbType)
 			{
 				case DatabaseColumnType.Guid:
-					if(value is not Guid)
+					if (value is not Guid)
 						throw new Exception($"Trying to set non Guid value as value to Guid column.");
 					break;
 				case DatabaseColumnType.Boolean:
@@ -122,14 +124,13 @@ public class TfDataRow : IEnumerable
 		if (string.IsNullOrEmpty(sharedKeyName))
 			return null;
 
-		try
-		{
-			return (Guid)this[$"tf_sk_{sharedKeyName}_id"];
-		}
-		catch
-		{
+		string skColumnName = $"tf_sk_{sharedKeyName}_id";
+
+		int index = DataTable.Columns.IndexOf(x => x.Name == skColumnName);
+		if (index == -1)
 			return null;
-		}
+
+		return (Guid)this[skColumnName];
 	}
 
 	private static class UnboxT<T>
