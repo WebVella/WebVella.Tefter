@@ -1,6 +1,4 @@
-﻿using Org.BouncyCastle.Crypto.Modes.Gcm;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public sealed class TfDataTable
 {
@@ -190,7 +188,7 @@ public sealed class TfDataTable
 	public TfDataTable Clone()
 	{
 		int[] indexes = new int[this.Rows.Count];
-		
+
 		for (int i = 0; i < this.Rows.Count; i++)
 			indexes[i] = i;
 
@@ -200,7 +198,7 @@ public sealed class TfDataTable
 	public TfDataRow NewRow()
 	{
 		object[] values = new object[this.Columns.Count];
-		return new TfDataRow(this,values);
+		return new TfDataRow(this, values);
 	}
 
 	public override string ToString()

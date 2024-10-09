@@ -63,6 +63,19 @@
 	font-size: 0.85em;
 }
 
+::deep .talk-panel__left__body__info {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden scroll;
+	display: flex;
+	flex-flow: column-reverse;
+	justify-content: end;
+	padding: 10px;
+	padding-bottom: 15px;
+}
 
 ::deep .talk-panel__left__body__messages {
 	position: absolute;
@@ -78,23 +91,39 @@
 
 ::deep .talk-panel__left__body__messages__message {
 	flex: 0 0 auto;
-	width:100%;
+	width: 100%;
 	display: flex;
-	padding: 10px;
-	position:relative;
+	padding: 5px 10px 2px 10px;
+	position: relative;
 }
+
 	::deep .talk-panel__left__body__messages__message:hover {
-		background:rgba(180, 180, 180, 0.05);
+		background: rgba(180, 180, 180, 0.05);
 	}
 
 
-::deep .talk-panel__left__body__messages__message--last {
-	margin-bottom: 1rem;
+
+::deep .talk-panel__left__body__messages__message__right__bottom > p {
+	margin-bottom: 0;
+}
+
+
+
+::deep .talk-panel__left__body__messages__message.talk-followup .talk-avatar,
+::deep .talk-panel__left__body__messages__message.talk-followup .talk-panel__left__body__messages__message__right__top {
+	display: none;
+}
+
+::deep .talk-panel__left__body__messages__message__left .talk-timestamp {
+	display: none;
+}
+
+::deep .talk-panel__left__body__messages__message.talk-followup:hover .talk-panel__left__body__messages__message__left .talk-timestamp {
+	display:block;
 }
 
 ::deep .talk-panel__left__body__messages__message__left {
 	flex: 0 0 40px;
-	padding-top: 4px;
 }
 
 ::deep .talk-panel__left__body__messages__message__right {
@@ -102,34 +131,34 @@
 }
 
 ::deep .talk-panel__left__body__messages__message__actions {
-	display:none;
-	flex-wrap:nowrap;
-	position:absolute;
-	top:-15px;
-	right:0px;
-	height:42px;
-	width:auto;
-	padding:5px;
-	background:var(--neutral-fill-input-active);
-	border:1px solid var(--neutral-stroke-rest);
-	border-radius:calc(var(--control-corner-radius) * 1px);
+	display: none;
+	flex-wrap: nowrap;
+	position: absolute;
+	top: -15px;
+	right: 0px;
+	height: 42px;
+	width: auto;
+	padding: 5px;
+	background: var(--neutral-fill-input-active);
+	border: 1px solid var(--neutral-stroke-rest);
+	border-radius: calc(var(--control-corner-radius) * 1px);
 }
 
 ::deep .talk-panel__left__body__messages__message:hover
 .talk-panel__left__body__messages__message__actions {
-	display:flex;
+	display: flex;
 }
 
 ::deep .talk-panel__left__body__messages__message__actions fluent-button::part(control) {
-	background:transparent;
+	background: transparent;
 }
 
 ::deep .talk-panel__left__body__messages__message__actions fluent-button svg {
-	fill:var(--neutral-base-color) !important;
+	fill: var(--neutral-base-color) !important;
 }
 
 ::deep .talk-panel__left__body__messages__message__actions fluent-button:hover svg {
-	fill:white !important;
+	fill: white !important;
 }
 
 ::deep .talk-sender {

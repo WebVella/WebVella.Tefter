@@ -3,8 +3,8 @@
 public partial class TfEditor : TfBaseComponent
 {
 	[Parameter] public string Value { get; set; }
-	[Parameter] public string Placeholder { get; set; } = String.Empty;
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public string Placeholder { get; set; } = String.Empty;
 	[Parameter] public EventCallback OnEnter { get; set; }
 
 	private CancellationTokenSource inputThrottleCancalationToken = new();
@@ -57,18 +57,22 @@ public partial class TfEditor : TfBaseComponent
 	}
 	private async Task _valueChanged(string value)
 	{
-		inputThrottleCancalationToken.Cancel();
-		inputThrottleCancalationToken = new();
-		await Task.Delay(500, inputThrottleCancalationToken.Token).ContinueWith(
-		async (task) =>
-		{
-			await ValueChanged.InvokeAsync(value);
-		}, inputThrottleCancalationToken.Token);
+		_value = value;
+		await ValueChanged.InvokeAsync(value);
+		//BOZ: there is problem with the throttle and the Enter key
+		//inputThrottleCancalationToken.Cancel();
+		//inputThrottleCancalationToken = new();
+		//await Task.Delay(500, inputThrottleCancalationToken.Token).ContinueWith(
+		//async (task) =>
+		//{
+		//	await ValueChanged.InvokeAsync(value);
+		//}, inputThrottleCancalationToken.Token);
 	}
 
-	public async Task Focus(){ 
-			await JSRuntime.InvokeAsync<object>(
-				"Tefter.focusQuill", _componentId.ToString());	
+	public async Task Focus()
+	{
+		await JSRuntime.InvokeAsync<object>(
+			"Tefter.focusQuill", _componentId.ToString());
 	}
 
 	[JSInvokable("OnEditorChange")]
@@ -82,6 +86,7 @@ public partial class TfEditor : TfBaseComponent
 	[JSInvokable("OnEnterHandler")]
 	public async Task OnEnterHandler()
 	{
+		Console.WriteLine($"OnEnterHandler {_componentId}");
 		await OnEnter.InvokeAsync();
 	}
 }

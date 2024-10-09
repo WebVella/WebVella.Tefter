@@ -9,7 +9,7 @@ public record TucUser
 	public string FirstName { get; init; }
 	public string LastName { get; init; }
 	public string Password { get; init; }
-	public string Title
+	public string Names
 	{
 		get
 		{

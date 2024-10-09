@@ -59,6 +59,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetUsersAsync failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -97,6 +98,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetUserAsync failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -114,6 +116,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetRolesAsync failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
