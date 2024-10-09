@@ -26,4 +26,5 @@ public class CreateTalkThread
 	public string Content { get; set; }
 	public Guid UserId { get; set; }
 	public List<Guid> RowIds { get; set; }
+	public Guid DataProviderId { get; set; }
 }

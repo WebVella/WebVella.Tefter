@@ -218,16 +218,34 @@ ORDER BY tt.created_on DESC";
 
 				if (thread.RowIds != null && thread.RowIds.Count > 0)
 				{
-					//foreach (var skId in thread.RelatedSK)
-					//{
-					//	var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-					//		"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
-					//			new NpgsqlParameter("@id", skId),
-					//			new NpgsqlParameter("@thread_id", id));
+					var channel = GetChannel(thread.ChannelId).Value;
+					var provider = _dataProviderManager.GetProvider(thread.DataProviderId).Value;
 
-					//	if (skDbResult != 1)
-					//		throw new Exception("Failed to insert new row in database for related shared key object");
-					//}
+					var queryResult = _dataManager.QueryDataProvider(provider, thread.RowIds);
+					
+					if(!queryResult.IsSuccess)
+						return Result.Fail(new Error("Failed to get rows by ids.")
+							.CausedBy(queryResult.Errors));
+
+					List<Guid> relatedSK = new List<Guid>();
+
+					foreach(TfDataRow row in queryResult.Value.Rows)
+					{
+						var skIdValue = row.GetSharedKeyValue(channel.SharedKey);
+						if (skIdValue is not null  && !relatedSK.Contains(skIdValue.Value))
+							relatedSK.Add(skIdValue.Value);
+					}
+
+					foreach (var skId in relatedSK)
+					{
+						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+							"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
+								new NpgsqlParameter("@id", skId),
+								new NpgsqlParameter("@thread_id", id));
+
+						if (skDbResult != 1)
+							throw new Exception("Failed to insert new row in database for related shared key object");
+					}
 				}
 
 				scope.Complete();

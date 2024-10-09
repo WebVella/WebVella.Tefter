@@ -5,19 +5,19 @@ namespace WebVella.Tefter;
 
 public partial interface IDataManager
 {
-	internal Result<TfDataTable> QueryDataProvider(
+	public Result<TfDataTable> QueryDataProvider(
 		TfDataProvider provider,
 		string search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false);
 
-	internal Result<TfDataTable> QueryDataProvider(
+	public Result<TfDataTable> QueryDataProvider(
 		TfDataProvider provider,
 		List<Guid> tfIds);
 
 
-	internal Result<TfDataTable> QuerySpaceData(
+	public Result<TfDataTable> QuerySpaceData(
 		Guid spaceDataId,
 		List<TfFilterBase> additionalFilters = null,
 		List<TfSort> sortOverrides = null,
@@ -30,10 +30,10 @@ public partial interface IDataManager
 		Guid spaceDataId,
 		List<Guid> tfIds);
 
-	internal Result<TfDataTable> SaveDataTable(
+	public Result<TfDataTable> SaveDataTable(
 		TfDataTable table);
 
-	internal Result DeleteDataProviderRowByTfId(
+	public Result DeleteDataProviderRowByTfId(
 		TfDataProvider provider,
 		Guid tfId);
 }
