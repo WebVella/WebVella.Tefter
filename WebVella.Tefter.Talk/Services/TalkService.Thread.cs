@@ -262,6 +262,9 @@ ORDER BY tt.created_on DESC";
 					var channel = GetChannel(thread.ChannelId).Value;
 					var provider = _dataProviderManager.GetProvider(thread.DataProviderId).Value;
 
+					if(provider is null)
+						throw new Exception($"Failed to find data provider with id='{thread.DataProviderId}'");
+
 					var queryResult = _dataManager.QueryDataProvider(provider, thread.RowIds);
 					
 					if(!queryResult.IsSuccess)
