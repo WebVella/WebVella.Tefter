@@ -130,7 +130,7 @@ public class TfDataRow : IEnumerable
 		if (index == -1)
 			return null;
 
-		return (Guid)this[skColumnName];
+		return (Guid)_values[index];
 	}
 
 	private static class UnboxT<T>
