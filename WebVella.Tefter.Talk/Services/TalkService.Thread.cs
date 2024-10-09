@@ -75,7 +75,7 @@ WHERE tt.id = @id";
 	{
 		try
 		{
-			const string SQL_NO_SK = 
+			const string SQL_NO_SK =
 @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
 	FROM talk_related_sk trs
@@ -96,6 +96,7 @@ SELECT
 	sk_info.json_result AS related_shared_key_json
 FROM talk_thread tt
 	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
+WHERE tt.channel_id = @channel_id
 ORDER BY tt.created_on DESC";
 
 const string SQL_WITH_SK = @"WITH sk_info AS (
