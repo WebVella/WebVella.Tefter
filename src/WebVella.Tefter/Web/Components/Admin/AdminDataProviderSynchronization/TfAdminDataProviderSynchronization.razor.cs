@@ -4,7 +4,6 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	private bool _isSynchronizing = false;
 	private async Task _onViewLogClick(Guid taskId, TucDataProviderSyncTaskInfoType type)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderSyncLogDialog>(

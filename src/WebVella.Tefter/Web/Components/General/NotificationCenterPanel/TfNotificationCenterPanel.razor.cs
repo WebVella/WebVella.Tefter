@@ -4,7 +4,7 @@ public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContent
 	[Parameter]
 	public GlobalState Content { get; set; } = default!;
 
-	private IDialogReference? _dialog;
+	//private IDialogReference? _dialog;
     protected override ValueTask DisposeAsyncCore(bool disposing)
     {
         if (disposing) {
@@ -24,7 +24,7 @@ public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContent
         InvokeAsync(StateHasChanged);
     }
 
-    private async Task OpenNotificationCenterAsync()
+    private Task OpenNotificationCenterAsync()
     {
         //_dialog = await DialogService.ShowPanelAsync<NotificationCenterPanel>(new DialogParameters<GlobalState>()
         //{
@@ -36,6 +36,7 @@ public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContent
         //});
         //DialogResult result = await _dialog.Result;
         //HandlePanel(result);
+		return Task.CompletedTask;
     }
 
     private static void HandlePanel(DialogResult result)

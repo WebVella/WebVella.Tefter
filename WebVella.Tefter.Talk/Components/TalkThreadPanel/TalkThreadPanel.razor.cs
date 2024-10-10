@@ -14,18 +14,21 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	private string _error = string.Empty;
 	private bool _isLoading = true;
-	private bool _primarySending = false;
 
-	private TfEditor _mainEditor = null;
-	private TfEditor _mainEditEditor = null;
-	private TfEditor _subEditor = null;
+	private TfEditor _channelEditor = null;
+	private string _channelEditorContent = null;
+	private bool _channelEditorSending = false;
+
+	private TfEditor _threadEditor = null;
+	private string _threadEditorContent = null;
+	private bool _threadEditorSending = false;
+
 	private TalkThread _activeThread = null;
 	private TalkChannel _channel = null;
 	private Guid? _skValue = null;
 	private Guid _rowId = Guid.Empty;
 	private List<TalkThread> _threads = new();
-	private string _primaryContent = null;
-	private Dictionary<Guid, string> _threadClassDict = new();
+
 	private Guid? _threadEditedId = null;
 	private Guid? _threadIdUpdateSaving = null;
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -47,17 +50,17 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 						var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
 						if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
 						else throw new Exception("GetThreads failed");
-						_generateThreadClassDict();
 					}
 				}
 				_isLoading = false;
 				await InvokeAsync(StateHasChanged);
 				await Task.Delay(100);
-				await _mainEditor.Focus();
+				await _channelEditor.Focus();
 			}
-			else{ 
+			else
+			{
 				_isLoading = false;
-				await InvokeAsync(StateHasChanged);			
+				await InvokeAsync(StateHasChanged);
 			}
 
 		}
@@ -71,8 +74,9 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	private async Task _sendMessage()
 	{
-		if (_primarySending) return;
-		_primarySending = true;
+		Console.WriteLine("_sendMessage");
+		if (_channelEditorSending) return;
+		_channelEditorSending = true;
 		await InvokeAsync(StateHasChanged);
 		try
 		{
@@ -80,7 +84,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			{
 				VisibleInChannel = false,
 				ChannelId = _channel.Id,
-				Content = _primaryContent,
+				Content = _channelEditorContent,
 				ThreadId = null,
 				Type = TalkThreadType.Comment,
 				UserId = TfUserState.Value.CurrentUser.Id,
@@ -92,11 +96,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Message is sent"));
-				_primaryContent = null;
+				_channelEditorContent = null;
 				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
 				if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
 				else throw new Exception("GetThreads failed");
-				_generateThreadClassDict();
 			}
 		}
 		catch (Exception ex)
@@ -105,16 +108,69 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		}
 		finally
 		{
-			_primarySending = false;
+			_channelEditorSending = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-	private void _generateThreadClassDict()
+	private async Task _replyMessage()
 	{
-		_threadClassDict.Clear();
+		Console.WriteLine("_replyMessage");
+		if (_threadEditorSending) return;
+		_threadEditorSending = true;
+		await InvokeAsync(StateHasChanged);
+		try
+		{
+			var submit = new CreateTalkThread
+			{
+				VisibleInChannel = false,
+				ChannelId = _channel.Id,
+				Content = _threadEditorContent,
+				ThreadId = _activeThread.Id,
+				Type = TalkThreadType.Comment,
+				UserId = TfUserState.Value.CurrentUser.Id,
+				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
+				RowIds = new List<Guid> { _rowId }
+			};
+			var result = TalkService.CreateThread(submit);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Message is sent"));
+				_threadEditorContent = null;
+				//var getThreadResult = TalkService.GetThread(_activeThread.Id);
+				//if (getThreadResult.IsSuccess)
+				//{
+				//	_activeThread = getThreadResult.Value;
+				//	var threadIndex = _threads.FindIndex(x=> x.Id == _activeThread.Id);
+				//	if(threadIndex > -1) _threads[threadIndex] = _activeThread;
+				//}
+				//else throw new Exception("GetThread failed");
+
+				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
+				var activeThreadIndex = getThreadsResult.Value.FindIndex(x=> x.Id == _activeThread.Id);
+				_activeThread = getThreadsResult.Value[activeThreadIndex];
+				var threadIndex = _threads.FindIndex(x => x.Id == _activeThread.Id);
+				if (threadIndex > -1) _threads[threadIndex] = _activeThread;
+
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_threadEditorSending = false;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private Dictionary<Guid, string> _generateThreadClassDict(List<TalkThread> threads)
+	{
+		var result = new Dictionary<Guid, string>();
 		int mainIndex = 0;
-		var threadsReversed = _threads.OrderBy(x => x.CreatedOn).ToList();
+		var threadsReversed = threads.OrderBy(x => x.CreatedOn).ToList();
 		foreach (var message in threadsReversed)
 		{
 			var isFirst = mainIndex == 0;
@@ -126,34 +182,26 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				prevMain is not null && !prevMain.DeletedOn.HasValue
 				&& prevMain.User.Id == message.User.Id
 				&& !message.DeletedOn.HasValue
+				&& (message.RelatedSK is null || message.RelatedSK.Count <= 1)
 				&& (message.CreatedOn - prevMain.CreatedOn).TotalMinutes <= 5)
 			{
 				cssList.Add("talk-followup");
 			}
 
-			_threadClassDict[message.Id] = String.Join(" ", cssList);
-
-			int subIndex = 0;
-			foreach (var subMessage in message.SubThread)
-			{
-				if (subMessage.Id == message.Id) continue;
-				var isSubFirst = subIndex == 1; //first should be the master
-				var isSubLast = subIndex == message.SubThread.Count - 1;
-				var prevSub = isSubFirst ? null : message.SubThread[mainIndex - 1];
-				var nextSub = isSubLast ? null : message.SubThread[mainIndex + 1];
-				var cssSubList = new List<string>();
-				_threadClassDict[subMessage.Id] = String.Join(" ", cssSubList);
-
-				subIndex++;
-			}
-
+			result[message.Id] = String.Join(" ", cssList);
 			mainIndex++;
 		}
+		return result;
 	}
 
-	private async Task _replyToThread(TalkThread thread)
+	private void _replyToThread(TalkThread thread)
 	{
 		_activeThread = _activeThread?.Id != thread.Id ? thread : null;
+	}
+
+	private void _closeActiveThread()
+	{
+		_activeThread = null;
 	}
 
 	private async Task _editThread(TalkThread thread)
@@ -184,7 +232,6 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
 				if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
 				else throw new Exception("GetThreads failed");
-				_generateThreadClassDict();
 			}
 		}
 		catch (Exception ex)
@@ -200,6 +247,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	private async Task _saveMessage(TalkThread thread, string content)
 	{
+		Console.WriteLine("_saveMessage");
 		if (_threadIdUpdateSaving is not null) return;
 		_threadIdUpdateSaving = thread.Id;
 		await InvokeAsync(StateHasChanged);

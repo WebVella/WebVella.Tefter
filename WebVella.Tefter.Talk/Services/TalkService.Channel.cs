@@ -19,7 +19,7 @@ public partial interface ITalkService
 
 internal partial class TalkService : ITalkService
 {
-	public Result<TalkChannel?> GetChannel(
+	public Result<TalkChannel> GetChannel(
 		Guid channelId)
 	{
 		try
@@ -30,9 +30,9 @@ internal partial class TalkService : ITalkService
 				new NpgsqlParameter("id", channelId));
 
 			if (dt.Rows.Count == 0)
-				return Result.Ok((TalkChannel?)null);
+				return Result.Ok((TalkChannel)null);
 
-			return Result.Ok((TalkChannel?)ToChannel(dt.Rows[0]));
+			return Result.Ok((TalkChannel)ToChannel(dt.Rows[0]));
 		}
 		catch (Exception ex)
 		{
@@ -230,8 +230,8 @@ internal partial class TalkService : ITalkService
 		{
 			Id = dr.Field<Guid>("id"),
 			Name = dr.Field<string>("name") ?? string.Empty,
-			SharedKey = dr.Field<string?>("shared_key"),
-			CountSharedColumnName = dr.Field<string?>("count_shared_column_name")
+			SharedKey = dr.Field<string>("shared_key"),
+			CountSharedColumnName = dr.Field<string>("count_shared_column_name")
 		};
 	}
 
@@ -311,7 +311,7 @@ internal partial class TalkService : ITalkService
 		}
 
 		public ValidationResult ValidateCreate(
-			TalkChannel? channel)
+			TalkChannel channel)
 		{
 			if (channel == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -324,7 +324,7 @@ internal partial class TalkService : ITalkService
 		}
 
 		public ValidationResult ValidateUpdate(
-			TalkChannel? channel)
+			TalkChannel channel)
 		{
 			if (channel == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -337,7 +337,7 @@ internal partial class TalkService : ITalkService
 		}
 
 		public ValidationResult ValidateDelete(
-			TalkChannel? channel)
+			TalkChannel channel)
 		{
 			if (channel == null)
 				return new ValidationResult(new[] { new ValidationFailure("",

@@ -2,7 +2,7 @@
 
 internal class TalkUtility
 {
-	public static NpgsqlParameter CreateParameter( string name, object? value, DbType type )
+	public static NpgsqlParameter CreateParameter( string name, object value, DbType type )
 	{
 		NpgsqlParameter par = new NpgsqlParameter(name, type);
 		if (value is null)

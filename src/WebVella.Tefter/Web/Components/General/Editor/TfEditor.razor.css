@@ -1,5 +1,5 @@
 ﻿::deep .toolbar {
-	margin-bottom: 0.5rem;
+	margin-bottom: 0.25rem;
 }
 
 	::deep .toolbar button {
@@ -23,7 +23,7 @@
 		}
 			::deep .toolbar button svg {
 				fill: var(--neutral-base-color) !important;
-				
+				width:14px !important;
 			}
 
 		::deep .toolbar button.ql-active {

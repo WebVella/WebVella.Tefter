@@ -467,7 +467,8 @@ public class NavigatorExtTests
 			var casted = (TucFilterDateTime)result[0];
 			casted.ComparisonMethod.Should().Be(method);
 			casted.Value.Should().NotBeNull();
-			casted.Value.Value.ToString(TfConstants.DateTimeFormat).Should().Be(value.Value.ToString(TfConstants.DateTimeFormat));
+			if(casted.Value is not null)
+				casted.Value.Value.ToString(TfConstants.DateTimeFormat).Should().Be(value.Value.ToString(TfConstants.DateTimeFormat));
 		}
 		#endregion
 

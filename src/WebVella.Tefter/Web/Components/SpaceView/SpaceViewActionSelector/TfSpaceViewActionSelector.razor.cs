@@ -5,25 +5,16 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private bool _open = false;
-	private bool _selectorLoading = false;
 
-	public async Task ToggleSelector()
+	public void ToggleSelector()
 	{
 		_open = !_open;
-		if (_open)
-		{
-			_selectorLoading = true;
-			await InvokeAsync(StateHasChanged);
-			await Task.Delay(1000); //load components with actions?
-			_selectorLoading = false;
-			await InvokeAsync(StateHasChanged);
-		}
 	}
 
-	private async Task _deleteSelectedRecords()
+	private Task _deleteSelectedRecords()
 	{
 		if (TfAppState.Value.SelectedDataRows.Count == 0
-		|| TfAppState.Value.SpaceView.SpaceDataId is null) return;
+		|| TfAppState.Value.SpaceView.SpaceDataId is null) return Task.CompletedTask;
 		try
 		{
 			var result = UC.DeleteSpaceDataRows(
@@ -38,5 +29,6 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 		{
 			ProcessException(ex);
 		}
+		return Task.CompletedTask;
 	}
 }

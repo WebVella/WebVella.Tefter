@@ -130,7 +130,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		_selectedDataProvider = null;
 		_form.DataProviderId = null;
 		Guid providerId = Guid.Empty;
-		if (!String.IsNullOrWhiteSpace(providerIdString) && Guid.TryParse(providerIdString, out providerId)) ;
+		if (!String.IsNullOrWhiteSpace(providerIdString) && Guid.TryParse(providerIdString, out providerId))
 		if (providerId == Guid.Empty) return;
 
 		var provider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == providerId);

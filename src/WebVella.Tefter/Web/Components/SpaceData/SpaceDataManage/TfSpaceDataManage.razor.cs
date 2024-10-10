@@ -39,10 +39,6 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
-	private string _title = "";
-	private string _btnText = "";
-	private Icon _iconBtn;
-	private bool _isCreate = false;
 	private TucSpaceData _form = new();
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)

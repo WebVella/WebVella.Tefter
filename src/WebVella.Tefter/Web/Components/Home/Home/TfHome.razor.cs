@@ -5,7 +5,6 @@ public partial class TfHome : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	private bool _isDataLoading = false;
 	private string _editor = null;
 	void AddInNotificationCenter()
 	{

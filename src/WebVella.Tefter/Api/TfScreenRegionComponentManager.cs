@@ -8,7 +8,7 @@ internal partial interface ITfScreenRegionComponentManager
 
 internal partial class TfScreenRegionComponentManager : ITfScreenRegionComponentManager
 {
-	public new List<TfScreenRegionComponentMeta> GetComponentMeta(
+	public List<TfScreenRegionComponentMeta> GetComponentMeta(
 		TfScreenRegion? region = null)
 	{
 		if (region == null)

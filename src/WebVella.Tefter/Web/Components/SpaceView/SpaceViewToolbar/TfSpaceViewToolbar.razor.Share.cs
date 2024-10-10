@@ -4,9 +4,10 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 
 	//Filter
 	private TfSpaceViewShareSelector _shareSelector;
-	private async Task OnExportClick()
+	private Task OnExportClick()
 	{
-		await _shareSelector.ToggleSelector();
+		_shareSelector.ToggleSelector();
+		return Task.CompletedTask;
 	}
 
 	//private void OnExportChange(SpaceViewExportChangedEventArgs args)

@@ -4,7 +4,7 @@ public partial class TalkSpaceViewSelectorAction : TucBaseScreenRegionComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	private IDialogReference? _dialog;
+	private IDialogReference _dialog;
 	private async Task _onClick()
 	{
 		var context = new TalkThreadModalContext

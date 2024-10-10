@@ -9,7 +9,6 @@ public partial class TfUserNavigation
 	private bool _visible = false;
 	private bool _helpVisible = false;
 	private bool _isAdmin = false;
-	private bool _auxLoaded = false;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{

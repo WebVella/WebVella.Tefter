@@ -36,7 +36,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		Navigator.ReloadCurrentUrl();
 	}
 
-	private async Task _searchChanged(string? search)
+	private async Task _searchChanged(string search)
 	{
 		_search = search;
 		_isListBusy = true;

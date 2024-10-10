@@ -49,8 +49,11 @@
 			<div class="talk-panel">
 				<div class="talk-panel__left">
 					<div class="talk-panel__left__header">
-						<div class="talk-panel__left__header__left">
-							<div class="talk-channel-label">@($"#{_channel.Name}")</div>
+						<div class="talk-channel-label">@($"#{_channel.Name}")</div>
+						<div>
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 						</div>
 					</div>
 					<div class="talk-panel__left__body">
@@ -63,10 +66,16 @@
 						else
 						{
 							<div class="talk-panel__left__body__messages">
+								@{
+									var channelCssDict = _generateThreadClassDict(_threads);
+								}
 								@foreach (TalkThread context in _threads)
 								{
-									<TalkMessage @key=context.Id Item="context"
-												 Class="@_threadClassDict[context.Id]"
+									if (context.DeletedOn.HasValue && context.SubThread.Count == 0) continue;
+									<TalkMessage @key=context.Id
+												 Item="context"
+												 CurrentUser="TfUserState.Value.CurrentUser"
+												 Class="@channelCssDict[context.Id]"
 												 IsEdited="@(_threadEditedId == context.Id)"
 												 IsSaving=@(_threadIdUpdateSaving == context.Id)
 												 OnDelete="@(_ => _deleteThread(context))"
@@ -74,33 +83,96 @@
 												 OnReply="@(_ => _replyToThread(context))"
 												 OnEditSave="@(x => _saveMessage(context,x))"
 												 OnEditCancel="@(_ => _cancelSaveMessage())" />
-									var user = new TucUser(context.User);
-
 								}
 							</div>
 						}
 					</div>
 					<div class="talk-panel__left__footer">
-						<div class="talk-panel__left__footer__editor">
-							<TfEditor @ref=_mainEditor Placeholder="Type a message in #general" @bind-Value="_primaryContent" OnEnter="_sendMessage" />
+						<div class="talk-editor">
+							<TfEditor @ref=_channelEditor Placeholder="@LOC("Message in #{0}",_channel.Name)" @bind-Value="_channelEditorContent" OnEnter="_sendMessage" />
 						</div>
-						<div class="talk-panel__left__footer__actions">
-							<div class="talk-panel__left__footer__actions__left">
+						<div class="talk-editor__actions">
+							<div class="editor__actions__left">
 								<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
 							</div>
-							<div class="talk-panel__left__footer__actions__right">
+							<div class="editor__actions__right">
 								<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_sendMessage"
-											  Loading="_primarySending" Disabled="_primarySending">Send</FluentButton>
+											  Loading="_channelEditorSending" Disabled="_channelEditorSending">Send</FluentButton>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="talk-panel__right" style="@(_activeThread is null ? "display:none" : "")">
-					<div class="talk-panel__right__header">
+					@if (_activeThread is not null)
+					{
+						<div class="talk-panel__right__header">
+							<div>@LOC("Thread")</div>
+							<div>
+								<FluentButton Appearance="@Appearance.Stealth"
+											  OnClick="_closeActiveThread"
+											  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+							</div>
+						</div>
+						<div class="talk-panel__right__body">
+							<div class="talk-panel__right__body__messages">
+								<TalkMessage @key=_activeThread.Id
+											 Item="_activeThread"
+											 CurrentUser="TfUserState.Value.CurrentUser"
+											 Class=""
+											 IsEdited="@(_threadEditedId == _activeThread.Id)"
+											 IsSaving=@(_threadIdUpdateSaving == _activeThread.Id)
+											 HideReplies="true"
+											 OnDelete="@(_ => _deleteThread(_activeThread))"
+											 OnEdit="@(_ => _editThread(_activeThread))"
+											 OnReply="@(_ => _replyToThread(_activeThread))"
+											 OnEditSave="@(x => _saveMessage(_activeThread,x))"
+											 OnEditCancel="@(_ => _cancelSaveMessage())" />
 
-					</div>
-					<div class="talk-panel__right__body">
-					</div>
+								@if (_activeThread.SubThread is not null && _activeThread.SubThread.Count > 0)
+								{
+									<div class="talk-message-separator">
+										<div class="talk-message-separator-label">@LOC("{0} replies", _activeThread.SubThread.Count)</div>
+										<div class="talk-message-separator-ruler"></div>
+									</div>
+								}
+								@{
+									var threadCssDict = _generateThreadClassDict(_activeThread.SubThread);
+								}
+								@foreach (var context in _activeThread.SubThread)
+								{
+									if (context.DeletedOn.HasValue && context.SubThread.Count == 0) continue;
+									<TalkMessage @key=context.Id
+												 Item="context"
+												 CurrentUser="TfUserState.Value.CurrentUser"
+												 Class="@threadCssDict[context.Id]"
+												 IsEdited="@(_threadEditedId == context.Id)"
+												 IsSaving=@(_threadIdUpdateSaving == context.Id)
+												 HideReplies="true"
+												 OnDelete="@(_ => _deleteThread(context))"
+												 OnEdit="@(_ => _editThread(context))"
+												 OnReply="@(_ => _replyToThread(context))"
+												 OnEditSave="@(x => _saveMessage(context,x))"
+												 OnEditCancel="@(_ => _cancelSaveMessage())" />
+								}
+								<div class="talk-panel__right__body__messages__editor">
+									<div class="talk-editor">
+										<TfEditor @ref=_threadEditor Placeholder="@LOC("Reply...")" @bind-Value="_threadEditorContent"
+												  OnEnter="_replyMessage" />
+									</div>
+									<div class="talk-editor__actions">
+										<div class="editor__actions__left">
+											<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
+										</div>
+										<div class="editor__actions__right">
+											<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_replyMessage"
+														  Loading="_threadEditorSending" Disabled="_threadEditorSending">Send</FluentButton>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					}
 				</div>
 			</div>
 		}

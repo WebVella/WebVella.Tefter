@@ -1,3 +1,13 @@
+root = true
+
+[*.{css,cs,razor}]
+dotnet_diagnostic.CSS104.severity=silent
+dotnet_diagnostic.CSS024.severity=silent
+
+[*.js]
+dotnet_diagnostic.TS1109.severity=silent
+
+
 [*.{cs,razor,txt}]
 charset = utf-8-bom
 [*.{html,css,js,less,scss}]

@@ -3,8 +3,6 @@ public partial class TfSpaceDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	private bool visible = false;
-
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
@@ -19,7 +17,6 @@ public partial class TfSpaceDetails : TfBaseComponent
 		}
 		else
 		{
-			visible = true;
 			StateHasChanged();
 		}
 	}

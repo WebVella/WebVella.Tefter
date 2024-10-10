@@ -81,7 +81,7 @@ public class EnumMappingTest
 		return types;
 	}
 
-	private static Type? GetEnumMatchAttributeValue(Type type)
+	private static Type GetEnumMatchAttributeValue(Type type)
 	{
 		var attributes = type.GetCustomAttributes(typeof(TucEnumMatchAttribute), true);
 		if (attributes.Length > 0)

@@ -136,11 +136,11 @@ internal static partial class TfConverters
 				return match.Groups[1].Value + domainName;
 			}
 		}
-		catch (RegexMatchTimeoutException e)
+		catch (RegexMatchTimeoutException)
 		{
 			return false;
 		}
-		catch (ArgumentException e)
+		catch (ArgumentException)
 		{
 			return false;
 		}
@@ -168,7 +168,7 @@ internal static partial class TfConverters
 			return Uri.TryCreate(url, UriKind.Absolute, out uriResult)
 				&& (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 		}
-		catch (ArgumentException e)
+		catch (ArgumentException)
 		{
 			return false;
 		}

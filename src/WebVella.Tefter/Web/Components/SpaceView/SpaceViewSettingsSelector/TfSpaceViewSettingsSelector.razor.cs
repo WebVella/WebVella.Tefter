@@ -6,24 +6,14 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	private bool _open = false;
-	private bool _selectorLoading = false;
 
 	private void _init()
 	{
 	}
 
-	public async Task ToggleSelector()
+	public void ToggleSelector()
 	{
 		_open = !_open;
-		if (_open)
-		{
-			_selectorLoading = true;
-			await InvokeAsync(StateHasChanged);
-			_init();
-
-			_selectorLoading = false;
-			await InvokeAsync(StateHasChanged);
-		}
 	}
 
 	private void _manageView()

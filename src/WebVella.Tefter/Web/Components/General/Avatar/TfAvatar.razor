@@ -1,5 +1,12 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 
-<div @onclick=_onClick style="@_getStyle()" @attributes=_attributes>
-	@TfConverters.GetUserInitials(User)
+<div @onclick=_onClick style=@_styles id=@Id class="@_cssClass" title="@_title">
+	@if (ChildContent is not null)
+	{
+		@ChildContent
+	}
+	else if (User is not null)
+	{
+		@TfConverters.GetUserInitials(User)
+	}
 </div>
