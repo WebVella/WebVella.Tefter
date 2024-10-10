@@ -546,6 +546,7 @@ ORDER BY tt.created_on DESC";
 			if (thread.ThreadId is not null)
 			{
 				var parentThread = threadList.Single(x => x.Id == thread.ThreadId);
+				thread.ParentThread = parentThread;
 				parentThread.SubThread.Add(thread);
 			}
 		}

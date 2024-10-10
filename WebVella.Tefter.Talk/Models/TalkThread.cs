@@ -5,6 +5,7 @@ public class TalkThread
 	public Guid Id { get; set; }
 	public Guid ChannelId { get; set; }
 	public Guid? ThreadId { get; set; }
+	public TalkThread ParentThread { get; set; } = null;
 	public TalkThreadType Type { get; set; }
 	public string Content { get; set; }
 	public bool VisibleInChannel { get; set; }	
