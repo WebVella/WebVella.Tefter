@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="connected to multiple rows" xml:space="preserve">
-    <value>свързан към множество редове</value>
+  <data name="Message in #{0}" xml:space="preserve">
+    <value>Съобщение в #{0}</value>
   </data>
   <data name="Message is sent" xml:space="preserve">
     <value>Съобщението е изпратено</value>
@@ -129,6 +129,9 @@
   <data name="No talk channel is selected for this view column!" xml:space="preserve">
     <value>Не е избран дискусионен канал за тази колона!</value>
   </data>
+  <data name="Reply..." xml:space="preserve">
+    <value>Отговори...</value>
+  </data>
   <data name="The selected dataset does not support the shared key '{0}' of channel '{1}'!" xml:space="preserve">
     <value>Избраните изходни данни не поддържат споделения ключ '{0}' на канала '{1}'!</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="The talk channel has no shared key set!" xml:space="preserve">
     <value>Дискусионният канал няма зададен споделен ключ!</value>
+  </data>
+  <data name="Thread" xml:space="preserve">
+    <value>Дискусия</value>
   </data>
   <data name="updated" xml:space="preserve">
     <value>обновено</value>

@@ -9,7 +9,6 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private bool _isCreate = false;
-	private bool _isBusy = true;
 	private bool _isSubmitting = false;
 	private string _title = "";
 	private string _btnText = "";

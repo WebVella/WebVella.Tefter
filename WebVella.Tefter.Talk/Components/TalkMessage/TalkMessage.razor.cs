@@ -6,14 +6,16 @@ namespace WebVella.Tefter.Web.Components;
 public partial class TalkMessage : TfBaseComponent
 {
 	[Parameter] public TalkThread Item { get; set; }
+	[Parameter] public TucUser CurrentUser { get; set; }
 	[Parameter] public string Class { get; set; }
-	[Parameter] public bool IsEdited { get; set; }
+	[Parameter] public bool IsEdited { get; set; } = false;
 	[Parameter] public EventCallback OnDelete { get; set; }
 	[Parameter] public EventCallback OnEdit { get; set; }
 	[Parameter] public EventCallback OnReply { get; set; }
 	[Parameter] public EventCallback<string> OnEditSave { get; set; }
 	[Parameter] public EventCallback OnEditCancel { get; set; }
 	[Parameter] public bool IsSaving { get; set; } = false;
+	[Parameter] public bool HideReplies { get; set; } = false;
 
 	private TucUser _user
 	{

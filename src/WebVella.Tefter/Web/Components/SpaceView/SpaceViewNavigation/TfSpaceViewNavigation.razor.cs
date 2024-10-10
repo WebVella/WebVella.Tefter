@@ -9,7 +9,6 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	private bool _settingsMenuVisible = false;
 	private string search = null;
 	private TfSpaceViewNavigationActiveTab _activeTab = TfSpaceViewNavigationActiveTab.Views;
-	private bool _isLoading = false;
 	private bool _linksFromAllViews = false;
 	private List<TucMenuItem> _getMenu()
 	{

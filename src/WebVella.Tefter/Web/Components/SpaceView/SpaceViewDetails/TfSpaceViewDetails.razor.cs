@@ -42,11 +42,10 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		});
 	}
 
-	public Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
+	public async Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
-		if (args.Key == KeyCode.PageUp) _goNextPage();
-		else if (args.Key == KeyCode.PageDown) _goPreviousPage();
-		return Task.CompletedTask;
+		if (args.Key == KeyCode.PageUp) await _goNextPage();
+		else if (args.Key == KeyCode.PageDown) await _goPreviousPage();
 	}
 
 	private async Task _goFirstPage()

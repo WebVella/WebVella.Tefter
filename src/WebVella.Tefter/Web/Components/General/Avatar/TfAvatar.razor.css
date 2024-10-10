@@ -8,3 +8,10 @@
 	font-size: 12px;
 	font-weight: 600;
 }
+
+	::deep.tf-small {
+		height: 18px;
+		width: 18px;		
+		font-weight:normal;
+		font-size:10px;
+	}

@@ -8,7 +8,6 @@ public partial class GuestLayout : LayoutComponentBase
 
 
 	private bool _isLoading = true;
-	private bool _firstRender = true;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{

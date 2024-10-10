@@ -294,7 +294,7 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	/// <param name="defaultValue"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	protected virtual T? GetDataObjectFromJsonByAlias<T>(string alias, T? defaultValue = null) where T : class
+	protected virtual T GetDataObjectFromJsonByAlias<T>(string alias, T defaultValue = null) where T : class
 	{
 		string dbName = GetColumnNameFromAlias(alias);
 		if (String.IsNullOrWhiteSpace(dbName))

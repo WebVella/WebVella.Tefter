@@ -117,31 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="1 reply" xml:space="preserve">
+    <value>1 отговор</value>
+  </data>
   <data name="connected to multiple rows" xml:space="preserve">
     <value>свързан към множество редове</value>
   </data>
-  <data name="Message is sent" xml:space="preserve">
-    <value>Съобщението е изпратено</value>
+  <data name="view thread" xml:space="preserve">
+    <value>виж дискусията</value>
   </data>
-  <data name="No messages in this thread yet" xml:space="preserve">
-    <value>Все още няма съобщения за тази дискусия</value>
-  </data>
-  <data name="No talk channel is selected for this view column!" xml:space="preserve">
-    <value>Не е избран дискусионен канал за тази колона!</value>
-  </data>
-  <data name="The selected dataset does not support the shared key '{0}' of channel '{1}'!" xml:space="preserve">
-    <value>Избраните изходни данни не поддържат споделения ключ '{0}' на канала '{1}'!</value>
-  </data>
-  <data name="The selected shared key '{0}' value is not yet generated for this row of the dataset!" xml:space="preserve">
-    <value>Стойността на споделения ключ '{0}' все още не е генерирана за този ред на изходните данни!</value>
-  </data>
-  <data name="The talk channel has no shared key set!" xml:space="preserve">
-    <value>Дискусионният канал няма зададен споделен ключ!</value>
-  </data>
-  <data name="updated" xml:space="preserve">
-    <value>обновено</value>
-  </data>
-  <data name="You will loose any unsaved changes on your previous edit. Do you want to continue?" xml:space="preserve">
-    <value>Ще загубиш всички незапомнени промени в предишната редакция. Сигурен ли си, че искаш да продължиш?</value>
+  <data name="{0} replies" xml:space="preserve">
+    <value>{0} отговора</value>
   </data>
 </root>

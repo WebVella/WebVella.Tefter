@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 public partial class TfNotificationCenter : TfBaseComponent
 {
-	private IDialogReference? _dialog;
+	private IDialogReference _dialog;
 	protected override ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)

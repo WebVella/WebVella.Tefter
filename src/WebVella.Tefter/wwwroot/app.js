@@ -58,7 +58,7 @@
 			key: 'Enter',
 			shiftKey: false,
 			handler: (range, context) => {
-				return Tefter.executeEditorEnterKeyListenerCallbacks();
+				return Tefter.executeEditorEnterKeyListenerCallbacks(editorId);
 			}
 		});
 		Tefter.HtmlEditors[editorId].on('text-change', (delta, oldDelta, source) => {
@@ -66,7 +66,7 @@
 				/*console.log('An API call triggered this change.');*/
 			} else if (source == 'user') {
 				/*console.log('A user action triggered this change.');*/
-				Tefter.executeEditorTextChangeListenerCallbacks(delta, oldDelta, source)
+				Tefter.executeEditorTextChangeListenerCallbacks(editorId, delta, oldDelta, source)
 			}
 		});
 	},
@@ -96,17 +96,16 @@
 		}
 		return true;
 	},
-	executeEditorTextChangeListenerCallbacks: function (delta, oldDelta, source) {
-		if (Tefter.HtmlEditorsChangeListeners) {
-			for (const prop in Tefter.HtmlEditorsChangeListeners) {
-				const dotNetHelper = Tefter.HtmlEditorsChangeListeners[prop].dotNetHelper;
-				const methodName = Tefter.HtmlEditorsChangeListeners[prop].methodName;
-				if (dotNetHelper && methodName) {
-					dotNetHelper.invokeMethodAsync(methodName);
-				}
+	executeEditorTextChangeListenerCallbacks: function (editorId, delta, oldDelta, source) {
+		if (Tefter.HtmlEditorsChangeListeners && Tefter.HtmlEditorsChangeListeners[editorId]) {
+			const dotNetHelper = Tefter.HtmlEditorsChangeListeners[editorId].dotNetHelper;
+			const methodName = Tefter.HtmlEditorsChangeListeners[editorId].methodName;
+			if (dotNetHelper && methodName) {
+				dotNetHelper.invokeMethodAsync(methodName);
 			}
+			return true;
 		}
-		return true;
+		return false;
 	},
 
 	addEditorEnterKeyListener: function (dotNetHelper, editorId, methodName) {
@@ -119,20 +118,17 @@
 		}
 		return true;
 	},
-	executeEditorEnterKeyListenerCallbacks: function () {
-		if (Tefter.HtmlEditorsEnterListeners) {
-			for (const prop in Tefter.HtmlEditorsEnterListeners) {
-				const dotNetHelper = Tefter.HtmlEditorsEnterListeners[prop].dotNetHelper;
-				const methodName = Tefter.HtmlEditorsEnterListeners[prop].methodName;
-				if (dotNetHelper && methodName) {
-					dotNetHelper.invokeMethodAsync(methodName);
-				}
+	executeEditorEnterKeyListenerCallbacks: function (editorId) {
+		if (Tefter.HtmlEditorsEnterListeners && Tefter.HtmlEditorsEnterListeners[editorId]) {
+			const dotNetHelper = Tefter.HtmlEditorsEnterListeners[editorId].dotNetHelper;
+			const methodName = Tefter.HtmlEditorsEnterListeners[editorId].methodName;
+			if (dotNetHelper && methodName) {
+				dotNetHelper.invokeMethodAsync(methodName);
 			}
-			if (Tefter.HtmlEditorsEnterListeners || Object.keys(Tefter.HtmlEditorsEnterListeners).length > 0) {
-				return false;
-			}
+
+			return true;
 		}
-		return true;
+		return false;
 	},
 	getQuillHtml: function (editorId) {
 		if (Tefter.HtmlEditors[editorId]) {

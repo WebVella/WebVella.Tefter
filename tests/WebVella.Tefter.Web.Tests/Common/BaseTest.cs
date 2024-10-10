@@ -15,8 +15,6 @@ public class BaseTest
 	public static IServiceProvider ServiceProvider;
 	public static IStore Store;
 	public static IState<TfAppState> TfAppState;
-	public static IStateSelection<TfAppState, Guid> UserIdState;
-	public static IStateSelection<TfAppState, bool> ScreenSidebarState;
 	public static Mock<IKeyCodeService> KeyCodeServiceMock;
 	public static Mock<IIdentityManager> IdentityManagerMock;
 	public static Mock<ITfDataProviderManager> TfDataProviderManagerMock;

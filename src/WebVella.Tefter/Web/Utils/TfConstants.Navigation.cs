@@ -45,6 +45,7 @@ public partial class TfConstants
 
 
 	//Action icons
+	public static Icon CloseIcon = GetIcon("Dismiss");
 	public static Icon SaveIcon = GetIcon("Save");
 	public static Icon CancelIcon = GetIcon("Star");
 	public static Icon SearchIcon = GetIcon("Search");

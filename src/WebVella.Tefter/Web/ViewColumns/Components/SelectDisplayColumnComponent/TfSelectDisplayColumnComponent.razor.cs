@@ -47,7 +47,6 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	private object _value = null;
 	private List<TucSelectOption> _selectOptionsList = new();
 	private TucSelectOption _selectedOption = null;
-	private bool _open = false;
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>

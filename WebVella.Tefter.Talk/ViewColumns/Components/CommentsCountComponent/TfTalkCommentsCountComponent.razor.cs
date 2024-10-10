@@ -33,14 +33,13 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	#endregion
 
 	#region << Properties >>
-	private int? _value = null;
 	private List<TucSelectOption> _sharedKeyOptions = new();
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
 	private Guid? _renderedHash = null;
 	private string _storageKey = "";
-	private IDialogReference? _dialog;
+	private IDialogReference _dialog;
 	private List<TalkChannel> _channels = new();
 	private TalkChannel _selectedChannel = null;
 	#endregion
@@ -110,7 +109,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 		return null;
 	}
 
-	public override async Task OnSpaceViewStateInited(
+	public override Task OnSpaceViewStateInited(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfRouteState routeState,
@@ -141,6 +140,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 			}
 		}
 		newAuxDataState.Data[_storageKey] = options;
+		return Task.CompletedTask;
 	}
 	#endregion
 	#region << Private logic >>

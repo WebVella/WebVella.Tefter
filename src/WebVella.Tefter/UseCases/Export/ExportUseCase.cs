@@ -23,7 +23,7 @@ public class ExportUseCase
 	}
 
 	//TODO RUMEN: Move to service method?
-	public async ValueTask<byte[]> ExportViewToExcel(TucExportViewData data)
+	public ValueTask<byte[]> ExportViewToExcel(TucExportViewData data)
 	{
 		if (data.RouteState.SpaceViewId is null) throw new Exception("SpaceViewId not provided");
 
@@ -126,9 +126,8 @@ public class ExportUseCase
 			ws.Columns(1, viewColumns.Count).AdjustToContents();
 			MemoryStream ms = new MemoryStream();
 			workbook.SaveAs(ms);
-			return ms.ToArray();
+			return ValueTask.FromResult(ms.ToArray());
 		}
 	}
-
 
 }

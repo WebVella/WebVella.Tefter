@@ -13,7 +13,6 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 	private string _btnText = "";
 	private Icon _iconBtn;
 
-	private DynamicComponent typeSettingsComponent;
 	private bool _isCreate = false;
 
 	private TucSharedColumnForm _form = new();

@@ -11,7 +11,9 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 	[Parameter] public ComponentDisplayMode DisplayMode { get; set; } = ComponentDisplayMode.ReadOnly;
 
 	[Parameter]
+#pragma warning disable BL0007 // Component parameters should be auto properties
 	public string Value
+#pragma warning restore BL0007 // Component parameters should be auto properties
 	{
 		get => JsonSerializer.Serialize(_form);
 		set

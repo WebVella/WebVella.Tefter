@@ -14,9 +14,6 @@ public partial class TfEditor : TfBaseComponent
 	private string _value = null;
 	private bool _editorInited = false;
 	private ElementReference divEditorElement;
-	private string EditorContent;
-	private string EditorHTMLContent;
-	private bool EditorEnabled = true;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
