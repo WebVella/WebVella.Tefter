@@ -441,7 +441,7 @@ ORDER BY tt.created_on DESC";
 					thread.RelatedSK[item.Id] = item.TextId;
 			}
 
-			thread.SubThread.Add(thread);
+			//thread.SubThread.Add(thread);
 			threadList.Add(thread);
 		}
 
