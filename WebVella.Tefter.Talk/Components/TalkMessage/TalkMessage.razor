@@ -1,0 +1,89 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="@_class">
+	<div class="talk-message__left">
+		@if (Item.DeletedOn is null)
+		{
+			<TfAvatar User="_user" Class="talk-avatar" />
+			<div class="talk-timestamp text-muted">
+				@Item.CreatedOn.ToString("HH:mm")
+			</div>
+		}
+		else
+		{
+			<div class="talk-avatar-deleted">
+				<FluentIcon Value="@TfConstants.GetIcon("Delete")" />
+			</div>
+		}
+	</div>
+
+	<div class="talk-message__right">
+		@if (!IsEdited)
+		{
+			<div class="talk-message__right__top">
+				@if (Item.DeletedOn is not null)
+				{
+					<span class="talk-deleted">@LOC("thread is deleted")</span>
+				}
+				else
+				{
+					<span class="talk-sender">@_user.Names</span>
+					<span class="talk-timestamp" title="@Item.CreatedOn.ToString("dd MMM yyyy HH:mm")">@Item.CreatedOn.ToString("HH:mm")</span>
+					@if (Item.RelatedSK.Keys.Count > 1)
+					{
+						<span class="talk-multicast">
+							<FluentIcon Style="margin-left:5px" Value="@TfConstants.GetIcon("Communication")" Title="@LOC("connected to multiple rows")" />
+						</span>
+					}
+					@if (Item.LastUpdatedOn is not null)
+					{
+						<span class="text-muted" style="margin-left:5px;" title="@Item.LastUpdatedOn?.ToString(TfConstants.DateTimeFormat)">(@LOC("updated"))</span>
+					}
+				}
+			</div>
+			@if (Item.DeletedOn is null)
+			{
+				<div class="talk-message__right__bottom">
+					@((MarkupString)Item.Content)
+				</div>
+			}
+		}
+		else
+		{
+			<div class="tf_message_editor">
+				<div class="tf_message_editor_content">
+					<TfEditor @ref=_editor Placeholder="Type a message in #general" @bind-Value="Item.Content"
+							  OnEnter="_onUpdate" />
+				</div>
+				<div class="tf_message_editor_actions">
+					<div class="tf_message_editor_actions_left">
+						<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
+					</div>
+					<div class="tf_message_editor_actions_right">
+						<FluentButton IconStart="@TfConstants.GetIcon("Save")" OnClick="_onUpdate"
+									  Loading="IsSaving"
+									  Disabled="IsSaving"
+									  Appearance="@Appearance.Accent">Save</FluentButton>
+						<FluentButton OnClick="@OnEditCancel"
+									  Disabled="IsSaving">Cancel</FluentButton>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+	<div class="talk-message__actions">
+		<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+					  Appearance="@Appearance.Stealth" Title="@LOC("delete message")"
+					  OnClick="@OnDelete" />
+		<FluentButton IconStart="@TfConstants.EditIcon.WithColor(Color.Neutral)"
+					  Appearance="@Appearance.Stealth" Title="@LOC("edit message")"
+					  OnClick="@OnEdit" />
+		<FluentButton IconStart="@TfConstants.GetIcon("Comment").WithColor(Color.Neutral)"
+					  Appearance="@Appearance.Stealth" Title="@LOC("reply to message")"
+					  OnClick="@OnReply" />
+	</div>
+
+
+</div>

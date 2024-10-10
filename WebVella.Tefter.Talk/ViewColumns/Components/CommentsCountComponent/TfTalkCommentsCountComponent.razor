@@ -3,11 +3,20 @@
 @inherits TucBaseViewColumn<TfTalkCommentsCountComponentOptions>
 @if (Context.Mode == TucComponentMode.Display)
 {
+
 	<div>
-		<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
-			<FluentIcon Value="@TfConstants.GetIcon("Comment")" />
-		</FluentButton>
+		@if (componentOptions.ChannelId is not null)
+		{
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
+				<FluentIcon Value="@TfConstants.GetIcon("Comment")" />
+			</FluentButton>
+		}
+		else
+		{
+			<FluentIcon Value="TfConstants.ErrorIcon" Title="@LOC("channel is not configured")" />
+		}
 	</div>
+
 
 }
 else if (Context.Mode == TucComponentMode.Options)

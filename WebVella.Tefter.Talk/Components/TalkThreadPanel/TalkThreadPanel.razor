@@ -5,9 +5,10 @@
 <style>
 	.talk-panel {
 		--message-editor-background: @TfAppState.Value.SpaceBackgkroundColor;
+		--panel-header-label-color: @TfAppState.Value.SpaceColorString;
 	}
 </style>
-@if (_activeThreadId is not null)
+@if (_activeThread is not null)
 {
 	<style>
 		::part(control) {
@@ -22,6 +23,10 @@
 		@if (_isLoading)
 		{
 			<TfLoadingPane />
+		}
+		else if (Content.ChannelId is null)
+		{
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No channel is configured for this column!")</FluentMessageBar>
 		}
 		else if (_channel is null)
 		{
@@ -60,86 +65,17 @@
 							<div class="talk-panel__left__body__messages">
 								@foreach (TalkThread context in _threads)
 								{
-									if (context.DeletedOn is null)
-									{
-										var user = new TucUser(context.User);
-										<div class="@($"talk-panel__left__body__messages__message {_threadClassDict[context.Id]} {(_threadEditedId == context.Id ? "editor-active" : "")}")" @key=context.Id>
-											<div class="talk-panel__left__body__messages__message__left">
-												<TfAvatar User="user" Class="talk-avatar" />
-												<div class="talk-timestamp text-muted">
-													@context.CreatedOn.ToString("HH:mm")
-												</div>
-											</div>
-											@if (_threadEditedId != context.Id)
-											{
-												<div class="talk-panel__left__body__messages__message__right">
-													<div class="talk-panel__left__body__messages__message__right__top">
-														<span class="talk-sender">@user.Names</span>
-														<span class="talk-timestamp" title="@context.CreatedOn.ToString("dd MMM yyyy HH:mm")">@context.CreatedOn.ToString("HH:mm")</span>
-														@if (context.RelatedSK.Keys.Count > 1)
-														{
-															<FluentBadge Style="margin-left:5px;" Appearance="Appearance.Accent">@LOC("broadcast")</FluentBadge>
-														}
-														@if (context.LastUpdatedOn is not null)
-														{
-															<span class="text-muted" style="margin-left:5px;" title="@context.LastUpdatedOn?.ToString(TfConstants.DateTimeFormat)">(@LOC("updated"))</span>
-														}
-													</div>
-													<div class="talk-panel__left__body__messages__message__right__bottom">
-														@((MarkupString)context.Content)
-													</div>
-												</div>
-												<div class="talk-panel__left__body__messages__message__actions">
-													<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
-																  Appearance="@Appearance.Stealth" Title="@LOC("delete message")"
-																  OnClick="@(_ => _deleteThread(context))" />
-													<FluentButton IconStart="@TfConstants.EditIcon.WithColor(Color.Neutral)"
-																  Appearance="@Appearance.Stealth" Title="@LOC("edit message")"
-																  OnClick="@(_ => _editThread(context))" />
-													<FluentButton IconStart="@TfConstants.GetIcon("Comment").WithColor(Color.Neutral)"
-																  Appearance="@Appearance.Stealth" Title="@LOC("reply to message")"
-																  OnClick="@(_ => _replyToThread(context))" />
-												</div>
-											}
-											else
-											{
-												<div class="talk-panel__left__body__messages__message__right">
-													<div class="tf_message_editor">
-														<div class="tf_message_editor_content">
-															<TfEditor @ref=_mainEditEditor Placeholder="Type a message in #general" @bind-Value="context.Content"
-																	  OnEnter="@(_=> _saveMessage(context))" />
-														</div>
-														<div class="tf_message_editor_actions">
-															<div class="tf_message_editor_actions_left">
-																<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
-															</div>
-															<div class="tf_message_editor_actions_right">
-																<FluentButton IconStart="@TfConstants.GetIcon("Save")" OnClick="@(_=> _saveMessage(context))"
-																			  Loading="(_threadIdUpdateSaving == context.Id)"
-																			  Disabled="(_threadIdUpdateSaving == context.Id)"
-																			  Appearance="@Appearance.Accent">Save</FluentButton>
-																<FluentButton OnClick="@_cancelSaveMessage"
-																			  Disabled="(_threadIdUpdateSaving == context.Id)">Cancel</FluentButton>
-															</div>
-														</div>
-													</div>
-												</div>
-											}
-										</div>
-									}
-									else
-									{
-										<div class="@($"talk-panel__left__body__messages__message message-deleted {_threadClassDict[context.Id]}")">
-											<div class="talk-panel__left__body__messages__message__left">
-												<FluentPersona><FluentIcon Value="TfConstants.AddIcon" /></FluentPersona>
-											</div>
-											<div class="talk-panel__left__body__messages__message__right">
-											<div class="talk-panel__left__body__messages__message__right__top">
-												message was deleted
-											</div>
-											</div>
-										</div>
-									}
+									<TalkMessage @key=context.Id Item="context"
+												 Class="@_threadClassDict[context.Id]"
+												 IsEdited="@(_threadEditedId == context.Id)"
+												 IsSaving=@(_threadIdUpdateSaving == context.Id)
+												 OnDelete="@(_ => _deleteThread(context))"
+												 OnEdit="@(_ => _editThread(context))"
+												 OnReply="@(_ => _replyToThread(context))"
+												 OnEditSave="@(x => _saveMessage(context,x))"
+												 OnEditCancel="@(_ => _cancelSaveMessage())" />
+									var user = new TucUser(context.User);
+
 								}
 							</div>
 						}
@@ -159,10 +95,11 @@
 						</div>
 					</div>
 				</div>
-				<div class="talk-panel__right" style="@(_activeThreadId is null ? "display:none" : "")">
-					<div class="talk-panel__right__header"></div>
+				<div class="talk-panel__right" style="@(_activeThread is null ? "display:none" : "")">
+					<div class="talk-panel__right__header">
+
+					</div>
 					<div class="talk-panel__right__body">
-						@_activeThreadId
 					</div>
 				</div>
 			</div>
