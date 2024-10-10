@@ -1,7 +1,4 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using System.Data;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public partial interface IDataManager
 {
@@ -686,7 +683,7 @@ public partial class DataManager
 			else if (column.DbType == DatabaseColumnType.Text ||
 				column.DbType == DatabaseColumnType.ShortText)
 			{
-				if ((string?)row[column.Name] != (string?)existingRow[column.Name])
+				if ((string)row[column.Name] != (string)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
 			else
@@ -810,7 +807,7 @@ public partial class DataManager
 				$"DELETE FROM dp{provider.Index} WHERE tf_id = @tf_id",
 				new NpgsqlParameter("@tf_id", tfId));
 
-			if(count == 0)
+			if (count == 0)
 			{
 				return Result.Fail(new ValidationError(
 						nameof(provider),

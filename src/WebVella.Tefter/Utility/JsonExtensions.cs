@@ -52,22 +52,22 @@ public static partial class JsonExtensions
 		property.Set = CreateSetter(typeInfo.Type, propertyInfo.GetSetMethod(true));
 		property.AttributeProvider = propertyInfo;
 		property.CustomConverter = propertyInfo.GetCustomAttribute<JsonConverterAttribute>()?.ConverterType is { } converterType
-			? (JsonConverter?)Activator.CreateInstance(converterType)
+			? (JsonConverter)Activator.CreateInstance(converterType)
 			: null;
 		typeInfo.Properties.Add(property);
 	}
 
 	delegate TValue RefFunc<TObject, TValue>(ref TObject arg);
 
-	static Func<object, object?>? CreateGetter(Type type, MethodInfo? method)
+	static Func<object, object> CreateGetter(Type type, MethodInfo method)
 	{
 		if (method == null)
 			return null;
 		var myMethod = typeof(JsonExtensions).GetMethod(nameof(JsonExtensions.CreateGetterGeneric), BindingFlags.NonPublic | BindingFlags.Static)!;
-		return (Func<object, object?>)(myMethod.MakeGenericMethod(new[] { type, method.ReturnType }).Invoke(null, new[] { method })!);
+		return (Func<object, object>)(myMethod.MakeGenericMethod(new[] { type, method.ReturnType }).Invoke(null, new[] { method })!);
 	}
 
-	static Func<object, object?> CreateGetterGeneric<TObject, TValue>(MethodInfo method)
+	static Func<object, object> CreateGetterGeneric<TObject, TValue>(MethodInfo method)
 	{
 		if (method == null)
 			throw new ArgumentNullException();
@@ -83,15 +83,15 @@ public static partial class JsonExtensions
 		}
 	}
 
-	static Action<object, object?>? CreateSetter(Type type, MethodInfo? method)
+	static Action<object, object> CreateSetter(Type type, MethodInfo method)
 	{
 		if (method == null)
 			return null;
 		var myMethod = typeof(JsonExtensions).GetMethod(nameof(JsonExtensions.CreateSetterGeneric), BindingFlags.NonPublic | BindingFlags.Static)!;
-		return (Action<object, object?>)(myMethod.MakeGenericMethod(new[] { type, method.GetParameters().Single().ParameterType }).Invoke(null, new[] { method })!);
+		return (Action<object, object>)(myMethod.MakeGenericMethod(new[] { type, method.GetParameters().Single().ParameterType }).Invoke(null, new[] { method })!);
 	}
 
-	static Action<object, object?>? CreateSetterGeneric<TObject, TValue>(MethodInfo method)
+	static Action<object, object> CreateSetterGeneric<TObject, TValue>(MethodInfo method)
 	{
 		if (method == null)
 			throw new ArgumentNullException();
@@ -101,14 +101,14 @@ public static partial class JsonExtensions
 		}
 		else
 		{
-			var func = (Action<TObject, TValue?>)Delegate.CreateDelegate(typeof(Action<TObject, TValue?>), method);
-			return (o, v) => func((TObject)o, (TValue?)v);
+			var func = (Action<TObject, TValue>)Delegate.CreateDelegate(typeof(Action<TObject, TValue>), method);
+			return (o, v) => func((TObject)o, (TValue)v);
 		}
 	}
 
-	static MemberInfo? GetMemberInfo(this JsonPropertyInfo property) => (property.AttributeProvider as MemberInfo);
+	static MemberInfo GetMemberInfo(this JsonPropertyInfo property) => (property.AttributeProvider as MemberInfo);
 
-	static IEnumerable<Type> BaseTypesAndSelf(this Type? type)
+	static IEnumerable<Type> BaseTypesAndSelf(this Type type)
 	{
 		while (type != null)
 		{

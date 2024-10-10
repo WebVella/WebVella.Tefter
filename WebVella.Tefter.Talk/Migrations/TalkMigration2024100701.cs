@@ -10,10 +10,12 @@ public class TalkMigration2024100701 : ITfApplicationMigration
 {
 	public async Task MigrateDataAsync(TfApplicationBase app, IServiceProvider serviceprovider, IDatabaseService dbService)
 	{
+		await Task.Delay(0);
 	}
 
 	public async Task MigrateStructureAsync(TfApplicationBase app, DatabaseBuilder dbBuilder)
 	{
+		await Task.Delay(0);
 
 		dbBuilder
 			.WithTableBuilder("talk_thread")
