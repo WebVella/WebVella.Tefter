@@ -12,6 +12,9 @@ public partial interface ITalkService
 	public Result<Guid> CreateThread(
 		CreateTalkThread thread);
 
+	public Result<Guid> CreateSubThread(
+		CreateTalkSubThread thread);
+
 	public Result UpdateThread(
 		Guid threadid,
 		string content);
@@ -167,10 +170,6 @@ ORDER BY tt.created_on DESC";
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			//threads which are not sub threads are always visible in channel
-			if(thread.ThreadId is null)
-				thread.VisibleInChannel = true;
-
 			var SQL = @"INSERT INTO talk_thread
 						(id, channel_id, thread_id, type, content, user_id,
 						created_on, last_updated_on, deleted_on, visible_in_channel)
@@ -189,7 +188,7 @@ ORDER BY tt.created_on DESC";
 
 			var threadIdPar = TalkUtility.CreateParameter(
 				"@thread_id",
-				thread.ThreadId,
+				null,
 				DbType.Guid);
 
 			var typePar = TalkUtility.CreateParameter(
@@ -204,7 +203,7 @@ ORDER BY tt.created_on DESC";
 
 			var visibleInChannelPar = TalkUtility.CreateParameter(
 				"@visible_in_channel",
-				thread.VisibleInChannel,
+				true,
 				DbType.Boolean);
 
 			var userIdPar = TalkUtility.CreateParameter(
@@ -281,6 +280,142 @@ ORDER BY tt.created_on DESC";
 
 				return Result.Ok(id);
 			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
+		}
+	}
+
+	public Result<Guid> CreateSubThread(
+		CreateTalkSubThread thread)
+	{
+		try
+		{
+			if (thread == null)
+				throw new NullReferenceException("Thread object is null");
+
+			//Guid id = Guid.NewGuid();
+
+			//TalkThreadValidator validator = new TalkThreadValidator(this);
+
+			//var validationResult = validator.ValidateCreate(thread, id);
+
+			//if (!validationResult.IsValid)
+			//	return validationResult.ToResult();
+
+			//var SQL = @"INSERT INTO talk_thread
+			//			(id, channel_id, thread_id, type, content, user_id,
+			//			created_on, last_updated_on, deleted_on, visible_in_channel)
+			//		VALUES(@id, @channel_id, @thread_id, @type, @content, @user_id,
+			//			@created_on, @last_updated_on, @deleted_on,@visible_in_channel); ";
+
+			//var idPar = TalkUtility.CreateParameter(
+			//	"@id",
+			//	id,
+			//	DbType.Guid);
+
+			//var channelIdPar = TalkUtility.CreateParameter(
+			//	"@channel_id",
+			//	thread.ChannelId,
+			//	DbType.Guid);
+
+			//var threadIdPar = TalkUtility.CreateParameter(
+			//	"@thread_id",
+			//	null,
+			//	DbType.Guid);
+
+			//var typePar = TalkUtility.CreateParameter(
+			//	"@type",
+			//	(short)thread.Type,
+			//	DbType.Int16);
+
+			//var contentPar = TalkUtility.CreateParameter(
+			//	"@content",
+			//	thread.Content,
+			//	DbType.String);
+
+			//var visibleInChannelPar = TalkUtility.CreateParameter(
+			//	"@visible_in_channel",
+			//	true,
+			//	DbType.Boolean);
+
+			//var userIdPar = TalkUtility.CreateParameter(
+			//	"@user_id",
+			//	thread.UserId,
+			//	DbType.Guid);
+
+			//var createdOnPar = TalkUtility.CreateParameter(
+			//	"@created_on",
+			//	DateTime.Now,
+			//	DbType.DateTime2);
+
+			//var lastUpdatedOnPar = TalkUtility.CreateParameter(
+			//	"@last_updated_on",
+			//	null,
+			//	DbType.DateTime2);
+
+			//var deletedOnPar = TalkUtility.CreateParameter(
+			//	"@deleted_on",
+			//	null,
+			//	DbType.DateTime2);
+
+			//using (var scope = _dbService.CreateTransactionScope())
+			//{
+			//	var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			//		SQL,
+			//		idPar, channelIdPar, threadIdPar,
+			//		typePar, contentPar, userIdPar,
+			//		createdOnPar, lastUpdatedOnPar,
+			//		deletedOnPar, visibleInChannelPar);
+
+			//	if (dbResult != 1)
+			//		throw new Exception("Failed to insert new row in database for thread object");
+
+
+			//	if (thread.RowIds != null && thread.RowIds.Count > 0)
+			//	{
+			//		var channel = GetChannel(thread.ChannelId).Value;
+			//		var provider = _dataProviderManager.GetProvider(thread.DataProviderId).Value;
+
+			//		if (provider is null)
+			//			throw new Exception($"Failed to find data provider with id='{thread.DataProviderId}'");
+
+			//		var queryResult = _dataManager.QueryDataProvider(provider, thread.RowIds);
+
+			//		if (!queryResult.IsSuccess)
+			//			return Result.Fail(new Error("Failed to get rows by ids.")
+			//				.CausedBy(queryResult.Errors));
+
+			//		List<Guid> relatedSK = new List<Guid>();
+
+			//		foreach (TfDataRow row in queryResult.Value.Rows)
+			//		{
+			//			var skIdValue = row.GetSharedKeyValue(channel.SharedKey);
+			//			if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
+			//				relatedSK.Add(skIdValue.Value);
+			//		}
+
+			//		foreach (var skId in relatedSK)
+			//		{
+			//			var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+			//				"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
+			//					new NpgsqlParameter("@id", skId),
+			//					new NpgsqlParameter("@thread_id", id));
+
+			//			if (skDbResult != 1)
+			//				throw new Exception("Failed to insert new row in database for related shared key object");
+			//		}
+			//	}
+
+			//	scope.Complete();
+
+			//	var threads = GetThreads(thread.ChannelId, null);
+
+			//	return Result.Ok(id);
+			//}
+
+			throw new NotImplementedException();
 		}
 		catch (Exception ex)
 		{
