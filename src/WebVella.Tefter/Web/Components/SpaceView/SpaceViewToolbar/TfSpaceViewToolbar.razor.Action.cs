@@ -2,10 +2,9 @@
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 	private TfSpaceViewActionSelector _actionSelector;
-	private Task OnActionClick()
+	private async Task OnActionClick()
 	{
-		_actionSelector.ToggleSelector();
-		return Task.CompletedTask;
+		await _actionSelector.ToggleSelector();
 	}
 	//private void OnActionChange(SpaceViewActionChangedEventArgs args)
 	//{

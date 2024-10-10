@@ -74,29 +74,32 @@
 		width: 1rem !important;
 	}
 
+::deep.talk-message.editor-active {
+	background: var(--space-background-color);
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
 ::deep .talk-sender {
 	font-weight: bold;
 }
 
-::deep .talk-timestamp {
+::deep .talk-timestamp,
+::deep .talk-updated,
+::deep .talk-broadcast{
 	color: var(--neutral-base-color);
+	margin-left:5px;
 }
 
 ::deep .tf_message_editor {
 	margin-top: 10px;
 }
 
-::deep.talk-message.editor-active {
-	background: var(--message-editor-background);
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
 ::deep .talk-deleted {
 	color: var(--neutral-base-color);
 }
 
-::deep .talk-multicast svg {
+ ::deep .talk-broadcast svg {
 	fill: var(--neutral-base-color) !important;
 	vertical-align: text-bottom;
 }

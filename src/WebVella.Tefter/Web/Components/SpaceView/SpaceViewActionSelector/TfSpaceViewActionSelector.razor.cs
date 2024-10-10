@@ -6,9 +6,10 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 
 	private bool _open = false;
 
-	public void ToggleSelector()
+	public async Task ToggleSelector()
 	{
 		_open = !_open;
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private Task _deleteSelectedRecords()

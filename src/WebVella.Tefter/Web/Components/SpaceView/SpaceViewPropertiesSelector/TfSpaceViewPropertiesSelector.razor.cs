@@ -12,8 +12,9 @@ public partial class TfSpaceViewPropertiesSelector : TfBaseComponent
 	{
 	}
 
-	public void ToggleSelector()
+	public async Task ToggleSelector()
 	{
 		_open = !_open;
+		await InvokeAsync(StateHasChanged);
 	}
 }

@@ -4,8 +4,8 @@
 
 <style>
 	.talk-panel {
-		--message-editor-background: @TfAppState.Value.SpaceBackgkroundColor;
-		--panel-header-label-color: @TfAppState.Value.SpaceColorString;
+		--space-background-color: @TfAppState.Value.SpaceBackgkroundColor;
+		--space-color: @TfAppState.Value.SpaceColorString;
 	}
 </style>
 @if (_activeThread is not null)
@@ -105,14 +105,34 @@
 				<div class="talk-panel__right" style="@(_activeThread is null ? "display:none" : "")">
 					@if (_activeThread is not null)
 					{
-						<div class="talk-panel__right__header">
-							<div>@LOC("Thread")</div>
-							<div>
-								<FluentButton Appearance="@Appearance.Stealth"
-											  OnClick="_closeActiveThread"
-											  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						@if (_activeThread.RelatedSK.Keys.Count > 1)
+						{
+							<div class="talk-panel__right__header broadcast">
+								<div class="talk-panel__right__header-icon">
+									<FluentIcon Value="@TfConstants.GetIcon("Communication")" />
+								</div>
+								<div class="talk-panel__right__header-label">@LOC("Broadcast")</div>
+								<div class="talk-panel__right__header-actions">
+									<FluentButton Appearance="@Appearance.Stealth"
+												  OnClick="_closeActiveThread"
+												  IconStart="@TfConstants.GetIcon("ChevronLeft").WithColor(Color.Neutral)" />
+								</div>
 							</div>
-						</div>
+						}
+						else
+						{
+							<div class="talk-panel__right__header">
+								<div class="talk-panel__right__header-icon">
+									<FluentIcon Value="@TfConstants.GetIcon("Communication")" />
+								</div>
+								<div class="talk-panel__right__header-label">@LOC("Thread")</div>
+								<div class="talk-panel__right__header-actions">
+									<FluentButton Appearance="@Appearance.Stealth"
+												  OnClick="_closeActiveThread"
+												  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+								</div>
+							</div>
+						}
 						<div class="talk-panel__right__body">
 							<div class="talk-panel__right__body__messages">
 								<TalkMessage @key=_activeThread.Id

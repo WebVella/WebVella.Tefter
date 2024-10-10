@@ -82,10 +82,8 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		{
 			var submit = new CreateTalkThread
 			{
-				VisibleInChannel = false,
 				ChannelId = _channel.Id,
 				Content = _channelEditorContent,
-				ThreadId = null,
 				Type = TalkThreadType.Comment,
 				UserId = TfUserState.Value.CurrentUser.Id,
 				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
@@ -121,38 +119,27 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			var submit = new CreateTalkThread
+			var submit = new CreateTalkSubThread
 			{
 				VisibleInChannel = false,
-				ChannelId = _channel.Id,
 				Content = _threadEditorContent,
 				ThreadId = _activeThread.Id,
-				Type = TalkThreadType.Comment,
 				UserId = TfUserState.Value.CurrentUser.Id,
-				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
-				RowIds = new List<Guid> { _rowId }
 			};
-			var result = TalkService.CreateThread(submit);
+			var result = TalkService.CreateSubThread(submit);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Message is sent"));
 				_threadEditorContent = null;
-				//var getThreadResult = TalkService.GetThread(_activeThread.Id);
-				//if (getThreadResult.IsSuccess)
-				//{
-				//	_activeThread = getThreadResult.Value;
-				//	var threadIndex = _threads.FindIndex(x=> x.Id == _activeThread.Id);
-				//	if(threadIndex > -1) _threads[threadIndex] = _activeThread;
-				//}
-				//else throw new Exception("GetThread failed");
-
-				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
-				var activeThreadIndex = getThreadsResult.Value.FindIndex(x=> x.Id == _activeThread.Id);
-				_activeThread = getThreadsResult.Value[activeThreadIndex];
-				var threadIndex = _threads.FindIndex(x => x.Id == _activeThread.Id);
-				if (threadIndex > -1) _threads[threadIndex] = _activeThread;
-
+				var getThreadResult = TalkService.GetThread(_activeThread.Id);
+				if (getThreadResult.IsSuccess)
+				{
+					_activeThread = getThreadResult.Value;
+					var threadIndex = _threads.FindIndex(x => x.Id == _activeThread.Id);
+					if (threadIndex > -1) _threads[threadIndex] = _activeThread;
+				}
+				else throw new Exception("GetThread failed");
 			}
 		}
 		catch (Exception ex)

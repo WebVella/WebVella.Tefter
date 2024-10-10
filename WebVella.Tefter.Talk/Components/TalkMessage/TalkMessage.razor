@@ -29,16 +29,16 @@
 				else
 				{
 					<span class="talk-sender">@_user.Names</span>
-					<span class="talk-timestamp" title="@Item.CreatedOn.ToString("dd MMM yyyy HH:mm")">@Item.CreatedOn.ToString("HH:mm")</span>
 					@if (Item.RelatedSK.Keys.Count > 1)
 					{
-						<span class="talk-multicast">
-							<FluentIcon Style="margin-left:5px" Value="@TfConstants.GetIcon("Communication")" Title="@LOC("connected to multiple rows")" />
+						<span class="talk-broadcast" title="@LOC("connected to multiple rows")">
+							<FluentIcon Value="@TfConstants.GetIcon("Communication")" />
 						</span>
 					}
+					<span class="talk-timestamp" title="@Item.CreatedOn.ToString("dd MMM yyyy HH:mm")">@Item.CreatedOn.ToString("HH:mm")</span>
 					@if (Item.LastUpdatedOn is not null)
 					{
-						<span class="text-muted" style="margin-left:5px;" title="@Item.LastUpdatedOn?.ToString(TfConstants.DateTimeFormat)">(@LOC("updated"))</span>
+						<span class="talk-updated" style="margin-left:5px;" title="@Item.LastUpdatedOn?.ToString(TfConstants.DateTimeFormat)">(@LOC("updated"))</span>
 					}
 				}
 			</div>

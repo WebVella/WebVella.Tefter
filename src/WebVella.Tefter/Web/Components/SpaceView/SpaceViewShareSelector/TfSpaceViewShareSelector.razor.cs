@@ -8,9 +8,10 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 	private string _exportExcelUrl = "/api/export/export-view";
 	private string _exportSelectionBtnId = "tfExportSelectionBtn";
 	private string _exportAllBtnId = "tfExportAllBtn";
-	public void ToggleSelector()
+	public async Task ToggleSelector()
 	{
 		_open = !_open;
+		await InvokeAsync(StateHasChanged);
 	}
 	private async Task _copyLinkToClipboard()
 	{

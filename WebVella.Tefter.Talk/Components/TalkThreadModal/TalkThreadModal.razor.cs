@@ -74,14 +74,13 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 		if (_isSubmitting) return;
 		_isSubmitting = true;
 		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1);
 		try
 		{
 			var submit = new CreateTalkThread
 			{
-				VisibleInChannel = false,
 				ChannelId = _selectedChannel.Id,
 				Content = _content,
-				ThreadId = null,
 				Type = TalkThreadType.Comment,
 				UserId = TfUserState.Value.CurrentUser.Id,
 				RowIds = Content.SelectedRowIds,
