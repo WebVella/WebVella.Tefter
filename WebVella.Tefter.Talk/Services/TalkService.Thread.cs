@@ -67,6 +67,11 @@ internal partial class TalkService : ITalkService
 	FROM talk_related_sk trs
 		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
 	GROUP BY trs.thread_id
+), 
+root_threads AS (
+	SELECT id 
+	FROM talk_thread
+	WHERE channel_id = @channel_id AND thread_id IS NULL
 )
 SELECT 
 	tt.id,
@@ -82,14 +87,22 @@ SELECT
 	sk_info.json_result AS related_shared_key_json
 FROM talk_thread tt
 	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
-WHERE tt.channel_id = @channel_id
-ORDER BY tt.created_on DESC";
+	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
+WHERE rt.id IS NOT NULL
+ORDER BY tt.created_on DESC
+";
 
 const string SQL_WITH_SK = @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
 	FROM talk_related_sk trs
 		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
 	GROUP BY trs.thread_id
+),
+root_threads AS (
+	SELECT tt.id 
+	FROM talk_thread tt
+		LEFT OUTER JOIN talk_related_sk sk ON sk.thread_id = tt.id AND sk.id = @sk_id
+	WHERE tt.channel_id = @channel_id AND tt.thread_id IS NULL AND sk.id IS NOT NULL
 )
 SELECT 
 	tt.id,
@@ -105,8 +118,8 @@ SELECT
 	sk_info.json_result AS related_shared_key_json
 FROM talk_thread tt
 	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
-	LEFT OUTER JOIN talk_related_sk sk ON sk.thread_id = tt.id AND sk.id = @sk_id
-WHERE sk.id is not null
+	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
+WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC";
 
 			string sql = string.Empty;
