@@ -58,6 +58,19 @@
 			<FluentValidationMessage For="@(() => _form.CultureName)" />
 		</FluentGridItem>
 	</FluentGrid>
+
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentTextArea Required="DisplayMode == Web.Models.ComponentDisplayMode.Form"
+							ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.ReadOnly"
+							Rows="7"
+							Value=@_advancedSettings
+							ValueChanged="(x=> _changeAdvancedSettings(x))"
+							Resize="TextAreaResize.Vertical"
+							Label="@LOC("Advanced Settings")" Style="width:100%" />
+			<FluentValidationMessage For="@(() => _form.AdvancedSetting)" />
+		</FluentGridItem>
+	</FluentGrid>
 </FluentEditForm>
 
 

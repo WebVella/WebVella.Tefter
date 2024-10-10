@@ -126,7 +126,8 @@
 		</div>
 	}
 	@if ((!IsSubThread && OnSubThreadView.HasDelegate && Item.VisibleInChannel && Item.ThreadId is not null)
-			|| (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id && Item.DeletedOn is null))
+			|| (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id && Item.DeletedOn is null)
+			|| Item.ThreadId is null)
 	{
 		<div class="talk-message__actions">
 			@if (!IsSubThread && OnSubThreadView.HasDelegate && Item.VisibleInChannel && Item.ThreadId is not null)

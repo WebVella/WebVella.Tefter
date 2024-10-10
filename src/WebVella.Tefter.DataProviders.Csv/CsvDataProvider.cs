@@ -151,7 +151,8 @@ public class CsvDataProvider : ITfDataProviderType
 
 							row[providerColumnWithSource.DbName] = ConvertValue(
 								providerColumnWithSource,
-								sourceRow[sourceName]);
+								sourceRow[sourceName],
+								settings: settings);
 
 						}
 						catch (Exception ex)
@@ -175,7 +176,8 @@ public class CsvDataProvider : ITfDataProviderType
 
 	private object ConvertValue(
 		TfDataProviderColumn column,
-		object value)
+		object value,
+		CsvDataProviderSettings settings)
 	{
 		//CSV source values are all string
 		string stringValue = value?.ToString();
@@ -183,6 +185,14 @@ public class CsvDataProvider : ITfDataProviderType
 		//if column is nullable return null, null is return for empty string 
 		if (string.IsNullOrEmpty(stringValue) && column.IsNullable)
 			return null;
+
+		string columnImportParseFormat = null;
+		if (settings is not null && settings.AdvancedSetting is not null
+			&& settings.AdvancedSetting.ColumnImportParseFormat is not null
+			&& settings.AdvancedSetting.ColumnImportParseFormat.ContainsKey(column.DbName))
+		{
+			columnImportParseFormat = settings.AdvancedSetting.ColumnImportParseFormat[column.DbName];
+		}
 
 		switch (column.DbType)
 		{
@@ -208,7 +218,10 @@ public class CsvDataProvider : ITfDataProviderType
 
 			case DatabaseColumnType.DateTime:
 				{
-					if (DateTime.TryParse(value?.ToString(), out DateTime parsedValue))
+					if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
+						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, null, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
+						return parsedValueExact;
+					else if (DateTime.TryParse(value?.ToString(), out DateTime parsedValue))
 						return parsedValue;
 
 					throw new Exception("Cannot convert value to DateTime value");
@@ -216,7 +229,13 @@ public class CsvDataProvider : ITfDataProviderType
 
 			case DatabaseColumnType.Date:
 				{
-					if (DateOnly.TryParse(value?.ToString(), out DateOnly parsedValue))
+					if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
+						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, null, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
+					{
+						//There are problems with DateOnly parse exact, so we use DateTime
+						return new DateOnly(parsedValueExact.Year,parsedValueExact.Month,parsedValueExact.Day);
+					}
+					else if (DateOnly.TryParse(value?.ToString(), out DateOnly parsedValue))
 						return parsedValue;
 
 					throw new Exception("Cannot convert value to DateOnly value");
