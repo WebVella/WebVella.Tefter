@@ -2,7 +2,7 @@
 
 public partial interface ITalkService
 {
-	internal Result<TalkThread> GetThread(
+	public Result<TalkThread> GetThread(
 		Guid id);
 
 	public Result<List<TalkThread>> GetThreads(
@@ -27,28 +27,7 @@ internal partial class TalkService : ITalkService
 	{
 		try
 		{
-			const string SQL = @"
-WITH sk_info AS (
-	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
-	FROM talk_related_sk trs
-		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
-	GROUP BY trs.thread_id
-)
-SELECT 
-	tt.id,
-	tt.channel_id,
-	tt.thread_id,
-	tt.type,
-	tt.content,
-	tt.user_id,
-	tt.created_on,
-	tt.last_updated_on,
-	tt.visible_in_channel,
-	tt.deleted_on,
-	sk_info.json_result AS related_shared_key_json
-FROM talk_thread tt
-	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
-WHERE tt.id = @id";
+			const string SQL = @"SELECT id, channel_id FROM talk_thread WHERE id = @id";
 
 			var threadIdPar = TalkUtility.CreateParameter(
 				"id",
@@ -56,12 +35,16 @@ WHERE tt.id = @id";
 				DbType.Guid);
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL, threadIdPar);
-			var threads = ToThreadList(dt);
+			if (dt.Rows.Count == 0)
+				return null;
 
-			if (threads.Count == 0)
-				return Result.Ok((TalkThread)null);
+			Guid channelId = (Guid)dt.Rows[0]["channel_id"];
 
-			return Result.Ok(threads[0]);
+			var threads = GetThreads(channelId, null).Value;
+
+			var resultThread = threads.SingleOrDefault(x=>x.ThreadId == id);
+
+			return Result.Ok(resultThread);
 		}
 		catch (Exception ex)
 		{
