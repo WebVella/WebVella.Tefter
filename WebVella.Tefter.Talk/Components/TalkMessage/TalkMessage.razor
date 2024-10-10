@@ -125,32 +125,35 @@
 			</div>
 		</div>
 	}
-
-	<div class="talk-message__actions">
-		@if (!IsSubThread && OnSubThreadView.HasDelegate && Item.VisibleInChannel && Item.ThreadId is not null)
-		{
-			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Neutral)"
-						  Appearance="@Appearance.Stealth" Title="@LOC("view thread")"
-						  OnClick="@OnSubThreadView" />
-		}
-		else
-		{
-			if (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id && Item.DeletedOn is null)
+	@if ((!IsSubThread && OnSubThreadView.HasDelegate && Item.VisibleInChannel && Item.ThreadId is not null)
+			|| (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id && Item.DeletedOn is null))
+	{
+		<div class="talk-message__actions">
+			@if (!IsSubThread && OnSubThreadView.HasDelegate && Item.VisibleInChannel && Item.ThreadId is not null)
 			{
-				<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
-							  Appearance="@Appearance.Stealth" Title="@LOC("delete message")"
-							  OnClick="@OnDelete" />
-				<FluentButton IconStart="@TfConstants.EditIcon.WithColor(Color.Neutral)"
-							  Appearance="@Appearance.Stealth" Title="@LOC("edit message")"
-							  OnClick="@OnEdit" />
+				<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Neutral)"
+							  Appearance="@Appearance.Stealth" Title="@LOC("view thread")"
+							  OnClick="@OnSubThreadView" />
 			}
-			if (Item.ThreadId is null)
+			else
 			{
-				<FluentButton IconStart="@TfConstants.GetIcon("Comment").WithColor(Color.Neutral)"
-							  Appearance="@Appearance.Stealth" Title="@LOC("reply to message")"
-							  OnClick="@OnReply" />
+				if (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id && Item.DeletedOn is null)
+				{
+					<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+								  Appearance="@Appearance.Stealth" Title="@LOC("delete message")"
+								  OnClick="@OnDelete" />
+					<FluentButton IconStart="@TfConstants.EditIcon.WithColor(Color.Neutral)"
+								  Appearance="@Appearance.Stealth" Title="@LOC("edit message")"
+								  OnClick="@OnEdit" />
+				}
+				if (Item.ThreadId is null)
+				{
+					<FluentButton IconStart="@TfConstants.GetIcon("Comment").WithColor(Color.Neutral)"
+								  Appearance="@Appearance.Stealth" Title="@LOC("reply to message")"
+								  OnClick="@OnReply" />
+				}
 			}
-		}
-	</div>
+		</div>
+	}
 
 </div>

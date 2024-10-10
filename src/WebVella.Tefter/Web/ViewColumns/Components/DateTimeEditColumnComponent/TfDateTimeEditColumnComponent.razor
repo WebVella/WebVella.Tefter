@@ -7,7 +7,7 @@
 			<FluentDatePicker Id="@_valueInputId"
 							  Value="@_value"
 							  ValueChanged="@((x) => _valueChanged(x))"
-							  View="@CalendarViews.Days"
+							  View="@componentOptions.CalendarViewsSelection"
 							  Style="width:60%;" />
 			<FluentTimePicker Id="@_valueTimeInputId"
 							  Value="@_value"
@@ -30,6 +30,16 @@ else if (Context.Mode == TucComponentMode.Options)
 							 Value="@componentOptions.ChangeConfirmationMessage" Style="width:100%"
 							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeConfirmationMessage),x))
 							 Placeholder="@LOC("empty shows a system one")" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="4">
+			<FluentInputLabel Label="@LOC("Selection method")" />
+			<FluentSelect Items="@(Enum.GetValues<CalendarViews>())"
+						  OptionText="@((x)=>x.ToString())"
+						  TOption="CalendarViews"
+						  SelectedOption="@componentOptions.CalendarViewsSelection"
+						  SelectedOptionChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.CalendarViewsSelection),x)) />
 		</FluentGridItem>
 	</FluentGrid>
 }

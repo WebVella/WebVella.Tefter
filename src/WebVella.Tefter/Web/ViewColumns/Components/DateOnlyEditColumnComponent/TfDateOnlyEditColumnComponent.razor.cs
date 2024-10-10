@@ -135,4 +135,8 @@ public class TfDateOnlyEditColumnComponentOptions
 
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string ChangeConfirmationMessage { get; set; }
+
+	[JsonPropertyName("CalendarViewsSelection")]
+	public CalendarViews CalendarViewsSelection { get; set; } = CalendarViews.Days;
+
 }

@@ -283,6 +283,9 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				var now = DateTime.Now;
 				if (threadsIndex > -1) _threads[threadsIndex].Content = content;
 				if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].Content = content;
+				_threadEditedId = null;
+				_subthreadEditedId = null;
+				thread.Content = content;
 			}
 		}
 		catch (Exception ex)
@@ -292,9 +295,6 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		finally
 		{
 			_threadIdUpdateSaving = null;
-			_threadEditedId = null;
-			_subthreadEditedId = null;
-			thread.Content = content;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

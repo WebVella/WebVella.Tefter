@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Time Edit")]
+[Description("Tefter DateTime Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateTimeEditColumnComponent.TfDateTimeEditColumnComponent", "WebVella.Tefter")]
 public partial class TfDateTimeEditColumnComponent : TucBaseViewColumn<TfDateTimeEditColumnComponentOptions>
 {
@@ -150,4 +150,7 @@ public class TfDateTimeEditColumnComponentOptions
 
 	[JsonPropertyName("ChangeConfirmationMessage")]
 	public string ChangeConfirmationMessage { get; set; }
+
+	[JsonPropertyName("CalendarViewsSelection")]
+	public CalendarViews CalendarViewsSelection { get; set; } = CalendarViews.Days;
 }

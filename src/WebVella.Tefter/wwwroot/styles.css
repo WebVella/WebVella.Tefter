@@ -693,7 +693,7 @@
   top: 0;
   bottom: 0;
   left: -11px;
-  box-shadow: inset -5px 0 5px var(--neutral-layer-2);
+  box-shadow: inset -2px 0 5px var(--neutral-layer-2);
   position: absolute;
 }
 .tfdt {

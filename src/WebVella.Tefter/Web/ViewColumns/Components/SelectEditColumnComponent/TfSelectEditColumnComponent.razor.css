@@ -3,6 +3,7 @@
 }
 
 ::deep fluent-button::part(control) {
+	background:var(--neutral-fill-input-focus);
 	border:1px solid var(--neutral-stroke-input-active);
 	justify-content: start;
 	display:flex;
@@ -19,8 +20,4 @@
 ::deep fluent-button {
 	background:var(--neutral-fill-input-active);
 }
-	::deep fluent-button::slotted(.end) svg {
-		fill:var(--neutral-stroke-input-active) !important;
-		fill:red !important;
-	}
 
