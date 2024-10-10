@@ -46,7 +46,7 @@
 		display: inline-block;
 	}
 
-::deep .ql-editor {
+::deep .editor-area .ql-editor {
 	min-height: 60px;
 	border-radius: calc(var(--control-corner-radius)* 1px);
 	background: var(--neutral-layer-2);
@@ -75,6 +75,8 @@
 
 			::deep .editor-area .ql-editor.ql-blank::before {
 				color: var(--neutral-stroke-rest);
+				left:10px;
+				right:10px;
 			}
 
 

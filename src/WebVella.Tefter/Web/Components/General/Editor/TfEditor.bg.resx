@@ -129,4 +129,7 @@
   <data name="Go to previous page" xml:space="preserve">
     <value>Към предишна страница</value>
   </data>
+  <data name="Shift + Enter for new line. Enter to send." xml:space="preserve">
+    <value>Shift + Enter за нов ред. Enter за изпращане.</value>
+  </data>
 </root>

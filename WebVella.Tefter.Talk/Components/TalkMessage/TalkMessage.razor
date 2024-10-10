@@ -28,13 +28,19 @@
 				}
 				else
 				{
-					<span class="talk-sender">@_user.Names</span>
 					@if (Item.RelatedSK.Keys.Count > 1)
 					{
 						<span class="talk-broadcast" title="@LOC("connected to multiple rows")">
 							<FluentIcon Value="@TfConstants.GetIcon("Communication")" />
 						</span>
 					}
+					@if (Item.VisibleInChannel && Item.ThreadId is not null)
+					{
+						<span class="talk-attachment" title="@LOC("attached to the channel")">
+							<FluentIcon Value="@TfConstants.GetIcon("Attach")" />
+						</span>
+					}
+					<span class="talk-sender">@_user.Names</span>
 					<span class="talk-timestamp" title="@Item.CreatedOn.ToString("dd MMM yyyy HH:mm")">@Item.CreatedOn.ToString("HH:mm")</span>
 					@if (Item.LastUpdatedOn is not null)
 					{
@@ -44,11 +50,18 @@
 			</div>
 			@if (Item.DeletedOn is null)
 			{
+				@if (!IsSubThread && Item.ParentThread is not null)
+				{
+					<div class="talk-inreply">
+						<span class="talk-inreply-label">@LOC("in reply to:")</span>
+						<span class="talk-inreply-parent"><a href="#" @onclick="@OnSubThreadView" @onclick:preventDefault>@_parentContent</a></span>
+					</div>
+				}
 				<div class="talk-message__right__bottom">
 					@((MarkupString)Item.Content)
 				</div>
 			}
-			@if (!HideReplies && Item.SubThread.Count > 0)
+			@if (!IsSubThread && Item.SubThread.Count > 0)
 			{
 				var distinctUsers = Item.SubThread.Select(x => new TucUser(x.User)).DistinctBy(x => x.Id).ToList();
 				var distinctUsersLimit = 5;
@@ -105,7 +118,7 @@
 									  Loading="IsSaving"
 									  Disabled="IsSaving"
 									  Appearance="@Appearance.Accent">Save</FluentButton>
-						<FluentButton OnClick="@OnEditCancel"
+						<FluentButton OnClick="@OnEditCancel" Appearance="@Appearance.Stealth"
 									  Disabled="IsSaving">Cancel</FluentButton>
 					</div>
 				</div>
@@ -113,13 +126,16 @@
 		</div>
 	}
 
-	@if (
-			(OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id)
-			|| (OnEdit.HasDelegate && Item.User.Id == CurrentUser.Id)
-			|| OnReply.HasDelegate)
-	{
-		<div class="talk-message__actions">
-			@if (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id)
+	<div class="talk-message__actions">
+		@if (!IsSubThread && OnSubThreadView.HasDelegate && Item.VisibleInChannel && Item.ThreadId is not null)
+		{
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Neutral)"
+						  Appearance="@Appearance.Stealth" Title="@LOC("view thread")"
+						  OnClick="@OnSubThreadView" />
+		}
+		else
+		{
+			if (OnDelete.HasDelegate && Item.User.Id == CurrentUser.Id && Item.DeletedOn is null)
 			{
 				<FluentButton IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
 							  Appearance="@Appearance.Stealth" Title="@LOC("delete message")"
@@ -128,9 +144,13 @@
 							  Appearance="@Appearance.Stealth" Title="@LOC("edit message")"
 							  OnClick="@OnEdit" />
 			}
-			<FluentButton IconStart="@TfConstants.GetIcon("Comment").WithColor(Color.Neutral)"
-						  Appearance="@Appearance.Stealth" Title="@LOC("reply to message")"
-						  OnClick="@OnReply" />
-		</div>
-	}
+			if (Item.ThreadId is null)
+			{
+				<FluentButton IconStart="@TfConstants.GetIcon("Comment").WithColor(Color.Neutral)"
+							  Appearance="@Appearance.Stealth" Title="@LOC("reply to message")"
+							  OnClick="@OnReply" />
+			}
+		}
+	</div>
+
 </div>

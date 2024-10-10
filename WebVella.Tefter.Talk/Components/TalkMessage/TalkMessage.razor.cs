@@ -1,5 +1,7 @@
 ﻿
 
+using HtmlAgilityPack;
+
 namespace WebVella.Tefter.Web.Components;
 
 [LocalizationResource("WebVella.Tefter.Talk.Components.TalkMessage.TalkMessage", "WebVella.Tefter.Talk")]
@@ -12,10 +14,11 @@ public partial class TalkMessage : TfBaseComponent
 	[Parameter] public EventCallback OnDelete { get; set; }
 	[Parameter] public EventCallback OnEdit { get; set; }
 	[Parameter] public EventCallback OnReply { get; set; }
+	[Parameter] public EventCallback OnSubThreadView { get; set; }
 	[Parameter] public EventCallback<string> OnEditSave { get; set; }
 	[Parameter] public EventCallback OnEditCancel { get; set; }
 	[Parameter] public bool IsSaving { get; set; } = false;
-	[Parameter] public bool HideReplies { get; set; } = false;
+	[Parameter] public bool IsSubThread { get; set; } = false;
 
 	private TucUser _user
 	{
@@ -38,6 +41,20 @@ public partial class TalkMessage : TfBaseComponent
 		}
 	}
 
+	private string _parentContent
+	{
+		get
+		{
+			if(Item.ParentThread is null || String.IsNullOrWhiteSpace(Item.ParentThread.Content)) return "";
+			
+			HtmlDocument doc = new HtmlDocument();
+			doc.LoadHtml(Item.ParentThread.Content);
+			var parentContent = doc.DocumentNode.InnerText;
+			if (parentContent.Length <= 150) return parentContent;
+			return parentContent.Substring(0, 150) + "...";
+		}
+	}
+
 	private TfEditor _editor = null;
 
 	private async Task _onUpdate()
@@ -45,4 +62,6 @@ public partial class TalkMessage : TfBaseComponent
 
 		await OnEditSave.InvokeAsync(Item.Content);
 	}
+
+
 }

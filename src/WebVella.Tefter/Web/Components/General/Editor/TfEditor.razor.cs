@@ -41,8 +41,11 @@ public partial class TfEditor : TfBaseComponent
 		{
 			var textChangeMethodName = "OnEditorChange";
 			var onEnterMethodName = OnEnter.HasDelegate ? "OnEnterHandler" : null;
+			var placeHolder = LOC("Shift + Enter for new line. Enter to send.");
+			if(!String.IsNullOrWhiteSpace(Placeholder))
+				placeHolder = Placeholder + Environment.NewLine + placeHolder;
 			await JSRuntime.InvokeAsync<object>(
-				"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, onEnterMethodName, Placeholder);
+				"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, onEnterMethodName, placeHolder);
 			_editorInited = true;
 		}
 	}

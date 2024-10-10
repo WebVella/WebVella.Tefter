@@ -57,22 +57,38 @@
 		background: var(--neutral-layer-2);
 	}
 
+::deep .tf_message_editor_actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 10px;
+}
+
+::deep .tf_message_editor_actions_left {
+	flex: 0 0 auto;
+}
+
+::deep .tf_message_editor_actions_right {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+}
+
+	::deep .tf_message_editor_actions_right fluent-button + fluent-button {
+		margin-left: 10px;
+	}
+
 ::deep.talk-message:hover .talk-message__actions {
 	display: flex;
 }
 
-::deep.talk-message__actions fluent-button {
-	height: 24px;
-	min-width: 28px;
+::deep.talk-message__actions fluent-button:not(:hover)::part(control) {
+	background: transparent;
 }
 
-	::deep.talk-message__actions fluent-button:not(:hover)::part(control) {
-		background: transparent;
-	}
-
-	::deep.talk-message__actions fluent-button svg {
-		width: 1rem !important;
-	}
+::deep.talk-message__actions fluent-button svg {
+	width: 1rem !important;
+}
 
 ::deep.talk-message.editor-active {
 	background: var(--space-background-color);
@@ -85,10 +101,14 @@
 }
 
 ::deep .talk-timestamp,
-::deep .talk-updated,
-::deep .talk-broadcast{
+::deep .talk-updated {
 	color: var(--neutral-base-color);
-	margin-left:5px;
+	margin-left: 5px;
+}
+
+::deep .talk-broadcast,
+::deep .talk-attachment {
+	margin-right: 5px;
 }
 
 ::deep .tf_message_editor {
@@ -99,7 +119,10 @@
 	color: var(--neutral-base-color);
 }
 
- ::deep .talk-broadcast svg {
+
+
+::deep .talk-broadcast svg,
+::deep .talk-attachment svg {
 	fill: var(--neutral-base-color) !important;
 	vertical-align: text-bottom;
 }
@@ -114,6 +137,7 @@
 	border-radius: calc(var(--control-corner-radius)* 1px);
 	border: calc(var(--stroke-width) * 1px) solid transparent;
 	max-width: 400px;
+	font-size:13px;
 }
 
 	::deep .talk-subthreads-button:hover {
@@ -123,7 +147,7 @@
 	}
 
 ::deep .talk-subthreads-button__avatars {
-	flex:0 0 auto;
+	flex: 0 0 auto;
 	display: inline-flex;
 	flex-wrap: nowrap;
 }
@@ -133,29 +157,63 @@
 	}
 
 ::deep .talk-subthreads-button__count {
-	flex:0 0 auto;
+	flex: 0 0 auto;
 	padding-left: 10px;
 }
 
 ::deep .talk-subthreads-button__text {
-	display:none;
+	display: none;
 	flex: 1 1 auto;
-	text-align:right;
-	color:var(--neutral-base-color);
+	text-align: right;
+	color: var(--neutral-base-color);
 }
 
 ::deep .talk-subthreads-button__icon {
-	display:none;
+	display: none;
 	flex: 0 0 auto;
 }
 
-::deep .talk-subthreads-button__icon svg{
-	fill:var(--neutral-base-color) !important;
-	vertical-align:text-bottom;
-}
+	::deep .talk-subthreads-button__icon svg {
+		fill: var(--neutral-base-color) !important;
+		vertical-align: text-bottom;
+	}
 
 
 ::deep .talk-subthreads-button:hover .talk-subthreads-button__text,
 ::deep .talk-subthreads-button:hover .talk-subthreads-button__icon {
-	display:block;
+	display: block;
 }
+
+
+/*talk-inreply*/
+.talk-inreply {
+	display: flex;
+	overflow:hidden;
+	max-width:500px;
+	font-size:13px;
+}
+
+.talk-inreply-label {
+	flex: 0 0 auto;
+	padding-right:5px;
+	color: var(--neutral-base-color);
+}
+
+.talk-inreply-parent {
+	flex:1 1 auto;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	position:relative;
+	display:block;
+	margin-right:25px;
+}
+
+	.talk-inreply-parent a {
+		text-decoration:none;
+	}
+
+	.talk-inreply-parent a:hover {
+		text-decoration:underline;
+	}
+

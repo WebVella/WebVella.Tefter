@@ -30,7 +30,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	private List<TalkThread> _threads = new();
 
 	private Guid? _threadEditedId = null;
+	private Guid? _subthreadEditedId = null;
 	private Guid? _threadIdUpdateSaving = null;
+	private bool _threadVisibleInChannel = false;
+	private bool _threadBroadcastVisible = false;
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
@@ -95,9 +98,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			{
 				ToastService.ShowSuccess(LOC("Message is sent"));
 				_channelEditorContent = null;
-				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
-				if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
-				else throw new Exception("GetThreads failed");
+				var getThreadResult = TalkService.GetThread(result.Value);
+				if (getThreadResult.IsFailed) throw new Exception("GetThreads failed");
+				_threads.Insert(0, getThreadResult.Value);
+
 			}
 		}
 		catch (Exception ex)
@@ -113,7 +117,6 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	private async Task _replyMessage()
 	{
-		Console.WriteLine("_replyMessage");
 		if (_threadEditorSending) return;
 		_threadEditorSending = true;
 		await InvokeAsync(StateHasChanged);
@@ -121,7 +124,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		{
 			var submit = new CreateTalkSubThread
 			{
-				VisibleInChannel = false,
+				VisibleInChannel = _threadVisibleInChannel,
 				Content = _threadEditorContent,
 				ThreadId = _activeThread.Id,
 				UserId = TfUserState.Value.CurrentUser.Id,
@@ -138,6 +141,14 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 					_activeThread = getThreadResult.Value;
 					var threadIndex = _threads.FindIndex(x => x.Id == _activeThread.Id);
 					if (threadIndex > -1) _threads[threadIndex] = _activeThread;
+					if (_threadVisibleInChannel)
+					{
+						var subThreadIndex = _activeThread.SubThread.FindIndex(x => x.Id == result.Value);
+						if (subThreadIndex > -1)
+						{
+							_threads.Insert(0, _activeThread.SubThread[subThreadIndex]);
+						}
+					}
 				}
 				else throw new Exception("GetThread failed");
 			}
@@ -149,6 +160,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		finally
 		{
 			_threadEditorSending = false;
+			_threadVisibleInChannel = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
@@ -169,6 +181,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				prevMain is not null && !prevMain.DeletedOn.HasValue
 				&& prevMain.User.Id == message.User.Id
 				&& !message.DeletedOn.HasValue
+				&& !(message.VisibleInChannel && message.ThreadId.HasValue)
 				&& (message.RelatedSK is null || message.RelatedSK.Count <= 1)
 				&& (message.CreatedOn - prevMain.CreatedOn).TotalMinutes <= 5)
 			{
@@ -185,22 +198,41 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	{
 		_activeThread = _activeThread?.Id != thread.Id ? thread : null;
 	}
+	private void _onSubThreadView(TalkThread thread)
+	{
+		_activeThread = thread.ParentThread;
+	}
+
 
 	private void _closeActiveThread()
 	{
 		_activeThread = null;
 	}
 
-	private async Task _editThread(TalkThread thread)
+	private async Task _editThread(TalkThread thread, bool isChannelThread = true)
 	{
-		if (_threadEditedId is not null)
+		if (isChannelThread)
 		{
-			if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("You will loose any unsaved changes on your previous edit. Do you want to continue?")))
-				return;
-		}
+			if (_threadEditedId is not null)
+			{
+				if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("You will loose any unsaved changes on your previous edit. Do you want to continue?")))
+					return;
+			}
 
-		if (_threadEditedId == thread.Id) _threadEditedId = null;
-		else _threadEditedId = thread.Id;
+			if (_threadEditedId == thread.Id) _threadEditedId = null;
+			else _threadEditedId = thread.Id;
+		}
+		else
+		{
+			if (_subthreadEditedId is not null)
+			{
+				if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("You will loose any unsaved changes on your previous edit. Do you want to continue?")))
+					return;
+			}
+
+			if (_subthreadEditedId == thread.Id) _subthreadEditedId = null;
+			else _subthreadEditedId = thread.Id;
+		}
 	}
 
 	private async Task _deleteThread(TalkThread thread)
@@ -216,9 +248,11 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Message deleted"));
-				var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
-				if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
-				else throw new Exception("GetThreads failed");
+				int threadsIndex = _threads.FindIndex(x => x.Id == thread.Id);
+				int subthreadsIndex = _activeThread is null ? -1 : _activeThread.SubThread.FindIndex(x => x.Id == thread.Id);
+				var now = DateTime.Now;
+				if (threadsIndex > -1) _threads[threadsIndex].DeletedOn = now;
+				if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].DeletedOn = now;
 			}
 		}
 		catch (Exception ex)
@@ -234,7 +268,6 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	private async Task _saveMessage(TalkThread thread, string content)
 	{
-		Console.WriteLine("_saveMessage");
 		if (_threadIdUpdateSaving is not null) return;
 		_threadIdUpdateSaving = thread.Id;
 		await InvokeAsync(StateHasChanged);
@@ -245,6 +278,11 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Message saved"));
+				int threadsIndex = _threads.FindIndex(x => x.Id == thread.Id);
+				int subthreadsIndex = _activeThread is null ? -1 : _activeThread.SubThread.FindIndex(x => x.Id == thread.Id);
+				var now = DateTime.Now;
+				if (threadsIndex > -1) _threads[threadsIndex].Content = content;
+				if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].Content = content;
 			}
 		}
 		catch (Exception ex)
@@ -255,6 +293,7 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		{
 			_threadIdUpdateSaving = null;
 			_threadEditedId = null;
+			_subthreadEditedId = null;
 			thread.Content = content;
 			await InvokeAsync(StateHasChanged);
 		}
@@ -264,6 +303,12 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 	{
 
 		_threadEditedId = null;
+		return Task.CompletedTask;
+	}
+
+	private Task _showThreadBradcastDetails()
+	{
+		_threadBroadcastVisible = !_threadBroadcastVisible;
 		return Task.CompletedTask;
 	}
 }

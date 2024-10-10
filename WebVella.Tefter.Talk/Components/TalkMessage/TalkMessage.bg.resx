@@ -120,6 +120,9 @@
   <data name="1 reply" xml:space="preserve">
     <value>1 отговор</value>
   </data>
+  <data name="attached to the channel" xml:space="preserve">
+    <value>прикрепено към канала</value>
+  </data>
   <data name="connected to multiple rows" xml:space="preserve">
     <value>свързан към множество редове</value>
   </data>

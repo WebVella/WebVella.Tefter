@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="attach to channel" xml:space="preserve">
+    <value>прикрепи към канала</value>
+  </data>
   <data name="Message in #{0}" xml:space="preserve">
     <value>Съобщение в #{0}</value>
   </data>
@@ -131,6 +134,12 @@
   </data>
   <data name="Reply..." xml:space="preserve">
     <value>Отговори...</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Изпрати</value>
+  </data>
+  <data name="Shift + Enter for new line. Enter to send." xml:space="preserve">
+    <value>Shift + Enter за нов ред. Enter за изпращане.</value>
   </data>
   <data name="The selected dataset does not support the shared key '{0}' of channel '{1}'!" xml:space="preserve">
     <value>Избраните изходни данни не поддържат споделения ключ '{0}' на канала '{1}'!</value>

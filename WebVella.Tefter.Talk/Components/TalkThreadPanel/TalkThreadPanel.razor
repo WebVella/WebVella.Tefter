@@ -82,7 +82,8 @@
 												 OnEdit="@(_ => _editThread(context))"
 												 OnReply="@(_ => _replyToThread(context))"
 												 OnEditSave="@(x => _saveMessage(context,x))"
-												 OnEditCancel="@(_ => _cancelSaveMessage())" />
+												 OnEditCancel="@(_ => _cancelSaveMessage())"
+												 OnSubThreadView="@(_ => _onSubThreadView(context))" />
 								}
 							</div>
 						}
@@ -92,12 +93,10 @@
 							<TfEditor @ref=_channelEditor Placeholder="@LOC("Message in #{0}",_channel.Name)" @bind-Value="_channelEditorContent" OnEnter="_sendMessage" />
 						</div>
 						<div class="talk-editor__actions">
-							<div class="editor__actions__left">
-								<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
-							</div>
+							<div class="editor__actions__left"></div>
 							<div class="editor__actions__right">
 								<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_sendMessage"
-											  Loading="_channelEditorSending" Disabled="_channelEditorSending">Send</FluentButton>
+											  Loading="_channelEditorSending" Disabled="_channelEditorSending">@LOC("Send")</FluentButton>
 							</div>
 						</div>
 					</div>
@@ -109,25 +108,45 @@
 						{
 							<div class="talk-panel__right__header broadcast">
 								<div class="talk-panel__right__header-icon">
-									<FluentIcon Value="@TfConstants.GetIcon("Communication")" />
+									<FluentIcon Value="@TfConstants.GetIcon("Communication").WithColor(Color.Neutral)" />
 								</div>
 								<div class="talk-panel__right__header-label">@LOC("Broadcast")</div>
 								<div class="talk-panel__right__header-actions">
+									<FluentButton Appearance="@Appearance.Stealth" Title=@LOC("view broadcast details")
+												  OnClick="_showThreadBradcastDetails"
+												  IconStart="@(_threadBroadcastVisible ? TfConstants.GetIcon("ChevronDown").WithColor(Color.Neutral) : TfConstants.GetIcon("ChevronLeft").WithColor(Color.Neutral))" />
 									<FluentButton Appearance="@Appearance.Stealth"
+												  Title=@LOC("close thread")
 												  OnClick="_closeActiveThread"
-												  IconStart="@TfConstants.GetIcon("ChevronLeft").WithColor(Color.Neutral)" />
+												  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 								</div>
 							</div>
+							@if (_threadBroadcastVisible)
+							{
+								<div class="talk-panel__right__subheader">
+									<table class="tf-grid">
+										<tbody class="tf-grid-tbody">
+											@foreach (var key in _activeThread.RelatedSK.Keys)
+											{
+												<tr @key=@key class="tf-grid-tr">
+													<td class="tf-grid-td"><div>@_activeThread.RelatedSK[key]</div></td>
+												</tr>
+											}
+										</tbody>
+									</table>
+								</div>
+							}
 						}
 						else
 						{
 							<div class="talk-panel__right__header">
 								<div class="talk-panel__right__header-icon">
-									<FluentIcon Value="@TfConstants.GetIcon("Communication")" />
+									<FluentIcon Value="@TfConstants.GetIcon("CommentMultiple").WithColor(Color.Neutral)" />
 								</div>
 								<div class="talk-panel__right__header-label">@LOC("Thread")</div>
 								<div class="talk-panel__right__header-actions">
 									<FluentButton Appearance="@Appearance.Stealth"
+												  Title=@LOC("close thread")
 												  OnClick="_closeActiveThread"
 												  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 								</div>
@@ -139,21 +158,25 @@
 											 Item="_activeThread"
 											 CurrentUser="TfUserState.Value.CurrentUser"
 											 Class=""
-											 IsEdited="@(_threadEditedId == _activeThread.Id)"
+											 IsEdited="@(_subthreadEditedId == _activeThread.Id)"
 											 IsSaving=@(_threadIdUpdateSaving == _activeThread.Id)
-											 HideReplies="true"
+											 IsSubThread="true"
 											 OnDelete="@(_ => _deleteThread(_activeThread))"
-											 OnEdit="@(_ => _editThread(_activeThread))"
+											 OnEdit="@(_ => _editThread(_activeThread,false))"
 											 OnReply="@(_ => _replyToThread(_activeThread))"
 											 OnEditSave="@(x => _saveMessage(_activeThread,x))"
 											 OnEditCancel="@(_ => _cancelSaveMessage())" />
 
 								@if (_activeThread.SubThread is not null && _activeThread.SubThread.Count > 0)
 								{
-									<div class="talk-message-separator">
-										<div class="talk-message-separator-label">@LOC("{0} replies", _activeThread.SubThread.Count)</div>
-										<div class="talk-message-separator-ruler"></div>
-									</div>
+									var visibleThreads = _activeThread.SubThread.Where(x => x.DeletedOn is null).ToList();
+									if (visibleThreads.Count > 0)
+									{
+										<div class="talk-message-separator">
+											<div class="talk-message-separator-label">@LOC("{0} replies", visibleThreads.Count)</div>
+											<div class="talk-message-separator-ruler"></div>
+										</div>
+									}
 								}
 								@{
 									var threadCssDict = _generateThreadClassDict(_activeThread.SubThread);
@@ -165,11 +188,11 @@
 												 Item="context"
 												 CurrentUser="TfUserState.Value.CurrentUser"
 												 Class="@threadCssDict[context.Id]"
-												 IsEdited="@(_threadEditedId == context.Id)"
+												 IsEdited="@(_subthreadEditedId == context.Id)"
 												 IsSaving=@(_threadIdUpdateSaving == context.Id)
-												 HideReplies="true"
+												 IsSubThread="true"
 												 OnDelete="@(_ => _deleteThread(context))"
-												 OnEdit="@(_ => _editThread(context))"
+												 OnEdit="@(_ => _editThread(context,false))"
 												 OnReply="@(_ => _replyToThread(context))"
 												 OnEditSave="@(x => _saveMessage(context,x))"
 												 OnEditCancel="@(_ => _cancelSaveMessage())" />
@@ -181,11 +204,11 @@
 									</div>
 									<div class="talk-editor__actions">
 										<div class="editor__actions__left">
-											<span class="text-muted">Shift + Enter for new line. Enter to send.</span>
+											<FluentCheckbox @bind-Value=@_threadVisibleInChannel Label="@LOC("attach to channel")" />
 										</div>
 										<div class="editor__actions__right">
 											<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_replyMessage"
-														  Loading="_threadEditorSending" Disabled="_threadEditorSending">Send</FluentButton>
+														  Loading="_threadEditorSending" Disabled="_threadEditorSending">@LOC("Send")</FluentButton>
 										</div>
 									</div>
 								</div>
