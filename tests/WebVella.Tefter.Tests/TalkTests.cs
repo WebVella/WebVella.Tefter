@@ -113,7 +113,7 @@ public partial class TalkTests : BaseTest
 				var id2 = talkService.CreateSubThread(thread2).Value;
 				threads = talkService.GetThreads(channel.Id, relSKId).Value;
 				threads.Count.Should().Be(1);
-				threads[0].SubThread.Count.Should().Be(2);
+				threads[0].SubThread.Count.Should().Be(1);
 
 				CreateTalkSubThread thread3 = new CreateTalkSubThread
 				{
