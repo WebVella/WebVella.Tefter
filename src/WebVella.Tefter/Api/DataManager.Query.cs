@@ -636,6 +636,8 @@ public partial class DataManager
 
 			if (newId != (Guid)row[$"tf_sk_{sharedKey.DbName}_id"])
 				row[$"tf_sk_{sharedKey.DbName}_id"] = newId;
+
+			row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
 		}
 
 		List<string> columnsWithChanges = new List<string>();

@@ -113,8 +113,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			{
 				var dbo = SharedKeyToDbo(sharedKey);
 
-				//set initial version to 0
-				dbo.Version = 0;
+				//set initial version to 1,
+				//default database value for version column is 0
+				//so already existing rows will be with version 0 and
+				//will be updated by background job
+				dbo.Version = 1;
 
 				dbo.LastModifiedOn = DateTime.Now;
 

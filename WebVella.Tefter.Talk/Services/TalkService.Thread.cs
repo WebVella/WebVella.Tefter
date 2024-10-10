@@ -42,7 +42,7 @@ internal partial class TalkService : ITalkService
 
 			var threads = GetThreads(channelId, null).Value;
 
-			var resultThread = threads.SingleOrDefault(x=>x.ThreadId == id);
+			var resultThread = threads.SingleOrDefault(x=>x.Id == id);
 
 			return Result.Ok(resultThread);
 		}

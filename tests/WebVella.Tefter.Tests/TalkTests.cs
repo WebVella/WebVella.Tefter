@@ -92,6 +92,10 @@ public partial class TalkTests : BaseTest
 				};
 
 				var id1 = talkService.CreateThread(thread).Value;
+				
+				var th = talkService.GetThread(id1).Value;
+				th.Should().NotBeNull();
+
 				var threads = talkService.GetThreads(channel.Id, null).Value;
 				threads.Count.Should().Be(1);
 
