@@ -115,7 +115,13 @@ public static class DependencyInjection
 			var loadedPaths = loadedAssemblies.Select(a => a.Location).ToHashSet();
 			var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.dll");
 			var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
-			toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
+			foreach (var path in toLoad)
+			{
+				Assembly assembly = null;
+				try { assembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path));  }catch {};
+				if(assembly != null)
+				loadedAssemblies.Add(assembly);
+			}
 		}
 	}
 }
