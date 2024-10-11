@@ -153,7 +153,7 @@ public partial class DataManager
 			{
 				List<string> keys = new List<string>();
 				foreach (var column in sharedKey.Columns)
-					keys.Add(row[column.DbName].ToString());
+					keys.Add(row[column.DbName]?.ToString());
 
 				var skIdResult = GetId(keys.ToArray());
 				if (!skIdResult.IsSuccess)

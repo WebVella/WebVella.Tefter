@@ -152,7 +152,8 @@ public class CsvDataProvider : ITfDataProviderType
 							row[providerColumnWithSource.DbName] = ConvertValue(
 								providerColumnWithSource,
 								sourceRow[sourceName],
-								settings: settings);
+								settings: settings,
+								culture:culture);
 
 						}
 						catch (Exception ex)
@@ -177,7 +178,8 @@ public class CsvDataProvider : ITfDataProviderType
 	private object ConvertValue(
 		TfDataProviderColumn column,
 		object value,
-		CsvDataProviderSettings settings)
+		CsvDataProviderSettings settings,
+		CultureInfo culture)
 	{
 		//CSV source values are all string
 		string stringValue = value?.ToString();
@@ -219,7 +221,7 @@ public class CsvDataProvider : ITfDataProviderType
 			case DatabaseColumnType.DateTime:
 				{
 					if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
-						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, null, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
+						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
 						return parsedValueExact;
 					else if (DateTime.TryParse(value?.ToString(), out DateTime parsedValue))
 						return parsedValue;
@@ -230,7 +232,7 @@ public class CsvDataProvider : ITfDataProviderType
 			case DatabaseColumnType.Date:
 				{
 					if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
-						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, null, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
+						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
 					{
 						//There are problems with DateOnly parse exact, so we use DateTime
 						return new DateOnly(parsedValueExact.Year,parsedValueExact.Month,parsedValueExact.Day);

@@ -45,8 +45,8 @@
 							<tr class="tf-grid-tr">
 								@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
 								{
-									if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
-									if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+									if (!_showSystemColumns && column.IsSystem) { continue; }
+									if (!_showSharedKeyColumns && column.IsShared) { continue; }
 									if (!_showCustomColumns && !column.IsSystem) { continue; }
 									<th class="tf-grid-th">@column.Name</th>
 									columnCount++;

@@ -58,7 +58,8 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				_isLoading = false;
 				await InvokeAsync(StateHasChanged);
 				await Task.Delay(100);
-				await _channelEditor.Focus();
+				if(_channelEditor is not null)
+					await _channelEditor.Focus();
 			}
 			else
 			{

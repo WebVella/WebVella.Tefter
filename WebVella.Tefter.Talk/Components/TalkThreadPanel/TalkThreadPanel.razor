@@ -26,23 +26,97 @@
 		}
 		else if (Content.ChannelId is null)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No channel is configured for this column!")</FluentMessageBar>
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No channel is configured for this column!")</FluentMessageBar>
+					</div>
+				</div>
+			</div>
 		}
 		else if (_channel is null)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No talk channel is selected for this view column!")</FluentMessageBar>
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No talk channel is selected for this view column!")</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
 		}
 		else if (String.IsNullOrWhiteSpace(_channel.SharedKey))
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The talk channel has no shared key set!")</FluentMessageBar>
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The talk channel has no shared key set!")</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
 		}
 		else if (_skValue is null)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of channel '{1}'!", _channel.SharedKey, _channel.Name)</FluentMessageBar>
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of channel '{1}'!", _channel.SharedKey, _channel.Name)</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
 		}
 		else if (_skValue == Guid.Empty)
 		{
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _channel.SharedKey)</FluentMessageBar>
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _channel.SharedKey)</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
 		}
 		else
 		{
@@ -50,7 +124,7 @@
 				<div class="talk-panel__left">
 					<div class="talk-panel__left__header">
 						<div class="talk-channel-label">@($"#{_channel.Name}")</div>
-						<div>
+						<div class="talk-panel__left__header_actions">
 							<FluentButton Appearance="@Appearance.Stealth"
 										  OnClick="_cancel"
 										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
