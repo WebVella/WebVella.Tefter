@@ -49,8 +49,8 @@ public class ExportUseCase
 
 		var dataServiceResult = _dataManager.QuerySpaceData(
 			spaceDataId: view.SpaceDataId,
-			additionalFilters: filters,
-			sortOverrides: sorts,
+			userFilters: filters,
+			userSorts: sorts,
 			search: data.RouteState.Search,
 			page: null,
 			pageSize: null

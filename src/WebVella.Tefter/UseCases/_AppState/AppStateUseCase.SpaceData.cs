@@ -329,8 +329,8 @@ internal partial class AppStateUseCase
 
 		var serviceResult = _dataManager.QuerySpaceData(
 			spaceDataId: spaceDataId,
-			additionalFilters: filters,
-			sortOverrides: sorts,
+			userFilters: filters,
+			userSorts: sorts,
 			search: search,
 			page: page,
 			pageSize: pageSize

@@ -116,8 +116,8 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 				var dataManager = serviceProvider.GetService<IDataManager>();
 				var optionsDTResult = dataManager.QuerySpaceData(
 					spaceDataId: componentOptions.SpaceDataId,
-					additionalFilters: null,
-					sortOverrides: null,
+					userFilters: null,
+					userSorts: null,
 					search: null,
 					page: 1,
 					pageSize: TfConstants.SelectOptionsMaxLimit

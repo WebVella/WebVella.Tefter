@@ -133,7 +133,7 @@ public partial class DataManagerTests : BaseTest
 					search: "10",
 					page: 1,
 					pageSize: 5,
-					additionalFilters: new List<TfFilterBase>
+					userFilters: new List<TfFilterBase>
 					{
 						new TfFilterOr(new[]
 							{
@@ -144,7 +144,7 @@ public partial class DataManagerTests : BaseTest
 							})
 
 					},
-					sortOverrides: new List<TfSort> {
+					userSorts: new List<TfSort> {
 						new TfSort {
 							DbName ="missing_column",
 							Direction=TfSortDirection.DESC} ,

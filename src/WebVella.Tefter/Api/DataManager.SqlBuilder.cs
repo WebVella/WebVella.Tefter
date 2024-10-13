@@ -20,8 +20,10 @@ public partial class DataManager
 
 		private TfFilterAnd _mainFilter;
 		private List<TfFilterBase> _filters = new();
-		private List<TfFilterBase> _additionalFilters = new();
-		private List<TfSort> _sortOrders = null;
+		private List<TfFilterBase> _userFilters = new();
+		private List<TfSort> _userSorts = null;
+		private List<TfFilterBase> _presetFilters = new();
+		private List<TfSort> _presetSorts = null;
 		private string _search = null;
 		private int? _page = null;
 		private int? _pageSize = null;
@@ -31,8 +33,10 @@ public partial class DataManager
 			IDatabaseService dbService,
 			TfDataProvider dataProvider,
 			TfSpaceData spaceData = null,
-			List<TfFilterBase> additionalFilters = null,
-			List<TfSort> sortOrders = null,
+			List<TfFilterBase> userFilters = null,
+			List<TfSort> userSorts = null,
+			List<TfFilterBase> presetFilters = null,
+			List<TfSort> presetSorts = null,
 			string search = null,
 			int? page = null,
 			int? pageSize = null)
@@ -46,10 +50,15 @@ public partial class DataManager
 			if (spaceData is not null && spaceData.Filters is not null)
 				_filters = spaceData.Filters;
 
-			if (additionalFilters is not null)
-				_additionalFilters = additionalFilters;
+			if (userFilters is not null)
+				_userFilters = userFilters;
 
-			_sortOrders = sortOrders;
+			_userSorts = userSorts;
+
+			if (presetFilters is not null)
+				_presetFilters = presetFilters;
+
+			_presetSorts = presetSorts;
 
 			_search = search;
 
@@ -87,9 +96,13 @@ public partial class DataManager
 
 			_filters = new List<TfFilterBase>();
 
-			_additionalFilters = new List<TfFilterBase>();
+			_userFilters = new List<TfFilterBase>();
 
-			_sortOrders = new List<TfSort>();
+			_userSorts = new List<TfSort>();
+
+			_presetFilters = new List<TfFilterBase>();
+
+			_presetSorts = new List<TfSort>();
 
 			_search = null;
 
@@ -122,9 +135,9 @@ public partial class DataManager
 			{
 				_selectColumns = _availableColumns.ToList();
 
-				if (_sortOrders is not null && _sortOrders.Count >= 0)
+				if (_userSorts is not null && _userSorts.Count >= 0)
 				{
-					foreach (var sortOrder in _sortOrders)
+					foreach (var sortOrder in _userSorts)
 					{
 						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
 						if (column is not null)
@@ -162,12 +175,34 @@ public partial class DataManager
 				}
 
 				//add all provider columns if there is no valid column in space data
-				if(!spaceDataHasAtLeastOneValidColumn)
+				if (!spaceDataHasAtLeastOneValidColumn)
 				{
 					_selectColumns = _availableColumns.ToList();
 				}
 
-				if (spaceData.SortOrders is not null && spaceData.SortOrders.Any())
+				//order of sort apply:
+				//1. if user specify own sort 
+				//2. if preset sort is specified
+				//3. if space data sort is specified
+				if (_userSorts is not null && _userSorts.Count > 0)
+				{
+					foreach (var sortOrder in _userSorts)
+					{
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						if (column is not null)
+							_sortColumns.Add(column);
+					}
+				}
+				else if (_presetSorts is not null && _presetSorts.Count > 0)
+				{
+					foreach (var sortOrder in _presetSorts)
+					{
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						if (column is not null)
+							_sortColumns.Add(column);
+					}
+				}
+				else if (spaceData.SortOrders is not null && spaceData.SortOrders.Any())
 				{
 					foreach (var sortOrder in spaceData.SortOrders)
 					{
@@ -176,21 +211,14 @@ public partial class DataManager
 							_sortColumns.Add(column);
 					}
 				}
-				else if (_sortOrders is not null && _sortOrders.Count > 0)
-				{
-					foreach (var sortOrder in _sortOrders)
-					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
-						if (column is not null)
-							_sortColumns.Add(column);
-					}
-				}
+				
 			}
 
 			//extract filter columns used later for validation if column exists and its alias			
 			var spaceDataFilter = new TfFilterAnd(_filters.ToArray());
-			var additionalFilter = new TfFilterAnd(_additionalFilters.ToArray());
-			_mainFilter = new TfFilterAnd(new[] { spaceDataFilter, additionalFilter });
+			var additionalFilter = new TfFilterAnd(_userFilters.ToArray());
+			var presetFilter = new TfFilterAnd(_presetFilters.ToArray());
+			_mainFilter = new TfFilterAnd(new[] { spaceDataFilter, additionalFilter, presetFilter });
 			ExtractColumnsFromFilter(_mainFilter);
 		}
 
@@ -349,12 +377,12 @@ public partial class DataManager
 			StringBuilder sb = new StringBuilder();
 
 			//sort implementation
-			if (_sortOrders != null && _sortOrders.Any())
+			if (_userSorts != null && _userSorts.Any())
 			{
 				StringBuilder sortSb = new StringBuilder();
 
 				bool first = true;
-				foreach (var sort in _sortOrders)
+				foreach (var sort in _userSorts)
 				{
 					var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.DbName);
 
@@ -615,7 +643,7 @@ public partial class DataManager
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.VarNumeric);
 				object value = ((TfFilterNumeric)filter).Value;
-				if (value is null)	value = DBNull.Value;
+				if (value is null) value = DBNull.Value;
 				parameter.Value = value;
 				parameters.Add(parameter);
 
@@ -655,7 +683,7 @@ public partial class DataManager
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, dbType);
 				object value = ((TfFilterText)filter).Value;
-				if(value is null )
+				if (value is null)
 					value = DBNull.Value;
 				parameter.Value = value;
 				parameters.Add(parameter);

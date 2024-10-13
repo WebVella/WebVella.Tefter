@@ -16,8 +16,8 @@ public partial interface IDataManager
 
 	public Result<TfDataTable> QuerySpaceData(
 		Guid spaceDataId,
-		List<TfFilterBase> additionalFilters = null,
-		List<TfSort> sortOverrides = null,
+		List<TfFilterBase> userFilters = null,
+		List<TfSort> userSorts = null,
 		string search = null,
 		int? page = null,
 		int? pageSize = null,
@@ -59,8 +59,8 @@ public partial class DataManager
 				dbService: _dbService,
 				dataProvider: provider,
 				spaceData: null,
-				additionalFilters: null,
-				sortOrders: null,
+				userFilters: null,
+				userSorts: null,
 				search: search,
 				page: page,
 				pageSize: pageSize);
@@ -205,8 +205,8 @@ public partial class DataManager
 
 	public Result<TfDataTable> QuerySpaceData(
 		Guid spaceDataId,
-		List<TfFilterBase> additionalFilters = null,
-		List<TfSort> sortOverrides = null,
+		List<TfFilterBase> userFilters = null,
+		List<TfSort> userSorts = null,
 		string search = null,
 		int? page = null,
 		int? pageSize = null,
@@ -238,8 +238,8 @@ public partial class DataManager
 				dbService: _dbService,
 				dataProvider: provider,
 				spaceData: spaceData,
-				additionalFilters: additionalFilters,
-				sortOrders: sortOverrides ?? spaceData.SortOrders,
+				userFilters: userFilters,
+				userSorts: userSorts ?? spaceData.SortOrders,
 				search: search,
 				page: page,
 				pageSize: pageSize);
