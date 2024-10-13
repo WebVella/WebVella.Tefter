@@ -19,6 +19,10 @@ public partial interface ITfSpaceManager
 	public Result<TfSpaceView> UpdateSpaceView(
 		TfSpaceView spaceView);
 
+	public Result UpdateSpaceViewPresets(
+		Guid spaceViewId,
+		List<TfSpaceViewPreset> presets);
+
 	public Result DeleteSpaceView(
 		Guid id);
 
@@ -35,9 +39,9 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		try
 		{
-			var spaceViews = _dboManager.GetList<TfSpaceView>();
+			var spaceViews = _dboManager.GetList<TfSpaceViewDbo>();
 
-			return Result.Ok(spaceViews);
+			return Result.Ok(spaceViews.Select(x => Convert(x)).ToList());
 		}
 		catch (Exception ex)
 		{
@@ -53,12 +57,12 @@ public partial class TfSpaceManager : ITfSpaceManager
 				nameof(TfSpace.Position),
 				OrderDirection.ASC);
 
-			var spaceViews = _dboManager.GetList<TfSpaceView>(
+			var spaceViews = _dboManager.GetList<TfSpaceViewDbo>(
 				spaceId,
 				nameof(TfSpaceView.SpaceId),
 				order: orderSettings);
 
-			return Result.Ok(spaceViews);
+			return Result.Ok(spaceViews.Select(x => Convert(x)).ToList());
 		}
 		catch (Exception ex)
 		{
@@ -72,8 +76,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		try
 		{
-			var spaceView = _dboManager.Get<TfSpaceView>(id);
-			return Result.Ok(spaceView);
+			var spaceView = _dboManager.Get<TfSpaceViewDbo>(id);
+			return Result.Ok(Convert(spaceView));
 		}
 		catch (Exception ex)
 		{
@@ -120,7 +124,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				//position is ignored - space is added at last place
 				spaceView.Position = (short)(spaceViews.Count + 1);
 
-				var success = _dboManager.Insert<TfSpaceView>(spaceView);
+				var success = _dboManager.Insert<TfSpaceViewDbo>(Convert(spaceView));
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Insert", spaceView));
@@ -136,8 +140,37 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
+	public Result UpdateSpaceViewPresets(
+		Guid spaceViewId,
+		List<TfSpaceViewPreset> presets)
+	{
+		try
+		{
+			var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceViewId);
+			if (existingSpaceView == null)
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The space view is null.") }).ToResult();
+
+			existingSpaceView.PresetsJson = JsonSerializer.Serialize(presets ?? new List<TfSpaceViewPreset>());
+
+			var success = _dboManager.Update<TfSpaceViewDbo>(
+				existingSpaceView,
+				nameof(TfSpaceViewDbo.PresetsJson));
+
+			if (!success)
+				return Result.Fail(new DboManagerError("Update", existingSpaceView));
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to update space").CausedBy(ex));
+		}
+
+	}
+
 	public Result<TfSpaceView> UpdateSpaceView(
-		TfSpaceView spaceView)
+	TfSpaceView spaceView)
 	{
 		try
 		{
@@ -149,12 +182,12 @@ public partial class TfSpaceManager : ITfSpaceManager
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			var existingSpaceView = _dboManager.Get<TfSpaceView>(spaceView.Id);
+			var existingSpaceView = _dboManager.Get<TfSpaceViewDbo>(spaceView.Id);
 
 			//position is not updated
 			spaceView.Position = existingSpaceView.Position;
 
-			var success = _dboManager.Update<TfSpaceView>(spaceView);
+			var success = _dboManager.Update<TfSpaceViewDbo>(Convert(spaceView));
 
 			if (!success)
 				return Result.Fail(new DboManagerError("Update", spaceView));
@@ -193,14 +226,14 @@ public partial class TfSpaceManager : ITfSpaceManager
 				if (prevSpace != null)
 					prevSpace.Position = (short)(prevSpace.Position + 1);
 
-				var success = _dboManager.Update<TfSpaceView>(spaceView);
+				var success = _dboManager.Update<TfSpaceViewDbo>(Convert(spaceView));
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Update", spaceView));
 
 				if (prevSpace != null)
 				{
-					success = _dboManager.Update<TfSpaceView>(prevSpace);
+					success = _dboManager.Update<TfSpaceViewDbo>(Convert(prevSpace));
 
 					if (!success)
 						return Result.Fail(new DboManagerError("Update", prevSpace));
@@ -244,14 +277,14 @@ public partial class TfSpaceManager : ITfSpaceManager
 				if (nextSpaceView != null)
 					nextSpaceView.Position = (short)(nextSpaceView.Position - 1);
 
-				var success = _dboManager.Update<TfSpaceView>(spaceView);
+				var success = _dboManager.Update<TfSpaceViewDbo>(Convert(spaceView));
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Update", spaceView));
 
 				if (nextSpaceView != null)
 				{
-					success = _dboManager.Update<TfSpaceView>(nextSpaceView);
+					success = _dboManager.Update<TfSpaceViewDbo>(Convert(nextSpaceView));
 
 					if (!success)
 						return Result.Fail(new DboManagerError("Update", nextSpaceView));
@@ -305,7 +338,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				foreach (var spaceAfter in spacesAfter)
 				{
 					spaceAfter.Position--;
-					var successUpdatePosition = _dboManager.Update<TfSpaceView>(spaceAfter);
+					var successUpdatePosition = _dboManager.Update<TfSpaceViewDbo>(Convert(spaceAfter));
 
 					if (!successUpdatePosition)
 						return Result.Fail(new DboManagerError("Failed to update space view position" +
@@ -323,7 +356,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				}
 
-				success = _dboManager.Delete<TfSpaceView>(id);
+				success = _dboManager.Delete<TfSpaceViewDbo>(id);
 
 				if (!success)
 					return Result.Fail(new DboManagerError("Delete", id));
@@ -337,6 +370,55 @@ public partial class TfSpaceManager : ITfSpaceManager
 		{
 			return Result.Fail(new Error("Failed to delete space view.").CausedBy(ex));
 		}
+	}
+
+	private TfSpaceView Convert(
+		TfSpaceViewDbo dbo)
+	{
+		if (dbo == null)
+			return null;
+
+		List<string> groups = new List<string>();
+		if (!string.IsNullOrWhiteSpace(dbo.GroupsJson))
+			groups = JsonSerializer.Deserialize<List<string>>(dbo.GroupsJson);
+
+		List<TfSpaceViewPreset> presets = new List<TfSpaceViewPreset>();
+		if (!string.IsNullOrWhiteSpace(dbo.PresetsJson))
+			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(dbo.PresetsJson);
+
+		return new TfSpaceView
+		{
+			Id = dbo.Id,
+			Name = dbo.Name,
+			Position = dbo.Position,
+			SettingsJson = dbo.SettingsJson,
+			SpaceDataId = dbo.SpaceDataId,
+			SpaceId = dbo.SpaceId,
+			Type = dbo.Type,
+			Groups = groups,
+			Presets = presets
+		};
+
+	}
+
+	private TfSpaceViewDbo Convert(
+		TfSpaceView model)
+	{
+		if (model == null)
+			return null;
+
+		return new TfSpaceViewDbo
+		{
+			Id = model.Id,
+			Name = model.Name,
+			Position = model.Position,
+			SettingsJson = model.SettingsJson,
+			SpaceDataId = model.SpaceDataId,
+			SpaceId = model.SpaceId,
+			Type = model.Type,
+			GroupsJson = JsonSerializer.Serialize(model.Groups ?? new List<string>()),
+			PresetsJson = JsonSerializer.Serialize(model.Presets ?? new List<TfSpaceViewPreset>())
+		};
 	}
 
 	#region <--- validation --->

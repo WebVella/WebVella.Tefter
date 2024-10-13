@@ -211,7 +211,6 @@ public partial class DataManager
 							_sortColumns.Add(column);
 					}
 				}
-				
 			}
 
 			//extract filter columns used later for validation if column exists and its alias			
