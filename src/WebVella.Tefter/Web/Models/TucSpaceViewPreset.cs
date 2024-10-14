@@ -3,7 +3,7 @@
 public record TucSpaceViewPreset
 {
 	[JsonPropertyName("id")]
-	public Guid Id { get; set; }
+	public Guid Id { get; set; } //if there is a preset with the view Id, this should be used for the view
 	
 	[JsonPropertyName("name")]
 	public string Name { get; set; }
@@ -14,6 +14,12 @@ public record TucSpaceViewPreset
 	[JsonPropertyName("sort_orders")]
 	public List<TfSort> SortOrders { get; set; } = new();
 
+	[JsonPropertyName("nodes")]
+	public List<TucSpaceViewPreset> Nodes { get; set; } = new();
+
+	[JsonPropertyName("is_group")]
+	public bool IsGroup { get; set; } = false;
+
 	public TucSpaceViewPreset() { }
 	public TucSpaceViewPreset(TfSpaceViewPreset model)
 	{
@@ -21,6 +27,9 @@ public record TucSpaceViewPreset
 		Name = model.Name;
 		Filters = model.Filters;
 		SortOrders = model.SortOrders;
+		Nodes = model.Nodes.Select(x=> new  TucSpaceViewPreset(x)).ToList();
+		IsGroup = model.IsGroup;
+
 	}
 	public TfSpaceViewPreset ToModel()
 	{
@@ -29,7 +38,9 @@ public record TucSpaceViewPreset
 			Id = Id,
 			Name = Name,
 			Filters = Filters,
-			SortOrders = SortOrders
+			SortOrders = SortOrders,
+			Nodes = Nodes.Select(x=> x.ToModel()).ToList(),
+			IsGroup = IsGroup,
 		};
 	}
 

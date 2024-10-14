@@ -1,0 +1,63 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<tr @key=@Item.Id class="tf-grid-tr">
+	<td class="tf-grid-td">
+		<div>
+			<FluentStack Wrap="false">
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+							  OnClick="_onRemove" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUp")"
+							  OnClick="@(_ => _onMove(true))" Disabled="IsFirst" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowDown")"
+							  OnClick="@(_ => _onMove(false))" Disabled="IsLast"/>
+			</FluentStack>
+		</div>
+	</td>
+	@if (Item.IsGroup)
+	{
+		<td class="tf-grid-td" colspan="3">
+			<div>
+				<FluentStack Wrap="false">
+					@for (int i = 0; i < Level; i++)
+					{
+						<span class="tf-grid-td-spacer"></span>
+					}
+					<span>@Item.Name</span>
+					<span class="td-description">(@LOC("filter group"))</span>
+				</FluentStack>
+
+			</div>
+		</td>
+	}
+	else
+	{
+		<td class="tf-grid-td">
+			<div>
+				<FluentStack Wrap="false">
+					@for (int i = 0; i < Level; i++)
+					{
+						<span class="tf-grid-td-spacer"></span>
+					}
+					<span>@Item.Name</span>
+				</FluentStack>
+
+			</div>
+		</td>
+		<td class="tf-grid-td">
+			<div>@LOC("{0} filters", Item.Filters.Count)</div>
+		</td>
+		<td class="tf-grid-td">
+			<div>@LOC("{0} sorts", Item.SortOrders.Count)</div>
+		</td>
+	}
+
+</tr>
+@foreach (var context in Item.Nodes)
+{
+	var contextIndex = Item.Nodes.FindIndex(x => x.Id == context.Id);
+	<TfPresetsCardItem Item="context" Level="(Level+1)" OnEdit="OnEdit" OnMove="OnMove" OnRemove="OnRemove"
+					   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Item.Nodes.Count -1)" />
+}

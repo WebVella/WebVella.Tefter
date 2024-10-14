@@ -8,6 +8,7 @@ public partial class TfConstants
 	public static string FiltersQueryName = "flt";
 	public static string SortsQueryName = "srt";
 	public static string ActiveSaveQueryName = "svid";
+	public static string TabQueryName = "tab";
 
 	public static string SearchInBookmarksQueryName = "sbkm";
 	public static string SearchInSavesQueryName = "ssvs";

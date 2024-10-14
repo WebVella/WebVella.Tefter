@@ -666,6 +666,13 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetViewColumns(viewId));
 
 	}
+	internal Result<TucSpaceView> UpdateSpaceViewPresets(Guid viewId, List<TucSpaceViewPreset> presets)
+	{
+		var updateResult = _spaceManager.UpdateSpaceViewPresets(viewId, presets.Select(x=>x.ToModel()).ToList());
+		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceViewPresets failed").CausedBy(updateResult.Errors));
+		return Result.Ok(GetSpaceView(viewId));
+
+	}
 
 	internal List<TucSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
 	{

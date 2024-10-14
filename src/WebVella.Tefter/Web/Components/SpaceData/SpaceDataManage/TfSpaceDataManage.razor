@@ -24,197 +24,32 @@ else
 					{
 						<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
 									  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl,SelectedProvider.Id))"
-									  IconStart="@TfConstants.ViewIcon" Target="_blank"/>
+									  IconStart="@TfConstants.ViewIcon" Target="_blank" />
 					}
 				</FluentStack>
 			</FluentGridItem>
 		</FluentGrid>
 	</TfCard>
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
-	<TfCard Small="true">
-		<TitleTemplate>
-			<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-				@if (_columnOptions.Count > 0)
-				{
-					<FluentSelect @bind-SelectedOption="@_selectedColumn"
-								  Disabled="_submitting"
-								  TOption="string" Required="false"
-								  Items="@_columnOptions" Style="width:200px"
-								  Placeholder="@LOC("select provider column")"></FluentSelect>
-				}
-				else
-				{
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
-				}
-				<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-			</FluentStack>
-		</TitleTemplate>
-		<ChildContent>
-			@if (_form.Columns.Count == 0)
-			{
-				@LOC("This dataset will return all data provider columns. Select columns for limitation.")
-			}
-			else
-			{
-				<div class="tf-grid-wrapper">
-					<table class="tf-grid">
-						<tbody class="tf-grid-tbody">
-							@foreach (var context in _form.Columns.Order())
-							{
-								var column = _getProviderColumnByName(context);
-								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-									<td class="tf-grid-td" style="width:1%;vertical-align:middle">
-										<div>
-											@if (column is not null)
-											{
-												<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
-											}
-											else
-											{
-												<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
-											}
-										</div>
-									</td>
-									<td class="tf-grid-td">
-										<div>@context</div>
-									</td>
-									<td class="tf-grid-td">
-										<div>@(column is null ? null : column.DbType.Name)</div>
-									</td>
-									<td class="tf-grid-td" style="width:1%;">
-										<div>
-											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
-														  Disabled="_submitting">
-												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-											</FluentButton>
-										</div>
-									</td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
-			}
-		</ChildContent>
-	</TfCard>
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
-	<CascadingValue IsFixed="false" Name="TfSpaceDataManage" Value="this" TValue="TfSpaceDataManage">
-		<TfCard Small="true">
-			<TitleTemplate>
-				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-					<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-						<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
-						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
-					</FluentStack>
-					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" VerticalAlignment="@VerticalAlignment.Center">
-						@if (SelectedProvider is null)
-						{
-							<FluentBadge Appearance="Appearance.Accent">@LOC("no data provider")</FluentBadge>
-						}
-						else if (SelectedProvider.ColumnsTotal.Count == 0)
-						{
-							<FluentBadge Appearance="Appearance.Accent">@LOC("no columns")</FluentBadge>
-						}
-						else
-						{
-							<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
-										  TOption="string" Required="false"
-										  Items="@AllColumnOptions" Style="width:140px"
-										  Placeholder="@LOC("select...")"></FluentSelect>
-							<FluentButton Disabled="_submitting" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
-						}
-						<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
-						<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TucFilterOr),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("OR")</FluentButton>
-					</FluentStack>
-				</FluentStack>
-			</TitleTemplate>
-			<ChildContent>
-				@if (_form.Filters.Count == 0)
-				{
-					<div>@LOC("No filters added yet")</div>
-				}
-				@foreach (var item in _form.Filters)
-				{
-					<TfFilterManage Item="item" Disabled="_submitting" 
-						SelectedProvider="SelectedProvider" 
-						AddFilter="@((x) => AddFilter(x.Item1,x.Item2,x.Item3))" 
-						AddColumnFilter="@((x) => AddColumnFilter(x.Item1,x.Item2))"
-						RemoveColumnFilter="@((x) => RemoveColumnFilter(x))"
-						UpdateColumnFilter="@((x) => UpdateColumnFilter(x))"/>
-				}
-			</ChildContent>
-		</TfCard>
-	</CascadingValue>
+	<FluentTabs ActiveTabId="@_activeTab" Class="tf-tabs">
+		<FluentTab Id="columns">
+			<Header>@LOC("Columns")</Header>
+			<Content>
+				<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
+			</Content>
+		</FluentTab>
+		<FluentTab Id="filters">
+			<Header>@LOC("Query Filters")</Header>
+			<Content>
+				<TfFilterCard DataProvider="SelectedProvider" Items="_form.Filters" ItemsChanged="_onFiltersChanged" />
+			</Content>
+		</FluentTab>
+		<FluentTab Id="sorts">
+			<Header>@LOC("Default Sort")</Header>
+			<Content>
+				<TfSortCard DataProvider="SelectedProvider" Items="_form.SortOrders" ItemsChanged="_onSortChanged" />
+			</Content>
+		</FluentTab>
+	</FluentTabs>
 
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Default Sort")</FluentLabel>
-	<TfCard Small="true">
-		<TitleTemplate>
-			<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-				@if (_columnSortOptions.Count > 0)
-				{
-					<FluentSelect @bind-SelectedOption="@_selectedSort.DbName"
-								  Disabled="_submitting"
-								  TOption="string" Required="false"
-								  Items="@_columnSortOptions" Style="width:200px"
-								  Placeholder="@LOC("select provider column")"></FluentSelect>
-					<FluentSelect @bind-SelectedOption="@_selectedSort.Direction"
-								  Disabled="_submitting"
-								  TOption="TucSortDirection"
-								  Items="@(Enum.GetValues<TucSortDirection>())" Style="width:100px"></FluentSelect>
-				}
-				else
-				{
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
-				}
-				<FluentButton OnClick="_addSortColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnSortOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-			</FluentStack>
-		</TitleTemplate>
-		<ChildContent>
-			@if (_form.SortOrders.Count == 0)
-			{
-				@LOC("This dataset will return all data without any sorting.")
-			}
-			else
-			{
-				<div class="tf-grid-wrapper">
-					<table class="tf-grid">
-						<tbody class="tf-grid-tbody">
-							@foreach (var context in _form.SortOrders)
-							{
-								<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-									<td class="tf-grid-td" style="width:1%;vertical-align:middle">
-										<div>
-											@if (AllColumnOptions.Contains(context.DbName))
-											{
-												<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
-											}
-											else
-											{
-												<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
-											}
-										</div>
-									</td>
-									<td class="tf-grid-td" style="width:300px;">
-										<div>@context.DbName</div>
-									</td>
-									<td class="tf-grid-td">
-										<div>@context.Direction.ToDescriptionString()</div>
-									</td>
-									<td class="tf-grid-td" style="width:1%;">
-										<div>
-											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteSortColumn(context))" Title="@LOC("Delete sort order")"
-														  Disabled="_submitting">
-												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-											</FluentButton>
-										</div>
-									</td>
-								</tr>
-							}
-						</tbody>
-					</table>
-				</div>
-			}
-		</ChildContent>
-	</TfCard>
 }
 

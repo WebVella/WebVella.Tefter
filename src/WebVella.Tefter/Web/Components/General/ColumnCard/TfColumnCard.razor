@@ -1,0 +1,70 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<TfCard Small="true">
+	<TitleTemplate>
+		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+			@if (_columnOptions.Count > 0)
+			{
+				<FluentSelect @bind-SelectedOption="@_selectedColumn"
+							  Disabled="_submitting"
+							  TOption="string" Required="false"
+							  Items="@_columnOptions" Style="width:200px"
+							  Placeholder="@LOC("select provider column")"></FluentSelect>
+			}
+			else
+			{
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+			}
+			<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+		</FluentStack>
+	</TitleTemplate>
+	<ChildContent>
+		@if (Items.Count == 0)
+		{
+			@LOC("This dataset will return all data provider columns. Select columns for limitation.")
+		}
+		else
+		{
+			<div class="tf-grid-wrapper">
+				<table class="tf-grid">
+					<tbody class="tf-grid-tbody">
+						@foreach (var context in Items.Order())
+						{
+							var column = _getProviderColumnByName(context);
+							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+								<td class="tf-grid-td" style="width:1%;vertical-align:middle">
+									<div>
+										@if (column is not null)
+										{
+											<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
+										}
+										else
+										{
+											<FluentIcon Value="@TfConstants.GetIcon("ErrorCircle")" Color="@Color.Error" Title="@LOC("not found in provider")"></FluentIcon>
+										}
+									</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@context</div>
+								</td>
+								<td class="tf-grid-td">
+									<div>@(column is null ? null : column.DbType.Name)</div>
+								</td>
+								<td class="tf-grid-td" style="width:1%;">
+									<div>
+										<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+													  Disabled="_submitting">
+											<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+										</FluentButton>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</ChildContent>
+</TfCard>

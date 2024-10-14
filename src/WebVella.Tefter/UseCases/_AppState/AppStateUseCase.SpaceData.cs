@@ -208,31 +208,13 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucSpaceData(tfResult.Value));
 	}
 
-	internal Result<TucSpaceData> AddColumnToSpaceData(Guid spaceDataId, string columnDbName)
+	internal Result<TucSpaceData> UpdateSpaceDataColumns(Guid spaceDataId, List<string> columns)
 	{
 		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
-		if (String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
 		var spaceData = GetSpaceData(spaceDataId);
 		if (spaceData is null) return Result.Fail("spaceData not found");
-		if (spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
-
-		spaceData.Columns.Add(columnDbName);
-		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
-
-		return Result.Ok(new TucSpaceData(updateResult.Value));
-
-	}
-
-	internal Result<TucSpaceData> RemoveColumnFromSpaceData(Guid spaceDataId, string columnDbName)
-	{
-		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
-		if (String.IsNullOrWhiteSpace(columnDbName)) return Result.Fail("columnDbName is required");
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null) return Result.Fail("spaceData not found");
-		if (!spaceData.Columns.Contains(columnDbName)) return Result.Ok(spaceData);
-
-		spaceData.Columns.Remove(columnDbName);
+		spaceData.Columns = columns;
+		var model = spaceData.ToModel();
 		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
 		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
@@ -254,31 +236,13 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal Result<TucSpaceData> AddSortColumnToSpaceData(Guid spaceDataId, TucSort sort)
+	internal Result<TucSpaceData> UpdateSpaceDataSorts(Guid spaceDataId, List<TucSort> sorts)
 	{
 		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
-		if (sort is null || String.IsNullOrWhiteSpace(sort.DbName)) return Result.Fail("sort is required");
 		var spaceData = GetSpaceData(spaceDataId);
 		if (spaceData is null) return Result.Fail("spaceData not found");
-		if (spaceData.SortOrders.Any(x => x.DbName == sort.DbName)) return Result.Ok(spaceData);
-
-		spaceData.SortOrders.Add(sort);
-		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
-
-		return Result.Ok(new TucSpaceData(updateResult.Value));
-
-	}
-
-	internal Result<TucSpaceData> RemoveSortColumnFromSpaceData(Guid spaceDataId, TucSort sort)
-	{
-		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
-		if (sort is null || String.IsNullOrWhiteSpace(sort.DbName)) return Result.Fail("sort is required");
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null) return Result.Fail("spaceData not found");
-		if (!spaceData.SortOrders.Any(x => x.DbName == sort.DbName)) return Result.Ok(spaceData);
-
-		spaceData.SortOrders = spaceData.SortOrders.Where(x => x.DbName != sort.DbName).ToList();
+		spaceData.SortOrders = sorts;
+		var model = spaceData.ToModel();
 		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
 		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
