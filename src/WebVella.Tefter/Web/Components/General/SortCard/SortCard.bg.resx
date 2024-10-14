@@ -117,49 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Added to groups" xml:space="preserve">
-    <value>Добавено към групи</value>
+  <data name="Column already added for sort" xml:space="preserve">
+    <value>Колоната е вече добавена за сортиране</value>
   </data>
-  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете колоната?</value>
-  </data>
-  <data name="Columns" xml:space="preserve">
-    <value>Колони</value>
-  </data>
-  <data name="Default Sort" xml:space="preserve">
-    <value>Подреждане</value>
-  </data>
-  <data name="Filters and Sorts" xml:space="preserve">
-    <value>Филтри и Подреждания</value>
-  </data>
-  <data name="Freeze Final Columns" xml:space="preserve">
-    <value>Замрази последние колони</value>
-  </data>
-  <data name="Freeze Starting Columns" xml:space="preserve">
-    <value>Замрази първите колони</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Име</value>
-  </data>
-  <data name="open dataset" xml:space="preserve">
-    <value>отвори данните</value>
-  </data>
-  <data name="open view" xml:space="preserve">
-    <value>отвори изгледа</value>
-  </data>
-  <data name="Quick Filter Navigation" xml:space="preserve">
-    <value>Навигация от Бързи Филтри</value>
-  </data>
-  <data name="Space View updated" xml:space="preserve">
-    <value>Изгледа е обновен</value>
-  </data>
-  <data name="These filters will be applied simultaneously with the user defined ones." xml:space="preserve">
-    <value>Тези филтри ще бъдат приложени едновременно с потребителските.</value>
-  </data>
-  <data name="These sorts will be overrided by the user defined ones." xml:space="preserve">
-    <value>Това подреждане се прилага само, ако няма потребителско.</value>
-  </data>
-  <data name="unknown" xml:space="preserve">
-    <value>непознат</value>
+  <data name="No data sort order defined yet" xml:space="preserve">
+    <value>Все още не е дефинирано подреждане на данните</value>
   </data>
 </root>

@@ -7,37 +7,9 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	public TucDataProvider SelectedProvider = null;
-	public bool _submitting = false;
-	public List<string> AllColumnOptions
-	{
-		get
-		{
-			if (SelectedProvider is null) return new List<string>();
-			return SelectedProvider.ColumnsTotal.Select(x => x.DbName).ToList();
-		}
-	}
-	internal List<string> _columnOptions
-	{
-		get
-		{
-			if (TfAppState.Value.SpaceData?.Columns is null) return AllColumnOptions;
-			return AllColumnOptions.Where(x => !TfAppState.Value.SpaceData.Columns.Contains(x)).ToList();
-		}
-	}
-	internal List<string> _columnSortOptions
-	{
-		get
-		{
-			if (TfAppState.Value.SpaceData?.SortOrders is null) return AllColumnOptions;
-			return AllColumnOptions.Where(x => !TfAppState.Value.SpaceData.SortOrders.Any(y => y.DbName == x)).ToList();
-		}
-	}
-
-	internal string _selectedColumn = null;
-	internal string _selectedFilterColumn = null;
-	internal TucSort _selectedSort = new TucSort();
 
 	private string _error = string.Empty;
+	private string _activeTab = "columns";
 	private bool _isSubmitting = false;
 	private TucSpaceData _form = new();
 
@@ -84,68 +56,11 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 	}
 
-
-	private void _dataProviderSelected(TucDataProvider provider)
+	private async Task _onColumnsChanged(List<string> columns)
 	{
-		if (provider is null) return;
-		SelectedProvider = provider;
-		_form.DataProviderId = SelectedProvider.Id;
-	}
-
-	private TucColumn _getProviderColumnByName(string dbName)
-	{
-		return SelectedProvider?.ColumnsTotal.FirstOrDefault(x => x.DbName == dbName);
-	}
-
-	private async Task _addColumn()
-	{
-		if (_isSubmitting) return;
 		try
 		{
-			if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
-			if (_form.Columns.Contains(_selectedColumn)) return;
-
-
-
-			Result<TucSpaceData> submitResult = UC.AddColumnToSpaceData(TfAppState.Value.SpaceData.Id, _selectedColumn);
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				ToastService.ShowSuccess("Dataset updated!");
-				submitResult.Value.Columns = submitResult.Value.Columns.Order().ToList();
-				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
-				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
-				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceData = submitResult.Value,
-					SpaceDataList = spaceDataList
-				}));
-				_form = submitResult.Value with { Id = submitResult.Value.Id };
-			}
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			_isSubmitting = false;
-			_selectedColumn = null;
-			await InvokeAsync(StateHasChanged);
-		}
-
-	}
-	private async Task _deleteColumn(string column)
-	{
-		if (_isSubmitting) return;
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?")))
-			return;
-		try
-		{
-			Result<TucSpaceData> submitResult = UC.RemoveColumnFromSpaceData(TfAppState.Value.SpaceData.Id, column);
+			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataColumns(TfAppState.Value.SpaceData.Id, columns);
 			ProcessFormSubmitResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
@@ -169,124 +84,13 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 		finally
 		{
-			_isSubmitting = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-	public async Task AddFilter(Type type, string dbName, Guid? parentId)
+	private async Task _onFiltersChanged(List<TucFilterBase> filters)
 	{
-		TucFilterBase filter = null;
-		if (type == typeof(TucFilterAnd)) filter = new TucFilterAnd() { ColumnName = dbName };
-		else if (type == typeof(TucFilterOr)) filter = new TucFilterOr() { ColumnName = dbName };
-		else if (type == typeof(TucFilterBoolean)) filter = new TucFilterBoolean() { ColumnName = dbName };
-		else if (type == typeof(TucFilterDateOnly)) filter = new TucFilterDateOnly() { ColumnName = dbName };
-		else if (type == typeof(TucFilterDateTime)) filter = new TucFilterDateTime() { ColumnName = dbName };
-		else if (type == typeof(TucFilterGuid)) filter = new TucFilterGuid() { ColumnName = dbName };
-		else if (type == typeof(TucFilterNumeric)) filter = new TucFilterNumeric() { ColumnName = dbName };
-		else if (type == typeof(TucFilterText)) filter = new TucFilterText() { ColumnName = dbName };
-		else throw new Exception("Filter type not supported");
-		if (parentId is null)
-		{
-			_form.Filters.Add(filter);
-		}
-		else
-		{
-			TucFilterBase parentFilter = null;
-			foreach (var item in _form.Filters)
-			{
-				var (result, resultParent) = FindFilter(item, parentId.Value, null);
-				if (result is not null)
-				{
-					parentFilter = result;
-					break;
-				}
-			}
-			if (parentFilter is not null)
-			{
-				if (parentFilter is TucFilterAnd) ((TucFilterAnd)parentFilter).Filters.Add(filter);
-				if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Add(filter);
-			}
-		}
-
-		await _saveFilters();
-	}
-
-	public async Task AddColumnFilter(string dbColumn, Guid? parentId)
-	{
-		if (String.IsNullOrWhiteSpace(dbColumn)) return;
-		if (SelectedProvider is null) return;
-		var column = SelectedProvider.ColumnsTotal.FirstOrDefault(x => x.DbName == dbColumn);
-		if (column is null) return;
-
-		switch (column.DbType.TypeValue)
-		{
-			case TucDatabaseColumnType.ShortInteger:
-			case TucDatabaseColumnType.Integer:
-			case TucDatabaseColumnType.LongInteger:
-			case TucDatabaseColumnType.Number:
-				{
-					await AddFilter(typeof(TucFilterNumeric), dbColumn, parentId);
-				}
-				break;
-			case TucDatabaseColumnType.Boolean:
-				{
-					await AddFilter(typeof(TucFilterBoolean), dbColumn, parentId);
-				}
-				break;
-			case TucDatabaseColumnType.Date:
-				{
-					await AddFilter(typeof(TucFilterDateOnly), dbColumn, parentId);
-				}
-				break;
-			case TucDatabaseColumnType.DateTime:
-				{
-					await AddFilter(typeof(TucFilterDateTime), dbColumn, parentId);
-				}
-				break;
-			case TucDatabaseColumnType.ShortText:
-			case TucDatabaseColumnType.Text:
-				{
-					await AddFilter(typeof(TucFilterText), dbColumn, parentId);
-				}
-				break;
-			case TucDatabaseColumnType.Guid:
-				{
-					await AddFilter(typeof(TucFilterGuid), dbColumn, parentId);
-				}
-				break;
-			default: throw new Exception("Unsupported column data type");
-
-		}
-	}
-
-	public async Task RemoveColumnFilter(Guid filterId)
-	{
-		TucFilterBase filter = null;
-		TucFilterBase parentFilter = null;
-		foreach (var item in _form.Filters)
-		{
-			var (result, resultParent) = FindFilter(item, filterId, null);
-			if (result is not null)
-			{
-				filter = result;
-				parentFilter = resultParent;
-				break;
-			}
-		}
-
-		if (filter is not null)
-		{
-			if (parentFilter is null) _form.Filters.Remove(filter);
-			else if (parentFilter is TucFilterAnd) ((TucFilterAnd)parentFilter).Filters.Remove(filter);
-			else if (parentFilter is TucFilterOr) ((TucFilterOr)parentFilter).Filters.Remove(filter);
-			await InvokeAsync(StateHasChanged);
-			await _saveFilters();
-		}
-	}
-
-	public async Task UpdateColumnFilter(TucFilterBase filter)
-	{
+		_form.Filters = filters;
 		await _saveFilters();
 	}
 
@@ -325,65 +129,11 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	}
 
-	private async Task _addColumnFilterHandler()
+	private async Task _onSortChanged(List<TucSort> sorts)
 	{
-		if (String.IsNullOrWhiteSpace(_selectedFilterColumn)) return;
-		await AddColumnFilter(_selectedFilterColumn, null);
-		//_selectedFilterColumn = null; //do not clear for convenience
-	}
-
-	private async Task _addSortColumn()
-	{
-		if (_isSubmitting) return;
 		try
 		{
-			if (_selectedSort is null || String.IsNullOrWhiteSpace(_selectedSort.DbName)) return;
-			if (TfAppState.Value.SpaceData.SortOrders.Any(x => x.DbName == _selectedSort.DbName)) return;
-
-
-
-			Result<TucSpaceData> submitResult = UC.AddSortColumnToSpaceData(TfAppState.Value.SpaceData.Id, _selectedSort);
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				ToastService.ShowSuccess("Dataset updated!");
-				submitResult.Value.Columns = submitResult.Value.Columns.Order().ToList();
-				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
-				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
-				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceData = submitResult.Value,
-					SpaceDataList = spaceDataList
-				}));
-				_form = submitResult.Value with { Id = submitResult.Value.Id };
-			}
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			_isSubmitting = false;
-			_selectedColumn = null;
-			await InvokeAsync(StateHasChanged);
-		}
-
-	}
-
-
-	private async Task _deleteSortColumn(TucSort sort)
-	{
-		if (_isSubmitting) return;
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this sort order removed?")))
-			return;
-		try
-		{
-			Result<TucSpaceData> submitResult = UC.RemoveSortColumnFromSpaceData(TfAppState.Value.SpaceData.Id, sort);
+			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataSorts(TfAppState.Value.SpaceData.Id, sorts);
 			ProcessFormSubmitResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
@@ -407,23 +157,8 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		}
 		finally
 		{
-			_isSubmitting = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}
 
-
-	private (TucFilterBase, TucFilterBase) FindFilter(TucFilterBase filter, Guid matchId, TucFilterBase parent)
-	{
-		if (filter.Id == matchId) return (filter, parent);
-		List<TucFilterBase> filters = new();
-		if (filter is TucFilterAnd) filters = ((TucFilterAnd)filter).Filters;
-		if (filter is TucFilterOr) filters = ((TucFilterOr)filter).Filters;
-		foreach (var item in filters)
-		{
-			var (result, resultParent) = FindFilter(item, matchId, filter);
-			if (result is not null) return (result, resultParent);
-		}
-		return (null, null);
-	}
 }

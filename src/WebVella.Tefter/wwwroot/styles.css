@@ -696,6 +696,10 @@
   box-shadow: inset -2px 0 5px var(--neutral-layer-2);
   position: absolute;
 }
+.tf-grid-td-spacer {
+  display: inline-block;
+  width: 1rem;
+}
 .tfdt {
   position: absolute;
   top: 0;
@@ -955,6 +959,12 @@ fluent-anchored-region fluent-menu {
 .fluent-dialog-main.right::part(control),
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px;
+}
+.tf-tabs {
+  margin-top: 1rem;
+}
+.tf-tabs fluent-tab-panel {
+  padding-top: 1rem;
 }
 :root {
   --tf-content-padding: 15px;

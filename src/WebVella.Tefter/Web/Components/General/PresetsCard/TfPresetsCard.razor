@@ -1,0 +1,51 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<TfCard Small="true">
+	<TitleTemplate>
+		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+			<FluentTextField @bind-Value="@_selectedName"
+							 Disabled="_submitting"
+							 Placeholder="@LOC("name")"
+							 Required="true" Style="width:180px" />
+			<FluentSelect @bind-SelectedOption="@_selectedType"
+						  Disabled="_submitting"
+						  TOption="TfPresetsCardType" Required="true"
+						  Items="@(Enum.GetValues<TfPresetsCardType>())" Style="min-width:60px"
+						  OptionText="@(x=> x.ToDescriptionString())" />
+			<FluentSelect @bind-SelectedOption="@_selectedParent"
+						  Disabled="_submitting"
+						  TOption="TucSpaceViewPreset"
+						  Items="@_getParents()" Style="min-width:180px"
+						  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
+			<FluentButton OnClick="_addPreset" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
+						  Disabled="@_submitting">@LOC("Add new")</FluentButton>
+		</FluentStack>
+	</TitleTemplate>
+	<ChildContent>
+		@if (Items.Count == 0)
+		{
+			@LOC("No quick filters defined. Standard view will be presented.")
+		}
+		else
+		{
+			<div class="tf-grid-wrapper">
+				<table class="tf-grid">
+					<colgroup style="width:1%"></colgroup>
+					<colgroup></colgroup>
+					<colgroup style="width:120px;"></colgroup>
+					<colgroup style="width:120px;"></colgroup>
+					<tbody class="tf-grid-tbody">
+						@foreach (var context in Items)
+						{
+							var contextIndex = Items.FindIndex(x => x.Id == context.Id);
+							<TfPresetsCardItem Item="context" Level="0" OnRemove="@_removePreset" OnMove="@_movePreset"
+											   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Items.Count -1)" />
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+	</ChildContent>
+</TfCard>
