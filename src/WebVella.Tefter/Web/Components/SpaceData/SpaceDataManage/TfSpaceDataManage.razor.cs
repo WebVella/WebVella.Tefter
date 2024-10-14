@@ -160,5 +160,5 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
 }
+

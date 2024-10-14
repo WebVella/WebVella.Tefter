@@ -120,10 +120,19 @@
   <data name="Cancel" xml:space="preserve">
     <value>Откажи</value>
   </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Филтри</value>
+  </data>
+  <data name="Groups do not have filter and sort selection." xml:space="preserve">
+    <value>Групите нямат избор на филтри и сортиране.</value>
+  </data>
   <data name="Quick Filter Management" xml:space="preserve">
     <value>Редакция на Бърз Филтър</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Запомни</value>
+  </data>
+  <data name="Sort" xml:space="preserve">
+    <value>Сортиране</value>
   </data>
 </root>

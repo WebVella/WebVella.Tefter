@@ -20,7 +20,7 @@ public partial class TfSpaceViewHeaderNavigation : TfBaseComponent
 		}
 	}
 
-	private async Task _onClick(Guid presetId){ 
+	private async Task _onClick(Guid? presetId){ 
 		var queryDict = new Dictionary<string,object>();
 		queryDict[TfConstants.PresetIdQueryName] = presetId;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);

@@ -3,6 +3,9 @@
 public partial class TfPresetsCard : TfBaseComponent
 {
 	[Parameter]
+	public TucDataProvider DataProvider { get; set; }
+
+	[Parameter]
 	public List<TucSpaceViewPreset> Items { get; set; } = new();
 
 	[Parameter]
@@ -26,6 +29,7 @@ public partial class TfPresetsCard : TfBaseComponent
 		var preset = new TucSpaceViewPreset
 		{
 			Id = Guid.NewGuid(),
+			ParentId = _selectedParent is null ? null : _selectedParent.Id,
 			Filters = new(),
 			SortOrders = new(),
 			IsGroup = _selectedType == TfPresetsCardType.Group,
@@ -35,12 +39,7 @@ public partial class TfPresetsCard : TfBaseComponent
 
 		if (_selectedParent is not null)
 		{
-			TucSpaceViewPreset parentNode = null;
-			foreach (var item in Items)
-			{
-				parentNode = _findParent(item, _selectedParent.Id);
-				if (parentNode is not null) break;
-			}
+			TucSpaceViewPreset parentNode = ModelHelpers.GetPresetById(Items, _selectedParent.Id);
 			if (parentNode is not null)
 				parentNode.Nodes.Add(preset);
 		}
@@ -75,12 +74,44 @@ public partial class TfPresetsCard : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 	}
 
+	private async Task _copyPreset(Guid presetId)
+	{
+		TucSpaceViewPreset source = ModelHelpers.GetPresetById(Items, presetId);
+		if (source is null) return;
+		if (source.ParentId is not null)
+		{
+			TucSpaceViewPreset parent = ModelHelpers.GetPresetById(Items, source.ParentId.Value);
+			if (parent is null) return;
+
+			var sourceIndex = parent.Nodes.FindIndex(x => x.Id == source.Id);
+			if (sourceIndex > -1)
+			{
+				parent.Nodes.Insert(sourceIndex + 1, _copyNode(source));
+			}
+		}
+		else
+		{
+			var sourceIndex = Items.FindIndex(x => x.Id == source.Id);
+			if (sourceIndex > -1)
+			{
+				Items.Insert(sourceIndex + 1, _copyNode(source));
+			}
+		}
+
+		_submitting = true;
+		await InvokeAsync(StateHasChanged);
+		await ItemsChanged.InvokeAsync(Items);
+		_submitting = false;
+		await InvokeAsync(StateHasChanged);
+	}
+
 	private async Task _editPreset(Guid presetId)
 	{
 		var context = new TucPresetManagementContext
 		{
 			Item = ModelHelpers.GetPresetById(Items, presetId),
-			Parents = _getParents().ToList()
+			Parents = _getParents().ToList(),
+			DataProvider = DataProvider
 		};
 		var dialog = await DialogService.ShowDialogAsync<TfPresetManageDialog>(
 		context,
@@ -88,12 +119,24 @@ public partial class TfPresetsCard : TfBaseComponent
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
+			Width = TfConstants.DialogWidthExtraLarge
 		});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
 			var record = (TucSpaceViewPreset)result.Data;
+			var currentValue = ModelHelpers.GetPresetById(Items, record.Id);
+			if (currentValue is not null)
+			{
+				currentValue.Name = record.Name;
+				currentValue.Filters = record.Filters.ToList();
+				currentValue.SortOrders = record.SortOrders.ToList();
+			}
+			_submitting = true;
+			await InvokeAsync(StateHasChanged);
+			await ItemsChanged.InvokeAsync(Items);
+			_submitting = false;
+			await InvokeAsync(StateHasChanged);
 			ToastService.ShowSuccess(LOC("Quick Filter updated!"));
 
 		}
@@ -113,20 +156,6 @@ public partial class TfPresetsCard : TfBaseComponent
 	{
 		if (current.IsGroup) parents.Add(current);
 		foreach (var item in current.Nodes) _fillParents(parents, item);
-	}
-
-	private TucSpaceViewPreset _findParent(TucSpaceViewPreset current, Guid parentId)
-	{
-		if (current.Id == parentId)
-		{
-			return current;
-		}
-		foreach (var item in current.Nodes)
-		{
-			var parent = _findParent(item, parentId);
-			if (parent is not null) return parent;
-		}
-		return null;
 	}
 
 	private List<TucSpaceViewPreset> _removeNode(List<TucSpaceViewPreset> nodes, Guid nodeId)
@@ -167,6 +196,17 @@ public partial class TfPresetsCard : TfBaseComponent
 		return nodes;
 	}
 
+	private TucSpaceViewPreset _copyNode(TucSpaceViewPreset item)
+	{
+		var newItem = item with { Id = Guid.NewGuid() };
+		var newNodes = new List<TucSpaceViewPreset>();
+		foreach (var node in item.Nodes)
+		{
+			newNodes.Add(_copyNode(node));
+		}
+		newItem.Nodes = newNodes;
+		return newItem;
+	}
 }
 
 public enum TfPresetsCardType

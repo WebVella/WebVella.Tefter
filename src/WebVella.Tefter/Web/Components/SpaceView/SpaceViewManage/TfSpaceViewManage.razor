@@ -205,7 +205,7 @@ else
 				<FluentTab Id="@TfSpaceViewManageTab.QuickFilters.ToString()">
 					<Header>@LOC("Quick Filters")</Header>
 					<Content>
-						<TfPresetsCard Items="TfAppState.Value.SpaceView.Presets" ItemsChanged="_onPresetsChanged"/>
+						<TfPresetsCard DataProvider="_dataProvider" Items="TfAppState.Value.SpaceView.Presets" ItemsChanged="_onPresetsChanged"/>
 					</Content>
 				</FluentTab>
 			</FluentTabs>

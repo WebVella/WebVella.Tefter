@@ -16,6 +16,34 @@
 @* Body *@
 <FluentDialogBody>
 	<div>
-		шеяш		
+		<FluentEditForm EditContext="EditContext" class="tf-form" novalidate>
+			<TfCard>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentTextField Required="true"
+										 TextFieldType="@TextFieldType.Text"
+										 @bind-Value=_form.Name AutoComplete="new-password"
+										 Label="@LOC("Name")" Style="width:100%" />
+						<FluentValidationMessage For="@(() => _form.Name)" />
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text"
+										 Value=@(_form.IsGroup ? LOC("group") : LOC("quick filter")) Disabled="true"
+										 Label="@LOC("Type")" Style="width:100%" />
+					</FluentGridItem>
+				</FluentGrid>
+			</TfCard>
+			@if (_form.IsGroup)
+			{
+				<FluentMessageBar Style="margin-top:2rem" AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("Groups do not have filter and sort selection.")</FluentMessageBar>
+			}
+			else
+			{
+				<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Filters")</FluentLabel>
+				<TfFilterCard DataProvider="Content.DataProvider" @bind-Items="_form.Filters" />
+				<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Sort")</FluentLabel>
+				<TfSortCard DataProvider="Content.DataProvider" @bind-Items="_form.SortOrders" />
+			}
+		</FluentEditForm>
 	</div>
 </FluentDialogBody>

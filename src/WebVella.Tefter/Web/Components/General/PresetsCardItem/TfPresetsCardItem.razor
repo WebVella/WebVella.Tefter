@@ -7,12 +7,19 @@
 		<div>
 			<FluentStack Wrap="false">
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+								Title="@LOC("edit")"
 							  OnClick="_onEdit" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("Copy")"
+							  Title="@LOC("copy")"
+							  OnClick="_onCopy" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+							  Title="@LOC("remove")"
 							  OnClick="_onRemove" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUp")"
+							  Title="@LOC("move up")"
 							  OnClick="@(_ => _onMove(true))" Disabled="IsFirst" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowDown")"
+							  Title="@LOC("move down")"
 							  OnClick="@(_ => _onMove(false))" Disabled="IsLast"/>
 			</FluentStack>
 		</div>
@@ -28,6 +35,7 @@
 					}
 					<span>@Item.Name</span>
 					<span class="td-description">(@LOC("group"))</span>
+					<span>@Item.Id</span>
 				</FluentStack>
 
 			</div>
@@ -43,6 +51,7 @@
 						<span class="tf-grid-td-spacer"></span>
 					}
 					<span>@Item.Name</span>
+					<span>@Item.Id</span>
 				</FluentStack>
 
 			</div>
@@ -60,5 +69,6 @@
 {
 	var contextIndex = Item.Nodes.FindIndex(x => x.Id == context.Id);
 	<TfPresetsCardItem Item="context" Level="(Level+1)" OnEdit="OnEdit" OnMove="OnMove" OnRemove="OnRemove"
+						OnCopy="OnCopy"
 					   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Item.Nodes.Count -1)" />
 }

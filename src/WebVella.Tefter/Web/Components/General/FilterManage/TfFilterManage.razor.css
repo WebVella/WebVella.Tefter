@@ -1,1 +1,7 @@
-﻿
+﻿::deep .tf-card {
+	margin-bottom:7px;
+}
+
+::deep .card-rule > .tf-card-title {
+	background-color:var(--neutral-layer-2);
+}

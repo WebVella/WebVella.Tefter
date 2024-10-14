@@ -40,9 +40,9 @@
 						@foreach (var context in Items)
 						{
 							var contextIndex = Items.FindIndex(x => x.Id == context.Id);
-							<TfPresetsCardItem Item="context" Level="0" OnRemove="@_removePreset" OnMove="@_movePreset"
-											   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Items.Count -1)" 
-											   OnEdit="@_editPreset"/>
+							<TfPresetsCardItem Item="context" Level="0" OnRemove="_removePreset" OnMove="_movePreset"
+											   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Items.Count -1)"
+											   OnEdit="_editPreset" OnCopy="_copyPreset" />
 						}
 					</tbody>
 				</table>

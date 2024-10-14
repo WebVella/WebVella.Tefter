@@ -9,6 +9,15 @@ public partial class TfPresetManageDialog : TfFormBaseComponent, IDialogContentC
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		_form = new TucSpaceViewPreset
+		{
+			Id = Content.Item.Id,
+			IsGroup = Content.Item.IsGroup,
+			Name = Content.Item.Name,
+			Filters = Content.Item.Filters.ToList(),
+			SortOrders = Content.Item.SortOrders.ToList(),
+			Nodes = Content.Item.Nodes.ToList()
+		};
 		base.InitForm(_form);
 	}
 
@@ -18,9 +27,9 @@ public partial class TfPresetManageDialog : TfFormBaseComponent, IDialogContentC
 		await Dialog.CancelAsync();
 	}
 
-	private void _save()
+	private async Task _save()
 	{
-
+		await Dialog.CloseAsync(_form);
 	}
 
 

@@ -174,7 +174,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	}
 }
 
-public enum TfSpaceViewManageTab{ 
+internal enum TfSpaceViewManageTab{ 
 	Columns = 0,
 	QuickFilters = 1
 }

@@ -120,7 +120,22 @@
   <data name="Are you sure that you need this quick filter removed" xml:space="preserve">
     <value>Сигурен ли си, че искаш да махнеш този бърз филтър?</value>
   </data>
+  <data name="copy" xml:space="preserve">
+    <value>копирай</value>
+  </data>
+  <data name="edit" xml:space="preserve">
+    <value>редакция</value>
+  </data>
   <data name="group" xml:space="preserve">
     <value>група</value>
+  </data>
+  <data name="move down" xml:space="preserve">
+    <value>премести надолу</value>
+  </data>
+  <data name="move up" xml:space="preserve">
+    <value>премести нагоре</value>
+  </data>
+  <data name="remove" xml:space="preserve">
+    <value>махни</value>
   </data>
 </root>

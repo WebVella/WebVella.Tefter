@@ -69,6 +69,9 @@ public class TfSpaceViewPreset
 {
 	[JsonPropertyName("id")]
 	public Guid Id { get; set; }
+
+	[JsonPropertyName("parent_id")]
+	public Guid? ParentId { get; set; }
 	
 	[JsonPropertyName("name")]
 	public string Name { get; set; }

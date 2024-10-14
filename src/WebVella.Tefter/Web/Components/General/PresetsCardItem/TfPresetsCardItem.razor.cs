@@ -21,6 +21,9 @@ public partial class TfPresetsCardItem : TfBaseComponent
 	public EventCallback<Guid> OnEdit { get; set; }
 
 	[Parameter]
+	public EventCallback<Guid> OnCopy { get; set; }
+
+	[Parameter]
 	public EventCallback<Tuple<Guid,bool>> OnMove { get; set; }
 
 	private async Task _onRemove(){ 
@@ -35,5 +38,9 @@ public partial class TfPresetsCardItem : TfBaseComponent
 
 	private async Task _onEdit(){ 
 		await OnEdit.InvokeAsync(Item.Id);
+	}
+
+	private async Task _onCopy(){ 
+		await OnCopy.InvokeAsync(Item.Id);
 	}
 }

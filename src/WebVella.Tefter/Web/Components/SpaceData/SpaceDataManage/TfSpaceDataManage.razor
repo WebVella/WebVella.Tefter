@@ -30,26 +30,11 @@ else
 			</FluentGridItem>
 		</FluentGrid>
 	</TfCard>
-	<FluentTabs ActiveTabId="@_activeTab" Class="tf-tabs">
-		<FluentTab Id="columns">
-			<Header>@LOC("Columns")</Header>
-			<Content>
-				<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
-			</Content>
-		</FluentTab>
-		<FluentTab Id="filters">
-			<Header>@LOC("Query Filters")</Header>
-			<Content>
-				<TfFilterCard DataProvider="SelectedProvider" Items="_form.Filters" ItemsChanged="_onFiltersChanged" />
-			</Content>
-		</FluentTab>
-		<FluentTab Id="sorts">
-			<Header>@LOC("Default Sort")</Header>
-			<Content>
-				<TfSortCard DataProvider="SelectedProvider" Items="_form.SortOrders" ItemsChanged="_onSortChanged" />
-			</Content>
-		</FluentTab>
-	</FluentTabs>
-
+	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
+	<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
+	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
+	<TfFilterCard DataProvider="SelectedProvider" Items="_form.Filters" ItemsChanged="_onFiltersChanged" />
+	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Default Sort")</FluentLabel>
+	<TfSortCard DataProvider="SelectedProvider" Items="_form.SortOrders" ItemsChanged="_onSortChanged" />
 }
 
