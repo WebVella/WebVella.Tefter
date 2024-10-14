@@ -4,10 +4,10 @@ internal static partial class TfConverters
 {
 	private static string conversionPrefix = "tf-";
 
-	internal static string ConvertGuidToHtmlElementId(Guid? guid)
+	internal static string ConvertGuidToHtmlElementId(Guid? guid, string prefix = "")
 	{
 		if (guid == null) return null;
-		return $"{conversionPrefix}{guid}";
+		return $"{conversionPrefix}{(String.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}-")}{guid}";
 	}
 
 	internal static Guid? ConvertHtmlElementIdToGuid(string htmlId)
@@ -174,13 +174,47 @@ internal static partial class TfConverters
 		}
 	}
 
-	internal static string GenerateDbNameFromText(string text){ 
-		if(String.IsNullOrEmpty(text)) return text;
+	internal static string GenerateDbNameFromText(string text)
+	{
+		if (String.IsNullOrEmpty(text)) return text;
 		text = text.Trim().ToLowerInvariant();
-		text = text.Replace("№","no");
+		text = text.Replace("№", "no");
 		Regex rgx = new Regex("[^a-zA-Z0-9]");
 		text = rgx.Replace(text, "_");
 		text = Regex.Replace(text, @"_+", "_");
 		return text;
+	}
+
+	internal static string Slugify(this string phrase)
+	{
+		string str = phrase.RemoveDiacritics().ToLower();
+		// invalid chars           
+		str = Regex.Replace(str, @"[^a-z0-9\s-\p{IsCyrillic}]", "");
+		// convert multiple spaces into one space   
+		str = Regex.Replace(str, @"\s+", " ").Trim();
+		// cut and trim 
+		str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();
+		str = Regex.Replace(str, @"\s", "-"); // hyphens   
+		return str;
+	}
+
+	public static string RemoveDiacritics(this string text)
+	{
+		var normalizedString = text.Normalize(NormalizationForm.FormD);
+		var stringBuilder = new StringBuilder(capacity: normalizedString.Length);
+
+		for (int i = 0; i < normalizedString.Length; i++)
+		{
+			char c = normalizedString[i];
+			var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+			if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+			{
+				stringBuilder.Append(c);
+			}
+		}
+
+		return stringBuilder
+			.ToString()
+			.Normalize(NormalizationForm.FormC);
 	}
 }

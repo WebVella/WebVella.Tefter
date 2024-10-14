@@ -3,6 +3,7 @@
 <style>
 	.sidebar-nav {
 		--tf-space-color: @TfAppState.Value.SpaceColorString;
+		--tf-space-icon-color: @TfAppState.Value.SpaceIconColorString;
 		--tf-space-border-color: @TfAppState.Value.SpaceBorderColor;
 	}
 </style>
@@ -66,8 +67,24 @@
 		<FluentNavMenu Style="width:100%">
 			@foreach (var item in menuItems)
 			{
-				<FluentNavLink Href="@item.Url" Class="@(item.Active ? "selected" : "")" Data="item" Id="@item.Id"
-							   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
+				if (item.IsGroup)
+				{
+					<FluentNavGroup HideExpander="false" Expanded="@_expandedGroups.Contains(item.Id)" ExpandedChanged="@(x=> _groupExpandedChanged(item.Id))" 
+									Title="@item.Title" Class="tf-menu-item-group"
+									Icon="@(_expandedGroups.Contains(item.Id) 
+										? TfConstants.GetIcon("FolderOpen") : TfConstants.GetIcon("Folder"))">
+						@foreach (var item in item.Nodes)
+						{
+							<FluentNavLink Href="@item.Url" Class="@(item.Active ? "selected" : "")" Data="item" Id="@item.Id"
+										   Icon="item.Icon">@item.Title</FluentNavLink>
+						}
+					</FluentNavGroup>
+				}
+				else
+				{
+					<FluentNavLink Href="@item.Url" Class="@(item.Active ? "selected" : "")" Data="item" Id="@item.Id"
+								   Icon="item.Icon">@item.Title</FluentNavLink>
+				}
 			}
 		</FluentNavMenu>
 		@if (menuItems.Count == 0)

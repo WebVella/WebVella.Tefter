@@ -70,7 +70,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			Result<Tuple<TucSpaceView,TucSpaceData>> result = null;
+			Result<Tuple<TucSpaceView, TucSpaceData>> result = null;
 			if (_isCreate)
 				result = UC.CreateSpaceViewWithForm(_form);
 			else
@@ -116,9 +116,10 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		}
 		else if (type == TucSpaceViewDataSetType.Existing)
 		{
-			if (TfAppState.Value.SpaceDataList.Any()){ 
+			if (TfAppState.Value.SpaceDataList.Any())
+			{
 				_form.SpaceDataId = TfAppState.Value.SpaceDataList[0].Id;
-				_selectedDataset = TfAppState.Value.SpaceDataList[0];			
+				_selectedDataset = TfAppState.Value.SpaceDataList[0];
 			}
 			_form.DataSetType = type;
 		}
@@ -131,7 +132,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		_form.DataProviderId = null;
 		Guid providerId = Guid.Empty;
 		if (!String.IsNullOrWhiteSpace(providerIdString) && Guid.TryParse(providerIdString, out providerId))
-		if (providerId == Guid.Empty) return;
+			if (providerId == Guid.Empty) return;
 
 		var provider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == providerId);
 		if (provider is null) return;
@@ -186,6 +187,22 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			if (_form.AddDatasetColumns)
 				_generatedColumns.AddRange(_selectedDataset.Columns.Select(x => x));
+		}
+	}
+
+
+	private void _onGroupValueChange(string value)
+	{
+		var splitArray = value.Split(",", StringSplitOptions.RemoveEmptyEntries);
+		_form.Groups.Clear();
+		var added = new HashSet<string>();
+		foreach (var item in splitArray)
+		{
+			var processed = item?.Trim();
+			if (added.Contains(processed)) continue;
+			added.Add(processed);
+
+			_form.Groups.Add(processed);
 		}
 	}
 }

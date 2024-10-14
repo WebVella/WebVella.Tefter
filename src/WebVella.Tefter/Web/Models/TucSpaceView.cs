@@ -30,6 +30,8 @@ public record TucSpaceView
 	[Required]
 	public bool AddDatasetColumns { get; set; } = true;
 	public TucSpaceViewSettings Settings { get; set; } = new TucSpaceViewSettings();
+	public List<TucSpaceViewPreset> Presets { get; set; } = new();
+	public List<string> Groups { get; set; } = new();
 
 	[JsonIgnore]
 	public Action OnClick { get; set; }
@@ -50,6 +52,8 @@ public record TucSpaceView
 		{
 			Settings = JsonSerializer.Deserialize<TucSpaceViewSettings>(model.SettingsJson);
 		}
+		Presets = model.Presets.Select(x=> new TucSpaceViewPreset(x)).ToList();
+		Groups = model.Groups;
 	}
 
 	public TfSpaceView ToModel()
@@ -62,7 +66,9 @@ public record TucSpaceView
 			Type = Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
 			SpaceDataId = SpaceDataId ?? Guid.Empty,
 			Position = Position,
-			SettingsJson = JsonSerializer.Serialize(Settings)
+			SettingsJson = JsonSerializer.Serialize(Settings),
+			Presets = Presets.Select(x=> x.ToModel()).ToList(),
+			Groups = Groups
 		};
 	}
 
@@ -81,7 +87,6 @@ public record TucSpaceView
 			AddSystemColumns = AddSystemColumns,
 			DataProviderId = DataProviderId,
 			NewSpaceDataName = NewSpaceDataName
-			//SettingsJson = JsonSerializer.Serialize(Settings)
 		};
 	}
 }

@@ -17,7 +17,8 @@ public record TucMenuItem
 	public Guid? SpaceId { get; set; }
 	public Guid? SpaceDataId { get; set; }
 	public Guid? SpaceViewId { get; set; }
-
+	public bool IsGroup { get; set; } = false;
+	public List<string> Groups { get; set; } = new();
 	public List<TucMenuItem> Nodes { get; set; } = new();
 
 	[JsonIgnore]

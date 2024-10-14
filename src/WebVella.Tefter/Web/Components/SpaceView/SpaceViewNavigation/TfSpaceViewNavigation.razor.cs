@@ -10,10 +10,12 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	private string search = null;
 	private TfSpaceViewNavigationActiveTab _activeTab = TfSpaceViewNavigationActiveTab.Views;
 	private bool _linksFromAllViews = false;
+	private List<string> _expandedGroups = new List<string>();
 	private List<TucMenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
 		var menuItems = new List<TucMenuItem>();
+		var menuGroups = new List<string>();
 		if (_activeTab == TfSpaceViewNavigationActiveTab.Views)
 		{
 			foreach (var record in TfAppState.Value.SpaceViewList.OrderBy(x => x.Name))
@@ -28,10 +30,34 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 					Match = NavLinkMatch.Prefix,
 					Title = record.Name,
 					Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id),
-					Active = record.Id == TfRouteState.Value.SpaceViewId
+					Active = record.Id == TfRouteState.Value.SpaceViewId,
+					IsGroup = false,
+					Groups = record.Groups
 				};
 				menuItems.Add(viewMenu);
+				menuGroups.AddRange(record.Groups.Where(x => !menuGroups.Contains(x)));
 			}
+
+			if (menuGroups.Count > 0)
+			{
+				var menuWithGroups = new List<TucMenuItem>();
+				foreach (var group in menuGroups.Order())
+				{
+					var viewMenu = new TucMenuItem
+					{
+						Id = "tf-" + group.Slugify(),
+						Icon = TfConstants.GetIcon("Folder"),
+						Title = group,
+						IsGroup = true,
+						Nodes = menuItems.Where(x => x.Groups.Contains(group)).ToList(),
+					};
+					menuWithGroups.Add(viewMenu);
+				}
+
+				menuWithGroups.AddRange(menuItems.Where(x => x.Groups is null || !x.Groups.Any()));
+				menuItems = menuWithGroups;
+			}
+
 		}
 		else if (_activeTab == TfSpaceViewNavigationActiveTab.Bookmarks)
 		{
@@ -181,6 +207,14 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	private string _getActiveClass(TfSpaceViewNavigationActiveTab tab)
 	{
 		return _activeTab == tab ? "active" : "";
+	}
+
+	private void _groupExpandedChanged(string groupId)
+	{
+		if(_expandedGroups.Contains(groupId))
+			_expandedGroups.Remove(groupId);
+		else
+			_expandedGroups.Add(groupId);
 	}
 }
 

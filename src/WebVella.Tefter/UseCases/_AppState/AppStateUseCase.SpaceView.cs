@@ -261,7 +261,10 @@ internal partial class AppStateUseCase
 				Position = 1,//will be overrided later
 				SpaceDataId = spaceData.Id,
 				SpaceId = space.Id,
-				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>()
+				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
+				Groups = view.Groups,
+				Presets = view.Presets.Select(x=> x.ToModel()).ToList(),
+				SettingsJson = JsonSerializer.Serialize(view.Settings),
 			};
 			var tfResult = _spaceManager.CreateSpaceView(spaceViewObj);
 			if (tfResult.IsFailed) return Result.Fail(new Error("CreateSpaceView failed").CausedBy(tfResult.Errors));
@@ -530,7 +533,9 @@ internal partial class AppStateUseCase
 				SpaceDataId = spaceData.Id,
 				SpaceId = space.Id,
 				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
-				SettingsJson = JsonSerializer.Serialize(view.Settings)
+				SettingsJson = JsonSerializer.Serialize(view.Settings),
+				Groups = view.Groups,
+				Presets = view.Presets.Select(x=> x.ToModel()).ToList(),
 			};
 			var tfResult = _spaceManager.UpdateSpaceView(spaceViewObj);
 			if (tfResult.IsFailed) return Result.Fail(new Error("UpdateSpaceView failed").CausedBy(tfResult.Errors));
