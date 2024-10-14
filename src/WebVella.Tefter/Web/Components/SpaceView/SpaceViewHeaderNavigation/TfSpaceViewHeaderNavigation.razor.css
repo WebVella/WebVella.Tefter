@@ -1,0 +1,38 @@
+﻿::deep {
+	padding: 0 10px;
+	font-weight: normal;
+	position: relative;
+	bottom: -6px;
+	display: flex;
+}
+
+	::deep > fluent-anchor {
+		border-radius: 5px 5px 0 0 !important;
+		height: 36px;
+	}
+
+		::deep > fluent-anchor.active {
+			background: var(--space-color) !important;
+		}
+
+		::deep > fluent-anchor + fluent-anchor {
+			margin-left: 10px;
+		}
+
+	::deep fluent-anchor::part(control) {
+		border-bottom: none;
+	}
+
+	::deep fluent-anchor.active::part(control) {
+		border-color: var(--space-color);
+	}
+
+	::deep fluent-anchor svg[slot='end'] {
+		fill: var(--neutral-base-color) !important;
+	}
+
+	::deep fluent-anchor::part(end) {
+		margin-inline-start: 0px;
+		position:relative;
+		right:-3px;
+	}

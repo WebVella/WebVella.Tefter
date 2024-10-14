@@ -8,6 +8,7 @@ public partial record TfRouteState
 	public Guid? SpaceViewId { get; init; }
 	public Guid? UserId { get; init; }
 	public Guid? DataProviderId { get; init; }
+	public Guid? SpaceViewPresetId { get; init; }
 	public string SpaceSection { get; init; }
 	public RouteDataFirstNode FirstNode { get; init; } = RouteDataFirstNode.Home;
 	public RouteDataSecondNode SecondNode { get; init; } = default!;

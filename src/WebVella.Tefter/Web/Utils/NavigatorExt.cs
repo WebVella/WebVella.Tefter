@@ -186,6 +186,8 @@ internal static class NavigatorExt
 		bool searchInSaves = GetBooleanFromQuery(uri, TfConstants.SearchInSavesQueryName, true).Value;
 		bool searchInViews = GetBooleanFromQuery(uri, TfConstants.SearchInViewsQueryName, true).Value;
 
+		Guid? spaceViewPresetId = GetGuidFromQuery(uri,TfConstants.PresetIdQueryName, null);
+
 		result = result with
 		{
 			Page = page,
@@ -196,7 +198,8 @@ internal static class NavigatorExt
 			ActiveSaveId = activeSaveId,
 			SearchInBookmarks = searchInBookmarks,
 			SearchInSaves = searchInSaves,
-			SearchInViews = searchInViews
+			SearchInViews = searchInViews,
+			SpaceViewPresetId = spaceViewPresetId,
 		};
 
 		return result;

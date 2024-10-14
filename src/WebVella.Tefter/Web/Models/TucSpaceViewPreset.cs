@@ -9,10 +9,10 @@ public record TucSpaceViewPreset
 	public string Name { get; set; }
 
 	[JsonPropertyName("filters")]
-	public List<TfFilterBase> Filters { get; set; } = new();
+	public List<TucFilterBase> Filters { get; set; } = new();
 
 	[JsonPropertyName("sort_orders")]
-	public List<TfSort> SortOrders { get; set; } = new();
+	public List<TucSort> SortOrders { get; set; } = new();
 
 	[JsonPropertyName("nodes")]
 	public List<TucSpaceViewPreset> Nodes { get; set; } = new();
@@ -25,8 +25,8 @@ public record TucSpaceViewPreset
 	{
 		Id = model.Id;
 		Name = model.Name;
-		Filters = model.Filters;
-		SortOrders = model.SortOrders;
+		Filters = model.Filters.Select(x=> TucFilterBase.FromModel(x)).ToList();
+		SortOrders = model.SortOrders.Select(x=> new TucSort(x)).ToList();
 		Nodes = model.Nodes.Select(x=> new  TucSpaceViewPreset(x)).ToList();
 		IsGroup = model.IsGroup;
 
@@ -37,8 +37,8 @@ public record TucSpaceViewPreset
 		{
 			Id = Id,
 			Name = Name,
-			Filters = Filters,
-			SortOrders = SortOrders,
+			Filters = Filters.Select(x=> TucFilterBase.ToModel(x)).ToList(),
+			SortOrders = SortOrders.Select(x=> x.ToModel()).ToList(),
 			Nodes = Nodes.Select(x=> x.ToModel()).ToList(),
 			IsGroup = IsGroup,
 		};

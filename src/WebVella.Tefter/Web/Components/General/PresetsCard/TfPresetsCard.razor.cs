@@ -75,6 +75,30 @@ public partial class TfPresetsCard : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 	}
 
+	private async Task _editPreset(Guid presetId)
+	{
+		var context = new TucPresetManagementContext
+		{
+			Item = ModelHelpers.GetPresetById(Items, presetId),
+			Parents = _getParents().ToList()
+		};
+		var dialog = await DialogService.ShowDialogAsync<TfPresetManageDialog>(
+		context,
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var record = (TucSpaceViewPreset)result.Data;
+			ToastService.ShowSuccess(LOC("Quick Filter updated!"));
+
+		}
+	}
+
 	private IEnumerable<TucSpaceViewPreset> _getParents()
 	{
 		var parents = new List<TucSpaceViewPreset>();
@@ -129,7 +153,7 @@ public partial class TfPresetsCard : TfBaseComponent
 		{
 			var list = nodes.Where(x => x.Id != nodeId).ToList();
 			var newIndex = isUp ? nodeIndex - 1 : nodeIndex + 1;
-			if(newIndex < 0 || newIndex > nodes.Count - 1) return nodes;
+			if (newIndex < 0 || newIndex > nodes.Count - 1) return nodes;
 
 			list.Insert(newIndex, nodes[nodeIndex]);
 			return list;

@@ -33,8 +33,8 @@ internal partial class AppStateUseCase
 			{
 				var viewData = GetSpaceDataDataTable(
 							spaceDataId: newAppState.SpaceData.Id,
-							additionalFilters: null,
-							sortOverrides: null,
+							userFilters: null,
+							userSorts: null,
 							search: routeState.Search,
 							page: routeState.Page,
 							pageSize: routeState.PageSize ?? TfConstants.PageSize
@@ -253,8 +253,10 @@ internal partial class AppStateUseCase
 	//Data
 	internal TfDataTable GetSpaceDataDataTable(
 		Guid spaceDataId,
-		List<TucFilterBase> additionalFilters = null,
-		List<TucSort> sortOverrides = null,
+		List<TucFilterBase> presetFilters = null,
+		List<TucSort> presetSorts = null,
+		List<TucFilterBase> userFilters = null,
+		List<TucSort> userSorts = null,
 		string search = null,
 		int? page = null,
 		int? pageSize = null)
@@ -285,16 +287,21 @@ internal partial class AppStateUseCase
 			return null;
 		}
 
-
-		List<TfFilterBase> filters = null;
-		List<TfSort> sorts = null;
-		if (additionalFilters is not null) filters = additionalFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
-		if (sortOverrides is not null) sorts = sortOverrides.Select(x => x.ToModel()).ToList();
+		List<TfFilterBase> presetFiltersSM = null;
+		List<TfSort> presetSortsSM = null;
+		List<TfFilterBase> userFiltersSM = null;
+		List<TfSort> userSortsSM = null;
+		if (presetFilters is not null) presetFiltersSM = presetFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+		if (presetSorts is not null) presetSortsSM = presetSorts.Select(x => x.ToModel()).ToList();
+		if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+		if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
 
 		var serviceResult = _dataManager.QuerySpaceData(
 			spaceDataId: spaceDataId,
-			userFilters: filters,
-			userSorts: sorts,
+			presetFilters: presetFiltersSM,
+			presetSorts: presetSortsSM,
+			userFilters: userFiltersSM,
+			userSorts: userSortsSM,
 			search: search,
 			page: page,
 			pageSize: pageSize

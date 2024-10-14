@@ -1,0 +1,47 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (TfAppState.Value.SpaceView is null || TfAppState.Value.SpaceView.Presets.Count == 0
+	|| TfRouteState.Value.ThirdNode != RouteDataThirdNode.Details) { }
+else
+{
+	<div class="tf-header-nav" style="@($"--space-color: {TfAppState.Value.SpaceColorString};")">
+		@foreach (var item in TfAppState.Value.SpaceView.Presets)
+		{
+			if (!item.IsGroup)
+			{
+				<FluentAnchor Href="#" Appearance="@Appearance.Outline" OnClick="@(_=> _onClick(item.Id))">
+					@item.Name
+				</FluentAnchor>
+			}
+			else
+			{
+				<FluentAnchor Href="#" Id="@($"tf-{item.Id}")"
+							  OnClick="@(_=> _toggleMenu(item.Id))" Appearance="@Appearance.Outline" 
+							  Class="@(false ? "active" : "")">
+					@item.Name
+					@if (item.Nodes.Count > 0)
+					{
+						<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" />
+					}
+				</FluentAnchor>
+				@if (item.Nodes.Count > 0)
+				{
+					<FluentMenu UseMenuService="true"
+								Open="(_opendedNode == item.Id)"
+								OpenChanged="@(x => _toggleMenu(item.Id,x))"
+								Anchor="@($"tf-{item.Id}")">
+						@foreach (var node in item.Nodes)
+						{
+							<TfSpaceViewHeaderNavigationItem Item="node" OnClick="@(_=> _onClick(node.Id))" />
+						}
+					</FluentMenu>
+				}
+
+			}
+		}
+		<FluentAnchor Href="#" Appearance="@Appearance.Outline">
+			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+		</FluentAnchor>
+	</div>
+}
+

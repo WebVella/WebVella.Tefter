@@ -6,7 +6,8 @@
 	<td class="tf-grid-td">
 		<div>
 			<FluentStack Wrap="false">
-				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
+				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+							  OnClick="_onEdit" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
 							  OnClick="_onRemove" />
 				<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUp")"
@@ -26,7 +27,7 @@
 						<span class="tf-grid-td-spacer"></span>
 					}
 					<span>@Item.Name</span>
-					<span class="td-description">(@LOC("filter group"))</span>
+					<span class="td-description">(@LOC("group"))</span>
 				</FluentStack>
 
 			</div>

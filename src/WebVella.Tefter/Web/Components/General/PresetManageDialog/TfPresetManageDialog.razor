@@ -1,0 +1,21 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="false" Visible="false">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Manage Quick Filter")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.SaveIcon"
+				  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+		шеяш		
+	</div>
+</FluentDialogBody>

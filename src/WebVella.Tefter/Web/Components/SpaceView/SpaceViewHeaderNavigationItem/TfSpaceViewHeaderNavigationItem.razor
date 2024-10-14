@@ -1,0 +1,18 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (!Item.IsGroup)
+{
+	<FluentMenuItem Label="@Item.Name" OnClick="@(_=>_onClick(Item.Id))" />
+}
+else 
+{
+	<FluentMenuItem Label="@Item.Name">
+		<MenuItems>
+			@foreach (var item in Item.Nodes)
+			{
+				<TfSpaceViewHeaderNavigationItem Item="item" OnClick="@(_=>_onClick(item.Id))" />
+			}
+		</MenuItems>
+	</FluentMenuItem>
+}
+

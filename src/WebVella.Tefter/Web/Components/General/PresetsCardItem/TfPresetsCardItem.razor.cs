@@ -33,4 +33,7 @@ public partial class TfPresetsCardItem : TfBaseComponent
 		await OnMove.InvokeAsync(new Tuple<Guid, bool>(Item.Id,isUp));
 	}
 
+	private async Task _onEdit(){ 
+		await OnEdit.InvokeAsync(Item.Id);
+	}
 }

@@ -44,10 +44,16 @@ internal partial class AppStateUseCase
 			};
 			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue)
 			{
+				TucSpaceViewPreset preset = null;
+				if (routeState.SpaceViewPresetId is not null)
+					preset = newAppState.SpaceView.Presets.GetPresetById(routeState.SpaceViewPresetId.Value);
+
 				var viewData = GetSpaceDataDataTable(
 							spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
-							additionalFilters: newAppState.SpaceViewFilters,
-							sortOverrides: newAppState.SpaceViewSorts,
+							presetFilters: preset is not null ? preset.Filters : null,
+							presetSorts: preset is not null ? preset.SortOrders : null,
+							userFilters: newAppState.SpaceViewFilters,
+							userSorts: newAppState.SpaceViewSorts,
 							search: newAppState.SpaceViewSearch,
 							page: newAppState.SpaceViewPage,
 							pageSize: newAppState.SpaceViewPageSize
@@ -137,7 +143,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceView failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -156,7 +162,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceViewsList failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -263,7 +269,7 @@ internal partial class AppStateUseCase
 				SpaceId = space.Id,
 				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
 				Groups = view.Groups,
-				Presets = view.Presets.Select(x=> x.ToModel()).ToList(),
+				Presets = view.Presets.Select(x => x.ToModel()).ToList(),
 				SettingsJson = JsonSerializer.Serialize(view.Settings),
 			};
 			var tfResult = _spaceManager.CreateSpaceView(spaceViewObj);
@@ -535,7 +541,7 @@ internal partial class AppStateUseCase
 				Type = view.Type.ConvertSafeToEnum<TucSpaceViewType, TfSpaceViewType>(),
 				SettingsJson = JsonSerializer.Serialize(view.Settings),
 				Groups = view.Groups,
-				Presets = view.Presets.Select(x=> x.ToModel()).ToList(),
+				Presets = view.Presets.Select(x => x.ToModel()).ToList(),
 			};
 			var tfResult = _spaceManager.UpdateSpaceView(spaceViewObj);
 			if (tfResult.IsFailed) return Result.Fail(new Error("UpdateSpaceView failed").CausedBy(tfResult.Errors));
@@ -565,7 +571,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -588,7 +594,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceViewColumn failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -608,7 +614,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceViewColumnsList failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -668,7 +674,7 @@ internal partial class AppStateUseCase
 	}
 	internal Result<TucSpaceView> UpdateSpaceViewPresets(Guid viewId, List<TucSpaceViewPreset> presets)
 	{
-		var updateResult = _spaceManager.UpdateSpaceViewPresets(viewId, presets.Select(x=>x.ToModel()).ToList());
+		var updateResult = _spaceManager.UpdateSpaceViewPresets(viewId, presets.Select(x => x.ToModel()).ToList());
 		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceViewPresets failed").CausedBy(updateResult.Errors));
 		return Result.Ok(GetSpaceView(viewId));
 
@@ -682,7 +688,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetAvailableSpaceViewColumnTypes failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
