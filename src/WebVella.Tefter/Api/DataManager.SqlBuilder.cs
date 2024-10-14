@@ -155,7 +155,7 @@ public partial class DataManager
 				bool spaceDataHasAtLeastOneValidColumn = false;
 				if (spaceData.Columns.Any())
 				{
-					foreach (var columnName in spaceData.Columns)
+					foreach (var columnName in spaceData.Columns.Distinct())
 					{
 						if (_selectColumns.Any(x => x.DbName == columnName))
 						{
