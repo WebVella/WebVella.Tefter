@@ -20,6 +20,7 @@ public partial class DataManager
 
 		private TfFilterAnd _mainFilter;
 		private List<TfFilterBase> _filters = new();
+		private List<TfSort> _sorts = null;
 		private List<TfFilterBase> _userFilters = new();
 		private List<TfSort> _userSorts = null;
 		private List<TfFilterBase> _presetFilters = new();
@@ -186,6 +187,7 @@ public partial class DataManager
 				//3. if space data sort is specified
 				if (_userSorts is not null && _userSorts.Count > 0)
 				{
+					_sorts = _userSorts.ToList();
 					foreach (var sortOrder in _userSorts)
 					{
 						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
@@ -195,6 +197,7 @@ public partial class DataManager
 				}
 				else if (_presetSorts is not null && _presetSorts.Count > 0)
 				{
+					_sorts = _presetSorts.ToList();
 					foreach (var sortOrder in _presetSorts)
 					{
 						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
@@ -204,6 +207,7 @@ public partial class DataManager
 				}
 				else if (spaceData.SortOrders is not null && spaceData.SortOrders.Any())
 				{
+					_sorts = spaceData.SortOrders.ToList();
 					foreach (var sortOrder in spaceData.SortOrders)
 					{
 						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
@@ -376,12 +380,12 @@ public partial class DataManager
 			StringBuilder sb = new StringBuilder();
 
 			//sort implementation
-			if (_userSorts != null && _userSorts.Any())
+			if (_sorts != null && _sorts.Any())
 			{
 				StringBuilder sortSb = new StringBuilder();
 
 				bool first = true;
-				foreach (var sort in _userSorts)
+				foreach (var sort in _sorts)
 				{
 					var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.DbName);
 
