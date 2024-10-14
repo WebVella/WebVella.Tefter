@@ -435,6 +435,22 @@ public partial class TfSpaceManager : ITfSpaceManager
 						return providerManager.GetProvider(providerId).Value != null;
 					})
 					.WithMessage("There is no existing data provider for specified provider id.");
+
+				RuleFor(spaceData => spaceData.Columns)
+					.Must(columns =>
+					{
+						HashSet<string> columnsHS = new HashSet<string>();
+						foreach(var column in columns)
+						{
+							if (columnsHS.Contains(column))
+								return false;
+
+							columnsHS.Add(column);
+						}
+
+						return true;
+					})
+					.WithMessage("There are duplicate columns. This is not allowed");
 			});
 
 			RuleSet("create", () =>
