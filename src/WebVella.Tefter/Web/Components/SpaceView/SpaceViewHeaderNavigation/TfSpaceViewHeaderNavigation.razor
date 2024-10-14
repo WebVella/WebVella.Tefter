@@ -1,18 +1,20 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 @if (TfAppState.Value.SpaceView is null || TfAppState.Value.SpaceView.Presets.Count == 0
-			|| TfRouteState.Value.ThirdNode != RouteDataThirdNode.Details) { }
+					|| TfRouteState.Value.ThirdNode != RouteDataThirdNode.Details) { }
 else
 {
+	var selectionDict = _generateSelectionDict();
 	<div class="tf-header-nav" style="@($"--space-color: {TfAppState.Value.SpaceColorString};")">
-		<FluentAnchor Href="#" OnClick="@(_=> _onClick(null))" Appearance="@Appearance.Outline" Class="@(TfRouteState.Value.SpaceViewPresetId is null ? "active" : "")">
+		<FluentAnchor Href="#" OnClick="@(_=> _onClick(null))" Appearance="@Appearance.Outline" 
+			Class="@(TfRouteState.Value.SpaceViewPresetId is null ? "main-active" : "")">
 			<FluentIcon Value="@TfConstants.HomeIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentAnchor>
 		@foreach (var item in TfAppState.Value.SpaceView.Presets)
 		{
 			if (!item.IsGroup)
 			{
-				<FluentAnchor Href="#" Appearance="@Appearance.Outline" OnClick="@(_=> _onClick(item.Id))" Class="@(TfRouteState.Value.SpaceViewPresetId == item.Id ? "active" : "")">
+				<FluentAnchor Href="#" Appearance="@Appearance.Outline" OnClick="@(_=> _onClick(item.Id))" Class="@(selectionDict[item.Id].Contains(TfRouteState.Value.SpaceViewPresetId ?? Guid.Empty) ? "active" : "")">
 					@item.Name
 				</FluentAnchor>
 			}
@@ -20,7 +22,7 @@ else
 			{
 				<FluentAnchor Href="#" Id="@($"tf-{item.Id}")"
 							  OnClick="@(_=> _toggleMenu(item.Id))" Appearance="@Appearance.Outline"
-							  Class="@(false ? "active" : "")">
+							  Class="@(selectionDict[item.Id].Contains(TfRouteState.Value.SpaceViewPresetId ?? Guid.Empty) ? "main-active" : "")">
 					@item.Name
 					@if (item.Nodes.Count > 0)
 					{
@@ -35,7 +37,8 @@ else
 								Anchor="@($"tf-{item.Id}")">
 						@foreach (var node in item.Nodes)
 						{
-							<TfSpaceViewHeaderNavigationItem Item="node" OnClick="@(_=> _onClick(node.Id))" />
+							<TfSpaceViewHeaderNavigationItem @key=node.Id Item="node" OnClick="@(x=> _onClick(x))"
+									SelectionDictionary="selectionDict" ActivePresetId="TfRouteState.Value.SpaceViewPresetId" />
 						}
 					</FluentMenu>
 				}

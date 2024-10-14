@@ -7,9 +7,15 @@ public partial class TfSpaceViewHeaderNavigationItem : TfBaseComponent
 	[Parameter]
 	public EventCallback<Guid> OnClick { get; set; }
 
+	[Parameter]
+	public Dictionary<Guid,List<Guid>> SelectionDictionary { get; set; } = new();
+
+	[Parameter]
+	public Guid? ActivePresetId { get; set; } = null;
 
 	private async Task _onClick(Guid itemId)
 	{
+		Console.WriteLine(itemId);
 		await OnClick.InvokeAsync(itemId);
 	}
 }

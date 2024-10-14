@@ -23,7 +23,6 @@ public record TucSpaceViewPreset
 	[JsonPropertyName("is_group")]
 	public bool IsGroup { get; set; } = false;
 
-
 	public TucSpaceViewPreset() { }
 	public TucSpaceViewPreset(TfSpaceViewPreset model)
 	{

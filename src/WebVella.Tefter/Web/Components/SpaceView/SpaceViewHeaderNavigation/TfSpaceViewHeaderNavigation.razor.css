@@ -11,7 +11,7 @@
 		height: 36px;
 	}
 
-		::deep > fluent-anchor.active {
+		::deep > fluent-anchor.main-active {
 			background: var(--space-color) !important;
 		}
 
@@ -23,11 +23,12 @@
 		border-bottom: none;
 	}
 
-	::deep fluent-anchor.active::part(control) {
+	::deep fluent-anchor.main-active::part(control) {
 		border-color: var(--space-color);
 	}
 
-	::deep fluent-anchor.active svg {
+	::deep fluent-anchor.main-active svg,
+	::deep fluent-anchor.main-active svg[slot='end']{
 		fill:var(--neutral-foreground-rest) !important;
 	}
 
