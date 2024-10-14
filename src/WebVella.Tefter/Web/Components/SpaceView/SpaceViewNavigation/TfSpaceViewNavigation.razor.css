@@ -108,7 +108,11 @@
 ::deep fluent-switch.checked::part(switch) {
 	background:var(--tf-space-color);
 }
-/*
-::deep fluent-switch::part(switch) {
-	background:var(--tf-space-color);
-}*/
+
+::deep .fluent-nav-item .fluent-nav-icon{
+	fill:var(--tf-space-icon-color) !important;
+}
+
+::deep .fluent-nav-item .expand-collapse-button {
+	pointer-events: none;
+}

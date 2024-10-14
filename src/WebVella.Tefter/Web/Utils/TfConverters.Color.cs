@@ -11,6 +11,15 @@ internal static partial class TfConverters
 		return System.Drawing.ColorTranslator.FromHtml(color.ToAttributeValue());
 	}
 
+	internal static System.Drawing.Color HEXToColor(string color)
+	{
+		if (String.IsNullOrWhiteSpace(color))
+		{
+			return new System.Drawing.Color();
+		}
+		return System.Drawing.ColorTranslator.FromHtml(color);
+	}
+
 	internal static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
 	{
 		float red = (float)color.R;

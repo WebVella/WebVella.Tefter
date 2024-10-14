@@ -104,6 +104,12 @@ else
 										Label="@LOC("can delete rows")" />
 					</FluentGridItem>
 				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@String.Join(", ",TfAppState.Value.SpaceView.Groups)
+										 Label="@LOC("Added to groups")" Style="width:100%" ReadOnly="true" />
+					</FluentGridItem>
+				</FluentGrid>
 			</TfCard>
 			<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
 			<TfCard Small="true">
