@@ -32,6 +32,20 @@
 										 Label="@LOC("Type")" Style="width:100%" />
 					</FluentGridItem>
 				</FluentGrid>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Group")" />
+						<FluentStack>
+							<FluentSelect Required="false"
+										  @bind-SelectedOption="@_selectedParent"
+										  TOption="TucSpaceViewPreset"
+										  Items="@Content.Parents" Style="width:100%"
+										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
+							<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.DeleteIcon" OnClick="@(_ => _selectedParent = null)"/>
+						</FluentStack>
+					</FluentGridItem>
+					<FluentGridItem xs="6"></FluentGridItem>
+				</FluentGrid>
 			</TfCard>
 			@if (_form.IsGroup)
 			{

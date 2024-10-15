@@ -126,12 +126,42 @@ public partial class TfPresetsCard : TfBaseComponent
 		{
 			var record = (TucSpaceViewPreset)result.Data;
 			var currentValue = ModelHelpers.GetPresetById(Items, record.Id);
+			var currentParentId = currentValue.ParentId;
 			if (currentValue is not null)
 			{
 				currentValue.Name = record.Name;
 				currentValue.Filters = record.Filters.ToList();
 				currentValue.SortOrders = record.SortOrders.ToList();
+				currentValue.ParentId = record.ParentId;
 			}
+			if (currentParentId != record.ParentId)
+			{
+				TucSpaceViewPreset currentParent = null;
+				TucSpaceViewPreset newParent = null;
+				if (currentParentId.HasValue) currentParent = ModelHelpers.GetPresetById(Items, currentParentId.Value);
+				if (record.ParentId.HasValue) newParent = ModelHelpers.GetPresetById(Items, record.ParentId.Value);
+
+				if (currentParent is not null)
+				{
+					var findIndex = currentParent.Nodes.FindIndex(x => x.Id == record.Id);
+					if (findIndex > -1) currentParent.Nodes.RemoveAt(findIndex);
+				}
+				else
+				{
+					var findIndex = Items.FindIndex(x => x.Id == record.Id);
+					if (findIndex > -1) Items.RemoveAt(findIndex);
+				}
+
+				if (newParent is not null)
+				{
+					newParent.Nodes.Add(currentValue);
+				}
+				else
+				{
+					Items.Add(currentValue);
+				}
+			}
+
 			_submitting = true;
 			await InvokeAsync(StateHasChanged);
 			await ItemsChanged.InvokeAsync(Items);

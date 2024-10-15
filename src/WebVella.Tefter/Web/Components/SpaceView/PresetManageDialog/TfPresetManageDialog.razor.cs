@@ -5,6 +5,7 @@ public partial class TfPresetManageDialog : TfFormBaseComponent, IDialogContentC
 	[Parameter] public TucPresetManagementContext Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 	private TucSpaceViewPreset _form = new();
+	private TucSpaceViewPreset _selectedParent = null;
 	private bool _isSubmitting = false;
 	protected override async Task OnInitializedAsync()
 	{
@@ -16,8 +17,13 @@ public partial class TfPresetManageDialog : TfFormBaseComponent, IDialogContentC
 			Name = Content.Item.Name,
 			Filters = Content.Item.Filters.ToList(),
 			SortOrders = Content.Item.SortOrders.ToList(),
-			Nodes = Content.Item.Nodes.ToList()
+			Nodes = Content.Item.Nodes.ToList(),
+			ParentId = Content.Item.ParentId,
 		};
+		if (_form.ParentId != null)
+		{
+			_selectedParent = Content.Parents.FirstOrDefault(x => x.Id == _form.ParentId);
+		}
 		base.InitForm(_form);
 	}
 
@@ -29,6 +35,7 @@ public partial class TfPresetManageDialog : TfFormBaseComponent, IDialogContentC
 
 	private async Task _save()
 	{
+		_form.ParentId = _selectedParent?.Id;
 		await Dialog.CloseAsync(_form);
 	}
 
