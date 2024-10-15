@@ -7,6 +7,7 @@ public partial class TfSpaceViewHeaderNavigation : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private Guid? _opendedNode = null;
+	private Guid? _activeContextMenuId = null;
 
 	private void _toggleMenu(Guid id, bool? isOpen = null)
 	{
@@ -29,12 +30,32 @@ public partial class TfSpaceViewHeaderNavigation : TfBaseComponent
 
 	}
 
+	private async Task _onRightClick(Guid? presetId)
+	{
+		_activeContextMenuId = presetId;
+	}
+
+	private async Task _onEdit(Guid presetId)
+	{
+
+	}
+
+	private async Task _onRemove(Guid presetId)
+	{
+
+	}
+
+	private async Task _onAdd(Guid presetId)
+	{
+
+	}
+
 	private Dictionary<Guid, List<Guid>> _generateSelectionDict()
 	{
 		var dict = new Dictionary<Guid, List<Guid>>();
 		foreach (var item in TfAppState.Value.SpaceView.Presets)
 		{
-			_getChildNodeIds(item,dict);
+			_getChildNodeIds(item, dict);
 		}
 		return dict;
 	}
@@ -46,7 +67,7 @@ public partial class TfSpaceViewHeaderNavigation : TfBaseComponent
 		foreach (var node in item.Nodes)
 		{
 			list.Add(node.Id);
-			var childIds = _getChildNodeIds(node,dict);
+			var childIds = _getChildNodeIds(node, dict);
 			list.AddRange(childIds);
 		}
 		dict[item.Id] = list.ToList();

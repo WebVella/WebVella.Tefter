@@ -2,19 +2,19 @@
 @inherits TfBaseComponent
 @if (!Item.IsGroup)
 {
-	<FluentMenuItem Label="@Item.Name" OnClick="@(_=>_onClick(Item.Id))"
-					Checked="SelectionDictionary[Item.Id].Contains(ActivePresetId ?? Guid.Empty)"/>
+	<FluentMenuItem Id="@($"tf-{Item.Id}")" Label="@Item.Name" OnClick="_onClick"
+					Checked="SelectionDictionary[Item.Id].Contains(ActivePresetId ?? Guid.Empty)" />
 }
 else
 {
-	<FluentMenuItem Label="@Item.Name" Checked="SelectionDictionary[Item.Id].Contains(ActivePresetId ?? Guid.Empty)">
+	<FluentMenuItem Id="@($"tf-{Item.Id}")" Label="@Item.Name" Checked="SelectionDictionary[Item.Id].Contains(ActivePresetId ?? Guid.Empty)">
 		<MenuItems>
 			@foreach (var node in Item.Nodes)
 			{
-				<TfSpaceViewHeaderNavigationItem @key=node.Id Item="node" OnClick="@(x=> _onClick(x))"
+				<TfSpaceViewHeaderNavigationItem @key=node.Id Item="node"
+												 OnClick="OnClick"
 												 SelectionDictionary="SelectionDictionary" ActivePresetId="ActivePresetId" />
 			}
 		</MenuItems>
 	</FluentMenuItem>
 }
-

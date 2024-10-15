@@ -7,6 +7,7 @@ public partial class TfSpaceViewSortsDialog : TfFormBaseComponent, IDialogConten
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private TucSpaceData _spaceData = null;
+	private TucDataProvider _dataProvider = null;
 	private List<TucSort> _items = new List<TucSort>();
 	private List<string> _columnOptions = new List<string>();
 
@@ -19,6 +20,10 @@ public partial class TfSpaceViewSortsDialog : TfFormBaseComponent, IDialogConten
 		if (TfAppState.Value.SpaceViewSorts is not null)
 			_items = JsonSerializer.Deserialize<List<TucSort>>(JsonSerializer.Serialize(TfAppState.Value.SpaceViewSorts));
 		_spaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId);
+		if (_spaceData is not null)
+		{
+			_dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _spaceData.DataProviderId);
+		}
 		_generateColumnOptions();
 	}
 

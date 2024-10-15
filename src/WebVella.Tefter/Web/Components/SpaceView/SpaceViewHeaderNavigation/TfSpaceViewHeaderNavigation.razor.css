@@ -15,8 +15,8 @@
 			background: var(--space-color) !important;
 		}
 
-		::deep > fluent-anchor + fluent-anchor {
-			margin-left: 10px;
+		::deep > fluent-anchor{
+			margin-right: 10px;
 		}
 
 	::deep fluent-anchor::part(control) {

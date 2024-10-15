@@ -2,6 +2,18 @@
 public partial class TfSpaceViewToolbar : TfBaseComponent
 {
 	[Parameter] public EventCallback<List<TucFilterBase>> OnFilter { get; set; }
+	[Parameter] public EventCallback OnClearFilter { get; set; }
+
+	private bool _showClearFilter
+	{
+		get
+		{
+			if (!String.IsNullOrWhiteSpace(TfAppState.Value.SpaceViewSearch)) return true;
+			if (TfAppState.Value.SpaceViewFilters is not null && TfAppState.Value.SpaceViewFilters.Count > 0) return true;
+			if (TfAppState.Value.SpaceViewSorts is not null && TfAppState.Value.SpaceViewSorts.Count > 0) return true;
+			return false;
+		}
+	}
 	private async Task OnFilterClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewFiltersDialog>(
@@ -18,5 +30,11 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 			await OnFilter.InvokeAsync((List<TucFilterBase>)result.Data);
 		}
 	}
+
+	private async Task OnClearFilterClick()
+	{
+		await OnClearFilter.InvokeAsync();
+	}
+
 
 }

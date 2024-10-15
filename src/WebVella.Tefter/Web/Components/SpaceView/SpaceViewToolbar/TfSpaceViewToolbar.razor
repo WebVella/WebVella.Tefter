@@ -15,7 +15,6 @@
 			}
 		</FluentButton>
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
-
 			@if ((TfAppState.Value.SpaceViewSorts?.Count ?? 0) > 0)
 			{
 				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
@@ -26,6 +25,12 @@
 				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 			}
 		</FluentButton>
+		@if (_showClearFilter)
+		{
+			<FluentButton OnClick="OnClearFilterClick" Title="@LOC("clear filters and sort")" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" />
+			</FluentButton>
+		}
 		@* 		<FluentButton Id="grid-properties-selector" OnClick="OnGridPropertiesClick" Title="grid properties" Appearance="@Appearance.Outline">
 		<FluentIcon Value="@TfConstants.GetIcon("TableSettings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentButton> *@

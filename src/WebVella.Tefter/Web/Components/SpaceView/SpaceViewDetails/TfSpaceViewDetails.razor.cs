@@ -164,6 +164,17 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
+	private async Task _onClearFilter()
+	{
+		if (_isDataLoading) return;
+		_isDataLoading = true;
+		var queryDict = new Dictionary<string, object>();
+		queryDict[TfConstants.SearchQueryName] = null;
+		queryDict[TfConstants.FiltersQueryName] = null;
+		queryDict[TfConstants.SortsQueryName] = null;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+
 	private Task _onRowChanged(TfDataTable value)
 	{
 
