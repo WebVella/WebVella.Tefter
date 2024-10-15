@@ -85,10 +85,23 @@
 	height: 24px !important;
 }
 
-	::deep .spacenav-nav.sidebar-collapsed .fluent-nav-item .positioning-region::before {
-		left: -10px;
-		width: 2px;
-	}
+::deep .fluent-nav-item.selected a .positioning-region::before {
+	content: "";
+	display: block;
+	position: absolute;
+	right: unset;
+	width: 3px;
+	height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
+	background: var(--accent-fill-rest);
+	border-radius: calc(var(--control-corner-radius)* 1px);
+	margin: calc(var(--design-unit)* 2px) 2px;
+	z-index: 5;
+}
+
+::deep .spacenav-nav.sidebar-collapsed .fluent-nav-item .positioning-region::before {
+	left: -10px;
+	width: 2px;
+}
 
 /*Fix for onclick click zone to small bug*/
 ::deep .spacenav-nav .fluent-nav-item .content-region > .fluent-nav-link {
@@ -99,6 +112,7 @@
 	right: 0;
 	justify-content: center;
 }
+
 ::deep ::-webkit-scrollbar {
 	width: 3px;
 	height: 3px;

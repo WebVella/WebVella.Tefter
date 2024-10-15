@@ -1,16 +1,24 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewNavigation.TfSpaceViewNavigation", "WebVella.Tefter")]
 public partial class TfSpaceViewNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
 
 	private bool _settingsMenuVisible = false;
 	private string search = null;
 	private TfSpaceViewNavigationActiveTab _activeTab = TfSpaceViewNavigationActiveTab.Views;
 	private bool _linksFromAllViews = false;
 	private List<string> _expandedGroups = new List<string>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		_expandedGroups = await _getOpenedGroupsFromStorage();
+	}
 	private List<TucMenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();
@@ -45,11 +53,11 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 				{
 					var viewMenu = new TucMenuItem
 					{
-						Id = "tf-" + group.Slugify(),
+						Id = $"tf-{TfAppState.Value.Space.Id}-" + group.Slugify(),
 						Icon = TfConstants.GetIcon("Folder"),
 						Title = group,
 						IsGroup = true,
-						Nodes = menuItems.Where(x => x.Groups.Contains(group)).ToList(),
+						Nodes = menuItems.Where(x => x.Groups.Contains(group)).ToList()
 					};
 					menuWithGroups.Add(viewMenu);
 				}
@@ -209,12 +217,49 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 		return _activeTab == tab ? "active" : "";
 	}
 
-	private void _groupExpandedChanged(string groupId)
+	private async Task _groupExpandedChanged(string groupId)
 	{
-		if(_expandedGroups.Contains(groupId))
+		if (_expandedGroups.Contains(groupId))
+		{
+			Console.WriteLine("COLLAPSE");
 			_expandedGroups.Remove(groupId);
+			await _removeOpenedGroupsToStorage(groupId);
+		}
 		else
+		{
+			Console.WriteLine("EXPAND");
 			_expandedGroups.Add(groupId);
+			await _setOpenedGroupsToStorage(groupId);
+		}
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private async Task<List<string>> _getOpenedGroupsFromStorage()
+	{
+		var result = await ProtectedLocalStorage.GetAsync<List<string>>(TfConstants.SpaceViewOpenedGroupsLocalStorageKey);
+		if (result.Success) return result.Value;
+		return new List<string>();
+	}
+
+	private async Task<List<string>> _setOpenedGroupsToStorage(string groupId)
+	{
+		var current = await _getOpenedGroupsFromStorage();
+		if (!current.Contains(groupId))
+		{
+			current.Add(groupId);
+			await ProtectedLocalStorage.SetAsync(TfConstants.SpaceViewOpenedGroupsLocalStorageKey, current);
+		}
+		return current;
+	}
+	private async Task<List<string>> _removeOpenedGroupsToStorage(string groupId)
+	{
+		var current = await _getOpenedGroupsFromStorage();
+		if (current.Contains(groupId))
+		{
+			current.Remove(groupId);
+			await ProtectedLocalStorage.SetAsync(TfConstants.SpaceViewOpenedGroupsLocalStorageKey, current);
+		}
+		return current;
 	}
 }
 

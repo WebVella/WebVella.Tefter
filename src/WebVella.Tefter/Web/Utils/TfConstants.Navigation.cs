@@ -55,6 +55,9 @@ public partial class TfConstants
 	public static Icon ViewIcon = GetIcon("Eye");
 	public static Icon RectangleIcon = GetIcon("RectangleLandscape",variant:IconVariant.Filled);
 	public static Icon ErrorIcon = Icons.GetInstance(new IconInfo { Name = "ErrorCircle", Size = IconSize.Size20, Variant = IconVariant.Filled }).WithColor(Color.Error);
+
+	//Storage keys
+	public static string SpaceViewOpenedGroupsLocalStorageKey = "tf-spaceview-opened-groups";
 }
 
 
