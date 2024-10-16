@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using FluentResults;
+
+namespace WebVella.Tefter;
 
 public partial interface ITfDataProviderManager
 {
@@ -614,19 +616,22 @@ ORDER BY st.created_on DESC");
 
 						if (!result.IsSuccess)
 							throw new Exception("Unable to write synchronization result info.");
+					}
 
-
-						//only for presentation - update even no changes to update shared key id value
+					//only for presentation - update even no changes to update shared key id value
+					if (!foundDiff)
+					{
 						//set only row index here
 						providerRow["tf_row_index"] = currentRowIndex;
 
-						result = _dataManager.UpdateProviderRow(
+						var result = _dataManager.UpdateProviderRow(
 							provider,
-							providerRow);
+						providerRow);
 
 						if (!result.IsSuccess)
 							throw new Exception("Unable to update data provider row with new values");
 					}
+
 				}
 			}
 		}
