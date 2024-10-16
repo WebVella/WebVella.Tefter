@@ -70,15 +70,20 @@ internal partial class AppStateUseCase
 			}
 			if (routeState.ThirdNode == RouteDataThirdNode.Data)
 			{
+				int defaultPageSize = TfConstants.PageSize;
+				if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
+				var dt = await GetDataProviderData(routeState.DataProviderId.Value, routeState.Search, (routeState.Page ?? 1), (routeState.PageSize ?? defaultPageSize));
 				newAppState = newAppState with
 				{
-					AdminDataProviderData = await GetDataProviderData(routeState.DataProviderId.Value, null, 1, TfConstants.PageSize),
-					AdminDataProviderDataPage = 1
+					AdminDataProviderData = dt,
+					AdminDataProviderDataPage = dt.QueryInfo.Page ?? 1,
+					AdminDataProviderDataPageSize = dt.QueryInfo.PageSize ?? TfConstants.PageSize,
+					AdminDataProviderDataSearch = routeState.Search
 				};
 			}
 			else
 			{
-				newAppState = newAppState with { AdminDataProviderData = null, AdminDataProviderDataPage = 0 };
+				newAppState = newAppState with { AdminDataProviderData = null, AdminDataProviderDataPage = 1 };
 			}
 		}
 
@@ -95,7 +100,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProviders failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -132,7 +137,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProvider failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -153,7 +158,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProviderTypes failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -260,7 +265,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSynchronizationTasksExtended failed").CausedBy(srvResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -280,7 +285,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("CreateSynchronizationTask failed").CausedBy(createResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -298,7 +303,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("Provider not found"),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -311,7 +316,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("DeleteAllProviderRows failed").CausedBy(createResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -376,7 +381,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProvider failed").CausedBy(srvProviderResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -397,7 +402,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("QueryDataProvider failed").CausedBy(srvProviderResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService

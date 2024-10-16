@@ -10,7 +10,7 @@
 		<div class="tfdt__toolbar" style="display:flex;justify-content:space-between;">
 			<div style="flex:1 1 auto">
 				<FluentStack>
-					<FluentSearch Value="@_search" ValueChanged="_searchChanged" />
+					<FluentSearch Value="@TfAppState.Value.AdminDataProviderDataSearch" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
 					<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
 								  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
 						<span>system</span>
@@ -54,10 +54,10 @@
 							</tr>
 						</thead>
 						<tbody class="tf-grid-tbody">
-							@if (_isListBusy)
+							@if (_isDataLoading)
 							{
 								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="@columnCount">Loading...</td>
+									<td class="tf-grid-td" colspan="@columnCount"><div>Loading...</div></td>
 								</tr>
 							}
 							else
@@ -67,8 +67,8 @@
 									<tr @key=@row["tf_id"] class="tf-grid-tr">
 										@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
 										{
-											if (!_showSystemColumns && column.IsSystem && !column.IsShared) { continue; }
-											if (!_showSharedKeyColumns && column.IsSystem && column.IsShared) { continue; }
+											if (!_showSystemColumns && column.IsSystem) { continue; }
+											if (!_showSharedKeyColumns && column.IsShared) { continue; }
 											if (!_showCustomColumns && !column.IsSystem) { continue; }
 											<td class="tf-grid-td">
 												<div>@row[column.Name]</div>
@@ -90,7 +90,8 @@
 			</div>
 			<div class="tfdt__pager">
 				<TfPager Page="@TfAppState.Value.AdminDataProviderDataPage" GoLast="@_goLastPage" GoNext="@_goNextPage"
-						 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
+						 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
+						 PageSize="@TfAppState.Value.AdminDataProviderDataPageSize" ChangePageSize="_pageSizeChange" />
 			</div>
 		}
 		else if (TfAppState.Value.AdminDataProviderData.Columns.Count == 0)
