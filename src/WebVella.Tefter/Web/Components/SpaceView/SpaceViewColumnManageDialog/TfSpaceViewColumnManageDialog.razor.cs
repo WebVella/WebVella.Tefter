@@ -66,7 +66,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				//This space data uses all the columns from the data provider
 				var dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x=> x.Id == selectedSpaceData.DataProviderId);
 				if(dataProvider is not null){ 
-					_options.AddRange(dataProvider.ColumnsTotal.Select(x=> x.DbName));
+					_options.AddRange(dataProvider.ColumnsPublic.Select(x=> x.DbName));
 				}
 			}
 		}

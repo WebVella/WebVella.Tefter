@@ -130,7 +130,7 @@
     <value>Създай</value>
   </data>
   <data name="Create space" xml:space="preserve">
-    <value>Създай зона</value>
+    <value>Създай област</value>
   </data>
   <data name="Icon" xml:space="preserve">
     <value>Икона</value>
@@ -139,7 +139,7 @@
     <value>ограничен достъп</value>
   </data>
   <data name="Manage space" xml:space="preserve">
-    <value>Редактирай зона</value>
+    <value>Редактирай област</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Име</value>

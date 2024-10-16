@@ -29,6 +29,8 @@ public partial record TfAppState
 	{
 		get
 		{
+			if(SpaceColorString == "default") 
+				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToAttributeValue());
 			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(SpaceColorString);
 		}
 	}

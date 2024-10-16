@@ -41,6 +41,11 @@
 					@LOC("Manage Space")
 					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
+				<FluentMenuItem OnClick="onDeleteSpaceClick">
+					@LOC("Delete Space")
+					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+				</FluentMenuItem>
+				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onDataListClick">
 					@LOC("Space Data")
 					<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
@@ -58,7 +63,7 @@
 		@{
 			var menuItems = _getMenu();
 		}
-		@if (_activeTab == TfSpaceViewNavigationActiveTab.Saves)
+		@if (_activeTab == TfSpaceViewNavigationActiveTab.Saves && menuItems.Count > 0)
 		{
 			<div style="text-align:right">
 				<FluentSwitch @bind-Value=_linksFromAllViews Label="@LOC("all views")" />
@@ -69,9 +74,9 @@
 			{
 				if (item.IsGroup)
 				{
-					<FluentNavGroup HideExpander="false" Expanded="@_expandedGroups.Contains(item.Id)" ExpandedChanged="@(x=> _groupExpandedChanged(item.Id))" 
+					<FluentNavGroup HideExpander="false" Expanded="@_expandedGroups.Contains(item.Id)" ExpandedChanged="@(x=> _groupExpandedChanged(item.Id))"
 									Title="@item.Title" Class="tf-menu-item-group"
-									Icon="@(_expandedGroups.Contains(item.Id) 
+									Icon="@(_expandedGroups.Contains(item.Id)
 										? TfConstants.GetIcon("FolderOpen") : TfConstants.GetIcon("Folder"))">
 						@foreach (var item in item.Nodes)
 						{
@@ -89,7 +94,11 @@
 		</FluentNavMenu>
 		@if (menuItems.Count == 0)
 		{
-			<div style="padding-left:5px;padding-top:5px">@LOC("No records")</div>
+			<div style="padding-left:5px;padding-top:5px">@LOC("No views found in the space")</div>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:1rem;">
+				<FluentIcon Slot="start" Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString"/>
+				@LOC("Create View")
+			</FluentButton>
 		}
 	</div>
 </div>

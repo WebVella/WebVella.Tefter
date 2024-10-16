@@ -33,7 +33,7 @@ public partial class TfFilterManage : TfBaseComponent
 		get
 		{
 			if (SelectedProvider is null) return new List<string>();
-			return SelectedProvider.ColumnsTotal.Select(x => x.DbName).ToList();
+			return SelectedProvider.ColumnsPublic.Select(x => x.DbName).ToList();
 		}
 	}
 	private async Task _addColumnFilterHandler()
