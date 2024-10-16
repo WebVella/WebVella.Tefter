@@ -614,6 +614,18 @@ ORDER BY st.created_on DESC");
 
 						if (!result.IsSuccess)
 							throw new Exception("Unable to write synchronization result info.");
+
+
+						//only for presentation - update even no changes to update shared key id value
+						//set only row index here
+						providerRow["tf_row_index"] = currentRowIndex;
+
+						result = _dataManager.UpdateProviderRow(
+							provider,
+							providerRow);
+
+						if (!result.IsSuccess)
+							throw new Exception("Unable to update data provider row with new values");
 					}
 				}
 			}
