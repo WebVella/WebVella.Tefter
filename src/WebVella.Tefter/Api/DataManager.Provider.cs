@@ -391,6 +391,12 @@ public partial class DataManager
 			parameters.Add(new NpgsqlParameter($"@{sharedKeyName}", row[sharedKeyName]));
 			sql.Append($"{sharedKeyName} = @{sharedKeyName}");
 			sql.AppendLine(",");
+
+			var sharedKeyVersion = $"tf_sk_{sharedKey.DbName}_version";
+			parameters.Add(new NpgsqlParameter($"@{sharedKeyVersion}", row[sharedKeyVersion]));
+			parameters.Add(new NpgsqlParameter($"@{sharedKeyVersion}", row[sharedKeyVersion]));
+			sql.Append($"{sharedKeyVersion} = @{sharedKeyVersion}");
+			sql.AppendLine(",");
 		}
 
 		foreach (var column in provider.Columns)
