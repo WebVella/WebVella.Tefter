@@ -68,48 +68,50 @@ internal partial class AppStateUseCase
 			{
 				newAppState = newAppState with { SpaceViewData = null };
 			}
-
-			//Aux Data Hook
-			var compContext = new TucViewColumnComponentContext()
+			if (newAppState.SpaceView is not null)
 			{
-				Hash = newAppState.Hash,
-				DataTable = newAppState.SpaceViewData,
-				Mode = TucComponentMode.Display, //ignored here
-				SpaceViewId = newAppState.SpaceView.Id,
-				EditContext = null, //ignored here
-				ValidationMessageStore = null, //ignored here
-				RowIndex = 0,///ignored here
-				CustomOptionsJson = null, //set in column loop
-				DataMapping = null,//set in column loop
-				QueryName = null,//set in column loop
-				SpaceViewColumnId = Guid.Empty, //set in column loop
-			};
-			foreach (TucSpaceViewColumn column in newAppState.SpaceViewColumns)
-			{
-				if (column.ComponentType is not null
-					&& column.ComponentType.GetInterface(nameof(ITucAuxDataUseComponent)) != null)
+				//Aux Data Hook
+				var compContext = new TucViewColumnComponentContext()
 				{
-					compContext.SpaceViewColumnId = column.Id;
-					compContext.CustomOptionsJson = column.CustomOptionsJson;
-					compContext.DataMapping = column.DataMapping;
-					compContext.QueryName = column.QueryName;
-					var component = (ITucAuxDataUseComponent)Activator.CreateInstance(column.ComponentType, compContext);
-					component.OnSpaceViewStateInited(
-							serviceProvider: serviceProvider,
-							currentUser: currentUser,
-							routeState: routeState,
-							newAppState: newAppState,
-							oldAppState: oldAppState,
-							newAuxDataState: newAuxDataState,
-							oldAuxDataState: oldAuxDataState
-					);
+					Hash = newAppState.Hash,
+					DataTable = newAppState.SpaceViewData,
+					Mode = TucComponentMode.Display, //ignored here
+					SpaceViewId = newAppState.SpaceView.Id,
+					EditContext = null, //ignored here
+					ValidationMessageStore = null, //ignored here
+					RowIndex = 0,///ignored here
+					CustomOptionsJson = null, //set in column loop
+					DataMapping = null,//set in column loop
+					QueryName = null,//set in column loop
+					SpaceViewColumnId = Guid.Empty, //set in column loop
+				};
+				foreach (TucSpaceViewColumn column in newAppState.SpaceViewColumns)
+				{
+					if (column.ComponentType is not null
+						&& column.ComponentType.GetInterface(nameof(ITucAuxDataUseComponent)) != null)
+					{
+						compContext.SpaceViewColumnId = column.Id;
+						compContext.CustomOptionsJson = column.CustomOptionsJson;
+						compContext.DataMapping = column.DataMapping;
+						compContext.QueryName = column.QueryName;
+						var component = (ITucAuxDataUseComponent)Activator.CreateInstance(column.ComponentType, compContext);
+						component.OnSpaceViewStateInited(
+								serviceProvider: serviceProvider,
+								currentUser: currentUser,
+								routeState: routeState,
+								newAppState: newAppState,
+								oldAppState: oldAppState,
+								newAuxDataState: newAuxDataState,
+								oldAuxDataState: oldAuxDataState
+						);
+					}
 				}
-			}
 
-			//Addon Components
-			var addonComponents = GetAddonComponents(null).Where(x => x.Region == TfScreenRegion.SpaceViewToolbarActions
-				|| x.Region == TfScreenRegion.SpaceViewSelectorActions).ToList();
-			newAppState = newAppState with { SpaceViewAddonComponents = addonComponents };
+				//Addon Components
+				var addonComponents = GetAddonComponents(null).Where(x => x.Region == TfScreenRegion.SpaceViewToolbarActions
+					|| x.Region == TfScreenRegion.SpaceViewSelectorActions).ToList();
+				newAppState = newAppState with { SpaceViewAddonComponents = addonComponents };
+			}
 		}
 		else
 		{

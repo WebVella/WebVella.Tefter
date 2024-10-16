@@ -15,7 +15,7 @@ public partial class TfFilterCard : TfBaseComponent
 		get
 		{
 			if (DataProvider is null) return new List<string>();
-			return DataProvider.ColumnsTotal.Select(x => x.DbName).ToList();
+			return DataProvider.ColumnsPublic.Select(x => x.DbName).ToList();
 		}
 	}
 
@@ -33,7 +33,7 @@ public partial class TfFilterCard : TfBaseComponent
 	{
 		if (String.IsNullOrWhiteSpace(dbColumn)) return;
 		if (DataProvider is null) return;
-		var column = DataProvider.ColumnsTotal.FirstOrDefault(x => x.DbName == dbColumn);
+		var column = DataProvider.ColumnsPublic.FirstOrDefault(x => x.DbName == dbColumn);
 		if (column is null) return;
 
 		switch (column.DbType.TypeValue)

@@ -1,8 +1,11 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceData.SpaceDataNavigation.TfSpaceDataNavigation", "WebVella.Tefter")]
 public partial class TfSpaceDataNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+
+	[Inject] private AppStateUseCase UC { get; set; }
 
 	private bool _settingsMenuVisible = false;
 	private string search = null;
@@ -11,7 +14,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	{
 		search = search?.Trim().ToLowerInvariant();
 		var menuItems = new List<TucMenuItem>();
-		foreach (var spaceData in TfAppState.Value.SpaceDataList.OrderBy(x=> x.Name))
+		foreach (var spaceData in TfAppState.Value.SpaceDataList.OrderBy(x => x.Name))
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !spaceData.Name.ToLowerInvariant().Contains(search))
 				continue;
@@ -61,6 +64,38 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		}
 	}
 
+	private async Task onDeleteSpaceClick()
+	{
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
+			return;
+
+		try
+		{
+			var result = UC.DeleteSpace(TfAppState.Value.Space.Id);
+
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
+				Dispatcher.Dispatch(new SetAppStateAction(
+									component: this,
+									state: TfAppState.Value with
+									{
+										CurrentUserSpaces = spaceList
+									}
+								));
+				Navigator.NavigateTo(TfConstants.HomePageUrl);
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
 	private async Task onManageSpaceClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(

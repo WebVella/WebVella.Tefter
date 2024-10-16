@@ -176,4 +176,11 @@ internal partial class AppStateUseCase
 		if (result.IsFailed) return Result.Fail(new Error("UpdateSpaceWithForm failed").CausedBy(result.Errors));
 		return Result.Ok(new TucSpace(result.Value));
 	}
+
+	internal Result DeleteSpace(Guid spaceId)
+	{
+		var result = _spaceManager.DeleteSpace(spaceId);
+		if (result.IsFailed) return Result.Fail(new Error("DeleteSpace failed").CausedBy(result.Errors));
+		return Result.Ok();
+	}
 }

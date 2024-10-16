@@ -16,8 +16,13 @@
 					@LOC("Manage Space")
 					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
+				<FluentMenuItem OnClick="onDeleteSpaceClick">
+					@LOC("Delete Space")
+					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+				</FluentMenuItem>
+				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onViewsListClick">
-					@LOC("Views List")
+					@LOC("Space Views")
 					<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
 				<FluentDivider></FluentDivider>
@@ -30,13 +35,24 @@
 		</div>
 	</div>
 	<div class="sidebar-inner">
+		@{
+			var menuItems = _getMenu();
+		}
 		<FluentNavMenu Style="width:100%">
-			@foreach (var item in _getMenu())
+			@foreach (var item in menuItems)
 			{
 				<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
 							   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
 			}
 		</FluentNavMenu>
+		@if (menuItems.Count == 0)
+		{
+			<div style="padding-left:5px;padding-top:5px">@LOC("No data found in the space")</div>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:1rem;">
+				<FluentIcon Slot="start" Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				@LOC("Create Dataset")
+			</FluentButton>
+		}
 	</div>
 </div>
 

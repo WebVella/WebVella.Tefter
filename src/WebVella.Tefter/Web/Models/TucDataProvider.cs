@@ -29,6 +29,22 @@ public record TucDataProvider
 			return result.OrderBy(x=> x.DbName).ToList();
 		}
 	}
+	public List<TucColumn> ColumnsPublic
+	{
+		get
+		{
+			var result = new List<TucColumn>();
+			if (Columns is not null)
+			{
+				foreach (var item in Columns) result.Add(new TucColumn(item));
+			}
+			if (SharedColumns is not null)
+			{
+				foreach (var item in SharedColumns) result.Add(new TucColumn(item));
+			}
+			return result.OrderBy(x=> x.DbName).ToList();
+		}
+	}
 	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
 

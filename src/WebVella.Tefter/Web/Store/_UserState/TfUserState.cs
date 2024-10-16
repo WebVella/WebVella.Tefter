@@ -49,6 +49,8 @@ public partial record TfUserState
 	{
 		get
 		{
+			if(ThemeColorString == "default") 
+				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToAttributeValue());
 			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(ThemeColorString);
 		}
 	}

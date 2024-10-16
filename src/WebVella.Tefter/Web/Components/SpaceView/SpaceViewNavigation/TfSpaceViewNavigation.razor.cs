@@ -8,6 +8,8 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
 
+	[Inject] private AppStateUseCase UC { get; set; }
+
 	private bool _settingsMenuVisible = false;
 	private string search = null;
 	private TfSpaceViewNavigationActiveTab _activeTab = TfSpaceViewNavigationActiveTab.Views;
@@ -157,7 +159,38 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
 		}
 	}
+	private async Task onDeleteSpaceClick()
+	{
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
+			return;
 
+		try
+		{
+			var result = UC.DeleteSpace(TfAppState.Value.Space.Id);
+
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
+				Dispatcher.Dispatch(new SetAppStateAction(
+									component: this,
+									state: TfAppState.Value with
+									{
+										CurrentUserSpaces = spaceList
+									}
+								));
+				Navigator.NavigateTo(TfConstants.HomePageUrl);
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
 	private async Task onManageSpaceClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(

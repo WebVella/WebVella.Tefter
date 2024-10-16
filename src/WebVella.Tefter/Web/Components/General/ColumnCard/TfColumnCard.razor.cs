@@ -14,7 +14,7 @@ public partial class TfColumnCard : TfBaseComponent
 		get
 		{
 			if (DataProvider is null) return new List<string>();
-			return DataProvider.ColumnsTotal.Select(x => x.DbName).ToList();
+			return DataProvider.ColumnsPublic.Select(x => x.DbName).ToList();
 		}
 	}
 	internal List<string> _columnOptions
@@ -60,7 +60,7 @@ public partial class TfColumnCard : TfBaseComponent
 
 	private TucColumn _getProviderColumnByName(string dbName)
 	{
-		return DataProvider?.ColumnsTotal.FirstOrDefault(x => x.DbName == dbName);
+		return DataProvider?.ColumnsPublic.FirstOrDefault(x => x.DbName == dbName);
 	}
 
 }

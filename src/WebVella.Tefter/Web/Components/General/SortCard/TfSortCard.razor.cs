@@ -14,7 +14,7 @@ public partial class TfSortCard : TfBaseComponent
 		get
 		{
 			if (DataProvider is null) return new List<string>();
-			return DataProvider.ColumnsTotal.Select(x => x.DbName).ToList();
+			return DataProvider.ColumnsPublic.Select(x => x.DbName).ToList();
 		}
 	}
 
