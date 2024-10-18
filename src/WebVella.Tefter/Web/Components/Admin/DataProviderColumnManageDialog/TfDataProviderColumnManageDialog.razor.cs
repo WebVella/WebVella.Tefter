@@ -160,18 +160,31 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		await Dialog.CancelAsync();
 	}
 
-	private void _selectionSourceTypeChanged(TucDataProviderTypeDataTypeInfo option)
+	private async Task _selectionSourceTypeChanged(TucDataProviderTypeDataTypeInfo option)
 	{
 		_selectedProviderType = option;
-		_selectedDbType = null;
-		if (_selectedProviderType.SupportedDatabaseColumnTypes.Any())
-			_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[0];
+		StateHasChanged();
+		await Task.Delay(1);
+		if (_selectedProviderType is not null)
+		{
+			var currentdbSelectionIndex = _selectedProviderType.SupportedDatabaseColumnTypes.FindIndex(x => x.TypeValue == _selectedDbType?.TypeValue);
+			if (currentdbSelectionIndex > -1)
+			{ 
+				_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[currentdbSelectionIndex];
+			}
+			else if (_selectedProviderType.SupportedDatabaseColumnTypes.Any())
+				_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[0];
+			else
+				_selectedDbType = null;
+		}
+
 		StateHasChanged();
 	}
 
-	private void _sourceColumnNameChanged(string text){ 
+	private void _sourceColumnNameChanged(string text)
+	{
 		_form.SourceName = text;
-		if(String.IsNullOrWhiteSpace(_form.DbName))
+		if (String.IsNullOrWhiteSpace(_form.DbName))
 			_form.DbName = TfConverters.GenerateDbNameFromText(text);
 	}
 

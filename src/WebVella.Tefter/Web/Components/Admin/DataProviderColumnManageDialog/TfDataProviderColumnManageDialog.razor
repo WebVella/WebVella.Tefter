@@ -35,31 +35,32 @@
 				<DataAnnotationsValidator />
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.SourceName ValueChanged="(x=> _sourceColumnNameChanged(x))"
-										 Label="@LOC("SOURCE column name")" Style="width:100%" AutoComplete="new-password" />
-						<FluentValidationMessage For="@(() => _form.SourceName)" />
-					</FluentGridItem>
-					<FluentGridItem xs="6">
 						<FluentSelect SelectedOption="@_selectedProviderType" TOption="TucDataProviderTypeDataTypeInfo"
 									  SelectedOptionChanged="_selectionSourceTypeChanged"
 									  Items="@_providerTypeOptions" Style="width:100%"
 									  OptionText="@(p => p.Name)" Label="@LOC("SOURCE column type")"></FluentSelect>
 						<FluentValidationMessage For="@(() => _form.SourceType)" />
 					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.SourceName ValueChanged="(x=> _sourceColumnNameChanged(x))"
+										 Label="@LOC("SOURCE column name")" Style="width:100%" AutoComplete="new-password" />
+						<FluentValidationMessage For="@(() => _form.SourceName)" />
+					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentSelect @bind-SelectedOption="@_selectedDbType"
+									  TOption="TucDatabaseColumnTypeInfo"
+									  Items="@_selectedProviderType.SupportedDatabaseColumnTypes" Style="width:100%" Placeholder="@LOC("select SOURCE column type")"
+									  OptionText="@(p => p.Name)"
+									  Label="@LOC("PROVIDER data type")" Disabled="!_isCreate"></FluentSelect>
+						<FluentValidationMessage For="@(() => _form.SourceType)" />
+					</FluentGridItem>
 					<FluentGridItem xs="6">
 						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.DbName
 										 Label="@LOC("PROVIDER column name")" Style="width:100%"
 										 Disabled="!_isCreate" AutoComplete="new-password" />
 						<FluentValidationMessage For="@(() => _form.DbName)" />
-					</FluentGridItem>
-					<FluentGridItem xs="6">
-						<FluentSelect @bind-SelectedOption="@_selectedDbType"
-									  TOption="TucDatabaseColumnTypeInfo"
-									  Items="@_selectedProviderType.SupportedDatabaseColumnTypes" Style="width:100%"
-									  OptionText="@(p => p.Name)" Label="@LOC("PROVIDER data type")" Disabled="!_isCreate"></FluentSelect>
-						<FluentValidationMessage For="@(() => _form.SourceType)" />
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentDivider Style="margin:15px 0" />

@@ -448,7 +448,7 @@ ORDER BY st.created_on DESC");
 
 	#region <--- Synchronization --->
 
-	public void Synchronize(
+	public async void Synchronize(
 		TfDataProviderSynchronizeTask task)
 	{
 
@@ -477,7 +477,6 @@ ORDER BY st.created_on DESC");
 			foreach (var row in rows)
 			{
 				currentRowIndex++;
-
 				foreach (var warning in row.Warnings)
 				{
 					warningsFound = true;

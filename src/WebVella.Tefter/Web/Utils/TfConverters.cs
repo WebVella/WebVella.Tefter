@@ -198,6 +198,12 @@ internal static partial class TfConverters
 		return str;
 	}
 
+	internal static string GenerateQueryName()
+	{
+		return "q" + (Guid.NewGuid()).ToString().Split("-")[0];
+	}
+
+
 	public static string RemoveDiacritics(this string text)
 	{
 		var normalizedString = text.Normalize(NormalizationForm.FormD);

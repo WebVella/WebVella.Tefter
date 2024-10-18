@@ -468,7 +468,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 							var spaceDataList = spaceManager.GetSpaceDataList(spaceData.SpaceId).Value;
 							return !spaceDataList.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
 						})
-						.WithMessage("There is already existing space data with same name in same space.");
+						.WithMessage("There is already existing space data with the same name in the same space.");
 			});
 
 			RuleSet("update", () =>

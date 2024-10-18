@@ -813,12 +813,15 @@
   border-left: var(--tf-content-border-top-width) solid transparent;
   display: flex;
 }
-.content-toolbar {
+.content-header {
   position: relative;
   padding: 0 var(--tf-content-padding);
-  height: calc(40px + var(--tf-content-toolbar-margin-top));
-  margin-bottom: var(--tf-content-toolbar-margin-bottom);
-  padding-top: var(--tf-content-toolbar-margin-top);
+  height: var(--tf-content-header-height);
+}
+.content-toolbar {
+  position: relative;
+  height: var(--tf-content-toolbar-height);
+  padding: 10px var(--tf-content-padding);
 }
 .content-inner {
   height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important;
@@ -829,9 +832,17 @@
   /*overflow-x: scroll !important;*/
   position: relative;
 }
+.content-body.with-header .content-inner {
+  padding-top: 0;
+  height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-header-height)) !important;
+}
 .content-body.with-toolbar .content-inner {
   padding-top: 0;
-  height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-toolbar-height) - var(--tf-content-toolbar-margin-bottom) - var(--tf-content-toolbar-margin-top)) !important;
+  height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-toolbar-height)) !important;
+}
+.content-body.with-toolbar.with-header .content-inner {
+  padding-top: 0;
+  height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - var(--tf-content-header-height) - var(--tf-content-toolbar-height)) !important;
 }
 /* width */
 ::-webkit-scrollbar {
@@ -960,6 +971,21 @@ fluent-button.accent svg {
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px;
 }
+.page-header {
+  font-size: var(--type-ramp-plus-4-font-size);
+  height: 100%;
+  padding-top: 15px;
+}
+.page-header-inner {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 30px;
+}
+.page-header-divider {
+  color: var(--neutral-base-color);
+  margin: 0 7px;
+}
 .tf-tabs {
   margin-top: 1rem;
 }
@@ -967,14 +993,13 @@ fluent-button.accent svg {
   padding-top: 1rem;
 }
 :root {
-  --tf-content-padding: 15px;
+  --tf-content-padding: 10px;
   --tf-header-height: 48px;
   --tf-content-border-radius: 8px;
   --tf-content-border-top-width: 3px;
   --tf-content-margin-bottom: 5px;
-  --tf-content-toolbar-height: 40px;
-  --tf-content-toolbar-margin-bottom: 10px;
-  --tf-content-toolbar-margin-top: 7px;
+  --tf-content-header-height: 50px;
+  --tf-content-toolbar-height: 60px;
   --tf-sidebar-toolbar-height: 40px;
   --tf-sidebar-toolbar-margin-top-bottom: 10px;
   --tf-sidebar-padding: 5px;
