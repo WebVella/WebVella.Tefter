@@ -38,6 +38,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			_form = _form with
 			{
 				Id = Guid.NewGuid(),
+				QueryName = TfConverters.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
 				ColumnType = defaultColumnType,
 				ComponentType = defaultColumnType?.DefaultComponentType
@@ -64,9 +65,10 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			else
 			{
 				//This space data uses all the columns from the data provider
-				var dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x=> x.Id == selectedSpaceData.DataProviderId);
-				if(dataProvider is not null){ 
-					_options.AddRange(dataProvider.ColumnsPublic.Select(x=> x.DbName));
+				var dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == selectedSpaceData.DataProviderId);
+				if (dataProvider is not null)
+				{
+					_options.AddRange(dataProvider.ColumnsPublic.Select(x => x.DbName));
 				}
 			}
 		}
@@ -244,4 +246,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 	}
 
+	private void _titleChanged(string title) { 
+		_form.Title = title;
+	}
 }

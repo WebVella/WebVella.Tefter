@@ -46,14 +46,28 @@ public static class ModelHelpers
 		return selectedType;
 	}
 
-	internal static TucSpaceViewPreset GetPresetById(this List<TucSpaceViewPreset> presets, Guid presetId){
+	internal static TucSpaceViewPreset GetPresetById(this List<TucSpaceViewPreset> presets, Guid presetId)
+	{
 		foreach (var item in presets)
 		{
-			if(item.Id == presetId) return item;
+			if (item.Id == presetId) return item;
 			var result = item.Nodes.GetPresetById(presetId);
-			if(result != null) return result;
+			if (result != null) return result;
 		}
 		return null;
+	}
+
+	internal static void FillPresetPathById(List<TucSpaceViewPreset> presets, Guid? presetId, List<TucSpaceViewPreset> result)
+	{
+		if (presetId is null) return;
+
+		var preset = presets.GetPresetById(presetId.Value);
+		if (preset is not null)
+		{
+			result.Add(preset);
+			FillPresetPathById(presets, preset.ParentId, result);
+		}
+		return;
 	}
 
 }

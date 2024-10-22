@@ -106,7 +106,7 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 		{
 			bool? value = _value;
 			if (_isThreeState && _state is null) value = null;
-			await OnRowColumnChangedByAlias(_valueAlias, _state);
+			await OnRowColumnChangedByAlias(_valueAlias, value);
 			ToastService.ShowSuccess(LOC("change applied"));
 		}
 		catch (Exception ex)
