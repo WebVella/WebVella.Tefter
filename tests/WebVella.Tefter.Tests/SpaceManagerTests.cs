@@ -1085,6 +1085,102 @@ public partial class SpaceManagerTests : BaseTest
 				updatedSpaceNode3_0_0 = FindNodeById(spaceNode3_0_0.Id, nodeTree);
 				updatedSpaceNode3_0_0.Position.Should().Be(3);
 
+				//change position without changing parent (root) with invalid position
+				spaceNode1_0_0.Position = null;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(3);
+				updatedSpaceNode1_0_0.ParentId.Should().Be(null);
+
+				updatedSpaceNode2_0_0 = FindNodeById(spaceNode2_0_0.Id, nodeTree);
+				updatedSpaceNode2_0_0.Position.Should().Be(1);
+
+				updatedSpaceNode3_0_0 = FindNodeById(spaceNode3_0_0.Id, nodeTree);
+				updatedSpaceNode3_0_0.Position.Should().Be(2);
+
+
+				#endregion
+
+				#region change root
+
+				//test change parent node and position
+				spaceNode1_0_0.Position = 2;
+				spaceNode1_0_0.ParentId = spaceNode3_0_0.Id;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(2);
+				updatedSpaceNode1_0_0.ParentId.Should().Be(spaceNode3_0_0.Id);
+
+				updatedSpaceNode2_0_0 = FindNodeById(spaceNode2_0_0.Id, nodeTree);
+				updatedSpaceNode2_0_0.Position.Should().Be(1);
+
+				updatedSpaceNode3_0_0 = FindNodeById(spaceNode3_0_0.Id, nodeTree);
+				updatedSpaceNode3_0_0.Position.Should().Be(2);
+
+				var updatedSpaceNode3_2_0 = FindNodeById(spaceNode3_2_0.Id, nodeTree);
+				updatedSpaceNode3_2_0.Position.Should().Be(3);
+
+				var updatedSpaceNode3_3_0 = FindNodeById(spaceNode3_3_0.Id, nodeTree);
+				updatedSpaceNode3_3_0.Position.Should().Be(4);
+
+				spaceNode1_0_0.Position = 1;
+				spaceNode1_0_0.ParentId = null;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(1);
+				updatedSpaceNode1_0_0.ParentId.Should().Be(null);
+
+				updatedSpaceNode2_0_0 = FindNodeById(spaceNode2_0_0.Id, nodeTree);
+				updatedSpaceNode2_0_0.Position.Should().Be(2);
+
+				updatedSpaceNode3_0_0 = FindNodeById(spaceNode3_0_0.Id, nodeTree);
+				updatedSpaceNode3_0_0.Position.Should().Be(3);
+
+				updatedSpaceNode3_2_0 = FindNodeById(spaceNode3_2_0.Id, nodeTree);
+				updatedSpaceNode3_2_0.Position.Should().Be(2);
+
+				updatedSpaceNode3_3_0 = FindNodeById(spaceNode3_3_0.Id, nodeTree);
+				updatedSpaceNode3_3_0.Position.Should().Be(3);
+
+				//change position with null + parent change
+				spaceNode1_0_0.Position = null;
+				spaceNode1_0_0.ParentId = spaceNode2_0_0.Id;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(4); //last position
+				updatedSpaceNode1_0_0.ParentId.Should().Be(spaceNode2_0_0.Id);
+
+				updatedSpaceNode2_0_0 = FindNodeById(spaceNode2_0_0.Id, nodeTree);
+				updatedSpaceNode2_0_0.Position.Should().Be(1);
+
+				updatedSpaceNode3_0_0 = FindNodeById(spaceNode3_0_0.Id, nodeTree);
+				updatedSpaceNode3_0_0.Position.Should().Be(2);
+
+				//return to initial state
+				spaceNode1_0_0.Position = 1;
+				spaceNode1_0_0.ParentId = null;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+
 				#endregion
 
 				#region delete node

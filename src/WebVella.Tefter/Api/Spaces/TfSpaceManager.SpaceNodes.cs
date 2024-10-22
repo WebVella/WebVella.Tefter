@@ -218,6 +218,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 					{
 						var childNodesForPositionUpdate = new List<TfSpaceNode>();
 
+						existingSpaceNode.ParentNode.ChildNodes.Remove(existingSpaceNode);
 
 						childNodesForPositionUpdate = existingSpaceNode.ParentNode.ChildNodes
 							.Where(x => x.Position.Value > existingSpaceNode.Position)
@@ -225,13 +226,16 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 						foreach (var childNode in childNodesForPositionUpdate)
 						{
-							childNode.Position = childNode.Position--;
-							nodesToUpdate.Add(childNode);
+							childNode.Position--;
+							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
+								nodesToUpdate.Add(childNode);
 						}
 					}
 					else
 					{
 						var childNodesForPositionUpdate = new List<TfSpaceNode>();
+
+						allNodes.Remove(existingSpaceNode);
 
 						childNodesForPositionUpdate = allNodes
 							.Where(x => x.ParentId is null && x.Position.Value > existingSpaceNode.Position)
@@ -239,8 +243,9 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 						foreach (var childNode in childNodesForPositionUpdate)
 						{
-							childNode.Position = childNode.Position--;
-							nodesToUpdate.Add(childNode);
+							childNode.Position--;
+							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
+								nodesToUpdate.Add(childNode);
 						}
 					}
 
@@ -275,59 +280,39 @@ public partial class TfSpaceManager : ITfSpaceManager
 						//else move nodes after position we insert at with one position down
 						var childNodesForPositionUpdate = new List<TfSpaceNode>();
 
-						if (parentNode is not null)
+						if (parentNode is null)
 						{
-							childNodesForPositionUpdate = parentNode.ChildNodes
+							allNodes.Remove(existingSpaceNode);
+
+							childNodesForPositionUpdate = allNodes
 								.Where(x => x.Position.Value >= spaceNode.Position)
 								.ToList();
 						}
 						else
 						{
-							childNodesForPositionUpdate = allNodes
-								.Where(x => x.ParentId is null && x.Position.Value >= spaceNode.Position)
+							parentNode.ChildNodes.Remove(existingSpaceNode);
+
+							childNodesForPositionUpdate = parentNode.ChildNodes
+								.Where(x => x.Position.Value >= spaceNode.Position)
 								.ToList();
 						}
 
 						foreach (var childNode in childNodesForPositionUpdate)
 						{
-							childNode.Position = childNode.Position++;
-							nodesToUpdate.Add(childNode);
+							childNode.Position++;
+							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
+								nodesToUpdate.Add(childNode);
 						}
 					}
 
 				}
 				else if (spaceNode.Position != existingSpaceNode.Position)
 				{
+
 					TfSpaceNode parentNode = null;
-
-					short? maxPosition = null;
-
-					if (spaceNode.ParentId is null)
-					{
-						maxPosition = allNodes
-							.Where(x => x.ParentId is null)
-							.Select(x => (short?)x.Position.Value)
-							.Max(x => x);
-					}
-					else
-					{
+					if (spaceNode.ParentId is not null)
 						parentNode = FindNodeById(spaceNode.ParentId.Value, allNodes);
 
-						maxPosition = parentNode
-							.ChildNodes
-							.Select(x => (short?)x.Position.Value)
-							.Max(x => x);
-					}
-					if (maxPosition is null)
-						maxPosition = 0;
-
-					//if position is not valid, we add node at the end
-					if (spaceNode.Position == null || spaceNode.Position <= 0 || spaceNode.Position > maxPosition)
-					{
-						spaceNode.Position = (short)(maxPosition + 1);
-					}
-
-					var childNodesForPositionIncrease = new List<TfSpaceNode>();
 					var childNodesForPositionDecrease = new List<TfSpaceNode>();
 
 					if (parentNode is not null)
@@ -341,17 +326,6 @@ public partial class TfSpaceManager : ITfSpaceManager
 						foreach (var childNode in childNodesForPositionDecrease)
 						{
 							childNode.Position--;
-							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-								nodesToUpdate.Add(childNode);
-						}
-
-						childNodesForPositionIncrease = parentNode.ChildNodes
-							.Where(x => x.Position.Value >= spaceNode.Position)
-							.ToList();
-
-						foreach (var childNode in childNodesForPositionIncrease)
-						{
-							childNode.Position++;
 							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
 								nodesToUpdate.Add(childNode);
 						}
@@ -371,6 +345,54 @@ public partial class TfSpaceManager : ITfSpaceManager
 							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
 								nodesToUpdate.Add(childNode);
 						}
+					}
+				
+
+					short? maxPosition = null;
+					if (spaceNode.ParentId is null)
+					{
+						maxPosition = allNodes
+							.Where(x => x.ParentId is null)
+							.Select(x => (short?)x.Position.Value)
+							.Max(x => x);
+					}
+					else
+					{
+						maxPosition = parentNode
+							.ChildNodes
+							.Select(x => (short?)x.Position.Value)
+							.Max(x => x);
+					}
+					if (maxPosition is null)
+						maxPosition = 0;
+
+					//if position is not valid, we add node at the end
+					if (spaceNode.Position == null || spaceNode.Position <= 0 || spaceNode.Position > maxPosition)
+					{
+						spaceNode.Position = (short)(maxPosition + 1);
+					}
+
+					var childNodesForPositionIncrease = new List<TfSpaceNode>();
+
+					if (parentNode is not null)
+					{
+						parentNode.ChildNodes.Remove(existingSpaceNode);
+
+						childNodesForPositionIncrease = parentNode.ChildNodes
+							.Where(x => x.Position.Value >= spaceNode.Position)
+							.ToList();
+
+						foreach (var childNode in childNodesForPositionIncrease)
+						{
+							childNode.Position++;
+							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
+								nodesToUpdate.Add(childNode);
+						}
+
+					}
+					else
+					{
+						allNodes.Remove(existingSpaceNode);
 
 						childNodesForPositionIncrease = allNodes
 							.Where(x => x.ParentId is null && x.Position.Value >= spaceNode.Position)
@@ -571,10 +593,6 @@ public partial class TfSpaceManager : ITfSpaceManager
 							return FindNodeById(id, allNodes) != null;
 						})
 						.WithMessage("There is not existing space node with specified identifier.");
-
-
-				//TODO rumen more validation about SpaceId and SpaceDataId changes
-
 
 			});
 
