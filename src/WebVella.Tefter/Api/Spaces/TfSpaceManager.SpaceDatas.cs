@@ -459,16 +459,16 @@ public partial class TfSpaceManager : ITfSpaceManager
 						.Must((spaceData, id) => { return spaceManager.GetSpaceData(id).Value == null; })
 						.WithMessage("There is already existing space data with specified identifier.");
 
-				RuleFor(spaceData => spaceData.Name)
-						.Must((spaceData, name) =>
-						{
-							if (string.IsNullOrEmpty(name))
-								return true;
+				//RuleFor(spaceData => spaceData.Name)
+				//		.Must((spaceData, name) =>
+				//		{
+				//			if (string.IsNullOrEmpty(name))
+				//				return true;
 
-							var spaceDataList = spaceManager.GetSpaceDataList(spaceData.SpaceId).Value;
-							return !spaceDataList.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
-						})
-						.WithMessage("There is already existing space data with same name in same space.");
+				//			var spaceDataList = spaceManager.GetSpaceDataList(spaceData.SpaceId).Value;
+				//			return !spaceDataList.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
+				//		})
+				//		.WithMessage("There is already existing space data with same name in same space.");
 			});
 
 			RuleSet("update", () =>

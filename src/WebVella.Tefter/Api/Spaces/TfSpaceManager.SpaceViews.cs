@@ -459,16 +459,16 @@ public partial class TfSpaceManager : ITfSpaceManager
 						.Must((spaceView, id) => { return spaceManager.GetSpaceView(id).Value == null; })
 						.WithMessage("There is already existing space view with specified identifier.");
 
-				RuleFor(spaceView => spaceView.Name)
-						.Must((spaceView, name) =>
-						{
-							if (string.IsNullOrEmpty(name))
-								return true;
+				//RuleFor(spaceView => spaceView.Name)
+				//		.Must((spaceView, name) =>
+				//		{
+				//			if (string.IsNullOrEmpty(name))
+				//				return true;
 
-							var spaceViews = spaceManager.GetSpaceViewsList(spaceView.SpaceId).Value;
-							return !spaceViews.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
-						})
-						.WithMessage("There is already existing space view with same name.");
+				//			var spaceViews = spaceManager.GetSpaceViewsList(spaceView.SpaceId).Value;
+				//			return !spaceViews.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
+				//		})
+				//		.WithMessage("There is already existing space view with same name.");
 
 
 			});

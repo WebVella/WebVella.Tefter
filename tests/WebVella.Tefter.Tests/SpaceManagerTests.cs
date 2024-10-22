@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Web.ViewColumns;
+﻿using Bogus;
+using WebVella.Tefter.Web.ViewColumns;
 
 namespace WebVella.Tefter.Tests;
 
@@ -758,6 +759,381 @@ public partial class SpaceManagerTests : BaseTest
 
 			}
 		}
+	}
+
+
+	[Fact]
+	public async Task CRUD_SpaceNode()
+	{
+		using (await locker.LockAsync())
+		{
+			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				#region Create Structure
+
+				var space = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0
+				};
+				spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+
+				
+				var spaceNode1_0_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "1_0_0",
+					Name = "1_0_0",
+					ParentId = null,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				var result = spaceManager.CreateSpaceNode(spaceNode1_0_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode1_1_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "1_1_0",
+					Name = "1_1_0",
+					ParentId = spaceNode1_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode1_1_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode1_2_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "1_2_0",
+					Name = "1_2_0",
+					ParentId = spaceNode1_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode1_2_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode1_3_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "1_3_0",
+					Name = "1_3_0",
+					ParentId = spaceNode1_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode1_3_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode2_0_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "2_0_0",
+					Name = "2_0_0",
+					ParentId = null,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode2_0_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode2_1_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "2_1_0",
+					Name = "2_1_0",
+					ParentId = spaceNode2_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode2_1_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode2_2_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "2_2_0",
+					Name = "2_2_0",
+					ParentId = spaceNode2_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode2_2_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode2_3_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "2_3_0",
+					Name = "2_3_0",
+					ParentId = spaceNode2_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode2_3_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode3_0_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "3_0_0",
+					Name = "3_0_0",
+					ParentId = null,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode3_0_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode3_1_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "3_1_0",
+					Name = "3_1_0",
+					ParentId = spaceNode3_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode3_1_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode3_2_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "3_2_0",
+					Name = "3_2_0",
+					ParentId = spaceNode3_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode3_2_0);
+				result.IsSuccess.Should().BeTrue();
+
+				var spaceNode3_3_0 = new TfSpaceNode
+				{
+					Id = Guid.NewGuid(),
+					ComponentSettingsJson = "{}",
+					ComponentType = "comp_type",
+					Icon = "3_3_0",
+					Name = "3_3_0",
+					ParentId = spaceNode3_0_0.Id,
+					Position = null,
+					SpaceId = space.Id,
+					Type = TfSpaceNodeType.Folder
+				};
+
+				result = spaceManager.CreateSpaceNode(spaceNode3_3_0);
+				result.IsSuccess.Should().BeTrue();
+
+
+
+				#endregion
+
+				#region move up/down in same parent node
+
+				//test move up in same parent node
+				spaceNode1_3_0.Position = 1;
+				var updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				var nodeTree = updateResult.Value;
+
+				var updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
+				updatedSpaceNode1_1_0.Position.Should().Be(2);
+
+				var updatedSpaceNode1_2_0 = FindNodeById(spaceNode1_2_0.Id, nodeTree);
+				updatedSpaceNode1_2_0.Position.Should().Be(3);
+
+				var updatedSpaceNode1_3_0 = FindNodeById(spaceNode1_3_0.Id, nodeTree);
+				updatedSpaceNode1_3_0.Position.Should().Be(1);
+
+
+				//test move down in same parent node
+				spaceNode1_3_0.Position = 3;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
+				updatedSpaceNode1_1_0.Position.Should().Be(1);
+
+				updatedSpaceNode1_2_0 = FindNodeById(spaceNode1_2_0.Id, nodeTree);
+				updatedSpaceNode1_2_0.Position.Should().Be(2);
+
+				updatedSpaceNode1_3_0 = FindNodeById(spaceNode1_3_0.Id, nodeTree);
+				updatedSpaceNode1_3_0.Position.Should().Be(3);
+
+				//test move up in same parent node
+				spaceNode1_3_0.Position = 2;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
+				updatedSpaceNode1_1_0.Position.Should().Be(1);
+
+				updatedSpaceNode1_2_0 = FindNodeById(spaceNode1_2_0.Id, nodeTree);
+				updatedSpaceNode1_2_0.Position.Should().Be(3);
+
+				updatedSpaceNode1_3_0 = FindNodeById(spaceNode1_3_0.Id, nodeTree);
+				updatedSpaceNode1_3_0.Position.Should().Be(2);
+
+
+				//test move down in same parent node
+				spaceNode1_3_0.Position = 3;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
+				updatedSpaceNode1_1_0.Position.Should().Be(1);
+
+				updatedSpaceNode1_2_0 = FindNodeById(spaceNode1_2_0.Id, nodeTree);
+				updatedSpaceNode1_2_0.Position.Should().Be(2);
+
+				updatedSpaceNode1_3_0 = FindNodeById(spaceNode1_3_0.Id, nodeTree);
+				updatedSpaceNode1_3_0.Position.Should().Be(3);
+				#endregion
+
+				#region root node - move up/down 
+
+				//test move up in same parent node
+				spaceNode1_0_0.Position = 3;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				var updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(3);
+
+				var updatedSpaceNode2_0_0 = FindNodeById(spaceNode2_0_0.Id, nodeTree);
+				updatedSpaceNode2_0_0.Position.Should().Be(1);
+
+				var updatedSpaceNode3_0_0 = FindNodeById(spaceNode3_0_0.Id, nodeTree);
+				updatedSpaceNode3_0_0.Position.Should().Be(2);
+
+				//test move down in same parent node
+				spaceNode1_0_0.Position = 1;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(1);
+
+				updatedSpaceNode2_0_0 = FindNodeById(spaceNode2_0_0.Id, nodeTree);
+				updatedSpaceNode2_0_0.Position.Should().Be(2);
+
+				updatedSpaceNode3_0_0 = FindNodeById(spaceNode3_0_0.Id, nodeTree);
+				updatedSpaceNode3_0_0.Position.Should().Be(3);
+
+				#endregion
+
+				#region delete node
+
+				var deleteResult = spaceManager.DeleteSpaceNode(spaceNode1_0_0);
+				deleteResult.IsSuccess.Should().BeTrue();
+				
+				deleteResult = spaceManager.DeleteSpaceNode(spaceNode2_0_0);
+				deleteResult.IsSuccess.Should().BeTrue();
+				
+				deleteResult = spaceManager.DeleteSpaceNode(spaceNode3_3_0);
+				deleteResult.IsSuccess.Should().BeTrue();
+				
+				deleteResult = spaceManager.DeleteSpaceNode(spaceNode3_0_0);
+				deleteResult.IsSuccess.Should().BeTrue();
+
+				#endregion
+			}
+		}
+	}
+
+	private TfSpaceNode FindNodeById(
+		Guid id,
+		List<TfSpaceNode> nodes)
+	{
+		if (nodes == null || nodes.Count == 0)
+			return null;
+
+		Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+
+		foreach (var node in nodes)
+		{
+			if (node.Id == id)
+				return node;
+
+			queue.Enqueue(node);
+		}
+
+		while (queue.Count > 0)
+		{
+			var node = queue.Dequeue();
+			if (node.Id == id)
+				return node;
+
+			foreach (var childNode in node.ChildNodes)
+				queue.Enqueue(childNode);
+		}
+
+		return null;
 	}
 
 }
