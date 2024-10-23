@@ -61,9 +61,9 @@ public class CsvDataProvider : ITfDataProviderType
 			case "NUMBER":
 				return new List<DatabaseColumnType> { DatabaseColumnType.Number }.AsReadOnly();
 			case "DATE":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Date }.AsReadOnly();
+				return new List<DatabaseColumnType> { DatabaseColumnType.Date, DatabaseColumnType.DateTime }.AsReadOnly();
 			case "DATETIME":
-				return new List<DatabaseColumnType> { DatabaseColumnType.DateTime }.AsReadOnly();
+				return new List<DatabaseColumnType> { DatabaseColumnType.DateTime, DatabaseColumnType.Date }.AsReadOnly();
 			case "SHORT_INTEGER":
 				return new List<DatabaseColumnType> { DatabaseColumnType.ShortInteger }.AsReadOnly();
 			case "INTEGER":
@@ -185,7 +185,8 @@ public class CsvDataProvider : ITfDataProviderType
 		string stringValue = value?.ToString();
 
 		//if column is nullable return null, null is return for empty string 
-		if (string.IsNullOrEmpty(stringValue) && column.IsNullable)
+		if ( ( string.IsNullOrEmpty(stringValue) || stringValue?.ToLowerInvariant() == "null" )
+			&& column.IsNullable)
 			return null;
 
 		string columnImportParseFormat = null;
@@ -207,7 +208,7 @@ public class CsvDataProvider : ITfDataProviderType
 					if (Boolean.TryParse(value?.ToString(), out bool parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to boolean value");
+					throw new Exception($"Cannot convert value to boolean value for column {column.SourceName}");
 				}
 
 			case DatabaseColumnType.Guid:
@@ -215,7 +216,7 @@ public class CsvDataProvider : ITfDataProviderType
 					if (Guid.TryParse(value?.ToString(), out Guid parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to GUID value");
+					throw new Exception("Cannot convert value to GUID value for column {column.SourceName}");
 				}
 
 			case DatabaseColumnType.DateTime:
@@ -226,7 +227,7 @@ public class CsvDataProvider : ITfDataProviderType
 					else if (DateTime.TryParse(value?.ToString(), out DateTime parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to DateTime value");
+					throw new Exception($"Cannot convert value to DateTime value for column {column.SourceName}");
 				}
 
 			case DatabaseColumnType.Date:
@@ -240,7 +241,7 @@ public class CsvDataProvider : ITfDataProviderType
 					else if (DateOnly.TryParse(value?.ToString(), out DateOnly parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to DateOnly value");
+					throw new Exception($"Cannot convert value to DateOnly value for column {column.SourceName}");
 				}
 
 			case DatabaseColumnType.ShortInteger:
@@ -248,7 +249,7 @@ public class CsvDataProvider : ITfDataProviderType
 					if (short.TryParse(value?.ToString(), out short parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to ShortInteger value");
+					throw new Exception($"Cannot convert value to ShortInteger value for column {column.SourceName}");
 				}
 
 			case DatabaseColumnType.Integer:
@@ -256,7 +257,7 @@ public class CsvDataProvider : ITfDataProviderType
 					if (int.TryParse(value?.ToString(), out int parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to Integer value");
+					throw new Exception($"Cannot convert value to Integer value for column {column.SourceName}");
 				}
 
 			case DatabaseColumnType.LongInteger:
@@ -264,7 +265,7 @@ public class CsvDataProvider : ITfDataProviderType
 					if (long.TryParse(value?.ToString(), out long parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to LongInteger value");
+					throw new Exception($"Cannot convert value to LongInteger value for column {column.SourceName}");
 				}
 
 			case DatabaseColumnType.Number:
@@ -272,11 +273,11 @@ public class CsvDataProvider : ITfDataProviderType
 					if (decimal.TryParse(value?.ToString(), out decimal parsedValue))
 						return parsedValue;
 
-					throw new Exception("Cannot convert value to Number value");
+					throw new Exception($"Cannot convert value to Number value for column {column.SourceName}");
 				}
 
 			default:
-				throw new Exception("Not supported source type");
+				throw new Exception($"Not supported source type for column {column.SourceName}");
 		}
 	}
 
