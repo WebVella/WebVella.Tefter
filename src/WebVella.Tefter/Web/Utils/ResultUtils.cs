@@ -37,7 +37,7 @@ internal static class ResultUtils
 			{
 				foreach (var reason in iError.Reasons)
 				{
-					GetInnerReason(reason,generalErrors);
+					GetInnerReason(reason, generalErrors,validationErrors);
 				}
 			}
 		}
@@ -60,16 +60,28 @@ internal static class ResultUtils
 		}
 	}
 
-	internal static void GetInnerReason(IError iError, List<string> current)
+	internal static void GetInnerReason(IError iError, List<string> generalErrors, List<string> validationErrors)
 	{
 		if (iError.Reasons.Count == 0)
 		{
-			if (!String.IsNullOrWhiteSpace(iError.Message)) current.Add(iError.Message);
+			if (iError is ValidationError)
+			{
+				var error = (ValidationError)iError;
+				if (String.IsNullOrWhiteSpace(error.PropertyName))
+					validationErrors.Add(error.Reason);
+				else
+					validationErrors.Add($"{error.PropertyName}: {error.Reason}");
+			}
+			else
+			{
+				if (!String.IsNullOrWhiteSpace(iError.Message)) generalErrors.Add(iError.Message);
+			}
+
 			return;
 		}
 		foreach (var item in iError.Reasons)
 		{
-			GetInnerReason(item, current);
+			GetInnerReason(item, generalErrors,validationErrors);
 		}
 	}
 

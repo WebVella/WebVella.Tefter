@@ -33,7 +33,8 @@
 					{
 						<span class="tf-grid-td-spacer"></span>
 					}
-					<span>@Item.Name</span>
+					<span><FluentIcon Value="TfConstants.GetIcon(Item.Icon)"/></span>
+					<span>@($"{Item.Position}. {Item.Name}")</span>
 					<span class="td-description">(@LOC("folder"))</span>
 				</FluentStack>
 

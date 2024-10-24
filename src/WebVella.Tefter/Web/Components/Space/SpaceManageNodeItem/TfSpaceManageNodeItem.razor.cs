@@ -15,7 +15,7 @@ public partial class TfSpaceManageNodeItem : TfBaseComponent
 	public int Level { get; set; } = 0;
 
 	[Parameter]
-	public EventCallback<Guid> OnRemove { get; set; }
+	public EventCallback<TucSpaceNode> OnRemove { get; set; }
 
 	[Parameter]
 	public EventCallback<Guid> OnEdit { get; set; }
@@ -24,16 +24,16 @@ public partial class TfSpaceManageNodeItem : TfBaseComponent
 	public EventCallback<Guid> OnCopy { get; set; }
 
 	[Parameter]
-	public EventCallback<Tuple<Guid,bool>> OnMove { get; set; }
+	public EventCallback<Tuple<TucSpaceNode,bool>> OnMove { get; set; }
 
 	private async Task _onRemove(){ 
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this quick filter removed?")))
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space node removed?")))
 			return;
-		await OnRemove.InvokeAsync(Item.Id);
+		await OnRemove.InvokeAsync(Item);
 	}
 
 	private async Task _onMove(bool isUp){ 
-		await OnMove.InvokeAsync(new Tuple<Guid, bool>(Item.Id,isUp));
+		await OnMove.InvokeAsync(new Tuple<TucSpaceNode, bool>(Item,isUp));
 	}
 
 	private async Task _onEdit(){ 
