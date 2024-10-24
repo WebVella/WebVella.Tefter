@@ -48,10 +48,4 @@
 	  <Folder Include="Interfaces\" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <EmbeddedResource Update="Web\Components\Space\SpaceNodeManageDialog\TfSpaceNodeManageDialog.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	</ItemGroup>
-
 </Project>
