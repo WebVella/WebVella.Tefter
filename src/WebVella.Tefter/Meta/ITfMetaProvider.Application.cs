@@ -42,7 +42,13 @@ public partial class TfMetaProvider
 		foreach (var assembly in assemblies)
 		{
 			foreach (Type type in assembly.GetTypes())
+			{
+				ScanAndRegisterSpaceNodeComponents(type);
+				ScanAndRegisterDataProvidersTypes(type);
+				ScanAndRegisterScreenRegionComponents(type);
+				ScanAndRegisterSpaceViewColumnTypes(type);
 				ScanAndRegisterApplications(type);
+			}
 		}
 	}
 
