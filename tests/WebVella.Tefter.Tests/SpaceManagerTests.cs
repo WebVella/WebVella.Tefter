@@ -767,6 +767,8 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
+			ITfTypeProvider typeProvider = ServiceProvider.GetRequiredService<ITfTypeProvider>();
+
 			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 
@@ -789,9 +791,9 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode1_0_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
-					ComponentType = "comp_type",
-					Icon = "1_0_0",
+					ComponentSettingsJson = null,
+					ComponentType = null,
+					Icon = null,
 					Name = "1_0_0",
 					ParentId = null,
 					Position = null,
