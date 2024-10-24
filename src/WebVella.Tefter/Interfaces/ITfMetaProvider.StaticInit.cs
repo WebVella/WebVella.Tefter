@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter;
 
-public partial class TfTypeProvider
+public partial class TfMetaProvider
 {
-	static TfTypeProvider()
+	static TfMetaProvider()
 	{
 		_spaceNodeComponentMeta = new List<TfSpaceNodeComponentMeta>();
 

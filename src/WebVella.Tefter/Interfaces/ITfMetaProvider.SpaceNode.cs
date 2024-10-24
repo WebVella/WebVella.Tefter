@@ -1,11 +1,11 @@
 ﻿namespace WebVella.Tefter;
 
-public partial interface ITfTypeProvider
+public partial interface ITfMetaProvider
 {
 	public ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodesComponentMeta();
 }
 
-public partial class TfTypeProvider
+public partial class TfMetaProvider
 {
 	private static readonly List<TfSpaceNodeComponentMeta> _spaceNodeComponentMeta;
 
