@@ -49,21 +49,6 @@ public partial class TfSpaceManage : TfBaseComponent
 		}
 	}
 
-	private IEnumerable<TucSpaceNode> _getParents()
-	{
-		var parents = new List<TucSpaceNode>();
-		foreach (var item in TfAppState.Value.SpaceNodes)
-		{
-			_fillParents(parents, item);
-		}
-		return parents.AsEnumerable();
-	}
-
-	private void _fillParents(List<TucSpaceNode> parents, TucSpaceNode current)
-	{
-		if (current.Type == TfSpaceNodeType.Folder) parents.Add(current);
-		foreach (var item in current.ChildNodes) _fillParents(parents, item);
-	}
 
 	private async Task _addNode()
 	{
@@ -91,54 +76,76 @@ public partial class TfSpaceManage : TfBaseComponent
 
 	}
 
-	private async Task _removeNode(Guid nodeId)
+	private async Task _removeNode(TucSpaceNode node)
 	{
-		//Items = _removeNode(Items, nodeId);
-		//_submitting = true;
-		//await InvokeAsync(StateHasChanged);
-		//await ItemsChanged.InvokeAsync(Items);
-		//_submitting = false;
-		//await InvokeAsync(StateHasChanged);
+		if (_submitting) return;
+		
+		_submitting = true;
+		await InvokeAsync(StateHasChanged);
+
+		try
+		{
+			Result<List<TucSpaceNode>> submitResult = UC.DeleteSpaceNode(node);
+			ProcessServiceResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Space node deleted!"));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceNodes = submitResult.Value
+				}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_submitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
-	private async Task _moveNode(Tuple<Guid, bool> args)
+	private async Task _moveNode(Tuple<TucSpaceNode, bool> args)
 	{
-		//Items = _moveNode(Items, args.Item1, args.Item2);
-		//_submitting = true;
-		//await InvokeAsync(StateHasChanged);
-		//await ItemsChanged.InvokeAsync(Items);
-		//_submitting = false;
-		//await InvokeAsync(StateHasChanged);
+		if (_submitting) return;
+
+		_submitting = true;
+		await InvokeAsync(StateHasChanged);
+
+		try
+		{
+			Result<List<TucSpaceNode>> submitResult = UC.MoveSpaceNode(args.Item1, args.Item2);
+			ProcessServiceResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Space node updated!"));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceNodes = submitResult.Value
+				}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_submitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
-	private async Task _copyNode(Guid presetId)
+	private async Task _copyNode(Guid nodeId)
 	{
-		//TucSpaceViewPreset source = ModelHelpers.GetPresetById(Items, presetId);
-		//if (source is null) return;
-		//if (source.ParentId is not null)
-		//{
-		//	TucSpaceViewPreset parent = ModelHelpers.GetPresetById(Items, source.ParentId.Value);
-		//	if (parent is null) return;
 
-		//	var sourceIndex = parent.Nodes.FindIndex(x => x.Id == source.Id);
-		//	if (sourceIndex > -1)
-		//	{
-		//		parent.Nodes.Insert(sourceIndex + 1, _copyNode(source));
-		//	}
-		//}
-		//else
-		//{
-		//	var sourceIndex = Items.FindIndex(x => x.Id == source.Id);
-		//	if (sourceIndex > -1)
-		//	{
-		//		Items.Insert(sourceIndex + 1, _copyNode(source));
-		//	}
-		//}
-
-		//_submitting = true;
-		//await InvokeAsync(StateHasChanged);
-		//await ItemsChanged.InvokeAsync(Items);
-		//_submitting = false;
-		//await InvokeAsync(StateHasChanged);
 	}
 
 	private async Task _editNode(Guid nodeId)
@@ -171,5 +178,6 @@ public partial class TfSpaceManage : TfBaseComponent
 			));
 		}
 	}
+
 
 }

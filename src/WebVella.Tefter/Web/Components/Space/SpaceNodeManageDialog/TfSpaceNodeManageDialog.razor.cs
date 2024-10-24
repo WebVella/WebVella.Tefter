@@ -14,6 +14,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 	private Icon _iconBtn;
 	private bool _isCreate = false;
 	private TucSpaceNode _form = new();
+	private string _parentIdString = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -30,6 +31,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		{
 
 			_form = Content with { Id = Content.Id };
+			_parentIdString = _form.ParentId.ToString();
 
 		}
 		base.InitForm(_form);
@@ -43,29 +45,20 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 	{
 		if (_isSubmitting) return;
 
-		//if (String.IsNullOrEmpty(_form.Name))
-		//{
-		//	ToastService.ShowWarning(LOC("Please select a name"));
-		//	return;
-		//}
+		MessageStore.Clear();
+
+		if (!EditContext.Validate()) return;
 
 		_isSubmitting = true;
 		await InvokeAsync(StateHasChanged);
-		var node = new TucSpaceNode
-		{
-			Id = Guid.NewGuid(),
-			ParentId = _form.ParentId,
-			Name = _form.Name,
-			Type = _form.Type,
-			ParentNode = _form.ParentNode,
-			Position = null,
-			SpaceId = _form.SpaceId,
-			Icon = _form.Type == TfSpaceNodeType.Page ? "Document" : "Folder"
-		};
 
 		try
 		{
-			Result<List<TucSpaceNode>> submitResult = UC.CreateSpaceNode(node);
+			Result<List<TucSpaceNode>> submitResult = null;
+			if(String.IsNullOrWhiteSpace(_parentIdString)) _form.ParentId = null;
+			else _form.ParentId = new Guid(_parentIdString);
+			if (_isCreate) submitResult = UC.CreateSpaceNode(_form);
+			else submitResult = UC.UpdateSpaceNode(_form);
 			ProcessServiceResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
@@ -77,6 +70,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 					SpaceNodes = submitResult.Value
 				}
 				));
+				await _cancel();
 			}
 		}
 		catch (Exception ex)
@@ -91,4 +85,29 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 
 
 	}
+
+	private IEnumerable<TucSpaceNode> _getParents()
+	{
+		var parents = new List<TucSpaceNode>();
+		foreach (var item in TfAppState.Value.SpaceNodes)
+		{
+			_fillParents(parents, item,new List<Guid>{ _form.Id});
+		}
+		return parents.AsEnumerable();
+	}
+
+	private void _fillParents(List<TucSpaceNode> parents, TucSpaceNode current,List<Guid> ignoreNodes)
+	{
+		if (current.Type == TfSpaceNodeType.Folder && !ignoreNodes.Contains(current.Id)) parents.Add(current);
+		foreach (var item in current.ChildNodes) _fillParents(parents, item,ignoreNodes);
+	}
+
+	private void _typeChanged(TfSpaceNodeType type){ 
+		_form.Type = type;
+		if(type == TfSpaceNodeType.Folder && _form.Icon == TfConstants.PageIconString)
+			_form.Icon = TfConstants.FolderIconString;
+		else if(type == TfSpaceNodeType.Page && _form.Icon == TfConstants.FolderIconString)
+			_form.Icon = TfConstants.PageIconString;
+	}
+
 }

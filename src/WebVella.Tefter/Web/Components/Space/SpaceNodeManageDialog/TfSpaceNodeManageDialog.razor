@@ -1,4 +1,4 @@
-﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+﻿ @using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @namespace WebVella.Tefter.Web.Components
 @inherits TfFormBaseComponent
 @* Header *@
@@ -34,7 +34,52 @@
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Parent")" />
+					<FluentStack>
+						<FluentSelect TOption="TucSpaceNode" Value=@_parentIdString ValueChanged="@(x=> _parentIdString = x)"
+									  Style="width:100%" Items="@_getParents()" Placeholder="@LOC("select...")"
+									  OptionValue="@(x=> x.Id.ToString())">
+							<OptionTemplate Context="option">
+								<FluentIcon Value="@TfConstants.GetIcon(option.Icon)" Slot="start" />
+								<span>@option.Name</span>
+							</OptionTemplate>
+						</FluentSelect>
+						@if (!String.IsNullOrWhiteSpace(_parentIdString))
+						{
+							<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=> _parentIdString = null)" />
+						}
+					</FluentStack>
+					<FluentValidationMessage For="@(() => _form.Type)" />
+				</FluentGridItem>
 			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentSelect TOption="TfSpaceNodeType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
+								  Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpaceNodeType>())"
+								  OptionText="@(x=> x.ToDescriptionString())" />
+					<FluentValidationMessage For="@(() => _form.Type)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Icon")" />
+					<TfSelectIcon @bind-Value="_form.Icon" />
+					<FluentValidationMessage For="@(() => _form.Icon)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentSelect TOption="TfSpaceNodeType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
+								  Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpaceNodeType>())"
+								  OptionText="@(x=> x.ToDescriptionString())" />
+					<FluentValidationMessage For="@(() => _form.Type)" />
+				</FluentGridItem>
+			</FluentGrid>
+			@if (_form.Type == TfSpaceNodeType.Page)
+			{
+				<FluentDivider Style="margin:15px 0" />
+				<div>page</div>
+			}
+			else if (_form.Type == TfSpaceNodeType.Folder) { }
 		</FluentEditForm>
 	}
 </FluentDialogBody>

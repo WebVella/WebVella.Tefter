@@ -16,9 +16,6 @@ public record TucSpaceNode
 	public string ComponentType { get; set; }
 	public string ComponentSettingsJson { get; set; } = "{}";
 	public List<TucSpaceNode> ChildNodes { get; set; } = new();
-	public TucSpaceNode ParentNode { get; set; } = null;
-
-
 	public TucSpaceNode() { }
 	public TucSpaceNode(TfSpaceNode model)
 	{
@@ -32,7 +29,6 @@ public record TucSpaceNode
 		ComponentType = model.ComponentType;
 		ComponentSettingsJson = model.ComponentSettingsJson;
 		ChildNodes = model.ChildNodes.Select(x => new TucSpaceNode(x)).ToList();
-		ParentNode = new TucSpaceNode(model.ParentNode);
 	}
 	public TfSpaceNode ToModel()
 	{
@@ -48,7 +44,6 @@ public record TucSpaceNode
 			ComponentType = ComponentType,
 			ComponentSettingsJson = ComponentSettingsJson,
 			ChildNodes = ChildNodes.Select(x=> x.ToModel()).ToList(),
-			ParentNode = ParentNode?.ToModel()
 		};
 	}
 
