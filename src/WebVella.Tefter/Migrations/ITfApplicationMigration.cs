@@ -3,11 +3,11 @@
 public interface ITfApplicationMigration
 {
 	public Task MigrateStructureAsync(
-		TfApplicationBase app,
+		ITfApplication app,
 		DatabaseBuilder db);
 
 	public Task MigrateDataAsync(
-		TfApplicationBase app,
+		ITfApplication app,
 		IServiceProvider serviceprovider,
 		IDatabaseService dbService);
 }

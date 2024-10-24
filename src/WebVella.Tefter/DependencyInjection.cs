@@ -60,7 +60,6 @@ public static class DependencyInjection
 		services.AddSingleton<ITfSharedColumnsManager, TfSharedColumnsManager>();
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
-		services.AddSingleton<ITfApplicationManager, TfApplicationManager>();
 		services.AddSingleton<ITfScreenRegionComponentManager, TfScreenRegionComponentManager>();
 		services.AddSingleton<ITfMetaProvider, TfMetaProvider>();
 
@@ -84,10 +83,10 @@ public static class DependencyInjection
 
 		//we don't use static constructor here, 
 		//because no control on assemblies order loading
-		TfApplicationManager.Init();
+		TfMetaProvider.Init();
 
 		//inject classes from applications
-		var applications = TfApplicationManager.GetApplicationsInternal();
+		var applications = TfMetaProvider.GetApplications();
 		foreach (var app in applications)
 			app.OnRegisterDependencyInjections(services);
 
@@ -100,7 +99,7 @@ public static class DependencyInjection
 		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
 
 		//execute application on start methods
-		var applications = TfApplicationManager.GetApplicationsInternal();
+		var applications = TfMetaProvider.GetApplications();
 		foreach (var app in applications)
 			app.OnStart();
 

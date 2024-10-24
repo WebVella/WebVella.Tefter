@@ -16,7 +16,6 @@ public partial class TfMetaProvider
 				ScanAndRegisterDataProvidersTypes(type);
 				ScanAndRegisterScreenRegionComponents(type);
 				ScanAndRegisterSpaceViewColumnTypes(type);
-				ScanAndRegisterApplications(type);
 			}
 		}
 	}

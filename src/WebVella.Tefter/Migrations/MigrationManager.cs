@@ -11,20 +11,20 @@ internal partial class MigrationManager : IMigrationManager
 	private readonly IDatabaseManager _dbManager;
 	private readonly IDboManager _dboManager;
 	private readonly IDatabaseService _dbService;
-	private readonly ITfApplicationManager _appManager;
+	private readonly ITfMetaProvider _metaProvider;
 
 	public MigrationManager(
 		IServiceProvider serviceProvider,
 		IDatabaseService dbService,
 		IDatabaseManager databaseManager,
 		IDboManager dboManager,
-		ITfApplicationManager appManager)
+		ITfMetaProvider metaProvider)
 	{
 		_serviceProvider = serviceProvider;
 		_dboManager = dboManager;
 		_dbManager = databaseManager;
 		_dbService = dbService;
-		_appManager = appManager;
+		_metaProvider = metaProvider;
 	}
 
 	public async Task CheckExecutePendingMigrationsAsync()
@@ -133,8 +133,8 @@ internal partial class MigrationManager : IMigrationManager
 			if (isExecuted)
 				continue;
 
-			
-			TfApplicationBase tfApp = _appManager.GetApplication(migration.ApplicationId);
+
+			ITfApplication tfApp = _metaProvider.GetApplication(migration.ApplicationId);
 
 			if (tfApp is null)
 			{

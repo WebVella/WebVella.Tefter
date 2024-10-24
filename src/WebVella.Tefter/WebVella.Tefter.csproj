@@ -44,8 +44,4 @@
 	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Meta\" />
-	</ItemGroup>
-
 </Project>

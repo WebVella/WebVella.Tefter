@@ -3,6 +3,9 @@
 public partial interface ITfMetaProvider
 {
 	public ReadOnlyCollection<TfApplicationMeta> GetApplicationsMeta();
+
+	public ITfApplication GetApplication(
+		Guid appId);
 }
 
 public partial class TfMetaProvider
@@ -13,6 +16,34 @@ public partial class TfMetaProvider
 	public ReadOnlyCollection<TfApplicationMeta> GetApplicationsMeta()
 	{
 		return _applicationsMeta.AsReadOnly();
+	}
+
+	public static ReadOnlyCollection<ITfApplication> GetApplications()
+	{
+		return _applicationsMeta
+			.Select(x => x.Instance)
+			.ToList()
+			.AsReadOnly();
+	}
+
+	public ITfApplication GetApplication(
+		Guid appId)
+	{
+		return GetApplications()
+			.SingleOrDefault(x => x.Id == appId);
+	}
+
+	internal static void Init()
+	{
+		var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+							.Where(a => !(a.FullName.ToLowerInvariant().StartsWith("microsoft.")
+							   || a.FullName.ToLowerInvariant().StartsWith("system.")));
+
+		foreach (var assembly in assemblies)
+		{
+			foreach (Type type in assembly.GetTypes())
+				ScanAndRegisterApplications(type);
+		}
 	}
 
 	private static void ScanAndRegisterApplications(

@@ -19,9 +19,9 @@ public partial class TfMetaProvider
 		Type type)
 	{
 
-		if (type.GetInterfaces().Any(x => x == typeof(ISpaceNodeComponent)))
+		if (type.GetInterfaces().Any(x => x == typeof(ITfSpaceNodeComponent)))
 		{
-			var instance = (ISpaceNodeComponent)Activator.CreateInstance(type);
+			var instance = (ITfSpaceNodeComponent)Activator.CreateInstance(type);
 			
 			TfSpaceNodeComponentMeta meta = new TfSpaceNodeComponentMeta
 			{
