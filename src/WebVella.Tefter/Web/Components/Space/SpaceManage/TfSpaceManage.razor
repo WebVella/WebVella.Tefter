@@ -1,0 +1,110 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+<TfSpaceNavigation />
+@if (TfRouteState.Value.SpaceId is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No space found"
+							  Style="border: 1px solid var(--neutral-base-color)"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				No space selected
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentLabel Typo="@Typography.PaneHeader" Style="margin-bottom:1rem">@LOC("Manage space '{0}'", TfAppState.Value.Space.Name)</FluentLabel>
+			<TfCard Small="true">
+				<TitleTemplate>
+					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpace">
+							@LOC("Edit")
+							<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+						</FluentButton>
+					</FluentStack>
+				</TitleTemplate>
+				<ChildContent>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Name")" />
+							<FluentStack>
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.Space.Name
+												 ReadOnly="true" Style="width:100%" />
+							</FluentStack>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Accessibility")" />
+							<FluentCheckbox Value=@TfAppState.Value.Space.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;"
+											ReadOnly="true" />
+						</FluentGridItem>
+					</FluentGrid>
+					<FluentGrid>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Color")" />
+							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
+								<FluentIcon Value="@TfConstants.RectangleIcon"
+											Color="Color.Custom" Style="height:100%;"
+											CustomColor="@(TfAppState.Value.Space.Color.ToAttributeValue() != "default" ? TfAppState.Value.Space.Color.ToAttributeValue() : "#036ac4" )" />
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.Space.Color.ToString()
+												 ReadOnly="true" Style="width:100%" />
+							</FluentStack>
+						</FluentGridItem>
+						<FluentGridItem xs="6">
+							<FluentInputLabel Label="@LOC("Icon")" />
+							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
+								@if (TfAppState.Value.Space.Icon is not null)
+								{
+									<FluentIcon Value="@Icons.GetInstance(TfAppState.Value.Space.Icon)" />
+								}
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.Space.IconString
+												 ReadOnly="true" Style="width:100%" />
+							</FluentStack>
+						</FluentGridItem>
+					</FluentGrid>
+				</ChildContent>
+			</TfCard>
+
+			<FluentLabel Typo="@Typography.H4" Style="margin:1rem 0">@LOC("Pages")</FluentLabel>
+			<TfCard Small="true">
+				<TitleTemplate>
+					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+						<FluentButton OnClick="_addNode" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline"
+									  Disabled="@_submitting">@LOC("Add new")</FluentButton>
+					</FluentStack>
+				</TitleTemplate>
+				<ChildContent>
+					@if (TfAppState.Value.SpaceNodes.Count == 0)
+					{
+						@LOC("No pages or folders created yet.")
+					}
+					else
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<colgroup style="width:1%"></colgroup>
+								<colgroup></colgroup>
+								<colgroup style="width:120px;"></colgroup>
+								<colgroup style="width:120px;"></colgroup>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in TfAppState.Value.SpaceNodes)
+									{
+										var contextIndex = TfAppState.Value.SpaceNodes.FindIndex(x => x.Id == context.Id);
+										<TfSpaceManageNodeItem Item="context" Level="0" OnRemove="_removeNode" OnMove="_moveNode"
+															   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == TfAppState.Value.SpaceNodes.Count -1)"
+														   OnEdit="_editNode" OnCopy="_copyNode" />
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</ChildContent>
+			</TfCard>
+		</div>
+	</FluentBodyContent>
+}

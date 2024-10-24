@@ -22,7 +22,9 @@ internal partial class AppStateUseCase
 
 		if (routeState.SpaceId is not null)
 		{
-			newAppState = newAppState with { Space = GetSpace(routeState.SpaceId.Value) };
+			var space = GetSpace(routeState.SpaceId.Value);
+			var spaceNodes = GetSpaceNodes(routeState.SpaceId.Value);
+			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes };
 		}
 		else
 		{
@@ -51,7 +53,6 @@ internal partial class AppStateUseCase
 
 		return new TucSpace(serviceResult.Value);
 	}
-
 	internal Task<List<TucSpace>> GetUserSpacesAsync(TucUser user)
 	{
 
@@ -106,7 +107,6 @@ internal partial class AppStateUseCase
 		return Task.FromResult(allSpaces.OrderBy(x=> x.Position).Take(10).ToList());
 
 	}
-
 	internal Task<List<TucSpace>> GetAllSpaces()
 	{
 
@@ -161,8 +161,6 @@ internal partial class AppStateUseCase
 		return Task.FromResult(allSpaces);
 
 	}
-
-
 	internal Result<TucSpace> CreateSpaceWithForm(TucSpace space)
 	{
 		var result = _spaceManager.CreateSpace(space.ToModel());
@@ -182,5 +180,30 @@ internal partial class AppStateUseCase
 		var result = _spaceManager.DeleteSpace(spaceId);
 		if (result.IsFailed) return Result.Fail(new Error("DeleteSpace failed").CausedBy(result.Errors));
 		return Result.Ok();
+	}
+
+	internal List<TucSpaceNode> GetSpaceNodes(Guid spaceId){ 
+		var resultSM = _spaceManager.GetSpaceNodes(spaceId);
+		if (resultSM.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetSpace failed").CausedBy(resultSM.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage:"Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var result = resultSM.Value.Select(x=> new TucSpaceNode(x)).ToList();
+		return result;
+	}
+
+	internal Result<List<TucSpaceNode>> CreateSpaceNode(TucSpaceNode node){ 
+		var resultSM = _spaceManager.CreateSpaceNode(node.ToModel());
+		if (resultSM.IsFailed) return Result.Fail(new Error("CreateSpaceNode failed").CausedBy(resultSM.Errors));
+		var result = resultSM.Value.Item2.Select(x=> new TucSpaceNode(x)).ToList();
+		return result;
 	}
 }

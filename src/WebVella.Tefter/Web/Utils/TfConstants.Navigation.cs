@@ -45,6 +45,10 @@ public partial class TfConstants
 
 
 	//Action icons
+	public static string PageIconString = "Document";
+	public static string FolderIconString = "Folder";
+	public static Icon PageIcon = GetIcon(PageIconString);
+	public static Icon FolderIcon = GetIcon(FolderIconString);
 	public static Icon CloseIcon = GetIcon("Dismiss");
 	public static Icon SaveIcon = GetIcon("Save");
 	public static Icon CancelIcon = GetIcon("Star");

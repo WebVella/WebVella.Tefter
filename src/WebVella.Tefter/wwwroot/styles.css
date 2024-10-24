@@ -971,20 +971,31 @@ fluent-button.accent svg {
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px;
 }
-.page-header {
-  font-size: var(--type-ramp-plus-4-font-size);
-  height: 100%;
-  padding-top: 15px;
+fluent-text-field[readonly]::part(root),
+fluent-number-field[readonly]::part(root),
+fluent-select[readonly]::part(control) {
+  background: transparent !important;
+  border-color: var(--neutral-fill-input-alt-active) !important;
 }
-.page-header-inner {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 30px;
+.fluent-input-label {
+  color: var(--neutral-foreground-hint) !important;
 }
-.page-header-divider {
-  color: var(--neutral-base-color);
-  margin: 0 7px;
+.tf-select-menu {
+  display: flex;
+  flex-flow: column;
+  overflow: hidden !important;
+}
+.tf-select-menu__header {
+  flex: 0 0 auto;
+  padding: 10px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+.tf-select-menu__body {
+  flex: 1 1 auto;
+  max-height: 300px;
+  overflow-y: scroll;
 }
 .tf-tabs {
   margin-top: 1rem;

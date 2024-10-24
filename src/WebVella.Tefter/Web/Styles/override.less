@@ -56,3 +56,13 @@ fluent-button.accent svg {
 .fluent-dialog-main.left::part(control) {
 	--dialog-padding: 0px;
 }
+
+fluent-text-field[readonly]::part(root),
+fluent-number-field[readonly]::part(root),
+fluent-select[readonly]::part(control) {
+	background: transparent !important;
+	border-color: var(--neutral-fill-input-alt-active) !important;
+}
+.fluent-input-label {
+	color: var(--neutral-foreground-hint) !important;
+}

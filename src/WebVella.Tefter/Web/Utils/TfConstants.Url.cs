@@ -50,6 +50,7 @@ public partial class TfConstants
 	public static string AdminSharedColumnsPageUrl  = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";
 
 	public static string RouteNameSpace  = "space";
+	public static string RouteNameSpacePage  = "page";
 	public static string RouteNameSpaceView  = "view";
 	public static string RouteNameSpaceData  = "data";
 	public static string RouteNameManage  = "manage";

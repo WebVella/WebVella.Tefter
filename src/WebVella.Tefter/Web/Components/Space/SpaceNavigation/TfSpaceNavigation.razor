@@ -1,0 +1,19 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (TfUserState.Value.SidebarExpanded)
+{
+	<style>
+		.sidebar-nav {
+			--tf-space-color: @TfAppState.Value.SpaceColorString;
+			--tf-space-icon-color: @TfAppState.Value.SpaceIconColorString;
+			--tf-space-border-color: @TfAppState.Value.SpaceBorderColor;
+		}
+	</style>
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
+		<div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
+			Space NAv
+		</div>
+	</FluentStack>
+}
+
+

@@ -42,22 +42,22 @@ public partial class TfLocation : TfBaseComponent
 					Title = TfAppState.Value.Space.Name,
 					Url = String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id)
 				});
-				if (TfAppState.Value.SpaceView is not null)
-				{
-					result.Add(new TucMenuItem
-					{
-						Title = TfAppState.Value.SpaceView.Name,
-						Url = String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.Id)
-					});
-				}
-				else if (TfAppState.Value.SpaceData is not null)
-				{
-					result.Add(new TucMenuItem
-					{
-						Title = TfAppState.Value.SpaceData.Name,
-						Url = String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceData.Id)
-					});
-				}
+				//if (TfAppState.Value.SpaceView is not null)
+				//{
+				//	result.Add(new TucMenuItem
+				//	{
+				//		Title = TfAppState.Value.SpaceView.Name,
+				//		Url = String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.Id)
+				//	});
+				//}
+				//else if (TfAppState.Value.SpaceData is not null)
+				//{
+				//	result.Add(new TucMenuItem
+				//	{
+				//		Title = TfAppState.Value.SpaceData.Name,
+				//		Url = String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceData.Id)
+				//	});
+				//}
 			}
 
 		}

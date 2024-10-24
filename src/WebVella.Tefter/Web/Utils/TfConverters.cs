@@ -3,6 +3,7 @@
 internal static partial class TfConverters
 {
 	private static string conversionPrefix = "tf-";
+	private static List<string> _allIcons = null;
 
 	internal static string ConvertGuidToHtmlElementId(Guid? guid, string prefix = "")
 	{
@@ -51,15 +52,17 @@ internal static partial class TfConverters
 
 	internal static List<string> GetSpaceIconLibrary()
 	{
+		if(_allIcons is not null) return _allIcons;
+
 		var result = new List<string>();
 		foreach (var item in Icons.AllIcons)
 		{
 			if (item.Size == TfConstants.IconSize
-			&& item.Variant == TfConstants.IconVariant
-			&& item.Name.Length <= 5)
+			&& item.Variant == TfConstants.IconVariant)
 				result.Add(item.Name);
 		}
-		return result.Take(50).ToList();
+		_allIcons = result.ToList();
+		return _allIcons;
 	}
 
 	internal static List<string> GetUniqueTagsFromText(

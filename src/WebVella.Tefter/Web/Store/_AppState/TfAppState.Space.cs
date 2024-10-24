@@ -43,6 +43,7 @@ public partial record TfAppState
 
 	//Navigation
 	public List<TucSpace> CurrentUserSpaces { get; init; } = new();
+	public List<TucSpaceNode> SpaceNodes { get; init; } = new();
 	public List<TucMenuItem> SpacesNav
 	{
 		get

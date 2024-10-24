@@ -24,7 +24,7 @@
 		<PackageReference Include="Npgsql" Version="8.0.5" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 		
-		<PackageReference Include="Serilog" Version="4.0.2" />
+		<PackageReference Include="Serilog" Version="4.1.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 		<PackageReference Include="Serilog.Enrichers.Context" Version="4.6.5" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
@@ -42,6 +42,10 @@
 
 	<ItemGroup>
 	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Interfaces\" />
 	</ItemGroup>
 
 </Project>

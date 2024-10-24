@@ -17,20 +17,29 @@ internal static class ResultUtils
 		var validationErrors = new List<string>();
 		foreach (IError iError in result.Errors)
 		{
-			if (iError is ValidationError)
+			if (iError.Reasons.Count == 0)
 			{
-				var error = (ValidationError)iError;
-				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					validationErrors.Add(error.Reason);
+				if (iError is ValidationError)
+				{
+					var error = (ValidationError)iError;
+					if (String.IsNullOrWhiteSpace(error.PropertyName))
+						validationErrors.Add(error.Reason);
+					else
+						validationErrors.Add($"{error.PropertyName}: {error.Reason}");
+				}
 				else
-					validationErrors.Add($"{error.PropertyName}: {error.Reason}");
+				{
+					var error = (IError)iError;
+					generalErrors.Add(error.Message);
+				}
 			}
 			else
 			{
-				var error = (IError)iError;
-				generalErrors.Add(error.Message);
+				foreach (var reason in iError.Reasons)
+				{
+					GetInnerReason(reason,generalErrors);
+				}
 			}
-
 		}
 		if (generalErrors.Count > 0)
 		{
@@ -45,9 +54,22 @@ internal static class ResultUtils
 				Title = toastValidationMessage,
 				Content = new CommunicationToastContent
 				{
-					Details = String.Join(Environment.NewLine,validationErrors)
+					Details = String.Join(Environment.NewLine, validationErrors)
 				}
 			});
+		}
+	}
+
+	internal static void GetInnerReason(IError iError, List<string> current)
+	{
+		if (iError.Reasons.Count == 0)
+		{
+			if (!String.IsNullOrWhiteSpace(iError.Message)) current.Add(iError.Message);
+			return;
+		}
+		foreach (var item in iError.Reasons)
+		{
+			GetInnerReason(item, current);
 		}
 	}
 
