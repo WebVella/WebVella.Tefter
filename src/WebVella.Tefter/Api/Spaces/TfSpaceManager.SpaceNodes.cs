@@ -593,7 +593,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 						.WithMessage("There is already existing space node with specified identifier.");
 
 				RuleFor(spaceNode => spaceNode.ParentId)
-						.Must((spaceNode, parentId) => { return spaceNode.Id == parentId; })
+						.Must((spaceNode, parentId) => { return spaceNode.Id != parentId; })
 						.WithMessage("Space node cannot be parent to itself.");
 			});
 
@@ -604,7 +604,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 						.WithMessage("There is not existing space node with specified identifier.");
 
 				RuleFor(spaceNode => spaceNode.ParentId)
-						.Must((spaceNode, parentId) => { return spaceNode.Id == parentId; })
+						.Must((spaceNode, parentId) => { return spaceNode.Id != parentId; })
 						.WithMessage("Space node cannot be parent to itself.");
 
 			});
