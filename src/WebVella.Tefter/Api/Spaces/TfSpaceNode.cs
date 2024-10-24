@@ -20,7 +20,7 @@ public class TfSpaceNode
 		Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
 
 		foreach(var node in ChildNodes)
-			queue.Append(node);
+			queue.Enqueue(node);
 
 		while(queue.Count > 0)
 		{
@@ -28,8 +28,8 @@ public class TfSpaceNode
 		
 			result.Add(node);
 
-			foreach (var childNode in ChildNodes)
-				queue.Append(childNode);
+			foreach (var childNode in node.ChildNodes)
+				queue.Enqueue(childNode);
 
 		}
 

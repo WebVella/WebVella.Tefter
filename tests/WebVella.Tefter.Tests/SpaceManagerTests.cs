@@ -1053,6 +1053,36 @@ public partial class SpaceManagerTests : BaseTest
 
 				#region root node - move up/down 
 
+				//test move up in same parent node while it is on first position
+				spaceNode1_0_0.Position = 0;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				var updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(1);
+
+				//test move up in same parent node on position greater than max allowed
+				spaceNode1_0_0.Position = 10;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(3);
+
+				//return node to position 1
+				spaceNode1_0_0.Position = 1;
+				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeTrue();
+
+				nodeTree = updateResult.Value;
+
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(1);
+
 				//test move up in same parent node
 				spaceNode1_0_0.Position = 3;
 				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
@@ -1060,7 +1090,7 @@ public partial class SpaceManagerTests : BaseTest
 
 				nodeTree = updateResult.Value;
 
-				var updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
 
 				var updatedSpaceNode2_0_0 = FindNodeById(spaceNode2_0_0.Id, nodeTree);
@@ -1179,6 +1209,15 @@ public partial class SpaceManagerTests : BaseTest
 				updateResult.IsSuccess.Should().BeTrue();
 
 				nodeTree = updateResult.Value;
+				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+				updatedSpaceNode1_0_0.Position.Should().Be(1);
+				updatedSpaceNode1_0_0.ParentId.Should().BeNull();
+
+				//try to move node inside child nodes tree
+				updatedSpaceNode1_0_0.Position = 1;
+				updatedSpaceNode1_0_0.ParentId = spaceNode1_2_0.Id;
+				updateResult = spaceManager.UpdateSpaceNode(updatedSpaceNode1_0_0);
+				updateResult.IsSuccess.Should().BeFalse();
 
 
 				#endregion
