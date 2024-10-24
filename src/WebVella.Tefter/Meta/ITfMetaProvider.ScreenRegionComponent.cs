@@ -2,7 +2,8 @@
 
 public partial interface ITfMetaProvider
 {
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetScreenRegionComponentsMeta();
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetScreenRegionComponentsMeta(
+		TfScreenRegion? region = null);
 }
 
 public partial class TfMetaProvider
@@ -10,9 +11,19 @@ public partial class TfMetaProvider
 	private static readonly List<TfScreenRegionComponentMeta> _screenRegionComponentMeta =
 		new List<TfScreenRegionComponentMeta>();
 
-	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetScreenRegionComponentsMeta()
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> GetScreenRegionComponentsMeta(
+		TfScreenRegion? region = null)
 	{
+		if (region is null)
+		{
+			return _screenRegionComponentMeta
+				.OrderBy(x => x.Position)
+				.ToList()
+				.AsReadOnly();
+		}
+
 		return _screenRegionComponentMeta
+			.Where(x => x.ScreenRegion == region)
 			.OrderBy(x => x.Position)
 			.ToList()
 			.AsReadOnly();
@@ -28,12 +39,12 @@ public partial class TfMetaProvider
 			//TODO remove property init and leave only instance
 			TfScreenRegionComponentMeta meta = new TfScreenRegionComponentMeta
 			{
-				Position = instance.Position,
-				ScreenRegion = instance.ScreenRegion,
-				UrlSlug = instance.UrlSlug,
-				Name = instance.Name,
-				ComponentType = type
-				//Instance = instance,
+				//Position = instance.Position,
+				//ScreenRegion = instance.ScreenRegion,
+				//UrlSlug = instance.UrlSlug,
+				//Name = instance.Name,
+				//ComponentType = type
+				Instance = instance,
 			};
 			
 			_screenRegionComponentMeta.Add(meta);

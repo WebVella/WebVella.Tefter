@@ -45,7 +45,7 @@ internal partial class AppStateUseCase
 	internal List<TucScreenRegionComponentMeta> GetAddonComponents(TfScreenRegion? region = null)
 	{
 		var results = new List<TucScreenRegionComponentMeta>();
-		var componentMeta = _screenRegionComponentManager.GetComponentMeta(region);
+		var componentMeta = _metaProvider.GetScreenRegionComponentsMeta(region);
 		foreach (var meta in componentMeta)
 		{
 			results.Add(new TucScreenRegionComponentMeta

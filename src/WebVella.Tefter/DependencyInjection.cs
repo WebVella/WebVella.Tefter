@@ -60,7 +60,6 @@ public static class DependencyInjection
 		services.AddSingleton<ITfSharedColumnsManager, TfSharedColumnsManager>();
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
-		services.AddSingleton<ITfScreenRegionComponentManager, TfScreenRegionComponentManager>();
 		services.AddSingleton<ITfMetaProvider, TfMetaProvider>();
 
 

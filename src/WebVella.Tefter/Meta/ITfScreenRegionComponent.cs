@@ -1,14 +1,14 @@
 ﻿namespace WebVella.Tefter;
 
-public class ITfScreenRegionComponent
+public interface ITfScreenRegionComponent
 {
 	public TfScreenRegion ScreenRegion { get; }
 	public int Position { get; }
-	public string Name { get; } = null;
-	public string UrlSlug { get; } = null;
+	public string Name { get; }
+	public string UrlSlug { get; }
 }
 
-public class TfScreenRegionComponentMetaNew
+public class TfScreenRegionComponentMeta
 {
 	public TfScreenRegion ScreenRegion { get { return Instance.ScreenRegion; } }
 	public int Position { get { return Instance.Position; } }
@@ -18,11 +18,11 @@ public class TfScreenRegionComponentMetaNew
 	public ITfScreenRegionComponent Instance { get; init; }
 }
 
-public class TfScreenRegionComponentMeta
-{
-	public TfScreenRegion ScreenRegion { get; init; } 
-	public int Position { get; init; }
-	public string Name { get; init; }
-	public string UrlSlug { get; init; }
-	public Type ComponentType { get; init; }
-}
+//public class TfScreenRegionComponentMeta
+//{
+//	public TfScreenRegion ScreenRegion { get; init; } 
+//	public int Position { get; init; }
+//	public string Name { get; init; }
+//	public string UrlSlug { get; init; }
+//	public Type ComponentType { get; init; }
+//}

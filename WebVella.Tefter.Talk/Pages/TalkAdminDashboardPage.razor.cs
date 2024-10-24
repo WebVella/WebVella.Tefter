@@ -1,8 +1,13 @@
 ﻿namespace WebVella.Tefter.Talk.Pages;
-[TfScreenRegionComponent(TfScreenRegion.AdminPages, 1, "Talk Administration", "talk-dashboard")]
-public partial class TalkAdminDashboardPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent
+
+public partial class TalkAdminDashboardPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
 {
-    public Task OnSpaceViewStateInited(IServiceProvider serviceProvider,TucUser currentUser,
+	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.AdminPages; } }
+	public int Position { get { return 1; } }
+	public string Name { get { return "Talk Administration"; } }
+	public string UrlSlug { get { return "talk-dashboard"; } }
+
+	public Task OnSpaceViewStateInited(IServiceProvider serviceProvider,TucUser currentUser,
         TfRouteState routeState, TfAppState newAppState,
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {
