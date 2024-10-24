@@ -4,8 +4,6 @@ public partial class TfMetaProvider
 {
 	static TfMetaProvider()
 	{
-		_spaceNodeComponentMeta = new List<TfSpaceNodeComponentMeta>();
-
 		var assemblies = AppDomain.CurrentDomain.GetAssemblies()
 							.Where(a => !(a.FullName.ToLowerInvariant().StartsWith("microsoft.")
 							   || a.FullName.ToLowerInvariant().StartsWith("system.")));
@@ -15,6 +13,10 @@ public partial class TfMetaProvider
 			foreach (Type type in assembly.GetTypes())
 			{
 				ScanAndRegisterSpaceNodeComponents(type);
+				ScanAndRegisterDataProvidersTypes(type);
+				ScanAndRegisterScreenRegionComponents(type);
+				ScanAndRegisterSpaceViewColumnTypes(type);
+				ScanAndRegisterApplications(type);
 			}
 		}
 	}

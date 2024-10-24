@@ -767,8 +767,6 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfMetaProvider typeProvider = ServiceProvider.GetRequiredService<ITfMetaProvider>();
-
 			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 

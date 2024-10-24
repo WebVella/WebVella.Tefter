@@ -2,14 +2,15 @@
 
 public partial interface ITfMetaProvider
 {
-	public ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodesComponentMeta();
+	public ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodesComponentsMeta();
 }
 
 public partial class TfMetaProvider
 {
-	private static readonly List<TfSpaceNodeComponentMeta> _spaceNodeComponentMeta;
+	private static List<TfSpaceNodeComponentMeta> _spaceNodeComponentMeta = 
+		new List<TfSpaceNodeComponentMeta>();
 
-	public ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodesComponentMeta()
+	public ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodesComponentsMeta()
 	{
 		return _spaceNodeComponentMeta.AsReadOnly();
 	}
@@ -17,16 +18,16 @@ public partial class TfMetaProvider
 	private static void ScanAndRegisterSpaceNodeComponents(
 		Type type)
 	{
+
 		if (type.GetInterfaces().Any(x => x == typeof(ISpaceNodeComponent)))
 		{
 			var instance = (ISpaceNodeComponent)Activator.CreateInstance(type);
+			
 			TfSpaceNodeComponentMeta meta = new TfSpaceNodeComponentMeta
 			{
-				Id = instance.Id,
-				Description = instance.Description,
-				Name = instance.Name,
-				SettingsComponentType = instance.SettingsComponentType
+				Instance = instance,
 			};
+
 			_spaceNodeComponentMeta.Add(meta);
 		}
 	}
