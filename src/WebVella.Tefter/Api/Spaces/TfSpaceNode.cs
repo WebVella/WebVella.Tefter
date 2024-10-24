@@ -17,6 +17,22 @@ public class TfSpaceNode
 	internal List<TfSpaceNode> GetChildNodesPlainList()
 	{
 		List<TfSpaceNode> result = new List<TfSpaceNode>();
+		Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+
+		foreach(var node in ChildNodes)
+			queue.Append(node);
+
+		while(queue.Count > 0)
+		{
+			var node = queue.Dequeue();
+		
+			result.Add(node);
+
+			foreach (var childNode in ChildNodes)
+				queue.Append(childNode);
+
+		}
+
 		return result;
 	}
 	public override string ToString()
