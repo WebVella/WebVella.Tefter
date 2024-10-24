@@ -14,6 +14,11 @@ public class TfSpaceNode
 	public List<TfSpaceNode> ChildNodes { get; set; } = new();
 	public TfSpaceNode ParentNode { get; set; } = null;
 
+	internal List<TfSpaceNode> GetChildNodesPlainList()
+	{
+		List<TfSpaceNode> result = new List<TfSpaceNode>();
+		return result;
+	}
 	public override string ToString()
 	{
 		return $"{Name} (pos:{Position}; par:{ParentNode?.Name})";

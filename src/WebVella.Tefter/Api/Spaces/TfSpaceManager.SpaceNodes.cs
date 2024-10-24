@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+
+namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
@@ -29,7 +31,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				.ToList();
 
 			var rootNodes = spaceNodesList.Where(x => x.ParentId is null).ToList();
-			foreach (var rootNode in rootNodes)
+			foreach (var rootNode in rootNodes.OrderBy(x => x.Position) )
 			{
 				rootNode.ParentNode = null;
 				InitSpaceNodeChildNodes(rootNode, spaceNodesList);
@@ -346,7 +348,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 								nodesToUpdate.Add(childNode);
 						}
 					}
-				
+
 
 					short? maxPosition = null;
 					if (spaceNode.ParentId is null)
@@ -367,9 +369,15 @@ public partial class TfSpaceManager : ITfSpaceManager
 						maxPosition = 0;
 
 					//if position is not valid, we add node at the end
-					if (spaceNode.Position == null || spaceNode.Position <= 0 || spaceNode.Position > maxPosition)
+					if (spaceNode.Position == null || spaceNode.Position > maxPosition)
 					{
 						spaceNode.Position = (short)(maxPosition + 1);
+					}
+					//if new position is equal or lower to 0 and current position is 1, 
+					// we do not change position
+					else if (spaceNode.Position <= 0 && existingSpaceNode.Position == 1) 
+					{
+						spaceNode.Position = 1;
 					}
 
 					var childNodesForPositionIncrease = new List<TfSpaceNode>();
@@ -546,9 +554,9 @@ public partial class TfSpaceManager : ITfSpaceManager
 			SpaceId = model.SpaceId,
 			Type = model.Type,
 			ParentId = model.ParentId,
-			Icon = model.Icon??string.Empty,
-			ComponentType = model.ComponentType??"",
-			ComponentSettingsJson = model.ComponentSettingsJson??"{}",
+			Icon = model.Icon ?? string.Empty,
+			ComponentType = model.ComponentType ?? "",
+			ComponentSettingsJson = model.ComponentSettingsJson ?? "{}",
 		};
 	}
 
@@ -583,16 +591,21 @@ public partial class TfSpaceManager : ITfSpaceManager
 				RuleFor(spaceNode => spaceNode.Id)
 						.Must((spaceNode, id) => { return FindNodeById(id, allNodes) == null; })
 						.WithMessage("There is already existing space node with specified identifier.");
+
+				RuleFor(spaceNode => spaceNode.ParentId)
+						.Must((spaceNode, parentId) => { return spaceNode.Id == parentId; })
+						.WithMessage("Space node cannot be parent to itself.");
 			});
 
 			RuleSet("update", () =>
 			{
 				RuleFor(spaceNode => spaceNode.Id)
-						.Must((spaceNode, id) =>
-						{
-							return FindNodeById(id, allNodes) != null;
-						})
+						.Must((spaceNode, id) => { return FindNodeById(id, allNodes) != null; })
 						.WithMessage("There is not existing space node with specified identifier.");
+
+				RuleFor(spaceNode => spaceNode.ParentId)
+						.Must((spaceNode, parentId) => { return spaceNode.Id == parentId; })
+						.WithMessage("Space node cannot be parent to itself.");
 
 			});
 
