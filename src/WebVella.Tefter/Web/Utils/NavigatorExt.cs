@@ -107,7 +107,15 @@ internal static class NavigatorExt
 			//Process 3
 			if (result.NodesDict.Count >= 3)
 			{
-				if (result.NodesDict[2] == TfConstants.RouteNameSpaceView)
+				if (result.NodesDict[2] == TfConstants.RouteNameSpacePage)
+				{
+					result = result with
+					{
+						SecondNode = RouteDataSecondNode.SpacePage,
+						ThirdNode = RouteDataThirdNode.Details
+					};
+				}
+				else if (result.NodesDict[2] == TfConstants.RouteNameSpaceView)
 				{
 					result = result with
 					{
@@ -144,7 +152,11 @@ internal static class NavigatorExt
 			//Process 4
 			if (result.NodesDict.Count >= 4)
 			{
-				if (result.SecondNode == RouteDataSecondNode.SpaceView)
+				if (result.SecondNode == RouteDataSecondNode.SpacePage)
+				{
+					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpacePageId = outGuid };
+				}
+				else if (result.SecondNode == RouteDataSecondNode.SpaceView)
 				{
 					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpaceViewId = outGuid };
 				}

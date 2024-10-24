@@ -70,4 +70,15 @@ public static class ModelHelpers
 		return;
 	}
 
+	internal static TucSpaceNode GetSpaceNodeById(this List<TucSpaceNode> presets, Guid nodeId)
+	{
+		foreach (var item in presets)
+		{
+			if (item.Id == nodeId) return item;
+			var result = item.ChildNodes.GetSpaceNodeById(nodeId);
+			if (result != null) return result;
+		}
+		return null;
+	}
+
 }

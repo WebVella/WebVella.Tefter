@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using System.Text.Json.Serialization.Metadata;
+
+namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
@@ -151,7 +153,16 @@ public partial class TfSpaceManager : ITfSpaceManager
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The space view is null.") }).ToResult();
 
-			existingSpaceView.PresetsJson = JsonSerializer.Serialize(presets ?? new List<TfSpaceViewPreset>());
+
+			var jsonOptions = new JsonSerializerOptions
+			{
+				TypeInfoResolver = new DefaultJsonTypeInfoResolver
+				{
+					Modifiers = { JsonExtensions.AddPrivateProperties<JsonIncludePrivatePropertyAttribute>() },
+				},
+			};
+
+			existingSpaceView.PresetsJson = JsonSerializer.Serialize(presets ?? new List<TfSpaceViewPreset>(), jsonOptions);
 
 			var success = _dboManager.Update<TfSpaceViewDbo>(
 				existingSpaceView,
@@ -383,8 +394,18 @@ public partial class TfSpaceManager : ITfSpaceManager
 			groups = JsonSerializer.Deserialize<List<string>>(dbo.GroupsJson);
 
 		List<TfSpaceViewPreset> presets = new List<TfSpaceViewPreset>();
+
 		if (!string.IsNullOrWhiteSpace(dbo.PresetsJson))
-			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(dbo.PresetsJson);
+		{
+			var jsonOptions = new JsonSerializerOptions
+			{
+				TypeInfoResolver = new DefaultJsonTypeInfoResolver
+				{
+					Modifiers = { JsonExtensions.AddPrivateProperties<JsonIncludePrivatePropertyAttribute>() },
+				},
+			};
+			presets = JsonSerializer.Deserialize<List<TfSpaceViewPreset>>(dbo.PresetsJson,jsonOptions);
+		}
 
 		return new TfSpaceView
 		{

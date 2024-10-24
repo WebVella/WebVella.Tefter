@@ -24,7 +24,7 @@
 		<PackageReference Include="Npgsql" Version="8.0.5" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 		
-		<PackageReference Include="Serilog" Version="4.0.2" />
+		<PackageReference Include="Serilog" Version="4.1.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 		<PackageReference Include="Serilog.Enrichers.Context" Version="4.6.5" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
@@ -46,6 +46,12 @@
 
 	<ItemGroup>
 	  <Folder Include="Interfaces\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Web\Components\Space\SpaceNodeManageDialog\TfSpaceNodeManageDialog.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

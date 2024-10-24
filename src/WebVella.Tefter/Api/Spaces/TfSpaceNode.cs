@@ -5,9 +5,9 @@ public class TfSpaceNode
 	public Guid Id { get; set; }
 	public Guid? ParentId { get; set; } = null;
 	public Guid SpaceId { get; set; }
-	public TfSpaceNodeType Type { get; set; }
+	public TfSpaceNodeType Type { get; set; } = TfSpaceNodeType.Page;
 	public string Name { get; set; }
-	public string Icon { get; set; } = null;
+	public string Icon { get; set; } = TfConstants.PageIconString;
 	public short? Position { get; set; }
 	public string ComponentType { get; set; }
 	public string ComponentSettingsJson { get; set; } = "{}";
@@ -55,8 +55,3 @@ public class TfSpaceNodeDbo
 }
 
 
-public enum TfSpaceNodeType
-{
-	Folder = 0,
-	Page = 1
-}

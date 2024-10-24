@@ -64,7 +64,8 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Icon")" />
-					<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
+					<TfSelectIcon @bind-Value=@_form.IconString/>
+@* 					<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
 						@if (_form.Icon is not null)
 						{
 							<FluentIcon Value="@Icons.GetInstance(_form.Icon)" />
@@ -79,7 +80,7 @@
 								</FluentStack>
 							</OptionTemplate>
 						</FluentSelect>
-					</FluentStack>
+					</FluentStack> *@
 				</FluentGridItem>
 			</FluentGrid>
 		</FluentEditForm>
