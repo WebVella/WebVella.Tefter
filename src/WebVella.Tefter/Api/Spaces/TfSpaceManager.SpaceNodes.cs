@@ -30,8 +30,12 @@ public partial class TfSpaceManager : ITfSpaceManager
 				.Select(x => Convert(x))
 				.ToList();
 
-			var rootNodes = spaceNodesList.Where(x => x.ParentId is null).ToList();
-			foreach (var rootNode in rootNodes.OrderBy(x => x.Position) )
+			var rootNodes = spaceNodesList
+				.Where(x => x.ParentId is null)
+				.OrderBy(x => x.Position)
+				.ToList();
+
+			foreach (var rootNode in rootNodes )
 			{
 				rootNode.ParentNode = null;
 				InitSpaceNodeChildNodes(rootNode, spaceNodesList);
