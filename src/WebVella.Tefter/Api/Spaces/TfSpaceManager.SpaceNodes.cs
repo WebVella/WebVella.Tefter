@@ -546,9 +546,9 @@ public partial class TfSpaceManager : ITfSpaceManager
 			SpaceId = model.SpaceId,
 			Type = model.Type,
 			ParentId = model.ParentId,
-			Icon = model.Icon,
-			ComponentType = model.ComponentType,
-			ComponentSettingsJson = model.ComponentSettingsJson,
+			Icon = model.Icon??string.Empty,
+			ComponentType = model.ComponentType??"",
+			ComponentSettingsJson = model.ComponentSettingsJson??"{}",
 		};
 	}
 
