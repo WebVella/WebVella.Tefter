@@ -39,11 +39,7 @@ public partial class TfMetaProvider
 			//TODO remove property init and leave only instance
 			TfScreenRegionComponentMeta meta = new TfScreenRegionComponentMeta
 			{
-				//Position = instance.Position,
-				//ScreenRegion = instance.ScreenRegion,
-				//UrlSlug = instance.UrlSlug,
-				//Name = instance.Name,
-				//ComponentType = type
+				ComponentType = type,
 				Instance = instance,
 			};
 			

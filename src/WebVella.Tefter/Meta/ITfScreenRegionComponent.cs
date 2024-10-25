@@ -14,7 +14,7 @@ public class TfScreenRegionComponentMeta
 	public int Position { get { return Instance.Position; } }
 	public string Name { get { return Instance.Name; } }
 	public string UrlSlug { get { return Instance.UrlSlug; } }
-	public Type ComponentType { get { return Instance.GetType();  } }
+	public Type ComponentType { get; init; }
 	public ITfScreenRegionComponent Instance { get; init; }
 }
 
