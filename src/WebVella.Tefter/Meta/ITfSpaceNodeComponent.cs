@@ -26,5 +26,6 @@ public class TfSpaceNodeComponentMeta
 	public string Name { get { return Instance.Name; } }
 	public string Description { get { return Instance.Description; } }
 	public ComponentDisplayMode DisplayMode { get { return Instance.DisplayMode; } }
+	public Type ComponentType { get; init; }
 	public ITfSpaceNodeComponent Instance { get; init; }
 }

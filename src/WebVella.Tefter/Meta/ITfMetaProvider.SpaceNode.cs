@@ -26,6 +26,7 @@ public partial class TfMetaProvider
 			TfSpaceNodeComponentMeta meta = new TfSpaceNodeComponentMeta
 			{
 				Instance = instance,
+				ComponentType = type,
 			};
 
 			_spaceNodeComponentMeta.Add(meta);
