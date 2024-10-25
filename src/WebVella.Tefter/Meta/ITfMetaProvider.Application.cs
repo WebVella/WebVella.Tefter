@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using System.Security.AccessControl;
+
+namespace WebVella.Tefter;
 
 public partial interface ITfMetaProvider
 {
@@ -43,6 +45,13 @@ public partial class TfMetaProvider
 		{
 			foreach (Type type in assembly.GetTypes())
 			{
+				if (type.IsAbstract || type.IsInterface)
+					continue;
+
+				var defaultConstructor = type.GetConstructor(Type.EmptyTypes);
+				if (defaultConstructor is null)
+					continue;
+
 				ScanAndRegisterSpaceNodeComponents(type);
 				ScanAndRegisterDataProvidersTypes(type);
 				ScanAndRegisterScreenRegionComponents(type);
