@@ -1,7 +1,8 @@
 ﻿::deep {
 	width:100%;
 }
-::deep fluent-button::part(content) {
+
+::deep .tf-select-btn::part(content) {
 	flex:1 1 auto;
 	text-align:left;
 }

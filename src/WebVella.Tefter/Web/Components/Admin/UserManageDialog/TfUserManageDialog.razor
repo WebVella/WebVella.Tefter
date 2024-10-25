@@ -81,18 +81,8 @@
 					<FluentValidationMessage For="@(() => _form.ThemeMode)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentSelect @bind-SelectedOption="@_form.ThemeColor" TOption="OfficeColor"
-								  Items="@(Enum.GetValues<OfficeColor>())" Style="width:100%"
-								  OptionText="@(p => p.ToString())" Label="@LOC("Theme Color")" Context="option">
-						<OptionTemplate>
-							<FluentStack>
-								<FluentIcon Value="@TfConstants.RectangleIcon"
-											Color="Color.Custom"
-											CustomColor="@(option.ToAttributeValue() != "default" ? option.ToAttributeValue() : "#036ac4" )" />
-								<FluentLabel>@option</FluentLabel>
-							</FluentStack>
-						</OptionTemplate>
-					</FluentSelect>
+					<FluentInputLabel Label="@LOC("Theme Color")" />
+					<TfSelectColor @bind-Value="@_form.ThemeColor" />
 					<FluentValidationMessage For="@(() => _form.ThemeColor)" />
 				</FluentGridItem>
 			</FluentGrid>

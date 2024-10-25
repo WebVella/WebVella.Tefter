@@ -8,7 +8,7 @@ namespace WebVella.Tefter.DataProviders.Csv.Components;
 public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDataProviderSettings
 {
 	//For this component only ReadOnly and Form will be supported
-	[Parameter] public ComponentDisplayMode DisplayMode { get; set; } = ComponentDisplayMode.ReadOnly;
+	[Parameter] public ComponentDisplayMode DisplayMode { get; set; } = ComponentDisplayMode.Display;
 
 	[Parameter]
 #pragma warning disable BL0007 // Component parameters should be auto properties

@@ -55,12 +55,8 @@
 								 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
 			</FluentGridItem>
 			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor.ToString()"
-								 ReadOnly="true" Label="@LOC("Theme Color")" Style="width:100%">
-					<FluentIcon Value="@TfConstants.RectangleIcon"
-								Color="Color.Custom" Slot="start"
-								CustomColor="@(TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor.ToAttributeValue() != "default" ? TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor.ToAttributeValue() : "#036ac4" )" />
-				</FluentTextField>
+				<FluentInputLabel Label="@LOC("Theme Color")"/>
+				<TfSelectColor Value="@(TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor ?? OfficeColor.Default)"/>
 			</FluentGridItem>
 		</FluentGrid>
 		<FluentGrid>

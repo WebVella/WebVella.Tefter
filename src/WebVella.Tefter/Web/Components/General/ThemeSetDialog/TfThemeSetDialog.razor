@@ -3,37 +3,28 @@
 @inherits TfFormBaseComponent
 @* Header *@
 <FluentDialogHeader ShowDismiss="true">
-    <FluentStack VerticalAlignment="VerticalAlignment.Center">
-        <FluentIcon Value="@TfConstants.GetIcon("WindowApps")" />
-        <FluentLabel Typo="Typography.PaneHeader">
-            @LOC("Theme Configuration")
-        </FluentLabel>
-    </FluentStack>
+	<FluentStack VerticalAlignment="VerticalAlignment.Center">
+		<FluentIcon Value="@TfConstants.GetIcon("WindowApps")" />
+		<FluentLabel Typo="Typography.PaneHeader">
+			@LOC("Theme Configuration")
+		</FluentLabel>
+	</FluentStack>
 </FluentDialogHeader>
 
 @* Footer *@
 <FluentDialogFooter>
-    <FluentButton Appearance="Appearance.Accent" OnClick="@_save">@LOC("Save")</FluentButton>
-    <FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 
 @* Body *@
 <FluentDialogBody>
-    <FluentStack Orientation="@Orientation.Vertical">
-        <FluentSelect @bind-SelectedOption="@_themeMode" TOption="DesignThemeModes"
-                      Items="@(Enum.GetValues<DesignThemeModes>())"
-                      OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"></FluentSelect>
-        <FluentSelect @bind-SelectedOption="@_themeColor" TOption="OfficeColor"
-                      Items="@(Enum.GetValues<OfficeColor>())"
-                      OptionText="@(p => p.ToString())" Label="@LOC("Theme Color")">
-            <OptionTemplate>
-                <FluentStack>
-                    <FluentIcon Value="@TfConstants.RectangleIcon"
-                                Color="Color.Custom"
-                                CustomColor="@(@context.ToAttributeValue() != "default" ? context.ToAttributeValue() : "#036ac4" )"/>
-                    <FluentLabel>@context</FluentLabel>
-                </FluentStack>
-            </OptionTemplate>
-        </FluentSelect>
-    </FluentStack>
+	<FluentStack Orientation="@Orientation.Vertical">
+		<FluentSelect @bind-SelectedOption="@_themeMode" TOption="DesignThemeModes"
+					  Items="@(Enum.GetValues<DesignThemeModes>())"
+					  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"
+					  Style="width:100%"></FluentSelect>
+		<FluentInputLabel Label="@LOC("Theme Color")" />
+		<TfSelectColor @bind-Value="@_themeColor" />
+	</FluentStack>
 </FluentDialogBody>
