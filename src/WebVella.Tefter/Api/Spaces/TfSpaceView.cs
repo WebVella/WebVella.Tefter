@@ -5,7 +5,7 @@ public class TfSpaceView
 	public Guid Id { get; set; }
 	public Guid SpaceDataId { get; set; }
 	public Guid SpaceId { get; set; }
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.Report;
+	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 	public string Name { get; set; }
 	public short Position { get; set; }
 	public string SettingsJson { get; set; } = "{}";
@@ -28,7 +28,7 @@ public class TfSpaceViewDbo
 
 	[DboModelProperty("type")]
 	[DboTypeConverter(typeof(EnumPropertyConverter<TfSpaceViewType>))]
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.Report;
+	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 
 	[DboModelProperty("name")]
 	public string Name { get; set; }
@@ -51,7 +51,7 @@ public class TfCreateSpaceViewExtended
 {
 	public Guid Id { get; set; }
 	public Guid SpaceId { get; set; }
-	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.Report;
+	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 	public short Position { get; set; }
 	public string Name { get; set; }
 	public string SettingsJson { get; set; } = "{}";
@@ -63,6 +63,7 @@ public class TfCreateSpaceViewExtended
 	public bool AddSystemColumns { get; set; } = false;
 	public bool AddProviderColumns { get; set; } = true;
 	public bool AddSharedColumns { get; set; } = true;
+	public bool AddDataSetColumns { get; set; } = true;
 }
 
 public class TfSpaceViewPreset
@@ -91,7 +92,7 @@ public class TfSpaceViewPreset
 
 public enum TfSpaceViewType
 {
-	Report = 0,
+	DataGrid = 0,
 	Form = 1,
 	Chart = 2,
 	Dashboard = 3

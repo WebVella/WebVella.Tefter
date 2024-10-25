@@ -121,7 +121,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private Dictionary<string, object> _getDynamicComponentParams()
 	{
 		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = ComponentDisplayMode.Update;
+		dict["DisplayMode"] = TfComponentMode.Update;
 		dict["Value"] = _form.SettingsJson;
 		return dict;
 	}

@@ -18,7 +18,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 	private string _parentIdString = null;
 	private ReadOnlyCollection<TfSpaceNodeComponentMeta> _pageComponents;
 	private TfSpaceNodeComponentMeta _selectedPageComponent = null;
-
+	private DynamicComponent typeSettingsComponent;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -30,16 +30,24 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		_pageComponents = TfMetaProvider.GetSpaceNodesComponentsMeta();
 		if (_isCreate)
 		{
-			_form = _form with { Id = Guid.NewGuid(), SpaceId = TfAppState.Value.Space.Id };
+			_form = _form with
+			{
+				Id = Guid.NewGuid(),
+				SpaceId = TfAppState.Value.Space.Id,
+				Type = TfSpaceNodeType.Page,
+				Icon = TfConstants.PageIconString,
+				ComponentType = _pageComponents.Count > 0 ? _pageComponents[0].ComponentType.FullName : null
+			};
 		}
 		else
 		{
 
 			_form = Content with { Id = Content.Id };
 			_parentIdString = _form.ParentId.ToString();
-			if(!String.IsNullOrWhiteSpace(_form.ComponentType)){ 
-				
-			}
+		}
+		if (!String.IsNullOrWhiteSpace(_form.ComponentType))
+		{
+			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentType.FullName == _form.ComponentType);
 		}
 
 		base.InitForm(_form);
@@ -55,7 +63,19 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 
 		MessageStore.Clear();
 
-		if (!EditContext.Validate()) return;
+		//Get dynamic settings component errors
+		List<ValidationError> settingsErrors = new();
+		ITfSpaceNodeComponent addonComponent = null;
+		if (typeSettingsComponent is not null)
+		{
+			addonComponent = typeSettingsComponent.Instance as ITfSpaceNodeComponent;
+			settingsErrors = addonComponent.ValidateOptions();
+		}
+
+		//Check form
+		var isValid = EditContext.Validate();
+		if (!isValid || settingsErrors.Count > 0) return;
+
 
 		_isSubmitting = true;
 		await InvokeAsync(StateHasChanged);
@@ -63,7 +83,8 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		try
 		{
 			Result<List<TucSpaceNode>> submitResult = null;
-			if(String.IsNullOrWhiteSpace(_parentIdString)) _form.ParentId = null;
+			_form.ComponentSettingsJson = addonComponent.GetOptions();
+			if (String.IsNullOrWhiteSpace(_parentIdString)) _form.ParentId = null;
 			else _form.ParentId = new Guid(_parentIdString);
 			if (_isCreate) submitResult = UC.CreateSpaceNode(_form);
 			else submitResult = UC.UpdateSpaceNode(_form);
@@ -99,23 +120,44 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		var parents = new List<TucSpaceNode>();
 		foreach (var item in TfAppState.Value.SpaceNodes)
 		{
-			_fillParents(parents, item,new List<Guid>{ _form.Id});
+			_fillParents(parents, item, new List<Guid> { _form.Id });
 		}
 		return parents.AsEnumerable();
 	}
 
-	private void _fillParents(List<TucSpaceNode> parents, TucSpaceNode current,List<Guid> ignoreNodes)
+	private void _fillParents(List<TucSpaceNode> parents, TucSpaceNode current, List<Guid> ignoreNodes)
 	{
 		if (current.Type == TfSpaceNodeType.Folder && !ignoreNodes.Contains(current.Id)) parents.Add(current);
-		foreach (var item in current.ChildNodes) _fillParents(parents, item,ignoreNodes);
+		foreach (var item in current.ChildNodes) _fillParents(parents, item, ignoreNodes);
 	}
 
-	private void _typeChanged(TfSpaceNodeType type){ 
+	private void _typeChanged(TfSpaceNodeType type)
+	{
 		_form.Type = type;
-		if(type == TfSpaceNodeType.Folder && _form.Icon == TfConstants.PageIconString)
+		if (type == TfSpaceNodeType.Folder && _form.Icon == TfConstants.PageIconString)
 			_form.Icon = TfConstants.FolderIconString;
-		else if(type == TfSpaceNodeType.Page && _form.Icon == TfConstants.FolderIconString)
+		else if (type == TfSpaceNodeType.Page && _form.Icon == TfConstants.FolderIconString)
 			_form.Icon = TfConstants.PageIconString;
+
+		if (type == TfSpaceNodeType.Folder) _selectedPageComponent = null;
+		else if (type == TfSpaceNodeType.Page && _pageComponents.Any()) _selectedPageComponent = _pageComponents[0];
+	}
+	private void _pageComponentChanged(TfSpaceNodeComponentMeta meta)
+	{
+		_selectedPageComponent = meta;
 	}
 
+	private Dictionary<string, object> _getDynamicComponentParams()
+	{
+		var dict = new Dictionary<string, object>();
+		if (_selectedPageComponent is null) return dict;
+
+		var context = new TfSpaceNodeComponentContext();
+		context.Icon = _form.Icon;
+		context.SpaceId = TfAppState.Value.Space.Id;
+		context.ComponentOptionsJson = _form.ComponentSettingsJson;
+		context.Mode = TfComponentMode.Create;
+		dict["Context"] = context;
+		return dict;
+	}
 }

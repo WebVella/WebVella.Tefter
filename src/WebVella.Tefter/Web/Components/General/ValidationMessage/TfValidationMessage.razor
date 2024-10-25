@@ -1,0 +1,18 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits ComponentBase
+@foreach (var error in _errors)
+{
+	<div class="@_cssClass" style="@_cssStyle">
+		<FluentIcon Value="@TfConstants.ErrorIcon" />
+		@if (!String.IsNullOrWhiteSpace(error.Reason))
+		{
+			<span>@error.Reason</span>
+		}
+		else if (!String.IsNullOrWhiteSpace(error.Message))
+		{
+			<span>@error.Message</span>
+		}
+	</div>
+}
+
+

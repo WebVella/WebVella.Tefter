@@ -174,7 +174,7 @@ else
 													<div class="tf-grid-td-hover"></div>
 													@if (column.ComponentType is not null)
 													{
-														<TfErrorBoundry>
+														<TfErrorBoundry ShowErrorDetails=false>
 															<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
 														</TfErrorBoundry>
 													}

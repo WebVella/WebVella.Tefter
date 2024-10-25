@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Wordprocessing;
+using Nito.AsyncEx.Synchronous;
 
 namespace WebVella.Tefter;
 
@@ -185,6 +186,29 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				if (!_dboManager.Insert<TfSpaceNodeDbo>(Convert(spaceNode)))
 					return Result.Fail(new DboManagerError("Insert", spaceNode));
+
+				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentType))
+				{
+					var spaceNodeComponents = _metaProvider.GetSpaceNodesComponentsMeta();
+					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentType);
+					if (nodeComponent is not null)
+					{
+						var task = Task.Run(async () =>
+						{
+							var context = new TfSpaceNodeComponentContext
+							{
+								SpaceId = spaceNode.SpaceId,
+								SpaceNodeId = spaceNode.Id,
+								ComponentOptionsJson = spaceNode.ComponentSettingsJson,
+								Icon = spaceNode.Icon,
+								Mode = TfComponentMode.Update
+							};
+
+							await nodeComponent.Instance.OnNodeCreated(_serviceProvider, context);
+						});
+						task.WaitAndUnwrapException();
+					}
+				}
 
 				scope.Complete();
 
@@ -432,6 +456,31 @@ public partial class TfSpaceManager : ITfSpaceManager
 						return Result.Fail(new DboManagerError("Update", childNode));
 				}
 
+
+				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentType))
+				{
+					var spaceNodeComponents = _metaProvider.GetSpaceNodesComponentsMeta();
+					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentType);
+					if (nodeComponent is not null)
+					{
+						var task = Task.Run(async () =>
+						{
+							var context = new TfSpaceNodeComponentContext
+							{
+								SpaceId = spaceNode.SpaceId,
+								SpaceNodeId = spaceNode.Id,
+								ComponentOptionsJson = spaceNode.ComponentSettingsJson,
+								Icon = spaceNode.Icon,
+								Mode = TfComponentMode.Update
+							};
+
+							await nodeComponent.Instance.OnNodeUpdated(_serviceProvider, context);
+						});
+						task.WaitAndUnwrapException();
+					}
+				}
+
+
 				scope.Complete();
 
 				allNodes = GetSpaceNodes(spaceNode.SpaceId).Value;
@@ -509,11 +558,36 @@ public partial class TfSpaceManager : ITfSpaceManager
 				}
 
 				nodesToDelete.Reverse();
+				
+				var spaceNodeComponents = _metaProvider.GetSpaceNodesComponentsMeta();
 
 				foreach (var nodeToDelete in nodesToDelete)
 				{
 					if (!_dboManager.Delete<TfSpaceNodeDbo>(nodeToDelete.Id))
 						return Result.Fail(new DboManagerError("Delete", nodeToDelete));
+
+					if (nodeToDelete.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(nodeToDelete.ComponentType))
+					{
+						var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == nodeToDelete.ComponentType);
+						if (nodeComponent is not null)
+						{
+							var task = Task.Run(async () =>
+							{
+								var context = new TfSpaceNodeComponentContext
+								{
+									SpaceId = nodeToDelete.SpaceId,
+									SpaceNodeId = nodeToDelete.Id,
+									ComponentOptionsJson = nodeToDelete.ComponentSettingsJson,
+									Icon = nodeToDelete.Icon,
+									Mode = TfComponentMode.Update
+								};
+
+								await nodeComponent.Instance.OnNodeDeleted(_serviceProvider, context);
+							});
+							task.WaitAndUnwrapException();
+						}
+					}
+
 				}
 
 				scope.Complete();

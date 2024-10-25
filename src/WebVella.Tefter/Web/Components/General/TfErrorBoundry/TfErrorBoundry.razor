@@ -4,11 +4,22 @@
         @ChildContent
     </ChildContent>
     <ErrorContent>
-        <FluentIcon Value="TfConstants.ErrorIcon" Title="@context.Message"/>
+        @if (ShowErrorDetails)
+        {
+            <div style="display:flex;">
+                <div style="flex:0 0 30px"><FluentIcon Value="TfConstants.ErrorIcon"/></div>
+                <div style="@($"flex:1 1 auto; color:{Color.Error.ToAttributeValue()};")">@context.Message</div>
+            </div>
+        }
+        else
+        {
+            <FluentIcon Value="TfConstants.ErrorIcon" Title="@context.Message" />
+        }
     </ErrorContent>
 </ErrorBoundary>
 
 
-@code {
-	[Parameter] public RenderFragment ChildContent { get; set; }
+    @code {
+    [Parameter] public bool ShowErrorDetails { get; set; } = true;
+    [Parameter] public RenderFragment ChildContent { get; set; }
 }

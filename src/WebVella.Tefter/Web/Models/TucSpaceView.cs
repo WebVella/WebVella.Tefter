@@ -12,7 +12,7 @@ public record TucSpaceView
 	public Guid SpaceId { get; set; }
 
 	[Required]
-	public TucSpaceViewType Type { get; init; } = TucSpaceViewType.Report;
+	public TucSpaceViewType Type { get; init; } = TucSpaceViewType.DataGrid;
 
 	[Required]
 	public TucSpaceViewDataSetType DataSetType { get; set; } = TucSpaceViewDataSetType.New;
@@ -54,6 +54,7 @@ public record TucSpaceView
 		}
 		Presets = model.Presets.Select(x=> new TucSpaceViewPreset(x)).ToList();
 		Groups = model.Groups;
+		
 	}
 
 	public TfSpaceView ToModel()
@@ -68,7 +69,7 @@ public record TucSpaceView
 			Position = Position,
 			SettingsJson = JsonSerializer.Serialize(Settings),
 			Presets = Presets.Select(x=> x.ToModel()).ToList(),
-			Groups = Groups
+			Groups = Groups,
 		};
 	}
 
@@ -86,7 +87,11 @@ public record TucSpaceView
 			AddSharedColumns = AddSharedColumns,
 			AddSystemColumns = AddSystemColumns,
 			DataProviderId = DataProviderId,
-			NewSpaceDataName = NewSpaceDataName
+			NewSpaceDataName = NewSpaceDataName,
+			AddDataSetColumns = AddDatasetColumns,
+			SettingsJson = JsonSerializer.Serialize(Settings),
+			Presets = Presets.Select(x=> x.ToModel()).ToList(),
+			Groups = Groups
 		};
 	}
 }
@@ -99,3 +104,10 @@ public enum TucSpaceViewDataSetType
 	Existing = 1
 }
 
+public enum TucSpaceViewSetType
+{
+	[Description("new view")]
+	New = 0,
+	[Description("existing view")]
+	Existing = 1
+}

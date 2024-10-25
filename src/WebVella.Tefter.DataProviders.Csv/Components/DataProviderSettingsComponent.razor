@@ -4,8 +4,8 @@
 <FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
 	<FluentGrid>
 		<FluentGridItem xs="9">
-			<FluentTextField Required="DisplayMode == Web.Models.ComponentDisplayMode.Update"
-							 ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.Display"
+			<FluentTextField Required="DisplayMode == Web.Models.TfComponentMode.Update"
+							 ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
 							 TextFieldType="@TextFieldType.Text"
 							 @bind-Value=_form.Filepath AutoComplete="new-password"
 							 Label="@LOC("CSV File with full access path")" Style="width:100%" />
@@ -20,7 +20,7 @@
 	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			@if (DisplayMode == Web.Models.ComponentDisplayMode.Update)
+			@if (DisplayMode == Web.Models.TfComponentMode.Update)
 			{
 				<FluentRadioGroup Required="true"
 								  @bind-Value=_form.Delimter
@@ -44,12 +44,12 @@
 		<FluentGridItem xs="6">
 			<FluentInputLabel Label="@LOC("Locale")" />
 			<FluentStack>
-				<FluentTextField ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.Display"
+				<FluentTextField ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
 								 TextFieldType="@TextFieldType.Text"
 								 @bind-Value=_form.CultureName AutoComplete="new-password"
 								 Style="width:100%"
 								 Placeholder="@LOC("empty uses culture invariant")" />
-				@if (DisplayMode == Web.Models.ComponentDisplayMode.Update)
+				@if (DisplayMode == Web.Models.TfComponentMode.Update)
 				{
 					<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from server")"
 								  OnClick="_getCultureFromServer" Appearance="@Appearance.Outline" />
@@ -61,8 +61,8 @@
 
 	<FluentGrid>
 		<FluentGridItem xs="12">
-			<FluentTextArea Required="DisplayMode == Web.Models.ComponentDisplayMode.Update"
-							ReadOnly="DisplayMode == Web.Models.ComponentDisplayMode.Display"
+			<FluentTextArea Required="DisplayMode == Web.Models.TfComponentMode.Update"
+							ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
 							Rows="7"
 							Value=@_advancedSettings
 							ValueChanged="(x=> _changeAdvancedSettings(x))"

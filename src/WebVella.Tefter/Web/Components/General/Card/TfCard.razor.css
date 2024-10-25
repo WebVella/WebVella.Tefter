@@ -48,6 +48,12 @@
 	display: none;
 }
 
+::deep .tf-card-content .tf-grid-wrapper:first-child .tf-grid tr:first-child td{
+	border-top-width:0 !important;
+}
+
+
+
 ::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid {
 	margin-bottom:0;
 }

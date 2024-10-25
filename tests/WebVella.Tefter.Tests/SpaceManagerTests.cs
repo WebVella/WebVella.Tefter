@@ -494,7 +494,7 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 1,
 					SpaceDataId = spaceData.Id,
 					SpaceId = space.Id,
-					Type = TfSpaceViewType.Report
+					Type = TfSpaceViewType.DataGrid
 				};
 
 				var spaceViewResult = spaceManager.CreateSpaceView(view);
@@ -594,7 +594,7 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 1,
 					SpaceDataId = spaceData.Id,
 					SpaceId = space.Id,
-					Type = TfSpaceViewType.Report
+					Type = TfSpaceViewType.DataGrid
 				};
 
 				var spaceViewResult = spaceManager.CreateSpaceView(view);
@@ -687,7 +687,7 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 1,
 					SpaceDataId = spaceData.Id,
 					SpaceId = space.Id,
-					Type = TfSpaceViewType.Report
+					Type = TfSpaceViewType.DataGrid
 				};
 
 				var spaceViewResult = spaceManager.CreateSpaceView(view);

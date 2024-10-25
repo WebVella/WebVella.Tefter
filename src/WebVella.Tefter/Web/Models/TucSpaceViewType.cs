@@ -3,8 +3,8 @@
 [TucEnumMatch(typeof(TfSpaceViewType))]
 public enum TucSpaceViewType
 {
-	[Description("Report")]
-	Report = 0,
+	[Description("Datagrid")]
+	DataGrid = 0,
 	[Description("Form")]
 	Form = 1,
 	[Description("Chart")]

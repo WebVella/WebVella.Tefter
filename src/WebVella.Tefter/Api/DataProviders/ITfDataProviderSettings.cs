@@ -2,7 +2,7 @@
 
 public interface ITfDataProviderSettings
 {
-	ComponentDisplayMode DisplayMode { get; set; }
+	TfComponentMode DisplayMode { get; set; }
 	string Value { get; set; }
 	List<ValidationError> Validate();
 }
