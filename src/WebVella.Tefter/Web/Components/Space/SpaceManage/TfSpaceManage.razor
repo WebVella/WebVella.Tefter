@@ -47,24 +47,11 @@ else
 					<FluentGrid>
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Color")" />
-							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								<FluentIcon Value="@TfConstants.RectangleIcon"
-											Color="Color.Custom" Style="height:100%;"
-											CustomColor="@(TfAppState.Value.Space.Color.ToAttributeValue() != "default" ? TfAppState.Value.Space.Color.ToAttributeValue() : "#036ac4" )" />
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.Space.Color.ToString()
-												 ReadOnly="true" Style="width:100%" />
-							</FluentStack>
+							<TfSelectColor Value="@TfAppState.Value.Space.Color"/>
 						</FluentGridItem>
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Icon")" />
-							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								@if (TfAppState.Value.Space.Icon is not null)
-								{
-									<FluentIcon Value="@Icons.GetInstance(TfAppState.Value.Space.Icon)" />
-								}
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.Space.IconString
-												 ReadOnly="true" Style="width:100%" />
-							</FluentStack>
+							<TfSelectIcon Value="@TfAppState.Value.Space.IconString" />
 						</FluentGridItem>
 					</FluentGrid>
 				</ChildContent>

@@ -1,0 +1,56 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (_isReadonly)
+{
+	<FluentTextField ReadOnly="true" Value="@Value.ToString()" Style="width:100%">
+		<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+					Color="Color.Custom"
+					CustomColor="@(Value.ToAttributeValue() != "default" ? Value.ToAttributeValue() : "#036ac4")" />
+	</FluentTextField>
+}
+else
+{
+	<div>
+		<FluentStack>
+			<FluentButton Id="@_elementId" Style="width:100%" Class="tf-select-btn"
+						  OnClick="@(_=> _onOpenChanged(true))">
+
+				<span>@(Value.ToString())</span>
+				<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
+							Color="Color.Custom"
+							CustomColor="@(Value.ToAttributeValue() != "default" ? Value.ToAttributeValue() : "#036ac4")" />
+				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
+			</FluentButton>
+			@if (!Required && Value != OfficeColor.Default)
+			{
+				<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(()=> _optionChanged(OfficeColor.Default))" />
+			}
+		</FluentStack>
+		@if (_open)
+		{
+			<FluentOverlay Visible="@true" OnClose="@(_=> _onOpenChanged(false))" Transparent="true" FullScreen="true" />
+			<FluentAnchoredRegion Anchor="@_elementId" Style="max-height:300px;overflow:scroll;position:relative;"
+								  AutoFocus="true" FixedPlacement="true" Class="tf-select-menu"
+								  HorizontalDefaultPosition="HorizontalPosition.Center"
+								  VerticalDefaultPosition="VerticalPosition.Bottom"
+								  HorizontalPositioningMode="AxisPositioningMode.Dynamic"
+								  VerticalPositioningMode="AxisPositioningMode.Dynamic"
+								  HorizontalScaling="AxisScalingMode.Anchor">
+				<div class="tf-select-menu__body">
+					<FluentNavMenu>
+						<Virtualize TItem="OfficeColor" Items="@_colors" Context="option" ItemSize="32">
+							<FluentMenuItem @key=@option OnClick="@(()=> _optionChanged(option))" Class="@(option == Value ? "tf-menu-item-selected" : "")">
+								<FluentIcon Value="@TfConstants.RectangleIcon"
+											Color="Color.Custom"
+											CustomColor="@(option.ToAttributeValue() != "default" ? option.ToAttributeValue() : "#036ac4")" Slot="start" />
+								<FluentLabel>@option</FluentLabel>
+							</FluentMenuItem>
+						</Virtualize>
+					</FluentNavMenu>
+				</div>
+			</FluentAnchoredRegion>
+		}
+	</div>
+}
+
+

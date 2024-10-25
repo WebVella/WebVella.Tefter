@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Web.Models;
 
-public record TucSpaceNode
+public record TucSpaceNode : ITfSpaceNodeComponentContext
 {
 	public Guid Id { get; set; }
 	public Guid? ParentId { get; set; } = null;

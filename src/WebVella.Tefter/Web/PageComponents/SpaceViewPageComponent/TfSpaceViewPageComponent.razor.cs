@@ -1,17 +1,12 @@
 ﻿
 namespace WebVella.Tefter.Web.PageComponents;
-public partial class TfSpaceViewPageComponent : ITfSpaceNodeComponent
+public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 {
-	public Guid Id { get; set; } = Guid.NewGuid();
+	public override Guid Id { get; set; } = new Guid("68afeecc-6ca9-4102-831d-ef4028057128");
 
-	public string Name { get; set; } = "SpaceView";
+	public override string Name { get; set; } = "SpaceView";
 
-	public string Description { get; set; } = "";
+	public override string Description { get; set; } = "present data in a grid format";
 
-	public ComponentDisplayMode DisplayMode { get; set; } = ComponentDisplayMode.Form;
 
-	public object GetData(IServiceProvider serviceProvider)
-	{
-		throw new NotImplementedException();
-	}
 }

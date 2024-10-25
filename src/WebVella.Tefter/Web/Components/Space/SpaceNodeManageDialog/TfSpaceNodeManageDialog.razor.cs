@@ -3,6 +3,7 @@
 public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceNode>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] protected ITfMetaProvider TfMetaProvider { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TucSpaceNode Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
@@ -15,6 +16,9 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 	private bool _isCreate = false;
 	private TucSpaceNode _form = new();
 	private string _parentIdString = null;
+	private ReadOnlyCollection<TfSpaceNodeComponentMeta> _pageComponents;
+	private TfSpaceNodeComponentMeta _selectedPageComponent = null;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -23,6 +27,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create space node") : LOC("Manage space node");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_pageComponents = TfMetaProvider.GetSpaceNodesComponentsMeta();
 		if (_isCreate)
 		{
 			_form = _form with { Id = Guid.NewGuid(), SpaceId = TfAppState.Value.Space.Id };
@@ -32,8 +37,11 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 
 			_form = Content with { Id = Content.Id };
 			_parentIdString = _form.ParentId.ToString();
-
+			if(!String.IsNullOrWhiteSpace(_form.ComponentType)){ 
+				
+			}
 		}
+
 		base.InitForm(_form);
 	}
 	private async Task _cancel()

@@ -6,9 +6,19 @@ public interface ITfSpaceNodeComponent
 	public string Name { get; }
 	public string Description { get; }
 	public ComponentDisplayMode DisplayMode { get; }
+	public ITfSpaceNodeComponentContext Context { get; }
 	public object GetData(IServiceProvider serviceProvider);
 }
 
+public interface ITfSpaceNodeComponentContext
+{
+	public Guid Id { get; set; }
+	public Guid SpaceId { get; set; }
+	public string Name { get; set; }
+	public string Icon { get; set; }
+	public string ComponentType { get; set; }
+	public string ComponentSettingsJson { get; set; }
+}
 
 public class TfSpaceNodeComponentMeta
 {

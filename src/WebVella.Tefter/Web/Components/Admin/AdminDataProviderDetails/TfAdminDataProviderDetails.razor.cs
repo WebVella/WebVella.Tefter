@@ -8,7 +8,7 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 	private Dictionary<string, object> _getDynamicComponentParams()
 	{
 		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = ComponentDisplayMode.ReadOnly;
+		dict["DisplayMode"] = ComponentDisplayMode.Display;
 		dict["Value"] = TfAppState.Value?.AdminDataProvider?.SettingsJson;
 		return dict;
 	}

@@ -2,10 +2,10 @@
 
 public enum ComponentDisplayMode
 {
-	[Description("Read Only")]
-	ReadOnly = 0,
-	[Description("Form")]
-	Form = 1,
+	[Description("Display")]
+	Display = 0,
+	[Description("Update")]
+	Update = 1,
 	[Description("Options")]
 	Options = 2,
 }
