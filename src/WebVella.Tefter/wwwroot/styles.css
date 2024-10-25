@@ -540,7 +540,6 @@
 }
 .tf-grid .tf-grid-tbody tr > .tf-grid-th > *,
 .tf-grid .tf-grid-tbody tr > .tf-grid-td > * {
-  z-index: 1;
   position: relative;
 }
 .tf-grid .tf-grid-tbody tr > .tf-grid-th > .tf-grid-td-color,
