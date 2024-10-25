@@ -145,8 +145,7 @@ public class CsvDataProvider : ITfDataProviderType
 						{
 							if (!sourceRow.ContainsKey(sourceName))
 							{
-								row.AddError($"Source column '{sourceName}' is not found in csv.");
-								continue;
+								throw new Exception($"Source column '{sourceName}' is not found in csv.");
 							}
 
 							row[providerColumnWithSource.DbName] = ConvertValue(
@@ -159,7 +158,7 @@ public class CsvDataProvider : ITfDataProviderType
 						catch (Exception ex)
 						{
 							var value = sourceRow[sourceName];
-							row.AddError($"Exception while processing source row: {ex.Message}");
+							throw new Exception($"Exception while processing source row: {ex.Message}");
 						}
 					}
 					result.Add(row);
