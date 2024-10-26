@@ -845,8 +845,8 @@
 }
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 5px;
+  height: 5px;
 }
 /* Track */
 ::-webkit-scrollbar-track {
@@ -923,6 +923,9 @@
 .loading-progress-text:after {
   content: var(--blazor-load-percentage-text, "Loading");
 }
+:root .tf-select-menu {
+  background: var(--neutral-layer-3) !important;
+}
 /*Overrides*/
 fluent-data-grid-row:has([row-selected]) {
   background-color: var(--neutral-fill-stealth-hover);
@@ -992,9 +995,11 @@ fluent-select[readonly]::part(control) {
   justify-content: center;
 }
 .tf-select-menu__body {
+  padding-top: 5px;
+  padding-bottom: 5px;
   flex: 1 1 auto;
   max-height: 300px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 .tf-tabs {
   margin-top: 1rem;

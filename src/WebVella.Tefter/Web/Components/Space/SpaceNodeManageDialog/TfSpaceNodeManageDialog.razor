@@ -68,15 +68,17 @@
 			</FluentGrid>
 			@if (_form.Type == TfSpaceNodeType.Page)
 			{
+				<FluentDivider Style="margin:15px 0" />
 				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentSelect TOption="TfSpaceNodeComponentMeta" SelectedOption=@_selectedPageComponent SelectedOptionChanged="_pageComponentChanged"
-									  Label="@LOC("Page type")" Style="width:100%" Items="@_pageComponents"
-									  OptionText="@(x=> x.Name)" Placeholder="@LOC("select..")" />
+					<FluentGridItem xs="12">
+						<FluentInputLabel Label="@LOC("Page type")" />
+						<TfSelectComponent TOption="TfSpaceNodeComponentMeta" Items="@_pageComponents"
+										   Value="_selectedPageComponent" ValueChanged="_pageComponentChanged"
+										   OptionText="@(x=> x.Instance.Name)" OptionIcon="@(x=> x.Instance.Icon)" OptionDescription="@(x=> x.Instance.Description)"
+										   OptionMatch="@((x,y)=> x.Instance?.Id == y.Instance.Id)" />
 						<FluentValidationMessage For="@(() => _form.ComponentType)" />
 					</FluentGridItem>
 				</FluentGrid>
-				<FluentDivider Style="margin:15px 0" />
 				@if (_selectedPageComponent is null)
 				{
 					<FluentMessageBar AllowDismiss="true" Intent="@MessageIntent.Warning">@LOC("Select a page type")</FluentMessageBar>

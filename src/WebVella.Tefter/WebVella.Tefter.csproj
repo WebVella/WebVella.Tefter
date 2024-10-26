@@ -48,6 +48,9 @@
 	  <Content Update="Web\Components\General\SelectColor\TfSelectColor.razor">
 	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 	  </Content>
+	  <Content Update="Web\Components\General\SelectComponent\TfSelectComponent.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	</ItemGroup>
 
 </Project>

@@ -27,7 +27,7 @@ public record TucSpaceNode
 		Icon = model.Icon;
 		Position = model.Position;
 		ComponentType = model.ComponentType;
-		ComponentSettingsJson = model.ComponentSettingsJson;
+		ComponentSettingsJson = model.ComponentOptionsJson;
 		ChildNodes = model.ChildNodes.Select(x => new TucSpaceNode(x)).ToList();
 	}
 	public TfSpaceNode ToModel()
@@ -42,7 +42,7 @@ public record TucSpaceNode
 			Icon = Icon,
 			Position = Position,
 			ComponentType = ComponentType,
-			ComponentSettingsJson = ComponentSettingsJson,
+			ComponentOptionsJson = ComponentSettingsJson,
 			ChildNodes = ChildNodes.Select(x=> x.ToModel()).ToList(),
 		};
 	}

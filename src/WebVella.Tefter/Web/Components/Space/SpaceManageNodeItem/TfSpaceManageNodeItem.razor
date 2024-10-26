@@ -43,14 +43,16 @@
 	}
 	else
 	{
-		<td class="tf-grid-td">
+		<td class="tf-grid-td" colspan="3">
 			<div>
 				<FluentStack Wrap="false">
 					@for (int i = 0; i < Level; i++)
 					{
 						<span class="tf-grid-td-spacer"></span>
 					}
+					<span><FluentIcon Value="TfConstants.GetIcon(Item.Icon)" /></span>
 					<span>@Item.Name</span>
+					<span class="td-description">(@LOC("page"))</span>
 				</FluentStack>
 
 			</div>

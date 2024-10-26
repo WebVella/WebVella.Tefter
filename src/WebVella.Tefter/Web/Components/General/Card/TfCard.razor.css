@@ -65,3 +65,12 @@
 ::deep .tf-card .tf-card-content .tf-card:last-child {
 	margin-bottom:0 !important;
 }
+
+.tf-card--clickable {
+	cursor:pointer;
+}
+
+.tf-card--clickable:hover {
+	background:var(--neutral-fill-stealth-hover);
+}
+

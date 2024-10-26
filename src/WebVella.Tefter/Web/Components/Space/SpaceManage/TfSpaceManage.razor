@@ -23,6 +23,10 @@ else
 			<TfCard Small="true">
 				<TitleTemplate>
 					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+						<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpace">
+							@LOC("Delete")
+							<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
+						</FluentButton>
 						<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpace">
 							@LOC("Edit")
 							<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
@@ -57,12 +61,12 @@ else
 				</ChildContent>
 			</TfCard>
 
-			<FluentLabel Typo="@Typography.H4" Style="margin:1rem 0">@LOC("Pages")</FluentLabel>
+			<FluentLabel Typo="@Typography.H4" Style="margin:1rem 0">@LOC("Content Items")</FluentLabel>
 			<TfCard Small="true">
 				<TitleTemplate>
 					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 						<FluentButton OnClick="_addNode" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline"
-									  Disabled="@_submitting">@LOC("Add new")</FluentButton>
+									  Disabled="@_submitting">@LOC("Add item")</FluentButton>
 					</FluentStack>
 				</TitleTemplate>
 				<ChildContent>

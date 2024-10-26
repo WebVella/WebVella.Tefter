@@ -96,40 +96,9 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	private async Task onManageSpaceClick()
+	private void onManageSpaceClick()
 	{
-		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(
-		TfAppState.Value.Space,
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var item = (TucSpace)result.Data;
-			ToastService.ShowSuccess(LOC("Space successfully updated!"));
-			//Change user state > spaces
-			var userSpaces = TfAppState.Value.CurrentUserSpaces.ToList();
-			var itemIndex = userSpaces.FindIndex(x => x.Id == item.Id);
-			if (itemIndex > -1)
-			{
-				userSpaces[itemIndex] = item;
-			}
-			var state = TfAppState.Value with { CurrentUserSpaces = userSpaces };
-			if (TfAppState.Value.Space is not null
-				&& TfAppState.Value.Space.Id == item.Id)
-			{
-				state = state with { Space = item };
-			}
-
-			Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: state
-			));
-		}
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id));
 	}
 
 	private void onViewsListClick()

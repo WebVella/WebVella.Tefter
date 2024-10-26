@@ -127,7 +127,8 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 
 	private void _fillParents(List<TucSpaceNode> parents, TucSpaceNode current, List<Guid> ignoreNodes)
 	{
-		if (current.Type == TfSpaceNodeType.Folder && !ignoreNodes.Contains(current.Id)) parents.Add(current);
+		//if (current.Type == TfSpaceNodeType.Folder && !ignoreNodes.Contains(current.Id)) parents.Add(current);
+		if (!ignoreNodes.Contains(current.Id)) parents.Add(current);
 		foreach (var item in current.ChildNodes) _fillParents(parents, item, ignoreNodes);
 	}
 

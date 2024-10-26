@@ -49,6 +49,38 @@ public partial class TfSpaceManage : TfBaseComponent
 		}
 	}
 
+	private async Task _deleteSpace()
+	{
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
+			return;
+
+		try
+		{
+			var result = UC.DeleteSpace(TfAppState.Value.Space.Id);
+
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
+				Dispatcher.Dispatch(new SetAppStateAction(
+									component: this,
+									state: TfAppState.Value with
+									{
+										CurrentUserSpaces = spaceList
+									}
+								));
+				Navigator.NavigateTo(TfConstants.HomePageUrl);
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+	}
 
 	private async Task _addNode()
 	{
@@ -79,7 +111,7 @@ public partial class TfSpaceManage : TfBaseComponent
 	private async Task _removeNode(TucSpaceNode node)
 	{
 		if (_submitting) return;
-		
+
 		_submitting = true;
 		await InvokeAsync(StateHasChanged);
 
@@ -145,7 +177,36 @@ public partial class TfSpaceManage : TfBaseComponent
 
 	private async Task _copyNode(Guid nodeId)
 	{
+		if (_submitting) return;
 
+		_submitting = true;
+		await InvokeAsync(StateHasChanged);
+
+		try
+		{
+			Result<List<TucSpaceNode>> submitResult = UC.CopySpaceNode(nodeId);
+			ProcessServiceResponse(submitResult);
+			if (submitResult.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Space node updated!"));
+				Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					SpaceNodes = submitResult.Value
+				}
+				));
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_submitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 	private async Task _editNode(Guid nodeId)

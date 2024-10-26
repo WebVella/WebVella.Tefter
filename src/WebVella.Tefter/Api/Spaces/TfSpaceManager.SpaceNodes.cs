@@ -8,6 +8,8 @@ public partial interface ITfSpaceManager
 	public Result<List<TfSpaceNode>> GetSpaceNodes(
 	Guid spaceId);
 
+	public Result<TfSpaceNode> GetSpaceNode(Guid spaceId, Guid nodeId);
+
 	public Result<(Guid, List<TfSpaceNode>)> CreateSpaceNode(
 		TfSpaceNode spaceNode);
 
@@ -16,6 +18,8 @@ public partial interface ITfSpaceManager
 
 	public Result<List<TfSpaceNode>> DeleteSpaceNode(
 		TfSpaceNode spaceNode);
+
+	public Result<List<TfSpaceNode>> CopySpaceNode(Guid nodeId);
 }
 
 public partial class TfSpaceManager : ITfSpaceManager
@@ -51,6 +55,25 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
+	public Result<TfSpaceNode> GetSpaceNode(
+		Guid spaceId, Guid nodeId)
+	{
+		//TODO RUMEN: make proper implementation
+		try
+		{
+			var allNodesResult = GetSpaceNodes(spaceId);
+			if (allNodesResult.IsFailed) return Result.Fail(new Error("GetSpaceNodes failed")
+						.CausedBy(allNodesResult.Errors));
+
+
+			return Result.Ok(FindNodeById(nodeId, allNodesResult.Value));
+
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get list of space nodes").CausedBy(ex));
+		}
+	}
 	private void InitSpaceNodeChildNodes(
 		TfSpaceNode node,
 		List<TfSpaceNode> allNodes)
@@ -199,7 +222,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 							{
 								SpaceId = spaceNode.SpaceId,
 								SpaceNodeId = spaceNode.Id,
-								ComponentOptionsJson = spaceNode.ComponentSettingsJson,
+								ComponentOptionsJson = spaceNode.ComponentOptionsJson,
 								Icon = spaceNode.Icon,
 								Mode = TfComponentMode.Update
 							};
@@ -469,7 +492,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 							{
 								SpaceId = spaceNode.SpaceId,
 								SpaceNodeId = spaceNode.Id,
-								ComponentOptionsJson = spaceNode.ComponentSettingsJson,
+								ComponentOptionsJson = spaceNode.ComponentOptionsJson,
 								Icon = spaceNode.Icon,
 								Mode = TfComponentMode.Update
 							};
@@ -558,7 +581,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				}
 
 				nodesToDelete.Reverse();
-				
+
 				var spaceNodeComponents = _metaProvider.GetSpaceNodesComponentsMeta();
 
 				foreach (var nodeToDelete in nodesToDelete)
@@ -577,7 +600,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 								{
 									SpaceId = nodeToDelete.SpaceId,
 									SpaceNodeId = nodeToDelete.Id,
-									ComponentOptionsJson = nodeToDelete.ComponentSettingsJson,
+									ComponentOptionsJson = nodeToDelete.ComponentOptionsJson,
 									Icon = nodeToDelete.Icon,
 									Mode = TfComponentMode.Update
 								};
@@ -603,6 +626,9 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
+	//TODO RUMEN: implement
+	public Result<List<TfSpaceNode>> CopySpaceNode(Guid nodeId)=> throw new NotImplementedException();
+
 	private TfSpaceNode Convert(
 		TfSpaceNodeDbo dbo)
 	{
@@ -616,7 +642,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Position = dbo.Position,
 			SpaceId = dbo.SpaceId,
 			Type = dbo.Type,
-			ComponentSettingsJson = dbo.ComponentSettingsJson,
+			ComponentOptionsJson = dbo.ComponentSettingsJson,
 			ComponentType = dbo.ComponentType,
 			Icon = dbo.Icon,
 			ParentId = dbo.ParentId
@@ -640,7 +666,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			ParentId = model.ParentId,
 			Icon = model.Icon ?? string.Empty,
 			ComponentType = model.ComponentType ?? "",
-			ComponentSettingsJson = model.ComponentSettingsJson ?? "{}",
+			ComponentSettingsJson = model.ComponentOptionsJson ?? "{}",
 		};
 	}
 

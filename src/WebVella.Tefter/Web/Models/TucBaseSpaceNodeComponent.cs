@@ -5,11 +5,9 @@ public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeCom
 {
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	public virtual Guid Id { get; set; } = Guid.NewGuid();
-
-	public virtual string Name { get; set; } = "";
-
-	public virtual string Description { get; set; } = "";
-
+	public virtual string Name { get; set; } = null;
+	public virtual string Description { get; set; } = null;
+	public virtual string Icon { get; set; } = null;
 	public virtual TfSpaceNodeComponentContext Context { get; set; }
 	public virtual string GetOptions() => "{}";
 	public virtual List<ValidationError> ValidateOptions() => new List<ValidationError>();

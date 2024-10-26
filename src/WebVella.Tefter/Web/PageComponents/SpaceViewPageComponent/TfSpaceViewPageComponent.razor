@@ -17,7 +17,6 @@ else if (Context.Mode == TfComponentMode.Create)
 			<TfValidationMessage Field="@(nameof(_options.SetType))" Errors="ValidationErrors" />
 		</FluentGridItem>
 	</FluentGrid>
-	<FluentDivider Style="margin:1rem 0" />
 	@if (_options.SetType == TucSpaceViewSetType.New)
 	{
 		<FluentGrid>
@@ -151,8 +150,8 @@ else if (Context.Mode == TfComponentMode.Create)
 							  TOption="TucSpaceView" Placeholder="@LOC("select...")"
 							  Items="@TfAppState.Value.SpaceViewList" Style="width:100%"
 							  OptionText="@(p => p.Name)" Label="@LOC("Existing views")"
-							  Class="@GetValidationCssClass(nameof(_options.Id))" />
-				<TfValidationMessage Field="@(nameof(_options.Id))" Errors="ValidationErrors" />
+							  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" />
+				<TfValidationMessage Field="@(nameof(_options.SpaceViewId))" Errors="ValidationErrors" />
 			</FluentGridItem>
 		</FluentGrid>
 	}

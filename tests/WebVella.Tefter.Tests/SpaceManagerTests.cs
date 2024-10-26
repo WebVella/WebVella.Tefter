@@ -789,7 +789,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode1_0_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = null,
+					ComponentOptionsJson = null,
 					ComponentType = null,
 					Icon = null,
 					Name = "1_0_0",
@@ -805,7 +805,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode1_1_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "1_1_0",
 					Name = "1_1_0",
@@ -821,7 +821,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode1_2_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "1_2_0",
 					Name = "1_2_0",
@@ -837,7 +837,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode1_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "1_3_0",
 					Name = "1_3_0",
@@ -853,7 +853,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode2_0_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "2_0_0",
 					Name = "2_0_0",
@@ -869,7 +869,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode2_1_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "2_1_0",
 					Name = "2_1_0",
@@ -885,7 +885,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode2_2_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "2_2_0",
 					Name = "2_2_0",
@@ -901,7 +901,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode2_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "2_3_0",
 					Name = "2_3_0",
@@ -917,7 +917,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode3_0_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "3_0_0",
 					Name = "3_0_0",
@@ -933,7 +933,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode3_1_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "3_1_0",
 					Name = "3_1_0",
@@ -949,7 +949,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode3_2_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "3_2_0",
 					Name = "3_2_0",
@@ -965,7 +965,7 @@ public partial class SpaceManagerTests : BaseTest
 				var spaceNode3_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
-					ComponentSettingsJson = "{}",
+					ComponentOptionsJson = "{}",
 					ComponentType = "comp_type",
 					Icon = "3_3_0",
 					Name = "3_3_0",

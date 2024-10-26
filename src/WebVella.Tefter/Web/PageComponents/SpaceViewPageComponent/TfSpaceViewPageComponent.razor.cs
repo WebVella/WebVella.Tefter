@@ -10,6 +10,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	public override Guid Id { get; set; } = new Guid("68afeecc-6ca9-4102-831d-ef4028057128");
 	public override string Name { get; set; } = "SpaceView";
 	public override string Description { get; set; } = "present data in a grid format";
+	public override string Icon { get; set; } = "Table";
 	[Parameter] public override TfSpaceNodeComponentContext Context { get; set; }
 	public override string GetOptions() => JsonSerializer.Serialize(_options);
 	public override List<ValidationError> ValidateOptions()
@@ -42,9 +43,9 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		}
 		else
 		{
-			if (_options.Id is null)
+			if (_options.SpaceViewId is null)
 			{
-				ValidationErrors.Add(new ValidationError(nameof(_options.Id), "required"));
+				ValidationErrors.Add(new ValidationError(nameof(_options.SpaceViewId), "required"));
 			}
 		}
 
@@ -54,17 +55,17 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	public override async Task OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)
 	{
 		await base.OnNodeCreated(serviceProvider, context);
-		throw new NotImplementedException();
+		_applyNodeUpsert(serviceProvider, context);
+
 	}
 	public override async Task OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)
 	{
 		await base.OnNodeUpdated(serviceProvider, context);
-		throw new NotImplementedException();
+		_applyNodeUpsert(serviceProvider, context);
 	}
 	public override async Task OnNodeDeleted(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)
 	{
 		await base.OnNodeDeleted(serviceProvider, context);
-		throw new NotImplementedException();
 	}
 	#endregion
 
@@ -87,6 +88,13 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		{
 			optionsJson = Context.ComponentOptionsJson;
 			_options = JsonSerializer.Deserialize<TfSpaceViewPageComponentSettings>(optionsJson);
+			if (_options.SpaceViewId is not null)
+				_optionsExistingSpaceView = TfAppState.Value.SpaceViewList.FirstOrDefault(x => x.Id == _options.SpaceViewId);
+			if (_optionsExistingSpaceView is not null)
+				_optionsDataset = TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == _optionsExistingSpaceView.SpaceDataId);
+			if (_options.DataProviderId is not null)
+				_optionsDataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _options.DataProviderId);
+			_generatedColumnsListInit();
 		}
 	}
 	#endregion
@@ -95,6 +103,14 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	private void _optionsSetTypeChangeHandler(TucSpaceViewSetType type)
 	{
 		_options.SetType = type;
+		if (type == TucSpaceViewSetType.Existing)
+		{
+			if (_optionsExistingSpaceView is null && TfAppState.Value.SpaceViewList.Any())
+			{
+				_optionsExistingSpaceView = TfAppState.Value.SpaceViewList[0];
+				_options.SpaceViewId = _optionsExistingSpaceView.Id;
+			}
+		}
 	}
 	private void _optionsDataSetTypeChangeHandler(TucSpaceViewDataSetType type)
 	{
@@ -148,7 +164,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	private void _optionsSpaceViewSelected(TucSpaceView view)
 	{
 		_optionsExistingSpaceView = view;
-		_options.Id = view.Id;
+		_options.SpaceViewId = view.Id;
 	}
 
 	private void _columnGeneratorSettingChanged(bool value, string field)
@@ -192,16 +208,71 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 				_generatedColumns.AddRange(_optionsDataset.Columns.Select(x => x));
 		}
 	}
+
+	private void _applyNodeUpsert(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)
+	{
+		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
+		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewPageComponentSettings>(context.ComponentOptionsJson);
+		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
+		Guid? originalSpaceViewId = jsonOptions.SpaceViewId;
+		var spaceman = serviceProvider.GetService<ITfSpaceManager>();
+		if (jsonOptions.SetType == TucSpaceViewSetType.New)
+		{
+			//Create view if needed
+			var spaceView = new TucSpaceView
+			{
+				Id = Guid.NewGuid(),
+				AddDatasetColumns = jsonOptions.AddDatasetColumns,
+				AddProviderColumns = jsonOptions.AddProviderColumns,
+				SpaceDataId = jsonOptions.SpaceDataId,
+				AddSharedColumns = jsonOptions.AddSharedColumns,
+				AddSystemColumns = jsonOptions.AddSystemColumns,
+				DataProviderId = jsonOptions.DataProviderId,
+				DataSetType = jsonOptions.DataSetType,
+				Name = jsonOptions.Name,
+				Groups = null,
+				NewSpaceDataName = jsonOptions.NewSpaceDataName,
+				Position = 1,
+				Presets = new List<TucSpaceViewPreset>(),
+				Settings = new TucSpaceViewSettings(),
+				SpaceId = context.SpaceId,
+				Type = jsonOptions.Type,
+			};
+
+			var serviceResult = spaceman.CreateSpaceView(spaceView.ToModelExtended(), spaceView.DataSetType == TucSpaceViewDataSetType.New);
+			if (serviceResult.IsFailed) throw new Exception("TfSpaceViewPageComponent error: CreateSpaceView failed");
+
+			jsonOptions.SpaceViewId = spaceView.Id;
+			jsonOptions.SpaceDataId = spaceView.SpaceDataId;
+		}
+		//Update node setting for production
+		if (jsonOptions.SpaceViewId != originalSpaceViewId || jsonOptions.SetType != TucSpaceViewSetType.Existing)
+		{
+			var productionOptions = new TfSpaceViewPageComponentSettings()
+			{
+				SpaceViewId = jsonOptions.SpaceViewId,
+				SetType = TucSpaceViewSetType.Existing
+			};
+			var getNodeResult = spaceman.GetSpaceNode(context.SpaceId, context.SpaceNodeId);
+			if (getNodeResult.IsFailed || getNodeResult.Value is null)
+				throw new Exception("TfSpaceViewPageComponent error: GetSpaceNodes failed");
+
+			var spaceNode = getNodeResult.Value;
+			spaceNode.ComponentOptionsJson = JsonSerializer.Serialize(productionOptions);
+			var updateNodeResult = spaceman.UpdateSpaceNode(spaceNode);
+			if (getNodeResult.IsFailed) throw new Exception("TfSpaceViewPageComponent error: UpdateSpaceNode failed");
+		}
+	}
 	#endregion
 }
 
 public class TfSpaceViewPageComponentSettings
 {
-	[JsonIgnore]
+	[JsonPropertyName("SetType")]
 	public TucSpaceViewSetType SetType { get; set; } = TucSpaceViewSetType.New;
 
-	[JsonPropertyName("Id")]
-	public Guid? Id { get; set; } = null;
+	[JsonPropertyName("SpaceViewId")]
+	public Guid? SpaceViewId { get; set; } = null;
 
 	[JsonPropertyName("Name")]
 	public string Name { get; set; } = "";

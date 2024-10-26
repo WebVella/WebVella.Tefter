@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<div class="@_class" style="@Style">
+<div class="@_class" style="@Style" id="@Id" @onclick=OnClick>
 	@if (TitleTemplate is not null)
 	{
 		<div class="tf-card-title" style="@TitleStyle">
