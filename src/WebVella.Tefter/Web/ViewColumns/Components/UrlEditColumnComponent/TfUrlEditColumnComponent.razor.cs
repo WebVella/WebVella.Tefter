@@ -109,7 +109,7 @@ public partial class TfUrlEditColumnComponent : TucBaseViewColumn<TfUrlEditColum
 		{
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
-			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);
+			await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
 		}
 		catch (Exception ex)
 		{

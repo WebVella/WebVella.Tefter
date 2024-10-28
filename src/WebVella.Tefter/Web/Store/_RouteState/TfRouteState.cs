@@ -6,7 +6,7 @@ public partial record TfRouteState
 	public Guid? SpaceId { get; init; }
 	public Guid? SpaceDataId { get; init; }
 	public Guid? SpaceViewId { get; init; }
-	public Guid? SpacePageId { get; init; }
+	public Guid? SpaceNodeId { get; init; }
 	public Guid? UserId { get; init; }
 	public Guid? DataProviderId { get; init; }
 	public Guid? SpaceViewPresetId { get; init; }

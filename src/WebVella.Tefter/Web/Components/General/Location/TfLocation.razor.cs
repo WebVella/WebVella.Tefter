@@ -13,7 +13,7 @@ public partial class TfLocation : TfBaseComponent
 		{
 			result.Add(new TucMenuItem
 			{
-				Title = TfConverters.StringOverflow("Home", _ellipsisCount),
+				Text = TfConverters.StringOverflow("Home", _ellipsisCount),
 				Url = "/"
 			});
 		}
@@ -21,7 +21,7 @@ public partial class TfLocation : TfBaseComponent
 		{
 			result.Add(new TucMenuItem
 			{
-				Title = TfConverters.StringOverflow("Pages", _ellipsisCount),
+				Text = TfConverters.StringOverflow("Pages", _ellipsisCount),
 				Url = String.Format(TfConstants.PagesPageUrl)
 			});
 		}
@@ -29,7 +29,7 @@ public partial class TfLocation : TfBaseComponent
 		{
 			result.Add(new TucMenuItem
 			{
-				Title = TfConverters.StringOverflow("Administration", _ellipsisCount),
+				Text = TfConverters.StringOverflow("Administration", _ellipsisCount),
 				Url = String.Format(TfConstants.AdminDashboardUrl)
 			});
 		}
@@ -39,7 +39,7 @@ public partial class TfLocation : TfBaseComponent
 			{
 				result.Add(new TucMenuItem
 				{
-					Title = TfAppState.Value.Space.Name,
+					Text = TfAppState.Value.Space.Name,
 					Url = String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id)
 				});
 				//if (TfAppState.Value.SpaceView is not null)

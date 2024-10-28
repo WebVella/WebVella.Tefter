@@ -37,10 +37,11 @@ public partial class TfNavigation : TfBaseComponent
 		});
 	}
 
-	private string _spaceSelectedClass(Guid? spaceId)
+	private string _spaceSelectedClass(TucMenuItem menu)
 	{
-		if (spaceId is null) return "";
+		if (String.IsNullOrWhiteSpace(menu.Id)) return "";
 		var uri = new Uri(Navigator.Uri);
+		var spaceId = TfConverters.ConvertHtmlElementIdToGuid(menu.Id);
 		if (uri.LocalPath.StartsWith(String.Format(TfConstants.SpacePageUrl, spaceId.Value)))
 			return "selected";
 

@@ -5,8 +5,8 @@ namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
-	public Result<List<TfSpaceNode>> GetSpaceNodes(
-	Guid spaceId);
+	public Result<List<TfSpaceNode>> GetAllSpaceNodes();
+	public Result<List<TfSpaceNode>> GetSpaceNodes(Guid spaceId);
 
 	public Result<TfSpaceNode> GetSpaceNode(Guid spaceId, Guid nodeId);
 
@@ -24,6 +24,34 @@ public partial interface ITfSpaceManager
 
 public partial class TfSpaceManager : ITfSpaceManager
 {
+	public Result<List<TfSpaceNode>> GetAllSpaceNodes()
+	{
+		try
+		{
+			var spaceNodesList = _dboManager.GetList<TfSpaceNodeDbo>()
+				.Select(x => Convert(x))
+				.ToList();
+
+			var rootNodes = spaceNodesList
+				.Where(x => x.ParentId is null)
+				.OrderBy(x => x.Position)
+				.ToList();
+
+			foreach (var rootNode in rootNodes)
+			{
+				rootNode.ParentNode = null;
+				InitSpaceNodeChildNodes(rootNode, spaceNodesList);
+			}
+
+			return Result.Ok(rootNodes);
+
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get list of space nodes").CausedBy(ex));
+		}
+	}
+
 	public Result<List<TfSpaceNode>> GetSpaceNodes(
 		Guid spaceId)
 	{
@@ -210,10 +238,10 @@ public partial class TfSpaceManager : ITfSpaceManager
 				if (!_dboManager.Insert<TfSpaceNodeDbo>(Convert(spaceNode)))
 					return Result.Fail(new DboManagerError("Insert", spaceNode));
 
-				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentType))
+				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentTypeFullName))
 				{
 					var spaceNodeComponents = _metaProvider.GetSpaceNodesComponentsMeta();
-					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentType);
+					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentTypeFullName);
 					if (nodeComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -480,10 +508,10 @@ public partial class TfSpaceManager : ITfSpaceManager
 				}
 
 
-				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentType))
+				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentTypeFullName))
 				{
 					var spaceNodeComponents = _metaProvider.GetSpaceNodesComponentsMeta();
-					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentType);
+					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentTypeFullName);
 					if (nodeComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -589,9 +617,9 @@ public partial class TfSpaceManager : ITfSpaceManager
 					if (!_dboManager.Delete<TfSpaceNodeDbo>(nodeToDelete.Id))
 						return Result.Fail(new DboManagerError("Delete", nodeToDelete));
 
-					if (nodeToDelete.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(nodeToDelete.ComponentType))
+					if (nodeToDelete.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(nodeToDelete.ComponentTypeFullName))
 					{
-						var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == nodeToDelete.ComponentType);
+						var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == nodeToDelete.ComponentTypeFullName);
 						if (nodeComponent is not null)
 						{
 							var task = Task.Run(async () =>
@@ -627,7 +655,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	}
 
 	//TODO RUMEN: implement
-	public Result<List<TfSpaceNode>> CopySpaceNode(Guid nodeId)=> throw new NotImplementedException();
+	public Result<List<TfSpaceNode>> CopySpaceNode(Guid nodeId) => throw new NotImplementedException();
 
 	private TfSpaceNode Convert(
 		TfSpaceNodeDbo dbo)
@@ -643,7 +671,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			SpaceId = dbo.SpaceId,
 			Type = dbo.Type,
 			ComponentOptionsJson = dbo.ComponentSettingsJson,
-			ComponentType = dbo.ComponentType,
+			ComponentTypeFullName = dbo.ComponentType,
 			Icon = dbo.Icon,
 			ParentId = dbo.ParentId
 		};
@@ -665,7 +693,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Type = model.Type,
 			ParentId = model.ParentId,
 			Icon = model.Icon ?? string.Empty,
-			ComponentType = model.ComponentType ?? "",
+			ComponentType = model.ComponentTypeFullName ?? "",
 			ComponentSettingsJson = model.ComponentOptionsJson ?? "{}",
 		};
 	}

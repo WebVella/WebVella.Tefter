@@ -60,4 +60,9 @@ internal partial class AppStateUseCase
 		return results.OrderBy(x => x.Position).ThenBy(x => x.Name).ToList();
 	}
 
+	internal ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodeComponents()
+	{
+		return _metaProvider.GetSpaceNodesComponentsMeta();
+	}
+	
 }

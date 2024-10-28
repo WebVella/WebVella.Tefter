@@ -7,7 +7,7 @@
 			@foreach (var item in Items)
 			{
 				<FluentNavLink Match="@item.Match" Href="@item.Url"
-					Icon="@item.Icon">@item.Title</FluentNavLink>
+					Icon="@item.IconCollapsed">@item.Text</FluentNavLink>
 			}
 		</FluentNavMenu>
 	</div>

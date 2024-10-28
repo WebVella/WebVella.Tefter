@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 @if (TfAppState.Value.SpaceView is null 
-							|| TfRouteState.Value.ThirdNode != RouteDataThirdNode.Details) { }
+							|| TfRouteState.Value.SpaceNodeId is null) { }
 else
 {
 	var selectionDict = _generateSelectionDict();

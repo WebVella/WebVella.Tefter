@@ -16,15 +16,15 @@ public record TucSpace
 
 	public Icon Icon { get => TfConstants.GetIcon(IconString); }
 
-	public Guid? DefaultViewId { get; set; } = null;
+	public Guid? DefaultNodeId { get; set; } = null;
 
 	public string Url
 	{
 		get
 		{
-			if(DefaultViewId is null) return String.Format(TfConstants.SpacePageUrl,Id);
+			if(DefaultNodeId is null) return String.Format(TfConstants.SpacePageUrl,Id);
 
-			return String.Format(TfConstants.SpaceViewPageUrl,Id,DefaultViewId.Value);
+			return String.Format(TfConstants.SpaceNodePageUrl,Id,DefaultNodeId.Value);
 		}
 	}
 

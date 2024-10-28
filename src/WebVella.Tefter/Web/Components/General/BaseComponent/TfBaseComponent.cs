@@ -13,6 +13,7 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected IWebConfigurationService ConfigurationService { get; set; }
 	[Inject] protected IIdentityManager IdentityManager { get; set; }
 	[Inject] protected ITfDataProviderManager DataProviderManager { get; set; }
+	[Inject] protected ITfMetaProvider MetaProvider { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 
@@ -20,6 +21,11 @@ public class TfBaseComponent : FluxorComponent
 	protected IStringLocalizer LC;
 	protected static IStringLocalizer GL = null;
 	private static AsyncLock _lock = new();
+
+	public bool IsRenderLockEnabled { get; private set; } = false;
+	public Guid CurrentRenderLock { get; private set; } = Guid.Empty;
+	public Guid OldRenderLock { get; private set; } = Guid.Empty;
+
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
@@ -49,10 +55,43 @@ public class TfBaseComponent : FluxorComponent
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-#if DEBUG
-		if (hasLogging) Console.WriteLine($"+++++++ Render {this.GetType().Name}");
-#endif
+		//#if DEBUG
+		//		if (hasLogging) Console.WriteLine($"+++++++ Render {this.GetType().Name}");
+		//#endif
 	}
+
+	protected override void OnParametersSet()
+	{
+		if (IsRenderLockEnabled) RegenRenderLock();
+	}
+
+	protected override bool ShouldRender()
+	{
+		if (!IsRenderLockEnabled)
+		{
+			return true;
+		}
+
+		if (CurrentRenderLock == OldRenderLock)
+		{
+			return false;
+		}
+
+		OldRenderLock = CurrentRenderLock;
+		return base.ShouldRender();
+	}
+
+	protected void EnableRenderLock()
+	{
+		IsRenderLockEnabled = true;
+	}
+
+	protected void DisableRenderLock()
+	{
+		IsRenderLockEnabled = false;
+	}
+
+	protected void RegenRenderLock() => CurrentRenderLock = Guid.NewGuid();
 
 	protected string LOC(string key, params object[] arguments)
 	{
@@ -72,7 +111,7 @@ public class TfBaseComponent : FluxorComponent
 		ResultUtils.ProcessServiceResult(
 			result: response,
 			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
-			toastValidationMessage:"Invalid Data",
+			toastValidationMessage: "Invalid Data",
 			notificationErrorTitle: LOC("Unexpected Error!"),
 			toastService: ToastService,
 			messageService: MessageService

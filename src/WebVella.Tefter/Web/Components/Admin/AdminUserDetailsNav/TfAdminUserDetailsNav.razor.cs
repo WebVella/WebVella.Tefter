@@ -13,21 +13,21 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, TfRouteState.Value.UserId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.PersonInfo(),
-			Title = LOC("Details")
+			Text = LOC("Details")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserAccessPageUrl, TfRouteState.Value.UserId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Key(),
-			Title = LOC("Access")
+			Text = LOC("Access")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserSavesViewsPageUrl, TfRouteState.Value.UserId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Save(),
-			Title = LOC("Saved Views")
+			Text = LOC("Saved Views")
 		});
 
 		return menu;

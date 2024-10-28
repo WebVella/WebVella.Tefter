@@ -1,0 +1,40 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (TfUserState.Value.SidebarExpanded)
+{
+	<TfSpaceNavigation />
+}
+@if (TfRouteState.Value.SpaceNodeId is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No space found"
+							  Style="border: 1px solid var(--neutral-base-color)"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				No page selected
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else if (TfAppState.Value.SpaceNode is null)
+{
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Title="No space found"
+							  Style="border: 1px solid var(--neutral-base-color)"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				No page found
+			</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
+}
+else if (!String.IsNullOrWhiteSpace(TfAppState.Value?.SpaceNode?.ComponentTypeFullName))
+{
+	<TfErrorBoundry>
+		<DynamicComponent Type="@Type.GetType(TfAppState.Value?.SpaceNode?.ComponentTypeFullName)" Parameters="@_getDynamicComponentParams()" />
+	</TfErrorBoundry>
+}

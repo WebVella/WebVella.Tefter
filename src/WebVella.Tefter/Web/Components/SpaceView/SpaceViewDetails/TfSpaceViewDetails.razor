@@ -16,12 +16,12 @@
 }
 else
 {
-	@if (TfUserState.Value.SidebarExpanded)
+@* 	@if (TfUserState.Value.SidebarExpanded)
 	{
 		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
 			<TfSpaceViewNavigation />
 		</FluentStack>
-	}
+	} *@
 
 	@if (TfAppState.Value.SpaceViewList.Count == 0)
 	{

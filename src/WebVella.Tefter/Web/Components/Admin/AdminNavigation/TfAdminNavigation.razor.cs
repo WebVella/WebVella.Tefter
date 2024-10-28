@@ -19,11 +19,11 @@ public partial class TfAdminNavigation : TfBaseComponent
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-dashboard-link",
-			Icon = TfConstants.AdminDashboardIcon,
+			IconCollapsed = TfConstants.AdminDashboardIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.All,
 			Url = "/admin",
-			Title = LOC(TfConstants.AdminDashboardMenuTitle)
+			Text = LOC(TfConstants.AdminDashboardMenuTitle)
 		});
 
 		var usersUrl = String.Format(TfConstants.AdminUsersPageUrl);
@@ -34,11 +34,11 @@ public partial class TfAdminNavigation : TfBaseComponent
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-users-link",
-			Icon = TfConstants.AdminUsersIcon,
+			IconCollapsed = TfConstants.AdminUsersIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.Prefix,
 			Url = usersUrl,
-			Title = LOC(TfConstants.AdminUsersMenuTitle)
+			Text = LOC(TfConstants.AdminUsersMenuTitle)
 		});
 
 		var dpUrl = String.Format(TfConstants.AdminDataProvidersPageUrl);
@@ -49,31 +49,31 @@ public partial class TfAdminNavigation : TfBaseComponent
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-data-providers-link",
-			Icon = TfConstants.AdminDataProvidersIcon,
+			IconCollapsed = TfConstants.AdminDataProvidersIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.Prefix,
 			Url = dpUrl,
-			Title = LOC(TfConstants.AdminDataProvidersMenuTitle)
+			Text = LOC(TfConstants.AdminDataProvidersMenuTitle)
 		});
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-aux-columns-link",
-			Icon = TfConstants.AdminAuxColumnsIcon,
+			IconCollapsed = TfConstants.AdminAuxColumnsIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.Prefix,
 			Url = "/admin/aux-columns",
-			Title = LOC(TfConstants.AdminAuxColumnsMenuTitle)
+			Text = LOC(TfConstants.AdminAuxColumnsMenuTitle)
 		});
 		if (TfAppState.Value.Pages.Count > 0)
 		{
 			menuItems.Add(new TucMenuItem()
 			{
 				Id = "tf-pages-link",
-				Icon = TfConstants.ApplicationIcon,
+				IconCollapsed = TfConstants.ApplicationIcon,
 				IconColor = TfConstants.AdminThemeColor,
 				Match = NavLinkMatch.Prefix,
 				Url = String.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Slug),
-				Title = LOC(TfConstants.AdminPagesMenuTitle)
+				Text = LOC(TfConstants.AdminPagesMenuTitle)
 			});
 		}
 	}

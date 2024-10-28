@@ -9,25 +9,6 @@
 </style>
 <div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
 	<div class="sidebar-toolbar">
-		<div class="sidebar-toolbar-mode">
-			<FluentToolbar Class="modebar">
-				<FluentButton Class="@($"btn views {_getActiveClass(TfSpaceViewNavigationActiveTab.Views)}")" Title="views"
-							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Views))"
-							  Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.SpaceViewIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentButton>
-				<FluentButton Class="@($"btn bookmarks {_getActiveClass(TfSpaceViewNavigationActiveTab.Bookmarks)}")" Title="bookmarks"
-							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Bookmarks))"
-							  Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentButton>
-				<FluentButton Class="@($"btn saves {_getActiveClass(TfSpaceViewNavigationActiveTab.Saves)}")" Title="saved URLs"
-							  OnClick="@(()=>_setActiveTab(TfSpaceViewNavigationActiveTab.Saves))"
-							  Appearance="Appearance.Outline">
-					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentButton>
-			</FluentToolbar>
-		</div>
 		<div class="sidebar-toolbar-search">
 			<FluentTextField Class="search" Placeholder="@LOC("search...")" Immediate="true" ImmediateDelay="500" Value=@search ValueChanged="onSearch" />
 		</div>
@@ -46,16 +27,23 @@
 					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
 				</FluentMenuItem>
 				<FluentDivider></FluentDivider>
-				<FluentMenuItem OnClick="onDataListClick">
-					@LOC("Space Data")
-					<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentMenuItem>
-				<FluentDivider></FluentDivider>
 				<FluentMenuItem OnClick="onAddClick">
 					@LOC("Create View")
 					<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				</FluentMenuItem>
-
+				<FluentDivider></FluentDivider>
+				<FluentMenuItem OnClick="onDataListClick">
+					@LOC("Space Data")
+					<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				</FluentMenuItem>
+				<FluentMenuItem OnClick="onViewListClick">
+					@LOC("Space Views")
+					<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				</FluentMenuItem>
+				<FluentMenuItem OnClick="onPageListClick">
+					@LOC("Space Pages")
+					<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				</FluentMenuItem>
 			</FluentMenu>
 		</div>
 	</div>
@@ -63,40 +51,12 @@
 		@{
 			var menuItems = _getMenu();
 		}
-		@if (_activeTab == TfSpaceViewNavigationActiveTab.Saves && menuItems.Count > 0)
-		{
-			<div style="text-align:right">
-				<FluentSwitch @bind-Value=_linksFromAllViews Label="@LOC("all views")" />
-			</div>
-		}
-		<FluentNavMenu Style="width:100%">
-			@foreach (var item in menuItems)
-			{
-				if (item.IsGroup)
-				{
-					<FluentNavGroup HideExpander="false" Expanded="@_expandedGroups.Contains(item.Id)" ExpandedChanged="@(x=> _groupExpandedChanged(item.Id))"
-									Title="@item.Title" Class="tf-menu-item-group"
-									Icon="@(_expandedGroups.Contains(item.Id)
-										? TfConstants.GetIcon("FolderOpen") : TfConstants.GetIcon("Folder"))">
-						@foreach (var item in item.Nodes)
-						{
-							<FluentNavLink Href="@item.Url" Class="@(item.Active ? "selected" : "")" Data="item" Id="@item.Id"
-										   Icon="item.Icon">@item.Title</FluentNavLink>
-						}
-					</FluentNavGroup>
-				}
-				else
-				{
-					<FluentNavLink Href="@item.Url" Class="@(item.Active ? "selected" : "")" Data="item" Id="@item.Id"
-								   Icon="item.Icon">@item.Title</FluentNavLink>
-				}
-			}
-		</FluentNavMenu>
+		<TfTreeView Items="menuItems" />
 		@if (menuItems.Count == 0)
 		{
 			<div style="padding-left:5px;padding-top:5px">@LOC("No views found in the space")</div>
 			<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:1rem;">
-				<FluentIcon Slot="start" Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString"/>
+				<FluentIcon Slot="start" Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 				@LOC("Create View")
 			</FluentButton>
 		}

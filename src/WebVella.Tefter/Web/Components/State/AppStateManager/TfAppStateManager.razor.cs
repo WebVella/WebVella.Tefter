@@ -14,6 +14,7 @@ public partial class TfAppStateManager : FluxorComponent
 	private Guid _renderedUserStateHash = Guid.Empty;
 	private Guid _renderedAppStateHash = Guid.Empty;
 	private bool _isBusy = true;
+	private bool _isRouteChanging = false;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -51,7 +52,7 @@ public partial class TfAppStateManager : FluxorComponent
 		using (await locker.LockAsync())
 		{
 			if (TfUserState.Value.CurrentUser is null) return;
-			var (appState,auxDataState) = await UC.InitState(TfUserState.Value.CurrentUser, url, oldState, oldAuxState);
+			var (appState, auxDataState) = await UC.InitState(TfUserState.Value.CurrentUser, url, oldState, oldAuxState);
 			Dispatcher.Dispatch(new SetAppStateAction(
 				component: null,
 				state: appState
@@ -67,8 +68,17 @@ public partial class TfAppStateManager : FluxorComponent
 	{
 		InvokeAsync(async () =>
 		{
+			_isRouteChanging = true;
+			_renderedUserStateHash = Guid.NewGuid(); //force rerender
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
 			await _init(null, TfAppState.Value, TfAuxDataState.Value);
 			//the change in the user state should triggger rerender later
+
+			_isRouteChanging = false;
+			_renderedUserStateHash = Guid.NewGuid(); //force rerender
+			await Task.Delay(1);
+			await InvokeAsync(StateHasChanged);
 		});
 	}
 

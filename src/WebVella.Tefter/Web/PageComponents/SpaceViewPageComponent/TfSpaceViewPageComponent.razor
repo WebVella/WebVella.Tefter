@@ -3,7 +3,7 @@
 
 @if (Context.Mode == TfComponentMode.Read)
 {
-	<h3>TfSpaceViewPageComponent DISPLAY</h3>
+	<TfSpaceViewDetails />
 }
 else if (Context.Mode == TfComponentMode.Create)
 {
@@ -22,7 +22,7 @@ else if (Context.Mode == TfComponentMode.Create)
 		<FluentGrid>
 			<FluentGridItem xs="6">
 				<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_options.Name
-								 Label="@LOC("Connected View type")" Style="width:100%" AutoComplete="new-password"
+								 Label="@LOC("New view name")" Style="width:100%" AutoComplete="new-password"
 								 Class="@GetValidationCssClass(nameof(_options.Name))" />
 				<TfValidationMessage Field="@(nameof(_options.Name))" Errors="ValidationErrors" />
 			</FluentGridItem>

@@ -4,6 +4,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 
 	[Inject] private AppStateUseCase UC { get; set; }
 
@@ -22,10 +23,10 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 			var menu = new TucMenuItem
 			{
 				Id = TfConverters.ConvertGuidToHtmlElementId(spaceData.Id),
-				Icon = TfConstants.SpaceDataIcon,
-				Match = NavLinkMatch.Prefix,
-				Title = spaceData.Name,
+				IconCollapsed = TfConstants.SpaceDataIcon,
+				Text = spaceData.Name,
 				Url = String.Format(TfConstants.SpaceDataPageUrl, spaceData.SpaceId, spaceData.Id),
+				Selected = spaceData.Id == TfRouteState.Value.SpaceDataId
 			};
 			menuItems.Add(menu);
 		}
@@ -100,12 +101,22 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 	{
 		Navigator.NavigateTo(String.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id));
 	}
-
+	private void onDataListClick()
+	{
+		Guid? spaceDataId = null;
+		if (TfAppState.Value.SpaceDataList.Count > 0) spaceDataId = TfAppState.Value.SpaceDataList[0].Id;
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, spaceDataId));
+	}
 	private void onViewsListClick()
 	{
 		Guid? spaceViewId = null;
 		if (TfAppState.Value.SpaceViewList.Count > 0) spaceViewId = TfAppState.Value.SpaceViewList[0].Id;
 		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, spaceViewId));
+	}
+
+	private void onPageListClick()
+	{
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceNodePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.Space.DefaultNodeId));
 	}
 
 	private void onSearch(string value)

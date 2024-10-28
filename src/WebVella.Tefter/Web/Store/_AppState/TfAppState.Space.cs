@@ -29,7 +29,7 @@ public partial record TfAppState
 	{
 		get
 		{
-			if(SpaceColorString == "default") 
+			if (SpaceColorString == "default")
 				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToAttributeValue());
 			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(SpaceColorString);
 		}
@@ -50,21 +50,21 @@ public partial record TfAppState
 		{
 			var result = new List<TucMenuItem>();
 			if (CurrentUserSpaces is null || CurrentUserSpaces.Count == 0) return result;
-			foreach (var item in CurrentUserSpaces.OrderBy(x=> x.Position).Take(TfConstants.NavSpacesMax))
+			foreach (var item in CurrentUserSpaces.OrderBy(x => x.Position).Take(TfConstants.NavSpacesMax))
 			{
 				result.Add(new TucMenuItem
 				{
-					Icon = item.Icon,
+					IconCollapsed = item.Icon,
 					Id = TfConverters.ConvertGuidToHtmlElementId(item.Id),
 					Match = NavLinkMatch.Prefix,
 					Url = item.Url,
-					SpaceId = item.Id,
-					//Url = String.Format(TfConstants.SpacePageUrl, item.Id), //item.DefaultViewId - active menu issues
-					Title = item.Name,
+					Text = item.Name,
 					IconColor = item.Color
 				});
 			}
 			return result;
 		}
 	}
+	public TucSpaceNode SpaceNode { get; init; } = null;
+	public object SpaceNodeData { get; init; } = null;
 }

@@ -6,18 +6,18 @@
 		<FluentButton Id="@_valueInputId" Style="width:100%"
 					  OnClick="@(() => _open = !_open)"
 					  Color="@_selectedOption?.Color" BackgroundColor="@_selectedOption?.BackgroundColor">
-			@if (!_selectedOption.HideLabel)
+			@if (_selectedOption is not null && !_selectedOption.HideLabel)
 			{
 				<span>@_selectedOption?.Label</span>
 			}
-			@if (!String.IsNullOrWhiteSpace(_selectedOption.IconName))
+			@if (_selectedOption is not null && !String.IsNullOrWhiteSpace(_selectedOption.IconName))
 			{
 				<FluentIcon Slot="start" Value="@TfConstants.GetIcon(_selectedOption.IconName)"
 							Color="Color.Custom" CustomColor="@_selectedOption?.Color" />
 			}
 			<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
 		</FluentButton>
-		<FluentMenu UseMenuService="true" 
+		<FluentMenu UseMenuService="true"
 					Style="max-height:300px"
 					HorizontalScaling="AxisScalingMode.Anchor"
 					Class="tf-btn-menu"

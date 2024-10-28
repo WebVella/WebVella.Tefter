@@ -20,8 +20,8 @@
 			<FluentNavMenu>
 				@foreach (var item in TfAppState.Value.SpacesNav)
 				{
-					<FluentNavLink Href="@item.Url" title="@item.Title" Class="@_spaceSelectedClass(item.SpaceId)" 
-								   Icon="@item.Icon.WithColor(item.IconColor.ToAttributeValue())" IconColor="Color.Custom" />
+					<FluentNavLink Href="@item.Url" title="@item.Text" Class="@_spaceSelectedClass(item)" 
+								   Icon="@item.IconCollapsed.WithColor(item.IconColor.ToAttributeValue())" IconColor="Color.Custom" />
 				}
 			</FluentNavMenu>
 		</div>

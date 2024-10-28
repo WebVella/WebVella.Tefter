@@ -790,7 +790,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = null,
-					ComponentType = null,
+					ComponentTypeFullName = null,
 					Icon = null,
 					Name = "1_0_0",
 					ParentId = null,
@@ -806,7 +806,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "1_1_0",
 					Name = "1_1_0",
 					ParentId = spaceNode1_0_0.Id,
@@ -822,7 +822,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "1_2_0",
 					Name = "1_2_0",
 					ParentId = spaceNode1_0_0.Id,
@@ -838,7 +838,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "1_3_0",
 					Name = "1_3_0",
 					ParentId = spaceNode1_0_0.Id,
@@ -854,7 +854,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "2_0_0",
 					Name = "2_0_0",
 					ParentId = null,
@@ -870,7 +870,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "2_1_0",
 					Name = "2_1_0",
 					ParentId = spaceNode2_0_0.Id,
@@ -886,7 +886,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "2_2_0",
 					Name = "2_2_0",
 					ParentId = spaceNode2_0_0.Id,
@@ -902,7 +902,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "2_3_0",
 					Name = "2_3_0",
 					ParentId = spaceNode2_0_0.Id,
@@ -918,7 +918,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "3_0_0",
 					Name = "3_0_0",
 					ParentId = null,
@@ -934,7 +934,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "3_1_0",
 					Name = "3_1_0",
 					ParentId = spaceNode3_0_0.Id,
@@ -950,7 +950,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "3_2_0",
 					Name = "3_2_0",
 					ParentId = spaceNode3_0_0.Id,
@@ -966,7 +966,7 @@ public partial class SpaceManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
-					ComponentType = "comp_type",
+					ComponentTypeFullName = "comp_type",
 					Icon = "3_3_0",
 					Name = "3_3_0",
 					ParentId = spaceNode3_0_0.Id,

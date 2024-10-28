@@ -51,24 +51,26 @@ internal partial class AppStateUseCase
 		LOC = loc;
 	}
 
-	internal async Task<(TfAppState,TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState,TfAuxDataState oldAuxDataState)
+	internal async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)
 	{
+		
 		if (oldAppState == null) oldAppState = new TfAppState();
 		if (oldAuxDataState == null) oldAuxDataState = new TfAuxDataState();
 		var routeState = _navigationManager.GetRouteState(url);
 		var appState = oldAppState with { Hash = oldAppState.Hash };
 		var auxDataState = oldAuxDataState with { Hash = oldAuxDataState.Hash };
-		appState = await InitAdminUsersAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitSpaceAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitAdminDataProviderAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitAdminSharedColumnsAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitSpaceDataAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitSpaceViewAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitBookmarksAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitHomeAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
-		appState = await InitPagesAsync(_serviceProvider,currentUser, routeState, appState,oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitAdminUsersAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitSpaceAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitAdminDataProviderAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitAdminSharedColumnsAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitSpaceDataAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitSpaceViewAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitBookmarksAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitHomeAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitPagesAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
+		appState = await InitSpaceNodeAsync(_serviceProvider, currentUser, routeState, appState, oldAppState, auxDataState, oldAuxDataState);
 
-		return (appState,auxDataState);
+		return (appState, auxDataState);
 	}
 
 
