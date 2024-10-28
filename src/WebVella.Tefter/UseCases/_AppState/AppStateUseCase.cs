@@ -53,6 +53,7 @@ internal partial class AppStateUseCase
 
 	internal async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)
 	{
+		
 		if (oldAppState == null) oldAppState = new TfAppState();
 		if (oldAuxDataState == null) oldAuxDataState = new TfAuxDataState();
 		var routeState = _navigationManager.GetRouteState(url);
