@@ -1,0 +1,27 @@
+﻿namespace WebVella.Tefter.Web.Components;
+public partial class TfSpaceNodeDetails : TfBaseComponent
+{
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
+
+	private Dictionary<string, object> _getDynamicComponentParams()
+	{
+		var dict = new Dictionary<string, object>();
+		if (TfAppState.Value.SpaceNode is not null)
+		{
+			dict["Context"] = new TfSpaceNodeComponentContext
+			{
+				ComponentOptionsJson = TfAppState.Value.SpaceNode.ComponentOptionsJson,
+				Icon = TfAppState.Value.SpaceNode.Icon,
+				Mode = TfComponentMode.Read,
+				SpaceId = TfAppState.Value.SpaceNode.SpaceId,
+				SpaceNodeId = TfAppState.Value.SpaceNode.Id
+			};
+		}
+
+
+		return dict;
+	}
+
+}

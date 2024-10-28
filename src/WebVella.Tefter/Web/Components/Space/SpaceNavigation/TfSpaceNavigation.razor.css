@@ -10,7 +10,6 @@
 	height: 40px;
 	margin-top: 5px;
 	margin-bottom: 5px;
-	padding-left: 5px;
 }
 
 .sidebar-toolbar-search {
@@ -75,31 +74,11 @@
 }
 
 
-::deep.sidebar-nav .fluent-nav-link .positioning-region {
-	background: transparent !important;
-}
-
 ::deep.sidebar-nav .load-more {
 	width: 100%;
 	margin-top: 1rem;
 }
 
-::deep .fluent-nav-menu .fluent-nav-item a.active .positioning-region::before {
-	display: none;
-}
-
-::deep .fluent-nav-menu .fluent-nav-item.selected a .positioning-region::before {
-	display:block !important;
-	content: "";
-	position: absolute;
-	background-color: var(--accent-fill-rest);
-	border-radius: calc(var(--control-corner-radius)* 1px);
-	right: unset;
-	width: 3px;
-	height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
-	margin: 0 2px;
-	z-index:5;
-}
 
 ::deep fluent-switch:not(.checked)::part(switch) {
 	border-color:var(--tf-space-border-color);

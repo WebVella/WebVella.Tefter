@@ -1,0 +1,17 @@
+﻿::deep .page-header {
+	font-size: var(--type-ramp-plus-4-font-size);
+	height: 100%;
+	padding-top: 15px;
+}
+
+::deep .page-header-inner {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height:30px;
+}
+
+::deep .page-header-divider {
+	color: var(--neutral-base-color);
+	margin:0 7px;
+}

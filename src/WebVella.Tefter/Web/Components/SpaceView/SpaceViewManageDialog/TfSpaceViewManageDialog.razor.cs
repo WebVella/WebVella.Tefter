@@ -190,19 +190,4 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		}
 	}
 
-
-	private void _onGroupValueChange(string value)
-	{
-		var splitArray = value.Split(",", StringSplitOptions.RemoveEmptyEntries);
-		_form.Groups.Clear();
-		var added = new HashSet<string>();
-		foreach (var item in splitArray)
-		{
-			var processed = item?.Trim();
-			if (added.Contains(processed)) continue;
-			added.Add(processed);
-
-			_form.Groups.Add(processed);
-		}
-	}
 }

@@ -76,7 +76,7 @@
 										   Value="_selectedPageComponent" ValueChanged="_pageComponentChanged"
 										   OptionText="@(x=> x.Instance.Name)" OptionIcon="@(x=> x.Instance.Icon)" OptionDescription="@(x=> x.Instance.Description)"
 										   OptionMatch="@((x,y)=> x.Instance?.Id == y.Instance.Id)" />
-						<FluentValidationMessage For="@(() => _form.ComponentType)" />
+						<FluentValidationMessage For="@(() => _form.ComponentTypeFullName)" />
 					</FluentGridItem>
 				</FluentGrid>
 				@if (_selectedPageComponent is null)

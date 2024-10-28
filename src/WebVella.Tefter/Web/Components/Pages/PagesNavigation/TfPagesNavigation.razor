@@ -8,13 +8,7 @@
 		</div>
 	</div>
 	<div class="sidebar-inner">
-		<FluentNavMenu Style="width:100%">
-			@foreach (var item in _getMenu())
-			{
-				<FluentNavLink Href="@item.Url" Match="@item.Match" Data="item" Id="@item.Id"
-							   Icon="item.Icon" IconColor="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString">@item.Title</FluentNavLink>
-			}
-		</FluentNavMenu>
+		<TfTreeView Items="_getMenu()" />
 	</div>
 </div>
 

@@ -9,9 +9,17 @@ public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeCom
 	public virtual string Description { get; set; } = null;
 	public virtual string Icon { get; set; } = null;
 	public virtual TfSpaceNodeComponentContext Context { get; set; }
+	public virtual string GetUrl(TfSpaceNodeComponentContext context) => null;
 	public virtual string GetOptions() => "{}";
 	public virtual List<ValidationError> ValidateOptions() => new List<ValidationError>();
 	public virtual List<ValidationError> ValidationErrors { get; set; } = new();
+	public virtual Task<(TfAppState,TfAuxDataState)> InitState(
+		IServiceProvider serviceProvider,
+		TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
+		TfSpaceNodeComponentContext context) => Task.FromResult((newAppState,newAuxDataState));
 	public virtual Task OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.CompletedTask;
 	public virtual Task OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.CompletedTask;
 	public virtual Task OnNodeDeleted(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.CompletedTask;

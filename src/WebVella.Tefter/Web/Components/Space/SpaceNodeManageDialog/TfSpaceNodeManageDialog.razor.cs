@@ -36,7 +36,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 				SpaceId = TfAppState.Value.Space.Id,
 				Type = TfSpaceNodeType.Page,
 				Icon = TfConstants.PageIconString,
-				ComponentType = _pageComponents.Count > 0 ? _pageComponents[0].ComponentType.FullName : null
+				ComponentTypeFullName = _pageComponents.Count > 0 ? _pageComponents[0].ComponentType.FullName : null
 			};
 		}
 		else
@@ -45,9 +45,9 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 			_form = Content with { Id = Content.Id };
 			_parentIdString = _form.ParentId.ToString();
 		}
-		if (!String.IsNullOrWhiteSpace(_form.ComponentType))
+		if (!String.IsNullOrWhiteSpace(_form.ComponentTypeFullName))
 		{
-			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentType.FullName == _form.ComponentType);
+			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentType.FullName == _form.ComponentTypeFullName);
 		}
 
 		base.InitForm(_form);
@@ -66,10 +66,21 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		//Get dynamic settings component errors
 		List<ValidationError> settingsErrors = new();
 		ITfSpaceNodeComponent addonComponent = null;
-		if (typeSettingsComponent is not null)
+		TucSpaceNode submit = _form with { Id = _form.Id };
+		if (submit.Type == TfSpaceNodeType.Folder)
 		{
-			addonComponent = typeSettingsComponent.Instance as ITfSpaceNodeComponent;
-			settingsErrors = addonComponent.ValidateOptions();
+			submit.ComponentOptionsJson = null;
+			submit.ComponentTypeFullName = null;
+
+		}
+		else if (submit.Type == TfSpaceNodeType.Page)
+		{
+			if (typeSettingsComponent is not null)
+			{
+				addonComponent = typeSettingsComponent.Instance as ITfSpaceNodeComponent;
+				settingsErrors = addonComponent.ValidateOptions();
+				submit.ComponentOptionsJson = addonComponent.GetOptions();
+			}
 		}
 
 		//Check form
@@ -83,20 +94,28 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		try
 		{
 			Result<List<TucSpaceNode>> submitResult = null;
-			_form.ComponentSettingsJson = addonComponent.GetOptions();
-			if (String.IsNullOrWhiteSpace(_parentIdString)) _form.ParentId = null;
-			else _form.ParentId = new Guid(_parentIdString);
-			if (_isCreate) submitResult = UC.CreateSpaceNode(_form);
-			else submitResult = UC.UpdateSpaceNode(_form);
+
+
+			if (String.IsNullOrWhiteSpace(_parentIdString)) submit.ParentId = null;
+			else submit.ParentId = new Guid(_parentIdString);
+
+			if (_isCreate) submitResult = UC.CreateSpaceNode(submit);
+			else submitResult = UC.UpdateSpaceNode(submit);
+
 			ProcessServiceResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("Space page created!"));
+				//Reload spaceViews and spaceData in case new ones were created
+				var spaceViews = UC.GetSpaceViewList(_form.SpaceId);
+				var spaceData = UC.GetSpaceDataList(_form.SpaceId);
 				Dispatcher.Dispatch(new SetAppStateAction(
 				component: this,
 				state: TfAppState.Value with
 				{
-					SpaceNodes = submitResult.Value
+					SpaceNodes = submitResult.Value,
+					SpaceViewList = spaceViews,
+					SpaceDataList = spaceData
 				}
 				));
 				await _cancel();
@@ -156,7 +175,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		var context = new TfSpaceNodeComponentContext();
 		context.Icon = _form.Icon;
 		context.SpaceId = TfAppState.Value.Space.Id;
-		context.ComponentOptionsJson = _form.ComponentSettingsJson;
+		context.ComponentOptionsJson = _form.ComponentOptionsJson;
 		context.Mode = TfComponentMode.Create;
 		dict["Context"] = context;
 		return dict;

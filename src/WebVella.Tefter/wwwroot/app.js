@@ -13,17 +13,21 @@
 				log.error(error);
 			});
 	},
-	clickElement: function (elementId) {
+	clickElement: function (elementRef) {
+		if (!elementRef) return;
+		elementRef.click();
+	},
+	clickElementById: function (elementId) {
 		var element = document.getElementById(elementId);
 		if (!element) return;
 		element.click();
 	},
-	focusElement: function (elementId) {
+	focusElementById: function (elementId) {
 		var element = document.getElementById(elementId);
 		if (!element) return;
 		element.focus();
 	},
-	blurElement: function (elementId) {
+	blurElementById: function (elementId) {
 		var element = document.getElementById(elementId);
 		if (!element) return;
 		element.blur();

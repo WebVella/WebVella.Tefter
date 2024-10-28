@@ -7,6 +7,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] private UserStateUseCase UserUC { get; set; }
+	[Parameter] public Guid? SpaceViewId { get; set; }
 
 	private bool _isDataLoading = true;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)

@@ -18,21 +18,21 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 			Url = String.Format(TfConstants.SpaceDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
-			Title = LOC("Details")
+			Text = LOC("Details")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.SpaceDataViewsPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
-			Title = LOC("Used in Views")
+			Text = LOC("Used in Views")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.SpaceDataDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
-			Title = LOC("Data")
+			Text = LOC("Data")
 		});
 		return menu;
 	}

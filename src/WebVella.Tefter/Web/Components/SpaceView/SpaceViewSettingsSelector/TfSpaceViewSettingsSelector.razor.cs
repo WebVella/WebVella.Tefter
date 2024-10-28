@@ -19,7 +19,7 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 
 	private void _manageView()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewManagePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.Id));
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.Id));
 	}
 	private void _manageData()
 	{

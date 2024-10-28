@@ -18,9 +18,9 @@ public partial class TfPagesNavigation : TfBaseComponent
 			var menu = new TucMenuItem
 			{
 				Id = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid()),
-				Icon = TfConstants.ApplicationIcon,
+				IconCollapsed = TfConstants.ApplicationIcon,
 				Match = NavLinkMatch.Prefix,
-				Title = page.Name,
+				Text = page.Name,
 				Url = String.Format(TfConstants.PagesSinglePageUrl, page.Slug),
 			};
 			menuItems.Add(menu);

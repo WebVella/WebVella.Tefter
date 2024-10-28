@@ -52,7 +52,7 @@ internal static partial class TfConverters
 
 	internal static List<string> GetSpaceIconLibrary()
 	{
-		if(_allIcons is not null) return _allIcons;
+		if (_allIcons is not null) return _allIcons;
 
 		var result = new List<string>();
 		foreach (var item in Icons.AllIcons)
@@ -225,5 +225,29 @@ internal static partial class TfConverters
 		return stringBuilder
 			.ToString()
 			.Normalize(NormalizationForm.FormC);
+	}
+
+	public static TItem FindItemByMatch<TItem>(this IEnumerable<TItem> items, Func<TItem,bool> matcher, Func<TItem,IEnumerable<TItem>> childGetter) where TItem : class
+	{
+		if (items == null)
+		{
+			return null;
+		}
+
+		foreach (var item in items)
+		{
+			if (matcher(item))
+			{
+				return item;
+			}
+
+			var nestedItem = FindItemByMatch(childGetter(item), matcher, childGetter);
+			if (nestedItem != null)
+			{
+				return nestedItem;
+			}
+		}
+
+		return null;
 	}
 }

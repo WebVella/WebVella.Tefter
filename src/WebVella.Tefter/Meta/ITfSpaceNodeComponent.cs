@@ -10,6 +10,13 @@ public interface ITfSpaceNodeComponent
 	public Task OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
 	public Task OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
 	public Task OnNodeDeleted(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
+	public Task<(TfAppState,TfAuxDataState)> InitState(
+		IServiceProvider serviceProvider,
+		TucUser currentUser,
+		TfRouteState routeState,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
+		TfSpaceNodeComponentContext context);
 	public string GetOptions();
 	public List<ValidationError> ValidateOptions();
 }

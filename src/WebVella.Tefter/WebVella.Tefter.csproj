@@ -45,12 +45,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="Web\Components\General\SelectColor\TfSelectColor.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	  <Content Update="Web\Components\General\SelectComponent\TfSelectComponent.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
+	  <EmbeddedResource Update="Web\Components\SpaceView\SpaceViewHeader\TfSpaceViewHeader.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

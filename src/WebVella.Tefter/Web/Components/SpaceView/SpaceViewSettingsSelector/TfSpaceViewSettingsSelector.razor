@@ -6,13 +6,13 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-setting-selector" UseMenuService="false">
 			@if (TfAppState.Value.ActiveSpaceViewBookmark is null || TfAppState.Value.ActiveSpaceViewSavedUrl is null)
 			{
-				@if (TfAppState.Value.ActiveSpaceViewBookmark is null)
+@* 				@if (TfAppState.Value.ActiveSpaceViewBookmark is null)
 				{
 					<FluentMenuItem OnClick="_bookmarkView">
 						@LOC("Bookmark View")
 						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 					</FluentMenuItem>
-				}
+				} *@
 				@if (TfAppState.Value.ActiveSpaceViewSavedUrl is null)
 				{
 					<FluentMenuItem OnClick="_saveViewUrl">

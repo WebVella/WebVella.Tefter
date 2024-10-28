@@ -154,7 +154,7 @@ internal static class NavigatorExt
 			{
 				if (result.SecondNode == RouteDataSecondNode.SpacePage)
 				{
-					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpacePageId = outGuid };
+					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpaceNodeId = outGuid };
 				}
 				else if (result.SecondNode == RouteDataSecondNode.SpaceView)
 				{

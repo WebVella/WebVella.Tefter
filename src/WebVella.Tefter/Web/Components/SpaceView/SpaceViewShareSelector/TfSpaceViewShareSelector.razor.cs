@@ -42,11 +42,11 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 
 	private async Task _exportSelection()
 	{
-		await JSRuntime.InvokeAsync<object>("Tefter.clickElement", _exportSelectionBtnId);
+		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportSelectionBtnId);
 	}
 	private async Task _exportAll()
 	{
-		await JSRuntime.InvokeAsync<object>("Tefter.clickElement", _exportAllBtnId);
+		await JSRuntime.InvokeAsync<object>("Tefter.clickElementById", _exportAllBtnId);
 	}
 
 }

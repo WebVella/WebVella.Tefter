@@ -170,7 +170,7 @@ public class NavigatorExtTests
 		result.SpaceId.Should().Be(spaceId);
 		result.SpaceViewId.Should().Be(viewId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceViewManagePageUrl, spaceId, viewId)}");
+		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceViewPageUrl, spaceId, viewId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(5);

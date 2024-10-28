@@ -106,7 +106,7 @@ public partial class TfDateOnlyEditColumnComponent : TucBaseViewColumn<TfDateOnl
 			if (_value is not null) doValue = new DateOnly(_value.Value.Year, _value.Value.Month, _value.Value.Day);
 			await OnRowColumnChangedByAlias(_valueAlias, doValue);
 			ToastService.ShowSuccess(LOC("change applied"));
-			await JSRuntime.InvokeAsync<string>("Tefter.blurElement", _valueInputId);
+			await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);
 		}
 		catch (Exception ex)
 		{

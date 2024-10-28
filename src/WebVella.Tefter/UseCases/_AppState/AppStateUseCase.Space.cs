@@ -24,6 +24,7 @@ internal partial class AppStateUseCase
 		{
 			var space = GetSpace(routeState.SpaceId.Value);
 			var spaceNodes = GetSpaceNodes(routeState.SpaceId.Value);
+			
 			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes };
 		}
 		else
@@ -72,11 +73,11 @@ internal partial class AppStateUseCase
 		var allSpaces = serviceResult.Value.Select(s => new TucSpace(s)).OrderBy(x => x.Position).ToList();
 		var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
 
-		var viewSrvResult = _spaceManager.GetAllSpaceViews();
-		if (viewSrvResult.IsFailed)
+		var nodeSrvResult = _spaceManager.GetAllSpaceNodes();
+		if (nodeSrvResult.IsFailed)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
+				result: Result.Fail(new Error("GetAllSpaceNodes failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -86,23 +87,23 @@ internal partial class AppStateUseCase
 			return Task.FromResult(new List<TucSpace>());
 		}
 
-		var spaceViewsDict = new Dictionary<Guid, List<TfSpaceView>>();
-		foreach (var item in viewSrvResult.Value)
+		var spaceNodeDict = new Dictionary<Guid, List<TfSpaceNode>>();
+		foreach (var item in nodeSrvResult.Value)
 		{
 			if (!spacesHS.Contains(item.SpaceId)) continue;
-			if (!spaceViewsDict.ContainsKey(item.SpaceId)) spaceViewsDict[item.SpaceId] = new();
-			spaceViewsDict[item.SpaceId].Add(item);
-		}
-
-		foreach (var spaceId in spaceViewsDict.Keys)
-		{
-			spaceViewsDict[spaceId] = spaceViewsDict[spaceId].OrderBy(x => x.Position).ToList();
+			if (!spaceNodeDict.ContainsKey(item.SpaceId)) spaceNodeDict[item.SpaceId] = new();
+			spaceNodeDict[item.SpaceId].Add(item);
 		}
 
 		foreach (var space in allSpaces)
 		{
-			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
-				space.DefaultViewId = spaceViewsDict[space.Id].OrderBy(x => x.Name).First().Id;
+			if (spaceNodeDict.ContainsKey(space.Id) && spaceNodeDict[space.Id].Count > 0)
+			{
+				var spacePageNode = spaceNodeDict[space.Id].FindItemByMatch((x) => x.Type == TfSpaceNodeType.Page, (x) => x.ChildNodes);
+				if (spacePageNode != null)
+					space.DefaultNodeId = spacePageNode.Id;
+			}
+
 		}
 		return Task.FromResult(allSpaces.OrderBy(x => x.Position).Take(10).ToList());
 
@@ -156,7 +157,7 @@ internal partial class AppStateUseCase
 		foreach (var space in allSpaces)
 		{
 			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
-				space.DefaultViewId = spaceViewsDict[space.Id].OrderBy(x => x.Name).First().Id;
+				space.DefaultNodeId = spaceViewsDict[space.Id].OrderBy(x => x.Name).First().Id;
 		}
 		return Task.FromResult(allSpaces);
 

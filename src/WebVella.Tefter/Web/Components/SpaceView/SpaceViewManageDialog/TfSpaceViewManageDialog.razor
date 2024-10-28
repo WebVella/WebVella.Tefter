@@ -67,16 +67,6 @@
 					<FluentValidationMessage For="@(() => _form.Settings.CanDeleteRows)" />
 				</FluentGridItem>
 			</FluentGrid>
-			<FluentGrid>
-				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Add to groups")" />
-					<FluentTextField AutoComplete="off" Style="width:100%"
-									 Value="@String.Join(", ",_form.Groups)"
-									 ValueChanged="_onGroupValueChange" />
-					<div class="tf-input-description">@LOC("how to be grouped on the side menu")</div>
-					<FluentValidationMessage For="@(() => _form.Groups)" />
-				</FluentGridItem>
-			</FluentGrid>
 			<FluentDivider Style="margin:1rem 0" />
 			<FluentGrid>
 				<FluentGridItem xs="6">
