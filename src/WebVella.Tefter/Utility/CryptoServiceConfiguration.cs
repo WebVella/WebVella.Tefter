@@ -2,15 +2,15 @@
 
 public interface ICryptoServiceConfiguration
 {
-    public string Password { get;  }
+	public string Password { get; }
 }
 
 public class CryptoServiceConfiguration : ICryptoServiceConfiguration
 {
-    public string Password { get; private set; }
+	public string Password { get; private set; }
 
-    public CryptoServiceConfiguration(IConfiguration config)
-    {
-		Password = config["Tefter:CryptoPassword"];
-    }
+	public CryptoServiceConfiguration(ITfConfigurationService config)
+	{
+		Password = config.CryptoPassword;
+	}
 }
