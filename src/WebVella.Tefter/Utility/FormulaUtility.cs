@@ -102,7 +102,6 @@ public static class FormulaUtility
 		return result;
 	}
 
-
 	private static string GetMatchFromString(this string formula, string pattern)
 	{
 		if (String.IsNullOrWhiteSpace(formula)) return null;

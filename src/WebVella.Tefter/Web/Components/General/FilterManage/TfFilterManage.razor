@@ -112,11 +112,17 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
-									<FluentTextField Value="@context.ValueString"
-													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
-													 Disabled="@Disabled" ReadOnly="ReadOnly"
-													 AutoComplete="new-password"
-													 Placeholder="@($"eg. {TfConstants.DateOnlyFormatInput}")" Style="width:300px" />
+									<FluentStack HorizontalGap="2">
+										<FluentTextField Value="@context.ValueString"
+														 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+														 Disabled="@Disabled" ReadOnly="ReadOnly"
+														 AutoComplete="new-password"
+														 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="width:300px" />
+										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.HelpIcon" Disabled=true/>
+										<FluentTooltip Anchor="@($"tf-{context.Id}")">
+											@((MarkupString)LOC("for dynamic date use one of the following:{0}", "<br/> now(+- decimal hours),<br/> day(+- decimal days),<br/> month(+- decimal months),<br/> year(+- decimal year)"))
+										</FluentTooltip>
+									</FluentStack>
 								}
 							}
 							else if (Item is TucFilterDateTime)
@@ -130,11 +136,17 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
-									<FluentTextField Value="@context.ValueString"
-													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
-													 Disabled="@Disabled" ReadOnly="ReadOnly"
-													 AutoComplete="new-password"
-													 Placeholder="@($"eg. {TfConstants.DateTimeFormatInput}")" Style="width:300px" />
+									<FluentStack HorizontalGap="2">
+										<FluentTextField Value="@context.ValueString"
+														 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
+														 Disabled="@Disabled" ReadOnly="ReadOnly"
+														 AutoComplete="new-password"
+														 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="width:300px" />
+										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.HelpIcon" Disabled=true/>
+										<FluentTooltip Anchor="@($"tf-{context.Id}")">
+											@((MarkupString)LOC("for dynamic date use one of the following:{0}", "<br/> now(+- decimal hours),<br/> day(+- decimal days),<br/> month(+- decimal months),<br/> year(+- decimal year)"))
+										</FluentTooltip>
+									</FluentStack>
 								}
 							}
 							else if (Item is TucFilterGuid)

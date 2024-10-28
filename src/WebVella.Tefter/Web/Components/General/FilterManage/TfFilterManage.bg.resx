@@ -129,6 +129,9 @@
   <data name="equal" xml:space="preserve">
     <value>равен</value>
   </data>
+  <data name="for dynamic date use one of the following:{0}" xml:space="preserve">
+    <value>за динамична дата използвайте едно от следните:{0}</value>
+  </data>
   <data name="full text search" xml:space="preserve">
     <value>съвпадение по цял текст</value>
   </data>
