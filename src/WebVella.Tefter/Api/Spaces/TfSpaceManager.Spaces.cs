@@ -281,6 +281,20 @@ public partial class TfSpaceManager : ITfSpaceManager
 												.CausedBy(result.Errors));
 				}
 
+				var spaceNodesResult = GetSpaceNodes(id);
+				if(!spaceNodesResult.IsSuccess)
+					return Result.Fail(new Error("Failed to get space node list.")
+											.CausedBy(spaceNodesResult.Errors));
+
+				foreach(var spaceNode in spaceNodesResult.Value.OrderByDescending(x=>x.Position))
+				{
+					var result = DeleteSpaceNode(spaceNode);
+					if (!result.IsSuccess)
+						return Result.Fail(new Error("Failed to delete space node.")
+												.CausedBy(result.Errors));
+
+				}	
+
 				var spacesAfter = GetSpacesList().Value.Where(x => x.Position > space.Position).ToList();
 
 				//update positions for spaces after the one being deleted

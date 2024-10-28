@@ -34,9 +34,9 @@ public static class DependencyInjection
 
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
 		services.AddSingleton<ILogger, NullLogger>();
-		services.AddSingleton<IDbConfigurationService, DatabaseConfigurationService>((Context) =>
+		services.AddSingleton<ITfConfigurationService, TfConfigurationService>((Context) =>
 		{
-			return new DatabaseConfigurationService(new ConfigurationBuilder()
+			return new TfConfigurationService(new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json".ToApplicationPath())
 				.AddJsonFile($"appsettings.{Environment.MachineName}.json".ToApplicationPath(), true)
 		   .Build());
@@ -51,6 +51,7 @@ public static class DependencyInjection
 		services.AddSingleton<ICryptoService, CryptoService>();
 		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
 		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
+		services.AddSingleton<IDbConfigurationService, DatabaseConfigurationService>();
 		services.AddSingleton<IDatabaseService, DatabaseService>();
 		services.AddSingleton<IDatabaseManager, DatabaseManager>();
 		services.AddSingleton<IDboManager, DboManager>();
@@ -61,6 +62,7 @@ public static class DependencyInjection
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
 		services.AddSingleton<ITfMetaProvider, TfMetaProvider>();
+		services.AddSingleton<ITfFileManager, TfFileManager>();
 
 
 		//lazy services

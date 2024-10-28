@@ -11,14 +11,14 @@ public class WebConfigurationService : IWebConfigurationService
 	public string CompanyName { get; }
 	public string CompanyLogoUrl { get; }
 
-	private IConfiguration configuration;
+	private ITfConfigurationService configuration;
 
-	public WebConfigurationService(IConfiguration config)
+	public WebConfigurationService(ITfConfigurationService config)
 	{
 		configuration = config;
-		var companyNameConfigString = config["Tefter:CompanyName"];
+		var companyNameConfigString = config.CompanyName;
 		CompanyName = !string.IsNullOrWhiteSpace(companyNameConfigString) ? companyNameConfigString : "Tefter.bg";
-		var companyLogoUrlConfigString = config["Tefter:CompanyLogoUrl"];
+		var companyLogoUrlConfigString = config.CompanyLogoUrl;
 		CompanyLogoUrl = !string.IsNullOrWhiteSpace(companyLogoUrlConfigString) ? companyLogoUrlConfigString : "_content/WebVella.Tefter/logo.svg";
 	}
 }
