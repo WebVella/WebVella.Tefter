@@ -35,4 +35,9 @@ internal class Constants
 	public const string TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID = "22d5436c-1dec-4d1d-bb4d-f197f19c9d12";
 	public const string TF_GENERIC_INTEGER_COLUMN_TYPE_ID = "a0708248-ebfc-4ba9-84e9-3f959c06989c";
 	public const string TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID = "e8a52dfe-fcb8-4fd2-8011-bd9e0a5a81d9";
+
+	public static CultureInfo TF_FILTER_CULTURE = CultureInfo.InvariantCulture;
+	public static NumberStyles TF_FILTER_NUMBER_STYLE = 
+		NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite |
+		NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint ;
 }

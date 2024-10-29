@@ -694,14 +694,14 @@ public partial class DataManager
 			}
 			else if (type == typeof(TfFilterGuid))
 			{
-				if (Guid.TryParse(((TfFilterGuid)filter).Value?.ToString(), out Guid outVal))
+				if (Guid.TryParse(((TfFilterGuid)filter).Value?.ToString(), Constants.TF_FILTER_CULTURE, out Guid outVal))
 					value = outVal;
 				else
 					value = null;
 			}
 			else if (type == typeof(TfFilterNumeric))
 			{
-				if (decimal.TryParse(((TfFilterNumeric)filter).Value?.ToString(), out decimal outVal))
+				if (decimal.TryParse(((TfFilterNumeric)filter).Value?.ToString(), Constants.TF_FILTER_CULTURE, out decimal outVal))
 					value = outVal;
 				else
 					value = null;
