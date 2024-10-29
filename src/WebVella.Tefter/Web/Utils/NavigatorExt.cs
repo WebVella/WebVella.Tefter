@@ -7,8 +7,16 @@ internal static class NavigatorExt
 		Uri uri = null;
 		if (String.IsNullOrWhiteSpace(url))
 			uri = new Uri(navigator.Uri);
-		else
+		else if(url.ToLowerInvariant().StartsWith("http")){ 
 			uri = new Uri(url);
+		}
+		else {
+			if(url.StartsWith("/")) url = url.Substring(1, url.Length - 1);
+
+			url = navigator.BaseUri + url;
+			uri = new Uri(url);
+		}
+			
 		return GetNodeData(uri);
 	}
 
