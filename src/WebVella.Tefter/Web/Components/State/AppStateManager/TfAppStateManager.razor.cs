@@ -66,6 +66,7 @@ public partial class TfAppStateManager : FluxorComponent
 
 	private void On_RouteChanged(SetRouteStateAction action)
 	{
+		Console.WriteLine("Route Changed");
 		InvokeAsync(async () =>
 		{
 			_isRouteChanging = true;
