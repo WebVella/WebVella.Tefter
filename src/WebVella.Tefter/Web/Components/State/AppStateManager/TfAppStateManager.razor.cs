@@ -15,11 +15,13 @@ public partial class TfAppStateManager : FluxorComponent
 	private Guid _renderedAppStateHash = Guid.Empty;
 	private bool _isBusy = true;
 	private bool _isRouteChanging = false;
+	private IDisposable navigationChangingRegistration;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
 			ActionSubscriber.UnsubscribeFromAllActions(this);
+			navigationChangingRegistration?.Dispose();
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -44,6 +46,7 @@ public partial class TfAppStateManager : FluxorComponent
 			_renderedUserStateHash = Guid.NewGuid(); //force rerender
 			await InvokeAsync(StateHasChanged);
 			ActionSubscriber.SubscribeToAction<SetRouteStateAction>(this, On_RouteChanged);
+			//navigationChangingRegistration = Navigator.RegisterLocationChangingHandler(LocationChangingHandler);
 		}
 	}
 
@@ -62,6 +65,13 @@ public partial class TfAppStateManager : FluxorComponent
 				state: auxDataState
 			));
 		}
+	}
+
+	private async ValueTask LocationChangingHandler(LocationChangingContext args)
+	{
+		await _init(args.TargetLocation, TfAppState.Value, TfAuxDataState.Value);
+		_renderedUserStateHash = Guid.NewGuid();
+		await InvokeAsync(StateHasChanged);
 	}
 
 	private void On_RouteChanged(SetRouteStateAction action)

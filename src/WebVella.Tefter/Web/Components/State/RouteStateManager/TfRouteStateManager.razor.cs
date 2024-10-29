@@ -5,8 +5,8 @@ public partial class TfRouteStateManager : FluxorComponent
 	[Inject] public IDispatcher Dispatcher { get; set; }
 
 	private readonly AsyncLock locker = new AsyncLock();
-	protected override bool ShouldRender() => false;
 	private IDisposable navigationChangingRegistration;
+	protected override bool ShouldRender() => false;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
