@@ -14,7 +14,6 @@ public partial class TfAppStateManager : FluxorComponent
 	private Guid _renderedUserStateHash = Guid.Empty;
 	private Guid _renderedAppStateHash = Guid.Empty;
 	private bool _isBusy = true;
-	private bool _isRouteChanging = false;
 	private IDisposable navigationChangingRegistration;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -76,20 +75,9 @@ public partial class TfAppStateManager : FluxorComponent
 
 	private void On_RouteChanged(SetRouteStateAction action)
 	{
-		Console.WriteLine("Route Changed");
 		InvokeAsync(async () =>
 		{
-			_isRouteChanging = true;
-			_renderedUserStateHash = Guid.NewGuid(); //force rerender
-			await InvokeAsync(StateHasChanged);
-			await Task.Delay(1);
 			await _init(null, TfAppState.Value, TfAuxDataState.Value);
-			//the change in the user state should triggger rerender later
-
-			_isRouteChanging = false;
-			_renderedUserStateHash = Guid.NewGuid(); //force rerender
-			await Task.Delay(1);
-			await InvokeAsync(StateHasChanged);
 		});
 	}
 

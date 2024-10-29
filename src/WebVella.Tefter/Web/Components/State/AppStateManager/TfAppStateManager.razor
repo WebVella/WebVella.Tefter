@@ -3,12 +3,6 @@
 
 @if (!_isBusy)
 {
-	@if (_isRouteChanging)
-	{
-		<div class="tf-loader-bar">
-			<div class="tf-loader-bar__loader"></div>
-		</div>
-	}
 	<TfErrorBoundry>
 		@ChildContent
 	</TfErrorBoundry>
