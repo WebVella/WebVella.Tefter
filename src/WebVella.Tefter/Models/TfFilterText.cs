@@ -4,15 +4,12 @@ public class TfFilterText : TfFilterBase
 {
 	public TfFilterTextComparisonMethod ComparisonMethod { get; init; }
 
-	public string Value { get; init; }
-
 	public TfFilterText(
 		string columnName,
 		TfFilterTextComparisonMethod comparisonMethod,
 		string value)
-		: base(columnName)
+		: base(columnName,  value)
 	{
 		ComparisonMethod = comparisonMethod;
-		Value = value;
 	}
 }

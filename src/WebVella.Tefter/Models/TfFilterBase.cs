@@ -1,7 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
 [JsonDerivedType(typeof(TfFilterBoolean), typeDiscriminator: "boolean")]
-[JsonDerivedType(typeof(TfFilterDateOnly), typeDiscriminator: "dateonly")]
 [JsonDerivedType(typeof(TfFilterDateTime), typeDiscriminator: "datetime")]
 [JsonDerivedType(typeof(TfFilterGuid), typeDiscriminator: "guid")]
 [JsonDerivedType(typeof(TfFilterNumeric), typeDiscriminator: "numeric")]
@@ -11,10 +10,14 @@
 public abstract class TfFilterBase
 {
 	public string ColumnName { get; init; }
+	public string Value { get; init; }
 
-	public TfFilterBase(string columnName)
+	public TfFilterBase(
+		string columnName,
+		string value)
 	{
 		ColumnName = columnName;
+		Value = value;
 	}
 
 }

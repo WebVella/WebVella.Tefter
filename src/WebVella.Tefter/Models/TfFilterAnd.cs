@@ -9,7 +9,7 @@ public class TfFilterAnd : TfFilterBase
 	public ReadOnlyCollection<TfFilterBase> Filters => _filters.AsReadOnly();
 
 	public TfFilterAnd()
-		: base(string.Empty)
+		: base(string.Empty, string.Empty)
 	{
 		_filters = new List<TfFilterBase>();
 	}

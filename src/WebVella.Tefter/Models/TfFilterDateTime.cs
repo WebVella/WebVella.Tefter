@@ -4,15 +4,12 @@ public class TfFilterDateTime : TfFilterBase
 {
 	public TfFilterDateTimeComparisonMethod ComparisonMethod { get; init; }
 
-	public DateTime? Value { get; init; }
-
 	public TfFilterDateTime(
 		string columnName,
 		TfFilterDateTimeComparisonMethod comparisonMethod,
-		DateTime? value)
-		: base(columnName)
+		string value)
+		: base(columnName, value)
 	{
 		ComparisonMethod = comparisonMethod;
-		Value = value;
 	}
 }

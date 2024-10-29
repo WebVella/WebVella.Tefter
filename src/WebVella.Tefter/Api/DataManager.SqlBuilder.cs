@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using NpgsqlTypes;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.RegularExpressions;
 
 namespace WebVella.Tefter;
 
@@ -509,9 +510,7 @@ public partial class DataManager
 					return string.Empty;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Boolean);
-				object value = ((TfFilterBoolean)filter).Value;
-				if (value is null) value = DBNull.Value;
-				parameter.Value = value;
+				parameter.Value = GetFilterParameterValue(filter, typeof(TfFilterBoolean));
 				parameters.Add(parameter);
 
 				switch (((TfFilterBoolean)filter).ComparisonMethod)
@@ -532,42 +531,6 @@ public partial class DataManager
 						throw new Exception("Not supported filter comparison method");
 				}
 			}
-			else if (filter is TfFilterDateOnly)
-			{
-				if (!(column.DbType == DatabaseColumnType.Date ||
-					 column.DbType == DatabaseColumnType.DateTime))
-				{
-					return string.Empty;
-				}
-
-				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Date);
-				object value = ((TfFilterDateOnly)filter).Value;
-				if (value is null) value = DBNull.Value;
-				parameter.Value = value;
-				parameters.Add(parameter);
-
-				switch (((TfFilterDateOnly)filter).ComparisonMethod)
-				{
-					case TfFilterDateTimeComparisonMethod.Equal:
-						return $" {columnName} = @{parameterName} ";
-					case TfFilterDateTimeComparisonMethod.NotEqual:
-						return $" {columnName} <> @{parameterName} ";
-					case TfFilterDateTimeComparisonMethod.GreaterOrEqual:
-						return $" {columnName} >= @{parameterName} ";
-					case TfFilterDateTimeComparisonMethod.Greater:
-						return $" {columnName} > @{parameterName} ";
-					case TfFilterDateTimeComparisonMethod.LowerOrEqual:
-						return $" {columnName} <= @{parameterName} ";
-					case TfFilterDateTimeComparisonMethod.Lower:
-						return $" {columnName} < @{parameterName} ";
-					case TfFilterDateTimeComparisonMethod.HasValue:
-						return $" {columnName} IS NOT NULL ";
-					case TfFilterDateTimeComparisonMethod.HasNoValue:
-						return $" {columnName} IS NULL ";
-					default:
-						throw new Exception("Not supported filter comparison method");
-				}
-			}
 			else if (filter is TfFilterDateTime)
 			{
 				if (!(column.DbType == DatabaseColumnType.Date ||
@@ -577,9 +540,7 @@ public partial class DataManager
 				}
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.DateTime2);
-				object value = ((TfFilterDateTime)filter).Value;
-				if (value is null) value = DBNull.Value;
-				parameter.Value = value;
+				parameter.Value = GetFilterParameterValue(filter, typeof(TfFilterDateTime));
 				parameters.Add(parameter);
 
 				switch (((TfFilterDateTime)filter).ComparisonMethod)
@@ -610,9 +571,7 @@ public partial class DataManager
 					return string.Empty;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Guid);
-				object value = ((TfFilterGuid)filter).Value;
-				if (value is null) value = DBNull.Value;
-				parameter.Value = value;
+				parameter.Value = GetFilterParameterValue(filter, typeof(TfFilterGuid));
 				parameters.Add(parameter);
 
 				switch (((TfFilterGuid)filter).ComparisonMethod)
@@ -645,9 +604,7 @@ public partial class DataManager
 				}
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.VarNumeric);
-				object value = ((TfFilterNumeric)filter).Value;
-				if (value is null) value = DBNull.Value;
-				parameter.Value = value;
+				parameter.Value = GetFilterParameterValue(filter, typeof(TfFilterNumeric));
 				parameters.Add(parameter);
 
 				switch (((TfFilterNumeric)filter).ComparisonMethod)
@@ -685,10 +642,7 @@ public partial class DataManager
 					dbType = DbType.StringFixedLength;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, dbType);
-				object value = ((TfFilterText)filter).Value;
-				if (value is null)
-					value = DBNull.Value;
-				parameter.Value = value;
+				parameter.Value = GetFilterParameterValue(filter,typeof(TfFilterText));
 				parameters.Add(parameter);
 
 				switch (((TfFilterText)filter).ComparisonMethod)
@@ -716,7 +670,60 @@ public partial class DataManager
 
 			return sb.ToString();
 		}
+
+		private object GetFilterParameterValue(
+			TfFilterBase filter, 
+			Type type)
+		{
+			object value = null;
+			
+			if (type == typeof(TfFilterText))
+			{
+				value = ((TfFilterText)filter).Value;
+			}
+			else if (type == typeof(TfFilterBoolean))
+			{
+				if (bool.TryParse(((TfFilterBoolean)filter).Value?.ToString(), out bool outVal))
+					value = outVal;
+				else
+					value = null;
+			}
+			else if (type == typeof(TfFilterDateTime))
+			{
+				if (DateTime.TryParse(((TfFilterDateTime)filter).Value?.ToString(), out DateTime outVal))
+					value = outVal;
+				else
+					value = null;
+			}
+			else if (type == typeof(TfFilterGuid))
+			{
+				if (Guid.TryParse(((TfFilterGuid)filter).Value?.ToString(), out Guid outVal))
+					value = outVal;
+				else
+					value = null;
+			}
+			else if (type == typeof(TfFilterNumeric))
+			{
+				if (decimal.TryParse(((TfFilterNumeric)filter).Value?.ToString(), out decimal outVal))
+					value = outVal;
+				else
+					value = null;
+			}
+			else
+			{
+				throw new Exception("Type is not supported");
+			}
+
+			if (value is null)
+			{
+				value = DBNull.Value;
+			}
+
+			return value;
+		}
+
 	}
+
 
 	record SqlBuilderColumn
 	{

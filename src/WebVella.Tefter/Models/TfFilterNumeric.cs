@@ -4,15 +4,12 @@ public class TfFilterNumeric : TfFilterBase
 {
 	public TfFilterNumericComparisonMethod ComparisonMethod { get; init; }
 
-	public decimal? Value { get; init; }
-
 	public TfFilterNumeric(
 		string columnName, 
 		TfFilterNumericComparisonMethod comparisonMethod,
-		decimal? value) 
-		: base(columnName)
+		string value) 
+		: base(columnName, value )
 	{
 		ComparisonMethod = comparisonMethod;
-		Value = value;
 	}
 }

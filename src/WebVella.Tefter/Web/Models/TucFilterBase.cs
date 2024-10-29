@@ -127,10 +127,10 @@ public record TucFilterBase
 		{
 			return new TucFilterBoolean(model);
 		}
-		else if (model is TfFilterDateOnly)
-		{
-			return new TucFilterDateOnly(model);
-		}
+		//else if (model is TfFilterDateOnly)
+		//{
+		//	return new TucFilterDateOnly(model);
+		//}
 		else if (model is TfFilterDateTime)
 		{
 			return new TucFilterDateTime(model);
@@ -441,7 +441,10 @@ public record TucFilterBoolean : TucFilterBase
 		if (model is TfFilterBoolean)
 		{
 			var item = (TfFilterBoolean)model;
-			Value = item.Value;
+			if(!String.IsNullOrWhiteSpace(item.Value) &&  bool.TryParse(item.Value, out bool outVal)) 
+				Value = outVal;
+			else
+				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterBooleanComparisonMethod, TucFilterBooleanComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterBoolean");
@@ -452,7 +455,7 @@ public record TucFilterBoolean : TucFilterBase
 		return new TfFilterBoolean(
 			columnName: ColumnName,
 			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterBooleanComparisonMethod, TfFilterBooleanComparisonMethod>(),
-			value: Value
+			value: Value?.ToString()
 		);
 
 	}
@@ -515,21 +518,22 @@ public record TucFilterDateOnly : TucFilterBase
 	{
 		ColumnName = model.ColumnName;
 
-		if (model is TfFilterDateOnly)
-		{
-			var item = (TfFilterDateOnly)model;
-			Value = item.Value;
-			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod, TucFilterDateTimeComparisonMethod>();
-		}
-		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterDateOnly");
+		//if (model is TfFilterDateOnly)
+		//{
+		//	var item = (TfFilterDateOnly)model;
+		//	Value = item.Value;
+		//	ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod, TucFilterDateTimeComparisonMethod>();
+		//}
+		//else
+			throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterDateOnly");
 	}
 
-	public TfFilterDateOnly ToModel()
+	public TfFilterDateTime ToModel()
 	{
-		return new TfFilterDateOnly(
+		return new TfFilterDateTime(
 			columnName: ColumnName,
 			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterDateTimeComparisonMethod, TfFilterDateTimeComparisonMethod>(),
-			value: Value
+			value: Value?.ToString()
 		);
 	}
 
@@ -591,7 +595,10 @@ public record TucFilterDateTime : TucFilterBase
 		if (model is TfFilterDateTime)
 		{
 			var item = (TfFilterDateTime)model;
-			Value = item.Value;
+			if (!string.IsNullOrWhiteSpace(item.Value) && DateTime.TryParse(item.Value, out DateTime outVal))
+				Value = outVal;
+			else
+				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod, TucFilterDateTimeComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterDateTime");
@@ -601,7 +608,7 @@ public record TucFilterDateTime : TucFilterBase
 		return new TfFilterDateTime(
 			columnName: ColumnName,
 			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterDateTimeComparisonMethod, TfFilterDateTimeComparisonMethod>(),
-			value: Value
+			value: Value?.ToString()
 		);
 	}
 
@@ -667,7 +674,10 @@ public record TucFilterGuid : TucFilterBase
 		if (model is TfFilterGuid)
 		{
 			var item = (TfFilterGuid)model;
-			Value = item.Value;
+			if (!string.IsNullOrWhiteSpace(item.Value) && Guid.TryParse(item.Value, out Guid outVal))
+				Value = outVal;
+			else
+				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterGuidComparisonMethod, TucFilterGuidComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterGuid");
@@ -678,7 +688,7 @@ public record TucFilterGuid : TucFilterBase
 		return new TfFilterGuid(
 			columnName: ColumnName,
 			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterGuidComparisonMethod, TfFilterGuidComparisonMethod>(),
-			value: Value
+			value: Value?.ToString()
 		);
 	}
 
@@ -734,7 +744,10 @@ public record TucFilterNumeric : TucFilterBase
 		if (model is TfFilterNumeric)
 		{
 			var item = (TfFilterNumeric)model;
-			Value = item.Value;
+			if (!string.IsNullOrWhiteSpace(item.Value) && decimal.TryParse(item.Value, out decimal outVal))
+				Value = outVal;
+			else
+				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterNumericComparisonMethod, TucFilterNumericComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterNumeric");
@@ -745,7 +758,7 @@ public record TucFilterNumeric : TucFilterBase
 		return new TfFilterNumeric(
 			columnName: ColumnName,
 			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterNumericComparisonMethod, TfFilterNumericComparisonMethod>(),
-			value: Value
+			value: Value?.ToString()
 		);
 	}
 
