@@ -33,8 +33,8 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 			_form = Content with { Id = Content.Id };
 		}
 		base.InitForm(_form);
-		if(TfAuxDataState.Value.Data.ContainsKey(Constants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY))
-			_sharedColumnsOptions = ((List<TfSharedColumn>)TfAuxDataState.Value.Data[Constants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY]).Select(x=> x.DbName).ToList();
+		if(TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY))
+			_sharedColumnsOptions = ((List<TfSharedColumn>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY]).Select(x=> x.DbName).ToList();
 	}
 	private async Task _save()
 	{

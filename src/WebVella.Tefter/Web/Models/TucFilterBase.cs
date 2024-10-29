@@ -4,7 +4,6 @@
 [JsonDerivedType(typeof(TucFilterAnd), "and")]
 [JsonDerivedType(typeof(TucFilterOr), "or")]
 [JsonDerivedType(typeof(TucFilterBoolean), "bool")]
-[JsonDerivedType(typeof(TucFilterDateOnly), "date")]
 [JsonDerivedType(typeof(TucFilterDateTime), "datetime")]
 [JsonDerivedType(typeof(TucFilterGuid), "guid")]
 [JsonDerivedType(typeof(TucFilterNumeric), "numeric")]
@@ -30,11 +29,6 @@ public record TucFilterBase
 		else if (model is TucFilterBoolean)
 		{
 			var item = (TucFilterBoolean)model;
-			return item.GetColumnName();
-		}
-		else if (model is TucFilterDateOnly)
-		{
-			var item = (TucFilterDateOnly)model;
 			return item.GetColumnName();
 		}
 		else if (model is TucFilterDateTime)
@@ -73,10 +67,6 @@ public record TucFilterBase
 		else if (model is TucFilterBoolean)
 		{
 			return TucFilterBoolean.GetFilterType();
-		}
-		else if (model is TucFilterDateOnly)
-		{
-			return TucFilterDateOnly.GetFilterType();
 		}
 		else if (model is TucFilterDateTime)
 		{
@@ -163,10 +153,6 @@ public record TucFilterBase
 		{
 			return ((TucFilterBoolean)model).ToModel();
 		}
-		else if (model is TucFilterDateOnly)
-		{
-			return ((TucFilterDateOnly)model).ToModel();
-		}
 		else if (model is TucFilterDateTime)
 		{
 			return ((TucFilterDateTime)model).ToModel();
@@ -205,10 +191,6 @@ public record TucFilterBase
 		{
 			return new TucFilterBoolean(model);
 		}
-		else if (model.Type == TucFilterDateOnly.GetFilterType())
-		{
-			return new TucFilterDateOnly(model);
-		}
 		else if (model.Type == TucFilterDateTime.GetFilterType())
 		{
 			return new TucFilterDateTime(model);
@@ -241,10 +223,6 @@ public record TucFilterBase
 		else if (model is TucFilterBoolean)
 		{
 			return ((TucFilterBoolean)model).ToQuery();
-		}
-		else if (model is TucFilterDateOnly)
-		{
-			return ((TucFilterDateOnly)model).ToQuery();
 		}
 		else if (model is TucFilterDateTime)
 		{
@@ -475,83 +453,6 @@ public record TucFilterBoolean : TucFilterBase
 			Type = GetFilterType(),
 			Name = GetColumnName(),
 			Value = Value?.ToString(),
-			Method = (int)ComparisonMethod,
-		};
-	}
-}
-
-public record TucFilterDateOnly : TucFilterBase
-{
-	[JsonPropertyName("v")]
-	public DateOnly? Value { get; set; } = null;
-	[JsonPropertyName("m")]
-	public TucFilterDateTimeComparisonMethod ComparisonMethod { get; set; } = TucFilterDateTimeComparisonMethod.Equal;
-
-	public string GetColumnName() => ColumnName;
-	public static string GetFilterType() => "dateonly";
-	public bool RequiresValue
-	{
-		get
-		{
-			if (ComparisonMethod == TucFilterDateTimeComparisonMethod.HasValue) return false;
-			if (ComparisonMethod == TucFilterDateTimeComparisonMethod.HasNoValue) return false;
-			return true;
-		}
-	}
-	public string ValueString
-	{
-		get => Value?.ToString(TfConstants.DateOnlyFormatInput);
-	}
-	public void ValueStringChanged(string value)
-	{
-		if (String.IsNullOrWhiteSpace(value)) Value = null;
-		else if (DateOnly.TryParse(value, out DateOnly outVal))
-			Value = outVal;
-		else
-			Value = null;
-	}
-
-
-	public TucFilterDateOnly() { }
-
-	public TucFilterDateOnly(TfFilterBase model)
-	{
-		ColumnName = model.ColumnName;
-
-		//if (model is TfFilterDateOnly)
-		//{
-		//	var item = (TfFilterDateOnly)model;
-		//	Value = item.Value;
-		//	ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod, TucFilterDateTimeComparisonMethod>();
-		//}
-		//else
-			throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterDateOnly");
-	}
-
-	public TfFilterDateTime ToModel()
-	{
-		return new TfFilterDateTime(
-			columnName: ColumnName,
-			comparisonMethod: ComparisonMethod.ConvertSafeToEnum<TucFilterDateTimeComparisonMethod, TfFilterDateTimeComparisonMethod>(),
-			value: Value?.ToString()
-		);
-	}
-
-	public TucFilterDateOnly(TucFilterQuery model)
-	{
-		Id = Guid.NewGuid();
-		ColumnName = model.Name;
-		Value = null;
-		if(!String.IsNullOrWhiteSpace(model.Value) && DateOnly.TryParse(model.Value,out DateOnly outVal)) Value = outVal;
-		ComparisonMethod = (TucFilterDateTimeComparisonMethod)model.Method;
-	}
-	public TucFilterQuery ToQuery()
-	{
-		return new TucFilterQuery
-		{
-			Type = GetFilterType(),
-			Name = GetColumnName(),
-			Value = Value?.ToString(TfConstants.DateFormatUrl),
 			Method = (int)ComparisonMethod,
 		};
 	}

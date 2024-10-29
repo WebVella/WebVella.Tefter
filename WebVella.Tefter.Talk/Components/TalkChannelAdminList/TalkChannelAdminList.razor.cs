@@ -20,9 +20,9 @@ public partial class TalkChannelAdminList : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var state = (List<TalkChannel>)TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+			var state = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 			state.Add((TalkChannel)result.Data);
-			TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
+			TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
 			Dispatcher.Dispatch(new SetAuxDataStateAction(
 				component: this,
 				state: TfAuxDataState.Value
@@ -46,13 +46,13 @@ public partial class TalkChannelAdminList : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var item = (TalkChannel)result.Data;
-			var state = (List<TalkChannel>)TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+			var state = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 			var itemIndex = state.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{
 				state[itemIndex] = item;
 			}
-			TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
+			TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
 			Dispatcher.Dispatch(new SetAuxDataStateAction(
 				component: this,
 				state: TfAuxDataState.Value
@@ -71,13 +71,13 @@ public partial class TalkChannelAdminList : TfBaseComponent
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
-				var state = (List<TalkChannel>)TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+				var state = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 				var itemIndex = state.FindIndex(x => x.Id == channel.Id);
 				if (itemIndex > -1)
 				{
 					state.RemoveAt(itemIndex);
 				}
-				TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
+				TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
 				Dispatcher.Dispatch(new SetAuxDataStateAction(
 					component: this,
 					state: TfAuxDataState.Value

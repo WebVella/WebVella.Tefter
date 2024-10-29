@@ -51,11 +51,6 @@ public partial class TfFilterCard : TfBaseComponent
 					await AddFilter(typeof(TucFilterBoolean), dbColumn, parentId);
 				}
 				break;
-			case TucDatabaseColumnType.Date:
-				{
-					await AddFilter(typeof(TucFilterDateOnly), dbColumn, parentId);
-				}
-				break;
 			case TucDatabaseColumnType.DateTime:
 				{
 					await AddFilter(typeof(TucFilterDateTime), dbColumn, parentId);
@@ -83,7 +78,6 @@ public partial class TfFilterCard : TfBaseComponent
 		if (type == typeof(TucFilterAnd)) filter = new TucFilterAnd() { ColumnName = dbName };
 		else if (type == typeof(TucFilterOr)) filter = new TucFilterOr() { ColumnName = dbName };
 		else if (type == typeof(TucFilterBoolean)) filter = new TucFilterBoolean() { ColumnName = dbName };
-		else if (type == typeof(TucFilterDateOnly)) filter = new TucFilterDateOnly() { ColumnName = dbName };
 		else if (type == typeof(TucFilterDateTime)) filter = new TucFilterDateTime() { ColumnName = dbName };
 		else if (type == typeof(TucFilterGuid)) filter = new TucFilterGuid() { ColumnName = dbName };
 		else if (type == typeof(TucFilterNumeric)) filter = new TucFilterNumeric() { ColumnName = dbName };

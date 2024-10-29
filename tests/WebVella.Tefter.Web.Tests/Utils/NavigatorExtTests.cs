@@ -20,6 +20,7 @@ public class NavigatorExtTests
 		Guid providerId = Guid.NewGuid();
 		Guid viewId = Guid.NewGuid();
 		Guid dataId = Guid.NewGuid();
+		Guid nodeId = Guid.NewGuid();
 
 		//When
 		uri = new Uri($"{baseUrl}");
@@ -166,16 +167,6 @@ public class NavigatorExtTests
 		result.NodesDict.Count.Should().Be(4);
 		result.FirstNode.Should().Be(RouteDataFirstNode.Space);
 		result.SecondNode.Should().Be(RouteDataSecondNode.SpaceView);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
-		result.SpaceId.Should().Be(spaceId);
-		result.SpaceViewId.Should().Be(viewId);
-
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceViewPageUrl, spaceId, viewId)}");
-		result = NavigatorExt.GetNodeData(uri);
-		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(5);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Space);
-		result.SecondNode.Should().Be(RouteDataSecondNode.SpaceView);
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Manage);
 		result.SpaceId.Should().Be(spaceId);
 		result.SpaceViewId.Should().Be(viewId);
@@ -205,6 +196,17 @@ public class NavigatorExtTests
 
 		#endregion
 
+		#region << Space node >>
+		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceNodePageUrl, spaceId, nodeId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(4);
+		result.FirstNode.Should().Be(RouteDataFirstNode.Space);
+		result.SecondNode.Should().Be(RouteDataSecondNode.SpacePage);
+		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
+		result.SpaceId.Should().Be(spaceId);
+		result.SpaceNodeId.Should().Be(nodeId);
+		#endregion
 	}
 
 	[Fact]
@@ -238,11 +240,6 @@ public class NavigatorExtTests
 									ColumnName = filterBoolColumnName,
 									ComparisonMethod = filterBoolMethod,
 									Value = filterBoolValue,
-								},
-								new TucFilterDateOnly{
-									ColumnName = filterDateOnlyColumnName,
-									ComparisonMethod = filterDateOnlyMethod,
-									Value = filterDateOnlyValue,
 								},
 								new TucFilterText{
 									ColumnName = filterTextColumnName,
@@ -305,7 +302,7 @@ public class NavigatorExtTests
 			lvl2.Should().BeOfType<TucFilterOr>();
 			var lvl2Filter = (TucFilterOr)lvl2;
 			lvl2Filter.Filters.Should().NotBeNull();
-			lvl2Filter.Filters.Count.Should().Be(3);
+			lvl2Filter.Filters.Count.Should().Be(2);
 
 			var lvl31 = lvl2Filter.Filters[0];
 			lvl31.Should().BeOfType<TucFilterBoolean>();
@@ -314,14 +311,7 @@ public class NavigatorExtTests
 			lvl31Filter.ComparisonMethod.Should().Be(filterBoolMethod);
 			lvl31Filter.Value.Should().Be(filterBoolValue);
 
-			var lvl32 = lvl2Filter.Filters[1];
-			lvl32.Should().BeOfType<TucFilterDateOnly>();
-			var lvl32Filter = (TucFilterDateOnly)lvl32;
-			lvl32Filter.ColumnName.Should().Be(filterDateOnlyColumnName);
-			lvl32Filter.ComparisonMethod.Should().Be(filterDateOnlyMethod);
-			lvl32Filter.Value.Should().Be(filterDateOnlyValue);
-
-			var lvl33 = lvl2Filter.Filters[2];
+			var lvl33 = lvl2Filter.Filters[1];
 			lvl33.Should().BeOfType<TucFilterText>();
 			var lvl33Filter = (TucFilterText)lvl33;
 			lvl33Filter.ColumnName.Should().Be(filterTextColumnName);
@@ -415,31 +405,6 @@ public class NavigatorExtTests
 			result[0].Should().BeOfType<TucFilterBoolean>();
 			result[0].ColumnName.Should().Be(columnName);
 			var casted = (TucFilterBoolean)result[0];
-			casted.ComparisonMethod.Should().Be(method);
-			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value);
-		}
-		#endregion
-
-		#region << TucFilterDateOnly >>
-		{
-			var method = TucFilterDateTimeComparisonMethod.Greater;
-			DateOnly? value = DateOnly.FromDateTime(DateTime.Now);
-			test = new List<TucFilterBase> {
-				new TucFilterDateOnly(){
-					Id = columnId,
-					ColumnName = columnName,
-					ComparisonMethod = method,
-					Value = value
-				}
-			};
-			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
-			result = NavigatorExt.DeserializeFiltersFromUrl(queryValue);
-			result.Should().NotBeNull();
-			result.Count.Should().Be(1);
-			result[0].Should().BeOfType<TucFilterDateOnly>();
-			result[0].ColumnName.Should().Be(columnName);
-			var casted = (TucFilterDateOnly)result[0];
 			casted.ComparisonMethod.Should().Be(method);
 			casted.Value.Should().NotBeNull();
 			casted.Value.Should().Be(value);
@@ -574,10 +539,6 @@ public class NavigatorExtTests
 			var boolMethod = TucFilterBooleanComparisonMethod.NotEqual;
 			bool? boolValue = false;
 
-			var dateOnlyColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-			var dateOnlyMethod = TucFilterDateTimeComparisonMethod.Greater;
-			DateOnly? dateOnlyValue = DateOnly.FromDateTime(DateTime.Now);
-
 			var textColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
 			var textMethod = TucFilterTextComparisonMethod.Contains;
 			var textValue = "//$~(&&)";
@@ -593,11 +554,6 @@ public class NavigatorExtTests
 									ColumnName = boolColumnName,
 									ComparisonMethod = boolMethod,
 									Value = boolValue,
-								},
-								new TucFilterDateOnly{
-									ColumnName = dateOnlyColumnName,
-									ComparisonMethod = dateOnlyMethod,
-									Value = dateOnlyValue,
 								},
 								new TucFilterText{
 									ColumnName = textColumnName,
@@ -621,23 +577,17 @@ public class NavigatorExtTests
 			lvl1Casted.Filters[0].Should().BeOfType<TucFilterOr>();
 			var lvl2Casted = (TucFilterOr)lvl1Casted.Filters[0];
 			lvl2Casted.Filters.Should().NotBeNull();
-			lvl2Casted.Filters.Count.Should().Be(3);
+			lvl2Casted.Filters.Count.Should().Be(2);
 
 			lvl2Casted.Filters[0].Should().BeOfType<TucFilterBoolean>();
-			lvl2Casted.Filters[1].Should().BeOfType<TucFilterDateOnly>();
-			lvl2Casted.Filters[2].Should().BeOfType<TucFilterText>();
+			lvl2Casted.Filters[1].Should().BeOfType<TucFilterText>();
 
 			var lvl31Casted = (TucFilterBoolean)lvl2Casted.Filters[0];
-			var lvl32Casted = (TucFilterDateOnly)lvl2Casted.Filters[1];
-			var lvl33Casted = (TucFilterText)lvl2Casted.Filters[2];
+			var lvl33Casted = (TucFilterText)lvl2Casted.Filters[1];
 
 			lvl31Casted.ColumnName.Should().Be(boolColumnName);
 			lvl31Casted.ComparisonMethod.Should().Be(boolMethod);
 			lvl31Casted.Value.Should().Be(boolValue);
-
-			lvl32Casted.ColumnName.Should().Be(dateOnlyColumnName);
-			lvl32Casted.ComparisonMethod.Should().Be(dateOnlyMethod);
-			lvl32Casted.Value.Should().Be(dateOnlyValue);
 
 			lvl33Casted.ColumnName.Should().Be(textColumnName);
 			lvl33Casted.ComparisonMethod.Should().Be(textMethod);

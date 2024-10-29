@@ -73,23 +73,6 @@ public partial class TfFilterManage : TfBaseComponent
 			}
 			else throw new Exception("propName not supported");
 		}
-		else if (model is TucFilterDateOnly)
-		{
-			var item = (TucFilterDateOnly)model;
-			if (propName == nameof(item.ComparisonMethod))
-			{
-				var value = (TucFilterDateTimeComparisonMethod)valueObj;
-				item.ComparisonMethod = value;
-				updateObj = item;
-			}
-			else if (propName == nameof(item.Value))
-			{
-				var value = (string)valueObj;
-				item.ValueStringChanged(value);
-				updateObj = item;
-			}
-			else throw new Exception("propName not supported");
-		}
 		else if (model is TucFilterDateTime)
 		{
 			var item = (TucFilterDateTime)model;

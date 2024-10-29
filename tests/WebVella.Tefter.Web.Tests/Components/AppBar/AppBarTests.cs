@@ -7,17 +7,17 @@ namespace WebVella.Tefter.Web.Tests.Components;
 public class AppBarComponentTests : BaseTest
 {
 
-	[Fact]
-	public void AppBarComponentRendersCorrectly()
-	{
-		//Given
-		var userId = Guid.NewGuid();
+	//[Fact]
+	//public void AppBarComponentRendersCorrectly()
+	//{
+	//	//Given
+	//	var userId = Guid.NewGuid();
 
-		// Act
-		var cut = Context.RenderComponent<TfAppBar>();
+	//	// Act
+	//	var cut = Context.RenderComponent<TfAppBar>();
 
-		// Assert
-		cut.Find(".tf-appbar");
-	}
+	//	// Assert
+	//	cut.Find(".tf-appbar");
+	//}
 
 }

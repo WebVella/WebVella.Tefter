@@ -2,8 +2,8 @@
 @inherits TfBaseComponent
 @{
 	var channels = new List<TalkChannel>();
-	if (TfAuxDataState.Value.Data.ContainsKey(Constants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[Constants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+	if (TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
+		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 }
 <FluentBodyContent Class="content-body with-toolbar">
 	<TfPageBar>

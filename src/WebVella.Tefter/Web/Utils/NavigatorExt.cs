@@ -120,7 +120,7 @@ internal static class NavigatorExt
 					result = result with
 					{
 						SecondNode = RouteDataSecondNode.SpaceView,
-						ThirdNode = RouteDataThirdNode.Details
+						ThirdNode = RouteDataThirdNode.Manage
 					};
 				}
 				else if (result.NodesDict[2] == TfConstants.RouteNameSpaceData)

@@ -1,21 +1,3 @@
 ﻿@namespace WebVella.Tefter.Talk.Pages
 @inherits TucBaseScreenRegionComponent
 <div>@Context.Hash</div>
-@{
-	DateTime? _date1 = null;
-	DateTime? _date2 = null;
-}
-<div style="display:flex;flex-flow:column">
-	<div>
-		<FluentDatePicker @bind-Value="@_date1"
-						  Style="width:100%;" />
-	</div>
-	<div>
-		<FluentDatePicker @bind-Value="@_date1"
-						  Style="width:100%;" />
-	</div>
-	<div>
-		<FluentDatePicker @bind-Value="@_date2"
-						  Style="width:100%;" />
-	</div>
-</div>

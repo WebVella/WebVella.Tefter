@@ -2,11 +2,11 @@
 
 public class TalkApp : ITfApplication
 {
-	public Guid Id => Constants.TALK_APP_ID;
+	public Guid Id => TfTalkConstants.TALK_APP_ID;
 
-	public string Name => Constants.TALK_APP_NAME;
+	public string Name => TfTalkConstants.TALK_APP_NAME;
 
-	public string Description => Constants.TALK_APP_DECRIPTION;
+	public string Description => TfTalkConstants.TALK_APP_DECRIPTION;
 
 	public void OnStart()
 	{
