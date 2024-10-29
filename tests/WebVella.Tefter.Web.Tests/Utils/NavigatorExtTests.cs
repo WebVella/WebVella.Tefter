@@ -446,7 +446,7 @@ public class NavigatorExtTests
 					Id = columnId,
 					ColumnName = columnName,
 					ComparisonMethod = method,
-					Value = value
+					Value = value.ToString()
 				}
 			};
 			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
@@ -458,7 +458,7 @@ public class NavigatorExtTests
 			var casted = (TucFilterGuid)result[0];
 			casted.ComparisonMethod.Should().Be(method);
 			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value);
+			casted.Value.Should().Be(value.ToString());
 		}
 		#endregion
 
@@ -471,7 +471,7 @@ public class NavigatorExtTests
 					Id = columnId,
 					ColumnName = columnName,
 					ComparisonMethod = method,
-					Value = value
+					Value = value.ToString()
 				}
 			};
 			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
@@ -483,7 +483,7 @@ public class NavigatorExtTests
 			var casted = (TucFilterNumeric)result[0];
 			casted.ComparisonMethod.Should().Be(method);
 			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value);
+			casted.Value.Should().Be(value.ToString());
 		}
 		#endregion
 
