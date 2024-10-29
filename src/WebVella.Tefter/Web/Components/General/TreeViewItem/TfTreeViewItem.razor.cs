@@ -21,7 +21,10 @@ public partial class TfTreeViewItem : ComponentBase
 	}
 
 	private void _onClick(){ 
-		if(Item.OnClick != null) Item.OnClick();
+		if(Item.OnClick != null) {
+			Item.OnClick();
+			return;
+		}
 		if(!String.IsNullOrWhiteSpace(Item.Url))
 			Navigator.NavigateTo(Item.Url);
 	}
