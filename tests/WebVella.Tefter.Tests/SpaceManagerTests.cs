@@ -1222,9 +1222,28 @@ public partial class SpaceManagerTests : BaseTest
 
 				#endregion
 
+				#region copy node
+
+				spaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
+
+				var copyResult = spaceManager.CopySpaceNode(spaceNode1_0_0.Id);
+				copyResult.IsSuccess.Should().BeTrue();	
+
+				var (copyNodeId, newNodeTree) = copyResult.Value;
+
+				var copiedNode = FindNodeById(copyNodeId, newNodeTree);
+				short newPosition = (short)(spaceNode1_0_0.Position.Value + 1);
+				copiedNode.Position.Value.Should().Be(newPosition);
+				copiedNode.ChildNodes.Count.Should().Be(spaceNode1_0_0.ChildNodes.Count);
+
+				var deleteResult = spaceManager.DeleteSpaceNode(copiedNode);
+				deleteResult.IsSuccess.Should().BeTrue();
+
+				#endregion
+
 				#region delete node
 
-				var deleteResult = spaceManager.DeleteSpaceNode(spaceNode1_0_0);
+				deleteResult = spaceManager.DeleteSpaceNode(spaceNode1_0_0);
 				deleteResult.IsSuccess.Should().BeTrue();
 				
 				deleteResult = spaceManager.DeleteSpaceNode(spaceNode2_0_0);
