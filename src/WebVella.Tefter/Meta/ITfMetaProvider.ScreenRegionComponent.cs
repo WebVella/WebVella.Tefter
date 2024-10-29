@@ -36,7 +36,6 @@ public partial class TfMetaProvider
 		{
 			var instance = (ITfScreenRegionComponent)Activator.CreateInstance(type);
 			
-			//TODO remove property init and leave only instance
 			TfScreenRegionComponentMeta meta = new TfScreenRegionComponentMeta
 			{
 				ComponentType = type,
@@ -44,6 +43,7 @@ public partial class TfMetaProvider
 			};
 			
 			_screenRegionComponentMeta.Add(meta);
+			_typesMap[type.FullName] = type;
 		}
 	}
 }

@@ -30,6 +30,7 @@ public partial class TfMetaProvider
 			};
 
 			_spaceNodeComponentMeta.Add(meta);
+			_typesMap[type.FullName] = type;
 		}
 	}
 }

@@ -1,5 +1,7 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Nito.AsyncEx.Synchronous;
+using System.Diagnostics;
 
 namespace WebVella.Tefter;
 
@@ -663,6 +665,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 		if (dbo == null)
 			return null;
 
+		var componentType = _metaProvider.GetTypeForFullClassName(dbo.ComponentType);
+
 		return new TfSpaceNode
 		{
 			Id = dbo.Id,
@@ -672,10 +676,10 @@ public partial class TfSpaceManager : ITfSpaceManager
 			Type = dbo.Type,
 			ComponentOptionsJson = dbo.ComponentSettingsJson,
 			ComponentTypeFullName = dbo.ComponentType,
+			ComponentType = componentType,
 			Icon = dbo.Icon,
 			ParentId = dbo.ParentId
 		};
-
 	}
 
 	private TfSpaceNodeDbo Convert(

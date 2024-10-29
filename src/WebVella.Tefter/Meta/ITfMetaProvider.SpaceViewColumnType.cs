@@ -28,6 +28,7 @@ public partial class TfMetaProvider
 			};
 
 			_spaceViewColumnTypeMeta.Add(meta);
+			_typesMap[type.FullName] = type;
 		}
 	}
 }

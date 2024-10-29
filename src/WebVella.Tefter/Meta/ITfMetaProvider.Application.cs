@@ -75,6 +75,7 @@ public partial class TfMetaProvider
 			};
 
 			_applicationsMeta.Add(meta);
+			_typesMap[type.FullName] = type;
 		}
 	}
 }

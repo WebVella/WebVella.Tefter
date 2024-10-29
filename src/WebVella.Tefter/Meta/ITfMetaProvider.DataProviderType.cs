@@ -28,6 +28,7 @@ public partial class TfMetaProvider
 			};
 
 			_dataProviderTypeMeta.Add(meta);
+			_typesMap[type.FullName] = type;
 		}
 	}
 }

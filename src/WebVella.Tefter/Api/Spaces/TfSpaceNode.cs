@@ -10,6 +10,7 @@ public class TfSpaceNode
 	public string Icon { get; set; } = TfConstants.PageIconString;
 	public short? Position { get; set; }
 	public string ComponentTypeFullName { get; set; }
+	public Type ComponentType { get; init; }
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TfSpaceNode> ChildNodes { get; set; } = new();
 	public TfSpaceNode ParentNode { get; set; } = null;
