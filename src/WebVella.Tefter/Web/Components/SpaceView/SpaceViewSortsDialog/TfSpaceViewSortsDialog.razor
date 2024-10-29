@@ -16,7 +16,7 @@
 <FluentDialogBody>
 	@if (_spaceData is not null)
 	{
-		<FluentTabs @bind-ActiveTabId="@_activeTab">
+		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 			<FluentTab Label="@LOC("Current")" Id="current">
 				<TfSortCard DataProvider="_dataProvider" @bind-Items="_items" />
 			</FluentTab>

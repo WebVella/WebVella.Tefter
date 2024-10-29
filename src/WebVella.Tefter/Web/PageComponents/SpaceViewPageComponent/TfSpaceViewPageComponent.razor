@@ -13,7 +13,8 @@ else if (Context.Mode == TfComponentMode.Create)
 						  SelectedOptionChanged="_optionsSetTypeChangeHandler"
 						  TOption="TucSpaceViewSetType"
 						  Items="@(Enum.GetValues<TucSpaceViewSetType>())" Style="width:100%"
-						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Select view")"></FluentSelect>
+						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Select view")"
+						  Class="@GetValidationCssClass(nameof(_options.SetType))"></FluentSelect>
 			<TfValidationMessage Field="@(nameof(_options.SetType))" Errors="ValidationErrors" />
 		</FluentGridItem>
 	</FluentGrid>

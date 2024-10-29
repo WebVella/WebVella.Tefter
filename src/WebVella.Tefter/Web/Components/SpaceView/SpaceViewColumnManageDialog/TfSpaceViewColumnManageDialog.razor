@@ -85,7 +85,7 @@
 			<FluentValidationMessage For="@(() => _form.DataMapping)" />
 			<FluentValidationMessage For="@(() => _form.Settings.Width)" />
 			<FluentValidationMessage For="@(() => _form.Settings.Color)" />
-			<FluentTabs @bind-ActiveTabId="@_activeTab">
+			<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 				<FluentTab Label="@LOC("Data mapping")" Id="data">
 					@if (_form.ColumnType is not null && _form.ComponentType is not null)
 					{

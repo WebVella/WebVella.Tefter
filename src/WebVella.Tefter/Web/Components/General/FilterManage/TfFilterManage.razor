@@ -8,7 +8,7 @@
 			<TitleTemplate>
 				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 					<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-						<FluentLabel Typo="@Typography.Body">@TucFilterBase.GetColumnName(Item) @Item.Id</FluentLabel>
+						<FluentLabel Typo="@Typography.Body">@TucFilterBase.GetColumnName(Item)</FluentLabel>
 						<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">@TucFilterBase.GetFieldType(Item)</FluentLabel>
 					</FluentStack>
 					@if (!ReadOnly)
@@ -92,7 +92,7 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
-									<FluentSelect Value="@context.ValueString"
+									<FluentSelect Value="@context.ValueProcessed"
 												  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 												  Disabled="@(Disabled || ReadOnly)"
 												  TOption="Option<string>" Required="false"
@@ -113,7 +113,7 @@
 								@if (context.RequiresValue)
 								{
 									<FluentStack HorizontalGap="2">
-										<FluentTextField Value="@context.ValueString"
+										<FluentTextField Value="@context.Value"
 														 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 														 Disabled="@Disabled" ReadOnly="ReadOnly"
 														 AutoComplete="new-password"
@@ -136,7 +136,7 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
-									<FluentTextField Value="@context.ValueString"
+									<FluentTextField Value="@context.ValueProcessed"
 													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 													 Disabled="@Disabled" ReadOnly="ReadOnly"
 													 AutoComplete="new-password"
@@ -154,7 +154,7 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
-									<FluentNumberField TValue="decimal?" Value="@context.Value"
+									<FluentNumberField TValue="decimal?" Value="@context.ValueAsDecimal"
 													   ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 													   Disabled="@Disabled" ReadOnly="ReadOnly"
 													   Placeholder="@LOC("enter valid decimal")" Style="width:300px" />

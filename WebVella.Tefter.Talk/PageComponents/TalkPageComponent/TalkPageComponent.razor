@@ -1,0 +1,31 @@
+﻿@namespace WebVella.Tefter.Talk.PageComponents
+@inherits TucBaseSpaceNodeComponent
+
+@if (Context.Mode == TfComponentMode.Read)
+{
+	<FluentBodyContent Class="content-body">
+		<TalkThreadComponent ChannelId="_options.ChannelId" CurrentUser="@TfUserState.Value.CurrentUser"
+							 SharedKeyValue="@Context.SpaceNodeId" Style="height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important" />
+	</FluentBodyContent>
+}
+else if (Context.Mode == TfComponentMode.Create)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentSelect SelectedOption="@_optionsChannel"
+						  SelectedOptionChanged="_optionsChannelChangeHandler"
+						  TOption="TalkChannel"
+						  Items="@_channels" Style="width:100%"
+						  OptionText="@(p => p.Name)" Label="@LOC("Select view")"
+						  Class="@GetValidationCssClass(nameof(_options.ChannelId))"></FluentSelect>
+			<TfValidationMessage Field="@(nameof(_options.ChannelId))" Errors="ValidationErrors" />
+		</FluentGridItem>
+	</FluentGrid>
+
+}
+else
+{
+
+}
+
+

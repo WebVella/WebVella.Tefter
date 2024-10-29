@@ -28,7 +28,7 @@ public class CreateTalkThread
 	public Guid DataProviderId { get; set; }
 }
 
-public class CreateTalkThread2
+public class CreateTalkThreadWithSharedKey
 {
 	public Guid ChannelId { get; set; }
 	public TalkThreadType Type { get; set; }

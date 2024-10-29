@@ -32,9 +32,9 @@ else if (TfAppState.Value.SpaceNode is null)
 		</div>
 	</FluentBodyContent>
 }
-else if (!String.IsNullOrWhiteSpace(TfAppState.Value?.SpaceNode?.ComponentTypeFullName))
+else if (TfAppState.Value.SpaceNode.ComponentType is not null)
 {
 	<TfErrorBoundry>
-		<DynamicComponent Type="@Type.GetType(TfAppState.Value?.SpaceNode?.ComponentTypeFullName)" Parameters="@_getDynamicComponentParams()" />
+		<DynamicComponent Type="@TfAppState.Value.SpaceNode.ComponentType" Parameters="@_getDynamicComponentParams()" />
 	</TfErrorBoundry>
 }

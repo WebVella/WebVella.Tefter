@@ -273,6 +273,9 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		{
 			optionsJson = Context.ComponentOptionsJson;
 			_options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(optionsJson);
+			//When cannot node has json from another page type
+			if(_options is null) _options = new TfSpaceViewPageComponentOptions();
+
 			if (_options.SpaceViewId is not null)
 				_optionsExistingSpaceView = TfAppState.Value.SpaceViewList.FirstOrDefault(x => x.Id == _options.SpaceViewId);
 			if (_optionsExistingSpaceView is not null)

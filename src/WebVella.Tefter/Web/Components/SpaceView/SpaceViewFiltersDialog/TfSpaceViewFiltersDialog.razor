@@ -16,31 +16,34 @@
 <FluentDialogBody>
 	@if (_spaceData is not null)
 	{
-		<FluentTabs @bind-ActiveTabId="@_activeTab">
+		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 			<FluentTab Label="@LOC("Current")" Id="current">
-				<TfFilterCard DataProvider="_dataProvider" Items="@_items" ItemsChanged="_onFiltersChangeHandler"/>
+				<TfFilterCard DataProvider="_dataProvider" Items="@_items" ItemsChanged="_onFiltersChangeHandler" />
 			</FluentTab>
 			<FluentTab Label="@LOC("Always applied")" Id="default">
-				<TfCard Small="true" Style="margin-top:1rem">
-					<TitleTemplate>
-						<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-							<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
-								<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
-								<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+				@if (_spaceData.Filters.Count == 0)
+				{
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("There are no filters that are always applied")</FluentMessageBar>
+				}
+				else
+				{
+					<TfCard Small="true" Style="margin-top:1rem">
+						<TitleTemplate>
+							<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+								<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
+									<FluentLabel Typo="@Typography.Body">AND</FluentLabel>
+									<FluentLabel Typo="@Typography.Body" Style="margin-left:0.5rem;color:var(--neutral-foreground-rest);opacity:0.5">rule</FluentLabel>
+								</FluentStack>
 							</FluentStack>
-						</FluentStack>
-					</TitleTemplate>
-					<ChildContent>
-						@foreach (var item in _spaceData.Filters)
-						{
-							<TfFilterManage Item="item" SelectedProvider="_dataProvider" ReadOnly="true" />
-						}
-						@if (_spaceData.Filters.Count == 0)
-						{
-							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("There are no filters that are always applied")</FluentMessageBar>
-						}
-					</ChildContent>
-				</TfCard>
+						</TitleTemplate>
+						<ChildContent>
+							@foreach (var item in _spaceData.Filters)
+							{
+								<TfFilterManage Item="item" SelectedProvider="_dataProvider" ReadOnly="true" />
+							}
+						</ChildContent>
+					</TfCard>
+				}
 			</FluentTab>
 		</FluentTabs>
 	}

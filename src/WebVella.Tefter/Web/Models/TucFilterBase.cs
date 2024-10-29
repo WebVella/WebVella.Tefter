@@ -302,7 +302,8 @@ public record TucFilterAnd : TucFilterBase
 			Type = GetFilterType(),
 			Name = GetColumnName()
 		};
-		foreach (var item in Filters){ 
+		foreach (var item in Filters)
+		{
 			query.Items.Add(TucFilterBase.ToQuery(item));
 		}
 		return query;
@@ -363,7 +364,8 @@ public record TucFilterOr : TucFilterBase
 			Type = GetFilterType(),
 			Name = GetColumnName()
 		};
-		foreach (var item in Filters){ 
+		foreach (var item in Filters)
+		{
 			query.Items.Add(TucFilterBase.ToQuery(item));
 		}
 		return query;
@@ -398,7 +400,7 @@ public record TucFilterBoolean : TucFilterBase
 			new Option<string>{Value="null",Text="NULL"}
 		};
 	}
-	public string ValueString
+	public string ValueProcessed
 	{
 		get => (Value is null ? "null" : Value).ToLowerInvariant();
 	}
@@ -421,7 +423,7 @@ public record TucFilterBoolean : TucFilterBase
 		if (model is TfFilterBoolean)
 		{
 			var item = (TfFilterBoolean)model;
-			if(!String.IsNullOrWhiteSpace(item.Value) &&  bool.TryParse(item.Value, out bool outVal)) 
+			if (!String.IsNullOrWhiteSpace(item.Value) && bool.TryParse(item.Value, out bool outVal))
 				Value = item.Value;
 			else
 				Value = null;
@@ -445,7 +447,7 @@ public record TucFilterBoolean : TucFilterBase
 		Id = Guid.NewGuid();
 		ColumnName = model.Name;
 		Value = null;
-		if(!String.IsNullOrWhiteSpace(model.Value) && Boolean.TryParse(model.Value,out bool outVal)) Value = model.Value;
+		if (!String.IsNullOrWhiteSpace(model.Value) && Boolean.TryParse(model.Value, out bool outVal)) Value = model.Value;
 		ComparisonMethod = (TucFilterBooleanComparisonMethod)model.Method;
 	}
 	public TucFilterQuery ToQuery()
@@ -477,14 +479,15 @@ public record TucFilterDateTime : TucFilterBase
 			return true;
 		}
 	}
-	public string ValueString
+	public string ValueProcessed
 	{
 		get => Value;
 	}
 	public void ValueStringChanged(string value)
 	{
 		if (String.IsNullOrWhiteSpace(value)) Value = null;
-		else if(FormulaUtility.GetDateFromFormulaString(value) != null) {
+		else if (FormulaUtility.GetDateFromFormulaString(value) != null)
+		{
 			Value = value;
 		}
 		else if (DateTime.TryParse(value, out DateTime outVal))
@@ -500,10 +503,16 @@ public record TucFilterDateTime : TucFilterBase
 		if (model is TfFilterDateTime)
 		{
 			var item = (TfFilterDateTime)model;
-			if (!string.IsNullOrWhiteSpace(item.Value) && DateTime.TryParse(item.Value, out DateTime outVal))
+			if (String.IsNullOrWhiteSpace(item.Value)) Value = null;
+			else if (FormulaUtility.GetDateFromFormulaString(item.Value) != null)
+			{
+				Value = item.Value;
+			}
+			else if (DateTime.TryParse(item.Value, out DateTime outVal2))
 				Value = item.Value;
 			else
 				Value = null;
+
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod, TucFilterDateTimeComparisonMethod>();
 		}
 		else throw new Exception("Unsupported TfFilterBase base type for conversion to TucFilterDateTime");
@@ -521,8 +530,15 @@ public record TucFilterDateTime : TucFilterBase
 	{
 		Id = Guid.NewGuid();
 		ColumnName = model.Name;
-		Value = null;
-		if(!String.IsNullOrWhiteSpace(model.Value) && DateTime.TryParse(model.Value,out DateTime outVal)) Value = model.Value;
+		if (String.IsNullOrWhiteSpace(model.Value)) Value = null;
+		else if (FormulaUtility.GetDateFromFormulaString(model.Value) != null)
+		{
+			Value = model.Value;
+		}
+		else if (DateTime.TryParse(model.Value, out DateTime outVal2))
+			Value = model.Value;
+		else
+			Value = null;
 		ComparisonMethod = (TucFilterDateTimeComparisonMethod)model.Method;
 	}
 	public TucFilterQuery ToQuery()
@@ -539,8 +555,6 @@ public record TucFilterDateTime : TucFilterBase
 
 public record TucFilterGuid : TucFilterBase
 {
-	[JsonPropertyName("v")]
-	public Guid? Value { get; set; } = null;
 	[JsonPropertyName("m")]
 	public TucFilterGuidComparisonMethod ComparisonMethod { get; set; } = TucFilterGuidComparisonMethod.Equal;
 
@@ -558,7 +572,7 @@ public record TucFilterGuid : TucFilterBase
 			return true;
 		}
 	}
-	public string ValueString
+	public string ValueProcessed
 	{
 		get => Value?.ToString();
 	}
@@ -566,7 +580,7 @@ public record TucFilterGuid : TucFilterBase
 	{
 		if (String.IsNullOrWhiteSpace(value)) Value = null;
 		else if (Guid.TryParse(value, out Guid outVal))
-			Value = outVal;
+			Value = value;
 		else
 			Value = null;
 	}
@@ -580,7 +594,7 @@ public record TucFilterGuid : TucFilterBase
 		{
 			var item = (TfFilterGuid)model;
 			if (!string.IsNullOrWhiteSpace(item.Value) && Guid.TryParse(item.Value, out Guid outVal))
-				Value = outVal;
+				Value = item.Value;
 			else
 				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterGuidComparisonMethod, TucFilterGuidComparisonMethod>();
@@ -602,7 +616,7 @@ public record TucFilterGuid : TucFilterBase
 		Id = Guid.NewGuid();
 		ColumnName = model.Name;
 		Value = null;
-		if(!String.IsNullOrWhiteSpace(model.Value) && Guid.TryParse(model.Value,out Guid outVal)) Value = outVal;
+		if (!String.IsNullOrWhiteSpace(model.Value) && Guid.TryParse(model.Value, out Guid outVal)) Value = model.Value;
 		ComparisonMethod = (TucFilterGuidComparisonMethod)model.Method;
 	}
 	public TucFilterQuery ToQuery()
@@ -619,8 +633,6 @@ public record TucFilterGuid : TucFilterBase
 
 public record TucFilterNumeric : TucFilterBase
 {
-	[JsonPropertyName("v")]
-	public decimal? Value { get; set; } = null;
 	[JsonPropertyName("m")]
 	public TucFilterNumericComparisonMethod ComparisonMethod { get; set; } = TucFilterNumericComparisonMethod.Equal;
 
@@ -637,8 +649,24 @@ public record TucFilterNumeric : TucFilterBase
 	}
 	public void ValueChanged(decimal? value)
 	{
-		Value = value;
+		Value = value?.ToString(CultureInfo.InvariantCulture);
 	}
+
+	public decimal? ValueAsDecimal
+	{
+		get
+		{
+			if (String.IsNullOrWhiteSpace(Value)) return null;
+
+			decimal? result = null;
+			if (decimal.TryParse(Value, CultureInfo.InvariantCulture, out decimal outDec))
+			{
+				result = outDec;
+			}
+			return result;
+		}
+	}
+
 
 	public TucFilterNumeric() { }
 
@@ -650,7 +678,7 @@ public record TucFilterNumeric : TucFilterBase
 		{
 			var item = (TfFilterNumeric)model;
 			if (!string.IsNullOrWhiteSpace(item.Value) && decimal.TryParse(item.Value, out decimal outVal))
-				Value = outVal;
+				Value = item.Value;
 			else
 				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterNumericComparisonMethod, TucFilterNumericComparisonMethod>();
@@ -672,7 +700,7 @@ public record TucFilterNumeric : TucFilterBase
 		Id = Guid.NewGuid();
 		ColumnName = model.Name;
 		Value = null;
-		if(!String.IsNullOrWhiteSpace(model.Value) && decimal.TryParse(model.Value,out decimal outVal)) Value = outVal;
+		if (!String.IsNullOrWhiteSpace(model.Value) && decimal.TryParse(model.Value, out decimal outVal)) Value = model.Value;
 		ComparisonMethod = (TucFilterNumericComparisonMethod)model.Method;
 	}
 	public TucFilterQuery ToQuery()
@@ -689,8 +717,6 @@ public record TucFilterNumeric : TucFilterBase
 
 public record TucFilterText : TucFilterBase
 {
-	[JsonPropertyName("v")]
-	public string Value { get; set; } = null;
 	[JsonPropertyName("m")]
 	public TucFilterTextComparisonMethod ComparisonMethod { get; set; } = TucFilterTextComparisonMethod.Equal;
 

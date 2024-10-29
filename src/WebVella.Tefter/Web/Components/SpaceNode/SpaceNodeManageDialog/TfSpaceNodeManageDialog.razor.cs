@@ -80,6 +80,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 				addonComponent = typeSettingsComponent.Instance as ITfSpaceNodeComponent;
 				settingsErrors = addonComponent.ValidateOptions();
 				submit.ComponentOptionsJson = addonComponent.GetOptions();
+				submit.ComponentTypeFullName = _selectedPageComponent?.ComponentType.FullName;
 			}
 		}
 

@@ -13,7 +13,7 @@ public partial interface ITalkService
 		CreateTalkThread thread);
 
 	public Result<Guid> CreateThread(
-		CreateTalkThread2 thread);
+		CreateTalkThreadWithSharedKey thread);
 
 	public Result<Guid> CreateSubThread(
 		CreateTalkSubThread thread);
@@ -311,7 +311,7 @@ ORDER BY tt.created_on DESC";
 	}
 
 	public Result<Guid> CreateThread(
-		CreateTalkThread2 thread)
+		CreateTalkThreadWithSharedKey thread)
 	{
 		try
 		{
@@ -716,7 +716,7 @@ ORDER BY tt.created_on DESC";
 		}
 
 		public ValidationResult ValidateCreate(
-			CreateTalkThread2 thread,
+			CreateTalkThreadWithSharedKey thread,
 			Guid id)
 		{
 			if (thread == null)
