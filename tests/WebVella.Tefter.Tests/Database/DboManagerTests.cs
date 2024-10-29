@@ -136,7 +136,7 @@ public partial class DboManagerTests : BaseTest
 				obj.Date.Should().Be(original.Date);
 				obj.DateNull.Should().Be(original.DateNull);
 				obj.DateNull.Should().BeNull();
-				obj.Date.Kind.Should().Be(DateTimeKind.Local);
+				obj.Date.Kind.Should().Be(DateTimeKind.Unspecified);
 			}
 		}
 	}
@@ -180,7 +180,7 @@ public partial class DboManagerTests : BaseTest
 
 				obj.DateNull.Should().Be(original.DateNull);
 				obj.DateNull.Should().BeNull();
-				obj.Date.Kind.Should().Be(DateTimeKind.Local);
+				obj.Date.Kind.Should().Be(DateTimeKind.Unspecified);
 			}
 		}
 	}

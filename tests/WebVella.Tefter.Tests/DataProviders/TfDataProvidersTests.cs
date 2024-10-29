@@ -1082,7 +1082,7 @@ public partial class TfDataProvidersTests : BaseTest
 				sharedKey1Created.DataProviderId.Should().Be(sharedKey.DataProviderId);
 				sharedKey1Created.DbName.Should().Be(sharedKey.DbName);
 				sharedKey1Created.Description.Should().Be(sharedKey.Description);
-				sharedKey1Created.Version.Should().Be(0);
+				sharedKey1Created.Version.Should().Be(1);
 				sharedKey1Created.Columns[0].Id.Should().Be(provider.Columns[0].Id);
 
 				var sharedKey2 = new TfDataProviderSharedKey
@@ -1105,7 +1105,7 @@ public partial class TfDataProvidersTests : BaseTest
 				sharedKey2Created.DataProviderId.Should().Be(sharedKey2.DataProviderId);
 				sharedKey2Created.DbName.Should().Be(sharedKey2.DbName);
 				sharedKey2Created.Description.Should().Be(sharedKey2.Description);
-				sharedKey2Created.Version.Should().Be(0);
+				sharedKey2Created.Version.Should().Be(1);
 				sharedKey2Created.Columns[0].Id.Should().Be(provider.Columns[1].Id);
 
 				sharedKey2Created.Columns.Add(provider.Columns[0]);
@@ -1128,7 +1128,7 @@ public partial class TfDataProvidersTests : BaseTest
 				sharedKey2Update.DataProviderId.Should().Be(sharedKey2.DataProviderId);
 				sharedKey2Update.DbName.Should().Be(sharedKey2.DbName);
 				sharedKey2Update.Description.Should().Be(sharedKey2.Description);
-				sharedKey2Update.Version.Should().Be(1);
+				sharedKey2Update.Version.Should().Be(2);
 				sharedKey2Update.Columns.Count().Should().Be(2);
 
 				providerResult = providerManager.DeleteDataProviderSharedKey(sharedKey2Created.Id);

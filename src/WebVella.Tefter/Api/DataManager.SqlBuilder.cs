@@ -690,10 +690,7 @@ public partial class DataManager
 			}
 			else if (type == typeof(TfFilterDateTime))
 			{
-				if (DateTime.TryParse(((TfFilterDateTime)filter).Value?.ToString(), out DateTime outVal))
-					value = outVal;
-				else
-					value = null;
+				value = ((TfFilterDateTime)filter).Value?.GetDateFromFormulaString();
 			}
 			else if (type == typeof(TfFilterGuid))
 			{
