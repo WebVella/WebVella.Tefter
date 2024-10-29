@@ -28,6 +28,15 @@ public class CreateTalkThread
 	public Guid DataProviderId { get; set; }
 }
 
+public class CreateTalkThread2
+{
+	public Guid ChannelId { get; set; }
+	public TalkThreadType Type { get; set; }
+	public string Content { get; set; }
+	public Guid UserId { get; set; }
+	public List<Guid> SKValueIds { get; set; }
+}
+
 public class CreateTalkSubThread
 {
 	public Guid ThreadId { get; set; }
