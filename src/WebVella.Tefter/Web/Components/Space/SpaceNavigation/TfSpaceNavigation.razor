@@ -2,13 +2,6 @@
 @inherits TfBaseComponent
 @if (TfUserState.Value.SidebarExpanded)
 {
-	<style>
-		.sidebar-nav {
-			--tf-space-color: @TfAppState.Value.SpaceColorString;
-			--tf-space-icon-color: @TfAppState.Value.SpaceIconColorString;
-			--tf-space-border-color: @TfAppState.Value.SpaceBorderColor;
-		}
-	</style>
 	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
 		<div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
 			<div class="sidebar-toolbar">
@@ -17,17 +10,17 @@
 						<FluentButton Class="@($"btn views {_getTabActiveClass(TfSpaceNavigationActiveTab.Nodes)}")" Title="views"
 									  OnClick="@(()=>_setActiveTab(TfSpaceNavigationActiveTab.Nodes))"
 									  Appearance="Appearance.Outline">
-							<FluentIcon Value="@TfConstants.SpaceViewIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+							<FluentIcon Value="@TfConstants.SpaceViewIcon" />
 						</FluentButton>
 @* 						<FluentButton Class="@($"btn bookmarks {_getTabActiveClass(TfSpaceNavigationActiveTab.Bookmarks)}")" Title="bookmarks"
 									  OnClick="@(()=>_setActiveTab(TfSpaceNavigationActiveTab.Bookmarks))"
 									  Appearance="Appearance.Outline">
-							<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+							<FluentIcon Value="@TfConstants.BookmarkOFFIcon" />
 						</FluentButton> *@
 						<FluentButton Class="@($"btn saves {_getTabActiveClass(TfSpaceNavigationActiveTab.Saves)}")" Title="saved URLs"
 									  OnClick="@(()=>_setActiveTab(TfSpaceNavigationActiveTab.Saves))"
 									  Appearance="Appearance.Outline">
-							<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+							<FluentIcon Value="@TfConstants.GetIcon("Link")"  />
 						</FluentButton>
 					</FluentToolbar>
 				</div>
@@ -38,35 +31,48 @@
 				<div class="sidebar-toolbar-actions">
 					<FluentButton Id="space-settings" Title="space actions"
 								  OnClick="_onSettingsClick" Appearance="@Appearance.Outline">
-						<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						<FluentIcon Value="@TfConstants.GetIcon("Settings")" />
 					</FluentButton>
 					<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
 						<FluentMenuItem OnClick="onManageSpaceClick">
 							@LOC("Manage Space")
-							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
 						</FluentMenuItem>
 						<FluentMenuItem OnClick="onDeleteSpaceClick">
 							@LOC("Delete Space")
 							<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
 						</FluentMenuItem>
 						<FluentDivider></FluentDivider>
+						<FluentMenuItem OnClick="_addNode">
+							@LOC("Create Page")
+							<FluentIcon Value="@TfConstants.AddIcon" Slot="start" />
+						</FluentMenuItem>
+						<FluentDivider></FluentDivider>
 						<FluentMenuItem OnClick="onDataListClick">
 							@LOC("Space Data")
-							<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+							<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" />
 						</FluentMenuItem>
 						<FluentMenuItem OnClick="onViewListClick">
 							@LOC("Space Views")
-							<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+							<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" />
 						</FluentMenuItem>
 						<FluentMenuItem OnClick="onPageListClick">
 							@LOC("Space Pages")
-							<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+							<FluentIcon Value="@TfConstants.PageIcon" Slot="start" />
 						</FluentMenuItem>
 					</FluentMenu>
 				</div>
 			</div>
 			<div class="sidebar-inner">
 				<TfTreeView Items="_menu" />
+				@if (_menu.Count == 0 && _activeTab == TfSpaceNavigationActiveTab.Nodes)
+				{
+					<div style="padding-left:5px;padding-top:5px">@LOC("No pages found in the space")</div>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_addNode" Style="margin-top:1rem;">
+						<FluentIcon Slot="start" Value="@TfConstants.AddIcon" />
+						@LOC("Create Page")
+					</FluentButton>
+				}
 			</div>
 		</div>
 	</FluentStack>

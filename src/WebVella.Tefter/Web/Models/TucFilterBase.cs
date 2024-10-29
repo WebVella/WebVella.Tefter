@@ -14,6 +14,10 @@ public record TucFilterBase
 	public Guid Id { get; set; } = Guid.NewGuid();
 	[JsonPropertyName("cn")]
 	public string ColumnName { get; set; }
+
+	[JsonPropertyName("v")]
+	public string Value { get; set; } = null;
+
 	public static string GetColumnName(TucFilterBase model)
 	{
 		if (model is TucFilterAnd)
@@ -368,8 +372,6 @@ public record TucFilterOr : TucFilterBase
 
 public record TucFilterBoolean : TucFilterBase
 {
-	[JsonPropertyName("v")]
-	public bool? Value { get; set; } = null;
 	[JsonPropertyName("m")]
 	public TucFilterBooleanComparisonMethod ComparisonMethod { get; set; } = TucFilterBooleanComparisonMethod.Equal;
 	public string GetColumnName() => ColumnName;
@@ -398,14 +400,14 @@ public record TucFilterBoolean : TucFilterBase
 	}
 	public string ValueString
 	{
-		get => (Value is null ? "null" : Value.Value.ToString()).ToLowerInvariant();
+		get => (Value is null ? "null" : Value).ToLowerInvariant();
 	}
 
 	public void ValueOptionChanged(Option<string> option)
 	{
 		if (option.Value == "null") Value = null;
 		else if (Boolean.TryParse(option.Value, out bool outVal))
-			Value = outVal;
+			Value = option.Value;
 		else
 			Value = null;
 	}
@@ -420,7 +422,7 @@ public record TucFilterBoolean : TucFilterBase
 		{
 			var item = (TfFilterBoolean)model;
 			if(!String.IsNullOrWhiteSpace(item.Value) &&  bool.TryParse(item.Value, out bool outVal)) 
-				Value = outVal;
+				Value = item.Value;
 			else
 				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterBooleanComparisonMethod, TucFilterBooleanComparisonMethod>();
@@ -443,7 +445,7 @@ public record TucFilterBoolean : TucFilterBase
 		Id = Guid.NewGuid();
 		ColumnName = model.Name;
 		Value = null;
-		if(!String.IsNullOrWhiteSpace(model.Value) && Boolean.TryParse(model.Value,out bool outVal)) Value = outVal;
+		if(!String.IsNullOrWhiteSpace(model.Value) && Boolean.TryParse(model.Value,out bool outVal)) Value = model.Value;
 		ComparisonMethod = (TucFilterBooleanComparisonMethod)model.Method;
 	}
 	public TucFilterQuery ToQuery()
@@ -460,8 +462,7 @@ public record TucFilterBoolean : TucFilterBase
 
 public record TucFilterDateTime : TucFilterBase
 {
-	[JsonPropertyName("v")]
-	public DateTime? Value { get; set; } = null;
+
 	[JsonPropertyName("m")]
 	public TucFilterDateTimeComparisonMethod ComparisonMethod { get; set; } = TucFilterDateTimeComparisonMethod.Equal;
 
@@ -478,13 +479,16 @@ public record TucFilterDateTime : TucFilterBase
 	}
 	public string ValueString
 	{
-		get => Value?.ToString(TfConstants.DateTimeFormatInput);
+		get => Value;
 	}
 	public void ValueStringChanged(string value)
 	{
 		if (String.IsNullOrWhiteSpace(value)) Value = null;
+		else if(FormulaUtility.GetDateFromFormulaString(value) != null) {
+			Value = value;
+		}
 		else if (DateTime.TryParse(value, out DateTime outVal))
-			Value = outVal;
+			Value = value;
 		else
 			Value = null;
 	}
@@ -497,7 +501,7 @@ public record TucFilterDateTime : TucFilterBase
 		{
 			var item = (TfFilterDateTime)model;
 			if (!string.IsNullOrWhiteSpace(item.Value) && DateTime.TryParse(item.Value, out DateTime outVal))
-				Value = outVal;
+				Value = item.Value;
 			else
 				Value = null;
 			ComparisonMethod = item.ComparisonMethod.ConvertSafeToEnum<TfFilterDateTimeComparisonMethod, TucFilterDateTimeComparisonMethod>();
@@ -518,7 +522,7 @@ public record TucFilterDateTime : TucFilterBase
 		Id = Guid.NewGuid();
 		ColumnName = model.Name;
 		Value = null;
-		if(!String.IsNullOrWhiteSpace(model.Value) && DateTime.TryParse(model.Value,out DateTime outVal)) Value = outVal;
+		if(!String.IsNullOrWhiteSpace(model.Value) && DateTime.TryParse(model.Value,out DateTime outVal)) Value = model.Value;
 		ComparisonMethod = (TucFilterDateTimeComparisonMethod)model.Method;
 	}
 	public TucFilterQuery ToQuery()
@@ -527,7 +531,7 @@ public record TucFilterDateTime : TucFilterBase
 		{
 			Type = GetFilterType(),
 			Name = GetColumnName(),
-			Value = Value?.ToString(TfConstants.DateTimeFormatUrl),
+			Value = Value,
 			Method = (int)ComparisonMethod,
 		};
 	}

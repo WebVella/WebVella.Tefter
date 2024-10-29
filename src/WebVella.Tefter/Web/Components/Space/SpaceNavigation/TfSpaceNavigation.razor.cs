@@ -138,6 +138,33 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		await _generateMenu();
 		RegenRenderLock();
 	}
+
+	private async Task _addNode()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfSpaceNodeManageDialog>(
+		new TucSpaceNode(),
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var nodes = (List<TucSpaceNode>)result.Data;
+			ToastService.ShowSuccess(LOC("Space page successfully created!"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
+			{
+				SpaceNodes = nodes
+			}
+			));
+		}
+
+	}
+
 	#endregion
 
 	#region << Menu General >>

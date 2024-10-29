@@ -7,8 +7,8 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 	private bool _isSubmitting = false;
 	private TucSpaceViewPreset _spaceViewPreset = null;
-	private TucSpaceData _spaceData = null;
-	private TucDataProvider _dataProvider = null;
+	private TucSpaceData _spaceData { get => TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId); }
+	private TucDataProvider _dataProvider { get => TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _spaceData?.DataProviderId); }
 	private string _activeTab;
 
 
@@ -17,13 +17,11 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		base.OnInitialized();
 		if (TfAppState.Value.SpaceView is not null)
 		{
-			_spaceData = TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId);
-			_dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _spaceData?.DataProviderId);
 			_spaceViewPreset = TfAppState.Value.SpaceView.Presets.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.Id);
 			if (_spaceViewPreset is null)
 				_spaceViewPreset = new TucSpaceViewPreset { Id = TfAppState.Value.SpaceView.Id, Name = TfAppState.Value.SpaceView.Name };
 		}
-		_activeTab = (Navigator.GetEnumFromQuery<TfSpaceViewManageTab>(TfConstants.TabQueryName,TfSpaceViewManageTab.Columns).Value).ToString();
+		_activeTab = (Navigator.GetEnumFromQuery<TfSpaceViewManageTab>(TfConstants.TabQueryName, TfSpaceViewManageTab.Columns).Value).ToString();
 	}
 
 	private async Task _editSpaceView()
@@ -40,7 +38,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var resultObj = (Tuple<TucSpaceView,TucSpaceData>)result.Data;
+			var resultObj = (Tuple<TucSpaceView, TucSpaceData>)result.Data;
 			var spaceView = resultObj.Item1;
 			var spaceData = resultObj.Item2;
 			var viewList = TfAppState.Value.SpaceViewList.ToList();
@@ -56,7 +54,8 @@ public partial class TfSpaceViewManage : TfBaseComponent
 			{
 				dataList[dataIndex] = spaceData;
 			}
-			else{ 
+			else
+			{
 				dataList.Add(spaceData);
 			}
 
@@ -65,8 +64,8 @@ public partial class TfSpaceViewManage : TfBaseComponent
 						state: TfAppState.Value with
 						{
 							SpaceView = spaceView,
-							SpaceViewList = viewList.OrderBy(x=> x.Position).ToList(),
-							SpaceDataList = dataList.OrderBy(x=> x.Position).ToList()
+							SpaceViewList = viewList.OrderBy(x => x.Position).ToList(),
+							SpaceDataList = dataList.OrderBy(x => x.Position).ToList()
 						}));
 
 			ToastService.ShowSuccess(LOC("Space view successfully updated!"));
@@ -212,16 +211,18 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		}
 	}
 
-	private async Task _tabChanged(FluentTab tabObj){ 
+	private async Task _tabChanged(FluentTab tabObj)
+	{
 		TfSpaceViewManageTab tab = TfSpaceViewManageTab.Columns;
-		if(Enum.TryParse<TfSpaceViewManageTab>(tabObj.Id,false,out tab)){ }
-		var queryDict = new Dictionary<string,object>();
+		if (Enum.TryParse<TfSpaceViewManageTab>(tabObj.Id, false, out tab)) { }
+		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.TabQueryName] = tab.ToString();
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 }
 
-internal enum TfSpaceViewManageTab{ 
+internal enum TfSpaceViewManageTab
+{
 	Columns = 0,
 	QuickFilters = 1
 }
