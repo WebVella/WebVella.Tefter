@@ -129,8 +129,8 @@
   <data name="Create" xml:space="preserve">
     <value>Създай</value>
   </data>
-  <data name="Create space" xml:space="preserve">
-    <value>Създай област</value>
+  <data name="Create page" xml:space="preserve">
+    <value>Създай страница</value>
   </data>
   <data name="Icon" xml:space="preserve">
     <value>Икона</value>
@@ -138,8 +138,8 @@
   <data name="limited access" xml:space="preserve">
     <value>ограничен достъп</value>
   </data>
-  <data name="Manage space" xml:space="preserve">
-    <value>Редактирай област</value>
+  <data name="Manage page" xml:space="preserve">
+    <value>Редактирай страница</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Име</value>

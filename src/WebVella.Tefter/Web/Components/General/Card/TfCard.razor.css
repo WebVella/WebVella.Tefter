@@ -11,6 +11,10 @@
 	border-radius: calc(var(--layer-corner-radius)* 1px) calc(var(--layer-corner-radius)* 1px) 0 0;
 }
 
+fluent-dialog .tf-card-title {
+	background: var(--neutral-layer-2);
+}
+
 .tf-card-content {
 	padding: calc(var(--design-unit)* 5px);	
 }

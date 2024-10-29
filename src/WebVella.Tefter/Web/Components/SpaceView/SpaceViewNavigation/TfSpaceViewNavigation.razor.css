@@ -43,8 +43,8 @@
 
 		::deep .sidebar-toolbar-mode .modebar .btn.active,
 		::deep .sidebar-toolbar-mode .modebar fluent-button.active::part(control){
-			background:var(--tf-space-color);
-			border-color:var(--tf-space-color);
+			background:var(--accent-base-color);
+			border-color:var(--accent-base-color);
 		}
 
 		::deep .sidebar-toolbar-mode .modebar .btn.active, 

@@ -239,7 +239,7 @@ public class NavigatorExtTests
 								new TucFilterBoolean{
 									ColumnName = filterBoolColumnName,
 									ComparisonMethod = filterBoolMethod,
-									Value = filterBoolValue,
+									Value = filterBoolValue.ToString(),
 								},
 								new TucFilterText{
 									ColumnName = filterTextColumnName,
@@ -309,7 +309,7 @@ public class NavigatorExtTests
 			var lvl31Filter = (TucFilterBoolean)lvl31;
 			lvl31Filter.ColumnName.Should().Be(filterBoolColumnName);
 			lvl31Filter.ComparisonMethod.Should().Be(filterBoolMethod);
-			lvl31Filter.Value.Should().Be(filterBoolValue);
+			lvl31Filter.Value.Should().Be(filterBoolValue.ToString());
 
 			var lvl33 = lvl2Filter.Filters[1];
 			lvl33.Should().BeOfType<TucFilterText>();
@@ -395,7 +395,7 @@ public class NavigatorExtTests
 					Id = columnId,
 					ColumnName = columnName,
 					ComparisonMethod = method,
-					Value = value
+					Value = value.ToString()
 				}
 			};
 			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
@@ -407,7 +407,7 @@ public class NavigatorExtTests
 			var casted = (TucFilterBoolean)result[0];
 			casted.ComparisonMethod.Should().Be(method);
 			casted.Value.Should().NotBeNull();
-			casted.Value.Should().Be(value);
+			casted.Value.Should().Be(value.ToString());
 		}
 		#endregion
 
@@ -420,7 +420,7 @@ public class NavigatorExtTests
 					Id = columnId,
 					ColumnName = columnName,
 					ComparisonMethod = method,
-					Value = value
+					Value = value?.ToString(TfConstants.DateTimeFormat)
 				}
 			};
 			queryValue = NavigatorExt.SerializeFiltersForUrl(test);
@@ -433,7 +433,7 @@ public class NavigatorExtTests
 			casted.ComparisonMethod.Should().Be(method);
 			casted.Value.Should().NotBeNull();
 			if(casted.Value is not null)
-				casted.Value.Value.ToString(TfConstants.DateTimeFormat).Should().Be(value.Value.ToString(TfConstants.DateTimeFormat));
+				casted.Value.Should().Be(value.Value.ToString(TfConstants.DateTimeFormat));
 		}
 		#endregion
 
@@ -553,7 +553,7 @@ public class NavigatorExtTests
 								new TucFilterBoolean{
 									ColumnName = boolColumnName,
 									ComparisonMethod = boolMethod,
-									Value = boolValue,
+									Value = boolValue.ToString(),
 								},
 								new TucFilterText{
 									ColumnName = textColumnName,
@@ -587,7 +587,7 @@ public class NavigatorExtTests
 
 			lvl31Casted.ColumnName.Should().Be(boolColumnName);
 			lvl31Casted.ComparisonMethod.Should().Be(boolMethod);
-			lvl31Casted.Value.Should().Be(boolValue);
+			lvl31Casted.Value.Should().Be(boolValue.ToString());
 
 			lvl33Casted.ColumnName.Should().Be(textColumnName);
 			lvl33Casted.ComparisonMethod.Should().Be(textMethod);

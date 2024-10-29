@@ -159,6 +159,9 @@
   <data name="No filters added yet" xml:space="preserve">
     <value>Все още няма добавени филтри</value>
   </data>
+  <data name="not equal" xml:space="preserve">
+    <value>различен</value>
+  </data>
   <data name="starts with" xml:space="preserve">
     <value>започва с</value>
   </data>

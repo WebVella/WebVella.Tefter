@@ -51,6 +51,7 @@ public partial class TfFilterCard : TfBaseComponent
 					await AddFilter(typeof(TucFilterBoolean), dbColumn, parentId);
 				}
 				break;
+			case TucDatabaseColumnType.Date:
 			case TucDatabaseColumnType.DateTime:
 				{
 					await AddFilter(typeof(TucFilterDateTime), dbColumn, parentId);
