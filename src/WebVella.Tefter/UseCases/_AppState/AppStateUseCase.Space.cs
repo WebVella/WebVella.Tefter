@@ -237,7 +237,9 @@ internal partial class AppStateUseCase
 	{
 		var resultSM = _spaceManager.CopySpaceNode(nodeId);
 		if (resultSM.IsFailed) return Result.Fail(new Error("CopySpaceNode failed").CausedBy(resultSM.Errors));
-		var result = resultSM.Value.Select(x => new TucSpaceNode(x)).ToList();
+		//newNodeId is the id of newly created node copy of specified one by nodeId argument
+		var (newNodeId, nodesList) = resultSM.Value;
+		var result = nodesList.Select(x => new TucSpaceNode(x)).ToList();
 		return result;
 	}
 }

@@ -1,13 +1,11 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Nito.AsyncEx.Synchronous;
-using System.Diagnostics;
+﻿using Nito.AsyncEx.Synchronous;
 
 namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
 	public Result<List<TfSpaceNode>> GetAllSpaceNodes();
+
 	public Result<List<TfSpaceNode>> GetSpaceNodes(Guid spaceId);
 
 	public Result<TfSpaceNode> GetSpaceNode(Guid spaceId, Guid nodeId);
@@ -21,7 +19,8 @@ public partial interface ITfSpaceManager
 	public Result<List<TfSpaceNode>> DeleteSpaceNode(
 		TfSpaceNode spaceNode);
 
-	public Result<List<TfSpaceNode>> CopySpaceNode(Guid nodeId);
+	public Result<(Guid, List<TfSpaceNode>)> CopySpaceNode(
+		Guid nodeId);
 }
 
 public partial class TfSpaceManager : ITfSpaceManager
@@ -86,22 +85,27 @@ public partial class TfSpaceManager : ITfSpaceManager
 	}
 
 	public Result<TfSpaceNode> GetSpaceNode(
-		Guid spaceId, Guid nodeId)
+		Guid spaceId,
+		Guid nodeId)
 	{
-		//TODO RUMEN: make proper implementation
 		try
 		{
 			var allNodesResult = GetSpaceNodes(spaceId);
-			if (allNodesResult.IsFailed) return Result.Fail(new Error("GetSpaceNodes failed")
+
+			if (allNodesResult.IsFailed)
+			{
+				return Result.Fail(new Error("GetSpaceNodes failed")
 						.CausedBy(allNodesResult.Errors));
+			}
 
+			var node = FindNodeById(nodeId, allNodesResult.Value);
 
-			return Result.Ok(FindNodeById(nodeId, allNodesResult.Value));
+			return Result.Ok(node);
 
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to get list of space nodes").CausedBy(ex));
+			return Result.Fail(new Error("Failed to get space node").CausedBy(ex));
 		}
 	}
 	private void InitSpaceNodeChildNodes(
@@ -231,10 +235,10 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 
 				//update nodes which position is changed
-				foreach (var childNode in nodesToUpdate)
+				foreach (var nodeToUpdate in nodesToUpdate)
 				{
-					if (!_dboManager.Update<TfSpaceNodeDbo>(Convert(spaceNode), nameof(TfSpaceNodeDbo.Position)))
-						return Result.Fail(new DboManagerError("Update", spaceNode));
+					if (!_dboManager.Update<TfSpaceNodeDbo>(Convert(nodeToUpdate), nameof(TfSpaceNodeDbo.Position)))
+						return Result.Fail(new DboManagerError("Update", nodeToUpdate));
 				}
 
 				if (!_dboManager.Insert<TfSpaceNodeDbo>(Convert(spaceNode)))
@@ -656,8 +660,66 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
-	//TODO RUMEN: implement
-	public Result<List<TfSpaceNode>> CopySpaceNode(Guid nodeId) => throw new NotImplementedException();
+	public Result<(Guid, List<TfSpaceNode>)> CopySpaceNode(
+		Guid nodeId)
+	{
+		try
+		{
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var allNodes = GetAllSpaceNodes().Value.ToList();
+
+				var nodeToCopy = FindNodeById(nodeId, allNodes);
+
+				if (nodeToCopy is null)
+				{
+					return Result.Fail(new Error("Node not found"));
+				}
+
+				List<TfSpaceNode> nodesToCreate = new List<TfSpaceNode>();
+
+				Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+
+				//node is placed after node we copy from
+				nodeToCopy.Position++;
+
+				queue.Enqueue(nodeToCopy);
+
+				while (queue.Count > 0)
+				{
+					var queuedNode = queue.Dequeue();
+					queuedNode.Id = Guid.NewGuid();
+					nodesToCreate.Add(queuedNode);
+
+					foreach (var childNode in queuedNode.ChildNodes)
+					{
+						childNode.ParentId = queuedNode.Id;
+						queue.Enqueue(childNode);
+					}
+				}
+
+				foreach (var nodeToCreate in nodesToCreate)
+				{
+					var createResult = CreateSpaceNode(nodeToCreate);
+
+					if (!createResult.IsSuccess)
+					{
+						return Result.Fail(createResult.Errors);
+					}
+				}
+
+				scope.Complete();
+
+				return (nodeToCopy.Id, GetSpaceNodes(nodeToCopy.SpaceId).Value);
+
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to delete space node.").CausedBy(ex));
+		}
+	}
+
 
 	private TfSpaceNode Convert(
 		TfSpaceNodeDbo dbo)
