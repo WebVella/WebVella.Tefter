@@ -37,7 +37,7 @@
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Parent")" />
 					<FluentStack>
-						<FluentSelect TOption="TucSpaceNode" Value=@_parentIdString ValueChanged="@(x=> _parentIdString = x)"
+						<FluentSelect TOption="TucSpaceNode" @bind-Value=@_parentIdString 
 									  Style="width:100%" Items="@_getParents()" Placeholder="@LOC("select...")"
 									  OptionValue="@(x=> x.Id.ToString())">
 							<OptionTemplate Context="option">
