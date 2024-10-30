@@ -15,7 +15,7 @@ public partial class TfPager : TfBaseComponent
 	private CancellationTokenSource inputThrottleCancalationToken = new();
 	private int _page = 1;
 	private int _pageSize = TfConstants.PageSize;
-
+	private int _throttleMS = 500;
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
@@ -27,7 +27,7 @@ public partial class TfPager : TfBaseComponent
 	{
 		inputThrottleCancalationToken.Cancel();
 		inputThrottleCancalationToken = new();
-		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
 		async (task) =>
 		{
 			await GoLast.InvokeAsync();
@@ -38,7 +38,7 @@ public partial class TfPager : TfBaseComponent
 	{
 		inputThrottleCancalationToken.Cancel();
 		inputThrottleCancalationToken = new();
-		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
 		async (task) =>
 		{
 			await GoNext.InvokeAsync();
@@ -49,7 +49,7 @@ public partial class TfPager : TfBaseComponent
 	{
 		inputThrottleCancalationToken.Cancel();
 		inputThrottleCancalationToken = new();
-		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
 		async (task) =>
 		{
 			await GoFirst.InvokeAsync();
@@ -60,7 +60,7 @@ public partial class TfPager : TfBaseComponent
 	{
 		inputThrottleCancalationToken.Cancel();
 		inputThrottleCancalationToken = new();
-		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
 		async (task) =>
 		{
 			await GoPrevious.InvokeAsync();
@@ -72,7 +72,7 @@ public partial class TfPager : TfBaseComponent
 		_page = page;
 		inputThrottleCancalationToken.Cancel();
 		inputThrottleCancalationToken = new();
-		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
 		async (task) =>
 		{
 			await GoOnPage.InvokeAsync(page);
@@ -84,7 +84,7 @@ public partial class TfPager : TfBaseComponent
 		_pageSize = pageSize;
 		inputThrottleCancalationToken.Cancel();
 		inputThrottleCancalationToken = new();
-		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
 		async (task) =>
 		{
 			await ChangePageSize.InvokeAsync(pageSize);
