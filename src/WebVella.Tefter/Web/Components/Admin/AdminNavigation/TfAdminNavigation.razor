@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<div class="@($"spacenav-nav spacenav-nav--appbar  {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+<div class="@($"spacenav-nav spacenav-nav--appbar  {(SidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")">
 	<FluentNavMenu>
 		@foreach (var item in menuItems)
 		{

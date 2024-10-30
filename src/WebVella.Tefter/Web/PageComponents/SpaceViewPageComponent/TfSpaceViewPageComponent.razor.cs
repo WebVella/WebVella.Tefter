@@ -127,6 +127,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 					);
 			if (getDataResult.IsFailed) throw new Exception($"QuerySpaceData failed");
 			spaceViewData = getDataResult.Value;
+			spaceViewPage = spaceViewData?.QueryInfo.Page ?? spaceViewPage;
 		}
 		#endregion
 

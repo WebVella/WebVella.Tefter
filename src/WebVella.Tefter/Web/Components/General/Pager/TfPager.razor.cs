@@ -23,6 +23,50 @@ public partial class TfPager : TfBaseComponent
 		_pageSize = PageSize;
 	}
 
+	private async Task _goLast()
+	{
+		inputThrottleCancalationToken.Cancel();
+		inputThrottleCancalationToken = new();
+		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		async (task) =>
+		{
+			await GoLast.InvokeAsync();
+		}, inputThrottleCancalationToken.Token);
+	}
+
+	private async Task _goNext()
+	{
+		inputThrottleCancalationToken.Cancel();
+		inputThrottleCancalationToken = new();
+		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		async (task) =>
+		{
+			await GoNext.InvokeAsync();
+		}, inputThrottleCancalationToken.Token);
+	}
+
+	private async Task _goFirst()
+	{
+		inputThrottleCancalationToken.Cancel();
+		inputThrottleCancalationToken = new();
+		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		async (task) =>
+		{
+			await GoFirst.InvokeAsync();
+		}, inputThrottleCancalationToken.Token);
+	}
+
+	private async Task _goPrevious()
+	{
+		inputThrottleCancalationToken.Cancel();
+		inputThrottleCancalationToken = new();
+		await Task.Delay(1000, inputThrottleCancalationToken.Token).ContinueWith(
+		async (task) =>
+		{
+			await GoPrevious.InvokeAsync();
+		}, inputThrottleCancalationToken.Token);
+	}
+
 	private async Task _pageChanged(int page)
 	{
 		_page = page;

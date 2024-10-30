@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewManage.TfSpaceViewManage", "WebVella.Tefter")]
 public partial class TfSpaceViewManage : TfBaseComponent
 {
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	private bool _isSubmitting = false;
@@ -15,6 +15,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
 		if (TfAppState.Value.SpaceView is not null)
 		{
 			_spaceViewPreset = TfAppState.Value.SpaceView.Presets.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.Id);

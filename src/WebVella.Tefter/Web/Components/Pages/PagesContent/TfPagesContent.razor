@@ -1,9 +1,9 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (TfUserState.Value.SidebarExpanded)
+@if (SidebarExpanded.Value)
 {
-	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfUserState.Value.ThemeSidebarStyle">
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@ThemeSidebarStyle.Value">
 		<TfPagesNavigation />
 	</FluentStack>
 }

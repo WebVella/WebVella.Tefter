@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitSpaceDataAsync(IServiceProvider serviceProvider,
+	internal Task<(TfAppState, TfAuxDataState)> InitSpaceDataAsync(IServiceProvider serviceProvider,
 		TucUser currentUser, TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
@@ -18,7 +18,7 @@ internal partial class AppStateUseCase
 				SpaceDataPageSize = TfConstants.PageSize,
 				SpaceDataSearch = null
 			};
-			return Task.FromResult(newAppState);
+			return Task.FromResult((newAppState,newAuxDataState));
 		}
 		//SpaceDataList
 		if (newAppState.Space?.Id != oldAppState.Space?.Id)
@@ -56,7 +56,7 @@ internal partial class AppStateUseCase
 		newAppState = newAppState with { AllDataProviders = GetDataProviderList() };
 
 
-		return Task.FromResult(newAppState);
+		return Task.FromResult((newAppState,newAuxDataState));
 	}
 	internal TucSpaceData GetSpaceData(Guid spaceDataId)
 	{

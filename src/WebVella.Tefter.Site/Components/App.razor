@@ -20,24 +20,24 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<base href="/" />
-	<link href="_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css" rel="stylesheet" />
+	<link href="_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css?cb=@cb" rel="stylesheet" />
 	<link rel="stylesheet" href="WebVella.Tefter.Site.styles.css?cb=@cb" />
 	<link rel="stylesheet" href="_content/WebVella.Tefter/styles.css?cb=@cb" />
 	<link rel="icon" type="image/png" href="_content/WebVella.Tefter/favicon.png" />
-	<script src="_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js" type="module" async></script>
+	@* <script src="_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js?cb=@cb" type="module" async></script> *@
 
 	<script src="_content/WebVella.Tefter/lib/quill.js"></script>
 	<HeadOutlet @rendermode="new InteractiveServerRenderMode(prerender: false)" />
 </head>
 
 <body>
+	@* <loading-theme storage-name="tf-theme"></loading-theme> *@
 	<div id="top"></div>
 	<Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
-	<script src="_framework/blazor.web.js"></script>
-	<script src="_content/Microsoft.FluentUI.AspNetCore.Components/js/loading-theme.js" type="text/javascript"></script>
-	<script src="_content/WebVella.Tefter/lib/Sortable.min.js" type="text/javascript"></script>
+	<script src="_framework/blazor.web.js?cb=@cb"></script>
+	<script src="_content/Microsoft.FluentUI.AspNetCore.Components/js/loading-theme.js?cb=@cb" type="text/javascript"></script>
+	<script src="_content/WebVella.Tefter/lib/Sortable.min.js?cb=@cb" type="text/javascript"></script>
 	<script src="_content/WebVella.Tefter/app.js?cb=@cb" type="text/javascript"></script>
-	<loading-theme storage-name="tf-theme"></loading-theme>
 </body>
 </html>
 

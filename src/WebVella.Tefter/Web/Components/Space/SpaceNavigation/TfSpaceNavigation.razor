@@ -1,9 +1,9 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfUserState.Value.SidebarExpanded)
+@if (SidebarExpanded.Value)
 {
 	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
-		<div class="@($"sidebar-nav {(TfUserState.Value.SidebarExpanded ? "expanded" : "collapsed")}")">
+		<div class="@($"sidebar-nav expanded")">
 			<div class="sidebar-toolbar">
 				<div class="sidebar-toolbar-mode">
 					<FluentToolbar Class="modebar">

@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceNavigation.TfSpaceNavigation", "WebVella.Tefter")]
 public partial class TfSpaceNavigation : TfBaseComponent
 {
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
@@ -31,6 +31,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
 		await _generateMenu();
 		EnableRenderLock();
 	}

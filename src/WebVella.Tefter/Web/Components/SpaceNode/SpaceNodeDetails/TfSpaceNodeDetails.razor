@@ -1,28 +1,14 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfUserState.Value.SidebarExpanded)
+@if (SidebarExpanded.Value)
 {
 	<TfSpaceNavigation />
 }
-@if (TfRouteState.Value.SpaceNodeId is null)
+@if (TfAppState.Value.SpaceNode is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
-			<FluentMessageBar Title="No space found"
-							  Style="border: 1px solid var(--neutral-base-color)"
-							  Intent="MessageIntent.Info"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				No page selected
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else if (TfAppState.Value.SpaceNode is null)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="No space found"
+			<FluentMessageBar Title="No page found"
 							  Style="border: 1px solid var(--neutral-base-color)"
 							  Intent="MessageIntent.Info"
 							  Type="@MessageType.Notification"

@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitHomeAsync(IServiceProvider serviceProvider,
+	internal async Task<(TfAppState, TfAuxDataState)> InitHomeAsync(IServiceProvider serviceProvider,
 		TucUser currentUser, TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
@@ -20,7 +20,7 @@ internal partial class AppStateUseCase
 				HomeViews = new(),
 				HomeSearchResults = new()
 			};
-			return newAppState;
+			return (newAppState,newAuxDataState);
 		}
 
 		//This temporary implementation
@@ -54,7 +54,7 @@ internal partial class AppStateUseCase
 		};
 
 
-		return newAppState;
+		return (newAppState,newAuxDataState);
 	}
 
 	internal async Task<List<TucSearchResult>> GetHomeSearchResultsAsync(Guid userId, string search = null,

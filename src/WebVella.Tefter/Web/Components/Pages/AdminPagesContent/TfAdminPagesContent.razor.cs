@@ -3,8 +3,12 @@ public partial class TfAdminPagesContent : TfBaseComponent
 {
 	[Parameter] public string Slug { get; set; } = String.Empty;
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
+	}
 	private Dictionary<string, object> _getComponentContext()
 	{
 		var componentData = new Dictionary<string, object>();

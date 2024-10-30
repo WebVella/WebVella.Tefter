@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitSpaceNodeAsync(IServiceProvider serviceProvider,
+	internal async Task<(TfAppState, TfAuxDataState)> InitSpaceNodeAsync(IServiceProvider serviceProvider,
 		TucUser currentUser, TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
@@ -13,7 +13,7 @@ internal partial class AppStateUseCase
 				SpaceNode = null,
 				SpaceNodeData = null
 			};
-			return newAppState;
+			return (newAppState,newAuxDataState);
 		}
 
 		TucSpaceNode spaceNode = null;
@@ -56,7 +56,7 @@ internal partial class AppStateUseCase
 
 
 
-		return newAppState;
+		return (newAppState,newAuxDataState);
 	}
 
 }

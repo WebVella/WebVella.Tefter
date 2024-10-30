@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 <div class="spacenav-nav-wrapper">
-	<div class="@($"spacenav-nav spacenav-nav__base {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+	<div class="@($"spacenav-nav spacenav-nav__base {(SidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")">
 		<FluentNavMenu>
 			<FluentNavLink Icon="@TfConstants.HomeIcon"
 						   Href="/" Match="@NavLinkMatch.All" title="@TfConstants.HomeMenuTitle" />
@@ -16,7 +16,7 @@
 		<FluentDivider Class="nav-divider"></FluentDivider>
 	</div>
 	<div class="spacenav-nav__secondary">
-		<div class="@($"spacenav-nav spacenav-nav__appbar  {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+		<div class="@($"spacenav-nav spacenav-nav__appbar  {(SidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")">
 			<FluentNavMenu>
 				@foreach (var item in TfAppState.Value.SpacesNav)
 				{
@@ -27,7 +27,7 @@
 		</div>
 
 		@* <TfAppBar Items="TfAppState.Value.SpacesNav" /> *@
-		<div class="@($"spacenav-nav spacenav-nav__end {(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")}")">
+		<div class="@($"spacenav-nav spacenav-nav__end {(SidebarExpanded.Value ? "sidebar-expanded" : "sidebar-collapsed")}")">
 			<FluentNavMenu>
 				<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon"
 							   OnClick="_searchSpaceHandler" title="@LOC("Search Spaces")" />

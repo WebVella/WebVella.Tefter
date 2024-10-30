@@ -19,7 +19,7 @@ public static class DependencyInjection
 
 		///Adds localization for components
 		services.AddLocalization();
-
+		services.AddHttpClient();
 		//Add Fluent UI which is our component library
 		//https://www.fluentui-blazor.net/
 		services.AddFluentUIComponents();

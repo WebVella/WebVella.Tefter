@@ -2,11 +2,16 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceData.SpaceDataNavigation.TfSpaceDataNavigation", "WebVella.Tefter")]
 public partial class TfSpaceDataNavigation : TfBaseComponent
 {
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
-
 	[Inject] private AppStateUseCase UC { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
+	}
 
 	private bool _settingsMenuVisible = false;
 	private string search = null;

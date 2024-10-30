@@ -2,10 +2,13 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.General.Navigation.TfNavigation", "WebVella.Tefter")]
 public partial class TfNavigation : TfBaseComponent
 {
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	private List<TucMenuItem> SpaceNav { get; set; } = new();
-
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
+	}
 	private async Task _addSpaceHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(

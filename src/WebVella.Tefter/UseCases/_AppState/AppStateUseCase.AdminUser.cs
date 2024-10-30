@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitAdminUsersAsync(IServiceProvider serviceProvider,
+	internal async Task<(TfAppState, TfAuxDataState)> InitAdminUsersAsync(IServiceProvider serviceProvider,
 		TucUser currentUser, TfRouteState routeState, 
 		TfAppState newAppState, TfAppState oldAppState, 
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
@@ -12,7 +12,7 @@ internal partial class AppStateUseCase
 			)
 		{
 			newAppState = newAppState with { AdminUsers = new(), AdminManagedUser = null, UserRoles = new() };
-			return newAppState;
+			return (newAppState,newAuxDataState);
 		};
 
 		//AdminUsers, AdminUsersPage
@@ -48,7 +48,7 @@ internal partial class AppStateUseCase
 				}
 			}
 		}
-		return newAppState;
+		return (newAppState,newAuxDataState);
 	}
 
 	internal async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)

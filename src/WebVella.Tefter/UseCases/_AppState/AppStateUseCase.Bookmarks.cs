@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitBookmarksAsync(IServiceProvider serviceProvider,
+	internal async Task<(TfAppState, TfAuxDataState)> InitBookmarksAsync(IServiceProvider serviceProvider,
 		TucUser currentUser, TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
@@ -18,7 +18,7 @@ internal partial class AppStateUseCase
 				ActiveSpaceViewSavedUrl = null,
 				ActiveSpaceViewBookmark = null
 			};
-			return newAppState;
+			return (newAppState,newAuxDataState);
 		}
 		if (newAppState.CurrentUserBookmarks == null || newAppState.CurrentUserSaves == null)
 		{
@@ -37,7 +37,7 @@ internal partial class AppStateUseCase
 			ActiveSpaceViewBookmark = activeBookmark
 		};
 
-		return newAppState;
+		return (newAppState,newAuxDataState);
 	}
 
 	internal async Task<(List<TucBookmark>, List<TucBookmark>)> GetUserBookmarksAsync(Guid userId)

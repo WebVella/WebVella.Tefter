@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<TfAppState> InitAdminSharedColumnsAsync(
+	internal Task<(TfAppState, TfAuxDataState)> InitAdminSharedColumnsAsync(
 		IServiceProvider serviceProvider,
 		TucUser currentUser, TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
@@ -17,7 +17,7 @@ internal partial class AppStateUseCase
 				AdminSharedColumns = new(),
 				AdminSharedColumnDataTypes = new()
 			};
-			return Task.FromResult(newAppState);
+			return Task.FromResult((newAppState,newAuxDataState));
 		};
 
 
@@ -36,7 +36,7 @@ internal partial class AppStateUseCase
 			};
 
 
-		return Task.FromResult(newAppState);
+		return Task.FromResult((newAppState,newAuxDataState));
 	}
 
 	internal List<TucSharedColumn> GetSharedColumns()

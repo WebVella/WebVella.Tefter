@@ -12,20 +12,23 @@ public partial class TfRouteStateManager : FluxorComponent
 		if (disposing)
 		{
 			Navigator.LocationChanged -= Navigator_LocationChanged;
-			navigationChangingRegistration?.Dispose();
+			//navigationChangingRegistration?.Dispose();
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		await _init(null);
+		await _init(Navigator.Uri);
 	}
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-		Navigator.LocationChanged += Navigator_LocationChanged;
-		//navigationChangingRegistration = Navigator.RegisterLocationChangingHandler(LocationChangingHandler);
+		if (firstRender)
+		{
+			Navigator.LocationChanged += Navigator_LocationChanged;
+			//navigationChangingRegistration = Navigator.RegisterLocationChangingHandler(LocationChangingHandler);
+		}
 	}
 
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
@@ -36,14 +39,14 @@ public partial class TfRouteStateManager : FluxorComponent
 		});
 	}
 
-	private async ValueTask LocationChangingHandler(LocationChangingContext  args)
-	{
-		await _init(args.TargetLocation);
-	}
+	//private async ValueTask LocationChangingHandler(LocationChangingContext  args)
+	//{
+	//	await _init(args.TargetLocation);
+	//}
 
 	private async Task _init(string url)
 	{
-		if(String.IsNullOrWhiteSpace(url)) return;
+		if (String.IsNullOrWhiteSpace(url)) return;
 		using (await locker.LockAsync())
 		{
 			Dispatcher.Dispatch(new SetRouteStateAction(

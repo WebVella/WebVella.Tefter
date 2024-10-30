@@ -3,11 +3,18 @@
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private string search = null;
 	private int _stringLimit = 30;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
+
+	}
 
 	private async Task onAddClick()
 	{

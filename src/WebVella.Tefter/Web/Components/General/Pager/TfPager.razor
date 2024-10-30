@@ -5,19 +5,19 @@
 <nav role="navigation" class="paginator-nav ">
 	<div class="paginator-nav__left">
 		<FluentStack>
-			<FluentButton @onclick="GoFirst" Disabled="@(Page == 1)" title="@LOC("Go to first page")">
+			<FluentButton @onclick="_goFirst" Disabled="@(Page == 1)" title="@LOC("Go to first page")">
 				<FluentIcon Value="@TfConstants.GetIcon("ChevronDoubleLeft")" Width="20px" />
 			</FluentButton>
-			<FluentButton @onclick="GoPrevious" Disabled="@(Page == 1)" title="@LOC("Go to previous page")">
+			<FluentButton @onclick="_goPrevious" Disabled="@(Page == 1)" title="@LOC("Go to previous page")">
 				<FluentIcon Value="@TfConstants.GetIcon("ChevronLeft")" Width="20px" />
 			</FluentButton>
 			<div class="pagination-pager">
 				<FluentNumberField TValue="int" Value="@_page" ValueChanged="_pageChanged" />
 			</div>
-			<FluentButton @onclick="GoNext" title="@LOC("Go to next page")">
+			<FluentButton @onclick="_goNext" title="@LOC("Go to next page")">
 				<FluentIcon Value="@TfConstants.GetIcon("ChevronRight")" Width="20px" />
 			</FluentButton>
-			<FluentButton @onclick="GoLast" title="@LOC("Go to last page")">
+			<FluentButton @onclick="_goLast" title="@LOC("Go to last page")">
 				<FluentIcon Value="@TfConstants.GetIcon("ChevronDoubleRight")" Width="20px" />
 			</FluentButton>
 		</FluentStack>

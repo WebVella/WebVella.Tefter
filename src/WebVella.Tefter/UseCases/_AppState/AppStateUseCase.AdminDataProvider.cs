@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal async Task<TfAppState> InitAdminDataProviderAsync(
+	internal async Task<(TfAppState, TfAuxDataState)> InitAdminDataProviderAsync(
 		IServiceProvider serviceProvider,
 		TucUser currentUser, TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
@@ -21,7 +21,7 @@ internal partial class AppStateUseCase
 				AdminDataProviderData = null,
 				AdminDataProviderDataPage = 0
 			};
-			return newAppState;
+			return (newAppState,newAuxDataState);
 		};
 
 
@@ -88,7 +88,7 @@ internal partial class AppStateUseCase
 		}
 
 
-		return newAppState;
+		return (newAppState,newAuxDataState);
 	}
 
 	//Data Provider

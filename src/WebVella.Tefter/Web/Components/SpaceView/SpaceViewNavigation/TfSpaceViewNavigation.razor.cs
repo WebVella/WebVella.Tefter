@@ -3,15 +3,18 @@ namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewNavigation.TfSpaceViewNavigation", "WebVella.Tefter")]
 public partial class TfSpaceViewNavigation : TfBaseComponent
 {
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
-
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private bool _settingsMenuVisible = false;
 	private string search = null;
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
+	}
 
 	private List<TucMenuItem> _getMenu()
 	{
@@ -30,7 +33,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 				IconCollapsed = TfConstants.SpaceViewIcon,
 				Text = record.Name,
 				Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id),
-				Selected = record.Id == TfRouteState.Value.SpaceViewId
+				Selected = record.Id == TfAppState.Value.SpaceView?.Id
 			};
 			menuItems.Add(viewMenu);
 		}
@@ -41,7 +44,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 	private async Task onAddClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewManageDialog>(
-		new TucSpaceView() with { SpaceId = TfRouteState.Value.SpaceId.Value },
+		new TucSpaceView() with { SpaceId = TfAppState.Value.Space.Id },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

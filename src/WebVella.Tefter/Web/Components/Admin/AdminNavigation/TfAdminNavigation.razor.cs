@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminNavigation.TfAdminNavigation", "WebVella.Tefter")]
 public partial class TfAdminNavigation : TfBaseComponent
 {
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	private List<TucMenuItem> menuItems = new List<TucMenuItem>();
@@ -10,6 +10,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		SidebarExpanded.Select(x => x.SidebarExpanded);
 		generateMenu();
 	}
 

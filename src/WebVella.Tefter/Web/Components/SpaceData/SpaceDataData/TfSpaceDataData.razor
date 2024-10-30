@@ -18,7 +18,7 @@
 					<thead class="tf-grid-thead">
 						<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
 						<tr class="tf-grid-tr">
-							@foreach (var column in TfAppState.Value.SpaceData.Columns)
+							@foreach (var column in TfAppState.Value.SpaceDataData.Columns)
 							{
 								<th class="tf-grid-th">@column</th>
 							}
@@ -28,10 +28,10 @@
 						@foreach (TfDataRow row in TfAppState.Value.SpaceDataData.Rows)
 						{
 							<tr @key=@row["tf_id"] class="tf-grid-tr">
-								@foreach (var column in TfAppState.Value.SpaceData.Columns)
+								@foreach (var column in TfAppState.Value.SpaceDataData.Columns)
 								{
 									<td class="tf-grid-td">
-										<div>@row[column]</div>
+										<div>@row[column.Name]</div>
 									</td>
 								}
 							</tr>

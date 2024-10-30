@@ -41,9 +41,6 @@ public partial class TfAppStateManager : FluxorComponent
 		if (firstRender)
 		{
 			await _init(null, new TfAppState(), new TfAuxDataState());
-			_isBusy = false;
-			_renderedUserStateHash = Guid.NewGuid(); //force rerender
-			await InvokeAsync(StateHasChanged);
 			ActionSubscriber.SubscribeToAction<SetRouteStateAction>(this, On_RouteChanged);
 			//navigationChangingRegistration = Navigator.RegisterLocationChangingHandler(LocationChangingHandler);
 		}
@@ -63,6 +60,9 @@ public partial class TfAppStateManager : FluxorComponent
 				component: null,
 				state: auxDataState
 			));
+			_isBusy = false;
+			_renderedUserStateHash = Guid.NewGuid();
+			await InvokeAsync(StateHasChanged);
 		}
 	}
 
@@ -78,6 +78,7 @@ public partial class TfAppStateManager : FluxorComponent
 		InvokeAsync(async () =>
 		{
 			await _init(null, TfAppState.Value, TfAuxDataState.Value);
+			//the change in the user state should triggger rerender later
 		});
 	}
 
