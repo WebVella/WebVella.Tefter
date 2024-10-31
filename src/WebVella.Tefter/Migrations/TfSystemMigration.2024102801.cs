@@ -15,9 +15,9 @@ internal class TefterSystemMigration2024102801 : TfSystemMigration
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddTextColumn("filepath", c => { c.NotNullable(); })
 					.AddGuidColumn("created_by", c => { c.Nullable(); })
-					.AddDateColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
+					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
 					.AddGuidColumn("last_modified_by", c => { c.Nullable(); })
-					.AddDateColumn("last_modified_on", c => { c.NotNullable().WithAutoDefaultValue(); });
+					.AddDateTimeColumn("last_modified_on", c => { c.NotNullable().WithAutoDefaultValue(); });
 
 			})
 			.WithConstraints(constraints =>
