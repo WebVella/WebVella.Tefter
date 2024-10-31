@@ -3,8 +3,9 @@
 public interface ITfFileManager
 {
 	public string RootPath { get; }
-	byte[] GetBytesFromLocalFileSystemPath(string path);
 
+	Result<byte[]> GetBytesFromLocalFileSystemPath(
+		string path);
 
 	public Result<TfFile> FindFile(
 		string filePath);
@@ -78,9 +79,17 @@ internal class TfFileManager : ITfFileManager
 		catch { }
 	}
 
-	public byte[] GetBytesFromLocalFileSystemPath(string path)
+	public Result<byte[]> GetBytesFromLocalFileSystemPath(
+		string path)
 	{
-		return File.ReadAllBytes(path);
+		try
+		{
+			return File.ReadAllBytes(path);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to read bytes from specified local filepath").CausedBy(ex));
+		}
 	}
 
 	public Result<TfFile> FindFile(
