@@ -209,7 +209,18 @@ internal class TfFileManager : ITfFileManager
 				if (existingFile is not null)
 				{
 					existingFile.LastModifiedBy = createdBy;
+
 					existingFile.LastModifiedOn = now;
+
+					var updateResult = _dboManager.Update<TfFile>(
+						existingFile,
+						nameof(TfFile.LastModifiedOn),
+						nameof(TfFile.LastModifiedBy));
+
+					if (!updateResult)
+					{
+						return Result.Fail(new Error("Update database failed"));
+					}
 
 					var path = GetFileSystemPath(existingFile);
 
