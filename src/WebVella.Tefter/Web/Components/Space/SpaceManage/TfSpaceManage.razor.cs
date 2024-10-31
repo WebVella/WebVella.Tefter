@@ -3,7 +3,6 @@
 public partial class TfSpaceManage : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private bool _submitting = false;

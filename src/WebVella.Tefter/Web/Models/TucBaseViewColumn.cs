@@ -433,7 +433,6 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	public virtual Task OnSpaceViewStateInited(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{

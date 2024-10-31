@@ -3,13 +3,13 @@ internal partial class AppStateUseCase
 {
 	internal Task<(TfAppState, TfAuxDataState)> InitAdminSharedColumnsAsync(
 		IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState,
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(routeState.FirstNode == RouteDataFirstNode.Admin
-			&& routeState.SecondNode == RouteDataSecondNode.SharedColumns)
+			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
+			&& newAppState.Route.SecondNode == RouteDataSecondNode.SharedColumns)
 			)
 		{
 			newAppState = newAppState with

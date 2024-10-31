@@ -1,6 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Store;
-[FeatureState]
-public partial record TfRouteState
+﻿namespace WebVella.Tefter.Web.Models;
+public partial record TucRouteState
 {
 	public Dictionary<int, string> NodesDict { get; init; } = new();
 	public Guid? SpaceId { get; init; }

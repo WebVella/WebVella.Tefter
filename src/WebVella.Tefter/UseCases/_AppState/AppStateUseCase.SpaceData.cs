@@ -2,7 +2,7 @@
 internal partial class AppStateUseCase
 {
 	internal Task<(TfAppState, TfAuxDataState)> InitSpaceDataAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState,
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
@@ -22,29 +22,29 @@ internal partial class AppStateUseCase
 		}
 		//SpaceDataList
 		if (newAppState.Space?.Id != oldAppState.Space?.Id)
-			newAppState = newAppState with { SpaceDataList = GetSpaceDataList(routeState.SpaceId.Value) };
+			newAppState = newAppState with { SpaceDataList = GetSpaceDataList(newAppState.Route.SpaceId.Value) };
 		//SpaceData
-		if (routeState.SpaceDataId is not null)
+		if (newAppState.Route.SpaceDataId is not null)
 		{
-			newAppState = newAppState with { SpaceData = GetSpaceData(routeState.SpaceDataId.Value) };
+			newAppState = newAppState with { SpaceData = GetSpaceData(newAppState.Route.SpaceDataId.Value) };
 
 			//Space Data data
-			if (routeState.ThirdNode == RouteDataThirdNode.Data)
+			if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
 			{
 				var viewData = GetSpaceDataDataTable(
 							spaceDataId: newAppState.SpaceData.Id,
 							userFilters: null,
 							userSorts: null,
-							search: routeState.Search,
-							page: routeState.Page,
-							pageSize: routeState.PageSize ?? TfConstants.PageSize
+							search: newAppState.Route.Search,
+							page: newAppState.Route.Page,
+							pageSize: newAppState.Route.PageSize ?? TfConstants.PageSize
 						);
 				newAppState = newAppState with
 				{
 					SpaceDataData = viewData,
-					SpaceDataPage = viewData?.QueryInfo.Page ?? (routeState.Page ?? 1),
-					SpaceDataPageSize = routeState.PageSize ?? TfConstants.PageSize,
-					SpaceDataSearch = routeState.Search
+					SpaceDataPage = viewData?.QueryInfo.Page ?? (newAppState.Route.Page ?? 1),
+					SpaceDataPageSize = newAppState.Route.PageSize ?? TfConstants.PageSize,
+					SpaceDataSearch = newAppState.Route.Search
 				};
 			}
 

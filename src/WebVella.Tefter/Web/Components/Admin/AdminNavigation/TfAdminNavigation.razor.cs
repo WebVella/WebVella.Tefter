@@ -4,7 +4,6 @@ public partial class TfAdminNavigation : TfBaseComponent
 {
 	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	private List<TucMenuItem> menuItems = new List<TucMenuItem>();
 
 	protected override void OnInitialized()

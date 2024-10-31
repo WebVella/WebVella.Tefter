@@ -2,11 +2,11 @@
 internal partial class AppStateUseCase
 {
 	internal Task<(TfAppState, TfAuxDataState)> InitPagesAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState,
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (routeState.FirstNode == RouteDataFirstNode.Admin)
+		if (newAppState.Route.FirstNode == RouteDataFirstNode.Admin)
 		{
 			newAppState = newAppState with
 			{
@@ -30,7 +30,6 @@ internal partial class AppStateUseCase
 				component.OnSpaceViewStateInited(
 						serviceProvider: _serviceProvider,
 						currentUser: currentUser,
-						routeState: routeState,
 						newAppState: newAppState,
 						oldAppState: oldAppState,
 						newAuxDataState: newAuxDataState,

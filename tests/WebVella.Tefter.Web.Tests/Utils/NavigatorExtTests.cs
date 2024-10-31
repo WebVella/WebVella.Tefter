@@ -14,7 +14,7 @@ public class NavigatorExtTests
 		//Given
 		var baseUrl = "http://localhost";
 		Uri uri = new Uri(baseUrl);
-		TfRouteState result = new();
+		TucRouteState result = new();
 		Guid spaceId = Guid.NewGuid();
 		Guid userId = Guid.NewGuid();
 		Guid providerId = Guid.NewGuid();
@@ -215,7 +215,7 @@ public class NavigatorExtTests
 		//Given
 		var baseUrl = "http://localhost";
 		Uri uri = new Uri(baseUrl);
-		TfRouteState result = new();
+		TucRouteState result = new();
 
 		int page = 3;
 		int pageSize = 12;

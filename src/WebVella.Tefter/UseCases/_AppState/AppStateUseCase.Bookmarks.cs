@@ -2,13 +2,13 @@
 internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitBookmarksAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState,
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(routeState.FirstNode == RouteDataFirstNode.Home
-			|| routeState.FirstNode == RouteDataFirstNode.Space)
+			!(newAppState.Route.FirstNode == RouteDataFirstNode.Home
+			|| newAppState.Route.FirstNode == RouteDataFirstNode.Space)
 			)
 		{
 			newAppState = newAppState with
@@ -29,8 +29,8 @@ internal partial class AppStateUseCase
 				CurrentUserSaves = saves
 			};
 		}
-		var activeSave = newAppState.CurrentUserSaves.FirstOrDefault(x => x.Id == routeState.ActiveSaveId);
-		var activeBookmark = newAppState.CurrentUserBookmarks.FirstOrDefault(x => x.SpaceViewId == routeState.SpaceViewId);
+		var activeSave = newAppState.CurrentUserSaves.FirstOrDefault(x => x.Id == newAppState.Route.ActiveSaveId);
+		var activeBookmark = newAppState.CurrentUserBookmarks.FirstOrDefault(x => x.SpaceViewId == newAppState.Route.SpaceViewId);
 		newAppState = newAppState with
 		{
 			ActiveSpaceViewSavedUrl = activeSave,

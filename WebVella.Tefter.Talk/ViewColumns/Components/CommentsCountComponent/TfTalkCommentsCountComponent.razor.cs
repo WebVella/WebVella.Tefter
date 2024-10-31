@@ -112,7 +112,6 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	public override Task OnSpaceViewStateInited(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{

@@ -4,13 +4,13 @@
 	var bcMenu = generateLocations();
 }
 <div class="location">
-	@if (TfRouteState.Value.FirstNode == RouteDataFirstNode.Admin)
+	@if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Admin)
 	{
 		<div class="title">
 			<FluentBadge Fill="somevalue" BackgroundColor="@TfConstants.AdminColor" Color="#ffffff">@LOC("Admin Panel")</FluentBadge>
 		</div>
 	}
-	else if (TfRouteState.Value.SpaceId is not null)
+	else if (TfAppState.Value.Route.SpaceId is not null)
 	{
 		<div class="title">
 			<FluentBadge Appearance="@Appearance.Neutral">@LOC("Space")</FluentBadge>

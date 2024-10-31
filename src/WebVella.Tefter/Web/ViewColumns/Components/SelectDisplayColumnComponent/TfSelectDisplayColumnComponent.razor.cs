@@ -89,14 +89,12 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	public override async Task OnSpaceViewStateInited(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		await base.OnSpaceViewStateInited(
 			serviceProvider:serviceProvider,
 			currentUser: currentUser,
-			routeState: routeState,
 			newAppState: newAppState,
 			oldAppState: oldAppState,
 			newAuxDataState: newAuxDataState,

@@ -5,7 +5,6 @@ namespace WebVella.Tefter.Web.Components;
 public partial class TfSpaceNavigation : TfBaseComponent
 {
 	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
 
@@ -183,7 +182,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 				{
 					_assignMenuItemActions(x);
 					x.Expanded = _expandedNodeIdList.Contains(x.Id);
-					x.Selected = TfRouteState.Value.SpaceNodeId == ((TucSpaceNode)x.Data).Id;
+					x.Selected = TfAppState.Value.Route.SpaceNodeId == ((TucSpaceNode)x.Data).Id;
 				});
 				menuItems.Add(item);
 			}
@@ -204,7 +203,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 					Match = NavLinkMatch.Prefix,
 					Text = record.Name,
 					Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.SpaceViewId),
-					Selected = record.SpaceViewId == TfRouteState.Value.SpaceViewId
+					Selected = record.SpaceViewId == TfAppState.Value.Route.SpaceViewId
 				};
 				menuItems.Add(viewMenu);
 			}
@@ -226,7 +225,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 					Match = NavLinkMatch.Prefix,
 					Text = record.Name,
 					Url = NavigatorExt.AddQueryValueToUri(record.Url, TfConstants.ActiveSaveQueryName, record.Id.ToString()),
-					Selected = record.Id == TfRouteState.Value.ActiveSaveId
+					Selected = record.Id == TfAppState.Value.Route.ActiveSaveId
 				};
 				menuItems.Add(viewMenu);
 			}

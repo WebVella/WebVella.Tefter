@@ -2,7 +2,7 @@
 internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitSpaceNodeAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState,
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
@@ -17,10 +17,10 @@ internal partial class AppStateUseCase
 		}
 
 		TucSpaceNode spaceNode = null;
-		if (routeState.SpaceNodeId is not null)
+		if (newAppState.Route.SpaceNodeId is not null)
 		{
 			spaceNode = newAppState.SpaceNodes.FindItemByMatch(
-				matcher:(x)=> x.Id == routeState.SpaceNodeId.Value,
+				matcher:(x)=> x.Id == newAppState.Route.SpaceNodeId.Value,
 				childGetter:(x)=> x.ChildNodes
 			);
 			newAppState = newAppState with { SpaceNode = spaceNode };
@@ -41,7 +41,6 @@ internal partial class AppStateUseCase
 					var(appStateResult, auxDataStateResult) = await spaceNodeMeta.Instance.InitState(
 					serviceProvider:serviceProvider,
 					currentUser: currentUser, 
-					routeState: routeState, 
 					newAppState: newAppState,
 					oldAppState: oldAppState,
 					newAuxDataState: newAuxDataState,

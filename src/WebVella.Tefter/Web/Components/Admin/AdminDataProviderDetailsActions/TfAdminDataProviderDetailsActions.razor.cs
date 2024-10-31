@@ -3,7 +3,6 @@
 public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	private bool _isDeleting = false;
 	private async Task _editProvider()

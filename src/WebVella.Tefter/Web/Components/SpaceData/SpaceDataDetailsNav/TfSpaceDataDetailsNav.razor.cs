@@ -3,7 +3,6 @@
 public partial class TfSpaceDataDetailsNav : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private List<TucSpaceView> viewList = new();
@@ -12,24 +11,24 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 	private List<TucMenuItem> _generateMenu()
 	{
 		var menu = new List<TucMenuItem>();
-		var providerId = TfRouteState.Value.DataProviderId ?? Guid.Empty;
+		var providerId = TfAppState.Value.Route.DataProviderId ?? Guid.Empty;
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
+			Url = String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Text = LOC("Details")
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataViewsPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
+			Url = String.Format(TfConstants.SpaceDataViewsPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Used in Views")
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.SpaceDataDataPageUrl, TfRouteState.Value.SpaceId, TfRouteState.Value.SpaceDataId),
+			Url = String.Format(TfConstants.SpaceDataDataPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceDataId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Data")

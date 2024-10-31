@@ -7,7 +7,6 @@ public interface ITucAuxDataUseComponent
 	Task OnSpaceViewStateInited(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState);
 }

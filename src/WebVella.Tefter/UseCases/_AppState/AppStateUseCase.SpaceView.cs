@@ -4,7 +4,6 @@ internal partial class AppStateUseCase
 	internal Task<(TfAppState, TfAuxDataState)> InitSpaceViewAsync(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
@@ -25,28 +24,28 @@ internal partial class AppStateUseCase
 		//SpaceViewList
 
 		if (newAppState.Space?.Id != oldAppState.Space?.Id)
-			newAppState = newAppState with { SpaceViewList = GetSpaceViewList(routeState.SpaceId.Value) };
+			newAppState = newAppState with { SpaceViewList = GetSpaceViewList(newAppState.Route.SpaceId.Value) };
 
 		//Space View
-		if (routeState.SpaceViewId is not null)
+		if (newAppState.Route.SpaceViewId is not null)
 		{
 			int defaultPageSize = TfConstants.PageSize;
 			if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
 			newAppState = newAppState with
 			{
-				SpaceView = GetSpaceView(routeState.SpaceViewId.Value),
-				SpaceViewColumns = GetViewColumns(routeState.SpaceViewId.Value),
-				SpaceViewPage = routeState.Page ?? 1,
-				SpaceViewPageSize = routeState.PageSize ?? defaultPageSize,
-				SpaceViewSearch = routeState.Search,
-				SpaceViewFilters = routeState.Filters,
-				SpaceViewSorts = routeState.Sorts,
+				SpaceView = GetSpaceView(newAppState.Route.SpaceViewId.Value),
+				SpaceViewColumns = GetViewColumns(newAppState.Route.SpaceViewId.Value),
+				SpaceViewPage = newAppState.Route.Page ?? 1,
+				SpaceViewPageSize = newAppState.Route.PageSize ?? defaultPageSize,
+				SpaceViewSearch = newAppState.Route.Search,
+				SpaceViewFilters = newAppState.Route.Filters,
+				SpaceViewSorts = newAppState.Route.Sorts,
 			};
 			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue)
 			{
 				TucSpaceViewPreset preset = null;
-				if (routeState.SpaceViewPresetId is not null)
-					preset = newAppState.SpaceView.Presets.GetPresetById(routeState.SpaceViewPresetId.Value);
+				if (newAppState.Route.SpaceViewPresetId is not null)
+					preset = newAppState.SpaceView.Presets.GetPresetById(newAppState.Route.SpaceViewPresetId.Value);
 
 				var viewData = GetSpaceDataDataTable(
 							spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
@@ -98,7 +97,6 @@ internal partial class AppStateUseCase
 						component.OnSpaceViewStateInited(
 								serviceProvider: serviceProvider,
 								currentUser: currentUser,
-								routeState: routeState,
 								newAppState: newAppState,
 								oldAppState: oldAppState,
 								newAuxDataState: newAuxDataState,

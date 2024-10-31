@@ -3,11 +3,11 @@ internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitSpaceAsync(
 		IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState,
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (routeState.FirstNode == RouteDataFirstNode.Admin)
+		if (newAppState.Route.FirstNode == RouteDataFirstNode.Admin)
 		{
 			newAppState = newAppState with { CurrentUserSpaces = new(), Space = null };
 			return (newAppState,newAuxDataState);
@@ -16,14 +16,14 @@ internal partial class AppStateUseCase
 		//CurrentUserSpaces
 		if (
 			newAppState.CurrentUserSpaces.Count == 0
-			|| (routeState.SpaceId is not null && !newAppState.CurrentUserSpaces.Any(x => x.Id == routeState.SpaceId))
+			|| (newAppState.Route.SpaceId is not null && !newAppState.CurrentUserSpaces.Any(x => x.Id == newAppState.Route.SpaceId))
 			) //Fill in only if not already loaded
 			newAppState = newAppState with { CurrentUserSpaces = await GetUserSpacesAsync(currentUser) };
 
-		if (routeState.SpaceId is not null)
+		if (newAppState.Route.SpaceId is not null)
 		{
-			var space = GetSpace(routeState.SpaceId.Value);
-			var spaceNodes = GetSpaceNodes(routeState.SpaceId.Value);
+			var space = GetSpace(newAppState.Route.SpaceId.Value);
+			var spaceNodes = GetSpaceNodes(newAppState.Route.SpaceId.Value);
 			
 			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes };
 		}

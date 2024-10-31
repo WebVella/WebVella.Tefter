@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Details)
+@if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Details)
 {
 	<FluentStack>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
@@ -14,28 +14,28 @@
 		</FluentButton>
 	</FluentStack>
 }
-else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Schema)
+else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Schema)
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 		@LOC("Add Column")
 		<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }
-else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.AuxColumns)
+else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.AuxColumns)
 {
 }
-else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.SharedKeys)
+else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.SharedKeys)
 {
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
 		@LOC("Shared key")
 		<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 	</FluentButton>
 }
-else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Synchronization)
+else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Synchronization)
 {
 
 }
-else if (TfRouteState.Value.ThirdNode == RouteDataThirdNode.Data)
+else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Data)
 {
 
 }

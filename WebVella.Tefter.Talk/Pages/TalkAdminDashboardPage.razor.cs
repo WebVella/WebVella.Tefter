@@ -8,7 +8,7 @@ public partial class TalkAdminDashboardPage : TucBaseScreenRegionComponent, ITuc
 	public string UrlSlug { get { return "talk-dashboard"; } }
 
 	public Task OnSpaceViewStateInited(IServiceProvider serviceProvider,TucUser currentUser,
-        TfRouteState routeState, TfAppState newAppState,
+        TfAppState newAppState,
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {
         var talkService = serviceProvider.GetRequiredService<ITalkService>();        

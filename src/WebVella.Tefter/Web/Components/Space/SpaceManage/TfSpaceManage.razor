@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 <TfSpaceNavigation />
-@if (TfRouteState.Value.SpaceId is null)
+@if (TfAppState.Value.Space is null)
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">

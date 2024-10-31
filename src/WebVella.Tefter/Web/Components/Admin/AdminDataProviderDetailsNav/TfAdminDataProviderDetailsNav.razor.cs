@@ -2,12 +2,12 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminDataProviderDetailsNav.TfAdminDataProviderDetailsNav","WebVella.Tefter")]
 public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 {
-	[Inject] private IState<TfRouteState> TfRouteState { get; set; }
+	[Inject] private IState<TfAppState> TfAppState { get; set; }
 
 	private List<TucMenuItem> _getMenu()
 	{
 		var menu = new List<TucMenuItem>();
-		var providerId = TfRouteState.Value.DataProviderId ?? Guid.Empty;
+		var providerId = TfAppState.Value.Route.DataProviderId ?? Guid.Empty;
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId),

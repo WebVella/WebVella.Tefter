@@ -2,11 +2,11 @@
 internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitHomeAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState,
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (!(routeState.FirstNode == RouteDataFirstNode.Home))
+		if (!(newAppState.Route.FirstNode == RouteDataFirstNode.Home))
 		{
 			newAppState = newAppState with
 			{
@@ -32,20 +32,20 @@ internal partial class AppStateUseCase
 		List<TucSpaceView> homeViews = await GetHomeViewsAsync();
 		List<TucSearchResult> homeSearchResults = await GetHomeSearchResultsAsync(
 			userId: currentUser.Id,
-			search: routeState.Search,
-			searchInBookmarks: routeState.SearchInBookmarks,
-			searchInSaves: routeState.SearchInSaves,
-			searchInViews: routeState.SearchInViews,
+			search: newAppState.Route.Search,
+			searchInBookmarks: newAppState.Route.SearchInBookmarks,
+			searchInSaves: newAppState.Route.SearchInSaves,
+			searchInViews: newAppState.Route.SearchInViews,
 			bookmarks: bookmarks,
 			saves: saves
 		);
 
 		newAppState = newAppState with
 		{
-			HomeSearch = routeState.Search,
-			HomeSearchInBookmarks = routeState.SearchInBookmarks,
-			HomeSearchInSaves = routeState.SearchInSaves,
-			HomeSearchInViews = routeState.SearchInViews,
+			HomeSearch = newAppState.Route.Search,
+			HomeSearchInBookmarks = newAppState.Route.SearchInBookmarks,
+			HomeSearchInSaves = newAppState.Route.SearchInSaves,
+			HomeSearchInViews = newAppState.Route.SearchInViews,
 			HomeTags = homeTags,
 			HomeBookmarks = homeBookmarks,
 			HomeSaves = homeSaves,

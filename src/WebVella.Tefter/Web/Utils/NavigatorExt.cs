@@ -2,7 +2,7 @@
 using WebVella.Tefter.Web.Models;
 internal static class NavigatorExt
 {
-	internal static TfRouteState GetRouteState(this NavigationManager navigator, string url = null)
+	internal static TucRouteState GetRouteState(this NavigationManager navigator, string url = null)
 	{
 		Uri uri = null;
 		if (String.IsNullOrWhiteSpace(url))
@@ -20,9 +20,9 @@ internal static class NavigatorExt
 		return GetNodeData(uri);
 	}
 
-	internal static TfRouteState GetNodeData(Uri uri)
+	internal static TucRouteState GetNodeData(Uri uri)
 	{
-		var result = new TfRouteState();
+		var result = new TucRouteState();
 
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
 		var dictIndex = 0;

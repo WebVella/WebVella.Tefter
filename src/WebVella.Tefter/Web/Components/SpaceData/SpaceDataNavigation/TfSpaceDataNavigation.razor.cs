@@ -4,7 +4,6 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 {
 	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	protected override void OnInitialized()
@@ -31,7 +30,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 				IconCollapsed = TfConstants.SpaceDataIcon,
 				Text = spaceData.Name,
 				Url = String.Format(TfConstants.SpaceDataPageUrl, spaceData.SpaceId, spaceData.Id),
-				Selected = spaceData.Id == TfRouteState.Value.SpaceDataId
+				Selected = spaceData.Id == TfAppState.Value.Route.SpaceDataId
 			};
 			menuItems.Add(menu);
 		}

@@ -14,13 +14,13 @@ public partial class TfAppStateManager : FluxorComponent
 	private Guid _renderedUserStateHash = Guid.Empty;
 	private Guid _renderedAppStateHash = Guid.Empty;
 	private bool _isBusy = true;
-	private IDisposable navigationChangingRegistration;
+	//private IDisposable navigationChangingRegistration;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
 		{
-			ActionSubscriber.UnsubscribeFromAllActions(this);
-			navigationChangingRegistration?.Dispose();
+			Navigator.LocationChanged -= Navigator_LocationChanged;
+			//navigationChangingRegistration?.Dispose();
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
@@ -41,9 +41,17 @@ public partial class TfAppStateManager : FluxorComponent
 		if (firstRender)
 		{
 			await _init(null, new TfAppState(), new TfAuxDataState());
-			ActionSubscriber.SubscribeToAction<SetRouteStateAction>(this, On_RouteChanged);
+			Navigator.LocationChanged += Navigator_LocationChanged;
 			//navigationChangingRegistration = Navigator.RegisterLocationChangingHandler(LocationChangingHandler);
 		}
+	}
+
+	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
+	{
+		InvokeAsync(async () =>
+		{
+			await _init(e.Location,TfAppState.Value, TfAuxDataState.Value);
+		});
 	}
 
 	private async Task _init(string url, TfAppState oldState, TfAuxDataState oldAuxState)
@@ -66,20 +74,12 @@ public partial class TfAppStateManager : FluxorComponent
 		}
 	}
 
-	private async ValueTask LocationChangingHandler(LocationChangingContext args)
-	{
-		await _init(args.TargetLocation, TfAppState.Value, TfAuxDataState.Value);
-		_renderedUserStateHash = Guid.NewGuid();
-		await InvokeAsync(StateHasChanged);
-	}
-
-	private void On_RouteChanged(SetRouteStateAction action)
-	{
-		InvokeAsync(async () =>
-		{
-			await _init(null, TfAppState.Value, TfAuxDataState.Value);
-			//the change in the user state should triggger rerender later
-		});
-	}
+	//private async ValueTask LocationChangingHandler(LocationChangingContext args)
+	//{
+	//	await _init(args.TargetLocation, TfAppState.Value, TfAuxDataState.Value);
+	//	_renderedUserStateHash = Guid.NewGuid();
+	//	await InvokeAsync(StateHasChanged);
+	//}
+	
 
 }

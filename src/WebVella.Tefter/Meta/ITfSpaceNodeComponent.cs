@@ -13,7 +13,6 @@ public interface ITfSpaceNodeComponent
 	public Task<(TfAppState,TfAuxDataState)> InitState(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
 		TfSpaceNodeComponentContext context);

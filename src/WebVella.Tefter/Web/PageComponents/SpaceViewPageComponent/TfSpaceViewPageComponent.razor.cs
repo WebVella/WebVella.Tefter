@@ -56,7 +56,6 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	public override Task<(TfAppState, TfAuxDataState)> InitState(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState,
 		TfSpaceNodeComponentContext context)
@@ -81,11 +80,11 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		List<TucScreenRegionComponentMeta> addonComponents = new();
 		int defaultPageSize = TfConstants.PageSize;
 		if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
-		int spaceViewPage = routeState.Page ?? 1;
-		int spaceViewPageSize = routeState.PageSize ?? defaultPageSize;
-		string spaceViewSearch = routeState.Search;
-		List<TucFilterBase> spaceViewFilters = routeState.Filters;
-		List<TucSort> spaceViewSorts = routeState.Sorts;
+		int spaceViewPage = newAppState.Route.Page ?? 1;
+		int spaceViewPageSize = newAppState.Route.PageSize ?? defaultPageSize;
+		string spaceViewSearch = newAppState.Route.Search;
+		List<TucFilterBase> spaceViewFilters = newAppState.Route.Filters;
+		List<TucSort> spaceViewSorts = newAppState.Route.Sorts;
 		List<Guid> selectedDataRows = oldAppState.SpaceView?.Id != newAppState.SpaceView?.Id ? new() : newAppState.SelectedDataRows;
 		#endregion
 
@@ -110,9 +109,9 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		if (spaceView is not null && spaceView.SpaceDataId is not null && newAppState.SpaceDataList.Any(x => x.Id == spaceView.SpaceDataId.Value))
 		{
 			TfSpaceViewPreset preset = null;
-			if (routeState.SpaceViewPresetId is not null)
+			if (newAppState.Route.SpaceViewPresetId is not null)
 				preset = tfSpaceView.Presets.FindItemByMatch(
-					matcher: (x) => x.Id == routeState.SpaceViewPresetId.Value,
+					matcher: (x) => x.Id == newAppState.Route.SpaceViewPresetId.Value,
 					childGetter: (x) => x.Nodes);
 
 			var getDataResult = dataManager.QuerySpaceData(
@@ -169,7 +168,6 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 					component.OnSpaceViewStateInited(
 							serviceProvider: serviceProvider,
 							currentUser: currentUser,
-							routeState: routeState,
 							newAppState: newAppState,
 							oldAppState: oldAppState,
 							newAuxDataState: newAuxDataState,

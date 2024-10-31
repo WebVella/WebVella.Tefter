@@ -2,13 +2,13 @@
 internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitAdminUsersAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, TfRouteState routeState, 
+		TucUser currentUser, 
 		TfAppState newAppState, TfAppState oldAppState, 
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(routeState.FirstNode == RouteDataFirstNode.Admin
-			&& routeState.SecondNode == RouteDataSecondNode.Users)
+			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
+			&& newAppState.Route.SecondNode == RouteDataSecondNode.Users)
 			)
 		{
 			newAppState = newAppState with { AdminUsers = new(), AdminManagedUser = null, UserRoles = new() };
@@ -18,14 +18,14 @@ internal partial class AppStateUseCase
 		//AdminUsers, AdminUsersPage
 		if (
 			newAppState.AdminUsers.Count == 0
-			|| (routeState.UserId is not null && !newAppState.AdminUsers.Any(x => x.Id == routeState.UserId))
+			|| (newAppState.Route.UserId is not null && !newAppState.AdminUsers.Any(x => x.Id == newAppState.Route.UserId))
 			)
 			newAppState = newAppState with { AdminUsers = await GetUsersAsync()};
 
 		//AdminManagedUser, UserRoles
-		if (routeState.UserId.HasValue)
+		if (newAppState.Route.UserId.HasValue)
 		{
-			var adminUser = await GetUserAsync(routeState.UserId.Value);
+			var adminUser = await GetUserAsync(newAppState.Route.UserId.Value);
 			newAppState = newAppState with { AdminManagedUser = adminUser };
 			if (adminUser is not null)
 			{
@@ -40,10 +40,10 @@ internal partial class AppStateUseCase
 				newAppState = newAppState with { UserRoles = roles ?? new List<TucRole>() };
 
 				//check for the other tabs
-				if (routeState.ThirdNode == RouteDataThirdNode.Access)
+				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Access)
 				{
 				}
-				else if (routeState.ThirdNode == RouteDataThirdNode.Saves)
+				else if (newAppState.Route.ThirdNode == RouteDataThirdNode.Saves)
 				{
 				}
 			}

@@ -3,7 +3,6 @@
 public partial class TfSpaceViewShareSelector : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	private bool _open = false;
 	private string _exportExcelUrl = "/api/export/export-view";
 	private string _exportSelectionBtnId = "tfExportSelectionBtn";
@@ -25,7 +24,7 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TucExportViewData()
 		{
 			SelectedRows = TfAppState.Value.SelectedDataRows,
-			RouteState = TfRouteState.Value
+			RouteState = TfAppState.Value.Route
 		});
 	}
 
@@ -35,7 +34,7 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 		return JsonSerializer.Serialize(new TucExportViewData()
 		{
 			SelectedRows = new(),
-			RouteState = TfRouteState.Value
+			RouteState = TfAppState.Value.Route
 		});
 	}
 

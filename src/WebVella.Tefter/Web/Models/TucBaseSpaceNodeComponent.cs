@@ -16,7 +16,6 @@ public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeCom
 	public virtual Task<(TfAppState,TfAuxDataState)> InitState(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfRouteState routeState,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
 		TfSpaceNodeComponentContext context) => Task.FromResult((newAppState,newAuxDataState));

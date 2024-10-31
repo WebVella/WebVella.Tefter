@@ -2,9 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminUserDetailsActions.TfAdminUserDetailsActions", "WebVella.Tefter")]
 public partial class TfAdminUserDetailsActions : TfBaseComponent
 {
-	[Inject] protected IState<TfRouteState> TfRouteState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-
 
 	private async Task _editUser()
 	{
