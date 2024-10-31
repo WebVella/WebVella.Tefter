@@ -140,11 +140,12 @@ internal class TfFileManager : ITfFileManager
 
 			var pagingSql = GeneratePagingSql(page, pageSize);
 
+			var orderBySql = " ORDER BY filePath ASC ";
 			var startsWithPathSql = " ( @starts_with_path IS NULL OR filePath ILIKE @starts_with_path ) ";
 			var containsPathSql = " ( @contains_path IS NULL OR filePath ILIKE @contains_path ) ";
 			var excludeTempFilesSql = " ( @tmp_path IS NULL OR filePath NOT ILIKE @tmp_path ) ";
 
-			var sql = $"WHERE {startsWithPathSql} AND {containsPathSql} AND {excludeTempFilesSql} {pagingSql}";
+			var sql = $"WHERE {startsWithPathSql} AND {containsPathSql} AND {excludeTempFilesSql} {orderBySql} {pagingSql}";
 
 			var startsWithParameter = new NpgsqlParameter("@starts_with_path", DbType.String); 
 			if(!string.IsNullOrWhiteSpace(startsWithPath))
@@ -176,10 +177,9 @@ internal class TfFileManager : ITfFileManager
 				tmpPathParameter.Value = DBNull.Value;
 			}
 
-			//TODO RUMEN: fix order
 			var	files = _dboManager.GetList<TfFile>(
 					sql,
-					order: null, //new OrderSettings(nameof(TfFile.FilePath), OrderDirection.ASC),
+					order: null,
 					startsWithParameter,
 					containsPathParameter,
 					tmpPathParameter);
