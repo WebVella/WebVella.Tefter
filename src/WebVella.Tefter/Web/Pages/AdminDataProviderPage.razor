@@ -15,6 +15,7 @@
 {
 	<FluentBodyContent Class="content-body">
 		<div class="content-inner">
+			<TfPageHeader Style="margin-bottom:15px;">@LOC("Data Providers")</TfPageHeader>
 			<FluentMessageBar Title="Under Construction" AllowDismiss="false"
 							  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
 				<div>TBD: Data Provider dashboard with various height level overview information</div>
@@ -29,9 +30,13 @@
 else
 {
 	var urlData = Navigator.GetRouteState();
-	<FluentBodyContent Class="content-body with-toolbar">
-		<TfAdminDataProviderDetailsNav />
+	<FluentBodyContent Class="content-body">
 		<div class="content-inner with-toolbar">
+			@if (TfAppState.Value.AdminDataProvider is not null)
+			{
+				<TfPageHeader>@TfAppState.Value.AdminDataProvider.Name</TfPageHeader>
+			}
+			<TfAdminDataProviderDetailsNav />
 			@if (!urlData.NodesDict.ContainsKey(3))
 			{
 				<TfAdminDataProviderDetails />

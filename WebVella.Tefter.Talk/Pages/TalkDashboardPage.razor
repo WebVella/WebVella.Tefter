@@ -1,3 +1,11 @@
 ﻿@namespace WebVella.Tefter.Talk.Pages
 @inherits TucBaseScreenRegionComponent
-<div>@Context.Hash</div>
+<FluentBodyContent Class="content-body">
+	<div class="content-inner">
+		<TfPageHeader Style="margin-bottom:15px;">@LOC("Talk Dashboard")</TfPageHeader>
+		<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+						  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+			<div>TBD: Talk dashboard with general information centered around the user</div>
+		</FluentMessageBar>
+	</div>
+</FluentBodyContent>

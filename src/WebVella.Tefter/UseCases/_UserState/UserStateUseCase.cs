@@ -61,6 +61,19 @@ internal partial class UserStateUseCase
 		var culture = await InitCulture(result.CurrentUser);
 		if (culture is null) return null;//should reload
 		result = result with { Culture = culture };
+
+		//Init Theme LocalStorage
+		TucThemeSettings userTheme = null;
+		var userThemeJson = await GetUnprotectedLocalStorage(TfConstants.UIThemeLocalKey);
+		if(!String.IsNullOrWhiteSpace(userThemeJson))
+		try{ 
+			userTheme = JsonSerializer.Deserialize<TucThemeSettings>(userThemeJson);
+		}catch{ }
+		if(userTheme is null){ 
+			userTheme = new TucThemeSettings { ThemeMode = user.Settings.ThemeMode, ThemeColor = user.Settings.ThemeColor };
+			await SetUnprotectedLocalStorage(TfConstants.UIThemeLocalKey, JsonSerializer.Serialize(userTheme));
+		}
+		
 		return result;
 	}
 

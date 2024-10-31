@@ -3,7 +3,18 @@
 
 @if (Context.Mode == TfComponentMode.Read)
 {
-	<TfSpaceViewDetails />
+	if (TfAppState.Value.SpaceView is null)
+	{
+		<FluentMessageBar Title="The page view no longer exists or not found"
+						  Style="border: 1px solid var(--neutral-base-color)"
+						  Intent="MessageIntent.Warning"
+						  Type="@MessageType.Notification"
+						  AllowDismiss="false" />
+	}
+	else
+	{
+		<TfSpaceViewDetails />
+	}
 }
 else if (Context.Mode == TfComponentMode.Create)
 {

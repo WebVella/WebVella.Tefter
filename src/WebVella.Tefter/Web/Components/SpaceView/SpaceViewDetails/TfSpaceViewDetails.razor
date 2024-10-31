@@ -16,7 +16,7 @@
 }
 else
 {
-@* 	@if (TfUserState.Value.SidebarExpanded)
+	@* 	@if (TfUserState.Value.SidebarExpanded)
 	{
 		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
 			<TfSpaceViewNavigation />
@@ -69,7 +69,9 @@ else
 					--tf-grid-border-color: @TfAppState.Value.SpaceBorderColor;
 				}
 			</style>
-			<TfSpaceViewHeader/>
+			<div class="content-header" style="padding-top:15px;">
+				<TfPageHeader>@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</TfPageHeader>
+			</div>
 			<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter" />
 			<div class="content-inner">
 				<div class="tfdt">

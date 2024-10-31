@@ -117,49 +117,37 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Accessibility" xml:space="preserve">
-    <value>Достъп</value>
+  <data name="Email" xml:space="preserve">
+    <value>Имейл</value>
   </data>
-  <data name="Are you sure that you need this column deleted?" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете колоната?</value>
+  <data name="Enabled" xml:space="preserve">
+    <value>активен</value>
   </data>
-  <data name="Cancel" xml:space="preserve">
-    <value>Откажи</value>
-  </data>
-  <data name="Color" xml:space="preserve">
-    <value>Цвят</value>
-  </data>
-  <data name="Columns" xml:space="preserve">
-    <value>Колони</value>
-  </data>
-  <data name="Create" xml:space="preserve">
-    <value>Създай</value>
-  </data>
-  <data name="Create view" xml:space="preserve">
-    <value>Създай изглед</value>
-  </data>
-  <data name="Default Sort" xml:space="preserve">
-    <value>Подреждане</value>
-  </data>
-  <data name="Icon" xml:space="preserve">
-    <value>Икона</value>
-  </data>
-  <data name="limited access" xml:space="preserve">
-    <value>ограничен достъп</value>
-  </data>
-  <data name="Manage data '{0}'" xml:space="preserve">
-    <value>Редакция на данни '{0}'</value>
-  </data>
-  <data name="Manage view" xml:space="preserve">
-    <value>Редактирай изглед</value>
-  </data>
-  <data name="Name" xml:space="preserve">
+  <data name="First Name" xml:space="preserve">
     <value>Име</value>
   </data>
-  <data name="Query Filters" xml:space="preserve">
-    <value>Филтри</value>
+  <data name="Last Name" xml:space="preserve">
+    <value>Фамилия</value>
   </data>
-  <data name="Save" xml:space="preserve">
-    <value>Запомни</value>
+  <data name="Localization" xml:space="preserve">
+    <value>Локализация</value>
+  </data>
+  <data name="No roles assigned" xml:space="preserve">
+    <value>Няма дадени роли</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Роли</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Theme Color" xml:space="preserve">
+    <value>Интерфейс Цвят</value>
+  </data>
+  <data name="Theme Mode" xml:space="preserve">
+    <value>Интерфейс Режим</value>
+  </data>
+  <data name="User not found" xml:space="preserve">
+    <value>Потребителят не е намерен</value>
   </data>
 </root>

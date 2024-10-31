@@ -3,38 +3,46 @@
 @inherits TfFormBaseComponent
 @if (!string.IsNullOrWhiteSpace(_error))
 {
-	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
-
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+		</div>
+	</FluentBodyContent>
 }
 else
 {
-	<TfCard>
-		<FluentGrid>
-			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceData.Name
-								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+	<FluentBodyContent Class="content-body">
+		<div class="content-inner">
+			<TfPageHeader Style="margin-bottom:1rem">@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
+			<TfCard>
+				<FluentGrid>
+					<FluentGridItem xs="6">
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceData.Name
+										 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 
-			</FluentGridItem>
-			<FluentGridItem xs="6">
-				<FluentInputLabel Label="@LOC("Data provider")" />
-				<FluentStack>
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
-									 Style="width:100%" ReadOnly="true" />
-					@if (TfUserState.Value.CurrentUser.IsAdmin)
-					{
-						<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
-									  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl,SelectedProvider.Id))"
-									  IconStart="@TfConstants.ViewIcon" Target="_blank" />
-					}
-				</FluentStack>
-			</FluentGridItem>
-		</FluentGrid>
-	</TfCard>
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
-	<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
-	<TfFilterCard DataProvider="SelectedProvider" Items="_form.Filters" ItemsChanged="_onFiltersChanged" />
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Default Sort")</FluentLabel>
-	<TfSortCard DataProvider="SelectedProvider" Items="_form.SortOrders" ItemsChanged="_onSortChanged" />
+					</FluentGridItem>
+					<FluentGridItem xs="6">
+						<FluentInputLabel Label="@LOC("Data provider")" />
+						<FluentStack>
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
+											 Style="width:100%" ReadOnly="true" />
+							@if (TfUserState.Value.CurrentUser.IsAdmin)
+							{
+								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
+											  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl,SelectedProvider.Id))"
+											  IconStart="@TfConstants.ViewIcon" Target="_blank" />
+							}
+						</FluentStack>
+					</FluentGridItem>
+				</FluentGrid>
+			</TfCard>
+			<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
+			<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
+			<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Query Filters")</FluentLabel>
+			<TfFilterCard DataProvider="SelectedProvider" Items="_form.Filters" ItemsChanged="_onFiltersChanged" />
+			<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Default Sort")</FluentLabel>
+			<TfSortCard DataProvider="SelectedProvider" Items="_form.SortOrders" ItemsChanged="_onSortChanged" />
+		</div>
+	</FluentBodyContent>
 }
 
