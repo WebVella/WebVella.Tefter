@@ -3,12 +3,15 @@
 public interface ITfFileManager
 {
 	public string RootPath { get; }
+	byte[] GetBytesFromLocalFileSystemPath(string path);
+
 
 	public Result<TfFile> FindFile(
 		string filePath);
 
 	public Result<List<TfFile>> FindAllFiles(
 	   string startsWithPath = null,
+	   string containsPath = null,
 	   bool includeTempFiles = false,
 	   int? page = null,
 	   int? pageSize = null);
@@ -75,6 +78,10 @@ internal class TfFileManager : ITfFileManager
 		catch { }
 	}
 
+	public byte[] GetBytesFromLocalFileSystemPath(string path)
+	{
+		return File.ReadAllBytes(path);
+	}
 
 	public Result<TfFile> FindFile(
 		string filePath)
@@ -106,6 +113,7 @@ internal class TfFileManager : ITfFileManager
 
 	public Result<List<TfFile>> FindAllFiles(
 		string startsWithPath = null,
+		string containsPath = null,
 		bool includeTempFiles = false,
 		int? page = null,
 		int? pageSize = null)
@@ -122,6 +130,12 @@ internal class TfFileManager : ITfFileManager
 			}
 
 			var pagingSql = GeneratePagingSql(page, pageSize);
+
+			//var startsWithPathSql = " ( @starts_with_path IS NULL OR filePath ILIKE @starts_with_path ) ";
+			//var containsPathSql = " ( @contains_path IS NULL OR filePath ILIKE @contains_path ) ";
+			//var excludeTempFilesSql = " ( @tmp_path IS NULL OR filePath NOT ILIKE @tmp_path ) ";
+
+			//var sql = $"WHERE filePath NOT ILIKE @tmp_path AND filePath ILIKE @startswith {pagingSql}";
 
 			List<TfFile> files = new List<TfFile>();
 
