@@ -60,7 +60,7 @@ public partial class TalkTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var (provider, spaceData) = SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
+				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
 				var dataTable = dataManager.QueryDataProvider(provider).Value;
 
 				List<Guid> rowIds = new List<Guid>();

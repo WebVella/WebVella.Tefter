@@ -85,6 +85,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					sharedKeys,
 					providerType);
 
+			provider.ServiceProvider = _serviceProvider;
 
 			InitDataProviderSharedColumns(provider);
 
@@ -132,6 +133,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					sharedKeys,
 					providerType);
 
+			provider.ServiceProvider = _serviceProvider;
+
 			InitDataProviderSharedColumns(provider);
 
 			return Result.Ok(provider);
@@ -177,6 +180,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						GetDataProviderColumns(dbo.Id),
 						sharedKeys,
 						providerType);
+
+				provider.ServiceProvider = _serviceProvider;
 
 				InitDataProviderSharedColumns(provider);
 

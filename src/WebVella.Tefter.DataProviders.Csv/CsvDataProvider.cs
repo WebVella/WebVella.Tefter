@@ -1,7 +1,10 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using FluentResults;
 using System.Globalization;
 using System.Text;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using System.Text.RegularExpressions;
 
 namespace WebVella.Tefter.DataProviders.Csv;
 
@@ -119,56 +122,92 @@ public class CsvDataProvider : ITfDataProviderType
 					break;
 			}
 
-			using (var stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-			using (var reader = new StreamReader(stream))
-			using (var csvReader = new CsvReader(reader, config))
+			if (string.IsNullOrWhiteSpace(settings.Filepath))
+				throw new Exception("Provider csv file path is not specified.");
+
+			if (settings.Filepath.ToLowerInvariant().StartsWith("tefter://"))
 			{
+				var fileManager = provider.ServiceProvider.GetService<ITfFileManager>();
 
-				csvReader.Read();
-				csvReader.ReadHeader();
+				var file = fileManager.FindFile(settings.Filepath).Value;
 
-				var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
+				if(file is null)
+					throw new Exception($"File '{settings.Filepath}' is not found.");
 
-				while (csvReader.Read())
+
+				using (var stream = fileManager.GetFileContentAsFileStream(file).Value )
 				{
-
-					Dictionary<string, string> sourceRow = new Dictionary<string, string>();
-					foreach (var column in csvReader.HeaderRecord)
-						sourceRow[column] = csvReader.GetField(column);
-
-
-					TfDataProviderDataRow row = new TfDataProviderDataRow();
-					foreach (var providerColumnWithSource in sourceColumns)
-					{
-						var sourceName = providerColumnWithSource.SourceName.Trim();
-						try
-						{
-							if (!sourceRow.ContainsKey(sourceName))
-							{
-								throw new Exception($"Source column '{sourceName}' is not found in csv.");
-							}
-
-							row[providerColumnWithSource.DbName] = ConvertValue(
-								providerColumnWithSource,
-								sourceRow[sourceName],
-								settings: settings,
-								culture:culture);
-
-						}
-						catch (Exception ex)
-						{
-							var value = sourceRow[sourceName];
-							throw new Exception($"Exception while processing source row: {ex.Message}");
-						}
-					}
-					result.Add(row);
+					return ReadCSVStream(stream, provider, config, settings, culture);
 				}
 			}
+			else
+			{
+				using (var stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+				{
+					return ReadCSVStream(stream, provider, config, settings, culture);
+				}
+			}
+
 		}
 		finally
 		{
 			Thread.CurrentThread.CurrentCulture = currentCulture;
 			Thread.CurrentThread.CurrentUICulture = currentUICulture;
+		}
+	}
+
+	private ReadOnlyCollection<TfDataProviderDataRow> ReadCSVStream( 
+		Stream stream, 
+		TfDataProvider provider,
+		CsvConfiguration config,
+		CsvDataProviderSettings settings,
+		CultureInfo culture )
+	{
+		var result = new List<TfDataProviderDataRow>();
+
+		using (var reader = new StreamReader(stream))
+		using (var csvReader = new CsvReader(reader, config))
+		{
+
+			csvReader.Read();
+			csvReader.ReadHeader();
+
+			var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
+
+			while (csvReader.Read())
+			{
+
+				Dictionary<string, string> sourceRow = new Dictionary<string, string>();
+				foreach (var column in csvReader.HeaderRecord)
+					sourceRow[column] = csvReader.GetField(column);
+
+
+				TfDataProviderDataRow row = new TfDataProviderDataRow();
+				foreach (var providerColumnWithSource in sourceColumns)
+				{
+					var sourceName = providerColumnWithSource.SourceName.Trim();
+					try
+					{
+						if (!sourceRow.ContainsKey(sourceName))
+						{
+							throw new Exception($"Source column '{sourceName}' is not found in csv.");
+						}
+
+						row[providerColumnWithSource.DbName] = ConvertValue(
+							providerColumnWithSource,
+							sourceRow[sourceName],
+							settings: settings,
+							culture: culture);
+
+					}
+					catch (Exception ex)
+					{
+						var value = sourceRow[sourceName];
+						throw new Exception($"Exception while processing source row: {ex.Message}");
+					}
+				}
+				result.Add(row);
+			}
 		}
 
 		return result.AsReadOnly();

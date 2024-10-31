@@ -86,7 +86,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 					if (!result.IsSuccess)
 						throw new Exception("Unable to update synchronization tasks");
 
-					_providerManager.Synchronize(task);
+					await _providerManager.Synchronize(task);
 
 					result = _providerManager.UpdateSychronizationTask(
 						task.Id,
@@ -161,7 +161,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 
 
 	//this method is used to fill data in unit tests
-	internal void StartManualProcessTasks()
+	internal async Task StartManualProcessTasks()
 	{
 		var inprogresTasksResult = _providerManager.GetSynchronizationTasks(
 			status: TfSynchronizationStatus.InProgress);
@@ -213,7 +213,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			if (!result.IsSuccess)
 				throw new Exception("Unable to update synchronization tasks");
 
-			_providerManager.Synchronize(task);
+			await _providerManager.Synchronize(task);
 
 			result = _providerManager.UpdateSychronizationTask(
 				task.Id,

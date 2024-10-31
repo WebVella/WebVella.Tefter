@@ -39,7 +39,7 @@ public partial interface ITfDataProviderManager
 		string warning = null,
 		string error = null);
 	
-	internal void Synchronize(
+	internal Task Synchronize(
 		TfDataProviderSynchronizeTask task);
 }
 
@@ -448,9 +448,10 @@ ORDER BY st.created_on DESC");
 
 	#region <--- Synchronization --->
 
-	public async void Synchronize(
+	public async Task Synchronize(
 		TfDataProviderSynchronizeTask task)
 	{
+		await Task.Delay(1);
 
 		var providerResult = GetProvider(task.DataProviderId);
 		if (!providerResult.IsSuccess)

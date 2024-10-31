@@ -6,6 +6,7 @@ public partial interface ITfDataProviderManager { }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
 {
+	private readonly IServiceProvider _serviceProvider;
 	private readonly IDataManager _dataManager;
 	private readonly IDboManager _dboManager;
 	private readonly IDatabaseService _dbService;
@@ -14,6 +15,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 	public TfDataProviderManager(IServiceProvider serviceProvider)
 	{
+		_serviceProvider = serviceProvider;
 		_dataManager = serviceProvider.GetService<IDataManager>();
 		_dboManager = serviceProvider.GetService<IDboManager>();
 		_dbService = serviceProvider.GetService<IDatabaseService>();

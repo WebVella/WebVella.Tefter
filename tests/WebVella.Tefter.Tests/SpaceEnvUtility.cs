@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Tests;
 
 internal class SpaceEnvUtility
 {
-	public static (TfDataProvider, TfSpaceData) CreateTestStructureAndData(
+	public async static Task<(TfDataProvider, TfSpaceData)> CreateTestStructureAndData(
 		ServiceProvider serviceProvider,
 		IDatabaseService dbService)
 	{
@@ -103,7 +103,7 @@ internal class SpaceEnvUtility
 
 		var createResult = providerManager.CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy());
 
-		backgroundSync.StartManualProcessTasks();
+		await backgroundSync.StartManualProcessTasks(); 
 
 		//insert data for shared keys
 		DataTable dt = dbService.ExecuteSqlQueryCommand($"SELECT * FROM dp{provider.Index}");

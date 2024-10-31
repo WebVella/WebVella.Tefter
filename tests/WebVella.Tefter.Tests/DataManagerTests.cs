@@ -19,7 +19,7 @@ public partial class DataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var (provider, spaceData) = SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider,dbService);
+				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider,dbService);
 				//var result = dataManager.QuerySpaceData(spaceData.Id);
 				var result = dataManager.QueryDataProvider(provider);
 				result.IsSuccess.Should().BeTrue();
@@ -127,7 +127,7 @@ public partial class DataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var (provider, spaceData) = SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider,dbService);
+				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider,dbService);
 				var result = dataManager.QuerySpaceData(spaceData.Id,
 					noRows: true,
 					search: "10",
