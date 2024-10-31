@@ -140,41 +140,50 @@ internal class TfFileManager : ITfFileManager
 
 			var pagingSql = GeneratePagingSql(page, pageSize);
 
-			//var startsWithPathSql = " ( @starts_with_path IS NULL OR filePath ILIKE @starts_with_path ) ";
-			//var containsPathSql = " ( @contains_path IS NULL OR filePath ILIKE @contains_path ) ";
-			//var excludeTempFilesSql = " ( @tmp_path IS NULL OR filePath NOT ILIKE @tmp_path ) ";
+			var startsWithPathSql = " ( @starts_with_path IS NULL OR filePath ILIKE @starts_with_path ) ";
+			var containsPathSql = " ( @contains_path IS NULL OR filePath ILIKE @contains_path ) ";
+			var excludeTempFilesSql = " ( @tmp_path IS NULL OR filePath NOT ILIKE @tmp_path ) ";
 
-			//var sql = $"WHERE filePath NOT ILIKE @tmp_path AND filePath ILIKE @startswith {pagingSql}";
+			var sql = $"WHERE {startsWithPathSql} AND {containsPathSql} AND {excludeTempFilesSql} {pagingSql}";
 
-			List<TfFile> files = new List<TfFile>();
-
-			if (!includeTempFiles && !string.IsNullOrWhiteSpace(startsWithPath))
+			var startsWithParameter = new NpgsqlParameter("@starts_with_path", DbType.String); 
+			if(!string.IsNullOrWhiteSpace(startsWithPath))
 			{
-				files = _dboManager.GetList<TfFile>(
-					$"WHERE filePath NOT ILIKE @tmp_path AND filePath ILIKE @startswith {pagingSql}",
-					order: new OrderSettings(nameof(TfFile.FilePath), OrderDirection.ASC),
-					new NpgsqlParameter("@tmp_path", "%" + FOLDER_SEPARATOR + TMP_FOLDER_NAME),
-					new NpgsqlParameter("@startswith", "%" + startsWithPath));
-			}
-			else if (!string.IsNullOrWhiteSpace(startsWithPath))
-			{
-				files = _dboManager.GetList<TfFile>(
-					$"WHERE filePath ILIKE @startswith {pagingSql}",
-					order: new OrderSettings(nameof(TfFile.FilePath), OrderDirection.ASC),
-					new NpgsqlParameter("@startswith", "%" + startsWithPath));
-			}
-			else if (!includeTempFiles)
-			{
-				files = _dboManager.GetList<TfFile>(
-					$"WHERE filePath NOT ILIKE @tmp_path {pagingSql}",
-					order: new OrderSettings(nameof(TfFile.FilePath), OrderDirection.ASC),
-					new NpgsqlParameter("@tmp_path", "%" + FOLDER_SEPARATOR + TMP_FOLDER_NAME));
+				startsWithParameter.Value = "%" + startsWithPath;
 			}
 			else
 			{
-				files = _dboManager.GetList<TfFile>($"WHERE TRUE = TRUE {pagingSql}");
+				startsWithParameter.Value = DBNull.Value;
 			}
 
+			var containsPathParameter = new NpgsqlParameter("@contains_path", DbType.String);
+			if (!string.IsNullOrWhiteSpace(containsPath))
+			{
+				containsPathParameter.Value = "%" + containsPath + "%";
+			}
+			else
+			{
+				containsPathParameter.Value = DBNull.Value;
+			}
+
+			var tmpPathParameter = new NpgsqlParameter("@tmp_path", DbType.String);
+			if (!includeTempFiles)
+			{
+				tmpPathParameter.Value = "%" + FOLDER_SEPARATOR + TMP_FOLDER_NAME;
+			}
+			else
+			{
+				tmpPathParameter.Value = DBNull.Value;
+			}
+
+			
+			var	files = _dboManager.GetList<TfFile>(
+					sql,
+					order: new OrderSettings(nameof(TfFile.FilePath), OrderDirection.ASC),
+					startsWithParameter,
+					containsPathParameter,
+					tmpPathParameter);
+			
 			return Result.Ok(files);
 		}
 		catch (Exception ex)
