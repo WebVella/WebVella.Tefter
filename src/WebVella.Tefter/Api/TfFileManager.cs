@@ -550,7 +550,12 @@ internal class TfFileManager : ITfFileManager
 		if (string.IsNullOrWhiteSpace(filePath))
 			return string.Empty;
 
+		
 		filePath = filePath.ToLowerInvariant();
+
+		if (filePath.StartsWith("tefter://fs"))
+			filePath = filePath.Substring("tefter://fs".Length);
+
 		if (!filePath.StartsWith(FOLDER_SEPARATOR))
 			filePath = FOLDER_SEPARATOR + filePath;
 
@@ -582,6 +587,12 @@ internal class TfFileManager : ITfFileManager
 					"Filepath is not provided") });
 			}
 
+			if( ! ValidateFilePath(filePath) )
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Filepath is not valid") });
+			}
+
 			var fileExists = _fileManager.FindFile(filePath).Value != null;
 
 			if (fileExists && !overwrite)
@@ -598,6 +609,11 @@ internal class TfFileManager : ITfFileManager
 			string destinationFilepath,
 			bool overwrite)
 		{
+			if (!ValidateFilePath(sourceFilepath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Source filepath is not valid") });
+			}
 
 			if (string.IsNullOrWhiteSpace(sourceFilepath))
 			{
@@ -609,6 +625,12 @@ internal class TfFileManager : ITfFileManager
 			{
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"Destination filePath is not provided") });
+			}
+
+			if (!ValidateFilePath(destinationFilepath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Destination filepath is not valid") });
 			}
 
 			var srcFile = _fileManager.FindFile(sourceFilepath).Value;
@@ -636,6 +658,12 @@ internal class TfFileManager : ITfFileManager
 			bool overwrite)
 		{
 
+			if (!ValidateFilePath(sourceFilepath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Source filepath is not valid") });
+			}
+
 			if (string.IsNullOrWhiteSpace(sourceFilepath))
 			{
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -647,6 +675,13 @@ internal class TfFileManager : ITfFileManager
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"Destination filePath is not provided") });
 			}
+
+			if (!ValidateFilePath(destinationFilepath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Destination filepath is not valid") });
+			}
+
 
 			var srcFile = _fileManager.FindFile(sourceFilepath).Value;
 
@@ -676,6 +711,13 @@ internal class TfFileManager : ITfFileManager
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"Filepath is not provided") });
 			}
+
+			if (!ValidateFilePath(filePath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Filepath is not valid") });
+			}
+
 
 			var fileToDelete = _fileManager.FindFile(filePath).Value;
 
@@ -712,6 +754,31 @@ internal class TfFileManager : ITfFileManager
 			}
 
 			return new ValidationResult();
+		}
+
+		private bool ValidateFilePath(string filePath)
+		{
+			if (string.IsNullOrWhiteSpace(filePath))
+				return false;
+
+			var filePathTmp = filePath.ToLowerInvariant();
+			if (!filePathTmp.StartsWith(FOLDER_SEPARATOR))
+				filePathTmp = FOLDER_SEPARATOR + filePathTmp;
+
+			try
+			{
+				if (!filePathTmp.StartsWith("tefter://fs"))
+					filePathTmp = $"tefter://fs{filePathTmp}";
+
+				Uri uri = new Uri(filePathTmp);
+
+				return true;
+			}
+			catch
+			{
+			}
+
+			return false;
 		}
 	}
 

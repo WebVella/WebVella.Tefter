@@ -21,4 +21,21 @@ public class TfFile
 
 	[DboModelProperty("last_modified_on")]
 	public DateTime LastModifiedOn { get; set; }
+
+	public Uri Uri 
+	{ 
+		get
+		{
+			try
+			{
+				return new Uri($"tefter://fs{FilePath}");
+			}
+			catch
+			{
+				return null;
+			}
+		} 
+	}
+
+	public string DownloadPath { get { return $"/fs{FilePath}"; } }
 }
