@@ -1,0 +1,61 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Update file content")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.SaveIcon"
+				  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
+									 Label="@LOC("Name")" Style="width:100%" ReadOnly="true"/>
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentInputLabel Label="@LOC("Upload new content")" />
+					<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+						<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
+									  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
+						@if (progressPercent < 100)
+						{
+							<TfProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
+						}
+						else if (_upload is not null)
+						{
+							<div style="display:flex;flex:0 0 auto;align-items:center">
+								<FluentIcon Value="@TfConstants.GetIcon("Checkmark",variant:IconVariant.Filled)" Color="@Color.Success" />
+								<div> @_upload.Name</div>
+							</div>
+						}
+					</FluentStack>
+					<FluentInputFile @ref="@fileUploader"
+									 DragDropZoneVisible="false"
+									 Mode="InputFileMode.SaveToTemporaryFolder"
+									 Multiple="false"
+									 AnchorId="@_uploadId"
+									 MaximumFileSize="@(100 * 1024 * 1024)"
+									 Accept="@Content.FileExtension"
+									 OnProgressChange="@_onProgress"
+									 OnCompleted="@_onCompleted" />
+					<FluentValidationMessage For="@(() => _form.LocalFilePath)" />
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
+	</div>
+</FluentDialogBody>
