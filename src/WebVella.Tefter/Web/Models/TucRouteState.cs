@@ -42,7 +42,8 @@ public enum RouteDataSecondNode
 	SpaceView = 4,
 	SpaceData = 5,
 	Pages = 6,
-	SpacePage = 7
+	SpacePage = 7,
+	FileRepository = 8,
 }
 
 public enum RouteDataThirdNode

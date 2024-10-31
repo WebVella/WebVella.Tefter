@@ -43,6 +43,9 @@ public partial class TfConstants
 	public static Icon AdminAuxColumnsIcon = GetIcon("Column");
 	public static string AdminAuxColumnsMenuTitle = "Shared Columns";
 
+	public static Icon AdminFileRepositoryIcon = GetIcon("DocumentDatabase");
+	public static string AdminFileRepositoryMenuTitle = "File Repository";
+
 
 	//Action icons
 	public static string PageIconString = "Document";

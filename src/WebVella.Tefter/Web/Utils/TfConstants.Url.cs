@@ -32,6 +32,7 @@ public partial class TfConstants
 	public static string RouteNameData  = "data";
 	public static string RouteNamePages  = "pages";
 	public static string RouteNameSharedColumns  = "aux-columns";
+	public static string RouteNameFileRepository  = "file-repository";
 	public static string AdminDashboardUrl  = $"/{RouteNameAdmin}";
 	public static string AdminPagesUrl  = $"/{RouteNameAdmin}/{RouteNamePages}";
 	public static string AdminPagesSingleUrl  = $"/{RouteNameAdmin}/{RouteNamePages}/{{0}}";
@@ -48,6 +49,7 @@ public partial class TfConstants
 	public static string AdminDataProviderSynchronizationPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSynchronization}";
 	public static string AdminDataProviderDataPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameData}";
 	public static string AdminSharedColumnsPageUrl  = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";
+	public static string AdminFileRepositoryPageUrl  = $"/{RouteNameAdmin}/{RouteNameFileRepository}";
 
 	public static string RouteNameSpace  = "space";
 	public static string RouteNameSpacePage  = "page";

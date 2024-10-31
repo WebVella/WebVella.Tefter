@@ -55,6 +55,10 @@ internal static class NavigatorExt
 				{
 					result = result with { SecondNode = RouteDataSecondNode.SharedColumns };
 				}
+				else if (result.NodesDict[1] == TfConstants.RouteNameFileRepository)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.FileRepository };
+				}
 				//Process 3
 				if (result.NodesDict.Count >= 3)
 				{

@@ -150,6 +150,16 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(default);
 		#endregion
 
+		#region << Admin FileRepository >>
+		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminFileRepositoryPageUrl)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(2);
+		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
+		result.SecondNode.Should().Be(RouteDataSecondNode.FileRepository);
+		result.ThirdNode.Should().Be(default);
+		#endregion
+
 		#region << Dashboard >>
 		uri = new Uri($"{baseUrl}/");
 		result = NavigatorExt.GetNodeData(uri);

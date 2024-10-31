@@ -61,8 +61,17 @@ public partial class TfAdminNavigation : TfBaseComponent
 			IconCollapsed = TfConstants.AdminAuxColumnsIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Match = NavLinkMatch.Prefix,
-			Url = "/admin/aux-columns",
+			Url = TfConstants.AdminSharedColumnsPageUrl,
 			Text = LOC(TfConstants.AdminAuxColumnsMenuTitle)
+		});
+		menuItems.Add(new TucMenuItem()
+		{
+			Id = "tf-file-repository-link",
+			IconCollapsed = TfConstants.AdminFileRepositoryIcon,
+			IconColor = TfConstants.AdminThemeColor,
+			Match = NavLinkMatch.Prefix,
+			Url = TfConstants.AdminFileRepositoryPageUrl,
+			Text = LOC(TfConstants.AdminFileRepositoryMenuTitle)
 		});
 		if (TfAppState.Value.Pages.Count > 0)
 		{

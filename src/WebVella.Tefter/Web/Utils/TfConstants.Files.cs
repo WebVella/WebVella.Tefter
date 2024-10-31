@@ -2,5 +2,5 @@
 
 public partial class TfConstants
 {
-	public const string SearchQuery = "search";
+	public const string AdminFileRepositoryStartPath = "/repository";
 }
