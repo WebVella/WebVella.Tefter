@@ -208,44 +208,54 @@ internal class TfFileManager : ITfFileManager
 
 				if (existingFile is not null)
 				{
-					var deleteResult = DeleteFile(existingFile.FilePath);
+					existingFile.LastModifiedBy = createdBy;
+					existingFile.LastModifiedOn = now;
 
-					if (!deleteResult.IsSuccess)
+					var path = GetFileSystemPath(existingFile);
+
+					//delete existing file on FS
+					File.Delete(path);
+
+					//create new file on FS
+					using (Stream stream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite))
 					{
-						return Result.Fail(deleteResult.Errors);
+						stream.Write(buffer, 0, buffer.Length);
+						stream.Close();
 					}
 				}
-
-				TfFile file = new TfFile
+				else
 				{
-					Id = Guid.NewGuid(),
-					FilePath = filePath,
-					CreatedBy = createdBy,
-					CreatedOn = now,
-					LastModifiedBy = createdBy,
-					LastModifiedOn = now
-				};
+					TfFile file = new TfFile
+					{
+						Id = Guid.NewGuid(),
+						FilePath = filePath,
+						CreatedBy = createdBy,
+						CreatedOn = now,
+						LastModifiedBy = createdBy,
+						LastModifiedOn = now
+					};
 
-				var insertResult = _dboManager.Insert<TfFile>(file);
+					var insertResult = _dboManager.Insert<TfFile>(file);
 
-				if (!insertResult)
-				{
-					return Result.Fail(new Error("Insert into database failed"));
-				}
+					if (!insertResult)
+					{
+						return Result.Fail(new Error("Insert into database failed"));
+					}
 
-				var path = GetFileSystemPath(file);
+					var path = GetFileSystemPath(file);
 
-				var folderPath = Path.GetDirectoryName(path);
+					var folderPath = Path.GetDirectoryName(path);
 
-				if (!Directory.Exists(folderPath))
-				{
-					Directory.CreateDirectory(folderPath);
-				}
+					if (!Directory.Exists(folderPath))
+					{
+						Directory.CreateDirectory(folderPath);
+					}
 
-				using (Stream stream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite))
-				{
-					stream.Write(buffer, 0, buffer.Length);
-					stream.Close();
+					using (Stream stream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite))
+					{
+						stream.Write(buffer, 0, buffer.Length);
+						stream.Close();
+					}
 				}
 
 				scope.Complete();
