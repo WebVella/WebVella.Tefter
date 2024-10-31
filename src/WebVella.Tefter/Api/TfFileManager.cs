@@ -149,7 +149,7 @@ internal class TfFileManager : ITfFileManager
 			var startsWithParameter = new NpgsqlParameter("@starts_with_path", DbType.String); 
 			if(!string.IsNullOrWhiteSpace(startsWithPath))
 			{
-				startsWithParameter.Value = "%" + startsWithPath;
+				startsWithParameter.Value = startsWithPath + "%";
 			}
 			else
 			{
@@ -176,10 +176,10 @@ internal class TfFileManager : ITfFileManager
 				tmpPathParameter.Value = DBNull.Value;
 			}
 
-			
+			//TODO RUMEN: fix order
 			var	files = _dboManager.GetList<TfFile>(
 					sql,
-					order: new OrderSettings(nameof(TfFile.FilePath), OrderDirection.ASC),
+					order: null, //new OrderSettings(nameof(TfFile.FilePath), OrderDirection.ASC),
 					startsWithParameter,
 					containsPathParameter,
 					tmpPathParameter);
