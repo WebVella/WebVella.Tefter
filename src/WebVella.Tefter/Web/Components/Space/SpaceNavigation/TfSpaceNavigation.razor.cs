@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using WebVella.Tefter.Web.Utils;
 namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceNavigation.TfSpaceNavigation", "WebVella.Tefter")]
+[LocalizationResource("WebVella.Tefter.Web.Components.Space.SpaceNavigation.TfSpaceNavigation", "WebVella.Tefter")]
 public partial class TfSpaceNavigation : TfBaseComponent
 {
 	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }

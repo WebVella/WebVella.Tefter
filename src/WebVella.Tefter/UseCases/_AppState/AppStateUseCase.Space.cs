@@ -3,14 +3,14 @@ internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitSpaceAsync(
 		IServiceProvider serviceProvider,
-		TucUser currentUser, 
+		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (newAppState.Route.FirstNode == RouteDataFirstNode.Admin)
 		{
 			newAppState = newAppState with { CurrentUserSpaces = new(), Space = null };
-			return (newAppState,newAuxDataState);
+			return (newAppState, newAuxDataState);
 		}
 
 		//CurrentUserSpaces
@@ -24,7 +24,9 @@ internal partial class AppStateUseCase
 		{
 			var space = GetSpace(newAppState.Route.SpaceId.Value);
 			var spaceNodes = GetSpaceNodes(newAppState.Route.SpaceId.Value);
-			
+			var spacePageNode = spaceNodes.FindItemByMatch((x) => x.Type == TfSpaceNodeType.Page, (x) => x.ChildNodes);
+			if (spacePageNode != null)
+				space.DefaultNodeId = spacePageNode.Id;
 			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes };
 		}
 		else
@@ -32,7 +34,7 @@ internal partial class AppStateUseCase
 			newAppState = newAppState with { Space = null };
 		}
 
-		return (newAppState,newAuxDataState);
+		return (newAppState, newAuxDataState);
 	}
 
 	internal TucSpace GetSpace(Guid spaceId)
