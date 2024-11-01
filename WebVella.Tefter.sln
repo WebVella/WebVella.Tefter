@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Talk", "Web
 		{488533C5-7E51-4222-AD4C-3B3109B006A3} = {488533C5-7E51-4222-AD4C-3B3109B006A3}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Assets", "WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj", "{EC503074-45F3-4367-B295-22593B36F4D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{C4999968-5255-45A0-849B-E09FAF424BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4999968-5255-45A0-849B-E09FAF424BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4999968-5255-45A0-849B-E09FAF424BA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC503074-45F3-4367-B295-22593B36F4D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC503074-45F3-4367-B295-22593B36F4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC503074-45F3-4367-B295-22593B36F4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC503074-45F3-4367-B295-22593B36F4D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
