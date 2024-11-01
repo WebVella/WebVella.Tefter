@@ -147,6 +147,9 @@
   <data name="included" xml:space="preserve">
     <value>участва</value>
   </data>
+  <data name="leave empty, if no source" xml:space="preserve">
+    <value>остави празно, ако няма източник</value>
+  </data>
   <data name="Manage column" xml:space="preserve">
     <value>Редактирай колона</value>
   </data>
