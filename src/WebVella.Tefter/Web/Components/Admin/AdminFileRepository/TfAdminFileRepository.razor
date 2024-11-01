@@ -67,7 +67,7 @@ else
 												  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
 									<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
 												  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"/>
-									<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Download file")"
+									<FluentAnchor Appearance="@Appearance.Outline" Target="_blank"
 												  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
 								</FluentStack>
 							</div>

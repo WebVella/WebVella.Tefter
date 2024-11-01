@@ -1,0 +1,47 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@{
+	var _items = _generateItems();
+}
+@if (_items.Count == 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This view is not connected to a page")</FluentMessageBar>
+
+}
+else
+{
+	<div class="tf-grid-wrapper">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfAppState.Value.SpaceBackgkroundColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th" style="width:30px;"></th>
+					<th class="tf-grid-th">@LOC("page")</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in _items)
+				{
+					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+						<td class="tf-grid-td" style="width:30px;">
+							<div>
+								<FluentAnchor Appearance="@Appearance.Outline" title="@LOC("view details")" 
+									Href="@String.Format(TfConstants.SpaceNodePageUrl,context.SpaceId,context.Id)">
+									<FluentIcon Value="@TfConstants.ViewIcon" />
+								</FluentAnchor>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@context.Name
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+

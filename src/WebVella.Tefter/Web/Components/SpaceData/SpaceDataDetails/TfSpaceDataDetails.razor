@@ -53,7 +53,10 @@ else
 	}
 	else
 	{
-		<FluentBodyContent Class="content-body with-toolbar">
+		<FluentBodyContent Class="content-body with-toolbar with-header">
+			<div class="content-header" style="padding-top:15px;">
+				<TfPageHeader Style="margin-bottom:1rem">@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
+			</div>
 			<TfSpaceDataDetailsNav />
 			<div class="content-inner">
 				@if (Menu == "views")

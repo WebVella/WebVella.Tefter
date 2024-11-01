@@ -1,9 +1,9 @@
 ﻿@page "/space/{SpaceId:guid}/view"
 @page "/space/{SpaceId:guid}/view/{SpaceViewId:guid}"
-@page "/space/{SpaceId:guid}/view/{SpaceViewId:guid}/manage"
+@page "/space/{SpaceId:guid}/view/{SpaceViewId:guid}/{Menu}"
 
 @layout SpaceLayout
 @inherits TfBasePage
 <TfSpaceTheme />
-<TfSpaceViewManage />
+<TfSpaceViewManage Menu="@Menu"/>
 

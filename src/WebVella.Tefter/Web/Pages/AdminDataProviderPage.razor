@@ -30,12 +30,15 @@
 else
 {
 	var urlData = Navigator.GetRouteState();
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner with-toolbar">
+	<FluentBodyContent Class="content-body with-toolbar content-header">
+		<div class="page-header">
 			@if (TfAppState.Value.AdminDataProvider is not null)
 			{
 				<TfPageHeader>@TfAppState.Value.AdminDataProvider.Name</TfPageHeader>
 			}
+		</div>
+		<div class="content-inner">
+
 			<TfAdminDataProviderDetailsNav />
 			@if (!urlData.NodesDict.ContainsKey(3))
 			{
@@ -43,7 +46,7 @@ else
 			}
 			else if (urlData.NodesDict[3] == "schema")
 			{
-				<TfAdminDataProviderSchema/>
+				<TfAdminDataProviderSchema />
 			}
 			else if (urlData.NodesDict[3] == "keys")
 			{

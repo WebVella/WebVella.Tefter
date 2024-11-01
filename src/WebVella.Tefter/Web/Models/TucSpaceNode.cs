@@ -21,6 +21,10 @@ public record TucSpaceNode
 
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TucSpaceNode> ChildNodes { get; set; } = new();
+
+	[JsonIgnore]
+	public Action OnClick { get; set; }
+
 	public TucSpaceNode() { }
 	public TucSpaceNode(TfSpaceNode model)
 	{
