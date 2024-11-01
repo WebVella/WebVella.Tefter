@@ -123,13 +123,22 @@
   <data name="Create Dataset" xml:space="preserve">
     <value>Създай данни</value>
   </data>
+  <data name="Delete Space" xml:space="preserve">
+    <value>Изтрий областта</value>
+  </data>
   <data name="Manage Space" xml:space="preserve">
     <value>Редактирай областта</value>
   </data>
   <data name="No data found in the space" xml:space="preserve">
     <value>Все още няма създадени данни за тази област</value>
   </data>
+  <data name="Space Data" xml:space="preserve">
+    <value>Данни в областта</value>
+  </data>
+  <data name="Space Pages" xml:space="preserve">
+    <value>Страници в областта</value>
+  </data>
   <data name="Space Views" xml:space="preserve">
-    <value>Списък изгледи</value>
+    <value>Изгледи в областта</value>
   </data>
 </root>

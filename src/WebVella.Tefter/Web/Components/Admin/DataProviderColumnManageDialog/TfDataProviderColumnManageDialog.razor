@@ -43,7 +43,8 @@
 					</FluentGridItem>
 					<FluentGridItem xs="6">
 						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.SourceName ValueChanged="(x=> _sourceColumnNameChanged(x))"
-										 Label="@LOC("SOURCE column name")" Style="width:100%" AutoComplete="new-password" />
+										 Label="@LOC("SOURCE column name")" Style="width:100%" AutoComplete="new-password" 
+										 Placeholder="@LOC("leave empty, if no source")"/>
 						<FluentValidationMessage For="@(() => _form.SourceName)" />
 					</FluentGridItem>
 				</FluentGrid>

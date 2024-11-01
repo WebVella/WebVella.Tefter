@@ -138,6 +138,9 @@
   <data name="get from server" xml:space="preserve">
     <value>вземи от сървъра</value>
   </data>
+  <data name="local, network or tefter protocols are supported" xml:space="preserve">
+    <value>локални, мрежови или tefter протоколи се поддържат</value>
+  </data>
   <data name="Locale" xml:space="preserve">
     <value>Локализация</value>
   </data>

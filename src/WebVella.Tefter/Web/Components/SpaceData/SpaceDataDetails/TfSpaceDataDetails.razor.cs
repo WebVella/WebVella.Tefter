@@ -1,4 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
+[LocalizationResource("WebVella.Tefter.Web.Components.SpaceData.SpaceDataDetails.TfSpaceDataDetails", "WebVella.Tefter")]
 public partial class TfSpaceDataDetails : TfBaseComponent
 {
 	[Parameter] public string Menu { get; set; } = "";

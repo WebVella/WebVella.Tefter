@@ -31,15 +31,14 @@ else
 {
 	var urlData = Navigator.GetRouteState();
 	<FluentBodyContent Class="content-body with-toolbar content-header">
-		<div class="page-header">
+		<div class="content-header" style="padding-top:15px">
 			@if (TfAppState.Value.AdminDataProvider is not null)
 			{
 				<TfPageHeader>@TfAppState.Value.AdminDataProvider.Name</TfPageHeader>
 			}
 		</div>
-		<div class="content-inner">
-
 			<TfAdminDataProviderDetailsNav />
+		<div class="content-inner">
 			@if (!urlData.NodesDict.ContainsKey(3))
 			{
 				<TfAdminDataProviderDetails />

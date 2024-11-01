@@ -117,4 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Create Page" xml:space="preserve">
+    <value>Създай страница</value>
+  </data>
+  <data name="Delete Space" xml:space="preserve">
+    <value>Изтрий областта</value>
+  </data>
+  <data name="Manage Space" xml:space="preserve">
+    <value>Редактирай областта</value>
+  </data>
+  <data name="No pages found in the space" xml:space="preserve">
+    <value>Няма намерени страници в областта</value>
+  </data>
+  <data name="Space Data" xml:space="preserve">
+    <value>Данни в областта</value>
+  </data>
+  <data name="Space Pages" xml:space="preserve">
+    <value>Страници в областта</value>
+  </data>
+  <data name="Space Views" xml:space="preserve">
+    <value>Изгледи в областта</value>
+  </data>
 </root>

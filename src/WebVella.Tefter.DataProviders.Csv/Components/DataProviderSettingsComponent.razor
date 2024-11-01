@@ -7,6 +7,7 @@
 			<FluentTextField Required="DisplayMode == Web.Models.TfComponentMode.Update"
 							 ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
 							 TextFieldType="@TextFieldType.Text"
+							 Placeholder="@LOC("local, network or tefter protocols are supported")"
 							 @bind-Value=_form.Filepath AutoComplete="new-password"
 							 Label="@LOC("CSV File with full access path")" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.Filepath)" />

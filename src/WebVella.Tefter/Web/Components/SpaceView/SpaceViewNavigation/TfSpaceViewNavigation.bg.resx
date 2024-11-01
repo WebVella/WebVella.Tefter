@@ -126,6 +126,9 @@
   <data name="Create View" xml:space="preserve">
     <value>Създай изглед</value>
   </data>
+  <data name="Delete Space" xml:space="preserve">
+    <value>Изтрий областта</value>
+  </data>
   <data name="Manage Space" xml:space="preserve">
     <value>Редактирай областта</value>
   </data>
@@ -133,6 +136,12 @@
     <value>Все още няма създадени изгледи за тази област</value>
   </data>
   <data name="Space Data" xml:space="preserve">
-    <value>Използвани данни</value>
+    <value>Данни в областта</value>
+  </data>
+  <data name="Space Pages" xml:space="preserve">
+    <value>Страници в областта</value>
+  </data>
+  <data name="Space Views" xml:space="preserve">
+    <value>Изгледи в областта</value>
   </data>
 </root>
