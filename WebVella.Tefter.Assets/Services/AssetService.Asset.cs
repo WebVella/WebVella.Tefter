@@ -1,0 +1,605 @@
+﻿namespace WebVella.Tefter.Assets.Services;
+
+public partial interface IAssetService
+{
+	public Result<Asset> GetAsset(
+		Guid id);
+
+	public Result<List<Asset>> GetAssets(
+		Guid? folderId = null,
+		Guid? skId = null);
+
+	public Result<Guid> CreateAsset(
+		CreateAssetModel asset);
+
+	public Result<Guid> CreateAsset(
+		CreateAssetWithSharedKeyModel asset);
+
+	public Result UpdateAssetContent(
+		Guid id,
+		AssetContentBase content,
+		Guid userId);
+
+	public Result DeleteAsset(
+		Guid assetId);
+}
+
+internal partial class AssetService : IAssetService
+{
+	public Result<Asset> GetAsset(
+		Guid id)
+	{
+		try
+		{
+			const string SQL =
+@"WITH sk_info AS (
+	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
+	FROM assets_related_sk trs
+		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+	GROUP BY trs.asset_id
+)
+SELECT 
+	aa.id,
+	aa.folder_id,
+	aa.type,
+	aa.content_json,
+	aa.created_by,
+	aa.created_on,
+	aa.modified_by,
+	aa.modified_on,
+	sk_info.json_result AS related_shared_key_json
+FROM assets_asset aa
+	LEFT OUTER JOIN sk_info  ON aa.id = sk_info.asset_id
+WHERE aa.id = @id
+";
+
+			var assetIdPar = CreateParameter(
+				"id",
+				id,
+				DbType.Guid);
+
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
+
+			List<Asset> assets = ToAssetList(dt);
+
+			if (assets.Count == 0)
+			{
+				return null;
+			}
+
+			return Result.Ok(assets[0]);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get asset.").CausedBy(ex));
+		}
+	}
+
+	public Result<List<Asset>> GetAssets(
+		Guid? folderId = null,
+		Guid? skId = null)
+	{
+		try
+		{
+			const string SQL = @"
+WITH sk_info AS (
+	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
+	FROM assets_related_sk trs
+		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+	GROUP BY trs.asset_id
+)
+SELECT 
+	aa.id,
+	aa.folder_id,
+	aa.type,
+	aa.content_json,
+	aa.created_by,
+	aa.created_on,
+	aa.modified_by,
+	aa.modified_on,
+	sk.json_result AS related_shared_key_json
+FROM assets_asset aa
+	LEFT OUTER JOIN sk_info sk ON aa.id = sk.asset_id
+WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND ( @sk_id IS NULL OR sk.id = @sk_id )
+ORDER BY aa.created_on DESC;";
+
+			var channelIdPar = CreateParameter(
+				"channel_id",
+				folderId,
+				DbType.Guid);
+
+			var skIdPar = CreateParameter(
+				"sk_id",
+				skId,
+				DbType.Guid);
+
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, channelIdPar, skIdPar);
+
+			return Result.Ok(ToAssetList(dt));
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get assets.").CausedBy(ex));
+		}
+	}
+
+	public Result<Guid> CreateAsset(
+		CreateAssetModel asset)
+	{
+		try
+		{
+			if (asset == null)
+				throw new NullReferenceException("Asset object is null");
+
+			Guid id = Guid.NewGuid();
+
+			AssetValidator validator = new AssetValidator(this);
+
+			var validationResult = validator.ValidateCreate(asset, id);
+
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
+
+			DateTime now = DateTime.Now;
+
+			var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on); ";
+
+			var idPar = CreateParameter("@id", id, DbType.Guid);
+
+			var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+			var typePar = CreateParameter("@type", (short)asset.Type, DbType.Int16);
+
+			var contentJson = JsonSerializer.Serialize(asset.Content);
+
+			var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+			var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
+
+			var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+			var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+			var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
+
+			using (var scope = _dbService.CreateTransactionScope())
+			{
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, folderIdPar,
+					typePar, contentJsonPar,
+					createdByPar, createdOnPar,
+					modifiedByPar, modifiedOnPar);
+
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to insert new row in database for thread object");
+				}
+
+
+				if (asset.RowIds != null && asset.RowIds.Count > 0)
+				{
+					var folder = GetFolder(asset.FolderId).Value;
+
+					var provider = _dataProviderManager.GetProvider(asset.DataProviderId).Value;
+
+					if (provider is null)
+					{
+						throw new Exception($"Failed to find data provider with id='{asset.DataProviderId}'");
+					}
+
+					var queryResult = _dataManager.QueryDataProvider(provider, asset.RowIds);
+
+					if (!queryResult.IsSuccess)
+					{
+						return Result.Fail(new Error("Failed to get rows by ids.")
+							.CausedBy(queryResult.Errors));
+					}
+
+					List<Guid> relatedSK = new List<Guid>();
+
+					foreach (TfDataRow row in queryResult.Value.Rows)
+					{
+						var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
+
+						if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
+						{
+							relatedSK.Add(skIdValue.Value);
+						}
+					}
+
+					foreach (var skId in relatedSK)
+					{
+						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+							"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
+								new NpgsqlParameter("@id", skId),
+								new NpgsqlParameter("@asset_id", id));
+
+						if (skDbResult != 1)
+						{
+							throw new Exception("Failed to insert new row in database for related shared key object");
+						}
+					}
+				}
+
+				scope.Complete();
+
+				return Result.Ok(id);
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create new asset.").CausedBy(ex));
+		}
+	}
+
+	public Result<Guid> CreateAsset(
+		CreateAssetWithSharedKeyModel asset)
+	{
+		try
+		{
+			if (asset == null)
+			{
+				throw new NullReferenceException("Asset object is null");
+			}
+
+			Guid id = Guid.NewGuid();
+
+			AssetValidator validator = new AssetValidator(this);
+
+			var validationResult = validator.ValidateCreate(asset, id);
+
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
+
+			DateTime now = DateTime.Now;
+
+			var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on); ";
+
+			var idPar = CreateParameter("@id", id, DbType.Guid);
+
+			var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+			var typePar = CreateParameter("@type", (short)asset.Type, DbType.Int16);
+
+			var contentJson = JsonSerializer.Serialize(asset.Content);
+
+			var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+			var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
+
+			var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+			var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+			var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
+
+			using (var scope = _dbService.CreateTransactionScope())
+			{
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, folderIdPar,
+					typePar, contentJsonPar,
+					createdByPar, createdOnPar,
+					modifiedByPar, modifiedOnPar);
+
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to insert new row in database for thread object");
+				}
+
+				if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
+				{
+					foreach (var skId in asset.SKValueIds)
+					{
+						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+							"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
+								new NpgsqlParameter("@id", skId),
+								new NpgsqlParameter("@asset_id", id));
+
+						if (skDbResult != 1)
+						{
+							throw new Exception("Failed to insert new row in database for related shared key object");
+						}
+					}
+				}
+
+				scope.Complete();
+
+				return Result.Ok(id);
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
+		}
+	}
+
+	public Result UpdateAssetContent(
+		Guid assetId,
+		AssetContentBase content,
+		Guid userId)
+	{
+		try
+		{
+			var existingAsset = GetAsset(assetId).Value;
+
+			var user = _identityManager.GetUser(userId).Value;
+
+			AssetValidator validator = new AssetValidator(this);
+
+			var validationResult = validator.ValidateUpdateContent(
+				existingAsset,
+				content,
+				user);
+
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
+
+			var SQL = "UPDATE assets_asset SET " +
+				"content_json=@content_json, " +
+				"modified_on=@modified_on, " +
+				"modified_by=@modified_by " +
+				"WHERE id = @id";
+
+			var idPar = CreateParameter(
+				"id",
+				assetId,
+				DbType.Guid);
+
+			string contentJson = JsonSerializer.Serialize(content);
+
+			var contentJsonPar = CreateParameter(
+				"@content_json",
+				content,
+				DbType.String);
+
+			var modifiedOnPar = CreateParameter(
+				"@modified_on",
+				DateTime.Now,
+				DbType.DateTime2);
+			
+			var modifiedByPar = CreateParameter(
+				"@modified_by",
+				user.Id,
+				DbType.Guid);
+
+
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar,
+				contentJsonPar,
+				modifiedByPar,
+				modifiedOnPar);
+
+			if (dbResult != 1)
+			{
+				throw new Exception("Failed to update row in database for asset object");
+			}
+
+			return Result.Ok();
+
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to update asset.").CausedBy(ex));
+		}
+	}
+
+	public Result DeleteAsset(
+		Guid assetId)
+	{
+		try
+		{
+			var existingAsset = GetAsset(assetId).Value;
+
+			AssetValidator validator = new AssetValidator(this);
+
+			var validationResult = validator.ValidateDelete(existingAsset);
+
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
+
+			var SQL = "DELETE FROM assets_asset WHERE id = @id";
+
+			var idPar = CreateParameter("id", assetId, DbType.Guid);
+
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
+
+			if (dbResult != 1)
+			{
+				throw new Exception("Failed to update row in database for asset object");
+			}
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to delete asset.").CausedBy(ex));
+		}
+	}
+
+	private List<Asset> ToAssetList(DataTable dt)
+	{
+		if (dt == null)
+		{
+			throw new Exception("DataTable is null");
+		}
+
+		List<Asset> assetList = new List<Asset>();
+
+		foreach (DataRow dr in dt.Rows)
+		{
+			var createdBy = _identityManager.GetUser(dr.Field<Guid>("created_by")).Value;
+
+			var modifiedBy = _identityManager.GetUser(dr.Field<Guid>("modified_by")).Value;
+
+			var type = (AssetType)dr.Field<short>("type");
+
+			string contentJson = dr.Field<string>("content_json");
+
+			AssetContentBase content = null;
+
+			if (type == AssetType.File)
+			{
+				content = JsonSerializer.Deserialize<FileAssetContent>(contentJson);
+			}
+			else if (type == AssetType.Link)
+			{
+				content = JsonSerializer.Deserialize<LinkAssetContent>(contentJson);
+			}
+			else
+			{
+				throw new Exception("Not supported asset type.");
+			}
+
+			Asset asset = new Asset
+			{
+				Id = dr.Field<Guid>("id"),
+				FolderId = dr.Field<Guid>("folder_id"),
+				Type = type,
+				Content = content,
+				CreatedBy = createdBy,
+				CreatedOn = dr.Field<DateTime>("created_on"),
+				ModifiedBy = modifiedBy,
+				ModifiedOn = dr.Field<DateTime>("modified_on"),
+				RelatedSK = new Dictionary<Guid, string>()
+			};
+
+
+			var relatedSharedKeysJson = dr.Field<string>("related_shared_key_json");
+
+			if (!String.IsNullOrWhiteSpace(relatedSharedKeysJson) &&
+				relatedSharedKeysJson.StartsWith("[") &&
+				relatedSharedKeysJson != "[null]")
+			{
+				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedSharedKeysJson);
+
+				foreach (var item in items)
+				{
+					asset.RelatedSK[item.Id] = item.TextId;
+				}
+			}
+
+			assetList.Add(asset);
+		}
+
+		return assetList;
+	}
+
+	private class IdDictModel
+	{
+		[JsonPropertyName("id")]
+		public Guid Id { get; set; }
+
+		[JsonPropertyName("text_id")]
+		public string TextId { get; set; }
+	}
+
+	#region <--- validation --->
+
+	internal class AssetValidator
+		: AbstractValidator<Asset>
+	{
+		private readonly IAssetService _service;
+
+		public AssetValidator(IAssetService service)
+		{
+			_service = service;
+		}
+
+		public ValidationResult ValidateCreate(
+			CreateAssetModel asset,
+			Guid id)
+		{
+			if (asset == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The channel object is null.") });
+			}
+
+			if (asset.Content is null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateAssetModel.Content),
+					"The content is empty.") });
+			}
+
+			return new ValidationResult();
+		}
+
+		public ValidationResult ValidateCreate(
+			CreateAssetWithSharedKeyModel asset,
+			Guid id)
+		{
+			if (asset == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The asset object is null.") });
+			}
+
+			if (asset.Content is null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateAssetWithSharedKeyModel.Content),
+					"The content is empty.") });
+			}
+
+			return new ValidationResult();
+		}
+
+		public ValidationResult ValidateUpdateContent(
+			Asset asset,
+			AssetContentBase content,
+			User user)
+		{
+			if (asset == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The thread object is null.") });
+			}
+
+			if (user == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"User is not found.") });
+			}
+
+
+			if (content is null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(Asset.Content),
+					"The content is empty.") });
+			}
+
+			return new ValidationResult();
+
+		}
+
+		public ValidationResult ValidateDelete(
+			Asset asset)
+		{
+			if (asset == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The asset object is null.") });
+			}
+
+			return this.Validate(asset, options =>
+			{
+				options.IncludeRuleSets("delete");
+			});
+		}
+	}
+
+	#endregion
+}
