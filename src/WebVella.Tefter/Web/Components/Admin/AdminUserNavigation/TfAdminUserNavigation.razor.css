@@ -1,34 +1,18 @@
-﻿
-.sidebar-nav {
-	padding: 5px;
-	flex: 1 1 auto;
-	width: 100%;
-}
-
-.sidebar-toolbar {
+﻿::deep .sidebar-toolbar {
 	display: flex;
 	height: 40px;
-	margin-top: 5px;
-	margin-bottom: 5px;
-	padding-left: 5px;
 }
 
-.sidebar-toolbar-search {
+::deep .sidebar-toolbar-search {
 	flex: 1 1 auto;
 	padding-right: 5px;
-	padding-left: 5px;
 }
 
 ::deep .sidebar-toolbar-search .search {
 	width: 100%;
 }
 
-::deep .search::part(root) {
-	border-color: var(--neutral-stroke-rest);
-	background:var(--neutral-fill-input-focus);
-}
-
-.sidebar-toolbar-mode {
+::deep .sidebar-toolbar-mode {
 	flex: 0 0 auto;
 }
 
@@ -64,7 +48,7 @@
 			border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
 		}
 
-.sidebar-toolbar-action {
+::deep .sidebar-toolbar-action {
 	flex: 0 0 auto;
 }
 

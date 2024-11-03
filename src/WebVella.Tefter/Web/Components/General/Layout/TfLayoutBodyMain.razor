@@ -1,0 +1,21 @@
+﻿@namespace WebVella.Tefter.Web.Components
+
+<section class="@_layoutClass">
+	@if (Header is not null)
+	{
+		<div class="tf-layout__body__main__header">@Header</div>
+	}
+	@if (Toolbar is not null)
+	{
+		<div class="tf-layout__body__main__toolbar">@Toolbar</div>
+	}
+	<div class="tf-layout__body__main__content">
+		<div class="tf-layout__body__main__content__inner">
+			@ChildContent
+		</div>
+	</div>
+	@if (Footer is not null)
+	{
+		<div class="tf-layout__body__main__footer">@Footer</div>
+	}
+</section>

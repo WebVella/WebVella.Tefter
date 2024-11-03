@@ -45,6 +45,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Update="Web\Components\General\Layout\TfLayout.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <EmbeddedResource Update="Web\Components\SpaceView\SpaceViewHeader\TfSpaceViewHeader.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>

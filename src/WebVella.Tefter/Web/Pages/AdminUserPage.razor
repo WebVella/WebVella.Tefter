@@ -3,63 +3,69 @@
 @page "/admin/users/{UserId:guid}/{*Path}"
 @layout AdminLayout
 @inherits TfBasePage
-
-@if (SidebarExpanded.Value)
-{
-	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
-		<TfAdminUserNavigation />
-	</FluentStack>
-}
-@if (UserId == Guid.Empty)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<TfPageHeader Style="margin-bottom:15px;">@LOC("Users")</TfPageHeader>
-			<FluentMessageBar Title="Under Construction" AllowDismiss="false"
-							  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
-				<div>TBD: Users dashboard with various height level overview information</div>
-			</FluentMessageBar>
-			<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
-							  Intent="@MessageIntent.Warning">
-				<div>Select user from the list to review and manage it</div>
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else
-{
-	var urlData = Navigator.GetRouteState();
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner with-toolbar">
-			@if (TfAppState.Value.AdminManagedUser is not null)
-			{
-				<TfPageHeader>@TfAppState.Value.AdminManagedUser.Names</TfPageHeader>
-			}
-			<TfAdminUserDetailsNav />
-			@if (!urlData.NodesDict.ContainsKey(3))
-			{
-				<TfAdminUserDetails />
-			}
-			else if (urlData.NodesDict[3] == "access")
-			{
-				<FluentMessageBar Title="Under Construction" AllowDismiss="false"
-								  Intent="@MessageIntent.Info">
-					<div>TBD: List of user's accessible views, so admin can check for permission  problems</div>
-				</FluentMessageBar>
-			}
-			else if (urlData.NodesDict[3] == "saves")
-			{
-				<FluentMessageBar Title="Under Construction" AllowDismiss="false"
-								  Intent="@MessageIntent.Info">
-					<div>TBD: List of user's saved views so admin can maintain</div>
-				</FluentMessageBar>
-			}
-
-		</div>
-	</FluentBodyContent>
-
-}
-
+<TfLayoutBody Color="@TfConstants.AdminBorderColor">
+	<Aside>
+		@if (SidebarExpanded.Value)
+		{
+			<TfAdminUserNavigation />
+		}
+	</Aside>
+	<ChildContent>
+		@if (UserId == Guid.Empty)
+		{
+			<TfLayoutBodyMain>
+				<Header>
+					<TfPageHeader Style="margin-bottom:15px;">@LOC("Users")</TfPageHeader>
+				</Header>
+				<ChildContent>
+					<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+									  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+						<div>TBD: Users dashboard with various height level overview information</div>
+					</FluentMessageBar>
+					<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
+									  Intent="@MessageIntent.Warning">
+						<div>Select user from the list to review and manage it</div>
+					</FluentMessageBar>
+				</ChildContent>
+			</TfLayoutBodyMain>
+		}
+		else
+		{
+			var urlData = Navigator.GetRouteState();
+			<TfLayoutBodyMain>
+				<Header>
+					@if (TfAppState.Value.AdminManagedUser is not null)
+					{
+						<TfPageHeader>@TfAppState.Value.AdminManagedUser.Names</TfPageHeader>
+					}
+				</Header>
+				<Toolbar>
+					<TfAdminUserDetailsNav />
+				</Toolbar>
+				<ChildContent>
+					@if (!urlData.NodesDict.ContainsKey(3))
+					{
+						<TfAdminUserDetails />
+					}
+					else if (urlData.NodesDict[3] == "access")
+					{
+						<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+										  Intent="@MessageIntent.Info">
+							<div>TBD: List of user's accessible views, so admin can check for permission  problems</div>
+						</FluentMessageBar>
+					}
+					else if (urlData.NodesDict[3] == "saves")
+					{
+						<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+										  Intent="@MessageIntent.Info">
+							<div>TBD: List of user's saved views so admin can maintain</div>
+						</FluentMessageBar>
+					}
+				</ChildContent>
+			</TfLayoutBodyMain>
+		}
+	</ChildContent>
+</TfLayoutBody>
 
 
 

@@ -8,7 +8,7 @@
 							 ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
 							 TextFieldType="@TextFieldType.Text"
 							 Placeholder="@LOC("local, network or tefter protocols are supported")"
-							 @bind-Value=_form.Filepath AutoComplete="new-password"
+							 @bind-Value=_form.Filepath AutoComplete="off"
 							 Label="@LOC("CSV File with full access path")" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.Filepath)" />
 		</FluentGridItem>
@@ -47,7 +47,7 @@
 			<FluentStack>
 				<FluentTextField ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
 								 TextFieldType="@TextFieldType.Text"
-								 @bind-Value=_form.CultureName AutoComplete="new-password"
+								 @bind-Value=_form.CultureName AutoComplete="off"
 								 Style="width:100%"
 								 Placeholder="@LOC("empty uses culture invariant")" />
 				@if (DisplayMode == Web.Models.TfComponentMode.Update)

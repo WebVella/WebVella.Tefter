@@ -16,19 +16,19 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Title
-									 Label="@LOC("Title")" Style="width:100%" AutoComplete="new-password" />
+									 Label="@LOC("Title")" Style="width:100%" AutoComplete="off" />
 					<div class="tf-input-description">@LOC("for icon type 'icon:[FLUENT_UI_ICON_NAME]' eg. icon:Comment")</div>
 					<FluentValidationMessage For="@(() => _form.Title)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.QueryName
-									 Label="@LOC("Query Name")" Style="width:100%" AutoComplete="new-password" />
+									 Label="@LOC("Query Name")" Style="width:100%" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.QueryName)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="short?" @bind-Value=_form.Position AutoComplete="new-password"
+					<FluentNumberField TValue="short?" @bind-Value=_form.Position AutoComplete="off"
 									   Label="@LOC("Insert in position")" Style="width:100%" Placeholder="@LOC("leave empty for last")" />
 					<FluentValidationMessage For="@(() => _form.Position)" />
 				</FluentGridItem>
@@ -97,7 +97,7 @@
 								<FluentGrid>
 									<FluentGridItem xs="6">
 										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@item.Alias Immediate ImmediateDelay="500"
-														 Disabled="true" Label="@LOC("Component alias")" Style="width:100%" AutoComplete="new-password" />
+														 Disabled="true" Label="@LOC("Component alias")" Style="width:100%" AutoComplete="off" />
 									</FluentGridItem>
 									<FluentGridItem xs="6">
 										<FluentCombobox TOption="string"
@@ -177,7 +177,7 @@
 				<FluentTab Label="@LOC("Styling")" Id="styling">
 					<FluentGrid>
 						<FluentGridItem xs="6">
-							<FluentNumberField TValue="short?" @bind-Value="_form.Settings.Width" AutoComplete="new-password"
+							<FluentNumberField TValue="short?" @bind-Value="_form.Settings.Width" AutoComplete="off"
 											   Label="@LOC("Width, px")" Style="width:100%" Placeholder="@LOC("auto")" />
 						</FluentGridItem>
 						<FluentGridItem xs="6">

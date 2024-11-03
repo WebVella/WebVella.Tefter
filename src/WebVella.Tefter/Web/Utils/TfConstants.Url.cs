@@ -31,7 +31,7 @@ public partial class TfConstants
 	public static string RouteNameSynchronization  = "synchronization";
 	public static string RouteNameData  = "data";
 	public static string RouteNamePages  = "pages";
-	public static string RouteNameSharedColumns  = "aux-columns";
+	public static string RouteNameSharedColumns  = "shared-columns";
 	public static string RouteNameFileRepository  = "file-repository";
 	public static string AdminDashboardUrl  = $"/{RouteNameAdmin}";
 	public static string AdminPagesUrl  = $"/{RouteNameAdmin}/{RouteNamePages}";

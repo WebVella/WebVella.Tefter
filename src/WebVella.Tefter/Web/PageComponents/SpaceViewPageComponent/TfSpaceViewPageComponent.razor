@@ -34,7 +34,7 @@ else if (Context.Mode == TfComponentMode.Create)
 		<FluentGrid>
 			<FluentGridItem xs="6">
 				<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_options.Name
-								 Label="@LOC("New view name")" Style="width:100%" AutoComplete="new-password"
+								 Label="@LOC("New view name")" Style="width:100%" AutoComplete="off"
 								 Class="@GetValidationCssClass(nameof(_options.Name))" />
 				<TfValidationMessage Field="@(nameof(_options.Name))" Errors="ValidationErrors" />
 			</FluentGridItem>
@@ -67,7 +67,7 @@ else if (Context.Mode == TfComponentMode.Create)
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_options.NewSpaceDataName
-									 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="new-password" />
+									 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="off" />
 					<TfValidationMessage Field="@(nameof(_options.NewSpaceDataName))" Errors="ValidationErrors" />
 				</FluentGridItem>
 			}
