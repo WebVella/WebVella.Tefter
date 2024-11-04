@@ -1,17 +1,17 @@
 ﻿namespace WebVella.Tefter.Assets.Services;
 
-public partial interface IAssetService
+public partial interface IAssetsService
 {
 }
 
-internal partial class AssetService : IAssetService
+internal partial class AssetsService : IAssetsService
 {
 	public readonly ITfDataProviderManager _dataProviderManager;
 	public readonly IDataManager _dataManager;
 	public readonly IDatabaseService _dbService;
 	public readonly IIdentityManager _identityManager;
 
-	public AssetService(
+	public AssetsService(
 		IDatabaseService dbService,
 		IIdentityManager identityManager,
 		IDataManager dataManager,

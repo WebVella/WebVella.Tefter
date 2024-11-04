@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Assets.Services;
 
-internal partial class AssetService : IAssetService
+internal partial class AssetsService : IAssetsService
 {
 	private static NpgsqlParameter CreateParameter(
 		string name, 

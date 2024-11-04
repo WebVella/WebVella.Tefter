@@ -14,7 +14,7 @@ public class AssetsApp : ITfApplication
 
 	public void OnRegisterDependencyInjections(IServiceCollection services)
 	{
-		services.AddSingleton<IAssetService, AssetService>();
+		services.AddSingleton<IAssetsService, AssetsService>();
 	}
 
 }

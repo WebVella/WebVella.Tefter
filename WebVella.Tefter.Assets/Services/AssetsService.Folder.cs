@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Assets.Services;
 
-public partial interface IAssetService
+public partial interface IAssetsService
 {
 	Result<Folder> GetFolder(
 		Guid folderId);
@@ -17,7 +17,7 @@ public partial interface IAssetService
 		Guid folderId);
 }
 
-internal partial class AssetService : IAssetService
+internal partial class AssetsService : IAssetsService
 {
 	public Result<Folder> GetFolder(
 		Guid folderId)
@@ -240,7 +240,7 @@ internal partial class AssetService : IAssetService
 	internal class AssetFolderValidator
 		: AbstractValidator<Folder>
 	{
-		public AssetFolderValidator(IAssetService service)
+		public AssetFolderValidator(IAssetsService service)
 		{
 
 			RuleSet("general", () =>

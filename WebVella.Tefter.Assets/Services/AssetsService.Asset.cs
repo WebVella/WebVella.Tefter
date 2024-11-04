@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Assets.Services;
 
-public partial interface IAssetService
+public partial interface IAssetsService
 {
 	public Result<Asset> GetAsset(
 		Guid id);
@@ -24,7 +24,7 @@ public partial interface IAssetService
 		Guid assetId);
 }
 
-internal partial class AssetService : IAssetService
+internal partial class AssetsService : IAssetsService
 {
 	public Result<Asset> GetAsset(
 		Guid id)
@@ -530,9 +530,9 @@ ORDER BY aa.created_on DESC;";
 	internal class AssetValidator
 		: AbstractValidator<Asset>
 	{
-		private readonly IAssetService _service;
+		private readonly IAssetsService _service;
 
-		public AssetValidator(IAssetService service)
+		public AssetValidator(IAssetsService service)
 		{
 			_service = service;
 		}
