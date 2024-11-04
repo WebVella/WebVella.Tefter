@@ -1,10 +1,10 @@
-﻿namespace WebVella.Tefter.Talk.Components;
-[LocalizationResource("WebVella.Tefter.Talk.Components.TalkChannelManageDialog.TalkChannelManageDialog", "WebVella.Tefter.Talk")]
-public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogContentComponent<TalkChannel>
+﻿namespace WebVella.Tefter.Assets.Components;
+[LocalizationResource("WebVella.Tefter.Talk.Components.AssetsFolderManageDialog.AssetsFolderManageDialog", "WebVella.Tefter.Assets")]
+public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogContentComponent<Folder>
 {
 	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }
-	[Inject] public ITalkService TalkService { get; set; }
-	[Parameter] public TalkChannel Content { get; set; }
+	[Inject] public IAssetsService AssetsService { get; set; }
+	[Parameter] public Folder Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private string _error = string.Empty;
@@ -13,7 +13,7 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private bool _isCreate = false;
-	private TalkChannel _form = new();
+	private Folder _form = new();
 	private List<string> _sharedColumnsOptions = new();
 	protected override async Task OnInitializedAsync()
 	{
@@ -33,8 +33,8 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 			_form = Content with { Id = Content.Id };
 		}
 		base.InitForm(_form);
-		if(TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY))
-			_sharedColumnsOptions = ((List<TfSharedColumn>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY]).Select(x=> x.DbName).ToList();
+		if(TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY))
+			_sharedColumnsOptions = ((List<TfSharedColumn>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY]).Select(x=> x.DbName).ToList();
 	}
 	private async Task _save()
 	{
@@ -52,14 +52,14 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<TalkChannel>();
+			var result = new Result<Folder>();
 			if (_isCreate)
 			{
-				result = TalkService.CreateChannel(_form);
+				result = AssetsService.CreateFolder(_form);
 			}
 			else
 			{
-				result = TalkService.UpdateChannel(_form);
+				result = AssetsService.UpdateFolder(_form);
 			}
 
 			ProcessFormSubmitResponse(result);

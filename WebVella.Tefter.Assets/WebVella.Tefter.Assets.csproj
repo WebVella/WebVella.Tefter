@@ -18,6 +18,19 @@
     <Content Update="Components\TalkThreadModal\TalkThreadModal.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+    <Content Update="_Imports.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="PageComponents\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Components\AssetsFolderManageDialog\AssetsFolderManageDialog.bg.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

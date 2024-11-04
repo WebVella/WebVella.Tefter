@@ -702,35 +702,7 @@
 .tf-grid-td > div:not([class]):empty {
   height: 30px;
 }
-.tfdt {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  padding-left: var(--tf-content-padding);
-  padding-right: var(--tf-content-margin-bottom);
-}
-.tfdt__toolbar {
-  flex: 0 0 40px;
-  padding-left: var(--tf-content-padding);
-  padding-right: var(--tf-content-margin-bottom);
-  padding-bottom: var(--tf-content-padding);
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-.tfdt__content {
-  flex: 1 1 auto;
-  box-sizing: content-box;
-  height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width) - 10px) !important;
-  overflow-y: scroll !important;
-  width: 100%;
-}
-.tfdt__pager {
+.tf-grid__pager {
   margin-top: 5px;
   margin-left: auto;
   margin-right: auto;
@@ -994,7 +966,6 @@ fluent-select[readonly]::part(control) {
   --tf-layout-wrapper-body-border-radius: 8px;
   --tf-layout-wrapper-body-aside-width: 300px;
   --tf-layout-wrapper-body-aside-toolbar-height: 40px;
-  --tf-layout-wrapper-body-main-padding: 10px;
 }
 body {
   width: 100vw;
@@ -1087,7 +1058,7 @@ body {
 .tf-layout__body__aside__toolbar {
   flex: 0 0 auto;
   height: var(--tf-layout-wrapper-body-aside-toolbar-height);
-  padding: calc(var(--tf-layout-wrapper-body-main-padding) / 2);
+  padding: calc(var(--tf-body-content-padding) / 2);
 }
 .tf-layout__body__aside__content {
   flex: 1 1 auto;
@@ -1100,7 +1071,7 @@ body {
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding: calc(var(--tf-layout-wrapper-body-main-padding) / 2);
+  padding: calc(var(--tf-body-content-padding) / 2);
 }
 .tf-layout__body__main {
   flex: 1 1 auto;
@@ -1109,19 +1080,22 @@ body {
 }
 .tf-layout__body__main__header {
   flex: 0 0 auto;
-  padding: 0 var(--tf-layout-wrapper-body-main-padding);
+  padding: 0 var(--tf-body-content-padding);
   background: var(--neutral-layer-1);
   border-bottom: 1px solid var(--neutral-layer-4);
   display: flex;
   align-items: end;
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 }
+.tf-layout__body__main__header.no-padding {
+  padding: 0;
+}
 .tf-layout__body--has-aside .tf-layout__body__main__header {
   border-radius: 0;
 }
 .tf-layout__body__main__header__content {
   flex: 0 0 auto;
-  padding: var(--tf-layout-wrapper-body-main-padding) 0;
+  padding: var(--tf-body-content-padding) 0;
   width: 35%;
   max-width: 35%;
 }
@@ -1130,19 +1104,40 @@ body {
 }
 .tf-layout__body__main__toolbar {
   flex: 0 0 auto;
+  padding: var(--tf-body-content-padding);
+  display: flex;
+}
+.tf-layout__body__main__toolbar.no-padding {
+  padding: 0;
+}
+.tf-layout__body__main__toolbar__content {
+  flex: 1 1 auto;
+}
+.tf-layout__body__main__toolbar__aside {
+  flex: 0 0 auto;
 }
 .tf-layout__body__main__content {
   flex: 1 1 auto;
   position: relative;
 }
 .tf-layout__body__main__content__inner {
+  padding: var(--tf-body-content-padding);
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  padding: var(--tf-layout-wrapper-body-main-padding);
+}
+.tf-layout__body__main__content.no-padding .tf-layout__body__main__content__inner {
+  padding: 0;
+}
+.tf-layout__body__main__footer {
+  flex: 0 0 auto;
+  padding: 0 var(--tf-body-content-padding);
+}
+.tf-layout__body__main__footer.no-padding {
+  padding: 0;
 }
 .tf-navigation {
   display: flex;
@@ -1312,7 +1307,7 @@ body {
   --tf-content-toolbar-height: 60px;
   --tf-sidebar-toolbar-height: 40px;
   --tf-sidebar-toolbar-margin-top-bottom: 10px;
-  --tf-sidebar-padding: 5px;
+  --tf-body-content-padding: 10px;
   --tf-grid-padding-top: calc(var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width));
   --tf-grid-padding-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1);
   --tf-grid-negative-margin-top: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * -1);

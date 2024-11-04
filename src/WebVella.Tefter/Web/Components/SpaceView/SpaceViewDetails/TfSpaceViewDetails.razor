@@ -4,9 +4,7 @@
 {
 	<TfLayoutBodyMain>
 		<Header>
-			<TfLayoutBodyMainHeader>
-				<TfPageHeader>@LOC("Space View")</TfPageHeader>
-			</TfLayoutBodyMainHeader>
+			<TfPageHeader>@LOC("Space View")</TfPageHeader>
 		</Header>
 		<ChildContent>
 			<FluentMessageBar Title="No space found"
@@ -32,9 +30,7 @@ else
 	{
 		<TfLayoutBodyMain>
 			<Header>
-				<TfLayoutBodyMainHeader>
-					<TfPageHeader>@LOC("Space View")</TfPageHeader>
-				</TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space View")</TfPageHeader>
 			</Header>
 			<ChildContent>
 				<FluentMessageBar Title="No existing views"
@@ -51,9 +47,7 @@ else
 	{
 		<TfLayoutBodyMain>
 			<Header>
-				<TfLayoutBodyMainHeader>
-					<TfPageHeader>@LOC("Space View")</TfPageHeader>
-				</TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space View")</TfPageHeader>
 			</Header>
 			<ChildContent>
 				<FluentMessageBar Title="No space view found"
@@ -72,136 +66,131 @@ else
 		var columnIndex = 1;
 		var _gridHeadBackgroundStyle = $"background: linear-gradient(to right, {TfAppState.Value.SpaceGridBackgkroundColor}, {TfAppState.Value.SpaceGridBackgkroundColor}),linear-gradient(to right, var(--neutral-layer-2),var(--neutral-layer-2));";
 		@((MarkupString)_getEmbeddedStyles())
-		<TfLayoutBodyMain>
+		<TfLayoutBodyMain ContentClass="no-padding">
 			<Header>
-				<TfLayoutBodyMainHeader>
-					<TfPageHeader>@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</TfPageHeader>
-				</TfLayoutBodyMainHeader>
+				<TfPageHeader>@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</TfPageHeader>
 			</Header>
 			<Toolbar>
 				<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter" />
 			</Toolbar>
 			<ChildContent>
-				<div class="tfdt">
-					<div class="tfdt__content">
-						<table class="tf-grid">
-							<colgroup>
-								@foreach (var index in configCss.Keys)
+				<div class="tf-grid-wrapper">
+					<table class="tf-grid">
+						<colgroup>
+							@foreach (var index in configCss.Keys)
+							{
+								<col span="1" style="@(configCss[index].Item1 is null ? "" : $"width: {configCss[index].Item1.Value}px;min-width:{configCss[index].Item1.Value}px" )">
+							}
+						</colgroup>
+						<thead class="tf-grid-thead">
+							<tr class="tf-grid-tr">
+								<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{_gridHeadBackgroundStyle}{configCss[0].Item3}")">
+									<div class="check-content">
+										@if (TfAppState.Value.AllDataRowsSelected)
+										{
+											<FluentButton OnClick="@(() =>_toggleSelectAll(false))" BackgroundColor="transparent" Color="transparent">
+												<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked",variant:IconVariant.Filled)" Color="@Color.Accent" />
+											</FluentButton>
+										}
+										else
+										{
+											<FluentButton OnClick="@(() =>_toggleSelectAll(true))" BackgroundColor="transparent" Color="transparent">
+												<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
+											</FluentButton>
+										}
+									</div>
+								</th>
+								@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 								{
-									<col span="1" style="@(configCss[index].Item1 is null ? "" : $"width: {configCss[index].Item1.Value}px;min-width:{configCss[index].Item1.Value}px" )">
-								}
-							</colgroup>
-							<thead class="tf-grid-thead">
-								<tr class="tf-grid-tr">
-									<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{_gridHeadBackgroundStyle}{configCss[0].Item3}")">
-										<div class="check-content">
-											@if (TfAppState.Value.AllDataRowsSelected)
-											{
-												<FluentButton OnClick="@(() =>_toggleSelectAll(false))" BackgroundColor="transparent" Color="transparent">
-													<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked",variant:IconVariant.Filled)" Color="@Color.Accent" />
-												</FluentButton>
-											}
-											else
-											{
-												<FluentButton OnClick="@(() =>_toggleSelectAll(true))" BackgroundColor="transparent" Color="transparent">
-													<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
-												</FluentButton>
-											}
-										</div>
+									<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{_gridHeadBackgroundStyle}{column.HeaderStyle}{configCss[columnIndex].Item3}")">
+										@if (column.Title.StartsWith("icon:"))
+										{
+											<div style="display:flex;">
+												<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))" />
+											</div>
+										}
+										else
+										{
+											<div>@column.Title</div>
+										}
 									</th>
-									@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
-									{
-										<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{_gridHeadBackgroundStyle}{column.HeaderStyle}{configCss[columnIndex].Item3}")">
-											@if (column.Title.StartsWith("icon:"))
-											{
-												<div style="display:flex;">
-													<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))" />
-												</div>
-											}
-											else
-											{
-												<div>@column.Title</div>
-											}
-										</th>
-										columnIndex++;
-									}
+									columnIndex++;
+								}
+							</tr>
+						</thead>
+						<tbody class="tf-grid-tbody">
+							@if (_isDataLoading)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Loading...")</div></td>
 								</tr>
-							</thead>
-							<tbody class="tf-grid-tbody">
-								@if (_isDataLoading)
+							}
+							else if (TfAppState.Value.SpaceViewData is null)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Space data not found")</div></td>
+								</tr>
+							}
+							else if (TfAppState.Value.SpaceViewData.Rows.Count == 0)
+							{
+								<tr class="tf-grid-tr">
+									<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("No data")</div></td>
+								</tr>
+							}
+							else
+							{
+								for (int i = 0; i < TfAppState.Value.SpaceViewData.Rows.Count; i++)
 								{
-									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Loading...")</div></td>
-									</tr>
-								}
-								else if (TfAppState.Value.SpaceViewData is null)
-								{
-									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Space data not found")</div></td>
-									</tr>
-								}
-								else if (TfAppState.Value.SpaceViewData.Rows.Count == 0)
-								{
-									<tr class="tf-grid-tr">
-										<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("No data")</div></td>
-									</tr>
-								}
-								else
-								{
-									for (int i = 0; i < TfAppState.Value.SpaceViewData.Rows.Count; i++)
-									{
-										var index = i;
-										columnIndex = 1;
-										var selected = _getItemSelection(index);
-										<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
-											<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"background:var(--neutral-fill-layer-rest);{configCss[0].Item3}")">
+									var index = i;
+									columnIndex = 1;
+									var selected = _getItemSelection(index);
+									<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
+										<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"background:var(--neutral-fill-layer-rest);{configCss[0].Item3}")">
+											<div class="tf-grid-td-selection"></div>
+											<div class="tf-grid-td-hover"></div>
+											<div class="check-content">
+												@if (TfAppState.Value.SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME] is not null)
+												{
+													@if (selected)
+													{
+														<FluentButton OnClick="@(() =>_toggleItemSelection(index,false))" BackgroundColor="transparent" Color="transparent">
+															<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked",variant:IconVariant.Filled)" Color="@Color.Accent" />
+														</FluentButton>
+													}
+													else
+													{
+														<FluentButton OnClick="@(() =>_toggleItemSelection(index,true))" BackgroundColor="transparent" Color="transparent">
+															<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
+														</FluentButton>
+													}
+												}
+											</div>
+
+										</td>
+										@foreach (var column in TfAppState.Value.SpaceViewColumns)
+										{
+											<td class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{configCss[columnIndex].Item3}")">
+												<div class="tf-grid-td-color" style="@column.CellColorStyle"></div>
 												<div class="tf-grid-td-selection"></div>
 												<div class="tf-grid-td-hover"></div>
-												<div class="check-content">
-													@if (TfAppState.Value.SpaceViewData.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME] is not null)
-													{
-														@if (selected)
-														{
-															<FluentButton OnClick="@(() =>_toggleItemSelection(index,false))" BackgroundColor="transparent" Color="transparent">
-																<FluentIcon Value="@TfConstants.GetIcon("CheckboxChecked",variant:IconVariant.Filled)" Color="@Color.Accent" />
-															</FluentButton>
-														}
-														else
-														{
-															<FluentButton OnClick="@(() =>_toggleItemSelection(index,true))" BackgroundColor="transparent" Color="transparent">
-																<FluentIcon Value="@TfConstants.GetIcon("CheckboxUnchecked")" Color="@Color.Custom" CustomColor="var(--neutral-stroke-input-active)" />
-															</FluentButton>
-														}
-													}
-												</div>
-
+												@if (column.ComponentType is not null)
+												{
+													<TfErrorBoundry ShowErrorDetails=false>
+														<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
+													</TfErrorBoundry>
+												}
 											</td>
-											@foreach (var column in TfAppState.Value.SpaceViewColumns)
-											{
-												<td class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{configCss[columnIndex].Item3}")">
-													<div class="tf-grid-td-color" style="@column.CellColorStyle"></div>
-													<div class="tf-grid-td-selection"></div>
-													<div class="tf-grid-td-hover"></div>
-													@if (column.ComponentType is not null)
-													{
-														<TfErrorBoundry ShowErrorDetails=false>
-															<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
-														</TfErrorBoundry>
-													}
-												</td>
-												columnIndex++;
-											}
-										</tr>
-									}
+											columnIndex++;
+										}
+									</tr>
 								}
-							</tbody>
-						</table>
-					</div>
-
+							}
+						</tbody>
+					</table>
 				</div>
 			</ChildContent>
 			<Footer>
-				<div class="tfdt__pager">
+				<div class="tf-grid__pager">
 					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize"
 							 GoLast="@_goLastPage" GoNext="@_goNextPage"
 							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />

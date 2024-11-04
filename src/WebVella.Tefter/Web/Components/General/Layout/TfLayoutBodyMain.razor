@@ -1,9 +1,21 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits ComponentBase
 <section class="@_layoutClass">
-	@Header
-	@Toolbar
-	<div class="tf-layout__body__main__content">
+	@if (Header is not null || HeaderAside is not null)
+	{
+		<TfLayoutBodyMainHeader>
+			<ChildContent>@Header</ChildContent>
+			<Aside>@HeaderAside</Aside>
+		</TfLayoutBodyMainHeader>	
+	}
+	@if (Toolbar is not null || ToolbarAside is not null)
+	{
+		<TfLayoutBodyMainToolbar>
+			<ChildContent>@Toolbar</ChildContent>
+			<Aside>@ToolbarAside</Aside>
+		</TfLayoutBodyMainToolbar>
+	}
+	<div class="@_contentClass">
 		<div class="tf-layout__body__main__content__inner">
 			@ChildContent
 		</div>

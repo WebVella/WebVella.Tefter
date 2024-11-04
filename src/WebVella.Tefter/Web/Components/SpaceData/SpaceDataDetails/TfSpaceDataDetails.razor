@@ -4,9 +4,7 @@
 {
 	<TfLayoutBodyMain>
 		<Header>
-			<TfLayoutBodyMainHeader>
-				<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
-			</TfLayoutBodyMainHeader>
+			<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
 		</Header>
 		<ChildContent>
 			<FluentMessageBar Title="No space found"
@@ -25,9 +23,7 @@ else
 	{
 		<TfLayoutBodyMain>
 			<Header>
-				<TfLayoutBodyMainHeader>
-					<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
-				</TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
 			</Header>
 			<ChildContent>
 				<FluentMessageBar Title="No existing datasets"
@@ -44,9 +40,7 @@ else
 	{
 		<TfLayoutBodyMain>
 			<Header>
-				<TfLayoutBodyMainHeader>
-					<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
-				</TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
 			</Header>
 			<ChildContent>
 				<FluentMessageBar Title="No space data found"
@@ -59,27 +53,24 @@ else
 			</ChildContent>
 		</TfLayoutBodyMain>
 	}
+	else if (Menu == "data")
+	{
+		<TfSpaceDataData />
+
+	}
 	else
 	{
 		<TfLayoutBodyMain>
 			<Header>
-				<TfLayoutBodyMainHeader>
-					<ChildContent>
-						<TfPageHeader>@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
-					</ChildContent>
-					<Aside>
-						<TfSpaceDataDetailsNav />
-					</Aside>
-				</TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
 			</Header>
+			<HeaderAside>
+				<TfSpaceDataDetailsNav />
+			</HeaderAside>
 			<ChildContent>
 				@if (Menu == "views")
 				{
 					<TfSpaceDataViews />
-				}
-				else if (Menu == "data")
-				{
-					<TfSpaceDataData />
 				}
 				else
 				{

@@ -4,9 +4,7 @@
 {
 	<TfLayoutBodyMain>
 		<Header>
-			<TfLayoutBodyMainHeader>
-				<TfPageHeader>@LOC("Space Views")</TfPageHeader>
-			</TfLayoutBodyMainHeader>
+			<TfPageHeader>@LOC("Space Views")</TfPageHeader>
 		</Header>
 		<ChildContent>
 			<FluentMessageBar Title="No view found"
@@ -23,15 +21,11 @@ else
 {
 	<TfLayoutBodyMain>
 		<Header>
-			<TfLayoutBodyMainHeader>
-				<ChildContent>
-					<TfPageHeader>@LOC("Manage view '{0}'", TfAppState.Value.SpaceView.Name)</TfPageHeader>
-				</ChildContent>
-				<Aside>
-					<TfSpaceViewDetailsNav />
-				</Aside>
-			</TfLayoutBodyMainHeader>
+			<TfPageHeader>@LOC("Manage view '{0}'", TfAppState.Value.SpaceView.Name)</TfPageHeader>
 		</Header>
+		<HeaderAside>
+			<TfSpaceViewDetailsNav />
+		</HeaderAside>
 		<ChildContent>
 			@if (Menu == "pages")
 			{

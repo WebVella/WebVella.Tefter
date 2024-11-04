@@ -2,11 +2,11 @@
 
 public class AssetsApp : ITfApplication
 {
-	public Guid Id => TfAssetConstants.ASSETS_APP_ID;
+	public Guid Id => TfAssetsConstants.ASSETS_APP_ID;
 
-	public string Name => TfAssetConstants.ASSETS_APP_NAME;
+	public string Name => TfAssetsConstants.ASSETS_APP_NAME;
 
-	public string Description => TfAssetConstants.ASSETS_APP_DECRIPTION;
+	public string Description => TfAssetsConstants.ASSETS_APP_DECRIPTION;
 
 	public void OnStart()
 	{

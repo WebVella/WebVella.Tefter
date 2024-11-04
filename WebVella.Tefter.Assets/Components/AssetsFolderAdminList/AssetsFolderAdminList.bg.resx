@@ -117,32 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Are you sure that you need this channel deleted? This will delete all threads and comments in it!" xml:space="preserve">
-    <value>Сигурен ли си, че искаш да изтриеш канала? Това ще изтрие и всички коментари към него!</value>
+  <data name="Are you sure that you need this folder deleted? This will delete all the files in it!" xml:space="preserve">
+    <value>Сигурен ли си, че искаш да изтриеш папката? Това ще изтрие и всички файлове към него!</value>
   </data>
-  <data name="channel name" xml:space="preserve">
-    <value>име канал</value>
+  <data name="Create folder" xml:space="preserve">
+    <value>Създай папка</value>
   </data>
-  <data name="Channel successfully created!" xml:space="preserve">
-    <value>Каналът е успешно създаден!</value>
+  <data name="delete folder" xml:space="preserve">
+    <value>изтрий папка</value>
   </data>
-  <data name="Channel successfully updated!" xml:space="preserve">
-    <value>Каналът е успешно редактиран!</value>
+  <data name="edit folder" xml:space="preserve">
+    <value>редактирай папка</value>
   </data>
-  <data name="comments count column" xml:space="preserve">
-    <value>колона за брой коментари</value>
+  <data name="files count column" xml:space="preserve">
+    <value>колона за брой файлове</value>
   </data>
-  <data name="Create channel" xml:space="preserve">
-    <value>Създай канал</value>
+  <data name="folder name" xml:space="preserve">
+    <value>папка име</value>
   </data>
-  <data name="delete channel" xml:space="preserve">
-    <value>изтрий канала</value>
+  <data name="Folder successfully created!" xml:space="preserve">
+    <value>Папката е успешно създадена!</value>
   </data>
-  <data name="edit channel" xml:space="preserve">
-    <value>редактирай канала</value>
+  <data name="Folder successfully updated!" xml:space="preserve">
+    <value>Папката е успешно редактирана!</value>
   </data>
-  <data name="No channels created yet" xml:space="preserve">
-    <value>Все още няма създадени канали</value>
+  <data name="No folders created yet" xml:space="preserve">
+    <value>Все още няма създадени папки</value>
   </data>
   <data name="shared key" xml:space="preserve">
     <value>споделен ключ</value>

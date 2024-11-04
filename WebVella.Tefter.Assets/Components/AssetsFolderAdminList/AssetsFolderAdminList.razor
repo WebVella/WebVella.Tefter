@@ -1,18 +1,18 @@
-﻿@namespace WebVella.Tefter.Talk.Components
+﻿@namespace WebVella.Tefter.Assets.Components
 @inherits TfBaseComponent
 @{
-	var channels = new List<TalkChannel>();
-	if (TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+	var channels = new List<Folder>();
+	if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
+		channels = (List<Folder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
 }
 <FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
-	<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
-		@LOC("Create channel")
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_createFolderHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
+		@LOC("Create folder")
 	</FluentButton>
 </FluentStack>
 @if (channels.Count == 0)
 {
-	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No channels created yet")</FluentMessageBar>
+	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No folders created yet")</FluentMessageBar>
 }
 else
 {
@@ -21,7 +21,7 @@ else
 			<tr class="tf-grid-thead-bkg" style="background-color: @TfConstants.AdminBackgkroundColor"></tr>
 			<tr class="tf-grid-tr">
 				<th class="tf-grid-th" style="width:40px;"></th>
-				<th class="tf-grid-th">@LOC("channel name")</th>
+				<th class="tf-grid-th">@LOC("folder name")</th>
 				<th class="tf-grid-th">@LOC("shared key")</th>
 				<th class="tf-grid-th">@LOC("comments count column")</th>
 			</tr>
@@ -33,9 +33,9 @@ else
 					<td class="tf-grid-td">
 						<div>
 							<FluentStack>
-								<FluentButton Title="@LOC("edit channel")" OnClick="@(_=> _editChannelHandler(context))"
+								<FluentButton Title="@LOC("edit channel")" OnClick="@(_=> _editFolderHandler(context))"
 											  Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
-								<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteChannelHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+								<FluentButton Title="@LOC("delete channel")" OnClick="@(_=> _deleteFolderHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
 							</FluentStack>
 						</div>
 					</td>

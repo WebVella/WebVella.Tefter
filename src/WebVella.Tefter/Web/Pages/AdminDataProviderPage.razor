@@ -14,9 +14,7 @@
 		{
 			<TfLayoutBodyMain>
 				<Header>
-					<TfLayoutBodyMainHeader>
-						<TfPageHeader>@LOC("Data Providers")</TfPageHeader>
-					</TfLayoutBodyMainHeader>
+					<TfPageHeader>@LOC("Data Providers")</TfPageHeader>
 				</Header>
 				<ChildContent>
 					<FluentMessageBar Title="Under Construction" AllowDismiss="false"
@@ -32,45 +30,43 @@
 		}
 		else
 		{
-			var urlData = Navigator.GetRouteState();
-			<TfLayoutBodyMain>
-				<Header>
-					<TfLayoutBodyMainHeader>
-						<ChildContent>
-							<TfPageHeader>@TfAppState.Value.AdminDataProvider?.Name</TfPageHeader>
-						</ChildContent>
-						<Aside>
-							<TfAdminDataProviderDetailsNav />
-						</Aside>
-					</TfLayoutBodyMainHeader>
-				</Header>
-				<ChildContent>
-					@if (!urlData.NodesDict.ContainsKey(3))
-					{
-						<TfAdminDataProviderDetails />
-					}
-					else if (urlData.NodesDict[3] == "schema")
-					{
-						<TfAdminDataProviderSchema />
-					}
-					else if (urlData.NodesDict[3] == "keys")
-					{
-						<TfAdminDataProviderKeys />
-					}
-					else if (urlData.NodesDict[3] == "aux")
-					{
-						<TfAdminDataProviderAux />
-					}
-					else if (urlData.NodesDict[3] == "synchronization")
-					{
-						<TfAdminDataProviderSynchronization />
-					}
-					else if (urlData.NodesDict[3] == "data")
-					{
-						<TfAdminDataProviderData />
-					}
-				</ChildContent>
-			</TfLayoutBodyMain>
+			if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Data)
+			{
+				<TfAdminDataProviderData />
+			}
+			else
+			{
+				<TfLayoutBodyMain>
+					<Header>
+						<TfPageHeader>@TfAppState.Value.AdminDataProvider?.Name</TfPageHeader>
+					</Header>
+					<HeaderAside>
+						<TfAdminDataProviderDetailsNav />
+					</HeaderAside>
+					<ChildContent>
+						@if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Details)
+						{
+							<TfAdminDataProviderDetails />
+						}
+						else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Schema)
+						{
+							<TfAdminDataProviderSchema />
+						}
+						else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.SharedKeys)
+						{
+							<TfAdminDataProviderKeys />
+						}
+						else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.AuxColumns)
+						{
+							<TfAdminDataProviderAux />
+						}
+						else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Synchronization)
+						{
+							<TfAdminDataProviderSynchronization />
+						}
+					</ChildContent>
+				</TfLayoutBodyMain>
+			}
 		}
 	</ChildContent>
 </TfLayoutBody>

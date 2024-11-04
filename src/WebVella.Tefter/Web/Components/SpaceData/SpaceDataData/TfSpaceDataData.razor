@@ -2,17 +2,19 @@
 @namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (TfAppState.Value.SpaceDataData is not null)
-{
-	<div class="tfdt" style="margin-top:1rem">
-		<div class="tfdt__toolbar" style="display:flex;justify-content:space-between;">
-			<div style="flex:1 1 auto">
-				<FluentStack>
-					<FluentSearch Value="@TfAppState.Value.SpaceDataSearch" ValueChanged="_onSearch" AutoComplete="off" />
-				</FluentStack>
-			</div>
-		</div>
-		<div class="tfdt__content">
+<TfLayoutBodyMain>
+	<Header>
+		<TfPageHeader>@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
+	</Header>
+	<HeaderAside>
+		<TfSpaceDataDetailsNav />
+	</HeaderAside>
+	<Toolbar>
+		<FluentSearch Value="@TfAppState.Value.SpaceDataSearch" ValueChanged="_onSearch" AutoComplete="off" />
+	</Toolbar>
+	<ChildContent>
+		@if (TfAppState.Value.SpaceDataData is not null)
+		{
 			<div class="tf-grid-wrapper">
 				<table class="tf-grid">
 					<thead class="tf-grid-thead">
@@ -46,10 +48,12 @@
 				</table>
 
 			</div>
-		</div>
-		<div class="tfdt__pager">
+		}
+	</ChildContent>
+	<Footer>
+		<div class="tf-grid__pager">
 			<TfPager Page="@TfAppState.Value.SpaceDataPage" GoLast="@_goLastPage" GoNext="@_goNextPage"
 					 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" />
 		</div>
-	</div>
-}
+	</Footer>
+</TfLayoutBodyMain>
