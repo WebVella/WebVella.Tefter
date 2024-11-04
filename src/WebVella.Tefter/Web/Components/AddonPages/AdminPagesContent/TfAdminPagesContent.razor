@@ -1,49 +1,58 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (SidebarExpanded.Value)
-{
-	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
+<TfLayoutBody Color="@TfConstants.AdminBorderColor">
+	<Aside>
 		<TfAdminPagesNavigation />
-	</FluentStack>
-}
-
-@if (String.IsNullOrWhiteSpace(Slug))
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="No page selected"
-							  Style="@("border: 1px solid var(--neutral-base-color)")"
-							  Intent="MessageIntent.Info"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				Select a page from the menu
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else
-{
-	TucScreenRegionComponentMeta componentMeta = TfAppState.Value.Pages.FirstOrDefault(x => x.Slug.ToLowerInvariant() == Slug.ToLowerInvariant());
-	if (componentMeta is null)
-	{
-		<FluentBodyContent Class="content-body">
-			<div class="content-inner">
-				<FluentMessageBar Title="Page Not Found"
-								  Style="@("border: 1px solid var(--neutral-base-color)")"
-								  Intent="MessageIntent.Info"
-								  Type="@MessageType.Notification"
-								  AllowDismiss="false">
-					No page was found on this URL
-				</FluentMessageBar>
-			</div>
-		</FluentBodyContent>
-	}
-	else
-	{
-		<TfErrorBoundry>
-			<DynamicComponent Type="@componentMeta.ComponentType" Parameters="@_getComponentContext()" />
-		</TfErrorBoundry>
-	}
-}
-
+	</Aside>
+	<ChildContent>
+		@if (String.IsNullOrWhiteSpace(Slug))
+		{
+			<TfLayoutBodyMain>
+				<Header>
+					<TfLayoutBodyMainHeader>
+						<TfPageHeader>@LOC("Addon Pages")</TfPageHeader>
+					</TfLayoutBodyMainHeader>
+				</Header>
+				<ChildContent>
+					<FluentMessageBar Title="No page selected"
+									  Style="@("border: 1px solid var(--neutral-base-color)")"
+									  Intent="MessageIntent.Info"
+									  Type="@MessageType.Notification"
+									  AllowDismiss="false">
+						Select a page from the menu
+					</FluentMessageBar>
+				</ChildContent>
+			</TfLayoutBodyMain>
+		}
+		else
+		{
+			TucScreenRegionComponentMeta componentMeta = TfAppState.Value.Pages.FirstOrDefault(x => x.Slug.ToLowerInvariant() == Slug.ToLowerInvariant());
+			if (componentMeta is null)
+			{
+				<TfLayoutBodyMain>
+					<Header>
+						<TfLayoutBodyMainHeader>
+							<TfPageHeader>@LOC("Addon Pages")</TfPageHeader>
+						</TfLayoutBodyMainHeader>
+					</Header>
+					<ChildContent>
+						<FluentMessageBar Title="Page Not Found"
+										  Style="@("border: 1px solid var(--neutral-base-color)")"
+										  Intent="MessageIntent.Info"
+										  Type="@MessageType.Notification"
+										  AllowDismiss="false">
+							No page was found on this URL
+						</FluentMessageBar>
+					</ChildContent>
+				</TfLayoutBodyMain>
+			}
+			else
+			{
+				<TfErrorBoundry>
+					<DynamicComponent Type="@componentMeta.ComponentType" Parameters="@_getComponentContext()" />
+				</TfErrorBoundry>
+			}
+		}
+	</ChildContent>
+</TfLayoutBody>

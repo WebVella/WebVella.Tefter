@@ -2,7 +2,7 @@
 public partial class TfAdminPagesNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 
 	protected override void OnInitialized()
 	{
@@ -20,12 +20,12 @@ public partial class TfAdminPagesNavigation : TfBaseComponent
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !page.Name.ToLowerInvariant().Contains(search))
 				continue;
-
+			var uri = new Uri(Navigator.Uri);
 			var menu = new TucMenuItem
 			{
 				Id = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid()),
 				IconCollapsed = TfConstants.ApplicationIcon,
-				Match = NavLinkMatch.Prefix,
+				Selected = uri.LocalPath.StartsWith(String.Format(TfConstants.AdminPagesSingleUrl, page.Slug)),
 				Text = page.Name,
 				Url = String.Format(TfConstants.AdminPagesSingleUrl, page.Slug),
 			};

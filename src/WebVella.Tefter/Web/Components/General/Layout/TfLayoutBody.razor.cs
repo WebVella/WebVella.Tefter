@@ -28,7 +28,7 @@ public partial class TfLayoutBody
 		{
 			StringBuilder sb = new();
 			sb.Append("tf-layout__body");
-			if (ChildContent is not null) sb.Append(" tf-layout__body--has-aside");
+			if (Aside is not null) sb.Append(" tf-layout__body--has-aside");
 			return String.Join(" ", sb);
 		}
 	}

@@ -157,4 +157,13 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
+
+	private bool _columnIsVisible(TfDataColumn column)
+	{
+		if (_showSharedKeyColumns && column.IsShared) return true;
+		if (_showSystemColumns && column.IsSystem) return true;
+		if (_showCustomColumns && !column.IsSystem) return true;
+
+		return false;
+	}
 }

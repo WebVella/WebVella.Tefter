@@ -5,67 +5,76 @@
 @layout AdminLayout
 @inherits TfBasePage
 
-@if (SidebarExpanded.Value)
-{
-	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfConstants.AdminSidebarStyle">
-		<TfAdminDataProviderNavigation />
-	</FluentStack>
-}
-@if (ProviderId == Guid.Empty)
-{
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<TfPageHeader Style="margin-bottom:15px;">@LOC("Data Providers")</TfPageHeader>
-			<FluentMessageBar Title="Under Construction" AllowDismiss="false"
-							  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
-				<div>TBD: Data Provider dashboard with various height level overview information</div>
-			</FluentMessageBar>
-			<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
-							  Intent="@MessageIntent.Warning">
-				<div>Select provider from the list to review and manage it</div>
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
-}
-else
-{
-	var urlData = Navigator.GetRouteState();
-	<FluentBodyContent Class="content-body with-toolbar content-header">
-		<div class="content-header" style="padding-top:15px">
-			@if (TfAppState.Value.AdminDataProvider is not null)
-			{
-				<TfPageHeader>@TfAppState.Value.AdminDataProvider.Name</TfPageHeader>
-			}
-		</div>
-			<TfAdminDataProviderDetailsNav />
-		<div class="content-inner">
-			@if (!urlData.NodesDict.ContainsKey(3))
-			{
-				<TfAdminDataProviderDetails />
-			}
-			else if (urlData.NodesDict[3] == "schema")
-			{
-				<TfAdminDataProviderSchema />
-			}
-			else if (urlData.NodesDict[3] == "keys")
-			{
-				<TfAdminDataProviderKeys />
-			}
-			else if (urlData.NodesDict[3] == "aux")
-			{
-				<TfAdminDataProviderAux />
-			}
-			else if (urlData.NodesDict[3] == "synchronization")
-			{
-				<TfAdminDataProviderSynchronization />
-			}
-			else if (urlData.NodesDict[3] == "data")
-			{
-				<TfAdminDataProviderData />
-			}
-		</div>
-	</FluentBodyContent>
-
-}
-
+<TfLayoutBody Color="@TfConstants.AdminBorderColor">
+	<Aside>
+		@if (SidebarExpanded.Value)
+		{
+			<TfAdminDataProviderNavigation />
+		}
+	</Aside>
+	<ChildContent>
+		@if (ProviderId == Guid.Empty)
+		{
+			<TfLayoutBodyMain>
+				<Header>
+					<TfLayoutBodyMainHeader>
+						<TfPageHeader>@LOC("Data Providers")</TfPageHeader>
+					</TfLayoutBodyMainHeader>
+				</Header>
+				<ChildContent>
+					<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+									  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+						<div>TBD: Data Provider dashboard with various height level overview information</div>
+					</FluentMessageBar>
+					<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
+									  Intent="@MessageIntent.Warning">
+						<div>Select provider from the list to review and manage it</div>
+					</FluentMessageBar>
+				</ChildContent>
+			</TfLayoutBodyMain>
+		}
+		else
+		{
+			var urlData = Navigator.GetRouteState();
+			<TfLayoutBodyMain>
+				<Header>
+					<TfLayoutBodyMainHeader>
+						<ChildContent>
+							<TfPageHeader>@TfAppState.Value.AdminDataProvider?.Name</TfPageHeader>
+						</ChildContent>
+						<Aside>
+							<TfAdminDataProviderDetailsNav />
+						</Aside>
+					</TfLayoutBodyMainHeader>
+				</Header>
+				<ChildContent>
+					@if (!urlData.NodesDict.ContainsKey(3))
+					{
+						<TfAdminDataProviderDetails />
+					}
+					else if (urlData.NodesDict[3] == "schema")
+					{
+						<TfAdminDataProviderSchema />
+					}
+					else if (urlData.NodesDict[3] == "keys")
+					{
+						<TfAdminDataProviderKeys />
+					}
+					else if (urlData.NodesDict[3] == "aux")
+					{
+						<TfAdminDataProviderAux />
+					}
+					else if (urlData.NodesDict[3] == "synchronization")
+					{
+						<TfAdminDataProviderSynchronization />
+					}
+					else if (urlData.NodesDict[3] == "data")
+					{
+						<TfAdminDataProviderData />
+					}
+				</ChildContent>
+			</TfLayoutBodyMain>
+		}
+	</ChildContent>
+</TfLayoutBody>
 

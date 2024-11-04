@@ -699,6 +699,9 @@
   display: inline-block;
   width: 1rem;
 }
+.tf-grid-td > div:not([class]):empty {
+  height: 30px;
+}
 .tfdt {
   position: absolute;
   top: 0;
@@ -1233,18 +1236,20 @@ body {
   display: none;
 }
 .tf-layout__body {
+  --tf-layout-body-color-rest: color-mix(in srgb, var(--accent-base-color) 40%, var(--neutral-layer-3) 60%);
+  --tf-layout-body-color-background: color-mix(in srgb, var(--accent-base-color) 15%, var(--neutral-layer-3) 85%);
   flex: 1 1 auto;
   width: var(--tf-layout-wrapper-body-width);
   display: flex;
   background: var(--neutral-layer-2) !important;
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
-  border-top: 2px solid var(--accent-base-color);
-  border-left: 1px solid var(--neutral-stroke-input-rest);
+  border-top: 2px solid var(--tf-layout-body-color-rest);
+  border-left: 1px solid var(--tf-layout-body-color-rest);
 }
 .tf-layout__body__aside {
   --neutral-fill-input-rest: var(--neutral-fill-input-focus);
-  --neutral-stroke-input-rest: color-mix(in srgb, var(--accent-base-color) 40%, var(--neutral-layer-3) 60%);
-  --neutral-stroke-rest: color-mix(in srgb, var(--accent-base-color) 40%, var(--neutral-layer-3) 60%);
+  --neutral-stroke-input-rest: var(--tf-layout-body-color-rest);
+  --neutral-stroke-rest: var(--tf-layout-body-color-rest);
   flex: 0 0 auto;
   width: var(--tf-layout-wrapper-body-aside-width);
   display: flex;
@@ -1253,7 +1258,7 @@ body {
   border-right: 1px solid var(--neutral-stroke-input-rest);
 }
 .tf-layout__body__aside:before {
-  background: color-mix(in srgb, var(--accent-base-color) 15%, var(--neutral-layer-3) 85%);
+  background: var(--tf-layout-body-color-background);
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
   content: "";
   position: absolute;
@@ -1288,7 +1293,25 @@ body {
 }
 .tf-layout__body__main__header {
   flex: 0 0 auto;
-  padding: var(--tf-layout-wrapper-body-main-padding);
+  padding: 0 var(--tf-layout-wrapper-body-main-padding);
+  background: var(--neutral-layer-1);
+  border-bottom: 1px solid var(--neutral-layer-4);
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
+}
+.tf-layout__body--has-aside .tf-layout__body__main__header {
+  border-radius: 0;
+}
+.tf-layout__body__main__header__content {
+  flex: 0 0 auto;
+  padding: var(--tf-layout-wrapper-body-main-padding) 0;
+  width: 400px;
+  max-width: 400px;
+}
+.tf-layout__body__main__header__aside {
+  flex: 0 0 auto;
 }
 .tf-layout__body__main__toolbar {
   flex: 0 0 auto;
@@ -1374,6 +1397,61 @@ body {
 }
 .tf-sidetoolbar__actions {
   flex: 0 0 auto;
+}
+.tf-tabnav.fluent-nav-menu {
+  display: flex;
+  position: relative;
+  margin-left: 15px;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-item {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link {
+  padding-right: 5px;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .fluent-nav-icon {
+  width: unset;
+  margin-left: 5px;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .fluent-nav-icon:empty {
+  display: none;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .fluent-nav-text {
+  width: unset;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .content-region {
+  margin-inline-start: 0;
+  padding-right: 10px;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .positioning-region {
+  border-width: 0;
+  border-radius: calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0 0 !important;
+  background: transparent;
+  border-top: 2px solid transparent;
+  position: relative;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .positioning-region:after {
+  content: "";
+  position: absolute;
+  bottom: -1px !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100%;
+  height: 1px;
+  background: inherit;
+  display: block;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .positioning-region:before {
+  display: none !important;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link .positioning-region:hover {
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
+  background-color: var(--neutral-layer-2) !important;
+}
+.tf-tabnav.fluent-nav-menu .fluent-nav-link.active .positioning-region {
+  background: var(--neutral-layer-2);
+  border-top-color: var(--accent-base-color);
 }
 :root {
   --tf-content-padding: 10px;

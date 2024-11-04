@@ -1,30 +1,31 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<div class="@($"sidebar-nav {(SidebarExpanded.Value ? "expanded" : "collapsed")}")">
-	<div class="sidebar-toolbar">
-		<div class="sidebar-toolbar-search">
-			<FluentTextField Class="search" Placeholder="@LOC("search...")" Immediate="true" ImmediateDelay="500" Value=@search
-							 ValueChanged="onSearch" />
+<TfLayoutBodyAside>
+	<Toolbar>
+		<div class="tf-sidetoolbar">
+			<div class="tf-sidetoolbar__search">
+				<FluentTextField Class="search" Placeholder="@LOC("search...")" Immediate="true" ImmediateDelay="500" Value=@search
+								 ValueChanged="onSearch" />
+			</div>
+			<div class="tf-sidetoolbar__actions">
+				<FluentButton Title="@LOC("Create new data provider")"
+							  IconStart="@TfConstants.AddIcon"
+							  OnClick="onAddClick" Appearance="@Appearance.Outline">@LOC("New")</FluentButton>
+			</div>
 		</div>
-		<div class="sidebar-toolbar-actions">
-			<FluentButton Title="@LOC("Create new data provider")"
-						  IconStart="@TfConstants.AddIcon"
-						  OnClick="onAddClick" Appearance="@Appearance.Outline">@LOC("New")</FluentButton>
-		</div>
-	</div>
-	<div class="sidebar-inner">
-
-		<FluentNavMenu Style="width:100%">
+	</Toolbar>
+	<ChildContent>
+		<FluentNavMenu Class="tf-sidenav">
 			@foreach (var item in _getProviders())
 			{
 				<FluentNavLink Href="@(string.Format(TfConstants.AdminDataProviderDetailsPageUrl,item.Id))" Match="@NavLinkMatch.Prefix"
-							   @key="@item.Id" Icon="@TfConstants.AdminDataProvidersIcon" IconColor="@Color.Neutral">
+							   @key="@item.Id" Icon="@TfConstants.AdminDataProvidersIcon" >
 					@TfConverters.StringOverflow(item.Name, _stringLimit)
 				</FluentNavLink>
 			}
 		</FluentNavMenu>
+	</ChildContent>
+</TfLayoutBodyAside>
 
-	</div>
-</div>
 

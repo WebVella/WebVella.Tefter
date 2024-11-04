@@ -1,30 +1,38 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
 @{
 	var columnCount = 0;
 }
 @if (TfAppState.Value.AdminDataProviderData is not null)
 {
-	<div class="tfdt">
+	<div class="tfdt" style="margin-top:1rem">
 		<div class="tfdt__toolbar" style="display:flex;justify-content:space-between;">
 			<div style="flex:1 1 auto">
 				<FluentStack>
 					<FluentSearch Value="@TfAppState.Value.AdminDataProviderDataSearch" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
 					<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
-								  Appearance="@(_showSystemColumns ? Appearance.Accent : Appearance.Outline)">
+								  Appearance="Appearance.Outline">
+						<FluentIcon Slot="start" Value="@(_showSystemColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
 						<span>system</span>
-						<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SystemColumns.Count</FluentBadge>
+						<span slot="end">
+							<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SystemColumns.Count</FluentBadge>
+						</span>
 					</FluentButton>
 					<FluentButton Id="view-filter-selector" Title="toggle shared key columns" OnClick="_toggleSharedKeyColumns"
-								  Appearance="@(_showSharedKeyColumns ? Appearance.Accent : Appearance.Outline)">
+								  Appearance="Appearance.Outline">
+						<FluentIcon Slot="start" Value="@(_showSharedKeyColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
 						<span>shared key</span>
-						<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SharedColumns.Count</FluentBadge>
+						<span slot="end">
+							<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SharedColumns.Count</FluentBadge>
+						</span>
 					</FluentButton>
 					<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
-								  Appearance="@(_showCustomColumns ? Appearance.Accent : Appearance.Outline)">
+								  Appearance="@Appearance.Outline">
+						<FluentIcon Slot="start" Value="@(_showCustomColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
 						<span>custom</span>
-						<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.Columns.Count</FluentBadge>
+						<span slot="end">
+							<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.Columns.Count</FluentBadge>
+						</span>
 					</FluentButton>
 				</FluentStack>
 			</div>
@@ -45,9 +53,7 @@
 							<tr class="tf-grid-tr">
 								@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
 								{
-									if (!_showSystemColumns && column.IsSystem) { continue; }
-									if (!_showSharedKeyColumns && column.IsShared) { continue; }
-									if (!_showCustomColumns && !column.IsSystem) { continue; }
+									if (!_columnIsVisible(column)) { continue; }
 									<th class="tf-grid-th">@column.Name</th>
 									columnCount++;
 								}
@@ -67,9 +73,7 @@
 									<tr @key=@row["tf_id"] class="tf-grid-tr">
 										@foreach (var column in TfAppState.Value.AdminDataProviderData.Columns)
 										{
-											if (!_showSystemColumns && column.IsSystem) { continue; }
-											if (!_showSharedKeyColumns && column.IsShared) { continue; }
-											if (!_showCustomColumns && !column.IsSystem) { continue; }
+											if (!_columnIsVisible(column)) { continue; }
 											<td class="tf-grid-td">
 												<div>@row[column.Name]</div>
 											</td>

@@ -2,9 +2,15 @@
 @layout AdminLayout
 @inherits TfBasePage
 
-<FluentBodyContent Class="content-body">
-	<div class="content-inner">
-		<TfPageHeader Style="margin-bottom:15px;">@LOC(TfConstants.AdminSharedColumnsMenuTitle)</TfPageHeader>
-		<TfAdminSharedColumns/>
-	</div>
-</FluentBodyContent>
+<TfLayoutBody Color="@TfConstants.AdminBorderColor">
+			<TfLayoutBodyMain>
+				<Header>
+					<TfLayoutBodyMainHeader>
+							<TfPageHeader>@LOC(TfConstants.AdminSharedColumnsMenuTitle)</TfPageHeader>
+					</TfLayoutBodyMainHeader>
+				</Header>
+				<ChildContent>
+					<TfAdminSharedColumns/>
+				</ChildContent>
+	</TfLayoutBodyMain>
+</TfLayoutBody>

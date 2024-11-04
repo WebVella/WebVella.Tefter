@@ -15,7 +15,9 @@
 		{
 			<TfLayoutBodyMain>
 				<Header>
-					<TfPageHeader Style="margin-bottom:15px;">@LOC("Users")</TfPageHeader>
+					<TfLayoutBodyMainHeader>
+						<TfPageHeader>@LOC("Users")</TfPageHeader>
+					</TfLayoutBodyMainHeader>
 				</Header>
 				<ChildContent>
 					<FluentMessageBar Title="Under Construction" AllowDismiss="false"
@@ -34,14 +36,15 @@
 			var urlData = Navigator.GetRouteState();
 			<TfLayoutBodyMain>
 				<Header>
-					@if (TfAppState.Value.AdminManagedUser is not null)
-					{
-						<TfPageHeader>@TfAppState.Value.AdminManagedUser.Names</TfPageHeader>
-					}
+					<TfLayoutBodyMainHeader>
+						<ChildContent>
+							<TfPageHeader>@TfAppState.Value.AdminManagedUser?.Names</TfPageHeader>
+						</ChildContent>
+						<Aside>
+							<TfAdminUserDetailsNav />
+						</Aside>
+					</TfLayoutBodyMainHeader>
 				</Header>
-				<Toolbar>
-					<TfAdminUserDetailsNav />
-				</Toolbar>
 				<ChildContent>
 					@if (!urlData.NodesDict.ContainsKey(3))
 					{

@@ -1,8 +1,12 @@
 ﻿@namespace WebVella.Tefter.Talk.Pages
 @inherits TucBaseScreenRegionComponent
-<FluentBodyContent Class="content-body">
-	<div class="content-inner">
-		<TfPageHeader>@LOC("Talk Administration")</TfPageHeader>
+<TfLayoutBodyMain>
+	<Header>
+		<TfLayoutBodyMainHeader>
+			<TfPageHeader>@LOC("Talk Administration")</TfPageHeader>
+		</TfLayoutBodyMainHeader>
+	</Header>
+	<ChildContent>
 		<TalkChannelAdminList />
-	</div>
-</FluentBodyContent>
+	</ChildContent>
+</TfLayoutBodyMain>
