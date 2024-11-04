@@ -2,7 +2,6 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminDataProviderNavigation.TfAdminDataProviderNavigation", "WebVella.Tefter")]
 public partial class TfAdminDataProviderNavigation : TfBaseComponent
 {
-	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 

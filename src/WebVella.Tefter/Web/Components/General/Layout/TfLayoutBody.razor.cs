@@ -3,7 +3,6 @@ public partial class TfLayoutBody
 {
 	[Parameter] public RenderFragment Aside { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
-	[Parameter] public string Color { get; set; }
 	private string _styles
 	{
 		get
@@ -11,11 +10,6 @@ public partial class TfLayoutBody
 			var sb = new StringBuilder();
 			sb.AppendLine("<style>");
 			sb.AppendLine(":root .tf-layout__body {");
-			if (!String.IsNullOrWhiteSpace(Color))
-			{
-				sb.AppendLine($"--accent-base-color: {Color};");
-				sb.AppendLine($"--accent-fill-rest: {Color};");
-			}
 			sb.AppendLine("}");
 			sb.AppendLine("</style>");
 			return sb.ToString();

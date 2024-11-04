@@ -16,6 +16,7 @@ public partial class TfPagesNavigation : TfBaseComponent
 	{
 		search = search?.Trim().ToLowerInvariant();
 		var menuItems = new List<TucMenuItem>();
+		var uri = new Uri(Navigator.Uri);
 		foreach (var page in TfAppState.Value.Pages)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !page.Name.ToLowerInvariant().Contains(search))
@@ -25,7 +26,7 @@ public partial class TfPagesNavigation : TfBaseComponent
 			{
 				Id = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid()),
 				IconCollapsed = TfConstants.ApplicationIcon.WithColor(Color.Accent),
-				Match = NavLinkMatch.Prefix,
+				Selected = uri.LocalPath.StartsWith(String.Format(TfConstants.PagesSinglePageUrl, page.Slug)),
 				Text = page.Name,
 				Url = String.Format(TfConstants.PagesSinglePageUrl, page.Slug),
 			};

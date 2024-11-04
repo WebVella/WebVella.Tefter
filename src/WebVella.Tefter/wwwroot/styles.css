@@ -732,26 +732,16 @@
 }
 .tfdt__pager {
   margin-top: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 600px;
   position: relative;
-  flex: 0 0 40px;
-  padding-left: var(--tf-content-padding);
-  padding-right: var(--tf-content-margin-bottom);
-  margin-left: var(--tf-content-padding);
-  margin-right: var(--tf-content-margin-bottom);
+  padding: 5px 10px;
   background: var(--neutral-layer-1);
   border-radius: var(--tf-content-border-radius) var(--tf-content-border-radius) 0 0;
+  border: 1px solid var(--neutral-layer-4);
+  border-bottom: none;
 }
-/*	.tfdt__pager:before {
-		background: var(--neutral-stroke-active);
-		position:absolute;
-		left:0;
-		right:0;
-		top:0;
-		width:100%;
-		height:1px;
-		content:"";
-		display:block;
-	}*/
 .layout {
   overflow-x: hidden;
   /*fix for a scroll blink on menu drop*/
@@ -1243,7 +1233,7 @@ body {
   display: flex;
   background: var(--neutral-layer-2) !important;
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
-  border-top: 2px solid var(--tf-layout-body-color-rest);
+  border-top: 3px solid var(--tf-layout-body-color-rest);
   border-left: 1px solid var(--tf-layout-body-color-rest);
 }
 .tf-layout__body__aside {
@@ -1298,7 +1288,6 @@ body {
   border-bottom: 1px solid var(--neutral-layer-4);
   display: flex;
   align-items: end;
-  justify-content: space-between;
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 }
 .tf-layout__body--has-aside .tf-layout__body__main__header {
@@ -1307,8 +1296,8 @@ body {
 .tf-layout__body__main__header__content {
   flex: 0 0 auto;
   padding: var(--tf-layout-wrapper-body-main-padding) 0;
-  width: 400px;
-  max-width: 400px;
+  width: 35%;
+  max-width: 35%;
 }
 .tf-layout__body__main__header__aside {
   flex: 0 0 auto;
@@ -1331,9 +1320,8 @@ body {
 }
 .tf-navigation {
   display: flex;
-  justify-content: center;
-}
-.tf-navigation .fluent-nav-menu {
+  flex-flow: column;
+  align-items: center;
   width: unset !important;
 }
 .tf-navigation .fluent-nav-item {
@@ -1387,6 +1375,41 @@ body {
 }
 .tf-sidetoolbar {
   display: flex;
+}
+.tf-sidetoolbar__mode {
+  flex: 0 0 auto;
+}
+.tf-sidetoolbar__mode .modebar {
+  padding: 0;
+  background: transparent;
+}
+.tf-sidetoolbar__mode .modebar .btn {
+  margin: 0;
+  border-radius: 0;
+}
+.tf-sidetoolbar__mode .modebar .btn.active {
+  background: var(--accent-base-color);
+  border-color: var(--accent-base-color);
+  color: var(--neutral-foreground-rest) !important;
+  fill: var(--neutral-foreground-rest) !important;
+}
+.tf-sidetoolbar__mode .modebar .btn.active svg {
+  color: var(--neutral-foreground-rest) !important;
+  fill: var(--neutral-foreground-rest) !important;
+}
+.tf-sidetoolbar__mode .modebar .btn:first-child {
+  border-radius: calc(var(--control-corner-radius) * 1px) 0 0 calc(var(--control-corner-radius) * 1px);
+}
+.tf-sidetoolbar__mode .modebar .btn:last-child {
+  border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
+  margin-right: 5px;
+}
+.tf-sidetoolbar__mode .modebar .btn + .btn {
+  margin-left: 0;
+}
+.tf-sidetoolbar__mode .modebar fluent-button.active::part(control) {
+  background: var(--accent-base-color);
+  border-color: var(--accent-base-color);
 }
 .tf-sidetoolbar__search {
   flex: 1 1 auto;

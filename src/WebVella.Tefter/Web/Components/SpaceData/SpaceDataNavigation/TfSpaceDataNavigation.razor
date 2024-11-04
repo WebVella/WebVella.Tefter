@@ -1,59 +1,64 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-
-<div class="@($"sidebar-nav {(SidebarExpanded.Value ? "expanded" : "collapsed")}")">
-	<div class="sidebar-toolbar">
-		<div class="sidebar-toolbar-search">
-			<FluentTextField Class="search" Placeholder="@LOC("search...")" Immediate="true" ImmediateDelay="500" Value=@search ValueChanged="onSearch" />
-		</div>
-		<div class="sidebar-toolbar-actions">
-			<FluentButton Id="space-settings" Title="space actions"
-						  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
-				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-			</FluentButton>
-			<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
-				<FluentMenuItem OnClick="onManageSpaceClick">
-					@LOC("Manage Space")
-					<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onDeleteSpaceClick">
-					@LOC("Delete Space")
-					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
-				</FluentMenuItem>
-				<FluentDivider></FluentDivider>
-				<FluentMenuItem OnClick="onAddClick">
+@if (SidebarExpanded.Value)
+{
+	<TfLayoutBodyAside>
+		<Toolbar>
+			<div class="tf-sidetoolbar">
+				<div class="tf-sidetoolbar__search">
+					<FluentTextField Class="search" Placeholder="@LOC("search...")" Immediate="true" 
+						ImmediateDelay="500" Value=@search ValueChanged="onSearch" AutoComplete="off"/>
+				</div>
+				<div class="tf-sidetoolbar__actions">
+					<FluentButton Id="space-settings" Title="space actions"
+								  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
+						<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+					</FluentButton>
+					<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
+						<FluentMenuItem OnClick="onManageSpaceClick">
+							@LOC("Manage Space")
+							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						</FluentMenuItem>
+						<FluentMenuItem OnClick="onDeleteSpaceClick">
+							@LOC("Delete Space")
+							<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+						</FluentMenuItem>
+						<FluentDivider></FluentDivider>
+						<FluentMenuItem OnClick="onAddClick">
+							@LOC("Create Dataset")
+							<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						</FluentMenuItem>
+						<FluentDivider></FluentDivider>
+						<FluentMenuItem OnClick="onDataListClick">
+							@LOC("Space Data")
+							<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						</FluentMenuItem>
+						<FluentMenuItem OnClick="onViewsListClick">
+							@LOC("Space Views")
+							<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						</FluentMenuItem>
+						<FluentMenuItem OnClick="onPageListClick">
+							@LOC("Space Pages")
+							<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						</FluentMenuItem>
+					</FluentMenu>
+				</div>
+			</div>
+		</Toolbar>
+		<ChildContent>
+			@{
+				var menuItems = _getMenu();
+			}
+			<TfTreeView Items="menuItems" />
+			@if (menuItems.Count == 0)
+			{
+				<div style="padding-left:5px;padding-top:5px">@LOC("No data found in the space")</div>
+				<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:1rem;">
+					<FluentIcon Slot="start" Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 					@LOC("Create Dataset")
-					<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentMenuItem>
-				<FluentDivider></FluentDivider>
-				<FluentMenuItem OnClick="onDataListClick">
-					@LOC("Space Data")
-					<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onViewsListClick">
-					@LOC("Space Views")
-					<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentMenuItem>
-				<FluentMenuItem OnClick="onPageListClick">
-					@LOC("Space Pages")
-					<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				</FluentMenuItem>
-			</FluentMenu>
-		</div>
-	</div>
-	<div class="sidebar-inner">
-		@{
-			var menuItems = _getMenu();
-		}
-		<TfTreeView Items="menuItems"/>
-		@if (menuItems.Count == 0)
-		{
-			<div style="padding-left:5px;padding-top:5px">@LOC("No data found in the space")</div>
-			<FluentButton Appearance="@Appearance.Outline" OnClick="onAddClick" Style="margin-top:1rem;">
-				<FluentIcon Slot="start" Value="@TfConstants.AddIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-				@LOC("Create Dataset")
-			</FluentButton>
-		}
-	</div>
-</div>
+				</FluentButton>
+			}
+		</ChildContent>
+	</TfLayoutBodyAside>
+}
 

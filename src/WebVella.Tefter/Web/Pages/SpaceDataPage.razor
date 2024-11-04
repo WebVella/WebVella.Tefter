@@ -1,8 +1,16 @@
 ﻿@page "/space/{SpaceId:guid}/data"
 @page "/space/{SpaceId:guid}/data/{SpaceDataId:guid}"
 @page "/space/{SpaceId:guid}/data/{SpaceDataId:guid}/{Menu}"
-@layout SpaceLayout
+@layout MainLayout
 @inherits TfBasePage
-<TfSpaceTheme />
-<TfSpaceDataDetails Menu="@Menu" />
+<TfLayoutBody>
+	<Aside>
+		<TfSpaceDataNavigation />
+	</Aside>
+	<ChildContent>
+		<TfSpaceDataDetails Menu="@Menu" />
+	</ChildContent>
+</TfLayoutBody>
+
+
 

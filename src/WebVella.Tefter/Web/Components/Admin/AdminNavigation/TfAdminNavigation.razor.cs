@@ -2,7 +2,7 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminNavigation.TfAdminNavigation", "WebVella.Tefter")]
 public partial class TfAdminNavigation : TfBaseComponent
 {
-	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	private List<TucMenuItem> menuItems = new List<TucMenuItem>();
 
@@ -20,7 +20,13 @@ public partial class TfAdminNavigation : TfBaseComponent
 		base.OnInitialized();
 		SidebarExpanded.Select(x => x.SidebarExpanded);
 		generateMenu();
-		ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 	}
 
 	private void On_AppChanged(SetAppStateAction action)
@@ -40,7 +46,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Id = "tf-dashboard-link",
 			IconCollapsed = TfConstants.AdminDashboardIcon,
 			IconColor = TfConstants.AdminThemeColor,
-			Selected= TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Dashboard,
+			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Dashboard,
 			Url = "/admin",
 			Text = LOC(TfConstants.AdminDashboardMenuTitle)
 		});
@@ -50,7 +56,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Id = "tf-users-link",
 			IconCollapsed = TfConstants.AdminUsersIcon,
 			IconColor = TfConstants.AdminThemeColor,
-			Selected= TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Users,
+			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Users,
 			Url = String.Format(TfConstants.AdminUsersPageUrl),
 			Text = LOC(TfConstants.AdminUsersMenuTitle)
 		});
@@ -60,7 +66,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Id = "tf-data-providers-link",
 			IconCollapsed = TfConstants.AdminDataProvidersIcon,
 			IconColor = TfConstants.AdminThemeColor,
-			Selected= TfAppState.Value.Route.SecondNode == RouteDataSecondNode.DataProviders,
+			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.DataProviders,
 			Url = String.Format(TfConstants.AdminDataProvidersPageUrl),
 			Text = LOC(TfConstants.AdminDataProvidersMenuTitle)
 		});
@@ -69,7 +75,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Id = "tf-shared-columns-link",
 			IconCollapsed = TfConstants.AdminSharedColumnsIcon,
 			IconColor = TfConstants.AdminThemeColor,
-			Selected= TfAppState.Value.Route.SecondNode == RouteDataSecondNode.SharedColumns,
+			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.SharedColumns,
 			Url = TfConstants.AdminSharedColumnsPageUrl,
 			Text = LOC(TfConstants.AdminSharedColumnsMenuTitle)
 		});
@@ -78,7 +84,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			Id = "tf-file-repository-link",
 			IconCollapsed = TfConstants.AdminFileRepositoryIcon,
 			IconColor = TfConstants.AdminThemeColor,
-			Selected= TfAppState.Value.Route.SecondNode == RouteDataSecondNode.FileRepository,
+			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.FileRepository,
 			Url = TfConstants.AdminFileRepositoryPageUrl,
 			Text = LOC(TfConstants.AdminFileRepositoryMenuTitle)
 		});
@@ -89,7 +95,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 				Id = "tf-pages-link",
 				IconCollapsed = TfConstants.ApplicationIcon,
 				IconColor = TfConstants.AdminThemeColor,
-				Selected= TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Pages,
+				Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Pages,
 				Url = String.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Slug),
 				Text = LOC(TfConstants.AdminPagesMenuTitle)
 			});

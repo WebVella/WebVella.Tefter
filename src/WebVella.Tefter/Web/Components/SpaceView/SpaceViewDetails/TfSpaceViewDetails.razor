@@ -2,8 +2,13 @@
 @inherits TfBaseComponent
 @if (TfAppState.Value.Space is null)
 {
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
+	<TfLayoutBodyMain>
+		<Header>
+			<TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space View")</TfPageHeader>
+			</TfLayoutBodyMainHeader>
+		</Header>
+		<ChildContent>
 			<FluentMessageBar Title="No space found"
 							  Style="@("border: 1px solid var(--neutral-base-color)")"
 							  Intent="MessageIntent.Info"
@@ -11,22 +16,27 @@
 							  AllowDismiss="false">
 				No spaces found yet notification
 			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
+		</ChildContent>
+	</TfLayoutBodyMain>
 }
 else
 {
 	@* 	@if (TfUserState.Value.SidebarExpanded)
 	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
-			<TfSpaceViewNavigation />
-		</FluentStack>
+	<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
+	<TfSpaceViewNavigation />
+	</FluentStack>
 	} *@
 
 	@if (TfAppState.Value.SpaceViewList.Count == 0)
 	{
-		<FluentBodyContent Class="content-body">
-			<div class="content-inner">
+		<TfLayoutBodyMain>
+			<Header>
+				<TfLayoutBodyMainHeader>
+					<TfPageHeader>@LOC("Space View")</TfPageHeader>
+				</TfLayoutBodyMainHeader>
+			</Header>
+			<ChildContent>
 				<FluentMessageBar Title="No existing views"
 								  Style="@("border: 1px solid var(--neutral-base-color)")"
 								  Intent="MessageIntent.Info"
@@ -34,13 +44,18 @@ else
 								  AllowDismiss="false">
 					Space views not created yet
 				</FluentMessageBar>
-			</div>
-		</FluentBodyContent>
+			</ChildContent>
+		</TfLayoutBodyMain>
 	}
 	else if (TfAppState.Value.SpaceView is null)
 	{
-		<FluentBodyContent Class="content-body">
-			<div class="content-inner">
+		<TfLayoutBodyMain>
+			<Header>
+				<TfLayoutBodyMainHeader>
+					<TfPageHeader>@LOC("Space View")</TfPageHeader>
+				</TfLayoutBodyMainHeader>
+			</Header>
+			<ChildContent>
 				<FluentMessageBar Title="No space view found"
 								  Style="@("border: 1px solid var(--neutral-base-color)")"
 								  Intent="MessageIntent.Info"
@@ -48,32 +63,25 @@ else
 								  AllowDismiss="false">
 					Space view not found
 				</FluentMessageBar>
-			</div>
-		</FluentBodyContent>
+			</ChildContent>
+		</TfLayoutBodyMain>
 	}
 	else
 	{
-		<FluentBodyContent Class="content-body with-toolbar with-header">
-			@{
-				var configCss = _generateColumnConfigurationCss(TfAppState.Value.SpaceView, TfAppState.Value.SpaceViewColumns);
-				var columnIndex = 1;
-				var _gridHeadBackgroundStyle = $"background: linear-gradient(to right, {TfAppState.Value.SpaceGridBackgkroundColor}, {TfAppState.Value.SpaceGridBackgkroundColor}),linear-gradient(to right, var(--neutral-layer-2),var(--neutral-layer-2));";
-			}
-			<style>
-				:root .tfdt,
-				:root .content-toolbar {
-					--tf-grid-row-selected: @TfAppState.Value.SpaceGridSelectedColor;
-					--space-color: @TfAppState.Value.SpaceColorString;
-					--accent-base-color: @TfAppState.Value.SpaceColorString;
-					--accent-fill-rest: @TfAppState.Value.SpaceColorString;
-					--tf-grid-border-color: @TfAppState.Value.SpaceBorderColor;
-				}
-			</style>
-			<div class="content-header" style="padding-top:15px;">
-				<TfPageHeader>@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</TfPageHeader>
-			</div>
-			<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter" />
-			<div class="content-inner">
+		var configCss = _generateColumnConfigurationCss(TfAppState.Value.SpaceView, TfAppState.Value.SpaceViewColumns);
+		var columnIndex = 1;
+		var _gridHeadBackgroundStyle = $"background: linear-gradient(to right, {TfAppState.Value.SpaceGridBackgkroundColor}, {TfAppState.Value.SpaceGridBackgkroundColor}),linear-gradient(to right, var(--neutral-layer-2),var(--neutral-layer-2));";
+		@((MarkupString)_getEmbeddedStyles())
+		<TfLayoutBodyMain>
+			<Header>
+				<TfLayoutBodyMainHeader>
+					<TfPageHeader>@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</TfPageHeader>
+				</TfLayoutBodyMainHeader>
+			</Header>
+			<Toolbar>
+				<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter" />
+			</Toolbar>
+			<ChildContent>
 				<div class="tfdt">
 					<div class="tfdt__content">
 						<table class="tf-grid">
@@ -189,13 +197,16 @@ else
 							</tbody>
 						</table>
 					</div>
-					<div class="tfdt__pager">
-						<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize"
-								 GoLast="@_goLastPage" GoNext="@_goNextPage"
-								 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
-					</div>
+
 				</div>
-			</div>
-		</FluentBodyContent>
+			</ChildContent>
+			<Footer>
+				<div class="tfdt__pager">
+					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize"
+							 GoLast="@_goLastPage" GoNext="@_goNextPage"
+							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
+				</div>
+			</Footer>
+		</TfLayoutBodyMain>
 	}
 }

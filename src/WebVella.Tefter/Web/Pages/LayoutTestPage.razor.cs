@@ -2,7 +2,7 @@
 using Npgsql;
 
 namespace WebVella.Tefter.Web.Pages;
-public partial class DevTestPage : TfBasePage
+public partial class LayoutTestPage : TfBasePage
 {
 
 	

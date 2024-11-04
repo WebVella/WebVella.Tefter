@@ -5,12 +5,9 @@
 @layout AdminLayout
 @inherits TfBasePage
 
-<TfLayoutBody Color="@TfConstants.AdminBorderColor">
+<TfLayoutBody>
 	<Aside>
-		@if (SidebarExpanded.Value)
-		{
-			<TfAdminDataProviderNavigation />
-		}
+		<TfAdminDataProviderNavigation />
 	</Aside>
 	<ChildContent>
 		@if (ProviderId == Guid.Empty)

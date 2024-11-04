@@ -2,8 +2,13 @@
 @inherits TfBaseComponent
 @if (TfAppState.Value.Space is null)
 {
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
+	<TfLayoutBodyMain>
+		<Header>
+			<TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
+			</TfLayoutBodyMainHeader>
+		</Header>
+		<ChildContent>
 			<FluentMessageBar Title="No space found"
 							  Style="@("border: 1px solid var(--neutral-base-color)")"
 							  Intent="MessageIntent.Info"
@@ -11,21 +16,20 @@
 							  AllowDismiss="false">
 				No spaces found yet notification
 			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
+		</ChildContent>
+	</TfLayoutBodyMain>
 }
 else
 {
-	@if (SidebarExpanded.Value)
-	{
-		<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@(TfAppState.Value.SpaceSidebarStyle)">
-			<TfSpaceDataNavigation />
-		</FluentStack>
-	}
 	@if (TfAppState.Value.SpaceDataList.Count == 0)
 	{
-		<FluentBodyContent Class="content-body">
-			<div class="content-inner">
+		<TfLayoutBodyMain>
+			<Header>
+				<TfLayoutBodyMainHeader>
+					<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
+				</TfLayoutBodyMainHeader>
+			</Header>
+			<ChildContent>
 				<FluentMessageBar Title="No existing datasets"
 								  Style="@("border: 1px solid var(--neutral-base-color)")"
 								  Intent="MessageIntent.Info"
@@ -33,13 +37,18 @@ else
 								  AllowDismiss="false">
 					Space datasets created yet
 				</FluentMessageBar>
-			</div>
-		</FluentBodyContent>
+			</ChildContent>
+		</TfLayoutBodyMain>
 	}
 	else if (TfAppState.Value.SpaceData is null)
 	{
-		<FluentBodyContent Class="content-body">
-			<div class="content-inner">
+		<TfLayoutBodyMain>
+			<Header>
+				<TfLayoutBodyMainHeader>
+					<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
+				</TfLayoutBodyMainHeader>
+			</Header>
+			<ChildContent>
 				<FluentMessageBar Title="No space data found"
 								  Style="@("border: 1px solid var(--neutral-base-color)")"
 								  Intent="MessageIntent.Info"
@@ -47,18 +56,23 @@ else
 								  AllowDismiss="false">
 					No space data found
 				</FluentMessageBar>
-			</div>
-		</FluentBodyContent>
-
+			</ChildContent>
+		</TfLayoutBodyMain>
 	}
 	else
 	{
-		<FluentBodyContent Class="content-body with-toolbar with-header">
-			<div class="content-header" style="padding-top:15px;">
-				<TfPageHeader Style="margin-bottom:1rem">@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
-			</div>
-			<TfSpaceDataDetailsNav />
-			<div class="content-inner">
+		<TfLayoutBodyMain>
+			<Header>
+				<TfLayoutBodyMainHeader>
+					<ChildContent>
+						<TfPageHeader>@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
+					</ChildContent>
+					<Aside>
+						<TfSpaceDataDetailsNav />
+					</Aside>
+				</TfLayoutBodyMainHeader>
+			</Header>
+			<ChildContent>
 				@if (Menu == "views")
 				{
 					<TfSpaceDataViews />
@@ -71,7 +85,7 @@ else
 				{
 					<TfSpaceDataManage />
 				}
-			</div>
-		</FluentBodyContent>
+			</ChildContent>
+		</TfLayoutBodyMain>
 	}
 }

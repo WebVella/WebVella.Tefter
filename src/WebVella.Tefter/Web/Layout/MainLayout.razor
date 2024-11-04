@@ -1,21 +1,25 @@
 ﻿@inherits FluxorLayout
 @layout StateLayout
-<FluentDesignTheme Mode="@TfUserState.Value.ThemeMode" OfficeColor="@TfUserState.Value.ThemeColor" StorageName="@TfConstants.UIThemeLocalKey" />
-<FluentLayout Class="@(TfUserState.Value.SidebarExpanded ? "sidebar-expanded" : "sidebar-collapsed")">
-	<FluentHeader Class="header">
-		<TfSidebarToggle />
-		<TfLocation />
-		<FluentSpacer />
-		<TfUserNavigation />
-	</FluentHeader>
-	<FluentStack Orientation="Orientation.Horizontal" Class="wrapper" HorizontalGap="0" VerticalGap="0">
-		<FluentStack Orientation="Orientation.Vertical" Class="spacenav" HorizontalGap="0" VerticalGap="0">
-			<TfNavigation />
-		</FluentStack>
-		<FluentBodyContent Class="content" style="@($"border-top-color:{TfUserState.Value.ThemeColorString}")">
-			@Body
-		</FluentBodyContent>
-	</FluentStack>
-</FluentLayout>
+<FluentDesignTheme Mode="@ThemeMode.Value" OfficeColor="@ThemeColor.Value" StorageName="@TfConstants.UIThemeLocalKey" />
+<TfLayout SidebarExpanded="@SidebarExpanded.Value" Color="@_layoutColor">
+	<Header>
+		<TfLayoutHeader>
+			<ChildContent>
+				<TfSidebarToggle />
+				<TfLocation />
+				<TfHeaderNavigation />
+			</ChildContent>
+			<Aside>
+				<TfUserNavigation />
+			</Aside>
+		</TfLayoutHeader>
+	</Header>
+	<Navigation>
+		<TfNavigation />
+	</Navigation>
+	<Body>
+		@Body
+	</Body>
+</TfLayout>
 
 

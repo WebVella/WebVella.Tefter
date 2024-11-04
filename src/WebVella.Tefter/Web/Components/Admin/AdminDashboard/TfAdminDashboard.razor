@@ -1,24 +1,22 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-<TfLayoutBody Color="@TfConstants.AdminBorderColor">
+
+<TfLayoutBodyMain>
+	<Header>
+		<TfLayoutBodyMainHeader>
+			<TfPageHeader>@LOC("Administration Dashboard")</TfPageHeader>
+		</TfLayoutBodyMainHeader>
+	</Header>
 	<ChildContent>
-		<TfLayoutBodyMain>
-			<Header>
-				<TfLayoutBodyMainHeader>
-					<TfPageHeader>@LOC("Administration Dashboard")</TfPageHeader>
-				</TfLayoutBodyMainHeader>
-			</Header>
-			<ChildContent>
-				<FluentMessageBar Title="Under Construction" AllowDismiss="false"
-								  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
-					<div>TBD: High level system overview and syncronization log</div>
-				</FluentMessageBar>
-				<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
-								  Intent="@MessageIntent.Warning">
-					<div>Select a menu from the navigation to proceed</div>
-				</FluentMessageBar>
-			</ChildContent>
-		</TfLayoutBodyMain>
+		<FluentMessageBar Title="Under Construction" AllowDismiss="false"
+						  Intent="@MessageIntent.Info" Style="margin-bottom:10px;">
+			<div>TBD: High level system overview and syncronization log</div>
+		</FluentMessageBar>
+		<FluentMessageBar Title="HOW TO PROCEED" AllowDismiss="false"
+						  Intent="@MessageIntent.Warning">
+			<div>Select a menu from the navigation to proceed</div>
+		</FluentMessageBar>
 	</ChildContent>
-</TfLayoutBody>
+</TfLayoutBodyMain>
+
 

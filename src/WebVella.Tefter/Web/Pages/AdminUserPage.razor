@@ -3,12 +3,9 @@
 @page "/admin/users/{UserId:guid}/{*Path}"
 @layout AdminLayout
 @inherits TfBasePage
-<TfLayoutBody Color="@TfConstants.AdminBorderColor">
+<TfLayoutBody>
 	<Aside>
-		@if (SidebarExpanded.Value)
-		{
-			<TfAdminUserNavigation />
-		}
+		<TfAdminUserNavigation />
 	</Aside>
 	<ChildContent>
 		@if (UserId == Guid.Empty)

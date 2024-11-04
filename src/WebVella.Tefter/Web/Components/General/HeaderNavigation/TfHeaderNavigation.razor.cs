@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewHeaderNavigation.TfSpaceViewHeaderNavigation", "WebVella.Tefter")]
-public partial class TfSpaceViewHeaderNavigation : TfBaseComponent
+[LocalizationResource("WebVella.Tefter.Web.Components.General.HeaderNavigation.TfHeaderNavigation", "WebVella.Tefter")]
+public partial class TfHeaderNavigation : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }

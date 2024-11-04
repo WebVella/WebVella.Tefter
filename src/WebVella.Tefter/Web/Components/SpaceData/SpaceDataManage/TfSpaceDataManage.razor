@@ -7,27 +7,44 @@
 }
 else
 {
-	<TfCard>
-		<FluentGrid>
-			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceData.Name
-								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+	<TfCard Small="true">
+		<TitleTemplate>
+			<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
+				@if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Details)
+				{
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceData">
+						@LOC("Delete")
+						<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
+					</FluentButton>
+					<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceData">
+						@LOC("Edit")
+						<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+					</FluentButton>
+				}
+			</FluentStack>
+		</TitleTemplate>
+		<ChildContent>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceData.Name
+									 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 
-			</FluentGridItem>
-			<FluentGridItem xs="6">
-				<FluentInputLabel Label="@LOC("Data provider")" />
-				<FluentStack>
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
-									 Style="width:100%" ReadOnly="true" />
-					@if (TfUserState.Value.CurrentUser.IsAdmin)
-					{
-						<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
-									  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl,SelectedProvider.Id))"
-									  IconStart="@TfConstants.ViewIcon" Target="_blank" />
-					}
-				</FluentStack>
-			</FluentGridItem>
-		</FluentGrid>
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Data provider")" />
+					<FluentStack>
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
+										 Style="width:100%" ReadOnly="true" />
+						@if (TfUserState.Value.CurrentUser.IsAdmin)
+						{
+							<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
+										  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl,SelectedProvider.Id))"
+										  IconStart="@TfConstants.ViewIcon" Target="_blank" />
+						}
+					</FluentStack>
+				</FluentGridItem>
+			</FluentGrid>
+		</ChildContent>
 	</TfCard>
 	<FluentLabel Typo="Typography.PaneHeader" Style="margin:1rem 0">@LOC("Columns")</FluentLabel>
 	<TfColumnCard DataProvider="SelectedProvider" Items="_form.Columns" ItemsChanged="_onColumnsChanged" />
