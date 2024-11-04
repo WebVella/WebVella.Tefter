@@ -1,10 +1,15 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-<TfSpaceNavigation />
+
 @if (TfAppState.Value.Space is null)
 {
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
+	<TfLayoutBodyMain>
+		<Header>
+			<TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space")</TfPageHeader>
+			</TfLayoutBodyMainHeader>
+		</Header>
+		<ChildContent>
 			<FluentMessageBar Title="No space found"
 							  Style="border: 1px solid var(--neutral-base-color)"
 							  Intent="MessageIntent.Info"
@@ -12,14 +17,18 @@
 							  AllowDismiss="false">
 				No space selected
 			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
+		</ChildContent>
+	</TfLayoutBodyMain>
 }
 else
 {
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentLabel Typo="@Typography.PaneHeader" Style="margin-bottom:1rem">@LOC("Manage space '{0}'", TfAppState.Value.Space.Name)</FluentLabel>
+	<TfLayoutBodyMain>
+		<Header>
+			<TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Manage space '{0}'", TfAppState.Value.Space.Name)</TfPageHeader>
+			</TfLayoutBodyMainHeader>
+		</Header>
+		<ChildContent>
 			<TfCard Small="true">
 				<TitleTemplate>
 					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
@@ -51,7 +60,7 @@ else
 					<FluentGrid>
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Color")" />
-							<TfSelectColor Value="@TfAppState.Value.Space.Color"/>
+							<TfSelectColor Value="@TfAppState.Value.Space.Color" />
 						</FluentGridItem>
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Icon")" />
@@ -60,7 +69,6 @@ else
 					</FluentGrid>
 				</ChildContent>
 			</TfCard>
-
 			<FluentLabel Typo="@Typography.H4" Style="margin:1rem 0">@LOC("Content Items")</FluentLabel>
 			<TfCard Small="true">
 				<TitleTemplate>
@@ -88,7 +96,7 @@ else
 										var contextIndex = TfAppState.Value.SpaceNodes.FindIndex(x => x.Id == context.Id);
 										<TfSpaceManageNodeItem Item="context" Level="0" OnRemove="_removeNode" OnMove="_moveNode"
 															   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == TfAppState.Value.SpaceNodes.Count -1)"
-														   OnEdit="_editNode" OnCopy="_copyNode" />
+															   OnEdit="_editNode" OnCopy="_copyNode" />
 									}
 								</tbody>
 							</table>
@@ -96,6 +104,6 @@ else
 					}
 				</ChildContent>
 			</TfCard>
-		</div>
-	</FluentBodyContent>
+		</ChildContent>
+	</TfLayoutBodyMain>
 }

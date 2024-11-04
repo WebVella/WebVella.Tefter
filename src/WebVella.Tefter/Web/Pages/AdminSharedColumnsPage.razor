@@ -1,10 +1,16 @@
-﻿@page "/admin/aux-columns"
+﻿@page "/admin/shared-columns"
 @layout AdminLayout
 @inherits TfBasePage
 
-<FluentBodyContent Class="content-body">
-	<div class="content-inner">
-		<TfPageHeader Style="margin-bottom:15px;">@LOC(TfConstants.AdminAuxColumnsMenuTitle)</TfPageHeader>
-		<TfAdminSharedColumns/>
-	</div>
-</FluentBodyContent>
+<TfLayoutBody>
+			<TfLayoutBodyMain>
+				<Header>
+					<TfLayoutBodyMainHeader>
+							<TfPageHeader>@LOC(TfConstants.AdminSharedColumnsMenuTitle)</TfPageHeader>
+					</TfLayoutBodyMainHeader>
+				</Header>
+				<ChildContent>
+					<TfAdminSharedColumns/>
+				</ChildContent>
+	</TfLayoutBodyMain>
+</TfLayoutBody>

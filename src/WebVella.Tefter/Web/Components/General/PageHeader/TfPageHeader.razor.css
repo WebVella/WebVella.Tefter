@@ -1,12 +1,12 @@
 ﻿::deep.page-header {
-	font-size: var(--type-ramp-plus-3-font-size);
+	font-size: var(--type-ramp-plus-2-font-size);
+	line-height:1.5em;
 }
 
 ::deep .page-header-inner {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	height:30px;
 }
 
 ::deep .page-header-divider {

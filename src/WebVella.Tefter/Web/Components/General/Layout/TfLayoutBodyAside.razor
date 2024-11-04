@@ -1,0 +1,13 @@
+﻿@namespace WebVella.Tefter.Web.Components
+
+<aside class="@_layoutClass">
+	@if (Toolbar is not null)
+	{
+		<div class="tf-layout__body__aside__toolbar">@Toolbar</div>
+	}
+	<section class="tf-layout__body__aside__content">
+		<div class="tf-layout__body__aside__content__inner">
+			@ChildContent
+		</div>
+	</section>
+</aside>

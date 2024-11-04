@@ -1,14 +1,14 @@
 ﻿
 .tf-card {
-	border: calc(var(--stroke-width)* 1px) solid var(--neutral-stroke-active);
-	border-radius: calc(var(--layer-corner-radius)* 1px);
+	--tf-card-border-radius:8px;
+	border: 3px solid var(--neutral-layer-1);
+	border-radius: var(--tf-card-border-radius);
 	/*	box-shadow: var(--elevation-shadow-card-rest);*/
 }
 
 .tf-card-title {
 	padding:calc(var(--design-unit)* 2.5px) calc(var(--design-unit)* 5px);	
 	background: var(--neutral-layer-1);
-	border-radius: calc(var(--layer-corner-radius)* 1px) calc(var(--layer-corner-radius)* 1px) 0 0;
 }
 
 fluent-dialog .tf-card-title {
@@ -20,15 +20,15 @@ fluent-dialog .tf-card-title {
 }
 
 .tf-card.tf-card--small .tf-card-title{
-	padding: 3px 7px;
+	padding: 5px 10px;
 }
 
 .tf-card.tf-card--small .tf-card-content{
-	padding: 7px;
+	padding: 10px;
 }
 
 .tf-card.tf-card--no-body .tf-card-title{
-	border-radius: calc(var(--layer-corner-radius)* 1px);
+	border-radius: var(--tf-card-border-radius);
 }
 
 

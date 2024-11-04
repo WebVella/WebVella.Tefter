@@ -40,8 +40,8 @@ public partial class TfConstants
 	public static Icon AdminUsersIcon = GetIcon("People");
 	public static string AdminUsersMenuTitle = "Users";
 
-	public static Icon AdminAuxColumnsIcon = GetIcon("Column");
-	public static string AdminAuxColumnsMenuTitle = "Shared Columns";
+	public static Icon AdminSharedColumnsIcon = GetIcon("Column");
+	public static string AdminSharedColumnsMenuTitle = "Shared Columns";
 
 	public static Icon AdminFileRepositoryIcon = GetIcon("DocumentDatabase");
 	public static string AdminFileRepositoryMenuTitle = "File Repository";

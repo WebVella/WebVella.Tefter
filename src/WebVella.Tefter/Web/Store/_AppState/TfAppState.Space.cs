@@ -55,6 +55,7 @@ public partial record TfAppState
 				result.Add(new TucMenuItem
 				{
 					IconCollapsed = item.Icon,
+					IconExpanded = item.Icon,
 					Id = TfConverters.ConvertGuidToHtmlElementId(item.Id),
 					Match = NavLinkMatch.Prefix,
 					Url = item.Url,

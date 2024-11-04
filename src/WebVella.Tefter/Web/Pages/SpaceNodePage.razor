@@ -1,8 +1,14 @@
 ﻿@page "/space/{SpaceId:guid}/page"
 @page "/space/{SpaceId:guid}/page/{SpaceNodeId:guid}"
-@layout SpaceLayout
+@layout MainLayout
 @inherits TfBasePage
-<TfSpaceTheme />
-<TfSpaceNodeDetails />
+<TfLayoutBody>
+	<Aside>
+		<TfSpaceNavigation />
+	</Aside>
+	<ChildContent>
+		<TfSpaceNodeDetails />
+	</ChildContent>
+</TfLayoutBody>
 
 

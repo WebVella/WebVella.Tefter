@@ -2,5 +2,12 @@
 @page "/admin/pages/{Slug}"
 @layout AdminLayout
 @inherits TfBasePage
-<TfAdminPagesContent Slug="@Slug" />
+<TfLayoutBody>
+	<Aside>
+		<TfAdminPagesNavigation />
+	</Aside>
+	<ChildContent>
+		<TfAdminPagesContent Slug="@Slug" />
+	</ChildContent>
+</TfLayoutBody>
 

@@ -1,7 +1,14 @@
 ﻿@page "/space/{SpaceId:guid}/manage"
-@layout SpaceLayout
+@layout MainLayout
 @inherits TfBasePage
-<TfSpaceTheme />
-<TfSpaceManage />
+<TfLayoutBody>
+	<Aside>
+		<TfSpaceNavigation />
+	</Aside>
+	<ChildContent>
+		<TfSpaceManage />
+	</ChildContent>
+</TfLayoutBody>
+
 
 

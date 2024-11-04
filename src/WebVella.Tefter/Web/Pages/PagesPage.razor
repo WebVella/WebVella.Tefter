@@ -1,5 +1,12 @@
 ﻿@page "/pages"
 @page "/pages/{Slug}"
 @inherits TfBasePage
-<TfPagesContent Slug="@Slug" />
+<TfLayoutBody>
+	<Aside>
+		<TfPagesNavigation />
+	</Aside>
+	<ChildContent>
+		<TfPagesContent Slug="@Slug" />
+	</ChildContent>
+</TfLayoutBody>
 

@@ -116,7 +116,7 @@
 										<FluentTextField Value="@context.Value"
 														 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 														 Disabled="@Disabled" ReadOnly="ReadOnly"
-														 AutoComplete="new-password"
+														 AutoComplete="off"
 														 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="width:300px" />
 										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.HelpIcon" Disabled=true/>
 										<FluentTooltip Anchor="@($"tf-{context.Id}")">
@@ -139,7 +139,7 @@
 									<FluentTextField Value="@context.ValueProcessed"
 													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 													 Disabled="@Disabled" ReadOnly="ReadOnly"
-													 AutoComplete="new-password"
+													 AutoComplete="off"
 													 Placeholder="@LOC("enter valid GUID")" Style="width:300px" />
 								}
 							}
@@ -171,7 +171,7 @@
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
-									<FluentTextField AutoComplete="new-password"
+									<FluentTextField AutoComplete="off"
 													 Value="@context.Value"
 													 Disabled="@Disabled" ReadOnly="ReadOnly"
 													 ValueChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"

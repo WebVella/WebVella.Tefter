@@ -197,6 +197,26 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
+	private string _getEmbeddedStyles(){ 
+		
+		
+		
+		var sb = new StringBuilder();
+		sb.AppendLine("<style>");
+		sb.AppendLine(":root .tfdt,");
+		sb.AppendLine(":root .content-toolbar {");
+		sb.AppendLine($"--tf-grid-row-selected: {TfAppState.Value.SpaceGridSelectedColor};");
+		sb.AppendLine($"--space-color: {TfAppState.Value.SpaceColorString};");
+		sb.AppendLine($"--accent-base-color: {TfAppState.Value.SpaceColorString};");
+		sb.AppendLine($"--accent-fill-rest: {TfAppState.Value.SpaceColorString};");
+		sb.AppendLine($"--tf-grid-border-color: {TfAppState.Value.SpaceBorderColor};");
+		sb.AppendLine("}");
+		sb.AppendLine("</style>");
+
+
+		return sb.ToString();
+	}
+
 	private Task _onRowChanged(TfDataTable value)
 	{
 

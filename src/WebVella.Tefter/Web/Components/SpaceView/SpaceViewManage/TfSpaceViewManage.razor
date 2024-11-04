@@ -2,227 +2,232 @@
 @inherits TfBaseComponent
 @if (TfAppState.Value.Space is null || TfAppState.Value.SpaceView is null)
 {
-			<FluentBodyContent Class="content-body">
-				<div class="content-inner">
-					<FluentMessageBar Title="No view found"
-									  Style="@("border: 1px solid var(--neutral-base-color)")"
-									  Intent="MessageIntent.Info"
-									  Type="@MessageType.Notification"
-									  AllowDismiss="false">
-						The requested view was not found
-					</FluentMessageBar>
-				</div>
-			</FluentBodyContent>
+	<TfLayoutBodyMain>
+		<Header>
+			<TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC("Space Views")</TfPageHeader>
+			</TfLayoutBodyMainHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar Title="No view found"
+							  Style="@("border: 1px solid var(--neutral-base-color)")"
+							  Intent="MessageIntent.Info"
+							  Type="@MessageType.Notification"
+							  AllowDismiss="false">
+				The requested view was not found
+			</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
 }
 else
 {
-	@if (SidebarExpanded.Value)
-	{
-						<FluentStack Orientation="Orientation.Vertical" Class="sidebar with-toolbar" Style="@TfAppState.Value.SpaceSidebarStyle">
-							<TfSpaceViewNavigation />
-						</FluentStack>
-	}
-			<FluentBodyContent Class="content-body with-toolbar with-header">
-				<div class="content-header" style="padding-top:15px">
-					<TfPageHeader Style="margin-bottom:1rem">@LOC("Manage view '{0}'", TfAppState.Value.SpaceView.Name)</TfPageHeader>
-				</div>
-				<TfSpaceViewDetailsNav/>
-				<div class="content-inner">
+	<TfLayoutBodyMain>
+		<Header>
+			<TfLayoutBodyMainHeader>
+				<ChildContent>
+					<TfPageHeader>@LOC("Manage view '{0}'", TfAppState.Value.SpaceView.Name)</TfPageHeader>
+				</ChildContent>
+				<Aside>
+					<TfSpaceViewDetailsNav />
+				</Aside>
+			</TfLayoutBodyMainHeader>
+		</Header>
+		<ChildContent>
 			@if (Menu == "pages")
 			{
-							<TfSpaceViewPages/>
+				<TfSpaceViewPages />
 			}
 			else
 			{
+				<TfCard Small="true">
+					<TitleTemplate>
+						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
+								@LOC("Edit")
+								<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentInputLabel Label="@LOC("Name")" />
+								<FluentStack>
+									<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceView.Name
+													 Style="flex:1 1 auto" ReadOnly="true" />
+									<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
+												  Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfAppState.Value.Space.Id,TfAppState.Value.SpaceView.Id))"
+												  IconStart="@TfConstants.ViewIcon" />
+								</FluentStack>
+
+
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceView.Type.ToDescriptionString()
+												 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
+							</FluentGridItem>
+						</FluentGrid>
+
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentInputLabel Label="@LOC("Dataset")" />
+								@if (_spaceData is not null)
+								{
+									<FluentStack>
+										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceData.Name
+														 ReadOnly="true" Style="flex:1 1 auto" />
+										<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
+													  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfAppState.Value.Space.Id,TfAppState.Value.SpaceView.SpaceDataId))"
+													  IconStart="@TfConstants.ViewIcon" Target="_blank" />
+									</FluentStack>
+								}
+								else
+								{
+									<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the dataset no longer exists")</FluentMessageBar>
+								}
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								@if (_spaceData is not null)
+								{
+									<FluentInputLabel Label="@LOC("Data provider")" />
+									@if (_dataProvider is not null)
+									{
+										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_dataProvider.Name
+														 Style="width:100%" ReadOnly="true" />
+									}
+									else
+									{
+										<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the data provider no longer exists")</FluentMessageBar>
+									}
+								}
+							</FluentGridItem>
+						</FluentGrid>
+						<FluentGrid>
+							<FluentGridItem xs="3">
+								<FluentInputLabel Label="@LOC("Freeze Starting Columns")" />
+								<FluentNumberField TValue="int?" Value=@TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns
+												   ReadOnly="true" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="3">
+								<FluentInputLabel Label="@LOC("Freeze Final Columns")" />
+								<FluentNumberField TValue="int?" Value=@TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns
+												   ReadOnly="true" Style="width:100%" />
+							</FluentGridItem>
+							<FluentGridItem xs="3">
+								<FluentInputLabel Label="@LOC("New Rows")" />
+								<FluentCheckbox Value="@TfAppState.Value.SpaceView.Settings.CanCreateRows"
+												Style="height:32px" ReadOnly="true"
+												Label="@LOC("can create new rows")" />
+							</FluentGridItem>
+							<FluentGridItem xs="3">
+								<FluentInputLabel Label="@LOC("Delete Rows")" />
+								<FluentCheckbox Value="@TfAppState.Value.SpaceView.Settings.CanDeleteRows"
+												Style="height:32px" ReadOnly="true"
+												Label="@LOC("can delete rows")" />
+							</FluentGridItem>
+						</FluentGrid>
+					</ChildContent>
+				</TfCard>
+				<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs" OnTabChange="_tabChanged">
+					<FluentTab Id="@TfSpaceViewManageTab.Columns.ToString()">
+						<Header>@LOC("Columns")</Header>
+						<Content>
 							<TfCard Small="true">
 								<TitleTemplate>
 									<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-										<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
-								@LOC("Edit")
-											<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+										<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
+											<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
+											@LOC("Add new")
 										</FluentButton>
 									</FluentStack>
 								</TitleTemplate>
 								<ChildContent>
-									<FluentGrid>
-										<FluentGridItem xs="6">
-											<FluentInputLabel Label="@LOC("Name")" />
-											<FluentStack>
-												<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceView.Name
-																 Style="flex:1 1 auto" ReadOnly="true" />
-												<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
-															  Href="@(String.Format(TfConstants.SpaceViewPageUrl,TfAppState.Value.Space.Id,TfAppState.Value.SpaceView.Id))"
-															  IconStart="@TfConstants.ViewIcon" />
-											</FluentStack>
-
-
-										</FluentGridItem>
-										<FluentGridItem xs="6">
-											<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.SpaceView.Type.ToDescriptionString()
-															 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
-										</FluentGridItem>
-									</FluentGrid>
-
-									<FluentGrid>
-										<FluentGridItem xs="6">
-											<FluentInputLabel Label="@LOC("Dataset")" />
-								@if (_spaceData is not null)
-								{
-														<FluentStack>
-															<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_spaceData.Name
-																			 ReadOnly="true" Style="flex:1 1 auto" />
-															<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open dataset")"
-																		  Href="@(String.Format(TfConstants.SpaceDataPageUrl,TfAppState.Value.Space.Id,TfAppState.Value.SpaceView.SpaceDataId))"
-																		  IconStart="@TfConstants.ViewIcon" Target="_blank" />
-														</FluentStack>
-								}
-								else
-								{
-														<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the dataset no longer exists")</FluentMessageBar>
-								}
-										</FluentGridItem>
-										<FluentGridItem xs="6">
-								@if (_spaceData is not null)
-								{
-														<FluentInputLabel Label="@LOC("Data provider")" />
-									@if (_dataProvider is not null)
-									{
-																	<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_dataProvider.Name
-																					 Style="width:100%" ReadOnly="true" />
-									}
-									else
-									{
-																	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("the data provider no longer exists")</FluentMessageBar>
-									}
-								}
-										</FluentGridItem>
-									</FluentGrid>
-									<FluentGrid>
-										<FluentGridItem xs="3">
-											<FluentInputLabel Label="@LOC("Freeze Starting Columns")" />
-											<FluentNumberField TValue="int?" Value=@TfAppState.Value.SpaceView.Settings.FreezeStartingNColumns
-															   ReadOnly="true" Style="width:100%" />
-										</FluentGridItem>
-										<FluentGridItem xs="3">
-											<FluentInputLabel Label="@LOC("Freeze Final Columns")" />
-											<FluentNumberField TValue="int?" Value=@TfAppState.Value.SpaceView.Settings.FreezeFinalNColumns
-															   ReadOnly="true" Style="width:100%" />
-										</FluentGridItem>
-										<FluentGridItem xs="3">
-											<FluentInputLabel Label="@LOC("New Rows")" />
-											<FluentCheckbox Value="@TfAppState.Value.SpaceView.Settings.CanCreateRows"
-															Style="height:32px" ReadOnly="true"
-															Label="@LOC("can create new rows")" />
-										</FluentGridItem>
-										<FluentGridItem xs="3">
-											<FluentInputLabel Label="@LOC("Delete Rows")" />
-											<FluentCheckbox Value="@TfAppState.Value.SpaceView.Settings.CanDeleteRows"
-															Style="height:32px" ReadOnly="true"
-															Label="@LOC("can delete rows")" />
-										</FluentGridItem>
-									</FluentGrid>
-								</ChildContent>
-							</TfCard>
-							<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs" OnTabChange="_tabChanged">
-								<FluentTab Id="@TfSpaceViewManageTab.Columns.ToString()">
-									<Header>@LOC("Columns")</Header>
-									<Content>
-										<TfCard Small="true">
-											<TitleTemplate>
-												<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-													<FluentButton OnClick="_addColumn" Appearance="@Appearance.Outline">
-														<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
-											@LOC("Add new")
-													</FluentButton>
-												</FluentStack>
-											</TitleTemplate>
-											<ChildContent>
 									@if (TfAppState.Value.SpaceViewColumns.Count == 0)
 									{
 										@LOC("This view has no columns yet.")
 									}
 									else
 									{
-															<div class="tf-grid-wrapper">
-																<table class="tf-grid">
-																	<tbody class="tf-grid-tbody">
+										<div class="tf-grid-wrapper">
+											<table class="tf-grid">
+												<tbody class="tf-grid-tbody">
 													@foreach (var context in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 													{
-																					<tr @key=@Guid.NewGuid() class="tf-grid-tr">
-																						<td class="tf-grid-td" style="width:1%;">
-																							<div>
-																								<FluentStack Wrap="false">
-																									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _editColumn(context))" Title="@LOC("Edit column")"
-																												  Disabled="_isSubmitting" IconStart="@TfConstants.EditIcon" />
-																									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
-																												  Disabled="_isSubmitting">
-																										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-																									</FluentButton>
-																									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,true))" Title="@LOC("Move up")"
-																												  Disabled="@(_isSubmitting || context.Position == 1)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
-																									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,false))" Title="@LOC("Move down")"
-																												  Disabled="@(_isSubmitting || context.Position == TfAppState.Value.SpaceViewColumns.Count)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
-																								</FluentStack>
-																							</div>
-																						</td>
-																						<td class="tf-grid-td" style="width:20px;">
-																							<div>@context.Position</div>
-																						</td>
-																						<td class="tf-grid-td" style="width:100px;">
-																							<div>
-																								<div>@context.Title</div>
-																								<div class="td-description">@context.QueryName</div>
-																							</div>
-																						</td>
-																						<td class="tf-grid-td">
+														<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+															<td class="tf-grid-td" style="width:1%;">
+																<div>
+																	<FluentStack Wrap="false">
+																		<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _editColumn(context))" Title="@LOC("Edit column")"
+																					  Disabled="_isSubmitting" IconStart="@TfConstants.EditIcon" />
+																		<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+																					  Disabled="_isSubmitting">
+																			<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+																		</FluentButton>
+																		<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,true))" Title="@LOC("Move up")"
+																					  Disabled="@(_isSubmitting || context.Position == 1)" IconStart="@TfConstants.GetIcon("ArrowUp")" />
+																		<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _moveColumn(context,false))" Title="@LOC("Move down")"
+																					  Disabled="@(_isSubmitting || context.Position == TfAppState.Value.SpaceViewColumns.Count)" IconStart="@TfConstants.GetIcon("ArrowDown")" />
+																	</FluentStack>
+																</div>
+															</td>
+															<td class="tf-grid-td" style="width:20px;">
+																<div>@context.Position</div>
+															</td>
+															<td class="tf-grid-td" style="width:100px;">
+																<div>
+																	<div>@context.Title</div>
+																	<div class="td-description">@context.QueryName</div>
+																</div>
+															</td>
+															<td class="tf-grid-td">
 																@if (context.ColumnType is not null)
 																{
-																										<div>
-																											<div>
-																												<FluentStack>
-																													<FluentIcon Value="@context.ColumnType.Icon" Color="@Color.Accent" />
-																													<div>@context.ColumnType.Name</div>
-																												</FluentStack>
-																											</div>
-																											<div class="td-description">@context.ColumnType.Description</div>
-																										</div>
+																	<div>
+																		<div>
+																			<FluentStack>
+																				<FluentIcon Value="@context.ColumnType.Icon" Color="@Color.Accent" />
+																				<div>@context.ColumnType.Name</div>
+																			</FluentStack>
+																		</div>
+																		<div class="td-description">@context.ColumnType.Description</div>
+																	</div>
 																}
 																else
 																{
-																										<div style="color:red">@LOC("unknown")</div>
+																	<div style="color:red">@LOC("unknown")</div>
 																}
-																						</td>
-																						<td class="tf-grid-td">
+															</td>
+															<td class="tf-grid-td">
 																@if (context.ComponentType is not null)
 																{
-																										<div>
-																											<div>@context.ComponentType.ToDescriptionString()</div>
-																											<div class="td-description">@context.ComponentType.FullName</div>
-																										</div>
+																	<div>
+																		<div>@context.ComponentType.ToDescriptionString()</div>
+																		<div class="td-description">@context.ComponentType.FullName</div>
+																	</div>
 																}
 																else
 																{
-																										<div style="color:red">@LOC("unknown")</div>
+																	<div style="color:red">@LOC("unknown")</div>
 																}
-																						</td>
-																					</tr>
+															</td>
+														</tr>
 													}
-																	</tbody>
-																</table>
-															</div>
+												</tbody>
+											</table>
+										</div>
 									}
-											</ChildContent>
-										</TfCard>
-									</Content>
-								</FluentTab>
-								<FluentTab Id="@TfSpaceViewManageTab.QuickFilters.ToString()">
-									<Header>@LOC("Quick Filters")</Header>
-									<Content>
-										<TfPresetsCard DataProvider="_dataProvider" Items="TfAppState.Value.SpaceView.Presets" ItemsChanged="_onPresetsChanged" />
-									</Content>
-								</FluentTab>
-							</FluentTabs>
+								</ChildContent>
+							</TfCard>
+						</Content>
+					</FluentTab>
+					<FluentTab Id="@TfSpaceViewManageTab.QuickFilters.ToString()">
+						<Header>@LOC("Quick Filters")</Header>
+						<Content>
+							<TfPresetsCard DataProvider="_dataProvider" Items="TfAppState.Value.SpaceView.Presets" ItemsChanged="_onPresetsChanged" />
+						</Content>
+					</FluentTab>
+				</FluentTabs>
 			}
-				</div>
-			</FluentBodyContent>
+		</ChildContent>
+	</TfLayoutBodyMain>
 }

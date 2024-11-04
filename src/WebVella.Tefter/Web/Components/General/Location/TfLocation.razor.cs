@@ -28,8 +28,7 @@ public partial class TfLocation : TfBaseComponent
 		{
 			result.Add(new TucMenuItem
 			{
-				Text = TfConverters.StringOverflow("Administration", _ellipsisCount),
-				Url = String.Format(TfConstants.AdminDashboardUrl)
+				Text = TfConverters.StringOverflow(TfAppState.Value.Route.SecondNode.ToDescriptionString(), _ellipsisCount)
 			});
 		}
 		else if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Space)

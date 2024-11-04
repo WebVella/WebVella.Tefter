@@ -24,13 +24,13 @@
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
 									 Label="@LOC("Name")" Style="width:100%"
-									 Disabled="!_isCreate" AutoComplete="new-password" />
+									 Disabled="!_isCreate" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.DbName)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Description
 									 Label="@LOC("Description")" Style="width:100%"
-									 AutoComplete="new-password" />
+									 AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.Description)" />
 				</FluentGridItem>
 			</FluentGrid>

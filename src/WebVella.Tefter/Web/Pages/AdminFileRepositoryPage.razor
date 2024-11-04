@@ -2,9 +2,15 @@
 @layout AdminLayout
 @inherits TfBasePage
 
-<FluentBodyContent Class="content-body">
-	<div class="content-inner">
-		<TfPageHeader Style="margin-bottom:15px;">@LOC(TfConstants.AdminFileRepositoryMenuTitle)</TfPageHeader>
-		<TfAdminFileRepository/>
-	</div>
-</FluentBodyContent>
+<TfLayoutBody>
+	<TfLayoutBodyMain>
+		<Header>
+			<TfLayoutBodyMainHeader>
+				<TfPageHeader>@LOC(TfConstants.AdminFileRepositoryMenuTitle)</TfPageHeader>
+			</TfLayoutBodyMainHeader>
+		</Header>
+		<ChildContent>
+			<TfAdminFileRepository />
+		</ChildContent>
+	</TfLayoutBodyMain>
+</TfLayoutBody>

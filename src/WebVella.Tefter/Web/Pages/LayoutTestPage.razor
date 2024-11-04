@@ -1,0 +1,63 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/LayoutTestPage"
+@layout SystemLayout
+@inherits TfBasePage
+
+<PageTitle>This is developers test page</PageTitle>
+<FluentDesignTheme Mode="@DesignThemeModes.Dark" OfficeColor="@OfficeColor.Access" StorageName="@TfConstants.UIThemeLocalKey" />
+<style>
+	.block {
+		content: "";
+		height: 100%;
+		width: 100%;
+		display: block;
+		background: blue;
+		min-height: 1rem;
+		min-width: 1rem;
+	}
+</style>
+
+<TfLayout>
+	<Header>
+		<TfLayoutHeader>
+			<ChildContent><div class="block" style="background:red"></div></ChildContent>
+			<Aside><div class="block" style="background:blue"></div></Aside>
+		</TfLayoutHeader>
+	</Header>
+	<Navigation>
+		<TfLayoutNavigation>
+			<Top><div class="block" style="background:green"></div></Top>
+			<ChildContent><div class="block" style="background:purple;height:10000px;width:10000px;"></div></ChildContent>
+			<Bottom><div class="block" style="background:orange"></div></Bottom>
+		</TfLayoutNavigation>
+	</Navigation>
+	<Body>
+		<TfLayoutBody>
+			<Aside>
+				<TfLayoutBodyAside>
+					<Toolbar><div class="block" style="background:magenta"></div></Toolbar>
+					<ChildContent><div class="block" style="background:yellow;height:10000px;width:10000px;"></div></ChildContent>
+				</TfLayoutBodyAside>
+			</Aside>
+			<ChildContent>
+				<TfLayoutBodyMain>
+					<Header>
+						<TfLayoutBodyMainHeader>
+							<ChildContent><div class="block" style="background:green;"></div></ChildContent>
+							<Aside><div class="block" style="background:orange;"></div></Aside>
+						</TfLayoutBodyMainHeader>
+					</Header>
+					<Toolbar>
+						<TfLayoutBodyMainToolbar>
+							<ChildContent><div class="block" style="background:orange;"></div></ChildContent>
+							<Aside><div class="block" style="background:green;"></div></Aside>
+						</TfLayoutBodyMainToolbar>
+						</Toolbar>
+					<ChildContent><div class="block" style="background:white;height:10000px;width:10000px;"></div></ChildContent>
+					<Footer><div class="block" style="background:orange;"></div></Footer>
+				</TfLayoutBodyMain>
+			</ChildContent>
+		</TfLayoutBody>
+	</Body>
+
+</TfLayout>
