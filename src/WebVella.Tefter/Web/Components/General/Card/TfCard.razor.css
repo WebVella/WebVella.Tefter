@@ -5,9 +5,11 @@
 	border-radius: var(--tf-card-border-radius);
 	/*	box-shadow: var(--elevation-shadow-card-rest);*/
 }
-
+.fluent-dialog-body .tf-card {
+	border-color:var(--neutral-layer-2);
+}
 .tf-card-title {
-	padding:calc(var(--design-unit)* 2.5px) calc(var(--design-unit)* 5px);	
+	padding: 5px 10px;
 	background: var(--neutral-layer-1);
 }
 
@@ -16,15 +18,7 @@ fluent-dialog .tf-card-title {
 }
 
 .tf-card-content {
-	padding: calc(var(--design-unit)* 5px);	
-}
-
-.tf-card.tf-card--small .tf-card-title{
 	padding: 5px 10px;
-}
-
-.tf-card.tf-card--small .tf-card-content{
-	padding: 10px;
 }
 
 .tf-card.tf-card--no-body .tf-card-title{

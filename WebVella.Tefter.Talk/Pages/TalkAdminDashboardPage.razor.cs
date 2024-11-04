@@ -7,7 +7,7 @@ public partial class TalkAdminDashboardPage : TucBaseScreenRegionComponent, ITuc
 	public string Name { get { return "Talk Administration"; } }
 	public string UrlSlug { get { return "talk-dashboard"; } }
 
-	public Task OnSpaceViewStateInited(IServiceProvider serviceProvider,TucUser currentUser,
+	public Task OnAppStateInit(IServiceProvider serviceProvider,TucUser currentUser,
         TfAppState newAppState,
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {

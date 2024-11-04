@@ -27,7 +27,7 @@ internal partial class AppStateUseCase
 				&& addonComponent.ComponentType.GetInterface(nameof(ITucAuxDataUseComponent)) != null)
 			{
 				var component = (ITucAuxDataUseComponent)Activator.CreateInstance(addonComponent.ComponentType);
-				component.OnSpaceViewStateInited(
+				component.OnAppStateInit(
 						serviceProvider: _serviceProvider,
 						currentUser: currentUser,
 						newAppState: newAppState,

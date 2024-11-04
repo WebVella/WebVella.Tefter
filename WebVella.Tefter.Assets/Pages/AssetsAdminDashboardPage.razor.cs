@@ -7,7 +7,7 @@ public partial class AssetsAdminDashboardPage : TucBaseScreenRegionComponent, IT
 	public string Name { get { return "Assets Administration"; } }
 	public string UrlSlug { get { return "assets-dashboard"; } }
 
-	public Task OnSpaceViewStateInited(IServiceProvider serviceProvider,TucUser currentUser,
+	public Task OnAppStateInit(IServiceProvider serviceProvider,TucUser currentUser,
         TfAppState newAppState,
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {

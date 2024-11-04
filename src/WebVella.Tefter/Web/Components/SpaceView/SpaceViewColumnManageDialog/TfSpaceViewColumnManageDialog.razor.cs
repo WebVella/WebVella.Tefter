@@ -40,7 +40,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				Id = Guid.NewGuid(),
 				QueryName = TfConverters.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
-				ColumnType = defaultColumnType,
+				ColumnType = defaultColumnType with { Id = defaultColumnType.Id},
 				ComponentType = defaultColumnType?.DefaultComponentType
 			};
 		}
@@ -73,8 +73,6 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			}
 		}
 	}
-
-
 
 	private async Task _save()
 	{
@@ -123,12 +121,12 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		await Dialog.CancelAsync();
 	}
 
-	private async Task _columnTypeChangeHandler(string columnTypeId)
+	private async Task _columnTypeChangeHandler(TucSpaceViewColumnType columnType)
 	{
 		_renderComponentTypeSelect = false;
 		_form.ColumnType = null;
-		if (!String.IsNullOrWhiteSpace(columnTypeId))
-			_form.ColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id.ToString() == columnTypeId);
+		if (columnType is not null)
+			_form.ColumnType = columnType;
 
 		if (_form.ColumnType is null)
 			_form.ColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
@@ -168,13 +166,13 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		_renderComponentTypeSelect = true;
 		await InvokeAsync(StateHasChanged);
 	}
-	private void _columnComponentChangeHandler(string componentTypeFullName)
+	private void _columnComponentChangeHandler(Type componentType)
 	{
 		_form.ComponentType = null;
 		if (_form.ColumnType is not null)
 		{
-			if (!String.IsNullOrWhiteSpace(componentTypeFullName))
-				_form.ComponentType = _form.ColumnType?.SupportedComponentTypes.FirstOrDefault(x => x.FullName == componentTypeFullName);
+			if (componentType is not null)
+				_form.ComponentType = componentType;
 
 			if (_form.ComponentType is null)
 				_form.ComponentType = _form.ColumnType?.DefaultComponentType;

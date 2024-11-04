@@ -15,7 +15,8 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 	private Icon _iconBtn;
 	private bool _isCreate = false;
 	private TucSpaceNode _form = new();
-	private string _parentIdString = null;
+	private TucSpaceNode _parentNode = null;
+	private IEnumerable<TucSpaceNode> _parentNodeOptions = Enumerable.Empty<TucSpaceNode>();
 	private ReadOnlyCollection<TfSpaceNodeComponentMeta> _pageComponents;
 	private TfSpaceNodeComponentMeta _selectedPageComponent = null;
 	private DynamicComponent typeSettingsComponent;
@@ -28,6 +29,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		_pageComponents = TfMetaProvider.GetSpaceNodesComponentsMeta();
+		_parentNodeOptions = _getParents();
 		if (_isCreate)
 		{
 			_form = _form with
@@ -43,7 +45,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		{
 
 			_form = Content with { Id = Content.Id };
-			_parentIdString = _form.ParentId.ToString();
+			_parentNode = _parentNodeOptions.FirstOrDefault(x=> x.Id == _form.ParentId);
 		}
 		if (!String.IsNullOrWhiteSpace(_form.ComponentTypeFullName))
 		{
@@ -97,8 +99,8 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 			Result<List<TucSpaceNode>> submitResult = null;
 
 
-			if (String.IsNullOrWhiteSpace(_parentIdString)) submit.ParentId = null;
-			else submit.ParentId = new Guid(_parentIdString);
+			if (_parentNode is null) submit.ParentId = null;
+			else submit.ParentId = _parentNode.Id;
 
 			if (_isCreate) submitResult = UC.CreateSpaceNode(submit);
 			else submitResult = UC.UpdateSpaceNode(submit);
@@ -119,6 +121,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 					SpaceDataList = spaceData
 				}
 				));
+				_parentNodeOptions = _getParents();
 				await _cancel();
 			}
 		}
@@ -150,6 +153,11 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		//if (current.Type == TfSpaceNodeType.Folder && !ignoreNodes.Contains(current.Id)) parents.Add(current);
 		if (!ignoreNodes.Contains(current.Id)) parents.Add(current);
 		foreach (var item in current.ChildNodes) _fillParents(parents, item, ignoreNodes);
+	}
+
+	private void _selectedParentChanged(TucSpaceNode node){ 
+		_parentNode = node;
+		_form.ParentId = node?.Id;
 	}
 
 	private void _typeChanged(TfSpaceNodeType type)

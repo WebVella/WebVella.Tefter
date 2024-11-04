@@ -61,7 +61,7 @@
 				}
 			</FluentGridItem>
 			<FluentGridItem xs="12" md="3" lg="2">
-				<TfCard Title="@LOC("My Tags")" Small="true" Style="overflow:hidden;margin-bottom:1rem">
+				<TfCard Title="@LOC("My Tags")" Style="overflow:hidden;margin-bottom:1rem">
 					@if (TfAppState.Value.HomeTags.Count == 0)
 					{
 						<div>no items yet</div>
@@ -76,7 +76,7 @@
 						</FluentStack>
 					}
 				</TfCard>
-				<TfCard Title="@LOC("My Saved URLs")" Small="true" Style="margin-bottom:1rem">
+				<TfCard Title="@LOC("My Saved URLs")" Style="margin-bottom:1rem">
 					@if (TfAppState.Value.HomeSaves.Count == 0)
 					{
 						<div>no items yet</div>
@@ -94,7 +94,7 @@
 						</FluentNavMenu>
 					}
 				</TfCard>
-				@* 				<TfCard Title="@LOC("My Bookmarks")" Small="true">
+				@* 				<TfCard Title="@LOC("My Bookmarks")">
 				@if (TfAppState.Value.HomeBookmarks.Count == 0)
 				{
 				<div>no items yet</div>
@@ -112,7 +112,7 @@
 				</FluentNavMenu>
 				}
 				</TfCard> *@
-				<TfCard Title="@LOC("My Views Visits")" Small="true" Style="margin-bottom:1rem">
+				<TfCard Title="@LOC("My Views Visits")" Style="margin-bottom:1rem">
 					@if (TfAppState.Value.HomeViews.Count == 0)
 					{
 						<div>no items yet</div>

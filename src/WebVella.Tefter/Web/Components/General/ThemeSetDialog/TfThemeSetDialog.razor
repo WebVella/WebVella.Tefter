@@ -22,6 +22,7 @@
 	<FluentStack Orientation="@Orientation.Vertical">
 		<FluentSelect @bind-SelectedOption="@_themeMode" TOption="DesignThemeModes"
 					  Items="@(Enum.GetValues<DesignThemeModes>())"
+					  OptionValue="@((p)=> ((int)p).ToString())"
 					  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"
 					  Style="width:100%"></FluentSelect>
 		<FluentInputLabel Label="@LOC("Theme Color")" />

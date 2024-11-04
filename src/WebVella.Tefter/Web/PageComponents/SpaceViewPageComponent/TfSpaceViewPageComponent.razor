@@ -24,6 +24,7 @@ else if (Context.Mode == TfComponentMode.Create)
 						  SelectedOptionChanged="_optionsSetTypeChangeHandler"
 						  TOption="TucSpaceViewSetType"
 						  Items="@(Enum.GetValues<TucSpaceViewSetType>())" Style="width:100%"
+						  OptionValue="@((p)=> ((int)p).ToString())"
 						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Select view")"
 						  Class="@GetValidationCssClass(nameof(_options.SetType))"></FluentSelect>
 			<TfValidationMessage Field="@(nameof(_options.SetType))" Errors="ValidationErrors" />
@@ -49,6 +50,7 @@ else if (Context.Mode == TfComponentMode.Create)
 							  SelectedOptionChanged="_optionsDataSetTypeChangeHandler"
 							  TOption="TucSpaceViewDataSetType"
 							  Items="@(Enum.GetValues<TucSpaceViewDataSetType>())" Style="width:100%"
+							  OptionValue="@((p)=> ((int)p).ToString())"
 							  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"></FluentSelect>
 				<TfValidationMessage Field="@(nameof(_options.DataSetType))" Errors="ValidationErrors" />
 			</FluentGridItem>
@@ -85,6 +87,7 @@ else if (Context.Mode == TfComponentMode.Create)
 									  SelectedOptionChanged="_optionsDatasetSelected"
 									  TOption="TucSpaceData" Placeholder="@LOC("select...")"
 									  Items="@TfAppState.Value.SpaceDataList" Style="width:100%"
+									  OptionValue="@((p)=> p.Id.ToString())"
 									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"></FluentSelect>
 						<TfValidationMessage Field="@(nameof(_options.SpaceDataId))" Errors="ValidationErrors" />
 					}
@@ -161,6 +164,7 @@ else if (Context.Mode == TfComponentMode.Create)
 							  SelectedOptionChanged="_optionsSpaceViewSelected"
 							  TOption="TucSpaceView" Placeholder="@LOC("select...")"
 							  Items="@TfAppState.Value.SpaceViewList" Style="width:100%"
+							  OptionValue="@((p)=> p.Id.ToString())"
 							  OptionText="@(p => p.Name)" Label="@LOC("Existing views")"
 							  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" />
 				<TfValidationMessage Field="@(nameof(_options.SpaceViewId))" Errors="ValidationErrors" />

@@ -165,7 +165,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 					compContext.DataMapping = column.DataMapping;
 					compContext.QueryName = column.QueryName;
 					var component = (ITucAuxDataUseComponent)Activator.CreateInstance(column.ComponentType, compContext);
-					component.OnSpaceViewStateInited(
+					component.OnAppStateInit(
 							serviceProvider: serviceProvider,
 							currentUser: currentUser,
 							newAppState: newAppState,

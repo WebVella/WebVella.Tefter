@@ -2,7 +2,7 @@
 @namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<TfCard Small="true">
+<TfCard>
 	<TitleTemplate>
 		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 			<FluentTextField @bind-Value="@_selectedName"
@@ -13,11 +13,13 @@
 						  Disabled="_submitting"
 						  TOption="TfPresetsCardType" Required="true"
 						  Items="@(Enum.GetValues<TfPresetsCardType>())" Style="min-width:60px"
+						  OptionValue="@((p)=> ((int)p).ToString())"
 						  OptionText="@(x=> x.ToDescriptionString())" />
 			<FluentSelect @bind-SelectedOption="@_selectedParent"
 						  Disabled="_submitting"
 						  TOption="TucSpaceViewPreset"
 						  Items="@_getParents()" Style="min-width:180px"
+						  OptionValue="@((p)=> p.Id.ToString())"
 						  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
 			<FluentButton OnClick="_addPreset" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
 						  Disabled="@_submitting">@LOC("Add new")</FluentButton>

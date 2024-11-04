@@ -88,13 +88,13 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 		return GetDataStringByAlias(_valueAlias);
 	}
 
-	public override async Task OnSpaceViewStateInited(
+	public override async Task OnAppStateInit(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		await base.OnSpaceViewStateInited(
+		await base.OnAppStateInit(
 			serviceProvider:serviceProvider,
 			currentUser: currentUser,
 			newAppState: newAppState,

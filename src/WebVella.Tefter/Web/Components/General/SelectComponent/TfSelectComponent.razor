@@ -23,7 +23,7 @@
 <div>
 	@if (_isReadonly)
 	{
-		<TfCard Small=true>
+		<TfCard Style="border:1px solid var(--neutral-fill-input-alt-active) !important">
 			<div class="tf-component">
 				@CardIcon(Value)
 				@CardMeta(Value)
@@ -32,7 +32,7 @@
 	}
 	else
 	{
-		<TfCard Id="@_elementId" Small=true OnClick="@(_=> _onOpenChanged(true))">
+		<TfCard Id="@_elementId" OnClick="@(_=> _onOpenChanged(true))" Style="border:1px solid var(--neutral-fill-input-alt-active) !important">
 			<div class="tf-component">
 				@CardIcon(Value)
 				@CardMeta(Value)

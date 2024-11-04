@@ -7,6 +7,7 @@ public record TucSpaceViewColumnType
 	public string Description { get; set; }
 	public Icon Icon { get; set; }
 	public List<TucSpaceViewColumnDataMapping> DataMapping { get; set; }
+	[JsonIgnore]
 	public Type DefaultComponentType { get; set; }
 	public List<Type> SupportedComponentTypes { get; set; }
 	public List<string> FilterAliases { get; set; }

@@ -1,14 +1,14 @@
-﻿@namespace WebVella.Tefter.Talk.Components
+﻿@namespace WebVella.Tefter.Assets.Components
 
-@inherits TucBaseViewColumn<TfTalkCommentsCountComponentOptions>
+@inherits TucBaseViewColumn<TfFolderAssetsCountComponentOptions>
 @if (Context.Mode == TucComponentMode.Display)
 {
 
 	<div>
-		@if (componentOptions.ChannelId is not null)
+		@if (componentOptions.FolderId is not null)
 		{
 			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
-				<FluentIcon Value="@TfConstants.GetIcon("Comment")" />
+				<FluentIcon Value="@TfConstants.GetIcon("DocumentCopy")" />
 			</FluentButton>
 		}
 		else
@@ -23,12 +23,11 @@ else if (Context.Mode == TucComponentMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentSelect TOption="TalkChannel"
-						  Items="_channels"
-						  OptionValue="@((p)=> p.Id.ToString())"
+			<FluentSelect TOption="Folder"
+						  Items="_folders"
 						  OptionText="(x=> x.Name)"
-						  SelectedOption="_selectedChannel"
-						  SelectedOptionChanged="_channelSelectHandler" />
+						  SelectedOption="_selectedFolder"
+						  SelectedOptionChanged="_folderSelectHandler" />
 		</FluentGridItem>
 
 	</FluentGrid>

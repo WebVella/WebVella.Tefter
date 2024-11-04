@@ -430,7 +430,7 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	/// The usual context with all the view meta and data is available when this method is called
 	/// </summary>
 	/// <param name="appState">the most current complete appState reference</param>
-	public virtual Task OnSpaceViewStateInited(
+	public virtual Task OnAppStateInit(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,

@@ -2,7 +2,7 @@
 @namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<TfCard Small="true">
+<TfCard>
 	<TitleTemplate>
 		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 			@if (AllColumnOptions.Count > 0)
@@ -15,7 +15,10 @@
 				<FluentSelect @bind-SelectedOption="@_selectedDirection"
 							  Disabled="_submitting"
 							  TOption="TucSortDirection"
-							  Items="@(Enum.GetValues<TucSortDirection>())" Style="width:100px"></FluentSelect>
+							  Items="@(Enum.GetValues<TucSortDirection>())"
+							  OptionValue="@((p)=> ((int)p).ToString())"
+							  OptionText="@((p)=> p.ToDescriptionString())"
+								  Style="width:100px"></FluentSelect>
 			}
 			else
 			{

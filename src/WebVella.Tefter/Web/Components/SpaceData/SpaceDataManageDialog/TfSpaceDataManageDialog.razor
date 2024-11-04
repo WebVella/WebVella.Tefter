@@ -38,6 +38,7 @@
 					<FluentSelect SelectedOption="@_selectedDataProvider" SelectedOptionChanged="_dataProviderSelected"
 								  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
 								  Items="@TfAppState.Value.AllDataProviders" Style="width:100%"
+								  OptionValue="@((p)=> p.Id.ToString())"
 								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
 					<FluentValidationMessage For="@(() => _form.DataProviderId)" />
 				</FluentGridItem>

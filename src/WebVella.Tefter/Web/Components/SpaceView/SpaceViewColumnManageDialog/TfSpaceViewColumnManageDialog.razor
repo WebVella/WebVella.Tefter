@@ -49,8 +49,8 @@
 						<FluentSelect Style="width:100%"
 									  TOption="TucSpaceViewColumnType"
 									  Placeholder="@LOC("select...")"
-									  Value="@(_form.ColumnType?.Id.ToString())"
-									  ValueChanged="_columnTypeChangeHandler"
+									  SelectedOption="@_form.ColumnType"
+									  SelectedOptionChanged="_columnTypeChangeHandler"
 									  OptionText="((x)=> x.Name)"
 									  OptionValue="((x)=> x.Id.ToString())"
 									  Items="TfAppState.Value.AvailableColumnTypes">
@@ -69,8 +69,8 @@
 					{
 						<FluentSelect Label="@LOC("Presentation component")"
 									  Style="width:100%" Required=true
-									  Value="@_form.ComponentType?.FullName"
-									  ValueChanged="_columnComponentChangeHandler"
+									  SelectedOption="@_form.ComponentType"
+									  SelectedOptionChanged="_columnComponentChangeHandler"
 									  TOption="Type"
 									  OptionText="((x)=> x.ToDescriptionString())"
 									  OptionValue="((x)=> x.FullName)"
@@ -200,6 +200,7 @@
 								<FluentSelect @bind-SelectedOption="@_form.Settings.Color" TOption="OfficeColor"
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
+											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
@@ -235,6 +236,7 @@
 								<FluentSelect @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="OfficeColor"
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
+											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>

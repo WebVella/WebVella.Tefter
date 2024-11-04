@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿namespace WebVella.Tefter.Talk.Components;
 [LocalizationResource("WebVella.Tefter.Talk.Components.TalkThreadModal.TalkThreadModal", "WebVella.Tefter.Talk")]
 public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentComponent<TalkThreadModalContext>
 {

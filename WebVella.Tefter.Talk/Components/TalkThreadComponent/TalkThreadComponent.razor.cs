@@ -1,6 +1,6 @@
 ﻿
 
-namespace WebVella.Tefter.Web.Components;
+namespace WebVella.Tefter.Talk.Components;
 
 [LocalizationResource("WebVella.Tefter.Talk.Components.TalkThreadComponent.TalkThreadComponent", "WebVella.Tefter.Talk")]
 public partial class TalkThreadComponent : TfBaseComponent

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Assets.Components;
-[LocalizationResource("WebVella.Tefter.Talk.Components.AssetsFolderManageDialog.AssetsFolderManageDialog", "WebVella.Tefter.Assets")]
+[LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderManageDialog.AssetsFolderManageDialog", "WebVella.Tefter.Assets")]
 public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogContentComponent<Folder>
 {
 	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }

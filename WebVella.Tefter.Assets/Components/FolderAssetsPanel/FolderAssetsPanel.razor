@@ -1,0 +1,149 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Assets.Components
+@inherits TfFormBaseComponent
+
+<style>
+	.talk-panel {
+		--space-background-color: @TfAppState.Value.SpaceBackgkroundColor;
+		--space-color: @TfAppState.Value.SpaceColorString;
+	}
+</style>
+@if (_activeThread is not null)
+{
+	<style>
+		::part(control) {
+			--dialog-width: 60vw;
+		}
+	</style>
+}
+<FluentDialogHeader Style="display:none" />
+<FluentDialogFooter Style="display:none" />
+<FluentDialogBody>
+	<div>
+		@if (_isLoading)
+		{
+			<TfLoadingPane />
+		}
+		else if (Content.FolderId is null)
+		{
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No folder is configured for this column!")</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+		}
+		else if (_folder is null)
+		{
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No folder is selected for this view column!")</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
+		}
+		else if (String.IsNullOrWhiteSpace(_folder.SharedKey))
+		{
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The folder has no shared key set!")</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
+		}
+		else if (_skValue is null)
+		{
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of folder '{1}'!", _folder.SharedKey, _folder.Name)</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
+		}
+		else if (_skValue == Guid.Empty)
+		{
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@LOC("Error")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body" style="padding:10px">
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _folder.SharedKey)</FluentMessageBar>
+					</div>
+				</div>
+			</div>
+
+		}
+		else
+		{
+			<div class="talk-panel">
+				<div class="talk-panel__left">
+					<div class="talk-panel__left__header">
+						<div class="talk-channel-label">@($"#{_folder.Name}")</div>
+						<div class="talk-panel__left__header_actions">
+							<FluentButton Appearance="@Appearance.Stealth"
+										  OnClick="_cancel"
+										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+						</div>
+					</div>
+					<div class="talk-panel__left__body">
+						@if (_items.Count == 0)
+						{
+							<div class="talk-panel__left__body__info">
+								<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>
+							</div>
+						}
+						else
+						{
+							<div>test</div>
+						}
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</FluentDialogBody>

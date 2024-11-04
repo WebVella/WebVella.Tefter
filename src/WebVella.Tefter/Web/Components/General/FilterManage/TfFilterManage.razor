@@ -4,7 +4,7 @@
 <div>
 	@if (Item is TucFilterAnd || Item is TucFilterOr)
 	{
-		<TfCard Small="true" Class="card-logical">
+		<TfCard Class="card-logical">
 			<TitleTemplate>
 				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 					<FluentStack HorizontalGap="0" HorizontalAlignment="@HorizontalAlignment.Left">
@@ -58,7 +58,7 @@
 	}
 	else
 	{
-		<TfCard Small="true" Class="card-rule">
+		<TfCard Class="card-rule">
 			<TitleTemplate>
 				<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 					<FluentStack HorizontalAlignment="@HorizontalAlignment.Left" VerticalAlignment="@VerticalAlignment.Center">
@@ -89,6 +89,7 @@
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterBooleanComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
@@ -109,6 +110,7 @@
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
@@ -118,7 +120,7 @@
 														 Disabled="@Disabled" ReadOnly="ReadOnly"
 														 AutoComplete="off"
 														 Placeholder="@($"{TfConstants.DateTimeFormatInput}, now()... ")" Style="width:300px" />
-										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.HelpIcon" Disabled=true/>
+										<FluentButton Id="@($"tf-{context.Id}")" IconStart="@TfConstants.HelpIcon" Disabled=true />
 										<FluentTooltip Anchor="@($"tf-{context.Id}")">
 											@((MarkupString)LOC("for dynamic date use one of the following:{0}", "<br/> now(+- decimal hours),<br/> day(+- decimal days),<br/> month(+- decimal months),<br/> year(+- decimal year)"))
 										</FluentTooltip>
@@ -133,6 +135,7 @@
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterGuidComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
@@ -151,6 +154,7 @@
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterNumericComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterNumericComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
@@ -168,6 +172,7 @@
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterTextComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterTextComparisonMethod>())" Style="width:140px"
+											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"></FluentSelect>
 								@if (context.RequiresValue)
 								{
