@@ -17,6 +17,7 @@ public class Asset
 [JsonDerivedType(typeof(LinkAssetContent), typeDiscriminator: "link")]
 public class AssetContentBase
 {
+	public string Label { get; set; }	
 }
 
 public class FileAssetContent : AssetContentBase

@@ -86,6 +86,7 @@ WITH sk_info AS (
 	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
 	FROM assets_related_sk trs
 		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+	WHERE ( @sk_id IS NULL OR trs.id = @sk_id )
 	GROUP BY trs.asset_id
 )
 SELECT 
@@ -100,11 +101,11 @@ SELECT
 	sk.json_result AS related_shared_key_json
 FROM assets_asset aa
 	LEFT OUTER JOIN sk_info sk ON aa.id = sk.asset_id
-WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND ( @sk_id IS NULL OR sk.id = @sk_id )
+WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND ( @sk_id IS NULL OR sk.asset_id is not null )
 ORDER BY aa.created_on DESC;";
 
-			var channelIdPar = CreateParameter(
-				"channel_id",
+			var folderIdPar = CreateParameter(
+				"folder_id",
 				folderId,
 				DbType.Guid);
 
@@ -113,7 +114,7 @@ ORDER BY aa.created_on DESC;";
 				skId,
 				DbType.Guid);
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, channelIdPar, skIdPar);
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
 
 			return Result.Ok(ToAssetList(dt));
 		}
@@ -144,9 +145,9 @@ ORDER BY aa.created_on DESC;";
 
 			var SQL = @"INSERT INTO assets_asset
 						(id, folder_id, type, content_json, created_by,
-						created_on, modified_by, modified_on)
+						created_on, modified_by, modified_on, x_search)
 					VALUES(@id, @folder_id, @type, @content_json, @created_by,
-						@created_on, @modified_by, @modified_on); ";
+						@created_on, @modified_by, @modified_on, @x_search); ";
 
 			var idPar = CreateParameter("@id", id, DbType.Guid);
 
@@ -164,7 +165,26 @@ ORDER BY aa.created_on DESC;";
 
 			var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
 
-			var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
+			var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+
+			string xSearch = string.Empty;
+
+			if (asset.Content is FileAssetContent)
+			{
+				var fileAssetContent = (FileAssetContent)asset.Content;
+				xSearch = $"{fileAssetContent.Label} {fileAssetContent.FilePath}";
+			}
+			else if (asset.Content is LinkAssetContent)
+			{
+				var linkAssetContent = (LinkAssetContent)asset.Content;
+				xSearch = $"{linkAssetContent.Label} {linkAssetContent.Url}";
+			}
+			else
+			{
+				throw new Exception("Not supported asset content type.");
+			}
+
+			var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
 
 			using (var scope = _dbService.CreateTransactionScope())
 			{
@@ -173,7 +193,8 @@ ORDER BY aa.created_on DESC;";
 					idPar, folderIdPar,
 					typePar, contentJsonPar,
 					createdByPar, createdOnPar,
-					modifiedByPar, modifiedOnPar);
+					modifiedByPar, modifiedOnPar,
+					xSearchPar);
 
 				if (dbResult != 1)
 				{
