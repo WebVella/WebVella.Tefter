@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfLayoutBody
+public partial class TfLayoutBody : ComponentBase
 {
 	[Parameter] public RenderFragment Aside { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }

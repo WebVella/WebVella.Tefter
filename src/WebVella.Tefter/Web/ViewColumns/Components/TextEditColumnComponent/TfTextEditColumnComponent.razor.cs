@@ -101,7 +101,6 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 
 		try
 		{
-			ConsoleExt.WriteLine($"TfTextEditColumnComponent {_value}");
 			await OnRowColumnChangedByAlias(_valueAlias, _value);
 			ToastService.ShowSuccess(LOC("change applied"));
 			await JSRuntime.InvokeAsync<string>("Tefter.blurElementById", _valueInputId);

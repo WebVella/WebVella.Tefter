@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfLayoutNavigation
+public partial class TfLayoutNavigation : ComponentBase
 {
 	[Parameter] public RenderFragment Top { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
