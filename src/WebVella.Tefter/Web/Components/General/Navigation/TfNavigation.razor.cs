@@ -20,7 +20,6 @@ public partial class TfNavigation : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		ConsoleExt.WriteLine("OnInitialized");
 		_defaultColor = TfAppState.Value.CurrentUser.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor;
 	}
 
@@ -33,7 +32,6 @@ public partial class TfNavigation : TfBaseComponent
 			StateHasChanged();
 			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 		}
-		ConsoleExt.WriteLine("OnAfterRender");
 	}
 	private void On_AppChanged(SetAppStateAction action)
 	{

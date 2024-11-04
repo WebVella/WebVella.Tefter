@@ -191,7 +191,6 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 	private void _dataMappingValueChanged(string value, string alias)
 	{
-		ConsoleExt.WriteLine(value);
 		_form.DataMapping[alias] = value;
 	}
 

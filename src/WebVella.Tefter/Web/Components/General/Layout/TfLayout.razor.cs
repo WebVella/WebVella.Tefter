@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfLayout
+public partial class TfLayout : ComponentBase
 {
 	[Parameter] public bool SidebarExpanded { get; set; }
 	[Parameter] public RenderFragment Header { get; set; }
@@ -7,7 +7,6 @@ public partial class TfLayout
 	[Parameter] public RenderFragment Body { get; set; }
 	[Parameter] public string Color { get; set; }
 	[Parameter] public string BackgroundColor { get; set; }
-
 	private string _styles
 	{
 		get
