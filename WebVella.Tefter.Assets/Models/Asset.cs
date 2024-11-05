@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Assets.Models;
+﻿using Org.BouncyCastle.Utilities;
+
+namespace WebVella.Tefter.Assets.Models;
 
 public class Asset
 {
@@ -30,6 +32,15 @@ public class LinkAssetContent : AssetContentBase
 	public string Url { get; set; }
 }
 
+public class CreateFileAssetModel
+{
+	public Guid FolderId { get; set; }
+	public string Label { get; set; }
+	public string LocalPath { get; set; }
+	public Guid CreatedBy { get; set; }
+	public List<Guid> RowIds { get; set; }
+	public Guid DataProviderId { get; set; }
+}
 
 public class CreateAssetModel
 {

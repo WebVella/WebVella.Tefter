@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Assets.Services;
+﻿using WebVella.Tefter.Assets.Models;
+
+namespace WebVella.Tefter.Assets.Services;
 
 public partial interface IAssetsService
 {
@@ -8,6 +10,9 @@ public partial interface IAssetsService
 	public Result<List<Asset>> GetAssets(
 		Guid? folderId = null,
 		Guid? skId = null);
+
+	public Result<Guid> CreateFileAsset(
+		CreateFileAssetModel fileAsset);
 
 	public Result<Guid> CreateAsset(
 		CreateAssetModel asset);
@@ -123,6 +128,140 @@ ORDER BY aa.created_on DESC;";
 			return Result.Fail(new Error("Failed to get assets.").CausedBy(ex));
 		}
 	}
+
+	public Result<Guid> CreateFileAsset(
+		CreateFileAssetModel fileAsset)
+	{
+		try
+		{
+			if (fileAsset == null)
+				throw new NullReferenceException("Asset object is null");
+
+			Guid id = Guid.NewGuid();
+
+			//AssetValidator validator = new AssetValidator(this);
+
+			//var validationResult = validator.ValidateCreateFileAsset(asset, id);
+
+			//if (!validationResult.IsValid)
+			//	return validationResult.ToResult();
+					
+
+			using (var scope = _dbService.CreateTransactionScope())
+			{
+				string filePath = string.Empty;
+				//https://netorg837044.sharepoint.com/:x:/s/TambelliniTeam/EfYX0kCroqFLmYnD62Pfop0Bz2Ixd95wx-hJNJjaO48oPg?e=pchoU6
+				//tefter://fs/assets/folderid/filename
+				 //TODO rumen implement file create with file manager
+
+				DateTime now = DateTime.Now;
+
+				var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on, x_search)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on, @x_search); ";
+
+				var idPar = CreateParameter("@id", id, DbType.Guid);
+
+				var folderIdPar = CreateParameter("@folder_id", fileAsset.FolderId, DbType.Guid);
+
+				var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
+
+				FileAssetContent content = new FileAssetContent
+				{
+					FilePath = filePath,
+					Label = fileAsset.Label
+				};
+
+				var contentJson = JsonSerializer.Serialize(content);
+
+				var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+				var createdByPar = CreateParameter("@created_by", fileAsset.CreatedBy, DbType.Guid);
+
+				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+				var modifiedByPar = CreateParameter("@modified_by", fileAsset.CreatedBy, DbType.Guid);
+
+				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+				
+				
+				string xSearch = string.Empty;
+				xSearch = $"{fileAsset.Label} {filePath}";
+
+				var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
+
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, folderIdPar,
+					typePar, contentJsonPar,
+					createdByPar, createdOnPar,
+					modifiedByPar, modifiedOnPar,
+					xSearchPar);
+
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to insert new row in database for thread object");
+				}
+
+
+				if (fileAsset.RowIds != null && fileAsset.RowIds.Count > 0)
+				{
+					var folder = GetFolder(fileAsset.FolderId).Value;
+
+					var provider = _dataProviderManager.GetProvider(fileAsset.DataProviderId).Value;
+
+					if (provider is null)
+					{
+						throw new Exception($"Failed to find data provider with id='{fileAsset.DataProviderId}'");
+					}
+
+					var queryResult = _dataManager.QueryDataProvider(provider, fileAsset.RowIds);
+
+					if (!queryResult.IsSuccess)
+					{
+						return Result.Fail(new Error("Failed to get rows by ids.")
+							.CausedBy(queryResult.Errors));
+					}
+
+					List<Guid> relatedSK = new List<Guid>();
+
+					foreach (TfDataRow row in queryResult.Value.Rows)
+					{
+						var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
+
+						if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
+						{
+							relatedSK.Add(skIdValue.Value);
+						}
+					}
+
+					foreach (var skId in relatedSK)
+					{
+						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+							"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
+								new NpgsqlParameter("@id", skId),
+								new NpgsqlParameter("@asset_id", id));
+
+						if (skDbResult != 1)
+						{
+							throw new Exception("Failed to insert new row in database for related shared key object");
+						}
+					}
+				}
+
+				scope.Complete();
+
+				return Result.Ok(id);
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create new asset.").CausedBy(ex));
+		}
+	}
+
 
 	public Result<Guid> CreateAsset(
 		CreateAssetModel asset)
