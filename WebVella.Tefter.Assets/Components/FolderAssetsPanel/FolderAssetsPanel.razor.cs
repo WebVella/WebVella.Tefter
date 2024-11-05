@@ -21,6 +21,13 @@ public partial class FolderAssetsPanel : TfFormBaseComponent, IDialogContentComp
 	private Guid? _assetEditedId = null;
 	private Guid? _assetIdUpdateSaving = null;
 	private bool _assetBroadcastVisible = false;
+	private FluentInputFileEventArgs _upload = null;
+	private string _uploadId = $"tf-{Guid.NewGuid()}";
+
+	FluentInputFile? fileUploader = default!;
+	int progressPercent = 0;
+	List<FluentInputFileEventArgs> Files = new();
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
@@ -60,44 +67,59 @@ public partial class FolderAssetsPanel : TfFormBaseComponent, IDialogContentComp
 		await Dialog.CancelAsync();
 	}
 
+	private async Task _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
+	{
+		Files = files.ToList();
+		progressPercent = fileUploader!.ProgressPercent;
+
+		if (Files.Count > 0)
+		{
+			_upload = Files[0];
+		}
+		await _addAsset();
+	}
+
+	private void _onProgress(FluentInputFileEventArgs e)
+	{
+		progressPercent = e.ProgressPercent;
+	}
+	
+
 	private async Task _addAsset()
 	{
-		Console.WriteLine("_sendMessage");
-		//if (_channelEditorSending) return;
-		//_channelEditorSending = true;
-		//await InvokeAsync(StateHasChanged);
-		//try
-		//{
-		//	var submit = new CreateTalkThread
-		//	{
-		//		ChannelId = _folder.Id,
-		//		Content = _channelEditorContent,
-		//		Type = TalkThreadType.Comment,
-		//		UserId = TfUserState.Value.CurrentUser.Id,
-		//		DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
-		//		RowIds = new List<Guid> { _rowId }
-		//	};
-		//	var result = AssetsService.CreateThread(submit);
-		//	ProcessServiceResponse(result);
-		//	if (result.IsSuccess)
-		//	{
-		//		ToastService.ShowSuccess(LOC("Message is sent"));
-		//		_channelEditorContent = null;
-		//		var getThreadResult = AssetsService.GetThread(result.Value);
-		//		if (getThreadResult.IsFailed) throw new Exception("GetThreads failed");
-		//		_items.Insert(0, getThreadResult.Value);
+		if(progressPercent != 0) return;
+		try
+		{
 
-		//	}
-		//}
-		//catch (Exception ex)
-		//{
-		//	ProcessException(ex);
-		//}
-		//finally
-		//{
-		//	_channelEditorSending = false;
-		//	await InvokeAsync(StateHasChanged);
-		//}
+			var submit = new CreateAssetModel
+			{
+				FolderId = _folder.Id,
+				Type = AssetType.File,
+				CreatedBy = TfAppState.Value.CurrentUser.Id,
+				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
+				RowIds = new List<Guid> { _rowId },
+			};
+			var result = AssetsService.CreateAsset(submit);
+			ProcessServiceResponse(result);
+			if (result.IsSuccess)
+			{
+				ToastService.ShowSuccess(LOC("Asset is added"));
+				var getResult = AssetsService.GetAsset(result.Value);
+				if (getResult.IsFailed) throw new Exception("GetAsset failed");
+				_items.Add(getResult.Value);
+
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			progressPercent = 0;
+			_upload = null;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 	private async Task _editAsset(Asset asset)
