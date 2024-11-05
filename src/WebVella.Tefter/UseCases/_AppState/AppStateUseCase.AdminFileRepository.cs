@@ -66,12 +66,16 @@ internal partial class AppStateUseCase
 	internal Result<TucFile> CreateFile(TucFileForm form)
 	{
 		var bytesResult = _fileManager.GetBytesFromLocalFileSystemPath(form.LocalFilePath);
+		if (File.Exists(form.LocalFilePath))
+		{
+			File.Delete(form.LocalFilePath);
+		}
 		if (bytesResult.IsFailed) throw new Exception("GetBytesFromLocalFileSystemPath failed");
 		var result = _fileManager.CreateFile(
 			filePath: $"{TfConstants.AdminFileRepositoryStartPath}/{form.Name}",
 			overwrite: false,
 			buffer: bytesResult.Value,
-			createdBy:form.CreatedBy);
+			createdBy: form.CreatedBy);
 		if (result.IsFailed)
 			return Result.Fail(new Error("CreateFile failed").CausedBy(result.Errors));
 
@@ -82,12 +86,16 @@ internal partial class AppStateUseCase
 	internal Result<TucFile> UpdateFile(TucFileForm form)
 	{
 		var bytesResult = _fileManager.GetBytesFromLocalFileSystemPath(form.LocalFilePath);
+		if (File.Exists(form.LocalFilePath))
+		{
+			File.Delete(form.LocalFilePath);
+		}
 		if (bytesResult.IsFailed) throw new Exception("GetBytesFromLocalFileSystemPath failed");
 		var result = _fileManager.CreateFile(
 			filePath: $"{TfConstants.AdminFileRepositoryStartPath}/{form.Name}",
 			overwrite: true,
 			buffer: bytesResult.Value,
-			createdBy:form.CreatedBy);
+			createdBy: form.CreatedBy);
 		if (result.IsFailed)
 			return Result.Fail(new Error("CreateFile failed").CausedBy(result.Errors));
 

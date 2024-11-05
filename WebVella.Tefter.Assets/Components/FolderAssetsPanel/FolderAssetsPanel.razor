@@ -3,19 +3,11 @@
 @inherits TfFormBaseComponent
 
 <style>
-	.talk-panel {
+	.asset-panel {
 		--space-background-color: @TfAppState.Value.SpaceBackgkroundColor;
 		--space-color: @TfAppState.Value.SpaceColorString;
 	}
 </style>
-@if (_activeThread is not null)
-{
-	<style>
-		::part(control) {
-			--dialog-width: 60vw;
-		}
-	</style>
-}
 <FluentDialogHeader Style="display:none" />
 <FluentDialogFooter Style="display:none" />
 <FluentDialogBody>
@@ -26,122 +18,132 @@
 		}
 		else if (Content.FolderId is null)
 		{
-			<div class="talk-panel">
-				<div class="talk-panel__left">
-					<div class="talk-panel__left__header">
-						<div class="talk-channel-label">@LOC("Error")</div>
-						<div class="talk-panel__left__header_actions">
-							<FluentButton Appearance="@Appearance.Stealth"
-										  OnClick="_cancel"
-										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-						</div>
+			<div class="asset-panel">
+				<div class="asset-panel__header">
+					<div class="asset-panel__header__content">@LOC("Error")</div>
+					<div class="asset-panel__header__actions">
+						<FluentButton Appearance="@Appearance.Stealth"
+									  OnClick="_cancel"
+									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 					</div>
-					<div class="talk-panel__left__body" style="padding:10px">
-						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No folder is configured for this column!")</FluentMessageBar>
-					</div>
+				</div>
+				<div class="asset-panel__body" style="padding:10px">
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No folder is configured for this column!")</FluentMessageBar>
 				</div>
 			</div>
 		}
 		else if (_folder is null)
 		{
-			<div class="talk-panel">
-				<div class="talk-panel__left">
-					<div class="talk-panel__left__header">
-						<div class="talk-channel-label">@LOC("Error")</div>
-						<div class="talk-panel__left__header_actions">
-							<FluentButton Appearance="@Appearance.Stealth"
-										  OnClick="_cancel"
-										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-						</div>
-					</div>
-					<div class="talk-panel__left__body" style="padding:10px">
-						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No folder is selected for this view column!")</FluentMessageBar>
+			<div class="asset-panel">
+				<div class="asset-panel__header">
+					<div class="asset-panel__header__content">@LOC("Error")</div>
+					<div class="asset-panel__header__actions">
+						<FluentButton Appearance="@Appearance.Stealth"
+									  OnClick="_cancel"
+									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 					</div>
 				</div>
+				<div class="asset-panel__body" style="padding:10px">
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No folder is selected for this view column!")</FluentMessageBar>
+				</div>
 			</div>
-
 		}
 		else if (String.IsNullOrWhiteSpace(_folder.SharedKey))
 		{
-			<div class="talk-panel">
-				<div class="talk-panel__left">
-					<div class="talk-panel__left__header">
-						<div class="talk-channel-label">@LOC("Error")</div>
-						<div class="talk-panel__left__header_actions">
-							<FluentButton Appearance="@Appearance.Stealth"
-										  OnClick="_cancel"
-										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-						</div>
-					</div>
-					<div class="talk-panel__left__body" style="padding:10px">
-						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The folder has no shared key set!")</FluentMessageBar>
+			<div class="asset-panel">
+				<div class="asset-panel__header">
+					<div class="asset-panel__header__content">@LOC("Error")</div>
+					<div class="asset-panel__header__actions">
+						<FluentButton Appearance="@Appearance.Stealth"
+									  OnClick="_cancel"
+									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 					</div>
 				</div>
+				<div class="asset-panel__body" style="padding:10px">
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The folder has no shared key set!")</FluentMessageBar>
+				</div>
 			</div>
-
 		}
 		else if (_skValue is null)
 		{
-			<div class="talk-panel">
-				<div class="talk-panel__left">
-					<div class="talk-panel__left__header">
-						<div class="talk-channel-label">@LOC("Error")</div>
-						<div class="talk-panel__left__header_actions">
-							<FluentButton Appearance="@Appearance.Stealth"
-										  OnClick="_cancel"
-										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-						</div>
-					</div>
-					<div class="talk-panel__left__body" style="padding:10px">
-						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of folder '{1}'!", _folder.SharedKey, _folder.Name)</FluentMessageBar>
+			<div class="asset-panel">
+				<div class="asset-panel__header">
+					<div class="asset-panel__header__content">@LOC("Error")</div>
+					<div class="asset-panel__header__actions">
+						<FluentButton Appearance="@Appearance.Stealth"
+									  OnClick="_cancel"
+									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 					</div>
 				</div>
+				<div class="asset-panel__body" style="padding:10px">
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of folder '{1}'!", _folder.SharedKey, _folder.Name)</FluentMessageBar>
+				</div>
 			</div>
-
 		}
 		else if (_skValue == Guid.Empty)
 		{
-			<div class="talk-panel">
-				<div class="talk-panel__left">
-					<div class="talk-panel__left__header">
-						<div class="talk-channel-label">@LOC("Error")</div>
-						<div class="talk-panel__left__header_actions">
-							<FluentButton Appearance="@Appearance.Stealth"
-										  OnClick="_cancel"
-										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-						</div>
-					</div>
-					<div class="talk-panel__left__body" style="padding:10px">
-						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _folder.SharedKey)</FluentMessageBar>
+			<div class="asset-panel">
+				<div class="asset-panel__header">
+					<div class="asset-panel__header__content">@LOC("Error")</div>
+					<div class="asset-panel__header__actions">
+						<FluentButton Appearance="@Appearance.Stealth"
+									  OnClick="_cancel"
+									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
 					</div>
 				</div>
+				<div class="asset-panel__body" style="padding:10px">
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _folder.SharedKey)</FluentMessageBar>
+				</div>
 			</div>
-
 		}
 		else
 		{
-			<div class="talk-panel">
-				<div class="talk-panel__left">
-					<div class="talk-panel__left__header">
-						<div class="talk-channel-label">@($"#{_folder.Name}")</div>
-						<div class="talk-panel__left__header_actions">
-							<FluentButton Appearance="@Appearance.Stealth"
-										  OnClick="_cancel"
-										  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
-						</div>
+			<div class="asset-panel">
+				<div class="asset-panel__header">
+					<div class="asset-panel__header__content">
+						<FluentIcon Value="@TfConstants.GetIcon("Folder")" />
+						@($"{_folder.Name}")
 					</div>
-					<div class="talk-panel__left__body">
-						@if (_items.Count == 0)
+					<div class="asset-panel__header__actions">
+						<FluentButton Appearance="@Appearance.Stealth"
+									  OnClick="_cancel"
+									  IconStart="TfConstants.CloseIcon.WithColor(Color.Neutral)" />
+					</div>
+				</div>
+				<div class="asset-panel__body">
+					@if (_items.Count == 0)
+					{
+						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>
+					}
+					@foreach (var asset in _items)
+					{
+						<div>@asset.Type</div>
+					}
+				</div>
+				<div class="asset-panel__footer">
+					<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+						<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
+									  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
+						@if (progressPercent < 100)
 						{
-							<div class="talk-panel__left__body__info">
-								<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>
+							<TfProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
+						}
+						else if (_upload is not null)
+						{
+							<div style="display:flex;flex:0 0 auto;align-items:center">
+								<FluentIcon Value="@TfConstants.GetIcon("Checkmark",variant:IconVariant.Filled)" Color="@Color.Success" />
+								<div> @LOC("file uploaded")</div>
 							</div>
 						}
-						else
-						{
-							<div>test</div>
-						}
-					</div>
+					</FluentStack>
+					<FluentInputFile @ref="@fileUploader"
+									 DragDropZoneVisible="false"
+									 Mode="InputFileMode.SaveToTemporaryFolder"
+									 Multiple="false"
+									 AnchorId="@_uploadId"
+									 MaximumFileSize="@(100 * 1024 * 1024)"
+									 OnProgressChange="@_onProgress"
+									 OnCompleted="@_onCompleted" />
 				</div>
 			</div>
 		}
