@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using WebVella.Tefter.Api;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;

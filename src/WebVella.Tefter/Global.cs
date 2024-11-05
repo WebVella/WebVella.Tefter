@@ -37,6 +37,8 @@ global using System.Text.Json.Serialization;
 global using System.Text.RegularExpressions;
 global using System.Threading.Tasks;
 global using System.Web;
+//webvella
+global using WebVella.Tefter.Jobs;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Database.Dbo;
 global using WebVella.Tefter.Errors;

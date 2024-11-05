@@ -1,6 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Components.Forms;
-using WebVella.Tefter.Api;
+﻿using Microsoft.AspNetCore.Components.Forms;
 
 namespace WebVella.Tefter.Web.Models;
 

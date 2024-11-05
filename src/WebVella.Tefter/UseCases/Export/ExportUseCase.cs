@@ -6,12 +6,12 @@ public class ExportUseCase
 {
 	private readonly IServiceProvider _serviceProvider;
 	private readonly IIdentityManager _identityManager;
-	private readonly IDataManager _dataManager;
+	private readonly ITfDataManager _dataManager;
 	private readonly ITfSpaceManager _spaceManager;
 	public ExportUseCase(
 		IServiceProvider serviceProvider,
 		IIdentityManager identityManager,
-		IDataManager dataManager,
+		ITfDataManager dataManager,
 		ITfSpaceManager spaceManager
 		)
 	{

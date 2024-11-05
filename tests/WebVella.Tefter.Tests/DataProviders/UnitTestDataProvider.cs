@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using System.Collections.ObjectModel;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests.DataProviders;
 

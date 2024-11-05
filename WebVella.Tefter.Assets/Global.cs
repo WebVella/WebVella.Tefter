@@ -9,7 +9,6 @@ global using Microsoft.AspNetCore.Components;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
 
-global using WebVella.Tefter.Api;
 global using WebVella.Tefter.Identity;
 global using WebVella.Tefter.Web.Store;
 global using WebVella.Tefter.Database;

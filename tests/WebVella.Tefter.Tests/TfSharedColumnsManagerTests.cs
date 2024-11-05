@@ -1,5 +1,5 @@
 ﻿using System.Security.AccessControl;
-using WebVella.Tefter.Api;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;
 

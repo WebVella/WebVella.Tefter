@@ -14,7 +14,7 @@ public partial class TalkTests : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -55,7 +55,7 @@ public partial class TalkTests : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))

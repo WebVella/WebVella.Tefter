@@ -69,7 +69,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 
 		#region << Init >>
 		var spaceManager = serviceProvider.GetService<ITfSpaceManager>();
-		var dataManager = serviceProvider.GetService<IDataManager>();
+		var dataManager = serviceProvider.GetService<ITfDataManager>();
 		var metaProvider = serviceProvider.GetService<ITfMetaProvider>();
 
 		TfSpaceView tfSpaceView = null;

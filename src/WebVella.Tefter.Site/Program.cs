@@ -97,7 +97,7 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "TEFTER: Application normal start-up failed");
-	FailedModeHost.CreateAndRun(ex, args);
+	TfFailedModeHost.CreateAndRun(ex, args);
 }
 finally
 {

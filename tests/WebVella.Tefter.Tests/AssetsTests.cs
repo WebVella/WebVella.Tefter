@@ -14,7 +14,7 @@ public partial class AssetsTests : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -55,7 +55,7 @@ public partial class AssetsTests : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))

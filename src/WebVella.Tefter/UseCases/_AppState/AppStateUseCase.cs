@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Api;
-
-namespace WebVella.Tefter.UseCases.AppState;
+﻿namespace WebVella.Tefter.UseCases.AppState;
 
 internal partial class AppStateUseCase
 {
@@ -10,7 +8,7 @@ internal partial class AppStateUseCase
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfDataProviderManager _dataProviderManager;
 	private readonly ITfSharedColumnsManager _sharedColumnsManager;
-	private readonly IDataManager _dataManager;
+	private readonly ITfDataManager _dataManager;
 	private readonly ITfSpaceManager _spaceManager;
 	//private readonly ITfScreenRegionComponentManager _screenRegionComponentManager;
 	private readonly ITfMetaProvider _metaProvider;
@@ -28,7 +26,7 @@ internal partial class AppStateUseCase
 		IIdentityManager identityManager,
 		ITfDataProviderManager dataProviderManager,
 		ITfSharedColumnsManager sharedColumnsManager,
-		IDataManager dataManager,
+		ITfDataManager dataManager,
 		ITfSpaceManager spaceManager,
 		ITfMetaProvider metaProvider,
 		ITfFileManager fileManager,

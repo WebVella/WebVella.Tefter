@@ -1,5 +1,6 @@
 ﻿using Bogus;
-using WebVella.Tefter.Api;
+using WebVella.Tefter.Jobs;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;
 
@@ -10,7 +11,7 @@ internal class SpaceEnvUtility
 		ITfDatabaseService dbService)
 	{
 		ITfSpaceManager spaceManager = serviceProvider.GetRequiredService<ITfSpaceManager>();
-		IDataManager dataManager = serviceProvider.GetRequiredService<IDataManager>();
+		ITfDataManager dataManager = serviceProvider.GetRequiredService<ITfDataManager>();
 		ITfDataProviderManager providerManager = serviceProvider.GetRequiredService<ITfDataProviderManager>();
 		TfDataProviderSynchronizeJob backgroundSync = serviceProvider.GetRequiredService<TfDataProviderSynchronizeJob>();
 		ITfSharedColumnsManager sharedColumnManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();

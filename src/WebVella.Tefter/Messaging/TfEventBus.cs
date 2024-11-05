@@ -14,13 +14,13 @@ public interface ITfEventBus: IAsyncDisposable
 
 public class TfEventBus : ITfEventBus, IAsyncDisposable
 {
-	private readonly IChannelEventRouter _channelEventRouter;
+	private readonly ITfChannelEventRouter _channelEventRouter;
 
 	public event Action<ITfEvent> OnEvent;
 
 	public TfEventBus(IServiceProvider serviceProvider)
 	{
-		_channelEventRouter = serviceProvider.GetRequiredService<IChannelEventRouter>();
+		_channelEventRouter = serviceProvider.GetRequiredService<ITfChannelEventRouter>();
 	}
 
 	internal async Task RaiseEventInternal(ITfEvent tfEvent)

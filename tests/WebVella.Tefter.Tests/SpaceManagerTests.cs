@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using WebVella.Tefter.Models;
 using WebVella.Tefter.Web.ViewColumns;
 
 namespace WebVella.Tefter.Tests;

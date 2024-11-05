@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using WebVella.Tefter.Api;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;
@@ -14,7 +13,7 @@ public partial class DataManagerTests : BaseTest
 		{
 			var faker = new Faker("en");
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -123,7 +122,7 @@ public partial class DataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
@@ -167,7 +166,7 @@ public partial class DataManagerTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Text;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 using System.Text.RegularExpressions;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.DataProviders.Csv;
 

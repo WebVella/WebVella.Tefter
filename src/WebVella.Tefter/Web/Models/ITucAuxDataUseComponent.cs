@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Api;
-
-namespace WebVella.Tefter.Web.Models;
+﻿namespace WebVella.Tefter.Web.Models;
 
 public interface ITucAuxDataUseComponent
 {

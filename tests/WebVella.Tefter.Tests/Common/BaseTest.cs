@@ -1,4 +1,5 @@
 ﻿using FluentAssertions.Common;
+using WebVella.Tefter.Jobs;
 
 namespace WebVella.Tefter.Tests.Common;
 

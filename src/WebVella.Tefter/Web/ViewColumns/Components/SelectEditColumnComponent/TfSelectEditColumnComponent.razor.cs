@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Api;
-
-namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.ViewColumns;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
@@ -114,7 +112,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 		{
 			if (componentOptions.SpaceDataId != Guid.Empty)
 			{
-				var dataManager = serviceProvider.GetService<IDataManager>();
+				var dataManager = serviceProvider.GetService<ITfDataManager>();
 				var optionsDTResult = dataManager.QuerySpaceData(
 					spaceDataId: componentOptions.SpaceDataId,
 					userFilters: null,
