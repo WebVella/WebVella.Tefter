@@ -39,7 +39,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		try
 		{
-			var orderSettings = new OrderSettings(
+			var orderSettings = new TfOrderSettings(
 				nameof(TfSpaceData.Position),
 				OrderDirection.ASC);
 
@@ -101,7 +101,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			columns.Add(new TfAvailableSpaceDataColumn
 			{
 				DbName = sharedKey.DbName,
-				DbType = DatabaseColumnType.Guid,
+				DbType = TfDatabaseColumnType.Guid,
 			});
 		}
 
@@ -399,7 +399,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	: AbstractValidator<TfSpaceData>
 	{
 		public TfSpaceDataValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfSpaceManager spaceManager,
 			ITfDataProviderManager providerManager)
 		{

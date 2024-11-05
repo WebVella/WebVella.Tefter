@@ -28,7 +28,7 @@ public class BaseTest
 
     protected DataTable ExecuteSqlQueryCommand(string sql, List<NpgsqlParameter> parameters)
     {
-        IDatabaseService dbService = Context.Services.GetService<IDatabaseService>();
+        ITfDatabaseService dbService = Context.Services.GetService<ITfDatabaseService>();
         using (var dbCon = dbService.CreateConnection())
         {
             NpgsqlCommand cmd = dbCon.CreateCommand(sql, CommandType.Text, parameters);

@@ -6,7 +6,7 @@ namespace WebVella.Tefter.Identity;
 
 public class TfAuthStateProvider : AuthenticationStateProvider
 {
-	private readonly ICryptoService _cryptoService;
+	private readonly ITfCryptoService _cryptoService;
 	private readonly IIdentityManager _identityManager;
 	private readonly IHttpContextAccessor _contextAccessor;
 	private readonly IServiceProvider _serviceProvider;
@@ -16,7 +16,7 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 	{
 		_serviceProvider = serviceProvider;
 
-		_cryptoService = _serviceProvider.GetRequiredService<ICryptoService>();
+		_cryptoService = _serviceProvider.GetRequiredService<ITfCryptoService>();
 
 		_contextAccessor = _serviceProvider.GetRequiredService<IHttpContextAccessor>();
 

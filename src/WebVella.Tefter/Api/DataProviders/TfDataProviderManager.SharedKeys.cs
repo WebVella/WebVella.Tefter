@@ -71,7 +71,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	public List<TfDataProviderSharedKey> GetDataProviderSharedKeys(
 		Guid providerId)
 	{
-		var orderSettings = new OrderSettings(
+		var orderSettings = new TfOrderSettings(
 			nameof(TfDataProviderSharedKey.DbName),
 			OrderDirection.ASC);
 
@@ -137,7 +137,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				string providerTableName = $"dp{provider.Index}";
 
 
-				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
 				dbBuilder
 					.WithTableBuilder(providerTableName)
@@ -278,7 +278,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 				string providerTableName = $"dp{provider.Index}";
 
-				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
 				dbBuilder
 					.WithTableBuilder(providerTableName)
@@ -361,11 +361,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	internal class TfDataProviderSharedKeyValidator
 		: AbstractValidator<TfDataProviderSharedKey>
 	{
-		private readonly IDboManager _dboManager;
+		private readonly ITfDboManager _dboManager;
 		private readonly ITfDataProviderManager _providerManager;
 
 		public TfDataProviderSharedKeyValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfDataProviderManager providerManager)
 		{
 			_dboManager = dboManager;

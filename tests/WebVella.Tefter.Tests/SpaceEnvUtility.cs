@@ -7,7 +7,7 @@ internal class SpaceEnvUtility
 {
 	public async static Task<(TfDataProvider, TfSpaceData)> CreateTestStructureAndData(
 		ServiceProvider serviceProvider,
-		IDatabaseService dbService)
+		ITfDatabaseService dbService)
 	{
 		ITfSpaceManager spaceManager = serviceProvider.GetRequiredService<ITfSpaceManager>();
 		IDataManager dataManager = serviceProvider.GetRequiredService<IDataManager>();
@@ -32,16 +32,16 @@ internal class SpaceEnvUtility
 
 		var provider = providerResult.Value;
 
-		List<Tuple<string, DatabaseColumnType, string>> columns = new List<Tuple<string, DatabaseColumnType, string>>();
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("guid_column", DatabaseColumnType.Guid, "GUID"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_text_column", DatabaseColumnType.ShortText, "SHORT_TEXT"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("text_column", DatabaseColumnType.Text, "TEXT"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("date_column", DatabaseColumnType.Date, "DATE"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("datetime_column", DatabaseColumnType.DateTime, "DATETIME"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_int_column", DatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("int_column", DatabaseColumnType.Integer, "INTEGER"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("long_int_column", DatabaseColumnType.LongInteger, "LONG_INTEGER"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("number_column", DatabaseColumnType.Number, "NUMBER"));
+		List<Tuple<string, TfDatabaseColumnType, string>> columns = new List<Tuple<string, TfDatabaseColumnType, string>>();
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("guid_column", TfDatabaseColumnType.Guid, "GUID"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_text_column", TfDatabaseColumnType.ShortText, "SHORT_TEXT"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("text_column", TfDatabaseColumnType.Text, "TEXT"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("date_column", TfDatabaseColumnType.Date, "DATE"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("datetime_column", TfDatabaseColumnType.DateTime, "DATETIME"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_int_column", TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("int_column", TfDatabaseColumnType.Integer, "INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("long_int_column", TfDatabaseColumnType.LongInteger, "LONG_INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
 		foreach (var column in columns)
 			CreateProviderColumn(providerManager, provider, column.Item1, column.Item2, column.Item3);
@@ -56,7 +56,7 @@ internal class SpaceEnvUtility
 						Description = "will be used for integer shared column",
 						DataProviderId = provider.Id,
 						DbName = "shared_key_int",
-						Columns = new() { provider.Columns.Single(x => x.DbType == DatabaseColumnType.Integer) }
+						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.Integer) }
 					};
 
 		providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
@@ -69,7 +69,7 @@ internal class SpaceEnvUtility
 						Description = "will be used for short text shared column",
 						DataProviderId = provider.Id,
 						DbName = "shared_key_text",
-						Columns = new() { provider.Columns.Single(x => x.DbType == DatabaseColumnType.ShortText) }
+						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.ShortText) }
 
 					};
 
@@ -80,7 +80,7 @@ internal class SpaceEnvUtility
 		{
 			Id = Guid.NewGuid(),
 			DbName = "sk_shared_key_text",
-			DbType = DatabaseColumnType.ShortText,
+			DbType = TfDatabaseColumnType.ShortText,
 			IncludeInTableSearch = false,
 			SharedKeyDbName = "shared_key_text"
 		};
@@ -91,7 +91,7 @@ internal class SpaceEnvUtility
 		{
 			Id = Guid.NewGuid(),
 			DbName = "sk_shared_key_int",
-			DbType = DatabaseColumnType.Integer,
+			DbType = TfDatabaseColumnType.Integer,
 			IncludeInTableSearch = false,
 			SharedKeyDbName = "shared_key_int"
 		};
@@ -162,7 +162,7 @@ internal class SpaceEnvUtility
 		ITfDataProviderManager providerManager,
 		TfDataProvider provider,
 		string dbName,
-		DatabaseColumnType dbType,
+		TfDatabaseColumnType dbType,
 		string sourceType)
 	{
 		var column = new TfDataProviderColumn

@@ -36,8 +36,8 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnType
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with short integer database column types",
-					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
-						DatabaseColumnType.ShortInteger
+					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
+						TfDatabaseColumnType.ShortInteger
 						}
 			}
 		};

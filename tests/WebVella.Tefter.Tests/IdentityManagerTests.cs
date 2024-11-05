@@ -7,7 +7,7 @@ public partial class IdentityManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -96,7 +96,7 @@ public partial class IdentityManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -117,7 +117,7 @@ public partial class IdentityManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))

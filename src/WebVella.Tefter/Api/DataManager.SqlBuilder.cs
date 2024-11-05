@@ -13,7 +13,7 @@ public partial class DataManager
 		private short _tableAliasCounter = 1;
 		private string _tableAlias = "t1";
 
-		private IDatabaseService _dbService = null;
+		private ITfDatabaseService _dbService = null;
 		private List<SqlBuilderColumn> _availableColumns = new();
 		private List<SqlBuilderColumn> _selectColumns = new();
 		private List<SqlBuilderColumn> _filterColumns = new();
@@ -32,7 +32,7 @@ public partial class DataManager
 		private List<Guid> _tfIds = null;
 
 		public SqlBuilder(
-			IDatabaseService dbService,
+			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
 			TfSpaceData spaceData = null,
 			List<TfFilterBase> userFilters = null,
@@ -79,7 +79,7 @@ public partial class DataManager
 		}
 
 		public SqlBuilder(
-			IDatabaseService dbService,
+			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
 			TfSpaceData spaceData,
 			List<Guid> tfIds
@@ -229,7 +229,7 @@ public partial class DataManager
 		private void AddAvailableColumn(
 			Guid id,
 			string dbName,
-			DatabaseColumnType dbType,
+			TfDatabaseColumnType dbType,
 			string sharedKeyDbName = null,
 			bool isSystem = false)
 		{
@@ -506,7 +506,7 @@ public partial class DataManager
 
 			if (filter is TfFilterBoolean)
 			{
-				if (column.DbType == DatabaseColumnType.Boolean)
+				if (column.DbType == TfDatabaseColumnType.Boolean)
 					return string.Empty;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Boolean);
@@ -533,8 +533,8 @@ public partial class DataManager
 			}
 			else if (filter is TfFilterDateTime)
 			{
-				if (!(column.DbType == DatabaseColumnType.Date ||
-					 column.DbType == DatabaseColumnType.DateTime))
+				if (!(column.DbType == TfDatabaseColumnType.Date ||
+					 column.DbType == TfDatabaseColumnType.DateTime))
 				{
 					return string.Empty;
 				}
@@ -567,7 +567,7 @@ public partial class DataManager
 			}
 			else if (filter is TfFilterGuid)
 			{
-				if (column.DbType != DatabaseColumnType.Guid)
+				if (column.DbType != TfDatabaseColumnType.Guid)
 					return string.Empty;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, DbType.Guid);
@@ -594,11 +594,11 @@ public partial class DataManager
 			}
 			else if (filter is TfFilterNumeric)
 			{
-				if (!(column.DbType == DatabaseColumnType.Number ||
-					 column.DbType == DatabaseColumnType.ShortInteger ||
-					 column.DbType == DatabaseColumnType.Integer ||
-					 column.DbType == DatabaseColumnType.LongInteger ||
-					 column.DbType == DatabaseColumnType.AutoIncrement))
+				if (!(column.DbType == TfDatabaseColumnType.Number ||
+					 column.DbType == TfDatabaseColumnType.ShortInteger ||
+					 column.DbType == TfDatabaseColumnType.Integer ||
+					 column.DbType == TfDatabaseColumnType.LongInteger ||
+					 column.DbType == TfDatabaseColumnType.AutoIncrement))
 				{
 					return string.Empty;
 				}
@@ -631,14 +631,14 @@ public partial class DataManager
 			}
 			else if (filter is TfFilterText)
 			{
-				if (!(column.DbType == DatabaseColumnType.ShortText ||
-					 column.DbType == DatabaseColumnType.Text))
+				if (!(column.DbType == TfDatabaseColumnType.ShortText ||
+					 column.DbType == TfDatabaseColumnType.Text))
 				{
 					return string.Empty;
 				}
 
 				DbType dbType = DbType.String;
-				if (column.DbType == DatabaseColumnType.ShortText)
+				if (column.DbType == TfDatabaseColumnType.ShortText)
 					dbType = DbType.StringFixedLength;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, dbType);
@@ -727,7 +727,7 @@ public partial class DataManager
 		public Guid Id { get; set; }
 		public string DbName { get; set; }
 		public string SharedKeyDbName { get; set; }
-		public DatabaseColumnType DbType { get; set; }
+		public TfDatabaseColumnType DbType { get; set; }
 		public string TableName { get; set; }
 		public string TableAlias { get; set; }
 

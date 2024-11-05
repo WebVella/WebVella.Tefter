@@ -4,7 +4,7 @@ public class TfDataColumn
 {
 	public TfDataTable DataTable { get; init; }
 	public string Name { get; init; }
-	public DatabaseColumnType DbType { get; init; }
+	public TfDatabaseColumnType DbType { get; init; }
 	public bool IsNullable { get; init; }
 	public bool IsShared { get; init; }
 	public bool IsSystem { get; init; }
@@ -12,7 +12,7 @@ public class TfDataColumn
 	internal TfDataColumn( 
 		TfDataTable dataTable,
 		string name,
-		DatabaseColumnType dbType,
+		TfDatabaseColumnType dbType,
 		bool isNullable,
 		bool isShared,
 		bool isSystem )

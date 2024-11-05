@@ -32,7 +32,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		try
 		{
-			var orderSettings = new OrderSettings(
+			var orderSettings = new TfOrderSettings(
 				nameof(TfSpace.Position),
 				OrderDirection.ASC);
 
@@ -365,7 +365,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	: AbstractValidator<TfSpace>
 	{
 		public TfSpaceValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfSpaceManager spaceManager)
 		{
 

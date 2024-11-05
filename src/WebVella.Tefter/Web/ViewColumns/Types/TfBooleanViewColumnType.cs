@@ -36,7 +36,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with the Boolean database column type",
-					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> { DatabaseColumnType.Boolean }
+					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> { TfDatabaseColumnType.Boolean }
 				}
 		};
 

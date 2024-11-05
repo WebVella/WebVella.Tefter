@@ -11,7 +11,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfSharedColumnsManager sharedColumnManager = ServiceProvider.GetRequiredService<ITfSharedColumnsManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -19,7 +19,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					DbName = "sk_test",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
 					SharedKeyDbName = "shared_key"
 				};
@@ -38,7 +38,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				sharedColumns[0].SharedKeyDbName.Should().Be(sharedColumn.SharedKeyDbName);
 
 				sharedColumn.DbName = "sk_test1";
-				sharedColumn.DbType = DatabaseColumnType.Integer;
+				sharedColumn.DbType = TfDatabaseColumnType.Integer;
 				sharedColumn.IncludeInTableSearch = !sharedColumn.IncludeInTableSearch;
 				sharedColumn.SharedKeyDbName = "shared_key_1";
 
@@ -76,7 +76,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 			ITfSharedColumnsManager sharedColumnManager = ServiceProvider.GetRequiredService<ITfSharedColumnsManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -106,7 +106,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 					DefaultValue = null,
 					DataProviderId = provider.Id,
 					DbName = "db_column",
-					DbType = DatabaseColumnType.Integer,
+					DbType = TfDatabaseColumnType.Integer,
 					SourceName = "source_column",
 					SourceType = "INTEGER",
 					IncludeInTableSearch = false,
@@ -145,7 +145,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					DbName = "sk_test1",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
 					SharedKeyDbName = "shared_key"
 				};

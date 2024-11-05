@@ -8,11 +8,11 @@ internal partial class AssetsService : IAssetsService
 {
 	public readonly ITfDataProviderManager _dataProviderManager;
 	public readonly IDataManager _dataManager;
-	public readonly IDatabaseService _dbService;
+	public readonly ITfDatabaseService _dbService;
 	public readonly IIdentityManager _identityManager;
 
 	public AssetsService(
-		IDatabaseService dbService,
+		ITfDatabaseService dbService,
 		IIdentityManager identityManager,
 		IDataManager dataManager,
 		ITfDataProviderManager dataProviderManager)

@@ -50,34 +50,34 @@ public class CsvDataProvider : ITfDataProviderType
 		}.AsReadOnly();
 	}
 
-	public ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
+	public ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
 		string dataType)
 	{
 		switch (dataType)
 		{
 			case "TEXT":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Text }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Text }.AsReadOnly();
 			case "SHORT_TEXT":
-				return new List<DatabaseColumnType> { DatabaseColumnType.ShortText }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortText }.AsReadOnly();
 			case "BOOLEAN":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Boolean }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Boolean }.AsReadOnly();
 			case "NUMBER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Number }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
 			case "DATE":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Date, DatabaseColumnType.DateTime }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Date, TfDatabaseColumnType.DateTime }.AsReadOnly();
 			case "DATETIME":
-				return new List<DatabaseColumnType> { DatabaseColumnType.DateTime, DatabaseColumnType.Date }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.Date }.AsReadOnly();
 			case "SHORT_INTEGER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.ShortInteger }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger }.AsReadOnly();
 			case "INTEGER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Integer }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Integer }.AsReadOnly();
 			case "LONG_INTEGER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.LongInteger }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.LongInteger }.AsReadOnly();
 			case "GUID":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Guid }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Guid }.AsReadOnly();
 
 		}
-		return new List<DatabaseColumnType>().AsReadOnly();
+		return new List<TfDatabaseColumnType>().AsReadOnly();
 	}
 
 
@@ -237,11 +237,11 @@ public class CsvDataProvider : ITfDataProviderType
 
 		switch (column.DbType)
 		{
-			case DatabaseColumnType.ShortText:
-			case DatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
 				return stringValue;
 
-			case DatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				{
 					if (Boolean.TryParse(value?.ToString(), out bool parsedValue))
 						return parsedValue;
@@ -249,7 +249,7 @@ public class CsvDataProvider : ITfDataProviderType
 					throw new Exception($"Cannot convert value to boolean value for column {column.SourceName}");
 				}
 
-			case DatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				{
 					if (Guid.TryParse(value?.ToString(), out Guid parsedValue))
 						return parsedValue;
@@ -257,7 +257,7 @@ public class CsvDataProvider : ITfDataProviderType
 					throw new Exception("Cannot convert value to GUID value for column {column.SourceName}");
 				}
 
-			case DatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				{
 					if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
 						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
@@ -268,7 +268,7 @@ public class CsvDataProvider : ITfDataProviderType
 					throw new Exception($"Cannot convert value to DateTime value for column {column.SourceName}");
 				}
 
-			case DatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				{
 					if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
 						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
@@ -282,7 +282,7 @@ public class CsvDataProvider : ITfDataProviderType
 					throw new Exception($"Cannot convert value to DateOnly value for column {column.SourceName}");
 				}
 
-			case DatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				{
 					if (short.TryParse(value?.ToString(), out short parsedValue))
 						return parsedValue;
@@ -290,7 +290,7 @@ public class CsvDataProvider : ITfDataProviderType
 					throw new Exception($"Cannot convert value to ShortInteger value for column {column.SourceName}");
 				}
 
-			case DatabaseColumnType.Integer:
+			case TfDatabaseColumnType.Integer:
 				{
 					if (int.TryParse(value?.ToString(), out int parsedValue))
 						return parsedValue;
@@ -298,7 +298,7 @@ public class CsvDataProvider : ITfDataProviderType
 					throw new Exception($"Cannot convert value to Integer value for column {column.SourceName}");
 				}
 
-			case DatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				{
 					if (long.TryParse(value?.ToString(), out long parsedValue))
 						return parsedValue;
@@ -306,7 +306,7 @@ public class CsvDataProvider : ITfDataProviderType
 					throw new Exception($"Cannot convert value to LongInteger value for column {column.SourceName}");
 				}
 
-			case DatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				{
 					if (decimal.TryParse(value?.ToString(), out decimal parsedValue))
 						return parsedValue;

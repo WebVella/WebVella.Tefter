@@ -328,7 +328,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	: AbstractValidator<TfBookmark>
 	{
 		public TfBookmarkValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfSpaceManager spaceManager)
 		{
 

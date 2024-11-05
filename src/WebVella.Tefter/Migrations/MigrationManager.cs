@@ -9,15 +9,15 @@ internal partial class MigrationManager : IMigrationManager
 {
 	private readonly IServiceProvider _serviceProvider;
 	private readonly IDatabaseManager _dbManager;
-	private readonly IDboManager _dboManager;
-	private readonly IDatabaseService _dbService;
+	private readonly ITfDboManager _dboManager;
+	private readonly ITfDatabaseService _dbService;
 	private readonly ITfMetaProvider _metaProvider;
 
 	public MigrationManager(
 		IServiceProvider serviceProvider,
-		IDatabaseService dbService,
+		ITfDatabaseService dbService,
 		IDatabaseManager databaseManager,
-		IDboManager dboManager,
+		ITfDboManager dboManager,
 		ITfMetaProvider metaProvider)
 	{
 		_serviceProvider = serviceProvider;
@@ -42,7 +42,7 @@ internal partial class MigrationManager : IMigrationManager
 	public async Task CheckExecutePendingSystemMigrationsAsync()
 	{
 		//checks and creates required postgres database extensions
-		_dbService.ExecuteSqlNonQueryCommand(DatabaseSqlProvider.GenerateSystemRequirementsScript());
+		_dbService.ExecuteSqlNonQueryCommand(TfDatabaseSqlProvider.GenerateSystemRequirementsScript());
 
 		var dbBuilder = _dbManager.GetDatabaseBuilder();
 
@@ -72,7 +72,7 @@ internal partial class MigrationManager : IMigrationManager
 				RevisionVer = initialSystemMigration.Version.Revision
 			});
 			if (!success)
-				throw new DatabaseException("Failed to save migration record.");
+				throw new TfDatabaseException("Failed to save migration record.");
 
 
 		}
@@ -89,7 +89,7 @@ internal partial class MigrationManager : IMigrationManager
 				continue;
 
 			if (lastExecutedSystemMigrationVersion > migration.Version)
-				throw new DatabaseException($"System migration with version [{migration.Version}] " +
+				throw new TfDatabaseException($"System migration with version [{migration.Version}] " +
 					$" is pending for execution, but greater version migration " +
 					$"[{lastExecutedSystemMigrationVersion}] is already executed!");
 
@@ -114,7 +114,7 @@ internal partial class MigrationManager : IMigrationManager
 				RevisionVer = migration.Version.Revision
 			});
 			if (!success)
-				throw new DatabaseException("Failed to save migration record.");
+				throw new TfDatabaseException("Failed to save migration record.");
 		}
 	}
 
@@ -153,7 +153,7 @@ internal partial class MigrationManager : IMigrationManager
 			if (lastExecutedApplicationMigration is not null &&
 				lastExecutedApplicationMigration.Version > migration.Version)
 			{
-				throw new DatabaseException($"Application migration for application {tfApp.Name}({tfApp.Id}) " +
+				throw new TfDatabaseException($"Application migration for application {tfApp.Name}({tfApp.Id}) " +
 					$" with version [{migration.Version}] " +
 					$" is pending for execution, but greater version migration " +
 					$"[{lastExecutedApplicationMigration.Version}] is already executed!");
@@ -182,7 +182,7 @@ internal partial class MigrationManager : IMigrationManager
 				RevisionVer = migration.Version.Revision
 			});
 			if (!success)
-				throw new DatabaseException("Failed to save application migration record.");
+				throw new TfDatabaseException("Failed to save application migration record.");
 		}
 
 	}

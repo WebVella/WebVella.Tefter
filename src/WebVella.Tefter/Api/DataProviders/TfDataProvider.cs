@@ -36,25 +36,25 @@ public record TfDataProviderModel
 
 
 [DboCacheModel]
-[DboModel("data_provider")]
+[TfDboModel("data_provider")]
 internal record TfDataProviderDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("name")]
+	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[DboAutoIncrementModel]
-	[DboModelProperty("index")]
+	[TfDboAutoIncrementModel]
+	[TfDboModelProperty("index")]
 	public int Index { get; set; }
 
-	[DboModelProperty("type_id")]
+	[TfDboModelProperty("type_id")]
 	public Guid TypeId { get; set; }
 
-	[DboModelProperty("type_name")]
+	[TfDboModelProperty("type_name")]
 	public string TypeName { get; set; }
 
-	[DboModelProperty("settings_json")]
+	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = null;
 }

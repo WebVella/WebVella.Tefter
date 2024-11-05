@@ -88,7 +88,7 @@ public sealed class TfDataTable
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_id",
-			DatabaseColumnType.Guid,
+			TfDatabaseColumnType.Guid,
 			isNullable: false,
 			isShared: false,
 			isSystem: true));
@@ -96,7 +96,7 @@ public sealed class TfDataTable
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_row_index",
-			DatabaseColumnType.Integer,
+			TfDatabaseColumnType.Integer,
 			isNullable: false,
 			isShared: false,
 			isSystem: true));
@@ -104,7 +104,7 @@ public sealed class TfDataTable
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_created_on",
-			DatabaseColumnType.DateTime,
+			TfDatabaseColumnType.DateTime,
 			isNullable: false,
 			isShared: false,
 			isSystem: true));
@@ -112,7 +112,7 @@ public sealed class TfDataTable
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_updated_on",
-			DatabaseColumnType.DateTime,
+			TfDatabaseColumnType.DateTime,
 			isNullable: false,
 			isShared: false,
 			isSystem: true));
@@ -120,7 +120,7 @@ public sealed class TfDataTable
 		columns.Add(new TfDataColumn(
 			this,
 			"tf_search",
-			DatabaseColumnType.Text,
+			TfDatabaseColumnType.Text,
 			isNullable: false,
 			isShared: false,
 			isSystem: true));
@@ -131,7 +131,7 @@ public sealed class TfDataTable
 			columns.Add(new TfDataColumn(
 			this,
 			name,
-			DatabaseColumnType.Guid,
+			TfDatabaseColumnType.Guid,
 			isNullable: false,
 			isShared: false,
 			isSystem: true));
@@ -140,7 +140,7 @@ public sealed class TfDataTable
 			columns.Add(new TfDataColumn(
 			this,
 			name,
-			DatabaseColumnType.ShortInteger,
+			TfDatabaseColumnType.ShortInteger,
 			isNullable: false,
 			isShared: false,
 			isSystem: true));

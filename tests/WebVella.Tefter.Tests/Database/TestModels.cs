@@ -1,57 +1,57 @@
 ﻿namespace WebVella.Tefter.Tests.Database;
 
 [DboCacheModel]
-[DboModel("test_table")]
+[TfDboModel("test_table")]
 public class TestModel
 {
-	[DboModelProperty("id")] public Guid Id { get; set; }
-	[DboModelProperty("checkbox")] public bool Checkbox { get; set; }
-	[DboModelProperty("checkbox_null")] public bool? CheckboxNull { get; set; }
-	[DboModelProperty("date")] public DateTime Date { get; set; }
-	[DboModelProperty("date_null")] public DateTime? DateNull { get; set; }
-	[DboModelProperty("datetime")] public DateTime DateTime { get; set; }
-	[DboModelProperty("datetime_null")] public DateTime? DateTimeNull { get; set; }
-	[DboModelProperty("number")] public decimal Number { get; set; }
-	[DboModelProperty("number_null")] public decimal? NumberNull { get; set; }
-	[DboModelProperty("guid")] public Guid Guid { get; set; }
-	[DboModelProperty("guid_null")] public Guid? GuidNull { get; set; }
-	[DboModelProperty("text")] public string Text { get; set; }
-	[DboModelProperty("json_obj")] public string JsonObj { get; set; }
-	[DboModelProperty("json_list")] public string JsonList { get; set; }
+	[TfDboModelProperty("id")] public Guid Id { get; set; }
+	[TfDboModelProperty("checkbox")] public bool Checkbox { get; set; }
+	[TfDboModelProperty("checkbox_null")] public bool? CheckboxNull { get; set; }
+	[TfDboModelProperty("date")] public DateTime Date { get; set; }
+	[TfDboModelProperty("date_null")] public DateTime? DateNull { get; set; }
+	[TfDboModelProperty("datetime")] public DateTime DateTime { get; set; }
+	[TfDboModelProperty("datetime_null")] public DateTime? DateTimeNull { get; set; }
+	[TfDboModelProperty("number")] public decimal Number { get; set; }
+	[TfDboModelProperty("number_null")] public decimal? NumberNull { get; set; }
+	[TfDboModelProperty("guid")] public Guid Guid { get; set; }
+	[TfDboModelProperty("guid_null")] public Guid? GuidNull { get; set; }
+	[TfDboModelProperty("text")] public string Text { get; set; }
+	[TfDboModelProperty("json_obj")] public string JsonObj { get; set; }
+	[TfDboModelProperty("json_list")] public string JsonList { get; set; }
 }
 
 
 [DboCacheModel]
-[DboModel("test_table")]
+[TfDboModel("test_table")]
 public class NumberTestModel
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("number")]
-	[DboTypeConverter(typeof(IntegerPropertyConverter))]
+	[TfDboModelProperty("number")]
+	[TfDboTypeConverter(typeof(TfIntegerPropertyConverter))]
 	public int Number { get; set; }
 
-	[DboModelProperty("number_null")]
-	[DboTypeConverter(typeof(IntegerPropertyConverter))]
+	[TfDboModelProperty("number_null")]
+	[TfDboTypeConverter(typeof(TfIntegerPropertyConverter))]
 	public int? NumberNull { get; set; }
 }
 
 
 
 [DboCacheModel]
-[DboModel("test_table")]
+[TfDboModel("test_table")]
 public class JsonTestModel
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("json_obj")]
-	[DboTypeConverter(typeof(JsonPropertyConverter<JsonObject>))]
+	[TfDboModelProperty("json_obj")]
+	[TfDboTypeConverter(typeof(TfJsonPropertyConverter<JsonObject>))]
 	public JsonObject JsonObj { get; set; }
 
-	[DboModelProperty("json_list")]
-	[DboTypeConverter(typeof(JsonPropertyConverter<List<JsonObject>>))]
+	[TfDboModelProperty("json_list")]
+	[TfDboTypeConverter(typeof(TfJsonPropertyConverter<List<JsonObject>>))]
 	public List<JsonObject> JsonList { get; set; }
 }
 
@@ -63,36 +63,36 @@ public record JsonObject
 
 
 [DboCacheModel]
-[DboModel("test_table")]
+[TfDboModel("test_table")]
 public class LongNumberTestModel
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("number")]
-	[DboTypeConverter(typeof(LongPropertyConverter))]
+	[TfDboModelProperty("number")]
+	[TfDboTypeConverter(typeof(TfLongPropertyConverter))]
 	public long Number { get; set; }
 
-	[DboModelProperty("number_null")]
-	[DboTypeConverter(typeof(LongPropertyConverter))]
+	[TfDboModelProperty("number_null")]
+	[TfDboTypeConverter(typeof(TfLongPropertyConverter))]
 	public long? NumberNull { get; set; }
 }
 
 
 
 [DboCacheModel]
-[DboModel("test_table")]
+[TfDboModel("test_table")]
 public class EnumTestModel
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("short")]
-	[DboTypeConverter(typeof(EnumPropertyConverter<SampleEnumType>))]
+	[TfDboModelProperty("short")]
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<SampleEnumType>))]
 	public SampleEnumType Sample { get; set; }
 
-	[DboModelProperty("short_null")]
-	[DboTypeConverter(typeof(EnumPropertyConverter<SampleEnumType>))]
+	[TfDboModelProperty("short_null")]
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<SampleEnumType>))]
 	public SampleEnumType? SampleNull { get; set; }
 }
 
@@ -105,33 +105,33 @@ public enum SampleEnumType
 
 
 [DboCacheModel]
-[DboModel("test_table")]
+[TfDboModel("test_table")]
 public class DateTimeTestModel
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("datetime")]
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
+	[TfDboModelProperty("datetime")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	public DateTime Date { get; set; }
 
-	[DboModelProperty("datetime_null")]
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
+	[TfDboModelProperty("datetime_null")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	public DateTime? DateNull { get; set; }
 }
 
 [DboCacheModel]
-[DboModel("test_table")]
+[TfDboModel("test_table")]
 public class DateTestModel
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("date")]
-	[DboTypeConverter(typeof(DatePropertyConverter))]
+	[TfDboModelProperty("date")]
+	[TfDboTypeConverter(typeof(TfDatePropertyConverter))]
 	public DateTime Date { get; set; }
 
-	[DboModelProperty("date_null")]
-	[DboTypeConverter(typeof(DatePropertyConverter))]
+	[TfDboModelProperty("date_null")]
+	[TfDboTypeConverter(typeof(TfDatePropertyConverter))]
 	public DateTime? DateNull { get; set; }
 }

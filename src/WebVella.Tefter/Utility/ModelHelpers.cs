@@ -1,38 +1,38 @@
 ﻿namespace WebVella.Tefter.Utility;
 public static class ModelHelpers
 {
-	internal static ITfSpaceViewColumnType GetColumnTypeForDbType(DatabaseColumnType dbType, ReadOnlyCollection<ITfSpaceViewColumnType> availableTypes)
+	internal static ITfSpaceViewColumnType GetColumnTypeForDbType(TfDatabaseColumnType dbType, ReadOnlyCollection<ITfSpaceViewColumnType> availableTypes)
 	{
 		ITfSpaceViewColumnType selectedType = null;
 		switch (dbType)
 		{
-			case DatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.AutoIncrement:
-			case DatabaseColumnType.Integer:
+			case TfDatabaseColumnType.AutoIncrement:
+			case TfDatabaseColumnType.Integer:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_INTEGER_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_NUMBER_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.ShortText:
-			case DatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_GUID_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_DATEONLY_COLUMN_TYPE_ID));
 				break;
-			case DatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID));
 				break;
 			default:

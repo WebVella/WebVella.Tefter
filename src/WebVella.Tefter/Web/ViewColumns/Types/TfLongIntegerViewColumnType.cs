@@ -36,10 +36,10 @@ public class TfLongIntegerViewColumnType : ITfSpaceViewColumnType
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with all integer database column types",
-					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
-						DatabaseColumnType.ShortInteger,
-						DatabaseColumnType.Integer,
-						DatabaseColumnType.LongInteger }
+					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
+						TfDatabaseColumnType.ShortInteger,
+						TfDatabaseColumnType.Integer,
+						TfDatabaseColumnType.LongInteger }
 			}
 		};
 

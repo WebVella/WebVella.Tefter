@@ -38,7 +38,7 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnType
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with the Guid database column",
-					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> { DatabaseColumnType.Guid }
+					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> { TfDatabaseColumnType.Guid }
 				}
 		};
 

@@ -32,49 +32,49 @@ public class UnitTestDataProvider : ITfDataProviderType
 		}.AsReadOnly();
 	}
 
-	public ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
+	public ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
 		string dataType)
 	{
 		switch (dataType)
 		{
 			case "TEXT":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Text }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Text }.AsReadOnly();
 			case "SHORT_TEXT":
-				return new List<DatabaseColumnType> { DatabaseColumnType.ShortText }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortText }.AsReadOnly();
 			case "BOOLEAN":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Boolean }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Boolean }.AsReadOnly();
 			case "NUMBER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Number }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
 			case "DATE":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Date }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Date }.AsReadOnly();
 			case "DATETIME":
-				return new List<DatabaseColumnType> { DatabaseColumnType.DateTime }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime }.AsReadOnly();
 			case "SHORT_INTEGER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.ShortInteger }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger }.AsReadOnly();
 			case "INTEGER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Integer }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Integer }.AsReadOnly();
 			case "LONG_INTEGER":
-				return new List<DatabaseColumnType> { DatabaseColumnType.LongInteger }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.LongInteger }.AsReadOnly();
 			case "GUID":
-				return new List<DatabaseColumnType> { DatabaseColumnType.Guid }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Guid }.AsReadOnly();
 
 		}
-		return new List<DatabaseColumnType>().AsReadOnly();
+		return new List<TfDatabaseColumnType>().AsReadOnly();
 	}
 
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
 		TfDataProvider provider)
 	{
-		List<Tuple<string, DatabaseColumnType, string>> columns = new List<Tuple<string, DatabaseColumnType, string>>();
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("guid_column", DatabaseColumnType.Guid, "GUID"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_text_column", DatabaseColumnType.ShortText, "SHORT_TEXT"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("text_column", DatabaseColumnType.Text, "TEXT"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("date_column", DatabaseColumnType.Date, "DATE"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("datetime_column", DatabaseColumnType.DateTime, "DATETIME"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("short_int_column", DatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("int_column", DatabaseColumnType.Integer, "INTEGER"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("long_int_column", DatabaseColumnType.LongInteger, "LONG_INTEGER"));
-		columns.Add(new Tuple<string, DatabaseColumnType, string>("number_column", DatabaseColumnType.Number, "NUMBER"));
+		List<Tuple<string, TfDatabaseColumnType, string>> columns = new List<Tuple<string, TfDatabaseColumnType, string>>();
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("guid_column", TfDatabaseColumnType.Guid, "GUID"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_text_column", TfDatabaseColumnType.ShortText, "SHORT_TEXT"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("text_column", TfDatabaseColumnType.Text, "TEXT"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("date_column", TfDatabaseColumnType.Date, "DATE"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("datetime_column", TfDatabaseColumnType.DateTime, "DATETIME"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_int_column", TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("int_column", TfDatabaseColumnType.Integer, "INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("long_int_column", TfDatabaseColumnType.LongInteger, "LONG_INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
 		var rows = new List<TfDataProviderDataRow>();
 		for ( int i = 0; i < 100; i++ )
@@ -89,28 +89,28 @@ public class UnitTestDataProvider : ITfDataProviderType
 		return rows.AsReadOnly();
 	}
 
-	private object GetRandomValueForDbColumnType(DatabaseColumnType dbType)
+	private object GetRandomValueForDbColumnType(TfDatabaseColumnType dbType)
 	{
 		var faker = new Faker("en");
 		switch (dbType)
 		{
-			case DatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				return faker.Random.Guid();
-			case DatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.ShortText:
 				return faker.Lorem.Sentence();
-			case DatabaseColumnType.Text:
+			case TfDatabaseColumnType.Text:
 				return faker.Lorem.Lines();
-			case DatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				return faker.Random.Short(0, 100);
-			case DatabaseColumnType.Integer:
+			case TfDatabaseColumnType.Integer:
 				return faker.Random.Number(100, 1000);
-			case DatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				return faker.Random.Long(1000, 10000);
-			case DatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				return faker.Random.Decimal(100000, 1000000);
-			case DatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				return faker.Date.PastDateOnly();
-			case DatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				return faker.Date.Future();
 			default:
 				throw new Exception("Type is not supported");

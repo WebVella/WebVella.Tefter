@@ -58,7 +58,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		try
 		{
-			var orderSettings = new OrderSettings(
+			var orderSettings = new TfOrderSettings(
 				nameof(TfSpace.Position),
 				OrderDirection.ASC);
 
@@ -324,7 +324,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 						{
 							foreach (var dbName in spaceData.Columns)
 							{
-								DatabaseColumnType? dbType = dataprovider.Columns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
+								TfDatabaseColumnType? dbType = dataprovider.Columns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
 								if (dbType is null) dbType = dataprovider.SharedColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
 								if (dbType is null) dbType = dataprovider.SystemColumns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
 								if (dbType is null) continue;
@@ -846,7 +846,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	: AbstractValidator<TfSpaceView>
 	{
 		public TfSpaceViewValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfSpaceManager spaceManager)
 		{
 

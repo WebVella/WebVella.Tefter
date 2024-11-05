@@ -3,7 +3,7 @@
 [TfSystemMigration("2024.9.20.1")]
 internal class TefterSystemMigration2024092001 : TfSystemMigration
 {
-	public override void MigrateStructure(DatabaseBuilder dbBuilder)
+	public override void MigrateStructure(TfDatabaseBuilder dbBuilder)
 	{
 
 		#region  TABLE: bookmark

@@ -48,13 +48,13 @@ public static class DependencyInjection
 		services.AddTransient<UserEventProvider, UserEventProvider>();
 		services.AddTransient<GlobalEventProvider, GlobalEventProvider>();
 
-		services.AddSingleton<ICryptoService, CryptoService>();
-		services.AddSingleton<ICryptoServiceConfiguration, CryptoServiceConfiguration>();
-		services.AddSingleton<ITransactionRollbackNotifyService, TransactionRollbackNotifyService>();
-		services.AddSingleton<IDbConfigurationService, DatabaseConfigurationService>();
-		services.AddSingleton<IDatabaseService, DatabaseService>();
-		services.AddSingleton<IDatabaseManager, DatabaseManager>();
-		services.AddSingleton<IDboManager, DboManager>();
+		services.AddSingleton<ITfCryptoService, TfCryptoService>();
+		services.AddSingleton<ITfCryptoServiceConfiguration, TfCryptoServiceConfiguration>();
+		services.AddSingleton<ITfTransactionRollbackNotifyService, TfTransactionRollbackNotifyService>();
+		services.AddSingleton<ITfDbConfigurationService, TfDatabaseConfigurationService>();
+		services.AddSingleton<ITfDatabaseService, TfDatabaseService>();
+		services.AddSingleton<IDatabaseManager, TfDatabaseManager>();
+		services.AddSingleton<ITfDboManager, TfDboManager>();
 		services.AddSingleton<IMigrationManager, MigrationManager>();
 		services.AddSingleton<IIdentityManager, IdentityManager>();
 		services.AddSingleton<IDataManager, DataManager>();
@@ -66,8 +66,8 @@ public static class DependencyInjection
 
 
 		//lazy services
-		services.AddSingleton<Lazy<IDatabaseService>>(provider =>
-				new Lazy<IDatabaseService>(() => provider.GetRequiredService<IDatabaseService>()));
+		services.AddSingleton<Lazy<ITfDatabaseService>>(provider =>
+				new Lazy<ITfDatabaseService>(() => provider.GetRequiredService<ITfDatabaseService>()));
 		services.AddSingleton<Lazy<ITfSpaceManager>>(provider =>
 				new Lazy<ITfSpaceManager>(() => provider.GetRequiredService<ITfSpaceManager>()));
 		services.AddSingleton<Lazy<ITfDataProviderManager>>(provider =>

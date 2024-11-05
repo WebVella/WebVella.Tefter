@@ -1,40 +1,40 @@
 ﻿namespace WebVella.Tefter;
 
-[DboModel("data_provider_synchronize_task")]
+[TfDboModel("data_provider_synchronize_task")]
 public class TfDataProviderSynchronizeTaskExtended
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("data_provider_id")]
+	[TfDboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-	[DboModelProperty("policy_json")]
+	[TfDboModelProperty("policy_json")]
 	public string PolicyJson { get; set; }
 
-	[DboModelProperty("status")]
-	[DboTypeConverter(typeof(EnumPropertyConverter<TfSynchronizationStatus>))]
+	[TfDboModelProperty("status")]
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSynchronizationStatus>))]
 	public TfSynchronizationStatus Status { get; set; } = TfSynchronizationStatus.Pending;
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("created_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("created_on")]
 	public DateTime CreatedOn { get; set; } = DateTime.Now;
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("started_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("started_on")]
 	public DateTime? StartedOn { get; set; } = null;
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("completed_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("completed_on")]
 	public DateTime? CompletedOn { get; set; } = null;
 
-	[DboModelProperty("info_count")]
+	[TfDboModelProperty("info_count")]
 	public long InfoCount { get; set; } = 0;
 
-	[DboModelProperty("warning_count")]
+	[TfDboModelProperty("warning_count")]
 	public long WarningCount { get; set; } = 0;
 
-	[DboModelProperty("error_count")]
+	[TfDboModelProperty("error_count")]
 	public long ErrorCount { get; set; } = 0;
 }
 
@@ -50,32 +50,32 @@ public class TfDataProviderSynchronizeTask
 	public DateTime? CompletedOn { get; set; } = null;
 }
 
-[DboModel("data_provider_synchronize_task")]
+[TfDboModel("data_provider_synchronize_task")]
 public class TfDataProviderSynchronizeTaskDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("data_provider_id")]
+	[TfDboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-	[DboModelProperty("policy_json")]
+	[TfDboModelProperty("policy_json")]
 	public string PolicyJson { get; set; }
 
-	[DboModelProperty("status")]
-	[DboTypeConverter(typeof(EnumPropertyConverter<TfSynchronizationStatus>))]
+	[TfDboModelProperty("status")]
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSynchronizationStatus>))]
 	public TfSynchronizationStatus Status { get; set; } = TfSynchronizationStatus.Pending;
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("created_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("created_on")]
 	public DateTime CreatedOn { get; set; } = DateTime.Now;
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("started_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("started_on")]
 	public DateTime? StartedOn { get; set; } = null;
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("completed_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("completed_on")]
 	public DateTime? CompletedOn { get; set; } = null;
 }
 
@@ -98,32 +98,32 @@ public class TfDataProviderSynchronizeResultInfo
 	public string Error { get; set; } = null;
 }
 
-[DboModel("data_provider_synchronize_result_info")]
+[TfDboModel("data_provider_synchronize_result_info")]
 public class TfDataProviderSynchronizeResultInfoDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("task_id")]
+	[TfDboModelProperty("task_id")]
 	public Guid TaskId { get; set; }
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("created_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("created_on")]
 	public DateTime CreatedOn { get; set; } = DateTime.Now;
 
-	[DboModelProperty("tf_row_index")]
+	[TfDboModelProperty("tf_row_index")]
 	public int? TfRowIndex { get; set; } = null;
 
-	[DboModelProperty("tf_id")]
+	[TfDboModelProperty("tf_id")]
 	public Guid? TfId { get; set; } = null;
 
 
-	[DboModelProperty("info")]
+	[TfDboModelProperty("info")]
 	public string Info { get; set; } = null;
 
-	[DboModelProperty("warning")]
+	[TfDboModelProperty("warning")]
 	public string Warning { get; set; } = null;
 
-	[DboModelProperty("error")]
+	[TfDboModelProperty("error")]
 	public string Error { get; set; } = null;
 }

@@ -55,14 +55,14 @@ internal class TfFileManager : ITfFileManager
 	private const string FOLDER_SEPARATOR = "/";
 	private const string TMP_FOLDER_NAME = "tmp";
 
-	private readonly IDatabaseService _dbServise;
-	private readonly IDboManager _dboManager;
+	private readonly ITfDatabaseService _dbServise;
+	private readonly ITfDboManager _dboManager;
 	public string RootPath { get; init; }
 
 	public TfFileManager(
 		ITfConfigurationService config,
-		IDatabaseService dbServise,
-		IDboManager dboManager)
+		ITfDatabaseService dbServise,
+		ITfDboManager dboManager)
 	{
 		_dbServise = dbServise;
 		_dboManager = dboManager;

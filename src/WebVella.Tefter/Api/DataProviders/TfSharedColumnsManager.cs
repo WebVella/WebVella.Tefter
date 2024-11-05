@@ -19,17 +19,17 @@ public partial interface ITfSharedColumnsManager
 
 public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 {
-	private readonly IDatabaseService _dbService;
-	private readonly IDboManager _dboManager;
+	private readonly ITfDatabaseService _dbService;
+	private readonly ITfDboManager _dboManager;
 	private readonly IDataManager _dataManager;
 
 	public TfSharedColumnsManager(
 		IServiceProvider serviceProvider,
-		IDatabaseService dbService,
+		ITfDatabaseService dbService,
 		IDataManager dataManager)
 	{
 		_dbService = dbService;
-		_dboManager = serviceProvider.GetService<IDboManager>();
+		_dboManager = serviceProvider.GetService<ITfDboManager>();
 		_dataManager = dataManager;
 	}
 
@@ -54,7 +54,7 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 	{
 		try
 		{
-			var orderSettings = new OrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
+			var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
 
 			var sharedColumns = _dboManager.GetList<TfSharedColumn>(order: orderSettings);
 
@@ -182,7 +182,7 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 		: AbstractValidator<TfSharedColumn>
 	{
 		public TfSharedColumnValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfSharedColumnsManager sharedColumnManager)
 		{
 			RuleSet("general", () =>

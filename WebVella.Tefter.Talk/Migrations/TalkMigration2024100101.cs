@@ -8,12 +8,12 @@ namespace WebVella.Tefter.Talk.Migrations;
 [TfApplicationMigration(TfTalkConstants.TALK_APP_ID_STRING, "2024.10.1.1")]
 public class TalkMigration2024100101 : ITfApplicationMigration
 {
-	public async Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceprovider, IDatabaseService dbService)
+	public async Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceprovider, ITfDatabaseService dbService)
 	{
 		await Task.Delay(0);
 	}
 
-	public async Task MigrateStructureAsync(ITfApplication app, DatabaseBuilder dbBuilder)
+	public async Task MigrateStructureAsync(ITfApplication app, TfDatabaseBuilder dbBuilder)
 	{
 		await Task.Delay(0);
 

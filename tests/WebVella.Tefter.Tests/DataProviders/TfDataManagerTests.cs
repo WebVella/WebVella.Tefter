@@ -43,7 +43,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -71,7 +71,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -102,7 +102,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -135,7 +135,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -169,7 +169,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -208,7 +208,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -242,7 +242,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -289,7 +289,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -327,7 +327,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -369,7 +369,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -397,7 +397,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = null,
 					DataProviderId = provider.Id,
 					DbName = "textOwa colona",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
@@ -447,7 +447,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -475,7 +475,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = null,
 					DataProviderId = provider.Id,
 					DbName = "textcolona",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
@@ -499,7 +499,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -527,7 +527,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = null,
 					DataProviderId = Guid.Empty,
 					DbName = "textcolona",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
@@ -552,7 +552,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -580,7 +580,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = null,
 					DataProviderId = provider.Id,
 					DbName = "textcolona",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					SourceName = "",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
@@ -604,7 +604,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -632,7 +632,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = null,
 					DataProviderId = provider.Id,
 					DbName = "textcolona",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source",
 					SourceType = "",
 					IncludeInTableSearch = true,
@@ -656,7 +656,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -684,7 +684,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = Guid.NewGuid().ToString(),
 					DataProviderId = provider.Id,
 					DbName = "text",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
@@ -705,7 +705,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = string.Empty,
 					DataProviderId = provider.Id,
 					DbName = "short_text",
-					DbType = DatabaseColumnType.ShortText,
+					DbType = TfDatabaseColumnType.ShortText,
 					SourceName = "source_column",
 					SourceType = "SHORT_TEXT",
 					IncludeInTableSearch = true,
@@ -726,7 +726,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = short.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
 					DbName = "short_int",
-					DbType = DatabaseColumnType.ShortInteger,
+					DbType = TfDatabaseColumnType.ShortInteger,
 					SourceName = "source_column",
 					SourceType = "SHORT_INTEGER",
 					IncludeInTableSearch = true,
@@ -747,7 +747,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = int.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
 					DbName = "int",
-					DbType = DatabaseColumnType.Integer,
+					DbType = TfDatabaseColumnType.Integer,
 					SourceName = "source_column",
 					SourceType = "INTEGER",
 					IncludeInTableSearch = true,
@@ -768,7 +768,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = long.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
 					DbName = "long_int",
-					DbType = DatabaseColumnType.LongInteger,
+					DbType = TfDatabaseColumnType.LongInteger,
 					SourceName = "source_column",
 					SourceType = "LONG_INTEGER",
 					IncludeInTableSearch = true,
@@ -789,7 +789,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = decimal.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
 					DbName = "number",
-					DbType = DatabaseColumnType.Number,
+					DbType = TfDatabaseColumnType.Number,
 					SourceName = "source_column",
 					SourceType = "NUMBER",
 					IncludeInTableSearch = true,
@@ -810,7 +810,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = "2024-06-27",
 					DataProviderId = provider.Id,
 					DbName = "date",
-					DbType = DatabaseColumnType.Date,
+					DbType = TfDatabaseColumnType.Date,
 					SourceName = "source_column",
 					SourceType = "DATE",
 					IncludeInTableSearch = true,
@@ -831,7 +831,7 @@ public partial class TfDataManagerTests : BaseTest
 					DefaultValue = "2024-06-27 12:01",
 					DataProviderId = provider.Id,
 					DbName = "datetime",
-					DbType = DatabaseColumnType.DateTime,
+					DbType = TfDatabaseColumnType.DateTime,
 					SourceName = "source_column",
 					SourceType = "DATETIME",
 					IncludeInTableSearch = true,
@@ -853,7 +853,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Text, "TEXT", "test def value");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Text, "TEXT", "test def value");
 		}
 	}
 
@@ -862,7 +862,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
 		}
 	}
 
@@ -872,7 +872,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Number, "NUMBER", "123.456");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Number, "NUMBER", "123.456");
 		}
 	}
 
@@ -881,7 +881,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
 		}
 	}
 
@@ -890,7 +890,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Integer, "INTEGER", "1");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Integer, "INTEGER", "1");
 		}
 	}
 
@@ -899,7 +899,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
 		}
 	}
 
@@ -908,7 +908,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Date, "DATE", "1975-10-25");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Date, "DATE", "1975-10-25");
 		}
 	}
 
@@ -917,7 +917,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
 		}
 	}
 
@@ -926,7 +926,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Boolean, "BOOLEAN", "true");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Boolean, "BOOLEAN", "true");
 		}
 	}
 
@@ -935,18 +935,18 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(DatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
 		}
 	}
 
 
 	private void CreateAndUpdateColumnType(
-		DatabaseColumnType type,
+		TfDatabaseColumnType type,
 		string sourceType,
 		string defaultValue)
 	{
 		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-		IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 		using (var scope = dbService.CreateTransactionScope())
 		{
@@ -1044,7 +1044,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
@@ -1148,7 +1148,7 @@ public partial class TfDataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
@@ -1199,7 +1199,7 @@ public partial class TfDataManagerTests : BaseTest
 			DefaultValue = null,
 			DataProviderId = provider.Id,
 			DbName = "db_column",
-			DbType = DatabaseColumnType.Text,
+			DbType = TfDatabaseColumnType.Text,
 			SourceName = "source_column",
 			SourceType = "TEXT",
 			IncludeInTableSearch = false,
@@ -1220,7 +1220,7 @@ public partial class TfDataManagerTests : BaseTest
 			DefaultValue = null,
 			DataProviderId = provider.Id,
 			DbName = "db_column2",
-			DbType = DatabaseColumnType.Text,
+			DbType = TfDatabaseColumnType.Text,
 			SourceName = "source_column2",
 			SourceType = "TEXT",
 			IncludeInTableSearch = false,

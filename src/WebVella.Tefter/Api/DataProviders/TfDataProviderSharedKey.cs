@@ -19,28 +19,28 @@ public record TfDataProviderSharedKey
 
 
 [DboCacheModel]
-[DboModel("data_provider_shared_key")]
+[TfDboModel("data_provider_shared_key")]
 internal record TfDataProviderSharedKeyDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("data_provider_id")]
+	[TfDboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-	[DboModelProperty("db_name")]
+	[TfDboModelProperty("db_name")]
 	public string DbName { get; set; }
 
-	[DboModelProperty("description")]
+	[TfDboModelProperty("description")]
 	public string Description { get; set; }
 
-	[DboModelProperty("column_ids_json")]
+	[TfDboModelProperty("column_ids_json")]
 	public string ColumnIdsJson { get; set; } = "[]";
 
-	[DboModelProperty("version")]
+	[TfDboModelProperty("version")]
 	public short Version { get; set; }
 
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
-	[DboModelProperty("last_modified_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
+	[TfDboModelProperty("last_modified_on")]
 	public DateTime LastModifiedOn { get; set; }
 }

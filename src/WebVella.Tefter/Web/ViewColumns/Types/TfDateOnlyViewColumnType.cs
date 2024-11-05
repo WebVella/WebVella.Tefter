@@ -35,9 +35,9 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnType
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with the all Date and DateTime database column types, but its intented use is with Date",
-					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
-						DatabaseColumnType.Date,
-						DatabaseColumnType.DateTime 
+					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
+						TfDatabaseColumnType.Date,
+						TfDatabaseColumnType.DateTime 
 					}
 				}
 		};

@@ -48,7 +48,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		try
 		{
-			var orderSettings = new OrderSettings(
+			var orderSettings = new TfOrderSettings(
 				nameof(TfSpace.Position),
 				OrderDirection.ASC);
 
@@ -425,7 +425,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 	: AbstractValidator<TfSpaceViewColumn>
 	{
 		public TfSpaceViewColumnValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfSpaceManager spaceManager)
 		{
 

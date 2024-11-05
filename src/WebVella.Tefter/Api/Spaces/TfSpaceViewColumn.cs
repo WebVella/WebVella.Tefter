@@ -18,37 +18,37 @@ public class TfSpaceViewColumn
 }
 
 [DboCacheModel]
-[DboModel("space_view_column")]
+[TfDboModel("space_view_column")]
 internal class TfSpaceViewColumnDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("space_view_id")]
+	[TfDboModelProperty("space_view_id")]
 	public Guid SpaceViewId { get; set; }
 	
-	[DboModelProperty("query_name")]
+	[TfDboModelProperty("query_name")]
 	public string QueryName { get; set; }
 
-	[DboModelProperty("title")]
+	[TfDboModelProperty("title")]
 	public string Title { get; set; }
 
-	[DboModelProperty("position")]
+	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
-	[DboModelProperty("full_type_name")]
+	[TfDboModelProperty("full_type_name")]
 	public string FullTypeName { get; set; }
 
-	[DboModelProperty("full_component_type_name")]
+	[TfDboModelProperty("full_component_type_name")]
 	public string FullComponentTypeName { get; set; }
 
-	[DboModelProperty("data_mapping_json")]
+	[TfDboModelProperty("data_mapping_json")]
 	public string DataMappingJson { get; set; } = "{}";
 
-	[DboModelProperty("custom_options_json")]
+	[TfDboModelProperty("custom_options_json")]
 	public string CustomOptionsJson { get; set; } = "{}";
 
-	[DboModelProperty("settings_json")]
+	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = "{}";
 }
 

@@ -7,7 +7,7 @@ public partial class DatabaseManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -31,7 +31,7 @@ public partial class DatabaseManagerTests : BaseTest
 		}
 	}
 
-	private void CreateSampleDatabaseStructure(DatabaseBuilder databaseBuilder)
+	private void CreateSampleDatabaseStructure(TfDatabaseBuilder databaseBuilder)
 	{
 		var tables = databaseBuilder
 			   .NewTable("data1", table =>
@@ -302,7 +302,7 @@ public partial class DatabaseManagerTests : BaseTest
 			   .Build();
 	}
 
-	private void CompareTables(DatabaseTable table1, DatabaseTable table2)
+	private void CompareTables(TfDatabaseTable table1, TfDatabaseTable table2)
 	{
 		table1.Should().NotBeNull();
 		table1.Name.Should().Be(table2.Name);
@@ -317,15 +317,15 @@ public partial class DatabaseManagerTests : BaseTest
 
 			column1.GetType().Should().Be(column2.GetType());
 
-			if (column1.GetType() == typeof(GuidDatabaseColumn))
-				((GuidDatabaseColumn)column1).AutoDefaultValue.Should().Be(
-					((GuidDatabaseColumn)column2).AutoDefaultValue);
-			if (column1.GetType() == typeof(DateDatabaseColumn))
-				((DateDatabaseColumn)column1).AutoDefaultValue.Should().Be(
-					((DateDatabaseColumn)column2).AutoDefaultValue);
-			if (column1.GetType() == typeof(DateTimeDatabaseColumn))
-				((DateTimeDatabaseColumn)column1).AutoDefaultValue.Should().Be(
-					((DateTimeDatabaseColumn)column2).AutoDefaultValue);
+			if (column1.GetType() == typeof(TfGuidDatabaseColumn))
+				((TfGuidDatabaseColumn)column1).AutoDefaultValue.Should().Be(
+					((TfGuidDatabaseColumn)column2).AutoDefaultValue);
+			if (column1.GetType() == typeof(TfDateDatabaseColumn))
+				((TfDateDatabaseColumn)column1).AutoDefaultValue.Should().Be(
+					((TfDateDatabaseColumn)column2).AutoDefaultValue);
+			if (column1.GetType() == typeof(TfDateTimeDatabaseColumn))
+				((TfDateTimeDatabaseColumn)column1).AutoDefaultValue.Should().Be(
+					((TfDateTimeDatabaseColumn)column2).AutoDefaultValue);
 
 			column1.Name.Should().Be(column2.Name);
 			column1.DefaultValue.Should().Be(column2.DefaultValue);
@@ -365,10 +365,10 @@ public partial class DatabaseManagerTests : BaseTest
 				column1.GetType().Should().Be(column2.GetType());
 			}
 
-			if (constraint1.GetType() == typeof(DatabaseForeignKeyConstraint))
+			if (constraint1.GetType() == typeof(TfDatabaseForeignKeyConstraint))
 			{
-				var fk1 = (DatabaseForeignKeyConstraint)constraint1 as DatabaseForeignKeyConstraint;
-				var fk2 = (DatabaseForeignKeyConstraint)constraint2 as DatabaseForeignKeyConstraint;
+				var fk1 = (TfDatabaseForeignKeyConstraint)constraint1 as TfDatabaseForeignKeyConstraint;
+				var fk2 = (TfDatabaseForeignKeyConstraint)constraint2 as TfDatabaseForeignKeyConstraint;
 
 				fk1.ForeignTable.Should().Be(fk2.ForeignTable);	
 

@@ -234,7 +234,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				var provider = providerResult.Value;
 				string providerTableName = $"dp{provider.Index}";
 
-				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 				dbBuilder.NewTableBuilder(Guid.NewGuid(), providerTableName)
 					.WithDataProviderId(provider.Id)
 					.WithColumns(columns =>
@@ -362,7 +362,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 				string providerTableName = $"dp{provider.Index}";
 
-				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
 				dbBuilder.Remove(providerTableName);
 
@@ -469,7 +469,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	: AbstractValidator<TfDataProviderModel>
 	{
 		public TfDataProviderCreateValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfDataProviderManager providerManager)
 		{
 			RuleFor(provider => provider.Id)
@@ -507,7 +507,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		: AbstractValidator<TfDataProviderModel>
 	{
 		public TfDataProviderUpdateValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfDataProviderManager providerManager)
 		{
 			RuleFor(provider => provider.Id)
@@ -563,7 +563,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		: AbstractValidator<TfDataProvider>
 	{
 		public TfDataProviderDeleteValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfDataProviderManager providerManager)
 		{
 

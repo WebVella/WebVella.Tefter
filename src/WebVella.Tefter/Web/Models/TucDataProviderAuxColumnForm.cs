@@ -84,7 +84,7 @@ public record TucDataProviderAuxColumnForm
 			CreatedOn = CreatedOn,
 			DataProviderId = DataProviderId,
 			DbName = DbName,
-			DbType = DbType.TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,DatabaseColumnType>(),
+			DbType = DbType.TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,TfDatabaseColumnType>(),
 			DefaultValue = DefaultValue,
 			SourceName = SourceName,
 			SourceType = SourceType,

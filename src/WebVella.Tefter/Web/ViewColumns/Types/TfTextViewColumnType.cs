@@ -38,9 +38,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with all column types, but its intended use is with text",
-					SupportedDatabaseColumnTypes = new List<DatabaseColumnType> {
-						DatabaseColumnType.ShortText,
-						DatabaseColumnType.Text
+					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
+						TfDatabaseColumnType.ShortText,
+						TfDatabaseColumnType.Text
 					}
 				}
 		};

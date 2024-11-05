@@ -11,7 +11,7 @@ public partial class AssetsTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
@@ -52,7 +52,7 @@ public partial class AssetsTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IAssetsService assetService = ServiceProvider.GetRequiredService<IAssetsService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();

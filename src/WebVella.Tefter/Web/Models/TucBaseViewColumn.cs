@@ -131,7 +131,7 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 		catch { }
 		if (column == null) return null;
 
-		return column.DbType.ConvertSafeToEnum<DatabaseColumnType, TucDatabaseColumnType>();
+		return column.DbType.ConvertSafeToEnum<TfDatabaseColumnType, TucDatabaseColumnType>();
 	}
 
 	protected virtual object GetColumnDataByAlias(string alias)

@@ -6,36 +6,36 @@ internal partial interface IMigrationManager
 
 internal partial class MigrationManager : IMigrationManager
 {
-	[DboModel("migration")]
+	[TfDboModel("migration")]
 	private record Migration
 	{
-		[DboModelProperty("id")]
+		[TfDboModelProperty("id")]
 		public Guid Id { get; init; }
 
-		[DboModelProperty("application_id")]
+		[TfDboModelProperty("application_id")]
 		public Guid? ApplicationId { get; init; }
 
-		[DboModelProperty("migration_class_name")]
+		[TfDboModelProperty("migration_class_name")]
 		public string MigrationClassName { get; init; }
 
-		[DboModelProperty("executed_on")]
-		[DboTypeConverter(typeof(DateTimePropertyConverter))]
+		[TfDboModelProperty("executed_on")]
+		[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 		public DateTime ExecutedOn { get; init; }
 
-		[DboModelProperty("major_ver")]
-		[DboTypeConverter(typeof(IntegerPropertyConverter))]
+		[TfDboModelProperty("major_ver")]
+		[TfDboTypeConverter(typeof(TfIntegerPropertyConverter))]
 		public int MajorVer { get; init; }
 
-		[DboModelProperty("minor_ver")]
-		[DboTypeConverter(typeof(IntegerPropertyConverter))]
+		[TfDboModelProperty("minor_ver")]
+		[TfDboTypeConverter(typeof(TfIntegerPropertyConverter))]
 		public int MinorVer { get; init; }
 
-		[DboModelProperty("build_ver")]
-		[DboTypeConverter(typeof(IntegerPropertyConverter))]
+		[TfDboModelProperty("build_ver")]
+		[TfDboTypeConverter(typeof(TfIntegerPropertyConverter))]
 		public int BuildVer { get; init; }
 
-		[DboModelProperty("revision_ver")]
-		[DboTypeConverter(typeof(IntegerPropertyConverter))]
+		[TfDboModelProperty("revision_ver")]
+		[TfDboTypeConverter(typeof(TfIntegerPropertyConverter))]
 		public int RevisionVer { get; init; }
 
 		public Version Version => new Version(MajorVer, MinorVer, BuildVer, RevisionVer);

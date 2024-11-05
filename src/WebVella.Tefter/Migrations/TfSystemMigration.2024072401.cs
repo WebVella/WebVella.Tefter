@@ -3,7 +3,7 @@
 [TfSystemMigration("2024.7.24.1")]
 internal class TefterSystemMigration2024072401 : TfSystemMigration
 {
-	public override void MigrateStructure(DatabaseBuilder dbBuilder)
+	public override void MigrateStructure(TfDatabaseBuilder dbBuilder)
 	{
 		#region TABLE: DATA_PROVIDER_COLUMN - make source_name and  source_type nullable
 

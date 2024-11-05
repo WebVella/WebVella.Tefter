@@ -4,12 +4,12 @@
 [TfApplicationMigration(TfAssetsConstants.ASSETS_APP_ID_STRING, "2024.11.1.1")]
 public class AssetsMigration2024110101 : ITfApplicationMigration
 {
-	public async Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceprovider, IDatabaseService dbService)
+	public async Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceprovider, ITfDatabaseService dbService)
 	{
 		await Task.Delay(0);
 	}
 
-	public async Task MigrateStructureAsync(ITfApplication app, DatabaseBuilder dbBuilder)
+	public async Task MigrateStructureAsync(ITfApplication app, TfDatabaseBuilder dbBuilder)
 	{
 		await Task.Delay(0);
 

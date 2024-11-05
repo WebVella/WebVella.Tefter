@@ -44,35 +44,35 @@ public class TfSpaceNode
 
 
 [DboCacheModel]
-[DboModel("space_node")]
+[TfDboModel("space_node")]
 public class TfSpaceNodeDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("parent_id")]
+	[TfDboModelProperty("parent_id")]
 	public Guid? ParentId { get; set; } = null;
 
-	[DboModelProperty("space_id")]
+	[TfDboModelProperty("space_id")]
 	public Guid SpaceId { get; set; }
 
-	[DboModelProperty("type")]
-	[DboTypeConverter(typeof(EnumPropertyConverter<TfSpaceNodeType>))]
+	[TfDboModelProperty("type")]
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSpaceNodeType>))]
 	public TfSpaceNodeType Type { get; set; }
 
-	[DboModelProperty("name")]
+	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[DboModelProperty("icon")]
+	[TfDboModelProperty("icon")]
 	public string Icon { get; set; } = null;
 
-	[DboModelProperty("position")]
+	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
-	[DboModelProperty("component_type")]
+	[TfDboModelProperty("component_type")]
 	public string ComponentType { get; set; }
 
-	[DboModelProperty("component_settings_json")]
+	[TfDboModelProperty("component_settings_json")]
 	public string ComponentSettingsJson { get; set; } = "{}";
 }
 

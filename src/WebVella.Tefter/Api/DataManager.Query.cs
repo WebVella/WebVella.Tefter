@@ -301,13 +301,13 @@ public partial class DataManager
 
 		foreach (var column in provider.Columns)
 		{
-			if (column.DbType == DatabaseColumnType.Date)
+			if (column.DbType == TfDatabaseColumnType.Date)
 				dateOnlyColumns.Add(column.DbName);
 		}
 
 		foreach (var column in provider.SharedColumns)
 		{
-			if (column.DbType == DatabaseColumnType.Date)
+			if (column.DbType == TfDatabaseColumnType.Date)
 				dateOnlyColumns.Add(column.DbName);
 		}
 
@@ -499,7 +499,7 @@ public partial class DataManager
 
 			var sharedKey = provider.SharedKeys.Single(x => x.DbName == sharedColumn.SharedKeyDbName);
 
-			DatabaseColumnType dbType = sharedColumn.DbType;
+			TfDatabaseColumnType dbType = sharedColumn.DbType;
 
 			object value = row[tableColumn.Name];
 
@@ -521,7 +521,7 @@ public partial class DataManager
 		string columnName,
 		Guid sharedColumnId,
 		Guid sharedKeyId,
-		DatabaseColumnType dbType)
+		TfDatabaseColumnType dbType)
 	{
 
 		var parameterType = GetDbTypeForDatabaseColumnType(dbType);
@@ -646,48 +646,48 @@ public partial class DataManager
 		List<string> columnsWithChanges = new List<string>();
 		foreach (var column in row.DataTable.Columns)
 		{
-			if (column.DbType == DatabaseColumnType.Guid)
+			if (column.DbType == TfDatabaseColumnType.Guid)
 			{
 				if ((Guid?)row[column.Name] != (Guid?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.Date)
+			else if (column.DbType == TfDatabaseColumnType.Date)
 			{
 				if ((DateOnly?)row[column.Name] != (DateOnly?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.DateTime)
+			else if (column.DbType == TfDatabaseColumnType.DateTime)
 			{
 				if ((DateTime?)row[column.Name] != (DateTime?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.ShortInteger)
+			else if (column.DbType == TfDatabaseColumnType.ShortInteger)
 			{
 				if ((short?)row[column.Name] != (short?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.Integer)
+			else if (column.DbType == TfDatabaseColumnType.Integer)
 			{
 				if ((int?)row[column.Name] != (int?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.LongInteger)
+			else if (column.DbType == TfDatabaseColumnType.LongInteger)
 			{
 				if ((long?)row[column.Name] != (long?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.Number)
+			else if (column.DbType == TfDatabaseColumnType.Number)
 			{
 				if ((decimal?)row[column.Name] != (decimal?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.Boolean)
+			else if (column.DbType == TfDatabaseColumnType.Boolean)
 			{
 				if ((bool?)row[column.Name] != (bool?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == DatabaseColumnType.Text ||
-				column.DbType == DatabaseColumnType.ShortText)
+			else if (column.DbType == TfDatabaseColumnType.Text ||
+				column.DbType == TfDatabaseColumnType.ShortText)
 			{
 				if ((string)row[column.Name] != (string)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
@@ -724,7 +724,7 @@ public partial class DataManager
 
 			var sharedKey = provider.SharedKeys.Single(x => x.DbName == sharedColumn.SharedKeyDbName);
 
-			DatabaseColumnType dbType = sharedColumn.DbType;
+			TfDatabaseColumnType dbType = sharedColumn.DbType;
 
 			object value = row[tableColumn.Name];
 
@@ -838,32 +838,32 @@ public partial class DataManager
 		return ((int)dt.Rows[0][0]) + 1;
 	}
 
-	private static DbType GetDbTypeForDatabaseColumnType(DatabaseColumnType dbType)
+	private static DbType GetDbTypeForDatabaseColumnType(TfDatabaseColumnType dbType)
 	{
 		DbType resultType;
 		switch (dbType)
 		{
-			case DatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				resultType = DbType.Guid; break;
-			case DatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				resultType = DbType.Boolean; break;
-			case DatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				resultType = DbType.Date; break;
-			case DatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				resultType = DbType.DateTime2; break;
-			case DatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.ShortText:
 				resultType = DbType.StringFixedLength; break;
-			case DatabaseColumnType.Text:
+			case TfDatabaseColumnType.Text:
 				resultType = DbType.String; break;
-			case DatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				resultType = DbType.Int16; break;
-			case DatabaseColumnType.Integer:
+			case TfDatabaseColumnType.Integer:
 				resultType = DbType.Int32; break;
-			case DatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				resultType = DbType.Int64; break;
-			case DatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				resultType = DbType.Decimal; break;
-			case DatabaseColumnType.AutoIncrement:
+			case TfDatabaseColumnType.AutoIncrement:
 			default:
 				throw new Exception("Not supported for conversion database column type.");
 		}

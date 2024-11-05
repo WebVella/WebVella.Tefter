@@ -35,63 +35,63 @@ public class UserSettings
 
 
 [DboCacheModel]
-[DboModel("user")]
+[TfDboModel("user")]
 internal record UserDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("email")]
+	[TfDboModelProperty("email")]
 	public string Email { get; set; }
 
-	[DboModelProperty("password")]
+	[TfDboModelProperty("password")]
 	public string Password { get; set; }
 
-	[DboModelProperty("first_name")]
+	[TfDboModelProperty("first_name")]
 	public string FirstName { get; set; }
 
-	[DboModelProperty("last_name")]
+	[TfDboModelProperty("last_name")]
 	public string LastName { get; set; }
 
-	[DboModelProperty("enabled")]
+	[TfDboModelProperty("enabled")]
 	public bool Enabled { get; set; }
 
-	[DboModelProperty("created_on")]
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
+	[TfDboModelProperty("created_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	public DateTime CreatedOn { get; set; }
 
-	[DboModelProperty("settings_json")]
-	[DboTypeConverter(typeof(JsonPropertyConverter<UserSettings>))]
+	[TfDboModelProperty("settings_json")]
+	[TfDboTypeConverter(typeof(TfJsonPropertyConverter<UserSettings>))]
 	public UserSettings Settings { get; set; }
 
-	[DboModelProperty("x_search")]
+	[TfDboModelProperty("x_search")]
 	public string XSearch { get; set; }
 }
 
 
 [DboCacheModel]
-[DboModel("user_role")]
+[TfDboModel("user_role")]
 internal record UserRoleDbo
 {
-	[DboModelProperty("user_id")]
+	[TfDboModelProperty("user_id")]
 	public Guid UserId { get; set; }
 
-	[DboModelProperty("role_id")]
+	[TfDboModelProperty("role_id")]
 	public Guid RoleId { get; set; }
 }
 
 
 [DboCacheModel]
-[DboModel("role")]
+[TfDboModel("role")]
 public record RoleDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("name")]
+	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[DboModelProperty("is_system")]
+	[TfDboModelProperty("is_system")]
 	public bool IsSystem { get; set; } = false;
 }
 

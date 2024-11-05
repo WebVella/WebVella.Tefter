@@ -153,7 +153,7 @@ public partial class IdentityManager : IIdentityManager
 
 	public Result<ReadOnlyCollection<User>> GetUsers()
 	{
-		var orderSettings = new OrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
+		var orderSettings = new TfOrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
 				.Add(nameof(UserDbo.FirstName), OrderDirection.ASC);
 
 		var usersDbo = _dboManager.GetList<UserDbo>(order: orderSettings);
@@ -230,7 +230,7 @@ public partial class IdentityManager : IIdentityManager
 			XSearch = $"{user.FirstName} {user.LastName} {user.Email}"
 		};
 
-		using (DatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+		using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
 		{
 			bool success = _dboManager.Insert<UserDbo>(userDbo);
 
@@ -283,7 +283,7 @@ public partial class IdentityManager : IIdentityManager
 			XSearch = $"{user.FirstName} {user.LastName} {user.Email}"
 		};
 
-		using (DatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+		using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
 		{
 			//update user info
 			bool success = _dboManager.Update<UserDbo>(userDbo);
@@ -449,7 +449,7 @@ public partial class IdentityManager : IIdentityManager
 
 	public async Task<Result<ReadOnlyCollection<User>>> GetUsersAsync()
 	{
-		var orderSettings = new OrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
+		var orderSettings = new TfOrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
 				.Add(nameof(UserDbo.FirstName), OrderDirection.ASC);
 
 		var usersDbo = await _dboManager.GetListAsync<UserDbo>(order: orderSettings);
@@ -526,7 +526,7 @@ public partial class IdentityManager : IIdentityManager
 			XSearch = $"{user.FirstName} {user.LastName} {user.Email}"
 		};
 
-		using (DatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+		using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
 		{
 			bool success = await _dboManager.InsertAsync<UserDbo>(userDbo);
 
@@ -579,7 +579,7 @@ public partial class IdentityManager : IIdentityManager
 			XSearch = $"{user.FirstName} {user.LastName} {user.Email}"
 		};
 
-		using (DatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+		using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
 		{
 			//update user info
 			bool success = await _dboManager.UpdateAsync<UserDbo>(userDbo);

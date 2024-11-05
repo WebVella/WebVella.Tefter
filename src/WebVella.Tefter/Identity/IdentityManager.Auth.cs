@@ -39,7 +39,7 @@ public partial class IdentityManager : IIdentityManager
 
 		try
 		{
-			var cryptoService = _serviceProvider.GetRequiredService<ICryptoService>();
+			var cryptoService = _serviceProvider.GetRequiredService<ITfCryptoService>();
 			if (jsRuntime == null)
 				return Result.Fail("Unable to instantiate JSRuntime.");
 

@@ -12,7 +12,7 @@ public partial class TfFileManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfFileManager fileManager = ServiceProvider.GetRequiredService<ITfFileManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))

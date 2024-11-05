@@ -54,7 +54,7 @@ public partial class IdentityManager : IIdentityManager
 
 	public Result<ReadOnlyCollection<Role>> GetRoles()
 	{
-		var orderSettings = new OrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
+		var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
 
 		var result = _dboManager.GetList<RoleDbo>(null, null, orderSettings)
 			.Select(x =>
@@ -171,7 +171,7 @@ public partial class IdentityManager : IIdentityManager
 
 	public async Task<Result<ReadOnlyCollection<Role>>> GetRolesAsync()
 	{
-		var orderSettings = new OrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
+		var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
 
 		var result = (await _dboManager.GetListAsync<RoleDbo>(null, null, orderSettings))
 			.Select(x =>

@@ -12,7 +12,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		Guid tableAppId = Guid.NewGuid();
 		Guid tableDpId = Guid.NewGuid();
 
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 
 		var tables = databaseBuilder
 			.NewTable(tableId, tableName, table => { })
@@ -63,7 +63,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		Guid tableAppId = Guid.NewGuid();
 		Guid tableDpId = Guid.NewGuid();
 
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 
 		var task = Task.Run(() =>
 		{
@@ -74,7 +74,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		var exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType(typeof(DatabaseBuilderException));
+		exception.Should().BeOfType(typeof(TfDatabaseBuilderException));
 		exception.Message.Should().Be($"There is already existing database object with id '{tableId}'");
 	}
 
@@ -87,7 +87,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		Guid tableAppId = Guid.NewGuid();
 		Guid tableDpId = Guid.NewGuid();
 
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 
 		var task = Task.Run(() =>
 		{
@@ -98,7 +98,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		var exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType(typeof(DatabaseBuilderException));
+		exception.Should().BeOfType(typeof(TfDatabaseBuilderException));
 		exception.Message.Should().Be($"There is already existing database object with name '{tableName}'");
 	}
 
@@ -107,7 +107,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	{
 		const string tableName = "test_table";
 
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 
 		var task = Task.Run(() =>
 		{
@@ -117,14 +117,14 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		var exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType(typeof(DatabaseBuilderException));
+		exception.Should().BeOfType(typeof(TfDatabaseBuilderException));
 		exception.Message.Should().Be($"Table with name '{tableName}' is not found.");
 	}
 
 	[Fact]
 	public void Table_CreateSimpleStructure()
 	{
-		var tables = DatabaseBuilder.New()
+		var tables = TfDatabaseBuilder.New()
 			.NewTable("data1", table =>
 			{
 				table
@@ -390,10 +390,10 @@ public partial class DatabaseBuilderTests : BaseTest
 			 })
 			.Build();
 
-		var differences = DatabaseComparer.Compare(null, tables);
-		var createSql = DatabaseSqlProvider.GenerateUpdateScript(differences);
+		var differences = TfDatabaseComparer.Compare(null, tables);
+		var createSql = TfDatabaseSqlProvider.GenerateUpdateScript(differences);
 
-		var tables2 = DatabaseBuilder.New(tables)
+		var tables2 = TfDatabaseBuilder.New(tables)
 			.WithTable("data1", table =>
 			{
 				table.WithColumns(columns =>
@@ -403,10 +403,10 @@ public partial class DatabaseBuilderTests : BaseTest
 			}).Build();
 
 
-		differences = DatabaseComparer.Compare(tables, tables2);
-		var dropSql = DatabaseSqlProvider.GenerateUpdateScript(differences);
+		differences = TfDatabaseComparer.Compare(tables, tables2);
+		var dropSql = TfDatabaseSqlProvider.GenerateUpdateScript(differences);
 
-		var tables3 = DatabaseBuilder.New(tables2)
+		var tables3 = TfDatabaseBuilder.New(tables2)
 		   .WithTable("data2", table =>
 		   {
 			   table.WithColumns(columns =>
@@ -415,8 +415,8 @@ public partial class DatabaseBuilderTests : BaseTest
 			   });
 		   }).Build();
 
-		differences = DatabaseComparer.Compare(tables2, tables3);
-		var dropModeSql = DatabaseSqlProvider.GenerateUpdateScript(differences);
+		differences = TfDatabaseComparer.Compare(tables2, tables3);
+		var dropModeSql = TfDatabaseSqlProvider.GenerateUpdateScript(differences);
 
 	}
 
@@ -427,13 +427,13 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_AutoIncrement()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_auto_inc";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -454,7 +454,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<AutoIncrementDatabaseColumn>();
+		columnById.Should().BeOfType<TfAutoIncrementDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeFalse();
 		columnById.DefaultValue.Should().Be(null);
@@ -478,14 +478,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_Guid()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_guid";
 		Guid defaultValue = Guid.NewGuid();
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -512,11 +512,11 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<GuidDatabaseColumn>();
+		columnById.Should().BeOfType<TfGuidDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
-		((GuidDatabaseColumn)columnById).AutoDefaultValue.Should().Be(false);
+		((TfGuidDatabaseColumn)columnById).AutoDefaultValue.Should().Be(false);
 
 		task = Task.Run(() =>
 		{
@@ -540,7 +540,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<GuidDatabaseColumn>();
+		columnById.Should().BeOfType<TfGuidDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -548,7 +548,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		columnById.IsNullable.Should().BeFalse();
 		columnById.DefaultValue.Should().Be(null);
-		((GuidDatabaseColumn)columnById).AutoDefaultValue.Should().BeTrue();
+		((TfGuidDatabaseColumn)columnById).AutoDefaultValue.Should().BeTrue();
 
 		task = Task.Run(() =>
 		{
@@ -569,14 +569,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_Number()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_number";
 		decimal defaultValue = 10;
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -602,7 +602,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<NumberDatabaseColumn>();
+		columnById.Should().BeOfType<TfNumberDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -628,7 +628,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<NumberDatabaseColumn>();
+		columnById.Should().BeOfType<TfNumberDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -656,14 +656,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_ShortInteger()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_short_integer";
 		short defaultValue = 10;
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -689,7 +689,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<ShortIntegerDatabaseColumn>();
+		columnById.Should().BeOfType<TfShortIntegerDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -715,7 +715,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<ShortIntegerDatabaseColumn>();
+		columnById.Should().BeOfType<TfShortIntegerDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -743,14 +743,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_Integer()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_integer";
 		int defaultValue = int.MaxValue;
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -776,7 +776,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<IntegerDatabaseColumn>();
+		columnById.Should().BeOfType<TfIntegerDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -802,7 +802,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<IntegerDatabaseColumn>();
+		columnById.Should().BeOfType<TfIntegerDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -830,14 +830,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_LongInteger()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_long_integer";
 		long defaultValue = long.MaxValue;
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -863,7 +863,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<LongIntegerDatabaseColumn>();
+		columnById.Should().BeOfType<TfLongIntegerDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -889,7 +889,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<LongIntegerDatabaseColumn>();
+		columnById.Should().BeOfType<TfLongIntegerDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -918,14 +918,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_Boolean()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_boolean";
 		bool defaultValue = true;
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -951,7 +951,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<BooleanDatabaseColumn>();
+		columnById.Should().BeOfType<TfBooleanDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -977,7 +977,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<BooleanDatabaseColumn>();
+		columnById.Should().BeOfType<TfBooleanDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -1005,14 +1005,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_Text()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_text";
 		string defaultValue = "def";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1038,7 +1038,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<TextDatabaseColumn>();
+		columnById.Should().BeOfType<TfTextDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -1064,7 +1064,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<TextDatabaseColumn>();
+		columnById.Should().BeOfType<TfTextDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -1092,14 +1092,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_ShortText()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_short_text";
 		string defaultValue = "def";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1125,7 +1125,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<ShortTextDatabaseColumn>();
+		columnById.Should().BeOfType<TfShortTextDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -1151,7 +1151,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<ShortTextDatabaseColumn>();
+		columnById.Should().BeOfType<TfShortTextDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -1179,14 +1179,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_Date()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_text";
 		DateOnly defaultValue = new DateOnly(2024, 10, 25);
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1212,7 +1212,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<DateDatabaseColumn>();
+		columnById.Should().BeOfType<TfDateDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -1238,7 +1238,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<DateDatabaseColumn>();
+		columnById.Should().BeOfType<TfDateDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -1266,14 +1266,14 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_CRUD_DateTime()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 		const string columnName = "test_text";
 		DateTime defaultValue = DateTime.Now;
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1299,7 +1299,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
 		columnById.GetHashCode().Should().Be(columnById.GetHashCode());
-		columnById.Should().BeOfType<DateTimeDatabaseColumn>();
+		columnById.Should().BeOfType<TfDateTimeDatabaseColumn>();
 
 		columnById.IsNullable.Should().BeTrue();
 		columnById.DefaultValue.Should().Be(defaultValue);
@@ -1325,7 +1325,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		table.Columns.Should().HaveCount(1);
 		columnById = table.Columns.Find(columnId);
 		columnByName = table.Columns.Find(columnName);
-		columnById.Should().BeOfType<DateTimeDatabaseColumn>();
+		columnById.Should().BeOfType<TfDateTimeDatabaseColumn>();
 
 		columnById.Should().NotBeNull();
 		columnByName.Should().NotBeNull();
@@ -1353,12 +1353,12 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Column_WithSameId()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1380,19 +1380,19 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"There is already existing database object with id '{columnId}'");
 	}
 
 	[Fact]
 	public void Column_WithSameName()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		const string columnName = "test";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1414,19 +1414,19 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"There is already existing column with name '{columnName}' for table '{tableBuilder.Name}'");
 	}
 
 	[Fact]
 	public void Column_WithDiffType()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		const string columnName = "test";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1448,19 +1448,19 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"Column of type Boolean and name '{columnName}' for table '{table.Name}' is not found.");
 	}
 
 	[Fact]
 	public void Column_RemoveNonExisting()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		const string columnName = "test";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder.WithColumns(columns =>
@@ -1483,7 +1483,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"Column with name '{nonExistingColumnName}' for table '{table.Name}' is not found.");
 	}
 	#endregion
@@ -1493,7 +1493,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Index_BTree_CRUD()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1501,7 +1501,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		Guid defaultValue = Guid.NewGuid();
 		const string indexName = "idx_btree";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1530,7 +1530,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Indexes.Count().Should().Be(1);
 		table.Indexes.Find(indexName).Should().NotBeNull();
-		table.Indexes.Find(indexName).Should().BeOfType<BTreeDatabaseIndex>();
+		table.Indexes.Find(indexName).Should().BeOfType<TfBTreeDatabaseIndex>();
 		table.Indexes.Find(indexName).Columns.Should().Contain(columnName);
 
 		task = Task.Run(() =>
@@ -1551,7 +1551,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Index_Gin_CRUD()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1559,7 +1559,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		const string defaultValue = "test default value";
 		const string indexName = "idx_gin";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1588,7 +1588,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Indexes.Count().Should().Be(1);
 		table.Indexes.Find(indexName).Should().NotBeNull();
-		table.Indexes.Find(indexName).Should().BeOfType<GinDatabaseIndex>();
+		table.Indexes.Find(indexName).Should().BeOfType<TfGinDatabaseIndex>();
 		table.Indexes.Find(indexName).Columns.Should().Contain(columnName);
 
 
@@ -1610,7 +1610,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Index_Gist_CRUD()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1618,7 +1618,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		const string defaultValue = "test default value";
 		const string indexName = "idx_gist";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1647,7 +1647,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Indexes.Count().Should().Be(1);
 		table.Indexes.Find(indexName).Should().NotBeNull();
-		table.Indexes.Find(indexName).Should().BeOfType<GistDatabaseIndex>();
+		table.Indexes.Find(indexName).Should().BeOfType<TfGistDatabaseIndex>();
 		table.Indexes.Find(indexName).Columns.Should().Contain(columnName);
 
 
@@ -1670,7 +1670,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Index_Hash_CRUD()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1678,7 +1678,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		const string defaultValue = "test default value";
 		const string indexName = "idx_hash";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1707,7 +1707,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Indexes.Count().Should().Be(1);
 		table.Indexes.Find(indexName).Should().NotBeNull();
-		table.Indexes.Find(indexName).Should().BeOfType<HashDatabaseIndex>();
+		table.Indexes.Find(indexName).Should().BeOfType<TfHashDatabaseIndex>();
 		table.Indexes.Find(indexName).Columns.Should().Contain(columnName);
 
 		task = Task.Run(() =>
@@ -1728,7 +1728,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Index_RemoveNonExisting()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1736,7 +1736,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		const string defaultValue = "test default value";
 		const string indexName = "idx_hash";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1765,7 +1765,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Indexes.Count().Should().Be(1);
 		table.Indexes.Find(indexName).Should().NotBeNull();
-		table.Indexes.Find(indexName).Should().BeOfType<HashDatabaseIndex>();
+		table.Indexes.Find(indexName).Should().BeOfType<TfHashDatabaseIndex>();
 		table.Indexes.Find(indexName).Columns.Should().Contain(columnName);
 
 		var nonExistingIndexName = indexName + "123";
@@ -1780,14 +1780,14 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"Index with name '{nonExistingIndexName}' is not found.");
 	}
 
 	[Fact]
 	public void Index_WithSameName()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1795,7 +1795,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		const string defaultValue = "test default value";
 		const string indexName = "idx_hash";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1824,7 +1824,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Indexes.Count().Should().Be(1);
 		table.Indexes.Find(indexName).Should().NotBeNull();
-		table.Indexes.Find(indexName).Should().BeOfType<HashDatabaseIndex>();
+		table.Indexes.Find(indexName).Should().BeOfType<TfHashDatabaseIndex>();
 		table.Indexes.Find(indexName).Columns.Should().Contain(columnName);
 
 		task = Task.Run(() =>
@@ -1842,7 +1842,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"There is already existing database object with name '{indexName}'");
 	}
 
@@ -1853,7 +1853,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Constraint_PrimaryKey_CRUD()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1861,7 +1861,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		Guid defaultValue = Guid.NewGuid();
 		const string constraintName = "pk_id";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1890,7 +1890,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Constraints.Count().Should().Be(1);
 		table.Constraints.Find(constraintName).Should().NotBeNull();
-		table.Constraints.Find(constraintName).Should().BeOfType<DatabasePrimaryKeyConstraint>();
+		table.Constraints.Find(constraintName).Should().BeOfType<TfDatabasePrimaryKeyConstraint>();
 		table.Constraints.Find(constraintName).Columns.Should().Contain(columnName);
 
 		task = Task.Run(() =>
@@ -1911,7 +1911,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Constraint_UniqueKey_CRUD()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -1919,7 +1919,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		Guid defaultValue = Guid.NewGuid();
 		const string constraintName = "ux_id";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -1948,7 +1948,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Constraints.Count().Should().Be(1);
 		table.Constraints.Find(constraintName).Should().NotBeNull();
-		table.Constraints.Find(constraintName).Should().BeOfType<DatabaseUniqueKeyConstraint>();
+		table.Constraints.Find(constraintName).Should().BeOfType<TfDatabaseUniqueKeyConstraint>();
 		table.Constraints.Find(constraintName).Columns.Should().Contain(columnName);
 
 		task = Task.Run(() =>
@@ -1969,7 +1969,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Constraint_ForeignKey_CRUD()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 
 		var data1Builder = databaseBuilder
 			.NewTableBuilder(Guid.NewGuid(), "data1")
@@ -2031,20 +2031,20 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		data1Table.Constraints.Count().Should().Be(1);
 		data1Table.Constraints.Find("fk_data1_data_rel").Should().NotBeNull();
-		data1Table.Constraints.Find("fk_data1_data_rel").Should().BeOfType<DatabaseForeignKeyConstraint>();
-		((DatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).Columns.Count().Should().Be(1);
-		((DatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).Columns.Should().Contain("id");
-		((DatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).ForeignColumns.Should().Contain("data1_id");
-		((DatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).ForeignTable.Should().Be("data_rel");
+		data1Table.Constraints.Find("fk_data1_data_rel").Should().BeOfType<TfDatabaseForeignKeyConstraint>();
+		((TfDatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).Columns.Count().Should().Be(1);
+		((TfDatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).Columns.Should().Contain("id");
+		((TfDatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).ForeignColumns.Should().Contain("data1_id");
+		((TfDatabaseForeignKeyConstraint)data1Table.Constraints.Find("fk_data1_data_rel")).ForeignTable.Should().Be("data_rel");
 
 		var data2Table = data2Builder.Build();
 		data2Table.Constraints.Count().Should().Be(1);
 		data2Table.Constraints.Find("fk_data2_data_rel").Should().NotBeNull();
-		data2Table.Constraints.Find("fk_data2_data_rel").Should().BeOfType<DatabaseForeignKeyConstraint>();
-		((DatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).Columns.Count().Should().Be(1);
-		((DatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).Columns.Should().Contain("id");
-		((DatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).ForeignColumns.Should().Contain("data2_id");
-		((DatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).ForeignTable.Should().Be("data_rel");
+		data2Table.Constraints.Find("fk_data2_data_rel").Should().BeOfType<TfDatabaseForeignKeyConstraint>();
+		((TfDatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).Columns.Count().Should().Be(1);
+		((TfDatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).Columns.Should().Contain("id");
+		((TfDatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).ForeignColumns.Should().Contain("data2_id");
+		((TfDatabaseForeignKeyConstraint)data2Table.Constraints.Find("fk_data2_data_rel")).ForeignTable.Should().Be("data_rel");
 
 		task = Task.Run(() =>
 		{
@@ -2070,7 +2070,7 @@ public partial class DatabaseBuilderTests : BaseTest
 	[Fact]
 	public void Constraint_RemoveNonExisting()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -2078,7 +2078,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		const string defaultValue = "test default value";
 		const string constraintName = "ux";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -2107,7 +2107,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Constraints.Count().Should().Be(1);
 		table.Constraints.Find(constraintName).Should().NotBeNull();
-		table.Constraints.Find(constraintName).Should().BeOfType<DatabaseUniqueKeyConstraint>();
+		table.Constraints.Find(constraintName).Should().BeOfType<TfDatabaseUniqueKeyConstraint>();
 		table.Constraints.Find(constraintName).Columns.Should().Contain(columnName);
 
 		var nonExistingConstraintName = constraintName + "123";
@@ -2122,14 +2122,14 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"Constraint with name '{nonExistingConstraintName}' is not found.");
 	}
 
 	[Fact]
 	public void Constraint_WithSameName()
 	{
-		var databaseBuilder = DatabaseBuilder.New();
+		var databaseBuilder = TfDatabaseBuilder.New();
 		var tableBuilder = CreateEmptyTableBuilder(databaseBuilder);
 
 		Guid columnId = Guid.NewGuid();
@@ -2137,7 +2137,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		const string defaultValue = "test default value";
 		const string constraintName = "ux";
 
-		DatabaseTable table = null;
+		TfDatabaseTable table = null;
 		var task = Task.Run(() =>
 		{
 			table = tableBuilder
@@ -2166,7 +2166,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 		table.Constraints.Count().Should().Be(1);
 		table.Constraints.Find(constraintName).Should().NotBeNull();
-		table.Constraints.Find(constraintName).Should().BeOfType<DatabaseUniqueKeyConstraint>();
+		table.Constraints.Find(constraintName).Should().BeOfType<TfDatabaseUniqueKeyConstraint>();
 		table.Constraints.Find(constraintName).Columns.Should().Contain(columnName);
 
 		task = Task.Run(() =>
@@ -2184,7 +2184,7 @@ public partial class DatabaseBuilderTests : BaseTest
 		});
 		exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().NotBeNull();
-		exception.Should().BeOfType<DatabaseBuilderException>();
+		exception.Should().BeOfType<TfDatabaseBuilderException>();
 		exception.Message.Should().Be($"There is already existing database object with name '{constraintName}'");
 	}
 
@@ -2192,7 +2192,7 @@ public partial class DatabaseBuilderTests : BaseTest
 
 	#region <--- utility--->
 
-	private DatabaseTableBuilder CreateEmptyTableBuilder(DatabaseBuilder databaseBuilder)
+	private TfDatabaseTableBuilder CreateEmptyTableBuilder(TfDatabaseBuilder databaseBuilder)
 	{
 		Guid tableId = Guid.NewGuid();
 		string tableName = "test_table";

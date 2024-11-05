@@ -8,7 +8,7 @@ public interface ITfDataProviderType
 	public string ImageBase64 { get; }
 	Type SettingsComponentType { get; }
 	public abstract ReadOnlyCollection<string> GetSupportedSourceDataTypes();
-	public abstract ReadOnlyCollection<DatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
+	public abstract ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
 		string dataType);
 	public abstract ReadOnlyCollection<TfDataProviderDataRow> GetRows(
 		TfDataProvider provider);

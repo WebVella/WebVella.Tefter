@@ -14,35 +14,35 @@ public class TfSpaceView
 }
 
 [DboCacheModel]
-[DboModel("space_view")]
+[TfDboModel("space_view")]
 public class TfSpaceViewDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("space_data_id")]
+	[TfDboModelProperty("space_data_id")]
 	public Guid SpaceDataId { get; set; }
 
-	[DboModelProperty("space_id")]
+	[TfDboModelProperty("space_id")]
 	public Guid SpaceId { get; set; }
 
-	[DboModelProperty("type")]
-	[DboTypeConverter(typeof(EnumPropertyConverter<TfSpaceViewType>))]
+	[TfDboModelProperty("type")]
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSpaceViewType>))]
 	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
 
-	[DboModelProperty("name")]
+	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[DboModelProperty("position")]
+	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
-	[DboModelProperty("settings_json")]
+	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = "{}";
 
-	[DboModelProperty("presets_json")]
+	[TfDboModelProperty("presets_json")]
 	public string PresetsJson { get; set; } = "[]";
 
-	[DboModelProperty("groups_json")]
+	[TfDboModelProperty("groups_json")]
 	public string GroupsJson { get; set; } = "[]";
 }
 

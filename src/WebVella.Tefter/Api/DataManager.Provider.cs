@@ -59,7 +59,7 @@ public partial class DataManager
 				else
 				{
 					var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == column.ColumnName);
-					if (providerColumn is not null && providerColumn.DbType == DatabaseColumnType.Date)
+					if (providerColumn is not null && providerColumn.DbType == TfDatabaseColumnType.Date)
 					{
 						value = DateOnly.FromDateTime((DateTime)value);
 					}
@@ -101,7 +101,7 @@ public partial class DataManager
 				else
 				{
 					var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == column.ColumnName);
-					if (providerColumn is not null && providerColumn.DbType == DatabaseColumnType.Date)
+					if (providerColumn is not null && providerColumn.DbType == TfDatabaseColumnType.Date)
 					{
 						value = DateOnly.FromDateTime((DateTime)value);
 					}

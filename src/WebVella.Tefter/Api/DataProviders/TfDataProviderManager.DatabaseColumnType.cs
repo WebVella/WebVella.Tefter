@@ -16,7 +16,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "AUTO INCREMENT",
-				Type = DatabaseColumnType.AutoIncrement,
+				Type = TfDatabaseColumnType.AutoIncrement,
 				CanBeProviderDataType = false,
 				SupportAutoDefaultValue = false
 			});
@@ -25,7 +25,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "GUID",
-				Type = DatabaseColumnType.Guid,
+				Type = TfDatabaseColumnType.Guid,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = true
 			});
@@ -34,7 +34,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "DATE",
-				Type = DatabaseColumnType.Date,
+				Type = TfDatabaseColumnType.Date,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = true
 			});
@@ -43,7 +43,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "DATE AND TIME",
-				Type = DatabaseColumnType.DateTime,
+				Type = TfDatabaseColumnType.DateTime,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = true
 			});
@@ -53,7 +53,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "BOOLEAN",
-				Type = DatabaseColumnType.Boolean,
+				Type = TfDatabaseColumnType.Boolean,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = false
 			});
@@ -62,7 +62,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "TEXT",
-				Type = DatabaseColumnType.Text,
+				Type = TfDatabaseColumnType.Text,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = false
 			});
@@ -71,7 +71,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "SHORT TEXT",
-				Type = DatabaseColumnType.ShortText,
+				Type = TfDatabaseColumnType.ShortText,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = false
 			});
@@ -80,7 +80,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "SHORT INTEGER (16bit)",
-				Type = DatabaseColumnType.ShortInteger,
+				Type = TfDatabaseColumnType.ShortInteger,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = false
 			});
@@ -89,7 +89,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "INTEGER (32bit)",
-				Type = DatabaseColumnType.Integer,
+				Type = TfDatabaseColumnType.Integer,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = false
 			});
@@ -98,7 +98,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "LONG INTEGER (64bit)",
-				Type = DatabaseColumnType.LongInteger,
+				Type = TfDatabaseColumnType.LongInteger,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = false
 			});
@@ -107,7 +107,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			new DatabaseColumnTypeInfo
 			{
 				Name = "DECIMAL",
-				Type = DatabaseColumnType.Number,
+				Type = TfDatabaseColumnType.Number,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = false
 			});
@@ -119,7 +119,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 public record DatabaseColumnTypeInfo
 {
 	public string Name { get; init; }
-	public DatabaseColumnType Type { get; init; }
+	public TfDatabaseColumnType Type { get; init; }
 	public bool CanBeProviderDataType { get; init; }
 	public bool SupportAutoDefaultValue { get; init; }
 }

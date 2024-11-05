@@ -10,7 +10,7 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -99,7 +99,7 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
@@ -208,7 +208,7 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
@@ -288,7 +288,7 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
@@ -316,7 +316,7 @@ public partial class SpaceManagerTests : BaseTest
 					DefaultValue = null,
 					DataProviderId = providerModel.Id,
 					DbName = "textcolona",
-					DbType = DatabaseColumnType.Text,
+					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
@@ -401,7 +401,7 @@ public partial class SpaceManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
@@ -539,7 +539,7 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
@@ -632,7 +632,7 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
@@ -767,7 +767,7 @@ public partial class SpaceManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))

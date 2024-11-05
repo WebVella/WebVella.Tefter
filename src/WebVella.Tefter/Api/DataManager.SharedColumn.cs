@@ -27,29 +27,29 @@ public partial class DataManager
 		}
 	}
 
-	private static string GetSharedColumnValueTableNameByType(DatabaseColumnType dbColumnType)
+	private static string GetSharedColumnValueTableNameByType(TfDatabaseColumnType dbColumnType)
 	{
 		switch (dbColumnType)
 		{
-			case DatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.ShortText:
 				return "shared_column_short_text_value";
-			case DatabaseColumnType.Text:
+			case TfDatabaseColumnType.Text:
 				return "shared_column_text_value";
-			case DatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				return "shared_column_boolean_value";
-			case DatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				return "shared_column_guid_value";
-			case DatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				return "shared_column_short_integer_value";
-			case DatabaseColumnType.Integer:
+			case TfDatabaseColumnType.Integer:
 				return "shared_column_integer_value";
-			case DatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				return "shared_column_long_integer_value";
-			case DatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				return "shared_column_number_value";
-			case DatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				return "shared_column_date_value";
-			case DatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				return "shared_column_datetime_value";
 			default:
 				throw new Exception("Not supported column type.");

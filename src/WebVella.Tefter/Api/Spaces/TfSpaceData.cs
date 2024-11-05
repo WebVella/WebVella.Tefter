@@ -15,35 +15,35 @@ public class TfSpaceData
 public class TfAvailableSpaceDataColumn
 {
 	public string DbName { get; set; }
-	public DatabaseColumnType DbType { get; init; }
+	public TfDatabaseColumnType DbType { get; init; }
 }
 
 
 [DboCacheModel]
-[DboModel("space_data")]
+[TfDboModel("space_data")]
 internal class TfSpaceDataDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("data_provider_id")]
+	[TfDboModelProperty("data_provider_id")]
 	public Guid DataProviderId { get; set; }
 
-	[DboModelProperty("space_id")]
+	[TfDboModelProperty("space_id")]
 	public Guid SpaceId { get; set; }
 	
-	[DboModelProperty("name")]
+	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[DboModelProperty("position")]
+	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
-	[DboModelProperty("filters_json")]
+	[TfDboModelProperty("filters_json")]
 	public string FiltersJson { get; set; }
 
-	[DboModelProperty("columns_json")]
+	[TfDboModelProperty("columns_json")]
 	public string ColumnsJson { get; set; }
 
-	[DboModelProperty("sort_orders_json")]
+	[TfDboModelProperty("sort_orders_json")]
 	public string SortOrdersJson { get; set; } 
 }

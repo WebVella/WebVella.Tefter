@@ -2,7 +2,7 @@
 
 internal abstract class TfSystemMigration
 {
-	public virtual void MigrateStructure(DatabaseBuilder dbBuilder) { }
+	public virtual void MigrateStructure(TfDatabaseBuilder dbBuilder) { }
 
 	public virtual Task MigrateDataAsync(IServiceProvider serviceProvider) {  return Task.CompletedTask; }
 }

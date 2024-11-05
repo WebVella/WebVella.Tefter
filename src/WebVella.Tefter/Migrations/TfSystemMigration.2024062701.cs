@@ -3,7 +3,7 @@
 [TfSystemMigration("2024.6.27.1")]
 internal class TefterSystemMigration2024062701 : TfSystemMigration
 {
-	public override void MigrateStructure(DatabaseBuilder dbBuilder)
+	public override void MigrateStructure(TfDatabaseBuilder dbBuilder)
 	{
 		#region  TABLE: MIGRATION
 		dbBuilder
@@ -222,8 +222,8 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)
 	{
-		IDatabaseService dbService = serviceProvider.GetService<IDatabaseService>();
-		IDboManager dboManager = serviceProvider.GetService<IDboManager>();
+		ITfDatabaseService dbService = serviceProvider.GetService<ITfDatabaseService>();
+		ITfDboManager dboManager = serviceProvider.GetService<ITfDboManager>();
 		IIdentityManager identityManager = serviceProvider.GetService<IIdentityManager>();
 
 		//creates default empty id in id_dict
@@ -244,7 +244,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 			var adminRoleResult = await identityManager.SaveRoleAsync(adminRole);
 			if (!adminRoleResult.IsSuccess)
-				throw new DatabaseException("Failed to create administrator role.");
+				throw new TfDatabaseException("Failed to create administrator role.");
 
 			adminRole = adminRoleResult.Value;
 
@@ -262,7 +262,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 			var userResult = await identityManager.SaveUserAsync(user);
 			if (!userResult.IsSuccess)
-				throw new DatabaseException("Failed to create administrator user");
+				throw new TfDatabaseException("Failed to create administrator user");
 		}
 
 
@@ -275,7 +275,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 			var adminRoleResult = identityManager.GetRole("Administrators");
 			if (!adminRoleResult.IsSuccess)
-				throw new DatabaseException("Failed to get admin role.");
+				throw new TfDatabaseException("Failed to get admin role.");
 
 			var adminRole = adminRoleResult.Value;
 
@@ -292,7 +292,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 			var userResult = await identityManager.SaveUserAsync(user);
 			if (!userResult.IsSuccess)
-				throw new DatabaseException("Failed to create Rumen Yankov user");
+				throw new TfDatabaseException("Failed to create Rumen Yankov user");
 
 			user = identityManager
 			   .CreateUserBuilder()
@@ -307,7 +307,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 			userResult = await identityManager.SaveUserAsync(user);
 			if (!userResult.IsSuccess)
-				throw new DatabaseException("Failed to create Bozhidar Zashev user");
+				throw new TfDatabaseException("Failed to create Bozhidar Zashev user");
 		}
 
 #endif

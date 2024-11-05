@@ -10,7 +10,7 @@ public partial class IdentityManager : IIdentityManager
 {
 	internal class UserValidator : AbstractValidator<User>
 	{
-		public UserValidator(IDboManager dboManager, IIdentityManager identityManager)
+		public UserValidator(ITfDboManager dboManager, IIdentityManager identityManager)
 		{
 			RuleSet("general", () =>
 			{

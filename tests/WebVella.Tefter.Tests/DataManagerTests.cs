@@ -13,7 +13,7 @@ public partial class DataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			var faker = new Faker("en");
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 
@@ -122,7 +122,7 @@ public partial class DataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
@@ -165,7 +165,7 @@ public partial class DataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
 

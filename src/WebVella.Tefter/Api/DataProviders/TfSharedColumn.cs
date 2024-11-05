@@ -1,22 +1,22 @@
 ﻿namespace WebVella.Tefter;
 
 [DboCacheModel]
-[DboModel("shared_column")]
+[TfDboModel("shared_column")]
 public record TfSharedColumn
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("shared_key_db_name")]
+	[TfDboModelProperty("shared_key_db_name")]
 	public string SharedKeyDbName { get; set; }
 
-	[DboModelProperty("db_name")]
+	[TfDboModelProperty("db_name")]
 	public string DbName { get; set; }
 
-	[DboTypeConverter(typeof(EnumPropertyConverter<DatabaseColumnType>))]
-	[DboModelProperty("db_type")]
-	public DatabaseColumnType DbType { get; set; }
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfDatabaseColumnType>))]
+	[TfDboModelProperty("db_type")]
+	public TfDatabaseColumnType DbType { get; set; }
 
-	[DboModelProperty("include_table_search")]
+	[TfDboModelProperty("include_table_search")]
 	public bool IncludeInTableSearch { get; set; }
 }

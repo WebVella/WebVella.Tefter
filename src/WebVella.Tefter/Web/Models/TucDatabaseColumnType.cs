@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-[TucEnumMatch(typeof(DatabaseColumnType))]
+[TucEnumMatch(typeof(TfDatabaseColumnType))]
 public enum TucDatabaseColumnType
 {
 	ShortInteger = 0,

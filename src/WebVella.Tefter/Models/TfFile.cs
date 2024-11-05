@@ -1,25 +1,25 @@
 ﻿namespace WebVella.Tefter.Models;
 
 [DboCacheModel]
-[DboModel("files")]
+[TfDboModel("files")]
 public class TfFile
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("filepath")]
+	[TfDboModelProperty("filepath")]
 	public string FilePath { get; set; }
 
-	[DboModelProperty("created_by")]
+	[TfDboModelProperty("created_by")]
 	public Guid? CreatedBy { get; set; }
 
-	[DboModelProperty("created_on")]
+	[TfDboModelProperty("created_on")]
 	public DateTime CreatedOn { get; set; }
 
-	[DboModelProperty("last_modified_by")]
+	[TfDboModelProperty("last_modified_by")]
 	public Guid? LastModifiedBy { get; set; }
 
-	[DboModelProperty("last_modified_on")]
+	[TfDboModelProperty("last_modified_on")]
 	public DateTime LastModifiedOn { get; set; }
 
 	public Uri Uri 

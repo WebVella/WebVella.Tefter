@@ -8,11 +8,11 @@ internal partial class TalkService : ITalkService
 {
 	public readonly ITfDataProviderManager _dataProviderManager;
 	public readonly IDataManager _dataManager;
-	public readonly IDatabaseService _dbService;
+	public readonly ITfDatabaseService _dbService;
 	public readonly IIdentityManager _identityManager;
 
 	public TalkService(
-		IDatabaseService dbService,
+		ITfDatabaseService dbService,
 		IIdentityManager identityManager,
 		IDataManager dataManager,
 		ITfDataProviderManager dataProviderManager)

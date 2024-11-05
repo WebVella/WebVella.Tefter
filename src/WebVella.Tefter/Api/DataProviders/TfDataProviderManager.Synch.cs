@@ -81,7 +81,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	{
 		try
 		{
-			var orderSettings = new OrderSettings(
+			var orderSettings = new TfOrderSettings(
 			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
 			OrderDirection.ASC);
 
@@ -326,7 +326,7 @@ ORDER BY st.created_on DESC");
 
 			var success = _dboManager.Insert<TfDataProviderSynchronizeTaskDbo>(task);
 			if (!success)
-				throw new DatabaseException("Failed to insert synchronization task.");
+				throw new TfDatabaseException("Failed to insert synchronization task.");
 
 			return Result.Ok(task.Id);
 		}
@@ -356,7 +356,7 @@ ORDER BY st.created_on DESC");
 
 			var success = _dboManager.Update<TfDataProviderSynchronizeTaskDbo>(dbo);
 			if (!success)
-				throw new DatabaseException("Failed to update synchronization task in database.");
+				throw new TfDatabaseException("Failed to update synchronization task in database.");
 
 			return Result.Ok();
 		}
@@ -375,7 +375,7 @@ ORDER BY st.created_on DESC");
 	{
 		try
 		{
-			var orderSettings = new OrderSettings(
+			var orderSettings = new TfOrderSettings(
 			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
 			OrderDirection.ASC);
 			
@@ -434,7 +434,7 @@ ORDER BY st.created_on DESC");
 
 			var success = _dboManager.Insert<TfDataProviderSynchronizeResultInfoDbo>(dbo);
 			if (!success)
-				throw new DatabaseException("Failed to insert synchronization task result info.");
+				throw new TfDatabaseException("Failed to insert synchronization task result info.");
 
 			return Result.Ok();
 		}
@@ -670,32 +670,32 @@ ORDER BY st.created_on DESC");
 		{
 			switch (column.DbType)
 			{
-				case DatabaseColumnType.ShortText:
-				case DatabaseColumnType.Text:
+				case TfDatabaseColumnType.ShortText:
+				case TfDatabaseColumnType.Text:
 					return (value as string == newValue as string);
 
-				case DatabaseColumnType.Boolean:
+				case TfDatabaseColumnType.Boolean:
 					return ((bool?)value == (bool?)newValue);
 
-				case DatabaseColumnType.Guid:
+				case TfDatabaseColumnType.Guid:
 					return ((Guid?)value == (Guid?)newValue);
 
-				case DatabaseColumnType.DateTime:
+				case TfDatabaseColumnType.DateTime:
 					return ((DateTime?)value == (DateTime?)newValue);
 
-				case DatabaseColumnType.Date:
+				case TfDatabaseColumnType.Date:
 					return ((DateOnly?)value == (DateOnly?)newValue);
 
-				case DatabaseColumnType.ShortInteger:
+				case TfDatabaseColumnType.ShortInteger:
 					return ((short?)value == (short?)newValue);
 
-				case DatabaseColumnType.Integer:
+				case TfDatabaseColumnType.Integer:
 					return ((int?)value == (int?)newValue);
 
-				case DatabaseColumnType.LongInteger:
+				case TfDatabaseColumnType.LongInteger:
 					return ((long?)value == (long?)newValue);
 
-				case DatabaseColumnType.Number:
+				case TfDatabaseColumnType.Number:
 					return ((decimal?)value == (decimal?)newValue);
 
 				default:

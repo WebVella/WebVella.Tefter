@@ -11,7 +11,7 @@ public partial class TalkTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
@@ -52,7 +52,7 @@ public partial class TalkTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 			IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();

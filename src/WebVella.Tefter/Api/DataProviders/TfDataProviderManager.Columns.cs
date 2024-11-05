@@ -64,7 +64,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	public List<TfDataProviderColumn> GetDataProviderColumns(
 		Guid providerId)
 	{
-		var orderSettings = new OrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
+		var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
 		return _dboManager.GetList<TfDataProviderColumn>(providerId, 
 			nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
 	}
@@ -77,31 +77,31 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		systemColumns.Add(new TfDataProviderSystemColumn
 		{
 			DbName = "tf_id",
-			DbType = DatabaseColumnType.Guid
+			DbType = TfDatabaseColumnType.Guid
 		});
 
 		systemColumns.Add(new TfDataProviderSystemColumn
 		{
 			DbName = "tf_row_index",
-			DbType = DatabaseColumnType.Integer
+			DbType = TfDatabaseColumnType.Integer
 		});
 
 		systemColumns.Add(new TfDataProviderSystemColumn
 		{
 			DbName = "tf_created_on",
-			DbType = DatabaseColumnType.DateTime
+			DbType = TfDatabaseColumnType.DateTime
 		});
 
 		systemColumns.Add(new TfDataProviderSystemColumn
 		{
 			DbName = "tf_updated_on",
-			DbType = DatabaseColumnType.DateTime
+			DbType = TfDatabaseColumnType.DateTime
 		});
 
 		systemColumns.Add(new TfDataProviderSystemColumn
 		{
 			DbName = "tf_search",
-			DbType = DatabaseColumnType.Text
+			DbType = TfDatabaseColumnType.Text
 		});
 
 		foreach (var sharedKey in sharedKeys)
@@ -109,13 +109,13 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
 				DbName = $"tf_sk_{sharedKey.DbName}_id",
-				DbType = DatabaseColumnType.Guid
+				DbType = TfDatabaseColumnType.Guid
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
 				DbName = $"tf_sk_{sharedKey.DbName}_version",
-				DbType = DatabaseColumnType.ShortInteger
+				DbType = TfDatabaseColumnType.ShortInteger
 			});
 		}
 
@@ -256,7 +256,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 				string providerTableName = $"dp{provider.Index}";
 
-				DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
 				dbBuilder.WithTableBuilder(providerTableName).WithColumns(columns => columns.Remove(column.DbName));
 
@@ -283,13 +283,13 @@ TfDataProviderColumn column)
 		{
 			string providerTableName = $"dp{provider.Index}";
 
-			DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 			var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
 			var columnsBuilder = tableBuilder.WithColumnsBuilder();
 
 			switch (column.DbType)
 			{
-				case DatabaseColumnType.Boolean:
+				case TfDatabaseColumnType.Boolean:
 					{
 						columnsBuilder.AddBooleanColumn(column.DbName, c =>
 						{
@@ -309,7 +309,7 @@ TfDataProviderColumn column)
 
 					}
 					break;
-				case DatabaseColumnType.Text:
+				case TfDatabaseColumnType.Text:
 					{
 						columnsBuilder.AddTextColumn(column.DbName, c =>
 						{
@@ -326,7 +326,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.ShortText:
+				case TfDatabaseColumnType.ShortText:
 					{
 						columnsBuilder.AddShortTextColumn(column.DbName, c =>
 						{
@@ -343,7 +343,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.Guid:
+				case TfDatabaseColumnType.Guid:
 					{
 						columnsBuilder.AddGuidColumn(column.DbName, c =>
 						{
@@ -366,7 +366,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.Date:
+				case TfDatabaseColumnType.Date:
 					{
 						columnsBuilder.AddDateColumn(column.DbName, c =>
 						{
@@ -393,7 +393,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.DateTime:
+				case TfDatabaseColumnType.DateTime:
 					{
 						columnsBuilder.AddDateTimeColumn(column.DbName, c =>
 						{
@@ -419,7 +419,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.Number:
+				case TfDatabaseColumnType.Number:
 					{
 						columnsBuilder.AddNumberColumn(column.DbName, c =>
 						{
@@ -439,7 +439,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.ShortInteger:
+				case TfDatabaseColumnType.ShortInteger:
 					{
 						columnsBuilder.AddShortIntegerColumn(column.DbName, c =>
 						{
@@ -459,7 +459,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.Integer:
+				case TfDatabaseColumnType.Integer:
 					{
 						columnsBuilder.AddIntegerColumn(column.DbName, c =>
 						{
@@ -479,7 +479,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.LongInteger:
+				case TfDatabaseColumnType.LongInteger:
 					{
 						columnsBuilder.AddLongIntegerColumn(column.DbName, c =>
 						{
@@ -531,13 +531,13 @@ TfDataProviderColumn column)
 		{
 			string providerTableName = $"dp{provider.Index}";
 
-			DatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 			var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
 			var columnsBuilder = tableBuilder.WithColumnsBuilder();
 
 			switch (column.DbType)
 			{
-				case DatabaseColumnType.Boolean:
+				case TfDatabaseColumnType.Boolean:
 					{
 						columnsBuilder.WithBooleanColumn(column.DbName, c =>
 						{
@@ -568,7 +568,7 @@ TfDataProviderColumn column)
 
 					}
 					break;
-				case DatabaseColumnType.Text:
+				case TfDatabaseColumnType.Text:
 					{
 						columnsBuilder.WithTextColumn(column.DbName, c =>
 						{
@@ -600,7 +600,7 @@ TfDataProviderColumn column)
 
 					}
 					break;
-				case DatabaseColumnType.ShortText:
+				case TfDatabaseColumnType.ShortText:
 					{
 						columnsBuilder.WithShortTextColumn(column.DbName, c =>
 						{
@@ -631,7 +631,7 @@ TfDataProviderColumn column)
 
 					}
 					break;
-				case DatabaseColumnType.Guid:
+				case TfDatabaseColumnType.Guid:
 					{
 						columnsBuilder.WithGuidColumn(column.DbName, c =>
 						{
@@ -663,7 +663,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.Date:
+				case TfDatabaseColumnType.Date:
 					{
 						columnsBuilder.WithDateColumn(column.DbName, c =>
 						{
@@ -699,7 +699,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.DateTime:
+				case TfDatabaseColumnType.DateTime:
 					{
 						columnsBuilder.WithDateTimeColumn(column.DbName, c =>
 						{
@@ -734,7 +734,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.Number:
+				case TfDatabaseColumnType.Number:
 					{
 						columnsBuilder.WithNumberColumn(column.DbName, c =>
 						{
@@ -764,7 +764,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.ShortInteger:
+				case TfDatabaseColumnType.ShortInteger:
 					{
 						columnsBuilder.WithShortIntegerColumn(column.DbName, c =>
 						{
@@ -794,7 +794,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.Integer:
+				case TfDatabaseColumnType.Integer:
 					{
 						columnsBuilder.WithIntegerColumn(column.DbName, c =>
 						{
@@ -824,7 +824,7 @@ TfDataProviderColumn column)
 						}
 					}
 					break;
-				case DatabaseColumnType.LongInteger:
+				case TfDatabaseColumnType.LongInteger:
 					{
 						columnsBuilder.WithLongIntegerColumn(column.DbName, c =>
 						{
@@ -891,11 +891,11 @@ TfDataProviderColumn column)
 	internal class TfDataProviderColumnValidator
 	: AbstractValidator<TfDataProviderColumn>
 	{
-		private readonly IDboManager _dboManager;
+		private readonly ITfDboManager _dboManager;
 		private readonly ITfDataProviderManager _providerManager;
 
 		public TfDataProviderColumnValidator(
-			IDboManager dboManager,
+			ITfDboManager dboManager,
 			ITfDataProviderManager providerManager)
 		{
 			_dboManager = dboManager;
@@ -1061,7 +1061,7 @@ TfDataProviderColumn column)
 						{
 							switch (column.DbType)
 							{
-								case DatabaseColumnType.Boolean:
+								case TfDatabaseColumnType.Boolean:
 									{
 										if (column.DefaultValue is not null)
 										{
@@ -1069,10 +1069,10 @@ TfDataProviderColumn column)
 										}
 									}
 									break;
-								case DatabaseColumnType.Text:
-								case DatabaseColumnType.ShortText:
+								case TfDatabaseColumnType.Text:
+								case TfDatabaseColumnType.ShortText:
 									break;
-								case DatabaseColumnType.Guid:
+								case TfDatabaseColumnType.Guid:
 									{
 										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
 										{
@@ -1080,7 +1080,7 @@ TfDataProviderColumn column)
 										}
 									}
 									break;
-								case DatabaseColumnType.Date:
+								case TfDatabaseColumnType.Date:
 									{
 										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
 										{
@@ -1088,7 +1088,7 @@ TfDataProviderColumn column)
 										}
 									}
 									break;
-								case DatabaseColumnType.DateTime:
+								case TfDatabaseColumnType.DateTime:
 									{
 										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
 										{
@@ -1096,7 +1096,7 @@ TfDataProviderColumn column)
 										}
 									}
 									break;
-								case DatabaseColumnType.Number:
+								case TfDatabaseColumnType.Number:
 									{
 										if (column.DefaultValue is not null)
 										{
@@ -1104,7 +1104,7 @@ TfDataProviderColumn column)
 										}
 									}
 									break;
-								case DatabaseColumnType.ShortInteger:
+								case TfDatabaseColumnType.ShortInteger:
 									{
 										if (column.DefaultValue is not null)
 										{
@@ -1113,7 +1113,7 @@ TfDataProviderColumn column)
 
 									}
 									break;
-								case DatabaseColumnType.Integer:
+								case TfDatabaseColumnType.Integer:
 									{
 										if (column.DefaultValue is not null)
 										{
@@ -1122,7 +1122,7 @@ TfDataProviderColumn column)
 
 									}
 									break;
-								case DatabaseColumnType.LongInteger:
+								case TfDatabaseColumnType.LongInteger:
 									{
 										if (column.DefaultValue is not null)
 										{

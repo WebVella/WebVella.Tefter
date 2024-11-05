@@ -25,9 +25,9 @@ public class FailedModeHost
 		StringBuilder sb = new StringBuilder();
 		sb.AppendLine("TEFTER FAILED TO START NORMAL");
 
-		if (ex.InnerException is DatabaseUpdateException)
+		if (ex.InnerException is TfDatabaseUpdateException)
 		{
-			var dbUpdateException = ex.InnerException as DatabaseUpdateException;
+			var dbUpdateException = ex.InnerException as TfDatabaseUpdateException;
 			sb.AppendLine("========== MIGRATION DATABASE UPDATE FAILED ============");
 
 			if(dbUpdateException.Result.Log.Any(x=>x.Success))

@@ -8,7 +8,7 @@ public partial class IdentityManager : IIdentityManager
 {
 	internal class RoleValidator : AbstractValidator<Role>
 	{
-		public RoleValidator(IDboManager dboManager, IIdentityManager identityManager)
+		public RoleValidator(ITfDboManager dboManager, IIdentityManager identityManager)
 		{
 			RuleSet("general", () =>
 			{

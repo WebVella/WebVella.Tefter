@@ -6,95 +6,95 @@ public record TucDatabaseColumnTypeInfo
 	public bool CanBeProviderDataType { get; init; }
 	public bool SupportAutoDefaultValue { get; init; }
 	public TucDatabaseColumnTypeInfo() { }
-	public TucDatabaseColumnTypeInfo(DatabaseColumnType model)
+	public TucDatabaseColumnTypeInfo(TfDatabaseColumnType model)
 	{
-		TypeValue = model.ConvertSafeToEnum<DatabaseColumnType,TucDatabaseColumnType>();
+		TypeValue = model.ConvertSafeToEnum<TfDatabaseColumnType,TucDatabaseColumnType>();
 		switch (model)
 		{
-			case DatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				{
 					Name = "SHORT INTEGER (16bit)";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = false;
 				}
 				break;
-			case DatabaseColumnType.Integer:
+			case TfDatabaseColumnType.Integer:
 				{
 					Name = "INTEGER (32bit)";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = false;
 				}
 				break;
-			case DatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				{
 					Name = "LONG INTEGER (64bit)";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = false;
 				}
 				break;
-			case DatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				{
 					Name = "DECIMAL";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = false;
 				}
 				break;
-			case DatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				{
 					Name = "BOOLEAN";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = false;
 				}
 				break;
-			case DatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				{
 					Name = "DATE";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = true;
 				}
 				break;
-			case DatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				{
 					Name = "DATE AND TIME";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = true;
 				}
 				break;
-			case DatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.ShortText:
 				{
 					Name = "SHORT TEXT";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = false;
 				}
 				break;
-			case DatabaseColumnType.Text:
+			case TfDatabaseColumnType.Text:
 				{
 					Name = "TEXT";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = false;
 				}
 				break;
-			case DatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				{
 					Name = "GUID";
 					CanBeProviderDataType = true;
 					SupportAutoDefaultValue = true;
 				}
 				break;
-			case DatabaseColumnType.AutoIncrement:
+			case TfDatabaseColumnType.AutoIncrement:
 				throw new Exception($"'{model}' should not be available for use cases");
 			default:
 				throw new Exception($"DatabaseColumnType: '{model}' not supported by use case");
 		}
 	}
 	public TucDatabaseColumnTypeInfo(DatabaseColumnTypeInfo model){
-		TypeValue = model.Type.ConvertSafeToEnum<DatabaseColumnType,TucDatabaseColumnType>();
+		TypeValue = model.Type.ConvertSafeToEnum<TfDatabaseColumnType,TucDatabaseColumnType>();
 		Name = model.Name;
 		CanBeProviderDataType = model.CanBeProviderDataType;
 		SupportAutoDefaultValue = model.SupportAutoDefaultValue;
 	}
-	public DatabaseColumnType ToModel()
+	public TfDatabaseColumnType ToModel()
 	{
-		return TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,DatabaseColumnType>();
+		return TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,TfDatabaseColumnType>();
 	}
 }

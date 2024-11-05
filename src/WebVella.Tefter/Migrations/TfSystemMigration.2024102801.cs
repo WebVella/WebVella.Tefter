@@ -3,7 +3,7 @@
 [TfSystemMigration("2024.10.28.1")]
 internal class TefterSystemMigration2024102801 : TfSystemMigration
 {
-	public override void MigrateStructure(DatabaseBuilder dbBuilder)
+	public override void MigrateStructure(TfDatabaseBuilder dbBuilder)
 	{
 		#region  TABLE: space_node
 

@@ -3,7 +3,7 @@
 [TfSystemMigration("2024.7.10.1")]
 internal class TefterSystemMigration2024071001 : TfSystemMigration
 {
-	public override void MigrateStructure(DatabaseBuilder dbBuilder)
+	public override void MigrateStructure(TfDatabaseBuilder dbBuilder)
 	{
 		#region  TABLE: data_provider_synchronize_task
 

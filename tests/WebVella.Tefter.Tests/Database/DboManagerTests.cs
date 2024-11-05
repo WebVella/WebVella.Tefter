@@ -7,10 +7,10 @@ public partial class DboManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDboManager dboManager = ServiceProvider.GetRequiredService<ITfDboManager>();
 
-			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+			using (TfDatabaseTransactionScope scope = dbService.CreateTransactionScope())
 			{
 				CreateTestTableInternal();
 
@@ -47,10 +47,10 @@ public partial class DboManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDboManager dboManager = ServiceProvider.GetRequiredService<ITfDboManager>();
 
-			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+			using (TfDatabaseTransactionScope scope = dbService.CreateTransactionScope())
 			{
 				CreateTestTableInternal();
 
@@ -80,10 +80,10 @@ public partial class DboManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDboManager dboManager = ServiceProvider.GetRequiredService<ITfDboManager>();
 
-			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+			using (TfDatabaseTransactionScope scope = dbService.CreateTransactionScope())
 			{
 				CreateTestTableInternal();
 				var original = new LongNumberTestModel
@@ -112,10 +112,10 @@ public partial class DboManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDboManager dboManager = ServiceProvider.GetRequiredService<ITfDboManager>();
 
-			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+			using (TfDatabaseTransactionScope scope = dbService.CreateTransactionScope())
 
 			{
 				CreateTestTableInternal();
@@ -146,10 +146,10 @@ public partial class DboManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDboManager dboManager = ServiceProvider.GetRequiredService<ITfDboManager>();
 
-			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+			using (TfDatabaseTransactionScope scope = dbService.CreateTransactionScope())
 
 			{
 				CreateTestTableInternal();
@@ -190,10 +190,10 @@ public partial class DboManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDboManager dboManager = ServiceProvider.GetRequiredService<ITfDboManager>();
 
-			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+			using (TfDatabaseTransactionScope scope = dbService.CreateTransactionScope())
 
 			{
 				CreateTestTableInternal();
@@ -226,10 +226,10 @@ public partial class DboManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
-			IDboManager dboManager = ServiceProvider.GetRequiredService<IDboManager>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDboManager dboManager = ServiceProvider.GetRequiredService<ITfDboManager>();
 
-			using (DatabaseTransactionScope scope = dbService.CreateTransactionScope())
+			using (TfDatabaseTransactionScope scope = dbService.CreateTransactionScope())
 			{
 				CreateTestTableInternal();
 

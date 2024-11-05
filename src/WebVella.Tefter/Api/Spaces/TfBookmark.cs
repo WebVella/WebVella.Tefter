@@ -1,54 +1,54 @@
 ﻿namespace WebVella.Tefter;
 
 [DboCacheModel]
-[DboModel("bookmark")]
+[TfDboModel("bookmark")]
 public class TfBookmark
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("name")]
+	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[DboModelProperty("description")]
+	[TfDboModelProperty("description")]
 	public string Description { get; set; }
 
-	[DboModelProperty("url")]
+	[TfDboModelProperty("url")]
 	public string Url { get; set; }
 
-	[DboModelProperty("created_on")]
-	[DboTypeConverter(typeof(DateTimePropertyConverter))]
+	[TfDboModelProperty("created_on")]
+	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	public DateTime CreatedOn { get; set; }
 
-	[DboModelProperty("user_id")]
+	[TfDboModelProperty("user_id")]
 	public Guid UserId { get; set; }
 
-	[DboModelProperty("space_view_id")]
+	[TfDboModelProperty("space_view_id")]
 	public Guid SpaceViewId { get; set; }
 
 	public List<TfTag> Tags { get; set; } = new();
 }
 
 [DboCacheModel]
-[DboModel("tag")]
+[TfDboModel("tag")]
 public class TfTag
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("label")]
+	[TfDboModelProperty("label")]
 	public string Label { get; set; }
 
 }
 
 [DboCacheModel]
-[DboModel("bookmark_tags")]
+[TfDboModel("bookmark_tags")]
 internal class TfBookmarkTag
 {
-	[DboModelProperty("bookmark_id")]
+	[TfDboModelProperty("bookmark_id")]
 	public Guid BookmarkId { get; set; }
 
-	[DboModelProperty("tag_id")]
+	[TfDboModelProperty("tag_id")]
 	public Guid TagId { get; set; }
 
 }

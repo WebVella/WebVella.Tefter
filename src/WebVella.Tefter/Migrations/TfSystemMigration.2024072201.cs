@@ -3,7 +3,7 @@
 [TfSystemMigration("2024.7.22.1")]
 internal class TefterSystemMigration2024072201 : TfSystemMigration
 {
-	public override void MigrateStructure(DatabaseBuilder dbBuilder)
+	public override void MigrateStructure(TfDatabaseBuilder dbBuilder)
 	{
 		#region  TABLE: shared_column
 

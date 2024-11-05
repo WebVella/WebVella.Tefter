@@ -10,24 +10,24 @@ public class TfSpace
 }
 
 [DboCacheModel]
-[DboModel("space")]
+[TfDboModel("space")]
 internal class TfSpaceDbo
 {
-	[DboModelProperty("id")]
+	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[DboModelProperty("name")]
+	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[DboModelProperty("position")]
+	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
-	[DboModelProperty("is_private")]
+	[TfDboModelProperty("is_private")]
 	public bool IsPrivate { get; set; }
 
-	[DboModelProperty("icon")]
+	[TfDboModelProperty("icon")]
 	public string Icon { get; set; }
 
-	[DboModelProperty("color")]
+	[TfDboModelProperty("color")]
 	public short Color { get; set; }
 }

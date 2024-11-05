@@ -16,7 +16,7 @@ public record TucDataProviderSystemColumn
 		return new TfDataProviderSystemColumn
 		{
 			DbName = DbName,
-			DbType = DbType.TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,DatabaseColumnType>(),
+			DbType = DbType.TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,TfDatabaseColumnType>(),
 		};
 	}
 
