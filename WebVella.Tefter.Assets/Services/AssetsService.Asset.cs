@@ -586,18 +586,34 @@ ORDER BY aa.created_on DESC;";
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			var SQL = "DELETE FROM assets_asset WHERE id = @id";
-
-			var idPar = CreateParameter("id", assetId, DbType.Guid);
-
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
-
-			if (dbResult != 1)
+			using (var scope = _dbService.CreateTransactionScope())
 			{
-				throw new Exception("Failed to update row in database for asset object");
-			}
 
-			return Result.Ok();
+				var SQL = "DELETE FROM assets_asset WHERE id = @id";
+
+				var idPar = CreateParameter("id", assetId, DbType.Guid);
+
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
+
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to update row in database for asset object");
+				}
+
+				if (existingAsset.Type == AssetType.File)
+				{
+					FileAssetContent content = (FileAssetContent)existingAsset.Content;
+					var result = _fileManager.DeleteFile(content.FilePath);
+					if(!result.IsSuccess)
+					{
+						throw new Exception("Failed to delete file from tefter FS");
+					}
+				}
+
+				scope.Complete();
+
+				return Result.Ok();
+			}
 		}
 		catch (Exception ex)
 		{
