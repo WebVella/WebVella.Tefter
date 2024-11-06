@@ -1,9 +1,9 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<div style="display:flex;justify-content:space-between;align-items:center;">
-	<FluentLabel Typo="Typography.PaneHeader" Style="margin-bottom:1rem">@LOC("Synchronization tasks")</FluentLabel>
-	<FluentButton Appearance="@Appearance.Outline" OnClick="_synchronizeNow">@LOC("Synchronize now")</FluentButton>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Synchronization tasks")</FluentLabel>
+	<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSync").WithColor(Color.Accent)" OnClick="_synchronizeNow">@LOC("Synchronize now")</FluentButton>
 </div>
 
 <div class="tf-grid-wrapper">

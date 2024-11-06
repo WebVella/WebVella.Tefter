@@ -1,12 +1,12 @@
 ﻿namespace WebVella.Tefter.Assets.Components;
 
-[LocalizationResource("WebVella.Tefter.Assets.Components.FolderAssetsPanel.FolderAssetsPanel", "WebVella.Tefter.Assets")]
-public partial class FolderAssetsPanel : TfFormBaseComponent, IDialogContentComponent<FolderAssetsPanelContext>
+[LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderPanel.AssetsFolderPanel", "WebVella.Tefter.Assets")]
+public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComponent<AssetsFolderPanelContext>
 {
 	[Inject] public IState<TfAppState> TfAppState { get; set; }
 	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }
 	[Inject] public IAssetsService AssetsService { get; set; }
-	[Parameter] public FolderAssetsPanelContext Content { get; set; }
+	[Parameter] public AssetsFolderPanelContext Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private string _error = string.Empty;
@@ -83,11 +83,28 @@ public partial class FolderAssetsPanel : TfFormBaseComponent, IDialogContentComp
 	{
 		progressPercent = e.ProgressPercent;
 	}
-	
+
+	private async Task _addLink()
+	{
+		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
+		new Asset(),
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var record = (Asset)result.Data;
+			
+		}
+	}
 
 	private async Task _addAsset()
 	{
-		if(progressPercent != 0) return;
+		if (progressPercent != 0) return;
 		try
 		{
 
@@ -170,7 +187,7 @@ public partial class FolderAssetsPanel : TfFormBaseComponent, IDialogContentComp
 		try
 		{
 			var assetContent = new AssetContentBase();
-			var result = AssetsService.UpdateAssetContent(asset.Id, assetContent,TfAppState.Value.CurrentUser.Id);
+			var result = AssetsService.UpdateAssetContent(asset.Id, assetContent, TfAppState.Value.CurrentUser.Id);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
@@ -207,7 +224,7 @@ public partial class FolderAssetsPanel : TfFormBaseComponent, IDialogContentComp
 	}
 }
 
-public record FolderAssetsPanelContext
+public record AssetsFolderPanelContext
 {
 	public Guid? FolderId { get; set; }
 	public TfDataTable DataTable { get; set; } = null;

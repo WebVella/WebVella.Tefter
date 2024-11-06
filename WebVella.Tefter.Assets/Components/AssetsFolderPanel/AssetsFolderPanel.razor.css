@@ -1,0 +1,80 @@
+﻿/*Layout*/
+
+::deep .asset-panel {
+	height: 100vh;
+	width: 100%;
+	display: flex;
+	flex-flow: column;
+}
+
+::deep .asset-panel__header {
+	flex: 0 0 50px;
+	border-bottom: 1px solid var(--neutral-stroke-rest);
+	padding: 0 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+    font-size: 1.15rem;
+}
+
+::deep .asset-panel__header__content {
+	display: flex;
+	align-items: center;
+}
+
+	::deep .asset-panel__header__content svg {
+		margin-right: 10px;
+	}
+
+::deep .asset-panel__subheader {
+	flex: 0 0 50px;
+	border-bottom: 1px solid var(--neutral-stroke-rest);
+	padding: 0 10px;
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+
+::deep .asset-panel__subheader__left {
+	flex: 0 0 50%;
+	padding-right: 10px;
+}
+
+::deep .asset-panel__subheader__right {
+	flex: 0 0 50%;
+	padding-left: 10px;
+}
+
+::deep .asset-panel__subheader__bottom {
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	right: 0;
+}
+
+	::deep .asset-panel__subheader__bottom .tf-progress {
+		width: 100%;
+	}
+
+	::deep .asset-panel__subheader__bottom fluent-progress::part(progress) {
+		height: 0;
+	}
+
+	::deep .asset-panel__subheader__bottom fluent-progress::part(determinate) {
+		height: 5px;
+	}
+
+::deep .asset-panel__body {
+	flex: 1 1 auto;
+	position: relative;
+	overflow: hidden;
+	padding: 10px;
+}
+
+::deep .asset-panel__footer {
+	flex: 0 0 auto;
+	padding: 5px 10px;
+	border-top: 1px solid var(--neutral-stroke-rest);
+	display: flex;
+	flex-flow: column;
+}

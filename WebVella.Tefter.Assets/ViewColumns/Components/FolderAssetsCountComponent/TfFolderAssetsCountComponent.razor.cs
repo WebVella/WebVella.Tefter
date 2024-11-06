@@ -145,14 +145,14 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	#region << Private logic >>
 	private async Task _onClick()
 	{
-		var panelContext = new FolderAssetsPanelContext
+		var panelContext = new AssetsFolderPanelContext
 		{
 			FolderId = componentOptions.FolderId,
 			DataTable = Context.DataTable,
 			RowIndex = Context.RowIndex
 		};
 
-		_dialog = await DialogService.ShowPanelAsync<FolderAssetsPanel>(
+		_dialog = await DialogService.ShowPanelAsync<AssetsFolderPanel>(
 		panelContext,
 		new DialogParameters()
 		{
