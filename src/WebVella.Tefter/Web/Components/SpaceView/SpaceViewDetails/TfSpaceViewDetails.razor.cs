@@ -203,7 +203,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		
 		var sb = new StringBuilder();
 		sb.AppendLine("<style>");
-		sb.AppendLine(":root .content-toolbar {");
+		sb.AppendLine(":root .tf-layout__body__main {");
 		sb.AppendLine($"--tf-grid-row-selected: {TfAppState.Value.SpaceGridSelectedColor};");
 		sb.AppendLine($"--space-color: {TfAppState.Value.SpaceColorString};");
 		sb.AppendLine($"--accent-base-color: {TfAppState.Value.SpaceColorString};");
