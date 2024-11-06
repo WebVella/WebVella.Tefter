@@ -113,7 +113,29 @@ public partial class AssetsTests : BaseTest
 
 				assets = assetService.GetAssets(folder.Id, relSKId).Value;
 				assets.Count.Should().Be(0);
+
+
+				//create file asset
+				CreateFileAssetModel fileAssetModel = new CreateFileAssetModel
+				{
+					FolderId = folder.Id,
+					CreatedBy = user.Id,
+					RowIds = rowIds.ToList(),
+					DataProviderId = provider.Id,
+					LocalPath = ToApplicationPath("appsettings.json")
+				};
+
+				var fileAssetResult = assetService.CreateFileAsset(fileAssetModel);
+				fileAssetResult.IsSuccess.Should().BeTrue();
 			}
 		}
+	}
+
+	public static string ToApplicationPath(string fileName)
+	{
+		var exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+		Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+		var appRoot = appPathMatcher.Match(exePath).Value;
+		return Path.Combine(appRoot, fileName);
 	}
 }

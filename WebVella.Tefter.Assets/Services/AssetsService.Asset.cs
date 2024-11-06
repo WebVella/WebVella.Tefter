@@ -139,20 +139,20 @@ ORDER BY aa.created_on DESC;";
 
 			Guid id = Guid.NewGuid();
 
-			//AssetValidator validator = new AssetValidator(this);
+			AssetValidator validator = new AssetValidator(this);
 
-			//var validationResult = validator.ValidateCreateFileAsset(asset, id);
+			var validationResult = validator.ValidateCreateFileAsset(fileAsset, id);
 
-			//if (!validationResult.IsValid)
-			//	return validationResult.ToResult();
-					
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
+
 
 			using (var scope = _dbService.CreateTransactionScope())
 			{
-				string filePath = string.Empty;
-				//https://netorg837044.sharepoint.com/:x:/s/TambelliniTeam/EfYX0kCroqFLmYnD62Pfop0Bz2Ixd95wx-hJNJjaO48oPg?e=pchoU6
-				//tefter://fs/assets/folderid/filename
-				 //TODO rumen implement file create with file manager
+				
+				string filename = Path.GetFileName(fileAsset.LocalPath);
+				
+				string filePath = $"tefter://fs/{TfAssetsConstants.ASSETS_APP_ID}/{fileAsset.FolderId}/{filename}";
 
 				DateTime now = DateTime.Now;
 
@@ -249,6 +249,24 @@ ORDER BY aa.created_on DESC;";
 							throw new Exception("Failed to insert new row in database for related shared key object");
 						}
 					}
+				}
+
+				//create file here , after we completed with database operations
+				var fileBytesResult = _fileManager.GetBytesFromLocalFileSystemPath(fileAsset.LocalPath);
+
+				if (!fileBytesResult.IsSuccess)
+				{
+					throw new Exception("Unable to read file content for specified local path");
+				}
+
+				var fileResult = _fileManager.CreateFile(filePath,
+					fileBytesResult.Value,
+					overwrite: true,
+					fileAsset.CreatedBy);
+
+				if (!fileResult.IsSuccess)
+				{
+					throw new Exception("Failed to create file in tefter fs.");
 				}
 
 				scope.Complete();
@@ -674,6 +692,31 @@ ORDER BY aa.created_on DESC;";
 		public AssetValidator(IAssetsService service)
 		{
 			_service = service;
+		}
+
+		public ValidationResult ValidateCreateFileAsset(
+			CreateFileAssetModel asset,
+			Guid id)
+		{
+			if (asset == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The asset object is null.") });
+			}
+
+			if(string.IsNullOrWhiteSpace(asset.LocalPath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"LocalPath is not specified.") });
+			}
+
+			if( !File.Exists(asset.LocalPath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"File is not found for specified local path.") });
+			}
+
+			return new ValidationResult();
 		}
 
 		public ValidationResult ValidateCreate(
