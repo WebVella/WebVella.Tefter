@@ -76,7 +76,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		{
 			_upload = Files[0];
 		}
-		await _addAsset();
+		await _addAsset(null);
 	}
 
 	private void _onProgress(FluentInputFileEventArgs e)
@@ -102,7 +102,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		}
 	}
 
-	private async Task _addAsset()
+	private async Task _addAsset(Asset asset)
 	{
 		if (progressPercent != 0) return;
 		try

@@ -31,13 +31,13 @@
             <DataAnnotationsValidator/>
             <FluentGrid>
                 <FluentGridItem xs="6">
-                    <FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+                    <FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
                                      Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
                     <FluentValidationMessage For="@(() => _form.Name)"/>
                 </FluentGridItem>
                 <FluentGridItem xs="6">
                     <FluentInputLabel Label="@LOC("Accessibility")"/>
-                    <FluentCheckbox @bind-Value=_form.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;"/>
+                    <FluentCheckbox @bind-Value=@_form.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;"/>
                     <FluentValidationMessage For="@(() => _form.IsPrivate)"/>
                 </FluentGridItem>
             </FluentGrid>

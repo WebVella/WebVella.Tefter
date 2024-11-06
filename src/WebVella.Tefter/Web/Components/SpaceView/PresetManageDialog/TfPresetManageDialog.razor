@@ -22,7 +22,7 @@
 					<FluentGridItem xs="6">
 						<FluentTextField Required="true"
 										 TextFieldType="@TextFieldType.Text"
-										 @bind-Value=_form.Name AutoComplete="off"
+										 @bind-Value=@_form.Name AutoComplete="off"
 										 Label="@LOC("Name")" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.Name)" />
 					</FluentGridItem>

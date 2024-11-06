@@ -68,7 +68,7 @@ else if (Context.Mode == TfComponentMode.Create)
 					<TfValidationMessage Field="@(nameof(_options.DataProviderId))" Errors="ValidationErrors" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_options.NewSpaceDataName
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_options.NewSpaceDataName
 									 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="off" />
 					<TfValidationMessage Field="@(nameof(_options.NewSpaceDataName))" Errors="ValidationErrors" />
 				</FluentGridItem>
