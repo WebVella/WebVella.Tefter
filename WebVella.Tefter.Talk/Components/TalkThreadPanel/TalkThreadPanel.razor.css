@@ -121,7 +121,6 @@
 /*Channel label*/
 ::deep .talk-channel-label {
 	font-size: 1.15rem;
-	color: var(--space-color);
 }
 
 /*Message separator*/

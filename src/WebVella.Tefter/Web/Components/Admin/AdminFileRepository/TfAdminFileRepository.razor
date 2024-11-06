@@ -19,7 +19,7 @@
 				</div>
 			}
 			<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0)"
-						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
+						  Appearance="Appearance.Outline" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">@LOC("Upload file")</FluentButton>
 		</FluentStack>
 		<FluentInputFile @ref="@fileUploader"
 						 DragDropZoneVisible="false"
@@ -63,12 +63,12 @@ else
 						<td class="tf-grid-td">
 							<div>
 								<FluentStack Wrap="false">
-									<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+									<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon.WithColor(Color.Accent)"
 												  Title="@LOC("Change file content")" OnClick="@(()=> _editFile(context))" />
 									<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete column")"
 												  OnClick="@(() => _deleteFile(context))" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"/>
 									<FluentAnchor Appearance="@Appearance.Outline" Target="_blank"
-												  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
+												  Href="@context.DownloadPath" IconStart="@TfConstants.GetIcon("ArrowDownload").WithColor(Color.Accent)" />
 								</FluentStack>
 							</div>
 						</td>

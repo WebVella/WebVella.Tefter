@@ -1,0 +1,86 @@
+﻿namespace WebVella.Tefter.Assets.Components;
+[LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderPanelLinkModal.AssetsFolderPanelLinkModal", "WebVella.Tefter.Assets")]
+public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogContentComponent<Asset>
+{
+	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }
+	[Inject] public IAssetsService AssetsService { get; set; }
+	[Parameter] public Asset Content { get; set; }
+	[CascadingParameter] public FluentDialog Dialog { get; set; }
+
+	private string _error = string.Empty;
+	private bool _isSubmitting = false;
+	private string _title = "";
+	private string _btnText = "";
+	private Icon _iconBtn;
+	private bool _isCreate = false;
+	private Asset _form = new();
+	private List<string> _sharedColumnsOptions = new();
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		if (Content is null) throw new Exception("Content is null");
+		if (Content.Id == Guid.Empty) _isCreate = true;
+		_title = _isCreate ? LOC("Create channel") : LOC("Manage channel");
+		_btnText = _isCreate ? LOC("Create") : LOC("Save");
+		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		//if (_isCreate)
+		//{
+		//	_form = _form with { Id = Guid.NewGuid() };
+		//}
+		//else
+		//{
+
+		//	_form = Content with { Id = Content.Id };
+		//}
+		base.InitForm(_form);
+		if(TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY))
+			_sharedColumnsOptions = ((List<TfSharedColumn>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY]).Select(x=> x.DbName).ToList();
+	}
+	private async Task _save()
+	{
+		if (_isSubmitting) return;
+		try
+		{
+			//Workaround to wait for the form to be bound 
+			//on enter click without blur
+			await Task.Delay(10);
+
+			MessageStore.Clear();
+
+			if (!EditContext.Validate()) return;
+
+			_isSubmitting = true;
+			await InvokeAsync(StateHasChanged);
+
+			var result = new Result<Folder>();
+			//if (_isCreate)
+			//{
+			//	result = AssetsService.CreateFolder(_form);
+			//}
+			//else
+			//{
+			//	result = AssetsService.UpdateFolder(_form);
+			//}
+
+			ProcessFormSubmitResponse(result);
+			if (result.IsSuccess)
+			{
+				await Dialog.CloseAsync(result.Value);
+			}
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_isSubmitting = false;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+	private async Task _cancel()
+	{
+		await Dialog.CancelAsync();
+	}
+
+}
