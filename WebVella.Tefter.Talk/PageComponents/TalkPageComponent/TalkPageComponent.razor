@@ -18,7 +18,8 @@ else if (Context.Mode == TfComponentMode.Create)
 						  Items="@_channels" Style="width:100%"
 						  OptionValue="@((p)=> p.Id.ToString())"
 						  OptionText="@(p => p.Name)" Label="@LOC("Select view")"
-						  Class="@GetValidationCssClass(nameof(_options.ChannelId))"></FluentSelect>
+						  Class="@GetValidationCssClass(nameof(_options.ChannelId))"
+						  Value="@(_optionsChannel?.Id.ToString())" />
 			<TfValidationMessage Field="@(nameof(_options.ChannelId))" Errors="ValidationErrors" />
 		</FluentGridItem>
 	</FluentGrid>

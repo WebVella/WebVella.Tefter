@@ -23,7 +23,8 @@
 					<FluentSelect @bind-SelectedOption="@_selectedColumn"
 								  TOption="string" Required="false"
 								  Items="@AllColumnOptions" Style="width:140px"
-								  Placeholder="@LOC("select...")"></FluentSelect>
+								  Placeholder="@LOC("select...")"
+								  Value="@_selectedColumn" />
 					<FluentButton Disabled="_submitting" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 				}
 				<FluentButton Disabled="_submitting" OnClick="@(() => AddFilter(typeof(TucFilterAnd),null,null))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>

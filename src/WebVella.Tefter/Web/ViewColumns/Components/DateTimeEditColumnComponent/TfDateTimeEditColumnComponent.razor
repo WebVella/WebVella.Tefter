@@ -40,7 +40,8 @@ else if (Context.Mode == TucComponentMode.Options)
 						  OptionText="@((x)=>x.ToString())"
 						  TOption="CalendarViews"
 						  SelectedOption="@componentOptions.CalendarViewsSelection"
-						  SelectedOptionChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.CalendarViewsSelection),x)) />
+						  SelectedOptionChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.CalendarViewsSelection),x))
+						  Value="@(((int)componentOptions?.CalendarViewsSelection).ToString())" />
 		</FluentGridItem>
 	</FluentGrid>
 }
