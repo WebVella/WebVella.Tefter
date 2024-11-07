@@ -1,19 +1,19 @@
 ﻿namespace WebVella.Tefter.Migrations;
 
-[TfSystemMigration("2024.10.28.1")]
-internal class TefterSystemMigration2024102801 : TfSystemMigration
+[TfSystemMigration("2024.11.7.1")]
+internal class TefterSystemMigration2024110701 : TfSystemMigration
 {
 	public override void MigrateStructure(TfDatabaseBuilder dbBuilder)
 	{
-		#region  TABLE: files
+		#region  TABLE: repository_file
 
 		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "files")
+			.NewTableBuilder(Guid.NewGuid(), "repository_file")
 			.WithColumns(columns =>
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddTextColumn("filepath", c => { c.NotNullable(); })
+					.AddTextColumn("filename", c => { c.NotNullable(); })
 					.AddGuidColumn("created_by", c => { c.Nullable(); })
 					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
 					.AddGuidColumn("last_modified_by", c => { c.Nullable(); })
@@ -23,13 +23,13 @@ internal class TefterSystemMigration2024102801 : TfSystemMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_files_id", c => { c.WithColumns("id"); });
+					.AddPrimaryKeyConstraint("pk_repository_files_id", c => { c.WithColumns("id"); });
 			})
 			.WithIndexes(indexes =>
 			{
 				indexes
-					.AddBTreeIndex("ix_files_id", i => { i.WithColumns("id"); })
-					.AddHashIndex("ix_files_filepath", i => { i.WithColumn("filepath"); });
+					.AddBTreeIndex("ix_repository_file_id", i => { i.WithColumns("id"); })
+					.AddHashIndex("ix_repository_file_filename", i => { i.WithColumn("filename"); });
 			});
 
 		#endregion
