@@ -199,7 +199,7 @@ internal class TfBlobManager : ITfBlobManager
 	{
 		try
 		{
-			if (!string.IsNullOrEmpty(localPath))
+			if (string.IsNullOrEmpty(localPath))
 			{
 				throw new Exception("Local path is not provided.");
 			}
@@ -338,7 +338,13 @@ internal class TfBlobManager : ITfBlobManager
 		string path = localPath;
 
 		if (string.IsNullOrEmpty(path))
+		{ 
 			path = Path.Combine(GetApplicationPath(), "BlobStorage");
+		}
+		else if (path == "WINDOWS-TEMP")
+		{
+			path = Path.Combine( System.IO.Path.GetTempPath() , Guid.NewGuid().ToString() );
+		}
 
 		return path;
 	}

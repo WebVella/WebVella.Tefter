@@ -38,4 +38,9 @@ public class TfRepositoryFile
 	}
 
 	public string DownloadPath { get { return $"/fs/repository/{Filename}"; } }
+
+	public override string ToString()
+	{
+		return Filename;
+	}
 }
