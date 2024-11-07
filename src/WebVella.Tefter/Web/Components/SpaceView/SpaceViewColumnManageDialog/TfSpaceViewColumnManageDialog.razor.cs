@@ -40,7 +40,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				Id = Guid.NewGuid(),
 				QueryName = TfConverters.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
-				ColumnType = defaultColumnType with { Id = defaultColumnType.Id},
+				ColumnType = defaultColumnType with { Id = defaultColumnType.Id },
 				ComponentType = defaultColumnType?.DefaultComponentType
 			};
 		}
@@ -243,7 +243,8 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 	}
 
-	private void _titleChanged(string title) { 
+	private void _titleChanged(string title)
+	{
 		_form.Title = title;
 	}
 }

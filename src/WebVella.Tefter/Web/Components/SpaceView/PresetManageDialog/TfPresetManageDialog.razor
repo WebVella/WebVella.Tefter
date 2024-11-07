@@ -22,7 +22,7 @@
 					<FluentGridItem xs="6">
 						<FluentTextField Required="true"
 										 TextFieldType="@TextFieldType.Text"
-										 @bind-Value=_form.Name AutoComplete="off"
+										 @bind-Value=@_form.Name AutoComplete="off"
 										 Label="@LOC("Name")" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.Name)" />
 					</FluentGridItem>
@@ -41,7 +41,8 @@
 										  TOption="TucSpaceViewPreset"
 										  Items="@Content.Parents" Style="width:100%"
 										  OptionValue="@((p)=> p.Id.ToString())"
-										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
+										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" 
+										  Value="@(_selectedParent?.Id.ToString())" />
 							<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.DeleteIcon" OnClick="@(_ => _selectedParent = null)"/>
 						</FluentStack>
 					</FluentGridItem>

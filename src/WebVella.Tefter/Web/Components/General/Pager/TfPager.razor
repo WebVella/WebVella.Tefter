@@ -12,7 +12,7 @@
 				<FluentIcon Value="@TfConstants.GetIcon("ChevronLeft")" Width="20px" />
 			</FluentButton>
 			<div class="pagination-pager">
-				<FluentNumberField TValue="int" Value="@_page" ValueChanged="_pageChanged" />
+				<FluentNumberField TValue="int" Value="@_page" ValueChanged="_pageChanged" AutoComplete="off" />
 			</div>
 			<FluentButton @onclick="_goNext" title="@LOC("Go to next page")">
 				<FluentIcon Value="@TfConstants.GetIcon("ChevronRight")" Width="20px" />
@@ -28,7 +28,7 @@
 			<FluentStack VerticalAlignment="@VerticalAlignment.Center">
 				<div class="paginator-nav-description">Items:</div>
 				<div class="pagination-pagesize">
-					<FluentNumberField TValue="int" Value="@_pageSize" ValueChanged="_pageSizeChanged" />
+					<FluentNumberField TValue="int" Value="@_pageSize" ValueChanged="_pageSizeChanged" AutoComplete="off"/>
 				</div>
 			</FluentStack>
 		}

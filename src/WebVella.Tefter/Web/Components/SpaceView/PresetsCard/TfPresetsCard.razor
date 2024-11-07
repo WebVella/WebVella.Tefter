@@ -14,13 +14,15 @@
 						  TOption="TfPresetsCardType" Required="true"
 						  Items="@(Enum.GetValues<TfPresetsCardType>())" Style="min-width:60px"
 						  OptionValue="@((p)=> ((int)p).ToString())"
-						  OptionText="@(x=> x.ToDescriptionString())" />
+						  OptionText="@(x=> x.ToDescriptionString())" 
+						  Value="@(((int)_selectedType).ToString())" />
 			<FluentSelect @bind-SelectedOption="@_selectedParent"
 						  Disabled="_submitting"
 						  TOption="TucSpaceViewPreset"
 						  Items="@_getParents()" Style="min-width:180px"
 						  OptionValue="@((p)=> p.Id.ToString())"
-						  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
+						  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" 
+						  Value="@(_selectedParent?.Id.ToString())" />
 			<FluentButton OnClick="_addPreset" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline"
 						  Disabled="@_submitting">@LOC("Add new")</FluentButton>
 		</FluentStack>

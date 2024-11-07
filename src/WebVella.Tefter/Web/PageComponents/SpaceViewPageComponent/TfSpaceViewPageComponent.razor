@@ -26,7 +26,8 @@ else if (Context.Mode == TfComponentMode.Create)
 						  Items="@(Enum.GetValues<TucSpaceViewSetType>())" Style="width:100%"
 						  OptionValue="@((p)=> ((int)p).ToString())"
 						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Select view")"
-						  Class="@GetValidationCssClass(nameof(_options.SetType))"></FluentSelect>
+						  Class="@GetValidationCssClass(nameof(_options.SetType))"
+						  Value="@(((int)_options.SetType).ToString())" />
 			<TfValidationMessage Field="@(nameof(_options.SetType))" Errors="ValidationErrors" />
 		</FluentGridItem>
 	</FluentGrid>
@@ -51,7 +52,8 @@ else if (Context.Mode == TfComponentMode.Create)
 							  TOption="TucSpaceViewDataSetType"
 							  Items="@(Enum.GetValues<TucSpaceViewDataSetType>())" Style="width:100%"
 							  OptionValue="@((p)=> ((int)p).ToString())"
-							  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"></FluentSelect>
+							  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"
+							  Value="@(((int)_options.DataSetType).ToString())" />
 				<TfValidationMessage Field="@(nameof(_options.DataSetType))" Errors="ValidationErrors" />
 			</FluentGridItem>
 		</FluentGrid>
@@ -64,11 +66,11 @@ else if (Context.Mode == TfComponentMode.Create)
 								  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
 								  Items="@TfAppState.Value.AllDataProviders" Style="width:100%"
 								  OptionValue="@(p => p.Id.ToString())"
-								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
+								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"/>
 					<TfValidationMessage Field="@(nameof(_options.DataProviderId))" Errors="ValidationErrors" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_options.NewSpaceDataName
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_options.NewSpaceDataName
 									 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="off" />
 					<TfValidationMessage Field="@(nameof(_options.NewSpaceDataName))" Errors="ValidationErrors" />
 				</FluentGridItem>
@@ -88,7 +90,8 @@ else if (Context.Mode == TfComponentMode.Create)
 									  TOption="TucSpaceData" Placeholder="@LOC("select...")"
 									  Items="@TfAppState.Value.SpaceDataList" Style="width:100%"
 									  OptionValue="@((p)=> p.Id.ToString())"
-									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"></FluentSelect>
+									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"
+									  Value="@(_optionsDataset?.Id.ToString())" />
 						<TfValidationMessage Field="@(nameof(_options.SpaceDataId))" Errors="ValidationErrors" />
 					}
 				</FluentGridItem>
@@ -166,7 +169,8 @@ else if (Context.Mode == TfComponentMode.Create)
 							  Items="@TfAppState.Value.SpaceViewList" Style="width:100%"
 							  OptionValue="@((p)=> p.Id.ToString())"
 							  OptionText="@(p => p.Name)" Label="@LOC("Existing views")"
-							  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" />
+							  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))"
+							  Value="@(_optionsExistingSpaceView?.Id.ToString())" />
 				<TfValidationMessage Field="@(nameof(_options.SpaceViewId))" Errors="ValidationErrors" />
 			</FluentGridItem>
 		</FluentGrid>

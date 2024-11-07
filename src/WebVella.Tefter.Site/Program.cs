@@ -30,11 +30,11 @@ try
 
 	var builder = WebApplication.CreateBuilder(args);
 	{
-		builder.Host.ConfigureLogging(logging =>
-        {
-            logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
-            logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
-        });
+		//builder.Host.ConfigureLogging(logging =>
+  //      {
+  //          logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
+  //          logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
+  //      });
 		//Enable Blazor Interactive Server
 		//NOTE: Currently tested and developed only in InteractiveServer mode
 		builder.Services.AddRazorComponents()

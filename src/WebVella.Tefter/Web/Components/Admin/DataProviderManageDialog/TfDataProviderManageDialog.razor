@@ -31,7 +31,7 @@
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text"
-									 @bind-Value=_form.Name AutoComplete="off"
+									 @bind-Value=@_form.Name AutoComplete="off"
 									 Label="@LOC("Name")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
@@ -40,7 +40,8 @@
 								  @bind-SelectedOption="@_form.ProviderType" TOption="TucDataProviderTypeInfo"
 								  Items="@TfAppState.Value.DataProviderTypes" Style="width:100%" Disabled="!_isCreate"
 								  OptionValue="@(p => p.Id.ToString())"
-								  OptionText="@(p => p.Name)" Label="@LOC("Type")"></FluentSelect>
+								  OptionText="@(p => p.Name)" Label="@LOC("Type")"
+								  Value="@_form.ProviderType?.Id.ToString()" />
 					<FluentValidationMessage For="@(() => _form.ProviderType)" />
 				</FluentGridItem>
 			</FluentGrid>

@@ -54,10 +54,18 @@ internal partial class AppStateUseCase
 
 	internal async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)
 	{
-		
+
 		if (oldAppState == null) oldAppState = new TfAppState();
 		if (oldAuxDataState == null) oldAuxDataState = new TfAuxDataState();
-		var appState = oldAppState with { Hash = oldAppState.Hash, Route = _navigationManager.GetRouteState(url), CurrentUser = currentUser};
+		var route = _navigationManager.GetRouteState(url);
+		if (route.Page is null) route = route with { Page = 1 };
+		if (route.PageSize is null)
+		{
+			if (currentUser?.Settings?.PageSize is not null)
+				route = route with { PageSize = currentUser.Settings.PageSize };
+		}
+		if(route.PageSize is null) route = route with { PageSize = TfConstants.PageSize };
+		var appState = oldAppState with { Hash = oldAppState.Hash, Route = route, CurrentUser = currentUser };
 		var auxDataState = oldAuxDataState with { Hash = oldAuxDataState.Hash };
 		(appState, auxDataState) = await InitAdminUsersAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitSpaceAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);

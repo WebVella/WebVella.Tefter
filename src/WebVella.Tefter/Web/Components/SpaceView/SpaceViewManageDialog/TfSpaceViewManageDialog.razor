@@ -30,7 +30,7 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
@@ -41,13 +41,13 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="int?" @bind-Value=_form.Settings.FreezeStartingNColumns
+					<FluentNumberField TValue="int?" @bind-Value=@_form.Settings.FreezeStartingNColumns
 									   Label="@LOC("Freeze Starting Columns")" Style="width:100%" />
 					<div class="tf-input-description">@LOC("how many columns from the start to freeze, not counting the checkbox column")</div>
 					<FluentValidationMessage For="@(() => _form.Settings.FreezeStartingNColumns)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="int?" @bind-Value=_form.Settings.FreezeFinalNColumns
+					<FluentNumberField TValue="int?" @bind-Value=@_form.Settings.FreezeFinalNColumns
 									   Label="@LOC("Freeze Final Columns")" Style="width:100%" />
 					<div class="tf-input-description">@LOC("how many columns from the end to freeze")</div>
 					<FluentValidationMessage For="@(() => _form.Settings.FreezeFinalNColumns)" />
@@ -75,7 +75,8 @@
 								  TOption="TucSpaceViewDataSetType"
 								  Items="@(Enum.GetValues<TucSpaceViewDataSetType>())" Style="width:100%"
 								  OptionValue="@((p)=> ((int)p).ToString())"
-								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"></FluentSelect>
+								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"
+								  Value="@(((int)_form.DataSetType).ToString())" />
 					<FluentValidationMessage For="@(() => _form.DataSetType)" />
 				</FluentGridItem>
 			</FluentGrid>
@@ -88,11 +89,12 @@
 									  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
 									  Items="@TfAppState.Value.AllDataProviders" Style="width:100%"
 									  OptionValue="@(p => p.Id.ToString())"
-									  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"></FluentSelect>
+									  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"
+									  Value="@(_selectedDataProvider?.Id.ToString())" />
 						<FluentValidationMessage For="@(() => _form.DataProviderId)" />
 					</FluentGridItem>
 					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.NewSpaceDataName
+						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.NewSpaceDataName
 										 Label="@LOC("Dataset name")" Style="width:100%" AutoComplete="off" />
 						<FluentValidationMessage For="@(() => _form.NewSpaceDataName)" />
 					</FluentGridItem>
@@ -112,7 +114,8 @@
 										  TOption="TucSpaceData" Placeholder="@LOC("select...")"
 										  Items="@TfAppState.Value.SpaceDataList" Style="width:100%"
 										  OptionValue="@((p)=> p.Id.ToString())"
-										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"></FluentSelect>
+										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"
+										  Value="@(_selectedDataset?.Id.ToString())" />
 							<FluentValidationMessage For="@(() => _form.SpaceDataId)" />
 						}
 					</FluentGridItem>

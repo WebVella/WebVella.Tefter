@@ -30,7 +30,7 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
@@ -38,7 +38,7 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.SharedKey
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.SharedKey
 									 Label="@LOC("Shared Key")" Style="width:100%" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.SharedKey)" />
 				</FluentGridItem>
@@ -47,7 +47,7 @@
 									Autocomplete="ComboboxAutocomplete.Both"
 									Items="_sharedColumnsOptions"
 									Height="@TfConstants.ComboPanelHeight"
-									@bind-Value=_form.CountSharedColumnName
+									@bind-Value=@_form.CountSharedColumnName
 									Label="@LOC("Shared column for count")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.CountSharedColumnName)" />
 				</FluentGridItem>

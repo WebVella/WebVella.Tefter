@@ -8,7 +8,7 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 	{
 		get
 		{
-			if (!String.IsNullOrWhiteSpace(TfAppState.Value.SpaceViewSearch)) return true;
+			if (!String.IsNullOrWhiteSpace(TfAppState.Value.Route.Search)) return true;
 			if (TfAppState.Value.SpaceViewFilters is not null && TfAppState.Value.SpaceViewFilters.Count > 0) return true;
 			if (TfAppState.Value.SpaceViewSorts is not null && TfAppState.Value.SpaceViewSorts.Count > 0) return true;
 			return false;

@@ -78,7 +78,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	private async Task _goFirstPage()
 	{
 		if (_isDataLoading) return;
-		if (TfAppState.Value.AdminDataProviderDataPage == 1) return;
+		if (TfAppState.Value.Route.Page == 1) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = 1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -87,9 +87,9 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	private async Task _goPreviousPage()
 	{
 		if (_isDataLoading) return;
-		var page = TfAppState.Value.AdminDataProviderDataPage - 1;
+		var page = TfAppState.Value.Route.Page - 1;
 		if (page < 1) page = 1;
-		if (TfAppState.Value.AdminDataProviderDataPage == page) return;
+		if (TfAppState.Value.Route.Page == page) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -102,9 +102,9 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		|| TfAppState.Value.AdminDataProviderData.Rows.Count == 0)
 			return;
 
-		var page = TfAppState.Value.AdminDataProviderDataPage + 1;
+		var page = TfAppState.Value.Route.Page + 1;
 		if (page < 1) page = 1;
-		if (TfAppState.Value.AdminDataProviderDataPage == page) return;
+		if (TfAppState.Value.Route.Page == page) return;
 
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
@@ -114,7 +114,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	private async Task _goLastPage()
 	{
 		if (_isDataLoading) return;
-		if (TfAppState.Value.AdminDataProviderDataPage == -1) return;
+		if (TfAppState.Value.Route.Page == -1) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = -1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -124,7 +124,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	{
 		if (_isDataLoading) return;
 		if (page < 1 && page != -1) page = 1;
-		if (TfAppState.Value.AdminDataProviderDataPage == page) return;
+		if (TfAppState.Value.Route.Page == page) return;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -134,9 +134,8 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	private async Task _pageSizeChange(int pageSize)
 	{
 		if (_isDataLoading) return;
-		_isDataLoading = true;
 		if (pageSize < 0) pageSize = TfConstants.PageSize;
-		if (TfAppState.Value.SpaceViewPageSize == pageSize) return;
+		if (TfAppState.Value.Route.PageSize == pageSize) return;
 		try
 		{
 			var resultSrv = await UserUC.SetPageSize(
@@ -156,6 +155,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+		_isDataLoading = true;
 	}
 
 	private bool _columnIsVisible(TfDataColumn column)

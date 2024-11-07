@@ -3,7 +3,7 @@ internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitAdminDataProviderAsync(
 		IServiceProvider serviceProvider,
-		TucUser currentUser, 
+		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
@@ -19,9 +19,8 @@ internal partial class AppStateUseCase
 				DataProviderTypes = new(),
 				DataProviderSyncTasks = new(),
 				AdminDataProviderData = null,
-				AdminDataProviderDataPage = 0
 			};
-			return (newAppState,newAuxDataState);
+			return (newAppState, newAuxDataState);
 		};
 
 
@@ -70,25 +69,21 @@ internal partial class AppStateUseCase
 			}
 			if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
 			{
-				int defaultPageSize = TfConstants.PageSize;
-				if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
-				var dt = await GetDataProviderData(newAppState.Route.DataProviderId.Value, newAppState.Route.Search, (newAppState.Route.Page ?? 1), (newAppState.Route.PageSize ?? defaultPageSize));
+				var dt = await GetDataProviderData(newAppState.Route.DataProviderId.Value, newAppState.Route.Search,
+					(newAppState.Route.Page ?? 1), (newAppState.Route.PageSize ?? TfConstants.PageSize));
 				newAppState = newAppState with
 				{
-					AdminDataProviderData = dt,
-					AdminDataProviderDataPage = dt.QueryInfo.Page ?? 1,
-					AdminDataProviderDataPageSize = dt.QueryInfo.PageSize ?? TfConstants.PageSize,
-					AdminDataProviderDataSearch = newAppState.Route.Search
+					AdminDataProviderData = dt
 				};
 			}
 			else
 			{
-				newAppState = newAppState with { AdminDataProviderData = null, AdminDataProviderDataPage = 1 };
+				newAppState = newAppState with { AdminDataProviderData = null };
 			}
 		}
 
 
-		return (newAppState,newAuxDataState);
+		return (newAppState, newAuxDataState);
 	}
 
 	//Data Provider

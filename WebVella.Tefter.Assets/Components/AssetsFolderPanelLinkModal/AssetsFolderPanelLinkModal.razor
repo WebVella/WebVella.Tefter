@@ -30,7 +30,7 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
 									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
@@ -38,7 +38,7 @@
 			<FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="12">
-						<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=_form.Name
+						<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
 										 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
 						<FluentValidationMessage For="@(() => _form.Name)" />
 					</FluentGridItem>

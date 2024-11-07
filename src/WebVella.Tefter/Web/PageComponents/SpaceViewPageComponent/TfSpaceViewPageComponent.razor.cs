@@ -78,10 +78,8 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		List<TucSpaceViewColumn> spaceViewColumns = new();
 		List<TucSpaceViewColumnType> availableColumnTypes = new();
 		List<TucScreenRegionComponentMeta> addonComponents = new();
-		int defaultPageSize = TfConstants.PageSize;
-		if (currentUser.Settings.PageSize is not null) defaultPageSize = currentUser.Settings.PageSize.Value;
-		int spaceViewPage = newAppState.Route.Page ?? 1;
-		int spaceViewPageSize = newAppState.Route.PageSize ?? defaultPageSize;
+		int spaceViewPage = newAppState.Route.Page.Value;
+		int spaceViewPageSize = newAppState.Route.PageSize.Value;
 		string spaceViewSearch = newAppState.Route.Search;
 		List<TucFilterBase> spaceViewFilters = newAppState.Route.Filters;
 		List<TucSort> spaceViewSorts = newAppState.Route.Sorts;
@@ -198,9 +196,6 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		{
 			SpaceView = spaceView,
 			SpaceViewColumns = spaceViewColumns,
-			SpaceViewPage = spaceViewPage,
-			SpaceViewPageSize = spaceViewPageSize,
-			SpaceViewSearch = spaceViewSearch,
 			SpaceViewFilters = spaceViewFilters,
 			SpaceViewSorts = spaceViewSorts,
 			SpaceViewData = spaceViewData,

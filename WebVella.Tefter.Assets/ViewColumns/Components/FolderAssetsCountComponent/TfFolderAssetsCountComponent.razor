@@ -27,7 +27,8 @@ else if (Context.Mode == TucComponentMode.Options)
 						  Items="_folders"
 						  OptionText="(x=> x.Name)"
 						  SelectedOption="_selectedFolder"
-						  SelectedOptionChanged="_folderSelectHandler" />
+						  SelectedOptionChanged="_folderSelectHandler"
+						  Value="@(_selectedFolder?.Id.ToString())" />
 		</FluentGridItem>
 
 	</FluentGrid>

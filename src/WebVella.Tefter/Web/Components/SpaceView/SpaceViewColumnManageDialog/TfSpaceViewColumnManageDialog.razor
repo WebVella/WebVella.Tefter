@@ -15,20 +15,20 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.Title
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Title
 									 Label="@LOC("Title")" Style="width:100%" AutoComplete="off" />
 					<div class="tf-input-description">@LOC("for icon type 'icon:[FLUENT_UI_ICON_NAME]' eg. icon:Comment")</div>
 					<FluentValidationMessage For="@(() => _form.Title)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=_form.QueryName
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.QueryName
 									 Label="@LOC("Query Name")" Style="width:100%" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.QueryName)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentNumberField TValue="short?" @bind-Value=_form.Position AutoComplete="off"
+					<FluentNumberField TValue="short?" @bind-Value=@_form.Position AutoComplete="off"
 									   Label="@LOC("Insert in position")" Style="width:100%" Placeholder="@LOC("leave empty for last")" />
 					<FluentValidationMessage For="@(() => _form.Position)" />
 				</FluentGridItem>
@@ -40,7 +40,7 @@
 					<FluentStack HorizontalGap="5">
 						@if (_form.ColumnType?.Icon is null)
 						{
-							<FluentButton Appearance="@Appearance.Outline"/>
+							<FluentButton Appearance="@Appearance.Outline" />
 						}
 						else
 						{
@@ -53,7 +53,8 @@
 									  SelectedOptionChanged="_columnTypeChangeHandler"
 									  OptionText="((x)=> x.Name)"
 									  OptionValue="((x)=> x.Id.ToString())"
-									  Items="TfAppState.Value.AvailableColumnTypes">
+									  Items="TfAppState.Value.AvailableColumnTypes"
+									  Value="@_form.ColumnType?.Id.ToString()">
 							<OptionTemplate Context="option">
 								<FluentStack>
 									<FluentIcon Value="@option.Icon" Color="@Color.Accent" />
@@ -74,7 +75,8 @@
 									  TOption="Type"
 									  OptionText="((x)=> x.ToDescriptionString())"
 									  OptionValue="((x)=> x.FullName)"
-									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)" />
+									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)"
+									  Value="@_form.ComponentType?.FullName" />
 
 						<FluentValidationMessage For="@(() => _form.ComponentType)" />
 					}
@@ -141,7 +143,7 @@
 						}
 						else
 						{
-						<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("This component does not require data mapping")" AllowDismiss="false" />	
+							<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("This component does not require data mapping")" AllowDismiss="false" />
 						}
 					}
 					else
@@ -201,7 +203,8 @@
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@(p => p.ToString())">
+											  OptionText="@(p => p.ToString())"
+											  Value="@(((int)_form.Settings?.Color).ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
 											@if (color.ToAttributeValue() != "default")
@@ -237,7 +240,8 @@
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@(p => p.ToString())">
+											  OptionText="@(p => p.ToString())"
+											  Value="@(((int)_form.Settings?.BackgroundColor).ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
 											@if (color.ToAttributeValue() != "default")

@@ -184,8 +184,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private void _sourceColumnNameChanged(string text)
 	{
 		_form.SourceName = text;
-		if (String.IsNullOrWhiteSpace(_form.DbName))
-			_form.DbName = TfConverters.GenerateDbNameFromText(text);
+		_form.DbName = TfConverters.GenerateDbNameFromText(text);
 	}
 
 }
