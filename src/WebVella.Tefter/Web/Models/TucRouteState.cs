@@ -14,7 +14,7 @@ public partial record TucRouteState
 	public RouteDataSecondNode SecondNode { get; init; } = default!;
 	public RouteDataThirdNode ThirdNode { get; init; } = default!;
 
-	public int? Page { get; init; } = 1;
+	public int? Page { get; init; } = null;
 	public int? PageSize { get; init; } = null;
 	public string Search { get; init; } = null;
 	public List<TucFilterBase> Filters { get; init; } = null;

@@ -191,7 +191,7 @@ else
 			</ChildContent>
 			<Footer>
 				<div class="tf-grid__pager">
-					<TfPager Page="@TfAppState.Value.SpaceViewPage" PageSize="@TfAppState.Value.SpaceViewPageSize"
+					<TfPager Page="@(TfAppState.Value.Route.Page ?? 1)" PageSize="@(TfAppState.Value.Route.PageSize ?? TfConstants.PageSize)"
 							 GoLast="@_goLastPage" GoNext="@_goNextPage"
 							 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage" ChangePageSize="_pageSizeChange" />
 				</div>

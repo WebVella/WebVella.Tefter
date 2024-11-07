@@ -40,6 +40,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
+			ActionSubscriber.SubscribeToAction<SetUserStateAction>(this, On_UserChanged);
 			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 		}
 	}
@@ -50,6 +51,16 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		InvokeAsync(async () =>
 		{
 			await _generateMenu();
+			RegenRenderLock();
+			await InvokeAsync(StateHasChanged);
+		});
+	}
+
+	private void On_UserChanged(SetUserStateAction action)
+	{
+		if (action.Component == this) return;
+		InvokeAsync(async () =>
+		{
 			RegenRenderLock();
 			await InvokeAsync(StateHasChanged);
 		});

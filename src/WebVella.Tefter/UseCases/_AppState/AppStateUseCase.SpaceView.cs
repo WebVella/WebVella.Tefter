@@ -35,9 +35,6 @@ internal partial class AppStateUseCase
 			{
 				SpaceView = GetSpaceView(newAppState.Route.SpaceViewId.Value),
 				SpaceViewColumns = GetViewColumns(newAppState.Route.SpaceViewId.Value),
-				SpaceViewPage = newAppState.Route.Page ?? 1,
-				SpaceViewPageSize = newAppState.Route.PageSize ?? defaultPageSize,
-				SpaceViewSearch = newAppState.Route.Search,
 				SpaceViewFilters = newAppState.Route.Filters,
 				SpaceViewSorts = newAppState.Route.Sorts,
 			};
@@ -53,14 +50,13 @@ internal partial class AppStateUseCase
 							presetSorts: preset is not null ? preset.SortOrders : null,
 							userFilters: newAppState.SpaceViewFilters,
 							userSorts: newAppState.SpaceViewSorts,
-							search: newAppState.SpaceViewSearch,
-							page: newAppState.SpaceViewPage,
-							pageSize: newAppState.SpaceViewPageSize
+							search: newAppState.Route.Search,
+							page: newAppState.Route.Page,
+							pageSize: newAppState.Route.PageSize
 						);
 				newAppState = newAppState with
 				{
 					SpaceViewData = viewData,
-					SpaceViewPage = viewData?.QueryInfo.Page ?? newAppState.SpaceViewPage,
 				};
 			}
 			else
@@ -118,9 +114,6 @@ internal partial class AppStateUseCase
 				SpaceView = null,
 				SpaceViewColumns = new(),
 				SpaceViewData = null,
-				SpaceViewPage = 0,
-				SpaceViewPageSize = TfConstants.PageSize,
-				SpaceViewSearch = null,
 				SpaceViewFilters = new(),
 				SpaceViewSorts = new(),
 				SelectedDataRows = new()
