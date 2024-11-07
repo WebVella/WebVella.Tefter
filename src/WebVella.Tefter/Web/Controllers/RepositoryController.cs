@@ -7,30 +7,29 @@ using Microsoft.Net.Http.Headers;
 using System.Net;
 
 [ResponseCache(Location = ResponseCacheLocation.None, Duration = 0, NoStore = true)]
-public class FsController : ControllerBase
+public class RepositoryController : ControllerBase
 {
-	private readonly ITfFileManager _fileManager;
+	private readonly ITfRepositoryService _repoService;
 
-	public FsController(
-		ExportUseCase uc,
-		ITfFileManager fileManager)
+	public RepositoryController(
+		ITfRepositoryService repoService)
 	{
-		_fileManager = fileManager;
+		_repoService = repoService;
 	}
 
 
 	[HttpGet]
-	[Route("/fs/{*filePath}")]
-	public IActionResult Download([FromRoute] string filePath)
+	[Route("/fs/repository/{filename}")]
+	public IActionResult Download([FromRoute] string filename)
 	{
-		if (string.IsNullOrWhiteSpace(filePath))
+		if (string.IsNullOrWhiteSpace(filename))
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
 		}
 
 
-		var file = _fileManager.FindFile(filePath).Value;
+		var file = _repoService.GetFile(filename).Value;
 
 		if (file == null)
 		{
@@ -59,11 +58,11 @@ public class FsController : ControllerBase
 
 		HttpContext.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + durationInSeconds;
 
-		var extension = Path.GetExtension(filePath).ToLowerInvariant();
+		var extension = Path.GetExtension(filename).ToLowerInvariant();
 
 		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
-		Stream fileContentStream = _fileManager.GetFileContentAsFileStream(file).Value;
+		Stream fileContentStream = _repoService.GetFileContentAsFileStream(filename).Value;
 		return File(fileContentStream, mimeType);
 	}
 

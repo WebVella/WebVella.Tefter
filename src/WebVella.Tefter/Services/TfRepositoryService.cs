@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-internal interface ITfRepositoryService
+public interface ITfRepositoryService
 {
 	public Result<TfRepositoryFile> GetFile(
 		string filename);

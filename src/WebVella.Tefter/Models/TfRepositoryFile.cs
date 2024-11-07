@@ -28,7 +28,7 @@ public class TfRepositoryFile
 		{
 			try
 			{
-				return new Uri($"tefter://fs/{Id}/{Filename}");
+				return new Uri($"tefter:///fs/repository/{Filename}");
 			}
 			catch
 			{
@@ -37,5 +37,5 @@ public class TfRepositoryFile
 		} 
 	}
 
-	public string DownloadPath { get { return $"/fs/{Id}/{Filename}"; } }
+	public string DownloadPath { get { return $"/fs/repository/{Filename}"; } }
 }
