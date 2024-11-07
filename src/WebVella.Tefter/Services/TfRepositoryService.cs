@@ -86,7 +86,7 @@ internal class TfRepositoryService : ITfRepositoryService
 			var containsSql = " ( @contains IS NULL OR filename ILIKE @contains ) ";
 			var endsWithSql = " ( @ends_with IS NULL OR filename ILIKE @ends_with ) ";
 
-			var sql = $"WHERE {startsWithSql} AND {containsSql} AND {endsWithSql} AND {orderBySql} {pagingSql}";
+			var sql = $"WHERE {startsWithSql} AND {containsSql} AND {endsWithSql} {orderBySql} {pagingSql}";
 
 			var startsWithParameter = new NpgsqlParameter("@starts_with", DbType.String);
 			if (!string.IsNullOrWhiteSpace(filenameStartsWith))
