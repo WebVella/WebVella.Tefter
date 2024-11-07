@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.FileRepositoryFileUpdateDialog.TfFileRepositoryFileUpdateDialog", "WebVella.Tefter")]
-public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDialogContentComponent<TucFile>
+public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDialogContentComponent<TucRepositoryFile>
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
-	[Parameter] public TucFile Content { get; set; }
+	[Parameter] public TucRepositoryFile Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -26,9 +26,8 @@ public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDi
 		{
 			Id = Content.Id,
 			CreatedBy = TfAppState.Value.CurrentUser.Id,
-			FilePath = Content.FilePath,
 			LocalFilePath = null,
-			Name = Content.FileName
+			FileName = Content.FileName
 		};
 		base.InitForm(_form);
 
@@ -69,7 +68,7 @@ public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<TucFile> submitResult;
+			Result<TucRepositoryFile> submitResult;
 			var submit = _form with
 			{
 				Id = _form.Id

@@ -12,7 +12,7 @@ internal partial class AppStateUseCase
 	private readonly ITfSpaceManager _spaceManager;
 	//private readonly ITfScreenRegionComponentManager _screenRegionComponentManager;
 	private readonly ITfMetaProvider _metaProvider;
-	private readonly ITfFileManager _fileManager;
+	private readonly ITfRepositoryService _repositoryManager;
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
@@ -29,7 +29,7 @@ internal partial class AppStateUseCase
 		ITfDataManager dataManager,
 		ITfSpaceManager spaceManager,
 		ITfMetaProvider metaProvider,
-		ITfFileManager fileManager,
+		ITfRepositoryService repositoryManager,
 		NavigationManager navigationManager,
 		IToastService toastService,
 		IMessageService messageService,
@@ -45,7 +45,7 @@ internal partial class AppStateUseCase
 		_dataManager = dataManager;
 		_spaceManager = spaceManager;
 		_metaProvider = metaProvider;
-		_fileManager = fileManager;
+		_repositoryManager = repositoryManager;
 		_navigationManager = navigationManager;
 		_toastService = toastService;
 		_messageService = messageService;

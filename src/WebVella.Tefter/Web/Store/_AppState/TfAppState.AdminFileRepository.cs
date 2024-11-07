@@ -2,5 +2,5 @@
 
 public partial record TfAppState
 {
-	public List<TucFile> AdminFileRepository { get; init; } = new();
+	public List<TucRepositoryFile> AdminFileRepository { get; init; } = new();
 }

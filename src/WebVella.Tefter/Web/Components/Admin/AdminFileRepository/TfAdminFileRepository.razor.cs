@@ -31,16 +31,15 @@ public partial class TfAdminFileRepository : TfBaseComponent
 				{
 					Id = null,
 					CreatedBy = TfAppState.Value.CurrentUser.Id,
-					FilePath = null,
 					LocalFilePath = file.LocalFile.ToString(),
-					Name = file.Name,
+					FileName = file.Name,
 				});
 				ProcessServiceResponse(result);
 				ToastService.ShowSuccess(LOC("File uploaded successfully!"));
 				progressPercent = 0;
 				var fileRep = TfAppState.Value.AdminFileRepository;
 				fileRep.Add(result.Value);
-				fileRep = fileRep.OrderBy(x=> x.FilePath).ToList();
+				fileRep = fileRep.OrderBy(x=> x.FileName).ToList();
 				Dispatcher.Dispatch(new SetAppStateAction(component: this,
 					state: TfAppState.Value with { AdminFileRepository = fileRep}));
 			}
@@ -59,7 +58,7 @@ public partial class TfAdminFileRepository : TfBaseComponent
 	{
 		progressPercent = e.ProgressPercent;
 	}
-	private async Task _editFile(TucFile file)
+	private async Task _editFile(TucRepositoryFile file)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfFileRepositoryFileUpdateDialog>(
 		file,
@@ -76,13 +75,13 @@ public partial class TfAdminFileRepository : TfBaseComponent
 		}
 	}
 
-	private async Task _deleteFile(TucFile file)
+	private async Task _deleteFile(TucRepositoryFile file)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this file deleted?")))
 			return;
 		try
 		{
-			Result result = UC.DeleteFile(file);
+			Result result = UC.DeleteFile(file.FileName);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
@@ -109,7 +108,7 @@ public partial class TfAdminFileRepository : TfBaseComponent
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
-	private async Task _copyUri(TucFile file){ 
+	private async Task _copyUri(TucRepositoryFile file){ 
 		await JSRuntime.InvokeVoidAsync("Tefter.copyToClipboard", file.Uri);
 		ToastService.ShowSuccess(LOC("Tefter Uri copied"));
 	

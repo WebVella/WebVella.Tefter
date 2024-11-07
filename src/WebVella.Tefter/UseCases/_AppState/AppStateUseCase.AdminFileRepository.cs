@@ -33,13 +33,11 @@ internal partial class AppStateUseCase
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
-	internal List<TucFile> GetFileRepository(string search, int? page = null, int? pageSize = null)
+	internal List<TucRepositoryFile> GetFileRepository(string search, int? page = null, int? pageSize = null)
 	{
-		var result = new List<TucFile>();
-		var tfResult = _fileManager.FindAllFiles(
-			startsWithPath: TfConstants.AdminFileRepositoryStartPath,
-			containsPath: search,
-			includeTempFiles: false,
+		var result = new List<TucRepositoryFile>();
+		var tfResult = _repositoryManager.GetFiles(
+			filenameContains: search,
 			page: page,
 			pageSize: pageSize
 		);
@@ -57,55 +55,44 @@ internal partial class AppStateUseCase
 		}
 
 		if (tfResult.Value is not null)
-			result = tfResult.Value.Select(x => new TucFile(x)).ToList();
+			result = tfResult.Value.Select(x => new TucRepositoryFile(x)).ToList();
 
 		return result;
 
 	}
 
-	internal Result<TucFile> CreateFile(TucFileForm form)
+	internal Result<TucRepositoryFile> CreateFile(TucFileForm form)
 	{
-		var bytesResult = _fileManager.GetBytesFromLocalFileSystemPath(form.LocalFilePath);
-		if (File.Exists(form.LocalFilePath))
-		{
-			File.Delete(form.LocalFilePath);
-		}
-		if (bytesResult.IsFailed) throw new Exception("GetBytesFromLocalFileSystemPath failed");
-		var result = _fileManager.CreateFile(
-			filePath: $"{TfConstants.AdminFileRepositoryStartPath}/{form.Name}",
-			overwrite: false,
-			buffer: bytesResult.Value,
+		var result = _repositoryManager.CreateFile(
+			filename: Path.GetFileName(form.FileName),
+			localPath: form.LocalFilePath,
 			createdBy: form.CreatedBy);
 		if (result.IsFailed)
 			return Result.Fail(new Error("CreateFile failed").CausedBy(result.Errors));
 
 
-		return Result.Ok(new TucFile(result.Value));
+		return Result.Ok(new TucRepositoryFile(result.Value));
 	}
 
-	internal Result<TucFile> UpdateFile(TucFileForm form)
+	internal Result<TucRepositoryFile> UpdateFile(TucFileForm form)
 	{
-		var bytesResult = _fileManager.GetBytesFromLocalFileSystemPath(form.LocalFilePath);
-		if (File.Exists(form.LocalFilePath))
-		{
-			File.Delete(form.LocalFilePath);
-		}
-		if (bytesResult.IsFailed) throw new Exception("GetBytesFromLocalFileSystemPath failed");
-		var result = _fileManager.CreateFile(
-			filePath: $"{TfConstants.AdminFileRepositoryStartPath}/{form.Name}",
-			overwrite: true,
-			buffer: bytesResult.Value,
-			createdBy: form.CreatedBy);
+		var result = _repositoryManager.UpdateFile(
+			filename: Path.GetFileName(form.FileName),
+			localPath: form.LocalFilePath,
+			updatedBy: form.CreatedBy);
 		if (result.IsFailed)
 			return Result.Fail(new Error("CreateFile failed").CausedBy(result.Errors));
 
+		var getResult = _repositoryManager.GetFile(Path.GetFileName(form.LocalFilePath));
+		if(getResult.IsFailed)
+			return Result.Fail(new Error("GetFileName failed").CausedBy(result.Errors));
 
-		return Result.Ok(new TucFile(result.Value));
+		return Result.Ok(new TucRepositoryFile(getResult.Value));
 	}
 
-	internal Result DeleteFile(TucFile file)
+	internal Result DeleteFile(string fileName)
 	{
-		var result = _fileManager.DeleteFile(file.FilePath);
+		var result = _repositoryManager.DeleteFile(fileName);
 		if (result.IsFailed)
 		{
 			ResultUtils.ProcessServiceResult(

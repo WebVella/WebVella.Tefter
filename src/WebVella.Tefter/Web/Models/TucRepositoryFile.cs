@@ -1,12 +1,11 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-public record TucFile
+public record TucRepositoryFile
 {
 	public Guid Id { get; set; }
 
-	public string FilePath { get; set; }
-	public string FileName { get => Path.GetFileName(FilePath);}
-	public string FileExtension { get => Path.GetExtension(FilePath);}
+	public string FileName { get; set; }
+	public string FileExtension { get => Path.GetExtension(FileName);}
 
 	public Guid? CreatedBy { get; set; }
 
@@ -19,11 +18,11 @@ public record TucFile
 	public string DownloadPath { get; set; }
 	public string UploadTempPath { get; set; }
 
-	public TucFile() { }
-	public TucFile(TfFile model)
+	public TucRepositoryFile() { }
+	public TucRepositoryFile(TfRepositoryFile model)
 	{
 		Id = model.Id;
-		FilePath = model.FilePath;
+		FileName = model.Filename;
 		CreatedBy = model.CreatedBy;
 		CreatedOn = model.CreatedOn;
 		LastModifiedBy = model.LastModifiedBy;
@@ -31,12 +30,12 @@ public record TucFile
 		Uri = model.Uri;
 		DownloadPath = model.DownloadPath;
 	}
-	public TfFile ToModel()
+	public TfRepositoryFile ToModel()
 	{
-		return new TfFile
+		return new TfRepositoryFile
 		{
 			Id = Id,
-			FilePath = FilePath,
+			Filename = FileName,
 			CreatedBy = CreatedBy,
 			LastModifiedBy = LastModifiedBy,
 			LastModifiedOn = LastModifiedOn,

@@ -358,4 +358,61 @@ public class FormulaUtilityTests
 		output.Value.Should().BeAfter(now);
 		output.Value.Should().BeBefore(until);
 	}
+
+	/*Excel*/
+	[Fact]
+	public void CheckGeneralFormulaParsing()
+	{
+		//Given
+		var idName = "Id";
+		var taxName = "tax";
+		var priceName = "price";
+		var totalName = "total";
+		var rowId = Guid.NewGuid();
+		DataTable table = new DataTable();
+
+		DataColumn idColumn = new DataColumn();
+		idColumn.DataType = System.Type.GetType("System.Guid");
+		idColumn.ColumnName = idName;
+		idColumn.DefaultValue = Guid.NewGuid();
+
+		DataColumn priceColumn = new DataColumn();
+		priceColumn.DataType = System.Type.GetType("System.Decimal");
+		priceColumn.ColumnName = priceName;
+		priceColumn.DefaultValue = 50;
+
+		// Create the second, calculated, column.
+		DataColumn taxColumn = new DataColumn();
+		taxColumn.DataType = System.Type.GetType("System.Decimal");
+		taxColumn.ColumnName = taxName;
+		taxColumn.Expression = $"{priceName} * 1.25";
+		
+
+		// Create third column.
+		DataColumn totalColumn = new DataColumn();
+		totalColumn.DataType = System.Type.GetType("System.Decimal");
+		totalColumn.ColumnName = totalName;
+		totalColumn.Expression = $"{priceName} + {taxName}";
+
+		// Add columns to DataTable.
+		table.Columns.Add(idColumn);
+		table.Columns.Add(priceColumn);
+		table.Columns.Add(taxColumn);
+		table.Columns.Add(totalColumn);
+
+
+		DataRow _ravi = table.NewRow();
+		_ravi[idName] = rowId;
+		_ravi[priceName] = 20;
+		table.Rows.Add(_ravi);
+
+		//var result = dt.Compute(expression,$"id='{rowId}'");
+		//var result = dt.Compute(expression,null);
+		DataView view = new DataView(table);
+		foreach (DataRow item in table.Rows)
+		{
+			var test = item.Field<decimal>(totalName);
+		}
+	}
+
 }
