@@ -59,8 +59,8 @@ internal class TfRepositoryService : ITfRepositoryService
 				return null;
 
 			var file = _dboManager.Get<TfRepositoryFile>(
-					" WHERE filename=@filename",
-					new NpgsqlParameter("@filename", filename.ToLowerInvariant()));
+					" WHERE filename ILIKE @filename",
+					new NpgsqlParameter("@filename", filename));
 
 			return Result.Ok(file);
 		}
@@ -163,7 +163,7 @@ internal class TfRepositoryService : ITfRepositoryService
 				TfRepositoryFile file = new TfRepositoryFile
 				{
 					Id = blobIdResult.Value,
-					Filename = filename.ToLowerInvariant(),
+					Filename = filename,
 					CreatedBy = createdBy,
 					CreatedOn = now,
 					LastModifiedBy = createdBy,
