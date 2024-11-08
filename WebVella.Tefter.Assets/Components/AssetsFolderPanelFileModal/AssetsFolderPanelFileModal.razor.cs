@@ -31,6 +31,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		_form.Label = Content.Label;
+		_form.FileName = Content.FileName;
 		_form.LocalPath = null;
 		base.InitForm(_form);
 	}
@@ -47,7 +48,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			{
 				_form.LocalPath = _upload.LocalFile.ToString();
 				_form.FileName = _upload.Name;
-				_getNameFromPath();
+				_getNameFromPath(false);
 			}
 		}
 	}
@@ -68,6 +69,13 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			await Task.Delay(10);
 
 			MessageStore.Clear();
+
+			if(_isCreate){ 
+				if(String.IsNullOrWhiteSpace(_form.LocalPath))
+					MessageStore.Add(EditContext.Field(nameof(_form.LocalPath)), LOC("File is required"));
+				if(String.IsNullOrWhiteSpace(_form.FileName))
+					MessageStore.Add(EditContext.Field(nameof(_form.LocalPath)), LOC("File is required"));
+			}
 
 			if (!EditContext.Validate()) return;
 
@@ -91,7 +99,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			}
 			else
 			{
-				throw new NotImplementedException();
+				result = AssetsService.UpdateFileAsset(Content.Id,_form.Label,_form.LocalPath,TfAppState.Value.CurrentUser.Id);
 			}
 
 			ProcessFormSubmitResponse(result);
@@ -116,11 +124,17 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 		await Dialog.CancelAsync();
 	}
 
-	private void _getNameFromPath()
+	private void _getNameFromPath(bool force = false)
 	{
-		if (_upload is null) return;
-		_form.Label = _upload.Name;
+		if (!force && !String.IsNullOrWhiteSpace(_form.Label)) return;
+		if (String.IsNullOrWhiteSpace(_form.FileName)) return;
+		_form.Label = _form.FileName;
 
+	}
+
+	private void _clearFile(){ 
+		_form.FileName = null;
+		_form.LocalPath = null;
 	}
 }
 
@@ -128,9 +142,7 @@ public class AssetsFolderPanelFileModalForm
 {
 	[Required]
 	public string Label { get; set; }
-	[Required]
 	public string LocalPath { get; set; }
-	[Required]
 	public string FileName { get; set; }
 }
 

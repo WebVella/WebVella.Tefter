@@ -5,7 +5,6 @@ namespace WebVella.Tefter.Assets.Components;
 [LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderPanelLinkModal.AssetsFolderPanelLinkModal", "WebVella.Tefter.Assets")]
 public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogContentComponent<AssetsFolderPanelLinkModalContext>
 {
-	[Inject] public ITfConfigurationService ConfigurationService { get; set; }
 	[Inject] public IAssetsService AssetsService { get; set; }
 	[Parameter] public AssetsFolderPanelLinkModalContext Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
@@ -62,7 +61,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 			}
 			else
 			{
-				throw new NotImplementedException();
+				result = AssetsService.UpdateLinkAsset(Content.Id,_form.Label,_form.Url,Content.CreatedBy);
 			}
 
 			ProcessFormSubmitResponse(result);
@@ -87,8 +86,9 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 		await Dialog.CancelAsync();
 	}
 
-	private async Task _getNameFromUrl()
+	private async Task _getNameFromUrl(bool force = false)
 	{
+		if (!force && !String.IsNullOrWhiteSpace(_form.Label)) return;
 		if (String.IsNullOrWhiteSpace(_form.Url)) return;
 
 

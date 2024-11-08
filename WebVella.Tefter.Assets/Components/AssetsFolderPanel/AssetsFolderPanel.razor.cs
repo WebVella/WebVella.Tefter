@@ -144,7 +144,26 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		}
 		else if (asset.Type == AssetType.Link)
 		{
-
+			var assetContent = (LinkAssetContent)asset.Content;
+			var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
+					new AssetsFolderPanelLinkModalContext()
+					{
+						CreatedBy = TfAppState.Value.CurrentUser.Id,
+						DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
+						FolderId = Content.FolderId.Value,
+						RowIds = new List<Guid> { _rowId },
+						Id = asset.Id,
+						Label = assetContent.Label,
+						Url = assetContent.Url,
+					},
+					new DialogParameters()
+					{
+						PreventDismissOnOverlayClick = true,
+						PreventScroll = true,
+						Width = TfConstants.DialogWidthLarge,
+						TrapFocus = false
+					});
+			result = await dialog.Result;
 		}
 
 		if (result is not null && !result.Cancelled && result.Data != null)
@@ -188,7 +207,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		Icon icon = TfConstants.GetIcon("Document");
 		string title = null;
 		string description = null;
-		description = $"{LOC("created on")}: {asset.CreatedOn.ToString(TfConstants.DateFormat)}";
+		description = $"{LOC("created on")}: {asset.CreatedOn.ToString(TfConstants.DateHourFormat)}";
 		if (asset.Type == AssetType.File)
 		{
 			var content = (FileAssetContent)asset.Content;
