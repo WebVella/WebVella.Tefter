@@ -172,7 +172,7 @@ ORDER BY aa.created_on DESC;";
 				{
 					BlobId = blobId,
 					Filename = filename,
-					Label = fileAsset.FileName
+					Label = fileAsset.Label
 				};
 
 				var contentJson = JsonSerializer.Serialize(content);
@@ -189,7 +189,7 @@ ORDER BY aa.created_on DESC;";
 
 
 				string xSearch = string.Empty;
-				xSearch = $"{fileAsset.FileName} {filename}";
+				xSearch = $"{fileAsset.Label} {filename}";
 
 				var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
 
