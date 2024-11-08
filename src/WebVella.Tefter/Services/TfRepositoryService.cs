@@ -2,6 +2,9 @@
 
 public interface ITfRepositoryService
 {
+	Result<TfRepositoryFile> GetFileByUri(
+	   string uriString);
+	
 	public Result<TfRepositoryFile> GetFile(
 		string filename);
 
@@ -48,6 +51,55 @@ internal class TfRepositoryService : ITfRepositoryService
 		_dbServise = dbServise;
 		_dboManager = dboManager;
 		_blobManager = blobManager;
+	}
+
+	public Result<TfRepositoryFile> GetFileByUri(
+		string uriString)
+	{
+		try
+		{
+			if (string.IsNullOrEmpty(uriString))
+			{
+				return Result.Fail(new Error("Invalid tefter uri. " +
+					"It should start with: 'tefter://fs/repository/' "));
+			}
+
+			uriString = uriString.ToLowerInvariant();
+
+			if (!uriString.StartsWith("tefter://fs/repository"))
+			{
+				return Result.Fail(new Error("Invalid tefter uri. " +
+					"It should start with: 'tefter://fs/repository/' "));
+			}
+
+			string filename = string.Empty;
+			try
+			{
+				var uri = new Uri(uriString);
+
+				if (uri.Segments.Length != 3)
+				{
+					return Result.Fail(new Error("Invalid tefter uri"));
+				}
+
+				filename = uri.Segments.Last();
+			}
+			catch (Exception ex)
+			{
+				return Result.Fail(new Error("Invalid tefter uri")
+					.CausedBy(ex));
+			}
+
+			var file = _dboManager.Get<TfRepositoryFile>(
+					" WHERE filename ILIKE @filename",
+					new NpgsqlParameter("@filename", filename));
+
+			return Result.Ok(file);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to find repository file").CausedBy(ex));
+		}
 	}
 
 	public Result<TfRepositoryFile> GetFile(

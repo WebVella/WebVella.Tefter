@@ -28,7 +28,7 @@ public class TfRepositoryFile
 		{
 			try
 			{
-				return new Uri($"tefter:///fs/repository/{Filename}");
+				return new Uri($"tefter://fs/repository/{Filename}");
 			}
 			catch
 			{

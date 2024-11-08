@@ -128,15 +128,14 @@ public class CsvDataProvider : ITfDataProviderType
 
 			if (settings.Filepath.ToLowerInvariant().StartsWith("tefter://"))
 			{
-				var fileManager = provider.ServiceProvider.GetService<ITfFileManager>();
+				var repoService = provider.ServiceProvider.GetService<ITfRepositoryService>();
 
-				var file = fileManager.FindFile(settings.Filepath).Value;
+				var file = repoService.GetFileByUri(settings.Filepath).Value;
 
-				if(file is null)
+				if (file is null)
 					throw new Exception($"File '{settings.Filepath}' is not found.");
 
-
-				using (var stream = fileManager.GetFileContentAsFileStream(file).Value )
+				using (var stream = repoService.GetFileContentAsFileStream(file.Filename).Value )
 				{
 					return ReadCSVStream(stream, provider, config, settings, culture);
 				}
