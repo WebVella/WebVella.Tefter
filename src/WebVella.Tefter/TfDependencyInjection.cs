@@ -57,7 +57,7 @@ public static class TfDependencyInjection
 		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
 		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
 		services.AddSingleton<ITfMetaProvider, TfMetaProvider>();
-		services.AddSingleton<ITfFileManager, TfFileManager>();
+		//services.AddSingleton<ITfFileManager, TfFileManager>();
 		services.AddSingleton<ITfRepositoryService, TfRepositoryService>();
 		services.AddSingleton<ITfBlobManager, TfBlobManager>();
 
