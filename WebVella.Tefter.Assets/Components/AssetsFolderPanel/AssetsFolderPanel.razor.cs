@@ -82,7 +82,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			var submit = new CreateFileAssetModel
 			{
 				FolderId = _folder.Id,
-				FileName = _upload.Name,
+				Label = _upload.Name,
 				LocalPath = _upload.LocalFile.ToString(),
 				CreatedBy = TfAppState.Value.CurrentUser.Id,
 				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
@@ -93,15 +93,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("File is added"));
-				//var getResult = AssetsService.GetAsset(result.Value);
-				//if (getResult.IsFailed)
-				//{
-				//	ToastService.ShowError(LOC("GetAsset failed"));
-				//}
-				//else
-				//{
-				//	_items.Add(getResult.Value);
-				//}
+				_items.Insert(0,result.Value);
 			}
 		}
 		catch (Exception ex)
@@ -138,13 +130,13 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
 		});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var record = (Asset)result.Data;
-
+			_items.Insert(0,(Asset)result.Data);
 		}
 	}
 
@@ -188,49 +180,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 
 	}
 
-	private async Task _saveAsset(Asset asset, string content)
-	{
-		if (_assetIdUpdateSaving is not null) return;
-		_assetIdUpdateSaving = asset.Id;
-		await InvokeAsync(StateHasChanged);
-		try
-		{
-			var assetContent = new AssetContentBase();
-			var result = AssetsService.UpdateAssetContent(asset.Id, assetContent, TfAppState.Value.CurrentUser.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Asset saved"));
-				int threadsIndex = _items.FindIndex(x => x.Id == asset.Id);
-				//TODO
-				//if (threadsIndex > -1) _items[threadsIndex].Content = content;
-
-				_assetEditedId = null;
-			}
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			_assetIdUpdateSaving = null;
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-
-	private Task _cancelSaveMessage()
-	{
-
-		_assetEditedId = null;
-		return Task.CompletedTask;
-	}
-
-	private Task _showThreadBradcastDetails()
-	{
-		_assetBroadcastVisible = !_assetBroadcastVisible;
-		return Task.CompletedTask;
-	}
+	
 }
 
 public record AssetsFolderPanelContext

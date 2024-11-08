@@ -3,7 +3,7 @@
 public partial class TfSpaceViewManage : TfBaseComponent
 {
 	[Parameter] public string Menu { get; set; } = "";
-	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	private bool _isSubmitting = false;
@@ -35,7 +35,8 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
+			Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
 		});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
@@ -82,7 +83,8 @@ public partial class TfSpaceViewManage : TfBaseComponent
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
 				});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
@@ -104,7 +106,8 @@ public partial class TfSpaceViewManage : TfBaseComponent
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
 				});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)

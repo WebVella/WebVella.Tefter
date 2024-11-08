@@ -23,7 +23,8 @@ public partial class TalkSpaceViewSelectorAction : TucBaseScreenRegionComponent,
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge
+					Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
 				});
 	}
 }

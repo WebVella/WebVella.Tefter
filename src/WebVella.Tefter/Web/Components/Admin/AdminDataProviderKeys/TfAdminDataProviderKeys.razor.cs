@@ -13,7 +13,8 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthLarge
+					Width = TfConstants.DialogWidthLarge,
+			TrapFocus = false
 				});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)

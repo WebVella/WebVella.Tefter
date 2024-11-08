@@ -15,6 +15,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private bool _isCreate = false;
+	private bool _isGetUrlLoading = false;
 	private AssetsFolderPanelLinkModalForm _form = new();
 	protected override async Task OnInitializedAsync()
 	{
@@ -56,7 +57,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 					RowIds = Content.RowIds,
 					DataProviderId = Content.DataProviderId
 				};
-				//result = AssetsService.CreateLinkAsset(submit);
+				result = AssetsService.CreateLinkAsset(submit);
 			}
 			else
 			{
@@ -66,6 +67,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 			ProcessFormSubmitResponse(result);
 			if (result.IsSuccess)
 			{
+				ToastService.ShowSuccess(_isCreate ? LOC("File is added") : LOC("File is updated"));
 				await Dialog.CloseAsync(result.Value);
 			}
 		}
@@ -84,6 +86,9 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 		await Dialog.CancelAsync();
 	}
 
+	private async Task _getNameFromUrl(){ 
+		_form.Label = "boz";
+	}
 }
 
 public class AssetsFolderPanelLinkModalForm

@@ -162,7 +162,8 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 			ShowDismiss = false,
 			PrimaryAction = null,
 			SecondaryAction = null,
-			Width = "25vw"
+			Width = "25vw",
+			TrapFocus = false
 		});
 	}
 
