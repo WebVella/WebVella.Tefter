@@ -30,16 +30,24 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Label
-									 Label="@LOC("Label")" Style="width:100%" AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.Label)" />
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Url
+									 @bind-Value:after=_getNameFromUrl
+									 Label="@LOC("Url")" Style="width:100%" AutoComplete="off" />
+
+					<FluentValidationMessage For="@(() => _form.Url)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Url
-									 Label="@LOC("Url")" Style="width:100%" AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.Url)" />
+					<FluentInputLabel Label="@LOC("Label")" />
+					<FluentStack>
+						<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Label
+										 Style="width:100%" AutoComplete="off" />
+						<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from URL")"
+									  OnClick="_getNameFromUrl" Appearance="@Appearance.Outline"
+									  Loading="_isGetUrlLoading" Disabled="_isGetUrlLoading" />
+					</FluentStack>
+					<FluentValidationMessage For="@(() => _form.Label)" />
 				</FluentGridItem>
 			</FluentGrid>
 		</FluentEditForm>

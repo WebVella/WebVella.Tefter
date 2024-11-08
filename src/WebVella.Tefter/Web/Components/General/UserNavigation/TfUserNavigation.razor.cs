@@ -57,6 +57,7 @@ public partial class TfUserNavigation
 		{
 			PreventDismissOnOverlayClick = true,
 			PreventScroll = true,
+			TrapFocus = false
 		});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)

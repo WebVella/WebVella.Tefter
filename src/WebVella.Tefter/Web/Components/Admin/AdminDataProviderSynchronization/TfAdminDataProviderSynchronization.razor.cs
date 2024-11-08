@@ -16,7 +16,8 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthExtraLarge
+					Width = TfConstants.DialogWidthExtraLarge,
+					TrapFocus = false
 				});
 
 	}
