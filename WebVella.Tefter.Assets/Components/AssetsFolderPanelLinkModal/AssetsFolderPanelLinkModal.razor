@@ -25,24 +25,23 @@
 	}
 	else
 	{
-@* 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
 						FormName="submit-form" class="tf-form" novalidate>
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
-									 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.Name)" />
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Label
+									 Label="@LOC("Label")" Style="width:100%" AutoComplete="off" />
+					<FluentValidationMessage For="@(() => _form.Label)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="12">
-						<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
-										 Label="@LOC("Name")" Style="width:100%" AutoComplete="off" />
-						<FluentValidationMessage For="@(() => _form.Name)" />
-					</FluentGridItem>
-				</FluentGrid>
-		</FluentEditForm> *@
+				<FluentGridItem xs="12">
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Url
+									 Label="@LOC("Url")" Style="width:100%" AutoComplete="off" />
+					<FluentValidationMessage For="@(() => _form.Url)" />
+				</FluentGridItem>
+			</FluentGrid>
+		</FluentEditForm>
 	}
 </FluentDialogBody>
