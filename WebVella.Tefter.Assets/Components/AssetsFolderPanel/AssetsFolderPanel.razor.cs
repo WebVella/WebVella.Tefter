@@ -76,55 +76,32 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		{
 			_upload = Files[0];
 		}
-		await _addAsset(null);
-	}
-
-	private void _onProgress(FluentInputFileEventArgs e)
-	{
-		progressPercent = e.ProgressPercent;
-	}
-
-	private async Task _addLink()
-	{
-		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
-		new Asset(),
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var record = (Asset)result.Data;
-			
-		}
-	}
-
-	private async Task _addAsset(Asset asset)
-	{
-		if (progressPercent != 0) return;
 		try
 		{
 
-			var submit = new CreateAssetModel
+			var submit = new CreateFileAssetModel
 			{
 				FolderId = _folder.Id,
-				Type = AssetType.File,
+				FileName = _upload.Name,
+				LocalPath = _upload.LocalFile.ToString(),
 				CreatedBy = TfAppState.Value.CurrentUser.Id,
 				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
 				RowIds = new List<Guid> { _rowId },
 			};
-			var result = AssetsService.CreateAsset(submit);
+			var result = AssetsService.CreateFileAsset(submit);
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
-				ToastService.ShowSuccess(LOC("Asset is added"));
+				ToastService.ShowSuccess(LOC("File is added"));
 				var getResult = AssetsService.GetAsset(result.Value);
-				if (getResult.IsFailed) throw new Exception("GetAsset failed");
-				_items.Add(getResult.Value);
-
+				if (getResult.IsFailed)
+				{
+					ToastService.ShowError(LOC("GetAsset failed"));
+				}
+				else
+				{
+					_items.Add(getResult.Value);
+				}
 			}
 		}
 		catch (Exception ex)
@@ -136,6 +113,38 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			progressPercent = 0;
 			_upload = null;
 			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private void _onProgress(FluentInputFileEventArgs e)
+	{
+		progressPercent = e.ProgressPercent;
+	}
+
+	private async Task _addLink()
+	{
+		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
+		new AssetsFolderPanelLinkModalContext()
+		{
+			CreatedBy = TfAppState.Value.CurrentUser.Id,
+			DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
+			FolderId = Content.FolderId.Value,
+			RowIds = new List<Guid> { _rowId },
+			Id = Guid.Empty,
+			Label = null,
+			Url = null,
+		},
+		new DialogParameters()
+		{
+			PreventDismissOnOverlayClick = true,
+			PreventScroll = true,
+			Width = TfConstants.DialogWidthLarge
+		});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var record = (Asset)result.Data;
+
 		}
 	}
 
