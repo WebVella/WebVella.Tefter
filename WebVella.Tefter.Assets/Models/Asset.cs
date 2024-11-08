@@ -19,16 +19,14 @@ public class Asset
 [JsonDerivedType(typeof(LinkAssetContent), typeDiscriminator: "link")]
 public class AssetContentBase
 {
-	public string Label { get; set; }	
+	public string Label { get; set; }
 }
 
 public class FileAssetContent : AssetContentBase
 {
 	public Guid BlobId { get; set; }
 	public string Filename { get; set; }
-
-	[JsonIgnore]
-	public string DownloadUrl { get { return "#"; }  }
+	public string DownloadUrl { get; set; }
 }
 
 public class LinkAssetContent : AssetContentBase

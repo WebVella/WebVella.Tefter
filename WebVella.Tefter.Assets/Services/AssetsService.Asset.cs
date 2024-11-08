@@ -179,7 +179,8 @@ ORDER BY aa.created_on DESC;";
 				{
 					BlobId = blobId,
 					Filename = filename,
-					Label = fileAsset.Label
+					Label = fileAsset.Label,
+					DownloadUrl = $"/fs/assets/{id}/{filename}"
 				};
 
 				var contentJson = JsonSerializer.Serialize(content);
@@ -444,7 +445,8 @@ ORDER BY aa.created_on DESC;";
 				{
 					BlobId = blobId,
 					Filename = filename,
-					Label = asset.Label
+					Label = asset.Label,
+					DownloadUrl = $"/fs/assets/{id}/{filename}"
 				};
 
 				var contentJson = JsonSerializer.Serialize(content);
@@ -644,6 +646,7 @@ ORDER BY aa.created_on DESC;";
 					BlobId = ((FileAssetContent)existingAsset.Content).BlobId,
 					Filename = ((FileAssetContent)existingAsset.Content).Filename,
 					Label = label,
+					DownloadUrl = ((FileAssetContent)existingAsset.Content).DownloadUrl
 				};
 
 				string contentJson = JsonSerializer.Serialize(fileAssetContent);
