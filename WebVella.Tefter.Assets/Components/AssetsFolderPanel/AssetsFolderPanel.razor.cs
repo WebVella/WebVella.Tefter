@@ -93,15 +93,15 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			if (result.IsSuccess)
 			{
 				ToastService.ShowSuccess(LOC("File is added"));
-				var getResult = AssetsService.GetAsset(result.Value);
-				if (getResult.IsFailed)
-				{
-					ToastService.ShowError(LOC("GetAsset failed"));
-				}
-				else
-				{
-					_items.Add(getResult.Value);
-				}
+				//var getResult = AssetsService.GetAsset(result.Value);
+				//if (getResult.IsFailed)
+				//{
+				//	ToastService.ShowError(LOC("GetAsset failed"));
+				//}
+				//else
+				//{
+				//	_items.Add(getResult.Value);
+				//}
 			}
 		}
 		catch (Exception ex)
