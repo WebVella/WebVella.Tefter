@@ -26,6 +26,9 @@ public class FileAssetContent : AssetContentBase
 {
 	public Guid BlobId { get; set; }
 	public string Filename { get; set; }
+
+	[JsonIgnore]
+	public string DownloadUrl { get { return "#"; }  }
 }
 
 public class LinkAssetContent : AssetContentBase
