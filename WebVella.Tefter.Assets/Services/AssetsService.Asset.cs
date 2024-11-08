@@ -673,7 +673,8 @@ ORDER BY aa.created_on DESC;";
 					idPar,
 					contentJsonPar,
 					modifiedByPar,
-					modifiedOnPar);
+					modifiedOnPar,
+					xSearchPar);
 
 				if (dbResult != 1)
 				{
@@ -816,15 +817,17 @@ ORDER BY aa.created_on DESC;";
 			{
 				//delete link to related shared keys
 
-				var SQL = "DELETE FROM assets_related_sk WHERE asset_id = @id";
+				var SQL = "DELETE FROM assets_related_sk WHERE asset_id = @asset_id";
 
-				var idPar = CreateParameter("id", assetId, DbType.Guid);
+				var assetIdPar = CreateParameter("asset_id", assetId, DbType.Guid);
 
-				_dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
+				_dbService.ExecuteSqlNonQueryCommand(SQL, assetIdPar);
 
 				//delete asset record
 
 				SQL = "DELETE FROM assets_asset WHERE id = @id";
+
+				var idPar = CreateParameter("id", assetId, DbType.Guid);
 
 				var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
 
