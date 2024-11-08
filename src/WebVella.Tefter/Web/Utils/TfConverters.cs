@@ -1,17 +1,17 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-internal static partial class TfConverters
+public static partial class TfConverters
 {
 	private static string conversionPrefix = "tf-";
 	private static List<string> _allIcons = null;
 
-	internal static string ConvertGuidToHtmlElementId(Guid? guid, string prefix = "")
+	public static string ConvertGuidToHtmlElementId(Guid? guid, string prefix = "")
 	{
 		if (guid == null) return null;
 		return $"{conversionPrefix}{(String.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}-")}{guid}";
 	}
 
-	internal static Guid? ConvertHtmlElementIdToGuid(string htmlId)
+	public static Guid? ConvertHtmlElementIdToGuid(string htmlId)
 	{
 		if (String.IsNullOrWhiteSpace(htmlId)) return null;
 		var match = htmlId.Trim().ToLowerInvariant();
@@ -24,16 +24,16 @@ internal static partial class TfConverters
 		return null;
 	}
 
-	internal static string StringOverflow(string input, int charCount)
+	public static string StringOverflow(string input, int charCount)
 	{
 		if (input.Length <= charCount) return input;
 		return input.Substring(0, charCount) + "...";
 	}
 
-	internal static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
+	public static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
 
 
-	internal static string GetUserInitials(TucUser user)
+	public static string GetUserInitials(TucUser user)
 	{
 		var list = new List<string>();
 		if (!String.IsNullOrWhiteSpace(user.FirstName))
@@ -50,7 +50,7 @@ internal static partial class TfConverters
 		return String.Join("", list).ToUpperInvariant();
 	}
 
-	internal static List<string> GetSpaceIconLibrary()
+	public static List<string> GetSpaceIconLibrary()
 	{
 		if (_allIcons is not null) return _allIcons;
 
@@ -65,7 +65,7 @@ internal static partial class TfConverters
 		return _allIcons;
 	}
 
-	internal static List<string> GetUniqueTagsFromText(
+	public static List<string> GetUniqueTagsFromText(
 		string text)
 	{
 		var result = new List<string>();
@@ -85,7 +85,7 @@ internal static partial class TfConverters
 		return result;
 	}
 
-	internal static T Convert<T>(string input)
+	public static T Convert<T>(string input)
 	{
 		try
 		{
@@ -116,7 +116,7 @@ internal static partial class TfConverters
 		return ret;
 	}
 
-	internal static bool IsValidEmail(string email)
+	public static bool IsValidEmail(string email)
 	{
 		if (string.IsNullOrWhiteSpace(email))
 			return false;
@@ -160,7 +160,7 @@ internal static partial class TfConverters
 		}
 	}
 
-	internal static bool IsValidURL(string url)
+	public static bool IsValidURL(string url)
 	{
 		if (string.IsNullOrWhiteSpace(url))
 			return false;
@@ -177,7 +177,7 @@ internal static partial class TfConverters
 		}
 	}
 
-	internal static string GenerateDbNameFromText(string text)
+	public static string GenerateDbNameFromText(string text)
 	{
 		if (String.IsNullOrEmpty(text)) return text;
 		text = text.Trim().ToLowerInvariant();
@@ -189,7 +189,7 @@ internal static partial class TfConverters
 		return text;
 	}
 
-	internal static string Slugify(this string phrase)
+	public static string Slugify(this string phrase)
 	{
 		string str = phrase.RemoveDiacritics().ToLower();
 		// invalid chars           
@@ -202,7 +202,7 @@ internal static partial class TfConverters
 		return str;
 	}
 
-	internal static string GenerateQueryName()
+	public static string GenerateQueryName()
 	{
 		return "q" + (Guid.NewGuid()).ToString().Split("-")[0];
 	}
@@ -252,7 +252,7 @@ internal static partial class TfConverters
 		return null;
 	}
 
-	private static readonly Dictionary<char, string> ConvertedLetters = new Dictionary<char, string>
+	public static readonly Dictionary<char, string> ConvertedLetters = new Dictionary<char, string>
 	{
 		{'а', "a"},
 		{'б', "b"},
@@ -333,5 +333,136 @@ internal static partial class TfConverters
 				result.Append(letter);
 		}
 		return result.ToString();
+	}
+
+	public static Icon ConvertFileNameToIcon(string fileName)
+	{
+		Icon result = TfConstants.GetIcon("Document");
+		var extension = Path.GetExtension(fileName);
+
+		switch (extension)
+		{
+			case ".txt":
+				return TfConstants.GetIcon("DocumentText");
+			case ".pdf":
+				return TfConstants.GetIcon("DocumentPdf");
+			case ".doc":
+			case ".docx":
+				return TfConstants.GetIcon("DocumentText");
+			case ".xls":
+			case ".xlsx":
+				return TfConstants.GetIcon("DocumentTable");
+			case ".ppt":
+			case ".pptx":
+				return TfConstants.GetIcon("DocumentData");
+			case ".gif":
+			case ".jpg":
+			case ".jpeg":
+			case ".png":
+			case ".bmp":
+			case ".tif":
+				return TfConstants.GetIcon("Image");
+			case ".zip":
+			case ".zipx":
+			case ".rar":
+			case ".tar":
+			case ".gz":
+			case ".dmg":
+			case ".iso":
+				return TfConstants.GetIcon("FolderZip");
+			case ".wav":
+			case ".mp3":
+			case ".fla":
+			case ".flac":
+			case ".ra":
+			case ".rma":
+			case ".aif":
+			case ".aiff":
+			case ".aa":
+			case ".aac":
+			case ".aax":
+			case ".ac3":
+			case ".au":
+			case ".ogg":
+			case ".avr":
+			case ".3ga":
+			case ".mid":
+			case ".midi":
+			case ".m4a":
+			case ".mp4a":
+			case ".amz":
+			case ".mka":
+			case ".asx":
+			case ".pcm":
+			case ".m3u":
+			case ".wma":
+			case ".xwma":
+				return TfConstants.GetIcon("Speaker2");
+			case ".avi":
+			case ".mpg":
+			case ".mp4":
+			case ".mkv":
+			case ".mov":
+			case ".wmv":
+			case ".vp6":
+			case ".264":
+			case ".vid":
+			case ".rv":
+			case ".webm":
+			case ".swf":
+			case ".h264":
+			case ".flv":
+			case ".mk3d":
+			case ".gifv":
+			case ".oggv":
+			case ".3gp":
+			case ".m4v":
+			case ".movie":
+			case ".divx":
+				return TfConstants.GetIcon("Video");
+			case ".c":
+			case ".cpp":
+			case ".css":
+			case ".js":
+			case ".py":
+			case ".git":
+			case ".cs":
+			case ".cshtml":
+			case ".xml":
+			case ".html":
+			case ".ini":
+			case ".config":
+			case ".json":
+			case ".h":
+			case ".htm":
+			case ".xhtml":
+			case ".php":
+			case ".aspx":
+				return TfConstants.GetIcon("Code");
+			case ".exe":
+			case ".jar":
+			case ".dll":
+			case ".bat":
+			case ".pl":
+			case ".scr":
+			case ".msi":
+			case ".app":
+			case ".deb":
+			case ".apk":
+			case ".vb":
+			case ".prg":
+			case ".sh":
+				return TfConstants.GetIcon("LauncherSettings");
+			case ".com":
+			case ".net":
+			case ".org":
+			case ".edu":
+			case ".gov":
+			case ".mil":
+			case "/":
+				return TfConstants.GetIcon("Link");
+			default:
+				return TfConstants.GetIcon("Document");
+		}
 	}
 }

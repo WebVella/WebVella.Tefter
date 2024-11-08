@@ -40,6 +40,7 @@ public class CreateFileAssetModel
 {
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }
+	public string FileName { get; set; }
 	public string LocalPath { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; }

@@ -10,7 +10,7 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-	[Inject] protected IWebConfigurationService ConfigurationService { get; set; }
+	[Inject] protected ITfConfigurationService ConfigurationService { get; set; }
 	[Inject] protected IIdentityManager IdentityManager { get; set; }
 	[Inject] protected ITfDataProviderManager DataProviderManager { get; set; }
 	[Inject] protected ITfMetaProvider MetaProvider { get; set; }

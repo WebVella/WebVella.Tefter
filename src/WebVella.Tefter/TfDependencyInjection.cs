@@ -22,9 +22,6 @@ public static class TfDependencyInjection
 		//https://www.fluentui-blazor.net/
 		services.AddFluentUIComponents();
 
-		services.AddSingleton<IWebConfigurationService, WebConfigurationService>();
-
-
 		services.AddHttpContextAccessor();
 		services.AddCascadingAuthenticationState();
 		services.AddAuthorizationCore();

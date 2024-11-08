@@ -12,7 +12,7 @@ public class TfBasePage : FluxorComponent
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-	[Inject] protected IWebConfigurationService ConfigurationService { get; set; }
+	[Inject] protected ITfConfigurationService ConfigurationService { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 

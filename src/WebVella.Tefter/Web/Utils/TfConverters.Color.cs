@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-internal static partial class TfConverters
+public static partial class TfConverters
 {
-	internal static System.Drawing.Color OfficeColorToColor(OfficeColor? color)
+	public static System.Drawing.Color OfficeColorToColor(OfficeColor? color)
 	{
 		if (color is null || color == OfficeColor.Default)
 		{
@@ -11,7 +11,7 @@ internal static partial class TfConverters
 		return System.Drawing.ColorTranslator.FromHtml(color.ToAttributeValue());
 	}
 
-	internal static System.Drawing.Color HEXToColor(string color)
+	public static System.Drawing.Color HEXToColor(string color)
 	{
 		if (String.IsNullOrWhiteSpace(color))
 		{
@@ -20,7 +20,7 @@ internal static partial class TfConverters
 		return System.Drawing.ColorTranslator.FromHtml(color);
 	}
 
-	internal static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
+	public static System.Drawing.Color ChangeColorBrightness(System.Drawing.Color color, float correctionFactor)
 	{
 		float red = (float)color.R;
 		float green = (float)color.G;
@@ -50,7 +50,7 @@ internal static partial class TfConverters
 		return System.Drawing.Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
 	}
 
-	internal static System.Drawing.Color ChangeColorDarkness(System.Drawing.Color color, float correctionFactor)
+	public static System.Drawing.Color ChangeColorDarkness(System.Drawing.Color color, float correctionFactor)
 	{
 		float red = (float)color.R;
 		float green = (float)color.G;
@@ -80,23 +80,23 @@ internal static partial class TfConverters
 		return System.Drawing.Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
 	}
 
-	internal static string ChangeColorBrightnessHex(System.Drawing.Color color, float correctionFactor)
+	public static string ChangeColorBrightnessHex(System.Drawing.Color color, float correctionFactor)
 	{
 		return ColorToHex(ChangeColorBrightness(color, correctionFactor));
 	}
 
-	internal static string ChangeColorDarknessHex(System.Drawing.Color color, float correctionFactor)
+	public static string ChangeColorDarknessHex(System.Drawing.Color color, float correctionFactor)
 	{
 		return ColorToHex(ChangeColorDarkness(color, correctionFactor));
 	}
 
-	internal static String ColorToHex(System.Drawing.Color c)
+	public static String ColorToHex(System.Drawing.Color c)
 		=> $"#{c.R:X2}{c.G:X2}{c.B:X2}";
 
-	internal static String ColorToRGB(System.Drawing.Color c)
+	public static String ColorToRGB(System.Drawing.Color c)
 		=> $"RGB({c.R},{c.G},{c.B})";
 
-	internal static string GetCssColorFromString(string colorString)
+	public static string GetCssColorFromString(string colorString)
 	{
 		if (String.IsNullOrWhiteSpace(colorString)) return null;
 		colorString = colorString.Trim().ToLowerInvariant();

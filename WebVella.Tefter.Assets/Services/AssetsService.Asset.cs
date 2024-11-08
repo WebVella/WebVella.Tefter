@@ -150,7 +150,7 @@ ORDER BY aa.created_on DESC;";
 
 			using (var scope = _dbService.CreateTransactionScope())
 			{
-				string filename = Path.GetFileName(fileAsset.LocalPath);
+				string filename = fileAsset.FileName;
 
 				Guid blobId = _blobManager.CreateBlob(fileAsset.LocalPath).Value;
 

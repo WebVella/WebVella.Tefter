@@ -111,25 +111,13 @@
 				</div>
 				<div class="asset-panel__subheader">
 					<div class="asset-panel__subheader__left">
-						<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-							<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)" Style="width:100%"
-										  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Document")">@LOC("Add file")</FluentButton>
-						</FluentStack>
-						<FluentInputFile @ref="@fileUploader"
-										 DragDropZoneVisible="false"
-										 Mode="InputFileMode.SaveToTemporaryFolder"
-										 Multiple="false"
-										 AnchorId="@_uploadId"
-										 MaximumFileSize="@(100 * 1024 * 1024)"
-										 OnProgressChange="@_onProgress"
-										 OnCompleted="@_onCompleted" />
+						<FluentButton Style="width:100%" OnClick="_addFile"
+									  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Document")">@LOC("Add file")</FluentButton>
+
 					</div>
 					<div class="asset-panel__subheader__right">
-						<FluentButton Id="@_uploadId" Style="width:100%" OnClick="_addLink"
+						<FluentButton Style="width:100%" OnClick="_addLink"
 									  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Link")">@LOC("Add link")</FluentButton>
-					</div>
-					<div class="asset-panel__subheader__bottom">
-						<TfProgress Value="progressPercent" Visible="@((progressPercent > 0 && progressPercent < 100) || true)" LabelVisible="false" />
 					</div>
 				</div>
 				<div class="asset-panel__body">
@@ -137,10 +125,38 @@
 					{
 						<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>
 					}
-					@foreach (var asset in _items)
-					{
-						<div>@asset.Type</div>
-					}
+					<div class="items-wrapper">
+						@foreach (var asset in _items)
+						{
+							var (icon, title, description) = _getAssetMeta(asset);
+
+							<div class="asset-item" @onclick=@(()=> _itemClick())>
+								<div class="asset-item__icon"><FluentIcon Value="@icon" /></div>
+								<div class="asset-item__meta">
+									<div class="asset-item__meta__title">@title</div>
+									<div class="asset-item__meta__description">@((MarkupString)description)</div>
+								</div>
+								<div class="asset-item__action">
+									<FluentButton OnClick="@(_=> _actionMenuIdOpened = asset.Id)" StopPropagation
+												  Id="@($"tf-{asset.Id}")" Style="@(_actionMenuIdOpened == asset.Id ? "visibility:visible;" : "")"
+												  Appearance="@Appearance.Stealth" IconStart="@TfConstants.GetIcon("MoreVertical").WithColor(Color.Neutral)" />
+									<FluentMenu UseMenuService="true"
+												Open="(_actionMenuIdOpened == asset.Id)"
+												OpenChanged="@(x => _actionMenuIdOpened = x ? asset.Id : null)"
+												Anchor="@($"tf-{asset.Id}")">
+										<FluentMenuItem OnClick="@(_=> _deleteAsset(asset))">
+											<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(Color.Error)" Slot="start" />
+											<FluentLabel>@LOC("delete")</FluentLabel>
+										</FluentMenuItem>
+										<FluentMenuItem OnClick="@(_=> _editAsset(asset))">
+											<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+											<FluentLabel>@LOC("update")</FluentLabel>
+										</FluentMenuItem>
+									</FluentMenu>
+								</div>
+							</div>
+						}
+					</div>
 				</div>
 			</div>
 		}

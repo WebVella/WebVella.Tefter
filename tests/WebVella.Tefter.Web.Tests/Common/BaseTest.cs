@@ -5,7 +5,6 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using Moq;
 using System;
 using WebVella.Tefter.Identity;
-using WebVella.Tefter.Web.Services;
 using WebVella.Tefter.Web.Store;
 
 
@@ -41,7 +40,7 @@ public class BaseTest
 			.AddJsonFile("appsettings.json".ToApplicationPath(), optional: false)
 			.Build();
 		Context.Services.AddSingleton<IConfiguration>(configuration);
-		Context.Services.AddScoped<IWebConfigurationService, WebConfigurationService>();
+		Context.Services.AddScoped<ITfConfigurationService, TfConfigurationService>();
 
 		StringLocalizerFactoryMock = new Mock<IStringLocalizerFactory>();
 		Context.Services.AddScoped(typeof(IStringLocalizerFactory), Services => StringLocalizerFactoryMock.Object);

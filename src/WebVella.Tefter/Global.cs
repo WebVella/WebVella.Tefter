@@ -54,7 +54,7 @@ global using WebVella.Tefter.Utility;
 /// Components
 global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Models;
-global using WebVella.Tefter.Web.Services;
+
 //State
 global using WebVella.Tefter.Web.Store;
 global using WebVella.Tefter.Web.Utils;
