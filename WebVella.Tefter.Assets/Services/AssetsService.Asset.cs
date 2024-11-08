@@ -524,10 +524,11 @@ ORDER BY aa.created_on DESC;";
 					Label = label,
 				};
 
-				if (!string.IsNullOrWhiteSpace(localPath))
-				{
-					fileAssetContent.Filename = Path.GetFileName(localPath);
-				}
+				//filename is not update because asset path may be used somewhere
+				//if (!string.IsNullOrWhiteSpace(localPath))
+				//{
+				//	fileAssetContent.Filename = Path.GetFileName(localPath);
+				//}
 
 				string contentJson = JsonSerializer.Serialize(fileAssetContent);
 
