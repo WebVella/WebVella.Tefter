@@ -683,7 +683,6 @@ ORDER BY aa.created_on DESC;";
 
 				if (!string.IsNullOrWhiteSpace(localPath))
 				{
-					var oldBlobIdd = fileAssetContent.BlobId;
 					var updateBlobResult = _blobManager.UpdateBlob(
 								fileAssetContent.BlobId,
 								localPath);
