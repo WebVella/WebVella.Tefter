@@ -14,8 +14,8 @@ public partial interface IAssetsService
 	public Result<Guid> CreateFileAsset(
 		CreateFileAssetModel fileAsset);
 
-	public Result<Guid> CreateAsset(
-		CreateAssetModel asset);
+	public Result<Guid> CreateLinkAsset(
+		CreateLinkAssetModel asset);
 
 	public Result<Guid> CreateAsset(
 		CreateAssetWithSharedKeyModel asset);
@@ -149,10 +149,9 @@ ORDER BY aa.created_on DESC;";
 
 			using (var scope = _dbService.CreateTransactionScope())
 			{
-				
 				string filename = Path.GetFileName(fileAsset.LocalPath);
-				
-				string filePath = $"tefter://fs/{TfAssetsConstants.ASSETS_APP_ID}/{fileAsset.FolderId}/{filename}";
+
+				Guid blobId = _blobManager.CreateBlob(fileAsset.LocalPath).Value;
 
 				DateTime now = DateTime.Now;
 
@@ -170,7 +169,8 @@ ORDER BY aa.created_on DESC;";
 
 				FileAssetContent content = new FileAssetContent
 				{
-					FilePath = filePath,
+					BlobId = blobId,
+					Filename = filename,
 					Label = fileAsset.Label
 				};
 
@@ -188,7 +188,7 @@ ORDER BY aa.created_on DESC;";
 				
 				
 				string xSearch = string.Empty;
-				xSearch = $"{fileAsset.Label} {filePath}";
+				xSearch = $"{fileAsset.Label} {filename}";
 
 				var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
 
@@ -251,24 +251,6 @@ ORDER BY aa.created_on DESC;";
 					}
 				}
 
-				//create file here , after we completed with database operations
-				var fileBytesResult = _fileManager.GetBytesFromLocalFileSystemPath(fileAsset.LocalPath);
-
-				if (!fileBytesResult.IsSuccess)
-				{
-					throw new Exception("Unable to read file content for specified local path");
-				}
-
-				var fileResult = _fileManager.CreateFile(filePath,
-					fileBytesResult.Value,
-					overwrite: true,
-					fileAsset.CreatedBy);
-
-				if (!fileResult.IsSuccess)
-				{
-					throw new Exception("Failed to create file in tefter fs.");
-				}
-
 				scope.Complete();
 
 				return Result.Ok(id);
@@ -281,8 +263,8 @@ ORDER BY aa.created_on DESC;";
 	}
 
 
-	public Result<Guid> CreateAsset(
-		CreateAssetModel asset)
+	public Result<Guid> CreateLinkAsset(
+		CreateLinkAssetModel asset)
 	{
 		try
 		{
@@ -293,10 +275,10 @@ ORDER BY aa.created_on DESC;";
 
 			AssetValidator validator = new AssetValidator(this);
 
-			var validationResult = validator.ValidateCreate(asset, id);
+			//var validationResult = validator.ValidateCreateLinkAsset(asset, id);
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+			//if (!validationResult.IsValid)
+			//	return validationResult.ToResult();
 
 			DateTime now = DateTime.Now;
 
@@ -310,9 +292,15 @@ ORDER BY aa.created_on DESC;";
 
 			var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
 
-			var typePar = CreateParameter("@type", (short)asset.Type, DbType.Int16);
+			var typePar = CreateParameter("@type", (short)AssetType.Link, DbType.Int16);
 
-			var contentJson = JsonSerializer.Serialize(asset.Content);
+			LinkAssetContent content = new LinkAssetContent
+			{
+				Label = asset.Label,
+				Url = asset.Url
+			};
+
+			var contentJson = JsonSerializer.Serialize(content);
 
 			var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
 
@@ -324,23 +312,8 @@ ORDER BY aa.created_on DESC;";
 
 			var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
 
-			string xSearch = string.Empty;
-
-			if (asset.Content is FileAssetContent)
-			{
-				var fileAssetContent = (FileAssetContent)asset.Content;
-				xSearch = $"{fileAssetContent.Label} {fileAssetContent.FilePath}";
-			}
-			else if (asset.Content is LinkAssetContent)
-			{
-				var linkAssetContent = (LinkAssetContent)asset.Content;
-				xSearch = $"{linkAssetContent.Label} {linkAssetContent.Url}";
-			}
-			else
-			{
-				throw new Exception("Not supported asset content type.");
-			}
-
+			string xSearch = $"{asset.Label} {asset.Url}";
+		
 			var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
 
 			using (var scope = _dbService.CreateTransactionScope())
@@ -411,7 +384,7 @@ ORDER BY aa.created_on DESC;";
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to create new asset.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to create new link asset.").CausedBy(ex));
 		}
 	}
 
@@ -603,10 +576,10 @@ ORDER BY aa.created_on DESC;";
 				if (existingAsset.Type == AssetType.File)
 				{
 					FileAssetContent content = (FileAssetContent)existingAsset.Content;
-					var result = _fileManager.DeleteFile(content.FilePath);
+					var result = _blobManager.DeleteBlob(content.BlobId);
 					if(!result.IsSuccess)
 					{
-						throw new Exception("Failed to delete file from tefter FS");
+						throw new Exception("Failed to delete blob content for file asset");
 					}
 				}
 
@@ -617,7 +590,7 @@ ORDER BY aa.created_on DESC;";
 		}
 		catch (Exception ex)
 		{
-			return Result.Fail(new Error("Failed to delete asset.").CausedBy(ex));
+			return Result.Fail(new Error("Failed to delete asset").CausedBy(ex));
 		}
 	}
 
@@ -735,21 +708,32 @@ ORDER BY aa.created_on DESC;";
 			return new ValidationResult();
 		}
 
-		public ValidationResult ValidateCreate(
-			CreateAssetModel asset,
+		public ValidationResult ValidateCreateLinkAsset(
+			CreateLinkAssetModel asset,
 			Guid id)
 		{
 			if (asset == null)
 			{
 				return new ValidationResult(new[] { new ValidationFailure("",
-					"The channel object is null.") });
+					"The asset object is null.") });
 			}
 
-			if (asset.Content is null)
+			if (string.IsNullOrWhiteSpace( asset.Url ))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateAssetModel.Content),
-					"The content is empty.") });
+					nameof(CreateLinkAssetModel.Url),
+					"The url is empty.") });
+			}
+
+			try
+			{
+				Uri uri = new Uri(asset.Url);
+			}
+			catch
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateLinkAssetModel.Url),
+					"The url is not valid.") });
 			}
 
 			return new ValidationResult();

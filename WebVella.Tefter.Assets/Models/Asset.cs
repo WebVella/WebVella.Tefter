@@ -24,7 +24,8 @@ public class AssetContentBase
 
 public class FileAssetContent : AssetContentBase
 {
-	public string FilePath { get; set; }
+	public Guid BlobId { get; set; }
+	public string Filename { get; set; }
 }
 
 public class LinkAssetContent : AssetContentBase
@@ -42,11 +43,11 @@ public class CreateFileAssetModel
 	public Guid DataProviderId { get; set; }
 }
 
-public class CreateAssetModel
+public class CreateLinkAssetModel
 {
 	public Guid FolderId { get; set; }
-	public AssetType Type { get; set; }
-	public AssetContentBase Content { get; set; }
+	public string Label { get; set; }
+	public string Url { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; }
 	public Guid DataProviderId { get; set; }

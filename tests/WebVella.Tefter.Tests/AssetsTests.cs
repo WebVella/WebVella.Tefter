@@ -80,23 +80,17 @@ public partial class AssetsTests : BaseTest
 
 				Guid skId = dataManager.GetId("shared_key_value", "1").Value;
 
-				FileAssetContent fileContent = new FileAssetContent
-				{
-					Label = "Test file - test.json",
-					FilePath = "tefter://fs/test.json"
-				};
-
-				CreateAssetModel asset = new CreateAssetModel
+				CreateLinkAssetModel asset = new CreateLinkAssetModel
 				{
 					FolderId = folder.Id,
-					Content = fileContent,
-					Type = AssetType.File,
+					Label = "Test link",
+					Url = "http://google.com",
 					CreatedBy = user.Id,
 					RowIds = rowIds.ToList(),
 					DataProviderId = provider.Id,
 				};
 
-				var id1 = assetService.CreateAsset(asset).Value;
+				var id1 = assetService.CreateLinkAsset(asset).Value;
 
 				var asset1 = assetService.GetAsset(id1).Value;
 				asset1.Should().NotBeNull();
