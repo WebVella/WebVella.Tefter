@@ -23,7 +23,7 @@ public partial interface IAssetsService
 
 	public Result<Asset> UpdateFileAsset(
 		Guid id,
-		string filename,
+		string label,
 		string localPath,
 		Guid userId);
 
