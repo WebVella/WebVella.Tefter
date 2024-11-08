@@ -11,13 +11,13 @@ public partial interface IAssetsService
 		Guid? folderId = null,
 		Guid? skId = null);
 
-	public Result<Guid> CreateFileAsset(
+	public Result<Asset> CreateFileAsset(
 		CreateFileAssetModel fileAsset);
 
-	public Result<Guid> CreateLinkAsset(
+	public Result<Asset> CreateLinkAsset(
 		CreateLinkAssetModel asset);
 
-	public Result<Guid> CreateAsset(
+	public Result<Asset> CreateAsset(
 		CreateAssetWithSharedKeyModel asset);
 
 	public Result UpdateAssetContent(
@@ -129,7 +129,7 @@ ORDER BY aa.created_on DESC;";
 		}
 	}
 
-	public Result<Guid> CreateFileAsset(
+	public Result<Asset> CreateFileAsset(
 		CreateFileAssetModel fileAsset)
 	{
 		try
@@ -253,7 +253,9 @@ ORDER BY aa.created_on DESC;";
 
 				scope.Complete();
 
-				return Result.Ok(id);
+				var resultAsset = GetAsset(id);
+
+				return resultAsset;
 			}
 		}
 		catch (Exception ex)
@@ -263,7 +265,7 @@ ORDER BY aa.created_on DESC;";
 	}
 
 
-	public Result<Guid> CreateLinkAsset(
+	public Result<Asset> CreateLinkAsset(
 		CreateLinkAssetModel asset)
 	{
 		try
@@ -379,7 +381,9 @@ ORDER BY aa.created_on DESC;";
 
 				scope.Complete();
 
-				return Result.Ok(id);
+				var resultAsset = GetAsset(id);
+
+				return resultAsset;
 			}
 		}
 		catch (Exception ex)
@@ -388,7 +392,7 @@ ORDER BY aa.created_on DESC;";
 		}
 	}
 
-	public Result<Guid> CreateAsset(
+	public Result<Asset> CreateAsset(
 		CreateAssetWithSharedKeyModel asset)
 	{
 		try
@@ -465,7 +469,9 @@ ORDER BY aa.created_on DESC;";
 
 				scope.Complete();
 
-				return Result.Ok(id);
+				var resultAsset = GetAsset(id);
+
+				return resultAsset;
 			}
 		}
 		catch (Exception ex)
