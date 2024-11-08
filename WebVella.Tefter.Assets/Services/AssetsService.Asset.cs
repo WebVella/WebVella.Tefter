@@ -695,7 +695,9 @@ ORDER BY aa.created_on DESC;";
 
 				scope.Complete();
 
-				return Result.Ok();
+				var resultAsset = GetAsset(id);
+
+				return resultAsset;
 			}
 		}
 		catch (Exception ex)
@@ -785,7 +787,9 @@ ORDER BY aa.created_on DESC;";
 
 				scope.Complete();
 
-				return Result.Ok();
+				var resultAsset = GetAsset(id);
+
+				return resultAsset;
 			}
 		}
 		catch (Exception ex)
