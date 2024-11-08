@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Assets.Models;
-
-namespace WebVella.Tefter.Assets.Services;
+﻿namespace WebVella.Tefter.Assets.Services;
 
 public partial interface IAssetsService
 {
@@ -17,13 +15,22 @@ public partial interface IAssetsService
 	public Result<Asset> CreateLinkAsset(
 		CreateLinkAssetModel asset);
 
-	public Result<Asset> CreateAsset(
-		CreateAssetWithSharedKeyModel asset);
+	public Result<Asset> CreateFileAsset(
+		CreateFileAssetWithSharedKeyModel asset);
+
+	public Result<Asset> CreateLinkAsset(
+		CreateLinkAssetWithSharedKeyModel asset);
 
 	public Result<Asset> UpdateFileAsset(
 		Guid id,
 		string filename,
 		string localPath,
+		Guid userId);
+
+	public Result<Asset> UpdateLinkAsset(
+		Guid id,
+		string label,
+		string url,
 		Guid userId);
 
 	public Result DeleteAsset(
@@ -265,7 +272,6 @@ ORDER BY aa.created_on DESC;";
 		}
 	}
 
-
 	public Result<Asset> CreateLinkAsset(
 		CreateLinkAssetModel asset)
 	{
@@ -393,8 +399,8 @@ ORDER BY aa.created_on DESC;";
 		}
 	}
 
-	public Result<Asset> CreateAsset(
-		CreateAssetWithSharedKeyModel asset)
+	public Result<Asset> CreateFileAsset(
+		CreateFileAssetWithSharedKeyModel asset)
 	{
 		try
 		{
@@ -407,45 +413,160 @@ ORDER BY aa.created_on DESC;";
 
 			AssetValidator validator = new AssetValidator(this);
 
-			var validationResult = validator.ValidateCreate(asset, id);
+			var validationResult = validator.ValidateCreateFileAsset(asset, id);
 
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			DateTime now = DateTime.Now;
 
-			var SQL = @"INSERT INTO assets_asset
-						(id, folder_id, type, content_json, created_by,
-						created_on, modified_by, modified_on)
-					VALUES(@id, @folder_id, @type, @content_json, @created_by,
-						@created_on, @modified_by, @modified_on); ";
-
-			var idPar = CreateParameter("@id", id, DbType.Guid);
-
-			var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
-
-			var typePar = CreateParameter("@type", (short)asset.Type, DbType.Int16);
-
-			var contentJson = JsonSerializer.Serialize(asset.Content);
-
-			var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
-
-			var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
-
-			var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
-
-			var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
-
-			var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
 
 			using (var scope = _dbService.CreateTransactionScope())
 			{
+				string filename = asset.FileName;
+
+				Guid blobId = _blobManager.CreateBlob(asset.LocalPath).Value;
+
+				DateTime now = DateTime.Now;
+
+				var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on, x_search)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on, @x_search); ";
+
+				var idPar = CreateParameter("@id", id, DbType.Guid);
+
+				var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+				var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
+
+				FileAssetContent content = new FileAssetContent
+				{
+					BlobId = blobId,
+					Filename = filename,
+					Label = asset.Label
+				};
+
+				var contentJson = JsonSerializer.Serialize(content);
+
+				var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+				var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
+
+				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+				var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+				var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
+
+				var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {filename}", DbType.String);
+
 				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 					SQL,
 					idPar, folderIdPar,
 					typePar, contentJsonPar,
 					createdByPar, createdOnPar,
-					modifiedByPar, modifiedOnPar);
+					modifiedByPar, modifiedOnPar,
+					xSearchPar);
+
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to insert new row in database for thread object");
+				}
+
+				if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
+				{
+					foreach (var skId in asset.SKValueIds)
+					{
+						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+							"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
+								new NpgsqlParameter("@id", skId),
+								new NpgsqlParameter("@asset_id", id));
+
+						if (skDbResult != 1)
+						{
+							throw new Exception("Failed to insert new row in database for related shared key object");
+						}
+					}
+				}
+
+				scope.Complete();
+
+				var resultAsset = GetAsset(id);
+
+				return resultAsset;
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
+		}
+	}
+
+	public Result<Asset> CreateLinkAsset(
+		CreateLinkAssetWithSharedKeyModel asset)
+	{
+		try
+		{
+			if (asset == null)
+			{
+				throw new NullReferenceException("Asset object is null");
+			}
+
+			Guid id = Guid.NewGuid();
+
+			AssetValidator validator = new AssetValidator(this);
+
+			var validationResult = validator.ValidateCreateLinkAsset(asset, id);
+
+			if (!validationResult.IsValid)
+				return validationResult.ToResult();
+
+
+
+			using (var scope = _dbService.CreateTransactionScope())
+			{
+				DateTime now = DateTime.Now;
+
+				var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on, x_search)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on, @x_search); ";
+
+				var idPar = CreateParameter("@id", id, DbType.Guid);
+
+				var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+				var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
+
+				LinkAssetContent content = new LinkAssetContent
+				{
+					Url = asset.Url,
+					Label = asset.Label
+				};
+
+				var contentJson = JsonSerializer.Serialize(content);
+
+				var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+				var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
+
+				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+				var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+				var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
+
+				var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {asset.Url}", DbType.String);
+
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, folderIdPar,
+					typePar, contentJsonPar,
+					createdByPar, createdOnPar,
+					modifiedByPar, modifiedOnPar,
+					xSearchPar);
 
 				if (dbResult != 1)
 				{
@@ -509,7 +630,8 @@ ORDER BY aa.created_on DESC;";
 				var SQL = "UPDATE assets_asset SET " +
 				"content_json=@content_json, " +
 				"modified_on=@modified_on, " +
-				"modified_by=@modified_by " +
+				"modified_by=@modified_by," +
+				"x_search = @x_search " +
 				"WHERE id = @id";
 
 				var idPar = CreateParameter(
@@ -523,12 +645,6 @@ ORDER BY aa.created_on DESC;";
 					Filename = ((FileAssetContent)existingAsset.Content).Filename,
 					Label = label,
 				};
-
-				//filename is not update because asset path may be used somewhere
-				//if (!string.IsNullOrWhiteSpace(localPath))
-				//{
-				//	fileAssetContent.Filename = Path.GetFileName(localPath);
-				//}
 
 				string contentJson = JsonSerializer.Serialize(fileAssetContent);
 
@@ -547,6 +663,10 @@ ORDER BY aa.created_on DESC;";
 					user.Id,
 					DbType.Guid);
 
+				var xSearchPar = CreateParameter(
+					"@x_search",
+					$"{label} {((FileAssetContent)existingAsset.Content).Filename}",
+					DbType.String);
 
 				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 					SQL,
@@ -612,7 +732,8 @@ ORDER BY aa.created_on DESC;";
 				var SQL = "UPDATE assets_asset SET " +
 				"content_json=@content_json, " +
 				"modified_on=@modified_on, " +
-				"modified_by=@modified_by " +
+				"modified_by=@modified_by, " +
+				"x_search = @x_search " +
 				"WHERE id = @id";
 
 				var idPar = CreateParameter(
@@ -643,13 +764,19 @@ ORDER BY aa.created_on DESC;";
 					user.Id,
 					DbType.Guid);
 
+				var xSearchPar = CreateParameter(
+					"@x_search",
+					$"{label} {url}",
+					DbType.String);
+
 
 				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 					SQL,
 					idPar,
 					contentJsonPar,
 					modifiedByPar,
-					modifiedOnPar);
+					modifiedOnPar,
+					xSearchPar);
 
 				if (dbResult != 1)
 				{
@@ -683,10 +810,17 @@ ORDER BY aa.created_on DESC;";
 
 			using (var scope = _dbService.CreateTransactionScope())
 			{
+				//delete link to related shared keys
 
-				var SQL = "DELETE FROM assets_asset WHERE id = @id";
+				var SQL = "DELETE FROM assets_related_sk WHERE asset_id = @id";
 
 				var idPar = CreateParameter("id", assetId, DbType.Guid);
+
+				_dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
+
+				//delete asset record
+
+				SQL = "DELETE FROM assets_asset WHERE id = @id";
 
 				var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
 
@@ -694,6 +828,8 @@ ORDER BY aa.created_on DESC;";
 				{
 					throw new Exception("Failed to update row in database for asset object");
 				}
+
+				//delete blob if file asset
 
 				if (existingAsset.Type == AssetType.File)
 				{
@@ -845,7 +981,7 @@ ORDER BY aa.created_on DESC;";
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The asset object is null.") });
 			}
-			
+
 			if (string.IsNullOrWhiteSpace(asset.Label))
 			{
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -873,8 +1009,8 @@ ORDER BY aa.created_on DESC;";
 			return new ValidationResult();
 		}
 
-		public ValidationResult ValidateCreate(
-			CreateAssetWithSharedKeyModel asset,
+		public ValidationResult ValidateCreateFileAsset(
+			CreateFileAssetWithSharedKeyModel asset,
 			Guid id)
 		{
 			if (asset == null)
@@ -883,11 +1019,59 @@ ORDER BY aa.created_on DESC;";
 					"The asset object is null.") });
 			}
 
-			if (asset.Content is null)
+			if (string.IsNullOrWhiteSpace(asset.Label))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Label is not specified.") });
+			}
+
+			if (string.IsNullOrWhiteSpace(asset.LocalPath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"LocalPath is not specified.") });
+			}
+
+			if (!File.Exists(asset.LocalPath))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"File is not found for specified local path.") });
+			}
+
+			return new ValidationResult();
+		}
+
+		public ValidationResult ValidateCreateLinkAsset(
+			CreateLinkAssetWithSharedKeyModel asset,
+			Guid id)
+		{
+			if (asset == null)
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The asset object is null.") });
+			}
+
+			if (string.IsNullOrWhiteSpace(asset.Label))
+			{
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"Label is not specified.") });
+			}
+
+			if (string.IsNullOrWhiteSpace(asset.Url))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(
-					nameof(CreateAssetWithSharedKeyModel.Content),
-					"The content is empty.") });
+					nameof(CreateLinkAssetModel.Url),
+					"The url is empty.") });
+			}
+
+			try
+			{
+				Uri uri = new Uri(asset.Url);
+			}
+			catch
+			{
+				return new ValidationResult(new[] { new ValidationFailure(
+					nameof(CreateLinkAssetModel.Url),
+					"The url is not valid.") });
 			}
 
 			return new ValidationResult();
@@ -923,7 +1107,7 @@ ORDER BY aa.created_on DESC;";
 					"Label is not specified.") });
 			}
 
-			if ( !string.IsNullOrEmpty(localPath) &&
+			if (!string.IsNullOrEmpty(localPath) &&
 				!File.Exists(localPath))
 			{
 				return new ValidationResult(new[] { new ValidationFailure(

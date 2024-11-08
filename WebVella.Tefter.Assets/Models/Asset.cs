@@ -57,11 +57,21 @@ public class CreateLinkAssetModel
 	public Guid DataProviderId { get; set; }
 }
 
-public class CreateAssetWithSharedKeyModel
+public class CreateFileAssetWithSharedKeyModel
 {
 	public Guid FolderId { get; set; }
-	public AssetType Type { get; set; }
-	public AssetContentBase Content { get; set; }
+	public string Label { get; set; }
+	public string FileName { get; set; }
+	public string LocalPath { get; set; }
+	public Guid CreatedBy { get; set; }
+	public List<Guid> SKValueIds { get; set; }
+}
+
+public class CreateLinkAssetWithSharedKeyModel
+{
+	public Guid FolderId { get; set; }
+	public string Label { get; set; }
+	public string Url { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> SKValueIds { get; set; }
 }
