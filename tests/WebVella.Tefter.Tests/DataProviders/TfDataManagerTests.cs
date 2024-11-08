@@ -1,5 +1,4 @@
 ﻿using WebVella.Tefter.Models;
-using WebVella.Tefter.Web.Services;
 
 namespace WebVella.Tefter.Tests.DataProviders;
 
