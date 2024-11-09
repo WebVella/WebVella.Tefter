@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.Assets.Components;
 [LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderManageDialog.AssetsFolderManageDialog", "WebVella.Tefter.Assets")]
-public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogContentComponent<Folder>
+public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogContentComponent<AssetsFolder>
 {
 	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }
 	[Inject] public IAssetsService AssetsService { get; set; }
-	[Parameter] public Folder Content { get; set; }
+	[Parameter] public AssetsFolder Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private string _error = string.Empty;
@@ -13,7 +13,7 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private bool _isCreate = false;
-	private Folder _form = new();
+	private AssetsFolder _form = new();
 	private List<string> _sharedColumnsOptions = new();
 	protected override async Task OnInitializedAsync()
 	{
@@ -52,7 +52,7 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<Folder>();
+			var result = new Result<AssetsFolder>();
 			if (_isCreate)
 			{
 				result = AssetsService.CreateFolder(_form);

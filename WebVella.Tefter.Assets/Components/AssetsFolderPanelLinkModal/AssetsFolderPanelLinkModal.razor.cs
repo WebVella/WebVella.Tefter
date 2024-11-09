@@ -27,6 +27,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		_form.Label = Content.Label;
 		_form.Url = Content.Url;
+		_form.IconUrl = Content.IconUrl;
 		base.InitForm(_form);
 	}
 	private async Task _save()
@@ -47,10 +48,10 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 
 			//Get Favicon Url
 			if (String.IsNullOrWhiteSpace(_form.IconUrl))
-				_form.IconUrl = await new HttpClientUtility(ConfigurationService).GetFavIconForUri(_form.Url);
+				_form.IconUrl = await new UrlUtility(ConfigurationService).GetFavIconForUrl(_form.Url);
 
 			var result = new Result<Asset>();
-			if (_isCreate)
+			if (_isCreate && Content.RowIds is not null && Content.RowIds.Count > 0)
 			{
 				var submit = new CreateLinkAssetModel
 				{
@@ -61,6 +62,19 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 					CreatedBy = Content.CreatedBy,
 					RowIds = Content.RowIds,
 					DataProviderId = Content.DataProviderId
+				};
+				result = AssetsService.CreateLinkAsset(submit);
+			}
+			else if (_isCreate && Content.SKValueIds is not null && Content.SKValueIds.Count > 0)
+			{
+				var submit = new CreateLinkAssetWithSharedKeyModel
+				{
+					FolderId = Content.FolderId,
+					Label = _form.Label,
+					Url = _form.Url,
+					IconUrl = _form.IconUrl,
+					CreatedBy = Content.CreatedBy,
+					SKValueIds = Content.SKValueIds
 				};
 				result = AssetsService.CreateLinkAsset(submit);
 			}
@@ -99,9 +113,9 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 
 		_isGetUrlLoading = true;
 		await InvokeAsync(StateHasChanged);
-		var newLabel = await new HttpClientUtility(ConfigurationService).GetMetaTitleFromUri(_form.Url);
+		var newLabel = await new UrlUtility(ConfigurationService).GetMetaTitleFromUrl(_form.Url);
 		if (!String.IsNullOrWhiteSpace(newLabel)) _form.Label = newLabel;
-		_form.IconUrl = await new HttpClientUtility(ConfigurationService).GetFavIconForUri(_form.Url);
+		_form.IconUrl = await new UrlUtility(ConfigurationService).GetFavIconForUrl(_form.Url);
 
 		_isGetUrlLoading = false;
 		await InvokeAsync(StateHasChanged);
@@ -123,7 +137,9 @@ public class AssetsFolderPanelLinkModalContext
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }
 	public string Url { get; set; }
+	public string IconUrl { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; }
 	public Guid DataProviderId { get; set; }
+	public List<Guid> SKValueIds { get; set; }
 }

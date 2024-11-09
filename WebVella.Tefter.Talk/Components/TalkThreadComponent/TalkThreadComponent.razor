@@ -2,74 +2,59 @@
 @namespace WebVella.Tefter.Talk.Components
 @inherits TfBaseComponent
 
-<style>
-	/* .talk-panel {
-			--space-background-color: TfAppState.Value.SpaceBackgkroundColor;
-			--space-color: TfAppState.Value.SpaceColorString;
-		} */
-</style>
-<div>
-	@if (_isLoading)
-	{
+@if (_isLoading)
+{
+	<TfLayoutBodyMain>
 		<TfLoadingPane />
-	}
-	else if (_channel is null)
-	{
-		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No talk channel is selected for this view column!")</FluentMessageBar>
-	}
-	else if (String.IsNullOrWhiteSpace(_channel.SharedKey))
-	{
-		<div class="talk-panel" style="@Style">
-			<div class="talk-panel__left">
-				<div class="talk-panel__left__header">
-					<div class="talk-channel-label">@LOC("Error")</div>
-					<div class="talk-panel__left__header_actions">
-						@HeaderActions
-					</div>
-				</div>
-				<div class="talk-panel__left__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The talk channel has no shared key set!")</FluentMessageBar>
-				</div>
-			</div>
-		</div>
-
-	}
-	else if (SharedKeyValue is null)
-	{
-		<div class="talk-panel" style="@Style">
-			<div class="talk-panel__left">
-				<div class="talk-panel__left__header">
-					<div class="talk-channel-label">@LOC("Error")</div>
-					<div class="talk-panel__left__header_actions">
-						@HeaderActions
-					</div>
-				</div>
-				<div class="talk-panel__left__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of channel '{1}'!", _channel.SharedKey, _channel.Name)</FluentMessageBar>
-				</div>
-			</div>
-		</div>
-
-	}
-	else if (SharedKeyValue == Guid.Empty)
-	{
-		<div class="talk-panel" style="@Style">
-			<div class="talk-panel__left">
-				<div class="talk-panel__left__header">
-					<div class="talk-channel-label">@LOC("Error")</div>
-					<div class="talk-panel__left__header_actions">
-						@HeaderActions
-					</div>
-				</div>
-				<div class="talk-panel__left__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _channel.SharedKey)</FluentMessageBar>
-				</div>
-			</div>
-		</div>
-
-	}
-	else
-	{
+	</TfLayoutBodyMain>
+}
+else if (_channel is null)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No talk channel is selected for this view column!")</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (String.IsNullOrWhiteSpace(_channel.SharedKey))
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The talk channel has no shared key set!")</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (SharedKeyValue is null)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of channel '{1}'!", _channel.SharedKey, _channel.Name)</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (SharedKeyValue == Guid.Empty)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _channel.SharedKey)</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else
+{
+	<TfLayoutBodyMain>
 		<div class="talk-panel" style="@Style">
 			<div class="talk-panel__left">
 				<div class="talk-panel__left__header" style="background: var(--neutral-layer-1)">
@@ -240,6 +225,6 @@
 				}
 			</div>
 		</div>
-	}
-</div>
+	</TfLayoutBodyMain>
+}
 

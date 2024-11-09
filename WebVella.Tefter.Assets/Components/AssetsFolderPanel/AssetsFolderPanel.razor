@@ -128,24 +128,24 @@
 					<div class="items-wrapper">
 						@foreach (var asset in _items)
 						{
-							var (icon, title, description, url, favicon) = _getAssetMeta(asset);
+							var assetMeta = _getAssetMeta(asset);
 
-							<div class="asset-item">
+							<div class="asset-item" @key=@asset.Id>
 								<div class="asset-item__icon">
-									@if (!String.IsNullOrWhiteSpace(favicon))
+									@if (!String.IsNullOrWhiteSpace(assetMeta.FavIcon))
 									{
 										<div class="image-wrapper">
-											<img src="@favicon" alt="" />
+											<img src="@assetMeta.FavIcon" alt="" />
 										</div>
 									}
 									else
 									{
-										<FluentIcon Value="@icon" />
+										<FluentIcon Value="@assetMeta.Icon" />
 									}
 								</div>
-								<a href="@url" target="_blank" class="asset-item__meta">
-									<div class="asset-item__meta__title">@title</div>
-									<div class="asset-item__meta__description">@((MarkupString)description)</div>
+								<a href="@assetMeta.Url" target="_blank" class="asset-item__meta">
+									<div class="asset-item__meta__title">@assetMeta.Title</div>
+									<div class="asset-item__meta__description">@((MarkupString)assetMeta.Description)</div>
 								</a>
 								<div class="asset-item__action">
 									<FluentButton OnClick="@(_=> _actionMenuIdOpened = asset.Id)" StopPropagation="true"

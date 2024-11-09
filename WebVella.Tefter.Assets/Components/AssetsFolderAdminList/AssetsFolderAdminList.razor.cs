@@ -10,7 +10,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 	private async Task _createFolderHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderManageDialog>(
-		new Folder(),
+		new AssetsFolder(),
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -21,10 +21,10 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			List<Folder> state = new();
+			List<AssetsFolder> state = new();
 			if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-				state = (List<Folder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
-			state.Add((Folder)result.Data);
+				state = (List<AssetsFolder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+			state.Add((AssetsFolder)result.Data);
 			TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
 			Dispatcher.Dispatch(new SetAuxDataStateAction(
 				component: this,
@@ -35,7 +35,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		}
 	}
 
-	private async Task _editFolderHandler(Folder folder)
+	private async Task _editFolderHandler(AssetsFolder folder)
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderManageDialog>(
 		folder,
@@ -49,10 +49,10 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var item = (Folder)result.Data;
-			List<Folder> state = new();
+			var item = (AssetsFolder)result.Data;
+			List<AssetsFolder> state = new();
 			if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-				state = (List<Folder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+				state = (List<AssetsFolder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
 			var itemIndex = state.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{
@@ -67,7 +67,7 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 
 		}
 	}
-	private async Task _deleteFolderHandler(Folder folder)
+	private async Task _deleteFolderHandler(AssetsFolder folder)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this folder deleted? This will delete all the files in it!")))
 			return;
@@ -77,9 +77,9 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 			ProcessServiceResponse(result);
 			if (result.IsSuccess)
 			{
-				List<Folder> state = new();
+				List<AssetsFolder> state = new();
 				if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-					state = (List<Folder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+					state = (List<AssetsFolder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
 				var itemIndex = state.FindIndex(x => x.Id == folder.Id);
 				if (itemIndex > -1)
 				{

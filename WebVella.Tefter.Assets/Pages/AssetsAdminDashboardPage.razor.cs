@@ -17,7 +17,7 @@ public partial class AssetsAdminDashboardPage : TucBaseScreenRegionComponent, IT
         if (srvResult.IsSuccess)
             newAuxDataState.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = srvResult.Value.OrderBy(x => x.Name).ToList();
         else
-            newAuxDataState.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = new List<Folder>();
+            newAuxDataState.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = new List<AssetsFolder>();
 
         var sharedColumnsResult = sharedColumnsManager.GetSharedColumns();
         if (sharedColumnsResult.IsSuccess)

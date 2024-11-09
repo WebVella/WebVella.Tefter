@@ -142,7 +142,6 @@ body {
 				background: var(--neutral-layer-1);
 				border-bottom: 1px solid var(--neutral-layer-4);
 				display: flex;
-				align-items: end;
 				border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 
 				&.no-padding {
@@ -157,11 +156,19 @@ body {
 					flex: 0 0 auto;
 					padding: var(--tf-body-content-padding) 0;
 					width: 35%;
-					max-width: 35%;
 				}
 
 				&__aside {
 					flex: 0 0 auto;
+					width: 65%;
+					display: flex;
+					justify-content: end;
+					align-items: center;
+				}
+
+				&.aside-tabs &__aside {
+					justify-content: start;
+					align-items: end;
 				}
 			}
 

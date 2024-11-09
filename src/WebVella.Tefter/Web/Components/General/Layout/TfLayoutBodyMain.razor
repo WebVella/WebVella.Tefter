@@ -3,14 +3,14 @@
 <section class="@_layoutClass">
 	@if (Header is not null || HeaderAside is not null)
 	{
-		<TfLayoutBodyMainHeader>
+		<TfLayoutBodyMainHeader Class="@HeaderClass">
 			<ChildContent>@Header</ChildContent>
 			<Aside>@HeaderAside</Aside>
 		</TfLayoutBodyMainHeader>	
 	}
 	@if (Toolbar is not null || ToolbarAside is not null)
 	{
-		<TfLayoutBodyMainToolbar>
+		<TfLayoutBodyMainToolbar Class="@ToolbarClass">
 			<ChildContent>@Toolbar</ChildContent>
 			<Aside>@ToolbarAside</Aside>
 		</TfLayoutBodyMainToolbar>

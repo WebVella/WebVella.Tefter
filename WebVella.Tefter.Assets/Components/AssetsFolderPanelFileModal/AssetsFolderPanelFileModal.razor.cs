@@ -85,7 +85,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			await InvokeAsync(StateHasChanged);
 
 			var result = new Result<Asset>();
-			if (_isCreate)
+			if (_isCreate && Content.RowIds is not null && Content.RowIds.Count > 0)
 			{
 				var submit = new CreateFileAssetModel
 				{
@@ -96,6 +96,19 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 					CreatedBy = TfAppState.Value.CurrentUser.Id,
 					DataProviderId = Content.DataProviderId,
 					RowIds = Content.RowIds,
+				};
+				result = AssetsService.CreateFileAsset(submit);
+			}
+			else if (_isCreate && Content.SKValueIds is not null && Content.SKValueIds.Count > 0)
+			{
+				var submit = new CreateFileAssetWithSharedKeyModel
+				{
+					FolderId = Content.FolderId,
+					Label = _form.Label,
+					FileName = _form.FileName,
+					LocalPath = _form.LocalPath,
+					CreatedBy = TfAppState.Value.CurrentUser.Id,
+					SKValueIds = Content.SKValueIds,
 				};
 				result = AssetsService.CreateFileAsset(submit);
 			}
@@ -162,4 +175,5 @@ public class AssetsFolderPanelFileModalContext
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; }
 	public Guid DataProviderId { get; set; }
+	public List<Guid> SKValueIds { get; set; }
 }

@@ -40,8 +40,8 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	private Guid? _renderedHash = null;
 	private string _storageKey = "";
 	private IDialogReference _dialog;
-	private List<Folder> _folders = new();
-	private Folder _selectedFolder = null;
+	private List<AssetsFolder> _folders = new();
+	private AssetsFolder _selectedFolder = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -178,7 +178,7 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 		_storageKey = this.GetType().Name + "_" + Context.SpaceViewColumnId;
 	}
 
-	private async Task _folderSelectHandler(Folder folder)
+	private async Task _folderSelectHandler(AssetsFolder folder)
 	{
 		_selectedFolder = folder;
 		await OnOptionsChanged(nameof(TfFolderAssetsCountComponentOptions.FolderId), folder?.Id);

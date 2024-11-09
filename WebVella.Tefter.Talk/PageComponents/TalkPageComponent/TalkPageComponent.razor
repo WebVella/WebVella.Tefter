@@ -3,10 +3,8 @@
 
 @if (Context.Mode == TfComponentMode.Read)
 {
-	<FluentBodyContent Class="content-body">
 		<TalkThreadComponent ChannelId="_options.ChannelId" CurrentUser="@TfUserState.Value.CurrentUser"
-							 SharedKeyValue="@Context.SpaceNodeId" Style="height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important" />
-	</FluentBodyContent>
+						 SharedKeyValue="@Context.SpaceNodeId" Style="height:100%;margin:calc(-1 * var(--tf-body-content-padding));display:flex;" />
 }
 else if (Context.Mode == TfComponentMode.Create)
 {

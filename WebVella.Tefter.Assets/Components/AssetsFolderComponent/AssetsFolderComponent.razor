@@ -1,0 +1,135 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Assets.Components
+@inherits TfBaseComponent
+
+@if (_isLoading)
+{
+	<TfLayoutBodyMain>
+		<TfLoadingPane />
+	</TfLayoutBodyMain>
+}
+else if (_folder is null)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("No assets folder is selected for this view column!")</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (String.IsNullOrWhiteSpace(_folder.SharedKey))
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The assets folder has no shared key set!")</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (SharedKeyValue is null)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of channel '{1}'!", _folder.SharedKey, _folder.Name)</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (SharedKeyValue == Guid.Empty)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Error")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _folder.SharedKey)</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@_folder.Name</TfPageHeader>
+		</Header>
+		<HeaderAside>
+			<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Document")"
+						  OnClick="_addFile" Style="margin-right:10px;">@LOC("Add file")</FluentButton>
+			<FluentButton Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("Link")"
+						  OnClick="_addLink">@LOC("Add link")</FluentButton>
+		</HeaderAside>
+		<Toolbar>
+			<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search" ValueChanged="_searchValueChanged" />
+		</Toolbar>
+		<ChildContent>
+			@if (_items.Count == 0)
+			{
+				<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No assets in this folder yet")</FluentMessageBar>
+			}
+			<div class="items-wrapper">
+				@foreach (var asset in _items)
+				{
+					var assetMeta = _getAssetMeta(asset);
+
+					<div class="asset-item" @key=@asset.Id>
+						<div class="asset-item__icon">
+							@if (!String.IsNullOrWhiteSpace(assetMeta.FavIcon))
+							{
+								<div class="image-wrapper">
+									<img src="@assetMeta.FavIcon" alt="" />
+								</div>
+							}
+							else
+							{
+								<FluentIcon Value="@assetMeta.Icon" />
+							}
+						</div>
+						<a href="@assetMeta.Url" target="_blank" class="asset-item__meta">
+							<div class="asset-item__meta__title">@assetMeta.Title</div>
+							<div class="asset-item__meta__description">@((MarkupString)assetMeta.Description)</div>
+						</a>
+						<div class="asset-item__action">
+							<FluentButton OnClick="@(_=> _actionMenuIdOpened = asset.Id)" StopPropagation="true"
+										  Id="@($"tf-{asset.Id}")" Style="@(_actionMenuIdOpened == asset.Id ? "visibility:visible;" : "")"
+										  Appearance="@Appearance.Stealth" IconStart="@TfConstants.GetIcon("MoreVertical").WithColor(Color.Neutral)" />
+							<FluentMenu UseMenuService="true"
+										Open="(_actionMenuIdOpened == asset.Id)"
+										OpenChanged="@(x => _actionMenuIdOpened = x ? asset.Id : null)"
+										Anchor="@($"tf-{asset.Id}")">
+								<FluentMenuItem OnClick="@(_=> _deleteAsset(asset))">
+									<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(Color.Error)" Slot="start" />
+									<FluentLabel>@LOC("Delete")</FluentLabel>
+								</FluentMenuItem>
+								<FluentMenuItem OnClick="@(_=> _editAsset(asset))">
+									<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
+									<FluentLabel>@LOC("Update")</FluentLabel>
+								</FluentMenuItem>
+								<FluentMenuItem OnClick="@(_=> _getAsset(asset))">
+									@if (asset.Type == AssetType.File)
+									{
+										<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Slot="start" />
+										<FluentLabel>@LOC("Download")</FluentLabel>
+									}
+									else
+									{
+										<FluentIcon Value="@TfConstants.GetIcon("GlobeSearch")" Slot="start" />
+										<FluentLabel>@LOC("Browse URL")</FluentLabel>
+									}
+
+								</FluentMenuItem>
+							</FluentMenu>
+						</div>
+					</div>
+				}
+			</div>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+
+

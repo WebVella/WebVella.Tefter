@@ -461,7 +461,7 @@ ORDER BY aa.created_on DESC;";
 
 				var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
 
-				var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
+				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
 
 				var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {filename}", DbType.String);
 
@@ -542,7 +542,7 @@ ORDER BY aa.created_on DESC;";
 
 				var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
 
-				var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
+				var typePar = CreateParameter("@type", (short)AssetType.Link, DbType.Int16);
 
 				LinkAssetContent content = new LinkAssetContent
 				{
@@ -561,7 +561,7 @@ ORDER BY aa.created_on DESC;";
 
 				var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
 
-				var modifiedOnPar = CreateParameter("@modified_on", null, DbType.DateTime2);
+				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
 
 				var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {asset.Url}", DbType.String);
 

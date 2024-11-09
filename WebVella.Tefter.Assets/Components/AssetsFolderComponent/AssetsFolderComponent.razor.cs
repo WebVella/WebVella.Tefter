@@ -1,49 +1,70 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿
+
+using WebVella.Tefter.Web.Utility;
 
 namespace WebVella.Tefter.Assets.Components;
 
-[LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderPanel.AssetsFolderPanel", "WebVella.Tefter.Assets")]
-public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComponent<AssetsFolderPanelContext>
+[LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderComponent.AssetsFolderComponent", "WebVella.Tefter.Assets")]
+public partial class AssetsFolderComponent : TfBaseComponent
 {
 	[Inject] public IState<TfAppState> TfAppState { get; set; }
-	[Inject] public IState<TfAuxDataState> TfAuxDataState { get; set; }
 	[Inject] public IAssetsService AssetsService { get; set; }
-	[Parameter] public AssetsFolderPanelContext Content { get; set; }
-	[CascadingParameter] public FluentDialog Dialog { get; set; }
+	[Parameter] public Guid? FolderId { get; set; }
+	[Parameter] public Guid? SharedKeyValue { get; set; }
+	[Parameter] public TucUser CurrentUser { get; set; }
+	[Parameter] public string Style { get; set; } = "";
+	[Parameter] public RenderFragment HeaderActions { get; set; }
 
 	private string _error = string.Empty;
 	private bool _isLoading = true;
 
-	private Asset _activeThread = null;
+	private TfEditor _folderEditor = null;
+	private string _folderEditorContent = null;
+	private bool _folderEditorSending = false;
+
+	private TfEditor _assetEditor = null;
+	private string _assetEditorContent = null;
+	private bool _assetEditorSending = false;
+
+	private Asset _activeAsset = null;
 	private AssetsFolder _folder = null;
-	private Guid? _skValue = null;
+
 	private Guid _rowId = Guid.Empty;
 	private List<Asset> _items = new();
+	private List<Asset> _allItems = new();
 	private Guid? _actionMenuIdOpened = null;
+	private string _search = null;
+
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			if (Content.FolderId is not null)
+			if (FolderId is not null)
 			{
-				var getFolderResult = AssetsService.GetFolder(Content.FolderId.Value);
+				var getFolderResult = AssetsService.GetFolder(FolderId.Value);
 				if (getFolderResult.IsSuccess) _folder = getFolderResult.Value;
 				else throw new Exception("GetFolder failed");
-				if (_folder is not null && !String.IsNullOrWhiteSpace(_folder.SharedKey) && Content.RowIndex > -1)
+				if (_folder is not null && SharedKeyValue is not null)
 				{
-					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-					_skValue = Content.DataTable.Rows[Content.RowIndex].GetSharedKeyValue(_folder.SharedKey);
-					if (_skValue is not null)
-					{
-						var getAssetsResult = AssetsService.GetAssets(_folder.Id, _skValue);
-						if (getAssetsResult.IsSuccess) _items = getAssetsResult.Value;
-						else throw new Exception("GetAssets failed");
-					}
+					var getAssetsResult = AssetsService.GetAssets(_folder.Id, SharedKeyValue.Value);
+					if (getAssetsResult.IsSuccess) _allItems = getAssetsResult.Value;
+					else throw new Exception("GetAssets failed");
 				}
 				_isLoading = false;
+				_search = TfAppState.Value.Route.Search;
+				_generateItems();
 				await InvokeAsync(StateHasChanged);
+				ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 			}
 			else
 			{
@@ -55,11 +76,51 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 
 	}
 
-	private async Task _cancel()
+	private void On_AppChanged(SetAppStateAction action)
 	{
-		await Dialog.CancelAsync();
+		InvokeAsync(async () =>
+		{
+			_search = TfAppState.Value.Route.Search;
+			_generateItems();
+			await InvokeAsync(StateHasChanged);
+		});
+	}
+	private async Task _searchValueChanged(string search)
+	{
+		_search = search?.Trim();
+		var queryDict = new Dictionary<string, object>();
+		queryDict[TfConstants.SearchQueryName] = _search;
+		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
+	private void _generateItems()
+	{
+		_items.Clear();
+		if (String.IsNullOrWhiteSpace(_search))
+		{
+			_items = _allItems.ToList();
+			return;
+		}
+		var searchLowered = _search?.Trim().ToLowerInvariant();
+		foreach (var item in _allItems)
+		{
+			if (item.Type == AssetType.File)
+			{
+				var content = (FileAssetContent)item.Content;
+				if (content.Label.ToLower().Contains(searchLowered)
+					|| content.Filename.ToLower().Contains(searchLowered))
+					_items.Add(item);
+			}
+			else if (item.Type == AssetType.Link)
+			{
+				var content = (LinkAssetContent)item.Content;
+				if (content.Label.ToLower().Contains(searchLowered)
+					|| content.Url.ToLower().Contains(searchLowered))
+					_items.Add(item);
+			}
+		}
+
+	}
 
 	private async Task _addLink()
 	{
@@ -67,9 +128,8 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		new AssetsFolderPanelLinkModalContext()
 		{
 			CreatedBy = TfAppState.Value.CurrentUser.Id,
-			DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
-			FolderId = Content.FolderId.Value,
-			RowIds = new List<Guid> { _rowId },
+			FolderId = _folder.Id,
+			SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
 			Id = Guid.Empty,
 			Label = null,
 			Url = null,
@@ -94,9 +154,8 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		new AssetsFolderPanelFileModalContext()
 		{
 			CreatedBy = TfAppState.Value.CurrentUser.Id,
-			DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
-			FolderId = Content.FolderId.Value,
-			RowIds = new List<Guid> { _rowId },
+			FolderId = _folder.Id,
+			SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
 			Id = Guid.Empty,
 			Label = null,
 			FileName = null,
@@ -126,9 +185,8 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 					new AssetsFolderPanelFileModalContext()
 					{
 						CreatedBy = TfAppState.Value.CurrentUser.Id,
-						DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
-						FolderId = Content.FolderId.Value,
-						RowIds = new List<Guid> { _rowId },
+						SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
+						FolderId = _folder.Id,
 						Id = asset.Id,
 						Label = assetContent.Label,
 						FileName = assetContent.Filename,
@@ -149,8 +207,8 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 					new AssetsFolderPanelLinkModalContext()
 					{
 						CreatedBy = TfAppState.Value.CurrentUser.Id,
-						DataProviderId = TfAppState.Value.SpaceViewData.QueryInfo.DataProviderId,
-						FolderId = Content.FolderId.Value,
+						SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
+						FolderId = _folder.Id,
 						RowIds = new List<Guid> { _rowId },
 						Id = asset.Id,
 						Label = assetContent.Label,
@@ -217,18 +275,9 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		}
 	}
 
-		private AssetsFolderPanelAssetMeta _getAssetMeta(Asset asset)
+	private AssetsFolderComponentAssetMeta _getAssetMeta(Asset asset)
 	{
-		var result = new AssetsFolderPanelAssetMeta();
-		if (asset.CreatedOn < asset.ModifiedOn)
-		{
-			result.Description += $"<span class='updated' title='{asset.ModifiedOn.ToString(TfConstants.DateHourFormat)} by {asset.ModifiedBy.Names}'>updated</span>";
-			result.Description += $"<span class='divider'> | </span>";
-		}
-		result.Description += $" {asset.CreatedOn.ToString(TfConstants.DateHourFormat)}";
-		if (asset.CreatedBy is not null)
-			result.Description += $" by {asset.CreatedBy.Names}";
-
+		var result = new AssetsFolderComponentAssetMeta();
 
 		if (asset.Type == AssetType.File)
 		{
@@ -236,6 +285,11 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			result.Title = content.Label;
 			result.Icon = TfConverters.ConvertFileNameToIcon(content.Filename);
 			result.Url = content.DownloadUrl;
+			if (content.Label != content.Filename)
+			{
+				result.Description += $"<span class='source'>{content.Filename}</span>";
+				result.Description += $"<span class='divider'> | </span>";
+			}
 		}
 		else if (asset.Type == AssetType.Link)
 		{
@@ -244,22 +298,27 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			result.Title = content.Label;
 			result.Url = content.Url;
 			result.FavIcon = content.IconUrl;
+			var domain = UrlUtility.GetDomainFromUrl(result.Url);
+			if (!String.IsNullOrWhiteSpace(domain))
+			{
+				result.Description += $"<span class='source'>{domain}</span>";
+				result.Description += $"<span class='divider'> | </span>";
+			}
 		}
 		result.Icon = result.Icon.WithColor(Color.Neutral);
+		if (asset.CreatedOn < asset.ModifiedOn)
+		{
+			result.Description += $"<span class='updated' title='{asset.ModifiedOn.ToString(TfConstants.DateHourFormat)} by {asset.ModifiedBy.Names}'>updated</span>";
+			result.Description += $"<span class='divider'> | </span>";
+		}
+		result.Description += $" {asset.CreatedOn.ToString(TfConstants.DateHourFormat)}";
+		if (asset.CreatedBy is not null)
+			result.Description += $" by {asset.CreatedBy.Names}";
 		return result;
 	}
-
-
 }
 
-public record AssetsFolderPanelContext
-{
-	public Guid? FolderId { get; set; }
-	public TfDataTable DataTable { get; set; } = null;
-	public int RowIndex { get; set; } = -1;
-}
-
-public record AssetsFolderPanelAssetMeta
+public record AssetsFolderComponentAssetMeta
 {
 	public Icon Icon { get; set; } = TfConstants.GetIcon("Document");
 	public string Title { get; set; }

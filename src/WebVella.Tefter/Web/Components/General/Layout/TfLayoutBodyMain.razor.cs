@@ -8,6 +8,8 @@ public partial class TfLayoutBodyMain : ComponentBase
 	[Parameter] public RenderFragment ToolbarAside { get; set; }
 	[Parameter] public RenderFragment Footer { get; set; }
 	[Parameter] public string ContentClass { get; set; }
+	[Parameter] public string HeaderClass { get; set; }
+	[Parameter] public string ToolbarClass { get; set; }
 
 	private string _layoutClass
 	{

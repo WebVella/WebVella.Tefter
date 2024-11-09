@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Assets.Models;
 
-public record Folder
+public record AssetsFolder
 {
 	[Required]
 	public Guid Id { get; set; }
@@ -11,12 +11,12 @@ public record Folder
 	public string SharedKey { get; set; } = null;
 	public string CountSharedColumnName { get; set; } = null;
 
-	public Folder() :
+	public AssetsFolder() :
 		this(Guid.Empty, string.Empty)
 	{
 	}
 
-	public Folder(
+	public AssetsFolder(
 		Guid id,
 		string name,
 		string sharedKey = null,

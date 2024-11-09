@@ -134,7 +134,7 @@
 }
 
 	::deep .asset-panel__body .asset-item__meta__description .updated {
-		color: var(--accent-base-color);
+		/*color: var(--accent-base-color);*/
 	}
 
 	::deep .asset-panel__body .asset-item__meta__description .divider {

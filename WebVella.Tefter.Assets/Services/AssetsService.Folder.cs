@@ -2,16 +2,16 @@
 
 public partial interface IAssetsService
 {
-	Result<Folder> GetFolder(
+	Result<AssetsFolder> GetFolder(
 		Guid folderId);
 
-	Result<List<Folder>> GetFolders();
+	Result<List<AssetsFolder>> GetFolders();
 
-	Result<Folder> CreateFolder(
-		Folder folder);
+	Result<AssetsFolder> CreateFolder(
+		AssetsFolder folder);
 
-	Result<Folder> UpdateFolder(
-		Folder folder);
+	Result<AssetsFolder> UpdateFolder(
+		AssetsFolder folder);
 
 	Result DeleteFolder(
 		Guid folderId);
@@ -19,7 +19,7 @@ public partial interface IAssetsService
 
 internal partial class AssetsService : IAssetsService
 {
-	public Result<Folder> GetFolder(
+	public Result<AssetsFolder> GetFolder(
 		Guid folderId)
 	{
 		try
@@ -30,9 +30,9 @@ internal partial class AssetsService : IAssetsService
 				new NpgsqlParameter("id", folderId));
 
 			if (dt.Rows.Count == 0)
-				return Result.Ok((Folder)null);
+				return Result.Ok((AssetsFolder)null);
 
-			return Result.Ok((Folder)ToFolder(dt.Rows[0]));
+			return Result.Ok((AssetsFolder)ToFolder(dt.Rows[0]));
 		}
 		catch (Exception ex)
 		{
@@ -40,7 +40,7 @@ internal partial class AssetsService : IAssetsService
 		}
 	}
 
-	public Result<List<Folder>> GetFolders()
+	public Result<List<AssetsFolder>> GetFolders()
 	{
 		try
 		{
@@ -48,7 +48,7 @@ internal partial class AssetsService : IAssetsService
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 
-			List<Folder> folders = new List<Folder>();
+			List<AssetsFolder> folders = new List<AssetsFolder>();
 
 			foreach (DataRow row in dt.Rows)
 				folders.Add(ToFolder(row));
@@ -61,8 +61,8 @@ internal partial class AssetsService : IAssetsService
 		}
 	}
 
-	public Result<Folder> CreateFolder(
-		Folder folder)
+	public Result<AssetsFolder> CreateFolder(
+		AssetsFolder folder)
 	{
 		try
 		{
@@ -126,8 +126,8 @@ internal partial class AssetsService : IAssetsService
 		}
 	}
 
-	public Result<Folder> UpdateFolder(
-		Folder folder)
+	public Result<AssetsFolder> UpdateFolder(
+		AssetsFolder folder)
 	{
 		try
 		{
@@ -221,12 +221,12 @@ internal partial class AssetsService : IAssetsService
 		}
 	}
 
-	private Folder ToFolder(DataRow dr)
+	private AssetsFolder ToFolder(DataRow dr)
 	{
 		if (dr == null)
 			throw new Exception("DataRow is null");
 
-		return new Folder
+		return new AssetsFolder
 		{
 			Id = dr.Field<Guid>("id"),
 			Name = dr.Field<string>("name") ?? string.Empty,
@@ -238,7 +238,7 @@ internal partial class AssetsService : IAssetsService
 	#region <--- validation --->
 
 	internal class AssetFolderValidator
-		: AbstractValidator<Folder>
+		: AbstractValidator<AssetsFolder>
 	{
 		public AssetFolderValidator(IAssetsService service)
 		{
@@ -311,7 +311,7 @@ internal partial class AssetsService : IAssetsService
 		}
 
 		public ValidationResult ValidateCreate(
-			Folder folder)
+			AssetsFolder folder)
 		{
 			if (folder == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -324,7 +324,7 @@ internal partial class AssetsService : IAssetsService
 		}
 
 		public ValidationResult ValidateUpdate(
-			Folder folder)
+			AssetsFolder folder)
 		{
 			if (folder == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
@@ -337,7 +337,7 @@ internal partial class AssetsService : IAssetsService
 		}
 
 		public ValidationResult ValidateDelete(
-			Folder folder)
+			AssetsFolder folder)
 		{
 			if (folder == null)
 				return new ValidationResult(new[] { new ValidationFailure("",

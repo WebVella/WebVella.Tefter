@@ -24,10 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="PageComponents\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Components\AssetsFolderPanelFileModal\AssetsFolderPanelFileModal.bg.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
