@@ -128,16 +128,27 @@
 					<div class="items-wrapper">
 						@foreach (var asset in _items)
 						{
-							var (icon, title, description) = _getAssetMeta(asset);
+							var (icon, title, description, url, favicon) = _getAssetMeta(asset);
 
-							<div class="asset-item" @onclick=@(()=> _itemClick())>
-								<div class="asset-item__icon"><FluentIcon Value="@icon" /></div>
-								<div class="asset-item__meta">
+							<div class="asset-item">
+								<div class="asset-item__icon">
+									@if (!String.IsNullOrWhiteSpace(favicon))
+									{
+										<div class="image-wrapper">
+											<img src="@favicon" alt="" />
+										</div>
+									}
+									else
+									{
+										<FluentIcon Value="@icon" />
+									}
+								</div>
+								<a href="@url" target="_blank" class="asset-item__meta">
 									<div class="asset-item__meta__title">@title</div>
 									<div class="asset-item__meta__description">@((MarkupString)description)</div>
-								</div>
+								</a>
 								<div class="asset-item__action">
-									<FluentButton OnClick="@(_=> _actionMenuIdOpened = asset.Id)" StopPropagation
+									<FluentButton OnClick="@(_=> _actionMenuIdOpened = asset.Id)" StopPropagation="true"
 												  Id="@($"tf-{asset.Id}")" Style="@(_actionMenuIdOpened == asset.Id ? "visibility:visible;" : "")"
 												  Appearance="@Appearance.Stealth" IconStart="@TfConstants.GetIcon("MoreVertical").WithColor(Color.Neutral)" />
 									<FluentMenu UseMenuService="true"
@@ -146,11 +157,24 @@
 												Anchor="@($"tf-{asset.Id}")">
 										<FluentMenuItem OnClick="@(_=> _deleteAsset(asset))">
 											<FluentIcon Value="@TfConstants.DeleteIcon.WithColor(Color.Error)" Slot="start" />
-											<FluentLabel>@LOC("delete")</FluentLabel>
+											<FluentLabel>@LOC("Delete")</FluentLabel>
 										</FluentMenuItem>
 										<FluentMenuItem OnClick="@(_=> _editAsset(asset))">
 											<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
-											<FluentLabel>@LOC("update")</FluentLabel>
+											<FluentLabel>@LOC("Update")</FluentLabel>
+										</FluentMenuItem>
+										<FluentMenuItem OnClick="@(_=> _getAsset(asset))">
+											@if (asset.Type == AssetType.File)
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Slot="start" />
+												<FluentLabel>@LOC("Download")</FluentLabel>
+											}
+											else
+											{
+												<FluentIcon Value="@TfConstants.GetIcon("GlobeSearch")" Slot="start" />
+												<FluentLabel>@LOC("Browse URL")</FluentLabel>
+											}
+
 										</FluentMenuItem>
 									</FluentMenu>
 								</div>

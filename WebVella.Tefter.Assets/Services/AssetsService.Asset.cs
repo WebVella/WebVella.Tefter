@@ -31,6 +31,7 @@ public partial interface IAssetsService
 		Guid id,
 		string label,
 		string url,
+		string iconUrl,
 		Guid userId);
 
 	public Result DeleteAsset(
@@ -307,7 +308,8 @@ ORDER BY aa.created_on DESC;";
 			LinkAssetContent content = new LinkAssetContent
 			{
 				Label = asset.Label,
-				Url = asset.Url
+				Url = asset.Url,
+				IconUrl = asset.IconUrl,
 			};
 
 			var contentJson = JsonSerializer.Serialize(content);
@@ -545,7 +547,8 @@ ORDER BY aa.created_on DESC;";
 				LinkAssetContent content = new LinkAssetContent
 				{
 					Url = asset.Url,
-					Label = asset.Label
+					Label = asset.Label,
+					IconUrl = asset.IconUrl
 				};
 
 				var contentJson = JsonSerializer.Serialize(content);
@@ -713,6 +716,7 @@ ORDER BY aa.created_on DESC;";
 		Guid id,
 		string label,
 		string url,
+		string iconUrl,
 		Guid userId)
 	{
 		try
@@ -749,7 +753,8 @@ ORDER BY aa.created_on DESC;";
 				LinkAssetContent linkAssetContent = new LinkAssetContent
 				{
 					Label = label,
-					Url = url
+					Url = url,
+					IconUrl = iconUrl
 				};
 
 				string contentJson = JsonSerializer.Serialize(linkAssetContent);

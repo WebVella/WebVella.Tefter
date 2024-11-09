@@ -31,10 +31,10 @@ try
 	var builder = WebApplication.CreateBuilder(args);
 	{
 		//builder.Host.ConfigureLogging(logging =>
-  //      {
-  //          logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
-  //          logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
-  //      });
+		//      {
+		//          logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
+		//          logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
+		//      });
 		//Enable Blazor Interactive Server
 		//NOTE: Currently tested and developed only in InteractiveServer mode
 		builder.Services.AddRazorComponents()
@@ -96,7 +96,7 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "TEFTER: Application normal start-up failed");
+	Log.Fatal(ex, "TEFTER: Application normal start-up failed");
 	TfFailedModeHost.CreateAndRun(ex, args);
 }
 finally

@@ -13,6 +13,18 @@ public class User
 	public DateTime CreatedOn { get; init; }
 	public UserSettings Settings { get; init; } = new();
 	public ReadOnlyCollection<Role> Roles { get; init; }
+
+	public string Names
+	{
+		get
+		{
+			var sb = new List<string>();
+			if (!String.IsNullOrWhiteSpace(FirstName)) sb.Add(FirstName);
+			if (!String.IsNullOrWhiteSpace(LastName)) sb.Add(LastName);
+
+			return String.Join(" ", sb);
+		}
+	}
 }
 
 public class Role

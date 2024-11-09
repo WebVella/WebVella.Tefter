@@ -32,6 +32,7 @@ public class FileAssetContent : AssetContentBase
 public class LinkAssetContent : AssetContentBase
 {
 	public string Url { get; set; }
+	public string IconUrl { get; set; }
 }
 
 public class CreateFileAssetModel
@@ -50,6 +51,7 @@ public class CreateLinkAssetModel
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }
 	public string Url { get; set; }
+	public string IconUrl { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; }
 	public Guid DataProviderId { get; set; }
@@ -70,6 +72,7 @@ public class CreateLinkAssetWithSharedKeyModel
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }
 	public string Url { get; set; }
+	public string IconUrl { get; set; }
 	public Guid CreatedBy { get; set; }
 	public List<Guid> SKValueIds { get; set; }
 }

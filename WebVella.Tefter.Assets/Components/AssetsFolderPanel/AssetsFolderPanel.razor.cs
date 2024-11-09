@@ -202,37 +202,54 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 
 	}
 
-	private (Icon, string, string) _getAssetMeta(Asset asset)
+	private async Task _getAsset(Asset asset)
+	{
+		if(asset.Type == AssetType.File){
+			var assetContent = (FileAssetContent)asset.Content;
+			await JSRuntime.InvokeVoidAsync("open", assetContent.DownloadUrl, "_blank");		
+		}
+		else if(asset.Type == AssetType.Link){ 
+			var assetContent = (LinkAssetContent)asset.Content;
+			await JSRuntime.InvokeVoidAsync("open", assetContent.Url, "_blank");
+		}
+	}
+
+	private (Icon, string, string,string, string) _getAssetMeta(Asset asset)
 	{
 		Icon icon = TfConstants.GetIcon("Document");
 		string title = null;
-		string description = null;
-		description = $"{LOC("created on")}: {asset.CreatedOn.ToString(TfConstants.DateHourFormat)}";
+		string description = "";
+		string url = "";
+		string favicon = "";
+		if (asset.CreatedOn < asset.ModifiedOn)
+		{
+			description += $"<span class='updated' title='{asset.ModifiedOn.ToString(TfConstants.DateHourFormat)} by {asset.ModifiedBy.Names}'>updated</span>";
+			description += $"<span class='divider'> | </span>";
+		}
+		description += $" {asset.CreatedOn.ToString(TfConstants.DateHourFormat)}";
+		if (asset.CreatedBy is not null)
+			description += $" by {asset.CreatedBy.Names}";
+
+
 		if (asset.Type == AssetType.File)
 		{
 			var content = (FileAssetContent)asset.Content;
 			title = content.Label;
 			icon = TfConverters.ConvertFileNameToIcon(content.Filename);
+			url = content.DownloadUrl;
 		}
 		else if (asset.Type == AssetType.Link)
 		{
 			icon = TfConstants.GetIcon("Link");
 			var content = (LinkAssetContent)asset.Content;
 			title = content.Label;
+			url = content.Url;
+			favicon = content.IconUrl;
 		}
 		icon = icon.WithColor(Color.Neutral);
-		return (icon, title, description);
+		return (icon, title, description,url,favicon);
 	}
 
-	private void _itemClick()
-	{
-		ToastService.ShowSuccess("_itemClick");
-	}
-
-	private void _actionClick()
-	{
-		ToastService.ShowSuccess("_actionClick");
-	}
 
 }
 

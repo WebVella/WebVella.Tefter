@@ -45,6 +45,10 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
+			//Get Favicon Url
+			if (String.IsNullOrWhiteSpace(_form.IconUrl))
+				_form.IconUrl = await new HttpClientUtility(ConfigurationService).GetFavIconForUri(_form.Url);
+
 			var result = new Result<Asset>();
 			if (_isCreate)
 			{
@@ -53,6 +57,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 					FolderId = Content.FolderId,
 					Label = _form.Label,
 					Url = _form.Url,
+					IconUrl = _form.IconUrl,
 					CreatedBy = Content.CreatedBy,
 					RowIds = Content.RowIds,
 					DataProviderId = Content.DataProviderId
@@ -61,7 +66,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 			}
 			else
 			{
-				result = AssetsService.UpdateLinkAsset(Content.Id,_form.Label,_form.Url,Content.CreatedBy);
+				result = AssetsService.UpdateLinkAsset(Content.Id, _form.Label, _form.Url, _form.IconUrl, Content.CreatedBy);
 			}
 
 			ProcessFormSubmitResponse(result);
@@ -94,7 +99,9 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 
 		_isGetUrlLoading = true;
 		await InvokeAsync(StateHasChanged);
-		_form.Label = await new HttpClientUtility(ConfigurationService).GetMetaTitleFromUri(_form.Url);
+		var newLabel = await new HttpClientUtility(ConfigurationService).GetMetaTitleFromUri(_form.Url);
+		if (!String.IsNullOrWhiteSpace(newLabel)) _form.Label = newLabel;
+		_form.IconUrl = await new HttpClientUtility(ConfigurationService).GetFavIconForUri(_form.Url);
 
 		_isGetUrlLoading = false;
 		await InvokeAsync(StateHasChanged);
@@ -107,6 +114,7 @@ public class AssetsFolderPanelLinkModalForm
 	public string Label { get; set; }
 	[Required]
 	public string Url { get; set; }
+	public string IconUrl { get; set; }
 }
 
 public class AssetsFolderPanelLinkModalContext

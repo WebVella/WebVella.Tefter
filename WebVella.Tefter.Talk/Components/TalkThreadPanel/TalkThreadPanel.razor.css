@@ -121,6 +121,7 @@
 /*Channel label*/
 ::deep .talk-channel-label {
 	font-size: 1.15rem;
+	color: var(--neutral-base-color);
 }
 
 /*Message separator*/
@@ -163,8 +164,8 @@
 
 /*right header */
 ::deep .talk-panel__right__header.broadcast {
-	background-color:var(--space-background-color);
-	border-bottom:1px solid var(--space-color);
+	background-color: var(--space-background-color);
+	border-bottom: 1px solid var(--space-color);
 }
 
 ::deep .talk-panel__right__header-icon {
@@ -173,7 +174,7 @@
 
 ::deep .talk-panel__right__header-label {
 	flex: 1 1 auto;
-	padding:0 10px;
+	padding: 0 10px;
 }
 
 ::deep .talk-panel__right__header-actions {
@@ -181,9 +182,9 @@
 }
 
 	::deep .talk-panel__right__header-actions fluent-button {
-		--neutral-fill-stealth-rest:transparent;
+		--neutral-fill-stealth-rest: transparent;
 	}
 
 ::deep .talk-panel__right__subheader table {
-	margin-bottom:0;
+	margin-bottom: 0;
 }

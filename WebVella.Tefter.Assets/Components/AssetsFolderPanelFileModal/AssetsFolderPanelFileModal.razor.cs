@@ -22,6 +22,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 	FluentInputFile? fileUploader = default!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
+	string fakeLocalPath = "uploaded";
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -32,11 +33,11 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		_form.Label = Content.Label;
 		_form.FileName = Content.FileName;
-		_form.LocalPath = null;
+		_form.LocalPath = _isCreate ? null : fakeLocalPath;
 		base.InitForm(_form);
 	}
 
-	private async Task _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
+	private void _onCompleted(IEnumerable<FluentInputFileEventArgs> files)
 	{
 		Files = files.ToList();
 		progressPercent = fileUploader!.ProgressPercent;
@@ -70,10 +71,11 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 
 			MessageStore.Clear();
 
-			if(_isCreate){ 
-				if(String.IsNullOrWhiteSpace(_form.LocalPath))
+			if (_isCreate)
+			{
+				if (String.IsNullOrWhiteSpace(_form.LocalPath))
 					MessageStore.Add(EditContext.Field(nameof(_form.LocalPath)), LOC("File is required"));
-				if(String.IsNullOrWhiteSpace(_form.FileName))
+				if (String.IsNullOrWhiteSpace(_form.FileName))
 					MessageStore.Add(EditContext.Field(nameof(_form.LocalPath)), LOC("File is required"));
 			}
 
@@ -99,7 +101,11 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			}
 			else
 			{
-				result = AssetsService.UpdateFileAsset(Content.Id,_form.Label,_form.LocalPath,TfAppState.Value.CurrentUser.Id);
+				result = AssetsService.UpdateFileAsset(
+					id: Content.Id,
+					label: _form.Label,
+					localPath: _form.LocalPath == fakeLocalPath ? null : _form.LocalPath,
+					userId: TfAppState.Value.CurrentUser.Id);
 			}
 
 			ProcessFormSubmitResponse(result);
@@ -132,13 +138,14 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 
 	}
 
-	private void _clearFile(){ 
+	private void _clearFile()
+	{
 		_form.FileName = null;
 		_form.LocalPath = null;
 	}
 }
 
-public class AssetsFolderPanelFileModalForm
+public record AssetsFolderPanelFileModalForm
 {
 	[Required]
 	public string Label { get; set; }

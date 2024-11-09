@@ -31,18 +31,28 @@
 			<FluentGrid>
 				<FluentGridItem xs="12">
 					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Url
-									 @bind-Value:after="@(()=>_getNameFromUrl(false))"
 									 Label="@LOC("Url")" Style="width:100%" AutoComplete="off" />
-
 					<FluentValidationMessage For="@(() => _form.Url)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Label")" Required="true"/>
+					<FluentInputLabel Label="@LOC("Label")" Required="true" />
 					<FluentStack>
+
 						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Label
-										 Style="width:100%" AutoComplete="off" />
+										 Style="width:100%" AutoComplete="off">
+							@if (String.IsNullOrWhiteSpace(_form.IconUrl))
+							{
+								<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="Color.Neutral" />
+							}
+							else
+							{
+								<img slot="start" style="width:20px; max-height:20px" src="@_form.IconUrl" alt="" />
+							}
+
+
+						</FluentTextField>
 						<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from URL")"
 									  OnClick="@(()=>_getNameFromUrl(true))" Appearance="@Appearance.Outline"
 									  Loading="_isGetUrlLoading" Disabled="_isGetUrlLoading" />

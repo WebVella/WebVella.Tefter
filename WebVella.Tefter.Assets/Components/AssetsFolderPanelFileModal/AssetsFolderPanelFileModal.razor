@@ -29,34 +29,77 @@
 						FormName="submit-form" class="tf-form" novalidate>
 			<DataAnnotationsValidator />
 			<FluentGrid>
-				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("File")" Required="true" />
-					<FluentStack VerticalAlignment="@VerticalAlignment.Center">
-						@if (!String.IsNullOrWhiteSpace(_form.FileName))
-						{
-							<FluentTextField ReadOnly="true" Value="@_form.FileName" Style="width:100%"/>
-							<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)"/>
-						}
-						else
-						{
-							<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
-										  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
-							@if (progressPercent < 100)
+
+				@if (_isCreate)
+				{
+					<FluentGridItem xs="12">
+						<FluentInputLabel Label="@LOC("File")" Required="true" />
+						<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+							@if (!String.IsNullOrWhiteSpace(_form.FileName))
 							{
-								<TfProgress Value="progressPercent" Visible="@(progressPercent > 0)" />
+								<FluentTextField ReadOnly="true" Value="@_form.FileName" Style="width:100%" />
+								<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
 							}
-							<FluentInputFile @ref="@fileUploader"
-											 DragDropZoneVisible="false"
-											 Mode="InputFileMode.SaveToTemporaryFolder"
-											 Multiple="false"
-											 AnchorId="@_uploadId"
-											 MaximumFileSize="@(100 * 1024 * 1024)"
-											 OnProgressChange="@_onProgress"
-											 OnCompleted="@_onCompleted" />
-						}
-					</FluentStack>
-					<FluentValidationMessage For="@(() => _form.LocalPath)" />
-				</FluentGridItem>
+							else
+							{
+								<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
+											  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
+								<TfProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
+								<FluentInputFile @ref="@fileUploader"
+												 DragDropZoneVisible="false"
+												 Mode="InputFileMode.SaveToTemporaryFolder"
+												 Multiple="false"
+												 AnchorId="@_uploadId"
+												 MaximumFileSize="@(100 * 1024 * 1024)"
+												 OnProgressChange="@_onProgress"
+												 OnCompleted="@_onCompleted" />
+							}
+						</FluentStack>
+						<FluentValidationMessage For="@(() => _form.LocalPath)" />
+					</FluentGridItem>
+				}
+				else
+				{
+					<FluentGridItem xs="12">
+						<FluentTextField Label="@LOC("File name")" ReadOnly="true" Value="@Content.FileName" Style="width:100%" />
+					</FluentGridItem>
+					<FluentGridItem xs="12">
+						<FluentInputLabel Label="@LOC("File content")" Required="true" />
+						<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+							@if (_upload is null && String.IsNullOrWhiteSpace(_form.LocalPath))
+							{
+								<FluentTextField ReadOnly="true" Value="@_form.FileName" Style="width:100%" />
+								<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
+							}
+							else
+							{
+								<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
+											  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
+
+								<TfProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
+								@if (progressPercent == 0)
+								{
+									<div>@LOC("keep the current file content")</div>
+								}
+								else if (!String.IsNullOrWhiteSpace(_form.FileName))
+								{
+									<div>@LOC("replace content with '{0}'", _form.FileName)</div>
+								}
+								<FluentInputFile @ref="@fileUploader"
+												 DragDropZoneVisible="false"
+												 Mode="InputFileMode.SaveToTemporaryFolder"
+												 Multiple="false"
+												 AnchorId="@_uploadId"
+												 Accept="@(Path.GetExtension(_form.FileName))"
+												 MaximumFileSize="@(100 * 1024 * 1024)"
+												 OnProgressChange="@_onProgress"
+												 OnCompleted="@_onCompleted" />
+							}
+						</FluentStack>
+						<FluentValidationMessage For="@(() => _form.LocalPath)" />
+					</FluentGridItem>
+				}
+
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
