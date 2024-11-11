@@ -37,7 +37,7 @@ internal partial class AppStateUseCase
 		LOC = serviceProvider.GetService<IStringLocalizer<AppStateUseCase>>();
 	}
 
-	internal async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)
+	internal virtual async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)
 	{
 
 		if (oldAppState == null) oldAppState = new TfAppState();

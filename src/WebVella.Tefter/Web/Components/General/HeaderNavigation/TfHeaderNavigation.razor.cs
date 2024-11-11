@@ -29,26 +29,6 @@ public partial class TfHeaderNavigation : TfBaseComponent
 
 	}
 
-	private async Task _onRightClick(Guid? presetId)
-	{
-		_activeContextMenuId = presetId;
-	}
-
-	private async Task _onEdit(Guid presetId)
-	{
-
-	}
-
-	private async Task _onRemove(Guid presetId)
-	{
-
-	}
-
-	private async Task _onAdd(Guid presetId)
-	{
-
-	}
-
 	private Dictionary<Guid, List<Guid>> _generateSelectionDict()
 	{
 		var dict = new Dictionary<Guid, List<Guid>>();

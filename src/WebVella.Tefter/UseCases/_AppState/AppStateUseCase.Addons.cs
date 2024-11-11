@@ -41,7 +41,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult((newAppState,newAuxDataState));
 	}
 
-	internal List<TucScreenRegionComponentMeta> GetAddonComponents(TfScreenRegion? region = null)
+	internal virtual List<TucScreenRegionComponentMeta> GetAddonComponents(TfScreenRegion? region = null)
 	{
 		var results = new List<TucScreenRegionComponentMeta>();
 		var componentMeta = _metaProvider.GetScreenRegionComponentsMeta(region);
@@ -59,7 +59,7 @@ internal partial class AppStateUseCase
 		return results.OrderBy(x => x.Position).ThenBy(x => x.Name).ToList();
 	}
 
-	internal ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodeComponents()
+	internal virtual ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodeComponents()
 	{
 		return _metaProvider.GetSpaceNodesComponentsMeta();
 	}

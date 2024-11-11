@@ -51,7 +51,7 @@ internal partial class AppStateUseCase
 		return (newAppState,newAuxDataState);
 	}
 
-	internal async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
+	internal virtual async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
 	{
 		var srvResult = await _identityManager.GetUsersAsync();
 		if (srvResult.IsFailed)
@@ -90,7 +90,7 @@ internal partial class AppStateUseCase
 		return records.Skip(TfConverters.CalcSkip(page.Value,pageSize.Value)).Take(pageSize.Value).Select(x => new TucUser(x)).ToList();
 
 	}
-	internal async Task<TucUser> GetUserAsync(Guid userId)
+	internal virtual async Task<TucUser> GetUserAsync(Guid userId)
 	{
 		var srvResult = await _identityManager.GetUserAsync(userId);
 		if (srvResult.IsFailed)
@@ -108,7 +108,7 @@ internal partial class AppStateUseCase
 		if (srvResult.Value is null) return null;
 		return new TucUser(srvResult.Value);
 	}
-	internal async Task<List<TucRole>> GetUserRolesAsync()
+	internal virtual async Task<List<TucRole>> GetUserRolesAsync()
 	{
 		var srvResult = await _identityManager.GetRolesAsync();
 		if (srvResult.IsFailed)
@@ -126,7 +126,7 @@ internal partial class AppStateUseCase
 		if (srvResult.Value is null) return null;
 		return srvResult.Value.Select(x => new TucRole(x)).ToList();
 	}
-	internal async Task<Result<TucUser>> CreateUserWithFormAsync(TucUserAdminManageForm form)
+	internal virtual async Task<Result<TucUser>> CreateUserWithFormAsync(TucUserAdminManageForm form)
 	{
 		UserBuilder userBuilder = _identityManager.CreateUserBuilder(null);
 		userBuilder
@@ -149,7 +149,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucUser(result.Value));
 	}
 
-	internal async Task<Result<TucUser>> UpdateUserWithFormAsync(TucUserAdminManageForm form)
+	internal virtual async Task<Result<TucUser>> UpdateUserWithFormAsync(TucUserAdminManageForm form)
 	{
 		var currentUserResult = await _identityManager.GetUserAsync(form.Id);
 		if (currentUserResult.IsFailed) return Result.Fail(new Error("GetUserAsync failed").CausedBy(currentUserResult.Errors));

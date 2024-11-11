@@ -19,31 +19,8 @@ internal partial class UserStateUseCase
 		_navigationManager = serviceProvider.GetService<NavigationManager>();
 	}
 
-	internal bool IsBusy { get; set; } = true;
 
-	internal async Task<TfAppState> InitState()
-	{
-		var result = new TfAppState();
-
-		//Init User
-		var user = await GetUserFromCookieAsync();
-		if (user is null) return null; //should redirect to login
-
-		//Init User spaces
-		var urlData = _navigationManager.GetRouteState();
-		var uri = new Uri(_navigationManager.Uri);
-		if (
-			urlData.FirstNode == RouteDataFirstNode.Home
-			|| urlData.FirstNode == RouteDataFirstNode.Space
-			)
-		{
-			//result = result with { CurrentUserSpaces = await InitUserSpaces(result.CurrentUser) };
-		}
-
-		return result;
-	}
-
-	internal async Task<TfUserState> InitUserState()
+	internal virtual async Task<TfUserState> InitUserState()
 	{
 		var result = new TfUserState();
 
@@ -73,7 +50,7 @@ internal partial class UserStateUseCase
 	}
 
 	//user
-	private async Task<User> GetUserWithChecks(Guid userId)
+	internal virtual async Task<User> GetUserWithChecks(Guid userId)
 	{
 		Result<User> userResult = await _identityManager.GetUserAsync(userId);
 		if (userResult.IsFailed) throw new Exception("GetUserAsync failed");
@@ -81,9 +58,10 @@ internal partial class UserStateUseCase
 		return userResult.Value;
 	}
 
-	internal async Task<TucUser> GetUserFromCookieAsync()
+	internal virtual async Task<TucUser> GetUserFromCookieAsync()
 	{
-		var user = (await _authenticationStateProvider.GetAuthenticationStateAsync()).User;
+		var user = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User;
+		if(user is null) return null;
 		//Temporary fix for multitab logout- we check the cookie as well
 		var cookie = await new CookieService(_jsRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
 		if (cookie is null || user.Identity is null || !user.Identity.IsAuthenticated ||
@@ -99,7 +77,7 @@ internal partial class UserStateUseCase
 		return new TucUser(tfUser);
 	}
 
-	public async Task<Result<TucUser>> SetUserCulture(Guid userId, string cultureCode)
+	public virtual async Task<Result<TucUser>> SetUserCulture(Guid userId, string cultureCode)
 	{
 		User user = await GetUserWithChecks(userId);
 
@@ -114,7 +92,7 @@ internal partial class UserStateUseCase
 		return Result.Ok(new TucUser(user));
 	}
 
-	internal async Task<TucCultureOption> InitCulture(TucUser user)
+	internal virtual async Task<TucCultureOption> InitCulture(TucUser user)
 	{
 		var cultureCookie = await new CookieService(_jsRuntime).GetAsync(CookieRequestCultureProvider.DefaultCookieName);
 		CultureInfo cookieCultureInfo = null;
@@ -163,7 +141,7 @@ internal partial class UserStateUseCase
 
 
 	//Theme
-	public async Task<Result<TucUser>> SetUserTheme(Guid userId,
+	public virtual async Task<Result<TucUser>> SetUserTheme(Guid userId,
 		DesignThemeModes themeMode, OfficeColor themeColor)
 	{
 		var user = await GetUserWithChecks(userId);
@@ -182,7 +160,7 @@ internal partial class UserStateUseCase
 		return Result.Ok(new TucUser(user));
 	}
 
-	public async Task<Result<TucUser>> SetStartUpUrl(Guid userId,
+	public virtual async Task<Result<TucUser>> SetStartUpUrl(Guid userId,
 		string url)
 	{
 		var user = await GetUserWithChecks(userId);
@@ -196,7 +174,7 @@ internal partial class UserStateUseCase
 		return Result.Ok(new TucUser(user));
 	}
 
-	public async Task<Result<TucUser>> SetPageSize(Guid userId,
+	public virtual async Task<Result<TucUser>> SetPageSize(Guid userId,
 		int? pageSize)
 	{
 		var user = await GetUserWithChecks(userId);
@@ -210,23 +188,23 @@ internal partial class UserStateUseCase
 		return Result.Ok(new TucUser(user));
 	}
 
-	internal async Task SetUnprotectedLocalStorage(string key, string value)
+	internal virtual async Task SetUnprotectedLocalStorage(string key, string value)
 	{
 		await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, value);
 	}
 
-	internal async Task RemoveUnprotectedLocalStorage(string key)
+	internal virtual async Task RemoveUnprotectedLocalStorage(string key)
 	{
 		await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
 	}
 
-	internal async Task<string> GetUnprotectedLocalStorage(string key)
+	internal virtual async Task<string> GetUnprotectedLocalStorage(string key)
 	{
 		return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", key);
 	}
 
 	//Sidebar
-	public async Task<Result<TucUser>> SetSidebarState(Guid userId,bool sidebarExpanded)
+	public virtual async Task<Result<TucUser>> SetSidebarState(Guid userId,bool sidebarExpanded)
 	{
 		User user = await GetUserWithChecks(userId);
 		var userBld = _identityManager.CreateUserBuilder(user).WithOpenSidebar(sidebarExpanded);

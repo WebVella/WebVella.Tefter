@@ -1,10 +1,4 @@
-﻿using Microsoft.FluentUI.AspNetCore.Components;
-using System.Globalization;
-using WebVella.Tefter.Web.Components;
-
-namespace WebVella.Tefter.Web.Tests.Components;
-
-
+﻿namespace WebVella.Tefter.Web.Tests.Components;
 public class LoginComponentTests : BaseTest
 {
 

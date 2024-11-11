@@ -7,15 +7,15 @@
 	<ChildContent>
 		<FluentGrid>
 			<FluentGridItem xs="5">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminDataProvider?.Name"
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value.AdminDataProvider?.Name"
 								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
 			</FluentGridItem>
 			<FluentGridItem xs="5">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminDataProvider?.ProviderType.Name"
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value.AdminDataProvider?.ProviderType.Name"
 								 Label="@LOC("Type")" Style="width:100%" ReadOnly="true" />
 			</FluentGridItem>
 			<FluentGridItem xs="2">
-				<FluentNumberField TValue="int?" Value="@TfAppState.Value?.AdminDataProvider?.Index"
+				<FluentNumberField TValue="int?" Value="@TfAppState.Value.AdminDataProvider?.Index"
 								   Label="@LOC("Index")" Style="width:100%" ReadOnly="true" Disabled="true" />
 			</FluentGridItem>
 		</FluentGrid>
@@ -23,7 +23,7 @@
 			<FluentGridItem xs="12">
 				<FluentInputLabel>@LOC("Supported Source data types")</FluentInputLabel>
 				@{
-					var supportedDataTypes = TfAppState.Value?.AdminDataProvider?.ProviderType.SupportedSourceDataTypes;
+					var supportedDataTypes = TfAppState.Value.AdminDataProvider?.ProviderType.SupportedSourceDataTypes;
 				}
 				@if (supportedDataTypes is null || supportedDataTypes.Count == 0)
 				{
@@ -45,13 +45,13 @@
 		<FluentDivider Style="margin:15px 0" />
 		<FluentGrid Style="margin-top:3px;">
 			<FluentGridItem xs="12">
-				@if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType is null) { }
-				else if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+				@if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType is null) { }
+				else if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
 				{
-					if (TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType is not null)
+					if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType is not null)
 					{
 						<TfErrorBoundry>
-							<DynamicComponent Type="TfAppState.Value?.AdminDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+							<DynamicComponent Type="TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
 						</TfErrorBoundry>
 					}
 				}

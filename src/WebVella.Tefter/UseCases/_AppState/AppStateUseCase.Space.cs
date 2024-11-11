@@ -37,7 +37,7 @@ internal partial class AppStateUseCase
 		return (newAppState, newAuxDataState);
 	}
 
-	internal TucSpace GetSpace(Guid spaceId)
+	internal virtual TucSpace GetSpace(Guid spaceId)
 	{
 		var serviceResult = _spaceManager.GetSpace(spaceId);
 		if (serviceResult.IsFailed)
@@ -56,7 +56,7 @@ internal partial class AppStateUseCase
 
 		return new TucSpace(serviceResult.Value);
 	}
-	internal Task<List<TucSpace>> GetUserSpacesAsync(TucUser user)
+	internal virtual Task<List<TucSpace>> GetUserSpacesAsync(TucUser user)
 	{
 
 		var serviceResult = _spaceManager.GetSpacesListForUser(user.Id);
@@ -110,7 +110,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult(allSpaces.OrderBy(x => x.Position).Take(10).ToList());
 
 	}
-	internal Task<List<TucSpace>> GetAllSpaces()
+	internal virtual Task<List<TucSpace>> GetAllSpaces()
 	{
 
 		var serviceResult = _spaceManager.GetSpacesList();
@@ -164,28 +164,28 @@ internal partial class AppStateUseCase
 		return Task.FromResult(allSpaces);
 
 	}
-	internal Result<TucSpace> CreateSpaceWithForm(TucSpace space)
+	internal virtual Result<TucSpace> CreateSpaceWithForm(TucSpace space)
 	{
 		var result = _spaceManager.CreateSpace(space.ToModel());
 		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceWithFormAsync failed").CausedBy(result.Errors));
 		return Result.Ok(new TucSpace(result.Value));
 	}
 
-	internal Result<TucSpace> UpdateSpaceWithForm(TucSpace space)
+	internal virtual Result<TucSpace> UpdateSpaceWithForm(TucSpace space)
 	{
 		var result = _spaceManager.UpdateSpace(space.ToModel());
 		if (result.IsFailed) return Result.Fail(new Error("UpdateSpaceWithForm failed").CausedBy(result.Errors));
 		return Result.Ok(new TucSpace(result.Value));
 	}
 
-	internal Result DeleteSpace(Guid spaceId)
+	internal virtual Result DeleteSpace(Guid spaceId)
 	{
 		var result = _spaceManager.DeleteSpace(spaceId);
 		if (result.IsFailed) return Result.Fail(new Error("DeleteSpace failed").CausedBy(result.Errors));
 		return Result.Ok();
 	}
 
-	internal List<TucSpaceNode> GetSpaceNodes(Guid spaceId)
+	internal virtual List<TucSpaceNode> GetSpaceNodes(Guid spaceId)
 	{
 		var resultSM = _spaceManager.GetSpaceNodes(spaceId);
 		if (resultSM.IsFailed)
@@ -204,7 +204,7 @@ internal partial class AppStateUseCase
 		return result;
 	}
 
-	internal Result<List<TucSpaceNode>> CreateSpaceNode(TucSpaceNode node)
+	internal virtual Result<List<TucSpaceNode>> CreateSpaceNode(TucSpaceNode node)
 	{
 		var resultSM = _spaceManager.CreateSpaceNode(node.ToModel());
 		if (resultSM.IsFailed) return Result.Fail(new Error("CreateSpaceNode failed").CausedBy(resultSM.Errors));
@@ -212,7 +212,7 @@ internal partial class AppStateUseCase
 		return result;
 	}
 
-	internal Result<List<TucSpaceNode>> UpdateSpaceNode(TucSpaceNode node)
+	internal virtual Result<List<TucSpaceNode>> UpdateSpaceNode(TucSpaceNode node)
 	{
 		var resultSM = _spaceManager.UpdateSpaceNode(node.ToModel());
 		if (resultSM.IsFailed) return Result.Fail(new Error("UpdateSpaceNode failed").CausedBy(resultSM.Errors));
@@ -220,14 +220,14 @@ internal partial class AppStateUseCase
 		return result;
 	}
 
-	internal Result<List<TucSpaceNode>> MoveSpaceNode(TucSpaceNode node, bool isMoveUp)
+	internal virtual Result<List<TucSpaceNode>> MoveSpaceNode(TucSpaceNode node, bool isMoveUp)
 	{
 		if (isMoveUp) node.Position--;
 		else node.Position++;
 		return UpdateSpaceNode(node);
 	}
 
-	internal Result<List<TucSpaceNode>> DeleteSpaceNode(TucSpaceNode node)
+	internal virtual Result<List<TucSpaceNode>> DeleteSpaceNode(TucSpaceNode node)
 	{
 		var resultSM = _spaceManager.DeleteSpaceNode(node.ToModel());
 		if (resultSM.IsFailed) return Result.Fail(new Error("DeleteSpaceNode failed").CausedBy(resultSM.Errors));
@@ -235,7 +235,7 @@ internal partial class AppStateUseCase
 		return result;
 	}
 
-	internal Result<List<TucSpaceNode>> CopySpaceNode(Guid nodeId)
+	internal virtual Result<List<TucSpaceNode>> CopySpaceNode(Guid nodeId)
 	{
 		var resultSM = _spaceManager.CopySpaceNode(nodeId);
 		if (resultSM.IsFailed) return Result.Fail(new Error("CopySpaceNode failed").CausedBy(resultSM.Errors));

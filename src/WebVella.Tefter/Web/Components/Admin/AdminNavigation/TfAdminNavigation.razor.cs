@@ -41,6 +41,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 	private void generateMenu()
 	{
 		menuItems.Clear();
+		if(TfAppState.Value.Route is null) return;
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-dashboard-link",

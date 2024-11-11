@@ -33,7 +33,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
-	internal List<TucRepositoryFile> GetFileRepository(string search, int? page = null, int? pageSize = null)
+	internal virtual List<TucRepositoryFile> GetFileRepository(string search, int? page = null, int? pageSize = null)
 	{
 		var result = new List<TucRepositoryFile>();
 		var tfResult = _repositoryManager.GetFiles(
@@ -61,7 +61,7 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal Result<TucRepositoryFile> CreateFile(TucFileForm form)
+	internal virtual Result<TucRepositoryFile> CreateFile(TucFileForm form)
 	{
 		var result = _repositoryManager.CreateFile(
 			filename: Path.GetFileName(form.FileName),
@@ -74,7 +74,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucRepositoryFile(result.Value));
 	}
 
-	internal Result<TucRepositoryFile> UpdateFile(TucFileForm form)
+	internal virtual Result<TucRepositoryFile> UpdateFile(TucFileForm form)
 	{
 		var result = _repositoryManager.UpdateFile(
 			filename: Path.GetFileName(form.FileName),
@@ -90,7 +90,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucRepositoryFile(getResult.Value));
 	}
 
-	internal Result DeleteFile(string fileName)
+	internal virtual Result DeleteFile(string fileName)
 	{
 		var result = _repositoryManager.DeleteFile(fileName);
 		if (result.IsFailed)

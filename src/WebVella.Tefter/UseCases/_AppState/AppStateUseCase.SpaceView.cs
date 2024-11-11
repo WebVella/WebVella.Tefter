@@ -128,7 +128,7 @@ internal partial class AppStateUseCase
 
 		return Task.FromResult((newAppState,newAuxDataState));
 	}
-	internal TucSpaceView GetSpaceView(Guid viewId)
+	internal virtual TucSpaceView GetSpaceView(Guid viewId)
 	{
 		var serviceResult = _spaceManager.GetSpaceView(viewId);
 		if (serviceResult.IsFailed)
@@ -147,7 +147,7 @@ internal partial class AppStateUseCase
 
 		return new TucSpaceView(serviceResult.Value);
 	}
-	internal List<TucSpaceView> GetSpaceViewList(Guid spaceId)
+	internal virtual List<TucSpaceView> GetSpaceViewList(Guid spaceId)
 	{
 		var serviceResult = _spaceManager.GetSpaceViewsList(spaceId);
 		if (serviceResult.IsFailed)
@@ -166,7 +166,7 @@ internal partial class AppStateUseCase
 
 		return serviceResult.Value.Select(x => new TucSpaceView(x)).ToList();
 	}
-	internal Result<Tuple<TucSpaceView, TucSpaceData>> CreateSpaceViewWithForm(TucSpaceView view)
+	internal virtual Result<Tuple<TucSpaceView, TucSpaceData>> CreateSpaceViewWithForm(TucSpaceView view)
 	{
 		var serviceResult = _spaceManager.CreateSpaceView(view.ToModelExtended(), view.DataSetType == TucSpaceViewDataSetType.New);
 		if (serviceResult.IsFailed)
@@ -201,7 +201,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(spaceView, spaceData));
 	}
 
-	internal Result<Tuple<TucSpaceView, TucSpaceData>> UpdateSpaceViewWithForm(TucSpaceView view)
+	internal virtual Result<Tuple<TucSpaceView, TucSpaceData>> UpdateSpaceViewWithForm(TucSpaceView view)
 	{
 		var serviceResult = _spaceManager.UpdateSpaceView(view.ToModelExtended(), view.DataSetType == TucSpaceViewDataSetType.New);
 		if (serviceResult.IsFailed)
@@ -236,7 +236,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(spaceView, spaceData));
 	}
 
-	internal Result DeleteSpaceView(Guid viewId)
+	internal virtual Result DeleteSpaceView(Guid viewId)
 	{
 		var tfResult = _spaceManager.DeleteSpaceView(viewId);
 		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
@@ -244,7 +244,7 @@ internal partial class AppStateUseCase
 		return Result.Ok();
 	}
 
-	internal Task<List<TucSpaceView>> GetAllSpaceViews()
+	internal virtual Task<List<TucSpaceView>> GetAllSpaceViews()
 	{
 
 		var serviceResult = _spaceManager.GetAllSpaceViews();
@@ -268,7 +268,7 @@ internal partial class AppStateUseCase
 
 
 	//View columns
-	internal TucSpaceViewColumn GetViewColumn(Guid columnId)
+	internal virtual TucSpaceViewColumn GetViewColumn(Guid columnId)
 	{
 		var serviceResult = _spaceManager.GetSpaceViewColumn(columnId);
 		if (serviceResult.IsFailed)
@@ -288,7 +288,7 @@ internal partial class AppStateUseCase
 		return new TucSpaceViewColumn(serviceResult.Value);
 	}
 
-	internal List<TucSpaceViewColumn> GetViewColumns(Guid viewId)
+	internal virtual List<TucSpaceViewColumn> GetViewColumns(Guid viewId)
 	{
 		var serviceResult = _spaceManager.GetSpaceViewColumnsList(viewId);
 		if (serviceResult.IsFailed)
@@ -309,7 +309,7 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal Result<List<TucSpaceViewColumn>> CreateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	internal virtual Result<List<TucSpaceViewColumn>> CreateSpaceViewColumnWithForm(TucSpaceViewColumn column)
 	{
 		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
 		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
@@ -320,7 +320,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetViewColumns(column.SpaceViewId));
 	}
 
-	internal Result<List<TucSpaceViewColumn>> UpdateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	internal virtual Result<List<TucSpaceViewColumn>> UpdateSpaceViewColumnWithForm(TucSpaceViewColumn column)
 	{
 		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
 		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
@@ -331,7 +331,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetViewColumns(column.SpaceViewId));
 	}
 
-	internal Result<List<TucSpaceViewColumn>> RemoveSpaceViewColumn(Guid columnId)
+	internal virtual Result<List<TucSpaceViewColumn>> RemoveSpaceViewColumn(Guid columnId)
 	{
 		if (columnId == Guid.Empty) return Result.Fail("columnId is required");
 		var column = GetViewColumn(columnId);
@@ -341,7 +341,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetViewColumns(column.SpaceViewId));
 	}
 
-	internal Result<List<TucSpaceViewColumn>> MoveSpaceViewColumn(Guid viewId, Guid columnId, bool isUp)
+	internal virtual Result<List<TucSpaceViewColumn>> MoveSpaceViewColumn(Guid viewId, Guid columnId, bool isUp)
 	{
 		if (columnId == Guid.Empty) return Result.Fail("columnId is required");
 		Result updateResult = null;
@@ -354,7 +354,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetViewColumns(viewId));
 
 	}
-	internal Result<TucSpaceView> UpdateSpaceViewPresets(Guid viewId, List<TucSpaceViewPreset> presets)
+	internal virtual Result<TucSpaceView> UpdateSpaceViewPresets(Guid viewId, List<TucSpaceViewPreset> presets)
 	{
 		var updateResult = _spaceManager.UpdateSpaceViewPresets(viewId, presets.Select(x => x.ToModel()).ToList());
 		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceViewPresets failed").CausedBy(updateResult.Errors));
@@ -362,7 +362,7 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal List<TucSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
+	internal virtual List<TucSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
 	{
 		var serviceResult = _spaceManager.GetAvailableSpaceViewColumnTypes();
 		if (serviceResult.IsFailed)

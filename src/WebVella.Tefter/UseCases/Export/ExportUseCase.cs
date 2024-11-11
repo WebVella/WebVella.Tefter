@@ -18,7 +18,7 @@ public class ExportUseCase
 	}
 
 	//TODO RUMEN: Move to service method?
-	public ValueTask<byte[]> ExportViewToExcel(TucExportViewData data)
+	public virtual ValueTask<byte[]> ExportViewToExcel(TucExportViewData data)
 	{
 		if (data.RouteState.SpaceViewId is null) throw new Exception("SpaceViewId not provided");
 

@@ -59,6 +59,12 @@ public class BaseTest
 	internal static Mock<ExportUseCase> ExportUseCaseMock;
 	internal static Mock<LoginUseCase> LoginUseCaseMock;
 
+	internal static IRenderedComponent<FluentToastProvider> toastProvider;
+	internal static IRenderedComponent<FluentDialogProvider> dialogProvider;
+	internal static IRenderedComponent<FluentTooltipProvider> tooltipProvider;
+	internal static IRenderedComponent<FluentKeyCodeProvider> keyCodeProvider;
+	internal static IRenderedComponent<FluentMenuProvider> menuProvider;
+
 	public static TestContext Context { get; }
 
 	static BaseTest()
@@ -164,6 +170,10 @@ public class BaseTest
 		LoginUseCaseMock = new Mock<LoginUseCase>(Context.Services);
 		Context.Services.AddTransient(typeof(LoginUseCase), Services => LoginUseCaseMock.Object);
 
-
+		toastProvider = Context.RenderComponent<FluentToastProvider>();
+		dialogProvider = Context.RenderComponent<FluentDialogProvider>();
+		tooltipProvider = Context.RenderComponent<FluentTooltipProvider>();
+		keyCodeProvider = Context.RenderComponent<FluentKeyCodeProvider>();
+		menuProvider = Context.RenderComponent<FluentMenuProvider>();
 	}
 }

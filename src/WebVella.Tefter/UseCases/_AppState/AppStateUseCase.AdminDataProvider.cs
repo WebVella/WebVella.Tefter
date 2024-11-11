@@ -87,7 +87,7 @@ internal partial class AppStateUseCase
 	}
 
 	//Data Provider
-	internal Task<List<TucDataProvider>> GetDataProvidersAsync(string search = null, int? page = null, int? pageSize = null)
+	internal virtual Task<List<TucDataProvider>> GetDataProvidersAsync(string search = null, int? page = null, int? pageSize = null)
 	{
 		var srvResult = _dataProviderManager.GetProviders();
 		if (srvResult.IsFailed)
@@ -124,7 +124,7 @@ internal partial class AppStateUseCase
 
 		return Task.FromResult(records.Skip(TfConverters.CalcSkip(page.Value, pageSize.Value)).Take(pageSize.Value).Select(x => new TucDataProvider(x)).ToList());
 	}
-	internal Task<TucDataProvider> GetDataProviderAsync(Guid providerId)
+	internal virtual Task<TucDataProvider> GetDataProviderAsync(Guid providerId)
 	{
 		var srvResult = _dataProviderManager.GetProvider(providerId);
 		if (srvResult.IsFailed)
@@ -145,7 +145,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult(new TucDataProvider(srvResult.Value));
 	}
 
-	internal Task<List<TucDataProviderTypeInfo>> GetProviderTypesAsync()
+	internal virtual Task<List<TucDataProviderTypeInfo>> GetProviderTypesAsync()
 	{
 		var srvResult = _dataProviderManager.GetProviderTypes();
 		if (srvResult.IsFailed)
@@ -164,7 +164,7 @@ internal partial class AppStateUseCase
 
 		return Task.FromResult(srvResult.Value.Select(t => new TucDataProviderTypeInfo(t)).ToList());
 	}
-	internal Task<Result> DeleteDataProviderAsync(Guid providerId)
+	internal virtual Task<Result> DeleteDataProviderAsync(Guid providerId)
 	{
 		var srvResult = _dataProviderManager.DeleteDataProvider(providerId);
 		if (srvResult.IsFailed)
@@ -175,7 +175,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult(Result.Ok());
 	}
 
-	internal Result<TucDataProvider> CreateDataProviderWithForm(TucDataProviderForm form)
+	internal virtual Result<TucDataProvider> CreateDataProviderWithForm(TucDataProviderForm form)
 	{
 		var providerTypesResult = _dataProviderManager.GetProviderTypes();
 		if (providerTypesResult.IsFailed) return Result.Fail(new Error("GetProviderTypes failed").CausedBy(providerTypesResult.Errors));
@@ -186,7 +186,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucDataProvider(createResult.Value));
 	}
 
-	internal Result<TucDataProvider> UpdateDataProviderWithForm(TucDataProviderForm form)
+	internal virtual Result<TucDataProvider> UpdateDataProviderWithForm(TucDataProviderForm form)
 	{
 		var providerTypesResult = _dataProviderManager.GetProviderTypes();
 		if (providerTypesResult.IsFailed) return Result.Fail(new Error("GetProviderTypes failed").CausedBy(providerTypesResult.Errors));
@@ -198,7 +198,7 @@ internal partial class AppStateUseCase
 	}
 
 	//Data provider columns
-	internal Result<TucDataProvider> CreateDataProviderColumn(TucDataProviderColumnForm form)
+	internal virtual Result<TucDataProvider> CreateDataProviderColumn(TucDataProviderColumnForm form)
 	{
 		var result = _dataProviderManager.CreateDataProviderColumn(form.ToModel());
 		if (result.IsFailed)
@@ -206,7 +206,7 @@ internal partial class AppStateUseCase
 
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
-	internal Result<TucDataProvider> UpdateDataProviderColumn(TucDataProviderColumnForm form)
+	internal virtual Result<TucDataProvider> UpdateDataProviderColumn(TucDataProviderColumnForm form)
 	{
 		var result = _dataProviderManager.UpdateDataProviderColumn(form.ToModel());
 		if (result.IsFailed)
@@ -214,7 +214,7 @@ internal partial class AppStateUseCase
 
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
-	internal Result<TucDataProvider> DeleteDataProviderColumn(Guid columnId)
+	internal virtual Result<TucDataProvider> DeleteDataProviderColumn(Guid columnId)
 	{
 		var result = _dataProviderManager.DeleteDataProviderColumn(columnId);
 		if (result.IsFailed)
@@ -225,7 +225,7 @@ internal partial class AppStateUseCase
 
 	//Data provider key
 
-	internal Result<TucDataProvider> CreateDataProviderKey(TucDataProviderSharedKeyForm form)
+	internal virtual Result<TucDataProvider> CreateDataProviderKey(TucDataProviderSharedKeyForm form)
 	{
 		var result = _dataProviderManager.CreateDataProviderSharedKey(form.ToModel());
 		if (result.IsFailed)
@@ -234,7 +234,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
 
-	internal Result<TucDataProvider> UpdateDataProviderKey(TucDataProviderSharedKeyForm form)
+	internal virtual Result<TucDataProvider> UpdateDataProviderKey(TucDataProviderSharedKeyForm form)
 	{
 		var result = _dataProviderManager.UpdateDataProviderSharedKey(form.ToModel());
 		if (result.IsFailed)
@@ -252,7 +252,7 @@ internal partial class AppStateUseCase
 	}
 
 	//Data synchronization
-	internal Task<List<TucDataProviderSyncTask>> GetDataProviderSynchronizationTasks(Guid providerId)
+	internal virtual Task<List<TucDataProviderSyncTask>> GetDataProviderSynchronizationTasks(Guid providerId)
 	{
 		var srvResult = _dataProviderManager.GetSynchronizationTasksExtended(providerId);
 		if (srvResult.IsFailed)
@@ -272,7 +272,7 @@ internal partial class AppStateUseCase
 		var tasks = srvResult.Value.OrderByDescending(x => x.CreatedOn).Take(TfConstants.PageSize).Select(x => new TucDataProviderSyncTask(x)).ToList();
 		return Task.FromResult(tasks);
 	}
-	internal Task TriggerSynchronization(Guid dataProviderId)
+	internal virtual Task TriggerSynchronization(Guid dataProviderId)
 	{
 		var createResult = _dataProviderManager.CreateSynchronizationTask(dataProviderId, new TfSynchronizationPolicy());
 		if (createResult.IsFailed)
@@ -290,7 +290,7 @@ internal partial class AppStateUseCase
 		return Task.CompletedTask;
 	}
 
-	internal Task DeleteAllProviderData(Guid dataProviderId)
+	internal virtual Task DeleteAllProviderData(Guid dataProviderId)
 	{
 		var provider = _dataProviderManager.GetProvider(dataProviderId);
 		if (provider is null)
@@ -321,7 +321,7 @@ internal partial class AppStateUseCase
 		return Task.CompletedTask;
 	}
 
-	internal Result<List<TucDataProviderSyncTaskInfo>> GetSynchronizationTaskLogRecords(Guid taskId,
+	internal virtual Result<List<TucDataProviderSyncTaskInfo>> GetSynchronizationTaskLogRecords(Guid taskId,
 			TucDataProviderSyncTaskInfoType type)
 	{
 		var allTasksResult = _dataProviderManager.GetSynchronizationTaskResultInfos(taskId);
@@ -349,7 +349,7 @@ internal partial class AppStateUseCase
 	}
 
 	//Data
-	internal Result<TfDataTable> GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)
+	internal virtual Result<TfDataTable> GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	{
 		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
 		if (srvProviderResult.IsFailed)
@@ -368,7 +368,7 @@ internal partial class AppStateUseCase
 
 		return Result.Ok(dtResult.Value);
 	}
-	internal Task<TfDataTable> GetDataProviderData(Guid providerId, string search = null, int? page = null, int? pageSize = null)
+	internal virtual Task<TfDataTable> GetDataProviderData(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	{
 		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
 		if (srvProviderResult.IsFailed)
