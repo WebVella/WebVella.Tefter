@@ -5,6 +5,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Moq;
+using Nito.AsyncEx;
 using System;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Database.Dbo;
@@ -22,6 +23,7 @@ using WebVella.Tefter.Web.Store;
 namespace WebVella.Tefter.Web.Tests;
 public class BaseTest
 {
+	protected static readonly AsyncLock locker = new AsyncLock();
 	public static Mock<ITfConfigurationService> TfConfigurationServiceMock;
 	public static Mock<AuthenticationStateProvider> AuthenticationStateProviderMock;
 	public static Mock<ILogger> LoggerMock;
