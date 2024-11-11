@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using WebVella.Tefter.Web.Components;
-
-namespace WebVella.Tefter.Web.Tests.Components;
-
-
+﻿namespace WebVella.Tefter.Web.Tests.Components;
 public class ColumnCardComponentTests : BaseTest
 {
 

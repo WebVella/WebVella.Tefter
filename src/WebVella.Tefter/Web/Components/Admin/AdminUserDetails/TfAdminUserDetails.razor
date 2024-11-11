@@ -1,12 +1,12 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-@if (TfAppState.Value?.AdminManagedUser is not null)
+@if (TfAppState.Value.AdminManagedUser is not null)
 {
 	CultureInfo cultureInfo = null;
 
-	if (!String.IsNullOrWhiteSpace(TfAppState.Value?.AdminManagedUser?.Settings?.CultureName))
+	if (!String.IsNullOrWhiteSpace(TfAppState.Value.AdminManagedUser?.Settings?.CultureName))
 	{
-		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == TfAppState.Value?.AdminManagedUser?.Settings?.CultureName)?.CultureInfo;
+		cultureInfo = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureInfo.Name == TfAppState.Value.AdminManagedUser?.Settings?.CultureName)?.CultureInfo;
 	}
 	if (cultureInfo is null)
 	{
@@ -23,7 +23,7 @@
 			<FluentGrid>
 				<FluentGridItem xs="1">
 					<FluentInputLabel>@LOC("Status")</FluentInputLabel>
-					@if (TfAppState.Value?.AdminManagedUser?.Enabled ?? false)
+					@if (TfAppState.Value.AdminManagedUser?.Enabled ?? false)
 					{
 						<FluentBadge Appearance="Appearance.Accent">ON</FluentBadge>
 					}
@@ -33,36 +33,36 @@
 					}
 				</FluentGridItem>
 				<FluentGridItem xs="5">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.Email"
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value.AdminManagedUser?.Email"
 									 ReadOnly="true" Label="@LOC("Email")" Style="width:100%" />
 				</FluentGridItem>
 				<FluentGridItem xs="3">
-					<FluentDatePicker Value="@TfAppState.Value?.AdminManagedUser?.CreatedOn"
+					<FluentDatePicker Value="@TfAppState.Value.AdminManagedUser?.CreatedOn"
 									  ReadOnly="true" Label="@LOC("Created On")" Style="width:100%" />
 				</FluentGridItem>
 				<FluentGridItem xs="3">
-					<FluentTimePicker Value="@TfAppState.Value?.AdminManagedUser?.CreatedOn"
+					<FluentTimePicker Value="@TfAppState.Value.AdminManagedUser?.CreatedOn"
 									  ReadOnly="true" Label="&nbsp;" Style="width:100%" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.FirstName"
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value.AdminManagedUser?.FirstName"
 									 ReadOnly="true" Label="@LOC("First Name")" Style="width:100%" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.LastName"
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value.AdminManagedUser?.LastName"
 									 ReadOnly="true" Label="@LOC("Last Name")" Style="width:100%" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value?.AdminManagedUser?.Settings?.ThemeMode.ToString()"
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@TfAppState.Value.AdminManagedUser?.Settings?.ThemeMode.ToString()"
 									 ReadOnly="true" Label="@LOC("Theme Mode")" Style="width:100%" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Theme Color")" />
-					<TfSelectColor Value="@(TfAppState.Value?.AdminManagedUser?.Settings?.ThemeColor ?? OfficeColor.Default)" />
+					<TfSelectColor Value="@(TfAppState.Value.AdminManagedUser?.Settings?.ThemeColor ?? OfficeColor.Default)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
@@ -76,14 +76,14 @@
 			<FluentGrid>
 				<FluentGridItem xs="12">
 					<FluentInputLabel Label="@LOC("Roles")" />
-					@if (TfAppState.Value?.AdminManagedUser?.Roles is null || !TfAppState.Value.AdminManagedUser.Roles.Any())
+					@if (TfAppState.Value.AdminManagedUser?.Roles is null || !TfAppState.Value.AdminManagedUser.Roles.Any())
 					{
 						<div>@LOC("No roles assigned")</div>
 					}
 					else
 					{
 						<FluentStack Orientation="@Orientation.Horizontal">
-							@foreach (var role in (TfAppState.Value?.AdminManagedUser?.Roles?.ToList() ?? new List<TucRole>()))
+							@foreach (var role in (TfAppState.Value.AdminManagedUser?.Roles?.ToList() ?? new List<TucRole>()))
 							{
 								<FluentBadge Appearance="Appearance.Accent">@role.Name</FluentBadge>
 							}

@@ -8,6 +8,7 @@ public partial class TfLocation : TfBaseComponent
 	private List<TucMenuItem> generateLocations()
 	{
 		var result = new List<TucMenuItem>();
+		if(TfAppState.Value.Route is null) return result;
 		if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Home)
 		{
 			result.Add(new TucMenuItem

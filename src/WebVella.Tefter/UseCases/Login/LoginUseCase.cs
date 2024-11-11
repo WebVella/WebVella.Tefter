@@ -15,7 +15,7 @@ internal class LoginUseCase
 	internal TucLoginForm Form { get; set; }
 	internal bool IsSubmitting { get; set; } = false;
 
-	internal async Task<Result<bool>> AuthenticateAsync(IJSRuntime jsRuntime)
+	internal virtual async Task<Result<bool>> AuthenticateAsync(IJSRuntime jsRuntime)
 	{
 		Result result = await _identityManager.AuthenticateAsync(
 			jsRuntime: jsRuntime,

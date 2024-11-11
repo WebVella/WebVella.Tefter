@@ -58,7 +58,7 @@ internal partial class AppStateUseCase
 
 		return Task.FromResult((newAppState,newAuxDataState));
 	}
-	internal TucSpaceData GetSpaceData(Guid spaceDataId)
+	internal virtual TucSpaceData GetSpaceData(Guid spaceDataId)
 	{
 		var serviceResult = _spaceManager.GetSpaceData(spaceDataId);
 		if (serviceResult.IsFailed)
@@ -78,7 +78,7 @@ internal partial class AppStateUseCase
 		return new TucSpaceData(serviceResult.Value);
 	}
 
-	internal List<TucSpaceData> GetSpaceDataList(Guid spaceId)
+	internal virtual List<TucSpaceData> GetSpaceDataList(Guid spaceId)
 	{
 		var serviceResult = _spaceManager.GetSpaceDataList(spaceId);
 		if (serviceResult.IsFailed)
@@ -98,7 +98,7 @@ internal partial class AppStateUseCase
 		return serviceResult.Value.Select(x => new TucSpaceData(x)).ToList();
 	}
 
-	internal Result DeleteSpaceData(Guid dataId)
+	internal virtual Result DeleteSpaceData(Guid dataId)
 	{
 		var tfResult = _spaceManager.DeleteSpaceData(dataId);
 		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
@@ -107,7 +107,7 @@ internal partial class AppStateUseCase
 	}
 
 
-	internal Result<TucSpaceData> CreateSpaceDataWithForm(TucSpaceData form)
+	internal virtual Result<TucSpaceData> CreateSpaceDataWithForm(TucSpaceData form)
 	{
 		TfSpace space = null;
 		TfDataProvider dataprovider = null;
@@ -157,7 +157,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucSpaceData(tfResult.Value));
 	}
 
-	internal Result<TucSpaceData> UpdateSpaceDataWithForm(TucSpaceData form)
+	internal virtual Result<TucSpaceData> UpdateSpaceDataWithForm(TucSpaceData form)
 	{
 		TfSpace space = null;
 		TfSpaceData spaceData = null;
@@ -208,7 +208,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucSpaceData(tfResult.Value));
 	}
 
-	internal Result<TucSpaceData> UpdateSpaceDataColumns(Guid spaceDataId, List<string> columns)
+	internal virtual Result<TucSpaceData> UpdateSpaceDataColumns(Guid spaceDataId, List<string> columns)
 	{
 		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
 		var spaceData = GetSpaceData(spaceDataId);
@@ -222,7 +222,7 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal Result<TucSpaceData> UpdateSpaceDataFilters(Guid spaceDataId, List<TucFilterBase> filters)
+	internal virtual Result<TucSpaceData> UpdateSpaceDataFilters(Guid spaceDataId, List<TucFilterBase> filters)
 	{
 		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
 		var spaceData = GetSpaceData(spaceDataId);
@@ -236,7 +236,7 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal Result<TucSpaceData> UpdateSpaceDataSorts(Guid spaceDataId, List<TucSort> sorts)
+	internal virtual Result<TucSpaceData> UpdateSpaceDataSorts(Guid spaceDataId, List<TucSort> sorts)
 	{
 		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
 		var spaceData = GetSpaceData(spaceDataId);
@@ -251,7 +251,7 @@ internal partial class AppStateUseCase
 	}
 
 	//Data
-	internal TfDataTable GetSpaceDataDataTable(
+	internal virtual TfDataTable GetSpaceDataDataTable(
 		Guid spaceDataId,
 		List<TucFilterBase> presetFilters = null,
 		List<TucSort> presetSorts = null,
@@ -322,14 +322,14 @@ internal partial class AppStateUseCase
 		return serviceResult.Value;
 	}
 
-	internal Result<TfDataTable> SaveDataDataTable(TfDataTable dt)
+	internal virtual Result<TfDataTable> SaveDataDataTable(TfDataTable dt)
 	{
 		var saveResult = _dataManager.SaveDataTable(dt);
 		if (saveResult.IsFailed) return Result.Fail(new Error("SaveDataTable failed").CausedBy(saveResult.Errors));
 		return Result.Ok(saveResult.Value);
 	}
 
-	internal Result DeleteSpaceDataRows(Guid spaceDataId, List<Guid> tfIdList)
+	internal virtual Result DeleteSpaceDataRows(Guid spaceDataId, List<Guid> tfIdList)
 	{
 		if (spaceDataId == Guid.Empty)
 		{
@@ -379,7 +379,7 @@ internal partial class AppStateUseCase
 	}
 
 	//Data provider
-	internal List<TucDataProvider> GetDataProviderList()
+	internal virtual List<TucDataProvider> GetDataProviderList()
 	{
 		var serviceResult = _dataProviderManager.GetProviders();
 		if (serviceResult.IsFailed)

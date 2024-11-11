@@ -57,7 +57,7 @@ internal partial class AppStateUseCase
 		return (newAppState,newAuxDataState);
 	}
 
-	internal async Task<List<TucSearchResult>> GetHomeSearchResultsAsync(Guid userId, string search = null,
+	internal virtual async Task<List<TucSearchResult>> GetHomeSearchResultsAsync(Guid userId, string search = null,
 		bool searchInBookmarks = true, bool searchInSaves = true,
 		bool searchInViews = true,
 		List<TucBookmark> bookmarks = null, List<TucBookmark> saves = null)
@@ -111,7 +111,7 @@ internal partial class AppStateUseCase
 		return results.OrderByDescending(x => x.CreatedOn).Take(TfConstants.HomeSearchMaxResults).ToList();
 	}
 
-	internal Task<List<TucTag>> GetHomeTagsAsync(List<TucBookmark> bookmarks, List<TucBookmark> saves)
+	internal virtual Task<List<TucTag>> GetHomeTagsAsync(List<TucBookmark> bookmarks, List<TucBookmark> saves)
 	{
 		//Temporary method for presenting tags
 		var result = new List<TucTag>();
@@ -138,17 +138,17 @@ internal partial class AppStateUseCase
 		return Task.FromResult(result.Take(TfConstants.HomeTagsMaxResult).ToList());
 	}
 
-	internal Task<List<TucBookmark>> GetHomeBookmarksAsync(List<TucBookmark> bookmarks)
+	internal virtual Task<List<TucBookmark>> GetHomeBookmarksAsync(List<TucBookmark> bookmarks)
 	{
 		return Task.FromResult(bookmarks.OrderByDescending(x => x.CreatedOn).Take(TfConstants.HomeSubListsMaxResult).ToList());
 	}
 
-	internal Task<List<TucBookmark>> GetHomeSavesAsync(List<TucBookmark> saves)
+	internal virtual Task<List<TucBookmark>> GetHomeSavesAsync(List<TucBookmark> saves)
 	{
 		return Task.FromResult(saves.OrderByDescending(x => x.CreatedOn).Take(TfConstants.HomeSubListsMaxResult).ToList());
 	}
 
-	internal async Task<List<TucSpaceView>> GetHomeViewsAsync()
+	internal virtual async Task<List<TucSpaceView>> GetHomeViewsAsync()
 	{
 		return (await GetAllSpaceViews()).OrderByDescending(x => x.Position).Take(TfConstants.HomeSubListsMaxResult).ToList();
 

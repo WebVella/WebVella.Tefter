@@ -14,7 +14,7 @@ public partial class TfAdminFileRepository : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_search = TfAppState.Value.Route.Search;
+		_search = TfAppState.Value.Route?.Search;
 	}
 
 	private void _onCompleted(IEnumerable<FluentInputFileEventArgs> files)

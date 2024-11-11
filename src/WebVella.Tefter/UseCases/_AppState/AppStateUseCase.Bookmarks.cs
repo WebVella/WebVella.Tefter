@@ -40,7 +40,7 @@ internal partial class AppStateUseCase
 		return (newAppState,newAuxDataState);
 	}
 
-	internal async Task<(List<TucBookmark>, List<TucBookmark>)> GetUserBookmarksAsync(Guid userId)
+	internal virtual async Task<(List<TucBookmark>, List<TucBookmark>)> GetUserBookmarksAsync(Guid userId)
 	{
 
 		var serviceResult = _spaceManager.GetUserBookmarksList(userId);
@@ -91,21 +91,21 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> CreateBookmarkAsync(TucBookmark bookmark)
+	internal virtual async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> CreateBookmarkAsync(TucBookmark bookmark)
 	{
 		var serviceResult = _spaceManager.CreateBookmark(bookmark.ToModel());
 		if (serviceResult.IsFailed) return Result.Fail(new Error("CreateBookmark failed").CausedBy(serviceResult.Errors));
 		return Result.Ok(await GetUserBookmarksAsync(bookmark.UserId));
 	}
 
-	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> UpdateBookmarkAsync(TucBookmark bookmark)
+	internal virtual async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> UpdateBookmarkAsync(TucBookmark bookmark)
 	{
 		var serviceResult = _spaceManager.UpdateBookmark(bookmark.ToModel());
 		if (serviceResult.IsFailed) return Result.Fail(new Error("UpdateBookmark failed").CausedBy(serviceResult.Errors));
 		return Result.Ok(await GetUserBookmarksAsync(bookmark.UserId));
 	}
 
-	internal async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> DeleteBookmarkAsync(TucBookmark bookmark)
+	internal virtual async Task<Result<(List<TucBookmark>, List<TucBookmark>)>> DeleteBookmarkAsync(TucBookmark bookmark)
 	{
 		var serviceResult = _spaceManager.DeleteBookmark(bookmark.Id);
 		if (serviceResult.IsFailed) return Result.Fail(new Error("DeleteBookmark failed").CausedBy(serviceResult.Errors));

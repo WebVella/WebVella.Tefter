@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.Web.Tests.Components;
-
 public class AvatarComponentTests : BaseTest
 {
 

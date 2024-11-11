@@ -39,7 +39,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult((newAppState,newAuxDataState));
 	}
 
-	internal List<TucSharedColumn> GetSharedColumns()
+	internal virtual List<TucSharedColumn> GetSharedColumns()
 	{
 		var result = new List<TucSharedColumn>();
 		var tfResult = _sharedColumnsManager.GetSharedColumns();
@@ -67,7 +67,7 @@ internal partial class AppStateUseCase
 
 	}
 
-	internal Result<List<TucSharedColumn>> CreateSharedColumn(TucSharedColumnForm form)
+	internal virtual Result<List<TucSharedColumn>> CreateSharedColumn(TucSharedColumnForm form)
 	{
 		if (form.Id == Guid.Empty)
 			form = form with { Id = Guid.NewGuid() };
@@ -78,7 +78,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetSharedColumns());
 	}
 
-	internal Result<List<TucSharedColumn>> UpdateSharedColumn(TucSharedColumnForm form)
+	internal virtual Result<List<TucSharedColumn>> UpdateSharedColumn(TucSharedColumnForm form)
 	{
 		var result = _sharedColumnsManager.UpdateSharedColumn(form.ToModel());
 		if (result.IsFailed)
@@ -87,7 +87,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetSharedColumns());
 	}
 
-	internal Result<List<TucSharedColumn>> DeleteSharedColumn(Guid columnId)
+	internal virtual Result<List<TucSharedColumn>> DeleteSharedColumn(Guid columnId)
 	{
 		var result = _sharedColumnsManager.DeleteSharedColumn(columnId);
 		if (result.IsFailed)
@@ -106,7 +106,7 @@ internal partial class AppStateUseCase
 		return Result.Ok(GetSharedColumns());
 	}
 
-	internal List<TucDatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos()
+	internal virtual List<TucDatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos()
 	{
 		var result = new List<TucDatabaseColumnTypeInfo>();
 		var resultColumnType = _dataProviderManager.GetDatabaseColumnTypeInfos();

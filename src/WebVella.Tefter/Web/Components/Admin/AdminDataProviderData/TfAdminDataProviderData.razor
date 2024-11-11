@@ -12,13 +12,13 @@
 	</HeaderAside>
 	<Toolbar>
 		<FluentStack>
-			<FluentSearch Value="@TfAppState.Value.Route.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
+			<FluentSearch Value="@TfAppState.Value.Route?.Search" ValueChanged="_onSearch" AutoComplete="off" Placeholder="@LOC("search...")" />
 			<FluentButton Id="view-filter-selector" Title="toggle system columns" OnClick="_toggleSystemColumns"
 						  Appearance="Appearance.Outline">
 				<FluentIcon Slot="start" Value="@(_showSystemColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
 				<span>system</span>
 				<span slot="end">
-					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SystemColumns.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider?.SystemColumns.Count</FluentBadge>
 				</span>
 			</FluentButton>
 			<FluentButton Id="view-filter-selector" Title="toggle shared key columns" OnClick="_toggleSharedKeyColumns"
@@ -26,7 +26,7 @@
 				<FluentIcon Slot="start" Value="@(_showSharedKeyColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
 				<span>shared key</span>
 				<span slot="end">
-					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.SharedColumns.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider?.SharedColumns.Count</FluentBadge>
 				</span>
 			</FluentButton>
 			<FluentButton Id="view-filter-selector" Title="toggle custom columns" OnClick="_toggleCustomColumns"
@@ -34,7 +34,7 @@
 				<FluentIcon Slot="start" Value="@(_showCustomColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
 				<span>custom</span>
 				<span slot="end">
-					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider.Columns.Count</FluentBadge>
+					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider?.Columns.Count</FluentBadge>
 				</span>
 			</FluentButton>
 		</FluentStack>
@@ -46,7 +46,7 @@
 		</FluentButton>
 	</ToolbarAside>
 	<ChildContent>
-		@if (TfAppState.Value.AdminDataProviderData.Rows.Count > 0 || TfAppState.Value.Route.Page != 1)
+		@if (TfAppState.Value.AdminDataProviderData is not null && (TfAppState.Value.AdminDataProviderData.Rows.Count > 0 || TfAppState.Value.Route.Page != 1))
 		{
 			<div class="tf-grid-wrapper">
 				<table class="tf-grid">
@@ -94,7 +94,7 @@
 
 			</div>
 		}
-		else if (TfAppState.Value.AdminDataProviderData.Columns.Count == 0)
+		else if (TfAppState.Value.AdminDataProviderData is not null && TfAppState.Value.AdminDataProviderData.Columns.Count == 0)
 		{
 			<FluentMessageBar AllowDismiss="false">@LOC("No columns are created for this data provider yet")</FluentMessageBar>
 		}
@@ -105,9 +105,9 @@
 	</ChildContent>
 	<Footer>
 		<div class="tf-grid__pager">
-			<TfPager Page="@(TfAppState.Value.Route.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+			<TfPager Page="@(TfAppState.Value.Route?.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
 					 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
-					 PageSize="@(TfAppState.Value.Route.PageSize ?? TfConstants.PageSize)" ChangePageSize="_pageSizeChange" />
+					 PageSize="@(TfAppState.Value.Route?.PageSize ?? TfConstants.PageSize)" ChangePageSize="_pageSizeChange" />
 		</div>
 	</Footer>
 </TfLayoutBodyMain>

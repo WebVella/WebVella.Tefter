@@ -1,9 +1,4 @@
-﻿using System;
-using System.Globalization;
-using WebVella.Tefter.Web.Components;
-
-namespace WebVella.Tefter.Web.Tests.Components;
-
+﻿namespace WebVella.Tefter.Web.Tests.Components;
 
 public class EditorComponentTests : BaseTest
 {
@@ -14,7 +9,6 @@ public class EditorComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-			var userId = Guid.NewGuid();
 
 			// Act
 			var cut = Context.RenderComponent<TfEditor>();

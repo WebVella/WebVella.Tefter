@@ -7,7 +7,8 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 	private List<TucMenuItem> _getMenu()
 	{
 		var menu = new List<TucMenuItem>();
-		var providerId = TfAppState.Value.Route.DataProviderId ?? Guid.Empty;
+		if(TfAppState.Value.Route?.DataProviderId is null) return menu;
+		var providerId = TfAppState.Value.Route.DataProviderId.Value;
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId),

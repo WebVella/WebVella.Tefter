@@ -1,20 +1,13 @@
-﻿using System;
-using System.Globalization;
-using WebVella.Tefter.Web.Components;
-
-namespace WebVella.Tefter.Web.Tests.Components;
-
-
+﻿namespace WebVella.Tefter.Web.Tests.Components;
 public class SidebarToggleComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task SidebarToggleComponentRendersCorrectly()
+	public async Task RendersCorrectly()
 	{
 		using (await locker.LockAsync())
 		{
 			//Given
-			var userId = Guid.NewGuid();
 
 			// Act
 			var cut = Context.RenderComponent<TfSidebarToggle>();

@@ -9,7 +9,7 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Read;
-		dict["Value"] = TfAppState.Value?.AdminDataProvider?.SettingsJson;
+		dict["Value"] = TfAppState.Value.AdminDataProvider?.SettingsJson;
 		return dict;
 	}
 

@@ -20,7 +20,7 @@ public partial class TfNavigation : TfBaseComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_defaultColor = TfAppState.Value.CurrentUser.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor;
+		_defaultColor = TfAppState.Value.CurrentUser?.Settings?.ThemeColor ?? TfConstants.DefaultThemeColor;
 	}
 
 	protected override void OnAfterRender(bool firstRender)
