@@ -36,22 +36,32 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Parent")" />
-					<FluentStack>
-						<FluentSelect TOption="TucSpaceNode" SelectedOption="@_parentNode"
-									  SelectedOptionChanged="_selectedParentChanged"
-									  Style="width:100%" Items="@_getParents()" Placeholder="@LOC("select...")"
-									  OptionValue="@(x=> x.Id.ToString())"
-									  Value="@(_parentNode?.Id.ToString())">
-							<OptionTemplate Context="option">
-								<FluentIcon Value="@TfConstants.GetIcon(option.Icon)" Slot="start" />
-								<span>@option.Name</span>
-							</OptionTemplate>
-						</FluentSelect>
-						@if (_form.ParentId is not null)
-						{
-							<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=> _form.ParentId = null)" />
-						}
-					</FluentStack>
+					@{
+						var parentItems = _getParents();
+					}
+					@if (parentItems.Count() > 0)
+					{
+						<FluentStack>
+							<FluentSelect TOption="TucSpaceNode" SelectedOption="@_parentNode"
+										  SelectedOptionChanged="_selectedParentChanged"
+										  Style="width:100%" Items="@parentItems" Placeholder="@LOC("select...")"
+										  OptionValue="@(x=> x.Id.ToString())">
+								<OptionTemplate Context="option">
+									<FluentIcon Value="@TfConstants.GetIcon(option.Icon)" Slot="start" />
+									<span>@option.Name</span>
+								</OptionTemplate>
+							</FluentSelect>
+							@if (_form.ParentId is not null)
+							{
+								<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=> _form.ParentId = null)" />
+							}
+						</FluentStack>
+					}
+					else
+					{
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("no parent options found")
+										 Style="width:100%" ReadOnly="true" />
+					}
 					<FluentValidationMessage For="@(() => _form.Type)" />
 				</FluentGridItem>
 			</FluentGrid>
@@ -60,8 +70,7 @@
 					<FluentSelect TOption="TfSpaceNodeType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
 								  Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpaceNodeType>())"
 								  OptionValue="@((p)=> ((int)p).ToString())"
-								  OptionText="@(x=> x.ToDescriptionString())"
-								  Value="@(((int)_form.Type).ToString())" />
+								  OptionText="@(x=> x.ToDescriptionString())"/>
 					<FluentValidationMessage For="@(() => _form.Type)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">

@@ -19,7 +19,7 @@ internal partial class AppStateUseCase
 	private readonly IStringLocalizer<AppStateUseCase> LOC;
 
 
-	internal AppStateUseCase(IServiceProvider serviceProvider)
+	public AppStateUseCase(IServiceProvider serviceProvider)
 	{
 		_serviceProvider = serviceProvider;
 		_authenticationStateProvider = serviceProvider.GetService<AuthenticationStateProvider>();

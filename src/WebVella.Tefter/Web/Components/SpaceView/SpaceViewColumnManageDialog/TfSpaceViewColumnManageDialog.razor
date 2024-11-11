@@ -53,8 +53,7 @@
 									  SelectedOptionChanged="_columnTypeChangeHandler"
 									  OptionText="((x)=> x.Name)"
 									  OptionValue="((x)=> x.Id.ToString())"
-									  Items="TfAppState.Value.AvailableColumnTypes"
-									  Value="@_form.ColumnType?.Id.ToString()">
+									  Items="TfAppState.Value.AvailableColumnTypes">
 							<OptionTemplate Context="option">
 								<FluentStack>
 									<FluentIcon Value="@option.Icon" Color="@Color.Accent" />
@@ -75,8 +74,7 @@
 									  TOption="Type"
 									  OptionText="((x)=> x.ToDescriptionString())"
 									  OptionValue="((x)=> x.FullName)"
-									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)"
-									  Value="@_form.ComponentType?.FullName" />
+									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)"/>
 
 						<FluentValidationMessage For="@(() => _form.ComponentType)" />
 					}
@@ -203,8 +201,7 @@
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@(p => p.ToString())"
-											  Value="@(((int)_form.Settings?.Color).ToString())">
+											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
 											@if (color.ToAttributeValue() != "default")
@@ -240,8 +237,7 @@
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@(p => p.ToString())"
-											  Value="@(((int)_form.Settings?.BackgroundColor).ToString())">
+											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
 											@if (color.ToAttributeValue() != "default")

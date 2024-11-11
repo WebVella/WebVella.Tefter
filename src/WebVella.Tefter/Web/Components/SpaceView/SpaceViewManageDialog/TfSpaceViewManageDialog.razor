@@ -75,8 +75,7 @@
 								  TOption="TucSpaceViewDataSetType"
 								  Items="@(Enum.GetValues<TucSpaceViewDataSetType>())" Style="width:100%"
 								  OptionValue="@((p)=> ((int)p).ToString())"
-								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"
-								  Value="@(((int)_form.DataSetType).ToString())" />
+								  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Dataset")"/>
 					<FluentValidationMessage For="@(() => _form.DataSetType)" />
 				</FluentGridItem>
 			</FluentGrid>
@@ -89,8 +88,7 @@
 									  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
 									  Items="@TfAppState.Value.AllDataProviders" Style="width:100%"
 									  OptionValue="@(p => p.Id.ToString())"
-									  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"
-									  Value="@(_selectedDataProvider?.Id.ToString())" />
+									  OptionText="@(p => p.Name)" Label="@LOC("Data provider")" />
 						<FluentValidationMessage For="@(() => _form.DataProviderId)" />
 					</FluentGridItem>
 					<FluentGridItem xs="6">
@@ -114,8 +112,7 @@
 										  TOption="TucSpaceData" Placeholder="@LOC("select...")"
 										  Items="@TfAppState.Value.SpaceDataList" Style="width:100%"
 										  OptionValue="@((p)=> p.Id.ToString())"
-										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"
-										  Value="@(_selectedDataset?.Id.ToString())" />
+										  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
 							<FluentValidationMessage For="@(() => _form.SpaceDataId)" />
 						}
 					</FluentGridItem>

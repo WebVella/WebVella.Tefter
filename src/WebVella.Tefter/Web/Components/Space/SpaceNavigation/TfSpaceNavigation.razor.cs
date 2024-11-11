@@ -32,7 +32,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		await base.OnInitializedAsync();
 		SidebarExpanded.Select(x => x.SidebarExpanded);
 		await _generateMenu();
-		EnableRenderLock();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -51,7 +50,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		InvokeAsync(async () =>
 		{
 			await _generateMenu();
-			RegenRenderLock();
 			await InvokeAsync(StateHasChanged);
 		});
 	}
@@ -61,7 +59,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		if (action.Component == this) return;
 		InvokeAsync(async () =>
 		{
-			RegenRenderLock();
 			await InvokeAsync(StateHasChanged);
 		});
 	}
@@ -82,12 +79,10 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		if (_activeTab == tab) return;
 		_activeTab = tab;
 		await _generateMenu();
-		RegenRenderLock();
 	}
 	private void _onSettingsClick()
 	{
 		_settingsMenuVisible = !_settingsMenuVisible;
-		RegenRenderLock();
 	}
 	private async Task onDeleteSpaceClick()
 	{
@@ -147,7 +142,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	{
 		search = value;
 		await _generateMenu();
-		RegenRenderLock();
 	}
 
 	private async Task _addNode()
@@ -263,7 +257,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 			await _addExpandedNodesToStorage(item.Id);
 		}
 
-		RegenRenderLock();
 	}
 
 	private async Task _onMenuItemClick(TucMenuItem item)
@@ -285,7 +278,6 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		{
 			item.Selected = !item.Selected;
 		}
-		RegenRenderLock();
 		return;
 	}
 

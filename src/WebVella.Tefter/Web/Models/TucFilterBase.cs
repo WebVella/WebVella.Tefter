@@ -400,9 +400,9 @@ public record TucFilterBoolean : TucFilterBase
 			new Option<string>{Value="null",Text="NULL"}
 		};
 	}
-	public string ValueProcessed
+	public Option<string> ValueOption
 	{
-		get => (Value is null ? "null" : Value).ToLowerInvariant();
+		get => (Value is null ? ValueOptions.Single(x=> x.Value == "null") : ValueOptions.Single(x=> x.Value == Value));
 	}
 
 	public void ValueOptionChanged(Option<string> option)

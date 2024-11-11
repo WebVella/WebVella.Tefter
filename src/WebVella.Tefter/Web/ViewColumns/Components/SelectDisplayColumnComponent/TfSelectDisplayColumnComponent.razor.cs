@@ -50,6 +50,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	/// </summary>
 	private Guid? _renderedHash = null;
 	private string _storageKey = "";
+	private TucSpaceData _selectedSpaceData = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -91,7 +92,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		await base.OnAppStateInit(
-			serviceProvider:serviceProvider,
+			serviceProvider: serviceProvider,
 			currentUser: currentUser,
 			newAppState: newAppState,
 			oldAppState: oldAppState,
@@ -163,7 +164,8 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 						var column = optionsDT.Columns[columnName];
 						if (column is not null)
 						{
-							if (optionsDT.Rows[i][columnName] is not null){
+							if (optionsDT.Rows[i][columnName] is not null)
+							{
 								color = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
 							}
 						}
@@ -174,7 +176,8 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 						var column = optionsDT.Columns[columnName];
 						if (column is not null)
 						{
-							if (optionsDT.Rows[i][columnName] is not null){
+							if (optionsDT.Rows[i][columnName] is not null)
+							{
 								backgroundColor = TfConverters.GetCssColorFromString(optionsDT.Rows[i][columnName].ToString());
 							}
 						}
@@ -199,6 +202,18 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	#region << Private logic >>
 	private async Task _initValues()
 	{
+		if (Context.Mode == TucComponentMode.Options)
+		{
+			_selectedSpaceData = TfAppState.Value.SpaceDataList?.FirstOrDefault(x => x.Id == componentOptions.SpaceDataId);
+
+			if (_selectedSpaceData is null && TfAppState.Value.SpaceDataList is not null && TfAppState.Value.SpaceDataList.Count > 0)
+			{
+				_selectedSpaceData = TfAppState.Value.SpaceDataList[0];
+				await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData.Id);
+			}
+
+		}
+
 		_value = GetColumnDataByAlias(_valueAlias);
 		if (!TfAuxDataState.Value.Data.ContainsKey(_storageKey)) return;
 		_selectOptionsList = ((List<TucSelectOption>)TfAuxDataState.Value.Data[_storageKey]).ToList();
@@ -221,15 +236,6 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 			_selectedOption = _selectOptionsList[0];
 		}
 
-		if (Context.Mode == TucComponentMode.Options)
-		{
-			var spaceDataIndex = TfAppState.Value.SpaceDataList?.FindIndex(x => x.Id == componentOptions.SpaceDataId);
-
-			if (spaceDataIndex == -1 && TfAppState.Value.SpaceDataList is not null && TfAppState.Value.SpaceDataList.Count > 0)
-			{
-				await OnOptionsChanged(nameof(componentOptions.SpaceDataId), TfAppState.Value.SpaceDataList[0].Id);
-			}
-		}
 	}
 	private void _initStorageKeys()
 	{
@@ -293,12 +299,20 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 		return result;
 	}
 
-	private string _getStyle(){ 
-		var sb= new StringBuilder();
+	private async Task _spaceDataChanged(TucSpaceData spaceData)
+	{
+		_selectedSpaceData = spaceData;
+		await OnOptionsChanged(nameof(componentOptions.SpaceDataId), _selectedSpaceData?.Id);
+	}
+
+
+	private string _getStyle()
+	{
+		var sb = new StringBuilder();
 		sb.Append("width:100%;");
-		if(!String.IsNullOrWhiteSpace(_selectedOption.Color))
+		if (!String.IsNullOrWhiteSpace(_selectedOption?.Color))
 			sb.Append($"color:{_selectedOption.Color};");
-		if(!String.IsNullOrWhiteSpace(_selectedOption.BackgroundColor))
+		if (!String.IsNullOrWhiteSpace(_selectedOption?.BackgroundColor))
 			sb.Append($"background-color:{_selectedOption.BackgroundColor};");
 
 		return sb.ToString();

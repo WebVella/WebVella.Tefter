@@ -10,7 +10,7 @@ internal partial class UserStateUseCase
 	private readonly ITfSpaceManager _spaceManager;
 	private readonly NavigationManager _navigationManager;
 
-	internal UserStateUseCase(IServiceProvider serviceProvider)
+	public UserStateUseCase(IServiceProvider serviceProvider)
 	{
 		_authenticationStateProvider = serviceProvider.GetService<AuthenticationStateProvider>();
 		_jsRuntime = serviceProvider.GetService<IJSRuntime>();

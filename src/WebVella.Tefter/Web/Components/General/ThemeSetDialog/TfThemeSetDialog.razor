@@ -24,8 +24,7 @@
 					  Items="@(Enum.GetValues<DesignThemeModes>())"
 					  OptionValue="@((p)=> ((int)p).ToString())"
 					  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"
-					  Style="width:100%"
-					  Value="@(((int)_themeMode).ToString())" />
+					  Style="width:100%" />
 		<FluentInputLabel Label="@LOC("Theme Color")" />
 		<TfSelectColor @bind-Value="@_themeColor" />
 	</FluentStack>

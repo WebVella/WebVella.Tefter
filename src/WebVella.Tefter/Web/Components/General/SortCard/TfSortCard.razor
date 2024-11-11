@@ -11,16 +11,14 @@
 							  Disabled="_submitting"
 							  TOption="string" Required="false"
 							  Items="@AllColumnOptions" Style="width:200px"
-							  Placeholder="@LOC("select provider column")"
-							  Value="@_selectedColumn" />
+							  Placeholder="@LOC("select provider column")" />
 				<FluentSelect @bind-SelectedOption="@_selectedDirection"
 							  Disabled="_submitting"
 							  TOption="TucSortDirection"
 							  Items="@(Enum.GetValues<TucSortDirection>())"
 							  OptionValue="@((p)=> ((int)p).ToString())"
 							  OptionText="@((p)=> p.ToDescriptionString())"
-							  Style="width:100px"
-							  Value="@(((int)_selectedDirection).ToString())" />
+							  Style="width:100px" />
 			}
 			else
 			{

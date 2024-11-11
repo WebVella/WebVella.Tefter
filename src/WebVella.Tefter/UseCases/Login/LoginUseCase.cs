@@ -3,7 +3,7 @@
 internal class LoginUseCase
 {
 	private readonly IIdentityManager _identityManager;
-	internal LoginUseCase(IServiceProvider serviceProvider)
+	public LoginUseCase(IServiceProvider serviceProvider)
 	{
 		_identityManager = serviceProvider.GetService<IIdentityManager>();
 	}

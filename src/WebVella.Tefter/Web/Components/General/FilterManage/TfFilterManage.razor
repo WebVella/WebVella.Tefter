@@ -27,8 +27,7 @@
 								<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
 											  TOption="string" Required="false"
 											  Items="@AllColumnOptions" Style="width:140px"
-											  Placeholder="@LOC("select...")"
-											  Value="@_selectedFilterColumn" />
+											  Placeholder="@LOC("select...")" />
 								<FluentButton Disabled="@Disabled" OnClick="@_addColumnFilterHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("Column")</FluentButton>
 							}
 							<FluentButton Disabled="@Disabled" OnClick="@(() => AddFilter.InvokeAsync((typeof(TucFilterAnd),null,Item.Id)))" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline">@LOC("AND")</FluentButton>
@@ -91,11 +90,10 @@
 											  TOption="TucFilterBooleanComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"
-											  Value="@(((int)context.ComparisonMethod).ToString())" />
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"/>
 								@if (context.RequiresValue)
 								{
-									<FluentSelect Value="@context.ValueProcessed"
+									<FluentSelect SelectedOption="@context.ValueOption"
 												  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 												  Disabled="@(Disabled || ReadOnly)"
 												  TOption="Option<string>" Required="false"
@@ -113,8 +111,7 @@
 											  TOption="TucFilterDateTimeComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterDateTimeComparisonMethod>())" Style="width:140px"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"
-											  Value="@(((int)context.ComparisonMethod).ToString())" />
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
 									<FluentStack HorizontalGap="2">
@@ -139,8 +136,7 @@
 											  TOption="TucFilterGuidComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"
-											  Value="@(((int)context.ComparisonMethod).ToString())" />
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"/>
 								@if (context.RequiresValue)
 								{
 									<FluentTextField Value="@context.ValueProcessed"
@@ -159,8 +155,7 @@
 											  TOption="TucFilterNumericComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterNumericComparisonMethod>())" Style="width:140px"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"
-											  Value="@(((int)context.ComparisonMethod).ToString())" />
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
 									<FluentNumberField TValue="decimal?" Value="@context.ValueAsDecimal"
@@ -178,8 +173,7 @@
 											  TOption="TucFilterTextComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterTextComparisonMethod>())" Style="width:140px"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"
-											  Value="@(((int)context.ComparisonMethod).ToString())" />
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
 									<FluentTextField AutoComplete="off"

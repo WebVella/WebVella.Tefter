@@ -40,8 +40,7 @@
 								  @bind-SelectedOption="@_form.ProviderType" TOption="TucDataProviderTypeInfo"
 								  Items="@TfAppState.Value.DataProviderTypes" Style="width:100%" Disabled="!_isCreate"
 								  OptionValue="@(p => p.Id.ToString())"
-								  OptionText="@(p => p.Name)" Label="@LOC("Type")"
-								  Value="@_form.ProviderType?.Id.ToString()" />
+								  OptionText="@(p => p.Name)" Label="@LOC("Type")" />
 					<FluentValidationMessage For="@(() => _form.ProviderType)" />
 				</FluentGridItem>
 			</FluentGrid>

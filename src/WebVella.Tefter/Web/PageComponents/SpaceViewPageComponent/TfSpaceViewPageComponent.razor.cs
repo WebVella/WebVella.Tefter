@@ -136,6 +136,17 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		}
 		#endregion
 
+		newAppState = newAppState with
+		{
+			SpaceView = spaceView,
+			SpaceViewColumns = spaceViewColumns,
+			SpaceViewFilters = spaceViewFilters,
+			SpaceViewSorts = spaceViewSorts,
+			SpaceViewData = spaceViewData,
+			AvailableColumnTypes = availableColumnTypes,
+			SpaceViewAddonComponents = addonComponents
+		};
+
 		#region << Init Addon Components >>
 		{
 			//Aux Data Hook
@@ -191,17 +202,6 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 				|| x.Region == TfScreenRegion.SpaceViewSelectorActions).ToList();
 		}
 		#endregion
-
-		newAppState = newAppState with
-		{
-			SpaceView = spaceView,
-			SpaceViewColumns = spaceViewColumns,
-			SpaceViewFilters = spaceViewFilters,
-			SpaceViewSorts = spaceViewSorts,
-			SpaceViewData = spaceViewData,
-			AvailableColumnTypes = availableColumnTypes,
-			SpaceViewAddonComponents = addonComponents
-		};
 
 		return Task.FromResult((newAppState, newAuxDataState));
 
@@ -321,15 +321,11 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		_generatedColumnsListInit();
 	}
 
-	private void _optionsDataProviderSelectedHandler(string providerIdString)
+	private void _optionsDataProviderSelectedHandler(TucDataProvider provider)
 	{
 		_optionsDataProvider = null;
 		_options.DataProviderId = null;
-		Guid providerId = Guid.Empty;
-		if (!String.IsNullOrWhiteSpace(providerIdString) && Guid.TryParse(providerIdString, out providerId))
-			if (providerId == Guid.Empty) return;
 
-		var provider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == providerId);
 		if (provider is null) return;
 		_optionsDataProvider = provider;
 		_options.DataProviderId = provider.Id;
