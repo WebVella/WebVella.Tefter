@@ -49,7 +49,7 @@ try
 			//options.UseRouting();
 			options.ScanAssemblies(typeof(IIdentityManager).Assembly);
 			//options.AddMiddleware<LoggingMiddleware>();
-			options.UseReduxDevTools();
+			//options.UseReduxDevTools();
 		});
 
 		//IMPORTANT: Do not remove. Required for the application to work

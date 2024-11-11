@@ -19,37 +19,22 @@ internal partial class AppStateUseCase
 	private readonly IStringLocalizer<AppStateUseCase> LOC;
 
 
-	public AppStateUseCase(
-		AuthenticationStateProvider authenticationStateProvider,
-		IServiceProvider serviceProvider,
-		IJSRuntime jsRuntime,
-		IIdentityManager identityManager,
-		ITfDataProviderManager dataProviderManager,
-		ITfSharedColumnsManager sharedColumnsManager,
-		ITfDataManager dataManager,
-		ITfSpaceManager spaceManager,
-		ITfMetaProvider metaProvider,
-		ITfRepositoryService repositoryManager,
-		NavigationManager navigationManager,
-		IToastService toastService,
-		IMessageService messageService,
-		IStringLocalizer<AppStateUseCase> loc
-		)
+	internal AppStateUseCase(IServiceProvider serviceProvider)
 	{
-		_authenticationStateProvider = authenticationStateProvider;
 		_serviceProvider = serviceProvider;
-		_jsRuntime = jsRuntime;
-		_identityManager = identityManager;
-		_dataProviderManager = dataProviderManager;
-		_sharedColumnsManager = sharedColumnsManager;
-		_dataManager = dataManager;
-		_spaceManager = spaceManager;
-		_metaProvider = metaProvider;
-		_repositoryManager = repositoryManager;
-		_navigationManager = navigationManager;
-		_toastService = toastService;
-		_messageService = messageService;
-		LOC = loc;
+		_authenticationStateProvider = serviceProvider.GetService<AuthenticationStateProvider>();
+		_jsRuntime = serviceProvider.GetService<IJSRuntime>();
+		_identityManager = serviceProvider.GetService<IIdentityManager>();
+		_dataProviderManager = serviceProvider.GetService<ITfDataProviderManager>();
+		_sharedColumnsManager = serviceProvider.GetService<ITfSharedColumnsManager>();
+		_dataManager = serviceProvider.GetService<ITfDataManager>();
+		_spaceManager = serviceProvider.GetService<ITfSpaceManager>();
+		_metaProvider = serviceProvider.GetService<ITfMetaProvider>();
+		_repositoryManager = serviceProvider.GetService<ITfRepositoryService>();
+		_navigationManager = serviceProvider.GetService<NavigationManager>();
+		_toastService = serviceProvider.GetService<IToastService>();
+		_messageService = serviceProvider.GetService<IMessageService>();
+		LOC = serviceProvider.GetService<IStringLocalizer<AppStateUseCase>>();
 	}
 
 	internal async Task<(TfAppState, TfAuxDataState)> InitState(TucUser currentUser, string url, TfAppState oldAppState, TfAuxDataState oldAuxDataState)

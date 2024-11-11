@@ -1,6 +1,6 @@
 ﻿using ClosedXML.Excel;
 
-namespace WebVella.Tefter.UseCases.Login;
+namespace WebVella.Tefter.UseCases.Export;
 
 public class ExportUseCase
 {
@@ -8,17 +8,12 @@ public class ExportUseCase
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfDataManager _dataManager;
 	private readonly ITfSpaceManager _spaceManager;
-	public ExportUseCase(
-		IServiceProvider serviceProvider,
-		IIdentityManager identityManager,
-		ITfDataManager dataManager,
-		ITfSpaceManager spaceManager
-		)
+	public ExportUseCase(IServiceProvider serviceProvider)
 	{
 		_serviceProvider = serviceProvider;
-		_identityManager = identityManager;
-		_dataManager = dataManager;
-		_spaceManager = spaceManager;
+		_identityManager = serviceProvider.GetService<IIdentityManager>();
+		_dataManager = serviceProvider.GetService<ITfDataManager>();
+		_spaceManager = serviceProvider.GetService<ITfSpaceManager>();
 
 	}
 

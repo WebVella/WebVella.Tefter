@@ -10,18 +10,13 @@ internal partial class UserStateUseCase
 	private readonly ITfSpaceManager _spaceManager;
 	private readonly NavigationManager _navigationManager;
 
-	public UserStateUseCase(
-		AuthenticationStateProvider authenticationStateProvider,
-		IJSRuntime jsRuntime,
-		IIdentityManager identityManager,
-		ITfSpaceManager spaceManager,
-		NavigationManager navigationManager)
+	internal UserStateUseCase(IServiceProvider serviceProvider)
 	{
-		_authenticationStateProvider = authenticationStateProvider;
-		_jsRuntime = jsRuntime;
-		_identityManager = identityManager;
-		_spaceManager = spaceManager;
-		_navigationManager = navigationManager;
+		_authenticationStateProvider = serviceProvider.GetService<AuthenticationStateProvider>();
+		_jsRuntime = serviceProvider.GetService<IJSRuntime>();
+		_identityManager = serviceProvider.GetService<IIdentityManager>();
+		_spaceManager = serviceProvider.GetService<ITfSpaceManager>();
+		_navigationManager = serviceProvider.GetService<NavigationManager>();
 	}
 
 	internal bool IsBusy { get; set; } = true;

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfAvatar
+public partial class TfAvatar :ComponentBase
 {
 	[Parameter] public string Id { get; set; }
 	[Parameter] public string Styles { get; set; }

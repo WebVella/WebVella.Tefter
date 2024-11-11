@@ -1,1 +1,1 @@
-﻿global using WebVella.Tefter.Web.Tests.Common;
+﻿global using WebVella.Tefter.Web.Tests;

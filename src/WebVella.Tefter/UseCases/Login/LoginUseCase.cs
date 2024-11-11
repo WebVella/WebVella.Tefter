@@ -1,11 +1,11 @@
 ﻿namespace WebVella.Tefter.UseCases.Login;
 
-public class LoginUseCase
+internal class LoginUseCase
 {
 	private readonly IIdentityManager _identityManager;
-	public LoginUseCase(IIdentityManager identityManager)
+	internal LoginUseCase(IServiceProvider serviceProvider)
 	{
-		_identityManager = identityManager;
+		_identityManager = serviceProvider.GetService<IIdentityManager>();
 	}
 	internal void OnInitialized()
 	{
