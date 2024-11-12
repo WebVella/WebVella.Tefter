@@ -8,6 +8,7 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 	internal List<TucMenuItem> _getMenu()
 	{
 		var menu = new List<TucMenuItem>();
+		if(TfAppState.Value.Route is null) return menu;
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.AdminUserDetailsPageUrl, TfAppState.Value.Route.UserId),

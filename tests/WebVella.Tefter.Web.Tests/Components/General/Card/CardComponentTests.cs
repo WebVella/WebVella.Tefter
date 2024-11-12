@@ -8,6 +8,7 @@ public class CardComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			var cssClass = "test-avatar";
 			// Act
 			var cut = Context.RenderComponent<TfCard>(parameters => parameters
@@ -18,6 +19,8 @@ public class CardComponentTests : BaseTest
 			var mainWrapper = cut.Find($".tf-card");
 			mainWrapper.HasAttribute("class");
 			mainWrapper.ClassList.Contains(cssClass);
+
+			Context.DisposeComponents();
 		}
 	}
 

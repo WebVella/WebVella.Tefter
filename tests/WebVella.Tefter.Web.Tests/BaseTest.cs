@@ -24,52 +24,51 @@ namespace WebVella.Tefter.Web.Tests;
 public class BaseTest
 {
 	protected static readonly AsyncLock locker = new AsyncLock();
-	public static Mock<ITfConfigurationService> TfConfigurationServiceMock;
-	public static Mock<AuthenticationStateProvider> AuthenticationStateProviderMock;
-	public static Mock<ILogger> LoggerMock;
+	public Mock<ITfConfigurationService> TfConfigurationServiceMock;
+	public Mock<AuthenticationStateProvider> AuthenticationStateProviderMock;
+	public Mock<ILogger> LoggerMock;
 	//messaging
-	internal static Mock<ITfChannelEventRouter> TfChannelEventRouterMock;
-	internal static Mock<ITfEventBus> TfEventBusMock;
-	internal static Mock<TfUserEventProvider> TfUserEventProviderMock;
-	internal static Mock<TfGlobalEventProvider> TfGlobalEventProviderMock;
+	internal Mock<ITfChannelEventRouter> TfChannelEventRouterMock;
+	public Mock<ITfEventBus> TfEventBusMock;
+	public Mock<TfUserEventProvider> TfUserEventProviderMock;
+	public Mock<TfGlobalEventProvider> TfGlobalEventProviderMock;
 
-	public static Mock<ITfCryptoService> TfCryptoServiceMock;
-	public static Mock<ITfCryptoServiceConfiguration> TfCryptoServiceConfigurationMock;
-	public static Mock<ITfTransactionRollbackNotifyService> TfTransactionRollbackNotifyServiceMock;
-	public static Mock<ITfDbConfigurationService> TfDbConfigurationServiceMock;
-	public static Mock<ITfDatabaseService> TfDatabaseServiceMock;
-	public static Mock<IDatabaseManager> DatabaseManagerMock;
-	internal static Mock<ITfDboManager> TfDboManagerMock;
-	internal static Mock<IMigrationManager> MigrationManagerMock;
-	public static Mock<IIdentityManager> IdentityManagerMock;
-	public static Mock<ITfDataManager> TfDataManagerMock;
-	public static Mock<ITfSharedColumnsManager> TfSharedColumnsManagerMock;
-	public static Mock<ITfDataProviderManager> TfDataProviderManagerMock;
-	public static Mock<ITfSpaceManager> TfSpaceManagerMock;
-	public static Mock<ITfMetaProvider> TfMetaProviderMock;
-	public static Mock<ITfRepositoryService> TfRepositoryServiceMock;
-	public static Mock<ITfBlobManager> TfBlobManagerMock;
+	public Mock<ITfCryptoService> TfCryptoServiceMock;
+	public Mock<ITfCryptoServiceConfiguration> TfCryptoServiceConfigurationMock;
+	public Mock<ITfTransactionRollbackNotifyService> TfTransactionRollbackNotifyServiceMock;
+	public Mock<ITfDbConfigurationService> TfDbConfigurationServiceMock;
+	public Mock<ITfDatabaseService> TfDatabaseServiceMock;
+	public Mock<IDatabaseManager> DatabaseManagerMock;
+	internal Mock<ITfDboManager> TfDboManagerMock;
+	internal Mock<IMigrationManager> MigrationManagerMock;
+	public Mock<IIdentityManager> IdentityManagerMock;
+	public Mock<ITfDataManager> TfDataManagerMock;
+	public Mock<ITfSharedColumnsManager> TfSharedColumnsManagerMock;
+	public Mock<ITfDataProviderManager> TfDataProviderManagerMock;
+	public Mock<ITfSpaceManager> TfSpaceManagerMock;
+	public Mock<ITfMetaProvider> TfMetaProviderMock;
+	public Mock<ITfRepositoryService> TfRepositoryServiceMock;
+	public Mock<ITfBlobManager> TfBlobManagerMock;
 
 	//localization
-	public static Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
+	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
 
 	//use cases
-	internal static Mock<AppStateUseCase> AppStateUseCaseMock;
-	internal static Mock<UserStateUseCase> UserStateUseCaseMock;
-	internal static Mock<ExportUseCase> ExportUseCaseMock;
-	internal static Mock<LoginUseCase> LoginUseCaseMock;
+	internal Mock<AppStateUseCase> AppStateUseCaseMock;
+	internal Mock<UserStateUseCase> UserStateUseCaseMock;
+	internal Mock<ExportUseCase> ExportUseCaseMock;
+	internal Mock<LoginUseCase> LoginUseCaseMock;
 
-	internal static IRenderedComponent<FluentToastProvider> toastProvider;
-	internal static IRenderedComponent<FluentDialogProvider> dialogProvider;
-	internal static IRenderedComponent<FluentTooltipProvider> tooltipProvider;
-	internal static IRenderedComponent<FluentKeyCodeProvider> keyCodeProvider;
-	internal static IRenderedComponent<FluentMenuProvider> menuProvider;
+	public IStore Store;
+	public IDispatcher Dispatcher;
+	public IState<TfUserState> TfUserState;
+	public IState<TfAppState> TfAppState;
 
-	public static TestContext Context { get; }
 
-	static BaseTest()
+	public TestContext GetTestContext()
 	{
-		Context = new TestContext();
+		var Context = new TestContext();
+
 		#region << Fluent And Flux >>
 		//Context.JSInterop.SetupModule("./_content/Microsoft.FluentUI.AspNetCore.Components/Components/Label/FluentInputLabel.razor.js");
 		Context.JSInterop.Mode = JSRuntimeMode.Loose;
@@ -170,10 +169,9 @@ public class BaseTest
 		LoginUseCaseMock = new Mock<LoginUseCase>(Context.Services);
 		Context.Services.AddTransient(typeof(LoginUseCase), Services => LoginUseCaseMock.Object);
 
-		toastProvider = Context.RenderComponent<FluentToastProvider>();
-		dialogProvider = Context.RenderComponent<FluentDialogProvider>();
-		tooltipProvider = Context.RenderComponent<FluentTooltipProvider>();
-		keyCodeProvider = Context.RenderComponent<FluentKeyCodeProvider>();
-		menuProvider = Context.RenderComponent<FluentMenuProvider>();
+		Store = Context.Services.GetRequiredService<IStore>();
+		Store.InitializeAsync().Wait();
+		Dispatcher = Context.Services.GetRequiredService<IDispatcher>();
+		return Context;
 	}
 }

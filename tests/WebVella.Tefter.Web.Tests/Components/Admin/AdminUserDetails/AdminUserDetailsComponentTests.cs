@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Web.Store;
-
-namespace WebVella.Tefter.Web.Tests.Components;
+﻿namespace WebVella.Tefter.Web.Tests.Components;
 public class AdminUserDetailsComponentTests : BaseTest
 {
 
@@ -10,18 +8,19 @@ public class AdminUserDetailsComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			var user = new TucUser { Settings = new TucUserSettings { IsSidebarOpen = true } };
-			var tfUserState = new TfUserState { CurrentUser = user };
-			UserStateUseCaseMock.Setup(x => x.InitUserState()).Returns(Task.FromResult(tfUserState));
-			UserStateUseCaseMock.Setup(x => x.GetUserFromCookieAsync()).Returns(Task.FromResult(user));
-			AppStateUseCaseMock.Setup(x => x.GetUserAsync(It.IsAny<Guid>())).Returns(Task.FromResult(user));
-			Context.RenderComponent<TfUserStateManager>();
-			Context.RenderComponent<TfAppStateManager>();
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: null,
+				state: new TfAppState { AdminManagedUser = user }));
+
 			// Act
 			var cut = Context.RenderComponent<TfAdminUserDetails>();
 
 			// Assert
 			cut.Find(".tf-card");
+
+			Context.DisposeComponents();
 		}
 	}
 }

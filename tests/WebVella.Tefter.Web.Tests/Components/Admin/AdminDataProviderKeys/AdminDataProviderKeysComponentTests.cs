@@ -8,12 +8,14 @@ public class AdminDataProviderKeysComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfAdminDataProviderKeys>();
 
 			// Assert
 			cut.Find(".fluent-messagebar");
+
+			Context.DisposeComponents();
 		}
 	}
 }

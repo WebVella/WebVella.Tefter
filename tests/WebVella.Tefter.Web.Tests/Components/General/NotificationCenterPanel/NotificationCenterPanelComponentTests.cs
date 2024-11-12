@@ -8,12 +8,14 @@ public class NotificationCenterPanelComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfNotificationCenterPanel>();
 
 			// Assert
 			cut.Find(".tf-notification-center-panel");
+
+			Context.DisposeComponents();
 		}
 	}
 }

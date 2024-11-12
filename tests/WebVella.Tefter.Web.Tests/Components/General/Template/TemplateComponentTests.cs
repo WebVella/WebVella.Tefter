@@ -8,6 +8,7 @@ public class TemplateComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			RenderFragment fragment = builder =>
 						{
 							builder.OpenElement(0, "header");
@@ -20,6 +21,8 @@ public class TemplateComponentTests : BaseTest
 
 			// Assert
 			cut.Find("header");
+
+			Context.DisposeComponents();
 		}
 	}
 

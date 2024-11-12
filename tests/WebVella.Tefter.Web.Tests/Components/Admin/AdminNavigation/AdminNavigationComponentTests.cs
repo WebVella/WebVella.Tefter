@@ -8,12 +8,14 @@ public class AdminNavigationComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfAdminNavigation>();
 
 			// Assert
 			cut.Find(".tf-navigation");
+
+			Context.DisposeComponents();
 		}
 	}
 }

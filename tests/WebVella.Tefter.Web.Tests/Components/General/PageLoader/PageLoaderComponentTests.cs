@@ -8,12 +8,14 @@ public class PageLoaderComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfPageLoader>();
 
 			// Assert
 			cut.Find(".tf-loader-bar");
+
+			Context.DisposeComponents();
 		}
 	}
 }

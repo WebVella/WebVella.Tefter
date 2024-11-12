@@ -8,12 +8,14 @@ public class FilterCardComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfFilterCard>();
 
 			// Assert
 			cut.Find(".tf-card");
+
+			Context.DisposeComponents();
 		}
 	}
 

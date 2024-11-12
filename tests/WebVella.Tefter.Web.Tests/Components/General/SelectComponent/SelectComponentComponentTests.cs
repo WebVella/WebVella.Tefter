@@ -8,12 +8,14 @@ public class SelectComponentComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfSelectComponent<string>>();
 
 			// Assert
 			cut.Find(".tf-select-component");
+
+			Context.DisposeComponents();
 		}
 	}
 }

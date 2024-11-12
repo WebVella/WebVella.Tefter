@@ -8,13 +8,19 @@ public class AdminPagesNavigationComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
+
 			var user = new TucUser { Settings = new TucUserSettings { IsSidebarOpen = true } };
-			UserStateUseCaseMock.Setup(x => x.GetUserFromCookieAsync()).Returns(Task.FromResult(user));
+			Dispatcher.Dispatch(new SetUserStateAction(
+			component: null,
+			state: new TfUserState { CurrentUser = user }));
 			// Act
 			var cut = Context.RenderComponent<TfAdminPagesNavigation>();
 
 			// Assert
 			cut.Find(".tf-layout__body__aside");
+
+			Context.DisposeComponents();
 		}
 	}
 }

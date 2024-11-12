@@ -235,7 +235,7 @@ public class NavigatorExtTests
 		var filterBoolMethod = TucFilterBooleanComparisonMethod.NotEqual;
 		bool? filterBoolValue = false;
 		var filterDateOnlyColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
-		var filterDateOnlyMethod = TucFilterDateTimeComparisonMethod.Greater;
+		//var filterDateOnlyMethod = TucFilterDateTimeComparisonMethod.Greater;
 		DateOnly? filterDateOnlyValue = DateOnly.FromDateTime(DateTime.Now);
 		var filterTextColumnName = Guid.NewGuid().ToString().Split("-", StringSplitOptions.RemoveEmptyEntries)[0];
 		var filterTextMethod = TucFilterTextComparisonMethod.Contains;

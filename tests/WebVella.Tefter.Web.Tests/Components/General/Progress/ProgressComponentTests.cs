@@ -8,7 +8,7 @@ public class ProgressComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfProgress>(p => p
 			.Add((x) => x.Visible, true)
@@ -16,6 +16,8 @@ public class ProgressComponentTests : BaseTest
 
 			// Assert
 			cut.Find(".tf-progress");
+
+			Context.DisposeComponents();
 		}
 	}
 }

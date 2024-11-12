@@ -8,12 +8,14 @@ public class SortCardComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfSortCard>();
 
 			// Assert
 			cut.Find(".tf-card");
+
+			Context.DisposeComponents();
 		}
 	}
 

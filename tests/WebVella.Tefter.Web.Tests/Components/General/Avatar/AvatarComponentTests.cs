@@ -8,6 +8,7 @@ public class AvatarComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			var cssClass = "test-avatar";
 			// Act
 			var cut = Context.RenderComponent<TfAvatar>(parameters => parameters
@@ -16,6 +17,8 @@ public class AvatarComponentTests : BaseTest
 
 			// Assert
 			cut.Find($".{cssClass}");
+
+			Context.DisposeComponents();
 		}
 	}
 

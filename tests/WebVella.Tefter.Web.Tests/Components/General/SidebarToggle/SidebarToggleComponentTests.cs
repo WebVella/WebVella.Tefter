@@ -8,12 +8,14 @@ public class SidebarToggleComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfSidebarToggle>();
 
 			// Assert
 			cut.Find("fluent-button");
+
+			Context.DisposeComponents();
 		}
 	}
 

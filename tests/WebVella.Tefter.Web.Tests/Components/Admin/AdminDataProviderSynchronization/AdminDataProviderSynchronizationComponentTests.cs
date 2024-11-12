@@ -8,12 +8,14 @@ public class AdminDataProviderSynchronizationComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfAdminDataProviderSynchronization>();
 
 			// Assert
 			cut.Find(".tf-grid-wrapper");
+
+			Context.DisposeComponents();
 		}
 	}
 }

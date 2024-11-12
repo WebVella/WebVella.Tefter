@@ -8,12 +8,14 @@ public class ErrorBoundryComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfErrorBoundry>();
 
 			// Assert
 			cut.Nodes.Length.Should().Be(0);	
+
+			Context.DisposeComponents();
 		}
 	}
 

@@ -8,12 +8,14 @@ public class PagerComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfPager>();
 
 			// Assert
 			cut.Find(".paginator-nav");
+
+			Context.DisposeComponents();
 		}
 	}
 }

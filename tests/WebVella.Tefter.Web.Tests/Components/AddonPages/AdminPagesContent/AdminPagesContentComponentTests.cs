@@ -8,12 +8,14 @@ public class AdminPagesContentComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfAdminPagesContent>();
 
 			// Assert
 			cut.Find(".tf-layout__body__main");
+
+			Context.DisposeComponents();
 		}
 	}
 }

@@ -8,12 +8,14 @@ public class NavigationComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfNavigation>();
 
 			// Assert
 			cut.Find(".tf-layout__navigation");
+
+			Context.DisposeComponents();
 		}
 	}
 }

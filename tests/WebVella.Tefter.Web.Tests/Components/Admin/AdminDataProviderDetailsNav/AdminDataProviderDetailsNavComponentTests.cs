@@ -8,12 +8,14 @@ public class AdminDataProviderDetailsNavComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfAdminDataProviderDetailsNav>();
 
 			// Assert
 			cut.Find(".tf-tabnav");
+
+			Context.DisposeComponents();
 		}
 	}
 }

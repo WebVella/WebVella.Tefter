@@ -8,6 +8,7 @@ public class ValidationMessageComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			var errors = new List<ValidationError>{ 
 				new ValidationError("test","test")
 			};
@@ -19,6 +20,8 @@ public class ValidationMessageComponentTests : BaseTest
 
 			// Assert
 			cut.Find(".validation-message");
+
+			Context.DisposeComponents();
 		}
 	}
 }

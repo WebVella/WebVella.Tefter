@@ -8,6 +8,7 @@ public class TreeViewItemComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			var menu = new TucMenuItem{ Text = "test"};
 			// Act
 			var cut = Context.RenderComponent<TfTreeViewItem>(p=>p
@@ -15,6 +16,8 @@ public class TreeViewItemComponentTests : BaseTest
 
 			// Assert
 			cut.Find(".tf-menu-item");
+
+			Context.DisposeComponents();
 		}
 	}
 

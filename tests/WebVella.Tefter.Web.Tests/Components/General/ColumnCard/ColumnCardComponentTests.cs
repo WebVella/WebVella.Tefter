@@ -8,6 +8,7 @@ public class ColumnCardComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			var items = new List<string> { "col1", "col2" };
 			// Act
 			var cut = Context.RenderComponent<TfColumnCard>(parameters => parameters
@@ -16,6 +17,8 @@ public class ColumnCardComponentTests : BaseTest
 
 			// Assert
 			var mainWrapper = cut.Find($".tf-card");
+
+			Context.DisposeComponents();
 		}
 	}
 

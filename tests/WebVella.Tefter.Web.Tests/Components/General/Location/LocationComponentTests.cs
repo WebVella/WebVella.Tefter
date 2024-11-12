@@ -8,12 +8,14 @@ public class LocationComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfLocation>();
 
 			// Assert
 			cut.Find(".location");
+
+			Context.DisposeComponents();
 		}
 	}
 }

@@ -2,6 +2,7 @@
 global using FluentResults;
 global using FluentValidation;
 global using FluentValidation.Results;
+global using Fluxor;
 global using System;
 global using System.Globalization;
 global using System.Collections.Generic;
@@ -14,3 +15,4 @@ global using Microsoft.FluentUI.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components;
 global using WebVella.Tefter.Errors;
 global using Moq;
+global using WebVella.Tefter.Web.Store;

@@ -9,12 +9,14 @@ public class EditorComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfEditor>();
 
 			// Assert
 			cut.Find(".tf-editor");
+
+			Context.DisposeComponents();
 		}
 	}
 

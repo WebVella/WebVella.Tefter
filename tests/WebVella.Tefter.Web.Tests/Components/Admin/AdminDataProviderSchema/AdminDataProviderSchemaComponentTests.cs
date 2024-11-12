@@ -8,12 +8,14 @@ public class AdminDataProviderSchemaComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfAdminDataProviderSchema>();
 
 			// Assert
 			cut.Find(".fluent-messagebar");
+
+			Context.DisposeComponents();
 		}
 	}
 }

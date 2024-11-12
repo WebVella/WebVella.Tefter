@@ -8,12 +8,14 @@ public class AdminFileRepositoryComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
-
+			var Context = GetTestContext();
 			// Act
 			var cut = Context.RenderComponent<TfAdminFileRepository>();
 
 			// Assert
 			cut.Find(".tf-admin-repository-toolbar");
+
+			Context.DisposeComponents();
 		}
 	}
 }

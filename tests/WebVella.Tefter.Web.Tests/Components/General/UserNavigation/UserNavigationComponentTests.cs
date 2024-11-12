@@ -8,13 +8,18 @@ public class UserNavigationComponentTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			//Given
+			var Context = GetTestContext();
 			var user = new TucUser{ FirstName = "First", LastName = "Last" };
-			UserStateUseCaseMock.Setup(x=> x.GetUserFromCookieAsync()).Returns(Task.FromResult(user));
+			Dispatcher.Dispatch(new SetUserStateAction(
+			component: null,
+			state: new TfUserState { CurrentUser = user }));
 			// Act
 			var cut = Context.RenderComponent<TfUserNavigation>();
 
 			// Assert
 			cut.Find(".usernav");
+
+			Context.DisposeComponents();
 		}
 	}
 
