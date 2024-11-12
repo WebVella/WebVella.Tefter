@@ -23,7 +23,6 @@ using WebVella.Tefter.Web.Store;
 namespace WebVella.Tefter.Web.Tests;
 public class BaseTest
 {
-	protected static readonly AsyncLock locker = new AsyncLock();
 	public Mock<ITfConfigurationService> TfConfigurationServiceMock;
 	public Mock<AuthenticationStateProvider> AuthenticationStateProviderMock;
 	public Mock<ILogger> LoggerMock;

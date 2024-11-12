@@ -3,19 +3,16 @@ public class AdminFileRepositoryComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfAdminFileRepository>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfAdminFileRepository>();
 
-			// Assert
-			cut.Find(".tf-admin-repository-toolbar");
+		// Assert
+		cut.Find(".tf-admin-repository-toolbar");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

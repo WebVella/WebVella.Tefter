@@ -3,19 +3,16 @@ public class LanguageSwitchComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfLanguageSwitch>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfLanguageSwitch>();
 
-			// Assert
-			cut.Find(".language-switch");
+		// Assert
+		cut.Find(".language-switch");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

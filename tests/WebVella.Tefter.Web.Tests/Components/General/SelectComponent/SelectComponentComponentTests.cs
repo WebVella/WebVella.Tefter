@@ -3,19 +3,16 @@ public class SelectComponentComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfSelectComponent<string>>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfSelectComponent<string>>();
 
-			// Assert
-			cut.Find(".tf-select-component");
+		// Assert
+		cut.Find(".tf-select-component");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

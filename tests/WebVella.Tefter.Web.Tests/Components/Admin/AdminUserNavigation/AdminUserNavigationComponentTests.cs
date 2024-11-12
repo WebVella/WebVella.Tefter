@@ -3,23 +3,20 @@ public class AdminUserNavigationComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			var user = new TucUser { Settings = new TucUserSettings { IsSidebarOpen = true } };
-			Dispatcher.Dispatch(new SetUserStateAction(
-			component: null,
-			state: new TfUserState { CurrentUser = user }));
-			// Act
-			var cut = Context.RenderComponent<TfAdminUserNavigation>();
+		//Given
+		var Context = GetTestContext();
+		var user = new TucUser { Settings = new TucUserSettings { IsSidebarOpen = true } };
+		Dispatcher.Dispatch(new SetUserStateAction(
+		component: null,
+		state: new TfUserState { CurrentUser = user }));
+		// Act
+		var cut = Context.RenderComponent<TfAdminUserNavigation>();
 
-			// Assert
-			cut.Find(".tf-layout__body__aside");
+		// Assert
+		cut.Find(".tf-layout__body__aside");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

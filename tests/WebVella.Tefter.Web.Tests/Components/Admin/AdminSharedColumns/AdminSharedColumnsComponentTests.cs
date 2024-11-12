@@ -3,19 +3,16 @@ public class AdminSharedColumnsComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfAdminSharedColumns>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfAdminSharedColumns>();
 
-			// Assert
-			cut.Find(".tf-admin-shared-columns-toolbar");
+		// Assert
+		cut.Find(".tf-admin-shared-columns-toolbar");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

@@ -3,19 +3,16 @@ public class AdminDataProviderSynchronizationComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfAdminDataProviderSynchronization>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfAdminDataProviderSynchronization>();
 
-			// Assert
-			cut.Find(".tf-grid-wrapper");
+		// Assert
+		cut.Find(".tf-grid-wrapper");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

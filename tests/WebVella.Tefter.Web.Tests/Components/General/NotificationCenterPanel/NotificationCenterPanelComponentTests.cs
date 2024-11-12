@@ -3,19 +3,16 @@ public class NotificationCenterPanelComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfNotificationCenterPanel>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfNotificationCenterPanel>();
 
-			// Assert
-			cut.Find(".tf-notification-center-panel");
+		// Assert
+		cut.Find(".tf-notification-center-panel");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

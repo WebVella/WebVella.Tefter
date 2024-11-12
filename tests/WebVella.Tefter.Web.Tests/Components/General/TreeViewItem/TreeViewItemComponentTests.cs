@@ -3,22 +3,19 @@ public class TreeViewItemComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			var menu = new TucMenuItem{ Text = "test"};
-			// Act
-			var cut = Context.RenderComponent<TfTreeViewItem>(p=>p
-			.Add(x=> x.Item,menu));
+		//Given
+		var Context = GetTestContext();
+		var menu = new TucMenuItem { Text = "test" };
+		// Act
+		var cut = Context.RenderComponent<TfTreeViewItem>(p => p
+		.Add(x => x.Item, menu));
 
-			// Assert
-			cut.Find(".tf-menu-item");
+		// Assert
+		cut.Find(".tf-menu-item");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 
 }

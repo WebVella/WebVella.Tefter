@@ -3,19 +3,16 @@ public class NavigationComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfNavigation>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfNavigation>();
 
-			// Assert
-			cut.Find(".tf-layout__navigation");
+		// Assert
+		cut.Find(".tf-layout__navigation");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

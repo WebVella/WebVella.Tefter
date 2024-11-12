@@ -3,19 +3,16 @@ public class PageHeaderComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfPageHeader>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfPageHeader>();
 
-			// Assert
-			cut.Find(".page-header");
+		// Assert
+		cut.Find(".page-header");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

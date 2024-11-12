@@ -4,20 +4,17 @@ public class HomeToolbarComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfHome>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfHome>();
 
-			// Assert
-			cut.Find(".home-toolbar");
+		// Assert
+		cut.Find(".home-toolbar");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 
 }

@@ -3,19 +3,16 @@ public class PagerComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfPager>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfPager>();
 
-			// Assert
-			cut.Find(".paginator-nav");
+		// Assert
+		cut.Find(".paginator-nav");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

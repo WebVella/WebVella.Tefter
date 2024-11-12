@@ -3,19 +3,16 @@ public class PageLoaderComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfPageLoader>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfPageLoader>();
 
-			// Assert
-			cut.Find(".tf-loader-bar");
+		// Assert
+		cut.Find(".tf-loader-bar");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

@@ -3,19 +3,16 @@ public class NotificationCenterComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfNotificationCenter>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfNotificationCenter>();
 
-			// Assert
-			cut.Nodes.Length.Should().BeGreaterThan(0);
+		// Assert
+		cut.Nodes.Length.Should().BeGreaterThan(0);
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

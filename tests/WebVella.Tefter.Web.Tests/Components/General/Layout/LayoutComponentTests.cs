@@ -3,19 +3,16 @@ public class LayoutComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfLayout>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfLayout>();
 
-			// Assert
-			cut.Find(".tf-layout");
+		// Assert
+		cut.Find(".tf-layout");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

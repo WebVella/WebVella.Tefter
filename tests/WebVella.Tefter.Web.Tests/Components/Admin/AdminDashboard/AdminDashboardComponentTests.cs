@@ -3,19 +3,16 @@ public class AdminDashboardComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfAdminDashboard>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfAdminDashboard>();
 
-			// Assert
-			cut.Find(".tf-layout__body__main");
+		// Assert
+		cut.Find(".tf-layout__body__main");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

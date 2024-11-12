@@ -3,20 +3,17 @@ public class FilterCardComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfFilterCard>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfFilterCard>();
 
-			// Assert
-			cut.Find(".tf-card");
+		// Assert
+		cut.Find(".tf-card");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 
 }

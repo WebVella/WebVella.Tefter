@@ -3,19 +3,16 @@ public class AdminNavigationComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			// Act
-			var cut = Context.RenderComponent<TfAdminNavigation>();
+		//Given
+		var Context = GetTestContext();
+		// Act
+		var cut = Context.RenderComponent<TfAdminNavigation>();
 
-			// Assert
-			cut.Find(".tf-navigation");
+		// Assert
+		cut.Find(".tf-navigation");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 }

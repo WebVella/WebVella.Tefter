@@ -3,24 +3,21 @@ public class UserNavigationComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
-			//Given
-			var Context = GetTestContext();
-			var user = new TucUser{ FirstName = "First", LastName = "Last" };
-			Dispatcher.Dispatch(new SetUserStateAction(
-			component: null,
-			state: new TfUserState { CurrentUser = user }));
-			// Act
-			var cut = Context.RenderComponent<TfUserNavigation>();
+		//Given
+		var Context = GetTestContext();
+		var user = new TucUser { FirstName = "First", LastName = "Last" };
+		Dispatcher.Dispatch(new SetUserStateAction(
+		component: null,
+		state: new TfUserState { CurrentUser = user }));
+		// Act
+		var cut = Context.RenderComponent<TfUserNavigation>();
 
-			// Assert
-			cut.Find(".usernav");
+		// Assert
+		cut.Find(".usernav");
 
-			Context.DisposeComponents();
-		}
+		Context.DisposeComponents();
 	}
 
 }

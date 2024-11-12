@@ -3,10 +3,8 @@ public class SidebarToggleComponentTests : BaseTest
 {
 
 	[Fact]
-	public async Task RendersCorrectly()
+	public void RendersCorrectly()
 	{
-		using (await locker.LockAsync())
-		{
 			//Given
 			var Context = GetTestContext();
 			// Act
@@ -16,7 +14,6 @@ public class SidebarToggleComponentTests : BaseTest
 			cut.Find("fluent-button");
 
 			Context.DisposeComponents();
-		}
 	}
 
 }
