@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Tests.Components;
 
-public class EditorComponentTests : BaseTest
+public class HomeToolbarComponentTests : BaseTest
 {
 
 	[Fact]
@@ -11,10 +11,10 @@ public class EditorComponentTests : BaseTest
 			//Given
 			var Context = GetTestContext();
 			// Act
-			var cut = Context.RenderComponent<TfEditor>();
+			var cut = Context.RenderComponent<TfHome>();
 
 			// Assert
-			cut.Find(".tf-editor");
+			cut.Find(".home-toolbar");
 
 			Context.DisposeComponents();
 		}
