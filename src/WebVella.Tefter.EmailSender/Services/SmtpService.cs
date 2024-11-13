@@ -13,11 +13,13 @@ internal partial class SmtpService : ISmtpService
 	private static bool queueProcessingInProgress = false;
 	private static object queueLockObj = new object();
 
+	private readonly IEmailService _emailService;
 	public readonly ITfDatabaseService _dbService;
 	private readonly ISmtpConfigurationService _config;
 	private readonly ITfBlobManager _blobManager;
 
 	public SmtpService(
+		IEmailService emailService,
 		ITfDatabaseService dbService,
 		ISmtpConfigurationService config,
 		ITfBlobManager blobManager)
@@ -25,19 +27,10 @@ internal partial class SmtpService : ISmtpService
 		_dbService = dbService;
 		_config = config;
 		_blobManager = blobManager;
+		_emailService = emailService;
 	}
 
-	private List<EmailMessage> GetPendingEmails()
-	{
-		var dt = _dbService.ExecuteSqlQueryCommand(
-			@"SELECT * FROM email_message WHERE status = @status AND scheduled_on IS NOT NULL" +
-			" AND scheduled_on < @scheduled_on  ORDER BY priority DESC, scheduled_on ASC  LIMIT 10",
-			CreateParameter("status", (short)EmailStatus.Pending, DbType.Int16),
-			CreateParameter("scheduled_on", DateTime.Now, DbType.DateTime2));
-
-		return EmailUtility.CreateModelListFromDataTable(dt);
-	}
-
+	
 	public async ValueTask ProcessSmtpQueue()
 	{
 		lock (queueLockObj)
@@ -53,7 +46,7 @@ internal partial class SmtpService : ISmtpService
 			List<EmailMessage> pendingEmailMessages = new List<EmailMessage>();
 			do
 			{
-				pendingEmailMessages = GetPendingEmails();
+				pendingEmailMessages = _emailService.GetPendingEmails();
 
 				foreach (var emailMessage in pendingEmailMessages)
 				{
@@ -193,12 +186,12 @@ internal partial class SmtpService : ISmtpService
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 				SQL,
-				CreateParameter("id", emailMessage.Id, DbType.Guid),
-				CreateParameter("status", (short)emailMessage.Status, DbType.Int16),
-				CreateParameter("sent_on", emailMessage.SentOn, DbType.DateTime2),
-				CreateParameter("scheduled_on", emailMessage.ScheduledOn, DbType.DateTime2),
-				CreateParameter("server_error", emailMessage.ServerError, DbType.String),
-				CreateParameter("retries_count", (short)emailMessage.RetriesCount, DbType.Int16));
+				_emailService.CreateParameter("id", emailMessage.Id, DbType.Guid),
+				_emailService.CreateParameter("status", (short)emailMessage.Status, DbType.Int16),
+				_emailService.CreateParameter("sent_on", emailMessage.SentOn, DbType.DateTime2),
+				_emailService.CreateParameter("scheduled_on", emailMessage.ScheduledOn, DbType.DateTime2),
+				_emailService.CreateParameter("server_error", emailMessage.ServerError, DbType.String),
+				_emailService.CreateParameter("retries_count", (short)emailMessage.RetriesCount, DbType.Int16));
 
 			if (dbResult != 1)
 			{
@@ -206,18 +199,4 @@ internal partial class SmtpService : ISmtpService
 			}
 		}
 	}
-
-	#region <--- utility --->
-	private static NpgsqlParameter CreateParameter(string name, object value, DbType type)
-	{
-		NpgsqlParameter par = new NpgsqlParameter(name, type);
-		if (value is null)
-			par.Value = DBNull.Value;
-		else
-			par.Value = value;
-
-		return par;
-	}
-	#endregion
-
 }

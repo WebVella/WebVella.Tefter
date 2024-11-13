@@ -20,6 +20,8 @@ public class EmailMessage
 	public int RetriesCount { get; internal set; }
 	public List<EmailAttachment> Attachments { get; internal set; } = new();
 	public string XSearch { get; internal set; }
+
+	public User User { get; internal set; }
 }
 
 public class CreateEmailMessageModel
@@ -34,4 +36,6 @@ public class CreateEmailMessageModel
 	public string ReplyTo { get; set; } = null;
 	public EmailPriority Priority { get; set; } = EmailPriority.Normal;
 	public List<CreateEmailAttachmentModel> Attachments { get; set; } = new();
+
+	public Guid? UserId { get; set; } = null;
 }

@@ -13,6 +13,13 @@ public partial interface IEmailService
 
 	public Result<EmailMessage> GetEmailMessageById(
 		Guid id);
+
+	internal List<EmailMessage> GetPendingEmails();
+
+	internal NpgsqlParameter CreateParameter(
+		string name, 
+		object value, 
+		DbType type);
 }
 
 internal partial class EmailService : IEmailService
@@ -49,7 +56,7 @@ internal partial class EmailService : IEmailService
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
 
-			List<EmailMessage> emailMessages = EmailUtility.CreateModelListFromDataTable(dt);
+			List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
 
 			if (emailMessages.Count == 0)
 			{
@@ -82,7 +89,7 @@ internal partial class EmailService : IEmailService
 			}
 
 			string SQL = $@"
-SELECT * FROM email_messages 
+SELECT * FROM email_message
 WHERE ( @search IS NULL OR x_search ILIKE CONCAT ('%', @search, '%') )
 ORDER BY created_on DESC {pagingSql}";
 
@@ -93,8 +100,7 @@ ORDER BY created_on DESC {pagingSql}";
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL, searchPar);
 
-			List<EmailMessage> emailMessages = 
-				EmailUtility.CreateModelListFromDataTable(dt);
+			List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
 
 			return Result.Ok(emailMessages);
 		}
@@ -182,7 +188,8 @@ INSERT INTO email_message(
 	recipients_cc,
 	recipients_bcc,
 	attachments,
-	x_search
+	x_search,
+	user_id
 )
 VALUES 
 (
@@ -203,7 +210,8 @@ VALUES
 	@recipients_cc, 
 	@recipients_bcc, 
 	@attachments, 
-	@x_search
+	@x_search,
+	@user_id
 )";
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
@@ -225,7 +233,8 @@ VALUES
 				CreateParameter("server_error", string.Empty, DbType.String),
 				CreateParameter("retries_count", (short)0, DbType.Int16),
 				CreateParameter("reply_to_email", replyToEmail, DbType.String),
-				CreateParameter("x_search", GenerateSearch(emailMessage), DbType.String)
+				CreateParameter("x_search", GenerateSearch(emailMessage), DbType.String),
+				CreateParameter("user_id", emailMessage.UserId, DbType.Guid)
 			);
 
 			if (dbResult != 1)
@@ -239,6 +248,80 @@ VALUES
 		}
 	}
 
+	public List<EmailMessage> GetPendingEmails()
+	{
+		var dt = _dbService.ExecuteSqlQueryCommand(
+			@"SELECT * FROM email_message WHERE status = @status AND scheduled_on IS NOT NULL" +
+			" AND scheduled_on < @scheduled_on  ORDER BY priority DESC, scheduled_on ASC  LIMIT 10",
+			CreateParameter("status", (short)EmailStatus.Pending, DbType.Int16),
+			CreateParameter("scheduled_on", DateTime.Now, DbType.DateTime2));
+
+		return CreateModelListFromDataTable(dt);
+	}
+
+	public List<EmailMessage> CreateModelListFromDataTable(
+		DataTable dt)
+	{
+		var result = new List<EmailMessage>();
+
+		if (dt is null)
+		{
+			return result;
+		}
+
+		foreach (DataRow dr in dt.Rows)
+		{
+			
+			User user = null;
+			
+			Guid? userId = dr.Field<Guid?>("user_id");
+
+			if (userId is not null )
+			{
+				user = _identityManager.GetUser(userId.Value).Value;
+			}
+
+			result.Add(new EmailMessage
+			{
+				Id = dr.Field<Guid>("id"),
+				Sender = JsonSerializer.Deserialize<EmailAddress>(dr.Field<string>("sender")),
+				Recipients = JsonSerializer.Deserialize<List<EmailAddress>>(dr.Field<string>("recipients")),
+				RecipientsCc = JsonSerializer.Deserialize<List<EmailAddress>>(dr.Field<string>("recipients_cc")),
+				RecipientsBcc = JsonSerializer.Deserialize<List<EmailAddress>>(dr.Field<string>("recipients_bcc")),
+				ReplyToEmail = dr.Field<string>("reply_to_email"),
+				Subject = dr.Field<string>("subject"),
+				ContentHtml = dr.Field<string>("content_html"),
+				ContentText = dr.Field<string>("content_text"),
+				CreatedOn = dr.Field<DateTime>("created_on"),
+				SentOn = dr.Field<DateTime?>("sent_on"),
+				ScheduledOn = dr.Field<DateTime?>("scheduled_on"),
+				Status = (EmailStatus)dr.Field<short>("status"),
+				Priority = (EmailPriority)dr.Field<short>("priority"),
+				ServerError = dr.Field<string>("server_error"),
+				RetriesCount = dr.Field<short>("retries_count"),
+				Attachments = JsonSerializer.Deserialize<List<EmailAttachment>>(dr.Field<string>("attachments")),
+				XSearch = dr.Field<string>("x_search"),
+				User = user
+			});
+
+		}
+		return result;
+	}
+
+	public NpgsqlParameter CreateParameter(
+		string name, 
+		object value, 
+		DbType type)
+	{
+		NpgsqlParameter par = new NpgsqlParameter(name, type);
+		if (value is null)
+			par.Value = DBNull.Value;
+		else
+			par.Value = value;
+
+		return par;
+	}
+
 
 	#region <--- utility --->
 
@@ -250,20 +333,7 @@ VALUES
 		return $"{emailMessage.Sender?.Name} {emailMessage.Sender?.Address} {recipientsText} {recipientsCcText} {recipientsBccText} " +
 			   $" {emailMessage.Subject} {emailMessage.HtmlBody} {emailMessage.TextBody}";
 	}
-
-
-
-	private static NpgsqlParameter CreateParameter(string name, object value, DbType type)
-	{
-		NpgsqlParameter par = new NpgsqlParameter(name, type);
-		if (value is null)
-			par.Value = DBNull.Value;
-		else
-			par.Value = value;
-
-		return par;
-	}
-
+	
 	#endregion
 
 	#region <--- validation --->

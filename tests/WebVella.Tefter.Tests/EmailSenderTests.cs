@@ -7,7 +7,7 @@ using WebVella.Tefter.EmailSender.Services;
 public partial class EmailSenderTests : BaseTest
 {
 	[Fact]
-	public async Task EmailSender_Create()
+	public async Task EmailSender_CreateAndGet()
 	{
 		using (await locker.LockAsync())
 		{
@@ -25,8 +25,21 @@ public partial class EmailSenderTests : BaseTest
 				model.TextBody = "test text body";
 				model.HtmlBody = "<p>test html</p>";
 				model.Recipients.Add(new EmailAddress { Address = "rumen.yankov@gmail.com", Name = "Rumen Yankov" });
+				model.UserId = user.Id;
 
-				emailService.CreateEmailMessage(model);
+				var result = emailService.CreateEmailMessage(model);
+				result.IsSuccess.Should().BeTrue();
+
+				var emailsListResult = emailService.GetEmailMessages();
+				emailsListResult.IsSuccess.Should().BeTrue();
+
+				foreach (var email in emailsListResult.Value)
+				{
+					var emailByIdResult = emailService.GetEmailMessageById(email.Id);
+					emailByIdResult.IsSuccess.Should().BeTrue();
+					emailByIdResult.Value.Should().NotBeNull();
+
+				}
 			}
 		}
 	}
