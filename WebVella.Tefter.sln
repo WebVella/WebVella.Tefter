@@ -24,14 +24,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Site", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Web.Tests", "tests\WebVella.Tefter.Web.Tests\WebVella.Tefter.Web.Tests.csproj", "{AE410F01-BB1F-45D4-AA01-9FA762B958E8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Talk", "WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj", "{C4999968-5255-45A0-849B-E09FAF424BA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Talk", "src\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj", "{C4999968-5255-45A0-849B-E09FAF424BA1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{488533C5-7E51-4222-AD4C-3B3109B006A3} = {488533C5-7E51-4222-AD4C-3B3109B006A3}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Assets", "WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj", "{EC503074-45F3-4367-B295-22593B36F4D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Assets", "src\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj", "{EC503074-45F3-4367-B295-22593B36F4D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Email", "WebVella.Tefter.Email\WebVella.Tefter.Email.csproj", "{998C9BB4-7BE9-44D6-9D2D-3CB97FB94D39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Email", "src\WebVella.Tefter.Email\WebVella.Tefter.Email.csproj", "{998C9BB4-7BE9-44D6-9D2D-3CB97FB94D39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
