@@ -2,6 +2,12 @@
 
 public partial interface IEmailService
 {
+	public Result<List<EmailMessage>> GetEmailMessages(
+		string search = null,
+		int? page = null,
+		int? pageSize = null
+		);
+
 	public Result<Guid> CreateEmailMessage(
 		CreateEmailMessageModel emailMessage);
 
@@ -29,6 +35,74 @@ internal partial class EmailService : IEmailService
 		_config = config;
 	}
 
+	public Result<EmailMessage> GetEmailMessageById(
+		Guid id)
+	{
+		try
+		{
+			const string SQL = "SELECT * FROM email_message WHERE aa.id = @id";
+
+			var assetIdPar = CreateParameter(
+				"id",
+				id,
+				DbType.Guid);
+
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
+
+			List<EmailMessage> emailMessages = EmailUtility.CreateModelListFromDataTable(dt);
+
+			if (emailMessages.Count == 0)
+			{
+				return null;
+			}
+
+			return Result.Ok(emailMessages[0]);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get asset.").CausedBy(ex));
+		}
+	}
+
+	public Result<List<EmailMessage>> GetEmailMessages(
+		string search = null,
+		int? page = null,
+		int? pageSize = null
+		)
+	{
+		try
+		{
+			string pagingSql = string.Empty;
+
+			if (page.HasValue && pageSize.HasValue)
+			{
+				int offset = (page.Value - 1) * pageSize.Value;
+				int limit = pageSize.Value;
+				pagingSql = $"OFFSET {offset} LIMIT {limit}";
+			}
+
+			string SQL = $@"
+SELECT * FROM email_messages 
+WHERE ( @search IS NULL OR x_search ILIKE @search )
+ORDER BY created_on DESC {pagingSql}";
+
+			var searchPar = CreateParameter(
+				"search",
+				search,
+				DbType.Guid);
+
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, searchPar);
+
+			List<EmailMessage> emailMessages = 
+				EmailUtility.CreateModelListFromDataTable(dt);
+
+			return Result.Ok(emailMessages);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get email messages.").CausedBy(ex));
+		}
+	}
 
 	public Result<Guid> CreateEmailMessage(
 		CreateEmailMessageModel emailMessage)
@@ -134,9 +208,9 @@ VALUES
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 				SQL,
-				CreateParameter("id",id, DbType.Guid),
+				CreateParameter("id", id, DbType.Guid),
 				CreateParameter("sender", JsonSerializer.Serialize(sender), DbType.String),
-				CreateParameter("recipients", JsonSerializer.Serialize(emailMessage.Recipients??new()), DbType.String),
+				CreateParameter("recipients", JsonSerializer.Serialize(emailMessage.Recipients ?? new()), DbType.String),
 				CreateParameter("recipients_cc", JsonSerializer.Serialize(emailMessage.RecipientsCc ?? new()), DbType.String),
 				CreateParameter("recipients_bcc", JsonSerializer.Serialize(emailMessage.RecipientsBcc ?? new()), DbType.String),
 				CreateParameter("attachments", JsonSerializer.Serialize(validAttachments), DbType.String),
@@ -165,34 +239,6 @@ VALUES
 		}
 	}
 
-	public Result<EmailMessage> GetEmailMessageById(
-		Guid id)
-	{
-		try
-		{
-			const string SQL ="SELECT * FROM email_message WHERE aa.id = @id";
-
-			var assetIdPar = CreateParameter(
-				"id",
-				id,
-				DbType.Guid);
-
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
-
-			List<EmailMessage> emailMessages = EmailUtility.CreateModelListFromDataTable(dt);
-
-			if (emailMessages.Count == 0)
-			{
-				return null;
-			}
-
-			return Result.Ok(emailMessages[0]);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get asset.").CausedBy(ex));
-		}
-	}
 
 	#region <--- utility --->
 
@@ -216,7 +262,7 @@ VALUES
 			par.Value = value;
 
 		return par;
-	} 
+	}
 
 	#endregion
 
