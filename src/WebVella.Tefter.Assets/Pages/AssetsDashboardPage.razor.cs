@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Assets.Pages;
 
-public partial class AssetsDashboardPage : TucBaseScreenRegionComponent, ITfScreenRegionComponent
+public partial class AssetsDashboardPage : TucBaseScreenRegionComponent //BOZ: not implemented yet, ITfScreenRegionComponent
 {
 	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.Pages; } }
 	public int Position { get { return 2; } }
