@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 
 
-@if (String.IsNullOrWhiteSpace(Slug))
+@if (ItemId == Guid.Empty)
 {
 	<TfLayoutBodyMain>
 		<Header>
@@ -21,7 +21,7 @@
 }
 else
 {
-	TucScreenRegionComponentMeta componentMeta = TfAppState.Value.Pages.FirstOrDefault(x => x.Slug.ToLowerInvariant() == Slug.ToLowerInvariant());
+	TucScreenRegionComponentMeta componentMeta = TfAppState.Value.Pages.FirstOrDefault(x => x.Id == ItemId);
 	if (componentMeta is null)
 	{
 		<TfLayoutBodyMain>

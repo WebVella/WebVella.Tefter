@@ -97,7 +97,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 				IconCollapsed = TfConstants.ApplicationIcon,
 				IconColor = TfConstants.AdminThemeColor,
 				Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Pages,
-				Url = String.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Slug),
+				Url = String.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Id),
 				Text = LOC(TfConstants.AdminPagesMenuTitle)
 			});
 		}

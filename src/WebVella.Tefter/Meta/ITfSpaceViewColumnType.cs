@@ -5,7 +5,7 @@ public interface ITfSpaceViewColumnType
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
-	public string Icon { get; init; }
+	public string FluentIconName { get; init; }
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public List<Type> SupportedComponentTypes { get; init; }
@@ -27,7 +27,7 @@ public class TfSpaceViewColumnTypeMeta
 	public Guid Id { get { return Instance.Id; } }
 	public string Name { get { return Instance.Name; } }
 	public string Description { get { return Instance.Description; } }
-	public string Icon { get { return Instance.Icon; } }
+	public string Icon { get { return Instance.FluentIconName; } }
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get { return Instance.DataMapping; } }
 	public Type DefaultComponentType { get { return Instance.DefaultComponentType; } }
 	public List<Type> SupportedComponentTypes { get { return Instance.SupportedComponentTypes; } }

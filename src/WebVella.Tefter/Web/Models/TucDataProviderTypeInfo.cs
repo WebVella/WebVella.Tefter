@@ -4,8 +4,7 @@ public record TucDataProviderTypeInfo
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
-	[JsonIgnore]
-	public string IconBase64 { get; init; }
+	public string FluentIconName { get; init; }
 	[JsonIgnore]
 	public Type SettingsComponentType { get; init; }
 	public List<TucDataProviderTypeDataTypeInfo> SupportedSourceDataTypes { get; init; } = new();
@@ -15,7 +14,7 @@ public record TucDataProviderTypeInfo
 		Id = model.Id;
 		Name = model.Name;
 		Description = model.Description;
-		IconBase64 = model.ImageBase64;
+		FluentIconName = model.FluentIconName;
 		SettingsComponentType = model.SettingsComponentType;
 		foreach (var sourceDataType in model.GetSupportedSourceDataTypes())
 		{

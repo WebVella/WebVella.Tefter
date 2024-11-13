@@ -21,14 +21,15 @@ public partial class TfPagesNavigation : TfBaseComponent
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !page.Name.ToLowerInvariant().Contains(search))
 				continue;
-
+			var icon = String.IsNullOrWhiteSpace(page.FluentIconName) ? TfConstants.ApplicationIcon : TfConstants.GetIcon(page.FluentIconName);
 			var menu = new TucMenuItem
 			{
 				Id = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid()),
-				IconCollapsed = TfConstants.ApplicationIcon.WithColor(Color.Accent),
-				Selected = uri.LocalPath.StartsWith(String.Format(TfConstants.PagesSinglePageUrl, page.Slug)),
+				IconCollapsed = icon.WithColor(Color.Accent),
+				IconExpanded = icon.WithColor(Color.Accent),
+				Selected = uri.LocalPath.StartsWith(String.Format(TfConstants.PagesSinglePageUrl, page.Id)),
 				Text = page.Name,
-				Url = String.Format(TfConstants.PagesSinglePageUrl, page.Slug),
+				Url = String.Format(TfConstants.PagesSinglePageUrl, page.Id),
 			};
 			menuItems.Add(menu);
 		}

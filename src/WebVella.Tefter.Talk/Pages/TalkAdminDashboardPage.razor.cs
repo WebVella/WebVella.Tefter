@@ -2,10 +2,11 @@
 
 public partial class TalkAdminDashboardPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
 {
+    public Guid Id { get { return new Guid("15f22367-7c8d-4971-9950-d7b1ff51f678"); } }
 	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.AdminPages; } }
 	public int Position { get { return 10; } }
-	public string Name { get { return "Talk Addon"; } }
-	public string UrlSlug { get { return "talk-dashboard"; } }
+	public string Name { get { return "Talk Channels"; } }
+	public string FluentIconName { get { return "CommentMultiple"; } }
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider,TucUser currentUser,
         TfAppState newAppState,

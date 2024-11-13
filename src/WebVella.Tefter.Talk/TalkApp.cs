@@ -7,6 +7,7 @@ public class TalkApp : ITfApplication
 	public string Name => TfTalkConstants.TALK_APP_NAME;
 
 	public string Description => TfTalkConstants.TALK_APP_DECRIPTION;
+	public string FluentIconName => "CommentMultiple";
 
 	public void OnStart()
 	{

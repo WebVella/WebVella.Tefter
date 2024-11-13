@@ -5,7 +5,7 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnType
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
-	public string Icon { get; init; }
+	public string FluentIconName { get; init; }
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public Type CustomOptionsComponentType { get; init; }
@@ -24,7 +24,7 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnType
 
 		Description = "displays related files count";
 
-		Icon = "DocumentCopy";
+		FluentIconName = "DocumentCopy";
 
 		DataMapping = new List<TfSpaceViewColumnDataMapping>
 		{

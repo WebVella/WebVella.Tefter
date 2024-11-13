@@ -11,7 +11,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
-	public string Icon { get; init; }
+	public string FluentIconName { get; init; }
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public List<Type> SupportedComponentTypes { get; init; }
@@ -28,7 +28,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnType
 
 		Description = TF_COLUMN_BOOLEAN_DESCRIPTION;
 
-		Icon = TF_COLUMN_BOOLEAN_ICON;
+		FluentIconName = TF_COLUMN_BOOLEAN_ICON;
 
 		DataMapping = new List<TfSpaceViewColumnDataMapping>
 		{
