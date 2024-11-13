@@ -40,7 +40,7 @@ internal partial class EmailService : IEmailService
 	{
 		try
 		{
-			const string SQL = "SELECT * FROM email_message WHERE aa.id = @id";
+			const string SQL = "SELECT * FROM email_message WHERE id = @id";
 
 			var assetIdPar = CreateParameter(
 				"id",
@@ -83,7 +83,7 @@ internal partial class EmailService : IEmailService
 
 			string SQL = $@"
 SELECT * FROM email_messages 
-WHERE ( @search IS NULL OR x_search ILIKE @search )
+WHERE ( @search IS NULL OR x_search ILIKE CONCAT ('%', @search, '%') )
 ORDER BY created_on DESC {pagingSql}";
 
 			var searchPar = CreateParameter(
