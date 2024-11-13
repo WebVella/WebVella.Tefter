@@ -8,7 +8,7 @@ public partial interface ITfSpaceManager
 
 	public Result<List<TfSpaceNode>> GetSpaceNodes(Guid spaceId);
 
-	public Result<TfSpaceNode> GetSpaceNode(Guid spaceId, Guid nodeId);
+	public Result<TfSpaceNode> GetSpaceNode(Guid nodeId);
 
 	public Result<(Guid, List<TfSpaceNode>)> CreateSpaceNode(
 		TfSpaceNode spaceNode);
@@ -84,17 +84,15 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
-	public Result<TfSpaceNode> GetSpaceNode(
-		Guid spaceId,
-		Guid nodeId)
+	public Result<TfSpaceNode> GetSpaceNode(Guid nodeId)
 	{
 		try
 		{
-			var allNodesResult = GetSpaceNodes(spaceId);
+			var allNodesResult = GetAllSpaceNodes();
 
 			if (allNodesResult.IsFailed)
 			{
-				return Result.Fail(new Error("GetSpaceNodes failed")
+				return Result.Fail(new Error("GetAllSpaceNodes failed")
 						.CausedBy(allNodesResult.Errors));
 			}
 

@@ -12,6 +12,7 @@ public partial class TfEmailDisplayColumnComponent : TucBaseViewColumn<TfEmailDi
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfEmailDisplayColumnComponent()
 	{
 	}

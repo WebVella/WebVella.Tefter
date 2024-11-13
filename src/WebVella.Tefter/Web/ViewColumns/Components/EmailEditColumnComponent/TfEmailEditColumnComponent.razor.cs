@@ -14,6 +14,7 @@ public partial class TfEmailEditColumnComponent : TucBaseViewColumn<TfEmailEditC
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfEmailEditColumnComponent()
 	{
 	}

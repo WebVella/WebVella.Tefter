@@ -12,6 +12,7 @@ public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisp
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfGuidDisplayColumnComponent()
 	{
 	}

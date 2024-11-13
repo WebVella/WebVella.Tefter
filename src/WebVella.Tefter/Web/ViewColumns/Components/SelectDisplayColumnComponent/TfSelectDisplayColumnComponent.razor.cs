@@ -19,6 +19,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfSelectDisplayColumnComponent()
 	{
 	}

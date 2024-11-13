@@ -20,7 +20,7 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 
 	private string _getExportSelectionData()
 	{
-		if (TfAppState.Value.SpaceView is null) return null;
+		if (TfAppState.Value.SpaceView is null || TfAppState.Value.SpaceNode is null) return null;
 		return JsonSerializer.Serialize(new TucExportViewData()
 		{
 			SelectedRows = TfAppState.Value.SelectedDataRows,
@@ -30,7 +30,7 @@ public partial class TfSpaceViewShareSelector : TfBaseComponent
 
 	private string _getExportAllData()
 	{
-		if (TfAppState.Value.SpaceView is null) return null;
+		if (TfAppState.Value.SpaceView is null || TfAppState.Value.SpaceNode is null) return null;
 		return JsonSerializer.Serialize(new TucExportViewData()
 		{
 			SelectedRows = new(),

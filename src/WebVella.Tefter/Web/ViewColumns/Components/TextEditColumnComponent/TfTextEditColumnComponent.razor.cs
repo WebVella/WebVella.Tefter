@@ -12,6 +12,7 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfTextEditColumnComponent()
 	{
 	}

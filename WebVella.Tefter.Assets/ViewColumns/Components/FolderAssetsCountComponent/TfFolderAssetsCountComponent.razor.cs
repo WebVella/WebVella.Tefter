@@ -17,6 +17,7 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfFolderAssetsCountComponent()
 	{
 	}

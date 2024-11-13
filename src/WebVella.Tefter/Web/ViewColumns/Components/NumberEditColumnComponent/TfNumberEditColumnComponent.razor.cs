@@ -14,6 +14,7 @@ public partial class TfNumberEditColumnComponent : TucBaseViewColumn<TfNumberEdi
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfNumberEditColumnComponent()
 	{
 	}

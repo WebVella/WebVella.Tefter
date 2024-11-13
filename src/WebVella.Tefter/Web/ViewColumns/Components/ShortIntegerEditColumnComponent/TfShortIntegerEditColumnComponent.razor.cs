@@ -14,6 +14,7 @@ public partial class TfShortIntegerEditColumnComponent : TucBaseViewColumn<TfSho
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfShortIntegerEditColumnComponent()
 	{
 	}

@@ -12,6 +12,7 @@ public partial class TfDateTimeDisplayColumnComponent : TucBaseViewColumn<TfDate
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfDateTimeDisplayColumnComponent()
 	{
 	}

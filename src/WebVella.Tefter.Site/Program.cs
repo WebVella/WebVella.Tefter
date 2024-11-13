@@ -66,7 +66,7 @@ try
 			app.UseHsts();
 		}
 		app.UseHttpsRedirection();
-		app.UseStaticFiles();
+		app.MapStaticAssets();
 		app.UseAntiforgery();
 		app.MapControllers();
 		//NOTE: if you want to have routable components in your own addon

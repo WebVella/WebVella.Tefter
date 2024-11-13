@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using WebVella.Tefter.Web.PageComponents;
 
 namespace WebVella.Tefter.UseCases.Export;
 
@@ -20,9 +21,30 @@ public class ExportUseCase
 	//TODO RUMEN: Move to service method?
 	public virtual ValueTask<byte[]> ExportViewToExcel(TucExportViewData data)
 	{
-		if (data.RouteState.SpaceViewId is null) throw new Exception("SpaceViewId not provided");
+		Guid? spaceViewId = null;
+		if (data.RouteState.SpaceViewId is not null) spaceViewId = data.RouteState.SpaceViewId.Value;
+		else if (data.RouteState.SpaceNodeId is not null)
+		{
+			var resultNode = _spaceManager.GetSpaceNode(data.RouteState.SpaceNodeId.Value);
+			if (resultNode.IsFailed) throw new Exception("GetSpaceNode method failed");
+			if (resultNode.Value.Type == TfSpaceNodeType.Page && resultNode.Value.ComponentType == typeof(TfSpaceViewPageComponent))
+			{
+				try
+				{
+					var options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(resultNode.Value.ComponentOptionsJson);
+					spaceViewId = options.SpaceViewId;
 
-		var viewSrvResult = _spaceManager.GetSpaceView(data.RouteState.SpaceViewId.Value);
+				}
+				catch (Exception ex)
+				{
+					throw new Exception($"TfSpaceViewPageComponent options could not be deserialized. {ex.Message}");
+				}
+			}
+		}
+
+		if (spaceViewId is null) throw new Exception("SpaceViewId not provided");
+
+		var viewSrvResult = _spaceManager.GetSpaceView(spaceViewId.Value);
 		if (viewSrvResult.IsFailed) throw new Exception("GetSpaceView method failed");
 
 		var view = viewSrvResult.Value;

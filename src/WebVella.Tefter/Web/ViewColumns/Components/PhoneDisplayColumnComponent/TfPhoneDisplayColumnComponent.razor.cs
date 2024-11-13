@@ -12,6 +12,7 @@ public partial class TfPhoneDisplayColumnComponent : TucBaseViewColumn<TfPhoneDi
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfPhoneDisplayColumnComponent()
 	{
 	}

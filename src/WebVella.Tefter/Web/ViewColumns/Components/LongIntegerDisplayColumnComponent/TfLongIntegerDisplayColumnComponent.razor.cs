@@ -12,6 +12,7 @@ public partial class TfLongIntegerDisplayColumnComponent : TucBaseViewColumn<TfL
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfLongIntegerDisplayColumnComponent()
 	{
 	}

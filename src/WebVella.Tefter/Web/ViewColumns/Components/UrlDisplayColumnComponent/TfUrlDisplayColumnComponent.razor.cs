@@ -12,6 +12,7 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfUrlDisplayColumnComponent()
 	{
 	}

@@ -12,6 +12,7 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfBooleanDisplayColumnComponent()
 	{
 	}

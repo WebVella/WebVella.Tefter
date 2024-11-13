@@ -12,6 +12,7 @@ public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<Tf
 	/// <summary>
 	/// Needed because of the custom constructor
 	/// </summary>
+	[ActivatorUtilitiesConstructor]
 	public TfShortIntegerDisplayColumnComponent()
 	{
 	}

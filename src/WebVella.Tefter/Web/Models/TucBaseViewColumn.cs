@@ -8,7 +8,7 @@ public interface ITucExportableViewColumn
 }
 
 
-public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExportableViewColumn, ITucAuxDataUseComponent
+public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExportableViewColumn, ITucAuxDataUseComponent
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
@@ -19,16 +19,6 @@ public class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExp
 	[Parameter] public TucViewColumnComponentContext Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
-	#endregion
-
-	#region << Constructor >>
-	public TucBaseViewColumn()
-	{
-	}
-	public TucBaseViewColumn(TucViewColumnComponentContext context)
-	{
-		Context = context;
-	}
 	#endregion
 
 	#region << Properties >>
