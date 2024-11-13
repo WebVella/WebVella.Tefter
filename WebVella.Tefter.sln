@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Talk", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Assets", "src\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj", "{EC503074-45F3-4367-B295-22593B36F4D9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebVella.Tefter.Email", "src\WebVella.Tefter.Email\WebVella.Tefter.Email.csproj", "{998C9BB4-7BE9-44D6-9D2D-3CB97FB94D39}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.EmailSender", "src\WebVella.Tefter.EmailSender\WebVella.Tefter.EmailSender.csproj", "{0FE29016-C0B1-4E4A-8353-D285F059AB5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,10 +67,10 @@ Global
 		{EC503074-45F3-4367-B295-22593B36F4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC503074-45F3-4367-B295-22593B36F4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC503074-45F3-4367-B295-22593B36F4D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{998C9BB4-7BE9-44D6-9D2D-3CB97FB94D39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{998C9BB4-7BE9-44D6-9D2D-3CB97FB94D39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{998C9BB4-7BE9-44D6-9D2D-3CB97FB94D39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{998C9BB4-7BE9-44D6-9D2D-3CB97FB94D39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FE29016-C0B1-4E4A-8353-D285F059AB5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

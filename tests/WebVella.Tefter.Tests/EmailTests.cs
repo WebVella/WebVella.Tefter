@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Tests;
 
-using WebVella.Tefter.Email.Models;
-using WebVella.Tefter.Email.Services;
+using WebVella.Tefter.EmailSender.Models;
+using WebVella.Tefter.EmailSender.Services;
 
 
 public partial class TalkTests : BaseTest

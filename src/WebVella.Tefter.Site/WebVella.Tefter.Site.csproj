@@ -9,7 +9,7 @@
 		<PackageReference Include="System.IO.Packaging" Version="9.0.0" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
 		<ProjectReference Include="..\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj" />
-		<ProjectReference Include="..\WebVella.Tefter.Email\WebVella.Tefter.Email.csproj" />
+		<ProjectReference Include="..\WebVella.Tefter.EmailSender\WebVella.Tefter.EmailSender.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />

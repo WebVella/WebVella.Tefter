@@ -1,12 +1,12 @@
-﻿namespace WebVella.Tefter.Email;
+﻿namespace WebVella.Tefter.EmailSender;
 
-public class EmailApp : ITfApplication
+public class EmailSenderApp : ITfApplication
 {
-	public Guid Id => TfEmailConstants.APP_ID;
+	public Guid Id => TfEmailSenderConstants.APP_ID;
 
-	public string Name => TfEmailConstants.APP_NAME;
+	public string Name => TfEmailSenderConstants.APP_NAME;
 
-	public string Description => TfEmailConstants.APP_DECRIPTION;
+	public string Description => TfEmailSenderConstants.APP_DECRIPTION;
 
 	public void OnStart()
 	{

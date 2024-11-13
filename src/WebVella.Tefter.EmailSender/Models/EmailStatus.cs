@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Email.Models;
+﻿namespace WebVella.Tefter.EmailSender.Models;
 
 public enum EmailStatus
 {

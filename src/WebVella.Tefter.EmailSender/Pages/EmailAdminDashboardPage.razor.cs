@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Email.Pages;
+﻿namespace WebVella.Tefter.EmailSender.Pages;
 
 public partial class EmailAdminDashboardPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
 {

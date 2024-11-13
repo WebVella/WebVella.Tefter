@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Email;
+﻿namespace WebVella.Tefter.EmailSender;
 
 internal class SmtpBackgroundJob : BackgroundService
 {

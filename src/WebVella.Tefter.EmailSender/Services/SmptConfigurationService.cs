@@ -1,5 +1,5 @@
 ﻿
-namespace WebVella.Tefter.Email.Services;
+namespace WebVella.Tefter.EmailSender.Services;
 
 internal interface ISmtpConfigurationService
 {

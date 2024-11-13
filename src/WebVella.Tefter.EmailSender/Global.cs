@@ -25,9 +25,9 @@ global using WebVella.Tefter.Web.Models;
 global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Migrations;
 
-global using WebVella.Tefter.Email;
-global using WebVella.Tefter.Email.Models;
-global using WebVella.Tefter.Email.Services;
+global using WebVella.Tefter.EmailSender;
+global using WebVella.Tefter.EmailSender.Models;
+global using WebVella.Tefter.EmailSender.Services;
 
 global using FluentResults;
 global using FluentValidation;

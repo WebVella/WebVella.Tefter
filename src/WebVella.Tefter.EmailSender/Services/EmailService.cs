@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Email.Services;
+﻿namespace WebVella.Tefter.EmailSender.Services;
 
 public partial interface IEmailService
 {
@@ -270,10 +270,8 @@ VALUES
 
 	internal class EmailMessageValidator : AbstractValidator<CreateEmailMessageModel>
 	{
-		public readonly ITfDataManager _dataManager;
 		public readonly ITfDatabaseService _dbService;
 		public readonly ITfBlobManager _blobManager;
-		public readonly IIdentityManager _identityManager;
 		public readonly ISmtpConfigurationService _config;
 
 		public EmailMessageValidator(
