@@ -32,8 +32,8 @@ internal partial class SmtpService : ISmtpService
 		var dt = _dbService.ExecuteSqlQueryCommand(
 			@"SELECT * FROM email_message WHERE status = @status AND scheduled_on IS NOT NULL" +
 			" AND scheduled_on < @scheduled_on  ORDER BY priority DESC, scheduled_on ASC  LIMIT 10",
-			new NpgsqlParameter("status", ((int)EmailStatus.Pending).ToString()),
-			new NpgsqlParameter("scheduled_on", DateTime.Now));
+			CreateParameter("status", (short)EmailStatus.Pending, DbType.Int16),
+			CreateParameter("scheduled_on", DateTime.Now, DbType.DateTime2));
 
 		return EmailUtility.CreateModelListFromDataTable(dt);
 	}
@@ -160,7 +160,7 @@ internal partial class SmtpService : ISmtpService
 				client.Disconnect(true);
 			}
 
-			emailMessage.SentOn = DateTime.UtcNow;
+			emailMessage.SentOn = DateTime.Now;
 			emailMessage.Status = EmailStatus.Sent;
 			emailMessage.ScheduledOn = null;
 			emailMessage.ServerError = null;

@@ -23,14 +23,14 @@ internal static class EmailUtility
 				ReplyToEmail = dr.Field<string>("reply_to_email"),
 				Subject = dr.Field<string>("subject"),
 				ContentHtml = dr.Field<string>("content_html"),
-				ContentText = dr.Field<string>("recipients_text"),
+				ContentText = dr.Field<string>("content_text"),
 				CreatedOn = dr.Field<DateTime>("created_on"),
 				SentOn = dr.Field<DateTime?>("sent_on"),
 				ScheduledOn = dr.Field<DateTime?>("scheduled_on"),
 				Status = (EmailStatus)dr.Field<short>("status"),
 				Priority = (EmailPriority)dr.Field<short>("priority"),
 				ServerError = dr.Field<string>("server_error"),
-				RetriesCount= dr.Field<short>("retry_count"),
+				RetriesCount= dr.Field<short>("retries_count"),
 				Attachments = JsonSerializer.Deserialize<List<EmailAttachment>>(dr.Field<string>("attachments")),
 				XSearch = dr.Field<string>("x_search")
 			});

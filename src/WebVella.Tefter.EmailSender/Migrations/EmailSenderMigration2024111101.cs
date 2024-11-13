@@ -28,7 +28,7 @@ public class EmailSenderMigration2024111101 : ITfApplicationMigration
 					.AddShortIntegerColumn("retries_count", c => { c.NotNullable().WithDefaultValue(0); })
 					.AddShortIntegerColumn("priority", c => { c.NotNullable().WithDefaultValue(1); })
 					.AddTextColumn("reply_to_email", c => { c.NotNullable().WithDefaultValue(string.Empty); })
-					.AddDateTimeColumn("scheduled_on", c => { c.NotNullable().WithAutoDefaultValue(); })
+					.AddDateTimeColumn("scheduled_on", c => { c.Nullable(); })
 					.AddShortIntegerColumn("status", c => { c.NotNullable().WithDefaultValue(0); })
 					.AddTextColumn("sender", c => { c.NotNullable().WithDefaultValue(string.Empty); })
 					.AddTextColumn("recipients", c => { c.NotNullable().WithDefaultValue(string.Empty); })

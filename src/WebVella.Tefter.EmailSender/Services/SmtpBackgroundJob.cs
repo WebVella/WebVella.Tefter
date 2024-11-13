@@ -44,11 +44,23 @@ internal class SmtpBackgroundJob : BackgroundService
 				try
 				{
 					var now = DateTime.Now;
-					if (now.Minute % 5 != 0 || now.Second != 0) //every 5 mins
+					if (!env.IsDevelopment())
 					{
-						//check every sec
-						await Task.Delay(1000, stoppingToken);
-						continue;
+						if (now.Minute % 5 != 0 || now.Second != 0) //every 5 mins
+						{
+							//check every sec
+							await Task.Delay(1000, stoppingToken);
+							continue;
+						}
+					}
+					else
+					{
+						if (now.Second % 10 != 0) //every 10 sec in dev mode
+						{
+							//check every sec
+							await Task.Delay(100, stoppingToken);
+							continue;
+						}
 					}
 
 					ExceptionDispatchInfo capturedException = null;

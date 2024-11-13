@@ -27,8 +27,10 @@ internal class SmtpConfigurationService : ISmtpConfigurationService
 
 	public string DefaultReplyToEmail { get; } = null;
 
-	public SmtpConfigurationService(IConfiguration config)
+	public SmtpConfigurationService(ITfConfigurationService tfConfiguration )
 	{
+		var config = tfConfiguration.Config;
+
 		if (bool.TryParse(config["Tefter:Email:Smtp:Enabled"], out var enabled)) Enabled = enabled;
 		if (int.TryParse(config["Tefter:Email:Smtp:Port"], out var port)) Port = port;
 
