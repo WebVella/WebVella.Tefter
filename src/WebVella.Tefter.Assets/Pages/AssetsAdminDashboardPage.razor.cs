@@ -2,10 +2,11 @@
 
 public partial class AssetsAdminDashboardPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
 {
+	public Guid Id { get { return new Guid("9cf13acf-8959-499e-aab8-ff2c25a6c97e"); } }
 	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.AdminPages; } }
 	public int Position { get { return 10; } }
-	public string Name { get { return "Assets Addon"; } }
-	public string UrlSlug { get { return "assets-dashboard"; } }
+	public string Name { get { return "Assets Folders"; } }
+	public string FluentIconName => "Folder";
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider,TucUser currentUser,
         TfAppState newAppState,

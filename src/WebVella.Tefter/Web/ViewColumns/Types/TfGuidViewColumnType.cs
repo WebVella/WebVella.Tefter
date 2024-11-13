@@ -11,7 +11,7 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnType
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
-	public string Icon { get; init; }
+	public string FluentIconName { get; init; }
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public Type CustomOptionsComponentType { get; init; }
@@ -30,7 +30,7 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnType
 
 		Description = TF_COLUMN_GUID_DESCRIPTION;
 
-		Icon = TF_COLUMN_GUID_ICON;
+		FluentIconName = TF_COLUMN_GUID_ICON;
 
 		DataMapping = new List<TfSpaceViewColumnDataMapping>
 		{

@@ -1,5 +1,5 @@
 ﻿@page "/admin/pages"
-@page "/admin/pages/{Slug}"
+@page "/admin/pages/{ItemId:guid}"
 @layout AdminLayout
 @inherits TfBasePage
 <TfLayoutBody>
@@ -7,7 +7,7 @@
 		<TfAdminPagesNavigation />
 	</Aside>
 	<ChildContent>
-		<TfAdminPagesContent Slug="@Slug" />
+		<TfAdminPagesContent ItemId="@ItemId" />
 	</ChildContent>
 </TfLayoutBody>
 

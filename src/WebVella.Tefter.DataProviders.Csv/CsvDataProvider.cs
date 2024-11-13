@@ -1,10 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
-using FluentResults;
 using System.Globalization;
 using System.Text;
-using static Org.BouncyCastle.Math.EC.ECCurve;
-using System.Text.RegularExpressions;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.DataProviders.Csv;
@@ -17,20 +14,7 @@ public class CsvDataProvider : ITfDataProviderType
 
 	public string Description => "Provide data from CSV formated file.";
 
-	public string ImageBase64
-	{
-		get
-		{
-			var stream = GetType().Assembly.GetManifestResourceStream(Constants.CSV_DATA_PROVIDER_ICON);
-			byte[] bytes;
-			using (var memoryStream = new MemoryStream())
-			{
-				stream.CopyTo(memoryStream);
-				bytes = memoryStream.ToArray();
-			}
-			return Convert.ToBase64String(bytes);
-		}
-	}
+	public string FluentIconName => "DocumentTable";
 
 	public Type SettingsComponentType => typeof(DataProviderSettingsComponent);
 
@@ -135,7 +119,7 @@ public class CsvDataProvider : ITfDataProviderType
 				if (file is null)
 					throw new Exception($"File '{settings.Filepath}' is not found.");
 
-				using (var stream = repoService.GetFileContentAsFileStream(file.Filename).Value )
+				using (var stream = repoService.GetFileContentAsFileStream(file.Filename).Value)
 				{
 					return ReadCSVStream(stream, provider, config, settings, culture);
 				}
@@ -156,12 +140,12 @@ public class CsvDataProvider : ITfDataProviderType
 		}
 	}
 
-	private ReadOnlyCollection<TfDataProviderDataRow> ReadCSVStream( 
-		Stream stream, 
+	private ReadOnlyCollection<TfDataProviderDataRow> ReadCSVStream(
+		Stream stream,
 		TfDataProvider provider,
 		CsvConfiguration config,
 		CsvDataProviderSettings settings,
-		CultureInfo culture )
+		CultureInfo culture)
 	{
 		var result = new List<TfDataProviderDataRow>();
 
@@ -223,7 +207,7 @@ public class CsvDataProvider : ITfDataProviderType
 		string stringValue = value?.ToString();
 
 		//if column is nullable return null, null is return for empty string 
-		if ( ( string.IsNullOrEmpty(stringValue) || stringValue?.ToLowerInvariant() == "null" )
+		if ((string.IsNullOrEmpty(stringValue) || stringValue?.ToLowerInvariant() == "null")
 			&& column.IsNullable)
 			return null;
 
@@ -274,7 +258,7 @@ public class CsvDataProvider : ITfDataProviderType
 						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))
 					{
 						//There are problems with DateOnly parse exact, so we use DateTime
-						return new DateOnly(parsedValueExact.Year,parsedValueExact.Month,parsedValueExact.Day);
+						return new DateOnly(parsedValueExact.Year, parsedValueExact.Month, parsedValueExact.Day);
 					}
 					else if (DateOnly.TryParse(value?.ToString(), out DateOnly parsedValue))
 						return parsedValue;

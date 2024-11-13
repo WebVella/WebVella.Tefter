@@ -7,6 +7,7 @@ public class AssetsApp : ITfApplication
 	public string Name => TfAssetsConstants.ASSETS_APP_NAME;
 
 	public string Description => TfAssetsConstants.ASSETS_APP_DECRIPTION;
+	public string FluentIconName => "Folder";
 
 	public void OnStart()
 	{

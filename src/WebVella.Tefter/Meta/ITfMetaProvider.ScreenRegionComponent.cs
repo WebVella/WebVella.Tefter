@@ -18,6 +18,7 @@ public partial class TfMetaProvider
 		{
 			return _screenRegionComponentMeta
 				.OrderBy(x => x.Position)
+				.ThenBy(x => x.Name)
 				.ToList()
 				.AsReadOnly();
 		}
@@ -25,6 +26,7 @@ public partial class TfMetaProvider
 		return _screenRegionComponentMeta
 			.Where(x => x.ScreenRegion == region)
 			.OrderBy(x => x.Position)
+			.ThenBy(x => x.Name)
 			.ToList()
 			.AsReadOnly();
 	}

@@ -2,18 +2,20 @@
 
 public interface ITfScreenRegionComponent
 {
+	public Guid Id { get; }
 	public TfScreenRegion ScreenRegion { get; }
 	public int Position { get; }
 	public string Name { get; }
-	public string UrlSlug { get; }
+	public string FluentIconName { get; }
 }
 
 public class TfScreenRegionComponentMeta
 {
+	public Guid Id { get { return Instance.Id; } }
 	public TfScreenRegion ScreenRegion { get { return Instance.ScreenRegion; } }
 	public int Position { get { return Instance.Position; } }
 	public string Name { get { return Instance.Name; } }
-	public string UrlSlug { get { return Instance.UrlSlug; } }
+	public string FluentIconName { get { return Instance.FluentIconName; } }
 	public Type ComponentType { get; init; }
 	public ITfScreenRegionComponent Instance { get; init; }
 }

@@ -49,11 +49,12 @@ internal partial class AppStateUseCase
 		{
 			results.Add(new TucScreenRegionComponentMeta
 			{
+				Id = meta.Id,
 				Region = meta.ScreenRegion,
 				Position = meta.Position,
-				Slug = meta.UrlSlug,
 				Name = meta.Name,
 				ComponentType = meta.ComponentType,
+				FluentIconName = meta.FluentIconName,
 			});
 		}
 		return results.OrderBy(x => x.Position).ThenBy(x => x.Name).ToList();

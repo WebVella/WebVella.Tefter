@@ -191,11 +191,12 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 			{
 				addonComponents.Add(new TucScreenRegionComponentMeta
 				{
+					Id = meta.Id,
 					Region = meta.ScreenRegion,
 					Position = meta.Position,
-					Slug = meta.UrlSlug,
 					Name = meta.Name,
 					ComponentType = meta.ComponentType,
+					FluentIconName = meta.FluentIconName,
 				});
 			}
 			addonComponents = addonComponents.Where(x => x.Region == TfScreenRegion.SpaceViewToolbarActions

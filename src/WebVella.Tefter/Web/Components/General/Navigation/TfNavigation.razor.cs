@@ -68,7 +68,7 @@ public partial class TfNavigation : TfBaseComponent
 				IconCollapsed = TfConstants.ApplicationIcon.WithColor(_defaultColor.ToAttributeValue()),
 				IconColor = _defaultColor,
 				Text = TfConstants.PagesMenuTitle,
-				Url = String.Format(TfConstants.PagesSinglePageUrl, TfAppState.Value.Pages[0].Slug),
+				Url = String.Format(TfConstants.PagesSinglePageUrl, TfAppState.Value.Pages[0].Id),
 				Selected = uri.LocalPath.StartsWith(TfConstants.PagesPageUrl)
 			});
 		}

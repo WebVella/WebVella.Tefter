@@ -11,7 +11,7 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnType
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
-	public string Icon { get; init; }
+	public string FluentIconName { get; init; }
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public List<Type> SupportedComponentTypes { get; init; }
@@ -27,7 +27,7 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnType
 
 		Description = TF_COLUMN_DATETIME_DESCRIPTION;
 
-		Icon = TF_COLUMN_DATETIME_ICON;
+		FluentIconName = TF_COLUMN_DATETIME_ICON;
 
 		DataMapping = new List<TfSpaceViewColumnDataMapping>
 		{
