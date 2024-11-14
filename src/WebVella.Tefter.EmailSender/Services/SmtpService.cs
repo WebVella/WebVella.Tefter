@@ -112,8 +112,8 @@ internal partial class SmtpService : ISmtpService
 			message.Subject = emailMessage.Subject;
 			var bodyBuilder = new BodyBuilder
 			{
-				HtmlBody = emailMessage.ContentHtml,
-				TextBody = emailMessage.ContentText
+				HtmlBody = emailMessage.ContentHtml??string.Empty,
+				TextBody = emailMessage.ContentText??string.Empty
 			};
 
 			if (emailMessage.Attachments != null && emailMessage.Attachments.Count > 0)
@@ -136,6 +136,8 @@ internal partial class SmtpService : ISmtpService
 					bodyBuilder.Attachments.Add(attachment);
 				}
 			}
+
+			_emailService.EmbedRepositoryImages(bodyBuilder);
 
 			message.Body = bodyBuilder.ToMessageBody();
 

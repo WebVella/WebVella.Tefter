@@ -22,8 +22,8 @@ public partial class EmailSenderTests : BaseTest
 				var user = identityManager.GetUser("rumen@webvella.com").Value;
 				CreateEmailMessageModel model = new CreateEmailMessageModel();
 				model.Subject = "test";
-				model.TextBody = "test text body";
-				model.HtmlBody = "<p>test html</p>";
+				model.TextBody = "";
+				model.HtmlBody = "<html><body><p>test html</p><img src='/fs/repository/ai_avatar.jpg'>people link</img></body></html>";
 				model.Recipients.Add(new EmailAddress { Address = "rumen.yankov@gmail.com", Name = "Rumen Yankov" });
 				model.UserId = user.Id;
 
@@ -40,6 +40,9 @@ public partial class EmailSenderTests : BaseTest
 					emailByIdResult.Value.Should().NotBeNull();
 
 				}
+
+				var searchResult = emailService.GetEmailMessages("rumen");
+				searchResult.IsSuccess.Should().BeTrue();
 			}
 		}
 	}

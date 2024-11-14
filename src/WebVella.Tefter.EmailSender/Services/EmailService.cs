@@ -1,4 +1,9 @@
-﻿namespace WebVella.Tefter.EmailSender.Services;
+﻿using HtmlAgilityPack;
+using MimeKit.Utils;
+using System.Text;
+using System.Web;
+
+namespace WebVella.Tefter.EmailSender.Services;
 
 public partial interface IEmailService
 {
@@ -16,9 +21,12 @@ public partial interface IEmailService
 
 	internal List<EmailMessage> GetPendingEmails();
 
+	internal void EmbedRepositoryImages(
+	   BodyBuilder builder);
+
 	internal NpgsqlParameter CreateParameter(
-		string name, 
-		object value, 
+		string name,
+		object value,
 		DbType type);
 }
 
@@ -28,18 +36,21 @@ internal partial class EmailService : IEmailService
 	private readonly ITfBlobManager _blobManager;
 	private readonly IIdentityManager _identityManager;
 	private readonly ISmtpConfigurationService _config;
+	private readonly ITfRepositoryService _repositoryService;
 
 	public EmailService(
 		ITfDatabaseService dbService,
 		IIdentityManager identityManager,
 		ITfBlobManager blobManager,
 		ITfDataManager dataManager,
+		ITfRepositoryService repositoryService,
 		ISmtpConfigurationService config)
 	{
 		_dbService = dbService;
 		_identityManager = identityManager;
 		_blobManager = blobManager;
 		_config = config;
+		_repositoryService = repositoryService;
 	}
 
 	public Result<EmailMessage> GetEmailMessageById(
@@ -96,7 +107,7 @@ ORDER BY created_on DESC {pagingSql}";
 			var searchPar = CreateParameter(
 				"search",
 				search,
-				DbType.Guid);
+				DbType.String);
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL, searchPar);
 
@@ -170,6 +181,34 @@ ORDER BY created_on DESC {pagingSql}";
 				replyToEmail = emailMessage.ReplyTo;
 			}
 
+
+			string htmlContent = null;
+			string textContent = null;
+
+			if (string.IsNullOrEmpty(emailMessage.HtmlBody) &&
+				string.IsNullOrEmpty(emailMessage.TextBody))
+			{
+				htmlContent = string.Empty;
+				textContent = string.Empty;
+			}
+			else if (string.IsNullOrEmpty(emailMessage.HtmlBody) &&
+				!string.IsNullOrEmpty(emailMessage.TextBody))
+			{
+				textContent = emailMessage.TextBody;
+				htmlContent = ConvertPlainTextToHtml(emailMessage.TextBody);
+			}
+			else if (!string.IsNullOrEmpty(emailMessage.HtmlBody) &&
+				string.IsNullOrEmpty(emailMessage.TextBody))
+			{
+				htmlContent = emailMessage.HtmlBody;
+				textContent = ConvertHtmlToPlainText(emailMessage.HtmlBody);
+			}
+			else
+			{
+				htmlContent = emailMessage.HtmlBody;
+				textContent = emailMessage.TextBody;
+			}
+
 			const string SQL = @"
 INSERT INTO email_message(
 	id,
@@ -223,8 +262,8 @@ VALUES
 				CreateParameter("recipients_bcc", JsonSerializer.Serialize(emailMessage.RecipientsBcc ?? new()), DbType.String),
 				CreateParameter("attachments", JsonSerializer.Serialize(validAttachments), DbType.String),
 				CreateParameter("subject", emailMessage.Subject, DbType.String),
-				CreateParameter("content_html", emailMessage.HtmlBody, DbType.String),
-				CreateParameter("content_text", emailMessage.TextBody, DbType.String),
+				CreateParameter("content_html", htmlContent, DbType.String),
+				CreateParameter("content_text", textContent, DbType.String),
 				CreateParameter("priority", (short)emailMessage.Priority, DbType.Int16),
 				CreateParameter("status", (short)EmailStatus.Pending, DbType.Int16),
 				CreateParameter("created_on", DateTime.Now, DbType.DateTime2),
@@ -271,12 +310,12 @@ VALUES
 
 		foreach (DataRow dr in dt.Rows)
 		{
-			
+
 			User user = null;
-			
+
 			Guid? userId = dr.Field<Guid?>("user_id");
 
-			if (userId is not null )
+			if (userId is not null)
 			{
 				user = _identityManager.GetUser(userId.Value).Value;
 			}
@@ -309,8 +348,8 @@ VALUES
 	}
 
 	public NpgsqlParameter CreateParameter(
-		string name, 
-		object value, 
+		string name,
+		object value,
 		DbType type)
 	{
 		NpgsqlParameter par = new NpgsqlParameter(name, type);
@@ -333,7 +372,7 @@ VALUES
 		return $"{emailMessage.Sender?.Name} {emailMessage.Sender?.Address} {recipientsText} {recipientsCcText} {recipientsBccText} " +
 			   $" {emailMessage.Subject} {emailMessage.HtmlBody} {emailMessage.TextBody}";
 	}
-	
+
 	#endregion
 
 	#region <--- validation --->
@@ -478,6 +517,178 @@ VALUES
 			{
 				options.IncludeRuleSets("create");
 			});
+		}
+	}
+
+	#endregion
+
+	#region <--- content processing --->
+
+	private string ConvertPlainTextToHtml(string text)
+	{
+		text = HttpUtility.HtmlEncode(text);
+		text = text.Replace("\r\n", "\r");
+		text = text.Replace("\n", "\r");
+		text = text.Replace("\r", "<br>\r\n");
+		text = text.Replace("  ", " &nbsp;");
+		return text;
+	}
+
+	private string ConvertHtmlToPlainText(string html)
+	{
+		try
+		{
+			if (string.IsNullOrWhiteSpace(html))
+				return string.Empty;
+
+			HtmlDocument doc = new HtmlDocument();
+			doc.LoadHtml(html);
+
+			StringWriter sw = new StringWriter();
+			ConvertTo(doc.DocumentNode, sw);
+			sw.Flush();
+			return sw.ToString();
+		}
+		catch
+		{
+			return string.Empty;
+		}
+	}
+
+	public void EmbedRepositoryImages(
+		BodyBuilder builder)
+	{
+		if (builder == null)
+			return;
+
+		if (string.IsNullOrWhiteSpace(builder.HtmlBody))
+			return;
+
+		try
+		{
+			var htmlDoc = new HtmlDocument();
+			htmlDoc.Load(new MemoryStream(Encoding.UTF8.GetBytes(builder.HtmlBody)));
+
+			if (htmlDoc.DocumentNode == null)
+				return;
+
+			foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//img[@src]"))
+			{
+				var src = node.Attributes["src"].Value.Split('?', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+
+
+				if (!string.IsNullOrWhiteSpace(src) &&
+					src.ToLowerInvariant().StartsWith("/fs/repository/"))
+				{
+					try
+					{
+						Uri uri = new Uri(src);
+						src = uri.AbsolutePath;
+					}
+					catch
+					{
+					}
+
+					string filename = src.ToLowerInvariant().Replace("/fs/repository/", "");
+
+					var file = _repositoryService.GetFile(filename);
+					if (file == null)
+						continue;
+
+					var bytes = _repositoryService.GetFileContentAsByteArray(filename).Value;
+
+					var extension = Path.GetExtension(src).ToLowerInvariant();
+					new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
+
+					var imagePart = new MimePart(mimeType)
+					{
+						ContentId = MimeUtils.GenerateMessageId(),
+						Content = new MimeContent(new MemoryStream(bytes)),
+						ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+						ContentTransferEncoding = ContentEncoding.Base64,
+						FileName = Path.GetFileName(src)
+					};
+
+					builder.LinkedResources.Add(imagePart);
+					node.SetAttributeValue("src", $"cid:{imagePart.ContentId}");
+				}
+			}
+
+			builder.HtmlBody = htmlDoc.DocumentNode.OuterHtml;
+			if (string.IsNullOrWhiteSpace(builder.TextBody) && !string.IsNullOrWhiteSpace(builder.HtmlBody))
+				builder.TextBody = ConvertHtmlToPlainText(builder.HtmlBody);
+		}
+		catch
+		{
+			return;
+		}
+	}
+
+
+	private void ConvertContentTo(HtmlNode node, TextWriter outText)
+	{
+		foreach (HtmlNode subnode in node.ChildNodes)
+		{
+			ConvertTo(subnode, outText);
+		}
+	}
+
+	private void ConvertTo(HtmlNode node, TextWriter outText)
+	{
+		string html;
+		switch (node.NodeType)
+		{
+			case HtmlNodeType.Comment:
+				// don't output comments
+				break;
+
+			case HtmlNodeType.Document:
+				ConvertContentTo(node, outText);
+				break;
+
+			case HtmlNodeType.Text:
+				// script and style must not be output
+				string parentName = node.ParentNode.Name;
+				if ((parentName == "script") || (parentName == "style"))
+					break;
+
+				// get text
+				html = ((HtmlTextNode)node).Text;
+
+				// is it in fact a special closing node output as text?
+				if (HtmlNode.IsOverlappedClosingElement(html))
+					break;
+
+				// check the text is meaningful and not a bunch of white spaces
+				if (html.Trim().Length > 0)
+				{
+					outText.Write(HtmlEntity.DeEntitize(html));
+				}
+
+				break;
+
+			case HtmlNodeType.Element:
+				switch (node.Name)
+				{
+					case "p":
+						// treat paragraphs as crlf
+						outText.Write(Environment.NewLine);
+						break;
+					case "br":
+						outText.Write(Environment.NewLine);
+						break;
+					case "a":
+						HtmlAttribute att = node.Attributes["href"];
+						outText.Write($"<{att.Value}>");
+						break;
+				}
+
+				if (node.HasChildNodes)
+				{
+					ConvertContentTo(node, outText);
+				}
+
+				break;
 		}
 	}
 
