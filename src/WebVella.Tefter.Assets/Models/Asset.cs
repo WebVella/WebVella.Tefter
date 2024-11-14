@@ -1,6 +1,4 @@
-﻿using Org.BouncyCastle.Utilities;
-
-namespace WebVella.Tefter.Assets.Models;
+﻿namespace WebVella.Tefter.Assets.Models;
 
 public class Asset
 {
