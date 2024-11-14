@@ -8,7 +8,7 @@ public partial interface IEmailService
 		int? pageSize = null
 		);
 
-	public Result<Guid> CreateEmailMessage(
+	public Result<EmailMessage> CreateEmailMessage(
 		CreateEmailMessageModel emailMessage);
 
 	public Result<EmailMessage> GetEmailMessageById(
@@ -110,7 +110,7 @@ ORDER BY created_on DESC {pagingSql}";
 		}
 	}
 
-	public Result<Guid> CreateEmailMessage(
+	public Result<EmailMessage> CreateEmailMessage(
 		CreateEmailMessageModel emailMessage)
 	{
 		try
@@ -240,7 +240,7 @@ VALUES
 			if (dbResult != 1)
 				throw new Exception("Tefter failed to save email to database");
 
-			return Result.Ok(id);
+			return GetEmailMessageById(id);
 		}
 		catch (Exception ex)
 		{
