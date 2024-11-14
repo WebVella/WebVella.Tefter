@@ -195,13 +195,13 @@ ORDER BY created_on DESC {pagingSql}";
 				!string.IsNullOrEmpty(emailMessage.TextBody))
 			{
 				textContent = emailMessage.TextBody;
-				htmlContent = ConvertPlainTextToHtml(emailMessage.TextBody);
+				htmlContent = TfConverters.ConvertPlainTextToHtml(emailMessage.TextBody);
 			}
 			else if (!string.IsNullOrEmpty(emailMessage.HtmlBody) &&
 				string.IsNullOrEmpty(emailMessage.TextBody))
 			{
 				htmlContent = emailMessage.HtmlBody;
-				textContent = ConvertHtmlToPlainText(emailMessage.HtmlBody);
+				textContent = TfConverters.ConvertHtmlToPlainText(emailMessage.HtmlBody);
 			}
 			else
 			{
@@ -524,36 +524,7 @@ VALUES
 
 	#region <--- content processing --->
 
-	private string ConvertPlainTextToHtml(string text)
-	{
-		text = HttpUtility.HtmlEncode(text);
-		text = text.Replace("\r\n", "\r");
-		text = text.Replace("\n", "\r");
-		text = text.Replace("\r", "<br>\r\n");
-		text = text.Replace("  ", " &nbsp;");
-		return text;
-	}
 
-	private string ConvertHtmlToPlainText(string html)
-	{
-		try
-		{
-			if (string.IsNullOrWhiteSpace(html))
-				return string.Empty;
-
-			HtmlDocument doc = new HtmlDocument();
-			doc.LoadHtml(html);
-
-			StringWriter sw = new StringWriter();
-			ConvertTo(doc.DocumentNode, sw);
-			sw.Flush();
-			return sw.ToString();
-		}
-		catch
-		{
-			return string.Empty;
-		}
-	}
 
 	public void EmbedRepositoryImages(
 		BodyBuilder builder)
@@ -616,7 +587,7 @@ VALUES
 
 			builder.HtmlBody = htmlDoc.DocumentNode.OuterHtml;
 			if (string.IsNullOrWhiteSpace(builder.TextBody) && !string.IsNullOrWhiteSpace(builder.HtmlBody))
-				builder.TextBody = ConvertHtmlToPlainText(builder.HtmlBody);
+				builder.TextBody = TfConverters.ConvertHtmlToPlainText(builder.HtmlBody);
 		}
 		catch
 		{
@@ -625,72 +596,6 @@ VALUES
 	}
 
 
-	private void ConvertContentTo(HtmlNode node, TextWriter outText)
-	{
-		foreach (HtmlNode subnode in node.ChildNodes)
-		{
-			ConvertTo(subnode, outText);
-		}
-	}
-
-	private void ConvertTo(HtmlNode node, TextWriter outText)
-	{
-		string html;
-		switch (node.NodeType)
-		{
-			case HtmlNodeType.Comment:
-				// don't output comments
-				break;
-
-			case HtmlNodeType.Document:
-				ConvertContentTo(node, outText);
-				break;
-
-			case HtmlNodeType.Text:
-				// script and style must not be output
-				string parentName = node.ParentNode.Name;
-				if ((parentName == "script") || (parentName == "style"))
-					break;
-
-				// get text
-				html = ((HtmlTextNode)node).Text;
-
-				// is it in fact a special closing node output as text?
-				if (HtmlNode.IsOverlappedClosingElement(html))
-					break;
-
-				// check the text is meaningful and not a bunch of white spaces
-				if (html.Trim().Length > 0)
-				{
-					outText.Write(HtmlEntity.DeEntitize(html));
-				}
-
-				break;
-
-			case HtmlNodeType.Element:
-				switch (node.Name)
-				{
-					case "p":
-						// treat paragraphs as crlf
-						outText.Write(Environment.NewLine);
-						break;
-					case "br":
-						outText.Write(Environment.NewLine);
-						break;
-					case "a":
-						HtmlAttribute att = node.Attributes["href"];
-						outText.Write($"<{att.Value}>");
-						break;
-				}
-
-				if (node.HasChildNodes)
-				{
-					ConvertContentTo(node, outText);
-				}
-
-				break;
-		}
-	}
 
 	#endregion
 }

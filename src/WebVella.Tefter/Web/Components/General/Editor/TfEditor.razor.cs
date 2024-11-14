@@ -21,7 +21,8 @@ public partial class TfEditor : TfBaseComponent
 		{
 			await JSRuntime.InvokeAsync<object>("Tefter.removeQuill", _componentId.ToString());
 		}
-		catch{ 
+		catch
+		{
 			//In rare ocasions the item is disposed after the JSRuntime is no longer avaible
 		}
 		_objectRef?.Dispose();
@@ -40,12 +41,23 @@ public partial class TfEditor : TfBaseComponent
 		if (firstRender)
 		{
 			var textChangeMethodName = "OnEditorChange";
-			var onEnterMethodName = OnEnter.HasDelegate ? "OnEnterHandler" : null;
-			var placeHolder = LOC("Shift + Enter for new line. Enter to send.");
-			if(!String.IsNullOrWhiteSpace(Placeholder))
-				placeHolder = Placeholder + Environment.NewLine + placeHolder;
-			await JSRuntime.InvokeAsync<object>(
-				"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, onEnterMethodName, placeHolder);
+			if (OnEnter.HasDelegate)
+			{
+				var onEnterMethodName = "OnEnterHandler";
+				var placeHolder = LOC("Shift + Enter for new line. Enter to send.");
+				if (!String.IsNullOrWhiteSpace(Placeholder))
+					placeHolder = Placeholder + Environment.NewLine + placeHolder;
+
+				await JSRuntime.InvokeAsync<object>(
+					"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, onEnterMethodName, placeHolder);
+			}
+			else{ 
+				await JSRuntime.InvokeAsync<object>(
+					"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, null, Placeholder);			
+			}
+
+
+
 			_editorInited = true;
 		}
 	}

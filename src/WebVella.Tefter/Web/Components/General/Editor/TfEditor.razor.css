@@ -1,5 +1,7 @@
 ﻿::deep .toolbar {
 	margin-bottom: 0.25rem;
+	display:flex;
+	align-items:center;
 }
 
 	::deep .toolbar button {

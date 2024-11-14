@@ -86,7 +86,7 @@ public partial class TfUrlEditColumnComponent : TucBaseViewColumn<TfUrlEditColum
 	{
 		if (!String.IsNullOrWhiteSpace(_value))
 		{
-			if (!TfConverters.IsValidURL(_value))
+			if (!TfValidators.IsValidURL(_value))
 			{
 				ToastService.ShowError(LOC("Invalid URL format"));
 				await _resetValue();

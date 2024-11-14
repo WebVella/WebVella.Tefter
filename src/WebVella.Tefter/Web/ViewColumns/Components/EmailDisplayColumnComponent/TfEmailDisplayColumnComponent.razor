@@ -2,7 +2,7 @@
 @inherits TucBaseViewColumn<TfEmailDisplayColumnComponentOptions>
 @if (Context.Mode == TucComponentMode.Display)
 {
-	if (!String.IsNullOrWhiteSpace(_value) && TfConverters.IsValidEmail(_value))
+	if (!String.IsNullOrWhiteSpace(_value) && TfValidators.IsValidEmail(_value))
 	{
 		<div><a href="@($"mailto:{_value}")">@_value</a></div>
 	}

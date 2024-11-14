@@ -1,0 +1,65 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.EmailSender.Components
+@inherits TfFormBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Send test email")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_sendEmail" IconStart="@TfConstants.GetIcon("MailArrowUp")"
+					  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Send")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentEditForm EditContext="EditContext" OnValidSubmit="_sendEmail"
+						FormName="submit-form" class="tf-form" novalidate>
+			<DataAnnotationsValidator />
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Email" @bind-Value=@_form.Recipient
+									 Label="@LOC("Recipient")" Style="width:100%" AutoComplete="off" />
+					<FluentValidationMessage For="@(() => _form.Recipient)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Subject
+									 Label="@LOC("Subject")" Style="width:100%" AutoComplete="off" />
+					<FluentValidationMessage For="@(() => _form.Subject)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentValidationMessage For="@(() => _form.ContentText)" />
+			<FluentValidationMessage For="@(() => _form.ContentHtml)" />
+			<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
+				<FluentTab Label="@LOC("Text Body")" Id="text">
+					<FluentGrid>
+						<FluentGridItem xs="12">
+							<FluentTextArea Required="true" @bind-Value=@_form.ContentText Style="width:100%" />
+						</FluentGridItem>
+					</FluentGrid>
+				</FluentTab>
+				<FluentTab Label="@LOC("HTML Body")" Id="html">
+					<FluentGrid>
+						<FluentGridItem xs="12">
+							<TfEditor @bind-Value=@_form.ContentHtml />
+						</FluentGridItem>
+					</FluentGrid>
+				</FluentTab>
+			</FluentTabs>
+		</FluentEditForm>
+	}
+</FluentDialogBody>

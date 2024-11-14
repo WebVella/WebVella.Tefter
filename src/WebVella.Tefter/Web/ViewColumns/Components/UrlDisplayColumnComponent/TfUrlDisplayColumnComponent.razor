@@ -2,7 +2,7 @@
 @inherits TucBaseViewColumn<TfUrlDisplayColumnComponentOptions>
 @if (Context.Mode == TucComponentMode.Display)
 {
-	if (!String.IsNullOrWhiteSpace(_value) && TfConverters.IsValidURL(_value))
+	if (!String.IsNullOrWhiteSpace(_value) && TfValidators.IsValidURL(_value))
 	{
 		<div><a href="@_value">@_value</a></div>
 	}

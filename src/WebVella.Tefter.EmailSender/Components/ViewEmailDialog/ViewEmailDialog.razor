@@ -1,0 +1,135 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.EmailSender.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true">
+	<FluentLabel Typo="Typography.PaneHeader">@LOC("Email details")</FluentLabel>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	@if (!string.IsNullOrWhiteSpace(_error))
+	{
+		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+	}
+	else
+	{
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.Status.ToDescriptionString()
+								 Label="@LOC("Status")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+		</FluentGrid>
+		@if (!String.IsNullOrWhiteSpace(Content.ServerError))
+		{
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextArea Value=@Content.ServerError
+									Label="@LOC("Error")" Style="width:100%" ReadOnly="true" Rows="3" />
+				</FluentGridItem>
+			</FluentGrid>
+		}
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.CreatedOn.ToString(TfConstants.DateHourFormat)
+								 Label="@LOC("Created on")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.SentOn?.ToString(TfConstants.DateHourFormat)
+								 Label="@LOC("Send on")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+		</FluentGrid>
+		@if (Content.ScheduledOn is not null)
+		{
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.ScheduledOn.Value.ToString(TfConstants.DateHourFormat)
+									 Label="@LOC("Scheduled on")" Style="width:100%" ReadOnly="true" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentNumberField Value=@Content.RetriesCount
+									   Label="@LOC("Retries")" Style="width:100%" ReadOnly="true" />
+				</FluentGridItem>
+			</FluentGrid>
+		}
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.Sender?.Address
+								 Label="@LOC("Sender")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				@if (String.IsNullOrWhiteSpace(Content.ReplyToEmail))
+				{
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.ReplyToEmail
+									 Label="@LOC("Reply To")" Style="width:100%" ReadOnly="true" />
+				}
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="12">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@Content.Sender?.Address
+								 Label="@LOC("Recipients")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+		</FluentGrid>
+		@if (Content.RecipientsCc.Count > 0)
+		{
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@(String.Join(", ",Content.RecipientsCc.Select(x=> x.Address)))"
+									 Label="@LOC("CC")" Style="width:100%" ReadOnly="true" />
+				</FluentGridItem>
+			</FluentGrid>
+		}
+		@if (Content.RecipientsBcc.Count > 0)
+		{
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@(String.Join(", ",Content.RecipientsBcc.Select(x=> x.Address)))"
+									 Label="@LOC("BCC")" Style="width:100%" ReadOnly="true" />
+				</FluentGridItem>
+			</FluentGrid>
+		}
+		<FluentGrid>
+			<FluentGridItem xs="12">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@Content.Subject"
+								 Label="@LOC("Subject")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+		</FluentGrid>
+		@if (Content.Attachments.Count > 0)
+		{
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@(String.Join(", ",Content.Attachments.Select(x=> x.Filename)))"
+									 Label="@LOC("Attachments")" Style="width:100%" ReadOnly="true" />
+				</FluentGridItem>
+			</FluentGrid>
+		}
+		<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
+			<FluentTab Label="@LOC("Text body")" Id="text">
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<TfCard Class="email-sender-email-body">
+							<pre>@Content.ContentText</pre>
+						</TfCard>
+					</FluentGridItem>
+				</FluentGrid>
+			</FluentTab>
+			<FluentTab Label="@LOC("HTML body")" Id="html">
+				<TfCard Class="email-sender-email-body">
+					@((MarkupString)Content.ContentHtml)
+				</TfCard>
+			</FluentTab>
+		</FluentTabs>
+	}
+	<style>
+		.email-sender-email-body img {
+			max-width: 100%;
+		}
+	</style>
+</FluentDialogBody>

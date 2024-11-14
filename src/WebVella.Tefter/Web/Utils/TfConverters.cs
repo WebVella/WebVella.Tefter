@@ -5,66 +5,12 @@ public static partial class TfConverters
 	private static string conversionPrefix = "tf-";
 	private static List<string> _allIcons = null;
 
-	public static string ConvertGuidToHtmlElementId(Guid? guid, string prefix = "")
-	{
-		if (guid == null) return null;
-		return $"{conversionPrefix}{(String.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}-")}{guid}";
-	}
-
-	public static Guid? ConvertHtmlElementIdToGuid(string htmlId)
-	{
-		if (String.IsNullOrWhiteSpace(htmlId)) return null;
-		var match = htmlId.Trim().ToLowerInvariant();
-		if (!match.StartsWith(conversionPrefix)) return null;
-
-		match = match.Replace(conversionPrefix, "");
-
-		if (Guid.TryParse(match, out Guid id)) return id;
-
-		return null;
-	}
-
+	#region << String >>
 	public static string StringOverflow(string input, int charCount)
 	{
 		if (input.Length <= charCount) return input;
 		return input.Substring(0, charCount) + "...";
 	}
-
-	public static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
-
-
-	public static string GetUserInitials(TucUser user)
-	{
-		var list = new List<string>();
-		if (!String.IsNullOrWhiteSpace(user.FirstName))
-		{
-			list.Add(user.FirstName.Substring(0, 1));
-		}
-		if (!String.IsNullOrWhiteSpace(user.LastName))
-		{
-			list.Add(user.LastName.Substring(0, 1));
-		}
-
-		if (list.Count == 0) return "?";
-
-		return String.Join("", list).ToUpperInvariant();
-	}
-
-	public static List<string> GetSpaceIconLibrary()
-	{
-		if (_allIcons is not null) return _allIcons;
-
-		var result = new List<string>();
-		foreach (var item in Icons.AllIcons)
-		{
-			if (item.Size == TfConstants.IconSize
-			&& item.Variant == TfConstants.IconVariant)
-				result.Add(item.Name);
-		}
-		_allIcons = result.ToList();
-		return _allIcons;
-	}
-
 	public static List<string> GetUniqueTagsFromText(
 		string text)
 	{
@@ -84,7 +30,6 @@ public static partial class TfConverters
 
 		return result;
 	}
-
 	public static T Convert<T>(string input)
 	{
 		try
@@ -102,93 +47,6 @@ public static partial class TfConverters
 			return default(T);
 		}
 	}
-
-
-	public static Dictionary<TKey, TValue> CloneDictionaryCloningValues<TKey, TValue>
-	   (Dictionary<TKey, TValue> original) where TValue : ICloneable
-	{
-		Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(original.Count,
-																original.Comparer);
-		foreach (KeyValuePair<TKey, TValue> entry in original)
-		{
-			ret.Add(entry.Key, (TValue)entry.Value.Clone());
-		}
-		return ret;
-	}
-
-	public static bool IsValidEmail(string email)
-	{
-		if (string.IsNullOrWhiteSpace(email))
-			return false;
-
-		try
-		{
-			// Normalize the domain
-			email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
-								  RegexOptions.None, TimeSpan.FromMilliseconds(200));
-
-			// Examines the domain part of the email and normalizes it.
-			string DomainMapper(Match match)
-			{
-				// Use IdnMapping class to convert Unicode domain names.
-				var idn = new IdnMapping();
-
-				// Pull out and process domain name (throws ArgumentException on invalid)
-				string domainName = idn.GetAscii(match.Groups[2].Value);
-
-				return match.Groups[1].Value + domainName;
-			}
-		}
-		catch (RegexMatchTimeoutException)
-		{
-			return false;
-		}
-		catch (ArgumentException)
-		{
-			return false;
-		}
-
-		try
-		{
-			return Regex.IsMatch(email,
-				@"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-				RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
-		}
-		catch (RegexMatchTimeoutException)
-		{
-			return false;
-		}
-	}
-
-	public static bool IsValidURL(string url)
-	{
-		if (string.IsNullOrWhiteSpace(url))
-			return false;
-
-		try
-		{
-			Uri uriResult;
-			return Uri.TryCreate(url, UriKind.Absolute, out uriResult)
-				&& (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-		}
-		catch (ArgumentException)
-		{
-			return false;
-		}
-	}
-
-	public static string GenerateDbNameFromText(string text)
-	{
-		if (String.IsNullOrEmpty(text)) return text;
-		text = text.Trim().ToLowerInvariant();
-		text = text.Replace("№", "no");
-		text = ConvertToLatin(text);
-		Regex rgx = new Regex("[^a-zA-Z0-9]");
-		text = rgx.Replace(text, "_");
-		text = Regex.Replace(text, @"_+", "_");
-		return text;
-	}
-
 	public static string Slugify(this string phrase)
 	{
 		string str = phrase.RemoveDiacritics().ToLower();
@@ -201,13 +59,17 @@ public static partial class TfConverters
 		str = Regex.Replace(str, @"\s", "-"); // hyphens   
 		return str;
 	}
-
-	public static string GenerateQueryName()
+	public static string GenerateDbNameFromText(string text)
 	{
-		return "q" + (Guid.NewGuid()).ToString().Split("-")[0];
+		if (String.IsNullOrEmpty(text)) return text;
+		text = text.Trim().ToLowerInvariant();
+		text = text.Replace("№", "no");
+		text = ConvertToLatin(text);
+		Regex rgx = new Regex("[^a-zA-Z0-9]");
+		text = rgx.Replace(text, "_");
+		text = Regex.Replace(text, @"_+", "_");
+		return text;
 	}
-
-
 	public static string RemoveDiacritics(this string text)
 	{
 		var normalizedString = text.Normalize(NormalizationForm.FormD);
@@ -226,30 +88,6 @@ public static partial class TfConverters
 		return stringBuilder
 			.ToString()
 			.Normalize(NormalizationForm.FormC);
-	}
-
-	public static TItem FindItemByMatch<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> matcher, Func<TItem, IEnumerable<TItem>> childGetter) where TItem : class
-	{
-		if (items == null)
-		{
-			return null;
-		}
-
-		foreach (var item in items)
-		{
-			if (matcher(item))
-			{
-				return item;
-			}
-
-			var nestedItem = FindItemByMatch(childGetter(item), matcher, childGetter);
-			if (nestedItem != null)
-			{
-				return nestedItem;
-			}
-		}
-
-		return null;
 	}
 
 	public static readonly Dictionary<char, string> ConvertedLetters = new Dictionary<char, string>
@@ -321,7 +159,6 @@ public static partial class TfConverters
 		{'Ю', "Yu"},
 		{'Я', "Ya"}
 	};
-
 	public static string ConvertToLatin(string source)
 	{
 		var result = new StringBuilder();
@@ -335,6 +172,69 @@ public static partial class TfConverters
 		return result.ToString();
 	}
 
+	#endregion
+
+	#region << Guid >>
+	public static string ConvertGuidToHtmlElementId(Guid? guid, string prefix = "")
+	{
+		if (guid == null) return null;
+		return $"{conversionPrefix}{(String.IsNullOrWhiteSpace(prefix) ? "" : $"{prefix}-")}{guid}";
+	}
+	public static Guid? ConvertHtmlElementIdToGuid(string htmlId)
+	{
+		if (String.IsNullOrWhiteSpace(htmlId)) return null;
+		var match = htmlId.Trim().ToLowerInvariant();
+		if (!match.StartsWith(conversionPrefix)) return null;
+
+		match = match.Replace(conversionPrefix, "");
+
+		if (Guid.TryParse(match, out Guid id)) return id;
+
+		return null;
+	}
+
+
+	#endregion
+
+	#region << User >>
+	public static string GetUserInitials(TucUser user)
+	{
+		var list = new List<string>();
+		if (!String.IsNullOrWhiteSpace(user.FirstName))
+		{
+			list.Add(user.FirstName.Substring(0, 1));
+		}
+		if (!String.IsNullOrWhiteSpace(user.LastName))
+		{
+			list.Add(user.LastName.Substring(0, 1));
+		}
+
+		if (list.Count == 0) return "?";
+
+		return String.Join("", list).ToUpperInvariant();
+	}
+
+	#endregion
+
+	#region << int >>
+	public static int CalcSkip(int page, int pageSize) => (page - 1) * pageSize;
+	#endregion
+
+	#region << Icon >>
+	public static List<string> GetSpaceIconLibrary()
+	{
+		if (_allIcons is not null) return _allIcons;
+
+		var result = new List<string>();
+		foreach (var item in Icons.AllIcons)
+		{
+			if (item.Size == TfConstants.IconSize
+			&& item.Variant == TfConstants.IconVariant)
+				result.Add(item.Name);
+		}
+		_allIcons = result.ToList();
+		return _allIcons;
+	}
 	public static Icon ConvertFileNameToIcon(string fileName)
 	{
 		Icon result = TfConstants.GetIcon("Document");
@@ -465,4 +365,48 @@ public static partial class TfConverters
 				return TfConstants.GetIcon("Document");
 		}
 	}
+	#endregion
+
+	#region << Dictionary >>
+	public static Dictionary<TKey, TValue> CloneDictionaryCloningValues<TKey, TValue>
+		   (Dictionary<TKey, TValue> original) where TValue : ICloneable
+	{
+		Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(original.Count,
+																original.Comparer);
+		foreach (KeyValuePair<TKey, TValue> entry in original)
+		{
+			ret.Add(entry.Key, (TValue)entry.Value.Clone());
+		}
+		return ret;
+	}
+
+	#endregion
+
+	#region << List >>
+	public static TItem FindItemByMatch<TItem>(this IEnumerable<TItem> items, Func<TItem, bool> matcher, Func<TItem, IEnumerable<TItem>> childGetter) where TItem : class
+	{
+		if (items == null)
+		{
+			return null;
+		}
+
+		foreach (var item in items)
+		{
+			if (matcher(item))
+			{
+				return item;
+			}
+
+			var nestedItem = FindItemByMatch(childGetter(item), matcher, childGetter);
+			if (nestedItem != null)
+			{
+				return nestedItem;
+			}
+		}
+
+		return null;
+	}
+	#endregion
+
+
 }

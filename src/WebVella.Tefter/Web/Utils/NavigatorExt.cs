@@ -715,5 +715,8 @@ public static class NavigatorExt
 		}
 		return false;
 	}
-
+	public static string GenerateQueryName()
+	{
+		return "q" + (Guid.NewGuid()).ToString().Split("-")[0];
+	}
 }

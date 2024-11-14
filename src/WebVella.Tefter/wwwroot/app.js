@@ -56,15 +56,16 @@
 		Tefter.HtmlEditors[editorId] = new Quill(quillElement, options);
 		if (updateTextMethodName)
 			Tefter.addEditorTextChangeListener(dotNetHelper, editorId, updateTextMethodName);
-		if (enterHandlerMethodName)
+		if (enterHandlerMethodName) {
 			Tefter.addEditorEnterKeyListener(dotNetHelper, editorId, enterHandlerMethodName);
-		Tefter.HtmlEditors[editorId].keyboard.bindings['Enter'].unshift({
-			key: 'Enter',
-			shiftKey: false,
-			handler: (range, context) => {
-				return Tefter.executeEditorEnterKeyListenerCallbacks(editorId);
-			}
-		});
+			Tefter.HtmlEditors[editorId].keyboard.bindings['Enter'].unshift({
+				key: 'Enter',
+				shiftKey: false,
+				handler: (range, context) => {
+					return Tefter.executeEditorEnterKeyListenerCallbacks(editorId);
+				}
+			});
+		}
 		Tefter.HtmlEditors[editorId].on('text-change', (delta, oldDelta, source) => {
 			if (source == 'api') {
 				/*console.log('An API call triggered this change.');*/

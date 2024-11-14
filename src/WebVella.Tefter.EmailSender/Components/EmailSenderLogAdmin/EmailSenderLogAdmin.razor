@@ -1,0 +1,83 @@
+﻿@namespace WebVella.Tefter.EmailSender.Components
+@inherits TfBaseComponent
+@{
+	var messages = new List<EmailMessage>();
+	if (TfAuxDataState.Value.Data.ContainsKey(TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY))
+		messages = (List<EmailMessage>)TfAuxDataState.Value.Data[TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
+}
+@if (messages.Count == 0)
+{
+	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No emails sent yet")</FluentMessageBar>
+}
+else
+{
+	<table class="tf-grid">
+		<thead class="tf-grid-thead">
+			<tr class="tf-grid-thead-bkg" style="background-color: @TfConstants.AdminBackgkroundColor"></tr>
+			<tr class="tf-grid-tr">
+				<th class="tf-grid-th" style="min-width:40px;width:40px;"></th>
+				<th class="tf-grid-th" style="min-width:80px;width:80px;">@LOC("st")</th>
+				<th class="tf-grid-th" style="min-width:140px;width:140px;">@LOC("created on")</th>
+				<th class="tf-grid-th">@LOC("subject")</th>
+				<th class="tf-grid-th">@LOC("recipients")</th>
+			</tr>
+		</thead>
+		<tbody class="tf-grid-tbody">
+			@foreach (var context in messages)
+			{
+				<tr @key=@context.Id class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>
+							<FluentStack>
+								<FluentButton Title="@LOC("view email")" OnClick="@(_=> _viewEmailHandler(context))"
+											  Appearance="@Appearance.Outline" IconStart="@TfConstants.ViewIcon.WithColor(Color.Accent)" />
+								@if (context.Status == EmailStatus.Sent || context.Status == EmailStatus.Aborted)
+								{
+									<FluentButton Title="@LOC("resent")" OnClick="@(_=> _resentEmailHandler(context))"
+												  Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("MailArrowUp").WithColor(Color.Accent)" />
+								}
+								else
+								{
+									<FluentButton Title="@LOC("cancel")" OnClick="@(_=> _cancelEmailHandler(context))"
+												  Appearance="@Appearance.Outline" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
+								}
+							</FluentStack>
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>@context.Status.ToDescriptionString()</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>
+							<div>@context.CreatedOn.ToString(TfConstants.DateHourFormat)</div>
+							@if (context.SentOn is not null)
+							{
+								<div class="td-description" title="send on">@context.SentOn.Value.ToString(TfConstants.DateHourFormat)</div>
+							}
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>@context.Subject</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>
+							@if (context.Recipients.Count > 0)
+							{
+								<div>@String.Join(", ", context.Recipients.Select(x => x.Address))</div>
+							}
+							@if (context.RecipientsCc.Count > 0)
+							{
+								<div class="td-description">CC: @String.Join(", ", context.RecipientsCc.Select(x => x.Address))</div>
+							}
+							@if (context.RecipientsBcc.Count > 0)
+							{
+								<div class="td-description">BCC: @String.Join(", ", context.RecipientsBcc.Select(x => x.Address))</div>
+							}
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+

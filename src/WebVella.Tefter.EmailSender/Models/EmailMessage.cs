@@ -1,12 +1,12 @@
 ﻿namespace WebVella.Tefter.EmailSender.Models;
 
-public class EmailMessage
+public record EmailMessage
 {
 	public Guid Id { get; internal set; }
 	public EmailAddress Sender { get; internal set; }
-	public List<EmailAddress> Recipients { get; internal set; }
-	public List<EmailAddress> RecipientsCc { get; internal set; }
-	public List<EmailAddress> RecipientsBcc { get; internal set; }
+	public List<EmailAddress> Recipients { get; internal set; } = new();
+	public List<EmailAddress> RecipientsCc { get; internal set; } = new();
+	public List<EmailAddress> RecipientsBcc { get; internal set; } = new();
 	public string ReplyToEmail { get; internal set; }
 	public string Subject { get; internal set; }
 	public string ContentText { get; internal set; }
@@ -24,7 +24,7 @@ public class EmailMessage
 	public User User { get; internal set; }
 }
 
-public class CreateEmailMessageModel
+public record CreateEmailMessageModel
 {
 	public EmailAddress Sender { get; set; }
 	public string Subject { get; set; }

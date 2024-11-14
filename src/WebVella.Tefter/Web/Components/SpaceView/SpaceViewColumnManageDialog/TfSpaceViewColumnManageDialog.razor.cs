@@ -38,7 +38,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			_form = _form with
 			{
 				Id = Guid.NewGuid(),
-				QueryName = TfConverters.GenerateQueryName(),
+				QueryName = NavigatorExt.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
 				ColumnType = defaultColumnType with { Id = defaultColumnType.Id },
 				ComponentType = defaultColumnType?.DefaultComponentType

@@ -88,7 +88,7 @@ public partial class TfEmailEditColumnComponent : TucBaseViewColumn<TfEmailEditC
 	{
 		if (!String.IsNullOrWhiteSpace(_value))
 		{
-			if (!TfConverters.IsValidEmail(_value))
+			if (!TfValidators.IsValidEmail(_value))
 			{
 				ToastService.ShowError(LOC("Invalid email format"));
 				await _resetValue();

@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 
-internal static class EnumExtensions
+public static class EnumExtensions
 {
-	internal static string ToDescriptionString<TEnum>(this TEnum e) where TEnum : IConvertible
+	public static string ToDescriptionString<TEnum>(this TEnum e) where TEnum : IConvertible
 	{
 		string description = "";
 
@@ -22,7 +22,7 @@ internal static class EnumExtensions
 		return description;
 	}
 
-	internal static TEnum ConvertIntToEnum<TEnum>(int value, TEnum defaultValue) where TEnum : IConvertible
+	public static TEnum ConvertIntToEnum<TEnum>(int value, TEnum defaultValue) where TEnum : IConvertible
 	{
 		if (Enum.IsDefined(typeof(TEnum), value))
 		{
@@ -32,7 +32,7 @@ internal static class EnumExtensions
 
 	}
 
-	internal static TEnum ConvertStringToEnum<TEnum>(string value, TEnum defaultValue) where TEnum : IConvertible
+	public static TEnum ConvertStringToEnum<TEnum>(string value, TEnum defaultValue) where TEnum : IConvertible
 	{
 		if (String.IsNullOrEmpty(value)) return defaultValue;
 		if (int.TryParse(value, out var n))
