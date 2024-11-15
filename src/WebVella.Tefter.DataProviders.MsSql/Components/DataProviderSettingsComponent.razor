@@ -1,0 +1,29 @@
+﻿@using WebVella.Tefter.Web.Components
+@inherits TfFormBaseComponent
+
+<FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentTextField Required="DisplayMode == Web.Models.TfComponentMode.Update"
+							 ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
+							 TextFieldType="@TextFieldType.Text"
+							 Placeholder="@LOC("mssql connection string")"
+							 @bind-Value=@_form.ConnectionString AutoComplete="off"
+							 Label="@LOC("mssql server connection string")" Style="width:100%" />
+			<FluentValidationMessage For="@(() => _form.ConnectionString)" />
+		</FluentGridItem>
+		<FluentGridItem xs="12">
+			<FluentTextArea Required="DisplayMode == Web.Models.TfComponentMode.Update"
+							 ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
+							 TextFieldType="@TextFieldType.Text"
+							 Rows="5"
+							 Resize="TextAreaResize.Vertical"
+							 Placeholder="@LOC("sql query")"
+							 @bind-Value=@_form.SqlQuery AutoComplete="off"
+							 Label="@LOC("sql query")" Style="width:100%" />
+			<FluentValidationMessage For="@(() => _form.SqlQuery)" />
+		</FluentGridItem>
+	</FluentGrid>	
+</FluentEditForm>
+
+
