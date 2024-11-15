@@ -11,6 +11,7 @@ public partial class TfSpaceViewDetailsNav : TfBaseComponent
 	private List<TucMenuItem> _generateMenu()
 	{
 		var menu = new List<TucMenuItem>();
+		if (TfAppState.Value.Route is null) return menu;
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceViewId),
@@ -28,5 +29,5 @@ public partial class TfSpaceViewDetailsNav : TfBaseComponent
 		return menu;
 	}
 
-	
+
 }

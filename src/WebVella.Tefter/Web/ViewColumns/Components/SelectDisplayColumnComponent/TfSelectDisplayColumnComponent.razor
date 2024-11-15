@@ -2,20 +2,24 @@
 @inherits TucBaseViewColumn<TfSelectDisplayColumnComponentOptions>
 @if (Context.Mode == TucComponentMode.Display)
 {
+
 	<div>
-		<div style="@_getStyle()" class="tf-select-btn">
-			@if (!String.IsNullOrWhiteSpace(_selectedOption?.IconName))
-			{
-				<div class="tf-select-btn__start">
-					<FluentIcon Value="@TfConstants.GetIcon(_selectedOption.IconName)"
-								Color="Color.Custom" CustomColor="@_selectedOption?.Color" />
-				</div>
-			}
-			@if (!_selectedOption.HideLabel)
-			{
-				<div class="tf-select-btn__content">@_selectedOption?.Label</div>
-			}
-		</div>
+		@if (_selectedOption is not null)
+		{
+			<div style="@_getStyle()" class="tf-select-btn">
+				@if (!String.IsNullOrWhiteSpace(_selectedOption?.IconName))
+				{
+					<div class="tf-select-btn__start">
+						<FluentIcon Value="@TfConstants.GetIcon(_selectedOption.IconName)"
+									Color="Color.Custom" CustomColor="@_selectedOption?.Color" />
+					</div>
+				}
+				@if (!_selectedOption.HideLabel)
+				{
+					<div class="tf-select-btn__content">@_selectedOption?.Label</div>
+				}
+			</div>
+		}
 	</div>
 }
 else if (Context.Mode == TucComponentMode.Options)

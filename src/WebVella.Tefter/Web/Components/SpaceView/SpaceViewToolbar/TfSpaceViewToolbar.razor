@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 <div class="content-toolbar">
 	<div class="content-toolbar-left">
-		<FluentSearch Value="@TfAppState.Value.Route.Search" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
+		<FluentSearch Value="@TfAppState.Value.Route?.Search" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
 		<FluentButton Id="view-filter-selector" OnClick="OnFilterClick" Title="data filters" Appearance="@Appearance.Outline">
 			@if ((TfAppState.Value.SpaceViewFilters?.Count ?? 0) > 0)
 			{

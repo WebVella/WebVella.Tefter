@@ -3,7 +3,6 @@
 public partial class TfSpaceDataManage : TfFormBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	public TucDataProvider SelectedProvider = null;

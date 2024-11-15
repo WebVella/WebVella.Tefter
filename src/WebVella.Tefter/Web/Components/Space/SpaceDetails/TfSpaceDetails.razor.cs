@@ -11,13 +11,16 @@ public partial class TfSpaceDetails : TfBaseComponent
 	protected override void OnAfterRender(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);
-		if (TfAppState.Value.Space is not null && TfAppState.Value.SpaceViewList.Count > 0)
+		if (firstRender)
 		{
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id));
-		}
-		else
-		{
-			StateHasChanged();
+			if (TfAppState.Value.Space is not null && TfAppState.Value.SpaceViewList.Count > 0)
+			{
+				Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id));
+			}
+			else
+			{
+				StateHasChanged();
+			}
 		}
 	}
 

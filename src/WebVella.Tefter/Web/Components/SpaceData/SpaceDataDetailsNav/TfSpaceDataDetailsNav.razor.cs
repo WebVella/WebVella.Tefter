@@ -11,7 +11,9 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 	private List<TucMenuItem> _generateMenu()
 	{
 		var menu = new List<TucMenuItem>();
-		var providerId = TfAppState.Value.Route.DataProviderId ?? Guid.Empty;
+		if(TfAppState.Value.Route is null || TfAppState.Value.Route.DataProviderId is null)
+			return menu;
+		var providerId = TfAppState.Value.Route.DataProviderId.Value;
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceDataId),

@@ -16,12 +16,13 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	[Inject] protected IToastService ToastService { get; set; }
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
-	[Parameter] public TucViewColumnComponentContext Context { get; set; }
-	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
-	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 	#endregion
 
 	#region << Properties >>
+	[Parameter] public TucViewColumnComponentContext Context { get; set; }
+	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
+	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
+
 	protected IStringLocalizer LC;
 	protected virtual TItem componentOptions { get; set; }
 	protected string optionsSerialized = null;

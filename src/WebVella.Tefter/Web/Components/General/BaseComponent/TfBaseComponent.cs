@@ -46,18 +46,6 @@ public class TfBaseComponent : FluxorComponent
 				GL = StringLocalizerFactory.Create(type.BaseType);
 			}
 		}
-
-#if DEBUG
-		if (hasLogging) Console.WriteLine($"+++++++ Initialized {type.Name}");
-#endif
-	}
-
-	protected override void OnAfterRender(bool firstRender)
-	{
-		base.OnAfterRender(firstRender);
-		//#if DEBUG
-		//		if (hasLogging) Console.WriteLine($"+++++++ Render {this.GetType().Name}");
-		//#endif
 	}
 
 	protected override void OnParametersSet()

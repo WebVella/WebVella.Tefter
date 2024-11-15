@@ -1,5 +1,7 @@
 ﻿using Fluxor;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -7,6 +9,8 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using Moq;
 using Nito.AsyncEx;
 using System;
+using System.Text;
+using System.Text.Json;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Database.Dbo;
 using WebVella.Tefter.Identity;
@@ -18,6 +22,7 @@ using WebVella.Tefter.UseCases.Login;
 using WebVella.Tefter.UseCases.UserState;
 using WebVella.Tefter.Utility;
 using WebVella.Tefter.Web.Store;
+using WebVella.Tefter.Web.Utils;
 
 
 namespace WebVella.Tefter.Web.Tests;
@@ -48,7 +53,6 @@ public class BaseTest
 	public Mock<ITfMetaProvider> TfMetaProviderMock;
 	public Mock<ITfRepositoryService> TfRepositoryServiceMock;
 	public Mock<ITfBlobManager> TfBlobManagerMock;
-
 	//localization
 	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
 
@@ -150,6 +154,38 @@ public class BaseTest
 
 		TfBlobManagerMock = new Mock<ITfBlobManager>();
 		Context.Services.AddSingleton(typeof(ITfBlobManager), Services => TfBlobManagerMock.Object);
+
+		#region << Local Storage >>
+		// This string will be the json of the object you want
+		// to receive when GetAsync is called from your ProtectedLocalStorage.
+		// In my case it was an instance of my UserSession class.
+		string openedNodesList = JsonSerializer.Serialize(new List<string>());
+
+		// Base64 used internally on the ProtectedSessionStorage.
+		string base64UserSessionJson = Convert.ToBase64String(Encoding.ASCII.GetBytes(openedNodesList));
+
+		// Notice how the mocked methods return the json.
+		Mock<IDataProtector> mockDataProtector = new Mock<IDataProtector>();
+		_ = mockDataProtector.Setup(sut => sut.Protect(It.IsAny<byte[]>())).Returns(Encoding.UTF8.GetBytes(base64UserSessionJson));
+		_ = mockDataProtector.Setup(sut => sut.Unprotect(It.IsAny<byte[]>())).Returns(Encoding.UTF8.GetBytes(openedNodesList));
+
+		Mock<IDataProtectionProvider> mockDataProtectionProvider = new Mock<IDataProtectionProvider>();
+		_ = mockDataProtectionProvider.Setup(s => s.CreateProtector(It.IsAny<string>())).Returns(mockDataProtector.Object);
+
+		// This is where the JSInterop by bunit is used.
+		// localStorage might need to be changed to your variable name or
+		// purpose? If you execute the test without this setup
+		// an exception will tell you the name you need to use.
+		_ = Context.JSInterop.Setup<string>("localStorage.getItem", TfConstants.SpaceViewOpenedGroupsLocalStorageKey).SetResult(base64UserSessionJson);
+
+		// Use this instance on your constructor or context.
+		ProtectedLocalStorage protectedSessionStorage = new ProtectedLocalStorage(
+			Context.JSInterop.JSRuntime,
+			mockDataProtectionProvider.Object);
+
+		Context.Services.AddScoped(typeof(ProtectedLocalStorage), Services => protectedSessionStorage);
+		#endregion
+
 
 		//localization
 		StringLocalizerFactoryMock = new Mock<IStringLocalizerFactory>();

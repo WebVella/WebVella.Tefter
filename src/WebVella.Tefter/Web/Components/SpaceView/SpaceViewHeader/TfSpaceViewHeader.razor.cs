@@ -7,7 +7,7 @@ public partial class TfSpaceViewHeader : TfBaseComponent
 
 	private string _generatePresetPathHtml()
 	{
-		if (TfAppState.Value.Route.SpaceViewPresetId is null || TfAppState.Value.SpaceView.Presets.Count == 0) return "";
+		if (TfAppState.Value.Route?.SpaceViewPresetId is null || TfAppState.Value.SpaceView.Presets.Count == 0) return "";
 
 		var preset = TfAppState.Value.SpaceView.Presets.GetPresetById(TfAppState.Value.Route.SpaceViewPresetId.Value);
 		if (preset is null) return "";

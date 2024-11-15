@@ -2,33 +2,29 @@
 @inherits TfBaseComponent
 @if (TfAppState.Value.Space is null)
 {
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="No space found"
-							  Style="border: 1px solid var(--neutral-base-color)"
-							  Intent="MessageIntent.Info"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				No spaces found yet notification
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
+	<TfLayoutBodyMain>
+		<FluentMessageBar Title="No space found"
+						  Style="border: 1px solid var(--neutral-base-color)"
+						  Intent="MessageIntent.Info"
+						  Type="@MessageType.Notification"
+						  AllowDismiss="false">
+			No spaces found yet notification
+		</FluentMessageBar>
+	</TfLayoutBodyMain>
 }
 else if (TfAppState.Value.SpaceViewList.Count == 0)
 {
-	<FluentBodyContent Class="content-body">
-		<div class="content-inner">
-			<FluentMessageBar Title="No space views found"
-							  Style="border: 1px solid var(--neutral-base-color)"
-							  Intent="MessageIntent.Info"
-							  Type="@MessageType.Notification"
-							  AllowDismiss="false">
-				<div><FluentButton OnClick="_createViewHandler" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">Create view</FluentButton></div>
-			</FluentMessageBar>
-		</div>
-	</FluentBodyContent>
+	<TfLayoutBodyMain>
+		<FluentMessageBar Title="No space views found"
+						  Style="border: 1px solid var(--neutral-base-color)"
+						  Intent="MessageIntent.Info"
+						  Type="@MessageType.Notification"
+						  AllowDismiss="false">
+			<div><FluentButton OnClick="_createViewHandler" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">Create view</FluentButton></div>
+		</FluentMessageBar>
+	</TfLayoutBodyMain>
 }
 else
 {
-@* 	Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfRouteState.Value.SpaceId, TfAppState.Value.SpaceViewList[0].Id)); *@
+	@* 	Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfRouteState.Value.SpaceId, TfAppState.Value.SpaceViewList[0].Id)); *@
 }
