@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Talk.Components;
+﻿using ClosedXML.Excel;
+
+namespace WebVella.Tefter.Talk.Components;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
@@ -105,9 +107,9 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData(IServiceProvider serviceProvider)
+	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
 	{
-		return null;
+		return new XLCellValue();
 	}
 
 	public override Task OnAppStateInit(

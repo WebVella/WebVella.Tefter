@@ -65,12 +65,12 @@ public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfInteg
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData(IServiceProvider serviceProvider)
+	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not int)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports int.");
-		return (int?)columnData;
+		return XLCellValue.FromObject((int?)columnData);
 	}
 	#endregion
 

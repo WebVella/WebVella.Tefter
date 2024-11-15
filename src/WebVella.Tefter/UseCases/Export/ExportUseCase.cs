@@ -130,10 +130,10 @@ public class ExportUseCase
 					if (rangeColumns > 1) cellRange.Merge();
 
 					if (column.ComponentType is not null
-						&& column.ComponentType.GetInterface(nameof(ITucExportableViewColumn)) != null)
+						&& column.ComponentType.GetInterface(nameof(ITucExcelExportableViewColumn)) != null)
 					{
-						var component = (ITucExportableViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
-						cellRange.SetValue(XLCellValue.FromObject(component.GetData(_serviceProvider)));
+						var component = (ITucExcelExportableViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
+						cellRange.SetValue(component.GetDataForExcel(_serviceProvider));
 					}
 					currentExcelColumn = currentExcelColumn + rangeColumns;
 				}
