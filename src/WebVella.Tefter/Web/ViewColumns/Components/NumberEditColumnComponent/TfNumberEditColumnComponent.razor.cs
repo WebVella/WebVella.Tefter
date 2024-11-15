@@ -67,12 +67,12 @@ public partial class TfNumberEditColumnComponent : TucBaseViewColumn<TfNumberEdi
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not decimal)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
-		return XLCellValue.FromObject((decimal?)columnData);
+		excelCell.SetValue(XLCellValue.FromObject((decimal?)columnData));
 	}
 	#endregion
 

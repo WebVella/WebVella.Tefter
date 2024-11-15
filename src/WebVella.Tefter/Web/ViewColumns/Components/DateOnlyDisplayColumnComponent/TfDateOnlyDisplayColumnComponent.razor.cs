@@ -65,13 +65,13 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
 		//dateonly is not generally supported so we return datetime
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not DateOnly)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
-		return XLCellValue.FromObject(((DateOnly?)columnData)?.ToDateTime());
+		excelCell.SetValue(XLCellValue.FromObject(((DateOnly?)columnData)?.ToDateTime()));
 	}
 	#endregion
 

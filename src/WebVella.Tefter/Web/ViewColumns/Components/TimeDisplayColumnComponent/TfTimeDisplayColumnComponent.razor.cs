@@ -67,11 +67,11 @@ public partial class TfTimeDisplayColumnComponent : TucBaseViewColumn<TfTimeDisp
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not DateTime) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateTime.");
-		return XLCellValue.FromObject((DateTime?)columnData);
+		excelCell.SetValue(XLCellValue.FromObject((DateTime?)columnData));
 	}
 	#endregion
 
