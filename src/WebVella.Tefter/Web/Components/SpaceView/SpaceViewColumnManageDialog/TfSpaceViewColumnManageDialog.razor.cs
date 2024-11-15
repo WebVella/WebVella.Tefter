@@ -51,6 +51,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		}
 		if (_form.ComponentType is null && _form.ColumnType is not null)
 			_form.ComponentType = _form.ColumnType.DefaultComponentType;
+
 		base.InitForm(_form);
 		_renderComponentTypeSelect = true;
 		TucSpaceData selectedSpaceData = null;

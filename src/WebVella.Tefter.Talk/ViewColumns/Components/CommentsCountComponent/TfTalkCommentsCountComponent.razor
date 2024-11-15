@@ -27,6 +27,7 @@ else if (Context.Mode == TucComponentMode.Options)
 						  Items="_channels"
 						  OptionValue="@((p)=> p.Id.ToString())"
 						  OptionText="(x=> x.Name)"
+						  OptionSelected="(x => x.Id == _selectedChannel?.Id)"
 						  SelectedOption="_selectedChannel"
 						  SelectedOptionChanged="_channelSelectHandler" />
 		</FluentGridItem>

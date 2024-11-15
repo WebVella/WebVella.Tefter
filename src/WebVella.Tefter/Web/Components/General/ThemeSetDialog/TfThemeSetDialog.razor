@@ -20,7 +20,8 @@
 @* Body *@
 <FluentDialogBody>
 	<FluentStack Orientation="@Orientation.Vertical">
-		<FluentSelect @bind-SelectedOption="@_themeMode" TOption="DesignThemeModes"
+		<FluentSelect OptionSelected="(x => x == _themeMode)"
+					  @bind-SelectedOption="@_themeMode" TOption="DesignThemeModes"
 					  Items="@(Enum.GetValues<DesignThemeModes>())"
 					  OptionValue="@((p)=> ((int)p).ToString())"
 					  OptionText="@(p => p.ToString())" Label="@LOC("Theme Mode")"

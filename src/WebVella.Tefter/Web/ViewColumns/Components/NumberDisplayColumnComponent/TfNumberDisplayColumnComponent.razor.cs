@@ -66,12 +66,12 @@ public partial class TfNumberDisplayColumnComponent : TucBaseViewColumn<TfNumber
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData(IServiceProvider serviceProvider)
+	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not decimal)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
-		return (decimal?)columnData;
+		return XLCellValue.FromObject((decimal?)columnData);
 	}
 	#endregion
 
@@ -82,6 +82,11 @@ public partial class TfNumberDisplayColumnComponent : TucBaseViewColumn<TfNumber
 		if(columnData is not null && columnData is not decimal) 
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
 		_value = (decimal?)columnData;
+	}
+
+	private void _getCultureFromServer()
+	{
+		componentOptions.CultureName = Thread.CurrentThread.CurrentCulture.Name;
 	}
 	#endregion
 }
@@ -94,4 +99,7 @@ public class TfNumberDisplayColumnComponentOptions
 {
 	[JsonPropertyName("Format")]
 	public string Format { get; set; }
+
+	[JsonPropertyName("Culture")]
+	public string CultureName { get; set; } = Thread.CurrentThread.CurrentCulture.Name;
 }

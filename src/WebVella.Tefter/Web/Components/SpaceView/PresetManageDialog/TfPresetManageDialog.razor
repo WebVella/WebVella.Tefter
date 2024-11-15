@@ -37,12 +37,13 @@
 						<FluentInputLabel Label="@LOC("Group")" />
 						<FluentStack>
 							<FluentSelect Required="false"
+										  OptionSelected="(x => x.Id == _selectedParent?.Id)"
 										  @bind-SelectedOption="@_selectedParent"
 										  TOption="TucSpaceViewPreset"
 										  Items="@Content.Parents" Style="width:100%"
 										  OptionValue="@((p)=> p.Id.ToString())"
-										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")"/>
-							<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.DeleteIcon" OnClick="@(_ => _selectedParent = null)"/>
+										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
+							<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.DeleteIcon" OnClick="@(_ => _selectedParent = null)" />
 						</FluentStack>
 					</FluentGridItem>
 					<FluentGridItem xs="6"></FluentGridItem>

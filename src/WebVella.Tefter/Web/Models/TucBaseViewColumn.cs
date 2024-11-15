@@ -2,13 +2,13 @@
 
 namespace WebVella.Tefter.Web.Models;
 
-public interface ITucExportableViewColumn
+public interface ITucExcelExportableViewColumn
 {
-	object GetData(IServiceProvider serviceProvider);
+	XLCellValue GetDataForExcel(IServiceProvider serviceProvider);
 }
 
 
-public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExportableViewColumn, ITucAuxDataUseComponent
+public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExcelExportableViewColumn, ITucAuxDataUseComponent
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
@@ -369,9 +369,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// This method needs to be overriden in the implementing component,
 	/// and will be called by various export services as Excel export in example
 	/// </summary>
-	public virtual object GetData(IServiceProvider serviceProvider)
+	public virtual XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
 	{
-		return null;
+		return new XLCellValue();
 	}
 
 	/// <summary>

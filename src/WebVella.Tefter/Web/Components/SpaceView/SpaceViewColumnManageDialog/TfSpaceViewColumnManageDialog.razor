@@ -49,6 +49,7 @@
 						<FluentSelect Style="width:100%"
 									  TOption="TucSpaceViewColumnType"
 									  Placeholder="@LOC("select...")"
+									  OptionSelected="(x => x.Id == _form.ColumnType?.Id)"
 									  SelectedOption="@_form.ColumnType"
 									  SelectedOptionChanged="_columnTypeChangeHandler"
 									  OptionText="((x)=> x.Name)"
@@ -69,12 +70,13 @@
 					{
 						<FluentSelect Label="@LOC("Presentation component")"
 									  Style="width:100%" Required=true
+									  OptionSelected="(x => x.FullName == _form.ComponentType?.FullName)"
 									  SelectedOption="@_form.ComponentType"
 									  SelectedOptionChanged="_columnComponentChangeHandler"
 									  TOption="Type"
 									  OptionText="((x)=> x.ToDescriptionString())"
 									  OptionValue="((x)=> x.FullName)"
-									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)"/>
+									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)" />
 
 						<FluentValidationMessage For="@(() => _form.ComponentType)" />
 					}
@@ -197,7 +199,8 @@
 								{
 									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
 								}
-								<FluentSelect @bind-SelectedOption="@_form.Settings.Color" TOption="OfficeColor"
+								<FluentSelect OptionSelected="(x => x == _form.Settings?.Color)"
+											  @bind-SelectedOption="@_form.Settings.Color" TOption="OfficeColor"
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"
@@ -233,7 +236,8 @@
 								{
 									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
 								}
-								<FluentSelect @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="OfficeColor"
+								<FluentSelect OptionSelected="(x => x == _form.Settings?.BackgroundColor)"
+											  @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="OfficeColor"
 											  Items="@(Enum.GetValues<OfficeColor>())"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"

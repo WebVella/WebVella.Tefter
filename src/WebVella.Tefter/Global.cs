@@ -37,6 +37,8 @@ global using System.Text.Json.Serialization;
 global using System.Text.RegularExpressions;
 global using System.Threading.Tasks;
 global using System.Web;
+global using ClosedXML;
+global using ClosedXML.Excel;
 //webvella
 global using WebVella.Tefter.Jobs;
 global using WebVella.Tefter.Database;

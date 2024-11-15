@@ -70,12 +70,12 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override object GetData(IServiceProvider serviceProvider)
+	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not Guid) 
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
-		return (Guid?)columnData;
+		return XLCellValue.FromObject((Guid?)columnData);
 	}
 	#endregion
 

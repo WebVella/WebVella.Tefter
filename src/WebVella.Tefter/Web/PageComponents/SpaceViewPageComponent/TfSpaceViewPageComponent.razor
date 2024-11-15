@@ -20,7 +20,8 @@ else if (Context.Mode == TfComponentMode.Create)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentSelect SelectedOption="@_options.SetType"
+			<FluentSelect OptionSelected="(x => x == _options.SetType)"
+						  SelectedOption="@_options.SetType"
 						  SelectedOptionChanged="_optionsSetTypeChangeHandler"
 						  TOption="TucSpaceViewSetType"
 						  Items="@(Enum.GetValues<TucSpaceViewSetType>())" Style="width:100%"
@@ -46,7 +47,8 @@ else if (Context.Mode == TfComponentMode.Create)
 		</FluentGrid>
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentSelect SelectedOption="@_options.DataSetType"
+				<FluentSelect OptionSelected="(x => x == _options?.DataSetType)"
+							  SelectedOption="@_options.DataSetType"
 							  SelectedOptionChanged="_optionsDataSetTypeChangeHandler"
 							  TOption="TucSpaceViewDataSetType"
 							  Items="@(Enum.GetValues<TucSpaceViewDataSetType>())" Style="width:100%"
@@ -59,12 +61,13 @@ else if (Context.Mode == TfComponentMode.Create)
 			@if (_options.DataSetType == TucSpaceViewDataSetType.New)
 			{
 				<FluentGridItem xs="6">
-					<FluentSelect SelectedOption="@_optionsDataProvider"
+					<FluentSelect OptionSelected="(x => x.Id == _optionsDataProvider?.Id)"
+								  SelectedOption="@_optionsDataProvider"
 								  SelectedOptionChanged="_optionsDataProviderSelectedHandler"
 								  TOption="TucDataProvider" Required="false" Placeholder="@LOC("select...")"
 								  Items="@TfAppState.Value.AllDataProviders" Style="width:100%"
 								  OptionValue="@(p => p.Id.ToString())"
-								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")"/>
+								  OptionText="@(p => p.Name)" Label="@LOC("Data provider")" />
 					<TfValidationMessage Field="@(nameof(_options.DataProviderId))" Errors="ValidationErrors" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
@@ -83,12 +86,13 @@ else if (Context.Mode == TfComponentMode.Create)
 					}
 					else
 					{
-						<FluentSelect SelectedOption="@_optionsDataset"
+						<FluentSelect OptionSelected="(x => x.Id == _optionsDataset?.Id)"
+									  SelectedOption="@_optionsDataset"
 									  SelectedOptionChanged="_optionsDatasetSelected"
 									  TOption="TucSpaceData" Placeholder="@LOC("select...")"
 									  Items="@TfAppState.Value.SpaceDataList" Style="width:100%"
 									  OptionValue="@((p)=> p.Id.ToString())"
-									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")"/>
+									  OptionText="@(p => p.Name)" Label="@LOC("Dataset")" />
 						<TfValidationMessage Field="@(nameof(_options.SpaceDataId))" Errors="ValidationErrors" />
 					}
 				</FluentGridItem>
@@ -160,7 +164,8 @@ else if (Context.Mode == TfComponentMode.Create)
 	{
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentSelect SelectedOption="@_optionsExistingSpaceView"
+				<FluentSelect OptionSelected="(x => x.Id == _optionsExistingSpaceView?.Id)"
+							  SelectedOption="@_optionsExistingSpaceView"
 							  SelectedOptionChanged="_optionsSpaceViewSelected"
 							  TOption="TucSpaceView" Placeholder="@LOC("select...")"
 							  Items="@TfAppState.Value.SpaceViewList" Style="width:100%"

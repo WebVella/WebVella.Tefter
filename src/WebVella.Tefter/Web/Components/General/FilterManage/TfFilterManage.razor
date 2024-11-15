@@ -24,7 +24,8 @@
 							}
 							else
 							{
-								<FluentSelect @bind-SelectedOption="@_selectedFilterColumn"
+								<FluentSelect OptionSelected="(x => x == _selectedFilterColumn)"
+											  @bind-SelectedOption="@_selectedFilterColumn"
 											  TOption="string" Required="false"
 											  Items="@AllColumnOptions" Style="width:140px"
 											  Placeholder="@LOC("select...")" />
@@ -84,28 +85,31 @@
 							@if (Item is TucFilterBoolean)
 							{
 								var context = (TucFilterBoolean)Item;
-								<FluentSelect SelectedOption="@context.ComparisonMethod"
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
 											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterBooleanComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterBooleanComparisonMethod>())" Style="width:140px"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"/>
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
-									<FluentSelect SelectedOption="@context.ValueOption"
+									<FluentSelect OptionSelected="(x => x.Value == context.ValueOption.Value)"
+												  SelectedOption="@context.ValueOption"
 												  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.Value),value))"
 												  Disabled="@(Disabled || ReadOnly)"
 												  TOption="Option<string>" Required="false"
 												  OptionText="@((p)=> p.Text)"
 												  OptionValue="@((p)=> p.Value)"
-												  Items="@context.ValueOptions" Style="width:300px"/>
+												  Items="@context.ValueOptions" Style="width:300px" />
 								}
 							}
 							else if (Item is TucFilterDateTime)
 							{
 								var context = (TucFilterDateTime)Item;
-								<FluentSelect SelectedOption="@context.ComparisonMethod"
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
 											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterDateTimeComparisonMethod" Required="true"
@@ -130,13 +134,14 @@
 							else if (Item is TucFilterGuid)
 							{
 								var context = (TucFilterGuid)Item;
-								<FluentSelect SelectedOption="@context.ComparisonMethod"
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
 											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterGuidComparisonMethod" Required="true"
 											  Items="@(Enum.GetValues<TucFilterGuidComparisonMethod>())" Style="width:140px"
 											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@((p)=> LOC(p.ToDescriptionString()))"/>
+											  OptionText="@((p)=> LOC(p.ToDescriptionString()))" />
 								@if (context.RequiresValue)
 								{
 									<FluentTextField Value="@context.ValueProcessed"
@@ -149,7 +154,8 @@
 							else if (Item is TucFilterNumeric)
 							{
 								var context = (TucFilterNumeric)Item;
-								<FluentSelect SelectedOption="@context.ComparisonMethod"
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
 											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterNumericComparisonMethod" Required="true"
@@ -167,7 +173,8 @@
 							else if (Item is TucFilterText)
 							{
 								var context = (TucFilterText)Item;
-								<FluentSelect SelectedOption="@context.ComparisonMethod"
+								<FluentSelect OptionSelected="(x => x == context.ComparisonMethod)"
+											  SelectedOption="@context.ComparisonMethod"
 											  SelectedOptionChanged="@((value) => _valueChanged(context,nameof(context.ComparisonMethod),value))"
 											  Disabled="@(Disabled || ReadOnly)"
 											  TOption="TucFilterTextComparisonMethod" Required="true"

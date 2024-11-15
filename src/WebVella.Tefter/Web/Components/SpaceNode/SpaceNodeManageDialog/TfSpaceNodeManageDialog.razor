@@ -42,7 +42,8 @@
 					@if (parentItems.Count() > 0)
 					{
 						<FluentStack>
-							<FluentSelect TOption="TucSpaceNode" SelectedOption="@_parentNode"
+							<FluentSelect OptionSelected="(x => x.Id == _parentNode?.Id)"
+										  TOption="TucSpaceNode" SelectedOption="@_parentNode"
 										  SelectedOptionChanged="_selectedParentChanged"
 										  Style="width:100%" Items="@parentItems" Placeholder="@LOC("select...")"
 										  OptionValue="@(x=> x.Id.ToString())">
@@ -67,10 +68,11 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentSelect TOption="TfSpaceNodeType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
+					<FluentSelect OptionSelected="(x => x == _form.Type)"
+								  TOption="TfSpaceNodeType" SelectedOption=@_form.Type SelectedOptionChanged="_typeChanged"
 								  Label="@LOC("Type")" Style="width:100%" Items="@(Enum.GetValues<TfSpaceNodeType>())"
 								  OptionValue="@((p)=> ((int)p).ToString())"
-								  OptionText="@(x=> x.ToDescriptionString())"/>
+								  OptionText="@(x=> x.ToDescriptionString())" />
 					<FluentValidationMessage For="@(() => _form.Type)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
