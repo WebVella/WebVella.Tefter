@@ -7,12 +7,14 @@
 		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 			@if (AllColumnOptions.Count > 0)
 			{
-				<FluentSelect @bind-SelectedOption="@_selectedColumn"
+				<FluentSelect OptionSelected="(x => x == _selectedColumn)"
+							  @bind-SelectedOption="@_selectedColumn"
 							  Disabled="_submitting"
 							  TOption="string" Required="false"
 							  Items="@AllColumnOptions" Style="width:200px"
 							  Placeholder="@LOC("select provider column")" />
-				<FluentSelect @bind-SelectedOption="@_selectedDirection"
+				<FluentSelect OptionSelected="(x => x == _selectedDirection)"
+							  @bind-SelectedOption="@_selectedDirection"
 							  Disabled="_submitting"
 							  TOption="TucSortDirection"
 							  Items="@(Enum.GetValues<TucSortDirection>())"

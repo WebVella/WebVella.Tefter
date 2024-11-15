@@ -9,13 +9,15 @@
 							 Disabled="_submitting"
 							 Placeholder="@LOC("name")"
 							 Required="true" Style="width:180px" />
-			<FluentSelect @bind-SelectedOption="@_selectedType"
+			<FluentSelect OptionSelected="(x => x == _selectedType)"
+						  @bind-SelectedOption="@_selectedType"
 						  Disabled="_submitting"
 						  TOption="TfPresetsCardType" Required="true"
 						  Items="@(Enum.GetValues<TfPresetsCardType>())" Style="min-width:60px"
 						  OptionValue="@((p)=> ((int)p).ToString())"
-						  OptionText="@(x=> x.ToDescriptionString())"  />
-			<FluentSelect @bind-SelectedOption="@_selectedParent"
+						  OptionText="@(x=> x.ToDescriptionString())" />
+			<FluentSelect OptionSelected="(x => x.Id == _selectedParent?.Id)"
+						  @bind-SelectedOption="@_selectedParent"
 						  Disabled="_submitting"
 						  TOption="TucSpaceViewPreset"
 						  Items="@_getParents()" Style="min-width:180px"

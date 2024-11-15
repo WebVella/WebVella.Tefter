@@ -2,7 +2,9 @@
 @inherits TucBaseViewColumn<TfNumberDisplayColumnComponentOptions>
 @if (Context.Mode == TucComponentMode.Display)
 {
-	<div>@_value?.ToString(componentOptions.Format)</div>
+	<div>@_value?.ToString(componentOptions.Format,
+				new CultureInfo(String.IsNullOrWhiteSpace(componentOptions.CultureName) ? "en-US" : componentOptions.CultureName))
+	</div>
 }
 else if (Context.Mode == TucComponentMode.Options)
 {
@@ -13,7 +15,19 @@ else if (Context.Mode == TucComponentMode.Options)
 							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.Format),x))
 							 Placeholder="@LOC("eg. 'N3'")" />
 		</FluentGridItem>
-		<FluentGridItem xs="6"></FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Locale")" />
+			<FluentStack>
+				<FluentTextField TextFieldType="@TextFieldType.Text" Immediate ImmediateDelay="500"
+								 Value=@componentOptions.CultureName AutoComplete="off"
+								 Style="width:100%"
+								 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.CultureName),x))
+								 Placeholder="@LOC("en-US")" />
+				<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from server")"
+							  OnClick="_getCultureFromServer" Appearance="@Appearance.Outline" />
+			</FluentStack>
+			<FluentValidationMessage For="@(() => componentOptions.CultureName)" />
+		</FluentGridItem>
 	</FluentGrid>
 }
 else

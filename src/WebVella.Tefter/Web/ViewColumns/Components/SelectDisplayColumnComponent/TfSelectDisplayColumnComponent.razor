@@ -60,7 +60,8 @@ else if (Context.Mode == TucComponentMode.Options)
 	{
 		<FluentGrid>
 			<FluentGridItem xs="6">
-				<FluentSelect TOption="TucSpaceData" Required=true
+				<FluentSelect OptionSelected="(x => x.Id == _selectedSpaceData?.Id)"
+							  TOption="TucSpaceData" Required=true
 							  SelectedOption="_selectedSpaceData"
 							  SelectedOptionChanged="@((x)=> _spaceDataChanged(x))"
 							  OptionValue="((x)=> x.Id.ToString())"

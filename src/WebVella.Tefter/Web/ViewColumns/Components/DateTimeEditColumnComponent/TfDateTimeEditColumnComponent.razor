@@ -35,7 +35,8 @@ else if (Context.Mode == TucComponentMode.Options)
 	<FluentGrid>
 		<FluentGridItem xs="4">
 			<FluentInputLabel Label="@LOC("Selection method")" />
-			<FluentSelect Items="@(Enum.GetValues<CalendarViews>())"
+			<FluentSelect OptionSelected="(x => x == componentOptions?.CalendarViewsSelection)"
+						  Items="@(Enum.GetValues<CalendarViews>())"
 						  OptionValue="@((p)=> ((int)p).ToString())"
 						  OptionText="@((x)=>x.ToString())"
 						  TOption="CalendarViews"

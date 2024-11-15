@@ -7,11 +7,12 @@
 		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 			@if (_columnOptions.Count > 0)
 			{
-				<FluentSelect @bind-SelectedOption="@_selectedColumn"
+				<FluentSelect OptionSelected="(x => x == _selectedColumn)"
+							  @bind-SelectedOption="@_selectedColumn"
 							  Disabled="_submitting"
 							  TOption="string" Required="false"
 							  Items="@_columnOptions" Style="width:200px"
-							  Placeholder="@LOC("select provider column")"/>
+							  Placeholder="@LOC("select provider column")" />
 			}
 			else
 			{

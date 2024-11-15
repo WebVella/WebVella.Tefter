@@ -37,6 +37,7 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentSelect Required="true"
+								  OptionSelected="(x => x.Id == _form.ProviderType?.Id)"
 								  @bind-SelectedOption="@_form.ProviderType" TOption="TucDataProviderTypeInfo"
 								  Items="@TfAppState.Value.DataProviderTypes" Style="width:100%" Disabled="!_isCreate"
 								  OptionValue="@(p => p.Id.ToString())"

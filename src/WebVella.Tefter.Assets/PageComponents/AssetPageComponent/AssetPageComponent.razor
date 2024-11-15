@@ -10,7 +10,8 @@ else if (Context.Mode == TfComponentMode.Create)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentSelect SelectedOption="@_optionsFolder"
+			<FluentSelect OptionSelected="(x => x.Id == _optionsFolder?.Id)"
+						  SelectedOption="@_optionsFolder"
 						  SelectedOptionChanged="_optionsFolderChangeHandler"
 						  TOption="AssetsFolder"
 						  Items="@_folders" Style="width:100%"

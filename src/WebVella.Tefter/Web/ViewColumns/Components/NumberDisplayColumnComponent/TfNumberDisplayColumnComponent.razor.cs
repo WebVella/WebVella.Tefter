@@ -83,6 +83,11 @@ public partial class TfNumberDisplayColumnComponent : TucBaseViewColumn<TfNumber
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
 		_value = (decimal?)columnData;
 	}
+
+	private void _getCultureFromServer()
+	{
+		componentOptions.CultureName = Thread.CurrentThread.CurrentCulture.Name;
+	}
 	#endregion
 }
 
@@ -94,4 +99,7 @@ public class TfNumberDisplayColumnComponentOptions
 {
 	[JsonPropertyName("Format")]
 	public string Format { get; set; }
+
+	[JsonPropertyName("Culture")]
+	public string CultureName { get; set; } = Thread.CurrentThread.CurrentCulture.Name;
 }

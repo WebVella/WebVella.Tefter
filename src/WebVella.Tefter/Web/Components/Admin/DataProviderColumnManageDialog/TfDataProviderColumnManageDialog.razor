@@ -35,12 +35,13 @@
 				<DataAnnotationsValidator />
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<FluentSelect SelectedOption="@_selectedProviderType" TOption="TucDataProviderTypeDataTypeInfo"
+						<FluentSelect OptionSelected="(x => x.Name == _selectedProviderType?.Name)"
+									  SelectedOption="@_selectedProviderType" TOption="TucDataProviderTypeDataTypeInfo"
 									  SelectedOptionChanged="_selectionSourceTypeChanged"
 									  Items="@_providerTypeOptions" Style="width:100%"
 									  OptionValue="@(p => p.Name)"
 									  OptionText="@(p => p.Name)"
-									  Label="@LOC("SOURCE column type")"/>
+									  Label="@LOC("SOURCE column type")" />
 						<FluentValidationMessage For="@(() => _form.SourceType)" />
 					</FluentGridItem>
 					<FluentGridItem xs="6">
@@ -52,12 +53,13 @@
 				</FluentGrid>
 				<FluentGrid>
 					<FluentGridItem xs="6">
-						<FluentSelect @bind-SelectedOption="@_selectedDbType"
+						<FluentSelect OptionSelected="(x => x.Name == _selectedDbType?.Name)"
+									  @bind-SelectedOption="@_selectedDbType"
 									  TOption="TucDatabaseColumnTypeInfo"
 									  Items="@_selectedProviderType.SupportedDatabaseColumnTypes" Style="width:100%" Placeholder="@LOC("select SOURCE column type")"
 									  OptionValue="@(p => p.Name)"
 									  OptionText="@(p => p.Name)"
-									  Label="@LOC("PROVIDER data type")" Disabled="!_isCreate"/>
+									  Label="@LOC("PROVIDER data type")" Disabled="!_isCreate" />
 						<FluentValidationMessage For="@(() => _form.SourceType)" />
 					</FluentGridItem>
 					<FluentGridItem xs="6">
@@ -107,10 +109,11 @@
 						<FluentValidationMessage For="@(() => _form.IncludeInTableSearch)" />
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentSelect @bind-SelectedOption="@_form.PreferredSearchType" TOption="TucDataProviderColumnSearchTypeInfo"
+						<FluentSelect OptionSelected="(x => x.Name == _form.PreferredSearchType?.Name)"
+									  @bind-SelectedOption="@_form.PreferredSearchType" TOption="TucDataProviderColumnSearchTypeInfo"
 									  Items="@_searchTypes" Style="width:100%"
 									  OptionValue="@(p => p.Name)"
-									  OptionText="@(p => p.Name)" 
+									  OptionText="@(p => p.Name)"
 									  Label="@LOC("Preferred search type")" />
 						<FluentValidationMessage For="@(() => _form.PreferredSearchType)" />
 					</FluentGridItem>

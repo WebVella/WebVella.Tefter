@@ -3,14 +3,15 @@
 
 @if (Context.Mode == TfComponentMode.Read)
 {
-		<TalkThreadComponent ChannelId="_options.ChannelId" CurrentUser="@TfUserState.Value.CurrentUser"
+	<TalkThreadComponent ChannelId="_options.ChannelId" CurrentUser="@TfUserState.Value.CurrentUser"
 						 SharedKeyValue="@Context.SpaceNodeId" Style="height:100%;margin:calc(-1 * var(--tf-body-content-padding));display:flex;" />
 }
 else if (Context.Mode == TfComponentMode.Create)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentSelect SelectedOption="@_optionsChannel"
+			<FluentSelect OptionSelected="(x => x.Id == _optionsChannel?.Id)"
+						  SelectedOption="@_optionsChannel"
 						  SelectedOptionChanged="_optionsChannelChangeHandler"
 						  TOption="TalkChannel"
 						  Items="@_channels" Style="width:100%"
