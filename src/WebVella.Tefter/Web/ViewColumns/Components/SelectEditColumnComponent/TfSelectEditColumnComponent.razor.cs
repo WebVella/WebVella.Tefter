@@ -83,9 +83,9 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
-		return XLCellValue.FromObject(GetDataStringByAlias(_valueAlias));
+		excelCell.SetValue(XLCellValue.FromObject(GetDataStringByAlias(_valueAlias)));
 	}
 
 	public override async Task OnAppStateInit(

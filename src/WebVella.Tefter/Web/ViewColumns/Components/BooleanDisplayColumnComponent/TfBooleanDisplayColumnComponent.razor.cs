@@ -65,22 +65,22 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not bool) 
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'");
 
 		bool? value = (bool?)columnData;
-		if (value is null) return new XLCellValue();
+		if (value is null) return;
 
 		//options are not inited yet as the component is not rendered
 		var options = GetOptions();
 
-		if (value.Value && !String.IsNullOrWhiteSpace(options.TrueLabel)) return options.TrueLabel;
-		else if (!value.Value && !String.IsNullOrWhiteSpace(options.FalseLabel)) return options.FalseLabel;
+		if (value.Value && !String.IsNullOrWhiteSpace(options.TrueLabel)) excelCell.SetValue(XLCellValue.FromObject(options.TrueLabel));
+		else if (!value.Value && !String.IsNullOrWhiteSpace(options.FalseLabel)) excelCell.SetValue(XLCellValue.FromObject(options.FalseLabel));
 
-		return XLCellValue.FromObject(value);
+		excelCell.SetValue(XLCellValue.FromObject(value));
 	}
 	#endregion
 

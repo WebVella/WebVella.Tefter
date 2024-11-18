@@ -107,9 +107,9 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
-		return new XLCellValue();
+		return;
 	}
 
 	public override Task OnAppStateInit(

@@ -65,12 +65,12 @@ public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<Tf
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override XLCellValue GetDataForExcel(IServiceProvider serviceProvider)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
 		if (columnData is not null && columnData is not short)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports short.");
-		return XLCellValue.FromObject((short?)columnData);
+		excelCell.SetValue(XLCellValue.FromObject((short?)columnData));
 	}
 	#endregion
 

@@ -124,18 +124,15 @@ public class ExportUseCase
 					compContext.DataMapping = column.DataMapping;
 					compContext.QueryName = column.QueryName;
 
-					var rangeColumns = 1;
-					var endColumn = currentExcelColumn + rangeColumns - 1;
-					var cellRange = ws.Range(currentExcelRow, currentExcelColumn, currentExcelRow, endColumn);
-					if (rangeColumns > 1) cellRange.Merge();
+					IXLCell excelCell = ws.Cell(currentExcelRow, currentExcelColumn);
 
 					if (column.ComponentType is not null
 						&& column.ComponentType.GetInterface(nameof(ITucExcelExportableViewColumn)) != null)
 					{
 						var component = (ITucExcelExportableViewColumn)Activator.CreateInstance(column.ComponentType, compContext);
-						cellRange.SetValue(component.GetDataForExcel(_serviceProvider));
+						component.ProcessExcelCell(_serviceProvider,excelCell);
 					}
-					currentExcelColumn = currentExcelColumn + rangeColumns;
+					currentExcelColumn++;
 				}
 				currentExcelRow++;
 			}
