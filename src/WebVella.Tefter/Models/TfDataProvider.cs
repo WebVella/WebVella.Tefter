@@ -13,6 +13,7 @@ public class TfDataProvider
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; internal set; }
 	public ReadOnlyCollection<TfSharedColumn> SharedColumns { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
+	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; internal set; }
 	public ITfDataProviderType ProviderType { get; internal set; }
 	public IServiceProvider ServiceProvider { get; internal set; }
 	public ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();
@@ -30,8 +31,8 @@ public record TfDataProviderModel
 	public string Name { get; internal set; }
 	[Required]
 	public ITfDataProviderType ProviderType { get; internal set; }
-
 	public string SettingsJson { get; internal set; } = null;
+	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
 }
 
 
@@ -57,4 +58,7 @@ internal record TfDataProviderDbo
 
 	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = null;
+
+	[TfDboModelProperty("sync_primary_key_columns_json")]
+	public string SynchPrimaryKeyColumnsJson { get; set; } = "[]";
 }

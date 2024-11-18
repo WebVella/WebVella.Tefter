@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using Newtonsoft.Json;
+
+namespace WebVella.Tefter;
 
 public partial interface ITfDataProviderManager
 {
@@ -414,7 +416,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	}
 
 	private static TfDataProviderDbo DataProviderToDbo(
-	TfDataProviderModel providerModel)
+		TfDataProviderModel providerModel)
 	{
 		if (providerModel == null)
 			throw new ArgumentException(nameof(providerModel));
@@ -426,6 +428,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			SettingsJson = providerModel.SettingsJson,
 			TypeId = providerModel.ProviderType.Id,
 			TypeName = providerModel.ProviderType.GetType().FullName,
+			SynchPrimaryKeyColumnsJson = JsonConvert.SerializeObject(providerModel.SynchPrimaryKeyColumns ?? new List<string>())
 		};
 	}
 
@@ -457,7 +460,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			ProviderType = providerType,
 			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
-			SharedKeys = sharedKeys.AsReadOnly()
+			SharedKeys = sharedKeys.AsReadOnly(),
+			SynchPrimaryKeyColumns = JsonConvert.DeserializeObject<List<string>>( dbo.SynchPrimaryKeyColumnsJson ?? "[]").AsReadOnly()
 		};
 	}
 
