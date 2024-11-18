@@ -9,6 +9,10 @@ public partial class TfColumnCard : TfBaseComponent
 	public List<string> Items { get; set; } = new();
 	[Parameter]
 	public EventCallback<List<string>> ItemsChanged { get; set; }
+
+	[Parameter]
+	public string NoItemsMessage { get; set; } = "This dataset will return all data provider columns. Select columns for limitation.";
+
 	public List<string> AllColumnOptions
 	{
 		get

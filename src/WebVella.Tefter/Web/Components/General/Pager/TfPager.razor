@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 
 
-<nav role="navigation" class="paginator-nav ">
+<nav role="navigation" class="paginator-nav " style="@_style">
 	<div class="paginator-nav__left">
 		<FluentStack>
 			<FluentButton @onclick="_goFirst" Disabled="@(Page == 1)" title="@LOC("Go to first page")">

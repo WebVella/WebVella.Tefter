@@ -2,6 +2,11 @@
 	font-size: var(--type-ramp-plus-2-font-size);
 	line-height:1.5em;
 }
+::deep.page-subheader {
+	font-size:var(--type-ramp-base-font-size);
+	color: var(--neutral-base-color)
+}
+
 
 ::deep .page-header-inner {
 	white-space: nowrap;
@@ -13,3 +18,4 @@
 	color: var(--neutral-base-color);
 	margin:0 7px;
 }
+

@@ -6,7 +6,7 @@ public record TucDataProvider
 	public string Name { get; init; }
 	public int Index { get; init; }
 	public string SettingsJson { get; init; }
-	public List<TucDataProviderSystemColumn> SystemColumns { get; internal set; }
+	public List<TucDataProviderSystemColumn> SystemColumns { get; init; }
 	public List<TucDataProviderColumn> Columns { get; init; }
 	public List<TucSharedColumn> SharedColumns { get; init; } = new();
 	public List<TucColumn> ColumnsTotal
@@ -47,7 +47,7 @@ public record TucDataProvider
 	}
 	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
-
+	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; init; }
 	public TucDataProvider() { }
 	public TucDataProvider(TfDataProvider model)
 	{
@@ -60,6 +60,7 @@ public record TucDataProvider
 		SharedColumns = model.SharedColumns is null ? null : model.SharedColumns.Select(x => new TucSharedColumn(x)).ToList();
 		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x => new TucDataProviderSharedKey(x)).ToList();
 		ProviderType = new TucDataProviderTypeInfo(model.ProviderType);
+		SynchPrimaryKeyColumns = model.SynchPrimaryKeyColumns;
 	}
 
 }

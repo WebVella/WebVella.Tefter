@@ -1,88 +1,98 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-	<FluentLabel Typo="Typography.PaneHeader">@LOC("Synchronization tasks")</FluentLabel>
-	<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSync").WithColor(Color.Accent)" OnClick="_synchronizeNow">@LOC("Synchronize now")</FluentButton>
-</div>
 
-<div class="tf-grid-wrapper">
-	<table class="tf-grid">
-		<thead class="tf-grid-thead">
-			<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
-			<tr class="tf-grid-tr">
-				<th class="tf-grid-th" style="width:140px;">created on</th>
-				<th class="tf-grid-th">status</th>
-				<th class="tf-grid-th" style="width:140px;">started on</th>
-				<th class="tf-grid-th" style="width:140px;">completed on</th>
-				<th class="tf-grid-th" style="width:160px;">infos</th>
-				<th class="tf-grid-th" style="width:160px;">warnings</th>
-				<th class="tf-grid-th" style="width:160px;">errors</th>
-			</tr>
-		</thead>
-		<tbody class="tf-grid-tbody">
-			@foreach (var context in TfAppState.Value.DataProviderSyncTasks)
-			{
-				<tr @key=context.Id class="tf-grid-tr">
-					<td class="tf-grid-td">
-						<div>@context.CreatedOn.ToString("yyyy-MM-dd HH:mm")</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>@context.Status.ToDescriptionString()</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>@context.StartedOn?.ToString("yyyy-MM-dd HH:mm")</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>@context.CompletedOn?.ToString("yyyy-MM-dd HH:mm")</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>
-							@if (context.InfoCount > 0)
-							{
-								<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Info))">
-									@LOC("{0} infos", context.InfoCount)
-								</FluentButton>
-							}
-							else
-							{
-								<FluentButton Disabled="true">@LOC("no infos")</FluentButton>
-							}
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>
-							@if (context.WarningCount > 0)
-							{
-								<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Warning))">
-									@LOC("{0} warnings", context.WarningCount)
-								</FluentButton>
-							}
-							else
-							{
-								<FluentButton Disabled="true">@LOC("no warnings")</FluentButton>
-							}
-						</div>
-					</td>
-					<td class="tf-grid-td">
-						<div>
-							@if (context.ErrorCount > 0)
-							{
-								<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Error))">
-									@LOC("{0} errors", context.ErrorCount)
-								</FluentButton>
-							}
-							else
-							{
-								<FluentButton Disabled="true">@LOC("no errors")</FluentButton>
-							}
-						</div>
-					</td>
+<TfPageHeader>@LOC("Row comparison key")</TfPageHeader>
+<TfPageHeader IsSubHeader="true" Style="margin-bottom:1rem">@LOC("which row data will be used to compare rows from source and provider. Order does has no significance.")</TfPageHeader>
+<TfColumnCard DataProvider="TfAppState.Value.AdminDataProvider" Items="_keyitems" ItemsChanged="_onColumnsChanged"
+			  NoItemsMessage="@LOC("Data row position in the list will be used for comparison.")" />
+
+
+<TfPageHeader Style="margin:1rem 0">@LOC("Synchronization tasks")</TfPageHeader>
+<TfCard>
+	<TitleTemplate>
+		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+			<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowSync").WithColor(Color.Accent)" OnClick="_synchronizeNow">@LOC("Synchronize now")</FluentButton>
+		</FluentStack>
+	</TitleTemplate>
+	<ChildContent>
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th" style="width:140px;">created on</th>
+					<th class="tf-grid-th">status</th>
+					<th class="tf-grid-th" style="width:140px;">started on</th>
+					<th class="tf-grid-th" style="width:140px;">completed on</th>
+					<th class="tf-grid-th" style="width:160px;">infos</th>
+					<th class="tf-grid-th" style="width:160px;">warnings</th>
+					<th class="tf-grid-th" style="width:160px;">errors</th>
 				</tr>
-			}
-		</tbody>
-	</table>
-</div>
-
-
-
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var context in TfAppState.Value.DataProviderSyncTasks)
+				{
+					<tr @key=context.Id class="tf-grid-tr">
+						<td class="tf-grid-td">
+							<div>@context.CreatedOn.ToString("yyyy-MM-dd HH:mm")</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.Status.ToDescriptionString()</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.StartedOn?.ToString("yyyy-MM-dd HH:mm")</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@context.CompletedOn?.ToString("yyyy-MM-dd HH:mm")</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@if (context.InfoCount > 0)
+								{
+									<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Info))">
+										@LOC("{0} infos", context.InfoCount)
+									</FluentButton>
+								}
+								else
+								{
+									<FluentButton Disabled="true">@LOC("no infos")</FluentButton>
+								}
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@if (context.WarningCount > 0)
+								{
+									<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Warning))">
+										@LOC("{0} warnings", context.WarningCount)
+									</FluentButton>
+								}
+								else
+								{
+									<FluentButton Disabled="true">@LOC("no warnings")</FluentButton>
+								}
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								@if (context.ErrorCount > 0)
+								{
+									<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Error))">
+										@LOC("{0} errors", context.ErrorCount)
+									</FluentButton>
+								}
+								else
+								{
+									<FluentButton Disabled="true">@LOC("no errors")</FluentButton>
+								}
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+		<TfPager Page="@(TfAppState.Value.Route?.Page ?? 1)" GoLast="@_goLastPage" GoNext="@_goNextPage"
+				 GoFirst="@_goFirstPage" GoPrevious="@_goPreviousPage" GoOnPage="@_goOnPage"
+				 PageSize="@(TfAppState.Value.Route?.PageSize ?? TfConstants.PageSize)" />
+	</ChildContent>
+</TfCard>

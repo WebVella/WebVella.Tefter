@@ -61,7 +61,11 @@ internal partial class AppStateUseCase
 
 			if (newAppState.Route.ThirdNode == RouteDataThirdNode.Synchronization)
 			{
-				newAppState = newAppState with { DataProviderSyncTasks = await GetDataProviderSynchronizationTasks(newAppState.Route.DataProviderId.Value) };
+				var tasks = await GetDataProviderSynchronizationTasks(newAppState.Route.DataProviderId.Value);
+				var pageSize = 5;
+				var page = newAppState.Route.Page ?? 1;
+				tasks = tasks.Skip(TfConverters.CalcSkip(page, pageSize)).Take(pageSize).ToList();
+				newAppState = newAppState with { DataProviderSyncTasks = tasks };
 			}
 			else
 			{
@@ -192,6 +196,24 @@ internal partial class AppStateUseCase
 		if (providerTypesResult.IsFailed) return Result.Fail(new Error("GetProviderTypes failed").CausedBy(providerTypesResult.Errors));
 		var submitForm = form.ToModel(providerTypesResult.Value);
 		var updateResult = _dataProviderManager.UpdateDataProvider(submitForm);
+		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateDataProvider failed").CausedBy(updateResult.Errors));
+		if (updateResult.Value is null) return Result.Fail(new Error("UpdateDataProvider returned null object").CausedBy(updateResult.Errors));
+		return Result.Ok(new TucDataProvider(updateResult.Value));
+	}
+
+	internal virtual Result<TucDataProvider> UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns)
+	{
+		var provider = _dataProviderManager.GetProvider(providerId);
+		if (provider.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(provider.Errors));
+		if(provider is null) return Result.Fail("Provider not found");
+		var submit = new TfDataProviderModel{ 
+			Id = providerId,
+			SynchPrimaryKeyColumns = columns,
+			Name = provider.Value.Name,
+			ProviderType = provider.Value.ProviderType,
+			SettingsJson = provider.Value.SettingsJson,
+		};
+		var updateResult = _dataProviderManager.UpdateDataProvider(submit);
 		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateDataProvider failed").CausedBy(updateResult.Errors));
 		if (updateResult.Value is null) return Result.Fail(new Error("UpdateDataProvider returned null object").CausedBy(updateResult.Errors));
 		return Result.Ok(new TucDataProvider(updateResult.Value));

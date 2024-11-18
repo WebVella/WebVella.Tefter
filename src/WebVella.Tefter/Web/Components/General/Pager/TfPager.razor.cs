@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿using Microsoft.FluentUI.AspNetCore.Components.Utilities;
+
+namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.General.Pager.TfPager", "WebVella.Tefter")]
 public partial class TfPager : TfBaseComponent
 {
@@ -12,82 +14,66 @@ public partial class TfPager : TfBaseComponent
 	[Parameter] public EventCallback<int> GoOnPage { get; set; }
 	[Parameter] public EventCallback<int> ChangePageSize { get; set; }
 
-	private CancellationTokenSource inputThrottleCancalationToken = new();
+	private readonly Debounce _currentSelectedChangedDebounce = new();
 	private int _page = 1;
 	private int _pageSize = TfConstants.PageSize;
 	private int _throttleMS = 500;
+	private string _style = null;
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
 		_page = Page;
 		_pageSize = PageSize;
+		if (ChangePageSize.HasDelegate) _style = "min-width:";
 	}
 
-	private async Task _goLast()
+	private void _goLast()
 	{
-		inputThrottleCancalationToken.Cancel();
-		inputThrottleCancalationToken = new();
-		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
-		async (task) =>
+		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await GoLast.InvokeAsync();
-		}, inputThrottleCancalationToken.Token);
+		}));
 	}
 
-	private async Task _goNext()
+	private void _goNext()
 	{
-		inputThrottleCancalationToken.Cancel();
-		inputThrottleCancalationToken = new();
-		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
-		async (task) =>
+		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await GoNext.InvokeAsync();
-		}, inputThrottleCancalationToken.Token);
+		}));
 	}
 
-	private async Task _goFirst()
+	private void _goFirst()
 	{
-		inputThrottleCancalationToken.Cancel();
-		inputThrottleCancalationToken = new();
-		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
-		async (task) =>
+		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await GoFirst.InvokeAsync();
-		}, inputThrottleCancalationToken.Token);
+		}));
 	}
 
-	private async Task _goPrevious()
+	private void _goPrevious()
 	{
-		inputThrottleCancalationToken.Cancel();
-		inputThrottleCancalationToken = new();
-		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
-		async (task) =>
+		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await GoPrevious.InvokeAsync();
-		}, inputThrottleCancalationToken.Token);
+		}));
 	}
 
-	private async Task _pageChanged(int page)
+	private void _pageChanged(int page)
 	{
 		_page = page;
-		inputThrottleCancalationToken.Cancel();
-		inputThrottleCancalationToken = new();
-		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
-		async (task) =>
+		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await GoOnPage.InvokeAsync(page);
-		}, inputThrottleCancalationToken.Token);
+		}));
 	}
 
-	private async Task _pageSizeChanged(int pageSize)
+	private void _pageSizeChanged(int pageSize)
 	{
 		_pageSize = pageSize;
-		inputThrottleCancalationToken.Cancel();
-		inputThrottleCancalationToken = new();
-		await Task.Delay(_throttleMS, inputThrottleCancalationToken.Token).ContinueWith(
-		async (task) =>
+		_currentSelectedChangedDebounce.Run(_throttleMS, () => InvokeAsync(async () =>
 		{
 			await ChangePageSize.InvokeAsync(pageSize);
-		}, inputThrottleCancalationToken.Token);
+		}));
 	}
 }
