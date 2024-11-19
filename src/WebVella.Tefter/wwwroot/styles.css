@@ -967,7 +967,7 @@ fluent-select[readonly]::part(control) {
   --tf-layout-wrapper-aside-width: 60px;
   --tf-layout-wrapper-body-width: calc(100vw - var(--tf-layout-wrapper-aside-width));
   --tf-layout-wrapper-body-border-radius: 8px;
-  --tf-layout-wrapper-body-aside-width: 300px;
+  --tf-layout-wrapper-body-aside-width: 240px;
   --tf-layout-wrapper-body-aside-toolbar-height: 40px;
 }
 body {
