@@ -15,7 +15,6 @@ internal partial class AppStateUseCase
 			};
 			return (newAppState,newAuxDataState);
 		}
-
 		TucSpaceNode spaceNode = null;
 		if (newAppState.Route.SpaceNodeId is not null)
 		{
@@ -46,7 +45,6 @@ internal partial class AppStateUseCase
 					newAuxDataState: newAuxDataState,
 					oldAuxDataState: oldAuxDataState, 
 					context: context);
-
 					newAppState = appStateResult;
 					newAuxDataState = auxDataStateResult;
 				}

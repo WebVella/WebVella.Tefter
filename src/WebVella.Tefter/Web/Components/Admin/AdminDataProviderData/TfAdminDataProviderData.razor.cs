@@ -79,10 +79,10 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	{
 		if (_isDataLoading) return;
 		if (TfAppState.Value.Route.Page == 1) return;
+		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = 1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		_isDataLoading = true;
 	}
 	private async Task _goPreviousPage()
 	{
@@ -90,10 +90,10 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		var page = TfAppState.Value.Route.Page - 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
+		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		_isDataLoading = true;
 	}
 	private async Task _goNextPage()
 	{
@@ -105,30 +105,29 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		var page = TfAppState.Value.Route.Page + 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
-
+		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		_isDataLoading = true;
 	}
 	private async Task _goLastPage()
 	{
 		if (_isDataLoading) return;
 		if (TfAppState.Value.Route.Page == -1) return;
+		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = -1;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		_isDataLoading = true;
 	}
 	private async Task _goOnPage(int page)
 	{
 		if (_isDataLoading) return;
 		if (page < 1 && page != -1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
+		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		_isDataLoading = true;
 	}
 
 	private async Task _pageSizeChange(int pageSize)
@@ -151,11 +150,10 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		}
 		catch { }
 
-
+		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		_isDataLoading = true;
 	}
 
 	private bool _columnIsVisible(TfDataColumn column)
