@@ -6,7 +6,7 @@
 		<FluentTextField Id="@_valueInputId" TextFieldType="@TextFieldType.Url"
 						 @bind-Value="@_value"
 						 @bind-Value:after="_valueChanged"
-						 Style="width:100%;" AutoComplete="off" />
+						 Style="width:100%;min-width:60px;" AutoComplete="off" />
 	</div>
 }
 else if (Context.Mode == TucComponentMode.Options)

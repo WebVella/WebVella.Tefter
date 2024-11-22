@@ -3,7 +3,7 @@
 @if (Context.Mode == TucComponentMode.Display)
 {
 	<div>
-		<FluentButton Id="@_valueInputId" Style="width:100%"
+		<FluentButton Id="@_valueInputId" Style="width:100%;min-width:80px;"
 					  OnClick="@(() => _open = !_open)"
 					  Color="@_selectedOption?.Color" BackgroundColor="@_selectedOption?.BackgroundColor">
 			@if (_selectedOption is not null && !_selectedOption.HideLabel)
@@ -24,7 +24,9 @@
 					Anchor="@_valueInputId"
 					@bind-Open="_open">
 			<Virtualize TItem="TucSelectOption" Items="_selectOptionsList" Context="option" ItemSize="32">
-				<FluentMenuItem @key=@option.Id OnClick="@(()=> _optionChanged(option))" Class="@(option.Value == _selectedOption.Value ? "tf-menu-item-selected" : "")">@option.Label</FluentMenuItem>
+				<FluentMenuItem @key=@option.Id OnClick="@(()=> _optionChanged(option))" 
+					Class="@(option.Value == _selectedOption.Value ? "tf-menu-item-selected" : "")"
+								title="@option.Label">@option.Label</FluentMenuItem>
 			</Virtualize>
 		</FluentMenu>
 	</div>

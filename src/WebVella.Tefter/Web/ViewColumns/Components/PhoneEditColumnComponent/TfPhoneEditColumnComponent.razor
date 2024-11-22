@@ -6,7 +6,7 @@
 		<FluentTextField Id="@_valueInputId" TextFieldType="TextFieldType.Tel"
 						 @bind-Value="@_value"
 						 @bind-Value:after="_valueChanged"
-						 Style="width:100%;" AutoComplete="off" />
+						 Style="width:100%;min-width:80px;" AutoComplete="off" />
 	</div>
 }
 else if (Context.Mode == TucComponentMode.Options)

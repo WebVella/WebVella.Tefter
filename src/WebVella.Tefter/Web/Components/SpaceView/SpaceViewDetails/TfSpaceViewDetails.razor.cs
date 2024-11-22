@@ -23,7 +23,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-		ConsoleExt.WriteLine($"OnAfterRenderAsync {_isDataLoading}");
 			_isDataLoading = false;
 			await InvokeAsync(StateHasChanged);
 			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
@@ -40,7 +39,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		InvokeAsync(async () =>
 		{
 			_isDataLoading = false;
-			ConsoleExt.WriteLine($"On_AppChanged {_isDataLoading}");
 			await InvokeAsync(StateHasChanged);
 		});
 	}
@@ -94,22 +92,17 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	}
 	private async Task _goNextPage()
 	{
-ConsoleExt.WriteLine($"_goNextPage 0 {_isDataLoading}");
 		if (_isDataLoading) return;
-		ConsoleExt.WriteLine($"_goNextPage 1 {_isDataLoading}");
 		if (TfAppState.Value.SpaceViewData is null
 		|| TfAppState.Value.SpaceViewData.Rows.Count == 0)
 			return;
-ConsoleExt.WriteLine($"_goNextPage 2 {_isDataLoading}");
 		var page = TfAppState.Value.Route.Page + 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
-ConsoleExt.WriteLine($"_goNextPage 3 {_isDataLoading}");
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>();
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
-		ConsoleExt.WriteLine($"_goNextPage 4 {_isDataLoading}");
 	}
 	private async Task _goLastPage()
 	{
