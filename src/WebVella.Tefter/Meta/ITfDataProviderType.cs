@@ -13,6 +13,8 @@ public interface ITfDataProviderType
 	public abstract ReadOnlyCollection<TfDataProviderDataRow> GetRows(
 		TfDataProvider provider);
 
+	public abstract Dictionary<string, TfDatabaseColumnType> GetDataProviderSourceSchema(TfDataProvider provider);
+
 }
 
 public class TfDataProviderTypeMeta

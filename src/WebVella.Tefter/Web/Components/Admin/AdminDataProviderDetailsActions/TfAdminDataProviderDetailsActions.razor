@@ -17,6 +17,10 @@
 else if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.Schema)
 {
 	<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End" Style="margin-bottom:1rem">
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_importFromSource">
+			@LOC("Import from source")
+			<FluentIcon Value="@TfConstants.GetIcon("ArrowDownload")" Color="@Color.Accent" Slot="start" />
+		</FluentButton>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
 			@LOC("Add Column")
 			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />

@@ -78,6 +78,10 @@ public class MsSqlDataProvider : ITfDataProviderType
 			provider);
 	}
 
+	public Dictionary<string, TfDatabaseColumnType> GetDataProviderSourceSchema(TfDataProvider provider){ 
+		return new Dictionary<string, TfDatabaseColumnType>();
+	}
+
 	private ReadOnlyCollection<TfDataProviderDataRow> ReadDataFromSql(
 		string connectionString,
 		string sql,

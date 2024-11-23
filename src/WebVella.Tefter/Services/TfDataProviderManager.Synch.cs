@@ -38,9 +38,11 @@ public partial interface ITfDataProviderManager
 		string info = null,
 		string warning = null,
 		string error = null);
-	
+
 	internal Task Synchronize(
 		TfDataProviderSynchronizeTask task);
+
+	internal Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(Guid providerId);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
@@ -145,7 +147,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	{
 		try
 		{
-			TfDataProviderSynchronizeTaskExtended dbo = 
+			TfDataProviderSynchronizeTaskExtended dbo =
 				_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
 @"SELECT
 	st.id,
@@ -378,12 +380,12 @@ ORDER BY st.created_on DESC");
 			var orderSettings = new TfOrderSettings(
 			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
 			OrderDirection.ASC);
-			
+
 			var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
 					"WHERE task_id = @task_id",
 					orderSettings,
 					new NpgsqlParameter("@task_id", taskId));
-			
+
 			var result = new List<TfDataProviderSynchronizeResultInfo>();
 
 			foreach (var dbo in dbos)
@@ -473,7 +475,7 @@ ORDER BY st.created_on DESC");
 			int currentRowIndex = 0;
 			var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 
-			
+
 
 			foreach (var row in rows)
 			{
@@ -528,7 +530,7 @@ ORDER BY st.created_on DESC");
 						provider,
 						row);
 
-					if( !insertResult.IsSuccess)
+					if (!insertResult.IsSuccess)
 						throw new Exception("New row insert failed");
 
 					if (task.Policy.WriteInfoResults)
@@ -641,7 +643,7 @@ ORDER BY st.created_on DESC");
 		//final synchronization process result value
 		{
 			string infoMessage = string.Empty;
-			if(warningsFound && errorsFound)
+			if (warningsFound && errorsFound)
 				infoMessage = "The process of synchronization completed with some warnings and errors.";
 			else if (warningsFound)
 				infoMessage = "The process of synchronization completed with some warnings.";
@@ -654,13 +656,36 @@ ORDER BY st.created_on DESC");
 								taskId: task.Id,
 								tfRowIndex: null,
 								tfId: null,
-								info: infoMessage );
+								info: infoMessage);
 
 			if (!result.IsSuccess)
 				throw new Exception("Unable to write synchronization result info.");
 		}
 	}
 
+	public Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(Guid providerId)
+	{
+		var result = new TfDataProviderSourceSchemaInfo();
+		var providerResult = GetProvider(providerId);
+		if (!providerResult.IsSuccess) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
+		var provider = providerResult.Value;
+		try
+		{
+			result.SourceColumnDatabaseType = provider.ProviderType.GetDataProviderSourceSchema(provider);
+			foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
+			{
+				var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
+				var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
+				result.DatabaseTypeToSourceType[supportedDbType] = providerDataType;
+			}
+			return Result.Ok(result);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(ex.Message);
+		}
+
+	}
 	private bool AreColumnValuesEqual(
 		TfDataProviderColumn column,
 		object value,

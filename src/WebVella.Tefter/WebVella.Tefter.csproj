@@ -55,6 +55,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <EmbeddedResource Update="Web\Components\Admin\DataProviderImportSchemaDialog\TfDataProviderImportSchemaDialog.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\SpaceView\SpaceViewHeader\TfSpaceViewHeader.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>

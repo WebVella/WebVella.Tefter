@@ -1,0 +1,65 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@* Header *@
+<FluentDialogHeader ShowDismiss="true" Class="modal-with-tabs">
+	<div class="modal-with-tabs__title">
+		<FluentLabel Typo="Typography.PaneHeader">@LOC("Import schema")</FluentLabel>
+	</div>
+	<div class="modal-with-tabs__menu">
+		@if (!_isBusy && string.IsNullOrWhiteSpace(_error))
+		{
+			<FluentNavMenu Class="tf-tabnav">
+				<FluentNavLink OnClick="@(_=> _activeTab = "new")" Class="@(_activeTab == "new" ? "selected" : "")">@LOC("New Columns")</FluentNavLink>
+				<FluentNavLink OnClick="@(_=> _activeTab = "existing")" Class="@(_activeTab == "existing" ? "selected" : "")">@LOC("Already Present")</FluentNavLink>
+			</FluentNavMenu>
+		}
+	</div>
+</FluentDialogHeader>
+
+@* Footer *@
+<FluentDialogFooter>
+	@if (String.IsNullOrWhiteSpace(_error))
+	{
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("ArrowDownload")"
+		Loading="_isSubmitting" Disabled="@(_isSubmitting || _isBusy || _activeTab == "existing")">@LOC("Import")</FluentButton>
+	}
+	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+</FluentDialogFooter>
+
+@* Body *@
+<FluentDialogBody>
+	<div>
+		@if (_isBusy)
+		{
+			<TfLoadingPane />
+		}
+		else if (!string.IsNullOrWhiteSpace(_error))
+		{
+			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
+
+		}
+		else if(_activeTab == "new")
+		{
+			@foreach (var column in _newColumns)
+			{
+				<p>@column.SourceName</p>
+			}
+			@if (_newColumns.Count == 0)
+			{
+				<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("No new columns are found in the source")</FluentMessageBar>
+			}
+		}
+		else if (_activeTab == "existing")
+		{
+			@foreach (var column in _existingColumns)
+			{
+				<p>@column.SourceName</p>
+			}
+			@if (_existingColumns.Count == 0)
+			{
+				<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("No existing columns are yet created")</FluentMessageBar>
+			}
+		}
+	</div>
+</FluentDialogBody>

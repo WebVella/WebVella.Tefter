@@ -3,6 +3,7 @@ using CsvHelper.Configuration;
 using System.Globalization;
 using System.Text;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.Web.Utils;
 
 namespace WebVella.Tefter.DataProviders.Csv;
 
@@ -138,6 +139,90 @@ public class CsvDataProvider : ITfDataProviderType
 			Thread.CurrentThread.CurrentCulture = currentCulture;
 			Thread.CurrentThread.CurrentUICulture = currentUICulture;
 		}
+	}
+
+	public Dictionary<string, TfDatabaseColumnType> GetDataProviderSourceSchema(TfDataProvider provider)
+	{
+		int maxSampleSize = 100;
+		var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson);
+		var culture = new CultureInfo(settings.CultureName);
+		var result = new Dictionary<string, TfDatabaseColumnType>();
+		var config = new CsvConfiguration(culture)
+		{
+			PrepareHeaderForMatch = args => args.Header.ToLower(),
+			Encoding = Encoding.UTF8,
+			IgnoreBlankLines = true,
+			BadDataFound = null,
+			TrimOptions = TrimOptions.Trim,
+			HasHeaderRecord = true,
+			MissingFieldFound = null
+		};
+		Stream stream;
+		switch (settings.Delimter)
+		{
+			case CsvDataProviderSettingsDelimiter.Semicolon:
+				config.Delimiter = ";";
+				break;
+			case CsvDataProviderSettingsDelimiter.Tab:
+				config.Delimiter = "\t";
+				break;
+			default:
+				config.Delimiter = ",";
+				break;
+		}
+		if (string.IsNullOrWhiteSpace(settings.Filepath))
+			throw new Exception("Provider csv file path is not specified.");
+
+		if (settings.Filepath.ToLowerInvariant().StartsWith("tefter://"))
+		{
+			var repoService = provider.ServiceProvider.GetService<ITfRepositoryService>();
+
+			var file = repoService.GetFileByUri(settings.Filepath).Value;
+
+			if (file is null)
+				throw new Exception($"File '{settings.Filepath}' is not found.");
+
+			stream = repoService.GetFileContentAsFileStream(file.Filename).Value;
+		}
+		else
+		{
+			stream = new FileStream(settings.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		}
+		Dictionary<string, List<TfDatabaseColumnType>> suggestedColumnTypes = new();
+		using (var reader = new StreamReader(stream))
+		using (var csvReader = new CsvReader(reader, config))
+		{
+			csvReader.Read();
+			csvReader.ReadHeader();
+			foreach (var item in csvReader.HeaderRecord)
+			{
+				result[item] = TfDatabaseColumnType.Text;
+			}
+
+			while (csvReader.Read())
+			{
+				foreach (var column in csvReader.HeaderRecord)
+				{
+					var fieldValue = csvReader.GetField(column);
+					if (!suggestedColumnTypes.ContainsKey(column)) suggestedColumnTypes[column] = new();
+					if (suggestedColumnTypes[column].Count >= maxSampleSize) break;
+
+					TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
+					suggestedColumnTypes[column].Add(type);
+				}
+			}
+		}
+
+		foreach (var key in result.Keys)
+		{
+			var columnType = TfDatabaseColumnType.Text;
+			if (suggestedColumnTypes.ContainsKey(key))
+				columnType = CsvSourceToColumnTypeConverter.GetTypeFromOptions(suggestedColumnTypes[key]);
+
+			result[key] = columnType;
+		}
+
+		return result;
 	}
 
 	private ReadOnlyCollection<TfDataProviderDataRow> ReadCSVStream(
@@ -302,6 +387,4 @@ public class CsvDataProvider : ITfDataProviderType
 				throw new Exception($"Not supported source type for column {column.SourceName}");
 		}
 	}
-
-
 }

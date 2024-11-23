@@ -205,8 +205,9 @@ internal partial class AppStateUseCase
 	{
 		var provider = _dataProviderManager.GetProvider(providerId);
 		if (provider.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(provider.Errors));
-		if(provider is null) return Result.Fail("Provider not found");
-		var submit = new TfDataProviderModel{ 
+		if (provider is null) return Result.Fail("Provider not found");
+		var submit = new TfDataProviderModel
+		{
 			Id = providerId,
 			SynchPrimaryKeyColumns = columns,
 			Name = provider.Value.Name,
@@ -243,6 +244,24 @@ internal partial class AppStateUseCase
 			return Result.Fail(new Error("DeleteDataProviderColumn failed").CausedBy(result.Errors));
 
 		return Result.Ok(new TucDataProvider(result.Value));
+	}
+
+	internal virtual Task<TucDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(TucDataProvider provider)
+	{
+		var resultSM = _dataProviderManager.GetDataProviderSourceSchemaInfo(provider.Id);
+		if (resultSM.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetProviders failed").CausedBy(resultSM.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new TucDataProviderSourceSchemaInfo());
+		}
+		return Task.FromResult(new TucDataProviderSourceSchemaInfo(resultSM.Value));
 	}
 
 	//Data provider key
