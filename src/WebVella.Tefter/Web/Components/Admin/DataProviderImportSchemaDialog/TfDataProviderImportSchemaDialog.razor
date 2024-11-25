@@ -22,7 +22,7 @@
 	@if (String.IsNullOrWhiteSpace(_error) && _newColumns.Count > 0)
 	{
 		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("ArrowDownload")"
-					  Loading="_isSubmitting" Disabled="@(_isSubmitting || _isBusy || _activeTab == "existing")">@LOC("Import")</FluentButton>
+		Loading="_isSubmitting" Disabled="@(_isSubmitting || _isBusy || _activeTab == "existing")">@LOC("Import")</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
@@ -68,7 +68,7 @@
 							{
 								<tr @key=context.Id class="tf-grid-tr">
 									<td class="tf-grid-td">
-										<div><FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=>_removeRow(context))"/></div>
+										<div><FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=>_removeRow(context))" /></div>
 									</td>
 									<td class="tf-grid-td">
 										<div>@context.SourceName</div>
@@ -76,9 +76,9 @@
 									<td class="tf-grid-td">
 										<div>
 											<FluentSelect Value="@context.SourceType"
-														  TOption="string"
-														  ValueChanged="@(x => _sourceTypeChanged(x,context))" Style="width:100%"
-														  Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))">
+											TOption="string"
+											ValueChanged="@(x => _sourceTypeChanged(x,context))" Style="width:100%"
+											Class="@_getValidationCssClass(context.SourceName,nameof(context.SourceType))">
 												@foreach (var op in _schemaInfo.SourceTypeSupportedDbTypes.Keys)
 												{
 													<FluentOption Value="@op.ToString()">@op</FluentOption>
@@ -90,18 +90,18 @@
 									<td class="tf-grid-td">
 										<div>
 											<FluentTextField TextFieldType="@TextFieldType.Text" Value=@context.DbName
-															 ValueChanged="@(x => _dbNameChanged(x,context))" AutoComplete="off"
-															 Class="@_getValidationCssClass(context.SourceName,nameof(context.DbName))" />
+											ValueChanged="@(x => _dbNameChanged(x,context))" AutoComplete="off"
+											Class="@_getValidationCssClass(context.SourceName,nameof(context.DbName))" />
 											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.DbName)}")" Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
 										<div>
 											<FluentSelect OptionSelected="(x => x == context.DbType)"
-														  @bind-SelectedOption="@context.DbType"
-														  TOption="TfDatabaseColumnType"
-														  Style="width:100%"
-														  Class="@_getValidationCssClass(context.SourceName,nameof(context.DbType))">
+											@bind-SelectedOption="@context.DbType"
+											TOption="TfDatabaseColumnType"
+											Style="width:100%"
+											Class="@_getValidationCssClass(context.SourceName,nameof(context.DbType))">
 												@foreach (var op in _schemaInfo.SourceTypeSupportedDbTypes[context.SourceType])
 												{
 													<FluentOption Value="@op.ToString()">@((new TucDatabaseColumnTypeInfo(op)).Name)</FluentOption>
@@ -113,7 +113,7 @@
 									<td class="tf-grid-td">
 										<div>
 											<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@context.DefaultValue AutoComplete="off"
-															 Class="@_getValidationCssClass(context.SourceName,nameof(context.DefaultValue))" />
+											Class="@_getValidationCssClass(context.SourceName,nameof(context.DefaultValue))" />
 											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.DefaultValue)}")" Errors="ValidationErrors" />
 										</div>
 									</td>
@@ -131,8 +131,14 @@
 									</td>
 									<td class="tf-grid-td">
 										<div>
-											<FluentSwitch @bind-Value=@context.AutoDefaultValue Class="@_getValidationCssClass(context.SourceName,nameof(context.AutoDefaultValue))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.AutoDefaultValue)}")" Errors="ValidationErrors" />
+											@if ((new TucDatabaseColumnTypeInfo(context.DbType)).SupportAutoDefaultValue)
+											{
+												<FluentSwitch @bind-Value=@context.AutoDefaultValue Class="@_getValidationCssClass(context.SourceName,nameof(context.AutoDefaultValue))" />
+												<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.AutoDefaultValue)}")" Errors="ValidationErrors" />
+											}
+											else { 
+												<span>n/a</span>
+											}
 										</div>
 									</td>
 									<td class="tf-grid-td">
@@ -155,7 +161,7 @@
 														  Items="@(Enum.GetValues<TfDataProviderColumnSearchType>())"
 														  Style="width:100%" Class="@_getValidationCssClass(context.SourceName,nameof(context.PreferredSearchType))"
 														  OptionText="((p)=> (new TucDataProviderColumnSearchTypeInfo(p)).Name)"
-														  OptionValue="((p)=> ((int)p).ToString())"/>
+														  OptionValue="((p)=> ((int)p).ToString())" />
 											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.PreferredSearchType)}")" Errors="ValidationErrors" />
 										</div>
 									</td>
@@ -219,7 +225,7 @@
 								</td>
 								<td class="tf-grid-td">
 									<div>
-										<FluentSwitch @bind-Value=@context.IsNullable Disabled="true"/>
+										<FluentSwitch @bind-Value=@context.IsNullable Disabled="true" />
 									</div>
 								</td>
 								<td class="tf-grid-td">
