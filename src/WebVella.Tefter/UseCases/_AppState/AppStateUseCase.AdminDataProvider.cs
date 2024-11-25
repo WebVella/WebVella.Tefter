@@ -246,6 +246,19 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucDataProvider(result.Value));
 	}
 
+	internal virtual Result<TucDataProvider> CreateBulkDataProviderColumn(Guid providerId,
+		List<TucDataProviderColumn> columns)
+	{
+		var columnSM = columns.Select(x => x.ToModel()).ToList();
+		var result = _dataProviderManager.CreateBulkDataProviderColumn(providerId, columnSM);
+		if (result.IsFailed)
+		{
+			return Result.Fail(result.Errors);
+		}
+
+
+		return Result.Ok(new TucDataProvider(result.Value));
+	}
 	internal virtual Task<TucDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(TucDataProvider provider)
 	{
 		var resultSM = _dataProviderManager.GetDataProviderSourceSchemaInfo(provider.Id);

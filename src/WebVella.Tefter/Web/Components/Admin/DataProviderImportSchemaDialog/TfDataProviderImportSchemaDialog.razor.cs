@@ -16,7 +16,7 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 	private List<TucDataProviderColumn> _newColumns = new List<TucDataProviderColumn>();
 	private List<TucDataProviderColumn> _existingColumns = new List<TucDataProviderColumn>();
 	private TucDataProviderSourceSchemaInfo _schemaInfo = new TucDataProviderSourceSchemaInfo();
-	public Dictionary<string,List<ValidationError>> ValidationErrorDict { get; set; } = new();
+	public virtual List<ValidationError> ValidationErrors { get; set; } = new();
 
 
 	protected override async Task OnInitializedAsync()
@@ -65,7 +65,6 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 					_existingColumns.Add(matchColumn);
 				}
 			}
-			_resetValidation();
 		}
 		catch (Exception ex)
 		{
@@ -73,23 +72,39 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 		}
 	}
 
-	private void _resetValidation(){ 
-		ValidationErrorDict = new();
-		foreach (var item in _newColumns)
-			ValidationErrorDict[item.SourceName] = new();
-	}
 	protected string _getValidationCssClass(string sourceName, string propName)
 	{
-		return (ValidationErrorDict[sourceName]).Any(x => x.PropertyName == propName) ? "invalid" : "";
+		return ValidationErrors.Any(x => x.PropertyName == $"{sourceName}-{propName}") ? "invalid" : "";
 	}
 	private async Task _save()
 	{
 		if (_isSubmitting) return;
 		try
 		{
-			_resetValidation();
+			_isSubmitting = true;
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
+			var result = UC.CreateBulkDataProviderColumn(Content.Id, _newColumns);
 
-			ValidationErrorDict["Index"].Add(new ValidationError(nameof(TucDataProviderColumn.DefaultValue),"error with default"));
+
+			if (result.IsSuccess)
+			{
+				await Dialog.CloseAsync(result.Value);
+			}
+			else
+			{
+				string errorMessage = null;
+				ValidationErrors = new();
+				foreach (var error in result.Errors)
+				{
+					if (error is ValidationError) ValidationErrors.Add((ValidationError)error);
+					else errorMessage = error.Message;
+				}
+				if (ValidationErrors.Count > 0 && String.IsNullOrWhiteSpace(errorMessage))
+					errorMessage = LOC("Invalid Data");
+				ToastService.ShowWarning(errorMessage);
+			}
+
 		}
 		catch (Exception ex)
 		{
@@ -106,7 +121,12 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 		await Dialog.CancelAsync();
 	}
 
-	private async void _sourceTypeChanged(string option, TucDataProviderColumn column)
+	private void _removeRow(TucDataProviderColumn column)
+	{
+		_newColumns.Remove(column);
+	}
+
+	private void _sourceTypeChanged(string option, TucDataProviderColumn column)
 	{
 		column.SourceType = option;
 		TfDatabaseColumnType defaultDbType = TfDatabaseColumnType.Text;
@@ -131,4 +151,9 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 		column.DbName = option;
 	}
 
+	private void _searchTypeChanged(TucDataProviderColumn column, TfDataProviderColumnSearchType type)
+	{
+		column.PreferredSearchType = type;
+	}
+	
 }

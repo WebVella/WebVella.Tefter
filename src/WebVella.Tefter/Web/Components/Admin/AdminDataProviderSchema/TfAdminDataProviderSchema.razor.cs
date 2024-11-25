@@ -4,6 +4,8 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+
+	private Guid? _deletedColumnId = null;
 	private async Task _editColumn(TucDataProviderColumn column)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderColumnManageDialog>(
@@ -13,7 +15,7 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
 					Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
+					TrapFocus = false
 				});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
@@ -27,8 +29,15 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 
 	private async Task _deleteColumn(TucDataProviderColumn column)
 	{
+		if (_deletedColumnId is not null) return;
+		_deletedColumnId = column.Id;
+
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this column deleted?") + "\r\n" + LOC("This will delete all related data too!")))
+		{
+			_deletedColumnId = null;
 			return;
+		}
+		await InvokeAsync(StateHasChanged);
 		try
 		{
 			Result<TucDataProvider> result = UC.DeleteDataProviderColumn(column.Id);
@@ -45,6 +54,9 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		{
 			ProcessException(ex);
 		}
-
+		finally{
+			_deletedColumnId = null;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 }

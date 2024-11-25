@@ -31,9 +31,9 @@ else
 								<FluentStack Wrap="false">
 									<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
 												  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
-									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
-										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-									</FluentButton>
+									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+												  Loading="@(_deletedColumnId == context.Id)" Disabled="@(_deletedColumnId is not null)"
+												  IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"/>
 								</FluentStack>
 							</div>
 						</td>
