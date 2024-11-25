@@ -61,13 +61,13 @@ public record TucDataProviderColumnForm
 			DefaultValue = model.DefaultValue;
 			CreatedOn = model.CreatedOn;
 			DataProviderId = model.DataProviderId;
-			DbType = model.DbType;
+			DbType = new TucDatabaseColumnTypeInfo(model.DbType);
 			Id = model.Id;
 			IncludeInTableSearch = model.IncludeInTableSearch;
 			IsSearchable = model.IsSearchable;
 			IsSortable = model.IsSortable;
 			IsUnique = model.IsUnique;
-			PreferredSearchType = model.PreferredSearchType;
+			PreferredSearchType = new TucDataProviderColumnSearchTypeInfo(model.PreferredSearchType);
 	}
 	public TfDataProviderColumn ToModel()
 	{
@@ -76,7 +76,7 @@ public record TucDataProviderColumnForm
 			Id = Id,
 			AutoDefaultValue = AutoDefaultValue,
 			IsNullable = IsNullable,
-			PreferredSearchType = PreferredSearchType.TypeValue.ConvertSafeToEnum<TucDataProviderColumnSearchType,TfDataProviderColumnSearchType>(),
+			PreferredSearchType = PreferredSearchType.TypeValue,
 			IsUnique = IsUnique,
 			IsSortable = IsSortable,
 			IsSearchable = IsSearchable,
@@ -84,7 +84,7 @@ public record TucDataProviderColumnForm
 			CreatedOn = CreatedOn,
 			DataProviderId = DataProviderId,
 			DbName = DbName,
-			DbType = DbType.TypeValue.ConvertSafeToEnum<TucDatabaseColumnType,TfDatabaseColumnType>(),
+			DbType = DbType.TypeValue,
 			DefaultValue = DefaultValue,
 			SourceName = SourceName,
 			SourceType = SourceType,

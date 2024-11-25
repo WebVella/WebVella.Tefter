@@ -14,7 +14,7 @@ public record TucSharedColumnForm
 			Id = Id,
 			SharedKeyDbName = SharedKeyDbName,
 			DbName = DbName,
-			DbType = DbType.ToModel(),
+			DbType = DbType.TypeValue,
 			IncludeInTableSearch = IncludeInTableSearch,
 		};
 	}

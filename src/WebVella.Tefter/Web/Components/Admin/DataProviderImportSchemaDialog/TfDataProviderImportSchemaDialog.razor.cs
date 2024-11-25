@@ -11,9 +11,13 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _activeTab = "new";
+	private bool _selectRedraw = false;
 
 	private List<TucDataProviderColumn> _newColumns = new List<TucDataProviderColumn>();
 	private List<TucDataProviderColumn> _existingColumns = new List<TucDataProviderColumn>();
+	private TucDataProviderSourceSchemaInfo _schemaInfo = new TucDataProviderSourceSchemaInfo();
+	public Dictionary<string,List<ValidationError>> ValidationErrorDict { get; set; } = new();
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -37,25 +41,23 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 	{
 		try
 		{
-			var schemaInfo = await UC.GetDataProviderSourceSchemaInfo(Content);
+			_schemaInfo = await UC.GetDataProviderSourceSchemaInfo(Content);
 			var supportedSourceTypes = Content.ProviderType.SupportedSourceDataTypes;
-			foreach (var columnName in schemaInfo.SourceColumnDatabaseType.Keys)
+			foreach (var columnName in _schemaInfo.SourceColumnDefaultDbType.Keys)
 			{
 				if (String.IsNullOrWhiteSpace(columnName)) continue;
-				var columnString = columnName.Trim().ToLowerInvariant();
-				var columnDbType = schemaInfo.SourceColumnDatabaseType[columnName];
-				var matchColumn = Content.Columns.FirstOrDefault(x => x.SourceName?.Trim().ToLowerInvariant() == columnString);
+				var matchColumn = Content.Columns.FirstOrDefault(x => x.SourceName?.Trim().ToLowerInvariant() == columnName.Trim().ToLowerInvariant());
 				if (matchColumn is null)
 				{
 					_newColumns.Add(new TucDataProviderColumn
 					{
 						Id = Guid.NewGuid(),
 						SourceName = columnName,
-						SourceType = schemaInfo.DatabaseTypeToSourceType[columnDbType],
+						SourceType = _schemaInfo.SourceColumnDefaultSourceType[columnName],
 						CreatedOn = DateTime.Now,
 						DataProviderId = Content.Id,
 						DbName = TfConverters.GenerateDbNameFromText(columnName),
-						DbType = new TucDatabaseColumnTypeInfo(columnDbType),
+						DbType = _schemaInfo.SourceColumnDefaultDbType[columnName],
 					});
 				}
 				else
@@ -63,6 +65,7 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 					_existingColumns.Add(matchColumn);
 				}
 			}
+			_resetValidation();
 		}
 		catch (Exception ex)
 		{
@@ -70,12 +73,23 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 		}
 	}
 
+	private void _resetValidation(){ 
+		ValidationErrorDict = new();
+		foreach (var item in _newColumns)
+			ValidationErrorDict[item.SourceName] = new();
+	}
+	protected string _getValidationCssClass(string sourceName, string propName)
+	{
+		return (ValidationErrorDict[sourceName]).Any(x => x.PropertyName == propName) ? "invalid" : "";
+	}
 	private async Task _save()
 	{
 		if (_isSubmitting) return;
 		try
 		{
+			_resetValidation();
 
+			ValidationErrorDict["Index"].Add(new ValidationError(nameof(TucDataProviderColumn.DefaultValue),"error with default"));
 		}
 		catch (Exception ex)
 		{
@@ -92,5 +106,29 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 		await Dialog.CancelAsync();
 	}
 
+	private async void _sourceTypeChanged(string option, TucDataProviderColumn column)
+	{
+		column.SourceType = option;
+		TfDatabaseColumnType defaultDbType = TfDatabaseColumnType.Text;
+		bool sourceTypeHasDbType = false;
+		if (_schemaInfo.SourceTypeSupportedDbTypes.ContainsKey(column.SourceType)
+		&& _schemaInfo.SourceTypeSupportedDbTypes[column.SourceType].Count > 0)
+		{
+			defaultDbType = _schemaInfo.SourceTypeSupportedDbTypes[column.SourceType][0];
+			sourceTypeHasDbType = true;
+		}
+		if (sourceTypeHasDbType && _schemaInfo.SourceTypeSupportedDbTypes[column.SourceType].Contains(column.DbType))
+		{
+			//keep current
+		}
+		else
+		{
+			column.DbType = defaultDbType;
+		}
+	}
+	private void _dbNameChanged(string option, TucDataProviderColumn column)
+	{
+		column.DbName = option;
+	}
 
 }

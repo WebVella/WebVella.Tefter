@@ -45,7 +45,7 @@ else
 						</td>
 						<td class="tf-grid-td">
 							<div>
-								<div>@context.DbType.Name</div>
+								<div>@((new TucDatabaseColumnTypeInfo(context.DbType)).Name)</div>
 								<div class="td-description">@context.SourceType</div>
 							</div>
 						</td>
@@ -65,7 +65,7 @@ else
 									}
 									@if (context.IsSearchable)
 									{
-										<FluentBadge Appearance="@Appearance.Accent">searchable [@context.PreferredSearchType.Name]</FluentBadge>
+										<FluentBadge Appearance="@Appearance.Accent">searchable [@((new TucDataProviderColumnSearchTypeInfo(context.PreferredSearchType)).Name)]</FluentBadge>
 									}
 									@if (context.IncludeInTableSearch)
 									{

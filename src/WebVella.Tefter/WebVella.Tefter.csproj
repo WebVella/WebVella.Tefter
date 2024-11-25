@@ -22,7 +22,7 @@
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.4" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.4" />
 	
-		<PackageReference Include="Npgsql" Version="8.0.5" />
+		<PackageReference Include="Npgsql" Version="9.0.1" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
 		
 		<PackageReference Include="Serilog" Version="4.1.0" />

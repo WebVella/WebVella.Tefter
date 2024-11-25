@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using WebVella.Tefter.Models;
@@ -23,7 +24,7 @@ public class CsvDataProvider : ITfDataProviderType
 	{
 		//sample only
 		return new List<string> {
-			"TEXT",
+			"TEXT", //Keep text on first place as the first place is used as default type
 			"SHORT_TEXT",
 			"BOOLEAN",
 			"DATE",
@@ -141,12 +142,12 @@ public class CsvDataProvider : ITfDataProviderType
 		}
 	}
 
-	public Dictionary<string, TfDatabaseColumnType> GetDataProviderSourceSchema(TfDataProvider provider)
+	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider)
 	{
-		int maxSampleSize = 100;
+		int maxSampleSize = 25;
 		var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson);
 		var culture = new CultureInfo(settings.CultureName);
-		var result = new Dictionary<string, TfDatabaseColumnType>();
+		var result = new TfDataProviderSourceSchemaInfo();
 		var config = new CsvConfiguration(culture)
 		{
 			PrepareHeaderForMatch = args => args.Header.ToLower(),
@@ -196,30 +197,48 @@ public class CsvDataProvider : ITfDataProviderType
 			csvReader.ReadHeader();
 			foreach (var item in csvReader.HeaderRecord)
 			{
-				result[item] = TfDatabaseColumnType.Text;
+				result.SourceColumnDefaultDbType[item] = TfDatabaseColumnType.Text;
 			}
-
+			var counter = 0;
 			while (csvReader.Read())
 			{
+				if (counter >= maxSampleSize) break;
 				foreach (var column in csvReader.HeaderRecord)
 				{
 					var fieldValue = csvReader.GetField(column);
 					if (!suggestedColumnTypes.ContainsKey(column)) suggestedColumnTypes[column] = new();
-					if (suggestedColumnTypes[column].Count >= maxSampleSize) break;
-
 					TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
 					suggestedColumnTypes[column].Add(type);
 				}
+				counter++;
 			}
 		}
-
-		foreach (var key in result.Keys)
+		foreach (var key in result.SourceColumnDefaultDbType.Keys)
 		{
 			var columnType = TfDatabaseColumnType.Text;
 			if (suggestedColumnTypes.ContainsKey(key))
 				columnType = CsvSourceToColumnTypeConverter.GetTypeFromOptions(suggestedColumnTypes[key]);
 
-			result[key] = columnType;
+			result.SourceColumnDefaultDbType[key] = columnType;
+		}
+		var preferredSourceTypeForDbType = new Dictionary<TfDatabaseColumnType, string>();
+		foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
+		{
+			var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
+			var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
+			result.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
+			if (supportedDBList.Count > 0)
+			{
+				preferredSourceTypeForDbType[supportedDBList.First()] = providerDataType;
+			}
+		}
+		foreach (var columnName in result.SourceColumnDefaultDbType.Keys)
+		{
+			var dbType = result.SourceColumnDefaultDbType[columnName];
+			if(preferredSourceTypeForDbType.ContainsKey(dbType))
+				result.SourceColumnDefaultSourceType[columnName] = preferredSourceTypeForDbType[dbType];
+			else
+				result.SourceColumnDefaultSourceType[columnName] = GetSupportedSourceDataTypes().First();
 		}
 
 		return result;

@@ -2,6 +2,7 @@
 
 public class TfDataProviderSourceSchemaInfo
 {
-	public Dictionary<string, TfDatabaseColumnType> SourceColumnDatabaseType { get; set; } = new();
-	public Dictionary<TfDatabaseColumnType,string> DatabaseTypeToSourceType { get; set; } = new();
+	public Dictionary<string, string> SourceColumnDefaultSourceType { get; set; } = new();
+	public Dictionary<string, TfDatabaseColumnType> SourceColumnDefaultDbType { get; set; } = new();
+	public Dictionary<string, List<TfDatabaseColumnType>> SourceTypeSupportedDbTypes { get; set; } = new();
 }

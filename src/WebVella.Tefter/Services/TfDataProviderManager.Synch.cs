@@ -671,14 +671,7 @@ ORDER BY st.created_on DESC");
 		var provider = providerResult.Value;
 		try
 		{
-			result.SourceColumnDatabaseType = provider.ProviderType.GetDataProviderSourceSchema(provider);
-			foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
-			{
-				var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
-				var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
-				result.DatabaseTypeToSourceType[supportedDbType] = providerDataType;
-			}
-			return Result.Ok(result);
+			return Result.Ok(provider.ProviderType.GetDataProviderSourceSchema(provider));
 		}
 		catch (Exception ex)
 		{

@@ -54,8 +54,9 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 				{
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
-					Width = TfConstants.DialogWidthExtraLarge,
-					TrapFocus = false
+					Width = TfConstants.DialogWidthFullScreen,
+					TrapFocus = false,
+					
 				});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)

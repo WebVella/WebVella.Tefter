@@ -7,11 +7,11 @@ public partial interface ITfDataProviderManager
 
 public partial class TfDataProviderManager : ITfDataProviderManager
 {
-	public Result<ReadOnlyCollection<DatabaseColumnTypeInfo>> GetDatabaseColumnTypeInfos()
+	public static ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList()
 	{
 		List<DatabaseColumnTypeInfo> databaseColumnTypeInfos =
 			new List<DatabaseColumnTypeInfo>();
-		
+
 		databaseColumnTypeInfos.Add(
 			new DatabaseColumnTypeInfo
 			{
@@ -112,7 +112,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				SupportAutoDefaultValue = false
 			});
 
-		return Result.Ok( databaseColumnTypeInfos.AsReadOnly());
+		return databaseColumnTypeInfos.AsReadOnly();
+	}
+	public Result<ReadOnlyCollection<DatabaseColumnTypeInfo>> GetDatabaseColumnTypeInfos()
+	{
+		return Result.Ok(GetDatabaseColumnTypeInfosList());
 	}
 }
 

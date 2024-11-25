@@ -28,4 +28,5 @@ public partial class TfConstants
 	public static string DialogWidthSmall = $"300px";
 	public static string DialogWidthLarge = $"800px";
 	public static string DialogWidthExtraLarge = $"1140px";
+	public static string DialogWidthFullScreen = $"99vw";
 }

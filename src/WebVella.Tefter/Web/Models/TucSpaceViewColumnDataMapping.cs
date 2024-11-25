@@ -4,7 +4,7 @@ public record TucSpaceViewColumnDataMapping
 {
 	public string Alias { get; init; }
 	public string Description { get; init; }
-	public List<TucDatabaseColumnType> SupportedDatabaseColumnTypes { get; init; }
+	public List<TfDatabaseColumnType> SupportedDatabaseColumnTypes { get; init; }
 	public TucSpaceViewColumnDataMapping() { }
 
 	public TucSpaceViewColumnDataMapping(TfSpaceViewColumnDataMapping model)
@@ -14,7 +14,7 @@ public record TucSpaceViewColumnDataMapping
 		SupportedDatabaseColumnTypes = new();
 		foreach (var colType in model.SupportedDatabaseColumnTypes)
 		{
-			SupportedDatabaseColumnTypes.Add(colType.ConvertSafeToEnum<TfDatabaseColumnType, TucDatabaseColumnType>());
+			SupportedDatabaseColumnTypes.Add(colType);
 		}
 	}
 
@@ -28,7 +28,7 @@ public record TucSpaceViewColumnDataMapping
 		};
 		foreach (var colType in SupportedDatabaseColumnTypes)
 		{
-			model.SupportedDatabaseColumnTypes.Add(colType.ConvertSafeToEnum<TucDatabaseColumnType, TfDatabaseColumnType>());
+			model.SupportedDatabaseColumnTypes.Add(colType);
 		}
 		return model;
 	}

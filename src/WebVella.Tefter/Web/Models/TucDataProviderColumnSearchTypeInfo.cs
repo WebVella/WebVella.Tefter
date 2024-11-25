@@ -1,13 +1,12 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 public record TucDataProviderColumnSearchTypeInfo
 {
-	public TucDataProviderColumnSearchType TypeValue { get; init; }
+	public TfDataProviderColumnSearchType TypeValue { get; init; }
 	public string Name { get; init; }
 
 	public TucDataProviderColumnSearchTypeInfo() { }
 	public TucDataProviderColumnSearchTypeInfo(TfDataProviderColumnSearchType model)
 	{
-		TypeValue = model.ConvertSafeToEnum<TfDataProviderColumnSearchType,TucDataProviderColumnSearchType>();
 		switch (model)
 		{
 			case TfDataProviderColumnSearchType.Equals:
@@ -20,9 +19,5 @@ public record TucDataProviderColumnSearchTypeInfo
 			default:
 				throw new Exception($"TfDataProviderColumnSearchType: '{model}' not supported by use case");
 		}
-	}
-	public TfDataProviderColumnSearchType ToModel()
-	{
-		return TypeValue.ConvertSafeToEnum<TucDataProviderColumnSearchType,TfDataProviderColumnSearchType>();
 	}
 }
