@@ -8,7 +8,7 @@ internal partial interface IMigrationManager
 internal partial class MigrationManager : IMigrationManager
 {
 	private readonly IServiceProvider _serviceProvider;
-	private readonly IDatabaseManager _dbManager;
+	private readonly ITfDatabaseManager _dbManager;
 	private readonly ITfDboManager _dboManager;
 	private readonly ITfDatabaseService _dbService;
 	private readonly ITfMetaProvider _metaProvider;
@@ -16,7 +16,7 @@ internal partial class MigrationManager : IMigrationManager
 	public MigrationManager(
 		IServiceProvider serviceProvider,
 		ITfDatabaseService dbService,
-		IDatabaseManager databaseManager,
+		ITfDatabaseManager databaseManager,
 		ITfDboManager dboManager,
 		ITfMetaProvider metaProvider)
 	{

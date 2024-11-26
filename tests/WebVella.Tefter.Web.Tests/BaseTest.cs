@@ -42,7 +42,7 @@ public class BaseTest
 	public Mock<ITfTransactionRollbackNotifyService> TfTransactionRollbackNotifyServiceMock;
 	public Mock<ITfDbConfigurationService> TfDbConfigurationServiceMock;
 	public Mock<ITfDatabaseService> TfDatabaseServiceMock;
-	public Mock<IDatabaseManager> DatabaseManagerMock;
+	public Mock<ITfDatabaseManager> DatabaseManagerMock;
 	internal Mock<ITfDboManager> TfDboManagerMock;
 	internal Mock<IMigrationManager> MigrationManagerMock;
 	public Mock<IIdentityManager> IdentityManagerMock;
@@ -122,8 +122,8 @@ public class BaseTest
 		TfDatabaseServiceMock = new Mock<ITfDatabaseService>();
 		Context.Services.AddSingleton(typeof(ITfDatabaseService), Services => TfDatabaseServiceMock.Object);
 
-		DatabaseManagerMock = new Mock<IDatabaseManager>();
-		Context.Services.AddSingleton(typeof(IDatabaseManager), Services => DatabaseManagerMock.Object);
+		DatabaseManagerMock = new Mock<ITfDatabaseManager>();
+		Context.Services.AddSingleton(typeof(ITfDatabaseManager), Services => DatabaseManagerMock.Object);
 
 		TfDboManagerMock = new Mock<ITfDboManager>();
 		Context.Services.AddSingleton(typeof(ITfDboManager), Services => TfDboManagerMock.Object);

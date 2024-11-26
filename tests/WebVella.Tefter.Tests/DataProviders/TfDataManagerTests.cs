@@ -1044,7 +1044,7 @@ public partial class TfDataManagerTests : BaseTest
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
+			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
@@ -1148,7 +1148,7 @@ public partial class TfDataManagerTests : BaseTest
 		{
 			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
+			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{

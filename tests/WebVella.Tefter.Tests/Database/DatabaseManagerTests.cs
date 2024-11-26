@@ -8,7 +8,7 @@ public partial class DatabaseManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IDatabaseManager dbManager = ServiceProvider.GetRequiredService<IDatabaseManager>();
+			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
@@ -27,6 +27,32 @@ public partial class DatabaseManagerTests : BaseTest
 					var savedTable = tablesAfterSave.Find(table.Id);
 					CompareTables(table,savedTable);
 				}
+			}
+		}
+	}
+
+	[Fact]
+	public async Task CreateStructureSaveAndCloneForSync()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var databaseBuilder = dbManager.GetDatabaseBuilder();
+				CreateSampleDatabaseStructure(databaseBuilder);
+				var result = dbManager.SaveChanges(databaseBuilder);
+				result.IsSuccess.Should().BeTrue();
+
+				result = dbManager.CloneTableForSynch("data1");
+				result.IsSuccess.Should().BeTrue();
+
+				var tablesAfterSave = dbManager.GetDatabaseBuilder().Build();
+				var table = tablesAfterSave.Find("data1_sync");
+				table.Should().NotBeNull();
+
 			}
 		}
 	}

@@ -39,8 +39,8 @@ public partial interface ITfDataProviderManager
 		string warning = null,
 		string error = null);
 	
-	internal Task Synchronize(
-		TfDataProviderSynchronizeTask task);
+//	internal Task Synchronize(
+//		TfDataProviderSynchronizeTask task);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
@@ -448,265 +448,265 @@ ORDER BY st.created_on DESC");
 
 	#region <--- Synchronization --->
 
-	public async Task Synchronize(
-		TfDataProviderSynchronizeTask task)
-	{
-		await Task.Delay(1);
+	//public async Task Synchronize(
+	//	TfDataProviderSynchronizeTask task)
+	//{
+	//	await Task.Delay(1);
 
-		var providerResult = GetProvider(task.DataProviderId);
-		if (!providerResult.IsSuccess)
-			throw new Exception("Unable to get provider.");
+	//	var providerResult = GetProvider(task.DataProviderId);
+	//	if (!providerResult.IsSuccess)
+	//		throw new Exception("Unable to get provider.");
 
-		var provider = providerResult.Value;
+	//	var provider = providerResult.Value;
 
-		bool warningsFound = false;
-		bool errorsFound = false;
+	//	bool warningsFound = false;
+	//	bool errorsFound = false;
 
-		var rows = provider.GetRows();
+	//	var rows = provider.GetRows();
 
-		if (task.Policy.ComparisonType == TfSynchronizationPolicyComparisonType.ByRowOrder)
-		{
-			_dataManager.DeleteProviderRowsAfterIndex(
-				provider,
-				rows.Count + 1);
+	//	if (task.Policy.ComparisonType == TfSynchronizationPolicyComparisonType.ByRowOrder)
+	//	{
+	//		_dataManager.DeleteProviderRowsAfterIndex(
+	//			provider,
+	//			rows.Count + 1);
 
-			int currentRowIndex = 0;
-			var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
+	//		int currentRowIndex = 0;
+	//		var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 
 			
 
-			foreach (var row in rows)
-			{
-				currentRowIndex++;
-				foreach (var warning in row.Warnings)
-				{
-					warningsFound = true;
+	//		foreach (var row in rows)
+	//		{
+	//			currentRowIndex++;
+	//			foreach (var warning in row.Warnings)
+	//			{
+	//				warningsFound = true;
 
-					var result = CreateSynchronizationResultInfo(
-						taskId: task.Id,
-						tfRowIndex: currentRowIndex,
-						tfId: null,
-						warning: warning);
+	//				var result = CreateSynchronizationResultInfo(
+	//					taskId: task.Id,
+	//					tfRowIndex: currentRowIndex,
+	//					tfId: null,
+	//					warning: warning);
 
-					if (!result.IsSuccess)
-						throw new Exception("Unable to write synchronization result info.");
-				}
+	//				if (!result.IsSuccess)
+	//					throw new Exception("Unable to write synchronization result info.");
+	//			}
 
-				if (row.Errors.Count > 0)
-				{
-					foreach (var error in row.Errors)
-					{
-						errorsFound = true;
+	//			if (row.Errors.Count > 0)
+	//			{
+	//				foreach (var error in row.Errors)
+	//				{
+	//					errorsFound = true;
 
-						var result = CreateSynchronizationResultInfo(
-							taskId: task.Id,
-							tfRowIndex: currentRowIndex,
-							tfId: null,
-							error: error);
+	//					var result = CreateSynchronizationResultInfo(
+	//						taskId: task.Id,
+	//						tfRowIndex: currentRowIndex,
+	//						tfId: null,
+	//						error: error);
 
-						if (!result.IsSuccess)
-							throw new Exception("Unable to write synchronization result info.");
-					}
-					continue;
-				}
+	//					if (!result.IsSuccess)
+	//						throw new Exception("Unable to write synchronization result info.");
+	//				}
+	//				continue;
+	//			}
 
 
-				var providerRowResult = _dataManager.GetProviderRow(
-					provider,
-					currentRowIndex);
+	//			var providerRowResult = _dataManager.GetProviderRow(
+	//				provider,
+	//				currentRowIndex);
 
-				if (!providerRowResult.IsSuccess)
-					throw new Exception($"Unable to get current provider row with index {currentRowIndex}");
+	//			if (!providerRowResult.IsSuccess)
+	//				throw new Exception($"Unable to get current provider row with index {currentRowIndex}");
 
-				var providerRow = providerRowResult.Value;
-				if (providerRow is null)
-				{
-					//we init only row index here
-					row["tf_row_index"] = currentRowIndex;
+	//			var providerRow = providerRowResult.Value;
+	//			if (providerRow is null)
+	//			{
+	//				//we init only row index here
+	//				row["tf_row_index"] = currentRowIndex;
 
-					var insertResult = _dataManager.InsertNewProviderRow(
-						provider,
-						row);
+	//				var insertResult = _dataManager.InsertNewProviderRow(
+	//					provider,
+	//					row);
 
-					if( !insertResult.IsSuccess)
-						throw new Exception("New row insert failed");
+	//				if( !insertResult.IsSuccess)
+	//					throw new Exception("New row insert failed");
 
-					if (task.Policy.WriteInfoResults)
-					{
-						var result = CreateSynchronizationResultInfo(
-							taskId: task.Id,
-							tfRowIndex: currentRowIndex,
-							tfId: (Guid)providerRow["tf_id"],
-							info: "The row not found in database. New row created.");
+	//				if (task.Policy.WriteInfoResults)
+	//				{
+	//					var result = CreateSynchronizationResultInfo(
+	//						taskId: task.Id,
+	//						tfRowIndex: currentRowIndex,
+	//						tfId: (Guid)providerRow["tf_id"],
+	//						info: "The row not found in database. New row created.");
 
-						if (!result.IsSuccess)
-							throw new Exception("Unable to write synchronization result info.");
-					}
-				}
-				else
-				{
-					bool foundDiff = false;
-					foreach (var column in sourceColumns)
-					{
-						if (!row.ColumnNames.Contains(column.DbName))
-						{
-							errorsFound = true;
+	//					if (!result.IsSuccess)
+	//						throw new Exception("Unable to write synchronization result info.");
+	//				}
+	//			}
+	//			else
+	//			{
+	//				bool foundDiff = false;
+	//				foreach (var column in sourceColumns)
+	//				{
+	//					if (!row.ColumnNames.Contains(column.DbName))
+	//					{
+	//						errorsFound = true;
 
-							string error = $"Column {column.DbName} is not found.";
-							row.AddError(error);
+	//						string error = $"Column {column.DbName} is not found.";
+	//						row.AddError(error);
 
-							var result = CreateSynchronizationResultInfo(
-								taskId: task.Id,
-								tfRowIndex: currentRowIndex,
-								tfId: null,
-								error: error);
+	//						var result = CreateSynchronizationResultInfo(
+	//							taskId: task.Id,
+	//							tfRowIndex: currentRowIndex,
+	//							tfId: null,
+	//							error: error);
 
-							if (!result.IsSuccess)
-								throw new Exception("Unable to write synchronization result info.");
+	//						if (!result.IsSuccess)
+	//							throw new Exception("Unable to write synchronization result info.");
 
-							break;
-						}
+	//						break;
+	//					}
 
-						bool valuesEqual = AreColumnValuesEqual(
-							column,
-							row[column.DbName],
-							providerRow[column.DbName]);
+	//					bool valuesEqual = AreColumnValuesEqual(
+	//						column,
+	//						row[column.DbName],
+	//						providerRow[column.DbName]);
 
-						if (valuesEqual == false)
-						{
-							providerRow[column.DbName] = row[column.DbName];
-							foundDiff = true;
-						}
-					}
+	//					if (valuesEqual == false)
+	//					{
+	//						providerRow[column.DbName] = row[column.DbName];
+	//						foundDiff = true;
+	//					}
+	//				}
 
-					if (row.Errors.Count > 0)
-						continue;
+	//				if (row.Errors.Count > 0)
+	//					continue;
 
-					if (foundDiff)
-					{
-						if (task.Policy.WriteInfoResults)
-						{
-							var resultInfo = CreateSynchronizationResultInfo(
-								taskId: task.Id,
-								tfRowIndex: currentRowIndex,
-								tfId: (Guid)providerRow["tf_id"],
-								info: "Some of row values differ. The row is updated.");
+	//				if (foundDiff)
+	//				{
+	//					if (task.Policy.WriteInfoResults)
+	//					{
+	//						var resultInfo = CreateSynchronizationResultInfo(
+	//							taskId: task.Id,
+	//							tfRowIndex: currentRowIndex,
+	//							tfId: (Guid)providerRow["tf_id"],
+	//							info: "Some of row values differ. The row is updated.");
 
-							if (!resultInfo.IsSuccess)
-								throw new Exception("Unable to write synchronization result info.");
-						}
+	//						if (!resultInfo.IsSuccess)
+	//							throw new Exception("Unable to write synchronization result info.");
+	//					}
 
-						//set only row index here
-						providerRow["tf_row_index"] = currentRowIndex;
+	//					//set only row index here
+	//					providerRow["tf_row_index"] = currentRowIndex;
 
-						var result = _dataManager.UpdateProviderRow(
-							provider,
-							providerRow);
+	//					var result = _dataManager.UpdateProviderRow(
+	//						provider,
+	//						providerRow);
 
-						if (!result.IsSuccess)
-							throw new Exception("Unable to update data provider row with new values");
-					}
-					else if (task.Policy.WriteInfoResults)
-					{
-						var result = CreateSynchronizationResultInfo(
-							taskId: task.Id,
-							tfRowIndex: currentRowIndex,
-							tfId: (Guid)providerRow["tf_id"],
-							info: "No changes found.");
+	//					if (!result.IsSuccess)
+	//						throw new Exception("Unable to update data provider row with new values");
+	//				}
+	//				else if (task.Policy.WriteInfoResults)
+	//				{
+	//					var result = CreateSynchronizationResultInfo(
+	//						taskId: task.Id,
+	//						tfRowIndex: currentRowIndex,
+	//						tfId: (Guid)providerRow["tf_id"],
+	//						info: "No changes found.");
 
-						if (!result.IsSuccess)
-							throw new Exception("Unable to write synchronization result info.");
-					}
+	//					if (!result.IsSuccess)
+	//						throw new Exception("Unable to write synchronization result info.");
+	//				}
 
-					//only for presentation - update even no changes to update shared key id value
-					if (!foundDiff)
-					{
-						//set only row index here
-						providerRow["tf_row_index"] = currentRowIndex;
+	//				//only for presentation - update even no changes to update shared key id value
+	//				if (!foundDiff)
+	//				{
+	//					//set only row index here
+	//					providerRow["tf_row_index"] = currentRowIndex;
 
-						var result = _dataManager.UpdateProviderRow(
-							provider,
-						providerRow);
+	//					var result = _dataManager.UpdateProviderRow(
+	//						provider,
+	//					providerRow);
 
-						if (!result.IsSuccess)
-							throw new Exception("Unable to update data provider row with new values");
-					}
+	//					if (!result.IsSuccess)
+	//						throw new Exception("Unable to update data provider row with new values");
+	//				}
 
-				}
-			}
-		}
-		else
-			throw new Exception("Policy not implemented yet.");
+	//			}
+	//		}
+	//	}
+	//	else
+	//		throw new Exception("Policy not implemented yet.");
 
-		//final synchronization process result value
-		{
-			string infoMessage = string.Empty;
-			if(warningsFound && errorsFound)
-				infoMessage = "The process of synchronization completed with some warnings and errors.";
-			else if (warningsFound)
-				infoMessage = "The process of synchronization completed with some warnings.";
-			else if (errorsFound)
-				infoMessage = "The process of synchronization completed with some errors.";
-			else
-				infoMessage = "The process of synchronization completed successfully.";
+	//	//final synchronization process result value
+	//	{
+	//		string infoMessage = string.Empty;
+	//		if(warningsFound && errorsFound)
+	//			infoMessage = "The process of synchronization completed with some warnings and errors.";
+	//		else if (warningsFound)
+	//			infoMessage = "The process of synchronization completed with some warnings.";
+	//		else if (errorsFound)
+	//			infoMessage = "The process of synchronization completed with some errors.";
+	//		else
+	//			infoMessage = "The process of synchronization completed successfully.";
 
-			var result = CreateSynchronizationResultInfo(
-								taskId: task.Id,
-								tfRowIndex: null,
-								tfId: null,
-								info: infoMessage );
+	//		var result = CreateSynchronizationResultInfo(
+	//							taskId: task.Id,
+	//							tfRowIndex: null,
+	//							tfId: null,
+	//							info: infoMessage );
 
-			if (!result.IsSuccess)
-				throw new Exception("Unable to write synchronization result info.");
-		}
-	}
+	//		if (!result.IsSuccess)
+	//			throw new Exception("Unable to write synchronization result info.");
+	//	}
+	//}
 
-	private bool AreColumnValuesEqual(
-		TfDataProviderColumn column,
-		object value,
-		object newValue)
-	{
-		try
-		{
-			switch (column.DbType)
-			{
-				case TfDatabaseColumnType.ShortText:
-				case TfDatabaseColumnType.Text:
-					return (value as string == newValue as string);
+	//private bool AreColumnValuesEqual(
+	//	TfDataProviderColumn column,
+	//	object value,
+	//	object newValue)
+	//{
+	//	try
+	//	{
+	//		switch (column.DbType)
+	//		{
+	//			case TfDatabaseColumnType.ShortText:
+	//			case TfDatabaseColumnType.Text:
+	//				return (value as string == newValue as string);
 
-				case TfDatabaseColumnType.Boolean:
-					return ((bool?)value == (bool?)newValue);
+	//			case TfDatabaseColumnType.Boolean:
+	//				return ((bool?)value == (bool?)newValue);
 
-				case TfDatabaseColumnType.Guid:
-					return ((Guid?)value == (Guid?)newValue);
+	//			case TfDatabaseColumnType.Guid:
+	//				return ((Guid?)value == (Guid?)newValue);
 
-				case TfDatabaseColumnType.DateTime:
-					return ((DateTime?)value == (DateTime?)newValue);
+	//			case TfDatabaseColumnType.DateTime:
+	//				return ((DateTime?)value == (DateTime?)newValue);
 
-				case TfDatabaseColumnType.Date:
-					return ((DateOnly?)value == (DateOnly?)newValue);
+	//			case TfDatabaseColumnType.Date:
+	//				return ((DateOnly?)value == (DateOnly?)newValue);
 
-				case TfDatabaseColumnType.ShortInteger:
-					return ((short?)value == (short?)newValue);
+	//			case TfDatabaseColumnType.ShortInteger:
+	//				return ((short?)value == (short?)newValue);
 
-				case TfDatabaseColumnType.Integer:
-					return ((int?)value == (int?)newValue);
+	//			case TfDatabaseColumnType.Integer:
+	//				return ((int?)value == (int?)newValue);
 
-				case TfDatabaseColumnType.LongInteger:
-					return ((long?)value == (long?)newValue);
+	//			case TfDatabaseColumnType.LongInteger:
+	//				return ((long?)value == (long?)newValue);
 
-				case TfDatabaseColumnType.Number:
-					return ((decimal?)value == (decimal?)newValue);
+	//			case TfDatabaseColumnType.Number:
+	//				return ((decimal?)value == (decimal?)newValue);
 
-				default:
-					throw new Exception("Not supported source type");
-			}
-		}
-		catch
-		{
-			return false;
-		}
-	}
+	//			default:
+	//				throw new Exception("Not supported source type");
+	//		}
+	//	}
+	//	catch
+	//	{
+	//		return false;
+	//	}
+	//}
 
 	#endregion
 }

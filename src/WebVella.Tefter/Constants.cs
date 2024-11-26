@@ -24,7 +24,10 @@ internal class Constants
 
     public const string DB_TABLE_ID_COLUMN_NAME = "id";
     public const string DB_OPERATION_LOCK_KEY = "DB_OPERATION_LOCK_KEY";
-    public static DateTime DB_INITIAL_LAST_COMMITED = new DateTime(2000,1,1,0,0,0,0,DateTimeKind.Utc);
+	public const string DB_SYNC_OPERATION_LOCK_KEY = "DB_SYNC_OPERATION_LOCK_KEY";
+	public static DateTime DB_INITIAL_LAST_COMMITED = new DateTime(2000,1,1,0,0,0,0,DateTimeKind.Utc);
+
+	internal const string SHARED_KEY_SEPARATOR = "$$$";
 
 	public const string TF_GENERIC_TEXT_COLUMN_TYPE_ID = "f061a3ce-7813-4fd6-98cb-a10cccea4797"; //used as default in view column creation, for convenience
 	public const string TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID = "c28e933b-6800-4819-b22f-e091e3e3c961";

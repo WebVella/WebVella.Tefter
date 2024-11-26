@@ -160,7 +160,7 @@ public partial class DataManagerTests : BaseTest
 	}
 
 	[Fact]
-	public async Task CRUD_ID()
+	public async Task ID_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -187,6 +187,44 @@ public partial class DataManagerTests : BaseTest
 				idResult6.Should().NotBeNull();
 				idResult6.IsSuccess.Should().BeTrue();
 				idResult6.Value.Should().Be(id);
+			}
+		}
+	}
+
+
+	[Fact]
+	public async Task ID_BuildFill()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var faker = new Faker("en");
+
+				Dictionary<string,Guid> idsDict = new Dictionary<string, Guid>();
+
+				for(int i = 0; i<10000; i++)
+				{
+					List<string> textList = new List<string>();
+					textList.Add(faker.Random.ReplaceNumbers("########################################"));
+					textList.Add(faker.Random.ReplaceNumbers("########################################"));
+					textList.Add(faker.Random.ReplaceNumbers("########################################"));
+
+					var combinedKey = dataManager.CombineKey(textList);
+					idsDict.Add(combinedKey, Guid.Empty);
+				}
+
+				var idResult = dataManager.BulkFillIds(idsDict);
+				idResult.IsSuccess.Should().BeTrue();
+
+				foreach(var guid in idsDict.Values)
+				{
+					guid.Should().NotBeEmpty();
+				}
+
 			}
 		}
 	}

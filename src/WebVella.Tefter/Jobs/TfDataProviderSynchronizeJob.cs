@@ -86,7 +86,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 					if (!result.IsSuccess)
 						throw new Exception("Unable to update synchronization tasks");
 
-					await _providerManager.Synchronize(task);
+					await _providerManager.BulkSynchronize(task);
 
 					result = _providerManager.UpdateSychronizationTask(
 						task.Id,
@@ -213,7 +213,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			if (!result.IsSuccess)
 				throw new Exception("Unable to update synchronization tasks");
 
-			await _providerManager.Synchronize(task);
+			await _providerManager.BulkSynchronize(task);
 
 			result = _providerManager.UpdateSychronizationTask(
 				task.Id,

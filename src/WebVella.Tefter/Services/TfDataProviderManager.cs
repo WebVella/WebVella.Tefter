@@ -8,7 +8,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	private readonly ITfDataManager _dataManager;
 	private readonly ITfDboManager _dboManager;
 	private readonly ITfDatabaseService _dbService;
-	private readonly IDatabaseManager _dbManager;
+	private readonly ITfDatabaseManager _dbManager;
 	private readonly ITfSharedColumnsManager _sharedColumnManager;
 
 	public TfDataProviderManager(IServiceProvider serviceProvider)
@@ -17,7 +17,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		_dataManager = serviceProvider.GetService<ITfDataManager>();
 		_dboManager = serviceProvider.GetService<ITfDboManager>();
 		_dbService = serviceProvider.GetService<ITfDatabaseService>();
-		_dbManager = serviceProvider.GetService<IDatabaseManager>();
+		_dbManager = serviceProvider.GetService<ITfDatabaseManager>();
 		_sharedColumnManager = serviceProvider.GetService<ITfSharedColumnsManager>();
 	}
 }

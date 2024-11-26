@@ -1,12 +1,15 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using HtmlAgilityPack;
 
-public partial interface IDatabaseManager
+namespace WebVella.Tefter.Database;
+
+public partial interface ITfDatabaseManager
 {
 	TfDatabaseBuilder GetDatabaseBuilder();
 	TfDatabaseUpdateResult SaveChanges(TfDatabaseBuilder databaseBuilder);
+	internal TfDatabaseUpdateResult CloneTableForSynch(string tableToClone);
 }
 
-public partial class TfDatabaseManager : IDatabaseManager
+public partial class TfDatabaseManager : ITfDatabaseManager
 {
 	private readonly ITfDatabaseService _dbService;
 
@@ -403,6 +406,415 @@ public partial class TfDatabaseManager : IDatabaseManager
 		}
 
 		return databaseBuilder;
+	}
+
+	public TfDatabaseUpdateResult CloneTableForSynch( string tableToClone )
+	{
+		var databaseBuilder = GetDatabaseBuilder();
+
+		const string suffix = "sync";
+
+		var cloneTableName = $"{tableToClone}_{suffix}";
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		{
+			#region <---tables--->
+
+			TfDatabaseTableBuilder newTableBuilder = null;
+
+			DataTable dtTables = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetTablesMetaSql());
+			foreach (DataRow row in dtTables.Rows)
+			{
+				TfDatabaseTableMeta meta = null;
+				//ignore tables with comments cant deserialize to meta object 
+				try { meta = JsonSerializer.Deserialize<TfDatabaseTableMeta>((string)row["meta"]); } catch { continue; }
+
+				string name = (string)row["table_name"];
+
+				if( name == tableToClone)
+				{
+					newTableBuilder = databaseBuilder
+						.NewTableBuilder(Guid.NewGuid(), cloneTableName)
+						.WithApplicationId(meta.ApplicationId)
+						.WithDataProviderId(meta.DataProviderId);
+				}
+			}
+
+			#endregion
+
+			if (newTableBuilder == null)
+			{
+				throw new Exception("Table to clone was not found in tefter database structures");
+			}
+
+			#region <--- columns --->
+
+			DataTable dtColumns = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetColumnsMetaSql());
+			foreach (DataRow row in dtColumns.Rows)
+			{
+
+				var tableName = (string)row["table_name"];
+
+				if (tableName != tableToClone)
+					continue;
+
+				TfDatabaseColumnMeta meta = null;
+				//ignore columns with comments cant deserialize to meta object 
+				try { meta = JsonSerializer.Deserialize<TfDatabaseColumnMeta>((string)row["meta"]); } catch { continue; }
+
+				var columnName = (string)row["column_name"];
+				var defaultValue = row["column_default"] == DBNull.Value ? null : ((string)row["column_default"]);
+				var isNullable = ((string)row["is_nullable"]).ToLower() == "yes";
+				var dbType = (string)row["data_type"];
+
+				var columnCollectionBuilder = newTableBuilder.WithColumnsBuilder();
+				meta.Id = Guid.NewGuid();
+
+				switch (meta.ColumnType)
+				{
+					case TfDatabaseColumnType.Guid:
+						{
+							Guid? guidDefaultValue = (Guid?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfGuidDatabaseColumn), defaultValue);
+
+							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
+
+							var columnBuider = columnCollectionBuilder
+								.AddGuidColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(guidDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							if (isAutoDefaultValue)
+								columnBuider.WithAutoDefaultValue();
+							else
+								columnBuider.WithoutAutoDefaultValue();
+						}
+						break;
+					case TfDatabaseColumnType.AutoIncrement:
+						{
+							var columnBuider = columnCollectionBuilder
+								.AddAutoIncrementColumnBuilder(meta.Id, columnName)
+								.WithLastCommited(meta.LastCommited)
+								.WithLastCommited(meta.LastCommited);
+						}
+						break;
+					case TfDatabaseColumnType.Boolean:
+						{
+							bool? columnDefaultValue = (bool?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfBooleanDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddBooleanColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+						}
+						break;
+					case TfDatabaseColumnType.Number:
+						{
+							decimal? columnDefaultValue = (decimal?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfNumberDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddNumberColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							columnBuider.WithLastCommited(meta.LastCommited);
+						}
+						break;
+					case TfDatabaseColumnType.Date:
+						{
+							DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
+
+							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+
+							var columnBuider = columnCollectionBuilder
+								.AddDateColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							if (isAutoDefaultValue)
+								columnBuider.WithAutoDefaultValue();
+							else
+								columnBuider.WithoutAutoDefaultValue();
+						}
+						break;
+					case TfDatabaseColumnType.DateTime:
+						{
+							DateTime? columnDefaultValue = (DateTime?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateTimeDatabaseColumn), defaultValue);
+
+							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+
+							var columnBuider = columnCollectionBuilder
+								.AddDateTimeColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							if (isAutoDefaultValue)
+								columnBuider.WithAutoDefaultValue();
+							else
+								columnBuider.WithoutAutoDefaultValue();
+						}
+						break;
+					case TfDatabaseColumnType.Text:
+						{
+							string columnDefaultValue = (string)TfDatabaseUtility
+								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfTextDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddTextColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+						}
+						break;
+					case TfDatabaseColumnType.ShortText:
+						{
+							string columnDefaultValue = (string)TfDatabaseUtility
+								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfShortTextDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddShortTextColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue)
+								.WithLastCommited(meta.LastCommited);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+						}
+						break;
+					case TfDatabaseColumnType.ShortInteger:
+						{
+							short? columnDefaultValue = (short?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+								typeof(TfShortIntegerDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddShortIntegerColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							columnBuider.WithLastCommited(meta.LastCommited);
+						}
+						break;
+					case TfDatabaseColumnType.Integer:
+						{
+							int? columnDefaultValue = (int?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+								typeof(TfIntegerDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddIntegerColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							columnBuider.WithLastCommited(meta.LastCommited);
+						}
+						break;
+					case TfDatabaseColumnType.LongInteger:
+						{
+							long? columnDefaultValue = (long?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName,
+								typeof(TfLongIntegerDatabaseColumn), defaultValue);
+
+							var columnBuider = columnCollectionBuilder
+								.AddLongIntegerColumnBuilder(meta.Id, columnName)
+								.WithDefaultValue(columnDefaultValue);
+
+							if (isNullable)
+								columnBuider.Nullable();
+							else
+								columnBuider.NotNullable();
+
+							columnBuider.WithLastCommited(meta.LastCommited);
+						}
+						break;
+					default:
+						throw new TfDatabaseException($"Not supported dbType for column '{columnName}'");
+				};
+			}
+
+			#endregion
+
+			#region <--- Constraints --->
+
+			Dictionary<string, string> constraintTableDict = new Dictionary<string, string>();
+			Dictionary<string, List<string>> constraintColumnsDict = new Dictionary<string, List<string>>();
+			Dictionary<string, List<string>> constraintForeignColumnsDict = new Dictionary<string, List<string>>();
+			Dictionary<string, string> constraintForeignTableDict = new Dictionary<string, string>();
+			Dictionary<string, char> constraintTypeDict = new Dictionary<string, char>();
+
+			DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
+			foreach (DataRow row in dtConstraints.Rows)
+			{
+				var constraintName = (string)row["constraint_name"];
+				if (!constraintTableDict.ContainsKey(constraintName))
+					constraintTableDict[constraintName] = (string)row["table_name"];
+				if (!constraintColumnsDict.ContainsKey(constraintName))
+					constraintColumnsDict[constraintName] = new List<string>();
+				if (!constraintTypeDict.ContainsKey(constraintName))
+					constraintTypeDict[constraintName] = (char)row["constraint_type"];
+				if (!constraintForeignColumnsDict.ContainsKey(constraintName))
+					constraintForeignColumnsDict[constraintName] = new List<string>();
+
+				constraintColumnsDict[constraintName].Add((string)row["column_name"]);
+
+				if (row["foreign_column_name"] != DBNull.Value && !string.IsNullOrEmpty((string)row["foreign_column_name"]))
+					constraintForeignColumnsDict[constraintName].Add((string)row["foreign_column_name"]);
+
+				if (row["foreign_table_name"] != DBNull.Value && !string.IsNullOrEmpty((string)row["foreign_table_name"]))
+					constraintForeignTableDict[constraintName] = ((string)row["foreign_table_name"]);
+			}
+
+			foreach (var constraintName in constraintTableDict.Keys)
+			{
+				var tableName = constraintTableDict[constraintName];
+
+				if (tableName != tableToClone)
+					continue;
+
+				var constraintsBuilder = newTableBuilder.WithConstraintsBuilder();
+
+				var newConstraintName = $"{constraintName}_{suffix}";
+
+				switch (constraintTypeDict[constraintName])
+				{
+					case 'p':
+						{
+							constraintsBuilder
+								.AddPrimaryKeyConstraintBuilder(newConstraintName)
+								.WithColumns(constraintColumnsDict[constraintName].ToArray());
+						}
+						break;
+					case 'u':
+						{
+							constraintsBuilder
+								.AddUniqueKeyConstraintBuilder(newConstraintName)
+								.WithColumns(constraintColumnsDict[constraintName].ToArray());
+						}
+						break;
+					case 'f':
+						{
+							constraintsBuilder
+								.AddForeignKeyConstraintBuilder(newConstraintName)
+								.WithColumns(constraintColumnsDict[constraintName].ToArray())
+								.WithForeignTable(constraintForeignTableDict[constraintName])
+								.WithForeignColumns(constraintForeignColumnsDict[constraintName].ToArray());
+						}
+						break;
+					default:
+						continue;
+				}
+			}
+			#endregion
+
+			#region <--- Indexes --->
+
+			Dictionary<string, string> indexTableDict = new Dictionary<string, string>();
+			Dictionary<string, List<string>> indexColumnsDict = new Dictionary<string, List<string>>();
+			Dictionary<string, string> indexTypeDict = new Dictionary<string, string>();
+			DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
+			foreach (DataRow row in dtIndexes.Rows)
+			{
+				var indexName = (string)row["index_name"];
+				if (!indexTableDict.ContainsKey(indexName))
+					indexTableDict[indexName] = (string)row["table_name"];
+				if (!indexColumnsDict.ContainsKey(indexName))
+					indexColumnsDict[indexName] = new List<string>();
+				if (!indexTypeDict.ContainsKey(indexName))
+					indexTypeDict[indexName] = (string)row["index_type"];
+
+				indexColumnsDict[indexName].Add((string)row["column_name"]);
+			}
+
+			foreach (var indexName in indexTableDict.Keys)
+			{
+				var tableName = indexTableDict[indexName];
+
+				if (tableName != tableToClone)
+					continue;
+
+				var newIndexName = $"{indexName}_{suffix}";
+
+				var indexesBuilder = newTableBuilder.WithIndexesBuilder();
+
+				switch (indexTypeDict[indexName])
+				{
+					case "btree":
+						{
+							indexesBuilder
+								.AddBTreeIndexBuilder(newIndexName)
+								.WithColumns(indexColumnsDict[indexName].ToArray());
+						}
+						break;
+					case "gin":
+						{
+							indexesBuilder
+								.AddGinIndexBuilder(newIndexName)
+								.WithColumns(indexColumnsDict[indexName].ToArray());
+
+						}
+						break;
+					case "gist":
+						{
+							indexesBuilder
+								.AddGistIndexBuilder(newIndexName)
+								.WithColumns(indexColumnsDict[indexName].ToArray());
+						}
+						break;
+					case "hash":
+						{
+							indexesBuilder
+								.AddHashIndexBuilder(newIndexName)
+								.WithColumn(indexColumnsDict[indexName][0]);
+						}
+						break;
+					default:
+						continue;
+				}
+			}
+
+			#endregion
+			
+
+			var result =  SaveChanges(databaseBuilder);
+
+			if(result.IsSuccess)
+				scope.Complete();
+
+			return result;
+		}
 	}
 
 	public TfDatabaseUpdateResult SaveChanges(TfDatabaseBuilder databaseBuilder)

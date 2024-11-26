@@ -48,7 +48,7 @@ public static class TfDependencyInjection
 		services.AddSingleton<ITfTransactionRollbackNotifyService, TfTransactionRollbackNotifyService>();
 		services.AddSingleton<ITfDbConfigurationService, TfDatabaseConfigurationService>();
 		services.AddSingleton<ITfDatabaseService, TfDatabaseService>();
-		services.AddSingleton<IDatabaseManager, TfDatabaseManager>();
+		services.AddSingleton<ITfDatabaseManager, TfDatabaseManager>();
 		services.AddSingleton<ITfDboManager, TfDboManager>();
 		services.AddSingleton<IMigrationManager, MigrationManager>();
 		services.AddSingleton<IIdentityManager, IdentityManager>();
