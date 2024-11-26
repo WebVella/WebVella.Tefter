@@ -39,13 +39,11 @@ public partial interface ITfDataProviderManager
 		string warning = null,
 		string error = null);
 
-	internal Task Synchronize(
-		TfDataProviderSynchronizeTask task);
+	internal Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(
+		Guid providerId);
 
-	internal Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(Guid providerId);
-	
-//	internal Task Synchronize(
-//		TfDataProviderSynchronizeTask task);
+	//	internal Task Synchronize(
+	//		TfDataProviderSynchronizeTask task);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
@@ -372,6 +370,24 @@ ORDER BY st.created_on DESC");
 	}
 
 	#endregion
+
+	public Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(
+		Guid providerId)
+	{
+		var result = new TfDataProviderSourceSchemaInfo();
+		var providerResult = GetProvider(providerId);
+		if (!providerResult.IsSuccess) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
+		var provider = providerResult.Value;
+		try
+		{
+			return Result.Ok(provider.ProviderType.GetDataProviderSourceSchema(provider));
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(ex.Message);
+		}
+
+	}
 
 	#region <--- Synchronization Result Info --->
 
