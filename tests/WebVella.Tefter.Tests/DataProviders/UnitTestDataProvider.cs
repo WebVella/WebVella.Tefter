@@ -116,4 +116,9 @@ public class UnitTestDataProvider : ITfDataProviderType
 				throw new Exception("Type is not supported");
 		}
 	}
+
+	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider)
+	{
+		throw new NotImplementedException();
+	}
 }

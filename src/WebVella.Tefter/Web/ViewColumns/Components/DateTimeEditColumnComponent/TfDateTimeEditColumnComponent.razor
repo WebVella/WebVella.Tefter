@@ -8,11 +8,11 @@
 							  Value="@_value"
 							  ValueChanged="@((x) => _valueChanged(x))"
 							  View="@componentOptions.CalendarViewsSelection"
-							  Style="width:60%;" />
+							  Style="width:60%;min-width:120px;" />
 			<FluentTimePicker Id="@_valueTimeInputId"
 							  Value="@_value"
 							  ValueChanged="@((x) => _valueChanged(x))"
-							  Style="width:40%;" />
+							  Style="width:40%;min-width:120px;" />
 		</FluentStack>
 	</div>
 }

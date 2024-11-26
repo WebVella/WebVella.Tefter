@@ -11,6 +11,8 @@ public record TucSpaceViewColumn
 	public string QueryName { get; set; }
 	[Required(ErrorMessage = "required")]
 	public string Title { get; set; }
+	public string Icon { get; set; }
+	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
 
 	[Required(ErrorMessage = "required")]
@@ -73,6 +75,8 @@ public record TucSpaceViewColumn
 		SpaceViewId = model.SpaceViewId;
 		QueryName = model.QueryName;
 		Title = model.Title;
+		Icon = model.Icon;
+		OnlyIcon = model.OnlyIcon;
 		Position = model.Position;
 		ColumnType = model.ColumnType is not null ? new TucSpaceViewColumnType(model.ColumnType) : null;
 		ComponentType = model.ComponentType;
@@ -98,6 +102,8 @@ public record TucSpaceViewColumn
 			SpaceViewId = SpaceViewId,
 			QueryName = QueryName,
 			Title = Title,
+			Icon = Icon,
+			OnlyIcon = OnlyIcon,
 			Position = Position,
 			ColumnType = columnType,
 			ComponentType = ComponentType,

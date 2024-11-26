@@ -83,7 +83,7 @@ internal partial class AppStateUseCase
 		if (result.IsFailed)
 			return Result.Fail(new Error("CreateFile failed").CausedBy(result.Errors));
 
-		var getResult = _repositoryManager.GetFile(Path.GetFileName(form.LocalFilePath));
+		var getResult = _repositoryManager.GetFile(form.FileName);
 		if(getResult.IsFailed)
 			return Result.Fail(new Error("GetFileName failed").CausedBy(result.Errors));
 

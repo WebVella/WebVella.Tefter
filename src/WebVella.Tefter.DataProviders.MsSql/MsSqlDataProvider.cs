@@ -78,6 +78,11 @@ public class MsSqlDataProvider : ITfDataProviderType
 			provider);
 	}
 
+	TfDataProviderSourceSchemaInfo ITfDataProviderType.GetDataProviderSourceSchema(TfDataProvider provider)
+	{
+		throw new NotImplementedException();
+	}
+
 	private ReadOnlyCollection<TfDataProviderDataRow> ReadDataFromSql(
 		string connectionString,
 		string sql,
@@ -233,4 +238,6 @@ public class MsSqlDataProvider : ITfDataProviderType
 
 		throw new Exception($"Not supported source type for column {column.SourceName}");
 	}
+
+
 }

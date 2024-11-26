@@ -18,16 +18,16 @@ else
 
 @code {
 	[Parameter] public bool ShowTop { get; set; } = false;
-	private bool _visible = false;
+	private bool _visible = true;
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			await Task.Delay(1000);
-			_visible = true;
-			await InvokeAsync(StateHasChanged);
+			// await Task.Delay(1000);
+			// _visible = true;
+			// await InvokeAsync(StateHasChanged);
 
 		}
 	}

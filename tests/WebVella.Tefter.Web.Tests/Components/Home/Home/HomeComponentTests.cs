@@ -15,6 +15,7 @@ public class HomeComponentTests : BaseTest
 		cut.Find(".tf-layout__body__main");
 
 		Context.DisposeComponents();
+
 	}
 
 }

@@ -31,9 +31,9 @@ else
 								<FluentStack Wrap="false">
 									<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
 												  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
-									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")">
-										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
-									</FluentButton>
+									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
+												  Loading="@(_deletedColumnId == context.Id)" Disabled="@(_deletedColumnId is not null)"
+												  IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"/>
 								</FluentStack>
 							</div>
 						</td>
@@ -45,7 +45,7 @@ else
 						</td>
 						<td class="tf-grid-td">
 							<div>
-								<div>@context.DbType.Name</div>
+								<div>@((new TucDatabaseColumnTypeInfo(context.DbType)).Name)</div>
 								<div class="td-description">@context.SourceType</div>
 							</div>
 						</td>
@@ -65,7 +65,7 @@ else
 									}
 									@if (context.IsSearchable)
 									{
-										<FluentBadge Appearance="@Appearance.Accent">searchable [@context.PreferredSearchType.Name]</FluentBadge>
+										<FluentBadge Appearance="@Appearance.Accent">searchable [@((new TucDataProviderColumnSearchTypeInfo(context.PreferredSearchType)).Name)]</FluentBadge>
 									}
 									@if (context.IncludeInTableSearch)
 									{

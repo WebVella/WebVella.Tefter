@@ -106,7 +106,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	/// <param name="alias"></param>
 	/// <returns></returns>
-	protected virtual TucDatabaseColumnType? GetColumnDatabaseTypeByAlias(string alias)
+	protected virtual TfDatabaseColumnType? GetColumnDatabaseTypeByAlias(string alias)
 	{
 		if (Context.DataTable is null) return null;
 		var colName = GetColumnNameFromAlias(alias);
@@ -120,7 +120,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		catch { }
 		if (column == null) return null;
 
-		return column.DbType.ConvertSafeToEnum<TfDatabaseColumnType, TucDatabaseColumnType>();
+		return column.DbType;
 	}
 
 	protected virtual object GetColumnDataByAlias(string alias)
@@ -131,25 +131,25 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		switch (colDbType)
 		{
-			case TucDatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				return GetDataStructByAlias<short>(alias);
-			case TucDatabaseColumnType.AutoIncrement:
-			case TucDatabaseColumnType.Integer:
+			case TfDatabaseColumnType.AutoIncrement:
+			case TfDatabaseColumnType.Integer:
 				return GetDataStructByAlias<int>(alias);
-			case TucDatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				return GetDataStructByAlias<long>(alias);
-			case TucDatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				return GetDataStructByAlias<decimal>(alias);
-			case TucDatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				return GetDataStructByAlias<bool>(alias);
-			case TucDatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				return GetDataStructByAlias<DateOnly>(alias);
-			case TucDatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				return GetDataStructByAlias<DateTime>(alias);
-			case TucDatabaseColumnType.ShortText:
-			case TucDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
 				return GetDataStringByAlias(alias);
-			case TucDatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				return GetDataStructByAlias<Guid>(alias);
 			default:
 				throw new Exception("colDbType not supported");
@@ -164,25 +164,25 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		switch (colDbType)
 		{
-			case TucDatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				return typeof(short);
-			case TucDatabaseColumnType.AutoIncrement:
-			case TucDatabaseColumnType.Integer:
+			case TfDatabaseColumnType.AutoIncrement:
+			case TfDatabaseColumnType.Integer:
 				return typeof(int);
-			case TucDatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				return typeof(long);
-			case TucDatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				return typeof(decimal);
-			case TucDatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				return typeof(bool);
-			case TucDatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				return typeof(DateOnly);
-			case TucDatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				return typeof(DateTime);
-			case TucDatabaseColumnType.ShortText:
-			case TucDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
 				return typeof(string);
-			case TucDatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				return typeof(Guid);
 			default:
 				throw new Exception("colDbType not supported");
@@ -197,25 +197,25 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		switch (colDbType)
 		{
-			case TucDatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.ShortInteger:
 				return TfConverters.Convert<short>(stringValue);
-			case TucDatabaseColumnType.AutoIncrement:
-			case TucDatabaseColumnType.Integer:
+			case TfDatabaseColumnType.AutoIncrement:
+			case TfDatabaseColumnType.Integer:
 				return TfConverters.Convert<int>(stringValue);
-			case TucDatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.LongInteger:
 				return TfConverters.Convert<long>(stringValue);
-			case TucDatabaseColumnType.Number:
+			case TfDatabaseColumnType.Number:
 				return TfConverters.Convert<decimal>(stringValue);
-			case TucDatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				return TfConverters.Convert<bool>(stringValue);
-			case TucDatabaseColumnType.Date:
+			case TfDatabaseColumnType.Date:
 				return TfConverters.Convert<DateOnly>(stringValue);
-			case TucDatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.DateTime:
 				return TfConverters.Convert<DateTime>(stringValue);
-			case TucDatabaseColumnType.ShortText:
-			case TucDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
 				return stringValue;
-			case TucDatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				return TfConverters.Convert<Guid>(stringValue); ;
 			default:
 				throw new Exception("colDbType not supported");

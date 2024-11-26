@@ -34,12 +34,19 @@ fluent-button.accent svg {
 	color: var(--neutral-foreground-active);
 	font-size: 11px;
 }
+fluent-anchored-region > div{
+	box-shadow: none !important;
+	background-color: transparent !important;
+}
 
-/*fluent-anchored-region fluent-menu {
-	min-width: 100%;
-	max-height:300px;
-	overflow-y:scroll;
-}*/
+fluent-anchored-region fluent-menu-item {
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+
 
 .tf-menu-item-selected{
 	position:relative;

@@ -13,7 +13,7 @@ public record TucColumn
 	{
 		Id = model.Id;
 		DbName = model.DbName;
-		DbType = model.DbType;
+		DbType = new TucDatabaseColumnTypeInfo(model.DbType);
 		IsShared = false;
 	}
 	public TucColumn(TucSharedColumn model)

@@ -339,6 +339,10 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 				}
 			}
 
+			if(String.IsNullOrWhiteSpace(label)){ 
+				label = value?.ToString();
+			}
+
 			result.Add(new TucSelectOption(
 				value: value,
 				label: label,

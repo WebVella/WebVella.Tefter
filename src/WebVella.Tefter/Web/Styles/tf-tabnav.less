@@ -7,6 +7,11 @@
 	.fluent-nav-item {
 		flex: 0 0 auto;
 		margin: 0;
+
+		&.selected .positioning-region {
+			background: var(--neutral-layer-2);
+			border-top-color: var(--accent-base-color);
+		}
 	}
 
 	.fluent-nav-link {
@@ -64,4 +69,30 @@
 			border-top-color: var(--accent-base-color);
 		}
 	}
+}
+
+.modal-with-tabs .fluent-nav-item {
+	margin-right:5px !important;
+}
+
+.modal-with-tabs .fluent-nav-icon{
+	min-width:0 !important;
+}
+
+.modal-with-tabs .content-region {
+	margin-inline-start: 0 !important;
+}
+
+
+.modal-with-tabs > div {
+	display: flex;
+}
+
+.modal-with-tabs__title {
+	flex:0 0 auto;
+	padding-right:1rem;
+}
+
+.modal-with-tabs__menu {
+	flex: 1 1 auto;
 }

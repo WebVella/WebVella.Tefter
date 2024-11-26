@@ -38,32 +38,32 @@ public partial class TfFilterCard : TfBaseComponent
 
 		switch (column.DbType.TypeValue)
 		{
-			case TucDatabaseColumnType.ShortInteger:
-			case TucDatabaseColumnType.Integer:
-			case TucDatabaseColumnType.LongInteger:
-			case TucDatabaseColumnType.Number:
+			case TfDatabaseColumnType.ShortInteger:
+			case TfDatabaseColumnType.Integer:
+			case TfDatabaseColumnType.LongInteger:
+			case TfDatabaseColumnType.Number:
 				{
 					await AddFilter(typeof(TucFilterNumeric), dbColumn, parentId);
 				}
 				break;
-			case TucDatabaseColumnType.Boolean:
+			case TfDatabaseColumnType.Boolean:
 				{
 					await AddFilter(typeof(TucFilterBoolean), dbColumn, parentId);
 				}
 				break;
-			case TucDatabaseColumnType.Date:
-			case TucDatabaseColumnType.DateTime:
+			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateTime:
 				{
 					await AddFilter(typeof(TucFilterDateTime), dbColumn, parentId);
 				}
 				break;
-			case TucDatabaseColumnType.ShortText:
-			case TucDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+			case TfDatabaseColumnType.Text:
 				{
 					await AddFilter(typeof(TucFilterText), dbColumn, parentId);
 				}
 				break;
-			case TucDatabaseColumnType.Guid:
+			case TfDatabaseColumnType.Guid:
 				{
 					await AddFilter(typeof(TucFilterGuid), dbColumn, parentId);
 				}

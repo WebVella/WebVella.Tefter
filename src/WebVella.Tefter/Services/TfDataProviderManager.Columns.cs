@@ -26,6 +26,15 @@ public partial interface ITfDataProviderManager
 	public Result<TfDataProvider> CreateDataProviderColumn(
 		TfDataProviderColumn column);
 
+
+	/// <summary>
+	/// Creates new data provider column
+	/// </summary>
+	/// <param name="column"></param>
+	/// <returns></returns>
+	public Result<TfDataProvider> CreateBulkDataProviderColumn(Guid providerId,
+		List<TfDataProviderColumn> columns);
+
 	/// <summary>
 	/// Updates existing data provider column
 	/// </summary>
@@ -65,12 +74,12 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		Guid providerId)
 	{
 		var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
-		return _dboManager.GetList<TfDataProviderColumn>(providerId, 
+		return _dboManager.GetList<TfDataProviderColumn>(providerId,
 			nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
 	}
 
 	private List<TfDataProviderSystemColumn> GetDataProviderSystemColumns(
-		List<TfDataProviderSharedKey> sharedKeys )
+		List<TfDataProviderSharedKey> sharedKeys)
 	{
 		var systemColumns = new List<TfDataProviderSystemColumn>();
 
@@ -175,6 +184,60 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			return Result.Fail(new Error("Failed to create new data provider column.").CausedBy(ex));
 		}
 	}
+
+
+	/// <summary>
+	/// Creates new data provider columns in bulk
+	/// </summary>
+	/// <param name="column"></param>
+	/// <returns></returns>
+	public Result<TfDataProvider> CreateBulkDataProviderColumn(Guid providerId,
+		List<TfDataProviderColumn> columns)
+	{
+		try
+		{
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				List<ValidationError> validationErrors = new();
+				foreach (var column in columns) {
+					column.DataProviderId = providerId;
+					var colResult = CreateDataProviderColumn(column);
+					if(colResult.IsFailed){ 
+						foreach (var error in colResult.Errors){
+							if(error is ValidationError){ 
+								var valError = (ValidationError)error;
+								validationErrors.Add(new ValidationError( 
+									propertyName:$"{column.SourceName}-{valError.PropertyName}",
+									reason: valError.Reason
+								));
+							}
+							else{ 
+								return Result.Fail(error);
+							}
+						}
+					}
+					
+				}
+				if(validationErrors.Count > 0){
+					return Result.Fail(validationErrors);
+				}
+				scope.Complete();
+				var providerResult = GetProvider(providerId);
+
+				if (providerResult.IsFailed)
+					return Result.Fail(new Error("Failed to create new data provider column")
+						.CausedBy(providerResult.Errors));
+
+				var provider = providerResult.Value;
+				return Result.Ok(provider);
+			}
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create new data provider column.").CausedBy(ex));
+		}
+	}
+
 
 	/// <summary>
 	/// Updates existing data provider column
@@ -883,7 +946,7 @@ TfDataProviderColumn column)
 		{
 			return Result.Fail(new Error("Failed to create database column.").CausedBy(ex));
 		}
-	} 
+	}
 	#endregion
 
 	#region <--- validation --->
@@ -933,7 +996,7 @@ TfDataProviderColumn column)
 							return true;
 
 						var provider = providerResult.Value;
-						if(provider is null) 
+						if (provider is null)
 							return true;
 
 						var supportedSourceTypes = provider.ProviderType.GetSupportedSourceDataTypes();
@@ -1044,7 +1107,7 @@ TfDataProviderColumn column)
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
-						if ( !column.IsNullable && defaultValue is null)
+						if (!column.IsNullable && defaultValue is null)
 							return false;
 
 						return true;

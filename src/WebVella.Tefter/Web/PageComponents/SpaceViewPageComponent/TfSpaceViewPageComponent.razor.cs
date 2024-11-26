@@ -203,9 +203,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 				|| x.Region == TfScreenRegion.SpaceViewSelectorActions).ToList();
 		}
 		#endregion
-
 		return Task.FromResult((newAppState, newAuxDataState));
-
 	}
 
 	public override async Task OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)

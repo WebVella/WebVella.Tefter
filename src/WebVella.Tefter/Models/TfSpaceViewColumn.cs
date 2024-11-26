@@ -6,6 +6,8 @@ public class TfSpaceViewColumn
 	public Guid SpaceViewId { get; set; }
 	public string QueryName { get; set; }
 	public string Title { get; set; }
+	public string Icon { get; set; }
+	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
 	public ITfSpaceViewColumnType ColumnType { get; set; }
 	public Type ComponentType { get; set; }

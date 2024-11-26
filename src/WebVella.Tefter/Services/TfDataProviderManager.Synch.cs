@@ -38,6 +38,11 @@ public partial interface ITfDataProviderManager
 		string info = null,
 		string warning = null,
 		string error = null);
+
+	internal Task Synchronize(
+		TfDataProviderSynchronizeTask task);
+
+	internal Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(Guid providerId);
 	
 //	internal Task Synchronize(
 //		TfDataProviderSynchronizeTask task);
@@ -145,7 +150,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	{
 		try
 		{
-			TfDataProviderSynchronizeTaskExtended dbo = 
+			TfDataProviderSynchronizeTaskExtended dbo =
 				_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
 @"SELECT
 	st.id,
@@ -378,12 +383,12 @@ ORDER BY st.created_on DESC");
 			var orderSettings = new TfOrderSettings(
 			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
 			OrderDirection.ASC);
-			
+
 			var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
 					"WHERE task_id = @task_id",
 					orderSettings,
 					new NpgsqlParameter("@task_id", taskId));
-			
+
 			var result = new List<TfDataProviderSynchronizeResultInfo>();
 
 			foreach (var dbo in dbos)
@@ -473,7 +478,7 @@ ORDER BY st.created_on DESC");
 	//		int currentRowIndex = 0;
 	//		var sourceColumns = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 
-			
+
 
 	//		foreach (var row in rows)
 	//		{
