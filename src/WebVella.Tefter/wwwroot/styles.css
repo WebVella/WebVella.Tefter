@@ -941,6 +941,9 @@ fluent-select[readonly]::part(control) {
 .fluent-input-label {
   color: var(--neutral-foreground-hint) !important;
 }
+fluent-switch::part(label) {
+  margin-inline-end: 0;
+}
 .tf-select-menu {
   display: flex;
   flex-flow: column;

@@ -103,16 +103,26 @@ else
 								@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 								{
 									<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{_gridHeadBackgroundStyle}{column.HeaderStyle}{configCss[columnIndex].Item3}")">
-										@if (column.Title.StartsWith("icon:"))
-										{
-											<div style="display:flex;">
-												<FluentIcon Value="@TfConstants.GetIcon(column.Title.Replace("icon:",""))" />
-											</div>
-										}
-										else
-										{
-											<div>@column.Title</div>
-										}
+										<div>
+											@if (String.IsNullOrWhiteSpace(column.Icon))
+											{
+												<div>@column.Title</div>
+
+											}
+											else if (column.OnlyIcon)
+											{
+												<div style="display:flex;">
+													<FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
+												</div>
+											}
+											else
+											{
+												<div style="display:flex">
+													<FluentIcon Value="@TfConstants.GetIcon(column.Icon)" />
+													<div style="padding-left:5px;">@column.Title</div>
+												</div>
+											}
+										</div>
 									</th>
 									columnIndex++;
 								}
