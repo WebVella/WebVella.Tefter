@@ -35,6 +35,12 @@ internal class TfSpaceViewColumnDbo
 	[TfDboModelProperty("title")]
 	public string Title { get; set; }
 
+	[TfDboModelProperty("icon")]
+	public string Icon { get; set; }
+
+	[TfDboModelProperty("only_icon")]
+	public bool OnlyIcon { get; set; } = false;
+
 	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
