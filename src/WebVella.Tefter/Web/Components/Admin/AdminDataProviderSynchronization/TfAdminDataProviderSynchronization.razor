@@ -24,8 +24,6 @@
 					<th class="tf-grid-th">status</th>
 					<th class="tf-grid-th" style="width:140px;">started on</th>
 					<th class="tf-grid-th" style="width:140px;">completed on</th>
-					<th class="tf-grid-th" style="width:160px;">infos</th>
-					<th class="tf-grid-th" style="width:160px;">warnings</th>
 					<th class="tf-grid-th" style="width:160px;">errors</th>
 				</tr>
 			</thead>
@@ -44,34 +42,6 @@
 						</td>
 						<td class="tf-grid-td">
 							<div>@context.CompletedOn?.ToString("yyyy-MM-dd HH:mm")</div>
-						</td>
-						<td class="tf-grid-td">
-							<div>
-								@if (context.InfoCount > 0)
-								{
-									<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Info))">
-										@LOC("{0} infos", context.InfoCount)
-									</FluentButton>
-								}
-								else
-								{
-									<FluentButton Disabled="true">@LOC("no infos")</FluentButton>
-								}
-							</div>
-						</td>
-						<td class="tf-grid-td">
-							<div>
-								@if (context.WarningCount > 0)
-								{
-									<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Warning))">
-										@LOC("{0} warnings", context.WarningCount)
-									</FluentButton>
-								}
-								else
-								{
-									<FluentButton Disabled="true">@LOC("no warnings")</FluentButton>
-								}
-							</div>
 						</td>
 						<td class="tf-grid-td">
 							<div>
