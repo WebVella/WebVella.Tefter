@@ -15,14 +15,14 @@ public partial class TfSpaceViewDetailsNav : TfBaseComponent
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceViewId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Text = LOC("Details")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = String.Format(TfConstants.SpaceViewPagesPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceViewId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Connected pages")
 		});

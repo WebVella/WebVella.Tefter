@@ -2,7 +2,7 @@
 public partial class TfSelectColor : TfBaseComponent
 {
 	[Parameter] public bool Required { get; set; } = false;
-	[Parameter] public OfficeColor Value { get; set; }
+	[Parameter] public OfficeColor? Value { get; set; }
 	[Parameter] public EventCallback<OfficeColor> ValueChanged { get; set; }
 	private string _elementId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 	private bool _open = false;

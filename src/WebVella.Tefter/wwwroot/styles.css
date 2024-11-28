@@ -914,6 +914,17 @@ fluent-anchored-region fluent-menu-item {
   overflow: hidden;
   white-space: nowrap;
   max-width: 100%;
+  position: relative;
+}
+fluent-anchored-region fluent-menu-item > .tf-addon {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  display: block;
+  padding: 0;
 }
 .tf-menu-item-selected {
   position: relative;

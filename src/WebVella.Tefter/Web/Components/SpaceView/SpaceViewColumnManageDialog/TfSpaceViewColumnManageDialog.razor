@@ -33,7 +33,8 @@
 				</FluentGridItem>
 				<FluentGridItem xs="2">
 					<FluentInputLabel Label="@LOC("Only icon")" />
-					<FluentSwitch @bind-Value=@_form.OnlyIcon/>
+					<FluentSwitch @bind-Value=@_form.OnlyIcon />
+					<FluentValidationMessage For="@(() => _form.OnlyIcon)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentNumberField TValue="short?" @bind-Value=@_form.Position AutoComplete="off"

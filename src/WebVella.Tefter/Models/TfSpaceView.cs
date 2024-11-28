@@ -88,6 +88,12 @@ public class TfSpaceViewPreset
 
 	[JsonPropertyName("is_group")]
 	public bool IsGroup { get; set; } = false;
+
+	[JsonPropertyName("color")]
+	public OfficeColor Color { get; set; } = OfficeColor.Default;
+
+	[JsonPropertyName("icon")]
+	public string Icon { get; set; }
 }
 
 public enum TfSpaceViewType

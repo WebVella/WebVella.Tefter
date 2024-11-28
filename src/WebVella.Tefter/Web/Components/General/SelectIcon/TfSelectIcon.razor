@@ -9,23 +9,29 @@
 else
 {
 	<div class="tf-select-icon">
-		<FluentButton Id="@_elementId" Style="width:100%"
-					  IconStart="Icons.GetInstance(_icon)"
-					  OnClick="@(_=> _onOpenChanged(true))">
-			@if (!String.IsNullOrWhiteSpace(Value))
+		<FluentStack HorizontalGap="5">
+			<FluentButton Id="@_elementId" Style="width:100%" Class="tf-select-btn"
+						  IconStart="Icons.GetInstance(_icon)"
+						  OnClick="@(_=> _onOpenChanged(true))">
+				@if (!String.IsNullOrWhiteSpace(Value))
+				{
+					<span>@Value</span>
+				}
+				else if (!String.IsNullOrWhiteSpace(Placeholder))
+				{
+					<span class="text-muted">@Placeholder</span>
+				}
+				else
+				{
+					<span class="text-muted">@LOC("select...")</span>
+				}
+				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
+			</FluentButton>
+			@if (!Required && !String.IsNullOrWhiteSpace(Value))
 			{
-				<span>@Value</span>
+				<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=>_optionChanged(null))" />
 			}
-			else if (!String.IsNullOrWhiteSpace(Placeholder))
-			{
-				<span class="text-muted">@Placeholder</span>
-			}
-			else
-			{
-				<span class="text-muted">@LOC("select...")</span>
-			}
-			<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
-		</FluentButton>
+		</FluentStack>
 		@if (_open)
 		{
 			<FluentOverlay Visible="@true" OnClose="@(_=> _onOpenChanged(false))" Transparent="true" FullScreen="true" />

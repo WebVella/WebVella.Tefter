@@ -77,7 +77,7 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Icon")" />
-					<TfSelectIcon @bind-Value="_form.Icon" />
+					<TfSelectIcon @bind-Value="_form.Icon" Required="true" />
 					<FluentValidationMessage For="@(() => _form.Icon)" />
 				</FluentGridItem>
 			</FluentGrid>
