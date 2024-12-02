@@ -2,7 +2,7 @@
 internal partial class AppStateUseCase
 {
 	internal Task<(TfAppState, TfAuxDataState)> InitSpaceDataAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, 
+		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
@@ -18,12 +18,8 @@ internal partial class AppStateUseCase
 				SpaceDataPageSize = TfConstants.PageSize,
 				SpaceDataSearch = null
 			};
-			return Task.FromResult((newAppState,newAuxDataState));
+			return Task.FromResult((newAppState, newAuxDataState));
 		}
-		//SpaceDataList
-		if (newAppState.Space?.Id != oldAppState.Space?.Id)
-			newAppState = newAppState with { SpaceDataList = GetSpaceDataList(newAppState.Route.SpaceId.Value) };
-		//SpaceData
 		if (newAppState.Route.SpaceDataId is not null)
 		{
 			newAppState = newAppState with { SpaceData = GetSpaceData(newAppState.Route.SpaceDataId.Value) };
@@ -56,7 +52,7 @@ internal partial class AppStateUseCase
 		newAppState = newAppState with { AllDataProviders = GetDataProviderList() };
 
 
-		return Task.FromResult((newAppState,newAuxDataState));
+		return Task.FromResult((newAppState, newAuxDataState));
 	}
 	internal virtual TucSpaceData GetSpaceData(Guid spaceDataId)
 	{
@@ -66,7 +62,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceData failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -86,7 +82,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetSpaceDataList failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -266,7 +262,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("spaceDataId not provided"),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -279,7 +275,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("Space Data is not found"),
 				toastErrorMessage: "Space Data is not found",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Space Data is not found",
 				toastService: _toastService,
 				messageService: _messageService
@@ -311,7 +307,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -320,6 +316,81 @@ internal partial class AppStateUseCase
 		}
 
 		return serviceResult.Value;
+	}
+
+	internal virtual List<Guid> GetSpaceDataIdList(
+		Guid spaceDataId,
+		List<TucFilterBase> presetFilters = null,
+		List<TucSort> presetSorts = null,
+		List<TucFilterBase> userFilters = null,
+		List<TucSort> userSorts = null,
+		string search = null,
+		int? page = null,
+		int? pageSize = null)
+	{
+		if (spaceDataId == Guid.Empty)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("spaceDataId not provided"),
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail("Space Data is not found"),
+				toastErrorMessage: "Space Data is not found",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Space Data is not found",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+
+		List<TfFilterBase> presetFiltersSM = null;
+		List<TfSort> presetSortsSM = null;
+		List<TfFilterBase> userFiltersSM = null;
+		List<TfSort> userSortsSM = null;
+		if (presetFilters is not null) presetFiltersSM = presetFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+		if (presetSorts is not null) presetSortsSM = presetSorts.Select(x => x.ToModel()).ToList();
+		if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+		if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
+
+		var serviceResult = _dataManager.QuerySpaceData(
+			spaceDataId: spaceDataId,
+			presetFilters: presetFiltersSM,
+			presetSorts: presetSortsSM,
+			userFilters: userFiltersSM,
+			userSorts: userSortsSM,
+			search: search,
+			page: page,
+			pageSize: pageSize
+		);
+		if (serviceResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var result = new List<Guid>();
+		for (int i = 0; i < serviceResult.Value.Rows.Count; i++)
+		{
+			result.Add((Guid)serviceResult.Value.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);
+		}
+		return result;
 	}
 
 	internal virtual Result<TfDataTable> SaveDataDataTable(TfDataTable dt)
@@ -336,7 +407,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("spaceDataId not provided"),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -349,7 +420,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail("Space Data is not found"),
 				toastErrorMessage: "Space Data is not found",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Space Data is not found",
 				toastService: _toastService,
 				messageService: _messageService
@@ -362,7 +433,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProvider failed").CausedBy(dataProviderResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
@@ -387,7 +458,7 @@ internal partial class AppStateUseCase
 			ResultUtils.ProcessServiceResult(
 				result: Result.Fail(new Error("GetProviders failed").CausedBy(serviceResult.Errors)),
 				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
+				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService

@@ -22,3 +22,17 @@ public static partial class AppStateReducers
 
 	}
 }
+
+//public partial class AppStateEffect
+//{
+//	private readonly IJSRuntime _jsRuntime;
+//	public AppStateEffect(IJSRuntime jsRuntime)
+//	{
+//		_jsRuntime = jsRuntime;
+//	}
+//	[EffectMethod]
+//	public async Task HandleSetAppStateActionEffect(SetAppStateAction action,IDispatcher dispatcher)
+//	{
+//		await _jsRuntime.InvokeVoidAsync("sessionStorage.setItem", TfConstants.SpaceViewSelectedRowsKey, JsonSerializer.Serialize(action.State.SelectedDataRows));
+//	}
+//}

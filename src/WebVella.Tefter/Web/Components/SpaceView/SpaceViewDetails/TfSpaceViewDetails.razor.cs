@@ -10,6 +10,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	[Parameter] public Guid? SpaceViewId { get; set; }
 
 	private bool _isDataLoading = true;
+	private bool _selectAllLoading = false;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -192,6 +193,56 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		queryDict[TfConstants.FiltersQueryName] = null;
 		queryDict[TfConstants.SortsQueryName] = null;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
+	}
+	private async Task _onSelectAll()
+	{
+		try
+		{
+			_selectAllLoading = true;
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
+			TucSpaceViewPreset preset = null;
+			if (TfAppState.Value.Route.SpaceViewPresetId is not null)
+				preset = TfAppState.Value.SpaceView.Presets.GetPresetById(TfAppState.Value.Route.SpaceViewPresetId.Value);
+			var resultSrv = UC.GetSpaceDataIdList(
+							spaceDataId: TfAppState.Value.SpaceView.SpaceDataId.Value,
+							presetFilters: preset is not null ? preset.Filters : null,
+							presetSorts: preset is not null ? preset.SortOrders : null,
+							userFilters: TfAppState.Value.SpaceViewFilters,
+							userSorts: TfAppState.Value.SpaceViewSorts,
+							search: TfAppState.Value.Route.Search,
+							page: null,
+							pageSize: null
+					);
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with { SelectedDataRows = resultSrv }));
+		}
+		catch { }
+		finally
+		{
+			_selectAllLoading = false;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _onDeSelectAll()
+	{
+		try
+		{
+			_selectAllLoading = true;
+			await InvokeAsync(StateHasChanged);
+			await Task.Delay(1);
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with { SelectedDataRows = new() }));
+		}
+		catch { }
+		finally
+		{
+			_selectAllLoading = false;
+			await InvokeAsync(StateHasChanged);
+		}
 	}
 
 	private string _getEmbeddedStyles()

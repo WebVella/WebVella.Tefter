@@ -1,8 +1,8 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 @if (TfAppState.Value.SpaceView is not null
-																&& TfAppState.Value.Route.SpaceNodeId is not null
-												&& TfAppState.Value.SpaceView.Presets.Count > 0)
+		&& TfAppState.Value.Route.SpaceNodeId is not null
+			&& TfAppState.Value.SpaceView.Presets.Count > 0)
 {
 	var selectionDict = _generateSelectionDict();
 	<div class="tf-header-nav" style="@($"--space-color: {TfAppState.Value.SpaceColorString};")">
