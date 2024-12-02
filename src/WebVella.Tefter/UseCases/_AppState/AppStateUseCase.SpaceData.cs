@@ -371,7 +371,9 @@ internal partial class AppStateUseCase
 			userSorts: userSortsSM,
 			search: search,
 			page: page,
-			pageSize: pageSize
+			pageSize: pageSize,
+			noRows:false,
+			returnOnlyTfIds:true
 		);
 		if (serviceResult.IsFailed)
 		{
