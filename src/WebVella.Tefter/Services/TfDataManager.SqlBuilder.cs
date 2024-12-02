@@ -30,6 +30,7 @@ public partial class TfDataManager
 		private int? _page = null;
 		private int? _pageSize = null;
 		private List<Guid> _tfIds = null;
+		private bool _returnOnlyTfIds = false;
 
 		public SqlBuilder(
 			ITfDatabaseService dbService,
@@ -41,7 +42,8 @@ public partial class TfDataManager
 			List<TfSort> presetSorts = null,
 			string search = null,
 			int? page = null,
-			int? pageSize = null)
+			int? pageSize = null,
+			bool returnOnlyTfIds = false)
 		{
 			if (dbService is null)
 				throw new ArgumentNullException(nameof(dbService));
@@ -59,6 +61,8 @@ public partial class TfDataManager
 
 			if (presetFilters is not null)
 				_presetFilters = presetFilters;
+
+			_returnOnlyTfIds = returnOnlyTfIds;
 
 			_presetSorts = presetSorts;
 
@@ -338,7 +342,10 @@ public partial class TfDataManager
 				_selectColumns.Select(x => x.GetSelectString()).ToList());
 
 			StringBuilder sb = new StringBuilder();
-			sb.Append($"SELECT {columns} {Environment.NewLine}FROM {_tableName} {_tableAlias}");
+			if(_returnOnlyTfIds)
+				sb.Append($"SELECT tf_id {Environment.NewLine}FROM {_tableName} {_tableAlias}");
+			else
+				sb.Append($"SELECT {columns} {Environment.NewLine}FROM {_tableName} {_tableAlias}");
 
 			//joins are created for select columns, filter columns and sort columns
 			var columnsToJoin = _selectColumns
@@ -642,7 +649,7 @@ public partial class TfDataManager
 					dbType = DbType.StringFixedLength;
 
 				NpgsqlParameter parameter = new NpgsqlParameter(parameterName, dbType);
-				parameter.Value = GetFilterParameterValue(filter,typeof(TfFilterText));
+				parameter.Value = GetFilterParameterValue(filter, typeof(TfFilterText));
 				parameters.Add(parameter);
 
 				switch (((TfFilterText)filter).ComparisonMethod)
@@ -672,11 +679,11 @@ public partial class TfDataManager
 		}
 
 		private object GetFilterParameterValue(
-			TfFilterBase filter, 
+			TfFilterBase filter,
 			Type type)
 		{
 			object value = null;
-			
+
 			if (type == typeof(TfFilterText))
 			{
 				value = ((TfFilterText)filter).Value;

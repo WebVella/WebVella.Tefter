@@ -160,6 +160,51 @@ public partial class DataManagerTests : BaseTest
 	}
 
 	[Fact]
+	public async Task SpaceData_QueryOnlyTfIds()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+
+			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
+				var result = dataManager.QuerySpaceData(spaceData.Id,
+					noRows: false,
+					//search: "10",
+					//page: 1,
+					//pageSize: 5,
+					returnOnlyTfIds: true,
+					//userFilters: new List<TfFilterBase>
+					//{
+					//	new TfFilterOr(new[]
+					//		{
+					//			(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
+					//			(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
+					//			(TfFilterBase)new TfFilterText("sk_shared_key_text", TfFilterTextComparisonMethod.Contains, "a"),
+					//			(TfFilterBase)new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
+					//		})
+
+					//},
+					userSorts: new List<TfSort> {
+						new TfSort {
+							DbName ="missing_column",
+							Direction=TfSortDirection.DESC} ,
+						new TfSort {
+							DbName ="guid_column",
+							Direction=TfSortDirection.DESC} ,
+						new TfSort {
+							DbName ="sk_shared_key_int",
+							Direction=TfSortDirection.ASC}
+					});
+
+			}
+		}
+	}
+
+
+	[Fact]
 	public async Task ID_CRUD()
 	{
 		using (await locker.LockAsync())

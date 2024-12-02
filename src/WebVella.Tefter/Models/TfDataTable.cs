@@ -85,13 +85,19 @@ public sealed class TfDataTable
 	{
 		var columns = new TfDataColumnCollection(this);
 
-		columns.Add(new TfDataColumn(
-			this,
-			"tf_id",
-			TfDatabaseColumnType.Guid,
-			isNullable: false,
-			isShared: false,
-			isSystem: true));
+		//the case we return only tf_ids
+		if (onlyColumns.Count == 1 && onlyColumns[0] == "tf_id")
+		{
+			columns.Add(new TfDataColumn(
+				this,
+				"tf_id",
+				TfDatabaseColumnType.Guid,
+				isNullable: false,
+				isShared: false,
+				isSystem: true));
+			
+			return columns;
+		}
 
 		columns.Add(new TfDataColumn(
 			this,

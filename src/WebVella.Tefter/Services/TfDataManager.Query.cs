@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+
+namespace WebVella.Tefter;
 
 public partial interface ITfDataManager
 {
@@ -23,7 +25,8 @@ public partial interface ITfDataManager
 		string search = null,
 		int? page = null,
 		int? pageSize = null,
-		bool noRows = false);
+		bool noRows = false,
+		bool returnOnlyTfIds = false);
 
 	public Result<TfDataTable> QuerySpaceData(
 		Guid spaceDataId,
@@ -214,7 +217,8 @@ public partial class TfDataManager
 		string search = null,
 		int? page = null,
 		int? pageSize = null,
-		bool noRows = false)
+		bool noRows = false,
+		bool returnOnlyTfIds = false ) 
 	{
 		try
 		{
@@ -248,7 +252,8 @@ public partial class TfDataManager
 				presetSorts: presetSorts,
 				search: search,
 				page: page,
-				pageSize: pageSize);
+				pageSize: pageSize,
+				returnOnlyTfIds: returnOnlyTfIds);
 
 			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
 
@@ -793,7 +798,6 @@ public partial class TfDataManager
 	}
 
 	#endregion
-
 
 	public Result DeleteDataProviderRowByTfId(
 		TfDataProvider provider,

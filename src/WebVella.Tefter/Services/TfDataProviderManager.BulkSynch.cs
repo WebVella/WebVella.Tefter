@@ -280,7 +280,32 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					case TfDatabaseColumnType.Date:
 					case TfDatabaseColumnType.DateTime:
 						{
-							((List<DateTime?>)paramsDict[column.DbName].Value).Add((DateTime?)row[column.DbName]);
+							DateTime? value = null;
+							if (row[column.DbName] is DateOnly)
+							{
+								value = ((DateOnly)row[column.DbName]).ToDateTime();
+							}
+							else if (row[column.DbName] is DateOnly?)
+							{
+								if (row[column.DbName] == null)
+								{
+									value = null;
+								}
+								else
+								{
+									value = ((DateOnly)row[column.DbName]).ToDateTime();
+								}
+							}
+							else if (row[column.DbName] is DateTime? || row[column.DbName] is DateTime)
+							{
+								value = (DateTime?)row[column.DbName];
+							}
+							else
+							{
+								throw new Exception("Some source rows contains non DateTime or DateOnly objects for column 'column.DbName' of type Date\\DateTime.");
+							}
+
+							((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
 						}
 						break;
 					case TfDatabaseColumnType.ShortInteger:
