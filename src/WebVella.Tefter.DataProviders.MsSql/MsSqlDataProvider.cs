@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter.DataProviders.MsSql;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using FluentResults;
+
+namespace WebVella.Tefter.DataProviders.MsSql;
 
 public class MsSqlDataProvider : ITfDataProviderType
 {
@@ -78,9 +81,107 @@ public class MsSqlDataProvider : ITfDataProviderType
 			provider);
 	}
 
-	TfDataProviderSourceSchemaInfo ITfDataProviderType.GetDataProviderSourceSchema(TfDataProvider provider)
+	TfDataProviderSourceSchemaInfo ITfDataProviderType.GetDataProviderSourceSchema(
+		TfDataProvider provider)
 	{
-		throw new NotImplementedException();
+		var settings = JsonSerializer.Deserialize<MsSqlDataProviderSettings>(provider.SettingsJson);
+
+		if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+			throw new Exception("Connection string is not specified.");
+
+		if (string.IsNullOrWhiteSpace(settings.SqlQuery))
+			throw new Exception("Sql query is not specified.");
+
+		TfDataProviderSourceSchemaInfo schemaInfo = new TfDataProviderSourceSchemaInfo();
+
+		SqlConnection connection = new SqlConnection(settings.ConnectionString);
+		try
+		{
+			connection.Open();
+
+			//TODO Rumen - rewrite code bellow to use GetSchemaTable
+			//DataTable dtSchema = null;
+
+			//using (var schemaCommand = new SqlCommand(settings.SqlQuery, connection))
+			//{
+			//	using (var reader = schemaCommand.ExecuteReader(CommandBehavior.SchemaOnly))
+			//	{
+			//		dtSchema = reader.GetSchemaTable();
+			//	}
+			//}
+
+			SqlCommand command = new SqlCommand($"WITH X AS ( {settings.SqlQuery} ) SELECT TOP 1 * FROM X", connection);
+
+			SqlDataAdapter adapter = new SqlDataAdapter(command);
+
+			DataTable dt = new DataTable();
+
+			adapter.Fill(dt);
+
+			foreach (DataColumn column in dt.Columns)
+			{
+				if (column.DataType == typeof(Guid) || column.DataType == typeof(Guid?))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Guid;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "GUID";
+				}
+				else if (column.DataType == typeof(DateOnly) || column.DataType == typeof(DateOnly?))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Date;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "DATE";
+				}
+				else if (column.DataType == typeof(DateTime) || column.DataType == typeof(DateTime?))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.DateTime;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "DATETIME";
+				}
+				else if (column.DataType == typeof(short) || column.DataType == typeof(short?))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.ShortInteger;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "SHORT_INTEGER";
+				}
+				else if (column.DataType == typeof(int) || column.DataType == typeof(int?))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Integer;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "INTEGER";
+				}
+				else if (column.DataType == typeof(long) || column.DataType == typeof(long?))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.LongInteger;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "LONG_INTEGER";
+				}
+				else if (column.DataType == typeof(decimal) || column.DataType == typeof(decimal?))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Number;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "NUMBER";
+				}
+				else if (column.DataType == typeof(string))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Text;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "TEXT";
+				}
+				else if (column.DataType == typeof(bool))
+				{
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Boolean;
+					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "BOOLEAN";
+				}
+
+			}
+			schemaInfo.SourceTypeSupportedDbTypes = new Dictionary<string, List<TfDatabaseColumnType>>();
+			foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
+			{
+				var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
+				var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
+				schemaInfo.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
+			}
+
+		}
+		finally
+		{
+			connection.Close();
+		}
+
+		return schemaInfo;
 	}
 
 	private ReadOnlyCollection<TfDataProviderDataRow> ReadDataFromSql(
@@ -105,7 +206,7 @@ public class MsSqlDataProvider : ITfDataProviderType
 
 			var providerColumnsWithSourceName = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 
-			if(!providerColumnsWithSourceName.Any())
+			if (!providerColumnsWithSourceName.Any())
 			{
 				throw new Exception($"No columns with source name are specified.");
 			}
@@ -164,7 +265,7 @@ public class MsSqlDataProvider : ITfDataProviderType
 			throw new Exception($"Trying to set null value for column " +
 				$"'{column.SourceName}' with is not nullable");
 		}
-			
+
 
 		switch (column.DbType)
 		{
