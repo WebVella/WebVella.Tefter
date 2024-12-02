@@ -1,13 +1,13 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 @if (TfAppState.Value.SpaceView is not null
-		&& TfAppState.Value.Route.SpaceNodeId is not null
-&& TfAppState.Value.SpaceView.Presets.Count > 0)
+																&& TfAppState.Value.Route.SpaceNodeId is not null
+												&& TfAppState.Value.SpaceView.Presets.Count > 0)
 {
 	var selectionDict = _generateSelectionDict();
 	<div class="tf-header-nav" style="@($"--space-color: {TfAppState.Value.SpaceColorString};")">
 		<FluentAnchor Href="#" OnClick="@(_=> _onClick(null))" Appearance="@Appearance.Outline"
-						Id="space-view-unfiltered"
+					  Id="space-view-unfiltered"
 					  Class="@(TfAppState.Value.Route.SpaceViewPresetId is null ? "main-active" : "")">
 			<FluentIcon Value="@TfConstants.SpaceViewIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
 		</FluentAnchor>
@@ -17,7 +17,15 @@
 			{
 				<FluentAnchor Id="@($"tf-{item.Id}")" Href="#" Appearance="@Appearance.Outline" OnClick="@(_=> _onClick(item.Id))"
 							  Class="@(selectionDict[item.Id].Contains(TfAppState.Value.Route.SpaceViewPresetId ?? Guid.Empty) ? "main-active" : "")">
+					@if (!String.IsNullOrWhiteSpace(item.Icon))
+					{
+						<FluentIcon Slot="start" Value="@TfConstants.GetIcon(item.Icon)" />
+					}
 					@item.Name
+					@if (item.Color != OfficeColor.Default)
+					{
+						<span class="tf-addon" style="@($"background-color:{item.Color.ToAttributeValue()}")"></span>
+					}
 				</FluentAnchor>
 			}
 			else
@@ -25,10 +33,18 @@
 				<FluentAnchor Href="#" Id="@($"tf-{item.Id}")"
 							  OnClick="@(_=> _toggleMenu(item.Id))" Appearance="@Appearance.Outline"
 							  Class="@(selectionDict[item.Id].Contains(TfAppState.Value.Route.SpaceViewPresetId ?? Guid.Empty) ? "main-active" : "")">
+					@if (!String.IsNullOrWhiteSpace(item.Icon))
+					{
+						<FluentIcon Slot="start" Value="@TfConstants.GetIcon(item.Icon)" />
+					}
 					@item.Name
 					@if (item.Nodes.Count > 0)
 					{
 						<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" />
+					}
+					@if (item.Color != OfficeColor.Default)
+					{
+						<span class="tf-addon" style="@($"background-color:{item.Color.ToAttributeValue()}")"></span>
 					}
 				</FluentAnchor>
 				@if (item.Nodes.Count > 0)

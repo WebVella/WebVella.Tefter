@@ -34,8 +34,6 @@ public record TucDataProviderSyncTask
 				return "not completed";
 		}
 	}
-	public long InfoCount { get; set; } = 0;
-	public long WarningCount { get; set; } = 0;
 	public long ErrorCount { get; set; } = 0;
 	public TucDataProviderSyncTask() { }
 	public TucDataProviderSyncTask(TfDataProviderSynchronizeTaskExtended model)
@@ -45,8 +43,6 @@ public record TucDataProviderSyncTask
 		CreatedOn = model.CreatedOn;
 		StartedOn = model.StartedOn;
 		CompletedOn = model.CompletedOn;
-		InfoCount = model.InfoCount;
-		WarningCount = model.WarningCount;
 		ErrorCount = model.ErrorCount;
 	}
 }

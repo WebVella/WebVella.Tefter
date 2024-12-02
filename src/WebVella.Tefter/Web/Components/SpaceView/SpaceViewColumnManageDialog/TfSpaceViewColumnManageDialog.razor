@@ -17,7 +17,6 @@
 				<FluentGridItem xs="6">
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Title
 									 Label="@LOC("Title")" Style="width:100%" AutoComplete="off" />
-					<div class="tf-input-description">@LOC("for icon type 'icon:[FLUENT_UI_ICON_NAME]' eg. icon:Comment")</div>
 					<FluentValidationMessage For="@(() => _form.Title)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
@@ -27,12 +26,21 @@
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
+				<FluentGridItem xs="4">
+					<FluentInputLabel Label="@LOC("Icon")" />
+					<TfSelectIcon @bind-Value=@_form.Icon />
+					<FluentValidationMessage For="@(() => _form.Icon)" />
+				</FluentGridItem>
+				<FluentGridItem xs="2">
+					<FluentInputLabel Label="@LOC("Only icon")" />
+					<FluentSwitch @bind-Value=@_form.OnlyIcon />
+					<FluentValidationMessage For="@(() => _form.OnlyIcon)" />
+				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentNumberField TValue="short?" @bind-Value=@_form.Position AutoComplete="off"
 									   Label="@LOC("Insert in position")" Style="width:100%" Placeholder="@LOC("leave empty for last")" />
 					<FluentValidationMessage For="@(() => _form.Position)" />
 				</FluentGridItem>
-				<FluentGridItem xs="6"></FluentGridItem>
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">

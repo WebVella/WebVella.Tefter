@@ -9,6 +9,7 @@
 	::deep > fluent-anchor {
 		border-radius: 5px 5px 0 0 !important;
 		height: 36px;
+		position:relative;
 	}
 
 		::deep > fluent-anchor.main-active {
@@ -40,4 +41,14 @@
 		margin-inline-start: 0px;
 		position:relative;
 		right:-3px;
+	}
+
+	::deep > fluent-anchor > .tf-addon{
+		position:absolute;
+		content:"";
+		left:0;
+		right:0;
+		bottom:-3px;
+		height: 3px;
+		display:block;
 	}

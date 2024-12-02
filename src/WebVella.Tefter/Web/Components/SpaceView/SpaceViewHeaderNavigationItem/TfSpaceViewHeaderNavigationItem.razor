@@ -3,7 +3,17 @@
 @if (!Item.IsGroup)
 {
 	<FluentMenuItem Id="@($"tf-{Item.Id}")" Label="@Item.Name" OnClick="_onClick"
-					Checked="SelectionDictionary[Item.Id].Contains(ActivePresetId ?? Guid.Empty)" />
+					Checked="SelectionDictionary[Item.Id].Contains(ActivePresetId ?? Guid.Empty)">
+
+		@if (!String.IsNullOrWhiteSpace(Item.Icon))
+		{
+			<FluentIcon Slot="start" Value="@TfConstants.GetIcon(Item.Icon)" />
+		}
+		@if (Item.Color != OfficeColor.Default)
+		{
+			<span class="tf-addon" style="@($"background-color:{Item.Color.ToAttributeValue()}")"></span>
+		}
+	</FluentMenuItem>
 }
 else
 {

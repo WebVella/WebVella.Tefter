@@ -19,22 +19,23 @@
 		<FluentEditForm EditContext="EditContext" class="tf-form" novalidate>
 			<TfCard>
 				<FluentGrid>
-					<FluentGridItem xs="6">
+					<FluentGridItem xs="4">
 						<FluentTextField Required="true"
 										 TextFieldType="@TextFieldType.Text"
 										 @bind-Value=@_form.Name AutoComplete="off"
 										 Label="@LOC("Name")" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.Name)" />
 					</FluentGridItem>
-					<FluentGridItem xs="6">
+					<FluentGridItem xs="4">
 						<FluentTextField TextFieldType="@TextFieldType.Text"
 										 Value=@(_form.IsGroup ? LOC("group") : LOC("quick filter")) Disabled="true"
 										 Label="@LOC("Type")" Style="width:100%" />
+						<FluentValidationMessage For="@(() => _form.IsGroup)" />
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentInputLabel Label="@LOC("Group")" />
+					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Parent Group")" />
 						<FluentStack>
 							<FluentSelect Required="false"
 										  OptionSelected="(x => x.Id == _selectedParent?.Id)"
@@ -43,10 +44,22 @@
 										  Items="@Content.Parents" Style="width:100%"
 										  OptionValue="@((p)=> p.Id.ToString())"
 										  OptionText="@(x=> x.Name)" Placeholder="@LOC("without group")" />
-							<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.DeleteIcon" OnClick="@(_ => _selectedParent = null)" />
+							@if (_selectedParent is not null)
+							{
+								<FluentButton Disabled="@(_selectedParent is null)" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_ => _selectedParent = null)" />
+							}
 						</FluentStack>
 					</FluentGridItem>
-					<FluentGridItem xs="6"></FluentGridItem>
+					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Color")" />
+						<TfSelectColor @bind-Value=@_form.Color />
+						<FluentValidationMessage For="@(() => _form.Color)" />
+					</FluentGridItem>
+					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Icon")" />
+						<TfSelectIcon @bind-Value=@_form.Icon />
+						<FluentValidationMessage For="@(() => _form.Icon)" />
+					</FluentGridItem>
 				</FluentGrid>
 			</TfCard>
 			@if (_form.IsGroup)

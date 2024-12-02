@@ -134,6 +134,8 @@ public partial class TfPresetsCard : TfBaseComponent
 				currentValue.Filters = record.Filters.ToList();
 				currentValue.SortOrders = record.SortOrders.ToList();
 				currentValue.ParentId = record.ParentId;
+				currentValue.Icon = record.Icon;
+				currentValue.Color = record.Color;
 			}
 			if (currentParentId != record.ParentId)
 			{

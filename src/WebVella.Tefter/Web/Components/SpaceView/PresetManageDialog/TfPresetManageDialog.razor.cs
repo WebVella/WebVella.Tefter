@@ -19,6 +19,8 @@ public partial class TfPresetManageDialog : TfFormBaseComponent, IDialogContentC
 			SortOrders = Content.Item.SortOrders.ToList(),
 			Nodes = Content.Item.Nodes.ToList(),
 			ParentId = Content.Item.ParentId,
+			Color = Content.Item.Color,
+			Icon = Content.Item.Icon
 		};
 		if (_form.ParentId != null)
 		{
