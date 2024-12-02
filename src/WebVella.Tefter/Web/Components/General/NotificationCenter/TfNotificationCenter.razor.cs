@@ -24,15 +24,19 @@ public partial class TfNotificationCenter : TfBaseComponent
 
 	private async Task OpenNotificationCenterAsync()
 	{
-		_dialog = await DialogService.ShowPanelAsync<TfNotificationCenterPanel>(new DialogParameters<GlobalState>()
+		_dialog = await DialogService.ShowPanelAsync<TfNotificationCenterPanel>(
+		true,
+		new DialogParameters()
 		{
+			DialogType = DialogType.Panel,
 			Alignment = HorizontalAlignment.Right,
-			Title = $"Notifications",
+			ShowTitle = false,
+			ShowDismiss = false,
 			PrimaryAction = null,
 			SecondaryAction = null,
-			ShowDismiss = true,
 			Width = "25vw",
-			PreventDismissOnOverlayClick = false
+			PreventDismissOnOverlayClick = false,
+			TrapFocus = false
 		});
 		DialogResult result = await _dialog.Result;
 		HandlePanel(result);

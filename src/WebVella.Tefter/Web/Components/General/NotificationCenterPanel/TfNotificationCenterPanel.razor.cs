@@ -1,8 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContentComponent<GlobalState>
+public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContentComponent<bool>
 {
 	[Parameter]
-	public GlobalState Content { get; set; } = default!;
+	public bool Content { get; set; } = true;
+
+	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	//private IDialogReference? _dialog;
     protected override ValueTask DisposeAsyncCore(bool disposing)
@@ -38,7 +40,15 @@ public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContent
         //HandlePanel(result);
 		return Task.CompletedTask;
     }
+	private async Task _cancel()
+	{
+		await Dialog.CancelAsync();
+	}
 
+	private async Task _dismissAll(){ 
+		MessageService.Clear(TfConstants.MESSAGES_NOTIFICATION_CENTER);
+		await _cancel();
+	}
     private static void HandlePanel(DialogResult result)
     {
         if (result.Cancelled)
