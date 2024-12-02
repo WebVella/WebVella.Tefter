@@ -71,7 +71,8 @@ else
 				<TfPageHeader>@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</TfPageHeader>
 			</Header>
 			<Toolbar>
-				<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter" />
+				<TfSpaceViewToolbar OnSearch="_onSearch" OnFilter="_onFilter" OnSort="_onSort" OnClearFilter="_onClearFilter"
+									OnSelectAll="_onSelectAll" SelectAllLoading="_selectAllLoading" OnDeSelectAll="_onDeSelectAll" />
 			</Toolbar>
 			<ChildContent>
 				<div class="tf-grid-wrapper">

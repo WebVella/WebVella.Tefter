@@ -27,7 +27,10 @@ internal partial class AppStateUseCase
 			var spacePageNode = spaceNodes.FindItemByMatch((x) => x.Type == TfSpaceNodeType.Page, (x) => x.ChildNodes);
 			if (spacePageNode != null)
 				space.DefaultNodeId = spacePageNode.Id;
-			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes };
+
+			var spaceDataList = GetSpaceDataList(space.Id);
+			var spaceViewList = GetSpaceViewList(space.Id);
+			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes, SpaceDataList = spaceDataList, SpaceViewList = spaceViewList};
 		}
 		else
 		{

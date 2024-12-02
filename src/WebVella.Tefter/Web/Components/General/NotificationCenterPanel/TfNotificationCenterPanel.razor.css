@@ -1,1 +1,46 @@
-﻿
+﻿/*Layout*/
+
+::deep .notification-panel {
+	height: 100vh;
+	width: 100%;
+	display: flex;
+}
+
+/*Layout left*/
+::deep .notification-panel {
+	flex: 1 1 auto;
+	display: flex;
+	flex-flow: column;
+}
+
+::deep .notification-panel__header {
+	flex: 0 0 50px;
+	border-bottom: 1px solid var(--neutral-stroke-rest);
+	padding: 0 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+
+::deep .notification-panel__body {
+	flex: 1 1 auto;
+	position: relative;
+	overflow: hidden;
+}
+
+::deep .fluent-messagebar-notification {
+	border:1px solid var(--neutral-stroke-rest) !important;
+	border-radius:0.25rem;
+	padding:0 5px !important;
+}
+
+::deep .fluent-messagebar-notification-message {
+	font-size:1rem;
+}
+
+::deep .fluent-messagebar-notification-content {
+	font-size:0.75rem;
+	color:var(--neutral-foreground-hint);
+	padding:0 !important;
+}

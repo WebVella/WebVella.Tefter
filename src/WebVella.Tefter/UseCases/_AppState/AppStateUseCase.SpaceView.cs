@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<(TfAppState, TfAuxDataState)> InitSpaceViewAsync(
+	internal async Task<(TfAppState, TfAuxDataState)> InitSpaceViewAsync(
 		IServiceProvider serviceProvider,
 		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
@@ -18,15 +18,9 @@ internal partial class AppStateUseCase
 				SpaceViewData = null,
 				SelectedDataRows = new()
 			};
-			return Task.FromResult((newAppState,newAuxDataState));
+			return (newAppState,newAuxDataState);
 		}
 
-		//SpaceViewList
-
-		if (newAppState.Space?.Id != oldAppState.Space?.Id)
-			newAppState = newAppState with { SpaceViewList = GetSpaceViewList(newAppState.Route.SpaceId.Value) };
-
-		//Space View
 		if (newAppState.Route.SpaceViewId is not null)
 		{
 			int defaultPageSize = TfConstants.PageSize;
@@ -57,6 +51,7 @@ internal partial class AppStateUseCase
 				newAppState = newAppState with
 				{
 					SpaceViewData = viewData,
+					Route = newAppState.Route with { Page = viewData.QueryInfo.Page }
 				};
 			}
 			else
@@ -90,7 +85,7 @@ internal partial class AppStateUseCase
 						compContext.DataMapping = column.DataMapping;
 						compContext.QueryName = column.QueryName;
 						var component = (ITucAuxDataUseComponent)Activator.CreateInstance(column.ComponentType, compContext);
-						component.OnAppStateInit(
+						await component.OnAppStateInit(
 								serviceProvider: serviceProvider,
 								currentUser: currentUser,
 								newAppState: newAppState,
@@ -126,7 +121,7 @@ internal partial class AppStateUseCase
 			newAppState = newAppState with { SelectedDataRows = new() };
 
 
-		return Task.FromResult((newAppState,newAuxDataState));
+		return (newAppState,newAuxDataState);
 	}
 	internal virtual TucSpaceView GetSpaceView(Guid viewId)
 	{

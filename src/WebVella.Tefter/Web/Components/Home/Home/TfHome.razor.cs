@@ -54,4 +54,17 @@ public partial class TfHome : TfBaseComponent
 		_editor = value;
 		await InvokeAsync(StateHasChanged);
 	}
+
+	private void _showNotification(){ 
+		MessageService.ShowMessageBar(options =>
+		{
+			options.Intent = MessageIntent.Error;
+			options.Title = $"Notification title {DateTime.Now.Second}";
+			options.Body = $"<div><strong>Notification body</strong> {DateTime.Now}</div>";
+			options.Timestamp = DateTime.Now;
+			options.Timeout = null;
+			options.AllowDismiss = true;
+			options.Section = TfConstants.MESSAGES_NOTIFICATION_CENTER;
+		});	
+	}
 }

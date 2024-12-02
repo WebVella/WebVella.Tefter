@@ -77,7 +77,8 @@ internal partial class AppStateUseCase
 					(newAppState.Route.Page ?? 1), (newAppState.Route.PageSize ?? TfConstants.PageSize));
 				newAppState = newAppState with
 				{
-					AdminDataProviderData = dt
+					AdminDataProviderData = dt,
+					Route = newAppState.Route with { Page = dt.QueryInfo.Page }
 				};
 			}
 			else
