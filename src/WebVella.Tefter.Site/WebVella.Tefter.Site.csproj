@@ -13,6 +13,7 @@
 		<ProjectReference Include="..\WebVella.Tefter.EmailSender\WebVella.Tefter.EmailSender.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
+		<ProjectReference Include="..\WebVella.Tefter.Templates\WebVella.Tefter.Templates.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 	</ItemGroup>
 
