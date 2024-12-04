@@ -92,7 +92,7 @@ internal partial class TemplatesService : ITemplatesService
 
 			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var returnTypePar = CreateParameter("@return_type", (short)template.ResultType, DbType.Int16);
+			var resultTypePar = CreateParameter("@result_type", (short)template.ResultType, DbType.Int16);
 
 			var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
 
@@ -121,7 +121,7 @@ internal partial class TemplatesService : ITemplatesService
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 				SQL,
 				idPar, namePar, descriptionPar, iconPar,
-				isEnabledPar, isSelectablePar, returnTypePar,
+				isEnabledPar, isSelectablePar, resultTypePar,
 				usedColumnsJsonPar, settingsJsonPar, cptPar,
 				createdByPar, createdOnPar, modifiedByPar, modifiedOnPar);
 
@@ -168,7 +168,7 @@ internal partial class TemplatesService : ITemplatesService
 
 			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var returnTypePar = CreateParameter("@return_type", (short)template.ResultType, DbType.Int16);
+			var resultTypePar = CreateParameter("@result_type", (short)template.ResultType, DbType.Int16);
 
 			var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
 
@@ -199,7 +199,7 @@ internal partial class TemplatesService : ITemplatesService
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
 				SQL,
 				idPar, namePar, descriptionPar, iconPar,
-				isEnabledPar, isSelectablePar, returnTypePar,
+				isEnabledPar, isSelectablePar, resultTypePar,
 				usedColumnsJsonPar, settingsJsonPar, cptPar,
 				modifiedByPar, modifiedOnPar);
 
