@@ -16,7 +16,8 @@ else if (Context.Mode == TfComponentMode.Create)
 						  TOption="AssetsFolder"
 						  Items="@_folders" Style="width:100%"
 						  OptionValue="@((p)=> p.Id.ToString())"
-						  OptionText="@(p => p.Name)" Label="@LOC("Select view")"
+						  Placeholder="@LOC("select..")"
+						  OptionText="@(p => p.Name)" Label="@LOC("Select folder")"
 						  Class="@GetValidationCssClass(nameof(_options.FolderId))"/>
 			<TfValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
 		</FluentGridItem>

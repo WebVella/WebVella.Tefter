@@ -7,8 +7,8 @@ public interface ITfSpaceNodeComponent
 	public string Description { get; set; }
 	public string Icon { get; set; }
 	public TfSpaceNodeComponentContext Context { get; set; }
-	public Task OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
-	public Task OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
+	public Task<string> OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
+	public Task<string> OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
 	public Task OnNodeDeleted(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
 	public Task<(TfAppState,TfAuxDataState)> InitState(
 		IServiceProvider serviceProvider,

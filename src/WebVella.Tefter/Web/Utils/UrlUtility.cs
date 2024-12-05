@@ -33,7 +33,6 @@ public class UrlUtility
 	public async Task<string> GetFavIconForUrl(string url)
 	{
 		Uri uri = ConvertUrlToUri(url);
-		if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri)) { }
 		if (uri == null) return null;
 		if (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps) return null;
 
@@ -75,17 +74,23 @@ public class UrlUtility
 		return uri.Authority;
 	}
 
-	public static Uri ConvertUrlToUri(string url){ 
-		if (!url.StartsWith("http") && String.IsNullOrWhiteSpace(BASE_URL))
-			return null;
-
-		if (url.StartsWith("/"))
+	public static Uri ConvertUrlToUri(string url)
+	{
+		//if (!url.StartsWith("http") && String.IsNullOrWhiteSpace(BASE_URL))
+		//	return null;
+		if (!url.StartsWith("http"))
 		{
-			url = BASE_URL + url;
+			if (url.StartsWith("/"))
+			{
+				url = BASE_URL + url;
+			}
+			else{ 
+				url = "https://" + url;
+			}
 		}
 		Uri uri = null;
 		if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri)) { }
-		if (uri == null) return null;	
-		return uri;	
+		if (uri == null) return null;
+		return uri;
 	}
 }

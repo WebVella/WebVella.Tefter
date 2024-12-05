@@ -66,7 +66,15 @@ public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 		var allChannelsResult = TalkService.GetChannels();
 		if (allChannelsResult.IsFailed) throw new Exception("GetChannels failed");
 		_channels = allChannelsResult.Value;
-		if (_channels.Count > 0)
+		if(!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson)){ 
+			optionsJson = Context.ComponentOptionsJson;
+			_options = JsonSerializer.Deserialize<TalkPageComponentPageComponentOptions>(optionsJson);
+			if(_options.ChannelId is not null){ 
+				_optionsChannel = _channels.FirstOrDefault(x=> x.Id == _options.ChannelId);
+			}
+		}
+
+		if (_optionsChannel is null && _channels.Count > 0)
 		{
 			_optionsChannel = _channels[0];
 			_options.ChannelId = _optionsChannel.Id;

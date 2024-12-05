@@ -66,7 +66,14 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 		var allFoldersResult = AssetsService.GetFolders();
 		if (allFoldersResult.IsFailed) throw new Exception("GetFolders failed");
 		_folders = allFoldersResult.Value;
-		if (_folders.Count > 0)
+		if(!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson)){ 
+			optionsJson = Context.ComponentOptionsJson;
+			_options = JsonSerializer.Deserialize<AssetsPageComponentPageComponentOptions>(optionsJson);
+			if(_options.FolderId is not null){ 
+				_optionsFolder = _folders.FirstOrDefault(x=> x.Id == _options.FolderId);
+			}
+		}
+		if (_optionsFolder is null && _folders.Count > 0)
 		{
 			_optionsFolder = _folders[0];
 			_options.FolderId = _optionsFolder.Id;

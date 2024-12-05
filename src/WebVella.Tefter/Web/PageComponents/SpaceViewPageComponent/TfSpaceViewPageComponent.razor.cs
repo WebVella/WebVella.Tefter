@@ -75,7 +75,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
-	public override async Task OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)
+	public override async Task<string> OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)
 	{
 		await base.OnNodeCreated(serviceProvider, context);
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
@@ -110,8 +110,9 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 
 			jsonOptions.SpaceViewId = serviceResult.Value.Id;
 			jsonOptions.SpaceDataId = serviceResult.Value.SpaceDataId;
+			context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);
 		}
-
+		return context.ComponentOptionsJson;
 	}
 
 	#endregion

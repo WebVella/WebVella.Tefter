@@ -259,7 +259,13 @@ public partial class TfSpaceManager : ITfSpaceManager
 								Mode = TfComponentMode.Update
 							};
 
-							await nodeComponent.Instance.OnNodeCreated(_serviceProvider, context);
+							var optionsJson = await nodeComponent.Instance.OnNodeCreated(_serviceProvider, context);
+							if (optionsJson != spaceNode.ComponentOptionsJson)
+							{
+								spaceNode.ComponentOptionsJson = optionsJson;
+								if (!_dboManager.Update<TfSpaceNodeDbo>(Convert(spaceNode), nameof(TfSpaceNodeDbo.ComponentSettingsJson)))
+									throw new Exception("Space Node update failed");
+							}
 						});
 						task.WaitAndUnwrapException();
 					}
@@ -529,7 +535,13 @@ public partial class TfSpaceManager : ITfSpaceManager
 								Mode = TfComponentMode.Update
 							};
 
-							await nodeComponent.Instance.OnNodeUpdated(_serviceProvider, context);
+							var optionsJson = await nodeComponent.Instance.OnNodeUpdated(_serviceProvider, context);
+							if (optionsJson != spaceNode.ComponentOptionsJson)
+							{
+								spaceNode.ComponentOptionsJson = optionsJson;
+								if (!_dboManager.Update<TfSpaceNodeDbo>(Convert(spaceNode), nameof(TfSpaceNodeDbo.ComponentSettingsJson)))
+									throw new Exception("Space Node update failed");
+							}
 						});
 						task.WaitAndUnwrapException();
 					}

@@ -30,7 +30,8 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Url
+					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text" Value=@_form.Url
+									ValueChanged="@((x)=> _urlChanged(x))"
 									 Label="@LOC("Url")" Style="width:100%" AutoComplete="off" />
 					<FluentValidationMessage For="@(() => _form.Url)" />
 				</FluentGridItem>

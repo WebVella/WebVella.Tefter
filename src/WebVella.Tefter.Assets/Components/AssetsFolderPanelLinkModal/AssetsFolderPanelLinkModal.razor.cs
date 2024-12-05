@@ -120,6 +120,13 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 		_isGetUrlLoading = false;
 		await InvokeAsync(StateHasChanged);
 	}
+
+	private void _urlChanged(string url){ 
+		if(!String.IsNullOrWhiteSpace(url) && !(url.StartsWith("http") || url.StartsWith("/"))){ 
+			url = "https://" + url;
+		}
+		_form.Url = url;
+	}
 }
 
 public class AssetsFolderPanelLinkModalForm

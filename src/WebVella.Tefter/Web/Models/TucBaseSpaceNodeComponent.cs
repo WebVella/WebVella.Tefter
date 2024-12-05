@@ -19,8 +19,8 @@ public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeCom
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
 		TfSpaceNodeComponentContext context) => Task.FromResult((newAppState,newAuxDataState));
-	public virtual Task OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.CompletedTask;
-	public virtual Task OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.CompletedTask;
+	public virtual Task<string> OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.FromResult(context.ComponentOptionsJson);
+	public virtual Task<string> OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.FromResult(context.ComponentOptionsJson);
 	public virtual Task OnNodeDeleted(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.CompletedTask;
 	
 
