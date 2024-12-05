@@ -94,7 +94,7 @@ internal partial class TalkService : ITalkService
 
 			var sharedKeyPar = TalkUtility.CreateParameter(
 				"shared_key",
-				channel.SharedKey,
+				channel.SharedKey??string.Empty,
 				DbType.StringFixedLength);
 
 			var countSharedColumnNamePar = TalkUtility.CreateParameter(
@@ -159,7 +159,7 @@ internal partial class TalkService : ITalkService
 
 			var sharedKeyPar = TalkUtility.CreateParameter(
 				"shared_key",
-				channel.SharedKey,
+				channel.SharedKey??string.Empty,
 				DbType.StringFixedLength);
 
 			var countSharedColumnNamePar = TalkUtility.CreateParameter(
@@ -230,7 +230,7 @@ internal partial class TalkService : ITalkService
 		{
 			Id = dr.Field<Guid>("id"),
 			Name = dr.Field<string>("name") ?? string.Empty,
-			SharedKey = dr.Field<string>("shared_key"),
+			SharedKey = dr.Field<string>("shared_key")??string.Empty,
 			CountSharedColumnName = dr.Field<string>("count_shared_column_name")
 		};
 	}
