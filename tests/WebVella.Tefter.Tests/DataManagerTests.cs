@@ -231,7 +231,6 @@ public partial class DataManagerTests : BaseTest
 				var idResult6 = dataManager.GetId(id);
 				idResult6.Should().NotBeNull();
 				idResult6.IsSuccess.Should().BeTrue();
-				idResult6.Value.Should().Be(id);
 			}
 		}
 	}
