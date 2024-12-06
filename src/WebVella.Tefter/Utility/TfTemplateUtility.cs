@@ -7,10 +7,62 @@ using System.Threading.Tasks;
 namespace WebVella.Tefter.Utility;
 internal static class TfTemplateUtility
 {
-	public static List<TfTemplateTagResult> ProcessTemplateTag(string text, TfDataTable dataSource)
+	public static List<TfTemplateTagResult> ProcessTemplateTag(string template, TfDataTable dataSource)
 	{
 		var result = new List<TfTemplateTagResult>();
+		for (int i = 0; i < dataSource.Rows.Count; i++)
+		{
+			result.Add(GenerateTemplateTagResult(template, dataSource, i));
+		}
+		return result;
+	}
 
+	public static TfTemplateTagResult GenerateTemplateTagResult(string template, TfDataTable dataSource, int? rowIndex)
+	{
+		var result = new TfTemplateTagResult();
+		result.Value = template;
+		if(String.IsNullOrWhiteSpace(template)) return result;
+		result.Tags = GetTagsFromTemplate(template);
+		foreach (var tag in result.Tags)
+		{
+			result.Value = ProcessTagInTemplate(result.Value, tag, dataSource, rowIndex);
+		}
+
+		return result;
+	}
+
+	public static string ProcessTagInTemplate(string template, TfTemplateTag tag, TfDataTable dataSource, int? contextRowIndex)
+	{
+		var result = template;
+		//Rules:
+		//If tag not found or cannot be used return tag full string (no substitution)
+		//if tag has index it is check for applicability if not applicable return tag full string for this template
+		//if tag has no index - apply the submitted index
+		//if not index is requested get the first if present		
+		if (tag.Type == TfTemplateTagType.Data)
+		{
+			if (String.IsNullOrWhiteSpace(tag.Name)) return result;
+			int columnIndex = dataSource.Columns.IndexOf(x => x.Name.ToLowerInvariant() == tag.Name);
+			if (columnIndex == -1) return result;
+			if (dataSource.Rows.Count == 0) return result;
+			int rowIndex = 0;
+			if(tag.IndexList is not null && tag.IndexList.Count > 0){ 
+				rowIndex = tag.IndexList[0];
+			}
+			else if (contextRowIndex is not null && dataSource.Rows.Count - 1 >= contextRowIndex)
+			{
+				rowIndex = contextRowIndex.Value;
+			}
+			result = result.Replace(tag.FullString, dataSource.Rows[rowIndex][columnIndex]?.ToString());
+		}
+		else if (tag.Type == TfTemplateTagType.Function)
+		{
+			throw new NotImplementedException();
+		}
+		else if (tag.Type == TfTemplateTagType.ExcelFunction)
+		{
+			throw new NotImplementedException();
+		}
 		return result;
 	}
 
@@ -86,8 +138,7 @@ internal static class TfTemplateUtility
 			var tagIndex = ExtractTagIndexFromGroup(matchGroup.Value);
 			if (tagIndex is null || tagIndex < 0)
 			{
-				//as in the sheet name there cannot be used [] and in all cases that there is a list of data matched
-				//we are adding the first index in the list to always be 0
+				//interpred [] or any [invalid] as 0
 				result.IndexList.Add(0);
 			}
 			else
@@ -95,7 +146,6 @@ internal static class TfTemplateUtility
 				result.IndexList.Add(tagIndex.Value);
 			}
 		}
-		if(result.IndexList.Count == 0) result.IndexList.Add(0);
 
 		processedDefinition = processedDefinition?.Trim();
 		//if (String.IsNullOrWhiteSpace(processedDefinition)) return null;

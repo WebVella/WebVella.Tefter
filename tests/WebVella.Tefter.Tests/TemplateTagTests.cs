@@ -45,8 +45,7 @@ public partial class TemplateTagTests
 		result[0].Name.Should().Be(columnName);
 		result[0].Type.Should().Be(TfTemplateTagType.Data);
 		result[0].IndexList.Should().NotBeNull();
-		result[0].IndexList.Count.Should().Be(1);
-		result[0].IndexList[0].Should().Be(0);//by default the first index should be always 0
+		result[0].IndexList.Count.Should().Be(0);
 		result[0].ParamGroups.Count.Should().Be(0);
 	}
 
@@ -534,7 +533,8 @@ public partial class TemplateTagTests
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(0);
+		result.Count.Should().Be(5);
+		result[0].Value.Should().Be(template);
 	}
 
 	[Fact]
@@ -547,7 +547,8 @@ public partial class TemplateTagTests
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(0);
+		result.Count.Should().Be(5);
+		result[0].Value.Should().Be(template);
 	}
 
 	[Fact]
@@ -560,9 +561,65 @@ public partial class TemplateTagTests
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(0);
+		result.Count.Should().Be(5);
+		result[0].Value.Should().Be(template);
 	}
 
+	[Fact]
+	public void TemplateProcessShouldReturnResultsIfTagCanBeProcessed()
+	{
+		//Given
+		string template = "{{name}}";
+		TfDataTable ds = GetSampleData();
+		//When
+		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(5);
+		result[0].Value.Should().Be(ds.Rows[0]["name"]?.ToString());
+		result[1].Value.Should().Be(ds.Rows[1]["name"]?.ToString());
+		result[2].Value.Should().Be(ds.Rows[2]["name"]?.ToString());
+		result[3].Value.Should().Be(ds.Rows[3]["name"]?.ToString());
+		result[4].Value.Should().Be(ds.Rows[4]["name"]?.ToString());
+	}
+
+	[Fact]
+	public void TemplateProcessShouldReturnResultsIfTagCanBeProcessedMulti()
+	{
+		//Given
+		string template = "{{position}}.{{name}}";
+		TfDataTable ds = GetSampleData();
+		//When
+		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(5);
+		result[0].Value.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
+		result[1].Value.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[1]["name"]);
+		result[2].Value.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[2]["name"]);
+		result[3].Value.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[3]["name"]);
+		result[4].Value.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[4]["name"]);
+
+	}
+
+	[Fact]
+	public void TemplateProcessShouldReturnResultsIfTagCanBeProcessedMultiFixedIndex()
+	{
+		//Given
+		string template = "{{position}}.{{name[0]}}";
+		TfDataTable ds = GetSampleData();
+		//When
+		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(5);
+		result[0].Value.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
+		result[1].Value.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[0]["name"]);
+		result[2].Value.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[0]["name"]);
+		result[3].Value.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[0]["name"]);
+		result[4].Value.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[0]["name"]);
+
+	}
 
 	private TfDataTable GetSampleData()
 	{

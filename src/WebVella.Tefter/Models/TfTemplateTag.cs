@@ -3,8 +3,8 @@
 internal class TfTemplateTagResult
 {
 	//What string needs to be replaced in the place of the tag data
-	public TfTemplateTag Tag { get; set; }
-	public object Value { get; set; }
+	public List<TfTemplateTag> Tags { get; set; }
+	public string Value { get; set; }
 }
 
 internal class TfTemplateTag
