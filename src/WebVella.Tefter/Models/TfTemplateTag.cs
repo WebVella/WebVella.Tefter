@@ -1,0 +1,28 @@
+﻿namespace WebVella.Tefter.Models;
+internal class TfTemplateTag
+{
+	//What string needs to be replaced in the place of the tag data
+	public string FullString { get; set; }
+	public string Name { get; set; }
+	public TfTemplateTagType Type { get; set; } = TfTemplateTagType.Data;
+	public List<TfTemplateTagParamGroup> ParamGroups { get; set; } = new();
+}
+internal enum TfTemplateTagType{ 
+	Data = 0,
+	Function = 1,
+	ExcelFunction = 2
+}
+
+internal class TfTemplateTagParamGroup
+{
+	//What string needs to be replaced in the place of the tag data
+	public string FullString { get; set; }
+	public List<TfTemplateTagParameter> Parameters { get; set; } = new();
+}
+
+internal class TfTemplateTagParameter
+{
+	//What string needs to be replaced in the place of the tag data
+	public string Name { get; set; } = null;
+	public string Value { get; set; } = null;
+}
