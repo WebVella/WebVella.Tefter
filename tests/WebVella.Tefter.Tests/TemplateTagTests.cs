@@ -44,6 +44,9 @@ public partial class TemplateTagTests
 		result[0].FullString.Should().Be(template);
 		result[0].Name.Should().Be(columnName);
 		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].IndexList.Should().NotBeNull();
+		result[0].IndexList.Count.Should().Be(1);
+		result[0].IndexList[0].Should().Be(0);//by default the first index should be always 0
 		result[0].ParamGroups.Count.Should().Be(0);
 	}
 
@@ -321,6 +324,31 @@ public partial class TemplateTagTests
 	}
 
 	[Fact]
+	public void ExactTemplateShouldReturnEmptyGroups()
+	{
+		//Given
+		var columnName = "column_name";
+		string template = "{{" + columnName + "()(\"test\")(test=1)}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		var column1Tag = result.FirstOrDefault(x => x.Name == columnName);
+		column1Tag.Should().NotBeNull();
+		column1Tag.FullString.Should().Be("{{" + columnName + "()(\"test\")(test=1)}}");
+		column1Tag.Name.Should().Be(columnName);
+		column1Tag.Type.Should().Be(TfTemplateTagType.Data);
+		column1Tag.ParamGroups.Count.Should().Be(3);
+		column1Tag.ParamGroups[0].FullString.Should().Be("()");
+		column1Tag.ParamGroups[0].Parameters.Count.Should().Be(0);
+		column1Tag.ParamGroups[1].FullString.Should().Be("(\"test\")");
+		column1Tag.ParamGroups[1].Parameters.Count.Should().Be(1);
+		column1Tag.ParamGroups[2].FullString.Should().Be("(test=1)");
+		column1Tag.ParamGroups[2].Parameters.Count.Should().Be(1);
+	}
+
+	[Fact]
 	public void ExactTemplateShouldReturnOneTagWithMultipleParameterGroups()
 	{
 		//Given
@@ -354,6 +382,72 @@ public partial class TemplateTagTests
 
 		column1Tag.ParamGroups[1].Parameters[0].Name.Should().Be(columnNameParam2Name.ToLowerInvariant());
 		column1Tag.ParamGroups[1].Parameters[0].Value.Should().Be(columnNameParam2Value);
+	}
+
+	[Fact]
+	public void ExactTemplateWithIndexingShouldReturnOneDataTagAndIndex()
+	{
+		//Given
+		var columnName = "column_name";
+		int columnIndex = 5;
+		string template = "{{" + columnName + "[" + columnIndex + "]}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].FullString.Should().Be(template);
+		result[0].Name.Should().Be(columnName);
+		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].IndexList.Should().NotBeNull();
+		result[0].IndexList.Count.Should().Be(1);
+		result[0].IndexList[0].Should().Be(columnIndex);
+		result[0].ParamGroups.Count.Should().Be(0);
+	}
+
+	[Fact]
+	public void ExactTemplateWithIndexingShouldReturnOneDataTagAndIndexZERO()
+	{
+		//Given
+		var columnName = "column_name";
+		int columnIndex = 5;
+		string template = "{{" + columnName + "[][" + columnIndex + "]}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].FullString.Should().Be(template);
+		result[0].Name.Should().Be(columnName);
+		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].IndexList.Should().NotBeNull();
+		result[0].IndexList.Count.Should().Be(2);
+		result[0].IndexList[0].Should().Be(0);
+		result[0].IndexList[1].Should().Be(columnIndex);
+		result[0].ParamGroups.Count.Should().Be(0);
+	}
+
+	[Fact]
+	public void ExactTemplateWithMultiIndexingShouldReturnOneDataTagAndMultiIndex()
+	{
+		//Given
+		var columnName = "column_name";
+		int columnIndex = 5;
+		int columnIndex2 = 2;
+		string template = "{{" + columnName + "[" + columnIndex + "][" + columnIndex2 + "]}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].FullString.Should().Be(template);
+		result[0].Name.Should().Be(columnName);
+		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].IndexList.Should().NotBeNull();
+		result[0].IndexList.Count.Should().Be(2);
+		result[0].IndexList[0].Should().Be(columnIndex);
+		result[0].IndexList[1].Should().Be(columnIndex2);
+		result[0].ParamGroups.Count.Should().Be(0);
 	}
 
 	#endregion
@@ -426,6 +520,72 @@ public partial class TemplateTagTests
 		result[0].Name.Should().Be(functionName.ToLowerInvariant());
 		result[0].Type.Should().Be(TfTemplateTagType.ExcelFunction);
 		result[0].ParamGroups.Count.Should().Be(0);
+	}
+	#endregion
+
+	#region << Processing >>
+	[Fact]
+	public void TemplateProcessShouldReturnNoResultsIfEmpty()
+	{
+		//Given
+		string template = "";
+		TfDataTable ds = GetSampleData();
+		//When
+		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(0);
+	}
+
+	[Fact]
+	public void TemplateProcessShouldReturnNoResultsIfNoTag()
+	{
+		//Given
+		string template = "sometext test";
+		TfDataTable ds = GetSampleData();
+		//When
+		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(0);
+	}
+
+	[Fact]
+	public void TemplateProcessShouldReturnResultsIfTagCannotBeProcessed()
+	{
+		//Given
+		string template = "{{}}";
+		TfDataTable ds = GetSampleData();
+		//When
+		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(0);
+	}
+
+
+	private TfDataTable GetSampleData()
+	{
+		var ds = new TfDataTable();
+		ds.Columns.Add(new TfDataColumn(ds, "position", TfDatabaseColumnType.Integer, false, false, false));
+		ds.Columns.Add(new TfDataColumn(ds, "name", TfDatabaseColumnType.Text, false, false, false));
+		ds.Columns.Add(new TfDataColumn(ds, "price", TfDatabaseColumnType.Number, false, false, false));
+		var values = new List<Tuple<int, string, decimal>>(){
+				new Tuple<int, string, decimal>(1,"item1",(decimal)3.26),
+				new Tuple<int, string, decimal>(2,"item2",(decimal)5.6),
+				new Tuple<int, string, decimal>(3,"item3",(decimal)4.34),
+				new Tuple<int, string, decimal>(4,"item4",(decimal)86.36),
+				new Tuple<int, string, decimal>(5,"item5",(decimal)55.55),
+			};
+		foreach (var item in values)
+		{
+			var dsrow = new TfDataRow(ds, new object[ds.Columns.Count]);
+			dsrow["position"] = item.Item1;
+			dsrow["name"] = item.Item2;
+			dsrow["price"] = item.Item3;
+			ds.Rows.Add(dsrow);
+		}
+		return ds;
 	}
 	#endregion
 }

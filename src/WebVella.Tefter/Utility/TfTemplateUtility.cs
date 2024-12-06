@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 namespace WebVella.Tefter.Utility;
 internal static class TfTemplateUtility
 {
+	public static List<TfTemplateTagResult> ProcessTemplateTag(string text, TfDataTable dataSource)
+	{
+		var result = new List<TfTemplateTagResult>();
+
+		return result;
+	}
+
 	public static List<TfTemplateTag> GetTagsFromTemplate(string text)
 	{
 		var result = new List<TfTemplateTag>();
@@ -21,7 +28,7 @@ internal static class TfTemplateUtility
 		return result;
 	}
 
-	public static TfTemplateTag ExtractTagFromDefinition(string tagDefinition)
+	private static TfTemplateTag ExtractTagFromDefinition(string tagDefinition)
 	{
 		if (String.IsNullOrWhiteSpace(tagDefinition)
 		|| !tagDefinition.StartsWith("{{")
@@ -51,26 +58,53 @@ internal static class TfTemplateUtility
 			result.Type = TfTemplateTagType.Data;
 
 		}
+
+		//PARAMETERS
 		foreach (Match matchGroup in Regex.Matches(processedDefinition, @"(\([^()]*\))"))
 		{
+			//Replace the first occurance of the group string
+			var regex = new Regex(Regex.Escape(matchGroup.Value));
+			processedDefinition = regex.Replace(processedDefinition, "", 1);
+
 			var group = new TfTemplateTagParamGroup
 			{
 				FullString = matchGroup.Value,
 				Parameters = ExtractTagParametersFromGroup(matchGroup.Value)
 			};
 			result.ParamGroups.Add(group);
+		}
+		processedDefinition = processedDefinition?.Trim();
+		//if (String.IsNullOrWhiteSpace(processedDefinition)) return null;
+
+		//INDEX
+		foreach (Match matchGroup in Regex.Matches(processedDefinition, @"(\[[^[]]*\]|\[\s*\])"))
+		{
 			//Replace the first occurance of the group string
 			var regex = new Regex(Regex.Escape(matchGroup.Value));
 			processedDefinition = regex.Replace(processedDefinition, "", 1);
+
+			var tagIndex = ExtractTagIndexFromGroup(matchGroup.Value);
+			if (tagIndex is null || tagIndex < 0)
+			{
+				//as in the sheet name there cannot be used [] and in all cases that there is a list of data matched
+				//we are adding the first index in the list to always be 0
+				result.IndexList.Add(0);
+			}
+			else
+			{
+				result.IndexList.Add(tagIndex.Value);
+			}
 		}
+		if(result.IndexList.Count == 0) result.IndexList.Add(0);
+
 		processedDefinition = processedDefinition?.Trim();
-		if (String.IsNullOrWhiteSpace(processedDefinition)) return null;
+		//if (String.IsNullOrWhiteSpace(processedDefinition)) return null;
 		result.Name = processedDefinition.ToLowerInvariant();
 		return result;
 
 	}
 
-	public static List<TfTemplateTagParameter> ExtractTagParametersFromGroup(string parameterGroup)
+	private static List<TfTemplateTagParameter> ExtractTagParametersFromGroup(string parameterGroup)
 	{
 		var result = new List<TfTemplateTagParameter>();
 		if (String.IsNullOrWhiteSpace(parameterGroup)
@@ -92,7 +126,7 @@ internal static class TfTemplateUtility
 		return result;
 	}
 
-	public static TfTemplateTagParameter ExtractTagParameterFromDefinition(string parameterDefinition)
+	private static TfTemplateTagParameter ExtractTagParameterFromDefinition(string parameterDefinition)
 	{
 		if (String.IsNullOrWhiteSpace(parameterDefinition)) return null;
 		TfTemplateTagParameter result = new();
@@ -100,10 +134,12 @@ internal static class TfTemplateUtility
 		string paramValue = null;
 		var firstEqualSignIndex = parameterDefinition.IndexOf('=');
 		//if not a named parameter
-		if(firstEqualSignIndex == -1){ 
+		if (firstEqualSignIndex == -1)
+		{
 			paramValue = parameterDefinition;
 		}
-		else{
+		else
+		{
 			paramName = parameterDefinition.Substring(0, firstEqualSignIndex);
 			paramValue = parameterDefinition.Substring(firstEqualSignIndex + 1); //Remove the =
 		}
@@ -112,11 +148,12 @@ internal static class TfTemplateUtility
 		paramValue = paramValue?.Trim();
 
 		//Check if it is a string value
-		if(
+		if (
 		(paramValue.StartsWith("\"") && paramValue.EndsWith("\""))
 		|| (paramValue.StartsWith("'") && paramValue.EndsWith("'"))
-		){
-			paramValue = paramValue.Remove(0,1);
+		)
+		{
+			paramValue = paramValue.Remove(0, 1);
 			paramValue = paramValue.Substring(0, paramValue.Length - 1);
 		}
 
@@ -126,4 +163,23 @@ internal static class TfTemplateUtility
 
 		return result;
 	}
+
+	private static int? ExtractTagIndexFromGroup(string indexGroup)
+	{
+		if (String.IsNullOrWhiteSpace(indexGroup)
+		|| !indexGroup.StartsWith("[")
+		|| !indexGroup.EndsWith("]")) return null;
+
+		//Remove leading and end []
+		var processedIndexGroup = indexGroup.Remove(0, 1);
+		processedIndexGroup = processedIndexGroup.Substring(0, processedIndexGroup.Length - 1);
+		processedIndexGroup = processedIndexGroup?.Trim();
+		if (String.IsNullOrWhiteSpace(processedIndexGroup)) return null;
+
+		if (int.TryParse(processedIndexGroup, out int outInt))
+			return outInt;
+
+		return null;
+	}
+
 }
