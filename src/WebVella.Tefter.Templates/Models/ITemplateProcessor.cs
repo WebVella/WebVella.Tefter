@@ -7,6 +7,7 @@ public interface ITemplateProcessor
 	public TemplateResultType ResultType { get; }
 	public List<string> GetUsedCollumns(string settingsJson);
 	public TemplateResult GenerateContent(string settingsJson, TfDataTable data);
+	public List<string> ValidateSettings(string settingsJson);
 	public Type SettingsComponentType { get; }
 	public Type ResultViewComponentType { get; }
 }

@@ -8,6 +8,17 @@ public sealed class TfDataTable
 	public TfDataColumnCollection Columns { get; init; }
 	public TfDataRowCollection Rows { get; init; }
 
+	internal TfDataTable()
+	{
+		Sql = string.Empty;
+		SqlParameters = new List<NpgsqlParameter>().AsReadOnly();
+		QueryInfo = null;
+
+		Columns = new TfDataColumnCollection(this);
+
+		Rows = new TfDataRowCollection(this);
+	}
+
 	private TfDataTable(
 		TfDataTable table,
 		params int[] rowIndexes)
