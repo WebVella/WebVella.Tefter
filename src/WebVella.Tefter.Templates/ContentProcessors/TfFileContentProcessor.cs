@@ -21,4 +21,9 @@ public class TfFileContentProcessor : ITemplateProcessor
 	{
 		return new List<string>();	
 	}
+	public List<string> ValidateSettings(string settingsJson)
+	{
+		//validate settings for circular usage
+		return new List<string>();
+	}
 }
