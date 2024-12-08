@@ -52,6 +52,13 @@
 	  <None Update="Files\Template2.docx">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Files\TemplatePlacement1.xlsx">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="FileResults\" />
 	</ItemGroup>
 
 	

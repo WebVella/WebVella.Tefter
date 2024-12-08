@@ -19,7 +19,7 @@ public sealed class TfDataTable
 		Rows = new TfDataRowCollection(this);
 	}
 
-	private TfDataTable(
+	internal TfDataTable(
 		TfDataTable table,
 		params int[] rowIndexes)
 	{

@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebVella.Tefter.Utility;
-internal static class TfTemplateUtility
+internal static partial class TfTemplateUtility
 {
 	public static List<TfTemplateTagResult> ProcessTemplateTag(string template, TfDataTable dataSource)
 	{
+		if(dataSource == null) throw new Exception("No datasource provided!");
 		var result = new List<TfTemplateTagResult>();
+		if(String.IsNullOrWhiteSpace(template)) return result;
+
 		for (int i = 0; i < dataSource.Rows.Count; i++)
 		{
 			result.Add(GenerateTemplateTagResult(template, dataSource, i));

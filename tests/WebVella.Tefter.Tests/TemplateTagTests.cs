@@ -1,9 +1,40 @@
-﻿ namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests;
 using ClosedXML.Excel;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Utility;
 
-public partial class TemplateTagTests
+public class TemplateTagTestsBase
+{
+	private TfDataTable _data;
+	public TemplateTagTestsBase()
+	{
+		var ds = new TfDataTable();
+		ds.Columns.Add(new TfDataColumn(ds, "position", TfDatabaseColumnType.Integer, false, false, false));
+		ds.Columns.Add(new TfDataColumn(ds, "sku", TfDatabaseColumnType.Text, false, false, false));
+		ds.Columns.Add(new TfDataColumn(ds, "name", TfDatabaseColumnType.Text, false, false, false));
+		ds.Columns.Add(new TfDataColumn(ds, "price", TfDatabaseColumnType.Number, false, false, false));
+		var values = new List<Tuple<int, string, string, decimal>>();
+		for (int i = 0; i < 5; i++)
+		{
+			var position = i + 1;
+			values.Add(new Tuple<int, string, string, decimal>(position, $"sku{position}", $"item{position}", (decimal)(position * 10)));
+		}
+
+		foreach (var item in values)
+		{
+			var dsrow = new TfDataRow(ds, new object[ds.Columns.Count]);
+			dsrow["position"] = item.Item1;
+			dsrow["sku"] = item.Item2;
+			dsrow["name"] = item.Item3;
+			dsrow["price"] = item.Item4;
+			ds.Rows.Add(dsrow);
+		}
+		_data = ds;
+	}
+	public TfDataTable SampleData => _data;
+}
+
+public partial class TemplateTagTests : TemplateTagTestsBase
 {
 	#region << DATA >>
 	[Fact]
@@ -528,7 +559,7 @@ public partial class TemplateTagTests
 	{
 		//Given
 		string template = "";
-		TfDataTable ds = GetSampleData();
+		TfDataTable ds = SampleData;
 		//When
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
@@ -542,7 +573,7 @@ public partial class TemplateTagTests
 	{
 		//Given
 		string template = "sometext test";
-		TfDataTable ds = GetSampleData();
+		TfDataTable ds = SampleData;
 		//When
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
@@ -556,7 +587,7 @@ public partial class TemplateTagTests
 	{
 		//Given
 		string template = "{{}}";
-		TfDataTable ds = GetSampleData();
+		TfDataTable ds = SampleData;
 		//When
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
@@ -570,7 +601,7 @@ public partial class TemplateTagTests
 	{
 		//Given
 		string template = "{{name}}";
-		TfDataTable ds = GetSampleData();
+		TfDataTable ds = SampleData;
 		//When
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
@@ -588,7 +619,7 @@ public partial class TemplateTagTests
 	{
 		//Given
 		string template = "{{position}}.{{name}}";
-		TfDataTable ds = GetSampleData();
+		TfDataTable ds = SampleData;
 		//When
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
@@ -607,7 +638,7 @@ public partial class TemplateTagTests
 	{
 		//Given
 		string template = "{{position}}.{{name[0]}}";
-		TfDataTable ds = GetSampleData();
+		TfDataTable ds = SampleData;
 		//When
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
@@ -621,28 +652,6 @@ public partial class TemplateTagTests
 
 	}
 
-	private TfDataTable GetSampleData()
-	{
-		var ds = new TfDataTable();
-		ds.Columns.Add(new TfDataColumn(ds, "position", TfDatabaseColumnType.Integer, false, false, false));
-		ds.Columns.Add(new TfDataColumn(ds, "name", TfDatabaseColumnType.Text, false, false, false));
-		ds.Columns.Add(new TfDataColumn(ds, "price", TfDatabaseColumnType.Number, false, false, false));
-		var values = new List<Tuple<int, string, decimal>>(){
-				new Tuple<int, string, decimal>(1,"item1",(decimal)3.26),
-				new Tuple<int, string, decimal>(2,"item2",(decimal)5.6),
-				new Tuple<int, string, decimal>(3,"item3",(decimal)4.34),
-				new Tuple<int, string, decimal>(4,"item4",(decimal)86.36),
-				new Tuple<int, string, decimal>(5,"item5",(decimal)55.55),
-			};
-		foreach (var item in values)
-		{
-			var dsrow = new TfDataRow(ds, new object[ds.Columns.Count]);
-			dsrow["position"] = item.Item1;
-			dsrow["name"] = item.Item2;
-			dsrow["price"] = item.Item3;
-			ds.Rows.Add(dsrow);
-		}
-		return ds;
-	}
+
 	#endregion
 }
