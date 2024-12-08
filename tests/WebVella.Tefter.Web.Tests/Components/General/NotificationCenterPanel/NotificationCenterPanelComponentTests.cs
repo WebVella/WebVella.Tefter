@@ -3,15 +3,19 @@ public class NotificationCenterPanelComponentTests : BaseTest
 {
 
 	[Fact]
-	public void RendersCorrectly()
+	public async Task RendersCorrectly()
 	{
 		//Given
 		var Context = GetTestContext();
+		var dialogProvider = Context.RenderComponent<FluentDialogProvider>();
 		// Act
-		var cut = Context.RenderComponent<TfNotificationCenterPanel>();
+		var dialogService = Context.Services.GetRequiredService<IDialogService>();
+		var dialog = await dialogService.ShowDialogAsync<TfNotificationCenterPanel>(new DialogParameters());
+		//var cut = Context.RenderComponent<TfNotificationCenterPanel>();
 
 		// Assert
-		cut.Find(".tf-notification-center-panel");
+		dialogProvider.Find(".notification-panel__body");
+		dialog.Dismiss(null);
 
 		Context.DisposeComponents();
 	}

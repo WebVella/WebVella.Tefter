@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿ namespace WebVella.Tefter.Tests;
 using ClosedXML.Excel;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Utility;

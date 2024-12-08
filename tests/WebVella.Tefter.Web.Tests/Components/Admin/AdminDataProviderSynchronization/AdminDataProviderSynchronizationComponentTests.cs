@@ -11,7 +11,7 @@ public class AdminDataProviderSynchronizationComponentTests : BaseTest
 		var cut = Context.RenderComponent<TfAdminDataProviderSynchronization>();
 
 		// Assert
-		cut.Find(".tf-grid-wrapper");
+		cut.Find(".tf-card");
 
 		Context.DisposeComponents();
 	}
