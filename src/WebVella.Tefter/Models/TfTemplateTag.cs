@@ -4,7 +4,8 @@ internal class TfTemplateTagResult
 {
 	//What string needs to be replaced in the place of the tag data
 	public List<TfTemplateTag> Tags { get; set; }
-	public string Value { get; set; }
+	public string ValueString { get; set; }
+	public object Value { get; set; }
 }
 
 internal class TfTemplateTag
@@ -35,5 +36,5 @@ internal class TfTemplateTagParameter
 {
 	//What string needs to be replaced in the place of the tag data
 	public string Name { get; set; } = null;
-	public string Value { get; set; } = null;
+	public string ValueString { get; set; } = null;
 }

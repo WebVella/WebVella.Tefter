@@ -7,66 +7,110 @@ using System.Threading.Tasks;
 namespace WebVella.Tefter.Utility;
 internal static partial class TfTemplateUtility
 {
-	public static List<TfTemplateTagResult> ProcessTemplateTag(string template, TfDataTable dataSource)
+	public static List<TfTemplateTagResult> ProcessTemplateTag(string template, TfDataTable dataSource, CultureInfo culture = null)
 	{
-		if(dataSource == null) throw new Exception("No datasource provided!");
+		if (culture == null) culture = TfConstants.DefaultCulture;
+		if (dataSource == null) throw new Exception("No datasource provided!");
 		var result = new List<TfTemplateTagResult>();
-		if(String.IsNullOrWhiteSpace(template)) return result;
+		var tags = GetTagsFromTemplate(template);
+		//if there are no tags - return one with the template
+		if (tags.Count == 0)
+		{
+			result.Add(new TfTemplateTagResult
+			{
+				Tags = new(),
+				Value = template,
+				ValueString = template,
+			});
+			return result;
+		}
+		//if all tags are index - return one with processed template
+		else if (!tags.Any(x => x.IndexList.Count == 0))
+		{
+			result.Add(GenerateTemplateTagResult(template, dataSource, null, culture));
+			return result;
+		}
 
 		for (int i = 0; i < dataSource.Rows.Count; i++)
 		{
-			result.Add(GenerateTemplateTagResult(template, dataSource, i));
+			result.Add(GenerateTemplateTagResult(template, dataSource, i, culture));
 		}
 		return result;
 	}
 
-	public static TfTemplateTagResult GenerateTemplateTagResult(string template, TfDataTable dataSource, int? rowIndex)
+	public static TfTemplateTagResult GenerateTemplateTagResult(string template, TfDataTable dataSource, int? rowIndex, CultureInfo culture)
 	{
 		var result = new TfTemplateTagResult();
-		result.Value = template;
-		if(String.IsNullOrWhiteSpace(template)) return result;
+		result.ValueString = template;
+		if (String.IsNullOrWhiteSpace(template)) return result;
 		result.Tags = GetTagsFromTemplate(template);
 		foreach (var tag in result.Tags)
 		{
-			result.Value = ProcessTagInTemplate(result.Value, tag, dataSource, rowIndex);
+			(result.ValueString, result.Value) = ProcessTagInTemplate(result.ValueString, result.Value, tag, dataSource, rowIndex, culture);
 		}
 
 		return result;
 	}
 
-	public static string ProcessTagInTemplate(string template, TfTemplateTag tag, TfDataTable dataSource, int? contextRowIndex)
+	public static (string, object) ProcessTagInTemplate(string templateResultString, object templateResultObject,
+		TfTemplateTag tag, TfDataTable dataSource, int? contextRowIndex, CultureInfo culture)
 	{
-		var result = template;
-		//Rules:
-		//If tag not found or cannot be used return tag full string (no substitution)
-		//if tag has index it is check for applicability if not applicable return tag full string for this template
-		//if tag has no index - apply the submitted index
-		//if not index is requested get the first if present		
-		if (tag.Type == TfTemplateTagType.Data)
+		var currentCulture = Thread.CurrentThread.CurrentCulture;
+		var currentUICulture = Thread.CurrentThread.CurrentUICulture;
+		try
 		{
-			if (String.IsNullOrWhiteSpace(tag.Name)) return result;
-			int columnIndex = dataSource.Columns.IndexOf(x => x.Name.ToLowerInvariant() == tag.Name);
-			if (columnIndex == -1) return result;
-			if (dataSource.Rows.Count == 0) return result;
-			int rowIndex = 0;
-			if(tag.IndexList is not null && tag.IndexList.Count > 0){ 
-				rowIndex = tag.IndexList[0];
-			}
-			else if (contextRowIndex is not null && dataSource.Rows.Count - 1 >= contextRowIndex)
+			Thread.CurrentThread.CurrentCulture = culture;
+			Thread.CurrentThread.CurrentCulture = culture;
+			object newResultObject = null;
+			//Rules:
+			//If tag not found or cannot be used return tag full string (no substitution)
+			//if tag has index it is check for applicability if not applicable return tag full string for this template
+			//if tag has no index - apply the submitted index
+			//if not index is requested get the first if present		
+			if (tag.Type == TfTemplateTagType.Data)
 			{
-				rowIndex = contextRowIndex.Value;
+				if (String.IsNullOrWhiteSpace(tag.Name)) return (templateResultString, templateResultObject);
+				int columnIndex = dataSource.Columns.IndexOf(x => x.Name.ToLowerInvariant() == tag.Name);
+				if (columnIndex == -1) return (templateResultString, templateResultObject);
+				if (dataSource.Rows.Count == 0) return (templateResultString, templateResultObject);
+				int rowIndex = 0;
+				if (tag.IndexList is not null && tag.IndexList.Count > 0)
+				{
+					rowIndex = tag.IndexList[0];
+				}
+				else if (contextRowIndex is not null && dataSource.Rows.Count - 1 >= contextRowIndex)
+				{
+					rowIndex = contextRowIndex.Value;
+				}
+				templateResultString = templateResultString.Replace(tag.FullString, dataSource.Rows[rowIndex][columnIndex]?.ToString());
+
+				if (templateResultObject is not null)
+				{
+					newResultObject = templateResultString;
+				}
+				else
+				{
+					newResultObject = dataSource.Rows[rowIndex][columnIndex];
+					//newResultObject = TryExractValue(templateResultString, dataSource.Columns[columnIndex]);
+				}
 			}
-			result = result.Replace(tag.FullString, dataSource.Rows[rowIndex][columnIndex]?.ToString());
+			else if (tag.Type == TfTemplateTagType.Function)
+			{
+				newResultObject = templateResultString;//temporary
+				throw new NotImplementedException();
+			}
+			else if (tag.Type == TfTemplateTagType.ExcelFunction)
+			{
+				newResultObject = templateResultString;//temporary
+				throw new NotImplementedException();
+			}
+			return (templateResultString, newResultObject);
 		}
-		else if (tag.Type == TfTemplateTagType.Function)
+		finally
 		{
-			throw new NotImplementedException();
+			Thread.CurrentThread.CurrentCulture = currentCulture;
+			Thread.CurrentThread.CurrentUICulture = currentUICulture;
 		}
-		else if (tag.Type == TfTemplateTagType.ExcelFunction)
-		{
-			throw new NotImplementedException();
-		}
-		return result;
 	}
 
 	public static List<TfTemplateTag> GetTagsFromTemplate(string text)
@@ -212,7 +256,7 @@ internal static partial class TfTemplateUtility
 
 
 		result.Name = paramName;
-		result.Value = paramValue;
+		result.ValueString = paramValue;
 
 		return result;
 	}
@@ -235,4 +279,69 @@ internal static partial class TfTemplateUtility
 		return null;
 	}
 
+	private static object TryExractValue(string templateResult, TfDataColumn column)
+	{
+		if (String.IsNullOrWhiteSpace(templateResult)) return null;
+		object result = null;
+		if (column.DbType == TfDatabaseColumnType.Guid)
+		{
+			if (Guid.TryParse(templateResult, out Guid outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.Date)
+		{
+			if (DateOnly.TryParse(templateResult, out DateOnly outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.DateTime)
+		{
+			if (DateTime.TryParse(templateResult, out DateTime outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.ShortInteger)
+		{
+			if (short.TryParse(templateResult, out short outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.Integer)
+		{
+			if (int.TryParse(templateResult, out int outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.LongInteger)
+		{
+			if (long.TryParse(templateResult, out long outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.Number)
+		{
+			if (decimal.TryParse(templateResult, out decimal outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.Boolean)
+		{
+			if (bool.TryParse(templateResult, out bool outResult))
+				result = outResult;
+			else result = templateResult;
+		}
+		else if (column.DbType == TfDatabaseColumnType.Text ||
+			column.DbType == TfDatabaseColumnType.ShortText)
+		{
+			result = templateResult;
+		}
+		else
+		{
+			throw new Exception("Not supported row type update");
+		}
+
+
+		return result;
+	}
 }

@@ -18,14 +18,25 @@ internal static partial class TfTemplateUtility
 	{
 		foreach (IXLWorksheet tempWs in result.TemplateWorkbook.Worksheets)
 		{
+			var tempWsUsedRowsCount = tempWs.LastRowUsed().RowNumber();
+			var tempWsUsedColumnsCount = tempWs.LastColumnUsed().ColumnNumber();
 			var resultWs = result.ResultWorkbook.AddWorksheet();
 			var resultCurrentRow = 1;
-			var resultCurrentColumn = 1;
-
-			foreach (IXLRow tempRow in tempWs.RowsUsed())
+			for (var rowIndex = 0; rowIndex < tempWsUsedRowsCount; rowIndex++)
 			{
-				foreach (IXLCell tempCell in tempRow.CellsUsed(XLCellsUsedOptions.All))
+				IXLRow tempRow = tempWs.Row(rowIndex + 1);
+				var resultCurrentColumn = 1;
+				var tempRowResultRowsUsed = 0;
+
+				for (var colIndex = 0; colIndex < tempWsUsedColumnsCount; colIndex++)
 				{
+					IXLCell tempCell = tempWs.Cell(tempRow.RowNumber(), (colIndex + 1));
+					var tempRangeStartRowNumber = resultCurrentRow;
+					var tempRangeStartColumnNumber = resultCurrentColumn;
+					var tempRangeEndRowNumber = resultCurrentRow;
+					var tempRangeEndColumnNumber = resultCurrentColumn;
+					var templateMergedRowCount = 1;
+					var templateMergedColumnCount = 1;
 					var mergedRange = tempCell.MergedRange();
 					//Process only the first cell in the merge
 					if (mergedRange is not null)
@@ -35,13 +46,109 @@ internal static partial class TfTemplateUtility
 						{
 							continue;
 						}
+						templateMergedRowCount = mergedRange.RowCount();
+						templateMergedColumnCount = mergedRange.ColumnCount();
 					}
 
-					var resultCell = resultWs.Cell(resultCurrentRow, resultCurrentColumn);
-					CopyCellProperties(tempCell, resultCell);
-					var tagResults = ProcessTemplateTag(tempCell.Value.ToString(), dataSource);
-					resultCell.Value = tagResults[0].Value;
+					tempRangeEndRowNumber = tempRangeEndRowNumber + templateMergedRowCount - 1;
+					tempRangeEndColumnNumber = tempRangeEndColumnNumber + templateMergedColumnCount - 1;
+
+					var tagProcessResult = ProcessTemplateTag(tempCell.Value.ToString(), dataSource);
+					if (tagProcessResult[0].Tags.Count > 0)
+					{
+						for (var i = 0; i < tagProcessResult.Count; i++)
+						{
+							var dsRowStarRowNumber = tempRangeStartRowNumber;
+							var dsRowStartColumnNumber = tempRangeStartColumnNumber;
+
+							var dsRowEndRowNumber = tempRangeEndRowNumber;
+							var dsRowEndColumnNumber = tempRangeEndColumnNumber;
+
+							//if vertical - increase rows with the merge
+							if (true)
+							{
+								dsRowStarRowNumber = tempRangeStartRowNumber + (templateMergedRowCount * i);
+								dsRowEndRowNumber = tempRangeEndRowNumber + (templateMergedRowCount * i);
+							}
+							//if hirozontal - increase columns with the merge
+							else
+							{
+								dsRowStartColumnNumber = tempRangeStartColumnNumber + (templateMergedColumnCount * i);
+								dsRowEndColumnNumber = tempRangeEndColumnNumber + (templateMergedColumnCount * i);
+							}
+
+
+							IXLRange dsRowResultRange = resultWs.Range(
+								firstCellRow: dsRowStarRowNumber,
+								firstCellColumn: dsRowStartColumnNumber,
+								lastCellRow: dsRowEndRowNumber,
+								lastCellColumn: dsRowEndColumnNumber);
+							dsRowResultRange.Merge();
+							CopyCellProperties(tempCell, dsRowResultRange);
+							var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
+							CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
+						}
+						if (true)
+						{
+							tempRangeEndRowNumber = tempRangeStartRowNumber + (dataSource.Rows.Count * templateMergedRowCount) - 1;
+						}
+						else
+						{
+							tempRangeEndColumnNumber = tempRangeStartColumnNumber + (dataSource.Rows.Count * templateMergedColumnCount) - 1;
+						}
+					}
+					else
+					{
+						tempRangeEndRowNumber = resultCurrentRow + templateMergedRowCount - 1;
+						tempRangeEndColumnNumber = resultCurrentColumn + templateMergedColumnCount - 1;
+						IXLRange dsRowResultRange = resultWs.Range(
+								firstCellRow: tempRangeStartRowNumber,
+								firstCellColumn: tempRangeStartColumnNumber,
+								lastCellRow: tempRangeEndRowNumber,
+								lastCellColumn: tempRangeEndColumnNumber);
+						dsRowResultRange.Merge();
+						dsRowResultRange.Value = tempCell.Value;
+
+						CopyCellProperties(tempCell, dsRowResultRange);
+
+						var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
+						CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
+					}
+
+					IXLRange resultRange = resultWs.Range(
+							firstCellRow: tempRangeStartRowNumber,
+							firstCellColumn: tempRangeStartColumnNumber,
+							lastCellRow: tempRangeEndRowNumber,
+							lastCellColumn: tempRangeEndColumnNumber);
+
+					//Copy column styles
+
+
+					//Create context
+					var context = new TfExcelTemplateContext()
+					{
+						Id = Guid.NewGuid(),
+						Tags = tagProcessResult.Count == 0 ? new() : tagProcessResult[0].Tags,
+						TemplateWorksheet = tempWs.Worksheet,
+						ResultWorksheet = resultWs.Worksheet,
+						TemplateRange = mergedRange is not null ? mergedRange : tempCell.AsRange(),
+						ResultRange = resultRange,
+					};
+					result.Contexts.Add(context);
+
+					if (tempRowResultRowsUsed < resultRange.RowCount())
+						tempRowResultRowsUsed = resultRange.RowCount();
+
+					resultCurrentColumn = resultCurrentColumn + resultRange.ColumnCount();
 				}
+				//Copy Row Styles
+				for (var i = 0; i < tempRowResultRowsUsed; i++)
+				{
+					var resultRow = resultWs.Row(resultCurrentRow + i);
+					CopyRowProperties(tempRow, resultRow);
+				}
+
+				resultCurrentRow += tempRowResultRowsUsed;
 			}
 		}
 	}
@@ -59,7 +166,7 @@ internal static partial class TfTemplateUtility
 			if (dataSource.Rows.Count > 0)
 			{
 				var processedWsNameResult = ProcessTemplateTag(tempWs.Name, new TfDataTable(dataSource, 0));
-				resultWs.Name = processedWsNameResult[0].Value;
+				resultWs.Name = processedWsNameResult[0].ValueString;
 			}
 
 
@@ -73,15 +180,36 @@ internal static partial class TfTemplateUtility
 		}
 	}
 
-	private static void CopyCellProperties(IXLCell origin, IXLCell destination)
+	private static void CopyCellProperties(IXLCell template, IXLRange result)
 	{
-		destination.ShowPhonetic = origin.ShowPhonetic;
-		destination.FormulaA1 = origin.FormulaA1;
-		destination.FormulaR1C1 = origin.FormulaR1C1;
-		if(origin.FormulaReference is not null)
-			destination.FormulaReference = origin.FormulaReference;
-		destination.ShareString = origin.ShareString;
-		destination.Style = origin.Style;
-		destination.Active = origin.Active;
+		foreach (IXLCell destination in result.Cells())
+		{
+			destination.ShowPhonetic = template.ShowPhonetic;
+			destination.FormulaA1 = template.FormulaA1;
+			destination.FormulaR1C1 = template.FormulaR1C1;
+			if (template.FormulaReference is not null)
+				destination.FormulaReference = template.FormulaReference;
+			destination.ShareString = template.ShareString;
+			destination.Style = template.Style;
+			destination.Active = template.Active;
+		}
+	}
+
+	private static void CopyRowProperties(IXLRow origin, IXLRow result)
+	{
+		result.OutlineLevel = origin.OutlineLevel;
+		result.Height = origin.Height;
+	}
+	private static void CopyColumnsProperties(IXLRange templateRange, IXLRange resultRange, IXLWorksheet templateWs, IXLWorksheet resultWs)
+	{
+		var dsRowResultColumnsCount = resultRange.ColumnCount();
+		for (var i = 0; i < templateRange.ColumnCount(); i++)
+		{
+			if (dsRowResultColumnsCount - 1 < i) continue;
+			var tempColumn = templateWs.Column(templateRange.RangeAddress.FirstAddress.ColumnNumber + i);
+			var resultColumn = resultWs.Column(resultRange.RangeAddress.FirstAddress.ColumnNumber + i);
+			resultColumn.OutlineLevel = tempColumn.OutlineLevel;
+			resultColumn.Width = tempColumn.Width;
+		}
 	}
 }

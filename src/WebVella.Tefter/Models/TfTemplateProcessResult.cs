@@ -12,6 +12,6 @@ internal class TfExcelTemplateProcessResult : TfTemplateProcessResult
 {
 	public XLWorkbook TemplateWorkbook { get; set; } = null;
 	public XLWorkbook ResultWorkbook { get; set; } = new();
-	public List<TfExcelTemplateContext> Contexts { get; set; }
+	public List<TfExcelTemplateContext> Contexts { get; set; } = new();
 }
 
