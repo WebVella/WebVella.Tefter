@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace WebVella.Tefter.Utility;
 internal static partial class TfTemplateUtility
 {
+	private static List<ITfTemplateTagParameterBase> _templateTagParameterTypes;
 	public static List<TfTemplateTagResult> ProcessTemplateTag(string template, TfDataTable dataSource, CultureInfo culture = null)
 	{
 		if (culture == null) culture = TfConstants.DefaultCulture;
@@ -168,7 +169,7 @@ internal static partial class TfTemplateUtility
 			var group = new TfTemplateTagParamGroup
 			{
 				FullString = matchGroup.Value,
-				Parameters = ExtractTagParametersFromGroup(matchGroup.Value)
+				Parameters = ExtractTagParametersFromGroup(matchGroup.Value, result.Type)
 			};
 			result.ParamGroups.Add(group);
 		}
@@ -201,9 +202,9 @@ internal static partial class TfTemplateUtility
 
 	}
 
-	private static List<TfTemplateTagParameter> ExtractTagParametersFromGroup(string parameterGroup)
+	private static List<ITfTemplateTagParameterBase> ExtractTagParametersFromGroup(string parameterGroup, TfTemplateTagType tagType)
 	{
-		var result = new List<TfTemplateTagParameter>();
+		var result = new List<ITfTemplateTagParameterBase>();
 		if (String.IsNullOrWhiteSpace(parameterGroup)
 		|| !parameterGroup.StartsWith("(")
 		|| !parameterGroup.EndsWith(")")) return result;
@@ -215,7 +216,7 @@ internal static partial class TfTemplateUtility
 
 		foreach (var parameterString in processedParameterGroup.Split(",", StringSplitOptions.RemoveEmptyEntries))
 		{
-			var parameter = ExtractTagParameterFromDefinition(parameterString);
+			var parameter = ExtractTagParameterFromDefinition(parameterString, tagType);
 			if (parameter is not null) result.Add(parameter);
 		}
 
@@ -223,10 +224,9 @@ internal static partial class TfTemplateUtility
 		return result;
 	}
 
-	private static TfTemplateTagParameter ExtractTagParameterFromDefinition(string parameterDefinition)
+	private static ITfTemplateTagParameterBase ExtractTagParameterFromDefinition(string parameterDefinition, TfTemplateTagType tagType)
 	{
 		if (String.IsNullOrWhiteSpace(parameterDefinition)) return null;
-		TfTemplateTagParameter result = new();
 		string paramName = null;
 		string paramValue = null;
 		var firstEqualSignIndex = parameterDefinition.IndexOf('=');
@@ -254,11 +254,19 @@ internal static partial class TfTemplateUtility
 			paramValue = paramValue.Substring(0, paramValue.Length - 1);
 		}
 
-
-		result.Name = paramName;
-		result.ValueString = paramValue;
-
-		return result;
+		if (tagType == TfTemplateTagType.Data)
+		{
+			if(paramName == "f"){ 
+				return new TfTemplateTagDataFlowParameter(paramValue);
+			};
+		}
+		else if (tagType == TfTemplateTagType.Function)
+		{
+		}
+		else if (tagType == TfTemplateTagType.ExcelFunction)
+		{
+		}
+		return new TfTemplateTagUnknownParameter(paramName,paramValue);
 	}
 
 	private static int? ExtractTagIndexFromGroup(string indexGroup)
@@ -279,69 +287,4 @@ internal static partial class TfTemplateUtility
 		return null;
 	}
 
-	private static object TryExractValue(string templateResult, TfDataColumn column)
-	{
-		if (String.IsNullOrWhiteSpace(templateResult)) return null;
-		object result = null;
-		if (column.DbType == TfDatabaseColumnType.Guid)
-		{
-			if (Guid.TryParse(templateResult, out Guid outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.Date)
-		{
-			if (DateOnly.TryParse(templateResult, out DateOnly outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.DateTime)
-		{
-			if (DateTime.TryParse(templateResult, out DateTime outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.ShortInteger)
-		{
-			if (short.TryParse(templateResult, out short outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.Integer)
-		{
-			if (int.TryParse(templateResult, out int outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.LongInteger)
-		{
-			if (long.TryParse(templateResult, out long outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.Number)
-		{
-			if (decimal.TryParse(templateResult, out decimal outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.Boolean)
-		{
-			if (bool.TryParse(templateResult, out bool outResult))
-				result = outResult;
-			else result = templateResult;
-		}
-		else if (column.DbType == TfDatabaseColumnType.Text ||
-			column.DbType == TfDatabaseColumnType.ShortText)
-		{
-			result = templateResult;
-		}
-		else
-		{
-			throw new Exception("Not supported row type update");
-		}
-
-
-		return result;
-	}
 }

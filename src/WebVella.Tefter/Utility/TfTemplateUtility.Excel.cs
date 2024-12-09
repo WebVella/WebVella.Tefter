@@ -38,6 +38,7 @@ internal static partial class TfTemplateUtility
 					var templateMergedRowCount = 1;
 					var templateMergedColumnCount = 1;
 					var mergedRange = tempCell.MergedRange();
+					List<IXLRange> resultRangeSlots = new List<IXLRange>();
 					//Process only the first cell in the merge
 					if (mergedRange is not null)
 					{
@@ -56,6 +57,7 @@ internal static partial class TfTemplateUtility
 					var tagProcessResult = ProcessTemplateTag(tempCell.Value.ToString(), dataSource);
 					if (tagProcessResult[0].Tags.Count > 0)
 					{
+						var isFlowHorizontal = IsFlowHorizontal(tagProcessResult[0]);
 						for (var i = 0; i < tagProcessResult.Count; i++)
 						{
 							var dsRowStarRowNumber = tempRangeStartRowNumber;
@@ -65,7 +67,7 @@ internal static partial class TfTemplateUtility
 							var dsRowEndColumnNumber = tempRangeEndColumnNumber;
 
 							//if vertical - increase rows with the merge
-							if (true)
+							if (!isFlowHorizontal)
 							{
 								dsRowStarRowNumber = tempRangeStartRowNumber + (templateMergedRowCount * i);
 								dsRowEndRowNumber = tempRangeEndRowNumber + (templateMergedRowCount * i);
@@ -87,14 +89,15 @@ internal static partial class TfTemplateUtility
 							CopyCellProperties(tempCell, dsRowResultRange);
 							var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
 							CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
+							resultRangeSlots.Add(dsRowResultRange);
 						}
-						if (true)
+						if (!isFlowHorizontal)
 						{
-							tempRangeEndRowNumber = tempRangeStartRowNumber + (dataSource.Rows.Count * templateMergedRowCount) - 1;
+							tempRangeEndRowNumber = tempRangeStartRowNumber + (tagProcessResult.Count * templateMergedRowCount) - 1;
 						}
 						else
 						{
-							tempRangeEndColumnNumber = tempRangeStartColumnNumber + (dataSource.Rows.Count * templateMergedColumnCount) - 1;
+							tempRangeEndColumnNumber = tempRangeStartColumnNumber + (tagProcessResult.Count * templateMergedColumnCount) - 1;
 						}
 					}
 					else
@@ -113,6 +116,8 @@ internal static partial class TfTemplateUtility
 
 						var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
 						CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
+
+						resultRangeSlots.Add(dsRowResultRange);
 					}
 
 					IXLRange resultRange = resultWs.Range(
@@ -133,6 +138,7 @@ internal static partial class TfTemplateUtility
 						ResultWorksheet = resultWs.Worksheet,
 						TemplateRange = mergedRange is not null ? mergedRange : tempCell.AsRange(),
 						ResultRange = resultRange,
+						ResultRangeSlots = resultRangeSlots,
 					};
 					result.Contexts.Add(context);
 
@@ -211,5 +217,37 @@ internal static partial class TfTemplateUtility
 			resultColumn.OutlineLevel = tempColumn.OutlineLevel;
 			resultColumn.Width = tempColumn.Width;
 		}
+	}
+
+	private static bool IsFlowHorizontal(TfTemplateTagResult tagResult)
+	{
+		var allTagsHorizontal = true;
+		foreach (var tag in tagResult.Tags)
+		{
+			if (tag.ParamGroups.Count == 0)
+			{
+				allTagsHorizontal = false;
+				break;
+			}
+			var paramGroup = tag.ParamGroups[0];
+			if (paramGroup.Parameters.Count == 0)
+			{
+				allTagsHorizontal = false;
+				break;
+			}
+			foreach (var parameter in paramGroup.Parameters)
+			{
+				if (parameter.Type.FullName == typeof(TfTemplateTagDataFlowParameter).FullName)
+				{
+					var paramObj = (TfTemplateTagDataFlowParameter)parameter;
+					if (paramObj.Value == TfTemplateTagDataFlow.Vertical)
+					{
+						allTagsHorizontal = false;
+						break;
+					}
+				}
+			}
+		}
+		return allTagsHorizontal;
 	}
 }

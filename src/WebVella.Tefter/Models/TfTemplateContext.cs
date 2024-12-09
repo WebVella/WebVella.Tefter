@@ -14,4 +14,5 @@ internal class TfExcelTemplateContext : TfTemplateContext
 	public IXLWorksheet ResultWorksheet { get; set; }
 	public IXLRange TemplateRange { get; set; }
 	public IXLRange ResultRange { get; set; }
+	public List<IXLRange> ResultRangeSlots { get; set; }
 }
