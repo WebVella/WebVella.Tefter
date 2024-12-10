@@ -6,32 +6,60 @@ using WebVella.Tefter.Utility;
 public class TemplateTagTestsBase
 {
 	private TfDataTable _data;
+	private TfDataTable _typeData;
 	public TemplateTagTestsBase()
 	{
-		var ds = new TfDataTable();
-		ds.Columns.Add(new TfDataColumn(ds, "position", TfDatabaseColumnType.Integer, false, false, false));
-		ds.Columns.Add(new TfDataColumn(ds, "sku", TfDatabaseColumnType.Text, false, false, false));
-		ds.Columns.Add(new TfDataColumn(ds, "name", TfDatabaseColumnType.Text, false, false, false));
-		ds.Columns.Add(new TfDataColumn(ds, "price", TfDatabaseColumnType.Number, false, false, false));
-		var values = new List<Tuple<int, string, string, decimal>>();
-		for (int i = 0; i < 5; i++)
+		//Data
 		{
-			var position = i + 1;
-			values.Add(new Tuple<int, string, string, decimal>(position, $"sku{position}", $"item{position}", (decimal)(position * 10)));
+			var ds = new TfDataTable();
+			ds.Columns.Add(new TfDataColumn(ds, "position", TfDatabaseColumnType.Integer, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "sku", TfDatabaseColumnType.Text, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "name", TfDatabaseColumnType.Text, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "price", TfDatabaseColumnType.Number, false, false, false));
+			for (int i = 0; i < 5; i++)
+			{
+				var position = i + 1;
+				var dsrow = new TfDataRow(ds, new object[ds.Columns.Count]);
+				dsrow["position"] = position;
+				dsrow["sku"] = $"sku{position}";
+				dsrow["name"] = $"item{position}";
+				dsrow["price"] = (decimal)(position * 10);
+				ds.Rows.Add(dsrow);
+			}
+			_data = ds;
 		}
-
-		foreach (var item in values)
+		//TypedData
 		{
-			var dsrow = new TfDataRow(ds, new object[ds.Columns.Count]);
-			dsrow["position"] = item.Item1;
-			dsrow["sku"] = item.Item2;
-			dsrow["name"] = item.Item3;
-			dsrow["price"] = item.Item4;
-			ds.Rows.Add(dsrow);
+			var ds = new TfDataTable();
+			ds.Columns.Add(new TfDataColumn(ds, "short", TfDatabaseColumnType.ShortInteger, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "int", TfDatabaseColumnType.Integer, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "long", TfDatabaseColumnType.LongInteger, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "number", TfDatabaseColumnType.Number, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "date", TfDatabaseColumnType.Date, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "datetime", TfDatabaseColumnType.DateTime, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "shorttext", TfDatabaseColumnType.ShortText, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "text", TfDatabaseColumnType.Text, false, false, false));
+			ds.Columns.Add(new TfDataColumn(ds, "guid", TfDatabaseColumnType.Guid, false, false, false));
+			for (short i = 0; i < 5; i++)
+			{
+				var position = i + 1;
+				var dsrow = new TfDataRow(ds, new object[ds.Columns.Count]);
+				dsrow["short"] = (short)position;
+				dsrow["int"] = (int)(position + 100);
+				dsrow["long"] = (long)(position + 1000);
+				dsrow["number"] = (decimal)(position * 10);
+				dsrow["date"] = DateOnly.FromDateTime(DateTime.Now.AddDays(i));
+				dsrow["datetime"] = DateTime.Now.AddDays(i + 10);
+				dsrow["shorttext"] = $"short text {i}";
+				dsrow["text"] = $"text {i}";
+				dsrow["guid"] = Guid.NewGuid();
+				ds.Rows.Add(dsrow);
+			}
+			_typeData = ds;
 		}
-		_data = ds;
 	}
 	public TfDataTable SampleData => _data;
+	public TfDataTable TypedData => _typeData;
 }
 
 public partial class TemplateTagTests : TemplateTagTestsBase
@@ -182,7 +210,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		result[0].ParamGroups.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters[0].Name.Should().BeNull();
-		result[0].ParamGroups[0].Parameters[0].Value.Should().Be("test");
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be("test");
 	}
 
 	[Fact]
@@ -204,7 +232,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		result[0].ParamGroups.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters[0].Name.Should().Be(paramName.ToLowerInvariant());
-		result[0].ParamGroups[0].Parameters[0].Value.Should().Be(paramValue);
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be(paramValue);
 	}
 
 	[Fact]
@@ -226,7 +254,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		result[0].ParamGroups.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters[0].Name.Should().Be(paramName);
-		result[0].ParamGroups[0].Parameters[0].Value.Should().Be(paramValue);
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be(paramValue);
 	}
 
 	[Fact]
@@ -248,7 +276,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		result[0].ParamGroups.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters.Count.Should().Be(1);
 		result[0].ParamGroups[0].Parameters[0].Name.Should().Be(paramName.ToLowerInvariant());
-		result[0].ParamGroups[0].Parameters[0].Value.Should().Be(paramValue);
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be(paramValue);
 	}
 
 	[Fact]
@@ -310,8 +338,8 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		var column1Param2 = column1Tag.ParamGroups[0].Parameters.FirstOrDefault(x => x.Name == columnNameParam2Name.ToLowerInvariant());
 		column1Param1.Should().NotBeNull();
 		column1Param2.Should().NotBeNull();
-		column1Param1.Value.Should().Be(columnNameParam1Value);
-		column1Param2.Value.Should().Be(columnNameParam2Value);
+		column1Param1.ValueString.Should().Be(columnNameParam1Value);
+		column1Param2.ValueString.Should().Be(columnNameParam2Value);
 
 		column2Tag.FullString.Should().Be("{{" + columnName2 + "(" + columnName2Param1Name + "=\"" + columnName2Param1Value + "\", " + columnName2Param2Name + "=\"" + columnName2Param2Value + "\")}}");
 		column2Tag.Name.Should().Be(columnName2);
@@ -322,8 +350,8 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		var column2Param2 = column2Tag.ParamGroups[0].Parameters.FirstOrDefault(x => x.Name == columnName2Param2Name.ToLowerInvariant());
 		column2Param1.Should().NotBeNull();
 		column2Param2.Should().NotBeNull();
-		column2Param1.Value.Should().Be(columnName2Param1Value);
-		column2Param2.Value.Should().Be(columnName2Param2Value);
+		column2Param1.ValueString.Should().Be(columnName2Param1Value);
+		column2Param2.ValueString.Should().Be(columnName2Param2Value);
 	}
 
 	[Fact]
@@ -408,10 +436,10 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 
 
 		column1Tag.ParamGroups[0].Parameters[0].Name.Should().Be(columnNameParam1Name.ToLowerInvariant());
-		column1Tag.ParamGroups[0].Parameters[0].Value.Should().Be(columnNameParam1Value);
+		column1Tag.ParamGroups[0].Parameters[0].ValueString.Should().Be(columnNameParam1Value);
 
 		column1Tag.ParamGroups[1].Parameters[0].Name.Should().Be(columnNameParam2Name.ToLowerInvariant());
-		column1Tag.ParamGroups[1].Parameters[0].Value.Should().Be(columnNameParam2Value);
+		column1Tag.ParamGroups[1].Parameters[0].ValueString.Should().Be(columnNameParam2Value);
 	}
 
 	[Fact]
@@ -564,8 +592,8 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(5);
-		result[0].Value.Should().Be(template);
+		result.Count.Should().Be(1);
+		result[0].ValueString.Should().Be(template);
 	}
 
 	[Fact]
@@ -578,8 +606,8 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(5);
-		result[0].Value.Should().Be(template);
+		result.Count.Should().Be(1);
+		result[0].ValueString.Should().Be(template);
 	}
 
 	[Fact]
@@ -592,8 +620,8 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(5);
-		result[0].Value.Should().Be(template);
+		result.Count.Should().Be(1);
+		result[0].ValueString.Should().Be(template);
 	}
 
 	[Fact]
@@ -607,11 +635,11 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		//Then
 		result.Should().NotBeNull();
 		result.Count.Should().Be(5);
-		result[0].Value.Should().Be(ds.Rows[0]["name"]?.ToString());
-		result[1].Value.Should().Be(ds.Rows[1]["name"]?.ToString());
-		result[2].Value.Should().Be(ds.Rows[2]["name"]?.ToString());
-		result[3].Value.Should().Be(ds.Rows[3]["name"]?.ToString());
-		result[4].Value.Should().Be(ds.Rows[4]["name"]?.ToString());
+		result[0].ValueString.Should().Be(ds.Rows[0]["name"]?.ToString());
+		result[1].ValueString.Should().Be(ds.Rows[1]["name"]?.ToString());
+		result[2].ValueString.Should().Be(ds.Rows[2]["name"]?.ToString());
+		result[3].ValueString.Should().Be(ds.Rows[3]["name"]?.ToString());
+		result[4].ValueString.Should().Be(ds.Rows[4]["name"]?.ToString());
 	}
 
 	[Fact]
@@ -625,11 +653,11 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		//Then
 		result.Should().NotBeNull();
 		result.Count.Should().Be(5);
-		result[0].Value.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
-		result[1].Value.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[1]["name"]);
-		result[2].Value.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[2]["name"]);
-		result[3].Value.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[3]["name"]);
-		result[4].Value.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[4]["name"]);
+		result[0].ValueString.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
+		result[1].ValueString.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[1]["name"]);
+		result[2].ValueString.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[2]["name"]);
+		result[3].ValueString.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[3]["name"]);
+		result[4].ValueString.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[4]["name"]);
 
 	}
 
@@ -644,14 +672,63 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		//Then
 		result.Should().NotBeNull();
 		result.Count.Should().Be(5);
-		result[0].Value.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
-		result[1].Value.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[0]["name"]);
-		result[2].Value.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[0]["name"]);
-		result[3].Value.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[0]["name"]);
-		result[4].Value.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[0]["name"]);
+		result[0].ValueString.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
+		result[1].ValueString.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[0]["name"]);
+		result[2].ValueString.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[0]["name"]);
+		result[3].ValueString.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[0]["name"]);
+		result[4].ValueString.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[0]["name"]);
 
 	}
 
+	[Fact]
+	public void TemplateProcessShouldReturnResultsIfTagCanBeProcessedMultiFixedIndexSingle()
+	{
+		//Given
+		string template = "{{name[0]}}";
+		TfDataTable ds = SampleData;
+		//When
+		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].ValueString.Should().Be((string)ds.Rows[0]["name"]);
+	}
+
+
+	[Fact]
+	public void ProcessValueShouldBeCorrect()
+	{
+		//Given
+		var columnTypeNames = new List<string>{
+			"short","int","long","number","date","datetime",
+			"shorttext","text","guid"
+		};
+		var culture = new CultureInfo("en-US");
+		var currentCulture = Thread.CurrentThread.CurrentCulture;
+		var currentUICulture = Thread.CurrentThread.CurrentUICulture;
+		try
+		{
+			Thread.CurrentThread.CurrentCulture = culture;
+			Thread.CurrentThread.CurrentCulture = culture;
+			foreach (var columnName in columnTypeNames)
+			{
+				string template = "{{" + columnName + "[0]}}";
+				TfDataTable ds = TypedData;
+				//When
+				List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds, culture);
+				//Then
+				result.Should().NotBeNull();
+				result.Count.Should().Be(1);
+				result[0].ValueString.Should().Be(ds.Rows[0][columnName]?.ToString());
+				result[0].Value.Should().Be(ds.Rows[0][columnName]);
+			}
+		}
+		finally
+		{
+			Thread.CurrentThread.CurrentCulture = currentCulture;
+			Thread.CurrentThread.CurrentUICulture = currentUICulture;
+		}
+	}
 
 	#endregion
 }

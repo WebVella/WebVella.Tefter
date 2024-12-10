@@ -6,7 +6,7 @@ public partial class TfConstants
 		new TucCultureOption{ CultureCode = "en-US", IconUrl ="/_content/WebVella.Tefter/media/us.svg", Name = "English (US)"},
 		new TucCultureOption{ CultureCode = "bg-BG", IconUrl ="/_content/WebVella.Tefter/media/bg.svg", Name = "Български"}
 	};
-
+	public static CultureInfo DefaultCulture = new CultureInfo("en-US");
 	public static string TimeZoneName = "Europe/Sofia";
 	public const string DateFormat = "dd.MM.yyyy";
 	public const string HourFormat = "HH:mm";
