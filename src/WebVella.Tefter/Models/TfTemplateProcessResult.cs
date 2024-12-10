@@ -5,7 +5,7 @@ internal abstract class TfTemplateProcessResult
 	public HashSet<Guid> ProcessedContexts { get; set; } = new();
 
 	//To find how many attempts were made for a context to be processed
-	public List<Guid> ContextProcessLog { get; set; } = new();	
+	public Dictionary<Guid,int> ContextProcessLog { get; set; } = new();	
 }
 
 internal class TfExcelTemplateProcessResult : TfTemplateProcessResult

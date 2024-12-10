@@ -4,6 +4,7 @@ internal class TfTemplateTagResultList
 {
 	//What string needs to be replaced in the place of the tag data
 	public List<TfTemplateTag> Tags { get; set; } = new();
+	public bool AllDataTags { get; set; } = false; //for optimization purpose - when all tags are a data type
 	public List<object> Values { get; set; } = new();
 }
 
@@ -50,7 +51,7 @@ internal interface ITfTemplateTagParameterBase
 
 internal interface ITfTemplateTagParameterExcel
 {
-	HashSet<Guid> GetDependencies(TfExcelTemplateProcessResult result, 
+	HashSet<Guid> GetDependencies(TfExcelTemplateProcessResult result,
 		TfExcelTemplateContext context,
 		TfTemplateTag tag,
 		TfTemplateTagParamGroup parameterGroup,
@@ -65,7 +66,7 @@ internal class TfTemplateTagUnknownParameter : ITfTemplateTagParameterBase
 	public string ValueString { get; set; } = null;
 	public TfTemplateTagType TagType { get => TfTemplateTagType.Data; }
 	public string Value { get; set; } = null;
-	public TfTemplateTagUnknownParameter(){}
+	public TfTemplateTagUnknownParameter() { }
 	public TfTemplateTagUnknownParameter(string name, string valueString)
 	{
 		Name = name;
@@ -73,7 +74,7 @@ internal class TfTemplateTagUnknownParameter : ITfTemplateTagParameterBase
 		Value = valueString;
 	}
 }
-internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase,ITfTemplateTagParameterExcel
+internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase, ITfTemplateTagParameterExcel
 {
 	public Type Type { get => this.GetType(); }
 	public string Name { get; set; } = "F";
@@ -81,7 +82,7 @@ internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase,ITfT
 	public TfTemplateTagType TagType { get => TfTemplateTagType.Data; }
 	public TfTemplateTagDataFlow Value { get; set; }
 
-	public TfTemplateTagDataFlowParameter(){}
+	public TfTemplateTagDataFlowParameter() { }
 	public TfTemplateTagDataFlowParameter(string valueString)
 	{
 		ValueString = valueString;

@@ -2,6 +2,7 @@
 using ClosedXML.Excel;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Utility;
+using WebVella.Tefter.Web.Utils;
 
 public class TemplateTagTestsBase
 {
@@ -589,7 +590,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "";
 		TfDataTable ds = SampleData;
 		//When
-		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, TfConstants.DefaultCulture);
 		//Then
 		result.Should().NotBeNull();
 		result.Values.Count.Should().Be(1);
@@ -603,7 +604,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "sometext test";
 		TfDataTable ds = SampleData;
 		//When
-		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, TfConstants.DefaultCulture);
 		//Then
 		result.Should().NotBeNull();
 		result.Values.Count.Should().Be(1);
@@ -617,7 +618,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{}}";
 		TfDataTable ds = SampleData;
 		//When
-		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, TfConstants.DefaultCulture);
 		//Then
 		result.Should().NotBeNull();
 		result.Values.Count.Should().Be(1);
@@ -631,7 +632,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{name}}";
 		TfDataTable ds = SampleData;
 		//When
-		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, TfConstants.DefaultCulture);
 		//Then
 		result.Should().NotBeNull();
 		result.Values.Count.Should().Be(5);
@@ -649,7 +650,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{position}}.{{name}}";
 		TfDataTable ds = SampleData;
 		//When
-		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, TfConstants.DefaultCulture);
 		//Then
 		result.Should().NotBeNull();
 		result.Values.Count.Should().Be(5);
@@ -668,7 +669,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{position}}.{{name[0]}}";
 		TfDataTable ds = SampleData;
 		//When
-		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, TfConstants.DefaultCulture);
 		//Then
 		result.Should().NotBeNull();
 		result.Values.Count.Should().Be(5);
@@ -687,7 +688,7 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{name[0]}}";
 		TfDataTable ds = SampleData;
 		//When
-		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, TfConstants.DefaultCulture);
 		//Then
 		result.Should().NotBeNull();
 		result.Values.Count.Should().Be(1);

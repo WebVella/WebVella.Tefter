@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,11 @@ internal static partial class TfTemplateUtility
 		result.ProcessExcelTemplateData(dataSource, culture);
 	}
 
-	public static void ProcessExcelTemplatePlacement(this TfExcelTemplateProcessResult result, TfDataTable dataSource)
+	public static void ProcessExcelTemplatePlacement(this TfExcelTemplateProcessResult result, TfDataTable dataSource, CultureInfo culture = null)
 	{
 		if (result is null) throw new Exception("No result provided!");
 		if (dataSource is null) throw new Exception("No datasource provided!");
+		if (culture is null) culture = TfConstants.DefaultCulture;
 		foreach (IXLWorksheet tempWs in result.TemplateWorkbook.Worksheets)
 		{
 			var tempWsUsedRowsCount = tempWs.LastRowUsed().RowNumber();
@@ -46,11 +48,11 @@ internal static partial class TfTemplateUtility
 					var templateMergedRowCount = 1;
 					var templateMergedColumnCount = 1;
 					var mergedRange = tempCell.MergedRange();
-					List<TfExcelTemplateContextRangeAddress> resultRangeSlots = new ();
+					List<TfExcelTemplateContextRangeAddress> resultRangeSlots = new();
 					//Process only the first cell in the merge
 					if (mergedRange is not null)
 					{
-						var margeRangeCells = mergedRange.CellsUsed(XLCellsUsedOptions.All);
+						var margeRangeCells = mergedRange.Cells();
 						if (margeRangeCells.First().Address.ToString() != tempCell.Address.ToString())
 						{
 							continue;
@@ -62,7 +64,8 @@ internal static partial class TfTemplateUtility
 					tempRangeEndRowNumber = tempRangeEndRowNumber + templateMergedRowCount - 1;
 					tempRangeEndColumnNumber = tempRangeEndColumnNumber + templateMergedColumnCount - 1;
 
-					var tagProcessResult = ProcessTemplateTag(tempCell.Value.ToString(), dataSource);
+					var tagProcessResult = ProcessTemplateTag(tempCell.Value.ToString(), dataSource, culture);
+					var contextDataProcessed = false;
 					if (tagProcessResult.Tags.Count > 0)
 					{
 						var isFlowHorizontal = IsFlowHorizontal(tagProcessResult);
@@ -87,21 +90,29 @@ internal static partial class TfTemplateUtility
 								dsRowEndColumnNumber = tempRangeEndColumnNumber + (templateMergedColumnCount * i);
 							}
 
-
 							IXLRange dsRowResultRange = resultWs.Range(
 								firstCellRow: dsRowStarRowNumber,
 								firstCellColumn: dsRowStartColumnNumber,
 								lastCellRow: dsRowEndRowNumber,
 								lastCellColumn: dsRowEndColumnNumber);
+
 							dsRowResultRange.Merge();
-							CopyCellProperties(tempCell, dsRowResultRange);
-							var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
-							CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
+
+							if(tagProcessResult.AllDataTags){ 
+								dsRowResultRange.Value = XLCellValue.FromObject(tagProcessResult.Values[i]);
+								contextDataProcessed = true;
+							}
+
+
+							//Boz: for optimization purposes is move outside the loop
+							//CopyCellProperties(tempCell, dsRowResultRange);
+							//var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
+							//CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
 							resultRangeSlots.Add(new TfExcelTemplateContextRangeAddress(
-								firstRow:dsRowResultRange.RangeAddress.FirstAddress.RowNumber,
-								firstColumn:dsRowResultRange.RangeAddress.FirstAddress.ColumnNumber,
-								lastRow:dsRowResultRange.RangeAddress.LastAddress.RowNumber,
-								lastColumn:dsRowResultRange.RangeAddress.LastAddress.ColumnNumber
+								firstRow: dsRowResultRange.RangeAddress.FirstAddress.RowNumber,
+								firstColumn: dsRowResultRange.RangeAddress.FirstAddress.ColumnNumber,
+								lastRow: dsRowResultRange.RangeAddress.LastAddress.RowNumber,
+								lastColumn: dsRowResultRange.RangeAddress.LastAddress.ColumnNumber
 							));
 						}
 						if (!isFlowHorizontal)
@@ -124,17 +135,17 @@ internal static partial class TfTemplateUtility
 								lastCellColumn: tempRangeEndColumnNumber);
 						dsRowResultRange.Merge();
 						dsRowResultRange.Value = tempCell.Value;
-
-						CopyCellProperties(tempCell, dsRowResultRange);
-
-						var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
-						CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
+						contextDataProcessed = true;
+						//Boz: for optimization purposes is move outside the loop
+						//CopyCellProperties(tempCell, dsRowResultRange);
+						//var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
+						//CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
 
 						resultRangeSlots.Add(new TfExcelTemplateContextRangeAddress(
-								firstRow:dsRowResultRange.RangeAddress.FirstAddress.RowNumber,
-								firstColumn:dsRowResultRange.RangeAddress.FirstAddress.ColumnNumber,
-								lastRow:dsRowResultRange.RangeAddress.LastAddress.RowNumber,
-								lastColumn:dsRowResultRange.RangeAddress.LastAddress.ColumnNumber
+								firstRow: dsRowResultRange.RangeAddress.FirstAddress.RowNumber,
+								firstColumn: dsRowResultRange.RangeAddress.FirstAddress.ColumnNumber,
+								lastRow: dsRowResultRange.RangeAddress.LastAddress.RowNumber,
+								lastColumn: dsRowResultRange.RangeAddress.LastAddress.ColumnNumber
 							));
 					}
 
@@ -158,8 +169,14 @@ internal static partial class TfTemplateUtility
 						TemplateRange = mergedRange is not null ? mergedRange : tempCell.AsRange(),
 						ResultRange = resultRange,
 						ResultRangeSlots = resultRangeSlots,
+						IsDataSet = contextDataProcessed
 					};
 					result.Contexts.Add(context);
+
+					//Boz: for optimization purposes is move from inside the loop
+					CopyCellProperties(tempCell, context.ResultRange);
+					var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
+					CopyColumnsProperties(templateRange, context.ResultRange, tempWs, resultWs);
 
 					if (tempRowResultRowsUsed < resultRange.RowCount())
 						tempRowResultRowsUsed = resultRange.RowCount();
@@ -225,12 +242,14 @@ internal static partial class TfTemplateUtility
 		{
 			var firstRowDt = dataSource.NewTable(0);
 			var resultWorksheets = result.ResultWorkbook.Worksheets.ToList();
-			for ( int i = 0; i < resultWorksheets.Count; i++ ) {
+			for (int i = 0; i < resultWorksheets.Count; i++)
+			{
 				var resultWs = resultWorksheets[i];
-				resultWs.Name = (ProcessTemplateTag(resultWs.Name,firstRowDt,culture)).Values[0].ToString();
+				resultWs.Name = (ProcessTemplateTag(resultWs.Name, firstRowDt, culture)).Values[0].ToString();
 			}
 		}
 		#endregion
+
 		#region << Process Worksheet Data>>
 		var contextDict = result.Contexts.ToDictionary(x => x.Id);
 		Queue<Guid> queue = new Queue<Guid>();
@@ -241,28 +260,30 @@ internal static partial class TfTemplateUtility
 		while (queue.Count > 0)
 		{
 			var contextId = queue.Dequeue();
-			var contextProcessAttempts = (result.ContextProcessLog.Select(x => x == contextId)).Count();
-			if (contextProcessAttempts > processAttemptsLimit) continue;
-			result.ContextProcessLog.Add(contextId);
+			if (!result.ContextProcessLog.ContainsKey(contextId))
+				result.ContextProcessLog[contextId] = 1;
+			if (result.ContextProcessLog[contextId] > processAttemptsLimit) continue;
 
 			var context = contextDict[contextId];
 
-			var resultCount = context.TagProcessResult.Values.Count;
-
-			for (var i = 0; i < context.ResultRangeSlots.Count; i++)
+			if (!context.IsDataSet)
 			{
-				var slot = context.ResultWorksheet.Range(
-					context.ResultRangeSlots[i].FirstRow,context.ResultRangeSlots[i].FirstColumn,
-					context.ResultRangeSlots[i].LastRow,context.ResultRangeSlots[i].LastColumn);
-				if (resultCount < i + 1) break;
-				slot.Value = XLCellValue.FromObject(context.TagProcessResult.Values[i]);
+				var resultCount = context.TagProcessResult.Values.Count;
+				for (var i = 0; i < context.ResultRangeSlots.Count; i++)
+				{
+					var address = context.ResultRangeSlots[i];
+					var slot = context.ResultWorksheet.Range(
+						address.FirstRow, address.FirstColumn,
+						address.LastRow, address.LastColumn);
+					if (resultCount < i + 1) break;
+					slot.Value = XLCellValue.FromObject(context.TagProcessResult.Values[i]);
+				}
 			}
 			result.ProcessedContexts.Add(contextId);
 			foreach (var dependantId in context.Dependants)
 			{
 				if (result.ProcessedContexts.Contains(dependantId))
 					throw new Exception("Dependant was calculated before the context it depends on");
-
 				queue.Enqueue(dependantId);
 			}
 		};
@@ -276,17 +297,25 @@ internal static partial class TfTemplateUtility
 
 	private static void CopyCellProperties(IXLCell template, IXLRange result)
 	{
-		foreach (IXLCell destination in result.Cells())
-		{
-			destination.ShowPhonetic = template.ShowPhonetic;
-			destination.FormulaA1 = template.FormulaA1;
-			destination.FormulaR1C1 = template.FormulaR1C1;
-			if (template.FormulaReference is not null)
-				destination.FormulaReference = template.FormulaReference;
-			destination.ShareString = template.ShareString;
-			destination.Style = template.Style;
-			destination.Active = template.Active;
-		}
+		//Commenting for optimization purposes
+		//foreach (IXLCell destination in result.Cells())
+		//{
+		//	destination.ShowPhonetic = template.ShowPhonetic;
+		//	destination.FormulaA1 = template.FormulaA1;
+		//	destination.FormulaR1C1 = template.FormulaR1C1;
+		//	if (template.FormulaReference is not null)
+		//		destination.FormulaReference = template.FormulaReference;
+		//	destination.ShareString = template.ShareString;
+		//	destination.Style = template.Style;
+		//	destination.Active = template.Active;
+		//}
+		if (!String.IsNullOrWhiteSpace(template.FormulaA1))
+			result.FormulaA1 = template.FormulaA1;
+		if (!String.IsNullOrWhiteSpace(template.FormulaR1C1))
+			result.FormulaR1C1 = template.FormulaR1C1;
+
+		result.ShareString = template.ShareString;
+		result.Style = template.Style;
 	}
 
 	private static void CopyRowProperties(IXLRow origin, IXLRow result)

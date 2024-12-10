@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,12 +9,17 @@ namespace WebVella.Tefter.Utility;
 internal static partial class TfTemplateUtility
 {
 	private static List<ITfTemplateTagParameterBase> _templateTagParameterTypes;
-	public static TfTemplateTagResultList ProcessTemplateTag(string template, TfDataTable dataSource, CultureInfo culture = null)
+	public static TfTemplateTagResultList ProcessTemplateTag(string template, TfDataTable dataSource, CultureInfo culture)
 	{
-		if (culture == null) culture = TfConstants.DefaultCulture;
-		if (dataSource == null) throw new Exception("No datasource provided!");
 		var result = new TfTemplateTagResultList();
+		//Commented for optimization purposes - it is rear case for high volume empty cells
+		//if (String.IsNullOrWhiteSpace(template))
+		//{
+		//	result.Values.Add(String.Empty);
+		//	return result;
+		//}
 		result.Tags = GetTagsFromTemplate(template);
+		result.AllDataTags = !result.Tags.Any(x => x.Type != TfTemplateTagType.Data);
 		//if there are no tags - return one with the template
 		if (result.Tags.Count == 0)
 		{
@@ -23,13 +29,12 @@ internal static partial class TfTemplateUtility
 		//if all tags are index - return one with processed template
 		else if (!result.Tags.Any(x => x.IndexList.Count == 0))
 		{
-			result.Values.Add(GenerateTemplateTagResult(template,result.Tags, dataSource, null, culture).Value);
+			result.Values.Add(GenerateTemplateTagResult(template, result.Tags, dataSource, null, culture).Value);
 			return result;
 		}
-
 		for (int i = 0; i < dataSource.Rows.Count; i++)
 		{
-			result.Values.Add(GenerateTemplateTagResult(template,result.Tags, dataSource, i, culture).Value);
+			result.Values.Add(GenerateTemplateTagResult(template, result.Tags, dataSource, i, culture).Value);
 		}
 		return result;
 	}
@@ -112,14 +117,11 @@ internal static partial class TfTemplateUtility
 	public static List<TfTemplateTag> GetTagsFromTemplate(string text)
 	{
 		var result = new List<TfTemplateTag>();
-		if (!text.Contains("{{") && !text.Contains("}}")) return result;
-
 		foreach (Match match in Regex.Matches(text, @"(\{\{[^{}]*\}\})"))
 		{
 			var tag = ExtractTagFromDefinition(match.Value);
 			if (tag is not null) result.Add(tag);
 		}
-
 		return result;
 	}
 
@@ -251,7 +253,8 @@ internal static partial class TfTemplateUtility
 
 		if (tagType == TfTemplateTagType.Data)
 		{
-			if(paramName == "f"){ 
+			if (paramName == "f")
+			{
 				return new TfTemplateTagDataFlowParameter(paramValue);
 			};
 		}
@@ -261,7 +264,7 @@ internal static partial class TfTemplateUtility
 		else if (tagType == TfTemplateTagType.ExcelFunction)
 		{
 		}
-		return new TfTemplateTagUnknownParameter(paramName,paramValue);
+		return new TfTemplateTagUnknownParameter(paramName, paramValue);
 	}
 
 	private static int? ExtractTagIndexFromGroup(string indexGroup)

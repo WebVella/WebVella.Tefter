@@ -250,7 +250,7 @@ public partial class ExcelTemplatesTests : TemplateTagTestsBase
 
 	#endregion
 
-	#region << Excel Function >>
+	#region << DATA >>
 	[Fact]
 	public async Task ExcelData1_RepeatAndWorksheetName()
 	{
@@ -393,8 +393,7 @@ public partial class ExcelTemplatesTests : TemplateTagTestsBase
 			result.ProcessExcelTemplateData(ds);
 			log.Add(sw.Elapsed);
 			sw.Stop();
-			Debug.WriteLine(System.Text.Json.JsonSerializer.Serialize(log));			
-			
+			Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(log));
 			//Assert
 			_generalResultChecks(result);
 

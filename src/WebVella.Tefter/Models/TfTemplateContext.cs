@@ -7,6 +7,8 @@ internal abstract class TfTemplateContext
 	public List<TfTemplateTag> Tags { get; set; }
 	public HashSet<Guid> Dependencies { get; set; } = new();
 	public HashSet<Guid> Dependants { get; set; } = new();
+	//for optimization purpose - when all tags are a data type their values are set during placement
+	public bool IsDataSet { get; set; } = false;
 }
 
 internal class TfExcelTemplateContext : TfTemplateContext
