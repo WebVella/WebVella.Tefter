@@ -25,13 +25,18 @@ public sealed class TfDataTable
 	{
 		Sql = string.Empty;
 		SqlParameters = new List<NpgsqlParameter>().AsReadOnly();
-		QueryInfo = new TfDataTableQueryInfo(
-			this,
-			table.QueryInfo.DataProviderId,
-			table.QueryInfo.SpaceDataId,
-			table.QueryInfo.Page,
-			table.QueryInfo.PageSize,
-			table.QueryInfo.Search);
+		QueryInfo = null;
+
+		if (table.QueryInfo != null)
+		{
+			QueryInfo = new TfDataTableQueryInfo(
+				this,
+				table.QueryInfo.DataProviderId,
+				table.QueryInfo.SpaceDataId,
+				table.QueryInfo.Page,
+				table.QueryInfo.PageSize,
+				table.QueryInfo.Search);
+		}
 
 		Columns = new TfDataColumnCollection(this);
 
