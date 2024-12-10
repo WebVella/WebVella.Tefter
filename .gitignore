@@ -352,3 +352,4 @@ MigrationBackup/
 .idea
 /src/WebVella.Tefter.Site/Files/
 /src/WebVella.Tefter.Site/BlobStorage/
+/tests/WebVella.Tefter.Tests/FileResults

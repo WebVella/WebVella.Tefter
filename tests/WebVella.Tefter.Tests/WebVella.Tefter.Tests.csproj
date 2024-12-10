@@ -87,6 +87,10 @@
 	  </None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="FileResults\" />
+	</ItemGroup>
+
 	
 
 </Project>
