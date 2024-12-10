@@ -1,5 +1,12 @@
 ﻿namespace WebVella.Tefter.Models;
 
+internal class TfTemplateTagResultList
+{
+	//What string needs to be replaced in the place of the tag data
+	public List<TfTemplateTag> Tags { get; set; } = new();
+	public List<object> Values { get; set; } = new();
+}
+
 internal class TfTemplateTagResult
 {
 	//What string needs to be replaced in the place of the tag data
@@ -41,6 +48,15 @@ internal interface ITfTemplateTagParameterBase
 	TfTemplateTagType TagType { get; }
 }
 
+internal interface ITfTemplateTagParameterExcel
+{
+	HashSet<Guid> GetDependencies(TfExcelTemplateProcessResult result, 
+		TfExcelTemplateContext context,
+		TfTemplateTag tag,
+		TfTemplateTagParamGroup parameterGroup,
+		ITfTemplateTagParameterExcel paramter);
+}
+
 #region << Template Tag Definitions >>
 internal class TfTemplateTagUnknownParameter : ITfTemplateTagParameterBase
 {
@@ -57,7 +73,7 @@ internal class TfTemplateTagUnknownParameter : ITfTemplateTagParameterBase
 		Value = valueString;
 	}
 }
-internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase
+internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase,ITfTemplateTagParameterExcel
 {
 	public Type Type { get => this.GetType(); }
 	public string Name { get; set; } = "F";
@@ -84,6 +100,8 @@ internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase
 		return TfTemplateTagDataFlow.Vertical;
 	}
 
+	public HashSet<Guid> GetDependencies(TfExcelTemplateProcessResult result, TfExcelTemplateContext context, TfTemplateTag tag, TfTemplateTagParamGroup parameterGroup, ITfTemplateTagParameterExcel paramter)
+	 => new HashSet<Guid>();
 }
 internal enum TfTemplateTagDataFlow
 {

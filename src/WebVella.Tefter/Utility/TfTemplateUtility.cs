@@ -8,43 +8,38 @@ namespace WebVella.Tefter.Utility;
 internal static partial class TfTemplateUtility
 {
 	private static List<ITfTemplateTagParameterBase> _templateTagParameterTypes;
-	public static List<TfTemplateTagResult> ProcessTemplateTag(string template, TfDataTable dataSource, CultureInfo culture = null)
+	public static TfTemplateTagResultList ProcessTemplateTag(string template, TfDataTable dataSource, CultureInfo culture = null)
 	{
 		if (culture == null) culture = TfConstants.DefaultCulture;
 		if (dataSource == null) throw new Exception("No datasource provided!");
-		var result = new List<TfTemplateTagResult>();
-		var tags = GetTagsFromTemplate(template);
+		var result = new TfTemplateTagResultList();
+		result.Tags = GetTagsFromTemplate(template);
 		//if there are no tags - return one with the template
-		if (tags.Count == 0)
+		if (result.Tags.Count == 0)
 		{
-			result.Add(new TfTemplateTagResult
-			{
-				Tags = new(),
-				Value = template,
-				ValueString = template,
-			});
+			result.Values.Add(template);
 			return result;
 		}
 		//if all tags are index - return one with processed template
-		else if (!tags.Any(x => x.IndexList.Count == 0))
+		else if (!result.Tags.Any(x => x.IndexList.Count == 0))
 		{
-			result.Add(GenerateTemplateTagResult(template, dataSource, null, culture));
+			result.Values.Add(GenerateTemplateTagResult(template,result.Tags, dataSource, null, culture).Value);
 			return result;
 		}
 
 		for (int i = 0; i < dataSource.Rows.Count; i++)
 		{
-			result.Add(GenerateTemplateTagResult(template, dataSource, i, culture));
+			result.Values.Add(GenerateTemplateTagResult(template,result.Tags, dataSource, i, culture).Value);
 		}
 		return result;
 	}
 
-	public static TfTemplateTagResult GenerateTemplateTagResult(string template, TfDataTable dataSource, int? rowIndex, CultureInfo culture)
+	public static TfTemplateTagResult GenerateTemplateTagResult(string template, List<TfTemplateTag> tags, TfDataTable dataSource, int? rowIndex, CultureInfo culture)
 	{
 		var result = new TfTemplateTagResult();
 		result.ValueString = template;
 		if (String.IsNullOrWhiteSpace(template)) return result;
-		result.Tags = GetTagsFromTemplate(template);
+		result.Tags = tags;
 		foreach (var tag in result.Tags)
 		{
 			(result.ValueString, result.Value) = ProcessTagInTemplate(result.ValueString, result.Value, tag, dataSource, rowIndex, culture);

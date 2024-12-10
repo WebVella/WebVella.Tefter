@@ -589,11 +589,11 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "";
 		TfDataTable ds = SampleData;
 		//When
-		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(1);
-		result[0].ValueString.Should().Be(template);
+		result.Values.Count.Should().Be(1);
+		result.Values[0].Should().Be(template);
 	}
 
 	[Fact]
@@ -603,11 +603,11 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "sometext test";
 		TfDataTable ds = SampleData;
 		//When
-		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(1);
-		result[0].ValueString.Should().Be(template);
+		result.Values.Count.Should().Be(1);
+		result.Values[0].Should().Be(template);
 	}
 
 	[Fact]
@@ -617,11 +617,11 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{}}";
 		TfDataTable ds = SampleData;
 		//When
-		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(1);
-		result[0].ValueString.Should().Be(template);
+		result.Values.Count.Should().Be(1);
+		result.Values[0].Should().Be(template);
 	}
 
 	[Fact]
@@ -631,15 +631,15 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{name}}";
 		TfDataTable ds = SampleData;
 		//When
-		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(5);
-		result[0].ValueString.Should().Be(ds.Rows[0]["name"]?.ToString());
-		result[1].ValueString.Should().Be(ds.Rows[1]["name"]?.ToString());
-		result[2].ValueString.Should().Be(ds.Rows[2]["name"]?.ToString());
-		result[3].ValueString.Should().Be(ds.Rows[3]["name"]?.ToString());
-		result[4].ValueString.Should().Be(ds.Rows[4]["name"]?.ToString());
+		result.Values.Count.Should().Be(5);
+		result.Values[0].Should().Be(ds.Rows[0]["name"]?.ToString());
+		result.Values[1].Should().Be(ds.Rows[1]["name"]?.ToString());
+		result.Values[2].Should().Be(ds.Rows[2]["name"]?.ToString());
+		result.Values[3].Should().Be(ds.Rows[3]["name"]?.ToString());
+		result.Values[4].Should().Be(ds.Rows[4]["name"]?.ToString());
 	}
 
 	[Fact]
@@ -649,15 +649,15 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{position}}.{{name}}";
 		TfDataTable ds = SampleData;
 		//When
-		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(5);
-		result[0].ValueString.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
-		result[1].ValueString.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[1]["name"]);
-		result[2].ValueString.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[2]["name"]);
-		result[3].ValueString.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[3]["name"]);
-		result[4].ValueString.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[4]["name"]);
+		result.Values.Count.Should().Be(5);
+		result.Values[0].Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
+		result.Values[1].Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[1]["name"]);
+		result.Values[2].Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[2]["name"]);
+		result.Values[3].Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[3]["name"]);
+		result.Values[4].Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[4]["name"]);
 
 	}
 
@@ -668,15 +668,15 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{position}}.{{name[0]}}";
 		TfDataTable ds = SampleData;
 		//When
-		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(5);
-		result[0].ValueString.Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
-		result[1].ValueString.Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[0]["name"]);
-		result[2].ValueString.Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[0]["name"]);
-		result[3].ValueString.Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[0]["name"]);
-		result[4].ValueString.Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[0]["name"]);
+		result.Values.Count.Should().Be(5);
+		result.Values[0].Should().Be(ds.Rows[0]["position"] + "." + ds.Rows[0]["name"]);
+		result.Values[1].Should().Be(ds.Rows[1]["position"] + "." + ds.Rows[0]["name"]);
+		result.Values[2].Should().Be(ds.Rows[2]["position"] + "." + ds.Rows[0]["name"]);
+		result.Values[3].Should().Be(ds.Rows[3]["position"] + "." + ds.Rows[0]["name"]);
+		result.Values[4].Should().Be(ds.Rows[4]["position"] + "." + ds.Rows[0]["name"]);
 
 	}
 
@@ -687,11 +687,11 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		string template = "{{name[0]}}";
 		TfDataTable ds = SampleData;
 		//When
-		List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds);
+		TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds);
 		//Then
 		result.Should().NotBeNull();
-		result.Count.Should().Be(1);
-		result[0].ValueString.Should().Be((string)ds.Rows[0]["name"]);
+		result.Values.Count.Should().Be(1);
+		result.Values[0].Should().Be((string)ds.Rows[0]["name"]);
 	}
 
 
@@ -715,12 +715,11 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 				string template = "{{" + columnName + "[0]}}";
 				TfDataTable ds = TypedData;
 				//When
-				List<TfTemplateTagResult> result = TfTemplateUtility.ProcessTemplateTag(template, ds, culture);
+				TfTemplateTagResultList result = TfTemplateUtility.ProcessTemplateTag(template, ds, culture);
 				//Then
 				result.Should().NotBeNull();
-				result.Count.Should().Be(1);
-				result[0].ValueString.Should().Be(ds.Rows[0][columnName]?.ToString());
-				result[0].Value.Should().Be(ds.Rows[0][columnName]);
+				result.Values.Count.Should().Be(1);
+				result.Values[0].Should().Be(ds.Rows[0][columnName]);
 			}
 		}
 		finally

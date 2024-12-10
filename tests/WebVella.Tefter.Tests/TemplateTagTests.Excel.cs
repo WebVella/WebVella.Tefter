@@ -1,5 +1,6 @@
 ﻿namespace WebVella.Tefter.Tests;
 using ClosedXML.Excel;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Utility;
@@ -187,7 +188,6 @@ public partial class ExcelTemplatesTests : TemplateTagTestsBase
 		}
 	}
 
-
 	[Fact]
 	public async Task Placement6_Data_HorizontalFlow()
 	{
@@ -226,6 +226,185 @@ public partial class ExcelTemplatesTests : TemplateTagTestsBase
 
 	#endregion
 
+	#region << Excel Function >>
+	//[Fact]
+	//public async Task ExcelFunction1_RelativeRangeConversion()
+	//{
+	//	// {{position}} | {{name}}
+	//	using (await locker.LockAsync())
+	//	{
+	//		//Given
+	//		var fileName = "TemplateExcelFunction1.xlsx";
+	//		var result = new TfExcelTemplateProcessResult();
+	//		result.TemplateWorkbook = _loadWorkbook(fileName);
+	//		//When
+	//		result.ProcessExcelTemplatePlacement(SampleData);
+	//		//Assert
+	//		_generalResultChecks(result);
+
+
+
+	//		_saveWorkbook(result.ResultWorkbook, fileName);
+	//	}
+	//}
+
+	#endregion
+
+	#region << Excel Function >>
+	[Fact]
+	public async Task ExcelData1_RepeatAndWorksheetName()
+	{
+		// {{position}} | {{name}}
+		using (await locker.LockAsync())
+		{
+			//Given
+			var fileName = "TemplateData1.xlsx";
+			var result = new TfExcelTemplateProcessResult();
+			result.TemplateWorkbook = _loadWorkbook(fileName);
+			//When
+			result.ProcessExcelTemplate(SampleData);
+			//Assert
+			_generalResultChecks(result);
+			var ws = result.ResultWorkbook.Worksheets.First();
+			ws.Name.Should().Be((string)SampleData.Rows[0]["name"]);
+
+			for (int i = 0; i < SampleData.Rows.Count; i++)
+			{
+				var cellValueString = ws.Cell(i + 1, 1).Value.ToString();
+				var rowValueString = SampleData.Rows[i]["position"]?.ToString();
+				cellValueString.Should().Be(rowValueString);
+			}
+
+
+			_saveWorkbook(result.ResultWorkbook, fileName);
+		}
+	}
+
+	[Fact]
+	public async Task ExcelData1_RepeatAndWorksheetName_Horizontal()
+	{
+		// {{position}} | {{name}}
+		using (await locker.LockAsync())
+		{
+			//Given
+			var fileName = "TemplateData2.xlsx";
+			var result = new TfExcelTemplateProcessResult();
+			result.TemplateWorkbook = _loadWorkbook(fileName);
+			//When
+			result.ProcessExcelTemplate(SampleData);
+			//Assert
+			_generalResultChecks(result);
+			var ws = result.ResultWorkbook.Worksheets.First();
+			ws.Name.Should().Be((string)SampleData.Rows[0]["name"]);
+
+			for (int i = 0; i < SampleData.Rows.Count; i++)
+			{
+				var cellValueString = ws.Cell(1, i + 1).Value.ToString();
+				var rowValueString = SampleData.Rows[i]["position"]?.ToString();
+				cellValueString.Should().Be(rowValueString);
+			}
+
+
+			_saveWorkbook(result.ResultWorkbook, fileName);
+		}
+	}
+
+	[Fact]
+	public async Task ExcelData1_RepeatAndWorksheetName_Mixed()
+	{
+		// {{position}} | {{name}}
+		using (await locker.LockAsync())
+		{
+			//Given
+			var fileName = "TemplateData3.xlsx";
+			var result = new TfExcelTemplateProcessResult();
+			result.TemplateWorkbook = _loadWorkbook(fileName);
+			//When
+			result.ProcessExcelTemplate(SampleData);
+			//Assert
+			_generalResultChecks(result);
+			var ws = result.ResultWorkbook.Worksheets.First();
+			ws.Name.Should().Be((string)SampleData.Rows[0]["name"]);
+
+			for (int i = 0; i < SampleData.Rows.Count; i++)
+			{
+				var cellValueString = ws.Cell(1, i + 1).Value.ToString();
+				var rowValueString = SampleData.Rows[i]["position"]?.ToString();
+				cellValueString.Should().Be(rowValueString);
+			}
+			for (int i = 0; i < SampleData.Rows.Count; i++)
+			{
+				var cellValueString = ws.Cell(i + 2, 1).Value.ToString();
+				var rowValueString = SampleData.Rows[i]["name"]?.ToString();
+				cellValueString.Should().Be(rowValueString);
+			}
+
+
+			_saveWorkbook(result.ResultWorkbook, fileName);
+		}
+	}
+
+	[Fact]
+	public async Task ExcelData1_RepeatAndWorksheetName_HighLoad()
+	{
+		var ds = new TfDataTable();
+		var colCount = 50;
+		//var rowCount = 5;
+		var rowCount = 50000;
+		var wb = new XLWorkbook();
+		var ws = wb.Worksheets.Add();
+		//Data
+		{
+			for (int i = 0; i < colCount; i++)
+			{
+				var colName = $"col{i}";
+				ds.Columns.Add(new TfDataColumn(ds, colName, TfDatabaseColumnType.Text, false, false, false));
+				ws.Cell(1, i + 1).Value = "{{" + colName + "}}";
+			}
+			for (int i = 0; i < rowCount; i++)
+			{
+				var position = i + 1;
+				var dsrow = new TfDataRow(ds, new object[ds.Columns.Count]);
+				for (int j = 0; j < colCount; j++)
+				{
+					dsrow[$"col{j}"] = $"cell-{i}-{j}";
+				}
+				ds.Rows.Add(dsrow);
+			}
+		}
+
+		// {{position}} | {{name}}
+		using (await locker.LockAsync())
+		{
+			//Given
+			var fileName = "TemplateDataGenerated.xlsx";
+			var result = new TfExcelTemplateProcessResult();
+			var log = new List<TimeSpan>();
+			result.TemplateWorkbook = wb;
+			//When
+			var sw = new Stopwatch();
+			sw.Start();
+			result.ProcessExcelTemplatePlacement(ds);
+			log.Add(sw.Elapsed);
+			sw.Restart();
+			result.ProcessExcelTemplateDependencies(ds);
+			log.Add(sw.Elapsed);
+			sw.Restart();
+			result.ProcessExcelTemplateData(ds);
+			log.Add(sw.Elapsed);
+			sw.Stop();
+			Debug.WriteLine(System.Text.Json.JsonSerializer.Serialize(log));			
+			
+			//Assert
+			_generalResultChecks(result);
+
+			_saveWorkbook(result.ResultWorkbook, fileName);
+		}
+	}
+
+
+	#endregion
+
 	#region << Private >>
 	private void _generalResultChecks(TfExcelTemplateProcessResult result)
 	{
@@ -234,7 +413,9 @@ public partial class ExcelTemplatesTests : TemplateTagTestsBase
 		result.ResultWorkbook.Should().NotBeNull();
 		result.Contexts.Should().NotBeNull();
 		result.TemplateWorkbook.Worksheets.Should().NotBeNull();
+		result.TemplateWorkbook.Worksheets.Count.Should().BeGreaterThan(0);
 		result.ResultWorkbook.Worksheets.Should().NotBeNull();
+		result.ResultWorkbook.Worksheets.Count.Should().BeGreaterThan(0);
 	}
 
 	private void _checkRangeDimensions(IXLRange range, int startRowNumber, int startColumnNumber, int lastRowNumber, int lastColumnNumber)

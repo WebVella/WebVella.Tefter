@@ -7,20 +7,28 @@ using System.Threading.Tasks;
 namespace WebVella.Tefter.Utility;
 internal static partial class TfTemplateUtility
 {
-	public static void ProcessExcelTemplate(this TfExcelTemplateProcessResult result, TfDataTable dataSource)
+	public static void ProcessExcelTemplate(this TfExcelTemplateProcessResult result,
+		TfDataTable dataSource, CultureInfo culture = null)
 	{
+		if (culture == null) culture = new CultureInfo("en-US");
+		if (result is null) throw new Exception("No result provided!");
 		if (dataSource is null) throw new Exception("No datasource provided!");
 		if (result.TemplateWorkbook is null) throw new Exception("No template provided!");
 		result.ProcessExcelTemplatePlacement(dataSource);
+		result.ProcessExcelTemplateDependencies(dataSource);
+		result.ProcessExcelTemplateData(dataSource, culture);
 	}
 
 	public static void ProcessExcelTemplatePlacement(this TfExcelTemplateProcessResult result, TfDataTable dataSource)
 	{
+		if (result is null) throw new Exception("No result provided!");
+		if (dataSource is null) throw new Exception("No datasource provided!");
 		foreach (IXLWorksheet tempWs in result.TemplateWorkbook.Worksheets)
 		{
 			var tempWsUsedRowsCount = tempWs.LastRowUsed().RowNumber();
 			var tempWsUsedColumnsCount = tempWs.LastColumnUsed().ColumnNumber();
 			var resultWs = result.ResultWorkbook.AddWorksheet();
+			resultWs.Name = tempWs.Name;
 			var resultCurrentRow = 1;
 			for (var rowIndex = 0; rowIndex < tempWsUsedRowsCount; rowIndex++)
 			{
@@ -38,7 +46,7 @@ internal static partial class TfTemplateUtility
 					var templateMergedRowCount = 1;
 					var templateMergedColumnCount = 1;
 					var mergedRange = tempCell.MergedRange();
-					List<IXLRange> resultRangeSlots = new List<IXLRange>();
+					List<TfExcelTemplateContextRangeAddress> resultRangeSlots = new ();
 					//Process only the first cell in the merge
 					if (mergedRange is not null)
 					{
@@ -55,10 +63,10 @@ internal static partial class TfTemplateUtility
 					tempRangeEndColumnNumber = tempRangeEndColumnNumber + templateMergedColumnCount - 1;
 
 					var tagProcessResult = ProcessTemplateTag(tempCell.Value.ToString(), dataSource);
-					if (tagProcessResult[0].Tags.Count > 0)
+					if (tagProcessResult.Tags.Count > 0)
 					{
-						var isFlowHorizontal = IsFlowHorizontal(tagProcessResult[0]);
-						for (var i = 0; i < tagProcessResult.Count; i++)
+						var isFlowHorizontal = IsFlowHorizontal(tagProcessResult);
+						for (var i = 0; i < tagProcessResult.Values.Count; i++)
 						{
 							var dsRowStarRowNumber = tempRangeStartRowNumber;
 							var dsRowStartColumnNumber = tempRangeStartColumnNumber;
@@ -89,15 +97,20 @@ internal static partial class TfTemplateUtility
 							CopyCellProperties(tempCell, dsRowResultRange);
 							var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
 							CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
-							resultRangeSlots.Add(dsRowResultRange);
+							resultRangeSlots.Add(new TfExcelTemplateContextRangeAddress(
+								firstRow:dsRowResultRange.RangeAddress.FirstAddress.RowNumber,
+								firstColumn:dsRowResultRange.RangeAddress.FirstAddress.ColumnNumber,
+								lastRow:dsRowResultRange.RangeAddress.LastAddress.RowNumber,
+								lastColumn:dsRowResultRange.RangeAddress.LastAddress.ColumnNumber
+							));
 						}
 						if (!isFlowHorizontal)
 						{
-							tempRangeEndRowNumber = tempRangeStartRowNumber + (tagProcessResult.Count * templateMergedRowCount) - 1;
+							tempRangeEndRowNumber = tempRangeStartRowNumber + (tagProcessResult.Values.Count * templateMergedRowCount) - 1;
 						}
 						else
 						{
-							tempRangeEndColumnNumber = tempRangeStartColumnNumber + (tagProcessResult.Count * templateMergedColumnCount) - 1;
+							tempRangeEndColumnNumber = tempRangeStartColumnNumber + (tagProcessResult.Values.Count * templateMergedColumnCount) - 1;
 						}
 					}
 					else
@@ -117,7 +130,12 @@ internal static partial class TfTemplateUtility
 						var templateRange = mergedRange is not null ? mergedRange : tempCell.AsRange();
 						CopyColumnsProperties(templateRange, dsRowResultRange, tempWs, resultWs);
 
-						resultRangeSlots.Add(dsRowResultRange);
+						resultRangeSlots.Add(new TfExcelTemplateContextRangeAddress(
+								firstRow:dsRowResultRange.RangeAddress.FirstAddress.RowNumber,
+								firstColumn:dsRowResultRange.RangeAddress.FirstAddress.ColumnNumber,
+								lastRow:dsRowResultRange.RangeAddress.LastAddress.RowNumber,
+								lastColumn:dsRowResultRange.RangeAddress.LastAddress.ColumnNumber
+							));
 					}
 
 					IXLRange resultRange = resultWs.Range(
@@ -133,7 +151,8 @@ internal static partial class TfTemplateUtility
 					var context = new TfExcelTemplateContext()
 					{
 						Id = Guid.NewGuid(),
-						Tags = tagProcessResult.Count == 0 ? new() : tagProcessResult[0].Tags,
+						TagProcessResult = tagProcessResult,
+						Tags = tagProcessResult.Tags,
 						TemplateWorksheet = tempWs.Worksheet,
 						ResultWorksheet = resultWs.Worksheet,
 						TemplateRange = mergedRange is not null ? mergedRange : tempCell.AsRange(),
@@ -161,29 +180,98 @@ internal static partial class TfTemplateUtility
 
 	public static void ProcessExcelTemplateDependencies(this TfExcelTemplateProcessResult result, TfDataTable dataSource)
 	{
-
-	}
-
-	public static void ProcessExcelTemplateData(this TfExcelTemplateProcessResult result, TfDataTable dataSource)
-	{
-		foreach (IXLWorksheet tempWs in result.TemplateWorkbook.Worksheets)
+		foreach (var context in result.Contexts)
 		{
-			var resultWs = result.ResultWorkbook.AddWorksheet();
-			if (dataSource.Rows.Count > 0)
+			HashSet<Guid> contextDependancies = new();
+			foreach (var tag in context.TagProcessResult.Tags)
 			{
-				var processedWsNameResult = ProcessTemplateTag(tempWs.Name, new TfDataTable(dataSource, 0));
-				resultWs.Name = processedWsNameResult[0].ValueString;
-			}
-
-
-			foreach (IXLRow tempRow in tempWs.RowsUsed())
-			{
-				foreach (IXLColumn tempColumn in tempWs.ColumnsUsed())
+				foreach (var tagParamGroup in tag.ParamGroups)
 				{
-
+					foreach (var tagParam in tagParamGroup.Parameters)
+					{
+						var baseParam = (ITfTemplateTagParameterBase)tagParam;
+						if (baseParam.Type.IsAssignableTo(typeof(ITfTemplateTagParameterExcel)))
+						{
+							var excelParam = (ITfTemplateTagParameterExcel)baseParam;
+							contextDependancies.Union(excelParam.GetDependencies(
+								result: result,
+								context: context,
+								tag: tag,
+								parameterGroup: tagParamGroup,
+								paramter: excelParam
+							));
+						}
+					}
 				}
 			}
+			context.Dependencies.Union(contextDependancies);
+			foreach (var contextId in contextDependancies)
+			{
+				result.Contexts.Single(x => x.Id == contextId).Dependants.Add(context.Id);
+			}
 		}
+	}
+
+	public static void ProcessExcelTemplateData(this TfExcelTemplateProcessResult result,
+		TfDataTable dataSource, CultureInfo culture = null)
+	{
+		int processAttemptsLimit = 200;
+		if (culture == null) culture = new CultureInfo("en-US");
+		if (result is null) throw new Exception("No result provided!");
+		if (dataSource is null) throw new Exception("No datasource provided!");
+
+		#region << Process Worksheet Names>>
+		if (dataSource.Rows.Count > 0)
+		{
+			var firstRowDt = dataSource.NewTable(0);
+			var resultWorksheets = result.ResultWorkbook.Worksheets.ToList();
+			for ( int i = 0; i < resultWorksheets.Count; i++ ) {
+				var resultWs = resultWorksheets[i];
+				resultWs.Name = (ProcessTemplateTag(resultWs.Name,firstRowDt,culture)).Values[0].ToString();
+			}
+		}
+		#endregion
+		#region << Process Worksheet Data>>
+		var contextDict = result.Contexts.ToDictionary(x => x.Id);
+		Queue<Guid> queue = new Queue<Guid>();
+		foreach (var contextId in result.Contexts.Where(x => x.Dependencies.Count == 0).Select(x => x.Id))
+		{
+			queue.Enqueue(contextId);
+		}
+		while (queue.Count > 0)
+		{
+			var contextId = queue.Dequeue();
+			var contextProcessAttempts = (result.ContextProcessLog.Select(x => x == contextId)).Count();
+			if (contextProcessAttempts > processAttemptsLimit) continue;
+			result.ContextProcessLog.Add(contextId);
+
+			var context = contextDict[contextId];
+
+			var resultCount = context.TagProcessResult.Values.Count;
+
+			for (var i = 0; i < context.ResultRangeSlots.Count; i++)
+			{
+				var slot = context.ResultWorksheet.Range(
+					context.ResultRangeSlots[i].FirstRow,context.ResultRangeSlots[i].FirstColumn,
+					context.ResultRangeSlots[i].LastRow,context.ResultRangeSlots[i].LastColumn);
+				if (resultCount < i + 1) break;
+				slot.Value = XLCellValue.FromObject(context.TagProcessResult.Values[i]);
+			}
+			result.ProcessedContexts.Add(contextId);
+			foreach (var dependantId in context.Dependants)
+			{
+				if (result.ProcessedContexts.Contains(dependantId))
+					throw new Exception("Dependant was calculated before the context it depends on");
+
+				queue.Enqueue(dependantId);
+			}
+		};
+
+		if (result.ProcessedContexts.Count < result.Contexts.Count)
+		{
+			throw new Exception("Not all excel cells were processed. Check for possible circular logic in formulas.");
+		}
+		#endregion
 	}
 
 	private static void CopyCellProperties(IXLCell template, IXLRange result)
@@ -219,7 +307,7 @@ internal static partial class TfTemplateUtility
 		}
 	}
 
-	private static bool IsFlowHorizontal(TfTemplateTagResult tagResult)
+	private static bool IsFlowHorizontal(TfTemplateTagResultList tagResult)
 	{
 		var allTagsHorizontal = true;
 		foreach (var tag in tagResult.Tags)
@@ -249,5 +337,23 @@ internal static partial class TfTemplateUtility
 			}
 		}
 		return allTagsHorizontal;
+	}
+
+	public static TfTemplateContext FindContextByCell(TfExcelTemplateProcessResult result, int worksheetPosition, int row, int column)
+	{
+		foreach (var item in result.Contexts)
+		{
+			if (item.TemplateWorksheet.Position != worksheetPosition) continue;
+			if (
+				item.TemplateRange.RangeAddress.FirstAddress.RowNumber >= row
+				&& item.TemplateRange.RangeAddress.LastAddress.RowNumber <= row
+				&& item.TemplateRange.RangeAddress.FirstAddress.ColumnNumber >= column
+				&& item.TemplateRange.RangeAddress.LastAddress.ColumnNumber <= column
+			)
+			{
+				return item;
+			}
+		}
+		return null;
 	}
 }

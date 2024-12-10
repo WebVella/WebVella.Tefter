@@ -3,9 +3,10 @@
 internal abstract class TfTemplateContext
 {
 	public Guid Id { get; set; }
+	public TfTemplateTagResultList TagProcessResult { get; set; }
 	public List<TfTemplateTag> Tags { get; set; }
-	public List<Guid> Dependencies { get; set; } = new();
-	public List<Guid> Dependants { get; set; } = new();
+	public HashSet<Guid> Dependencies { get; set; } = new();
+	public HashSet<Guid> Dependants { get; set; } = new();
 }
 
 internal class TfExcelTemplateContext : TfTemplateContext
@@ -14,5 +15,18 @@ internal class TfExcelTemplateContext : TfTemplateContext
 	public IXLWorksheet ResultWorksheet { get; set; }
 	public IXLRange TemplateRange { get; set; }
 	public IXLRange ResultRange { get; set; }
-	public List<IXLRange> ResultRangeSlots { get; set; }
+	public List<TfExcelTemplateContextRangeAddress> ResultRangeSlots { get; set; }
+}
+
+internal class TfExcelTemplateContextRangeAddress{
+	public int FirstRow { get; set; }
+	public int FirstColumn { get; set; }
+	public int LastRow { get; set; }
+	public int LastColumn { get; set; }
+
+	public TfExcelTemplateContextRangeAddress(){}
+	public TfExcelTemplateContextRangeAddress(int firstRow, int firstColumn, int lastRow, int lastColumn){
+		FirstRow = firstRow; FirstColumn = firstColumn;
+		LastRow = lastRow; LastColumn = lastColumn;
+	}
 }
