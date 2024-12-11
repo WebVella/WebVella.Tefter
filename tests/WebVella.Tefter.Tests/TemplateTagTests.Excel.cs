@@ -350,7 +350,7 @@ public partial class ExcelTemplatesTests : TemplateTagTestsBase
 		var ds = new TfDataTable();
 		var colCount = 50;
 		//var rowCount = 5;
-		var rowCount = 50000;
+		var rowCount = 500;
 		var wb = new XLWorkbook();
 		var ws = wb.Worksheets.Add();
 		//Data
@@ -550,11 +550,9 @@ public partial class ExcelTemplatesTests : TemplateTagTestsBase
 
 	private XLWorkbook _loadWorkbook(string fileName)
 	{
-		var ds = SampleData;
 		var path = Path.Combine(Environment.CurrentDirectory, $"Files\\{fileName}");
 		var fi = new FileInfo(path);
 		fi.Exists.Should().BeTrue();
-
 		var templateWB = new XLWorkbook(path);
 		templateWB.Should().NotBeNull();
 

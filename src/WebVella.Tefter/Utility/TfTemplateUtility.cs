@@ -83,16 +83,29 @@ internal static partial class TfTemplateUtility
 				{
 					rowIndex = contextRowIndex.Value;
 				}
-				templateResultString = templateResultString.Replace(tag.FullString, dataSource.Rows[rowIndex][columnIndex]?.ToString());
+				var indexCanBeApplied = (dataSource.Rows.Count >= rowIndex + 1) && (dataSource.Columns.Count >= columnIndex + 1);
+				var oneTagOnlyTemplate = templateResultString?.ToLowerInvariant() == tag.FullString?.ToLowerInvariant();
 
-				if (templateResultObject is not null)
+				if(indexCanBeApplied)
+					templateResultString = templateResultString.Replace(tag.FullString, dataSource.Rows[rowIndex][columnIndex]?.ToString());
+
+				if (oneTagOnlyTemplate)
 				{
-					newResultObject = templateResultString;
+					if (templateResultObject is not null)
+					{
+						newResultObject = templateResultString;
+					}
+					else if(indexCanBeApplied)
+					{
+						newResultObject = dataSource.Rows[rowIndex][columnIndex];
+						//newResultObject = TryExractValue(templateResultString, dataSource.Columns[columnIndex]);
+					}
+					else{ 
+						newResultObject = templateResultString;
+					}
 				}
-				else
-				{
-					newResultObject = dataSource.Rows[rowIndex][columnIndex];
-					//newResultObject = TryExractValue(templateResultString, dataSource.Columns[columnIndex]);
+				else{ 
+					newResultObject = templateResultString;
 				}
 			}
 			else if (tag.Type == TfTemplateTagType.Function)
