@@ -7,4 +7,6 @@ internal class TfTemplatesConstants
 	public static string TEMPLATES_APP_NAME = "Templates Application";
 	public static string TEMPLATES_APP_DECRIPTION = "Templates Application Description";
 
+	internal static short MAX_CALCULATION_DEPTH= 10;
+
 }

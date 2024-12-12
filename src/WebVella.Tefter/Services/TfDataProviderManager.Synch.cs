@@ -41,9 +41,6 @@ public partial interface ITfDataProviderManager
 
 	internal Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(
 		Guid providerId);
-
-	//	internal Task Synchronize(
-	//		TfDataProviderSynchronizeTask task);
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager

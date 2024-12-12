@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebVella.Tefter.Utility;
-internal static partial class TfTemplateUtility
+public static partial class TfTemplateUtility
 {
 	public static void ProcessExcelTemplate(this TfExcelTemplateProcessResult result,
 		TfDataTable dataSource, CultureInfo culture = null)

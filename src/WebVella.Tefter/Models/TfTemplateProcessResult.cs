@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-internal abstract class TfTemplateProcessResult
+public abstract class TfTemplateProcessResult
 {
 	public HashSet<Guid> ProcessedContexts { get; set; } = new();
 
@@ -8,7 +8,7 @@ internal abstract class TfTemplateProcessResult
 	public Dictionary<Guid,int> ContextProcessLog { get; set; } = new();	
 }
 
-internal class TfExcelTemplateProcessResult : TfTemplateProcessResult
+public class TfExcelTemplateProcessResult : TfTemplateProcessResult
 {
 	public XLWorkbook TemplateWorkbook { get; set; } = null;
 	public XLWorkbook ResultWorkbook { get; set; } = new();

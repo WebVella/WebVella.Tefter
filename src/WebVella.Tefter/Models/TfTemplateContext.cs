@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-internal abstract class TfTemplateContext
+public abstract class TfTemplateContext
 {
 	public Guid Id { get; set; }
 	public TfTemplateTagResultList TagProcessResult { get; set; }
@@ -11,7 +11,7 @@ internal abstract class TfTemplateContext
 	public bool IsDataSet { get; set; } = false;
 }
 
-internal class TfExcelTemplateContext : TfTemplateContext
+public class TfExcelTemplateContext : TfTemplateContext
 {
 	public IXLWorksheet TemplateWorksheet { get; set; }
 	public IXLWorksheet ResultWorksheet { get; set; }
@@ -20,7 +20,7 @@ internal class TfExcelTemplateContext : TfTemplateContext
 	public List<TfExcelTemplateContextRangeAddress> ResultRangeSlots { get; set; }
 }
 
-internal class TfExcelTemplateContextRangeAddress{
+public class TfExcelTemplateContextRangeAddress{
 	public int FirstRow { get; set; }
 	public int FirstColumn { get; set; }
 	public int LastRow { get; set; }

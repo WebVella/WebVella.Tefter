@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-internal class TfTemplateTagResultList
+public class TfTemplateTagResultList
 {
 	//What string needs to be replaced in the place of the tag data
 	public List<TfTemplateTag> Tags { get; set; } = new();
@@ -8,7 +8,7 @@ internal class TfTemplateTagResultList
 	public List<object> Values { get; set; } = new();
 }
 
-internal class TfTemplateTagResult
+public class TfTemplateTagResult
 {
 	//What string needs to be replaced in the place of the tag data
 	public List<TfTemplateTag> Tags { get; set; }
@@ -16,7 +16,7 @@ internal class TfTemplateTagResult
 	public object Value { get; set; }
 }
 
-internal class TfTemplateTag
+public class TfTemplateTag
 {
 	//What string needs to be replaced in the place of the tag data
 	public string FullString { get; set; }
@@ -27,21 +27,21 @@ internal class TfTemplateTag
 	public List<int> IndexList { get; set; } = new();
 	public List<TfTemplateTagParamGroup> ParamGroups { get; set; } = new();
 }
-internal enum TfTemplateTagType
+public enum TfTemplateTagType
 {
 	Data = 0,
 	Function = 1,
 	ExcelFunction = 2
 }
 
-internal class TfTemplateTagParamGroup
+public class TfTemplateTagParamGroup
 {
 	//What string needs to be replaced in the place of the tag data
 	public string FullString { get; set; }
 	public List<ITfTemplateTagParameterBase> Parameters { get; set; } = new();
 }
 
-internal interface ITfTemplateTagParameterBase
+public interface ITfTemplateTagParameterBase
 {
 	Type Type { get; }
 	string Name { get; set; }
@@ -49,7 +49,7 @@ internal interface ITfTemplateTagParameterBase
 	TfTemplateTagType TagType { get; }
 }
 
-internal interface ITfTemplateTagParameterExcel
+public interface ITfTemplateTagParameterExcel
 {
 	HashSet<Guid> GetDependencies(TfExcelTemplateProcessResult result,
 		TfExcelTemplateContext context,

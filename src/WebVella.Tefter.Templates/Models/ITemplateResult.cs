@@ -1,4 +1,4 @@
 ﻿namespace WebVella.Tefter.Templates.Models;
-public interface TemplateResult
+public interface ITemplateResult
 {
 }

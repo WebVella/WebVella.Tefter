@@ -1,6 +1,4 @@
 ﻿using NpgsqlTypes;
-using System.Collections.Specialized;
-using System.Diagnostics;
 
 namespace WebVella.Tefter;
 
@@ -106,6 +104,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		}
 	}
 
+	private void BulkExecuteSqlCommand( string sql, List<NpgsqlParameter> paramList, int bulkSize = 5000 )
+	{
+
+	}
+
 	private (List<string> columnNames, Dictionary<string, NpgsqlParameter>, Dictionary<string, Guid>) PrepareQueryArrayParameters(
 		TfDataProvider provider,
 		Dictionary<string, Guid> sharedKeyBulkIdDict,
@@ -143,7 +146,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						parameter.Value = new List<Guid?>();
 						paramsDict.Add(column.DbName, parameter);
 					}
-					break;
+					break; 
 				case TfDatabaseColumnType.Text:
 					{
 						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Text);
@@ -185,7 +188,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Bigint);
 						parameter.Value = new List<long?>();
 						paramsDict.Add(column.DbName, parameter);
-					}
+					}					
 					break;
 				case TfDatabaseColumnType.Number:
 					{

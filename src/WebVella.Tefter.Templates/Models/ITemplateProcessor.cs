@@ -5,9 +5,9 @@ public interface ITemplateProcessor
 	public string Name { get; }
 	public string Description { get; }
 	public TemplateResultType ResultType { get; }
-	public List<string> GetUsedCollumns(string settingsJson);
-	public TemplateResult GenerateContent(string settingsJson, TfDataTable data);
-	public List<string> ValidateSettings(string settingsJson);
+	public List<string> GetUsedColumns(string settingsJson, ITemplatesService templateService);
+	public List<Template> GetUsedTemplates(string settingsJson, ITemplatesService templateService);
+	public ITemplateResult GenerateContent(Template template, TfDataTable data);
 	public Type SettingsComponentType { get; }
 	public Type ResultViewComponentType { get; }
 }

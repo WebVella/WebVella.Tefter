@@ -76,7 +76,7 @@ internal partial class TemplatesService : ITemplatesService
 
 			var contentProcessor = GetProcessor(template.ContentProcessorType).Value;
 
-			List<string> usedColumns = contentProcessor.GetUsedCollumns(template.SettingsJson);
+			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson,this);
 
 			string usedColumnsJson = JsonSerializer.Serialize(usedColumns??new List<string>());
 
@@ -152,7 +152,7 @@ internal partial class TemplatesService : ITemplatesService
 
 			var contentProcessor = GetProcessor(template.ContentProcessorType).Value;
 
-			List<string> usedColumns = contentProcessor.GetUsedCollumns(template.SettingsJson);
+			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson, this);
 
 			string usedColumnsJson = JsonSerializer.Serialize(usedColumns ?? new List<string>());
 

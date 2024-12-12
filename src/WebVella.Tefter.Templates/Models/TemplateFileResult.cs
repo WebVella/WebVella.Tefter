@@ -1,12 +1,19 @@
 ﻿namespace WebVella.Tefter.Templates.Models;
 
-public interface TemplateFileResult : TemplateResult
+public interface TemplateFileResult : ITemplateResult
 {
-	public List<TfTemplateFileResultItem> Items { get; }
+	public List<TemplateFileResultItem> Items { get; }
 }
 
-public class TfTemplateFileResultItem
+public class TemplateFileResultItem
 {
 	public string FileName { get; set; }
 	public byte[] Content { get; set; }
+}
+
+public class TemplateFileSettings
+{
+	public string FileName { get; set; }
+	public Guid TemplateFileBlobId { get; set; }
+	public string GroupBy { get; set; }
 }

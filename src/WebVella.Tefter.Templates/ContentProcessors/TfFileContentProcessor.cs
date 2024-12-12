@@ -12,18 +12,42 @@ public class TfFileContentProcessor : ITemplateProcessor
 
 	public Type ResultViewComponentType => null;
 
-	public TemplateResult GenerateContent(string settingsJson, TfDataTable data)
+	public ITemplateResult GenerateContent(
+		Template template, 
+		TfDataTable data)
 	{
 		return null;
 	}
 
-	public List<string> GetUsedCollumns(string settingsJson)
+	public List<string> GetUsedColumns(
+		string settingsJson, 
+		ITemplatesService templateService)
 	{
-		return new List<string>();	
+		var settings = JsonSerializer.Deserialize<TemplateFileSettings>(settingsJson);
+
+		List<string> usedColumns = new List<string>();
+
+		if (!string.IsNullOrWhiteSpace(settings.GroupBy))
+			usedColumns.Add(settings.GroupBy);
+
+		var tags = TfTemplateUtility.GetTagsFromTemplate(settings.FileName ?? string.Empty);
+
+		foreach (var tag in tags)
+		{
+			if (tag.Type == TfTemplateTagType.Data)
+			{
+				if (!usedColumns.Contains(tag.Name))
+					usedColumns.Add(tag.Name);
+			}
+		}
+
+		return usedColumns;
 	}
-	public List<string> ValidateSettings(string settingsJson)
+
+	public List<Template> GetUsedTemplates(
+		string settingsJson, 
+		ITemplatesService templateService)
 	{
-		//validate settings for circular usage
-		return new List<string>();
+		return new List<Template>();
 	}
 }

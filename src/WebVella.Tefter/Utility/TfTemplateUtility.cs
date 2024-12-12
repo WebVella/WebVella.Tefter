@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace WebVella.Tefter.Utility;
-internal static partial class TfTemplateUtility
+public static partial class TfTemplateUtility
 {
 	private static List<ITfTemplateTagParameterBase> _templateTagParameterTypes;
 	public static TfTemplateTagResultList ProcessTemplateTag(string template, TfDataTable dataSource, CultureInfo culture)
