@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Utility;
-internal static partial class TfTemplateUtility
+public static partial class TfTemplateUtility
 {
 	public static void ProcessTextTemplate(this TfTextTemplateProcessResult result,
 		TfDataTable dataSource, CultureInfo culture = null)
