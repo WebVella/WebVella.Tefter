@@ -5,34 +5,48 @@ public interface ITfBlobManager
 	internal string BlobStoragePath { get; }
 
 	public Result<bool> ExistsBlob(
-		Guid blobId);
+		Guid blobId,
+		bool temporary = false);
 
 	public Result<Guid> CreateBlob(
-		byte[] byteArray);
+		byte[] byteArray,
+		bool temporary = false);
 
 	public Result<Guid> CreateBlob(
-		Stream stream);
+		Stream stream,
+		bool temporary = false);
 	public Result<Guid> CreateBlob(
-		string localPath);
+		string localPath,
+		bool temporary = false);
 
 	public Result UpdateBlob(
 		Guid blobId,
-		byte[] byteArray);
+		byte[] byteArray,
+		bool temporary = false);
 
 	public Result UpdateBlob(
 		Guid blobId,
-		Stream stream);
+		Stream stream,
+		bool temporary = false);
+
 	public Result UpdateBlob(
 		Guid blobId,
-		string localPath);
+		string localPath,
+		bool temporary = false);
 
 	public Result DeleteBlob(
-		Guid blobId);
+		Guid blobId,
+		bool temporary = false);
 
 	public Result<byte[]> GetBlobByteArray(
-		Guid blobId);
+		Guid blobId,
+		bool temporary = false);
 
 	public Result<Stream> GetBlobStream(
+		Guid blobId,
+		bool temporary = false);
+
+	public Result MakeTempBlobPermanent(
 		Guid blobId);
 }
 
@@ -47,7 +61,8 @@ internal class TfBlobManager : ITfBlobManager
 	}
 
 	public Result<Guid> CreateBlob(
-		Stream inputStream)
+		Stream inputStream,
+		bool temporary = false)
 	{
 		try
 		{
@@ -60,7 +75,7 @@ internal class TfBlobManager : ITfBlobManager
 			Guid blobId = Guid.NewGuid();
 			do
 			{
-				if (File.Exists(GetFileSystemPath(blobId)))
+				if (File.Exists(GetFileSystemPath(blobId, temporary)))
 				{
 					blobId = Guid.NewGuid();
 					continue;
@@ -70,11 +85,11 @@ internal class TfBlobManager : ITfBlobManager
 			}
 			while (true);
 
-			var path = GetFileSystemPath(blobId);
+			var path = GetFileSystemPath(blobId, temporary);
 
 			var folderPath = Path.GetDirectoryName(path);
 
-			if(!Directory.Exists(folderPath))
+			if (!Directory.Exists(folderPath))
 				Directory.CreateDirectory(folderPath);
 
 			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
@@ -96,11 +111,12 @@ internal class TfBlobManager : ITfBlobManager
 	}
 
 	public Result<Guid> CreateBlob(
-		byte[] byteArray)
+		byte[] byteArray,
+		bool temporary = false)
 	{
 		try
 		{
-			return CreateBlob(new MemoryStream(byteArray));
+			return CreateBlob(new MemoryStream(byteArray), temporary);
 		}
 		catch (Exception ex)
 		{
@@ -109,7 +125,8 @@ internal class TfBlobManager : ITfBlobManager
 	}
 
 	public Result<Guid> CreateBlob(
-		string localPath)
+		string localPath,
+		bool temporary = false)
 	{
 		try
 		{
@@ -125,7 +142,7 @@ internal class TfBlobManager : ITfBlobManager
 
 			var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 
-			var result = CreateBlob(stream);
+			var result = CreateBlob(stream, temporary);
 
 			if (result.IsSuccess)
 			{
@@ -142,11 +159,12 @@ internal class TfBlobManager : ITfBlobManager
 
 	public Result UpdateBlob(
 		Guid blobId,
-		Stream inputStream)
+		Stream inputStream,
+		bool temporary = false)
 	{
 		try
 		{
-			var blobExistsResult = ExistsBlob(blobId);
+			var blobExistsResult = ExistsBlob(blobId, temporary);
 
 			if (!blobExistsResult.IsSuccess)
 			{
@@ -159,7 +177,7 @@ internal class TfBlobManager : ITfBlobManager
 				return Result.Fail(new Error("Blob does not exist for specified identifier"));
 			}
 
-			var path = GetFileSystemPath(blobId);
+			var path = GetFileSystemPath(blobId, temporary);
 
 			using Stream fileStream = File.Open(path, FileMode.Create, FileAccess.ReadWrite);
 
@@ -181,11 +199,12 @@ internal class TfBlobManager : ITfBlobManager
 
 	public Result UpdateBlob(
 		Guid blobId,
-		byte[] byteArray)
+		byte[] byteArray,
+		bool temporary = false)
 	{
 		try
 		{
-			return UpdateBlob(blobId, new MemoryStream(byteArray));
+			return UpdateBlob(blobId, new MemoryStream(byteArray), temporary);
 		}
 		catch (Exception ex)
 		{
@@ -195,7 +214,8 @@ internal class TfBlobManager : ITfBlobManager
 
 	public Result UpdateBlob(
 		Guid blobId,
-		string localPath)
+		string localPath,
+		bool temporary = false)
 	{
 		try
 		{
@@ -211,7 +231,7 @@ internal class TfBlobManager : ITfBlobManager
 
 			var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 
-			var result = UpdateBlob(blobId, stream);
+			var result = UpdateBlob(blobId, stream, temporary);
 
 			if (result.IsSuccess)
 			{
@@ -227,11 +247,12 @@ internal class TfBlobManager : ITfBlobManager
 	}
 
 	public Result DeleteBlob(
-		Guid blobId)
+		Guid blobId,
+		bool temporary = false)
 	{
 		try
 		{
-			var blobExistsResult = ExistsBlob(blobId);
+			var blobExistsResult = ExistsBlob(blobId, temporary);
 
 			if (!blobExistsResult.IsSuccess)
 			{
@@ -244,7 +265,7 @@ internal class TfBlobManager : ITfBlobManager
 				return Result.Fail(new Error("Blob does not exist for specified identifier"));
 			}
 
-			var filepath = GetFileSystemPath(blobId);
+			var filepath = GetFileSystemPath(blobId, temporary);
 
 			if (!File.Exists(filepath))
 			{
@@ -262,11 +283,12 @@ internal class TfBlobManager : ITfBlobManager
 	}
 
 	public Result<bool> ExistsBlob(
-		Guid blobId)
+		Guid blobId,
+		bool temporary = false)
 	{
 		try
 		{
-			var path = GetFileSystemPath(blobId);
+			var path = GetFileSystemPath(blobId, temporary);
 
 			return File.Exists(path);
 		}
@@ -276,13 +298,69 @@ internal class TfBlobManager : ITfBlobManager
 		}
 	}
 
-	public Result<byte[]> GetBlobByteArray(
+	public Result MakeTempBlobPermanent(
 		Guid blobId)
+	{
+		try
+		{
+			var blobExistsResult = ExistsBlob(blobId, true);
+
+			if (!blobExistsResult.IsSuccess)
+			{
+				return Result.Fail(new Error("Failed to check if temp blob exists")
+					.CausedBy(blobExistsResult.Errors));
+			}
+
+			if (!blobExistsResult.Value)
+			{
+				return Result.Fail(new Error("Temporary blob does not exist for specified identifier"));
+			}
+
+			var filepath = GetFileSystemPath(blobId, true);
+
+			if (!File.Exists(filepath))
+			{
+				return Result.Fail(new Error("Temporary blob file does not exist for specified identifier"));
+			}
+
+			//create permanent blob
+			var createResult = CreateBlob(filepath);
+
+			if (!createResult.IsSuccess)
+			{
+				return Result.Fail(new Error("Failed create permanent copy of temporary blob")
+					.CausedBy(blobExistsResult.Errors));
+			}
+
+			//delete temp blob
+			var deleteResult = DeleteBlob(blobId, false);
+
+			if (!createResult.IsSuccess)
+			{
+				//delete already created permanent copy
+				DeleteBlob(blobId);
+
+				return Result.Fail(new Error("Failed delete temporary blob")
+					.CausedBy(blobExistsResult.Errors));
+			}
+
+			return Result.Ok();
+
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to make blob permanent").CausedBy(ex));
+		}
+	}
+
+	public Result<byte[]> GetBlobByteArray(
+		Guid blobId,
+		bool temporary = false)
 	{
 
 		try
 		{
-			var path = GetFileSystemPath(blobId);
+			var path = GetFileSystemPath(blobId, temporary);
 
 			if (!File.Exists(path))
 			{
@@ -298,11 +376,12 @@ internal class TfBlobManager : ITfBlobManager
 	}
 
 	public Result<Stream> GetBlobStream(
-		Guid blobId)
+		Guid blobId,
+		bool temporary = false)
 	{
 		try
 		{
-			var path = GetFileSystemPath(blobId);
+			var path = GetFileSystemPath(blobId, temporary);
 
 			if (!File.Exists(path))
 			{
@@ -338,12 +417,12 @@ internal class TfBlobManager : ITfBlobManager
 		string path = localPath;
 
 		if (string.IsNullOrEmpty(path))
-		{ 
+		{
 			path = Path.Combine(GetApplicationPath(), "BlobStorage");
 		}
 		else if (path == "WINDOWS-TEMP")
 		{
-			path = Path.Combine( System.IO.Path.GetTempPath() , Guid.NewGuid().ToString() );
+			path = Path.Combine(System.IO.Path.GetTempPath(), Guid.NewGuid().ToString());
 		}
 
 		return path;
@@ -356,15 +435,21 @@ internal class TfBlobManager : ITfBlobManager
 		return appPathMatcher.Match(exePath).Value;
 	}
 
-	private string GetFileSystemPath(Guid blobId)
+	private string GetFileSystemPath(Guid blobId, bool temporary = false)
 	{
 		var guidIinitialPart = blobId.ToString().Split(new[] { '-' })[0];
 		var depth1Folder = guidIinitialPart.Substring(0, 2);
 		var depth2Folder = guidIinitialPart.Substring(2, 2);
-		return Path.Combine(BlobStoragePath, depth1Folder, depth2Folder, $"{blobId}.tfblob");
+
+		if (temporary)
+		{
+			return Path.Combine(BlobStoragePath, "_", depth1Folder, depth2Folder, $"{blobId}.tfblob");
+		}
+		else
+		{
+			return Path.Combine(BlobStoragePath, depth1Folder, depth2Folder, $"{blobId}.tfblob");
+		}
 	}
-
-
 
 	#endregion
 
