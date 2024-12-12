@@ -46,6 +46,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Update="Files\Template6.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Files\Template5.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Files\Template4.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Files\Template3.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Files\Template2.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Files\Template1.txt">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Files\TemplateData4.xlsx">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
@@ -85,10 +103,6 @@
 	  <None Update="Files\TemplatePlacement2.xlsx">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="FileResults\" />
 	</ItemGroup>
 
 	

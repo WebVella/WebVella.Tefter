@@ -15,3 +15,9 @@ public class TfExcelTemplateProcessResult : TfTemplateProcessResult
 	public List<TfExcelTemplateContext> Contexts { get; set; } = new();
 }
 
+internal class TfTextTemplateProcessResult : TfTemplateProcessResult
+{
+	public string TemplateText { get; set; } = null;
+	public string ResultText { get; set; } = null;
+	public List<TfTemplateContext> Contexts { get; set; } = new();
+}
