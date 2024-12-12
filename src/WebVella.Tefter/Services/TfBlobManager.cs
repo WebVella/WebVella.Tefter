@@ -110,6 +110,56 @@ internal class TfBlobManager : ITfBlobManager
 		}
 	}
 
+	private Result CreateBlob(
+		Guid id,
+		Stream inputStream,
+		bool temporary = false)
+	{
+		try
+		{
+			if (!Directory.Exists(BlobStoragePath))
+			{
+				throw new Exception($"Blob storage folder ({BlobStoragePath}) cannot be created on file system.");
+			}
+
+			Guid blobId = id;
+			do
+			{
+				if (File.Exists(GetFileSystemPath(blobId, temporary)))
+				{
+					blobId = Guid.NewGuid();
+					continue;
+				}
+
+				break;
+			}
+			while (true);
+
+			var path = GetFileSystemPath(blobId, temporary);
+
+			var folderPath = Path.GetDirectoryName(path);
+
+			if (!Directory.Exists(folderPath))
+				Directory.CreateDirectory(folderPath);
+
+			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
+
+			inputStream.Seek(0, SeekOrigin.Begin);
+
+			inputStream.CopyTo(fileStream);
+
+			fileStream.Close();
+
+			inputStream.Close();
+
+			return Result.Ok();
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
+		}
+	}
+
 	public Result<Guid> CreateBlob(
 		byte[] byteArray,
 		bool temporary = false)
@@ -324,7 +374,8 @@ internal class TfBlobManager : ITfBlobManager
 			}
 
 			//create permanent blob
-			var createResult = CreateBlob(filepath);
+			var stream = File.Open(filepath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			var createResult = CreateBlob(blobId, stream, false);
 
 			if (!createResult.IsSuccess)
 			{
@@ -333,9 +384,10 @@ internal class TfBlobManager : ITfBlobManager
 			}
 
 			//delete temp blob
-			var deleteResult = DeleteBlob(blobId, false);
+			var deleteResult = DeleteBlob(blobId, true);
 
-			if (!createResult.IsSuccess)
+			//if delete failed
+			if (!deleteResult.IsSuccess)
 			{
 				//delete already created permanent copy
 				DeleteBlob(blobId);
