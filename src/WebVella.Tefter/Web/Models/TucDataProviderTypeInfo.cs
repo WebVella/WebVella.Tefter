@@ -5,6 +5,7 @@ public record TucDataProviderTypeInfo
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
+	public ITfDataProviderType Model { get; init; }
 	[JsonIgnore]
 	public Type SettingsComponentType { get; init; }
 	public List<TucDataProviderTypeDataTypeInfo> SupportedSourceDataTypes { get; init; } = new();
@@ -28,7 +29,7 @@ public record TucDataProviderTypeInfo
 				SupportedDatabaseColumnTypes = supportedDbTypes
 			});
 		}
-		
+		Model = model;
 	}
 	public ITfDataProviderType ToModel(ReadOnlyCollection<ITfDataProviderType> type)
 	{
