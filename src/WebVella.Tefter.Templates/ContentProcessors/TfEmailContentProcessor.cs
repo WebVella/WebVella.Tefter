@@ -171,4 +171,35 @@ public class TfEmailContentProcessor : ITemplateProcessor
 		public Template Template { get; set; }
 		public short Depth { get; set; }
 	}
+
+	public List<ValidationError> ValidateSettings(
+		string settingsJson,
+		ITemplatesService templateService)
+	{
+		throw new NotImplementedException();
+	}
+
+	public string OnCreateTemplate(
+		string settingsJson,
+		ITemplatesService templateService)
+	{
+		return settingsJson;
+	}
+
+	public string OnUpdateTemplate(
+		Guid templateId,
+		string newSettingsJson,
+		ITemplatesService templateService)
+	{
+		//do nothing
+		return newSettingsJson;
+
+	}
+
+	public void OnDeleteTemplate(
+		Guid templateId,
+		ITemplatesService templateService)
+	{
+		//do nothing
+	}
 }
