@@ -58,7 +58,7 @@ public class TfFileContentProcessor : ITemplateProcessor
 		throw new NotImplementedException();
 	}
 
-	public string OnCreateTemplate(
+	public string OnCreate(
 		string settingsJson,
 		ITemplatesService templateService)
 	{
@@ -66,7 +66,7 @@ public class TfFileContentProcessor : ITemplateProcessor
 		return settingsJson;
 	}
 
-	public string OnUpdateTemplate(
+	public string OnUpdate(
 		Guid templateId,
 		string newSettingsJson,
 		ITemplatesService templateService)
@@ -76,7 +76,7 @@ public class TfFileContentProcessor : ITemplateProcessor
 
 	}
 
-	public void OnDeleteTemplate(
+	public void OnDelete(
 		Guid templateId,
 		ITemplatesService templateService)
 	{

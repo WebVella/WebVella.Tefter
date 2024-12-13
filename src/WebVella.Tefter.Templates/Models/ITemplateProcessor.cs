@@ -24,16 +24,16 @@ public interface ITemplateProcessor
 		string settingsJson,
 		ITemplatesService templateService);
 
-	public string OnCreateTemplate(
+	public string OnCreate(
 		string settingsJson,
 		ITemplatesService templateService);
 
-	public string OnUpdateTemplate(
+	public string OnUpdate(
 		Guid templateId,
 		string newSettingsJson,
 		ITemplatesService templateService);
 
-	public void OnDeleteTemplate(
+	public void OnDelete(
 		Guid templateId,
 		ITemplatesService templateService);
 

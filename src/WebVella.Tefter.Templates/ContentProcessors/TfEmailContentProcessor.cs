@@ -179,14 +179,14 @@ public class TfEmailContentProcessor : ITemplateProcessor
 		throw new NotImplementedException();
 	}
 
-	public string OnCreateTemplate(
+	public string OnCreate(
 		string settingsJson,
 		ITemplatesService templateService)
 	{
 		return settingsJson;
 	}
 
-	public string OnUpdateTemplate(
+	public string OnUpdate(
 		Guid templateId,
 		string newSettingsJson,
 		ITemplatesService templateService)
@@ -196,7 +196,7 @@ public class TfEmailContentProcessor : ITemplateProcessor
 
 	}
 
-	public void OnDeleteTemplate(
+	public void OnDelete(
 		Guid templateId,
 		ITemplatesService templateService)
 	{
