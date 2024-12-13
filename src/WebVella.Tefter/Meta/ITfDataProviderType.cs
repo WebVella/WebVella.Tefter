@@ -12,8 +12,9 @@ public interface ITfDataProviderType
 		string dataType);
 	public abstract ReadOnlyCollection<TfDataProviderDataRow> GetRows(
 		TfDataProvider provider);
-
 	public abstract TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider);
+
+	public List<ValidationError> Validate(string settingsJson);
 
 }
 

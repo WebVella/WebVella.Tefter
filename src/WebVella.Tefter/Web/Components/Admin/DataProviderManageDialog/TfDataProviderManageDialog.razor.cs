@@ -74,11 +74,15 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 
 			//Get dynamic settings component errors
 			List<ValidationError> settingsErrors = new();
-			if (_form.ProviderType.SettingsComponentType is not null
-				&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
-			{
-				settingsErrors = (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate();
+			settingsErrors = _form.ProviderType.Model.Validate(_form.SettingsJson);
+			foreach (ValidationError error in settingsErrors) {
+				MessageStore.Add(EditContext.Field(error.PropertyName), error.Reason);
 			}
+			//if (_form.ProviderType.SettingsComponentType is not null
+			//	&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+			//{
+			//	settingsErrors = (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate();
+			//}
 
 			//Check form
 			var isValid = EditContext.Validate();

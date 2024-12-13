@@ -235,7 +235,7 @@ public class CsvDataProvider : ITfDataProviderType
 		foreach (var columnName in result.SourceColumnDefaultDbType.Keys)
 		{
 			var dbType = result.SourceColumnDefaultDbType[columnName];
-			if(preferredSourceTypeForDbType.ContainsKey(dbType))
+			if (preferredSourceTypeForDbType.ContainsKey(dbType))
 				result.SourceColumnDefaultSourceType[columnName] = preferredSourceTypeForDbType[dbType];
 			else
 				result.SourceColumnDefaultSourceType[columnName] = GetSupportedSourceDataTypes().First();
@@ -406,4 +406,43 @@ public class CsvDataProvider : ITfDataProviderType
 				throw new Exception($"Not supported source type for column {column.SourceName}");
 		}
 	}
+
+	public List<ValidationError> Validate(string settingsJson)
+	{
+
+		CsvDataProviderSettings settings = new();
+		if (!String.IsNullOrWhiteSpace(settingsJson))
+		{
+			try
+			{
+				settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(settingsJson);
+			}
+			catch { }
+		}
+		var errors = new List<ValidationError>();
+
+		if (String.IsNullOrWhiteSpace(settings.Filepath))
+		{
+			errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath), LOC("required")));
+		}
+		else
+		{
+			string extension = Path.GetExtension(settings.Filepath);
+			if (extension != ".csv")
+			{
+				errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath), LOC("'csv' file extension is required")));
+			}
+		}
+
+		if (!String.IsNullOrWhiteSpace(settings.CultureName))
+		{
+			CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures & ~CultureTypes.NeutralCultures);
+			var culture = cultures.FirstOrDefault(c => c.Name.Equals(settings.CultureName, StringComparison.OrdinalIgnoreCase));
+			if (culture == null)
+				errors.Add(new ValidationError(nameof(CsvDataProviderSettings.CultureName), LOC("invalid. format like 'en-US'")));
+		}
+		return errors;
+	}
+
+	private string LOC(string name) => name;
 }

@@ -340,5 +340,8 @@ public class MsSqlDataProvider : ITfDataProviderType
 		throw new Exception($"Not supported source type for column {column.SourceName}");
 	}
 
-
+	public List<ValidationError> Validate(string settingsJson)
+	{
+		throw new NotImplementedException();
+	}
 }
