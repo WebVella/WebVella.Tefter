@@ -13,7 +13,7 @@ public partial class TemplateAdminPage : TucBaseScreenRegionComponent, ITucAuxDa
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {
         var service = serviceProvider.GetRequiredService<ITemplatesService>();        
-        var processorsResult = service.GetProcessors();
+        var processorsResult = service.GetTemplateProcessors();
         if(processorsResult.IsSuccess) 
             newAuxDataState.Data[TemplatesConstants.TEMPLATE_APP_PROCESSORS_LIST_DATA_KEY] = processorsResult.Value.OrderBy(x=> x.Name).ToList();
         else 
