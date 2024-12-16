@@ -74,7 +74,7 @@ internal partial class TemplatesService : ITemplatesService
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			var contentProcessor = GetProcessor(template.ContentProcessorType).Value;
+			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType).Value;
 
 			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson,this);
 
@@ -150,7 +150,7 @@ internal partial class TemplatesService : ITemplatesService
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
 
-			var contentProcessor = GetProcessor(template.ContentProcessorType).Value;
+			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType).Value;
 
 			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson, this);
 
@@ -285,7 +285,7 @@ internal partial class TemplatesService : ITemplatesService
 					"Content processor type is not specified.") });
 			}
 
-			var contentProcessor = _service.GetProcessor(template.ContentProcessorType).Value;
+			var contentProcessor = _service.GetTemplateProcessor(template.ContentProcessorType).Value;
 			if( contentProcessor is null )
 			{
 				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
@@ -322,7 +322,7 @@ internal partial class TemplatesService : ITemplatesService
 					"Content processor type is not specified.") });
 			}
 
-			var contentProcessor = _service.GetProcessor(template.ContentProcessorType).Value;
+			var contentProcessor = _service.GetTemplateProcessor(template.ContentProcessorType).Value;
 			if (contentProcessor is null)
 			{
 				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",

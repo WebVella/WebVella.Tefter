@@ -2,7 +2,7 @@
 
 using WebVella.Tefter.Templates.Models;
 using WebVella.Tefter.Templates.Services;
-using WebVella.Tefter.Templates.ContentProcessors;
+using WebVella.Tefter.Templates.TemplateProcessors;
 
 
 public partial class TemplatesTests : BaseTest
@@ -27,7 +27,7 @@ public partial class TemplatesTests : BaseTest
 					Name = "unit test",
 					Description = "unit test desc",
 					Icon = string.Empty,
-					ContentProcessorType = typeof(FileContentProcessor),
+					ContentProcessorType = typeof(FileTemplateProcessor),
 					IsEnabled = true,
 					IsSelectable = true,
 					ResultType = TemplateResultType.File,
@@ -52,7 +52,7 @@ public partial class TemplatesTests : BaseTest
 					Name = "unit test updated",
 					Description = "unit test desc updated",
 					Icon = "icon",
-					ContentProcessorType = typeof(FileContentProcessor),
+					ContentProcessorType = typeof(FileTemplateProcessor),
 					IsEnabled = true,
 					IsSelectable = true,
 					ResultType = TemplateResultType.File,

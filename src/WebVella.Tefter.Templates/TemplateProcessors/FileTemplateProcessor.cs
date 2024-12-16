@@ -1,11 +1,11 @@
-﻿namespace WebVella.Tefter.Templates.ContentProcessors;
+﻿namespace WebVella.Tefter.Templates.TemplateProcessors;
 
-public class FileContentProcessor : ITemplateProcessor
+public class FileTemplateProcessor : ITemplateProcessor
 {
 	public Guid Id => TemplatesConstants.FILE_CONTENT_PROCESSOR_ID;
-	public string Name => "Default tefter file content processor";
+	public string Name => "Default tefter file template processor";
 
-	public string Description => "Default file email content processor";
+	public string Description => "Default file email template processor";
 
 	public TemplateResultType ResultType => TemplateResultType.File;
 
@@ -13,7 +13,7 @@ public class FileContentProcessor : ITemplateProcessor
 
 	public Type ResultViewComponentType => null;
 
-	public ITemplateResult GenerateContent(
+	public ITemplateResult GenerateTemplateResult(
 		Template template, 
 		TfDataTable data)
 	{

@@ -17,7 +17,7 @@ public interface ITemplateProcessor
 		string settingsJson,
 		ITemplatesService templateService);
 
-	public ITemplateResult GenerateContent(
+	public ITemplateResult GenerateTemplateResult(
 		Template template,
 		TfDataTable data);
 

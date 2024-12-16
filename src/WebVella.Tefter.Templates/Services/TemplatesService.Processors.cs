@@ -2,15 +2,15 @@
 
 public partial interface ITemplatesService
 {
-	public Result<ITemplateProcessor> GetProcessor(
+	public Result<ITemplateProcessor> GetTemplateProcessor(
 			string typeName);
 
-	public Result<ITemplateProcessor> GetProcessor(
+	public Result<ITemplateProcessor> GetTemplateProcessor(
 			Type type);
 
-	public Result<ReadOnlyCollection<Type>> GetProcessorTypes();
+	public Result<ReadOnlyCollection<Type>> GetTemplateProcessorTypes();
 
-	public Result<ReadOnlyCollection<ITemplateProcessor>> GetProcessors();
+	public Result<ReadOnlyCollection<ITemplateProcessor>> GetTemplateProcessors();
 }
 
 internal partial class TemplatesService : ITemplatesService
@@ -18,14 +18,14 @@ internal partial class TemplatesService : ITemplatesService
 	private static AsyncLock _lock = new AsyncLock();
 	private static Dictionary<Type, ITemplateProcessor> _templateProcessorsDict = null;
 
-	public Result<ITemplateProcessor> GetProcessor(
+	public Result<ITemplateProcessor> GetTemplateProcessor(
 		string typeName )
 	{
 		try
 		{
 			var type = Type.GetType( typeName );
 
-			return GetProcessor(type);
+			return GetTemplateProcessor(type);
 		}
 		catch (Exception ex)
 		{
@@ -33,7 +33,7 @@ internal partial class TemplatesService : ITemplatesService
 		}
 	}
 
-	public Result<ITemplateProcessor> GetProcessor(
+	public Result<ITemplateProcessor> GetTemplateProcessor(
 		Type type)
 	{
 		try
@@ -53,7 +53,7 @@ internal partial class TemplatesService : ITemplatesService
 		}
 	}
 
-	public Result<ReadOnlyCollection<ITemplateProcessor>> GetProcessors()
+	public Result<ReadOnlyCollection<ITemplateProcessor>> GetTemplateProcessors()
 	{
 		try
 		{
@@ -72,7 +72,7 @@ internal partial class TemplatesService : ITemplatesService
 		}
 	}
 
-	public Result<ReadOnlyCollection<Type>> GetProcessorTypes()
+	public Result<ReadOnlyCollection<Type>> GetTemplateProcessorTypes()
 	{
 		try
 		{

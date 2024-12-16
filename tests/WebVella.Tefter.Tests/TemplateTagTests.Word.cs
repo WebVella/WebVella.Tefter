@@ -2,7 +2,7 @@
 
 using WebVella.Tefter.Templates.Models;
 using WebVella.Tefter.Templates.Services;
-using WebVella.Tefter.Templates.ContentProcessors;
+using WebVella.Tefter.Templates.TemplateProcessors;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;

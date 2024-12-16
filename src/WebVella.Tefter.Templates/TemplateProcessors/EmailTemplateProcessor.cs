@@ -1,13 +1,13 @@
 ﻿using WebVella.Tefter.Templates.Models;
 
-namespace WebVella.Tefter.Templates.ContentProcessors;
+namespace WebVella.Tefter.Templates.TemplateProcessors;
 
-public class EmailContentProcessor : ITemplateProcessor
+public class EmailTemplateProcessor : ITemplateProcessor
 {
 	public Guid Id => TemplatesConstants.EMAIL_CONTENT_PROCESSOR_ID;
-	public string Name => "Default tefter email content processor";
+	public string Name => "Default tefter email template processor";
 
-	public string Description => "Default tefter email content processor";
+	public string Description => "Default tefter email template processor";
 
 	public TemplateResultType ResultType => TemplateResultType.Email;
 
@@ -15,7 +15,7 @@ public class EmailContentProcessor : ITemplateProcessor
 
 	public Type ResultViewComponentType => null;
 
-	public ITemplateResult GenerateContent(
+	public ITemplateResult GenerateTemplateResult(
 		Template template,
 		TfDataTable data)
 	{
@@ -138,7 +138,7 @@ public class EmailContentProcessor : ITemplateProcessor
 					"because it goes to deep recursive.");
 			}
 
-			var processorResult = templateService.GetProcessor(queueItem.Template.ContentProcessorType);
+			var processorResult = templateService.GetTemplateProcessor(queueItem.Template.ContentProcessorType);
 
 			if (!processorResult.IsSuccess || processorResult.Value == null)
 				continue;
