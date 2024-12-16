@@ -1,6 +1,8 @@
 ﻿namespace WebVella.Tefter.Templates.Models;
 public enum TemplateResultType
 {
-	File = 0,
+	ExcelFile = 0,
 	Email = 1,
+	TextFile = 2,
+	TextContent = 3,
 }

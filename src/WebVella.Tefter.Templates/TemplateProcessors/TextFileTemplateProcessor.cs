@@ -1,15 +1,15 @@
 ﻿namespace WebVella.Tefter.Templates.TemplateProcessors;
 
-public class FileTemplateProcessor : ITemplateProcessor
+public class TextFileTemplateProcessor : ITemplateProcessor
 {
-	public Guid Id => TemplatesConstants.FILE_CONTENT_PROCESSOR_ID;
-	public string Name => "Default tefter file template processor";
+	public Guid Id => TemplatesConstants.TEXT_FILE_CONTENT_PROCESSOR_ID;
+	public string Name => "Tefter text file template";
 
-	public string Description => "Default file email template processor";
+	public string Description => "creates excel files from excel template and data";
 
 	public string FluentIconName => "Table";
 
-	public TemplateResultType ResultType => TemplateResultType.File;
+	public TemplateResultType ResultType => TemplateResultType.TextFile;
 
 	public Type SettingsComponentType => null;
 

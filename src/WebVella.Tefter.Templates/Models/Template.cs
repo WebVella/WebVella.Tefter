@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Templates.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.Templates.Models;
 
 public class Template
 {
@@ -20,8 +22,10 @@ public class Template
 
 public class CreateTemplateModel
 {
+	[Required]
 	public string Name { get; set; }
 	public string Description { get; set; }
+	[Required]
 	public string Icon { get; set; }
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;

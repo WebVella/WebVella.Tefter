@@ -27,7 +27,24 @@
 		<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
 						FormName="submit-form" class="tf-form" novalidate>
 			<DataAnnotationsValidator />
-
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Status")" />
+					<FluentSwitch @bind-Value=@_form.IsEnabled>
+						<span slot="checked-message">@LOC("enabled")</span>
+						<span slot="unchecked-message">@LOC("enabled")</span>
+					</FluentSwitch>
+					<FluentValidationMessage For="@(() => _form.IsEnabled)" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Use")" />
+					<FluentSwitch @bind-Value=@_form.IsSelectable>
+						<span slot="checked-message">@LOC("selectable")</span>
+						<span slot="unchecked-message">@LOC("selectable")</span>
+					</FluentSwitch>
+					<FluentValidationMessage For="@(() => _form.IsSelectable)" />
+				</FluentGridItem>
+			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
 					<FluentTextField Required="true" TextFieldType="@TextFieldType.Text"
@@ -36,6 +53,18 @@
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Icon")" />
+					<TfSelectIcon @bind-Value="@_form.Icon" Required="true" />
+					<FluentValidationMessage For="@(() => _form.Icon)" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentTextArea Rows="2"
+									@bind-Value=@_form.Description
+									Resize="TextAreaResize.Vertical"
+									Label="@LOC("Description")" Style="width:100%" />
+					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:15px 0" />
