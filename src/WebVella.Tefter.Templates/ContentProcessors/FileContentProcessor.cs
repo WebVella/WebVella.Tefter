@@ -7,6 +7,8 @@ public class FileContentProcessor : ITemplateProcessor
 
 	public string Description => "Default file email content processor";
 
+	public string FluentIconName => "Table";
+
 	public TemplateResultType ResultType => TemplateResultType.File;
 
 	public Type SettingsComponentType => null;

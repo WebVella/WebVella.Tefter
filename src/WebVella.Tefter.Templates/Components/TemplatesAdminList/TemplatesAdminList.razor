@@ -1,16 +1,11 @@
 ﻿@namespace WebVella.Tefter.Templates.Components
 @inherits TfBaseComponent
-@{
-	var templates = new List<Template>();
-	if (TfAuxDataState.Value.Data.ContainsKey(TemplatesConstants.TEMPLATE_APP_TEMPLATES_LIST_DATA_KEY))
-		templates = (List<Template>)TfAuxDataState.Value.Data[TemplatesConstants.TEMPLATE_APP_TEMPLATES_LIST_DATA_KEY];
-}
 <FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_createTemplateHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
 		@LOC("Create template")
 	</FluentButton>
 </FluentStack>
-@if (templates.Count == 0)
+@if (_templates.Count == 0)
 {
 	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No templates created yet")</FluentMessageBar>
 }
@@ -25,7 +20,7 @@ else
 			</tr>
 		</thead>
 		<tbody class="tf-grid-tbody">
-			@foreach (var context in templates)
+			@foreach (var context in _templates)
 			{
 				<tr @key=@context.Id class="tf-grid-tr">
 					<td class="tf-grid-td">

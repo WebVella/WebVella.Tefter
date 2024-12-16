@@ -5,6 +5,7 @@ public interface ITemplateProcessor
 	public Guid Id { get; }
 	public string Name { get; }
 	public string Description { get; }
+	public string FluentIconName { get; }
 	public TemplateResultType ResultType { get; }
 	public Type SettingsComponentType { get; }
 	public Type ResultViewComponentType { get; }
