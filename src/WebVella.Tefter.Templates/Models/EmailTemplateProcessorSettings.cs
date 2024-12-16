@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Templates.Models;
 
-public class EmailContentProcessorSettings
+public class EmailTemplateProcessorSettings
 {
 	[Required]
 	public string Subject { get; set; }

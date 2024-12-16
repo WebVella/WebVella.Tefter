@@ -22,14 +22,14 @@ public partial class EmailContentProcessorSettingsComponent : TfFormBaseComponen
 			}
 			else
 			{
-				_form = JsonSerializer.Deserialize<EmailContentProcessorSettings>(value);
+				_form = JsonSerializer.Deserialize<EmailTemplateProcessorSettings>(value);
 			}
 		}
 	}
 
 
 
-	private EmailContentProcessorSettings _form = new();
+	private EmailTemplateProcessorSettings _form = new();
 
 	protected override void OnInitialized()
 	{
