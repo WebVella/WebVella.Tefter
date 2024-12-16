@@ -5,7 +5,7 @@ using WebVella.Tefter.Talk.Services;
 namespace WebVella.Tefter.Talk.Migrations;
 
 
-[TfApplicationMigration(TfTalkConstants.TALK_APP_ID_STRING, "2024.10.7.1")]
+[TfApplicationMigration(TalkConstants.TALK_APP_ID_STRING, "2024.10.7.1")]
 public class TalkMigration2024100701 : ITfApplicationMigration
 {
 	public async Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceprovider, ITfDatabaseService dbService)

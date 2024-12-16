@@ -2,8 +2,8 @@
 @inherits TfBaseComponent
 @{
 	var channels = new List<AssetsFolder>();
-	if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-		channels = (List<AssetsFolder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+	if (TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
+		channels = (List<AssetsFolder>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
 }
 <FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_createFolderHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">

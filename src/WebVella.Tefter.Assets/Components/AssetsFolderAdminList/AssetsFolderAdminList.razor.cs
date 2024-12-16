@@ -22,10 +22,10 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			List<AssetsFolder> state = new();
-			if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-				state = (List<AssetsFolder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+			if (TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
+				state = (List<AssetsFolder>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
 			state.Add((AssetsFolder)result.Data);
-			TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
+			TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
 			Dispatcher.Dispatch(new SetAuxDataStateAction(
 				component: this,
 				state: TfAuxDataState.Value
@@ -51,14 +51,14 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 		{
 			var item = (AssetsFolder)result.Data;
 			List<AssetsFolder> state = new();
-			if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-				state = (List<AssetsFolder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+			if (TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
+				state = (List<AssetsFolder>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
 			var itemIndex = state.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{
 				state[itemIndex] = item;
 			}
-			TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
+			TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
 			Dispatcher.Dispatch(new SetAuxDataStateAction(
 				component: this,
 				state: TfAuxDataState.Value
@@ -78,14 +78,14 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				List<AssetsFolder> state = new();
-				if (TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-					state = (List<AssetsFolder>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+				if (TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
+					state = (List<AssetsFolder>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
 				var itemIndex = state.FindIndex(x => x.Id == folder.Id);
 				if (itemIndex > -1)
 				{
 					state.RemoveAt(itemIndex);
 				}
-				TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
+				TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
 				Dispatcher.Dispatch(new SetAuxDataStateAction(
 					component: this,
 					state: TfAuxDataState.Value

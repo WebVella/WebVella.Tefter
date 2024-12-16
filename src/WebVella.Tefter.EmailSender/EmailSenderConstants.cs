@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.EmailSender;
-internal class TfEmailSenderConstants
+internal class EmailSenderConstants
 {
 	public const string APP_ID_STRING = "0c847f54-28c0-4314-9151-bb9226d42033";
 	public static Guid  APP_ID = new Guid(APP_ID_STRING);

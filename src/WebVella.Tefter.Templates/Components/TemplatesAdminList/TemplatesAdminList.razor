@@ -1,0 +1,43 @@
+﻿@namespace WebVella.Tefter.Templates.Components
+@inherits TfBaseComponent
+<FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_createTemplateHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">
+		@LOC("Create template")
+	</FluentButton>
+</FluentStack>
+@if (_templates.Count == 0)
+{
+	<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Info">@LOC("No templates created yet")</FluentMessageBar>
+}
+else
+{
+	<table class="tf-grid">
+		<thead class="tf-grid-thead">
+			<tr class="tf-grid-thead-bkg" style="background-color: @TfConstants.AdminBackgkroundColor"></tr>
+			<tr class="tf-grid-tr">
+				<th class="tf-grid-th" style="width:40px;"></th>
+				<th class="tf-grid-th">@LOC("templates name")</th>
+			</tr>
+		</thead>
+		<tbody class="tf-grid-tbody">
+			@foreach (var context in _templates)
+			{
+				<tr @key=@context.Id class="tf-grid-tr">
+					<td class="tf-grid-td">
+						<div>
+							<FluentStack>
+								<FluentButton Title="@LOC("edit template")" OnClick="@(_=> _editTemplateHandler(context))"
+											  Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon" />
+								<FluentButton Title="@LOC("delete template")" OnClick="@(_=> _deleteTemplateHandler(context))" Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
+							</FluentStack>
+						</div>
+					</td>
+					<td class="tf-grid-td">
+						<div>@context.Name</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+

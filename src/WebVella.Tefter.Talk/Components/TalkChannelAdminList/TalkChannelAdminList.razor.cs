@@ -22,11 +22,11 @@ public partial class TalkChannelAdminList : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			List<TalkChannel> state = new();
-			if (TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-				state = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+			if (TfAuxDataState.Value.Data.ContainsKey(TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
+				state = (List<TalkChannel>)TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 
 			state.Add((TalkChannel)result.Data);
-			TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
+			TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
 			Dispatcher.Dispatch(new SetAuxDataStateAction(
 				component: this,
 				state: TfAuxDataState.Value
@@ -52,14 +52,14 @@ public partial class TalkChannelAdminList : TfBaseComponent
 		{
 			var item = (TalkChannel)result.Data;
 			List<TalkChannel> state = new();
-			if (TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-				state = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+			if (TfAuxDataState.Value.Data.ContainsKey(TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
+				state = (List<TalkChannel>)TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 			var itemIndex = state.FindIndex(x => x.Id == item.Id);
 			if (itemIndex > -1)
 			{
 				state[itemIndex] = item;
 			}
-			TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
+			TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
 			Dispatcher.Dispatch(new SetAuxDataStateAction(
 				component: this,
 				state: TfAuxDataState.Value
@@ -79,14 +79,14 @@ public partial class TalkChannelAdminList : TfBaseComponent
 			if (result.IsSuccess)
 			{
 				List<TalkChannel> state = new();
-				if (TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-					state = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+				if (TfAuxDataState.Value.Data.ContainsKey(TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
+					state = (List<TalkChannel>)TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 				var itemIndex = state.FindIndex(x => x.Id == channel.Id);
 				if (itemIndex > -1)
 				{
 					state.RemoveAt(itemIndex);
 				}
-				TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
+				TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
 				Dispatcher.Dispatch(new SetAuxDataStateAction(
 					component: this,
 					state: TfAuxDataState.Value
