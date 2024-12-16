@@ -30,7 +30,6 @@ public partial class TemplatesTests : BaseTest
 					ContentProcessorType = typeof(FileTemplateProcessor),
 					IsEnabled = true,
 					IsSelectable = true,
-					ResultType = TemplateResultType.File,
 					SettingsJson = "{}",
 					UserId = user.Id,
 				};
@@ -55,7 +54,6 @@ public partial class TemplatesTests : BaseTest
 					ContentProcessorType = typeof(FileTemplateProcessor),
 					IsEnabled = true,
 					IsSelectable = true,
-					ResultType = TemplateResultType.File,
 					SettingsJson = "{}",
 					UserId = user.Id,
 				};

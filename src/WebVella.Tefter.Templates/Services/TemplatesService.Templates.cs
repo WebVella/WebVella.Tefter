@@ -92,7 +92,7 @@ internal partial class TemplatesService : ITemplatesService
 
 			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var resultTypePar = CreateParameter("@result_type", (short)template.ResultType, DbType.Int16);
+			var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
 
 			var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
 
@@ -290,12 +290,6 @@ internal partial class TemplatesService : ITemplatesService
 			{
 				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
 					"Content processor type is not found.") });
-			}
-
-			if( contentProcessor.ResultType != template.ResultType )
-			{
-				return new ValidationResult(new[] { new ValidationFailure("ResultType",
-					"Template result type does not match selected content processor result type.") });
 			}
 
 			return new ValidationResult();

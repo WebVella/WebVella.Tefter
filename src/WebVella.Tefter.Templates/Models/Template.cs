@@ -25,7 +25,6 @@ public class CreateTemplateModel
 	public string Icon { get; set; }
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
-	public TemplateResultType ResultType { get; set; }
 	public string SettingsJson { get; set; }
 	public Type ContentProcessorType { get; set; }
 	public Guid? UserId { get; set; }	
