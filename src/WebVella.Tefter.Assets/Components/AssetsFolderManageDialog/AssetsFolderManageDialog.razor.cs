@@ -33,8 +33,8 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 			_form = Content with { Id = Content.Id };
 		}
 		base.InitForm(_form);
-		if(TfAuxDataState.Value.Data.ContainsKey(TfAssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY))
-			_sharedColumnsOptions = ((List<TfSharedColumn>)TfAuxDataState.Value.Data[TfAssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY]).Select(x=> x.DbName).ToList();
+		if(TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY))
+			_sharedColumnsOptions = ((List<TfSharedColumn>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY]).Select(x=> x.DbName).ToList();
 	}
 	private async Task _save()
 	{

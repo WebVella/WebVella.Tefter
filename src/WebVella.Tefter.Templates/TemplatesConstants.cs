@@ -12,4 +12,7 @@ internal class TemplatesConstants
 	public static Guid EMAIL_CONTENT_PROCESSOR_ID = new Guid("12c7c882-0be3-4692-add0-469098d36032");
 	public static Guid FILE_CONTENT_PROCESSOR_ID = new Guid("a655fffd-1a02-4e90-9e05-50595916f97a");
 
+	public static string TEMPLATE_APP_TEMPLATES_LIST_DATA_KEY = $"{TEMPLATES_APP_ID_STRING}-templates-list";
+	public static string TEMPLATE_APP_PROCESSORS_LIST_DATA_KEY = $"{TEMPLATES_APP_ID_STRING}-processors-list";
+
 }

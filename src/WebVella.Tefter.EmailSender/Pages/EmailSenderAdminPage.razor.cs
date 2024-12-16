@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.EmailSender.Pages;
 
-public partial class EmailAdminDashboardPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
+public partial class EmailSenderAdminPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
@@ -19,9 +19,9 @@ public partial class EmailAdminDashboardPage : TucBaseScreenRegionComponent, ITu
 		var mailService = serviceProvider.GetRequiredService<IEmailService>();
 		var srvResult = mailService.GetEmailMessages(newAppState.Route.Search, newAppState.Route.Page, newAppState.Route.PageSize);
 		if (srvResult.IsSuccess)
-			newAuxDataState.Data[TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = srvResult.Value;
+			newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = srvResult.Value;
 		else
-			newAuxDataState.Data[TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = new List<EmailMessage>();
+			newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = new List<EmailMessage>();
 
 		return Task.CompletedTask;
 	}
@@ -42,10 +42,10 @@ public partial class EmailAdminDashboardPage : TucBaseScreenRegionComponent, ITu
 		{
 			if (TfAppState.Value.Route.Page == 1)
 			{
-				var items = (List<EmailMessage>)TfAuxDataState.Value.Data[TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
+				var items = (List<EmailMessage>)TfAuxDataState.Value.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
 				items.Insert(0, (EmailMessage)result.Data);
 				Dispatcher.Dispatch(new SetAuxDataStateByKeyAction(component: this,
-					dictKey: TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY,
+					dictKey: EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY,
 					dictData: items));
 			}
 		}

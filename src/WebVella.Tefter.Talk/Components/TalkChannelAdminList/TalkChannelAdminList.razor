@@ -2,8 +2,8 @@
 @inherits TfBaseComponent
 @{
 	var channels = new List<TalkChannel>();
-	if (TfAuxDataState.Value.Data.ContainsKey(TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[TfTalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+	if (TfAuxDataState.Value.Data.ContainsKey(TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
+		channels = (List<TalkChannel>)TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
 }
 <FluentStack HorizontalAlignment="@HorizontalAlignment.Right" Style="margin-bottom:1rem;">
 	<FluentButton Appearance="@Appearance.Outline" OnClick="_createChannelHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)">

@@ -2,11 +2,11 @@
 
 public class EmailSenderApp : ITfApplication
 {
-	public Guid Id => TfEmailSenderConstants.APP_ID;
+	public Guid Id => EmailSenderConstants.APP_ID;
 
-	public string Name => TfEmailSenderConstants.APP_NAME;
+	public string Name => EmailSenderConstants.APP_NAME;
 
-	public string Description => TfEmailSenderConstants.APP_DECRIPTION;
+	public string Description => EmailSenderConstants.APP_DECRIPTION;
 	public string FluentIconName => "Mail";
 
 	public void OnStart()

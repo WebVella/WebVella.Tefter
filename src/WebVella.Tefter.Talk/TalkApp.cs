@@ -2,11 +2,11 @@
 
 public class TalkApp : ITfApplication
 {
-	public Guid Id => TfTalkConstants.TALK_APP_ID;
+	public Guid Id => TalkConstants.TALK_APP_ID;
 
-	public string Name => TfTalkConstants.TALK_APP_NAME;
+	public string Name => TalkConstants.TALK_APP_NAME;
 
-	public string Description => TfTalkConstants.TALK_APP_DECRIPTION;
+	public string Description => TalkConstants.TALK_APP_DECRIPTION;
 	public string FluentIconName => "CommentMultiple";
 
 	public void OnStart()

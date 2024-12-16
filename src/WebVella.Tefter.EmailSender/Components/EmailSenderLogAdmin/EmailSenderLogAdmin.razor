@@ -2,8 +2,8 @@
 @inherits TfBaseComponent
 @{
 	var messages = new List<EmailMessage>();
-	if (TfAuxDataState.Value.Data.ContainsKey(TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY))
-		messages = (List<EmailMessage>)TfAuxDataState.Value.Data[TfEmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
+	if (TfAuxDataState.Value.Data.ContainsKey(EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY))
+		messages = (List<EmailMessage>)TfAuxDataState.Value.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY];
 }
 @if (messages.Count == 0)
 {

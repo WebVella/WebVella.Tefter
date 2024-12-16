@@ -2,11 +2,11 @@
 
 public class AssetsApp : ITfApplication
 {
-	public Guid Id => TfAssetsConstants.ASSETS_APP_ID;
+	public Guid Id => AssetsConstants.ASSETS_APP_ID;
 
-	public string Name => TfAssetsConstants.ASSETS_APP_NAME;
+	public string Name => AssetsConstants.ASSETS_APP_NAME;
 
-	public string Description => TfAssetsConstants.ASSETS_APP_DECRIPTION;
+	public string Description => AssetsConstants.ASSETS_APP_DECRIPTION;
 	public string FluentIconName => "Folder";
 
 	public void OnStart()
