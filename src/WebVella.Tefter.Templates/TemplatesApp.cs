@@ -2,11 +2,11 @@
 
 public class TemplatesApp : ITfApplication
 {
-	public Guid Id => TfTemplatesConstants.TEMPLATES_APP_ID;
+	public Guid Id => TemplatesConstants.TEMPLATES_APP_ID;
 
-	public string Name => TfTemplatesConstants.TEMPLATES_APP_NAME;
+	public string Name => TemplatesConstants.TEMPLATES_APP_NAME;
 
-	public string Description => TfTemplatesConstants.TEMPLATES_APP_DECRIPTION;
+	public string Description => TemplatesConstants.TEMPLATES_APP_DECRIPTION;
 
 	public string FluentIconName => string.Empty;
 

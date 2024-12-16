@@ -121,4 +121,9 @@ public class UnitTestDataProvider : ITfDataProviderType
 	{
 		throw new NotImplementedException();
 	}
+
+	public List<ValidationError> Validate(string settingsJson)
+	{
+		throw new NotImplementedException();
+	}
 }

@@ -2,6 +2,7 @@
 
 public interface ITemplateProcessor
 {
+	public Guid Id { get; }
 	public string Name { get; }
 	public string Description { get; }
 	public TemplateResultType ResultType { get; }

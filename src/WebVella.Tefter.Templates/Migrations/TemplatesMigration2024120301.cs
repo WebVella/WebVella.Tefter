@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Assets.Migrations;
 
 
-[TfApplicationMigration(TfTemplatesConstants.TEMPLATES_APP_ID_STRING, "2024.12.3.1")]
+[TfApplicationMigration(TemplatesConstants.TEMPLATES_APP_ID_STRING, "2024.12.3.1")]
 public class TemplatesMigration2024120301 : ITfApplicationMigration
 {
 	public async Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceprovider, ITfDatabaseService dbService)

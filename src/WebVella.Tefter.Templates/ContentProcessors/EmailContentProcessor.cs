@@ -2,8 +2,9 @@
 
 namespace WebVella.Tefter.Templates.ContentProcessors;
 
-public class TfEmailContentProcessor : ITemplateProcessor
+public class EmailContentProcessor : ITemplateProcessor
 {
+	public Guid Id => TemplatesConstants.EMAIL_CONTENT_PROCESSOR_ID;
 	public string Name => "Default tefter email content processor";
 
 	public string Description => "Default tefter email content processor";
@@ -131,7 +132,7 @@ public class TfEmailContentProcessor : ITemplateProcessor
 		{
 			var queueItem = queue.Dequeue();
 
-			if (queueItem.Depth > TfTemplatesConstants.MAX_CALCULATION_DEPTH)
+			if (queueItem.Depth > TemplatesConstants.MAX_CALCULATION_DEPTH)
 			{
 				throw new Exception("Calculation of used templates failed, " +
 					"because it goes to deep recursive.");

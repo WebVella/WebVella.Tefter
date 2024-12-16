@@ -1,7 +1,8 @@
 ﻿namespace WebVella.Tefter.Templates.ContentProcessors;
 
-public class TfFileContentProcessor : ITemplateProcessor
+public class FileContentProcessor : ITemplateProcessor
 {
+	public Guid Id => TemplatesConstants.FILE_CONTENT_PROCESSOR_ID;
 	public string Name => "Default tefter file content processor";
 
 	public string Description => "Default file email content processor";
