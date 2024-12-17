@@ -16,7 +16,7 @@ public record TucManageTemplateModel
 	public Type ContentProcessorType { get; set; }
 	public Guid? UserId { get; set; }
 	public TucManageTemplateModel() { }
-	public TucManageTemplateModel(TfUpdateTemplateModel model)
+	public TucManageTemplateModel(TfManageTemplateModel model)
 	{
 		Id = model.Id;
 		Name = model.Name;
@@ -28,9 +28,9 @@ public record TucManageTemplateModel
 		ContentProcessorType = model.ContentProcessorType;
 		UserId = model.UserId;
 	}
-	public TfUpdateTemplateModel ToModel()
+	public TfManageTemplateModel ToModel()
 	{
-		return new TfUpdateTemplateModel
+		return new TfManageTemplateModel
 		{
 			Name = Name,
 			Description = Description,

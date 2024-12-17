@@ -52,4 +52,23 @@ public static class EnumExtensions
 
 	}
 
+	internal static string GetFluentIcon<TEnum>(this TEnum e) where TEnum : IConvertible
+	{
+
+		if (e is Enum)
+		{
+			Type type = e.GetType();
+			var memInfo = type.GetMember(type.GetEnumName(e.ToInt32(CultureInfo.InvariantCulture)));
+			var soAttributes = memInfo[0].GetCustomAttributes(typeof(FluentIconAttribute), false);
+			if (soAttributes.Length > 0)
+			{
+				// we're only getting the first description we find
+				// others will be ignored
+				return ((FluentIconAttribute)soAttributes[0]).Name;
+			}
+		}
+
+		return "ErrorCircle";
+	}
+
 }

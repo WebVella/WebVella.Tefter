@@ -18,7 +18,7 @@
 				@foreach (var item in Enum.GetValues<TfTemplateResultType>())
 				{
 					<FluentNavLink Href="@(string.Format(TfConstants.AdminTemplatesResultPageUrl,(int)item))" Match="@NavLinkMatch.Prefix"
-								   @key="@item" Icon="@TfConstants.AdminTemplatesIcon">
+								   @key="@item" Icon="@TfConstants.GetIcon(item.GetFluentIcon())">
 						@item.ToDescriptionString()
 					</FluentNavLink>
 				}

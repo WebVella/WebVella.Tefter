@@ -22,4 +22,15 @@ public static class ClassExtensions
 
 		return (null,null);
 	}
+
+	internal static string GetFluentIcon(this Type type)
+	{
+
+		var attributes = (FluentIconAttribute[])
+				   type.GetCustomAttributes(typeof(FluentIconAttribute), false);
+
+		if (attributes.Length > 0) return attributes[0].Name;
+
+		return "ErrorCircle";
+	}
 }
