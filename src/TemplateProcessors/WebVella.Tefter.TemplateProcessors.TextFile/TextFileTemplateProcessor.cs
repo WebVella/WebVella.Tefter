@@ -9,7 +9,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 	public string Description => "creates excel files from excel template and data";
 
-	public string FluentIconName => "Table";
+	public string FluentIconName => "DocumentBulletList";
 
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
 

@@ -82,6 +82,15 @@ public partial class TfAdminNavigation : TfBaseComponent
 		});
 		menuItems.Add(new TucMenuItem()
 		{
+			Id = "tf-templates-link",
+			IconCollapsed = TfConstants.AdminTemplatesIcon,
+			IconColor = TfConstants.AdminThemeColor,
+			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Templates,
+			Url = String.Format(TfConstants.AdminTemplatesResultPageUrl,(int)TfTemplateResultType.File),
+			Text = LOC(TfConstants.AdminTemplatesMenuTitle)
+		});
+		menuItems.Add(new TucMenuItem()
+		{
 			Id = "tf-file-repository-link",
 			IconCollapsed = TfConstants.AdminFileRepositoryIcon,
 			IconColor = TfConstants.AdminThemeColor,

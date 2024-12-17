@@ -93,7 +93,7 @@ internal partial class TfTemplateService : ITfTemplateService
 
 			var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
 
-			var iconPar = CreateParameter("@icon", template.Icon, DbType.String);
+			var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
 
 			var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
 
@@ -169,7 +169,7 @@ internal partial class TfTemplateService : ITfTemplateService
 
 			var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
 
-			var iconPar = CreateParameter("@icon", template.Icon, DbType.String);
+			var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
 
 			var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
 
@@ -383,7 +383,7 @@ internal partial class TfTemplateService : ITfTemplateService
 				Id = dr.Field<Guid>("id"),
 				Name = dr.Field<string>("name"),
 				Description = dr.Field<string>("description"),
-				Icon = dr.Field<string>("icon"),
+				FluentIconName = dr.Field<string>("icon"),
 				UsedColumns = JsonSerializer.Deserialize<List<string>>(dr.Field<string>("used_columns_json")),
 				ContentProcessorType = Type.GetType(dr.Field<string>("content_processor_type")),
 				ResultType = (TfTemplateResultType)dr.Field<short>("result_type"),

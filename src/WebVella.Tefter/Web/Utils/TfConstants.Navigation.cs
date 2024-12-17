@@ -46,6 +46,8 @@ public partial class TfConstants
 	public static Icon AdminFileRepositoryIcon = GetIcon("DocumentDatabase");
 	public static string AdminFileRepositoryMenuTitle = "File Repository";
 
+	public static Icon AdminTemplatesIcon = GetIcon("CalendarTemplate");
+	public static string AdminTemplatesMenuTitle = "Templates";
 
 	//Action icons
 	public static string PageIconString = "Document";

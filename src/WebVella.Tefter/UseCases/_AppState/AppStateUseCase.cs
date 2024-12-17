@@ -13,6 +13,7 @@ internal partial class AppStateUseCase
 	//private readonly ITfScreenRegionComponentManager _screenRegionComponentManager;
 	private readonly ITfMetaProvider _metaProvider;
 	private readonly ITfRepositoryService _repositoryManager;
+	private readonly ITfTemplateService _templateService;
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
@@ -31,6 +32,7 @@ internal partial class AppStateUseCase
 		_spaceManager = serviceProvider.GetService<ITfSpaceManager>();
 		_metaProvider = serviceProvider.GetService<ITfMetaProvider>();
 		_repositoryManager = serviceProvider.GetService<ITfRepositoryService>();
+		_templateService = serviceProvider.GetService<ITfTemplateService>();
 		_navigationManager = serviceProvider.GetService<NavigationManager>();
 		_toastService = serviceProvider.GetService<IToastService>();
 		_messageService = serviceProvider.GetService<IMessageService>();
@@ -56,6 +58,7 @@ internal partial class AppStateUseCase
 		(appState, auxDataState) = await InitAdminDataProviderAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitAdminSharedColumnsAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitAdminFileRepositoryAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
+		(appState, auxDataState) = await InitAdminTemplatesAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitBookmarksAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitHomeAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);
 		(appState, auxDataState) = await InitPagesAsync(_serviceProvider, currentUser, appState, oldAppState, auxDataState, oldAuxDataState);

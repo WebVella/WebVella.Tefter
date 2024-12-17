@@ -10,9 +10,12 @@ public partial record TucRouteState
 	public Guid? DataProviderId { get; init; }
 	public Guid? SpaceViewPresetId { get; init; }
 	public string SpaceSection { get; init; }
+	public TfTemplateResultType? TemplateType { get; init; }
+	public Guid? TemplateId { get; init; }
 	public RouteDataFirstNode FirstNode { get; init; } = RouteDataFirstNode.Home;
 	public RouteDataSecondNode SecondNode { get; init; } = default!;
 	public RouteDataThirdNode ThirdNode { get; init; } = default!;
+
 
 	public int? Page { get; init; } = null;
 	public int? PageSize { get; init; } = null;
@@ -57,6 +60,8 @@ public enum RouteDataSecondNode
 	SpacePage = 7,
 	[Description("File Repository")]
 	FileRepository = 8,
+	[Description("Templates")]
+	Templates = 9,
 }
 
 public enum RouteDataThirdNode
@@ -80,6 +85,8 @@ public enum RouteDataThirdNode
 	[Description("Data")]
 	Data = 8,
 	[Description("Views")]
-	Views = 9
+	Views = 9,
+	[Description("List")]
+	List = 10
 
 }

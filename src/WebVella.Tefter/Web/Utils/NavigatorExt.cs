@@ -63,6 +63,10 @@ public static class NavigatorExt
 				{
 					result = result with { SecondNode = RouteDataSecondNode.FileRepository };
 				}
+				else if (result.NodesDict[1] == TfConstants.RouteNameTemplates)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.Templates };
+				}
 				//Process 3
 				if (result.NodesDict.Count >= 3)
 				{
@@ -73,6 +77,10 @@ public static class NavigatorExt
 					else if (result.SecondNode == RouteDataSecondNode.DataProviders)
 					{
 						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { DataProviderId = outGuid };
+					}
+					else if (result.SecondNode == RouteDataSecondNode.Templates)
+					{
+						if (Enum.TryParse<TfTemplateResultType>(result.NodesDict[2], out TfTemplateResultType outEnum)) result = result with { TemplateType = outEnum };
 					}
 				}
 
@@ -106,6 +114,10 @@ public static class NavigatorExt
 					else if (result.NodesDict[3] == TfConstants.RouteNameData)
 					{
 						result = result with { ThirdNode = RouteDataThirdNode.Data };
+					}
+					else if (result.SecondNode == RouteDataSecondNode.Templates && result.TemplateType is not null)
+					{
+						if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { TemplateId = outGuid };
 					}
 				}
 			}

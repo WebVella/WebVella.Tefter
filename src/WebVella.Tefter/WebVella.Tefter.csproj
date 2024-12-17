@@ -15,7 +15,7 @@
 		<PackageReference Include="Fluxor" Version="6.1.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.1.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.1.0" />
-		<PackageReference Include="Markdig" Version="0.38.0" />
+		<PackageReference Include="Markdig" Version="0.39.0" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
