@@ -16,7 +16,7 @@ public class TemplateComponentTests : BaseTest
 						builder.CloseElement();
 					};
 		// Act
-		var cut = Context.RenderComponent<TfTemplate>(p => p
+		var cut = Context.RenderComponent<TfTemplateComponent>(p => p
 		.Add(x => x.ChildContent, fragment)
 		);
 
