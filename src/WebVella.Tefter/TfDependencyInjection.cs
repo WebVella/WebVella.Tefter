@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using WebVella.Tefter.Services;
+
+namespace WebVella.Tefter;
 
 public static class TfDependencyInjection
 {
@@ -60,6 +62,7 @@ public static class TfDependencyInjection
 		//services.AddSingleton<ITfFileManager, TfFileManager>();
 		services.AddSingleton<ITfRepositoryService, TfRepositoryService>();
 		services.AddSingleton<ITfBlobManager, TfBlobManager>();
+		services.AddSingleton<ITfTemplateService, TfTemplateService>();
 
 
 		//lazy services

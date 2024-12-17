@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+
+
+
+	<ItemGroup>
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.0" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Services\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\WebVella.Tefter\WebVella.Tefter.csproj" />
+	</ItemGroup>
+
+</Project>

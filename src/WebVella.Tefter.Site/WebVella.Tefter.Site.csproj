@@ -8,12 +8,15 @@
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
 		<PackageReference Include="System.IO.Packaging" Version="9.0.0" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
+		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj" />
+		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />
+		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextContent\WebVella.Tefter.TemplateProcessors.TextContent.csproj" />
+		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.TextFile\WebVella.Tefter.TemplateProcessors.TextFile.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.Assets\WebVella.Tefter.Assets.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.MsSql\WebVella.Tefter.DataProviders.MsSql.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.EmailSender\WebVella.Tefter.EmailSender.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.Talk\WebVella.Tefter.Talk.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
-		<ProjectReference Include="..\WebVella.Tefter.Templates\WebVella.Tefter.Templates.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 	</ItemGroup>
 

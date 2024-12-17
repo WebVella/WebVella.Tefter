@@ -48,6 +48,8 @@ global using WebVella.Tefter.Identity;
 global using WebVella.Tefter.Messaging;
 global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Models;
+global using WebVella.Tefter.Services;
+
 /// Use cases
 global using WebVella.Tefter.UseCases.AppState;
 global using WebVella.Tefter.UseCases.Login;
