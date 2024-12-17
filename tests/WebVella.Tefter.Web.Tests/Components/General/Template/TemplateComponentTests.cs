@@ -1,7 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Tests.Components;
 
-using TfTemplate = WebVella.Tefter.Web.Components.TfTemplate;
-
 public class TemplateComponentTests : BaseTest
 {
 
