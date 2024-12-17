@@ -18,7 +18,7 @@ internal class TefterSystemMigration2024121701 : TfSystemMigration
 					.AddBooleanColumn("is_enabled", c => { c.NotNullable().WithDefaultValue(true); })
 					.AddBooleanColumn("is_selectable", c => { c.NotNullable().WithDefaultValue(true); })
 					.AddShortIntegerColumn("result_type", c => { c.NotNullable().WithDefaultValue(0); })
-					.AddTextColumn("settings_json", c => { c.NotNullable().WithDefaultValue("{}"); })
+					.AddTextColumn("settings_json", c => { c.Nullable(); })
 					.AddTextColumn("content_processor_type", c => { c.NotNullable(); })
 					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
 					.AddDateTimeColumn("modified_on", c => { c.NotNullable().WithAutoDefaultValue(); })
