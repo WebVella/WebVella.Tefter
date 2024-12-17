@@ -1,7 +1,5 @@
 ﻿namespace WebVella.Tefter.Services;
 
-using TfTemplate = WebVella.Tefter.Models.TfTemplate;
-
 public partial interface ITfTemplateService
 {
 	public Result<TfTemplate> GetTemplate(
@@ -83,7 +81,7 @@ internal partial class TfTemplateService : ITfTemplateService
 
 			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType).Value;
 
-			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson,this);
+			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson,_serviceProvider);
 
 			string usedColumnsJson = JsonSerializer.Serialize(usedColumns??new List<string>());
 
@@ -159,7 +157,7 @@ internal partial class TfTemplateService : ITfTemplateService
 
 			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType).Value;
 
-			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson, this);
+			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson, _serviceProvider);
 
 			string usedColumnsJson = JsonSerializer.Serialize(usedColumns ?? new List<string>());
 

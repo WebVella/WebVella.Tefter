@@ -1,5 +1,4 @@
-﻿
-namespace WebVella.Tefter.Models;
+﻿namespace WebVella.Tefter.Models;
 
 public interface ITfTemplateProcessor
 {
@@ -13,32 +12,47 @@ public interface ITfTemplateProcessor
 
 	public List<string> GetUsedColumns(
 		string settingsJson,
-		ITfTemplateService templateService);
+		IServiceProvider serviceProvider);
 
 	public List<TfTemplate> GetUsedTemplates(
 		string settingsJson,
-		ITfTemplateService templateService);
+		IServiceProvider serviceProvider);
 
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
-		TfDataTable data);
+		TfDataTable data,
+		IServiceProvider serviceProvider);
+
+	public void ProcessTemplateResult(
+		TfTemplate template,
+		TfDataTable data,
+		IServiceProvider serviceProvider);
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
-		ITfTemplateService templateService);
+		IServiceProvider serviceProvider );
 
-	public string OnCreate(
-		string settingsJson,
-		ITfTemplateService templateService);
+	public List<ValidationError> OnCreate(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider );
 
-	public string OnUpdate(
-		Guid templateId,
-		string newSettingsJson,
-		ITfTemplateService templateService);
+	public void OnCreated(
+		TfTemplate template,
+		IServiceProvider serviceProvider);
 
-	public void OnDelete(
-		Guid templateId,
-		ITfTemplateService templateService);
+	public List<ValidationError> OnUpdate(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider);
 
+	public void OnUpdated(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider);
 
+	public List<ValidationError> OnDelete(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider);
+
+	public void OnDeleted(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider);
 }

@@ -17,57 +17,89 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 
 	public Type ResultViewComponentType => null;
 
-	public ITfTemplateResult GenerateTemplateResult(
-		TfTemplate template, 
-		TfDataTable data)
-	{
-		return null;
-	}
-
 	public List<string> GetUsedColumns(
-		string settingsJson, 
-		ITfTemplateService templateService)
+		string settingsJson,
+		IServiceProvider serviceProvider)
 	{
-		List<string> usedColumns = new List<string>();
-
-		//TODO implement
-
-		return usedColumns;
+		//TODO 
+		return new List<string>();
 	}
 
 	public List<TfTemplate> GetUsedTemplates(
 		string settingsJson,
-		ITfTemplateService templateService)
+		IServiceProvider serviceProvider)
 	{
+		//TODO 
 		return new List<TfTemplate>();
+	}
+
+	public ITfTemplateResult GenerateTemplateResult(
+		TfTemplate template,
+		TfDataTable data,
+		IServiceProvider serviceProvider)
+	{
+		//TODO 
+		return null;
+	}
+
+	public void ProcessTemplateResult(
+		TfTemplate template,
+		TfDataTable data,
+		IServiceProvider serviceProvider)
+	{
+		//TODO
 	}
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
-		ITfTemplateService templateService)
+		IServiceProvider serviceProvider)
 	{
-		throw new NotImplementedException();
+		//TODO
+		return new List<ValidationError>();
 	}
 
-	public string OnCreate(
-		string settingsJson,
-		ITfTemplateService templateService)
+	public List<ValidationError> OnCreate(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider)
 	{
-		return settingsJson;
+		//TODO
+		return new List<ValidationError>();
 	}
 
-	public string OnUpdate(
-		Guid templateId,
-		string newSettingsJson,
-		ITfTemplateService templateService)
+	public void OnCreated(
+		TfTemplate template,
+		IServiceProvider serviceProvider)
 	{
-		return newSettingsJson;
-
+		//TODO
 	}
 
-	public void OnDelete(
-		Guid templateId,
-		ITfTemplateService templateService)
+	public List<ValidationError> OnUpdate(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider)
 	{
+		//TODO
+		return new List<ValidationError>();
+	}
+
+	public void OnUpdated(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider)
+	{
+		//TODO
+	}
+
+	public List<ValidationError> OnDelete(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider)
+	{
+		//TODO
+		return new List<ValidationError>();
+	}
+
+	public void OnDeleted(
+		TfManageTemplateModel template,
+		IServiceProvider serviceProvider)
+	{
+		//TODO
 	}
 }
