@@ -10,10 +10,10 @@ public partial interface ITfTemplateService
 	public Result<List<TfTemplate>> GetTemplates();
 
 	public Result<TfTemplate> CreateTemplate(
-		TfCreateTemplateModel template);
+		TfManageTemplateModel template);
 
 	public Result<TfTemplate> UpdateTemplate(
-		TfUpdateTemplateModel template);
+		TfManageTemplateModel template);
 
 	public Result DeleteTemplate(
 		Guid templateId);
@@ -61,20 +61,25 @@ internal partial class TfTemplateService : ITfTemplateService
 	}
 
 	public Result<TfTemplate> CreateTemplate(
-		TfCreateTemplateModel template)
+		TfManageTemplateModel template)
 	{
 		try
 		{
-			Guid id = Guid.NewGuid();
+
+			if (template is not null && template.Id == Guid.Empty)
+			{
+				template.Id = Guid.NewGuid();
+			}
 
 			DateTime now = DateTime.Now;
 
 			TemplateValidator validator = new TemplateValidator(this);
 
-			var validationResult = validator.ValidateCreate(template, id);
+			var validationResult = validator.ValidateCreate(template);
 
 			if (!validationResult.IsValid)
 				return validationResult.ToResult();
+
 
 			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType).Value;
 
@@ -82,7 +87,7 @@ internal partial class TfTemplateService : ITfTemplateService
 
 			string usedColumnsJson = JsonSerializer.Serialize(usedColumns??new List<string>());
 
-			var idPar = CreateParameter("@id", id, DbType.Guid);
+			var idPar = CreateParameter("@id", template.Id, DbType.Guid);
 
 			var namePar = CreateParameter("@name", template.Name, DbType.String);
 
@@ -132,7 +137,7 @@ internal partial class TfTemplateService : ITfTemplateService
 				throw new Exception("Failed to insert new row in database for template object");
 			}
 
-			return GetTemplate(id);
+			return GetTemplate(template.Id);
 		}
 		catch (Exception ex)
 		{
@@ -141,7 +146,7 @@ internal partial class TfTemplateService : ITfTemplateService
 	}
 
 	public Result<TfTemplate> UpdateTemplate(
-		TfUpdateTemplateModel template)
+		TfManageTemplateModel template)
 	{
 		try
 		{
@@ -170,7 +175,7 @@ internal partial class TfTemplateService : ITfTemplateService
 
 			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var resultTypePar = CreateParameter("@result_type", (short)template.ResultType, DbType.Int16);
+			var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
 
 			var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
 
@@ -266,13 +271,18 @@ internal partial class TfTemplateService : ITfTemplateService
 		}
 
 		public ValidationResult ValidateCreate(
-			TfCreateTemplateModel template,
-			Guid id)
+			TfManageTemplateModel template)
 		{
 			if (template == null)
 			{
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The template object is null.") });
+			}
+
+			if (template.Id == Guid.Empty )
+			{
+				return new ValidationResult(new[] { new ValidationFailure("Id",
+					"Id is not specified.") });
 			}
 
 			if (string.IsNullOrWhiteSpace(template.Name))
@@ -298,7 +308,7 @@ internal partial class TfTemplateService : ITfTemplateService
 		}
 
 		public ValidationResult ValidateUpdate(
-			TfUpdateTemplateModel template)
+			TfManageTemplateModel template)
 		{
 			if (template == null)
 			{
@@ -323,12 +333,6 @@ internal partial class TfTemplateService : ITfTemplateService
 			{
 				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
 					"Content processor type is not found.") });
-			}
-
-			if (contentProcessor.ResultType != template.ResultType)
-			{
-				return new ValidationResult(new[] { new ValidationFailure("ResultType",
-					"Template result type does not match selected content processor result type.") });
 			}
 
 			return new ValidationResult();

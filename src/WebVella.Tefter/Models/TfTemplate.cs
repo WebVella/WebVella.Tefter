@@ -20,21 +20,7 @@ public class TfTemplate
 	public User ModifiedBy { get; set; }
 }
 
-public class TfCreateTemplateModel
-{
-	[Required]
-	public string Name { get; set; }
-	public string Description { get; set; }
-	[Required]
-	public string Icon { get; set; }
-	public bool IsEnabled { get; set; } = true;
-	public bool IsSelectable { get; set; } = true;
-	public string SettingsJson { get; set; }
-	public Type ContentProcessorType { get; set; }
-	public Guid? UserId { get; set; }	
-}
-
-public class TfUpdateTemplateModel
+public class TfManageTemplateModel
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; }
@@ -42,7 +28,6 @@ public class TfUpdateTemplateModel
 	public string Icon { get; set; }
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
-	public TfTemplateResultType ResultType { get; set; }
 	public string SettingsJson { get; set; }
 	public Type ContentProcessorType { get; set; }
 	public Guid? UserId { get; set; }
