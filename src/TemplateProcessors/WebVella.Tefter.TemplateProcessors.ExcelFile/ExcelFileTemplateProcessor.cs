@@ -87,12 +87,15 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
 
+		if( settings.BlobId is null )
+			return new List<ValidationError>();
+
 		var blobManager = serviceProvider.GetService<ITfBlobManager>();
 
-		var isTmpBlob = blobManager.ExistsBlob(settings.BlobId, temporary: true).Value;
+		var isTmpBlob = blobManager.ExistsBlob(settings.BlobId.Value, temporary: true).Value;
 		if (isTmpBlob)
 		{
-			blobManager.MakeTempBlobPermanent(settings.BlobId);
+			blobManager.MakeTempBlobPermanent(settings.BlobId.Value);
 		}
 
 		return new List<ValidationError>();
@@ -138,11 +141,14 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 						blobManager.DeleteBlob(blobId.Value);
 					}
 
-					//make new blob persistent
-					var isTmpBlob = blobManager.ExistsBlob(newSettings.BlobId, temporary: true).Value;
-					if (isTmpBlob)
+					if (newSettings.BlobId is not null)
 					{
-						blobManager.MakeTempBlobPermanent(newSettings.BlobId);
+						//make new blob persistent
+						var isTmpBlob = blobManager.ExistsBlob(newSettings.BlobId.Value, temporary: true).Value;
+						if (isTmpBlob)
+						{
+							blobManager.MakeTempBlobPermanent(newSettings.BlobId.Value);
+						}
 					}
 				}
 			}
