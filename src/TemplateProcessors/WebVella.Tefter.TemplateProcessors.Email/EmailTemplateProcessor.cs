@@ -26,8 +26,10 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 		List<string> usedColumns = new List<string>();
 
-		if (!string.IsNullOrWhiteSpace(settings.GroupBy))
-			usedColumns.Add(settings.GroupBy);
+		if (settings.GroupBy != null && settings.GroupBy.Count > 0 )
+		{
+			usedColumns.AddRange(settings.GroupBy);
+		}
 
 		var senderTags = TfTemplateUtility.GetTagsFromTemplate(settings.Sender ?? string.Empty);
 		var recipientsTags = TfTemplateUtility.GetTagsFromTemplate(settings.Recipients ?? string.Empty);

@@ -9,6 +9,6 @@ public class EmailTemplateSettings
 	public string Subject { get; set; }
 	public string HtmlContent { get; set; }
 	public string TextContent { get; set; }
-	public string GroupBy { get; set; }
+	public List<string> GroupBy { get; set; } = new();
 	public List<EmailTemplateSettingsAttachmentItem> AttachmentItems { get; set; } = new();
 }
