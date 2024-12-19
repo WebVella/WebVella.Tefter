@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Pages;
-public partial class AdminTemplatesPage : TfBasePage
+public partial class AdminTemplateDetailsPage : TfBasePage
 {
 	[Parameter] public int? ResultId { get; set; }
 	[Parameter] public Guid? TemplateId { get; set; }

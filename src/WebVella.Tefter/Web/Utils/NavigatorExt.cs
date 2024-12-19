@@ -80,7 +80,7 @@ public static class NavigatorExt
 					}
 					else if (result.SecondNode == RouteDataSecondNode.Templates)
 					{
-						if (Enum.TryParse<TfTemplateResultType>(result.NodesDict[2], out TfTemplateResultType outEnum)) result = result with { TemplateType = outEnum };
+						if (Enum.TryParse<TfTemplateResultType>(result.NodesDict[2], out TfTemplateResultType outEnum)) result = result with { TemplateResultType = outEnum };
 					}
 				}
 
@@ -115,7 +115,7 @@ public static class NavigatorExt
 					{
 						result = result with { ThirdNode = RouteDataThirdNode.Data };
 					}
-					else if (result.SecondNode == RouteDataSecondNode.Templates && result.TemplateType is not null)
+					else if (result.SecondNode == RouteDataSecondNode.Templates && result.TemplateResultType is not null)
 					{
 						if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { TemplateId = outGuid };
 					}

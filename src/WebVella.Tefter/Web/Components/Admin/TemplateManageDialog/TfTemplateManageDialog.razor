@@ -67,17 +67,19 @@
 					<FluentValidationMessage For="@(() => _form.Name)" />
 				</FluentGridItem>
 			</FluentGrid>
-			<FluentDivider Style="margin:15px 0" />
-			<FluentGrid>
-				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Template type")" />
-					<TfSelectComponent TOption="ITfTemplateProcessor" Items="@_processors"
-									   Value="_selectedProcessor" ValueChanged="_componentChanged"
-									   OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
-									   OptionMatch="@((x,y)=> x.Id == y.Id)" />
-					<FluentValidationMessage For="@(() => _form.ContentProcessorType)" />
-				</FluentGridItem>
-			</FluentGrid>
+			@if (_isCreate)
+			{
+				<FluentDivider Style="margin:15px 0" />
+				<FluentGrid>
+					<FluentGridItem xs="12">
+						<FluentInputLabel Label="@LOC("Template type")" />
+						<TfSelectComponent TOption="ITfTemplateProcessor" Items="@_processors"
+										   Value="_selectedProcessor" ValueChanged="_componentChanged"
+										   OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
+										   OptionMatch="@((x,y)=> x.Id == y.Id)" />
+					</FluentGridItem>
+				</FluentGrid>
+			}
 		</FluentEditForm>
 	}
 </FluentDialogBody>

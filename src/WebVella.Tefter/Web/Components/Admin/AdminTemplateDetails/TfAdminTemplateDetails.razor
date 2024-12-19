@@ -1,0 +1,84 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@{
+	var context = TfAppState.Value.AdminTemplateDetails;
+	var processor = _getProcessor();
+}
+<TfCard>
+	<TitleTemplate>
+		<div style="display:flex;align-items:center;justify-content:space-between">
+			<div>@LOC("General")</div>
+			<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateClick">
+				@LOC("Update")
+				<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+			</FluentButton>
+		</div>
+	</TitleTemplate>
+	<ChildContent>
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@context.Name"
+								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+			<FluentGridItem xs="6">
+				<FluentInputLabel Label="@LOC("Icon")" />
+				<TfSelectIcon Value="@context.FluentIconName" Required="true" />
+			</FluentGridItem>
+		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="6">
+				<FluentTextArea Value="@context.Description"
+								Label="@LOC("Description")" Style="width:100%" ReadOnly="true" />
+			</FluentGridItem>
+			<FluentGridItem xs="3">
+				<FluentInputLabel Label="@LOC("Status")" />
+				@if (context.IsEnabled)
+				{
+					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">enabled</FluentBadge>
+				}
+				else
+				{
+					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">disabled</FluentBadge>
+				}
+			</FluentGridItem>
+			<FluentGridItem xs="3">
+				<FluentInputLabel Label="@LOC("Usable")" />
+				@if (context.IsSelectable)
+				{
+					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">selectable</FluentBadge>
+				}
+				else
+				{
+					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">not selectable</FluentBadge>
+				}
+			</FluentGridItem>
+		</FluentGrid>
+	</ChildContent>
+</TfCard>
+<div style="margin:1rem 0">
+	<TfSelectComponent TOption="ITfTemplateProcessor" Items="@TfAppState.Value.AdminTemplateProcessors"
+					   Value="processor"
+					   OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
+					   OptionMatch="@((x,y)=> x.Id == y.Id)" />
+</div>
+@if (processor is not null && processor.SettingsComponentType is not null)
+{
+	<TfCard>
+		<TitleTemplate>
+			<div style="display:flex;align-items:center;justify-content:space-between">
+				<div>@LOC("Processor Settings")</div>
+				<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateClick">
+					@LOC("Update")
+					<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+				</FluentButton>
+			</div>
+		</TitleTemplate>
+		<ChildContent>
+			<TfErrorBoundry>
+				<DynamicComponent Type="processor.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+			</TfErrorBoundry>
+		</ChildContent>
+	</TfCard>
+}
+
+
