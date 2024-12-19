@@ -28,8 +28,10 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(settingsJson);
 
-		if (!string.IsNullOrWhiteSpace(settings.GroupBy))
-			usedColumns.Add(settings.GroupBy);
+		if (settings.GroupBy != null && settings.GroupBy.Count > 0)
+		{
+			usedColumns.AddRange(settings.GroupBy);
+		}
 
 		var tags = TfTemplateUtility.GetTagsFromTemplate(settings.FileName ?? string.Empty);
 
