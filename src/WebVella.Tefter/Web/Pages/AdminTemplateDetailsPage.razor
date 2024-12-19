@@ -1,0 +1,22 @@
+﻿@namespace WebVella.Tefter.Web.Pages
+@page "/admin/templates/{ResultId:int}/{TemplateId:guid}"
+@layout AdminLayout
+@inherits TfBasePage
+<TfLayoutBody>
+	<Aside>
+		<TfAdminTemplateNavigation/>
+	</Aside>
+	<ChildContent>
+		<TfLayoutBodyMain>
+			<Header>
+				<TfPageHeader><span class="text-muted">@LOC("Template"):</span> @TfAppState.Value.AdminTemplateDetails?.Name</TfPageHeader>
+			</Header>
+			<ChildContent>
+				<TfAdminTemplateDetails />
+			</ChildContent>
+		</TfLayoutBodyMain>
+		
+	</ChildContent>
+</TfLayoutBody>
+
+

@@ -12,7 +12,7 @@ public record TucTemplate
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
 	public TfTemplateResultType ResultType { get; set; }
-	public string SettingsJson { get; set; }
+	public string SettingsJson { get; set; } = "{}";
 	public Type ContentProcessorType { get; set; }
 	public DateTime CreatedOn { get; set; }
 	public TucUser CreatedBy { get; set; }
@@ -33,8 +33,8 @@ public record TucTemplate
 		ContentProcessorType = model.ContentProcessorType;
 		CreatedOn = model.CreatedOn;
 		ModifiedOn = model.ModifiedOn;
-		CreatedBy = new TucUser(model.CreatedBy);
-		ModifiedBy = new TucUser(model.ModifiedBy);
+		CreatedBy = model.CreatedBy is null ? null : new TucUser(model.CreatedBy);
+		ModifiedBy = model.ModifiedBy is null ? null : new TucUser(model.ModifiedBy);
 	}
 
 }

@@ -10,7 +10,7 @@ public partial record TucRouteState
 	public Guid? DataProviderId { get; init; }
 	public Guid? SpaceViewPresetId { get; init; }
 	public string SpaceSection { get; init; }
-	public TfTemplateResultType? TemplateType { get; init; }
+	public TfTemplateResultType? TemplateResultType { get; init; }
 	public Guid? TemplateId { get; init; }
 	public RouteDataFirstNode FirstNode { get; init; } = RouteDataFirstNode.Home;
 	public RouteDataSecondNode SecondNode { get; init; } = default!;

@@ -1,7 +1,5 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextContent;
 
-using TfTemplate = WebVella.Tefter.Models.TfTemplate;
-
 public class TextTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.TEXT_CONTENT_PROCESSOR_ID;

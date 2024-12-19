@@ -11,7 +11,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
 
-	public Type SettingsComponentType => null;
+	public Type SettingsComponentType => typeof(SettingsComponent);
 
 	public Type ResultViewComponentType => null;
 

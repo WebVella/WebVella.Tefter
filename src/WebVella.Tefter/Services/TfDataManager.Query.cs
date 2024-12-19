@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public partial interface ITfDataManager
 {
@@ -218,7 +216,7 @@ public partial class TfDataManager
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false,
-		bool returnOnlyTfIds = false ) 
+		bool returnOnlyTfIds = false)
 	{
 		try
 		{

@@ -1,0 +1,25 @@
+﻿@using WebVella.Tefter.Web.Components
+@namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components
+@inherits TfFormBaseComponent
+<FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
+	<div>settings 12312</div>
+@* 	<FluentGrid>
+		<FluentGridItem xs="9">
+			<FluentTextField Required="DisplayMode == Web.Models.TfComponentMode.Update"
+							 ReadOnly="DisplayMode == Web.Models.TfComponentMode.Read"
+							 TextFieldType="@TextFieldType.Text"
+							 Placeholder="@LOC("local, network or tefter protocols are supported")"
+							 @bind-Value=@_form.Filepath AutoComplete="off"
+							 Label="@LOC("CSV File with full access path")" Style="width:100%" />
+			<FluentValidationMessage For="@(() => _form.Filepath)" />
+		</FluentGridItem>
+		<FluentGridItem xs="3">
+			<FluentTextField Disabled="true"
+							 TextFieldType="@TextFieldType.Text"
+							 Value="UTF-8"
+							 Label="@LOC("File encoding")" Style="width:100%" />
+		</FluentGridItem>
+	</FluentGrid> *@
+</FluentEditForm>
+
+

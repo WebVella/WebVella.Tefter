@@ -12,7 +12,7 @@ public record TucManageTemplateModel
 	public string FluentIconName { get; set; }
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
-	public string SettingsJson { get; set; }
+	public string SettingsJson { get; set; } = "{}";
 	public Type ContentProcessorType { get; set; }
 	public Guid? UserId { get; set; }
 	public TucManageTemplateModel() { }
@@ -32,6 +32,7 @@ public record TucManageTemplateModel
 	{
 		return new TfManageTemplateModel
 		{
+			Id = Id,
 			Name = Name,
 			Description = Description,
 			FluentIconName = FluentIconName,
