@@ -1,19 +1,24 @@
 ﻿namespace WebVella.Tefter.Web.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
 using System.Net;
 
+[Authorize]
 [ResponseCache(Location = ResponseCacheLocation.None, Duration = 0, NoStore = true)]
 public class RepositoryController : ControllerBase
 {
 	private readonly ITfRepositoryService _repoService;
+	private readonly ITfBlobManager _blobManager;
 
 	public RepositoryController(
+	ITfBlobManager blobManager,
 		ITfRepositoryService repoService)
 	{
+		_blobManager = blobManager;
 		_repoService = repoService;
 	}
 
@@ -66,6 +71,37 @@ public class RepositoryController : ControllerBase
 		return File(fileContentStream, mimeType);
 	}
 
+	[HttpGet]
+	[Route("/fs/blob/{blobId}/{fileName}")]
+	public IActionResult Download([FromRoute] Guid blobId, [FromRoute] string filename)
+	{
+		if (blobId == Guid.Empty || string.IsNullOrWhiteSpace(filename))
+		{
+			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+			return new JsonResult(new { });
+		}
+		var stream = _blobManager.GetBlobStream(blobId).Value;
+
+		if (stream == null)
+		{
+			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+			return new JsonResult(new { });
+		}
+
+		string headerModifiedSince = Request.Headers["If-Modified-Since"];
+
+		var cultureInfo = new CultureInfo("en-US");
+
+		const int durationInSeconds = 60 * 60 * 24 * 30; //30 days caching of these resources
+
+		HttpContext.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + durationInSeconds;
+
+		var extension = Path.GetExtension(filename).ToLowerInvariant();
+
+		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
+
+		return File(stream, mimeType);
+	}
 
 
 }

@@ -55,6 +55,7 @@ public partial class TfConstants
 	public static string AdminTemplatesResultPageUrl  = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}";
 	public static string AdminTemplatesResultWithSearchPageUrl  = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}?{TfConstants.SearchQueryName}={{1}}";
 	public static string AdminTemplatesTemplatePageUrl  = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}/{{1}}";
+	public static string BlobDownloadUrl  = $"/fs/blob/{{0}}/{{1}}";
 
 	public static string RouteNameSpace  = "space";
 	public static string RouteNameSpacePage  = "page";

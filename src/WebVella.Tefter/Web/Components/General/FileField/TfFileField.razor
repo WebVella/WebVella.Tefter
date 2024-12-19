@@ -1,0 +1,44 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
+@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+@if (IsLoading)
+{
+	<FluentButton Disabled="true" Loading="true"
+				  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
+}
+else if (ReadOnly)
+{
+}
+else
+{
+	<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+		@if (!String.IsNullOrWhiteSpace(Value))
+		{
+			if (!String.IsNullOrWhiteSpace(DownloadUrl))
+			{
+				<FluentAnchor Href="@DownloadUrl" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
+			}
+			<FluentTextField ReadOnly="true" Value="@_fileName" Style="width:100%" />
+			@if (!String.IsNullOrWhiteSpace(_originalValue) && _originalValue != Value)
+			{
+				<FluentButton OnClick="_resetFile" IconStart="@TfConstants.GetIcon("ArrowReset")" />
+			}
+			<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
+		}
+		else
+		{
+			<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
+						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
+			<TfProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
+			<FluentInputFile @ref="@fileUploader"
+							 DragDropZoneVisible="false"
+							 Mode="InputFileMode.SaveToTemporaryFolder"
+							 Multiple="false"
+							 AnchorId="@_uploadId"
+							 MaximumFileSize="@(100 * 1024 * 1024)"
+							 OnProgressChange="@_onProgress"
+							 OnCompleted="@_onCompleted" />
+		}
+	</FluentStack>
+}

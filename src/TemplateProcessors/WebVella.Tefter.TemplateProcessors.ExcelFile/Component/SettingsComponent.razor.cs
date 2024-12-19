@@ -28,11 +28,24 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDataProviderSet
 	}
 
 	private ExcelFileTemplateSettings _form = new();
+	private string _fileLocalPath = null;
+	private string _downloadUrl = null;
+	private bool _fileLoading = false;
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		base.InitForm(_form);
+		_initFileSettings();
+	}
+
+	private void _initFileSettings()
+	{
+		_downloadUrl = null;
+		if (_form.BlobId is not null && _form.BlobId != Guid.Empty)
+		{
+			_downloadUrl = String.Format(TfConstants.BlobDownloadUrl, _form.BlobId, _form.FileName);
+		}
 	}
 
 	public List<ValidationError> Validate()
@@ -45,6 +58,17 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDataProviderSet
 		StateHasChanged();
 		return errors;
 	}
+	private async Task _fileChanged(Tuple<string,string> input)
+	{
+		_fileLoading = true;
+		await InvokeAsync(StateHasChanged);
+		await Task.Delay(1000);
+		_form.FileName = input.Item2;
+		_form.BlobId = Guid.NewGuid();
 
+
+		_fileLoading = true;
+		await InvokeAsync(StateHasChanged);
+	}
 
 }
