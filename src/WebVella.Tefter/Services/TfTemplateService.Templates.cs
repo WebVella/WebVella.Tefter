@@ -63,57 +63,76 @@ internal partial class TfTemplateService : ITfTemplateService
 	{
 		try
 		{
-
-			if (template is not null && template.Id == Guid.Empty)
+			if (template == null)
 			{
-				template.Id = Guid.NewGuid();
+				return Result.Fail(new Error("Template object is null"));
 			}
 
-			DateTime now = DateTime.Now;
-
-			TemplateValidator validator = new TemplateValidator(this);
-
-			var validationResult = validator.ValidateCreate(template);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
+			if (template.ContentProcessorType == null)
+			{
+				return Result.Fail(new Error("Content processor is not selected"));
+			}
 
 			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType).Value;
+			
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				if (template is not null && template.Id == Guid.Empty)
+				{
+					template.Id = Guid.NewGuid();
+				}
 
-			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson,_serviceProvider);
+				var errors = contentProcessor.OnCreate(template, _serviceProvider);
+				
+				if (errors is not null && errors.Count > 0)
+				{
+					return Result.Fail(errors);
+				}
 
-			string usedColumnsJson = JsonSerializer.Serialize(usedColumns??new List<string>());
+				DateTime now = DateTime.Now;
 
-			var idPar = CreateParameter("@id", template.Id, DbType.Guid);
+				TemplateValidator validator = new TemplateValidator(this);
 
-			var namePar = CreateParameter("@name", template.Name, DbType.String);
+				var validationResult = validator.ValidateCreate(template);
 
-			var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
+				if (!validationResult.IsValid)
+				{
+					return validationResult.ToResult();
+				}
 
-			var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
+				List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson, _serviceProvider);
 
-			var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
+				string usedColumnsJson = JsonSerializer.Serialize(usedColumns ?? new List<string>());
 
-			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
+				var idPar = CreateParameter("@id", template.Id, DbType.Guid);
 
-			var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
+				var namePar = CreateParameter("@name", template.Name, DbType.String);
 
-			var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
+				var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
 
-			var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
+				var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
 
-			var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.FullName, DbType.String);
+				var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
 
-			var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+				var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var createdByPar = CreateParameter("@created_by", template.UserId, DbType.Guid);
+				var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
 
-			var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+				var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
 
-			var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
+				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
 
-			const string SQL = @"
+				var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
+
+				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+				var createdByPar = CreateParameter("@created_by", template.UserId, DbType.Guid);
+
+				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+
+				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
+
+				const string SQL = @"
 				INSERT INTO template(
 					id, name, icon, description, used_columns_json, is_enabled, 
 					is_selectable, result_type, settings_json, content_processor_type,
@@ -123,19 +142,26 @@ internal partial class TfTemplateService : ITfTemplateService
 					@is_selectable, @result_type, @settings_json, @content_processor_type,
 					@created_on, @modified_on, @created_by, @modified_by )";
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar, namePar, descriptionPar, iconPar,
-				isEnabledPar, isSelectablePar, resultTypePar,
-				usedColumnsJsonPar, settingsJsonPar, cptPar,
-				createdByPar, createdOnPar, modifiedByPar, modifiedOnPar);
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, namePar, descriptionPar, iconPar,
+					isEnabledPar, isSelectablePar, resultTypePar,
+					usedColumnsJsonPar, settingsJsonPar, cptPar,
+					createdByPar, createdOnPar, modifiedByPar, modifiedOnPar);
 
-			if (dbResult != 1)
-			{
-				throw new Exception("Failed to insert new row in database for template object");
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to insert new row in database for template object");
+				}
+
+				scope.Complete();
 			}
 
-			return GetTemplate(template.Id);
+			var resultTemplate = GetTemplate(template.Id).Value;
+			
+			contentProcessor.OnCreated(resultTemplate, _serviceProvider);
+			
+			return resultTemplate;
 		}
 		catch (Exception ex)
 		{
@@ -148,44 +174,65 @@ internal partial class TfTemplateService : ITfTemplateService
 	{
 		try
 		{
-			TemplateValidator validator = new TemplateValidator(this);
+			if (template == null)
+			{
+				return Result.Fail(new Error("Template object is null"));
+			}
 
-			var validationResult = validator.ValidateUpdate(template);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+			if (template.ContentProcessorType == null)
+			{
+				return Result.Fail(new Error("Content processor is not selected"));
+			}
 
 			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType).Value;
 
-			List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson, _serviceProvider);
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var errors = contentProcessor.OnUpdate(template, _serviceProvider);
+				
+				if (errors is not null && errors.Count > 0)
+				{
+					return Result.Fail(errors);
+				}
 
-			string usedColumnsJson = JsonSerializer.Serialize(usedColumns ?? new List<string>());
+				TemplateValidator validator = new TemplateValidator(this);
 
-			var idPar = CreateParameter("@id", template.Id, DbType.Guid);
+				var validationResult = validator.ValidateUpdate(template);
 
-			var namePar = CreateParameter("@name", template.Name, DbType.String);
+				if (!validationResult.IsValid)
+				{
+					return validationResult.ToResult();
+				}
 
-			var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
+				List<string> usedColumns = contentProcessor.GetUsedColumns(template.SettingsJson, _serviceProvider);
 
-			var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
+				string usedColumnsJson = JsonSerializer.Serialize(usedColumns ?? new List<string>());
 
-			var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
+				var idPar = CreateParameter("@id", template.Id, DbType.Guid);
 
-			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
+				var namePar = CreateParameter("@name", template.Name, DbType.String);
 
-			var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
+				var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
 
-			var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
+				var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
 
-			var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
+				var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
 
-			var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.FullName, DbType.String);
+				var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var modifiedOnPar = CreateParameter("@modified_on", DateTime.Now, DbType.DateTime2);
+				var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
 
-			var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
+				var usedColumnsJsonPar = CreateParameter("@used_columns_json", usedColumnsJson, DbType.String);
 
-			const string SQL = @"
+				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
+
+				var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
+
+				var modifiedOnPar = CreateParameter("@modified_on", DateTime.Now, DbType.DateTime2);
+
+				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
+
+				const string SQL = @"
 				UPDATE template
 				SET 
 					name=@name,
@@ -201,19 +248,26 @@ internal partial class TfTemplateService : ITfTemplateService
 					modified_by=@modified_by
 				WHERE id = @id;";
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar, namePar, descriptionPar, iconPar,
-				isEnabledPar, isSelectablePar, resultTypePar,
-				usedColumnsJsonPar, settingsJsonPar, cptPar,
-				modifiedByPar, modifiedOnPar);
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, namePar, descriptionPar, iconPar,
+					isEnabledPar, isSelectablePar, resultTypePar,
+					usedColumnsJsonPar, settingsJsonPar, cptPar,
+					modifiedByPar, modifiedOnPar);
 
-			if (dbResult != 1)
-			{
-				throw new Exception("Failed to insert new row in database for template object");
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to insert new row in database for template object");
+				}
+
+				scope.Complete();
 			}
 
-			return GetTemplate(template.Id);
+			var resultTemplate = GetTemplate(template.Id).Value;
+
+			contentProcessor.OnUpdated(resultTemplate, _serviceProvider);
+
+			return resultTemplate;
 		}
 		catch (Exception ex)
 		{
@@ -228,23 +282,44 @@ internal partial class TfTemplateService : ITfTemplateService
 		{
 			var existingTemplate = GetTemplate(templateId).Value;
 
-			TemplateValidator validator = new TemplateValidator(this);
-
-			var validationResult = validator.ValidateDelete(existingTemplate);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			const string SQL = "DELETE FROM template WHERE id = @id";
-
-			var idPar = CreateParameter("id", templateId, DbType.Guid);
-
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
-
-			if (dbResult != 1)
+			if (existingTemplate == null)
 			{
-				throw new Exception("Failed to delete row in database for template object");
+				return Result.Fail(new Error("Template is not found"));
 			}
+
+			var contentProcessor = GetTemplateProcessor(existingTemplate.ContentProcessorType).Value;
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var errors = contentProcessor.OnDelete(existingTemplate, _serviceProvider);
+
+				if (errors is not null && errors.Count > 0)
+				{
+					return Result.Fail(errors);
+				}
+
+				TemplateValidator validator = new TemplateValidator(this);
+
+				var validationResult = validator.ValidateDelete(existingTemplate);
+
+				if (!validationResult.IsValid)
+					return validationResult.ToResult();
+
+				const string SQL = "DELETE FROM template WHERE id = @id";
+
+				var idPar = CreateParameter("id", templateId, DbType.Guid);
+
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
+
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to delete row in database for template object");
+				}
+
+				scope.Complete();
+			}
+
+			contentProcessor.OnDeleted(existingTemplate, _serviceProvider);
 
 			return Result.Ok();
 
@@ -277,7 +352,7 @@ internal partial class TfTemplateService : ITfTemplateService
 					"The template object is null.") });
 			}
 
-			if (template.Id == Guid.Empty )
+			if (template.Id == Guid.Empty)
 			{
 				return new ValidationResult(new[] { new ValidationFailure("Id",
 					"Id is not specified.") });
@@ -296,7 +371,7 @@ internal partial class TfTemplateService : ITfTemplateService
 			}
 
 			var contentProcessor = _service.GetTemplateProcessor(template.ContentProcessorType).Value;
-			if( contentProcessor is null )
+			if (contentProcessor is null)
 			{
 				return new ValidationResult(new[] { new ValidationFailure("ContentProcessorType",
 					"Content processor type is not found.") });
@@ -376,6 +451,9 @@ internal partial class TfTemplateService : ITfTemplateService
 				modifiedBy = _identityManager.GetUser(dr.Field<Guid>("modified_by")).Value;
 			}
 
+			string processorTypeName = dr.Field<string>("content_processor_type");
+			var contentProcessor = GetTemplateProcessor(processorTypeName).Value;
+
 			TfTemplate asset = new TfTemplate
 			{
 				Id = dr.Field<Guid>("id"),
@@ -383,7 +461,7 @@ internal partial class TfTemplateService : ITfTemplateService
 				Description = dr.Field<string>("description"),
 				FluentIconName = dr.Field<string>("icon"),
 				UsedColumns = JsonSerializer.Deserialize<List<string>>(dr.Field<string>("used_columns_json")),
-				ContentProcessorType = Type.GetType(dr.Field<string>("content_processor_type")),
+				ContentProcessorType = contentProcessor.GetType(),
 				ResultType = (TfTemplateResultType)dr.Field<short>("result_type"),
 				SettingsJson = dr.Field<string>("settings_json"),
 				IsSelectable = dr.Field<bool>("is_selectable"),

@@ -1,7 +1,5 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.ExcelFile;
 
-using TfTemplate = WebVella.Tefter.Models.TfTemplate;
-
 public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.EXCEL_FILE_CONTENT_PROCESSOR_ID;
@@ -21,15 +19,36 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		string settingsJson,
 		IServiceProvider serviceProvider)
 	{
-		//TODO 
-		return new List<string>();
+		List<string> usedColumns = new List<string>();
+
+		if (string.IsNullOrEmpty(settingsJson))
+		{
+			return usedColumns;
+		}
+
+		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(settingsJson);
+
+		if (!string.IsNullOrWhiteSpace(settings.GroupBy))
+			usedColumns.Add(settings.GroupBy);
+
+		var tags = TfTemplateUtility.GetTagsFromTemplate(settings.FileName ?? string.Empty);
+
+		foreach (var tag in tags)
+		{
+			if (tag.Type == TfTemplateTagType.Data)
+			{
+				if (!usedColumns.Contains(tag.Name))
+					usedColumns.Add(tag.Name);
+			}
+		}
+
+		return usedColumns;
 	}
 
 	public List<TfTemplate> GetUsedTemplates(
 		string settingsJson,
 		IServiceProvider serviceProvider)
 	{
-		//TODO 
 		return new List<TfTemplate>();
 	}
 
@@ -62,7 +81,20 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		TfManageTemplateModel template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
+
+		if (String.IsNullOrWhiteSpace(template.SettingsJson))
+			return new List<ValidationError>();
+
+		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
+
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+
+		var isTmpBlob = blobManager.ExistsBlob(settings.BlobId, temporary: true).Value;
+		if (isTmpBlob)
+		{
+			blobManager.MakeTempBlobPermanent(settings.BlobId);
+		}
+
 		return new List<ValidationError>();
 	}
 
@@ -77,19 +109,58 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		TfManageTemplateModel template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var templateServise = serviceProvider.GetService<ITfTemplateService>();
+
+		Guid? blobId = null;
+
+		var existingTemplate = templateServise.GetTemplate(template.Id).Value;
+
+		if (existingTemplate is not null)
+		{
+			if (string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
+			{
+				var oldSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(existingTemplate.SettingsJson);
+				blobId = oldSettings.BlobId;
+			}
+		}
+
+		if (template is not null)
+		{
+			if (string.IsNullOrWhiteSpace(template.SettingsJson))
+			{
+				var newSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(existingTemplate.SettingsJson);
+				if (newSettings.BlobId != blobId)
+				{
+					//delete old blob
+					if (blobId is not null)
+					{
+						blobManager.DeleteBlob(blobId.Value);
+					}
+
+					//make new blob persistent
+					var isTmpBlob = blobManager.ExistsBlob(newSettings.BlobId, temporary: true).Value;
+					if (isTmpBlob)
+					{
+						blobManager.MakeTempBlobPermanent(newSettings.BlobId);
+					}
+				}
+			}
+		}
+
+
 		return new List<ValidationError>();
 	}
 
 	public void OnUpdated(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
 	}
 
 	public List<ValidationError> OnDelete(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
@@ -97,83 +168,9 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 	}
 
 	public void OnDeleted(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
 	}
-
-	//public ITfTemplateResult GenerateTemplateResult(
-	//	TfTemplate template, 
-	//	TfDataTable data)
-	//{
-	//	return null;
-	//}
-
-	//public List<string> GetUsedColumns(
-	//	string settingsJson,
-	//	ITfTemplateService templateService)
-	//{
-	//	var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(settingsJson);
-
-	//	List<string> usedColumns = new List<string>();
-
-	//	if (!string.IsNullOrWhiteSpace(settings.GroupBy))
-	//		usedColumns.Add(settings.GroupBy);
-
-	//	var tags = TfTemplateUtility.GetTagsFromTemplate(settings.FileName ?? string.Empty);
-
-	//	foreach (var tag in tags)
-	//	{
-	//		if (tag.Type == TfTemplateTagType.Data)
-	//		{
-	//			if (!usedColumns.Contains(tag.Name))
-	//				usedColumns.Add(tag.Name);
-	//		}
-	//	}
-
-	//	return usedColumns;
-	//}
-
-	//public List<TfTemplate> GetUsedTemplates(
-	//	string settingsJson,
-	//	ITfTemplateService templateService)
-	//{
-	//	//TODO
-	//	return new List<TfTemplate>();
-	//}
-
-	//public List<ValidationError> ValidateSettings(
-	//	string settingsJson,
-	//	ITfTemplateService templateService)
-	//{
-	//	//TODO
-	//	throw new NotImplementedException();
-	//}
-
-	//public string OnCreate(
-	//	string settingsJson,
-	//	ITfTemplateService templateService)
-	//{
-	//	//TODO
-	//	var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(settingsJson);
-	//	return settingsJson;
-	//}
-
-	//public string OnUpdate(
-	//	Guid templateId,
-	//	string newSettingsJson,
-	//	ITfTemplateService templateService)
-	//{
-	//	//TODO
-	//	return newSettingsJson;
-
-	//}
-
-	//public void OnDelete(
-	//	Guid templateId,
-	//	ITfTemplateService templateService)
-	//{
-	//	//TODO
-	//}
 }

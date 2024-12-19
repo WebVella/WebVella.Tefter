@@ -82,14 +82,14 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 	}
 
 	public void OnUpdated(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
 	}
 
 	public List<ValidationError> OnDelete(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
@@ -97,7 +97,7 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 	}
 
 	public void OnDeleted(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO

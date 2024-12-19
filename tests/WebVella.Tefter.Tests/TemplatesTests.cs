@@ -1,9 +1,8 @@
 ﻿namespace WebVella.Tefter.Tests;
 
-using WebVella.Tefter.Templates.Models;
-using WebVella.Tefter.Templates.Services;
-using WebVella.Tefter.Templates.TemplateProcessors;
-
+using WebVella.Tefter.Models;
+using WebVella.Tefter.Services;
+using WebVella.Tefter.TemplateProcessors.TextContent;
 
 public partial class TemplatesTests : BaseTest
 {
@@ -13,7 +12,7 @@ public partial class TemplatesTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITemplatesService templatesService = ServiceProvider.GetRequiredService<ITemplatesService>();
+			ITfTemplateService templatesService = ServiceProvider.GetRequiredService<ITfTemplateService>();
 			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
 			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 
@@ -22,15 +21,15 @@ public partial class TemplatesTests : BaseTest
 			{
 				var user = identityManager.GetUser("rumen@webvella.com").Value;
 
-				CreateTemplateModel createTemplateModel = new CreateTemplateModel
+				TfManageTemplateModel createTemplateModel = new TfManageTemplateModel
 				{
 					Name = "unit test",
 					Description = "unit test desc",
-					Icon = string.Empty,
-					ContentProcessorType = typeof(ExcelFileTemplateProcessor),
+					FluentIconName = string.Empty,
+					ContentProcessorType = typeof(TextTemplateProcessor),
 					IsEnabled = true,
 					IsSelectable = true,
-					SettingsJson = "{}",
+					SettingsJson = null,
 					UserId = user.Id,
 				};
 
@@ -42,16 +41,16 @@ public partial class TemplatesTests : BaseTest
 				allTemplateResult.Value.Count.Should().Be(1);
 				allTemplateResult.Value[0].Name.Should().Be(createTemplateModel.Name);
 				allTemplateResult.Value[0].Description.Should().Be(createTemplateModel.Description);
-				allTemplateResult.Value[0].Icon.Should().Be(createTemplateModel.Icon);
+				allTemplateResult.Value[0].FluentIconName.Should().Be(createTemplateModel.FluentIconName);
 
 
-				UpdateTemplateModel updateTemplateModel = new UpdateTemplateModel
+				TfManageTemplateModel updateTemplateModel = new TfManageTemplateModel
 				{
 					Id = allTemplateResult.Value[0].Id,
 					Name = "unit test updated",
 					Description = "unit test desc updated",
-					Icon = "icon",
-					ContentProcessorType = typeof(ExcelFileTemplateProcessor),
+					FluentIconName = "icon",
+					ContentProcessorType = typeof(TextTemplateProcessor),
 					IsEnabled = true,
 					IsSelectable = true,
 					SettingsJson = "{}",
@@ -66,10 +65,10 @@ public partial class TemplatesTests : BaseTest
 				allTemplateResult.Value.Count.Should().Be(1);
 				allTemplateResult.Value[0].Name.Should().Be(updateTemplateModel.Name);
 				allTemplateResult.Value[0].Description.Should().Be(updateTemplateModel.Description);
-				allTemplateResult.Value[0].Icon.Should().Be(updateTemplateModel.Icon);
+				allTemplateResult.Value[0].FluentIconName.Should().Be(updateTemplateModel.FluentIconName);
 
 				var deleteResult = templatesService.DeleteTemplate(updateTemplateModel.Id);
-				updateResult.IsSuccess.Should().BeTrue();
+				deleteResult.IsSuccess.Should().BeTrue();
 
 				allTemplateResult = templatesService.GetTemplates();
 				allTemplateResult.IsSuccess.Should().BeTrue();

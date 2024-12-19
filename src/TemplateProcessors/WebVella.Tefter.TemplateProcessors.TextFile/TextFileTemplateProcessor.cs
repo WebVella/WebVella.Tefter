@@ -1,7 +1,5 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextFile;
 
-using TfTemplate = WebVella.Tefter.Models.TfTemplate;
-
 public class TextFileTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.TEXT_FILE_CONTENT_PROCESSOR_ID;
@@ -82,14 +80,14 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	}
 
 	public void OnUpdated(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
 	}
 
 	public List<ValidationError> OnDelete(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
@@ -97,7 +95,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	}
 
 	public void OnDeleted(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
 		//TODO

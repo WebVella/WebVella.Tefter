@@ -45,14 +45,14 @@ public interface ITfTemplateProcessor
 		IServiceProvider serviceProvider);
 
 	public void OnUpdated(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider);
 
 	public List<ValidationError> OnDelete(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider);
 
 	public void OnDeleted(
-		TfManageTemplateModel template,
+		TfTemplate template,
 		IServiceProvider serviceProvider);
 }
