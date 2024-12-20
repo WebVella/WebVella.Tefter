@@ -40,19 +40,19 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 		return null;
 	}
 
-	public void ProcessTemplateResult(
+	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
+		return new List<ValidationError>();
 	}
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
 		return new List<ValidationError>();
 	}
 
@@ -60,7 +60,6 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 		TfManageTemplateModel template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
 		return new List<ValidationError>();
 	}
 
@@ -68,14 +67,12 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
 	}
 
 	public List<ValidationError> OnUpdate(
 		TfManageTemplateModel template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
 		return new List<ValidationError>();
 	}
 
@@ -83,14 +80,12 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
 	}
 
 	public List<ValidationError> OnDelete(
 		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
 		return new List<ValidationError>();
 	}
 
@@ -98,6 +93,5 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
 	}
 }

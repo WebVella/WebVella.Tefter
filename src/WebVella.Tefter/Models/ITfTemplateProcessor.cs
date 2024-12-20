@@ -23,7 +23,7 @@ public interface ITfTemplateProcessor
 		TfDataTable data,
 		IServiceProvider serviceProvider);
 
-	public void ProcessTemplateResult(
+	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
 		IServiceProvider serviceProvider);

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.TextFile;
+﻿using System.Diagnostics;
+
+namespace WebVella.Tefter.TemplateProcessors.TextFile;
 
 public class TextFileTemplateProcessor : ITfTemplateProcessor
 {
@@ -40,20 +42,52 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		return null;
 	}
 
-	public void ProcessTemplateResult(
+	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
+		return new List<ValidationError>();
 	}
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
-		return new List<ValidationError>();
+		var result = new List<ValidationError>();
+
+		if (string.IsNullOrWhiteSpace(settingsJson))
+		{
+			return result;
+		}
+
+		var settings = JsonSerializer.Deserialize<TextFileTemplateSettings>(settingsJson);
+
+		if (string.IsNullOrWhiteSpace(settings.FileName))
+		{
+			result.Add(new ValidationError(nameof(settings.FileName), "Filename is required"));
+		}
+		else if (settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != 0)
+		{
+			result.Add(new ValidationError(nameof(settings.FileName), "Filename is invalid"));
+		}
+
+		if (settings.TemplateFileBlobId is null)
+		{
+			result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not specified"));
+		}
+		else
+		{
+			var blobManager = serviceProvider.GetService<ITfBlobManager>();
+			if (!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false).Value &&
+				!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value)
+			{
+				result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not found."));
+			}
+		}
+
+		return result;
 	}
 
 	public List<ValidationError> OnCreate(

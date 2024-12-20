@@ -63,20 +63,52 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		return null;
 	}
 
-	public void ProcessTemplateResult(
+	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
+		return new List<ValidationError>();
 	}
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
-		return new List<ValidationError>();
+		var result = new List<ValidationError>();
+
+		if (string.IsNullOrWhiteSpace(settingsJson))
+		{
+			return result;
+		}
+
+		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(settingsJson);
+
+		if (string.IsNullOrWhiteSpace(settings.FileName))
+		{
+			result.Add(new ValidationError(nameof(settings.FileName), "Filename is required"));
+		}
+		else if( settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != 0 )
+		{
+			result.Add(new ValidationError(nameof(settings.FileName), "Filename is invalid"));
+		}
+
+		if (settings.TemplateFileBlobId is null )
+		{
+			result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not specified"));
+		}
+		else
+		{
+			var blobManager = serviceProvider.GetService<ITfBlobManager>();
+			if ( !blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false).Value &&
+				!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value )
+			{
+				result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not found."));
+			}
+		}
+
+		return result;
 	}
 
 	public List<ValidationError> OnCreate(
@@ -89,15 +121,15 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
 
-		if( settings.BlobId is null )
+		if( settings.TemplateFileBlobId is null )
 			return new List<ValidationError>();
 
 		var blobManager = serviceProvider.GetService<ITfBlobManager>();
 
-		var isTmpBlob = blobManager.ExistsBlob(settings.BlobId.Value, temporary: true).Value;
+		var isTmpBlob = blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value;
 		if (isTmpBlob)
 		{
-			blobManager.MakeTempBlobPermanent(settings.BlobId.Value);
+			blobManager.MakeTempBlobPermanent(settings.TemplateFileBlobId.Value);
 		}
 
 		return new List<ValidationError>();
@@ -126,7 +158,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 			if (string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
 			{
 				var oldSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(existingTemplate.SettingsJson);
-				blobId = oldSettings.BlobId;
+				blobId = oldSettings.TemplateFileBlobId;
 			}
 		}
 
@@ -135,7 +167,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 			if (string.IsNullOrWhiteSpace(template.SettingsJson))
 			{
 				var newSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(existingTemplate.SettingsJson);
-				if (newSettings.BlobId != blobId)
+				if (newSettings.TemplateFileBlobId != blobId)
 				{
 					//delete old blob
 					if (blobId is not null)
@@ -143,13 +175,13 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 						blobManager.DeleteBlob(blobId.Value);
 					}
 
-					if (newSettings.BlobId is not null)
+					if (newSettings.TemplateFileBlobId is not null)
 					{
 						//make new blob persistent
-						var isTmpBlob = blobManager.ExistsBlob(newSettings.BlobId.Value, temporary: true).Value;
+						var isTmpBlob = blobManager.ExistsBlob(newSettings.TemplateFileBlobId.Value, temporary: true).Value;
 						if (isTmpBlob)
 						{
-							blobManager.MakeTempBlobPermanent(newSettings.BlobId.Value);
+							blobManager.MakeTempBlobPermanent(newSettings.TemplateFileBlobId.Value);
 						}
 					}
 				}

@@ -114,20 +114,34 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 		return null;
 	}
 
-	public void ProcessTemplateResult(
+	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
+		return new List<ValidationError>();
 	}
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
-		return new List<ValidationError>();
+		var result = new List<ValidationError>();
+
+		if( string.IsNullOrWhiteSpace(settingsJson) )
+		{
+			return result;
+		}
+
+		var settings = JsonSerializer.Deserialize<EmailTemplateSettings>(settingsJson);
+
+		if( string.IsNullOrWhiteSpace(settings.Recipients) )
+		{
+			result.Add(new ValidationError(nameof(settings.Recipients), "Recipient(s) is/are required."));
+		}
+
+		return result;
 	}
 
 	public List<ValidationError> OnCreate(
