@@ -107,7 +107,7 @@
 					<FluentStack>
 						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Label
 										 Style="width:100%" AutoComplete="off" />
-						<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get file name")"
+						<FluentButton IconStart="@(TfConstants.GetIcon("CloudArrowDown"))" Title="@LOC("get file name")"
 									  OnClick="@(()=>_getNameFromPath(true))" Appearance="@Appearance.Outline" />
 					</FluentStack>
 					<FluentValidationMessage For="@(() => _form.Label)" />

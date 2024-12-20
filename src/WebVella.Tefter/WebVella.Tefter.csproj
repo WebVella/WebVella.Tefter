@@ -15,12 +15,12 @@
 		<PackageReference Include="Fluxor" Version="6.1.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.1.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.1.0" />
-		<PackageReference Include="Markdig" Version="0.39.0" />
+		<PackageReference Include="Markdig" Version="0.39.1" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.10.4" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.4" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.0" />
 	
 		<PackageReference Include="Npgsql" Version="9.0.2" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />

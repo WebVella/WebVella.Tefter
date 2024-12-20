@@ -226,7 +226,7 @@ public static partial class TfConverters
 		if (_allIcons is not null) return _allIcons;
 
 		var result = new List<string>();
-		foreach (var item in Icons.AllIcons)
+		foreach (var item in IconsExtensions.AllIcons)
 		{
 			if (item.Size == TfConstants.IconSize
 			&& item.Variant == TfConstants.IconVariant)

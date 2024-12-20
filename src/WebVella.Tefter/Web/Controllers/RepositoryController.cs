@@ -2,12 +2,12 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
 using System.Net;
 
-[Authorize]
 [ResponseCache(Location = ResponseCacheLocation.None, Duration = 0, NoStore = true)]
 public class RepositoryController : ControllerBase
 {
@@ -39,7 +39,7 @@ public class RepositoryController : ControllerBase
 		if (file == null)
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-			return new JsonResult(new { });
+			return NotFound();
 		}
 
 		string headerModifiedSince = Request.Headers["If-Modified-Since"];
@@ -78,15 +78,18 @@ public class RepositoryController : ControllerBase
 		if (blobId == Guid.Empty || string.IsNullOrWhiteSpace(filename))
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-			return new JsonResult(new { });
+			return NotFound();
 		}
-		var stream = _blobManager.GetBlobStream(blobId).Value;
 
-		if (stream == null)
+		var streamResult = _blobManager.GetBlobStream(blobId);
+		if(streamResult.IsFailed ||  streamResult.Value is null) 
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-			return new JsonResult(new { });
+			return NotFound();
 		}
+
+		var stream = streamResult.Value;
+
 
 		string headerModifiedSince = Request.Headers["If-Modified-Since"];
 

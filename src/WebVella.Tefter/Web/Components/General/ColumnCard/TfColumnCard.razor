@@ -4,22 +4,27 @@
 
 <TfCard>
 	<TitleTemplate>
-		<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-			@if (_columnOptions.Count > 0)
-			{
-				<FluentSelect OptionSelected="(x => x == _selectedColumn)"
-							  @bind-SelectedOption="@_selectedColumn"
-							  Disabled="_submitting"
-							  TOption="string" Required="false"
-							  Items="@_columnOptions" Style="width:200px"
-							  Placeholder="@LOC("select provider column")" />
-			}
-			else
-			{
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
-			}
-			<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
-		</FluentStack>
+		<div style="display:flex;justify-content:space-between;align-items:center">
+			<div>@Title</div>
+			<div>
+				<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+					@if (_columnOptions.Count > 0)
+					{
+						<FluentSelect OptionSelected="(x => x == _selectedColumn)"
+									  @bind-SelectedOption="@_selectedColumn"
+									  Disabled="_submitting"
+									  TOption="string" Required="false"
+									  Items="@_columnOptions" Style="width:200px"
+									  Placeholder="@LOC("select provider column")" />
+					}
+					else
+					{
+						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all columns added") Style="width:200px" Disabled="true" />
+					}
+					<FluentButton OnClick="_addColumn" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_columnOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+				</FluentStack>
+			</div>
+		</div>
 	</TitleTemplate>
 	<ChildContent>
 		@if (Items.Count == 0)

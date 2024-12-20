@@ -54,7 +54,7 @@
 
 
 						</FluentTextField>
-						<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from URL")"
+						<FluentButton IconStart="@(TfConstants.GetIcon("CloudArrowDown"))" Title="@LOC("get from URL")"
 									  OnClick="@(()=>_getNameFromUrl(true))" Appearance="@Appearance.Outline"
 									  Loading="_isGetUrlLoading" Disabled="_isGetUrlLoading" />
 					</FluentStack>

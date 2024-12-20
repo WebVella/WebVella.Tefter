@@ -2,8 +2,15 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.General.ColumnCard.TfColumnCard", "WebVella.Tefter")]
 public partial class TfColumnCard : TfBaseComponent
 {
+
+	[Parameter]
+	public string Title { get; set; } = null;
+
 	[Parameter]
 	public TucDataProvider DataProvider { get; set; } = null;
+
+	[Parameter]
+	public List<string> Options { get; set; } = null;
 
 	[Parameter]
 	public List<string> Items { get; set; } = new();
@@ -17,8 +24,10 @@ public partial class TfColumnCard : TfBaseComponent
 	{
 		get
 		{
-			if (DataProvider is null) return new List<string>();
-			return DataProvider.ColumnsPublic.Select(x => x.DbName).ToList();
+			if (DataProvider is not null)
+				return DataProvider.ColumnsPublic.Select(x => x.DbName).ToList();
+			if (Options is not null) return Options.ToList();
+			return new List<string>();
 		}
 	}
 	internal List<string> _columnOptions

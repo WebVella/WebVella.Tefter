@@ -1,4 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿
+namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.TemplateManageDialog.TfTemplateManageDialog", "WebVella.Tefter")]
 public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogContentComponent<TucTemplate>
 {
@@ -24,7 +25,7 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create template") : LOC("Manage template");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add") : TfConstants.GetIcon("Save");
 		_processors = TfAppState.Value.AdminTemplateProcessors;
 		_form = new TucManageTemplateModel
 		{

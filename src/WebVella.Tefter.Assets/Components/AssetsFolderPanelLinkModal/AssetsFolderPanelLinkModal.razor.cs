@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WebVella.Tefter.Web.Utility;
-
 namespace WebVella.Tefter.Assets.Components;
 [LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderPanelLinkModal.AssetsFolderPanelLinkModal", "WebVella.Tefter.Assets")]
 public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogContentComponent<AssetsFolderPanelLinkModalContext>

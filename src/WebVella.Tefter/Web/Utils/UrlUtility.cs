@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Web.Utility;
+﻿namespace WebVella.Tefter.Web.Utils;
 public class UrlUtility
 {
 	private static string BASE_URL = "";

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Utils;
+﻿using DocumentFormat.OpenXml.Office.CustomUI;
+
+namespace WebVella.Tefter.Web.Utils;
 
 public partial class TfConstants
 {
@@ -6,11 +8,11 @@ public partial class TfConstants
 	{
 		try
 		{
-			return Icons.GetInstance(new IconInfo { Name = name, Size = size, Variant = variant });
+			return IconsExtensions.GetInstance(new IconInfo { Name = name, Size = size, Variant = variant });
 		}
 		catch
 		{
-			return Icons.GetInstance(new IconInfo { Name = "ErrorCircle", Size = IconSize.Size20, Variant = IconVariant.Regular }).WithColor(Color.Error);
+			return IconsExtensions.GetInstance(new IconInfo { Name = "ErrorCircle", Size = IconSize.Size20, Variant = IconVariant.Regular }).WithColor(Color.Error);
 		}
 	}
 
@@ -64,7 +66,7 @@ public partial class TfConstants
 	public static Icon ViewIcon = GetIcon("Eye");
 	public static Icon HelpIcon = GetIcon("QuestionCircle");
 	public static Icon RectangleIcon = GetIcon("RectangleLandscape",variant:IconVariant.Filled);
-	public static Icon ErrorIcon = Icons.GetInstance(new IconInfo { Name = "ErrorCircle", Size = IconSize.Size20, Variant = IconVariant.Filled }).WithColor(Color.Error);
+	public static Icon ErrorIcon = IconsExtensions.GetInstance(new IconInfo { Name = "ErrorCircle", Size = IconSize.Size20, Variant = IconVariant.Filled }).WithColor(Color.Error);
 
 	//Storage keys
 	public static string SpaceViewOpenedGroupsLocalStorageKey = "tf-spaceview-opened-groups";

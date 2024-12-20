@@ -52,7 +52,7 @@
 								 Placeholder="@LOC("empty uses culture invariant")" />
 				@if (DisplayMode == Web.Models.TfComponentMode.Update)
 				{
-					<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from server")"
+					<FluentButton IconStart="@(TfConstants.GetIcon(" CloudArrowDown"))" Title="@LOC("get from server")"
 								  OnClick="_getCultureFromServer" Appearance="@Appearance.Outline" />
 				}
 			</FluentStack>

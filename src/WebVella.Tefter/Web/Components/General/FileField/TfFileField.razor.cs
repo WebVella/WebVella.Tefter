@@ -5,8 +5,6 @@ public partial class TfFileField : TfBaseComponent
 	[Parameter] public bool IsLoading { get; set; } = false;
 	[Parameter] public bool ReadOnly { get; set; } = false;
 	[Parameter] public string Value { get; set; }
-	[Parameter] public string FileName { get; set; }
-	[Parameter] public string DownloadUrl { get; set; }
 	[Parameter] public EventCallback<Tuple<string,string>> ValueChanged { get; set; }
 	[Parameter] public EventCallback ResetRequested { get; set; }
 
@@ -15,7 +13,6 @@ public partial class TfFileField : TfBaseComponent
 	{
 		get
 		{
-			if(!String.IsNullOrWhiteSpace(FileName)) return FileName;
 			if(!String.IsNullOrWhiteSpace(Value)) return Path.GetFileName(Value);
 
 			return null;

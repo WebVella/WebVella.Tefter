@@ -6,8 +6,15 @@
 	<FluentGrid>
 		<FluentGridItem xs="6">
 			<FluentInputLabel Label="@LOC("Template File")" />
-			<TfFileField Value=@_fileLocalPath FileName="@_form.FileName" DownloadUrl="@_downloadUrl" ValueChanged="_fileChanged"/>
+			<TfFileField Value=@_downloadUrl ValueChanged="_fileChanged" IsLoading="_fileLoading" />
 			<FluentValidationMessage For="@(() => _form.FileName)" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentInputLabel Label="@LOC("Group by columns")" />
+			<FluentTextField Value=@_downloadUrl />
+			<FluentValidationMessage For="@(() => _form.GroupBy)" />
 		</FluentGridItem>
 	</FluentGrid>
 </FluentEditForm>

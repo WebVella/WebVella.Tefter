@@ -16,6 +16,7 @@ global using Microsoft.Extensions.Localization;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.FluentUI.AspNetCore.Components;
 global using Microsoft.FluentUI.AspNetCore.Components.Extensions;
+global using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons;
 global using Microsoft.JSInterop;
 global using Nito.AsyncEx;
 global using Npgsql;

@@ -28,7 +28,6 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDataProviderSet
 	}
 
 	private ExcelFileTemplateSettings _form = new();
-	private string _fileLocalPath = null;
 	private string _downloadUrl = null;
 	private bool _fileLoading = false;
 
@@ -66,8 +65,8 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDataProviderSet
 		_form.FileName = input.Item2;
 		_form.BlobId = Guid.NewGuid();
 
-
-		_fileLoading = true;
+		_initFileSettings();
+		_fileLoading = false;
 		await InvokeAsync(StateHasChanged);
 	}
 

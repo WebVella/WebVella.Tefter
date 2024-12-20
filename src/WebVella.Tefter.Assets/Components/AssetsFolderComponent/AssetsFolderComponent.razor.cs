@@ -1,6 +1,6 @@
 ﻿
 
-using WebVella.Tefter.Web.Utility;
+using WebVella.Tefter.Web.Utils;
 
 namespace WebVella.Tefter.Assets.Components;
 

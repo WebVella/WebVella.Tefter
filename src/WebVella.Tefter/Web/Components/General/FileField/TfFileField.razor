@@ -12,13 +12,11 @@ else if (ReadOnly)
 }
 else
 {
-	<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+	<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalGap="5">
 		@if (!String.IsNullOrWhiteSpace(Value))
 		{
-			if (!String.IsNullOrWhiteSpace(DownloadUrl))
-			{
-				<FluentAnchor Href="@DownloadUrl" IconStart="@TfConstants.GetIcon("ArrowDownload")" />
-			}
+
+			<FluentAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" />
 			<FluentTextField ReadOnly="true" Value="@_fileName" Style="width:100%" />
 			@if (!String.IsNullOrWhiteSpace(_originalValue) && _originalValue != Value)
 			{
