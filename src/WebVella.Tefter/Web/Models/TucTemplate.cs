@@ -25,7 +25,8 @@ public record TucTemplate
 		Name = model.Name;
 		Description = model.Description;
 		FluentIconName = model.FluentIconName;
-		UsedColumns = model.UsedColumns;
+		//TODO boz
+		UsedColumns = null;
 		IsEnabled = model.IsEnabled;
 		IsSelectable = model.IsSelectable;
 		ResultType = model.ResultType;

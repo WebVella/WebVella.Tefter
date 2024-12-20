@@ -8,7 +8,7 @@ public class TfTemplate
 	public string Name { get; set; }
 	public string Description { get; set; }
 	public string FluentIconName { get; set; }
-	public List<string> UsedColumns { get; set; } = new();
+	public List<Guid> SpaceDataList { get; set; } = new();
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
 	public TfTemplateResultType ResultType { get; set; }
@@ -32,5 +32,6 @@ public class TfManageTemplateModel
 	public bool IsSelectable { get; set; } = true;
 	public string SettingsJson { get; set; }
 	public Type ContentProcessorType { get; set; }
-	public Guid? UserId { get; set; }	
+	public Guid? UserId { get; set; }
+	public List<Guid> SpaceDataList { get; set; } = new();
 }
