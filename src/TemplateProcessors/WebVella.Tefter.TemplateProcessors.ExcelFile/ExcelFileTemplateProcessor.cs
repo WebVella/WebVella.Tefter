@@ -15,45 +15,6 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 	public Type ResultViewComponentType => null;
 
-	public List<string> GetUsedColumns(
-		string settingsJson,
-		IServiceProvider serviceProvider)
-	{
-		List<string> usedColumns = new List<string>();
-
-		if (string.IsNullOrEmpty(settingsJson))
-		{
-			return usedColumns;
-		}
-
-		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(settingsJson);
-
-		if (settings.GroupBy != null && settings.GroupBy.Count > 0)
-		{
-			usedColumns.AddRange(settings.GroupBy);
-		}
-
-		var tags = TfTemplateUtility.GetTagsFromTemplate(settings.FileName ?? string.Empty);
-
-		foreach (var tag in tags)
-		{
-			if (tag.Type == TfTemplateTagType.Data)
-			{
-				if (!usedColumns.Contains(tag.Name))
-					usedColumns.Add(tag.Name);
-			}
-		}
-
-		return usedColumns;
-	}
-
-	public List<TfTemplate> GetUsedTemplates(
-		string settingsJson,
-		IServiceProvider serviceProvider)
-	{
-		return new List<TfTemplate>();
-	}
-
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
 		TfDataTable data,

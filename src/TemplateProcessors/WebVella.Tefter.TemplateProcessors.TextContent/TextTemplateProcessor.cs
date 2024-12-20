@@ -15,22 +15,6 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 
 	public Type ResultViewComponentType => null;
 
-	public List<string> GetUsedColumns(
-		string settingsJson,
-		IServiceProvider serviceProvider)
-	{
-		//TODO 
-		return new List<string>();
-	}
-
-	public List<TfTemplate> GetUsedTemplates(
-		string settingsJson,
-		IServiceProvider serviceProvider)
-	{
-		//TODO 
-		return new List<TfTemplate>();
-	}
-
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
 		TfDataTable data,

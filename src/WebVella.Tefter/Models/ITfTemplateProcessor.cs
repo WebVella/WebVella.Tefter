@@ -10,14 +10,6 @@ public interface ITfTemplateProcessor
 	public Type SettingsComponentType { get; }
 	public Type ResultViewComponentType { get; }
 
-	public List<string> GetUsedColumns(
-		string settingsJson,
-		IServiceProvider serviceProvider);
-
-	public List<TfTemplate> GetUsedTemplates(
-		string settingsJson,
-		IServiceProvider serviceProvider);
-
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
