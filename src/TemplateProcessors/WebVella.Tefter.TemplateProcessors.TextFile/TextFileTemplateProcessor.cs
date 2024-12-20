@@ -16,6 +16,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	public Type SettingsComponentType => null;
 
 	public Type ResultViewComponentType => null;
+	public Type HelpComponentType => null;
 
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,

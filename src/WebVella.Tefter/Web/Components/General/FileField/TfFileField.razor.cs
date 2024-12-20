@@ -3,17 +3,19 @@
 public partial class TfFileField : TfBaseComponent
 {
 	[Parameter] public bool IsLoading { get; set; } = false;
-	[Parameter] public bool ReadOnly { get; set; } = false;
+	[Parameter] public string Accept { get; set; }
 	[Parameter] public string Value { get; set; }
-	[Parameter] public EventCallback<Tuple<string,string>> ValueChanged { get; set; }
+	[Parameter] public EventCallback<Tuple<string, string>> Uploaded { get; set; }
 	[Parameter] public EventCallback ResetRequested { get; set; }
-
+	[Parameter] public string Placeholder { get; set; }
+	private string _placeholder { get => String.IsNullOrWhiteSpace(Placeholder) ? LOC("no file") : Placeholder; }
+	private bool _isReadonly { get => !Uploaded.HasDelegate; }
 	private string _originalValue = null;
 	private string _fileName
 	{
 		get
 		{
-			if(!String.IsNullOrWhiteSpace(Value)) return Path.GetFileName(Value);
+			if (!String.IsNullOrWhiteSpace(Value)) return Path.GetFileName(Value);
 
 			return null;
 		}
@@ -31,9 +33,15 @@ public partial class TfFileField : TfBaseComponent
 		_originalValue = Value;
 	}
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		Console.WriteLine("file " + Value);
+	}
+
 	private async Task _clearFile()
 	{
-		await ValueChanged.InvokeAsync(null);
+		await Uploaded.InvokeAsync(null);
 	}
 
 	private async Task _resetFile()
@@ -51,7 +59,7 @@ public partial class TfFileField : TfBaseComponent
 			_upload = Files[0];
 			if (_upload is not null)
 			{
-				await ValueChanged.InvokeAsync(new Tuple<string,string>(_upload.LocalFile.ToString(),_upload.Name));
+				await Uploaded.InvokeAsync(new Tuple<string, string>(_upload.LocalFile.ToString(), _upload.Name));
 				//_form.LocalPath = _upload.LocalFile.ToString();
 				//_form.FileName = _upload.Name;
 				//_getNameFromPath(false);

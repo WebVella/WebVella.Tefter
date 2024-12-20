@@ -75,4 +75,8 @@ public partial class TfConstants
 	public static string SpaceDataViewsPageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameViews}";
 	public static string SpaceDataDataPageUrl  = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameData}";
 
+	public static List<string> SupportedUriFirstNodes = new List<string>() {
+		String.Empty,RouteNameAdmin, RouteNameSpacePages,RouteNameSpace
+	};
+
 }

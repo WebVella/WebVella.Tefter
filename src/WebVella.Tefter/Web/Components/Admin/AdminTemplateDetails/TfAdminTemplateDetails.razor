@@ -2,83 +2,97 @@
 @inherits TfBaseComponent
 @{
 	var context = TfAppState.Value.AdminTemplateDetails;
-	var processor = _getProcessor();
 }
-<TfCard>
-	<TitleTemplate>
-		<div style="display:flex;align-items:center;justify-content:space-between">
-			<div>@LOC("General")</div>
-			<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateClick">
-				@LOC("Update")
-				<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
-			</FluentButton>
-		</div>
-	</TitleTemplate>
-	<ChildContent>
-		<FluentGrid>
-			<FluentGridItem xs="6">
-				<FluentTextField TextFieldType="@TextFieldType.Text" Value="@context.Name"
-								 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
-			</FluentGridItem>
-			<FluentGridItem xs="6">
-				<FluentInputLabel Label="@LOC("Icon")" />
-				<TfSelectIcon Value="@context.FluentIconName" Required="true" />
-			</FluentGridItem>
-		</FluentGrid>
-		<FluentGrid>
-			<FluentGridItem xs="6">
-				<FluentTextArea Value="@context.Description"
-								Label="@LOC("Description")" Style="width:100%" ReadOnly="true" />
-			</FluentGridItem>
-			<FluentGridItem xs="3">
-				<FluentInputLabel Label="@LOC("Status")" />
-				@if (context.IsEnabled)
-				{
-					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">enabled</FluentBadge>
-				}
-				else
-				{
-					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">disabled</FluentBadge>
-				}
-			</FluentGridItem>
-			<FluentGridItem xs="3">
-				<FluentInputLabel Label="@LOC("Usable")" />
-				@if (context.IsSelectable)
-				{
-					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">selectable</FluentBadge>
-				}
-				else
-				{
-					<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">not selectable</FluentBadge>
-				}
-			</FluentGridItem>
-		</FluentGrid>
-	</ChildContent>
-</TfCard>
-<div style="margin:1rem 0">
-	<TfSelectComponent TOption="ITfTemplateProcessor" Items="@TfAppState.Value.AdminTemplateProcessors"
-					   Value="processor"
-					   OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
-					   OptionMatch="@((x,y)=> x.Id == y.Id)" />
-</div>
-@if (processor is not null && processor.SettingsComponentType is not null)
-{
+<ErrorBoundary>
 	<TfCard>
 		<TitleTemplate>
-			<div style="display:flex;align-items:center;justify-content:space-between">
-				<div>@LOC("Template Settings")</div>
-				<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateClick">
-					@LOC("Update")
-					<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
-				</FluentButton>
-			</div>
+			<FluentStack HorizontalAlignment="@HorizontalAlignment.Stretch" VerticalAlignment="@VerticalAlignment.Center">
+				<div style="white-space: nowrap;">@LOC("General")</div>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
+					<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateClick">
+						@LOC("Update")
+						<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+					</FluentButton>
+				</FluentStack>
+			</FluentStack>
 		</TitleTemplate>
 		<ChildContent>
-			<TfErrorBoundry>
-				<DynamicComponent Type="processor.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
-			</TfErrorBoundry>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextField TextFieldType="@TextFieldType.Text" Value="@context.Name"
+									 Label="@LOC("Name")" Style="width:100%" ReadOnly="true" />
+				</FluentGridItem>
+				<FluentGridItem xs="6">
+					<FluentInputLabel Label="@LOC("Icon")" />
+					<TfSelectIcon Value="@context.FluentIconName" Required="true" />
+				</FluentGridItem>
+			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="6">
+					<FluentTextArea Value="@context.Description"
+									Label="@LOC("Description")" Style="width:100%" ReadOnly="true" />
+				</FluentGridItem>
+				<FluentGridItem xs="3">
+					<FluentInputLabel Label="@LOC("Status")" />
+					@if (context.IsEnabled)
+					{
+						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">enabled</FluentBadge>
+					}
+					else
+					{
+						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">disabled</FluentBadge>
+					}
+				</FluentGridItem>
+				<FluentGridItem xs="3">
+					<FluentInputLabel Label="@LOC("Usable")" />
+					@if (context.IsSelectable)
+					{
+						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">selectable</FluentBadge>
+					}
+					else
+					{
+						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">not selectable</FluentBadge>
+					}
+				</FluentGridItem>
+			</FluentGrid>
 		</ChildContent>
 	</TfCard>
-}
-
+	<div style="margin:1rem 0">
+		<TfSelectComponent TOption="ITfTemplateProcessor" Items="@TfAppState.Value.AdminTemplateProcessors"
+						   Value="_processor"
+						   OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
+						   OptionMatch="@((x,y)=> x.Id == y.Id)" />
+	</div>
+	@if (_processor is not null && _processor.SettingsComponentType is not null)
+	{
+		<TfCard>
+			<TitleTemplate>
+				<FluentStack HorizontalAlignment="@HorizontalAlignment.Stretch" VerticalAlignment="@VerticalAlignment.Center">
+					<div style="white-space: nowrap;">@LOC("Template Settings")</div>
+					<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
+						@if (_processor.HelpComponentType is not null)
+						{
+							<FluentButton Appearance="@Appearance.Outline" OnClick="onHelpClick">
+								@LOC("Help")
+								<FluentIcon Value="@TfConstants.GetIcon("QuestionCircle")" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
+						}
+						@if (_processor.SettingsComponentType is not null)
+						{
+							<FluentButton Appearance="@Appearance.Outline" OnClick="onUpdateSettingsClick">
+								@LOC("Update")
+								<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+							</FluentButton>
+						}
+					</FluentStack>
+				</FluentStack>
+			</TitleTemplate>
+			<ChildContent>
+				<TfErrorBoundry>
+					<DynamicComponent Type="_processor.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+				</TfErrorBoundry>
+			</ChildContent>
+		</TfCard>
+	}
+</ErrorBoundary>
 

@@ -28,6 +28,30 @@ public record TucManageTemplateModel
 		ContentProcessorType = model.ContentProcessorType;
 		UserId = model.UserId;
 	}
+	public TucManageTemplateModel(TfTemplate model)
+	{
+		Id = model.Id;
+		Name = model.Name;
+		Description = model.Description;
+		FluentIconName = model.FluentIconName;
+		IsEnabled = model.IsEnabled;
+		IsSelectable = model.IsSelectable;
+		SettingsJson = model.SettingsJson;
+		ContentProcessorType = model.ContentProcessorType;
+		UserId = model.CreatedBy?.Id;
+	}
+	public TucManageTemplateModel(TucTemplate model)
+	{
+		Id = model.Id;
+		Name = model.Name;
+		Description = model.Description;
+		FluentIconName = model.FluentIconName;
+		IsEnabled = model.IsEnabled;
+		IsSelectable = model.IsSelectable;
+		SettingsJson = model.SettingsJson;
+		ContentProcessorType = model.ContentProcessorType;
+		UserId = model.CreatedBy?.Id;
+	}
 	public TfManageTemplateModel ToModel()
 	{
 		return new TfManageTemplateModel

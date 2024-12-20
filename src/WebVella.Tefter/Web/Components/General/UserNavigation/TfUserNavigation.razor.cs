@@ -27,6 +27,7 @@ public partial class TfUserNavigation
 	}
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
+		if(!Navigator.UrlHasState()) return;
 		initAdmin(e.Location);
 		StateHasChanged();
 	}
