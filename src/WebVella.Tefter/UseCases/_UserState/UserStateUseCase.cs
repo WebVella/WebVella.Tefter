@@ -20,14 +20,14 @@ internal partial class UserStateUseCase
 	}
 
 
-	internal virtual async Task<TfUserState> InitUserState()
+	internal virtual async Task<TfUserState> InitUserState(Guid sessionId)
 	{
 		var result = new TfUserState();
 
 		//Init User
 		var user = await GetUserFromCookieAsync();
 		if (user is null) return null; //should redirect to login
-		result = result with { CurrentUser = user };
+		result = result with { CurrentUser = user, SessionId = sessionId };
 
 		//Init Culture
 		var culture = await InitCulture(result.CurrentUser);

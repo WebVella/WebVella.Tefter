@@ -145,7 +145,8 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 			{
 				Dispatcher.Dispatch(new SetUserStateAction(
 					component: this,
-					state: TfUserState.Value with { CurrentUser = resultSrv.Value }));
+					oldStateHash:TfUserState.Value.Hash,
+					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
 			}
 		}
 		catch { }

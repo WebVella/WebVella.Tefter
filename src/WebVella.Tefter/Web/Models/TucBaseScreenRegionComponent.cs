@@ -23,6 +23,7 @@ public class TucBaseScreenRegionComponent : FluxorComponent, IAsyncDisposable
 	/// <returns></returns>
 	protected override Task OnInitializedAsync()
 	{
+		base.OnInitializedAsync();
 		var type = this.GetType();
 		var (resourceBaseName, resourceLocation) = type.GetLocalizationResourceInfo();
 		if (!String.IsNullOrWhiteSpace(resourceBaseName) && !String.IsNullOrWhiteSpace(resourceLocation))

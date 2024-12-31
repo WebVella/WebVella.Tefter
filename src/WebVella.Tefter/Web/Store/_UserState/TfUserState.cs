@@ -5,6 +5,7 @@ using SystemColor = System.Drawing.Color;
 public partial record TfUserState
 {
 	public Guid Hash { get; init; } = Guid.NewGuid();
+	public Guid SessionId { get; init; } = Guid.NewGuid();
 	public TucUser CurrentUser { get; init; }
 	public TucCultureOption Culture { get; init; }
 	public bool SidebarExpanded

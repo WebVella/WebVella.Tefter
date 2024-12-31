@@ -32,13 +32,6 @@ public partial class TfFileField : TfBaseComponent
 		base.OnInitialized();
 		_originalValue = Value;
 	}
-
-	protected override void OnParametersSet()
-	{
-		base.OnParametersSet();
-		Console.WriteLine("file " + Value);
-	}
-
 	private async Task _clearFile()
 	{
 		await Uploaded.InvokeAsync(null);
