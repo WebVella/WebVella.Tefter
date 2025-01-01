@@ -92,7 +92,6 @@ public partial class TfUserStateManager : FluxorComponent
 		if (action.State.Hash == TfUserState.Value.Hash) return;
 
 		var state = action.State with { Hash = action.State.Hash, SessionId = ComponentId };
-		Debug.WriteLine($"++++++++++++ OUT SESSION: {ComponentId} ACTSESSION: {action.State.SessionId} HASH: {TfUserState.Value.Hash} ACTHASH: {action.State.Hash} ");
 		Dispatcher.Dispatch(new SetUserStateAction(
 			component: this,
 			state: state,

@@ -27,6 +27,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDataProviderSet
 			{
 				_form = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(value);
 			}
+			if(_form is null) _form = new();
 		}
 	}
 

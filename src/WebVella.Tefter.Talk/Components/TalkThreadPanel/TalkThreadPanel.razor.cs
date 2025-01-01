@@ -78,7 +78,6 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 	private async Task _sendMessage()
 	{
-		Console.WriteLine("_sendMessage");
 		if (_channelEditorSending) return;
 		_channelEditorSending = true;
 		await InvokeAsync(StateHasChanged);

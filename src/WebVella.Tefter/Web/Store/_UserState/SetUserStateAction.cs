@@ -27,7 +27,6 @@ public static partial class UserStateReducers
 	public static TfUserState SetUserStateReducer(TfUserState state, SetUserStateAction action)
 	{
 		if (action.State.Hash == action.OldStateHash) return state;
-		Debug.WriteLine($"========= SetUserStateReducer SESSION: {action.State.SessionId} HASH: {action.State.Hash} OLDHASH: {action.OldStateHash}");
 		return action.State;
 	}
 }
@@ -45,7 +44,6 @@ public partial class UserStateEffects
 		if(action.FromEvent) return;
 		if (action.State.Hash == action.OldStateHash) return;
 
-		Debug.WriteLine($"========= SetUserStateEffect SESSION: {action.State.SessionId} HASH: {action.State.Hash} OLDHASH: {action.OldStateHash} ");
 		await _eventProvider.PublishEventAsync(new UserStateChangedEvent
 		{
 			Id = Guid.NewGuid(),

@@ -104,7 +104,6 @@ public partial class TfEditor : TfBaseComponent
 	[JSInvokable("OnEnterHandler")]
 	public async Task OnEnterHandler()
 	{
-		Console.WriteLine($"OnEnterHandler {_componentId}");
 		await OnEnter.InvokeAsync();
 	}
 }
