@@ -3,5 +3,4 @@
 public class EmailTemplateSettingsAttachmentItem
 {
 	public Guid TemplateId { get; set; }
-	public bool SendWithNoContent { get; set; }
 }
