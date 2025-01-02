@@ -2,6 +2,17 @@
 using WebVella.Tefter.Web.Models;
 public static class NavigatorExt
 {
+	internal static bool UrlHasState(this NavigationManager navigator){ 
+		Uri uri = new Uri(navigator.Uri);
+		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+		if(nodes.Length == 0)  return TfConstants.SupportedUriFirstNodes.Contains(String.Empty);
+
+		var firstNode = nodes[0].ToLowerInvariant();
+		if(TfConstants.SupportedUriFirstNodes.Any(x=> x.ToLowerInvariant() == firstNode)) return true;
+		
+		return false;
+	}
+
 	internal static TucRouteState GetRouteState(this NavigationManager navigator, string url = null)
 	{
 		Uri uri = null;

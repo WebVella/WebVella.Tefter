@@ -27,6 +27,7 @@ public partial class TfUserNavigation
 	}
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
+		if(!Navigator.UrlHasState()) return;
 		initAdmin(e.Location);
 		StateHasChanged();
 	}
@@ -76,7 +77,8 @@ public partial class TfUserNavigation
 					ToastService.ShowSuccess(LOC("The theme configurations were successfully changed!"));
 					Dispatcher.Dispatch(new SetUserStateAction(
 						component: this,
-						state: TfUserState.Value with { CurrentUser = resultSrv.Value }));
+						oldStateHash:TfUserState.Value.Hash,
+						state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
 				}
 			}
 			catch (Exception ex)
@@ -103,7 +105,8 @@ public partial class TfUserNavigation
 				ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
 				Dispatcher.Dispatch(new SetUserStateAction(
 					component: this,
-					state: TfUserState.Value with { CurrentUser = resultSrv.Value }));
+					oldStateHash:TfUserState.Value.Hash,
+					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
 			}
 		}
 		catch (Exception ex)

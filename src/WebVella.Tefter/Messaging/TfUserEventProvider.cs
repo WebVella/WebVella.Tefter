@@ -18,8 +18,11 @@ public partial class TfUserEventProvider : IAsyncDisposable
 		if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
 		{
 			_currentUser = ((TfIdentity)authState.User.Identity).User;
-			_eventBus.JoinChannelsAsync(_currentUser.Id.ToString());
-			_eventBus.OnEvent += OnEventReceived;
+			if (_currentUser is not null)
+			{
+				_eventBus.JoinChannelsAsync(_currentUser.Id.ToString());
+				_eventBus.OnEvent += OnEventReceived;
+			}
 		}
 	}
 

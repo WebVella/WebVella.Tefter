@@ -100,6 +100,19 @@ internal partial class AppStateUseCase
 		return Result.Ok(new TucTemplate(tfResult.Value));
 	}
 
+	internal virtual Result<TucTemplate> UpdateTemplateSettings(Guid templateId, string settingsJson)
+	{
+		var getResult = _templateService.GetTemplate(templateId);
+		if(getResult.IsFailed)
+			return Result.Fail(new Error("GetTemplate failed").CausedBy(getResult.Errors));
+
+		var submit = new TucManageTemplateModel(getResult.Value);
+		submit.SettingsJson = settingsJson;
+		var tfResult = _templateService.UpdateTemplate(submit.ToModel());
+		if (tfResult.IsFailed) return Result.Fail(new Error("UpdateTemplate failed").CausedBy(tfResult.Errors));
+		return Result.Ok(new TucTemplate(tfResult.Value));
+	}
+
 	internal virtual Result DeleteTemplate(Guid templateId)
 	{
 		var tfResult = _templateService.DeleteTemplate(templateId);

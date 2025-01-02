@@ -10,7 +10,7 @@ public class UserNavigationComponentTests : BaseTest
 		var user = new TucUser { FirstName = "First", LastName = "Last" };
 		Dispatcher.Dispatch(new SetUserStateAction(
 		component: null,
-		state: new TfUserState { CurrentUser = user }));
+		state: new TfUserState { Hash = Guid.NewGuid(), CurrentUser = user }));
 		// Act
 		var cut = Context.RenderComponent<TfUserNavigation>();
 

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.Email;
+﻿using WebVella.Tefter.TemplateProcessors.Email.Components;
+
+namespace WebVella.Tefter.TemplateProcessors.Email;
 
 public class EmailTemplateProcessor : ITfTemplateProcessor
 {
@@ -9,9 +11,10 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 	public TfTemplateResultType ResultType => TfTemplateResultType.Email;
 
-	public Type SettingsComponentType => null;
+	public Type SettingsComponentType => typeof(SettingsComponent);
 
-	public Type ResultViewComponentType => null;
+	public Type ResultViewComponentType => typeof(ResultViewComponent);
+	public Type HelpComponentType => typeof(HelpComponent);
 
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,

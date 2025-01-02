@@ -9,6 +9,7 @@ public interface ITfTemplateProcessor
 	public TfTemplateResultType ResultType { get; }
 	public Type SettingsComponentType { get; }
 	public Type ResultViewComponentType { get; }
+	public Type HelpComponentType { get; }
 
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,

@@ -7,8 +7,18 @@
 	<FluentButton Disabled="true" Loading="true"
 				  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
 }
-else if (ReadOnly)
+else if (_isReadonly && String.IsNullOrWhiteSpace(Value))
 {
+	<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalGap="5">
+		<div>@_placeholder</div>
+	</FluentStack>
+}
+else if (_isReadonly && !String.IsNullOrWhiteSpace(Value))
+{
+	<FluentStack VerticalAlignment="@VerticalAlignment.Center" HorizontalGap="5">
+		<FluentAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" Target="_blank" />
+		<FluentTextField ReadOnly="true" Value="@_fileName" Style="width:100%" />
+	</FluentStack>
 }
 else
 {
@@ -16,11 +26,11 @@ else
 		@if (!String.IsNullOrWhiteSpace(Value))
 		{
 
-			<FluentAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" />
+			<FluentAnchor Href="@Value" IconStart="@TfConstants.GetIcon("ArrowDownload")" Appearance="Appearance.Outline" Target="_blank" />
 			<FluentTextField ReadOnly="true" Value="@_fileName" Style="width:100%" />
 			@if (!String.IsNullOrWhiteSpace(_originalValue) && _originalValue != Value)
 			{
-				<FluentButton OnClick="_resetFile" IconStart="@TfConstants.GetIcon("ArrowReset")" />
+				<FluentButton OnClick="_resetFile" Title="@LOC("download file")" IconStart="@TfConstants.GetIcon("ArrowReset")" />
 			}
 			<FluentButton OnClick="_clearFile" IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" />
 		}
@@ -29,7 +39,7 @@ else
 			<FluentButton Id="@_uploadId" Disabled="@(progressPercent > 0 && progressPercent < 100)"
 						  Appearance="Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowUpload")">@LOC("Upload file")</FluentButton>
 			<TfProgress Value="progressPercent" Visible="@(progressPercent > 0 && progressPercent < 100)" />
-			<FluentInputFile @ref="@fileUploader"
+			<FluentInputFile @ref="@fileUploader" Accept="@Accept"
 							 DragDropZoneVisible="false"
 							 Mode="InputFileMode.SaveToTemporaryFolder"
 							 Multiple="false"

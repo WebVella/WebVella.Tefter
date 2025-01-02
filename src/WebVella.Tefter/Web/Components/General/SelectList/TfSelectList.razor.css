@@ -1,0 +1,22 @@
+﻿::deep {
+	width: 100%;
+}
+
+	::deep .tf-select-list-input-wrapper {
+		width: 100%;
+		margin-bottom: 5px;
+	}
+
+	::deep .tf-select-list-input {
+		width: 100%;
+	}
+
+	::deep .tf-select-list-values fluent-badge span {
+		padding: 3px 5px;
+		font-size: var(--type-ramp-base-font-size) !important;
+	}
+
+		::deep .tf-select-list-values fluent-badge span svg {
+			margin-left: 5px !important;
+			width: 1rem !important;
+		}

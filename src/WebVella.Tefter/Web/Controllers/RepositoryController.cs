@@ -81,7 +81,7 @@ public class RepositoryController : ControllerBase
 			return NotFound();
 		}
 
-		var streamResult = _blobManager.GetBlobStream(blobId);
+		var streamResult = _blobManager.GetBlobStream(blobId,true);
 		if(streamResult.IsFailed ||  streamResult.Value is null) 
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
