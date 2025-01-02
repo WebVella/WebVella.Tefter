@@ -10,26 +10,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-
-	[Parameter]
-#pragma warning disable BL0007 // Component parameters should be auto properties
-	public string Value
-#pragma warning restore BL0007 // Component parameters should be auto properties
-	{
-		get => JsonSerializer.Serialize(_form);
-		set
-		{
-			if (String.IsNullOrEmpty(value))
-			{
-				_form = new();
-			}
-			else
-			{
-				_form = JsonSerializer.Deserialize<TextContentTemplateSettings>(value);
-			}
-			if(_form is null) _form = new();
-		}
-	}
+	[Parameter] public string Value { get; set; }
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public object Context { get; set; }
 
@@ -38,20 +19,38 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<TextContentTemplateSettings>(Value);
 		base.InitForm(_form);
 	}
-
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (Value != JsonSerializer.Serialize(_form))
+		{
+			_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<TextContentTemplateSettings>(Value);
+			base.InitForm(_form);
+		}
+	}
 
 	public List<ValidationError> Validate()
 	{
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();
+		if (String.IsNullOrWhiteSpace(_form.Content))
+			errors.Add(new ValidationError(nameof(TextContentTemplateSettings.Content), LOC("required")));
 
-
+		foreach (var item in errors)
+		{
+			MessageStore.Add(EditContext.Field(item.PropertyName), item.Reason);
+		}
 		var isValid = EditContext.Validate();
 		StateHasChanged();
 		return errors;
 	}
 	
+	private async Task _valueChanged()
+	{
+		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
+	}
 
 }

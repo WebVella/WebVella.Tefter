@@ -1,6 +1,12 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.TextContent.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.TemplateProcessors.TextContent.Models;
 
 public class TextContentTemplateSettings
 {
-	//TODO 
+	[Required]
+	public string Content { get; set; }
+
+	[Required]
+	public bool IsHtml { get; set; } = false;
 }

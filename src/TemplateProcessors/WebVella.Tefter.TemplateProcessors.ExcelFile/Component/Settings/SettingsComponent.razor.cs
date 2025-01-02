@@ -11,51 +11,52 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 
-	[Parameter]
-#pragma warning disable BL0007 // Component parameters should be auto properties
-	public string Value
-#pragma warning restore BL0007 // Component parameters should be auto properties
-	{
-		get => JsonSerializer.Serialize(_form);
-		set
-		{
-			if (String.IsNullOrEmpty(value))
-			{
-				_form = new();
-			}
-			else
-			{
-				_form = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(value);
-			}
-			if(_form is null) _form = new();
-		}
-	}
-
+	[Parameter] public string Value { get; set; }
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public object Context { get; set; }
 
 	private ExcelFileTemplateSettings _form = new();
-	private string _downloadUrl { get { 
-		if (_form.TemplateFileBlobId is not null && _form.TemplateFileBlobId != Guid.Empty)
+	private string _downloadUrl
+	{
+		get
 		{
-			return String.Format(TfConstants.BlobDownloadUrl, _form.TemplateFileBlobId, _form.FileName);
-		}	
-		return null;
-	} }
+			if (_form.TemplateFileBlobId is not null && _form.TemplateFileBlobId != Guid.Empty)
+			{
+				return String.Format(TfConstants.BlobDownloadUrl, _form.TemplateFileBlobId, _form.FileName);
+			}
+			return null;
+		}
+	}
 	private bool _fileLoading = false;
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<ExcelFileTemplateSettings>(Value);
 		base.InitForm(_form);
 	}
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (Value != JsonSerializer.Serialize(_form))
+		{
+			_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<ExcelFileTemplateSettings>(Value);
+			base.InitForm(_form);
+		}
+	}
 
 	public List<ValidationError> Validate()
 	{
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();
-
+		if (String.IsNullOrWhiteSpace(_form.FileName))
+			errors.Add(new ValidationError(nameof(ExcelFileTemplateSettings.FileName), LOC("required")));
+		
+			foreach (var item in errors)
+		{
+			MessageStore.Add(EditContext.Field(item.PropertyName), item.Reason);
+		}
 
 		var isValid = EditContext.Validate();
 		StateHasChanged();
@@ -81,14 +82,13 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 			_form.FileName = null;
 			_form.TemplateFileBlobId = null;
 		}
-		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
+		await _valueChanged();
 		_fileLoading = false;
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task _groupByChanged(List<string> input)
+	private async Task _valueChanged()
 	{
-		_form.GroupBy = input;
 		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
 	}
 
