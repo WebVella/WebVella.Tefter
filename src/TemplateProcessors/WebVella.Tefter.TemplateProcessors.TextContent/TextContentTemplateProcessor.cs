@@ -1,6 +1,8 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.TextContent;
+﻿using WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
-public class TextTemplateProcessor : ITfTemplateProcessor
+namespace WebVella.Tefter.TemplateProcessors.TextContent;
+
+public class TextContentTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.TEXT_CONTENT_PROCESSOR_ID;
 	public string Name => "Tefter text content template";
@@ -11,10 +13,10 @@ public class TextTemplateProcessor : ITfTemplateProcessor
 
 	public TfTemplateResultType ResultType => TfTemplateResultType.Text;
 
-	public Type SettingsComponentType => null;
+	public Type SettingsComponentType => typeof(SettingsComponent);
 
-	public Type ResultViewComponentType => null;
-	public Type HelpComponentType => null;
+	public Type ResultViewComponentType => typeof(ResultViewComponent);
+	public Type HelpComponentType => typeof(HelpComponent);
 
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,

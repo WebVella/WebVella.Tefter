@@ -14,6 +14,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
+	private DynamicComponent _settingsComponent;
 	private ITfTemplateProcessor _processor = null;
 	private string _form = null;
 	protected override async Task OnInitializedAsync()
@@ -43,14 +44,19 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		if (_isSubmitting) return;
 		try
 		{
-			//Workaround to wait for the form to be bound 
-			//on enter click without blur
-			await Task.Delay(10);
 			////Check form
+			List<ValidationError> settingsErrors = new();
+			if (_processor.SettingsComponentType is not null
+				&& _processor.SettingsComponentType.GetInterface(nameof(ITfCustomComponent)) is not null)
+			{
+				settingsErrors = (_settingsComponent.Instance as ITfCustomComponent).Validate();
+			}
+
+			if (settingsErrors.Count > 0) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			var submitResult = UC.UpdateTemplateSettings(Content.Id,_form);
+			var submitResult = UC.UpdateTemplateSettings(Content.Id, _form);
 			ProcessServiceResponse(submitResult);
 			if (submitResult.IsSuccess)
 			{
@@ -78,6 +84,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		dict["DisplayMode"] = TfComponentMode.Update;
 		dict["Value"] = _form;
 		dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
+		dict["Context"] = Content;
 		return dict;
 	}
 

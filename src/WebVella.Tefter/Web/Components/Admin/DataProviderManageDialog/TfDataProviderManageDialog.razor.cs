@@ -66,23 +66,15 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 		if (_isSubmitting) return;
 		try
 		{
-			//Workaround to wait for the form to be bound 
-			//on enter click without blur
-			await Task.Delay(10);
-
 			MessageStore.Clear();
 
 			//Get dynamic settings component errors
 			List<ValidationError> settingsErrors = new();
-			settingsErrors = _form.ProviderType.Model.Validate(_form.SettingsJson);
-			foreach (ValidationError error in settingsErrors) {
-				MessageStore.Add(EditContext.Field(error.PropertyName), error.Reason);
+			if (_form.ProviderType.SettingsComponentType is not null
+				&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfCustomComponent)) is not null)
+			{
+				settingsErrors = (typeSettingsComponent.Instance as ITfCustomComponent).Validate();
 			}
-			//if (_form.ProviderType.SettingsComponentType is not null
-			//	&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
-			//{
-			//	settingsErrors = (typeSettingsComponent.Instance as ITfDataProviderSettings).Validate();
-			//}
 
 			//Check form
 			var isValid = EditContext.Validate();
@@ -91,7 +83,6 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			Result<TucDataProvider> submitResult;
-			_form.SettingsJson = (typeSettingsComponent.Instance as ITfDataProviderSettings).Value;
 			if (_isCreate)
 			{
 				submitResult = UC.CreateDataProviderWithForm(_form);
@@ -127,7 +118,13 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Update;
 		dict["Value"] = _form.SettingsJson;
+		dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
+		dict["Context"] = Content;
 		return dict;
+	}
+	private void _settingsChanged(string json)
+	{
+		_form.SettingsJson = json;
 	}
 
 }

@@ -65,6 +65,10 @@
 		border: 1px solid var(--neutral-stroke-strong-hover);
 	}
 
+::deep.tf-editor--readonly .ql-editor:hover {
+	border-color:var(--neutral-stroke-rest) !important;
+}
+
 /*	::deep .ql-editor ol > li[data-list=bullet] {
 		list-style: none;
 		margin-left: -10px;

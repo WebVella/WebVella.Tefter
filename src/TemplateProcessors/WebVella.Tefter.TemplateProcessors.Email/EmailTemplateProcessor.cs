@@ -15,7 +15,6 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 	public Type ResultViewComponentType => typeof(ResultViewComponent);
 	public Type HelpComponentType => typeof(HelpComponent);
-
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
@@ -40,14 +39,14 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 	{
 		var result = new List<ValidationError>();
 
-		if( string.IsNullOrWhiteSpace(settingsJson) )
+		if (string.IsNullOrWhiteSpace(settingsJson))
 		{
 			return result;
 		}
 
 		var settings = JsonSerializer.Deserialize<EmailTemplateSettings>(settingsJson);
 
-		if( string.IsNullOrWhiteSpace(settings.Recipients) )
+		if (string.IsNullOrWhiteSpace(settings.Recipients))
 		{
 			result.Add(new ValidationError(nameof(settings.Recipients), "Recipient(s) is/are required."));
 		}
@@ -92,5 +91,23 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 		TfTemplate template,
 		IServiceProvider serviceProvider)
 	{
+	}
+
+	public List<TfTemplate> GetTemplateSelectionList(
+		Guid? templateId,
+		ITfTemplateService _templateService)
+	{
+		var result = new List<TfTemplate>();
+		var allTemplatesResult = _templateService.GetTemplates();
+		if(allTemplatesResult.IsFailed) throw new Exception("GetTemplates failed");
+		foreach (var item in allTemplatesResult.Value)
+		{
+			if(item.ResultType != TfTemplateResultType.File) continue;
+			if(!item.IsSelectable) continue;
+			if(item.Id == templateId) continue;
+			result.Add(item);
+		}
+		result = result.OrderBy(x=> x.Name).ToList();
+		return result;
 	}
 }

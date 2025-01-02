@@ -3,7 +3,7 @@
 namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Help.ResultViewComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class ResultViewComponent : TfFormBaseComponent, ITfDataProviderSettings
+public partial class ResultViewComponent : TfFormBaseComponent, ITfCustomComponent
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
@@ -26,6 +26,8 @@ public partial class ResultViewComponent : TfFormBaseComponent, ITfDataProviderS
 			}
 		}
 	}
+	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public object Context { get; set; }
 
 	private EmailTemplateSettings _form = new();
 

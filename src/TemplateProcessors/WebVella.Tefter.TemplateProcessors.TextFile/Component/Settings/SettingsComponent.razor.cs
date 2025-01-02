@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.AspNetCore.Components.Forms;
 
-namespace WebVella.Tefter.TemplateProcessors.Email.Components;
+namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class HelpComponent : TfFormBaseComponent, ITfCustomComponent
+[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.Settings.SettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
+public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 {
+	[Inject] public ITfBlobManager BlobManager { get; set; }
+
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 
@@ -22,22 +25,20 @@ public partial class HelpComponent : TfFormBaseComponent, ITfCustomComponent
 			}
 			else
 			{
-				_form = JsonSerializer.Deserialize<EmailTemplateSettings>(value);
+				_form = JsonSerializer.Deserialize<TextFileTemplateSettings>(value);
 			}
+			if(_form is null) _form = new();
 		}
 	}
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public object Context { get; set; }
-
-	private EmailTemplateSettings _form = new();
-
+	private TextFileTemplateSettings _form = new();
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		base.InitForm(_form);
 	}
-
 
 
 	public List<ValidationError> Validate()
@@ -50,6 +51,6 @@ public partial class HelpComponent : TfFormBaseComponent, ITfCustomComponent
 		StateHasChanged();
 		return errors;
 	}
-
+	
 
 }

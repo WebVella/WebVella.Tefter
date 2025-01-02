@@ -6,29 +6,13 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.Csv.Components;
 
-public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDataProviderSettings
+public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfCustomComponent
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-
-	[Parameter]
-#pragma warning disable BL0007 // Component parameters should be auto properties
-	public string Value
-#pragma warning restore BL0007 // Component parameters should be auto properties
-	{
-		get => JsonSerializer.Serialize(_form);
-		set
-		{
-			if (String.IsNullOrEmpty(value))
-			{
-				_form = new();
-			}
-			else
-			{
-				_form = JsonSerializer.Deserialize<CsvDataProviderSettings>(value);
-			}
-		}
-	}
+	[Parameter] public string Value { get; set; }
+	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public object Context { get; set; }
 
 	private string _advancedSettings
 	{
@@ -39,14 +23,23 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 		}
 	}
 
-
 	private CsvDataProviderSettings _form = new();
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(Value);
 		base.InitForm(_form);
+	}
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (Value != JsonSerializer.Serialize(_form))
+		{
+			_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(Value);
+			base.InitForm(_form);
+		}
 	}
 
 	public List<ValidationError> Validate()
@@ -79,8 +72,9 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 		{
 			MessageStore.Add(EditContext.Field(item.PropertyName), item.Reason);
 		}
-		var isValid = EditContext.Validate();
+		EditContext.Validate();
 		StateHasChanged();
+		EditContext.Validate();
 		return errors;
 	}
 
@@ -89,15 +83,21 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 		_form.CultureName = Thread.CurrentThread.CurrentCulture.Name;
 	}
 
-	private void _changeAdvancedSettings(string value)
+	private async Task _changeAdvancedSettings(string value)
 	{
 		try
 		{
 			_form.AdvancedSetting = JsonSerializer.Deserialize<CsvDataProviderSettingsAdvanced>(value);
+			await _valueChanged();
 		}
 		catch (Exception ex)
 		{
 			ToastService.ShowError(ex.Message);
 		}
+	}
+
+	private async Task _valueChanged()
+	{
+		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
 	}
 }

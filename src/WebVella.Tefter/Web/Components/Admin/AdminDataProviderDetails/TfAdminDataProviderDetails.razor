@@ -46,7 +46,7 @@
 		<FluentGrid Style="margin-top:3px;">
 			<FluentGridItem xs="12">
 				@if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType is null) { }
-				else if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfDataProviderSettings)) is not null)
+				else if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType.GetInterface(nameof(ITfCustomComponent)) is not null)
 				{
 					if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType is not null)
 					{

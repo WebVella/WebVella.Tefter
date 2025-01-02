@@ -5,36 +5,32 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.MsSql.Components;
 
-public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDataProviderSettings
+public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfCustomComponent
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 
-	[Parameter]
-#pragma warning disable BL0007 // Component parameters should be auto properties
-	public string Value
-#pragma warning restore BL0007 // Component parameters should be auto properties
-	{
-		get => JsonSerializer.Serialize(_form);
-		set
-		{
-			if (String.IsNullOrEmpty(value))
-			{
-				_form = new();
-			}
-			else
-			{
-				_form = JsonSerializer.Deserialize<MsSqlDataProviderSettings>(value);
-			}
-		}
-	}
+	[Parameter] public string Value { get; set; }
+	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public object Context { get; set; }
 
 	private MsSqlDataProviderSettings _form = new();
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<MsSqlDataProviderSettings>(Value);
 		base.InitForm(_form);
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (Value != JsonSerializer.Serialize(_form))
+		{
+			_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<MsSqlDataProviderSettings>(Value);
+			base.InitForm(_form);
+		}
 	}
 
 	public List<ValidationError> Validate()
@@ -49,7 +45,7 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 
 		if (String.IsNullOrWhiteSpace(_form.SqlQuery))
 		{
-			errors.Add(new ValidationError(nameof(MsSqlDataProviderSettings.ConnectionString), LOC("required")));
+			errors.Add(new ValidationError(nameof(MsSqlDataProviderSettings.SqlQuery), LOC("required")));
 		}
 
 		foreach (var item in errors)
@@ -61,5 +57,10 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDat
 		StateHasChanged();
 
 		return errors;
+	}
+
+	private async Task _valueChanged()
+	{
+		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
 	}
 }

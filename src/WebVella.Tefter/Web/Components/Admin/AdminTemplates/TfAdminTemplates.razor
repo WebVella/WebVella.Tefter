@@ -30,7 +30,7 @@ else
 				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
 				<tr class="tf-grid-tr">
 					<th class="tf-grid-th" style="width:100px;min-width:100px;"></th>
-					<th class="tf-grid-th" style="width:100px;min-width:100px;">status</th>
+					<th class="tf-grid-th" style="width:60px;min-width:60px;">status</th>
 					<th class="tf-grid-th" style="width:30px;min-width:30px;">icon</th>
 					<th class="tf-grid-th">name</th>
 					<th class="tf-grid-th">processor</th>
@@ -61,11 +61,11 @@ else
 								<div style="margin-bottom:5px;width:100%">
 									@if (context.IsEnabled)
 									{
-										<FluentBadge Style="display:block" Appearance="@Appearance.Neutral">@LOC("enabled")</FluentBadge>
+										<FluentBadge Style="display:block" Appearance="@Appearance.Neutral">@LOC("ON")</FluentBadge>
 									}
 									else
 									{
-										<FluentBadge Style="display:block" Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">@LOC("disabled")</FluentBadge>
+										<FluentBadge Style="display:block" Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">@LOC("OFF")</FluentBadge>
 									}
 								</div>
 								<div style="width:100%">

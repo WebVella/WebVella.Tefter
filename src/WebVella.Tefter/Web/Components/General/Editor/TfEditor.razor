@@ -1,33 +1,37 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
-<div class="tf-editor">
+<div class="@($"tf-editor {(ReadOnly ? "tf-editor--readonly" : "")}")">
+
 	<div id="@($"toolbar-{_componentId}")" class="toolbar">
-		<span class="ql-formats">
-			<button class="ql-bold" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextBold")" /></button>
-			<button class="ql-italic" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextItalic")" /></button>
-			<button class="ql-strike" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextStrikethrough")" /></button>
-		</span>
-		<span class="separator"></span>
-		<span class="ql-formats">
-			<button class="ql-link" type="button"><FluentIcon Value="@TfConstants.GetIcon("Link")" /></button>
-		</span>
-		<span class="separator"></span>
-		<span class="ql-formats">
-			<button class="ql-list" value="ordered" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextNumberListLtr")" /></button>
-			<button class="ql-list" value="bullet" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextBulletList")" /></button>
-			<button class="ql-indent" value="-1" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextIndentDecrease")" /></button>
-			<button class="ql-indent" value="+1" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextIndentIncreaseLtr")" /></button>
-		</span>
-		<span class="separator"></span>
-		<span class="ql-formats">
-			<button class="ql-undo" type="button"><FluentIcon Value="@TfConstants.GetIcon("ArrowUndo")" /></button>
-			<button class="ql-redo" type="button"><FluentIcon Value="@TfConstants.GetIcon("ArrowRedo")" /></button>
-		</span>
-		<span class="separator"></span>
-		<span class="ql-formats">
-			<button class="ql-clean" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextClearFormatting")" /></button>
-		</span>
+		@if (!ReadOnly)
+		{
+			<span class="ql-formats">
+				<button class="ql-bold" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextBold")" /></button>
+				<button class="ql-italic" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextItalic")" /></button>
+				<button class="ql-strike" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextStrikethrough")" /></button>
+			</span>
+			<span class="separator"></span>
+			<span class="ql-formats">
+				<button class="ql-link" type="button"><FluentIcon Value="@TfConstants.GetIcon("Link")" /></button>
+			</span>
+			<span class="separator"></span>
+			<span class="ql-formats">
+				<button class="ql-list" value="ordered" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextNumberListLtr")" /></button>
+				<button class="ql-list" value="bullet" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextBulletList")" /></button>
+				<button class="ql-indent" value="-1" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextIndentDecrease")" /></button>
+				<button class="ql-indent" value="+1" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextIndentIncreaseLtr")" /></button>
+			</span>
+			<span class="separator"></span>
+			<span class="ql-formats">
+				<button class="ql-undo" type="button"><FluentIcon Value="@TfConstants.GetIcon("ArrowUndo")" /></button>
+				<button class="ql-redo" type="button"><FluentIcon Value="@TfConstants.GetIcon("ArrowRedo")" /></button>
+			</span>
+			<span class="separator"></span>
+			<span class="ql-formats">
+				<button class="ql-clean" type="button"><FluentIcon Value="@TfConstants.GetIcon("TextClearFormatting")" /></button>
+			</span>
+		}
 	</div>
-	<div class="editor-area" @ref="@divEditorElement">@((MarkupString)_value)</div>
+	<div class="editor-area" @ref="@divEditorElement" style="@_style">@((MarkupString)_value)</div>
 </div>
 

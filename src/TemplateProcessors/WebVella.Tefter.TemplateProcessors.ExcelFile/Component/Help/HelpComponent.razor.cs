@@ -3,7 +3,7 @@
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
-public partial class HelpComponent : TfFormBaseComponent, ITfDataProviderSettings
+public partial class HelpComponent : TfFormBaseComponent, ITfCustomComponent
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
@@ -26,6 +26,8 @@ public partial class HelpComponent : TfFormBaseComponent, ITfDataProviderSetting
 			}
 		}
 	}
+	[Parameter] public EventCallback<string> ValueChanged { get; set; }
+	[Parameter] public object Context { get; set; }
 
 	private ExcelFileTemplateSettings _form = new();
 	private string _fileLocalPath = null;

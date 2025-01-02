@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.TextFile;
 
@@ -13,10 +14,10 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
 
-	public Type SettingsComponentType => null;
+	public Type SettingsComponentType => typeof(SettingsComponent);
 
-	public Type ResultViewComponentType => null;
-	public Type HelpComponentType => null;
+	public Type ResultViewComponentType => typeof(ResultViewComponent);
+	public Type HelpComponentType => typeof(HelpComponent);
 
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,

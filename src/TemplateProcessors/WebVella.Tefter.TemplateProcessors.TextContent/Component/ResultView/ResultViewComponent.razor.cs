@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
-namespace WebVella.Tefter.TemplateProcessors.Email.Components;
+namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class HelpComponent : TfFormBaseComponent, ITfCustomComponent
+[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Help.ResultViewComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
+public partial class ResultViewComponent : TfFormBaseComponent, ITfCustomComponent
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
@@ -22,14 +22,14 @@ public partial class HelpComponent : TfFormBaseComponent, ITfCustomComponent
 			}
 			else
 			{
-				_form = JsonSerializer.Deserialize<EmailTemplateSettings>(value);
+				_form = JsonSerializer.Deserialize<TextContentTemplateSettings>(value);
 			}
 		}
 	}
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public object Context { get; set; }
 
-	private EmailTemplateSettings _form = new();
+	private TextContentTemplateSettings _form = new();
 
 
 	protected override void OnInitialized()

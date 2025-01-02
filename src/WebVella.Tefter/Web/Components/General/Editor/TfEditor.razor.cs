@@ -6,6 +6,9 @@ public partial class TfEditor : TfBaseComponent
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public string Placeholder { get; set; } = String.Empty;
 	[Parameter] public EventCallback OnEnter { get; set; }
+	[Parameter] public bool ReadOnly { get; set; } = false;
+
+	[Parameter] public TfEditorSize Size { get; set; } = TfEditorSize.Normal;
 
 	private CancellationTokenSource inputThrottleCancalationToken = new();
 	private DotNetObjectReference<TfEditor> _objectRef;
@@ -14,6 +17,19 @@ public partial class TfEditor : TfBaseComponent
 	private string _value = null;
 	private bool _editorInited = false;
 	private ElementReference divEditorElement;
+
+	private string _style
+	{
+		get
+		{
+			var result = new StringBuilder();
+			if(Size == TfEditorSize.Large){ 
+				result.Append($"height:200px;");
+			}
+
+			return result.ToString();
+		}
+	}
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -49,11 +65,12 @@ public partial class TfEditor : TfBaseComponent
 					placeHolder = Placeholder + Environment.NewLine + placeHolder;
 
 				await JSRuntime.InvokeAsync<object>(
-					"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, onEnterMethodName, placeHolder);
+					"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, onEnterMethodName, placeHolder, ReadOnly);
 			}
-			else{ 
+			else
+			{
 				await JSRuntime.InvokeAsync<object>(
-					"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, null, Placeholder);			
+					"Tefter.createQuill", divEditorElement, _componentId.ToString(), _objectRef, textChangeMethodName, null, Placeholder, ReadOnly);
 			}
 
 
@@ -106,4 +123,10 @@ public partial class TfEditor : TfBaseComponent
 	{
 		await OnEnter.InvokeAsync();
 	}
+
+}
+
+public enum TfEditorSize{ 
+	Normal = 0,
+	Large = 1
 }

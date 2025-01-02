@@ -138,8 +138,6 @@ internal partial class AppStateUseCase
 		}
 		return result;
 	}
-
-
 	internal static bool TemplateMatchSearch(TucTemplate template, string search = null, TfTemplateResultType? resultType = null)
 	{
 		if (resultType is not null && template.ResultType != resultType.Value) 

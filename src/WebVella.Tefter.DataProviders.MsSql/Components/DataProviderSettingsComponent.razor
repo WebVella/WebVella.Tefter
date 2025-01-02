@@ -9,6 +9,7 @@
 							 TextFieldType="@TextFieldType.Text"
 							 Placeholder="@LOC("mssql connection string")"
 							 @bind-Value=@_form.ConnectionString AutoComplete="off"
+							 @bind-Value:after=_valueChanged
 							 Label="@LOC("mssql server connection string")" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.ConnectionString)" />
 		</FluentGridItem>
@@ -19,7 +20,8 @@
 							 Rows="5"
 							 Resize="TextAreaResize.Vertical"
 							 Placeholder="@LOC("sql query")"
-							 @bind-Value=@_form.SqlQuery AutoComplete="off"
+							 @bind-Value=@_form.SqlQuery
+							@bind-Value:after=_valueChanged
 							 Label="@LOC("sql query")" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.SqlQuery)" />
 		</FluentGridItem>

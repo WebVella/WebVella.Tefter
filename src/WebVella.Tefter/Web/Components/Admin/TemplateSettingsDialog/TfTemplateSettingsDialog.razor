@@ -25,7 +25,7 @@
 	else
 	{
 		<TfErrorBoundry>
-			<DynamicComponent Type="_processor.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
+			<DynamicComponent @ref=_settingsComponent Type="_processor.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
 		</TfErrorBoundry>
 	}
 </FluentDialogBody>

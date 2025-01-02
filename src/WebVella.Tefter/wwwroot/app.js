@@ -47,7 +47,7 @@
 		if (!element) return;
 		element.blur();
 	},
-	createQuill: function (quillElement, editorId, dotNetHelper, updateTextMethodName, enterHandlerMethodName, placeholder) {
+	createQuill: function (quillElement, editorId, dotNetHelper, updateTextMethodName, enterHandlerMethodName, placeholder, readonly) {
 		var options = {
 			modules: {
 				toolbar: {
@@ -64,7 +64,7 @@
 				}
 			},
 			placeholder: placeholder,
-			readOnly: false
+			readOnly: readonly
 		};
 		// set quill at the object we can call
 		// methods on later
