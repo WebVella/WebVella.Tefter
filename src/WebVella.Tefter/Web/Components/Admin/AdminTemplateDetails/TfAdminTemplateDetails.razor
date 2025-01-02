@@ -55,6 +55,49 @@
 					}
 				</FluentGridItem>
 			</FluentGrid>
+			<FluentGrid>
+				<FluentGridItem xs="12">
+					<FluentInputLabel Label="@LOC("Target Space Data")" />
+					<div class="tf-grid-wrapper" style="margin-top:15px;">
+						<table class="tf-grid">
+							<thead class="tf-grid-thead">
+								<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+								<tr class="tf-grid-tr">
+									<th class="tf-grid-th">space</th>
+									<th class="tf-grid-th">data name</th>
+								</tr>
+							</thead>
+							<tbody class="tf-grid-tbody">
+								@foreach (var row in _spaceDataSelection)
+								{
+									<tr @key=row.Id class="tf-grid-tr">
+										<td class="tf-grid-td">
+											<div>
+												@row.SpaceName
+											</div>
+										</td>
+										<td class="tf-grid-td">
+											<div>
+												@row.Name
+											</div>
+										</td>
+									</tr>
+								}
+								@if (_spaceDataSelection.Count == 0)
+								{
+									<tr class="tf-grid-tr">
+										<td class="tf-grid-td" colspan="4">
+											<div>
+												@LOC("No targeted space data found")
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</FluentGridItem>
+			</FluentGrid>
 		</ChildContent>
 	</TfCard>
 	<div style="margin:1rem 0">

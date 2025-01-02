@@ -4,12 +4,27 @@ namespace WebVella.Tefter.Web.Components;
 public partial class TfAdminTemplateDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 	private ITfTemplateProcessor _processor = null;
-
+	private List<TfSpaceDataAsOption> _spaceDataAll = new();
+	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
+	private bool _loading = true;
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		_processor = _getProcessor();
+	}
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			_spaceDataAll = UC.GetSpaceDataOptionsForTemplate();
+			_recalcSpaceDataOptions();
+			_loading = false;
+			await InvokeAsync(StateHasChanged);
+		}
+
 	}
 
 	private async Task onUpdateClick()
@@ -30,6 +45,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 			ToastService.ShowSuccess(LOC("Template successfully updated!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { AdminTemplateDetails = template }));
+			_recalcSpaceDataOptions();
 		}
 	}
 
@@ -51,6 +67,8 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 			ToastService.ShowSuccess(LOC("Template successfully updated!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { AdminTemplateDetails = template }));
+
+			_recalcSpaceDataOptions();
 		}
 	}
 
@@ -86,5 +104,16 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		}
 		return null;
 
+	}
+
+	private void _recalcSpaceDataOptions()
+	{
+		_spaceDataSelection = new();
+		foreach (var item in TfAppState.Value.AdminTemplateDetails.SpaceDataList)
+		{
+			var attachment = _spaceDataAll.Where(x => x.Id == item).FirstOrDefault();
+			if (attachment is null) continue;
+			_spaceDataSelection.Add(attachment);
+		}
 	}
 }

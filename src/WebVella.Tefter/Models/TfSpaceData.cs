@@ -18,6 +18,13 @@ public class TfAvailableSpaceDataColumn
 	public TfDatabaseColumnType DbType { get; init; }
 }
 
+public class TfSpaceDataAsOption
+{
+	public Guid Id { get; set; }
+	public string SpaceName { get; set; }
+	public string Name { get; set; }
+}
+
 
 [DboCacheModel]
 [TfDboModel("space_data")]

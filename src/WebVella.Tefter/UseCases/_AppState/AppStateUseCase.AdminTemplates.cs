@@ -103,7 +103,7 @@ internal partial class AppStateUseCase
 	internal virtual Result<TucTemplate> UpdateTemplateSettings(Guid templateId, string settingsJson)
 	{
 		var getResult = _templateService.GetTemplate(templateId);
-		if(getResult.IsFailed)
+		if (getResult.IsFailed)
 			return Result.Fail(new Error("GetTemplate failed").CausedBy(getResult.Errors));
 
 		var submit = new TucManageTemplateModel(getResult.Value);
@@ -140,11 +140,11 @@ internal partial class AppStateUseCase
 	}
 	internal static bool TemplateMatchSearch(TucTemplate template, string search = null, TfTemplateResultType? resultType = null)
 	{
-		if (resultType is not null && template.ResultType != resultType.Value) 
+		if (resultType is not null && template.ResultType != resultType.Value)
 			return false;
 
 		var stringProcessed = search?.Trim().ToLowerInvariant();
-		if(String.IsNullOrWhiteSpace(stringProcessed)) return true;
+		if (String.IsNullOrWhiteSpace(stringProcessed)) return true;
 		else if (template.Name.ToLowerInvariant().Contains(stringProcessed))
 		{
 			return true;
@@ -153,12 +153,29 @@ internal partial class AppStateUseCase
 		{
 			return true;
 		}
-		else if (template.UsedColumns.Any(y => y.ToLowerInvariant().Contains(stringProcessed)))
-		{
-			return true;
-		}
-
 
 		return false;
+	}
+
+	internal virtual List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
+	{
+		var result = new List<TfSpaceDataAsOption>();
+		var spaceResult = _spaceManager.GetSpacesList();
+		if (spaceResult.IsFailed) throw new Exception("GetSpacesList failed");
+		var spaceDataResult = _spaceManager.GetAllSpaceData();
+		if (spaceDataResult.IsFailed) throw new Exception("GetAllSpaceData failed");
+		var spaceDict = spaceResult.Value.ToDictionary(x => x.Id);
+		foreach (var item in spaceDataResult.Value)
+		{
+			result.Add(new TfSpaceDataAsOption
+			{
+				Id = item.Id,
+				Name = item.Name,
+				SpaceName = spaceDict[item.SpaceId].Name
+			});
+		}
+
+		result = result.OrderBy(x=> x.SpaceName).ThenBy(x=> x.Name).ToList();
+		return result;
 	}
 }

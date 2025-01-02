@@ -7,6 +7,8 @@ namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
+	public Result<List<TfSpaceData>> GetAllSpaceData();
+
 	public Result<List<TfSpaceData>> GetSpaceDataList(
 		Guid spaceId);
 
@@ -34,6 +36,18 @@ public partial interface ITfSpaceManager
 
 public partial class TfSpaceManager : ITfSpaceManager
 {
+	public Result<List<TfSpaceData>> GetAllSpaceData()
+	{
+		try
+		{
+			var dbos = _dboManager.GetList<TfSpaceDataDbo>();
+			return Result.Ok(dbos.Select(x => Convert(x)).ToList());
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get list of space data list").CausedBy(ex));
+		}
+	}
 	public Result<List<TfSpaceData>> GetSpaceDataList(
 		Guid spaceId)
 	{

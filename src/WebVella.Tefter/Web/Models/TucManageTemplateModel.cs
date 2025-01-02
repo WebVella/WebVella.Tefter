@@ -15,6 +15,8 @@ public record TucManageTemplateModel
 	public string SettingsJson { get; set; } = "{}";
 	public Type ContentProcessorType { get; set; }
 	public Guid? UserId { get; set; }
+
+	public List<Guid> SpaceDataList { get; set; } = new();
 	public TucManageTemplateModel() { }
 	public TucManageTemplateModel(TfManageTemplateModel model)
 	{
@@ -27,6 +29,7 @@ public record TucManageTemplateModel
 		SettingsJson = model.SettingsJson;
 		ContentProcessorType = model.ContentProcessorType;
 		UserId = model.UserId;
+		SpaceDataList = model.SpaceDataList;
 	}
 	public TucManageTemplateModel(TfTemplate model)
 	{
@@ -39,6 +42,7 @@ public record TucManageTemplateModel
 		SettingsJson = model.SettingsJson;
 		ContentProcessorType = model.ContentProcessorType;
 		UserId = model.CreatedBy?.Id;
+		SpaceDataList = model.SpaceDataList;
 	}
 	public TucManageTemplateModel(TucTemplate model)
 	{
@@ -51,6 +55,7 @@ public record TucManageTemplateModel
 		SettingsJson = model.SettingsJson;
 		ContentProcessorType = model.ContentProcessorType;
 		UserId = model.CreatedBy?.Id;
+		SpaceDataList = model.SpaceDataList;
 	}
 	public TfManageTemplateModel ToModel()
 	{
@@ -64,7 +69,8 @@ public record TucManageTemplateModel
 			IsSelectable = IsSelectable,
 			SettingsJson = SettingsJson,
 			ContentProcessorType = ContentProcessorType,
-			UserId = UserId
+			UserId = UserId,
+			SpaceDataList = SpaceDataList
 		};
 	}
 

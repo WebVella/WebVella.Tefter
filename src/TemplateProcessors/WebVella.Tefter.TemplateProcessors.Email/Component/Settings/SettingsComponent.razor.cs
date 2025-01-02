@@ -52,7 +52,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 		{
 			_templatesAll = contentProcessor.GetTemplateSelectionList(_templateId, TemplateService);
 			_recalcAttachmentData();
-			_loading = true;
+			_loading = false;
 			await InvokeAsync(StateHasChanged);
 		}
 	}

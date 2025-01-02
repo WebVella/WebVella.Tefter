@@ -71,7 +71,6 @@ public partial class TfAdminTemplates : TfBaseComponent
 		{
 			return TfAppState.Value.AdminTemplateList.Where(x=> 
 				x.Name.ToLowerInvariant().Contains(searchProcessed)
-				|| x.UsedColumns.Any(z=> z.ToLowerInvariant().Contains(searchProcessed))
 			).ToList();
 		}
 		else

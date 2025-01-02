@@ -8,7 +8,7 @@ public record TucTemplate
 	public string Name { get; set; }
 	public string Description { get; set; }
 	public string FluentIconName { get; set; }
-	public List<string> UsedColumns { get; set; } = new();
+	public List<Guid> SpaceDataList { get; set; } = new();
 	public bool IsEnabled { get; set; } = true;
 	public bool IsSelectable { get; set; } = true;
 	public TfTemplateResultType ResultType { get; set; }
@@ -25,8 +25,7 @@ public record TucTemplate
 		Name = model.Name;
 		Description = model.Description;
 		FluentIconName = model.FluentIconName;
-		//TODO boz
-		UsedColumns = new();
+		SpaceDataList = model.SpaceDataList;
 		IsEnabled = model.IsEnabled;
 		IsSelectable = model.IsSelectable;
 		ResultType = model.ResultType;

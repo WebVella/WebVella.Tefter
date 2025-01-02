@@ -1,7 +1,10 @@
 ﻿@using WebVella.Tefter.Web.Components
 @namespace WebVella.Tefter.TemplateProcessors.Email.Components
 @inherits TfFormBaseComponent
-@if (DisplayMode == TfComponentMode.Create || DisplayMode == TfComponentMode.Update)
+@if(_loading){
+	<TfLoadingPane/>
+}
+else if (DisplayMode == TfComponentMode.Create || DisplayMode == TfComponentMode.Update)
 {
 	<FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
 
