@@ -43,10 +43,6 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 			SelectedRowIds = TfAppState.Value.SelectedDataRows,
 			SpaceData = TfAppState.Value.SpaceData,
 			User = TfAppState.Value.CurrentUser,
-			SpaceColorString = TfAppState.Value.SpaceColorString,
-			SpaceBackgroundColorString = TfAppState.Value.SpaceBackgkroundColor,
-			SpaceGridSelectedColor = TfAppState.Value.SpaceGridSelectedColor,
-			SpaceBorderColor = TfAppState.Value.SpaceBorderColor,
 		};
 		var dialog = await DialogService.ShowDialogAsync<TfUseTemplateDialog>(
 				context,

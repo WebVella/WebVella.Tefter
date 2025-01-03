@@ -12,6 +12,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private bool _stepLoading = false;
 	private List<TucTemplate> _templates = new();
 	private TucTemplate _selectedTemplate = null;
+	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
 
 	protected override async Task OnInitializedAsync()
@@ -42,50 +43,83 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		await Dialog.CancelAsync();
 	}
 
-	private async Task _next(){ 
-		if(_currentStep == TfUseTemplateDialogStep.SelectTemplate){ 
-			if(_selectedTemplate is null){ 
+	private void _next()
+	{
+		if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
+		{
+			if (_selectedTemplate is null)
+			{
 				ToastService.ShowWarning(LOC("You need to select a template first"));
 			}
-			else{ 
+			else
+			{
 				_currentStep = TfUseTemplateDialogStep.ResultPreview;
 			}
 		}
-		else if(_currentStep == TfUseTemplateDialogStep.ResultPreview){
-		
+		else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
+		{
+
 		}
 	}
 
-	private async Task _back(){ 
-		
+	private void _back()
+	{
+		if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
+		{
+
+		}
+		else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
+		{
+			_currentStep = TfUseTemplateDialogStep.SelectTemplate;
+		}
 	}
 
-	private async Task _selectTemplate(TucTemplate template){ 
+	private void _selectTemplate(TucTemplate template)
+	{
 		_selectedTemplate = template;
+		if (_selectedTemplate is not null)
+		{
+			_processor = _getTemplateProcessorInstance(_selectedTemplate.ContentProcessorType);
+		}
 	}
 
+	private ITfTemplateProcessor _getTemplateProcessorInstance(Type type)
+	{
+		if (type is not null && type.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		{
+			return (ITfTemplateProcessor)Activator.CreateInstance(type);
+		}
+		return null;
+	}
 	private string _getEmbeddedStyles()
 	{
 		var sb = new StringBuilder();
 		sb.AppendLine("<style>");
 		sb.AppendLine(":root {");
-		sb.AppendLine($"--tf-grid-row-selected: {Content.SpaceGridSelectedColor};");
-		sb.AppendLine($"--space-color: {Content.SpaceColorString};");
-		sb.AppendLine($"--accent-base-color: {Content.SpaceColorString};");
-		sb.AppendLine($"--accent-fill-rest: {Content.SpaceColorString} !important;");
-		sb.AppendLine($"--tf-grid-border-color: {Content.SpaceBorderColor};");
+		sb.AppendLine($"--tf-grid-row-selected: var(--neutral-layer-3);");
 		sb.AppendLine("}");
 		sb.AppendLine("</style>");
 		return sb.ToString();
 	}
+
 	private void onSearch(string value)
 	{
 		_search = value;
 		_getTemplates();
 	}
+	private Dictionary<string, object> _getDynamicComponentParams()
+	{
+		var dict = new Dictionary<string, object>();
+		dict["DisplayMode"] = TfComponentMode.Update;
+		//dict["Value"] = _form.SettingsJson;
+		//dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
+		dict["Context"] = Content;
+		return dict;
+	}
 }
 
-public enum TfUseTemplateDialogStep{ 
+public enum TfUseTemplateDialogStep
+{
 	SelectTemplate = 0,
 	ResultPreview = 1,
 	Result = 2,

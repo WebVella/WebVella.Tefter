@@ -18,7 +18,7 @@
 			else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 			{
 				<FluentButton Appearance="Appearance.Neutral" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
-				<FluentButton Appearance="Appearance.Neutral" OnClick="@_next" IconEnd="@TfConstants.GetIcon("LauncherSettings")">@LOC("Submit")</FluentButton>
+				<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send")">@LOC("Submit")</FluentButton>
 			}
 		</FluentStack>
 	</FluentStack>
@@ -34,6 +34,7 @@
 
 @* Body *@
 <FluentDialogBody>
+	@((MarkupString)_getEmbeddedStyles())
 	@if (_loading)
 	{
 		<TfLoadingPane />
@@ -44,29 +45,30 @@
 	}
 	else if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
 	{
-		@((MarkupString)_getEmbeddedStyles())
 		<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search" ValueChanged="onSearch" Immediate="true" ImmediateDelay="500" />
 		<div class="tf-grid-wrapper" style="margin-top:15px;">
 			<table class="tf-grid">
 				<thead class="tf-grid-thead">
-					<tr class="tf-grid-thead-bkg" style="@($"background-color:{Content.SpaceBackgroundColorString}")"></tr>
 					<tr class="tf-grid-tr">
 						<th class="tf-grid-th" style="width:120px;min-width:120px;"></th>
-						<th class="tf-grid-th" style="width:30px;min-width:30px;">icon</th>
-						<th class="tf-grid-th">name</th>
+						<th class="tf-grid-th" style="width:30px;min-width:30px;"></th>
+						<th class="tf-grid-th">@LOC("name")</th>
+						<th class="tf-grid-th">@LOC("type")</th>
 					</tr>
 				</thead>
 				<tbody class="tf-grid-tbody">
 					@foreach (var row in _templates)
 					{
 						var selected = row.Id == _selectedTemplate?.Id;
+						var rowProcessor = _getTemplateProcessorInstance(row.ContentProcessorType);
 						<tr @key=row.Id class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
 							<td class="tf-grid-td">
 								<div class="tf-grid-td-selection"></div>
+								<div class="tf-grid-td-hover"></div>
 								<div>
 									@if (selected)
 									{
-										<FluentButton OnClick="@(_=> _selectTemplate(row))" BackgroundColor="@Content.SpaceColorString" Color="white" Style="width:100%">selected</FluentButton>
+										<FluentButton OnClick="@(_=> _selectTemplate(row))" Appearance="Appearance.Accent" Style="width:100%">selected</FluentButton>
 									}
 									else
 									{
@@ -77,15 +79,25 @@
 							</td>
 							<td class="tf-grid-td">
 								<div class="tf-grid-td-selection"></div>
+								<div class="tf-grid-td-hover"></div>
 								<div>
 									<FluentIcon Value="@TfConstants.GetIcon(row.FluentIconName).WithColor(Color.Accent)" />
 								</div>
 							</td>
 							<td class="tf-grid-td">
 								<div class="tf-grid-td-selection"></div>
+								<div class="tf-grid-td-hover"></div>
 								<div>
 									<div>@row.Name</div>
 									<div class="td-description">@row.Description</div>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div class="tf-grid-td-selection"></div>
+								<div class="tf-grid-td-hover"></div>
+								<div>
+									<div>@rowProcessor?.Name</div>
+									<div class="td-description">@rowProcessor?.Description</div>
 								</div>
 							</td>
 						</tr>
@@ -116,20 +128,36 @@
 							</div>
 						</td>
 						<td class="tf-grid-td">
-							<div class="tf-grid-td-selection"></div>
 							<div>
 								<div>@_selectedTemplate.Name</div>
 								<div class="td-description">@_selectedTemplate.Description</div>
 							</div>
 						</td>
+						<td class="tf-grid-td">
+							<div>
+								<div>@_processor?.Name</div>
+								<div class="td-description">@_processor?.Description</div>
+							</div>
+						</td>
 						<td class="tf-grid-td" style="max-width:120px;width:120px;">
 							<div>
-								@LOC("{0} rows",Content.SelectedRowIds.Count)
+								@LOC("{0} rows", Content.SelectedRowIds.Count)
 							</div>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
+		@if (_processor is null)
+		{
+			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This template does not have a content processor definition")</FluentMessageBar>
+		}
+		else
+		{
+			<TfErrorBoundry>
+				<DynamicComponent Type="@_processor.ResultPreviewComponentType" Parameters="@_getDynamicComponentParams()" />
+			</TfErrorBoundry>
+		}
 	}
+
 </FluentDialogBody>

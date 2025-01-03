@@ -7,25 +7,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent, ITfCustomComp
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-
-	[Parameter]
-#pragma warning disable BL0007 // Component parameters should be auto properties
-	public string Value
-#pragma warning restore BL0007 // Component parameters should be auto properties
-	{
-		get => JsonSerializer.Serialize(_form);
-		set
-		{
-			if (String.IsNullOrEmpty(value))
-			{
-				_form = new();
-			}
-			else
-			{
-				_form = JsonSerializer.Deserialize<TextFileTemplateSettings>(value);
-			}
-		}
-	}
+	[Parameter] public string Value { get; set; }
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public object Context { get; set; }
 
