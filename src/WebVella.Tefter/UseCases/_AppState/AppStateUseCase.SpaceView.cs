@@ -51,6 +51,7 @@ internal partial class AppStateUseCase
 				newAppState = newAppState with
 				{
 					SpaceViewData = viewData,
+					SpaceData = GetSpaceData(newAppState.SpaceView.SpaceDataId.Value),
 					Route = newAppState.Route with { Page = viewData.QueryInfo.Page }
 				};
 			}
@@ -195,7 +196,6 @@ internal partial class AppStateUseCase
 		var spaceData = new TucSpaceData(spaceDataResult.Value);
 		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(spaceView, spaceData));
 	}
-
 	internal virtual Result<Tuple<TucSpaceView, TucSpaceData>> UpdateSpaceViewWithForm(TucSpaceView view)
 	{
 		var serviceResult = _spaceManager.UpdateSpaceView(view.ToModelExtended(), view.DataSetType == TucSpaceViewDataSetType.New);
@@ -230,7 +230,6 @@ internal partial class AppStateUseCase
 		var spaceData = new TucSpaceData(spaceDataResult.Value);
 		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(spaceView, spaceData));
 	}
-
 	internal virtual Result DeleteSpaceView(Guid viewId)
 	{
 		var tfResult = _spaceManager.DeleteSpaceView(viewId);
@@ -238,7 +237,6 @@ internal partial class AppStateUseCase
 
 		return Result.Ok();
 	}
-
 	internal virtual Task<List<TucSpaceView>> GetAllSpaceViews()
 	{
 
@@ -259,8 +257,6 @@ internal partial class AppStateUseCase
 		return Task.FromResult(serviceResult.Value.Select(x => new TucSpaceView(x)).ToList());
 
 	}
-
-
 
 	//View columns
 	internal virtual TucSpaceViewColumn GetViewColumn(Guid columnId)

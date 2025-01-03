@@ -4,10 +4,20 @@
 {
 	<div class="view-export-selector-menu">
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
+			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="useTemplateWithSelectedRecords">
+				@LOC("Use Template")
+				<FluentIcon Value="@TfConstants.TemplateIcon" Slot="start" Color="@Color.Error" />
+				@if (TfAppState.Value.SelectedDataRows.Count > 0)
+				{
+					<span slot="end">
+						<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+					</span>
+				}
+			</FluentMenuItem>
 			@if (TfAppState.Value.SpaceView.Settings.CanDeleteRows)
 			{
 				<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_deleteSelectedRecords">
-					Delete Selected
+					@LOC("Delete Selected")
 					<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
 					@if (TfAppState.Value.SelectedDataRows.Count > 0)
 					{

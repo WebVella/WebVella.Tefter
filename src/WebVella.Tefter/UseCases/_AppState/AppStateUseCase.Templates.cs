@@ -65,8 +65,35 @@ internal partial class AppStateUseCase
 			);
 			return null;
 		}
-		var result = tfResult.Value.OrderBy(x => x.Name).Select(x => new TucTemplate(x));
-		return result.Where(x => TemplateMatchSearch(x, search, resultType)).ToList();
+		var result = tfResult.Value.Where(x => TemplateMatchSearch(x, search, resultType)).OrderBy(x => x.Name).Select(x => new TucTemplate(x));
+		return result.ToList();
+	}
+
+	internal virtual List<TucTemplate> GetSpaceDataTemplates(Guid spaceDataId, string search = null)
+	{
+		var tfResult = _templateService.GetTemplates();
+		if (tfResult.IsFailed)
+		{
+			ResultUtils.ProcessServiceResult(
+				result: Result.Fail(new Error("GetTemplates failed").CausedBy(tfResult.Errors)),
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return null;
+		}
+		var result = new List<TucTemplate>();
+		foreach (var item in tfResult.Value)
+		{
+			if (!item.IsEnabled) continue;
+			if (!item.IsSelectable) continue;
+			if (!item.SpaceDataList.Contains(spaceDataId)) continue;
+			if (!TemplateMatchSearch(item,search,null)) continue;
+			result.Add(new TucTemplate(item));
+		}
+		return result.OrderBy(x => x.Name).ToList();
 	}
 
 	internal virtual TucTemplate GetTemplate(Guid templateId)
@@ -120,25 +147,7 @@ internal partial class AppStateUseCase
 		return Result.Ok();
 	}
 
-	internal virtual Dictionary<TfTemplateResultType, int> GetTemplateFoundCount(string search)
-	{
-		var templates = GetTemplates();
-		var result = new Dictionary<TfTemplateResultType, int>();
-		foreach (var item in Enum.GetValues<TfTemplateResultType>())
-		{
-			result[item] = 0;
-		}
-		var stringProcessed = search?.Trim().ToLowerInvariant();
-		if (String.IsNullOrWhiteSpace(stringProcessed)) return result;
-
-		var matchTemplates = templates.Where(x => TemplateMatchSearch(x, stringProcessed));
-		foreach (var template in matchTemplates)
-		{
-			result[template.ResultType]++;
-		}
-		return result;
-	}
-	internal static bool TemplateMatchSearch(TucTemplate template, string search = null, TfTemplateResultType? resultType = null)
+	internal static bool TemplateMatchSearch(TfTemplate template, string search = null, TfTemplateResultType? resultType = null)
 	{
 		if (resultType is not null && template.ResultType != resultType.Value)
 			return false;
@@ -175,7 +184,7 @@ internal partial class AppStateUseCase
 			});
 		}
 
-		result = result.OrderBy(x=> x.SpaceName).ThenBy(x=> x.Name).ToList();
+		result = result.OrderBy(x => x.SpaceName).ThenBy(x => x.Name).ToList();
 		return result;
 	}
 }

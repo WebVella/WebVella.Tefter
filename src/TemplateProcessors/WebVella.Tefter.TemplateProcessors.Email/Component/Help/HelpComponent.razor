@@ -1,6 +1,13 @@
 ﻿@using WebVella.Tefter.Web.Components
 @namespace WebVella.Tefter.TemplateProcessors.Email.Components
 @inherits TfFormBaseComponent
-<div>Help</div>
+<ul>
+	<li>@LOC("tags should correspond to the format: ") {{column_name}}</li>
+	<li>@LOC("explicit row can be used with row index like: ") {{column_name[0]}} @LOC("for the first row. Index counting starts from 0")</li>
+	<li>@LOC("tags can be used in all fields")</li>
+	<li>@LOC("tags in text fields will result in substitution from the first row in the data. They will not repeat")</li>
+	<li>@LOC("only file templates can be attached")</li>
+	<li>@LOC("all groups of data as defined from the 'Group by' property will send a separate instance of this template's result")</li>
+</ul>
 
 

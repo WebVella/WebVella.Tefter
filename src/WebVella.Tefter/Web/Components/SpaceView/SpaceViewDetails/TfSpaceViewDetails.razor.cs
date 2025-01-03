@@ -248,9 +248,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private string _getEmbeddedStyles()
 	{
-
-
-
 		var sb = new StringBuilder();
 		sb.AppendLine("<style>");
 		sb.AppendLine(":root .tf-layout__body__main {");
@@ -261,8 +258,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		sb.AppendLine($"--tf-grid-border-color: {TfAppState.Value.SpaceBorderColor};");
 		sb.AppendLine("}");
 		sb.AppendLine("</style>");
-
-
 		return sb.ToString();
 	}
 

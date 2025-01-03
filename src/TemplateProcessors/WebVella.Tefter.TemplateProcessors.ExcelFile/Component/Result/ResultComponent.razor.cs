@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
-namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
+namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Help.ResultViewComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
-public partial class ResultViewComponent : TfFormBaseComponent, ITfCustomComponent
+[LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
+public partial class ResultComponent : TfFormBaseComponent, ITfCustomComponent
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
@@ -22,14 +22,14 @@ public partial class ResultViewComponent : TfFormBaseComponent, ITfCustomCompone
 			}
 			else
 			{
-				_form = JsonSerializer.Deserialize<TextContentTemplateSettings>(value);
+				_form = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(value);
 			}
 		}
 	}
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public object Context { get; set; }
 
-	private TextContentTemplateSettings _form = new();
+	private ExcelFileTemplateSettings _form = new();
 
 
 	protected override void OnInitialized()

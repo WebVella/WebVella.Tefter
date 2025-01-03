@@ -15,7 +15,8 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 
 	public Type SettingsComponentType => typeof(SettingsComponent);
 
-	public Type ResultViewComponentType => typeof(ResultViewComponent);
+	public Type ResultPreviewComponentType => typeof(ResultPreviewComponent);
+	public Type ResultComponentType => typeof(ResultComponent);
 	public Type HelpComponentType => typeof(HelpComponent);
 
 	public ITfTemplateResult GenerateTemplateResult(

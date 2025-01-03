@@ -19,11 +19,11 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 		try
 		{
 			var result = UC.DeleteSpaceDataRows(
-				spaceDataId:TfAppState.Value.SpaceView.SpaceDataId.Value,
-				tfIdList:TfAppState.Value.SelectedDataRows
+				spaceDataId: TfAppState.Value.SpaceView.SpaceDataId.Value,
+				tfIdList: TfAppState.Value.SelectedDataRows
 			);
 			ProcessServiceResponse(result);
-			if(result.IsSuccess)
+			if (result.IsSuccess)
 				Navigator.ReloadCurrentUrl();
 		}
 		catch (Exception ex)
@@ -31,5 +31,31 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 			ProcessException(ex);
 		}
 		return Task.CompletedTask;
+	}
+
+	private async Task useTemplateWithSelectedRecords()
+	{
+		if (TfAppState.Value.SelectedDataRows.Count == 0
+		|| TfAppState.Value.SpaceView.SpaceDataId is null) return;
+
+		var context = new TucUseTemplateContext
+		{
+			SelectedRowIds = TfAppState.Value.SelectedDataRows,
+			SpaceData = TfAppState.Value.SpaceData,
+			User = TfAppState.Value.CurrentUser,
+			SpaceColorString = TfAppState.Value.SpaceColorString,
+			SpaceBackgroundColorString = TfAppState.Value.SpaceBackgkroundColor,
+			SpaceGridSelectedColor = TfAppState.Value.SpaceGridSelectedColor,
+			SpaceBorderColor = TfAppState.Value.SpaceBorderColor,
+		};
+		var dialog = await DialogService.ShowDialogAsync<TfUseTemplateDialog>(
+				context,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthExtraLarge,
+					TrapFocus = false
+				});
 	}
 }

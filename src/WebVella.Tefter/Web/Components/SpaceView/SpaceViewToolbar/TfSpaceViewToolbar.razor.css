@@ -33,3 +33,7 @@
 	background:var(--accent-base-color);
 	color:rgba(255,255,255,0.75);
 }
+
+::deep fluent-search::part(start) {
+	color:var(--neutral-stroke-hover);
+}

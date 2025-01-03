@@ -8,7 +8,8 @@ public interface ITfTemplateProcessor
 	public string FluentIconName { get; }
 	public TfTemplateResultType ResultType { get; }
 	public Type SettingsComponentType { get; }
-	public Type ResultViewComponentType { get; }
+	public Type ResultPreviewComponentType { get; }
+	public Type ResultComponentType { get; }
 	public Type HelpComponentType { get; }
 
 	public ITfTemplateResult GenerateTemplateResult(
