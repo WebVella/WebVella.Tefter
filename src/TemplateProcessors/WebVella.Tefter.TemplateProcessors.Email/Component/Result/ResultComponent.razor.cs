@@ -11,12 +11,13 @@ public partial class ResultComponent : TfFormBaseComponent, ITfCustomComponent
 	[Parameter] public EventCallback<string> ValueChanged { get; set; }
 	[Parameter] public object Context { get; set; }
 
-	private EmailTemplateSettings _form = new();
+	private EmailTemplateProcessSettings _form = new();
 
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<EmailTemplateProcessSettings>(Value);
 		base.InitForm(_form);
 	}
 

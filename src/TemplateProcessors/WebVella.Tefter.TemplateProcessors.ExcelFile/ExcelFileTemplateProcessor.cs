@@ -19,6 +19,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
+		object processSettings,
 		IServiceProvider serviceProvider)
 	{
 		//TODO 
@@ -28,6 +29,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
+		object processSettings,
 		IServiceProvider serviceProvider)
 	{
 		//TODO

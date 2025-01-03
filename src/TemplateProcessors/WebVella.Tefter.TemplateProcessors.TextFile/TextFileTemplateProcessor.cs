@@ -23,6 +23,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
+		object processSettings,
 		IServiceProvider serviceProvider)
 	{
 		//TODO 
@@ -32,6 +33,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
+		object processSettings,
 		IServiceProvider serviceProvider)
 	{
 		//TODO

@@ -15,11 +15,13 @@ public interface ITfTemplateProcessor
 	public ITfTemplateResult GenerateTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
+		object processSettings,
 		IServiceProvider serviceProvider);
 
 	public List<ValidationError> ProcessTemplateResult(
 		TfTemplate template,
 		TfDataTable data,
+		object processSettings,
 		IServiceProvider serviceProvider);
 
 	public List<ValidationError> ValidateSettings(

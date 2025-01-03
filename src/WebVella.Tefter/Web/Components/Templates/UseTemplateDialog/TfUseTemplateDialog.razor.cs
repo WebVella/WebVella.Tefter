@@ -14,6 +14,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private TucTemplate _selectedTemplate = null;
 	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
+	private string _templateCustomSettings = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -111,10 +112,14 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Update;
-		//dict["Value"] = _form.SettingsJson;
-		//dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
+		dict["Value"] = _templateCustomSettings;
+		dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
 		dict["Context"] = Content;
 		return dict;
+	}
+
+	private void _settingsChanged(string value){ 
+		_templateCustomSettings = value;
 	}
 }
 
