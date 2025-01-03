@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Models;
-public interface ITfTemplateResult
+public interface ITfTemplatePreviewResult
 {
 	public List<ValidationError> Errors { get; set; }
 }

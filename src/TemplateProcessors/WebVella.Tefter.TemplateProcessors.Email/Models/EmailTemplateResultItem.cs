@@ -10,4 +10,5 @@ public class EmailTemplateResultItem
 	public string HtmlContent { get; set; }
 	public string TextContent { get; set; }
 	public List<EmailTemplateResultItemAttachment> Attachments { get; set; } = new();
+	public List<ValidationError> Errors { get; set; } = new();
 }

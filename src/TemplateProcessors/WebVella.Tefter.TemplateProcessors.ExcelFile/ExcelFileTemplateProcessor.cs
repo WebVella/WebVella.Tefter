@@ -4,34 +4,33 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.EXCEL_FILE_CONTENT_PROCESSOR_ID;
 	public string Name => "Tefter Excel file template";
-
 	public string Description => "creates excel files from excel template and data";
-
 	public string FluentIconName => "DocumentData";
-
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
-
 	public Type SettingsComponentType => typeof(SettingsComponent);
 	public Type ResultPreviewComponentType => typeof(ResultPreviewComponent);
 	public Type ResultComponentType => typeof(ResultComponent);
 	public Type HelpComponentType =>  typeof(HelpComponent);
 
-	public ITfTemplateResult GenerateTemplateResult(
+	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfDataTable data,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
 		IServiceProvider serviceProvider)
 	{
 		//TODO 
 		return null;
 	}
 
-	public List<ValidationError> ProcessTemplateResult(
+	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfDataTable data,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
+		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
-		return new List<ValidationError>();
+		return null;
 	}
 
 	public List<ValidationError> ValidateSettings(

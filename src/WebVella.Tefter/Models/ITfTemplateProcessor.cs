@@ -12,14 +12,17 @@ public interface ITfTemplateProcessor
 	public Type ResultComponentType { get; }
 	public Type HelpComponentType { get; }
 
-	public ITfTemplateResult GenerateTemplateResult(
+	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfDataTable data,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
 		IServiceProvider serviceProvider);
 
-	public List<ValidationError> ProcessTemplateResult(
+	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfDataTable data,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
+		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider);
 
 	public List<ValidationError> ValidateSettings(

@@ -8,28 +8,31 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 	public string Name => "Tefter email template";
 	public string Description => "creates emails from a template and data";
 	public string FluentIconName => "Mail";
-
 	public TfTemplateResultType ResultType => TfTemplateResultType.Email;
 	public Type SettingsComponentType => typeof(SettingsComponent);
 	public Type ResultPreviewComponentType => typeof(ResultPreviewComponent);
 	public Type ResultComponentType => typeof(ResultComponent);
 	public Type HelpComponentType => typeof(HelpComponent);
-	public ITfTemplateResult GenerateTemplateResult(
+	
+	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfDataTable data,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
 		IServiceProvider serviceProvider)
 	{
 		//TODO 
 		return null;
 	}
 
-	public List<ValidationError> ProcessTemplateResult(
+	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfDataTable data,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
+		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
 		//TODO
-		return new List<ValidationError>();
+		return null;
 	}
 
 	public List<ValidationError> ValidateSettings(
