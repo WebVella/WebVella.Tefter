@@ -45,7 +45,7 @@
 	}
 	else if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
 	{
-		<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Value="@_search" ValueChanged="onSearch" Immediate="true" ImmediateDelay="500" />
+		<FluentSearch Placeholder="@LOC("search...")" AutoComplete="off" Autofocus="true" Value="@_search" ValueChanged="onSearch" Immediate="true" ImmediateDelay="500" />
 		<div class="tf-grid-wrapper" style="margin-top:15px;">
 			<table class="tf-grid">
 				<thead class="tf-grid-thead">
@@ -61,7 +61,7 @@
 					{
 						var selected = row.Id == _selectedTemplate?.Id;
 						var rowProcessor = _getTemplateProcessorInstance(row.ContentProcessorType);
-						<tr @key=row.Id class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
+						<tr @key=@(Guid.NewGuid()) class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
 							<td class="tf-grid-td">
 								<div class="tf-grid-td-selection"></div>
 								<div class="tf-grid-td-hover"></div>
