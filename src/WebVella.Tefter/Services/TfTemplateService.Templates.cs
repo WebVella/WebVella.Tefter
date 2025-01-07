@@ -15,6 +15,17 @@ public partial interface ITfTemplateService
 
 	public Result DeleteTemplate(
 		Guid templateId);
+
+	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
+		TfTemplate template,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds);
+
+	public ITfTemplateResult ProcessTemplate(
+		TfTemplate template,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
+		ITfTemplatePreviewResult preview);
 }
 
 internal partial class TfTemplateService : ITfTemplateService
@@ -489,5 +500,24 @@ internal partial class TfTemplateService : ITfTemplateService
 	}
 
 	#endregion
+
+	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
+		TfTemplate template,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds)
+	{
+		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
+		return processor.GenerateTemplatePreviewResult(template,tfSpace, tfRecordIds, _serviceProvider);
+	}
+
+	public ITfTemplateResult ProcessTemplate(
+		TfTemplate template,
+		TfSpace tfSpace,
+		List<Guid> tfRecordIds,
+		ITfTemplatePreviewResult preview)
+	{
+		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
+		return processor.ProcessTemplate(template, tfSpace, tfRecordIds, preview, _serviceProvider);
+	}
 
 }
