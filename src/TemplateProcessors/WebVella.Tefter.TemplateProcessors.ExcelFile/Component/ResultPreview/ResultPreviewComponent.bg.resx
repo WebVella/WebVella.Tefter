@@ -117,4 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="error" xml:space="preserve">
+    <value>грешка</value>
+  </data>
+  <data name="Errors" xml:space="preserve">
+    <value>Грешки</value>
+  </data>
+  <data name="Errors occured while generating the preview" xml:space="preserve">
+    <value>Има грешки при генериране на прегледа</value>
+  </data>
+  <data name="file name" xml:space="preserve">
+    <value>име на файла</value>
+  </data>
+  <data name="Files to be generated" xml:space="preserve">
+    <value>Файлове, които ще се генерират</value>
+  </data>
+  <data name="no errors" xml:space="preserve">
+    <value>няма грешки</value>
+  </data>
+  <data name="No files will be generated" xml:space="preserve">
+    <value>Няма да се генерират файлове</value>
+  </data>
+  <data name="property" xml:space="preserve">
+    <value>поле</value>
+  </data>
+  <data name="used rows" xml:space="preserve">
+    <value>използв. реда</value>
+  </data>
+  <data name="{0} files have errors" xml:space="preserve">
+    <value>{0} файлове с грешки</value>
+  </data>
 </root>

@@ -59,7 +59,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		}
 		else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 		{
-
+			_currentStep = TfUseTemplateDialogStep.Result;
 		}
 	}
 
@@ -115,7 +115,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		dict["DisplayMode"] = TfComponentMode.Update;
 		dict["Value"] = _templateCustomSettings;
 		dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
-		dict["Context"] = Content;
+		dict["Context"] = Content with {TemplateId = _selectedTemplate?.Id};
 		return dict;
 	}
 

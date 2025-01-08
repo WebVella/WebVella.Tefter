@@ -43,6 +43,7 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 			SelectedRowIds = TfAppState.Value.SelectedDataRows,
 			SpaceData = TfAppState.Value.SpaceData,
 			User = TfAppState.Value.CurrentUser,
+			TemplateId = null
 		};
 		var dialog = await DialogService.ShowDialogAsync<TfUseTemplateDialog>(
 				context,

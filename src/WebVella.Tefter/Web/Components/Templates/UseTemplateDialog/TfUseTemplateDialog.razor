@@ -8,20 +8,31 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	<FluentStack HorizontalAlignment="@HorizontalAlignment.Stretch">
-		<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
-		<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
-			@if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
-			{
-				<FluentButton Appearance="Appearance.Neutral" OnClick="@_next" IconEnd="@TfConstants.GetIcon("ArrowRight")">@LOC("Next")</FluentButton>
-			}
-			else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
-			{
-				<FluentButton Appearance="Appearance.Neutral" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
-				<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send")">@LOC("Submit")</FluentButton>
-			}
+
+	@if (_currentStep == TfUseTemplateDialogStep.Result)
+	{
+		<FluentStack HorizontalAlignment="@HorizontalAlignment.Center">
+			<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Close")</FluentButton>
 		</FluentStack>
-	</FluentStack>
+	}
+	else
+	{
+		<FluentStack HorizontalAlignment="@HorizontalAlignment.Stretch">
+			<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+			<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
+				@if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
+				{
+					<FluentButton Appearance="Appearance.Neutral" OnClick="@_next" IconEnd="@TfConstants.GetIcon("ArrowRight")">@LOC("Next")</FluentButton>
+				}
+				else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
+				{
+					<FluentButton Appearance="Appearance.Neutral" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
+					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send")">@LOC("Submit")</FluentButton>
+				}
+			</FluentStack>
+		</FluentStack>
+	}
+
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
 		@*         <FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="_iconBtn"
@@ -156,6 +167,49 @@
 		{
 			<TfErrorBoundry>
 				<DynamicComponent Type="@_processor.ResultPreviewComponentType" Parameters="@_getDynamicComponentParams()" />
+			</TfErrorBoundry>
+		}
+	}
+	else if (_currentStep == TfUseTemplateDialogStep.Result)
+	{
+		<div class="tf-grid-wrapper">
+			<table class="tf-grid">
+				<tbody class="tf-grid-tbody">
+					<tr class="@($"tf-grid-tr")">
+						<td class="tf-grid-td" style="max-width:50px;width:50px;">
+							<div>
+								<FluentIcon Value="@TfConstants.GetIcon(_selectedTemplate.FluentIconName).WithColor(Color.Accent)" />
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								<div>@_selectedTemplate.Name</div>
+								<div class="td-description">@_selectedTemplate.Description</div>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
+								<div>@_processor?.Name</div>
+								<div class="td-description">@_processor?.Description</div>
+							</div>
+						</td>
+						<td class="tf-grid-td" style="max-width:120px;width:120px;">
+							<div>
+								@LOC("{0} rows", Content.SelectedRowIds.Count)
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		@if (_processor is null)
+		{
+			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("This template does not have a content processor definition")</FluentMessageBar>
+		}
+		else
+		{
+			<TfErrorBoundry>
+				<DynamicComponent Type="@_processor.ResultComponentType" Parameters="@_getDynamicComponentParams()" />
 			</TfErrorBoundry>
 		}
 	}
