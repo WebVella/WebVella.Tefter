@@ -1,5 +1,9 @@
 ﻿using ClosedXML.Excel;
 using System.Text;
+using System.IO.Compression;
+using FluentResults;
+using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile;
 
@@ -109,6 +113,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 				result.Items.Add(new ExcelFileTemplateResultItem
 				{
 					FileName = filename,
+					BlobId = resultBlobId,
 					DownloadUrl = $"/fs/blob/{resultBlobId}/{filename}",
 					NumberOfRows = groupedData[key].Rows.Count
 				});
@@ -118,7 +123,8 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 				result.Items.Add(new ExcelFileTemplateResultItem
 				{
 					FileName = filename,
-					DownloadUrl = $"#",
+					DownloadUrl = null,
+					BlobId = null,
 					NumberOfRows = groupedData[key].Rows.Count,
 					Errors = new()
 					{
@@ -128,9 +134,44 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 			}
 		}
 
+		GenerateZipFile(settings.FileName,result,blobManager);
+
 		return result;
 	}
 
+	private void GenerateZipFile(
+		string filename,
+		ExcelFileTemplateResult result,
+		ITfBlobManager blobManager)
+	{
+		var validItems = result.Items
+			.Where(x => x.Errors.Count == 0 && x.BlobId.HasValue )
+			.ToList();
+
+		if (validItems.Count == 0)
+		{
+			return;
+		}
+
+		using MemoryStream zipMs = new MemoryStream();
+
+		using (var archive = new ZipArchive(zipMs, ZipArchiveMode.Create, true))
+		{
+			foreach (var item in validItems)
+			{
+				var fileBytes = blobManager.GetBlobByteArray(item.BlobId.Value, temporary: true).Value;
+				var zipArchiveEntry = archive.CreateEntry(item.FileName, CompressionLevel.Fastest);
+				using var zipStream = zipArchiveEntry.Open();
+				zipStream.Write(fileBytes, 0, fileBytes.Length);
+				zipStream.Close();
+			}
+		}
+
+		var name = Path.GetFileNameWithoutExtension(filename);
+
+		var zipBlobId = blobManager.CreateBlob(zipMs, temporary: true).Value;
+		result.ZipDownloadUrl = $"/fs/blob/{zipBlobId}/{name}.zip";
+	}
 
 	private Dictionary<string, TfDataTable> GroupDataTable(
 		List<string> groupColumns,
