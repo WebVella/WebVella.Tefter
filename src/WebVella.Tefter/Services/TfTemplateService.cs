@@ -12,6 +12,7 @@ internal partial class TfTemplateService : ITfTemplateService
 	public readonly ITfDatabaseService _dbService;
 	public readonly IIdentityManager _identityManager;
 	public readonly ITfBlobManager _blobManager;
+	public readonly ITfSpaceManager _spaceManager;
 
 	public TfTemplateService(
 		IServiceProvider serviceProvider,
@@ -19,6 +20,7 @@ internal partial class TfTemplateService : ITfTemplateService
 		IIdentityManager identityManager,
 		ITfDataManager dataManager,
 		ITfBlobManager blobManager,
+		ITfSpaceManager spaceManager,
 		ITfDataProviderManager dataProviderManager)
 	{
 		_serviceProvider = serviceProvider;
@@ -27,5 +29,6 @@ internal partial class TfTemplateService : ITfTemplateService
 		_dataManager = dataManager;
 		_dataProviderManager = dataProviderManager;
 		_blobManager = blobManager;
+		_spaceManager = spaceManager;
 	}
 }

@@ -16,7 +16,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		IServiceProvider serviceProvider)
 	{
@@ -26,7 +26,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)

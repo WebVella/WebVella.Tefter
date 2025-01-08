@@ -16,17 +16,17 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 	
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		IServiceProvider serviceProvider)
 	{
-		//TODO 
+		//TODO  
 		return null;
 	}
 
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)

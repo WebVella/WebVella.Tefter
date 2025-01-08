@@ -14,13 +14,13 @@ public interface ITfTemplateProcessor
 
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		IServiceProvider serviceProvider);
 
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider);

@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.ExcelFile;
+﻿using ClosedXML.Excel;
+using System.Text;
+
+namespace WebVella.Tefter.TemplateProcessors.ExcelFile;
 
 public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 {
@@ -10,27 +13,157 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 	public Type SettingsComponentType => typeof(SettingsComponent);
 	public Type ResultPreviewComponentType => typeof(ResultPreviewComponent);
 	public Type ResultComponentType => typeof(ResultComponent);
-	public Type HelpComponentType =>  typeof(HelpComponent);
+	public Type HelpComponentType => typeof(HelpComponent);
 
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		IServiceProvider serviceProvider)
 	{
-		//TODO 
-		return null;
+		var result = (ExcelFileTemplateResult)GenerateResultInternal(
+			template, spaceData, tfRecordIds, serviceProvider);
+
+		return new ExcelFileTemplatePreviewResult
+		{
+			Errors = result.Errors,
+			Items = result.Items
+		};
 	}
 
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfSpace tfSpace,
+		TfSpaceData spaceData,
 		List<Guid> tfRecordIds,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
-		return null;
+		return GenerateResultInternal(template, spaceData, tfRecordIds, serviceProvider);
+	}
+
+	private ITfTemplateResult GenerateResultInternal(
+		TfTemplate template,
+		TfSpaceData spaceData,
+		List<Guid> tfRecordIds,
+		IServiceProvider serviceProvider)
+	{
+		var result = new ExcelFileTemplateResult();
+
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var dataManager = serviceProvider.GetService<ITfDataManager>();
+
+		var getDataResult = dataManager.QuerySpaceData(spaceData.Id, tfRecordIds);
+
+		if (!getDataResult.IsSuccess)
+		{
+			foreach (var error in getDataResult.Errors)
+			{
+				result.Errors.Add(new ValidationError("", error.Message));
+			}
+			return result;
+		}
+
+		if (string.IsNullOrWhiteSpace(template.SettingsJson))
+		{
+			result.Errors.Add(new ValidationError("", "Template settings are not set."));
+			return result;
+		}
+
+		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
+
+		var groupedData = GroupDataTable(settings.GroupBy, getDataResult.Value);
+
+		int filesCounter = 0;
+		foreach (var key in groupedData.Keys)
+		{
+			string filename = settings.FileName;
+
+			filesCounter++;
+
+			if (groupedData.Keys.Count > 1)
+			{
+				var ext = Path.GetExtension(filename);
+				var name = Path.GetFileNameWithoutExtension(filename);
+				filename = $"{filename}_{filesCounter}{ext}";
+			}
+
+			try
+			{
+				using var blobStream = blobManager.GetBlobStream(settings.TemplateFileBlobId.Value).Value;
+
+				var excelResult = new TfExcelTemplateProcessResult();
+
+				excelResult.TemplateWorkbook = new XLWorkbook(blobStream);
+
+				excelResult.ProcessExcelTemplate(groupedData[key]);
+
+				using var resultStream = new MemoryStream();
+
+				excelResult.ResultWorkbook.SaveAs(resultStream);
+
+				var resultBlobId = blobManager.CreateBlob(resultStream, temporary: true).Value;
+
+				blobStream.Close();
+				resultStream.Close();
+
+				result.Items.Add(new ExcelFileTemplateResultItem
+				{
+					FileName = filename,
+					DownloadUrl = $"/fs/blob/{resultBlobId}/{filename}",
+					NumberOfRows = groupedData[key].Rows.Count
+				});
+			}
+			catch (Exception ex)
+			{
+				result.Items.Add(new ExcelFileTemplateResultItem
+				{
+					FileName = filename,
+					DownloadUrl = $"#",
+					NumberOfRows = groupedData[key].Rows.Count,
+					Errors = new()
+					{
+						new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}")
+					}
+				});
+			}
+		}
+
+		return result;
+	}
+
+
+	private Dictionary<string, TfDataTable> GroupDataTable(
+		List<string> groupColumns,
+		TfDataTable dataTable)
+	{
+		var result = new Dictionary<string, TfDataTable>();
+		if (groupColumns is null || groupColumns.Count == 0)
+		{
+			result.Add(string.Empty, dataTable);
+		}
+		else
+		{
+			foreach (TfDataRow row in dataTable.Rows)
+			{
+				var sbKey = new StringBuilder();
+
+				foreach (var column in groupColumns)
+				{
+					sbKey.Append($"{row[column]}$$$|||$$$");
+				}
+
+				var key = sbKey.ToString();
+
+				if (!result.ContainsKey(key))
+				{
+					result.Add(key, dataTable.NewTable());
+				}
+
+				result[key].Rows.Add(row);
+			}
+		}
+
+		return result;
 	}
 
 	public List<ValidationError> ValidateSettings(
@@ -50,20 +183,20 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		{
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is required"));
 		}
-		else if( settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != 0 )
+		else if (settings.FileName.IndexOfAny(Path.GetInvalidFileNameChars()) != 0)
 		{
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is invalid"));
 		}
 
-		if (settings.TemplateFileBlobId is null )
+		if (settings.TemplateFileBlobId is null)
 		{
 			result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not specified"));
 		}
 		else
 		{
 			var blobManager = serviceProvider.GetService<ITfBlobManager>();
-			if ( !blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false).Value &&
-				!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value )
+			if (!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false).Value &&
+				!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value)
 			{
 				result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not found."));
 			}
@@ -82,7 +215,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
 
-		if( settings.TemplateFileBlobId is null )
+		if (settings.TemplateFileBlobId is null)
 			return new List<ValidationError>();
 
 		var blobManager = serviceProvider.GetService<ITfBlobManager>();
@@ -125,9 +258,9 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		if (template is not null)
 		{
-			if (string.IsNullOrWhiteSpace(template.SettingsJson))
+			if (!string.IsNullOrWhiteSpace(template.SettingsJson))
 			{
-				var newSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(existingTemplate.SettingsJson);
+				var newSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
 				if (newSettings.TemplateFileBlobId != blobId)
 				{
 					//delete old blob

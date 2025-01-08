@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using WebVella.Tefter.Models;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfTemplateService
 {
@@ -17,13 +19,13 @@ public partial interface ITfTemplateService
 		Guid templateId);
 
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
-		TfTemplate template,
-		TfSpace tfSpace,
+		Guid templateId,
+		Guid spaceDataId,
 		List<Guid> tfRecordIds);
 
 	public ITfTemplateResult ProcessTemplate(
-		TfTemplate template,
-		TfSpace tfSpace,
+		Guid templateId,
+		Guid spaceDataId,
 		List<Guid> tfRecordIds,
 		ITfTemplatePreviewResult preview);
 }
@@ -502,22 +504,26 @@ internal partial class TfTemplateService : ITfTemplateService
 	#endregion
 
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
-		TfTemplate template,
-		TfSpace tfSpace,
+		Guid templateId,
+		Guid spaceDataId,
 		List<Guid> tfRecordIds)
 	{
+		var template = GetTemplate(templateId).Value;
+		var spaceData = _spaceManager.GetSpaceData(spaceDataId).Value; 
 		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
-		return processor.GenerateTemplatePreviewResult(template,tfSpace, tfRecordIds, _serviceProvider);
+		return processor.GenerateTemplatePreviewResult(template, spaceData, tfRecordIds, _serviceProvider);
 	}
 
 	public ITfTemplateResult ProcessTemplate(
-		TfTemplate template,
-		TfSpace tfSpace,
+		Guid templateId,
+		Guid spaceDataId,
 		List<Guid> tfRecordIds,
 		ITfTemplatePreviewResult preview)
 	{
+		var template = GetTemplate(templateId).Value;
+		var spaceData = _spaceManager.GetSpaceData(spaceDataId).Value;
 		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
-		return processor.ProcessTemplate(template, tfSpace, tfRecordIds, preview, _serviceProvider);
+		return processor.ProcessTemplate(template, spaceData, tfRecordIds, preview, _serviceProvider);
 	}
 
 }
