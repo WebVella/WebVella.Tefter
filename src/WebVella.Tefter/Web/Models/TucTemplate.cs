@@ -36,5 +36,23 @@ public record TucTemplate
 		CreatedBy = model.CreatedBy is null ? null : new TucUser(model.CreatedBy);
 		ModifiedBy = model.ModifiedBy is null ? null : new TucUser(model.ModifiedBy);
 	}
-
+	public TfTemplate ToModel()
+	{
+		return new TfTemplate{ 
+		Id = Id,
+		Name = Name,
+		Description = Description,
+		FluentIconName= FluentIconName,
+		SpaceDataList = SpaceDataList,
+		IsEnabled = IsEnabled,
+		IsSelectable = IsSelectable,
+		ResultType = ResultType,
+		SettingsJson = SettingsJson,
+		ContentProcessorType = ContentProcessorType,
+		CreatedOn = CreatedOn,
+		ModifiedOn = ModifiedOn,
+		CreatedBy = CreatedBy is null ? null : CreatedBy.ToModel(),
+		ModifiedBy = ModifiedBy is null ? null : ModifiedBy.ToModel(),
+		};
+	}
 }

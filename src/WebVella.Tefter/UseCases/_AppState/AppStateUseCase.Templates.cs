@@ -31,6 +31,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
+	//Processors
 	internal virtual List<ITfTemplateProcessor> GetProcessors()
 	{
 		var result = new List<ITfTemplateProcessor>();
@@ -50,6 +51,7 @@ internal partial class AppStateUseCase
 		return tfResult.Value.ToList();
 	}
 
+	//Templates
 	internal virtual List<TucTemplate> GetTemplates(TfTemplateResultType? resultType = null, string search = null)
 	{
 		var tfResult = _templateService.GetTemplates();
@@ -90,7 +92,7 @@ internal partial class AppStateUseCase
 			if (!item.IsEnabled) continue;
 			if (!item.IsSelectable) continue;
 			if (!item.SpaceDataList.Contains(spaceDataId)) continue;
-			if (!TemplateMatchSearch(item,search,null)) continue;
+			if (!TemplateMatchSearch(item, search, null)) continue;
 			result.Add(new TucTemplate(item));
 		}
 		return result.OrderBy(x => x.Name).ToList();
@@ -166,6 +168,7 @@ internal partial class AppStateUseCase
 		return false;
 	}
 
+	//Space data
 	internal virtual List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
 	{
 		var result = new List<TfSpaceDataAsOption>();
@@ -187,4 +190,35 @@ internal partial class AppStateUseCase
 		result = result.OrderBy(x => x.SpaceName).ThenBy(x => x.Name).ToList();
 		return result;
 	}
+
+	//Template processing
+	//internal virtual ITfTemplatePreviewResult GenerateTemplatePreviewResult(
+	//	ITfTemplateProcessor processor,
+	//	TucTemplate template,
+	//	TucSpace space,
+	//	List<Guid> recordIds)
+	//{
+	//	return processor.GenerateTemplatePreviewResult(
+	//		template:template.ToModel(),
+	//		tfSpace:space.ToModel(),
+	//		tfRecordIds:recordIds,
+	//		serviceProvider:_serviceProvider
+	//	);
+	//}
+
+	//internal virtual ITfTemplateResult ProcessTemplate(
+	//	ITfTemplateProcessor processor,
+	//	TucTemplate template,
+	//	TucSpace space,
+	//	List<Guid> recordIds,
+	//	ITfTemplatePreviewResult preview)
+	//{
+	//	return processor.ProcessTemplate(
+	//		template:template.ToModel(),
+	//		tfSpace:space.ToModel(),
+	//		tfRecordIds:recordIds,
+	//		preview:preview,
+	//		serviceProvider:_serviceProvider
+	//	);
+	//}
 }

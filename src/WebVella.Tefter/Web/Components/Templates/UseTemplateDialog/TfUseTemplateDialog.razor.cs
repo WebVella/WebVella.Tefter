@@ -82,6 +82,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		{
 			_processor = _getTemplateProcessorInstance(_selectedTemplate.ContentProcessorType);
 		}
+		_next();
 	}
 
 	private ITfTemplateProcessor _getTemplateProcessorInstance(Type type)
@@ -118,7 +119,8 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		return dict;
 	}
 
-	private void _settingsChanged(string value){ 
+	private void _settingsChanged(string value)
+	{
 		_templateCustomSettings = value;
 	}
 }
