@@ -37,7 +37,7 @@ else
 								</div>
 							</td>
 							<td class="tf-grid-td">
-								<div>@error.Reason</div>
+								<div>@error.Message</div>
 							</td>
 						</tr>
 					}
@@ -84,7 +84,7 @@ else
 										<ul>
 											@foreach (var error in item.Errors)
 											{
-												<li style="color:var(--accent-base-color)">@error.PropertyName > @error.Reason</li>
+												<li style="color:var(--accent-base-color)">@error.PropertyName > @error.Message</li>
 											}
 										</ul>
 									}

@@ -52,9 +52,9 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 		if (String.IsNullOrWhiteSpace(_form.FileName))
 			errors.Add(new ValidationError(nameof(ExcelFileTemplateSettings.FileName), LOC("required")));
 		
-			foreach (var item in errors)
+		foreach (var item in errors)
 		{
-			MessageStore.Add(EditContext.Field(item.PropertyName), item.Reason);
+			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
 		}
 
 		var isValid = EditContext.Validate();

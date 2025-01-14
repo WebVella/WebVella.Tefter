@@ -1,7 +1,6 @@
 ﻿using HtmlAgilityPack;
 using MimeKit.Utils;
 using System.Text;
-using System.Web;
 
 namespace WebVella.Tefter.EmailSender.Services;
 
@@ -10,8 +9,12 @@ public partial interface IEmailService
 	public Result<List<EmailMessage>> GetEmailMessages(
 		string search = null,
 		int? page = null,
-		int? pageSize = null
-		);
+		int? pageSize = null);
+
+	public Result<List<EmailMessage>> GetEmailMessages(
+		Guid tfRowId,
+		int? page = null,
+		int? pageSize = null);
 
 	public Result<EmailMessage> CreateEmailMessage(
 		CreateEmailMessageModel emailMessage);
@@ -110,6 +113,45 @@ ORDER BY created_on DESC {pagingSql}";
 				DbType.String);
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL, searchPar);
+
+			List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
+
+			return Result.Ok(emailMessages);
+		}
+		catch (Exception ex)
+		{
+			return Result.Fail(new Error("Failed to get email messages.").CausedBy(ex));
+		}
+	}
+
+	public Result<List<EmailMessage>> GetEmailMessages(
+		Guid tfRowId,
+		int? page = null,
+		int? pageSize = null
+		)
+	{
+		try
+		{
+			string pagingSql = string.Empty;
+
+			if (page.HasValue && pageSize.HasValue)
+			{
+				int offset = (page.Value - 1) * pageSize.Value;
+				int limit = pageSize.Value;
+				pagingSql = $"OFFSET {offset} LIMIT {limit}";
+			}
+
+			string SQL = $@"
+SELECT * FROM email_message
+WHERE ( related_row_ids ILIKE CONCAT ('%', @id, '%') )
+ORDER BY created_on DESC {pagingSql}";
+
+			var idParam = CreateParameter(
+				"id",
+				tfRowId.ToString(),
+				DbType.String);
+
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, idParam);
 
 			List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
 
@@ -228,7 +270,8 @@ INSERT INTO email_message(
 	recipients_bcc,
 	attachments,
 	x_search,
-	user_id
+	user_id,
+	related_row_ids
 )
 VALUES 
 (
@@ -250,7 +293,8 @@ VALUES
 	@recipients_bcc, 
 	@attachments, 
 	@x_search,
-	@user_id
+	@user_id,
+	@related_row_ids
 )";
 
 			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
@@ -273,7 +317,8 @@ VALUES
 				CreateParameter("retries_count", (short)0, DbType.Int16),
 				CreateParameter("reply_to_email", replyToEmail, DbType.String),
 				CreateParameter("x_search", GenerateSearch(emailMessage), DbType.String),
-				CreateParameter("user_id", emailMessage.UserId, DbType.Guid)
+				CreateParameter("user_id", emailMessage.UserId, DbType.Guid),
+				CreateParameter("related_row_ids", JsonSerializer.Serialize(emailMessage.RelatedRowIds ?? new()), DbType.String)
 			);
 
 			if (dbResult != 1)
@@ -340,6 +385,7 @@ VALUES
 				RetriesCount = dr.Field<short>("retries_count"),
 				Attachments = JsonSerializer.Deserialize<List<EmailAttachment>>(dr.Field<string>("attachments")),
 				XSearch = dr.Field<string>("x_search"),
+				RelatedRowIds = JsonSerializer.Deserialize<List<Guid>>(dr.Field<string>("related_row_ids")),
 				User = user
 			});
 

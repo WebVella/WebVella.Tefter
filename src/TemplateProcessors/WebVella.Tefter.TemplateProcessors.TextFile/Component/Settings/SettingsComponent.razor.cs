@@ -53,7 +53,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 
 		foreach (var item in errors)
 		{
-			MessageStore.Add(EditContext.Field(item.PropertyName), item.Reason);
+			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
 		}
 
 		var isValid = EditContext.Validate();

@@ -2,55 +2,60 @@
 
 public partial interface ITfTemplateService
 {
-	public Result<ITfTemplateResult> GenerateTemplateResult(
-		Guid templateId,
-		TfDataTable data);
+	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
+			Guid templateId,
+			Guid spaceDataId,
+			List<Guid> tfRecordIds);
 
-	public Result ProcessTemplateResult(
+	public ITfTemplateResult ProcessTemplate(
 		Guid templateId,
-		ITfTemplateResult result);
+		Guid spaceDataId,
+		List<Guid> tfRecordIds,
+		ITfTemplatePreviewResult preview);
+
+	public ITfTemplateResult ProcessTemplate(
+		Guid templateId,
+		TfDataTable dataTable,
+		ITfTemplatePreviewResult preview);
 }
 
 internal partial class TfTemplateService : ITfTemplateService
 {
-	public Result<ITfTemplateResult> GenerateTemplateResult(
+	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		Guid templateId,
-		TfDataTable data)
+		Guid spaceDataId,
+		List<Guid> tfRecordIds)
 	{
-		try
-		{
-			var templateResult = GetTemplate(templateId);
-			if (!templateResult.IsSuccess || templateResult.Value == null)
-			{
-				return Result.Fail(new Error("Failed to get template " +
-					"for specified template identifier")
-						.CausedBy(templateResult.Errors));
+		var template = GetTemplate(templateId).Value;
+		var spaceData = _spaceManager.GetSpaceData(spaceDataId).Value;
+		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
 
-			}
+		var dataTable = _dataManager.QuerySpaceData(spaceData.Id, tfRecordIds).Value;
 
-			var template = templateResult.Value;
-
-			
-
-			return null;
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to generate template result").CausedBy(ex));
-		}
+		return processor.GenerateTemplatePreviewResult(template, dataTable, _serviceProvider);
 	}
 
-	public Result ProcessTemplateResult(
+	public ITfTemplateResult ProcessTemplate(
 		Guid templateId,
-		ITfTemplateResult result)
+		Guid spaceDataId,
+		List<Guid> tfRecordIds,
+		ITfTemplatePreviewResult preview)
 	{
-		try
-		{
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to process template result").CausedBy(ex));
-		}
+		var template = GetTemplate(templateId).Value;
+		var spaceData = _spaceManager.GetSpaceData(spaceDataId).Value;
+		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
+		var dataTable = _dataManager.QuerySpaceData(spaceData.Id, tfRecordIds).Value;
+
+		return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+	}
+
+	public ITfTemplateResult ProcessTemplate(
+		Guid templateId,
+		TfDataTable dataTable,
+		ITfTemplatePreviewResult preview)
+	{
+		var template = GetTemplate(templateId).Value;
+		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
+		return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
 	}
 }

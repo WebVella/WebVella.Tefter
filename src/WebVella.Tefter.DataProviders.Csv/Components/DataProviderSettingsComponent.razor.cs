@@ -70,7 +70,7 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfCus
 
 		foreach (var item in errors)
 		{
-			MessageStore.Add(EditContext.Field(item.PropertyName), item.Reason);
+			MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
 		}
 		EditContext.Validate();
 		StateHasChanged();

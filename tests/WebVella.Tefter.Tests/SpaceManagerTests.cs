@@ -278,7 +278,7 @@ public partial class SpaceManagerTests : BaseTest
 				result.Errors.Count().Should().Be(1);
 				result.Errors[0].Should().BeOfType<ValidationError>();
 				((ValidationError)result.Errors[0]).PropertyName.Should().Be("SpaceId");
-				((ValidationError)result.Errors[0]).Reason.Should()
+				((ValidationError)result.Errors[0]).Message.Should()
 					.Be("Space cannot be changed for space data.");
 			}
 		}

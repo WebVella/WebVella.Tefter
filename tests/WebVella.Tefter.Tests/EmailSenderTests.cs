@@ -19,6 +19,8 @@ public partial class EmailSenderTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
+				Guid relatedRowId = Guid.NewGuid();
+
 				var user = identityManager.GetUser("rumen@webvella.com").Value;
 				CreateEmailMessageModel model = new CreateEmailMessageModel();
 				model.Subject = "test";
@@ -26,6 +28,7 @@ public partial class EmailSenderTests : BaseTest
 				model.HtmlBody = "<html><body><p>test html</p><img src='/fs/repository/ai_avatar.jpg'>people link</img></body></html>";
 				model.Recipients.Add(new EmailAddress { Address = "rumen.yankov@gmail.com", Name = "Rumen Yankov" });
 				model.UserId = user.Id;
+				model.RelatedRowIds.Add(relatedRowId);
 
 				var result = emailService.CreateEmailMessage(model);
 				result.IsSuccess.Should().BeTrue();
@@ -38,13 +41,15 @@ public partial class EmailSenderTests : BaseTest
 					var emailByIdResult = emailService.GetEmailMessageById(email.Id);
 					emailByIdResult.IsSuccess.Should().BeTrue();
 					emailByIdResult.Value.Should().NotBeNull();
-
 				}
 
 				var searchResult = emailService.GetEmailMessages("rumen");
 				searchResult.IsSuccess.Should().BeTrue();
+
+				emailsListResult = emailService.GetEmailMessages(relatedRowId);
+				emailsListResult.IsSuccess.Should().BeTrue();
+				emailsListResult.Value.Count.Should().Be(1);
 			}
 		}
 	}
-
 }

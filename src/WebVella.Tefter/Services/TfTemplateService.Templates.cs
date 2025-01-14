@@ -17,17 +17,6 @@ public partial interface ITfTemplateService
 
 	public Result DeleteTemplate(
 		Guid templateId);
-
-	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
-		Guid templateId,
-		Guid spaceDataId,
-		List<Guid> tfRecordIds);
-
-	public ITfTemplateResult ProcessTemplate(
-		Guid templateId,
-		Guid spaceDataId,
-		List<Guid> tfRecordIds,
-		ITfTemplatePreviewResult preview);
 }
 
 internal partial class TfTemplateService : ITfTemplateService
@@ -44,7 +33,7 @@ internal partial class TfTemplateService : ITfTemplateService
 
 			if (list.Count == 0)
 			{
-				return null;
+				return Result.Ok((TfTemplate)null);
 			}
 
 			return Result.Ok(list[0]);
@@ -503,27 +492,6 @@ internal partial class TfTemplateService : ITfTemplateService
 
 	#endregion
 
-	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
-		Guid templateId,
-		Guid spaceDataId,
-		List<Guid> tfRecordIds)
-	{
-		var template = GetTemplate(templateId).Value;
-		var spaceData = _spaceManager.GetSpaceData(spaceDataId).Value; 
-		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
-		return processor.GenerateTemplatePreviewResult(template, spaceData, tfRecordIds, _serviceProvider);
-	}
-
-	public ITfTemplateResult ProcessTemplate(
-		Guid templateId,
-		Guid spaceDataId,
-		List<Guid> tfRecordIds,
-		ITfTemplatePreviewResult preview)
-	{
-		var template = GetTemplate(templateId).Value;
-		var spaceData = _spaceManager.GetSpaceData(spaceDataId).Value;
-		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
-		return processor.ProcessTemplate(template, spaceData, tfRecordIds, preview, _serviceProvider);
-	}
+	
 
 }

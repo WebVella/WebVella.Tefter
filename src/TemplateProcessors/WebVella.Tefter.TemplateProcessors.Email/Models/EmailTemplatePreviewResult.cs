@@ -2,6 +2,6 @@
 
 public class EmailTemplatePreviewResult : ITfTemplatePreviewResult
 {
-	public List<EmailTemplateResultItem> Items { get; } = new();
+	public List<EmailTemplateResultItem> Items { get; set; } = new();
 	public List<ValidationError> Errors { get; set; } = new();
 }

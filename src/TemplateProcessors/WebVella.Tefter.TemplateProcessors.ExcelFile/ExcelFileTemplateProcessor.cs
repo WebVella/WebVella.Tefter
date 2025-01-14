@@ -19,14 +19,19 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 	public Type ResultComponentType => typeof(ResultComponent);
 	public Type HelpComponentType => typeof(HelpComponent);
 
+	public void ValidatePreview(
+		TfTemplate template,
+		ITfTemplatePreviewResult preview,
+		IServiceProvider serviceProvider)
+	{
+	}
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfSpaceData spaceData,
-		List<Guid> tfRecordIds,
+		TfDataTable dataTable,
 		IServiceProvider serviceProvider)
 	{
 		var result = (ExcelFileTemplateResult)GenerateResultInternal(
-			template, spaceData, tfRecordIds, serviceProvider);
+			template, dataTable, serviceProvider);
 
 		return new ExcelFileTemplatePreviewResult
 		{
@@ -37,35 +42,22 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfSpaceData spaceData,
-		List<Guid> tfRecordIds,
+		TfDataTable dataTable,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
-		return GenerateResultInternal(template, spaceData, tfRecordIds, serviceProvider);
+		return GenerateResultInternal(template, dataTable, serviceProvider);
 	}
 
 	private ITfTemplateResult GenerateResultInternal(
 		TfTemplate template,
-		TfSpaceData spaceData,
-		List<Guid> tfRecordIds,
+		TfDataTable dataTable,
 		IServiceProvider serviceProvider)
 	{
 		var result = new ExcelFileTemplateResult();
 
 		var blobManager = serviceProvider.GetService<ITfBlobManager>();
 		var dataManager = serviceProvider.GetService<ITfDataManager>();
-
-		var getDataResult = dataManager.QuerySpaceData(spaceData.Id, tfRecordIds);
-
-		if (!getDataResult.IsSuccess)
-		{
-			foreach (var error in getDataResult.Errors)
-			{
-				result.Errors.Add(new ValidationError("", error.Message));
-			}
-			return result;
-		}
 
 		if (string.IsNullOrWhiteSpace(template.SettingsJson))
 		{
@@ -75,7 +67,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
 
-		var groupedData = GroupDataTable(settings.GroupBy, getDataResult.Value);
+		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
 
 		int filesCounter = 0;
 		foreach (var key in groupedData.Keys)
@@ -134,7 +126,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 			}
 		}
 
-		GenerateZipFile(settings.FileName,result,blobManager);
+		GenerateZipFile(settings.FileName, result, blobManager);
 
 		return result;
 	}
@@ -145,7 +137,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		ITfBlobManager blobManager)
 	{
 		var validItems = result.Items
-			.Where(x => x.Errors.Count == 0 && x.BlobId.HasValue )
+			.Where(x => x.Errors.Count == 0 && x.BlobId.HasValue)
 			.ToList();
 
 		if (validItems.Count == 0)
@@ -170,6 +162,8 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		var name = Path.GetFileNameWithoutExtension(filename);
 
 		var zipBlobId = blobManager.CreateBlob(zipMs, temporary: true).Value;
+		result.ZipFilename = $"{name}.zip";
+		result.ZipBlobId = zipBlobId;
 		result.ZipDownloadUrl = $"/fs/blob/{zipBlobId}/{name}.zip";
 	}
 

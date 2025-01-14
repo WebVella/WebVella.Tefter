@@ -23,9 +23,9 @@ internal static class ResultUtils
 				{
 					var error = (ValidationError)iError;
 					if (String.IsNullOrWhiteSpace(error.PropertyName))
-						validationErrors.Add(error.Reason);
+						validationErrors.Add(error.Message);
 					else
-						validationErrors.Add($"{error.PropertyName}: {error.Reason}");
+						validationErrors.Add($"{error.PropertyName}: {error.Message}");
 				}
 				else
 				{
@@ -68,9 +68,9 @@ internal static class ResultUtils
 			{
 				var error = (ValidationError)iError;
 				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					validationErrors.Add(error.Reason);
+					validationErrors.Add(error.Message);
 				else
-					validationErrors.Add($"{error.PropertyName}: {error.Reason}");
+					validationErrors.Add($"{error.PropertyName}: {error.Message}");
 			}
 			else
 			{
@@ -156,7 +156,7 @@ internal static class ResultUtils
 		foreach (var valError in validationErrors)
 		{
 			var field = editContext.Field(valError.PropertyName);
-			messageStore.Add(field, valError.Reason);
+			messageStore.Add(field, valError.Message);
 		}
 
 		editContext.NotifyValidationStateChanged();
@@ -178,7 +178,7 @@ internal static class ResultUtils
 		{
 			var error = (ValidationError)iError;
 			if (String.IsNullOrWhiteSpace(error.PropertyName))
-				generalErrors.Add(error.Reason);
+				generalErrors.Add(error.Message);
 			else
 			{
 				validationErrors.Add(error);
@@ -218,10 +218,10 @@ internal static class ResultUtils
 			{
 				var errorObj = (ValidationError)error;
 				if (!String.IsNullOrWhiteSpace(errorObj.PropertyName))
-					ex.Data.Add(errorObj.PropertyName, errorObj.Reason);
+					ex.Data.Add(errorObj.PropertyName, errorObj.Message);
 				else
 				{
-					ex.Data.Add("", errorObj.Reason);
+					ex.Data.Add("", errorObj.Message);
 				}
 			}
 			else

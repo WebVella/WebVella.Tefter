@@ -14,10 +14,16 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 	public Type ResultComponentType => typeof(ResultComponent);
 	public Type HelpComponentType => typeof(HelpComponent);
 
+	public void ValidatePreview(
+		TfTemplate template,
+		ITfTemplatePreviewResult preview,
+		IServiceProvider serviceProvider)
+	{
+	}
+
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
 		TfTemplate template,
-		TfSpaceData spaceData,
-		List<Guid> tfRecordIds,
+		TfDataTable dataTable,
 		IServiceProvider serviceProvider)
 	{
 		//TODO 
@@ -26,8 +32,7 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 
 	public ITfTemplateResult ProcessTemplate(
 		TfTemplate template,
-		TfSpaceData spaceData,
-		List<Guid> tfRecordIds,
+		TfDataTable dataTable,
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{

@@ -125,7 +125,7 @@ public partial class TfDataProvidersTests : BaseTest
 				providerResult.Errors.Count().Should().Be(1);
 				providerResult.Errors[0].Should().BeOfType<ValidationError>();
 				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("ProviderType");
-				((ValidationError)providerResult.Errors[0]).Reason.Should()
+				((ValidationError)providerResult.Errors[0]).Message.Should()
 					.Be("The data provider type is required.");
 			}
 		}
@@ -158,7 +158,7 @@ public partial class TfDataProvidersTests : BaseTest
 				providerResult.Errors.Count().Should().Be(1);
 				providerResult.Errors[0].Should().BeOfType<ValidationError>();
 				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Reason.Should()
+				((ValidationError)providerResult.Errors[0]).Message.Should()
 					.Be("The data provider name is required.");
 
 			}
@@ -197,7 +197,7 @@ public partial class TfDataProvidersTests : BaseTest
 				providerResult.Errors.Count().Should().Be(1);
 				providerResult.Errors[0].Should().BeOfType<ValidationError>();
 				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Reason.Should()
+				((ValidationError)providerResult.Errors[0]).Message.Should()
 					.Be("There is already existing data provider with specified name.");
 
 			}
@@ -279,7 +279,7 @@ public partial class TfDataProvidersTests : BaseTest
 				providerResult.Errors.Count().Should().Be(1);
 				providerResult.Errors[0].Should().BeOfType<ValidationError>();
 				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Reason.Should()
+				((ValidationError)providerResult.Errors[0]).Message.Should()
 					.Be("There is already existing data provider with specified name.");
 			}
 		}
@@ -317,7 +317,7 @@ public partial class TfDataProvidersTests : BaseTest
 				providerResult.Errors.Count().Should().Be(1);
 				providerResult.Errors[0].Should().BeOfType<ValidationError>();
 				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Reason.Should()
+				((ValidationError)providerResult.Errors[0]).Message.Should()
 					.Be("The data provider name is required.");
 			}
 		}
@@ -355,7 +355,7 @@ public partial class TfDataProvidersTests : BaseTest
 				providerResult.Errors.Count().Should().Be(1);
 				providerResult.Errors[0].Should().BeOfType<ValidationError>();
 				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("ProviderType");
-				((ValidationError)providerResult.Errors[0]).Reason.Should()
+				((ValidationError)providerResult.Errors[0]).Message.Should()
 					.Be("The data provider type is required.");
 			}
 		}

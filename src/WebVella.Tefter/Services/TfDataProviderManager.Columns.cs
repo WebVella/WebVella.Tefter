@@ -208,7 +208,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 								var valError = (ValidationError)error;
 								validationErrors.Add(new ValidationError( 
 									propertyName:$"{column.SourceName}-{valError.PropertyName}",
-									reason: valError.Reason
+									message: valError.Message
 								));
 							}
 							else{ 
