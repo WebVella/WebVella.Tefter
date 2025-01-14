@@ -1,7 +1,11 @@
 ﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
 using DocumentFormat.OpenXml.Wordprocessing;
+using FluentResults;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Text;
+using WebVella.Tefter.EmailSender.Models;
+using WebVella.Tefter.EmailSender.Services;
 using WebVella.Tefter.TemplateProcessors.Email.Components;
 using WebVella.Tefter.TemplateProcessors.ExcelFile;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
@@ -25,6 +29,41 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
+		var previewResult = (EmailTemplatePreviewResult)preview;
+		foreach (var item in previewResult.Items)
+		{
+			if (!string.IsNullOrWhiteSpace(item.Sender) && !item.Sender.IsEmail())
+			{
+				item.Errors.Add(new ValidationError("Sender", "Sender is not a valid email address."));
+			}
+
+			if (item.Recipients == null || item.Recipients.Count == 0)
+			{
+				item.Errors.Add(new ValidationError("Recipients", "Recipients are not specified."));
+			}
+			else
+			{
+				if (item.Recipients.Any(x => !x.IsEmail()))
+				{
+					item.Errors.Add(new ValidationError("Recipients", "Invalid recipients."));
+				}
+			}
+
+			if (item.CcRecipients != null && item.CcRecipients.Count > 0 && item.Recipients.Any(x => !x.IsEmail()))
+			{
+				item.Errors.Add(new ValidationError("CcRecipients", "Copy recipients contains invalid email address."));
+			}
+
+			if (item.BccRecipients != null && item.BccRecipients.Count > 0 && item.BccRecipients.Any(x => !x.IsEmail()))
+			{
+				item.Errors.Add(new ValidationError("BccRecipients", "Blind-copy recipients contains invalid email address."));
+			}
+
+			if(string.IsNullOrEmpty(item.HtmlContent) && string.IsNullOrEmpty(item.TextContent))
+			{
+				item.Errors.Add(new ValidationError("HtmlContent", "Email body content is empty."));
+			}
+		}
 	}
 
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
@@ -48,7 +87,67 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
-		return null;
+		EmailTemplateResult result = new EmailTemplateResult
+		{
+			Items = ((EmailTemplateResult)preview).Items,
+			Errors = preview.Errors,
+		};
+
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var emailService = serviceProvider.GetService<IEmailService>();
+		
+		foreach (var item in result.Items) 
+		{
+			var emailMessage = new CreateEmailMessageModel();
+			if (!string.IsNullOrWhiteSpace( item.Sender) )
+			{
+				emailMessage.Sender = new EmailAddress(item.Sender);
+			}
+			
+			emailMessage.Recipients = new List<EmailAddress>();
+			foreach (var recipient in item.Recipients)
+			{
+				emailMessage.Recipients.Add(new EmailAddress(recipient));
+			}
+
+			if (item.CcRecipients != null && item.CcRecipients.Count > 0 )
+			{
+				emailMessage.RecipientsCc = new List<EmailAddress>();
+				foreach (var recipient in item.CcRecipients)
+				{
+					emailMessage.RecipientsCc.Add(new EmailAddress(recipient));
+				}
+			}
+
+			if (item.BccRecipients != null && item.BccRecipients.Count > 0)
+			{
+				emailMessage.RecipientsBcc = new List<EmailAddress>();
+				foreach (var recipient in item.BccRecipients)
+				{
+					emailMessage.RecipientsBcc.Add(new EmailAddress(recipient));
+				}
+			}
+
+			emailMessage.Subject = item.Subject;
+			emailMessage.TextBody = item.TextContent;
+			emailMessage.HtmlBody = item.HtmlContent;
+
+			emailMessage.Attachments = new List<CreateEmailAttachmentModel>();
+			foreach (var attachment in item.Attachments)
+			{
+				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value).Value;
+				var emailAttachment = new CreateEmailAttachmentModel
+				{
+					Filename = attachment.FileName,
+					Buffer = bytes
+				};
+				emailMessage.Attachments.Add(emailAttachment);
+			}
+
+			emailService.CreateEmailMessage(emailMessage);
+		}
+
+		return result;
 	}
 
 	private ITfTemplateResult GenerateResultInternal(
