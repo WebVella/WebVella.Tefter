@@ -85,4 +85,21 @@ public class UrlHelperTests
 		var result = UrlHelper.GenerateLocalizedUrl(url,culture);
 		result.Should().Be("/");
 	}
+
+	[Fact]
+	public void GenerateLocalizedUrl_81()
+	{
+		var url = "https://domain.com/en/terms";
+		var culture = WvConstants.DefaultLang.GetCulture();
+		var result = UrlHelper.GenerateLocalizedUrl(url,culture,true);
+		result.Should().Be(url);
+	}
+	[Fact]
+	public void GenerateLocalizedUrl_82()
+	{
+		var url = "https://domain.com/en/terms";
+		var culture = CookieLang.Bg.GetCulture();
+		var result = UrlHelper.GenerateLocalizedUrl(url,culture,true);
+		result.Should().Be("https://domain.com/bg/terms");
+	}
 }

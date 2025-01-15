@@ -8,12 +8,31 @@ public static partial class TfTemplateUtility
 		if (result is null) throw new Exception("No result provided!");
 		if (dataSource is null) throw new Exception("No datasource provided!");
 		var sb = new StringBuilder();
-		foreach (string line in result.TemplateText.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
+		var lines = result.TemplateText.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+		if (lines.Count() == 1)
 		{
-			var tagProcessResult = ProcessTemplateTag(line, dataSource, culture);
-			foreach (var value in tagProcessResult.Values)
+			var tagProcessResult = ProcessTemplateTag(lines.First(), dataSource, culture);
+			if (tagProcessResult.Values.Count == 1)
 			{
-				sb.AppendLine(value?.ToString());
+				sb.Append(tagProcessResult.Values[0]?.ToString());
+			}
+			else if (tagProcessResult.Values.Count > 1)
+			{
+				foreach (var value in tagProcessResult.Values)
+				{
+					sb.Append(value?.ToString());
+				}
+			}
+		}
+		else if (lines.Count() > 1)
+		{
+			foreach (string line in lines)
+			{
+				var tagProcessResult = ProcessTemplateTag(line, dataSource, culture);
+				foreach (var value in tagProcessResult.Values)
+				{
+					sb.AppendLine(value?.ToString());
+				}
 			}
 		}
 		result.ResultText = sb.ToString();

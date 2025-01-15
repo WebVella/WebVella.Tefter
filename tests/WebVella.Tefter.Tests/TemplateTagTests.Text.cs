@@ -1,4 +1,6 @@
 ﻿namespace WebVella.Tefter.Tests;
+
+using System.Runtime.InteropServices;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Utility;
 
@@ -16,6 +18,29 @@ public partial class TextTemplatesTests : TemplateTagTestsBase
 			var result = new TfTextTemplateProcessResult();
 			Func<bool> action = () => { result.ProcessTextTemplate(null); return true; };
 			action.Should().Throw<Exception>("No datasource provided!");
+		}
+	}
+	#endregion
+
+	#region << Plain text >>
+	[Fact]
+	public async Task Text_NoTag()
+	{
+		var text = "test";
+		var data = SampleData.NewTable(new int[]{ 1 });
+		using (await locker.LockAsync())
+		{
+			var result = new TfTextTemplateProcessResult();
+			result.TemplateText = text;
+			Func<bool> action = () => { result.ProcessTextTemplate(data); return true; };
+			action.Should().NotThrow();
+
+			result.ResultText.Should().NotBeNullOrWhiteSpace();
+			var lines = _getLines(result.ResultText);
+			lines.Should().HaveCount(1);
+			result.ResultText.Should().Be(text);
+
+			
 		}
 	}
 	#endregion
