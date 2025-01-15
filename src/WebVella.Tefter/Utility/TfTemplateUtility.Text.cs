@@ -9,6 +9,7 @@ public static partial class TfTemplateUtility
 		if (dataSource is null) throw new Exception("No datasource provided!");
 		var sb = new StringBuilder();
 		var lines = result.TemplateText.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+		var endWithNewLine = result.TemplateText.EndsWith(Environment.NewLine);
 		if (lines.Count() == 1)
 		{
 			var tagProcessResult = ProcessTemplateTag(lines.First(), dataSource, culture);
@@ -20,7 +21,10 @@ public static partial class TfTemplateUtility
 			{
 				foreach (var value in tagProcessResult.Values)
 				{
-					sb.Append(value?.ToString());
+					if(endWithNewLine)
+						sb.AppendLine(value?.ToString());
+					else
+						sb.Append(value?.ToString());
 				}
 			}
 		}
