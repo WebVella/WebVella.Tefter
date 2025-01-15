@@ -37,6 +37,6 @@ public record CreateEmailMessageModel
 	public string ReplyTo { get; set; } = null;
 	public EmailPriority Priority { get; set; } = EmailPriority.Normal;
 	public List<CreateEmailAttachmentModel> Attachments { get; set; } = new();
-	public List<Guid> RelatedRowIds { get; internal set; } = new();
+	public List<Guid> RelatedRowIds { get; set; } = new();
 	public Guid? UserId { get; set; } = null;
 }
