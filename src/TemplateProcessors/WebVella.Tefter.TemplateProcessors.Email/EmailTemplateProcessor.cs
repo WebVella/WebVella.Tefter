@@ -235,18 +235,19 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				{
 					var excelTemplateResult = templateService.GetTemplate(attItem.TemplateId);
 
+					//we ignore missing template attachments
 					if (!excelTemplateResult.IsSuccess || excelTemplateResult.Value == null)
 					{
-						emailItem.Attachments.Add(new EmailTemplateResultItemAttachment
-						{
-							BlobId = null,
-							DownloadUrl = null,
-							Errors = new List<ValidationError>()
-							{
-								new ValidationError("", "Excel template was not found.")
-							},
-							FileName = null
-						});
+						//emailItem.Attachments.Add(new EmailTemplateResultItemAttachment
+						//{
+						//	BlobId = null,
+						//	DownloadUrl = null,
+						//	Errors = new List<ValidationError>()
+						//	{
+						//		new ValidationError("", "Excel template was not found.")
+						//	},
+						//	FileName = null
+						//});
 						continue;
 					}
 
