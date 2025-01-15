@@ -17,6 +17,10 @@ public partial interface ITfTemplateService
 		Guid templateId,
 		TfDataTable dataTable,
 		ITfTemplatePreviewResult preview);
+
+	public void ValidatePreview(
+		Guid templateId,
+		ITfTemplatePreviewResult preview);
 }
 
 internal partial class TfTemplateService : ITfTemplateService
@@ -57,5 +61,14 @@ internal partial class TfTemplateService : ITfTemplateService
 		var template = GetTemplate(templateId).Value;
 		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
 		return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+	}
+
+	public void ValidatePreview(
+		Guid templateId,
+		ITfTemplatePreviewResult preview)
+	{
+		var template = GetTemplate(templateId).Value;
+		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
+		processor.ValidatePreview(template, preview, _serviceProvider);
 	}
 }

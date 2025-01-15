@@ -135,6 +135,12 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 			emailMessage.Attachments = new List<CreateEmailAttachmentModel>();
 			foreach (var attachment in item.Attachments)
 			{
+				if (attachment.BlobId == null)
+					continue;
+
+				if (attachment.Errors != null && attachment.Errors.Count > 0)
+					continue;
+
 				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value).Value;
 				var emailAttachment = new CreateEmailAttachmentModel
 				{
@@ -283,6 +289,8 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				}
 
 				#endregion
+
+				result.Items.Add(emailItem);
 			}
 			catch (Exception ex)
 			{
