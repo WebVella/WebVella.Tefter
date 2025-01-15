@@ -32,6 +32,8 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 		var previewResult = (EmailTemplatePreviewResult)preview;
 		foreach (var item in previewResult.Items)
 		{
+			item.Errors.Clear();
+
 			if (!string.IsNullOrWhiteSpace(item.Sender) && !item.Sender.IsEmail())
 			{
 				item.Errors.Add(new ValidationError("Sender", "Sender is not a valid email address."));
@@ -89,7 +91,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 	{
 		EmailTemplateResult result = new EmailTemplateResult
 		{
-			Items = ((EmailTemplateResult)preview).Items,
+			Items = ((EmailTemplatePreviewResult)preview).Items,
 			Errors = preview.Errors,
 		};
 
@@ -141,7 +143,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				if (attachment.Errors != null && attachment.Errors.Count > 0)
 					continue;
 
-				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value).Value;
+				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value,temporary: true).Value;
 				var emailAttachment = new CreateEmailAttachmentModel
 				{
 					Filename = attachment.FileName,
