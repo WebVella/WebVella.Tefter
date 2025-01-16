@@ -12,15 +12,15 @@
 		<PackageReference Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 		<PackageReference Include="Bogus" Version="35.6.1" />
-		<PackageReference Include="Fluxor" Version="6.5.0" />
-		<PackageReference Include="Fluxor.Blazor.Web" Version="6.5.0" />
-		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.5.0" />
-		<PackageReference Include="Markdig" Version="0.39.1" />
-		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.0" />
+		<PackageReference Include="Fluxor" Version="6.5.2" />
+		<PackageReference Include="Fluxor.Blazor.Web" Version="6.5.2" />
+		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.5.2" />
+		<PackageReference Include="Markdig" Version="0.40.0" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.1" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.3" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.3" />
 	
 		<PackageReference Include="Npgsql" Version="9.0.2" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
@@ -37,10 +37,10 @@
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-		<PackageReference Include="System.Drawing.Common" Version="9.0.0" />
-		<PackageReference Include="System.Formats.Asn1" Version="9.0.0" />
-		<PackageReference Include="System.IO.Packaging" Version="9.0.0" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="9.0.1" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.1" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.1" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.11.72" />
 	</ItemGroup>
 
