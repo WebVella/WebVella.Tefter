@@ -48,7 +48,7 @@
 			<FluentDivider Style="margin:15px 0" />
 			<div>
 				@if (_form?.ProviderType?.SettingsComponentType is null) { }
-				else if (_form?.ProviderType?.SettingsComponentType?.GetInterface(nameof(ITfCustomComponent)) is not null)
+				else if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType.Implements(typeof(ITfComponentContext<>), typeof(TfDataProviderSettingsComponentContext)) ?? false)
 				{
 					if (_form.ProviderType.SettingsComponentType is not null)
 					{

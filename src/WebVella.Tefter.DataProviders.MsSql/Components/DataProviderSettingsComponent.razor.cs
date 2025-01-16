@@ -5,35 +5,34 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.MsSql.Components;
 
-public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfCustomComponent
+public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfComponentContext<TfDataProviderSettingsComponentContext>
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 
-	[Parameter] public string Value { get; set; }
-	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public object Context { get; set; }
+	[Parameter] public TfDataProviderSettingsComponentContext Context { get; set; }
 
 	private MsSqlDataProviderSettings _form = new();
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<MsSqlDataProviderSettings>(Value);
+		_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<MsSqlDataProviderSettings>(Context.SettingsJson);
+		Context.Validate = _validate;
 		base.InitForm(_form);
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Value != JsonSerializer.Serialize(_form))
+		if (Context.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<MsSqlDataProviderSettings>(Value);
+			_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<MsSqlDataProviderSettings>(Context.SettingsJson);
 			base.InitForm(_form);
 		}
 	}
 
-	public List<ValidationError> Validate()
+	private List<ValidationError> _validate()
 	{
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();
@@ -61,6 +60,6 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfCus
 
 	private async Task _valueChanged()
 	{
-		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
+		await Context.SettingsJsonChanged.InvokeAsync(JsonSerializer.Serialize(_form));
 	}
 }
