@@ -9,10 +9,17 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	private List<TfSpaceDataAsOption> _spaceDataAll = new();
 	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
 	private bool _loading = true;
+	private DynamicComponent _settingsComponent;
+	private TfTemplateProcessorSettingsComponentContext _setttingsContext = null;
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		_processor = _getProcessor();
+		_setttingsContext = new TfTemplateProcessorSettingsComponentContext
+		{
+			Template = TfAppState.Value.AdminTemplateDetails,
+			Validate = null
+		};
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -65,6 +72,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		{
 			var template = (TucTemplate)result.Data;
 			ToastService.ShowSuccess(LOC("Template successfully updated!"));
+			_setttingsContext.Template = template;
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { AdminTemplateDetails = template }));
 
@@ -89,7 +97,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Read;
-		dict["Value"] = TfAppState.Value.AdminTemplateDetails?.SettingsJson;
+		dict["Context"] = _setttingsContext;
 		return dict;
 	}
 

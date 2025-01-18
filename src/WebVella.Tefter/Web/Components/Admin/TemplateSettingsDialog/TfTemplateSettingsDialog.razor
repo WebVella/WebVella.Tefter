@@ -22,10 +22,20 @@
 	{
 		<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@_error</FluentMessageBar>
 	}
-	else
+	else if (_processor?.SettingsComponentType is null)
+	{
+		<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("This processor does not have settings")</FluentMessageBar>
+	}
+	else if (_processor?.SettingsComponentType.Implements(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorSettingsComponentContext)) ?? false)
 	{
 		<TfErrorBoundry>
 			<DynamicComponent @ref=_settingsComponent Type="_processor.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
 		</TfErrorBoundry>
+	}
+	else
+	{
+		<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">
+			<div>@LOC("Warning: Data provider settings component does not implement ITfDynamicComponent<TfTemplateProcessorSettingsComponentContext> and cannot be rendered!")</div>
+		</FluentMessageBar>
 	}
 </FluentDialogBody>

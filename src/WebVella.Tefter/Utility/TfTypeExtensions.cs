@@ -1,10 +1,10 @@
-﻿public static class TypeExtensions
+﻿public static class TfTypeExtensions
 {
-	public static bool Implements(this Type type, Type genericInterface) 
-    {
-        return type.GetInterfaces()
-            .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericInterface);
-    }
+	//public static bool Implements(this Type type, Type genericInterface) 
+ //   {
+ //       return type.GetInterfaces()
+ //           .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == genericInterface);
+ //   }
 
 	public static bool Implements(this Type type, Type genericInterface, Type genericArgument) 
     {

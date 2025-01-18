@@ -4,35 +4,35 @@ using Microsoft.AspNetCore.Components.Forms;
 namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Settings.SettingsComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
-public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
+public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorSettingsComponentContext>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public string Value { get; set; }
-	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public object Context { get; set; }
+	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
 
 	private TextContentTemplateSettings _form = new();
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<TextContentTemplateSettings>(Value);
+		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
+		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<TextContentTemplateSettings>(Context.Template.SettingsJson);
+		Context.Validate = _validate;
 		base.InitForm(_form);
 	}
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Value != JsonSerializer.Serialize(_form))
+		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<TextContentTemplateSettings>(Value);
+			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<TextContentTemplateSettings>(Context.Template.SettingsJson);
 			base.InitForm(_form);
 		}
 	}
 
-	public List<ValidationError> Validate()
+	private List<ValidationError> _validate()
 	{
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();
@@ -47,10 +47,11 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 		StateHasChanged();
 		return errors;
 	}
-	
+
 	private async Task _valueChanged()
 	{
-		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
+		Context.Template.SettingsJson = JsonSerializer.Serialize(_form);
+		await Context.SettingsJsonChanged.InvokeAsync(Context.Template.SettingsJson);
 	}
 
 }

@@ -5,7 +5,7 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.MsSql.Components;
 
-public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfComponentContext<TfDataProviderSettingsComponentContext>
+public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfDataProviderSettingsComponentContext>
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
@@ -60,6 +60,7 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfCom
 
 	private async Task _valueChanged()
 	{
+		Context.SettingsJson = JsonSerializer.Serialize(_form);
 		await Context.SettingsJsonChanged.InvokeAsync(JsonSerializer.Serialize(_form));
 	}
 }

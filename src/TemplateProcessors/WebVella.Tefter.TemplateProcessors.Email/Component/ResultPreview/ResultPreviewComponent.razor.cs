@@ -3,26 +3,26 @@
 namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class ResultPreviewComponent : TfFormBaseComponent, ITfCustomComponent
+public partial class ResultPreviewComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public string Value { get; set; }
-	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public object Context { get; set; }
+	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; set; }
 	private EmailTemplateProcessSettings _form = new();
 
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<EmailTemplateProcessSettings>(Value);
+		if (Context is null) throw new Exception("Context is not defined");
+		_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateProcessSettings>(Context.SettingsJson);
+		Context.Validate = _validate;
 		base.InitForm(_form);
 	}
 
 
 
-	public List<ValidationError> Validate()
+	private List<ValidationError> _validate()
 	{
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();

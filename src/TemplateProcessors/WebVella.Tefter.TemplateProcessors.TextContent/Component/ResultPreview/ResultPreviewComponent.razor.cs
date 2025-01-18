@@ -3,13 +3,11 @@
 namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
-public partial class ResultPreviewComponent : TfFormBaseComponent, ITfCustomComponent
+public partial class ResultPreviewComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public string Value { get; set; }
-	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public object Context { get; set; }
+	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; set; }
 
 	private TextContentTemplateSettings _form = new();
 

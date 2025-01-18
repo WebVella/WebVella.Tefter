@@ -15,6 +15,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private DynamicComponent _settingsComponent;
+	private TfTemplateProcessorSettingsComponentContext _setttingsContext = null;
 	private ITfTemplateProcessor _processor = null;
 	private string _form = null;
 	protected override async Task OnInitializedAsync()
@@ -26,6 +27,12 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		_iconBtn = TfConstants.GetIcon("Save");
 		_processor = _getProcessor();
 		_form = Content.SettingsJson;
+		_setttingsContext = new TfTemplateProcessorSettingsComponentContext
+		{
+			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
+			Template = Content with { Id = Content.Id },
+			Validate = null
+		};
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -46,10 +53,9 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		{
 			////Check form
 			List<ValidationError> settingsErrors = new();
-			if (_processor.SettingsComponentType is not null
-				&& _processor.SettingsComponentType.GetInterface(nameof(ITfCustomComponent)) is not null)
+			if (_setttingsContext.Validate is not null)
 			{
-				settingsErrors = (_settingsComponent.Instance as ITfCustomComponent).Validate();
+				settingsErrors = _setttingsContext.Validate();
 			}
 
 			if (settingsErrors.Count > 0) return;
@@ -82,9 +88,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Value"] = _form;
-		dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
-		dict["Context"] = Content;
+		dict["Context"] = _setttingsContext;
 		return dict;
 	}
 

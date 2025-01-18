@@ -17,7 +17,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private DynamicComponent typeSettingsComponent;
 	private bool _isCreate = false;
 	private TucDataProviderForm _form = new();
-
+	private TfDataProviderSettingsComponentContext _setttingsContext = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -46,6 +46,10 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 				_form.ProviderType = TfAppState.Value.DataProviderTypes.FirstOrDefault(x => x.Id == Content.ProviderType.Id);
 			}
 		}
+		_setttingsContext = new TfDataProviderSettingsComponentContext{
+			SettingsJson = _form.SettingsJson,
+			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
+		};
 		base.InitForm(_form);
 
 	}
@@ -70,10 +74,9 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 
 			//Get dynamic settings component errors
 			List<ValidationError> settingsErrors = new();
-			if (_form.ProviderType.SettingsComponentType is not null
-				&& _form.ProviderType.SettingsComponentType.GetInterface(nameof(ITfCustomComponent)) is not null)
+			if (_setttingsContext.Validate is not null)
 			{
-				settingsErrors = (typeSettingsComponent.Instance as ITfCustomComponent).Validate();
+				settingsErrors = _setttingsContext.Validate();
 			}
 
 			//Check form
@@ -117,10 +120,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Context"] = new TfDataProviderSettingsComponentContext{
-			SettingsJson = _form.SettingsJson,
-			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
-		};
+		dict["Context"] = _setttingsContext;
 		return dict;
 	}
 	private void _settingsChanged(string json)

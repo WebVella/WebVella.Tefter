@@ -4,17 +4,14 @@ using Microsoft.AspNetCore.Components.Forms;
 namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Settings.SettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
+public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorSettingsComponentContext>
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public string Value { get; set; }
-	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public object Context { get; set; }
-	private Guid? _templateId { get; set; }
+	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
 	private EmailTemplateSettings _form = new();
 	private List<TfTemplate> _templatesAll = new();
 	private List<TfTemplate> _templatesOptions = new();
@@ -26,21 +23,18 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_templateId = null;
-		if (Context is not null && Context is TucTemplate)
-		{
-			_templateId = ((TucTemplate)Context).Id;
-		}
+		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
 		contentProcessor = new EmailTemplateProcessor();
-		_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(Value);
+		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(Context.Template.SettingsJson);
+		Context.Validate = _validate;
 		base.InitForm(_form);
 	}
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Value != JsonSerializer.Serialize(_form))
+		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Value) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(Value);
+			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(Context.Template.SettingsJson);
 			base.InitForm(_form);
 		}
 	}
@@ -50,7 +44,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			_templatesAll = contentProcessor.GetTemplateSelectionList(_templateId, TemplateService);
+			_templatesAll = contentProcessor.GetTemplateSelectionList(Context.Template.Id, TemplateService);
 			_recalcAttachmentData();
 			_loading = false;
 			await InvokeAsync(StateHasChanged);
@@ -74,7 +68,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 		}
 	}
 
-	public List<ValidationError> Validate()
+	private List<ValidationError> _validate()
 	{
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();
@@ -105,7 +99,8 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfCustomComponent
 	private async Task _valueChanged()
 	{
 		_form.TextContent = null; //to be regenerated from service
-		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_form));
+		Context.Template.SettingsJson = JsonSerializer.Serialize(_form);
+		await Context.SettingsJsonChanged.InvokeAsync(Context.Template.SettingsJson);
 	}
 
 	private async Task _selectedOptionChanged(TfTemplate option)

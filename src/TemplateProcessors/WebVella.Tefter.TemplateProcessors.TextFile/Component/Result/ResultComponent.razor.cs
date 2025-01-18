@@ -3,13 +3,11 @@
 namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
-public partial class ResultComponent : TfFormBaseComponent, ITfCustomComponent
+public partial class ResultComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public string Value { get; set; }
-	[Parameter] public EventCallback<string> ValueChanged { get; set; }
-	[Parameter] public object Context { get; set; }
+	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
 
 	private TextFileTemplateSettings _form = new();
 

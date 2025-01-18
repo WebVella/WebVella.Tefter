@@ -48,7 +48,7 @@
 			<FluentDivider Style="margin:15px 0" />
 			<div>
 				@if (_form?.ProviderType?.SettingsComponentType is null) { }
-				else if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType.Implements(typeof(ITfComponentContext<>), typeof(TfDataProviderSettingsComponentContext)) ?? false)
+				else if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType.Implements(typeof(ITfDynamicComponent<>), typeof(TfDataProviderSettingsComponentContext)) ?? false)
 				{
 					if (_form.ProviderType.SettingsComponentType is not null)
 					{
@@ -61,7 +61,7 @@
 				else
 				{
 					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">
-						<div>@LOC("Warning: Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
+						<div>@LOC("Warning: Data provider settings component does not implement ITfDynamicComponent<TfDataProviderSettingsComponentContext> and cannot be rendered!")</div>
 					</FluentMessageBar>
 				}
 				<FluentValidationMessage For="@(() => _form.SettingsJson)" />
