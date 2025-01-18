@@ -117,9 +117,10 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Value"] = _form.SettingsJson;
-		dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
-		dict["Context"] = Content;
+		dict["Context"] = new TfDataProviderSettingsComponentContext{
+			SettingsJson = _form.SettingsJson,
+			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
+		};
 		return dict;
 	}
 	private void _settingsChanged(string json)
