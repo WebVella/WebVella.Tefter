@@ -13,7 +13,7 @@ internal class TefterSystemMigration2024121701 : TfSystemMigration
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
 					.AddShortTextColumn("icon", c => { c.Nullable(); })
-					.AddTextColumn("description", c => { c.NotNullable().WithDefaultValue(""); })
+					.AddTextColumn("description", c => { c.Nullable().WithDefaultValue(""); })
 					.AddTextColumn("used_columns_json", c => { c.NotNullable().WithDefaultValue("[]"); })
 					.AddBooleanColumn("is_enabled", c => { c.NotNullable().WithDefaultValue(true); })
 					.AddBooleanColumn("is_selectable", c => { c.NotNullable().WithDefaultValue(true); })
