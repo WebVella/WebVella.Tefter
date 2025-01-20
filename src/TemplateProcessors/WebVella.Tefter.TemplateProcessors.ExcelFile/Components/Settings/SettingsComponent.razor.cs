@@ -7,8 +7,6 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorSettingsComponentContext>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
-
-	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
 
@@ -85,7 +83,6 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponen
 		_fileLoading = false;
 		await InvokeAsync(StateHasChanged);
 	}
-
 	private async Task _valueChanged()
 	{
 		Context.Template.SettingsJson = JsonSerializer.Serialize(_form);

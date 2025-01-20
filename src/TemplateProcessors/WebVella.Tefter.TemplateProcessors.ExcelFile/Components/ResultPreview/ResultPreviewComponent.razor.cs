@@ -11,38 +11,40 @@ public partial class ResultPreviewComponent : TfBaseComponent, ITfDynamicCompone
 
 	private ExcelFileTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;
+	private List<ValidationError> _previewValidationErrors = new();
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		if (Context is null) throw new Exception("Context is not defined");
+		Context.ValidatePreviewResult = _validatePreviewResult;
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-
-			//if (_context.TemplateId.HasValue && _context.SpaceData is not null)
-			//{
-			//	ITfTemplatePreviewResult result = TemplateService.GenerateTemplatePreviewResult(
-			//		templateId: _context.TemplateId.Value,
-			//		spaceDataId: _context.SpaceData.Id,
-			//		tfRecordIds: _context.SelectedRowIds
-			//	);
-			//	if (result is ExcelFileTemplatePreviewResult)
-			//	{
-			//		_preview = (ExcelFileTemplatePreviewResult)result;
-			//		await ValueChanged.InvokeAsync(JsonSerializer.Serialize(_preview));
-			//	}
-			//}
+			if (Context.Template is not null && Context.SpaceData is not null)
+			{
+				ITfTemplatePreviewResult result = TemplateService.GenerateTemplatePreviewResult(
+					templateId: Context.Template.Id,
+					spaceDataId: Context.SpaceData.Id,
+					tfRecordIds: Context.SelectedRowIds
+				);
+				if (result is not ExcelFileTemplatePreviewResult)
+				{
+					throw new Exception("Preview result is not of type ExcelFileTemplatePreviewResult");
+				}
+				_preview = (ExcelFileTemplatePreviewResult)result;
+				await Context.PreviewResultChanged.InvokeAsync(_preview);
+			}
 
 			_isLoading = false;
 			StateHasChanged();
 		}
 	}
-
-	public List<ValidationError> Validate()
+	private List<ValidationError> _validatePreviewResult()
 	{
-		return new List<ValidationError>();
+		_previewValidationErrors = new List<ValidationError>();
+		return _previewValidationErrors;
 	}
 }

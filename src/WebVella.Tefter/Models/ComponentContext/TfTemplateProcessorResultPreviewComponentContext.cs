@@ -3,11 +3,11 @@
 public class TfTemplateProcessorResultPreviewComponentContext
 {
 	public TucTemplate Template { get; set; }
-	public Guid? TemplateId { get; set; }
 	public List<Guid> SelectedRowIds { get; set; }
 	public TucSpaceData SpaceData { get; set; }
 	public TucUser User { get; set; }
+	public string CustomSettingsJson { get; set; } = null;
+	public EventCallback<string> CustomSettingsJsonChanged { get; set; }
 	public EventCallback<ITfTemplatePreviewResult> PreviewResultChanged { get; set; }
-	public EventCallback<string> SettingsJsonChanged { get; set; }
-	public Func<List<ValidationError>> Validate { get; set; }
+	public Func<List<ValidationError>> ValidatePreviewResult { get; set; }
 }

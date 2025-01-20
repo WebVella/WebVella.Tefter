@@ -26,7 +26,7 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Read;
-		dict["Value"] = null;
+		dict["Context"] = new TfTemplateProcessorHelpComponentContext(){};
 		return dict;
 	}
 }

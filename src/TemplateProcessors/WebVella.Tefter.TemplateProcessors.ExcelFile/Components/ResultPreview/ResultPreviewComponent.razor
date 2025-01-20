@@ -15,36 +15,17 @@ else if (_preview is null)
 }
 else
 {
-	@if (_preview.Errors.Count > 0)
+	@if (_previewValidationErrors.Count > 0)
 	{
 		<h4>@LOC("Errors")</h4>
-		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("Errors occured while generating the preview")</FluentMessageBar>
-		<div class="tf-grid-wrapper" style="margin-top:15px;">
-			<table class="tf-grid">
-				<thead class="tf-grid-thead">
-					<tr class="tf-grid-tr">
-						<th class="tf-grid-th">@LOC("property")</th>
-						<th class="tf-grid-th">@LOC("error")</th>
-					</tr>
-				</thead>
-				<tbody class="tf-grid-tbody">
-					@foreach (var error in _preview.Errors)
-					{
-						<tr @key=@(Guid.NewGuid())>
-							<td class="tf-grid-td">
-								<div>
-									@error.PropertyName
-								</div>
-							</td>
-							<td class="tf-grid-td">
-								<div>@error.Message</div>
-							</td>
-						</tr>
-					}
-				</tbody>
-			</table>
-		</div>
+		<TfValidationErrors Errors="_previewValidationErrors" Message="@LOC("Errors occured while validation the preview")"/>
 	}
+	else if (_preview.Errors.Count > 0)
+	{
+		<h4>@LOC("Errors")</h4>
+		<TfValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occured while generating the preview")" />
+	}
+	
 	@if (_preview.Items.Count == 0)
 	{
 		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("No files will be generated")</FluentMessageBar>

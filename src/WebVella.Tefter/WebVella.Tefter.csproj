@@ -48,4 +48,10 @@
 	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Content Update="Web\Components\General\ValidationErrors\TfValidationErrors.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
+	</ItemGroup>
+
 </Project>

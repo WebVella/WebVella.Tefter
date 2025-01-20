@@ -14,7 +14,6 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private TucTemplate _selectedTemplate = null;
 	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
-	private string _templateCustomSettings = null;
 	private TfTemplateProcessorResultPreviewComponentContext _previewResultContext = null;
 	private TfTemplateProcessorResultComponentContext _resultContext = null;
 	protected override async Task OnInitializedAsync()
@@ -28,9 +27,10 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 			SelectedRowIds = Content.SelectedRowIds,
 			SpaceData = Content.SpaceData,
 			User = Content.User,
-			PreviewResultChanged = EventCallback<ITfTemplatePreviewResult>.Empty,
-			SettingsJsonChanged = EventCallback<string>.Empty,
-			Validate = null,
+			CustomSettingsJson = null,
+			CustomSettingsJsonChanged = EventCallback.Factory.Create<string>(this, _customSettingsChanged),
+			PreviewResultChanged = EventCallback.Factory.Create<ITfTemplatePreviewResult>(this, _previewResultChanged),
+			ValidatePreviewResult = null,
 
 		};
 		_resultContext = new TfTemplateProcessorResultComponentContext
@@ -39,6 +39,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 			SelectedRowIds = Content.SelectedRowIds,
 			SpaceData = Content.SpaceData,
 			User = Content.User,
+			CustomSettingsJson = null,
 			Preview = null
 		};
 	}
@@ -79,7 +80,12 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		}
 		else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 		{
-			_currentStep = TfUseTemplateDialogStep.Result;
+			if (_previewResultContext.ValidatePreviewResult is not null)
+			{
+				var validationErrors = _previewResultContext.ValidatePreviewResult();
+				if (validationErrors.Count == 0)
+					_currentStep = TfUseTemplateDialogStep.Result;
+			}
 		}
 	}
 
@@ -138,7 +144,6 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		dict["Context"] = _previewResultContext;
 		return dict;
 	}
-
 	private Dictionary<string, object> _getResultDynamicComponentParams()
 	{
 		var dict = new Dictionary<string, object>();
@@ -146,10 +151,14 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		dict["Context"] = _resultContext;
 		return dict;
 	}
-
-	private void _settingsChanged(string value)
+	private void _customSettingsChanged(string value)
 	{
-		_templateCustomSettings = value;
+		_previewResultContext.CustomSettingsJson = value;
+		_resultContext.CustomSettingsJson = value;
+	}
+	private void _previewResultChanged(ITfTemplatePreviewResult value)
+	{
+		_resultContext.Preview = value;
 	}
 }
 

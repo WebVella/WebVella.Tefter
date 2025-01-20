@@ -1,0 +1,36 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (Errors.Count > 0)
+{
+	<div class="@Class" style="@Style">
+		@if (!String.IsNullOrWhiteSpace(Message))
+		{
+			<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@Message</FluentMessageBar>
+		}
+		<div class="tf-grid-wrapper" style="margin-top:15px;">
+			<table class="tf-grid">
+				<thead class="tf-grid-thead">
+					<tr class="tf-grid-tr">
+						<th class="tf-grid-th">@LOC("property")</th>
+						<th class="tf-grid-th">@LOC("error")</th>
+					</tr>
+				</thead>
+				<tbody class="tf-grid-tbody">
+					@foreach (var error in Errors)
+					{
+						<tr class="tf-grid-tr" @key=@(Guid.NewGuid())>
+							<td class="tf-grid-td">
+								<div>
+									@error.PropertyName
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>@error.Message</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
