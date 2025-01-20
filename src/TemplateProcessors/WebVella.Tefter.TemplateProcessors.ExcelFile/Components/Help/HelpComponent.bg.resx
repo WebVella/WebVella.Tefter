@@ -120,6 +120,9 @@
   <data name="All non-template content will remain unchanged and will retain its original placement relative to its position in the template." xml:space="preserve">
     <value>Всички не-шаблонни съдържания ще останат непроменени и ще запазят оригиналното си разположение спрямо позицията им в шаблона.</value>
   </data>
+  <data name="Each data group, as defined by the 'Group by' property, will generate a separate instance of the template's result." xml:space="preserve">
+    <value>Всяка група данни, определена чрез свойството 'Групиране по', ще генерира отделен екземпляр на резултата от шаблона.</value>
+  </data>
   <data name="Each template tag must start with '{0}' and end with '{1}'" xml:space="preserve">
     <value>Всеки шаблонен таг трябва да започва с '{0}' и да завършва с '{1}'</value>
   </data>
@@ -129,8 +132,14 @@
   <data name="Horizontal data transposition" xml:space="preserve">
     <value>Хоризонтално транспониране на данни</value>
   </data>
+  <data name="result" xml:space="preserve">
+    <value>резултат</value>
+  </data>
   <data name="Selecting data by index" xml:space="preserve">
     <value>Избор на данни по индекс</value>
+  </data>
+  <data name="template" xml:space="preserve">
+    <value>шаблон</value>
   </data>
   <data name="The file will be processed cell by cell, starting from the top-left corner and proceeding to the bottom-right corner." xml:space="preserve">
     <value>Файлът ще бъде обработван клетка по клетка, започвайки от горния ляв ъгъл и продължавайки към долния десен ъгъл.</value>

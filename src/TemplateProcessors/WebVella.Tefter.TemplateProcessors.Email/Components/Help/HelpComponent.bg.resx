@@ -117,4 +117,52 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="All non-template content will remain unchanged and will retain its original placement relative to its position in the template." xml:space="preserve">
+    <value>Всичкото съдържание, което не е част от шаблона, ще остане непроменено и ще запази оригиналното си място спрямо позицията си в шаблона.</value>
+  </data>
+  <data name="Each data group, as defined by the 'Group by' property, will generate a separate instance of the template's result." xml:space="preserve">
+    <value>Всяка група данни, определена чрез свойството 'Групиране по', ще генерира отделен екземпляр на резултата от шаблона.</value>
+  </data>
+  <data name="Each field of the template can use template tags with the selected data, following these rules:" xml:space="preserve">
+    <value>Всяко поле на шаблона може да използва шаблонни тагове със избраните данни, спазвайки тези правила:</value>
+  </data>
+  <data name="Each template tag must start with '{0}' and end with '{1}'" xml:space="preserve">
+    <value>Всеки шаблонен таг трябва да започва с '{0}' и да завършва с '{1}'</value>
+  </data>
+  <data name="General Rules" xml:space="preserve">
+    <value>Общи правила</value>
+  </data>
+  <data name="Horizontal data transposition" xml:space="preserve">
+    <value>Хоризонтално транспониране на данни</value>
+  </data>
+  <data name="Multiline template fields such as HTML Content will be processed line by line." xml:space="preserve">
+    <value>Многостранни шаблонни полета, като HTML съдържание, ще бъдат обработвани ред по ред.</value>
+  </data>
+  <data name="result lines" xml:space="preserve">
+    <value>редове на резултата</value>
+  </data>
+  <data name="Selecting data by index" xml:space="preserve">
+    <value>Избиране на данни по индекс</value>
+  </data>
+  <data name="template line (ends with newline)" xml:space="preserve">
+    <value>шаблонен ред (завършващ с нов ред)</value>
+  </data>
+  <data name="Templates in a single line fields will produce result from the first data row. If you need another row, use index." xml:space="preserve">
+    <value>Шаблоните в едноредови полета ще генерират резултат от първия ред на данните. Ако ви е необходим друг ред, използвайте индекс.</value>
+  </data>
+  <data name="The template requires the exact name of the data column to match the name used in the data provider." xml:space="preserve">
+    <value>Шаблонът изисква точната име на данната колона да съвпада с името, използвано в доставчика на данни.</value>
+  </data>
+  <data name="This flow can be applied by the 'F'(flow) template setting with value 'H' (horizontal). Example if there are 3 rows of data:" xml:space="preserve">
+    <value>Този поток може да се приложи чрез настройката на шаблона 'F' (поток) със стойност 'H' (хоризонтален). Пример: ако има 3 реда данни:</value>
+  </data>
+  <data name="This is is the default flow. Example if there are 3 rows of data:" xml:space="preserve">
+    <value>Това е по подразбиране потокът. Пример: ако има 3 реда данни:</value>
+  </data>
+  <data name="Vertical data transposition" xml:space="preserve">
+    <value>Вертикално транспониране на данни</value>
+  </data>
+  <data name="You can select a specific row to be processed by its index. &lt;u&gt;Important&lt;/u&gt;: The index starts at 0, meaning the first row has an index of 0. Example if there are 3 rows of data:" xml:space="preserve">
+    <value>Можете да изберете конкретен ред за обработка по неговия индекс. &lt;u&gt;Важно&lt;/u&gt;: Индексът започва от 0, което означава, че първият ред има индекс 0. Пример: ако има 3 реда данни:</value>
+  </data>
 </root>
