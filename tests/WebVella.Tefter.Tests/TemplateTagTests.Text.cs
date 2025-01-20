@@ -20,6 +20,18 @@ public partial class TextTemplatesTests : TemplateTagTestsBase
 			action.Should().Throw<Exception>("No datasource provided!");
 		}
 	}
+	[Fact]
+	public async Task ShouldProcessEmpty()
+	{
+		using (await locker.LockAsync())
+		{
+			var result = new TfTextTemplateProcessResult();
+			var data = SampleData.NewTable(new int[]{ 1 });
+			Func<bool> action = () => { result.ProcessTextTemplate(data); return true; };
+			action.Should().NotThrow();
+			result.ResultText.Should().Be(result.TemplateText);
+		}
+	}
 	#endregion
 
 	#region << Plain text >>

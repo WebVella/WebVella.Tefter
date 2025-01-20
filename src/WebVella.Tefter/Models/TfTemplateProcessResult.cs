@@ -21,3 +21,11 @@ public class TfTextTemplateProcessResult : TfTemplateProcessResult
 	public string ResultText { get; set; } = null;
 	public List<TfTemplateContext> Contexts { get; set; } = new();
 }
+
+public class TfHtmlTemplateProcessResult : TfTemplateProcessResult
+{
+	public string TemplateHtml { get; set; } = null;
+	public string ResultHtml { get; set; } = null;
+	public List<TfTemplateContext> Contexts { get; set; } = new();
+}
+

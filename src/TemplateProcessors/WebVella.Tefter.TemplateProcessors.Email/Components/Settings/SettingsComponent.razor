@@ -12,16 +12,14 @@ else if (DisplayMode == TfComponentMode.Create || DisplayMode == TfComponentMode
 		<FluentTabs @bind-ActiveTabId="@_activeTab">
 			<FluentTab Label="@LOC("Content")" Id="@SettingsComponentTabs.Content.ToDescriptionString()" Style="padding-top:15px">
 				<FluentGrid>
-					<FluentGridItem xs="12">
+					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("From")" />
 						<FluentTextField @bind-Value=@_form.Sender
 										 @bind-Value:after=_valueChanged
 										 TextFieldType="TextFieldType.Text" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.Sender)" />
 					</FluentGridItem>
-				</FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="12">
+					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("To")" />
 						<FluentTextField @bind-Value=@_form.Recipients
 										 @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" />
@@ -29,14 +27,12 @@ else if (DisplayMode == TfComponentMode.Create || DisplayMode == TfComponentMode
 					</FluentGridItem>
 				</FluentGrid>
 				<FluentGrid>
-					<FluentGridItem xs="12">
+					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("Cc")" />
 						<FluentTextField @bind-Value=@_form.CcRecipients @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.CcRecipients)" />
 					</FluentGridItem>
-				</FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="12">
+					<FluentGridItem xs="6">
 						<FluentInputLabel Label="@LOC("Bcc")" />
 						<FluentTextField @bind-Value=@_form.BccRecipients @bind-Value:after=_valueChanged TextFieldType="TextFieldType.Text" Style="width:100%" />
 						<FluentValidationMessage For="@(() => _form.BccRecipients)" />

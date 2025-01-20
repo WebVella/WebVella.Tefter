@@ -1,7 +1,10 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.Email.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.TemplateProcessors.Email.Models;
 
 public class EmailTemplateResultItem
 {
+	public Guid Id { get; set; } = Guid.NewGuid();
 	public string Sender { get; set; }
 	public List<string> Recipients { get; set; } = new();
 	public List<string> CcRecipients { get; set; } = new();
