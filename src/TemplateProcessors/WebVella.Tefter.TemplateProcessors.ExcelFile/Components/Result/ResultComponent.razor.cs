@@ -9,7 +9,6 @@ public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTe
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
 
-	private ExcelFileTemplatePreviewResult _preview = null;
 	private ExcelFileTemplateResult _result = null;
 	private bool _isLoading = true;
 	private bool _showDetails = false;
@@ -25,21 +24,13 @@ public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTe
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			//if (!String.IsNullOrWhiteSpace(Value))
-			//{
-			//	try
-			//	{
-			//		_preview = JsonSerializer.Deserialize<ExcelFileTemplatePreviewResult>(Value);
-			//	}
-			//	catch { }
-			//}
 			if (Context.Template is not null && Context.SpaceData is not null)
 			{
 				ITfTemplateResult result = TemplateService.ProcessTemplate(
 					templateId: Context.Template.Id,
 					spaceDataId: Context.SpaceData.Id,
 					tfRecordIds: Context.SelectedRowIds,
-					preview: _preview
+					preview: Context.Preview
 				); ;
 				if (result is ExcelFileTemplateResult)
 				{
@@ -50,11 +41,6 @@ public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTe
 			_isLoading = false;
 			StateHasChanged();
 		}
-	}
-
-	public List<ValidationError> Validate()
-	{
-		return new List<ValidationError>();
 	}
 
 

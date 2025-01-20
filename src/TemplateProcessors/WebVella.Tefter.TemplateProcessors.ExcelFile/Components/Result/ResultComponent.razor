@@ -51,9 +51,9 @@ else
 	}
 	else
 	{
-		@if (_result.ItemWithErrorsCount > 0)
+		@if (_result.ItemsWithErrorsCount > 0)
 		{
-			<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("{0} files have errors", _result.ItemWithErrorsCount)</FluentMessageBar>
+			<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("{0} files have errors", _result.ItemsWithErrorsCount)</FluentMessageBar>
 			<h4>@LOC("File errors")</h4>
 			<div class="tf-grid-wrapper" style="margin-top:15px;">
 				<table class="tf-grid">
