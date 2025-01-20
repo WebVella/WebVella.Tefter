@@ -15,7 +15,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent, ITfDynamicCom
 	{
 		base.OnInitialized();
 		if (Context is null) throw new Exception("Context is not defined");
-		_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateProcessSettings>(Context.SettingsJson);
+
 		Context.Validate = _validate;
 		base.InitForm(_form);
 	}

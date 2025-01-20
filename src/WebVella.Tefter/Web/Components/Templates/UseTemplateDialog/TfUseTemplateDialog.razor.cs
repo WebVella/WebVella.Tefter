@@ -15,12 +15,32 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
 	private string _templateCustomSettings = null;
-
+	private TfTemplateProcessorResultPreviewComponentContext _previewResultContext = null;
+	private TfTemplateProcessorResultComponentContext _resultContext = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) _error = LOC("Content is null");
 		else if (Content.SpaceData is null) _error = LOC("SpaceData is null");
+		_previewResultContext = new TfTemplateProcessorResultPreviewComponentContext
+		{
+			Template = null,
+			SelectedRowIds = Content.SelectedRowIds,
+			SpaceData = Content.SpaceData,
+			User = Content.User,
+			PreviewResultChanged = EventCallback<ITfTemplatePreviewResult>.Empty,
+			SettingsJsonChanged = EventCallback<string>.Empty,
+			Validate = null,
+
+		};
+		_resultContext = new TfTemplateProcessorResultComponentContext
+		{
+			Template = null,
+			SelectedRowIds = Content.SelectedRowIds,
+			SpaceData = Content.SpaceData,
+			User = Content.User,
+			Preview = null
+		};
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -81,6 +101,8 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		if (_selectedTemplate is not null)
 		{
 			_processor = _getTemplateProcessorInstance(_selectedTemplate.ContentProcessorType);
+			_previewResultContext.Template = _selectedTemplate;
+			_resultContext.Template = _selectedTemplate;
 		}
 		_next();
 	}
@@ -109,13 +131,19 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		_search = value;
 		_getTemplates();
 	}
-	private Dictionary<string, object> _getDynamicComponentParams()
+	private Dictionary<string, object> _getResultPreviewDynamicComponentParams()
 	{
 		var dict = new Dictionary<string, object>();
 		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Value"] = _templateCustomSettings;
-		dict["ValueChanged"] = EventCallback.Factory.Create<string>(this, _settingsChanged);
-		dict["Context"] = Content with {TemplateId = _selectedTemplate?.Id};
+		dict["Context"] = _previewResultContext;
+		return dict;
+	}
+
+	private Dictionary<string, object> _getResultDynamicComponentParams()
+	{
+		var dict = new Dictionary<string, object>();
+		dict["DisplayMode"] = TfComponentMode.Update;
+		dict["Context"] = _resultContext;
 		return dict;
 	}
 

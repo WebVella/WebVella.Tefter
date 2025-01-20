@@ -9,7 +9,6 @@ public partial class ResultPreviewComponent : TfBaseComponent, ITfDynamicCompone
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; set; }
 
-	private TucUseTemplateContext _context = null;
 	private ExcelFileTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;
 	protected override void OnInitialized()
@@ -23,7 +22,6 @@ public partial class ResultPreviewComponent : TfBaseComponent, ITfDynamicCompone
 		if (firstRender)
 		{
 
-			_context = Context.Data;
 			//if (_context.TemplateId.HasValue && _context.SpaceData is not null)
 			//{
 			//	ITfTemplatePreviewResult result = TemplateService.GenerateTemplatePreviewResult(

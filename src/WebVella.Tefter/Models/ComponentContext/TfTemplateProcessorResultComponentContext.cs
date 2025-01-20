@@ -3,6 +3,10 @@
 public class TfTemplateProcessorResultComponentContext
 {
 	public TucTemplate Template { get; set; }
-	public string SettingsJson { get; set; } = "{}";
-	public TucUseTemplateContext Data { get; set; }
+	public List<Guid> SelectedRowIds { get; set; }
+	public TucSpaceData SpaceData { get; set; }
+	public TucUser User { get; set; }
+	public ITfTemplatePreviewResult Preview { get; set; }
+
+
 }

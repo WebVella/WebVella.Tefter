@@ -9,17 +9,17 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponen
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 
-	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
+
+	private bool _loading = true;
+	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();
 	private EmailTemplateSettings _form = new();
 	private List<TfTemplate> _templatesAll = new();
 	private List<TfTemplate> _templatesOptions = new();
 	private TfTemplate _selectedOption = null;
 	private List<EmailTemplateSettingsAttachmentItemDisplay> _attachmentsSelection = new();
-	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();
-	private bool _loading = true;
-	public EmailTemplateProcessor contentProcessor { get; set; }
+	private EmailTemplateProcessor contentProcessor { get; set; }
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
@@ -38,7 +38,6 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponen
 			base.InitForm(_form);
 		}
 	}
-
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
