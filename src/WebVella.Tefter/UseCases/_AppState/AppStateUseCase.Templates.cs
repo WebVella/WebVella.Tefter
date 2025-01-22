@@ -160,7 +160,7 @@ internal partial class AppStateUseCase
 		{
 			return true;
 		}
-		else if (template.Description.ToLowerInvariant().Contains(stringProcessed))
+		else if ((template.Description??string.Empty).ToLowerInvariant().Contains(stringProcessed))
 		{
 			return true;
 		}

@@ -1,8 +1,10 @@
-﻿namespace WebVella.Tefter;
+﻿using System.Runtime.CompilerServices;
+
+namespace WebVella.Tefter;
 
 public interface ITfBlobManager
 {
-	internal string BlobStoragePath { get; }
+	internal string BlobStoragePath { get; set; }
 
 	public Result<bool> ExistsBlob(
 		Guid blobId,
@@ -48,6 +50,8 @@ public interface ITfBlobManager
 
 	public Result MakeTempBlobPermanent(
 		Guid blobId);
+	internal Task CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(
+		CancellationToken stoppingToken);
 }
 
 internal class TfBlobManager : ITfBlobManager
@@ -505,5 +509,9 @@ internal class TfBlobManager : ITfBlobManager
 
 	#endregion
 
+	public async Task CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(
+		CancellationToken stoppingToken)
+	{
 
+	}
 }

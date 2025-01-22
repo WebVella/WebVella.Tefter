@@ -82,6 +82,7 @@ public static class TfDependencyInjection
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
+		services.AddHostedService<TfBlobMaintenanceJob>();
 
 		//we don't use static constructor here, 
 		//because no control on assemblies order loading

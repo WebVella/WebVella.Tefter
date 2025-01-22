@@ -259,7 +259,23 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		TfManageTemplateModel template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
+
+		if (String.IsNullOrWhiteSpace(template.SettingsJson))
+			return new List<ValidationError>();
+
+		var settings = JsonSerializer.Deserialize<TextFileTemplateSettings>(template.SettingsJson);
+
+		if (settings.TemplateFileBlobId is null)
+			return new List<ValidationError>();
+
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+
+		var isTmpBlob = blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value;
+		if (isTmpBlob)
+		{
+			blobManager.MakeTempBlobPermanent(settings.TemplateFileBlobId.Value);
+		}
+
 		return new List<ValidationError>();
 	}
 
@@ -274,7 +290,49 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		TfManageTemplateModel template,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var templateServise = serviceProvider.GetService<ITfTemplateService>();
+
+		Guid? blobId = null;
+
+		var existingTemplate = templateServise.GetTemplate(template.Id).Value;
+
+		if (existingTemplate is not null)
+		{
+			if (string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
+			{
+				var oldSettings = JsonSerializer.Deserialize<TextFileTemplateSettings>(existingTemplate.SettingsJson);
+				blobId = oldSettings.TemplateFileBlobId;
+			}
+		}
+
+		if (template is not null)
+		{
+			if (!string.IsNullOrWhiteSpace(template.SettingsJson))
+			{
+				var newSettings = JsonSerializer.Deserialize<TextFileTemplateSettings>(template.SettingsJson);
+				if (newSettings.TemplateFileBlobId != blobId)
+				{
+					//delete old blob
+					if (blobId is not null)
+					{
+						blobManager.DeleteBlob(blobId.Value);
+					}
+
+					if (newSettings.TemplateFileBlobId is not null)
+					{
+						//make new blob persistent
+						var isTmpBlob = blobManager.ExistsBlob(newSettings.TemplateFileBlobId.Value, temporary: true).Value;
+						if (isTmpBlob)
+						{
+							blobManager.MakeTempBlobPermanent(newSettings.TemplateFileBlobId.Value);
+						}
+					}
+				}
+			}
+		}
+
+
 		return new List<ValidationError>();
 	}
 
