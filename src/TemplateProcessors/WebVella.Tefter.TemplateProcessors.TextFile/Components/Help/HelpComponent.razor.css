@@ -1,0 +1,25 @@
+﻿::deep .example-row{
+	display:flex;
+	flex:1 1 100%;
+	width:100%;
+}
+
+::deep .example-col{
+	flex: 0 0 50%;
+}
+
+::deep .example-col .tf-grid-wrapper{
+	width:100%;
+}
+
+::deep .example-col .tf-grid{
+	width:100%; 
+}
+
+::deep .example-col.left{
+	padding-right:10px;
+}
+
+::deep .example-col.right{
+	padding-left:10px;
+}
