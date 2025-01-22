@@ -33,7 +33,7 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 		return new TextContentTemplatePreviewResult
 		{
 			Errors = result.Errors,
-			Content = result.Content
+			Items = result.Items
 		};
 	}
 
@@ -70,6 +70,8 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 
 		foreach (var key in groupedData.Keys)
 		{
+			var item = new TextContentTemplateResultItem();
+
 			try
 			{
 				if (settings.IsHtml)
@@ -77,19 +79,23 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 					var htmlProcessResult = new TfHtmlTemplateProcessResult();
 					htmlProcessResult.TemplateHtml = settings.Content ?? string.Empty;
 					htmlProcessResult.ProcessHtmlTemplate(groupedData[key]);
-					result.Content.Add(htmlProcessResult.ResultHtml??string.Empty);
+					item.Content = htmlProcessResult.ResultHtml ?? string.Empty;
 				}
 				else
 				{
 					var textProcessResult = new TfTextTemplateProcessResult();
 					textProcessResult.TemplateText = settings.Content ?? string.Empty;
 					textProcessResult.ProcessTextTemplate(groupedData[key]);
-					result.Content.Add(textProcessResult.ResultText ?? string.Empty);
+					item.Content = textProcessResult.ResultText ?? string.Empty;
 				}
+
+				item.NumberOfRows = groupedData.Count;
+
+				result.Items.Add(item);
 			}
 			catch (Exception ex)
 			{
-				result.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
+				item.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
 			}
 
 		}

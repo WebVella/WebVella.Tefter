@@ -2,7 +2,8 @@
 
 public class TextContentTemplatePreviewResult : ITfTemplatePreviewResult
 {
-	public List<string> Content { get; set; } = new();
+	public int ItemWithErrorsCount { get => Items.Where(x => x.Errors.Count > 0).Count(); }
+	public List<TextContentTemplateResultItem> Items { get; set; } = new();
 	public bool IsHtml { get; set; }
 	public List<ValidationError> Errors { get; set; } = new();
 }
