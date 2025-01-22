@@ -28,10 +28,31 @@
 				<FluentValidationMessage For="@(() => _form.Content)" />
 			</FluentGridItem>
 		</FluentGrid>
+		<FluentGrid>
+			<FluentGridItem xs="12">
+				<FluentInputLabel Label="@LOC("Group by columns")" />
+				<FluentStack>
+					<TfSelectList @bind-Values=@_form.GroupBy @bind-Values:after=_valueChanged Placeholder="@LOC("type a column name + ENTER")"
+					NoItemsMessage="@LOC("no data grouping will be applied")" />
+				</FluentStack>
+				<FluentValidationMessage For="@(() => _form.GroupBy)" />
+			</FluentGridItem>
+		</FluentGrid>
 	</FluentEditForm>
 }
 else
 {
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentInputLabel Label="@LOC("Content type")" />
+			@if (_form.IsHtml) {
+				<div><FluentBadge Appearance="Appearance.Accent">HTML</FluentBadge></div>
+			}
+			else{
+				<div><FluentBadge Appearance="Appearance.Neutral">Text</FluentBadge></div>
+			}
+		</FluentGridItem>
+	</FluentGrid>
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Content")" />
@@ -43,6 +64,12 @@ else
 			{
 				<FluentTextArea Value=@_form.Content ReadOnly="true" Style="width:100%" Rows="7" />
 			}
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentInputLabel Label="@LOC("Group by columns")" />
+			<TfSelectList Values=@_form.GroupBy NoItemsMessage="@LOC("no data grouping will be applied")" />
 		</FluentGridItem>
 	</FluentGrid>
 }
