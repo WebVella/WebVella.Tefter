@@ -35,8 +35,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.EmailSender
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.DataProviders.MsSql", "src\WebVella.Tefter.DataProviders.MsSql\WebVella.Tefter.DataProviders.MsSql.csproj", "{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Templates", "src\WebVella.Tefter.Templates\WebVella.Tefter.Templates.csproj", "{29A87AE2-DB59-413F-8B49-4ADF72869D46}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TemplateProcessors", "TemplateProcessors", "{5B27AF15-DB08-4A07-BDBB-1F857288F9FC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.TemplateProcessors.Email", "src\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj", "{CCB8DE67-5804-4E5B-A254-99B59540E87B}"
@@ -89,10 +87,6 @@ Global
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB9D1C7F-6726-4EF7-B9D0-886AAC46C329}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29A87AE2-DB59-413F-8B49-4ADF72869D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29A87AE2-DB59-413F-8B49-4ADF72869D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29A87AE2-DB59-413F-8B49-4ADF72869D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29A87AE2-DB59-413F-8B49-4ADF72869D46}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CCB8DE67-5804-4E5B-A254-99B59540E87B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CCB8DE67-5804-4E5B-A254-99B59540E87B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCB8DE67-5804-4E5B-A254-99B59540E87B}.Release|Any CPU.ActiveCfg = Release|Any CPU
