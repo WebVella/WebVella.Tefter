@@ -33,10 +33,11 @@ else
 	{
 		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("{0} files have errors", _preview.ItemWithErrorsCount)</FluentMessageBar>
 	}
-	<h4>@LOC("Files to be generated")</h4>
+	<h4 style="margin-top:1rem;">@LOC("Files to be generated")</h4>
 	<div class="tf-grid-wrapper" style="margin-top:15px;">
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
 				<tr class="tf-grid-tr">
 					<th class="tf-grid-th">@LOC("file name")</th>
 					<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("used rows")</th>
@@ -56,13 +57,22 @@ else
 							<div>@item.NumberOfRows</div>
 						</td>
 						<td class="tf-grid-td">
-							<div>
+							<div style="white-space:normal">
 								@if (item.Errors.Count > 0)
 								{
 									<ul>
 										@foreach (var error in item.Errors)
 										{
-											<li style="color:var(--accent-base-color)">@error.PropertyName > @error.Message</li>
+											<li style="color:var(--error)">
+												@if (String.IsNullOrWhiteSpace(error.PropertyName))
+												{
+													<span>@error.Message</span>
+												}
+												else
+												{
+													<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
+												}
+											</li>
 										}
 									</ul>
 								}
