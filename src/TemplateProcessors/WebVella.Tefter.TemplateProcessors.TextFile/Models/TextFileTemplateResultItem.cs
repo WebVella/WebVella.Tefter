@@ -3,7 +3,8 @@
 public class TextFileTemplateResultItem
 {
 	public string FileName { get; set; }
-	public byte[] Content { get; set; }
-
+	public Guid? BlobId { get; set; } = null;
+	public string DownloadUrl { get; set; }
+	public int NumberOfRows { get; set; }
 	public List<ValidationError> Errors { get; set; } = new();
 }

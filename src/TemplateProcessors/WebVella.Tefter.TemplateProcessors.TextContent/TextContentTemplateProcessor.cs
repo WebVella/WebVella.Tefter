@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.TemplateProcessors.TextContent.Components;
+﻿using System.Text;
+using WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.TextContent;
 
@@ -26,8 +27,14 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 		TfDataTable dataTable,
 		IServiceProvider serviceProvider)
 	{
-		//TODO 
-		return null;
+		var result = (TextContentTemplateResult)GenerateResultInternal(
+			template, dataTable, serviceProvider);
+
+		return new TextContentTemplatePreviewResult
+		{
+			Errors = result.Errors,
+			Content = result.Content
+		};
 	}
 
 	public ITfTemplateResult ProcessTemplate(
@@ -36,8 +43,53 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
-		return null;
+		return GenerateResultInternal(template, dataTable, serviceProvider);
+	}
+
+	private ITfTemplateResult GenerateResultInternal(
+		TfTemplate template,
+		TfDataTable dataTable,
+		IServiceProvider serviceProvider)
+	{
+		var result = new TextContentTemplateResult();
+
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var dataManager = serviceProvider.GetService<ITfDataManager>();
+
+		if (string.IsNullOrWhiteSpace(template.SettingsJson))
+		{
+			result.Errors.Add(new ValidationError("", "Template settings are not set."));
+			return result;
+		}
+
+		var settings = JsonSerializer.Deserialize<TextContentTemplateSettings>(template.SettingsJson);
+
+		try
+		{
+			if (settings.IsHtml)
+			{
+				var htmlProcessResult = new TfHtmlTemplateProcessResult();
+				htmlProcessResult.TemplateHtml = settings.Content ?? string.Empty;
+				htmlProcessResult.ProcessHtmlTemplate(dataTable);
+				result.Content = htmlProcessResult.ResultHtml;
+				result.IsHtml = true;
+			}
+			else
+			{
+				var textProcessResult = new TfTextTemplateProcessResult();
+				textProcessResult.TemplateText = settings.Content ?? string.Empty;
+				textProcessResult.ProcessTextTemplate(dataTable);
+				result.Content = textProcessResult.ResultText;
+				result.IsHtml = false;
+			}
+		}
+		catch (Exception ex)
+		{
+			result.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
+		}
+
+
+		return result;
 	}
 
 	public List<ValidationError> ValidateSettings(

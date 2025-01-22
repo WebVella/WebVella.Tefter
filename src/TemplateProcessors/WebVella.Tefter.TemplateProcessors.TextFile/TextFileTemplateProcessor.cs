@@ -1,4 +1,7 @@
-﻿using WebVella.Tefter.TemplateProcessors.TextFile.Components;
+﻿using ClosedXML.Excel;
+using System.IO.Compression;
+using System.Text;
+using WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.TextFile;
 
@@ -26,8 +29,14 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		TfDataTable dataTable,
 		IServiceProvider serviceProvider)
 	{
-		//TODO 
-		return null;
+		var result = (TextFileTemplateResult)GenerateResultInternal(
+			template, dataTable, serviceProvider);
+
+		return new TextFileTemplatePreviewResult
+		{
+			Errors = result.Errors,
+			Items = result.Items
+		};
 	}
 
 	public ITfTemplateResult ProcessTemplate(
@@ -36,9 +45,176 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		ITfTemplatePreviewResult preview,
 		IServiceProvider serviceProvider)
 	{
-		//TODO
-		return null;
+		return GenerateResultInternal(template, dataTable, serviceProvider);
 	}
+
+	private ITfTemplateResult GenerateResultInternal(
+	TfTemplate template,
+	TfDataTable dataTable,
+	IServiceProvider serviceProvider)
+	{
+		var result = new TextFileTemplateResult();
+
+		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var dataManager = serviceProvider.GetService<ITfDataManager>();
+
+		if (string.IsNullOrWhiteSpace(template.SettingsJson))
+		{
+			result.Errors.Add(new ValidationError("", "Template settings are not set."));
+			return result;
+		}
+
+		var settings = JsonSerializer.Deserialize<TextFileTemplateSettings>(template.SettingsJson);
+
+		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
+
+		int filesCounter = 0;
+		foreach (var key in groupedData.Keys)
+		{
+			string filename = settings.FileName;
+
+			filesCounter++;
+
+			var ext = Path.GetExtension(filename);
+
+			if (groupedData.Keys.Count > 1)
+			{
+				var name = Path.GetFileNameWithoutExtension(filename);
+				filename = $"{filename}_{filesCounter}{ext}";
+			}
+
+			try
+			{
+				var bytes = blobManager.GetBlobByteArray(settings.TemplateFileBlobId.Value).Value;
+
+				string content = Encoding.UTF8.GetString(bytes);
+
+				string processedContent = string.Empty;
+
+				if(ext.ToLowerInvariant() == ".html" || ext.ToLowerInvariant() == ".htm")
+				{
+					var htmlProcessResult = new TfHtmlTemplateProcessResult();
+					htmlProcessResult.TemplateHtml = content ?? string.Empty;
+					htmlProcessResult.ProcessHtmlTemplate(groupedData[key]);
+					processedContent = htmlProcessResult.ResultHtml;
+				}
+				else
+				{
+					var textProcessResult = new TfTextTemplateProcessResult();
+					textProcessResult.TemplateText = content ?? string.Empty;
+					textProcessResult.ProcessTextTemplate(groupedData[key]);
+					processedContent = textProcessResult.ResultText;
+				}
+
+				using var resultStream = new MemoryStream();
+
+				bytes = UTF8Encoding.UTF8.GetBytes(processedContent);
+
+				resultStream.Write(bytes, 0, bytes.Length);
+
+				var resultBlobId = blobManager.CreateBlob(resultStream, temporary: true).Value;
+
+				resultStream.Close();
+
+				result.Items.Add(new TextFileTemplateResultItem
+				{
+					FileName = filename,
+					BlobId = resultBlobId,
+					DownloadUrl = $"/fs/blob/{resultBlobId}/{filename}",
+					NumberOfRows = groupedData[key].Rows.Count
+				});
+			}
+			catch (Exception ex)
+			{
+				result.Items.Add(new TextFileTemplateResultItem
+				{
+					FileName = filename,
+					DownloadUrl = null,
+					BlobId = null,
+					NumberOfRows = groupedData[key].Rows.Count,
+					Errors = new()
+					{
+						new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}")
+					}
+				});
+			}
+		}
+
+		GenerateZipFile(settings.FileName, result, blobManager);
+
+		return result;
+	}
+
+	private void GenerateZipFile(
+		string filename,
+		TextFileTemplateResult result,
+		ITfBlobManager blobManager)
+	{
+		var validItems = result.Items
+			.Where(x => x.Errors.Count == 0 && x.BlobId.HasValue)
+			.ToList();
+
+		if (validItems.Count == 0)
+		{
+			return;
+		}
+
+		using MemoryStream zipMs = new MemoryStream();
+
+		using (var archive = new ZipArchive(zipMs, ZipArchiveMode.Create, true))
+		{
+			foreach (var item in validItems)
+			{
+				var fileBytes = blobManager.GetBlobByteArray(item.BlobId.Value, temporary: true).Value;
+				var zipArchiveEntry = archive.CreateEntry(item.FileName, CompressionLevel.Fastest);
+				using var zipStream = zipArchiveEntry.Open();
+				zipStream.Write(fileBytes, 0, fileBytes.Length);
+				zipStream.Close();
+			}
+		}
+
+		var name = Path.GetFileNameWithoutExtension(filename);
+
+		var zipBlobId = blobManager.CreateBlob(zipMs, temporary: true).Value;
+		result.ZipFilename = $"{name}.zip";
+		result.ZipBlobId = zipBlobId;
+		result.ZipDownloadUrl = $"/fs/blob/{zipBlobId}/{name}.zip";
+	}
+
+	private Dictionary<string, TfDataTable> GroupDataTable(
+		List<string> groupColumns,
+		TfDataTable dataTable)
+	{
+		var result = new Dictionary<string, TfDataTable>();
+		if (groupColumns is null || groupColumns.Count == 0)
+		{
+			result.Add(string.Empty, dataTable);
+		}
+		else
+		{
+			foreach (TfDataRow row in dataTable.Rows)
+			{
+				var sbKey = new StringBuilder();
+
+				foreach (var column in groupColumns)
+				{
+					sbKey.Append($"{row[column]}$$$|||$$$");
+				}
+
+				var key = sbKey.ToString();
+
+				if (!result.ContainsKey(key))
+				{
+					result.Add(key, dataTable.NewTable());
+				}
+
+				result[key].Rows.Add(row);
+			}
+		}
+
+		return result;
+	}
+
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,

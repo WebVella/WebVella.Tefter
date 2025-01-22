@@ -193,7 +193,6 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				}
 
 				var textProcessResult = new TfTextTemplateProcessResult();
-				var htmlProcessResult = new TfHtmlTemplateProcessResult();
 				textProcessResult.TemplateText = settings.Sender ?? string.Empty;
 				textProcessResult.ProcessTextTemplate(data);
 				emailItem.Sender = textProcessResult.ResultText;
@@ -223,7 +222,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				textProcessResult.ProcessTextTemplate(data);
 				emailItem.TextContent = textProcessResult.ResultText;
 
-				htmlProcessResult = new TfHtmlTemplateProcessResult();
+				var htmlProcessResult = new TfHtmlTemplateProcessResult();
 				htmlProcessResult.TemplateHtml = settings.HtmlContent ?? string.Empty;
 				htmlProcessResult.ProcessHtmlTemplate(data);
 				emailItem.HtmlContent = htmlProcessResult.ResultHtml;

@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace WebVella.Tefter.Templates.Components;
 
-public partial class EmailContentProcessorSettingsComponent : TfFormBaseComponent, ITfCustomComponent
+public partial class EmailContentProcessorSettingsComponent : TfFormBaseComponent//, ITfCustomComponent
 {
 	//For this component only ReadOnly and Form will be supported
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
