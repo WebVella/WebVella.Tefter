@@ -67,6 +67,12 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
 
+		if (settings.TemplateFileBlobId is null )
+		{
+			result.Errors.Add(new ValidationError("TemplateFileBlobId", "Template file is not uploaded."));
+			return result;
+		}
+
 		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
 
 		int filesCounter = 0;

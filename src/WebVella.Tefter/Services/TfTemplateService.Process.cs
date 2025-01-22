@@ -46,10 +46,22 @@ internal partial class TfTemplateService : ITfTemplateService
 		ITfTemplatePreviewResult preview)
 	{
 		var template = GetTemplate(templateId).Value;
+
+		if (template is null)
+		{
+			throw new Exception("Template is not found.");
+		}
+
+		if (!template.SpaceDataList.Contains(spaceDataId))
+		{
+			throw new Exception("Template does not work for selected space data.");
+		}
+
 		var spaceData = _spaceManager.GetSpaceData(spaceDataId).Value;
 		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
 		var dataTable = _dataManager.QuerySpaceData(spaceData.Id, tfRecordIds).Value;
 
+		
 		return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
 	}
 
@@ -59,6 +71,12 @@ internal partial class TfTemplateService : ITfTemplateService
 		ITfTemplatePreviewResult preview)
 	{
 		var template = GetTemplate(templateId).Value;
+
+		if (template is null)
+		{
+			throw new Exception("Template is not found.");
+		}
+
 		var processor = GetTemplateProcessor(template.ContentProcessorType).Value;
 		return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
 	}

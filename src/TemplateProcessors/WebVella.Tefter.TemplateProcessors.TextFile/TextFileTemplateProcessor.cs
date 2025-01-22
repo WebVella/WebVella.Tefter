@@ -63,10 +63,20 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 			result.Errors.Add(new ValidationError("", "Template settings are not set."));
 			return result;
 		}
-
+		
 		var settings = JsonSerializer.Deserialize<TextFileTemplateSettings>(template.SettingsJson);
 
+		if (settings.TemplateFileBlobId is null)
+		{
+			result.Errors.Add(new ValidationError("TemplateFileBlobId", "Template file is not uploaded."));
+			return result;
+		}
+
 		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
+
+		var bytes = blobManager.GetBlobByteArray(settings.TemplateFileBlobId.Value).Value;
+
+		string content = Encoding.UTF8.GetString(bytes);
 
 		int filesCounter = 0;
 		foreach (var key in groupedData.Keys)
@@ -85,10 +95,6 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 			try
 			{
-				var bytes = blobManager.GetBlobByteArray(settings.TemplateFileBlobId.Value).Value;
-
-				string content = Encoding.UTF8.GetString(bytes);
-
 				string processedContent = string.Empty;
 
 				if(ext.ToLowerInvariant() == ".html" || ext.ToLowerInvariant() == ".htm")
