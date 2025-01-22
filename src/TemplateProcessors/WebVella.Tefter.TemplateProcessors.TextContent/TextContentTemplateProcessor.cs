@@ -89,7 +89,7 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 					item.Content = textProcessResult.ResultText ?? string.Empty;
 				}
 
-				item.NumberOfRows = groupedData.Count;
+				item.NumberOfRows = groupedData[key].Count;
 
 				result.Items.Add(item);
 			}
