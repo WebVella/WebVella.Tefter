@@ -2,7 +2,7 @@
 
 public class TextContentTemplatePreviewResult : ITfTemplatePreviewResult
 {
-	public string Content { get; set; }
+	public List<string> Content { get; set; } = new();
 	public bool IsHtml { get; set; }
 	public List<ValidationError> Errors { get; set; } = new();
 }

@@ -9,4 +9,5 @@ public class TextContentTemplateSettings
 
 	[Required]
 	public bool IsHtml { get; set; } = false;
+	public List<string> GroupBy { get; set; } = new();
 }

@@ -64,33 +64,73 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<TextContentTemplateSettings>(template.SettingsJson);
 
-		try
-		{
-			if (settings.IsHtml)
-			{
-				var htmlProcessResult = new TfHtmlTemplateProcessResult();
-				htmlProcessResult.TemplateHtml = settings.Content ?? string.Empty;
-				htmlProcessResult.ProcessHtmlTemplate(dataTable);
-				result.Content = htmlProcessResult.ResultHtml;
-				result.IsHtml = true;
-			}
-			else
-			{
-				var textProcessResult = new TfTextTemplateProcessResult();
-				textProcessResult.TemplateText = settings.Content ?? string.Empty;
-				textProcessResult.ProcessTextTemplate(dataTable);
-				result.Content = textProcessResult.ResultText;
-				result.IsHtml = false;
-			}
-		}
-		catch (Exception ex)
-		{
-			result.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
-		}
+		result.IsHtml = settings.IsHtml;
 
+		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
+
+		foreach (var key in groupedData.Keys)
+		{
+			try
+			{
+				if (settings.IsHtml)
+				{
+					var htmlProcessResult = new TfHtmlTemplateProcessResult();
+					htmlProcessResult.TemplateHtml = settings.Content ?? string.Empty;
+					htmlProcessResult.ProcessHtmlTemplate(groupedData[key]);
+					result.Content.Add(htmlProcessResult.ResultHtml??string.Empty);
+				}
+				else
+				{
+					var textProcessResult = new TfTextTemplateProcessResult();
+					textProcessResult.TemplateText = settings.Content ?? string.Empty;
+					textProcessResult.ProcessTextTemplate(groupedData[key]);
+					result.Content.Add(textProcessResult.ResultText ?? string.Empty);
+				}
+			}
+			catch (Exception ex)
+			{
+				result.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
+			}
+
+		}
 
 		return result;
 	}
+
+	private Dictionary<string, TfDataTable> GroupDataTable(
+		List<string> groupColumns,
+		TfDataTable dataTable)
+	{
+		var result = new Dictionary<string, TfDataTable>();
+		if (groupColumns is null || groupColumns.Count == 0)
+		{
+			result.Add(string.Empty, dataTable);
+		}
+		else
+		{
+			foreach (TfDataRow row in dataTable.Rows)
+			{
+				var sbKey = new StringBuilder();
+
+				foreach (var column in groupColumns)
+				{
+					sbKey.Append($"{row[column]}$$$|||$$$");
+				}
+
+				var key = sbKey.ToString();
+
+				if (!result.ContainsKey(key))
+				{
+					result.Add(key, dataTable.NewTable());
+				}
+
+				result[key].Rows.Add(row);
+			}
+		}
+
+		return result;
+	}
+
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
