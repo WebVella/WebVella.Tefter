@@ -154,6 +154,87 @@ public partial class TextTemplatesTests : TemplateTagTestsBase
 		
 		}
 	}
+	[Fact]
+	public async Task Text_Tag5()
+	{
+		var text = "{{sku(F=H,S=',',B=\", \")}}";
+		var data = SampleData.NewTable(new int[]{ 0,1,2 });
+		using (await locker.LockAsync())
+		{
+			var result = new TfTextTemplateProcessResult();
+			result.TemplateText = text;
+			Func<bool> action = () => { result.ProcessTextTemplate(data); return true; };
+			action.Should().NotThrow();
+
+			result.ResultText.Should().NotBeNullOrWhiteSpace();
+			var lines = _getLines(result.ResultText);
+			lines.Should().HaveCount(1);
+			result.ResultText.Should().Be("sku1,sku2,sku3");
+		
+		}
+	}
+
+	[Fact]
+	public async Task Text_Tag6()
+	{
+		var text = "test {{sku(F=H,S=',')}} {{name(F=H,S=',')}}";
+		var data = SampleData.NewTable(new int[]{ 0,1,2 });
+		using (await locker.LockAsync())
+		{
+			var result = new TfTextTemplateProcessResult();
+			result.TemplateText = text;
+			Func<bool> action = () => { result.ProcessTextTemplate(data); return true; };
+			action.Should().NotThrow();
+
+			result.ResultText.Should().NotBeNullOrWhiteSpace();
+			var lines = _getLines(result.ResultText);
+			lines.Should().HaveCount(1);
+			result.ResultText.Should().Be("test sku1,sku2,sku3 item1,item2,item3");
+		
+		}
+	}
+
+	[Fact]
+	public async Task Text_Tag7()
+	{
+		var text = "test {{sku(F=H,S=',')}} {{name(F=H,S=', ')}}";
+		var data = SampleData.NewTable(new int[]{ 0,1,2 });
+		using (await locker.LockAsync())
+		{
+			var result = new TfTextTemplateProcessResult();
+			result.TemplateText = text;
+			Func<bool> action = () => { result.ProcessTextTemplate(data); return true; };
+			action.Should().NotThrow();
+
+			result.ResultText.Should().NotBeNullOrWhiteSpace();
+			var lines = _getLines(result.ResultText);
+			lines.Should().HaveCount(1);
+			result.ResultText.Should().Be("test sku1,sku2,sku3 item1, item2, item3");
+		
+		}
+	}
+
+	[Fact]
+	public async Task Text_Tag8()
+	{
+		var text = "Component: {{sku(F=H,S=', ')}} with ETA: {{name(F=H,S=', ')}}";
+		var data = SampleData.NewTable(new int[]{ 0,1,2 });
+		using (await locker.LockAsync())
+		{
+			var result = new TfTextTemplateProcessResult();
+			result.TemplateText = text;
+			Func<bool> action = () => { result.ProcessTextTemplate(data); return true; };
+			action.Should().NotThrow();
+
+			result.ResultText.Should().NotBeNullOrWhiteSpace();
+			var lines = _getLines(result.ResultText);
+			lines.Should().HaveCount(1);
+			result.ResultText.Should().Be("test sku1,sku2,sku3 item1, item2, item3");
+		
+		}
+	}
+
+	
 	#endregion
 
 	#region << Data >>

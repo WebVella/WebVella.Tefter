@@ -91,6 +91,24 @@ public partial class HtmlTemplatesTests : TemplateTagTestsBase
 			
 		}
 	}
+
+	[Fact]
+	public async Task Text_Tag8()
+	{
+		var text = "<p>Component: {{sku(F=H,S=', ')}} with ETA: <strong>{{name(F=H,S=', ')}}</strong></p>";
+		var data = SampleData.NewTable(new int[]{ 0,1,2 });
+		using (await locker.LockAsync())
+		{
+			var result = new TfHtmlTemplateProcessResult();
+			result.TemplateHtml = text;
+			Func<bool> action = () => { result.ProcessHtmlTemplate(data); return true; };
+			action.Should().NotThrow();
+
+			result.ResultHtml.Should().NotBeNullOrWhiteSpace();
+			result.ResultHtml.Should().Be("test sku1,sku2,sku3 item1, item2, item3");
+		
+		}
+	}
 	#endregion
 
 	#region << Plain Div >>

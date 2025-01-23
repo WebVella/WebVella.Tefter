@@ -19,7 +19,6 @@ public static partial class TfTemplateUtility
 		//	return result;
 		//}
 		result.Tags = GetTagsFromTemplate(template);
-		result.AllDataTags = !result.Tags.Any(x => x.Type != TfTemplateTagType.Data);
 		//if there are no tags - return one with the template
 		if (result.Tags.Count == 0)
 		{
@@ -27,11 +26,12 @@ public static partial class TfTemplateUtility
 			return result;
 		}
 		//if all tags are index - return one with processed template
-		else if (!result.Tags.Any(x => x.IndexList.Count == 0))
+		if (!result.IsMultiValueTemplate)
 		{
 			result.Values.Add(GenerateTemplateTagResult(template, result.Tags, dataSource, null, culture).Value);
 			return result;
 		}
+
 		for (int i = 0; i < dataSource.Rows.Count; i++)
 		{
 			result.Values.Add(GenerateTemplateTagResult(template, result.Tags, dataSource, i, culture).Value);
@@ -71,41 +71,14 @@ public static partial class TfTemplateUtility
 			if (tag.Type == TfTemplateTagType.Data)
 			{
 				if (String.IsNullOrWhiteSpace(tag.Name)) return (templateResultString, templateResultObject);
-				int columnIndex = dataSource.Columns.IndexOf(x => x.Name.ToLowerInvariant() == tag.Name);
-				if (columnIndex == -1) return (templateResultString, templateResultObject);
-				if (dataSource.Rows.Count == 0) return (templateResultString, templateResultObject);
-				int rowIndex = 0;
-				if (tag.IndexList is not null && tag.IndexList.Count > 0)
+				if (tag.Flow == TfTemplateTagDataFlow.Horizontal && contextRowIndex is null)
 				{
-					rowIndex = tag.IndexList[0];
+					//If horizontal all items should be return in one template 
+					(templateResultString, newResultObject) = ReplaceAllValuesDataTagInTemplate(templateResultString, templateResultObject, tag, dataSource);
 				}
-				else if (contextRowIndex is not null && dataSource.Rows.Count - 1 >= contextRowIndex)
+				else
 				{
-					rowIndex = contextRowIndex.Value;
-				}
-				var indexCanBeApplied = (dataSource.Rows.Count >= rowIndex + 1) && (dataSource.Columns.Count >= columnIndex + 1);
-				var oneTagOnlyTemplate = templateResultString?.ToLowerInvariant() == tag.FullString?.ToLowerInvariant();
-
-				if(indexCanBeApplied)
-					templateResultString = templateResultString.Replace(tag.FullString, dataSource.Rows[rowIndex][columnIndex]?.ToString());
-
-				if (oneTagOnlyTemplate)
-				{
-					if (templateResultObject is not null)
-					{
-						newResultObject = templateResultString;
-					}
-					else if(indexCanBeApplied)
-					{
-						newResultObject = dataSource.Rows[rowIndex][columnIndex];
-						//newResultObject = TryExractValue(templateResultString, dataSource.Columns[columnIndex]);
-					}
-					else{ 
-						newResultObject = templateResultString;
-					}
-				}
-				else{ 
-					newResultObject = templateResultString;
+					(templateResultString, newResultObject) = ReplaceSingleValueDataTagInTemplate(templateResultString, templateResultObject, tag, dataSource, contextRowIndex);
 				}
 			}
 			else if (tag.Type == TfTemplateTagType.Function)
@@ -125,6 +98,78 @@ public static partial class TfTemplateUtility
 			Thread.CurrentThread.CurrentCulture = currentCulture;
 			Thread.CurrentThread.CurrentUICulture = currentUICulture;
 		}
+	}
+
+	public static (string, object) ReplaceSingleValueDataTagInTemplate(string templateResultString, object templateResultObject, TfTemplateTag tag, TfDataTable dataSource, int? contextRowIndex)
+	{
+		object newResultObject = null;
+		int columnIndex = dataSource.Columns.IndexOf(x => x.Name.ToLowerInvariant() == tag.Name);
+		if (columnIndex == -1) return (templateResultString, templateResultObject);
+		if (dataSource.Rows.Count == 0) return (templateResultString, templateResultObject);
+		int rowIndex = 0;
+		if (tag.IndexList is not null && tag.IndexList.Count > 0)
+		{
+			rowIndex = tag.IndexList[0];
+		}
+		else if (contextRowIndex is not null && dataSource.Rows.Count - 1 >= contextRowIndex)
+		{
+			rowIndex = contextRowIndex.Value;
+		}
+		var indexCanBeApplied = (dataSource.Rows.Count >= rowIndex + 1) && (dataSource.Columns.Count >= columnIndex + 1);
+		var oneTagOnlyTemplate = templateResultString?.ToLowerInvariant() == tag.FullString?.ToLowerInvariant();
+
+		if (indexCanBeApplied)
+			templateResultString = templateResultString.Replace(tag.FullString, dataSource.Rows[rowIndex][columnIndex]?.ToString());
+
+		if (oneTagOnlyTemplate)
+		{
+			if (templateResultObject is not null)
+			{
+				newResultObject = templateResultString;
+			}
+			else if (indexCanBeApplied)
+			{
+				newResultObject = dataSource.Rows[rowIndex][columnIndex];
+				//newResultObject = TryExractValue(templateResultString, dataSource.Columns[columnIndex]);
+			}
+			else
+			{
+				newResultObject = templateResultString;
+			}
+		}
+		else
+		{
+			newResultObject = templateResultString;
+		}
+		return (templateResultString, newResultObject);
+	}
+
+	public static (string, object) ReplaceAllValuesDataTagInTemplate(string templateResultString, object templateResultObject, TfTemplateTag tag, TfDataTable dataSource)
+	{
+		object newResultObject = null;
+		int columnIndex = dataSource.Columns.IndexOf(x => x.Name.ToLowerInvariant() == tag.Name);
+		if (columnIndex == -1) return (templateResultString, templateResultObject);
+		if (dataSource.Rows.Count == 0) return (templateResultString, templateResultObject);
+
+		var oneTagOnlyTemplate = templateResultString?.ToLowerInvariant() == tag.FullString?.ToLowerInvariant();
+
+		var tagContentList = new List<string>();
+		for (int rowIndex = 0; rowIndex < dataSource.Rows.Count; rowIndex++)
+		{
+			var value = dataSource.Rows[rowIndex][columnIndex]?.ToString();
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				tagContentList.Add(value);
+			}
+		}
+
+		if (tagContentList.Count > 0)
+		{
+			var separator = tag.FlowSeparator ?? "";
+			templateResultString = templateResultString.Replace(tag.FullString, String.Join(separator, tagContentList));
+		}
+		newResultObject = templateResultString;
+		return (templateResultString, newResultObject);
 	}
 
 	public static List<TfTemplateTag> GetTagsFromTemplate(string text)
@@ -224,9 +269,12 @@ public static partial class TfTemplateUtility
 		processedParameterGroup = processedParameterGroup?.Trim();
 		if (String.IsNullOrWhiteSpace(processedParameterGroup)) return result;
 
-		foreach (var parameterString in processedParameterGroup.Split(",", StringSplitOptions.RemoveEmptyEntries))
+		string pattern = @"\w+(?:\s*=\s*('[^']*'|\"".*?\""|[^,]*))?";
+		Regex regex = new Regex(pattern);
+		MatchCollection matches = regex.Matches(processedParameterGroup);
+		foreach (Match match in matches)
 		{
-			var parameter = ExtractTagParameterFromDefinition(parameterString, tagType);
+			var parameter = ExtractTagParameterFromDefinition(match.Value, tagType);
 			if (parameter is not null) result.Add(parameter);
 		}
 
@@ -270,6 +318,10 @@ public static partial class TfTemplateUtility
 			{
 				return new TfTemplateTagDataFlowParameter(paramValue);
 			};
+			if (paramName == "s")
+			{
+				return new TfTemplateTagDataSeparatorParameter(paramValue);
+			};
 		}
 		else if (tagType == TfTemplateTagType.Function)
 		{
@@ -297,5 +349,6 @@ public static partial class TfTemplateUtility
 
 		return null;
 	}
+
 
 }

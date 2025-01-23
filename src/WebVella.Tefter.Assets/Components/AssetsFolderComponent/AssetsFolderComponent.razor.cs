@@ -34,6 +34,8 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private List<Asset> _allItems = new();
 	private Guid? _actionMenuIdOpened = null;
 	private string _search = null;
+	private Guid? _itemsFolderId = null;
+	private Guid? _itemsShareKeyValue = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -51,15 +53,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 		{
 			if (FolderId is not null)
 			{
-				var getFolderResult = AssetsService.GetFolder(FolderId.Value);
-				if (getFolderResult.IsSuccess) _folder = getFolderResult.Value;
-				else throw new Exception("GetFolder failed");
-				if (_folder is not null && SharedKeyValue is not null)
-				{
-					var getAssetsResult = AssetsService.GetAssets(_folder.Id, SharedKeyValue.Value);
-					if (getAssetsResult.IsSuccess) _allItems = getAssetsResult.Value;
-					else throw new Exception("GetAssets failed");
-				}
+				_getAllItems();
 				_isLoading = false;
 				_search = TfAppState.Value.Route.Search;
 				_generateItems();
@@ -74,6 +68,17 @@ public partial class AssetsFolderComponent : TfBaseComponent
 
 		}
 
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		if (SharedKeyValue != _itemsShareKeyValue || FolderId != _itemsFolderId)
+		{
+			//_allitems needs to be regenerated
+			_getAllItems();
+			_generateItems();
+		}
 	}
 
 	private void On_AppChanged(SetAppStateAction action)
@@ -120,6 +125,21 @@ public partial class AssetsFolderComponent : TfBaseComponent
 			}
 		}
 
+	}
+
+	private void _getAllItems()
+	{
+		var getFolderResult = AssetsService.GetFolder(FolderId.Value);
+		if (getFolderResult.IsSuccess) _folder = getFolderResult.Value;
+		else throw new Exception("GetFolder failed");
+		if (_folder is not null && SharedKeyValue is not null)
+		{
+			var getAssetsResult = AssetsService.GetAssets(_folder.Id, SharedKeyValue.Value);
+			if (getAssetsResult.IsSuccess) _allItems = getAssetsResult.Value;
+			else throw new Exception("GetAssets failed");
+		}
+		_itemsShareKeyValue = SharedKeyValue;
+		_itemsFolderId = FolderId;
 	}
 
 	private async Task _addLink()

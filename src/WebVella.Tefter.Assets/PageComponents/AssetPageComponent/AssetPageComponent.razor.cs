@@ -5,6 +5,7 @@ namespace WebVella.Tefter.Assets.PageComponents;
 public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 {
 	#region << Injects >>
+	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
 	[Inject] protected IAssetsService AssetsService { get; set; }

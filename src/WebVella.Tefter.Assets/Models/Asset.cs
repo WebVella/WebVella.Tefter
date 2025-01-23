@@ -15,6 +15,7 @@ public class Asset
 
 [JsonDerivedType(typeof(FileAssetContent), typeDiscriminator: "file")]
 [JsonDerivedType(typeof(LinkAssetContent), typeDiscriminator: "link")]
+[JsonDerivedType(typeof(DocumentAssetContent), typeDiscriminator: "document")]
 public class AssetContentBase
 {
 	public string Label { get; set; }
@@ -31,6 +32,12 @@ public class LinkAssetContent : AssetContentBase
 {
 	public string Url { get; set; }
 	public string IconUrl { get; set; }
+}
+
+public class DocumentAssetContent : AssetContentBase
+{
+	public DocumentAssetContentType Type { get; set; }
+	public string Content { get; set; }
 }
 
 public class CreateFileAssetModel

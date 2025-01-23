@@ -4,7 +4,20 @@ public class TfTemplateTagResultList
 {
 	//What string needs to be replaced in the place of the tag data
 	public List<TfTemplateTag> Tags { get; set; } = new();
-	public bool AllDataTags { get; set; } = false; //for optimization purpose - when all tags are a data type
+	public bool AllDataTags
+	{
+		get
+		{
+			return Tags.All(x => x.Type == TfTemplateTagType.Data);
+		}
+	}
+	public bool IsMultiValueTemplate
+	{
+		get
+		{
+			return Tags.Any(x => x.IndexList.Count == 0 && x.Flow != TfTemplateTagDataFlow.Horizontal);
+		}
+	}
 	public List<object> Values { get; set; } = new();
 }
 
@@ -26,6 +39,44 @@ public class TfTemplateTag
 	//in the methods the first one is always 0 by default
 	public List<int> IndexList { get; set; } = new();
 	public List<TfTemplateTagParamGroup> ParamGroups { get; set; } = new();
+
+	public TfTemplateTagDataFlow Flow
+	{
+		get
+		{
+			foreach (var paramGroup in ParamGroups)
+			{
+				foreach (var param in paramGroup.Parameters)
+				{
+					if (param.Type == typeof(TfTemplateTagDataFlowParameter)
+						&& ((TfTemplateTagDataFlowParameter)param).Value == TfTemplateTagDataFlow.Horizontal)
+					{
+						return TfTemplateTagDataFlow.Horizontal;
+					}
+				}
+			}
+			return TfTemplateTagDataFlow.Vertical;
+		}
+	}
+
+	public string FlowSeparator
+	{
+		get
+		{
+			foreach (var paramGroup in ParamGroups)
+			{
+				foreach (var param in paramGroup.Parameters)
+				{
+					if (param.Type == typeof(TfTemplateTagDataSeparatorParameter))
+					{
+						return param.ValueString;
+					}
+				}
+			}
+			return null;
+		}
+	}
+
 }
 public enum TfTemplateTagType
 {
@@ -77,7 +128,7 @@ internal class TfTemplateTagUnknownParameter : ITfTemplateTagParameterBase
 internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase, ITfTemplateTagParameterExcel
 {
 	public Type Type { get => this.GetType(); }
-	public string Name { get; set; } = "F";
+	public string Name { get; set; } = "f";
 	public string ValueString { get; set; }
 	public TfTemplateTagType TagType { get => TfTemplateTagType.Data; }
 	public TfTemplateTagDataFlow Value { get; set; }
@@ -104,12 +155,31 @@ internal class TfTemplateTagDataFlowParameter : ITfTemplateTagParameterBase, ITf
 	public HashSet<Guid> GetDependencies(TfExcelTemplateProcessResult result, TfExcelTemplateContext context, TfTemplateTag tag, TfTemplateTagParamGroup parameterGroup, ITfTemplateTagParameterExcel paramter)
 	 => new HashSet<Guid>();
 }
-internal enum TfTemplateTagDataFlow
+public enum TfTemplateTagDataFlow
 {
 	[Description("V")]
 	Vertical = 0,
 	[Description("H")]
 	Horizontal = 1
+}
+
+internal class TfTemplateTagDataSeparatorParameter : ITfTemplateTagParameterBase, ITfTemplateTagParameterExcel
+{
+	public Type Type { get => this.GetType(); }
+	public string Name { get; set; } = "s";
+	public string ValueString { get; set; }
+	public TfTemplateTagType TagType { get => TfTemplateTagType.Data; }
+	public string Value { get; set; }
+
+	public TfTemplateTagDataSeparatorParameter() { }
+	public TfTemplateTagDataSeparatorParameter(string valueString)
+	{
+		ValueString = valueString;
+		Value = valueString;
+	}
+
+	public HashSet<Guid> GetDependencies(TfExcelTemplateProcessResult result, TfExcelTemplateContext context, TfTemplateTag tag, TfTemplateTagParamGroup parameterGroup, ITfTemplateTagParameterExcel paramter)
+ => new HashSet<Guid>();
 }
 
 #endregion

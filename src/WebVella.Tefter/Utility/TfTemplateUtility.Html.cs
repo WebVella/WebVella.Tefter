@@ -14,6 +14,9 @@ public static partial class TfTemplateUtility
 			result.ResultHtml = result.TemplateHtml;
 			return;
 		}
+		//The editor encodes some of the symbols like ' and ""
+		result.TemplateHtml = HttpUtility.HtmlDecode(result.TemplateHtml);
+
 		HtmlDocument doc = new HtmlDocument();
 		doc.OptionEmptyCollection = true; //Prevent from returning null
 		HtmlDocument docResult = new HtmlDocument();

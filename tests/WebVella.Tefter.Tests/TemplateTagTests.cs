@@ -509,6 +509,116 @@ public partial class TemplateTagTests : TemplateTagTestsBase
 		result[0].ParamGroups.Count.Should().Be(0);
 	}
 
+	[Fact]
+	public void OnInTextTemplateShouldReturnOneDataTagWitTwoNamedGroupParams()
+	{
+		//Given
+		var columnName = "column_name";
+		var paramName = "param1";
+		var paramValue = "test";
+		var paramName2 = "param2";
+		var paramValue2 = "test2";
+		string template = "{{" + columnName + "(" + paramName + "='" + paramValue + "')" + "(" + paramName2 + "='" + paramValue2 + "')}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].FullString.Should().Be(template);
+		result[0].Name.Should().Be(columnName);
+		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].ParamGroups.Count.Should().Be(2);
+		result[0].ParamGroups[0].Parameters.Count.Should().Be(1);
+		result[0].ParamGroups[0].Parameters[0].Name.Should().Be(paramName.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be(paramValue);
+		result[0].ParamGroups[1].Parameters.Count.Should().Be(1);
+		result[0].ParamGroups[1].Parameters[0].Name.Should().Be(paramName2.ToLowerInvariant());
+		result[0].ParamGroups[1].Parameters[0].ValueString.Should().Be(paramValue2);
+	}
+	[Fact]
+	public void OnInTextTemplateShouldReturnOneDataTagWitGroupWithParams()
+	{
+		//Given
+		var columnName = "column_name";
+		var paramName = "param1";
+		var paramValue = "test";
+		var paramName2 = "param2";
+		var paramValue2 = "test2";
+		string template = "{{" + columnName + "(" + paramName + "='" + paramValue + "'," + paramName2 + "='" + paramValue2 + "')}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].FullString.Should().Be(template);
+		result[0].Name.Should().Be(columnName);
+		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].ParamGroups.Count.Should().Be(1);
+		result[0].ParamGroups[0].Parameters.Count.Should().Be(2);
+		result[0].ParamGroups[0].Parameters[0].Name.Should().Be(paramName.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be(paramValue);
+		result[0].ParamGroups[0].Parameters[1].Name.Should().Be(paramName2.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[1].ValueString.Should().Be(paramValue2);
+	}
+	[Fact]
+	public void OnInTextTemplateShouldReturnOneDataTagWitGroupWithParamsWithQuotes()
+	{
+		//Given
+		var columnName = "column_name";
+		var paramName = "param1";
+		var paramValue = "test";
+		var paramName2 = "param2";
+		var paramValue2 = "test2";
+		string template = "{{" + columnName + "(" + paramName + "=\"" + paramValue + "\"," + paramName2 + "=\"" + paramValue2 + "\")}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].FullString.Should().Be(template);
+		result[0].Name.Should().Be(columnName);
+		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].ParamGroups.Count.Should().Be(1);
+		result[0].ParamGroups[0].Parameters.Count.Should().Be(2);
+		result[0].ParamGroups[0].Parameters[0].Name.Should().Be(paramName.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be(paramValue);
+		result[0].ParamGroups[0].Parameters[1].Name.Should().Be(paramName2.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[1].ValueString.Should().Be(paramValue2);
+	}
+
+	[Fact]
+	public void OnInTextTemplateShouldReturnOneDataTagWitGroupWithParamsWithQuotes2()
+	{
+		//Given
+		var columnName = "column_name";
+		var paramName = "F";
+		var paramValue = "H";
+		var paramName2 = "S";
+		var paramValue2 = ", ";
+		var paramName3 = "B";
+		var paramValue3 = ", ";
+		//var text = "{{sku(F=H,S=',',B=\", \")}}";
+		string template = "{{" + columnName + "(" + paramName + "=" + paramValue + "," + paramName2 +"='" +paramValue2 +"'," + paramName3 + "=\"" + paramValue3 + "\")}}";
+		//When
+		List<TfTemplateTag> result = TfTemplateUtility.GetTagsFromTemplate(template);
+		//Then
+		result.Should().NotBeNull();
+		result.Count.Should().Be(1);
+		result[0].FullString.Should().Be(template);
+		result[0].Name.Should().Be(columnName);
+		result[0].Type.Should().Be(TfTemplateTagType.Data);
+		result[0].ParamGroups.Count.Should().Be(1);
+		result[0].ParamGroups[0].Parameters.Count.Should().Be(3);
+		result[0].ParamGroups[0].Parameters[0].Name.Should().Be(paramName.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[0].ValueString.Should().Be(paramValue);
+		result[0].ParamGroups[0].Parameters[1].Name.Should().Be(paramName2.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[1].ValueString.Should().Be(paramValue2);
+		result[0].ParamGroups[0].Parameters[2].Name.Should().Be(paramName3.ToLowerInvariant());
+		result[0].ParamGroups[0].Parameters[2].ValueString.Should().Be(paramValue3);
+	}
+
+	
+
 	#endregion
 
 	#region << FUNCTION >>

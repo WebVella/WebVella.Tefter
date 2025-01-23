@@ -117,7 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add page" xml:space="preserve">
+    <value>Добави страница</value>
+  </data>
   <data name="Manage space '{0}'" xml:space="preserve">
     <value>Редактирай област '{0}'</value>
+  </data>
+  <data name="Pages" xml:space="preserve">
+    <value>Страници</value>
   </data>
 </root>
