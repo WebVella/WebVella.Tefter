@@ -74,6 +74,14 @@ public class AssetsController : ControllerBase
 				}
 			}
 		}
+
+		
+		if(!_blobManager.ExistsBlob(fileAssetContent.BlobId).Value)
+		{
+			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+			return new JsonResult(new { });
+		}
+
 		var cultureInfo = new CultureInfo("en-US");
 
 		HttpContext.Response.Headers.Add("last-modified", asset.ModifiedOn.ToString(cultureInfo));
