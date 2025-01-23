@@ -1,4 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Wordprocessing;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace WebVella.Tefter;
 
@@ -513,5 +517,39 @@ internal class TfBlobManager : ITfBlobManager
 		CancellationToken stoppingToken)
 	{
 
+		var tmpDirectory = Path.Combine(BlobStoragePath, "_");
+		foreach (var dir in Directory.GetDirectories(tmpDirectory))
+		{
+			string lvl1DirPath = Path.Combine(tmpDirectory, dir);
+
+			foreach (var childDir in Directory.GetDirectories(lvl1DirPath))
+			{
+				var lvl2DirPath = Path.Combine(dir, childDir);
+				var files = Directory.GetFiles(lvl2DirPath); ;
+
+				foreach (var file in files)
+				{
+					string fullFilePath = Path.Combine(lvl2DirPath, file);
+					var lastModified = System.IO.File.GetLastWriteTime(fullFilePath);
+					if (lastModified < DateTime.Now.AddDays(-7))
+					{
+						File.Delete(fullFilePath);
+					}
+				}
+
+				files = Directory.GetFiles(lvl2DirPath);
+				if (files.Length == 0)
+				{
+					Directory.Delete(lvl2DirPath);
+				}
+			}
+
+			if (Directory.GetDirectories(lvl1DirPath).Length == 0)
+			{
+				Directory.Delete(lvl1DirPath);
+			}
+		}
+
+		await Task.Delay(100);
 	}
 }
