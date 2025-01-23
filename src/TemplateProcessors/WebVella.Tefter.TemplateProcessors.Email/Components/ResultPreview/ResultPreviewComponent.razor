@@ -36,19 +36,19 @@ else
 	}
 	<FluentStack>
 		<h4 style="flex:0 0 33%">@LOC("Emails to be generated") <FluentBadge Appearance="Appearance.Accent">@_preview.Items.Count</FluentBadge></h4>
-		<FluentStack Style="flex:0 0 67%">
-			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="width:100px" OnClick="_prevItem" Disabled="@(_preview.Items.Count == 1)" />
-			<FluentSelect TOption="EmailTemplateResultItem" Style="width:100%" SelectedOption="@_form"
+		<FluentStack Style="flex:1 1 auto" HorizontalGap="5">
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_prevItem" Disabled="@(_preview.Items.Count == 1)" />
+			<FluentSelect TOption="EmailTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
 						  SelectedOptionChanged="_selectedOptionChanged" Value="@_form.Id.ToString()"
 						  Disabled="@(_preview.Items.Count == 1)"
-						  OptionValue="@((p)=> p.Id.ToString())" OptionText="@((p)=> String.Join(";",p.Recipients))"
+						  OptionValue="@((p)=> p.Id.ToString())" 
 						  Items="_preview.Items">
 				<OptionTemplate Context="p">
 					<span style="margin-right:5px">@_itemPositionDict[p.Id]:</span>
 					<span>@String.Join(";", p.Recipients)</span>
 				</OptionTemplate>
 			</FluentSelect>
-			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline" Style="width:100px" OnClick="_nextItem" Disabled="@(_preview.Items.Count == 1)" />
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_nextItem" Disabled="@(_preview.Items.Count == 1)" />
 		</FluentStack>
 	</FluentStack>
 	<FluentDivider Style="margin:10px 0" />
