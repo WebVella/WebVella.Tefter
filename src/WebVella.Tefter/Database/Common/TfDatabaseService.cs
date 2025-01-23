@@ -2,6 +2,7 @@
 
 public interface ITfDatabaseService
 {
+	ITfDbConfigurationService Configuration { get; }
 	TfDatabaseContext CreateContext();
 	TfDatabaseConnection CreateConnection();
 	TfDatabaseTransactionScope CreateTransactionScope(string lockKey = null);

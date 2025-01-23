@@ -83,14 +83,14 @@ public class RepositoryController : ControllerBase
 
 		//try to find as perm blob
 		var streamResult = _blobManager.GetBlobStream(blobId,true);
-		if(streamResult.IsFailed) 
-		{
-			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-			return NotFound();
-		}
+		//if(streamResult.IsFailed) 
+		//{
+		//	HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+		//	return NotFound();
+		//}
 
 		//try to find as temp blob
-		if (streamResult.Value is null)
+		if (streamResult.IsFailed || streamResult.Value is null)
 		{
 			streamResult = _blobManager.GetBlobStream(blobId, false);
 			if (streamResult.IsFailed || streamResult.Value is null )

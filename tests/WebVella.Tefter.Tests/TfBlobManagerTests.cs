@@ -11,6 +11,9 @@ public partial class TfBlobManagerTests : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfBlobManager blobManager = ServiceProvider.GetRequiredService<ITfBlobManager>();
 
+			if (dbService.Configuration.ConnectionString.ToLowerInvariant().Contains("database=tefter;"))
+				throw new Exception("Invalid database");
+
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				const string sampleJsonFileContent = @"{
@@ -131,6 +134,9 @@ public partial class TfBlobManagerTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfBlobManager blobManager = ServiceProvider.GetRequiredService<ITfBlobManager>();
+
+			if (dbService.Configuration.ConnectionString.ToLowerInvariant().Contains("database=tefter;"))
+				throw new Exception("Invalid database");
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
