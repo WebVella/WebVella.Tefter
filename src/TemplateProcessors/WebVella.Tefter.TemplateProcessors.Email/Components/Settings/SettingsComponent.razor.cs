@@ -35,6 +35,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponen
 		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
 			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(Context.Template.SettingsJson);
+			_recalcAttachmentData();
 			base.InitForm(_form);
 		}
 	}
