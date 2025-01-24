@@ -146,51 +146,8 @@ ORDER BY aa.created_on DESC;";
 		Guid? folderId = null,
 		string skTextId = null)
 	{
-		try
-		{
-			Guid? skId = _dataManager.GetId(skTextId).Value;
-
-			const string SQL = @"
-WITH sk_info AS (
-	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
-	FROM assets_related_sk trs
-		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
-	WHERE ( @sk_id IS NULL OR trs.id = @sk_id )
-	GROUP BY trs.asset_id
-)
-SELECT 
-	aa.id,
-	aa.folder_id,
-	aa.type,
-	aa.content_json,
-	aa.created_by,
-	aa.created_on,
-	aa.modified_by,
-	aa.modified_on,
-	sk.json_result AS related_shared_key_json
-FROM assets_asset aa
-	LEFT OUTER JOIN sk_info sk ON aa.id = sk.asset_id
-WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND ( @sk_id IS NULL OR sk.asset_id is not null )
-ORDER BY aa.created_on DESC;";
-
-			var folderIdPar = CreateParameter(
-				"folder_id",
-				folderId,
-				DbType.Guid);
-
-			var skIdPar = CreateParameter(
-				"sk_id",
-				skId,
-				DbType.Guid);
-
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
-
-			return Result.Ok(ToAssetList(dt));
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get assets.").CausedBy(ex));
-		}
+		Guid? skId = _dataManager.GetId(skTextId).Value;
+		return GetAssets(folderId, skId);
 	}
 
 	public Result<Asset> CreateFileAsset(
