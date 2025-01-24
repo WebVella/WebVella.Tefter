@@ -466,6 +466,10 @@ internal class TfBlobManager : ITfBlobManager
 		{
 			if (!Directory.Exists(BlobStoragePath))
 				Directory.CreateDirectory(BlobStoragePath);
+
+			var tmpDirectory = Path.Combine(BlobStoragePath, "_");
+			if (!Directory.Exists(tmpDirectory))
+				Directory.CreateDirectory(tmpDirectory);
 		}
 		catch
 		{
