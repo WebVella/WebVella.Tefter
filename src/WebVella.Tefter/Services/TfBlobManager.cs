@@ -518,6 +518,12 @@ internal class TfBlobManager : ITfBlobManager
 	{
 
 		var tmpDirectory = Path.Combine(BlobStoragePath, "_");
+
+		if( !Directory.Exists(tmpDirectory))
+		{
+			return;
+		}
+
 		foreach (var dir in Directory.GetDirectories(tmpDirectory))
 		{
 			string lvl1DirPath = Path.Combine(tmpDirectory, dir);
