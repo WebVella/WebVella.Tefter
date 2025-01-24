@@ -6,9 +6,11 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.Csv.Components;
 
-public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfDataProviderSettingsComponentContext>
+public partial class DataProviderSettingsComponent : TfFormBaseComponent,
+	ITfDynamicComponent<TfDataProviderSettingsComponentContext>,
+	ITfComponentScope<CsvDataProvider>
 {
-	//For this component only ReadOnly and Form will be supported
+	public Guid Id { get; set; } = new Guid("05368f83-0061-4efb-9fea-5eda8ba6a2a6");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfDataProviderSettingsComponentContext Context { get; set; }
 
@@ -27,7 +29,7 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDyn
 	{
 		base.OnInitialized();
 		_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(Context.SettingsJson);
-		Context.Validate = _validate;
+		Context.SetValidate(_validate);
 		base.InitForm(_form);
 	}
 

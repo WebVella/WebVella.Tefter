@@ -5,7 +5,7 @@ public interface ITfSpaceNodeComponent
 	public Guid Id { get; set; }
 	public string Name { get; set; }
 	public string Description { get; set; }
-	public string Icon { get; set; }
+	public string FluentIconName { get; set; }
 	public TfSpaceNodeComponentContext Context { get; set; }
 	public Task<string> OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);
 	public Task<string> OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context);

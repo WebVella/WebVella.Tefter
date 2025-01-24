@@ -141,14 +141,11 @@
   <data name="Send" xml:space="preserve">
     <value>Изпрати</value>
   </data>
+  <data name="Shared key value is not provided" xml:space="preserve">
+    <value>Не е зададена стойност на споделения ключ</value>
+  </data>
   <data name="Shift + Enter for new line. Enter to send." xml:space="preserve">
     <value>Shift + Enter за нов ред. Enter за изпращане.</value>
-  </data>
-  <data name="The selected dataset does not support the shared key '{0}' of channel '{1}'!" xml:space="preserve">
-    <value>Избраните изходни данни не поддържат споделения ключ '{0}' на канала '{1}'!</value>
-  </data>
-  <data name="The selected shared key '{0}' value is not yet generated for this row of the dataset!" xml:space="preserve">
-    <value>Стойността на споделения ключ '{0}' все още не е генерирана за този ред на изходните данни!</value>
   </data>
   <data name="The talk channel has no shared key set!" xml:space="preserve">
     <value>Дискусионният канал няма зададен споделен ключ!</value>

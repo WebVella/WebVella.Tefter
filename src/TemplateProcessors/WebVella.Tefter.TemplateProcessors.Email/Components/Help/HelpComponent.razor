@@ -85,6 +85,11 @@
 								<div>@((MarkupString)$"{leftTagEncoded}column_name(F=H){rightTagEncoded} items")</div>
 							</td>
 						</tr>
+						<tr class="tf-grid-tr">
+							<td class="tf-grid-td">
+								<div>@((MarkupString)$"{leftTagEncoded}column_name(F=H,S=\", \"){rightTagEncoded} items")</div>
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
@@ -101,6 +106,9 @@
 					<tbody class="tf-grid-tbody">
 						<tr class="tf-grid-tr">
 							<td class="tf-grid-td"><div>data1data2data3 items</div></td>
+						</tr>
+						<tr class="tf-grid-tr">
+							<td class="tf-grid-td"><div>data1, data2, data3 items</div></td>
 						</tr>
 					</tbody>
 				</table>

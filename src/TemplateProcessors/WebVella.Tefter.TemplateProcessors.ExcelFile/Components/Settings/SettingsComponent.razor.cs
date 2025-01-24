@@ -7,6 +7,8 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorSettingsComponentContext>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
+
+	public Guid Id { get; set; } = new Guid("e7d1ad9b-021e-424d-8c2d-102a749c735c");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
 

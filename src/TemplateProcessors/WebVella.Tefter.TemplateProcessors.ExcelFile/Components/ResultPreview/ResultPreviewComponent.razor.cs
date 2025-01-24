@@ -6,6 +6,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 public partial class ResultPreviewComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
+	public Guid Id { get; set; } = new Guid("b48f5e44-17d8-4f06-b15e-ab98571f0b05");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; set; }
 

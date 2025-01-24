@@ -5,11 +5,12 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.DataProviders.MsSql.Components;
 
-public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfDataProviderSettingsComponentContext>
+public partial class DataProviderSettingsComponent : TfFormBaseComponent, 
+	ITfDynamicComponent<TfDataProviderSettingsComponentContext>, 
+	ITfComponentScope<MsSqlDataProvider>
 {
-	//For this component only ReadOnly and Form will be supported
+	public Guid Id { get; set; } = new Guid("d03dfd93-866c-419d-bca4-fd7dbbec6034");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-
 	[Parameter] public TfDataProviderSettingsComponentContext Context { get; set; }
 
 	private MsSqlDataProviderSettings _form = new();
@@ -18,7 +19,7 @@ public partial class DataProviderSettingsComponent : TfFormBaseComponent, ITfDyn
 	{
 		base.OnInitialized();
 		_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<MsSqlDataProviderSettings>(Context.SettingsJson);
-		Context.Validate = _validate;
+		Context.SetValidate(_validate);
 		base.InitForm(_form);
 	}
 

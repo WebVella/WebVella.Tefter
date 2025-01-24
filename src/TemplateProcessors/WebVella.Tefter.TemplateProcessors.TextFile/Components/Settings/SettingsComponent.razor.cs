@@ -7,8 +7,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorSettingsComponentContext>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
-
-	//For this component only ReadOnly and Form will be supported
+	public Guid Id { get; set; } = new Guid("8ff50585-770e-47e8-b9e0-88ac642ed7e1");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
 	private TextFileTemplateSettings _form = new();

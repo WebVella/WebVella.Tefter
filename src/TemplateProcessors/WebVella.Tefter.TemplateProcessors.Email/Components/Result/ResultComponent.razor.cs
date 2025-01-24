@@ -4,6 +4,7 @@
 public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
+	public Guid Id { get; set; } = new Guid("623a2def-f5f0-466e-9690-6de4bd7584df");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
 

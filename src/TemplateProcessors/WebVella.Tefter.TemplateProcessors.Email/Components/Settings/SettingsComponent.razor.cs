@@ -8,7 +8,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponen
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 	[Inject] public ITfBlobManager BlobManager { get; set; }
-
+	public Guid Id { get; set; } = new Guid("fd351159-a5db-4802-ad63-467f16da3883");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
 

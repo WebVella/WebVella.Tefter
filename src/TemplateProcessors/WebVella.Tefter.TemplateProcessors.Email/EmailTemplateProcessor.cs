@@ -1,9 +1,4 @@
-﻿using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.Wordprocessing;
-using FluentResults;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using System.Text;
+﻿using System.Text;
 using WebVella.Tefter.EmailSender.Models;
 using WebVella.Tefter.EmailSender.Services;
 using WebVella.Tefter.TemplateProcessors.Email.Components;
@@ -61,7 +56,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				item.Errors.Add(new ValidationError("BccRecipients", "Blind-copy recipients contains invalid email address."));
 			}
 
-			if(string.IsNullOrEmpty(item.HtmlContent) && string.IsNullOrEmpty(item.TextContent))
+			if (string.IsNullOrEmpty(item.HtmlContent) && string.IsNullOrEmpty(item.TextContent))
 			{
 				item.Errors.Add(new ValidationError("HtmlContent", "Email body content is empty."));
 			}
@@ -97,22 +92,22 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 		var blobManager = serviceProvider.GetService<ITfBlobManager>();
 		var emailService = serviceProvider.GetService<IEmailService>();
-		
-		foreach (var item in result.Items) 
+
+		foreach (var item in result.Items)
 		{
 			var emailMessage = new CreateEmailMessageModel();
-			if (!string.IsNullOrWhiteSpace( item.Sender) )
+			if (!string.IsNullOrWhiteSpace(item.Sender))
 			{
 				emailMessage.Sender = new EmailAddress(item.Sender);
 			}
-			
+
 			emailMessage.Recipients = new List<EmailAddress>();
 			foreach (var recipient in item.Recipients)
 			{
 				emailMessage.Recipients.Add(new EmailAddress(recipient));
 			}
 
-			if (item.CcRecipients != null && item.CcRecipients.Count > 0 )
+			if (item.CcRecipients != null && item.CcRecipients.Count > 0)
 			{
 				emailMessage.RecipientsCc = new List<EmailAddress>();
 				foreach (var recipient in item.CcRecipients)
@@ -144,7 +139,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				if (attachment.Errors != null && attachment.Errors.Count > 0)
 					continue;
 
-				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value,temporary: true).Value;
+				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value, temporary: true).Value;
 				var emailAttachment = new CreateEmailAttachmentModel
 				{
 					Filename = attachment.FileName,

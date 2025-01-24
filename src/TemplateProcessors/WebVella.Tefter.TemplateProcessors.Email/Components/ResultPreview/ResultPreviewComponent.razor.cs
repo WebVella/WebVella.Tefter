@@ -6,6 +6,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 public partial class ResultPreviewComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
+	public Guid Id { get; set; } = new Guid("7bc7c97d-5b35-486b-a334-481a8af24e85");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; set; }
 

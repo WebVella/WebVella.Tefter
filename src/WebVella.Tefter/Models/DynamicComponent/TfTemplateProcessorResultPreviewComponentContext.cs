@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfTemplateProcessorResultPreviewComponentContext
+public class TfTemplateProcessorResultPreviewComponentContext : TfBaseComponentContext
 {
 	public TucTemplate Template { get; set; }
 	public List<Guid> SelectedRowIds { get; set; }

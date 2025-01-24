@@ -14,7 +14,7 @@ public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 	public override Guid Id { get; set; } = new Guid("6589259a-4f90-445d-8a62-d4b51bab3afd");
 	public override string Name { get; set; } = "Talk Page";
 	public override string Description { get; set; } = "general discussion per page";
-	public override string Icon { get; set; } = "ChatMultiple";
+	public override string FluentIconName { get; set; } = "ChatMultiple";
 	[Parameter] public override TfSpaceNodeComponentContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);

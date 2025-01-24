@@ -10,7 +10,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	[Inject] public IState<TfAppState> TfAppState { get; set; }
 	[Inject] public IAssetsService AssetsService { get; set; }
 	[Parameter] public Guid? FolderId { get; set; }
-	[Parameter] public Guid? SharedKeyValue { get; set; }
+	[Parameter] public string SharedKeyValue { get; set; } = "";
 	[Parameter] public TucUser CurrentUser { get; set; }
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
@@ -35,7 +35,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private Guid? _actionMenuIdOpened = null;
 	private string _search = null;
 	private Guid? _itemsFolderId = null;
-	private Guid? _itemsShareKeyValue = null;
+	private string _itemsShareKeyValue = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -134,7 +134,9 @@ public partial class AssetsFolderComponent : TfBaseComponent
 		else throw new Exception("GetFolder failed");
 		if (_folder is not null && SharedKeyValue is not null)
 		{
-			var getAssetsResult = AssetsService.GetAssets(_folder.Id, SharedKeyValue.Value);
+			var getAssetsResult = AssetsService.GetAssets(
+			folderId: _folder.Id,
+			skTextId: SharedKeyValue);
 			if (getAssetsResult.IsSuccess) _allItems = getAssetsResult.Value;
 			else throw new Exception("GetAssets failed");
 		}

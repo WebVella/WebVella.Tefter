@@ -10,7 +10,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	public override Guid Id { get; set; } = new Guid("68afeecc-6ca9-4102-831d-ef4028057128");
 	public override string Name { get; set; } = "SpaceView";
 	public override string Description { get; set; } = "present data in a grid format";
-	public override string Icon { get; set; } = "Table";
+	public override string FluentIconName { get; set; } = "Table";
 	[Parameter] public override TfSpaceNodeComponentContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);

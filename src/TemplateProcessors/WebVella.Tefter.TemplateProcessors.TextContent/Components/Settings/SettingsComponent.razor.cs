@@ -8,7 +8,7 @@ public partial class SettingsComponent : TfFormBaseComponent, ITfDynamicComponen
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 
-	//For this component only ReadOnly and Form will be supported
+	public Guid Id { get; set; } = new Guid("11998c8d-e572-415b-89c5-f0acf5f1438c");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorSettingsComponentContext Context { get; set; }
 

@@ -6,6 +6,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
+	public Guid Id { get; set; } = new Guid("9947c5e2-fe1d-41a6-aa53-be041e8a3a98");
 	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
 	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
 

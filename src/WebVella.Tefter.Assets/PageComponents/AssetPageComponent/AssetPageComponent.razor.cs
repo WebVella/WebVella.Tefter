@@ -15,7 +15,7 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 	public override Guid Id { get; set; } = new Guid("0109d2c8-8597-47e7-bb4b-b1b06badd4a7");
 	public override string Name { get; set; } = "Asset Page";
 	public override string Description { get; set; } = "asset folder per page";
-	public override string Icon { get; set; } = "Folder";
+	public override string FluentIconName { get; set; } = "Folder";
 	[Parameter] public override TfSpaceNodeComponentContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);
@@ -47,15 +47,16 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 		//};
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
-
 	#endregion
 
 	#region << Private properties >>
 	private string contextKeyInAuxDataState = "AssetsPageContext";
 	private string optionsJson = "{}";
-	private AssetsPageComponentPageComponentOptions _options { get; set; } = new();
-	private AssetsFolder _optionsFolder { get; set; } = null;
-	private List<AssetsFolder> _folders { get; set; } = new();
+	private AssetsPageComponentPageComponentOptions _options = new();
+	private AssetsFolder _optionsFolder = null;
+	private Asset _optionsAsset = null;
+	private List<Asset> _optionsFolderAssets = new();
+	private List<AssetsFolder> _folders = new();
 
 	#endregion
 
@@ -67,11 +68,13 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 		var allFoldersResult = AssetsService.GetFolders();
 		if (allFoldersResult.IsFailed) throw new Exception("GetFolders failed");
 		_folders = allFoldersResult.Value;
-		if(!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson)){ 
+		if (!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson))
+		{
 			optionsJson = Context.ComponentOptionsJson;
 			_options = JsonSerializer.Deserialize<AssetsPageComponentPageComponentOptions>(optionsJson);
-			if(_options.FolderId is not null){ 
-				_optionsFolder = _folders.FirstOrDefault(x=> x.Id == _options.FolderId);
+			if (_options.FolderId is not null)
+			{
+				_optionsFolder = _folders.FirstOrDefault(x => x.Id == _options.FolderId);
 			}
 		}
 		if (_optionsFolder is null && _folders.Count > 0)
@@ -89,14 +92,28 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 			optionsJson = Context.ComponentOptionsJson;
 			_options = JsonSerializer.Deserialize<AssetsPageComponentPageComponentOptions>(optionsJson);
 			//When cannot node has json from another page type
-			if(_options is null) _options = new();
-			if(_options.FolderId is null && _optionsFolder is not null) _options.FolderId = _optionsFolder.Id;
+			if (_options is null) _options = new();
+			if (_options.FolderId is null && _optionsFolder is not null) _options.FolderId = _optionsFolder.Id;
 		}
 	}
 	#endregion
 
 	#region << Private methods >>
 
+	private string _getSharedKeyValue()
+	{
+		switch (_options.ShareKeyType)
+		{
+			case AssetsFolderShareKeyType.SpaceNodeId:
+				return (TfAppState.Value.SpaceNode?.Id ?? Guid.Empty).ToString();
+			case AssetsFolderShareKeyType.SpaceId:
+				return (TfAppState.Value.Space?.Id ?? Guid.Empty).ToString();
+			case AssetsFolderShareKeyType.CustomString:
+				return (String.IsNullOrWhiteSpace(_options.CustomShareKeyValue) ? Guid.Empty.ToString() : _options.CustomShareKeyValue);
+			default:
+				throw new Exception("Shared Key Type not supported");
+		}
+	}
 
 	private Task _optionsFolderChangeHandler(AssetsFolder folder)
 	{
@@ -112,10 +129,16 @@ public class AssetsPageComponentPageComponentOptions
 {
 	[JsonPropertyName("FolderId")]
 	public Guid? FolderId { get; set; } = null;
-}
 
-public class AssetsPageComponentPageComponentContext
-{
-	[JsonPropertyName("Folders")]
-	public List<AssetsFolder> Folders { get; set; } = new();
+	[JsonPropertyName("ViewType")]
+	public AssetsFolderViewType ViewType { get; set; } = AssetsFolderViewType.List;
+
+	[JsonPropertyName("AssetId")]
+	public Guid? AssetId { get; set; } = null;
+
+	[JsonPropertyName("ShareKeyType")]
+	public AssetsFolderShareKeyType ShareKeyType { get; set; } = AssetsFolderShareKeyType.SpaceNodeId;
+
+	[JsonPropertyName("CustomShareKeyValue")]
+	public string CustomShareKeyValue { get; set; } = "";
 }

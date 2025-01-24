@@ -7,7 +7,7 @@ public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeCom
 	public virtual Guid Id { get; set; } = Guid.NewGuid();
 	public virtual string Name { get; set; } = null;
 	public virtual string Description { get; set; } = null;
-	public virtual string Icon { get; set; } = null;
+	public virtual string FluentIconName { get; set; } = null;
 	public virtual TfSpaceNodeComponentContext Context { get; set; }
 	public virtual string GetUrl(TfSpaceNodeComponentContext context) => null;
 	public virtual string GetOptions() => "{}";
