@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
+﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
-
-	public Guid Id { get; set; } = new Guid("81b1bbd2-b13c-4ed1-944d-4d4fac2b65c7");
-	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
+	public Guid Id { get; init; } = new Guid("e74d6c12-7d1d-4723-be9b-2e1bd1d982e1");
+	public int PositionRank { get; init; } = 0;
+	public string Name { get; init; } = "Text File Template Result";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "PuzzlePiece";
+	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
 
 	private TextFileTemplateResult _result = null;
 	private bool _isLoading = true;

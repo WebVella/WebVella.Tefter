@@ -6,9 +6,12 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
-	public Guid Id { get; set; } = new Guid("0881242e-bad4-44da-83e8-ad2d488de941");
-	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
+	public Guid Id { get; init; } = new Guid("8eed6b14-101b-4fb9-863c-6e520b0196d8");
+	public int PositionRank { get; init; } = 0;
+	public string Name { get; init; } = "Excel Template Result";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "PuzzlePiece";
+	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
 
 	private ExcelFileTemplateResult _result = null;
 	private bool _isLoading = true;

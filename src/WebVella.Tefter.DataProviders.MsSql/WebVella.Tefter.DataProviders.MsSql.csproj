@@ -22,8 +22,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Update="Components\DataProviderSettingsComponent.bg.resx">
+		<EmbeddedResource Update="Components\ManageSettings\ManageSettingsComponent.bg.resx">
 			<Generator></Generator>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Components\ViewSettings\ViewSettingsComponent.bg.resx">
+		  <Generator></Generator>
 		</EmbeddedResource>
 	</ItemGroup>
 

@@ -25,8 +25,6 @@ public class EnumMappingTest
 				var hasMatch = false;
 				foreach (Enum mapVal in Enum.GetValues(mappedType))
 				{
-					var boz =Convert.ToInt32(itemVal);
-					var boz2 =Convert.ToInt32(mapVal);
 
 					if (
 						itemVal.ToString() == mapVal.ToString()

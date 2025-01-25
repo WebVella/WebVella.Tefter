@@ -18,7 +18,7 @@ public class CsvDataProvider : ITfDataProviderType
 
 	public string FluentIconName => "DocumentTable";
 
-	public Type SettingsComponentType => typeof(DataProviderSettingsComponent);
+	public Type SettingsComponentType => typeof(ManageSettingsComponent);
 
 	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{

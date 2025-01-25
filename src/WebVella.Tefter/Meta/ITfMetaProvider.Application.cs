@@ -35,31 +35,7 @@ public partial class TfMetaProvider
 			.SingleOrDefault(x => x.Id == appId);
 	}
 
-	internal static void Init()
-	{
-		var assemblies = AppDomain.CurrentDomain.GetAssemblies()
-							.Where(a => !(a.FullName.ToLowerInvariant().StartsWith("microsoft.")
-							   || a.FullName.ToLowerInvariant().StartsWith("system.")));
-
-		foreach (var assembly in assemblies)
-		{
-			foreach (Type type in assembly.GetTypes())
-			{
-				if (type.IsAbstract || type.IsInterface)
-					continue;
-
-				var defaultConstructor = type.GetConstructor(Type.EmptyTypes);
-				if (defaultConstructor is null)
-					continue;
-
-				ScanAndRegisterSpaceNodeComponents(type);
-				ScanAndRegisterDataProvidersTypes(type);
-				ScanAndRegisterScreenRegionComponents(type);
-				ScanAndRegisterSpaceViewColumnTypes(type);
-				ScanAndRegisterApplications(type);
-			}
-		}
-	}
+	
 
 	private static void ScanAndRegisterApplications(
 		Type type)

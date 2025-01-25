@@ -45,22 +45,7 @@
 		<FluentDivider Style="margin:15px 0" />
 		<FluentGrid Style="margin-top:3px;">
 			<FluentGridItem xs="12">
-				@if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType is null) { }
-				else if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType.ImplementsGenericInterface(typeof(ITfDynamicComponent<>),typeof(TfDataProviderSettingsComponentContext)) ?? false)
-				{
-					if (TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType is not null)
-					{
-						<TfErrorBoundry>
-							<DynamicComponent Type="TfAppState.Value.AdminDataProvider?.ProviderType.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />
-						</TfErrorBoundry>
-					}
-				}
-				else
-				{
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning" Title="@LOC("Warning")">
-						<div>@LOC(" Data provider settings component does not implement ITfDataProviderSettings and cannot be rendered!")</div>
-					</FluentMessageBar>
-				}
+				<TfDynamicComponent Context="_dynamicComponentContext" Scope="@_dynamicComponentScope" />
 			</FluentGridItem>
 		</FluentGrid>
 	</ChildContent>

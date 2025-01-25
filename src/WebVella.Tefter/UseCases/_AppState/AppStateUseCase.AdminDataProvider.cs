@@ -344,7 +344,6 @@ internal partial class AppStateUseCase
 		}
 		return Task.CompletedTask;
 	}
-
 	internal virtual Task DeleteAllProviderData(Guid dataProviderId)
 	{
 		var provider = _dataProviderManager.GetProvider(dataProviderId);
@@ -375,7 +374,6 @@ internal partial class AppStateUseCase
 		}
 		return Task.CompletedTask;
 	}
-
 	internal virtual Result<List<TucDataProviderSyncTaskInfo>> GetSynchronizationTaskLogRecords(Guid taskId,
 			TucDataProviderSyncTaskInfoType type)
 	{
@@ -461,4 +459,5 @@ internal partial class AppStateUseCase
 		}
 		return Task.FromResult(dtResult.Value);
 	}
+
 }

@@ -1,0 +1,36 @@
+﻿@using WebVella.Tefter.Web.Components
+@namespace WebVella.Tefter.TemplateProcessors.TextContent.Components
+@inherits TfFormBaseComponent
+
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentInputLabel Label="@LOC("Content type")" />
+		@if (_form.IsHtml)
+		{
+			<div><FluentBadge Appearance="Appearance.Accent">HTML</FluentBadge></div>
+		}
+		else
+		{
+			<div><FluentBadge Appearance="Appearance.Neutral">Text</FluentBadge></div>
+		}
+	</FluentGridItem>
+</FluentGrid>
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentInputLabel Label="@LOC("Content")" />
+		@if (_form.IsHtml)
+		{
+			<TfEditor Value=@_form.Content Size="TfEditorSize.Large" ReadOnly="true" />
+		}
+		else
+		{
+			<FluentTextArea Value=@_form.Content ReadOnly="true" Style="width:100%" Rows="7" />
+		}
+	</FluentGridItem>
+</FluentGrid>
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentInputLabel Label="@LOC("Group by columns")" />
+		<TfSelectList Values=@_form.GroupBy NoItemsMessage="@LOC("no data grouping will be applied")" />
+	</FluentGridItem>
+</FluentGrid>

@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
+﻿namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
-	public Guid Id { get; set; } = new Guid("9947c5e2-fe1d-41a6-aa53-be041e8a3a98");
-	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
+
+	public Guid Id { get; init; } = new Guid("ac4317e2-ef23-46b8-875d-c763e50a5d8e");
+	public int PositionRank { get; init; } = 0;
+	public string Name { get; init; } = "Text Content Result";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "PuzzlePiece";
+	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
 
 
 	private TextContentTemplateResult _result = null;
@@ -86,7 +88,7 @@ public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTe
 
 	private async Task _copyToClipboard()
 	{
-		if(_form is null) return;
+		if (_form is null) return;
 		await JSRuntime.InvokeVoidAsync("Tefter.copyToClipboard", _form.Content);
 		ToastService.ShowSuccess(LOC("Content copied"));
 	}

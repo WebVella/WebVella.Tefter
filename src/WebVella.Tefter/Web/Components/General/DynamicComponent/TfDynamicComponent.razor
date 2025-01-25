@@ -1,0 +1,11 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@if (_componentsMeta.Count > 0)
+{
+	<TfErrorBoundry>
+		@foreach (var meta in _componentsMeta)
+		{
+			<DynamicComponent Type="@meta.ComponentType" Parameters="@_context" />
+		}
+
+	</TfErrorBoundry>
+}

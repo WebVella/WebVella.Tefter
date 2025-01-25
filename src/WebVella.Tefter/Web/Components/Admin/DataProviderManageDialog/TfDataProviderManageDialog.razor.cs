@@ -14,13 +14,27 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private string _btnText = "";
 	private Icon _iconBtn;
 
-	private DynamicComponent typeSettingsComponent;
 	private bool _isCreate = false;
 	private TucDataProviderForm _form = new();
-	private TfDataProviderSettingsComponentContext _setttingsContext = null;
+
+	private TfDataProviderManageSettingsComponentContext _dynamicComponentContext = null;
+	private Type _dynamicComponentScope = null;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+		_initForm();
+		_initDynamicComponent();
+	}
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		_initForm();
+		_initDynamicComponent();
+	}
+
+	private void _initForm()
+	{
 		if (Content is null) throw new Exception("Content is null");
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create data provider") : LOC("Manage data provider");
@@ -46,22 +60,20 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 				_form.ProviderType = TfAppState.Value.DataProviderTypes.FirstOrDefault(x => x.Id == Content.ProviderType.Id);
 			}
 		}
-		_setttingsContext = new TfDataProviderSettingsComponentContext{
+		base.InitForm(_form);
+	}
+
+	private void _initDynamicComponent()
+	{
+		if (TfAppState.Value.AdminDataProvider is null)
+			throw new Exception("Data Provider not found");
+
+		_dynamicComponentContext = new TfDataProviderManageSettingsComponentContext
+		{
 			SettingsJson = _form.SettingsJson,
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 		};
-		base.InitForm(_form);
-
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-
-			await InvokeAsync(StateHasChanged);
-		}
+		_dynamicComponentScope = TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType();
 
 	}
 
@@ -74,9 +86,9 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 
 			//Get dynamic settings component errors
 			List<ValidationError> settingsErrors = new();
-			if (_setttingsContext.Validate is not null)
+			if (_dynamicComponentContext.Validate is not null)
 			{
-				settingsErrors = _setttingsContext.Validate();
+				settingsErrors = _dynamicComponentContext.Validate();
 			}
 
 			//Check form
@@ -114,14 +126,6 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
-	}
-
-	private Dictionary<string, object> _getDynamicComponentParams()
-	{
-		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Context"] = _setttingsContext;
-		return dict;
 	}
 	private void _settingsChanged(string json)
 	{

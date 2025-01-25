@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
+﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class HelpComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorHelpComponentContext>
 {
-	public Guid Id { get; set; } = new Guid("34ec50ca-eeb8-41fe-b876-25946f079a88");
-	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public TfTemplateProcessorHelpComponentContext Context { get; set; }
+	public Guid Id { get; init; } = new Guid("12d4f78b-daf2-48f0-ab84-3108703e7d7b");
+	public int PositionRank { get; init; } = 0;
+	public string Name { get; init; } = "Text File Template Help";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "PuzzlePiece";
+	[Parameter] public TfTemplateProcessorHelpComponentContext Context { get; init; }
 
 }

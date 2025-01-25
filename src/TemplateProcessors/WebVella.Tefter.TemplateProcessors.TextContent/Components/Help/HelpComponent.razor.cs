@@ -3,9 +3,10 @@
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class HelpComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorHelpComponentContext>
 {
-	public Guid Id { get; set; } = new Guid("cf4e06c3-f96f-4806-9406-e50548244bd0");
-	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public TfTemplateProcessorHelpComponentContext Context { get; set; }
-
-
+	public Guid Id { get; init; } = new Guid("68407341-381c-4d66-8f27-7db46c223d74");
+	public int PositionRank { get; init; } = 0;
+	public string Name { get; init; } = "Text Content Template Help";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "PuzzlePiece";
+	[Parameter] public TfTemplateProcessorHelpComponentContext Context { get; init; }
 }

@@ -15,7 +15,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	private string _btnText = "";
 	private Icon _iconBtn;
 	private DynamicComponent _settingsComponent;
-	private TfTemplateProcessorSettingsComponentContext _setttingsContext = null;
+	private TfTemplateProcessorManageSettingsComponentContext _setttingsContext = null;
 	private ITfTemplateProcessor _processor = null;
 	private string _form = null;
 	protected override async Task OnInitializedAsync()
@@ -27,7 +27,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		_iconBtn = TfConstants.GetIcon("Save");
 		_processor = _getProcessor();
 		_form = Content.SettingsJson;
-		_setttingsContext = new TfTemplateProcessorSettingsComponentContext
+		_setttingsContext = new TfTemplateProcessorManageSettingsComponentContext
 		{
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 			Template = Content with { Id = Content.Id },

@@ -1,6 +1,9 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfTemplateProcessorResultPreviewComponentContext : TfBaseComponentContext
+/// <summary>
+/// Context need to be included in the ScanAndRegisterDynamicComponents method as a case in order to be discovered
+/// </summary>
+public class TfTemplateProcessorResultPreviewComponentContext : TfBaseDynamicComponentContext
 {
 	public TucTemplate Template { get; set; }
 	public List<Guid> SelectedRowIds { get; set; }

@@ -10,12 +10,12 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
 	private bool _loading = true;
 	private DynamicComponent _settingsComponent;
-	private TfTemplateProcessorSettingsComponentContext _setttingsContext = null;
+	private TfTemplateProcessorManageSettingsComponentContext _setttingsContext = null;
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		_processor = _getProcessor();
-		_setttingsContext = new TfTemplateProcessorSettingsComponentContext
+		_setttingsContext = new TfTemplateProcessorManageSettingsComponentContext
 		{
 			Template = TfAppState.Value.AdminTemplateDetails,
 			Validate = null

@@ -26,7 +26,7 @@
 	{
 		<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("This processor does not have settings")</FluentMessageBar>
 	}
-	else if (_processor?.SettingsComponentType.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorSettingsComponentContext)) ?? false)
+	else if (_processor?.SettingsComponentType.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorManageSettingsComponentContext)) ?? false)
 	{
 		<TfErrorBoundry>
 			<DynamicComponent @ref=_settingsComponent Type="_processor.SettingsComponentType" Parameters="@_getDynamicComponentParams()" />

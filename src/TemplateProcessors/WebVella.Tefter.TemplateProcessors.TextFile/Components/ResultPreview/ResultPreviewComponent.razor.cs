@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-
-namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
+﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 
-	public Guid Id { get; set; } = new Guid("00c3172f-e887-4fa4-89c5-dc2e1c647425");
-	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; set; }
+	public Guid Id { get; init; } = new Guid("c940dd21-6151-4c4c-ae5b-e6d21de8b80c");
+	public int PositionRank { get; init; } = 0;
+	public string Name { get; init; } = "Text File Template Result Preview";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "PuzzlePiece";
+	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
 
 	private TextFileTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;

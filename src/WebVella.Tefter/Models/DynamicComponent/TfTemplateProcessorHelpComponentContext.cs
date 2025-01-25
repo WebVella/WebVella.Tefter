@@ -1,5 +1,8 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfTemplateProcessorHelpComponentContext : TfBaseComponentContext
+/// <summary>
+/// Context need to be included in the ScanAndRegisterDynamicComponents method as a case in order to be discovered
+/// </summary>
+public class TfTemplateProcessorHelpComponentContext : TfBaseDynamicComponentContext
 {
 }

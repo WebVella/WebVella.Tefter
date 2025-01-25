@@ -1,12 +1,17 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
+public partial class ResultComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
-	public Guid Id { get; set; } = new Guid("623a2def-f5f0-466e-9690-6de4bd7584df");
-	[Parameter] public TfComponentMode DisplayMode { get; set; } = TfComponentMode.Read;
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; set; }
+
+	public Guid Id { get; init; } = new Guid("b0ca06fa-4e26-49c4-a043-c0ec7960ab02");
+	public int PositionRank { get; init; } = 0;
+	public string Name { get; init; } = "Email Template Result";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "PuzzlePiece";
+	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
 
 	private EmailTemplateResult _result = null;
 	private bool _isLoading = true;

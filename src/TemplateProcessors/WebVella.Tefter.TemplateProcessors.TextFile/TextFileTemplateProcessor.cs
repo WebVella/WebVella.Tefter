@@ -12,7 +12,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	public string Description => "creates excel files from excel template and data";
 	public string FluentIconName => "DocumentBulletList";
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
-	public Type SettingsComponentType => typeof(SettingsComponent);
+	public Type SettingsComponentType => typeof(ManageSettingsComponent);
 	public Type ResultPreviewComponentType => typeof(ResultPreviewComponent);
 	public Type ResultComponentType => typeof(ResultComponent);
 	public Type HelpComponentType => typeof(HelpComponent);

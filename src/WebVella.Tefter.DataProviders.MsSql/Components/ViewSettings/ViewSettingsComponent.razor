@@ -1,0 +1,25 @@
+﻿@using WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@namespace WebVella.Tefter.DataProviders.MsSql.Components
+
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentTextField ReadOnly="true"
+						 TextFieldType="@TextFieldType.Text"
+						 Placeholder="@LOC("mssql connection string")"
+						 Value=@_form.ConnectionString AutoComplete="off"
+						 Label="@LOC("mssql server connection string")" Style="width:100%" />
+	</FluentGridItem>
+	<FluentGridItem xs="12">
+		<FluentTextArea ReadOnly="true"
+						TextFieldType="@TextFieldType.Text"
+						Rows="5"
+						Resize="TextAreaResize.Vertical"
+						Placeholder="@LOC("sql query")"
+						Value=@_form.SqlQuery
+						Label="@LOC("sql query")" Style="width:100%" />
+	</FluentGridItem>
+</FluentGrid>
+
+
+

@@ -14,7 +14,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 	public string Description => "creates emails from a template and data";
 	public string FluentIconName => "Mail";
 	public TfTemplateResultType ResultType => TfTemplateResultType.Email;
-	public Type SettingsComponentType => typeof(SettingsComponent);
+	public Type SettingsComponentType => typeof(ManageSettingsComponent);
 	public Type ResultPreviewComponentType => typeof(ResultPreviewComponent);
 	public Type ResultComponentType => typeof(ResultComponent);
 	public Type HelpComponentType => typeof(HelpComponent);
