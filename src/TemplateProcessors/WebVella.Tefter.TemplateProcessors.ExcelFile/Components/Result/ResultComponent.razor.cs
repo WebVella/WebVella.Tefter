@@ -3,7 +3,9 @@
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
-public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
+public partial class ResultComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorResultComponentContext>,
+	ITfComponentScope<ExcelFileTemplateProcessor>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 	public Guid Id { get; init; } = new Guid("8eed6b14-101b-4fb9-863c-6e520b0196d8");

@@ -7,10 +7,6 @@ public interface ITfTemplateProcessor
 	public string Description { get; }
 	public string FluentIconName { get; }
 	public TfTemplateResultType ResultType { get; }
-	public Type SettingsComponentType { get; }
-	public Type ResultPreviewComponentType { get; }
-	public Type ResultComponentType { get; }
-	public Type HelpComponentType { get; }
 
 	public void ValidatePreview(
 		TfTemplate template,

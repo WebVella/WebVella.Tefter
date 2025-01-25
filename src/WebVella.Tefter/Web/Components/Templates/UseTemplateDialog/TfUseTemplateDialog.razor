@@ -165,9 +165,7 @@
 		}
 		else
 		{
-			<TfErrorBoundry>
-				<DynamicComponent Type="@_processor.ResultPreviewComponentType" Parameters="@_getResultPreviewDynamicComponentParams()" />
-			</TfErrorBoundry>
+			<TfDynamicComponent Context="_resultPreviewComponentContext" Scope="@_dynamicComponentScope" />
 		}
 	}
 	else if (_currentStep == TfUseTemplateDialogStep.Result)
@@ -208,9 +206,7 @@
 		}
 		else
 		{
-			<TfErrorBoundry>
-				<DynamicComponent Type="@_processor.ResultComponentType" Parameters="@_getResultDynamicComponentParams()" />
-			</TfErrorBoundry>
+			<TfDynamicComponent Context="_resultComponentContext" Scope="@_dynamicComponentScope" />
 		}
 	}
 

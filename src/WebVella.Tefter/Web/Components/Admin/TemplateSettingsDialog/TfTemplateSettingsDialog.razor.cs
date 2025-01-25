@@ -14,10 +14,12 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	private string _title = "";
 	private string _btnText = "";
 	private Icon _iconBtn;
-	private DynamicComponent _settingsComponent;
-	private TfTemplateProcessorManageSettingsComponentContext _setttingsContext = null;
-	private ITfTemplateProcessor _processor = null;
 	private string _form = null;
+
+	private ITfTemplateProcessor _processor = null;
+	private TfTemplateProcessorManageSettingsComponentContext _dynamicComponentContext = null;
+	private Type _dynamicComponentScope = null;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -25,25 +27,8 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		_title = LOC("Update settings");
 		_btnText = LOC("Save");
 		_iconBtn = TfConstants.GetIcon("Save");
-		_processor = _getProcessor();
 		_form = Content.SettingsJson;
-		_setttingsContext = new TfTemplateProcessorManageSettingsComponentContext
-		{
-			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
-			Template = Content with { Id = Content.Id },
-			Validate = null
-		};
-	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-
-			await InvokeAsync(StateHasChanged);
-		}
-
+		_initDynamicComponent();
 	}
 
 	private async Task _save()
@@ -53,9 +38,9 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		{
 			////Check form
 			List<ValidationError> settingsErrors = new();
-			if (_setttingsContext.Validate is not null)
+			if (_dynamicComponentContext.Validate is not null)
 			{
-				settingsErrors = _setttingsContext.Validate();
+				settingsErrors = _dynamicComponentContext.Validate();
 			}
 
 			if (settingsErrors.Count > 0) return;
@@ -84,14 +69,6 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		await Dialog.CancelAsync();
 	}
 
-	private Dictionary<string, object> _getDynamicComponentParams()
-	{
-		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Context"] = _setttingsContext;
-		return dict;
-	}
-
 	private void _settingsChanged(string json)
 	{
 		_form = json;
@@ -99,16 +76,28 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 
 	private ITfTemplateProcessor _getProcessor()
 	{
-		var context = Content;
-		if (context is null) return null;
-		if (context.ContentProcessorType is not null && context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+
+		if (Content.ContentProcessorType is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
 		{
-			return (ITfTemplateProcessor)Activator.CreateInstance(context.ContentProcessorType);
+			return (ITfTemplateProcessor)Activator.CreateInstance(Content.ContentProcessorType);
 
 		}
 		return null;
 
 	}
+
+	private void _initDynamicComponent()
+	{
+		_processor = _getProcessor();
+
+		_dynamicComponentContext = new TfTemplateProcessorManageSettingsComponentContext
+		{
+			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
+			Template = Content with { Id = Content.Id },
+		};
+		_dynamicComponentScope = _processor.GetType();
+	}
+
 
 }
 

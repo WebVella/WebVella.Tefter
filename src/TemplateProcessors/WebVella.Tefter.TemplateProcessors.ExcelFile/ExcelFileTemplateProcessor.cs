@@ -14,10 +14,6 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 	public string Description => "creates excel files from excel template and data";
 	public string FluentIconName => "DocumentData";
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
-	public Type SettingsComponentType => typeof(ManageSettingsComponent);
-	public Type ResultPreviewComponentType => typeof(ResultPreviewComponent);
-	public Type ResultComponentType => typeof(ResultComponent);
-	public Type HelpComponentType => typeof(HelpComponent);
 
 	public void ValidatePreview(
 		TfTemplate template,

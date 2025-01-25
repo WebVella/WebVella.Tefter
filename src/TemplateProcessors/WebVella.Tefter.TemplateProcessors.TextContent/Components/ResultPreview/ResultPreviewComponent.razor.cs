@@ -1,7 +1,9 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
-public partial class ResultPreviewComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>
+public partial class ResultPreviewComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>,
+	ITfComponentScope<TextContentTemplateProcessor>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 

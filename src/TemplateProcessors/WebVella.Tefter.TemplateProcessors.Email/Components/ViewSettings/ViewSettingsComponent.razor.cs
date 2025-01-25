@@ -2,7 +2,8 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ViewSettingsComponent : TfBaseComponent,
-	ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>
+	ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>,
+	ITfComponentScope<EmailTemplateProcessor>
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 

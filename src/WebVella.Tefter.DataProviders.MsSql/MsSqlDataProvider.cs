@@ -13,8 +13,6 @@ public class MsSqlDataProvider : ITfDataProviderType
 
 	public string FluentIconName => "DocumentTable";
 
-	public Type SettingsComponentType => typeof(ManageSettingsComponent);
-
 	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{
 		return new List<string> {

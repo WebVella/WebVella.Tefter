@@ -1,7 +1,9 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
-public partial class ViewSettingsComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>
+public partial class ViewSettingsComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>,
+	ITfComponentScope<TextFileTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("a23a91fe-cf4b-4f83-9f43-58484978cdab");
 	public int PositionRank { get; init; } = 0;

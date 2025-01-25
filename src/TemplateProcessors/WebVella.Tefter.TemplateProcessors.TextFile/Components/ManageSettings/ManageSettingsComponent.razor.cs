@@ -3,7 +3,9 @@
 namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
-public partial class ManageSettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>
+public partial class ManageSettingsComponent : TfFormBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>,
+	ITfComponentScope<TextFileTemplateProcessor>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 	public Guid Id { get; init; } = new Guid("4afa2cc0-eb47-4dc1-b7bc-1dfb037c4e5a");

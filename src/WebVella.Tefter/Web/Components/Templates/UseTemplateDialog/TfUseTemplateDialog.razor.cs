@@ -14,34 +14,16 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private TucTemplate _selectedTemplate = null;
 	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
-	private TfTemplateProcessorResultPreviewComponentContext _previewResultContext = null;
-	private TfTemplateProcessorResultComponentContext _resultContext = null;
+	private TfTemplateProcessorResultPreviewComponentContext _resultPreviewComponentContext = null;
+	private TfTemplateProcessorResultComponentContext _resultComponentContext = null;
+	private Type _dynamicComponentScope = null;
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) _error = LOC("Content is null");
 		else if (Content.SpaceData is null) _error = LOC("SpaceData is null");
-		_previewResultContext = new TfTemplateProcessorResultPreviewComponentContext
-		{
-			Template = null,
-			SelectedRowIds = Content.SelectedRowIds,
-			SpaceData = Content.SpaceData,
-			User = Content.User,
-			CustomSettingsJson = null,
-			CustomSettingsJsonChanged = EventCallback.Factory.Create<string>(this, _customSettingsChanged),
-			PreviewResultChanged = EventCallback.Factory.Create<ITfTemplatePreviewResult>(this, _previewResultChanged),
-			ValidatePreviewResult = null,
-
-		};
-		_resultContext = new TfTemplateProcessorResultComponentContext
-		{
-			Template = null,
-			SelectedRowIds = Content.SelectedRowIds,
-			SpaceData = Content.SpaceData,
-			User = Content.User,
-			CustomSettingsJson = null,
-			Preview = null
-		};
+		_initDynamicComponent();
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -80,9 +62,9 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		}
 		else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 		{
-			if (_previewResultContext.ValidatePreviewResult is not null)
+			if (_resultPreviewComponentContext.ValidatePreviewResult is not null)
 			{
-				var validationErrors = _previewResultContext.ValidatePreviewResult();
+				var validationErrors = _resultPreviewComponentContext.ValidatePreviewResult();
 				if (validationErrors.Count == 0)
 					_currentStep = TfUseTemplateDialogStep.Result;
 			}
@@ -104,12 +86,10 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private void _selectTemplate(TucTemplate template)
 	{
 		_selectedTemplate = template;
-		if (_selectedTemplate is not null)
-		{
-			_processor = _getTemplateProcessorInstance(_selectedTemplate.ContentProcessorType);
-			_previewResultContext.Template = _selectedTemplate;
-			_resultContext.Template = _selectedTemplate;
-		}
+		_processor = _getProcessor();
+
+		_resultPreviewComponentContext.Template = _selectedTemplate;
+		_resultComponentContext.Template = _selectedTemplate;
 		_next();
 	}
 
@@ -137,29 +117,57 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		_search = value;
 		_getTemplates();
 	}
-	private Dictionary<string, object> _getResultPreviewDynamicComponentParams()
-	{
-		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Context"] = _previewResultContext;
-		return dict;
-	}
-	private Dictionary<string, object> _getResultDynamicComponentParams()
-	{
-		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = TfComponentMode.Update;
-		dict["Context"] = _resultContext;
-		return dict;
-	}
 	private void _customSettingsChanged(string value)
 	{
-		_previewResultContext.CustomSettingsJson = value;
-		_resultContext.CustomSettingsJson = value;
+		_resultPreviewComponentContext.CustomSettingsJson = value;
+		_resultComponentContext.CustomSettingsJson = value;
 	}
 	private void _previewResultChanged(ITfTemplatePreviewResult value)
 	{
-		_resultContext.Preview = value;
+		_resultComponentContext.Preview = value;
 	}
+	private ITfTemplateProcessor _getProcessor()
+	{
+		if (_selectedTemplate is null) return null;
+
+		if (_selectedTemplate.ContentProcessorType is not null
+			&& _selectedTemplate.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		{
+			return (ITfTemplateProcessor)Activator.CreateInstance(_selectedTemplate.ContentProcessorType);
+
+		}
+		return null;
+
+	}
+
+	private void _initDynamicComponent()
+	{
+		_processor = _getProcessor();
+		_resultPreviewComponentContext = new TfTemplateProcessorResultPreviewComponentContext
+		{
+			Template = null,
+			SelectedRowIds = Content.SelectedRowIds,
+			SpaceData = Content.SpaceData,
+			User = Content.User,
+			CustomSettingsJson = null,
+			CustomSettingsJsonChanged = EventCallback.Factory.Create<string>(this, _customSettingsChanged),
+			PreviewResultChanged = EventCallback.Factory.Create<ITfTemplatePreviewResult>(this, _previewResultChanged),
+			ValidatePreviewResult = null,
+
+		};
+		_resultComponentContext = new TfTemplateProcessorResultComponentContext
+		{
+			Template = null,
+			SelectedRowIds = Content.SelectedRowIds,
+			SpaceData = Content.SpaceData,
+			User = Content.User,
+			CustomSettingsJson = null,
+			Preview = null
+		};
+		_dynamicComponentScope = _processor is not null ? _processor.GetType() : null;
+	}
+
+
 }
 
 public enum TfUseTemplateDialogStep

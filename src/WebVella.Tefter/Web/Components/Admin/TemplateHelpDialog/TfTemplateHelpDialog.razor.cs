@@ -1,33 +1,50 @@
 ﻿
 namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.TemplateHelpDialog.TfTemplateHelpDialog", "WebVella.Tefter")]
-public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentComponent<ITfTemplateProcessor>
+public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentComponent<TucTemplate>
 {
-	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] private AppStateUseCase UC { get; set; }
-	[Parameter] public ITfTemplateProcessor Content { get; set; }
-
+	[Parameter] public TucTemplate Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
 	private string _error = string.Empty;
+
+	private ITfTemplateProcessor _processor = null;
+	private TfTemplateProcessorHelpComponentContext _dynamicComponentContext = null;
+	private Type _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 		if (Content is null) _error = "Content is null";
-		if(Content.HelpComponentType is null) _error = LOC("Processor does not have help");
+		_initDynamicComponent();
 	}
 	private async Task _cancel()
 	{
 		await Dialog.CancelAsync();
 	}
 
-	private Dictionary<string, object> _getDynamicComponentParams()
+	private ITfTemplateProcessor _getProcessor()
 	{
-		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = TfComponentMode.Read;
-		dict["Context"] = new TfTemplateProcessorHelpComponentContext(){};
-		return dict;
+
+		if (Content.ContentProcessorType is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		{
+			return (ITfTemplateProcessor)Activator.CreateInstance(Content.ContentProcessorType);
+
+		}
+		return null;
+
 	}
+
+	private void _initDynamicComponent()
+	{
+		_processor = _getProcessor();
+
+		_dynamicComponentContext = new TfTemplateProcessorHelpComponentContext
+		{
+		};
+		_dynamicComponentScope = _processor.GetType();
+	}
+
+
 }
 

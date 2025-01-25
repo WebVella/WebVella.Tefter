@@ -1,7 +1,9 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
-public partial class ResultComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultComponentContext>
+public partial class ResultComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorResultComponentContext>,
+	ITfComponentScope<TextFileTemplateProcessor>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 	public Guid Id { get; init; } = new Guid("e74d6c12-7d1d-4723-be9b-2e1bd1d982e1");

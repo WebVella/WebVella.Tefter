@@ -3,7 +3,9 @@
 namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class ResultPreviewComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>
+public partial class ResultPreviewComponent : TfFormBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>,
+	ITfComponentScope<EmailTemplateProcessor>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 

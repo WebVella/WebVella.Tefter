@@ -6,8 +6,6 @@ public record TucDataProviderTypeInfo
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
 	public ITfDataProviderType Model { get; init; }
-	[JsonIgnore]
-	public Type SettingsComponentType { get; init; }
 	public List<TucDataProviderTypeDataTypeInfo> SupportedSourceDataTypes { get; init; } = new();
 	public TucDataProviderTypeInfo() { }
 	public TucDataProviderTypeInfo(ITfDataProviderType model)
@@ -16,7 +14,6 @@ public record TucDataProviderTypeInfo
 		Name = model.Name;
 		Description = model.Description;
 		FluentIconName = model.FluentIconName;
-		SettingsComponentType = model.SettingsComponentType;
 		foreach (var sourceDataType in model.GetSupportedSourceDataTypes())
 		{
 			var supportedDbTypes = new List<TucDatabaseColumnTypeInfo>();

@@ -1,7 +1,9 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
-public partial class HelpComponent : TfBaseComponent, ITfDynamicComponent<TfTemplateProcessorHelpComponentContext>
+public partial class HelpComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorHelpComponentContext>,
+	ITfComponentScope<TextFileTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("12d4f78b-daf2-48f0-ab84-3108703e7d7b");
 	public int PositionRank { get; init; } = 0;

@@ -19,8 +19,6 @@
 	}
 	else
 	{
-		<TfErrorBoundry>
-			<DynamicComponent Type="Content.HelpComponentType" Parameters="@_getDynamicComponentParams()" />
-		</TfErrorBoundry>
+		<TfDynamicComponent Context="_dynamicComponentContext" Scope="@_dynamicComponentScope" Placeholder="@LOC("Template does not have help")"/>
 	}
 </FluentDialogBody>

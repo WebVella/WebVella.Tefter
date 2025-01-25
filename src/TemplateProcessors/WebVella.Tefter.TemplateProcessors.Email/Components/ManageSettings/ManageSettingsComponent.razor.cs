@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Components.Forms;
 namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class ManageSettingsComponent : TfFormBaseComponent, ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>
+public partial class ManageSettingsComponent : TfFormBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>,
+	ITfComponentScope<EmailTemplateProcessor>
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 	[Inject] public ITfBlobManager BlobManager { get; set; }

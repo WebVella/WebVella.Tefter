@@ -9,17 +9,24 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	private List<TfSpaceDataAsOption> _spaceDataAll = new();
 	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
 	private bool _loading = true;
-	private DynamicComponent _settingsComponent;
-	private TfTemplateProcessorManageSettingsComponentContext _setttingsContext = null;
+
+	private TfTemplateProcessorViewSettingsComponentContext _dynamicComponentContext = null;
+	private Type _dynamicComponentScope = null;
+
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
+
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_processor = _getProcessor();
-		_setttingsContext = new TfTemplateProcessorManageSettingsComponentContext
-		{
-			Template = TfAppState.Value.AdminTemplateDetails,
-			Validate = null
-		};
+		_initDynamicComponent();
+		ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -32,6 +39,35 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		_initDynamicComponent();
+	}
+
+	private void On_AppChanged(SetAppStateAction action)
+	{
+		InvokeAsync(async () =>
+		{
+			_initDynamicComponent();
+			await InvokeAsync(StateHasChanged);
+		});
+	}
+
+	private void _initDynamicComponent()
+	{
+		_processor = _getProcessor();
+
+		if (TfAppState.Value.AdminTemplateDetails is null)
+			throw new Exception("Template not found");
+
+		_dynamicComponentContext = new TfTemplateProcessorViewSettingsComponentContext
+		{
+			Template = TfAppState.Value.AdminTemplateDetails
+		};
+		_dynamicComponentScope = _processor.GetType();
 	}
 
 	private async Task onUpdateClick()
@@ -72,7 +108,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		{
 			var template = (TucTemplate)result.Data;
 			ToastService.ShowSuccess(LOC("Template successfully updated!"));
-			_setttingsContext.Template = template;
+			//_setttingsContext.Template = template;
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { AdminTemplateDetails = template }));
 
@@ -83,7 +119,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	private async Task onHelpClick()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfTemplateHelpDialog>(
-		_processor,
+		TfAppState.Value.AdminTemplateDetails,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -93,16 +129,12 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		});
 	}
 
-	private Dictionary<string, object> _getDynamicComponentParams()
-	{
-		var dict = new Dictionary<string, object>();
-		dict["DisplayMode"] = TfComponentMode.Read;
-		dict["Context"] = _setttingsContext;
-		return dict;
-	}
 
 	private ITfTemplateProcessor _getProcessor()
 	{
+		if (TfAppState.Value.AdminTemplateDetails is null)
+			throw new Exception("Template not found");
+
 		var context = TfAppState.Value.AdminTemplateDetails;
 		if (context is null) return null;
 		if (context.ContentProcessorType is not null && context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
