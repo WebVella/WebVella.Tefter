@@ -41,7 +41,7 @@ else
 			<FluentSelect TOption="EmailTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
 						  SelectedOptionChanged="_selectedOptionChanged" Value="@_form.Id.ToString()"
 						  Disabled="@(_preview.Items.Count == 1)"
-						  OptionValue="@((p)=> p.Id.ToString())" 
+						  OptionValue="@((p)=> p.Id.ToString())"
 						  Items="_preview.Items">
 				<OptionTemplate Context="p">
 					<span style="margin-right:5px">@_itemPositionDict[p.Id]:</span>
@@ -107,7 +107,14 @@ else
 					<tr @key=(Guid.NewGuid()) class="tf-grid-tr">
 						<td class="tf-grid-td">
 							<div>
-								<a href="@row.DownloadUrl" target="_blank">@row.FileName</a>
+								@if (String.IsNullOrWhiteSpace(row.FileName) || String.IsNullOrWhiteSpace(row.DownloadUrl))
+								{
+									<span style="color:var(--error)">attachment generated with error (no name or download url)</span>
+								}
+								else
+								{
+									<a href="@row.DownloadUrl" target="_blank">@row.FileName</a>
+								}
 							</div>
 						</td>
 					</tr>

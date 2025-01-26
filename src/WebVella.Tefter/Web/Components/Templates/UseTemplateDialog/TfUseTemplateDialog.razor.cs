@@ -86,7 +86,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private void _selectTemplate(TucTemplate template)
 	{
 		_selectedTemplate = template;
-		_processor = _getProcessor();
+		_initDynamicComponent();
 
 		_resultPreviewComponentContext.Template = _selectedTemplate;
 		_resultComponentContext.Template = _selectedTemplate;
