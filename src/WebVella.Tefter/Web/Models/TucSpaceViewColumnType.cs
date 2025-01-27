@@ -14,6 +14,10 @@ public record TucSpaceViewColumnType
 	public List<string> SortAliases { get; set; }
 	public List<Guid> SupportedAddonTypes { get; set; }
 
+	[JsonIgnore]
+	public Type SpaceViewColumnType { get; set; }
+
+
 	public TucSpaceViewColumnType() { }
 	public TucSpaceViewColumnType(ITfSpaceViewColumnType model)
 	{
@@ -27,5 +31,6 @@ public record TucSpaceViewColumnType
 		FilterAliases = model.FilterAliases;
 		SortAliases = model.SortAliases;
 		SupportedAddonTypes = model.SupportedAddonTypes;
+		SpaceViewColumnType = model.GetType();
 	}
 }

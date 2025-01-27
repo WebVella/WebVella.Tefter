@@ -9,7 +9,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 	public Guid Id { get; init; } = new Guid("4afa2cc0-eb47-4dc1-b7bc-1dfb037c4e5a");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text File Template Manage Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";

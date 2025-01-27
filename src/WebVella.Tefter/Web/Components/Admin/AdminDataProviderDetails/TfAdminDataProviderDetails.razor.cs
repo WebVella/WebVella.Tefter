@@ -6,7 +6,7 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	private TfDataProviderViewSettingsComponentContext _dynamicComponentContext = null;
+	private TfDataProviderDisplaySettingsComponentContext _dynamicComponentContext = null;
 	private Type _dynamicComponentScope = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -45,7 +45,7 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 		if (TfAppState.Value.AdminDataProvider is null)
 			throw new Exception("Data Provider not found");
 
-		_dynamicComponentContext = new TfDataProviderViewSettingsComponentContext
+		_dynamicComponentContext = new TfDataProviderDisplaySettingsComponentContext
 		{
 			SettingsJson = TfAppState.Value.AdminDataProvider.SettingsJson
 		};

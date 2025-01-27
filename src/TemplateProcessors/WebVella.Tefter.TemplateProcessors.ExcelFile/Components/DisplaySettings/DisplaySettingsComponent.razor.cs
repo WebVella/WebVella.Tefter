@@ -1,16 +1,16 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
-public partial class ViewSettingsComponent : TfBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>,
+[LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
+public partial class DisplaySettingsComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
 	ITfComponentScope<ExcelFileTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("e403ba40-0d75-4ee5-b978-d0490cd8c374");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Excel Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	[Parameter] public TfTemplateProcessorViewSettingsComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
 	private ExcelFileTemplateSettings _form = new();
 	private string _downloadUrl
 	{

@@ -1,18 +1,18 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
-public partial class ViewSettingsComponent : TfBaseComponent,
-	ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>,
+[LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
+public partial class DisplaySettingsComponent : TfBaseComponent,
+	ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
 	ITfComponentScope<EmailTemplateProcessor>
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 
 	public Guid Id { get; init; } = new Guid("a52465b2-6e8c-48b3-a903-7fb2d43c55fa");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	[Parameter] public TfTemplateProcessorViewSettingsComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
 
 	private bool _loading = true;
 	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();

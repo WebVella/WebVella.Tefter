@@ -12,7 +12,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 
 	public Guid Id { get; init; } = new Guid("0a15ce68-12af-4fae-a464-10bf5c0a1c9b");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template Settings Manage";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";

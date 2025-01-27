@@ -12,7 +12,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	ITfComponentScope<CsvDataProvider>
 {
 	public Guid Id { get; init; } = new Guid("8edf466e-74d1-42f0-b166-8df2c4e3e1b9");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "CSV Data Provider Manage Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";

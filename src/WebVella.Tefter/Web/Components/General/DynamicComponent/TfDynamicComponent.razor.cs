@@ -5,6 +5,7 @@ public partial class TfDynamicComponent
 	[Parameter] public Type Scope { get; set; }
 	[Parameter] public TfBaseDynamicComponentContext Context { get; set; }
 	[Parameter] public string Placeholder { get; set; } = null;
+	[Parameter] public int? Count { get; set; } = null;
 
 	private Dictionary<string, object> _context
 	{
@@ -20,11 +21,18 @@ public partial class TfDynamicComponent
 	{
 		get
 		{
-			if(Context is null) return (new List<TfDynamicComponentMeta>()).AsReadOnly();
+			if (Context is null) return (new List<TfDynamicComponentMeta>()).AsReadOnly();
 
+			if (Count is not null)
+			{
+				return UC.GetDynamicComponentsMetaForContext(
+					context: Context.GetType(),
+					scope: Scope
+				).Take(Count.Value).ToList().AsReadOnly();
+			}
 			return UC.GetDynamicComponentsMetaForContext(
-				context:Context.GetType(),
-				scope:Scope
+				context: Context.GetType(),
+				scope: Scope
 			);
 		}
 	}

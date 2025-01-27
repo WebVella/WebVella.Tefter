@@ -9,7 +9,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 	public Guid Id { get; init; } = new Guid("e6923a63-885f-4201-bab5-701867f7b952");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Excel Template Result Preview";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";

@@ -34,7 +34,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (_isDataLoading) return false;
 		return base.ShouldRender();
 	}
-
 	private void On_AppChanged(SetAppStateAction action)
 	{
 		InvokeAsync(async () =>
@@ -140,7 +139,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			{
 				Dispatcher.Dispatch(new SetUserStateAction(
 					component: this,
-					oldStateHash:TfUserState.Value.Hash,
+					oldStateHash: TfUserState.Value.Hash,
 					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
 			}
 		}

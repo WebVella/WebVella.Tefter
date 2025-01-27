@@ -10,7 +10,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 
 	public Guid Id { get; init; } = new Guid("57ef9ad4-45ff-4674-8ad6-9e1420fefbb1");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template Result Preview";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";

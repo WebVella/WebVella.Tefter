@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
-public partial class ViewSettingsComponent : TfBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>,
+[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
+public partial class DisplaySettingsComponent : TfBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
 	ITfComponentScope<TextFileTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("a23a91fe-cf4b-4f83-9f43-58484978cdab");
@@ -10,7 +10,7 @@ public partial class ViewSettingsComponent : TfBaseComponent,
 	public string Name { get; init; } = "Text File Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	[Parameter] public TfTemplateProcessorViewSettingsComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
 	private TextFileTemplateSettings _form = new();
 	private string _downloadUrl
 	{

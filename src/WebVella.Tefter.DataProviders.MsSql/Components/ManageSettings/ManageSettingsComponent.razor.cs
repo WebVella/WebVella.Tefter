@@ -9,7 +9,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	ITfComponentScope<MsSqlDataProvider>
 {
 	public Guid Id { get; init; } = new Guid("b543421c-c77f-45d9-8c81-ac0c5a0a303f");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "MSSQL Data Provider Manage Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";

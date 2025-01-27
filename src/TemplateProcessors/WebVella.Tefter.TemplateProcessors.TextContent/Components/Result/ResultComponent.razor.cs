@@ -8,7 +8,7 @@ public partial class ResultComponent : TfBaseComponent,
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 
 	public Guid Id { get; init; } = new Guid("ac4317e2-ef23-46b8-875d-c763e50a5d8e");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text Content Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";

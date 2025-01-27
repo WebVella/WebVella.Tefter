@@ -1,16 +1,16 @@
 ﻿namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
-[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
-public partial class ViewSettingsComponent : TfFormBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>,
+[LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
+public partial class DisplaySettingsComponent : TfFormBaseComponent, 
+	ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
 	ITfComponentScope<TextContentTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("d05ea639-b6d2-4f8b-8cc7-307961cf0502");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text content View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	[Parameter] public TfTemplateProcessorViewSettingsComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
 
 	private TextContentTemplateSettings _form = new();
 

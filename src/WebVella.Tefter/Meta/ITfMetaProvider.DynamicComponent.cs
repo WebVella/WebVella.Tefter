@@ -52,9 +52,9 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfDataProviderViewSettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfDataProviderDisplaySettingsComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfDataProviderViewSettingsComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfDynamicComponent<TfDataProviderDisplaySettingsComponentContext>)Activator.CreateInstance(type);
 				meta = new TfDynamicComponentMeta
 				{
 					Id = instance.Id,
@@ -150,9 +150,9 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorViewSettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorDisplaySettingsComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfTemplateProcessorViewSettingsComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>)Activator.CreateInstance(type);
 				meta = new TfDynamicComponentMeta
 				{
 					Id = instance.Id,

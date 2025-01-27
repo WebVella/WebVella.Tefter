@@ -8,7 +8,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 
 	public Guid Id { get; init; } = new Guid("c940dd21-6151-4c4c-ae5b-e6d21de8b80c");
-	public int PositionRank { get; init; } = 0;
+	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text File Template Result Preview";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
