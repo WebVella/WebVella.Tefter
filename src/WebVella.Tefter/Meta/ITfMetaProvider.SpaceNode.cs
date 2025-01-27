@@ -19,7 +19,7 @@ public partial class TfMetaProvider
 		Type type)
 	{
 
-		if (type.GetInterfaces().Any(x => x == typeof(ITfSpaceNodeComponent)))
+		if (type.ImplementsInterface(typeof(ITfSpaceNodeComponent)))
 		{
 			var instance = (ITfSpaceNodeComponent)Activator.CreateInstance(type);
 			

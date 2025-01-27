@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
 	ITfComponentScope<ExcelFileTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("e403ba40-0d75-4ee5-b978-d0490cd8c374");

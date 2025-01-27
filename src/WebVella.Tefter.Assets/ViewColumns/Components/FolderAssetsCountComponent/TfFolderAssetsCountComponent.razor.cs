@@ -36,6 +36,10 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("6c32d6e7-8758-4916-9685-e0476275a3a2");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfFolderAssetsCountViewColumnType)
+	};
 	private List<TucSelectOption> _sharedKeyOptions = new();
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value

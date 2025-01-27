@@ -1,10 +1,11 @@
-﻿/// <summary>
+﻿
+namespace WebVella.Tefter.Web.ViewColumns;
+
+/// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-
-namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Number Display")]
+[Description("Number Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.NumberDisplayColumnComponent.TfNumberDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfNumberDisplayColumnComponent : TucBaseViewColumn<TfNumberDisplayColumnComponentOptions>
 {
@@ -29,6 +30,10 @@ public partial class TfNumberDisplayColumnComponent : TucBaseViewColumn<TfNumber
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("46deff56-8b26-4f93-8575-f929d2e2e7d7");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfNumberViewColumnType)
+	};
 
 	/// <summary>
 	/// The alias of the column name that stores the value.

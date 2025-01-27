@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public interface ITfDynamicComponent<T> where T : TfBaseDynamicComponentContext
+public interface ITfRegionComponent<T> where T : TfBaseRegionComponentContext
 {
 	public Guid Id { get; init;}
 	public int PositionRank { get; init;}
@@ -10,7 +10,7 @@ public interface ITfDynamicComponent<T> where T : TfBaseDynamicComponentContext
 	T Context { get; init; }
 }
 
-public class TfDynamicComponentMeta
+public class TfRegionComponentMeta
 {
 	public Guid Id { get; init;}
 	public int PositionRank { get; init;}

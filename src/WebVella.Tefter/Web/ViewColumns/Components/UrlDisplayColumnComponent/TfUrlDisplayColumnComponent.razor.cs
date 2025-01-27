@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter URL Display")]
+[Description("URL Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.UrlDisplayColumnComponent.TfUrlDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDisplayColumnComponentOptions>
 {
@@ -29,7 +29,11 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	#endregion
 
 	#region << Properties >>
-/// <summary>
+	public override Guid Id { get; init; } = new Guid("75fa0e5e-24d8-4971-854c-d0ed41ad9019");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfTextViewColumnType)
+	};
+	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
@@ -65,10 +69,10 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
-		if (columnData is not null && columnData is not string) 
+		if (columnData is not null && columnData is not string)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
 		excelCell.SetValue(XLCellValue.FromObject((string)columnData));
 	}
@@ -78,7 +82,7 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	private void _initValues()
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
-		if (columnData is not null && columnData is not string) 
+		if (columnData is not null && columnData is not string)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
 		_value = (string)columnData;
 	}

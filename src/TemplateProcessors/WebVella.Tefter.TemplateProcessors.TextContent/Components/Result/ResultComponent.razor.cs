@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorResultComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorResultComponentContext>,
 	ITfComponentScope<TextContentTemplateProcessor>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }

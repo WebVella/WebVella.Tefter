@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Select Display")]
+[Description("Select Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.SelectDisplayColumnComponent.TfSelectDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelectDisplayColumnComponentOptions>
 {
@@ -36,6 +36,10 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("dd1cf064-9167-4432-b603-128b931ca89d");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfTextViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

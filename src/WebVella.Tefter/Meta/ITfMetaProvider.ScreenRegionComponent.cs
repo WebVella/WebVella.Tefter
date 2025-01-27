@@ -34,7 +34,7 @@ public partial class TfMetaProvider
 	private static void ScanAndRegisterScreenRegionComponents(
 		Type type)
 	{
-		if (type.GetInterfaces().Any(x => x == typeof(ITfScreenRegionComponent)))
+		if (type.ImplementsInterface(typeof(ITfScreenRegionComponent)))
 		{
 			var instance = (ITfScreenRegionComponent)Activator.CreateInstance(type);
 			

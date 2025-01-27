@@ -18,7 +18,7 @@ public partial class TfMetaProvider
 	private static void ScanAndRegisterDataProvidersTypes(
 		Type type)
 	{
-		if (type.GetInterfaces().Any(x => x == typeof(ITfDataProviderType)))
+		if (type.ImplementsInterface(typeof(ITfDataProviderType)))
 		{
 			var instance = (ITfDataProviderType)Activator.CreateInstance(type);
 			

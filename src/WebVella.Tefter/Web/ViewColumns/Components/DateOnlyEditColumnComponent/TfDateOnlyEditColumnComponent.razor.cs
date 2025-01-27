@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Date Edit")]
+[Description("Date Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateOnlyEditColumnComponent.TfDateOnlyEditColumnComponent", "WebVella.Tefter")]
 public partial class TfDateOnlyEditColumnComponent : TucBaseViewColumn<TfDateOnlyEditColumnComponentOptions>
 {
@@ -29,6 +29,10 @@ public partial class TfDateOnlyEditColumnComponent : TucBaseViewColumn<TfDateOnl
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("b83ac16e-b46f-4b0a-b6f8-e4848a973a63");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfDateOnlyViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

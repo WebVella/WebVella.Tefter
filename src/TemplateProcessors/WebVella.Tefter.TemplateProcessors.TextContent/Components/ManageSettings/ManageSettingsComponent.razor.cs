@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>,
 	ITfComponentScope<TextContentTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("459ce24e-37af-48eb-99fe-abf32d0b83b4");

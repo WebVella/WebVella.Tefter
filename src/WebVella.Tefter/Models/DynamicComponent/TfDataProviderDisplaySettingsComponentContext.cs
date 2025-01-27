@@ -3,7 +3,7 @@
 /// <summary>
 /// Context need to be included in the ScanAndRegisterDynamicComponents method as a case in order to be discovered
 /// </summary>
-public class TfDataProviderDisplaySettingsComponentContext : TfBaseDynamicScopedComponentContext<ITfDataProviderType>
+public class TfDataProviderDisplaySettingsComponentContext : TfBaseRegionScopedComponentContext<ITfDataProviderType>
 {
 	public string SettingsJson { get; set; } = "{}";
 }

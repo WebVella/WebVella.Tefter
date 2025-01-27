@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Boolean Edit")]
+[Description("Boolean Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.BooleanEditColumnComponent.TfBooleanEditColumnComponent", "WebVella.Tefter")]
 public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanEditColumnComponentOptions>
 {
@@ -29,6 +29,10 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init;} = new Guid("1faec857-0ae5-4912-ba6e-3a8624a06666");
+	public override List<Type> SupportedColumnTypes { get; init;} = new List<Type>{ 
+		typeof(TfBooleanViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

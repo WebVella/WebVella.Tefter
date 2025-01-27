@@ -5,7 +5,7 @@ using WebVella.Tefter.Web.Models;
 namespace WebVella.Tefter.DataProviders.MsSql.Components;
 [LocalizationResource("WebVella.Tefter.DataProviders.MsSql.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.MsSql")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfDynamicComponent<TfDataProviderManageSettingsComponentContext>,
+	ITfRegionComponent<TfDataProviderManageSettingsComponentContext>,
 	ITfComponentScope<MsSqlDataProvider>
 {
 	public Guid Id { get; init; } = new Guid("b543421c-c77f-45d9-8c81-ac0c5a0a303f");

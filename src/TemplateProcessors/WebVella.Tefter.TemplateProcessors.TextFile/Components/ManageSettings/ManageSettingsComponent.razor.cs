@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>,
 	ITfComponentScope<TextFileTemplateProcessor>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }

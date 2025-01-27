@@ -355,22 +355,9 @@ internal partial class AppStateUseCase
 
 	internal virtual List<TucSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
 	{
-		var serviceResult = _spaceManager.GetAvailableSpaceViewColumnTypes();
-		if (serviceResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetAvailableSpaceViewColumnTypes failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return new();
-		}
-		if (serviceResult.Value is null) return new();
+		var serviceResult = _metaProvider.GetSpaceViewColumnTypesMeta();
 
-		return serviceResult.Value.Select(x => new TucSpaceViewColumnType(x)).ToList();
+		return serviceResult.Select(x => new TucSpaceViewColumnType(x.Instance)).ToList();
 
 	}
 

@@ -4,7 +4,7 @@
 /// </summary>
 
 namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Integer Display")]
+[Description("Integer Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.IntegerDisplayColumnComponent.TfIntegerDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfIntegerDisplayColumnComponentOptions>
 {
@@ -29,6 +29,10 @@ public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfInteg
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("40a51679-0e22-477e-bf60-9b0142043b7c");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfIntegerViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

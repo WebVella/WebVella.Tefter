@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>,
 	ITfComponentScope<ExcelFileTemplateProcessor>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }

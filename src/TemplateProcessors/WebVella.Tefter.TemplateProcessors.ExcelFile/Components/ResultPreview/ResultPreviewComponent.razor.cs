@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>,
 	ITfComponentScope<ExcelFileTemplateProcessor>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }

@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Text Edit")]
+[Description("Text Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.TextEditColumnComponent.TfTextEditColumnComponent", "WebVella.Tefter")]
 public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditColumnComponentOptions>
 {
@@ -29,6 +29,10 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("7e5d2466-0415-4308-bf51-4bd4dbabecdc");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfTextViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

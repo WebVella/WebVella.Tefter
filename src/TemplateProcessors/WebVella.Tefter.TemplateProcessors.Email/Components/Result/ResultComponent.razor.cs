@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorResultComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorResultComponentContext>,
 	ITfComponentScope<EmailTemplateProcessor>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }

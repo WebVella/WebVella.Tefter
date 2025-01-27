@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Date Display")]
+[Description("Date Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.DateOnlyDisplayColumnComponent.TfDateOnlyDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDateOnlyDisplayColumnComponentOptions>
 {
@@ -28,6 +28,10 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("6ee59177-2aad-4c90-a5b9-702b91ff358d");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfDateOnlyViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
@@ -65,7 +69,7 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		//dateonly is not generally supported so we return datetime
 		object columnData = GetColumnDataByAlias(_valueAlias);
@@ -79,7 +83,7 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	private void _initValues()
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
-		if(columnData is not null && columnData is not DateOnly) 
+		if (columnData is not null && columnData is not DateOnly)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
 		_value = (DateOnly?)columnData;
 	}

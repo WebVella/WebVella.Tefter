@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
 	ITfComponentScope<TextFileTemplateProcessor>
 {
 	public Guid Id { get; init; } = new Guid("a23a91fe-cf4b-4f83-9f43-58484978cdab");

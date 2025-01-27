@@ -98,7 +98,7 @@ public class UtilityTests
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(UtilityTestsSimpleClass)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(UtilityTestsSimpleClass)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeFalse();
 		}
@@ -111,7 +111,7 @@ public class UtilityTests
 		{
 			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfDynamicComponent<>),typeof(TfDataProviderManageSettingsComponentContext)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>),typeof(TfDataProviderManageSettingsComponentContext)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeTrue();
 		}
@@ -147,7 +147,7 @@ public class UtilityTests
 	{
 		using (await locker.LockAsync())
 		{
-			Type objType = typeof(ITfDynamicComponent<TfDataProviderManageSettingsComponentContext>);
+			Type objType = typeof(ITfRegionComponent<TfDataProviderManageSettingsComponentContext>);
 			Type result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFromGenericInterface(); return true; };
 			action.Should().NotThrow();
@@ -164,7 +164,7 @@ public class UtilityTests
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
 			List<Type> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFromImplementedGenericInterface(typeof(ITfDynamicComponent<>)); return true; };
+			Func<bool> action = () => { result = objType.GetGenericTypeFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(0);
@@ -178,7 +178,7 @@ public class UtilityTests
 		{
 			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
 			List<Type> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFromImplementedGenericInterface(typeof(ITfDynamicComponent<>)); return true; };
+			Func<bool> action = () => { result = objType.GetGenericTypeFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(1);
@@ -215,7 +215,7 @@ public class UtilityTestsChildGenericClass : UtilityTestsBaseGenericClass<Utilit
 
 }
 
-public class UtilityTestsClassDynamicComponentWithoutScope : ITfDynamicComponent<TfDataProviderManageSettingsComponentContext>
+public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
 {
 	public TfDataProviderManageSettingsComponentContext Context { get; init; }
 	public Guid Id { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
@@ -225,7 +225,7 @@ public class UtilityTestsClassDynamicComponentWithoutScope : ITfDynamicComponent
 	public string FluentIconName { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 }
 
-public class UtilityTestsClassDynamicComponentWithScope : ITfDynamicComponent<TfDataProviderManageSettingsComponentContext>, ITfComponentScope<UtilityTestsDataProviderTypeClass>
+public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsComponentContext>, ITfComponentScope<UtilityTestsDataProviderTypeClass>
 {
 	public TfDataProviderManageSettingsComponentContext Context { get; init; }
 	public Guid Id { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }

@@ -46,7 +46,7 @@
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:15px 0" />
-			<TfDynamicComponent Context="_dynamicComponentContext" Scope="@_dynamicComponentScope" Count="1" />
+			<TfRegionComponent Context="_dynamicComponentContext" Scope="@_dynamicComponentScope" Count="1" />
 			<FluentValidationMessage For="@(() => _form.SettingsJson)" />
 		</FluentEditForm>
 	}

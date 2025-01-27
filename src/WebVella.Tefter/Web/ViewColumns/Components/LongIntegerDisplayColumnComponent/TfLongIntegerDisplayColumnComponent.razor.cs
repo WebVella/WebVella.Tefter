@@ -1,10 +1,9 @@
-﻿/// <summary>
+﻿namespace WebVella.Tefter.Web.ViewColumns;
+/// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-
-namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Long Integer Display")]
+[Description("Long Integer Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.LongIntegerDisplayColumnComponent.TfLongIntegerDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfLongIntegerDisplayColumnComponent : TucBaseViewColumn<TfLongIntegerDisplayColumnComponentOptions>
 {
@@ -29,6 +28,10 @@ public partial class TfLongIntegerDisplayColumnComponent : TucBaseViewColumn<TfL
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("aeb523ff-a796-4158-bb59-73aa07e380e6");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfIntegerViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

@@ -8,7 +8,7 @@ namespace WebVella.Tefter.DataProviders.Csv.Components;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.Csv.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.Csv")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfDynamicComponent<TfDataProviderManageSettingsComponentContext>,
+	ITfRegionComponent<TfDataProviderManageSettingsComponentContext>,
 	ITfComponentScope<CsvDataProvider>
 {
 	public Guid Id { get; init; } = new Guid("8edf466e-74d1-42f0-b166-8df2c4e3e1b9");

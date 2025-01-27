@@ -9,7 +9,7 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnType
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public Type CustomOptionsComponentType { get; init; }
-	public List<Type> SupportedComponentTypes { get; init; }
+	public List<Type> SupportedComponentTypes { get; set; }
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
@@ -36,9 +36,6 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnType
 
 		DefaultComponentType = typeof(TfTalkCommentsCountComponent);
 
-		SupportedComponentTypes = new List<Type> {
-			typeof(TfTalkCommentsCountComponent)
-			};
 	}
 }
 

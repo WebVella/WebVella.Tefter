@@ -82,9 +82,9 @@
 									  SelectedOption="@_form.ComponentType"
 									  SelectedOptionChanged="_columnComponentChangeHandler"
 									  TOption="Type"
-									  OptionText="((x)=> x.ToDescriptionString())"
+									  OptionText="((x)=> x.ToDescriptionString() ?? x.Name)"
 									  OptionValue="((x)=> x.FullName)"
-									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.FullName)" />
+									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.ToDescriptionString()).ToList()" />
 
 						<FluentValidationMessage For="@(() => _form.ComponentType)" />
 					}

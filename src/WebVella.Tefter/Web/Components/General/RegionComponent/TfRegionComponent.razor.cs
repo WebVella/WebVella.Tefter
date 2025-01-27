@@ -1,9 +1,9 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfDynamicComponent
+public partial class TfRegionComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public Type Scope { get; set; }
-	[Parameter] public TfBaseDynamicComponentContext Context { get; set; }
+	[Parameter] public TfBaseRegionComponentContext Context { get; set; }
 	[Parameter] public string Placeholder { get; set; } = null;
 	[Parameter] public int? Count { get; set; } = null;
 
@@ -17,11 +17,11 @@ public partial class TfDynamicComponent
 		}
 	}
 
-	private ReadOnlyCollection<TfDynamicComponentMeta> _componentsMeta
+	private ReadOnlyCollection<TfRegionComponentMeta> _componentsMeta
 	{
 		get
 		{
-			if (Context is null) return (new List<TfDynamicComponentMeta>()).AsReadOnly();
+			if (Context is null) return (new List<TfRegionComponentMeta>()).AsReadOnly();
 
 			if (Count is not null)
 			{

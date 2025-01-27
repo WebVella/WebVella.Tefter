@@ -15,7 +15,10 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnType
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public Type CustomOptionsComponentType { get; init; }
-	public List<Type> SupportedComponentTypes { get; init; }
+	/// <summary>
+	/// This property will be inited on application start
+	/// </summary>
+	public List<Type> SupportedComponentTypes { get; set; } = new();
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
@@ -47,12 +50,6 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnType
 		SortAliases = new List<string> { ALIAS };
 
 		DefaultComponentType = typeof(TfGuidDisplayColumnComponent);
-
-		SupportedComponentTypes = new List<Type> {
-			typeof(TfGuidDisplayColumnComponent),
-			typeof(TfGuidEditColumnComponent),
-			typeof(TfTextDisplayColumnComponent)
-			};
 	}
 }
 

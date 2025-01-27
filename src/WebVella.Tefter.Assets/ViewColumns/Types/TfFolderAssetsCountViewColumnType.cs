@@ -9,7 +9,7 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnType
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public Type CustomOptionsComponentType { get; init; }
-	public List<Type> SupportedComponentTypes { get; init; }
+	public List<Type> SupportedComponentTypes { get; set; }
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
@@ -35,10 +35,6 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnType
 		SortAliases = new List<string> { };
 
 		DefaultComponentType = typeof(TfFolderAssetsCountComponent);
-
-		SupportedComponentTypes = new List<Type> {
-			typeof(TfFolderAssetsCountComponent)
-			};
 	}
 }
 

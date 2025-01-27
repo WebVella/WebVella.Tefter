@@ -6,7 +6,7 @@ namespace WebVella.Tefter.Web.ViewColumns;
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter GUID Edit")]
+[Description("GUID Edit")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.GuidEditColumnComponent.TfGuidEditColumnComponent", "WebVella.Tefter")]
 public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditColumnComponentOptions>
 {
@@ -32,6 +32,10 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("7b1a4f3e-500b-4b97-8833-dfe4e3ade1fb");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfGuidViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

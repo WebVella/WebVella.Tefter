@@ -2,29 +2,29 @@
 
 public partial interface ITfMetaProvider
 {
-	public ReadOnlyCollection<TfDynamicComponentMeta> GetDynamicComponentsMeta();
-	public ReadOnlyCollection<TfDynamicComponentMeta> GetDynamicComponentsMeta(Type context = null, Type scope = null);
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta();
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, Type scope = null);
 }
 
 public partial class TfMetaProvider
 {
-	private static readonly List<TfDynamicComponentMeta> _dynamicComponentMeta =
-		new List<TfDynamicComponentMeta>();
+	private static readonly List<TfRegionComponentMeta> _regionComponentMeta =
+		new List<TfRegionComponentMeta>();
 
-	public ReadOnlyCollection<TfDynamicComponentMeta> GetDynamicComponentsMeta()
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta()
 	{
-		return _dynamicComponentMeta
+		return _regionComponentMeta
 			.OrderBy(x => x.PositionRank)
 			.ThenBy(x => x.Name)
 			.ToList()
 			.AsReadOnly();
 	}
-	public ReadOnlyCollection<TfDynamicComponentMeta> GetDynamicComponentsMeta(Type context = null, Type scope = null)
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, Type scope = null)
 	{
-		return _dynamicComponentMeta
+		return _regionComponentMeta
 			.Where(x =>
 				(scope is null || x.ScopeTypeFullNames.Contains(scope.FullName))
-				&& (context is null || x.ComponentType.ImplementsGenericInterface(typeof(ITfDynamicComponent<>),context))
+				&& (context is null || x.ComponentType.ImplementsGenericInterface(typeof(ITfRegionComponent<>),context))
 				)
 			.OrderBy(x => x.PositionRank)
 			.ThenBy(x => x.Name)
@@ -32,16 +32,16 @@ public partial class TfMetaProvider
 			.AsReadOnly();
 	}
 
-	private static void ScanAndRegisterDynamicComponents(Type type)
+	private static void ScanAndRegisterRegionComponents(Type type)
 	{
-		TfDynamicComponentMeta meta = null;
+		TfRegionComponentMeta meta = null;
 
 		#region << Try Get meta >>
 		{
-			if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfDataProviderManageSettingsComponentContext)))
+			if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfDataProviderManageSettingsComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfDataProviderManageSettingsComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -52,10 +52,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfDataProviderDisplaySettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderDisplaySettingsComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfDataProviderDisplaySettingsComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfDataProviderDisplaySettingsComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -66,10 +66,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfSpaceNodeManageComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeManageComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfSpaceNodeManageComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfSpaceNodeManageComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -80,10 +80,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfSpaceNodeViewComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeViewComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfSpaceNodeViewComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfSpaceNodeViewComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -94,10 +94,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorHelpComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorHelpComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfTemplateProcessorHelpComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfTemplateProcessorHelpComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -108,10 +108,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorManageSettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorManageSettingsComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -122,10 +122,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorResultComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfTemplateProcessorResultComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfTemplateProcessorResultComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -136,10 +136,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorResultPreviewComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultPreviewComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfTemplateProcessorResultPreviewComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -150,10 +150,10 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfDynamicComponent<>), typeof(TfTemplateProcessorDisplaySettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorDisplaySettingsComponentContext)))
 			{
-				var instance = (ITfDynamicComponent<TfTemplateProcessorDisplaySettingsComponentContext>)Activator.CreateInstance(type);
-				meta = new TfDynamicComponentMeta
+				var instance = (ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
 					PositionRank = instance.PositionRank,
@@ -168,7 +168,7 @@ public partial class TfMetaProvider
 		#endregion
 		if (meta is not null)
 		{
-			_dynamicComponentMeta.Add(meta);
+			_regionComponentMeta.Add(meta);
 			_typesMap[type.FullName] = type;
 		}
 	}

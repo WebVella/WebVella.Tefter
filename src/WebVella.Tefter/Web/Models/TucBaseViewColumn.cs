@@ -2,13 +2,7 @@
 
 namespace WebVella.Tefter.Web.Models;
 
-public interface ITucExcelExportableViewColumn
-{
-	void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell);
-}
-
-
-public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITucExcelExportableViewColumn, ITucAuxDataUseComponent
+public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfSpaceViewColumnComponent, ITucAuxDataUseComponent
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
@@ -19,6 +13,8 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	#endregion
 
 	#region << Properties >>
+	public virtual Guid Id { get; init; } = Guid.NewGuid();
+	public virtual List<Type> SupportedColumnTypes { get; init; }
 	[Parameter] public TucViewColumnComponentContext Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
@@ -369,7 +365,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// This method needs to be overriden in the implementing component,
 	/// and will be called by various export services as Excel export in example
 	/// </summary>
-	public virtual void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell){}
+	public virtual void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell) { }
 
 	/// <summary>
 	/// This method expects a datatable with a single row (in most cases) 

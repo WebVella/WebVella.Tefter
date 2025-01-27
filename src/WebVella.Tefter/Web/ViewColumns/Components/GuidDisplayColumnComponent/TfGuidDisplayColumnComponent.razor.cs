@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter GUID Display")]
+[Description("GUID Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.GuidDisplayColumnComponent.TfGuidDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisplayColumnComponentOptions>
 {
@@ -29,6 +29,10 @@ public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisp
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("fb66f025-6701-400e-81b9-54d4046be8a6");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfGuidViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

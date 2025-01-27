@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfDynamicComponent<TfTemplateProcessorManageSettingsComponentContext>,
+	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>,
 	ITfComponentScope<EmailTemplateProcessor>
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }

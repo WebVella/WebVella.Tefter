@@ -1,10 +1,10 @@
-﻿/// <summary>
+﻿namespace WebVella.Tefter.Web.ViewColumns;
+
+/// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-
-namespace WebVella.Tefter.Web.ViewColumns;
-[Description("Tefter Short Integer Display")]
+[Description("Short Integer Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.IntegerDisplayColumnComponent.TfIntegerDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<TfShortIntegerDisplayColumnComponentOptions>
 {
@@ -29,6 +29,10 @@ public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<Tf
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("02f6f53c-cbe9-42e6-92a1-9fc5c7efb229");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfShortIntegerViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component

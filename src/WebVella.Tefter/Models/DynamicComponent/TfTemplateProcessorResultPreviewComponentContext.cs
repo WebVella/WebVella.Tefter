@@ -3,7 +3,7 @@
 /// <summary>
 /// Context need to be included in the ScanAndRegisterDynamicComponents method as a case in order to be discovered
 /// </summary>
-public class TfTemplateProcessorResultPreviewComponentContext : TfBaseDynamicScopedComponentContext<ITfTemplateProcessor>
+public class TfTemplateProcessorResultPreviewComponentContext : TfBaseRegionScopedComponentContext<ITfTemplateProcessor>
 {
 	public TucTemplate Template { get; set; }
 	public List<Guid> SelectedRowIds { get; set; }

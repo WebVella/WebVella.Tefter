@@ -36,6 +36,10 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("5f3855f1-4819-488f-b24a-d4a81448e4f0");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfTalkCommentsCountViewColumnType)
+	};
 	private List<TucSelectOption> _sharedKeyOptions = new();
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value

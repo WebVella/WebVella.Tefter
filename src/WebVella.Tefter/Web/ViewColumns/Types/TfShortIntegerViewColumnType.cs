@@ -14,7 +14,10 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnType
 	public string FluentIconName { get; init; }
 	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
-	public List<Type> SupportedComponentTypes { get; init; }
+	/// <summary>
+	/// This property will be inited on application start
+	/// </summary>
+	public List<Type> SupportedComponentTypes { get; set; } = new();
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
@@ -47,12 +50,6 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnType
 		SortAliases = new List<string> { ALIAS };
 
 		DefaultComponentType = typeof(TfShortIntegerDisplayColumnComponent);
-
-		SupportedComponentTypes = new List<Type> {
-			typeof(TfShortIntegerDisplayColumnComponent),
-			typeof(TfShortIntegerEditColumnComponent),
-			typeof(TfTextDisplayColumnComponent)
-			};
 	}
 }
 

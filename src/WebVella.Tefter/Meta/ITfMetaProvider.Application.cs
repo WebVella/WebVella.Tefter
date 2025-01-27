@@ -41,7 +41,7 @@ public partial class TfMetaProvider
 		Type type)
 	{
 
-		if (type.GetInterfaces().Any(x => x == typeof(ITfApplication)))
+		if (type.ImplementsInterface(typeof(ITfApplication)))
 		{
 			var instance = (ITfApplication)Activator.CreateInstance(type);
 			

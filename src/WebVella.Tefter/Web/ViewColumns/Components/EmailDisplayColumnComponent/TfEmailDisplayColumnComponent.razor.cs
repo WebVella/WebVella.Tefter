@@ -4,7 +4,7 @@
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Tefter Email Display")]
+[Description("Email Display")]
 [LocalizationResource("WebVella.Tefter.Web.ViewColumns.Components.EmailDisplayColumnComponent.TfEmailDisplayColumnComponent", "WebVella.Tefter")]
 public partial class TfEmailDisplayColumnComponent : TucBaseViewColumn<TfEmailDisplayColumnComponentOptions>
 {
@@ -29,6 +29,10 @@ public partial class TfEmailDisplayColumnComponent : TucBaseViewColumn<TfEmailDi
 	#endregion
 
 	#region << Properties >>
+	public override Guid Id { get; init; } = new Guid("c07af5f0-0a25-4786-8043-375f22cde7bd");
+	public override List<Type> SupportedColumnTypes { get; init; } = new List<Type>{
+		typeof(TfTextViewColumnType)
+	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
 	/// Depends on the ITfSpaceViewColumnType that renders this component
