@@ -34,7 +34,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 	{
 		try
 		{
-			return Result.Ok(_spaceViewColumnTypes.AsReadOnly());
+			var meta = _metaProvider.GetSpaceViewColumnTypesMeta();
+			return Result.Ok(meta.Select(x => x.Instance).ToList().AsReadOnly());
 		}
 		catch (Exception ex)
 		{
@@ -378,8 +379,8 @@ public partial class TfSpaceManager : ITfSpaceManager
 		if (dbo == null)
 			return null;
 
-		ITfSpaceViewColumnType columnType = GetSpaceViewColumnTypeByName(dbo.FullTypeName);
-		Type componentType = GetSpaceViewColumnComponentType(dbo.FullComponentTypeName);
+		ITfSpaceViewColumnType columnType = _metaProvider.GetSpaceViewColumnTypeByName(dbo.FullTypeName);
+		Type componentType = _metaProvider.GetSpaceViewColumnComponentType(dbo.FullComponentTypeName);
 
 		return new TfSpaceViewColumn
 		{
