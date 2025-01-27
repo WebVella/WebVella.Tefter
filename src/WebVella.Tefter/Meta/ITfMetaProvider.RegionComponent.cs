@@ -94,6 +94,45 @@ public partial class TfMetaProvider
 					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
 				};
 			}
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewSelectorActionComponentContext)))
+			{
+				var instance = (ITfRegionComponent<TfSpaceViewSelectorActionComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
+				{
+					Id = instance.Id,
+					PositionRank = instance.PositionRank,
+					Name = instance.Name,
+					Description = instance.Description,
+					FluentIconName = instance.FluentIconName,
+					ComponentType = type
+				};
+			}
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionComponentContext)))
+			{
+				var instance = (ITfRegionComponent<TfSpaceViewToolBarActionComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
+				{
+					Id = instance.Id,
+					PositionRank = instance.PositionRank,
+					Name = instance.Name,
+					Description = instance.Description,
+					FluentIconName = instance.FluentIconName,
+					ComponentType = type
+				};
+			}
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionComponentContext)))
+			{
+				var instance = (ITfRegionComponent<TfSpaceViewToolBarActionComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
+				{
+					Id = instance.Id,
+					PositionRank = instance.PositionRank,
+					Name = instance.Name,
+					Description = instance.Description,
+					FluentIconName = instance.FluentIconName,
+					ComponentType = type
+				};
+			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorHelpComponentContext)))
 			{
 				var instance = (ITfRegionComponent<TfTemplateProcessorHelpComponentContext>)Activator.CreateInstance(type);
