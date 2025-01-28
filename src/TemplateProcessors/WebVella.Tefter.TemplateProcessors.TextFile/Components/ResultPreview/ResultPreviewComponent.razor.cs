@@ -2,8 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>,
-	ITfComponentScope<TextFileTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 
@@ -12,6 +11,9 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	public string Name { get; init; } = "Text File Template Result Preview";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(TextFileTemplateProcessor),null)
+	};
 	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
 
 	private TextFileTemplatePreviewResult _preview = null;

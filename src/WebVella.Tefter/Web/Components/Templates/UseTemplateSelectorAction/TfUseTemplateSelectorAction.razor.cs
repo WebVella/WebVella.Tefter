@@ -12,6 +12,7 @@ public partial class TfUseTemplateSelectorAction : TfBaseComponent, ITfRegionCom
 	public string Name { get; init;} = "Use template with selection";
 	public string Description { get; init;} = "";
 	public string FluentIconName { get; init; } =  "CalendarTemplate";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new ();
 
 	[Parameter] 
 	public TfSpaceViewSelectorActionComponentContext Context { get; init; }

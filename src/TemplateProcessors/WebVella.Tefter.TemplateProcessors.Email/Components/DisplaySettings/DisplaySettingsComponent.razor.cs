@@ -2,8 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class DisplaySettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
-	ITfComponentScope<EmailTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 
@@ -12,6 +11,9 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 	public string Name { get; init; } = "Email Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(EmailTemplateProcessor),null)
+	};
 	[Parameter] 
 	public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
 

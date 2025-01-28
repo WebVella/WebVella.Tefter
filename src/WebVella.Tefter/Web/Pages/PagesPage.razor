@@ -1,12 +1,12 @@
 ﻿@page "/pages"
-@page "/pages/{Slug}"
+@page "/pages/{ItemId:guid}"
 @inherits TfBasePage
 <TfLayoutBody>
 	<Aside>
 		<TfPagesNavigation />
 	</Aside>
 	<ChildContent>
-		<TfPagesContent Slug="@Slug" />
+		<TfPagesContent ItemId="@ItemId" />
 	</ChildContent>
 </TfLayoutBody>
 

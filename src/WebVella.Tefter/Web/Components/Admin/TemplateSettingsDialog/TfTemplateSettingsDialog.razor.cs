@@ -18,7 +18,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 
 	private ITfTemplateProcessor _processor = null;
 	private TfTemplateProcessorManageSettingsComponentContext _dynamicComponentContext = null;
-	private Type _dynamicComponentScope = null;
+	private TfRegionComponentScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -95,7 +95,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 			Template = Content with { Id = Content.Id },
 		};
-		_dynamicComponentScope = _processor.GetType();
+		_dynamicComponentScope = new TfRegionComponentScope(_processor.GetType(),null);
 	}
 
 

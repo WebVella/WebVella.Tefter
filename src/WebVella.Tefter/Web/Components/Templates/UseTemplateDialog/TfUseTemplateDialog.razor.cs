@@ -16,7 +16,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
 	private TfTemplateProcessorResultPreviewComponentContext _resultPreviewComponentContext = null;
 	private TfTemplateProcessorResultComponentContext _resultComponentContext = null;
-	private Type _dynamicComponentScope = null;
+	private TfRegionComponentScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -164,7 +164,9 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 			CustomSettingsJson = null,
 			Preview = null
 		};
-		_dynamicComponentScope = _processor is not null ? _processor.GetType() : null;
+		_dynamicComponentScope = _processor is not null 
+			? new TfRegionComponentScope(_processor.GetType(),null)
+			: null;
 	}
 
 

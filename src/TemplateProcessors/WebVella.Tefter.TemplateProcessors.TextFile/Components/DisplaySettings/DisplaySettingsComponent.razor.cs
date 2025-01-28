@@ -2,14 +2,16 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>,
-	ITfComponentScope<TextFileTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>
 {
 	public Guid Id { get; init; } = new Guid("a23a91fe-cf4b-4f83-9f43-58484978cdab");
 	public int PositionRank { get; init; } = 0;
 	public string Name { get; init; } = "Text File Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(TextFileTemplateProcessor),null)
+	};
 	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
 	private TextFileTemplateSettings _form = new();
 	private string _downloadUrl

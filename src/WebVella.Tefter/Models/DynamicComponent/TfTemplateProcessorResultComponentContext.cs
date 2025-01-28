@@ -3,7 +3,7 @@
 /// <summary>
 /// Context need to be included in the ScanAndRegisterRegionComponents method as a case in order to be discovered
 /// </summary>
-public class TfTemplateProcessorResultComponentContext : TfBaseRegionScopedComponentContext<ITfTemplateProcessor>
+public class TfTemplateProcessorResultComponentContext : TfBaseRegionComponentContext
 {
 	public TucTemplate Template { get; set; }
 	public List<Guid> SelectedRowIds { get; set; }

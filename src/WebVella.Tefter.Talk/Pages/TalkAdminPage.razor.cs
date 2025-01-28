@@ -1,12 +1,17 @@
 ﻿namespace WebVella.Tefter.Talk.Pages;
 
-public partial class TalkAdminPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
+public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageComponentContext>
 {
-    public Guid Id { get { return new Guid("15f22367-7c8d-4971-9950-d7b1ff51f678"); } }
-	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.AdminPages; } }
-	public int Position { get { return 10; } }
-	public string Name { get { return "Talk Channels"; } }
-	public string FluentIconName { get { return "CommentMultiple"; } }
+	public Guid Id { get; init; } = new Guid("15f22367-7c8d-4971-9950-d7b1ff51f678"); 
+	public int PositionRank { get; init; } = 90;
+	public string Name { get; init;} = "Talk Channels";
+	public string Description { get; init;} = "";
+	public string FluentIconName { get; init; } =  "CommentMultiple";
+    public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
+        new TfRegionComponentScope(null,new Guid("15f22367-7c8d-4971-9950-d7b1ff51f678"))
+    };
+	[Parameter] 
+	public TfAdminPageComponentContext Context { get; init; }
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider,TucUser currentUser,
         TfAppState newAppState,

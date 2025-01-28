@@ -21,29 +21,6 @@
 }
 else
 {
-	TucScreenRegionComponentMeta componentMeta = TfAppState.Value.Pages.FirstOrDefault(x => x.Id == ItemId);
-	if (componentMeta is null)
-	{
-		<TfLayoutBodyMain>
-			<Header>
-				<TfPageHeader>@LOC("Addon Pages")</TfPageHeader>
-			</Header>
-			<ChildContent>
-				<FluentMessageBar Title="Page Not Found"
-								  Style="@("border: 1px solid var(--neutral-base-color)")"
-								  Intent="MessageIntent.Info"
-								  Type="@MessageType.Notification"
-								  AllowDismiss="false">
-					No page was found on this URL
-				</FluentMessageBar>
-			</ChildContent>
-		</TfLayoutBodyMain>
-	}
-	else
-	{
-		<TfErrorBoundry>
-			<DynamicComponent Type="@componentMeta.ComponentType" Parameters="@_getComponentContext()" />
-		</TfErrorBoundry>
-	}
+	<TfRegionComponent Context="@(new TfPageComponentContext())" Scope="@(new TfRegionComponentScope(null,ItemId))" />
 }
 

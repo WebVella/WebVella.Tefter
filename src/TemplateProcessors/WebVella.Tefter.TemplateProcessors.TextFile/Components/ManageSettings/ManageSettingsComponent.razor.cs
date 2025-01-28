@@ -4,8 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>,
-	ITfComponentScope<TextFileTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
 {
 	[Inject] public ITfBlobManager BlobManager { get; set; }
 	public Guid Id { get; init; } = new Guid("4afa2cc0-eb47-4dc1-b7bc-1dfb037c4e5a");
@@ -13,6 +12,9 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	public string Name { get; init; } = "Text File Template Manage Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(TextFileTemplateProcessor),null)
+	};
 	[Parameter] public TfTemplateProcessorManageSettingsComponentContext Context { get; init; }
 	private TextFileTemplateSettings _form = new();
 	private string _downloadUrl

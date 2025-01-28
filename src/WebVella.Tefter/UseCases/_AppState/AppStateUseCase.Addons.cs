@@ -10,21 +10,26 @@ internal partial class AppStateUseCase
 		{
 			newAppState = newAppState with
 			{
-				Pages = GetAddonComponents(TfScreenRegion.AdminPages)
+				Pages = GetDynamicComponentsMetaForContext(
+					context: typeof(TfAdminPageComponentContext),
+					scope: null
+				)
 			};
 		}
 		else
 		{
 			newAppState = newAppState with
 			{
-				Pages = GetAddonComponents(TfScreenRegion.Pages)
+				Pages = GetDynamicComponentsMetaForContext(
+					context: typeof(TfPageComponentContext),
+					scope: null
+				)
 			};
 		}
 
-		foreach (TucScreenRegionComponentMeta addonComponent in newAppState.Pages)
+		foreach (TfRegionComponentMeta addonComponent in newAppState.Pages)
 		{
-			if (addonComponent.ComponentType is not null
-				&& addonComponent.ComponentType.GetInterface(nameof(ITucAuxDataUseComponent)) != null)
+			if (addonComponent.ComponentType.ImplementsInterface(typeof(ITucAuxDataUseComponent)))
 			{
 				var component = (ITucAuxDataUseComponent)Activator.CreateInstance(addonComponent.ComponentType);
 				component.OnAppStateInit(

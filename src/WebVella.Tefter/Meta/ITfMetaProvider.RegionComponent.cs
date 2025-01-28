@@ -3,7 +3,7 @@
 public partial interface ITfMetaProvider
 {
 	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta();
-	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, Type scope = null);
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfRegionComponentScope scope = null);
 }
 
 public partial class TfMetaProvider
@@ -19,13 +19,40 @@ public partial class TfMetaProvider
 			.ToList()
 			.AsReadOnly();
 	}
-	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, Type scope = null)
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfRegionComponentScope scope = null)
 	{
-		return _regionComponentMeta
-			.Where(x =>
-				(scope is null || x.ScopeTypeFullNames.Contains(scope.FullName))
-				&& (context is null || x.ComponentType.ImplementsGenericInterface(typeof(ITfRegionComponent<>),context))
-				)
+		var result = new List<TfRegionComponentMeta>();
+		foreach (var comp in _regionComponentMeta)
+		{
+			var contextMatched = false;
+			if (context is null || comp.ComponentType.ImplementsGenericInterface(typeof(ITfRegionComponent<>), context))
+				contextMatched = true;
+			if (!contextMatched) continue;
+
+			var scopeMatched = false;
+			if (scope is null || comp.Scopes is null || comp.Scopes.Count == 0)
+			{
+				scopeMatched = true;
+			}
+			else
+			{
+				foreach (var compScope in comp.Scopes)
+				{
+					if (ScopesMatch(scope, compScope))
+					{
+						scopeMatched = true;
+						break;
+					}
+				}
+			}
+
+			if (!scopeMatched) continue;
+
+
+			result.Add(comp);
+		}
+
+		return result
 			.OrderBy(x => x.PositionRank)
 			.ThenBy(x => x.Name)
 			.ToList()
@@ -38,7 +65,21 @@ public partial class TfMetaProvider
 
 		#region << Try Get meta >>
 		{
-			if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsComponentContext)))
+			if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfAdminPageComponentContext)))
+			{
+				var instance = (ITfRegionComponent<TfAdminPageComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
+				{
+					Id = instance.Id,
+					PositionRank = instance.PositionRank,
+					Name = instance.Name,
+					Description = instance.Description,
+					FluentIconName = instance.FluentIconName,
+					ComponentType = type,
+					Scopes = instance.Scopes
+				};
+			}
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsComponentContext)))
 			{
 				var instance = (ITfRegionComponent<TfDataProviderManageSettingsComponentContext>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
@@ -49,7 +90,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderDisplaySettingsComponentContext)))
@@ -63,7 +104,21 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
+				};
+			}
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfPageComponentContext)))
+			{
+				var instance = (ITfRegionComponent<TfPageComponentContext>)Activator.CreateInstance(type);
+				meta = new TfRegionComponentMeta
+				{
+					Id = instance.Id,
+					PositionRank = instance.PositionRank,
+					Name = instance.Name,
+					Description = instance.Description,
+					FluentIconName = instance.FluentIconName,
+					ComponentType = type,
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeManageComponentContext)))
@@ -77,7 +132,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeViewComponentContext)))
@@ -91,7 +146,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewSelectorActionComponentContext)))
@@ -104,7 +159,8 @@ public partial class TfMetaProvider
 					Name = instance.Name,
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
-					ComponentType = type
+					ComponentType = type,
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionComponentContext)))
@@ -117,7 +173,8 @@ public partial class TfMetaProvider
 					Name = instance.Name,
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
-					ComponentType = type
+					ComponentType = type,
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionComponentContext)))
@@ -130,7 +187,8 @@ public partial class TfMetaProvider
 					Name = instance.Name,
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
-					ComponentType = type
+					ComponentType = type,
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorHelpComponentContext)))
@@ -144,7 +202,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorManageSettingsComponentContext)))
@@ -158,7 +216,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultComponentContext)))
@@ -172,7 +230,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultPreviewComponentContext)))
@@ -186,7 +244,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorDisplaySettingsComponentContext)))
@@ -200,7 +258,7 @@ public partial class TfMetaProvider
 					Description = instance.Description,
 					FluentIconName = instance.FluentIconName,
 					ComponentType = type,
-					ScopeTypeFullNames = type.GetGenericTypeFromImplementedGenericInterfaceAsStringList(typeof(ITfComponentScope<>)),
+					Scopes = instance.Scopes
 				};
 			}
 		}
@@ -210,6 +268,22 @@ public partial class TfMetaProvider
 			_regionComponentMeta.Add(meta);
 			_typesMap[type.FullName] = type;
 		}
+	}
+
+	private static bool ScopesMatch(TfRegionComponentScope requestedScope, TfRegionComponentScope compScope)
+	{
+		if(requestedScope is null || compScope is null) return true;
+		if(requestedScope.ComponentId is null && requestedScope.ItemType is null) return true;
+		if(compScope.ComponentId is null && compScope.ItemType is null) return true;
+		var compMatched = false;
+		var itemTypeMatched = false;
+		if(requestedScope.ComponentId is null || compScope.ComponentId is null || requestedScope.ComponentId == compScope.ComponentId)
+			compMatched = true;
+
+		if(requestedScope.ItemType is null || compScope.ItemType is null || requestedScope.ItemType.FullName == compScope.ItemType.FullName)
+			itemTypeMatched = true;
+
+		return compMatched && itemTypeMatched;
 	}
 }
 

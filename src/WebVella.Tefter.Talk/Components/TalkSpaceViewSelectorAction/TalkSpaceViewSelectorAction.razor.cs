@@ -7,6 +7,7 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent, ITfRegionCom
 	public string Name { get; init;} = "Add Talk Discussion to Selection";
 	public string Description { get; init;} = "";
 	public string FluentIconName { get; init; } =  "CommentMultiple";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new ();
 	[Parameter] 
 	public TfSpaceViewSelectorActionComponentContext Context { get; init; }
 

@@ -69,7 +69,7 @@ internal partial class AppStateUseCase
 		return (appState, auxDataState);
 	}
 
-	internal virtual ReadOnlyCollection<TfRegionComponentMeta> GetDynamicComponentsMetaForContext(Type context, Type scope = null){ 
+	internal virtual ReadOnlyCollection<TfRegionComponentMeta> GetDynamicComponentsMetaForContext(Type context, TfRegionComponentScope scope = null){ 
 		return _metaProvider.GetRegionComponentsMeta(
 			context: context,
 			scope: scope);

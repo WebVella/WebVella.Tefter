@@ -2,8 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultComponentContext>,
-	ITfComponentScope<TextContentTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 
@@ -12,6 +11,9 @@ public partial class ResultComponent : TfBaseComponent,
 	public string Name { get; init; } = "Text Content Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(TextContentTemplateProcessor),null)
+	};
 	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
 
 
