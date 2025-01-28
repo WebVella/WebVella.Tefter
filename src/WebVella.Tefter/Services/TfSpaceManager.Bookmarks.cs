@@ -4,9 +4,9 @@ namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
-	public Result<List<TfBookmark>> GetUserBookmarksList(
+	public Result<List<TfBookmark>> GetBookmarksListForUser(
 		Guid userId);
-	public Result<List<TfBookmark>> GetSpaceViewBookmarksList(
+	public Result<List<TfBookmark>> GetBookmarksListForSpaceView(
 		Guid spaceViewId);
 
 	public Result<TfBookmark> GetBookmark(
@@ -24,7 +24,7 @@ public partial interface ITfSpaceManager
 
 public partial class TfSpaceManager : ITfSpaceManager
 {
-	public Result<List<TfBookmark>> GetUserBookmarksList(
+	public Result<List<TfBookmark>> GetBookmarksListForUser(
 		Guid userId)
 	{
 		try
@@ -41,7 +41,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 		}
 	}
 
-	public Result<List<TfBookmark>> GetSpaceViewBookmarksList(
+	public Result<List<TfBookmark>> GetBookmarksListForSpaceView(
 		Guid spaceViewId)
 	{
 		try

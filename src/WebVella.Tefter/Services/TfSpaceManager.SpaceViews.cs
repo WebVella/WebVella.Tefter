@@ -729,7 +729,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 				bool success = false;
 
-				var bookmarks = GetSpaceViewBookmarksList(id).Value;
+				var bookmarks = GetBookmarksListForSpaceView(id).Value;
 				foreach (var bookmark in bookmarks)
 				{
 					var result = DeleteBookmark(bookmark.Id);

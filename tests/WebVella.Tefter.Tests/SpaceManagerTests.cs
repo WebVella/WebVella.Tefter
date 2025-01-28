@@ -509,7 +509,7 @@ public partial class SpaceManagerTests : BaseTest
 				spaceViewResult.Value.Type.Should().Be(view.Type);
 
 
-				var bookmarkList = spaceManager.GetUserBookmarksList(user.Id);
+				var bookmarkList = spaceManager.GetBookmarksListForUser(user.Id);
 
 				var bookmarkModel = new TfBookmark
 				{
@@ -526,9 +526,9 @@ public partial class SpaceManagerTests : BaseTest
 				bookmark.Description = " test with #tag_1 #tAg_2 #Tag3";
 				bookmark = spaceManager.UpdateBookmark(bookmark).Value;
 
-				spaceManager.GetUserBookmarksList(user.Id).Value.Count.Should().Be(1);
+				spaceManager.GetBookmarksListForUser(user.Id).Value.Count.Should().Be(1);
 				spaceManager.DeleteBookmark(bookmark.Id).IsSuccess.Should().BeTrue();
-				spaceManager.GetUserBookmarksList(user.Id).Value.Count.Should().Be(0);
+				spaceManager.GetBookmarksListForUser(user.Id).Value.Count.Should().Be(0);
 
 			}
 		}

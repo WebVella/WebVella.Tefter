@@ -43,7 +43,7 @@ internal partial class AppStateUseCase
 	internal virtual async Task<(List<TucBookmark>, List<TucBookmark>)> GetUserBookmarksAsync(Guid userId)
 	{
 
-		var serviceResult = _spaceManager.GetUserBookmarksList(userId);
+		var serviceResult = _spaceManager.GetBookmarksListForUser(userId);
 		if (serviceResult.IsFailed)
 		{
 			ResultUtils.ProcessServiceResult(
