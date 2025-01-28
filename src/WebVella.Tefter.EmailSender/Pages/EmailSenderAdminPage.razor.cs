@@ -53,8 +53,9 @@ public partial class EmailSenderAdminPage : TucBaseScreenRegionComponent, ITucAu
 
 	private async Task _searchValueChanged(string search)
 	{
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.SearchQueryName] = search;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.SearchQueryName,search}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 		await InvokeAsync(StateHasChanged);
 	}
@@ -62,8 +63,9 @@ public partial class EmailSenderAdminPage : TucBaseScreenRegionComponent, ITucAu
 	private async Task _goFirstPage()
 	{
 		if (TfAppState.Value.Route.Page == 1) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = 1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName,1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goPreviousPage()
@@ -71,8 +73,9 @@ public partial class EmailSenderAdminPage : TucBaseScreenRegionComponent, ITucAu
 		var page = TfAppState.Value.Route.Page - 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goNextPage()
@@ -81,23 +84,26 @@ public partial class EmailSenderAdminPage : TucBaseScreenRegionComponent, ITucAu
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
 
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName,page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goLastPage()
 	{
 		if (TfAppState.Value.Route.Page == -1) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = -1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, -1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goOnPage(int page)
 	{
 		if (page < 1 && page != -1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 

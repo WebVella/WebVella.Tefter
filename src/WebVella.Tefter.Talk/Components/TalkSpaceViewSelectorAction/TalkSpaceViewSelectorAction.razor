@@ -1,5 +1,5 @@
 ﻿@namespace WebVella.Tefter.Talk.Components
-@inherits TucBaseScreenRegionComponent
+@inherits TfBaseComponent
 <FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_onClick">
 	Comment Selected
 	<FluentIcon Value="@TfConstants.GetIcon("Comment")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />

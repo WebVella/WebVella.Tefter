@@ -12,7 +12,6 @@ public class SpaceViewToolbarComponentTests : BaseTest
 		component: null,
 		state: new TfAppState { 
 			Route = new TucRouteState(),
-			SpaceViewAddonComponents = new(),
 			SpaceView = new(),
 			SelectedDataRows = new()
 			}));

@@ -28,5 +28,4 @@ public partial record TfAppState
 		}
 	}
 	public List<TucSpaceViewColumnType> AvailableColumnTypes { get; init; }
-	public List<TucScreenRegionComponentMeta> SpaceViewAddonComponents { get; init; }
 }

@@ -93,8 +93,9 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private async Task _searchValueChanged(string search)
 	{
 		_search = search?.Trim();
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.SearchQueryName] = _search;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.SearchQueryName,_search}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 

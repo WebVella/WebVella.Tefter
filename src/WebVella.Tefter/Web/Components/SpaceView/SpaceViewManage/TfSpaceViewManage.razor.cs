@@ -220,8 +220,9 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	{
 		TfSpaceViewManageTab tab = TfSpaceViewManageTab.Columns;
 		if (Enum.TryParse<TfSpaceViewManageTab>(tabObj.Id, false, out tab)) { }
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.TabQueryName] = tab.ToString();
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.TabQueryName, tab.ToString()}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 }

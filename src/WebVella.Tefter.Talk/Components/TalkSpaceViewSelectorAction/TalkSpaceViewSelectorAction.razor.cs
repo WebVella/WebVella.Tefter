@@ -1,12 +1,14 @@
 ﻿namespace WebVella.Tefter.Talk.Components;
 
-public partial class TalkSpaceViewSelectorAction : TucBaseScreenRegionComponent, ITfScreenRegionComponent
+public partial class TalkSpaceViewSelectorAction : TfBaseComponent, ITfRegionComponent<TfSpaceViewSelectorActionComponentContext>
 {
-	public Guid Id { get { return new Guid("dbf92a2b-f235-4d88-b982-b7a8be17c2b1"); } }
-	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.SpaceViewSelectorActions; } }
-	public int Position { get { return 10; } }
-	public string Name { get { return null; } }
-	public string FluentIconName => "CommentMultiple";
+	public Guid Id { get; init; } = new Guid("942d6fb0-4662-4c5c-ae52-123dd40375ac"); 
+	public int PositionRank { get; init; } = 100;
+	public string Name { get; init;} = "Add Talk Discussion to Selection";
+	public string Description { get; init;} = "";
+	public string FluentIconName { get; init; } =  "CommentMultiple";
+	[Parameter] 
+	public TfSpaceViewSelectorActionComponentContext Context { get; init; }
 
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 

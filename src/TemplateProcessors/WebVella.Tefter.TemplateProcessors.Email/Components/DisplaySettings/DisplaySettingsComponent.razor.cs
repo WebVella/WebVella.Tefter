@@ -12,7 +12,8 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 	public string Name { get; init; } = "Email Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
+	[Parameter] 
+	public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
 
 	private bool _loading = true;
 	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();

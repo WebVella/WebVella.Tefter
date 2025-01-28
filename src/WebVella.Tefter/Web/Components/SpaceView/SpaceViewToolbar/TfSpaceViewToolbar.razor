@@ -57,15 +57,7 @@
 		</FluentButton> *@
 	</div>
 	<div class="content-toolbar-right">
-		@foreach (var comp in TfAppState.Value.SpaceViewAddonComponents.Where(x => x.Region == TfScreenRegion.SpaceViewToolbarActions))
-		{
-			if (comp.ComponentType is not null)
-			{
-				<TfErrorBoundry>
-					<DynamicComponent Type="comp.ComponentType" />
-				</TfErrorBoundry>
-			}
-		}
+		<TfRegionComponent Context="@(new TfSpaceViewToolBarActionComponentContext())" Scope="null" />
 		@if (TfAppState.Value.SpaceView.Settings.CanCreateRows)
 		{
 			<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">
