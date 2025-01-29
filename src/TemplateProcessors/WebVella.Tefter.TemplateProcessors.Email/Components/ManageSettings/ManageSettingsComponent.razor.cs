@@ -5,8 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>,
-	ITfComponentScope<EmailTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
 {
 	[Inject] public ITfTemplateService TemplateService { get; set; }
 	[Inject] public ITfBlobManager BlobManager { get; set; }
@@ -16,6 +15,9 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	public string Name { get; init; } = "Email Template Settings Manage";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(EmailTemplateProcessor),null)
+	};
 	[Parameter] public TfTemplateProcessorManageSettingsComponentContext Context { get; init; }
 
 	private bool _loading = true;

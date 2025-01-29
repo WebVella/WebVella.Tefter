@@ -1,12 +1,17 @@
 ﻿namespace WebVella.Tefter.Talk.Pages;
 
-//BOZ: not implemented yet
-//public partial class TalkPage : TucBaseScreenRegionComponent, ITfScreenRegionComponent
-//{
-//	public Guid Id { get { return new Guid("beb9a070-49b0-4c49-b57e-7f110da4dccd"); } }
-//	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.Pages; } }
-//	public int Position { get { return 1; } }
-//	public string Name { get { return "Talk Dashboard"; } }
-//	public string UrlSlug { get { return "talk-dashboard"; } }
 
-//}
+public partial class TalkPage : TfBaseComponent, ITfRegionComponent<TfPageComponentContext>
+{
+	public Guid Id { get; init; } = new Guid("beb9a070-49b0-4c49-b57e-7f110da4dccd");
+	public int PositionRank { get; init; } = 90;
+	public string Name { get; init; } = "Talk Dashboard";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "Folder";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
+		new TfRegionComponentScope(null,new Guid("beb9a070-49b0-4c49-b57e-7f110da4dccd"))
+	};
+	[Parameter]
+	public TfPageComponentContext Context { get; init; }
+
+}

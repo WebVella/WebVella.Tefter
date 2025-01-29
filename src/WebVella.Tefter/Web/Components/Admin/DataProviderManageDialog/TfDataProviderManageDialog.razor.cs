@@ -18,7 +18,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private TucDataProviderForm _form = new();
 
 	private TfDataProviderManageSettingsComponentContext _dynamicComponentContext = null;
-	private Type _dynamicComponentScope = null;
+	private TfRegionComponentScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -73,7 +73,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 			SettingsJson = _form.SettingsJson,
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 		};
-		_dynamicComponentScope = TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType();
+		_dynamicComponentScope = new TfRegionComponentScope(TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType(),null);
 
 	}
 

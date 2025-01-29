@@ -1,0 +1,12 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_clickHandler">
+	@LOC("Use Template")
+	<FluentIcon Value="@TfConstants.TemplateIcon" Slot="start" Color="@Color.Error" />
+	@if (TfAppState.Value.SelectedDataRows.Count > 0)
+	{
+		<span slot="end">
+			<FluentBadge Appearance="@Appearance.Neutral" Style="margin-left:3px;">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
+		</span>
+	}
+</FluentMenuItem>

@@ -7,8 +7,9 @@ public partial class TfSpaceDataData : TfBaseComponent
 	private async Task _goFirstPage()
 	{
 		if (TfAppState.Value.SpaceDataPage == 1) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = 1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName,1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goPreviousPage()
@@ -16,8 +17,9 @@ public partial class TfSpaceDataData : TfBaseComponent
 		var page = TfAppState.Value.SpaceDataPage - 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.SpaceDataPage == page) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goNextPage()
@@ -30,31 +32,35 @@ public partial class TfSpaceDataData : TfBaseComponent
 		if (page < 1) page = 1;
 		if (TfAppState.Value.SpaceDataPage == page) return;
 
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goLastPage()
 	{
 		if (TfAppState.Value.SpaceDataPage == -1) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = -1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, -1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goOnPage(int page)
 	{
 		if (page < 1 && page != -1) page = 1;
 		if (TfAppState.Value.SpaceDataPage == page) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
 
 	private async Task _onSearch(string value)
 	{
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.SearchQueryName] = value;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.SearchQueryName, value}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 }

@@ -5,14 +5,16 @@ using WebVella.Tefter.Web.Models;
 namespace WebVella.Tefter.DataProviders.MsSql.Components;
 [LocalizationResource("WebVella.Tefter.DataProviders.MsSql.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.MsSql")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfRegionComponent<TfDataProviderManageSettingsComponentContext>,
-	ITfComponentScope<MsSqlDataProvider>
+	ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
 {
 	public Guid Id { get; init; } = new Guid("b543421c-c77f-45d9-8c81-ac0c5a0a303f");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "MSSQL Data Provider Manage Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(MsSqlDataProvider),null)
+	};
 	[Parameter] public TfDataProviderManageSettingsComponentContext Context { get; init; }
 
 	private MsSqlDataProviderSettings _form = new();

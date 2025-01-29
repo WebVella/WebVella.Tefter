@@ -2,15 +2,21 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.SpaceViewDetails.TfSpaceViewDetails", "WebVella.Tefter")]
 public partial class TfSpaceViewDetails : TfBaseComponent
 {
+	// Dependency Injection
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private IKeyCodeService KeyCodeService { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] private UserStateUseCase UserUC { get; set; }
+
+	// Parameters
 	[Parameter] public Guid? SpaceViewId { get; set; }
 
+	// State
 	private bool _isDataLoading = true;
 	private bool _selectAllLoading = false;
+
+	// Lifecycle Methods
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -26,15 +32,13 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		{
 			_isDataLoading = false;
 			await InvokeAsync(StateHasChanged);
-			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
+			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, HandleAppStateChange);
 		}
 	}
-	protected override bool ShouldRender()
-	{
-		if (_isDataLoading) return false;
-		return base.ShouldRender();
-	}
-	private void On_AppChanged(SetAppStateAction action)
+	protected override bool ShouldRender() => !_isDataLoading && base.ShouldRender();
+
+	// Event Handlers
+	private void HandleAppStateChange(SetAppStateAction action)
 	{
 		InvokeAsync(async () =>
 		{
@@ -42,41 +46,21 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		});
 	}
-
-	public async Task OnKeyDownAsync(FluentKeyCodeEventArgs args)
+	public async Task HandleKeyDownAsync(FluentKeyCodeEventArgs args)
 	{
 		if (args.Key == KeyCode.PageUp) await _goNextPage();
 		else if (args.Key == KeyCode.PageDown) await _goPreviousPage();
 	}
 
-	private string _generatePresetPathHtml()
-	{
-		if (TfAppState.Value.Route.SpaceViewPresetId is null || TfAppState.Value.SpaceView.Presets.Count == 0) return "";
-
-		var preset = TfAppState.Value.SpaceView.Presets.GetPresetById(TfAppState.Value.Route.SpaceViewPresetId.Value);
-		if (preset is null) return "";
-
-		var result = new StringBuilder();
-		var path = new List<TucSpaceViewPreset>();
-		ModelHelpers.FillPresetPathById(TfAppState.Value.SpaceView.Presets, TfAppState.Value.Route.SpaceViewPresetId.Value, path);
-		if (path.Count == 0) return "";
-		path.Reverse();
-		foreach (var item in path)
-		{
-			result.Append($"<span class=\"page-header-divider\">:</span>");
-			result.Append(item.Name);
-		}
-		return result.ToString();
-
-	}
-
+	// Navigation Methods
 	private async Task _goFirstPage()
 	{
 		if (_isDataLoading) return;
 		if (TfAppState.Value.Route.Page == 1) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = 1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, 1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goPreviousPage()
@@ -86,8 +70,9 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goNextPage()
@@ -100,8 +85,9 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goLastPage()
@@ -109,8 +95,9 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (_isDataLoading) return;
 		if (TfAppState.Value.Route.Page == -1) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = -1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, -1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goOnPage(int page)
@@ -119,11 +106,11 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (page < 1 && page != -1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-
 	private async Task _pageSizeChange(int pageSize)
 	{
 		if (_isDataLoading) return;
@@ -146,20 +133,22 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		catch { }
 
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageSizeQueryName] = pageSize;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageSizeQueryName, pageSize}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
+	// Search, Filter, Sort Handlers
 	private async Task _onSearch(string value)
 	{
 		if (_isDataLoading) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.SearchQueryName] = value;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.SearchQueryName, value}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-
 	private async Task _onFilter(List<TucFilterBase> filters)
 	{
 		if (_isDataLoading) return;
@@ -171,7 +160,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			queryDict[TfConstants.FiltersQueryName] = NavigatorExt.SerializeFiltersForUrl(filters, false);
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-
 	private async Task _onSort(List<TucSort> sorts)
 	{
 		if (_isDataLoading) return;
@@ -183,17 +171,19 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			queryDict[TfConstants.SortsQueryName] = NavigatorExt.SerializeSortsForUrl(sorts, false);
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
-
 	private async Task _onClearFilter()
 	{
 		if (_isDataLoading) return;
 		_isDataLoading = true;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.SearchQueryName] = null;
-		queryDict[TfConstants.FiltersQueryName] = null;
-		queryDict[TfConstants.SortsQueryName] = null;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.SearchQueryName, null},
+			{TfConstants.FiltersQueryName, null},
+			{TfConstants.SortsQueryName, null}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
+
+	//Select Handlers
 	private async Task _onSelectAll()
 	{
 		try
@@ -225,7 +215,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-
 	private async Task _onDeSelectAll()
 	{
 		try
@@ -245,6 +234,28 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		}
 	}
 
+	// Utility Methods
+	private string _generatePresetPathHtml()
+	{
+		if (TfAppState.Value.Route.SpaceViewPresetId is null || TfAppState.Value.SpaceView.Presets.Count == 0) return "";
+
+		var preset = TfAppState.Value.SpaceView.Presets.GetPresetById(TfAppState.Value.Route.SpaceViewPresetId.Value);
+		if (preset is null) return "";
+
+		var result = new StringBuilder();
+		var path = new List<TucSpaceViewPreset>();
+		ModelHelpers.FillPresetPathById(TfAppState.Value.SpaceView.Presets, TfAppState.Value.Route.SpaceViewPresetId.Value, path);
+		if (path.Count == 0) return "";
+		path.Reverse();
+		foreach (var item in path)
+		{
+			result.Append($"<span class=\"page-header-divider\">:</span>");
+			result.Append(item.Name);
+		}
+		return result.ToString();
+
+	}
+
 	private string _getEmbeddedStyles()
 	{
 		var sb = new StringBuilder();
@@ -262,39 +273,31 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private Task _onRowChanged(TfDataTable value)
 	{
-
-		try
+		var result = UC.SaveDataDataTable(value);
+		//ProcessServiceResponse(result); //should be handled by the component
+		if (result.IsSuccess)
 		{
-			var result = UC.SaveDataDataTable(value);
-			//ProcessServiceResponse(result); //should be handled by the component
-			if (result.IsSuccess)
+			//Apply changed to the datatable
+			var viewData = TfAppState.Value.SpaceViewData.Clone();
+			if (viewData is null || viewData.Rows.Count == 0 || result.Value.Rows.Count == 0) return Task.CompletedTask;
+			for (int i = 0; i < result.Value.Rows.Count; i++)
 			{
-				//Apply changed to the datatable
-				var viewData = TfAppState.Value.SpaceViewData.Clone();
-				if (viewData is null || viewData.Rows.Count == 0 || result.Value.Rows.Count == 0) return Task.CompletedTask;
-				for (int i = 0; i < result.Value.Rows.Count; i++)
+				TfDataRow row = result.Value.Rows[i];
+				Guid tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
+				var currentRow = viewData.Rows[tfId];
+
+				for (int j = 0; j < result.Value.Columns.Count; j++)
 				{
-					TfDataRow row = result.Value.Rows[i];
-					Guid tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-					var currentRow = viewData.Rows[tfId];
-
-					for (int j = 0; j < result.Value.Columns.Count; j++)
-					{
-						TfDataColumn column = result.Value.Columns[j];
-						currentRow[column.Name] = row[column.Name];
-					}
+					TfDataColumn column = result.Value.Columns[j];
+					currentRow[column.Name] = row[column.Name];
 				}
-				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { SpaceViewData = viewData }));
 			}
-			else
-			{
-				throw ResultUtils.ConvertResultToException(result, LOC("Data change failed!"));
-			}
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { SpaceViewData = viewData }));
 		}
-		catch
+		else
 		{
-			throw;
+			throw ResultUtils.ConvertResultToException(result, LOC("Data change failed!"));
 		}
 		return Task.CompletedTask;
 	}

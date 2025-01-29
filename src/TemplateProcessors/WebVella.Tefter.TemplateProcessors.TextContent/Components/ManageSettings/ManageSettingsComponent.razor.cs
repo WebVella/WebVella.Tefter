@@ -4,14 +4,16 @@ namespace WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>,
-	ITfComponentScope<TextContentTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
 {
 	public Guid Id { get; init; } = new Guid("459ce24e-37af-48eb-99fe-abf32d0b83b4");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text Content Template Manage Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(TextContentTemplateProcessor),null)
+	};
 	[Parameter] public TfTemplateProcessorManageSettingsComponentContext Context { get; init; }
 
 	private TextContentTemplateSettings _form = new();

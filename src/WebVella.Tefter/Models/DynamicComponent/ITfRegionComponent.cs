@@ -7,6 +7,7 @@ public interface ITfRegionComponent<T> where T : TfBaseRegionComponentContext
 	public string Name { get; init;}
 	public string Description { get; init;}
 	public string FluentIconName { get; init; }
+	public List<TfRegionComponentScope> Scopes { get; init; }
 	T Context { get; init; }
 }
 
@@ -18,5 +19,6 @@ public class TfRegionComponentMeta
 	public string Description { get; init;}
 	public string FluentIconName { get; init;}
 	public Type ComponentType { get; init; }
+	public List<TfRegionComponentScope> Scopes { get; init; }
 	public List<string> ScopeTypeFullNames { get; init; } = new();
 }

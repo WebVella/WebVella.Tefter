@@ -4,7 +4,7 @@
 /// Context need to be included in the ScanAndRegisterRegionComponents method as a case in order to be discovered
 /// </summary>
 
-public class TfDataProviderManageSettingsComponentContext : TfBaseRegionScopedComponentContext<ITfDataProviderType>
+public class TfDataProviderManageSettingsComponentContext : TfBaseRegionComponentContext
 {
 	public string SettingsJson { get; set; } = "{}";
 	public EventCallback<string> SettingsJsonChanged { get; init; }

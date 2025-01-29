@@ -7,7 +7,7 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private TfDataProviderDisplaySettingsComponentContext _dynamicComponentContext = null;
-	private Type _dynamicComponentScope = null;
+	private TfRegionComponentScope _dynamicComponentScope = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -49,7 +49,7 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 		{
 			SettingsJson = TfAppState.Value.AdminDataProvider.SettingsJson
 		};
-		_dynamicComponentScope = TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType();
+		_dynamicComponentScope = new TfRegionComponentScope(TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType(),null);
 
 	}
 

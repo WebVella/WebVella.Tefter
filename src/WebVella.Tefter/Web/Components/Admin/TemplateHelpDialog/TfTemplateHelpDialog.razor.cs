@@ -10,7 +10,7 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 
 	private ITfTemplateProcessor _processor = null;
 	private TfTemplateProcessorHelpComponentContext _dynamicComponentContext = null;
-	private Type _dynamicComponentScope = null;
+	private TfRegionComponentScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -42,7 +42,7 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 		_dynamicComponentContext = new TfTemplateProcessorHelpComponentContext
 		{
 		};
-		_dynamicComponentScope = _processor.GetType();
+		_dynamicComponentScope = new TfRegionComponentScope(_processor.GetType(),null);
 	}
 
 

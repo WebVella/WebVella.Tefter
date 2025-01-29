@@ -32,26 +32,4 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 		}
 		return Task.CompletedTask;
 	}
-
-	private async Task useTemplateWithSelectedRecords()
-	{
-		if (TfAppState.Value.SelectedDataRows.Count == 0
-		|| TfAppState.Value.SpaceView.SpaceDataId is null) return;
-
-		var context = new TucUseTemplateContext
-		{
-			SelectedRowIds = TfAppState.Value.SelectedDataRows,
-			SpaceData = TfAppState.Value.SpaceData,
-			User = TfAppState.Value.CurrentUser
-		};
-		var dialog = await DialogService.ShowDialogAsync<TfUseTemplateDialog>(
-				context,
-				new DialogParameters()
-				{
-					PreventDismissOnOverlayClick = true,
-					PreventScroll = true,
-					Width = TfConstants.DialogWidthExtraLarge,
-					TrapFocus = false
-				});
-	}
 }

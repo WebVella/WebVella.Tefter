@@ -42,8 +42,9 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 	private async Task _goFirstPage()
 	{
 		if (TfAppState.Value.Route.Page == 1) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = 1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, 1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goPreviousPage()
@@ -51,8 +52,9 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		var page = TfAppState.Value.Route.Page - 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goNextPage()
@@ -64,23 +66,26 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		var page = TfAppState.Value.Route.Page + 1;
 		if (page < 1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goLastPage()
 	{
 		if (TfAppState.Value.Route.Page == -1) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = -1;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, -1}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 	private async Task _goOnPage(int page)
 	{
 		if (page < 1 && page != -1) page = 1;
 		if (TfAppState.Value.Route.Page == page) return;
-		var queryDict = new Dictionary<string, object>();
-		queryDict[TfConstants.PageQueryName] = page;
+		var queryDict = new Dictionary<string, object>{
+			{TfConstants.PageQueryName, page}
+		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 

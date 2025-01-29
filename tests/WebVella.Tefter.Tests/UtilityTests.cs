@@ -223,9 +223,10 @@ public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<
 	public string Name { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 	public string Description { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 	public string FluentIconName { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){};
 }
 
-public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsComponentContext>, ITfComponentScope<UtilityTestsDataProviderTypeClass>
+public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
 {
 	public TfDataProviderManageSettingsComponentContext Context { get; init; }
 	public Guid Id { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
@@ -233,6 +234,9 @@ public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfD
 	public string Name { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 	public string Description { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
 	public string FluentIconName { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(UtilityTestsDataProviderTypeClass),null)
+	};
 }
 
 public class UtilityTestsDataProviderTypeClass : ITfDataProviderType

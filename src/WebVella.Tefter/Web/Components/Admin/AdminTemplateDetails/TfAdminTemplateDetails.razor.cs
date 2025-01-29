@@ -11,7 +11,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	private bool _loading = true;
 
 	private TfTemplateProcessorDisplaySettingsComponentContext _dynamicComponentContext = null;
-	private Type _dynamicComponentScope = null;
+	private TfRegionComponentScope _dynamicComponentScope = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -67,7 +67,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		{
 			Template = TfAppState.Value.AdminTemplateDetails
 		};
-		_dynamicComponentScope = _processor.GetType();
+		_dynamicComponentScope = new TfRegionComponentScope(_processor.GetType(),null);
 	}
 
 	private async Task onUpdateClick()

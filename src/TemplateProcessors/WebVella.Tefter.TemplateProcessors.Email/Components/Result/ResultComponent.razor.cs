@@ -2,8 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultComponentContext>,
-	ITfComponentScope<EmailTemplateProcessor>
+	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
 {
 	[Inject] private ITfTemplateService TemplateService { get; set; }
 
@@ -12,6 +11,9 @@ public partial class ResultComponent : TfBaseComponent,
 	public string Name { get; init; } = "Email Template Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+		new TfRegionComponentScope(typeof(EmailTemplateProcessor),null)
+	};
 	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
 
 	private EmailTemplateResult _result = null;
