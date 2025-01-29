@@ -81,27 +81,27 @@ public class RepositoryController : ControllerBase
 			return NotFound();
 		}
 
-		//try to find as perm blob
-		var streamResult = _blobManager.GetBlobStream(blobId,true);
-		//if(streamResult.IsFailed) 
-		//{
-		//	HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-		//	return NotFound();
-		//}
+		Stream stream = null;
 
-		//try to find as temp blob
-		if (streamResult.IsFailed || streamResult.Value is null)
+		if (_blobManager.ExistsBlob(blobId, true))
 		{
-			streamResult = _blobManager.GetBlobStream(blobId, false);
-			if (streamResult.IsFailed || streamResult.Value is null )
-			{
-				HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
-				return NotFound();
-			}
+			stream = _blobManager.GetBlobStream(blobId, true);
+		}
+		else if (_blobManager.ExistsBlob(blobId, false))
+		{
+			stream = _blobManager.GetBlobStream(blobId, false);
+		}
+		else
+		{
+			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+			return NotFound();
 		}
 
-		var stream = streamResult.Value;
-
+		if (stream is null)
+		{
+			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
+			return NotFound();
+		}
 
 		string headerModifiedSince = Request.Headers["If-Modified-Since"];
 

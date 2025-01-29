@@ -172,7 +172,7 @@ ORDER BY aa.created_on DESC;";
 			{
 				string filename = fileAsset.FileName;
 
-				Guid blobId = _blobManager.CreateBlob(fileAsset.LocalPath).Value;
+				Guid blobId = _blobManager.CreateBlob(fileAsset.LocalPath);
 
 				DateTime now = DateTime.Now;
 
@@ -439,7 +439,7 @@ ORDER BY aa.created_on DESC;";
 			{
 				string filename = asset.FileName;
 
-				Guid blobId = _blobManager.CreateBlob(asset.LocalPath).Value;
+				Guid blobId = _blobManager.CreateBlob(asset.LocalPath);
 
 				DateTime now = DateTime.Now;
 
@@ -701,14 +701,7 @@ ORDER BY aa.created_on DESC;";
 
 				if (!string.IsNullOrWhiteSpace(localPath))
 				{
-					var updateBlobResult = _blobManager.UpdateBlob(
-								fileAssetContent.BlobId,
-								localPath);
-
-					if (!updateBlobResult.IsSuccess)
-					{
-						throw new Exception("Failed to update blob content");
-					}
+					_blobManager.UpdateBlob(fileAssetContent.BlobId, localPath);
 				}
 
 				scope.Complete();
@@ -860,11 +853,7 @@ ORDER BY aa.created_on DESC;";
 				if (existingAsset.Type == AssetType.File)
 				{
 					FileAssetContent content = (FileAssetContent)existingAsset.Content;
-					var result = _blobManager.DeleteBlob(content.BlobId);
-					if (!result.IsSuccess)
-					{
-						throw new Exception("Failed to delete blob content for file asset");
-					}
+					_blobManager.DeleteBlob(content.BlobId);
 				}
 
 				scope.Complete();

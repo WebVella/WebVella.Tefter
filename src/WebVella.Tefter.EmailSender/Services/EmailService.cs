@@ -188,17 +188,12 @@ ORDER BY created_on DESC {pagingSql}";
 			{
 				foreach (var att in emailMessage.Attachments)
 				{
-					var blobResult = _blobManager.CreateBlob(att.Buffer);
-
-					if (!blobResult.IsSuccess)
-					{
-						throw new Exception("Saving attachment content failed");
-					}
+					var blobId = _blobManager.CreateBlob(att.Buffer);
 
 					EmailAttachment attachment = new EmailAttachment
 					{
 						Filename = att.Filename,
-						BlobId = blobResult.Value
+						BlobId = blobId
 					};
 
 					validAttachments.Add(attachment);

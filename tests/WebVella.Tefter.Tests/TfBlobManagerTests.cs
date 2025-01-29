@@ -35,51 +35,40 @@ public partial class TfBlobManagerTests : BaseTest
 				byte[] sampleBytes2 = Encoding.UTF8.GetBytes(sampleJsonFileContent2);
 
 				// create from bytes
-				var createResult = blobManager.CreateBlob(sampleBytes);
-				createResult.IsSuccess.Should().BeTrue();
-
-				var blobId = createResult.Value;
+				var blobId = blobManager.CreateBlob(sampleBytes);
 
 				//read bytes
-				var getBytesResult = blobManager.GetBlobByteArray(blobId);
-				getBytesResult.IsSuccess.Should().BeTrue();
+				var bytes = blobManager.GetBlobByteArray(blobId);
 
-				var json = Encoding.UTF8.GetString(getBytesResult.Value);
+				var json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent);
 
 				//get stream
-				var getStreamResult = blobManager.GetBlobStream(blobId);
-				getStreamResult.IsSuccess.Should().BeTrue();
-
-				var bytes = ReadFully(getStreamResult.Value);
-				getStreamResult.Value.Close();
+				var stream = blobManager.GetBlobStream(blobId);
+				bytes = ReadFully(stream);
+				stream.Close();
 
 				json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent);
 
 				//exists
-				var isExistsResult = blobManager.ExistsBlob(blobId);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeTrue();
+				var doExist = blobManager.ExistsBlob(blobId);
+				doExist.Should().BeTrue();
 
 				//update
-				var updateResult = blobManager.UpdateBlob(blobId, sampleBytes2);
-				updateResult.IsSuccess.Should().BeTrue();
+				blobManager.UpdateBlob(blobId, sampleBytes2);
 
-				getBytesResult = blobManager.GetBlobByteArray(blobId);
-				getBytesResult.IsSuccess.Should().BeTrue();
+				bytes = blobManager.GetBlobByteArray(blobId);
 
-				json = Encoding.UTF8.GetString(getBytesResult.Value);
+				json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent2);
 
 				//delete
-				var deleteResult = blobManager.DeleteBlob(blobId);
-				deleteResult.IsSuccess.Should().BeTrue();
-
+				blobManager.DeleteBlob(blobId);
+				
 				//exists after delete
-				isExistsResult = blobManager.ExistsBlob(blobId);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeFalse();
+				var doExists = blobManager.ExistsBlob(blobId);
+				doExists.Should().BeFalse();
 
 				//create from local path
 				string tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
@@ -89,17 +78,13 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				createResult = blobManager.CreateBlob(tmpFilePath);
-				createResult.IsSuccess.Should().BeTrue();
-
+				blobId = blobManager.CreateBlob(tmpFilePath);
+				
 				//local path file should be deleted after successful create of blob
 				File.Exists(tmpFilePath).Should().BeFalse();
 
-				blobId = createResult.Value;
-
-				isExistsResult = blobManager.ExistsBlob(blobId);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeTrue();
+				doExists = blobManager.ExistsBlob(blobId);
+				doExists.Should().BeTrue();
 
 				//create from stream
 				tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
@@ -109,17 +94,13 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				createResult = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open));
-				createResult.IsSuccess.Should().BeTrue();
+				blobId = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open));
 
 				//file should not deleted after successful create of blob because its from stream
 				File.Exists(tmpFilePath).Should().BeTrue();
 
-				blobId = createResult.Value;
-
-				isExistsResult = blobManager.ExistsBlob(blobId);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeTrue();
+				doExists = blobManager.ExistsBlob(blobId);
+				doExists.Should().BeTrue();
 
 				//cleanup by deleting storage folder
 				Directory.Delete(blobManager.BlobStoragePath, true);
@@ -159,51 +140,42 @@ public partial class TfBlobManagerTests : BaseTest
 				byte[] sampleBytes2 = Encoding.UTF8.GetBytes(sampleJsonFileContent2);
 
 				// create from bytes
-				var createResult = blobManager.CreateBlob(sampleBytes, true);
-				createResult.IsSuccess.Should().BeTrue();
-
-				var blobId = createResult.Value;
+				var blobId = blobManager.CreateBlob(sampleBytes, true);
 
 				//read bytes
-				var getBytesResult = blobManager.GetBlobByteArray(blobId, true);
-				getBytesResult.IsSuccess.Should().BeTrue();
+				var bytes = blobManager.GetBlobByteArray(blobId, true);
 
-				var json = Encoding.UTF8.GetString(getBytesResult.Value);
+				var json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent);
 
 				//get stream
-				var getStreamResult = blobManager.GetBlobStream(blobId, true);
-				getStreamResult.IsSuccess.Should().BeTrue();
+				var stream = blobManager.GetBlobStream(blobId, true);
 
-				var bytes = ReadFully(getStreamResult.Value);
-				getStreamResult.Value.Close();
+				bytes = ReadFully(stream);
+				
+				stream.Close();
 
 				json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent);
 
 				//exists
-				var isExistsResult = blobManager.ExistsBlob(blobId, true);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeTrue();
+				var doExists = blobManager.ExistsBlob(blobId, true);
+				doExists.Should().BeTrue();
 
 				//update
-				var updateResult = blobManager.UpdateBlob(blobId, sampleBytes2, true);
-				updateResult.IsSuccess.Should().BeTrue();
+				blobManager.UpdateBlob(blobId, sampleBytes2, true);
+				
+				bytes = blobManager.GetBlobByteArray(blobId,true);
 
-				getBytesResult = blobManager.GetBlobByteArray(blobId,true);
-				getBytesResult.IsSuccess.Should().BeTrue();
-
-				json = Encoding.UTF8.GetString(getBytesResult.Value);
+				json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent2);
 
 				//delete
-				var deleteResult = blobManager.DeleteBlob(blobId, true);
-				deleteResult.IsSuccess.Should().BeTrue();
-
+				blobManager.DeleteBlob(blobId, true);
+				
 				//exists after delete
-				isExistsResult = blobManager.ExistsBlob(blobId,true);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeFalse();
+				doExists = blobManager.ExistsBlob(blobId,true);
+				doExists.Should().BeFalse();
 
 				//create from local path
 				string tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
@@ -213,17 +185,13 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				createResult = blobManager.CreateBlob(tmpFilePath,true);
-				createResult.IsSuccess.Should().BeTrue();
+				blobId = blobManager.CreateBlob(tmpFilePath,true);
 
 				//local path file should be deleted after successful create of blob
 				File.Exists(tmpFilePath).Should().BeFalse();
 
-				blobId = createResult.Value;
-
-				isExistsResult = blobManager.ExistsBlob(blobId,true);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeTrue();
+				doExists = blobManager.ExistsBlob(blobId,true);
+				doExists.Should().BeTrue();
 
 				//create from stream
 				tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
@@ -233,29 +201,22 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				createResult = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open),true);
-				createResult.IsSuccess.Should().BeTrue();
+				blobId = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open),true);
 
 				//file should not deleted after successful create of blob because its from stream
 				File.Exists(tmpFilePath).Should().BeTrue();
 
-				blobId = createResult.Value;
-
-				isExistsResult = blobManager.ExistsBlob(blobId,true);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeTrue();
+				doExists = blobManager.ExistsBlob(blobId,true);
+				doExists.Should().BeTrue();
 
 
-				var permanentResult = blobManager.MakeTempBlobPermanent(blobId);
-				isExistsResult.IsSuccess.Should().BeTrue();
+				blobManager.MakeTempBlobPermanent(blobId);
 
-				isExistsResult = blobManager.ExistsBlob(blobId, false);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeTrue();
+				doExists = blobManager.ExistsBlob(blobId, false);
+				doExists.Should().BeTrue();
 
-				isExistsResult = blobManager.ExistsBlob(blobId, true);
-				isExistsResult.IsSuccess.Should().BeTrue();
-				isExistsResult.Value.Should().BeFalse();
+				doExists = blobManager.ExistsBlob(blobId, true);
+				doExists.Should().BeFalse();
 
 				//cleanup by deleting storage folder
 				Directory.Delete(blobManager.BlobStoragePath, true);

@@ -23,8 +23,15 @@ internal class TfBlobMaintenanceJob : BackgroundService
 
 		while (!stoppingToken.IsCancellationRequested)
 		{
-			await _blobManager.CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(stoppingToken);
-			
+			try
+			{
+				await _blobManager.CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(stoppingToken);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"{this.GetType().Name} exception");
+			}
+
 			await Task.Delay(4320000); //12 hour
 		}
 	}

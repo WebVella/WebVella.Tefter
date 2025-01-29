@@ -36,7 +36,6 @@ public class AssetsController : ControllerBase
 			return new JsonResult(new { });
 		}
 
-
 		var assetResult = _assetsService.GetAsset(assetId);
 		if(!assetResult.IsSuccess)
 		{
@@ -76,7 +75,7 @@ public class AssetsController : ControllerBase
 		}
 
 		
-		if(!_blobManager.ExistsBlob(fileAssetContent.BlobId).Value)
+		if(!_blobManager.ExistsBlob(fileAssetContent.BlobId))
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
@@ -94,7 +93,7 @@ public class AssetsController : ControllerBase
 
 		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
-		Stream fileContentStream = _blobManager.GetBlobStream(fileAssetContent.BlobId).Value;
+		Stream fileContentStream = _blobManager.GetBlobStream(fileAssetContent.BlobId);
 
 		return File(fileContentStream, mimeType);
 	}

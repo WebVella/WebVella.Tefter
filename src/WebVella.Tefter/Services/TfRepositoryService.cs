@@ -204,17 +204,12 @@ internal class TfRepositoryService : ITfRepositoryService
 			using (var scope = _dbServise.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 
-				var blobIdResult = _blobManager.CreateBlob(localPath);
+				var blobId = _blobManager.CreateBlob(localPath);
 
-				if (!blobIdResult.IsSuccess)
-				{
-					return Result.Fail(new Error("Failed to save file to file system")
-						.CausedBy(blobIdResult.Errors));
-				}
 
 				TfRepositoryFile file = new TfRepositoryFile
 				{
-					Id = blobIdResult.Value,
+					Id = blobId,
 					Filename = filename,
 					CreatedBy = createdBy,
 					CreatedOn = now,
@@ -271,14 +266,8 @@ internal class TfRepositoryService : ITfRepositoryService
 					return Result.Fail(new Error("Update repository file record into database failed"));
 				}
 
-				var blobResult = _blobManager.UpdateBlob(repFile.Id, localPath);
-
-				if (!blobResult.IsSuccess)
-				{
-					return Result.Fail(new Error("Failed to save content to file system")
-						.CausedBy(blobResult.Errors));
-				}
-
+				_blobManager.UpdateBlob(repFile.Id, localPath);
+				
 				scope.Complete();
 			}
 
@@ -362,9 +351,7 @@ internal class TfRepositoryService : ITfRepositoryService
 
 			var file = GetFile(filename).Value;
 
-			var stream = _blobManager.GetBlobStream(file.Id).Value;
-
-			return Result.Ok(stream);
+			return _blobManager.GetBlobStream(file.Id);
 		}
 		catch (Exception ex)
 		{

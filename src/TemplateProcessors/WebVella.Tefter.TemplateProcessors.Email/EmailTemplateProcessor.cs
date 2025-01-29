@@ -135,7 +135,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				if (attachment.Errors != null && attachment.Errors.Count > 0)
 					continue;
 
-				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value, temporary: true).Value;
+				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value, temporary: true);
 				var emailAttachment = new CreateEmailAttachmentModel
 				{
 					Filename = attachment.FileName,
@@ -144,7 +144,14 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				emailMessage.Attachments.Add(emailAttachment);
 			}
 
-			emailService.CreateEmailMessage(emailMessage);
+			var resultEmail = emailService.CreateEmailMessage(emailMessage);
+			if(!resultEmail.IsSuccess)
+			{
+				foreach (var err in resultEmail.Errors)
+				{
+					result.Errors.Add(new ValidationError("", err.Message));
+				}
+			}
 		}
 
 		return result;

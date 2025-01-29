@@ -120,7 +120,7 @@ internal partial class SmtpService : ISmtpService
 			{
 				foreach (var att in emailMessage.Attachments)
 				{
-					var bytes = _blobManager.GetBlobByteArray(att.BlobId).Value;
+					var bytes = _blobManager.GetBlobByteArray(att.BlobId);
 
 					var extension = Path.GetExtension(att.Filename).ToLowerInvariant();
 					new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);

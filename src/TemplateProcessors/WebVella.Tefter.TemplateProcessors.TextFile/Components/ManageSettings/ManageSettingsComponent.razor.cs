@@ -70,13 +70,9 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 
 		if (input is not null)
 		{
-			var blobResult = BlobManager.CreateBlob(input.Item1, true);
-			ProcessServiceResponse(blobResult);
-			if (blobResult.IsSuccess)
-			{
-				_form.TemplateFileBlobId = blobResult.Value;
-				_form.FileName = input.Item2;
-			}
+			var blobId = BlobManager.CreateBlob(input.Item1, true);
+			_form.TemplateFileBlobId = blobId;
+			_form.FileName = input.Item2;
 		}
 		else
 		{

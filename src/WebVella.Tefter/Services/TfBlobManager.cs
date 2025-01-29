@@ -10,49 +10,49 @@ public interface ITfBlobManager
 {
 	internal string BlobStoragePath { get; set; }
 
-	public Result<bool> ExistsBlob(
+	public bool ExistsBlob(
 		Guid blobId,
 		bool temporary = false);
 
-	public Result<Guid> CreateBlob(
+	public Guid CreateBlob(
 		byte[] byteArray,
 		bool temporary = false);
 
-	public Result<Guid> CreateBlob(
+	public Guid CreateBlob(
 		Stream stream,
 		bool temporary = false);
-	public Result<Guid> CreateBlob(
+	public Guid CreateBlob(
 		string localPath,
 		bool temporary = false);
 
-	public Result UpdateBlob(
+	public void UpdateBlob(
 		Guid blobId,
 		byte[] byteArray,
 		bool temporary = false);
 
-	public Result UpdateBlob(
+	public void UpdateBlob(
 		Guid blobId,
 		Stream stream,
 		bool temporary = false);
 
-	public Result UpdateBlob(
+	public void UpdateBlob(
 		Guid blobId,
 		string localPath,
 		bool temporary = false);
 
-	public Result DeleteBlob(
+	public void DeleteBlob(
 		Guid blobId,
 		bool temporary = false);
 
-	public Result<byte[]> GetBlobByteArray(
+	public byte[] GetBlobByteArray(
 		Guid blobId,
 		bool temporary = false);
 
-	public Result<Stream> GetBlobStream(
+	public Stream GetBlobStream(
 		Guid blobId,
 		bool temporary = false);
 
-	public Result MakeTempBlobPermanent(
+	public void MakeTempBlobPermanent(
 		Guid blobId);
 	internal Task CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(
 		CancellationToken stoppingToken);
@@ -68,392 +68,267 @@ internal class TfBlobManager : ITfBlobManager
 		InitBlobStorageFolder(config.BlobStoragePath);
 	}
 
-	public Result<Guid> CreateBlob(
+	public Guid CreateBlob(
 		Stream inputStream,
 		bool temporary = false)
 	{
-		try
+		if (!Directory.Exists(BlobStoragePath))
 		{
-			if (!Directory.Exists(BlobStoragePath))
+			throw new Exception($"Blob storage folder ({BlobStoragePath}) cannot be created on file system.");
+		}
+
+		//getting GUID with is not used
+		Guid blobId = Guid.NewGuid();
+		do
+		{
+			if (File.Exists(GetFileSystemPath(blobId, temporary)))
 			{
-				throw new Exception($"Blob storage folder ({BlobStoragePath}) cannot be created on file system.");
+				blobId = Guid.NewGuid();
+				continue;
 			}
 
-			//getting GUID with is not used
-			Guid blobId = Guid.NewGuid();
-			do
-			{
-				if (File.Exists(GetFileSystemPath(blobId, temporary)))
-				{
-					blobId = Guid.NewGuid();
-					continue;
-				}
-
-				break;
-			}
-			while (true);
-
-			var path = GetFileSystemPath(blobId, temporary);
-
-			var folderPath = Path.GetDirectoryName(path);
-
-			if (!Directory.Exists(folderPath))
-				Directory.CreateDirectory(folderPath);
-
-			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
-
-			inputStream.Seek(0, SeekOrigin.Begin);
-
-			inputStream.CopyTo(fileStream);
-
-			fileStream.Close();
-
-			inputStream.Close();
-
-			return Result.Ok(blobId);
+			break;
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
-		}
+		while (true);
+
+		var path = GetFileSystemPath(blobId, temporary);
+
+		var folderPath = Path.GetDirectoryName(path);
+
+		if (!Directory.Exists(folderPath))
+			Directory.CreateDirectory(folderPath);
+
+		using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
+
+		inputStream.Seek(0, SeekOrigin.Begin);
+
+		inputStream.CopyTo(fileStream);
+
+		fileStream.Close();
+
+		inputStream.Close();
+
+		return blobId;
 	}
 
-	private Result CreateBlob(
+	private void CreateBlob(
 		Guid id,
 		Stream inputStream,
 		bool temporary = false)
 	{
-		try
+		if (!Directory.Exists(BlobStoragePath))
 		{
-			if (!Directory.Exists(BlobStoragePath))
+			throw new Exception($"Blob storage folder ({BlobStoragePath}) cannot be created on file system.");
+		}
+
+		Guid blobId = id;
+		do
+		{
+			if (File.Exists(GetFileSystemPath(blobId, temporary)))
 			{
-				throw new Exception($"Blob storage folder ({BlobStoragePath}) cannot be created on file system.");
+				blobId = Guid.NewGuid();
+				continue;
 			}
 
-			Guid blobId = id;
-			do
-			{
-				if (File.Exists(GetFileSystemPath(blobId, temporary)))
-				{
-					blobId = Guid.NewGuid();
-					continue;
-				}
-
-				break;
-			}
-			while (true);
-
-			var path = GetFileSystemPath(blobId, temporary);
-
-			var folderPath = Path.GetDirectoryName(path);
-
-			if (!Directory.Exists(folderPath))
-				Directory.CreateDirectory(folderPath);
-
-			using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
-
-			inputStream.Seek(0, SeekOrigin.Begin);
-
-			inputStream.CopyTo(fileStream);
-
-			fileStream.Close();
-
-			inputStream.Close();
-
-			return Result.Ok();
+			break;
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
-		}
+		while (true);
+
+		var path = GetFileSystemPath(blobId, temporary);
+
+		var folderPath = Path.GetDirectoryName(path);
+
+		if (!Directory.Exists(folderPath))
+			Directory.CreateDirectory(folderPath);
+
+		using Stream fileStream = File.Open(path, FileMode.CreateNew, FileAccess.ReadWrite);
+
+		inputStream.Seek(0, SeekOrigin.Begin);
+
+		inputStream.CopyTo(fileStream);
+
+		fileStream.Close();
+
+		inputStream.Close();
 	}
 
-	public Result<Guid> CreateBlob(
+	public Guid CreateBlob(
 		byte[] byteArray,
 		bool temporary = false)
 	{
-		try
-		{
-			return CreateBlob(new MemoryStream(byteArray), temporary);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
-		}
+		return CreateBlob(new MemoryStream(byteArray), temporary);
 	}
 
-	public Result<Guid> CreateBlob(
+	public Guid CreateBlob(
 		string localPath,
 		bool temporary = false)
 	{
+		if (string.IsNullOrEmpty(localPath))
+		{
+			throw new Exception("Local path is not provided.");
+		}
+
+		if (!File.Exists(localPath))
+		{
+			throw new Exception("File does not exists on provided local path.");
+		}
+
 		try
 		{
-			if (string.IsNullOrEmpty(localPath))
-			{
-				throw new Exception("Local path is not provided.");
-			}
-
-			if (!File.Exists(localPath))
-			{
-				throw new Exception("File does not exists on provided local path.");
-			}
-
-			var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-
-			var result = CreateBlob(stream, temporary);
-
-			if (result.IsSuccess)
+			using var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			return CreateBlob(stream, temporary);
+		}
+		catch
+		{
+			if (File.Exists(localPath))
 			{
 				File.Delete(localPath);
 			}
-
-			return result;
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
+			throw;
 		}
 	}
 
-	public Result UpdateBlob(
+	public void UpdateBlob(
 		Guid blobId,
 		Stream inputStream,
 		bool temporary = false)
 	{
-		try
+
+		if (!ExistsBlob(blobId, temporary))
 		{
-			var blobExistsResult = ExistsBlob(blobId, temporary);
-
-			if (!blobExistsResult.IsSuccess)
-			{
-				return Result.Fail(new Error("Failed to check if blob exists")
-					.CausedBy(blobExistsResult.Errors));
-			}
-
-			if (!blobExistsResult.Value)
-			{
-				return Result.Fail(new Error("Blob does not exist for specified identifier"));
-			}
-
-			var path = GetFileSystemPath(blobId, temporary);
-
-			using Stream fileStream = File.Open(path, FileMode.Create, FileAccess.ReadWrite);
-
-			inputStream.Seek(0, SeekOrigin.Begin);
-
-			inputStream.CopyTo(fileStream);
-
-			fileStream.Close();
-
-			inputStream.Close();
-
-			return Result.Ok();
+			throw new TfException("Blob does not exist for specified identifier");
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update blob").CausedBy(ex));
-		}
+
+		var path = GetFileSystemPath(blobId, temporary);
+
+		using Stream fileStream = File.Open(path, FileMode.Create, FileAccess.ReadWrite);
+
+		inputStream.Seek(0, SeekOrigin.Begin);
+
+		inputStream.CopyTo(fileStream);
+
+		fileStream.Close();
+
+		inputStream.Close();
 	}
 
-	public Result UpdateBlob(
+	public void UpdateBlob(
 		Guid blobId,
 		byte[] byteArray,
 		bool temporary = false)
 	{
-		try
-		{
-			return UpdateBlob(blobId, new MemoryStream(byteArray), temporary);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
-		}
+		UpdateBlob(blobId, new MemoryStream(byteArray), temporary);
 	}
 
-	public Result UpdateBlob(
+	public void UpdateBlob(
 		Guid blobId,
 		string localPath,
 		bool temporary = false)
 	{
+		if (string.IsNullOrEmpty(localPath))
+		{
+			throw new Exception("Local path is not provided.");
+		}
+
+		if (!File.Exists(localPath))
+		{
+			throw new Exception("File does not exists on provided local path.");
+		}
+
 		try
 		{
-			if (string.IsNullOrEmpty(localPath))
-			{
-				throw new Exception("Local path is not provided.");
-			}
-
-			if (!File.Exists(localPath))
-			{
-				throw new Exception("File does not exists on provided local path.");
-			}
-
-			var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-
-			var result = UpdateBlob(blobId, stream, temporary);
-
-			if (result.IsSuccess)
+			using var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+			UpdateBlob(blobId, stream, temporary);
+		}
+		catch
+		{
+			if (File.Exists(localPath))
 			{
 				File.Delete(localPath);
 			}
+		}
 
-			return result;
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
-		}
 	}
 
-	public Result DeleteBlob(
+	public void DeleteBlob(
 		Guid blobId,
 		bool temporary = false)
 	{
-		try
+
+		if (!ExistsBlob(blobId, temporary))
 		{
-			var blobExistsResult = ExistsBlob(blobId, temporary);
-
-			if (!blobExistsResult.IsSuccess)
-			{
-				return Result.Fail(new Error("Failed to check if blob exists")
-					.CausedBy(blobExistsResult.Errors));
-			}
-
-			if (!blobExistsResult.Value)
-			{
-				return Result.Fail(new Error("Blob does not exist for specified identifier"));
-			}
-
-			var filepath = GetFileSystemPath(blobId, temporary);
-
-			if (!File.Exists(filepath))
-			{
-				return Result.Fail(new Error("Blob file does not exist for specified identifier"));
-			}
-
-			File.Delete(filepath);
-
-			return Result.Ok();
+			throw new TfException("Blob does not exist for specified identifier");
 		}
-		catch (Exception ex)
+
+		var filepath = GetFileSystemPath(blobId, temporary);
+
+		if (!File.Exists(filepath))
 		{
-			return Result.Fail(new Error("Failed to create blob").CausedBy(ex));
+			throw new TfException("Blob file does not exist for specified identifier");
 		}
+
+		File.Delete(filepath);
 	}
 
-	public Result<bool> ExistsBlob(
+	public bool ExistsBlob(
 		Guid blobId,
 		bool temporary = false)
 	{
-		try
-		{
-			var path = GetFileSystemPath(blobId, temporary);
-
-			return File.Exists(path);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to check if blob exists").CausedBy(ex));
-		}
+		var path = GetFileSystemPath(blobId, temporary);
+		return File.Exists(path);
 	}
 
-	public Result MakeTempBlobPermanent(
+	public void MakeTempBlobPermanent(
 		Guid blobId)
 	{
-		try
+
+		if (!ExistsBlob(blobId, true))
 		{
-			var blobExistsResult = ExistsBlob(blobId, true);
-
-			if (!blobExistsResult.IsSuccess)
-			{
-				return Result.Fail(new Error("Failed to check if temp blob exists")
-					.CausedBy(blobExistsResult.Errors));
-			}
-
-			if (!blobExistsResult.Value)
-			{
-				return Result.Fail(new Error("Temporary blob does not exist for specified identifier"));
-			}
-
-			var filepath = GetFileSystemPath(blobId, true);
-
-			if (!File.Exists(filepath))
-			{
-				return Result.Fail(new Error("Temporary blob file does not exist for specified identifier"));
-			}
-
-			//create permanent blob
-			var stream = File.Open(filepath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-			var createResult = CreateBlob(blobId, stream, false);
-
-			if (!createResult.IsSuccess)
-			{
-				return Result.Fail(new Error("Failed create permanent copy of temporary blob")
-					.CausedBy(blobExistsResult.Errors));
-			}
-
-			//delete temp blob
-			var deleteResult = DeleteBlob(blobId, true);
-
-			//if delete failed
-			if (!deleteResult.IsSuccess)
-			{
-				//delete already created permanent copy
-				DeleteBlob(blobId);
-
-				return Result.Fail(new Error("Failed delete temporary blob")
-					.CausedBy(blobExistsResult.Errors));
-			}
-
-			return Result.Ok();
-
+			throw new TfException("Temporary blob does not exist for specified identifier");
 		}
-		catch (Exception ex)
+
+		var filepath = GetFileSystemPath(blobId, true);
+
+		if (!File.Exists(filepath))
 		{
-			return Result.Fail(new Error("Failed to make blob permanent").CausedBy(ex));
+			throw new TfException("Temporary blob file does not exist for specified identifier");
 		}
+
+
+		var stream = File.Open(filepath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+		CreateBlob(blobId, stream, false);
+
+		DeleteBlob(blobId, true);
 	}
 
-	public Result<byte[]> GetBlobByteArray(
+	public byte[] GetBlobByteArray(
 		Guid blobId,
 		bool temporary = false)
 	{
 
-		try
-		{
-			var path = GetFileSystemPath(blobId, temporary);
+		var path = GetFileSystemPath(blobId, temporary);
 
-			if (!File.Exists(path))
-			{
-				throw new Exception("Blob content with specified identifier is not found.");
-			}
-
-			return File.ReadAllBytes(path);
-		}
-		catch (Exception ex)
+		if (!File.Exists(path))
 		{
-			return Result.Fail(new Error("Failed to read blob content").CausedBy(ex));
+			throw new TfException("Blob content with specified identifier is not found.");
 		}
+
+		return File.ReadAllBytes(path);
 	}
 
-	public Result<Stream> GetBlobStream(
+	public Stream GetBlobStream(
 		Guid blobId,
 		bool temporary = false)
 	{
-		try
-		{
-			var path = GetFileSystemPath(blobId, temporary);
+		var path = GetFileSystemPath(blobId, temporary);
 
-			if (!File.Exists(path))
-			{
-				throw new Exception("Blob content with specified identifier is not found.");
-			}
-
-			return File.Open(path, FileMode.Open, FileAccess.ReadWrite);
-		}
-		catch (Exception ex)
+		if (!File.Exists(path))
 		{
-			return Result.Fail(new Error("Failed to read blob content").CausedBy(ex));
+			throw new TfException("Blob content with specified identifier is not found.");
 		}
+
+		return File.Open(path, FileMode.Open, FileAccess.ReadWrite);
 	}
 
 	#region <--- private methods --->
@@ -523,17 +398,26 @@ internal class TfBlobManager : ITfBlobManager
 
 		var tmpDirectory = Path.Combine(BlobStoragePath, "_");
 
-		if( !Directory.Exists(tmpDirectory))
+		if (!Directory.Exists(tmpDirectory))
 		{
 			return;
 		}
 
 		foreach (var dir in Directory.GetDirectories(tmpDirectory))
 		{
+			if (stoppingToken.IsCancellationRequested)
+				return;
+
 			string lvl1DirPath = Path.Combine(tmpDirectory, dir);
 
 			foreach (var childDir in Directory.GetDirectories(lvl1DirPath))
 			{
+				if (stoppingToken.IsCancellationRequested)
+					return;
+
+				if (!Directory.Exists(lvl1DirPath))
+					continue;
+
 				var lvl2DirPath = Path.Combine(dir, childDir);
 				var files = Directory.GetFiles(lvl2DirPath); ;
 
@@ -554,12 +438,12 @@ internal class TfBlobManager : ITfBlobManager
 				}
 			}
 
-			if (Directory.GetDirectories(lvl1DirPath).Length == 0)
+			if (Directory.Exists(lvl1DirPath) && Directory.GetDirectories(lvl1DirPath).Length == 0)
 			{
 				Directory.Delete(lvl1DirPath);
 			}
 		}
 
-		await Task.Delay(100);
+		await Task.Delay(10);
 	}
 }

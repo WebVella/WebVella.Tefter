@@ -70,7 +70,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
 
-		var bytes = blobManager.GetBlobByteArray(settings.TemplateFileBlobId.Value).Value;
+		var bytes = blobManager.GetBlobByteArray(settings.TemplateFileBlobId.Value);
 
 		string content = Encoding.UTF8.GetString(bytes);
 
@@ -114,7 +114,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 				resultStream.Write(bytes, 0, bytes.Length);
 
-				var resultBlobId = blobManager.CreateBlob(resultStream, temporary: true).Value;
+				var resultBlobId = blobManager.CreateBlob(resultStream, temporary: true);
 
 				resultStream.Close();
 
@@ -167,7 +167,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		{
 			foreach (var item in validItems)
 			{
-				var fileBytes = blobManager.GetBlobByteArray(item.BlobId.Value, temporary: true).Value;
+				var fileBytes = blobManager.GetBlobByteArray(item.BlobId.Value, temporary: true);
 				var zipArchiveEntry = archive.CreateEntry(item.FileName, CompressionLevel.Fastest);
 				using var zipStream = zipArchiveEntry.Open();
 				zipStream.Write(fileBytes, 0, fileBytes.Length);
@@ -177,7 +177,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 		var name = Path.GetFileNameWithoutExtension(filename);
 
-		var zipBlobId = blobManager.CreateBlob(zipMs, temporary: true).Value;
+		var zipBlobId = blobManager.CreateBlob(zipMs, temporary: true);
 		result.ZipFilename = $"{name}.zip";
 		result.ZipBlobId = zipBlobId;
 		result.ZipDownloadUrl = $"/fs/blob/{zipBlobId}/{name}.zip";
@@ -247,8 +247,8 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		else
 		{
 			var blobManager = serviceProvider.GetService<ITfBlobManager>();
-			if (!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false).Value &&
-				!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value)
+			if (!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false) &&
+				!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true))
 			{
 				result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not found."));
 			}
@@ -272,7 +272,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 		var blobManager = serviceProvider.GetService<ITfBlobManager>();
 
-		var isTmpBlob = blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true).Value;
+		var isTmpBlob = blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true);
 		if (isTmpBlob)
 		{
 			blobManager.MakeTempBlobPermanent(settings.TemplateFileBlobId.Value);
@@ -324,7 +324,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 					if (newSettings.TemplateFileBlobId is not null)
 					{
 						//make new blob persistent
-						var isTmpBlob = blobManager.ExistsBlob(newSettings.TemplateFileBlobId.Value, temporary: true).Value;
+						var isTmpBlob = blobManager.ExistsBlob(newSettings.TemplateFileBlobId.Value, temporary: true);
 						if (isTmpBlob)
 						{
 							blobManager.MakeTempBlobPermanent(newSettings.TemplateFileBlobId.Value);
