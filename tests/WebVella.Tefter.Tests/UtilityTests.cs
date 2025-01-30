@@ -218,22 +218,22 @@ public class UtilityTestsChildGenericClass : UtilityTestsBaseGenericClass<Utilit
 public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
 {
 	public TfDataProviderManageSettingsComponentContext Context { get; init; }
-	public Guid Id { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public int PositionRank { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public string Name { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public string Description { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public string FluentIconName { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+	public Guid Id { get; init; }
+	public int PositionRank { get; init; }
+	public string Name { get; init; }
+	public string Description { get; init; }
+	public string FluentIconName { get; init; }
 	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){};
 }
 
 public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
 {
 	public TfDataProviderManageSettingsComponentContext Context { get; init; }
-	public Guid Id { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public int PositionRank { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public string Name { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public string Description { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
-	public string FluentIconName { get => throw new NotImplementedException(); init => throw new NotImplementedException(); }
+	public Guid Id { get; init; }
+	public int PositionRank { get; init; }
+	public string Name { get; init; }
+	public string Description { get; init; }
+	public string FluentIconName { get; init; }
 	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
 		new TfRegionComponentScope(typeof(UtilityTestsDataProviderTypeClass),null)
 	};

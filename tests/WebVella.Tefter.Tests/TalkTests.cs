@@ -78,7 +78,7 @@ public partial class TalkTests : BaseTest
 				};
 				var channelCreated = talkService.CreateChannel(channel);
 
-				Guid skId = dataManager.GetId("shared_key_value", "1").Value;
+				Guid skId = dataManager.GetId("shared_key_value", "1");
 
 				CreateTalkThread thread = new CreateTalkThread
 				{

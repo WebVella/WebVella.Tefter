@@ -146,7 +146,7 @@ ORDER BY aa.created_on DESC;";
 		Guid? folderId = null,
 		string skTextId = null)
 	{
-		Guid? skId = _dataManager.GetId(skTextId).Value;
+		Guid skId = _dataManager.GetId(skTextId);
 		return GetAssets(folderId, skId);
 	}
 

@@ -437,7 +437,7 @@ public partial class TfDataManager
 		TfDataProvider provider,
 		TfDataRow row)
 	{
-		row["tf_id"] = GetId(Guid.NewGuid()).Value;
+		row["tf_id"] = GetId(Guid.NewGuid());
 
 		row["tf_created_on"] = DateTime.Now;
 
@@ -480,7 +480,7 @@ public partial class TfDataManager
 				keys.Add(row[column.DbName]?.ToString()); //Boz: columns could be nullable
 
 
-			row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray()).Value;
+			row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
 
 			row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
 		}
@@ -638,7 +638,7 @@ public partial class TfDataManager
 			foreach (var column in sharedKey.Columns)
 				keys.Add(row[column.DbName]?.ToString());
 
-			var newId = GetId(keys.ToArray()).Value;
+			var newId = GetId(keys.ToArray());
 
 			if (newId != (Guid)row[$"tf_sk_{sharedKey.DbName}_id"])
 				row[$"tf_sk_{sharedKey.DbName}_id"] = newId;

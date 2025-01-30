@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+
+namespace WebVella.Tefter.Tests;
 
 public partial class TfBlobManagerTests : BaseTest
 {
@@ -35,39 +37,67 @@ public partial class TfBlobManagerTests : BaseTest
 				byte[] sampleBytes2 = Encoding.UTF8.GetBytes(sampleJsonFileContent2);
 
 				// create from bytes
-				var blobId = blobManager.CreateBlob(sampleBytes);
+				Guid blobId = Guid.Empty;
+				var task = Task.Run(() => { blobId = blobManager.CreateBlob(sampleBytes); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				blobId.Should().NotBe(Guid.Empty);
 
 				//read bytes
-				var bytes = blobManager.GetBlobByteArray(blobId);
+				byte[] bytes = null;
+				task = Task.Run(() => { bytes = blobManager.GetBlobByteArray(blobId); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				bytes.Should().NotBeNull();
 
 				var json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent);
 
 				//get stream
-				var stream = blobManager.GetBlobStream(blobId);
-				bytes = ReadFully(stream);
-				stream.Close();
+				Stream stream = null;
+				task = Task.Run(() =>
+				{
+					stream = blobManager.GetBlobStream(blobId);
+					bytes = ReadFully(stream);
+					stream.Close();
+				});
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				bytes.Should().NotBeNull();
 
 				json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent);
 
 				//exists
-				var doExist = blobManager.ExistsBlob(blobId);
-				doExist.Should().BeTrue();
+				bool doExists = false;
+				task = Task.Run(() => { doExists = blobManager.ExistsBlob(blobId); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				doExists.Should().BeTrue();
 
 				//update
-				blobManager.UpdateBlob(blobId, sampleBytes2);
+				task = Task.Run(() => { blobManager.UpdateBlob(blobId, sampleBytes2); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
-				bytes = blobManager.GetBlobByteArray(blobId);
+				task = Task.Run(() => { bytes = blobManager.GetBlobByteArray(blobId); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				bytes.Should().NotBeNull();
 
 				json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent2);
 
 				//delete
-				blobManager.DeleteBlob(blobId);
+				task = Task.Run(() => { blobManager.DeleteBlob(blobId); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 				
+
 				//exists after delete
-				var doExists = blobManager.ExistsBlob(blobId);
+				task = Task.Run(() => { doExists = blobManager.ExistsBlob(blobId); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 				doExists.Should().BeFalse();
 
 				//create from local path
@@ -78,12 +108,20 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				blobId = blobManager.CreateBlob(tmpFilePath);
-				
+				blobId = Guid.Empty;
+				task = Task.Run(() => { blobId = blobManager.CreateBlob(tmpFilePath); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				blobId.Should().NotBe(Guid.Empty);
+
+
 				//local path file should be deleted after successful create of blob
 				File.Exists(tmpFilePath).Should().BeFalse();
 
-				doExists = blobManager.ExistsBlob(blobId);
+				doExists = false;
+				task = Task.Run(() => { doExists = blobManager.ExistsBlob(blobId); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 				doExists.Should().BeTrue();
 
 				//create from stream
@@ -94,12 +132,19 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				blobId = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open));
+				blobId = Guid.Empty;
+				task = Task.Run(() => { blobId = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open)); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				blobId.Should().NotBe(Guid.Empty);
 
 				//file should not deleted after successful create of blob because its from stream
 				File.Exists(tmpFilePath).Should().BeTrue();
 
-				doExists = blobManager.ExistsBlob(blobId);
+				doExists = false;
+				task = Task.Run(() => { doExists = blobManager.ExistsBlob(blobId); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 				doExists.Should().BeTrue();
 
 				//cleanup by deleting storage folder
@@ -152,7 +197,7 @@ public partial class TfBlobManagerTests : BaseTest
 				var stream = blobManager.GetBlobStream(blobId, true);
 
 				bytes = ReadFully(stream);
-				
+
 				stream.Close();
 
 				json = Encoding.UTF8.GetString(bytes);
@@ -164,17 +209,17 @@ public partial class TfBlobManagerTests : BaseTest
 
 				//update
 				blobManager.UpdateBlob(blobId, sampleBytes2, true);
-				
-				bytes = blobManager.GetBlobByteArray(blobId,true);
+
+				bytes = blobManager.GetBlobByteArray(blobId, true);
 
 				json = Encoding.UTF8.GetString(bytes);
 				json.Should().Be(sampleJsonFileContent2);
 
 				//delete
 				blobManager.DeleteBlob(blobId, true);
-				
+
 				//exists after delete
-				doExists = blobManager.ExistsBlob(blobId,true);
+				doExists = blobManager.ExistsBlob(blobId, true);
 				doExists.Should().BeFalse();
 
 				//create from local path
@@ -185,12 +230,12 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				blobId = blobManager.CreateBlob(tmpFilePath,true);
+				blobId = blobManager.CreateBlob(tmpFilePath, true);
 
 				//local path file should be deleted after successful create of blob
 				File.Exists(tmpFilePath).Should().BeFalse();
 
-				doExists = blobManager.ExistsBlob(blobId,true);
+				doExists = blobManager.ExistsBlob(blobId, true);
 				doExists.Should().BeTrue();
 
 				//create from stream
@@ -201,12 +246,12 @@ public partial class TfBlobManagerTests : BaseTest
 				bw.Close();
 				fileStream.Close();
 
-				blobId = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open),true);
+				blobId = blobManager.CreateBlob(File.Open(tmpFilePath, FileMode.Open), true);
 
 				//file should not deleted after successful create of blob because its from stream
 				File.Exists(tmpFilePath).Should().BeTrue();
 
-				doExists = blobManager.ExistsBlob(blobId,true);
+				doExists = blobManager.ExistsBlob(blobId, true);
 				doExists.Should().BeTrue();
 
 

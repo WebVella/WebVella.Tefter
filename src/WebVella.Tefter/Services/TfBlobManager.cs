@@ -178,13 +178,12 @@ internal class TfBlobManager : ITfBlobManager
 			using var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 			return CreateBlob(stream, temporary);
 		}
-		catch
+		finally
 		{
 			if (File.Exists(localPath))
 			{
 				File.Delete(localPath);
 			}
-			throw;
 		}
 	}
 

@@ -124,11 +124,7 @@ public partial class TfDataManager
 	{
 		try
 		{
-			var idResult = GetId(Guid.NewGuid());
-			if (!idResult.IsSuccess)
-				throw new Exception("Unable to get new ID from id manager.");
-
-			row["tf_id"] = idResult.Value;
+			row["tf_id"] = GetId(Guid.NewGuid());
 			row["tf_created_on"] = DateTime.Now;
 			row["tf_updated_on"] = DateTime.Now;
 
@@ -155,11 +151,7 @@ public partial class TfDataManager
 				foreach (var column in sharedKey.Columns)
 					keys.Add(row[column.DbName]?.ToString());
 
-				var skIdResult = GetId(keys.ToArray());
-				if (!skIdResult.IsSuccess)
-					throw new Exception("Unable to get new ID from id manager.");
-
-				row[$"tf_sk_{sharedKey.DbName}_id"] = skIdResult.Value;
+				row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
 				row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
 			}
 
@@ -208,11 +200,7 @@ public partial class TfDataManager
 				foreach (var column in sharedKey.Columns)
 					keys.Add(row[column.DbName].ToString());
 
-				var skIdResult = GetId(keys.ToArray());
-				if (!skIdResult.IsSuccess)
-					throw new Exception("Unable to get new ID from id manager.");
-
-				row[$"tf_sk_{sharedKey.DbName}_id"] = skIdResult.Value;
+				row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
 				row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
 			}
 

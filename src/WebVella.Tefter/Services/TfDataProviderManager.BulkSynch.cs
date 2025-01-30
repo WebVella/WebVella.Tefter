@@ -400,11 +400,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			}
 		}
 
-		var sharedKeysBulkFillResult = _dataManager.BulkFillIds(sharedKeyBulkIdDict);
-
-		if (!sharedKeysBulkFillResult.IsSuccess)
-			throw new Exception("Failed to generate bulk shared keys values");
-
+		_dataManager.BulkFillIds(sharedKeyBulkIdDict);
+		
 		return sharedKeyBulkIdDict;
 	}
 
@@ -412,11 +409,8 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		Dictionary<string, Guid> newTfIds,
 		NpgsqlParameter tfIdsParam)
 	{
-		var sharedKeysBulkFillResult = _dataManager.BulkFillIds(newTfIds);
-
-		if (!sharedKeysBulkFillResult.IsSuccess)
-			throw new Exception("Failed to generate bulk tf_id values");
-
+		_dataManager.BulkFillIds(newTfIds);
+		
 		var tfIdList = (List<Guid>)tfIdsParam.Value;
 		List<Guid> newtfIdList = new List<Guid>();
 		foreach (var id in tfIdList)

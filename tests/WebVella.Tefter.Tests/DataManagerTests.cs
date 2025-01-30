@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;
@@ -215,22 +216,20 @@ public partial class DataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var idResult = dataManager.GetId("test");
-				idResult.Should().NotBeNull();
-				idResult.IsSuccess.Should().BeTrue();
+				Guid? id1 = null;
+				Guid? id2 = null;
 
-				var idResult2 = dataManager.GetId("test");
-				idResult2.Should().NotBeNull();
-				idResult2.IsSuccess.Should().BeTrue();
+				var task = Task.Run(() => { id1 = dataManager.GetId("test"); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				id1.Should().NotBeNull();
 
-				idResult.Value.Should().Be(idResult2.Value);
+				task = Task.Run(() => { id2 = dataManager.GetId("test"); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				id2.Should().NotBeNull();
 
-				var id = Guid.NewGuid();
-
-
-				var idResult6 = dataManager.GetId(id);
-				idResult6.Should().NotBeNull();
-				idResult6.IsSuccess.Should().BeTrue();
+				id1.Should().Be(id2.Value);
 			}
 		}
 	}
@@ -261,8 +260,9 @@ public partial class DataManagerTests : BaseTest
 					idsDict.Add(combinedKey, Guid.Empty);
 				}
 
-				var idResult = dataManager.BulkFillIds(idsDict);
-				idResult.IsSuccess.Should().BeTrue();
+				var task = Task.Run(() => { dataManager.BulkFillIds(idsDict); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				foreach(var guid in idsDict.Values)
 				{
