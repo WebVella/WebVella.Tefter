@@ -124,8 +124,8 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
-			Type result = null;
-			Func<bool> action = () => { result = objType.GetGenericTypeFromGenericInterface(); return true; };
+			string? result = null;
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().Throw<ArgumentException>("The provided type must be a interface.");
 		}
 	}
@@ -136,8 +136,8 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(ITfDataProviderType);
-			Type result = null;
-			Func<bool> action = () => { result = objType.GetGenericTypeFromGenericInterface(); return true; };
+			string? result = null;
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().Throw<ArgumentException>("he provided type must be a generic interface.");
 		}
 	}
@@ -148,10 +148,10 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(ITfRegionComponent<TfDataProviderManageSettingsComponentContext>);
-			Type result = null;
-			Func<bool> action = () => { result = objType.GetGenericTypeFromGenericInterface(); return true; };
+			string? result = null;
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().NotThrow();
-			result.Should().Be(typeof(TfDataProviderManageSettingsComponentContext));
+			result.Should().Be(typeof(TfDataProviderManageSettingsComponentContext).FullName);
 		}
 	}
 
@@ -163,8 +163,8 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
-			List<Type> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
+			List<string> result = new();
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(0);
@@ -177,12 +177,12 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
-			List<Type> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
+			List<string> result = new();
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(1);
-			result[0].Should().Be(typeof(TfDataProviderManageSettingsComponentContext));
+			result[0].Should().Be(typeof(TfDataProviderManageSettingsComponentContext).FullName);
 		}
 	}
 
