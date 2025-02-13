@@ -77,7 +77,7 @@
 			.Any(i => i.GetGenericArguments().Contains(genericArgument));
 	}
 
-	public static Type? GetGenericTypeFromGenericInterface(this Type type)
+	public static string? GetGenericTypeFullNameFromGenericInterface(this Type type)
 	{
 		if (type is null)
 			throw new ArgumentException("The provided type is null.", nameof(type));
@@ -87,15 +87,15 @@
 		if (!type.IsGenericType)
 			throw new ArgumentException("The provided type must be a generic interface.", nameof(type));
 
-		return type.GetGenericArguments()?.FirstOrDefault();
+		return type.GetGenericArguments()?.FirstOrDefault()?.FullName;
 	}
 
-	public static List<Type> GetGenericTypeFromImplementedGenericInterface(this Type type, Type genericInterface)
+	public static List<string> GetGenericTypeFullNameFromImplementedGenericInterface(this Type type, Type genericInterface)
 	{
 		if (type is null)
 			throw new ArgumentException("The provided type is null.", nameof(type));
 
-		var result = new List<Type>();
+		var result = new List<string>();
 		
 		if (genericInterface is null) return result;
 
@@ -105,19 +105,10 @@
 		if (!implementedInterfaces.Any()) return result;
 		foreach (var implementedInterface in implementedInterfaces)
 		{
-			var implType = GetGenericTypeFromGenericInterface(implementedInterface);
+			var implType = GetGenericTypeFullNameFromGenericInterface(implementedInterface);
 			if (implType != null) result.Add(implType);
 		}
 		return result;
 	}
 
-	public static List<string> GetGenericTypeFromImplementedGenericInterfaceAsStringList(this Type type, Type genericInterface)
-	{
-		if (type is null)
-			throw new ArgumentException("The provided type is null.", nameof(type));
-		if (genericInterface is null) return new List<string>();
-		return type.GetGenericTypeFromImplementedGenericInterface(genericInterface)
-		.Where(x => x is not null && !String.IsNullOrWhiteSpace(x.FullName))
-		.Select(x => x.FullName).ToList();
-	}
 }
