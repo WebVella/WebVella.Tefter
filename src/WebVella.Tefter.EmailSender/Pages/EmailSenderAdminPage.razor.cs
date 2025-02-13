@@ -17,11 +17,15 @@ public partial class EmailSenderAdminPage : TucBaseScreenRegionComponent, ITucAu
 		TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		var mailService = serviceProvider.GetRequiredService<IEmailService>();
-		var srvResult = mailService.GetEmailMessages(newAppState.Route.Search, newAppState.Route.Page, newAppState.Route.PageSize);
-		if (srvResult.IsSuccess)
-			newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = srvResult.Value;
-		else
+		try
+		{
+			var emails = mailService.GetEmailMessages(newAppState.Route.Search, newAppState.Route.Page, newAppState.Route.PageSize);
+			newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = emails;
+		}
+		catch
+		{
 			newAuxDataState.Data[EmailSenderConstants.APP_EMAIL_LIST_DATA_KEY] = new List<EmailMessage>();
+		}
 
 		return Task.CompletedTask;
 	}

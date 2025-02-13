@@ -15,14 +15,22 @@ internal class LoginUseCase
 	internal TucLoginForm Form { get; set; }
 	internal bool IsSubmitting { get; set; } = false;
 
-	internal virtual async Task<Result<bool>> AuthenticateAsync(IJSRuntime jsRuntime)
+	internal virtual async Task<bool> AuthenticateAsync(IJSRuntime jsRuntime)
 	{
-		Result result = await _identityManager.AuthenticateAsync(
-			jsRuntime: jsRuntime,
-			email: Form.Email,
-			password: Form.Password,
-			rememberMe: Form.RememberMe);
-		return Result.Ok(result.IsSuccess);
+		try
+		{
+			await _identityManager.AuthenticateAsync(
+				jsRuntime: jsRuntime,
+				email: Form.Email,
+				password: Form.Password,
+				rememberMe: Form.RememberMe);
+
+			return true;
+		}
+		catch (Exception ex)
+		{
+			return false;
+		}
 	}
 
 }

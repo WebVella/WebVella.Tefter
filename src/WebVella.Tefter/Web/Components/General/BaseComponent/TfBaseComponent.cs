@@ -94,18 +94,17 @@ public class TfBaseComponent : FluxorComponent
 	/// Validation messages will not be processed by this method
 	/// </summary>
 	/// <param name="ex"></param>
-	protected void ProcessServiceResponse(Result<object> response)
-	{
-		ResultUtils.ProcessServiceResult(
-			result: response,
-			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
-			toastValidationMessage: "Invalid Data",
-			notificationErrorTitle: LOC("Unexpected Error!"),
-			toastService: ToastService,
-			messageService: MessageService
-		);
-	}
-
+	//protected void ProcessServiceResponse(Result<object> response)
+	//{
+	//	ResultUtils.ProcessServiceResult(
+	//		result: response,
+	//		toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
+	//		toastValidationMessage: "Invalid Data",
+	//		notificationErrorTitle: LOC("Unexpected Error!"),
+	//		toastService: ToastService,
+	//		messageService: MessageService
+	//	);
+	//}
 
 	/// <summary>
 	/// Processes Exception from Server call

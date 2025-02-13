@@ -1,77 +1,56 @@
-﻿using WebVella.Tefter.Identity;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
-	public Result<List<TfBookmark>> GetBookmarksListForUser(
+	public List<TfBookmark> GetBookmarksListForUser(
 		Guid userId);
-	public Result<List<TfBookmark>> GetBookmarksListForSpaceView(
+	public List<TfBookmark> GetBookmarksListForSpaceView(
 		Guid spaceViewId);
 
-	public Result<TfBookmark> GetBookmark(
+	public TfBookmark GetBookmark(
 		Guid id);
 
-	public Result<TfBookmark> CreateBookmark(
+	public TfBookmark CreateBookmark(
 		TfBookmark bookmark);
 
-	public Result<TfBookmark> UpdateBookmark(
+	public TfBookmark UpdateBookmark(
 		TfBookmark bookmark);
 
-	public Result DeleteBookmark(
+	public void DeleteBookmark(
 		Guid id);
 }
 
 public partial class TfSpaceManager : ITfSpaceManager
 {
-	public Result<List<TfBookmark>> GetBookmarksListForUser(
+	public List<TfBookmark> GetBookmarksListForUser(
 		Guid userId)
 	{
-		try
-		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-			foreach (var bookmark in bookmarks)
-				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+		var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
+		foreach (var bookmark in bookmarks)
+			bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
-			return Result.Ok(bookmarks);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of user bookmarks").CausedBy(ex));
-		}
+		return bookmarks;
 	}
 
-	public Result<List<TfBookmark>> GetBookmarksListForSpaceView(
+	public List<TfBookmark> GetBookmarksListForSpaceView(
 		Guid spaceViewId)
 	{
-		try
-		{
-			var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpaceViewId));
-			foreach (var bookmark in bookmarks)
-				bookmark.Tags = GetBookmarkTags(bookmark.Id);
+		var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpaceViewId));
+		foreach (var bookmark in bookmarks)
+			bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
-			return Result.Ok(bookmarks);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of user bookmarks").CausedBy(ex));
-		}
+		return bookmarks;
 	}
 
-	public Result<TfBookmark> GetBookmark(
+	public TfBookmark GetBookmark(
 		Guid id)
 	{
-		try
-		{
-			var bookmark = _dboManager.Get<TfBookmark>(id);
-			if (bookmark is not null)
-				bookmark.Tags = GetBookmarkTags(id);
-			return Result.Ok(bookmark);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of user bookmarks").CausedBy(ex));
-		}
+		var bookmark = _dboManager.Get<TfBookmark>(id);
+		if (bookmark is not null)
+			bookmark.Tags = GetBookmarkTags(id);
+		return bookmark;
 	}
 
 	private List<TfTag> GetBookmarkTags(
@@ -104,219 +83,185 @@ public partial class TfSpaceManager : ITfSpaceManager
 		return result;
 	}
 
-	public Result<TfBookmark> CreateBookmark(
+	public TfBookmark CreateBookmark(
 		TfBookmark bookmark)
 	{
-		try
+		if (bookmark != null && bookmark.Id == Guid.Empty)
+			bookmark.Id = Guid.NewGuid();
+		
+		new TfBookmarkValidator(_dboManager, this)
+			.ValidateCreate(bookmark)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			if (bookmark != null && bookmark.Id == Guid.Empty)
-				bookmark.Id = Guid.NewGuid();
+			bool success = false;
 
-			//TfSpaceValidator validator =
-			//	new TfSpaceValidator(_dboManager, this);
+			success = _dboManager.Insert<TfBookmark>(bookmark);
 
-			//var validationResult = validator.ValidateCreate(space);
+			if (!success)
+				throw new TfDboServiceException("Insert<TfBookmark> failed.");
 
-			//if (!validationResult.IsValid)
-			//	return validationResult.ToResult();
-
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			var textTags = GetUniqueTagsFromText(bookmark.Description);
+			if (textTags.Count > 0)
 			{
+				var allTags = _dboManager.GetList<TfTag>();
 
-				bool success = false;
-
-				success = _dboManager.Insert<TfBookmark>(bookmark);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Insert", bookmark));
-
-				var textTags = GetUniqueTagsFromText(bookmark.Description);
-				if (textTags.Count > 0)
+				foreach (var textTag in textTags)
 				{
-					var allTags = _dboManager.GetList<TfTag>();
+					var tag = allTags.SingleOrDefault(x => x.Label == textTag);
 
-					foreach (var textTag in textTags)
+					TfBookmarkTag bookmarkTag = null;
+
+					if (tag is not null)
 					{
-						var tag = allTags.SingleOrDefault(x => x.Label == textTag);
-
-						TfBookmarkTag bookmarkTag = null;
-
-						if (tag is not null)
+						bookmarkTag = new TfBookmarkTag
 						{
-							bookmarkTag = new TfBookmarkTag
-							{
-								BookmarkId = bookmark.Id,
-								TagId = tag.Id
-							};
-						}
-						else
+							BookmarkId = bookmark.Id,
+							TagId = tag.Id
+						};
+					}
+					else
+					{
+						var newTag = new TfTag
 						{
-							var newTag = new TfTag
-							{
-								Id = Guid.NewGuid(),
-								Label = textTag
-							};
+							Id = Guid.NewGuid(),
+							Label = textTag
+						};
 
-							success = _dboManager.Insert<TfTag>(newTag);
-							if (!success)
-								return Result.Fail(new DboManagerError("Insert", newTag));
-
-							bookmarkTag = new TfBookmarkTag
-							{
-								BookmarkId = bookmark.Id,
-								TagId = newTag.Id
-							};
-
-						}
-
-						success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
-
+						success = _dboManager.Insert<TfTag>(newTag);
 						if (!success)
-							return Result.Fail(new DboManagerError("Insert", bookmarkTag));
+							throw new TfDboServiceException("Insert<TfTag> failed.");
+
+						bookmarkTag = new TfBookmarkTag
+						{
+							BookmarkId = bookmark.Id,
+							TagId = newTag.Id
+						};
 
 					}
-				}
-
-				scope.Complete();
-
-				return GetBookmark(bookmark.Id);
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create user bookmark").CausedBy(ex));
-		}
-	}
-
-	public Result<TfBookmark> UpdateBookmark(
-		TfBookmark bookmark)
-	{
-		try
-		{
-			//TfSpaceValidator validator =
-			//	new TfSpaceValidator(_dboManager, this);
-
-			//var validationResult = validator.ValidateUpdate(bookmark);
-
-			//if (!validationResult.IsValid)
-			//	return validationResult.ToResult();
-
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				bool success = false;
-
-				var existingBookmark = GetBookmark(bookmark.Id).Value;
-
-				var textTags = GetUniqueTagsFromText(bookmark.Description);
-
-				List<string> tagsToAdd = textTags
-					.Where(t => !existingBookmark.Tags.Any(x => x.Label == t))
-					.ToList();
-
-				List<Guid> tagIdsToRemove = existingBookmark.Tags
-					.Where(x => !textTags.Contains(x.Label))
-					.Select(x => x.Id)
-					.ToList();
-
-
-				//add new tags
-				foreach (var textTag in tagsToAdd)
-				{
-					var newTag = new TfTag { Id = Guid.NewGuid(), Label = textTag };
-
-					success = _dboManager.Insert<TfTag>(newTag);
-
-					if (!success)
-						return Result.Fail(new DboManagerError("Insert", newTag));
-
-					var bookmarkTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = newTag.Id };
 
 					success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
 
 					if (!success)
-						return Result.Fail(new DboManagerError("Insert", bookmarkTag));
+						throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
 
 				}
-
-				//remove connection to missing tags
-				foreach (Guid id in tagIdsToRemove)
-				{
-					Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
-					deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
-					deleteKey.Add(nameof(TfBookmarkTag.TagId), id);
-
-					success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
-
-					if (!success)
-						return Result.Fail(new DboManagerError("Delete", deleteKey));
-				}
-
-
-				//TODO process tags also
-				success = _dboManager.Update<TfBookmark>(bookmark);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", bookmark));
-
-				scope.Complete();
-
-				return GetBookmark(bookmark.Id);
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update user bookmark").CausedBy(ex));
+
+			scope.Complete();
+
+			return GetBookmark(bookmark.Id);
 		}
 
 	}
 
-	public Result DeleteBookmark(
-		Guid id)
+	public TfBookmark UpdateBookmark(
+		TfBookmark bookmark)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			var existingBookmark = GetBookmark(bookmark.Id);
+
+			new TfBookmarkValidator(_dboManager, this)
+				.ValidateUpdate(existingBookmark)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			bool success = false;
+
+			var textTags = GetUniqueTagsFromText(bookmark.Description);
+
+			List<string> tagsToAdd = textTags
+				.Where(t => !existingBookmark.Tags.Any(x => x.Label == t))
+				.ToList();
+
+			List<Guid> tagIdsToRemove = existingBookmark.Tags
+				.Where(x => !textTags.Contains(x.Label))
+				.Select(x => x.Id)
+				.ToList();
+
+
+			//add new tags
+			foreach (var textTag in tagsToAdd)
 			{
-				//TfSpaceValidator validator =
-				//	new TfSpaceValidator(_dboManager, this);
+				var newTag = new TfTag { Id = Guid.NewGuid(), Label = textTag };
 
-				//var space = GetSpace(id).Value;
-
-				//var validationResult = validator.ValidateDelete(space);
-
-				//if (!validationResult.IsValid)
-				//	return validationResult.ToResult();
-
-				bool success = false;
-
-				var existingBookmark = GetBookmark(id).Value;
-
-				//remove connection to tags
-				foreach (Guid tagId in existingBookmark.Tags.Select(x => x.Id).ToList())
-				{
-					Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
-					deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
-					deleteKey.Add(nameof(TfBookmarkTag.TagId), tagId);
-
-					success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
-
-					if (!success)
-						return Result.Fail(new DboManagerError("Delete", deleteKey));
-				}
-
-				success = _dboManager.Delete<TfBookmark>(id);
+				success = _dboManager.Insert<TfTag>(newTag);
 
 				if (!success)
-					return Result.Fail(new DboManagerError("Delete", id));
+					throw new TfDboServiceException("Insert<TfTag> failed.");
 
-				scope.Complete();
+				var bookmarkTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = newTag.Id };
 
-				return Result.Ok();
+				success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
+
+				if (!success)
+					throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
+
 			}
+
+			//remove connection to missing tags
+			foreach (Guid id in tagIdsToRemove)
+			{
+				Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
+				deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
+				deleteKey.Add(nameof(TfBookmarkTag.TagId), id);
+
+				success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
+
+				if (!success)
+					throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
+			}
+
+
+			//TODO process tags also
+			success = _dboManager.Update<TfBookmark>(bookmark);
+
+			if (!success)
+				throw new TfDboServiceException("Update<TfBookmark> failed.");
+
+			scope.Complete();
+
+			return GetBookmark(bookmark.Id);
 		}
-		catch (Exception ex)
+	}
+
+	public void DeleteBookmark(
+		Guid id)
+	{
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			return Result.Fail(new Error("Failed to delete user bookmark.").CausedBy(ex));
+			var existingBookmark = GetBookmark(id);
+
+			new TfBookmarkValidator(_dboManager, this)
+				.ValidateDelete(existingBookmark)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			
+			bool success = false;
+			
+			//remove connection to tags
+			foreach (Guid tagId in existingBookmark.Tags.Select(x => x.Id).ToList())
+			{
+				Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
+				deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
+				deleteKey.Add(nameof(TfBookmarkTag.TagId), tagId);
+
+				success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
+
+				if (!success)
+					throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
+			}
+
+			success = _dboManager.Delete<TfBookmark>(id);
+
+			if (!success)
+				throw new TfDboServiceException("Delete<TfBookmark> failed.");
+
+			scope.Complete();
 		}
 	}
 
@@ -324,8 +269,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 	#region <--- validation --->
 
-	internal class TfBookmarkValidator
-	: AbstractValidator<TfBookmark>
+	internal class TfBookmarkValidator : AbstractValidator<TfBookmark>
 	{
 		public TfBookmarkValidator(
 			ITfDboManager dboManager,
@@ -334,42 +278,32 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 			RuleSet("general", () =>
 			{
-				RuleFor(space => space.Id)
+				RuleFor(bookmark => bookmark.Id)
 					.NotEmpty()
-					.WithMessage("The space id is required.");
+					.WithMessage("The bookmark id is required.");
 
-				RuleFor(space => space.Name)
+				RuleFor(bookmark => bookmark.Name)
 					.NotEmpty()
-					.WithMessage("The space name is required.");
+					.WithMessage("The bookmark name is required.");
 
 			});
 
 			RuleSet("create", () =>
 			{
-				RuleFor(space => space.Id)
-						.Must((space, id) => { return spaceManager.GetSpace(id).Value == null; })
-						.WithMessage("There is already existing space with specified identifier.");
+				RuleFor(bookmark => bookmark.Id)
+						.Must((bookmark, id) => { return spaceManager.GetBookmark(id) == null; })
+						.WithMessage("There is already existing bookmark with specified identifier.");
 
-				RuleFor(space => space.Name)
-						.Must((space, name) =>
-						{
-							if (string.IsNullOrEmpty(name))
-								return true;
-
-							var spaces = spaceManager.GetSpacesList().Value;
-							return !spaces.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
-						})
-						.WithMessage("There is already existing space with same name.");
 			});
 
 			RuleSet("update", () =>
 			{
-				RuleFor(space => space.Id)
-						.Must((space, id) =>
+				RuleFor(bookmark => bookmark.Id)
+						.Must((bookmark, id) =>
 						{
-							return spaceManager.GetSpace(id).Value != null;
+							return spaceManager.GetBookmark(id) != null;
 						})
-						.WithMessage("There is not existing space with specified identifier.");
+						.WithMessage("There is not existing bookmark with specified identifier.");
 
 			});
 
@@ -379,44 +313,44 @@ public partial class TfSpaceManager : ITfSpaceManager
 
 		}
 
-		//public ValidationResult ValidateCreate(
-		//	TfSpace space)
-		//{
-		//	if (space == null)
-		//		return new ValidationResult(new[] { new ValidationFailure("",
-		//			"The space is null.") });
+		public ValidationResult ValidateCreate(
+			TfBookmark bookmark)
+		{
+			if (bookmark == null)
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The bookmark is null.") });
 
-		//	return this.Validate(space, options =>
-		//	{
-		//		options.IncludeRuleSets("general", "create");
-		//	});
-		//}
+			return this.Validate(bookmark, options =>
+			{
+				options.IncludeRuleSets("general", "create");
+			});
+		}
 
-		//public ValidationResult ValidateUpdate(
-		//	TfSpace space)
-		//{
-		//	if (space == null)
-		//		return new ValidationResult(new[] { new ValidationFailure("",
-		//			"The space is null.") });
+		public ValidationResult ValidateUpdate(
+			TfBookmark bookmark)
+		{
+			if (bookmark == null)
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The bookmark is null.") });
 
-		//	return this.Validate(space, options =>
-		//	{
-		//		options.IncludeRuleSets("general", "update");
-		//	});
-		//}
+			return this.Validate(bookmark, options =>
+			{
+				options.IncludeRuleSets("general", "update");
+			});
+		}
 
-		//public ValidationResult ValidateDelete(
-		//	TfSpace space)
-		//{
-		//	if (space == null)
-		//		return new ValidationResult(new[] { new ValidationFailure("",
-		//			"The space with specified identifier is not found.") });
+		public ValidationResult ValidateDelete(
+			TfBookmark bookmark)
+		{
+			if (bookmark == null)
+				return new ValidationResult(new[] { new ValidationFailure("",
+					"The bookmark with specified identifier is not found.") });
 
-		//	return this.Validate(space, options =>
-		//	{
-		//		options.IncludeRuleSets("delete");
-		//	});
-		//}
+			return this.Validate(bookmark, options =>
+			{
+				options.IncludeRuleSets("delete");
+			});
+		}
 	}
 
 	#endregion

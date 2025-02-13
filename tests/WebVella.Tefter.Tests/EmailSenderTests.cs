@@ -21,7 +21,7 @@ public partial class EmailSenderTests : BaseTest
 			{
 				Guid relatedRowId = Guid.NewGuid();
 
-				var user = identityManager.GetUser("rumen@webvella.com").Value;
+				var user = identityManager.GetUser("rumen@webvella.com");
 				CreateEmailMessageModel model = new CreateEmailMessageModel();
 				model.Subject = "test";
 				model.TextBody = "";
@@ -30,25 +30,19 @@ public partial class EmailSenderTests : BaseTest
 				model.UserId = user.Id;
 				model.RelatedRowIds.Add(relatedRowId);
 
-				var result = emailService.CreateEmailMessage(model);
-				result.IsSuccess.Should().BeTrue();
-
-				var emailsListResult = emailService.GetEmailMessages();
-				emailsListResult.IsSuccess.Should().BeTrue();
-
-				foreach (var email in emailsListResult.Value)
+				emailService.CreateEmailMessage(model);
+				var emailsList = emailService.GetEmailMessages();
+				
+				foreach (var email in emailsList)
 				{
-					var emailByIdResult = emailService.GetEmailMessageById(email.Id);
-					emailByIdResult.IsSuccess.Should().BeTrue();
-					emailByIdResult.Value.Should().NotBeNull();
+					var emailById = emailService.GetEmailMessageById(email.Id);
+					emailById.Should().NotBeNull();
 				}
 
 				var searchResult = emailService.GetEmailMessages("rumen");
-				searchResult.IsSuccess.Should().BeTrue();
 
-				emailsListResult = emailService.GetEmailMessages(relatedRowId);
-				emailsListResult.IsSuccess.Should().BeTrue();
-				emailsListResult.Value.Count.Should().Be(1);
+				emailsList = emailService.GetEmailMessages(relatedRowId);
+				emailsList.Count.Should().Be(1);
 			}
 		}
 	}

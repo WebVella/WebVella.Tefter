@@ -56,7 +56,7 @@ public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<TucSpace>();
+			var result = new TucSpace();
 			if (_isCreate)
 			{
 				result = UC.CreateSpaceWithForm(_form);
@@ -66,15 +66,11 @@ public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentCo
 				result = UC.UpdateSpaceWithForm(_form);
 			}
 
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				await Dialog.CloseAsync(result.Value);
-			}
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

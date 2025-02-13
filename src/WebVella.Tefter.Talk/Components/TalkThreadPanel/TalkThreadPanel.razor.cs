@@ -41,24 +41,18 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		{
 			if (Content.ChannelId is not null)
 			{
-				var getChannelResult = TalkService.GetChannel(Content.ChannelId.Value);
-				if (getChannelResult.IsSuccess) _channel = getChannelResult.Value;
-				else throw new Exception("GetChannel failed");
+				_channel = TalkService.GetChannel(Content.ChannelId.Value);
 				if (_channel is not null && !String.IsNullOrWhiteSpace(_channel.SharedKey) && Content.RowIndex > -1)
 				{
 					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 					_skValue = Content.DataTable.Rows[Content.RowIndex].GetSharedKeyValue(_channel.SharedKey);
 					if (_skValue is not null)
-					{
-						var getThreadsResult = TalkService.GetThreads(_channel.Id, _skValue);
-						if (getThreadsResult.IsSuccess) _threads = getThreadsResult.Value;
-						else throw new Exception("GetThreads failed");
-					}
+						_threads = TalkService.GetThreads(_channel.Id, _skValue);
 				}
 				_isLoading = false;
 				await InvokeAsync(StateHasChanged);
 				await Task.Delay(100);
-				if(_channelEditor is not null)
+				if (_channelEditor is not null)
 					await _channelEditor.Focus();
 			}
 			else
@@ -92,17 +86,11 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				DataProviderId = Content.DataTable.QueryInfo.DataProviderId,
 				RowIds = new List<Guid> { _rowId }
 			};
-			var result = TalkService.CreateThread(submit);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Message is sent"));
-				_channelEditorContent = null;
-				var getThreadResult = TalkService.GetThread(result.Value);
-				if (getThreadResult.IsFailed) throw new Exception("GetThreads failed");
-				_threads.Insert(0, getThreadResult.Value);
-
-			}
+			var threadId = TalkService.CreateThread(submit);
+			ToastService.ShowSuccess(LOC("Message is sent"));
+			_channelEditorContent = null;
+			var thread = TalkService.GetThread(threadId);
+			_threads.Insert(0, thread);
 		}
 		catch (Exception ex)
 		{
@@ -129,28 +117,19 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 				ThreadId = _activeThread.Id,
 				UserId = TfUserState.Value.CurrentUser.Id,
 			};
-			var result = TalkService.CreateSubThread(submit);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
+			var threadId = TalkService.CreateSubThread(submit);
+			ToastService.ShowSuccess(LOC("Message is sent"));
+			_threadEditorContent = null;
+			_activeThread = TalkService.GetThread(_activeThread.Id);
+			var threadIndex = _threads.FindIndex(x => x.Id == _activeThread.Id);
+			if (threadIndex > -1) _threads[threadIndex] = _activeThread;
+			if (_threadVisibleInChannel)
 			{
-				ToastService.ShowSuccess(LOC("Message is sent"));
-				_threadEditorContent = null;
-				var getThreadResult = TalkService.GetThread(_activeThread.Id);
-				if (getThreadResult.IsSuccess)
+				var subThreadIndex = _activeThread.SubThread.FindIndex(x => x.Id == threadId);
+				if (subThreadIndex > -1)
 				{
-					_activeThread = getThreadResult.Value;
-					var threadIndex = _threads.FindIndex(x => x.Id == _activeThread.Id);
-					if (threadIndex > -1) _threads[threadIndex] = _activeThread;
-					if (_threadVisibleInChannel)
-					{
-						var subThreadIndex = _activeThread.SubThread.FindIndex(x => x.Id == result.Value);
-						if (subThreadIndex > -1)
-						{
-							_threads.Insert(0, _activeThread.SubThread[subThreadIndex]);
-						}
-					}
+					_threads.Insert(0, _activeThread.SubThread[subThreadIndex]);
 				}
-				else throw new Exception("GetThread failed");
 			}
 		}
 		catch (Exception ex)
@@ -243,17 +222,13 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 
 		try
 		{
-			var result = TalkService.DeleteThread(thread.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Message deleted"));
-				int threadsIndex = _threads.FindIndex(x => x.Id == thread.Id);
-				int subthreadsIndex = _activeThread is null ? -1 : _activeThread.SubThread.FindIndex(x => x.Id == thread.Id);
-				var now = DateTime.Now;
-				if (threadsIndex > -1) _threads[threadsIndex].DeletedOn = now;
-				if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].DeletedOn = now;
-			}
+			TalkService.DeleteThread(thread.Id);
+			ToastService.ShowSuccess(LOC("Message deleted"));
+			int threadsIndex = _threads.FindIndex(x => x.Id == thread.Id);
+			int subthreadsIndex = _activeThread is null ? -1 : _activeThread.SubThread.FindIndex(x => x.Id == thread.Id);
+			var now = DateTime.Now;
+			if (threadsIndex > -1) _threads[threadsIndex].DeletedOn = now;
+			if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].DeletedOn = now;
 		}
 		catch (Exception ex)
 		{
@@ -273,20 +248,16 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			var result = TalkService.UpdateThread(thread.Id, content);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Message saved"));
-				int threadsIndex = _threads.FindIndex(x => x.Id == thread.Id);
-				int subthreadsIndex = _activeThread is null ? -1 : _activeThread.SubThread.FindIndex(x => x.Id == thread.Id);
-				var now = DateTime.Now;
-				if (threadsIndex > -1) _threads[threadsIndex].Content = content;
-				if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].Content = content;
-				_threadEditedId = null;
-				_subthreadEditedId = null;
-				thread.Content = content;
-			}
+			TalkService.UpdateThread(thread.Id, content);
+			ToastService.ShowSuccess(LOC("Message saved"));
+			int threadsIndex = _threads.FindIndex(x => x.Id == thread.Id);
+			int subthreadsIndex = _activeThread is null ? -1 : _activeThread.SubThread.FindIndex(x => x.Id == thread.Id);
+			var now = DateTime.Now;
+			if (threadsIndex > -1) _threads[threadsIndex].Content = content;
+			if (subthreadsIndex > -1) _activeThread.SubThread[subthreadsIndex].Content = content;
+			_threadEditedId = null;
+			_subthreadEditedId = null;
+			thread.Content = content;
 		}
 		catch (Exception ex)
 		{

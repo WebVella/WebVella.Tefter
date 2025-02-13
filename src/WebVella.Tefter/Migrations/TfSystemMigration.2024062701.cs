@@ -242,12 +242,8 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 				.IsSystem(true)
 			.Build();
 
-			var adminRoleResult = await identityManager.SaveRoleAsync(adminRole);
-			if (!adminRoleResult.IsSuccess)
-				throw new TfDatabaseException("Failed to create administrator role.");
-
-			adminRole = adminRoleResult.Value;
-
+			adminRole = await identityManager.SaveRoleAsync(adminRole);
+			
 			//default settings
 			var user = identityManager
 				.CreateUserBuilder()
@@ -260,9 +256,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 				.WithRoles(adminRole)
 				.Build();
 
-			var userResult = await identityManager.SaveUserAsync(user);
-			if (!userResult.IsSuccess)
-				throw new TfDatabaseException("Failed to create administrator user");
+			await identityManager.SaveUserAsync(user);
 		}
 
 
@@ -273,11 +267,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 		{
 
-			var adminRoleResult = identityManager.GetRole("Administrators");
-			if (!adminRoleResult.IsSuccess)
-				throw new TfDatabaseException("Failed to get admin role.");
-
-			var adminRole = adminRoleResult.Value;
+			var adminRole = identityManager.GetRole("Administrators");
 
 			var user = identityManager
 				.CreateUserBuilder()
@@ -290,9 +280,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 				.WithRoles(adminRole)
 				.Build();
 
-			var userResult = await identityManager.SaveUserAsync(user);
-			if (!userResult.IsSuccess)
-				throw new TfDatabaseException("Failed to create Rumen Yankov user");
+			user = await identityManager.SaveUserAsync(user);
 
 			user = identityManager
 			   .CreateUserBuilder()
@@ -305,9 +293,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 			   .WithRoles(adminRole)
 			   .Build();
 
-			userResult = await identityManager.SaveUserAsync(user);
-			if (!userResult.IsSuccess)
-				throw new TfDatabaseException("Failed to create Bozhidar Zashev user");
+			await identityManager.SaveUserAsync(user);
 		}
 
 #endif

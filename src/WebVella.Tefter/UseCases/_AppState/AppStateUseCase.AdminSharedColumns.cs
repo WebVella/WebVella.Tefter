@@ -1,11 +1,14 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
+
 internal partial class AppStateUseCase
 {
 	internal Task<(TfAppState, TfAuxDataState)> InitAdminSharedColumnsAsync(
 		IServiceProvider serviceProvider,
-		TucUser currentUser, 
-		TfAppState newAppState, TfAppState oldAppState,
-		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
+		TucUser currentUser,
+		TfAppState newAppState,
+		TfAppState oldAppState,
+		TfAuxDataState newAuxDataState,
+		TfAuxDataState oldAuxDataState)
 	{
 		if (
 			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
@@ -17,7 +20,7 @@ internal partial class AppStateUseCase
 				AdminSharedColumns = new(),
 				AdminSharedColumnDataTypes = new()
 			};
-			return Task.FromResult((newAppState,newAuxDataState));
+			return Task.FromResult((newAppState, newAuxDataState));
 		};
 
 
@@ -36,101 +39,103 @@ internal partial class AppStateUseCase
 			};
 
 
-		return Task.FromResult((newAppState,newAuxDataState));
+		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
 	internal virtual List<TucSharedColumn> GetSharedColumns()
 	{
 		var result = new List<TucSharedColumn>();
-		var tfResult = _sharedColumnsManager.GetSharedColumns();
-		if (tfResult.IsFailed)
+		try
 		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSharedColumns failed").CausedBy(tfResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return result;
-		}
-
-		if (tfResult.Value is not null)
-		{
-			foreach (TfSharedColumn item in tfResult.Value)
+			var sharedColumns = _sharedColumnsManager.GetSharedColumns();
+			foreach (TfSharedColumn item in sharedColumns)
 			{
 				result.Add(new TucSharedColumn(item));
 			}
+			return result;
 		}
-		return result;
-
-	}
-
-	internal virtual Result<List<TucSharedColumn>> CreateSharedColumn(TucSharedColumnForm form)
-	{
-		if (form.Id == Guid.Empty)
-			form = form with { Id = Guid.NewGuid() };
-		var result = _sharedColumnsManager.CreateSharedColumn(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("CreateDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(GetSharedColumns());
-	}
-
-	internal virtual Result<List<TucSharedColumn>> UpdateSharedColumn(TucSharedColumnForm form)
-	{
-		var result = _sharedColumnsManager.UpdateSharedColumn(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("UpdateDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(GetSharedColumns());
-	}
-
-	internal virtual Result<List<TucSharedColumn>> DeleteSharedColumn(Guid columnId)
-	{
-		var result = _sharedColumnsManager.DeleteSharedColumn(columnId);
-		if (result.IsFailed)
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetDatabaseColumnTypeInfos failed").CausedBy(result.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return result;
 		}
 
-		return Result.Ok(GetSharedColumns());
+	}
+
+	internal virtual List<TucSharedColumn> CreateSharedColumn(
+		TucSharedColumnForm form)
+	{
+		if (form.Id == Guid.Empty)
+			form = form with { Id = Guid.NewGuid() };
+
+		_sharedColumnsManager.CreateSharedColumn(form.ToModel());
+
+		return GetSharedColumns();
+	}
+
+	internal virtual List<TucSharedColumn> UpdateSharedColumn(
+		TucSharedColumnForm form)
+	{
+		_sharedColumnsManager.UpdateSharedColumn(form.ToModel());
+
+		return GetSharedColumns();
+	}
+
+	internal virtual List<TucSharedColumn> DeleteSharedColumn(
+		Guid columnId)
+	{
+		try
+		{
+			_sharedColumnsManager.DeleteSharedColumn(columnId);
+			return GetSharedColumns();
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceResult(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
 	}
 
 	internal virtual List<TucDatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos()
 	{
-		var result = new List<TucDatabaseColumnTypeInfo>();
-		var resultColumnType = _dataProviderManager.GetDatabaseColumnTypeInfos();
-		if (resultColumnType.IsFailed)
+		try
 		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetDatabaseColumnTypeInfos failed").CausedBy(resultColumnType.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+			var result = new List<TucDatabaseColumnTypeInfo>();
+			var resultColumnType = _dataProviderManager.GetDatabaseColumnTypeInfos();
+
+			if (resultColumnType is not null)
+			{
+				foreach (DatabaseColumnTypeInfo item in resultColumnType)
+					result.Add(new TucDatabaseColumnTypeInfo(item));
+			}
+
 			return result;
 		}
-
-		if (resultColumnType.Value is not null)
+		catch (Exception ex)
 		{
-			foreach (DatabaseColumnTypeInfo item in resultColumnType.Value)
-			{
-				result.Add(new TucDatabaseColumnTypeInfo(item));
-			}
+			ResultUtils.ProcessServiceResult(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
 		}
-		return result;
-
 	}
 }

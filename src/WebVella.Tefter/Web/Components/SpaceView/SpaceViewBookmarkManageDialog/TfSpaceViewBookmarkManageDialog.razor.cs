@@ -44,7 +44,7 @@ public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDia
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = new Result<(List<TucBookmark>, List<TucBookmark>)>();
+			var result =  (new List<TucBookmark>(), new List<TucBookmark>() );
 			if (_form.Id == Guid.Empty)
 			{
 				_form.Id = Guid.NewGuid();
@@ -55,16 +55,12 @@ public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDia
 				result = await UC.UpdateBookmarkAsync(_form);
 			}
 
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				var resultObj = new Tuple<TucBookmark, List<TucBookmark>, List<TucBookmark>>(_form, result.Value.Item1, result.Value.Item2);
-				await Dialog.CloseAsync(resultObj);
-			}
+			var resultObj = new Tuple<TucBookmark, List<TucBookmark>, List<TucBookmark>>(_form, result.Item1, result.Item2);
+			await Dialog.CloseAsync(resultObj);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

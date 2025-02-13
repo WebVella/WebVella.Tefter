@@ -23,9 +23,7 @@ public partial class TfLogin : TfFormBaseComponent
 			await InvokeAsync(StateHasChanged);
 
 			var result = await UC.AuthenticateAsync(JSRuntime);
-
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
+			if (result)
 				Navigator.NavigateTo(TfConstants.HomePageUrl, true);
 		}
 		catch (Exception ex)

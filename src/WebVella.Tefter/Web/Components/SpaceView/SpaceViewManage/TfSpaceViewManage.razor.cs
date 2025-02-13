@@ -129,17 +129,13 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		try
 		{
 			_isSubmitting = true;
-			Result<List<TucSpaceViewColumn>> submitResult = UC.RemoveSpaceViewColumn(column.Id);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Space View updated!"));
+			List<TucSpaceViewColumn> submitResult = UC.RemoveSpaceViewColumn(column.Id);
+			ToastService.ShowSuccess(LOC("Space View updated!"));
 
-				Dispatcher.Dispatch(new SetAppStateAction(
+			Dispatcher.Dispatch(new SetAppStateAction(
 				component: this,
-				state: TfAppState.Value with { SpaceViewColumns = submitResult.Value }
-				));
-			}
+				state: TfAppState.Value with { SpaceViewColumns = submitResult }
+			));
 		}
 		catch (Exception ex)
 		{
@@ -158,19 +154,15 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (_isSubmitting) return;
 		try
 		{
-			Result<List<TucSpaceViewColumn>> submitResult = UC.MoveSpaceViewColumn(viewId: TfAppState.Value.SpaceView.Id, columnId: column.Id, isUp: isUp);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
+			var submitResult = UC.MoveSpaceViewColumn(viewId: TfAppState.Value.SpaceView.Id, columnId: column.Id, isUp: isUp);
+			ToastService.ShowSuccess(LOC("Space View updated!"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess(LOC("Space View updated!"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceViewColumns = submitResult.Value
-				}
-				));
+				SpaceViewColumns = submitResult
 			}
+			));
 		}
 		catch (Exception ex)
 		{
@@ -189,21 +181,18 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		if (_isSubmitting) return;
 		try
 		{
-			Result<TucSpaceView> submitResult = UC.UpdateSpaceViewPresets(
+			var submitResult = UC.UpdateSpaceViewPresets(
 				viewId: TfAppState.Value.SpaceView.Id,
 				presets: presets);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Space View updated!"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
+
+			ToastService.ShowSuccess(LOC("Space View updated!"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 				{
-					SpaceView = submitResult.Value
+					SpaceView = submitResult
 				}
-				));
-			}
+			));
 		}
 		catch (Exception ex)
 		{

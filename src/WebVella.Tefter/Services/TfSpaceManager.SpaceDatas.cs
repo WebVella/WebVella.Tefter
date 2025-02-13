@@ -7,83 +7,62 @@ namespace WebVella.Tefter;
 
 public partial interface ITfSpaceManager
 {
-	public Result<List<TfSpaceData>> GetAllSpaceData();
+	public List<TfSpaceData> GetAllSpaceData();
 
-	public Result<List<TfSpaceData>> GetSpaceDataList(
+	public List<TfSpaceData> GetSpaceDataList(
 		Guid spaceId);
 
-	public Result<TfSpaceData> GetSpaceData(
+	public TfSpaceData GetSpaceData(
 		Guid id);
 
-	public Result<TfSpaceData> CreateSpaceData(
+	public TfSpaceData CreateSpaceData(
 		TfSpaceData spaceData);
 
-	public Result<TfSpaceData> UpdateSpaceData(
+	public TfSpaceData UpdateSpaceData(
 		TfSpaceData spaceData);
 
-	public Result DeleteSpaceData(
+	public void DeleteSpaceData(
 		Guid id);
 
-	public Result MoveSpaceDataUp(
+	public void MoveSpaceDataUp(
 		Guid id);
 
-	public Result MoveSpaceDataDown(
+	public void MoveSpaceDataDown(
 		Guid id);
-
-	public Result<List<TfAvailableSpaceDataColumn>> GetSpaceDataAvailableColumns(
+	public List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
 		Guid spaceDataId);
 }
 
 public partial class TfSpaceManager : ITfSpaceManager
 {
-	public Result<List<TfSpaceData>> GetAllSpaceData()
+	public List<TfSpaceData> GetAllSpaceData()
 	{
-		try
-		{
-			var dbos = _dboManager.GetList<TfSpaceDataDbo>();
-			return Result.Ok(dbos.Select(x => Convert(x)).ToList());
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of space data list").CausedBy(ex));
-		}
+		var dbos = _dboManager.GetList<TfSpaceDataDbo>();
+		return dbos.Select(x => Convert(x)).ToList();
 	}
-	public Result<List<TfSpaceData>> GetSpaceDataList(
+
+	public List<TfSpaceData> GetSpaceDataList(
 		Guid spaceId)
 	{
-		try
-		{
-			var orderSettings = new TfOrderSettings(
-				nameof(TfSpaceData.Position),
-				OrderDirection.ASC);
+		var orderSettings = new TfOrderSettings(
+			nameof(TfSpaceData.Position),
+			OrderDirection.ASC);
 
-			var dbos = _dboManager.GetList<TfSpaceDataDbo>(
-				spaceId,
-				nameof(TfSpaceData.SpaceId), order: orderSettings);
+		var dbos = _dboManager.GetList<TfSpaceDataDbo>(
+			spaceId,
+			nameof(TfSpaceData.SpaceId), order: orderSettings);
 
-			return Result.Ok(dbos.Select(x => Convert(x)).ToList());
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of space data list").CausedBy(ex));
-		}
+		return dbos.Select(x => Convert(x)).ToList();
 	}
 
-	public Result<TfSpaceData> GetSpaceData(
+	public TfSpaceData GetSpaceData(
 		Guid id)
 	{
-		try
-		{
-			var dbo = _dboManager.Get<TfSpaceDataDbo>(id);
-			return Result.Ok(Convert(dbo));
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get space data by id").CausedBy(ex));
-		}
+		var dbo = _dboManager.Get<TfSpaceDataDbo>(id);
+		return Convert(dbo);
 	}
 
-	public Result<List<TfAvailableSpaceDataColumn>> GetSpaceDataAvailableColumns(
+	public List<TfAvailableSpaceDataColumn> GetSpaceDataAvailableColumns(
 		Guid spaceDataId)
 	{
 		List<TfAvailableSpaceDataColumn> columns = new List<TfAvailableSpaceDataColumn>();
@@ -94,14 +73,11 @@ public partial class TfSpaceManager : ITfSpaceManager
 		if (spaceData == null)
 			return columns;
 
-		var providerResult = _providerManager.GetProvider(spaceData.DataProviderId);
-		if (!providerResult.IsSuccess)
-			throw new Exception("Unable to get specified data provider");
+		var provider = _providerManager.GetProvider(spaceData.DataProviderId);
+		if (provider is null)
+			throw new TfException("Not found specified data provider");
 
-		if (providerResult.Value == null)
-			throw new Exception("Not found specified data provider");
-
-		foreach (var column in providerResult.Value.Columns)
+		foreach (var column in provider.Columns)
 		{
 			columns.Add(new TfAvailableSpaceDataColumn
 			{
@@ -110,7 +86,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			});
 		}
 
-		foreach (var sharedKey in providerResult.Value.SharedKeys)
+		foreach (var sharedKey in provider.SharedKeys)
 		{
 			columns.Add(new TfAvailableSpaceDataColumn
 			{
@@ -119,7 +95,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			});
 		}
 
-		foreach (var column in providerResult.Value.SharedColumns)
+		foreach (var column in provider.SharedColumns)
 		{
 			columns.Add(new TfAvailableSpaceDataColumn
 			{
@@ -128,228 +104,173 @@ public partial class TfSpaceManager : ITfSpaceManager
 			});
 		}
 
-		return Result.Ok(columns);
+		return columns;
 	}
 
-	public Result<TfSpaceData> CreateSpaceData(
+	public TfSpaceData CreateSpaceData(
 		TfSpaceData spaceData)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				if (spaceData != null && spaceData.Id == Guid.Empty)
-					spaceData.Id = Guid.NewGuid();
+			if (spaceData != null && spaceData.Id == Guid.Empty)
+				spaceData.Id = Guid.NewGuid();
 
-				TfSpaceDataValidator validator =
-					new TfSpaceDataValidator(_dboManager, this, _providerManager);
+			new TfSpaceDataValidator(_dboManager, this, _providerManager)
+				.ValidateCreate(spaceData)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-				var validationResult = validator.ValidateCreate(spaceData);
+			var spaceDataList = GetSpaceDataList(spaceData.SpaceId);
 
-				if (!validationResult.IsValid)
-					return validationResult.ToResult();
+			var dbo = Convert(spaceData);
+			dbo.Position = (short)(spaceDataList.Count + 1);
 
-				var spaceDataList = GetSpaceDataList(spaceData.SpaceId).Value;
+			var success = _dboManager.Insert<TfSpaceDataDbo>(dbo);
 
-				var dbo = Convert(spaceData);
-				dbo.Position = (short)(spaceDataList.Count + 1);
+			if (!success)
+				throw new TfDboServiceException("Insert<TfSpaceDataDbo> failed.");
 
-				var success = _dboManager.Insert<TfSpaceDataDbo>(dbo);
+			scope.Complete();
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Insert", spaceData));
-
-				scope.Complete();
-
-				return GetSpaceData(spaceData.Id);
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create space data").CausedBy(ex));
+			return GetSpaceData(spaceData.Id);
 		}
 	}
 
-	public Result<TfSpaceData> UpdateSpaceData(
+	public TfSpaceData UpdateSpaceData(
 		TfSpaceData spaceData)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				TfSpaceDataValidator validator =
-				new TfSpaceDataValidator(_dboManager, this, _providerManager);
 
-				var validationResult = validator.ValidateUpdate(spaceData);
+			new TfSpaceDataValidator(_dboManager, this, _providerManager)
+				.ValidateUpdate(spaceData)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-				if (!validationResult.IsValid)
-					return validationResult.ToResult();
+			var existingSpaceData = _dboManager.Get<TfSpaceDataDbo>(spaceData.Id);
 
-				var existingSpaceData = _dboManager.Get<TfSpaceDataDbo>(spaceData.Id);
+			var dbo = Convert(spaceData);
+			dbo.Position = existingSpaceData.Position;
 
-				var dbo = Convert(spaceData);
-				dbo.Position = existingSpaceData.Position;
+			var success = _dboManager.Update<TfSpaceDataDbo>(dbo);
 
-				var success = _dboManager.Update<TfSpaceDataDbo>(dbo);
+			if (!success)
+				throw new TfDboServiceException("Update<TfSpaceDataDbo> failed.");
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", spaceData));
+			scope.Complete();
 
-				scope.Complete();
-
-				return GetSpaceData(spaceData.Id);
-			}
+			return GetSpaceData(spaceData.Id);
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update space data").CausedBy(ex));
-		}
-
 	}
 
-	public Result DeleteSpaceData(
+	public void DeleteSpaceData(
 		Guid id)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			var spaceData = GetSpaceData(id);
+			new TfSpaceDataValidator(_dboManager, this, _providerManager)
+				.ValidateDelete(spaceData)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			var spaceDatasForSpace = GetSpaceDataList(spaceData.SpaceId);
+
+			//update positions for spaces after the one being deleted
+			foreach (var sd in spaceDatasForSpace.Where(x => x.Position > spaceData.Position))
 			{
-				TfSpaceDataValidator validator =
-						new TfSpaceDataValidator(_dboManager, this, _providerManager);
+				sd.Position--;
+				var successUpdatePosition = _dboManager.Update<TfSpaceDataDbo>(Convert(sd));
 
-				var spaceData = GetSpaceData(id).Value;
-
-				var validationResult = validator.ValidateDelete(spaceData);
-
-				if (!validationResult.IsValid)
-					return validationResult.ToResult();
-
-				var spaceDatasForSpace = GetSpaceDataList(spaceData.SpaceId).Value;
-
-				//update positions for spaces after the one being deleted
-				foreach (var sd in spaceDatasForSpace.Where(x => x.Position > spaceData.Position))
-				{
-					sd.Position--;
-					var successUpdatePosition = _dboManager.Update<TfSpaceDataDbo>(Convert(sd));
-
-					if (!successUpdatePosition)
-						return Result.Fail(new DboManagerError("Failed to update space data position during delete space process", sd));
-				}
-
-				var success = _dboManager.Delete<TfSpaceDataDbo>(id);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Delete", id));
-
-				scope.Complete();
-
-				return Result.Ok();
+				if (!successUpdatePosition)
+					throw new TfDboServiceException("Update<TfSpaceDataDbo> failed during delete space process.");
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete space data.").CausedBy(ex));
+
+			var success = _dboManager.Delete<TfSpaceDataDbo>(id);
+
+			if (!success)
+				throw new TfDboServiceException("Delete<TfSpaceDataDbo> failed.");
+
+			scope.Complete();
 		}
 	}
 
 
-	public Result MoveSpaceDataUp(
+	public void MoveSpaceDataUp(
 		Guid id)
 	{
-		try
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			var spaceData = GetSpaceData(id);
+			if (spaceData == null)
+				throw new TfException("Found no space data for specified identifier.");
+
+			var spaceDataList = GetSpaceDataList(spaceData.SpaceId);
+
+			if (spaceData.Position == 1)
+				return;
+
+			var prevSpaceData = spaceDataList.SingleOrDefault(x => x.Position == (spaceData.Position - 1));
+
+			spaceData.Position = (short)(spaceData.Position - 1);
+
+			if (prevSpaceData != null)
+				prevSpaceData.Position = (short)(prevSpaceData.Position + 1);
+
+			var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
+
+			if (!success)
+				throw new TfDboServiceException("Update<TfSpaceDataDbo> failed.");
+
+			if (prevSpaceData != null)
 			{
-				var spaceData = GetSpaceData(id).Value;
-				if (spaceData == null)
-					return Result.Fail(new ValidationError(
-						nameof(id),
-						"Found no space data for specified identifier."));
-
-				var spaceDataList = GetSpaceDataList(spaceData.SpaceId).Value;
-
-				if (spaceData.Position == 1)
-					return Result.Ok();
-
-				var prevSpaceData = spaceDataList.SingleOrDefault(x => x.Position == (spaceData.Position - 1));
-
-				spaceData.Position = (short)(spaceData.Position - 1);
-
-				if (prevSpaceData != null)
-					prevSpaceData.Position = (short)(prevSpaceData.Position + 1);
-
-				var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
+				success = _dboManager.Update<TfSpaceDataDbo>(Convert(prevSpaceData));
 
 				if (!success)
-					return Result.Fail(new DboManagerError("Update", spaceData));
-
-				if (prevSpaceData != null)
-				{
-					success = _dboManager.Update<TfSpaceDataDbo>(Convert(prevSpaceData));
-
-					if (!success)
-						return Result.Fail(new DboManagerError("Update", prevSpaceData));
-				}
-
-				scope.Complete();
-
-				return Result.Ok();
+					throw new TfDboServiceException("Update<TfSpaceDataDbo> failed.");
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to move space data up in position").CausedBy(ex));
+
+			scope.Complete();
 		}
 	}
 
-	public Result MoveSpaceDataDown(
+	public void MoveSpaceDataDown(
 		Guid id)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			var spaceData = GetSpaceData(id);
+			if (spaceData == null)
+				throw new TfException("Found no space data for specified identifier.");
+
+			var spaceDataList = GetSpaceDataList(spaceData.SpaceId);
+
+
+			if (spaceData.Position == spaceDataList.Count)
+				return;
+
+			var nextSpaceData = spaceDataList.SingleOrDefault(x => x.Position == (spaceData.Position + 1));
+
+			spaceData.Position = (short)(spaceData.Position + 1);
+
+			if (nextSpaceData != null)
+				nextSpaceData.Position = (short)(nextSpaceData.Position - 1);
+
+			var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
+
+			if (!success)
+				throw new TfDboServiceException("Update<TfSpaceDataDbo> failed.");
+
+			if (nextSpaceData != null)
 			{
-				var spaceData = GetSpaceData(id).Value;
-
-				if (spaceData == null)
-					return Result.Fail(new ValidationError(
-						nameof(id),
-						"Found no space data for specified identifier."));
-
-				var spaceDataList = GetSpaceDataList(spaceData.SpaceId).Value;
-
-
-				if (spaceData.Position == spaceDataList.Count)
-					return Result.Ok();
-
-				var nextSpaceData = spaceDataList.SingleOrDefault(x => x.Position == (spaceData.Position + 1));
-
-				spaceData.Position = (short)(spaceData.Position + 1);
-
-				if (nextSpaceData != null)
-					nextSpaceData.Position = (short)(nextSpaceData.Position - 1);
-
-				var success = _dboManager.Update<TfSpaceDataDbo>(Convert(spaceData));
+				success = _dboManager.Update<TfSpaceDataDbo>(Convert(nextSpaceData));
 
 				if (!success)
-					return Result.Fail(new DboManagerError("Update", spaceData));
-
-				if (nextSpaceData != null)
-				{
-					success = _dboManager.Update<TfSpaceDataDbo>(Convert(nextSpaceData));
-
-					if (!success)
-						return Result.Fail(new DboManagerError("Update", nextSpaceData));
-				}
-
-				scope.Complete();
-
-				return Result.Ok();
+					throw new TfDboServiceException("Update<TfSpaceDataDbo> failed.");
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to move space down in position").CausedBy(ex));
+
+			scope.Complete();
 		}
 	}
 
@@ -435,7 +356,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				RuleFor(spaceData => spaceData.SpaceId)
 					.Must(spaceId =>
 					{
-						return spaceManager.GetSpace(spaceId).Value != null;
+						return spaceManager.GetSpace(spaceId) != null;
 					})
 					.WithMessage("There is no existing space for specified space id.");
 
@@ -446,7 +367,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 				RuleFor(spaceData => spaceData.DataProviderId)
 					.Must(providerId =>
 					{
-						return providerManager.GetProvider(providerId).Value != null;
+						return providerManager.GetProvider(providerId) != null;
 					})
 					.WithMessage("There is no existing data provider for specified provider id.");
 
@@ -454,7 +375,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 					.Must(columns =>
 					{
 						HashSet<string> columnsHS = new HashSet<string>();
-						foreach(var column in columns)
+						foreach (var column in columns)
 						{
 							if (columnsHS.Contains(column))
 								return false;
@@ -470,7 +391,7 @@ public partial class TfSpaceManager : ITfSpaceManager
 			RuleSet("create", () =>
 			{
 				RuleFor(spaceData => spaceData.Id)
-						.Must((spaceData, id) => { return spaceManager.GetSpaceData(id).Value == null; })
+						.Must((spaceData, id) => { return spaceManager.GetSpaceData(id) == null; })
 						.WithMessage("There is already existing space data with specified identifier.");
 
 				//RuleFor(spaceData => spaceData.Name)
@@ -490,14 +411,14 @@ public partial class TfSpaceManager : ITfSpaceManager
 				RuleFor(spaceData => spaceData.Id)
 						.Must((spaceData, id) =>
 						{
-							return spaceManager.GetSpaceData(id).Value != null;
+							return spaceManager.GetSpaceData(id) != null;
 						})
 						.WithMessage("There is not existing space data with specified identifier.");
 
 				RuleFor(spaceData => spaceData.SpaceId)
 					.Must((spaceData, spaceId) =>
 					{
-						var existingSpaceData = spaceManager.GetSpaceData(spaceData.Id).Value;
+						var existingSpaceData = spaceManager.GetSpaceData(spaceData.Id);
 						if (existingSpaceData == null)
 							return true;
 

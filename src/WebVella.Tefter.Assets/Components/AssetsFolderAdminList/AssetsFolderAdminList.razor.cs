@@ -73,24 +73,21 @@ public partial class AssetsFolderAdminList : TfBaseComponent
 			return;
 		try
 		{
-			var result = AssetsService.DeleteFolder(folder.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
+			AssetsService.DeleteFolder(folder.Id);
+
+			List<AssetsFolder> state = new();
+			if (TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
+				state = (List<AssetsFolder>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
+			var itemIndex = state.FindIndex(x => x.Id == folder.Id);
+			if (itemIndex > -1)
 			{
-				List<AssetsFolder> state = new();
-				if (TfAuxDataState.Value.Data.ContainsKey(AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY))
-					state = (List<AssetsFolder>)TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY];
-				var itemIndex = state.FindIndex(x => x.Id == folder.Id);
-				if (itemIndex > -1)
-				{
-					state.RemoveAt(itemIndex);
-				}
-				TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
-				Dispatcher.Dispatch(new SetAuxDataStateAction(
-					component: this,
-					state: TfAuxDataState.Value
-				));
+				state.RemoveAt(itemIndex);
 			}
+			TfAuxDataState.Value.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = state;
+			Dispatcher.Dispatch(new SetAuxDataStateAction(
+				component: this,
+				state: TfAuxDataState.Value
+			));
 		}
 		catch (Exception ex)
 		{

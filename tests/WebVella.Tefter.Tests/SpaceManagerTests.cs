@@ -1,4 +1,6 @@
 ﻿using Bogus;
+using System;
+using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Web.ViewColumns;
 
@@ -28,14 +30,13 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 0
 				};
 				var result = spaceManager.CreateSpace(space1);
-				result.IsSuccess.Should().BeTrue();
-				result.Value.Should().NotBeNull();
-				result.Value.Id.Should().Be(space1.Id);
-				result.Value.Name.Should().Be(space1.Name);
-				result.Value.Position.Should().Be(1);
-				result.Value.IsPrivate.Should().Be(space1.IsPrivate);
-				result.Value.Icon.Should().Be(space1.Icon);
-				result.Value.Color.Should().Be(space1.Color);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(space1.Id);
+				result.Name.Should().Be(space1.Name);
+				result.Position.Should().Be(1);
+				result.IsPrivate.Should().Be(space1.IsPrivate);
+				result.Icon.Should().Be(space1.Icon);
+				result.Color.Should().Be(space1.Color);
 
 				var space2 = new TfSpace
 				{
@@ -47,28 +48,23 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 0
 				};
 				result = spaceManager.CreateSpace(space2);
-				result.IsSuccess.Should().BeTrue();
-				result.Value.Should().NotBeNull();
-				result.Value.Id.Should().Be(space2.Id);
-				result.Value.Name.Should().Be(space2.Name);
-				result.Value.Position.Should().Be(2);
-				result.Value.IsPrivate.Should().Be(space2.IsPrivate);
-				result.Value.Icon.Should().Be(space2.Icon);
-				result.Value.Color.Should().Be(space2.Color);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(space2.Id);
+				result.Name.Should().Be(space2.Name);
+				result.Position.Should().Be(2);
+				result.IsPrivate.Should().Be(space2.IsPrivate);
+				result.Icon.Should().Be(space2.Icon);
+				result.Color.Should().Be(space2.Color);
 
-				result = spaceManager.MoveSpaceDown(space1.Id);
-				result.IsSuccess.Should().BeTrue();
-
-				space1 = spaceManager.GetSpace(space1.Id).Value;
-				space2 = spaceManager.GetSpace(space2.Id).Value;
+				spaceManager.MoveSpaceDown(space1.Id);
+				space1 = spaceManager.GetSpace(space1.Id);
+				space2 = spaceManager.GetSpace(space2.Id);
 				space1.Position.Should().Be(2);
 				space2.Position.Should().Be(1);
 
-				result = spaceManager.MoveSpaceUp(space1.Id);
-				result.IsSuccess.Should().BeTrue();
-
-				space1 = spaceManager.GetSpace(space1.Id).Value;
-				space2 = spaceManager.GetSpace(space2.Id).Value;
+				spaceManager.MoveSpaceUp(space1.Id);
+				space1 = spaceManager.GetSpace(space1.Id);
+				space2 = spaceManager.GetSpace(space2.Id);
 				space1.Position.Should().Be(1);
 				space2.Position.Should().Be(2);
 
@@ -78,18 +74,16 @@ public partial class SpaceManagerTests : BaseTest
 				space1.IsPrivate = true;
 
 				result = spaceManager.UpdateSpace(space1);
-				result.IsSuccess.Should().BeTrue();
-				result.Value.Should().NotBeNull();
-				result.Value.Id.Should().Be(space1.Id);
-				result.Value.Name.Should().Be(space1.Name);
-				result.Value.Position.Should().Be(1);
-				result.Value.IsPrivate.Should().Be(space1.IsPrivate);
-				result.Value.Icon.Should().Be(space1.Icon);
-				result.Value.Color.Should().Be(space1.Color);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(space1.Id);
+				result.Name.Should().Be(space1.Name);
+				result.Position.Should().Be(1);
+				result.IsPrivate.Should().Be(space1.IsPrivate);
+				result.Icon.Should().Be(space1.Icon);
+				result.Color.Should().Be(space1.Color);
 
-				result = spaceManager.DeleteSpace(space1.Id);
-				result.IsSuccess.Should().BeTrue();
-				space2 = spaceManager.GetSpace(space2.Id).Value;
+				spaceManager.DeleteSpace(space1.Id);
+				space2 = spaceManager.GetSpace(space2.Id);
 				space2.Position.Should().Be(1);
 			}
 		}
@@ -106,8 +100,8 @@ public partial class SpaceManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
@@ -117,9 +111,9 @@ public partial class SpaceManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(providerModel);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				
+				var provider = providerManager.CreateDataProvider(providerModel);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				var space = new TfSpace
 				{
@@ -130,7 +124,7 @@ public partial class SpaceManagerTests : BaseTest
 					IsPrivate = false,
 					Position = 0
 				};
-				spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpace(space);
 
 
 				var spaceData1 = new TfSpaceData
@@ -142,14 +136,13 @@ public partial class SpaceManagerTests : BaseTest
 				};
 
 				var result = spaceManager.CreateSpaceData(spaceData1);
-				result.IsSuccess.Should().BeTrue();
-				result.Value.Should().NotBeNull();
-				result.Value.Id.Should().Be(spaceData1.Id);
-				result.Value.Name.Should().Be(spaceData1.Name);
-				result.Value.SpaceId.Should().Be(space.Id);
-				result.Value.Position.Should().Be(1);
-				result.Value.Filters.Should().NotBeNull();
-				result.Value.Filters.Count().Should().Be(0);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(spaceData1.Id);
+				result.Name.Should().Be(spaceData1.Name);
+				result.SpaceId.Should().Be(space.Id);
+				result.Position.Should().Be(1);
+				result.Filters.Should().NotBeNull();
+				result.Filters.Count().Should().Be(0);
 
 
 				var spaceData2 = new TfSpaceData
@@ -161,45 +154,35 @@ public partial class SpaceManagerTests : BaseTest
 				};
 
 				result = spaceManager.CreateSpaceData(spaceData2);
-				result.IsSuccess.Should().BeTrue();
-				result.Value.Should().NotBeNull();
-				result.Value.Id.Should().Be(spaceData2.Id);
-				result.Value.Name.Should().Be(spaceData2.Name);
-				result.Value.SpaceId.Should().Be(space.Id);
-				result.Value.Position.Should().Be(2);
-				result.Value.Filters.Should().NotBeNull();
-				result.Value.Filters.Count().Should().Be(0);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(spaceData2.Id);
+				result.Name.Should().Be(spaceData2.Name);
+				result.SpaceId.Should().Be(space.Id);
+				result.Position.Should().Be(2);
+				result.Filters.Should().NotBeNull();
+				result.Filters.Count().Should().Be(0);
 
-				result = spaceManager.MoveSpaceDataDown(spaceData1.Id);
-				result.IsSuccess.Should().BeTrue();
-
-				spaceData1 = spaceManager.GetSpaceData(spaceData1.Id).Value;
-				spaceData2 = spaceManager.GetSpaceData(spaceData2.Id).Value;
+				spaceManager.MoveSpaceDataDown(spaceData1.Id);
+				spaceData1 = spaceManager.GetSpaceData(spaceData1.Id);
+				spaceData2 = spaceManager.GetSpaceData(spaceData2.Id);
 				spaceData1.Position.Should().Be(2);
 				spaceData2.Position.Should().Be(1);
 
-				result = spaceManager.MoveSpaceDataUp(spaceData1.Id);
-				result.IsSuccess.Should().BeTrue();
-
-				spaceData1 = spaceManager.GetSpaceData(spaceData1.Id).Value;
-				spaceData2 = spaceManager.GetSpaceData(spaceData2.Id).Value;
+				spaceManager.MoveSpaceDataUp(spaceData1.Id);
+				spaceData1 = spaceManager.GetSpaceData(spaceData1.Id);
+				spaceData2 = spaceManager.GetSpaceData(spaceData2.Id);
 				spaceData1.Position.Should().Be(1);
 				spaceData2.Position.Should().Be(2);
 
 				spaceData1.Name = "updated name";
 				result = spaceManager.UpdateSpaceData(spaceData1);
-				result.IsSuccess.Should().BeTrue();
-				result.Value.Name.Should().Be(spaceData1.Name);
+				result.Name.Should().Be(spaceData1.Name);
 
-				result = spaceManager.DeleteSpaceData(spaceData1.Id);
-				result.IsSuccess.Should().BeTrue();
-
-				spaceData2 = spaceManager.GetSpaceData(spaceData2.Id).Value;
+				spaceManager.DeleteSpaceData(spaceData1.Id);
+				spaceData2 = spaceManager.GetSpaceData(spaceData2.Id);
 				spaceData2.Position.Should().Be(1);
 
-				var deleteSpaceResult = spaceManager.DeleteSpace(space.Id);
-				deleteSpaceResult.IsSuccess.Should().BeTrue();
-
+				spaceManager.DeleteSpace(space.Id);
 			}
 		}
 	}
@@ -215,8 +198,8 @@ public partial class SpaceManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
@@ -226,9 +209,8 @@ public partial class SpaceManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(providerModel);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(providerModel);
+				provider.Should().BeOfType<TfDataProvider>();
 
 
 				var space = new TfSpace
@@ -240,7 +222,7 @@ public partial class SpaceManagerTests : BaseTest
 					IsPrivate = false,
 					Position = 0
 				};
-				spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpace(space);
 
 				var space2 = new TfSpace
 				{
@@ -251,7 +233,7 @@ public partial class SpaceManagerTests : BaseTest
 					IsPrivate = false,
 					Position = 0
 				};
-				spaceManager.CreateSpace(space2).IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpace(space2);
 
 				var spaceData1 = new TfSpaceData
 				{
@@ -262,24 +244,22 @@ public partial class SpaceManagerTests : BaseTest
 				};
 
 				var result = spaceManager.CreateSpaceData(spaceData1);
-				result.IsSuccess.Should().BeTrue();
-				result.Value.Should().NotBeNull();
-				result.Value.Id.Should().Be(spaceData1.Id);
-				result.Value.Name.Should().Be(spaceData1.Name);
-				result.Value.SpaceId.Should().Be(space.Id);
-				result.Value.Position.Should().Be(1);
-				result.Value.Filters.Should().NotBeNull();
-				result.Value.Filters.Count().Should().Be(0);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(spaceData1.Id);
+				result.Name.Should().Be(spaceData1.Name);
+				result.SpaceId.Should().Be(space.Id);
+				result.Position.Should().Be(1);
+				result.Filters.Should().NotBeNull();
+				result.Filters.Count().Should().Be(0);
 
 
 				spaceData1.SpaceId = space2.Id;
-				result = spaceManager.UpdateSpaceData(spaceData1);
-				result.IsSuccess.Should().BeFalse();
-				result.Errors.Count().Should().Be(1);
-				result.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be("SpaceId");
-				((ValidationError)result.Errors[0]).Message.Should()
-					.Be("Space cannot be changed for space data.");
+				var task = Task.Run(() => { result = spaceManager.UpdateSpaceData(spaceData1); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				exception.Data.Keys.Count.Should().Be(1);
+				exception.Data.Contains(nameof(TfSpaceData.SpaceId)).Should().BeTrue();
 			}
 		}
 	}
@@ -295,8 +275,8 @@ public partial class SpaceManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
@@ -306,9 +286,8 @@ public partial class SpaceManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(providerModel);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(providerModel);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -329,9 +308,9 @@ public partial class SpaceManagerTests : BaseTest
 				};
 
 				//empty id, but internaly we set new id
-				providerManager.CreateDataProviderColumn(column).IsSuccess.Should().BeTrue();
+				providerManager.CreateDataProviderColumn(column);
 
-				var provider = providerManager.GetProvider(providerModel.Id).Value;
+				provider = providerManager.GetProvider(providerModel.Id);
 
 				TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -344,9 +323,9 @@ public partial class SpaceManagerTests : BaseTest
 
 					};
 
-				providerManager.CreateDataProviderSharedKey(sharedKey).IsSuccess.Should().BeTrue();
+				providerManager.CreateDataProviderSharedKey(sharedKey);
 
-				provider = providerManager.GetProvider(providerModel.Id).Value;
+				provider = providerManager.GetProvider(providerModel.Id);
 				provider.SharedKeys.Count().Should().Be(1);
 
 
@@ -359,7 +338,7 @@ public partial class SpaceManagerTests : BaseTest
 					IsPrivate = false,
 					Position = 0
 				};
-				spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpace(space);
 
 				var spaceData = new TfSpaceData
 				{
@@ -415,12 +394,8 @@ public partial class SpaceManagerTests : BaseTest
 						.WithName("UnitTester")
 						.Build();
 
-				var roleResult = await identityManager.SaveRoleAsync(role);
-				roleResult.Should().NotBeNull();
-				roleResult.IsSuccess.Should().BeTrue();
-				roleResult.Value.Should().NotBeNull();
-
-				role = roleResult.Value;
+				role = await identityManager.SaveRoleAsync(role);
+				role.Should().NotBeNull();
 
 				var user = identityManager
 					.CreateUserBuilder()
@@ -433,21 +408,14 @@ public partial class SpaceManagerTests : BaseTest
 					.WithRoles(role)
 					.Build();
 
-				var userResult = await identityManager.SaveUserAsync(user);
-				userResult.Should().NotBeNull();
-				userResult.IsSuccess.Should().BeTrue();
-				userResult.Value.Should().NotBeNull();
+				user = await identityManager.SaveUserAsync(user);
+				user.Should().NotBeNull();
 
-				userResult = await identityManager.GetUserAsync("test@test.com", "password");
-				userResult.Should().NotBeNull();
-				userResult.IsSuccess.Should().BeTrue();
-				userResult.Value.Should().NotBeNull();
+				user = await identityManager.GetUserAsync("test@test.com", "password");
+				user.Should().NotBeNull();
 
-				user = userResult.Value;
-
-
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
@@ -457,9 +425,8 @@ public partial class SpaceManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(providerModel);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(providerModel);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				var space = new TfSpace
 				{
@@ -471,9 +438,8 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 0
 				};
 
-				var spaceResult = spaceManager.CreateSpace(space);
-				spaceResult.IsSuccess.Should().BeTrue();
-				spaceResult.Value.Should().NotBeNull();
+				space = spaceManager.CreateSpace(space);
+				space.Should().NotBeNull();
 
 				var spaceData = new TfSpaceData
 				{
@@ -483,9 +449,8 @@ public partial class SpaceManagerTests : BaseTest
 					SpaceId = space.Id,
 				};
 
-				var spaceDataResult = spaceManager.CreateSpaceData(spaceData);
-				spaceDataResult.IsSuccess.Should().BeTrue();
-				spaceDataResult.Value.Should().NotBeNull();
+				spaceData = spaceManager.CreateSpaceData(spaceData);
+				spaceData.Should().NotBeNull();
 
 
 				TfSpaceView view = new TfSpaceView
@@ -498,15 +463,14 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceViewType.DataGrid
 				};
 
-				var spaceViewResult = spaceManager.CreateSpaceView(view);
-				spaceViewResult.IsSuccess.Should().BeTrue();
-				spaceViewResult.Value.Should().NotBeNull();
-				spaceViewResult.Value.Id.Should().Be(view.Id);
-				spaceViewResult.Value.Name.Should().Be(view.Name);
-				spaceViewResult.Value.Position.Should().Be(view.Position);
-				spaceViewResult.Value.SpaceDataId.Should().Be(view.SpaceDataId);
-				spaceViewResult.Value.SpaceId.Should().Be(view.SpaceId);
-				spaceViewResult.Value.Type.Should().Be(view.Type);
+				var spaceView = spaceManager.CreateSpaceView(view);
+				spaceView.Should().NotBeNull();
+				spaceView.Id.Should().Be(view.Id);
+				spaceView.Name.Should().Be(view.Name);
+				spaceView.Position.Should().Be(view.Position);
+				spaceView.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceView.SpaceId.Should().Be(view.SpaceId);
+				spaceView.Type.Should().Be(view.Type);
 
 
 				var bookmarkList = spaceManager.GetBookmarksListForUser(user.Id);
@@ -522,14 +486,13 @@ public partial class SpaceManagerTests : BaseTest
 					CreatedOn = DateTime.UtcNow
 				};
 
-				var bookmark = spaceManager.CreateBookmark(bookmarkModel).Value;
+				var bookmark = spaceManager.CreateBookmark(bookmarkModel);
 				bookmark.Description = " test with #tag_1 #tAg_2 #Tag3";
-				bookmark = spaceManager.UpdateBookmark(bookmark).Value;
+				bookmark = spaceManager.UpdateBookmark(bookmark);
 
-				spaceManager.GetBookmarksListForUser(user.Id).Value.Count.Should().Be(1);
-				spaceManager.DeleteBookmark(bookmark.Id).IsSuccess.Should().BeTrue();
-				spaceManager.GetBookmarksListForUser(user.Id).Value.Count.Should().Be(0);
-
+				spaceManager.GetBookmarksListForUser(user.Id).Count.Should().Be(1);
+				spaceManager.DeleteBookmark(bookmark.Id);
+				spaceManager.GetBookmarksListForUser(user.Id).Count.Should().Be(0);
 			}
 		}
 	}
@@ -546,8 +509,8 @@ public partial class SpaceManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
@@ -557,9 +520,8 @@ public partial class SpaceManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(providerModel);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(providerModel);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				var space = new TfSpace
 				{
@@ -571,9 +533,8 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 0
 				};
 
-				var spaceResult = spaceManager.CreateSpace(space);
-				spaceResult.IsSuccess.Should().BeTrue();
-				spaceResult.Value.Should().NotBeNull();
+				space = spaceManager.CreateSpace(space);
+				space.Should().NotBeNull();
 
 				var spaceData = new TfSpaceData
 				{
@@ -583,9 +544,8 @@ public partial class SpaceManagerTests : BaseTest
 					SpaceId = space.Id,
 				};
 
-				var spaceDataResult = spaceManager.CreateSpaceData(spaceData);
-				spaceDataResult.IsSuccess.Should().BeTrue();
-				spaceDataResult.Value.Should().NotBeNull();
+				spaceData = spaceManager.CreateSpaceData(spaceData);
+				spaceData.Should().NotBeNull();
 
 
 				TfSpaceView view = new TfSpaceView
@@ -598,32 +558,29 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceViewType.DataGrid
 				};
 
-				var spaceViewResult = spaceManager.CreateSpaceView(view);
-				spaceViewResult.IsSuccess.Should().BeTrue();
-				spaceViewResult.Value.Should().NotBeNull();
-				spaceViewResult.Value.Id.Should().Be(view.Id);
-				spaceViewResult.Value.Name.Should().Be(view.Name);
-				spaceViewResult.Value.Position.Should().Be(view.Position);
-				spaceViewResult.Value.SpaceDataId.Should().Be(view.SpaceDataId);
-				spaceViewResult.Value.SpaceId.Should().Be(view.SpaceId);
-				spaceViewResult.Value.Type.Should().Be(view.Type);
+				var spaceView = spaceManager.CreateSpaceView(view);
+				spaceView.Should().NotBeNull();
+				spaceView.Id.Should().Be(view.Id);
+				spaceView.Name.Should().Be(view.Name);
+				spaceView.Position.Should().Be(view.Position);
+				spaceView.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceView.SpaceId.Should().Be(view.SpaceId);
+				spaceView.Type.Should().Be(view.Type);
 
 
 				view.Name = "view1";
 				view.Type = TfSpaceViewType.Chart;
 
-				spaceViewResult = spaceManager.UpdateSpaceView(view);
-				spaceViewResult.IsSuccess.Should().BeTrue();
-				spaceViewResult.Value.Should().NotBeNull();
-				spaceViewResult.Value.Id.Should().Be(view.Id);
-				spaceViewResult.Value.Name.Should().Be(view.Name);
-				spaceViewResult.Value.Position.Should().Be(view.Position);
-				spaceViewResult.Value.SpaceDataId.Should().Be(view.SpaceDataId);
-				spaceViewResult.Value.SpaceId.Should().Be(view.SpaceId);
-				spaceViewResult.Value.Type.Should().Be(view.Type);
+				spaceView = spaceManager.UpdateSpaceView(view);
+				spaceView.Should().NotBeNull();
+				spaceView.Id.Should().Be(view.Id);
+				spaceView.Name.Should().Be(view.Name);
+				spaceView.Position.Should().Be(view.Position);
+				spaceView.SpaceDataId.Should().Be(view.SpaceDataId);
+				spaceView.SpaceId.Should().Be(view.SpaceId);
+				spaceView.Type.Should().Be(view.Type);
 
-				spaceViewResult = spaceManager.DeleteSpaceView(view.Id);
-				spaceViewResult.IsSuccess.Should().BeTrue();
+				spaceManager.DeleteSpaceView(view.Id);
 			}
 		}
 	}
@@ -639,8 +596,8 @@ public partial class SpaceManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
@@ -650,9 +607,8 @@ public partial class SpaceManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(providerModel);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(providerModel);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				var space = new TfSpace
 				{
@@ -664,9 +620,8 @@ public partial class SpaceManagerTests : BaseTest
 					Position = 0
 				};
 
-				var spaceResult = spaceManager.CreateSpace(space);
-				spaceResult.IsSuccess.Should().BeTrue();
-				spaceResult.Value.Should().NotBeNull();
+				space = spaceManager.CreateSpace(space);
+				space.Should().NotBeNull();
 
 				var spaceData = new TfSpaceData
 				{
@@ -676,10 +631,8 @@ public partial class SpaceManagerTests : BaseTest
 					SpaceId = space.Id,
 				};
 
-				var spaceDataResult = spaceManager.CreateSpaceData(spaceData);
-				spaceDataResult.IsSuccess.Should().BeTrue();
-				spaceDataResult.Value.Should().NotBeNull();
-
+				spaceData = spaceManager.CreateSpaceData(spaceData);
+				spaceData.Should().NotBeNull();
 
 				TfSpaceView view = new TfSpaceView
 				{
@@ -691,11 +644,10 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceViewType.DataGrid
 				};
 
-				var spaceViewResult = spaceManager.CreateSpaceView(view);
-				spaceViewResult.IsSuccess.Should().BeTrue();
-				spaceViewResult.Value.Should().NotBeNull();
+				var spaceView = spaceManager.CreateSpaceView(view);
+				spaceView.Should().NotBeNull();
 
-				var availableColumnTypes = spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+				var availableColumnTypes = spaceManager.GetAvailableSpaceViewColumnTypes();
 				Type componentType = typeof(TfTextDisplayColumnComponent);
 
 				List<TfSpaceViewColumn> createdColums = new List<TfSpaceViewColumn>();
@@ -720,13 +672,12 @@ public partial class SpaceManagerTests : BaseTest
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }
 					};
 
-					var columnResult = spaceManager.CreateSpaceViewColumn(column);
-					columnResult.IsSuccess.Should().BeTrue();
-					columnResult.Value.Should().NotBeNull();
-					createdColums.Add(columnResult.Value);
+					var createdSpaceViewColumn = spaceManager.CreateSpaceViewColumn(column);
+					createdSpaceViewColumn.Should().NotBeNull();
+					createdColums.Add(createdSpaceViewColumn);
 				}
 
-				var columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
+				var columns = spaceManager.GetSpaceViewColumnsList(view.Id);
 				columns.Count.Should().Be(availableColumnTypes.Count);
 
 				var first = createdColums[0];
@@ -735,10 +686,9 @@ public partial class SpaceManagerTests : BaseTest
 				first.Position = (short)(createdColums.Count);
 
 				var updateResult = spaceManager.UpdateSpaceViewColumn(first);
-				updateResult.IsSuccess.Should().BeTrue();
-				updateResult.Value.Should().NotBeNull();
+				updateResult.Should().NotBeNull();
 
-				columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
+				columns = spaceManager.GetSpaceViewColumnsList(view.Id);
 				columns.Single(x => x.Id == first.Id).Position.Should().Be((short)(createdColums.Count));
 				columns.Single(x => x.Id == last.Id).Position.Should().Be((short)(createdColums.Count - 1));
 
@@ -746,18 +696,15 @@ public partial class SpaceManagerTests : BaseTest
 
 				for (int i = 1; i < columns.Count; i++)
 				{
-					var upResult = spaceManager.MoveSpaceViewColumnUp(last.Id);
-					updateResult.IsSuccess.Should().BeTrue();
+					spaceManager.MoveSpaceViewColumnUp(last.Id);
 
-					columns = spaceManager.GetSpaceViewColumnsList(view.Id).Value;
+					columns = spaceManager.GetSpaceViewColumnsList(view.Id);
 					var column = columns.Single(x => x.Id == last.Id);
 					column.Position.Should().Be((short)(columns.Count - i));
 				}
 
 				//test delete the entire space
-				var deleteSpaceResult = spaceManager.DeleteSpace(space.Id);
-				deleteSpaceResult.IsSuccess.Should().BeTrue();
-
+				spaceManager.DeleteSpace(space.Id);
 			}
 		}
 	}
@@ -784,7 +731,7 @@ public partial class SpaceManagerTests : BaseTest
 					IsPrivate = false,
 					Position = 0
 				};
-				spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpace(space);
 
 				
 				var spaceNode1_0_0 = new TfSpaceNode
@@ -800,8 +747,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				var result = spaceManager.CreateSpaceNode(spaceNode1_0_0);
-				result.IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpaceNode(spaceNode1_0_0);
 
 				var spaceNode1_1_0 = new TfSpaceNode
 				{
@@ -816,8 +762,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode1_1_0);
-				result.IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpaceNode(spaceNode1_1_0);
 
 				var spaceNode1_2_0 = new TfSpaceNode
 				{
@@ -832,9 +777,8 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode1_2_0);
-				result.IsSuccess.Should().BeTrue();
-
+				spaceManager.CreateSpaceNode(spaceNode1_2_0);
+				
 				var spaceNode1_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -848,8 +792,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode1_3_0);
-				result.IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpaceNode(spaceNode1_3_0);
 
 				var spaceNode2_0_0 = new TfSpaceNode
 				{
@@ -864,8 +807,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode2_0_0);
-				result.IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpaceNode(spaceNode2_0_0);
 
 				var spaceNode2_1_0 = new TfSpaceNode
 				{
@@ -880,8 +822,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode2_1_0);
-				result.IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpaceNode(spaceNode2_1_0);
 
 				var spaceNode2_2_0 = new TfSpaceNode
 				{
@@ -896,9 +837,8 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode2_2_0);
-				result.IsSuccess.Should().BeTrue();
-
+				spaceManager.CreateSpaceNode(spaceNode2_2_0);
+				
 				var spaceNode2_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -912,8 +852,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode2_3_0);
-				result.IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpaceNode(spaceNode2_3_0);
 
 				var spaceNode3_0_0 = new TfSpaceNode
 				{
@@ -928,9 +867,8 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode3_0_0);
-				result.IsSuccess.Should().BeTrue();
-
+				spaceManager.CreateSpaceNode(spaceNode3_0_0);
+				
 				var spaceNode3_1_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -944,8 +882,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode3_1_0);
-				result.IsSuccess.Should().BeTrue();
+				spaceManager.CreateSpaceNode(spaceNode3_1_0);
 
 				var spaceNode3_2_0 = new TfSpaceNode
 				{
@@ -960,9 +897,8 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode3_2_0);
-				result.IsSuccess.Should().BeTrue();
-
+				spaceManager.CreateSpaceNode(spaceNode3_2_0);
+				
 				var spaceNode3_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -976,10 +912,7 @@ public partial class SpaceManagerTests : BaseTest
 					Type = TfSpaceNodeType.Folder
 				};
 
-				result = spaceManager.CreateSpaceNode(spaceNode3_3_0);
-				result.IsSuccess.Should().BeTrue();
-
-
+				spaceManager.CreateSpaceNode(spaceNode3_3_0);
 
 				#endregion
 
@@ -987,11 +920,8 @@ public partial class SpaceManagerTests : BaseTest
 
 				//test move up in same parent node
 				spaceNode1_3_0.Position = 1;
-				var updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				var nodeTree = updateResult.Value;
-
+				var nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
+	
 				var updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(2);
 
@@ -1004,10 +934,7 @@ public partial class SpaceManagerTests : BaseTest
 
 				//test move down in same parent node
 				spaceNode1_3_0.Position = 3;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
 
 				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(1);
@@ -1020,10 +947,7 @@ public partial class SpaceManagerTests : BaseTest
 
 				//test move up in same parent node
 				spaceNode1_3_0.Position = 2;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
 
 				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(1);
@@ -1037,10 +961,7 @@ public partial class SpaceManagerTests : BaseTest
 
 				//test move down in same parent node
 				spaceNode1_3_0.Position = 3;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_3_0);
 
 				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(1);
@@ -1056,40 +977,28 @@ public partial class SpaceManagerTests : BaseTest
 
 				//test move up in same parent node while it is on first position
 				spaceNode1_0_0.Position = 0;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				var updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
 
 				//test move up in same parent node on position greater than max allowed
 				spaceNode1_0_0.Position = 10;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
 
 				//return node to position 1
 				spaceNode1_0_0.Position = 1;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
 
 				//test move up in same parent node
 				spaceNode1_0_0.Position = 3;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
@@ -1102,10 +1011,7 @@ public partial class SpaceManagerTests : BaseTest
 
 				//test move down in same parent node
 				spaceNode1_0_0.Position = 1;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
@@ -1118,11 +1024,8 @@ public partial class SpaceManagerTests : BaseTest
 
 				//change position without changing parent (root) with invalid position
 				spaceNode1_0_0.Position = null;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
-
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
+				
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
 				updatedSpaceNode1_0_0.ParentId.Should().Be(null);
@@ -1141,10 +1044,7 @@ public partial class SpaceManagerTests : BaseTest
 				//test change parent node and position
 				spaceNode1_0_0.Position = 2;
 				spaceNode1_0_0.ParentId = spaceNode3_0_0.Id;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(2);
@@ -1164,10 +1064,7 @@ public partial class SpaceManagerTests : BaseTest
 
 				spaceNode1_0_0.Position = 1;
 				spaceNode1_0_0.ParentId = null;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
@@ -1188,10 +1085,8 @@ public partial class SpaceManagerTests : BaseTest
 				//change position with null + parent change
 				spaceNode1_0_0.Position = null;
 				spaceNode1_0_0.ParentId = spaceNode2_0_0.Id;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(4); //last position
@@ -1206,10 +1101,7 @@ public partial class SpaceManagerTests : BaseTest
 				//return to initial state
 				spaceNode1_0_0.Position = 1;
 				spaceNode1_0_0.ParentId = null;
-				updateResult = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeTrue();
-
-				nodeTree = updateResult.Value;
+				nodeTree = spaceManager.UpdateSpaceNode(spaceNode1_0_0);
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
 				updatedSpaceNode1_0_0.ParentId.Should().BeNull();
@@ -1217,9 +1109,7 @@ public partial class SpaceManagerTests : BaseTest
 				//try to move node inside child nodes tree
 				updatedSpaceNode1_0_0.Position = 1;
 				updatedSpaceNode1_0_0.ParentId = spaceNode1_2_0.Id;
-				updateResult = spaceManager.UpdateSpaceNode(updatedSpaceNode1_0_0);
-				updateResult.IsSuccess.Should().BeFalse();
-
+				nodeTree = spaceManager.UpdateSpaceNode(updatedSpaceNode1_0_0);
 
 				#endregion
 
@@ -1227,34 +1117,23 @@ public partial class SpaceManagerTests : BaseTest
 
 				spaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 
-				var copyResult = spaceManager.CopySpaceNode(spaceNode1_0_0.Id);
-				copyResult.IsSuccess.Should().BeTrue();	
-
-				var (copyNodeId, newNodeTree) = copyResult.Value;
+				var (copyNodeId, newNodeTree) = spaceManager.CopySpaceNode(spaceNode1_0_0.Id);
 
 				var copiedNode = FindNodeById(copyNodeId, newNodeTree);
 				short newPosition = (short)(spaceNode1_0_0.Position.Value + 1);
 				copiedNode.Position.Value.Should().Be(newPosition);
 				copiedNode.ChildNodes.Count.Should().Be(spaceNode1_0_0.ChildNodes.Count);
 
-				var deleteResult = spaceManager.DeleteSpaceNode(copiedNode);
-				deleteResult.IsSuccess.Should().BeTrue();
+				spaceManager.DeleteSpaceNode(copiedNode);
 
 				#endregion
 
 				#region delete node
 
-				deleteResult = spaceManager.DeleteSpaceNode(spaceNode1_0_0);
-				deleteResult.IsSuccess.Should().BeTrue();
-				
-				deleteResult = spaceManager.DeleteSpaceNode(spaceNode2_0_0);
-				deleteResult.IsSuccess.Should().BeTrue();
-				
-				deleteResult = spaceManager.DeleteSpaceNode(spaceNode3_3_0);
-				deleteResult.IsSuccess.Should().BeTrue();
-				
-				deleteResult = spaceManager.DeleteSpaceNode(spaceNode3_0_0);
-				deleteResult.IsSuccess.Should().BeTrue();
+				spaceManager.DeleteSpaceNode(spaceNode1_0_0);
+				spaceManager.DeleteSpaceNode(spaceNode2_0_0);
+				spaceManager.DeleteSpaceNode(spaceNode3_3_0);
+				spaceManager.DeleteSpaceNode(spaceNode3_0_0);
 
 				#endregion
 			}

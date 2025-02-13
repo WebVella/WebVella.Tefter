@@ -78,7 +78,8 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<TucUser>();
+			var result = new TucUser();
+			
 			if (_isCreate)
 			{
 				result = await UC.CreateUserWithFormAsync(_form);
@@ -87,16 +88,12 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 			{
 				result = await UC.UpdateUserWithFormAsync(_form);
 			}
-
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				await Dialog.CloseAsync(result.Value);
-			}
+			
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

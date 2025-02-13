@@ -5,16 +5,16 @@ namespace WebVella.Tefter.Identity;
 public partial interface IIdentityManager
 {
 	UserBuilder CreateUserBuilder(User user = null);
-	Result<User> GetUser(Guid id);
-	Result<User> GetUser(string email);
-	Result<User> GetUser(string email, string password);
-	Result<ReadOnlyCollection<User>> GetUsers();
-	Result<User> SaveUser(User user);
-	Task<Result<User>> GetUserAsync(Guid id);
-	Task<Result<User>> GetUserAsync(string email);
-	Task<Result<User>> GetUserAsync(string email, string password);
-	Task<Result<ReadOnlyCollection<User>>> GetUsersAsync();
-	Task<Result<User>> SaveUserAsync(User user);
+	User GetUser(Guid id);
+	User GetUser(string email);
+	User GetUser(string email, string password);
+	ReadOnlyCollection<User> GetUsers();
+	User SaveUser(User user);
+	Task<User> GetUserAsync(Guid id);
+	Task<User> GetUserAsync(string email);
+	Task<User> GetUserAsync(string email, string password);
+	Task<ReadOnlyCollection<User>> GetUsersAsync();
+	Task<User> SaveUserAsync(User user);
 }
 
 public partial class IdentityManager : IIdentityManager
@@ -24,17 +24,13 @@ public partial class IdentityManager : IIdentityManager
 		return new UserBuilder(this, user);
 	}
 
-	public Result<User> GetUser(Guid id)
+	public User GetUser(Guid id)
 	{
 		var userDbo = _dboManager.Get<UserDbo>(id);
 		if (userDbo == null)
-			return Result.Ok();
+			return null;
 
-		var rolesResult = GetRoles();
-		if (!rolesResult.IsSuccess)
-			return Result.Fail(new Error("Failed to get user.").CausedBy(rolesResult.Errors));
-
-		var roles = rolesResult.Value;
+		var roles = GetRoles();
 
 		var userRoles = new List<Role>();
 		foreach (var userRoleRelation in _dboManager.GetList<UserRoleDbo>(id, nameof(UserRoleDbo.UserId)))
@@ -60,23 +56,23 @@ public partial class IdentityManager : IIdentityManager
 				.WithPageSize(userDbo.Settings.PageSize);
 		}
 
-		return Result.Ok(userBuilder.Build());
+		return userBuilder.Build();
 	}
 
-	public Result<User> GetUser(string email)
+	public User GetUser(string email)
 	{
-		Result validationResult = new Result();
-		if (email == null)
-			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+		var valEx = new TfValidationException();
 
-		if (validationResult.IsFailed)
-			return validationResult;
+		if (email == null)
+			valEx.AddValidationError(nameof(User.Email), "The email is required.");
+
+		valEx.ThrowIfContainsErrors();
 
 		var userDbo = _dboManager.Get<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
-			return Result.Ok();
+			return null;
 
-		var roles = GetRoles().Value;
+		var roles = GetRoles();
 		var userRoles = new List<Role>();
 		foreach (var userRoleRelation in _dboManager.GetList<UserRoleDbo>(userDbo.Id, nameof(UserRoleDbo.UserId)))
 			userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
@@ -101,29 +97,30 @@ public partial class IdentityManager : IIdentityManager
 				.WithPageSize(userDbo.Settings.PageSize);
 		}
 
-		return Result.Ok(userBuilder.Build());
+		return userBuilder.Build();
 	}
 
-	public Result<User> GetUser(string email, string password)
+	public User GetUser(string email, string password)
 	{
-		Result validationResult = new Result();
+		var valEx = new TfValidationException();
+
 		if (email == null)
-			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+			valEx.AddValidationError(nameof(User.Email), "The email is required.");
 
 		if (password == null)
-			validationResult.WithError(new ValidationError(nameof(User.Password), "The password is required."));
+			valEx.AddValidationError(nameof(User.Password), "The password is required.");
 
-		if (validationResult.IsFailed)
-			return validationResult;
+		valEx.ThrowIfContainsErrors();
+
 
 		var userDbo = _dboManager.Get<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
-			return Result.Ok();
+			return null;
 
 		if (userDbo.Password != password.ToMD5Hash())
-			return Result.Ok();
+			return null;
 
-		var roles = GetRoles().Value;
+		var roles = GetRoles();
 		var userRoles = new List<Role>();
 		foreach (var userRoleRelation in _dboManager.GetList<UserRoleDbo>(userDbo.Id, nameof(UserRoleDbo.UserId)))
 			userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
@@ -148,17 +145,17 @@ public partial class IdentityManager : IIdentityManager
 				.WithPageSize(userDbo.Settings.PageSize);
 		}
 
-		return Result.Ok(userBuilder.Build());
+		return userBuilder.Build();
 	}
 
-	public Result<ReadOnlyCollection<User>> GetUsers()
+	public ReadOnlyCollection<User> GetUsers()
 	{
 		var orderSettings = new TfOrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
 				.Add(nameof(UserDbo.FirstName), OrderDirection.ASC);
 
 		var usersDbo = _dboManager.GetList<UserDbo>(order: orderSettings);
 
-		var roles = GetRoles().Value;
+		var roles = GetRoles();
 		var userRolesDict = new Dictionary<Guid, List<Role>>();
 		foreach (var userRoleRelation in _dboManager.GetList<UserRoleDbo>())
 		{
@@ -196,10 +193,10 @@ public partial class IdentityManager : IIdentityManager
 			users.Add(userBuilder.Build());
 		}
 
-		return Result.Ok(users.AsReadOnly());
+		return users.AsReadOnly();
 	}
 
-	public Result<User> SaveUser(User user)
+	public User SaveUser(User user)
 	{
 		if (user == null)
 			throw new ArgumentNullException(nameof(user));
@@ -210,12 +207,12 @@ public partial class IdentityManager : IIdentityManager
 			return UpdateUser(user);
 	}
 
-	private Result<User> CreateUser(User user)
+	private User CreateUser(User user)
 	{
-		ValidationResult result = _userValidator.ValidateCreate(user);
-
-		if (!result.IsValid)
-			return result.ToResult<User>();
+		_userValidator
+			.ValidateCreate(user)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		UserDbo userDbo = new UserDbo
 		{
@@ -235,7 +232,7 @@ public partial class IdentityManager : IIdentityManager
 			bool success = _dboManager.Insert<UserDbo>(userDbo);
 
 			if (!success)
-				return Result.Fail(new DboManagerError("InsertAsync", userDbo));
+				throw new TfDboServiceException("Insert<UserDbo> failed");
 
 			foreach (var role in user.Roles)
 			{
@@ -246,9 +243,8 @@ public partial class IdentityManager : IIdentityManager
 				};
 
 				success = _dboManager.Insert<UserRoleDbo>(dbo);
-
 				if (!success)
-					return Result.Fail(new DboManagerError("InsertAsync", dbo));
+					throw new TfDboServiceException("Insert<UserRoleDbo> failed");
 			}
 
 			scope.Complete();
@@ -257,15 +253,15 @@ public partial class IdentityManager : IIdentityManager
 		return GetUser(userDbo.Id);
 	}
 
-	private Result<User> UpdateUser(User user)
+	private User UpdateUser(User user)
 	{
-		ValidationResult result = _userValidator.ValidateUpdate(user);
-
-		if (!result.IsValid)
-			return result.ToResult<User>();
+		_userValidator
+			.ValidateUpdate(user)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		//if password is changed, hash new password
-		var existingUser = GetUser(user.Id).Value;
+		var existingUser = GetUser(user.Id);
 		string password = user.Password;
 		if (existingUser.Password != user.Password)
 			password = user.Password.ToMD5Hash();
@@ -289,7 +285,7 @@ public partial class IdentityManager : IIdentityManager
 			bool success = _dboManager.Update<UserDbo>(userDbo);
 
 			if (!success)
-				return Result.Fail(new DboManagerError("UpdateAsync", userDbo));
+				throw new TfDboServiceException("Update<UserDbo> failed");
 
 			//remove old roles
 			foreach (var role in existingUser.Roles)
@@ -301,7 +297,7 @@ public partial class IdentityManager : IIdentityManager
 				success = _dboManager.Delete<UserRoleDbo>(dbId);
 
 				if (!success)
-					return Result.Fail(new DboManagerError("InsertAsync", dbId));
+					throw new TfDboServiceException("Delete<UserRoleDbo> failed");
 			}
 
 			//add new roles
@@ -316,7 +312,7 @@ public partial class IdentityManager : IIdentityManager
 				success = _dboManager.Insert<UserRoleDbo>(dbo);
 
 				if (!success)
-					return Result.Fail(new DboManagerError("InsertAsync", dbo));
+					throw new TfDboServiceException("Insert<UserRoleDbo> failed");
 			}
 
 			scope.Complete();
@@ -325,13 +321,13 @@ public partial class IdentityManager : IIdentityManager
 		return GetUser(userDbo.Id);
 	}
 
-	public async Task<Result<User>> GetUserAsync(Guid id)
+	public async Task<User> GetUserAsync(Guid id)
 	{
 		var userDbo = await _dboManager.GetAsync<UserDbo>(id);
 		if (userDbo == null)
-			return Result.Ok();
+			return null;
 
-		var roles = (await GetRolesAsync()).Value;
+		var roles = await GetRolesAsync();
 		var userRoles = new List<Role>();
 		foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(id, nameof(UserRoleDbo.UserId)))
 			userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
@@ -356,23 +352,23 @@ public partial class IdentityManager : IIdentityManager
 				.WithPageSize(userDbo.Settings.PageSize);
 		}
 
-		return Result.Ok(userBuilder.Build());
+		return userBuilder.Build();
 	}
 
-	public async Task<Result<User>> GetUserAsync(string email)
+	public async Task<User> GetUserAsync(string email)
 	{
-		Result validationResult = new Result();
-		if (email == null)
-			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+		var valEx = new TfValidationException();
 
-		if (validationResult.IsFailed)
-			return validationResult;
+		if (email == null)
+			valEx.AddValidationError(nameof(User.Email), "The email is required.");
+
+		valEx.ThrowIfContainsErrors();
 
 		var userDbo = await _dboManager.GetAsync<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
-			return Result.Ok();
+			return null;
 
-		var roles = (await GetRolesAsync()).Value;
+		var roles = await GetRolesAsync();
 		var userRoles = new List<Role>();
 		foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(userDbo.Id, nameof(UserRoleDbo.UserId)))
 			userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
@@ -397,29 +393,30 @@ public partial class IdentityManager : IIdentityManager
 				.WithPageSize(userDbo.Settings.PageSize);
 		}
 
-		return Result.Ok(userBuilder.Build());
+		return userBuilder.Build();
 	}
 
-	public async Task<Result<User>> GetUserAsync(string email, string password)
+	public async Task<User> GetUserAsync(string email, string password)
 	{
-		Result validationResult = new Result();
-		if (string.IsNullOrWhiteSpace(email))
-			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+		var valEx = new TfValidationException();
+
+		if (email == null)
+			valEx.AddValidationError(nameof(User.Email), "The email is required.");
 
 		if (string.IsNullOrWhiteSpace(password))
-			validationResult.WithError(new ValidationError(nameof(User.Password), "The password is required."));
+			valEx.AddValidationError(nameof(User.Password), "The password is required.");
 
-		if (validationResult.IsFailed)
-			return validationResult;
+		valEx.ThrowIfContainsErrors();
+
 
 		var userDbo = await _dboManager.GetAsync<UserDbo>(email, nameof(UserDbo.Email));
 		if (userDbo == null)
-			return Result.Ok();
+			return null;
 
 		if (userDbo.Password != password.ToMD5Hash())
-			return Result.Ok();
+			return null;
 
-		var roles = (await GetRolesAsync()).Value;
+		var roles = await GetRolesAsync();
 		var userRoles = new List<Role>();
 		foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>(userDbo.Id, nameof(UserRoleDbo.UserId)))
 			userRoles.Add(roles.Single(x => x.Id == userRoleRelation.RoleId));
@@ -444,17 +441,17 @@ public partial class IdentityManager : IIdentityManager
 				.WithPageSize(userDbo.Settings.PageSize);
 		}
 
-		return Result.Ok(userBuilder.Build());
+		return userBuilder.Build();
 	}
 
-	public async Task<Result<ReadOnlyCollection<User>>> GetUsersAsync()
+	public async Task<ReadOnlyCollection<User>> GetUsersAsync()
 	{
 		var orderSettings = new TfOrderSettings(nameof(UserDbo.LastName), OrderDirection.ASC)
 				.Add(nameof(UserDbo.FirstName), OrderDirection.ASC);
 
 		var usersDbo = await _dboManager.GetListAsync<UserDbo>(order: orderSettings);
 
-		var roles = (await GetRolesAsync()).Value;
+		var roles = await GetRolesAsync();
 		var userRolesDict = new Dictionary<Guid, List<Role>>();
 		foreach (var userRoleRelation in await _dboManager.GetListAsync<UserRoleDbo>())
 		{
@@ -492,10 +489,10 @@ public partial class IdentityManager : IIdentityManager
 			users.Add(userBuilder.Build());
 		}
 
-		return Result.Ok(users.AsReadOnly());
+		return users.AsReadOnly();
 	}
 
-	public async Task<Result<User>> SaveUserAsync(User user)
+	public async Task<User> SaveUserAsync(User user)
 	{
 		if (user == null)
 			throw new ArgumentNullException(nameof(user));
@@ -506,12 +503,12 @@ public partial class IdentityManager : IIdentityManager
 			return await UpdateUserAsync(user);
 	}
 
-	private async Task<Result<User>> CreateUserAsync(User user)
+	private async Task<User> CreateUserAsync(User user)
 	{
-		ValidationResult result = _userValidator.ValidateCreate(user);
-
-		if (!result.IsValid)
-			return result.ToResult<User>();
+		_userValidator
+			.ValidateCreate(user)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		UserDbo userDbo = new UserDbo
 		{
@@ -529,9 +526,8 @@ public partial class IdentityManager : IIdentityManager
 		using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
 		{
 			bool success = await _dboManager.InsertAsync<UserDbo>(userDbo);
-
 			if (!success)
-				return Result.Fail(new DboManagerError("InsertAsync", userDbo));
+				throw new TfDboServiceException("Insert<UserDbo> failed");
 
 			foreach (var role in user.Roles)
 			{
@@ -542,9 +538,8 @@ public partial class IdentityManager : IIdentityManager
 				};
 
 				success = await _dboManager.InsertAsync<UserRoleDbo>(dbo);
-
 				if (!success)
-					return Result.Fail(new DboManagerError("InsertAsync", dbo));
+					throw new TfDboServiceException("Insert<UserRoleDbo> failed");
 			}
 
 			scope.Complete();
@@ -553,15 +548,15 @@ public partial class IdentityManager : IIdentityManager
 		return await GetUserAsync(userDbo.Id);
 	}
 
-	private async Task<Result<User>> UpdateUserAsync(User user)
+	private async Task<User> UpdateUserAsync(User user)
 	{
-		ValidationResult result = _userValidator.ValidateUpdate(user);
-
-		if (!result.IsValid)
-			return result.ToResult<User>();
+		_userValidator
+			.ValidateUpdate(user)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		//if password is changed, hash new password
-		var existingUser = (await GetUserAsync(user.Id)).Value;
+		var existingUser = await GetUserAsync(user.Id);
 		string password = user.Password;
 		if (existingUser.Password != user.Password)
 			password = user.Password.ToMD5Hash();
@@ -583,9 +578,8 @@ public partial class IdentityManager : IIdentityManager
 		{
 			//update user info
 			bool success = await _dboManager.UpdateAsync<UserDbo>(userDbo);
-
 			if (!success)
-				return Result.Fail(new DboManagerError("UpdateAsync", userDbo));
+				throw new TfDboServiceException("UpdateAsync<UserDbo> failed");
 
 			//remove old roles
 			foreach (var role in existingUser.Roles)
@@ -597,7 +591,7 @@ public partial class IdentityManager : IIdentityManager
 				success = await _dboManager.DeleteAsync<UserRoleDbo>(dbId);
 
 				if (!success)
-					return Result.Fail(new DboManagerError("InsertAsync", dbId));
+					throw new TfDboServiceException("DeleteAsync<UserRoleDbo> failed");
 			}
 
 			//add new roles
@@ -612,7 +606,7 @@ public partial class IdentityManager : IIdentityManager
 				success = await _dboManager.InsertAsync<UserRoleDbo>(dbo);
 
 				if (!success)
-					return Result.Fail(new DboManagerError("InsertAsync", dbo));
+					throw new TfDboServiceException("InsertAsync<UserRoleDbo> failed");
 			}
 
 			scope.Complete();

@@ -40,21 +40,17 @@ public partial class TfAdminDataProviderSchema : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			Result<TucDataProvider> result = UC.DeleteDataProviderColumn(column.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminDataProvider = result.Value }));
-
-			}
+			TucDataProvider provider = UC.DeleteDataProviderColumn(column.Id);
+			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminDataProvider = provider }));
 		}
 		catch (Exception ex)
 		{
 			ProcessException(ex);
 		}
-		finally{
+		finally
+		{
 			_deletedColumnId = null;
 			await InvokeAsync(StateHasChanged);
 		}

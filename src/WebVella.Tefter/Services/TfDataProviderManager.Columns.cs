@@ -23,7 +23,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="column"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> CreateDataProviderColumn(
+	public TfDataProvider CreateDataProviderColumn(
 		TfDataProviderColumn column);
 
 
@@ -32,7 +32,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="column"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> CreateBulkDataProviderColumn(Guid providerId,
+	public TfDataProvider CreateBulkDataProviderColumn(Guid providerId,
 		List<TfDataProviderColumn> columns);
 
 	/// <summary>
@@ -40,7 +40,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="column"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> UpdateDataProviderColumn(
+	public TfDataProvider UpdateDataProviderColumn(
 		TfDataProviderColumn column);
 
 	/// <summary>
@@ -48,7 +48,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> DeleteDataProviderColumn(
+	public TfDataProvider DeleteDataProviderColumn(
 		Guid id);
 }
 
@@ -136,52 +136,32 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="column"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> CreateDataProviderColumn(
+	public TfDataProvider CreateDataProviderColumn(
 		TfDataProviderColumn column)
 	{
-		try
+		if (column != null && column.Id == Guid.Empty)
+			column.Id = Guid.NewGuid();
+
+		new TfDataProviderColumnValidator(_dboManager, this)
+			.ValidateCreate(column)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			if (column != null && column.Id == Guid.Empty)
-				column.Id = Guid.NewGuid();
+			var success = _dboManager.Insert<TfDataProviderColumn>(column);
+			if (!success)
+				throw new TfDboServiceException("Insert<TfDataProviderColumn> failed.");
 
-			TfDataProviderColumnValidator validator =
-				new TfDataProviderColumnValidator(_dboManager, this);
+			var provider = GetProvider(column.DataProviderId);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider column");
 
-			var validationResult = validator.ValidateCreate(column);
+			CreateDatabaseColumn(provider, column);
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+			scope.Complete();
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-
-				var success = _dboManager.Insert<TfDataProviderColumn>(column);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Insert", column));
-
-				var providerResult = GetProvider(column.DataProviderId);
-
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to create new data provider column")
-						.CausedBy(providerResult.Errors));
-
-				var provider = providerResult.Value;
-
-				var result = CreateDatabaseColumn(provider, column);
-
-				if (result.IsFailed)
-					return Result.Fail(new Error("Failed to create new data provider column.")
-						.CausedBy(result.Errors));
-
-				scope.Complete();
-
-				return Result.Ok(provider);
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new data provider column.").CausedBy(ex));
+			return provider;
 		}
 	}
 
@@ -191,50 +171,24 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="column"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> CreateBulkDataProviderColumn(Guid providerId,
+	public TfDataProvider CreateBulkDataProviderColumn(Guid providerId,
 		List<TfDataProviderColumn> columns)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			List<ValidationError> validationErrors = new();
+			foreach (var column in columns)
 			{
-				List<ValidationError> validationErrors = new();
-				foreach (var column in columns) {
-					column.DataProviderId = providerId;
-					var colResult = CreateDataProviderColumn(column);
-					if(colResult.IsFailed){ 
-						foreach (var error in colResult.Errors){
-							if(error is ValidationError){ 
-								var valError = (ValidationError)error;
-								validationErrors.Add(new ValidationError( 
-									propertyName:$"{column.SourceName}-{valError.PropertyName}",
-									message: valError.Message
-								));
-							}
-							else{ 
-								return Result.Fail(error);
-							}
-						}
-					}
-					
-				}
-				if(validationErrors.Count > 0){
-					return Result.Fail(validationErrors);
-				}
-				scope.Complete();
-				var providerResult = GetProvider(providerId);
-
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to create new data provider column")
-						.CausedBy(providerResult.Errors));
-
-				var provider = providerResult.Value;
-				return Result.Ok(provider);
+				column.DataProviderId = providerId;
+				CreateDataProviderColumn(column);
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new data provider column.").CausedBy(ex));
+			scope.Complete();
+
+			var provider = GetProvider(providerId);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider column");
+
+			return provider;
 		}
 	}
 
@@ -244,42 +198,28 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="column"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> UpdateDataProviderColumn(
+	public TfDataProvider UpdateDataProviderColumn(
 		TfDataProviderColumn column)
 	{
-		try
-		{
-			TfDataProviderColumnValidator validator =
-				new TfDataProviderColumnValidator(_dboManager, this);
+		new TfDataProviderColumnValidator(_dboManager, this)
+			.ValidateUpdate(column)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateUpdate(column);
+		var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var success = _dboManager.Update<TfDataProviderColumn>(column);
 
-			var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
+		if (!success)
+			throw new TfDboServiceException("Update<TfDataProviderColumn> failed.");
 
-			var success = _dboManager.Update<TfDataProviderColumn>(column);
+		var provider = GetProvider(column.DataProviderId);
+		if (provider is null)
+			throw new TfException("Failed to create new data provider column");
 
-			if (!success)
-				return Result.Fail(new DboManagerError("Update", column));
+		UpdateDatabaseColumn(provider, column, existingColumn);
 
-			var providerResult = GetProvider(column.DataProviderId);
-
-			if (providerResult.IsFailed)
-				return Result.Fail(new Error("Failed to update data provider column")
-					.CausedBy(providerResult.Errors));
-
-			var provider = providerResult.Value;
-
-			UpdateDatabaseColumn(provider, column, existingColumn);
-
-			return Result.Ok(GetProvider(column.DataProviderId).Value);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update data provider column.").CausedBy(ex));
-		}
+		return GetProvider(column.DataProviderId);
 	}
 
 	/// <summary>
@@ -287,665 +227,637 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> DeleteDataProviderColumn(
+	public TfDataProvider DeleteDataProviderColumn(
 		Guid id)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				TfDataProviderColumnValidator validator =
-						new TfDataProviderColumnValidator(_dboManager, this);
+			var column = GetDataProviderColumn(id);
 
-				var column = GetDataProviderColumn(id);
+			new TfDataProviderColumnValidator(_dboManager, this)
+				.ValidateDelete(column)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-				var validationResult = validator.ValidateDelete(column);
+			var success = _dboManager.Delete<TfDataProviderColumn>(id);
 
-				if (!validationResult.IsValid)
-					return validationResult.ToResult();
+			if (!success)
+				throw new TfDboServiceException("Delete<TfDataProviderColumn> failed");
 
-				var success = _dboManager.Delete<TfDataProviderColumn>(id);
+			var provider = GetProvider(column.DataProviderId);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider column");
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Delete", id));
+			string providerTableName = $"dp{provider.Index}";
 
-				var providerResult = GetProvider(column.DataProviderId);
+			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to delete provider column.")
-						.CausedBy(providerResult.Errors));
+			dbBuilder.WithTableBuilder(providerTableName).WithColumns(columns => columns.Remove(column.DbName));
 
-				var provider = providerResult.Value;
+			_dbManager.SaveChanges(dbBuilder);
 
-				string providerTableName = $"dp{provider.Index}";
+			scope.Complete();
 
-				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-
-				dbBuilder.WithTableBuilder(providerTableName).WithColumns(columns => columns.Remove(column.DbName));
-
-				_dbManager.SaveChanges(dbBuilder);
-
-				scope.Complete();
-
-				return Result.Ok(GetProvider(column.DataProviderId).Value);
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete data provider column.").CausedBy(ex));
+			return GetProvider(column.DataProviderId);
 		}
 	}
 
 	#region <--- utility --->
 
-	private Result CreateDatabaseColumn(
-TfDataProvider provider,
-TfDataProviderColumn column)
+	private void CreateDatabaseColumn(
+		TfDataProvider provider,
+		TfDataProviderColumn column)
 	{
-		try
+		string providerTableName = $"dp{provider.Index}";
+
+		TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+		var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
+		var columnsBuilder = tableBuilder.WithColumnsBuilder();
+
+		switch (column.DbType)
 		{
-			string providerTableName = $"dp{provider.Index}";
-
-			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-			var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
-			var columnsBuilder = tableBuilder.WithColumnsBuilder();
-
-			switch (column.DbType)
-			{
-				case TfDatabaseColumnType.Boolean:
-					{
-						columnsBuilder.AddBooleanColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-
-							if (column.DefaultValue is not null)
-								c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
-						});
-
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-					}
-					break;
-				case TfDatabaseColumnType.Text:
-					{
-						columnsBuilder.AddTextColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							c.WithDefaultValue(column.DefaultValue);
-						});
-
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddGinIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.ShortText:
-					{
-						columnsBuilder.AddShortTextColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							c.WithDefaultValue(column.DefaultValue);
-						});
-
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.Guid:
-					{
-						columnsBuilder.AddGuidColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.AutoDefaultValue)
-								c.WithAutoDefaultValue();
-							else
-							{
-								if (column.DefaultValue is not null)
-									c.WithDefaultValue(new Guid(column.DefaultValue));
-							}
-						});
-
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.Date:
-					{
-						columnsBuilder.AddDateColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.AutoDefaultValue)
-								c.WithAutoDefaultValue();
-							else
-							{
-								if (column.DefaultValue is not null)
-								{
-									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-									DateOnly date = DateOnly.FromDateTime(datetime);
-									c.WithDefaultValue(date);
-								}
-							}
-						});
-
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.DateTime:
-					{
-						columnsBuilder.AddDateTimeColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.AutoDefaultValue)
-								c.WithAutoDefaultValue();
-							else
-							{
-								if (column.DefaultValue is not null)
-								{
-									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-									c.WithDefaultValue(datetime);
-								}
-							}
-						});
-
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.Number:
-					{
-						columnsBuilder.AddNumberColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
-								c.WithDefaultValue(number);
-							}
-						});
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.ShortInteger:
-					{
-						columnsBuilder.AddShortIntegerColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = short.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
-							}
-						});
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.Integer:
-					{
-						columnsBuilder.AddIntegerColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = int.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
-							}
-						});
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				case TfDatabaseColumnType.LongInteger:
-					{
-						columnsBuilder.AddLongIntegerColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = long.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
-							}
-						});
-						if (column.IsSearchable || column.IsSortable)
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
-							});
-						}
-					}
-					break;
-				default:
-					throw new Exception("Not supported database column type");
-			}
-
-			if (column.IsUnique)
-			{
-				tableBuilder.WithConstraints(constraints =>
+			case TfDatabaseColumnType.Boolean:
 				{
-					constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
-						c => { c.WithColumns(column.DbName); });
-				});
-			}
+					columnsBuilder.AddBooleanColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
-			_dbManager.SaveChanges(dbBuilder);
+						if (column.DefaultValue is not null)
+							c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
+					});
 
-			return Result.Ok();
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+				}
+				break;
+			case TfDatabaseColumnType.Text:
+				{
+					columnsBuilder.AddTextColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						c.WithDefaultValue(column.DefaultValue);
+					});
+
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddGinIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.ShortText:
+				{
+					columnsBuilder.AddShortTextColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						c.WithDefaultValue(column.DefaultValue);
+					});
+
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.Guid:
+				{
+					columnsBuilder.AddGuidColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.AutoDefaultValue)
+							c.WithAutoDefaultValue();
+						else
+						{
+							if (column.DefaultValue is not null)
+								c.WithDefaultValue(new Guid(column.DefaultValue));
+						}
+					});
+
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.Date:
+				{
+					columnsBuilder.AddDateColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.AutoDefaultValue)
+							c.WithAutoDefaultValue();
+						else
+						{
+							if (column.DefaultValue is not null)
+							{
+								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+								DateOnly date = DateOnly.FromDateTime(datetime);
+								c.WithDefaultValue(date);
+							}
+						}
+					});
+
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.DateTime:
+				{
+					columnsBuilder.AddDateTimeColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.AutoDefaultValue)
+							c.WithAutoDefaultValue();
+						else
+						{
+							if (column.DefaultValue is not null)
+							{
+								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+								c.WithDefaultValue(datetime);
+							}
+						}
+					});
+
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.Number:
+				{
+					columnsBuilder.AddNumberColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+							c.WithDefaultValue(number);
+						}
+					});
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.ShortInteger:
+				{
+					columnsBuilder.AddShortIntegerColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = short.Parse(column.DefaultValue);
+							c.WithDefaultValue(number);
+						}
+					});
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.Integer:
+				{
+					columnsBuilder.AddIntegerColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = int.Parse(column.DefaultValue);
+							c.WithDefaultValue(number);
+						}
+					});
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			case TfDatabaseColumnType.LongInteger:
+				{
+					columnsBuilder.AddLongIntegerColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = long.Parse(column.DefaultValue);
+							c.WithDefaultValue(number);
+						}
+					});
+					if (column.IsSearchable || column.IsSortable)
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndex($"ix_{providerTableName}_{column.DbName}", c => { c.WithColumns(column.DbName); });
+						});
+					}
+				}
+				break;
+			default:
+				throw new Exception("Not supported database column type");
 		}
-		catch (Exception ex)
+
+		if (column.IsUnique)
 		{
-			return Result.Fail(new Error("Failed to create database column.").CausedBy(ex));
+			tableBuilder.WithConstraints(constraints =>
+			{
+				constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
+					c => { c.WithColumns(column.DbName); });
+			});
 		}
+
+		var result = _dbManager.SaveChanges(dbBuilder);
+		if (!result.IsSuccess)
+			throw new TfException("Failed to save changes to database schema");
 	}
 
-	private Result UpdateDatabaseColumn(
+	private void UpdateDatabaseColumn(
 		TfDataProvider provider,
 		TfDataProviderColumn column,
 		TfDataProviderColumn existingColumn)
 	{
-		try
+		string providerTableName = $"dp{provider.Index}";
+
+		TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+		var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
+		var columnsBuilder = tableBuilder.WithColumnsBuilder();
+
+		switch (column.DbType)
 		{
-			string providerTableName = $"dp{provider.Index}";
-
-			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-			var tableBuilder = dbBuilder.WithTableBuilder(providerTableName);
-			var columnsBuilder = tableBuilder.WithColumnsBuilder();
-
-			switch (column.DbType)
-			{
-				case TfDatabaseColumnType.Boolean:
-					{
-						columnsBuilder.WithBooleanColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-
-							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
-							{
-								c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-
-					}
-					break;
-				case TfDatabaseColumnType.Text:
-					{
-						columnsBuilder.WithTextColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-
-							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
-							{
-								c.WithDefaultValue(column.DefaultValue);
-							}
-						});
-
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-
-					}
-					break;
-				case TfDatabaseColumnType.ShortText:
-					{
-						columnsBuilder.WithShortTextColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-
-							if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
-							{
-								c.WithDefaultValue(column.DefaultValue);
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-
-					}
-					break;
-				case TfDatabaseColumnType.Guid:
-					{
-						columnsBuilder.WithGuidColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.AutoDefaultValue)
-								c.WithAutoDefaultValue();
-							else
-							{
-								if (column.DefaultValue is not null)
-									c.WithDefaultValue(new Guid(column.DefaultValue));
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-					}
-					break;
-				case TfDatabaseColumnType.Date:
-					{
-						columnsBuilder.WithDateColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.AutoDefaultValue)
-								c.WithAutoDefaultValue();
-							else
-							{
-								if (column.DefaultValue is not null)
-								{
-									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-									DateOnly date = DateOnly.FromDateTime(datetime);
-									c.WithDefaultValue(date);
-								}
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-					}
-					break;
-				case TfDatabaseColumnType.DateTime:
-					{
-						columnsBuilder.WithDateTimeColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.AutoDefaultValue)
-								c.WithAutoDefaultValue();
-							else
-							{
-								if (column.DefaultValue is not null)
-								{
-									var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
-									c.WithDefaultValue(datetime);
-								}
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-					}
-					break;
-				case TfDatabaseColumnType.Number:
-					{
-						columnsBuilder.WithNumberColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
-								c.WithDefaultValue(number);
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-					}
-					break;
-				case TfDatabaseColumnType.ShortInteger:
-					{
-						columnsBuilder.WithShortIntegerColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = short.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-					}
-					break;
-				case TfDatabaseColumnType.Integer:
-					{
-						columnsBuilder.WithIntegerColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = int.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-					}
-					break;
-				case TfDatabaseColumnType.LongInteger:
-					{
-						columnsBuilder.WithLongIntegerColumn(column.DbName, c =>
-						{
-							if (column.IsNullable) c.Nullable(); else c.NotNullable();
-							if (column.DefaultValue is not null)
-							{
-								var number = long.Parse(column.DefaultValue);
-								c.WithDefaultValue(number);
-							}
-						});
-
-						string indexName = $"ix_{providerTableName}_{column.DbName}";
-
-						if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
-							(column.IsSearchable || column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes =>
-							{
-								indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
-							});
-						}
-
-						if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
-							(!column.IsSearchable && !column.IsSortable))
-						{
-							tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
-						}
-					}
-					break;
-				default:
-					throw new Exception("Not supported database column type");
-			}
-
-			if (column.IsUnique && !existingColumn.IsUnique)
-			{
-				tableBuilder.WithConstraints(constraints =>
+			case TfDatabaseColumnType.Boolean:
 				{
-					constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
-						c => { c.WithColumns(column.DbName); });
-				});
-			}
+					columnsBuilder.WithBooleanColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
-			if (!column.IsUnique && existingColumn.IsUnique)
-			{
-				tableBuilder.WithConstraints(constraints =>
+						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+						{
+							c.WithDefaultValue(Convert.ToBoolean(column.DefaultValue));
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+
+				}
+				break;
+			case TfDatabaseColumnType.Text:
 				{
-					constraints.Remove($"ux_{providerTableName}_{column.DbName}");
-				});
-			}
+					columnsBuilder.WithTextColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
 
-			_dbManager.SaveChanges(dbBuilder);
+						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+						{
+							c.WithDefaultValue(column.DefaultValue);
+						}
+					});
 
-			return Result.Ok();
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddGinIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+
+				}
+				break;
+			case TfDatabaseColumnType.ShortText:
+				{
+					columnsBuilder.WithShortTextColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+
+						if (existingColumn.DefaultValue != column.DefaultValue && column.DefaultValue is not null)
+						{
+							c.WithDefaultValue(column.DefaultValue);
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+
+				}
+				break;
+			case TfDatabaseColumnType.Guid:
+				{
+					columnsBuilder.WithGuidColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.AutoDefaultValue)
+							c.WithAutoDefaultValue();
+						else
+						{
+							if (column.DefaultValue is not null)
+								c.WithDefaultValue(new Guid(column.DefaultValue));
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+				}
+				break;
+			case TfDatabaseColumnType.Date:
+				{
+					columnsBuilder.WithDateColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.AutoDefaultValue)
+							c.WithAutoDefaultValue();
+						else
+						{
+							if (column.DefaultValue is not null)
+							{
+								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+								DateOnly date = DateOnly.FromDateTime(datetime);
+								c.WithDefaultValue(date);
+							}
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+				}
+				break;
+			case TfDatabaseColumnType.DateTime:
+				{
+					columnsBuilder.WithDateTimeColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.AutoDefaultValue)
+							c.WithAutoDefaultValue();
+						else
+						{
+							if (column.DefaultValue is not null)
+							{
+								var datetime = DateTime.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+								c.WithDefaultValue(datetime);
+							}
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+				}
+				break;
+			case TfDatabaseColumnType.Number:
+				{
+					columnsBuilder.WithNumberColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+							c.WithDefaultValue(number);
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+				}
+				break;
+			case TfDatabaseColumnType.ShortInteger:
+				{
+					columnsBuilder.WithShortIntegerColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = short.Parse(column.DefaultValue);
+							c.WithDefaultValue(number);
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+				}
+				break;
+			case TfDatabaseColumnType.Integer:
+				{
+					columnsBuilder.WithIntegerColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = int.Parse(column.DefaultValue);
+							c.WithDefaultValue(number);
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+				}
+				break;
+			case TfDatabaseColumnType.LongInteger:
+				{
+					columnsBuilder.WithLongIntegerColumn(column.DbName, c =>
+					{
+						if (column.IsNullable) c.Nullable(); else c.NotNullable();
+						if (column.DefaultValue is not null)
+						{
+							var number = long.Parse(column.DefaultValue);
+							c.WithDefaultValue(number);
+						}
+					});
+
+					string indexName = $"ix_{providerTableName}_{column.DbName}";
+
+					if ((!existingColumn.IsSearchable && !existingColumn.IsSortable) &&
+						(column.IsSearchable || column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes =>
+						{
+							indexes.AddBTreeIndexBuilder(indexName, c => { c.WithColumns(column.DbName); });
+						});
+					}
+
+					if ((existingColumn.IsSearchable || existingColumn.IsSortable) &&
+						(!column.IsSearchable && !column.IsSortable))
+					{
+						tableBuilder.WithIndexes(indexes => { indexes.Remove(indexName); });
+					}
+				}
+				break;
+			default:
+				throw new Exception("Not supported database column type");
 		}
-		catch (Exception ex)
+
+		if (column.IsUnique && !existingColumn.IsUnique)
 		{
-			return Result.Fail(new Error("Failed to create database column.").CausedBy(ex));
+			tableBuilder.WithConstraints(constraints =>
+			{
+				constraints.AddUniqueKeyConstraintBuilder($"ux_{providerTableName}_{column.DbName}",
+					c => { c.WithColumns(column.DbName); });
+			});
 		}
+
+		if (!column.IsUnique && existingColumn.IsUnique)
+		{
+			tableBuilder.WithConstraints(constraints =>
+			{
+				constraints.Remove($"ux_{providerTableName}_{column.DbName}");
+			});
+		}
+
+		var result = _dbManager.SaveChanges(dbBuilder);
+		if (!result.IsSuccess)
+			throw new TfException("Failed to save changes to database schema");
 	}
 	#endregion
 
@@ -977,7 +889,7 @@ TfDataProviderColumn column)
 				RuleFor(column => column.DataProviderId)
 					.Must(providerId =>
 					{
-						return providerManager.GetProvider(providerId).Value != null;
+						return providerManager.GetProvider(providerId) != null;
 					})
 					.WithMessage("There is no existing data provider for specified provider id.");
 
@@ -991,11 +903,7 @@ TfDataProviderColumn column)
 						if (string.IsNullOrWhiteSpace(sourceType))
 							return true;
 
-						var providerResult = providerManager.GetProvider(column.DataProviderId);
-						if (providerResult.IsFailed)
-							return true;
-
-						var provider = providerResult.Value;
+						var provider = providerManager.GetProvider(column.DataProviderId);
 						if (provider is null)
 							return true;
 
@@ -1012,11 +920,7 @@ TfDataProviderColumn column)
 						if (string.IsNullOrWhiteSpace(sourceType))
 							return true;
 
-						var providerResult = providerManager.GetProvider(column.DataProviderId);
-						if (providerResult.IsFailed)
-							return true;
-
-						var provider = providerResult.Value;
+						var provider = providerManager.GetProvider(column.DataProviderId);
 						if (provider is null)
 							return true;
 
@@ -1034,11 +938,7 @@ TfDataProviderColumn column)
 						if (string.IsNullOrWhiteSpace(sourceType))
 							return true;
 
-						var providerResult = providerManager.GetProvider(column.DataProviderId);
-						if (providerResult.IsFailed)
-							return true;
-
-						var provider = providerResult.Value;
+						var provider = providerManager.GetProvider(column.DataProviderId);
 						if (provider is null)
 							return true;
 

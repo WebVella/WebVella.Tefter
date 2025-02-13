@@ -2,29 +2,20 @@
 
 public partial interface ITfDataManager
 {
-	internal Result DeleteSharedColumnData(
+	internal void DeleteSharedColumnData(
 		TfSharedColumn sharedColumn);
 }
 
 public partial class TfDataManager
 {
-	public Result DeleteSharedColumnData(
+	public void DeleteSharedColumnData(
 		TfSharedColumn sharedColumn)
 	{
-		try
-		{
-			string tableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType);
+		string tableName = GetSharedColumnValueTableNameByType(sharedColumn.DbType);
 
-			string sql = $"DELETE FROM {tableName} WHERE shared_column_id = @shared_column_id";
+		string sql = $"DELETE FROM {tableName} WHERE shared_column_id = @shared_column_id";
 
-			_dbService.ExecuteSqlNonQueryCommand(sql, new NpgsqlParameter("@shared_column_id", sharedColumn.Id));
-
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete data provider row after index").CausedBy(ex));
-		}
+		_dbService.ExecuteSqlNonQueryCommand(sql, new NpgsqlParameter("@shared_column_id", sharedColumn.Id));
 	}
 
 	private static string GetSharedColumnValueTableNameByType(TfDatabaseColumnType dbColumnType)

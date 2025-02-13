@@ -94,20 +94,16 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 	{
 		try
 		{
-			Result<TucDataProvider> submitResult = UC.UpdateDataProviderSynchPrimaryKeyColumns(TfAppState.Value.AdminDataProvider.Id, columns);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				ToastService.ShowSuccess("Data provider updated!");
-				Dispatcher.Dispatch(new SetAppStateAction(
+			TucDataProvider provider = UC.UpdateDataProviderSynchPrimaryKeyColumns(TfAppState.Value.AdminDataProvider.Id, columns);
+			ToastService.ShowSuccess("Data provider updated!");
+			Dispatcher.Dispatch(new SetAppStateAction(
 				component: this,
 				state: TfAppState.Value with
 				{
-					AdminDataProvider = submitResult.Value,
+					AdminDataProvider = provider,
 
 				}));
-				_keyitems = submitResult.Value.SynchPrimaryKeyColumns.ToList();
-			}
+			_keyitems = provider.SynchPrimaryKeyColumns.ToList();
 		}
 		catch (Exception ex)
 		{

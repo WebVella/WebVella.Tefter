@@ -30,7 +30,7 @@ internal partial class AppStateUseCase
 
 			var spaceDataList = GetSpaceDataList(space.Id);
 			var spaceViewList = GetSpaceViewList(space.Id);
-			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes, SpaceDataList = spaceDataList, SpaceViewList = spaceViewList};
+			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes, SpaceDataList = spaceDataList, SpaceViewList = spaceViewList };
 		}
 		else
 		{
@@ -40,87 +40,125 @@ internal partial class AppStateUseCase
 		return (newAppState, newAuxDataState);
 	}
 
-	internal virtual TucSpace GetSpace(Guid spaceId)
+	internal virtual TucSpace GetSpace(
+		Guid spaceId)
 	{
-		var serviceResult = _spaceManager.GetSpace(spaceId);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var space = _spaceManager.GetSpace(spaceId);
+			if (space is null)
+				return null;
+
+			return new TucSpace(space);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		if (serviceResult.Value is null) return null;
-
-		return new TucSpace(serviceResult.Value);
 	}
+
 	internal virtual Task<List<TucSpace>> GetUserSpacesAsync(TucUser user)
 	{
-
-		var serviceResult = _spaceManager.GetSpacesListForUser(user.Id);
-		if (serviceResult.IsFailed)
+		try
 		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return Task.FromResult(new List<TucSpace>());
-		}
-		var allSpaces = serviceResult.Value.Select(s => new TucSpace(s)).OrderBy(x => x.Position).ToList();
-		var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
+			var allSpaces = _spaceManager.GetSpacesListForUser(user.Id)
+				.Select(s => new TucSpace(s))
+				.OrderBy(x => x.Position)
+				.ToList();
 
-		var nodeSrvResult = _spaceManager.GetAllSpaceNodes();
-		if (nodeSrvResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetAllSpaceNodes failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return Task.FromResult(new List<TucSpace>());
-		}
+			var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
 
-		var spaceNodeDict = new Dictionary<Guid, List<TfSpaceNode>>();
-		foreach (var item in nodeSrvResult.Value)
-		{
-			if (!spacesHS.Contains(item.SpaceId)) continue;
-			if (!spaceNodeDict.ContainsKey(item.SpaceId)) spaceNodeDict[item.SpaceId] = new();
-			spaceNodeDict[item.SpaceId].Add(item);
-		}
+			var allSpaceNodes = _spaceManager.GetAllSpaceNodes();
 
-		foreach (var space in allSpaces)
-		{
-			if (spaceNodeDict.ContainsKey(space.Id) && spaceNodeDict[space.Id].Count > 0)
+			var spaceNodeDict = new Dictionary<Guid, List<TfSpaceNode>>();
+			foreach (var item in allSpaceNodes)
 			{
-				var spacePageNode = spaceNodeDict[space.Id].FindItemByMatch((x) => x.Type == TfSpaceNodeType.Page, (x) => x.ChildNodes);
-				if (spacePageNode != null)
-					space.DefaultNodeId = spacePageNode.Id;
+				if (!spacesHS.Contains(item.SpaceId))
+					continue;
+
+				if (!spaceNodeDict.ContainsKey(item.SpaceId))
+					spaceNodeDict[item.SpaceId] = new();
+
+				spaceNodeDict[item.SpaceId].Add(item);
 			}
 
-		}
-		return Task.FromResult(allSpaces.OrderBy(x => x.Position).Take(10).ToList());
+			foreach (var space in allSpaces)
+			{
+				if (spaceNodeDict.ContainsKey(space.Id) && spaceNodeDict[space.Id].Count > 0)
+				{
+					var spacePageNode = spaceNodeDict[space.Id].FindItemByMatch((x) => x.Type == TfSpaceNodeType.Page, (x) => x.ChildNodes);
+					if (spacePageNode != null)
+						space.DefaultNodeId = spacePageNode.Id;
+				}
 
+			}
+			return Task.FromResult(allSpaces.OrderBy(x => x.Position).Take(10).ToList());
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceResult(
+				exception: ex,
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpace>());
+		}
 	}
+
 	internal virtual Task<List<TucSpace>> GetAllSpaces()
 	{
+		try
+		{
+			var allSpaces = _spaceManager.GetSpacesList()
+				.Select(s => new TucSpace(s))
+				.OrderBy(x => x.Position)
+				.ToList();
 
-		var serviceResult = _spaceManager.GetSpacesList();
-		if (serviceResult.IsFailed)
+			var spacesHS = allSpaces
+				.Select(x => x.Id)
+				.Distinct()
+				.ToHashSet();
+
+			var spaceViewsDict = new Dictionary<Guid, List<TfSpaceView>>();
+			foreach (var item in _spaceManager.GetAllSpaceViews())
+			{
+				if (!spacesHS.Contains(item.SpaceId))
+					continue;
+
+				if (!spaceViewsDict.ContainsKey(item.SpaceId))
+					spaceViewsDict[item.SpaceId] = new();
+
+				spaceViewsDict[item.SpaceId].Add(item);
+			}
+
+			foreach (var spaceId in spaceViewsDict.Keys)
+			{
+				spaceViewsDict[spaceId] = spaceViewsDict[spaceId].OrderBy(x => x.Position).ToList();
+			}
+
+			foreach (var space in allSpaces)
+			{
+				if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
+					space.DefaultNodeId = spaceViewsDict[space.Id].OrderBy(x => x.Name).First().Id;
+			}
+
+			return Task.FromResult(allSpaces);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpace failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -129,122 +167,91 @@ internal partial class AppStateUseCase
 			);
 			return Task.FromResult(new List<TucSpace>());
 		}
-		var allSpaces = serviceResult.Value.Select(s => new TucSpace(s)).OrderBy(x => x.Position).ToList();
-		var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
-
-		var viewSrvResult = _spaceManager.GetAllSpaceViews();
-		if (viewSrvResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return Task.FromResult(new List<TucSpace>());
-		}
-
-		var spaceViewsDict = new Dictionary<Guid, List<TfSpaceView>>();
-		foreach (var item in viewSrvResult.Value)
-		{
-			if (!spacesHS.Contains(item.SpaceId)) continue;
-			if (!spaceViewsDict.ContainsKey(item.SpaceId)) spaceViewsDict[item.SpaceId] = new();
-			spaceViewsDict[item.SpaceId].Add(item);
-		}
-
-		foreach (var spaceId in spaceViewsDict.Keys)
-		{
-			spaceViewsDict[spaceId] = spaceViewsDict[spaceId].OrderBy(x => x.Position).ToList();
-		}
-
-		foreach (var space in allSpaces)
-		{
-			if (spaceViewsDict.ContainsKey(space.Id) && spaceViewsDict[space.Id].Count > 0)
-				space.DefaultNodeId = spaceViewsDict[space.Id].OrderBy(x => x.Name).First().Id;
-		}
-		return Task.FromResult(allSpaces);
-
 	}
-	internal virtual Result<TucSpace> CreateSpaceWithForm(TucSpace space)
+
+	internal virtual TucSpace CreateSpaceWithForm(
+		TucSpace space)
 	{
 		var result = _spaceManager.CreateSpace(space.ToModel());
-		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceWithFormAsync failed").CausedBy(result.Errors));
-		return Result.Ok(new TucSpace(result.Value));
+		return new TucSpace(result);
 	}
 
-	internal virtual Result<TucSpace> UpdateSpaceWithForm(TucSpace space)
+	internal virtual TucSpace UpdateSpaceWithForm(
+		TucSpace space)
 	{
 		var result = _spaceManager.UpdateSpace(space.ToModel());
-		if (result.IsFailed) return Result.Fail(new Error("UpdateSpaceWithForm failed").CausedBy(result.Errors));
-		return Result.Ok(new TucSpace(result.Value));
+		return new TucSpace(result);
 	}
 
-	internal virtual Result DeleteSpace(Guid spaceId)
+	internal virtual void DeleteSpace(
+		Guid spaceId)
 	{
-		var result = _spaceManager.DeleteSpace(spaceId);
-		if (result.IsFailed) return Result.Fail(new Error("DeleteSpace failed").CausedBy(result.Errors));
-		return Result.Ok();
+		_spaceManager.DeleteSpace(spaceId);
 	}
 
-	internal virtual List<TucSpaceNode> GetSpaceNodes(Guid spaceId)
+	internal virtual List<TucSpaceNode> GetSpaceNodes(
+		Guid spaceId)
 	{
-		var resultSM = _spaceManager.GetSpaceNodes(spaceId);
-		if (resultSM.IsFailed)
+		try
+		{
+			return _spaceManager.GetSpaceNodes(spaceId)
+				.Select(x => new TucSpaceNode(x))
+				.ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpace failed").CausedBy(resultSM.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		var result = resultSM.Value.Select(x => new TucSpaceNode(x)).ToList();
-		return result;
 	}
 
-	internal virtual Result<List<TucSpaceNode>> CreateSpaceNode(TucSpaceNode node)
+	internal virtual List<TucSpaceNode> CreateSpaceNode(
+		TucSpaceNode node)
 	{
-		var resultSM = _spaceManager.CreateSpaceNode(node.ToModel());
-		if (resultSM.IsFailed) return Result.Fail(new Error("CreateSpaceNode failed").CausedBy(resultSM.Errors));
-		var result = resultSM.Value.Item2.Select(x => new TucSpaceNode(x)).ToList();
-		return result;
+		return _spaceManager.CreateSpaceNode(node.ToModel())
+				.Item2
+				.Select(x => new TucSpaceNode(x)).ToList();
 	}
 
-	internal virtual Result<List<TucSpaceNode>> UpdateSpaceNode(TucSpaceNode node)
+	internal virtual List<TucSpaceNode> UpdateSpaceNode(
+		TucSpaceNode node)
 	{
-		var resultSM = _spaceManager.UpdateSpaceNode(node.ToModel());
-		if (resultSM.IsFailed) return Result.Fail(new Error("UpdateSpaceNode failed").CausedBy(resultSM.Errors));
-		var result = resultSM.Value.Select(x => new TucSpaceNode(x)).ToList();
-		return result;
+		return _spaceManager.UpdateSpaceNode(node.ToModel())
+			.Select(x => new TucSpaceNode(x))
+			.ToList();
 	}
 
-	internal virtual Result<List<TucSpaceNode>> MoveSpaceNode(TucSpaceNode node, bool isMoveUp)
+	internal virtual List<TucSpaceNode> MoveSpaceNode(
+		TucSpaceNode node,
+		bool isMoveUp)
 	{
-		if (isMoveUp) node.Position--;
-		else node.Position++;
+		if (isMoveUp) 
+			node.Position--;
+		else 
+			node.Position++;
+
 		return UpdateSpaceNode(node);
 	}
 
-	internal virtual Result<List<TucSpaceNode>> DeleteSpaceNode(TucSpaceNode node)
+	internal virtual List<TucSpaceNode> DeleteSpaceNode(
+		TucSpaceNode node)
 	{
-		var resultSM = _spaceManager.DeleteSpaceNode(node.ToModel());
-		if (resultSM.IsFailed) return Result.Fail(new Error("DeleteSpaceNode failed").CausedBy(resultSM.Errors));
-		var result = resultSM.Value.Select(x => new TucSpaceNode(x)).ToList();
-		return result;
+		return _spaceManager.DeleteSpaceNode(node.ToModel())
+			.Select(x => new TucSpaceNode(x))
+			.ToList();
 	}
 
-	internal virtual Result<List<TucSpaceNode>> CopySpaceNode(Guid nodeId)
+	internal virtual List<TucSpaceNode> CopySpaceNode(Guid nodeId)
 	{
-		var resultSM = _spaceManager.CopySpaceNode(nodeId);
-		if (resultSM.IsFailed) return Result.Fail(new Error("CopySpaceNode failed").CausedBy(resultSM.Errors));
 		//newNodeId is the id of newly created node copy of specified one by nodeId argument
-		var (newNodeId, nodesList) = resultSM.Value;
-		var result = nodesList.Select(x => new TucSpaceNode(x)).ToList();
-		return result;
+		var (newNodeId, nodesList) = _spaceManager.CopySpaceNode(nodeId);
+		return nodesList.Select(x => new TucSpaceNode(x)).ToList();
 	}
 }

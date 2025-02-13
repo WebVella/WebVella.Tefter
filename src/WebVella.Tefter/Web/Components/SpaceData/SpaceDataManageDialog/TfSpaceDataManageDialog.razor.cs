@@ -51,21 +51,17 @@ public partial class TfSpaceDataManageDialog : TfFormBaseComponent, IDialogConte
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			Result<TucSpaceData> result = null;
+			TucSpaceData result = null;
 			if (_isCreate)
 				result = UC.CreateSpaceDataWithForm(_form);
 			else
 				result = UC.UpdateSpaceDataWithForm(_form);
 
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				await Dialog.CloseAsync(result.Value);
-			}
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

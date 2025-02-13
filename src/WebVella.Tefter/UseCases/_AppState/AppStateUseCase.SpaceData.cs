@@ -1,10 +1,13 @@
 ﻿namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
-	internal Task<(TfAppState, TfAuxDataState)> InitSpaceDataAsync(IServiceProvider serviceProvider,
+	internal Task<(TfAppState, TfAuxDataState)> InitSpaceDataAsync(
+		IServiceProvider serviceProvider,
 		TucUser currentUser,
-		TfAppState newAppState, TfAppState oldAppState,
-		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
+		TfAppState newAppState,
+		TfAppState oldAppState,
+		TfAuxDataState newAuxDataState,
+		TfAuxDataState oldAuxDataState)
 	{
 		if (newAppState.Space is null)
 		{
@@ -54,83 +57,98 @@ internal partial class AppStateUseCase
 
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
-	internal virtual TucSpaceData GetSpaceData(Guid spaceDataId)
+	internal virtual TucSpaceData GetSpaceData(
+		Guid spaceDataId)
 	{
-		var serviceResult = _spaceManager.GetSpaceData(spaceDataId);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var spaceData = _spaceManager.GetSpaceData(spaceDataId);
+			if (spaceData is null)
+				return null;
+
+			return new TucSpaceData(spaceData);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceData failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		if (serviceResult.Value is null) return null;
-
-		return new TucSpaceData(serviceResult.Value);
 	}
 
-	internal virtual List<TucSpaceData> GetSpaceDataList(Guid spaceId)
+	internal virtual List<TucSpaceData> GetSpaceDataList(
+		Guid spaceId)
 	{
-		var serviceResult = _spaceManager.GetSpaceDataList(spaceId);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var spaceDataList = _spaceManager.GetSpaceDataList(spaceId);
+			if (spaceDataList is null)
+				return new();
+
+			return spaceDataList
+				.Select(x => new TucSpaceData(x))
+				.ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceDataList failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		if (serviceResult.Value is null) return new();
-
-		return serviceResult.Value.Select(x => new TucSpaceData(x)).ToList();
 	}
 
-	internal virtual Result DeleteSpaceData(Guid dataId)
+	internal virtual void DeleteSpaceData(
+		Guid dataId)
 	{
-		var tfResult = _spaceManager.DeleteSpaceData(dataId);
-		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
-
-		return Result.Ok();
+		_spaceManager.DeleteSpaceData(dataId);
 	}
 
 
-	internal virtual Result<TucSpaceData> CreateSpaceDataWithForm(TucSpaceData form)
+	internal virtual TucSpaceData CreateSpaceDataWithForm(
+		TucSpaceData form)
 	{
 		TfSpace space = null;
 		TfDataProvider dataprovider = null;
-		#region << Validate>>
-		var validationErrors = new List<ValidationError>();
+
+		#region << Validate >>
+
+		var valEx = new TfValidationException();
 		//args
-		if (String.IsNullOrWhiteSpace(form.Name)) validationErrors.Add(new ValidationError(nameof(form.Name), "name is required"));
-		if (form.SpaceId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "space is required"));
-		if (form.DataProviderId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "dataprovider is required"));
+		if (String.IsNullOrWhiteSpace(form.Name))
+			valEx.AddValidationError(nameof(form.Name), "name is required");
+
+		if (form.SpaceId == Guid.Empty)
+			valEx.AddValidationError(nameof(form.SpaceId), "space is required");
+
+		if (form.DataProviderId == Guid.Empty)
+			valEx.AddValidationError(nameof(form.DataProviderId), "dataprovider is required");
 
 		//Space
-		var spaceResult = _spaceManager.GetSpace(form.SpaceId);
-		if (spaceResult.IsFailed) return Result.Fail(new Error("GetSpace failed").CausedBy(spaceResult.Errors));
-		if (spaceResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "space is not found"));
-		space = spaceResult.Value;
+		space = _spaceManager.GetSpace(form.SpaceId);
+		if (space is null)
+			valEx.AddValidationError(nameof(form.SpaceId), "space is not found");
 
 		//DataProvider
 		if (form.DataProviderId != Guid.Empty)
 		{
-			var providerResult = _dataProviderManager.GetProvider(form.DataProviderId);
-			if (providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
-			if (providerResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "data provider is not found"));
-			dataprovider = providerResult.Value;
+			dataprovider = _dataProviderManager.GetProvider(form.DataProviderId);
+			if (dataprovider is null)
+				valEx.AddValidationError(nameof(form.DataProviderId), "data provider is not found");
 		}
 
-		if (validationErrors.Count > 0)
-			return Result.Fail(validationErrors);
+		valEx.ThrowIfContainsErrors();
 
 		#endregion
 
@@ -145,104 +163,120 @@ internal partial class AppStateUseCase
 			Position = 1 //position is overrided in the creation
 		};
 
-		var tfResult = _spaceManager.CreateSpaceData(spaceDataObj);
-		if (tfResult.IsFailed) return Result.Fail(new Error("CreateSpaceData failed").CausedBy(tfResult.Errors));
-		if (tfResult.Value is null) return Result.Fail("CreateSpaceData failed to return value");
+		var spaceData = _spaceManager.CreateSpaceData(spaceDataObj);
 
-		//Should commit transaction
-		return Result.Ok(new TucSpaceData(tfResult.Value));
+		return new TucSpaceData(spaceData);
 	}
 
-	internal virtual Result<TucSpaceData> UpdateSpaceDataWithForm(TucSpaceData form)
+	internal virtual TucSpaceData UpdateSpaceDataWithForm(
+		TucSpaceData form)
 	{
 		TfSpace space = null;
 		TfSpaceData spaceData = null;
 		TfDataProvider dataprovider = null;
+
 		#region << Validate>>
-		var validationErrors = new List<ValidationError>();
+
+		var valEx = new TfValidationException();
+
 		//args
-		if (form.Id == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.Id), "required"));
-		if (String.IsNullOrWhiteSpace(form.Name)) validationErrors.Add(new ValidationError(nameof(form.Name), "required"));
-		if (form.SpaceId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "required"));
-		if (form.DataProviderId == Guid.Empty) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "required"));
+		if (form.Id == Guid.Empty)
+			valEx.AddValidationError(nameof(form.Id), "required");
+
+		if (String.IsNullOrWhiteSpace(form.Name))
+			valEx.AddValidationError(nameof(form.Name), "required");
+
+		if (form.SpaceId == Guid.Empty)
+			valEx.AddValidationError(nameof(form.SpaceId), "required");
+
+		if (form.DataProviderId == Guid.Empty)
+			valEx.AddValidationError(nameof(form.DataProviderId), "required");
 
 		//Space
-		var spaceResult = _spaceManager.GetSpace(form.SpaceId);
-		if (spaceResult.IsFailed) return Result.Fail(new Error("GetSpace failed").CausedBy(spaceResult.Errors));
-		if (spaceResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.SpaceId), "space is not found"));
-		space = spaceResult.Value;
+		space = _spaceManager.GetSpace(form.SpaceId);
+		if (space is null)
+			valEx.AddValidationError(nameof(form.SpaceId), "space is not found");
 
 		//DataProvider
 		if (form.DataProviderId != Guid.Empty)
 		{
-			var providerResult = _dataProviderManager.GetProvider(form.DataProviderId);
-			if (providerResult.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
-			if (providerResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.DataProviderId), "data provider is not found"));
-			dataprovider = providerResult.Value;
+			dataprovider = _dataProviderManager.GetProvider(form.DataProviderId);
+			if (dataprovider is null)
+				valEx.AddValidationError(nameof(form.DataProviderId), "data provider is not found");
 		}
 
 		//SpaceData
-		var spaceDataResult = _spaceManager.GetSpaceData(form.Id);
-		if (spaceDataResult.IsFailed) return Result.Fail(new Error("GetSpaceData failed").CausedBy(spaceDataResult.Errors));
-		if (spaceDataResult.Value is null) validationErrors.Add(new ValidationError(nameof(form.Id), "dataset is not found"));
-		spaceData = spaceDataResult.Value;
+		spaceData = _spaceManager.GetSpaceData(form.Id);
+		if (spaceData is null)
+			valEx.AddValidationError(nameof(form.Id), "dataset is not found");
 
-
-
-		if (validationErrors.Count > 0)
-			return Result.Fail(validationErrors);
+		valEx.ThrowIfContainsErrors();
 
 		#endregion
+
 		spaceData.Name = form.Name;
 		spaceData.DataProviderId = form.DataProviderId;
 
-		var tfResult = _spaceManager.UpdateSpaceData(spaceData);
-		if (tfResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(tfResult.Errors));
-		if (tfResult.Value is null) return Result.Fail("UpdateSpaceData failed to return value");
+		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData);
 
 		//Should commit transaction
-		return Result.Ok(new TucSpaceData(tfResult.Value));
+		return new TucSpaceData(updatedSpaceData);
 	}
 
-	internal virtual Result<TucSpaceData> UpdateSpaceDataColumns(Guid spaceDataId, List<string> columns)
+	internal virtual TucSpaceData UpdateSpaceDataColumns(
+		Guid spaceDataId,
+		List<string> columns)
 	{
-		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if (spaceDataId == Guid.Empty)
+			new TfException("spaceDataId is required");
+
 		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null) return Result.Fail("spaceData not found");
+		if (spaceData is null)
+			new TfException("spaceData not found");
+
 		spaceData.Columns = columns;
-		var model = spaceData.ToModel();
-		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
-		return Result.Ok(new TucSpaceData(updateResult.Value));
+		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+
+		return new TucSpaceData(updatedSpaceData);
 
 	}
 
-	internal virtual Result<TucSpaceData> UpdateSpaceDataFilters(Guid spaceDataId, List<TucFilterBase> filters)
+	internal virtual TucSpaceData UpdateSpaceDataFilters(
+		Guid spaceDataId,
+		List<TucFilterBase> filters)
 	{
-		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
+		if (spaceDataId == Guid.Empty)
+			throw new TfException("spaceDataId is required");
+
 		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null) return Result.Fail("spaceData not found");
+		if (spaceData is null)
+			throw new TfException("spaceData not found");
+
 		spaceData.Filters = filters;
-		var model = spaceData.ToModel();
-		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
 
-		return Result.Ok(new TucSpaceData(updateResult.Value));
+		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+
+		return new TucSpaceData(updatedSpaceData);
 
 	}
 
-	internal virtual Result<TucSpaceData> UpdateSpaceDataSorts(Guid spaceDataId, List<TucSort> sorts)
+	internal virtual TucSpaceData UpdateSpaceDataSorts(
+		Guid spaceDataId,
+		List<TucSort> sorts)
 	{
-		if (spaceDataId == Guid.Empty) return Result.Fail("spaceDataId is required");
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null) return Result.Fail("spaceData not found");
-		spaceData.SortOrders = sorts;
-		var model = spaceData.ToModel();
-		var updateResult = _spaceManager.UpdateSpaceData(spaceData.ToModel());
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceData failed").CausedBy(updateResult.Errors));
+		if (spaceDataId == Guid.Empty)
+			throw new TfException("spaceDataId is required");
 
-		return Result.Ok(new TucSpaceData(updateResult.Value));
+		var spaceData = GetSpaceData(spaceDataId);
+		if (spaceData is null)
+			throw new TfException("spaceData not found");
+
+		spaceData.SortOrders = sorts;
+
+		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+
+		return new TucSpaceData(updatedSpaceData);
 
 	}
 
@@ -257,65 +291,47 @@ internal partial class AppStateUseCase
 		int? page = null,
 		int? pageSize = null)
 	{
-		if (spaceDataId == Guid.Empty)
+		try
+		{
+			if (spaceDataId == Guid.Empty)
+				throw new TfException("spaceDataId not provided");
+
+			var spaceData = GetSpaceData(spaceDataId);
+			if (spaceData is null)
+				throw new TfException("Space Data is not found");
+
+			List<TfFilterBase> presetFiltersSM = null;
+			List<TfSort> presetSortsSM = null;
+			List<TfFilterBase> userFiltersSM = null;
+			List<TfSort> userSortsSM = null;
+			if (presetFilters is not null) presetFiltersSM = presetFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+			if (presetSorts is not null) presetSortsSM = presetSorts.Select(x => x.ToModel()).ToList();
+			if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+			if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
+
+			return _dataManager.QuerySpaceData(
+				spaceDataId: spaceDataId,
+				presetFilters: presetFiltersSM,
+				presetSorts: presetSortsSM,
+				userFilters: userFiltersSM,
+				userSorts: userSortsSM,
+				search: search,
+				page: page,
+				pageSize: pageSize
+			);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("spaceDataId not provided"),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("Space Data is not found"),
-				toastErrorMessage: "Space Data is not found",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Space Data is not found",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-
-		List<TfFilterBase> presetFiltersSM = null;
-		List<TfSort> presetSortsSM = null;
-		List<TfFilterBase> userFiltersSM = null;
-		List<TfSort> userSortsSM = null;
-		if (presetFilters is not null) presetFiltersSM = presetFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
-		if (presetSorts is not null) presetSortsSM = presetSorts.Select(x => x.ToModel()).ToList();
-		if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
-		if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
-
-		var serviceResult = _dataManager.QuerySpaceData(
-			spaceDataId: spaceDataId,
-			presetFilters: presetFiltersSM,
-			presetSorts: presetSortsSM,
-			userFilters: userFiltersSM,
-			userSorts: userSortsSM,
-			search: search,
-			page: page,
-			pageSize: pageSize
-		);
-		if (serviceResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-
-		return serviceResult.Value;
 	}
 
 	internal virtual List<Guid> GetSpaceDataIdList(
@@ -328,147 +344,119 @@ internal partial class AppStateUseCase
 		int? page = null,
 		int? pageSize = null)
 	{
-		if (spaceDataId == Guid.Empty)
+		try
 		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("spaceDataId not provided"),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("Space Data is not found"),
-				toastErrorMessage: "Space Data is not found",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Space Data is not found",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
+			if (spaceDataId == Guid.Empty)
+				throw new TfException("spaceDataId not provided");
 
-		List<TfFilterBase> presetFiltersSM = null;
-		List<TfSort> presetSortsSM = null;
-		List<TfFilterBase> userFiltersSM = null;
-		List<TfSort> userSortsSM = null;
-		if (presetFilters is not null) presetFiltersSM = presetFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
-		if (presetSorts is not null) presetSortsSM = presetSorts.Select(x => x.ToModel()).ToList();
-		if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
-		if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
+			var spaceData = GetSpaceData(spaceDataId);
+			if (spaceData is null)
+				throw new TfException("Space Data is not found");
 
-		var serviceResult = _dataManager.QuerySpaceData(
-			spaceDataId: spaceDataId,
-			presetFilters: presetFiltersSM,
-			presetSorts: presetSortsSM,
-			userFilters: userFiltersSM,
-			userSorts: userSortsSM,
-			search: search,
-			page: page,
-			pageSize: pageSize,
-			noRows:false,
-			returnOnlyTfIds:true
-		);
-		if (serviceResult.IsFailed)
+			List<TfFilterBase> presetFiltersSM = null;
+			List<TfSort> presetSortsSM = null;
+			List<TfFilterBase> userFiltersSM = null;
+			List<TfSort> userSortsSM = null;
+			if (presetFilters is not null) presetFiltersSM = presetFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+			if (presetSorts is not null) presetSortsSM = presetSorts.Select(x => x.ToModel()).ToList();
+			if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
+			if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
+
+			var dt = _dataManager.QuerySpaceData(
+				spaceDataId: spaceDataId,
+				presetFilters: presetFiltersSM,
+				presetSorts: presetSortsSM,
+				userFilters: userFiltersSM,
+				userSorts: userSortsSM,
+				search: search,
+				page: page,
+				pageSize: pageSize,
+				noRows: false,
+				returnOnlyTfIds: true
+			);
+
+			var result = new List<Guid>();
+			for (int i = 0; i < dt.Rows.Count; i++)
+			{
+				result.Add((Guid)dt.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);
+			}
+			return result;
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("QuerySpaceData failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		var result = new List<Guid>();
-		for (int i = 0; i < serviceResult.Value.Rows.Count; i++)
-		{
-			result.Add((Guid)serviceResult.Value.Rows[i][TfConstants.TEFTER_ITEM_ID_PROP_NAME]);
-		}
-		return result;
 	}
 
-	internal virtual Result<TfDataTable> SaveDataDataTable(TfDataTable dt)
+	internal virtual TfDataTable SaveDataDataTable(
+		TfDataTable dt)
 	{
-		var saveResult = _dataManager.SaveDataTable(dt);
-		if (saveResult.IsFailed) return Result.Fail(new Error("SaveDataTable failed").CausedBy(saveResult.Errors));
-		return Result.Ok(saveResult.Value);
+		return _dataManager.SaveDataTable(dt);
 	}
 
-	internal virtual Result DeleteSpaceDataRows(Guid spaceDataId, List<Guid> tfIdList)
+	internal virtual void DeleteSpaceDataRows(
+		Guid spaceDataId,
+		List<Guid> tfIdList)
 	{
-		if (spaceDataId == Guid.Empty)
+		try
 		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("spaceDataId not provided"),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-		var spaceData = GetSpaceData(spaceDataId);
-		if (spaceData is null)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("Space Data is not found"),
-				toastErrorMessage: "Space Data is not found",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Space Data is not found",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-		var dataProviderResult = _dataProviderManager.GetProvider(spaceData.DataProviderId);
-		if (dataProviderResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProvider failed").CausedBy(dataProviderResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
+			if (spaceDataId == Guid.Empty)
+				throw new TfException("spaceDataId not provided");
 
-		foreach (var tfId in tfIdList)
-		{
-			var result = _dataManager.DeleteDataProviderRowByTfId(dataProviderResult.Value, tfId);
-			if (result.IsFailed) return Result.Fail("Deleting a record failed");
+			var spaceData = GetSpaceData(spaceDataId);
+			if (spaceData is null)
+				throw new TfException("Space Data is not found");
+
+			var dataProvider = _dataProviderManager.GetProvider(spaceData.DataProviderId);
+			if (dataProvider is null)
+				throw new TfException("GetProvider failed");
+
+			foreach (var tfId in tfIdList)
+			{
+				_dataManager.DeleteDataProviderRowByTfId(dataProvider, tfId);
+			}
 		}
-		return Result.Ok();
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceResult(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+		}
 	}
 
 	//Data provider
 	internal virtual List<TucDataProvider> GetDataProviderList()
 	{
-		var serviceResult = _dataProviderManager.GetProviders();
-		if (serviceResult.IsFailed)
+		try
+		{
+			return _dataProviderManager.GetProviders()
+				.Select(x => new TucDataProvider(x))
+				.ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProviders failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		if (serviceResult.Value is null) return new();
-
-		return serviceResult.Value.Select(x => new TucDataProvider(x)).ToList();
 	}
 }

@@ -1,7 +1,4 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-using FluentResults;
-
-namespace WebVella.Tefter.DataProviders.MsSql;
+﻿namespace WebVella.Tefter.DataProviders.MsSql;
 
 public class MsSqlDataProvider : ITfDataProviderType
 {

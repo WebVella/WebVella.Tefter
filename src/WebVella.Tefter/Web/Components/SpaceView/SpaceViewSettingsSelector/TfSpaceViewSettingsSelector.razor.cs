@@ -32,16 +32,12 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 		try
 		{
 
-			Result result = UC.DeleteSpaceView(TfAppState.Value.SpaceView.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Space view deleted"));
-				if (TfAppState.Value.SpaceViewList.Count > 0)
-					Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
-				else
-					Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
-			}
+			UC.DeleteSpaceView(TfAppState.Value.SpaceView.Id);
+			ToastService.ShowSuccess(LOC("Space view deleted"));
+			if (TfAppState.Value.SpaceViewList.Count > 0)
+				Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
+			else
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
 		}
 		catch (Exception ex)
 		{
@@ -52,6 +48,6 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 			await InvokeAsync(StateHasChanged);
 		}
 	}
-	
+
 
 }

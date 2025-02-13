@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using WebVella.Tefter.EmailSender.Models;
 using WebVella.Tefter.EmailSender.Services;
+using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.TemplateProcessors.Email.Components;
 using WebVella.Tefter.TemplateProcessors.ExcelFile;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
@@ -144,13 +145,35 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				emailMessage.Attachments.Add(emailAttachment);
 			}
 
-			var resultEmail = emailService.CreateEmailMessage(emailMessage);
-			if(!resultEmail.IsSuccess)
+			try
 			{
-				foreach (var err in resultEmail.Errors)
+				var resultEmail = emailService.CreateEmailMessage(emailMessage);
+			}
+			catch (Exception ex)
+			{
+				if (ex is TfValidationException)
 				{
-					result.Errors.Add(new ValidationError("", err.Message));
+					var valEx = ex as TfValidationException;
+
+					var data = valEx.GetDataAsUsableDictionary();
+					foreach (var propertyName in data.Keys)
+					{
+						var errors = data[propertyName];
+						foreach (var errorMessage in errors)
+						{
+							if (String.IsNullOrWhiteSpace(propertyName))
+								result.Errors.Add(new ValidationError("",errorMessage));
+							else
+								result.Errors.Add(new ValidationError(propertyName, errorMessage));
+						}
+					}
+
+					if(data.Keys.Count ==0 && !string.IsNullOrWhiteSpace(valEx.Message))
+						result.Errors.Add(new ValidationError("", ex.Message));
 				}
+				else
+					result.Errors.Add(new ValidationError("", ex.Message));
+
 			}
 		}
 
@@ -231,25 +254,13 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 				foreach (var attItem in settings.AttachmentItems ?? new List<EmailTemplateSettingsAttachmentItem>())
 				{
-					var excelTemplateResult = templateService.GetTemplate(attItem.TemplateId);
+					var excelTemplate = templateService.GetTemplate(attItem.TemplateId);
 
 					//we ignore missing template attachments
-					if (!excelTemplateResult.IsSuccess || excelTemplateResult.Value == null)
-					{
-						//emailItem.Attachments.Add(new EmailTemplateResultItemAttachment
-						//{
-						//	BlobId = null,
-						//	DownloadUrl = null,
-						//	Errors = new List<ValidationError>()
-						//	{
-						//		new ValidationError("", "Excel template was not found.")
-						//	},
-						//	FileName = null
-						//});
+					if (excelTemplate == null)
 						continue;
-					}
 
-					if (((TfTemplate)excelTemplateResult.Value).ContentProcessorType != typeof(ExcelFileTemplateProcessor))
+					if (((TfTemplate)excelTemplate).ContentProcessorType != typeof(ExcelFileTemplateProcessor))
 					{
 						emailItem.Attachments.Add(new EmailTemplateResultItemAttachment
 						{
@@ -402,9 +413,8 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 		ITfTemplateService _templateService)
 	{
 		var result = new List<TfTemplate>();
-		var allTemplatesResult = _templateService.GetTemplates();
-		if (allTemplatesResult.IsFailed) throw new Exception("GetTemplates failed");
-		foreach (var item in allTemplatesResult.Value)
+		var allTemplates = _templateService.GetTemplates();
+		foreach (var item in allTemplates)
 		{
 			if (item.ResultType != TfTemplateResultType.File) continue;
 			if (!item.IsSelectable) continue;

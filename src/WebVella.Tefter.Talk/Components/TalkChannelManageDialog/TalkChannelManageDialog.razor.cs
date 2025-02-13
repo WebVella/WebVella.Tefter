@@ -52,7 +52,7 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<TalkChannel>();
+			var result = new TalkChannel();
 			if (_isCreate)
 			{
 				result = TalkService.CreateChannel(_form);
@@ -61,16 +61,11 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 			{
 				result = TalkService.UpdateChannel(_form);
 			}
-
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				await Dialog.CloseAsync(result.Value);
-			}
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

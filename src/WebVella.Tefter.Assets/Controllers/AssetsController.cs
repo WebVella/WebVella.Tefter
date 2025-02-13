@@ -36,15 +36,7 @@ public class AssetsController : ControllerBase
 			return new JsonResult(new { });
 		}
 
-		var assetResult = _assetsService.GetAsset(assetId);
-		if(!assetResult.IsSuccess)
-		{
-			HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-			return new JsonResult(new { });
-		}
-
-		var asset = assetResult.Value;
-
+		var asset = _assetsService.GetAsset(assetId);
 		if (asset is null || asset.Type != AssetType.File )
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;

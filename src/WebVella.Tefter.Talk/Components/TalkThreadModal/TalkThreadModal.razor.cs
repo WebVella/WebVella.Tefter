@@ -30,15 +30,9 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 			|| Content.DataProviderId == Guid.Empty
 			|| Content.SelectedRowIds is null || Content.SelectedRowIds.Count == 0) return;
 
-			var getDataProviderResult = DataProviderManager.GetProvider(Content.DataProviderId);
-			if (getDataProviderResult.IsSuccess) _dataProvider = getDataProviderResult.Value;
-			else throw new Exception("GetProvider failed");
+			_dataProvider = DataProviderManager.GetProvider(Content.DataProviderId);
 
-
-			var allChannels = new List<TalkChannel>();
-			var getChannelsResult = TalkService.GetChannels();
-			if (getChannelsResult.IsSuccess) allChannels = getChannelsResult.Value;
-			else throw new Exception("GetChannels failed");
+			var allChannels = TalkService.GetChannels();
 
 			//Select only channels that are compatible with this DataProvider
 			foreach (var channel in allChannels)
@@ -86,14 +80,10 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 				RowIds = Content.SelectedRowIds,
 				DataProviderId = Content.DataProviderId
 			};
-			var result = TalkService.CreateThread(submit);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Message is sent"));
-				_content = null;
-				await _cancel();
-			}
+			TalkService.CreateThread(submit);
+			ToastService.ShowSuccess(LOC("Message is sent"));
+			_content = null;
+			await _cancel();
 		}
 		catch (Exception ex)
 		{

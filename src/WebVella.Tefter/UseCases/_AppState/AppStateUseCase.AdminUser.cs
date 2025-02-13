@@ -53,80 +53,89 @@ internal partial class AppStateUseCase
 
 	internal virtual async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
 	{
-		var srvResult = await _identityManager.GetUsersAsync();
-		if (srvResult.IsFailed)
+		try
+		{
+			var users = await _identityManager.GetUsersAsync();
+			var orderedResults = users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName);
+			var records = new List<User>();
+			if (!String.IsNullOrWhiteSpace(search))
+			{
+				var searchProcessed = search.Trim().ToLowerInvariant();
+				foreach (var item in orderedResults)
+				{
+					bool hasMatch = false;
+					if (item.Email.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+					if (item.FirstName.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+					if (item.LastName.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+					if (hasMatch) records.Add(item);
+				}
+			}
+			else records = orderedResults.ToList();
+
+			if (page is null || pageSize is null) return records.Select(x => new TucUser(x)).ToList();
+
+			return records.Skip(TfConverters.CalcSkip(page.Value, pageSize.Value)).Take(pageSize.Value).Select(x => new TucUser(x)).ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetUsersAsync failed").CausedBy(srvResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return new List<TucUser>();
 		}
-
-		if (srvResult.Value is null) return new List<TucUser>();
-		var orderedResults = srvResult.Value.OrderBy(x=> x.FirstName).ThenBy(x=> x.LastName);
-
-		var records = new List<User>();
-		if (!String.IsNullOrWhiteSpace(search))
-		{
-			var searchProcessed = search.Trim().ToLowerInvariant();
-			foreach (var item in orderedResults)
-			{
-				bool hasMatch = false;
-				if(item.Email.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
-				if(item.FirstName.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
-				if(item.LastName.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
-				if(hasMatch) records.Add(item);
-			}
-		}
-		else records = orderedResults.ToList();
-
-		if (page is null || pageSize is null) return records.Select(x => new TucUser(x)).ToList();
-
-		return records.Skip(TfConverters.CalcSkip(page.Value,pageSize.Value)).Take(pageSize.Value).Select(x => new TucUser(x)).ToList();
 
 	}
 	internal virtual async Task<TucUser> GetUserAsync(Guid userId)
 	{
-		var srvResult = await _identityManager.GetUserAsync(userId);
-		if (srvResult.IsFailed)
+		try
+		{
+			var user = await _identityManager.GetUserAsync(userId);
+			
+			if (user is null) 
+				return null;
+
+			return new TucUser(user);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetUserAsync failed").CausedBy(srvResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		if (srvResult.Value is null) return null;
-		return new TucUser(srvResult.Value);
 	}
+
 	internal virtual async Task<List<TucRole>> GetUserRolesAsync()
 	{
-		var srvResult = await _identityManager.GetRolesAsync();
-		if (srvResult.IsFailed)
+		try
+		{
+			var roles = await _identityManager.GetRolesAsync();
+			return roles.Select(x => new TucRole(x)).ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetRolesAsync failed").CausedBy(srvResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage:"Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return null;
 		}
-		if (srvResult.Value is null) return null;
-		return srvResult.Value.Select(x => new TucRole(x)).ToList();
 	}
-	internal virtual async Task<Result<TucUser>> CreateUserWithFormAsync(TucUserAdminManageForm form)
+	internal virtual async Task<TucUser> CreateUserWithFormAsync(TucUserAdminManageForm form)
 	{
 		UserBuilder userBuilder = _identityManager.CreateUserBuilder(null);
 		userBuilder
@@ -143,19 +152,17 @@ internal partial class AppStateUseCase
 			.WithRoles(form.Roles.Select(x => x.ToModel()).ToArray());
 
 		var user = userBuilder.Build();
-		var result = await _identityManager.SaveUserAsync(user);
-		if (result.IsFailed) return Result.Fail(new Error("SaveUserAsync failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucUser(result.Value));
+		user = await _identityManager.SaveUserAsync(user);
+		return new TucUser(user);
 	}
 
-	internal virtual async Task<Result<TucUser>> UpdateUserWithFormAsync(TucUserAdminManageForm form)
+	internal virtual async Task<TucUser> UpdateUserWithFormAsync(TucUserAdminManageForm form)
 	{
-		var currentUserResult = await _identityManager.GetUserAsync(form.Id);
-		if (currentUserResult.IsFailed) return Result.Fail(new Error("GetUserAsync failed").CausedBy(currentUserResult.Errors));
-		if (currentUserResult.Value is null) return Result.Fail(new Error("GetUserAsync - no user was created"));
+		var currentUser = await _identityManager.GetUserAsync(form.Id);
+		if (currentUser is null) 
+			throw new TfException("User does not exist");
 
-		UserBuilder userBuilder = _identityManager.CreateUserBuilder(currentUserResult.Value);
+		UserBuilder userBuilder = _identityManager.CreateUserBuilder(currentUser);
 		userBuilder
 			.WithEmail(form.Email)
 			.WithFirstName(form.FirstName)
@@ -171,7 +178,6 @@ internal partial class AppStateUseCase
 
 		var user = userBuilder.Build();
 		var result = await _identityManager.SaveUserAsync(user);
-		if (result.IsFailed) return Result.Fail(new Error("SaveUserAsync failed").CausedBy(result.Errors));
-		return Result.Ok(new TucUser(result.Value));
+		return new TucUser(result);
 	}
 }

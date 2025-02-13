@@ -63,9 +63,7 @@ public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		var allChannelsResult = TalkService.GetChannels();
-		if (allChannelsResult.IsFailed) throw new Exception("GetChannels failed");
-		_channels = allChannelsResult.Value;
+		_channels = TalkService.GetChannels();
 		if(!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson)){ 
 			optionsJson = Context.ComponentOptionsJson;
 			_options = JsonSerializer.Deserialize<TalkPageComponentPageComponentOptions>(optionsJson);

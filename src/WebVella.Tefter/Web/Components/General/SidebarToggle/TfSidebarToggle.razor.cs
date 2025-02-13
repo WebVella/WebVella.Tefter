@@ -25,19 +25,14 @@ public partial class TfSidebarToggle : TfBaseComponent
 	{
 		try
 		{
-			var resultSrv = await UC.SetSidebarState(
+			var user = await UC.SetSidebarState(
 						userId: TfUserState.Value.CurrentUser.Id,
 						sidebarExpanded: !TfUserState.Value.SidebarExpanded);
 
-			ProcessServiceResponse(resultSrv);
-
-			if (resultSrv.IsSuccess)
-			{
-				Dispatcher.Dispatch(new SetUserStateAction(
-					component: this,
-					oldStateHash:TfUserState.Value.Hash,
-					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
-			}
+			Dispatcher.Dispatch(new SetUserStateAction(
+				component: this,
+				oldStateHash: TfUserState.Value.Hash,
+				state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = user }));
 		}
 		catch (Exception ex)
 		{

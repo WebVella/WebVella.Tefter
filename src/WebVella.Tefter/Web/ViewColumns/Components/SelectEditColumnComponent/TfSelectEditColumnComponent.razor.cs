@@ -119,7 +119,8 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 			if (componentOptions.SpaceDataId != Guid.Empty)
 			{
 				var dataManager = serviceProvider.GetService<ITfDataManager>();
-				var optionsDTResult = dataManager.QuerySpaceData(
+				
+				var optionsDT = dataManager.QuerySpaceData(
 					spaceDataId: componentOptions.SpaceDataId,
 					userFilters: null,
 					userSorts: null,
@@ -127,7 +128,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 					page: 1,
 					pageSize: TfConstants.SelectOptionsMaxLimit
 				);
-				var optionsDT = optionsDTResult.Value;
+				
 				for (int i = 0; i < optionsDT.Rows.Count; i++)
 				{
 					object value = null;

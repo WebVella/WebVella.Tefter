@@ -70,19 +70,17 @@ public partial class TemplatesTests : BaseTest
 				};
 
 				var createResult = templatesService.CreateTemplate(createTemplateModel);
-				createResult.IsSuccess.Should().BeTrue();
-
+				
 				var allTemplateResult = templatesService.GetTemplates();
-				allTemplateResult.IsSuccess.Should().BeTrue();
-				allTemplateResult.Value.Count.Should().Be(1);
-				allTemplateResult.Value[0].Name.Should().Be(createTemplateModel.Name);
-				allTemplateResult.Value[0].Description.Should().Be(createTemplateModel.Description);
-				allTemplateResult.Value[0].FluentIconName.Should().Be(createTemplateModel.FluentIconName);
+				allTemplateResult.Count.Should().Be(1);
+				allTemplateResult[0].Name.Should().Be(createTemplateModel.Name);
+				allTemplateResult[0].Description.Should().Be(createTemplateModel.Description);
+				allTemplateResult[0].FluentIconName.Should().Be(createTemplateModel.FluentIconName);
 
 
 				TfManageTemplateModel updateTemplateModel = new TfManageTemplateModel
 				{
-					Id = allTemplateResult.Value[0].Id,
+					Id = allTemplateResult[0].Id,
 					Name = "unit test updated",
 					Description = "unit test desc updated",
 					FluentIconName = "icon",
@@ -94,21 +92,17 @@ public partial class TemplatesTests : BaseTest
 				};
 				
 				var updateResult = templatesService.UpdateTemplate(updateTemplateModel);
-				updateResult.IsSuccess.Should().BeTrue();
 
 				allTemplateResult = templatesService.GetTemplates();
-				allTemplateResult.IsSuccess.Should().BeTrue();
-				allTemplateResult.Value.Count.Should().Be(1);
-				allTemplateResult.Value[0].Name.Should().Be(updateTemplateModel.Name);
-				allTemplateResult.Value[0].Description.Should().Be(updateTemplateModel.Description);
-				allTemplateResult.Value[0].FluentIconName.Should().Be(updateTemplateModel.FluentIconName);
+				allTemplateResult.Count.Should().Be(1);
+				allTemplateResult[0].Name.Should().Be(updateTemplateModel.Name);
+				allTemplateResult[0].Description.Should().Be(updateTemplateModel.Description);
+				allTemplateResult[0].FluentIconName.Should().Be(updateTemplateModel.FluentIconName);
 
-				var deleteResult = templatesService.DeleteTemplate(updateTemplateModel.Id);
-				deleteResult.IsSuccess.Should().BeTrue();
-
+				templatesService.DeleteTemplate(updateTemplateModel.Id);
+				
 				allTemplateResult = templatesService.GetTemplates();
-				allTemplateResult.IsSuccess.Should().BeTrue();
-				allTemplateResult.Value.Count.Should().Be(0);
+				allTemplateResult.Count.Should().Be(0);
 			}
 		}
 	}

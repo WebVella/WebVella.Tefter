@@ -118,17 +118,14 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (TfAppState.Value.Route.PageSize == pageSize) return;
 		try
 		{
-			var resultSrv = await UserUC.SetPageSize(
+			var user = await UserUC.SetPageSize(
 						userId: TfUserState.Value.CurrentUser.Id,
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);
-			if (resultSrv.IsSuccess)
-			{
-				Dispatcher.Dispatch(new SetUserStateAction(
-					component: this,
-					oldStateHash: TfUserState.Value.Hash,
-					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
-			}
+			Dispatcher.Dispatch(new SetUserStateAction(
+				component: this,
+				oldStateHash: TfUserState.Value.Hash,
+				state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = user }));
 		}
 		catch { }
 
@@ -273,33 +270,34 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private Task _onRowChanged(TfDataTable value)
 	{
-		var result = UC.SaveDataDataTable(value);
-		//ProcessServiceResponse(result); //should be handled by the component
-		if (result.IsSuccess)
+		try
 		{
+			var dataTable = UC.SaveDataDataTable(value);
+
 			//Apply changed to the datatable
 			var viewData = TfAppState.Value.SpaceViewData.Clone();
-			if (viewData is null || viewData.Rows.Count == 0 || result.Value.Rows.Count == 0) return Task.CompletedTask;
-			for (int i = 0; i < result.Value.Rows.Count; i++)
+			if (viewData is null || viewData.Rows.Count == 0 || dataTable.Rows.Count == 0) return Task.CompletedTask;
+			for (int i = 0; i < dataTable.Rows.Count; i++)
 			{
-				TfDataRow row = result.Value.Rows[i];
+				TfDataRow row = dataTable.Rows[i];
 				Guid tfId = (Guid)row[TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 				var currentRow = viewData.Rows[tfId];
 
-				for (int j = 0; j < result.Value.Columns.Count; j++)
+				for (int j = 0; j < dataTable.Columns.Count; j++)
 				{
-					TfDataColumn column = result.Value.Columns[j];
+					TfDataColumn column = dataTable.Columns[j];
 					currentRow[column.Name] = row[column.Name];
 				}
 			}
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { SpaceViewData = viewData }));
+
+			return Task.CompletedTask;
 		}
-		else
+		catch (Exception ex)
 		{
-			throw ResultUtils.ConvertResultToException(result, LOC("Data change failed!"));
+			throw new TfException(LOC("Data change failed!"), ex);
 		}
-		return Task.CompletedTask;
 	}
 
 	private Dictionary<string, object> _getColumnComponentContext(TucSpaceViewColumn column, TfDataTable dataTable, int rowIndex)

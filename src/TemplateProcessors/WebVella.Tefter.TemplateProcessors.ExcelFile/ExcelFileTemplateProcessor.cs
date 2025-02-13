@@ -1,9 +1,6 @@
 ﻿using ClosedXML.Excel;
-using System.Text;
 using System.IO.Compression;
-using FluentResults;
-using Microsoft.Extensions.DependencyInjection;
-using System.IO;
+using System.Text;
 
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile;
 
@@ -63,7 +60,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
 
-		if (settings.TemplateFileBlobId is null )
+		if (settings.TemplateFileBlobId is null)
 		{
 			result.Errors.Add(new ValidationError("TemplateFileBlobId", "Template file is not uploaded."));
 			return result;
@@ -282,7 +279,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 		Guid? blobId = null;
 
-		var existingTemplate = templateServise.GetTemplate(template.Id).Value;
+		var existingTemplate = templateServise.GetTemplate(template.Id);
 
 		if (existingTemplate is not null)
 		{

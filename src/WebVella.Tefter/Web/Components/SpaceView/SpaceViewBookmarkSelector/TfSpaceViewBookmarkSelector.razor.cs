@@ -20,22 +20,22 @@ public partial class TfSpaceViewBookmarkSelector : TfBaseComponent
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
 					Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
+					TrapFocus = false
 				});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-				var resultObj = (Tuple<TucBookmark,List<TucBookmark>,List<TucBookmark>>)result.Data;
-				ToastService.ShowSuccess(LOC("Bookmark saved"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-					component: this,
-					state: TfAppState.Value with
-					{
-						CurrentUserBookmarks = resultObj.Item2,
-						CurrentUserSaves = resultObj.Item3,
-						ActiveSpaceViewBookmark = resultObj.Item1
-					}
-				));
+			var resultObj = (Tuple<TucBookmark, List<TucBookmark>, List<TucBookmark>>)result.Data;
+			ToastService.ShowSuccess(LOC("Bookmark saved"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					CurrentUserBookmarks = resultObj.Item2,
+					CurrentUserSaves = resultObj.Item3,
+					ActiveSpaceViewBookmark = resultObj.Item1
+				}
+			));
 		}
 	}
 
@@ -43,23 +43,24 @@ public partial class TfSpaceViewBookmarkSelector : TfBaseComponent
 	{
 		try
 		{
-			var bookmark = TfAppState.Value.CurrentUserBookmarks.FirstOrDefault(x=> x.SpaceViewId == TfAppState.Value.SpaceView.Id);
-			if(bookmark is null) return;
-			var result = await UC.DeleteBookmarkAsync(bookmark);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Bookmark removed"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-					component: this,
-					state: TfAppState.Value with
-					{
-						CurrentUserBookmarks = result.Value.Item1,
-						CurrentUserSaves = result.Value.Item2,
-						ActiveSpaceViewBookmark = null
-					}
-				));
-			}
+			var bookmark = TfAppState.Value.CurrentUserBookmarks.FirstOrDefault(x => x.SpaceViewId == TfAppState.Value.SpaceView.Id);
+			
+			if (bookmark is null) 
+				return;
+
+			var (bookmarks, saves) = await UC.DeleteBookmarkAsync(bookmark);
+
+			ToastService.ShowSuccess(LOC("Bookmark removed"));
+
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					CurrentUserBookmarks = bookmarks,
+					CurrentUserSaves = saves,
+					ActiveSpaceViewBookmark = null
+				}
+			));
 		}
 		catch (Exception ex)
 		{

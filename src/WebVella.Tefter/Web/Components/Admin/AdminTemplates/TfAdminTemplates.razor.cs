@@ -15,7 +15,7 @@ public partial class TfAdminTemplates : TfBaseComponent
 	private async Task _addTemplate()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfTemplateManageDialog>(
-		new TucTemplate() { ResultType = TfAppState.Value.Route.TemplateResultType ?? TfTemplateResultType.File},
+		new TucTemplate() { ResultType = TfAppState.Value.Route.TemplateResultType ?? TfTemplateResultType.File },
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -28,7 +28,7 @@ public partial class TfAdminTemplates : TfBaseComponent
 		{
 			var template = (TucTemplate)result.Data;
 			ToastService.ShowSuccess(LOC("Template successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)TfAppState.Value.Route.TemplateResultType,template.Id));
+			Navigator.NavigateTo(String.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)TfAppState.Value.Route.TemplateResultType, template.Id));
 		}
 	}
 
@@ -38,15 +38,11 @@ public partial class TfAdminTemplates : TfBaseComponent
 			return;
 		try
 		{
-			Result result = UC.DeleteTemplate(template.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("The template was successfully deleted!"));
-				var templates = TfAppState.Value.AdminTemplateList.Where(x=> x.Id != template.Id).ToList();
-				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminTemplateList = templates }));
-			}
+			UC.DeleteTemplate(template.Id);
+			ToastService.ShowSuccess(LOC("The template was successfully deleted!"));
+			var templates = TfAppState.Value.AdminTemplateList.Where(x => x.Id != template.Id).ToList();
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminTemplateList = templates }));
 		}
 		catch (Exception ex)
 		{
@@ -69,7 +65,7 @@ public partial class TfAdminTemplates : TfBaseComponent
 
 		if (!String.IsNullOrWhiteSpace(searchProcessed))
 		{
-			return TfAppState.Value.AdminTemplateList.Where(x=> 
+			return TfAppState.Value.AdminTemplateList.Where(x =>
 				x.Name.ToLowerInvariant().Contains(searchProcessed)
 			).ToList();
 		}

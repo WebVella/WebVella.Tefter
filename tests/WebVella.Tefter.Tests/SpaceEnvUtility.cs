@@ -16,8 +16,8 @@ internal class SpaceEnvUtility
 		TfDataProviderSynchronizeJob backgroundSync = serviceProvider.GetRequiredService<TfDataProviderSynchronizeJob>();
 		ITfSharedColumnsManager sharedColumnManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();
 
-		var providerTypesResult = providerManager.GetProviderTypes();
-		var providerType = providerTypesResult.Value
+		var providerTypes = providerManager.GetProviderTypes();
+		var providerType = providerTypes
 			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 		TfDataProviderModel providerModel = new TfDataProviderModel
@@ -27,11 +27,8 @@ internal class SpaceEnvUtility
 			ProviderType = providerType,
 			SettingsJson = null
 		};
-		var providerResult = providerManager.CreateDataProvider(providerModel);
-		providerResult.IsSuccess.Should().BeTrue();
-		providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-		var provider = providerResult.Value;
+		var provider = providerManager.CreateDataProvider(providerModel);
+		provider.Should().BeOfType<TfDataProvider>();
 
 		List<Tuple<string, TfDatabaseColumnType, string>> columns = new List<Tuple<string, TfDatabaseColumnType, string>>();
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("guid_column", TfDatabaseColumnType.Guid, "GUID"));
@@ -48,7 +45,7 @@ internal class SpaceEnvUtility
 			CreateProviderColumn(providerManager, provider, column.Item1, column.Item2, column.Item3);
 
 		//get provider with new columns
-		provider = providerManager.GetProvider(provider.Id).Value;
+		provider = providerManager.GetProvider(provider.Id);
 
 		TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -60,8 +57,8 @@ internal class SpaceEnvUtility
 						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.Integer) }
 					};
 
-		providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
-		providerResult.IsSuccess.Should().BeTrue();
+		provider = providerManager.CreateDataProviderSharedKey(sharedKey);
+		provider.Should().NotBeNull();
 
 		sharedKey =
 					new TfDataProviderSharedKey
@@ -74,8 +71,8 @@ internal class SpaceEnvUtility
 
 					};
 
-		providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
-		providerResult.IsSuccess.Should().BeTrue();
+		provider = providerManager.CreateDataProviderSharedKey(sharedKey);
+		provider.Should().NotBeNull();
 
 		TfSharedColumn sharedColumn1 = new TfSharedColumn
 		{
@@ -100,7 +97,7 @@ internal class SpaceEnvUtility
 		scResult.IsSuccess.Should().BeTrue();
 
 		//get provider with new shared columns
-		provider = providerManager.GetProvider(provider.Id).Value;
+		provider = providerManager.GetProvider(provider.Id);
 
 		var createResult = providerManager.CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy());
 
@@ -130,7 +127,7 @@ internal class SpaceEnvUtility
 			IsPrivate = false,
 			Position = 0
 		};
-		spaceManager.CreateSpace(space).IsSuccess.Should().BeTrue();
+		spaceManager.CreateSpace(space);
 
 		var spaceColumns = columns.Select(x => x.Item1).ToList();
 		spaceColumns.Add(sharedColumn1.DbName);
@@ -150,11 +147,8 @@ internal class SpaceEnvUtility
 		//spaceData.Filters.Add(new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Greater, 5));
 
 		var result = spaceManager.CreateSpaceData(spaceData);
-		result.IsSuccess.Should().BeTrue();
-		result.Value.Should().NotBeNull();
-
-		provider = providerManager.GetProvider(provider.Id).Value;
-		spaceData = spaceManager.GetSpaceData(spaceData.Id).Value;
+		provider = providerManager.GetProvider(provider.Id);
+		spaceData = spaceManager.GetSpaceData(spaceData.Id);
 
 		return (provider, spaceData);
 	}
@@ -184,7 +178,6 @@ internal class SpaceEnvUtility
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
-		var providerColumnResult = providerManager.CreateDataProviderColumn(column);
-		providerColumnResult.IsSuccess.Should().BeTrue();
+		providerManager.CreateDataProviderColumn(column);
 	}
 }

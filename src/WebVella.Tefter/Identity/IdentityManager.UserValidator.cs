@@ -39,11 +39,11 @@ public partial class IdentityManager : IIdentityManager
 			RuleSet("create", () =>
 			{
 				RuleFor(user => user.Id)
-					.Must(id => { return identityManager.GetUser(id).Value == null; })
+					.Must(id => { return identityManager.GetUser(id) == null; })
 					.WithMessage("There is already existing user with specified id.");
 
 				RuleFor(user => user.Email)
-					.Must(email => { return identityManager.GetUser(email).Value == null; })
+					.Must(email => { return identityManager.GetUser(email) == null; })
 					.WithMessage("There is already existing user with specified email.");
 			});
 
@@ -54,13 +54,13 @@ public partial class IdentityManager : IIdentityManager
 					.WithMessage("User identifier is not provided.");
 
 				RuleFor(user => user.Id)
-					.Must( id => { return identityManager.GetUser(id).Value != null; })
+					.Must( id => { return identityManager.GetUser(id) != null; })
 					.WithMessage("There is no existing user for specified identifier.");
 
 				RuleFor(user => user.Email)
 					.Must((user, email) =>
 					{
-						var existingUser = identityManager.GetUser(user.Email).Value;
+						var existingUser = identityManager.GetUser(user.Email);
 						return !(existingUser != null && existingUser.Id != user.Id);
 					})
 					.WithMessage("There is already existing user with specified email.");

@@ -69,29 +69,25 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<TucDataProvider> submitResult;
+			TucDataProvider provider;
 			var submit = _form with
 			{
 				Id = _form.Id
 			};
 			if (_isCreate)
 			{
-				submitResult = UC.CreateDataProviderKey(submit);
+				provider = UC.CreateDataProviderKey(submit);
 			}
 			else
 			{
-				submitResult = UC.UpdateDataProviderKey(submit);
+				provider = UC.UpdateDataProviderKey(submit);
 			}
 
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			await Dialog.CloseAsync(provider);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

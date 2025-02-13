@@ -28,7 +28,6 @@ global using WebVella.Tefter.TemplateProcessors.TextContent;
 global using WebVella.Tefter.TemplateProcessors.TextContent.Models;
 //global using WebVella.Tefter.TemplateProcessors.TextContent.Services;
 
-global using FluentResults;
 global using FluentValidation;
 global using FluentValidation.Results;
 global using Npgsql;

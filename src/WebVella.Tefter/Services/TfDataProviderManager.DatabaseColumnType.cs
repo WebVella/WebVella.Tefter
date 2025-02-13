@@ -2,7 +2,7 @@
 
 public partial interface ITfDataProviderManager
 {
-	Result<ReadOnlyCollection<DatabaseColumnTypeInfo>> GetDatabaseColumnTypeInfos();
+	ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos();
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
@@ -114,9 +114,9 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 		return databaseColumnTypeInfos.AsReadOnly();
 	}
-	public Result<ReadOnlyCollection<DatabaseColumnTypeInfo>> GetDatabaseColumnTypeInfos()
+	public ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos()
 	{
-		return Result.Ok(GetDatabaseColumnTypeInfosList());
+		return GetDatabaseColumnTypeInfosList();
 	}
 }
 

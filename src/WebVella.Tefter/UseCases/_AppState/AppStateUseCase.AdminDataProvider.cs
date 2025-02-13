@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UseCases.AppState;
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitAdminDataProviderAsync(
@@ -92,50 +94,77 @@ internal partial class AppStateUseCase
 	}
 
 	//Data Provider
-	internal virtual Task<List<TucDataProvider>> GetDataProvidersAsync(string search = null, int? page = null, int? pageSize = null)
+	internal virtual Task<List<TucDataProvider>> GetDataProvidersAsync(
+		string search = null,
+		int? page = null,
+		int? pageSize = null)
 	{
-		var srvResult = _dataProviderManager.GetProviders();
-		if (srvResult.IsFailed)
+		try
+		{
+			var providers = _dataProviderManager.GetProviders();
+			if (providers is null)
+				return Task.FromResult(new List<TucDataProvider>());
+
+			var orderedResults = providers.OrderBy(x => x.Name);
+
+			var records = new List<TfDataProvider>();
+			if (!String.IsNullOrWhiteSpace(search))
+			{
+				var searchProcessed = search.Trim().ToLowerInvariant();
+				foreach (var item in orderedResults)
+				{
+					bool hasMatch = false;
+					if (item.Name.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
+					if (hasMatch) records.Add(item);
+				}
+			}
+			else
+			{
+				records = orderedResults.ToList();
+			}
+
+			if (page is null || pageSize is null)
+			{
+				return Task.FromResult(records
+					.Select(x => new TucDataProvider(x))
+					.ToList());
+			}
+
+			return Task.FromResult(records
+					.Skip(TfConverters.CalcSkip(page.Value, pageSize.Value))
+					.Take(pageSize.Value)
+					.Select(x => new TucDataProvider(x))
+					.ToList());
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProviders failed").CausedBy(srvResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return Task.FromResult(new List<TucDataProvider>());
 		}
-
-		if (srvResult.Value is null) return Task.FromResult(new List<TucDataProvider>());
-
-		var orderedResults = srvResult.Value.OrderBy(x => x.Name);
-
-		var records = new List<TfDataProvider>();
-		if (!String.IsNullOrWhiteSpace(search))
-		{
-			var searchProcessed = search.Trim().ToLowerInvariant();
-			foreach (var item in orderedResults)
-			{
-				bool hasMatch = false;
-				if (item.Name.ToLowerInvariant().Contains(searchProcessed)) hasMatch = true;
-				if (hasMatch) records.Add(item);
-			}
-		}
-		else records = orderedResults.ToList();
-
-		if (page is null || pageSize is null) return Task.FromResult(records.Select(x => new TucDataProvider(x)).ToList());
-
-		return Task.FromResult(records.Skip(TfConverters.CalcSkip(page.Value, pageSize.Value)).Take(pageSize.Value).Select(x => new TucDataProvider(x)).ToList());
 	}
-	internal virtual Task<TucDataProvider> GetDataProviderAsync(Guid providerId)
+
+	internal virtual Task<TucDataProvider> GetDataProviderAsync(
+		Guid providerId)
 	{
-		var srvResult = _dataProviderManager.GetProvider(providerId);
-		if (srvResult.IsFailed)
+		try
+		{
+			var provider = _dataProviderManager.GetProvider(providerId);
+			if (provider is null)
+				return Task.FromResult((TucDataProvider)null);
+
+			return Task.FromResult(new TucDataProvider(provider));
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProvider failed").CausedBy(srvResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -143,130 +172,133 @@ internal partial class AppStateUseCase
 				messageService: _messageService
 			);
 			return Task.FromResult(new TucDataProvider());
+
 		}
-		if (srvResult.Value is null) return Task.FromResult((TucDataProvider)null);
-
-
-		return Task.FromResult(new TucDataProvider(srvResult.Value));
 	}
 
 	internal virtual Task<List<TucDataProviderTypeInfo>> GetProviderTypesAsync()
 	{
-		var srvResult = _dataProviderManager.GetProviderTypes();
-		if (srvResult.IsFailed)
+		try
+		{
+			var providerTypes = _dataProviderManager.GetProviderTypes();
+			if (providerTypes is null)
+				return Task.FromResult(new List<TucDataProviderTypeInfo>());
+
+			return Task.FromResult(providerTypes.Select(t => new TucDataProviderTypeInfo(t)).ToList());
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProviderTypes failed").CausedBy(srvResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return Task.FromResult(new List<TucDataProviderTypeInfo>());
 		}
-		if (srvResult.Value is null) return Task.FromResult(new List<TucDataProviderTypeInfo>());
-
-		return Task.FromResult(srvResult.Value.Select(t => new TucDataProviderTypeInfo(t)).ToList());
 	}
-	internal virtual Task<Result> DeleteDataProviderAsync(Guid providerId)
+
+	internal virtual Task DeleteDataProviderAsync(
+		Guid providerId)
 	{
-		var srvResult = _dataProviderManager.DeleteDataProvider(providerId);
-		if (srvResult.IsFailed)
-		{
-			return Task.FromResult(Result.Fail(new Error("DeleteDataProvider failed").CausedBy(srvResult.Errors)));
-		}
-
-		return Task.FromResult(Result.Ok());
+		_dataProviderManager.DeleteDataProvider(providerId);
+		return Task.CompletedTask;
 	}
 
-	internal virtual Result<TucDataProvider> CreateDataProviderWithForm(TucDataProviderForm form)
+	internal virtual TucDataProvider CreateDataProviderWithForm(
+		TucDataProviderForm form)
 	{
-		var providerTypesResult = _dataProviderManager.GetProviderTypes();
-		if (providerTypesResult.IsFailed) return Result.Fail(new Error("GetProviderTypes failed").CausedBy(providerTypesResult.Errors));
-		var submitForm = form.ToModel(providerTypesResult.Value);
-		var createResult = _dataProviderManager.CreateDataProvider(submitForm);
-		if (createResult.IsFailed) return Result.Fail(new Error("CreateDataProvider failed").CausedBy(createResult.Errors));
-		if (createResult.Value is null) return Result.Fail(new Error("CreateDataProvider returned null object").CausedBy(createResult.Errors));
-		return Result.Ok(new TucDataProvider(createResult.Value));
+		var providerTypes = _dataProviderManager.GetProviderTypes();
+		var submitForm = form.ToModel(providerTypes);
+
+		var provider = _dataProviderManager.CreateDataProvider(submitForm);
+		if (provider is null)
+			throw new TfException("CreateDataProvider returned null object");
+
+		return new TucDataProvider(provider);
 	}
 
-	internal virtual Result<TucDataProvider> UpdateDataProviderWithForm(TucDataProviderForm form)
+	internal virtual TucDataProvider UpdateDataProviderWithForm(
+		TucDataProviderForm form)
 	{
-		var providerTypesResult = _dataProviderManager.GetProviderTypes();
-		if (providerTypesResult.IsFailed) return Result.Fail(new Error("GetProviderTypes failed").CausedBy(providerTypesResult.Errors));
-		var submitForm = form.ToModel(providerTypesResult.Value);
-		var updateResult = _dataProviderManager.UpdateDataProvider(submitForm);
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateDataProvider failed").CausedBy(updateResult.Errors));
-		if (updateResult.Value is null) return Result.Fail(new Error("UpdateDataProvider returned null object").CausedBy(updateResult.Errors));
-		return Result.Ok(new TucDataProvider(updateResult.Value));
+		var providerTypes = _dataProviderManager.GetProviderTypes();
+		var submitForm = form.ToModel(providerTypes);
+
+		var provider = _dataProviderManager.UpdateDataProvider(submitForm);
+		if (provider is null)
+			throw new TfException("UpdateDataProvider returned null object");
+
+		return new TucDataProvider(provider);
 	}
 
-	internal virtual Result<TucDataProvider> UpdateDataProviderSynchPrimaryKeyColumns(Guid providerId, List<string> columns)
+	internal virtual TucDataProvider UpdateDataProviderSynchPrimaryKeyColumns(
+		Guid providerId,
+		List<string> columns)
 	{
 		var provider = _dataProviderManager.GetProvider(providerId);
-		if (provider.IsFailed) return Result.Fail(new Error("GetProvider failed").CausedBy(provider.Errors));
-		if (provider is null) return Result.Fail("Provider not found");
+		if (provider is null)
+			throw new TfException("Provider not found");
+
 		var submit = new TfDataProviderModel
 		{
 			Id = providerId,
 			SynchPrimaryKeyColumns = columns,
-			Name = provider.Value.Name,
-			ProviderType = provider.Value.ProviderType,
-			SettingsJson = provider.Value.SettingsJson,
+			Name = provider.Name,
+			ProviderType = provider.ProviderType,
+			SettingsJson = provider.SettingsJson,
 		};
-		var updateResult = _dataProviderManager.UpdateDataProvider(submit);
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateDataProvider failed").CausedBy(updateResult.Errors));
-		if (updateResult.Value is null) return Result.Fail(new Error("UpdateDataProvider returned null object").CausedBy(updateResult.Errors));
-		return Result.Ok(new TucDataProvider(updateResult.Value));
+
+		provider = _dataProviderManager.UpdateDataProvider(submit);
+		if (provider is null)
+			throw new TfException("UpdateDataProvider returned null object");
+
+		return new TucDataProvider(provider);
 	}
 
 	//Data provider columns
-	internal virtual Result<TucDataProvider> CreateDataProviderColumn(TucDataProviderColumnForm form)
+	internal virtual TucDataProvider CreateDataProviderColumn(
+		TucDataProviderColumnForm form)
 	{
 		var result = _dataProviderManager.CreateDataProviderColumn(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("CreateDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return new TucDataProvider(result);
 	}
-	internal virtual Result<TucDataProvider> UpdateDataProviderColumn(TucDataProviderColumnForm form)
+
+	internal virtual TucDataProvider UpdateDataProviderColumn(
+		TucDataProviderColumnForm form)
 	{
 		var result = _dataProviderManager.UpdateDataProviderColumn(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("UpdateDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return new TucDataProvider(result);
 	}
-	internal virtual Result<TucDataProvider> DeleteDataProviderColumn(Guid columnId)
+
+	internal virtual TucDataProvider DeleteDataProviderColumn(
+		Guid columnId)
 	{
 		var result = _dataProviderManager.DeleteDataProviderColumn(columnId);
-		if (result.IsFailed)
-			return Result.Fail(new Error("DeleteDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return new TucDataProvider(result);
 	}
 
-	internal virtual Result<TucDataProvider> CreateBulkDataProviderColumn(Guid providerId,
+	internal virtual TucDataProvider CreateBulkDataProviderColumn(
+		Guid providerId,
 		List<TucDataProviderColumn> columns)
 	{
 		var columnSM = columns.Select(x => x.ToModel()).ToList();
 		var result = _dataProviderManager.CreateBulkDataProviderColumn(providerId, columnSM);
-		if (result.IsFailed)
-		{
-			return Result.Fail(result.Errors);
-		}
-
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return new TucDataProvider(result);
 	}
+
 	internal virtual Task<TucDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(TucDataProvider provider)
 	{
-		var resultSM = _dataProviderManager.GetDataProviderSourceSchemaInfo(provider.Id);
-		if (resultSM.IsFailed)
+		try
+		{
+			var result = _dataProviderManager.GetDataProviderSourceSchemaInfo(provider.Id);
+			return Task.FromResult(new TucDataProviderSourceSchemaInfo(result));
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProviders failed").CausedBy(resultSM.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -275,82 +307,93 @@ internal partial class AppStateUseCase
 			);
 			return Task.FromResult(new TucDataProviderSourceSchemaInfo());
 		}
-		return Task.FromResult(new TucDataProviderSourceSchemaInfo(resultSM.Value));
 	}
 
 	//Data provider key
-
-	internal virtual Result<TucDataProvider> CreateDataProviderKey(TucDataProviderSharedKeyForm form)
+	internal virtual TucDataProvider CreateDataProviderKey(
+		TucDataProviderSharedKeyForm form)
 	{
 		var result = _dataProviderManager.CreateDataProviderSharedKey(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("CreateDataProviderSharedKey failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return new TucDataProvider(result);
 	}
 
-	internal virtual Result<TucDataProvider> UpdateDataProviderKey(TucDataProviderSharedKeyForm form)
+	internal virtual TucDataProvider UpdateDataProviderKey(
+		TucDataProviderSharedKeyForm form)
 	{
 		var result = _dataProviderManager.UpdateDataProviderSharedKey(form.ToModel());
-		if (result.IsFailed)
-			return Result.Fail(new Error("UpdateDataProviderColumn failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return new TucDataProvider(result);
 	}
-	internal Result<TucDataProvider> DeleteDataProviderSharedKey(Guid keyId)
+
+	internal TucDataProvider DeleteDataProviderSharedKey(
+		Guid keyId)
 	{
 		var result = _dataProviderManager.DeleteDataProviderSharedKey(keyId);
-		if (result.IsFailed)
-			return Result.Fail(new Error("DeleteDataProviderSharedKey failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucDataProvider(result.Value));
+		return new TucDataProvider(result);
 	}
 
 	//Data synchronization
-	internal virtual Task<List<TucDataProviderSyncTask>> GetDataProviderSynchronizationTasks(Guid providerId)
+	internal virtual Task<List<TucDataProviderSyncTask>> GetDataProviderSynchronizationTasks(
+		Guid providerId)
 	{
-		var srvResult = _dataProviderManager.GetSynchronizationTasksExtended(providerId);
-		if (srvResult.IsFailed)
+		try
+		{
+			var result = _dataProviderManager.GetSynchronizationTasksExtended(providerId);
+
+			if (result is null)
+				return Task.FromResult(new List<TucDataProviderSyncTask>());
+
+			var tasks = result
+				.OrderByDescending(x => x.CreatedOn)
+				.Take(TfConstants.PageSize)
+				.Select(x => new TucDataProviderSyncTask(x))
+				.ToList();
+
+			return Task.FromResult(tasks);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSynchronizationTasksExtended failed").CausedBy(srvResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+
 			return Task.FromResult(new List<TucDataProviderSyncTask>());
 		}
-		if (srvResult.Value is null) return Task.FromResult(new List<TucDataProviderSyncTask>());
-
-		var tasks = srvResult.Value.OrderByDescending(x => x.CreatedOn).Take(TfConstants.PageSize).Select(x => new TucDataProviderSyncTask(x)).ToList();
-		return Task.FromResult(tasks);
 	}
-	internal virtual Task TriggerSynchronization(Guid dataProviderId)
+
+	internal virtual Task TriggerSynchronization(
+		Guid dataProviderId)
 	{
-		var createResult = _dataProviderManager.CreateSynchronizationTask(dataProviderId, new TfSynchronizationPolicy());
-		if (createResult.IsFailed)
+		try
+		{
+			_dataProviderManager.CreateSynchronizationTask(dataProviderId, new TfSynchronizationPolicy());
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("CreateSynchronizationTask failed").CausedBy(createResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return Task.CompletedTask;
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 		}
 		return Task.CompletedTask;
 	}
-	internal virtual Task DeleteAllProviderData(Guid dataProviderId)
+
+	internal virtual Task DeleteAllProviderData(
+		Guid dataProviderId)
 	{
 		var provider = _dataProviderManager.GetProvider(dataProviderId);
 		if (provider is null)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail("Provider not found"),
+				exception: new TfException("Provider not found"),
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -359,105 +402,80 @@ internal partial class AppStateUseCase
 			);
 			return Task.CompletedTask;
 		}
-		var createResult = _dataManager.DeleteAllProviderRows(provider.Value);
-		if (createResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("DeleteAllProviderRows failed").CausedBy(createResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return Task.CompletedTask;
-		}
+		_dataManager.DeleteAllProviderRows(provider);
 		return Task.CompletedTask;
 	}
-	internal virtual Result<List<TucDataProviderSyncTaskInfo>> GetSynchronizationTaskLogRecords(Guid taskId,
-			TucDataProviderSyncTaskInfoType type)
+
+	internal virtual List<TucDataProviderSyncTaskInfo> GetSynchronizationTaskLogRecords(
+		Guid taskId,
+		TucDataProviderSyncTaskInfoType type)
 	{
-		var allTasksResult = _dataProviderManager.GetSynchronizationTaskResultInfos(taskId);
-		if (allTasksResult.IsFailed)
-			return Result.Fail(new Error("GetSynchronizationTaskResultInfos failed").CausedBy(allTasksResult.Errors));
+		var allTasks = _dataProviderManager.GetSynchronizationTaskResultInfos(taskId);
 		var result = new List<TucDataProviderSyncTaskInfo>();
 		switch (type)
 		{
 			case TucDataProviderSyncTaskInfoType.Info:
-				result = allTasksResult.Value.Where(x => !String.IsNullOrWhiteSpace(x.Info))
+				result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Info))
 				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
 				break;
 			case TucDataProviderSyncTaskInfoType.Warning:
-				result = allTasksResult.Value.Where(x => !String.IsNullOrWhiteSpace(x.Warning))
+				result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Warning))
 				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
 				break;
 			case TucDataProviderSyncTaskInfoType.Error:
-				result = allTasksResult.Value.Where(x => !String.IsNullOrWhiteSpace(x.Error))
+				result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Error))
 				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
 				break;
 			default:
-				return Result.Fail("Not supported TucDataProviderSyncTaskInfoType");
+				throw new TfException("Not supported TucDataProviderSyncTaskInfoType");
 		}
-		return Result.Ok(result);
+		return result;
 	}
 
 	//Data
-	internal virtual Result<TfDataTable> GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)
+	internal virtual TfDataTable GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	{
-		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
-		if (srvProviderResult.IsFailed)
-			return Result.Fail(new Error("GetProvider failed").CausedBy(srvProviderResult.Errors));
+		var provider = _dataProviderManager.GetProvider(providerId);
+		if (provider is null)
+			throw new TfException("Provider not found");
 
-		if (srvProviderResult.Value is null) return Result.Fail("Provider not found");
-
-		var dtResult = _dataManager.QueryDataProvider(
-			provider: srvProviderResult.Value,
+		var dt = _dataManager.QueryDataProvider(
+			provider: provider,
 			search: search,
 			page: page,
 			pageSize: pageSize);
 
-		if (dtResult.IsFailed)
-			return Result.Fail(new Error("QueryDataProvider failed").CausedBy(dtResult.Errors));
-
-		return Result.Ok(dtResult.Value);
+		return dt;
 	}
+
 	internal virtual Task<TfDataTable> GetDataProviderData(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	{
-		var srvProviderResult = _dataProviderManager.GetProvider(providerId);
-		if (srvProviderResult.IsFailed)
+		try
+		{
+			var provider = _dataProviderManager.GetProvider(providerId);
+
+			if (provider is null) return Task.FromResult((TfDataTable)null);
+
+			var data = _dataManager.QueryDataProvider(
+				provider: provider,
+				search: search,
+				page: page,
+				pageSize: pageSize);
+
+			return Task.FromResult(data);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetProvider failed").CausedBy(srvProviderResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return Task.FromResult((TfDataTable)null);
 		}
-
-		if (srvProviderResult.Value is null) return Task.FromResult((TfDataTable)null);
-
-		var dtResult = _dataManager.QueryDataProvider(
-			provider: srvProviderResult.Value,
-			search: search,
-			page: page,
-			pageSize: pageSize);
-
-		if (dtResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("QueryDataProvider failed").CausedBy(srvProviderResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return Task.FromResult((TfDataTable)null);
-		}
-		return Task.FromResult(dtResult.Value);
 	}
 
 }

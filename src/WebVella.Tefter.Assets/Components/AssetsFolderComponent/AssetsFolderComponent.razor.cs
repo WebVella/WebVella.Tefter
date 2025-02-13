@@ -130,16 +130,12 @@ public partial class AssetsFolderComponent : TfBaseComponent
 
 	private void _getAllItems()
 	{
-		var getFolderResult = AssetsService.GetFolder(FolderId.Value);
-		if (getFolderResult.IsSuccess) _folder = getFolderResult.Value;
-		else throw new Exception("GetFolder failed");
+		var _folder = AssetsService.GetFolder(FolderId.Value);
 		if (_folder is not null && SharedKeyValue is not null)
 		{
-			var getAssetsResult = AssetsService.GetAssets(
+			_allItems = AssetsService.GetAssets(
 			folderId: _folder.Id,
 			skTextId: SharedKeyValue);
-			if (getAssetsResult.IsSuccess) _allItems = getAssetsResult.Value;
-			else throw new Exception("GetAssets failed");
 		}
 		_itemsShareKeyValue = SharedKeyValue;
 		_itemsFolderId = FolderId;
@@ -264,14 +260,10 @@ public partial class AssetsFolderComponent : TfBaseComponent
 
 		try
 		{
-			var result = AssetsService.DeleteAsset(asset.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("File deleted"));
-				int index = _items.FindIndex(x => x.Id == asset.Id);
-				if (index > -1) _items.RemoveAt(index);
-			}
+			AssetsService.DeleteAsset(asset.Id);
+			ToastService.ShowSuccess(LOC("File deleted"));
+			int index = _items.FindIndex(x => x.Id == asset.Id);
+			if (index > -1) _items.RemoveAt(index);
 		}
 		catch (Exception ex)
 		{

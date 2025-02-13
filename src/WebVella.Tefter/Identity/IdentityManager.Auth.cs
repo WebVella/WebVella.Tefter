@@ -4,71 +4,52 @@ namespace WebVella.Tefter.Identity;
 
 public partial interface IIdentityManager
 {
-	Task<Result> AuthenticateAsync(IJSRuntime jsRuntime,
+	Task AuthenticateAsync(IJSRuntime jsRuntime,
 		string email, string password, bool rememberMe);
 
-	Task<Result> LogoutAsync(IJSRuntime jsRuntime);
+	Task LogoutAsync(IJSRuntime jsRuntime);
 }
 
 public partial class IdentityManager : IIdentityManager
 {
-	public async Task<Result> AuthenticateAsync(IJSRuntime jsRuntime,
+	public async Task AuthenticateAsync(IJSRuntime jsRuntime,
 		string email, string password, bool rememberMe)
 	{
-		Result validationResult = new Result();
+		var valEx = new TfValidationException();
+
 		if (string.IsNullOrWhiteSpace(email))
-			validationResult.WithError(new ValidationError(nameof(User.Email), "The email is required."));
+			valEx.AddValidationError(nameof(User.Email), "The email is required.");
 
 		if (string.IsNullOrWhiteSpace(password))
-			validationResult.WithError(new ValidationError(nameof(User.Password), "The password is required."));
+			valEx.AddValidationError(nameof(User.Password), "The password is required.");
 
-		if (validationResult.IsFailed)
-			return validationResult;
+		valEx.ThrowIfContainsErrors();
 
-		var userResult = (await GetUserAsync(email, password));
-		if (userResult.IsFailed)
-			return Result.Fail(new Error("Unable to get user.").CausedBy(userResult.Errors));
-
-		var user = userResult.Value;
+		var user = (await GetUserAsync(email, password));
 
 		if (user == null)
-			return Result.Fail(new ValidationError(nameof(User.Password), "Invalid email or password."));
+			valEx.AddValidationError(nameof(User.Password), "Invalid email or password.");
 
 		if (user is { Enabled: false })
-			return Result.Fail(new ValidationError(nameof(User.Email), "User access to site is denied."));
+			valEx.AddValidationError(nameof(User.Email), "User access to site is denied.");
 
-		try
-		{
-			var cryptoService = _serviceProvider.GetRequiredService<ITfCryptoService>();
-			if (jsRuntime == null)
-				return Result.Fail("Unable to instantiate JSRuntime.");
+		valEx.ThrowIfContainsErrors();
 
-			//Set auth cookie
-			await new CookieService(jsRuntime).SetAsync(
-					key: Constants.TEFTER_AUTH_COOKIE_NAME,
-					value: cryptoService.Encrypt(user.Id.ToString()),
-					expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
+		var cryptoService = _serviceProvider.GetRequiredService<ITfCryptoService>();
+		if (jsRuntime == null)
+			throw new TfException("Unable to instantiate JSRuntime.");
 
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("User authentication failed.").CausedBy(ex));
-		}
+		//Set auth cookie
+		await new CookieService(jsRuntime).SetAsync(
+				key: Constants.TEFTER_AUTH_COOKIE_NAME,
+				value: cryptoService.Encrypt(user.Id.ToString()),
+				expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
 	}
 
-	public async Task<Result> LogoutAsync(IJSRuntime jsRuntime )
+	public async Task LogoutAsync(IJSRuntime jsRuntime)
 	{
-		try
-		{
-			//remove auth cookie
-			await new CookieService(jsRuntime).RemoveAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("User logout failed.").CausedBy(ex));
-		}
+		//remove auth cookie
+		await new CookieService(jsRuntime).RemoveAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
 	}
 
 }

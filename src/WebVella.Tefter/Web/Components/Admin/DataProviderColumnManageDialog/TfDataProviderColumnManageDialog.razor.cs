@@ -129,25 +129,21 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 				SourceType = _selectedProviderType.Name,
 				DbType = _selectedDbType
 			};
-			Result<TucDataProvider> submitResult;
+			TucDataProvider provider;
 			if (_isCreate)
 			{
-				submitResult = UC.CreateDataProviderColumn(submit);
+				provider = UC.CreateDataProviderColumn(submit);
 			}
 			else
 			{
-				submitResult = UC.UpdateDataProviderColumn(submit);
+				provider = UC.UpdateDataProviderColumn(submit);
 			}
 
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			await Dialog.CloseAsync(provider);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

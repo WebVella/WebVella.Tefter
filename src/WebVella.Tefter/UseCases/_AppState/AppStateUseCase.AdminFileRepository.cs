@@ -36,77 +36,69 @@ internal partial class AppStateUseCase
 	internal virtual List<TucRepositoryFile> GetFileRepository(string search, int? page = null, int? pageSize = null)
 	{
 		var result = new List<TucRepositoryFile>();
-		var tfResult = _repositoryManager.GetFiles(
-			filenameContains: search,
-			page: page,
-			pageSize: pageSize
-		);
-		if (tfResult.IsFailed)
+		try
+		{
+			var files = _repositoryManager.GetFiles(
+				filenameContains: search,
+				page: page,
+				pageSize: pageSize
+			);
+
+			return files.Select(x => new TucRepositoryFile(x)).ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("FindAllFiles failed").CausedBy(tfResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 			return result;
 		}
 
-		if (tfResult.Value is not null)
-			result = tfResult.Value.Select(x => new TucRepositoryFile(x)).ToList();
-
-		return result;
-
 	}
 
-	internal virtual Result<TucRepositoryFile> CreateFile(TucFileForm form)
+	internal virtual TucRepositoryFile CreateFile(TucFileForm form)
 	{
-		var result = _repositoryManager.CreateFile(
+		var file = _repositoryManager.CreateFile(
 			filename: Path.GetFileName(form.FileName),
 			localPath: form.LocalFilePath,
 			createdBy: form.CreatedBy);
-		if (result.IsFailed)
-			return Result.Fail(new Error("CreateFile failed").CausedBy(result.Errors));
 
-
-		return Result.Ok(new TucRepositoryFile(result.Value));
+		return new TucRepositoryFile(file);
 	}
 
-	internal virtual Result<TucRepositoryFile> UpdateFile(TucFileForm form)
+	internal virtual TucRepositoryFile UpdateFile(TucFileForm form)
 	{
-		var result = _repositoryManager.UpdateFile(
+		_repositoryManager.UpdateFile(
 			filename: Path.GetFileName(form.FileName),
 			localPath: form.LocalFilePath,
 			updatedBy: form.CreatedBy);
-		if (result.IsFailed)
-			return Result.Fail(new Error("CreateFile failed").CausedBy(result.Errors));
 
-		var getResult = _repositoryManager.GetFile(form.FileName);
-		if(getResult.IsFailed)
-			return Result.Fail(new Error("GetFileName failed").CausedBy(result.Errors));
-
-		return Result.Ok(new TucRepositoryFile(getResult.Value));
+		var file = _repositoryManager.GetFile(form.FileName);
+		return new TucRepositoryFile(file);
 	}
 
-	internal virtual Result DeleteFile(string fileName)
+	internal virtual void DeleteFile(string fileName)
 	{
-		var result = _repositoryManager.DeleteFile(fileName);
-		if (result.IsFailed)
+		try
+		{
+			_repositoryManager.DeleteFile(fileName);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("DeleteFile failed").CausedBy(result.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return result;
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
 		}
-
-		return Result.Ok();
 	}
 
 

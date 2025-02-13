@@ -13,14 +13,10 @@ public partial class TfLanguageSwitch : TfBaseComponent
 	{
 		try
 		{
-			var resultSrv = await UC.SetUserCulture(
-						userId: TfUserState.Value.CurrentUser.Id,
-						cultureCode: option.CultureCode);
+			 await UC.SetUserCulture(
+				userId: TfUserState.Value.CurrentUser.Id,
+				cultureCode: option.CultureCode);
 
-			ProcessServiceResponse(resultSrv);
-
-			if (resultSrv.IsSuccess)
-			{
 				ToastService.ShowSuccess(LOC("The language is successfully changed!"));
 
 				var culture = CultureInfo.GetCultureInfo(option.CultureCode);
@@ -31,7 +27,6 @@ public partial class TfLanguageSwitch : TfBaseComponent
 								culture)), DateTimeOffset.Now.AddYears(30));
 				//Needs to reload the whole page so the Localizer can reinit from the cookie
 				Navigator.ReloadCurrentUrl();
-			}
 		}
 		catch (Exception ex)
 		{

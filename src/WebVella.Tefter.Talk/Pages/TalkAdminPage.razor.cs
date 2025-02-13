@@ -18,18 +18,26 @@ public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, I
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {
         var talkService = serviceProvider.GetRequiredService<ITalkService>();        
-        var sharedColumnsManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();        
-        var srvResult = talkService.GetChannels();
-        if(srvResult.IsSuccess) 
-            newAuxDataState.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = srvResult.Value.OrderBy(x=> x.Name).ToList();
-        else 
-            newAuxDataState.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = new List<TalkChannel>();
+        var sharedColumnsManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();
+		try
+		{
+			var channels = talkService.GetChannels();
+			newAuxDataState.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = channels.OrderBy(x => x.Name).ToList();
+		}
+		catch
+		{
+			newAuxDataState.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = new List<TalkChannel>();
+		}
 
-        var sharedColumnsResult = sharedColumnsManager.GetSharedColumns();
-        if(sharedColumnsResult.IsSuccess) 
-            newAuxDataState.Data[TalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumnsResult.Value.OrderBy(x=> x.DbName).ToList();
-        else
-            newAuxDataState.Data[TalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY] = new List<TfSharedColumn>();
+		try
+		{
+			var sharedColumns = sharedColumnsManager.GetSharedColumns();
+			newAuxDataState.Data[TalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumns.OrderBy(x => x.DbName).ToList();
+		}
+		catch
+		{
+			newAuxDataState.Data[TalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY] = new List<TfSharedColumn>();
+		}
 
         return Task.CompletedTask;
     }

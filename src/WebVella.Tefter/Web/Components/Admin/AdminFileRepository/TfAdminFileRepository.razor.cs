@@ -34,14 +34,16 @@ public partial class TfAdminFileRepository : TfBaseComponent
 					LocalFilePath = file.LocalFile.ToString(),
 					FileName = file.Name,
 				});
-				ProcessServiceResponse(result);
+
 				ToastService.ShowSuccess(LOC("File uploaded successfully!"));
+
 				progressPercent = 0;
 				var fileRep = TfAppState.Value.AdminFileRepository;
-				fileRep.Add(result.Value);
-				fileRep = fileRep.OrderBy(x=> x.FileName).ToList();
+				fileRep.Add(result);
+
+				fileRep = fileRep.OrderBy(x => x.FileName).ToList();
 				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminFileRepository = fileRep}));
+					state: TfAppState.Value with { AdminFileRepository = fileRep }));
 			}
 			catch (Exception ex)
 			{
@@ -82,15 +84,12 @@ public partial class TfAdminFileRepository : TfBaseComponent
 			return;
 		try
 		{
-			Result result = UC.DeleteFile(file.FileName);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("The file is successfully deleted!"));
-				var fileRep = TfAppState.Value.AdminFileRepository.Where(x=> x.Id != file.Id).ToList();
-				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminFileRepository = fileRep }));
-			}
+			UC.DeleteFile(file.FileName);
+			ToastService.ShowSuccess(LOC("The file is successfully deleted!"));
+			var fileRep = TfAppState.Value.AdminFileRepository.Where(x => x.Id != file.Id).ToList();
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminFileRepository = fileRep }));
+
 		}
 		catch (Exception ex)
 		{
@@ -102,7 +101,7 @@ public partial class TfAdminFileRepository : TfBaseComponent
 	private async Task _searchValueChanged(string search)
 	{
 		search = search?.Trim();
-		if(_search == search) return;
+		if (_search == search) return;
 		_search = search;
 		var queryDict = new Dictionary<string, object>{
 			{TfConstants.SearchQueryName, _search}
@@ -110,10 +109,11 @@ public partial class TfAdminFileRepository : TfBaseComponent
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
 
-	private async Task _copyUri(TucRepositoryFile file){ 
+	private async Task _copyUri(TucRepositoryFile file)
+	{
 		await JSRuntime.InvokeVoidAsync("Tefter.copyToClipboard", file.Uri);
 		ToastService.ShowSuccess(LOC("Tefter Uri copied"));
-	
+
 	}
 
 }

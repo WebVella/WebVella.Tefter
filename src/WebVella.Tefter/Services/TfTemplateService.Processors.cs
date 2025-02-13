@@ -2,15 +2,15 @@
 
 public partial interface ITfTemplateService
 {
-	public Result<ITfTemplateProcessor> GetTemplateProcessor(
+	public ITfTemplateProcessor GetTemplateProcessor(
 			string typeName);
 
-	public Result<ITfTemplateProcessor> GetTemplateProcessor(
+	public ITfTemplateProcessor GetTemplateProcessor(
 			Type type);
 
-	public Result<ReadOnlyCollection<Type>> GetTemplateProcessorTypes();
+	public ReadOnlyCollection<Type> GetTemplateProcessorTypes();
 
-	public Result<ReadOnlyCollection<ITfTemplateProcessor>> GetTemplateProcessors();
+	public ReadOnlyCollection<ITfTemplateProcessor> GetTemplateProcessors();
 }
 
 internal partial class TfTemplateService : ITfTemplateService
@@ -18,77 +18,42 @@ internal partial class TfTemplateService : ITfTemplateService
 	private static AsyncLock _lock = new AsyncLock();
 	private static Dictionary<Type, ITfTemplateProcessor> _templateProcessorsDict = null;
 
-	public Result<ITfTemplateProcessor> GetTemplateProcessor(
-		string typeName )
+	public ITfTemplateProcessor GetTemplateProcessor(
+		string typeName)
 	{
-		try
-		{
-			var type = Type.GetType( typeName );
-
-			return GetTemplateProcessor(type);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get template processor.").CausedBy(ex));
-		}
+		var type = Type.GetType(typeName);
+		return GetTemplateProcessor(type);
 	}
 
-	public Result<ITfTemplateProcessor> GetTemplateProcessor(
+	public ITfTemplateProcessor GetTemplateProcessor(
 		Type type)
 	{
-		try
-		{
-			ScanAndRegisterProcessorTypes();
+		ScanAndRegisterProcessorTypes();
 
-			if (_templateProcessorsDict.ContainsKey(type))
-			{
-				return Result.Ok(_templateProcessorsDict[type]);
-			}
+		if (_templateProcessorsDict.ContainsKey(type))
+			return _templateProcessorsDict[type];
 
-			return Result.Ok((ITfTemplateProcessor)null);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get template processor.").CausedBy(ex));
-		}
+		return null;
 	}
 
-	public Result<ReadOnlyCollection<ITfTemplateProcessor>> GetTemplateProcessors()
+	public ReadOnlyCollection<ITfTemplateProcessor> GetTemplateProcessors()
 	{
-		try
-		{
-			ScanAndRegisterProcessorTypes();
+		ScanAndRegisterProcessorTypes();
 
-			var result = _templateProcessorsDict
-				.Values
-				.ToList()
-				.AsReadOnly();
-
-			return Result.Ok(result);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get template processors list.").CausedBy(ex));
-		}
+		return _templateProcessorsDict
+			.Values
+			.ToList()
+			.AsReadOnly();
 	}
 
-	public Result<ReadOnlyCollection<Type>> GetTemplateProcessorTypes()
+	public ReadOnlyCollection<Type> GetTemplateProcessorTypes()
 	{
-		try
-		{
-			ScanAndRegisterProcessorTypes();
+		ScanAndRegisterProcessorTypes();
 
-			var result = _templateProcessorsDict
-				.Keys
-				.ToList()
-				.AsReadOnly();
-
-			return Result.Ok(result);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get template processors types list.").CausedBy(ex));
-		}
+		return _templateProcessorsDict
+			.Keys
+			.ToList()
+			.AsReadOnly();
 	}
 
 	private void ScanAndRegisterProcessorTypes()

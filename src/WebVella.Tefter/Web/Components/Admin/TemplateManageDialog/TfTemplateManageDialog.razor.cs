@@ -107,20 +107,18 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 			TucManageTemplateModel submit = _form with { UserId = TfAppState.Value.CurrentUser.Id };
 			if (_isCreate)
 				submit = submit with { Id = Guid.NewGuid() };
-			Result<TucTemplate> submitResult = null;
-			if (_isCreate) submitResult = UC.CreateTemplate(submit);
-			else submitResult = UC.UpdateTemplate(submit);
+			
+			TucTemplate template = null;
+			if (_isCreate) 
+				template = UC.CreateTemplate(submit);
+			else 
+				template = UC.UpdateTemplate(submit);
 
-
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			await Dialog.CloseAsync(template);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

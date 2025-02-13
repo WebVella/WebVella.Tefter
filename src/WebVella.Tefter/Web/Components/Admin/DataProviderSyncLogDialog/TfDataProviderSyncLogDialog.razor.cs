@@ -38,10 +38,7 @@ public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogC
 		{
 			try
 			{
-				var result = UC.GetSynchronizationTaskLogRecords(Content.TaskId, Content.Type);
-				ProcessServiceResponse(result);
-				if (result.IsSuccess)
-					_items = result.Value;
+				_items = UC.GetSynchronizationTaskLogRecords(Content.TaskId, Content.Type);
 			}
 			catch (Exception ex)
 			{

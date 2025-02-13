@@ -20,24 +20,24 @@ public partial class IdentityManager : IIdentityManager
 			RuleSet("create", () =>
 			{
 				RuleFor(role => role.Name)
-					.Must(name => { return identityManager.GetRole(name).Value == null; })
+					.Must(name => { return identityManager.GetRole(name) == null; })
 					.WithMessage("There is already existing role with specified name.");
 
 				RuleFor(role => role.Id)
-					.Must(id => { return identityManager.GetRole(id).Value == null; })
+					.Must(id => { return identityManager.GetRole(id) == null; })
 					.WithMessage("There is already existing role with specified identifier.");
 			});
 
 			RuleSet("update", () =>
 			{
 				RuleFor(role => role.Id)
-					.Must((role, id) => { return identityManager.GetRole(id).Value != null; })
+					.Must((role, id) => { return identityManager.GetRole(id) != null; })
 					.WithMessage("There is no existing role for specified identifier.");
 
 				RuleFor(role => role.Name)
 					.Must((role, name) =>
 					{
-						var existingRole = identityManager.GetRole(role.Name).Value;
+						var existingRole = identityManager.GetRole(role.Name);
 						return !(existingRole != null && existingRole.Id != role.Id);
 					})
 					.WithMessage("There is already existing role with specified name.");
@@ -46,7 +46,7 @@ public partial class IdentityManager : IIdentityManager
 			RuleSet("delete", () =>
 			{
 				RuleFor(role => role.Id)
-					.Must((role, id) => { return identityManager.GetRole(id).Value != null; })
+					.Must((role, id) => { return identityManager.GetRole(id) != null; })
 					.WithMessage("There is no existing role for specified identifier.");
 
 				RuleFor(role => role.IsSystem)

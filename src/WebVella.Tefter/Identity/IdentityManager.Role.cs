@@ -3,17 +3,16 @@
 public partial interface IIdentityManager
 {
 	RoleBuilder CreateRoleBuilder(Role role = null);
-
-	Result<Role> GetRole(Guid id);
-	Result<Role> GetRole(string name);
-	Result<ReadOnlyCollection<Role>> GetRoles();
-	Result<Role> SaveRole(Role role);
-	Result DeleteRole(Role role);
-	Task<Result<Role>> GetRoleAsync(Guid id);
-	Task<Result<Role>> GetRoleAsync(string name);
-	Task<Result<ReadOnlyCollection<Role>>> GetRolesAsync();
-	Task<Result<Role>> SaveRoleAsync(Role role);
-	Task<Result> DeleteRoleAsync(Role role);
+	Role GetRole(Guid id);
+	Role GetRole(string name);
+	ReadOnlyCollection<Role> GetRoles();
+	Role SaveRole(Role role);
+	void DeleteRole(Role role);
+	Task<Role> GetRoleAsync(Guid id);
+	Task<Role> GetRoleAsync(string name);
+	Task<ReadOnlyCollection<Role>> GetRolesAsync();
+	Task<Role> SaveRoleAsync(Role role);
+	Task DeleteRoleAsync(Role role);
 
 }
 
@@ -24,39 +23,36 @@ public partial class IdentityManager : IIdentityManager
 		return new RoleBuilder(this, role);
 	}
 
-	public Result<Role> GetRole(Guid id)
+	public Role GetRole(Guid id)
 	{
 		var roleDbo = _dboManager.Get<RoleDbo>(id, nameof(Role.Id));
 		if (roleDbo == null)
-			return Result.Ok();
+			return null;
 
-		return Result.Ok(
-			new RoleBuilder(this, roleDbo.Id)
+		return new RoleBuilder(this, roleDbo.Id)
 				.WithName(roleDbo.Name)
 				.IsSystem(roleDbo.IsSystem)
-				.Build()
-			);
+				.Build();
+
 	}
 
-	public Result<Role> GetRole(string name)
+	public Role GetRole(string name)
 	{
 		var roleDbo = _dboManager.Get<RoleDbo>(name, nameof(Role.Name));
 		if (roleDbo == null)
-			return Result.Ok();
+			return null;
 
-		return Result.Ok(
-			new RoleBuilder(this, roleDbo.Id)
+		return new RoleBuilder(this, roleDbo.Id)
 				.WithName(roleDbo.Name)
 				.IsSystem(roleDbo.IsSystem)
-				.Build()
-			);
+				.Build();
 	}
 
-	public Result<ReadOnlyCollection<Role>> GetRoles()
+	public ReadOnlyCollection<Role> GetRoles()
 	{
 		var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
 
-		var result = _dboManager.GetList<RoleDbo>(null, null, orderSettings)
+		return _dboManager.GetList<RoleDbo>(null, null, orderSettings)
 			.Select(x =>
 				new RoleBuilder(this, x.Id)
 					.WithName(x.Name)
@@ -65,11 +61,9 @@ public partial class IdentityManager : IIdentityManager
 			)
 			.ToList()
 			.AsReadOnly();
-
-		return Result.Ok(result);
 	}
 
-	public Result<Role> SaveRole(Role role)
+	public Role SaveRole(Role role)
 	{
 		if (role == null)
 			throw new ArgumentNullException(nameof(role));
@@ -80,12 +74,12 @@ public partial class IdentityManager : IIdentityManager
 			return UpdateRole(role);
 	}
 
-	private Result<Role> CreateRole(Role role)
+	private Role CreateRole(Role role)
 	{
-		ValidationResult result = _roleValidator.ValidateCreate(role);
-
-		if (!result.IsValid)
-			return result.ToResult<Role>();
+		_roleValidator
+			.ValidateCreate(role)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		RoleDbo roleDbo = new RoleDbo
 		{
@@ -96,17 +90,17 @@ public partial class IdentityManager : IIdentityManager
 
 		bool success = _dboManager.Insert<RoleDbo>(roleDbo);
 		if (!success)
-			return Result.Fail(new DboManagerError("Insert", roleDbo));
+			throw new TfDboServiceException("Insert<RoleDbo> failed");
 
 		return GetRole(roleDbo.Id);
 	}
 
-	private Result<Role> UpdateRole(Role role)
+	private Role UpdateRole(Role role)
 	{
-		ValidationResult result = _roleValidator.ValidateUpdate(role);
-
-		if (!result.IsValid)
-			return result.ToResult<Role>();
+		_roleValidator
+			.ValidateUpdate(role)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		RoleDbo roleDbo = new RoleDbo
 		{
@@ -116,64 +110,57 @@ public partial class IdentityManager : IIdentityManager
 		};
 
 		bool success = _dboManager.Update<RoleDbo>(roleDbo);
-		
 		if (!success)
-			return Result.Fail(new DboManagerError("Update", roleDbo));
+			throw new TfDboServiceException("Update<RoleDbo> failed");
 
 		return GetRole(roleDbo.Id);
 	}
 
-	public Result DeleteRole(Role role)
+	public void DeleteRole(Role role)
 	{
 		if (role == null)
 			throw new ArgumentNullException(nameof(role));
 
-		ValidationResult result = _roleValidator.ValidateDelete(role);
-
-		if (!result.IsValid)
-			return result.ToResult();
+		_roleValidator
+			.ValidateDelete(role)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		var success = _dboManager.Delete<RoleDbo>(role.Id);
 		if (!success)
-			return Result.Fail(new DboManagerError("Delete", role));
-
-		return Result.Ok();
+			throw new TfDboServiceException("Delete<RoleDbo> failed");
 	}
 
-	public async Task<Result<Role>> GetRoleAsync(Guid id)
+	public async Task<Role> GetRoleAsync(Guid id)
 	{
 		var roleDbo = await _dboManager.GetAsync<RoleDbo>(id, nameof(Role.Id));
-		
-		if (roleDbo == null)
-			return Result.Ok();
 
-		return Result.Ok(
-			new RoleBuilder(this, roleDbo.Id)
+		if (roleDbo == null)
+			return null;
+
+		return new RoleBuilder(this, roleDbo.Id)
 				.WithName(roleDbo.Name)
 				.IsSystem(roleDbo.IsSystem)
-				.Build()
-			);
+				.Build();
 	}
 
-	public async Task<Result<Role>> GetRoleAsync(string name)
+	public async Task<Role> GetRoleAsync(string name)
 	{
 		var roleDbo = await _dboManager.GetAsync<RoleDbo>(name, nameof(Role.Name));
 		if (roleDbo == null)
-			return Result.Ok();
+			return null;
 
-		return Result.Ok(
-			new RoleBuilder(this, roleDbo.Id)
+		return new RoleBuilder(this, roleDbo.Id)
 				.WithName(roleDbo.Name)
 				.IsSystem(roleDbo.IsSystem)
-				.Build()
-			);
+				.Build();
 	}
 
-	public async Task<Result<ReadOnlyCollection<Role>>> GetRolesAsync()
+	public async Task<ReadOnlyCollection<Role>> GetRolesAsync()
 	{
 		var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
 
-		var result = (await _dboManager.GetListAsync<RoleDbo>(null, null, orderSettings))
+		return  (await _dboManager.GetListAsync<RoleDbo>(null, null, orderSettings))
 			.Select(x =>
 				new RoleBuilder(this, x.Id)
 					.WithName(x.Name)
@@ -182,11 +169,9 @@ public partial class IdentityManager : IIdentityManager
 			)
 			.ToList()
 			.AsReadOnly();
-
-		return Result.Ok(result);
 	}
 
-	public async Task<Result<Role>> SaveRoleAsync(Role role)
+	public async Task<Role> SaveRoleAsync(Role role)
 	{
 		if (role == null)
 			throw new ArgumentNullException(nameof(role));
@@ -197,13 +182,13 @@ public partial class IdentityManager : IIdentityManager
 			return await UpdateRoleAsync(role);
 	}
 
-	private async Task<Result<Role>> CreateRoleAsync(Role role)
+	private async Task<Role> CreateRoleAsync(Role role)
 	{
-		ValidationResult result = _roleValidator.ValidateCreate(role);
+		_roleValidator
+			.ValidateCreate(role)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-		if(!result.IsValid)
-			return result.ToResult<Role>();
-		
 		RoleDbo roleDbo = new RoleDbo
 		{
 			Id = Guid.NewGuid(),
@@ -212,20 +197,18 @@ public partial class IdentityManager : IIdentityManager
 		};
 
 		bool success = await _dboManager.InsertAsync<RoleDbo>(roleDbo);
-
 		if (!success)
-			return Result.Fail(new DboManagerError("InsertAsync", roleDbo));
+			throw new TfDboServiceException("InsertAsync<RoleDbo> failed");
 
 		return await GetRoleAsync(roleDbo.Id);
 	}
 
-	private async Task<Result<Role>> UpdateRoleAsync(Role role)
+	private async Task<Role> UpdateRoleAsync(Role role)
 	{
-		ValidationResult result = _roleValidator.ValidateUpdate(role);
-
-		if (!result.IsValid)
-			return result.ToResult<Role>();
-
+		_roleValidator
+			.ValidateUpdate(role)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		RoleDbo roleDbo = new RoleDbo
 		{
@@ -235,27 +218,24 @@ public partial class IdentityManager : IIdentityManager
 		};
 
 		bool success = await _dboManager.UpdateAsync<RoleDbo>(roleDbo);
-
 		if (!success)
-			return Result.Fail(new DboManagerError("UpdateAsync", roleDbo));
+			throw new TfDboServiceException("UpdateAsync<RoleDbo> failed");
 
 		return await GetRoleAsync(roleDbo.Id);
 	}
 
-	public async Task<Result> DeleteRoleAsync(Role role)
+	public async Task DeleteRoleAsync(Role role)
 	{
 		if (role == null)
 			throw new ArgumentNullException(nameof(role));
 
-		ValidationResult result = _roleValidator.ValidateDelete(role);
-
-		if (!result.IsValid)
-			return result.ToResult();
+		_roleValidator
+			.ValidateDelete(role)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
 		var success = await _dboManager.DeleteAsync<RoleDbo>(role.Id);
 		if (!success)
-			return Result.Fail(new DboManagerError("DeleteAsync", role));
-
-		return Result.Ok();
+			throw new TfDboServiceException("DeleteAsync<RoleDbo> failed");
 	}
 }

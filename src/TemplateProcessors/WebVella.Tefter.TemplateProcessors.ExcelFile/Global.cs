@@ -29,7 +29,6 @@ global using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 global using WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 //global using WebVella.Tefter.TemplateProcessors.ExcelFile.Services;
 
-global using FluentResults;
 global using FluentValidation;
 global using FluentValidation.Results;
 global using Npgsql;

@@ -64,26 +64,21 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<List<TucSharedColumn>> submitResult;
+			List<TucSharedColumn> sharedColumns;
 			var submit = _form with { DbName = "sk_" + _form.DbName };
 			if (_isCreate)
 			{
-				submitResult = UC.CreateSharedColumn(submit);
+				sharedColumns = UC.CreateSharedColumn(submit);
 			}
 			else
 			{
-				submitResult = UC.UpdateSharedColumn(submit);
+				sharedColumns = UC.UpdateSharedColumn(submit);
 			}
-
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			await Dialog.CloseAsync(sharedColumns);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

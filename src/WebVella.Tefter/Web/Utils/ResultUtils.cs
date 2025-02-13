@@ -1,46 +1,71 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using Microsoft.AspNetCore.Components.Forms;
+using System;
 
 namespace WebVella.Tefter.Web.Utils;
 
 internal static class ResultUtils
 {
 	internal static void ProcessServiceResult(
-		Result<object> result,
+		Exception exception,
 		string toastErrorMessage,
 		string toastValidationMessage,
 		string notificationErrorTitle,
 		IToastService toastService,
 		IMessageService messageService)
 	{
-		if (result.IsSuccess) return;
+		if (exception is null)
+			return;
+
 		var generalErrors = new List<string>();
 		var validationErrors = new List<string>();
-		foreach (IError iError in result.Errors)
+
+		if (exception is TfValidationException)
 		{
-			if (iError.Reasons.Count == 0)
+			var valEx = (TfValidationException)exception;
+
+			if (!string.IsNullOrWhiteSpace(valEx.Message))
+				generalErrors.Add(valEx.Message);
+
+			var data = valEx.GetDataAsUsableDictionary();
+			foreach (var propertyName in data.Keys)
 			{
-				if (iError is ValidationError)
+				var errors = data[propertyName];
+				foreach (var errorMessage in errors)
 				{
-					var error = (ValidationError)iError;
-					if (String.IsNullOrWhiteSpace(error.PropertyName))
-						validationErrors.Add(error.Message);
+					if (String.IsNullOrWhiteSpace(propertyName))
+						validationErrors.Add(errorMessage);
 					else
-						validationErrors.Add($"{error.PropertyName}: {error.Message}");
-				}
-				else
-				{
-					var error = (IError)iError;
-					generalErrors.Add(error.Message);
-				}
-			}
-			else
-			{
-				foreach (var reason in iError.Reasons)
-				{
-					GetInnerReason(reason, generalErrors,validationErrors);
+						validationErrors.Add($"{propertyName}: {errorMessage}");
 				}
 			}
 		}
+		else if (exception.GetType().IsAssignableFrom(typeof(TfException)))
+		{
+			var valEx = (TfException)exception;
+
+			if (!string.IsNullOrWhiteSpace(valEx.Message))
+				generalErrors.Add(valEx.Message);
+
+			var data = valEx.GetDataAsUsableDictionary();
+			foreach (var propertyName in data.Keys)
+			{
+				var errors = data[propertyName];
+				foreach (var errorMessage in errors)
+				{
+					if (String.IsNullOrWhiteSpace(propertyName))
+						generalErrors.Add(errorMessage);
+					else
+						generalErrors.Add($"{propertyName}: {errorMessage}");
+				}
+			}
+		}
+		else
+		{
+			if (!string.IsNullOrWhiteSpace(exception.Message))
+				generalErrors.Add(exception.Message);
+		}
+
 		if (generalErrors.Count > 0)
 		{
 			toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
@@ -60,30 +85,86 @@ internal static class ResultUtils
 		}
 	}
 
-	internal static void GetInnerReason(IError iError, List<string> generalErrors, List<string> validationErrors)
-	{
-		if (iError.Reasons.Count == 0)
-		{
-			if (iError is ValidationError)
-			{
-				var error = (ValidationError)iError;
-				if (String.IsNullOrWhiteSpace(error.PropertyName))
-					validationErrors.Add(error.Message);
-				else
-					validationErrors.Add($"{error.PropertyName}: {error.Message}");
-			}
-			else
-			{
-				if (!String.IsNullOrWhiteSpace(iError.Message)) generalErrors.Add(iError.Message);
-			}
+	//internal static void ProcessServiceResult(
+	//	Result<object> result,
+	//	string toastErrorMessage,
+	//	string toastValidationMessage,
+	//	string notificationErrorTitle,
+	//	IToastService toastService,
+	//	IMessageService messageService)
+	//{
+	//	if (result.IsSuccess) return;
+	//	var generalErrors = new List<string>();
+	//	var validationErrors = new List<string>();
+	//	foreach (IError iError in result.Errors)
+	//	{
+	//		if (iError.Reasons.Count == 0)
+	//		{
+	//			if (iError is ValidationError)
+	//			{
+	//				var error = (ValidationError)iError;
+	//				if (String.IsNullOrWhiteSpace(error.PropertyName))
+	//					validationErrors.Add(error.Message);
+	//				else
+	//					validationErrors.Add($"{error.PropertyName}: {error.Message}");
+	//			}
+	//			else
+	//			{
+	//				var error = (IError)iError;
+	//				generalErrors.Add(error.Message);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			foreach (var reason in iError.Reasons)
+	//			{
+	//				GetInnerReason(reason, generalErrors, validationErrors);
+	//			}
+	//		}
+	//	}
+	//	if (generalErrors.Count > 0)
+	//	{
+	//		toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
+	//		SendErrorsToNotifications(notificationErrorTitle, generalErrors, null, messageService);
+	//	}
+	//	else if (validationErrors.Count > 0)
+	//	{
+	//		toastService.ShowCommunicationToast(new ToastParameters<CommunicationToastContent>()
+	//		{
+	//			Intent = ToastIntent.Warning,
+	//			Title = toastValidationMessage,
+	//			Content = new CommunicationToastContent
+	//			{
+	//				Details = String.Join(Environment.NewLine, validationErrors)
+	//			}
+	//		});
+	//	}
+	//}
 
-			return;
-		}
-		foreach (var item in iError.Reasons)
-		{
-			GetInnerReason(item, generalErrors,validationErrors);
-		}
-	}
+	//internal static void GetInnerReason(IError iError, List<string> generalErrors, List<string> validationErrors)
+	//{
+	//	if (iError.Reasons.Count == 0)
+	//	{
+	//		if (iError is ValidationError)
+	//		{
+	//			var error = (ValidationError)iError;
+	//			if (String.IsNullOrWhiteSpace(error.PropertyName))
+	//				validationErrors.Add(error.Message);
+	//			else
+	//				validationErrors.Add($"{error.PropertyName}: {error.Message}");
+	//		}
+	//		else
+	//		{
+	//			if (!String.IsNullOrWhiteSpace(iError.Message)) generalErrors.Add(iError.Message);
+	//		}
+
+	//		return;
+	//	}
+	//	foreach (var item in iError.Reasons)
+	//	{
+	//		GetInnerReason(item, generalErrors, validationErrors);
+	//	}
+	//}
 
 	internal static void SendErrorsToNotifications(
 		string message,
@@ -125,6 +206,7 @@ internal static class ResultUtils
 		IMessageService messageService
 		)
 	{
+		//TODO RUMEN - rewrite to show validations
 		string errorMessage = toastErrorMessage;
 		toastService.ShowToast(ToastIntent.Error, errorMessage);
 		SendErrorsToNotifications(notificationErrorTitle, new List<string> { exception.Message }, exception.StackTrace, messageService);
@@ -133,7 +215,7 @@ internal static class ResultUtils
 	}
 
 	internal static void ProcessFormSubmitResult(
-		Result<object> result,
+		Exception exception,
 		string toastErrorMessage,
 		string notificationErrorTitle,
 		EditContext editContext,
@@ -145,12 +227,32 @@ internal static class ResultUtils
 
 		var generalErrors = new List<string>();
 		var validationErrors = new List<ValidationError>();
-		if (result is null || editContext is null || messageStore is null) return;
-		if (result.IsSuccess) return;
+		if (exception is null || editContext is null || messageStore is null) return;
 
-		foreach (IError iError in result.Errors)
+
+		if (exception is TfValidationException)
 		{
-			ProssessFormResultError(iError, validationErrors, generalErrors);
+			var valEx = (TfValidationException)exception;
+
+			if (!string.IsNullOrWhiteSpace(valEx.Message))
+				generalErrors.Add(valEx.Message);
+
+			var data = valEx.GetDataAsUsableDictionary();
+			foreach (var propertyName in data.Keys)
+			{
+				var errors = data[propertyName];
+				foreach (var errorMessage in errors)
+				{
+					if (String.IsNullOrWhiteSpace(propertyName))
+						validationErrors.Add(new ValidationError("",errorMessage));
+					else
+						validationErrors.Add(new ValidationError(propertyName, errorMessage));
+				}
+			}
+		}
+		else
+		{
+			generalErrors.Add(exception.Message);
 		}
 
 		foreach (var valError in validationErrors)
@@ -167,70 +269,106 @@ internal static class ResultUtils
 		}
 	}
 
-	internal static void ProssessFormResultError(
-		IError iError,
-		List<ValidationError> validationErrors,
-		List<string> generalErrors)
-	{
-		if (iError is null) return;
 
-		if (iError is ValidationError)
-		{
-			var error = (ValidationError)iError;
-			if (String.IsNullOrWhiteSpace(error.PropertyName))
-				generalErrors.Add(error.Message);
-			else
-			{
-				validationErrors.Add(error);
-			}
-		}
-		else
-		{
-			var error = (IError)iError;
-			generalErrors.Add(error.Message);
-		}
+	//internal static void ProcessFormSubmitResult(
+	//	Result<object> result,
+	//	string toastErrorMessage,
+	//	string notificationErrorTitle,
+	//	EditContext editContext,
+	//	ValidationMessageStore messageStore,
+	//	IToastService toastService,
+	//	IMessageService messageService
+	//	)
+	//{
 
-		if (iError.Reasons is not null)
-		{
-			foreach (IError iReason in iError.Reasons)
-			{
-				ProssessFormResultError(iReason, validationErrors, generalErrors);
-			}
-		}
+	//	var generalErrors = new List<string>();
+	//	var validationErrors = new List<ValidationError>();
+	//	if (result is null || editContext is null || messageStore is null) return;
+	//	if (result.IsSuccess) return;
 
-	}
+	//	foreach (IError iError in result.Errors)
+	//	{
+	//		ProssessFormResultError(iError, validationErrors, generalErrors);
+	//	}
 
-	internal static Exception ConvertResultToException(Result<object> result, string message = null)
-	{
-		if (String.IsNullOrWhiteSpace(message))
-		{
-			message = "System error";
-			if (result.Errors.Count > 0)
-			{
-				message = result.Errors[0].Message;
-			}
-		}
-		var ex = new Exception(message);
-		foreach (IError error in result.Errors)
-		{
-			if (error is null) continue;
-			if (error is ValidationError)
-			{
-				var errorObj = (ValidationError)error;
-				if (!String.IsNullOrWhiteSpace(errorObj.PropertyName))
-					ex.Data.Add(errorObj.PropertyName, errorObj.Message);
-				else
-				{
-					ex.Data.Add("", errorObj.Message);
-				}
-			}
-			else
-			{
-				ex.Data.Add("", error.Message);
-			}
+	//	foreach (var valError in validationErrors)
+	//	{
+	//		var field = editContext.Field(valError.PropertyName);
+	//		messageStore.Add(field, valError.Message);
+	//	}
 
-		}
+	//	editContext.NotifyValidationStateChanged();
+	//	if (generalErrors.Count > 0 && validationErrors.Count == 0)
+	//	{
+	//		toastService.ShowToast(ToastIntent.Error, toastErrorMessage);
+	//		SendErrorsToNotifications(notificationErrorTitle, generalErrors, null, messageService);
+	//	}
+	//}
 
-		return ex;
-	}
+	//internal static void ProssessFormResultError(
+	//	IError iError,
+	//	List<ValidationError> validationErrors,
+	//	List<string> generalErrors)
+	//{
+	//	if (iError is null) return;
+
+	//	if (iError is ValidationError)
+	//	{
+	//		var error = (ValidationError)iError;
+	//		if (String.IsNullOrWhiteSpace(error.PropertyName))
+	//			generalErrors.Add(error.Message);
+	//		else
+	//		{
+	//			validationErrors.Add(error);
+	//		}
+	//	}
+	//	else
+	//	{
+	//		var error = (IError)iError;
+	//		generalErrors.Add(error.Message);
+	//	}
+
+	//	if (iError.Reasons is not null)
+	//	{
+	//		foreach (IError iReason in iError.Reasons)
+	//		{
+	//			ProssessFormResultError(iReason, validationErrors, generalErrors);
+	//		}
+	//	}
+
+	//}
+
+	//internal static Exception ConvertResultToException(Result<object> result, string message = null)
+	//{
+	//	if (String.IsNullOrWhiteSpace(message))
+	//	{
+	//		message = "System error";
+	//		if (result.Errors.Count > 0)
+	//		{
+	//			message = result.Errors[0].Message;
+	//		}
+	//	}
+	//	var ex = new Exception(message);
+	//	foreach (IError error in result.Errors)
+	//	{
+	//		if (error is null) continue;
+	//		if (error is ValidationError)
+	//		{
+	//			var errorObj = (ValidationError)error;
+	//			if (!String.IsNullOrWhiteSpace(errorObj.PropertyName))
+	//				ex.Data.Add(errorObj.PropertyName, errorObj.Message);
+	//			else
+	//			{
+	//				ex.Data.Add("", errorObj.Message);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			ex.Data.Add("", error.Message);
+	//		}
+
+	//	}
+
+	//	return ex;
+	//}
 }

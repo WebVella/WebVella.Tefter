@@ -297,7 +297,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 		Guid? blobId = null;
 
-		var existingTemplate = templateServise.GetTemplate(template.Id).Value;
+		var existingTemplate = templateServise.GetTemplate(template.Id);
 
 		if (existingTemplate is not null)
 		{

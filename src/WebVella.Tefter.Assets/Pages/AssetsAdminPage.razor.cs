@@ -19,17 +19,26 @@ public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent,
     {
         var assetsService = serviceProvider.GetRequiredService<IAssetsService>();
         var sharedColumnsManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();
-        var srvResult = assetsService.GetFolders();
-        if (srvResult.IsSuccess)
-            newAuxDataState.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = srvResult.Value.OrderBy(x => x.Name).ToList();
-        else
-            newAuxDataState.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = new List<AssetsFolder>();
 
-        var sharedColumnsResult = sharedColumnsManager.GetSharedColumns();
-        if (sharedColumnsResult.IsSuccess)
-            newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumnsResult.Value.OrderBy(x => x.DbName).ToList();
-        else
-            newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = new List<TfSharedColumn>();
+		try
+		{
+			var folders = assetsService.GetFolders();
+			newAuxDataState.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = folders.OrderBy(x => x.Name).ToList();
+		}
+		catch
+		{
+			newAuxDataState.Data[AssetsConstants.ASSETS_APP_FOLDER_LIST_DATA_KEY] = new List<AssetsFolder>();
+		}
+
+		try
+		{
+			var sharedColumns = sharedColumnsManager.GetSharedColumns();
+			newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumns.OrderBy(x => x.DbName).ToList();
+		}
+		catch (Exception ex)
+		{
+			newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = new List<TfSharedColumn>();
+		}
 
         return Task.CompletedTask;
     }

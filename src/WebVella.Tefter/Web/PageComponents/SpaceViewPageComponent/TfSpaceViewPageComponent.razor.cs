@@ -105,11 +105,9 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 				Type = jsonOptions.Type,
 			};
 
-			var serviceResult = spaceman.CreateSpaceView(spaceView.ToModelExtended(), spaceView.DataSetType == TucSpaceViewDataSetType.New);
-			if (serviceResult.IsFailed) throw new Exception("TfSpaceViewPageComponent error: CreateSpaceView failed");
-
-			jsonOptions.SpaceViewId = serviceResult.Value.Id;
-			jsonOptions.SpaceDataId = serviceResult.Value.SpaceDataId;
+			var createdSpaceView = spaceman.CreateSpaceView(spaceView.ToModelExtended(), spaceView.DataSetType == TucSpaceViewDataSetType.New);
+			jsonOptions.SpaceViewId = createdSpaceView.Id;
+			jsonOptions.SpaceDataId = createdSpaceView.SpaceDataId;
 			context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);
 		}
 		return context.ComponentOptionsJson;

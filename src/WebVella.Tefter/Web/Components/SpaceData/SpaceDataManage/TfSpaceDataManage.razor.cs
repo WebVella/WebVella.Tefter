@@ -61,17 +61,14 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			return;
 		try
 		{
+			UC.DeleteSpaceData(TfAppState.Value.SpaceData.Id);
 
-			Result result = UC.DeleteSpaceData(TfAppState.Value.SpaceData.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Space data deleted"));
-				if (TfAppState.Value.SpaceDataList.Count > 0)
-					Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceDataList[0].Id), true);
-				else
-					Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
-			}
+			ToastService.ShowSuccess(LOC("Space data deleted"));
+
+			if (TfAppState.Value.SpaceDataList.Count > 0)
+				Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceDataList[0].Id), true);
+			else
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
 		}
 		catch (Exception ex)
 		{
@@ -121,27 +118,23 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		try
 		{
-			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataColumns(TfAppState.Value.SpaceData.Id, columns);
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
+			TucSpaceData spaceData = UC.UpdateSpaceDataColumns(TfAppState.Value.SpaceData.Id, columns);
+			ToastService.ShowSuccess("Dataset updated!");
+			var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
+			var itemIndex = spaceDataList.FindIndex(x => x.Id == spaceData.Id);
+			if (itemIndex > -1) spaceDataList[itemIndex] = spaceData;
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess("Dataset updated!");
-				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
-				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
-				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceData = submitResult.Value,
-					SpaceDataList = spaceDataList
-				}));
-				_form = submitResult.Value with { Id = submitResult.Value.Id };
-			}
+				SpaceData = spaceData,
+				SpaceDataList = spaceDataList
+			}));
+			_form = spaceData with { Id = spaceData.Id };
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{
@@ -160,27 +153,23 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		if (_isSubmitting) return;
 		try
 		{
-			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataFilters(TfAppState.Value.SpaceData.Id, _form.Filters);
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
+			TucSpaceData submitResult = UC.UpdateSpaceDataFilters(TfAppState.Value.SpaceData.Id, _form.Filters);
+			ToastService.ShowSuccess("Dataset updated!");
+			var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
+			var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Id);
+			if (itemIndex > -1) spaceDataList[itemIndex] = submitResult;
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess("Dataset updated!");
-				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
-				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
-				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceData = submitResult.Value,
-					SpaceDataList = spaceDataList
-				}));
-				_form = submitResult.Value with { Id = submitResult.Value.Id };
-			}
+				SpaceData = submitResult,
+				SpaceDataList = spaceDataList
+			}));
+			_form = submitResult with { Id = submitResult.Id };
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{
@@ -194,27 +183,23 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	{
 		try
 		{
-			Result<TucSpaceData> submitResult = UC.UpdateSpaceDataSorts(TfAppState.Value.SpaceData.Id, sorts);
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
+			TucSpaceData submitResult = UC.UpdateSpaceDataSorts(TfAppState.Value.SpaceData.Id, sorts);
+			ToastService.ShowSuccess("Dataset updated!");
+			var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
+			var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Id);
+			if (itemIndex > -1) spaceDataList[itemIndex] = submitResult;
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess("Dataset updated!");
-				var spaceDataList = TfAppState.Value.SpaceDataList.ToList();
-				var itemIndex = spaceDataList.FindIndex(x => x.Id == submitResult.Value.Id);
-				if (itemIndex > -1) spaceDataList[itemIndex] = submitResult.Value;
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceData = submitResult.Value,
-					SpaceDataList = spaceDataList
-				}));
-				_form = submitResult.Value with { Id = submitResult.Value.Id };
-			}
+				SpaceData = submitResult,
+				SpaceDataList = spaceDataList
+			}));
+			_form = submitResult with { Id = submitResult.Id };
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

@@ -2,223 +2,172 @@
 
 public partial interface ITalkService
 {
-	Result<TalkChannel> GetChannel(
+	TalkChannel GetChannel(
 		Guid channelId);
 
-	Result<List<TalkChannel>> GetChannels();
+	List<TalkChannel> GetChannels();
 
-	Result<TalkChannel> CreateChannel(
+	TalkChannel CreateChannel(
 		TalkChannel channel);
 
-	Result<TalkChannel> UpdateChannel(
+	TalkChannel UpdateChannel(
 		TalkChannel channel);
 
-	Result DeleteChannel(
+	void DeleteChannel(
 		Guid channelId);
 }
 
 internal partial class TalkService : ITalkService
 {
-	public Result<TalkChannel> GetChannel(
+	public TalkChannel GetChannel(
 		Guid channelId)
 	{
-		try
-		{
-			var SQL = "SELECT * FROM talk_channel WHERE id = @id";
+		var SQL = "SELECT * FROM talk_channel WHERE id = @id";
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL,
-				new NpgsqlParameter("id", channelId));
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL,
+			new NpgsqlParameter("id", channelId));
 
-			if (dt.Rows.Count == 0)
-				return Result.Ok((TalkChannel)null);
+		if (dt.Rows.Count == 0)
+			return null;
 
-			return Result.Ok((TalkChannel)ToChannel(dt.Rows[0]));
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get channel.").CausedBy(ex));
-		}
+		return (TalkChannel)ToChannel(dt.Rows[0]);
 	}
 
-	public Result<List<TalkChannel>> GetChannels()
+	public List<TalkChannel> GetChannels()
 	{
-		try
-		{
-			var SQL = "SELECT * FROM talk_channel";
+		var SQL = "SELECT * FROM talk_channel";
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 
-			List<TalkChannel> channels = new List<TalkChannel>();
+		List<TalkChannel> channels = new List<TalkChannel>();
 
-			foreach (DataRow row in dt.Rows)
-				channels.Add(ToChannel(row));
+		foreach (DataRow row in dt.Rows)
+			channels.Add(ToChannel(row));
 
-			return Result.Ok(channels);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get channels.").CausedBy(ex));
-		}
+		return channels;
 	}
 
-	public Result<TalkChannel> CreateChannel(
+	public TalkChannel CreateChannel(
 		TalkChannel channel)
 	{
-		try
-		{
-			if (channel == null)
-				throw new NullReferenceException("Channel object is null");
+		if (channel == null)
+			throw new NullReferenceException("Channel object is null");
 
-			if (channel.Id == Guid.Empty)
-				channel.Id = Guid.NewGuid();
+		if (channel.Id == Guid.Empty)
+			channel.Id = Guid.NewGuid();
 
-			TalkChannelValidator validator = new TalkChannelValidator(this);
+		new TalkChannelValidator(this)
+			.ValidateCreate(channel)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateCreate(channel);
+		var SQL = "INSERT INTO talk_channel(id,name,shared_key,count_shared_column_name) " +
+			"VALUES( @id,@name,@shared_key,@count_shared_column_name)";
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var idPar = TalkUtility.CreateParameter(
+			"id",
+			channel.Id,
+			DbType.Guid);
 
-			var SQL = "INSERT INTO talk_channel(id,name,shared_key,count_shared_column_name) " +
-				"VALUES( @id,@name,@shared_key,@count_shared_column_name)";
+		var namePar = TalkUtility.CreateParameter(
+			"name",
+			channel.Name,
+			DbType.StringFixedLength);
 
-			var idPar = TalkUtility.CreateParameter(
-				"id",
-				channel.Id,
-				DbType.Guid);
+		var sharedKeyPar = TalkUtility.CreateParameter(
+			"shared_key",
+			channel.SharedKey,
+			DbType.StringFixedLength);
 
-			var namePar = TalkUtility.CreateParameter(
-				"name",
-				channel.Name,
-				DbType.StringFixedLength);
+		var countSharedColumnNamePar = TalkUtility.CreateParameter(
+			"count_shared_column_name",
+			channel.CountSharedColumnName,
+			DbType.StringFixedLength);
 
-			var sharedKeyPar = TalkUtility.CreateParameter(
-				"shared_key",
-				channel.SharedKey,
-				DbType.StringFixedLength);
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			SQL,
+			idPar,
+			namePar,
+			sharedKeyPar,
+			countSharedColumnNamePar);
 
-			var countSharedColumnNamePar = TalkUtility.CreateParameter(
-				"count_shared_column_name",
-				channel.CountSharedColumnName,
-				DbType.StringFixedLength);
+		if (dbResult != 1)
+			throw new Exception("Failed to insert new row in database for channel object");
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar,
-				namePar,
-				sharedKeyPar,
-				countSharedColumnNamePar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to insert new row in database for channel object");
-
-			var insertedChannelResult = GetChannel(channel.Id);
-
-			if (!insertedChannelResult.IsSuccess || insertedChannelResult.Value is null)
-				throw new Exception("Failed to get newly create channel from database");
-
-			return Result.Ok(insertedChannelResult.Value);
-
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new channel.").CausedBy(ex));
-		}
+		return GetChannel(channel.Id);
 	}
 
-	public Result<TalkChannel> UpdateChannel(
+	public TalkChannel UpdateChannel(
 		TalkChannel channel)
 	{
-		try
-		{
-			if (channel == null)
-				throw new NullReferenceException("Channel object is null");
+		if (channel == null)
+			throw new NullReferenceException("Channel object is null");
 
-			TalkChannelValidator validator = new TalkChannelValidator(this);
+		new TalkChannelValidator(this)
+			.ValidateUpdate(channel)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateUpdate(channel);
+		var SQL = "UPDATE talk_channel SET " +
+			"name=@name, " +
+			"shared_key=@shared_key, " +
+			"count_shared_column_name=@count_shared_column_name " +
+			"WHERE id = @id";
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var idPar = TalkUtility.CreateParameter(
+			"id",
+			channel.Id,
+			DbType.Guid);
 
-			var SQL = "UPDATE talk_channel SET " +
-				"name=@name, " +
-				"shared_key=@shared_key, " +
-				"count_shared_column_name=@count_shared_column_name " +
-				"WHERE id = @id";
+		var namePar = TalkUtility.CreateParameter(
+			"name",
+			channel.Name,
+			DbType.StringFixedLength);
 
-			var idPar = TalkUtility.CreateParameter(
-				"id",
-				channel.Id,
-				DbType.Guid);
+		var sharedKeyPar = TalkUtility.CreateParameter(
+			"shared_key",
+			channel.SharedKey,
+			DbType.StringFixedLength);
 
-			var namePar = TalkUtility.CreateParameter(
-				"name",
-				channel.Name,
-				DbType.StringFixedLength);
+		var countSharedColumnNamePar = TalkUtility.CreateParameter(
+			"count_shared_column_name",
+			channel.CountSharedColumnName,
+			DbType.StringFixedLength);
 
-			var sharedKeyPar = TalkUtility.CreateParameter(
-				"shared_key",
-				channel.SharedKey,
-				DbType.StringFixedLength);
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			SQL,
+			idPar,
+			namePar,
+			sharedKeyPar,
+			countSharedColumnNamePar);
 
-			var countSharedColumnNamePar = TalkUtility.CreateParameter(
-				"count_shared_column_name",
-				channel.CountSharedColumnName,
-				DbType.StringFixedLength);
+		if (dbResult != 1)
+			throw new Exception("Failed to update row in database for channel object");
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar,
-				namePar,
-				sharedKeyPar,
-				countSharedColumnNamePar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to update row in database for channel object");
-
-			return Result.Ok(GetChannel(channel.Id).Value);
-
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update channel.").CausedBy(ex));
-		}
+		return GetChannel(channel.Id);
 	}
 
-	public Result DeleteChannel(
+	public void DeleteChannel(
 		Guid channelId)
 	{
-		try
-		{
+		var existingChannel = GetChannel(channelId);
 
-			var existingChannel = GetChannel(channelId).Value;
+		new TalkChannelValidator(this)
+			.ValidateDelete(existingChannel)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			TalkChannelValidator validator = new TalkChannelValidator(this);
+		var SQL = "DELETE FROM talk_channel WHERE id = @id";
 
-			var validationResult = validator.ValidateDelete(existingChannel);
+		var idPar = TalkUtility.CreateParameter(
+			"id",
+			channelId,
+			DbType.Guid);
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
 
-			var SQL = "DELETE FROM talk_channel WHERE id = @id";
-
-			var idPar = TalkUtility.CreateParameter(
-				"id",
-				channelId,
-				DbType.Guid);
-
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to delete row in database for channel object");
-
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete channel.").CausedBy(ex));
-		}
+		if (dbResult != 1)
+			throw new Exception("Failed to delete row in database for channel object");
 	}
 
 	private TalkChannel ToChannel(DataRow dr)
@@ -258,7 +207,7 @@ internal partial class TalkService : ITalkService
 			RuleSet("create", () =>
 			{
 				RuleFor(channel => channel.Id)
-						.Must((channel, id) => { return service.GetChannel(id).Value == null; })
+						.Must((channel, id) => { return service.GetChannel(id) == null; })
 						.WithMessage("There is already existing channel with specified identifier.");
 
 				RuleFor(channel => channel.Name)
@@ -267,7 +216,7 @@ internal partial class TalkService : ITalkService
 							if (string.IsNullOrEmpty(name))
 								return true;
 
-							var channels = service.GetChannels().Value;
+							var channels = service.GetChannels();
 							return !channels.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
 						})
 						.WithMessage("There is already existing channel with same name.");
@@ -278,7 +227,7 @@ internal partial class TalkService : ITalkService
 				RuleFor(channnel => channnel.Id)
 						.Must((channel, id) =>
 						{
-							return service.GetChannel(id).Value != null;
+							return service.GetChannel(id) != null;
 						})
 						.WithMessage("There is not existing channel with specified identifier.");
 
@@ -288,7 +237,7 @@ internal partial class TalkService : ITalkService
 							if (string.IsNullOrEmpty(name))
 								return true;
 
-							var channels = service.GetChannels().Value;
+							var channels = service.GetChannels();
 							return !channels.Any(x =>
 								x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim() &&
 								x.Id != channel.Id
@@ -303,7 +252,7 @@ internal partial class TalkService : ITalkService
 				RuleFor(channnel => channnel.Id)
 					.Must((channel, id) =>
 					{
-						return service.GetChannel(id).Value != null;
+						return service.GetChannel(id) != null;
 					})
 					.WithMessage("There is not existing channel with specified identifier.");
 			});

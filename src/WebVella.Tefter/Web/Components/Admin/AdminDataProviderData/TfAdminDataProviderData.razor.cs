@@ -144,17 +144,15 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (TfAppState.Value.Route.PageSize == pageSize) return;
 		try
 		{
-			var resultSrv = await UserUC.SetPageSize(
+			var user = await UserUC.SetPageSize(
 						userId: TfUserState.Value.CurrentUser.Id,
 						pageSize: pageSize == TfConstants.PageSize ? null : pageSize
 					);
-			if (resultSrv.IsSuccess)
-			{
+
 				Dispatcher.Dispatch(new SetUserStateAction(
 					component: this,
 					oldStateHash: TfUserState.Value.Hash,
-					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
-			}
+					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = user }));
 		}
 		catch { }
 

@@ -65,9 +65,7 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		var allFoldersResult = AssetsService.GetFolders();
-		if (allFoldersResult.IsFailed) throw new Exception("GetFolders failed");
-		_folders = allFoldersResult.Value;
+		_folders = AssetsService.GetFolders();
 		if (!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson))
 		{
 			optionsJson = Context.ComponentOptionsJson;

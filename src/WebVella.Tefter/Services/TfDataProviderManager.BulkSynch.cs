@@ -18,14 +18,10 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	{
 		await Task.Delay(1);
 
-		var providerResult = GetProvider(task.DataProviderId);
+		var provider = GetProvider(task.DataProviderId);
 
-		if (!providerResult.IsSuccess)
-		{
-			throw new Exception("Unable to get provider.");
-		}
-
-		var provider = providerResult.Value;
+		if (provider is null)
+			throw new TfException("Unable to get provider.");
 
 		using (var scope = _dbService.CreateTransactionScope(Constants.DB_SYNC_OPERATION_LOCK_KEY))
 		{

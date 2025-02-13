@@ -52,7 +52,7 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<AssetsFolder>();
+			var result = new AssetsFolder();
 			if (_isCreate)
 			{
 				result = AssetsService.CreateFolder(_form);
@@ -61,12 +61,7 @@ public partial class AssetsFolderManageDialog : TfFormBaseComponent, IDialogCont
 			{
 				result = AssetsService.UpdateFolder(_form);
 			}
-
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				await Dialog.CloseAsync(result.Value);
-			}
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{

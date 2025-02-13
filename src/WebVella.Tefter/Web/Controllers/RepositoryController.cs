@@ -34,7 +34,7 @@ public class RepositoryController : ControllerBase
 		}
 
 
-		var file = _repoService.GetFile(filename).Value;
+		var file = _repoService.GetFile(filename);
 
 		if (file == null)
 		{
@@ -67,7 +67,7 @@ public class RepositoryController : ControllerBase
 
 		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
-		Stream fileContentStream = _repoService.GetFileContentAsFileStream(filename).Value;
+		Stream fileContentStream = _repoService.GetFileContentAsFileStream(filename);
 		return File(fileContentStream, mimeType);
 	}
 

@@ -17,17 +17,12 @@ public partial class TfSpaceViewToolbar : TfBaseComponent
 			newDt.Rows.Add(newDt.NewRow());
 
 			var result = UC.SaveDataDataTable(newDt);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				var clone = TfAppState.Value.SpaceViewData.Clone();
-				clone.Rows.Insert(0,result.Value.Rows[0]);
-				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { SpaceViewData = clone }));
+			var clone = TfAppState.Value.SpaceViewData.Clone();
+			clone.Rows.Insert(0, result.Rows[0]);
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { SpaceViewData = clone }));
 
-				ToastService.ShowSuccess(LOC("Row added"));
-			}
-
+			ToastService.ShowSuccess(LOC("Row added"));
 		}
 		catch (Exception ex)
 		{

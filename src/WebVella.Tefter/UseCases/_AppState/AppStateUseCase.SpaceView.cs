@@ -119,13 +119,21 @@ internal partial class AppStateUseCase
 
 		return (newAppState,newAuxDataState);
 	}
-	internal virtual TucSpaceView GetSpaceView(Guid viewId)
+	internal virtual TucSpaceView GetSpaceView(
+		Guid viewId)
 	{
-		var serviceResult = _spaceManager.GetSpaceView(viewId);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var spaceView = _spaceManager.GetSpaceView(viewId);
+			if (spaceView is null) 
+				return null;
+
+			return new TucSpaceView(spaceView);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceView failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -134,17 +142,21 @@ internal partial class AppStateUseCase
 			);
 			return null;
 		}
-		if (serviceResult.Value is null) return null;
-
-		return new TucSpaceView(serviceResult.Value);
 	}
-	internal virtual List<TucSpaceView> GetSpaceViewList(Guid spaceId)
+
+	internal virtual List<TucSpaceView> GetSpaceViewList(
+		Guid spaceId)
 	{
-		var serviceResult = _spaceManager.GetSpaceViewsList(spaceId);
-		if (serviceResult.IsFailed)
+		try
+		{
+			return _spaceManager.GetSpaceViewsList(spaceId)
+				.Select(x => new TucSpaceView(x))
+				.ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceViewsList failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -153,17 +165,26 @@ internal partial class AppStateUseCase
 			);
 			return null;
 		}
-		if (serviceResult.Value is null) return new();
-
-		return serviceResult.Value.Select(x => new TucSpaceView(x)).ToList();
 	}
-	internal virtual Result<Tuple<TucSpaceView, TucSpaceData>> CreateSpaceViewWithForm(TucSpaceView view)
+	internal virtual Tuple<TucSpaceView, TucSpaceData> CreateSpaceViewWithForm(
+		TucSpaceView view)
 	{
-		var serviceResult = _spaceManager.CreateSpaceView(view.ToModelExtended(), view.DataSetType == TucSpaceViewDataSetType.New);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var spaceView = _spaceManager.CreateSpaceView(
+				view.ToModelExtended(), 
+				view.DataSetType == TucSpaceViewDataSetType.New);
+
+			var spaceData = _spaceManager.GetSpaceData(spaceView.SpaceDataId);
+
+			return new Tuple<TucSpaceView, TucSpaceData>(
+				new TucSpaceView(spaceView),
+				new TucSpaceData(spaceData));
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("CreateSpaceView failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -172,32 +193,26 @@ internal partial class AppStateUseCase
 			);
 			return null;
 		}
-
-		var spaceDataResult = _spaceManager.GetSpaceData(serviceResult.Value.SpaceDataId);
-		if (spaceDataResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceData failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-
-		var spaceView = new TucSpaceView(serviceResult.Value);
-		var spaceData = new TucSpaceData(spaceDataResult.Value);
-		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(spaceView, spaceData));
 	}
-	internal virtual Result<Tuple<TucSpaceView, TucSpaceData>> UpdateSpaceViewWithForm(TucSpaceView view)
+	internal virtual Tuple<TucSpaceView, TucSpaceData> UpdateSpaceViewWithForm(
+		TucSpaceView view)
 	{
-		var serviceResult = _spaceManager.UpdateSpaceView(view.ToModelExtended(), view.DataSetType == TucSpaceViewDataSetType.New);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var spaceView = _spaceManager.UpdateSpaceView(
+				view.ToModelExtended(), 
+				view.DataSetType == TucSpaceViewDataSetType.New);
+			
+			var spaceData = _spaceManager.GetSpaceData(spaceView.SpaceDataId);
+
+			return new Tuple<TucSpaceView, TucSpaceData>(
+				new TucSpaceView(spaceView),
+				new TucSpaceData(spaceData));
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("UpdateSpaceView failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -206,40 +221,30 @@ internal partial class AppStateUseCase
 			);
 			return null;
 		}
-
-		var spaceDataResult = _spaceManager.GetSpaceData(serviceResult.Value.SpaceDataId);
-		if (spaceDataResult.IsFailed)
-		{
-			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceData failed").CausedBy(serviceResult.Errors)),
-				toastErrorMessage: "Unexpected Error",
-				toastValidationMessage: "Invalid Data",
-				notificationErrorTitle: "Unexpected Error",
-				toastService: _toastService,
-				messageService: _messageService
-			);
-			return null;
-		}
-
-		var spaceView = new TucSpaceView(serviceResult.Value);
-		var spaceData = new TucSpaceData(spaceDataResult.Value);
-		return Result.Ok(new Tuple<TucSpaceView, TucSpaceData>(spaceView, spaceData));
 	}
-	internal virtual Result DeleteSpaceView(Guid viewId)
+
+	internal virtual void DeleteSpaceView(
+		Guid viewId)
 	{
-		var tfResult = _spaceManager.DeleteSpaceView(viewId);
-		if (tfResult.IsFailed) return Result.Fail(new Error("DeleteSpaceView failed").CausedBy(tfResult.Errors));
-
-		return Result.Ok();
+		_spaceManager.DeleteSpaceView(viewId);
 	}
+
 	internal virtual Task<List<TucSpaceView>> GetAllSpaceViews()
 	{
+		try
+		{
+			var allSpaceViews = _spaceManager.GetAllSpaceViews();
+			if (allSpaceViews is null) 
+				return Task.FromResult(new List<TucSpaceView>());
 
-		var serviceResult = _spaceManager.GetAllSpaceViews();
-		if (serviceResult.IsFailed)
+			return Task.FromResult(allSpaceViews
+				.Select(x => new TucSpaceView(x))
+				.ToList());
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetAllSpaceViews failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
@@ -248,110 +253,132 @@ internal partial class AppStateUseCase
 			);
 			return Task.FromResult(new List<TucSpaceView>());
 		}
-		if (serviceResult.Value is null) return Task.FromResult(new List<TucSpaceView>());
-		return Task.FromResult(serviceResult.Value.Select(x => new TucSpaceView(x)).ToList());
-
 	}
 
 	//View columns
-	internal virtual TucSpaceViewColumn GetViewColumn(Guid columnId)
+	internal virtual TucSpaceViewColumn GetViewColumn(
+		Guid columnId)
 	{
-		var serviceResult = _spaceManager.GetSpaceViewColumn(columnId);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var spaceViewColumn = _spaceManager.GetSpaceViewColumn(columnId);
+			if (spaceViewColumn is null)
+				return new TucSpaceViewColumn();
+
+			return new TucSpaceViewColumn(spaceViewColumn);
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceViewColumn failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
 			);
-			return new();
+			return new TucSpaceViewColumn();
 		}
-		if (serviceResult.Value is null) return new();
-
-		return new TucSpaceViewColumn(serviceResult.Value);
 	}
 
-	internal virtual List<TucSpaceViewColumn> GetViewColumns(Guid viewId)
+	internal virtual List<TucSpaceViewColumn> GetViewColumns(
+		Guid viewId)
 	{
-		var serviceResult = _spaceManager.GetSpaceViewColumnsList(viewId);
-		if (serviceResult.IsFailed)
+		try
+		{
+			var columnList = _spaceManager.GetSpaceViewColumnsList(viewId);
+			if (columnList is null) 
+				return new List<TucSpaceViewColumn>();
+
+			return columnList.Select(x => new TucSpaceViewColumn(x)).ToList();
+		}
+		catch (Exception ex)
 		{
 			ResultUtils.ProcessServiceResult(
-				result: Result.Fail(new Error("GetSpaceViewColumnsList failed").CausedBy(serviceResult.Errors)),
+				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
 				notificationErrorTitle: "Unexpected Error",
 				toastService: _toastService,
 				messageService: _messageService
 			);
-			return new();
+			return new List<TucSpaceViewColumn>();
 		}
-		if (serviceResult.Value is null) return new();
-
-		return serviceResult.Value.Select(x => new TucSpaceViewColumn(x)).ToList();
 
 	}
 
-	internal virtual Result<List<TucSpaceViewColumn>> CreateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	internal virtual List<TucSpaceViewColumn> CreateSpaceViewColumnWithForm(
+		TucSpaceViewColumn column)
 	{
-		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes();
 		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
-		if (selectedType is null) return Result.Fail("Column selected type not found");
-		var result = _spaceManager.CreateSpaceViewColumn(column.ToModel(selectedType));
+		if (selectedType is null)
+			throw new TfException("Column selected type is not found");
 
-		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceViewColumn failed").CausedBy(result.Errors));
-		return Result.Ok(GetViewColumns(column.SpaceViewId));
+		_spaceManager.CreateSpaceViewColumn(column.ToModel(selectedType));
+		
+		return GetViewColumns(column.SpaceViewId);
 	}
 
-	internal virtual Result<List<TucSpaceViewColumn>> UpdateSpaceViewColumnWithForm(TucSpaceViewColumn column)
+	internal virtual List<TucSpaceViewColumn> UpdateSpaceViewColumnWithForm(
+		TucSpaceViewColumn column)
 	{
-		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes().Value;
+		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes();
+
 		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
-		if (selectedType is null) return Result.Fail("Column selected type not found");
-		var result = _spaceManager.UpdateSpaceViewColumn(column.ToModel(selectedType));
+		if (selectedType is null)
+			throw new TfException("Column selected type is not found");
 
-		if (result.IsFailed) return Result.Fail(new Error("CreateSpaceViewColumn failed").CausedBy(result.Errors));
-		return Result.Ok(GetViewColumns(column.SpaceViewId));
+		_spaceManager.UpdateSpaceViewColumn(column.ToModel(selectedType));
+
+		return GetViewColumns(column.SpaceViewId);
 	}
 
-	internal virtual Result<List<TucSpaceViewColumn>> RemoveSpaceViewColumn(Guid columnId)
+	internal virtual List<TucSpaceViewColumn> RemoveSpaceViewColumn(
+		Guid columnId)
 	{
-		if (columnId == Guid.Empty) return Result.Fail("columnId is required");
+		if (columnId == Guid.Empty)
+			throw new TfException("Column ID is not specified");
+
 		var column = GetViewColumn(columnId);
-		if (column is null) return Result.Fail("column not found");
-		var updateResult = _spaceManager.DeleteSpaceViewColumn(columnId);
-		if (updateResult.IsFailed) return Result.Fail(new Error("DeleteSpaceViewColumn failed").CausedBy(updateResult.Errors));
-		return Result.Ok(GetViewColumns(column.SpaceViewId));
+
+		if (column is null)
+			throw new TfException("Column is not found");
+
+		_spaceManager.DeleteSpaceViewColumn(columnId);
+		
+		return GetViewColumns(column.SpaceViewId);
 	}
 
-	internal virtual Result<List<TucSpaceViewColumn>> MoveSpaceViewColumn(Guid viewId, Guid columnId, bool isUp)
+	internal virtual List<TucSpaceViewColumn> MoveSpaceViewColumn(
+		Guid viewId, 
+		Guid columnId, 
+		bool isUp)
 	{
-		if (columnId == Guid.Empty) return Result.Fail("columnId is required");
-		Result updateResult = null;
+		if (columnId == Guid.Empty)
+			throw new TfException("Column ID is not specified");
+		;
 		if (isUp)
-			updateResult = _spaceManager.MoveSpaceViewColumnUp(columnId);
+			_spaceManager.MoveSpaceViewColumnUp(columnId);
 		else
-			updateResult = _spaceManager.MoveSpaceViewColumnDown(columnId);
+			_spaceManager.MoveSpaceViewColumnDown(columnId);
 
-		if (updateResult.IsFailed) return Result.Fail(new Error("MoveSpaceViewColumn failed").CausedBy(updateResult.Errors));
-		return Result.Ok(GetViewColumns(viewId));
+		return GetViewColumns(viewId);
 
 	}
-	internal virtual Result<TucSpaceView> UpdateSpaceViewPresets(Guid viewId, List<TucSpaceViewPreset> presets)
+
+	internal virtual TucSpaceView UpdateSpaceViewPresets(
+		Guid viewId,
+		List<TucSpaceViewPreset> presets)
 	{
-		var updateResult = _spaceManager.UpdateSpaceViewPresets(viewId, presets.Select(x => x.ToModel()).ToList());
-		if (updateResult.IsFailed) return Result.Fail(new Error("UpdateSpaceViewPresets failed").CausedBy(updateResult.Errors));
-		return Result.Ok(GetSpaceView(viewId));
+		_spaceManager.UpdateSpaceViewPresets(viewId, presets.Select(x => x.ToModel()).ToList());
+		return GetSpaceView(viewId);
 
 	}
 
 	internal virtual List<TucSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
 	{
 		var serviceResult = _metaProvider.GetSpaceViewColumnTypesMeta();
-
 		return serviceResult.Select(x => new TucSpaceViewColumnType(x.Instance)).ToList();
 
 	}

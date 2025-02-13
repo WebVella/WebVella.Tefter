@@ -68,22 +68,17 @@ public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<TucRepositoryFile> submitResult;
+			TucRepositoryFile provider;
 			var submit = _form with
 			{
 				Id = _form.Id
 			};
-			submitResult = UC.UpdateFile(submit);
-
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			provider = UC.UpdateFile(submit);
+			await Dialog.CloseAsync(provider);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

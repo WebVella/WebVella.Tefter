@@ -1,37 +1,35 @@
-﻿using FluentResults;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public partial interface ITfDataProviderManager
 {
-	internal Result<TfDataProviderSynchronizeTask> GetSynchronizationTask(
+	internal TfDataProviderSynchronizeTask GetSynchronizationTask(
 		Guid taskId);
 
-	internal Result<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTaskExtended(
+	internal TfDataProviderSynchronizeTaskExtended GetSynchronizationTaskExtended(
 		Guid taskId);
 
-	internal Result<List<TfDataProviderSynchronizeTaskExtended>> GetSynchronizationTasksExtended(
+	internal List<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTasksExtended(
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null);
 
-	internal Result<List<TfDataProviderSynchronizeTask>> GetSynchronizationTasks(
+	internal List<TfDataProviderSynchronizeTask> GetSynchronizationTasks(
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null);
 
-	internal Result<Guid> CreateSynchronizationTask(
+	internal Guid CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy);
 
-	internal Result UpdateSychronizationTask(
+	internal void UpdateSychronizationTask(
 		Guid taskId,
 		TfSynchronizationStatus status,
 		DateTime? startedOn = null,
 		DateTime? completedOn = null);
 
-	internal Result<List<TfDataProviderSynchronizeResultInfo>> GetSynchronizationTaskResultInfos(
+	internal List<TfDataProviderSynchronizeResultInfo> GetSynchronizationTaskResultInfos(
 		Guid taskId);
 
-	internal Result CreateSynchronizationResultInfo(
+	internal void CreateSynchronizationResultInfo(
 		Guid syncTaskId,
 		int? tfRowIndex,
 		Guid? tfId,
@@ -39,7 +37,7 @@ public partial interface ITfDataProviderManager
 		string warning = null,
 		string error = null);
 
-	internal Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(
+	internal TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(
 		Guid providerId);
 }
 
@@ -47,17 +45,69 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 {
 	#region <--- Synchronization Tasks --->
 
-	public Result<TfDataProviderSynchronizeTask> GetSynchronizationTask(
+	public TfDataProviderSynchronizeTask GetSynchronizationTask(
 		Guid taskId)
 	{
-		try
+		var dbo = _dboManager.Get<TfDataProviderSynchronizeTaskDbo>(taskId);
+
+		if (dbo == null)
+			return null;
+
+		return new TfDataProviderSynchronizeTask
 		{
-			var dbo = _dboManager.Get<TfDataProviderSynchronizeTaskDbo>(taskId);
+			Id = dbo.Id,
+			DataProviderId = dbo.DataProviderId,
+			CompletedOn = dbo.CompletedOn,
+			CreatedOn = dbo.CreatedOn,
+			Policy = JsonSerializer.Deserialize<TfSynchronizationPolicy>(dbo.PolicyJson),
+			StartedOn = dbo.StartedOn,
+			Status = dbo.Status,
+		};
+	}
 
-			if (dbo == null)
-				return Result.Ok();
+	public List<TfDataProviderSynchronizeTask> GetSynchronizationTasks(
+		Guid? providerId = null,
+		TfSynchronizationStatus? status = null)
+	{
+		var orderSettings = new TfOrderSettings(
+		nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
+		OrderDirection.ASC);
 
-			return new TfDataProviderSynchronizeTask
+		List<TfDataProviderSynchronizeTaskDbo> dbos = null;
+		if (providerId is not null && status is not null)
+		{
+			dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(
+				"WHERE data_provider_id = @data_provider_id AND status = @status",
+				orderSettings,
+				new NpgsqlParameter("@data_provider_id", providerId.Value),
+				new NpgsqlParameter("@status", (short)status.Value));
+
+		}
+		else if (providerId is not null)
+		{
+			dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(
+				"WHERE data_provider_id = @data_provider_id ",
+				orderSettings,
+				new NpgsqlParameter("@data_provider_id", providerId.Value));
+
+		}
+		else if (status is not null)
+		{
+			dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(
+				"WHERE status = @status",
+				orderSettings,
+				new NpgsqlParameter("@status", (short)status.Value));
+		}
+		else
+		{
+			dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(order: orderSettings);
+		}
+
+		var result = new List<TfDataProviderSynchronizeTask>();
+
+		foreach (var dbo in dbos)
+		{
+			var task = new TfDataProviderSynchronizeTask
 			{
 				Id = dbo.Id,
 				DataProviderId = dbo.DataProviderId,
@@ -67,86 +117,17 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				StartedOn = dbo.StartedOn,
 				Status = dbo.Status,
 			};
+			result.Add(task);
+		}
 
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get data providers").CausedBy(ex));
-		}
+		return result;
 	}
 
-	public Result<List<TfDataProviderSynchronizeTask>> GetSynchronizationTasks(
-		Guid? providerId = null,
-		TfSynchronizationStatus? status = null)
-	{
-		try
-		{
-			var orderSettings = new TfOrderSettings(
-			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
-			OrderDirection.ASC);
-
-			List<TfDataProviderSynchronizeTaskDbo> dbos = null;
-			if (providerId is not null && status is not null)
-			{
-				dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(
-					"WHERE data_provider_id = @data_provider_id AND status = @status",
-					orderSettings,
-					new NpgsqlParameter("@data_provider_id", providerId.Value),
-					new NpgsqlParameter("@status", (short)status.Value));
-
-			}
-			else if (providerId is not null)
-			{
-				dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(
-					"WHERE data_provider_id = @data_provider_id ",
-					orderSettings,
-					new NpgsqlParameter("@data_provider_id", providerId.Value));
-
-			}
-			else if (status is not null)
-			{
-				dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(
-					"WHERE status = @status",
-					orderSettings,
-					new NpgsqlParameter("@status", (short)status.Value));
-			}
-			else
-			{
-				dbos = _dboManager.GetList<TfDataProviderSynchronizeTaskDbo>(order: orderSettings);
-			}
-
-			var result = new List<TfDataProviderSynchronizeTask>();
-
-			foreach (var dbo in dbos)
-			{
-				var task = new TfDataProviderSynchronizeTask
-				{
-					Id = dbo.Id,
-					DataProviderId = dbo.DataProviderId,
-					CompletedOn = dbo.CompletedOn,
-					CreatedOn = dbo.CreatedOn,
-					Policy = JsonSerializer.Deserialize<TfSynchronizationPolicy>(dbo.PolicyJson),
-					StartedOn = dbo.StartedOn,
-					Status = dbo.Status,
-				};
-				result.Add(task);
-			}
-
-			return Result.Ok(result);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of synchronization tasks").CausedBy(ex));
-		}
-	}
-
-	public Result<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTaskExtended(
+	public TfDataProviderSynchronizeTaskExtended GetSynchronizationTaskExtended(
 		Guid taskId)
 	{
-		try
-		{
-			TfDataProviderSynchronizeTaskExtended dbo =
-				_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
+		TfDataProviderSynchronizeTaskExtended dbo =
+			_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
 @"SELECT
 	st.id,
 	st.data_provider_id,
@@ -169,26 +150,19 @@ GROUP BY
 	st.started_on,
 	st.completed_on
 ORDER BY st.created_on DESC",
-					new NpgsqlParameter("@task_id", taskId));
+				new NpgsqlParameter("@task_id", taskId));
 
-			return Result.Ok(dbo);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of synchronization tasks").CausedBy(ex));
-		}
+		return dbo;
 	}
 
-	public Result<List<TfDataProviderSynchronizeTaskExtended>> GetSynchronizationTasksExtended(
+	public List<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTasksExtended(
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null)
 	{
-		try
+		List<TfDataProviderSynchronizeTaskExtended> dbos = null;
+		if (providerId is not null && status is not null)
 		{
-			List<TfDataProviderSynchronizeTaskExtended> dbos = null;
-			if (providerId is not null && status is not null)
-			{
-				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
 @"SELECT
 	st.id,
 	st.data_provider_id,
@@ -211,13 +185,13 @@ GROUP BY
 	st.started_on,
 	st.completed_on
 ORDER BY st.created_on DESC",
-					new NpgsqlParameter("@data_provider_id", providerId.Value),
-					new NpgsqlParameter("@status", (short)status.Value));
+				new NpgsqlParameter("@data_provider_id", providerId.Value),
+				new NpgsqlParameter("@status", (short)status.Value));
 
-			}
-			else if (providerId is not null)
-			{
-				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+		}
+		else if (providerId is not null)
+		{
+			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
 @"SELECT
 	st.id,
 	st.data_provider_id,
@@ -240,12 +214,12 @@ GROUP BY
 	st.started_on,
 	st.completed_on
 ORDER BY st.created_on DESC",
-					new NpgsqlParameter("@data_provider_id", providerId.Value));
+				new NpgsqlParameter("@data_provider_id", providerId.Value));
 
-			}
-			else if (status is not null)
-			{
-				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+		}
+		else if (status is not null)
+		{
+			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
 @"SELECT 
 	st.id, 
 	st.data_provider_id, 
@@ -271,11 +245,11 @@ GROUP BY
 	st.started_on,
 	st.completed_on
 ORDER BY st.created_on DESC",
-					new NpgsqlParameter("@status", (short)status.Value));
-			}
-			else
-			{
-				dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+				new NpgsqlParameter("@status", (short)status.Value));
+		}
+		else
+		{
+			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
 @"SELECT
 	st.id,
 	st.data_provider_id,
@@ -297,138 +271,103 @@ GROUP BY
 	st.started_on,
 	st.completed_on
 ORDER BY st.created_on DESC");
-			}
+		}
 
-			return Result.Ok(dbos);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of synchronization tasks").CausedBy(ex));
-		}
+		return dbos;
 	}
 
-	public Result<Guid> CreateSynchronizationTask(
+	public Guid CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy)
 	{
-		try
+		var task = new TfDataProviderSynchronizeTaskDbo
 		{
-			var task = new TfDataProviderSynchronizeTaskDbo
-			{
-				Id = Guid.NewGuid(),
-				DataProviderId = providerId,
-				PolicyJson = JsonSerializer.Serialize(synchPolicy),
-				Status = TfSynchronizationStatus.Pending,
-				CreatedOn = DateTime.Now,
-				CompletedOn = null,
-				StartedOn = DateTime.Now
-			};
+			Id = Guid.NewGuid(),
+			DataProviderId = providerId,
+			PolicyJson = JsonSerializer.Serialize(synchPolicy),
+			Status = TfSynchronizationStatus.Pending,
+			CreatedOn = DateTime.Now,
+			CompletedOn = null,
+			StartedOn = DateTime.Now
+		};
 
-			var success = _dboManager.Insert<TfDataProviderSynchronizeTaskDbo>(task);
-			if (!success)
-				throw new TfDatabaseException("Failed to insert synchronization task.");
+		var success = _dboManager.Insert<TfDataProviderSynchronizeTaskDbo>(task);
+		if (!success)
+			throw new TfDatabaseException("Failed to insert synchronization task.");
 
-			return Result.Ok(task.Id);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to insert synchronization task.").CausedBy(ex));
-		}
+		return task.Id;
 	}
 
-	public Result UpdateSychronizationTask(
+	public void UpdateSychronizationTask(
 		Guid taskId,
 		TfSynchronizationStatus status,
 		DateTime? startedOn = null,
 		DateTime? completedOn = null)
 	{
-		try
-		{
-			var dbo = _dboManager.Get<TfDataProviderSynchronizeTaskDbo>(taskId);
-			if (dbo == null)
-				throw new Exception("Synchronization task was not found.");
+		var dbo = _dboManager.Get<TfDataProviderSynchronizeTaskDbo>(taskId);
+		if (dbo == null)
+			throw new Exception("Synchronization task was not found.");
 
-			dbo.Status = status;
-			if (startedOn is not null)
-				dbo.StartedOn = startedOn;
-			if (completedOn is not null)
-				dbo.CompletedOn = completedOn;
+		dbo.Status = status;
+		if (startedOn is not null)
+			dbo.StartedOn = startedOn;
+		if (completedOn is not null)
+			dbo.CompletedOn = completedOn;
 
-			var success = _dboManager.Update<TfDataProviderSynchronizeTaskDbo>(dbo);
-			if (!success)
-				throw new TfDatabaseException("Failed to update synchronization task in database.");
-
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update synchronization task.").CausedBy(ex));
-		}
+		var success = _dboManager.Update<TfDataProviderSynchronizeTaskDbo>(dbo);
+		if (!success)
+			throw new TfDatabaseException("Failed to update synchronization task in database.");
 	}
 
 	#endregion
 
-	public Result<TfDataProviderSourceSchemaInfo> GetDataProviderSourceSchemaInfo(
+	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(
 		Guid providerId)
 	{
 		var result = new TfDataProviderSourceSchemaInfo();
-		var providerResult = GetProvider(providerId);
-		if (!providerResult.IsSuccess) return Result.Fail(new Error("GetProvider failed").CausedBy(providerResult.Errors));
-		var provider = providerResult.Value;
-		try
-		{
-			return Result.Ok(provider.ProviderType.GetDataProviderSourceSchema(provider));
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(ex.Message);
-		}
+		var provider = GetProvider(providerId);
+		if (provider is null)
+			throw new TfException("GetProvider failed");
 
+		return provider.ProviderType.GetDataProviderSourceSchema(provider);
 	}
 
 	#region <--- Synchronization Result Info --->
 
-	public Result<List<TfDataProviderSynchronizeResultInfo>> GetSynchronizationTaskResultInfos(
+	public List<TfDataProviderSynchronizeResultInfo> GetSynchronizationTaskResultInfos(
 		Guid taskId)
 	{
-		try
+		var orderSettings = new TfOrderSettings(
+		nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
+		OrderDirection.ASC);
+
+		var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
+				"WHERE task_id = @task_id",
+				orderSettings,
+				new NpgsqlParameter("@task_id", taskId));
+
+		var result = new List<TfDataProviderSynchronizeResultInfo>();
+
+		foreach (var dbo in dbos)
 		{
-			var orderSettings = new TfOrderSettings(
-			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
-			OrderDirection.ASC);
-
-			var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
-					"WHERE task_id = @task_id",
-					orderSettings,
-					new NpgsqlParameter("@task_id", taskId));
-
-			var result = new List<TfDataProviderSynchronizeResultInfo>();
-
-			foreach (var dbo in dbos)
+			var task = new TfDataProviderSynchronizeResultInfo
 			{
-				var task = new TfDataProviderSynchronizeResultInfo
-				{
-					Id = dbo.Id,
-					TaskId = dbo.TaskId,
-					TfId = dbo.TfId,
-					TfRowIndex = dbo.TfRowIndex,
-					CreatedOn = dbo.CreatedOn,
-					Info = dbo.Info,
-					Error = dbo.Error,
-					Warning = dbo.Warning
-				};
-				result.Add(task);
-			}
+				Id = dbo.Id,
+				TaskId = dbo.TaskId,
+				TfId = dbo.TfId,
+				TfRowIndex = dbo.TfRowIndex,
+				CreatedOn = dbo.CreatedOn,
+				Info = dbo.Info,
+				Error = dbo.Error,
+				Warning = dbo.Warning
+			};
+			result.Add(task);
+		}
 
-			return Result.Ok(result);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get list of synchronization result for task").CausedBy(ex));
-		}
+		return result;
 	}
 
-	public Result CreateSynchronizationResultInfo(
+	public void CreateSynchronizationResultInfo(
 		Guid taskId,
 		int? tfRowIndex,
 		Guid? tfId,
@@ -436,30 +375,21 @@ ORDER BY st.created_on DESC");
 		string warning = null,
 		string error = null)
 	{
-		try
+		var dbo = new TfDataProviderSynchronizeResultInfoDbo
 		{
-			var dbo = new TfDataProviderSynchronizeResultInfoDbo
-			{
-				Id = Guid.NewGuid(),
-				TaskId = taskId,
-				CreatedOn = DateTime.Now,
-				Info = info,
-				Error = error,
-				Warning = warning,
-				TfId = tfId,
-				TfRowIndex = tfRowIndex
-			};
+			Id = Guid.NewGuid(),
+			TaskId = taskId,
+			CreatedOn = DateTime.Now,
+			Info = info,
+			Error = error,
+			Warning = warning,
+			TfId = tfId,
+			TfRowIndex = tfRowIndex
+		};
 
-			var success = _dboManager.Insert<TfDataProviderSynchronizeResultInfoDbo>(dbo);
-			if (!success)
-				throw new TfDatabaseException("Failed to insert synchronization task result info.");
-
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to insert synchronization task.").CausedBy(ex));
-		}
+		var success = _dboManager.Insert<TfDataProviderSynchronizeResultInfoDbo>(dbo);
+		if (!success)
+			throw new TfDatabaseException("Failed to insert synchronization task result info.");
 	}
 
 	#endregion

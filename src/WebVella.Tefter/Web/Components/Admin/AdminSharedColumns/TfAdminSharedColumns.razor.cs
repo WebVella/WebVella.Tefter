@@ -51,14 +51,10 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 			return;
 		try
 		{
-			Result<List<TucSharedColumn>> result = UC.DeleteSharedColumn(column.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
-				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminSharedColumns = (List<TucSharedColumn>)result.Value }));
-			}
+			var result = UC.DeleteSharedColumn(column.Id);
+			ToastService.ShowSuccess(LOC("The column is successfully deleted!"));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminSharedColumns = (List<TucSharedColumn>)result }));
 		}
 		catch (Exception ex)
 		{
@@ -81,7 +77,7 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 
 		if (!String.IsNullOrWhiteSpace(searchProcessed))
 		{
-			return TfAppState.Value.AdminSharedColumns.Where(x=> 
+			return TfAppState.Value.AdminSharedColumns.Where(x =>
 				x.DbName.ToLowerInvariant().Contains(searchProcessed)
 				|| x.SharedKeyDbName.ToLowerInvariant().Contains(searchProcessed)
 			).ToList();

@@ -46,8 +46,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
@@ -57,9 +57,8 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(model);
+				provider.Should().BeOfType<TfDataProvider>();
 			}
 		}
 	}

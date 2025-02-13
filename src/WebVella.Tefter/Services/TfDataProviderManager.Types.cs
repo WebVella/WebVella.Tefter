@@ -2,20 +2,19 @@
 
 public partial interface ITfDataProviderManager
 {
-	Result<ITfDataProviderType> GetProviderType(Guid id);
-	Result<ReadOnlyCollection<ITfDataProviderType>> GetProviderTypes();
+	ITfDataProviderType GetProviderType(Guid id);
+	ReadOnlyCollection<ITfDataProviderType> GetProviderTypes();
 }
 
 public partial class TfDataProviderManager : ITfDataProviderManager
 {
-	public Result<ITfDataProviderType> GetProviderType(Guid id)
+	public ITfDataProviderType GetProviderType(Guid id)
 	{
-		var provider = _providerTypes.SingleOrDefault(x=>x.Id == id);
-		return Result.Ok(provider);
+		return _providerTypes.SingleOrDefault(x=>x.Id == id);
 	}
 
-	public Result<ReadOnlyCollection<ITfDataProviderType>> GetProviderTypes()
+	public ReadOnlyCollection<ITfDataProviderType> GetProviderTypes()
 	{
-		return Result.Ok(_providerTypes.AsReadOnly());
+		return _providerTypes.AsReadOnly();
 	}
 }

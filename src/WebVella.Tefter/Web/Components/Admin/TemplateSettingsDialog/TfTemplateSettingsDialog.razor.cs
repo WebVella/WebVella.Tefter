@@ -47,12 +47,8 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			var submitResult = UC.UpdateTemplateSettings(Content.Id, _form);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			var template = UC.UpdateTemplateSettings(Content.Id, _form);
+			await Dialog.CloseAsync(template);
 		}
 		catch (Exception ex)
 		{

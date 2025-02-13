@@ -27,7 +27,7 @@ public partial class TfUserNavigation
 	}
 	private void Navigator_LocationChanged(object sender, LocationChangedEventArgs e)
 	{
-		if(!Navigator.UrlHasState()) return;
+		if (!Navigator.UrlHasState()) return;
 		initAdmin(e.Location);
 		StateHasChanged();
 	}
@@ -66,20 +66,16 @@ public partial class TfUserNavigation
 			var response = (TucThemeSettings)result.Data;
 			try
 			{
-				var resultSrv = await UC.SetUserTheme(
+				var user = await UC.SetUserTheme(
 							userId: TfUserState.Value.CurrentUser.Id,
 							themeMode: response.ThemeMode,
 							themeColor: response.ThemeColor
 						);
-				ProcessServiceResponse(resultSrv);
-				if (resultSrv.IsSuccess)
-				{
-					ToastService.ShowSuccess(LOC("The theme configurations were successfully changed!"));
-					Dispatcher.Dispatch(new SetUserStateAction(
-						component: this,
-						oldStateHash:TfUserState.Value.Hash,
-						state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
-				}
+				ToastService.ShowSuccess(LOC("The theme configurations were successfully changed!"));
+				Dispatcher.Dispatch(new SetUserStateAction(
+					component: this,
+					oldStateHash: TfUserState.Value.Hash,
+					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = user }));
 			}
 			catch (Exception ex)
 			{
@@ -95,19 +91,15 @@ public partial class TfUserNavigation
 		var uri = new Uri(Navigator.Uri);
 		try
 		{
-			var resultSrv = await UC.SetStartUpUrl(
+			var user = await UC.SetStartUpUrl(
 						userId: TfUserState.Value.CurrentUser.Id,
 						url: uri.PathAndQuery
 					);
-			ProcessServiceResponse(resultSrv);
-			if (resultSrv.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
-				Dispatcher.Dispatch(new SetUserStateAction(
-					component: this,
-					oldStateHash:TfUserState.Value.Hash,
-					state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = resultSrv.Value }));
-			}
+			ToastService.ShowSuccess(LOC("Startup URL was successfully changed!"));
+			Dispatcher.Dispatch(new SetUserStateAction(
+				component: this,
+				oldStateHash: TfUserState.Value.Hash,
+				state: TfUserState.Value with { Hash = Guid.NewGuid(), CurrentUser = user }));
 		}
 		catch (Exception ex)
 		{

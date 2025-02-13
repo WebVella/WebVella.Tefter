@@ -18,21 +18,20 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 			{
 				Url = new Uri(Navigator.Uri).PathAndQuery
 			};
-			var result = await UC.UpdateBookmarkAsync(submit);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("URL updated"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-					component: this,
-					state: TfAppState.Value with
-					{
-						CurrentUserBookmarks = result.Value.Item1,
-						CurrentUserSaves = result.Value.Item2,
-						ActiveSpaceViewSavedUrl = submit
-					}
-				));
-			}
+
+			var (bookmarks, saves) = await UC.UpdateBookmarkAsync(submit);
+
+			ToastService.ShowSuccess(LOC("URL updated"));
+
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					CurrentUserBookmarks = bookmarks,
+					CurrentUserSaves = saves,
+					ActiveSpaceViewSavedUrl = submit
+				}
+			));
 		}
 		catch (Exception ex)
 		{
@@ -53,12 +52,12 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 							PreventDismissOnOverlayClick = true,
 							PreventScroll = true,
 							Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
+							TrapFocus = false
 						});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var resultObj = (Tuple<TucBookmark,List<TucBookmark>,List<TucBookmark>>)result.Data;
+			var resultObj = (Tuple<TucBookmark, List<TucBookmark>, List<TucBookmark>>)result.Data;
 			ToastService.ShowSuccess(LOC("URL saved"));
 			Dispatcher.Dispatch(new SetAppStateAction(
 				component: this,
@@ -74,18 +73,18 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 	private async Task _saveUrlAs()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceViewBookmarkManageDialog>(
-						TfAppState.Value.ActiveSpaceViewSavedUrl with { Id = Guid.Empty},
+						TfAppState.Value.ActiveSpaceViewSavedUrl with { Id = Guid.Empty },
 						new DialogParameters()
 						{
 							PreventDismissOnOverlayClick = true,
 							PreventScroll = true,
 							Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
+							TrapFocus = false
 						});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
 		{
-			var resultObj = (Tuple<TucBookmark,List<TucBookmark>,List<TucBookmark>>)result.Data;
+			var resultObj = (Tuple<TucBookmark, List<TucBookmark>, List<TucBookmark>>)result.Data;
 			ToastService.ShowSuccess(LOC("URL saved"));
 			Dispatcher.Dispatch(new SetAppStateAction(
 				component: this,
@@ -102,26 +101,25 @@ public partial class TfSpaceViewLinkSaveSelector : TfBaseComponent
 	{
 		try
 		{
-			if (TfAppState.Value.ActiveSpaceViewSavedUrl is null) return;
-			var result = await UC.DeleteBookmarkAsync(TfAppState.Value.ActiveSpaceViewSavedUrl);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Saved URL removed"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-					component: this,
-					state: TfAppState.Value with
-					{
-						CurrentUserBookmarks = result.Value.Item1,
-						CurrentUserSaves = result.Value.Item2,
-						ActiveSpaceViewSavedUrl = null
-					}
-				));
-				var query = new Dictionary<string, object>();
-				query[TfConstants.ActiveSaveQueryName] = null;
-				await Navigator.ApplyChangeToUrlQuery(query);
+			if (TfAppState.Value.ActiveSpaceViewSavedUrl is null)
+				return;
 
-			}
+			var (bookmarks, saves) = await UC.DeleteBookmarkAsync(TfAppState.Value.ActiveSpaceViewSavedUrl);
+
+			ToastService.ShowSuccess(LOC("Saved URL removed"));
+
+			Dispatcher.Dispatch(new SetAppStateAction(
+				component: this,
+				state: TfAppState.Value with
+				{
+					CurrentUserBookmarks = bookmarks,
+					CurrentUserSaves = saves,
+					ActiveSpaceViewSavedUrl = null
+				}
+			));
+			var query = new Dictionary<string, object>();
+			query[TfConstants.ActiveSaveQueryName] = null;
+			await Navigator.ApplyChangeToUrlQuery(query);
 		}
 		catch (Exception ex)
 		{

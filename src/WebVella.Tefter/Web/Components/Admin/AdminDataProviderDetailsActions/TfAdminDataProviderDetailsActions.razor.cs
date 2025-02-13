@@ -78,12 +78,8 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 		{
 			_isDeleting = true;
 			await InvokeAsync(StateHasChanged);
-			var result = await UC.DeleteDataProviderAsync(TfAppState.Value.AdminDataProvider.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);
-			}
+			await UC.DeleteDataProviderAsync(TfAppState.Value.AdminDataProvider.Id);
+			Navigator.NavigateTo(TfConstants.AdminDataProvidersPageUrl, true);
 		}
 		catch (Exception ex)
 		{

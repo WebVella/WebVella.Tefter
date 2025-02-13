@@ -18,13 +18,11 @@ public partial class TfSpaceViewActionSelector : TfBaseComponent
 		|| TfAppState.Value.SpaceView.SpaceDataId is null) return Task.CompletedTask;
 		try
 		{
-			var result = UC.DeleteSpaceDataRows(
+			UC.DeleteSpaceDataRows(
 				spaceDataId: TfAppState.Value.SpaceView.SpaceDataId.Value,
 				tfIdList: TfAppState.Value.SelectedDataRows
 			);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-				Navigator.ReloadCurrentUrl();
+			Navigator.ReloadCurrentUrl();
 		}
 		catch (Exception ex)
 		{

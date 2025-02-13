@@ -84,26 +84,24 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
-			var result = UC.CreateBulkDataProviderColumn(Content.Id, _newColumns);
+			
+			var provider = UC.CreateBulkDataProviderColumn(Content.Id, _newColumns);
+			await Dialog.CloseAsync(provider);
 
-
-			if (result.IsSuccess)
-			{
-				await Dialog.CloseAsync(result.Value);
-			}
-			else
-			{
-				string errorMessage = null;
-				ValidationErrors = new();
-				foreach (var error in result.Errors)
-				{
-					if (error is ValidationError) ValidationErrors.Add((ValidationError)error);
-					else errorMessage = error.Message;
-				}
-				if (ValidationErrors.Count > 0 && String.IsNullOrWhiteSpace(errorMessage))
-					errorMessage = LOC("Invalid Data");
-				ToastService.ShowWarning(errorMessage);
-			}
+			//TODO RUMEN - check validation in modal
+			//else
+			//{
+			//	string errorMessage = null;
+			//	ValidationErrors = new();
+			//	foreach (var error in result.Errors)
+			//	{
+			//		if (error is ValidationError) ValidationErrors.Add((ValidationError)error);
+			//		else errorMessage = error.Message;
+			//	}
+			//	if (ValidationErrors.Count > 0 && String.IsNullOrWhiteSpace(errorMessage))
+			//		errorMessage = LOC("Invalid Data");
+			//	ToastService.ShowWarning(errorMessage);
+			//}
 
 		}
 		catch (Exception ex)

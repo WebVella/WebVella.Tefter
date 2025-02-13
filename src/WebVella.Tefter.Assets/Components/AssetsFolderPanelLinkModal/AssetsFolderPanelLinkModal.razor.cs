@@ -48,7 +48,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 			if (String.IsNullOrWhiteSpace(_form.IconUrl))
 				_form.IconUrl = await new UrlUtility(ConfigurationService).GetFavIconForUrl(_form.Url);
 
-			var result = new Result<Asset>();
+			var result = new Asset();
 			if (_isCreate && Content.RowIds is not null && Content.RowIds.Count > 0)
 			{
 				var submit = new CreateLinkAssetModel
@@ -81,12 +81,8 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 				result = AssetsService.UpdateLinkAsset(Content.Id, _form.Label, _form.Url, _form.IconUrl, Content.CreatedBy);
 			}
 
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(_isCreate ? LOC("Link is added") : LOC("Link is updated"));
-				await Dialog.CloseAsync(result.Value);
-			}
+			ToastService.ShowSuccess(_isCreate ? LOC("Link is added") : LOC("Link is updated"));
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{
@@ -119,8 +115,10 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void _urlChanged(string url){ 
-		if(!String.IsNullOrWhiteSpace(url) && !(url.StartsWith("http") || url.StartsWith("/"))){ 
+	private void _urlChanged(string url)
+	{
+		if (!String.IsNullOrWhiteSpace(url) && !(url.StartsWith("http") || url.StartsWith("/")))
+		{
 			url = "https://" + url;
 		}
 		_form.Url = url;

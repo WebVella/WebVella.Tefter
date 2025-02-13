@@ -9,6 +9,7 @@ public class ExportUseCase
 	private readonly IIdentityManager _identityManager;
 	private readonly ITfDataManager _dataManager;
 	private readonly ITfSpaceManager _spaceManager;
+
 	public ExportUseCase(IServiceProvider serviceProvider)
 	{
 		_serviceProvider = serviceProvider;
@@ -22,49 +23,51 @@ public class ExportUseCase
 	public virtual ValueTask<byte[]> ExportViewToExcel(TucExportViewData data)
 	{
 		Guid? spaceViewId = null;
-		if (data.RouteState.SpaceViewId is not null) spaceViewId = data.RouteState.SpaceViewId.Value;
+
+		if (data.RouteState.SpaceViewId is not null)
+		{
+			spaceViewId = data.RouteState.SpaceViewId.Value;
+		}
 		else if (data.RouteState.SpaceNodeId is not null)
 		{
 			var resultNode = _spaceManager.GetSpaceNode(data.RouteState.SpaceNodeId.Value);
-			if (resultNode.IsFailed) throw new Exception("GetSpaceNode method failed");
-			if (resultNode.Value.Type == TfSpaceNodeType.Page && resultNode.Value.ComponentType == typeof(TfSpaceViewPageComponent))
+			if (resultNode is null)
+				throw new TfException("GetSpaceNode method failed");
+
+			if (resultNode.Type == TfSpaceNodeType.Page && resultNode.ComponentType == typeof(TfSpaceViewPageComponent))
 			{
 				try
 				{
-					var options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(resultNode.Value.ComponentOptionsJson);
+					var options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(resultNode.ComponentOptionsJson);
 					spaceViewId = options.SpaceViewId;
-
 				}
 				catch (Exception ex)
 				{
-					throw new Exception($"TfSpaceViewPageComponent options could not be deserialized. {ex.Message}");
+					throw new Exception($"TfSpaceViewPageComponent options could not deserialize. {ex.Message}");
 				}
 			}
 		}
 
-		if (spaceViewId is null) throw new Exception("SpaceViewId not provided");
+		if (spaceViewId is null)
+			throw new TfException("SpaceViewId not provided");
 
-		var viewSrvResult = _spaceManager.GetSpaceView(spaceViewId.Value);
-		if (viewSrvResult.IsFailed) throw new Exception("GetSpaceView method failed");
+		var view = _spaceManager.GetSpaceView(spaceViewId.Value);
+		if (view is null)
+			throw new TfException("View not found.");
 
-		var view = viewSrvResult.Value;
-		if (view is null) throw new Exception("View not found");
 
-		var viewColumnsSrvResult = _spaceManager.GetSpaceViewColumnsList(view.Id);
-		if (viewColumnsSrvResult.IsFailed) throw new Exception("GetSpaceViewColumnsList method failed");
-		var viewColumns = viewColumnsSrvResult.Value;
+		var viewColumns = _spaceManager.GetSpaceViewColumnsList(view.Id);
 
 		List<TfFilterBase> filters = null;
 		List<TfSort> sorts = null;
 
-		if (data.RouteState.Filters is not null
-			&& data.RouteState.Filters.Count > 0) filters = data.RouteState.Filters.Select(x => TucFilterBase.ToModel(x)).ToList();
+		if (data.RouteState.Filters is not null && data.RouteState.Filters.Count > 0)
+			filters = data.RouteState.Filters.Select(x => TucFilterBase.ToModel(x)).ToList();
 
-		if (data.RouteState.Sorts is not null
-			&& data.RouteState.Sorts.Count > 0)
+		if (data.RouteState.Sorts is not null && data.RouteState.Sorts.Count > 0)
 			sorts = data.RouteState.Sorts.Select(x => x.ToModel()).ToList();
 
-		var dataServiceResult = _dataManager.QuerySpaceData(
+		var viewData = _dataManager.QuerySpaceData(
 			spaceDataId: view.SpaceDataId,
 			userFilters: filters,
 			userSorts: sorts,
@@ -72,9 +75,6 @@ public class ExportUseCase
 			page: null,
 			pageSize: null
 		);
-		if (dataServiceResult.IsFailed)
-			throw new Exception("QuerySpaceData method failed");
-		var viewData = dataServiceResult.Value;
 
 		using (var workbook = new XLWorkbook())
 		{
@@ -129,7 +129,7 @@ public class ExportUseCase
 					if (column.ComponentType.ImplementsInterface(typeof(ITfSpaceViewColumnComponent)))
 					{
 						var component = (ITfSpaceViewColumnComponent)Activator.CreateInstance(column.ComponentType, compContext);
-						component.ProcessExcelCell(_serviceProvider,excelCell);
+						component.ProcessExcelCell(_serviceProvider, excelCell);
 					}
 					currentExcelColumn++;
 				}

@@ -1,5 +1,4 @@
-﻿using FluentResults;
-using NpgsqlTypes;
+﻿using NpgsqlTypes;
 using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 

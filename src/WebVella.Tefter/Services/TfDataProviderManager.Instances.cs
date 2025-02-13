@@ -9,7 +9,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> GetProvider(
+	public TfDataProvider GetProvider(
 		Guid id);
 
 	/// <summary>
@@ -17,21 +17,21 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="name"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> GetProvider(
+	public TfDataProvider GetProvider(
 		string name);
 
 	/// <summary>
 	/// Gets list of available data providers
 	/// </summary>
 	/// <returns></returns>
-	public Result<ReadOnlyCollection<TfDataProvider>> GetProviders();
+	public ReadOnlyCollection<TfDataProvider> GetProviders();
 
 	/// <summary>
 	/// Creates new data provider 
 	/// </summary>
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
-	internal Result<TfDataProvider> CreateDataProvider(
+	internal TfDataProvider CreateDataProvider(
 		TfDataProviderModel providerModel);
 
 	/// <summary>
@@ -39,7 +39,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
-	internal Result<TfDataProvider> UpdateDataProvider(
+	internal TfDataProvider UpdateDataProvider(
 		TfDataProviderModel providerModel);
 
 	/// <summary>
@@ -47,7 +47,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	internal Result DeleteDataProvider(
+	internal void DeleteDataProvider(
 		Guid id);
 }
 
@@ -59,44 +59,32 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> GetProvider(
+	public TfDataProvider GetProvider(
 		Guid id)
 	{
-		try
-		{
-			var providerDbo = _dboManager.Get<TfDataProviderDbo>(id);
+		var providerDbo = _dboManager.Get<TfDataProviderDbo>(id);
 
-			if (providerDbo == null)
-				return Result.Ok();
+		if (providerDbo == null)
+			return null;
 
-			var providerTypeResult = GetProviderType(providerDbo.TypeId);
-			if (providerTypeResult.IsFailed)
-				return Result.Fail(new Error("Failed to get data provider")
-					.CausedBy(providerTypeResult.Errors));
+		var providerType = GetProviderType(providerDbo.TypeId);
+		if (providerType == null)
+			throw new TfException("Unable to find provider type for specified provider instance.");
 
-			var providerType = providerTypeResult.Value;
-			if (providerType == null)
-				return Result.Fail(new Error("Unable to find provider type for specified provider instance."));
+		var sharedKeys = GetDataProviderSharedKeys(id);
 
-			var sharedKeys = GetDataProviderSharedKeys(id);
+		var provider = DataProviderFromDbo(
+				providerDbo,
+				GetDataProviderSystemColumns(sharedKeys),
+				GetDataProviderColumns(id),
+				sharedKeys,
+				providerType);
 
-			var provider = DataProviderFromDbo(
-					providerDbo,
-					GetDataProviderSystemColumns(sharedKeys),
-					GetDataProviderColumns(id),
-					sharedKeys,
-					providerType);
+		provider.ServiceProvider = _serviceProvider;
 
-			provider.ServiceProvider = _serviceProvider;
+		InitDataProviderSharedColumns(provider);
 
-			InitDataProviderSharedColumns(provider);
-
-			return Result.Ok(provider);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get data providers").CausedBy(ex));
-		}
+		return provider;
 	}
 
 
@@ -105,33 +93,62 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="name"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> GetProvider(
+	public TfDataProvider GetProvider(
 		string name)
 	{
-		try
+		var providerDbo = _dboManager
+			.Get<TfDataProviderDbo>(name, nameof(TfDataProviderDbo.Name));
+
+		if (providerDbo == null)
+			return null;
+
+		var providerType = GetProviderType(providerDbo.TypeId);
+		if (providerType == null)
+			throw new TfException("Failed to get data provider");
+
+		var sharedKeys = GetDataProviderSharedKeys(providerDbo.Id);
+
+		var provider = DataProviderFromDbo(
+				providerDbo,
+				GetDataProviderSystemColumns(sharedKeys),
+				GetDataProviderColumns(providerDbo.Id),
+				sharedKeys,
+				providerType);
+
+		provider.ServiceProvider = _serviceProvider;
+
+		InitDataProviderSharedColumns(provider);
+
+		return provider;
+	}
+
+	/// <summary>
+	/// Gets list of available data providers
+	/// </summary>
+	/// <returns></returns>
+	public ReadOnlyCollection<TfDataProvider> GetProviders()
+	{
+
+		List<TfDataProvider> providers = new List<TfDataProvider>();
+
+		var providerTypes = GetProviderTypes();
+
+		var providersDbo = _dboManager.GetList<TfDataProviderDbo>();
+
+		foreach (var dbo in providersDbo)
 		{
-			var providerDbo = _dboManager
-				.Get<TfDataProviderDbo>(name, nameof(TfDataProviderDbo.Name));
+			var providerType = providerTypes.SingleOrDefault(x => x.Id == dbo.TypeId);
 
-			if (providerDbo == null)
-				return Result.Ok();
-
-			var providerTypeResult = GetProviderType(providerDbo.TypeId);
-			if (providerTypeResult.IsFailed)
-				return Result.Fail(new Error("Failed to get data provider")
-					.CausedBy(providerTypeResult.Errors));
-
-			var providerType = providerTypeResult.Value;
 			if (providerType == null)
-				return Result.Fail("Unable to find provider type" +
-					" for specified provider instance.");
+				throw new TfException($"Failed to get data providers, because " +
+					$"provider type {dbo.TypeName} with id = '{dbo.TypeId}' is not found.");
 
-			var sharedKeys = GetDataProviderSharedKeys(providerDbo.Id);
+			var sharedKeys = GetDataProviderSharedKeys(dbo.Id);
 
 			var provider = DataProviderFromDbo(
-					providerDbo,
+					dbo,
 					GetDataProviderSystemColumns(sharedKeys),
-					GetDataProviderColumns(providerDbo.Id),
+					GetDataProviderColumns(dbo.Id),
 					sharedKeys,
 					providerType);
 
@@ -139,144 +156,81 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 
 			InitDataProviderSharedColumns(provider);
 
-			return Result.Ok(provider);
+			providers.Add(provider);
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get data providers").CausedBy(ex));
-		}
+
+		return providers.AsReadOnly();
 	}
 
-	/// <summary>
-	/// Gets list of available data providers
-	/// </summary>
-	/// <returns></returns>
-	public Result<ReadOnlyCollection<TfDataProvider>> GetProviders()
-	{
-		try
-		{
-			List<TfDataProvider> providers = new List<TfDataProvider>();
-
-			var providerTypesResult = GetProviderTypes();
-			if (providerTypesResult.IsFailed)
-				return Result.Fail(new Error("Failed to get data providers list ")
-					.CausedBy(providerTypesResult.Errors));
-
-			var providerTypes = providerTypesResult.Value;
-
-			var providersDbo = _dboManager.GetList<TfDataProviderDbo>();
-
-			foreach (var dbo in providersDbo)
-			{
-				var providerType = providerTypes.SingleOrDefault(x => x.Id == dbo.TypeId);
-
-				if (providerType == null)
-					return Result.Fail(new Error($"Failed to get data providers, because " +
-						$"provider type {dbo.TypeName} with id = '{dbo.TypeId}' is not found."));
-
-				var sharedKeys = GetDataProviderSharedKeys(dbo.Id);
-
-				var provider = DataProviderFromDbo(
-						dbo,
-						GetDataProviderSystemColumns(sharedKeys),
-						GetDataProviderColumns(dbo.Id),
-						sharedKeys,
-						providerType);
-
-				provider.ServiceProvider = _serviceProvider;
-
-				InitDataProviderSharedColumns(provider);
-
-				providers.Add(provider);
-			}
-
-			return Result.Ok(providers.AsReadOnly());
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get data providers").CausedBy(ex));
-		}
-	}
 
 	/// <summary>
 	/// Creates new data provider 
 	/// </summary>
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> CreateDataProvider(
+	public TfDataProvider CreateDataProvider(
 		TfDataProviderModel providerModel)
 	{
-		try
+		if (providerModel != null && providerModel.Id == Guid.Empty)
+			providerModel.Id = Guid.NewGuid();
+
+		new TfDataProviderCreateValidator(_dboManager, this)
+			.Validate(providerModel)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			if (providerModel != null && providerModel.Id == Guid.Empty)
-				providerModel.Id = Guid.NewGuid();
 
-			TfDataProviderCreateValidator validator =
-				new TfDataProviderCreateValidator(_dboManager, this);
+			TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
 
-			var validationResult = validator.Validate(providerModel);
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+			var success = _dboManager.Insert<TfDataProviderDbo>(dataProviderDbo);
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
+			if (!success)
+				throw new TfDboServiceException("Insert<TfDataProviderDbo> failed");
 
-				TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
+			var provider = GetProvider(providerModel.Id);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider");
 
-				var success = _dboManager.Insert<TfDataProviderDbo>(dataProviderDbo);
+			string providerTableName = $"dp{provider.Index}";
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Insert", dataProviderDbo));
+			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+			dbBuilder.NewTableBuilder(Guid.NewGuid(), providerTableName)
+				.WithDataProviderId(provider.Id)
+				.WithColumns(columns =>
+				{
+					columns
+						.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+						.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+						.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+						.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); })
+						.AddIntegerColumn("tf_row_index", c => { c.NotNullable(); });
+				})
+				.WithConstraints(constraints =>
+				{
+					constraints
+						.AddPrimaryKeyConstraint($"pk_{providerTableName}", c => { c.WithColumns("tf_id"); })
+						.AddForeignKeyConstraint($"fk_{providerTableName}_id_dict", c =>
+						{
+							c.WithColumns("tf_id")
+							.WithForeignTable("id_dict")
+							.WithForeignColumns("id");
+						});
 
-				var providerResult = GetProvider(providerModel.Id);
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to create new data provider")
-						.CausedBy(providerResult.Errors));
+				})
+				.WithIndexes(indexes =>
+				{
+					indexes
+						.AddBTreeIndex($"ix_{providerTableName}_tf_id", c => { c.WithColumns("tf_id"); })
+						.AddGinIndex($"ix_{providerTableName}_tf_search", c => { c.WithColumns("tf_search"); });
+				});
 
-				var provider = providerResult.Value;
-				string providerTableName = $"dp{provider.Index}";
+			_dbManager.SaveChanges(dbBuilder);
 
-				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-				dbBuilder.NewTableBuilder(Guid.NewGuid(), providerTableName)
-					.WithDataProviderId(provider.Id)
-					.WithColumns(columns =>
-					{
-						columns
-							.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); })
-							.AddIntegerColumn("tf_row_index", c => { c.NotNullable(); });
-					})
-					.WithConstraints(constraints =>
-					{
-						constraints
-							.AddPrimaryKeyConstraint($"pk_{providerTableName}", c => { c.WithColumns("tf_id"); })
-							.AddForeignKeyConstraint($"fk_{providerTableName}_id_dict", c =>
-							{
-								c.WithColumns("tf_id")
-								.WithForeignTable("id_dict")
-								.WithForeignColumns("id");
-							});
+			scope.Complete();
 
-					})
-					.WithIndexes(indexes =>
-					{
-						indexes
-							.AddBTreeIndex($"ix_{providerTableName}_tf_id", c => { c.WithColumns("tf_id"); })
-							.AddGinIndex($"ix_{providerTableName}_tf_search", c => { c.WithColumns("tf_search"); });
-					});
-
-				_dbManager.SaveChanges(dbBuilder);
-
-				scope.Complete();
-
-				return Result.Ok(provider);
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new data provider.").CausedBy(ex));
+			return provider;
 		}
 	}
 
@@ -285,31 +239,22 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> UpdateDataProvider(
+	public TfDataProvider UpdateDataProvider(
 		TfDataProviderModel providerModel)
 	{
-		try
-		{
-			TfDataProviderUpdateValidator validator =
-				new TfDataProviderUpdateValidator(_dboManager, this);
+		new TfDataProviderUpdateValidator(_dboManager, this)
+			.Validate(providerModel)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.Validate(providerModel);
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
 
-			TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
+		var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo);
 
-			var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo);
+		if (!success)
+			throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
 
-			if (!success)
-				return Result.Fail(new DboManagerError("Update", dataProviderDbo));
-
-			return Result.Ok(GetProvider(providerModel.Id).Value);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update data provider.").CausedBy(ex));
-		}
+		return GetProvider(providerModel.Id);
 	}
 
 	/// <summary>
@@ -317,67 +262,53 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public Result DeleteDataProvider(
+	public void DeleteDataProvider(
 		Guid id)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			var provider = GetProvider(id);
+			if (provider is null)
+				new TfException("Provider is not found.");
+
+			new TfDataProviderDeleteValidator(_dboManager, this)
+				.Validate(provider)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			bool success = true;
+
+			foreach (var column in provider.Columns)
 			{
-				var providerResult = GetProvider(id);
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to delete provider.")
-						.CausedBy(providerResult.Errors));
-
-				TfDataProviderDeleteValidator validator =
-					new TfDataProviderDeleteValidator(_dboManager, this);
-
-				var validationResult = validator.ValidateDelete(providerResult.Value);
-
-				if (!validationResult.IsValid)
-					return validationResult.ToResult();
-
-				bool success = true;
-
-				foreach (var column in providerResult.Value.Columns)
-				{
-					success = _dboManager.Delete<TfDataProviderColumn>(column.Id);
-
-					if (!success)
-						return Result.Fail(new DboManagerError("Delete", column));
-				}
-
-				foreach (var sharedKey in providerResult.Value.SharedKeys )
-				{
-					success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
-
-					if (!success)
-						return Result.Fail(new DboManagerError("Delete", sharedKey));
-				}
-
-				success = _dboManager.Delete<TfDataProviderDbo>(id);
+				success = _dboManager.Delete<TfDataProviderColumn>(column.Id);
 
 				if (!success)
-					return Result.Fail(new DboManagerError("Delete", id));
-
-				var provider = providerResult.Value;
-
-				string providerTableName = $"dp{provider.Index}";
-
-				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-
-				dbBuilder.Remove(providerTableName);
-
-				_dbManager.SaveChanges(dbBuilder);
-
-				scope.Complete();
-
-				return Result.Ok();
+					throw new TfDboServiceException("Delete<TfDataProviderColumn> failed.");
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete data provider.").CausedBy(ex));
+
+			foreach (var sharedKey in provider.SharedKeys)
+			{
+				success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
+
+				if (!success)
+					throw new TfDboServiceException("Delete<TfDataProviderSharedKeyDbo> failed.");
+			}
+
+			success = _dboManager.Delete<TfDataProviderDbo>(id);
+
+			if (!success)
+				throw new TfDboServiceException("Delete<TfDataProviderDbo> failed.");
+
+
+			string providerTableName = $"dp{provider.Index}";
+
+			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+
+			dbBuilder.Remove(providerTableName);
+
+			_dbManager.SaveChanges(dbBuilder);
+
+			scope.Complete();
 		}
 	}
 
@@ -395,19 +326,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			provider.SharedColumns = columns.AsReadOnly();
 			return;
 		}
-		
-		var sharedColumnsResult = _sharedColumnManager.GetSharedColumns();
 
-		if (!sharedColumnsResult.IsSuccess)
-			throw new Exception("Failed to get shared columns while initializing data provider.");
-
-		var sharedColumns = sharedColumnsResult.Value;
-
-	
-
-		foreach (var sharedColumn in sharedColumns )
+		var sharedColumns = _sharedColumnManager.GetSharedColumns();
+		foreach (var sharedColumn in sharedColumns)
 		{
-			var sharedKey = provider.SharedKeys.SingleOrDefault(x=>x.DbName == sharedColumn.SharedKeyDbName);
+			var sharedKey = provider.SharedKeys.SingleOrDefault(x => x.DbName == sharedColumn.SharedKeyDbName);
 			if (sharedKey is not null && !columns.Contains(sharedColumn))
 				columns.Add(sharedColumn);
 		}
@@ -461,7 +384,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
 			SharedKeys = sharedKeys.AsReadOnly(),
-			SynchPrimaryKeyColumns = JsonConvert.DeserializeObject<List<string>>( dbo.SynchPrimaryKeyColumnsJson ?? "[]").AsReadOnly()
+			SynchPrimaryKeyColumns = JsonConvert.DeserializeObject<List<string>>(dbo.SynchPrimaryKeyColumnsJson ?? "[]").AsReadOnly()
 		};
 	}
 
@@ -489,11 +412,11 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				.WithMessage("The data provider type is required.");
 
 			RuleFor(provider => provider.Id)
-					.Must(id => { return providerManager.GetProvider(id).Value == null; })
+					.Must(id => { return providerManager.GetProvider(id) == null; })
 					.WithMessage("There is already existing data provider with specified identifier.");
 
 			RuleFor(provider => provider.Name)
-					.Must(name => { return providerManager.GetProvider(name).Value == null; })
+					.Must(name => { return providerManager.GetProvider(name) == null; })
 					.WithMessage("There is already existing data provider with specified name.");
 
 		}
@@ -527,7 +450,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 				.WithMessage("The data provider type is required.");
 
 			RuleFor(provider => provider.Id)
-					.Must((provider, id) => { return providerManager.GetProvider(id).Value != null; })
+					.Must((provider, id) => { return providerManager.GetProvider(id) != null; })
 					.WithMessage("There is no existing data provider for specified identifier.");
 
 			RuleFor(provider => provider.ProviderType)
@@ -536,7 +459,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						if (provider.ProviderType == null)
 							return true;
 
-						var existingObject = providerManager.GetProvider(provider.Id).Value;
+						var existingObject = providerManager.GetProvider(provider.Id);
 
 						if (existingObject != null && existingObject.ProviderType.Id != provider.ProviderType.Id)
 							return false;
@@ -548,7 +471,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			RuleFor(provider => provider.Name)
 				.Must((provider, name) =>
 				{
-					var existingObj = providerManager.GetProvider(provider.Name).Value;
+					var existingObj = providerManager.GetProvider(provider.Name);
 					return !(existingObj != null && existingObj.Id != provider.Id);
 				})
 				.WithMessage("There is already existing data provider with specified name.");

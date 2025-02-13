@@ -2,18 +2,18 @@
 
 public partial interface ITfSharedColumnsManager
 {
-	Result<TfSharedColumn> GetSharedColumn(
+	TfSharedColumn GetSharedColumn(
 		Guid id);
 
-	Result<List<TfSharedColumn>> GetSharedColumns();
+	List<TfSharedColumn> GetSharedColumns();
 
-	Result CreateSharedColumn(
+	void CreateSharedColumn(
 	   TfSharedColumn column);
 
-	Result UpdateSharedColumn(
+	void UpdateSharedColumn(
 		TfSharedColumn column);
 
-	Result DeleteSharedColumn(
+	void DeleteSharedColumn(
 		Guid columnId);
 }
 
@@ -33,146 +33,82 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 		_dataManager = dataManager;
 	}
 
-	public Result<TfSharedColumn> GetSharedColumn(
+	public TfSharedColumn GetSharedColumn(
 		Guid id)
 	{
-		try
-		{
-			var sharedColumn = _dboManager.Get<TfSharedColumn>(id);
-
-			return Result.Ok(sharedColumn);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get shared column").CausedBy(ex));
-		}
-
-		
+		return _dboManager.Get<TfSharedColumn>(id);
 	}
 
-	public Result<List<TfSharedColumn>> GetSharedColumns()
+	public List<TfSharedColumn> GetSharedColumns()
 	{
-		try
-		{
-			var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
-
-			var sharedColumns = _dboManager.GetList<TfSharedColumn>(order: orderSettings);
-
-			return Result.Ok(sharedColumns);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get shared columns").CausedBy(ex));
-		}
-		
+		var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
+		return _dboManager.GetList<TfSharedColumn>(order: orderSettings);
 	}
 
-	public Result CreateSharedColumn(
+	public void CreateSharedColumn(
 		TfSharedColumn column)
 	{
-		try
+		if (column != null && column.Id == Guid.Empty)
+			column.Id = Guid.NewGuid();
+
+		new TfSharedColumnValidator(_dboManager, this)
+			.ValidateCreate(column)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			if (column != null && column.Id == Guid.Empty)
-				column.Id = Guid.NewGuid();
+			var success = _dboManager.Insert<TfSharedColumn>(column);
+			if (!success)
+				throw new TfDboServiceException("Insert<TfSharedColumn> failed");
 
-			TfSharedColumnValidator validator =
-				new TfSharedColumnValidator(_dboManager, this);
-
-			var validationResult = validator.ValidateCreate(column);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-
-				var success = _dboManager.Insert<TfSharedColumn>(column);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Insert", column));
-
-				scope.Complete();
-
-				return Result.Ok();
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new shared column.").CausedBy(ex));
+			scope.Complete();
 		}
 	}
 
-	public Result UpdateSharedColumn(
+	public void UpdateSharedColumn(
 		TfSharedColumn column)
 	{
-		try
+		if (column != null && column.Id == Guid.Empty)
+			column.Id = Guid.NewGuid();
+
+
+		new TfSharedColumnValidator(_dboManager, this)
+			.ValidateUpdate(column)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			if (column != null && column.Id == Guid.Empty)
-				column.Id = Guid.NewGuid();
+			var success = _dboManager.Update<TfSharedColumn>(column);
+			if (!success)
+				throw new TfDboServiceException("Update<TfSharedColumn> failed");
 
-			TfSharedColumnValidator validator =
-				new TfSharedColumnValidator(_dboManager, this);
-
-			var validationResult = validator.ValidateUpdate(column);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-
-				var success = _dboManager.Update<TfSharedColumn>(column);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", column));
-
-				scope.Complete();
-
-				return Result.Ok();
-			}
+			scope.Complete();
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update shared column.").CausedBy(ex));
-		}
+
 	}
 
-	public Result DeleteSharedColumn(
+	public void DeleteSharedColumn(
 		Guid columnId)
 	{
-		try
+		var column = GetSharedColumn(columnId);
+
+		new TfSharedColumnValidator(_dboManager, this)
+			.ValidateDelete(column)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			var columnResult = GetSharedColumn(columnId);
-			if (!columnResult.IsSuccess)
-				throw new Exception("Error while trying to get shared column for delete");
+			_dataManager.DeleteSharedColumnData(column);
 
-			var column = columnResult.Value;
+			var success = _dboManager.Delete<TfSharedColumn>(columnId);
+			if (!success)
+				throw new TfDboServiceException("Delete<TfSharedColumn> failed");
 
-			TfSharedColumnValidator validator =
-			new TfSharedColumnValidator(_dboManager, this);
-
-			var validationResult = validator.ValidateDelete(column);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				_dataManager.DeleteSharedColumnData(column);
-				
-				var success = _dboManager.Delete<TfSharedColumn>(columnId);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Delete", columnId));
-
-				scope.Complete();
-
-				return Result.Ok();
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete new shared column.").CausedBy(ex));
+			scope.Complete();
 		}
 	}
 
@@ -254,7 +190,7 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 			RuleSet("create", () =>
 			{
 				RuleFor(column => column.Id)
-						.Must((column, id) => { return sharedColumnManager.GetSharedColumn(id).Value == null; })
+						.Must((column, id) => { return sharedColumnManager.GetSharedColumn(id) == null; })
 						.WithMessage("There is already existing data shared column with specified identifier.");
 
 				RuleFor(column => column.DbName)
@@ -263,7 +199,7 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 							if (string.IsNullOrEmpty(dbName))
 								return true;
 
-							var columns = sharedColumnManager.GetSharedColumns().Value;
+							var columns = sharedColumnManager.GetSharedColumns();
 							return !columns.Any(x => x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim());
 						})
 						.WithMessage("There is already existing shared column with specified database name.");
@@ -274,7 +210,7 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 				RuleFor(column => column.Id)
 						.Must((column, id) =>
 						{
-							return sharedColumnManager.GetSharedColumn(id).Value != null;
+							return sharedColumnManager.GetSharedColumn(id) != null;
 						})
 						.WithMessage("There is not existing data shared column with specified identifier.");
 
@@ -284,7 +220,7 @@ public partial class TfSharedColumnsManager : ITfSharedColumnsManager
 							if (string.IsNullOrEmpty(dbName))
 								return true;
 
-							var columns = sharedColumnManager.GetSharedColumns().Value;
+							var columns = sharedColumnManager.GetSharedColumns();
 							return !columns.Any(x => x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim() && x.Id != column.Id);
 						})
 						.WithMessage("There is already existing shared column with specified database name.");

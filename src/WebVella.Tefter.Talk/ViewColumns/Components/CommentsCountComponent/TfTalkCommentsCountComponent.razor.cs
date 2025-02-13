@@ -58,10 +58,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 		_initStorageKeys();
 		if (Context.Mode == TucComponentMode.Options)
 		{
-			var resultSM = TalkService.GetChannels();
-			if (resultSM.IsSuccess && resultSM.Value is not null)
-				_channels = resultSM.Value;
-
+			_channels = TalkService.GetChannels();
 
 			if (componentOptions.ChannelId is not null)
 			{
@@ -128,13 +125,13 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 		{
 			var spaceManager = serviceProvider.GetRequiredService<ITfSpaceManager>();
 			var dataProviderManager = serviceProvider.GetRequiredService<ITfDataProviderManager>();
-			var spaceDataResult = spaceManager.GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
-			if (spaceDataResult.IsSuccess && spaceDataResult.Value is not null)
+			var spaceData = spaceManager.GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
+			if (spaceData is not null)
 			{
-				var dataProviderResult = dataProviderManager.GetProvider(spaceDataResult.Value.DataProviderId);
-				if (dataProviderResult.IsSuccess && dataProviderResult.Value is not null)
+				var dataProvider = dataProviderManager.GetProvider(spaceData.DataProviderId);
+				if (dataProvider is not null)
 				{
-					foreach (var key in dataProviderResult.Value.SharedKeys)
+					foreach (var key in dataProvider.SharedKeys)
 					{
 						options.Add(new TucSelectOption
 						{

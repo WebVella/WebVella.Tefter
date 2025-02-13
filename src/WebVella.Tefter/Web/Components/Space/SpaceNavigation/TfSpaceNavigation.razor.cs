@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Space.SpaceNavigation.TfSpaceNavigation", "WebVella.Tefter")]
 public partial class TfSpaceNavigation : TfBaseComponent
 {
-	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
+	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
 
@@ -91,21 +91,16 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 		try
 		{
-			var result = UC.DeleteSpace(TfAppState.Value.Space.Id);
-
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
-				Dispatcher.Dispatch(new SetAppStateAction(
-									component: this,
-									state: TfAppState.Value with
-									{
-										CurrentUserSpaces = spaceList
-									}
-								));
-				Navigator.NavigateTo(TfConstants.HomePageUrl);
-			}
+			UC.DeleteSpace(TfAppState.Value.Space.Id);
+			var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
+			Dispatcher.Dispatch(new SetAppStateAction(
+								component: this,
+								state: TfAppState.Value with
+								{
+									CurrentUserSpaces = spaceList
+								}
+							));
+			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
 		catch (Exception ex)
 		{

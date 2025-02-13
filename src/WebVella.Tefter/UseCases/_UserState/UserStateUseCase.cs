@@ -52,10 +52,11 @@ internal partial class UserStateUseCase
 	//user
 	internal virtual async Task<User> GetUserWithChecks(Guid userId)
 	{
-		Result<User> userResult = await _identityManager.GetUserAsync(userId);
-		if (userResult.IsFailed) throw new Exception("GetUserAsync failed");
-		if (userResult.Value is null) throw new Exception("User not found failed");
-		return userResult.Value;
+		var user = await _identityManager.GetUserAsync(userId);
+		if (user is null) 
+			throw new Exception("User not found");
+
+		return user;
 	}
 
 	internal virtual async Task<TucUser> GetUserFromCookieAsync()
@@ -77,19 +78,17 @@ internal partial class UserStateUseCase
 		return new TucUser(tfUser);
 	}
 
-	public virtual async Task<Result<TucUser>> SetUserCulture(Guid userId, string cultureCode)
+	public virtual async Task<TucUser> SetUserCulture(Guid userId, string cultureCode)
 	{
 		User user = await GetUserWithChecks(userId);
 
 		var userBld = _identityManager.CreateUserBuilder(user);
 		userBld.WithCultureCode(cultureCode);
 
-		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
-
+		await _identityManager.SaveUserAsync(userBld.Build());
+		
 		user = await GetUserWithChecks(userId);
-		return Result.Ok(new TucUser(user));
+		return new TucUser(user);
 	}
 
 	internal virtual async Task<TucCultureOption> InitCulture(TucUser user)
@@ -141,7 +140,7 @@ internal partial class UserStateUseCase
 
 
 	//Theme
-	public virtual async Task<Result<TucUser>> SetUserTheme(Guid userId,
+	public virtual async Task<TucUser> SetUserTheme(Guid userId,
 		DesignThemeModes themeMode, OfficeColor themeColor)
 	{
 		var user = await GetUserWithChecks(userId);
@@ -149,43 +148,39 @@ internal partial class UserStateUseCase
 		userBld
 		.WithThemeMode(themeMode)
 		.WithThemeColor(themeColor);
-		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
-
+		
+		await _identityManager.SaveUserAsync(userBld.Build());
+		
 		await RemoveUnprotectedLocalStorage(TfConstants.UIThemeLocalKey);
 		var themeSetting = new TucThemeSettings { ThemeMode = themeMode, ThemeColor = themeColor };
 		await SetUnprotectedLocalStorage(TfConstants.UIThemeLocalKey, JsonSerializer.Serialize(themeSetting));
 		user = await GetUserWithChecks(userId);
-		return Result.Ok(new TucUser(user));
+		return new TucUser(user);
 	}
 
-	public virtual async Task<Result<TucUser>> SetStartUpUrl(Guid userId,
+	public virtual async Task<TucUser> SetStartUpUrl(Guid userId,
 		string url)
 	{
 		var user = await GetUserWithChecks(userId);
 		var userBld = _identityManager.CreateUserBuilder(user);
 		userBld
 		.WithStartUpUrl(url);
-		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
+		
+		await _identityManager.SaveUserAsync(userBld.Build());
 		user = await GetUserWithChecks(userId);
-		return Result.Ok(new TucUser(user));
+		return new TucUser(user);
 	}
 
-	public virtual async Task<Result<TucUser>> SetPageSize(Guid userId,
+	public virtual async Task<TucUser> SetPageSize(Guid userId,
 		int? pageSize)
 	{
 		var user = await GetUserWithChecks(userId);
 		var userBld = _identityManager.CreateUserBuilder(user);
 		userBld
 		.WithPageSize(pageSize);
-		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
+		await _identityManager.SaveUserAsync(userBld.Build());
 		user = await GetUserWithChecks(userId);
-		return Result.Ok(new TucUser(user));
+		return new TucUser(user);
 	}
 
 	internal virtual async Task SetUnprotectedLocalStorage(string key, string value)
@@ -204,14 +199,12 @@ internal partial class UserStateUseCase
 	}
 
 	//Sidebar
-	public virtual async Task<Result<TucUser>> SetSidebarState(Guid userId,bool sidebarExpanded)
+	public virtual async Task<TucUser> SetSidebarState(Guid userId,bool sidebarExpanded)
 	{
 		User user = await GetUserWithChecks(userId);
 		var userBld = _identityManager.CreateUserBuilder(user).WithOpenSidebar(sidebarExpanded);
-		var saveResult = await _identityManager.SaveUserAsync(userBld.Build());
-		if (saveResult.IsFailed)
-			return Result.Fail(new Error("SaveUserAsync failed").CausedBy(saveResult.Errors));
+		await _identityManager.SaveUserAsync(userBld.Build());
 		user = await GetUserWithChecks(userId);
-		return Result.Ok(new TucUser(user));
+		return new TucUser(user);
 	}
 }

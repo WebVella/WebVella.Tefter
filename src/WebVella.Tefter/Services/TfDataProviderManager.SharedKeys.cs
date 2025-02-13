@@ -23,7 +23,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="sharedKey"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> CreateDataProviderSharedKey(
+	public TfDataProvider CreateDataProviderSharedKey(
 		TfDataProviderSharedKey sharedKey);
 
 	/// <summary>
@@ -31,7 +31,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="sharedKey"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> UpdateDataProviderSharedKey(
+	public TfDataProvider UpdateDataProviderSharedKey(
 		TfDataProviderSharedKey sharedKey);
 
 	/// <summary>
@@ -39,7 +39,7 @@ public partial interface ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> DeleteDataProviderSharedKey(
+	public TfDataProvider DeleteDataProviderSharedKey(
 		Guid id);
 }
 
@@ -54,7 +54,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		Guid id)
 	{
 		var dbo = _dboManager.Get<TfDataProviderSharedKeyDbo>(id);
-		
+
 		if (dbo == null)
 			return null;
 
@@ -93,87 +93,71 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="sharedKey"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> CreateDataProviderSharedKey(
+	public TfDataProvider CreateDataProviderSharedKey(
 		TfDataProviderSharedKey sharedKey)
 	{
-		try
+		if (sharedKey != null && sharedKey.Id == Guid.Empty)
+			sharedKey.Id = Guid.NewGuid();
+
+		new TfDataProviderSharedKeyValidator(_dboManager, this)
+			.ValidateCreate(sharedKey)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			if (sharedKey != null && sharedKey.Id == Guid.Empty)
-				sharedKey.Id = Guid.NewGuid();
+			var dbo = SharedKeyToDbo(sharedKey);
 
-			TfDataProviderSharedKeyValidator validator =
-					new TfDataProviderSharedKeyValidator(_dboManager, this);
+			//set initial version to 1,
+			//default database value for version column is 0
+			//so already existing rows will be with version 0 and
+			//will be updated by background job
+			dbo.Version = 1;
 
-			var validationResult = validator.ValidateCreate(sharedKey);
+			dbo.LastModifiedOn = DateTime.Now;
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+			var success = _dboManager.Insert<TfDataProviderSharedKeyDbo>(dbo);
+			if (!success)
+				throw new TfDboServiceException("Insert<TfDataProviderSharedKeyDbo>");
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				var dbo = SharedKeyToDbo(sharedKey);
+			var provider = GetProvider(sharedKey.DataProviderId);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider shared key");
 
-				//set initial version to 1,
-				//default database value for version column is 0
-				//so already existing rows will be with version 0 and
-				//will be updated by background job
-				dbo.Version = 1;
+			string providerTableName = $"dp{provider.Index}";
 
-				dbo.LastModifiedOn = DateTime.Now;
+			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
-				var success = _dboManager.Insert<TfDataProviderSharedKeyDbo>(dbo);
+			dbBuilder
+				.WithTableBuilder(providerTableName)
+				.WithColumnsBuilder()
+				.AddGuidColumn($"tf_sk_{sharedKey.DbName}_id", c =>
+				{
+					c.WithDefaultValue(Guid.Empty);
+				})
+				.AddShortIntegerColumn($"tf_sk_{sharedKey.DbName}_version", c =>
+				{
+					c.WithDefaultValue(0);
+				});
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Insert", dbo));
+			dbBuilder
+				.WithTableBuilder(providerTableName)
+				.WithConstraints(constraints =>
+				{
+					constraints
+						.AddForeignKeyConstraint($"fk_{providerTableName}_{sharedKey.DbName}_id_dict", c =>
+						{
+							c.WithColumns($"tf_sk_{sharedKey.DbName}_id")
+							.WithForeignTable("id_dict")
+							.WithForeignColumns("id");
+						});
+				});
 
-				var providerResult = GetProvider(sharedKey.DataProviderId);
+			_dbManager.SaveChanges(dbBuilder);
 
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to create new data provider shared key")
-						.CausedBy(providerResult.Errors));
+			scope.Complete();
 
-				var provider = providerResult.Value;
-
-				string providerTableName = $"dp{provider.Index}";
-
-
-				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-
-				dbBuilder
-					.WithTableBuilder(providerTableName)
-					.WithColumnsBuilder()
-					.AddGuidColumn($"tf_sk_{sharedKey.DbName}_id", c =>
-					{
-						c.WithDefaultValue(Guid.Empty);
-					})
-					.AddShortIntegerColumn($"tf_sk_{sharedKey.DbName}_version", c =>
-					{
-						c.WithDefaultValue(0);
-					});
-
-				dbBuilder
-					.WithTableBuilder(providerTableName)
-					.WithConstraints(constraints =>
-					{
-						constraints
-							.AddForeignKeyConstraint($"fk_{providerTableName}_{sharedKey.DbName}_id_dict", c =>
-							{
-								c.WithColumns($"tf_sk_{sharedKey.DbName}_id")
-								.WithForeignTable("id_dict")
-								.WithForeignColumns("id");
-							});
-					});
-
-				_dbManager.SaveChanges(dbBuilder);
-
-				scope.Complete();
-
-				return Result.Ok(provider);
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new data provider shared key.").CausedBy(ex));
+			return provider;
 		}
 	}
 
@@ -182,65 +166,51 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="sharedKey"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> UpdateDataProviderSharedKey(
+	public TfDataProvider UpdateDataProviderSharedKey(
 		TfDataProviderSharedKey sharedKey)
 	{
-		try
+		new TfDataProviderSharedKeyValidator(_dboManager, this)
+			.ValidateUpdate(sharedKey)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			TfDataProviderSharedKeyValidator validator =
-					new TfDataProviderSharedKeyValidator(_dboManager, this);
+			var existingSharedKey = GetDataProviderSharedKey(sharedKey.Id);
 
-			var validationResult = validator.ValidateUpdate(sharedKey);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			bool columnsChange = existingSharedKey.Columns.Count != sharedKey.Columns.Count;
+			if (!columnsChange)
 			{
-				var existingSharedKey = GetDataProviderSharedKey(sharedKey.Id);
-
-				bool columnsChange = existingSharedKey.Columns.Count != sharedKey.Columns.Count;
-				if (!columnsChange)
+				for (int i = 0; i < sharedKey.Columns.Count; i++)
 				{
-					for (int i = 0; i < sharedKey.Columns.Count; i++)
+					if (existingSharedKey.Columns[i].Id != sharedKey.Columns[i].Id)
 					{
-						if (existingSharedKey.Columns[i].Id != sharedKey.Columns[i].Id)
-						{
-							columnsChange = true;
-							break;
-						}
+						columnsChange = true;
+						break;
 					}
 				}
-
-				var dbo = SharedKeyToDbo(sharedKey);
-
-				//only increment version if columns or columns order is changed
-				if (columnsChange)
-					dbo.Version = (short)(existingSharedKey.Version + 1);
-
-				dbo.LastModifiedOn = DateTime.Now;
-
-				var success = _dboManager.Update<TfDataProviderSharedKeyDbo>(dbo);
-
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", dbo));
-
-				var providerResult = GetProvider(sharedKey.DataProviderId);
-
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to create new data provider shared key")
-						.CausedBy(providerResult.Errors));
-
-				var provider = providerResult.Value;
-
-				scope.Complete();
-
-				return Result.Ok(provider);
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update data provider shared key.").CausedBy(ex));
+
+			var dbo = SharedKeyToDbo(sharedKey);
+
+			//only increment version if columns or columns order is changed
+			if (columnsChange)
+				dbo.Version = (short)(existingSharedKey.Version + 1);
+
+			dbo.LastModifiedOn = DateTime.Now;
+
+			var success = _dboManager.Update<TfDataProviderSharedKeyDbo>(dbo);
+
+			if (!success)
+				throw new TfDboServiceException("Update<TfDataProviderSharedKeyDbo>");
+
+			var provider = GetProvider(sharedKey.DataProviderId);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider shared key");
+
+			scope.Complete();
+
+			return provider;
 		}
 	}
 
@@ -250,52 +220,41 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public Result<TfDataProvider> DeleteDataProviderSharedKey(
+	public TfDataProvider DeleteDataProviderSharedKey(
 		Guid id)
 	{
-		try
+		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				var sharedKey = GetDataProviderSharedKey(id);
+			var sharedKey = GetDataProviderSharedKey(id);
 
-				if (sharedKey is null)
-					return Result.Fail("Failed to delete data provider shared key cause not found");
+			if (sharedKey is null)
+				throw new TfException("Failed to delete data provider shared key cause not found");
 
-				var success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
+			var success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
 
-				if (!success)
-					return Result.Fail(new DboManagerError("Update", sharedKey));
+			if (!success)
+				throw new TfDboServiceException("Delete<TfDataProviderSharedKeyDbo>");
+
+			var provider = GetProvider(sharedKey.DataProviderId);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider shared key");
 
 
-				var providerResult = GetProvider(sharedKey.DataProviderId);
+			string providerTableName = $"dp{provider.Index}";
 
-				if (providerResult.IsFailed)
-					return Result.Fail(new Error("Failed to delete data provider shared key")
-						.CausedBy(providerResult.Errors));
+			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
-				var provider = providerResult.Value;
+			dbBuilder
+				.WithTableBuilder(providerTableName)
+				.WithColumnsBuilder()
+				.Remove($"tf_sk_{sharedKey.DbName}_id")
+				.Remove($"tf_sk_{sharedKey.DbName}_version");
 
-				string providerTableName = $"dp{provider.Index}";
+			_dbManager.SaveChanges(dbBuilder);
 
-				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+			scope.Complete();
 
-				dbBuilder
-					.WithTableBuilder(providerTableName)
-					.WithColumnsBuilder()
-					.Remove($"tf_sk_{sharedKey.DbName}_id")
-					.Remove($"tf_sk_{sharedKey.DbName}_version");
-
-				_dbManager.SaveChanges(dbBuilder);
-
-				scope.Complete();
-
-				return Result.Ok(provider);
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete data provider shared key.").CausedBy(ex));
+			return provider;
 		}
 	}
 
@@ -310,14 +269,14 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 		string columnIdsJson = "[]";
 		if (sharedKey.Columns is not null)
 			columnIdsJson = JsonSerializer.Serialize(
-				sharedKey.Columns.Select(x=>x.Id));
+				sharedKey.Columns.Select(x => x.Id));
 
 		return new TfDataProviderSharedKeyDbo
 		{
 			Id = sharedKey.Id,
 			DataProviderId = sharedKey.DataProviderId,
 			DbName = sharedKey.DbName,
-			Description = sharedKey.Description??string.Empty,
+			Description = sharedKey.Description ?? string.Empty,
 			ColumnIdsJson = columnIdsJson,
 			Version = sharedKey.Version,
 			LastModifiedOn = sharedKey.LastModifiedOn,
@@ -350,7 +309,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			Description = dbo.Description,
 			Columns = columns,
 			Version = dbo.Version,
-			LastModifiedOn= dbo.LastModifiedOn
+			LastModifiedOn = dbo.LastModifiedOn
 		};
 	}
 
@@ -382,7 +341,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					.WithMessage("The shared key data provider id is required.");
 
 				RuleFor(sharedKey => sharedKey.DataProviderId)
-					.Must(providerId => { return providerManager.GetProvider(providerId).Value != null; })
+					.Must(providerId => { return providerManager.GetProvider(providerId) != null; })
 					.WithMessage("There is no existing data provider for specified provider id.");
 
 				RuleFor(sharedKey => sharedKey.DbName)
@@ -464,7 +423,7 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 						var providerColumns = _providerManager.GetDataProviderColumns(sharedKey.DataProviderId);
 
 						HashSet<Guid> columnIds = new HashSet<Guid>();
-						
+
 						foreach (var column in columns)
 						{
 							var exists = columnIds.Contains(column.Id);
@@ -534,12 +493,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 					})
 					.WithMessage("There database name of shared key cannot be changed.");
 			});
-
-
-			RuleSet("delete", () =>
-			{
-			});
-
 		}
 
 		public ValidationResult ValidateCreate(
@@ -565,19 +518,6 @@ public partial class TfDataProviderManager : ITfDataProviderManager
 			return this.Validate(sharedKey, options =>
 			{
 				options.IncludeRuleSets("general", "update");
-			});
-		}
-
-		public ValidationResult ValidateDelete(
-			TfDataProviderSharedKey sharedKey)
-		{
-			if (sharedKey == null)
-				return new ValidationResult(new[] { new ValidationFailure("",
-					"The data provider shared key with specified identifier is not found.") });
-
-			return this.Validate(sharedKey, options =>
-			{
-				options.IncludeRuleSets("delete");
 			});
 		}
 	}

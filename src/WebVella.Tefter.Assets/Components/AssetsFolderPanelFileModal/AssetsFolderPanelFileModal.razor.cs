@@ -84,7 +84,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<Asset>();
+			var result = new Asset();
 			if (_isCreate && Content.RowIds is not null && Content.RowIds.Count > 0)
 			{
 				var submit = new CreateFileAssetModel
@@ -121,12 +121,8 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 					userId: TfAppState.Value.CurrentUser.Id);
 			}
 
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(_isCreate ? LOC("File is added") : LOC("File is updated"));
-				await Dialog.CloseAsync(result.Value);
-			}
+			ToastService.ShowSuccess(_isCreate ? LOC("File is added") : LOC("File is updated"));
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{

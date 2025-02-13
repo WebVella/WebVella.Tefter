@@ -56,21 +56,16 @@ public partial class TfSpaceManage : TfBaseComponent
 
 		try
 		{
-			var result = UC.DeleteSpace(TfAppState.Value.Space.Id);
-
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
-				Dispatcher.Dispatch(new SetAppStateAction(
-									component: this,
-									state: TfAppState.Value with
-									{
-										CurrentUserSpaces = spaceList
-									}
-								));
-				Navigator.NavigateTo(TfConstants.HomePageUrl);
-			}
+			UC.DeleteSpace(TfAppState.Value.Space.Id);
+			var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
+			Dispatcher.Dispatch(new SetAppStateAction(
+								component: this,
+								state: TfAppState.Value with
+								{
+									CurrentUserSpaces = spaceList
+								}
+							));
+			Navigator.NavigateTo(TfConstants.HomePageUrl);
 		}
 		catch (Exception ex)
 		{
@@ -118,19 +113,15 @@ public partial class TfSpaceManage : TfBaseComponent
 
 		try
 		{
-			Result<List<TucSpaceNode>> submitResult = UC.DeleteSpaceNode(node);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
+			List<TucSpaceNode> submitResult = UC.DeleteSpaceNode(node);
+			ToastService.ShowSuccess(LOC("Space node deleted!"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess(LOC("Space node deleted!"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceNodes = submitResult.Value
-				}
-				));
+				SpaceNodes = submitResult
 			}
+			));
 		}
 		catch (Exception ex)
 		{
@@ -151,19 +142,16 @@ public partial class TfSpaceManage : TfBaseComponent
 
 		try
 		{
-			Result<List<TucSpaceNode>> submitResult = UC.MoveSpaceNode(args.Item1, args.Item2);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
+			List<TucSpaceNode> submitResult = UC.MoveSpaceNode(args.Item1, args.Item2);
+
+			ToastService.ShowSuccess(LOC("Space node updated!"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess(LOC("Space node updated!"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceNodes = submitResult.Value
-				}
-				));
+				SpaceNodes = submitResult
 			}
+			));
 		}
 		catch (Exception ex)
 		{
@@ -185,19 +173,16 @@ public partial class TfSpaceManage : TfBaseComponent
 
 		try
 		{
-			Result<List<TucSpaceNode>> submitResult = UC.CopySpaceNode(nodeId);
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
+			List<TucSpaceNode> submitResult = UC.CopySpaceNode(nodeId);
+
+			ToastService.ShowSuccess(LOC("Space node updated!"));
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess(LOC("Space node updated!"));
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceNodes = submitResult.Value
-				}
-				));
+				SpaceNodes = submitResult
 			}
+			));
 		}
 		catch (Exception ex)
 		{

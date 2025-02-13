@@ -14,7 +14,7 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 					PreventDismissOnOverlayClick = true,
 					PreventScroll = true,
 					Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
+					TrapFocus = false
 				});
 		var result = await dialog.Result;
 		if (!result.Cancelled && result.Data != null)
@@ -31,15 +31,11 @@ public partial class TfAdminDataProviderKeys : TfBaseComponent
 			return;
 		try
 		{
-			Result<TucDataProvider> result = UC.DeleteDataProviderSharedKey(key.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
-				Dispatcher.Dispatch(new SetAppStateAction(component: this,
-					state: TfAppState.Value with { AdminDataProvider = (TucDataProvider)result.Value }));
+			var provider = UC.DeleteDataProviderSharedKey(key.Id);
+			ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminDataProvider = (TucDataProvider)provider }));
 
-			}
 		}
 		catch (Exception ex)
 		{

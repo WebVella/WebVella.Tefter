@@ -45,7 +45,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		{
 
 			_form = Content with { Id = Content.Id };
-			_parentNode = _parentNodeOptions.FirstOrDefault(x=> x.Id == _form.ParentId);
+			_parentNode = _parentNodeOptions.FirstOrDefault(x => x.Id == _form.ParentId);
 		}
 		if (!String.IsNullOrWhiteSpace(_form.ComponentTypeFullName))
 		{
@@ -96,34 +96,31 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 
 		try
 		{
-			Result<List<TucSpaceNode>> submitResult = null;
-
+			List<TucSpaceNode> result = null;
 
 			if (_parentNode is null) submit.ParentId = null;
 			else submit.ParentId = _parentNode.Id;
 
-			if (_isCreate) submitResult = UC.CreateSpaceNode(submit);
-			else submitResult = UC.UpdateSpaceNode(submit);
+			if (_isCreate)
+				result = UC.CreateSpaceNode(submit);
+			else
+				result = UC.UpdateSpaceNode(submit);
 
-			ProcessServiceResponse(submitResult);
-			if (submitResult.IsSuccess)
+			ToastService.ShowSuccess(LOC("Space page created!"));
+			//Reload spaceViews and spaceData in case new ones were created
+			var spaceViews = UC.GetSpaceViewList(_form.SpaceId);
+			var spaceData = UC.GetSpaceDataList(_form.SpaceId);
+			Dispatcher.Dispatch(new SetAppStateAction(
+			component: this,
+			state: TfAppState.Value with
 			{
-				ToastService.ShowSuccess(LOC("Space page created!"));
-				//Reload spaceViews and spaceData in case new ones were created
-				var spaceViews = UC.GetSpaceViewList(_form.SpaceId);
-				var spaceData = UC.GetSpaceDataList(_form.SpaceId);
-				Dispatcher.Dispatch(new SetAppStateAction(
-				component: this,
-				state: TfAppState.Value with
-				{
-					SpaceNodes = submitResult.Value,
-					SpaceViewList = spaceViews,
-					SpaceDataList = spaceData
-				}
-				));
-				_parentNodeOptions = _getParents();
-				await _cancel();
+				SpaceNodes = result,
+				SpaceViewList = spaceViews,
+				SpaceDataList = spaceData
 			}
+			));
+			_parentNodeOptions = _getParents();
+			await _cancel();
 		}
 		catch (Exception ex)
 		{
@@ -155,7 +152,8 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		foreach (var item in current.ChildNodes) _fillParents(parents, item, ignoreNodes);
 	}
 
-	private void _selectedParentChanged(TucSpaceNode node){ 
+	private void _selectedParentChanged(TucSpaceNode node)
+	{
 		_parentNode = node;
 		_form.ParentId = node?.Id;
 	}

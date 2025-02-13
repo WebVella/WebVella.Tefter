@@ -40,11 +40,9 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 				if (!Guid.TryParse(cookieDecryptedText, out currentUserId))
 					return await Task.FromResult(new AuthenticationState(_anonymous));
 
-				var userResult = await _identityManager.GetUserAsync(currentUserId);
-				if (!userResult.IsSuccess || userResult.Value is null)
+				var user = await _identityManager.GetUserAsync(currentUserId);
+				if (user is null)
 					return await Task.FromResult(new AuthenticationState(_anonymous));
-
-				var user = userResult.Value;
 
 				var claims = new List<Claim> {
 					new(ClaimTypes.NameIdentifier, user.Id.ToString()),

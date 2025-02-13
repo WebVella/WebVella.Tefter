@@ -97,25 +97,20 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			Result<TucDataProvider> submitResult;
+			TucDataProvider provider;
 			if (_isCreate)
 			{
-				submitResult = UC.CreateDataProviderWithForm(_form);
+				provider = UC.CreateDataProviderWithForm(_form);
 			}
 			else
 			{
-				submitResult = UC.UpdateDataProviderWithForm(_form);
+				provider = UC.UpdateDataProviderWithForm(_form);
 			}
-
-			ProcessFormSubmitResponse(submitResult);
-			if (submitResult.IsSuccess)
-			{
-				await Dialog.CloseAsync(submitResult.Value);
-			}
+			await Dialog.CloseAsync(provider);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

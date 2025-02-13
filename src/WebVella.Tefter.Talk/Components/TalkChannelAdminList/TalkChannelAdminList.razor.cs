@@ -74,24 +74,20 @@ public partial class TalkChannelAdminList : TfBaseComponent
 			return;
 		try
 		{
-			var result = TalkService.DeleteChannel(channel.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
+			TalkService.DeleteChannel(channel.Id);
+			List<TalkChannel> state = new();
+			if (TfAuxDataState.Value.Data.ContainsKey(TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
+				state = (List<TalkChannel>)TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
+			var itemIndex = state.FindIndex(x => x.Id == channel.Id);
+			if (itemIndex > -1)
 			{
-				List<TalkChannel> state = new();
-				if (TfAuxDataState.Value.Data.ContainsKey(TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY))
-					state = (List<TalkChannel>)TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY];
-				var itemIndex = state.FindIndex(x => x.Id == channel.Id);
-				if (itemIndex > -1)
-				{
-					state.RemoveAt(itemIndex);
-				}
-				TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
-				Dispatcher.Dispatch(new SetAuxDataStateAction(
-					component: this,
-					state: TfAuxDataState.Value
-				));
+				state.RemoveAt(itemIndex);
 			}
+			TfAuxDataState.Value.Data[TalkConstants.TALK_APP_CHANNEL_LIST_DATA_KEY] = state;
+			Dispatcher.Dispatch(new SetAuxDataStateAction(
+				component: this,
+				state: TfAuxDataState.Value
+			));
 		}
 		catch (Exception ex)
 		{

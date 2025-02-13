@@ -2,54 +2,52 @@
 
 public partial interface IAssetsService
 {
-	public Result<Asset> GetAsset(
+	public Asset GetAsset(
 		Guid id);
 
-	public Result<List<Asset>> GetAssets(
+	public List<Asset> GetAssets(
 		Guid? folderId = null,
 		Guid? skId = null);
 
-	public Result<List<Asset>> GetAssets(
+	public List<Asset> GetAssets(
 		Guid? folderId = null,
 		string skTextId = null);
 
-	public Result<Asset> CreateFileAsset(
+	public Asset CreateFileAsset(
 		CreateFileAssetModel fileAsset);
 
-	public Result<Asset> CreateLinkAsset(
+	public Asset CreateLinkAsset(
 		CreateLinkAssetModel asset);
 
-	public Result<Asset> CreateFileAsset(
+	public Asset CreateFileAsset(
 		CreateFileAssetWithSharedKeyModel asset);
 
-	public Result<Asset> CreateLinkAsset(
+	public Asset CreateLinkAsset(
 		CreateLinkAssetWithSharedKeyModel asset);
 
-	public Result<Asset> UpdateFileAsset(
+	public Asset UpdateFileAsset(
 		Guid id,
 		string label,
 		string localPath,
 		Guid userId);
 
-	public Result<Asset> UpdateLinkAsset(
+	public Asset UpdateLinkAsset(
 		Guid id,
 		string label,
 		string url,
 		string iconUrl,
 		Guid userId);
 
-	public Result DeleteAsset(
+	public void DeleteAsset(
 		Guid assetId);
 }
 
 internal partial class AssetsService : IAssetsService
 {
-	public Result<Asset> GetAsset(
+	public Asset GetAsset(
 		Guid id)
 	{
-		try
-		{
-			const string SQL =
+		const string SQL =
 @"WITH sk_info AS (
 	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
 	FROM assets_related_sk trs
@@ -71,35 +69,28 @@ FROM assets_asset aa
 WHERE aa.id = @id
 ";
 
-			var assetIdPar = CreateParameter(
-				"id",
-				id,
-				DbType.Guid);
+		var assetIdPar = CreateParameter(
+			"id",
+			id,
+			DbType.Guid);
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
 
-			List<Asset> assets = ToAssetList(dt);
+		List<Asset> assets = ToAssetList(dt);
 
-			if (assets.Count == 0)
-			{
-				return null;
-			}
-
-			return Result.Ok(assets[0]);
-		}
-		catch (Exception ex)
+		if (assets.Count == 0)
 		{
-			return Result.Fail(new Error("Failed to get asset.").CausedBy(ex));
+			return null;
 		}
+
+		return assets[0];
 	}
 
-	public Result<List<Asset>> GetAssets(
+	public List<Asset> GetAssets(
 		Guid? folderId = null,
 		Guid? skId = null)
 	{
-		try
-		{
-			const string SQL = @"
+		const string SQL = @"
 WITH sk_info AS (
 	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
 	FROM assets_related_sk trs
@@ -122,27 +113,22 @@ FROM assets_asset aa
 WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND ( @sk_id IS NULL OR sk.asset_id is not null )
 ORDER BY aa.created_on DESC;";
 
-			var folderIdPar = CreateParameter(
-				"folder_id",
-				folderId,
-				DbType.Guid);
+		var folderIdPar = CreateParameter(
+			"folder_id",
+			folderId,
+			DbType.Guid);
 
-			var skIdPar = CreateParameter(
-				"sk_id",
-				skId,
-				DbType.Guid);
+		var skIdPar = CreateParameter(
+			"sk_id",
+			skId,
+			DbType.Guid);
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, folderIdPar, skIdPar);
 
-			return Result.Ok(ToAssetList(dt));
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get assets.").CausedBy(ex));
-		}
+		return ToAssetList(dt);
 	}
 
-	public Result<List<Asset>> GetAssets(
+	public List<Asset> GetAssets(
 		Guid? folderId = null,
 		string skTextId = null)
 	{
@@ -150,159 +136,345 @@ ORDER BY aa.created_on DESC;";
 		return GetAssets(folderId, skId);
 	}
 
-	public Result<Asset> CreateFileAsset(
+	public Asset CreateFileAsset(
 		CreateFileAssetModel fileAsset)
 	{
-		try
+		if (fileAsset == null)
+			throw new NullReferenceException("Asset object is null");
+
+		Guid id = Guid.NewGuid();
+
+		new AssetValidator(this)
+			.ValidateCreateFileAsset(fileAsset, id)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope())
 		{
-			if (fileAsset == null)
-				throw new NullReferenceException("Asset object is null");
+			string filename = fileAsset.FileName;
 
-			Guid id = Guid.NewGuid();
+			Guid blobId = _blobManager.CreateBlob(fileAsset.LocalPath);
 
-			AssetValidator validator = new AssetValidator(this);
+			DateTime now = DateTime.Now;
 
-			var validationResult = validator.ValidateCreateFileAsset(fileAsset, id);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-
-			using (var scope = _dbService.CreateTransactionScope())
-			{
-				string filename = fileAsset.FileName;
-
-				Guid blobId = _blobManager.CreateBlob(fileAsset.LocalPath);
-
-				DateTime now = DateTime.Now;
-
-				var SQL = @"INSERT INTO assets_asset
+			var SQL = @"INSERT INTO assets_asset
 						(id, folder_id, type, content_json, created_by,
 						created_on, modified_by, modified_on, x_search)
 					VALUES(@id, @folder_id, @type, @content_json, @created_by,
 						@created_on, @modified_by, @modified_on, @x_search); ";
 
-				var idPar = CreateParameter("@id", id, DbType.Guid);
+			var idPar = CreateParameter("@id", id, DbType.Guid);
 
-				var folderIdPar = CreateParameter("@folder_id", fileAsset.FolderId, DbType.Guid);
+			var folderIdPar = CreateParameter("@folder_id", fileAsset.FolderId, DbType.Guid);
 
-				var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
+			var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
 
-				FileAssetContent content = new FileAssetContent
-				{
-					BlobId = blobId,
-					Filename = filename,
-					Label = fileAsset.Label,
-					DownloadUrl = $"/fs/assets/{id}/{filename}"
-				};
+			FileAssetContent content = new FileAssetContent
+			{
+				BlobId = blobId,
+				Filename = filename,
+				Label = fileAsset.Label,
+				DownloadUrl = $"/fs/assets/{id}/{filename}"
+			};
 
-				var contentJson = JsonSerializer.Serialize(content);
+			var contentJson = JsonSerializer.Serialize(content);
 
-				var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+			var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
 
-				var createdByPar = CreateParameter("@created_by", fileAsset.CreatedBy, DbType.Guid);
+			var createdByPar = CreateParameter("@created_by", fileAsset.CreatedBy, DbType.Guid);
 
-				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+			var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
 
-				var modifiedByPar = CreateParameter("@modified_by", fileAsset.CreatedBy, DbType.Guid);
+			var modifiedByPar = CreateParameter("@modified_by", fileAsset.CreatedBy, DbType.Guid);
 
-				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
-
-
-				string xSearch = string.Empty;
-				xSearch = $"{fileAsset.Label} {filename}";
-
-				var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
-
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar, folderIdPar,
-					typePar, contentJsonPar,
-					createdByPar, createdOnPar,
-					modifiedByPar, modifiedOnPar,
-					xSearchPar);
-
-				if (dbResult != 1)
-				{
-					throw new Exception("Failed to insert new row in database for thread object");
-				}
+			var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
 
 
-				if (fileAsset.RowIds != null && fileAsset.RowIds.Count > 0)
-				{
-					var folder = GetFolder(fileAsset.FolderId).Value;
+			string xSearch = string.Empty;
+			xSearch = $"{fileAsset.Label} {filename}";
 
-					var provider = _dataProviderManager.GetProvider(fileAsset.DataProviderId).Value;
+			var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
 
-					if (provider is null)
-					{
-						throw new Exception($"Failed to find data provider with id='{fileAsset.DataProviderId}'");
-					}
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar, folderIdPar,
+				typePar, contentJsonPar,
+				createdByPar, createdOnPar,
+				modifiedByPar, modifiedOnPar,
+				xSearchPar);
 
-					var queryResult = _dataManager.QueryDataProvider(provider, fileAsset.RowIds);
-
-					if (!queryResult.IsSuccess)
-					{
-						return Result.Fail(new Error("Failed to get rows by ids.")
-							.CausedBy(queryResult.Errors));
-					}
-
-					List<Guid> relatedSK = new List<Guid>();
-
-					foreach (TfDataRow row in queryResult.Value.Rows)
-					{
-						var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
-
-						if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
-						{
-							relatedSK.Add(skIdValue.Value);
-						}
-					}
-
-					foreach (var skId in relatedSK)
-					{
-						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-							"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
-								new NpgsqlParameter("@id", skId),
-								new NpgsqlParameter("@asset_id", id));
-
-						if (skDbResult != 1)
-						{
-							throw new Exception("Failed to insert new row in database for related shared key object");
-						}
-					}
-				}
-
-				scope.Complete();
-
-				var resultAsset = GetAsset(id);
-
-				return resultAsset;
+			if (dbResult != 1)
+			{
+				throw new Exception("Failed to insert new row in database for thread object");
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new asset.").CausedBy(ex));
+
+
+			if (fileAsset.RowIds != null && fileAsset.RowIds.Count > 0)
+			{
+				var folder = GetFolder(fileAsset.FolderId);
+
+				var provider = _dataProviderManager.GetProvider(fileAsset.DataProviderId);
+
+				if (provider is null)
+				{
+					throw new Exception($"Failed to find data provider with id='{fileAsset.DataProviderId}'");
+				}
+
+				var dataTable = _dataManager.QueryDataProvider(provider, fileAsset.RowIds);
+
+				List<Guid> relatedSK = new List<Guid>();
+
+				foreach (TfDataRow row in dataTable.Rows)
+				{
+					var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
+
+					if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
+					{
+						relatedSK.Add(skIdValue.Value);
+					}
+				}
+
+				foreach (var skId in relatedSK)
+				{
+					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+						"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
+							new NpgsqlParameter("@id", skId),
+							new NpgsqlParameter("@asset_id", id));
+
+					if (skDbResult != 1)
+					{
+						throw new Exception("Failed to insert new row in database for related shared key object");
+					}
+				}
+			}
+
+			scope.Complete();
+
+			var resultAsset = GetAsset(id);
+
+			return resultAsset;
 		}
 	}
 
-	public Result<Asset> CreateLinkAsset(
+	public Asset CreateLinkAsset(
 		CreateLinkAssetModel asset)
 	{
-		try
+		if (asset == null)
+			throw new NullReferenceException("Asset object is null");
+
+		Guid id = Guid.NewGuid();
+
+		DateTime now = DateTime.Now;
+
+		var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on, x_search)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on, @x_search); ";
+
+		var idPar = CreateParameter("@id", id, DbType.Guid);
+
+		var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+		var typePar = CreateParameter("@type", (short)AssetType.Link, DbType.Int16);
+
+		LinkAssetContent content = new LinkAssetContent
 		{
-			if (asset == null)
-				throw new NullReferenceException("Asset object is null");
+			Label = asset.Label,
+			Url = asset.Url,
+			IconUrl = asset.IconUrl,
+		};
 
-			Guid id = Guid.NewGuid();
+		var contentJson = JsonSerializer.Serialize(content);
 
-			AssetValidator validator = new AssetValidator(this);
+		var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
 
-			//var validationResult = validator.ValidateCreateLinkAsset(asset, id);
+		var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
 
-			//if (!validationResult.IsValid)
-			//	return validationResult.ToResult();
+		var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
 
+		var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+		var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+
+		string xSearch = $"{asset.Label} {asset.Url}";
+
+		var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
+
+		using (var scope = _dbService.CreateTransactionScope())
+		{
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar, folderIdPar,
+				typePar, contentJsonPar,
+				createdByPar, createdOnPar,
+				modifiedByPar, modifiedOnPar,
+				xSearchPar);
+
+			if (dbResult != 1)
+			{
+				throw new Exception("Failed to insert new row in database for thread object");
+			}
+
+
+			if (asset.RowIds != null && asset.RowIds.Count > 0)
+			{
+				var folder = GetFolder(asset.FolderId);
+
+				var provider = _dataProviderManager.GetProvider(asset.DataProviderId);
+
+				if (provider is null)
+				{
+					throw new Exception($"Failed to find data provider with id='{asset.DataProviderId}'");
+				}
+
+				var dataTable = _dataManager.QueryDataProvider(provider, asset.RowIds);
+
+				List<Guid> relatedSK = new List<Guid>();
+
+				foreach (TfDataRow row in dataTable.Rows)
+				{
+					var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
+
+					if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
+					{
+						relatedSK.Add(skIdValue.Value);
+					}
+				}
+
+				foreach (var skId in relatedSK)
+				{
+					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+						"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
+							new NpgsqlParameter("@id", skId),
+							new NpgsqlParameter("@asset_id", id));
+
+					if (skDbResult != 1)
+					{
+						throw new Exception("Failed to insert new row in database for related shared key object");
+					}
+				}
+			}
+
+			scope.Complete();
+
+			var resultAsset = GetAsset(id);
+
+			return resultAsset;
+		}
+	}
+
+	public Asset CreateFileAsset(
+		CreateFileAssetWithSharedKeyModel asset)
+	{
+
+		if (asset == null)
+			throw new NullReferenceException("Asset object is null");
+
+		Guid id = Guid.NewGuid();
+
+		new AssetValidator(this)
+			.ValidateCreateFileAsset(asset, id)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope())
+		{
+			string filename = asset.FileName;
+
+			Guid blobId = _blobManager.CreateBlob(asset.LocalPath);
+
+			DateTime now = DateTime.Now;
+
+			var SQL = @"INSERT INTO assets_asset
+						(id, folder_id, type, content_json, created_by,
+						created_on, modified_by, modified_on, x_search)
+					VALUES(@id, @folder_id, @type, @content_json, @created_by,
+						@created_on, @modified_by, @modified_on, @x_search); ";
+
+			var idPar = CreateParameter("@id", id, DbType.Guid);
+
+			var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
+
+			var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
+
+			FileAssetContent content = new FileAssetContent
+			{
+				BlobId = blobId,
+				Filename = filename,
+				Label = asset.Label,
+				DownloadUrl = $"/fs/assets/{id}/{filename}"
+			};
+
+			var contentJson = JsonSerializer.Serialize(content);
+
+			var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
+
+			var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
+
+			var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+
+			var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
+
+			var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+
+			var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {filename}", DbType.String);
+
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar, folderIdPar,
+				typePar, contentJsonPar,
+				createdByPar, createdOnPar,
+				modifiedByPar, modifiedOnPar,
+				xSearchPar);
+
+			if (dbResult != 1)
+			{
+				throw new Exception("Failed to insert new row in database for thread object");
+			}
+
+			if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
+			{
+				foreach (var skId in asset.SKValueIds)
+				{
+					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+						"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
+							new NpgsqlParameter("@id", skId),
+							new NpgsqlParameter("@asset_id", id));
+
+					if (skDbResult != 1)
+					{
+						throw new Exception("Failed to insert new row in database for related shared key object");
+					}
+				}
+			}
+
+			scope.Complete();
+
+			var resultAsset = GetAsset(id);
+
+			return resultAsset;
+		}
+	}
+
+	public Asset CreateLinkAsset(
+		CreateLinkAssetWithSharedKeyModel asset)
+	{
+
+		if (asset == null)
+		{
+			throw new NullReferenceException("Asset object is null");
+		}
+
+		Guid id = Guid.NewGuid();
+
+		new AssetValidator(this)
+			.ValidateCreateLinkAsset(asset, id)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope())
+		{
 			DateTime now = DateTime.Now;
 
 			var SQL = @"INSERT INTO assets_asset
@@ -319,9 +491,9 @@ ORDER BY aa.created_on DESC;";
 
 			LinkAssetContent content = new LinkAssetContent
 			{
-				Label = asset.Label,
 				Url = asset.Url,
-				IconUrl = asset.IconUrl,
+				Label = asset.Label,
+				IconUrl = asset.IconUrl
 			};
 
 			var contentJson = JsonSerializer.Serialize(content);
@@ -336,534 +508,262 @@ ORDER BY aa.created_on DESC;";
 
 			var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
 
-			string xSearch = $"{asset.Label} {asset.Url}";
+			var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {asset.Url}", DbType.String);
 
-			var xSearchPar = CreateParameter("@x_search", xSearch, DbType.String);
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar, folderIdPar,
+				typePar, contentJsonPar,
+				createdByPar, createdOnPar,
+				modifiedByPar, modifiedOnPar,
+				xSearchPar);
 
-			using (var scope = _dbService.CreateTransactionScope())
+			if (dbResult != 1)
 			{
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar, folderIdPar,
-					typePar, contentJsonPar,
-					createdByPar, createdOnPar,
-					modifiedByPar, modifiedOnPar,
-					xSearchPar);
-
-				if (dbResult != 1)
-				{
-					throw new Exception("Failed to insert new row in database for thread object");
-				}
-
-
-				if (asset.RowIds != null && asset.RowIds.Count > 0)
-				{
-					var folder = GetFolder(asset.FolderId).Value;
-
-					var provider = _dataProviderManager.GetProvider(asset.DataProviderId).Value;
-
-					if (provider is null)
-					{
-						throw new Exception($"Failed to find data provider with id='{asset.DataProviderId}'");
-					}
-
-					var queryResult = _dataManager.QueryDataProvider(provider, asset.RowIds);
-
-					if (!queryResult.IsSuccess)
-					{
-						return Result.Fail(new Error("Failed to get rows by ids.")
-							.CausedBy(queryResult.Errors));
-					}
-
-					List<Guid> relatedSK = new List<Guid>();
-
-					foreach (TfDataRow row in queryResult.Value.Rows)
-					{
-						var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
-
-						if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
-						{
-							relatedSK.Add(skIdValue.Value);
-						}
-					}
-
-					foreach (var skId in relatedSK)
-					{
-						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-							"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
-								new NpgsqlParameter("@id", skId),
-								new NpgsqlParameter("@asset_id", id));
-
-						if (skDbResult != 1)
-						{
-							throw new Exception("Failed to insert new row in database for related shared key object");
-						}
-					}
-				}
-
-				scope.Complete();
-
-				var resultAsset = GetAsset(id);
-
-				return resultAsset;
+				throw new Exception("Failed to insert new row in database for thread object");
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new link asset.").CausedBy(ex));
+
+			if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
+			{
+				foreach (var skId in asset.SKValueIds)
+				{
+					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+						"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
+							new NpgsqlParameter("@id", skId),
+							new NpgsqlParameter("@asset_id", id));
+
+					if (skDbResult != 1)
+					{
+						throw new Exception("Failed to insert new row in database for related shared key object");
+					}
+				}
+			}
+
+			scope.Complete();
+
+			var resultAsset = GetAsset(id);
+
+			return resultAsset;
 		}
 	}
 
-	public Result<Asset> CreateFileAsset(
-		CreateFileAssetWithSharedKeyModel asset)
-	{
-		try
-		{
-			if (asset == null)
-			{
-				throw new NullReferenceException("Asset object is null");
-			}
-
-			Guid id = Guid.NewGuid();
-
-			AssetValidator validator = new AssetValidator(this);
-
-			var validationResult = validator.ValidateCreateFileAsset(asset, id);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-
-
-			using (var scope = _dbService.CreateTransactionScope())
-			{
-				string filename = asset.FileName;
-
-				Guid blobId = _blobManager.CreateBlob(asset.LocalPath);
-
-				DateTime now = DateTime.Now;
-
-				var SQL = @"INSERT INTO assets_asset
-						(id, folder_id, type, content_json, created_by,
-						created_on, modified_by, modified_on, x_search)
-					VALUES(@id, @folder_id, @type, @content_json, @created_by,
-						@created_on, @modified_by, @modified_on, @x_search); ";
-
-				var idPar = CreateParameter("@id", id, DbType.Guid);
-
-				var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
-
-				var typePar = CreateParameter("@type", (short)AssetType.File, DbType.Int16);
-
-				FileAssetContent content = new FileAssetContent
-				{
-					BlobId = blobId,
-					Filename = filename,
-					Label = asset.Label,
-					DownloadUrl = $"/fs/assets/{id}/{filename}"
-				};
-
-				var contentJson = JsonSerializer.Serialize(content);
-
-				var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
-
-				var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
-
-				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
-
-				var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
-
-				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
-
-				var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {filename}", DbType.String);
-
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar, folderIdPar,
-					typePar, contentJsonPar,
-					createdByPar, createdOnPar,
-					modifiedByPar, modifiedOnPar,
-					xSearchPar);
-
-				if (dbResult != 1)
-				{
-					throw new Exception("Failed to insert new row in database for thread object");
-				}
-
-				if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
-				{
-					foreach (var skId in asset.SKValueIds)
-					{
-						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-							"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
-								new NpgsqlParameter("@id", skId),
-								new NpgsqlParameter("@asset_id", id));
-
-						if (skDbResult != 1)
-						{
-							throw new Exception("Failed to insert new row in database for related shared key object");
-						}
-					}
-				}
-
-				scope.Complete();
-
-				var resultAsset = GetAsset(id);
-
-				return resultAsset;
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
-		}
-	}
-
-	public Result<Asset> CreateLinkAsset(
-		CreateLinkAssetWithSharedKeyModel asset)
-	{
-		try
-		{
-			if (asset == null)
-			{
-				throw new NullReferenceException("Asset object is null");
-			}
-
-			Guid id = Guid.NewGuid();
-
-			AssetValidator validator = new AssetValidator(this);
-
-			var validationResult = validator.ValidateCreateLinkAsset(asset, id);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-
-
-			using (var scope = _dbService.CreateTransactionScope())
-			{
-				DateTime now = DateTime.Now;
-
-				var SQL = @"INSERT INTO assets_asset
-						(id, folder_id, type, content_json, created_by,
-						created_on, modified_by, modified_on, x_search)
-					VALUES(@id, @folder_id, @type, @content_json, @created_by,
-						@created_on, @modified_by, @modified_on, @x_search); ";
-
-				var idPar = CreateParameter("@id", id, DbType.Guid);
-
-				var folderIdPar = CreateParameter("@folder_id", asset.FolderId, DbType.Guid);
-
-				var typePar = CreateParameter("@type", (short)AssetType.Link, DbType.Int16);
-
-				LinkAssetContent content = new LinkAssetContent
-				{
-					Url = asset.Url,
-					Label = asset.Label,
-					IconUrl = asset.IconUrl
-				};
-
-				var contentJson = JsonSerializer.Serialize(content);
-
-				var contentJsonPar = CreateParameter("@content_json", contentJson, DbType.String);
-
-				var createdByPar = CreateParameter("@created_by", asset.CreatedBy, DbType.Guid);
-
-				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
-
-				var modifiedByPar = CreateParameter("@modified_by", asset.CreatedBy, DbType.Guid);
-
-				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
-
-				var xSearchPar = CreateParameter("@x_search", $"{asset.Label} {asset.Url}", DbType.String);
-
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar, folderIdPar,
-					typePar, contentJsonPar,
-					createdByPar, createdOnPar,
-					modifiedByPar, modifiedOnPar,
-					xSearchPar);
-
-				if (dbResult != 1)
-				{
-					throw new Exception("Failed to insert new row in database for thread object");
-				}
-
-				if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
-				{
-					foreach (var skId in asset.SKValueIds)
-					{
-						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-							"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
-								new NpgsqlParameter("@id", skId),
-								new NpgsqlParameter("@asset_id", id));
-
-						if (skDbResult != 1)
-						{
-							throw new Exception("Failed to insert new row in database for related shared key object");
-						}
-					}
-				}
-
-				scope.Complete();
-
-				var resultAsset = GetAsset(id);
-
-				return resultAsset;
-			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
-		}
-	}
-
-	public Result<Asset> UpdateFileAsset(
+	public Asset UpdateFileAsset(
 		Guid id,
 		string label,
 		string localPath,
 		Guid userId)
 	{
-		try
-		{
-			var existingAsset = GetAsset(id).Value;
+		var existingAsset = GetAsset(id);
 
-			var user = _identityManager.GetUser(userId).Value;
+		var user = _identityManager.GetUser(userId);
 
-			AssetValidator validator = new AssetValidator(this);
-
-			var validationResult = validator.ValidateUpdateFileAsset(
+		new AssetValidator(this)
+			.ValidateUpdateFileAsset(
 				existingAsset,
 				label,
 				localPath,
-				user);
+				user)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
 
-			using (var scope = _dbService.CreateTransactionScope())
-			{
-				var SQL = "UPDATE assets_asset SET " +
-				"content_json=@content_json, " +
-				"modified_on=@modified_on, " +
-				"modified_by=@modified_by," +
-				"x_search = @x_search " +
-				"WHERE id = @id";
-
-				var idPar = CreateParameter(
-					"id",
-					id,
-					DbType.Guid);
-
-				FileAssetContent fileAssetContent = new FileAssetContent
-				{
-					BlobId = ((FileAssetContent)existingAsset.Content).BlobId,
-					Filename = ((FileAssetContent)existingAsset.Content).Filename,
-					Label = label,
-					DownloadUrl = ((FileAssetContent)existingAsset.Content).DownloadUrl
-				};
-
-				string contentJson = JsonSerializer.Serialize(fileAssetContent);
-
-				var contentJsonPar = CreateParameter(
-					"@content_json",
-					contentJson,
-					DbType.String);
-
-				var modifiedOnPar = CreateParameter(
-					"@modified_on",
-					DateTime.Now,
-					DbType.DateTime2);
-
-				var modifiedByPar = CreateParameter(
-					"@modified_by",
-					user.Id,
-					DbType.Guid);
-
-				var xSearchPar = CreateParameter(
-					"@x_search",
-					$"{label} {((FileAssetContent)existingAsset.Content).Filename}",
-					DbType.String);
-
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar,
-					contentJsonPar,
-					modifiedByPar,
-					modifiedOnPar,
-					xSearchPar);
-
-				if (dbResult != 1)
-				{
-					throw new Exception("Failed to update row in database for asset object");
-				}
-
-				if (!string.IsNullOrWhiteSpace(localPath))
-				{
-					_blobManager.UpdateBlob(fileAssetContent.BlobId, localPath);
-				}
-
-				scope.Complete();
-
-				var resultAsset = GetAsset(id);
-
-				return resultAsset;
-			}
-		}
-		catch (Exception ex)
+		using (var scope = _dbService.CreateTransactionScope())
 		{
-			return Result.Fail(new Error("Failed to update asset.").CausedBy(ex));
+			var SQL = "UPDATE assets_asset SET " +
+			"content_json=@content_json, " +
+			"modified_on=@modified_on, " +
+			"modified_by=@modified_by," +
+			"x_search = @x_search " +
+			"WHERE id = @id";
+
+			var idPar = CreateParameter(
+				"id",
+				id,
+				DbType.Guid);
+
+			FileAssetContent fileAssetContent = new FileAssetContent
+			{
+				BlobId = ((FileAssetContent)existingAsset.Content).BlobId,
+				Filename = ((FileAssetContent)existingAsset.Content).Filename,
+				Label = label,
+				DownloadUrl = ((FileAssetContent)existingAsset.Content).DownloadUrl
+			};
+
+			string contentJson = JsonSerializer.Serialize(fileAssetContent);
+
+			var contentJsonPar = CreateParameter(
+				"@content_json",
+				contentJson,
+				DbType.String);
+
+			var modifiedOnPar = CreateParameter(
+				"@modified_on",
+				DateTime.Now,
+				DbType.DateTime2);
+
+			var modifiedByPar = CreateParameter(
+				"@modified_by",
+				user.Id,
+				DbType.Guid);
+
+			var xSearchPar = CreateParameter(
+				"@x_search",
+				$"{label} {((FileAssetContent)existingAsset.Content).Filename}",
+				DbType.String);
+
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar,
+				contentJsonPar,
+				modifiedByPar,
+				modifiedOnPar,
+				xSearchPar);
+
+			if (dbResult != 1)
+			{
+				throw new Exception("Failed to update row in database for asset object");
+			}
+
+			if (!string.IsNullOrWhiteSpace(localPath))
+			{
+				_blobManager.UpdateBlob(fileAssetContent.BlobId, localPath);
+			}
+
+			scope.Complete();
+
+			var resultAsset = GetAsset(id);
+
+			return resultAsset;
 		}
 	}
 
-	public Result<Asset> UpdateLinkAsset(
+	public Asset UpdateLinkAsset(
 		Guid id,
 		string label,
 		string url,
 		string iconUrl,
 		Guid userId)
 	{
-		try
-		{
-			var existingAsset = GetAsset(id).Value;
+		var existingAsset = GetAsset(id);
 
-			var user = _identityManager.GetUser(userId).Value;
+		var user = _identityManager.GetUser(userId);
 
-			AssetValidator validator = new AssetValidator(this);
-
-			var validationResult = validator.ValidateUpdateLinkAsset(
+		new AssetValidator(this)
+			.ValidateUpdateLinkAsset(
 				existingAsset,
 				label,
 				url,
-				user);
+				user)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			using (var scope = _dbService.CreateTransactionScope())
-			{
-				var SQL = "UPDATE assets_asset SET " +
-				"content_json=@content_json, " +
-				"modified_on=@modified_on, " +
-				"modified_by=@modified_by, " +
-				"x_search = @x_search " +
-				"WHERE id = @id";
-
-				var idPar = CreateParameter(
-					"id",
-					id,
-					DbType.Guid);
-
-				LinkAssetContent linkAssetContent = new LinkAssetContent
-				{
-					Label = label,
-					Url = url,
-					IconUrl = iconUrl
-				};
-
-				string contentJson = JsonSerializer.Serialize(linkAssetContent);
-
-				var contentJsonPar = CreateParameter(
-					"@content_json",
-					contentJson,
-					DbType.String);
-
-				var modifiedOnPar = CreateParameter(
-					"@modified_on",
-					DateTime.Now,
-					DbType.DateTime2);
-
-				var modifiedByPar = CreateParameter(
-					"@modified_by",
-					user.Id,
-					DbType.Guid);
-
-				var xSearchPar = CreateParameter(
-					"@x_search",
-					$"{label} {url}",
-					DbType.String);
-
-
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar,
-					contentJsonPar,
-					modifiedByPar,
-					modifiedOnPar,
-					xSearchPar);
-
-				if (dbResult != 1)
-				{
-					throw new Exception("Failed to update row in database for asset object");
-				}
-
-				scope.Complete();
-
-				var resultAsset = GetAsset(id);
-
-				return resultAsset;
-			}
-		}
-		catch (Exception ex)
+		using (var scope = _dbService.CreateTransactionScope())
 		{
-			return Result.Fail(new Error("Failed to update asset.").CausedBy(ex));
+			var SQL = "UPDATE assets_asset SET " +
+			"content_json=@content_json, " +
+			"modified_on=@modified_on, " +
+			"modified_by=@modified_by, " +
+			"x_search = @x_search " +
+			"WHERE id = @id";
+
+			var idPar = CreateParameter(
+				"id",
+				id,
+				DbType.Guid);
+
+			LinkAssetContent linkAssetContent = new LinkAssetContent
+			{
+				Label = label,
+				Url = url,
+				IconUrl = iconUrl
+			};
+
+			string contentJson = JsonSerializer.Serialize(linkAssetContent);
+
+			var contentJsonPar = CreateParameter(
+				"@content_json",
+				contentJson,
+				DbType.String);
+
+			var modifiedOnPar = CreateParameter(
+				"@modified_on",
+				DateTime.Now,
+				DbType.DateTime2);
+
+			var modifiedByPar = CreateParameter(
+				"@modified_by",
+				user.Id,
+				DbType.Guid);
+
+			var xSearchPar = CreateParameter(
+				"@x_search",
+				$"{label} {url}",
+				DbType.String);
+
+
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar,
+				contentJsonPar,
+				modifiedByPar,
+				modifiedOnPar,
+				xSearchPar);
+
+			if (dbResult != 1)
+			{
+				throw new Exception("Failed to update row in database for asset object");
+			}
+
+			scope.Complete();
+
+			var resultAsset = GetAsset(id);
+
+			return resultAsset;
 		}
 	}
 
-	public Result DeleteAsset(
+	public void DeleteAsset(
 		Guid assetId)
 	{
-		try
+		var existingAsset = GetAsset(assetId);
+
+		new AssetValidator(this)
+			.ValidateDelete(existingAsset)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
+
+		using (var scope = _dbService.CreateTransactionScope())
 		{
-			var existingAsset = GetAsset(assetId).Value;
+			//delete link to related shared keys
 
-			AssetValidator validator = new AssetValidator(this);
+			var SQL = "DELETE FROM assets_related_sk WHERE asset_id = @asset_id";
 
-			var validationResult = validator.ValidateDelete(existingAsset);
+			var assetIdPar = CreateParameter("asset_id", assetId, DbType.Guid);
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+			_dbService.ExecuteSqlNonQueryCommand(SQL, assetIdPar);
 
-			using (var scope = _dbService.CreateTransactionScope())
+			//delete asset record
+
+			SQL = "DELETE FROM assets_asset WHERE id = @id";
+
+			var idPar = CreateParameter("id", assetId, DbType.Guid);
+
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
+
+			if (dbResult != 1)
 			{
-				//delete link to related shared keys
-
-				var SQL = "DELETE FROM assets_related_sk WHERE asset_id = @asset_id";
-
-				var assetIdPar = CreateParameter("asset_id", assetId, DbType.Guid);
-
-				_dbService.ExecuteSqlNonQueryCommand(SQL, assetIdPar);
-
-				//delete asset record
-
-				SQL = "DELETE FROM assets_asset WHERE id = @id";
-
-				var idPar = CreateParameter("id", assetId, DbType.Guid);
-
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
-
-				if (dbResult != 1)
-				{
-					throw new Exception("Failed to update row in database for asset object");
-				}
-
-				//delete blob if file asset
-
-				if (existingAsset.Type == AssetType.File)
-				{
-					FileAssetContent content = (FileAssetContent)existingAsset.Content;
-					_blobManager.DeleteBlob(content.BlobId);
-				}
-
-				scope.Complete();
-
-				return Result.Ok();
+				throw new Exception("Failed to update row in database for asset object");
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete asset").CausedBy(ex));
+
+			//delete blob if file asset
+
+			if (existingAsset.Type == AssetType.File)
+			{
+				FileAssetContent content = (FileAssetContent)existingAsset.Content;
+				_blobManager.DeleteBlob(content.BlobId);
+			}
+
+			scope.Complete();
 		}
 	}
 
@@ -878,9 +778,9 @@ ORDER BY aa.created_on DESC;";
 
 		foreach (DataRow dr in dt.Rows)
 		{
-			var createdBy = _identityManager.GetUser(dr.Field<Guid>("created_by")).Value;
+			var createdBy = _identityManager.GetUser(dr.Field<Guid>("created_by"));
 
-			var modifiedBy = _identityManager.GetUser(dr.Field<Guid>("modified_by")).Value;
+			var modifiedBy = _identityManager.GetUser(dr.Field<Guid>("modified_by"));
 
 			var type = (AssetType)dr.Field<short>("type");
 

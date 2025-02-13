@@ -2,223 +2,172 @@
 
 public partial interface IAssetsService
 {
-	Result<AssetsFolder> GetFolder(
+	AssetsFolder GetFolder(
 		Guid folderId);
 
-	Result<List<AssetsFolder>> GetFolders();
+	List<AssetsFolder> GetFolders();
 
-	Result<AssetsFolder> CreateFolder(
+	AssetsFolder CreateFolder(
 		AssetsFolder folder);
 
-	Result<AssetsFolder> UpdateFolder(
+	AssetsFolder UpdateFolder(
 		AssetsFolder folder);
 
-	Result DeleteFolder(
+	void DeleteFolder(
 		Guid folderId);
 }
 
 internal partial class AssetsService : IAssetsService
 {
-	public Result<AssetsFolder> GetFolder(
+	public AssetsFolder GetFolder(
 		Guid folderId)
 	{
-		try
-		{
-			var SQL = "SELECT * FROM assets_folder WHERE id = @id";
+		var SQL = "SELECT * FROM assets_folder WHERE id = @id";
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL,
-				new NpgsqlParameter("id", folderId));
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL,
+			new NpgsqlParameter("id", folderId));
 
-			if (dt.Rows.Count == 0)
-				return Result.Ok((AssetsFolder)null);
+		if (dt.Rows.Count == 0)
+			return null;
 
-			return Result.Ok((AssetsFolder)ToFolder(dt.Rows[0]));
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get folder.").CausedBy(ex));
-		}
+		return ToFolder(dt.Rows[0]);
 	}
 
-	public Result<List<AssetsFolder>> GetFolders()
+	public List<AssetsFolder> GetFolders()
 	{
-		try
-		{
-			var SQL = "SELECT * FROM assets_folder";
+		var SQL = "SELECT * FROM assets_folder";
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 
-			List<AssetsFolder> folders = new List<AssetsFolder>();
+		List<AssetsFolder> folders = new List<AssetsFolder>();
 
-			foreach (DataRow row in dt.Rows)
-				folders.Add(ToFolder(row));
+		foreach (DataRow row in dt.Rows)
+			folders.Add(ToFolder(row));
 
-			return Result.Ok(folders);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get folders.").CausedBy(ex));
-		}
+		return folders;
 	}
 
-	public Result<AssetsFolder> CreateFolder(
+	public AssetsFolder CreateFolder(
 		AssetsFolder folder)
 	{
-		try
-		{
-			if (folder == null)
-				throw new NullReferenceException("Folder object is null");
+		if (folder == null)
+			throw new NullReferenceException("Folder object is null");
 
-			if (folder.Id == Guid.Empty)
-				folder.Id = Guid.NewGuid();
+		if (folder.Id == Guid.Empty)
+			folder.Id = Guid.NewGuid();
 
-			AssetFolderValidator validator = new AssetFolderValidator(this);
+		new AssetFolderValidator(this)
+			.ValidateCreate(folder)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateCreate(folder);
+		var SQL = "INSERT INTO assets_folder(id,name,shared_key,count_shared_column_name) " +
+			"VALUES( @id,@name,@shared_key,@count_shared_column_name)";
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var idPar = CreateParameter(
+			"id",
+			folder.Id,
+			DbType.Guid);
 
-			var SQL = "INSERT INTO assets_folder(id,name,shared_key,count_shared_column_name) " +
-				"VALUES( @id,@name,@shared_key,@count_shared_column_name)";
+		var namePar = CreateParameter(
+			"name",
+			folder.Name,
+			DbType.StringFixedLength);
 
-			var idPar = CreateParameter(
-				"id",
-				folder.Id,
-				DbType.Guid);
+		var sharedKeyPar = CreateParameter(
+			"shared_key",
+			folder.SharedKey,
+			DbType.StringFixedLength);
 
-			var namePar = CreateParameter(
-				"name",
-				folder.Name,
-				DbType.StringFixedLength);
+		var countSharedColumnNamePar = CreateParameter(
+			"count_shared_column_name",
+			folder.CountSharedColumnName,
+			DbType.StringFixedLength);
 
-			var sharedKeyPar = CreateParameter(
-				"shared_key",
-				folder.SharedKey,
-				DbType.StringFixedLength);
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			SQL,
+			idPar,
+			namePar,
+			sharedKeyPar,
+			countSharedColumnNamePar);
 
-			var countSharedColumnNamePar = CreateParameter(
-				"count_shared_column_name",
-				folder.CountSharedColumnName,
-				DbType.StringFixedLength);
+		if (dbResult != 1)
+			throw new Exception("Failed to insert new row in database for folder object");
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar,
-				namePar,
-				sharedKeyPar,
-				countSharedColumnNamePar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to insert new row in database for folder object");
-
-			var insertedFolderResult = GetFolder(folder.Id);
-
-			if (!insertedFolderResult.IsSuccess || insertedFolderResult.Value is null)
-				throw new Exception("Failed to get newly create folder in database");
-
-			return Result.Ok(insertedFolderResult.Value);
-
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new channel.").CausedBy(ex));
-		}
+		return GetFolder(folder.Id);
 	}
 
-	public Result<AssetsFolder> UpdateFolder(
+	public AssetsFolder UpdateFolder(
 		AssetsFolder folder)
 	{
-		try
-		{
-			if (folder == null)
-				throw new NullReferenceException("Folder object is null");
+		if (folder == null)
+			throw new NullReferenceException("Folder object is null");
 
-			AssetFolderValidator validator = new AssetFolderValidator(this);
+		new AssetFolderValidator(this)
+			.ValidateUpdate(folder)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateUpdate(folder);
+		var SQL = "UPDATE assets_folder SET " +
+			"name=@name, " +
+			"shared_key=@shared_key, " +
+			"count_shared_column_name=@count_shared_column_name " +
+			"WHERE id = @id";
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var idPar = CreateParameter(
+			"id",
+			folder.Id,
+			DbType.Guid);
 
-			var SQL = "UPDATE assets_folder SET " +
-				"name=@name, " +
-				"shared_key=@shared_key, " +
-				"count_shared_column_name=@count_shared_column_name " +
-				"WHERE id = @id";
+		var namePar = CreateParameter(
+			"name",
+			folder.Name,
+			DbType.StringFixedLength);
 
-			var idPar = CreateParameter(
-				"id",
-				folder.Id,
-				DbType.Guid);
+		var sharedKeyPar = CreateParameter(
+			"shared_key",
+			folder.SharedKey,
+			DbType.StringFixedLength);
 
-			var namePar = CreateParameter(
-				"name",
-				folder.Name,
-				DbType.StringFixedLength);
+		var countSharedColumnNamePar = CreateParameter(
+			"count_shared_column_name",
+			folder.CountSharedColumnName,
+			DbType.StringFixedLength);
 
-			var sharedKeyPar = CreateParameter(
-				"shared_key",
-				folder.SharedKey,
-				DbType.StringFixedLength);
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			SQL,
+			idPar,
+			namePar,
+			sharedKeyPar,
+			countSharedColumnNamePar);
 
-			var countSharedColumnNamePar = CreateParameter(
-				"count_shared_column_name",
-				folder.CountSharedColumnName,
-				DbType.StringFixedLength);
+		if (dbResult != 1)
+			throw new Exception("Failed to update row in database for channel object");
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar,
-				namePar,
-				sharedKeyPar,
-				countSharedColumnNamePar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to update row in database for channel object");
-
-			return Result.Ok(GetFolder(folder.Id).Value);
-
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update folder.").CausedBy(ex));
-		}
+		return GetFolder(folder.Id);
 	}
 
-	public Result DeleteFolder(
+	public void DeleteFolder(
 		Guid folderId)
 	{
-		try
-		{
+		var existingFolder = GetFolder(folderId);
 
-			var existingFolder = GetFolder(folderId).Value;
+		new AssetFolderValidator(this)
+			.ValidateDelete(existingFolder)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			AssetFolderValidator validator = new AssetFolderValidator(this);
+		var SQL = "DELETE FROM assets_folder WHERE id = @id";
 
-			var validationResult = validator.ValidateDelete(existingFolder);
+		var idPar = CreateParameter(
+			"id",
+			folderId,
+			DbType.Guid);
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
 
-			var SQL = "DELETE FROM assets_folder WHERE id = @id";
-
-			var idPar = CreateParameter(
-				"id",
-				folderId,
-				DbType.Guid);
-
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to delete row in database for folder object");
-
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete folder.").CausedBy(ex));
-		}
+		if (dbResult != 1)
+			throw new Exception("Failed to delete row in database for folder object");
 	}
 
 	private AssetsFolder ToFolder(DataRow dr)
@@ -258,7 +207,7 @@ internal partial class AssetsService : IAssetsService
 			RuleSet("create", () =>
 			{
 				RuleFor(folder => folder.Id)
-						.Must((folder, id) => { return service.GetFolder(id).Value == null; })
+						.Must((folder, id) => { return service.GetFolder(id) == null; })
 						.WithMessage("There is already existing folder with specified identifier.");
 
 				RuleFor(folder => folder.Name)
@@ -267,7 +216,7 @@ internal partial class AssetsService : IAssetsService
 							if (string.IsNullOrEmpty(name))
 								return true;
 
-							var folders = service.GetFolders().Value;
+							var folders = service.GetFolders();
 							return !folders.Any(x => x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim());
 						})
 						.WithMessage("There is already existing folder with same name.");
@@ -278,7 +227,7 @@ internal partial class AssetsService : IAssetsService
 				RuleFor(folder => folder.Id)
 						.Must((folder, id) =>
 						{
-							return service.GetFolder(id).Value != null;
+							return service.GetFolder(id) != null;
 						})
 						.WithMessage("There is not existing folder with specified identifier.");
 
@@ -288,7 +237,7 @@ internal partial class AssetsService : IAssetsService
 							if (string.IsNullOrEmpty(name))
 								return true;
 
-							var folders = service.GetFolders().Value;
+							var folders = service.GetFolders();
 							return !folders.Any(x =>
 								x.Name.ToLowerInvariant().Trim() == name.ToLowerInvariant().Trim() &&
 								x.Id != folder.Id
@@ -303,7 +252,7 @@ internal partial class AssetsService : IAssetsService
 				RuleFor(folder => folder.Id)
 					.Must((folder, id) =>
 					{
-						return service.GetFolder(id).Value != null;
+						return service.GetFolder(id) != null;
 					})
 					.WithMessage("There is not existing folder with specified identifier.");
 			});

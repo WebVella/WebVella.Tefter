@@ -19,7 +19,7 @@ public partial class TalkTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var user = identityManager.GetUser("rumen@webvella.com").Value;
+				var user = identityManager.GetUser("rumen@webvella.com");
 
 				TalkChannel channel = new TalkChannel
 				{
@@ -29,20 +29,13 @@ public partial class TalkTests : BaseTest
 					CountSharedColumnName = ""
 				};
 
-				var channelResult = talkService.CreateChannel(channel);
-				channelResult.IsSuccess.Should().BeTrue();
-
-				channel = channelResult.Value;
+				channel = talkService.CreateChannel(channel);
 				channel.Should().NotBeNull();
 
 				channel.Name = "Test channel 1";
-				channelResult = talkService.UpdateChannel(channel);
-				channelResult.IsSuccess.Should().BeTrue();
-
+				channel = talkService.UpdateChannel(channel);
 				channel.Name.Should().Be("Test channel 1");
-
-				channelResult = talkService.DeleteChannel(channel.Id);
-				channelResult.IsSuccess.Should().BeTrue();
+				talkService.DeleteChannel(channel.Id);
 			}
 		}
 	}
@@ -61,13 +54,13 @@ public partial class TalkTests : BaseTest
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
-				var dataTable = dataManager.QueryDataProvider(provider).Value;
+				var dataTable = dataManager.QueryDataProvider(provider);
 
 				List<Guid> rowIds = new List<Guid>();
 				for(int i = 0; i < 5 ; i++)
 					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
 
-				var user = identityManager.GetUser("rumen@webvella.com").Value;
+				var user = identityManager.GetUser("rumen@webvella.com");
 
 				TalkChannel channel = new TalkChannel
 				{
@@ -90,17 +83,17 @@ public partial class TalkTests : BaseTest
 					DataProviderId = provider.Id,
 				};
 
-				var id1 = talkService.CreateThread(thread).Value;
+				var id1 = talkService.CreateThread(thread);
 				
-				var th = talkService.GetThread(id1).Value;
+				var th = talkService.GetThread(id1);
 				th.Should().NotBeNull();
 
-				var threads = talkService.GetThreads(channel.Id, null).Value;
+				var threads = talkService.GetThreads(channel.Id, null);
 				threads.Count.Should().Be(1);
 
 				var relSKId = threads[0].RelatedSK.Keys.First();
 
-				threads = talkService.GetThreads(channel.Id, relSKId).Value;
+				threads = talkService.GetThreads(channel.Id, relSKId);
 				threads.Count.Should().Be(1);
 
 				CreateTalkSubThread thread2 = new CreateTalkSubThread
@@ -110,8 +103,8 @@ public partial class TalkTests : BaseTest
 					UserId = user.Id,
 				};
 
-				var id2 = talkService.CreateSubThread(thread2).Value;
-				threads = talkService.GetThreads(channel.Id, relSKId).Value;
+				var id2 = talkService.CreateSubThread(thread2);
+				threads = talkService.GetThreads(channel.Id, relSKId);
 				threads.Count.Should().Be(1);
 				threads[0].SubThread.Count.Should().Be(1);
 
@@ -123,8 +116,8 @@ public partial class TalkTests : BaseTest
 					VisibleInChannel = true
 				};
 
-				var id3 = talkService.CreateSubThread(thread3).Value;
-				threads = talkService.GetThreads(channel.Id, relSKId).Value;
+				var id3 = talkService.CreateSubThread(thread3);
+				threads = talkService.GetThreads(channel.Id, relSKId);
 				threads.Count.Should().Be(2);
 			}
 		}

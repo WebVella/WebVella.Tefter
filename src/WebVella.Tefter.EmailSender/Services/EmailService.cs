@@ -6,20 +6,20 @@ namespace WebVella.Tefter.EmailSender.Services;
 
 public partial interface IEmailService
 {
-	public Result<List<EmailMessage>> GetEmailMessages(
+	public List<EmailMessage> GetEmailMessages(
 		string search = null,
 		int? page = null,
 		int? pageSize = null);
 
-	public Result<List<EmailMessage>> GetEmailMessages(
+	public List<EmailMessage> GetEmailMessages(
 		Guid tfRowId,
 		int? page = null,
 		int? pageSize = null);
 
-	public Result<EmailMessage> CreateEmailMessage(
+	public EmailMessage CreateEmailMessage(
 		CreateEmailMessageModel emailMessage);
 
-	public Result<EmailMessage> GetEmailMessageById(
+	public EmailMessage GetEmailMessageById(
 		Guid id);
 
 	internal List<EmailMessage> GetPendingEmails();
@@ -56,197 +56,171 @@ internal partial class EmailService : IEmailService
 		_repositoryService = repositoryService;
 	}
 
-	public Result<EmailMessage> GetEmailMessageById(
+	public EmailMessage GetEmailMessageById(
 		Guid id)
 	{
-		try
+		const string SQL = "SELECT * FROM email_message WHERE id = @id";
+
+		var assetIdPar = CreateParameter(
+			"id",
+			id,
+			DbType.Guid);
+
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
+
+		List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
+
+		if (emailMessages.Count == 0)
 		{
-			const string SQL = "SELECT * FROM email_message WHERE id = @id";
-
-			var assetIdPar = CreateParameter(
-				"id",
-				id,
-				DbType.Guid);
-
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, assetIdPar);
-
-			List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
-
-			if (emailMessages.Count == 0)
-			{
-				return null;
-			}
-
-			return Result.Ok(emailMessages[0]);
+			return null;
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get asset.").CausedBy(ex));
-		}
+
+		return emailMessages[0];
 	}
 
-	public Result<List<EmailMessage>> GetEmailMessages(
+	public List<EmailMessage> GetEmailMessages(
 		string search = null,
 		int? page = null,
 		int? pageSize = null
 		)
 	{
-		try
+		string pagingSql = string.Empty;
+
+		if (page.HasValue && pageSize.HasValue)
 		{
-			string pagingSql = string.Empty;
+			int offset = (page.Value - 1) * pageSize.Value;
+			int limit = pageSize.Value;
+			pagingSql = $"OFFSET {offset} LIMIT {limit}";
+		}
 
-			if (page.HasValue && pageSize.HasValue)
-			{
-				int offset = (page.Value - 1) * pageSize.Value;
-				int limit = pageSize.Value;
-				pagingSql = $"OFFSET {offset} LIMIT {limit}";
-			}
-
-			string SQL = $@"
+		string SQL = $@"
 SELECT * FROM email_message
 WHERE ( @search IS NULL OR x_search ILIKE CONCAT ('%', @search, '%') )
 ORDER BY created_on DESC {pagingSql}";
 
-			var searchPar = CreateParameter(
-				"search",
-				search,
-				DbType.String);
+		var searchPar = CreateParameter(
+			"search",
+			search,
+			DbType.String);
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, searchPar);
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, searchPar);
 
-			List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
+		List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
 
-			return Result.Ok(emailMessages);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get email messages.").CausedBy(ex));
-		}
+		return emailMessages;
 	}
 
-	public Result<List<EmailMessage>> GetEmailMessages(
+	public List<EmailMessage> GetEmailMessages(
 		Guid tfRowId,
 		int? page = null,
 		int? pageSize = null
 		)
 	{
-		try
+		string pagingSql = string.Empty;
+
+		if (page.HasValue && pageSize.HasValue)
 		{
-			string pagingSql = string.Empty;
+			int offset = (page.Value - 1) * pageSize.Value;
+			int limit = pageSize.Value;
+			pagingSql = $"OFFSET {offset} LIMIT {limit}";
+		}
 
-			if (page.HasValue && pageSize.HasValue)
-			{
-				int offset = (page.Value - 1) * pageSize.Value;
-				int limit = pageSize.Value;
-				pagingSql = $"OFFSET {offset} LIMIT {limit}";
-			}
-
-			string SQL = $@"
+		string SQL = $@"
 SELECT * FROM email_message
 WHERE ( related_row_ids ILIKE CONCAT ('%', @id, '%') )
 ORDER BY created_on DESC {pagingSql}";
 
-			var idParam = CreateParameter(
-				"id",
-				tfRowId.ToString(),
-				DbType.String);
+		var idParam = CreateParameter(
+			"id",
+			tfRowId.ToString(),
+			DbType.String);
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, idParam);
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, idParam);
 
-			List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
+		List<EmailMessage> emailMessages = CreateModelListFromDataTable(dt);
 
-			return Result.Ok(emailMessages);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get email messages.").CausedBy(ex));
-		}
+		return emailMessages;
 	}
 
-	public Result<EmailMessage> CreateEmailMessage(
+	public EmailMessage CreateEmailMessage(
 		CreateEmailMessageModel emailMessage)
 	{
-		try
+
+
+		new EmailMessageValidator(
+				_dbService,
+				_blobManager,
+				_config
+		)
+		.ValidateCreate(emailMessage)
+		.ToValidationException()
+		.ThrowIfContainsErrors();
+
+		var validAttachments = new List<EmailAttachment>();
+
+		if (emailMessage.Attachments is not null)
 		{
-			EmailMessageValidator validator =
-				new EmailMessageValidator(
-						_dbService,
-						_blobManager,
-						_config
-				);
-
-			var validationResult = validator.ValidateCreate(emailMessage);
-
-			if (!validationResult.IsValid)
+			foreach (var att in emailMessage.Attachments)
 			{
-				return validationResult.ToResult();
-			}
+				var blobId = _blobManager.CreateBlob(att.Buffer);
 
-			var validAttachments = new List<EmailAttachment>();
-
-			if (emailMessage.Attachments is not null)
-			{
-				foreach (var att in emailMessage.Attachments)
+				EmailAttachment attachment = new EmailAttachment
 				{
-					var blobId = _blobManager.CreateBlob(att.Buffer);
-
-					EmailAttachment attachment = new EmailAttachment
-					{
-						Filename = att.Filename,
-						BlobId = blobId
-					};
-
-					validAttachments.Add(attachment);
-				}
-			}
-
-			var id = Guid.NewGuid();
-
-			EmailAddress sender = emailMessage.Sender;
-			if (sender is null)
-			{
-				sender = new EmailAddress
-				{
-					Address = _config.DefaultSenderEmail,
-					Name = _config.DefaultSenderName
+					Filename = att.Filename,
+					BlobId = blobId
 				};
-			}
 
-			string replyToEmail = _config.DefaultReplyToEmail;
-			if (!string.IsNullOrWhiteSpace(emailMessage.ReplyTo))
-			{
-				replyToEmail = emailMessage.ReplyTo;
+				validAttachments.Add(attachment);
 			}
+		}
+
+		var id = Guid.NewGuid();
+
+		EmailAddress sender = emailMessage.Sender;
+		if (sender is null)
+		{
+			sender = new EmailAddress
+			{
+				Address = _config.DefaultSenderEmail,
+				Name = _config.DefaultSenderName
+			};
+		}
+
+		string replyToEmail = _config.DefaultReplyToEmail;
+		if (!string.IsNullOrWhiteSpace(emailMessage.ReplyTo))
+		{
+			replyToEmail = emailMessage.ReplyTo;
+		}
 
 
-			string htmlContent = null;
-			string textContent = null;
+		string htmlContent = null;
+		string textContent = null;
 
-			if (string.IsNullOrEmpty(emailMessage.HtmlBody) &&
-				string.IsNullOrEmpty(emailMessage.TextBody))
-			{
-				htmlContent = string.Empty;
-				textContent = string.Empty;
-			}
-			else if (string.IsNullOrEmpty(emailMessage.HtmlBody) &&
-				!string.IsNullOrEmpty(emailMessage.TextBody))
-			{
-				textContent = emailMessage.TextBody;
-				htmlContent = TfConverters.ConvertPlainTextToHtml(emailMessage.TextBody);
-			}
-			else if (!string.IsNullOrEmpty(emailMessage.HtmlBody) &&
-				string.IsNullOrEmpty(emailMessage.TextBody))
-			{
-				htmlContent = emailMessage.HtmlBody;
-				textContent = TfConverters.ConvertHtmlToPlainText(emailMessage.HtmlBody);
-			}
-			else
-			{
-				htmlContent = emailMessage.HtmlBody;
-				textContent = emailMessage.TextBody;
-			}
+		if (string.IsNullOrEmpty(emailMessage.HtmlBody) &&
+			string.IsNullOrEmpty(emailMessage.TextBody))
+		{
+			htmlContent = string.Empty;
+			textContent = string.Empty;
+		}
+		else if (string.IsNullOrEmpty(emailMessage.HtmlBody) &&
+			!string.IsNullOrEmpty(emailMessage.TextBody))
+		{
+			textContent = emailMessage.TextBody;
+			htmlContent = TfConverters.ConvertPlainTextToHtml(emailMessage.TextBody);
+		}
+		else if (!string.IsNullOrEmpty(emailMessage.HtmlBody) &&
+			string.IsNullOrEmpty(emailMessage.TextBody))
+		{
+			htmlContent = emailMessage.HtmlBody;
+			textContent = TfConverters.ConvertHtmlToPlainText(emailMessage.HtmlBody);
+		}
+		else
+		{
+			htmlContent = emailMessage.HtmlBody;
+			textContent = emailMessage.TextBody;
+		}
 
-			const string SQL = @"
+		const string SQL = @"
 INSERT INTO email_message(
 	id,
 	subject,
@@ -292,39 +266,34 @@ VALUES
 	@related_row_ids
 )";
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				CreateParameter("id", id, DbType.Guid),
-				CreateParameter("sender", JsonSerializer.Serialize(sender), DbType.String),
-				CreateParameter("recipients", JsonSerializer.Serialize(emailMessage.Recipients ?? new()), DbType.String),
-				CreateParameter("recipients_cc", JsonSerializer.Serialize(emailMessage.RecipientsCc ?? new()), DbType.String),
-				CreateParameter("recipients_bcc", JsonSerializer.Serialize(emailMessage.RecipientsBcc ?? new()), DbType.String),
-				CreateParameter("attachments", JsonSerializer.Serialize(validAttachments), DbType.String),
-				CreateParameter("subject", emailMessage.Subject, DbType.String),
-				CreateParameter("content_html", htmlContent, DbType.String),
-				CreateParameter("content_text", textContent, DbType.String),
-				CreateParameter("priority", (short)emailMessage.Priority, DbType.Int16),
-				CreateParameter("status", (short)EmailStatus.Pending, DbType.Int16),
-				CreateParameter("created_on", DateTime.Now, DbType.DateTime2),
-				CreateParameter("sent_on", null, DbType.DateTime2),
-				CreateParameter("scheduled_on", DateTime.Now, DbType.DateTime2),
-				CreateParameter("server_error", string.Empty, DbType.String),
-				CreateParameter("retries_count", (short)0, DbType.Int16),
-				CreateParameter("reply_to_email", replyToEmail, DbType.String),
-				CreateParameter("x_search", GenerateSearch(emailMessage), DbType.String),
-				CreateParameter("user_id", emailMessage.UserId, DbType.Guid),
-				CreateParameter("related_row_ids", JsonSerializer.Serialize(emailMessage.RelatedRowIds ?? new()), DbType.String)
-			);
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			SQL,
+			CreateParameter("id", id, DbType.Guid),
+			CreateParameter("sender", JsonSerializer.Serialize(sender), DbType.String),
+			CreateParameter("recipients", JsonSerializer.Serialize(emailMessage.Recipients ?? new()), DbType.String),
+			CreateParameter("recipients_cc", JsonSerializer.Serialize(emailMessage.RecipientsCc ?? new()), DbType.String),
+			CreateParameter("recipients_bcc", JsonSerializer.Serialize(emailMessage.RecipientsBcc ?? new()), DbType.String),
+			CreateParameter("attachments", JsonSerializer.Serialize(validAttachments), DbType.String),
+			CreateParameter("subject", emailMessage.Subject, DbType.String),
+			CreateParameter("content_html", htmlContent, DbType.String),
+			CreateParameter("content_text", textContent, DbType.String),
+			CreateParameter("priority", (short)emailMessage.Priority, DbType.Int16),
+			CreateParameter("status", (short)EmailStatus.Pending, DbType.Int16),
+			CreateParameter("created_on", DateTime.Now, DbType.DateTime2),
+			CreateParameter("sent_on", null, DbType.DateTime2),
+			CreateParameter("scheduled_on", DateTime.Now, DbType.DateTime2),
+			CreateParameter("server_error", string.Empty, DbType.String),
+			CreateParameter("retries_count", (short)0, DbType.Int16),
+			CreateParameter("reply_to_email", replyToEmail, DbType.String),
+			CreateParameter("x_search", GenerateSearch(emailMessage), DbType.String),
+			CreateParameter("user_id", emailMessage.UserId, DbType.Guid),
+			CreateParameter("related_row_ids", JsonSerializer.Serialize(emailMessage.RelatedRowIds ?? new()), DbType.String)
+		);
 
-			if (dbResult != 1)
-				throw new Exception("Tefter failed to save email to database");
+		if (dbResult != 1)
+			throw new Exception("Tefter failed to save email to database");
 
-			return GetEmailMessageById(id);
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to send email").CausedBy(ex));
-		}
+		return GetEmailMessageById(id);
 	}
 
 	public List<EmailMessage> GetPendingEmails()
@@ -357,7 +326,7 @@ VALUES
 
 			if (userId is not null)
 			{
-				user = _identityManager.GetUser(userId.Value).Value;
+				user = _identityManager.GetUser(userId.Value);
 			}
 
 			result.Add(new EmailMessage
@@ -607,7 +576,7 @@ VALUES
 					if (file == null)
 						continue;
 
-					var bytes = _repositoryService.GetFileContentAsByteArray(filename).Value;
+					var bytes = _repositoryService.GetFileContentAsByteArray(filename);
 
 					var extension = Path.GetExtension(src).ToLowerInvariant();
 					new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);

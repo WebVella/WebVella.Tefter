@@ -2,78 +2,67 @@
 
 public partial interface ITalkService
 {
-	public Result<TalkThread> GetThread(
+	public TalkThread GetThread(
 		Guid id);
 
-	public Result<List<TalkThread>> GetThreads(
+	public List<TalkThread> GetThreads(
 		Guid channelId,
 		Guid? skId);
 
-	public Result<Guid> CreateThread(
+	public Guid CreateThread(
 		CreateTalkThread thread);
 
-	public Result<Guid> CreateThread(
+	public Guid CreateThread(
 		CreateTalkThreadWithSharedKey thread);
 
-	public Result<Guid> CreateSubThread(
+	public Guid CreateSubThread(
 		CreateTalkSubThread thread);
 
-	public Result UpdateThread(
+	public void UpdateThread(
 		Guid threadid,
 		string content);
 
-	public Result DeleteThread(
+	public void DeleteThread(
 		Guid threadId);
 }
 
 internal partial class TalkService : ITalkService
 {
-	public Result<TalkThread> GetThread(
+	public TalkThread GetThread(
 		Guid id)
 	{
-		try
+		const string SQL = @"SELECT id, channel_id FROM talk_thread WHERE id = @id";
+
+		var threadIdPar = TalkUtility.CreateParameter(
+			"id",
+			id,
+			DbType.Guid);
+
+		var dt = _dbService.ExecuteSqlQueryCommand(SQL, threadIdPar);
+		if (dt.Rows.Count == 0)
+			return null;
+
+		Guid channelId = (Guid)dt.Rows[0]["channel_id"];
+
+		var threads = GetThreads(channelId, null);
+
+		var threadsAsFlatList = new List<TalkThread>();
+
+		foreach (var thread in threads)
 		{
-			const string SQL = @"SELECT id, channel_id FROM talk_thread WHERE id = @id";
-
-			var threadIdPar = TalkUtility.CreateParameter(
-				"id",
-				id,
-				DbType.Guid);
-
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL, threadIdPar);
-			if (dt.Rows.Count == 0)
-				return null;
-
-			Guid channelId = (Guid)dt.Rows[0]["channel_id"];
-
-			var threads = GetThreads(channelId, null).Value;
-
-			var threadsAsFlatList = new List<TalkThread>();
-
-			foreach(var thread in threads)
-			{
-				threadsAsFlatList.Add(thread);
-				foreach (var subThread in thread.SubThread )
-					threadsAsFlatList.Add(subThread);
-			}
-
-			var resultThread = threadsAsFlatList.SingleOrDefault(x=>x.Id == id);
-
-			return Result.Ok(resultThread);
+			threadsAsFlatList.Add(thread);
+			foreach (var subThread in thread.SubThread)
+				threadsAsFlatList.Add(subThread);
 		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get thread.").CausedBy(ex));
-		}
+
+		return threadsAsFlatList.SingleOrDefault(x => x.Id == id);
 	}
 
-	public Result<List<TalkThread>> GetThreads(
+	public List<TalkThread> GetThreads(
 		Guid channelId,
 		Guid? skId)
 	{
-		try
-		{
-			const string SQL_NO_SK =
+		const string SQL_NO_SK =
 @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
 	FROM talk_related_sk trs
@@ -104,7 +93,7 @@ WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC
 ";
 
-const string SQL_WITH_SK = @"WITH sk_info AS (
+		const string SQL_WITH_SK = @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
 	FROM talk_related_sk trs
 		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
@@ -134,491 +123,431 @@ FROM talk_thread tt
 WHERE rt.id IS NOT NULL
 ORDER BY tt.created_on DESC";
 
-			string sql = string.Empty;
+		string sql = string.Empty;
 
-			List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+		List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
 
-			if (skId is not null)
-			{
-				sql = SQL_WITH_SK;
-
-				var channelIdPar = TalkUtility.CreateParameter(
-					"channel_id",
-					channelId,
-					DbType.Guid);
-				
-				parameters.Add(channelIdPar);
-				
-				var skIdPar = TalkUtility.CreateParameter(
-					"sk_id",
-					skId,
-					DbType.Guid);
-
-				parameters.Add(skIdPar);
-			}
-			else
-			{
-				sql = SQL_NO_SK;
-
-				var channelIdPar = TalkUtility.CreateParameter(
-					"channel_id",
-					channelId,
-					DbType.Guid);
-
-				parameters.Add(channelIdPar);
-			}
-
-			var dt = _dbService.ExecuteSqlQueryCommand(sql, parameters);
-
-			return Result.Ok(ToThreadList(dt));
-		}
-		catch (Exception ex)
+		if (skId is not null)
 		{
-			return Result.Fail(new Error("Failed to get threads.").CausedBy(ex));
+			sql = SQL_WITH_SK;
+
+			var channelIdPar = TalkUtility.CreateParameter(
+				"channel_id",
+				channelId,
+				DbType.Guid);
+
+			parameters.Add(channelIdPar);
+
+			var skIdPar = TalkUtility.CreateParameter(
+				"sk_id",
+				skId,
+				DbType.Guid);
+
+			parameters.Add(skIdPar);
 		}
+		else
+		{
+			sql = SQL_NO_SK;
+
+			var channelIdPar = TalkUtility.CreateParameter(
+				"channel_id",
+				channelId,
+				DbType.Guid);
+
+			parameters.Add(channelIdPar);
+		}
+
+		var dt = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+
+		return ToThreadList(dt);
 	}
 
-	public Result<Guid> CreateThread(
+	public Guid CreateThread(
 		CreateTalkThread thread)
 	{
-		try
-		{
-			if (thread == null)
-				throw new NullReferenceException("Thread object is null");
+		if (thread == null)
+			throw new NullReferenceException("Thread object is null");
 
-			Guid id = Guid.NewGuid();
+		Guid id = Guid.NewGuid();
 
-			TalkThreadValidator validator = new TalkThreadValidator(this);
+		new TalkThreadValidator(this)
+			.ValidateCreate(thread, id)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateCreate(thread, id);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			var SQL = @"INSERT INTO talk_thread
+		var SQL = @"INSERT INTO talk_thread
 						(id, channel_id, thread_id, type, content, user_id,
 						created_on, last_updated_on, deleted_on, visible_in_channel)
 					VALUES(@id, @channel_id, @thread_id, @type, @content, @user_id,
 						@created_on, @last_updated_on, @deleted_on,@visible_in_channel); ";
 
-			var idPar = TalkUtility.CreateParameter(
-				"@id",
-				id,
-				DbType.Guid);
+		var idPar = TalkUtility.CreateParameter(
+			"@id",
+			id,
+			DbType.Guid);
 
-			var channelIdPar = TalkUtility.CreateParameter(
-				"@channel_id",
-				thread.ChannelId,
-				DbType.Guid);
+		var channelIdPar = TalkUtility.CreateParameter(
+			"@channel_id",
+			thread.ChannelId,
+			DbType.Guid);
 
-			var threadIdPar = TalkUtility.CreateParameter(
-				"@thread_id",
-				null,
-				DbType.Guid);
+		var threadIdPar = TalkUtility.CreateParameter(
+			"@thread_id",
+			null,
+			DbType.Guid);
 
-			var typePar = TalkUtility.CreateParameter(
-				"@type",
-				(short)thread.Type,
-				DbType.Int16);
+		var typePar = TalkUtility.CreateParameter(
+			"@type",
+			(short)thread.Type,
+			DbType.Int16);
 
-			var contentPar = TalkUtility.CreateParameter(
-				"@content",
-				thread.Content,
-				DbType.String);
+		var contentPar = TalkUtility.CreateParameter(
+			"@content",
+			thread.Content,
+			DbType.String);
 
-			var visibleInChannelPar = TalkUtility.CreateParameter(
-				"@visible_in_channel",
-				true,
-				DbType.Boolean);
+		var visibleInChannelPar = TalkUtility.CreateParameter(
+			"@visible_in_channel",
+			true,
+			DbType.Boolean);
 
-			var userIdPar = TalkUtility.CreateParameter(
-				"@user_id",
-				thread.UserId,
-				DbType.Guid);
+		var userIdPar = TalkUtility.CreateParameter(
+			"@user_id",
+			thread.UserId,
+			DbType.Guid);
 
-			var createdOnPar = TalkUtility.CreateParameter(
-				"@created_on",
-				DateTime.Now,
-				DbType.DateTime2);
+		var createdOnPar = TalkUtility.CreateParameter(
+			"@created_on",
+			DateTime.Now,
+			DbType.DateTime2);
 
-			var lastUpdatedOnPar = TalkUtility.CreateParameter(
-				"@last_updated_on",
-				null,
-				DbType.DateTime2);
+		var lastUpdatedOnPar = TalkUtility.CreateParameter(
+			"@last_updated_on",
+			null,
+			DbType.DateTime2);
 
-			var deletedOnPar = TalkUtility.CreateParameter(
-				"@deleted_on",
-				null,
-				DbType.DateTime2);
+		var deletedOnPar = TalkUtility.CreateParameter(
+			"@deleted_on",
+			null,
+			DbType.DateTime2);
 
-			using (var scope = _dbService.CreateTransactionScope())
+		using (var scope = _dbService.CreateTransactionScope())
+		{
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar, channelIdPar, threadIdPar,
+				typePar, contentPar, userIdPar,
+				createdOnPar, lastUpdatedOnPar,
+				deletedOnPar, visibleInChannelPar);
+
+			if (dbResult != 1)
+				throw new Exception("Failed to insert new row in database for thread object");
+
+
+			if (thread.RowIds != null && thread.RowIds.Count > 0)
 			{
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar, channelIdPar, threadIdPar,
-					typePar, contentPar, userIdPar,
-					createdOnPar, lastUpdatedOnPar,
-					deletedOnPar, visibleInChannelPar);
+				var channel = GetChannel(thread.ChannelId);
+				var provider = _dataProviderManager.GetProvider(thread.DataProviderId);
 
-				if (dbResult != 1)
-					throw new Exception("Failed to insert new row in database for thread object");
+				if (provider is null)
+					throw new Exception($"Failed to find data provider with id='{thread.DataProviderId}'");
 
+				var dataTable = _dataManager.QueryDataProvider(provider, thread.RowIds);
 
-				if (thread.RowIds != null && thread.RowIds.Count > 0)
+				List<Guid> relatedSK = new List<Guid>();
+
+				foreach (TfDataRow row in dataTable.Rows)
 				{
-					var channel = GetChannel(thread.ChannelId).Value;
-					var provider = _dataProviderManager.GetProvider(thread.DataProviderId).Value;
-
-					if(provider is null)
-						throw new Exception($"Failed to find data provider with id='{thread.DataProviderId}'");
-
-					var queryResult = _dataManager.QueryDataProvider(provider, thread.RowIds);
-					
-					if(!queryResult.IsSuccess)
-						return Result.Fail(new Error("Failed to get rows by ids.")
-							.CausedBy(queryResult.Errors));
-
-					List<Guid> relatedSK = new List<Guid>();
-
-					foreach(TfDataRow row in queryResult.Value.Rows)
-					{
-						var skIdValue = row.GetSharedKeyValue(channel.SharedKey);
-						if (skIdValue is not null  && !relatedSK.Contains(skIdValue.Value))
-							relatedSK.Add(skIdValue.Value);
-					}
-
-					foreach (var skId in relatedSK)
-					{
-						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-							"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
-								new NpgsqlParameter("@id", skId),
-								new NpgsqlParameter("@thread_id", id));
-
-						if (skDbResult != 1)
-							throw new Exception("Failed to insert new row in database for related shared key object");
-					}
+					var skIdValue = row.GetSharedKeyValue(channel.SharedKey);
+					if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
+						relatedSK.Add(skIdValue.Value);
 				}
 
-				scope.Complete(); 
+				foreach (var skId in relatedSK)
+				{
+					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+						"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
+							new NpgsqlParameter("@id", skId),
+							new NpgsqlParameter("@thread_id", id));
 
-				return Result.Ok(id);
+					if (skDbResult != 1)
+						throw new Exception("Failed to insert new row in database for related shared key object");
+				}
 			}
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
+
+			scope.Complete();
+
+			return id;
 		}
 	}
 
-	public Result<Guid> CreateThread(
+	public Guid CreateThread(
 		CreateTalkThreadWithSharedKey thread)
 	{
-		try
-		{
-			if (thread == null)
-				throw new NullReferenceException("Thread object is null");
+		if (thread == null)
+			throw new NullReferenceException("Thread object is null");
 
-			Guid id = Guid.NewGuid();
+		Guid id = Guid.NewGuid();
 
-			TalkThreadValidator validator = new TalkThreadValidator(this);
+		new TalkThreadValidator(this)
+			.ValidateCreate(thread, id)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateCreate(thread, id);
-
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			var SQL = @"INSERT INTO talk_thread
+		var SQL = @"INSERT INTO talk_thread
 						(id, channel_id, thread_id, type, content, user_id,
 						created_on, last_updated_on, deleted_on, visible_in_channel)
 					VALUES(@id, @channel_id, @thread_id, @type, @content, @user_id,
 						@created_on, @last_updated_on, @deleted_on,@visible_in_channel); ";
 
-			var idPar = TalkUtility.CreateParameter(
-				"@id",
-				id,
-				DbType.Guid);
+		var idPar = TalkUtility.CreateParameter(
+			"@id",
+			id,
+			DbType.Guid);
 
-			var channelIdPar = TalkUtility.CreateParameter(
-				"@channel_id",
-				thread.ChannelId,
-				DbType.Guid);
+		var channelIdPar = TalkUtility.CreateParameter(
+			"@channel_id",
+			thread.ChannelId,
+			DbType.Guid);
 
-			var threadIdPar = TalkUtility.CreateParameter(
-				"@thread_id",
-				null,
-				DbType.Guid);
+		var threadIdPar = TalkUtility.CreateParameter(
+			"@thread_id",
+			null,
+			DbType.Guid);
 
-			var typePar = TalkUtility.CreateParameter(
-				"@type",
-				(short)thread.Type,
-				DbType.Int16);
+		var typePar = TalkUtility.CreateParameter(
+			"@type",
+			(short)thread.Type,
+			DbType.Int16);
 
-			var contentPar = TalkUtility.CreateParameter(
-				"@content",
-				thread.Content,
-				DbType.String);
+		var contentPar = TalkUtility.CreateParameter(
+			"@content",
+			thread.Content,
+			DbType.String);
 
-			var visibleInChannelPar = TalkUtility.CreateParameter(
-				"@visible_in_channel",
-				true,
-				DbType.Boolean);
+		var visibleInChannelPar = TalkUtility.CreateParameter(
+			"@visible_in_channel",
+			true,
+			DbType.Boolean);
 
-			var userIdPar = TalkUtility.CreateParameter(
-				"@user_id",
-				thread.UserId,
-				DbType.Guid);
+		var userIdPar = TalkUtility.CreateParameter(
+			"@user_id",
+			thread.UserId,
+			DbType.Guid);
 
-			var createdOnPar = TalkUtility.CreateParameter(
-				"@created_on",
-				DateTime.Now,
-				DbType.DateTime2);
+		var createdOnPar = TalkUtility.CreateParameter(
+			"@created_on",
+			DateTime.Now,
+			DbType.DateTime2);
 
-			var lastUpdatedOnPar = TalkUtility.CreateParameter(
-				"@last_updated_on",
-				null,
-				DbType.DateTime2);
+		var lastUpdatedOnPar = TalkUtility.CreateParameter(
+			"@last_updated_on",
+			null,
+			DbType.DateTime2);
 
-			var deletedOnPar = TalkUtility.CreateParameter(
-				"@deleted_on",
-				null,
-				DbType.DateTime2);
+		var deletedOnPar = TalkUtility.CreateParameter(
+			"@deleted_on",
+			null,
+			DbType.DateTime2);
 
-			using (var scope = _dbService.CreateTransactionScope())
-			{
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar, channelIdPar, threadIdPar,
-					typePar, contentPar, userIdPar,
-					createdOnPar, lastUpdatedOnPar,
-					deletedOnPar, visibleInChannelPar);
-
-				if (dbResult != 1)
-					throw new Exception("Failed to insert new row in database for thread object");
-
-
-				if (thread.SKValueIds != null && thread.SKValueIds.Count > 0)
-				{
-					foreach (var skId in thread.SKValueIds)
-					{
-						var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-							"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
-								new NpgsqlParameter("@id", skId),
-								new NpgsqlParameter("@thread_id", id));
-
-						if (skDbResult != 1)
-							throw new Exception("Failed to insert new row in database for related shared key object");
-					}
-				}
-
-				scope.Complete();
-
-				return Result.Ok(id);
-			}
-		}
-		catch (Exception ex)
+		using (var scope = _dbService.CreateTransactionScope())
 		{
-			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar, channelIdPar, threadIdPar,
+				typePar, contentPar, userIdPar,
+				createdOnPar, lastUpdatedOnPar,
+				deletedOnPar, visibleInChannelPar);
+
+			if (dbResult != 1)
+				throw new Exception("Failed to insert new row in database for thread object");
+
+
+			if (thread.SKValueIds != null && thread.SKValueIds.Count > 0)
+			{
+				foreach (var skId in thread.SKValueIds)
+				{
+					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
+						"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
+							new NpgsqlParameter("@id", skId),
+							new NpgsqlParameter("@thread_id", id));
+
+					if (skDbResult != 1)
+						throw new Exception("Failed to insert new row in database for related shared key object");
+				}
+			}
+
+			scope.Complete();
+
+			return id;
 		}
 	}
 
-	public Result<Guid> CreateSubThread(
+	public Guid CreateSubThread(
 		CreateTalkSubThread thread)
 	{
-		try
-		{
-			if (thread == null)
-				throw new NullReferenceException("Thread object is null");
+		if (thread == null)
+			throw new NullReferenceException("Thread object is null");
 
-			Guid id = Guid.NewGuid();
+		Guid id = Guid.NewGuid();
 
-			var parentThread = GetThread(thread.ThreadId).Value;
+		var parentThread = GetThread(thread.ThreadId);
 
 
-			TalkThreadValidator validator = new TalkThreadValidator(this);
-
-			var validationResult = validator.ValidateCreateSubThread(
+		new TalkThreadValidator(this)
+			.ValidateCreateSubThread(
 				thread,
-				parentThread, 
-				id);
+				parentThread,
+				id)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
-
-			var SQL = @"INSERT INTO talk_thread
+		var SQL = @"INSERT INTO talk_thread
 						(id, channel_id, thread_id, type, content, user_id,
 						created_on, last_updated_on, deleted_on, visible_in_channel)
 					VALUES(@id, @channel_id, @thread_id, @type, @content, @user_id,
 						@created_on, @last_updated_on, @deleted_on,@visible_in_channel); ";
 
-			var idPar = TalkUtility.CreateParameter(
-				"@id",
-				id,
-				DbType.Guid);
+		var idPar = TalkUtility.CreateParameter(
+			"@id",
+			id,
+			DbType.Guid);
 
-			var channelIdPar = TalkUtility.CreateParameter(
-				"@channel_id",
-				parentThread.ChannelId,
-				DbType.Guid);
+		var channelIdPar = TalkUtility.CreateParameter(
+			"@channel_id",
+			parentThread.ChannelId,
+			DbType.Guid);
 
-			var threadIdPar = TalkUtility.CreateParameter(
-				"@thread_id",
-				thread.ThreadId,
-				DbType.Guid);
+		var threadIdPar = TalkUtility.CreateParameter(
+			"@thread_id",
+			thread.ThreadId,
+			DbType.Guid);
 
-			var typePar = TalkUtility.CreateParameter(
-				"@type",
-				(short)parentThread.Type,
-				DbType.Int16);
+		var typePar = TalkUtility.CreateParameter(
+			"@type",
+			(short)parentThread.Type,
+			DbType.Int16);
 
-			var contentPar = TalkUtility.CreateParameter(
-				"@content",
-				thread.Content,
-				DbType.String);
+		var contentPar = TalkUtility.CreateParameter(
+			"@content",
+			thread.Content,
+			DbType.String);
 
-			var visibleInChannelPar = TalkUtility.CreateParameter(
-				"@visible_in_channel",
-				thread.VisibleInChannel,
-				DbType.Boolean);
+		var visibleInChannelPar = TalkUtility.CreateParameter(
+			"@visible_in_channel",
+			thread.VisibleInChannel,
+			DbType.Boolean);
 
-			var userIdPar = TalkUtility.CreateParameter(
-				"@user_id",
-				thread.UserId,
-				DbType.Guid);
+		var userIdPar = TalkUtility.CreateParameter(
+			"@user_id",
+			thread.UserId,
+			DbType.Guid);
 
-			var createdOnPar = TalkUtility.CreateParameter(
-				"@created_on",
-				DateTime.Now,
-				DbType.DateTime2);
+		var createdOnPar = TalkUtility.CreateParameter(
+			"@created_on",
+			DateTime.Now,
+			DbType.DateTime2);
 
-			var lastUpdatedOnPar = TalkUtility.CreateParameter(
-				"@last_updated_on",
-				null,
-				DbType.DateTime2);
+		var lastUpdatedOnPar = TalkUtility.CreateParameter(
+			"@last_updated_on",
+			null,
+			DbType.DateTime2);
 
-			var deletedOnPar = TalkUtility.CreateParameter(
-				"@deleted_on",
-				null,
-				DbType.DateTime2);
+		var deletedOnPar = TalkUtility.CreateParameter(
+			"@deleted_on",
+			null,
+			DbType.DateTime2);
 
-			using (var scope = _dbService.CreateTransactionScope())
-			{
-				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-					SQL,
-					idPar, channelIdPar, threadIdPar,
-					typePar, contentPar, userIdPar,
-					createdOnPar, lastUpdatedOnPar,
-					deletedOnPar, visibleInChannelPar);
-
-				if (dbResult != 1)
-					throw new Exception("Failed to insert new row in database for sub thread object");
-
-				scope.Complete();
-
-				return Result.Ok(id);
-			}
-		}
-		catch (Exception ex)
+		using (var scope = _dbService.CreateTransactionScope())
 		{
-			return Result.Fail(new Error("Failed to create new thread.").CausedBy(ex));
+			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+				SQL,
+				idPar, channelIdPar, threadIdPar,
+				typePar, contentPar, userIdPar,
+				createdOnPar, lastUpdatedOnPar,
+				deletedOnPar, visibleInChannelPar);
+
+			if (dbResult != 1)
+				throw new Exception("Failed to insert new row in database for sub thread object");
+
+			scope.Complete();
+
+			return id;
 		}
 	}
 
-	public Result UpdateThread(
+	public void UpdateThread(
 		Guid threadId,
 		string content)
 	{
-		try
-		{
+		var existingThread = GetThread(threadId);
 
-			var existingThread = GetThread(threadId).Value;
+		new TalkThreadValidator(this)
+			.ValidateUpdate(existingThread, content)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			TalkThreadValidator validator = new TalkThreadValidator(this);
+		var SQL = "UPDATE talk_thread SET " +
+			"content=@content, " +
+			"last_updated_on=@last_updated_on " +
+			"WHERE id = @id";
 
-			var validationResult = validator.ValidateUpdate(existingThread, content);
+		var idPar = TalkUtility.CreateParameter(
+			"id",
+			threadId,
+			DbType.Guid);
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var contentPar = TalkUtility.CreateParameter(
+			"@content",
+			content,
+			DbType.String);
 
-			var SQL = "UPDATE talk_thread SET " +
-				"content=@content, " +
-				"last_updated_on=@last_updated_on " +
-				"WHERE id = @id";
+		var lastUpdatedPar = TalkUtility.CreateParameter(
+			"@last_updated_on",
+			DateTime.Now,
+			DbType.DateTime2);
 
-			var idPar = TalkUtility.CreateParameter(
-				"id",
-				threadId,
-				DbType.Guid);
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			SQL,
+			idPar,
+			contentPar,
+			lastUpdatedPar);
 
-			var contentPar = TalkUtility.CreateParameter(
-				"@content",
-				content,
-				DbType.String);
-
-			var lastUpdatedPar = TalkUtility.CreateParameter(
-				"@last_updated_on",
-				DateTime.Now,
-				DbType.DateTime2);
-
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar,
-				contentPar,
-				lastUpdatedPar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to update row in database for thread object");
-
-			return Result.Ok();
-
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to update thread.").CausedBy(ex));
-		}
+		if (dbResult != 1)
+			throw new Exception("Failed to update row in database for thread object");
 	}
 
-	public Result DeleteThread(
+	public void DeleteThread(
 		Guid threadId)
 	{
-		try
-		{
-			var existingThread = GetThread(threadId).Value;
+		var existingThread = GetThread(threadId);
 
-			TalkThreadValidator validator = new TalkThreadValidator(this);
+		new TalkThreadValidator(this)
+			.ValidateDelete(existingThread)
+			.ToValidationException()
+			.ThrowIfContainsErrors();
 
-			var validationResult = validator.ValidateDelete(existingThread);
+		var SQL = "UPDATE talk_thread SET " +
+			"deleted_on = @deleted_on " +
+			"WHERE id = @id";
 
-			if (!validationResult.IsValid)
-				return validationResult.ToResult();
+		var idPar = TalkUtility.CreateParameter(
+			"id",
+			threadId,
+			DbType.Guid);
 
-			var SQL = "UPDATE talk_thread SET " +
-				"deleted_on = @deleted_on " +
-				"WHERE id = @id";
+		var deletedOnPar = TalkUtility.CreateParameter(
+			"@deleted_on",
+			DateTime.Now,
+			DbType.DateTime2);
 
-			var idPar = TalkUtility.CreateParameter(
-				"id",
-				threadId,
-				DbType.Guid);
+		var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+			SQL,
+			idPar,
+			deletedOnPar);
 
-			var deletedOnPar = TalkUtility.CreateParameter(
-				"@deleted_on",
-				DateTime.Now,
-				DbType.DateTime2);
-
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar,
-				deletedOnPar);
-
-			if (dbResult != 1)
-				throw new Exception("Failed to update row in database for thread object");
-
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete thread.").CausedBy(ex));
-		}
+		if (dbResult != 1)
+			throw new Exception("Failed to update row in database for thread object");
 	}
 
 	private List<TalkThread> ToThreadList(DataTable dt)
@@ -631,7 +560,7 @@ ORDER BY tt.created_on DESC";
 
 		foreach (DataRow dr in dt.Rows)
 		{
-			var user = _identityManager.GetUser(dr.Field<Guid>("user_id")).Value;
+			var user = _identityManager.GetUser(dr.Field<Guid>("user_id"));
 
 			TalkThread thread = new TalkThread
 			{
@@ -652,7 +581,7 @@ ORDER BY tt.created_on DESC";
 			var relatedSharedKeysJson = dr.Field<string>("related_shared_key_json");
 			if (!String.IsNullOrWhiteSpace(relatedSharedKeysJson) &&
 				relatedSharedKeysJson.StartsWith("[") &&
-				relatedSharedKeysJson != "[null]" )
+				relatedSharedKeysJson != "[null]")
 			{
 				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedSharedKeysJson);
 				foreach (var item in items)
@@ -664,7 +593,7 @@ ORDER BY tt.created_on DESC";
 		}
 
 		//fill sub thread
-		foreach (var thread in threadList.OrderBy(x=>x.CreatedOn))
+		foreach (var thread in threadList.OrderBy(x => x.CreatedOn))
 		{
 			if (thread.ThreadId is not null)
 			{
@@ -674,7 +603,7 @@ ORDER BY tt.created_on DESC";
 			}
 		}
 
-		return threadList.Where(x=>x.VisibleInChannel).ToList();
+		return threadList.Where(x => x.VisibleInChannel).ToList();
 	}
 
 	private class IdDictModel
@@ -696,7 +625,7 @@ ORDER BY tt.created_on DESC";
 		}
 
 		public ValidationResult ValidateCreate(
-			CreateTalkThread thread, 
+			CreateTalkThread thread,
 			Guid id)
 		{
 			if (thread == null)
@@ -737,8 +666,8 @@ ORDER BY tt.created_on DESC";
 
 
 		public ValidationResult ValidateCreateSubThread(
-			CreateTalkSubThread thread, 
-			TalkThread parent, 
+			CreateTalkSubThread thread,
+			TalkThread parent,
 			Guid id)
 		{
 			if (thread == null)
@@ -770,7 +699,7 @@ ORDER BY tt.created_on DESC";
 		}
 
 		public ValidationResult ValidateUpdate(
-			TalkThread thread, 
+			TalkThread thread,
 			string content)
 		{
 			if (thread == null)

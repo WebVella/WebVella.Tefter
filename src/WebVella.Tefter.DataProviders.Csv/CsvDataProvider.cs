@@ -114,12 +114,12 @@ public class CsvDataProvider : ITfDataProviderType
 			{
 				var repoService = provider.ServiceProvider.GetService<ITfRepositoryService>();
 
-				var file = repoService.GetFileByUri(settings.Filepath).Value;
+				var file = repoService.GetFileByUri(settings.Filepath);
 
 				if (file is null)
 					throw new Exception($"File '{settings.Filepath}' is not found.");
 
-				using (var stream = repoService.GetFileContentAsFileStream(file.Filename).Value)
+				using (var stream = repoService.GetFileContentAsFileStream(file.Filename))
 				{
 					return ReadCSVStream(stream, provider, config, settings, culture);
 				}
@@ -176,12 +176,12 @@ public class CsvDataProvider : ITfDataProviderType
 		{
 			var repoService = provider.ServiceProvider.GetService<ITfRepositoryService>();
 
-			var file = repoService.GetFileByUri(settings.Filepath).Value;
+			var file = repoService.GetFileByUri(settings.Filepath);
 
 			if (file is null)
 				throw new Exception($"File '{settings.Filepath}' is not found.");
 
-			stream = repoService.GetFileContentAsFileStream(file.Filename).Value;
+			stream = repoService.GetFileContentAsFileStream(file.Filename);
 		}
 		else
 		{

@@ -91,7 +91,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 
-			var result = new Result<List<TucSpaceViewColumn>>();
+			var result = new List<TucSpaceViewColumn>();
 			if (_isCreate)
 			{
 				result = UC.CreateSpaceViewColumnWithForm(_form);
@@ -101,15 +101,11 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				result = UC.UpdateSpaceViewColumnWithForm(_form);
 			}
 
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				await Dialog.CloseAsync(result.Value);
-			}
+			await Dialog.CloseAsync(result);
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

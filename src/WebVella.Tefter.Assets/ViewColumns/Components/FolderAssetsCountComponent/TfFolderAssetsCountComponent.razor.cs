@@ -58,11 +58,8 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 		_initStorageKeys();
 		if (Context.Mode == TucComponentMode.Options)
 		{
-			var resultSM = AssetsService.GetFolders();
-			if (resultSM.IsSuccess && resultSM.Value is not null)
-				_folders = resultSM.Value;
-
-
+			var _folders = AssetsService.GetFolders();
+	
 			if (componentOptions.FolderId is not null)
 			{
 				if (_folders.Count > 0)
@@ -128,13 +125,13 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 		{
 			var spaceManager = serviceProvider.GetRequiredService<ITfSpaceManager>();
 			var dataProviderManager = serviceProvider.GetRequiredService<ITfDataProviderManager>();
-			var spaceDataResult = spaceManager.GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
-			if (spaceDataResult.IsSuccess && spaceDataResult.Value is not null)
+			var spaceData = spaceManager.GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
+			if ( spaceData is not null)
 			{
-				var dataProviderResult = dataProviderManager.GetProvider(spaceDataResult.Value.DataProviderId);
-				if (dataProviderResult.IsSuccess && dataProviderResult.Value is not null)
+				var dataProvider = dataProviderManager.GetProvider(spaceData.DataProviderId);
+				if (dataProvider is not null)
 				{
-					foreach (var key in dataProviderResult.Value.SharedKeys)
+					foreach (var key in dataProvider.SharedKeys)
 					{
 						options.Add(new TucSelectOption
 						{

@@ -2,19 +2,19 @@
 
 public partial interface ITfDataManager
 {
-	public Result<TfDataTable> QueryDataProvider(
+	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		string search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false);
 
-	public Result<TfDataTable> QueryDataProvider(
+	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		List<Guid> tfIds);
 
 
-	public Result<TfDataTable> QuerySpaceData(
+	public TfDataTable QuerySpaceData(
 		Guid spaceDataId,
 		List<TfFilterBase> userFilters = null,
 		List<TfSort> userSorts = null,
@@ -26,14 +26,14 @@ public partial interface ITfDataManager
 		bool noRows = false,
 		bool returnOnlyTfIds = false);
 
-	public Result<TfDataTable> QuerySpaceData(
+	public TfDataTable QuerySpaceData(
 		Guid spaceDataId,
 		List<Guid> tfIds);
 
-	public Result<TfDataTable> SaveDataTable(
+	public TfDataTable SaveDataTable(
 		TfDataTable table);
 
-	public Result DeleteDataProviderRowByTfId(
+	public void DeleteDataProviderRowByTfId(
 		TfDataProvider provider,
 		Guid tfId);
 }
@@ -41,172 +41,140 @@ public partial interface ITfDataManager
 public partial class TfDataManager
 {
 
-	public Result<TfDataTable> QueryDataProvider(
+	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		string search = null,
 		int? page = null,
 		int? pageSize = null,
 		bool noRows = false)
 	{
-		try
-		{
 
-			if (provider is null)
+		if (provider is null)
+		{
+			throw new ArgumentNullException(nameof(provider));
+		}
+
+		var sqlBuilder = new SqlBuilder(
+			dbService: _dbService,
+			dataProvider: provider,
+			spaceData: null,
+			userFilters: null,
+			userSorts: null,
+			search: search,
+			page: page,
+			pageSize: pageSize);
+
+		var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
+
+		//do not make sql request if no rows are required
+		DataTable dataTable = null;
+		if (noRows)
+			dataTable = new DataTable();
+		else
+			dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+
+		return ProcessSqlResult(
+			sql,
+			parameters,
+			provider,
+			new TfDataTableQuery
 			{
-				return Result.Fail(new ValidationError(
-						nameof(provider),
-						"Provider object is null"));
-			}
-
-			var sqlBuilder = new SqlBuilder(
-				dbService: _dbService,
-				dataProvider: provider,
-				spaceData: null,
-				userFilters: null,
-				userSorts: null,
-				search: search,
-				page: page,
-				pageSize: pageSize);
-
-			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
-
-			//do not make sql request if no rows are required
-			DataTable dataTable = null;
-			if (noRows)
-				dataTable = new DataTable();
-			else
-				dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
-
-			return Result.Ok(ProcessSqlResult(
-				sql,
-				parameters,
-				provider,
-				new TfDataTableQuery
-				{
-					Search = search,
-					Page = usedPage,
-					PageSize = usedPageSize,
-					DataProviderId = provider.Id,
-					SpaceDataId = null
-				},
-				dataTable
-			));
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to get data provider rows").CausedBy(ex));
-		}
+				Search = search,
+				Page = usedPage,
+				PageSize = usedPageSize,
+				DataProviderId = provider.Id,
+				SpaceDataId = null
+			},
+			dataTable
+		);
 	}
 
-	public Result<TfDataTable> QueryDataProvider(
+	public TfDataTable QueryDataProvider(
 		TfDataProvider provider,
 		List<Guid> tfIds)
 	{
-		try
+
+		if (provider is null)
 		{
-			if (provider is null)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(provider),
-						"Provider object is null"));
-			}
-
-			if (tfIds is null)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(tfIds),
-						"List of row ids object is null"));
-			}
-
-			var sqlBuilder = new SqlBuilder(
-				dbService: _dbService,
-				dataProvider: provider,
-				spaceData: null,
-				tfIds: tfIds);
-
-			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
-
-			DataTable dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
-
-			return Result.Ok(ProcessSqlResult(
-				sql,
-				parameters,
-				provider,
-				new TfDataTableQuery
-				{
-					Search = null,
-					Page = null,
-					PageSize = null,
-					DataProviderId = provider.Id,
-					SpaceDataId = null
-				},
-				dataTable
-			));
+			throw new ArgumentNullException(nameof(provider));
 		}
-		catch (Exception ex)
+
+		if (tfIds is null)
 		{
-			return Result.Fail(new Error("Failed to get data provider rows").CausedBy(ex));
+			throw new ArgumentNullException(nameof(tfIds));
 		}
+
+		var sqlBuilder = new SqlBuilder(
+			dbService: _dbService,
+			dataProvider: provider,
+			spaceData: null,
+			tfIds: tfIds);
+
+		var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
+
+		DataTable dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+
+		return ProcessSqlResult(
+			sql,
+			parameters,
+			provider,
+			new TfDataTableQuery
+			{
+				Search = null,
+				Page = null,
+				PageSize = null,
+				DataProviderId = provider.Id,
+				SpaceDataId = null
+			},
+			dataTable
+		);
 	}
 
-	public Result<TfDataTable> QuerySpaceData(
+	public TfDataTable QuerySpaceData(
 		Guid spaceDataId,
 		List<Guid> tfIds)
 	{
-		try
+
+		var spaceData = _spaceManager.GetSpaceData(spaceDataId);
+		if (spaceData is null)
 		{
-			var spaceDataResult = _spaceManager.GetSpaceData(spaceDataId);
-			if (!spaceDataResult.IsSuccess || spaceDataResult.Value == null)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(spaceDataId),
-						"Found no space data for specified identifier."));
-			}
-
-			var spaceData = spaceDataResult.Value;
-
-			var providerResult = _providerManager.GetProvider(spaceData.DataProviderId);
-			if (!providerResult.IsSuccess || providerResult.Value == null)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(spaceDataId),
-						"Found no data provider for specified space data."));
-			}
-
-			var provider = providerResult.Value;
-
-			var sqlBuilder = new SqlBuilder(
-				dbService: _dbService,
-				dataProvider: provider,
-				spaceData: spaceData,
-				tfIds: tfIds);
-
-			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
-
-			DataTable dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
-
-			return Result.Ok(ProcessSqlResult(
-				sql,
-				parameters,
-				provider,
-				new TfDataTableQuery
-				{
-					Search = null,
-					Page = null,
-					PageSize = null,
-					DataProviderId = provider.Id,
-					SpaceDataId = spaceDataId,
-				},
-				dataTable
-			));
+			throw new TfException("Found no existing space data for specified id.");
 		}
-		catch (Exception ex)
+
+
+		var provider = _providerManager.GetProvider(spaceData.DataProviderId);
+		if (provider is null)
 		{
-			return Result.Fail(new Error("Failed to get data provider rows").CausedBy(ex));
+			throw new TfException("There is not existing provider for specified space data.");
 		}
+
+		var sqlBuilder = new SqlBuilder(
+			dbService: _dbService,
+			dataProvider: provider,
+			spaceData: spaceData,
+			tfIds: tfIds);
+
+		var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
+
+		DataTable dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+
+		return ProcessSqlResult(
+			sql,
+			parameters,
+			provider,
+			new TfDataTableQuery
+			{
+				Search = null,
+				Page = null,
+				PageSize = null,
+				DataProviderId = provider.Id,
+				SpaceDataId = spaceDataId,
+			},
+			dataTable
+		);
 	}
 
-	public Result<TfDataTable> QuerySpaceData(
+	public TfDataTable QuerySpaceData(
 		Guid spaceDataId,
 		List<TfFilterBase> userFilters = null,
 		List<TfSort> userSorts = null,
@@ -218,70 +186,58 @@ public partial class TfDataManager
 		bool noRows = false,
 		bool returnOnlyTfIds = false)
 	{
-		try
+
+		var spaceData = _spaceManager.GetSpaceData(spaceDataId);
+		if (spaceData is null)
 		{
-			var spaceDataResult = _spaceManager.GetSpaceData(spaceDataId);
-			if (!spaceDataResult.IsSuccess || spaceDataResult.Value == null)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(spaceDataId),
-						"Found no space data for specified identifier."));
-			}
-
-			var spaceData = spaceDataResult.Value;
-
-			var providerResult = _providerManager.GetProvider(spaceData.DataProviderId);
-			if (!providerResult.IsSuccess || providerResult.Value == null)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(spaceDataId),
-						"Found no data provider for specified space data."));
-			}
-
-			var provider = providerResult.Value;
-
-			var sqlBuilder = new SqlBuilder(
-				dbService: _dbService,
-				dataProvider: provider,
-				spaceData: spaceData,
-				userFilters: userFilters,
-				userSorts: userSorts,
-				presetFilters: presetFilters,
-				presetSorts: presetSorts,
-				search: search,
-				page: page,
-				pageSize: pageSize,
-				returnOnlyTfIds: returnOnlyTfIds);
-
-			var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
-
-			//do not make sql request if no rows are required
-			DataTable dataTable = null;
-			if (noRows)
-				dataTable = new DataTable();
-			else
-				dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
-
-			return Result.Ok(ProcessSqlResult(
-				sql,
-				parameters,
-				provider,
-				new TfDataTableQuery
-				{
-					Search = search,
-					Page = usedPage,
-					PageSize = usedPageSize,
-					DataProviderId = provider.Id,
-					SpaceDataId = spaceData.Id
-				},
-
-				dataTable
-			));
+			throw new TfException("Found no existing space data for specified id.");
 		}
-		catch (Exception ex)
+
+
+		var provider = _providerManager.GetProvider(spaceData.DataProviderId);
+		if (provider is null)
 		{
-			return Result.Fail(new Error("Failed to get data provider rows").CausedBy(ex));
+			throw new TfException("There is not existing provider for specified space data.");
 		}
+
+
+		var sqlBuilder = new SqlBuilder(
+			dbService: _dbService,
+			dataProvider: provider,
+			spaceData: spaceData,
+			userFilters: userFilters,
+			userSorts: userSorts,
+			presetFilters: presetFilters,
+			presetSorts: presetSorts,
+			search: search,
+			page: page,
+			pageSize: pageSize,
+			returnOnlyTfIds: returnOnlyTfIds);
+
+		var (sql, parameters, usedPage, usedPageSize) = sqlBuilder.Build();
+
+		//do not make sql request if no rows are required
+		DataTable dataTable = null;
+		if (noRows)
+			dataTable = new DataTable();
+		else
+			dataTable = _dbService.ExecuteSqlQueryCommand(sql, parameters);
+
+		return ProcessSqlResult(
+			sql,
+			parameters,
+			provider,
+			new TfDataTableQuery
+			{
+				Search = search,
+				Page = usedPage,
+				PageSize = usedPageSize,
+				DataProviderId = provider.Id,
+				SpaceDataId = spaceData.Id
+			},
+
+			dataTable
+		);
 	}
 
 	private TfDataTable ProcessSqlResult(
@@ -341,27 +297,23 @@ public partial class TfDataManager
 		return resultTable;
 	}
 
-	public Result<TfDataTable> SaveDataTable(
+	public TfDataTable SaveDataTable(
 		TfDataTable table)
 	{
 		if (table is null)
 		{
-			return Result.Fail(new ValidationError(
-					nameof(table),
-					"Table object is null"));
+			throw new TfException("Table object is null");
 		}
 
 
 		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 		{
-			var providerResult = _providerManager.GetProvider(table.QueryInfo.DataProviderId);
-			var provider = providerResult.Value;
-
-			if (!providerResult.IsSuccess || provider is null)
+			var provider = _providerManager.GetProvider(table.QueryInfo.DataProviderId);
+			if (provider is null)
 			{
-				return Result.Fail(new ValidationError(
+				throw new TfValidationException(
 						nameof(provider),
-						"Provider associated to data table query is not found"));
+						"Provider associated to data table query is not found");
 			}
 
 			foreach (TfDataRow row in table.Rows)
@@ -373,45 +325,30 @@ public partial class TfDataManager
 					TfDataRow existingRow = null;
 					if (table.QueryInfo.SpaceDataId is null)
 					{
-						var existingRowResult = QueryDataProvider(provider, new List<Guid> { (Guid)row["tf_id"] });
-
-						if (!existingRowResult.IsSuccess)
+						var dt = QueryDataProvider(provider, new List<Guid> { (Guid)row["tf_id"] });
+						if (dt.Rows.Count != 1)
 						{
-							return Result.Fail(new ValidationError(
-									nameof(table),
-									"Failed to get existing row by id from data provider table"));
+							throw new TfValidationException(
+								nameof(table),
+								"Row for update not found in provider table");
 						}
 
-						if (existingRowResult.Value.Rows.Count != 1)
-						{
-							return Result.Fail(new ValidationError(
-									nameof(table),
-									"Row for update not found in provider table"));
-						}
-
-						existingRow = existingRowResult.Value.Rows[0];
+						existingRow = dt.Rows[0];
 					}
 					else
 					{
-						var existingRowResult = QuerySpaceData(
+						var dt = QuerySpaceData(
 							table.QueryInfo.SpaceDataId.Value,
 							new List<Guid> { (Guid)row["tf_id"] });
 
-						if (!existingRowResult.IsSuccess)
+						if (dt.Rows.Count != 1)
 						{
-							return Result.Fail(new ValidationError(
-									nameof(table),
-									"Failed to get existing row by id from space data"));
+							throw new TfValidationException(
+								nameof(table),
+								"Row for update not found in provider table");
 						}
 
-						if (existingRowResult.Value.Rows.Count != 1)
-						{
-							return Result.Fail(new ValidationError(
-									nameof(table),
-									"Row for update not found in space data"));
-						}
-
-						existingRow = existingRowResult.Value.Rows[0];
+						existingRow = dt.Rows[0];
 					}
 
 					UpdateRow(provider, existingRow, row);
@@ -797,37 +734,19 @@ public partial class TfDataManager
 
 	#endregion
 
-	public Result DeleteDataProviderRowByTfId(
+	public void DeleteDataProviderRowByTfId(
 		TfDataProvider provider,
 		Guid tfId)
 	{
-
-		try
-		{
 			if (provider is null)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(provider),
-						"Provider object is null"));
-			}
+				throw new TfException("Provider object is null");
 
 			var count = _dbService.ExecuteSqlNonQueryCommand(
 				$"DELETE FROM dp{provider.Index} WHERE tf_id = @tf_id",
 				new NpgsqlParameter("@tf_id", tfId));
 
 			if (count == 0)
-			{
-				return Result.Fail(new ValidationError(
-						nameof(provider),
-						"Data row not found in provider table."));
-			}
-
-			return Result.Ok();
-		}
-		catch (Exception ex)
-		{
-			return Result.Fail(new Error("Failed to delete data provider row").CausedBy(ex));
-		}
+				throw new TfException("Data row not found in provider table.");
 	}
 
 	private int GetProviderNextRowIndex(

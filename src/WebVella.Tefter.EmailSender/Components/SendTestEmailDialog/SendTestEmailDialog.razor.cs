@@ -45,17 +45,13 @@ public partial class SendTestEmailDialog : TfFormBaseComponent, IDialogContentCo
 				Recipients = new List<EmailAddress> { new EmailAddress { Address = _form.Recipient } }
 			};
 			var result = EmailService.CreateEmailMessage(submit);
+			ToastService.ShowSuccess(LOC("Message scheduled for sending"));
+			await Dialog.CloseAsync(result);
 
-			ProcessFormSubmitResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("Message scheduled for sending"));
-				await Dialog.CloseAsync(result.Value);
-			}
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{

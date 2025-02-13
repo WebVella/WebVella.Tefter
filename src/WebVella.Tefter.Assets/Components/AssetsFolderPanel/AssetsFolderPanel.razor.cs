@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Web;
-
-namespace WebVella.Tefter.Assets.Components;
+﻿namespace WebVella.Tefter.Assets.Components;
 
 [LocalizationResource("WebVella.Tefter.Assets.Components.AssetsFolderPanel.AssetsFolderPanel", "WebVella.Tefter.Assets")]
 public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComponent<AssetsFolderPanelContext>
@@ -28,19 +26,13 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		{
 			if (Content.FolderId is not null)
 			{
-				var getFolderResult = AssetsService.GetFolder(Content.FolderId.Value);
-				if (getFolderResult.IsSuccess) _folder = getFolderResult.Value;
-				else throw new Exception("GetFolder failed");
+				_folder = AssetsService.GetFolder(Content.FolderId.Value);
 				if (_folder is not null && !String.IsNullOrWhiteSpace(_folder.SharedKey) && Content.RowIndex > -1)
 				{
 					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
 					_skValue = Content.DataTable.Rows[Content.RowIndex].GetSharedKeyValue(_folder.SharedKey);
 					if (_skValue is not null)
-					{
-						var getAssetsResult = AssetsService.GetAssets(_folder.Id, _skValue);
-						if (getAssetsResult.IsSuccess) _items = getAssetsResult.Value;
-						else throw new Exception("GetAssets failed");
-					}
+						_items = AssetsService.GetAssets(_folder.Id, _skValue);
 				}
 				_isLoading = false;
 				await InvokeAsync(StateHasChanged);
@@ -183,14 +175,10 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 
 		try
 		{
-			var result = AssetsService.DeleteAsset(asset.Id);
-			ProcessServiceResponse(result);
-			if (result.IsSuccess)
-			{
-				ToastService.ShowSuccess(LOC("File deleted"));
-				int index = _items.FindIndex(x => x.Id == asset.Id);
-				if (index > -1) _items.RemoveAt(index);
-			}
+			AssetsService.DeleteAsset(asset.Id);
+			ToastService.ShowSuccess(LOC("File deleted"));
+			int index = _items.FindIndex(x => x.Id == asset.Id);
+			if (index > -1) _items.RemoveAt(index);
 		}
 		catch (Exception ex)
 		{
@@ -217,7 +205,7 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 		}
 	}
 
-		private AssetsFolderPanelAssetMeta _getAssetMeta(Asset asset)
+	private AssetsFolderPanelAssetMeta _getAssetMeta(Asset asset)
 	{
 		var result = new AssetsFolderPanelAssetMeta();
 		if (asset.CreatedOn < asset.ModifiedOn)
