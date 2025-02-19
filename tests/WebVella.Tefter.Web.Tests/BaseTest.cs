@@ -100,10 +100,10 @@ public class BaseTest
 		TfEventBusMock = new Mock<ITfEventBus>();
 		Context.Services.AddTransient(typeof(ITfEventBus), Services => TfEventBusMock.Object);
 
-		TfUserEventProviderMock = new Mock<TfUserEventProvider>();
+		TfUserEventProviderMock = new Mock<TfUserEventProvider>(TfEventBusMock.Object, AuthenticationStateProviderMock.Object);
 		Context.Services.AddTransient(typeof(TfUserEventProvider), Services => TfUserEventProviderMock.Object);
 
-		TfGlobalEventProviderMock = new Mock<TfGlobalEventProvider>();
+		TfGlobalEventProviderMock = new Mock<TfGlobalEventProvider>(TfEventBusMock.Object);
 		Context.Services.AddTransient(typeof(TfGlobalEventProvider), Services => TfGlobalEventProviderMock.Object);
 		#endregion
 

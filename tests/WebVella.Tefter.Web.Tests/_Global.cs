@@ -1,5 +1,4 @@
 ﻿global using FluentAssertions;
-global using FluentResults;
 global using FluentValidation;
 global using FluentValidation.Results;
 global using Fluxor;

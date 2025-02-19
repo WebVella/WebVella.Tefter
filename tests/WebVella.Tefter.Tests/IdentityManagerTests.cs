@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.Tests;
 
 public partial class IdentityManagerTests : BaseTest
 {
@@ -17,12 +19,8 @@ public partial class IdentityManagerTests : BaseTest
 					.WithName("UnitTester")
 					.Build();
 
-				var roleResult = await identityManager.SaveRoleAsync(role);
-				roleResult.Should().NotBeNull();
-				roleResult.IsSuccess.Should().BeTrue();
-				roleResult.Value.Should().NotBeNull();
-
-				role = roleResult.Value;
+				role = await identityManager.SaveRoleAsync(role);
+				role.Should().NotBeNull();
 
 				var user = identityManager
 					.CreateUserBuilder()
@@ -35,17 +33,11 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles(role)
 					.Build();
 
-				var userResult = await identityManager.SaveUserAsync(user);
-				userResult.Should().NotBeNull();
-				userResult.IsSuccess.Should().BeTrue();
-				userResult.Value.Should().NotBeNull();
+				user = await identityManager.SaveUserAsync(user);
+				user.Should().NotBeNull();
 
-				userResult = await identityManager.GetUserAsync("test@test.com", "password");
-				userResult.Should().NotBeNull();
-				userResult.IsSuccess.Should().BeTrue();
-				userResult.Value.Should().NotBeNull();
-
-				user = userResult.Value;
+				user = await identityManager.GetUserAsync("test@test.com", "password");
+				user.Should().NotBeNull();
 
 				user = identityManager
 					.CreateUserBuilder(user)
@@ -57,36 +49,31 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles(role)
 					.Build();
 
-				userResult = await identityManager.SaveUserAsync(user);
-				userResult.Should().NotBeNull();
-				userResult.IsSuccess.Should().BeTrue();
-				userResult.Value.Should().NotBeNull();
-				userResult.Value.Id.Should().Be(user.Id);
-				userResult.Value.Email.Should().Be(user.Email);
-				userResult.Value.FirstName.Should().Be(user.FirstName);
-				userResult.Value.LastName.Should().Be(user.LastName);
-				userResult.Value.Enabled.Should().Be(user.Enabled);
-				userResult.Value.CreatedOn.Should().Be(user.CreatedOn);
+				user = await identityManager.SaveUserAsync(user);
+				user.Should().NotBeNull();
+				user.Id.Should().Be(user.Id);
+				user.Email.Should().Be(user.Email);
+				user.FirstName.Should().Be(user.FirstName);
+				user.LastName.Should().Be(user.LastName);
+				user.Enabled.Should().Be(user.Enabled);
+				user.CreatedOn.Should().Be(user.CreatedOn);
 
-				var deleteRoleResult = await identityManager.DeleteRoleAsync(role);
-				deleteRoleResult.Should().NotBeNull();
-				deleteRoleResult.IsSuccess.Should().BeFalse();
+
+				var task = Task.Run(async () => { await identityManager.DeleteRoleAsync(role); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
 
 				var role2 = identityManager
 					.CreateRoleBuilder()
 					.WithName("UnitTester2")
 					.Build();
 
-				roleResult = await identityManager.SaveRoleAsync(role2);
-				roleResult.Should().NotBeNull();
-				roleResult.IsSuccess.Should().BeTrue();
-				roleResult.Value.Should().NotBeNull();
+				role2 = await identityManager.SaveRoleAsync(role2);
+				role2.Should().NotBeNull();
 
-				role2 = roleResult.Value;
-
-				deleteRoleResult = await identityManager.DeleteRoleAsync(role2);
-				deleteRoleResult.Should().NotBeNull();
-				deleteRoleResult.IsSuccess.Should().BeTrue();
+				await identityManager.DeleteRoleAsync(role2);
 			}
 		}
 	}
@@ -101,13 +88,14 @@ public partial class IdentityManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var result = identityManager.GetUser(null, null);
-				result.IsFailed.Should().BeTrue();
-				result.Errors.Count().Should().Be(2);
-				result.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(User.Email));
-				result.Errors[1].Should().BeOfType<ValidationError>();
-				((ValidationError)result.Errors[1]).PropertyName.Should().Be(nameof(User.Password));
+
+				var task = Task.Run(() => { var user = identityManager.GetUser(null, null); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(2);
+				((TfValidationException)exception).Data.Contains(nameof(User.Email)).Should().BeTrue();
+				((TfValidationException)exception).Data.Contains(nameof(User.Password)).Should().BeTrue();
 			}
 		}
 	}
@@ -127,12 +115,8 @@ public partial class IdentityManagerTests : BaseTest
 					.WithName("UnitTester")
 					.Build();
 
-				var roleResult = await identityManager.SaveRoleAsync(role);
-				roleResult.Should().NotBeNull();
-				roleResult.IsSuccess.Should().BeTrue();
-				roleResult.Value.Should().NotBeNull();
-
-				role = roleResult.Value;
+				role = await identityManager.SaveRoleAsync(role);
+				role.Should().NotBeNull();
 
 				var user = identityManager
 					.CreateUserBuilder()
@@ -145,11 +129,8 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles(role)
 					.Build();
 
-				var userResult = await identityManager.SaveUserAsync(user);
-				userResult.Should().NotBeNull();
-				userResult.IsSuccess.Should().BeTrue();
-				userResult.Value.Should().NotBeNull();
-
+				user = await identityManager.SaveUserAsync(user);
+				user.Should().NotBeNull();
 
 				user = identityManager
 					.CreateUserBuilder(user)
@@ -161,10 +142,8 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles()
 					.Build();
 
-				userResult = await identityManager.SaveUserAsync(user);
-				userResult.Should().NotBeNull();
-				userResult.Value.Roles.Count.Should().Be(0);
-
+				user = await identityManager.SaveUserAsync(user);
+				user.Should().NotBeNull();
 			}
 		}
 	}

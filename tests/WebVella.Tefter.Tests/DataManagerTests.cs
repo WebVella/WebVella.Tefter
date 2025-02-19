@@ -22,11 +22,10 @@ public partial class DataManagerTests : BaseTest
 				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider,dbService);
 				//var result = dataManager.QuerySpaceData(spaceData.Id);
 				var result = dataManager.QueryDataProvider(provider);
-				result.IsSuccess.Should().BeTrue();
 
 				dataManager.DeleteAllProviderRows(provider);
 
-				var newTable = result.Value.NewTable();
+				var newTable = result.NewTable();
 
 				for (var i = 0; i < 10; i++)
 				{
@@ -49,16 +48,14 @@ public partial class DataManagerTests : BaseTest
 				}
 
 				result = dataManager.SaveDataTable(newTable);
-				result.IsSuccess.Should().BeTrue();
 
-				Guid? skIntValue = result.Value.Rows[0].GetSharedKeyValue("test");
-				Guid? skTextValue = result.Value.Rows[0].GetSharedKeyValue("shared_key_text");
+				Guid? skIntValue = result.Rows[0].GetSharedKeyValue("test");
+				Guid? skTextValue = result.Rows[0].GetSharedKeyValue("shared_key_text");
 
 				//result = dataManager.QuerySpaceData(spaceData.Id);
 				result = dataManager.QueryDataProvider(provider);
-				result.IsSuccess.Should().BeTrue();
 
-				var tableToUpdate = result.Value;
+				var tableToUpdate = result;
 
 				for (var i = 0; i < 10; i++)
 				{
@@ -79,13 +76,11 @@ public partial class DataManagerTests : BaseTest
 				}
 
 				result = dataManager.SaveDataTable(tableToUpdate);
-				result.IsSuccess.Should().BeTrue();
-
-				//result = dataManager.QuerySpaceData(spaceData.Id);
+				
 				result = dataManager.QueryDataProvider(provider);
-				result.IsSuccess.Should().BeTrue();
 
-				tableToUpdate = result.Value;
+
+				tableToUpdate = result;
 
 				for (var i = 0; i < 10; i++)
 				{
@@ -106,13 +101,8 @@ public partial class DataManagerTests : BaseTest
 				}
 
 				result = dataManager.SaveDataTable(tableToUpdate);
-				result.IsSuccess.Should().BeTrue();
 
-				//result = dataManager.QuerySpaceData(spaceData.Id);
 				result = dataManager.QueryDataProvider(provider);
-				result.IsSuccess.Should().BeTrue();
-
-			
 			}
 		}
 	}

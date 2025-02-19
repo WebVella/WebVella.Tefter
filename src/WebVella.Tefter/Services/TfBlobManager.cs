@@ -1,13 +1,8 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Wordprocessing;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.CompilerServices;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public interface ITfBlobManager
 {
+	protected static readonly AsyncLock locker = new AsyncLock();
 	internal string BlobStoragePath { get; set; }
 
 	public bool ExistsBlob(

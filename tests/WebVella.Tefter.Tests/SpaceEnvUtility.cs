@@ -82,9 +82,8 @@ internal class SpaceEnvUtility
 			IncludeInTableSearch = false,
 			SharedKeyDbName = "shared_key_text"
 		};
-		var scResult = sharedColumnManager.CreateSharedColumn(sharedColumn1);
-		scResult.IsSuccess.Should().BeTrue();
-
+		sharedColumnManager.CreateSharedColumn(sharedColumn1);
+		
 		TfSharedColumn sharedColumn2 = new TfSharedColumn
 		{
 			Id = Guid.NewGuid(),
@@ -93,9 +92,8 @@ internal class SpaceEnvUtility
 			IncludeInTableSearch = false,
 			SharedKeyDbName = "shared_key_int"
 		};
-		scResult = sharedColumnManager.CreateSharedColumn(sharedColumn2);
-		scResult.IsSuccess.Should().BeTrue();
-
+		sharedColumnManager.CreateSharedColumn(sharedColumn2);
+		
 		//get provider with new shared columns
 		provider = providerManager.GetProvider(provider.Id);
 

@@ -55,7 +55,7 @@ public partial class TemplatesTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var user = identityManager.GetUser("rumen@webvella.com").Value;
+				var user = identityManager.GetUser("rumen@webvella.com");
 
 				TfManageTemplateModel createTemplateModel = new TfManageTemplateModel
 				{

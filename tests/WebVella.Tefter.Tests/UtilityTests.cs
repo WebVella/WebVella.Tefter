@@ -241,15 +241,15 @@ public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfD
 
 public class UtilityTestsDataProviderTypeClass : ITfDataProviderType
 {
-	public Guid Id => throw new NotImplementedException();
+	public Guid Id { get;set; }
 
-	public string Name => throw new NotImplementedException();
+	public string Name { get; set; }
 
-	public string Description => throw new NotImplementedException();
+	public string Description { get; set; }
 
-	public string FluentIconName => throw new NotImplementedException();
+	public string FluentIconName { get; set; }
 
-	public Type SettingsComponentType => throw new NotImplementedException();
+	public Type SettingsComponentType { get; set; }
 
 	public ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(string dataType)
 	{

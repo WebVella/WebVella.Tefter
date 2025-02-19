@@ -8,8 +8,8 @@ public class SearchSpaceDialogComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		var dialogProvider = Context.RenderComponent<FluentDialogProvider>();
-		TfSpaceManagerMock.Setup(x => x.GetSpacesList()).Returns(Result.Ok(new List<TfSpace>()));
-		TfSpaceManagerMock.Setup(x => x.GetAllSpaceViews()).Returns(Result.Ok(new List<TfSpaceView>()));
+		TfSpaceManagerMock.Setup(x => x.GetSpacesList()).Returns(new List<TfSpace>());
+		TfSpaceManagerMock.Setup(x => x.GetAllSpaceViews()).Returns(new List<TfSpaceView>());
 
 		// Act
 		var dialogService = Context.Services.GetRequiredService<IDialogService>();

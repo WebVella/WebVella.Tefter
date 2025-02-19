@@ -1,4 +1,8 @@
-﻿using WebVella.Tefter.Models;
+﻿using DocumentFormat.OpenXml.EMMA;
+using System;
+using WebVella.Tefter.Database;
+using WebVella.Tefter.Exceptions;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests.DataProviders;
 
@@ -17,8 +21,8 @@ public partial class TfDataManagerTests : BaseTest
 
 	//		using (var scope = dbService.CreateTransactionScope())
 	//		{
-	//			var providerTypesResult = providerManager.GetProviderTypes();
-	//			var providerType = providerTypesResult.Value
+	//			var providerTypes = providerManager.GetProviderTypes();
+	//			var providerType = providerTypes
 	//				.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 	//			var providerResult = providerManager.GetProvider(new Guid("a5bcbc2a-c983-45d8-a1e5-897468b3266f"));
@@ -73,8 +77,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
@@ -84,12 +88,16 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
 
-				var deleteResult = providerManager.DeleteDataProvider(providerResult.Value.Id);
-				deleteResult.IsSuccess.Should().BeTrue();
+				TfDataProvider provider = null;
+				var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				provider.Should().BeOfType<TfDataProvider>();
+
+				task = Task.Run(() => { providerManager.DeleteDataProvider(provider.Id); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 			}
 		}
 	}
@@ -104,8 +112,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
@@ -116,13 +124,14 @@ public partial class TfDataManagerTests : BaseTest
 					SettingsJson = null
 				};
 
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsFailed.Should().BeTrue();
-				providerResult.Errors.Count().Should().Be(1);
-				providerResult.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("ProviderType");
-				((ValidationError)providerResult.Errors[0]).Message.Should()
-					.Be("The data provider type is required.");
+				var task = Task.Run(() =>
+				{
+					var provider = providerManager.CreateDataProvider(model);
+				});
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Contains("ProviderType").Should().BeTrue();
 			}
 		}
 	}
@@ -137,8 +146,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
@@ -149,14 +158,15 @@ public partial class TfDataManagerTests : BaseTest
 					SettingsJson = null
 				};
 
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsFailed.Should().BeTrue();
-				providerResult.Errors.Count().Should().Be(1);
-				providerResult.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Message.Should()
-					.Be("The data provider name is required.");
-
+				var task = Task.Run(() =>
+				{
+					var provider = providerManager.CreateDataProvider(model);
+				});
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains("Name").Should().BeTrue();
 			}
 		}
 	}
@@ -171,8 +181,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
@@ -182,19 +192,20 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(model);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				model.Id = Guid.NewGuid();
 
-				providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsFailed.Should().BeTrue();
-				providerResult.Errors.Count().Should().Be(1);
-				providerResult.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Message.Should()
-					.Be("There is already existing data provider with specified name.");
+				var task = Task.Run(() =>
+				{
+					var provider = providerManager.CreateDataProvider(model);
+				});
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains("Name").Should().BeTrue();
 
 			}
 		}
@@ -210,8 +221,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
@@ -221,15 +232,13 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(model);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				model.Name = "test data provider 1";
-				providerResult = providerManager.UpdateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
-				providerResult.Value.Name.Should().Be(model.Name);
+				provider = providerManager.UpdateDataProvider(model);
+				provider.Should().BeOfType<TfDataProvider>();
+				provider.Name.Should().Be(model.Name);
 			}
 		}
 	}
@@ -244,8 +253,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel model = new TfDataProviderModel
@@ -254,9 +263,8 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(model);
+				provider.Should().BeOfType<TfDataProvider>();
 
 				TfDataProviderModel model2 = new TfDataProviderModel
 				{
@@ -264,19 +272,21 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				providerResult = providerManager.CreateDataProvider(model2);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				provider = providerManager.CreateDataProvider(model2);
+				provider.Should().BeOfType<TfDataProvider>();
 
 
 				model.Name = model2.Name;
-				providerResult = providerManager.UpdateDataProvider(model);
-				providerResult.IsFailed.Should().BeTrue();
-				providerResult.Errors.Count().Should().Be(1);
-				providerResult.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Message.Should()
-					.Be("There is already existing data provider with specified name.");
+
+				var task = Task.Run(() =>
+				{
+					provider = providerManager.UpdateDataProvider(model);
+				});
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains("Name").Should().BeTrue();
 			}
 		}
 	}
@@ -291,8 +301,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel model = new TfDataProviderModel
@@ -301,20 +311,21 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(model);
+				provider.Should().BeOfType<TfDataProvider>();
 
-				model.Id = providerResult.Value.Id;
+				model.Id = provider.Id;
 				model.Name = "";
 
-				providerResult = providerManager.UpdateDataProvider(model);
-				providerResult.IsFailed.Should().BeTrue();
-				providerResult.Errors.Count().Should().Be(1);
-				providerResult.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("Name");
-				((ValidationError)providerResult.Errors[0]).Message.Should()
-					.Be("The data provider name is required.");
+				var task = Task.Run(() =>
+				{
+					provider = providerManager.UpdateDataProvider(model);
+				});
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains("Name").Should().BeTrue();
 			}
 		}
 	}
@@ -329,8 +340,8 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
+				var providerTypes = providerManager.GetProviderTypes();
+				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel model = new TfDataProviderModel
@@ -339,20 +350,21 @@ public partial class TfDataManagerTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
+				var provider = providerManager.CreateDataProvider(model);
+				provider.Should().BeOfType<TfDataProvider>();
 
-				model.Id = providerResult.Value.Id;
+				model.Id = provider.Id;
 				model.ProviderType = null;
 
-				providerResult = providerManager.UpdateDataProvider(model);
-				providerResult.IsFailed.Should().BeTrue();
-				providerResult.Errors.Count().Should().Be(1);
-				providerResult.Errors[0].Should().BeOfType<ValidationError>();
-				((ValidationError)providerResult.Errors[0]).PropertyName.Should().Be("ProviderType");
-				((ValidationError)providerResult.Errors[0]).Message.Should()
-					.Be("The data provider type is required.");
+				var task = Task.Run(() =>
+				{
+					provider = providerManager.UpdateDataProvider(model);
+				});
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains("ProviderType").Should().BeTrue();
 			}
 		}
 	}
@@ -360,6 +372,34 @@ public partial class TfDataManagerTests : BaseTest
 	#endregion
 
 	#region <--- Columns --->
+
+	private async Task<TfDataProvider> CreateProvider(
+		ITfDataProviderManager providerManager)
+	{
+		var providerTypes = providerManager.GetProviderTypes();
+		var providerType = providerTypes
+			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+
+		Guid id = Guid.NewGuid();
+		TfDataProviderModel model = new TfDataProviderModel
+		{
+			Name = "test data provider",
+			ProviderType = providerType,
+			SettingsJson = null
+		};
+
+		TfDataProvider provider = null;
+		var task = Task.Run(() =>
+		{
+			provider = providerManager.CreateDataProvider(model);
+		});
+		var exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+		provider.Should().BeOfType<TfDataProvider>();
+
+		return provider;
+
+	}
 
 	[Fact]
 	public async Task Column_DbName_Invalid()
@@ -371,22 +411,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
-				{
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-				var provider = providerResult.Value;
+				var provider = await CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -399,7 +424,7 @@ public partial class TfDataManagerTests : BaseTest
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
-					IsNullable = false,
+					IsNullable = true,
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
@@ -407,34 +432,50 @@ public partial class TfDataManagerTests : BaseTest
 				};
 
 				//name format invalid
-				var result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
+
 
 				//empty name
 				column.DbName = string.Empty;
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
 
 				//start with tf_
 				column.DbName = "tf_test";
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
 
 				//too short
 				column.DbName = "a";
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
 
 				//too long
 				column.DbName = "rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt" +
 					"rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt";
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DbName));
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
 			}
 		}
 	}
@@ -449,22 +490,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
-				{
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-				var provider = providerResult.Value;
+				var provider = await CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -484,9 +510,10 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				//empty id, but internaly we set new id
-				var result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				//empty id, but internally we set new id
+				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 			}
 		}
 	}
@@ -501,22 +528,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
-				{
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-				var provider = providerResult.Value;
+				var provider = await CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -529,7 +541,7 @@ public partial class TfDataManagerTests : BaseTest
 					SourceName = "source_column",
 					SourceType = "TEXT",
 					IncludeInTableSearch = true,
-					IsNullable = false,
+					IsNullable = true,
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
@@ -537,9 +549,11 @@ public partial class TfDataManagerTests : BaseTest
 				};
 
 				//empty id
-				var result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.DataProviderId));
+				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DataProviderId)).Should().BeTrue();
 			}
 		}
 	}
@@ -554,22 +568,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
-				{
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-				var provider = providerResult.Value;
+				var provider = await CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -589,9 +588,10 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				var result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
 				//we allow this now
+				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 			}
 		}
 	}
@@ -606,22 +606,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
-				{
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-				var provider = providerResult.Value;
+				var provider = await CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -634,16 +619,18 @@ public partial class TfDataManagerTests : BaseTest
 					SourceName = "source",
 					SourceType = "",
 					IncludeInTableSearch = true,
-					IsNullable = false,
+					IsNullable = true,
 					IsSearchable = true,
 					IsSortable = true,
 					IsUnique = true,
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				var result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeFalse();
-				((ValidationError)result.Errors[0]).PropertyName.Should().Be(nameof(TfDataProviderColumn.SourceType));
+				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.SourceType)).Should().BeTrue();
 			}
 		}
 	}
@@ -658,22 +645,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypesResult = providerManager.GetProviderTypes();
-				var providerType = providerTypesResult.Value
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
-				{
-					Name = "test data provider",
-					ProviderType = providerType,
-					SettingsJson = null
-				};
-				var providerResult = providerManager.CreateDataProvider(model);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-				var provider = providerResult.Value;
+				var provider = await CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -693,8 +665,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				var result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				column = new TfDataProviderColumn
 				{
@@ -714,8 +687,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				column = new TfDataProviderColumn
 				{
@@ -735,8 +709,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				column = new TfDataProviderColumn
 				{
@@ -756,8 +731,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				column = new TfDataProviderColumn
 				{
@@ -777,8 +753,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				column = new TfDataProviderColumn
 				{
@@ -798,8 +775,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				column = new TfDataProviderColumn
 				{
@@ -819,8 +797,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 
 				column = new TfDataProviderColumn
 				{
@@ -840,8 +819,9 @@ public partial class TfDataManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				result = providerManager.CreateDataProviderColumn(column);
-				result.IsSuccess.Should().BeTrue();
+				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 			}
 		}
 	}
@@ -851,7 +831,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.Text, "TEXT", "test def value");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.Text, "TEXT", "test def value");
 		}
 	}
 
@@ -860,7 +840,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
 		}
 	}
 
@@ -870,7 +850,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.Number, "NUMBER", "123.456");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.Number, "NUMBER", "123.456");
 		}
 	}
 
@@ -879,7 +859,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
 		}
 	}
 
@@ -888,7 +868,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.Integer, "INTEGER", "1");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.Integer, "INTEGER", "1");
 		}
 	}
 
@@ -897,7 +877,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
 		}
 	}
 
@@ -906,7 +886,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.Date, "DATE", "1975-10-25");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.Date, "DATE", "1975-10-25");
 		}
 	}
 
@@ -915,7 +895,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
 		}
 	}
 
@@ -924,7 +904,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.Boolean, "BOOLEAN", "true");
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.Boolean, "BOOLEAN", "true");
 		}
 	}
 
@@ -933,12 +913,12 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
+			await CreateAndUpdateColumnType(TfDatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
 		}
 	}
 
 
-	private void CreateAndUpdateColumnType(
+	private async Task CreateAndUpdateColumnType(
 		TfDatabaseColumnType type,
 		string sourceType,
 		string defaultValue)
@@ -948,22 +928,7 @@ public partial class TfDataManagerTests : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope())
 		{
-			var providerTypesResult = providerManager.GetProviderTypes();
-			var providerType = providerTypesResult.Value
-				.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
-
-			Guid id = Guid.NewGuid();
-			TfDataProviderModel model = new TfDataProviderModel
-			{
-				Name = "test data provider",
-				ProviderType = providerType,
-				SettingsJson = null
-			};
-			var providerResult = providerManager.CreateDataProvider(model);
-			providerResult.IsSuccess.Should().BeTrue();
-			providerResult.Value.Should().BeOfType<TfDataProvider>();
-
-			var provider = providerResult.Value;
+			var provider = await CreateProvider(providerManager);
 
 			TfDataProviderColumn column = new TfDataProviderColumn
 			{
@@ -983,10 +948,11 @@ public partial class TfDataManagerTests : BaseTest
 				PreferredSearchType = TfDataProviderColumnSearchType.Contains
 			};
 
-			var result = providerManager.CreateDataProviderColumn(column);
-			result.IsSuccess.Should().BeTrue();
+			var task = Task.Run(() => { provider = providerManager.CreateDataProviderColumn(column); });
+			var exception = Record.ExceptionAsync(async () => await task).Result;
+			exception.Should().BeNull();
 
-			var exColumn = result.Value.Columns.FirstOrDefault();
+			var exColumn = provider.Columns.FirstOrDefault();
 
 			exColumn.Should().NotBeNull();
 			exColumn.AutoDefaultValue.Should().Be(column.AutoDefaultValue);
@@ -1013,10 +979,11 @@ public partial class TfDataManagerTests : BaseTest
 			column.IsUnique = !column.IsUnique;
 			column.PreferredSearchType = TfDataProviderColumnSearchType.Equals;
 
-			result = providerManager.UpdateDataProviderColumn(column);
-			result.IsSuccess.Should().BeTrue();
+			task = Task.Run(() => { provider = providerManager.UpdateDataProviderColumn(column); });
+			exception = Record.ExceptionAsync(async () => await task).Result;
+			exception.Should().BeNull();
 
-			exColumn = result.Value.Columns.FirstOrDefault();
+			exColumn = provider.Columns.FirstOrDefault();
 			exColumn.AutoDefaultValue.Should().Be(column.AutoDefaultValue);
 			exColumn.DataProviderId.Should().Be(column.DataProviderId);
 			exColumn.DbName.Should().Be(column.DbName);
@@ -1060,10 +1027,9 @@ public partial class TfDataManagerTests : BaseTest
 
 					};
 
-				var providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
-				providerResult.IsSuccess.Should().BeTrue();
-
-				provider = providerResult.Value;
+				var task = Task.Run(() => { provider = providerManager.CreateDataProviderSharedKey(sharedKey); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 				provider.SharedKeys.Count().Should().Be(1);
 
 				var tables = dbManager.GetDatabaseBuilder().Build();
@@ -1089,10 +1055,9 @@ public partial class TfDataManagerTests : BaseTest
 					Columns = new() { provider.Columns[1] }
 				};
 
-				providerResult = providerManager.CreateDataProviderSharedKey(sharedKey2);
-				providerResult.IsSuccess.Should().BeTrue();
-
-				provider = providerResult.Value;
+				task = Task.Run(() => { provider = providerManager.CreateDataProviderSharedKey(sharedKey2); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 				provider.SharedKeys.Count().Should().Be(2);
 
 				var sharedKey2Created = provider.SharedKeys.Single(x => x.Id == sharedKey2.Id);
@@ -1105,10 +1070,9 @@ public partial class TfDataManagerTests : BaseTest
 
 				sharedKey2Created.Columns.Add(provider.Columns[0]);
 
-				providerResult = providerManager.UpdateDataProviderSharedKey(sharedKey2Created);
-				providerResult.IsSuccess.Should().BeTrue();
-
-				provider = providerResult.Value;
+				task = Task.Run(() => { provider = providerManager.UpdateDataProviderSharedKey(sharedKey2Created); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
 				provider.SharedKeys.Count().Should().Be(2);
 
 				tables = dbManager.GetDatabaseBuilder().Build();
@@ -1126,9 +1090,11 @@ public partial class TfDataManagerTests : BaseTest
 				sharedKey2Update.Version.Should().Be(2);
 				sharedKey2Update.Columns.Count().Should().Be(2);
 
-				providerResult = providerManager.DeleteDataProviderSharedKey(sharedKey2Created.Id);
-				providerResult.IsSuccess.Should().BeTrue();
-				providerResult.Value.SharedKeys.Count().Should().Be(1);
+
+				task = Task.Run(() => { provider = providerManager.DeleteDataProviderSharedKey(sharedKey2Created.Id); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				provider.SharedKeys.Count().Should().Be(1);
 
 				tables = dbManager.GetDatabaseBuilder().Build();
 				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
@@ -1164,8 +1130,11 @@ public partial class TfDataManagerTests : BaseTest
 
 					};
 
-				var providerResult = providerManager.CreateDataProviderSharedKey(sharedKey);
-				providerResult.IsSuccess.Should().BeFalse();
+				var task = Task.Run(() => { provider = providerManager.CreateDataProviderSharedKey(sharedKey); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
 			}
 		}
 	}
@@ -1173,8 +1142,8 @@ public partial class TfDataManagerTests : BaseTest
 	private TfDataProvider CreateSharedKeysStructure(
 		ITfDataProviderManager providerManager)
 	{
-		var providerTypesResult = providerManager.GetProviderTypes();
-		var providerType = providerTypesResult.Value
+		var providerTypes = providerManager.GetProviderTypes();
+		var providerType = providerTypes
 			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 		Guid id = Guid.NewGuid();
@@ -1184,11 +1153,13 @@ public partial class TfDataManagerTests : BaseTest
 			ProviderType = providerType,
 			SettingsJson = null
 		};
-		var providerResult = providerManager.CreateDataProvider(model);
-		providerResult.IsSuccess.Should().BeTrue();
-		providerResult.Value.Should().BeOfType<TfDataProvider>();
 
-		var provider = providerResult.Value;
+		TfDataProvider provider = null;
+		var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+		var exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
+		provider.Should().NotBeNull();
+		provider.Should().BeOfType<TfDataProvider>();
 
 		TfDataProviderColumn column = new TfDataProviderColumn
 		{
@@ -1208,8 +1179,9 @@ public partial class TfDataManagerTests : BaseTest
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
-		var result = providerManager.CreateDataProviderColumn(column);
-		result.IsSuccess.Should().BeTrue();
+		task = Task.Run(() => { provider = providerManager.CreateDataProviderColumn(column); });
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
 
 		TfDataProviderColumn column2 = new TfDataProviderColumn
 		{
@@ -1229,10 +1201,11 @@ public partial class TfDataManagerTests : BaseTest
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
-		result = providerManager.CreateDataProviderColumn(column2);
-		result.IsSuccess.Should().BeTrue();
+		task = Task.Run(() => { provider = providerManager.CreateDataProviderColumn(column2); });
+		exception = Record.ExceptionAsync(async () => await task).Result;
+		exception.Should().BeNull();
 
-		return result.Value;
+		return provider;
 	}
 
 	#endregion

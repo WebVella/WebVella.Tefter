@@ -15,7 +15,7 @@ public partial class TfUserEventProvider : IAsyncDisposable
 		_eventBus = eventBus;
 		_authStateProvider = authStateProvider;
 		var authState = authStateProvider.GetAuthenticationStateAsync().GetAwaiter().GetResult();
-		if (authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
+		if (authState is not null && authState.User.Identity != null && authState.User.Identity.IsAuthenticated)
 		{
 			_currentUser = ((TfIdentity)authState.User.Identity).User;
 			if (_currentUser is not null)

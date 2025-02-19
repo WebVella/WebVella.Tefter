@@ -1109,7 +1109,9 @@ public partial class SpaceManagerTests : BaseTest
 				//try to move node inside child nodes tree
 				updatedSpaceNode1_0_0.Position = 1;
 				updatedSpaceNode1_0_0.ParentId = spaceNode1_2_0.Id;
-				nodeTree = spaceManager.UpdateSpaceNode(updatedSpaceNode1_0_0);
+				var task = Task.Run(() => { nodeTree = spaceManager.UpdateSpaceNode(updatedSpaceNode1_0_0);  });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
 
 				#endregion
 
