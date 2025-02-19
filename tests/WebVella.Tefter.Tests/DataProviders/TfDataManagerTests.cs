@@ -1,7 +1,4 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using System;
-using WebVella.Tefter.Database;
-using WebVella.Tefter.Exceptions;
+﻿using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests.DataProviders;
@@ -15,9 +12,9 @@ public partial class TfDataManagerTests : BaseTest
 	//{
 	//	using (await locker.LockAsync())
 	//	{
-	//		IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+	//		ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 	//		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-	//		IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+	//		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 	//		using (var scope = dbService.CreateTransactionScope())
 	//		{
@@ -25,17 +22,19 @@ public partial class TfDataManagerTests : BaseTest
 	//			var providerType = providerTypes
 	//				.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-	//			var providerResult = providerManager.GetProvider(new Guid("a5bcbc2a-c983-45d8-a1e5-897468b3266f"));
-	//			providerResult.IsSuccess.Should().BeTrue();
-	//			providerResult.Value.Should().BeOfType<TfDataProvider>();
+	//			Guid id = Guid.NewGuid();
+	//			TfDataProviderModel model = new TfDataProviderModel
+	//			{
+	//				Name = "test data provider",
+	//				ProviderType = providerType,
+	//				SettingsJson = null
+	//			};
+	//			var provider = providerManager.CreateDataProvider(model);
+	//			provider.Should().BeOfType<TfDataProvider>();
 
-	//			var provider = providerResult.Value;
 
-	//			var dataResult = dataManager.GetProviderRows(provider, search: null, page: -1, pageSize: 4);
-	//			dataResult.IsSuccess.Should().BeTrue();
-	//			dataResult.Value.Should().BeOfType<TfDataTable>();
-
-	//			//dataResult.Value
+	//			var dataTable = dataManager.QueryDataProvider(provider, search: null, page: -1, pageSize: 4);
+	//			var dt = dataTable.ToDataTable();
 	//		}
 	//	}
 	//}
@@ -373,7 +372,7 @@ public partial class TfDataManagerTests : BaseTest
 
 	#region <--- Columns --->
 
-	private async Task<TfDataProvider> CreateProvider(
+	private TfDataProvider CreateProvider(
 		ITfDataProviderManager providerManager)
 	{
 		var providerTypes = providerManager.GetProviderTypes();
@@ -411,7 +410,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = await CreateProvider(providerManager);
+				var provider = CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -490,7 +489,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = await CreateProvider(providerManager);
+				var provider = CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -528,7 +527,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = await CreateProvider(providerManager);
+				var provider = CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -568,7 +567,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = await CreateProvider(providerManager);
+				var provider = CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -606,7 +605,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = await CreateProvider(providerManager);
+				var provider = CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -645,7 +644,7 @@ public partial class TfDataManagerTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = await CreateProvider(providerManager);
+				var provider = CreateProvider(providerManager);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -831,7 +830,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.Text, "TEXT", "test def value");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Text, "TEXT", "test def value");
 		}
 	}
 
@@ -840,7 +839,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
 		}
 	}
 
@@ -850,7 +849,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.Number, "NUMBER", "123.456");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Number, "NUMBER", "123.456");
 		}
 	}
 
@@ -859,7 +858,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
 		}
 	}
 
@@ -868,7 +867,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.Integer, "INTEGER", "1");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Integer, "INTEGER", "1");
 		}
 	}
 
@@ -877,7 +876,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
 		}
 	}
 
@@ -886,7 +885,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.Date, "DATE", "1975-10-25");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Date, "DATE", "1975-10-25");
 		}
 	}
 
@@ -895,7 +894,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
 		}
 	}
 
@@ -904,7 +903,7 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.Boolean, "BOOLEAN", "true");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Boolean, "BOOLEAN", "true");
 		}
 	}
 
@@ -913,12 +912,12 @@ public partial class TfDataManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			await CreateAndUpdateColumnType(TfDatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
 		}
 	}
 
 
-	private async Task CreateAndUpdateColumnType(
+	private void CreateAndUpdateColumnType(
 		TfDatabaseColumnType type,
 		string sourceType,
 		string defaultValue)
@@ -928,7 +927,7 @@ public partial class TfDataManagerTests : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope())
 		{
-			var provider = await CreateProvider(providerManager);
+			var provider = CreateProvider(providerManager);
 
 			TfDataProviderColumn column = new TfDataProviderColumn
 			{

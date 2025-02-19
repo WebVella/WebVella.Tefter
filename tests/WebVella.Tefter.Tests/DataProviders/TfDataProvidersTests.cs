@@ -9,13 +9,13 @@ public partial class TfDataProvidersTests : BaseTest
 	#region <--- Providers --->
 
 	//[Fact]
-	//public async Task _Provider_Lists() 
+	//public async Task _Provider_Lists()
 	//{
 	//	using (await locker.LockAsync())
 	//	{
-	//		IDataManager dataManager = ServiceProvider.GetRequiredService<IDataManager>();
+	//		ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
 	//		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-	//		IDatabaseService dbService = ServiceProvider.GetRequiredService<IDatabaseService>();
+	//		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 	//		using (var scope = dbService.CreateTransactionScope())
 	//		{
@@ -23,20 +23,11 @@ public partial class TfDataProvidersTests : BaseTest
 	//			var providerType = providerTypes
 	//				.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-	//			var providerResult = providerManager.GetProvider(new Guid("b631c9c8-7c0a-40c6-aabf-cb8c5863cf08"));
-	//			providerResult.IsSuccess.Should().BeTrue();
-	//			providerResult.Value.Should().BeOfType<TfDataProvider>();
+	//			var provider = providerManager.GetProvider(new Guid("b90d2c29-5600-401d-821e-b7d85c676ee5"));
 
-	//			var provider = providerResult.Value;
+	//			var dataTable = dataManager.QueryDataProvider(provider, search: null, page: null, pageSize: null);
+	//			var dt = dataTable.ToDataTable();
 
-	//			var dataResult = dataManager.GetProviderRows(provider, search: null, page: null, pageSize: null);
-	//			dataResult.IsSuccess.Should().BeTrue();
-	//			dataResult.Value.Should().BeOfType<TfDataTable>();
-
-	//			TfDataTable dt = dataResult.Value;
-	//			var dateOfBirth = dt.Rows[0].Field<DateOnly>("date_of_birth");
-
-	//			//dataResult.Value
 	//		}
 	//	}
 	//}

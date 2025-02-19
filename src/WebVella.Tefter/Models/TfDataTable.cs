@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter;
+﻿using Bogus;
+
+namespace WebVella.Tefter;
 
 public sealed class TfDataTable
 {
@@ -226,5 +228,47 @@ public sealed class TfDataTable
 	public override string ToString()
 	{
 		return $"{Rows}  {Columns}  {QueryInfo}";
+	}
+
+	public DataTable ToDataTable()
+	{
+		DataTable dt = new DataTable();
+		foreach (var column in this.Columns)
+		{
+			var columnType = GetTypeForDatabaseColumnType(column.DbType);
+			dt.Columns.Add(column.Name, columnType);
+		}
+
+		foreach(TfDataRow row in this.Rows)
+			dt.Rows.Add(row.Values);
+
+		return dt;
+	}
+
+	private Type GetTypeForDatabaseColumnType(TfDatabaseColumnType dbType)
+	{
+		switch (dbType)
+		{
+			case TfDatabaseColumnType.Guid:
+				return typeof(Guid);
+			case TfDatabaseColumnType.ShortText:
+				return typeof(string);
+			case TfDatabaseColumnType.Text:
+				return typeof(string);
+			case TfDatabaseColumnType.ShortInteger:
+				return typeof(short);
+			case TfDatabaseColumnType.Integer:
+				return typeof(int);
+			case TfDatabaseColumnType.LongInteger:
+				return typeof(long);
+			case TfDatabaseColumnType.Number:
+				return typeof(decimal);
+			case TfDatabaseColumnType.Date:
+				return typeof(DateOnly);
+			case TfDatabaseColumnType.DateTime:
+				return typeof(DateTime);
+			default:
+				throw new Exception("Type is not supported");
+		}
 	}
 }

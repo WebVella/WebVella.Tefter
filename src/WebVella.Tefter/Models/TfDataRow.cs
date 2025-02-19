@@ -5,7 +5,7 @@ namespace WebVella.Tefter;
 public class TfDataRow : IEnumerable
 {
 	private readonly object[] _values;
-
+	internal object[] Values => _values;
 	public TfDataTable DataTable { get; init; }
 
 	public object this[int columnIndex]
