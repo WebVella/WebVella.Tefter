@@ -553,45 +553,49 @@ VALUES
 			if (htmlDoc.DocumentNode == null)
 				return;
 
-			foreach (HtmlNode node in htmlDoc.DocumentNode.SelectNodes("//img[@src]"))
+			var nodes = htmlDoc.DocumentNode.SelectNodes("//img[@src]");
+			if (nodes is not null)
 			{
-				var src = node.Attributes["src"].Value.Split('?', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-
-
-				if (!string.IsNullOrWhiteSpace(src) &&
-					src.ToLowerInvariant().StartsWith("/fs/repository/"))
+				foreach (HtmlNode node in nodes)
 				{
-					try
+					var src = node.Attributes["src"].Value.Split('?', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
+
+
+					if (!string.IsNullOrWhiteSpace(src) &&
+						src.ToLowerInvariant().StartsWith("/fs/repository/"))
 					{
-						Uri uri = new Uri(src);
-						src = uri.AbsolutePath;
+						try
+						{
+							Uri uri = new Uri(src);
+							src = uri.AbsolutePath;
+						}
+						catch
+						{
+						}
+
+						string filename = src.ToLowerInvariant().Replace("/fs/repository/", "");
+
+						var file = _repositoryService.GetFile(filename);
+						if (file == null)
+							continue;
+
+						var bytes = _repositoryService.GetFileContentAsByteArray(filename);
+
+						var extension = Path.GetExtension(src).ToLowerInvariant();
+						new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
+
+						var imagePart = new MimePart(mimeType)
+						{
+							ContentId = MimeUtils.GenerateMessageId(),
+							Content = new MimeContent(new MemoryStream(bytes)),
+							ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+							ContentTransferEncoding = ContentEncoding.Base64,
+							FileName = Path.GetFileName(src)
+						};
+
+						builder.LinkedResources.Add(imagePart);
+						node.SetAttributeValue("src", $"cid:{imagePart.ContentId}");
 					}
-					catch
-					{
-					}
-
-					string filename = src.ToLowerInvariant().Replace("/fs/repository/", "");
-
-					var file = _repositoryService.GetFile(filename);
-					if (file == null)
-						continue;
-
-					var bytes = _repositoryService.GetFileContentAsByteArray(filename);
-
-					var extension = Path.GetExtension(src).ToLowerInvariant();
-					new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
-
-					var imagePart = new MimePart(mimeType)
-					{
-						ContentId = MimeUtils.GenerateMessageId(),
-						Content = new MimeContent(new MemoryStream(bytes)),
-						ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-						ContentTransferEncoding = ContentEncoding.Base64,
-						FileName = Path.GetFileName(src)
-					};
-
-					builder.LinkedResources.Add(imagePart);
-					node.SetAttributeValue("src", $"cid:{imagePart.ContentId}");
 				}
 			}
 
