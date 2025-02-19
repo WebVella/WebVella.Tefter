@@ -138,7 +138,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",
@@ -163,7 +163,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
@@ -188,7 +188,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",
@@ -297,7 +297,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 				exception: ex,
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
@@ -352,7 +352,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",
@@ -374,7 +374,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",
@@ -392,7 +392,7 @@ internal partial class AppStateUseCase
 		var provider = _dataProviderManager.GetProvider(dataProviderId);
 		if (provider is null)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 				exception: new TfException("Provider not found"),
 				toastErrorMessage: "Unexpected Error",
 				toastValidationMessage: "Invalid Data",
@@ -466,7 +466,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",

@@ -60,26 +60,9 @@ public class TfFormBaseComponent : TfBaseComponent
 		MessageStore.Clear(e.FieldIdentifier);
 	}
 
-	/// <summary>
-	/// Process Result<object> from service calls and injects the errors in EditContext MessageStore
-	/// </summary>
-	/// <param name="result"></param>
-	//protected void ProcessFormSubmitResponse(Result<object> result)
-	//{
-	//	ResultUtils.ProcessFormSubmitResult(
-	//		result: result,
-	//		toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
-	//		notificationErrorTitle: LOC("Unexpected Error!"),
-	//		editContext: EditContext,
-	//		messageStore: MessageStore,
-	//		toastService: ToastService,
-	//		messageService: MessageService
-	//	);
-	//}
-
 	protected void ProcessFormSubmitResponse(Exception ex)
 	{
-		ResultUtils.ProcessFormSubmitResult(
+		ResultUtils.ProcessFormSubmitException(
 			exception: ex,
 			toastErrorMessage: LOC("Unexpected Error! Check Notifications for details"),
 			notificationErrorTitle: LOC("Unexpected Error!"),

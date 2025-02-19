@@ -5,7 +5,7 @@ public class TfException : Exception
 	private string oldStackTrace;
 	public override string StackTrace { get { return this.oldStackTrace; } }
 
-	public TfException() : base() { }
+	public TfException() : base(message:string.Empty) { }
 
 	public TfException(string message) : base(message) { }
 

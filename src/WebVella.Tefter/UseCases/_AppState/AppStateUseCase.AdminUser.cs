@@ -78,7 +78,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",
@@ -103,7 +103,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",
@@ -124,7 +124,7 @@ internal partial class AppStateUseCase
 		}
 		catch (Exception ex)
 		{
-			ResultUtils.ProcessServiceResult(
+			ResultUtils.ProcessServiceException(
 					exception: ex,
 					toastErrorMessage: "Unexpected Error",
 					toastValidationMessage: "Invalid Data",
