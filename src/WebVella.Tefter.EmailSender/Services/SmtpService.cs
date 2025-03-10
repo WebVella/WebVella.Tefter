@@ -16,17 +16,17 @@ internal partial class SmtpService : ISmtpService
 	private readonly IEmailService _emailService;
 	public readonly ITfDatabaseService _dbService;
 	private readonly ISmtpConfigurationService _config;
-	private readonly ITfBlobManager _blobManager;
+	private readonly ITfService _tfService;
 
 	public SmtpService(
 		IEmailService emailService,
 		ITfDatabaseService dbService,
 		ISmtpConfigurationService config,
-		ITfBlobManager blobManager)
+		ITfService tfService)
 	{
 		_dbService = dbService;
 		_config = config;
-		_blobManager = blobManager;
+		_tfService = tfService;
 		_emailService = emailService;
 	}
 
@@ -120,7 +120,7 @@ internal partial class SmtpService : ISmtpService
 			{
 				foreach (var att in emailMessage.Attachments)
 				{
-					var bytes = _blobManager.GetBlobByteArray(att.BlobId);
+					var bytes = _tfService.GetBlobByteArray(att.BlobId);
 
 					var extension = Path.GetExtension(att.Filename).ToLowerInvariant();
 					new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);

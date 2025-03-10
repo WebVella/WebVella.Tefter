@@ -6,20 +6,14 @@ public partial interface ITalkService
 
 internal partial class TalkService : ITalkService
 {
-	public readonly ITfDataProviderManager _dataProviderManager;
-	public readonly ITfDataManager _dataManager;
 	public readonly ITfDatabaseService _dbService;
-	public readonly IIdentityManager _identityManager;
+	public readonly ITfService _tfService;
 
 	public TalkService(
 		ITfDatabaseService dbService,
-		IIdentityManager identityManager,
-		ITfDataManager dataManager,
-		ITfDataProviderManager dataProviderManager)
+		ITfService tfService)
 	{
 		_dbService = dbService;
-		_identityManager = identityManager;
-		_dataManager = dataManager;
-		_dataProviderManager = dataProviderManager;	
+		_tfService = tfService;
 	}
 }

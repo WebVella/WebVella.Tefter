@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 
 public class ExcelFileTemplateResult : ITfTemplateResult
 {

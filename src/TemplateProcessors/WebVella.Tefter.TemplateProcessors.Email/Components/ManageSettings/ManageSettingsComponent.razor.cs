@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
@@ -7,9 +8,6 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
 {
-	[Inject] public ITfTemplateService TemplateService { get; set; }
-	[Inject] public ITfBlobManager BlobManager { get; set; }
-
 	public Guid Id { get; init; } = new Guid("0a15ce68-12af-4fae-a464-10bf5c0a1c9b");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template Settings Manage";
@@ -52,7 +50,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			_templatesAll = contentProcessor.GetTemplateSelectionList(Context.Template.Id, TemplateService);
+			_templatesAll = contentProcessor.GetTemplateSelectionList(Context.Template.Id, TfService);
 			_recalcAttachmentData();
 			_loading = false;
 			await InvokeAsync(StateHasChanged);

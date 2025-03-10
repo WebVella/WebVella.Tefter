@@ -16,7 +16,7 @@ global using System.Runtime.ExceptionServices;
 
 
 
-global using WebVella.Tefter.Identity;
+global using WebVella.Tefter.Services;
 global using WebVella.Tefter.Web.Store;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Models;

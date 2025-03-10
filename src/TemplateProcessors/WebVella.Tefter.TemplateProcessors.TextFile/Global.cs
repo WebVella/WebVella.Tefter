@@ -11,7 +11,7 @@ global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using Nito.AsyncEx;
 
-global using WebVella.Tefter.Identity;
+global using WebVella.Tefter.Authorization;
 global using WebVella.Tefter.Web.Store;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Models;
@@ -20,7 +20,7 @@ global using WebVella.Tefter.Web.Models;
 global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Migrations;
 global using WebVella.Tefter.Utility;
-global using WebVella.Tefter.Errors;
+global using WebVella.Tefter.Exceptions;
 global using WebVella.Tefter.Services;
 
 

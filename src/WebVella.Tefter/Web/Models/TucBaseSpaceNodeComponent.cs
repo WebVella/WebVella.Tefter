@@ -1,5 +1,4 @@
-﻿
-namespace WebVella.Tefter.Web.Models;
+﻿namespace WebVella.Tefter.Web.Models;
 
 public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeComponent
 {

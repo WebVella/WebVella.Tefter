@@ -123,12 +123,11 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 		var options = new List<TucSelectOption>();
 		if (newAppState.SpaceView.SpaceDataId is not null)
 		{
-			var spaceManager = serviceProvider.GetRequiredService<ITfSpaceManager>();
-			var dataProviderManager = serviceProvider.GetRequiredService<ITfDataProviderManager>();
-			var spaceData = spaceManager.GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
+			var tfService = serviceProvider.GetRequiredService<ITfService>();
+			var spaceData = tfService.GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
 			if ( spaceData is not null)
 			{
-				var dataProvider = dataProviderManager.GetProvider(spaceData.DataProviderId);
+				var dataProvider = tfService.GetDataProvider(spaceData.DataProviderId);
 				if (dataProvider is not null)
 				{
 					foreach (var key in dataProvider.SharedKeys)

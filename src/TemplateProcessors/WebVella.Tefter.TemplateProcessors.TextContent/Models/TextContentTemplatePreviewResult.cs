@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.TextContent.Models;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.TemplateProcessors.TextContent.Models;
 
 public class TextContentTemplatePreviewResult : ITfTemplatePreviewResult
 {

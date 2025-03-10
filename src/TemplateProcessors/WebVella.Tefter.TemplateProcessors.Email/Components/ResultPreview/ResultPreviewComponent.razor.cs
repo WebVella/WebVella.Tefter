@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
@@ -6,8 +7,6 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 public partial class ResultPreviewComponent : TfFormBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
-	[Inject] private ITfTemplateService TemplateService { get; set; }
-
 	public Guid Id { get; init; } = new Guid("57ef9ad4-45ff-4674-8ad6-9e1420fefbb1");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template Result Preview";
@@ -39,7 +38,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 		{
 			if (Context.Template is not null && Context.SpaceData is not null)
 			{
-				ITfTemplatePreviewResult result = TemplateService.GenerateTemplatePreviewResult(
+				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
 					templateId: Context.Template.Id,
 					spaceDataId: Context.SpaceData.Id,
 					tfRecordIds: Context.SelectedRowIds

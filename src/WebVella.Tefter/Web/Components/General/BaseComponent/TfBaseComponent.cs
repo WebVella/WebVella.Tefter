@@ -11,9 +11,8 @@ public class TfBaseComponent : FluxorComponent
 	[Inject] protected IDialogService DialogService { get; set; }
 	[Inject] protected IMessageService MessageService { get; set; }
 	[Inject] protected ITfConfigurationService ConfigurationService { get; set; }
-	[Inject] protected IIdentityManager IdentityManager { get; set; }
-	[Inject] protected ITfDataProviderManager DataProviderManager { get; set; }
-	[Inject] protected ITfMetaProvider MetaProvider { get; set; }
+	[Inject] protected ITfService TfService { get; set; }
+	[Inject] protected ITfMetaService MetaService { get; set; }
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	[Parameter] public Guid ComponentId { get; set; } = Guid.NewGuid();
 

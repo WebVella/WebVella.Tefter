@@ -62,7 +62,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var spaceData = _spaceManager.GetSpaceData(spaceDataId);
+			var spaceData = _tfService.GetSpaceData(spaceDataId);
 			if (spaceData is null)
 				return null;
 
@@ -87,7 +87,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var spaceDataList = _spaceManager.GetSpaceDataList(spaceId);
+			var spaceDataList = _tfService.GetSpaceDataList(spaceId);
 			if (spaceDataList is null)
 				return new();
 
@@ -112,7 +112,7 @@ internal partial class AppStateUseCase
 	internal virtual void DeleteSpaceData(
 		Guid dataId)
 	{
-		_spaceManager.DeleteSpaceData(dataId);
+		_tfService.DeleteSpaceData(dataId);
 	}
 
 
@@ -136,14 +136,14 @@ internal partial class AppStateUseCase
 			valEx.AddValidationError(nameof(form.DataProviderId), "dataprovider is required");
 
 		//Space
-		space = _spaceManager.GetSpace(form.SpaceId);
+		space = _tfService.GetSpace(form.SpaceId);
 		if (space is null)
 			valEx.AddValidationError(nameof(form.SpaceId), "space is not found");
 
 		//DataProvider
 		if (form.DataProviderId != Guid.Empty)
 		{
-			dataprovider = _dataProviderManager.GetProvider(form.DataProviderId);
+			dataprovider = _tfService.GetDataProvider(form.DataProviderId);
 			if (dataprovider is null)
 				valEx.AddValidationError(nameof(form.DataProviderId), "data provider is not found");
 		}
@@ -163,7 +163,7 @@ internal partial class AppStateUseCase
 			Position = 1 //position is overrided in the creation
 		};
 
-		var spaceData = _spaceManager.CreateSpaceData(spaceDataObj);
+		var spaceData = _tfService.CreateSpaceData(spaceDataObj);
 
 		return new TucSpaceData(spaceData);
 	}
@@ -193,20 +193,20 @@ internal partial class AppStateUseCase
 			valEx.AddValidationError(nameof(form.DataProviderId), "required");
 
 		//Space
-		space = _spaceManager.GetSpace(form.SpaceId);
+		space = _tfService.GetSpace(form.SpaceId);
 		if (space is null)
 			valEx.AddValidationError(nameof(form.SpaceId), "space is not found");
 
 		//DataProvider
 		if (form.DataProviderId != Guid.Empty)
 		{
-			dataprovider = _dataProviderManager.GetProvider(form.DataProviderId);
+			dataprovider = _tfService.GetDataProvider(form.DataProviderId);
 			if (dataprovider is null)
 				valEx.AddValidationError(nameof(form.DataProviderId), "data provider is not found");
 		}
 
 		//SpaceData
-		spaceData = _spaceManager.GetSpaceData(form.Id);
+		spaceData = _tfService.GetSpaceData(form.Id);
 		if (spaceData is null)
 			valEx.AddValidationError(nameof(form.Id), "dataset is not found");
 
@@ -217,7 +217,7 @@ internal partial class AppStateUseCase
 		spaceData.Name = form.Name;
 		spaceData.DataProviderId = form.DataProviderId;
 
-		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData);
+		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData);
 
 		//Should commit transaction
 		return new TucSpaceData(updatedSpaceData);
@@ -236,7 +236,7 @@ internal partial class AppStateUseCase
 
 		spaceData.Columns = columns;
 
-		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToModel());
 
 		return new TucSpaceData(updatedSpaceData);
 
@@ -255,7 +255,7 @@ internal partial class AppStateUseCase
 
 		spaceData.Filters = filters;
 
-		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToModel());
 
 		return new TucSpaceData(updatedSpaceData);
 
@@ -274,7 +274,7 @@ internal partial class AppStateUseCase
 
 		spaceData.SortOrders = sorts;
 
-		var updatedSpaceData = _spaceManager.UpdateSpaceData(spaceData.ToModel());
+		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToModel());
 
 		return new TucSpaceData(updatedSpaceData);
 
@@ -309,7 +309,7 @@ internal partial class AppStateUseCase
 			if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
 			if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
 
-			return _dataManager.QuerySpaceData(
+			return _tfService.QuerySpaceData(
 				spaceDataId: spaceDataId,
 				presetFilters: presetFiltersSM,
 				presetSorts: presetSortsSM,
@@ -362,7 +362,7 @@ internal partial class AppStateUseCase
 			if (userFilters is not null) userFiltersSM = userFilters.Select(x => TucFilterBase.ToModel(x)).ToList();
 			if (userSorts is not null) userSortsSM = userSorts.Select(x => x.ToModel()).ToList();
 
-			var dt = _dataManager.QuerySpaceData(
+			var dt = _tfService.QuerySpaceData(
 				spaceDataId: spaceDataId,
 				presetFilters: presetFiltersSM,
 				presetSorts: presetSortsSM,
@@ -399,7 +399,7 @@ internal partial class AppStateUseCase
 	internal virtual TfDataTable SaveDataDataTable(
 		TfDataTable dt)
 	{
-		return _dataManager.SaveDataTable(dt);
+		return _tfService.SaveDataTable(dt);
 	}
 
 	internal virtual void DeleteSpaceDataRows(
@@ -415,13 +415,13 @@ internal partial class AppStateUseCase
 			if (spaceData is null)
 				throw new TfException("Space Data is not found");
 
-			var dataProvider = _dataProviderManager.GetProvider(spaceData.DataProviderId);
+			var dataProvider = _tfService.GetDataProvider(spaceData.DataProviderId);
 			if (dataProvider is null)
 				throw new TfException("GetProvider failed");
 
 			foreach (var tfId in tfIdList)
 			{
-				_dataManager.DeleteDataProviderRowByTfId(dataProvider, tfId);
+				_tfService.DeleteDataProviderRowByTfId(dataProvider, tfId);
 			}
 		}
 		catch (Exception ex)
@@ -442,7 +442,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			return _dataProviderManager.GetProviders()
+			return _tfService.GetDataProviders()
 				.Select(x => new TucDataProvider(x))
 				.ToList();
 		}

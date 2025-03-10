@@ -118,9 +118,9 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 		{
 			if (componentOptions.SpaceDataId != Guid.Empty)
 			{
-				var dataManager = serviceProvider.GetService<ITfDataManager>();
+				var tfService = serviceProvider.GetService<ITfService>();
 				
-				var optionsDT = dataManager.QuerySpaceData(
+				var optionsDT = tfService.QuerySpaceData(
 					spaceDataId: componentOptions.SpaceDataId,
 					userFilters: null,
 					userSorts: null,

@@ -109,7 +109,7 @@ public partial class TfUserNavigation
 
 	private async Task _logout()
 	{
-		await IdentityManager.LogoutAsync(JSRuntime);
+		await TfService.LogoutAsync(JSRuntime);
 		Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 	}

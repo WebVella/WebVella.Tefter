@@ -12,48 +12,47 @@ public partial class TfRepositoryServiceTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfBlobManager blobManager = ServiceProvider.GetRequiredService<ITfBlobManager>();
-			ITfRepositoryService repoService = ServiceProvider.GetRequiredService<ITfRepositoryService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var filesResult = repoService.GetFiles();
+				var filesResult = tfService.GetRepositoryFiles();
 
 				var tmpFilePath = CreateTmpFile("This is a test content1.");
-				var createResult = repoService.CreateFile("test.bin", tmpFilePath);
+				var createResult = tfService.CreateRepositoryFile("test.bin", tmpFilePath);
 
-				var fileResult = repoService.GetFile("test.bin");
+				var fileResult = tfService.GetRepositoryFile("test.bin");
 				fileResult.Filename.Should().Be("test.bin");
 
-				filesResult = repoService.GetFiles();
+				filesResult = tfService.GetRepositoryFiles();
 				filesResult.Count.Should().Be(1);
 				filesResult[0].Filename.Should().Be("test.bin");
 
 				tmpFilePath = CreateTmpFile("This is a test content2.");
-				createResult = repoService.CreateFile("rumen.bin", tmpFilePath);
+				createResult = tfService.CreateRepositoryFile("rumen.bin", tmpFilePath);
 
-				filesResult = repoService.GetFiles(filenameStartsWith:"r");
+				filesResult = tfService.GetRepositoryFiles(filenameStartsWith:"r");
 				filesResult.Count.Should().Be(1);
 				filesResult[0].Filename.Should().Be("rumen.bin");
 
-				filesResult = repoService.GetFiles(filenameStartsWith: "t");
+				filesResult = tfService.GetRepositoryFiles(filenameStartsWith: "t");
 				filesResult.Count.Should().Be(1);
 				filesResult[0].Filename.Should().Be("test.bin");
 
-				filesResult = repoService.GetFiles(filenameContains: "e");
+				filesResult = tfService.GetRepositoryFiles(filenameContains: "e");
 				filesResult.Count.Should().Be(2);
 
 				tmpFilePath = CreateTmpFile("This is a test content3.");
 				
-				repoService.UpdateFile("rumen.bin", tmpFilePath);
+				tfService.UpdateRepositoryFile("rumen.bin", tmpFilePath);
 				
-				repoService.DeleteFile("rumen.bin");
+				tfService.DeleteRepositoryFile("rumen.bin");
 				
-				fileResult = repoService.GetFile("rumen.bin");
+				fileResult = tfService.GetRepositoryFile("rumen.bin");
 				fileResult.Should().BeNull();
 
 				//cleanup by deleting blob storage folder
-				Directory.Delete(blobManager.BlobStoragePath, true);
+				Directory.Delete(tfService.BlobStoragePath, true);
 			}
 		}
 	}

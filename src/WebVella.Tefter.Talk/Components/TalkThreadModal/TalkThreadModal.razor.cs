@@ -30,7 +30,7 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 			|| Content.DataProviderId == Guid.Empty
 			|| Content.SelectedRowIds is null || Content.SelectedRowIds.Count == 0) return;
 
-			_dataProvider = DataProviderManager.GetProvider(Content.DataProviderId);
+			_dataProvider = TfService.GetDataProvider(Content.DataProviderId);
 
 			var allChannels = TalkService.GetChannels();
 

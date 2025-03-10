@@ -6,9 +6,9 @@ public class Asset
 	public Guid FolderId { get; set; }
 	public AssetType Type { get; set; }
 	public AssetContentBase Content { get; set; }
-	public User CreatedBy { get; set; }
+	public TfUser CreatedBy { get; set; }
 	public DateTime CreatedOn { get; set; }
-	public User ModifiedBy { get; set; }
+	public TfUser ModifiedBy { get; set; }
 	public DateTime ModifiedOn { get; set; }
 	public Dictionary<Guid, string> RelatedSK { get; set; }
 }

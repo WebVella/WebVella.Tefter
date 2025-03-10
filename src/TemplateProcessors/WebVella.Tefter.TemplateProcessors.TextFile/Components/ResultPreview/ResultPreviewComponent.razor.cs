@@ -1,11 +1,11 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
-	[Inject] private ITfTemplateService TemplateService { get; set; }
-
 	public Guid Id { get; init; } = new Guid("c940dd21-6151-4c4c-ae5b-e6d21de8b80c");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text File Template Result Preview";
@@ -35,7 +35,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 		{
 			if (Context.Template is not null && Context.SpaceData is not null)
 			{
-				ITfTemplatePreviewResult result = TemplateService.GenerateTemplatePreviewResult(
+				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
 					templateId: Context.Template.Id,
 					spaceDataId: Context.SpaceData.Id,
 					tfRecordIds: Context.SelectedRowIds

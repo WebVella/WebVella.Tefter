@@ -3,7 +3,7 @@
 public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogContentComponent<TucSpaceNode>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected ITfMetaProvider TfMetaProvider { get; set; }
+	[Inject] protected ITfMetaService TfMetaService { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TucSpaceNode Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
@@ -28,7 +28,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create page") : LOC("Manage page");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
-		_pageComponents = TfMetaProvider.GetSpaceNodesComponentsMeta();
+		_pageComponents = TfMetaService.GetSpaceNodesComponentsMeta();
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
 		{

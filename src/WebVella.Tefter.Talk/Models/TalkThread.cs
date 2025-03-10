@@ -9,7 +9,7 @@ public class TalkThread
 	public TalkThreadType Type { get; set; }
 	public string Content { get; set; }
 	public bool VisibleInChannel { get; set; }	
-	public  User User { get; set; }
+	public  TfUser User { get; set; }
 	public DateTime CreatedOn { get; set; }
 	public DateTime? LastUpdatedOn { get; set; } = null;
 	public DateTime? DeletedOn { get; set; } = null;

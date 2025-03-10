@@ -36,24 +36,17 @@ public partial interface IEmailService
 internal partial class EmailService : IEmailService
 {
 	private readonly ITfDatabaseService _dbService;
-	private readonly ITfBlobManager _blobManager;
-	private readonly IIdentityManager _identityManager;
+	private readonly ITfService _tfService;
 	private readonly ISmtpConfigurationService _config;
-	private readonly ITfRepositoryService _repositoryService;
 
 	public EmailService(
 		ITfDatabaseService dbService,
-		IIdentityManager identityManager,
-		ITfBlobManager blobManager,
-		ITfDataManager dataManager,
-		ITfRepositoryService repositoryService,
+		ITfService tfService,
 		ISmtpConfigurationService config)
 	{
 		_dbService = dbService;
-		_identityManager = identityManager;
-		_blobManager = blobManager;
+		_tfService = tfService;
 		_config = config;
-		_repositoryService = repositoryService;
 	}
 
 	public EmailMessage GetEmailMessageById(
@@ -149,7 +142,7 @@ ORDER BY created_on DESC {pagingSql}";
 
 		new EmailMessageValidator(
 				_dbService,
-				_blobManager,
+				_tfService,
 				_config
 		)
 		.ValidateCreate(emailMessage)
@@ -162,7 +155,7 @@ ORDER BY created_on DESC {pagingSql}";
 		{
 			foreach (var att in emailMessage.Attachments)
 			{
-				var blobId = _blobManager.CreateBlob(att.Buffer);
+				var blobId = _tfService.CreateBlob(att.Buffer);
 
 				EmailAttachment attachment = new EmailAttachment
 				{
@@ -320,13 +313,13 @@ VALUES
 		foreach (DataRow dr in dt.Rows)
 		{
 
-			User user = null;
+			TfUser user = null;
 
 			Guid? userId = dr.Field<Guid?>("user_id");
 
 			if (userId is not null)
 			{
-				user = _identityManager.GetUser(userId.Value);
+				user = _tfService.GetUser(userId.Value);
 			}
 
 			result.Add(new EmailMessage
@@ -390,16 +383,16 @@ VALUES
 	internal class EmailMessageValidator : AbstractValidator<CreateEmailMessageModel>
 	{
 		public readonly ITfDatabaseService _dbService;
-		public readonly ITfBlobManager _blobManager;
+		public readonly ITfService _tfService;
 		public readonly ISmtpConfigurationService _config;
 
 		public EmailMessageValidator(
 			ITfDatabaseService dbService,
-			ITfBlobManager blobManager,
+			ITfService tfService,
 			ISmtpConfigurationService config)
 		{
 			_dbService = dbService;
-			_blobManager = blobManager;
+			_tfService = tfService;
 			_config = config;
 
 			RuleSet("create", () =>
@@ -575,11 +568,11 @@ VALUES
 
 						string filename = src.ToLowerInvariant().Replace("/fs/repository/", "");
 
-						var file = _repositoryService.GetFile(filename);
+						var file = _tfService.GetRepositoryFile(filename);
 						if (file == null)
 							continue;
 
-						var bytes = _repositoryService.GetFileContentAsByteArray(filename);
+						var bytes = _tfService.GetRepositoryFileContentAsByteArray(filename);
 
 						var extension = Path.GetExtension(src).ToLowerInvariant();
 						new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);

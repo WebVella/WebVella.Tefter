@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using WebVella.Tefter.Exceptions;
+﻿using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests.DataProviders;
@@ -13,28 +12,27 @@ public partial class TfDataProvidersTests : BaseTest
 	//{
 	//	using (await locker.LockAsync())
 	//	{
-	//		ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
-	//		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+	//		ITfService tfService = ServiceProvider.GetService<ITfService>();
 	//		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 	//		using (var scope = dbService.CreateTransactionScope())
 	//		{
-	//			var providerTypes = providerManager.GetProviderTypes();
+	//			var providerTypes = tfService.GetDataProviderTypes();
 	//			var providerType = providerTypes
 	//				.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-	//			var provider = providerManager.GetProvider(new Guid("b90d2c29-5600-401d-821e-b7d85c676ee5"));
+	//			var provider = tfService.GetDataProvider(new Guid("b90d2c29-5600-401d-821e-b7d85c676ee5"));
 
-	//			var dataTable = dataManager.QueryDataProvider(provider, search: null, page: null, pageSize: null);
+	//			var dataTable = tfService.QueryDataProvider(provider, search: null, page: null, pageSize: null);
 	//			var dt = dataTable.ToDataTable();
 
 	//		}
 	//	}
 	//}
 
-	private TfDataProvider CreateProviderInternal(ITfDataProviderManager providerManager)
+	private TfDataProvider CreateProviderInternal(ITfService tfService)
 	{
-		var providerTypes = providerManager.GetProviderTypes();
+		var providerTypes = tfService.GetDataProviderTypes();
 		var providerType = providerTypes
 			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -47,7 +45,7 @@ public partial class TfDataProvidersTests : BaseTest
 		};
 
 		TfDataProvider provider = null;
-		var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+		var task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
 		var exception = Record.ExceptionAsync(async () => await task).Result;
 		exception.Should().BeNull();
 		provider.Should().NotBeNull();
@@ -60,12 +58,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				CreateProviderInternal(providerManager);
+				CreateProviderInternal(tfService);
 			}
 		}
 	}
@@ -75,14 +73,14 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
-				var task = Task.Run(() => { providerManager.DeleteDataProvider(provider.Id); });
+				var task = Task.Run(() => { tfService.DeleteDataProvider(provider.Id); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 			}
@@ -94,12 +92,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = providerManager.GetProviderTypes();
+				var providerTypes = tfService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -112,7 +110,7 @@ public partial class TfDataProvidersTests : BaseTest
 				};
 
 				TfDataProvider provider = null;
-				var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -127,12 +125,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = providerManager.GetProviderTypes();
+				var providerTypes = tfService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -145,7 +143,7 @@ public partial class TfDataProvidersTests : BaseTest
 				};
 
 				TfDataProvider provider = null;
-				var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -160,12 +158,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = providerManager.GetProviderTypes();
+				var providerTypes = tfService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -178,14 +176,14 @@ public partial class TfDataProvidersTests : BaseTest
 				};
 
 				TfDataProvider provider = null;
-				var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.Should().BeOfType<TfDataProvider>();
 
 				model.Id = Guid.NewGuid();
 
-				task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+				task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
@@ -199,12 +197,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -215,7 +213,7 @@ public partial class TfDataProvidersTests : BaseTest
 					SettingsJson = null
 				};
 
-				var task = Task.Run(() => { provider = providerManager.UpdateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.Name.Should().Be(model.Name);
@@ -228,12 +226,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = providerManager.GetProviderTypes();
+				var providerTypes = tfService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -245,7 +243,7 @@ public partial class TfDataProvidersTests : BaseTest
 				};
 
 				TfDataProvider provider = null;
-				var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.Should().BeOfType<TfDataProvider>();
@@ -257,7 +255,7 @@ public partial class TfDataProvidersTests : BaseTest
 					SettingsJson = null
 				};
 
-				task = Task.Run(() => { provider = providerManager.CreateDataProvider(model2); });
+				task = Task.Run(() => { provider = tfService.CreateDataProvider(model2); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.Should().BeOfType<TfDataProvider>();
@@ -265,7 +263,7 @@ public partial class TfDataProvidersTests : BaseTest
 
 				model.Name = model2.Name;
 
-				task = Task.Run(() => { provider = providerManager.UpdateDataProvider(model); });
+				task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
@@ -279,12 +277,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
@@ -294,7 +292,7 @@ public partial class TfDataProvidersTests : BaseTest
 					SettingsJson = null
 				};
 
-				var task = Task.Run(() => { provider = providerManager.UpdateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -309,12 +307,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
@@ -324,7 +322,7 @@ public partial class TfDataProvidersTests : BaseTest
 					SettingsJson = null
 				};
 
-				var task = Task.Run(() => { provider = providerManager.UpdateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -343,12 +341,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -369,7 +367,7 @@ public partial class TfDataProvidersTests : BaseTest
 				};
 
 				//name format invalid
-				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -379,7 +377,7 @@ public partial class TfDataProvidersTests : BaseTest
 
 				//empty name
 				column.DbName = string.Empty;
-				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -388,7 +386,7 @@ public partial class TfDataProvidersTests : BaseTest
 
 				//start with tf_
 				column.DbName = "tf_test";
-				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -397,7 +395,7 @@ public partial class TfDataProvidersTests : BaseTest
 
 				//too short
 				column.DbName = "a";
-				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -407,7 +405,7 @@ public partial class TfDataProvidersTests : BaseTest
 				//too long
 				column.DbName = "rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt" +
 					"rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt";
-				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -422,12 +420,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -448,7 +446,7 @@ public partial class TfDataProvidersTests : BaseTest
 				};
 
 				//empty id, but internally we set new id
-				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 			}
@@ -460,12 +458,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -486,7 +484,7 @@ public partial class TfDataProvidersTests : BaseTest
 				};
 
 				//empty id
-				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -501,12 +499,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -526,7 +524,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				//we allow this now
@@ -539,12 +537,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -564,7 +562,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				var task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
@@ -579,12 +577,12 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(providerManager);
+				var provider = CreateProviderInternal(tfService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -604,7 +602,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 
 				column = new TfDataProviderColumn
 				{
@@ -624,7 +622,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 
 				column = new TfDataProviderColumn
 				{
@@ -644,7 +642,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 
 				column = new TfDataProviderColumn
 				{
@@ -664,7 +662,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 
 				column = new TfDataProviderColumn
 				{
@@ -684,7 +682,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 
 				column = new TfDataProviderColumn
 				{
@@ -704,7 +702,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 
 				column = new TfDataProviderColumn
 				{
@@ -724,7 +722,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 
 				column = new TfDataProviderColumn
 				{
@@ -744,7 +742,7 @@ public partial class TfDataProvidersTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Equals
 				};
 
-				provider = providerManager.CreateDataProviderColumn(column);
+				provider = tfService.CreateDataProviderColumn(column);
 			}
 		}
 	}
@@ -846,12 +844,12 @@ public partial class TfDataProvidersTests : BaseTest
 		string sourceType,
 		string defaultValue)
 	{
-		ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+		ITfService tfService = ServiceProvider.GetService<ITfService>();
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 		using (var scope = dbService.CreateTransactionScope())
 		{
-			var provider = CreateProviderInternal(providerManager);
+			var provider = CreateProviderInternal(tfService);
 
 			TfDataProviderColumn column = new TfDataProviderColumn
 			{
@@ -871,7 +869,7 @@ public partial class TfDataProvidersTests : BaseTest
 				PreferredSearchType = TfDataProviderColumnSearchType.Contains
 			};
 
-			provider = providerManager.CreateDataProviderColumn(column);
+			provider = tfService.CreateDataProviderColumn(column);
 
 			var exColumn = provider.Columns.FirstOrDefault();
 
@@ -900,8 +898,8 @@ public partial class TfDataProvidersTests : BaseTest
 			column.IsUnique = !column.IsUnique;
 			column.PreferredSearchType = TfDataProviderColumnSearchType.Equals;
 
-			provider = providerManager.UpdateDataProviderColumn(column);
-			
+			provider = tfService.UpdateDataProviderColumn(column);
+
 			exColumn = provider.Columns.FirstOrDefault();
 			exColumn.AutoDefaultValue.Should().Be(column.AutoDefaultValue);
 			exColumn.DataProviderId.Should().Be(column.DataProviderId);
@@ -927,13 +925,13 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateSharedKeysStructure(providerManager);
+				var provider = CreateSharedKeysStructure(tfService);
 
 				TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -946,10 +944,10 @@ public partial class TfDataProvidersTests : BaseTest
 
 					};
 
-				var task = Task.Run(() => { provider = providerManager.CreateDataProviderSharedKey(sharedKey); });
+				var task = Task.Run(() => { provider = tfService.CreateDataProviderSharedKey(sharedKey); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				
+
 				provider.SharedKeys.Count().Should().Be(1);
 
 				var tables = dbManager.GetDatabaseBuilder().Build();
@@ -975,7 +973,7 @@ public partial class TfDataProvidersTests : BaseTest
 					Columns = new() { provider.Columns[1] }
 				};
 
-				task = Task.Run(() => { provider = providerManager.CreateDataProviderSharedKey(sharedKey2); });
+				task = Task.Run(() => { provider = tfService.CreateDataProviderSharedKey(sharedKey2); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
@@ -991,7 +989,7 @@ public partial class TfDataProvidersTests : BaseTest
 
 				sharedKey2Created.Columns.Add(provider.Columns[0]);
 
-				task = Task.Run(() => { provider = providerManager.UpdateDataProviderSharedKey(sharedKey2Created); });
+				task = Task.Run(() => { provider = tfService.UpdateDataProviderSharedKey(sharedKey2Created); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
@@ -1012,7 +1010,7 @@ public partial class TfDataProvidersTests : BaseTest
 				sharedKey2Update.Version.Should().Be(2);
 				sharedKey2Update.Columns.Count().Should().Be(2);
 
-				task = Task.Run(() => { provider = providerManager.DeleteDataProviderSharedKey(sharedKey2Created.Id); });
+				task = Task.Run(() => { provider = tfService.DeleteDataProviderSharedKey(sharedKey2Created.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.SharedKeys.Count().Should().Be(1);
@@ -1031,13 +1029,13 @@ public partial class TfDataProvidersTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateSharedKeysStructure(providerManager);
+				var provider = CreateSharedKeysStructure(tfService);
 
 				TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -1050,7 +1048,7 @@ public partial class TfDataProvidersTests : BaseTest
 
 					};
 
-				var task = Task.Run(() => { providerManager.CreateDataProviderSharedKey(sharedKey); });
+				var task = Task.Run(() => { tfService.CreateDataProviderSharedKey(sharedKey); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 			}
@@ -1058,9 +1056,9 @@ public partial class TfDataProvidersTests : BaseTest
 	}
 
 	private TfDataProvider CreateSharedKeysStructure(
-		ITfDataProviderManager providerManager)
+		ITfService tfService)
 	{
-		var provider = CreateProviderInternal(providerManager);
+		var provider = CreateProviderInternal(tfService);
 
 		TfDataProviderColumn column = new TfDataProviderColumn
 		{
@@ -1080,7 +1078,7 @@ public partial class TfDataProvidersTests : BaseTest
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
-		providerManager.CreateDataProviderColumn(column);
+		tfService.CreateDataProviderColumn(column);
 
 		TfDataProviderColumn column2 = new TfDataProviderColumn
 		{
@@ -1100,7 +1098,7 @@ public partial class TfDataProvidersTests : BaseTest
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
-		return providerManager.CreateDataProviderColumn(column2);
+		return tfService.CreateDataProviderColumn(column2);
 	}
 
 	#endregion

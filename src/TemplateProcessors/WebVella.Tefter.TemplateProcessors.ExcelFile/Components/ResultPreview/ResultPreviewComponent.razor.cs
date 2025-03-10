@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
@@ -6,7 +7,6 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 public partial class ResultPreviewComponent : TfBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
 {
-	[Inject] private ITfTemplateService TemplateService { get; set; }
 	public Guid Id { get; init; } = new Guid("e6923a63-885f-4201-bab5-701867f7b952");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Excel Template Result Preview";
@@ -33,7 +33,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 		{
 			if (Context.Template is not null && Context.SpaceData is not null)
 			{
-				ITfTemplatePreviewResult result = TemplateService.GenerateTemplatePreviewResult(
+				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
 					templateId: Context.Template.Id,
 					spaceDataId: Context.SpaceData.Id,
 					tfRecordIds: Context.SelectedRowIds

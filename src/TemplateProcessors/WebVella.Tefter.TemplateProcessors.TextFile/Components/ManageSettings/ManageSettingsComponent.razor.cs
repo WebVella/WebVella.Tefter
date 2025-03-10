@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
@@ -6,7 +7,6 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
 {
-	[Inject] public ITfBlobManager BlobManager { get; set; }
 	public Guid Id { get; init; } = new Guid("4afa2cc0-eb47-4dc1-b7bc-1dfb037c4e5a");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text File Template Manage Settings";
@@ -72,7 +72,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 
 		if (input is not null)
 		{
-			var blobId = BlobManager.CreateBlob(input.Item1, true);
+			var blobId = TfService.CreateBlob(input.Item1, true);
 			_form.TemplateFileBlobId = blobId;
 			_form.FileName = input.Item2;
 		}

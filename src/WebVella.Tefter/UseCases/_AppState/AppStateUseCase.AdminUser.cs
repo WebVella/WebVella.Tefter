@@ -55,9 +55,9 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var users = await _identityManager.GetUsersAsync();
+			var users = await _tfService.GetUsersAsync();
 			var orderedResults = users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName);
-			var records = new List<User>();
+			var records = new List<TfUser>();
 			if (!String.IsNullOrWhiteSpace(search))
 			{
 				var searchProcessed = search.Trim().ToLowerInvariant();
@@ -94,7 +94,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var user = await _identityManager.GetUserAsync(userId);
+			var user = await _tfService.GetUserAsync(userId);
 			
 			if (user is null) 
 				return null;
@@ -119,7 +119,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var roles = await _identityManager.GetRolesAsync();
+			var roles = await _tfService.GetRolesAsync();
 			return roles.Select(x => new TucRole(x)).ToList();
 		}
 		catch (Exception ex)
@@ -137,7 +137,7 @@ internal partial class AppStateUseCase
 	}
 	internal virtual async Task<TucUser> CreateUserWithFormAsync(TucUserAdminManageForm form)
 	{
-		UserBuilder userBuilder = _identityManager.CreateUserBuilder(null);
+		TfUserBuilder userBuilder = _tfService.CreateUserBuilder(null);
 		userBuilder
 			.WithEmail(form.Email)
 			.WithFirstName(form.FirstName)
@@ -152,17 +152,17 @@ internal partial class AppStateUseCase
 			.WithRoles(form.Roles.Select(x => x.ToModel()).ToArray());
 
 		var user = userBuilder.Build();
-		user = await _identityManager.SaveUserAsync(user);
+		user = await _tfService.SaveUserAsync(user);
 		return new TucUser(user);
 	}
 
 	internal virtual async Task<TucUser> UpdateUserWithFormAsync(TucUserAdminManageForm form)
 	{
-		var currentUser = await _identityManager.GetUserAsync(form.Id);
+		var currentUser = await _tfService.GetUserAsync(form.Id);
 		if (currentUser is null) 
 			throw new TfException("User does not exist");
 
-		UserBuilder userBuilder = _identityManager.CreateUserBuilder(currentUser);
+		TfUserBuilder userBuilder = _tfService.CreateUserBuilder(currentUser);
 		userBuilder
 			.WithEmail(form.Email)
 			.WithFirstName(form.FirstName)
@@ -177,7 +177,7 @@ internal partial class AppStateUseCase
 			userBuilder.WithPassword(form.Password);
 
 		var user = userBuilder.Build();
-		var result = await _identityManager.SaveUserAsync(user);
+		var result = await _tfService.SaveUserAsync(user);
 		return new TucUser(result);
 	}
 }

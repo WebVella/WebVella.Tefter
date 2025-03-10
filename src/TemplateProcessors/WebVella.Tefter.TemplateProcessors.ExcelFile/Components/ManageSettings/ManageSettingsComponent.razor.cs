@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
@@ -6,7 +7,6 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
 {
-	[Inject] public ITfBlobManager BlobManager { get; set; }
 	public Guid Id { get; init; } = new Guid("51157e04-9849-48ec-9bf3-de31308c4b0c");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Excel Template Manage Seettings";
@@ -73,7 +73,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 
 		if (input is not null)
 		{
-			var blobId = BlobManager.CreateBlob(input.Item1, true);
+			var blobId = TfService.CreateBlob(input.Item1, true);
 			_form.TemplateFileBlobId = blobId;
 			_form.FileName = input.Item2;
 		}

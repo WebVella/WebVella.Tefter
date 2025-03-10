@@ -3,7 +3,9 @@ using CsvHelper.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.Services;
 using WebVella.Tefter.Web.Utils;
 
 namespace WebVella.Tefter.DataProviders.Csv;
@@ -112,14 +114,14 @@ public class CsvDataProvider : ITfDataProviderType
 
 			if (settings.Filepath.ToLowerInvariant().StartsWith("tefter://"))
 			{
-				var repoService = provider.ServiceProvider.GetService<ITfRepositoryService>();
+				var tfService = provider.ServiceProvider.GetService<ITfService>();
 
-				var file = repoService.GetFileByUri(settings.Filepath);
+				var file = tfService.GetRepositoryFileByUri(settings.Filepath);
 
 				if (file is null)
 					throw new Exception($"File '{settings.Filepath}' is not found.");
 
-				using (var stream = repoService.GetFileContentAsFileStream(file.Filename))
+				using (var stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename))
 				{
 					return ReadCSVStream(stream, provider, config, settings, culture);
 				}
@@ -174,14 +176,14 @@ public class CsvDataProvider : ITfDataProviderType
 
 		if (settings.Filepath.ToLowerInvariant().StartsWith("tefter://"))
 		{
-			var repoService = provider.ServiceProvider.GetService<ITfRepositoryService>();
+			var tfService = provider.ServiceProvider.GetService<ITfService>();
 
-			var file = repoService.GetFileByUri(settings.Filepath);
+			var file = tfService.GetRepositoryFileByUri(settings.Filepath);
 
 			if (file is null)
 				throw new Exception($"File '{settings.Filepath}' is not found.");
 
-			stream = repoService.GetFileContentAsFileStream(file.Filename);
+			stream = tfService.GetRepositoryFileContentAsFileStream(file.Filename);
 		}
 		else
 		{

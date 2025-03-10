@@ -6,41 +6,39 @@ using WebVella.Tefter.TemplateProcessors.TextContent;
 
 public partial class TemplatesTests : BaseTest
 {
-	/*
-	[Fact]
-	public async Task Dev_Debug()
-	{
-		using (await locker.LockAsync())
-		{
-			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfTemplateService templatesService = ServiceProvider.GetRequiredService<ITfTemplateService>();
-			ITfSpaceManager spaceManager = ServiceProvider.GetRequiredService<ITfSpaceManager>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
-			ITfBlobManager blobManager = ServiceProvider.GetRequiredService<ITfBlobManager>();
-			blobManager.BlobStoragePath = @"\\192.168.0.190\Install\TefterBlobStorage";
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
-			{
-				//var templateId = new Guid("b4c24392-3276-4c69-905f-4d177906e62b"); //excel
-				var templateId = new Guid("e59a67f9-243f-4180-b9c3-2eaea4134e9a"); //email
-				var spaceDataId = new Guid("ff4b8789-34d4-43a2-a4da-f9bbac4950ba");
-				//var spaceData = spaceManager.GetSpaceData(spaceDataId).Value;
-				//var template = templatesService.GetTemplate(templateId).Value;
+	//[Fact]
+	//public async Task Dev_Debug()
+	//{
+	//	using (await locker.LockAsync())
+	//	{
+	//		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+	//		ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-				var dataTable = dataManager.QuerySpaceData(spaceDataId, returnOnlyTfIds: true).Value;
-				List<Guid> ids = new List<Guid>();
-				foreach (TfDataRow row in dataTable.Rows)
-					ids.Add((Guid)row["tf_id"]);
+	//		tfService.BlobStoragePath = @"\\192.168.0.190\Install\TefterBlobStorage";
 
-				var preview = templatesService.GenerateTemplatePreviewResult(templateId, spaceDataId, ids);
+	//		using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+	//		{
+	//			//var templateId = new Guid("b4c24392-3276-4c69-905f-4d177906e62b"); //excel
+	//			var templateId = new Guid("e59a67f9-243f-4180-b9c3-2eaea4134e9a"); //email
+	//			var spaceDataId = new Guid("ff4b8789-34d4-43a2-a4da-f9bbac4950ba");
+	//			//var spaceData = spaceManager.GetSpaceData(spaceDataId).Value;
+	//			//var template = tfService.GetTemplate(templateId).Value;
 
-				templatesService.ValidatePreview(templateId,preview);
+	//			var dataTable = tfService.QuerySpaceData(spaceDataId, returnOnlyTfIds: true);
+	//			List<Guid> ids = new List<Guid>();
+	//			foreach (TfDataRow row in dataTable.Rows)
+	//				ids.Add((Guid)row["tf_id"]);
 
-				var result= templatesService.ProcessTemplate(templateId, spaceDataId,ids, preview);
-			}
-		}
-	}
-	*/
+	//			var preview = tfService.GenerateTemplatePreviewResult(templateId, spaceDataId, ids);
+
+	//			tfService.ValidateTemplatePreview(templateId, preview);
+
+	//			var result = tfService.ProcessTemplate(templateId, spaceDataId, ids, preview);
+	//		}
+	//	}
+	//}
+
 
 	[Fact]
 	public async Task Templates_CRUD()
@@ -48,14 +46,11 @@ public partial class TemplatesTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfTemplateService templatesService = ServiceProvider.GetRequiredService<ITfTemplateService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
-
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var user = identityManager.GetUser("rumen@webvella.com");
+				var user = tfService.GetUser("rumen@webvella.com");
 
 				TfManageTemplateModel createTemplateModel = new TfManageTemplateModel
 				{
@@ -69,9 +64,9 @@ public partial class TemplatesTests : BaseTest
 					UserId = user.Id,
 				};
 
-				var createResult = templatesService.CreateTemplate(createTemplateModel);
+				var createResult = tfService.CreateTemplate(createTemplateModel);
 				
-				var allTemplateResult = templatesService.GetTemplates();
+				var allTemplateResult = tfService.GetTemplates();
 				allTemplateResult.Count.Should().Be(1);
 				allTemplateResult[0].Name.Should().Be(createTemplateModel.Name);
 				allTemplateResult[0].Description.Should().Be(createTemplateModel.Description);
@@ -91,17 +86,17 @@ public partial class TemplatesTests : BaseTest
 					UserId = user.Id,
 				};
 				
-				var updateResult = templatesService.UpdateTemplate(updateTemplateModel);
+				var updateResult = tfService.UpdateTemplate(updateTemplateModel);
 
-				allTemplateResult = templatesService.GetTemplates();
+				allTemplateResult = tfService.GetTemplates();
 				allTemplateResult.Count.Should().Be(1);
 				allTemplateResult[0].Name.Should().Be(updateTemplateModel.Name);
 				allTemplateResult[0].Description.Should().Be(updateTemplateModel.Description);
 				allTemplateResult[0].FluentIconName.Should().Be(updateTemplateModel.FluentIconName);
 
-				templatesService.DeleteTemplate(updateTemplateModel.Id);
+				tfService.DeleteTemplate(updateTemplateModel.Id);
 				
-				allTemplateResult = templatesService.GetTemplates();
+				allTemplateResult = tfService.GetTemplates();
 				allTemplateResult.Count.Should().Be(0);
 			}
 		}

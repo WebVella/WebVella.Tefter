@@ -132,7 +132,7 @@ ORDER BY aa.created_on DESC;";
 		Guid? folderId = null,
 		string skTextId = null)
 	{
-		Guid skId = _dataManager.GetId(skTextId);
+		Guid skId = _tfService.GetId(skTextId);
 		return GetAssets(folderId, skId);
 	}
 
@@ -153,7 +153,7 @@ ORDER BY aa.created_on DESC;";
 		{
 			string filename = fileAsset.FileName;
 
-			Guid blobId = _blobManager.CreateBlob(fileAsset.LocalPath);
+			Guid blobId = _tfService.CreateBlob(fileAsset.LocalPath);
 
 			DateTime now = DateTime.Now;
 
@@ -213,14 +213,14 @@ ORDER BY aa.created_on DESC;";
 			{
 				var folder = GetFolder(fileAsset.FolderId);
 
-				var provider = _dataProviderManager.GetProvider(fileAsset.DataProviderId);
+				var provider = _tfService.GetDataProvider(fileAsset.DataProviderId);
 
 				if (provider is null)
 				{
 					throw new Exception($"Failed to find data provider with id='{fileAsset.DataProviderId}'");
 				}
 
-				var dataTable = _dataManager.QueryDataProvider(provider, fileAsset.RowIds);
+				var dataTable = _tfService.QueryDataProvider(provider, fileAsset.RowIds);
 
 				List<Guid> relatedSK = new List<Guid>();
 
@@ -321,14 +321,14 @@ ORDER BY aa.created_on DESC;";
 			{
 				var folder = GetFolder(asset.FolderId);
 
-				var provider = _dataProviderManager.GetProvider(asset.DataProviderId);
+				var provider = _tfService.GetDataProvider(asset.DataProviderId);
 
 				if (provider is null)
 				{
 					throw new Exception($"Failed to find data provider with id='{asset.DataProviderId}'");
 				}
 
-				var dataTable = _dataManager.QueryDataProvider(provider, asset.RowIds);
+				var dataTable = _tfService.QueryDataProvider(provider, asset.RowIds);
 
 				List<Guid> relatedSK = new List<Guid>();
 
@@ -382,7 +382,7 @@ ORDER BY aa.created_on DESC;";
 		{
 			string filename = asset.FileName;
 
-			Guid blobId = _blobManager.CreateBlob(asset.LocalPath);
+			Guid blobId = _tfService.CreateBlob(asset.LocalPath);
 
 			DateTime now = DateTime.Now;
 
@@ -555,7 +555,7 @@ ORDER BY aa.created_on DESC;";
 	{
 		var existingAsset = GetAsset(id);
 
-		var user = _identityManager.GetUser(userId);
+		var user = _tfService.GetUser(userId);
 
 		new AssetValidator(this)
 			.ValidateUpdateFileAsset(
@@ -626,7 +626,7 @@ ORDER BY aa.created_on DESC;";
 
 			if (!string.IsNullOrWhiteSpace(localPath))
 			{
-				_blobManager.UpdateBlob(fileAssetContent.BlobId, localPath);
+				_tfService.UpdateBlob(fileAssetContent.BlobId, localPath);
 			}
 
 			scope.Complete();
@@ -646,7 +646,7 @@ ORDER BY aa.created_on DESC;";
 	{
 		var existingAsset = GetAsset(id);
 
-		var user = _identityManager.GetUser(userId);
+		var user = _tfService.GetUser(userId);
 
 		new AssetValidator(this)
 			.ValidateUpdateLinkAsset(
@@ -760,7 +760,7 @@ ORDER BY aa.created_on DESC;";
 			if (existingAsset.Type == AssetType.File)
 			{
 				FileAssetContent content = (FileAssetContent)existingAsset.Content;
-				_blobManager.DeleteBlob(content.BlobId);
+				_tfService.DeleteBlob(content.BlobId);
 			}
 
 			scope.Complete();
@@ -778,9 +778,9 @@ ORDER BY aa.created_on DESC;";
 
 		foreach (DataRow dr in dt.Rows)
 		{
-			var createdBy = _identityManager.GetUser(dr.Field<Guid>("created_by"));
+			var createdBy = _tfService.GetUser(dr.Field<Guid>("created_by"));
 
-			var modifiedBy = _identityManager.GetUser(dr.Field<Guid>("modified_by"));
+			var modifiedBy = _tfService.GetUser(dr.Field<Guid>("modified_by"));
 
 			var type = (AssetType)dr.Field<short>("type");
 
@@ -996,7 +996,7 @@ ORDER BY aa.created_on DESC;";
 			Asset asset,
 			string label,
 			string localPath,
-			User user)
+			TfUser user)
 		{
 			if (asset == null)
 			{
@@ -1038,7 +1038,7 @@ ORDER BY aa.created_on DESC;";
 			Asset asset,
 			string label,
 			string url,
-			User user)
+			TfUser user)
 		{
 			if (asset == null)
 			{

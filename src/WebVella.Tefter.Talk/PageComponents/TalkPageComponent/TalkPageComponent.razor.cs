@@ -1,4 +1,4 @@
-﻿using WebVella.Tefter.Errors;
+﻿using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.Talk.PageComponents;
 [LocalizationResource("WebVella.Tefter.Talk.PageComponents.TalkPageComponent.TalkPageComponent", "WebVella.Tefter.Talk")]

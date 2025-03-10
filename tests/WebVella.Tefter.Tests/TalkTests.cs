@@ -13,13 +13,12 @@ public partial class TalkTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var user = identityManager.GetUser("rumen@webvella.com");
+				var user = tfService.GetUser("rumen@webvella.com");
 
 				TalkChannel channel = new TalkChannel
 				{
@@ -47,20 +46,18 @@ public partial class TalkTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
-
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
-				var dataTable = dataManager.QueryDataProvider(provider);
+				var dataTable = tfService.QueryDataProvider(provider);
 
 				List<Guid> rowIds = new List<Guid>();
 				for(int i = 0; i < 5 ; i++)
 					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
 
-				var user = identityManager.GetUser("rumen@webvella.com");
+				var user = tfService.GetUser("rumen@webvella.com");
 
 				TalkChannel channel = new TalkChannel
 				{
@@ -71,7 +68,7 @@ public partial class TalkTests : BaseTest
 				};
 				var channelCreated = talkService.CreateChannel(channel);
 
-				Guid skId = dataManager.GetId("shared_key_value", "1");
+				Guid skId = tfService.GetId("shared_key_value", "1");
 
 				CreateTalkThread thread = new CreateTalkThread
 				{

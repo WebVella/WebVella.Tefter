@@ -13,7 +13,7 @@ global using WebVella.Tefter.Web.Models;
 global using WebVella.Tefter.Models;
 global using Microsoft.FluentUI.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components;
-global using WebVella.Tefter.Errors;
+global using WebVella.Tefter.Exceptions;
 global using Moq;
 global using WebVella.Tefter.Web.Store;
 global using WebVella.Tefter.Web.PageComponents;

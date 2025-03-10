@@ -1,8 +1,9 @@
 ﻿using WebVella.Tefter.Exceptions;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;
 
-public partial class IdentityManagerTests : BaseTest
+public partial class tfServiceTests : BaseTest
 {
 	[Fact]
 	public async Task CRUD_UserAndRole()
@@ -10,19 +11,19 @@ public partial class IdentityManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var role = identityManager
+				var role = tfService
 					.CreateRoleBuilder()
 					.WithName("UnitTester")
 					.Build();
 
-				role = await identityManager.SaveRoleAsync(role);
+				role = await tfService.SaveRoleAsync(role);
 				role.Should().NotBeNull();
 
-				var user = identityManager
+				var user = tfService
 					.CreateUserBuilder()
 					.WithEmail("test@test.com")
 					.WithPassword("password")
@@ -33,13 +34,13 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles(role)
 					.Build();
 
-				user = await identityManager.SaveUserAsync(user);
+				user = await tfService.SaveUserAsync(user);
 				user.Should().NotBeNull();
 
-				user = await identityManager.GetUserAsync("test@test.com", "password");
+				user = await tfService.GetUserAsync("test@test.com", "password");
 				user.Should().NotBeNull();
 
-				user = identityManager
+				user = tfService
 					.CreateUserBuilder(user)
 					.WithEmail("test1@test.com")
 					.WithPassword("password1")
@@ -49,7 +50,7 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles(role)
 					.Build();
 
-				user = await identityManager.SaveUserAsync(user);
+				user = await tfService.SaveUserAsync(user);
 				user.Should().NotBeNull();
 				user.Id.Should().Be(user.Id);
 				user.Email.Should().Be(user.Email);
@@ -59,21 +60,21 @@ public partial class IdentityManagerTests : BaseTest
 				user.CreatedOn.Should().Be(user.CreatedOn);
 
 
-				var task = Task.Run(async () => { await identityManager.DeleteRoleAsync(role); });
+				var task = Task.Run(async () => { await tfService.DeleteRoleAsync(role); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
 
-				var role2 = identityManager
+				var role2 = tfService
 					.CreateRoleBuilder()
 					.WithName("UnitTester2")
 					.Build();
 
-				role2 = await identityManager.SaveRoleAsync(role2);
+				role2 = await tfService.SaveRoleAsync(role2);
 				role2.Should().NotBeNull();
 
-				await identityManager.DeleteRoleAsync(role2);
+				await tfService.DeleteRoleAsync(role2);
 			}
 		}
 	}
@@ -84,18 +85,18 @@ public partial class IdentityManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 
-				var task = Task.Run(() => { var user = identityManager.GetUser(null, null); });
+				var task = Task.Run(() => { var user = tfService.GetUser(null, null); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(2);
-				((TfValidationException)exception).Data.Contains(nameof(User.Email)).Should().BeTrue();
-				((TfValidationException)exception).Data.Contains(nameof(User.Password)).Should().BeTrue();
+				((TfValidationException)exception).Data.Contains(nameof(TfUser.Email)).Should().BeTrue();
+				((TfValidationException)exception).Data.Contains(nameof(TfUser.Password)).Should().BeTrue();
 			}
 		}
 	}
@@ -106,19 +107,19 @@ public partial class IdentityManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var role = identityManager
+				var role = tfService
 					.CreateRoleBuilder()
 					.WithName("UnitTester")
 					.Build();
 
-				role = await identityManager.SaveRoleAsync(role);
+				role = await tfService.SaveRoleAsync(role);
 				role.Should().NotBeNull();
 
-				var user = identityManager
+				var user = tfService
 					.CreateUserBuilder()
 					.WithEmail("test@test.com")
 					.WithPassword("password")
@@ -129,10 +130,10 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles(role)
 					.Build();
 
-				user = await identityManager.SaveUserAsync(user);
+				user = await tfService.SaveUserAsync(user);
 				user.Should().NotBeNull();
 
-				user = identityManager
+				user = tfService
 					.CreateUserBuilder(user)
 					.WithEmail("test1@test.com")
 					.WithPassword("password1")
@@ -142,7 +143,7 @@ public partial class IdentityManagerTests : BaseTest
 					.WithRoles()
 					.Build();
 
-				user = await identityManager.SaveUserAsync(user);
+				user = await tfService.SaveUserAsync(user);
 				user.Should().NotBeNull();
 			}
 		}

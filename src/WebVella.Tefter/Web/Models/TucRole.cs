@@ -7,15 +7,15 @@ public record TucRole
 	public bool IsSystem { get; init; }
 
 	public TucRole() { }
-	public TucRole(Role model)
+	public TucRole(TfRole model)
 	{
 		Id = model.Id;
 		Name = model.Name;
 		IsSystem = model.IsSystem;
 	}
-	public Role ToModel()
+	public TfRole ToModel()
 	{
-		return new Role
+		return new TfRole
 		{
 			Id = Id,
 			Name = Name,

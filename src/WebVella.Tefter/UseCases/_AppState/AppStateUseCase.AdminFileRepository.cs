@@ -38,7 +38,7 @@ internal partial class AppStateUseCase
 		var result = new List<TucRepositoryFile>();
 		try
 		{
-			var files = _repositoryManager.GetFiles(
+			var files = _tfService.GetRepositoryFiles(
 				filenameContains: search,
 				page: page,
 				pageSize: pageSize
@@ -63,7 +63,7 @@ internal partial class AppStateUseCase
 
 	internal virtual TucRepositoryFile CreateFile(TucFileForm form)
 	{
-		var file = _repositoryManager.CreateFile(
+		var file = _tfService.CreateRepositoryFile(
 			filename: Path.GetFileName(form.FileName),
 			localPath: form.LocalFilePath,
 			createdBy: form.CreatedBy);
@@ -73,12 +73,12 @@ internal partial class AppStateUseCase
 
 	internal virtual TucRepositoryFile UpdateFile(TucFileForm form)
 	{
-		_repositoryManager.UpdateFile(
+		_tfService.UpdateRepositoryFile(
 			filename: Path.GetFileName(form.FileName),
 			localPath: form.LocalFilePath,
 			updatedBy: form.CreatedBy);
 
-		var file = _repositoryManager.GetFile(form.FileName);
+		var file = _tfService.GetRepositoryFile(form.FileName);
 		return new TucRepositoryFile(file);
 	}
 
@@ -86,7 +86,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			_repositoryManager.DeleteFile(fileName);
+			_tfService.DeleteRepositoryFile(fileName);
 		}
 		catch (Exception ex)
 		{

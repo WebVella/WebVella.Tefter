@@ -1,4 +1,4 @@
-﻿using WebVella.Tefter.Errors;
+﻿using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.Assets.PageComponents;
 [LocalizationResource("WebVella.Tefter.Assets.PageComponents.AssetPageComponent.AssetPageComponent", "WebVella.Tefter.Assets")]

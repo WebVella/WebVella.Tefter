@@ -18,7 +18,7 @@ public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, I
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {
         var talkService = serviceProvider.GetRequiredService<ITalkService>();        
-        var sharedColumnsManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();
+        var tfService = serviceProvider.GetRequiredService<ITfService>();
 		try
 		{
 			var channels = talkService.GetChannels();
@@ -31,7 +31,7 @@ public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, I
 
 		try
 		{
-			var sharedColumns = sharedColumnsManager.GetSharedColumns();
+			var sharedColumns = tfService.GetSharedColumns();
 			newAuxDataState.Data[TalkConstants.TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumns.OrderBy(x => x.DbName).ToList();
 		}
 		catch

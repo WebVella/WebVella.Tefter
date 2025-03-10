@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.FluentUI.AspNetCore.Components;
-@using WebVella.Tefter.Identity
+@using WebVella.Tefter.Services
 @using WebVella.Tefter.Web.Layout;
 
 <Fluxor.Blazor.Web.StoreInitializer />
@@ -9,7 +9,7 @@
 	do not forget to added them also in the Program.cs
 *@
 <Router AppAssembly="typeof(WebVella.Tefter.Site.Components.App).Assembly"
-		AdditionalAssemblies = "new[] { typeof(IIdentityManager).Assembly }">
+		AdditionalAssemblies = "new[] { typeof(ITfService).Assembly }">
 	<Found Context="routeData">
 		<RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
 		<FocusOnNavigate RouteData="routeData" Selector="#top" />

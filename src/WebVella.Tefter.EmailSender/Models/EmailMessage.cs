@@ -22,7 +22,7 @@ public record EmailMessage
 	public List<Guid> RelatedRowIds { get; internal set; } = new();
 	public string XSearch { get; internal set; }
 
-	public User User { get; internal set; }
+	public TfUser User { get; internal set; }
 }
 
 public record CreateEmailMessageModel

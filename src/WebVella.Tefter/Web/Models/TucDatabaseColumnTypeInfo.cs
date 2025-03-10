@@ -8,7 +8,7 @@ public record TucDatabaseColumnTypeInfo
 	public TucDatabaseColumnTypeInfo() { }
 	public TucDatabaseColumnTypeInfo(TfDatabaseColumnType model)
 	{
-		var typeTf = (TfDataProviderManager.GetDatabaseColumnTypeInfosList()).Single(x=> x.Type == model);
+		var typeTf = (TfService.GetDatabaseColumnTypeInfosList()).Single(x=> x.Type == model);
 		TypeValue = typeTf.Type;
 		Name = typeTf.Name;
 		CanBeProviderDataType = typeTf.CanBeProviderDataType;

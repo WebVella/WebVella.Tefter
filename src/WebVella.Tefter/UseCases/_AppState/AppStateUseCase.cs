@@ -5,15 +5,8 @@ internal partial class AppStateUseCase
 	private readonly AuthenticationStateProvider _authenticationStateProvider;
 	private readonly IServiceProvider _serviceProvider;
 	private readonly IJSRuntime _jsRuntime;
-	private readonly IIdentityManager _identityManager;
-	private readonly ITfDataProviderManager _dataProviderManager;
-	private readonly ITfSharedColumnsManager _sharedColumnsManager;
-	private readonly ITfDataManager _dataManager;
-	private readonly ITfSpaceManager _spaceManager;
-	//private readonly ITfScreenRegionComponentManager _screenRegionComponentManager;
-	private readonly ITfMetaProvider _metaProvider;
-	private readonly ITfRepositoryService _repositoryManager;
-	private readonly ITfTemplateService _templateService;
+	private readonly ITfService _tfService;
+	private readonly ITfMetaService _metaService;
 	private readonly NavigationManager _navigationManager;
 	private readonly IToastService _toastService;
 	private readonly IMessageService _messageService;
@@ -25,14 +18,8 @@ internal partial class AppStateUseCase
 		_serviceProvider = serviceProvider;
 		_authenticationStateProvider = serviceProvider.GetService<AuthenticationStateProvider>();
 		_jsRuntime = serviceProvider.GetService<IJSRuntime>();
-		_identityManager = serviceProvider.GetService<IIdentityManager>();
-		_dataProviderManager = serviceProvider.GetService<ITfDataProviderManager>();
-		_sharedColumnsManager = serviceProvider.GetService<ITfSharedColumnsManager>();
-		_dataManager = serviceProvider.GetService<ITfDataManager>();
-		_spaceManager = serviceProvider.GetService<ITfSpaceManager>();
-		_metaProvider = serviceProvider.GetService<ITfMetaProvider>();
-		_repositoryManager = serviceProvider.GetService<ITfRepositoryService>();
-		_templateService = serviceProvider.GetService<ITfTemplateService>();
+		_tfService = serviceProvider.GetService<ITfService>();
+		_metaService = serviceProvider.GetService<ITfMetaService>();
 		_navigationManager = serviceProvider.GetService<NavigationManager>();
 		_toastService = serviceProvider.GetService<IToastService>();
 		_messageService = serviceProvider.GetService<IMessageService>();
@@ -70,7 +57,7 @@ internal partial class AppStateUseCase
 	}
 
 	internal virtual ReadOnlyCollection<TfRegionComponentMeta> GetDynamicComponentsMetaForContext(Type context, TfRegionComponentScope scope = null){ 
-		return _metaProvider.GetRegionComponentsMeta(
+		return _metaService.GetRegionComponentsMeta(
 			context: context,
 			scope: scope);
 	}

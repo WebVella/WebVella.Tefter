@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.DataProviders.MsSql;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.DataProviders.MsSql;
 
 public class MsSqlDataProvider : ITfDataProviderType
 {

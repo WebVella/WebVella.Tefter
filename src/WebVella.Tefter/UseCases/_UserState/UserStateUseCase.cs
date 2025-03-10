@@ -6,16 +6,14 @@ internal partial class UserStateUseCase
 {
 	private readonly AuthenticationStateProvider _authenticationStateProvider;
 	private readonly IJSRuntime _jsRuntime;
-	private readonly IIdentityManager _identityManager;
-	private readonly ITfSpaceManager _spaceManager;
+	private readonly ITfService _tfService;
 	private readonly NavigationManager _navigationManager;
 
 	public UserStateUseCase(IServiceProvider serviceProvider)
 	{
 		_authenticationStateProvider = serviceProvider.GetService<AuthenticationStateProvider>();
 		_jsRuntime = serviceProvider.GetService<IJSRuntime>();
-		_identityManager = serviceProvider.GetService<IIdentityManager>();
-		_spaceManager = serviceProvider.GetService<ITfSpaceManager>();
+		_tfService = serviceProvider.GetService<TfService>();
 		_navigationManager = serviceProvider.GetService<NavigationManager>();
 	}
 
@@ -50,9 +48,9 @@ internal partial class UserStateUseCase
 	}
 
 	//user
-	internal virtual async Task<User> GetUserWithChecks(Guid userId)
+	internal virtual async Task<TfUser> GetUserWithChecks(Guid userId)
 	{
-		var user = await _identityManager.GetUserAsync(userId);
+		var user = await _tfService.GetUserAsync(userId);
 		if (user is null) 
 			throw new Exception("User not found");
 
@@ -80,12 +78,12 @@ internal partial class UserStateUseCase
 
 	public virtual async Task<TucUser> SetUserCulture(Guid userId, string cultureCode)
 	{
-		User user = await GetUserWithChecks(userId);
+		TfUser user = await GetUserWithChecks(userId);
 
-		var userBld = _identityManager.CreateUserBuilder(user);
+		var userBld = _tfService.CreateUserBuilder(user);
 		userBld.WithCultureCode(cultureCode);
 
-		await _identityManager.SaveUserAsync(userBld.Build());
+		await _tfService.SaveUserAsync(userBld.Build());
 		
 		user = await GetUserWithChecks(userId);
 		return new TucUser(user);
@@ -144,12 +142,12 @@ internal partial class UserStateUseCase
 		DesignThemeModes themeMode, OfficeColor themeColor)
 	{
 		var user = await GetUserWithChecks(userId);
-		var userBld = _identityManager.CreateUserBuilder(user);
+		var userBld = _tfService.CreateUserBuilder(user);
 		userBld
 		.WithThemeMode(themeMode)
 		.WithThemeColor(themeColor);
 		
-		await _identityManager.SaveUserAsync(userBld.Build());
+		await _tfService.SaveUserAsync(userBld.Build());
 		
 		await RemoveUnprotectedLocalStorage(TfConstants.UIThemeLocalKey);
 		var themeSetting = new TucThemeSettings { ThemeMode = themeMode, ThemeColor = themeColor };
@@ -162,11 +160,11 @@ internal partial class UserStateUseCase
 		string url)
 	{
 		var user = await GetUserWithChecks(userId);
-		var userBld = _identityManager.CreateUserBuilder(user);
+		var userBld = _tfService.CreateUserBuilder(user);
 		userBld
 		.WithStartUpUrl(url);
 		
-		await _identityManager.SaveUserAsync(userBld.Build());
+		await _tfService.SaveUserAsync(userBld.Build());
 		user = await GetUserWithChecks(userId);
 		return new TucUser(user);
 	}
@@ -175,10 +173,10 @@ internal partial class UserStateUseCase
 		int? pageSize)
 	{
 		var user = await GetUserWithChecks(userId);
-		var userBld = _identityManager.CreateUserBuilder(user);
+		var userBld = _tfService.CreateUserBuilder(user);
 		userBld
 		.WithPageSize(pageSize);
-		await _identityManager.SaveUserAsync(userBld.Build());
+		await _tfService.SaveUserAsync(userBld.Build());
 		user = await GetUserWithChecks(userId);
 		return new TucUser(user);
 	}
@@ -201,9 +199,9 @@ internal partial class UserStateUseCase
 	//Sidebar
 	public virtual async Task<TucUser> SetSidebarState(Guid userId,bool sidebarExpanded)
 	{
-		User user = await GetUserWithChecks(userId);
-		var userBld = _identityManager.CreateUserBuilder(user).WithOpenSidebar(sidebarExpanded);
-		await _identityManager.SaveUserAsync(userBld.Build());
+		TfUser user = await GetUserWithChecks(userId);
+		var userBld = _tfService.CreateUserBuilder(user).WithOpenSidebar(sidebarExpanded);
+		await _tfService.SaveUserAsync(userBld.Build());
 		user = await GetUserWithChecks(userId);
 		return new TucUser(user);
 	}

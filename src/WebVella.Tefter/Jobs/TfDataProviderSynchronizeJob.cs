@@ -2,14 +2,14 @@
 
 internal class TfDataProviderSynchronizeJob : BackgroundService
 {
-	private readonly ITfDataProviderManager _providerManager;
+	private readonly ITfService _tfService;
 	private readonly ILogger<TfDataProviderSynchronizeJob> _logger;
 
 	public TfDataProviderSynchronizeJob(
-		ITfDataProviderManager providerManager,
+		ITfService tfService,
 		ILogger<TfDataProviderSynchronizeJob> logger)
 	{
-		_providerManager = providerManager;
+		_tfService = tfService;
 		_logger = logger;
 	}
 
@@ -33,17 +33,17 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			{
 				//update already started, but not finished task as Failed
 				{
-					var inProgresTasks = _providerManager.GetSynchronizationTasks(
+					var inProgresTasks = _tfService.GetSynchronizationTasks(
 										status: TfSynchronizationStatus.InProgress);
 
 					foreach (var taskInProgress in inProgresTasks)
 					{
-						_providerManager.UpdateSychronizationTask(
+						_tfService.UpdateSychronizationTask(
 							taskInProgress.Id,
 							TfSynchronizationStatus.Failed,
 							completedOn: DateTime.Now);
 
-						_providerManager.CreateSynchronizationResultInfo(
+						_tfService.CreateSynchronizationResultInfo(
 							syncTaskId: taskInProgress.Id,
 							tfRowIndex: null,
 							tfId: null,
@@ -52,7 +52,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 					}
 				}
 
-				var pendingTasks = _providerManager.GetSynchronizationTasks(
+				var pendingTasks = _tfService.GetSynchronizationTasks(
 									status: TfSynchronizationStatus.Pending);
 
 				if (pendingTasks.Count() == 0)
@@ -65,26 +65,26 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 
 				try
 				{
-					_providerManager.UpdateSychronizationTask(
+					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.InProgress,
 						startedOn: DateTime.Now);
 										
-					await _providerManager.BulkSynchronize(task);
+					await _tfService.BulkSynchronize(task);
 
-					_providerManager.UpdateSychronizationTask(
+					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.Completed,
 						completedOn: DateTime.Now);
 				}
 				catch (OperationCanceledException ex)
 				{
-					_providerManager.UpdateSychronizationTask(
+					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.Failed,
 						completedOn: DateTime.Now);
 
-					_providerManager.CreateSynchronizationResultInfo(
+					_tfService.CreateSynchronizationResultInfo(
 						syncTaskId: task.Id,
 						tfRowIndex: null,
 						tfId: null,
@@ -96,12 +96,12 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 				}
 				catch (Exception ex)
 				{
-					_providerManager.UpdateSychronizationTask(
+					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.Failed,
 						completedOn: DateTime.Now);
 
-					_providerManager.CreateSynchronizationResultInfo(
+					_tfService.CreateSynchronizationResultInfo(
 						syncTaskId: task.Id,
 						tfRowIndex: null,
 						tfId: null,
@@ -132,17 +132,17 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 	//this method is used to fill data in unit tests
 	internal async Task StartManualProcessTasks()
 	{
-		var inProgresTasks = _providerManager.GetSynchronizationTasks(
+		var inProgresTasks = _tfService.GetSynchronizationTasks(
 			status: TfSynchronizationStatus.InProgress);
 
 		foreach (var taskInProgress in inProgresTasks)
 		{
-			_providerManager.UpdateSychronizationTask(
+			_tfService.UpdateSychronizationTask(
 				taskInProgress.Id,
 				TfSynchronizationStatus.Failed,
 				completedOn: DateTime.Now);
 
-			_providerManager.CreateSynchronizationResultInfo(
+			_tfService.CreateSynchronizationResultInfo(
 				syncTaskId: taskInProgress.Id,
 				tfRowIndex: null,
 				tfId: null,
@@ -151,7 +151,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 		}
 
 
-		var pendingTasks = _providerManager.GetSynchronizationTasks(
+		var pendingTasks = _tfService.GetSynchronizationTasks(
 				status: TfSynchronizationStatus.Pending);
 
 		if (pendingTasks.Count() == 0)
@@ -161,26 +161,26 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 
 		try
 		{
-			_providerManager.UpdateSychronizationTask(
+			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.InProgress,
 				startedOn: DateTime.Now);
 
-			await _providerManager.BulkSynchronize(task);
+			await _tfService.BulkSynchronize(task);
 
-			_providerManager.UpdateSychronizationTask(
+			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.Completed,
 				completedOn: DateTime.Now);
 		}
 		catch (OperationCanceledException ex)
 		{
-			_providerManager.UpdateSychronizationTask(
+			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.Failed,
 				completedOn: DateTime.Now);
 
-			_providerManager.CreateSynchronizationResultInfo(
+			_tfService.CreateSynchronizationResultInfo(
 				syncTaskId: task.Id,
 				tfRowIndex: null,
 				tfId: null,
@@ -192,12 +192,12 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 		}
 		catch (Exception ex)
 		{
-			_providerManager.UpdateSychronizationTask(
+			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.Failed,
 				completedOn: DateTime.Now);
 
-			_providerManager.CreateSynchronizationResultInfo(
+			_tfService.CreateSynchronizationResultInfo(
 				syncTaskId: task.Id,
 				tfRowIndex: null,
 				tfId: null,

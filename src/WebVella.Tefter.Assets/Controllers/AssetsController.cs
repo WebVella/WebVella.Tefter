@@ -11,14 +11,14 @@ using System.Net;
 public class AssetsController : ControllerBase
 {
 	private readonly IAssetsService _assetsService;
-	private readonly ITfBlobManager _blobManager;
+	private readonly ITfService _tfService;
 
 	public AssetsController(
 		IAssetsService assetsService,
-		ITfBlobManager blobManager)
+		ITfService tfService)
 	{
 		_assetsService = assetsService;
-		_blobManager = blobManager;
+		_tfService = tfService;
 	}
 
 
@@ -67,7 +67,7 @@ public class AssetsController : ControllerBase
 		}
 
 		
-		if(!_blobManager.ExistsBlob(fileAssetContent.BlobId))
+		if(!_tfService.ExistsBlob(fileAssetContent.BlobId))
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
@@ -85,7 +85,7 @@ public class AssetsController : ControllerBase
 
 		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
-		Stream fileContentStream = _blobManager.GetBlobStream(fileAssetContent.BlobId);
+		Stream fileContentStream = _tfService.GetBlobStream(fileAssetContent.BlobId);
 
 		return File(fileContentStream, mimeType);
 	}

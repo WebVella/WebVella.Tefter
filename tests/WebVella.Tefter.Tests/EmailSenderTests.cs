@@ -13,15 +13,14 @@ public partial class EmailSenderTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			IEmailService emailService = ServiceProvider.GetRequiredService<IEmailService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				Guid relatedRowId = Guid.NewGuid();
 
-				var user = identityManager.GetUser("rumen@webvella.com");
+				var user = tfService.GetUser("rumen@webvella.com");
 				CreateEmailMessageModel model = new CreateEmailMessageModel();
 				model.Subject = "test";
 				model.TextBody = "";

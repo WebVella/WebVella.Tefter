@@ -4,7 +4,7 @@ using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Tests;
 
-public partial class DataManagerTests : BaseTest
+public partial class tfServiceTests : BaseTest
 {
 
 	[Fact]
@@ -14,16 +14,15 @@ public partial class DataManagerTests : BaseTest
 		{
 			var faker = new Faker("en");
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider,dbService);
-				//var result = dataManager.QuerySpaceData(spaceData.Id);
-				var result = dataManager.QueryDataProvider(provider);
+				//var result = tfService.QuerySpaceData(spaceData.Id);
+				var result = tfService.QueryDataProvider(provider);
 
-				dataManager.DeleteAllProviderRows(provider);
+				tfService.DeleteAllProviderRows(provider);
 
 				var newTable = result.NewTable();
 
@@ -47,13 +46,13 @@ public partial class DataManagerTests : BaseTest
 					newTable.Rows.Add(newRow);
 				}
 
-				result = dataManager.SaveDataTable(newTable);
+				result = tfService.SaveDataTable(newTable);
 
 				Guid? skIntValue = result.Rows[0].GetSharedKeyValue("test");
 				Guid? skTextValue = result.Rows[0].GetSharedKeyValue("shared_key_text");
 
-				//result = dataManager.QuerySpaceData(spaceData.Id);
-				result = dataManager.QueryDataProvider(provider);
+				//result = tfService.QuerySpaceData(spaceData.Id);
+				result = tfService.QueryDataProvider(provider);
 
 				var tableToUpdate = result;
 
@@ -75,9 +74,9 @@ public partial class DataManagerTests : BaseTest
 					row["sk_shared_key_int"] = i + i;
 				}
 
-				result = dataManager.SaveDataTable(tableToUpdate);
+				result = tfService.SaveDataTable(tableToUpdate);
 				
-				result = dataManager.QueryDataProvider(provider);
+				result = tfService.QueryDataProvider(provider);
 
 
 				tableToUpdate = result;
@@ -100,9 +99,9 @@ public partial class DataManagerTests : BaseTest
 					row["sk_shared_key_int"] = null;
 				}
 
-				result = dataManager.SaveDataTable(tableToUpdate);
+				result = tfService.SaveDataTable(tableToUpdate);
 
-				result = dataManager.QueryDataProvider(provider);
+				result = tfService.QueryDataProvider(provider);
 			}
 		}
 	}
@@ -113,12 +112,12 @@ public partial class DataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider,dbService);
-				var result = dataManager.QuerySpaceData(spaceData.Id,
+				var result = tfService.QuerySpaceData(spaceData.Id,
 					noRows: true,
 					search: "10",
 					page: 1,
@@ -156,12 +155,12 @@ public partial class DataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
-				var result = dataManager.QuerySpaceData(spaceData.Id,
+				var result = tfService.QuerySpaceData(spaceData.Id,
 					noRows: false,
 					//search: "10",
 					//page: 1,
@@ -201,20 +200,19 @@ public partial class DataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			IIdentityManager identityManager = ServiceProvider.GetRequiredService<IIdentityManager>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 				Guid? id1 = null;
 				Guid? id2 = null;
 
-				var task = Task.Run(() => { id1 = dataManager.GetId("test"); });
+				var task = Task.Run(() => { id1 = tfService.GetId("test"); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				id1.Should().NotBeNull();
 
-				task = Task.Run(() => { id2 = dataManager.GetId("test"); });
+				task = Task.Run(() => { id2 = tfService.GetId("test"); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				id2.Should().NotBeNull();
@@ -231,7 +229,7 @@ public partial class DataManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-			ITfDataManager dataManager = ServiceProvider.GetRequiredService<ITfDataManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
@@ -246,11 +244,11 @@ public partial class DataManagerTests : BaseTest
 					textList.Add(faker.Random.ReplaceNumbers("########################################"));
 					textList.Add(faker.Random.ReplaceNumbers("########################################"));
 
-					var combinedKey = dataManager.CombineKey(textList);
+					var combinedKey = tfService.CombineKey(textList);
 					idsDict.Add(combinedKey, Guid.Empty);
 				}
 
-				var task = Task.Run(() => { dataManager.BulkFillIds(idsDict); });
+				var task = Task.Run(() => { tfService.BulkFillIds(idsDict); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 

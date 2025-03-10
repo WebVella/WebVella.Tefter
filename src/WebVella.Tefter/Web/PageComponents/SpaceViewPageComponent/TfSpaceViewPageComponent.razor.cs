@@ -82,7 +82,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
 		Guid? originalSpaceViewId = jsonOptions.SpaceViewId;
-		var spaceman = serviceProvider.GetService<ITfSpaceManager>();
+		var tfService = serviceProvider.GetService<ITfService>();
 		if (jsonOptions.SetType == TucSpaceViewSetType.New)
 		{
 			//Create view if needed
@@ -105,7 +105,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 				Type = jsonOptions.Type,
 			};
 
-			var createdSpaceView = spaceman.CreateSpaceView(spaceView.ToModelExtended(), spaceView.DataSetType == TucSpaceViewDataSetType.New);
+			var createdSpaceView = tfService.CreateSpaceView(spaceView.ToModelExtended(), spaceView.DataSetType == TucSpaceViewDataSetType.New);
 			jsonOptions.SpaceViewId = createdSpaceView.Id;
 			jsonOptions.SpaceDataId = createdSpaceView.SpaceDataId;
 			context.ComponentOptionsJson = JsonSerializer.Serialize(jsonOptions);

@@ -11,7 +11,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfSharedColumnsManager sharedColumnManager = ServiceProvider.GetRequiredService<ITfSharedColumnsManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
@@ -25,12 +25,12 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 					SharedKeyDbName = "shared_key"
 				};
 
-				var task = Task.Run(() => { sharedColumnManager.CreateSharedColumn(sharedColumn); });
+				var task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
 				List<TfSharedColumn> sharedColumns = null;
-				task = Task.Run(() => { sharedColumns = sharedColumnManager.GetSharedColumns(); });
+				task = Task.Run(() => { sharedColumns = tfService.GetSharedColumns(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				sharedColumns.Should().NotBeNull();
@@ -48,11 +48,11 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				sharedColumn.SharedKeyDbName = "shared_key_1";
 
 
-				task = Task.Run(() => { sharedColumnManager.UpdateSharedColumn(sharedColumn); });
+				task = Task.Run(() => { tfService.UpdateSharedColumn(sharedColumn); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				task = Task.Run(() => { sharedColumns = sharedColumnManager.GetSharedColumns(); });
+				task = Task.Run(() => { sharedColumns = tfService.GetSharedColumns(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				sharedColumns.Should().NotBeNull();
@@ -64,12 +64,12 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
 				sharedColumns[0].SharedKeyDbName.Should().Be(sharedColumn.SharedKeyDbName);
 
-				task = Task.Run(() => { sharedColumnManager.DeleteSharedColumn(sharedColumn.Id); });
+				task = Task.Run(() => { tfService.DeleteSharedColumn(sharedColumn.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
 
-				task = Task.Run(() => { sharedColumns = sharedColumnManager.GetSharedColumns(); });
+				task = Task.Run(() => { sharedColumns = tfService.GetSharedColumns(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				sharedColumns.Should().NotBeNull();
@@ -84,14 +84,13 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			ITfDataProviderManager providerManager = ServiceProvider.GetRequiredService<ITfDataProviderManager>();
-			ITfSharedColumnsManager sharedColumnManager = ServiceProvider.GetRequiredService<ITfSharedColumnsManager>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
 
-				var providerTypes = providerManager.GetProviderTypes();
+				var providerTypes = tfService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -104,7 +103,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 				};
 
 				TfDataProvider provider = null;
-				var task = Task.Run(() => { provider = providerManager.CreateDataProvider(model); });
+				var task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
@@ -126,11 +125,11 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 					PreferredSearchType = TfDataProviderColumnSearchType.Contains
 				};
 
-				task = Task.Run(() => { providerManager.CreateDataProviderColumn(column); });
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				provider = providerManager.GetProvider(provider.Id);
+				provider = tfService.GetDataProvider(provider.Id);
 
 				TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -143,7 +142,7 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 
 					};
 
-				task = Task.Run(() => { provider = providerManager.CreateDataProviderSharedKey(sharedKey); });
+				task = Task.Run(() => { provider = tfService.CreateDataProviderSharedKey(sharedKey); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
@@ -156,16 +155,16 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 					SharedKeyDbName = "shared_key"
 				};
 
-				task = Task.Run(() => { sharedColumnManager.CreateSharedColumn(sharedColumn); });
+				task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
 				List<TfSharedColumn> sharedColumns = null;
-				task = Task.Run(() => { sharedColumns = sharedColumnManager.GetSharedColumns(); });
+				task = Task.Run(() => { sharedColumns = tfService.GetSharedColumns(); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				task = Task.Run(() => { provider = providerManager.GetProvider(provider.Id); });
+				task = Task.Run(() => { provider = tfService.GetDataProvider(provider.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				provider.SharedColumns.Count.Should().Be(1);

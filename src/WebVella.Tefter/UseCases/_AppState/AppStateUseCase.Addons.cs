@@ -49,7 +49,7 @@ internal partial class AppStateUseCase
 	internal virtual List<TucScreenRegionComponentMeta> GetAddonComponents(TfScreenRegion? region = null)
 	{
 		var results = new List<TucScreenRegionComponentMeta>();
-		var componentMeta = _metaProvider.GetScreenRegionComponentsMeta(region);
+		var componentMeta = _metaService.GetScreenRegionComponentsMeta(region);
 		foreach (var meta in componentMeta)
 		{
 			results.Add(new TucScreenRegionComponentMeta
@@ -67,7 +67,7 @@ internal partial class AppStateUseCase
 
 	internal virtual ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodeComponents()
 	{
-		return _metaProvider.GetSpaceNodesComponentsMeta();
+		return _metaService.GetSpaceNodesComponentsMeta();
 	}
 	
 }

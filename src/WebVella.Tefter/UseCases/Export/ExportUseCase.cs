@@ -6,17 +6,12 @@ namespace WebVella.Tefter.UseCases.Export;
 public class ExportUseCase
 {
 	private readonly IServiceProvider _serviceProvider;
-	private readonly IIdentityManager _identityManager;
-	private readonly ITfDataManager _dataManager;
-	private readonly ITfSpaceManager _spaceManager;
+	private readonly ITfService _tfService;
 
 	public ExportUseCase(IServiceProvider serviceProvider)
 	{
 		_serviceProvider = serviceProvider;
-		_identityManager = serviceProvider.GetService<IIdentityManager>();
-		_dataManager = serviceProvider.GetService<ITfDataManager>();
-		_spaceManager = serviceProvider.GetService<ITfSpaceManager>();
-
+		_tfService = serviceProvider.GetService<ITfService>();
 	}
 
 	//TODO RUMEN: Move to service method?
@@ -30,7 +25,7 @@ public class ExportUseCase
 		}
 		else if (data.RouteState.SpaceNodeId is not null)
 		{
-			var resultNode = _spaceManager.GetSpaceNode(data.RouteState.SpaceNodeId.Value);
+			var resultNode = _tfService.GetSpaceNode(data.RouteState.SpaceNodeId.Value);
 			if (resultNode is null)
 				throw new TfException("GetSpaceNode method failed");
 
@@ -51,12 +46,12 @@ public class ExportUseCase
 		if (spaceViewId is null)
 			throw new TfException("SpaceViewId not provided");
 
-		var view = _spaceManager.GetSpaceView(spaceViewId.Value);
+		var view = _tfService.GetSpaceView(spaceViewId.Value);
 		if (view is null)
 			throw new TfException("View not found.");
 
 
-		var viewColumns = _spaceManager.GetSpaceViewColumnsList(view.Id);
+		var viewColumns = _tfService.GetSpaceViewColumnsList(view.Id);
 
 		List<TfFilterBase> filters = null;
 		List<TfSort> sorts = null;
@@ -67,7 +62,7 @@ public class ExportUseCase
 		if (data.RouteState.Sorts is not null && data.RouteState.Sorts.Count > 0)
 			sorts = data.RouteState.Sorts.Select(x => x.ToModel()).ToList();
 
-		var viewData = _dataManager.QuerySpaceData(
+		var viewData = _tfService.QuerySpaceData(
 			spaceDataId: view.SpaceDataId,
 			userFilters: filters,
 			userSorts: sorts,

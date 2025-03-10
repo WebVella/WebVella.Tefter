@@ -23,7 +23,7 @@ global using WebVella.Tefter.Tests;
 global using WebVella.Tefter.Tests.Common;
 global using WebVella.Tefter.Tests.Database;
 global using WebVella.Tefter.Database.Dbo;
-global using WebVella.Tefter.Identity;
-global using WebVella.Tefter.Errors;
+global using WebVella.Tefter.Services;
+global using WebVella.Tefter.Exceptions;
 
 

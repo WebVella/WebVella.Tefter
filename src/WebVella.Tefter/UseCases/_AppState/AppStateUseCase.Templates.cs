@@ -37,7 +37,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			return _templateService.GetTemplateProcessors().ToList();
+			return _tfService.GetTemplateProcessors().ToList();
 		}
 		catch (Exception ex)
 		{
@@ -60,7 +60,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			return _templateService.GetTemplates()
+			return _tfService.GetTemplates()
 				.Where(x => TemplateMatchSearch(x, search, resultType))
 				.OrderBy(x => x.Name)
 				.Select(x => new TucTemplate(x))
@@ -87,7 +87,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var templates = _templateService.GetTemplates();
+			var templates = _tfService.GetTemplates();
 			var result = new List<TucTemplate>();
 			foreach (var item in templates)
 			{
@@ -127,7 +127,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var template = _templateService.GetTemplate(templateId);
+			var template = _tfService.GetTemplate(templateId);
 			return new TucTemplate(template);
 		}
 		catch (Exception ex)
@@ -147,13 +147,13 @@ internal partial class AppStateUseCase
 	internal virtual TucTemplate CreateTemplate(
 		TucManageTemplateModel submit)
 	{
-		var template = _templateService.CreateTemplate(submit.ToModel());
+		var template = _tfService.CreateTemplate(submit.ToModel());
 		return new TucTemplate(template);
 	}
 	internal virtual TucTemplate UpdateTemplate(
 		TucManageTemplateModel submit)
 	{
-		var template = _templateService.UpdateTemplate(submit.ToModel());
+		var template = _tfService.UpdateTemplate(submit.ToModel());
 		return new TucTemplate(template);
 	}
 
@@ -161,17 +161,17 @@ internal partial class AppStateUseCase
 		Guid templateId,
 		string settingsJson)
 	{
-		var template = _templateService.GetTemplate(templateId);
+		var template = _tfService.GetTemplate(templateId);
 		var submit = new TucManageTemplateModel(template);
 		submit.SettingsJson = settingsJson;
-		var updatedTemplate = _templateService.UpdateTemplate(submit.ToModel());
+		var updatedTemplate = _tfService.UpdateTemplate(submit.ToModel());
 		return new TucTemplate(updatedTemplate);
 	}
 
 	internal virtual void DeleteTemplate(
 		Guid templateId)
 	{
-		_templateService.DeleteTemplate(templateId);
+		_tfService.DeleteTemplate(templateId);
 	}
 
 	internal static bool TemplateMatchSearch(
@@ -200,8 +200,8 @@ internal partial class AppStateUseCase
 	internal virtual List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
 	{
 		var result = new List<TfSpaceDataAsOption>();
-		var spaceData = _spaceManager.GetAllSpaceData();
-		var spaceDict = _spaceManager.GetSpacesList().ToDictionary(x => x.Id);
+		var spaceData = _tfService.GetAllSpaceData();
+		var spaceDict = _tfService.GetSpacesList().ToDictionary(x => x.Id);
 		foreach (var item in spaceData)
 		{
 			result.Add(new TfSpaceDataAsOption

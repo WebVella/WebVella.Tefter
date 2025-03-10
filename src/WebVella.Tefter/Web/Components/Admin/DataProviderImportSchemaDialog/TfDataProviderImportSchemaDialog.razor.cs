@@ -1,5 +1,4 @@
 ﻿using System;
-using WebVella.Tefter.Errors;
 
 namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderImportSchemaDialog.TfDataProviderImportSchemaDialog", "WebVella.Tefter")]

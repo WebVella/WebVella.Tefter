@@ -1,0 +1,137 @@
+﻿using NpgsqlTypes;
+
+namespace WebVella.Tefter.Services;
+
+public partial interface ITfService
+{
+	Guid GetId(
+		params string[] textId);
+
+	Guid GetId(
+		Guid guidId);
+
+	internal void BulkFillIds(
+		Dictionary<string, Guid> input);
+
+	internal string CombineKey(
+		params string[] keys);
+
+	internal string CombineKey(
+		List<string> keys);
+}
+
+public partial class TfService : ITfService
+{
+	private static Dictionary<string, Guid> idsDict = new Dictionary<string, Guid>();
+	private const string SQL = "SELECT * FROM _tefter_id_dict_insert_select( @text_id, @id )";
+
+	public Guid GetId(
+		params string[] textId)
+	{
+		using (_lock.Lock())
+		{
+			CheckInitIdDict();
+
+			string combinedTextId = CombineKey(textId);
+
+			if (idsDict.ContainsKey(combinedTextId))
+				return idsDict[combinedTextId];
+
+
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL,
+			new NpgsqlParameter("text_id", combinedTextId),
+			new NpgsqlParameter("id", DBNull.Value));
+
+			Guid id = (Guid)dt.Rows[0][0];
+
+			idsDict[combinedTextId] = id;
+
+			return id;
+		}
+	}
+
+	public Guid GetId(
+		Guid guidId)
+	{
+		return GetId(guidId.ToString());
+	}
+
+	public void BulkFillIds(
+		Dictionary<string, Guid> input)
+	{
+		using (_lock.Lock())
+		{
+			CheckInitIdDict();
+
+			if (input is null)
+				return;
+
+			Dictionary<string, Guid> notFoundDict = new Dictionary<string, Guid>();
+
+			foreach (var key in input.Keys)
+			{
+				if (idsDict.ContainsKey(key))
+				{
+					input[key] = idsDict[key];
+					continue;
+				}
+				notFoundDict.Add(key, Guid.NewGuid());
+			}
+
+			var parameterIds = new NpgsqlParameter("@id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+			parameterIds.Value = new List<Guid>();
+
+			var parameterTextIds = new NpgsqlParameter("@text_id", NpgsqlDbType.Array | NpgsqlDbType.Text);
+			parameterTextIds.Value = new List<string>();
+
+			foreach (var key in notFoundDict.Keys)
+			{
+				((List<Guid>)parameterIds.Value).Add(notFoundDict[key]);
+				((List<string>)parameterTextIds.Value).Add(key);
+			}
+
+			var sql = $"INSERT INTO id_dict ( id, text_id ) SELECT * FROM UNNEST ( @id, @text_id ) ";
+
+			_dbService.ExecuteSqlNonQueryCommand(sql, parameterIds, parameterTextIds);
+
+			foreach (var key in notFoundDict.Keys)
+			{
+				input[key] = notFoundDict[key];
+			}
+		}
+	}
+
+	private void CheckInitIdDict()
+	{
+		if (idsDict.Count > 0)
+		{
+			return;
+		}
+
+		var dt = _dbService.ExecuteSqlQueryCommand("SELECT * FROM id_dict");
+
+		foreach (DataRow dr in dt.Rows)
+		{
+			Guid id = dr.Field<Guid>("id");
+			string textId = dr.Field<string>("text_id");
+
+			if (!idsDict.ContainsKey(textId))
+			{
+				idsDict[textId] = id;
+			}
+		}
+	}
+
+	public string CombineKey(params string[] keys)
+	{
+		if (keys == null || keys.Length == 0)
+			return string.Empty;
+
+		return string.Join(Constants.SHARED_KEY_SEPARATOR, keys) ?? string.Empty;
+	}
+
+	public string CombineKey(params List<string> keys)
+	{
+		return CombineKey(keys?.ToArray());
+	}
+}

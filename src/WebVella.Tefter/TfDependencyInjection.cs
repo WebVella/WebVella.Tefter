@@ -1,6 +1,4 @@
-﻿using WebVella.Tefter.Services;
-
-namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter;
 
 public static class TfDependencyInjection
 {
@@ -53,25 +51,8 @@ public static class TfDependencyInjection
 		services.AddSingleton<ITfDatabaseManager, TfDatabaseManager>();
 		services.AddSingleton<ITfDboManager, TfDboManager>();
 		services.AddSingleton<IMigrationManager, MigrationManager>();
-		services.AddSingleton<IIdentityManager, IdentityManager>();
-		services.AddSingleton<ITfDataManager, TfDataManager>();
-		services.AddSingleton<ITfSharedColumnsManager, TfSharedColumnsManager>();
-		services.AddSingleton<ITfDataProviderManager, TfDataProviderManager>();
-		services.AddSingleton<ITfSpaceManager, TfSpaceManager>();
-		services.AddSingleton<ITfMetaProvider, TfMetaProvider>();
-		//services.AddSingleton<ITfFileManager, TfFileManager>();
-		services.AddSingleton<ITfRepositoryService, TfRepositoryService>();
-		services.AddSingleton<ITfBlobManager, TfBlobManager>();
-		services.AddSingleton<ITfTemplateService, TfTemplateService>();
-
-
-		//lazy services
-		services.AddSingleton<Lazy<ITfDatabaseService>>(provider =>
-				new Lazy<ITfDatabaseService>(() => provider.GetRequiredService<ITfDatabaseService>()));
-		services.AddSingleton<Lazy<ITfSpaceManager>>(provider =>
-				new Lazy<ITfSpaceManager>(() => provider.GetRequiredService<ITfSpaceManager>()));
-		services.AddSingleton<Lazy<ITfDataProviderManager>>(provider =>
-				new Lazy<ITfDataProviderManager>(() => provider.GetRequiredService<ITfDataProviderManager>()));
+		services.AddSingleton<ITfMetaService, TfMetaService>();
+		services.AddSingleton<ITfService, TfService>();
 
 		//use cases
 		services.AddTransient<AppStateUseCase, AppStateUseCase>();
@@ -86,10 +67,10 @@ public static class TfDependencyInjection
 
 		//we don't use static constructor here, 
 		//because no control on assemblies order loading
-		TfMetaProvider.Init();
+		TfMetaService.Init();
 
 		//inject classes from applications
-		var applications = TfMetaProvider.GetApplications();
+		var applications = TfMetaService.GetApplications();
 		foreach (var app in applications)
 			app.OnRegisterDependencyInjections(services);
 
@@ -102,7 +83,7 @@ public static class TfDependencyInjection
 		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
 
 		//execute application on start methods
-		var applications = TfMetaProvider.GetApplications();
+		var applications = TfMetaService.GetApplications();
 		foreach (var app in applications)
 			app.OnStart();
 

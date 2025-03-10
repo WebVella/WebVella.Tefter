@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Text;
 using WebVella.Tefter;
 using WebVella.Tefter.Database;
-using WebVella.Tefter.Identity;
+using WebVella.Tefter.Services;
 using WebVella.Tefter.Site.Components;
 using WebVella.Tefter.Utility;
 using WebVella.Tefter.Web.Utils;
@@ -47,7 +47,7 @@ try
 		builder.Services.AddFluxor(options =>
 		{
 			//options.UseRouting();
-			options.ScanAssemblies(typeof(IIdentityManager).Assembly);
+			options.ScanAssemblies(typeof(ITfService).Assembly);
 			//options.AddMiddleware<LoggingMiddleware>();
 			//options.UseReduxDevTools();
 		});
@@ -74,7 +74,7 @@ try
 		//IMPORTANT: to not forget to add it in the <Route> AdditionalAssemblies 
 		//parameter also
 		app.MapRazorComponents<App>()
-			.AddAdditionalAssemblies(new[] { typeof(IIdentityManager).Assembly })
+			.AddAdditionalAssemblies(new[] { typeof(ITfService).Assembly })
 			.AddInteractiveServerRenderMode();
 
 		//This setups the localization of the Application. 

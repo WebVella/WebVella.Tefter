@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.TextFile.Models;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.TemplateProcessors.TextFile.Models;
 
 public class TextFileTemplateResultItem
 {

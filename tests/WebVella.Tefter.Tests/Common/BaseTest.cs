@@ -20,7 +20,7 @@ public class BaseTest
 		Context.Services.AddSingleton<TfDataProviderSynchronizeJob>();
 		ServiceProvider = Context.Services.BuildServiceProvider();
 		ServiceProvider.UseTefter();
-    }
+	}
 
     protected DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters)
     {

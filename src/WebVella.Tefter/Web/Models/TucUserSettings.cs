@@ -13,7 +13,7 @@ public record TucUserSettings
 	public int? PageSize { get; init; } = null;
 
 	public TucUserSettings(){}
-	public TucUserSettings(UserSettings model){
+	public TucUserSettings(TfUserSettings model){
 		ThemeMode = model.ThemeMode;
 		ThemeColor = model.ThemeColor;
 		IsSidebarOpen = model.IsSidebarOpen;
@@ -22,9 +22,9 @@ public record TucUserSettings
 		PageSize = model.PageSize;
 	}
 
-	public UserSettings ToModel()
+	public TfUserSettings ToModel()
 	{
-		return new UserSettings
+		return new TfUserSettings
 		{
 			CultureName = CultureName,
 			ThemeMode = ThemeMode,

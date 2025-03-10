@@ -45,7 +45,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var userBookmarks = _spaceManager.GetBookmarksListForUser(userId);
+			var userBookmarks = _tfService.GetBookmarksListForUser(userId);
 			var allSpaces = await GetAllSpaces();
 			var allViews = await GetAllSpaceViews();
 			var spaceDict = allSpaces.ToDictionary(x => x.Id);
@@ -96,21 +96,21 @@ internal partial class AppStateUseCase
 	internal virtual async Task<(List<TucBookmark>, List<TucBookmark>)> CreateBookmarkAsync(
 		TucBookmark bookmark)
 	{
-		_spaceManager.CreateBookmark(bookmark.ToModel());
+		_tfService.CreateBookmark(bookmark.ToModel());
 		return await GetUserBookmarksAsync(bookmark.UserId);
 	}
 
 	internal virtual async Task<(List<TucBookmark>, List<TucBookmark>)> UpdateBookmarkAsync(
 		TucBookmark bookmark)
 	{
-		_spaceManager.UpdateBookmark(bookmark.ToModel());
+		_tfService.UpdateBookmark(bookmark.ToModel());
 		return await GetUserBookmarksAsync(bookmark.UserId);
 	}
 
 	internal virtual async Task<(List<TucBookmark>, List<TucBookmark>)> DeleteBookmarkAsync(
 		TucBookmark bookmark)
 	{
-		_spaceManager.DeleteBookmark(bookmark.Id);
+		_tfService.DeleteBookmark(bookmark.Id);
 		return await GetUserBookmarksAsync(bookmark.UserId);
 	}
 

@@ -247,12 +247,12 @@ ORDER BY tt.created_on DESC";
 			if (thread.RowIds != null && thread.RowIds.Count > 0)
 			{
 				var channel = GetChannel(thread.ChannelId);
-				var provider = _dataProviderManager.GetProvider(thread.DataProviderId);
+				var provider = _tfService.GetDataProvider(thread.DataProviderId);
 
 				if (provider is null)
 					throw new Exception($"Failed to find data provider with id='{thread.DataProviderId}'");
 
-				var dataTable = _dataManager.QueryDataProvider(provider, thread.RowIds);
+				var dataTable = _tfService.QueryDataProvider(provider, thread.RowIds);
 
 				List<Guid> relatedSK = new List<Guid>();
 
@@ -560,7 +560,7 @@ ORDER BY tt.created_on DESC";
 
 		foreach (DataRow dr in dt.Rows)
 		{
-			var user = _identityManager.GetUser(dr.Field<Guid>("user_id"));
+			var user = _tfService.GetUser(dr.Field<Guid>("user_id"));
 
 			TalkThread thread = new TalkThread
 			{

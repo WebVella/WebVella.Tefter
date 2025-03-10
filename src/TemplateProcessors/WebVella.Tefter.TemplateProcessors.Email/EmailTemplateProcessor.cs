@@ -1,10 +1,14 @@
 ﻿using System.Text;
+using WebVella.DocumentTemplates.Engines.Email;
+using WebVella.DocumentTemplates.Engines.Email.Models;
 using WebVella.Tefter.EmailSender.Models;
 using WebVella.Tefter.EmailSender.Services;
 using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.TemplateProcessors.Email.Components;
 using WebVella.Tefter.TemplateProcessors.ExcelFile;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
+using WebVella.Tefter.TemplateProcessors.TextFile;
+using WebVella.Tefter.TemplateProcessors.TextFile.Models;
 
 namespace WebVella.Tefter.TemplateProcessors.Email;
 
@@ -87,7 +91,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 			Errors = preview.Errors,
 		};
 
-		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var tfService = serviceProvider.GetService<ITfService>();
 		var emailService = serviceProvider.GetService<IEmailService>();
 
 		foreach (var item in result.Items)
@@ -136,7 +140,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				if (attachment.Errors != null && attachment.Errors.Count > 0)
 					continue;
 
-				var bytes = blobManager.GetBlobByteArray(attachment.BlobId.Value, temporary: true);
+				var bytes = tfService.GetBlobByteArray(attachment.BlobId.Value, temporary: true);
 				var emailAttachment = new CreateEmailAttachmentModel
 				{
 					Filename = attachment.FileName,
@@ -162,13 +166,13 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 						foreach (var errorMessage in errors)
 						{
 							if (String.IsNullOrWhiteSpace(propertyName))
-								result.Errors.Add(new ValidationError("",errorMessage));
+								result.Errors.Add(new ValidationError("", errorMessage));
 							else
 								result.Errors.Add(new ValidationError(propertyName, errorMessage));
 						}
 					}
 
-					if(data.Keys.Count ==0 && !string.IsNullOrWhiteSpace(valEx.Message))
+					if (data.Keys.Count == 0 && !string.IsNullOrWhiteSpace(valEx.Message))
 						result.Errors.Add(new ValidationError("", ex.Message));
 				}
 				else
@@ -179,7 +183,7 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 		return result;
 	}
-
+	/*
 	private ITfTemplateResult GenerateResultInternal(
 		TfTemplate template,
 		TfDataTable dataTable,
@@ -313,6 +317,133 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 		return result;
 	}
+	*/
+	private ITfTemplateResult GenerateResultInternal(
+		TfTemplate template,
+		TfDataTable dataTable,
+		IServiceProvider serviceProvider)
+	{
+		var result = new EmailTemplateResult();
+
+		var _tfService = serviceProvider.GetService<ITfService>();
+
+		if (string.IsNullOrWhiteSpace(template.SettingsJson))
+		{
+			result.Errors.Add(new ValidationError("", "Template settings are not set."));
+			return result;
+		}
+
+		var settings = JsonSerializer.Deserialize<EmailTemplateSettings>(template.SettingsJson);
+
+		WvEmail emailTmpl = new WvEmail
+		{
+			Sender = settings.Sender ?? string.Empty,
+			Recipients = settings.Recipients ?? string.Empty,
+			CcRecipients = settings.CcRecipients ?? string.Empty,
+			BccRecipients = settings.BccRecipients ?? string.Empty,
+			Subject = settings.Subject ?? string.Empty,
+			TextContent = settings.TextContent ?? string.Empty,
+			HtmlContent = settings.HtmlContent ?? string.Empty
+		};
+
+		emailTmpl.AttachmentItems = new List<WvEmailAttachment>();
+		foreach (var attItem in settings.AttachmentItems ?? new List<EmailTemplateSettingsAttachmentItem>())
+		{
+			var emailAtt = new WvEmailAttachment();
+
+			var attTemplate = _tfService.GetTemplate(attItem.TemplateId);
+
+			//we ignore missing template attachments
+			if (attTemplate == null)
+				continue;
+
+			if (((TfTemplate)attTemplate).ContentProcessorType == typeof(ExcelFileTemplateProcessor))
+			{
+				var attTemplaceSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(attTemplate.SettingsJson);
+				var bytes = _tfService.GetBlobByteArray(attTemplaceSettings.TemplateFileBlobId.Value);
+
+				emailAtt.Type = WvEmailAttachmentType.SpreadsheetFile;
+				emailAtt.Template = new MemoryStream(bytes);
+				emailAtt.Filename = attTemplaceSettings.FileName;
+				emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
+				emailTmpl.AttachmentItems.Add(emailAtt);
+			}
+			else if (((TfTemplate)attTemplate).ContentProcessorType == typeof(TextFileTemplateProcessor))
+			{
+				var attTemplaceSettings = JsonSerializer.Deserialize<TextFileTemplateSettings>(attTemplate.SettingsJson);
+				var bytes = _tfService.GetBlobByteArray(attTemplaceSettings.TemplateFileBlobId.Value);
+
+				emailAtt.Type = WvEmailAttachmentType.TextFile;
+				emailAtt.Template = new MemoryStream(bytes);
+				emailAtt.Filename = attTemplaceSettings.FileName;
+				emailAtt.GroupDataByColumns = attTemplaceSettings.GroupBy;
+				emailTmpl.AttachmentItems.Add(emailAtt);
+			}
+			else
+			{
+				//ignore other type templates
+			}
+		}
+
+		WvEmailTemplate tmpl = new WvEmailTemplate
+		{
+			Template = emailTmpl,
+			GroupDataByColumns = settings.GroupBy
+		};
+
+
+		var tmplResult = tmpl.Process(dataTable.ToDataTable());
+
+
+		foreach (var resultItem in tmplResult.ResultItems)
+		{
+			if (resultItem is null)
+				continue;
+
+			var emailItem = new EmailTemplateResultItem();
+
+			try
+			{
+				foreach (DataRow row in resultItem.DataTable.Rows)
+					emailItem.RelatedRowIds.Add((Guid)row["tf_id"]);
+
+				emailItem.Sender = resultItem.Result.Sender ?? string.Empty;
+				emailItem.Recipients = (resultItem.Result.Recipients ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries).ToList();
+				emailItem.CcRecipients = (resultItem.Result.CcRecipients ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries).ToList();
+				emailItem.BccRecipients = (resultItem.Result.BccRecipients ?? string.Empty).Split(";", StringSplitOptions.RemoveEmptyEntries).ToList();
+				emailItem.Subject = resultItem.Result.Subject ?? string.Empty;
+				emailItem.TextContent = resultItem.Result.TextContent ?? string.Empty;
+				emailItem.HtmlContent = resultItem.Result.HtmlContent ?? string.Empty;
+
+				emailItem.Attachments = new List<EmailTemplateResultItemAttachment>();
+
+				foreach (var attachmentItem in resultItem.Result.AttachmentItems)
+				{
+					if (attachmentItem is null)
+						continue;
+
+					var emailAtt = new EmailTemplateResultItemAttachment();
+
+					emailAtt.FileName = attachmentItem.Filename;
+					emailAtt.DownloadUrl = null;
+					if (attachmentItem.Template is not null)
+					{
+						emailAtt.BlobId = _tfService.CreateBlob(attachmentItem.Template.GetBuffer(), temporary: true);
+						emailAtt.DownloadUrl = $"/fs/blob/{emailAtt.BlobId}/{emailAtt.FileName}";
+					}
+					emailItem.Attachments.Add(emailAtt);
+				}
+
+				result.Items.Add(emailItem);
+			}
+			catch (Exception ex)
+			{
+				emailItem.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
+			}
+		}
+
+		return result;
+	}
 
 	private Dictionary<string, TfDataTable> GroupDataTable(
 		List<string> groupColumns,
@@ -410,10 +541,10 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 	public List<TfTemplate> GetTemplateSelectionList(
 		Guid? templateId,
-		ITfTemplateService _templateService)
+		ITfService _tfService)
 	{
 		var result = new List<TfTemplate>();
-		var allTemplates = _templateService.GetTemplates();
+		var allTemplates = _tfService.GetTemplates();
 		foreach (var item in allTemplates)
 		{
 			if (item.ResultType != TfTemplateResultType.File) continue;

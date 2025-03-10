@@ -18,7 +18,7 @@ public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent,
         TfAppState oldAppState, TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
     {
         var assetsService = serviceProvider.GetRequiredService<IAssetsService>();
-        var sharedColumnsManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();
+        var tfService = serviceProvider.GetRequiredService<ITfService>();
 
 		try
 		{
@@ -32,7 +32,7 @@ public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent,
 
 		try
 		{
-			var sharedColumns = sharedColumnsManager.GetSharedColumns();
+			var sharedColumns = tfService.GetSharedColumns();
 			newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumns.OrderBy(x => x.DbName).ToList();
 		}
 		catch (Exception ex)

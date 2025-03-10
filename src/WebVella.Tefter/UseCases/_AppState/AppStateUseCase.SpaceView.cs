@@ -124,7 +124,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var spaceView = _spaceManager.GetSpaceView(viewId);
+			var spaceView = _tfService.GetSpaceView(viewId);
 			if (spaceView is null) 
 				return null;
 
@@ -149,7 +149,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			return _spaceManager.GetSpaceViewsList(spaceId)
+			return _tfService.GetSpaceViewsList(spaceId)
 				.Select(x => new TucSpaceView(x))
 				.ToList();
 		}
@@ -171,11 +171,11 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var spaceView = _spaceManager.CreateSpaceView(
+			var spaceView = _tfService.CreateSpaceView(
 				view.ToModelExtended(), 
 				view.DataSetType == TucSpaceViewDataSetType.New);
 
-			var spaceData = _spaceManager.GetSpaceData(spaceView.SpaceDataId);
+			var spaceData = _tfService.GetSpaceData(spaceView.SpaceDataId);
 
 			return new Tuple<TucSpaceView, TucSpaceData>(
 				new TucSpaceView(spaceView),
@@ -199,11 +199,11 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var spaceView = _spaceManager.UpdateSpaceView(
+			var spaceView = _tfService.UpdateSpaceView(
 				view.ToModelExtended(), 
 				view.DataSetType == TucSpaceViewDataSetType.New);
 			
-			var spaceData = _spaceManager.GetSpaceData(spaceView.SpaceDataId);
+			var spaceData = _tfService.GetSpaceData(spaceView.SpaceDataId);
 
 			return new Tuple<TucSpaceView, TucSpaceData>(
 				new TucSpaceView(spaceView),
@@ -226,14 +226,14 @@ internal partial class AppStateUseCase
 	internal virtual void DeleteSpaceView(
 		Guid viewId)
 	{
-		_spaceManager.DeleteSpaceView(viewId);
+		_tfService.DeleteSpaceView(viewId);
 	}
 
 	internal virtual Task<List<TucSpaceView>> GetAllSpaceViews()
 	{
 		try
 		{
-			var allSpaceViews = _spaceManager.GetAllSpaceViews();
+			var allSpaceViews = _tfService.GetAllSpaceViews();
 			if (allSpaceViews is null) 
 				return Task.FromResult(new List<TucSpaceView>());
 
@@ -261,7 +261,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var spaceViewColumn = _spaceManager.GetSpaceViewColumn(columnId);
+			var spaceViewColumn = _tfService.GetSpaceViewColumn(columnId);
 			if (spaceViewColumn is null)
 				return new TucSpaceViewColumn();
 
@@ -286,7 +286,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var columnList = _spaceManager.GetSpaceViewColumnsList(viewId);
+			var columnList = _tfService.GetSpaceViewColumnsList(viewId);
 			if (columnList is null) 
 				return new List<TucSpaceViewColumn>();
 
@@ -310,12 +310,12 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSpaceViewColumn> CreateSpaceViewColumnWithForm(
 		TucSpaceViewColumn column)
 	{
-		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes();
+		var availableTypes = _tfService.GetAvailableSpaceViewColumnTypes();
 		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
 		if (selectedType is null)
 			throw new TfException("Column selected type is not found");
 
-		_spaceManager.CreateSpaceViewColumn(column.ToModel(selectedType));
+		_tfService.CreateSpaceViewColumn(column.ToModel(selectedType));
 		
 		return GetViewColumns(column.SpaceViewId);
 	}
@@ -323,13 +323,13 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSpaceViewColumn> UpdateSpaceViewColumnWithForm(
 		TucSpaceViewColumn column)
 	{
-		var availableTypes = _spaceManager.GetAvailableSpaceViewColumnTypes();
+		var availableTypes = _tfService.GetAvailableSpaceViewColumnTypes();
 
 		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
 		if (selectedType is null)
 			throw new TfException("Column selected type is not found");
 
-		_spaceManager.UpdateSpaceViewColumn(column.ToModel(selectedType));
+		_tfService.UpdateSpaceViewColumn(column.ToModel(selectedType));
 
 		return GetViewColumns(column.SpaceViewId);
 	}
@@ -345,7 +345,7 @@ internal partial class AppStateUseCase
 		if (column is null)
 			throw new TfException("Column is not found");
 
-		_spaceManager.DeleteSpaceViewColumn(columnId);
+		_tfService.DeleteSpaceViewColumn(columnId);
 		
 		return GetViewColumns(column.SpaceViewId);
 	}
@@ -359,9 +359,9 @@ internal partial class AppStateUseCase
 			throw new TfException("Column ID is not specified");
 		;
 		if (isUp)
-			_spaceManager.MoveSpaceViewColumnUp(columnId);
+			_tfService.MoveSpaceViewColumnUp(columnId);
 		else
-			_spaceManager.MoveSpaceViewColumnDown(columnId);
+			_tfService.MoveSpaceViewColumnDown(columnId);
 
 		return GetViewColumns(viewId);
 
@@ -371,14 +371,14 @@ internal partial class AppStateUseCase
 		Guid viewId,
 		List<TucSpaceViewPreset> presets)
 	{
-		_spaceManager.UpdateSpaceViewPresets(viewId, presets.Select(x => x.ToModel()).ToList());
+		_tfService.UpdateSpaceViewPresets(viewId, presets.Select(x => x.ToModel()).ToList());
 		return GetSpaceView(viewId);
 
 	}
 
 	internal virtual List<TucSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
 	{
-		var serviceResult = _metaProvider.GetSpaceViewColumnTypesMeta();
+		var serviceResult = _metaService.GetSpaceViewColumnTypesMeta();
 		return serviceResult.Select(x => new TucSpaceViewColumnType(x.Instance)).ToList();
 
 	}

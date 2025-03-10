@@ -4,8 +4,6 @@
 public partial class DisplaySettingsComponent : TfBaseComponent,
 	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>
 {
-	[Inject] public ITfTemplateService TemplateService { get; set; }
-
 	public Guid Id { get; init; } = new Guid("a52465b2-6e8c-48b3-a903-7fb2d43c55fa");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template View Settings";
@@ -44,7 +42,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			_templatesAll = contentProcessor.GetTemplateSelectionList(Context.Template.Id, TemplateService);
+			_templatesAll = contentProcessor.GetTemplateSelectionList(Context.Template.Id, TfService);
 			_recalcAttachmentData();
 			_loading = false;
 			await InvokeAsync(StateHasChanged);

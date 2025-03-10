@@ -1,6 +1,12 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using System.IO.Compression;
 using System.Text;
+using System.Text.Unicode;
+using WebVella.DocumentTemplates.Engines.Html;
+using WebVella.DocumentTemplates.Engines.Text;
+using WebVella.DocumentTemplates.Engines.TextFile;
+using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.TextFile;
@@ -51,15 +57,14 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	{
 		var result = new TextFileTemplateResult();
 
-		var blobManager = serviceProvider.GetService<ITfBlobManager>();
-		var dataManager = serviceProvider.GetService<ITfDataManager>();
+		var tfService = serviceProvider.GetService<ITfService>();
 
 		if (string.IsNullOrWhiteSpace(template.SettingsJson))
 		{
 			result.Errors.Add(new ValidationError("", "Template settings are not set."));
 			return result;
 		}
-		
+
 		var settings = JsonSerializer.Deserialize<TextFileTemplateSettings>(template.SettingsJson);
 
 		if (settings.TemplateFileBlobId is null)
@@ -68,81 +73,141 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 			return result;
 		}
 
-		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
-
-		var bytes = blobManager.GetBlobByteArray(settings.TemplateFileBlobId.Value);
-
-		string content = Encoding.UTF8.GetString(bytes);
-
-		int filesCounter = 0;
-		foreach (var key in groupedData.Keys)
+		try
 		{
-			string filename = settings.FileName;
+			var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value);
 
-			filesCounter++;
+			string content = Encoding.UTF8.GetString(bytes);
+
+			string filename = settings.FileName;
 
 			var ext = Path.GetExtension(filename);
 
-			if (groupedData.Keys.Count > 1)
-			{
-				var name = Path.GetFileNameWithoutExtension(filename);
-				filename = $"{filename}_{filesCounter}{ext}";
-			}
+			int filesCounter = 0;
 
-			try
+			if (ext.ToLowerInvariant() == ".html" || ext.ToLowerInvariant() == ".htm")
 			{
-				string processedContent = string.Empty;
+				WvHtmlTemplate tmpl = new WvHtmlTemplate
+				{
+					Template = UTF8Encoding.UTF8.GetString(bytes),
+					GroupDataByColumns = settings.GroupBy
+				};
 
-				if(ext.ToLowerInvariant() == ".html" || ext.ToLowerInvariant() == ".htm")
+				var tmplResult = tmpl.Process(dataTable.ToDataTable());
+
+				if (tmplResult.ResultItems.Count > 1)
 				{
-					var htmlProcessResult = new TfHtmlTemplateProcessResult();
-					htmlProcessResult.TemplateHtml = content ?? string.Empty;
-					htmlProcessResult.ProcessHtmlTemplate(groupedData[key]);
-					processedContent = htmlProcessResult.ResultHtml;
-				}
-				else
-				{
-					var textProcessResult = new TfTextTemplateProcessResult();
-					textProcessResult.TemplateText = content ?? string.Empty;
-					textProcessResult.ProcessTextTemplate(groupedData[key]);
-					processedContent = textProcessResult.ResultText;
+					var name = Path.GetFileNameWithoutExtension(filename);
+					filename = $"{filename}_{filesCounter}{ext}";
 				}
 
-				using var resultStream = new MemoryStream();
-
-				bytes = UTF8Encoding.UTF8.GetBytes(processedContent);
-
-				resultStream.Write(bytes, 0, bytes.Length);
-
-				var resultBlobId = blobManager.CreateBlob(resultStream, temporary: true);
-
-				resultStream.Close();
-
-				result.Items.Add(new TextFileTemplateResultItem
+				foreach (var resultItem in tmplResult.ResultItems)
 				{
-					FileName = filename,
-					BlobId = resultBlobId,
-					DownloadUrl = $"/fs/blob/{resultBlobId}/{filename}",
-					NumberOfRows = groupedData[key].Rows.Count
-				});
-			}
-			catch (Exception ex)
-			{
-				result.Items.Add(new TextFileTemplateResultItem
-				{
-					FileName = filename,
-					DownloadUrl = null,
-					BlobId = null,
-					NumberOfRows = groupedData[key].Rows.Count,
-					Errors = new()
+					if (resultItem is null)
+						continue;
+
+					try
 					{
-						new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}")
-					}
-				});
-			}
-		}
+						var item = new TextFileTemplateResultItem
+						{
+							FileName = filename,
+							NumberOfRows = (int)resultItem.DataTable?.Rows.Count
+						};
 
-		GenerateZipFile(settings.FileName, result, blobManager);
+						if (resultItem.Result is not null)
+						{
+							item.BlobId = tfService.CreateBlob(resultItem.Result, temporary: true);
+							item.DownloadUrl = $"/fs/blob/{item.BlobId}/{filename}";
+						}
+
+						foreach (var ctx in resultItem.Contexts)
+						{
+							item.Errors.AddRange(ctx.Errors.Select(x => new ValidationError("", x)));
+						}
+
+						result.Items.Add(item);
+					}
+					catch (Exception ex)
+					{
+						result.Items.Add(new TextFileTemplateResultItem
+						{
+							FileName = filename,
+							DownloadUrl = null,
+							BlobId = null,
+							NumberOfRows = (int)resultItem.DataTable?.Rows.Count,
+							Errors = new()
+							{
+								new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}")
+							}
+						});
+					}
+				}
+			}
+			else
+			{
+				WvTextFileTemplate tmpl = new WvTextFileTemplate
+				{
+					Template = new MemoryStream(bytes),
+					GroupDataByColumns = settings.GroupBy
+				};
+
+				var tmplResult = tmpl.Process(dataTable.ToDataTable());
+
+				if (tmplResult.ResultItems.Count > 1)
+				{
+					var name = Path.GetFileNameWithoutExtension(filename);
+					filename = $"{filename}_{filesCounter}{ext}";
+				}
+
+				foreach (var resultItem in tmplResult.ResultItems)
+				{
+					if (resultItem is null)
+						continue;
+
+					try
+					{
+						var item = new TextFileTemplateResultItem
+						{
+							FileName = filename,
+							NumberOfRows = (int)resultItem.DataTable?.Rows.Count
+						};
+
+						if (resultItem.Result is not null)
+						{
+							item.BlobId = tfService.CreateBlob(resultItem.Result, temporary: true);
+							item.DownloadUrl = $"/fs/blob/{item.BlobId}/{filename}";
+						}
+
+						foreach (var ctx in resultItem.Contexts)
+						{
+							item.Errors.AddRange(ctx.Errors.Select(x => new ValidationError("", x)));
+						}
+
+						result.Items.Add(item);
+					}
+					catch (Exception ex)
+					{
+						result.Items.Add(new TextFileTemplateResultItem
+						{
+							FileName = filename,
+							DownloadUrl = null,
+							BlobId = null,
+							NumberOfRows = (int)resultItem.DataTable?.Rows.Count,
+							Errors = new()
+							{
+								new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}")
+							}
+						});
+					}
+				}
+			}
+
+			GenerateZipFile(settings.FileName, result, tfService);
+		}
+		catch (Exception ex)
+		{
+			result.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
+		}
 
 		return result;
 	}
@@ -150,7 +215,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 	private void GenerateZipFile(
 		string filename,
 		TextFileTemplateResult result,
-		ITfBlobManager blobManager)
+		ITfService tfService)
 	{
 		var validItems = result.Items
 			.Where(x => x.Errors.Count == 0 && x.BlobId.HasValue)
@@ -167,7 +232,7 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		{
 			foreach (var item in validItems)
 			{
-				var fileBytes = blobManager.GetBlobByteArray(item.BlobId.Value, temporary: true);
+				var fileBytes = tfService.GetBlobByteArray(item.BlobId.Value, temporary: true);
 				var zipArchiveEntry = archive.CreateEntry(item.FileName, CompressionLevel.Fastest);
 				using var zipStream = zipArchiveEntry.Open();
 				zipStream.Write(fileBytes, 0, fileBytes.Length);
@@ -177,46 +242,11 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 
 		var name = Path.GetFileNameWithoutExtension(filename);
 
-		var zipBlobId = blobManager.CreateBlob(zipMs, temporary: true);
+		var zipBlobId = tfService.CreateBlob(zipMs, temporary: true);
 		result.ZipFilename = $"{name}.zip";
 		result.ZipBlobId = zipBlobId;
 		result.ZipDownloadUrl = $"/fs/blob/{zipBlobId}/{name}.zip";
 	}
-
-	private Dictionary<string, TfDataTable> GroupDataTable(
-		List<string> groupColumns,
-		TfDataTable dataTable)
-	{
-		var result = new Dictionary<string, TfDataTable>();
-		if (groupColumns is null || groupColumns.Count == 0)
-		{
-			result.Add(string.Empty, dataTable);
-		}
-		else
-		{
-			foreach (TfDataRow row in dataTable.Rows)
-			{
-				var sbKey = new StringBuilder();
-
-				foreach (var column in groupColumns)
-				{
-					sbKey.Append($"{row[column]}$$$|||$$$");
-				}
-
-				var key = sbKey.ToString();
-
-				if (!result.ContainsKey(key))
-				{
-					result.Add(key, dataTable.NewTable());
-				}
-
-				result[key].Rows.Add(row);
-			}
-		}
-
-		return result;
-	}
-
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,
@@ -246,9 +276,9 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		}
 		else
 		{
-			var blobManager = serviceProvider.GetService<ITfBlobManager>();
-			if (!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false) &&
-				!blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true))
+			var tfService = serviceProvider.GetService<ITfService>();
+			if (!tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false) &&
+				!tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true))
 			{
 				result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not found."));
 			}
@@ -270,12 +300,12 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		if (settings.TemplateFileBlobId is null)
 			return new List<ValidationError>();
 
-		var blobManager = serviceProvider.GetService<ITfBlobManager>();
+		var tfService = serviceProvider.GetService<ITfService>();
 
-		var isTmpBlob = blobManager.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true);
+		var isTmpBlob = tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true);
 		if (isTmpBlob)
 		{
-			blobManager.MakeTempBlobPermanent(settings.TemplateFileBlobId.Value);
+			tfService.MakeTempBlobPermanent(settings.TemplateFileBlobId.Value);
 		}
 
 		return new List<ValidationError>();
@@ -292,12 +322,11 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 		TfManageTemplateModel template,
 		IServiceProvider serviceProvider)
 	{
-		var blobManager = serviceProvider.GetService<ITfBlobManager>();
-		var templateServise = serviceProvider.GetService<ITfTemplateService>();
+		var tfService = serviceProvider.GetService<ITfService>();
 
 		Guid? blobId = null;
 
-		var existingTemplate = templateServise.GetTemplate(template.Id);
+		var existingTemplate = tfService.GetTemplate(template.Id);
 
 		if (existingTemplate is not null)
 		{
@@ -318,16 +347,16 @@ public class TextFileTemplateProcessor : ITfTemplateProcessor
 					//delete old blob
 					if (blobId is not null)
 					{
-						blobManager.DeleteBlob(blobId.Value);
+						tfService.DeleteBlob(blobId.Value);
 					}
 
 					if (newSettings.TemplateFileBlobId is not null)
 					{
 						//make new blob persistent
-						var isTmpBlob = blobManager.ExistsBlob(newSettings.TemplateFileBlobId.Value, temporary: true);
+						var isTmpBlob = tfService.ExistsBlob(newSettings.TemplateFileBlobId.Value, temporary: true);
 						if (isTmpBlob)
 						{
-							blobManager.MakeTempBlobPermanent(newSettings.TemplateFileBlobId.Value);
+							tfService.MakeTempBlobPermanent(newSettings.TemplateFileBlobId.Value);
 						}
 					}
 				}

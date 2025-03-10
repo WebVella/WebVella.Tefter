@@ -15,9 +15,9 @@ public class TfTemplate
 	public string SettingsJson { get; set; }
 	public Type ContentProcessorType { get; set; }
 	public DateTime CreatedOn { get; set; }
-	public User CreatedBy { get; set; }
+	public TfUser CreatedBy { get; set; }
 	public DateTime ModifiedOn { get; set; }
-	public User ModifiedBy { get; set; }
+	public TfUser ModifiedBy { get; set; }
 }
 
 public class TfManageTemplateModel

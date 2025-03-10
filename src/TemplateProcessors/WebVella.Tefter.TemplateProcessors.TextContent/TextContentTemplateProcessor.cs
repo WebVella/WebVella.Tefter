@@ -1,4 +1,7 @@
 ﻿using System.Text;
+using WebVella.DocumentTemplates.Engines.Html;
+using WebVella.DocumentTemplates.Engines.Text;
+using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.TemplateProcessors.TextContent.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.TextContent;
@@ -49,8 +52,7 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 	{
 		var result = new TextContentTemplateResult();
 
-		var blobManager = serviceProvider.GetService<ITfBlobManager>();
-		var dataManager = serviceProvider.GetService<ITfDataManager>();
+		var tfService = serviceProvider.GetService<ITfService>();
 
 		if (string.IsNullOrWhiteSpace(template.SettingsJson))
 		{
@@ -62,77 +64,60 @@ public class TextContentTemplateProcessor : ITfTemplateProcessor
 
 		result.IsHtml = settings.IsHtml;
 
-		var groupedData = GroupDataTable(settings.GroupBy, dataTable);
+		DataTable dt = dataTable.ToDataTable();
 
-		foreach (var key in groupedData.Keys)
+		try
 		{
-			var item = new TextContentTemplateResultItem();
-
-			try
+			if (!settings.IsHtml)
 			{
-				if (settings.IsHtml)
+				var wvTemplate = new WvTextTemplate
 				{
-					var htmlProcessResult = new TfHtmlTemplateProcessResult();
-					htmlProcessResult.TemplateHtml = settings.Content ?? string.Empty;
-					htmlProcessResult.ProcessHtmlTemplate(groupedData[key]);
-					item.Content = htmlProcessResult.ResultHtml ?? string.Empty;
-				}
-				else
+					GroupDataByColumns = settings.GroupBy,
+					Template = settings.Content
+				};
+
+				var res = wvTemplate.Process(dt);
+				foreach (var resultItem in res.ResultItems)
 				{
-					var textProcessResult = new TfTextTemplateProcessResult();
-					textProcessResult.TemplateText = settings.Content ?? string.Empty;
-					textProcessResult.ProcessTextTemplate(groupedData[key]);
-					item.Content = textProcessResult.ResultText ?? string.Empty;
+					var item = new TextContentTemplateResultItem();
+					item.Content = resultItem.Result;
+					item.NumberOfRows = (int)resultItem.DataTable?.Rows.Count;
+					foreach (var ctx in resultItem.Contexts)
+					{
+						item.Errors.AddRange(ctx.Errors.Select(x => new ValidationError("", x)));
+					}
+					result.Items.Add(item);
 				}
-
-				item.NumberOfRows = (int)groupedData[key].Rows.Count;
-
-				result.Items.Add(item);
 			}
-			catch (Exception ex)
+			else
 			{
-				item.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
-			}
+				var wvTemplate = new WvHtmlTemplate
+				{
+					GroupDataByColumns = settings.GroupBy,
+					Template = settings.Content
+				};
 
+				var res = wvTemplate.Process(dt);
+				foreach (var resultItem in res.ResultItems)
+				{
+					var item = new TextContentTemplateResultItem();
+					item.Content = resultItem.Result;
+					item.NumberOfRows = (int)resultItem.DataTable?.Rows.Count;
+					foreach (var ctx in resultItem.Contexts)
+					{
+						item.Errors.AddRange(ctx.Errors.Select(x => new ValidationError("", x)));
+					}
+					result.Items.Add(item);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			result.Errors.Add(new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}"));
 		}
 
 		return result;
 	}
-
-	private Dictionary<string, TfDataTable> GroupDataTable(
-		List<string> groupColumns,
-		TfDataTable dataTable)
-	{
-		var result = new Dictionary<string, TfDataTable>();
-		if (groupColumns is null || groupColumns.Count == 0)
-		{
-			result.Add(string.Empty, dataTable);
-		}
-		else
-		{
-			foreach (TfDataRow row in dataTable.Rows)
-			{
-				var sbKey = new StringBuilder();
-
-				foreach (var column in groupColumns)
-				{
-					sbKey.Append($"{row[column]}$$$|||$$$");
-				}
-
-				var key = sbKey.ToString();
-
-				if (!result.ContainsKey(key))
-				{
-					result.Add(key, dataTable.NewTable());
-				}
-
-				result[key].Rows.Add(row);
-			}
-		}
-
-		return result;
-	}
-
 
 	public List<ValidationError> ValidateSettings(
 		string settingsJson,

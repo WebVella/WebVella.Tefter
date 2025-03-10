@@ -11,15 +11,12 @@ using System.Net;
 [ResponseCache(Location = ResponseCacheLocation.None, Duration = 0, NoStore = true)]
 public class RepositoryController : ControllerBase
 {
-	private readonly ITfRepositoryService _repoService;
-	private readonly ITfBlobManager _blobManager;
+	private readonly ITfService _tfService;
 
 	public RepositoryController(
-	ITfBlobManager blobManager,
-		ITfRepositoryService repoService)
+		ITfService tfService)
 	{
-		_blobManager = blobManager;
-		_repoService = repoService;
+		_tfService = tfService;
 	}
 
 
@@ -34,7 +31,7 @@ public class RepositoryController : ControllerBase
 		}
 
 
-		var file = _repoService.GetFile(filename);
+		var file = _tfService.GetRepositoryFile(filename);
 
 		if (file == null)
 		{
@@ -67,7 +64,7 @@ public class RepositoryController : ControllerBase
 
 		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
-		Stream fileContentStream = _repoService.GetFileContentAsFileStream(filename);
+		Stream fileContentStream = _tfService.GetRepositoryFileContentAsFileStream(filename);
 		return File(fileContentStream, mimeType);
 	}
 
@@ -83,13 +80,13 @@ public class RepositoryController : ControllerBase
 
 		Stream stream = null;
 
-		if (_blobManager.ExistsBlob(blobId, true))
+		if (_tfService.ExistsBlob(blobId, true))
 		{
-			stream = _blobManager.GetBlobStream(blobId, true);
+			stream = _tfService.GetBlobStream(blobId, true);
 		}
-		else if (_blobManager.ExistsBlob(blobId, false))
+		else if (_tfService.ExistsBlob(blobId, false))
 		{
-			stream = _blobManager.GetBlobStream(blobId, false);
+			stream = _tfService.GetBlobStream(blobId, false);
 		}
 		else
 		{

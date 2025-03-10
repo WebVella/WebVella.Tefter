@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Database.Dbo;
-using WebVella.Tefter.Identity;
+using WebVella.Tefter.Authorization;
 using WebVella.Tefter.Messaging;
 using WebVella.Tefter.Migrations;
 using WebVella.Tefter.UseCases.AppState;
@@ -23,6 +23,7 @@ using WebVella.Tefter.UseCases.UserState;
 using WebVella.Tefter.Utility;
 using WebVella.Tefter.Web.Store;
 using WebVella.Tefter.Web.Utils;
+using WebVella.Tefter.Services;
 
 
 namespace WebVella.Tefter.Web.Tests;
@@ -45,14 +46,8 @@ public class BaseTest
 	public Mock<ITfDatabaseManager> DatabaseManagerMock;
 	internal Mock<ITfDboManager> TfDboManagerMock;
 	internal Mock<IMigrationManager> MigrationManagerMock;
-	public Mock<IIdentityManager> IdentityManagerMock;
-	public Mock<ITfDataManager> TfDataManagerMock;
-	public Mock<ITfSharedColumnsManager> TfSharedColumnsManagerMock;
-	public Mock<ITfDataProviderManager> TfDataProviderManagerMock;
-	public Mock<ITfSpaceManager> TfSpaceManagerMock;
-	public Mock<ITfMetaProvider> TfMetaProviderMock;
-	public Mock<ITfRepositoryService> TfRepositoryServiceMock;
-	public Mock<ITfBlobManager> TfBlobManagerMock;
+	public Mock<ITfService> TfServiceMock;
+	public Mock<ITfMetaService> TfMetaServiceMock;
 	//localization
 	public Mock<IStringLocalizerFactory> StringLocalizerFactoryMock;
 
@@ -78,7 +73,7 @@ public class BaseTest
 
 		Context.Services.AddFluentUIComponents();
 		Context.Services.AddFluxor(x =>
-					x.ScanAssemblies(typeof(IIdentityManager).Assembly));
+					x.ScanAssemblies(typeof(ITfService).Assembly));
 		Context.Services.AddScoped<IToastService, ToastService>();
 		Context.Services.AddScoped<IDialogService, DialogService>();
 		Context.Services.AddScoped<IMessageService, MessageService>();
@@ -131,29 +126,11 @@ public class BaseTest
 		MigrationManagerMock = new Mock<IMigrationManager>();
 		Context.Services.AddSingleton(typeof(IMigrationManager), Services => MigrationManagerMock.Object);
 
-		IdentityManagerMock = new Mock<IIdentityManager>();
-		Context.Services.AddSingleton(typeof(IIdentityManager), Services => IdentityManagerMock.Object);
+		TfServiceMock = new Mock<ITfService>();
+		Context.Services.AddSingleton(typeof(ITfService), Services => TfServiceMock.Object);
 
-		TfDataManagerMock = new Mock<ITfDataManager>();
-		Context.Services.AddSingleton(typeof(ITfDataManager), Services => TfDataManagerMock.Object);
-
-		TfSharedColumnsManagerMock = new Mock<ITfSharedColumnsManager>();
-		Context.Services.AddSingleton(typeof(ITfSharedColumnsManager), Services => TfSharedColumnsManagerMock.Object);
-
-		TfDataProviderManagerMock = new Mock<ITfDataProviderManager>();
-		Context.Services.AddSingleton(typeof(ITfDataProviderManager), Services => TfDataProviderManagerMock.Object);
-
-		TfSpaceManagerMock = new Mock<ITfSpaceManager>();
-		Context.Services.AddSingleton(typeof(ITfSpaceManager), Services => TfSpaceManagerMock.Object);
-
-		TfMetaProviderMock = new Mock<ITfMetaProvider>();
-		Context.Services.AddSingleton(typeof(ITfMetaProvider), Services => TfMetaProviderMock.Object);
-
-		TfRepositoryServiceMock = new Mock<ITfRepositoryService>();
-		Context.Services.AddSingleton(typeof(ITfRepositoryService), Services => TfRepositoryServiceMock.Object);
-
-		TfBlobManagerMock = new Mock<ITfBlobManager>();
-		Context.Services.AddSingleton(typeof(ITfBlobManager), Services => TfBlobManagerMock.Object);
+		TfMetaServiceMock = new Mock<ITfMetaService>();
+		Context.Services.AddSingleton(typeof(ITfMetaService), Services => TfMetaServiceMock.Object);
 
 		#region << Local Storage >>
 		// This string will be the json of the object you want

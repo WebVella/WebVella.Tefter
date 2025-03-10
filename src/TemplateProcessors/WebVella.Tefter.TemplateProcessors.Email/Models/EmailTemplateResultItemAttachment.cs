@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.TemplateProcessors.Email.Models;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.TemplateProcessors.Email.Models;
 
 public class EmailTemplateResultItemAttachment
 {

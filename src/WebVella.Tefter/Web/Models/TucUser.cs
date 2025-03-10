@@ -38,7 +38,7 @@ public record TucUser
 	}
 	public TucUser() { }
 
-	public TucUser(User model)
+	public TucUser(TfUser model)
 	{
 		Id = model.Id;
 		Email = model.Email;
@@ -51,9 +51,9 @@ public record TucUser
 		Roles = model.Roles is null ? null : model.Roles.Select(x => new TucRole(x)).ToList().AsReadOnly();
 	}
 
-	public User ToModel()
+	public TfUser ToModel()
 	{
-		return new User
+		return new TfUser
 		{
 			Id = Id,
 			Email = Email,

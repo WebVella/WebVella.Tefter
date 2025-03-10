@@ -6,7 +6,6 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 public partial class ResultComponent : TfBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
 {
-	[Inject] private ITfTemplateService TemplateService { get; set; }
 	public Guid Id { get; init; } = new Guid("8eed6b14-101b-4fb9-863c-6e520b0196d8");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Excel Template Result";
@@ -34,7 +33,7 @@ public partial class ResultComponent : TfBaseComponent,
 		{
 			if (Context.Template is not null && Context.SpaceData is not null)
 			{
-				ITfTemplateResult result = TemplateService.ProcessTemplate(
+				ITfTemplateResult result = TfService.ProcessTemplate(
 					templateId: Context.Template.Id,
 					spaceDataId: Context.SpaceData.Id,
 					tfRecordIds: Context.SelectedRowIds,

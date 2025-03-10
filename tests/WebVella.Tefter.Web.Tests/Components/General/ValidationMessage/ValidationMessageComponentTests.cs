@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Tests.Components;
+﻿using WebVella.Tefter.Exceptions;
+
+namespace WebVella.Tefter.Web.Tests.Components;
 public class ValidationMessageComponentTests : BaseTest
 {
 

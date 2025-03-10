@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Microsoft.Extensions.DependencyInjection;
 using WebVella.Tefter.Jobs;
 using WebVella.Tefter.Models;
 
@@ -10,13 +11,10 @@ internal class SpaceEnvUtility
 		ServiceProvider serviceProvider,
 		ITfDatabaseService dbService)
 	{
-		ITfSpaceManager spaceManager = serviceProvider.GetRequiredService<ITfSpaceManager>();
-		ITfDataManager dataManager = serviceProvider.GetRequiredService<ITfDataManager>();
-		ITfDataProviderManager providerManager = serviceProvider.GetRequiredService<ITfDataProviderManager>();
+		ITfService tfService = serviceProvider.GetService<ITfService>(); 
 		TfDataProviderSynchronizeJob backgroundSync = serviceProvider.GetRequiredService<TfDataProviderSynchronizeJob>();
-		ITfSharedColumnsManager sharedColumnManager = serviceProvider.GetRequiredService<ITfSharedColumnsManager>();
-
-		var providerTypes = providerManager.GetProviderTypes();
+		
+		var providerTypes = tfService.GetDataProviderTypes();
 		var providerType = providerTypes
 			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -27,7 +25,7 @@ internal class SpaceEnvUtility
 			ProviderType = providerType,
 			SettingsJson = null
 		};
-		var provider = providerManager.CreateDataProvider(providerModel);
+		var provider = tfService.CreateDataProvider(providerModel);
 		provider.Should().BeOfType<TfDataProvider>();
 
 		List<Tuple<string, TfDatabaseColumnType, string>> columns = new List<Tuple<string, TfDatabaseColumnType, string>>();
@@ -42,10 +40,10 @@ internal class SpaceEnvUtility
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
 		foreach (var column in columns)
-			CreateProviderColumn(providerManager, provider, column.Item1, column.Item2, column.Item3);
+			CreateProviderColumn(tfService, provider, column.Item1, column.Item2, column.Item3);
 
 		//get provider with new columns
-		provider = providerManager.GetProvider(provider.Id);
+		provider = tfService.GetDataProvider(provider.Id);
 
 		TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -57,7 +55,7 @@ internal class SpaceEnvUtility
 						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.Integer) }
 					};
 
-		provider = providerManager.CreateDataProviderSharedKey(sharedKey);
+		provider = tfService.CreateDataProviderSharedKey(sharedKey);
 		provider.Should().NotBeNull();
 
 		sharedKey =
@@ -71,7 +69,7 @@ internal class SpaceEnvUtility
 
 					};
 
-		provider = providerManager.CreateDataProviderSharedKey(sharedKey);
+		provider = tfService.CreateDataProviderSharedKey(sharedKey);
 		provider.Should().NotBeNull();
 
 		TfSharedColumn sharedColumn1 = new TfSharedColumn
@@ -82,7 +80,7 @@ internal class SpaceEnvUtility
 			IncludeInTableSearch = false,
 			SharedKeyDbName = "shared_key_text"
 		};
-		sharedColumnManager.CreateSharedColumn(sharedColumn1);
+		tfService.CreateSharedColumn(sharedColumn1);
 		
 		TfSharedColumn sharedColumn2 = new TfSharedColumn
 		{
@@ -92,12 +90,12 @@ internal class SpaceEnvUtility
 			IncludeInTableSearch = false,
 			SharedKeyDbName = "shared_key_int"
 		};
-		sharedColumnManager.CreateSharedColumn(sharedColumn2);
+		tfService.CreateSharedColumn(sharedColumn2);
 		
 		//get provider with new shared columns
-		provider = providerManager.GetProvider(provider.Id);
+		provider = tfService.GetDataProvider(provider.Id);
 
-		var createResult = providerManager.CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy());
+		var createResult = tfService.CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy());
 
 		await backgroundSync.StartManualProcessTasks(); 
 
@@ -125,7 +123,7 @@ internal class SpaceEnvUtility
 			IsPrivate = false,
 			Position = 0
 		};
-		spaceManager.CreateSpace(space);
+		tfService.CreateSpace(space);
 
 		var spaceColumns = columns.Select(x => x.Item1).ToList();
 		spaceColumns.Add(sharedColumn1.DbName);
@@ -144,15 +142,15 @@ internal class SpaceEnvUtility
 
 		//spaceData.Filters.Add(new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Greater, 5));
 
-		var result = spaceManager.CreateSpaceData(spaceData);
-		provider = providerManager.GetProvider(provider.Id);
-		spaceData = spaceManager.GetSpaceData(spaceData.Id);
+		var result = tfService.CreateSpaceData(spaceData);
+		provider = tfService.GetDataProvider(provider.Id);
+		spaceData = tfService.GetSpaceData(spaceData.Id);
 
 		return (provider, spaceData);
 	}
 
 	private static void CreateProviderColumn(
-		ITfDataProviderManager providerManager,
+		ITfService tfService,
 		TfDataProvider provider,
 		string dbName,
 		TfDatabaseColumnType dbType,
@@ -176,6 +174,6 @@ internal class SpaceEnvUtility
 			PreferredSearchType = TfDataProviderColumnSearchType.Contains
 		};
 
-		providerManager.CreateDataProviderColumn(column);
+		tfService.CreateDataProviderColumn(column);
 	}
 }

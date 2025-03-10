@@ -4,7 +4,7 @@ public interface IUserEvent : ITfEvent { }
 
 public partial class TfUserEventProvider : IAsyncDisposable
 {
-	private readonly User _currentUser;
+	private readonly TfUser _currentUser;
 	private readonly ITfEventBus _eventBus;
 	private readonly AuthenticationStateProvider _authStateProvider;
 

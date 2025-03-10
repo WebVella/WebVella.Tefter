@@ -101,7 +101,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var providers = _dataProviderManager.GetProviders();
+			var providers = _tfService.GetDataProviders();
 			if (providers is null)
 				return Task.FromResult(new List<TucDataProvider>());
 
@@ -155,7 +155,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var provider = _dataProviderManager.GetProvider(providerId);
+			var provider = _tfService.GetDataProvider(providerId);
 			if (provider is null)
 				return Task.FromResult((TucDataProvider)null);
 
@@ -180,7 +180,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var providerTypes = _dataProviderManager.GetProviderTypes();
+			var providerTypes = _tfService.GetDataProviderTypes();
 			if (providerTypes is null)
 				return Task.FromResult(new List<TucDataProviderTypeInfo>());
 
@@ -203,17 +203,17 @@ internal partial class AppStateUseCase
 	internal virtual Task DeleteDataProviderAsync(
 		Guid providerId)
 	{
-		_dataProviderManager.DeleteDataProvider(providerId);
+		_tfService.DeleteDataProvider(providerId);
 		return Task.CompletedTask;
 	}
 
 	internal virtual TucDataProvider CreateDataProviderWithForm(
 		TucDataProviderForm form)
 	{
-		var providerTypes = _dataProviderManager.GetProviderTypes();
+		var providerTypes = _tfService.GetDataProviderTypes();
 		var submitForm = form.ToModel(providerTypes);
 
-		var provider = _dataProviderManager.CreateDataProvider(submitForm);
+		var provider = _tfService.CreateDataProvider(submitForm);
 		if (provider is null)
 			throw new TfException("CreateDataProvider returned null object");
 
@@ -223,10 +223,10 @@ internal partial class AppStateUseCase
 	internal virtual TucDataProvider UpdateDataProviderWithForm(
 		TucDataProviderForm form)
 	{
-		var providerTypes = _dataProviderManager.GetProviderTypes();
+		var providerTypes = _tfService.GetDataProviderTypes();
 		var submitForm = form.ToModel(providerTypes);
 
-		var provider = _dataProviderManager.UpdateDataProvider(submitForm);
+		var provider = _tfService.UpdateDataProvider(submitForm);
 		if (provider is null)
 			throw new TfException("UpdateDataProvider returned null object");
 
@@ -237,7 +237,7 @@ internal partial class AppStateUseCase
 		Guid providerId,
 		List<string> columns)
 	{
-		var provider = _dataProviderManager.GetProvider(providerId);
+		var provider = _tfService.GetDataProvider(providerId);
 		if (provider is null)
 			throw new TfException("Provider not found");
 
@@ -250,7 +250,7 @@ internal partial class AppStateUseCase
 			SettingsJson = provider.SettingsJson,
 		};
 
-		provider = _dataProviderManager.UpdateDataProvider(submit);
+		provider = _tfService.UpdateDataProvider(submit);
 		if (provider is null)
 			throw new TfException("UpdateDataProvider returned null object");
 
@@ -261,21 +261,21 @@ internal partial class AppStateUseCase
 	internal virtual TucDataProvider CreateDataProviderColumn(
 		TucDataProviderColumnForm form)
 	{
-		var result = _dataProviderManager.CreateDataProviderColumn(form.ToModel());
+		var result = _tfService.CreateDataProviderColumn(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
 	internal virtual TucDataProvider UpdateDataProviderColumn(
 		TucDataProviderColumnForm form)
 	{
-		var result = _dataProviderManager.UpdateDataProviderColumn(form.ToModel());
+		var result = _tfService.UpdateDataProviderColumn(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
 	internal virtual TucDataProvider DeleteDataProviderColumn(
 		Guid columnId)
 	{
-		var result = _dataProviderManager.DeleteDataProviderColumn(columnId);
+		var result = _tfService.DeleteDataProviderColumn(columnId);
 		return new TucDataProvider(result);
 	}
 
@@ -284,7 +284,7 @@ internal partial class AppStateUseCase
 		List<TucDataProviderColumn> columns)
 	{
 		var columnSM = columns.Select(x => x.ToModel()).ToList();
-		var result = _dataProviderManager.CreateBulkDataProviderColumn(providerId, columnSM);
+		var result = _tfService.CreateBulkDataProviderColumn(providerId, columnSM);
 		return new TucDataProvider(result);
 	}
 
@@ -292,7 +292,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var result = _dataProviderManager.GetDataProviderSourceSchemaInfo(provider.Id);
+			var result = _tfService.GetDataProviderSourceSchemaInfo(provider.Id);
 			return Task.FromResult(new TucDataProviderSourceSchemaInfo(result));
 		}
 		catch (Exception ex)
@@ -313,21 +313,21 @@ internal partial class AppStateUseCase
 	internal virtual TucDataProvider CreateDataProviderKey(
 		TucDataProviderSharedKeyForm form)
 	{
-		var result = _dataProviderManager.CreateDataProviderSharedKey(form.ToModel());
+		var result = _tfService.CreateDataProviderSharedKey(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
 	internal virtual TucDataProvider UpdateDataProviderKey(
 		TucDataProviderSharedKeyForm form)
 	{
-		var result = _dataProviderManager.UpdateDataProviderSharedKey(form.ToModel());
+		var result = _tfService.UpdateDataProviderSharedKey(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
 	internal TucDataProvider DeleteDataProviderSharedKey(
 		Guid keyId)
 	{
-		var result = _dataProviderManager.DeleteDataProviderSharedKey(keyId);
+		var result = _tfService.DeleteDataProviderSharedKey(keyId);
 		return new TucDataProvider(result);
 	}
 
@@ -337,7 +337,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var result = _dataProviderManager.GetSynchronizationTasksExtended(providerId);
+			var result = _tfService.GetSynchronizationTasksExtended(providerId);
 
 			if (result is null)
 				return Task.FromResult(new List<TucDataProviderSyncTask>());
@@ -370,7 +370,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			_dataProviderManager.CreateSynchronizationTask(dataProviderId, new TfSynchronizationPolicy());
+			_tfService.CreateSynchronizationTask(dataProviderId, new TfSynchronizationPolicy());
 		}
 		catch (Exception ex)
 		{
@@ -389,7 +389,7 @@ internal partial class AppStateUseCase
 	internal virtual Task DeleteAllProviderData(
 		Guid dataProviderId)
 	{
-		var provider = _dataProviderManager.GetProvider(dataProviderId);
+		var provider = _tfService.GetDataProvider(dataProviderId);
 		if (provider is null)
 		{
 			ResultUtils.ProcessServiceException(
@@ -402,7 +402,7 @@ internal partial class AppStateUseCase
 			);
 			return Task.CompletedTask;
 		}
-		_dataManager.DeleteAllProviderRows(provider);
+		_tfService.DeleteAllProviderRows(provider);
 		return Task.CompletedTask;
 	}
 
@@ -410,7 +410,7 @@ internal partial class AppStateUseCase
 		Guid taskId,
 		TucDataProviderSyncTaskInfoType type)
 	{
-		var allTasks = _dataProviderManager.GetSynchronizationTaskResultInfos(taskId);
+		var allTasks = _tfService.GetSynchronizationTaskResultInfos(taskId);
 		var result = new List<TucDataProviderSyncTaskInfo>();
 		switch (type)
 		{
@@ -435,11 +435,11 @@ internal partial class AppStateUseCase
 	//Data
 	internal virtual TfDataTable GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)
 	{
-		var provider = _dataProviderManager.GetProvider(providerId);
+		var provider = _tfService.GetDataProvider(providerId);
 		if (provider is null)
 			throw new TfException("Provider not found");
 
-		var dt = _dataManager.QueryDataProvider(
+		var dt = _tfService.QueryDataProvider(
 			provider: provider,
 			search: search,
 			page: page,
@@ -452,11 +452,11 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var provider = _dataProviderManager.GetProvider(providerId);
+			var provider = _tfService.GetDataProvider(providerId);
 
 			if (provider is null) return Task.FromResult((TfDataTable)null);
 
-			var data = _dataManager.QueryDataProvider(
+			var data = _tfService.QueryDataProvider(
 				provider: provider,
 				search: search,
 				page: page,

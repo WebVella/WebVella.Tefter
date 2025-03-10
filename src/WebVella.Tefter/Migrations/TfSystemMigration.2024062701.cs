@@ -224,7 +224,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 	{
 		ITfDatabaseService dbService = serviceProvider.GetService<ITfDatabaseService>();
 		ITfDboManager dboManager = serviceProvider.GetService<ITfDboManager>();
-		IIdentityManager identityManager = serviceProvider.GetService<IIdentityManager>();
+		ITfService tfService = serviceProvider.GetService<ITfService>();
 
 		//creates default empty id in id_dict
 		//this entry is required because data provider shared keys default
@@ -236,16 +236,16 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 		// CREATES INITIAL ADMINISTRATOR USER AND ROLE 
 
 		{
-			var adminRole = identityManager
+			var adminRole = tfService
 				.CreateRoleBuilder()
 				.WithName("Administrators")
 				.IsSystem(true)
 			.Build();
 
-			adminRole = await identityManager.SaveRoleAsync(adminRole);
+			adminRole = await tfService.SaveRoleAsync(adminRole);
 			
 			//default settings
-			var user = identityManager
+			var user = tfService
 				.CreateUserBuilder()
 				.WithEmail("admin@tefter.bg")
 				.WithFirstName("Tefter")
@@ -256,7 +256,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 				.WithRoles(adminRole)
 				.Build();
 
-			await identityManager.SaveUserAsync(user);
+			await tfService.SaveUserAsync(user);
 		}
 
 
@@ -267,9 +267,9 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 
 		{
 
-			var adminRole = identityManager.GetRole("Administrators");
+			var adminRole = tfService.GetRole("Administrators");
 
-			var user = identityManager
+			var user = tfService
 				.CreateUserBuilder()
 				.WithEmail("rumen@webvella.com")
 				.WithFirstName("Rumen")
@@ -280,9 +280,9 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 				.WithRoles(adminRole)
 				.Build();
 
-			user = await identityManager.SaveUserAsync(user);
+			user = await tfService.SaveUserAsync(user);
 
-			user = identityManager
+			user = tfService
 			   .CreateUserBuilder()
 			   .WithEmail("boz@webvella.com")
 			   .WithFirstName("Bozhidar")
@@ -293,7 +293,7 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 			   .WithRoles(adminRole)
 			   .Build();
 
-			await identityManager.SaveUserAsync(user);
+			await tfService.SaveUserAsync(user);
 		}
 
 #endif

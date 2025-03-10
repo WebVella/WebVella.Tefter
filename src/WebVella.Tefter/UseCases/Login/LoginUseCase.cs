@@ -2,10 +2,10 @@
 
 internal class LoginUseCase
 {
-	private readonly IIdentityManager _identityManager;
+	private readonly ITfService _tfService;
 	public LoginUseCase(IServiceProvider serviceProvider)
 	{
-		_identityManager = serviceProvider.GetService<IIdentityManager>();
+		_tfService = serviceProvider.GetService<ITfService>();
 	}
 	internal void OnInitialized()
 	{
@@ -19,7 +19,7 @@ internal class LoginUseCase
 	{
 		try
 		{
-			await _identityManager.AuthenticateAsync(
+			await _tfService.AuthenticateAsync(
 				jsRuntime: jsRuntime,
 				email: Form.Email,
 				password: Form.Password,

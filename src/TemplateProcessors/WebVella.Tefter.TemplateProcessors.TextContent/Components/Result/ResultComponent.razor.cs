@@ -4,8 +4,6 @@
 public partial class ResultComponent : TfBaseComponent, 
 	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
 {
-	[Inject] private ITfTemplateService TemplateService { get; set; }
-
 	public Guid Id { get; init; } = new Guid("ac4317e2-ef23-46b8-875d-c763e50a5d8e");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text Content Result";
@@ -36,7 +34,7 @@ public partial class ResultComponent : TfBaseComponent,
 		{
 			if (Context.Template is not null && Context.SpaceData is not null)
 			{
-				ITfTemplateResult result = TemplateService.ProcessTemplate(
+				ITfTemplateResult result = TfService.ProcessTemplate(
 					templateId: Context.Template.Id,
 					spaceDataId: Context.SpaceData.Id,
 					tfRecordIds: Context.SelectedRowIds,

@@ -47,7 +47,7 @@ internal partial class AppStateUseCase
 		var result = new List<TucSharedColumn>();
 		try
 		{
-			var sharedColumns = _sharedColumnsManager.GetSharedColumns();
+			var sharedColumns = _tfService.GetSharedColumns();
 			foreach (TfSharedColumn item in sharedColumns)
 			{
 				result.Add(new TucSharedColumn(item));
@@ -75,7 +75,7 @@ internal partial class AppStateUseCase
 		if (form.Id == Guid.Empty)
 			form = form with { Id = Guid.NewGuid() };
 
-		_sharedColumnsManager.CreateSharedColumn(form.ToModel());
+		_tfService.CreateSharedColumn(form.ToModel());
 
 		return GetSharedColumns();
 	}
@@ -83,7 +83,7 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSharedColumn> UpdateSharedColumn(
 		TucSharedColumnForm form)
 	{
-		_sharedColumnsManager.UpdateSharedColumn(form.ToModel());
+		_tfService.UpdateSharedColumn(form.ToModel());
 
 		return GetSharedColumns();
 	}
@@ -93,7 +93,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			_sharedColumnsManager.DeleteSharedColumn(columnId);
+			_tfService.DeleteSharedColumn(columnId);
 			return GetSharedColumns();
 		}
 		catch (Exception ex)
@@ -115,7 +115,7 @@ internal partial class AppStateUseCase
 		try
 		{
 			var result = new List<TucDatabaseColumnTypeInfo>();
-			var resultColumnType = _dataProviderManager.GetDatabaseColumnTypeInfos();
+			var resultColumnType = _tfService.GetDatabaseColumnTypeInfos();
 
 			if (resultColumnType is not null)
 			{
