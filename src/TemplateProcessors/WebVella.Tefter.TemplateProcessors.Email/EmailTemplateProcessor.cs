@@ -402,8 +402,15 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 
 			var emailItem = new EmailTemplateResultItem();
 
+			
 			try
 			{
+				foreach( var ctx in resultItem.Contexts )
+				{
+					foreach(var errorMessage in ctx.Errors )
+						emailItem.Errors.Add( new ValidationError("", errorMessage) );
+				}
+
 				foreach (DataRow row in resultItem.DataTable.Rows)
 					emailItem.RelatedRowIds.Add((Guid)row["tf_id"]);
 
@@ -423,6 +430,12 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 						continue;
 
 					var emailAtt = new EmailTemplateResultItemAttachment();
+
+					foreach (var ctx in attachmentItem.Contexts)
+					{
+						foreach (var errorMessage in ctx.Errors)
+							emailAtt.Errors.Add(new ValidationError("", errorMessage));
+					}
 
 					emailAtt.FileName = attachmentItem.Filename;
 					emailAtt.DownloadUrl = null;
