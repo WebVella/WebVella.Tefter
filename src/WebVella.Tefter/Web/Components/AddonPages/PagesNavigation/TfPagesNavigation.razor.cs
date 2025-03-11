@@ -17,6 +17,8 @@ public partial class TfPagesNavigation : TfBaseComponent
 		search = search?.Trim().ToLowerInvariant();
 		var menuItems = new List<TucMenuItem>();
 		var uri = new Uri(Navigator.Uri);
+		if(TfAppState.Value.Pages is null) return menuItems;
+
 		foreach (var page in TfAppState.Value.Pages)
 		{
 			if (!String.IsNullOrWhiteSpace(search) && !page.Name.ToLowerInvariant().Contains(search))

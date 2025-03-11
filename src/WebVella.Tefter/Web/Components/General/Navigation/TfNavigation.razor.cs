@@ -59,7 +59,8 @@ public partial class TfNavigation : TfBaseComponent
 			Url = "/",
 			Selected = uri.LocalPath == "/"
 		});
-		if (TfAppState.Value.Pages.Count > 0)
+		if (TfAppState.Value.Pages is not null
+		&& TfAppState.Value.Pages.Count > 0)
 		{
 			_topMenuItems.Add(new TucMenuItem()
 			{
