@@ -10,7 +10,7 @@ public partial interface ITfMetaService
 
 public partial class TfMetaService : ITfMetaService
 {
-	public static List<ITfDataProviderType> _providerTypes { get; internal set; }
+	public static List<ITfDataProviderType> _providerTypes { get; internal set; } = new List<ITfDataProviderType>();
 
 	private static void ScanAndRegisterDataProvidersTypes(
 		Type type)
