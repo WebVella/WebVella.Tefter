@@ -9,7 +9,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextContent;
 public class TextContentTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.TEXT_CONTENT_PROCESSOR_ID;
-	public string Name => "Tefter text content template";
+	public string Name => "Text content template";
 	public string Description => "creates text content from a template and data";
 	public string FluentIconName => "ScanText";
 	public TfTemplateResultType ResultType => TfTemplateResultType.Text;

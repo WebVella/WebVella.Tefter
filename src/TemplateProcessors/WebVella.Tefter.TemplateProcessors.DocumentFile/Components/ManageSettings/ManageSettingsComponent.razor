@@ -6,7 +6,7 @@
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Template File")" />
-			<TfFileField Value=@_downloadUrl Uploaded="_fileChanged" IsLoading="_fileLoading" Accept=".xls,.xlsx" />
+			<TfFileField Value=@_downloadUrl Uploaded="_fileChanged" IsLoading="_fileLoading" Accept=".docx" />
 			<FluentValidationMessage For="@(() => _form.FileName)" />
 		</FluentGridItem>
 	</FluentGrid>

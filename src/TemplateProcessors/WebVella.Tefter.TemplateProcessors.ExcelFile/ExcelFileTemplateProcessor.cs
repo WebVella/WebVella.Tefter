@@ -7,7 +7,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile;
 public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.EXCEL_FILE_CONTENT_PROCESSOR_ID;
-	public string Name => "Tefter Spreadsheet file template";
+	public string Name => "Excel file template";
 	public string Description => "creates excel files from excel template and data";
 	public string FluentIconName => "DocumentData";
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;

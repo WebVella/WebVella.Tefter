@@ -7,7 +7,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile;
 public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.DOCUMENT_FILE_CONTENT_PROCESSOR_ID;
-	public string Name => "Tefter Word file template";
+	public string Name => "Word file template";
 	public string Description => "creates word files from word template and data";
 	public string FluentIconName => "DocumentData";
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
