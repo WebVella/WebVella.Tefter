@@ -290,9 +290,8 @@ public partial class TfService : ITfService
 				RuleFor(role => role.Id)
 					.Must(id =>
 					{
-						var role = tfService.GetRole(id);
-						var exists = role != null;
-						return !exists;
+						var users = tfService.GetUsers();
+						return users.Count(x => x.Roles.Any(r => r.Id == id)) == 0;
 					})
 					.WithMessage("There is one or more existing users with this role.");
 			});

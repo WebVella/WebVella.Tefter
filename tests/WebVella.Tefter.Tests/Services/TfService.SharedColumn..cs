@@ -1,10 +1,6 @@
-﻿using System;
-using System.Security.AccessControl;
-using WebVella.Tefter.Models;
+﻿namespace WebVella.Tefter.Tests.Services;
 
-namespace WebVella.Tefter.Tests;
-
-public partial class TfSharedColumnsManagerTests : BaseTest
+public partial class TfServiceTest : BaseTest
 {
 	[Fact]
 	public async Task SharedColumn_CRUD()

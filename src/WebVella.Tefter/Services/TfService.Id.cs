@@ -122,7 +122,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public string CombineKey(params string[] keys)
+	public string CombineKey(
+		params string[] keys)
 	{
 		if (keys == null || keys.Length == 0)
 			return string.Empty;
@@ -130,7 +131,8 @@ public partial class TfService : ITfService
 		return string.Join(Constants.SHARED_KEY_SEPARATOR, keys) ?? string.Empty;
 	}
 
-	public string CombineKey(params List<string> keys)
+	public string CombineKey(
+		params List<string> keys)
 	{
 		return CombineKey(keys?.ToArray());
 	}

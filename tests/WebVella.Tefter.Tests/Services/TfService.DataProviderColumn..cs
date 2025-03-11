@@ -1,0 +1,594 @@
+﻿using WebVella.Tefter.Models;
+
+namespace WebVella.Tefter.Tests.Services;
+
+public partial class TfServiceTest : BaseTest
+{
+	[Fact]
+	public async Task DataProviderColumn_DbName_Invalid()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateProviderInternal(tfService, tfMetaService);
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textOwa colona",
+					DbType = TfDatabaseColumnType.Text,
+					SourceName = "source_column",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//name format invalid
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
+
+
+				//empty name
+				column.DbName = string.Empty;
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
+
+				//start with tf_
+				column.DbName = "tf_test";
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
+
+				//too short
+				column.DbName = "a";
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
+
+				//too long
+				column.DbName = "rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt" +
+					"rtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrtrt";
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_Id_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateProviderInternal(tfService, tfMetaService);
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.Empty,
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textcolona",
+					DbType = TfDatabaseColumnType.Text,
+					SourceName = "source_column",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//empty id, but internally we set new id
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_DataProviderId_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateProviderInternal(tfService, tfMetaService);
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = Guid.Empty,
+					DbName = "textcolona",
+					DbType = TfDatabaseColumnType.Text,
+					SourceName = "source_column",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				//empty id
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DataProviderId)).Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_SourceName_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateProviderInternal(tfService, tfMetaService);
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textcolona",
+					DbType = TfDatabaseColumnType.Text,
+					SourceName = "",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				//we allow this now
+			}
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_SourceType_Empty()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateProviderInternal(tfService, tfMetaService);
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = null,
+					DataProviderId = provider.Id,
+					DbName = "textcolona",
+					DbType = TfDatabaseColumnType.Text,
+					SourceName = "source",
+					SourceType = "",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				var task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.SourceType)).Should().BeTrue();
+			}
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_DefaultValue()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+			using (var scope = dbService.CreateTransactionScope())
+			{
+				var provider = CreateProviderInternal(tfService, tfMetaService);
+
+				TfDataProviderColumn column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = Guid.NewGuid().ToString(),
+					DataProviderId = provider.Id,
+					DbName = "text",
+					DbType = TfDatabaseColumnType.Text,
+					SourceName = "source_column",
+					SourceType = "TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Contains
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = string.Empty,
+					DataProviderId = provider.Id,
+					DbName = "short_text",
+					DbType = TfDatabaseColumnType.ShortText,
+					SourceName = "source_column",
+					SourceType = "SHORT_TEXT",
+					IncludeInTableSearch = true,
+					IsNullable = false,
+					IsSearchable = true,
+					IsSortable = true,
+					IsUnique = true,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = short.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "short_int",
+					DbType = TfDatabaseColumnType.ShortInteger,
+					SourceName = "source_column",
+					SourceType = "SHORT_INTEGER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = int.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "int",
+					DbType = TfDatabaseColumnType.Integer,
+					SourceName = "source_column",
+					SourceType = "INTEGER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = long.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "long_int",
+					DbType = TfDatabaseColumnType.LongInteger,
+					SourceName = "source_column",
+					SourceType = "LONG_INTEGER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = true,
+					DefaultValue = decimal.MaxValue.ToString(CultureInfo.InvariantCulture),
+					DataProviderId = provider.Id,
+					DbName = "number",
+					DbType = TfDatabaseColumnType.Number,
+					SourceName = "source_column",
+					SourceType = "NUMBER",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27",
+					DataProviderId = provider.Id,
+					DbName = "date",
+					DbType = TfDatabaseColumnType.Date,
+					SourceName = "source_column",
+					SourceType = "DATE",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+
+				column = new TfDataProviderColumn
+				{
+					Id = Guid.NewGuid(),
+					AutoDefaultValue = false,
+					DefaultValue = "2024-06-27 12:01",
+					DataProviderId = provider.Id,
+					DbName = "datetime",
+					DbType = TfDatabaseColumnType.DateTime,
+					SourceName = "source_column",
+					SourceType = "DATETIME",
+					IncludeInTableSearch = true,
+					IsNullable = true,
+					IsSearchable = false,
+					IsSortable = false,
+					IsUnique = false,
+					PreferredSearchType = TfDataProviderColumnSearchType.Equals
+				};
+
+				provider = tfService.CreateDataProviderColumn(column);
+			}
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_TEXT()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Text, "TEXT", "test def value");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_SHORT_TEXT()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortText, "SHORT_TEXT", "test def value");
+		}
+	}
+
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_NUMBER()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Number, "NUMBER", "123.456");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_SHORT_INTEGER()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER", "1");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_INTEGER()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Integer, "INTEGER", "1");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_LONG_INTEGER()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.LongInteger, "LONG_INTEGER", "1");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_DATE()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Date, "DATE", "1975-10-25");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_DATETIME()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.DateTime, "DATETIME", "1975-10-25 20:25:45.123");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_BOOLEAN()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Boolean, "BOOLEAN", "true");
+		}
+	}
+
+	[Fact]
+	public async Task DataProviderColumn_CreateUpdate_GUID()
+	{
+		using (await locker.LockAsync())
+		{
+			CreateAndUpdateColumnType(TfDatabaseColumnType.Guid, "GUID", Guid.NewGuid().ToString());
+		}
+	}
+
+
+	private void CreateAndUpdateColumnType(
+		TfDatabaseColumnType type,
+		string sourceType,
+		string defaultValue)
+	{
+		ITfService tfService = ServiceProvider.GetService<ITfService>();
+		ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
+		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+
+		using (var scope = dbService.CreateTransactionScope())
+		{
+			var provider = CreateProviderInternal(tfService, tfMetaService);
+
+			TfDataProviderColumn column = new TfDataProviderColumn
+			{
+				Id = Guid.NewGuid(),
+				AutoDefaultValue = false,
+				DefaultValue = null,
+				DataProviderId = provider.Id,
+				DbName = "db_column",
+				DbType = type,
+				SourceName = "source_column",
+				SourceType = sourceType,
+				IncludeInTableSearch = false,
+				IsNullable = true,
+				IsSearchable = true,
+				IsSortable = true,
+				IsUnique = true,
+				PreferredSearchType = TfDataProviderColumnSearchType.Contains
+			};
+
+			provider = tfService.CreateDataProviderColumn(column);
+
+			var exColumn = provider.Columns.FirstOrDefault();
+
+			exColumn.Should().NotBeNull();
+			exColumn.AutoDefaultValue.Should().Be(column.AutoDefaultValue);
+			exColumn.DataProviderId.Should().Be(column.DataProviderId);
+			exColumn.DbName.Should().Be(column.DbName);
+			exColumn.DbType.Should().Be(column.DbType);
+			exColumn.SourceName.Should().Be(column.SourceName);
+			exColumn.SourceType.Should().Be(column.SourceType);
+			exColumn.IncludeInTableSearch.Should().Be(column.IncludeInTableSearch);
+			exColumn.IsNullable.Should().Be(column.IsNullable);
+			exColumn.IsSearchable.Should().Be(column.IsSearchable);
+			exColumn.IsSortable.Should().Be(column.IsSortable);
+			exColumn.IsUnique.Should().Be(column.IsUnique);
+			exColumn.PreferredSearchType.Should().Be(column.PreferredSearchType);
+			exColumn.DefaultValue.Should().Be(column.DefaultValue);
+
+			column.DefaultValue = defaultValue;
+			column.SourceName = "source_column_updated";
+			column.IncludeInTableSearch = !column.IncludeInTableSearch;
+			column.AutoDefaultValue = !column.AutoDefaultValue;
+			column.IsNullable = !column.IsNullable;
+			column.IsSearchable = !column.IsSearchable;
+			column.IsSortable = !column.IsSortable;
+			column.IsUnique = !column.IsUnique;
+			column.PreferredSearchType = TfDataProviderColumnSearchType.Equals;
+
+			provider = tfService.UpdateDataProviderColumn(column);
+
+			exColumn = provider.Columns.FirstOrDefault();
+			exColumn.AutoDefaultValue.Should().Be(column.AutoDefaultValue);
+			exColumn.DataProviderId.Should().Be(column.DataProviderId);
+			exColumn.DbName.Should().Be(column.DbName);
+			exColumn.DbType.Should().Be(column.DbType);
+			exColumn.SourceName.Should().Be(column.SourceName);
+			exColumn.SourceType.Should().Be(column.SourceType);
+			exColumn.IncludeInTableSearch.Should().Be(column.IncludeInTableSearch);
+			exColumn.IsNullable.Should().Be(column.IsNullable);
+			exColumn.IsSearchable.Should().Be(column.IsSearchable);
+			exColumn.IsSortable.Should().Be(column.IsSortable);
+			exColumn.IsUnique.Should().Be(column.IsUnique);
+			exColumn.PreferredSearchType.Should().Be(column.PreferredSearchType);
+			exColumn.DefaultValue.Should().Be(column.DefaultValue);
+		}
+	}
+}

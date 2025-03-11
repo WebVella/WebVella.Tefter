@@ -1,10 +1,10 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests.Services;
 
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Services;
 using WebVella.Tefter.TemplateProcessors.TextContent;
 
-public partial class TemplatesTests : BaseTest
+public partial class TfServiceTest : BaseTest
 {
 
 	//[Fact]
@@ -41,7 +41,7 @@ public partial class TemplatesTests : BaseTest
 
 
 	[Fact]
-	public async Task Templates_CRUD()
+	public async Task Template_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -65,7 +65,7 @@ public partial class TemplatesTests : BaseTest
 				};
 
 				var createResult = tfService.CreateTemplate(createTemplateModel);
-				
+
 				var allTemplateResult = tfService.GetTemplates();
 				allTemplateResult.Count.Should().Be(1);
 				allTemplateResult[0].Name.Should().Be(createTemplateModel.Name);
@@ -85,7 +85,7 @@ public partial class TemplatesTests : BaseTest
 					SettingsJson = "{}",
 					UserId = user.Id,
 				};
-				
+
 				var updateResult = tfService.UpdateTemplate(updateTemplateModel);
 
 				allTemplateResult = tfService.GetTemplates();
@@ -95,7 +95,7 @@ public partial class TemplatesTests : BaseTest
 				allTemplateResult[0].FluentIconName.Should().Be(updateTemplateModel.FluentIconName);
 
 				tfService.DeleteTemplate(updateTemplateModel.Id);
-				
+
 				allTemplateResult = tfService.GetTemplates();
 				allTemplateResult.Count.Should().Be(0);
 			}

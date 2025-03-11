@@ -4,12 +4,12 @@ using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Web.ViewColumns;
 
-namespace WebVella.Tefter.Tests;
+namespace WebVella.Tefter.Tests.Services;
 
-public partial class tfServiceTests : BaseTest
+public partial class TfServiceTest : BaseTest
 {
 	[Fact]
-	public async Task CRUD_Space()
+	public async Task Space_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -90,7 +90,7 @@ public partial class tfServiceTests : BaseTest
 	}
 
 	[Fact]
-	public async Task CRUD_SpaceData()
+	public async Task SpaceData_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -111,7 +111,7 @@ public partial class tfServiceTests : BaseTest
 					ProviderType = providerType,
 					SettingsJson = null
 				};
-				
+
 				var provider = tfService.CreateDataProvider(providerModel);
 				provider.Should().BeOfType<TfDataProvider>();
 
@@ -376,7 +376,7 @@ public partial class tfServiceTests : BaseTest
 	}
 
 	[Fact]
-	public async Task CRUD_Bookmark()
+	public async Task Bookmark_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -498,7 +498,7 @@ public partial class tfServiceTests : BaseTest
 
 
 	[Fact]
-	public async Task CRUD_SpaceView()
+	public async Task SpaceView_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -585,7 +585,7 @@ public partial class tfServiceTests : BaseTest
 	}
 
 	[Fact]
-	public async Task CRUD_SpaceViewColumn()
+	public async Task SpaceViewColumn_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -682,13 +682,13 @@ public partial class tfServiceTests : BaseTest
 				var first = createdColums[0];
 				var last = createdColums[createdColums.Count - 1];
 
-				first.Position = (short)(createdColums.Count);
+				first.Position = (short)createdColums.Count;
 
 				var updateResult = tfService.UpdateSpaceViewColumn(first);
 				updateResult.Should().NotBeNull();
 
 				columns = tfService.GetSpaceViewColumnsList(view.Id);
-				columns.Single(x => x.Id == first.Id).Position.Should().Be((short)(createdColums.Count));
+				columns.Single(x => x.Id == first.Id).Position.Should().Be((short)createdColums.Count);
 				columns.Single(x => x.Id == last.Id).Position.Should().Be((short)(createdColums.Count - 1));
 
 				last = columns.Single(x => x.Id == first.Id);
@@ -710,7 +710,7 @@ public partial class tfServiceTests : BaseTest
 
 
 	[Fact]
-	public async Task CRUD_SpaceNode()
+	public async Task SpaceNode_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -732,7 +732,7 @@ public partial class tfServiceTests : BaseTest
 				};
 				tfService.CreateSpace(space);
 
-				
+
 				var spaceNode1_0_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -777,7 +777,7 @@ public partial class tfServiceTests : BaseTest
 				};
 
 				tfService.CreateSpaceNode(spaceNode1_2_0);
-				
+
 				var spaceNode1_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -837,7 +837,7 @@ public partial class tfServiceTests : BaseTest
 				};
 
 				tfService.CreateSpaceNode(spaceNode2_2_0);
-				
+
 				var spaceNode2_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -867,7 +867,7 @@ public partial class tfServiceTests : BaseTest
 				};
 
 				tfService.CreateSpaceNode(spaceNode3_0_0);
-				
+
 				var spaceNode3_1_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -897,7 +897,7 @@ public partial class tfServiceTests : BaseTest
 				};
 
 				tfService.CreateSpaceNode(spaceNode3_2_0);
-				
+
 				var spaceNode3_3_0 = new TfSpaceNode
 				{
 					Id = Guid.NewGuid(),
@@ -920,7 +920,7 @@ public partial class tfServiceTests : BaseTest
 				//test move up in same parent node
 				spaceNode1_3_0.Position = 1;
 				var nodeTree = tfService.UpdateSpaceNode(spaceNode1_3_0);
-	
+
 				var updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(2);
 
@@ -1024,7 +1024,7 @@ public partial class tfServiceTests : BaseTest
 				//change position without changing parent (root) with invalid position
 				spaceNode1_0_0.Position = null;
 				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
-				
+
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
 				updatedSpaceNode1_0_0.ParentId.Should().Be(null);
@@ -1084,7 +1084,7 @@ public partial class tfServiceTests : BaseTest
 				//change position with null + parent change
 				spaceNode1_0_0.Position = null;
 				spaceNode1_0_0.ParentId = spaceNode2_0_0.Id;
-				
+
 				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
@@ -1108,7 +1108,7 @@ public partial class tfServiceTests : BaseTest
 				//try to move node inside child nodes tree
 				updatedSpaceNode1_0_0.Position = 1;
 				updatedSpaceNode1_0_0.ParentId = spaceNode1_2_0.Id;
-				var task = Task.Run(() => { nodeTree = tfService.UpdateSpaceNode(updatedSpaceNode1_0_0);  });
+				var task = Task.Run(() => { nodeTree = tfService.UpdateSpaceNode(updatedSpaceNode1_0_0); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 

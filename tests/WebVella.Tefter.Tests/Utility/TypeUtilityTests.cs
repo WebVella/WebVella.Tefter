@@ -3,9 +3,9 @@ using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Web.Models;
 
-namespace WebVella.Tefter.Tests;
+namespace WebVella.Tefter.Tests.Utility;
 
-public class UtilityTests
+public class TypeUtilityTests
 {
 	protected static readonly AsyncLock locker = new AsyncLock();
 
@@ -112,7 +112,7 @@ public class UtilityTests
 		{
 			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>),typeof(TfDataProviderManageSettingsComponentContext)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsComponentContext)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeTrue();
 		}
@@ -125,7 +125,7 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
-			string? result = null;
+			string result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().Throw<ArgumentException>("The provided type must be a interface.");
 		}
@@ -137,7 +137,7 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(ITfDataProviderType);
-			string? result = null;
+			string result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().Throw<ArgumentException>("he provided type must be a generic interface.");
 		}
@@ -149,7 +149,7 @@ public class UtilityTests
 		using (await locker.LockAsync())
 		{
 			Type objType = typeof(ITfRegionComponent<TfDataProviderManageSettingsComponentContext>);
-			string? result = null;
+			string result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().NotThrow();
 			result.Should().Be(typeof(TfDataProviderManageSettingsComponentContext).FullName);
@@ -224,7 +224,7 @@ public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){};
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>() { };
 }
 
 public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
@@ -235,14 +235,14 @@ public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfD
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
 		new TfRegionComponentScope(typeof(UtilityTestsDataProviderTypeClass),null)
 	};
 }
 
 public class UtilityTestsDataProviderTypeClass : ITfDataProviderType
 {
-	public Guid Id { get;set; }
+	public Guid Id { get; set; }
 
 	public string Name { get; set; }
 

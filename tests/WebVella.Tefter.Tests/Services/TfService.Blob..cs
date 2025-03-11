@@ -1,12 +1,10 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
+﻿namespace WebVella.Tefter.Tests.Services;
 
-namespace WebVella.Tefter.Tests;
-
-public partial class TftfServiceTests : BaseTest
+public partial class TfServiceTest : BaseTest
 {
 
 	[Fact]
-	public async Task tfService_CRUD()
+	public async Task Blob_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -92,7 +90,7 @@ public partial class TftfServiceTests : BaseTest
 				task = Task.Run(() => { tfService.DeleteBlob(blobId); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				
+
 
 				//exists after delete
 				task = Task.Run(() => { doExists = tfService.ExistsBlob(blobId); });
@@ -101,7 +99,7 @@ public partial class TftfServiceTests : BaseTest
 				doExists.Should().BeFalse();
 
 				//create from local path
-				string tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
+				string tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
 				Stream fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
 				var bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);
@@ -125,7 +123,7 @@ public partial class TftfServiceTests : BaseTest
 				doExists.Should().BeTrue();
 
 				//create from stream
-				tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
+				tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
 				fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
 				bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);
@@ -154,7 +152,7 @@ public partial class TftfServiceTests : BaseTest
 	}
 
 	[Fact]
-	public async Task tfService_TemporaryBlobOperations()
+	public async Task Blob_TemporaryBlobOperations()
 	{
 		using (await locker.LockAsync())
 		{
@@ -223,7 +221,7 @@ public partial class TftfServiceTests : BaseTest
 				doExists.Should().BeFalse();
 
 				//create from local path
-				string tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
+				string tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
 				Stream fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
 				var bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);
@@ -239,7 +237,7 @@ public partial class TftfServiceTests : BaseTest
 				doExists.Should().BeTrue();
 
 				//create from stream
-				tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
+				tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
 				fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
 				bw = new BinaryWriter(fileStream);
 				bw.Write(sampleJsonFileContent2);

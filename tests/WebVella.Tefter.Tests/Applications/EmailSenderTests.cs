@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests.Applications;
 
 using WebVella.Tefter.EmailSender.Models;
 using WebVella.Tefter.EmailSender.Services;
@@ -31,7 +31,7 @@ public partial class EmailSenderTests : BaseTest
 
 				emailService.CreateEmailMessage(model);
 				var emailsList = emailService.GetEmailMessages();
-				
+
 				foreach (var email in emailsList)
 				{
 					var emailById = emailService.GetEmailMessageById(email.Id);

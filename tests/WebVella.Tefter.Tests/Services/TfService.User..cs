@@ -1,12 +1,11 @@
-﻿using WebVella.Tefter.Exceptions;
-using WebVella.Tefter.Models;
+﻿using WebVella.Tefter.Models;
 
-namespace WebVella.Tefter.Tests;
+namespace WebVella.Tefter.Tests.Services;
 
-public partial class tfServiceTests : BaseTest
+public partial class TfServiceTest : BaseTest
 {
 	[Fact]
-	public async Task CRUD_UserAndRole()
+	public async Task User_CRUD()
 	{
 		using (await locker.LockAsync())
 		{

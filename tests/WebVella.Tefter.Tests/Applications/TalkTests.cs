@@ -1,8 +1,7 @@
-﻿namespace WebVella.Tefter.Tests;
+﻿namespace WebVella.Tefter.Tests.Applications;
 
 using WebVella.Tefter.Talk.Models;
 using WebVella.Tefter.Talk.Services;
-
 
 public partial class TalkTests : BaseTest
 {
@@ -50,11 +49,11 @@ public partial class TalkTests : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var (provider, spaceData) = await SpaceEnvUtility.CreateTestStructureAndData(ServiceProvider, dbService);
+				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 				var dataTable = tfService.QueryDataProvider(provider);
 
 				List<Guid> rowIds = new List<Guid>();
-				for(int i = 0; i < 5 ; i++)
+				for (int i = 0; i < 5; i++)
 					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
 
 				var user = tfService.GetUser("rumen@webvella.com");
@@ -81,7 +80,7 @@ public partial class TalkTests : BaseTest
 				};
 
 				var id1 = talkService.CreateThread(thread);
-				
+
 				var th = talkService.GetThread(id1);
 				th.Should().NotBeNull();
 

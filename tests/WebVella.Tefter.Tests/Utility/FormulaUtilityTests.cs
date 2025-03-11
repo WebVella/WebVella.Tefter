@@ -1,7 +1,7 @@
 ﻿using WebVella.Tefter.Utility;
 using WebVella.Tefter.Web.Utils;
 
-namespace WebVella.Tefter.Tests;
+namespace WebVella.Tefter.Tests.Utility;
 public class FormulaUtilityTests
 {
 	[Fact]
@@ -372,25 +372,25 @@ public class FormulaUtilityTests
 		DataTable table = new DataTable();
 
 		DataColumn idColumn = new DataColumn();
-		idColumn.DataType = System.Type.GetType("System.Guid");
+		idColumn.DataType = Type.GetType("System.Guid");
 		idColumn.ColumnName = idName;
 		idColumn.DefaultValue = Guid.NewGuid();
 
 		DataColumn priceColumn = new DataColumn();
-		priceColumn.DataType = System.Type.GetType("System.Decimal");
+		priceColumn.DataType = Type.GetType("System.Decimal");
 		priceColumn.ColumnName = priceName;
 		priceColumn.DefaultValue = 50;
 
 		// Create the second, calculated, column.
 		DataColumn taxColumn = new DataColumn();
-		taxColumn.DataType = System.Type.GetType("System.Decimal");
+		taxColumn.DataType = Type.GetType("System.Decimal");
 		taxColumn.ColumnName = taxName;
 		taxColumn.Expression = $"{priceName} * 1.25";
-		
+
 
 		// Create third column.
 		DataColumn totalColumn = new DataColumn();
-		totalColumn.DataType = System.Type.GetType("System.Decimal");
+		totalColumn.DataType = Type.GetType("System.Decimal");
 		totalColumn.ColumnName = totalName;
 		totalColumn.Expression = $"{priceName} + {taxName}";
 

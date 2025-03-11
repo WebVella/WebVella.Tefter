@@ -1,13 +1,10 @@
-﻿using System.IO;
-using System.Text;
+﻿namespace WebVella.Tefter.Tests.Services;
 
-namespace WebVella.Tefter.Tests;
-
-public partial class TfRepositoryServiceTests : BaseTest
+public partial class TfServiceTest : BaseTest
 {
 
 	[Fact]
-	public async Task RepositoryService_CRUD()
+	public async Task Repository_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -31,7 +28,7 @@ public partial class TfRepositoryServiceTests : BaseTest
 				tmpFilePath = CreateTmpFile("This is a test content2.");
 				createResult = tfService.CreateRepositoryFile("rumen.bin", tmpFilePath);
 
-				filesResult = tfService.GetRepositoryFiles(filenameStartsWith:"r");
+				filesResult = tfService.GetRepositoryFiles(filenameStartsWith: "r");
 				filesResult.Count.Should().Be(1);
 				filesResult[0].Filename.Should().Be("rumen.bin");
 
@@ -43,11 +40,11 @@ public partial class TfRepositoryServiceTests : BaseTest
 				filesResult.Count.Should().Be(2);
 
 				tmpFilePath = CreateTmpFile("This is a test content3.");
-				
+
 				tfService.UpdateRepositoryFile("rumen.bin", tmpFilePath);
-				
+
 				tfService.DeleteRepositoryFile("rumen.bin");
-				
+
 				fileResult = tfService.GetRepositoryFile("rumen.bin");
 				fileResult.Should().BeNull();
 
@@ -57,12 +54,12 @@ public partial class TfRepositoryServiceTests : BaseTest
 		}
 	}
 
-	public static string CreateTmpFile(string content )
+	public static string CreateTmpFile(string content)
 	{
-		var tmpFilePath = System.IO.Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
+		var tmpFilePath = Path.GetTempPath() + Guid.NewGuid().ToString() + ".json";
 		var fileStream = File.Open(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite);
 		var bw = new BinaryWriter(fileStream);
-		bw.Write( Encoding.UTF8.GetBytes(content));
+		bw.Write(Encoding.UTF8.GetBytes(content));
 		bw.Close();
 		fileStream.Close();
 
