@@ -56,7 +56,6 @@ public static class TfDependencyInjection
 
 		//use cases
 		services.AddTransient<AppStateUseCase, AppStateUseCase>();
-		services.AddTransient<AppStateUseCase, AppStateUseCase>();
 		services.AddTransient<UserStateUseCase, UserStateUseCase>();
 		services.AddTransient<ExportUseCase, ExportUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();

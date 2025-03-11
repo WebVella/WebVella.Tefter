@@ -13,7 +13,7 @@ internal partial class UserStateUseCase
 	{
 		_authenticationStateProvider = serviceProvider.GetService<AuthenticationStateProvider>();
 		_jsRuntime = serviceProvider.GetService<IJSRuntime>();
-		_tfService = serviceProvider.GetService<TfService>();
+		_tfService = serviceProvider.GetService<ITfService>();
 		_navigationManager = serviceProvider.GetService<NavigationManager>();
 	}
 
