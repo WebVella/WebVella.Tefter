@@ -29,9 +29,6 @@ public partial class TfService : ITfService
 		_metaService = metaService;
 		_dboManager = serviceProvider.GetService<ITfDboManager>();
 		
-		_providerTypes = new List<ITfDataProviderType>();
-		
-		ScanAndRegisterDataProviderTypes();
 		InitBlobStorageFolder(_config.BlobStoragePath);
 	}
 }

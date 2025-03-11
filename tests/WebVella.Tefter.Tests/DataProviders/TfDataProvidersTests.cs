@@ -1,5 +1,6 @@
 ﻿using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.Services;
 
 namespace WebVella.Tefter.Tests.DataProviders;
 
@@ -30,9 +31,11 @@ public partial class TfDataProvidersTests : BaseTest
 	//	}
 	//}
 
-	private TfDataProvider CreateProviderInternal(ITfService tfService)
+	private TfDataProvider CreateProviderInternal(
+		ITfService tfService,
+		ITfMetaService tfMetaService)
 	{
-		var providerTypes = tfService.GetDataProviderTypes();
+		var providerTypes = tfMetaService.GetDataProviderTypes();
 		var providerType = providerTypes
 			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -59,11 +62,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				CreateProviderInternal(tfService);
+				CreateProviderInternal(tfService, tfMetaService);
 			}
 		}
 	}
@@ -74,11 +78,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				var task = Task.Run(() => { tfService.DeleteDataProvider(provider.Id); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
@@ -93,11 +98,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -126,11 +132,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -159,11 +166,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -198,11 +206,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel
@@ -227,11 +236,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -278,11 +288,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
@@ -308,11 +319,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderModel model = new TfDataProviderModel
 				{
@@ -342,11 +354,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -421,11 +434,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -459,11 +473,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -500,11 +515,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -538,11 +554,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -578,11 +595,12 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService);
+				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				TfDataProviderColumn column = new TfDataProviderColumn
 				{
@@ -845,11 +863,12 @@ public partial class TfDataProvidersTests : BaseTest
 		string defaultValue)
 	{
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
+		ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 		using (var scope = dbService.CreateTransactionScope())
 		{
-			var provider = CreateProviderInternal(tfService);
+			var provider = CreateProviderInternal(tfService, tfMetaService);
 
 			TfDataProviderColumn column = new TfDataProviderColumn
 			{
@@ -926,12 +945,13 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateSharedKeysStructure(tfService);
+				var provider = CreateSharedKeysStructure(tfService, tfMetaService);
 
 				TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -1030,12 +1050,13 @@ public partial class TfDataProvidersTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfDatabaseManager dbManager = ServiceProvider.GetRequiredService<ITfDatabaseManager>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateSharedKeysStructure(tfService);
+				var provider = CreateSharedKeysStructure(tfService, tfMetaService);
 
 				TfDataProviderSharedKey sharedKey =
 					new TfDataProviderSharedKey
@@ -1056,9 +1077,10 @@ public partial class TfDataProvidersTests : BaseTest
 	}
 
 	private TfDataProvider CreateSharedKeysStructure(
-		ITfService tfService)
+		ITfService tfService,
+		ITfMetaService tfMetaService)
 	{
-		var provider = CreateProviderInternal(tfService);
+		var provider = CreateProviderInternal(tfService, tfMetaService);
 
 		TfDataProviderColumn column = new TfDataProviderColumn
 		{

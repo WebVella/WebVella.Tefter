@@ -96,10 +96,11 @@ public partial class tfServiceTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -193,10 +194,11 @@ public partial class tfServiceTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -269,10 +271,11 @@ public partial class tfServiceTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -379,6 +382,7 @@ public partial class tfServiceTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
@@ -409,7 +413,7 @@ public partial class tfServiceTests : BaseTest
 				user = await tfService.GetUserAsync("test@test.com", "password");
 				user.Should().NotBeNull();
 
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -500,10 +504,11 @@ public partial class tfServiceTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
@@ -586,10 +591,11 @@ public partial class tfServiceTests : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
 			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 

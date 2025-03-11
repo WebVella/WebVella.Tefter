@@ -180,7 +180,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var providerTypes = _tfService.GetDataProviderTypes();
+			var providerTypes = _metaService.GetDataProviderTypes();
 			if (providerTypes is null)
 				return Task.FromResult(new List<TucDataProviderTypeInfo>());
 
@@ -210,7 +210,7 @@ internal partial class AppStateUseCase
 	internal virtual TucDataProvider CreateDataProviderWithForm(
 		TucDataProviderForm form)
 	{
-		var providerTypes = _tfService.GetDataProviderTypes();
+		var providerTypes = _metaService.GetDataProviderTypes();
 		var submitForm = form.ToModel(providerTypes);
 
 		var provider = _tfService.CreateDataProvider(submitForm);
@@ -223,7 +223,7 @@ internal partial class AppStateUseCase
 	internal virtual TucDataProvider UpdateDataProviderWithForm(
 		TucDataProviderForm form)
 	{
-		var providerTypes = _tfService.GetDataProviderTypes();
+		var providerTypes = _metaService.GetDataProviderTypes();
 		var submitForm = form.ToModel(providerTypes);
 
 		var provider = _tfService.UpdateDataProvider(submitForm);

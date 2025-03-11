@@ -11,10 +11,11 @@ internal class SpaceEnvUtility
 		ServiceProvider serviceProvider,
 		ITfDatabaseService dbService)
 	{
-		ITfService tfService = serviceProvider.GetService<ITfService>(); 
+		ITfService tfService = serviceProvider.GetService<ITfService>();
+		ITfMetaService tfMetaService = serviceProvider.GetService<ITfMetaService>();
 		TfDataProviderSynchronizeJob backgroundSync = serviceProvider.GetRequiredService<TfDataProviderSynchronizeJob>();
 		
-		var providerTypes = tfService.GetDataProviderTypes();
+		var providerTypes = tfMetaService.GetDataProviderTypes();
 		var providerType = providerTypes
 			.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 

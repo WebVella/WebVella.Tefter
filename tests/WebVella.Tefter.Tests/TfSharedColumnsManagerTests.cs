@@ -85,12 +85,13 @@ public partial class TfSharedColumnsManagerTests : BaseTest
 		using (await locker.LockAsync())
 		{
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
 
-				var providerTypes = tfService.GetDataProviderTypes();
+				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
