@@ -15,7 +15,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email;
 public class EmailTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.EMAIL_CONTENT_PROCESSOR_ID;
-	public string Name => "Tefter email template";
+	public string Name => "Email template";
 	public string Description => "creates emails from a template and data";
 	public string FluentIconName => "Mail";
 	public TfTemplateResultType ResultType => TfTemplateResultType.Email;

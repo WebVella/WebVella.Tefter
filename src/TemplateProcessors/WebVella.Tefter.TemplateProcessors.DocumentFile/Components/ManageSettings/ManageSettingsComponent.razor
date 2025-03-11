@@ -1,12 +1,12 @@
 ﻿@using WebVella.Tefter.Web.Components
-@namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components
+@namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Components
 @inherits TfFormBaseComponent
 
 <FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
 	<FluentGrid>
 		<FluentGridItem xs="12">
 			<FluentInputLabel Label="@LOC("Template File")" />
-			<TfFileField Value=@_downloadUrl Uploaded="_fileChanged" IsLoading="_fileLoading" Accept=".xlsx" />
+			<TfFileField Value=@_downloadUrl Uploaded="_fileChanged" IsLoading="_fileLoading" Accept=".docx" />
 			<FluentValidationMessage For="@(() => _form.FileName)" />
 		</FluentGridItem>
 	</FluentGrid>

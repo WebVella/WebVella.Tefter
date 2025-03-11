@@ -14,7 +14,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile;
 public class TextFileTemplateProcessor : ITfTemplateProcessor
 {
 	public Guid Id => Constants.TEXT_FILE_CONTENT_PROCESSOR_ID;
-	public string Name => "Tefter text file template";
+	public string Name => "Text file template";
 	public string Description => "creates excel files from excel template and data";
 	public string FluentIconName => "DocumentBulletList";
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
