@@ -21,12 +21,14 @@ public partial class TfService : ITfService
 		IServiceProvider serviceProvider,
 		ITfConfigurationService config,
 		ITfMetaService metaService,
-		ITfDatabaseService dbService)
+		ITfDatabaseService dbService,
+		ITfDatabaseManager dbManager)
 	{
 		_serviceProvider = serviceProvider;
 		_dbService = dbService;
 		_config = config;
 		_metaService = metaService;
+		_dbManager = dbManager;
 		_dboManager = serviceProvider.GetService<ITfDboManager>();
 		
 		InitBlobStorageFolder(_config.BlobStoragePath);
