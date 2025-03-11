@@ -1,14 +1,14 @@
 ﻿using System.IO.Compression;
-using WebVella.DocumentTemplates.Engines.SpreadsheetFile;
+using WebVella.DocumentTemplates.Engines.DocumentFile;
 using WebVella.Tefter.Exceptions;
 
-namespace WebVella.Tefter.TemplateProcessors.ExcelFile;
+namespace WebVella.Tefter.TemplateProcessors.DocumentFile;
 
-public class ExcelFileTemplateProcessor : ITfTemplateProcessor
+public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 {
-	public Guid Id => Constants.EXCEL_FILE_CONTENT_PROCESSOR_ID;
-	public string Name => "Tefter Spreadsheet file template";
-	public string Description => "creates excel files from excel template and data";
+	public Guid Id => Constants.DOCUMENT_FILE_CONTENT_PROCESSOR_ID;
+	public string Name => "Tefter Document file template";
+	public string Description => "creates word files from word template and data";
 	public string FluentIconName => "DocumentData";
 	public TfTemplateResultType ResultType => TfTemplateResultType.File;
 
@@ -23,10 +23,10 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		TfDataTable dataTable,
 		IServiceProvider serviceProvider)
 	{
-		var result = (ExcelFileTemplateResult)GenerateResultInternal(
+		var result = (DocumentFileTemplateResult)GenerateResultInternal(
 			template, dataTable, serviceProvider);
 
-		return new ExcelFileTemplatePreviewResult
+		return new DocumentFileTemplatePreviewResult
 		{
 			Errors = result.Errors,
 			Items = result.Items
@@ -47,7 +47,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		TfDataTable dataTable,
 		IServiceProvider serviceProvider)
 	{
-		var result = new ExcelFileTemplateResult();
+		var result = new DocumentFileTemplateResult();
 
 		var tfService = serviceProvider.GetService<ITfService>();
 
@@ -57,7 +57,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 			return result;
 		}
 
-		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
+		var settings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(template.SettingsJson);
 
 		if (settings.TemplateFileBlobId is null)
 		{
@@ -69,7 +69,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		{
 			var bytes = tfService.GetBlobByteArray(settings.TemplateFileBlobId.Value);
 
-			WvSpreadsheetFileTemplate tmpl = new WvSpreadsheetFileTemplate
+			WvDocumentFileTemplate tmpl = new WvDocumentFileTemplate
 			{
 				Template = new MemoryStream(bytes),
 				GroupDataByColumns = settings.GroupBy
@@ -97,7 +97,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 				try
 				{
-					var item = new ExcelFileTemplateResultItem
+					var item = new DocumentFileTemplateResultItem
 					{
 						FileName = filename,
 						NumberOfRows = (int)resultItem.DataTable?.Rows.Count
@@ -113,7 +113,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 				}
 				catch (Exception ex)
 				{
-					result.Items.Add(new ExcelFileTemplateResultItem
+					result.Items.Add(new DocumentFileTemplateResultItem
 					{
 						FileName = filename,
 						DownloadUrl = null,
@@ -139,7 +139,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 
 	private void GenerateZipFile(
 		string filename,
-		ExcelFileTemplateResult result,
+		DocumentFileTemplateResult result,
 		ITfService tfService)
 	{
 		var validItems = result.Items
@@ -184,7 +184,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 			return result;
 		}
 
-		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(settingsJson);
+		var settings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(settingsJson);
 
 		if (string.IsNullOrWhiteSpace(settings.FileName))
 		{
@@ -220,7 +220,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		if (String.IsNullOrWhiteSpace(template.SettingsJson))
 			return new List<ValidationError>();
 
-		var settings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
+		var settings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(template.SettingsJson);
 
 		if (settings.TemplateFileBlobId is null)
 			return new List<ValidationError>();
@@ -257,7 +257,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		{
 			if (string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
 			{
-				var oldSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(existingTemplate.SettingsJson);
+				var oldSettings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(existingTemplate.SettingsJson);
 				blobId = oldSettings.TemplateFileBlobId;
 			}
 		}
@@ -266,7 +266,7 @@ public class ExcelFileTemplateProcessor : ITfTemplateProcessor
 		{
 			if (!string.IsNullOrWhiteSpace(template.SettingsJson))
 			{
-				var newSettings = JsonSerializer.Deserialize<ExcelFileTemplateSettings>(template.SettingsJson);
+				var newSettings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(template.SettingsJson);
 				if (newSettings.TemplateFileBlobId != blobId)
 				{
 					//delete old blob
