@@ -464,8 +464,6 @@ public partial class TfService : ITfService
 
 			valEx.ThrowIfContainsErrors();
 
-			throw new Exception("testing");
-
 			var userDbo = await _dboManager.GetAsync<UserDbo>(email, nameof(UserDbo.Email));
 			if (userDbo == null)
 				return null;
