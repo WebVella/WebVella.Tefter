@@ -17,20 +17,13 @@ internal class LoginUseCase
 
 	internal virtual async Task<bool> AuthenticateAsync(IJSRuntime jsRuntime)
 	{
-		try
-		{
-			await _tfService.AuthenticateAsync(
-				jsRuntime: jsRuntime,
-				email: Form.Email,
-				password: Form.Password,
-				rememberMe: Form.RememberMe);
+		await _tfService.AuthenticateAsync(
+			jsRuntime: jsRuntime,
+			email: Form.Email,
+			password: Form.Password,
+			rememberMe: Form.RememberMe);
 
-			return true;
-		}
-		catch (Exception ex)
-		{
-			return false;
-		}
+		return true;
 	}
 
 }

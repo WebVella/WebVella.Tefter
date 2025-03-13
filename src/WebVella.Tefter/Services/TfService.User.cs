@@ -464,6 +464,7 @@ public partial class TfService : ITfService
 
 			valEx.ThrowIfContainsErrors();
 
+			throw new Exception("testing");
 
 			var userDbo = await _dboManager.GetAsync<UserDbo>(email, nameof(UserDbo.Email));
 			if (userDbo == null)
@@ -471,6 +472,8 @@ public partial class TfService : ITfService
 
 			if (userDbo.Password != password.ToMD5Hash())
 				return null;
+
+
 
 			var roles = await GetRolesAsync();
 			var userRoles = new List<TfRole>();

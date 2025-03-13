@@ -2,8 +2,8 @@
 
 public class TfException : Exception
 {
-	private string oldStackTrace;
-	public override string StackTrace { get { return this.oldStackTrace; } }
+	//private string oldStackTrace;
+	//public override string StackTrace { get { return this.oldStackTrace; } }
 
 	public TfException() : base(message:string.Empty) { }
 
@@ -57,10 +57,10 @@ public class TfException : Exception
 		}
 	}
 
-	public void SetStackTrace(string stackTrace)
-	{
-		oldStackTrace = stackTrace;
-	}
+	//public void SetStackTrace(string stackTrace)
+	//{
+	//	oldStackTrace = stackTrace;
+	//}
 
 	public IDictionary<string, List<string>> GetDataAsUsableDictionary()
 	{

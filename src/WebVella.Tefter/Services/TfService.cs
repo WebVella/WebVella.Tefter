@@ -16,7 +16,7 @@ public partial class TfService : ITfService
 	private readonly ITfDatabaseManager _dbManager;
 	private readonly ITfMetaService _metaService;
 	private readonly ITfDatabaseService _dbService;
-	private readonly ILogger _logger;
+	private readonly ILogger<TfService> _logger;
 
 	public TfService(
 		IServiceProvider serviceProvider,
@@ -24,7 +24,7 @@ public partial class TfService : ITfService
 		ITfMetaService metaService,
 		ITfDatabaseService dbService,
 		ITfDatabaseManager dbManager,
-		ILogger logger)
+		ILogger<TfService> logger)
 	{
 		_serviceProvider = serviceProvider;
 		_dbService = dbService;

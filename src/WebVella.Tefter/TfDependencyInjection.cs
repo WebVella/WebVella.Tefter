@@ -28,7 +28,6 @@ public static class TfDependencyInjection
 		services.AddAuthenticationCore();
 
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
-		services.AddSingleton<ILogger, NullLogger>();
 		services.AddSingleton<ITfConfigurationService, TfConfigurationService>((Context) =>
 		{
 			return new TfConfigurationService(new ConfigurationBuilder()

@@ -1,8 +1,11 @@
 ﻿#region <--- USING DIRECTIVES --->
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Fluxor;
 using Fluxor.Blazor.Web.ReduxDevTools;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Microsoft.IdentityModel.Abstractions;
 using Serilog;
+using Serilog.Extensions.Logging;
 using System.Globalization;
 using System.Text;
 using WebVella.Tefter;
@@ -30,6 +33,8 @@ try
 
 	var builder = WebApplication.CreateBuilder(args);
 	{
+		builder.Host.UseSerilog(Log.Logger);
+
 		//builder.Host.ConfigureLogging(logging =>
 		//      {
 		//          logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
@@ -37,6 +42,7 @@ try
 		//      });
 		//Enable Blazor Interactive Server
 		//NOTE: Currently tested and developed only in InteractiveServer mode
+
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 
@@ -52,12 +58,16 @@ try
 			//options.UseReduxDevTools();
 		});
 
+
+
 		//IMPORTANT: Do not remove. Required for the application to work
 		builder.Services.AddTefter();
 	}
 
 	var app = builder.Build();
 	{
+		app.UseSerilogRequestLogging();
+
 		// Configure the HTTP request pipeline.
 		if (!app.Environment.IsDevelopment())
 		{
@@ -65,6 +75,7 @@ try
 			// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 			app.UseHsts();
 		}
+
 		app.UseHttpsRedirection();
 		app.MapStaticAssets();
 		app.UseAntiforgery();

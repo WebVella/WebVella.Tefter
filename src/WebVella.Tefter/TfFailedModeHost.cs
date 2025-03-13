@@ -58,7 +58,6 @@ public class TfFailedModeHost
 			sb.AppendLine($"{ex.Message}");
 			sb.AppendLine($"{ex.StackTrace}");
 		}
-
 		return sb.ToString();
 	}
 

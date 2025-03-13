@@ -3,9 +3,9 @@
 internal partial class TfDboManager : ITfDboManager
 {
 	private ITfDatabaseService dbService;
-	private ILogger logger;
+	private ILogger<TfDboManager> logger;
 
-	public TfDboManager(ITfDatabaseService dbService, ILogger logger)
+	public TfDboManager(ITfDatabaseService dbService, ILogger<TfDboManager> logger)
 	{
 		this.dbService = dbService;
 		this.logger = logger;
