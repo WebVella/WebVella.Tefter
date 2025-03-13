@@ -19,223 +19,328 @@ public partial class TfService : ITfService
 {
 	public TfRoleBuilder CreateRoleBuilder(TfRole role = null)
 	{
-		return new TfRoleBuilder(this, role);
+		try
+		{
+			return new TfRoleBuilder(this, role);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfRole GetRole(Guid id)
 	{
-		var roleDbo = _dboManager.Get<RoleDbo>(id, nameof(TfRole.Id));
-		if (roleDbo == null)
-			return null;
+		try
+		{
+			var roleDbo = _dboManager.Get<RoleDbo>(id, nameof(TfRole.Id));
+			if (roleDbo == null)
+				return null;
 
-		return new TfRoleBuilder(this, roleDbo.Id)
-				.WithName(roleDbo.Name)
-				.IsSystem(roleDbo.IsSystem)
-				.Build();
+			return new TfRoleBuilder(this, roleDbo.Id)
+					.WithName(roleDbo.Name)
+					.IsSystem(roleDbo.IsSystem)
+					.Build();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 
 	}
 
 	public TfRole GetRole(string name)
 	{
-		var roleDbo = _dboManager.Get<RoleDbo>(name, nameof(TfRole.Name));
-		if (roleDbo == null)
-			return null;
+		try
+		{
+			var roleDbo = _dboManager.Get<RoleDbo>(name, nameof(TfRole.Name));
+			if (roleDbo == null)
+				return null;
 
-		return new TfRoleBuilder(this, roleDbo.Id)
-				.WithName(roleDbo.Name)
-				.IsSystem(roleDbo.IsSystem)
-				.Build();
+			return new TfRoleBuilder(this, roleDbo.Id)
+					.WithName(roleDbo.Name)
+					.IsSystem(roleDbo.IsSystem)
+					.Build();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public ReadOnlyCollection<TfRole> GetRoles()
 	{
-		var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
+		try
+		{
+			var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
 
-		return _dboManager.GetList<RoleDbo>(null, null, orderSettings)
-			.Select(x =>
-				new TfRoleBuilder(this, x.Id)
-					.WithName(x.Name)
-					.IsSystem(x.IsSystem)
-					.Build()
-			)
-			.ToList()
-			.AsReadOnly();
+			return _dboManager.GetList<RoleDbo>(null, null, orderSettings)
+				.Select(x =>
+					new TfRoleBuilder(this, x.Id)
+						.WithName(x.Name)
+						.IsSystem(x.IsSystem)
+						.Build()
+				)
+				.ToList()
+				.AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfRole SaveRole(TfRole role)
 	{
-		if (role == null)
-			throw new ArgumentNullException(nameof(role));
+		try
+		{
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
 
-		if (role.Id == Guid.Empty)
-			return CreateRole(role);
-		else
-			return UpdateRole(role);
+			if (role.Id == Guid.Empty)
+				return CreateRole(role);
+			else
+				return UpdateRole(role);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	private TfRole CreateRole(TfRole role)
 	{
-		new RoleValidator(this)
-			.ValidateCreate(role)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		RoleDbo roleDbo = new RoleDbo
+		try
 		{
-			Id = Guid.NewGuid(),
-			Name = role.Name,
-			IsSystem = role.IsSystem
-		};
+			new RoleValidator(this)
+				.ValidateCreate(role)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		bool success = _dboManager.Insert<RoleDbo>(roleDbo);
-		if (!success)
-			throw new TfDboServiceException("Insert<RoleDbo> failed");
+			RoleDbo roleDbo = new RoleDbo
+			{
+				Id = Guid.NewGuid(),
+				Name = role.Name,
+				IsSystem = role.IsSystem
+			};
 
-		return GetRole(roleDbo.Id);
+			bool success = _dboManager.Insert<RoleDbo>(roleDbo);
+			if (!success)
+				throw new TfDboServiceException("Insert<RoleDbo> failed");
+
+			return GetRole(roleDbo.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	private TfRole UpdateRole(TfRole role)
 	{
-		new RoleValidator(this)
-			.ValidateUpdate(role)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		RoleDbo roleDbo = new RoleDbo
+		try
 		{
-			Id = role.Id,
-			Name = role.Name,
-			IsSystem = role.IsSystem
-		};
+			new RoleValidator(this)
+				.ValidateUpdate(role)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		bool success = _dboManager.Update<RoleDbo>(roleDbo);
-		if (!success)
-			throw new TfDboServiceException("Update<RoleDbo> failed");
+			RoleDbo roleDbo = new RoleDbo
+			{
+				Id = role.Id,
+				Name = role.Name,
+				IsSystem = role.IsSystem
+			};
 
-		return GetRole(roleDbo.Id);
+			bool success = _dboManager.Update<RoleDbo>(roleDbo);
+			if (!success)
+				throw new TfDboServiceException("Update<RoleDbo> failed");
+
+			return GetRole(roleDbo.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void DeleteRole(TfRole role)
 	{
-		if (role == null)
-			throw new ArgumentNullException(nameof(role));
+		try
+		{
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
 
-		new RoleValidator(this)
-			.ValidateDelete(role)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
+			new RoleValidator(this)
+				.ValidateDelete(role)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		var success = _dboManager.Delete<RoleDbo>(role.Id);
-		if (!success)
-			throw new TfDboServiceException("Delete<RoleDbo> failed");
+			var success = _dboManager.Delete<RoleDbo>(role.Id);
+			if (!success)
+				throw new TfDboServiceException("Delete<RoleDbo> failed");
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public async Task<TfRole> GetRoleAsync(Guid id)
 	{
-		var roleDbo = await _dboManager.GetAsync<RoleDbo>(id, nameof(TfRole.Id));
+		try
+		{
+			var roleDbo = await _dboManager.GetAsync<RoleDbo>(id, nameof(TfRole.Id));
 
-		if (roleDbo == null)
-			return null;
+			if (roleDbo == null)
+				return null;
 
-		return new TfRoleBuilder(this, roleDbo.Id)
-				.WithName(roleDbo.Name)
-				.IsSystem(roleDbo.IsSystem)
-				.Build();
+			return new TfRoleBuilder(this, roleDbo.Id)
+					.WithName(roleDbo.Name)
+					.IsSystem(roleDbo.IsSystem)
+					.Build();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public async Task<TfRole> GetRoleAsync(string name)
 	{
-		var roleDbo = await _dboManager.GetAsync<RoleDbo>(name, nameof(TfRole.Name));
-		if (roleDbo == null)
-			return null;
+		try
+		{
+			var roleDbo = await _dboManager.GetAsync<RoleDbo>(name, nameof(TfRole.Name));
+			if (roleDbo == null)
+				return null;
 
-		return new TfRoleBuilder(this, roleDbo.Id)
-				.WithName(roleDbo.Name)
-				.IsSystem(roleDbo.IsSystem)
-				.Build();
+			return new TfRoleBuilder(this, roleDbo.Id)
+					.WithName(roleDbo.Name)
+					.IsSystem(roleDbo.IsSystem)
+					.Build();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public async Task<ReadOnlyCollection<TfRole>> GetRolesAsync()
 	{
-		var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
+		try
+		{
+			var orderSettings = new TfOrderSettings(nameof(RoleDbo.Name), OrderDirection.ASC);
 
-		return (await _dboManager.GetListAsync<RoleDbo>(null, null, orderSettings))
-			.Select(x =>
-				new TfRoleBuilder(this, x.Id)
-					.WithName(x.Name)
-					.IsSystem(x.IsSystem)
-					.Build()
-			)
-			.ToList()
-			.AsReadOnly();
+			return (await _dboManager.GetListAsync<RoleDbo>(null, null, orderSettings))
+				.Select(x =>
+					new TfRoleBuilder(this, x.Id)
+						.WithName(x.Name)
+						.IsSystem(x.IsSystem)
+						.Build()
+				)
+				.ToList()
+				.AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public async Task<TfRole> SaveRoleAsync(TfRole role)
 	{
-		if (role == null)
-			throw new ArgumentNullException(nameof(role));
+		try
+		{
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
 
-		if (role.Id == Guid.Empty)
-			return await CreateRoleAsync(role);
-		else
-			return await UpdateRoleAsync(role);
+			if (role.Id == Guid.Empty)
+				return await CreateRoleAsync(role);
+			else
+				return await UpdateRoleAsync(role);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	private async Task<TfRole> CreateRoleAsync(TfRole role)
 	{
-		new RoleValidator(this)
-			.ValidateCreate(role)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		RoleDbo roleDbo = new RoleDbo
+		try
 		{
-			Id = Guid.NewGuid(),
-			Name = role.Name,
-			IsSystem = role.IsSystem
-		};
+			new RoleValidator(this)
+				.ValidateCreate(role)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		bool success = await _dboManager.InsertAsync<RoleDbo>(roleDbo);
-		if (!success)
-			throw new TfDboServiceException("InsertAsync<RoleDbo> failed");
+			RoleDbo roleDbo = new RoleDbo
+			{
+				Id = Guid.NewGuid(),
+				Name = role.Name,
+				IsSystem = role.IsSystem
+			};
 
-		return await GetRoleAsync(roleDbo.Id);
+			bool success = await _dboManager.InsertAsync<RoleDbo>(roleDbo);
+			if (!success)
+				throw new TfDboServiceException("InsertAsync<RoleDbo> failed");
+
+			return await GetRoleAsync(roleDbo.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	private async Task<TfRole> UpdateRoleAsync(TfRole role)
 	{
-		new RoleValidator(this)
-			.ValidateUpdate(role)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		RoleDbo roleDbo = new RoleDbo
+		try
 		{
-			Id = role.Id,
-			Name = role.Name,
-			IsSystem = role.IsSystem
-		};
+			new RoleValidator(this)
+				.ValidateUpdate(role)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		bool success = await _dboManager.UpdateAsync<RoleDbo>(roleDbo);
-		if (!success)
-			throw new TfDboServiceException("UpdateAsync<RoleDbo> failed");
+			RoleDbo roleDbo = new RoleDbo
+			{
+				Id = role.Id,
+				Name = role.Name,
+				IsSystem = role.IsSystem
+			};
 
-		return await GetRoleAsync(roleDbo.Id);
+			bool success = await _dboManager.UpdateAsync<RoleDbo>(roleDbo);
+			if (!success)
+				throw new TfDboServiceException("UpdateAsync<RoleDbo> failed");
+
+			return await GetRoleAsync(roleDbo.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public async Task DeleteRoleAsync(TfRole role)
 	{
-		if (role == null)
-			throw new ArgumentNullException(nameof(role));
+		try
+		{
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
 
-		new RoleValidator(this)
-			.ValidateDelete(role)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
+			new RoleValidator(this)
+				.ValidateDelete(role)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		var success = await _dboManager.DeleteAsync<RoleDbo>(role.Id);
-		if (!success)
-			throw new TfDboServiceException("DeleteAsync<RoleDbo> failed");
+			var success = await _dboManager.DeleteAsync<RoleDbo>(role.Id);
+			if (!success)
+				throw new TfDboServiceException("DeleteAsync<RoleDbo> failed");
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	#region <--- validation --->

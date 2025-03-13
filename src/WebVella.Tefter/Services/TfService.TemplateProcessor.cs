@@ -20,39 +20,67 @@ public partial class TfService : ITfService
 	public ITfTemplateProcessor GetTemplateProcessor(
 		string typeName)
 	{
-		var type = Type.GetType(typeName);
-		return GetTemplateProcessor(type);
+		try
+		{
+			var type = Type.GetType(typeName);
+			return GetTemplateProcessor(type);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public ITfTemplateProcessor GetTemplateProcessor(
 		Type type)
 	{
-		ScanAndRegisterProcessorTypes();
+		try
+		{
+			ScanAndRegisterProcessorTypes();
 
-		if (_templateProcessorsDict.ContainsKey(type))
-			return _templateProcessorsDict[type];
+			if (_templateProcessorsDict.ContainsKey(type))
+				return _templateProcessorsDict[type];
 
-		return null;
+			return null;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public ReadOnlyCollection<ITfTemplateProcessor> GetTemplateProcessors()
 	{
-		ScanAndRegisterProcessorTypes();
+		try
+		{
+			ScanAndRegisterProcessorTypes();
 
-		return _templateProcessorsDict
-			.Values
-			.ToList()
-			.AsReadOnly();
+			return _templateProcessorsDict
+				.Values
+				.ToList()
+				.AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public ReadOnlyCollection<Type> GetTemplateProcessorTypes()
 	{
-		ScanAndRegisterProcessorTypes();
+		try
+		{
+			ScanAndRegisterProcessorTypes();
 
-		return _templateProcessorsDict
-			.Keys
-			.ToList()
-			.AsReadOnly();
+			return _templateProcessorsDict
+				.Keys
+				.ToList()
+				.AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	private void ScanAndRegisterProcessorTypes()

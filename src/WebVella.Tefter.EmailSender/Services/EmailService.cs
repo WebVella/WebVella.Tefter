@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using MimeKit.Utils;
 using System.Text;
+using WebVella.Tefter.Utility;
 
 namespace WebVella.Tefter.EmailSender.Services;
 

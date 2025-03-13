@@ -28,76 +28,97 @@ public partial class TfService : ITfService
 	public Guid GetId(
 		params string[] textId)
 	{
-		using (_lock.Lock())
+		try
 		{
-			CheckInitIdDict();
+			using (_lock.Lock())
+			{
+				CheckInitIdDict();
 
-			string combinedTextId = CombineKey(textId);
+				string combinedTextId = CombineKey(textId);
 
-			if (idsDict.ContainsKey(combinedTextId))
-				return idsDict[combinedTextId];
+				if (idsDict.ContainsKey(combinedTextId))
+					return idsDict[combinedTextId];
 
 
-			var dt = _dbService.ExecuteSqlQueryCommand(SQL,
-			new NpgsqlParameter("text_id", combinedTextId),
-			new NpgsqlParameter("id", DBNull.Value));
+				var dt = _dbService.ExecuteSqlQueryCommand(SQL,
+				new NpgsqlParameter("text_id", combinedTextId),
+				new NpgsqlParameter("id", DBNull.Value));
 
-			Guid id = (Guid)dt.Rows[0][0];
+				Guid id = (Guid)dt.Rows[0][0];
 
-			idsDict[combinedTextId] = id;
+				idsDict[combinedTextId] = id;
 
-			return id;
+				return id;
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public Guid GetId(
 		Guid guidId)
 	{
-		return GetId(guidId.ToString());
+		try
+		{
+			return GetId(guidId.ToString());
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void BulkFillIds(
 		Dictionary<string, Guid> input)
 	{
-		using (_lock.Lock())
+		try
 		{
-			CheckInitIdDict();
-
-			if (input is null)
-				return;
-
-			Dictionary<string, Guid> notFoundDict = new Dictionary<string, Guid>();
-
-			foreach (var key in input.Keys)
+			using (_lock.Lock())
 			{
-				if (idsDict.ContainsKey(key))
+				CheckInitIdDict();
+
+				if (input is null)
+					return;
+
+				Dictionary<string, Guid> notFoundDict = new Dictionary<string, Guid>();
+
+				foreach (var key in input.Keys)
 				{
-					input[key] = idsDict[key];
-					continue;
+					if (idsDict.ContainsKey(key))
+					{
+						input[key] = idsDict[key];
+						continue;
+					}
+					notFoundDict.Add(key, Guid.NewGuid());
 				}
-				notFoundDict.Add(key, Guid.NewGuid());
+
+				var parameterIds = new NpgsqlParameter("@id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+				parameterIds.Value = new List<Guid>();
+
+				var parameterTextIds = new NpgsqlParameter("@text_id", NpgsqlDbType.Array | NpgsqlDbType.Text);
+				parameterTextIds.Value = new List<string>();
+
+				foreach (var key in notFoundDict.Keys)
+				{
+					((List<Guid>)parameterIds.Value).Add(notFoundDict[key]);
+					((List<string>)parameterTextIds.Value).Add(key);
+				}
+
+				var sql = $"INSERT INTO id_dict ( id, text_id ) SELECT * FROM UNNEST ( @id, @text_id ) ";
+
+				_dbService.ExecuteSqlNonQueryCommand(sql, parameterIds, parameterTextIds);
+
+				foreach (var key in notFoundDict.Keys)
+				{
+					input[key] = notFoundDict[key];
+				}
 			}
-
-			var parameterIds = new NpgsqlParameter("@id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
-			parameterIds.Value = new List<Guid>();
-
-			var parameterTextIds = new NpgsqlParameter("@text_id", NpgsqlDbType.Array | NpgsqlDbType.Text);
-			parameterTextIds.Value = new List<string>();
-
-			foreach (var key in notFoundDict.Keys)
-			{
-				((List<Guid>)parameterIds.Value).Add(notFoundDict[key]);
-				((List<string>)parameterTextIds.Value).Add(key);
-			}
-
-			var sql = $"INSERT INTO id_dict ( id, text_id ) SELECT * FROM UNNEST ( @id, @text_id ) ";
-
-			_dbService.ExecuteSqlNonQueryCommand(sql, parameterIds, parameterTextIds);
-
-			foreach (var key in notFoundDict.Keys)
-			{
-				input[key] = notFoundDict[key];
-			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
@@ -125,15 +146,29 @@ public partial class TfService : ITfService
 	public string CombineKey(
 		params string[] keys)
 	{
-		if (keys == null || keys.Length == 0)
-			return string.Empty;
+		try
+		{
+			if (keys == null || keys.Length == 0)
+				return string.Empty;
 
-		return string.Join(Constants.SHARED_KEY_SEPARATOR, keys) ?? string.Empty;
+			return string.Join(Constants.SHARED_KEY_SEPARATOR, keys) ?? string.Empty;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public string CombineKey(
 		params List<string> keys)
 	{
-		return CombineKey(keys?.ToArray());
+		try
+		{
+			return CombineKey(keys?.ToArray());
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 }

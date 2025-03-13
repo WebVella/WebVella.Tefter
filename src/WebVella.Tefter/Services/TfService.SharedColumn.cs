@@ -22,79 +22,113 @@ public partial class TfService : ITfService
 	public TfSharedColumn GetSharedColumn(
 		Guid id)
 	{
-		return _dboManager.Get<TfSharedColumn>(id);
+		try
+		{
+			return _dboManager.Get<TfSharedColumn>(id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public List<TfSharedColumn> GetSharedColumns()
 	{
-		var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
-		return _dboManager.GetList<TfSharedColumn>(order: orderSettings);
+		try
+		{
+			var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.DbName), OrderDirection.ASC);
+			return _dboManager.GetList<TfSharedColumn>(order: orderSettings);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void CreateSharedColumn(
 		TfSharedColumn column)
 	{
-		if (column != null && column.Id == Guid.Empty)
-			column.Id = Guid.NewGuid();
-
-		new TfSharedColumnValidator(this)
-			.ValidateCreate(column)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var success = _dboManager.Insert<TfSharedColumn>(column);
-			if (!success)
-				throw new TfDboServiceException("Insert<TfSharedColumn> failed");
+			if (column != null && column.Id == Guid.Empty)
+				column.Id = Guid.NewGuid();
 
-			scope.Complete();
+			new TfSharedColumnValidator(this)
+				.ValidateCreate(column)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var success = _dboManager.Insert<TfSharedColumn>(column);
+				if (!success)
+					throw new TfDboServiceException("Insert<TfSharedColumn> failed");
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public void UpdateSharedColumn(
 		TfSharedColumn column)
 	{
-		if (column != null && column.Id == Guid.Empty)
-			column.Id = Guid.NewGuid();
-
-
-		new TfSharedColumnValidator(this)
-			.ValidateUpdate(column)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var success = _dboManager.Update<TfSharedColumn>(column);
-			if (!success)
-				throw new TfDboServiceException("Update<TfSharedColumn> failed");
+			if (column != null && column.Id == Guid.Empty)
+				column.Id = Guid.NewGuid();
 
-			scope.Complete();
+
+			new TfSharedColumnValidator(this)
+				.ValidateUpdate(column)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var success = _dboManager.Update<TfSharedColumn>(column);
+				if (!success)
+					throw new TfDboServiceException("Update<TfSharedColumn> failed");
+
+				scope.Complete();
+			}
 		}
-
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void DeleteSharedColumn(
 		Guid columnId)
 	{
-		var column = GetSharedColumn(columnId);
-
-		new TfSharedColumnValidator(this)
-			.ValidateDelete(column)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			DeleteSharedColumnData(column);
+			var column = GetSharedColumn(columnId);
 
-			var success = _dboManager.Delete<TfSharedColumn>(columnId);
-			if (!success)
-				throw new TfDboServiceException("Delete<TfSharedColumn> failed");
+			new TfSharedColumnValidator(this)
+				.ValidateDelete(column)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-			scope.Complete();
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				DeleteSharedColumnData(column);
+
+				var success = _dboManager.Delete<TfSharedColumn>(columnId);
+				if (!success)
+					throw new TfDboServiceException("Delete<TfSharedColumn> failed");
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 

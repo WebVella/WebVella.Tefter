@@ -330,12 +330,19 @@ ORDER BY st.created_on DESC");
 	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(
 		Guid providerId)
 	{
-		var result = new TfDataProviderSourceSchemaInfo();
-		var provider = GetDataProvider(providerId);
-		if (provider is null)
-			throw new TfException("GetProvider failed");
+		try
+		{
+			var result = new TfDataProviderSourceSchemaInfo();
+			var provider = GetDataProvider(providerId);
+			if (provider is null)
+				throw new TfException("GetProvider failed");
 
-		return provider.ProviderType.GetDataProviderSourceSchema(provider);
+			return provider.ProviderType.GetDataProviderSourceSchema(provider);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	#region <--- Synchronization Result Info --->
@@ -343,6 +350,7 @@ ORDER BY st.created_on DESC");
 	public List<TfDataProviderSynchronizeResultInfo> GetSynchronizationTaskResultInfos(
 		Guid taskId)
 	{
+		try { 
 		var orderSettings = new TfOrderSettings(
 		nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
 		OrderDirection.ASC);
@@ -371,6 +379,11 @@ ORDER BY st.created_on DESC");
 		}
 
 		return result;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void CreateSynchronizationResultInfo(
@@ -381,6 +394,7 @@ ORDER BY st.created_on DESC");
 		string warning = null,
 		string error = null)
 	{
+		try { 
 		var dbo = new TfDataProviderSynchronizeResultInfoDbo
 		{
 			Id = Guid.NewGuid(),
@@ -396,6 +410,12 @@ ORDER BY st.created_on DESC");
 		var success = _dboManager.Insert<TfDataProviderSynchronizeResultInfoDbo>(dbo);
 		if (!success)
 			throw new TfDatabaseException("Failed to insert synchronization task result info.");
+
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	#endregion
@@ -403,87 +423,94 @@ ORDER BY st.created_on DESC");
 	public async Task BulkSynchronize(
 		TfDataProviderSynchronizeTask task)
 	{
-		await Task.Delay(1);
-
-		var provider = GetDataProvider(task.DataProviderId);
-
-		if (provider is null)
-			throw new TfException("Unable to get provider.");
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_SYNC_OPERATION_LOCK_KEY))
+		try
 		{
-			var existingData = GetExistingData(provider);
-			var newData = GetNewData(provider);
+			await Task.Delay(1);
 
-			if (newData.Count() == 0)
+			var provider = GetDataProvider(task.DataProviderId);
+
+			if (provider is null)
+				throw new TfException("Unable to get provider.");
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_SYNC_OPERATION_LOCK_KEY))
 			{
-				DeleteAllProviderRows(provider);
+				var existingData = GetExistingData(provider);
+				var newData = GetNewData(provider);
+
+				if (newData.Count() == 0)
+				{
+					DeleteAllProviderRows(provider);
+					scope.Complete();
+					return;
+				}
+
+				var tableName = $"dp{provider.Index}";
+
+				var preparedSharedKeyIds = BulkPrepareSharedKeyValueIds(provider, newData);
+
+				var (columnList, paramsDict, newTfIds) = PrepareQueryArrayParameters(provider, preparedSharedKeyIds, existingData, newData);
+
+				BulkPrepareAndUpdateTfIds(newTfIds, paramsDict["tf_id"]);
+
+				//drop cloned table if exists
+				_dbService.ExecuteSqlNonQueryCommand($"DROP TABLE IF EXISTS {tableName}_sync CASCADE;");
+
+				//clone table
+				var result = _dbManager.CloneTableForSynch(tableName);
+
+				if (!result.IsSuccess)
+				{
+					throw new Exception("Failed to create duplicate structure of provider database table.");
+				}
+
+				StringBuilder sql = new StringBuilder();
+				sql.Append($"INSERT INTO {tableName}_sync ( ");
+				sql.Append(string.Join(", ", columnList.Select(x => $"\"{x}\"").ToArray()));
+				sql.Append(" ) SELECT * FROM UNNEST ( ");
+				sql.Append(string.Join(", ", columnList.Select(x => $"@{x}").ToArray()));
+				sql.Append(" ); ");
+				sql.AppendLine();
+
+				sql.AppendLine($"DROP TABLE IF EXISTS {tableName} CASCADE;");
+				sql.AppendLine($"ALTER TABLE {tableName}_sync RENAME TO {tableName};");
+
+				DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
+				foreach (DataRow row in dtConstraints.Rows)
+				{
+					var constraintName = (string)row["constraint_name"];
+
+					if (constraintName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+					{
+						var constraintNewName = constraintName.Substring(0, constraintName.Length - 5);
+						sql.AppendLine($"ALTER TABLE {tableName} RENAME CONSTRAINT {constraintName} TO {constraintNewName};");
+					}
+				}
+
+				DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
+				foreach (DataRow row in dtIndexes.Rows)
+				{
+					var indexName = (string)row["index_name"];
+					if (indexName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+					{
+						var indexNewName = indexName.Substring(0, indexName.Length - 5);
+						sql.AppendLine($"ALTER INDEX {indexName} RENAME TO {indexNewName};");
+					}
+				}
+
+				List<NpgsqlParameter> paramList = new List<NpgsqlParameter>();
+				foreach (var column in columnList)
+				{
+					paramList.Add(paramsDict[column]);
+				}
+
+				_dbService.ExecuteSqlNonQueryCommand(sql.ToString(), paramList);
+
 				scope.Complete();
-				return;
 			}
-
-			var tableName = $"dp{provider.Index}";
-
-			var preparedSharedKeyIds = BulkPrepareSharedKeyValueIds(provider, newData);
-
-			var (columnList, paramsDict, newTfIds) = PrepareQueryArrayParameters(provider, preparedSharedKeyIds, existingData, newData);
-
-			BulkPrepareAndUpdateTfIds(newTfIds, paramsDict["tf_id"]);
-
-			//drop cloned table if exists
-			_dbService.ExecuteSqlNonQueryCommand($"DROP TABLE IF EXISTS {tableName}_sync CASCADE;");
-
-			//clone table
-			var result = _dbManager.CloneTableForSynch(tableName);
-
-			if (!result.IsSuccess)
-			{
-				throw new Exception("Failed to create duplicate structure of provider database table.");
-			}
-
-			StringBuilder sql = new StringBuilder();
-			sql.Append($"INSERT INTO {tableName}_sync ( ");
-			sql.Append(string.Join(", ", columnList.Select(x => $"\"{x}\"").ToArray()));
-			sql.Append(" ) SELECT * FROM UNNEST ( ");
-			sql.Append(string.Join(", ", columnList.Select(x => $"@{x}").ToArray()));
-			sql.Append(" ); ");
-			sql.AppendLine();
-
-			sql.AppendLine($"DROP TABLE IF EXISTS {tableName} CASCADE;");
-			sql.AppendLine($"ALTER TABLE {tableName}_sync RENAME TO {tableName};");
-
-			DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
-			foreach (DataRow row in dtConstraints.Rows)
-			{
-				var constraintName = (string)row["constraint_name"];
-
-				if (constraintName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
-				{
-					var constraintNewName = constraintName.Substring(0, constraintName.Length - 5);
-					sql.AppendLine($"ALTER TABLE {tableName} RENAME CONSTRAINT {constraintName} TO {constraintNewName};");
-				}
-			}
-
-			DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
-			foreach (DataRow row in dtIndexes.Rows)
-			{
-				var indexName = (string)row["index_name"];
-				if (indexName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
-				{
-					var indexNewName = indexName.Substring(0, indexName.Length - 5);
-					sql.AppendLine($"ALTER INDEX {indexName} RENAME TO {indexNewName};");
-				}
-			}
-
-			List<NpgsqlParameter> paramList = new List<NpgsqlParameter>();
-			foreach (var column in columnList)
-			{
-				paramList.Add(paramsDict[column]);
-			}
-
-			_dbService.ExecuteSqlNonQueryCommand(sql.ToString(), paramList);
-
-			scope.Complete();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
@@ -493,7 +520,6 @@ ORDER BY st.created_on DESC");
 		Dictionary<string, DataRow> existingData,
 		ReadOnlyCollection<TfDataProviderDataRow> newData)
 	{
-
 		List<string> columnNames = new List<string>();
 
 		Dictionary<string, NpgsqlParameter> paramsDict =

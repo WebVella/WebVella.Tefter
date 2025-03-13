@@ -30,262 +30,318 @@ public partial class TfService : ITfService
 {
 	public ReadOnlyCollection<ITfSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
 	{
-		var meta = _metaService.GetSpaceViewColumnTypesMeta();
-		return meta.Select(x => x.Instance).ToList().AsReadOnly();
+		try
+		{
+			var meta = _metaService.GetSpaceViewColumnTypesMeta();
+			return meta.Select(x => x.Instance).ToList().AsReadOnly();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 
 	public List<TfSpaceViewColumn> GetSpaceViewColumnsList(
 		Guid spaceViewId)
 	{
-		var orderSettings = new TfOrderSettings(
+		try
+		{
+			var orderSettings = new TfOrderSettings(
 			nameof(TfSpace.Position),
 			OrderDirection.ASC);
 
-		var spaceViewColumns = _dboManager.GetList<TfSpaceViewColumnDbo>(
-			spaceViewId,
-			nameof(TfSpaceViewColumn.SpaceViewId),
-			order: orderSettings);
+			var spaceViewColumns = _dboManager.GetList<TfSpaceViewColumnDbo>(
+				spaceViewId,
+				nameof(TfSpaceViewColumn.SpaceViewId),
+				order: orderSettings);
 
-		return spaceViewColumns.Select(x => ConvertDboToModel(x)).ToList();
+			return spaceViewColumns.Select(x => ConvertDboToModel(x)).ToList();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 
 	public TfSpaceViewColumn GetSpaceViewColumn(
 		Guid id)
 	{
-		var spaceViewColumn = _dboManager.Get<TfSpaceViewColumnDbo>(id);
-		return ConvertDboToModel(spaceViewColumn);
+		try
+		{
+			var spaceViewColumn = _dboManager.Get<TfSpaceViewColumnDbo>(id);
+			return ConvertDboToModel(spaceViewColumn);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfSpaceViewColumn CreateSpaceViewColumn(
 		TfSpaceViewColumn spaceViewColumn)
 	{
-		if (spaceViewColumn != null && spaceViewColumn.Id == Guid.Empty)
-			spaceViewColumn.Id = Guid.NewGuid();
-
-		new TfSpaceViewColumnValidator(this)
-			.ValidateCreate(spaceViewColumn)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+			if (spaceViewColumn != null && spaceViewColumn.Id == Guid.Empty)
+				spaceViewColumn.Id = Guid.NewGuid();
 
-			if (spaceViewColumn.Position == null)
+			new TfSpaceViewColumnValidator(this)
+				.ValidateCreate(spaceViewColumn)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				spaceViewColumn.Position = (short)(spaceViewColumns.Count + 1);
+				var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+
+				if (spaceViewColumn.Position == null)
+				{
+					spaceViewColumn.Position = (short)(spaceViewColumns.Count + 1);
+				}
+				else if (spaceViewColumn.Position.Value > (spaceViewColumns.Count + 1))
+				{
+					spaceViewColumn.Position = (short)(spaceViewColumns.Count + 1);
+				}
+				else if (spaceViewColumn.Position.Value < 0)
+				{
+					spaceViewColumn.Position = 1;
+				}
+
+				//increment column position for columns for same and after new position
+				var columnsAfter = spaceViewColumns
+					.Where(x => x.Position >= spaceViewColumn.Position).ToList();
+
+				foreach (var columnAfter in columnsAfter)
+				{
+					columnAfter.Position++;
+
+					var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
+					if (!successUpdatePosition)
+						throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				}
+
+
+				var success = _dboManager.Insert<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
+				if (!success)
+					throw new TfDboServiceException("Insert<TfSpaceViewColumnDbo> failed");
+
+				scope.Complete();
+
+				return GetSpaceViewColumn(spaceViewColumn.Id);
 			}
-			else if (spaceViewColumn.Position.Value > (spaceViewColumns.Count + 1))
-			{
-				spaceViewColumn.Position = (short)(spaceViewColumns.Count + 1);
-			}
-			else if (spaceViewColumn.Position.Value < 0)
-			{
-				spaceViewColumn.Position = 1;
-			}
-
-			//increment column position for columns for same and after new position
-			var columnsAfter = spaceViewColumns
-				.Where(x => x.Position >= spaceViewColumn.Position).ToList();
-
-			foreach (var columnAfter in columnsAfter)
-			{
-				columnAfter.Position++;
-
-				var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
-				if (!successUpdatePosition)
-					throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
-			}
-
-
-			var success = _dboManager.Insert<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
-			if (!success)
-				throw new TfDboServiceException("Insert<TfSpaceViewColumnDbo> failed");
-
-			scope.Complete();
-
-			return GetSpaceViewColumn(spaceViewColumn.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public TfSpaceViewColumn UpdateSpaceViewColumn(
 		TfSpaceViewColumn spaceViewColumn)
 	{
-		new TfSpaceViewColumnValidator(this)
+		try
+		{
+			new TfSpaceViewColumnValidator(this)
 			.ValidateUpdate(spaceViewColumn)
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
-		var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+			var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
 
-		var existingSpaceView = spaceViewColumns.Single(x => x.Id == spaceViewColumn.Id);
+			var existingSpaceView = spaceViewColumns.Single(x => x.Id == spaceViewColumn.Id);
 
-		if (spaceViewColumn.Position == null)
-		{
-			spaceViewColumn.Position = existingSpaceView.Position;
-		}
-		else if (spaceViewColumn.Position.Value > spaceViewColumns.Count)
-		{
-			spaceViewColumn.Position = (short)(spaceViewColumns.Count);
-		}
-		else if (spaceViewColumn.Position.Value < 0)
-		{
-			spaceViewColumn.Position = 1;
-		}
-
-		if (spaceViewColumn.Position.Value != existingSpaceView.Position)
-		{
-
-			//decrement column position for columns after old position (move up)
-			var columnsAfter = spaceViewColumns
-				.Where(x => x.Position > existingSpaceView.Position).ToList();
-
-			foreach (var columnAfter in columnsAfter)
+			if (spaceViewColumn.Position == null)
 			{
-				columnAfter.Position--;
-
-				var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
-				if (!successUpdatePosition)
-					throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				spaceViewColumn.Position = existingSpaceView.Position;
+			}
+			else if (spaceViewColumn.Position.Value > spaceViewColumns.Count)
+			{
+				spaceViewColumn.Position = (short)(spaceViewColumns.Count);
+			}
+			else if (spaceViewColumn.Position.Value < 0)
+			{
+				spaceViewColumn.Position = 1;
 			}
 
-			//increment column position for columns after new position (move down)
-			columnsAfter = spaceViewColumns
-				.Where(x => x.Position >= spaceViewColumn.Position.Value).ToList();
-
-			foreach (var columnAfter in columnsAfter)
+			if (spaceViewColumn.Position.Value != existingSpaceView.Position)
 			{
-				columnAfter.Position++;
 
-				var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
-				if (!successUpdatePosition)
-					throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				//decrement column position for columns after old position (move up)
+				var columnsAfter = spaceViewColumns
+					.Where(x => x.Position > existingSpaceView.Position).ToList();
+
+				foreach (var columnAfter in columnsAfter)
+				{
+					columnAfter.Position--;
+
+					var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
+					if (!successUpdatePosition)
+						throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				}
+
+				//increment column position for columns after new position (move down)
+				columnsAfter = spaceViewColumns
+					.Where(x => x.Position >= spaceViewColumn.Position.Value).ToList();
+
+				foreach (var columnAfter in columnsAfter)
+				{
+					columnAfter.Position++;
+
+					var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
+					if (!successUpdatePosition)
+						throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				}
 			}
+
+
+			var success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
+			if (!success)
+				throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+
+			return GetSpaceViewColumn(spaceViewColumn.Id);
 		}
-
-
-		var success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
-		if (!success)
-			throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
-
-		return GetSpaceViewColumn(spaceViewColumn.Id);
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void MoveSpaceViewColumnUp(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var spaceViewColumn = GetSpaceViewColumn(id);
-
-			if (spaceViewColumn == null)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				throw new TfValidationException(nameof(id),
-					"Found no space view column for specified identifier.");
-			}
+				var spaceViewColumn = GetSpaceViewColumn(id);
 
-			if (spaceViewColumn.Position == 1)
-				return;
+				if (spaceViewColumn == null)
+				{
+					throw new TfValidationException(nameof(id),
+						"Found no space view column for specified identifier.");
+				}
 
-			var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
+				if (spaceViewColumn.Position == 1)
+					return;
 
-			var prevSpaceViewColumn = spaceViewColumns.SingleOrDefault(x => x.Position == (spaceViewColumn.Position - 1));
-			spaceViewColumn.Position = (short)(spaceViewColumn.Position - 1);
+				var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
 
-			if (prevSpaceViewColumn != null)
-				prevSpaceViewColumn.Position = (short)(prevSpaceViewColumn.Position + 1);
+				var prevSpaceViewColumn = spaceViewColumns.SingleOrDefault(x => x.Position == (spaceViewColumn.Position - 1));
+				spaceViewColumn.Position = (short)(spaceViewColumn.Position - 1);
 
-			var success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
+				if (prevSpaceViewColumn != null)
+					prevSpaceViewColumn.Position = (short)(prevSpaceViewColumn.Position + 1);
 
-			if (!success)
-				throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
-
-			if (prevSpaceViewColumn != null)
-			{
-				success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(prevSpaceViewColumn));
+				var success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
 
 				if (!success)
 					throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
-			}
 
-			scope.Complete();
+				if (prevSpaceViewColumn != null)
+				{
+					success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(prevSpaceViewColumn));
+
+					if (!success)
+						throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				}
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public void MoveSpaceViewColumnDown(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-
-
-			var spaceViewColumn = GetSpaceViewColumn(id);
-
-			if (spaceViewColumn == null)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				throw new TfValidationException(nameof(id),
-					"Found no space view column for specified identifier.");
-			}
 
-			var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
 
-			if (spaceViewColumn.Position == spaceViewColumns.Count)
-				return;
+				var spaceViewColumn = GetSpaceViewColumn(id);
 
-			var nextSpaceViewColumn = spaceViewColumns.SingleOrDefault(x => x.Position == (spaceViewColumn.Position + 1));
-			spaceViewColumn.Position = (short)(spaceViewColumn.Position + 1);
+				if (spaceViewColumn == null)
+				{
+					throw new TfValidationException(nameof(id),
+						"Found no space view column for specified identifier.");
+				}
 
-			if (nextSpaceViewColumn != null)
-				nextSpaceViewColumn.Position = (short)(nextSpaceViewColumn.Position - 1);
+				var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
 
-			var success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
-			if (!success)
-				throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				if (spaceViewColumn.Position == spaceViewColumns.Count)
+					return;
 
-			if (nextSpaceViewColumn != null)
-			{
-				success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(nextSpaceViewColumn));
+				var nextSpaceViewColumn = spaceViewColumns.SingleOrDefault(x => x.Position == (spaceViewColumn.Position + 1));
+				spaceViewColumn.Position = (short)(spaceViewColumn.Position + 1);
+
+				if (nextSpaceViewColumn != null)
+					nextSpaceViewColumn.Position = (short)(nextSpaceViewColumn.Position - 1);
+
+				var success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(spaceViewColumn));
 				if (!success)
 					throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
-			}
 
-			scope.Complete();
+				if (nextSpaceViewColumn != null)
+				{
+					success = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(nextSpaceViewColumn));
+					if (!success)
+						throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				}
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public void DeleteSpaceViewColumn(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var spaceViewColumn = GetSpaceViewColumn(id);
-
-
-			new TfSpaceViewColumnValidator(this)
-				.ValidateDelete(spaceViewColumn)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
-
-			var columnsAfter = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId)
-				.Where(x => x.Position > spaceViewColumn.Position).ToList();
-
-			//update positions for space view columns after the one being deleted
-			foreach (var columnAfter in columnsAfter)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				columnAfter.Position--;
-				var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
-				if (!successUpdatePosition)
-					throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				var spaceViewColumn = GetSpaceViewColumn(id);
+
+
+				new TfSpaceViewColumnValidator(this)
+					.ValidateDelete(spaceViewColumn)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
+
+				var columnsAfter = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId)
+					.Where(x => x.Position > spaceViewColumn.Position).ToList();
+
+				//update positions for space view columns after the one being deleted
+				foreach (var columnAfter in columnsAfter)
+				{
+					columnAfter.Position--;
+					var successUpdatePosition = _dboManager.Update<TfSpaceViewColumnDbo>(ConvertModelToDbo(columnAfter));
+					if (!successUpdatePosition)
+						throw new TfDboServiceException("Update<TfSpaceViewColumnDbo> failed");
+				}
+
+				var success = _dboManager.Delete<TfSpaceViewColumnDbo>(id);
+
+				if (!success)
+					throw new TfDboServiceException("Delete<TfSpaceViewColumnDbo> failed");
+
+				scope.Complete();
 			}
-
-			var success = _dboManager.Delete<TfSpaceViewColumnDbo>(id);
-
-			if (!success)
-				throw new TfDboServiceException("Delete<TfSpaceViewColumnDbo> failed");
-
-			scope.Complete();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 

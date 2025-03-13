@@ -64,7 +64,14 @@ public partial class TfService : ITfService
 	public TfDataProviderColumn GetDataProviderColumn(
 		Guid id)
 	{
-		return _dboManager.Get<TfDataProviderColumn>(id);
+		try
+		{
+			return _dboManager.Get<TfDataProviderColumn>(id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	/// <summary>
@@ -75,62 +82,76 @@ public partial class TfService : ITfService
 	public List<TfDataProviderColumn> GetDataProviderColumns(
 		Guid providerId)
 	{
-		var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
-		return _dboManager.GetList<TfDataProviderColumn>(providerId,
-			nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
+		try
+		{
+			var orderSettings = new TfOrderSettings(nameof(TfDataProviderColumn.CreatedOn), OrderDirection.ASC);
+			return _dboManager.GetList<TfDataProviderColumn>(providerId,
+				nameof(TfDataProviderColumn.DataProviderId), order: orderSettings);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	private List<TfDataProviderSystemColumn> GetDataProviderSystemColumns(
 		List<TfDataProviderSharedKey> sharedKeys)
 	{
-		var systemColumns = new List<TfDataProviderSystemColumn>();
-
-		systemColumns.Add(new TfDataProviderSystemColumn
+		try
 		{
-			DbName = "tf_id",
-			DbType = TfDatabaseColumnType.Guid
-		});
+			var systemColumns = new List<TfDataProviderSystemColumn>();
 
-		systemColumns.Add(new TfDataProviderSystemColumn
-		{
-			DbName = "tf_row_index",
-			DbType = TfDatabaseColumnType.Integer
-		});
-
-		systemColumns.Add(new TfDataProviderSystemColumn
-		{
-			DbName = "tf_created_on",
-			DbType = TfDatabaseColumnType.DateTime
-		});
-
-		systemColumns.Add(new TfDataProviderSystemColumn
-		{
-			DbName = "tf_updated_on",
-			DbType = TfDatabaseColumnType.DateTime
-		});
-
-		systemColumns.Add(new TfDataProviderSystemColumn
-		{
-			DbName = "tf_search",
-			DbType = TfDatabaseColumnType.Text
-		});
-
-		foreach (var sharedKey in sharedKeys)
-		{
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = $"tf_sk_{sharedKey.DbName}_id",
+				DbName = "tf_id",
 				DbType = TfDatabaseColumnType.Guid
 			});
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
-				DbName = $"tf_sk_{sharedKey.DbName}_version",
-				DbType = TfDatabaseColumnType.ShortInteger
+				DbName = "tf_row_index",
+				DbType = TfDatabaseColumnType.Integer
 			});
-		}
 
-		return systemColumns;
+			systemColumns.Add(new TfDataProviderSystemColumn
+			{
+				DbName = "tf_created_on",
+				DbType = TfDatabaseColumnType.DateTime
+			});
+
+			systemColumns.Add(new TfDataProviderSystemColumn
+			{
+				DbName = "tf_updated_on",
+				DbType = TfDatabaseColumnType.DateTime
+			});
+
+			systemColumns.Add(new TfDataProviderSystemColumn
+			{
+				DbName = "tf_search",
+				DbType = TfDatabaseColumnType.Text
+			});
+
+			foreach (var sharedKey in sharedKeys)
+			{
+				systemColumns.Add(new TfDataProviderSystemColumn
+				{
+					DbName = $"tf_sk_{sharedKey.DbName}_id",
+					DbType = TfDatabaseColumnType.Guid
+				});
+
+				systemColumns.Add(new TfDataProviderSystemColumn
+				{
+					DbName = $"tf_sk_{sharedKey.DbName}_version",
+					DbType = TfDatabaseColumnType.ShortInteger
+				});
+			}
+
+			return systemColumns;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	/// <summary>
@@ -141,29 +162,36 @@ public partial class TfService : ITfService
 	public TfDataProvider CreateDataProviderColumn(
 		TfDataProviderColumn column)
 	{
-		if (column != null && column.Id == Guid.Empty)
-			column.Id = Guid.NewGuid();
-
-		new TfDataProviderColumnValidator(this)
-			.ValidateCreate(column)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var success = _dboManager.Insert<TfDataProviderColumn>(column);
-			if (!success)
-				throw new TfDboServiceException("Insert<TfDataProviderColumn> failed.");
+			if (column != null && column.Id == Guid.Empty)
+				column.Id = Guid.NewGuid();
 
-			var provider = GetDataProvider(column.DataProviderId);
-			if (provider is null)
-				throw new TfException("Failed to create new data provider column");
+			new TfDataProviderColumnValidator(this)
+				.ValidateCreate(column)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-			CreateDatabaseColumn(provider, column);
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var success = _dboManager.Insert<TfDataProviderColumn>(column);
+				if (!success)
+					throw new TfDboServiceException("Insert<TfDataProviderColumn> failed.");
 
-			scope.Complete();
+				var provider = GetDataProvider(column.DataProviderId);
+				if (provider is null)
+					throw new TfException("Failed to create new data provider column");
 
-			return provider;
+				CreateDatabaseColumn(provider, column);
+
+				scope.Complete();
+
+				return provider;
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
@@ -176,21 +204,28 @@ public partial class TfService : ITfService
 	public TfDataProvider CreateBulkDataProviderColumn(Guid providerId,
 		List<TfDataProviderColumn> columns)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			List<ValidationError> validationErrors = new();
-			foreach (var column in columns)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				column.DataProviderId = providerId;
-				CreateDataProviderColumn(column);
+				List<ValidationError> validationErrors = new();
+				foreach (var column in columns)
+				{
+					column.DataProviderId = providerId;
+					CreateDataProviderColumn(column);
+				}
+				scope.Complete();
+
+				var provider = GetDataProvider(providerId);
+				if (provider is null)
+					throw new TfException("Failed to create new data provider column");
+
+				return provider;
 			}
-			scope.Complete();
-
-			var provider = GetDataProvider(providerId);
-			if (provider is null)
-				throw new TfException("Failed to create new data provider column");
-
-			return provider;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
@@ -203,25 +238,32 @@ public partial class TfService : ITfService
 	public TfDataProvider UpdateDataProviderColumn(
 		TfDataProviderColumn column)
 	{
-		new TfDataProviderColumnValidator(this)
-			.ValidateUpdate(column)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
+		try
+		{
+			new TfDataProviderColumnValidator(this)
+				.ValidateUpdate(column)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
+			var existingColumn = _dboManager.Get<TfDataProviderColumn>(column.Id);
 
-		var success = _dboManager.Update<TfDataProviderColumn>(column);
+			var success = _dboManager.Update<TfDataProviderColumn>(column);
 
-		if (!success)
-			throw new TfDboServiceException("Update<TfDataProviderColumn> failed.");
+			if (!success)
+				throw new TfDboServiceException("Update<TfDataProviderColumn> failed.");
 
-		var provider = GetDataProvider(column.DataProviderId);
-		if (provider is null)
-			throw new TfException("Failed to create new data provider column");
+			var provider = GetDataProvider(column.DataProviderId);
+			if (provider is null)
+				throw new TfException("Failed to create new data provider column");
 
-		UpdateDatabaseColumn(provider, column, existingColumn);
+			UpdateDatabaseColumn(provider, column, existingColumn);
 
-		return GetDataProvider(column.DataProviderId);
+			return GetDataProvider(column.DataProviderId);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	/// <summary>
@@ -232,35 +274,42 @@ public partial class TfService : ITfService
 	public TfDataProvider DeleteDataProviderColumn(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var column = GetDataProviderColumn(id);
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var column = GetDataProviderColumn(id);
 
-			new TfDataProviderColumnValidator(this)
-				.ValidateDelete(column)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
+				new TfDataProviderColumnValidator(this)
+					.ValidateDelete(column)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
 
-			var success = _dboManager.Delete<TfDataProviderColumn>(id);
+				var success = _dboManager.Delete<TfDataProviderColumn>(id);
 
-			if (!success)
-				throw new TfDboServiceException("Delete<TfDataProviderColumn> failed");
+				if (!success)
+					throw new TfDboServiceException("Delete<TfDataProviderColumn> failed");
 
-			var provider = GetDataProvider(column.DataProviderId);
-			if (provider is null)
-				throw new TfException("Failed to create new data provider column");
+				var provider = GetDataProvider(column.DataProviderId);
+				if (provider is null)
+					throw new TfException("Failed to create new data provider column");
 
-			string providerTableName = $"dp{provider.Index}";
+				string providerTableName = $"dp{provider.Index}";
 
-			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
-			dbBuilder.WithTableBuilder(providerTableName).WithColumns(columns => columns.Remove(column.DbName));
+				dbBuilder.WithTableBuilder(providerTableName).WithColumns(columns => columns.Remove(column.DbName));
 
-			_dbManager.SaveChanges(dbBuilder);
+				_dbManager.SaveChanges(dbBuilder);
 
-			scope.Complete();
+				scope.Complete();
 
-			return GetDataProvider(column.DataProviderId);
+				return GetDataProvider(column.DataProviderId);
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
@@ -865,6 +914,7 @@ public partial class TfService : ITfService
 
 	public static ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfosList()
 	{
+
 		List<DatabaseColumnTypeInfo> databaseColumnTypeInfos =
 			new List<DatabaseColumnTypeInfo>();
 
@@ -972,7 +1022,14 @@ public partial class TfService : ITfService
 	}
 	public ReadOnlyCollection<DatabaseColumnTypeInfo> GetDatabaseColumnTypeInfos()
 	{
-		return GetDatabaseColumnTypeInfosList();
+		try
+		{
+			return GetDatabaseColumnTypeInfosList();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	#region <--- validation --->

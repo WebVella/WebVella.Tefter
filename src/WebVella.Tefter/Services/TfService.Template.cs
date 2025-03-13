@@ -41,95 +41,111 @@ public partial class TfService : ITfService
 {
 	public TfTemplate GetTemplate(Guid id)
 	{
-		const string SQL = @"SELECT * FROM template WHERE id = @id";
+		try
+		{
+			const string SQL = @"SELECT * FROM template WHERE id = @id";
 
-		var dt = _dbService.ExecuteSqlQueryCommand(SQL, CreateParameter("@id", id, DbType.Guid));
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL, CreateParameter("@id", id, DbType.Guid));
 
-		var list = ToTemplateList(dt);
+			var list = ToTemplateList(dt);
 
-		if (list.Count == 0)
-			return null;
+			if (list.Count == 0)
+				return null;
 
-		return list[0];
+			return list[0];
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public List<TfTemplate> GetTemplates()
 	{
-		const string SQL = @"SELECT * FROM template";
+		try
+		{
+			const string SQL = @"SELECT * FROM template";
 
-		var dt = _dbService.ExecuteSqlQueryCommand(SQL);
+			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 
-		return ToTemplateList(dt);
+			return ToTemplateList(dt);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfTemplate CreateTemplate(
 		TfManageTemplateModel template)
 	{
-		if (template == null)
-			throw new TfException("Template object is null");
-
-		if (template.ContentProcessorType == null)
-			throw new TfException("Content processor is not selected");
-
-		var contentProcessor = GetTemplateProcessor(template.ContentProcessorType);
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			if (template is not null && template.Id == Guid.Empty)
-			{
-				template.Id = Guid.NewGuid();
-			}
+			if (template == null)
+				throw new TfException("Template object is null");
 
-			var errors = contentProcessor.OnCreate(template, _serviceProvider);
+			if (template.ContentProcessorType == null)
+				throw new TfException("Content processor is not selected");
 
-			if (errors is not null && errors.Count > 0)
+			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType);
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var exception = new TfException();
-				foreach (var error in errors)
+				if (template is not null && template.Id == Guid.Empty)
 				{
-					exception.UpsertDataList(error.PropertyName, error.Message);
+					template.Id = Guid.NewGuid();
 				}
-				throw exception;
-			}
 
-			DateTime now = DateTime.Now;
+				var errors = contentProcessor.OnCreate(template, _serviceProvider);
 
-			new TemplateValidator(this)
-				.ValidateCreate(template)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
+				if (errors is not null && errors.Count > 0)
+				{
+					var exception = new TfException();
+					foreach (var error in errors)
+					{
+						exception.UpsertDataList(error.PropertyName, error.Message);
+					}
+					throw exception;
+				}
 
-			string spaceDataListJson = JsonSerializer.Serialize(template.SpaceDataList ?? new List<Guid>());
+				DateTime now = DateTime.Now;
 
-			var idPar = CreateParameter("@id", template.Id, DbType.Guid);
+				new TemplateValidator(this)
+					.ValidateCreate(template)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
 
-			var namePar = CreateParameter("@name", template.Name, DbType.String);
+				string spaceDataListJson = JsonSerializer.Serialize(template.SpaceDataList ?? new List<Guid>());
 
-			var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
+				var idPar = CreateParameter("@id", template.Id, DbType.Guid);
 
-			var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
+				var namePar = CreateParameter("@name", template.Name, DbType.String);
 
-			var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
+				var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
 
-			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
+				var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
 
-			var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
+				var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
 
-			var spaceDataJsonPar = CreateParameter("@space_data_json", spaceDataListJson, DbType.String);
+				var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
+				var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
 
-			var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
+				var spaceDataJsonPar = CreateParameter("@space_data_json", spaceDataListJson, DbType.String);
 
-			var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
+				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
 
-			var createdByPar = CreateParameter("@created_by", template.UserId, DbType.Guid);
+				var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
 
-			var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+				var createdOnPar = CreateParameter("@created_on", now, DbType.DateTime2);
 
-			var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
+				var createdByPar = CreateParameter("@created_by", template.UserId, DbType.Guid);
 
-			const string SQL = @"
+				var modifiedOnPar = CreateParameter("@modified_on", now, DbType.DateTime2);
+
+				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
+
+				const string SQL = @"
 				INSERT INTO template(
 					id, name, icon, description, space_data_json, is_enabled, 
 					is_selectable, result_type, settings_json, content_processor_type,
@@ -139,84 +155,91 @@ public partial class TfService : ITfService
 					@is_selectable, @result_type, @settings_json, @content_processor_type,
 					@created_on, @modified_on, @created_by, @modified_by )";
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar, namePar, descriptionPar, iconPar,
-				isEnabledPar, isSelectablePar, resultTypePar,
-				spaceDataJsonPar, settingsJsonPar, cptPar,
-				createdByPar, createdOnPar, modifiedByPar, modifiedOnPar);
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, namePar, descriptionPar, iconPar,
+					isEnabledPar, isSelectablePar, resultTypePar,
+					spaceDataJsonPar, settingsJsonPar, cptPar,
+					createdByPar, createdOnPar, modifiedByPar, modifiedOnPar);
 
-			if (dbResult != 1)
-			{
-				throw new TfException("Failed to insert new row in database for template object");
+				if (dbResult != 1)
+				{
+					throw new TfException("Failed to insert new row in database for template object");
+				}
+
+				scope.Complete();
 			}
 
-			scope.Complete();
+			var resultTemplate = GetTemplate(template.Id);
+
+			contentProcessor.OnCreated(resultTemplate, _serviceProvider);
+
+			return resultTemplate;
 		}
-
-		var resultTemplate = GetTemplate(template.Id);
-
-		contentProcessor.OnCreated(resultTemplate, _serviceProvider);
-
-		return resultTemplate;
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfTemplate UpdateTemplate(
 		TfManageTemplateModel template)
 	{
-		if (template == null)
-			throw new TfException("Template object is null");
-
-		if (template.ContentProcessorType == null)
-			throw new TfException("Content processor is not selected");
-
-		var contentProcessor = GetTemplateProcessor(template.ContentProcessorType);
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var errors = contentProcessor.OnUpdate(template, _serviceProvider);
-			if (errors is not null && errors.Count > 0)
+			if (template == null)
+				throw new TfException("Template object is null");
+
+			if (template.ContentProcessorType == null)
+				throw new TfException("Content processor is not selected");
+
+			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType);
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var exception = new TfException();
-				foreach (var error in errors)
+				var errors = contentProcessor.OnUpdate(template, _serviceProvider);
+				if (errors is not null && errors.Count > 0)
 				{
-					exception.UpsertDataList(error.PropertyName, error.Message);
+					var exception = new TfException();
+					foreach (var error in errors)
+					{
+						exception.UpsertDataList(error.PropertyName, error.Message);
+					}
+					throw exception;
 				}
-				throw exception;
-			}
 
-			new TemplateValidator(this)
-				.ValidateUpdate(template)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
+				new TemplateValidator(this)
+					.ValidateUpdate(template)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
 
-			string spaceDataListJson = JsonSerializer.Serialize(template.SpaceDataList ?? new List<Guid>());
+				string spaceDataListJson = JsonSerializer.Serialize(template.SpaceDataList ?? new List<Guid>());
 
-			var idPar = CreateParameter("@id", template.Id, DbType.Guid);
+				var idPar = CreateParameter("@id", template.Id, DbType.Guid);
 
-			var namePar = CreateParameter("@name", template.Name, DbType.String);
+				var namePar = CreateParameter("@name", template.Name, DbType.String);
 
-			var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
+				var descriptionPar = CreateParameter("@description", template.Description, DbType.String);
 
-			var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
+				var iconPar = CreateParameter("@icon", template.FluentIconName, DbType.String);
 
-			var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
+				var isEnabledPar = CreateParameter("@is_enabled", template.IsEnabled, DbType.Boolean);
 
-			var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
+				var isSelectablePar = CreateParameter("@is_selectable", template.IsSelectable, DbType.Boolean);
 
-			var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
+				var resultTypePar = CreateParameter("@result_type", (short)contentProcessor.ResultType, DbType.Int16);
 
-			var spaceDataJsonPar = CreateParameter("@space_data_json", spaceDataListJson, DbType.String);
+				var spaceDataJsonPar = CreateParameter("@space_data_json", spaceDataListJson, DbType.String);
 
-			var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
+				var settingsJsonPar = CreateParameter("@settings_json", template.SettingsJson, DbType.String);
 
-			var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
+				var cptPar = CreateParameter("@content_processor_type", template.ContentProcessorType.AssemblyQualifiedName, DbType.String);
 
-			var modifiedOnPar = CreateParameter("@modified_on", DateTime.Now, DbType.DateTime2);
+				var modifiedOnPar = CreateParameter("@modified_on", DateTime.Now, DbType.DateTime2);
 
-			var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
+				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
 
-			const string SQL = @"
+				const string SQL = @"
 				UPDATE template
 				SET 
 					name=@name,
@@ -232,70 +255,82 @@ public partial class TfService : ITfService
 					modified_by=@modified_by
 				WHERE id = @id;";
 
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(
-				SQL,
-				idPar, namePar, descriptionPar, iconPar,
-				isEnabledPar, isSelectablePar, resultTypePar,
-				spaceDataJsonPar, settingsJsonPar, cptPar,
-				modifiedByPar, modifiedOnPar);
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(
+					SQL,
+					idPar, namePar, descriptionPar, iconPar,
+					isEnabledPar, isSelectablePar, resultTypePar,
+					spaceDataJsonPar, settingsJsonPar, cptPar,
+					modifiedByPar, modifiedOnPar);
 
-			if (dbResult != 1)
-			{
-				throw new Exception("Failed to insert new row in database for template object");
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to insert new row in database for template object");
+				}
+
+				scope.Complete();
 			}
 
-			scope.Complete();
+			var resultTemplate = GetTemplate(template.Id);
+
+			contentProcessor.OnUpdated(resultTemplate, _serviceProvider);
+
+			return resultTemplate;
 		}
-
-		var resultTemplate = GetTemplate(template.Id);
-
-		contentProcessor.OnUpdated(resultTemplate, _serviceProvider);
-
-		return resultTemplate;
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void DeleteTemplate(
 		Guid templateId)
 	{
-		var existingTemplate = GetTemplate(templateId);
-		if (existingTemplate == null)
-			throw new TfException("Template is not found");
-
-		var contentProcessor = GetTemplateProcessor(existingTemplate.ContentProcessorType);
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var errors = contentProcessor.OnDelete(existingTemplate, _serviceProvider);
-			if (errors is not null && errors.Count > 0)
+			var existingTemplate = GetTemplate(templateId);
+			if (existingTemplate == null)
+				throw new TfException("Template is not found");
+
+			var contentProcessor = GetTemplateProcessor(existingTemplate.ContentProcessorType);
+
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var exception = new TfException();
-				foreach (var error in errors)
+				var errors = contentProcessor.OnDelete(existingTemplate, _serviceProvider);
+				if (errors is not null && errors.Count > 0)
 				{
-					exception.UpsertDataList(error.PropertyName, error.Message);
+					var exception = new TfException();
+					foreach (var error in errors)
+					{
+						exception.UpsertDataList(error.PropertyName, error.Message);
+					}
+					throw exception;
 				}
-				throw exception;
+
+				new TemplateValidator(this)
+					.ValidateDelete(existingTemplate)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
+
+				const string SQL = "DELETE FROM template WHERE id = @id";
+
+				var idPar = CreateParameter("id", templateId, DbType.Guid);
+
+				var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
+
+				if (dbResult != 1)
+				{
+					throw new Exception("Failed to delete row in database for template object");
+				}
+
+				scope.Complete();
 			}
 
-			new TemplateValidator(this)
-				.ValidateDelete(existingTemplate)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
-
-			const string SQL = "DELETE FROM template WHERE id = @id";
-
-			var idPar = CreateParameter("id", templateId, DbType.Guid);
-
-			var dbResult = _dbService.ExecuteSqlNonQueryCommand(SQL, idPar);
-
-			if (dbResult != 1)
-			{
-				throw new Exception("Failed to delete row in database for template object");
-			}
-
-			scope.Complete();
+			contentProcessor.OnDeleted(existingTemplate, _serviceProvider);
 		}
-
-		contentProcessor.OnDeleted(existingTemplate, _serviceProvider);
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public ITfTemplatePreviewResult GenerateTemplatePreviewResult(
@@ -303,13 +338,20 @@ public partial class TfService : ITfService
 		Guid spaceDataId,
 		List<Guid> tfRecordIds)
 	{
-		var template = GetTemplate(templateId);
-		var spaceData = GetSpaceData(spaceDataId);
-		var processor = GetTemplateProcessor(template.ContentProcessorType);
+		try
+		{
+			var template = GetTemplate(templateId);
+			var spaceData = GetSpaceData(spaceDataId);
+			var processor = GetTemplateProcessor(template.ContentProcessorType);
 
-		var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
+			var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
 
-		return processor.GenerateTemplatePreviewResult(template, dataTable, _serviceProvider);
+			return processor.GenerateTemplatePreviewResult(template, dataTable, _serviceProvider);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public ITfTemplateResult ProcessTemplate(
@@ -318,20 +360,27 @@ public partial class TfService : ITfService
 		List<Guid> tfRecordIds,
 		ITfTemplatePreviewResult preview)
 	{
-		var template = GetTemplate(templateId);
+		try
+		{
+			var template = GetTemplate(templateId);
 
-		if (template is null)
-			throw new Exception("Template is not found.");
+			if (template is null)
+				throw new Exception("Template is not found.");
 
-		if (!template.SpaceDataList.Contains(spaceDataId))
-			throw new Exception("Template does not work for selected space data.");
+			if (!template.SpaceDataList.Contains(spaceDataId))
+				throw new Exception("Template does not work for selected space data.");
 
-		var spaceData = GetSpaceData(spaceDataId);
-		var processor = GetTemplateProcessor(template.ContentProcessorType);
-		var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
+			var spaceData = GetSpaceData(spaceDataId);
+			var processor = GetTemplateProcessor(template.ContentProcessorType);
+			var dataTable = QuerySpaceData(spaceData.Id, tfRecordIds);
 
 
-		return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+			return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public ITfTemplateResult ProcessTemplate(
@@ -339,21 +388,35 @@ public partial class TfService : ITfService
 		TfDataTable dataTable,
 		ITfTemplatePreviewResult preview)
 	{
-		var template = GetTemplate(templateId);
-		if (template is null)
-			throw new Exception("Template is not found.");
+		try
+		{
+			var template = GetTemplate(templateId);
+			if (template is null)
+				throw new Exception("Template is not found.");
 
-		var processor = GetTemplateProcessor(template.ContentProcessorType);
-		return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+			var processor = GetTemplateProcessor(template.ContentProcessorType);
+			return processor.ProcessTemplate(template, dataTable, preview, _serviceProvider);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void ValidateTemplatePreview(
 		Guid templateId,
 		ITfTemplatePreviewResult preview)
 	{
-		var template = GetTemplate(templateId);
-		var processor = GetTemplateProcessor(template.ContentProcessorType);
-		processor.ValidatePreview(template, preview, _serviceProvider);
+		try
+		{
+			var template = GetTemplate(templateId);
+			var processor = GetTemplateProcessor(template.ContentProcessorType);
+			processor.ValidatePreview(template, preview, _serviceProvider);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	#region <--- validation --->

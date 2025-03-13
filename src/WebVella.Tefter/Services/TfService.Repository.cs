@@ -40,53 +40,67 @@ public partial class TfService : ITfService
 	public TfRepositoryFile GetRepositoryFileByUri(
 		string uriString)
 	{
-		if (string.IsNullOrEmpty(uriString))
-		{
-			throw new TfException("Invalid tefter uri. " +
-				"It should start with: 'tefter://fs/repository/' ");
-		}
-
-		uriString = uriString.ToLowerInvariant();
-
-		if (!uriString.StartsWith("tefter://fs/repository"))
-		{
-			throw new TfException("Invalid tefter uri. " +
-				"It should start with: 'tefter://fs/repository/' ");
-		}
-
-		string filename = string.Empty;
 		try
 		{
-			var uri = new Uri(uriString);
+			if (string.IsNullOrEmpty(uriString))
+			{
+				throw new TfException("Invalid tefter uri. " +
+					"It should start with: 'tefter://fs/repository/' ");
+			}
 
-			if (uri.Segments.Length != 3)
-				throw new TfException("Invalid tefter uri");
+			uriString = uriString.ToLowerInvariant();
 
-			filename = uri.Segments.Last();
+			if (!uriString.StartsWith("tefter://fs/repository"))
+			{
+				throw new TfException("Invalid tefter uri. " +
+					"It should start with: 'tefter://fs/repository/' ");
+			}
+
+			string filename = string.Empty;
+			try
+			{
+				var uri = new Uri(uriString);
+
+				if (uri.Segments.Length != 3)
+					throw new TfException("Invalid tefter uri");
+
+				filename = uri.Segments.Last();
+			}
+			catch (Exception ex)
+			{
+				throw new TfException("Invalid tefter uri", ex);
+			}
+
+			var file = _dboManager.Get<TfRepositoryFile>(
+					" WHERE filename ILIKE @filename",
+					new NpgsqlParameter("@filename", filename));
+
+			return file;
 		}
 		catch (Exception ex)
 		{
-			throw new TfException("Invalid tefter uri", ex);
+			throw ProcessException(ex);
 		}
-
-		var file = _dboManager.Get<TfRepositoryFile>(
-				" WHERE filename ILIKE @filename",
-				new NpgsqlParameter("@filename", filename));
-
-		return file;
 	}
 
 	public TfRepositoryFile GetRepositoryFile(
 		string filename)
 	{
-		if (string.IsNullOrEmpty(filename))
-			return null;
+		try
+		{
+			if (string.IsNullOrEmpty(filename))
+				return null;
 
-		var file = _dboManager.Get<TfRepositoryFile>(
-				" WHERE filename ILIKE @filename",
-				new NpgsqlParameter("@filename", filename));
+			var file = _dboManager.Get<TfRepositoryFile>(
+					" WHERE filename ILIKE @filename",
+					new NpgsqlParameter("@filename", filename));
 
-		return file;
+			return file;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public List<TfRepositoryFile> GetRepositoryFiles(
@@ -96,53 +110,60 @@ public partial class TfService : ITfService
 		int? page = null,
 		int? pageSize = null)
 	{
-		var pagingSql = GeneratePagingSql(page, pageSize);
-
-		var orderBySql = " ORDER BY filename ASC ";
-		var startsWithSql = " ( @starts_with IS NULL OR filename ILIKE @starts_with ) ";
-		var containsSql = " ( @contains IS NULL OR filename ILIKE @contains ) ";
-		var endsWithSql = " ( @ends_with IS NULL OR filename ILIKE @ends_with ) ";
-
-		var sql = $"WHERE {startsWithSql} AND {containsSql} AND {endsWithSql} {orderBySql} {pagingSql}";
-
-		var startsWithParameter = new NpgsqlParameter("@starts_with", DbType.String);
-		if (!string.IsNullOrWhiteSpace(filenameStartsWith))
+		try
 		{
-			startsWithParameter.Value = filenameStartsWith + "%";
-		}
-		else
-		{
-			startsWithParameter.Value = DBNull.Value;
-		}
+			var pagingSql = GeneratePagingSql(page, pageSize);
 
-		var containsPathParameter = new NpgsqlParameter("@contains", DbType.String);
-		if (!string.IsNullOrWhiteSpace(filenameContains))
-		{
-			containsPathParameter.Value = "%" + filenameContains + "%";
-		}
-		else
-		{
-			containsPathParameter.Value = DBNull.Value;
-		}
+			var orderBySql = " ORDER BY filename ASC ";
+			var startsWithSql = " ( @starts_with IS NULL OR filename ILIKE @starts_with ) ";
+			var containsSql = " ( @contains IS NULL OR filename ILIKE @contains ) ";
+			var endsWithSql = " ( @ends_with IS NULL OR filename ILIKE @ends_with ) ";
 
-		var endsWithParameter = new NpgsqlParameter("@ends_with", DbType.String);
-		if (!string.IsNullOrWhiteSpace(filenameEndWith))
-		{
-			endsWithParameter.Value = "%" + filenameEndWith;
-		}
-		else
-		{
-			endsWithParameter.Value = DBNull.Value;
-		}
+			var sql = $"WHERE {startsWithSql} AND {containsSql} AND {endsWithSql} {orderBySql} {pagingSql}";
 
-		var files = _dboManager.GetList<TfRepositoryFile>(
-				sql,
-				order: null,
-				startsWithParameter,
-				containsPathParameter,
-				endsWithParameter);
+			var startsWithParameter = new NpgsqlParameter("@starts_with", DbType.String);
+			if (!string.IsNullOrWhiteSpace(filenameStartsWith))
+			{
+				startsWithParameter.Value = filenameStartsWith + "%";
+			}
+			else
+			{
+				startsWithParameter.Value = DBNull.Value;
+			}
 
-		return files;
+			var containsPathParameter = new NpgsqlParameter("@contains", DbType.String);
+			if (!string.IsNullOrWhiteSpace(filenameContains))
+			{
+				containsPathParameter.Value = "%" + filenameContains + "%";
+			}
+			else
+			{
+				containsPathParameter.Value = DBNull.Value;
+			}
+
+			var endsWithParameter = new NpgsqlParameter("@ends_with", DbType.String);
+			if (!string.IsNullOrWhiteSpace(filenameEndWith))
+			{
+				endsWithParameter.Value = "%" + filenameEndWith;
+			}
+			else
+			{
+				endsWithParameter.Value = DBNull.Value;
+			}
+
+			var files = _dboManager.GetList<TfRepositoryFile>(
+					sql,
+					order: null,
+					startsWithParameter,
+					containsPathParameter,
+					endsWithParameter);
+
+			return files;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfRepositoryFile CreateRepositoryFile(
@@ -150,36 +171,43 @@ public partial class TfService : ITfService
 		string localPath,
 		Guid? createdBy = null)
 	{
-		new TfRepositoryServiceValidator(this)
-			.ValidateCreate(filename, localPath)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		DateTime now = DateTime.Now;
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
+			new TfRepositoryServiceValidator(this)
+				.ValidateCreate(filename, localPath)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-			var blobId = CreateBlob(localPath);
+			DateTime now = DateTime.Now;
 
-
-			TfRepositoryFile file = new TfRepositoryFile
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				Id = blobId,
-				Filename = filename,
-				CreatedBy = createdBy,
-				CreatedOn = now,
-				LastModifiedBy = createdBy,
-				LastModifiedOn = now
-			};
 
-			var insertResult = _dboManager.Insert<TfRepositoryFile>(file);
-			if (!insertResult)
-				throw new TfDboServiceException("Insert repository file record into database failed");
+				var blobId = CreateBlob(localPath);
 
-			scope.Complete();
 
-			return file;
+				TfRepositoryFile file = new TfRepositoryFile
+				{
+					Id = blobId,
+					Filename = filename,
+					CreatedBy = createdBy,
+					CreatedOn = now,
+					LastModifiedBy = createdBy,
+					LastModifiedOn = now
+				};
+
+				var insertResult = _dboManager.Insert<TfRepositoryFile>(file);
+				if (!insertResult)
+					throw new TfDboServiceException("Insert repository file record into database failed");
+
+				scope.Complete();
+
+				return file;
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
@@ -188,29 +216,36 @@ public partial class TfService : ITfService
 		string localPath,
 		Guid? updatedBy = null)
 	{
-		new TfRepositoryServiceValidator(this)
-			.ValidateUpdate(filename, localPath)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		DateTime now = DateTime.Now;
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var repFile = GetRepositoryFile(filename);
+			new TfRepositoryServiceValidator(this)
+				.ValidateUpdate(filename, localPath)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-			repFile.LastModifiedBy = updatedBy;
+			DateTime now = DateTime.Now;
 
-			repFile.LastModifiedOn = DateTime.Now;
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var repFile = GetRepositoryFile(filename);
 
-			var updateResult = _dboManager.Update<TfRepositoryFile>(repFile);
+				repFile.LastModifiedBy = updatedBy;
 
-			if (!updateResult)
-				throw new TfDboServiceException("Update repository file record into database failed");
+				repFile.LastModifiedOn = DateTime.Now;
 
-			UpdateBlob(repFile.Id, localPath);
+				var updateResult = _dboManager.Update<TfRepositoryFile>(repFile);
 
-			scope.Complete();
+				if (!updateResult)
+					throw new TfDboServiceException("Update repository file record into database failed");
+
+				UpdateBlob(repFile.Id, localPath);
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
@@ -218,45 +253,65 @@ public partial class TfService : ITfService
 	public void DeleteRepositoryFile(
 		string filename)
 	{
-
-		new TfRepositoryServiceValidator(this)
-			.ValidateDelete(filename)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-
-		using (var scope = _dbService.CreateTransactionScope())
+		try
 		{
-			var existingFile = GetRepositoryFile(filename);
+			new TfRepositoryServiceValidator(this)
+				.ValidateDelete(filename)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-			var deleteResult = _dboManager.Delete<TfRepositoryFile>(existingFile.Id);
-			if (!deleteResult)
-				throw new TfDboServiceException("Failed to delete file from database.");
 
-			DeleteBlob(existingFile.Id);
+			using (var scope = _dbService.CreateTransactionScope())
+			{
+				var existingFile = GetRepositoryFile(filename);
 
-			scope.Complete();
+				var deleteResult = _dboManager.Delete<TfRepositoryFile>(existingFile.Id);
+				if (!deleteResult)
+					throw new TfDboServiceException("Failed to delete file from database.");
+
+				DeleteBlob(existingFile.Id);
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public byte[] GetRepositoryFileContentAsByteArray(
 		string filename)
 	{
-		using var contentStream = GetRepositoryFileContentAsFileStream(filename);
-		return new BinaryReader(contentStream)
-				.ReadBytes((int)contentStream.Length);
+		try
+		{
+			using var contentStream = GetRepositoryFileContentAsFileStream(filename);
+			return new BinaryReader(contentStream)
+					.ReadBytes((int)contentStream.Length);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public Stream GetRepositoryFileContentAsFileStream(
 		string filename)
 	{
-		new TfRepositoryServiceValidator(this)
-			.ValidateFileContentStream(filename)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
+		try
+		{
+			new TfRepositoryServiceValidator(this)
+				.ValidateFileContentStream(filename)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		var file = GetRepositoryFile(filename);
-		return GetBlobStream(file.Id);
+			var file = GetRepositoryFile(filename);
+			return GetBlobStream(file.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 

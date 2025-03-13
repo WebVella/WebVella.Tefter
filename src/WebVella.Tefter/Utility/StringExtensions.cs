@@ -1,15 +1,15 @@
-﻿namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter.Utility;
 
 public static class StringExtensions
 {
-    //utility method to get configuration file path
-    public static string ToApplicationPath(this string fileName)
-    {
-        var exePath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-        Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
-        var appRoot = appPathMatcher.Match(exePath).Value;
-        return Path.Combine(appRoot, fileName);
-    }
+	//utility method to get configuration file path
+	public static string ToApplicationPath(this string fileName)
+	{
+		var exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
+		var appRoot = appPathMatcher.Match(exePath).Value;
+		return Path.Combine(appRoot, fileName);
+	}
 
 	public static string ToMD5Hash(this string input)
 	{

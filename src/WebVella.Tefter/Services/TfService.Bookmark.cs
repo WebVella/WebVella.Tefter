@@ -25,132 +25,174 @@ public partial class TfService : ITfService
 	public List<TfBookmark> GetBookmarksListForUser(
 		Guid userId)
 	{
-		var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
-		foreach (var bookmark in bookmarks)
-			bookmark.Tags = GetBookmarkTags(bookmark.Id);
+		try
+		{
+			var bookmarks = _dboManager.GetList<TfBookmark>(userId, nameof(TfBookmark.UserId));
+			foreach (var bookmark in bookmarks)
+				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
-		return bookmarks;
+			return bookmarks;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public List<TfBookmark> GetBookmarksListForSpaceView(
 		Guid spaceViewId)
 	{
-		var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpaceViewId));
-		foreach (var bookmark in bookmarks)
-			bookmark.Tags = GetBookmarkTags(bookmark.Id);
+		try
+		{
+			var bookmarks = _dboManager.GetList<TfBookmark>(spaceViewId, nameof(TfBookmark.SpaceViewId));
+			foreach (var bookmark in bookmarks)
+				bookmark.Tags = GetBookmarkTags(bookmark.Id);
 
-		return bookmarks;
+			return bookmarks;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfBookmark GetBookmark(
 		Guid id)
 	{
-		var bookmark = _dboManager.Get<TfBookmark>(id);
-		if (bookmark is not null)
-			bookmark.Tags = GetBookmarkTags(id);
-		return bookmark;
+		try
+		{
+			var bookmark = _dboManager.Get<TfBookmark>(id);
+			if (bookmark is not null)
+				bookmark.Tags = GetBookmarkTags(id);
+			return bookmark;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	private List<TfTag> GetBookmarkTags(
 		Guid bookmarkId)
 	{
-		return _dboManager.GetListBySql<TfTag>(@"SELECT t.* FROM tag t
+		try
+		{
+			return _dboManager.GetListBySql<TfTag>(@"SELECT t.* FROM tag t
 				LEFT OUTER JOIN bookmark_tags bt ON bt.tag_id = t.id AND bt.bookmark_id = @bookmark_id
 			WHERE bt.tag_id IS NOT NULL AND bt.bookmark_id = @bookmark_id
 			", new NpgsqlParameter("bookmark_id", bookmarkId));
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 
 	}
 
 	private List<string> GetUniqueTagsFromText(
 		string text)
 	{
-		var result = new List<string>();
-
-		if (string.IsNullOrWhiteSpace(text))
-			return result;
-
-		var regex = new Regex(@"#\w+");
-		var matches = regex.Matches(text);
-		foreach (var match in matches)
+		try
 		{
-			var tag = match.ToString().ToLowerInvariant().Trim().Substring(1);
-			if (!string.IsNullOrWhiteSpace(tag) && !result.Contains(tag))
-				result.Add(tag);
-		}
+			var result = new List<string>();
 
-		return result;
+			if (string.IsNullOrWhiteSpace(text))
+				return result;
+
+			var regex = new Regex(@"#\w+");
+			var matches = regex.Matches(text);
+			foreach (var match in matches)
+			{
+				var tag = match.ToString().ToLowerInvariant().Trim().Substring(1);
+				if (!string.IsNullOrWhiteSpace(tag) && !result.Contains(tag))
+					result.Add(tag);
+			}
+
+			return result;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfBookmark CreateBookmark(
 		TfBookmark bookmark)
 	{
-		if (bookmark != null && bookmark.Id == Guid.Empty)
-			bookmark.Id = Guid.NewGuid();
-
-		new TfBookmarkValidator(this)
-			.ValidateCreate(bookmark)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			bool success = false;
+			if (bookmark != null && bookmark.Id == Guid.Empty)
+				bookmark.Id = Guid.NewGuid();
 
-			success = _dboManager.Insert<TfBookmark>(bookmark);
+			new TfBookmarkValidator(this)
+				.ValidateCreate(bookmark)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-			if (!success)
-				throw new TfDboServiceException("Insert<TfBookmark> failed.");
-
-			var textTags = GetUniqueTagsFromText(bookmark.Description);
-			if (textTags.Count > 0)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var allTags = _dboManager.GetList<TfTag>();
+				bool success = false;
 
-				foreach (var textTag in textTags)
+				success = _dboManager.Insert<TfBookmark>(bookmark);
+
+				if (!success)
+					throw new TfDboServiceException("Insert<TfBookmark> failed.");
+
+				var textTags = GetUniqueTagsFromText(bookmark.Description);
+				if (textTags.Count > 0)
 				{
-					var tag = allTags.SingleOrDefault(x => x.Label == textTag);
+					var allTags = _dboManager.GetList<TfTag>();
 
-					TfBookmarkTag bookmarkTag = null;
-
-					if (tag is not null)
+					foreach (var textTag in textTags)
 					{
-						bookmarkTag = new TfBookmarkTag
-						{
-							BookmarkId = bookmark.Id,
-							TagId = tag.Id
-						};
-					}
-					else
-					{
-						var newTag = new TfTag
-						{
-							Id = Guid.NewGuid(),
-							Label = textTag
-						};
+						var tag = allTags.SingleOrDefault(x => x.Label == textTag);
 
-						success = _dboManager.Insert<TfTag>(newTag);
+						TfBookmarkTag bookmarkTag = null;
+
+						if (tag is not null)
+						{
+							bookmarkTag = new TfBookmarkTag
+							{
+								BookmarkId = bookmark.Id,
+								TagId = tag.Id
+							};
+						}
+						else
+						{
+							var newTag = new TfTag
+							{
+								Id = Guid.NewGuid(),
+								Label = textTag
+							};
+
+							success = _dboManager.Insert<TfTag>(newTag);
+							if (!success)
+								throw new TfDboServiceException("Insert<TfTag> failed.");
+
+							bookmarkTag = new TfBookmarkTag
+							{
+								BookmarkId = bookmark.Id,
+								TagId = newTag.Id
+							};
+
+						}
+
+						success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
+
 						if (!success)
-							throw new TfDboServiceException("Insert<TfTag> failed.");
-
-						bookmarkTag = new TfBookmarkTag
-						{
-							BookmarkId = bookmark.Id,
-							TagId = newTag.Id
-						};
+							throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
 
 					}
-
-					success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
-
-					if (!success)
-						throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
-
 				}
+
+				scope.Complete();
+
+				return GetBookmark(bookmark.Id);
 			}
-
-			scope.Complete();
-
-			return GetBookmark(bookmark.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 
 	}
@@ -158,108 +200,122 @@ public partial class TfService : ITfService
 	public TfBookmark UpdateBookmark(
 		TfBookmark bookmark)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var existingBookmark = GetBookmark(bookmark.Id);
-
-			new TfBookmarkValidator(this)
-				.ValidateUpdate(existingBookmark)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
-
-			bool success = false;
-
-			var textTags = GetUniqueTagsFromText(bookmark.Description);
-
-			List<string> tagsToAdd = textTags
-				.Where(t => !existingBookmark.Tags.Any(x => x.Label == t))
-				.ToList();
-
-			List<Guid> tagIdsToRemove = existingBookmark.Tags
-				.Where(x => !textTags.Contains(x.Label))
-				.Select(x => x.Id)
-				.ToList();
-
-
-			//add new tags
-			foreach (var textTag in tagsToAdd)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var newTag = new TfTag { Id = Guid.NewGuid(), Label = textTag };
+				var existingBookmark = GetBookmark(bookmark.Id);
 
-				success = _dboManager.Insert<TfTag>(newTag);
+				new TfBookmarkValidator(this)
+					.ValidateUpdate(existingBookmark)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
+
+				bool success = false;
+
+				var textTags = GetUniqueTagsFromText(bookmark.Description);
+
+				List<string> tagsToAdd = textTags
+					.Where(t => !existingBookmark.Tags.Any(x => x.Label == t))
+					.ToList();
+
+				List<Guid> tagIdsToRemove = existingBookmark.Tags
+					.Where(x => !textTags.Contains(x.Label))
+					.Select(x => x.Id)
+					.ToList();
+
+
+				//add new tags
+				foreach (var textTag in tagsToAdd)
+				{
+					var newTag = new TfTag { Id = Guid.NewGuid(), Label = textTag };
+
+					success = _dboManager.Insert<TfTag>(newTag);
+
+					if (!success)
+						throw new TfDboServiceException("Insert<TfTag> failed.");
+
+					var bookmarkTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = newTag.Id };
+
+					success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
+
+					if (!success)
+						throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
+
+				}
+
+				//remove connection to missing tags
+				foreach (Guid id in tagIdsToRemove)
+				{
+					Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
+					deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
+					deleteKey.Add(nameof(TfBookmarkTag.TagId), id);
+
+					success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
+				}
+
+
+				//TODO process tags also
+				success = _dboManager.Update<TfBookmark>(bookmark);
 
 				if (!success)
-					throw new TfDboServiceException("Insert<TfTag> failed.");
+					throw new TfDboServiceException("Update<TfBookmark> failed.");
 
-				var bookmarkTag = new TfBookmarkTag { BookmarkId = bookmark.Id, TagId = newTag.Id };
+				scope.Complete();
 
-				success = _dboManager.Insert<TfBookmarkTag>(bookmarkTag);
-
-				if (!success)
-					throw new TfDboServiceException("Insert<TfBookmarkTag> failed.");
-
+				return GetBookmark(bookmark.Id);
 			}
-
-			//remove connection to missing tags
-			foreach (Guid id in tagIdsToRemove)
-			{
-				Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
-				deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
-				deleteKey.Add(nameof(TfBookmarkTag.TagId), id);
-
-				success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
-
-				if (!success)
-					throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
-			}
-
-
-			//TODO process tags also
-			success = _dboManager.Update<TfBookmark>(bookmark);
-
-			if (!success)
-				throw new TfDboServiceException("Update<TfBookmark> failed.");
-
-			scope.Complete();
-
-			return GetBookmark(bookmark.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public void DeleteBookmark(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var existingBookmark = GetBookmark(id);
-
-			new TfBookmarkValidator(this)
-				.ValidateDelete(existingBookmark)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
-
-
-			bool success = false;
-
-			//remove connection to tags
-			foreach (Guid tagId in existingBookmark.Tags.Select(x => x.Id).ToList())
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
-				deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
-				deleteKey.Add(nameof(TfBookmarkTag.TagId), tagId);
+				var existingBookmark = GetBookmark(id);
 
-				success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
+				new TfBookmarkValidator(this)
+					.ValidateDelete(existingBookmark)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
+
+
+				bool success = false;
+
+				//remove connection to tags
+				foreach (Guid tagId in existingBookmark.Tags.Select(x => x.Id).ToList())
+				{
+					Dictionary<string, Guid> deleteKey = new Dictionary<string, Guid>();
+					deleteKey.Add(nameof(TfBookmarkTag.BookmarkId), existingBookmark.Id);
+					deleteKey.Add(nameof(TfBookmarkTag.TagId), tagId);
+
+					success = _dboManager.Delete<TfBookmarkTag>(deleteKey);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
+				}
+
+				success = _dboManager.Delete<TfBookmark>(id);
 
 				if (!success)
-					throw new TfDboServiceException("Delete<TfBookmarkTag> failed.");
+					throw new TfDboServiceException("Delete<TfBookmark> failed.");
+
+				scope.Complete();
 			}
-
-			success = _dboManager.Delete<TfBookmark>(id);
-
-			if (!success)
-				throw new TfDboServiceException("Delete<TfBookmark> failed.");
-
-			scope.Complete();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 

@@ -17,6 +17,7 @@ global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Models;
 global using WebVella.Tefter.Web.Utils;
 global using WebVella.Tefter.Migrations;
+global using WebVella.Tefter.Utility;
 
 
 global using WebVella.Tefter.Assets;

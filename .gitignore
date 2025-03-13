@@ -353,3 +353,7 @@ MigrationBackup/
 /src/WebVella.Tefter.Site/Files/
 /src/WebVella.Tefter.Site/BlobStorage/
 /tests/WebVella.Tefter.Tests/FileResults
+
+# private development log configuration
+appsettings.rumen.json
+appsettings.DESKTOP-KU8LRG2.json

@@ -16,19 +16,22 @@ public partial class TfService : ITfService
 	private readonly ITfDatabaseManager _dbManager;
 	private readonly ITfMetaService _metaService;
 	private readonly ITfDatabaseService _dbService;
+	private readonly ILogger _logger;
 
 	public TfService(
 		IServiceProvider serviceProvider,
 		ITfConfigurationService config,
 		ITfMetaService metaService,
 		ITfDatabaseService dbService,
-		ITfDatabaseManager dbManager)
+		ITfDatabaseManager dbManager,
+		ILogger logger)
 	{
 		_serviceProvider = serviceProvider;
 		_dbService = dbService;
 		_config = config;
 		_metaService = metaService;
 		_dbManager = dbManager;
+		_logger = logger;
 		_dboManager = serviceProvider.GetService<ITfDboManager>();
 		
 		InitBlobStorageFolder(_config.BlobStoragePath);

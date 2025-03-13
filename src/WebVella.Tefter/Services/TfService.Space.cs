@@ -30,14 +30,21 @@ public partial class TfService : ITfService
 {
 	public List<TfSpace> GetSpacesList()
 	{
-		var orderSettings = new TfOrderSettings(
-			nameof(TfSpace.Position),
-			OrderDirection.ASC);
+		try
+		{
+			var orderSettings = new TfOrderSettings(
+				nameof(TfSpace.Position),
+				OrderDirection.ASC);
 
-		var dbos = _dboManager.GetList<TfSpaceDbo>(
-			order: orderSettings);
+			var dbos = _dboManager.GetList<TfSpaceDbo>(
+				order: orderSettings);
 
-		return dbos.Select(x => ConvertDboToModel(x)).ToList();
+			return dbos.Select(x => ConvertDboToModel(x)).ToList();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	/// <summary>
@@ -51,191 +58,233 @@ public partial class TfService : ITfService
 	public TfSpace GetSpace(
 		Guid id)
 	{
-		var dbo = _dboManager.Get<TfSpaceDbo>(id);
-		return ConvertDboToModel(dbo);
+		try
+		{
+			var dbo = _dboManager.Get<TfSpaceDbo>(id);
+			return ConvertDboToModel(dbo);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public TfSpace CreateSpace(
 		TfSpace space)
 	{
-		if (space != null && space.Id == Guid.Empty)
-			space.Id = Guid.NewGuid();
-
-		new TfSpaceValidator(this)
-			.ValidateCreate(space)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
-
-
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var spaces = GetSpacesList();
+			if (space != null && space.Id == Guid.Empty)
+				space.Id = Guid.NewGuid();
 
-			//position is ignored - space is added at last place
-			var dbo = ConvertModelToDbo(space);
-			dbo.Position = (short)(spaces.Count + 1);
+			new TfSpaceValidator(this)
+				.ValidateCreate(space)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-			var success = _dboManager.Insert<TfSpaceDbo>(dbo);
-			if (!success)
-				throw new TfDboServiceException("Insert<TfSpaceDbo> failed");
 
-			scope.Complete();
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var spaces = GetSpacesList();
 
-			return GetSpace(space.Id);
+				//position is ignored - space is added at last place
+				var dbo = ConvertModelToDbo(space);
+				dbo.Position = (short)(spaces.Count + 1);
+
+				var success = _dboManager.Insert<TfSpaceDbo>(dbo);
+				if (!success)
+					throw new TfDboServiceException("Insert<TfSpaceDbo> failed");
+
+				scope.Complete();
+
+				return GetSpace(space.Id);
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public TfSpace UpdateSpace(
 		TfSpace space)
 	{
-		new TfSpaceValidator(this)
-			.ValidateUpdate(space)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
+		try
+		{
+			new TfSpaceValidator(this)
+				.ValidateUpdate(space)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		var existingSpace = _dboManager.Get<TfSpaceDbo>(space.Id);
+			var existingSpace = _dboManager.Get<TfSpaceDbo>(space.Id);
 
-		//position is not updated
-		var dbo = ConvertModelToDbo(space);
-		dbo.Position = existingSpace.Position;
+			//position is not updated
+			var dbo = ConvertModelToDbo(space);
+			dbo.Position = existingSpace.Position;
 
-		var success = _dboManager.Update<TfSpaceDbo>(dbo);
-		if (!success)
-			throw new TfDboServiceException("Update<TfSpaceDbo> failed");
+			var success = _dboManager.Update<TfSpaceDbo>(dbo);
+			if (!success)
+				throw new TfDboServiceException("Update<TfSpaceDbo> failed");
 
-		return GetSpace(space.Id);
+			return GetSpace(space.Id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public void MoveSpaceUp(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var spaces = GetSpacesList();
-
-			var space = spaces.SingleOrDefault(x => x.Id == id);
-
-			if (space == null)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				throw new TfValidationException(nameof(id),
-					"Found no space for specified identifier.");
-			}
+				var spaces = GetSpacesList();
 
-			if (space.Position == 1)
-				return;
+				var space = spaces.SingleOrDefault(x => x.Id == id);
 
-			var prevSpace = spaces.SingleOrDefault(x => x.Position == (space.Position - 1));
-			space.Position = (short)(space.Position - 1);
+				if (space == null)
+				{
+					throw new TfValidationException(nameof(id),
+						"Found no space for specified identifier.");
+				}
 
-			if (prevSpace != null)
-				prevSpace.Position = (short)(prevSpace.Position + 1);
+				if (space.Position == 1)
+					return;
 
-			var success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(space));
-			if (!success)
-				throw new TfDboServiceException("Update<TfSpaceDbo> failed");
+				var prevSpace = spaces.SingleOrDefault(x => x.Position == (space.Position - 1));
+				space.Position = (short)(space.Position - 1);
 
-			if (prevSpace != null)
-			{
-				success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(prevSpace));
+				if (prevSpace != null)
+					prevSpace.Position = (short)(prevSpace.Position + 1);
+
+				var success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(space));
 				if (!success)
 					throw new TfDboServiceException("Update<TfSpaceDbo> failed");
-			}
 
-			scope.Complete();
+				if (prevSpace != null)
+				{
+					success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(prevSpace));
+					if (!success)
+						throw new TfDboServiceException("Update<TfSpaceDbo> failed");
+				}
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public void MoveSpaceDown(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var spaces = GetSpacesList();
-
-			var space = spaces.SingleOrDefault(x => x.Id == id);
-
-			if (space == null)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				throw new TfValidationException(nameof(id),
-					"Found no space for specified identifier.");
-			}
+				var spaces = GetSpacesList();
 
-			if (space.Position == spaces.Count)
-				return;
+				var space = spaces.SingleOrDefault(x => x.Id == id);
+
+				if (space == null)
+				{
+					throw new TfValidationException(nameof(id),
+						"Found no space for specified identifier.");
+				}
+
+				if (space.Position == spaces.Count)
+					return;
 
 
-			var nextSpace = spaces.SingleOrDefault(x => x.Position == (space.Position + 1));
-			space.Position = (short)(space.Position + 1);
+				var nextSpace = spaces.SingleOrDefault(x => x.Position == (space.Position + 1));
+				space.Position = (short)(space.Position + 1);
 
-			if (nextSpace != null)
-				nextSpace.Position = (short)(nextSpace.Position - 1);
+				if (nextSpace != null)
+					nextSpace.Position = (short)(nextSpace.Position - 1);
 
-			var success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(space));
-			if (!success)
-				throw new TfDboServiceException("Update<TfSpaceDbo> failed");
-
-			if (nextSpace != null)
-			{
-				success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(nextSpace));
+				var success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(space));
 				if (!success)
 					throw new TfDboServiceException("Update<TfSpaceDbo> failed");
-			}
 
-			scope.Complete();
+				if (nextSpace != null)
+				{
+					success = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(nextSpace));
+					if (!success)
+						throw new TfDboServiceException("Update<TfSpaceDbo> failed");
+				}
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 
 	public void DeleteSpace(
 		Guid id)
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var space = GetSpace(id);
-
-			new TfSpaceValidator(this)
-				.ValidateDelete(space)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
-
-			var spaceViews = GetSpaceViewsList(space.Id);
-			foreach (var spaceView in spaceViews)
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				DeleteSpaceView(spaceView.Id);
+				var space = GetSpace(id);
+
+				new TfSpaceValidator(this)
+					.ValidateDelete(space)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
+
+				var spaceViews = GetSpaceViewsList(space.Id);
+				foreach (var spaceView in spaceViews)
+				{
+					DeleteSpaceView(spaceView.Id);
+				}
+
+				var spaceDataList = GetSpaceDataList(id);
+
+				foreach (var spaceData in spaceDataList)
+				{
+					DeleteSpaceData(spaceData.Id);
+				}
+
+				var spaceNodes = GetSpaceNodes(id);
+				foreach (var spaceNode in spaceNodes.OrderByDescending(x => x.Position))
+				{
+					DeleteSpaceNode(spaceNode);
+				}
+
+				var spacesAfter = GetSpacesList()
+					.Where(x => x.Position > space.Position)
+					.ToList();
+
+				//update positions for spaces after the one being deleted
+				foreach (var spaceAfter in spacesAfter)
+				{
+					spaceAfter.Position--;
+
+					var successUpdatePosition = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(spaceAfter));
+					if (!successUpdatePosition)
+						throw new TfDboServiceException("Update<TfSpaceDbo> failed");
+				}
+
+				var success = _dboManager.Delete<TfSpaceDbo>(id);
+
+				if (!success)
+					throw new TfDboServiceException("Delete<TfSpaceDbo> failed");
+
+				scope.Complete();
 			}
-
-			var spaceDataList = GetSpaceDataList(id);
-
-			foreach (var spaceData in spaceDataList)
-			{
-				DeleteSpaceData(spaceData.Id);
-			}
-
-			var spaceNodes = GetSpaceNodes(id);
-			foreach (var spaceNode in spaceNodes.OrderByDescending(x => x.Position))
-			{
-				DeleteSpaceNode(spaceNode);
-			}
-
-			var spacesAfter = GetSpacesList()
-				.Where(x => x.Position > space.Position)
-				.ToList();
-
-			//update positions for spaces after the one being deleted
-			foreach (var spaceAfter in spacesAfter)
-			{
-				spaceAfter.Position--;
-
-				var successUpdatePosition = _dboManager.Update<TfSpaceDbo>(ConvertModelToDbo(spaceAfter));
-				if (!successUpdatePosition)
-					throw new TfDboServiceException("Update<TfSpaceDbo> failed");
-			}
-
-			var success = _dboManager.Delete<TfSpaceDbo>(id);
-
-			if (!success)
-				throw new TfDboServiceException("Delete<TfSpaceDbo> failed");
-
-			scope.Complete();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
 		}
 	}
 

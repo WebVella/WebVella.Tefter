@@ -1,4 +1,4 @@
-﻿namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter.Utility;
 
 public static class ValidationResultExtensions
 {
