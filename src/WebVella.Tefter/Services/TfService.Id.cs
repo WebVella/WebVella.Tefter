@@ -22,34 +22,17 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	private static Dictionary<string, Guid> idsDict = new Dictionary<string, Guid>();
-	private const string SQL = "SELECT * FROM _tefter_id_dict_insert_select( @text_id, @id )";
-
 	public Guid GetId(
 		params string[] textId)
 	{
 		try
 		{
-			using (_lock.Lock())
-			{
-				CheckInitIdDict();
-
-				string combinedTextId = CombineKey(textId);
-
-				if (idsDict.ContainsKey(combinedTextId))
-					return idsDict[combinedTextId];
-
-
-				var dt = _dbService.ExecuteSqlQueryCommand(SQL,
-				new NpgsqlParameter("text_id", combinedTextId),
+			var dt = _dbService.ExecuteSqlQueryCommand(
+				"SELECT * FROM _tefter_id_dict_insert_select( @text_id, @id )",
+				new NpgsqlParameter("text_id", CombineKey(textId)),
 				new NpgsqlParameter("id", DBNull.Value));
 
-				Guid id = (Guid)dt.Rows[0][0];
-
-				idsDict[combinedTextId] = id;
-
-				return id;
-			}
+			return (Guid)dt.Rows[0][0];
 		}
 		catch (Exception ex)
 		{
@@ -75,71 +58,88 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (_lock.Lock())
+			if (input is null || input.Keys.Count == 0)
+				return;
+
+			var parameterIds = new NpgsqlParameter("@id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+			parameterIds.Value = new List<Guid>();
+
+			var parameterTextIds = new NpgsqlParameter("@text_id", NpgsqlDbType.Array | NpgsqlDbType.Text);
+			parameterTextIds.Value = new List<string>();
+
+			foreach (var key in input.Keys)
 			{
-				CheckInitIdDict();
+				((List<Guid>)parameterIds.Value).Add(input[key]);
+				((List<string>)parameterTextIds.Value).Add(key);
+			}
 
-				if (input is null)
-					return;
+			//select all by existing text_id
+			var sql = "SELECT * FROM id_dict WHERE text_id = ANY(@text_id)";
+			var dt = _dbService.ExecuteSqlQueryCommand(sql, parameterTextIds);
 
-				Dictionary<string, Guid> notFoundDict = new Dictionary<string, Guid>();
+			//create dictionary with existing data
+			Dictionary<string, Guid> foundIds = new Dictionary<string, Guid>();
+			foreach (DataRow dr in dt.Rows)
+			{
+				foundIds.Add((string)dr["text_id"], (Guid)dr["id"]);
+				input[(string)dr["text_id"]] = (Guid)dr["id"];
+			}
 
-				foreach (var key in input.Keys)
-				{
-					if (idsDict.ContainsKey(key))
-					{
-						input[key] = idsDict[key];
-						continue;
-					}
-					notFoundDict.Add(key, Guid.NewGuid());
-				}
+			//find records not found in database table
+			Dictionary<string, Guid> notFoundIds = new Dictionary<string, Guid>();
+			foreach (var key in input.Keys)
+			{
+				if (foundIds.ContainsKey(key))
+					continue;
+				if (notFoundIds.ContainsKey(key))
+					continue;
+				notFoundIds.Add(key, Guid.NewGuid());
+			}
 
-				var parameterIds = new NpgsqlParameter("@id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+			if (notFoundIds.Count > 0)
+			{
+				//create new parameters used for INSERT UNNEST operation
+				parameterIds = new NpgsqlParameter("@id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
 				parameterIds.Value = new List<Guid>();
 
-				var parameterTextIds = new NpgsqlParameter("@text_id", NpgsqlDbType.Array | NpgsqlDbType.Text);
+				parameterTextIds = new NpgsqlParameter("@text_id", NpgsqlDbType.Array | NpgsqlDbType.Text);
 				parameterTextIds.Value = new List<string>();
 
-				foreach (var key in notFoundDict.Keys)
+				//fill data in parameters with not found data
+				foreach (var key in notFoundIds.Keys)
 				{
-					((List<Guid>)parameterIds.Value).Add(notFoundDict[key]);
+					((List<Guid>)parameterIds.Value).Add(notFoundIds[key]);
 					((List<string>)parameterTextIds.Value).Add(key);
 				}
 
-				var sql = $"INSERT INTO id_dict ( id, text_id ) SELECT * FROM UNNEST ( @id, @text_id ) ";
-
+				//ignore conflicts because during operation someone else may create same id-text_id combination
+				sql = $"INSERT INTO id_dict ( id, text_id ) SELECT * FROM UNNEST ( @id, @text_id ) ON CONFLICT DO NOTHING";
 				_dbService.ExecuteSqlNonQueryCommand(sql, parameterIds, parameterTextIds);
 
-				foreach (var key in notFoundDict.Keys)
+
+				parameterTextIds = new NpgsqlParameter("@text_id", NpgsqlDbType.Array | NpgsqlDbType.Text);
+				parameterTextIds.Value = new List<string>();
+
+				//prepare new parameter
+				foreach (var key in notFoundIds.Keys)
+					((List<string>)parameterTextIds.Value).Add(key);
+
+				//select newly created records and fill input
+				sql = "SELECT * FROM id_dict WHERE text_id = ANY(@text_id)";
+				dt = _dbService.ExecuteSqlQueryCommand(sql, parameterTextIds);
+
+				foreach (DataRow dr in dt.Rows)
 				{
-					input[key] = notFoundDict[key];
+					var textId = (string)dr["text_id"];
+					var id = (Guid)dr["id"];
+
+					input[textId] = id;
 				}
 			}
 		}
 		catch (Exception ex)
 		{
 			throw ProcessException(ex);
-		}
-	}
-
-	private void CheckInitIdDict()
-	{
-		if (idsDict.Count > 0)
-		{
-			return;
-		}
-
-		var dt = _dbService.ExecuteSqlQueryCommand("SELECT * FROM id_dict");
-
-		foreach (DataRow dr in dt.Rows)
-		{
-			Guid id = dr.Field<Guid>("id");
-			string textId = dr.Field<string>("text_id");
-
-			if (!idsDict.ContainsKey(textId))
-			{
-				idsDict[textId] = id;
-			}
 		}
 	}
 
