@@ -65,6 +65,10 @@ public class RepositoryController : ControllerBase
 		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
 		Stream fileContentStream = _tfService.GetRepositoryFileContentAsFileStream(filename);
+
+		if (string.IsNullOrWhiteSpace(mimeType))
+			mimeType = "text/plain";
+
 		return File(fileContentStream, mimeType);
 	}
 
@@ -111,6 +115,9 @@ public class RepositoryController : ControllerBase
 		var extension = Path.GetExtension(filename).ToLowerInvariant();
 
 		new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
+
+		if (string.IsNullOrWhiteSpace(mimeType))
+			mimeType = "text/plain";
 
 		return File(stream, mimeType);
 	}

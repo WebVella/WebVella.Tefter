@@ -130,12 +130,12 @@ public partial class AssetsFolderComponent : TfBaseComponent
 
 	private void _getAllItems()
 	{
-		var _folder = AssetsService.GetFolder(FolderId.Value);
+		_folder = AssetsService.GetFolder(FolderId.Value);
 		if (_folder is not null && SharedKeyValue is not null)
 		{
 			_allItems = AssetsService.GetAssets(
-			folderId: _folder.Id,
-			skTextId: SharedKeyValue);
+				folderId: _folder.Id,
+				skTextId: SharedKeyValue);
 		}
 		_itemsShareKeyValue = SharedKeyValue;
 		_itemsFolderId = FolderId;
@@ -144,23 +144,25 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private async Task _addLink()
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelLinkModal>(
-		new AssetsFolderPanelLinkModalContext()
-		{
-			CreatedBy = TfAppState.Value.CurrentUser.Id,
-			FolderId = _folder.Id,
-			SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
-			Id = Guid.Empty,
-			Label = null,
-			Url = null,
-		},
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new AssetsFolderPanelLinkModalContext()
+			{
+				CreatedBy = TfAppState.Value.CurrentUser.Id,
+				FolderId = _folder.Id,
+				SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
+				Id = Guid.Empty,
+				Label = null,
+				Url = null,
+			},
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+
 		var result = await dialog.Result;
+		
 		if (!result.Cancelled && result.Data != null)
 		{
 			_items.Insert(0, (Asset)result.Data);
@@ -170,23 +172,25 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private async Task _addFile()
 	{
 		var dialog = await DialogService.ShowDialogAsync<AssetsFolderPanelFileModal>(
-		new AssetsFolderPanelFileModalContext()
-		{
-			CreatedBy = TfAppState.Value.CurrentUser.Id,
-			FolderId = _folder.Id,
-			SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
-			Id = Guid.Empty,
-			Label = null,
-			FileName = null,
-		},
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
+			new AssetsFolderPanelFileModalContext()
+			{
+				CreatedBy = TfAppState.Value.CurrentUser.Id,
+				FolderId = _folder.Id,
+				SKValueIds = new List<Guid> { TfAppState.Value.Space.Id },
+				Id = Guid.Empty,
+				Label = null,
+				FileName = null,
+			},
+			new DialogParameters()
+			{
+				PreventDismissOnOverlayClick = true,
+				PreventScroll = true,
+				Width = TfConstants.DialogWidthLarge,
+				TrapFocus = false
+			});
+
 		var result = await dialog.Result;
+
 		if (!result.Cancelled && result.Data != null)
 		{
 			_items.Insert(0, (Asset)result.Data);

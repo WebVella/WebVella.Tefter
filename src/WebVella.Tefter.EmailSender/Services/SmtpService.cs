@@ -125,6 +125,9 @@ internal partial class SmtpService : ISmtpService
 					var extension = Path.GetExtension(att.Filename).ToLowerInvariant();
 					new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
+					if (string.IsNullOrWhiteSpace(mimeType))
+						mimeType = "text/plain";
+
 					var attachment = new MimePart(mimeType)
 					{
 						Content = new MimeContent(new MemoryStream(bytes)),

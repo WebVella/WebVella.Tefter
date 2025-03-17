@@ -578,6 +578,9 @@ VALUES
 						var extension = Path.GetExtension(src).ToLowerInvariant();
 						new FileExtensionContentTypeProvider().Mappings.TryGetValue(extension, out string mimeType);
 
+						if (string.IsNullOrWhiteSpace(mimeType))
+							mimeType = "text/plain";
+
 						var imagePart = new MimePart(mimeType)
 						{
 							ContentId = MimeUtils.GenerateMessageId(),

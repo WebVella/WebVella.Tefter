@@ -87,7 +87,11 @@ public class AssetsController : ControllerBase
 
 		Stream fileContentStream = _tfService.GetBlobStream(fileAssetContent.BlobId);
 
+		if(string.IsNullOrWhiteSpace(mimeType))
+			mimeType = "text/plain";
+
 		return File(fileContentStream, mimeType);
+		
 	}
 
 
