@@ -6,6 +6,7 @@ public static class TfDependencyInjection
 	{
 		LoadAllAssemblies();
 
+		
 		//because server render components are not disposed for about 10 min after page is left by browser
 		//maybe 5 seconds is too low ???
 		//https://stackoverflow.com/questions/78451698/dispose-is-never-called-for-any-server-side-blazor-components
@@ -62,6 +63,8 @@ public static class TfDependencyInjection
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
 		services.AddHostedService<TfBlobMaintenanceJob>();
+		services.AddHostedService<TfSharedKeysUpdateJob>();
+		services.AddHostedService<TfIdsCacheLoaderJob>();
 
 		//we don't use static constructor here, 
 		//because no control on assemblies order loading

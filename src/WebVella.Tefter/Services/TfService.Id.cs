@@ -18,6 +18,9 @@ public partial interface ITfService
 
 	internal string CombineKey(
 		List<string> keys);
+
+	internal Task LoadIdsCacheAsync(
+		CancellationToken stoppingToken);
 }
 
 public partial class TfService : ITfService
@@ -27,10 +30,21 @@ public partial class TfService : ITfService
 	{
 		try
 		{
+			string key = CombineKey(textId);
+
+			if (_cache.TryGetValue(key, out Guid id))
+				return id;
+
 			var dt = _dbService.ExecuteSqlQueryCommand(
 				"SELECT * FROM _tefter_id_dict_insert_select( @text_id, @id )",
-				new NpgsqlParameter("text_id", CombineKey(textId)),
+				new NpgsqlParameter("text_id", key),
 				new NpgsqlParameter("id", DBNull.Value));
+
+
+			var cacheEntryOptions = new MemoryCacheEntryOptions()
+				.SetSlidingExpiration(TimeSpan.FromDays(365));
+
+			_cache.Set(key, (Guid)dt.Rows[0][0], cacheEntryOptions);
 
 			return (Guid)dt.Rows[0][0];
 		}
@@ -170,5 +184,42 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+	}
+
+	public async Task LoadIdsCacheAsync(
+		CancellationToken stoppingToken)
+	{
+		int pageSize = 10000;
+		Guid? lastId = null;
+		int rowsCount = 0;
+		int loadedCount = 0;
+		do
+		{
+			if (stoppingToken.IsCancellationRequested)
+				return;
+
+			DataTable dt = GetKeysDataTable(lastId, pageSize);
+
+			rowsCount = dt.Rows.Count;
+			foreach (DataRow dr in dt.Rows)
+			{
+				var key = (string)dr["text_id"];
+				var id = (Guid)dr["id"];
+				_cache.Set(key, id);
+				lastId = id;
+			}
+			
+			loadedCount += rowsCount;
+			_logger.LogDebug("Ids total loaded: " + loadedCount);
+
+		} while (rowsCount > 0);
+	}
+
+	private DataTable GetKeysDataTable(Guid? lastId = null, int pageSize = 1000)
+	{
+		NpgsqlParameter idParam = new NpgsqlParameter("id", DbType.Guid);
+		idParam.Value = lastId.HasValue? lastId.Value : DBNull.Value;
+		return _dbService.ExecuteSqlQueryCommand(
+			$"SELECT * FROM id_dict WHERE ( id > @id OR @id IS NULL ) ORDER BY id LIMIT {pageSize}",idParam);
 	}
 }

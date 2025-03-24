@@ -51,6 +51,7 @@ public partial class TfAdminFileRepository : TfBaseComponent
 			}
 			finally
 			{
+				progressPercent = 0;
 				file.LocalFile?.Delete();
 			}
 		}

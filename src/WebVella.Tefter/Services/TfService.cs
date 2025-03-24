@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WebVella.Tefter.Services;
 
@@ -17,6 +18,7 @@ public partial class TfService : ITfService
 	private readonly ITfMetaService _metaService;
 	private readonly ITfDatabaseService _dbService;
 	private readonly ILogger<TfService> _logger;
+	private readonly IMemoryCache _cache;
 
 	public TfService(
 		IServiceProvider serviceProvider,
@@ -33,7 +35,11 @@ public partial class TfService : ITfService
 		_dbManager = dbManager;
 		_logger = logger;
 		_dboManager = serviceProvider.GetService<ITfDboManager>();
-		
+
+		var cacheOptions = new MemoryCacheOptions();
+		cacheOptions.ExpirationScanFrequency = TimeSpan.FromHours(1);
+		_cache = new MemoryCache(cacheOptions);
+
 		InitBlobStorageFolder(_config.BlobStoragePath);
 	}
 }

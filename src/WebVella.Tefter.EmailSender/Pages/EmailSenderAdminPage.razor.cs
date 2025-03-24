@@ -1,16 +1,21 @@
 ﻿namespace WebVella.Tefter.EmailSender.Pages;
 
-public partial class EmailSenderAdminPage : TucBaseScreenRegionComponent, ITucAuxDataUseComponent, ITfScreenRegionComponent
+public partial class EmailSenderAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageComponentContext>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
-	[Inject] protected NavigationManager Navigator { get; set; }
-	[Inject] public IDispatcher Dispatcher { get; set; }
-	public Guid Id { get { return new Guid("1f6e544e-6a53-4fa1-98ef-9c51a569c2b5"); } }
-	public TfScreenRegion ScreenRegion { get { return TfScreenRegion.AdminPages; } }
-	public int Position { get { return 1000; } }
-	public string Name { get { return "Email Sender"; } }
-	public string FluentIconName => "Mail";
+
+	public Guid Id { get; init; } = new Guid("1f6e544e-6a53-4fa1-98ef-9c51a569c2b5");
+	public int PositionRank { get; init; } = 1000;
+	public string Name { get; init; } = "Email Sender";
+	public string Description { get; init; } = "";
+	public string FluentIconName { get; init; } = "Mail";
+	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
+		new TfRegionComponentScope(null,new Guid("1f6e544e-6a53-4fa1-98ef-9c51a569c2b5"))
+	};
+	[Parameter]
+	public TfAdminPageComponentContext Context { get; init; }
+
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
 		TfAppState newAppState,

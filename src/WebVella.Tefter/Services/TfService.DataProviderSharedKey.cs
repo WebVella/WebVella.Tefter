@@ -44,6 +44,13 @@ public partial interface ITfService
 	/// <returns></returns>
 	public TfDataProvider DeleteDataProviderSharedKey(
 		Guid id);
+
+	/// <summary>
+	/// Updates rows with shared keys different to last version
+	/// This happens when new shared key is added or existing one is
+	/// updated after provider data is synchronized
+	/// </summary>
+	internal Task UpdateSharedKeysVersionAsync(CancellationToken stoppingToken);
 }
 
 public partial class TfService : ITfService
@@ -288,6 +295,75 @@ public partial class TfService : ITfService
 
 			return provider;
 		}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public async Task UpdateSharedKeysVersionAsync(CancellationToken stoppingToken)
+	{
+		try
+		{
+			var dataProviders = GetDataProviders();
+			foreach (var provider in dataProviders)
+			{
+				if(stoppingToken.IsCancellationRequested)
+					return;
+
+				var sharedKeys = GetDataProviderSharedKeys(provider.Id);
+
+				if (sharedKeys.Count == 0)
+					continue;
+
+				List<string> conditions = new List<string>();
+				foreach (var sharedKey in sharedKeys)
+				{
+					conditions.Add($"tf_sk_{sharedKey.DbName}_version <> {sharedKey.Version}");
+				}
+
+				//select 100 rows
+				string sql = "SELECT tf_id FROM " + $"dp{provider.Index}" +
+					" WHERE " + string.Join(" OR ", conditions) + 
+					" LIMIT 100";
+
+				while (true)
+				{
+					if (stoppingToken.IsCancellationRequested)
+						return;
+
+					var dt = _dbService.ExecuteSqlQueryCommand(sql);
+
+					List<Guid> tfIds = new List<Guid>();
+					foreach (DataRow row in dt.Rows)
+					{
+						Guid tfId = (Guid)row["tf_id"];
+						tfIds.Add(tfId);
+					}
+
+					if(tfIds.Count == 0)
+						break;
+
+					var dataTable = QueryDataProvider(provider, tfIds);
+
+					Dictionary<string, object> values = new Dictionary<string, object>();
+					foreach (TfDataRow row in dataTable.Rows)
+					{
+						foreach (var sharedKey in provider.SharedKeys)
+						{
+							List<string> keys = new List<string>();
+							foreach (var column in sharedKey.Columns)
+								keys.Add(row[column.DbName]?.ToString());
+
+							values[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
+							values[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
+						}
+
+						UpdateProviderRowSharedKeysOnly(provider, (Guid)row["tf_id"], values);
+					}
+				}
+			}
 		}
 		catch (Exception ex)
 		{

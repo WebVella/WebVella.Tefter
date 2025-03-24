@@ -1047,6 +1047,28 @@ public partial class TfService : ITfService
 		}
 	}
 
+	private void UpdateProviderRowSharedKeysOnly(
+		TfDataProvider provider,
+		Guid tfId,
+		Dictionary<string, object> values)
+	{
+		try
+		{
+			List<NpgsqlParameter> parameters;
+			var sql = BuildUpdateRowSharedKeysOnlySql(provider, tfId, values, out parameters);
+
+			var count = _dbService.ExecuteSqlNonQueryCommand(sql, parameters);
+			if (count != 1)
+			{
+				throw new Exception("Failed to update row");
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
 	public void DeleteProviderRowsAfterIndex(
 		TfDataProvider provider,
 		int index)
@@ -1209,7 +1231,6 @@ public partial class TfService : ITfService
 
 			var sharedKeyVersion = $"tf_sk_{sharedKey.DbName}_version";
 			parameters.Add(new NpgsqlParameter($"@{sharedKeyVersion}", row[sharedKeyVersion]));
-			parameters.Add(new NpgsqlParameter($"@{sharedKeyVersion}", row[sharedKeyVersion]));
 			sql.Append($"{sharedKeyVersion} = @{sharedKeyVersion}");
 			sql.AppendLine(",");
 		}
@@ -1239,6 +1260,38 @@ public partial class TfService : ITfService
 		sql.AppendLine();
 
 		parameters.Add(new NpgsqlParameter("@tf_id", row["tf_id"]));
+		sql.AppendLine("WHERE tf_id = @tf_id ");
+
+		sql.AppendLine();
+		return sql.ToString();
+	}
+
+	private string BuildUpdateRowSharedKeysOnlySql(
+		TfDataProvider provider,
+		Guid tfId,
+		Dictionary<string,object> values,
+		out List<NpgsqlParameter> parameters)
+	{
+		parameters = new List<NpgsqlParameter>();
+		StringBuilder sql = new StringBuilder();
+
+		sql.AppendLine($"UPDATE dp{provider.Index} SET ");
+
+		foreach (var sharedKey in provider.SharedKeys)
+		{
+			var sharedKeyName = $"tf_sk_{sharedKey.DbName}_id";
+			parameters.Add(new NpgsqlParameter($"@{sharedKeyName}", (Guid)values[sharedKeyName]));
+			sql.Append($"{sharedKeyName} = @{sharedKeyName}");
+			sql.AppendLine(",");
+
+			var sharedKeyVersion = $"tf_sk_{sharedKey.DbName}_version";
+			parameters.Add(new NpgsqlParameter($"@{sharedKeyVersion}", (short)values[sharedKeyVersion]));
+			sql.Append($"{sharedKeyVersion} = @{sharedKeyVersion}");
+			sql.AppendLine(",");
+		}
+
+		sql.AppendLine("tf_id = @tf_id");
+		parameters.Add(new NpgsqlParameter("@tf_id", tfId));
 		sql.AppendLine("WHERE tf_id = @tf_id ");
 
 		sql.AppendLine();

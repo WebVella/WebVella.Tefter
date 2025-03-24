@@ -292,7 +292,9 @@ public partial class TfService : ITfService
 		{
 			if (!ExistsBlob(blobId, temporary))
 			{
-				throw new TfException("Blob does not exist for specified identifier");
+				//ignore deleting missing blob
+				return;
+				//throw new TfException("Blob does not exist for specified identifier");
 			}
 
 			var filepath = GetFileSystemPath(blobId, temporary);

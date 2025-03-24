@@ -4,6 +4,8 @@ internal partial class TfDboManager : ITfDboManager
 {
 	private ITfDatabaseService dbService;
 	private ILogger<TfDboManager> logger;
+	//this is used for debugging purposes
+	private bool doLogCacheMisses = false;
 
 	public TfDboManager(ITfDatabaseService dbService, ILogger<TfDboManager> logger)
 	{
@@ -45,7 +47,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache && string.IsNullOrWhiteSpace(searchQuery))
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetListAsync<T>:{typeof(T)}");
 
 		return result;
@@ -85,7 +87,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetListAsync<T>(prop):{typeof(T)}");
 
 		return result;
@@ -117,7 +119,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetListAsync<T>(where):{typeof(T)}");
 
 		return result;
@@ -156,7 +158,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if(doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>:{typeof(T)}");
 
 		return result;
@@ -202,7 +204,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>:{typeof(T)}");
 
 		return result;
@@ -241,7 +243,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>(prop):{typeof(T)}");
 
 		return result;
@@ -272,7 +274,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>(where):{typeof(T)}");
 
 		return result;
@@ -291,7 +293,8 @@ internal partial class TfDboManager : ITfDboManager
 		string sql = meta.AnyExistsSql.Replace("$$$WHERE$$$", whereSql);
 		var dt = ExecuteSqlQueryCommand(sql, parameters);
 
-		logger.LogDebug($"No-Cache:ExistsAnyAsync<bool>(where):{typeof(T)}");
+		if (doLogCacheMisses)
+			logger.LogDebug($"No-Cache:ExistsAnyAsync<bool>(where):{typeof(T)}");
 
 		return (bool)dt.Rows[0][0];
 	}
@@ -515,7 +518,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <param name="pageSize"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, TfOrderSettings order = null, string searchQuery = null ) where T : class, new()
+	public async Task<List<T>> GetListAsync<T>(int? page = null, int? pageSize = null, TfOrderSettings order = null, string searchQuery = null) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -525,7 +528,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		var (searchSql, searchParams) = GenerateSearchSql(meta, searchQuery);
 		string sql = $"{meta.GetSql} {searchSql} {GenerateOrderSql(meta, order)} {GeneratePagingSql(page, pageSize)} ";
-		
+
 		DataTable dt = null;
 
 		if (meta.UseCache && string.IsNullOrWhiteSpace(searchQuery))
@@ -534,14 +537,14 @@ internal partial class TfDboManager : ITfDboManager
 			dt = GetFromCache<T>(cacheKey);
 		}
 
-		if(dt == null)
-			dt = await ExecuteSqlQueryCommandAsync(sql,searchParams);
+		if (dt == null)
+			dt = await ExecuteSqlQueryCommandAsync(sql, searchParams);
 
 		var result = ConvertDataTableToModelList<T>(dt, meta);
 
 		if (meta.UseCache && string.IsNullOrWhiteSpace(searchQuery))
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetListAsync<T>:{typeof(T)}");
 
 		return result;
@@ -555,7 +558,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <param name="propertyName"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async Task<List<T>> GetListAsync<T>(object propertyValue, string propertyName, 
+	public async Task<List<T>> GetListAsync<T>(object propertyValue, string propertyName,
 		int? page = null, int? pageSize = null, TfOrderSettings order = null) where T : class, new()
 	{
 		string cacheKey = null;
@@ -569,19 +572,19 @@ internal partial class TfDboManager : ITfDboManager
 		var sqlParam = new NpgsqlParameter(columnName, propertyValue ?? DBNull.Value);
 
 		DataTable dt = null;
-        if (meta.UseCache)
-        {
-            cacheKey = GetHashCode(sql, sqlParam);
-            dt = GetFromCache<T>(cacheKey);
-        }
-        if (dt == null)
-            dt = await ExecuteSqlQueryCommandAsync(sql, sqlParam);
+		if (meta.UseCache)
+		{
+			cacheKey = GetHashCode(sql, sqlParam);
+			dt = GetFromCache<T>(cacheKey);
+		}
+		if (dt == null)
+			dt = await ExecuteSqlQueryCommandAsync(sql, sqlParam);
 
 		var result = ConvertDataTableToModelList<T>(dt, meta);
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetListAsync<T>(prop):{typeof(T)}");
 
 		return result;
@@ -594,26 +597,26 @@ internal partial class TfDboManager : ITfDboManager
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
-		
+
 		if (meta.IsSqlModel)
 			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
 		string sql = meta.GetSql + " " + whereSql + " " + GenerateOrderSql(meta, order);
 
-        DataTable dt = null;
-        if (meta.UseCache)
-        {
-            cacheKey = GetHashCode(sql, parameters);
-            dt = GetFromCache<T>(cacheKey);
-        }
-        if (dt == null)
-            dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
+		DataTable dt = null;
+		if (meta.UseCache)
+		{
+			cacheKey = GetHashCode(sql, parameters);
+			dt = GetFromCache<T>(cacheKey);
+		}
+		if (dt == null)
+			dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
 
 		var result = ConvertDataTableToModelList<T>(dt, meta);
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetListAsync<T>(where):{typeof(T)}");
 
 		return result;
@@ -654,7 +657,7 @@ internal partial class TfDboManager : ITfDboManager
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>:{typeof(T)}");
 
 		return result;
@@ -667,7 +670,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <param name="id"></param>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-	public async Task<T> GetAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new()
+	public async Task<T> GetAsync<T>(Dictionary<string, Guid> compositeKey) where T : class, new()
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
@@ -675,13 +678,13 @@ internal partial class TfDboManager : ITfDboManager
 		if (meta.IsSqlModel)
 			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
-		
+
 
 		List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
 		List<string> clauses = new List<string>();
 		foreach (var propName in compositeKey.Keys)
 		{
-			var propMeta= meta.Properties.Single(x => x.PropertyInfo.Name == propName);
+			var propMeta = meta.Properties.Single(x => x.PropertyInfo.Name == propName);
 			clauses.Add($" {propMeta.ColumnName} = @{propMeta.ColumnName} ");
 			parameters.Add(new NpgsqlParameter($@"{propMeta.ColumnName}", compositeKey[propName]));
 		}
@@ -689,20 +692,20 @@ internal partial class TfDboManager : ITfDboManager
 		var whereClause = string.Join(" AND ", clauses);
 
 		DataTable dt = null;
-        if (meta.UseCache)
-        {
-            cacheKey = GetHashCode(meta.GetRecordSql.Replace("$$$WHERE$$$", whereClause), parameters);
-            dt = GetFromCache<T>(cacheKey);
-        }
+		if (meta.UseCache)
+		{
+			cacheKey = GetHashCode(meta.GetRecordSql.Replace("$$$WHERE$$$", whereClause), parameters);
+			dt = GetFromCache<T>(cacheKey);
+		}
 
-        if (dt == null)
-            dt = await ExecuteSqlQueryCommandAsync(meta.GetRecordSql.Replace("$$$WHERE$$$", whereClause), parameters);
+		if (dt == null)
+			dt = await ExecuteSqlQueryCommandAsync(meta.GetRecordSql.Replace("$$$WHERE$$$", whereClause), parameters);
 
 		var result = ConvertDataTableToModel<T>(dt, meta);
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>:{typeof(T)}");
 
 		return result;
@@ -720,28 +723,28 @@ internal partial class TfDboManager : ITfDboManager
 	{
 		string cacheKey = null;
 		var meta = GetModelMeta<T>();
-		
+
 		if (meta.IsSqlModel)
 			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
 		var (whereSql, columnName) = GeneratePropertyWhereSql(meta, propertyName);
 		string sql = meta.GetSql + " " + whereSql;
 		var sqlParam = new NpgsqlParameter(columnName, propertyValue ?? DBNull.Value);
-		
-        DataTable dt = null;
-        if (meta.UseCache)
-        {
-            cacheKey = GetHashCode(sql, sqlParam);
-            dt = GetFromCache<T>(cacheKey);
-        }
-        if (dt == null)
-            dt = await ExecuteSqlQueryCommandAsync(sql, sqlParam);
+
+		DataTable dt = null;
+		if (meta.UseCache)
+		{
+			cacheKey = GetHashCode(sql, sqlParam);
+			dt = GetFromCache<T>(cacheKey);
+		}
+		if (dt == null)
+			dt = await ExecuteSqlQueryCommandAsync(sql, sqlParam);
 
 		var result = ConvertDataTableToModel<T>(dt, meta);
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>(prop):{typeof(T)}");
 
 		return result;
@@ -759,59 +762,60 @@ internal partial class TfDboManager : ITfDboManager
 			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
 		string sql = meta.GetSql + " " + whereSql;
-        DataTable dt = null;
-        if (meta.UseCache)
-        {
-            cacheKey = GetHashCode(sql, parameters);
-            dt = GetFromCache<T>(cacheKey);
-        }
-        if (dt == null)
-            dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
+		DataTable dt = null;
+		if (meta.UseCache)
+		{
+			cacheKey = GetHashCode(sql, parameters);
+			dt = GetFromCache<T>(cacheKey);
+		}
+		if (dt == null)
+			dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
 
 		var result = ConvertDataTableToModel<T>(dt, meta);
 
 		if (meta.UseCache)
 			AddToCache<T>(cacheKey, dt);
-		else
+		else if (doLogCacheMisses)
 			logger.LogDebug($"No-Cache:GetAsync<T>(where):{typeof(T)}");
 
 		return result;
 	}
 
-    /// <summary>
-    /// Returns true/false if any records exists for specified parameters and where clause in database async
-    /// </summary>
-    public async Task<bool> ExistsAnyAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new()
-    {
-        var meta = GetModelMeta<T>();
+	/// <summary>
+	/// Returns true/false if any records exists for specified parameters and where clause in database async
+	/// </summary>
+	public async Task<bool> ExistsAnyAsync<T>(string whereSql, params NpgsqlParameter[] parameters) where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
 
-        if (meta.IsSqlModel)
-            throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
 		string sql = meta.AnyExistsSql.Replace("$$$WHERE$$$", whereSql);
-        var dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
+		var dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
 
-        logger.LogDebug($"No-Cache:ExistsAnyAsync<bool>(where):{typeof(T)}");
+		if (doLogCacheMisses)
+			logger.LogDebug($"No-Cache:ExistsAnyAsync<bool>(where):{typeof(T)}");
 
 		return (bool)dt.Rows[0][0];
-    }
+	}
 
-    /// <summary>
-    /// Returns record for specified sql and parameters
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="sql"></param>
-    /// <param name="parameters"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public async Task<T> GetAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new()
+	/// <summary>
+	/// Returns record for specified sql and parameters
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="sql"></param>
+	/// <param name="parameters"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public async Task<T> GetAsyncBySql<T>(string sql, params NpgsqlParameter[] parameters) where T : class, new()
 	{
-		var meta = GetModelMeta<T>();			
+		var meta = GetModelMeta<T>();
 		var dt = await ExecuteSqlQueryCommandAsync(sql, parameters);
 		return ConvertDataTableToModel<T>(dt, meta);
 	}
 
-	
+
 	/// <summary>
 	/// Return list of records for specified sql and parameters
 	/// </summary>
@@ -890,8 +894,8 @@ internal partial class TfDboManager : ITfDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
-	public async Task<bool> UpdateAsync<T>(T obj,  Dictionary<string, Guid> compositeKey, 
-		params string [] updateThesePropsOnly ) where T : class, new()
+	public async Task<bool> UpdateAsync<T>(T obj, Dictionary<string, Guid> compositeKey,
+		params string[] updateThesePropsOnly) where T : class, new()
 	{
 		var meta = GetModelMeta<T>();
 
@@ -925,9 +929,9 @@ internal partial class TfDboManager : ITfDboManager
 			var existingPropNames = meta.Properties.Select(x => x.PropertyInfo.Name).ToHashSet();
 			var notFoundProps = updateThesePropsOnly.Where(x => !existingPropNames.Contains(x)).ToList();
 
-            if (notFoundProps.Count > 0 )
-				throw new Exception("Properties to update contain non existing one or more! [" + string.Join(",", notFoundProps ) + "]");
-			
+			if (notFoundProps.Count > 0)
+				throw new Exception("Properties to update contain non existing one or more! [" + string.Join(",", notFoundProps) + "]");
+
 			var columnNamesToUpdate = meta.Properties.Where(x => updateThesePropsOnly.Contains(x.PropertyInfo.Name)).Select(x => x.ColumnName);
 			sql = $"UPDATE {meta.TableName} SET {string.Join(", ", columnNamesToUpdate.Where(x => x != "id").Select(x => $"{x}=@{x}"))} WHERE {whereClause} ";
 		}
@@ -966,7 +970,7 @@ internal partial class TfDboManager : ITfDboManager
 	/// <param name="origin_id"></param>
 	/// <param name="target_id"></param>
 	/// <returns></returns>
-	public async Task<bool> DeleteAsync<T>(Dictionary<string,Guid> compositeKey) where T : class, new()
+	public async Task<bool> DeleteAsync<T>(Dictionary<string, Guid> compositeKey) where T : class, new()
 	{
 		var meta = GetModelMeta<T>();
 
@@ -974,8 +978,8 @@ internal partial class TfDboManager : ITfDboManager
 			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
 		List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
-		List<string>clauses = new List<string>();
-		foreach(var propName in compositeKey.Keys)
+		List<string> clauses = new List<string>();
+		foreach (var propName in compositeKey.Keys)
 		{
 			var propMeta = meta.Properties.Single(x => x.PropertyInfo.Name == propName);
 			clauses.Add($" {propMeta.ColumnName} = @{propMeta.ColumnName} ");
@@ -995,17 +999,17 @@ internal partial class TfDboManager : ITfDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <returns></returns>
 	/// <exception cref="Exception"></exception>
-    public async Task DeleteAllAsync<T>() where T : class, new()
-    {
-        var meta = GetModelMeta<T>();
+	public async Task DeleteAllAsync<T>() where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
 
-        if (meta.IsSqlModel)
-            throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
-        var affectedRows = await ExecuteSqlNonQueryCommandAsync(meta.DeleteAllRecordSql);
-        if (affectedRows > 0 && meta.UseCache)
-            ClearCache<T>();
-    }
+		var affectedRows = await ExecuteSqlNonQueryCommandAsync(meta.DeleteAllRecordSql);
+		if (affectedRows > 0 && meta.UseCache)
+			ClearCache<T>();
+	}
 
-    
+
 }
