@@ -703,13 +703,28 @@ ORDER BY st.created_on DESC");
 									value = ((DateOnly)row[column.DbName]).ToDateTime();
 								}
 							}
-							else if (row[column.DbName] is DateTime? || row[column.DbName] is DateTime)
+							else if (row[column.DbName] is DateTime)
 							{
-								value = (DateTime?)row[column.DbName];
+								value = (DateTime)row[column.DbName];
+							}
+							else if (row[column.DbName] is DateTime?)
+							{
+								if (row[column.DbName] == null)
+								{
+									value = null;
+								}
+								else
+								{
+									value = (DateTime)row[column.DbName];
+								}
+							}
+							else if (row[column.DbName] == null )
+							{
+								value = null;
 							}
 							else
 							{
-								throw new Exception("Some source rows contains non DateTime or DateOnly objects for column 'column.DbName' of type Date\\DateTime.");
+								throw new Exception($"Some source rows contains non DateTime or DateOnly objects for column '{column.DbName}' of type Date\\DateTime.");
 							}
 
 							((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
