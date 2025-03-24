@@ -19,7 +19,7 @@ internal class TfIdsCacheLoaderJob : BackgroundService
 		_logger.LogInformation($"{GetType().Name} is running.");
 
 		//initial 60 sec wait
-		await Task.Delay(10 * 1000);
+		await Task.Delay(60 * 1000);
 
 		while (!stoppingToken.IsCancellationRequested)
 		{

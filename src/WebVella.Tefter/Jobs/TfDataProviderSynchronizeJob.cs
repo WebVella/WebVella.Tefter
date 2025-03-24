@@ -18,8 +18,8 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 	{
 		_logger.LogInformation($"{GetType().Name} is running.");
 
-		//initial 10 sec wait
-		await Task.Delay(10 * 1000);
+		//initial 300 sec wait
+		await Task.Delay(300 * 1000);
 
 		await ProcessTasks(stoppingToken);
 	}

@@ -18,8 +18,8 @@ internal class TfBlobMaintenanceJob : BackgroundService
 	{
 		_logger.LogInformation($"{GetType().Name} is running.");
 
-		//initial 10 sec wait
-		await Task.Delay(10 * 1000);
+		//initial 120 sec wait
+		await Task.Delay(120 * 1000);
 
 		while (!stoppingToken.IsCancellationRequested)
 		{

@@ -733,7 +733,7 @@ ORDER BY st.created_on DESC");
 						break;
 					case TfDatabaseColumnType.Number:
 						{
-							((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal)row[column.DbName]);
+							((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)row[column.DbName]);
 						}
 						break;
 					default:
