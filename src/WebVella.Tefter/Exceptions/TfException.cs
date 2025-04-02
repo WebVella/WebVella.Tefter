@@ -1,11 +1,10 @@
-﻿namespace WebVella.Tefter.Exceptions;
+﻿using WebVella.Tefter.Web.Components;
+
+namespace WebVella.Tefter.Exceptions;
 
 public class TfException : Exception
 {
-	//private string oldStackTrace;
-	//public override string StackTrace { get { return this.oldStackTrace; } }
-
-	public TfException() : base(message:string.Empty) { }
+	public TfException() : base(message: string.Empty) { }
 
 	public TfException(string message) : base(message) { }
 
@@ -25,12 +24,12 @@ public class TfException : Exception
 		AddData(dictionary);
 	}
 
-	public void UpsertDataList(string key, string value)
+	public void UpsertDataList(string key, string value, long index = -1)
 	{
 		if (!Data.Contains(key))
-			Data.Add(key, new List<string>());
+			Data.Add(key, new List<ValidationError>());
 
-		(Data[key] as List<string>)?.Add(value);
+		(Data[key] as List<ValidationError>)?.Add(new ValidationError(key,value,null,index));
 	}
 
 	public void ThrowIfContainsErrors()
@@ -57,18 +56,23 @@ public class TfException : Exception
 		}
 	}
 
-	//public void SetStackTrace(string stackTrace)
-	//{
-	//	oldStackTrace = stackTrace;
-	//}
-
-	public IDictionary<string, List<string>> GetDataAsUsableDictionary()
+	public IDictionary<string, List<ValidationError>> GetDataAsUsableDictionary()
 	{
-		IDictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+		IDictionary<string, List<ValidationError>> dict = new Dictionary<string, List<ValidationError>>();
 		foreach (var key in Data.Keys)
 		{
-			dict.Add(key.ToString(), (Data[key] as List<string>) ?? new List<string>());
+			dict.Add(key.ToString(), (Data[key] as List<ValidationError>) ?? new List<ValidationError>());
 		}
 		return dict;
+	}
+
+	public List<ValidationError> GetDataAsValidationErrorList()
+	{
+		List<ValidationError> result = new List<ValidationError>();
+		foreach (var key in Data.Keys)
+		{
+			result.AddRange((Data[key] as List<ValidationError>) ?? new List<ValidationError>());
+		}
+		return result;
 	}
 }

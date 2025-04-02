@@ -1,4 +1,5 @@
 ﻿using System;
+using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderImportSchemaDialog.TfDataProviderImportSchemaDialog", "WebVella.Tefter")]
@@ -95,19 +96,7 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 			ValidationErrors = new();
 
 			var valEx = (TfValidationException)ex;
-
-			var data = valEx.GetDataAsUsableDictionary();
-			foreach (var propertyName in data.Keys)
-			{
-				var errors = data[propertyName];
-				foreach (var errorMessage in errors)
-				{
-					if (String.IsNullOrWhiteSpace(propertyName))
-						ValidationErrors.Add(new ValidationError("", errorMessage));
-					else
-						ValidationErrors.Add(new ValidationError(propertyName, errorMessage));
-				}
-			}
+			ValidationErrors.AddRange(valEx.GetDataAsValidationErrorList());
 
 			if (ValidationErrors.Count > 0 && string.IsNullOrWhiteSpace(valEx.Message))
 				ToastService.ShowWarning(LOC("Invalid Data"));

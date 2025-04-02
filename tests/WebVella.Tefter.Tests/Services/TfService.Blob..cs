@@ -10,6 +10,7 @@ public partial class TfServiceTest : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			tfService.InitBlobStorageFolder();
 
 			if (dbService.Configuration.ConnectionString.ToLowerInvariant().Contains("database=tefter;"))
 				throw new Exception("Invalid database");
@@ -158,6 +159,7 @@ public partial class TfServiceTest : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
+			tfService.InitBlobStorageFolder();
 
 			if (dbService.Configuration.ConnectionString.ToLowerInvariant().Contains("database=tefter;"))
 				throw new Exception("Invalid database");

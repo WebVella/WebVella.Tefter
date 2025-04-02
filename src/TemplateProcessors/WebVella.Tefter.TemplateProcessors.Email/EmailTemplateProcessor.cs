@@ -9,6 +9,7 @@ using WebVella.Tefter.TemplateProcessors.ExcelFile;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 using WebVella.Tefter.TemplateProcessors.TextFile;
 using WebVella.Tefter.TemplateProcessors.TextFile.Models;
+using WebVella.Tefter.Web.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.Email;
 
@@ -159,20 +160,9 @@ public class EmailTemplateProcessor : ITfTemplateProcessor
 				{
 					var valEx = ex as TfValidationException;
 
-					var data = valEx.GetDataAsUsableDictionary();
-					foreach (var propertyName in data.Keys)
-					{
-						var errors = data[propertyName];
-						foreach (var errorMessage in errors)
-						{
-							if (String.IsNullOrWhiteSpace(propertyName))
-								result.Errors.Add(new ValidationError("", errorMessage));
-							else
-								result.Errors.Add(new ValidationError(propertyName, errorMessage));
-						}
-					}
+					result.Errors.AddRange(valEx.GetDataAsValidationErrorList());
 
-					if (data.Keys.Count == 0 && !string.IsNullOrWhiteSpace(valEx.Message))
+					if (result.Errors.Count == 0 && !string.IsNullOrWhiteSpace(valEx.Message))
 						result.Errors.Add(new ValidationError("", ex.Message));
 				}
 				else

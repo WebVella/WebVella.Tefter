@@ -27,18 +27,29 @@ internal static class ResultUtils
 			if (!string.IsNullOrWhiteSpace(valEx.Message))
 				generalErrors.Add(valEx.Message);
 
-			var data = valEx.GetDataAsUsableDictionary();
-			foreach (var propertyName in data.Keys)
+			//used GetDataAsValidationErrorList which combine all errors in one list and no 2 cycles needed
+			var validationErrorList = valEx.GetDataAsValidationErrorList();
+			foreach (var valError in validationErrorList)
 			{
-				var errors = data[propertyName];
-				foreach (var errorMessage in errors)
-				{
-					if (String.IsNullOrWhiteSpace(propertyName))
-						validationErrors.Add(errorMessage);
-					else
-						validationErrors.Add($"{propertyName}: {errorMessage}");
-				}
+				if (String.IsNullOrWhiteSpace(valError.PropertyName))
+					validationErrors.Add(valError.Message);
+				else
+					validationErrors.Add($"{valError.PropertyName}: {valError.Message}");
 			}
+
+			//using GetDataAsUsableDictionary variant
+			//var data = valEx.GetDataAsUsableDictionary();
+			//foreach (var propertyName in data.Keys)
+			//{
+			//	var errors = data[propertyName];
+			//	foreach (var valError in errors)
+			//	{
+			//		if (String.IsNullOrWhiteSpace(propertyName))
+			//			validationErrors.Add(valError.Message);
+			//		else
+			//			validationErrors.Add($"{propertyName}: {valError.Message}");
+			//	}
+			//}
 		}
 		else if (exception.GetType().IsAssignableFrom(typeof(TfException)))
 		{
@@ -47,18 +58,29 @@ internal static class ResultUtils
 			if (!string.IsNullOrWhiteSpace(valEx.Message))
 				generalErrors.Add(valEx.Message);
 
-			var data = valEx.GetDataAsUsableDictionary();
-			foreach (var propertyName in data.Keys)
+			//used GetDataAsValidationErrorList which combine all errors in one list and no 2 cycles needed
+			var validationErrorList = valEx.GetDataAsValidationErrorList();
+			foreach (var valError in validationErrorList)
 			{
-				var errors = data[propertyName];
-				foreach (var errorMessage in errors)
-				{
-					if (String.IsNullOrWhiteSpace(propertyName))
-						generalErrors.Add(errorMessage);
-					else
-						generalErrors.Add($"{propertyName}: {errorMessage}");
-				}
+				if (String.IsNullOrWhiteSpace(valError.PropertyName))
+					generalErrors.Add(valError.Message);
+				else
+					generalErrors.Add($"{valError.PropertyName}: {valError.Message}");
 			}
+
+			//using GetDataAsUsableDictionary variant
+			//var data = valEx.GetDataAsUsableDictionary();
+			//foreach (var propertyName in data.Keys)
+			//{
+			//	var errors = data[propertyName];
+			//	foreach (var valError in errors)
+			//	{
+			//		if (String.IsNullOrWhiteSpace(valError.PropertyName))
+			//			generalErrors.Add(valError.Message);
+			//		else
+			//			generalErrors.Add($"{valError.PropertyName}: {valError.Message}");
+			//	}
+			//}
 		}
 		else
 		{
@@ -139,7 +161,7 @@ internal static class ResultUtils
 		EditContext editContext,
 		ValidationMessageStore messageStore,
 		IToastService toastService,
-		IMessageService messageService )
+		IMessageService messageService)
 	{
 		var generalErrors = new List<string>();
 		var validationErrors = new List<ValidationError>();
@@ -153,18 +175,21 @@ internal static class ResultUtils
 			if (!string.IsNullOrWhiteSpace(valEx.Message))
 				generalErrors.Add(valEx.Message);
 
-			var data = valEx.GetDataAsUsableDictionary();
-			foreach (var propertyName in data.Keys)
-			{
-				var errors = data[propertyName];
-				foreach (var errorMessage in errors)
-				{
-					if (String.IsNullOrWhiteSpace(propertyName))
-						validationErrors.Add(new ValidationError("",errorMessage));
-					else
-						validationErrors.Add(new ValidationError(propertyName, errorMessage));
-				}
-			}
+			//used GetDataAsValidationErrorList which combine all errors in one list and no 2 cycles needed
+			var validationErrorList = valEx.GetDataAsValidationErrorList();
+			validationErrors.AddRange(validationErrorList);
+
+
+			//using GetDataAsUsableDictionary variant
+			//var data = valEx.GetDataAsUsableDictionary();
+			//foreach (var propertyName in data.Keys)
+			//{
+			//	var errors = data[propertyName];
+			//	foreach (var valError in errors)
+			//	{
+			//		validationErrors.Add(valError);
+			//	}
+			//}
 		}
 		else
 		{

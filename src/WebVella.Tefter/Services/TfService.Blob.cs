@@ -50,6 +50,8 @@ public partial interface ITfService
 		Guid blobId);
 	internal Task CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(
 		CancellationToken stoppingToken);
+
+	internal void InitBlobStorageFolder();
 }
 
 public partial class TfService : ITfService
@@ -397,6 +399,11 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+	}
+
+	public void InitBlobStorageFolder()
+	{
+		InitBlobStorageFolder(_config.BlobStoragePath);
 	}
 
 	#region <--- private methods --->

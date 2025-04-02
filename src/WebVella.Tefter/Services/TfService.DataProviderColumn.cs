@@ -1171,7 +1171,8 @@ public partial class TfService : ITfService
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
-						if (!column.IsNullable && String.IsNullOrWhiteSpace(defaultValue))
+						if (!column.IsNullable && String.IsNullOrWhiteSpace(defaultValue) && 
+							( column.DbType != TfDatabaseColumnType.Text && column.DbType != TfDatabaseColumnType.ShortText) )
 							return false;
 
 						return true;
