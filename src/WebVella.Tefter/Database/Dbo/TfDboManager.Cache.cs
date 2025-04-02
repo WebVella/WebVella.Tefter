@@ -12,6 +12,9 @@ internal partial class TfDboManager
 
 	private void AddToCache<T>(string key, DataTable obj) where T : class, new()
 	{
+		if (dbService.IsContextTransactional)
+			return;
+
 		var memCache = cacheDict[typeof(T)];
 		var options = new MemoryCacheEntryOptions();
 		options.SetAbsoluteExpiration(TimeSpan.FromHours(1));
@@ -24,6 +27,9 @@ internal partial class TfDboManager
 
 	private DataTable GetFromCache<T>(string key) where T : class, new()
 	{
+		if (dbService.IsContextTransactional)
+			return null;
+
 		var memCache = cacheDict[typeof(T)];
 		DataTable result = null;
 		bool found = memCache.TryGetValue(key, out result);

@@ -1,7 +1,10 @@
-﻿namespace WebVella.Tefter.Database;
+﻿using DocumentFormat.OpenXml.InkML;
+
+namespace WebVella.Tefter.Database;
 
 public interface ITfDatabaseService
 {
+	bool IsContextTransactional { get; }
 	ITfDbConfigurationService Configuration { get; }
 	TfDatabaseContext CreateContext();
 	TfDatabaseConnection CreateConnection();
@@ -21,6 +24,7 @@ public class TfDatabaseService : ITfDatabaseService
 {
 	private ITfTransactionRollbackNotifyService _tranRNS = null;
 	public ITfDbConfigurationService Configuration { get; private set; }
+	public bool IsContextTransactional { get { return TfDatabaseContext.Current != null && TfDatabaseContext.Current.Transaction != null; } }
 
 	public TfDatabaseService(ITfDbConfigurationService configuration, ITfTransactionRollbackNotifyService tranRNS)
 	{
