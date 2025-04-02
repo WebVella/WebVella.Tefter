@@ -19,8 +19,8 @@
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.3" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.3" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.6" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.6" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.7" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.7" />
 	
 		<PackageReference Include="Npgsql" Version="9.0.3" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
@@ -32,7 +32,7 @@
 		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
 		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
-		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.0" />
+		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
 		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
