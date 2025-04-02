@@ -138,6 +138,9 @@
   <data name="Success" xml:space="preserve">
     <value>Успех</value>
   </data>
+  <data name="Under Construction" xml:space="preserve">
+    <value>В процес на разработка</value>
+  </data>
   <data name="Warning" xml:space="preserve">
     <value>Внимание</value>
   </data>

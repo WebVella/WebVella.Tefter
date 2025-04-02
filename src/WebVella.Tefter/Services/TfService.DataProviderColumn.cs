@@ -1171,7 +1171,7 @@ public partial class TfService : ITfService
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
-						if (!column.IsNullable && defaultValue is null)
+						if (!column.IsNullable && String.IsNullOrWhiteSpace(defaultValue))
 							return false;
 
 						return true;
@@ -1181,7 +1181,7 @@ public partial class TfService : ITfService
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
-						if (defaultValue == null)
+						if (String.IsNullOrWhiteSpace(defaultValue))
 							return true;
 
 						try

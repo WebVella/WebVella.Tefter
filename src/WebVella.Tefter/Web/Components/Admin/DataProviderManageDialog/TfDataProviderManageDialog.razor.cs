@@ -65,16 +65,12 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 
 	private void _initDynamicComponent()
 	{
-		if (TfAppState.Value.AdminDataProvider is null)
-			throw new Exception("Data Provider not found");
-
 		_dynamicComponentContext = new TfDataProviderManageSettingsComponentContext
 		{
 			SettingsJson = _form.SettingsJson,
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 		};
-		_dynamicComponentScope = new TfRegionComponentScope(TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType(),null);
-
+		_dynamicComponentScope = new TfRegionComponentScope(_form.ProviderType.Model.GetType(), null);
 	}
 
 	private async Task _save()
@@ -125,6 +121,12 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private void _settingsChanged(string json)
 	{
 		_form.SettingsJson = json;
+	}
+
+	private void _providerTypeChanged(TucDataProviderTypeInfo selection)
+	{
+		_form.ProviderType = selection;
+		_initDynamicComponent();
 	}
 
 }

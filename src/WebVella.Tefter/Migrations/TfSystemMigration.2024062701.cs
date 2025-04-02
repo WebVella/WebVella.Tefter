@@ -251,51 +251,16 @@ internal class TefterSystemMigration2024062701 : TfSystemMigration
 				.WithFirstName("Tefter")
 				.WithLastName("Administrator")
 				.CreatedOn(DateTime.Now)
-				.WithPassword("123")
+				.WithPassword("@tefter.bg")
 				.Enabled(true)
 				.WithRoles(adminRole)
+				.WithThemeColor(OfficeColor.Excel)
+				.WithThemeMode(DesignThemeModes.System)
+				.WithOpenSidebar(true)
 				.Build();
 
 			await tfService.SaveUserAsync(user);
 		}
 
-
-		//adds users for developers
-		//this migration will be removed for production or at later stage
-
-#if DEBUG
-
-		{
-
-			var adminRole = tfService.GetRole("Administrators");
-
-			var user = tfService
-				.CreateUserBuilder()
-				.WithEmail("rumen@webvella.com")
-				.WithFirstName("Rumen")
-				.WithLastName("Yankov")
-				.CreatedOn(DateTime.Now)
-				.WithPassword("123")
-				.Enabled(true)
-				.WithRoles(adminRole)
-				.Build();
-
-			user = await tfService.SaveUserAsync(user);
-
-			user = tfService
-			   .CreateUserBuilder()
-			   .WithEmail("boz@webvella.com")
-			   .WithFirstName("Bozhidar")
-			   .WithLastName("Zashev")
-			   .CreatedOn(DateTime.Now)
-			   .WithPassword("123")
-			   .Enabled(true)
-			   .WithRoles(adminRole)
-			   .Build();
-
-			await tfService.SaveUserAsync(user);
-		}
-
-#endif
 	}
 }
