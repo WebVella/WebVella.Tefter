@@ -10,3 +10,7 @@
 	width: 12px !important;
 	fill: var(--error) !important;
 }
+
+::deep.validation-message span {
+	white-space:normal;
+}
