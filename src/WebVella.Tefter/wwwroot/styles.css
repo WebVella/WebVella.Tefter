@@ -1220,6 +1220,28 @@ body {
   margin: calc(var(--design-unit)*2px) 2px;
   z-index: 5;
 }
+.tf-navigation .fluent-nav-item.expand-link .positioning-region {
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  min-height: unset !important;
+  min-width: unset !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+}
+.tf-navigation .fluent-nav-item.expand-link .fluent-nav-link {
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  min-height: unset !important;
+  min-width: unset !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex: 0 0 auto !important;
+}
 .tf-sidenav .fluent-nav-link .positioning-region {
   background: transparent !important;
 }
