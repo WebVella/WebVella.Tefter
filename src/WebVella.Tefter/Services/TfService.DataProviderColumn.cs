@@ -208,12 +208,28 @@ public partial class TfService : ITfService
 		{
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				List<ValidationError> validationErrors = new();
+				var validator = new TfDataProviderColumnValidator(this);
+				List<ValidationResult> validationResults = new();
 				foreach (var column in columns)
 				{
 					column.DataProviderId = providerId;
+
+					if (column != null && column.Id == Guid.Empty)
+						column.Id = Guid.NewGuid();
+
+					var validationResult = validator.ValidateCreate(column);
+					validationResults.Add(validationResult);
+
+					if(!validationResult.IsValid)
+						continue;
+
 					CreateDataProviderColumn(column);
 				}
+
+				validationResults
+					.ToValidationException()
+					.ThrowIfContainsErrors(); 
+
 				scope.Complete();
 
 				var provider = GetDataProvider(providerId);
@@ -1171,7 +1187,13 @@ public partial class TfService : ITfService
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>
 					{
-						if (!column.IsNullable && String.IsNullOrWhiteSpace(defaultValue) && 
+						if (column.IsNullable)
+							return true;
+
+						if (!column.IsNullable && column.DefaultValue == null)
+							return false;
+					
+						if	(!column.IsNullable && string.IsNullOrWhiteSpace(column.DefaultValue) &&
 							( column.DbType != TfDatabaseColumnType.Text && column.DbType != TfDatabaseColumnType.ShortText) )
 							return false;
 
