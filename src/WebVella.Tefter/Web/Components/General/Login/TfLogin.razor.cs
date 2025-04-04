@@ -28,7 +28,7 @@ public partial class TfLogin : TfFormBaseComponent
 		}
 		catch (Exception ex)
 		{
-			ProcessException(ex);
+			ProcessFormSubmitResponse(ex);
 		}
 		finally
 		{
