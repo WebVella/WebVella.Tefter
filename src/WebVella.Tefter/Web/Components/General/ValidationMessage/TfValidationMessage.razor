@@ -4,7 +4,7 @@
 {
 	<div class="@_cssClass" style="@_cssStyle">
 		<FluentIcon Value="@TfConstants.ErrorIcon" />
-		if (!String.IsNullOrWhiteSpace(error.Message))
+		@if (!String.IsNullOrWhiteSpace(error.Message))
 		{
 			<span>@error.Message</span>
 		}

@@ -21,7 +21,8 @@ internal partial class AppStateUseCase
 				AdminSharedColumnDataTypes = new()
 			};
 			return Task.FromResult((newAppState, newAuxDataState));
-		};
+		}
+		;
 
 
 		//SharedColumns
@@ -120,7 +121,10 @@ internal partial class AppStateUseCase
 			if (resultColumnType is not null)
 			{
 				foreach (DatabaseColumnTypeInfo item in resultColumnType)
+				{
+					if(item.Type == TfDatabaseColumnType.AutoIncrement) continue;
 					result.Add(new TucDatabaseColumnTypeInfo(item));
+				}
 			}
 
 			return result;

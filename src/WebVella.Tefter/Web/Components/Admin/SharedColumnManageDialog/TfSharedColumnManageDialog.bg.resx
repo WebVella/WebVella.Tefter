@@ -129,8 +129,11 @@
   <data name="Create shared column" xml:space="preserve">
     <value>Създай споделена колона</value>
   </data>
-  <data name="data type" xml:space="preserve">
-    <value>тип данни</value>
+  <data name="Data type" xml:space="preserve">
+    <value>Тип данни</value>
+  </data>
+  <data name="Database name" xml:space="preserve">
+    <value>Име в базата</value>
   </data>
   <data name="Global search" xml:space="preserve">
     <value>Глобално търсене</value>
@@ -140,9 +143,6 @@
   </data>
   <data name="Manage shared column" xml:space="preserve">
     <value>Редактирай споделена колона</value>
-  </data>
-  <data name="name" xml:space="preserve">
-    <value>име</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Запомни</value>

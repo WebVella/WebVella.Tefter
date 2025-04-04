@@ -12,14 +12,26 @@ namespace WebVella.Tefter.DataProviders.Csv;
 
 public class CsvDataProvider : ITfDataProviderType
 {
+	/// <summary>
+	/// used as unique identifier
+	/// </summary>
 	public Guid Id => new Guid("82883b60-197f-4f5a-8c6a-2bec16508816");
-
+	/// <summary>
+	/// presented to the end user
+	/// </summary>
 	public string Name => "Csv Data Provider";
-
+	/// <summary>
+	/// presented to the end user
+	/// </summary>
 	public string Description => "Provide data from CSV formated file.";
-
+	/// <summary>
+	/// presented to the end user
+	/// </summary>
 	public string FluentIconName => "DocumentTable";
 
+	/// <summary>
+	/// Return what types of data types it can process from the data source
+	/// </summary>
 	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{
 		//sample only
@@ -36,7 +48,9 @@ public class CsvDataProvider : ITfDataProviderType
 			"GUID"
 		}.AsReadOnly();
 	}
-
+	/// <summary>
+	/// Returns mapping between source data types and Tefter.bg data types
+	/// </summary>
 	public ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
 		string dataType)
 	{
@@ -67,7 +81,9 @@ public class CsvDataProvider : ITfDataProviderType
 		return new List<TfDatabaseColumnType>().AsReadOnly();
 	}
 
-
+	/// <summary>
+	/// Gets data from the data source
+	/// </summary>
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
 		TfDataProvider provider)
 	{
@@ -142,6 +158,9 @@ public class CsvDataProvider : ITfDataProviderType
 		}
 	}
 
+	/// <summary>
+	/// Gets the data source schema
+	/// </summary>
 	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider)
 	{
 		int maxSampleSize = 25;
@@ -243,6 +262,47 @@ public class CsvDataProvider : ITfDataProviderType
 
 		return result;
 	}
+
+	/// <summary>
+	/// Validates its custom settings on user submit
+	/// </summary>
+	public List<ValidationError> Validate(string settingsJson)
+	{
+
+		CsvDataProviderSettings settings = new();
+		if (!String.IsNullOrWhiteSpace(settingsJson))
+		{
+			try
+			{
+				settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(settingsJson);
+			}
+			catch { }
+		}
+		var errors = new List<ValidationError>();
+
+		if (String.IsNullOrWhiteSpace(settings.Filepath))
+		{
+			errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath), LOC("required")));
+		}
+		else
+		{
+			string extension = Path.GetExtension(settings.Filepath);
+			if (extension != ".csv")
+			{
+				errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath), LOC("'csv' file extension is required")));
+			}
+		}
+
+		if (!String.IsNullOrWhiteSpace(settings.CultureName))
+		{
+			CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures & ~CultureTypes.NeutralCultures);
+			var culture = cultures.FirstOrDefault(c => c.Name.Equals(settings.CultureName, StringComparison.OrdinalIgnoreCase));
+			if (culture == null)
+				errors.Add(new ValidationError(nameof(CsvDataProviderSettings.CultureName), LOC("invalid. format like 'en-US'")));
+		}
+		return errors;
+	}
+
 
 	private ReadOnlyCollection<TfDataProviderDataRow> ReadCSVStream(
 		Stream stream,
@@ -405,43 +465,6 @@ public class CsvDataProvider : ITfDataProviderType
 			default:
 				throw new Exception($"Not supported source type for column {column.SourceName}");
 		}
-	}
-
-	public List<ValidationError> Validate(string settingsJson)
-	{
-
-		CsvDataProviderSettings settings = new();
-		if (!String.IsNullOrWhiteSpace(settingsJson))
-		{
-			try
-			{
-				settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(settingsJson);
-			}
-			catch { }
-		}
-		var errors = new List<ValidationError>();
-
-		if (String.IsNullOrWhiteSpace(settings.Filepath))
-		{
-			errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath), LOC("required")));
-		}
-		else
-		{
-			string extension = Path.GetExtension(settings.Filepath);
-			if (extension != ".csv")
-			{
-				errors.Add(new ValidationError(nameof(CsvDataProviderSettings.Filepath), LOC("'csv' file extension is required")));
-			}
-		}
-
-		if (!String.IsNullOrWhiteSpace(settings.CultureName))
-		{
-			CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.AllCultures & ~CultureTypes.NeutralCultures);
-			var culture = cultures.FirstOrDefault(c => c.Name.Equals(settings.CultureName, StringComparison.OrdinalIgnoreCase));
-			if (culture == null)
-				errors.Add(new ValidationError(nameof(CsvDataProviderSettings.CultureName), LOC("invalid. format like 'en-US'")));
-		}
-		return errors;
 	}
 
 	private string LOC(string name) => name;

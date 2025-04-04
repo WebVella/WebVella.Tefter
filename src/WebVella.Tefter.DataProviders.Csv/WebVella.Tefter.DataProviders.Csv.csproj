@@ -6,14 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="Assets\Icon.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<EmbeddedResource Include="Assets\Icon.png" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="CsvHelper" Version="33.0.1" />
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.3" />
 		<PackageReference Include="System.IO.Packaging" Version="9.0.3" />

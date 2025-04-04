@@ -1,7 +1,7 @@
 ﻿.tf-navigation {
 	display: flex;
-	flex-flow:column;
-	align-items:center;
+	flex-flow: column;
+	align-items: center;
 	width: unset !important;
 
 	.fluent-nav-item {
@@ -59,6 +59,32 @@
 				border-radius: calc(var(--control-corner-radius)* 1px);
 				margin: calc(var(--design-unit)* 2px) 2px;
 				z-index: 5;
+			}
+		}
+
+		&.expand-link {
+			.positioning-region {
+				border-radius: 50%;
+				width: 42px;
+				height: 42px;
+				min-height: unset !important;
+				min-width: unset !important;
+				display: inline-flex !important;
+				justify-content: center !important;
+				align-items: center !important;
+				flex: 0 0 auto !important;
+			}
+
+			.fluent-nav-link {
+				border-radius: 50%;
+				width: 42px;
+				height: 42px;
+				min-height: unset !important;
+				min-width: unset !important;
+				display: inline-flex !important;
+				justify-content: center !important;
+				align-items: center !important;
+				flex: 0 0 auto !important;
 			}
 		}
 	}

@@ -1199,7 +1199,7 @@ public partial class TfService : ITfService
 
 						return true;
 					})
-					.WithMessage($"Column is marked as not nullable, but no default value is specified.");
+					.WithMessage($"required if not nullable");
 
 				RuleFor(column => column.DefaultValue)
 					.Must((column, defaultValue) =>

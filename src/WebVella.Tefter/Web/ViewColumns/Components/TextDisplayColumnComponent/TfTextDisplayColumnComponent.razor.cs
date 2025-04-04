@@ -13,9 +13,7 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	/// Needed because of the custom constructor
 	/// </summary>
 	[ActivatorUtilitiesConstructor]
-	public TfTextDisplayColumnComponent()
-	{
-	}
+	public TfTextDisplayColumnComponent(){}
 
 	/// <summary>
 	/// The custom constructor is needed because in varoius cases we need to instance the component without

@@ -1,6 +1,7 @@
 ﻿@using Microsoft.FluentUI.AspNetCore.Components.Extensions
 @namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
+
 @* Header *@
 <FluentDialogHeader ShowDismiss="true" Class="modal-with-tabs">
 	<div class="modal-with-tabs__title">
@@ -43,6 +44,7 @@
 		{
 			@if (_newColumns.Count > 0)
 			{
+				var _rowIndex = -1;
 				<div class="tf-grid-wrapper">
 					<table class="tf-grid">
 						<thead class="tf-grid-thead">
@@ -66,6 +68,7 @@
 						<tbody class="tf-grid-tbody">
 							@foreach (var context in _newColumns)
 							{
+								_rowIndex++;
 								<tr @key=context.Id class="tf-grid-tr">
 									<td class="tf-grid-td">
 										<div><FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(_=>_removeRow(context))" /></div>
@@ -84,7 +87,7 @@
 													<FluentOption Value="@op.ToString()">@op</FluentOption>
 												}
 											</FluentSelect>
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.SourceType)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.SourceType)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
@@ -92,7 +95,7 @@
 											<FluentTextField TextFieldType="@TextFieldType.Text" Value=@context.DbName
 											ValueChanged="@(x => _dbNameChanged(x,context))" AutoComplete="off"
 											Class="@_getValidationCssClass(context.SourceName,nameof(context.DbName))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.DbName)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.DbName)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
@@ -107,26 +110,26 @@
 													<FluentOption Value="@op.ToString()">@((new TucDatabaseColumnTypeInfo(op)).Name)</FluentOption>
 												}
 											</FluentSelect>
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.DbType)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.DbType)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
 										<div>
 											<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@context.DefaultValue AutoComplete="off"
 											Class="@_getValidationCssClass(context.SourceName,nameof(context.DefaultValue))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.DefaultValue)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.DefaultValue)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
 										<div>
 											<FluentSwitch @bind-Value=@context.IsNullable Class="@_getValidationCssClass(context.SourceName,nameof(context.IsNullable))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.IsNullable)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.IsNullable)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
 										<div>
 											<FluentSwitch @bind-Value=@context.IsUnique Class="@_getValidationCssClass(context.SourceName,nameof(context.IsUnique))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.IsUnique)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.IsUnique)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
@@ -134,7 +137,7 @@
 											@if ((new TucDatabaseColumnTypeInfo(context.DbType)).SupportAutoDefaultValue)
 											{
 												<FluentSwitch @bind-Value=@context.AutoDefaultValue Class="@_getValidationCssClass(context.SourceName,nameof(context.AutoDefaultValue))" />
-												<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.AutoDefaultValue)}")" Errors="ValidationErrors" />
+												<TfValidationMessage Field="@nameof(context.AutoDefaultValue)" Index=_rowIndex Errors="ValidationErrors" />
 											}
 											else { 
 												<span>n/a</span>
@@ -144,13 +147,13 @@
 									<td class="tf-grid-td">
 										<div>
 											<FluentSwitch @bind-Value=@context.IsSearchable Class="@_getValidationCssClass(context.SourceName,nameof(context.IsSearchable))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.IsSearchable)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.IsSearchable)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
 										<div>
 											<FluentSwitch @bind-Value=@context.IncludeInTableSearch Class="@_getValidationCssClass(context.SourceName,nameof(context.IncludeInTableSearch))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.IncludeInTableSearch)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.IncludeInTableSearch)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
@@ -162,13 +165,13 @@
 														  Style="width:100%" Class="@_getValidationCssClass(context.SourceName,nameof(context.PreferredSearchType))"
 														  OptionText="((p)=> (new TucDataProviderColumnSearchTypeInfo(p)).Name)"
 														  OptionValue="((p)=> ((int)p).ToString())" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.PreferredSearchType)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.PreferredSearchType)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 									<td class="tf-grid-td">
 										<div>
 											<FluentSwitch @bind-Value=@context.IsSortable Class="@_getValidationCssClass(context.SourceName,nameof(context.IsSortable))" />
-											<TfValidationMessage Field="@($"{context.SourceName}-{nameof(context.IsSortable)}")" Errors="ValidationErrors" />
+											<TfValidationMessage Field="@nameof(context.IsSortable)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>
 								</tr>
