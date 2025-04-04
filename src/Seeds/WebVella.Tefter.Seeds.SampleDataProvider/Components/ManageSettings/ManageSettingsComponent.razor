@@ -7,10 +7,10 @@
 		<FluentGridItem xs="12">
 			<FluentTextField Required="true"
 							 TextFieldType="@TextFieldType.Text"
-							 Placeholder="@LOC("sample test just to show how setting is added and validated")"
+							 Placeholder="sample test just to show how setting is added and validated"
 							 @bind-Value=@_form.SampleSetting AutoComplete="off"
 							 @bind-Value:after=_valueChanged
-							 Label="@LOC("Sample setting")" Style="width:100%" />
+							 Label="Sample setting" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.SampleSetting)" />
 		</FluentGridItem>
 	</FluentGrid>
@@ -22,7 +22,7 @@
 							Value=@_advancedSettings
 							ValueChanged="(x=> _changeAdvancedSettings(x))"
 							Resize="TextAreaResize.Vertical"
-							Label="@LOC("Advanced Settings")" Style="width:100%" />
+							Label="Advanced Settings" Style="width:100%" />
 			<FluentValidationMessage For="@(() => _form.AdvancedSetting)" />
 		</FluentGridItem>
 	</FluentGrid>
