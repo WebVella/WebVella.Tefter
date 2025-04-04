@@ -1,6 +1,7 @@
 ﻿namespace WebVella.Tefter.Assets.Pages;
 
-public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageComponentContext>
+public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent, 
+	ITfRegionComponent<TfAdminPageComponentContext>
 {
 	public Guid Id { get; init; } = new Guid("9cf13acf-8959-499e-aab8-ff2c25a6c97e"); 
 	public int PositionRank { get; init; } = 100;
