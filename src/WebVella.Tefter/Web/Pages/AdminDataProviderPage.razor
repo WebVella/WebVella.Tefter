@@ -10,7 +10,7 @@
 		<TfAdminDataProviderNavigation />
 	</Aside>
 	<ChildContent>
-		@if (ProviderId == Guid.Empty)
+		@if (ProviderId == Guid.Empty || TfAppState.Value.AdminDataProvider is null)
 		{
 			<TfLayoutBodyMain>
 				<Header>

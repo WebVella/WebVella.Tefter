@@ -42,15 +42,14 @@ public partial class TfAdminDataProviderDetails : TfBaseComponent
 
 	private void _initDynamicComponent()
 	{
-		if (TfAppState.Value.AdminDataProvider is null)
-			throw new Exception("Data Provider not found");
-
-		_dynamicComponentContext = new TfDataProviderDisplaySettingsComponentContext
+		if (TfAppState.Value.AdminDataProvider is not null)
 		{
-			SettingsJson = TfAppState.Value.AdminDataProvider.SettingsJson
-		};
-		_dynamicComponentScope = new TfRegionComponentScope(TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType(),null);
-
+			_dynamicComponentContext = new TfDataProviderDisplaySettingsComponentContext
+			{
+				SettingsJson = TfAppState.Value.AdminDataProvider.SettingsJson
+			};
+			_dynamicComponentScope = new TfRegionComponentScope(TfAppState.Value.AdminDataProvider.ProviderType.Model.GetType(), null);
+		}
 	}
 
 }

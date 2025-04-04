@@ -25,6 +25,10 @@
 		<PackageReleaseNotes>Initial release</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Remove="compilerconfig.json" />
+	</ItemGroup>
 	
 	<ItemGroup>
 		<None Include="..\..\LICENSE">
@@ -36,6 +40,9 @@
 			<PackagePath>\</PackagePath>
 		</None>
 		<None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
+		<None Include="compilerconfig.json">
+		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	
 	<ItemGroup>

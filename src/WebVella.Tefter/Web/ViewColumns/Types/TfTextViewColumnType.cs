@@ -1,5 +1,4 @@
 ﻿namespace WebVella.Tefter.Web.ViewColumns;
-
 public class TfTextViewColumnType : ITfSpaceViewColumnType
 {
 	const string TF_COLUMN_TEXT_ID = Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID;

@@ -1,5 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
+
 <TfCard>
 	<TitleTemplate>
 		<TfAdminDataProviderDetailsActions />
@@ -45,10 +46,8 @@
 		<FluentDivider Style="margin:15px 0" />
 		<FluentGrid Style="margin-top:3px;">
 			<FluentGridItem xs="12">
-				<TfRegionComponent Context="_dynamicComponentContext" Scope="@_dynamicComponentScope"/>
+				<TfRegionComponent Context="_dynamicComponentContext" Scope="@_dynamicComponentScope" />
 			</FluentGridItem>
 		</FluentGrid>
 	</ChildContent>
 </TfCard>
-
-
