@@ -4,8 +4,40 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+		<AssemblyName>WebVella.Tefter</AssemblyName>
+		<OutputType>Library</OutputType>
+		<PackageId>$(AssemblyName)</PackageId>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<Description>The core library of the open-source Tefter platform. It is an open-source web platform hosted on your server, designed to optimize your team's processes, enhance communication, and streamline tasks when working with data.		</Description>
+		<Version>0.0.1</Version>
+		<Authors>WebVella</Authors>
+		<Company>WebVella</Company>
+		<Copyright>WebVella 2025</Copyright>
+		<PackageProjectUrl>https://tefter.bg</PackageProjectUrl>
+		<Icon>https://tefter.bg/favicon.ico</Icon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/WebVella/WebVella.Tefter.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<!-- Remove the language litter of code analysis on publish https://github.com/dotnet/roslyn/issues/39458-->
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+		<Title>WebVella.Tefter</Title>
+		<PackageTags>data,communications,tasks,processes</PackageTags>
+		<PackageReleaseNotes>Initial release</PackageReleaseNotes>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
-
+	
+	<ItemGroup>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
+	</ItemGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="ClosedXML" Version="0.104.2" />
 		<!--<PackageReference Include="FluentResults" Version="3.16.0" />
@@ -45,9 +77,7 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Include="C:\Projects\WebVella\WebVella.Tefter\src\WebVella.Tefter\.editorconfig" />
-	</ItemGroup>
+	
 
 	<ItemGroup>
 	  <Content Update="Web\Components\General\ValidationErrors\TfValidationErrors.razor">
