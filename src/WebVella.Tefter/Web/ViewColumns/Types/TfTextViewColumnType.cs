@@ -21,19 +21,12 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
-
-
 	public TfTextViewColumnType()
 	{
-
 		Id = new Guid(TF_COLUMN_TEXT_ID);
-
 		Name = TF_COLUMN_TEXT_NAME;
-
 		Description = TF_COLUMN_TEXT_DESCRIPTION;
-
 		FluentIconName = TF_COLUMN_TEXT_ICON;
-
 		DataMapping = new List<TfSpaceViewColumnDataMapping>
 		{
 			new TfSpaceViewColumnDataMapping
@@ -46,11 +39,8 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 					}
 				}
 		};
-
 		FilterAliases = new List<string>() { ALIAS };
-
 		SortAliases = new List<string> { ALIAS };
-
 		DefaultComponentType = typeof(TfTextDisplayColumnComponent);
 	}
 }
