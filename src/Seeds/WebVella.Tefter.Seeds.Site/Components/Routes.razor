@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.FluentUI.AspNetCore.Components;
+@using WebVella.Tefter.Services
+@using WebVella.Tefter.Web.Layout;
+
+<Fluxor.Blazor.Web.StoreInitializer />
+@*
+	IMPORANT: If you want to have your own routable components in your addon
+	do not forget to added them also in the Program.cs
+*@
+<Router AppAssembly="typeof(WebVella.Tefter.Seeds.Site.Components.App).Assembly"
+		AdditionalAssemblies = "new[] { typeof(ITfService).Assembly }">
+	<Found Context="routeData">
+		<RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+		<FocusOnNavigate RouteData="routeData" Selector="#top" />
+	</Found>
+</Router>
+<FluentToastProvider MaxToastCount="3" Position="ToastPosition.TopCenter"/>
+<FluentDialogProvider />
+<FluentTooltipProvider />
+<FluentKeyCodeProvider />
+<FluentMenuProvider />

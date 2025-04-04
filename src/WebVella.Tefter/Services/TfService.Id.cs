@@ -210,7 +210,7 @@ public partial class TfService : ITfService
 			}
 			
 			loadedCount += rowsCount;
-			_logger.LogDebug("Ids total loaded: " + loadedCount);
+			//_logger.LogDebug("Ids total loaded: " + loadedCount);
 
 		} while (rowsCount > 0);
 	}
