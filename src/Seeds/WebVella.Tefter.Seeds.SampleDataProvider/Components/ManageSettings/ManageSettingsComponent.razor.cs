@@ -8,8 +8,6 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.Seeds.SampleDataProvider.Components;
 
-[LocalizationResource("WebVella.Tefter.Seeds.SampleDataProvider.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.Seeds.SampleDataProvider")]
-
 public partial class ManageSettingsComponent : TfFormBaseComponent,
 	ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
 {

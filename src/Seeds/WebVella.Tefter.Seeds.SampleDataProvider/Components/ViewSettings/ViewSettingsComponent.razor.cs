@@ -4,7 +4,6 @@ using WebVella.Tefter.Web.Models;
 
 namespace WebVella.Tefter.Seeds.SampleDataProvider.Components;
 
-[LocalizationResource("WebVella.Tefter.Seeds.SampleDataProvider.Components.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.Seeds.SampleDataProvider")]
 public partial class ViewSettingsComponent : TfBaseComponent,
 	ITfRegionComponent<TfDataProviderDisplaySettingsComponentContext>
 {

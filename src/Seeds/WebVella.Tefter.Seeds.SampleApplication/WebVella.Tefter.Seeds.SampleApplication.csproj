@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,11 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="C:\Users\rumen\.nuget\packages\webvella.tefter\0.0.2\contentFiles\any\net9.0\compilerconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="WebVella.Tefter" Version="0.0.2" />
+    <PackageReference Include="WebVella.Tefter" Version="0.0.3" />
   </ItemGroup>
 
 </Project>
