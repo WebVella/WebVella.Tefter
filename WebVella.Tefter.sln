@@ -57,7 +57,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Seeds.Sampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Seeds.SampleTemplateProcessor", "src\Seeds\WebVella.Tefter.Seeds.SampleTemplateProcessor\WebVella.Tefter.Seeds.SampleTemplateProcessor.csproj", "{6B48DF26-790D-C28B-E21C-0CF642871453}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Seeds.SampleViewColumnType", "src\Seeds\WebVella.Tefter.Seeds.SampleViewColumn\WebVella.Tefter.Seeds.SampleViewColumnType.csproj", "{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Seeds.SampleViewColumn", "src\Seeds\WebVella.Tefter.Seeds.SampleViewColumn\WebVella.Tefter.Seeds.SampleViewColumn.csproj", "{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
