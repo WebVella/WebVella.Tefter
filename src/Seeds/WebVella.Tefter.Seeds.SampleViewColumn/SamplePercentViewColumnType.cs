@@ -4,7 +4,7 @@ public class SamplePercentViewColumnType : ITfSpaceViewColumnType
 {
 	const string SAMPLE_PERCENT_COLUMN__ID = "cbe7a847-72a5-4af5-af7f-98771e043f14";
 	const string SAMPLE_PERCENT_COLUMN_NAME = "Percent";
-	const string SAMPLE_PERCENT_COLUMN_DESCRIPTION = "displays percent based of value between 0 and 1";
+	const string SAMPLE_PERCENT_COLUMN_DESCRIPTION = "displays percent based of value between 0 and specified in settings value";
 	const string SAMPLE_PERCENT_COLUMN_ICON = "PercentSymbol";
 	const string ALIAS = "Value";
 
