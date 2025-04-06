@@ -1,0 +1,14 @@
+﻿@using WebVella.Tefter.Web.Components
+@namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Components
+@inherits TfFormBaseComponent
+
+<FluentEditForm EditContext="EditContext" FormName="dp-settings" class="tf-form" novalidate>
+	<FluentGrid>
+		<FluentGridItem xs="12">
+			<FluentInputLabel Label="Content" />
+				<FluentTextArea @bind-Value=@_form.Content @bind-Value:after=_valueChanged Style="width:100%" Rows="7" />
+			<FluentValidationMessage For="@(() => _form.Content)" />
+		</FluentGridItem>
+	</FluentGrid>
+</FluentEditForm>
+https://localhost:5000/

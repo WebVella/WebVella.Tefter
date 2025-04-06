@@ -1,0 +1,134 @@
+﻿@using WebVella.Tefter.Web.Components
+@namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Components
+@inherits TfBaseComponent
+@if (_isLoading)
+{
+	<TfLoadingPane />
+}
+else if (Context is null || Context.Template is null || Context.SpaceData is null)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">Result cannot be generated as arguments are missing from the provided context</FluentMessageBar>
+}
+else if (_result is null)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">Result is from the wrong object type</FluentMessageBar>
+}
+else if (_result.Errors.Count > 0)
+{
+	<h4>"Errors"</h4>
+	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">Errors occured while generating the preview</FluentMessageBar>
+	<div class="tf-grid-wrapper" style="margin-top:15px;">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th">property)</th>
+					<th class="tf-grid-th">error</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var error in _result.Errors)
+				{
+					<tr @key=@(Guid.NewGuid())>
+						<td class="tf-grid-td">
+							<div>
+								@error.PropertyName
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@error.Message</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+else if (_result.Items.Count == 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">No content was generated</FluentMessageBar>
+}
+else if (_result.ItemWithErrorsCount > 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@String.Format("{0} content have errors", _result.ItemWithErrorsCount)</FluentMessageBar>
+	<h4 style="margin-top:1rem;">Content to be generated</h4>
+	<div class="tf-grid-wrapper" style="margin-top:15px;">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th">group</th>
+					<th class="tf-grid-th" style="width:80px;max-width:80px;">used rows</th>
+					<th class="tf-grid-th">errors</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var item in _result.Items)
+				{
+					<tr @key=@(Guid.NewGuid())>
+						<td class="tf-grid-td">
+							<div>
+								@string.Format("group {0}", _itemPosition)
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@item.NumberOfRows</div>
+						</td>
+						<td class="tf-grid-td">
+							<div style="white-space:normal">
+								@if (item.Errors.Count > 0)
+								{
+									<ul>
+										@foreach (var error in item.Errors)
+										{
+											<li style="color:var(--error)">
+												@if (String.IsNullOrWhiteSpace(error.PropertyName))
+												{
+													<span>@error.Message</span>
+												}
+												else
+												{
+													<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
+												}
+											</li>
+										}
+									</ul>
+								}
+								else
+								{
+									<span>no errors</span>
+								}
+							</div>
+						</td>
+					</tr>
+					_itemPosition++;
+				}
+			</tbody>
+		</table>
+	</div>
+}
+else
+{
+	<FluentStack>
+		<h4 style="flex:0 0 30%">Generated content <FluentBadge Appearance="Appearance.Accent">@_result.Items.Count</FluentBadge></h4>
+		<FluentStack Style="flex:1 1 auto" HorizontalGap="5">
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowLeft")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_prevItem"
+						  Disabled="@(_result.Items.Count == 1)" />
+			<FluentSelect TOption="SampleTemplateResultItem" Style="flex:1 1 auto" SelectedOption="@_form"
+						  SelectedOptionChanged="_selectedOptionChanged" Value="@_form.Id.ToString()"
+						  Disabled="@(_result.Items.Count == 1)"
+						  OptionValue="@((p)=> p.Id.ToString())"
+						  Items="_result.Items">
+				<OptionTemplate Context="p">
+					@string.Format("content {0}", _itemPositionDict[p.Id])
+				</OptionTemplate>
+			</FluentSelect>
+			<FluentButton IconStart="@TfConstants.GetIcon("Copy")" Appearance="@Appearance.Outline" Style="flex:0 0 100px" OnClick="_copyToClipboard">copy</FluentButton>
+			<FluentButton IconStart="@TfConstants.GetIcon("ArrowRight")" Appearance="@Appearance.Outline" Style="flex:0 0 80px" OnClick="_nextItem"
+						  Disabled="@(_result.Items.Count == 1)" />
+		</FluentStack>
+	</FluentStack>
+	<FluentDivider Style="margin:10px 0" />
+		<FluentTextArea Value=@_form.Content ReadOnly="true" Style="width:100%" Rows="7" />
+}
+
+

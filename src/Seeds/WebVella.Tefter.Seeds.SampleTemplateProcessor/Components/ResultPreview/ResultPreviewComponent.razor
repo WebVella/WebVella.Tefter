@@ -1,0 +1,95 @@
+﻿@using WebVella.Tefter.Web.Components
+@namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Components
+@inherits TfBaseComponent
+@if (_isLoading)
+{
+	<TfLoadingPane />
+}
+else if (Context is null || Context.Template is null || Context.SpaceData is null)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">Preview cannot be generated as arguments are missing from the provided context</FluentMessageBar>
+}
+else if (_preview is null)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">Preview is from the wrong object type</FluentMessageBar>
+}
+else if (_previewValidationErrors.Count > 0)
+{
+	<h4>@LOC("Errors")</h4>
+	<TfValidationErrors Errors="_previewValidationErrors" Message="Errors occured while validation the preview" />
+}
+else if (_preview.Errors.Count > 0)
+{
+	<h4>@LOC("Errors")</h4>
+	<TfValidationErrors Errors="_preview.Errors" Message="Errors occured while generating the preview" />
+}
+else if (_preview.Items.Count == 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">No content will be generated</FluentMessageBar>
+}
+else
+{
+	@if (_preview.ItemWithErrorsCount > 0)
+	{
+		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@string.Format("{0} content have errors", _preview.ItemWithErrorsCount)</FluentMessageBar>
+	}
+	<h4 style="margin-top:1rem;">Content to be generated</h4>
+	<div class="tf-grid-wrapper" style="margin-top:15px;">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th">group</th>
+					<th class="tf-grid-th" style="width:80px;max-width:80px;">used rows</th>
+					<th class="tf-grid-th">errors</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var item in _preview.Items)
+				{
+					<tr @key=@(Guid.NewGuid())>
+						<td class="tf-grid-td">
+							<div>
+								@string.Format("group {0}",_itemPosition)
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@item.NumberOfRows</div>
+						</td>
+						<td class="tf-grid-td">
+							<div style="white-space:normal">
+								@if (item.Errors.Count > 0)
+								{
+									<ul>
+										@foreach (var error in item.Errors)
+										{
+											<li style="color:var(--error)">
+												@if (String.IsNullOrWhiteSpace(error.PropertyName))
+												{
+													<span>@error.Message</span>
+												}
+												else
+												{
+													<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
+												}
+											</li>
+										}
+									</ul>
+								}
+								else
+								{
+									<span>no errors</span>
+								}
+							</div>
+						</td>
+					</tr>
+					_itemPosition++;
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+
+
+
