@@ -158,8 +158,8 @@ public partial class TfService : ITfService
 
 			if (dataProviderId is not null)
 			{
-				dataProvider = GetDataProvider(dataProviderId.Value);
-				if (dataProvider is null)
+				dataprovider = GetDataProvider(dataProviderId.Value);
+				if (dataprovider is null)
 					valEx.AddValidationError(nameof(dataProviderId), "data provider is not found");
 			}
 
