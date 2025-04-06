@@ -1,0 +1,24 @@
+﻿@namespace WebVella.Tefter.Seeds.SampleViewColumn.Components
+@inherits TucBaseViewColumn<SamplePercentDisplayViewColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
+{
+	<div>@_value?.ToString("N0")%</div>
+}
+else if (Context.Mode == TucComponentMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Label="Value considered as 100%"
+							 Value="@componentOptions.MaxValue.ToString()" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.MaxValue),x))
+							 Placeholder="" />
+		</FluentGridItem>
+		<FluentGridItem xs="6"></FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

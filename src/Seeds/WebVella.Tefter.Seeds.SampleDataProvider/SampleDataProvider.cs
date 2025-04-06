@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Text.Json;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Exceptions;
@@ -182,5 +183,92 @@ public class SampleDataProvider : ITfDataProviderType
 		}
 
 		return errors;
+	}
+
+	TfDataProviderSourceSchemaInfo ITfDataProviderType.GetDataProviderSourceSchema(
+		TfDataProvider provider)
+	{
+		TfDataProviderSourceSchemaInfo schemaInfo = new TfDataProviderSourceSchemaInfo();
+
+		var rows = GetRows(provider);
+		if (rows.Count == 0)
+			return schemaInfo;
+
+		var columnNames = rows[0].ColumnNames;
+
+		foreach (var columnName in columnNames )
+		{
+			object value = null;
+
+			//try to find value in any row,
+			//on first found exist cycle
+			foreach(var row in rows)
+			{
+				if (row[columnName] != null)
+				{
+					value = row[columnName];
+					break;
+				}
+			}
+
+			if (value == null)
+				continue;
+
+			if ( value.GetType() == typeof(Guid))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Guid;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "GUID";
+			}
+			else if (value.GetType() == typeof(DateOnly))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Date;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "DATE";
+			}
+			else if (value.GetType() == typeof(DateTime))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.DateTime;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "DATETIME";
+			}
+			else if (value.GetType() == typeof(short))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.ShortInteger;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "SHORT_INTEGER";
+			}
+			else if (value.GetType() == typeof(int))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Integer;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "INTEGER";
+			}
+			else if (value.GetType() == typeof(long))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.LongInteger;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "LONG_INTEGER";
+			}
+			else if (value.GetType() == typeof(decimal))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Number;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "NUMBER";
+			}
+			else if (value.GetType() == typeof(string))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Text;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "TEXT";
+			}
+			else if (value.GetType() == typeof(bool))
+			{
+				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Boolean;
+				schemaInfo.SourceColumnDefaultSourceType[columnName] = "BOOLEAN";
+			}
+
+		}
+		schemaInfo.SourceTypeSupportedDbTypes = new Dictionary<string, List<TfDatabaseColumnType>>();
+		foreach (var providerDataType in provider.ProviderType.GetSupportedSourceDataTypes())
+		{
+			var supportedDBList = provider.ProviderType.GetDatabaseColumnTypesForSourceDataType(providerDataType);
+			var supportedDbType = supportedDBList.Count > 0 ? supportedDBList.First() : TfDatabaseColumnType.Text;
+			schemaInfo.SourceTypeSupportedDbTypes[providerDataType] = supportedDBList.ToList();
+		}
+
+		return schemaInfo;
 	}
 }
