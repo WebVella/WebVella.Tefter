@@ -32,7 +32,7 @@ internal class TfIdsCacheLoaderJob : BackgroundService
 				_logger.LogError(ex, $"{GetType().Name} exception");
 			}
 
-			await Task.Delay(5 * 60 * 1000); //5mins
+			await Task.Delay(60 * 60 * 1000); //60mins
 		}
 	}
 

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="WebVella.Tefter" Version="0.0.5" />
+		<PackageReference Include="Bogus" Version="35.6.2" />
+	</ItemGroup>
+
+</Project>

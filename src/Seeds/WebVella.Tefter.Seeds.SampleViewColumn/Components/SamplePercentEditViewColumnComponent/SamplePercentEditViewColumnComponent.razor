@@ -1,0 +1,23 @@
+﻿@namespace WebVella.Tefter.Seeds.SampleViewColumn.Components
+@inherits TucBaseViewColumn<TfIntegerEditColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
+{
+	<div>
+		<FluentNumberField TValue="decimal?"
+						   Id="@_valueInputId"
+						   Value="@_value"
+						   ValueChanged="@((x) => _valueChanged(x))"
+						   Step="1"
+						   Style="width:100%;min-width:80px;" AutoComplete="off" />
+	</div>
+}
+else if (Context.Mode == TucComponentMode.Options)
+{
+	<div style="color:green">No options are provided</div>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

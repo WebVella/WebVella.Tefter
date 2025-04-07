@@ -5,4 +5,5 @@ internal class SampleAppConstants
 	public static Guid APP_ID = new Guid(APP_ID_STRING);
 	public static string APP_NAME = "Sample Application";
 	public static string APP_DECRIPTION = "Sample Application Description";
+	public static string APP_NOTES_LIST_DATA_KEY = $"{APP_ID_STRING}-notes-list";
 }

@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using WebVella.Tefter.Seeds.SampleApplication.Services;
-
-namespace WebVella.Tefter.Seeds.SampleApplication;
+﻿namespace WebVella.Tefter.Seeds.SampleApplication;
 
 public class SampleApp : ITfApplication
 {
