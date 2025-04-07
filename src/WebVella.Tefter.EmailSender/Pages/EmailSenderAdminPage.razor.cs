@@ -5,17 +5,28 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITucAuxDataUseCompo
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
 
-	public Guid Id { get; init; } = new Guid("1f6e544e-6a53-4fa1-98ef-9c51a569c2b5");
-	public int PositionRank { get; init; } = 1000;
-	public string Name { get; init; } = "Email Sender";
-	public string Description { get; init; } = "";
-	public string FluentIconName { get; init; } = "Mail";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
-		new TfRegionComponentScope(null,new Guid("1f6e544e-6a53-4fa1-98ef-9c51a569c2b5"))
-	};
+	public Guid Id { get; init; }
+	public int PositionRank { get; init; }
+	public string Name { get; init; }
+	public string Description { get; init; }
+	public string FluentIconName { get; init; }
+	public List<TfRegionComponentScope> Scopes { get; init; }
 	[Parameter]
 	public TfAdminPageComponentContext Context { get; init; }
 
+	public EmailSenderAdminPage() : base()
+	{
+		var componentId = new Guid("1f6e544e-6a53-4fa1-98ef-9c51a569c2b5");
+		Id = componentId;
+		PositionRank = 990;
+		Name = "Email Sender";
+		Description = "";
+		FluentIconName = "Mail";
+		Scopes = new List<TfRegionComponentScope>(){
+			new TfRegionComponentScope(null,componentId)
+		};
+
+	}
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
 		TfAppState newAppState,

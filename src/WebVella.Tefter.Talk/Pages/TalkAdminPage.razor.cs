@@ -2,16 +2,27 @@
 
 public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageComponentContext>
 {
-	public Guid Id { get; init; } = new Guid("15f22367-7c8d-4971-9950-d7b1ff51f678"); 
-	public int PositionRank { get; init; } = 90;
-	public string Name { get; init;} = "Talk Channels";
-	public string Description { get; init;} = "";
-	public string FluentIconName { get; init; } =  "CommentMultiple";
-    public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
-        new TfRegionComponentScope(null,new Guid("15f22367-7c8d-4971-9950-d7b1ff51f678"))
-    };
+	public Guid Id { get; init; }
+	public int PositionRank { get; init; }
+	public string Name { get; init;}
+	public string Description { get; init;}
+	public string FluentIconName { get; init; }
+    public List<TfRegionComponentScope> Scopes { get; init; }
 	[Parameter] 
 	public TfAdminPageComponentContext Context { get; init; }
+
+	public TalkAdminPage() : base()
+	{
+		var componentId = new Guid("15f22367-7c8d-4971-9950-d7b1ff51f678");
+		Id = componentId;
+		PositionRank = 90;
+		Name = "Talk Channels";
+		Description = "";
+		FluentIconName = "CommentMultiple";
+		Scopes = new List<TfRegionComponentScope>(){
+			new TfRegionComponentScope(null,componentId)
+		};
+	}
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider,TucUser currentUser,
         TfAppState newAppState,

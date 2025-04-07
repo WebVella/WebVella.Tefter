@@ -29,7 +29,6 @@ public partial class SampleAppAdminPage : TfBaseComponent, ITucAuxDataUseCompone
 		Scopes = new List<TfRegionComponentScope>(){
 			new TfRegionComponentScope(null,componentId)
 		};
-
 	}
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,

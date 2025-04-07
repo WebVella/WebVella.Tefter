@@ -3,16 +3,27 @@
 public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent, 
 	ITfRegionComponent<TfAdminPageComponentContext>
 {
-	public Guid Id { get; init; } = new Guid("9cf13acf-8959-499e-aab8-ff2c25a6c97e"); 
-	public int PositionRank { get; init; } = 100;
-	public string Name { get; init;} = "Assets Folders";
-	public string Description { get; init;} = "";
-	public string FluentIconName { get; init; } =  "Folder";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
-		new TfRegionComponentScope(null,new Guid("9cf13acf-8959-499e-aab8-ff2c25a6c97e"))
-	};
+	public Guid Id { get; init; }
+	public int PositionRank { get; init; }
+	public string Name { get; init;}
+	public string Description { get; init;}
+	public string FluentIconName { get; init; }
+	public List<TfRegionComponentScope> Scopes { get; init; }
 	[Parameter] 
 	public TfAdminPageComponentContext Context { get; init; }
+
+	public AssetsAdminPage() : base()
+	{
+		var componentId = new Guid("9cf13acf-8959-499e-aab8-ff2c25a6c97e");
+		Id = componentId;
+		PositionRank = 100;
+		Name = "Assets Folders";
+		Description = "";
+		FluentIconName = "Folder";
+		Scopes = new List<TfRegionComponentScope>(){
+			new TfRegionComponentScope(null,componentId)
+		};		
+	}
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider,TucUser currentUser,
         TfAppState newAppState,
