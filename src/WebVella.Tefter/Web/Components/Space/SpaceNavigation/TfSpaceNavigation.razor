@@ -29,38 +29,7 @@
 									 Value=@search ValueChanged="onSearch" />
 				</div>
 				<div class="tf-sidetoolbar__actions">
-					<FluentButton Id="space-settings" Title="space actions"
-								  OnClick="_onSettingsClick" Appearance="@Appearance.Outline">
-						<FluentIcon Value="@TfConstants.GetIcon("Settings")" />
-					</FluentButton>
-					<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
-						<FluentMenuItem OnClick="onManageSpaceClick">
-							@LOC("Manage Space")
-							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" />
-						</FluentMenuItem>
-						<FluentMenuItem OnClick="onDeleteSpaceClick">
-							@LOC("Delete Space")
-							<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
-						</FluentMenuItem>
-						<FluentDivider></FluentDivider>
-						<FluentMenuItem OnClick="_addNode">
-							@LOC("Create Page")
-							<FluentIcon Value="@TfConstants.AddIcon" Slot="start" />
-						</FluentMenuItem>
-						<FluentDivider></FluentDivider>
-						<FluentMenuItem OnClick="onDataListClick">
-							@LOC("Space Data")
-							<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" />
-						</FluentMenuItem>
-						<FluentMenuItem OnClick="onViewListClick">
-							@LOC("Space Views")
-							<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" />
-						</FluentMenuItem>
-						<FluentMenuItem OnClick="onPageListClick">
-							@LOC("Space Pages")
-							<FluentIcon Value="@TfConstants.PageIcon" Slot="start" />
-						</FluentMenuItem>
-					</FluentMenu>
+					<TfSpaceActions/>
 				</div>
 			</div>
 		</Toolbar>
@@ -69,7 +38,7 @@
 			@if (_menu.Count == 0 && _activeTab == TfSpaceNavigationActiveTab.Nodes)
 			{
 				<div style="padding-left:5px;padding-top:5px">@LOC("No pages found in the space")</div>
-				<FluentButton Appearance="@Appearance.Outline" OnClick="_addNode" Style="margin-top:1rem;">
+				<FluentButton Appearance="@Appearance.Outline" OnClick="_addPage" Style="margin-top:1rem;">
 					<FluentIcon Slot="start" Value="@TfConstants.AddIcon" />
 					@LOC("Create Page")
 				</FluentButton>

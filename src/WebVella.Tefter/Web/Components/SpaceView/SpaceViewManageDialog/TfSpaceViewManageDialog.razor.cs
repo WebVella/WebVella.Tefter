@@ -177,7 +177,17 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		else if (_selectedDataset is not null)
 		{
 			if (_form.AddDatasetColumns)
-				_generatedColumns.AddRange(_selectedDataset.Columns.Select(x => x));
+			{
+				if (_selectedDataset.Columns.Count > 0)
+				{
+					_generatedColumns.AddRange(_selectedDataset.Columns.Select(x => x));
+				}
+				else if (TfAppState.Value.AllDataProviders.Any(x => x.Id == _selectedDataset.DataProviderId))
+				{
+					var dataProvider = TfAppState.Value.AllDataProviders.Single(x => x.Id == _selectedDataset.DataProviderId);
+					_generatedColumns.AddRange(dataProvider.Columns.Select(x => x.DbName));
+				}
+			}
 		}
 	}
 

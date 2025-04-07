@@ -26,6 +26,32 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		_activeTab = (Navigator.GetEnumFromQuery<TfSpaceViewManageTab>(TfConstants.TabQueryName, TfSpaceViewManageTab.Columns).Value).ToString();
 	}
 
+	private async Task _deleteSpaceView()
+	{
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space view deleted?")))
+			return;
+		try
+		{
+			UC.DeleteSpaceView(TfAppState.Value.SpaceView.Id);
+
+			ToastService.ShowSuccess(LOC("Space view deleted"));
+
+			if (TfAppState.Value.SpaceViewList.Count > 0)
+				Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
+			else
+				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			await InvokeAsync(StateHasChanged);
+		}
+
+	}
+
 	private async Task _editSpaceView()
 	{
 

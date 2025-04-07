@@ -68,10 +68,10 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		#endregion
 
 		#region << Init SpaceView>>
-		newAppState = newAppState with { Route = newAppState.Route with {SpaceViewId = options.SpaceViewId }};
+		newAppState = newAppState with { Route = newAppState.Route with { SpaceViewId = options.SpaceViewId } };
 		#endregion
 
-	
+
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
@@ -135,7 +135,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 			optionsJson = Context.ComponentOptionsJson;
 			_options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(optionsJson);
 			//When cannot node has json from another page type
-			if(_options is null) _options = new TfSpaceViewPageComponentOptions();
+			if (_options is null) _options = new TfSpaceViewPageComponentOptions();
 
 			if (_options.SpaceViewId is not null)
 				_optionsExistingSpaceView = TfAppState.Value.SpaceViewList.FirstOrDefault(x => x.Id == _options.SpaceViewId);
@@ -250,7 +250,16 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		else if (_optionsDataset is not null)
 		{
 			if (_options.AddDatasetColumns)
-				_generatedColumns.AddRange(_optionsDataset.Columns.Select(x => x));
+			{
+				if (_optionsDataset.Columns.Count > 0)
+				{
+					_generatedColumns.AddRange(_optionsDataset.Columns.Select(x => x));
+				}
+				else if(TfAppState.Value.AllDataProviders.Any(x=> x.Id == _optionsDataset.DataProviderId)){ 
+					var dataProvider = TfAppState.Value.AllDataProviders.Single(x=> x.Id == _optionsDataset.DataProviderId);
+					_generatedColumns.AddRange(dataProvider.Columns.Select(x => x.DbName));
+				}
+			}
 		}
 	}
 

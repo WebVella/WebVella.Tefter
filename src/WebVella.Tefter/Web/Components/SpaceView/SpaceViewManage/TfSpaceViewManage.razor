@@ -36,6 +36,10 @@ else
 				<TfCard>
 					<TitleTemplate>
 						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+							<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceView">
+								@LOC("Delete")
+								<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
+							</FluentButton>
 							<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpaceView">
 								@LOC("Edit")
 								<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />

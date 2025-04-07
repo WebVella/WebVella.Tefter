@@ -10,38 +10,7 @@
 						ImmediateDelay="500" Value=@search ValueChanged="onSearch" AutoComplete="off"/>
 				</div>
 				<div class="tf-sidetoolbar__actions">
-					<FluentButton Id="space-settings" Title="space actions"
-								  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
-						<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-					</FluentButton>
-					<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
-						<FluentMenuItem OnClick="onManageSpaceClick">
-							@LOC("Manage Space")
-							<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-						</FluentMenuItem>
-						<FluentMenuItem OnClick="onDeleteSpaceClick">
-							@LOC("Delete Space")
-							<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
-						</FluentMenuItem>
-						<FluentDivider></FluentDivider>
-						<FluentMenuItem OnClick="onAddClick">
-							@LOC("Create Dataset")
-							<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-						</FluentMenuItem>
-						<FluentDivider></FluentDivider>
-						<FluentMenuItem OnClick="onDataListClick">
-							@LOC("Space Data")
-							<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-						</FluentMenuItem>
-						<FluentMenuItem OnClick="onViewsListClick">
-							@LOC("Space Views")
-							<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-						</FluentMenuItem>
-						<FluentMenuItem OnClick="onPageListClick">
-							@LOC("Space Pages")
-							<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
-						</FluentMenuItem>
-					</FluentMenu>
+					<TfSpaceActions />
 				</div>
 			</div>
 		</Toolbar>

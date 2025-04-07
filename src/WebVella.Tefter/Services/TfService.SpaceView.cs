@@ -339,7 +339,16 @@ public partial class TfService : ITfService
 					{
 						if (spaceViewExt.AddDataSetColumns)
 						{
-							foreach (var dbName in spaceData.Columns)
+							var columnsList = new List<string>();
+							if (spaceData.Columns.Count > 0)
+							{
+								columnsList = spaceData.Columns;
+							}
+							else
+							{
+								columnsList = dataprovider.Columns.Select(x => x.DbName).ToList();
+							}
+							foreach (var dbName in columnsList)
 							{
 								TfDatabaseColumnType? dbType = dataprovider.Columns.FirstOrDefault(x => x.DbName == dbName)?.DbType;
 

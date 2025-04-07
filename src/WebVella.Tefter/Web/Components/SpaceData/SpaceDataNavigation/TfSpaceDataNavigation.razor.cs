@@ -70,55 +70,6 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		}
 	}
 
-	private async Task onDeleteSpaceClick()
-	{
-		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this space deleted?")))
-			return;
-
-		try
-		{
-			UC.DeleteSpace(TfAppState.Value.Space.Id);
-			var spaceList = TfAppState.Value.CurrentUserSpaces.Where(x => x.Id != TfAppState.Value.Space.Id).ToList();
-			Dispatcher.Dispatch(new SetAppStateAction(
-								component: this,
-								state: TfAppState.Value with
-								{
-									CurrentUserSpaces = spaceList
-								}
-							));
-			Navigator.NavigateTo(TfConstants.HomePageUrl);
-		}
-		catch (Exception ex)
-		{
-			ProcessException(ex);
-		}
-		finally
-		{
-			await InvokeAsync(StateHasChanged);
-		}
-	}
-	private void onManageSpaceClick()
-	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id));
-	}
-	private void onDataListClick()
-	{
-		Guid? spaceDataId = null;
-		if (TfAppState.Value.SpaceDataList.Count > 0) spaceDataId = TfAppState.Value.SpaceDataList[0].Id;
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, spaceDataId));
-	}
-	private void onViewsListClick()
-	{
-		Guid? spaceViewId = null;
-		if (TfAppState.Value.SpaceViewList.Count > 0) spaceViewId = TfAppState.Value.SpaceViewList[0].Id;
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, spaceViewId));
-	}
-
-	private void onPageListClick()
-	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceNodePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.Space.DefaultNodeId));
-	}
-
 	private void onSearch(string value)
 	{
 		search = value;
