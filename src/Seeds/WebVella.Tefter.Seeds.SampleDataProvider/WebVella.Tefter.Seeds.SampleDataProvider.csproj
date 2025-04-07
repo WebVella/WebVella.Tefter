@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="WebVella.Tefter" Version="0.0.4" />
+		<PackageReference Include="WebVella.Tefter" Version="0.0.5" />
 		<PackageReference Include="Bogus" Version="35.6.2" />
 	</ItemGroup>
 
