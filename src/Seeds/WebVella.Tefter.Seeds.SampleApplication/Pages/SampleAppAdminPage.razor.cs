@@ -5,17 +5,32 @@ public partial class SampleAppAdminPage : TfBaseComponent, ITucAuxDataUseCompone
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
 
-	public Guid Id { get; init; } = new Guid("afc65ec6-5e97-4149-aa0a-b39eb4c6561a");
-	public int PositionRank { get; init; } = 1000;
-	public string Name { get; init; } = "Sample App";
-	public string Description { get; init; } = "";
-	public string FluentIconName { get; init; } = "Album";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
-		new TfRegionComponentScope(null,new Guid("0153dbe3-ba62-4df4-8f9d-d0ed889c1444"))
-	};
+	//Id of the component
+	public Guid Id { get; init; } 
+	//Position ranking
+	public int PositionRank { get; init; }
+	//Human readable name of the component
+	public string Name { get; init; }
+	//Human readable name of the component
+	public string Description { get; init; }
+	public string FluentIconName { get; init; }
+	public List<TfRegionComponentScope> Scopes { get; init; }
 	[Parameter]
 	public TfAdminPageComponentContext Context { get; init; }
 
+	public SampleAppAdminPage() : base()
+	{
+		var componentId = new Guid("afc65ec6-5e97-4149-aa0a-b39eb4c6561a");
+		Id = componentId;
+		PositionRank = 1000;
+		Name = "Sample App";
+		Description = "";
+		FluentIconName = "Album";
+		Scopes = new List<TfRegionComponentScope>(){
+			new TfRegionComponentScope(null,componentId)
+		};
+
+	}
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
 		TfAppState newAppState,

@@ -282,9 +282,19 @@ public partial class TfSpaceNavigation : TfBaseComponent
 
 	private async Task<List<string>> _getExpandedNodesFromStorage()
 	{
-		var result = await ProtectedLocalStorage.GetAsync<List<string>>(TfConstants.SpaceViewOpenedGroupsLocalStorageKey);
-		if (result.Success) return result.Value;
-		return new List<string>();
+		try
+		{
+			var result = await ProtectedLocalStorage.GetAsync<List<string>>(TfConstants.SpaceViewOpenedGroupsLocalStorageKey);
+			if (result.Success) return result.Value;
+			return new List<string>();
+		}
+		catch
+		{
+			//if decryption fail delete Protected LocalStoravge
+			await ProtectedLocalStorage.DeleteAsync(TfConstants.SpaceViewOpenedGroupsLocalStorageKey);
+			return new List<string>();
+		}
+
 	}
 
 	private async Task<List<string>> _addExpandedNodesToStorage(string itemId)

@@ -10,7 +10,7 @@ public partial class TfSelectColor : TfBaseComponent
 
 	private List<OfficeColor> _colors
 	{
-		get => Enum.GetValues<OfficeColor>().ToList();
+		get => Enum.GetValues<OfficeColor>().Where(x=> x != OfficeColor.Default).ToList();
 	}
 
 	private void _onOpenChanged(bool isOpened)
