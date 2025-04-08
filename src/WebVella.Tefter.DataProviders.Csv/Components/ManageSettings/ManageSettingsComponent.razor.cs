@@ -9,17 +9,17 @@ namespace WebVella.Tefter.DataProviders.Csv.Components;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.Csv.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.Csv")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfRegionComponent<TfDataProviderManageSettingsComponentContext>
+	ITfRegionComponent<TfDataProviderManageSettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("8edf466e-74d1-42f0-b166-8df2c4e3e1b9");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "CSV Data Provider Manage Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(CsvDataProvider),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(CsvDataProvider),null)
 	};
-	[Parameter] public TfDataProviderManageSettingsComponentContext Context { get; init; }
+	[Parameter] public TfDataProviderManageSettingsScreenRegion Context { get; init; }
 
 	private string _advancedSettings
 	{

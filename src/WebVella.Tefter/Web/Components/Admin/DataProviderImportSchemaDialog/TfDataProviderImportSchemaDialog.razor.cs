@@ -14,7 +14,6 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private string _activeTab = "new";
-	private bool _selectRedraw = false;
 
 	private List<TucDataProviderColumn> _newColumns = new List<TucDataProviderColumn>();
 	private List<TucDataProviderColumn> _existingColumns = new List<TucDataProviderColumn>();

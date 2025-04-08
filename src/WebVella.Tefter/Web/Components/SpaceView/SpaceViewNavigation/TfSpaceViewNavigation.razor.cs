@@ -5,10 +5,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 {
 	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
-	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
-	[Inject] private AppStateUseCase UC { get; set; }
 
-	private bool _settingsMenuVisible = false;
 	private string search = null;
 	protected override void OnInitialized()
 	{

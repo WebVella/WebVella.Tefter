@@ -50,11 +50,9 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 
 	#region << Private properties >>
-	private string contextKeyInAuxDataState = "AssetsPageContext";
 	private string optionsJson = "{}";
 	private AssetsPageComponentPageComponentOptions _options = new();
 	private AssetsFolder _optionsFolder = null;
-	private Asset _optionsAsset = null;
 	private List<Asset> _optionsFolderAssets = new();
 	private List<AssetsFolder> _folders = new();
 

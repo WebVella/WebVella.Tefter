@@ -11,11 +11,7 @@ public partial class TfValidationMessage : ComponentBase
 	private string _cssStyle => $"{Style}";
 	private List<ValidationError> _errors
 	{
-		get
-		{
-			var list = (Errors ?? new List<ValidationError>()).Where(x => x.PropertyName == Field && x.Index == Index).ToList();
-			return list;
-		}
+		get => (Errors ?? new List<ValidationError>()).Where(x => x.PropertyName == Field && x.Index == Index).ToList();
 	}
 
 }

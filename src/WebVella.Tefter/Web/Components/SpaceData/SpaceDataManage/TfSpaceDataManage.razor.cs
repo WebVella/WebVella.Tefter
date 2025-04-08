@@ -8,7 +8,6 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	public TucDataProvider SelectedProvider = null;
 
 	private string _error = string.Empty;
-	private string _activeTab = "columns";
 	private bool _isSubmitting = false;
 	private TucSpaceData _form = new();
 

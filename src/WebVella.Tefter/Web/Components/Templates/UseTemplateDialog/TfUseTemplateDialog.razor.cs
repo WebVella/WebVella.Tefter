@@ -9,14 +9,13 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private string _error = string.Empty;
 	private string _search = null;
 	private bool _loading = true;
-	private bool _stepLoading = false;
 	private List<TucTemplate> _templates = new();
 	private TucTemplate _selectedTemplate = null;
 	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
 	private TfTemplateProcessorResultPreviewComponentContext _resultPreviewComponentContext = null;
-	private TfTemplateProcessorResultComponentContext _resultComponentContext = null;
-	private TfRegionComponentScope _dynamicComponentScope = null;
+	private TfTemplateProcessorResultScreenRegion _resultComponentContext = null;
+	private TfScreenRegionScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -155,7 +154,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 			ValidatePreviewResult = null,
 
 		};
-		_resultComponentContext = new TfTemplateProcessorResultComponentContext
+		_resultComponentContext = new TfTemplateProcessorResultScreenRegion
 		{
 			Template = null,
 			SelectedRowIds = Content.SelectedRowIds,
@@ -165,7 +164,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 			Preview = null
 		};
 		_dynamicComponentScope = _processor is not null 
-			? new TfRegionComponentScope(_processor.GetType(),null)
+			? new TfScreenRegionScope(_processor.GetType(),null)
 			: null;
 	}
 

@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.SpaceView.UseTemplateSelectorAction.TfUseTemplateSelectorAction", "WebVella.Tefter")]
 
-public partial class TfUseTemplateSelectorAction : TfBaseComponent, ITfRegionComponent<TfSpaceViewSelectorActionComponentContext>
+public partial class TfUseTemplateSelectorAction : TfBaseComponent, ITfRegionComponent<TfSpaceViewSelectorActionScreenRegion>
 {
 	//Injects
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -12,12 +12,11 @@ public partial class TfUseTemplateSelectorAction : TfBaseComponent, ITfRegionCom
 	public string Name { get; init;} = "Use template with selection";
 	public string Description { get; init;} = "";
 	public string FluentIconName { get; init; } =  "CalendarTemplate";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new ();
+	public List<TfScreenRegionScope> Scopes { get; init; } = new ();
 
 	[Parameter] 
-	public TfSpaceViewSelectorActionComponentContext Context { get; init; }
+	public TfSpaceViewSelectorActionScreenRegion Context { get; init; }
 
-	private IDialogReference _dialog;
 	private async Task _clickHandler()
 	{
 		if (TfAppState.Value.SelectedDataRows.Count == 0

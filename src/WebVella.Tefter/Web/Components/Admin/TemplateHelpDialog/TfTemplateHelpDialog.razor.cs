@@ -9,8 +9,8 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 	private string _error = string.Empty;
 
 	private ITfTemplateProcessor _processor = null;
-	private TfTemplateProcessorHelpComponentContext _dynamicComponentContext = null;
-	private TfRegionComponentScope _dynamicComponentScope = null;
+	private TfTemplateProcessorHelpScreenRegion _dynamicComponentContext = null;
+	private TfScreenRegionScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -39,10 +39,10 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 	{
 		_processor = _getProcessor();
 
-		_dynamicComponentContext = new TfTemplateProcessorHelpComponentContext
+		_dynamicComponentContext = new TfTemplateProcessorHelpScreenRegion
 		{
 		};
-		_dynamicComponentScope = new TfRegionComponentScope(_processor.GetType(),null);
+		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(),null);
 	}
 
 

@@ -60,7 +60,6 @@ public partial class TfMetaService : ITfMetaService
 
 				ScanAndRegisterSpaceNodeComponents(type);
 				ScanAndRegisterDataProvidersTypes(type);
-				ScanAndRegisterScreenRegionComponents(type);
 				ScanAndRegisterSpaceViewColumnTypes(type);
 				ScanAndRegisterApplications(type);
 				ScanAndRegisterRegionComponents(type);

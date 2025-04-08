@@ -6,12 +6,6 @@ public partial class TfSpaceManage : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private bool _submitting = false;
-	private string _selectedName = null;
-	private TfSpaceNodeType _selectedType = TfSpaceNodeType.Page;
-	private TucSpaceNode _selectedParent = null;
-
-	private string _icon = "Document";
-
 	private async Task _editSpace()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(

@@ -12,7 +12,6 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 	private string _error = string.Empty;
 	private bool _isLoading = true;
 
-	private Asset _activeThread = null;
 	private AssetsFolder _folder = null;
 	private Guid? _skValue = null;
 	private Guid _rowId = Guid.Empty;

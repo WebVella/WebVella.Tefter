@@ -8,10 +8,9 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	private ITfTemplateProcessor _processor = null;
 	private List<TfSpaceDataAsOption> _spaceDataAll = new();
 	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
-	private bool _loading = true;
 
-	private TfTemplateProcessorDisplaySettingsComponentContext _dynamicComponentContext = null;
-	private TfRegionComponentScope _dynamicComponentScope = null;
+	private TfTemplateProcessorDisplaySettingsScreenRegion _dynamicComponentContext = null;
+	private TfScreenRegionScope _dynamicComponentScope = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -35,7 +34,6 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		{
 			_spaceDataAll = UC.GetSpaceDataOptionsForTemplate();
 			_recalcSpaceDataOptions();
-			_loading = false;
 			await InvokeAsync(StateHasChanged);
 		}
 
@@ -63,11 +61,11 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		if (TfAppState.Value.AdminTemplateDetails is null)
 			throw new Exception("Template not found");
 
-		_dynamicComponentContext = new TfTemplateProcessorDisplaySettingsComponentContext
+		_dynamicComponentContext = new TfTemplateProcessorDisplaySettingsScreenRegion
 		{
 			Template = TfAppState.Value.AdminTemplateDetails
 		};
-		_dynamicComponentScope = new TfRegionComponentScope(_processor.GetType(),null);
+		_dynamicComponentScope = new TfScreenRegionScope(_processor.GetType(),null);
 	}
 
 	private async Task onUpdateClick()

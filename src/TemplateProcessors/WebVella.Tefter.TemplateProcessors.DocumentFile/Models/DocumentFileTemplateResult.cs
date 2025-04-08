@@ -8,7 +8,7 @@ public class DocumentFileTemplateResult : ITfTemplateResult
 	public List<DocumentFileTemplateResultItem> Items { get; set; } = new();
 	public List<ValidationError> Errors { get; set; } = new();
 
-	public string ZipFilename { get; set; } = null;
+	public string? ZipFilename { get; set; } = null;
 	public Guid? ZipBlobId { get; set; } = null;
-	public string ZipDownloadUrl { get; set; } = null;
+	public string? ZipDownloadUrl { get; set; } = null;
 }

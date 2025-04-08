@@ -4,19 +4,21 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("8eed6b14-101b-4fb9-863c-6e520b0196d8");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Document Template Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(DocumentFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+	[Parameter] public TfTemplateProcessorResultScreenRegion Context { get; init; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-	private DocumentFileTemplateResult _result = null;
+	private DocumentFileTemplateResult? _result = null;
 	private bool _isLoading = true;
 	private bool _showDetails = false;
 

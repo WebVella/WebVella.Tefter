@@ -11,7 +11,6 @@ public partial class TfAdminPagesNavigation : TfBaseComponent
 	}
 
 	private string search = null;
-	private int _stringLimit = 30;
 	private List<TucMenuItem> _getMenu()
 	{
 		search = search?.Trim().ToLowerInvariant();

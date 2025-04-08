@@ -4,17 +4,17 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("8eed6b14-101b-4fb9-863c-6e520b0196d8");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Excel Template Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(ExcelFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(ExcelFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegion Context { get; init; }
 
 	private ExcelFileTemplateResult _result = null;
 	private bool _isLoading = true;

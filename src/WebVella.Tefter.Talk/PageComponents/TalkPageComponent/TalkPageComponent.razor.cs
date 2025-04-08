@@ -50,7 +50,6 @@ public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 
 	#region << Private properties >>
-	private string contextKeyInAuxDataState = "TalkPageContext";
 	private string optionsJson = "{}";
 	private TalkPageComponentPageComponentOptions _options { get; set; } = new();
 	private TalkChannel _optionsChannel { get; set; } = null;

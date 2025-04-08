@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public record TfRegionComponentScope
+public record TfScreenRegionScope
 {
 	/// <summary>
 	/// matched towards the type of the presented item. Null - for no restriction
@@ -12,9 +12,9 @@ public record TfRegionComponentScope
 	/// </summary>
 	public Guid? ComponentId { get; private set; } = null;
 
-	public TfRegionComponentScope(){}
+	public TfScreenRegionScope(){}
 
-	public TfRegionComponentScope(Type itemType, Guid? componentId){
+	public TfScreenRegionScope(Type itemType, Guid? componentId){
 		ItemType = itemType;
 		ComponentId = componentId;
 	}

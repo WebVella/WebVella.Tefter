@@ -5,7 +5,7 @@ public partial class TfAdminFileRepository : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
-	FluentInputFile? fileUploader = default!;
+	FluentInputFile fileUploader = default!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
 	private string _search = null;

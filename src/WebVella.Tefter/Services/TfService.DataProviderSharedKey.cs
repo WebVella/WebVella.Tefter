@@ -261,40 +261,41 @@ public partial class TfService : ITfService
 	public TfDataProvider DeleteDataProviderSharedKey(
 		Guid id)
 	{
-		try { 
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var sharedKey = GetDataProviderSharedKey(id);
+			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			{
+				var sharedKey = GetDataProviderSharedKey(id);
 
-			if (sharedKey is null)
-				throw new TfException("Failed to delete data provider shared key cause not found");
+				if (sharedKey is null)
+					throw new TfException("Failed to delete data provider shared key cause not found");
 
-			var success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
+				var success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
 
-			if (!success)
-				throw new TfDboServiceException("Delete<TfDataProviderSharedKeyDbo>");
+				if (!success)
+					throw new TfDboServiceException("Delete<TfDataProviderSharedKeyDbo>");
 
-			var provider = GetDataProvider(sharedKey.DataProviderId);
-			if (provider is null)
-				throw new TfException("Failed to create new data provider shared key");
+				var provider = GetDataProvider(sharedKey.DataProviderId);
+				if (provider is null)
+					throw new TfException("Failed to create new data provider shared key");
 
 
-			string providerTableName = $"dp{provider.Index}";
+				string providerTableName = $"dp{provider.Index}";
 
-			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
 
-			dbBuilder
-				.WithTableBuilder(providerTableName)
-				.WithColumnsBuilder()
-				.Remove($"tf_sk_{sharedKey.DbName}_id")
-				.Remove($"tf_sk_{sharedKey.DbName}_version");
+				dbBuilder
+					.WithTableBuilder(providerTableName)
+					.WithColumnsBuilder()
+					.Remove($"tf_sk_{sharedKey.DbName}_id")
+					.Remove($"tf_sk_{sharedKey.DbName}_version");
 
-			_dbManager.SaveChanges(dbBuilder);
+				_dbManager.SaveChanges(dbBuilder);
 
-			scope.Complete();
+				scope.Complete();
 
-			return provider;
-		}
+				return provider;
+			}
 		}
 		catch (Exception ex)
 		{
@@ -302,15 +303,15 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public async Task UpdateSharedKeysVersionAsync(CancellationToken stoppingToken)
+	public Task UpdateSharedKeysVersionAsync(CancellationToken stoppingToken)
 	{
 		try
 		{
 			var dataProviders = GetDataProviders();
 			foreach (var provider in dataProviders)
 			{
-				if(stoppingToken.IsCancellationRequested)
-					return;
+				if (stoppingToken.IsCancellationRequested)
+					return Task.CompletedTask;
 
 				var sharedKeys = GetDataProviderSharedKeys(provider.Id);
 
@@ -325,13 +326,13 @@ public partial class TfService : ITfService
 
 				//select 100 rows
 				string sql = "SELECT tf_id FROM " + $"dp{provider.Index}" +
-					" WHERE " + string.Join(" OR ", conditions) + 
+					" WHERE " + string.Join(" OR ", conditions) +
 					" LIMIT 100";
 
 				while (true)
 				{
 					if (stoppingToken.IsCancellationRequested)
-						return;
+						return Task.CompletedTask;
 
 					var dt = _dbService.ExecuteSqlQueryCommand(sql);
 
@@ -342,7 +343,7 @@ public partial class TfService : ITfService
 						tfIds.Add(tfId);
 					}
 
-					if(tfIds.Count == 0)
+					if (tfIds.Count == 0)
 						break;
 
 					var dataTable = QueryDataProvider(provider, tfIds);
@@ -364,6 +365,7 @@ public partial class TfService : ITfService
 					}
 				}
 			}
+			return Task.CompletedTask;
 		}
 		catch (Exception ex)
 		{

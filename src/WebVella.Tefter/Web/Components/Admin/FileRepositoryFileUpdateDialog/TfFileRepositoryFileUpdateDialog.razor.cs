@@ -14,7 +14,7 @@ public partial class TfFileRepositoryFileUpdateDialog : TfFormBaseComponent, IDi
 	private FluentInputFileEventArgs _upload = null;
 	private string _uploadId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 
-	FluentInputFile? fileUploader = default!;
+	FluentInputFile fileUploader = default!;
 	int progressPercent = 0;
 	List<FluentInputFileEventArgs> Files = new();
 

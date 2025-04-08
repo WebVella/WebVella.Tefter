@@ -16,7 +16,6 @@ public partial class ResultComponent : TfBaseComponent,
 
 	private SampleTemplateResult _result = null;
 	private bool _isLoading = true;
-	private bool _showDetails = false;
 	private SampleTemplateResultItem _form = new();
 	private Dictionary<Guid, int> _itemPositionDict = new();
 	private int _itemPosition = 1;

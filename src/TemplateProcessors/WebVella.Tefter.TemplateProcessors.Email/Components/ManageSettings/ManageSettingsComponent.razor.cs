@@ -6,17 +6,17 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("0a15ce68-12af-4fae-a464-10bf5c0a1c9b");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template Settings Manage";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(EmailTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorManageSettingsComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegion Context { get; init; }
 
 	private bool _loading = true;
 	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();

@@ -1,16 +1,16 @@
 ﻿namespace WebVella.Tefter.Assets.Pages;
 
 public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent, 
-	ITfRegionComponent<TfAdminPageComponentContext>
+	ITfRegionComponent<TfAdminPageScreenRegion>
 {
 	public Guid Id { get; init; }
 	public int PositionRank { get; init; }
 	public string Name { get; init;}
 	public string Description { get; init;}
 	public string FluentIconName { get; init; }
-	public List<TfRegionComponentScope> Scopes { get; init; }
+	public List<TfScreenRegionScope> Scopes { get; init; }
 	[Parameter] 
-	public TfAdminPageComponentContext Context { get; init; }
+	public TfAdminPageScreenRegion Context { get; init; }
 
 	public AssetsAdminPage() : base()
 	{
@@ -20,8 +20,8 @@ public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent,
 		Name = "Assets Folders";
 		Description = "";
 		FluentIconName = "Folder";
-		Scopes = new List<TfRegionComponentScope>(){
-			new TfRegionComponentScope(null,componentId)
+		Scopes = new List<TfScreenRegionScope>(){
+			new TfScreenRegionScope(null,componentId)
 		};		
 	}
 
@@ -47,7 +47,7 @@ public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent,
 			var sharedColumns = tfService.GetSharedColumns();
 			newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = sharedColumns.OrderBy(x => x.DbName).ToList();
 		}
-		catch (Exception ex)
+		catch
 		{
 			newAuxDataState.Data[AssetsConstants.ASSETS_APP_SHARED_COLUMNS_LIST_DATA_KEY] = new List<TfSharedColumn>();
 		}

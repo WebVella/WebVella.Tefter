@@ -2,8 +2,8 @@
 public partial class TfRegionComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
-	[Parameter] public TfRegionComponentScope Scope { get; set; }
-	[Parameter] public TfBaseRegionComponentContext Context { get; set; }
+	[Parameter] public TfScreenRegionScope Scope { get; set; }
+	[Parameter] public TfBaseScreenRegion Context { get; set; }
 	[Parameter] public string Placeholder { get; set; } = null;
 	[Parameter] public int? Count { get; set; } = null;
 
@@ -25,12 +25,12 @@ public partial class TfRegionComponent
 
 			if (Count is not null)
 			{
-				return UC.GetDynamicComponentsMetaForContext(
+				return UC.GetRegionComponentsMetaForContext(
 					context: Context.GetType(),
 					scope: Scope
 				).Take(Count.Value).ToList().AsReadOnly();
 			}
-			return UC.GetDynamicComponentsMetaForContext(
+			return UC.GetRegionComponentsMetaForContext(
 				context: Context.GetType(),
 				scope: Scope
 			);

@@ -12,7 +12,6 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 		SidebarExpanded.Select(x => x.SidebarExpanded);
 	}
 
-	private bool _settingsMenuVisible = false;
 	private string search = null;
 
 	private List<TucMenuItem> _getMenu()

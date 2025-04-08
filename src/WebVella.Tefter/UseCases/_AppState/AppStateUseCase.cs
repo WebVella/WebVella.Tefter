@@ -56,7 +56,7 @@ internal partial class AppStateUseCase
 		return (appState, auxDataState);
 	}
 
-	internal virtual ReadOnlyCollection<TfRegionComponentMeta> GetDynamicComponentsMetaForContext(Type context, TfRegionComponentScope scope = null){ 
+	internal virtual ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMetaForContext(Type context, TfScreenRegionScope scope = null){ 
 		return _metaService.GetRegionComponentsMeta(
 			context: context,
 			scope: scope);

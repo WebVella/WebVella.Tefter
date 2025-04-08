@@ -9,13 +9,4 @@ public partial class TfAdminPagesContent : TfBaseComponent
 		base.OnInitialized();
 		SidebarExpanded.Select(x => x.SidebarExpanded);
 	}
-	private Dictionary<string, object> _getComponentContext()
-	{
-		var componentData = new Dictionary<string, object>();
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TucScreenRegionComponentContext{
-			Hash = Guid.NewGuid(),
-		};
-
-		return componentData;
-	}
 }

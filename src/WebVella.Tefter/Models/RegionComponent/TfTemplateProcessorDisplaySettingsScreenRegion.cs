@@ -3,7 +3,7 @@
 /// <summary>
 /// Context need to be included in the ScanAndRegisterRegionComponents method as a case in order to be discovered
 /// </summary>
-public class TfDataProviderDisplaySettingsComponentContext : TfBaseRegionComponentContext
+public class TfTemplateProcessorDisplaySettingsScreenRegion : TfBaseScreenRegion
 {
-	public string SettingsJson { get; set; } = "{}";
+	public TucTemplate Template { get; set; }
 }

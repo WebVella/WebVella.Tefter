@@ -2,17 +2,19 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("e403ba40-0d75-4ee5-b978-d0490cd8c374");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Document Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(DocumentFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegion Context { get; init; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 	private DocumentFileTemplateSettings _form = new();
 	private string _downloadUrl
 	{
@@ -22,16 +24,14 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 			{
 				return String.Format(TfConstants.BlobDownloadUrl, _form.TemplateFileBlobId, _form.FileName);
 			}
-			return null;
+			return String.Empty;
 		}
 	}
-	private bool _fileLoading = false;
-
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
 		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
-		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson);
+		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
 	}
 
 	protected override void OnParametersSet()
@@ -39,7 +39,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 		base.OnParametersSet();
 		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson);
+			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
 		}
 	}
 

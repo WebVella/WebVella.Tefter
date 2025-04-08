@@ -12,8 +12,8 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	public string Name { get; init; } = "Excel Template Result Preview";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(ExcelFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(ExcelFileTemplateProcessor),null)
 	};
 	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
 

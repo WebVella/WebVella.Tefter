@@ -3,7 +3,7 @@
 public partial interface ITfMetaService
 {
 	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta();
-	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfRegionComponentScope scope = null);
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfScreenRegionScope scope = null);
 }
 
 public partial class TfMetaService : ITfMetaService
@@ -19,7 +19,7 @@ public partial class TfMetaService : ITfMetaService
 			.ToList()
 			.AsReadOnly();
 	}
-	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfRegionComponentScope scope = null)
+	public ReadOnlyCollection<TfRegionComponentMeta> GetRegionComponentsMeta(Type context = null, TfScreenRegionScope scope = null)
 	{
 		var result = new List<TfRegionComponentMeta>();
 		foreach (var comp in _regionComponentMeta)
@@ -65,9 +65,9 @@ public partial class TfMetaService : ITfMetaService
 
 		#region << Try Get meta >>
 		{
-			if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfAdminPageComponentContext)))
+			if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfAdminPageScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfAdminPageComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfAdminPageScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -79,9 +79,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfDataProviderManageSettingsComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfDataProviderManageSettingsScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -93,9 +93,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderDisplaySettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderDisplaySettingsScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfDataProviderDisplaySettingsComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -107,9 +107,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfPageComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfPageScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfPageComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfPageScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -121,9 +121,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeManageComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeManageScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfSpaceNodeManageComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfSpaceNodeManageScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -135,9 +135,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeViewComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeViewScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfSpaceNodeViewComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfSpaceNodeViewScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -149,9 +149,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewSelectorActionComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewSelectorActionScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfSpaceViewSelectorActionComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfSpaceViewSelectorActionScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -163,9 +163,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfSpaceViewToolBarActionComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfSpaceViewToolBarActionScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -177,9 +177,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewToolBarActionScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfSpaceViewToolBarActionComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfSpaceViewToolBarActionScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -191,9 +191,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorHelpComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorHelpScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfTemplateProcessorHelpComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfTemplateProcessorHelpScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -205,9 +205,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorManageSettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorManageSettingsScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -219,9 +219,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfTemplateProcessorResultComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfTemplateProcessorResultScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -247,9 +247,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorDisplaySettingsComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorDisplaySettingsScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,
@@ -270,7 +270,7 @@ public partial class TfMetaService : ITfMetaService
 		}
 	}
 
-	private static bool ScopesMatch(TfRegionComponentScope requestedScope, TfRegionComponentScope compScope)
+	private static bool ScopesMatch(TfScreenRegionScope requestedScope, TfScreenRegionScope compScope)
 	{
 		if(requestedScope is null || compScope is null) return true;
 		if(requestedScope.ComponentId is null && requestedScope.ItemType is null) return true;

@@ -6,8 +6,6 @@ public partial class TfHeaderNavigation : TfBaseComponent
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private Guid? _opendedNode = null;
-	private Guid? _activeContextMenuId = null;
-
 	private void _toggleMenu(Guid id, bool? isOpen = null)
 	{
 		if (isOpen is null)

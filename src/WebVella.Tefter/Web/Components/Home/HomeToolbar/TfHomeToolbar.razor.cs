@@ -7,7 +7,6 @@ public partial class TfHomeToolbar : TfBaseComponent
 	[Parameter] public EventCallback<string> OnSearch { get; set; }
 	[Parameter] public EventCallback<string> OnFilterToggle { get; set; }
 
-	private List<TucScreenRegionComponentMeta> _regionComponents = new();
 	private async Task _searchChanged(string value) => await OnSearch.InvokeAsync(value);
 
 	private async Task _toggleFilter(string propName) => await OnFilterToggle.InvokeAsync(propName);

@@ -2,22 +2,21 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("ac4317e2-ef23-46b8-875d-c763e50a5d8e");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text Content Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(TextContentTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(TextContentTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegion Context { get; init; }
 
 
 	private TextContentTemplateResult _result = null;
 	private bool _isLoading = true;
-	private bool _showDetails = false;
 	private TextContentTemplateResultItem _form = new();
 	private Dictionary<Guid, int> _itemPositionDict = new();
 	private int _itemPosition = 1;

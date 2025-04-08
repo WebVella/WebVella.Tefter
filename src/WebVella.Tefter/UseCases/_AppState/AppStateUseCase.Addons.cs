@@ -10,8 +10,8 @@ internal partial class AppStateUseCase
 		{
 			newAppState = newAppState with
 			{
-				Pages = GetDynamicComponentsMetaForContext(
-					context: typeof(TfAdminPageComponentContext),
+				Pages = GetRegionComponentsMetaForContext(
+					context: typeof(TfAdminPageScreenRegion),
 					scope: null
 				)
 			};
@@ -20,8 +20,8 @@ internal partial class AppStateUseCase
 		{
 			newAppState = newAppState with
 			{
-				Pages = GetDynamicComponentsMetaForContext(
-					context: typeof(TfPageComponentContext),
+				Pages = GetRegionComponentsMetaForContext(
+					context: typeof(TfPageScreenRegion),
 					scope: null
 				)
 			};
@@ -44,25 +44,6 @@ internal partial class AppStateUseCase
 		}
 
 		return Task.FromResult((newAppState,newAuxDataState));
-	}
-
-	internal virtual List<TucScreenRegionComponentMeta> GetAddonComponents(TfScreenRegion? region = null)
-	{
-		var results = new List<TucScreenRegionComponentMeta>();
-		var componentMeta = _metaService.GetScreenRegionComponentsMeta(region);
-		foreach (var meta in componentMeta)
-		{
-			results.Add(new TucScreenRegionComponentMeta
-			{
-				Id = meta.Id,
-				Region = meta.ScreenRegion,
-				Position = meta.Position,
-				Name = meta.Name,
-				ComponentType = meta.ComponentType,
-				FluentIconName = meta.FluentIconName,
-			});
-		}
-		return results.OrderBy(x => x.Position).ThenBy(x => x.Name).ToList();
 	}
 
 	internal virtual ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodeComponents()

@@ -12,12 +12,14 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	public string Name { get; init; } = "Document Template Result Preview";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(DocumentFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-	private DocumentFileTemplatePreviewResult _preview = null;
+	private DocumentFileTemplatePreviewResult? _preview = null;
 	private bool _isLoading = true;
 	private List<ValidationError> _previewValidationErrors = new();
 	protected override void OnInitialized()

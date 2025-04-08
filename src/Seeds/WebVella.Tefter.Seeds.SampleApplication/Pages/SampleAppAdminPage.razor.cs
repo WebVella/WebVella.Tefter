@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleApplication.Pages;
 
-public partial class SampleAppAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageComponentContext>
+public partial class SampleAppAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageScreenRegion>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
@@ -14,9 +14,9 @@ public partial class SampleAppAdminPage : TfBaseComponent, ITucAuxDataUseCompone
 	//Human readable name of the component
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfRegionComponentScope> Scopes { get; init; }
+	public List<TfScreenRegionScope> Scopes { get; init; }
 	[Parameter]
-	public TfAdminPageComponentContext Context { get; init; }
+	public TfAdminPageScreenRegion Context { get; init; }
 
 	public SampleAppAdminPage() : base()
 	{
@@ -26,8 +26,8 @@ public partial class SampleAppAdminPage : TfBaseComponent, ITucAuxDataUseCompone
 		Name = "Sample App";
 		Description = "";
 		FluentIconName = "Album";
-		Scopes = new List<TfRegionComponentScope>(){
-			new TfRegionComponentScope(null,componentId)
+		Scopes = new List<TfScreenRegionScope>(){
+			new TfScreenRegionScope(null,componentId)
 		};
 	}
 

@@ -5,17 +5,19 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("51157e04-9849-48ec-9bf3-de31308c4b0c");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Document Template Manage Seettings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(DocumentFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorManageSettingsComponentContext Context { get; init; }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegion Context { get; init; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 	private DocumentFileTemplateSettings _form = new();
 	private string _downloadUrl
@@ -26,7 +28,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 			{
 				return String.Format(TfConstants.BlobDownloadUrl, _form.TemplateFileBlobId, _form.FileName);
 			}
-			return null;
+			return string.Empty;
 		}
 	}
 	private bool _fileLoading = false;
@@ -35,7 +37,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	{
 		base.OnInitialized();
 		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
-		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson);
+		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
 		Context.Validate = _validate;
 		base.InitForm(_form);
 	}
@@ -45,7 +47,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 		base.OnParametersSet();
 		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson);
+			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
 			base.InitForm(_form);
 		}
 	}

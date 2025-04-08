@@ -186,7 +186,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public async Task LoadIdsCacheAsync(
+	public Task LoadIdsCacheAsync(
 		CancellationToken stoppingToken)
 	{
 		int pageSize = 10000;
@@ -196,7 +196,7 @@ public partial class TfService : ITfService
 		do
 		{
 			if (stoppingToken.IsCancellationRequested)
-				return;
+				return Task.CompletedTask;
 
 			DataTable dt = GetKeysDataTable(lastId, pageSize);
 
@@ -213,6 +213,7 @@ public partial class TfService : ITfService
 			//_logger.LogDebug("Ids total loaded: " + loadedCount);
 
 		} while (rowsCount > 0);
+		return Task.CompletedTask;
 	}
 
 	private DataTable GetKeysDataTable(Guid? lastId = null, int pageSize = 1000)

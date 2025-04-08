@@ -23,7 +23,6 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 	private List<TfSpaceDataAsOption> _spaceDataOptions = new();
 	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
 	private TfSpaceDataAsOption _spaceDataOption = null;
-	private bool _loading = true;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -83,7 +82,6 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 		{
 			_spaceDataAll = UC.GetSpaceDataOptionsForTemplate();
 			_recalcSpaceDataOptions();
-			_loading = false;
 			await InvokeAsync(StateHasChanged);
 		}
 

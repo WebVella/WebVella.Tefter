@@ -50,6 +50,8 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 		var result = new DocumentFileTemplateResult();
 
 		var tfService = serviceProvider.GetService<ITfService>();
+		if(tfService is null) 
+			throw new Exception("tfService not found");
 
 		if (string.IsNullOrWhiteSpace(template.SettingsJson))
 		{
@@ -59,7 +61,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(template.SettingsJson);
 
-		if (settings.TemplateFileBlobId is null)
+		if (settings is null || settings.TemplateFileBlobId is null)
 		{
 			result.Errors.Add(new ValidationError("TemplateFileBlobId", "Template file is not uploaded."));
 			return result;
@@ -84,7 +86,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 				if (resultItem is null)
 					continue;
 
-				string filename = settings.FileName;
+				string filename = settings.FileName ?? String.Empty;
 
 				filesCounter++;
 
@@ -100,7 +102,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 					var item = new DocumentFileTemplateResultItem
 					{
 						FileName = filename,
-						NumberOfRows = (int)resultItem.DataTable?.Rows.Count
+						NumberOfRows = (int)(resultItem.DataTable?.Rows.Count ?? 0)
 					};
 
 					if (resultItem.Result is not null)
@@ -116,9 +118,9 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 					result.Items.Add(new DocumentFileTemplateResultItem
 					{
 						FileName = filename,
-						DownloadUrl = null,
+						DownloadUrl = String.Empty,
 						BlobId = null,
-						NumberOfRows = (int)resultItem.DataTable?.Rows.Count,
+						NumberOfRows = (int)(resultItem.DataTable?.Rows.Count ?? 0),
 						Errors = new()
 						{
 							new ValidationError("", $"Unexpected error occurred. {ex.Message} {ex.StackTrace}")
@@ -126,8 +128,8 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 					});
 				}
 			}
-
-			GenerateZipFile(settings.FileName, result, tfService);
+			if (!String.IsNullOrEmpty(settings.FileName))
+				GenerateZipFile(settings.FileName, result, tfService);
 		}
 		catch (Exception ex)
 		{
@@ -157,6 +159,8 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 		{
 			foreach (var item in validItems)
 			{
+				if (!item.BlobId.HasValue) continue;
+				if (String.IsNullOrWhiteSpace(item.FileName)) continue;
 				var fileBytes = tfService.GetBlobByteArray(item.BlobId.Value, temporary: true);
 				var zipArchiveEntry = archive.CreateEntry(item.FileName, CompressionLevel.Fastest);
 				using var zipStream = zipArchiveEntry.Open();
@@ -186,7 +190,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(settingsJson);
 
-		if (string.IsNullOrWhiteSpace(settings.FileName))
+		if (settings is null || string.IsNullOrWhiteSpace(settings.FileName))
 		{
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is required"));
 		}
@@ -195,13 +199,15 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 			result.Add(new ValidationError(nameof(settings.FileName), "Filename is invalid"));
 		}
 
-		if (settings.TemplateFileBlobId is null)
+		if (settings is null || settings.TemplateFileBlobId is null)
 		{
 			result.Add(new ValidationError(nameof(settings.TemplateFileBlobId), "Template file is not specified"));
 		}
 		else
 		{
 			var tfService = serviceProvider.GetService<ITfService>();
+			if(tfService is null) throw new Exception("tfService not found");
+
 			if (!tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: false) &&
 				!tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true))
 			{
@@ -222,11 +228,11 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 
 		var settings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(template.SettingsJson);
 
-		if (settings.TemplateFileBlobId is null)
+		if (settings is null || settings.TemplateFileBlobId is null)
 			return new List<ValidationError>();
 
 		var tfService = serviceProvider.GetService<ITfService>();
-
+		if(tfService is null) throw new Exception("tfService not found");
 		var isTmpBlob = tfService.ExistsBlob(settings.TemplateFileBlobId.Value, temporary: true);
 		if (isTmpBlob)
 		{
@@ -248,7 +254,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 		IServiceProvider serviceProvider)
 	{
 		var tfService = serviceProvider.GetService<ITfService>();
-
+		if(tfService is null) throw new Exception("tfService not found");
 		Guid? blobId = null;
 
 		var existingTemplate = tfService.GetTemplate(template.Id);
@@ -258,7 +264,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 			if (string.IsNullOrWhiteSpace(existingTemplate.SettingsJson))
 			{
 				var oldSettings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(existingTemplate.SettingsJson);
-				blobId = oldSettings.TemplateFileBlobId;
+				blobId = oldSettings?.TemplateFileBlobId;
 			}
 		}
 
@@ -267,7 +273,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 			if (!string.IsNullOrWhiteSpace(template.SettingsJson))
 			{
 				var newSettings = JsonSerializer.Deserialize<DocumentFileTemplateSettings>(template.SettingsJson);
-				if (newSettings.TemplateFileBlobId != blobId)
+				if (newSettings?.TemplateFileBlobId != blobId)
 				{
 					//delete old blob
 					if (blobId is not null)
@@ -275,7 +281,7 @@ public class DocumentFileTemplateProcessor : ITfTemplateProcessor
 						tfService.DeleteBlob(blobId.Value);
 					}
 
-					if (newSettings.TemplateFileBlobId is not null)
+					if (newSettings?.TemplateFileBlobId is not null)
 					{
 						//make new blob persistent
 						var isTmpBlob = tfService.ExistsBlob(newSettings.TemplateFileBlobId.Value, temporary: true);

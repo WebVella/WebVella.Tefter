@@ -7,16 +7,9 @@ public partial class TfSpaceNavigation : TfBaseComponent
 	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected ProtectedLocalStorage ProtectedLocalStorage { get; set; }
-
-	[Inject] private AppStateUseCase UC { get; set; }
-	private IEnumerable<TucTreeViewItem> _items { get; set; } = Enumerable.Empty<TucTreeViewItem>();
 	private List<TucMenuItem> _menu { get; set; } = new();
 	private List<string> _expandedNodeIdList = new();
-	private FluentTreeView _treeEl;
 	private string search = null;
-	private bool _linksFromAllViews = false;
-	private bool _settingsMenuVisible = false;
-
 	private TfSpaceNavigationActiveTab _activeTab = TfSpaceNavigationActiveTab.Nodes;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{

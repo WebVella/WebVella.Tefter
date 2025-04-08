@@ -2,22 +2,20 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("b0ca06fa-4e26-49c4-a043-c0ec7960ab02");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(EmailTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegion Context { get; init; }
 
 	private EmailTemplateResult _result = null;
 	private bool _isLoading = true;
-	private bool _showDetails = false;
-
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();

@@ -18,15 +18,6 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private string _error = string.Empty;
 	private bool _isLoading = true;
 
-	private TfEditor _folderEditor = null;
-	private string _folderEditorContent = null;
-	private bool _folderEditorSending = false;
-
-	private TfEditor _assetEditor = null;
-	private string _assetEditorContent = null;
-	private bool _assetEditorSending = false;
-
-	private Asset _activeAsset = null;
 	private AssetsFolder _folder = null;
 
 	private Guid _rowId = Guid.Empty;

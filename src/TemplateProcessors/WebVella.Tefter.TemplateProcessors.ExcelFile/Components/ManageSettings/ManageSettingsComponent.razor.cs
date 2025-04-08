@@ -5,17 +5,17 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsComponentContext>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("51157e04-9849-48ec-9bf3-de31308c4b0c");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Excel Template Manage Seettings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(ExcelFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(ExcelFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorManageSettingsComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegion Context { get; init; }
 
 	private ExcelFileTemplateSettings _form = new();
 	private string _downloadUrl

@@ -77,7 +77,7 @@
 			.Any(i => i.GetGenericArguments().Contains(genericArgument));
 	}
 
-	public static string? GetGenericTypeFullNameFromGenericInterface(this Type type)
+	public static string GetGenericTypeFullNameFromGenericInterface(this Type type)
 	{
 		if (type is null)
 			throw new ArgumentException("The provided type is null.", nameof(type));

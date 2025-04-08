@@ -2,18 +2,18 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class DisplaySettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("a52465b2-6e8c-48b3-a903-7fb2d43c55fa");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Email Template View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(EmailTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
 	[Parameter] 
-	public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
+	public TfTemplateProcessorDisplaySettingsScreenRegion Context { get; init; }
 
 	private bool _loading = true;
 	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();

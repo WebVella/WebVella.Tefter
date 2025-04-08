@@ -1,15 +1,15 @@
 ﻿namespace WebVella.Tefter.Talk.Pages;
 
-public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageComponentContext>
+public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageScreenRegion>
 {
 	public Guid Id { get; init; }
 	public int PositionRank { get; init; }
 	public string Name { get; init;}
 	public string Description { get; init;}
 	public string FluentIconName { get; init; }
-    public List<TfRegionComponentScope> Scopes { get; init; }
+    public List<TfScreenRegionScope> Scopes { get; init; }
 	[Parameter] 
-	public TfAdminPageComponentContext Context { get; init; }
+	public TfAdminPageScreenRegion Context { get; init; }
 
 	public TalkAdminPage() : base()
 	{
@@ -19,8 +19,8 @@ public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, I
 		Name = "Talk Channels";
 		Description = "";
 		FluentIconName = "CommentMultiple";
-		Scopes = new List<TfRegionComponentScope>(){
-			new TfRegionComponentScope(null,componentId)
+		Scopes = new List<TfScreenRegionScope>(){
+			new TfScreenRegionScope(null,componentId)
 		};
 	}
 

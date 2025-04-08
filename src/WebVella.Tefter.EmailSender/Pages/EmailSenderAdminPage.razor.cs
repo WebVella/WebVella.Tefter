@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.EmailSender.Pages;
 
-public partial class EmailSenderAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageComponentContext>
+public partial class EmailSenderAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageScreenRegion>
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
@@ -10,9 +10,9 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITucAuxDataUseCompo
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfRegionComponentScope> Scopes { get; init; }
+	public List<TfScreenRegionScope> Scopes { get; init; }
 	[Parameter]
-	public TfAdminPageComponentContext Context { get; init; }
+	public TfAdminPageScreenRegion Context { get; init; }
 
 	public EmailSenderAdminPage() : base()
 	{
@@ -22,8 +22,8 @@ public partial class EmailSenderAdminPage : TfBaseComponent, ITucAuxDataUseCompo
 		Name = "Email Sender";
 		Description = "";
 		FluentIconName = "Mail";
-		Scopes = new List<TfRegionComponentScope>(){
-			new TfRegionComponentScope(null,componentId)
+		Scopes = new List<TfScreenRegionScope>(){
+			new TfScreenRegionScope(null,componentId)
 		};
 
 	}

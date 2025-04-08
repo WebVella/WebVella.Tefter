@@ -2,17 +2,17 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("e74d6c12-7d1d-4723-be9b-2e1bd1d982e1");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text File Template Result";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(TextFileTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(TextFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegion Context { get; init; }
 
 	private TextFileTemplateResult _result = null;
 	private bool _isLoading = true;

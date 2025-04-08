@@ -27,7 +27,7 @@ public partial class EmailSenderLogAdmin : TfBaseComponent
 		}
 	}
 
-	private async Task _resentEmailHandler(EmailMessage message)
+	private Task _resentEmailHandler(EmailMessage message)
 	{
 		//try
 		//{
@@ -49,10 +49,11 @@ public partial class EmailSenderLogAdmin : TfBaseComponent
 		//	_isSubmitting = false;
 		//	await InvokeAsync(StateHasChanged);
 		//}
+		return Task.CompletedTask;
 	}
 
-	private async Task _cancelEmailHandler(EmailMessage message)
+	private Task _cancelEmailHandler(EmailMessage message)
 	{
-		
+		return Task.CompletedTask;
 	}
 }

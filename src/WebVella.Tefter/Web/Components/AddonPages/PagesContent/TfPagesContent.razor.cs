@@ -12,14 +12,4 @@ public partial class TfPagesContent : TfBaseComponent
 		SidebarExpanded.Select(x => x.SidebarExpanded);
 		ThemeSidebarStyle.Select(x => x.ThemeSidebarStyle);
 	}
-
-	private Dictionary<string, object> _getComponentContext()
-	{
-		var componentData = new Dictionary<string, object>();
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TucScreenRegionComponentContext{
-			Hash = Guid.NewGuid(),
-		};
-
-		return componentData;
-	}
 }
