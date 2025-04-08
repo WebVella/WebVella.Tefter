@@ -12,8 +12,8 @@
 			<FluentSelect OptionSelected="(x => x == _selectedType)"
 						  @bind-SelectedOption="@_selectedType"
 						  Disabled="_submitting"
-						  TOption="TfPresetsCardType" Required="true"
-						  Items="@(Enum.GetValues<TfPresetsCardType>())" Style="min-width:60px"
+						  TOption="TfQuickFilterItemType" Required="true"
+						  Items="@(Enum.GetValues<TfQuickFilterItemType>())" Style="min-width:60px"
 						  OptionValue="@((p)=> ((int)p).ToString())"
 						  OptionText="@(x=> x.ToDescriptionString())" />
 			<FluentSelect OptionSelected="(x => x.Id == _selectedParent?.Id)"
@@ -44,7 +44,7 @@
 						@foreach (var context in Items)
 						{
 							var contextIndex = Items.FindIndex(x => x.Id == context.Id);
-							<TfPresetsCardItem Item="context" Level="0" OnRemove="_removePreset" OnMove="_movePreset"
+							<TfQuickFiltersCardItem Item="context" Level="0" OnRemove="_removePreset" OnMove="_movePreset"
 											   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Items.Count -1)"
 											   OnEdit="_editPreset" OnCopy="_copyPreset" />
 						}

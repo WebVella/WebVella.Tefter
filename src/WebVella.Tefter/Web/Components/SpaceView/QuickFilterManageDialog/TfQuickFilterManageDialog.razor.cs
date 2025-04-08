@@ -1,8 +1,8 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.PresetManageDialog.TfPresetManageDialog", "WebVella.Tefter")]
-public partial class TfPresetManageDialog : TfFormBaseComponent, IDialogContentComponent<TucPresetManagementContext>
+[LocalizationResource("WebVella.Tefter.Web.Components.General.QuickFilterManageDialog.TfQuickFilterManageDialog", "WebVella.Tefter")]
+public partial class TfQuickFilterManageDialog : TfFormBaseComponent, IDialogContentComponent<TucQuickFilterManagementContext>
 {
-	[Parameter] public TucPresetManagementContext Content { get; set; }
+	[Parameter] public TucQuickFilterManagementContext Content { get; set; }
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 	private TucSpaceViewPreset _form = new();
 	private TucSpaceViewPreset _selectedParent = null;

@@ -9,7 +9,7 @@ public class PresetsCardComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfPresetsCard>();
+		var cut = Context.RenderComponent<TfQuickFiltersCard>();
 
 		// Assert
 		cut.Find(".tf-card");

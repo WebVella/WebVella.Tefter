@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.PresetsCardItem.TfPresetsCardItem", "WebVella.Tefter")]
-public partial class TfPresetsCardItem : TfBaseComponent
+[LocalizationResource("WebVella.Tefter.Web.Components.General.QuickFiltersCardItem.TfQuickFiltersCardItem", "WebVella.Tefter")]
+public partial class TfQuickFiltersCardItem : TfBaseComponent
 {
 	[Parameter]
 	public bool IsFirst { get; set; } = false;

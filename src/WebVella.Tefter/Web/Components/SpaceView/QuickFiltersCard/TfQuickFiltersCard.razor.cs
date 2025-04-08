@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.General.PresetsCard.TfPresetsCard", "WebVella.Tefter")]
-public partial class TfPresetsCard : TfBaseComponent
+[LocalizationResource("WebVella.Tefter.Web.Components.General.QuickFiltersCard.TfQuickFiltersCard", "WebVella.Tefter")]
+public partial class TfQuickFiltersCard : TfBaseComponent
 {
 	[Parameter]
 	public TucDataProvider DataProvider { get; set; }
@@ -12,7 +12,7 @@ public partial class TfPresetsCard : TfBaseComponent
 	public EventCallback<List<TucSpaceViewPreset>> ItemsChanged { get; set; }
 
 	public bool _submitting = false;
-	public TfPresetsCardType _selectedType = TfPresetsCardType.QuickFilter;
+	public TfQuickFilterItemType _selectedType = TfQuickFilterItemType.QuickFilter;
 	public TucSpaceViewPreset _selectedParent = null;
 	public string _selectedName = null;
 
@@ -32,7 +32,7 @@ public partial class TfPresetsCard : TfBaseComponent
 			ParentId = _selectedParent is null ? null : _selectedParent.Id,
 			Filters = new(),
 			SortOrders = new(),
-			IsGroup = _selectedType == TfPresetsCardType.Group,
+			IsGroup = _selectedType == TfQuickFilterItemType.Group,
 			Name = _selectedName,
 			Nodes = new()
 		};
@@ -107,13 +107,13 @@ public partial class TfPresetsCard : TfBaseComponent
 
 	private async Task _editPreset(Guid presetId)
 	{
-		var context = new TucPresetManagementContext
+		var context = new TucQuickFilterManagementContext
 		{
 			Item = ModelHelpers.GetPresetById(Items, presetId),
 			Parents = _getParents().ToList(),
 			DataProvider = DataProvider
 		};
-		var dialog = await DialogService.ShowDialogAsync<TfPresetManageDialog>(
+		var dialog = await DialogService.ShowDialogAsync<TfQuickFilterManageDialog>(
 		context,
 		new DialogParameters()
 		{
@@ -242,7 +242,7 @@ public partial class TfPresetsCard : TfBaseComponent
 	}
 }
 
-public enum TfPresetsCardType
+public enum TfQuickFilterItemType
 {
 	[Description("quick filter")]
 	QuickFilter = 0,

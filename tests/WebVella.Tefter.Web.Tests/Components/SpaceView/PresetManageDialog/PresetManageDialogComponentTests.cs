@@ -10,7 +10,7 @@ public class PresetManageDialogComponentTests : BaseTest
 		var dialogProvider = Context.RenderComponent<FluentDialogProvider>();
 		// Act
 		var dialogService = Context.Services.GetRequiredService<IDialogService>();
-		var dialog = await dialogService.ShowDialogAsync<TfPresetManageDialog>(new TucPresetManagementContext(),new DialogParameters());
+		var dialog = await dialogService.ShowDialogAsync<TfQuickFilterManageDialog>(new TucQuickFilterManagementContext(),new DialogParameters());
 		// Assert
 		dialogProvider.Find(".fluent-dialog-main");
 		dialog.Dismiss(null);

@@ -9,7 +9,7 @@ public class PresetsCardItemComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfPresetsCardItem>(args => args
+		var cut = Context.RenderComponent<TfQuickFiltersCardItem>(args => args
 		.Add(x=> x.Item, new TucSpaceViewPreset()));
 
 		// Assert

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-public record TucPresetManagementContext
+public record TucQuickFilterManagementContext
 {
 	public TucDataProvider DataProvider { get; init; }
 	public TucSpaceViewPreset Item { get; init; }
