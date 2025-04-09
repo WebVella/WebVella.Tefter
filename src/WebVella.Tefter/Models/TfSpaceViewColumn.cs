@@ -9,7 +9,7 @@ public class TfSpaceViewColumn
 	public string Icon { get; set; }
 	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
-	public ITfSpaceViewColumnType ColumnType { get; set; }
+	public ITfSpaceViewColumnAddon ColumnType { get; set; }
 	public Type ComponentType { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";

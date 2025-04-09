@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("c940dd21-6151-4c4c-ae5b-e6d21de8b80c");
 	public int PositionRank { get; init; } = 1000;
@@ -14,7 +14,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(TextFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegion Context { get; init; }
 
 	private TextFileTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;

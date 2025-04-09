@@ -1,17 +1,17 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Components;
 
 public partial class DisplaySettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsComponentContext>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("d05ea639-b6d2-4f8b-8cc7-307961cf0502");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Text content View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(SampleTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(SampleTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorDisplaySettingsComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegion Context { get; init; }
 
 	private SampleTemplateSettings _form = new();
 

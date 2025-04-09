@@ -10,24 +10,24 @@ using WebVella.Tefter.Web.Utils;
 
 namespace WebVella.Tefter.DataProviders.Csv;
 
-public class CsvDataProvider : ITfDataProviderType
+public class CsvDataProvider : ITfDataProviderAddon
 {
 	/// <summary>
 	/// used as unique identifier
 	/// </summary>
-	public Guid Id => new Guid("82883b60-197f-4f5a-8c6a-2bec16508816");
+	public Guid Id { get; init;} = new Guid("82883b60-197f-4f5a-8c6a-2bec16508816");
 	/// <summary>
 	/// presented to the end user
 	/// </summary>
-	public string Name => "Csv Data Provider";
+	public string Name { get; init;} = "Csv Data Provider";
 	/// <summary>
 	/// presented to the end user
 	/// </summary>
-	public string Description => "Provide data from CSV formated file.";
+	public string Description { get; init;} = "Provide data from CSV formated file.";
 	/// <summary>
 	/// presented to the end user
 	/// </summary>
-	public string FluentIconName => "DocumentTable";
+	public string FluentIconName { get; init;} = "DocumentTable";
 
 	/// <summary>
 	/// Return what types of data types it can process from the data source

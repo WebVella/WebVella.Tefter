@@ -11,11 +11,11 @@ public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid Id { get; set; } = new Guid("6589259a-4f90-445d-8a62-d4b51bab3afd");
-	public override string Name { get; set; } = "Talk Page";
-	public override string Description { get; set; } = "general discussion per page";
-	public override string FluentIconName { get; set; } = "ChatMultiple";
-	[Parameter] public override TfSpaceNodeComponentContext Context { get; set; }
+	public override Guid Id { get; init; } = new Guid("6589259a-4f90-445d-8a62-d4b51bab3afd");
+	public override string Name { get; init; } = "Talk Page";
+	public override string Description { get; init; } = "general discussion per page";
+	public override string FluentIconName { get; init; } = "ChatMultiple";
+	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);
 	public override List<ValidationError> ValidateOptions()
@@ -35,7 +35,7 @@ public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState,
-		TfSpaceNodeComponentContext context)
+		TfSpacePageAddonContext context)
 	{
 		//var talkService = serviceProvider.GetService<ITalkService>();
 		//var allChannelsResult = talkService.GetChannels();

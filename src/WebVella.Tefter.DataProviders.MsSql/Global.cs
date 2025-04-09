@@ -10,6 +10,7 @@ global using System.Text;
 global using Microsoft.Data.SqlClient;
 global using System.Data;
 
+global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.DataProviders.MsSql.Components;

@@ -87,7 +87,7 @@
 				<FluentGrid>
 					<FluentGridItem xs="12">
 						<FluentInputLabel Label="@LOC("Page type")" />
-						<TfSelectComponent TOption="TfSpaceNodeComponentMeta" Items="@_pageComponents"
+						<TfSelectComponent TOption="TfSpacePageAddonMeta" Items="@_pageComponents"
 										   Value="_selectedPageComponent" ValueChanged="_pageComponentChanged"
 										   OptionText="@(x=> x.Instance.Name)" OptionIcon="@(x=> x.Instance.FluentIconName)" OptionDescription="@(x=> x.Instance.Description)"
 										   OptionMatch="@((x,y)=> x.Instance?.Id == y.Instance.Id)" Disabled ="!_isCreate"/>

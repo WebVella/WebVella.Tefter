@@ -121,9 +121,9 @@ public class ExportUseCase
 
 					IXLCell excelCell = ws.Cell(currentExcelRow, currentExcelColumn);
 
-					if (column.ComponentType.ImplementsInterface(typeof(ITfSpaceViewColumnComponent)))
+					if (column.ComponentType.ImplementsInterface(typeof(ITfSpaceViewColumnComponentAddon)))
 					{
-						var component = (ITfSpaceViewColumnComponent)Activator.CreateInstance(column.ComponentType, compContext);
+						var component = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(column.ComponentType, compContext);
 						component.ProcessExcelCell(_serviceProvider, excelCell);
 					}
 					currentExcelColumn++;

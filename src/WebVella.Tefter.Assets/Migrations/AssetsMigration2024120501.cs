@@ -7,7 +7,7 @@ public class AssetsMigration2024120501 : ITfApplicationMigration
 	/// <summary>
 	/// Called during the schema altering phase
 	/// </summary>
-	public Task MigrateStructureAsync(ITfApplication app, TfDatabaseBuilder dbBuilder)
+	public Task MigrateStructureAsync(ITfApplicationAddon app, TfDatabaseBuilder dbBuilder)
 	{
 		dbBuilder
 			.WithTableBuilder("assets_folder")
@@ -24,7 +24,7 @@ public class AssetsMigration2024120501 : ITfApplicationMigration
 	/// <param name="serviceprovider"></param>
 	/// <param name="dbService"></param>
 	/// <returns></returns>
-	public Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceprovider, ITfDatabaseService dbService)
+	public Task MigrateDataAsync(ITfApplicationAddon app, IServiceProvider serviceprovider, ITfDatabaseService dbService)
 	{
 		return Task.CompletedTask;
 	}

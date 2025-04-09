@@ -237,7 +237,7 @@ public partial class TfService : ITfService
 					{
 						var task = Task.Run(async () =>
 						{
-							var context = new TfSpaceNodeComponentContext
+							var context = new TfSpacePageAddonContext
 							{
 								SpaceId = spaceNode.SpaceId,
 								SpaceNodeId = spaceNode.Id,
@@ -246,7 +246,7 @@ public partial class TfService : ITfService
 								Mode = TfComponentMode.Update
 							};
 
-							var optionsJson = await nodeComponent.Instance.OnNodeCreated(_serviceProvider, context);
+							var optionsJson = await nodeComponent.Instance.OnPageCreated(_serviceProvider, context);
 							if (optionsJson != spaceNode.ComponentOptionsJson)
 							{
 								spaceNode.ComponentOptionsJson = optionsJson;
@@ -511,7 +511,7 @@ public partial class TfService : ITfService
 					{
 						var task = Task.Run(async () =>
 						{
-							var context = new TfSpaceNodeComponentContext
+							var context = new TfSpacePageAddonContext
 							{
 								SpaceId = spaceNode.SpaceId,
 								SpaceNodeId = spaceNode.Id,
@@ -520,7 +520,7 @@ public partial class TfService : ITfService
 								Mode = TfComponentMode.Update
 							};
 
-							var optionsJson = await nodeComponent.Instance.OnNodeUpdated(_serviceProvider, context);
+							var optionsJson = await nodeComponent.Instance.OnPageUpdated(_serviceProvider, context);
 							if (optionsJson != spaceNode.ComponentOptionsJson)
 							{
 								spaceNode.ComponentOptionsJson = optionsJson;
@@ -621,7 +621,7 @@ public partial class TfService : ITfService
 						{
 							var task = Task.Run(async () =>
 							{
-								var context = new TfSpaceNodeComponentContext
+								var context = new TfSpacePageAddonContext
 								{
 									SpaceId = nodeToDelete.SpaceId,
 									SpaceNodeId = nodeToDelete.Id,
@@ -630,7 +630,7 @@ public partial class TfService : ITfService
 									Mode = TfComponentMode.Update
 								};
 
-								await nodeComponent.Instance.OnNodeDeleted(_serviceProvider, context);
+								await nodeComponent.Instance.OnPageDeleted(_serviceProvider, context);
 							});
 							task.WaitAndUnwrapException();
 						}

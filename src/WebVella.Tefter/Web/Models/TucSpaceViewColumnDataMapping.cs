@@ -7,7 +7,7 @@ public record TucSpaceViewColumnDataMapping
 	public List<TfDatabaseColumnType> SupportedDatabaseColumnTypes { get; init; }
 	public TucSpaceViewColumnDataMapping() { }
 
-	public TucSpaceViewColumnDataMapping(TfSpaceViewColumnDataMapping model)
+	public TucSpaceViewColumnDataMapping(TfSpaceViewColumnAddonDataMapping model)
 	{
 		Alias = model.Alias;
 		Description = model.Description;
@@ -18,9 +18,9 @@ public record TucSpaceViewColumnDataMapping
 		}
 	}
 
-	public TfSpaceViewColumnDataMapping ToModel()
+	public TfSpaceViewColumnAddonDataMapping ToModel()
 	{
-		var model = new TfSpaceViewColumnDataMapping()
+		var model = new TfSpaceViewColumnAddonDataMapping()
 		{
 			Alias = Alias,
 			Description = Description,

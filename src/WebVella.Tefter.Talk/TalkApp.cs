@@ -1,13 +1,13 @@
 ﻿namespace WebVella.Tefter.Talk;
 
-public class TalkApp : ITfApplication
+public class TalkApp : ITfApplicationAddon
 {
-	public Guid Id => TalkConstants.TALK_APP_ID;
+	public Guid Id { get; init;} =  TalkConstants.TALK_APP_ID;
 
-	public string Name => TalkConstants.TALK_APP_NAME;
+	public string Name { get; init;} =  TalkConstants.TALK_APP_NAME;
 
-	public string Description => TalkConstants.TALK_APP_DECRIPTION;
-	public string FluentIconName => "CommentMultiple";
+	public string Description { get; init;} =  TalkConstants.TALK_APP_DECRIPTION;
+	public string FluentIconName { get; init;} =  "CommentMultiple";
 
 	public void OnStart()
 	{

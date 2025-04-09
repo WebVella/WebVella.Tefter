@@ -14,7 +14,7 @@ public class TfDataProvider
 	public ReadOnlyCollection<TfSharedColumn> SharedColumns { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
 	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; internal set; }
-	public ITfDataProviderType ProviderType { get; internal set; }
+	public ITfDataProviderAddon ProviderType { get; internal set; }
 	public IServiceProvider ServiceProvider { get; internal set; }
 	public ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows()
@@ -30,7 +30,7 @@ public record TfDataProviderModel
 	[Required]
 	public string Name { get; internal set; }
 	[Required]
-	public ITfDataProviderType ProviderType { get; internal set; }
+	public ITfDataProviderAddon ProviderType { get; internal set; }
 	public string SettingsJson { get; internal set; } = null;
 	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
 }

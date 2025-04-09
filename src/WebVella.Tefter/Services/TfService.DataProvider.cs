@@ -398,7 +398,7 @@ public partial class TfService : ITfService
 		List<TfDataProviderSystemColumn> systemColumns,
 		List<TfDataProviderColumn> columns,
 		List<TfDataProviderSharedKey> sharedKeys,
-		ITfDataProviderType providerType)
+		ITfDataProviderAddon providerType)
 	{
 		if (dbo == null)
 			throw new ArgumentException(nameof(dbo));

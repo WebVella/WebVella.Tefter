@@ -205,9 +205,9 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultPreviewComponentContext)))
+			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfTemplateProcessorResultPreviewScreenRegion)))
 			{
-				var instance = (ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>)Activator.CreateInstance(type);
+				var instance = (ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegion>)Activator.CreateInstance(type);
 				meta = new TfRegionComponentMeta
 				{
 					Id = instance.Id,

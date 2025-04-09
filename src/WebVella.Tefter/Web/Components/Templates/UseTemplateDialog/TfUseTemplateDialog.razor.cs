@@ -13,7 +13,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private TucTemplate _selectedTemplate = null;
 	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
-	private TfTemplateProcessorResultPreviewComponentContext _resultPreviewComponentContext = null;
+	private TfTemplateProcessorResultPreviewScreenRegion _resultPreviewComponentContext = null;
 	private TfTemplateProcessorResultScreenRegion _resultComponentContext = null;
 	private TfScreenRegionScope _dynamicComponentScope = null;
 
@@ -142,7 +142,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private void _initDynamicComponent()
 	{
 		_processor = _getProcessor();
-		_resultPreviewComponentContext = new TfTemplateProcessorResultPreviewComponentContext
+		_resultPreviewComponentContext = new TfTemplateProcessorResultPreviewScreenRegion
 		{
 			Template = null,
 			SelectedRowIds = Content.SelectedRowIds,

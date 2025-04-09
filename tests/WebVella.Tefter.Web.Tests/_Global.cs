@@ -10,6 +10,7 @@ global using WebVella.Tefter.Web.Tests;
 global using System.Threading.Tasks;
 global using WebVella.Tefter.Web.Components;
 global using WebVella.Tefter.Web.Models;
+global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using Microsoft.FluentUI.AspNetCore.Components;
 global using Microsoft.AspNetCore.Components;

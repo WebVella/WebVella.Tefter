@@ -73,7 +73,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsInterface(typeof(ITfDataProviderType)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsInterface(typeof(ITfDataProviderAddon)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeFalse();
 		}
@@ -86,7 +86,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsDataProviderTypeClass);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsInterface(typeof(ITfDataProviderType)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsInterface(typeof(ITfDataProviderAddon)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeTrue();
 		}
@@ -136,7 +136,7 @@ public class TypeUtilityTests
 	{
 		using (await locker.LockAsync())
 		{
-			Type objType = typeof(ITfDataProviderType);
+			Type objType = typeof(ITfDataProviderAddon);
 			string result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().Throw<ArgumentException>("he provided type must be a generic interface.");
@@ -240,15 +240,15 @@ public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfD
 	};
 }
 
-public class UtilityTestsDataProviderTypeClass : ITfDataProviderType
+public class UtilityTestsDataProviderTypeClass : ITfDataProviderAddon
 {
-	public Guid Id { get; set; }
+	public Guid Id { get; init; }
 
-	public string Name { get; set; }
+	public string Name { get; init; }
 
-	public string Description { get; set; }
+	public string Description { get; init; }
 
-	public string FluentIconName { get; set; }
+	public string FluentIconName { get; init; }
 
 	public Type SettingsComponentType { get; set; }
 

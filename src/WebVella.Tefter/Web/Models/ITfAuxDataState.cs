@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-public interface ITucAuxDataUseComponent
+public interface ITfAuxDataState
 {
 	Task OnAppStateInit(
 		IServiceProvider serviceProvider,

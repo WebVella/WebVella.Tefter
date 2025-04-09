@@ -1,17 +1,17 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Components;
 
 public partial class ResultPreviewComponent : TfBaseComponent,
-	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("9f9d348d-53eb-4288-a169-69c225847b6b");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Sample Template Result Preview";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){
-		new TfRegionComponentScope(typeof(SampleTemplateProcessor),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
+		new TfScreenRegionScope(typeof(SampleTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegion Context { get; init; }
 
 	private SampleTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;

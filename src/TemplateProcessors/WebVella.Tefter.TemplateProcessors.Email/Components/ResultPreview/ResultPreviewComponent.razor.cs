@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultPreviewComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("57ef9ad4-45ff-4674-8ad6-9e1420fefbb1");
 	public int PositionRank { get; init; } = 1000;
@@ -15,7 +15,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegion Context { get; init; }
 
 	private EmailTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;

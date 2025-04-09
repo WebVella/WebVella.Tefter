@@ -79,13 +79,13 @@ internal partial class AppStateUseCase
 				foreach (TucSpaceViewColumn column in newAppState.SpaceViewColumns)
 				{
 					if (column.ComponentType is not null
-						&& column.ComponentType.GetInterface(nameof(ITucAuxDataUseComponent)) != null)
+						&& column.ComponentType.GetInterface(nameof(ITfAuxDataState)) != null)
 					{
 						compContext.SpaceViewColumnId = column.Id;
 						compContext.CustomOptionsJson = column.CustomOptionsJson;
 						compContext.DataMapping = column.DataMapping;
 						compContext.QueryName = column.QueryName;
-						var component = (ITucAuxDataUseComponent)Activator.CreateInstance(column.ComponentType, compContext);
+						var component = (ITfAuxDataState)Activator.CreateInstance(column.ComponentType, compContext);
 						await component.OnAppStateInit(
 								serviceProvider: serviceProvider,
 								currentUser: currentUser,

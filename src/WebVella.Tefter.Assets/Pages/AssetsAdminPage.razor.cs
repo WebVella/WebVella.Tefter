@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Assets.Pages;
 
-public partial class AssetsAdminPage : TfBaseComponent, ITucAuxDataUseComponent, 
+public partial class AssetsAdminPage : TfBaseComponent, ITfAuxDataState, 
 	ITfRegionComponent<TfAdminPageScreenRegion>
 {
 	public Guid Id { get; init; }

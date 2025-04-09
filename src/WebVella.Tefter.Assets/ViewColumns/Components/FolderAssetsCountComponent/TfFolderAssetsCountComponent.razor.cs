@@ -8,7 +8,7 @@ namespace WebVella.Tefter.Assets.Components;
 /// </summary>
 [Description("Folder Assets Count Display")]
 [LocalizationResource("WebVella.Tefter.Assets.ViewColumns.Components.FolderAssetsCountComponent.TfFolderAssetsCountComponent", "WebVella.Tefter.Assets")]
-public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAssetsCountComponentOptions>, ITucAuxDataUseComponent
+public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAssetsCountComponentOptions>, ITfAuxDataState
 {
 	#region << Injects >>
 	[Inject] protected IAssetsService AssetsService { get; set; }

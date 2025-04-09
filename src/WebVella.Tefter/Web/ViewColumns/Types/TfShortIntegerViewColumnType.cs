@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.ViewColumns;
 
-public class TfShortIntegerViewColumnType : ITfSpaceViewColumnType
+public class TfShortIntegerViewColumnType : ITfSpaceViewColumnAddon
 {
 	const string TF_COLUMN_NUMBER_ID = Constants.TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID;
 	const string TF_COLUMN_NUMBER_NAME = "Short Integer";
@@ -12,7 +12,7 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnType
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
+	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	/// <summary>
 	/// This property will be inited on application start
@@ -33,9 +33,9 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnType
 
 		FluentIconName = TF_COLUMN_NUMBER_ICON;
 
-		DataMapping = new List<TfSpaceViewColumnDataMapping>
+		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
-			new TfSpaceViewColumnDataMapping
+			new TfSpaceViewColumnAddonDataMapping
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with short integer database column types",

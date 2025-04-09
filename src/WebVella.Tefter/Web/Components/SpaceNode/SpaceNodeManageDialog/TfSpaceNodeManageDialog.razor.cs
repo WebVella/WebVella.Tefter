@@ -17,8 +17,8 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 	private TucSpaceNode _form = new();
 	private TucSpaceNode _parentNode = null;
 	private IEnumerable<TucSpaceNode> _parentNodeOptions = Enumerable.Empty<TucSpaceNode>();
-	private ReadOnlyCollection<TfSpaceNodeComponentMeta> _pageComponents;
-	private TfSpaceNodeComponentMeta _selectedPageComponent = null;
+	private ReadOnlyCollection<TfSpacePageAddonMeta> _pageComponents;
+	private TfSpacePageAddonMeta _selectedPageComponent = null;
 	private DynamicComponent typeSettingsComponent;
 	protected override async Task OnInitializedAsync()
 	{
@@ -67,7 +67,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 
 		//Get dynamic settings component errors
 		List<ValidationError> settingsErrors = new();
-		ITfSpaceNodeComponent addonComponent = null;
+		ITfSpacePageAddon addonComponent = null;
 		TucSpaceNode submit = _form with { Id = _form.Id };
 		if (submit.Type == TfSpaceNodeType.Folder)
 		{
@@ -79,7 +79,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			if (typeSettingsComponent is not null)
 			{
-				addonComponent = typeSettingsComponent.Instance as ITfSpaceNodeComponent;
+				addonComponent = typeSettingsComponent.Instance as ITfSpacePageAddon;
 				settingsErrors = addonComponent.ValidateOptions();
 				submit.ComponentOptionsJson = addonComponent.GetOptions();
 				submit.ComponentTypeFullName = _selectedPageComponent?.ComponentType.FullName;
@@ -169,7 +169,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		if (type == TfSpaceNodeType.Folder) _selectedPageComponent = null;
 		else if (type == TfSpaceNodeType.Page && _pageComponents.Any()) _selectedPageComponent = _pageComponents[0];
 	}
-	private void _pageComponentChanged(TfSpaceNodeComponentMeta meta)
+	private void _pageComponentChanged(TfSpacePageAddonMeta meta)
 	{
 		_selectedPageComponent = meta;
 	}
@@ -179,7 +179,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		var dict = new Dictionary<string, object>();
 		if (_selectedPageComponent is null) return dict;
 
-		var context = new TfSpaceNodeComponentContext();
+		var context = new TfSpacePageAddonContext();
 		context.Icon = _form.Icon;
 		context.SpaceId = TfAppState.Value.Space.Id;
 		context.ComponentOptionsJson = _form.ComponentOptionsJson;

@@ -47,6 +47,7 @@ global using WebVella.Tefter.Database.Dbo;
 global using WebVella.Tefter.Authorization;
 global using WebVella.Tefter.Messaging;
 global using WebVella.Tefter.Migrations;
+global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using WebVella.Tefter.Services;
 global using WebVella.Tefter.Exceptions;

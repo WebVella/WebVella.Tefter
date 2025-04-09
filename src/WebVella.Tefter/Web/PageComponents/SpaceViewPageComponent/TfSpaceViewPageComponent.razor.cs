@@ -8,11 +8,11 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid Id { get; set; } = new Guid("68afeecc-6ca9-4102-831d-ef4028057128");
-	public override string Name { get; set; } = "Space View";
-	public override string Description { get; set; } = "present data in a grid format";
-	public override string FluentIconName { get; set; } = "Table";
-	[Parameter] public override TfSpaceNodeComponentContext Context { get; set; }
+	public override Guid Id { get; init; } = new Guid("68afeecc-6ca9-4102-831d-ef4028057128");
+	public override string Name { get; init; } = "Space View";
+	public override string Description { get; init; } = "present data in a grid format";
+	public override string FluentIconName { get; init; } = "Table";
+	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);
 	public override List<ValidationError> ValidateOptions()
@@ -59,7 +59,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState,
-		TfSpaceNodeComponentContext context)
+		TfSpacePageAddonContext context)
 	{
 		#region << Init Options >>
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) return Task.FromResult((newAppState, newAuxDataState)); ;
@@ -76,9 +76,9 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
-	public override async Task<string> OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context)
+	public override async Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
 	{
-		await base.OnNodeCreated(serviceProvider, context);
+		await base.OnPageCreated(serviceProvider, context);
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
 		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");

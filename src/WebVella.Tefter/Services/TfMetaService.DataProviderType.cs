@@ -2,33 +2,33 @@
 
 public partial interface ITfMetaService
 {
-	ITfDataProviderType GetDataProviderType(
+	ITfDataProviderAddon GetDataProviderType(
 		Guid id);
 
-	ReadOnlyCollection<ITfDataProviderType> GetDataProviderTypes();
+	ReadOnlyCollection<ITfDataProviderAddon> GetDataProviderTypes();
 }
 
 public partial class TfMetaService : ITfMetaService
 {
-	public static List<ITfDataProviderType> _providerTypes { get; internal set; } = new List<ITfDataProviderType>();
+	public static List<ITfDataProviderAddon> _providerTypes { get; internal set; } = new List<ITfDataProviderAddon>();
 
 	private static void ScanAndRegisterDataProvidersTypes(
 		Type type)
 	{
-		if (type.GetInterfaces().Any(x => x == typeof(ITfDataProviderType)))
+		if (type.GetInterfaces().Any(x => x == typeof(ITfDataProviderAddon)))
 		{
-			var instance = (ITfDataProviderType)Activator.CreateInstance(type);
+			var instance = (ITfDataProviderAddon)Activator.CreateInstance(type);
 			_providerTypes.Add(instance);
 			_typesMap[type.FullName] = type;
 		}
 	}
-	public ITfDataProviderType GetDataProviderType(
+	public ITfDataProviderAddon GetDataProviderType(
 		Guid id)
 	{
 		return _providerTypes.SingleOrDefault(x => x.Id == id);
 	}
 
-	public ReadOnlyCollection<ITfDataProviderType> GetDataProviderTypes()
+	public ReadOnlyCollection<ITfDataProviderAddon> GetDataProviderTypes()
 	{
 		return _providerTypes.AsReadOnly();
 	}

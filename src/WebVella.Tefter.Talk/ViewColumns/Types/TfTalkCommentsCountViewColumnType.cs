@@ -1,12 +1,12 @@
 ﻿namespace WebVella.Tefter.Talk;
 
-public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnType
+public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnAddon
 {
 	public Guid Id { get; init; }
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
+	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	public Type CustomOptionsComponentType { get; init; }
 	public List<Type> SupportedComponentTypes { get; set; }
@@ -26,7 +26,7 @@ public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnType
 
 		FluentIconName = "CommentMultiple";
 
-		DataMapping = new List<TfSpaceViewColumnDataMapping>
+		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
 		};
 

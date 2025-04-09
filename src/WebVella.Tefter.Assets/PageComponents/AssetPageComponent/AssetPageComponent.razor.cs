@@ -12,11 +12,11 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid Id { get; set; } = new Guid("0109d2c8-8597-47e7-bb4b-b1b06badd4a7");
-	public override string Name { get; set; } = "Asset Page";
-	public override string Description { get; set; } = "asset folder per page";
-	public override string FluentIconName { get; set; } = "Folder";
-	[Parameter] public override TfSpaceNodeComponentContext Context { get; set; }
+	public override Guid Id { get; init; } = new Guid("0109d2c8-8597-47e7-bb4b-b1b06badd4a7");
+	public override string Name { get; init; } = "Asset Page";
+	public override string Description { get; init; } = "asset folder per page";
+	public override string FluentIconName { get; init; } = "Folder";
+	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);
 	public override List<ValidationError> ValidateOptions()
@@ -36,7 +36,7 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState,
-		TfSpaceNodeComponentContext context)
+		TfSpacePageAddonContext context)
 	{
 		//var talkService = serviceProvider.GetService<ITalkService>();
 		//var allFoldersResult = talkService.GetFolders();

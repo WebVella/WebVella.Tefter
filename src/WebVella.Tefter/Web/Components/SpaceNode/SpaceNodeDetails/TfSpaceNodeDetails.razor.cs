@@ -14,7 +14,7 @@ public partial class TfSpaceNodeDetails : TfBaseComponent
 		var dict = new Dictionary<string, object>();
 		if (TfAppState.Value.SpaceNode is not null)
 		{
-			dict["Context"] = new TfSpaceNodeComponentContext
+			dict["Context"] = new TfSpacePageAddonContext
 			{
 				ComponentOptionsJson = TfAppState.Value.SpaceNode.ComponentOptionsJson,
 				Icon = TfAppState.Value.SpaceNode.Icon,

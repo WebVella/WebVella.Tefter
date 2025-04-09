@@ -5,10 +5,10 @@ public record TucDataProviderTypeInfo
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public ITfDataProviderType Model { get; init; }
+	public ITfDataProviderAddon Model { get; init; }
 	public List<TucDataProviderTypeDataTypeInfo> SupportedSourceDataTypes { get; init; } = new();
 	public TucDataProviderTypeInfo() { }
-	public TucDataProviderTypeInfo(ITfDataProviderType model)
+	public TucDataProviderTypeInfo(ITfDataProviderAddon model)
 	{
 		Id = model.Id;
 		Name = model.Name;
@@ -28,7 +28,7 @@ public record TucDataProviderTypeInfo
 		}
 		Model = model;
 	}
-	public ITfDataProviderType ToModel(ReadOnlyCollection<ITfDataProviderType> type)
+	public ITfDataProviderAddon ToModel(ReadOnlyCollection<ITfDataProviderAddon> type)
 	{
 		return type.Single(x=> x.Id == Id);
 	}

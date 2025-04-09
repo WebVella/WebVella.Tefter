@@ -5,17 +5,17 @@ using WebVella.Tefter.Web.Models;
 namespace WebVella.Tefter.Seeds.SampleDataProvider.Components;
 
 public partial class ViewSettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfDataProviderDisplaySettingsComponentContext>
+	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("4872f1ca-778e-4076-9ca0-b2b8424b1093");
 	public int PositionRank { get; init; } = 1000;
 	public string Name { get; init; } = "Sample Data Provider View Settings";
 	public string Description { get; init; } = "";
 	public string FluentIconName { get; init; } = "PuzzlePiece";
-	public List<TfRegionComponentScope> Scopes { get; init; } = new List<TfRegionComponentScope>(){ 
-		new TfRegionComponentScope(typeof(SampleDataProvider),null)
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
+		new TfScreenRegionScope(typeof(SampleDataProvider),null)
 	};
-	[Parameter] public TfDataProviderDisplaySettingsComponentContext Context { get; init; }
+	[Parameter] public TfDataProviderDisplaySettingsScreenRegion Context { get; init; }
 
 	private string _advancedSettings
 	{

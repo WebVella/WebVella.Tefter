@@ -2,7 +2,7 @@
 
 public partial interface ITfService
 {
-	public ReadOnlyCollection<ITfSpaceViewColumnType> GetAvailableSpaceViewColumnTypes();
+	public ReadOnlyCollection<ITfSpaceViewColumnAddon> GetAvailableSpaceViewColumnTypes();
 
 	public List<TfSpaceViewColumn> GetSpaceViewColumnsList(
 		Guid spaceViewId);
@@ -28,7 +28,7 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public ReadOnlyCollection<ITfSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
+	public ReadOnlyCollection<ITfSpaceViewColumnAddon> GetAvailableSpaceViewColumnTypes()
 	{
 		try
 		{
@@ -350,7 +350,7 @@ public partial class TfService : ITfService
 		if (dbo == null)
 			return null;
 
-		ITfSpaceViewColumnType columnType = _metaService.GetSpaceViewColumnTypeByName(dbo.FullTypeName);
+		ITfSpaceViewColumnAddon columnType = _metaService.GetSpaceViewColumnTypeByName(dbo.FullTypeName);
 		Type componentType = _metaService.GetSpaceViewColumnComponentType(dbo.FullComponentTypeName);
 
 		return new TfSpaceViewColumn

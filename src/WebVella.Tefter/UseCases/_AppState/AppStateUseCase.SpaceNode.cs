@@ -29,7 +29,7 @@ internal partial class AppStateUseCase
 				var spaceNodeMeta = nodeComponentsMeta.FirstOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentTypeFullName);
 				if (spaceNodeMeta is not null)
 				{
-					var context = new TfSpaceNodeComponentContext
+					var context = new TfSpacePageAddonContext
 					{
 						ComponentOptionsJson = spaceNode.ComponentOptionsJson,
 						Icon = spaceNode.Icon,

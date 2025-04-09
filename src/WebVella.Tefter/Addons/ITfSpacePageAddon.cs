@@ -1,0 +1,32 @@
+﻿namespace WebVella.Tefter.Addons;
+
+public interface ITfSpacePageAddon : ITfAddon
+{
+	public TfSpacePageAddonContext Context { get; set; }
+	public Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
+	public Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
+	public Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context);
+	public Task<(TfAppState,TfAuxDataState)> InitState(
+		IServiceProvider serviceProvider,
+		TucUser currentUser,
+		TfAppState newAppState, TfAppState oldAppState,
+		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
+		TfSpacePageAddonContext context);
+	public string GetOptions();
+	public List<ValidationError> ValidateOptions();
+}
+
+public class TfSpacePageAddonMeta
+{
+	public Type ComponentType { get; init; }
+	internal ITfSpacePageAddon Instance { get; init; }
+}
+
+public class TfSpacePageAddonContext
+{
+	public Guid SpaceNodeId { get; set; }
+	public Guid SpaceId { get; set; }
+	public string Icon { get; set; }
+	public string ComponentOptionsJson { get; set; }
+	public TfComponentMode Mode { get; set; }
+}

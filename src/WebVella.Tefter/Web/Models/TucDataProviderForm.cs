@@ -19,7 +19,7 @@ public record TucDataProviderForm
 		SettingsJson = model.SettingsJson;
 		ProviderType = new TucDataProviderTypeInfo(model.ProviderType);
 	}
-	public TfDataProviderModel ToModel(ReadOnlyCollection<ITfDataProviderType> providerTypes)
+	public TfDataProviderModel ToModel(ReadOnlyCollection<ITfDataProviderAddon> providerTypes)
 	{
 		return new TfDataProviderModel
 		{

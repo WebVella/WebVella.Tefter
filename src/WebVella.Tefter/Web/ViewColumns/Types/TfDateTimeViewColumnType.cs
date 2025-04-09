@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.ViewColumns;
 
-public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
+public class TfDateTimeViewColumnType : ITfSpaceViewColumnAddon
 {
 	const string TF_COLUMN_DATETIME_ID = Constants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID;
 	const string TF_COLUMN_DATETIME_NAME = "DateTime";
@@ -12,7 +12,7 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
+	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	/// <summary>
 	/// This property will be inited on application start
@@ -32,9 +32,9 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnType
 
 		FluentIconName = TF_COLUMN_DATETIME_ICON;
 
-		DataMapping = new List<TfSpaceViewColumnDataMapping>
+		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
-			new TfSpaceViewColumnDataMapping
+			new TfSpaceViewColumnAddonDataMapping
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with the all Date and DateTime database column types, but its intented use is with DateTime",

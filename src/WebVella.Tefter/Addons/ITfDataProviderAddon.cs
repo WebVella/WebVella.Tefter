@@ -1,11 +1,7 @@
-﻿namespace WebVella.Tefter;
+﻿namespace WebVella.Tefter.Addons;
 
-public interface ITfDataProviderType
+public interface ITfDataProviderAddon : ITfAddon
 {
-	public Guid Id { get; }
-	public string Name { get; }
-	public string Description { get; }
-	public string FluentIconName { get; }
 	public abstract ReadOnlyCollection<string> GetSupportedSourceDataTypes();
 	public abstract ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
 		string dataType);

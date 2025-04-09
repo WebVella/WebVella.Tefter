@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewComponentContext>
+	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegion>
 {
 	public Guid Id { get; init; } = new Guid("e6923a63-885f-4201-bab5-701867f7b952");
 	public int PositionRank { get; init; } = 1000;
@@ -16,7 +16,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-	[Parameter] public TfTemplateProcessorResultPreviewComponentContext Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegion Context { get; init; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 	private DocumentFileTemplatePreviewResult? _preview = null;

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Talk.Pages;
 
-public partial class TalkAdminPage : TfBaseComponent, ITucAuxDataUseComponent, ITfRegionComponent<TfAdminPageScreenRegion>
+public partial class TalkAdminPage : TfBaseComponent, ITfAuxDataState, ITfRegionComponent<TfAdminPageScreenRegion>
 {
 	public Guid Id { get; init; }
 	public int PositionRank { get; init; }

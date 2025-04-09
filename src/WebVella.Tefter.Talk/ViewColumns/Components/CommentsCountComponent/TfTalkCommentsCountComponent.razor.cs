@@ -8,7 +8,7 @@ namespace WebVella.Tefter.Talk.Components;
 /// </summary>
 [Description("Talk Comments Count Display")]
 [LocalizationResource("WebVella.Tefter.Talk.ViewColumns.Components.TalkCommentsCountComponent.TfTalkCommentsCountComponent", "WebVella.Tefter.Talk")]
-public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommentsCountComponentOptions>, ITucAuxDataUseComponent
+public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommentsCountComponentOptions>, ITfAuxDataState
 {
 	#region << Injects >>
 	[Inject] protected ITalkService TalkService { get; set; }

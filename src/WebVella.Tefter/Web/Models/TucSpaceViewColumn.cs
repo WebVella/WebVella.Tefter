@@ -94,7 +94,7 @@ public record TucSpaceViewColumn
 
 	//Column type should be get from GetAvailableSpaceViewColumnTypes()
 	//and then matched by ID
-	public TfSpaceViewColumn ToModel(ITfSpaceViewColumnType columnType)
+	public TfSpaceViewColumn ToModel(ITfSpaceViewColumnAddon columnType)
 	{
 		return new TfSpaceViewColumn
 		{

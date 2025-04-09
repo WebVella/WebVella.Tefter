@@ -2,23 +2,23 @@
 
 public partial interface ITfMetaService
 {
-	public ReadOnlyCollection<TfApplicationMeta> GetApplicationsMeta();
+	public ReadOnlyCollection<TfApplicationAddonMeta> GetApplicationsMeta();
 
-	public ITfApplication GetApplication(
+	public ITfApplicationAddon GetApplication(
 		Guid appId);
 }
 
 public partial class TfMetaService : ITfMetaService
 {
-	private static List<TfApplicationMeta> _applicationsMeta =
-		new List<TfApplicationMeta>();
+	private static List<TfApplicationAddonMeta> _applicationsMeta =
+		new List<TfApplicationAddonMeta>();
 
-	public ReadOnlyCollection<TfApplicationMeta> GetApplicationsMeta()
+	public ReadOnlyCollection<TfApplicationAddonMeta> GetApplicationsMeta()
 	{
 		return _applicationsMeta.AsReadOnly();
 	}
 
-	public static ReadOnlyCollection<ITfApplication> GetApplications()
+	public static ReadOnlyCollection<ITfApplicationAddon> GetApplications()
 	{
 		return _applicationsMeta
 			.Select(x => x.Instance)
@@ -26,7 +26,7 @@ public partial class TfMetaService : ITfMetaService
 			.AsReadOnly();
 	}
 
-	public ITfApplication GetApplication(
+	public ITfApplicationAddon GetApplication(
 		Guid appId)
 	{
 		return GetApplications()
@@ -39,11 +39,11 @@ public partial class TfMetaService : ITfMetaService
 		Type type)
 	{
 
-		if (type.ImplementsInterface(typeof(ITfApplication)))
+		if (type.ImplementsInterface(typeof(ITfApplicationAddon)))
 		{
-			var instance = (ITfApplication)Activator.CreateInstance(type);
+			var instance = (ITfApplicationAddon)Activator.CreateInstance(type);
 
-			TfApplicationMeta meta = new TfApplicationMeta
+			TfApplicationAddonMeta meta = new TfApplicationAddonMeta
 			{
 				Instance = instance,
 			};

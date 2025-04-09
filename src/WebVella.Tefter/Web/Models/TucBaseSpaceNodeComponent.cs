@@ -1,14 +1,13 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeComponent
+public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpacePageAddon
 {
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
-	public virtual Guid Id { get; set; } = Guid.NewGuid();
-	public virtual string Name { get; set; } = null;
-	public virtual string Description { get; set; } = null;
-	public virtual string FluentIconName { get; set; } = null;
-	public virtual TfSpaceNodeComponentContext Context { get; set; }
-	public virtual string GetUrl(TfSpaceNodeComponentContext context) => null;
+	public virtual Guid Id { get; init; } = Guid.NewGuid();
+	public virtual string Name { get; init; } = null;
+	public virtual string Description { get; init; } = null;
+	public virtual string FluentIconName { get; init; } = null;
+	public virtual TfSpacePageAddonContext Context { get; set; }
 	public virtual string GetOptions() => "{}";
 	public virtual List<ValidationError> ValidateOptions() => new List<ValidationError>();
 	public virtual List<ValidationError> ValidationErrors { get; set; } = new();
@@ -17,10 +16,10 @@ public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpaceNodeCom
 		TucUser currentUser,
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState, 
-		TfSpaceNodeComponentContext context) => Task.FromResult((newAppState,newAuxDataState));
-	public virtual Task<string> OnNodeCreated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.FromResult(context.ComponentOptionsJson);
-	public virtual Task<string> OnNodeUpdated(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.FromResult(context.ComponentOptionsJson);
-	public virtual Task OnNodeDeleted(IServiceProvider serviceProvider, TfSpaceNodeComponentContext context) => Task.CompletedTask;
+		TfSpacePageAddonContext context) => Task.FromResult((newAppState,newAuxDataState));
+	public virtual Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.FromResult(context.ComponentOptionsJson);
+	public virtual Task<string> OnPageUpdated(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.FromResult(context.ComponentOptionsJson);
+	public virtual Task OnPageDeleted(IServiceProvider serviceProvider, TfSpacePageAddonContext context) => Task.CompletedTask;
 	
 
 	#region << Private properties >>

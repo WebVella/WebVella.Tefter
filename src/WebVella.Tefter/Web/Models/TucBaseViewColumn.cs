@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Web.Models;
 
-public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfSpaceViewColumnComponent, ITucAuxDataUseComponent
+public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable, ITfSpaceViewColumnComponentAddon, ITfAuxDataState
 {
 	#region << Injects >>
 	[Inject] protected IJSRuntime JSRuntime { get; set; }
@@ -14,6 +14,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 	#region << Properties >>
 	public virtual Guid Id { get; init; } = Guid.NewGuid();
+	public string Name { get; init;} = String.Empty;
+	public string Description { get; init;} = String.Empty;
+	public string FluentIconName { get; init;} = String.Empty;
 	public virtual List<Type> SupportedColumnTypes { get; init; }
 	[Parameter] public TucViewColumnComponentContext Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }

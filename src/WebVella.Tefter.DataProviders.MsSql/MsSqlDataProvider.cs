@@ -2,15 +2,15 @@
 
 namespace WebVella.Tefter.DataProviders.MsSql;
 
-public class MsSqlDataProvider : ITfDataProviderType
+public class MsSqlDataProvider : ITfDataProviderAddon
 {
-	public Guid Id => new Guid("0f86e009-1db4-497f-b10a-a55f4fad455d");
+	public Guid Id { get; init;} = new Guid("0f86e009-1db4-497f-b10a-a55f4fad455d");
 
-	public string Name => "Microsoft Sql Data Provider";
+	public string Name { get; init;} = "Microsoft Sql Data Provider";
 
-	public string Description => "Provide data from Microsoft SQL server query.";
+	public string Description { get; init;} = "Provide data from Microsoft SQL server query.";
 
-	public string FluentIconName => "DocumentTable";
+	public string FluentIconName { get; init;} = "DocumentTable";
 
 	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{
@@ -78,7 +78,7 @@ public class MsSqlDataProvider : ITfDataProviderType
 			provider);
 	}
 
-	TfDataProviderSourceSchemaInfo ITfDataProviderType.GetDataProviderSourceSchema(
+	TfDataProviderSourceSchemaInfo ITfDataProviderAddon.GetDataProviderSourceSchema(
 		TfDataProvider provider)
 	{
 		var settings = JsonSerializer.Deserialize<MsSqlDataProviderSettings>(provider.SettingsJson);

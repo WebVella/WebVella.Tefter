@@ -1,8 +1,7 @@
-﻿namespace WebVella.Tefter.Models;
+﻿namespace WebVella.Tefter.Addons;
 
-public interface ITfSpaceViewColumnComponent
+public interface ITfSpaceViewColumnComponentAddon : ITfAddon
 {
-	public Guid Id { get; init; }
 	public List<Type> SupportedColumnTypes { get; init; }
 	void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell);
 }

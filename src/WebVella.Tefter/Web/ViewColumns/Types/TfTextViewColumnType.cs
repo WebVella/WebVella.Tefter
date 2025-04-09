@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.ViewColumns;
-public class TfTextViewColumnType : ITfSpaceViewColumnType
+public class TfTextViewColumnType : ITfSpaceViewColumnAddon
 {
 	const string TF_COLUMN_TEXT_ID = Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID;
 	const string TF_COLUMN_TEXT_NAME = "Text";
@@ -11,7 +11,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 	public string Name { get; init; }
 	public string Description { get; init; }
 	public string FluentIconName { get; init; }
-	public List<TfSpaceViewColumnDataMapping> DataMapping { get; init; }
+	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
 	/// <summary>
 	/// This property will be inited on application start
@@ -26,9 +26,9 @@ public class TfTextViewColumnType : ITfSpaceViewColumnType
 		Name = TF_COLUMN_TEXT_NAME;
 		Description = TF_COLUMN_TEXT_DESCRIPTION;
 		FluentIconName = TF_COLUMN_TEXT_ICON;
-		DataMapping = new List<TfSpaceViewColumnDataMapping>
+		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
-			new TfSpaceViewColumnDataMapping
+			new TfSpaceViewColumnAddonDataMapping
 				{
 					Alias = ALIAS,
 					Description = "this column is compatible with all column types, but its intended use is with text",

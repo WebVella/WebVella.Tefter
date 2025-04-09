@@ -29,9 +29,9 @@ internal partial class AppStateUseCase
 
 		foreach (TfRegionComponentMeta addonComponent in newAppState.Pages)
 		{
-			if (addonComponent.ComponentType.ImplementsInterface(typeof(ITucAuxDataUseComponent)))
+			if (addonComponent.ComponentType.ImplementsInterface(typeof(ITfAuxDataState)))
 			{
-				var component = (ITucAuxDataUseComponent)Activator.CreateInstance(addonComponent.ComponentType);
+				var component = (ITfAuxDataState)Activator.CreateInstance(addonComponent.ComponentType);
 				component.OnAppStateInit(
 						serviceProvider: _serviceProvider,
 						currentUser: currentUser,
@@ -46,7 +46,7 @@ internal partial class AppStateUseCase
 		return Task.FromResult((newAppState,newAuxDataState));
 	}
 
-	internal virtual ReadOnlyCollection<TfSpaceNodeComponentMeta> GetSpaceNodeComponents()
+	internal virtual ReadOnlyCollection<TfSpacePageAddonMeta> GetSpaceNodeComponents()
 	{
 		return _metaService.GetSpaceNodesComponentsMeta();
 	}
