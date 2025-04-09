@@ -130,7 +130,7 @@ public partial class TfSpaceActions : TfBaseComponent
 
 	private void onPageListClick()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceNodePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.Space.DefaultNodeId));
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.Space.DefaultNodeId));
 	}
 
 }

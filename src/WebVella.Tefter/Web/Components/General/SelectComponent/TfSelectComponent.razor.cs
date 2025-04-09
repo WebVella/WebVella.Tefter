@@ -9,7 +9,8 @@ public partial class TfSelectComponent<TOption> : TfBaseComponent where TOption 
 	[Parameter] public Func<TOption, string> OptionText { get; set; }
 	[Parameter] public Func<TOption, string> OptionDescription { get; set; }
 	[Parameter] public Func<TOption, TOption, bool> OptionMatch { get; set; }
-	private bool _isReadonly { get => !ValueChanged.HasDelegate; }
+	[Parameter] public bool Disabled { get; set; } = false;
+	private bool _isReadonly { get => Disabled || !ValueChanged.HasDelegate; }
 
 	private string _elementId = TfConverters.ConvertGuidToHtmlElementId(Guid.NewGuid());
 	private bool _open = false;

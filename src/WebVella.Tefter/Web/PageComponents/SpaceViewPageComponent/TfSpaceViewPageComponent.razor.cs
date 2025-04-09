@@ -4,6 +4,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 {
 	#region << Render Injects >>
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+	[Inject] protected NavigationManager Navigator { get; set; }
 	#endregion
 
 	#region << Base Overrides >>
@@ -261,6 +262,12 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 				}
 			}
 		}
+	}
+
+	private void _goToView(){ 
+		if(TfAppState.Value.Space is null || _optionsExistingSpaceView is null || _optionsExistingSpaceView.Id == Guid.Empty) return;
+
+		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl,TfAppState.Value.Space.Id, _optionsExistingSpaceView.Id));
 	}
 
 	#endregion

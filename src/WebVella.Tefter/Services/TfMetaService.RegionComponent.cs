@@ -121,34 +121,6 @@ public partial class TfMetaService : ITfMetaService
 					Scopes = instance.Scopes
 				};
 			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeManageScreenRegion)))
-			{
-				var instance = (ITfRegionComponent<TfSpaceNodeManageScreenRegion>)Activator.CreateInstance(type);
-				meta = new TfRegionComponentMeta
-				{
-					Id = instance.Id,
-					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
-					ComponentType = type,
-					Scopes = instance.Scopes
-				};
-			}
-			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceNodeViewScreenRegion)))
-			{
-				var instance = (ITfRegionComponent<TfSpaceNodeViewScreenRegion>)Activator.CreateInstance(type);
-				meta = new TfRegionComponentMeta
-				{
-					Id = instance.Id,
-					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
-					ComponentType = type,
-					Scopes = instance.Scopes
-				};
-			}
 			else if (type.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfSpaceViewSelectorActionScreenRegion)))
 			{
 				var instance = (ITfRegionComponent<TfSpaceViewSelectorActionScreenRegion>)Activator.CreateInstance(type);

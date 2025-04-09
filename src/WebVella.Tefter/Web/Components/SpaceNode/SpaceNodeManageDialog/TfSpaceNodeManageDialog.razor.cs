@@ -183,7 +183,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		context.Icon = _form.Icon;
 		context.SpaceId = TfAppState.Value.Space.Id;
 		context.ComponentOptionsJson = _form.ComponentOptionsJson;
-		context.Mode = TfComponentMode.Create;
+		context.Mode = _isCreate ? TfComponentMode.Create : TfComponentMode.Update;
 		dict["Context"] = context;
 		return dict;
 	}

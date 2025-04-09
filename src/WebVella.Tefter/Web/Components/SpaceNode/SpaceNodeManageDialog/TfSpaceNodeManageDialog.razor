@@ -90,7 +90,7 @@
 						<TfSelectComponent TOption="TfSpaceNodeComponentMeta" Items="@_pageComponents"
 										   Value="_selectedPageComponent" ValueChanged="_pageComponentChanged"
 										   OptionText="@(x=> x.Instance.Name)" OptionIcon="@(x=> x.Instance.FluentIconName)" OptionDescription="@(x=> x.Instance.Description)"
-										   OptionMatch="@((x,y)=> x.Instance?.Id == y.Instance.Id)" />
+										   OptionMatch="@((x,y)=> x.Instance?.Id == y.Instance.Id)" Disabled ="!_isCreate"/>
 						<FluentValidationMessage For="@(() => _form.ComponentTypeFullName)" />
 					</FluentGridItem>
 				</FluentGrid>

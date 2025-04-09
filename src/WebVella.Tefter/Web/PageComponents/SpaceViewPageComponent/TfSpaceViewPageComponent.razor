@@ -177,6 +177,25 @@ else if (Context.Mode == TfComponentMode.Create)
 		</FluentGrid>
 	}
 }
+else if (Context.Mode == TfComponentMode.Update)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentSelect OptionSelected="(x => x.Id == _optionsExistingSpaceView?.Id)"
+						  SelectedOption="@_optionsExistingSpaceView"
+						  SelectedOptionChanged="_optionsSpaceViewSelected"
+						  TOption="TucSpaceView" Placeholder="@LOC("select...")"
+						  Items="@TfAppState.Value.SpaceViewList" Style="width:100%"
+						  OptionValue="@((p)=> p.Id.ToString())"
+						  OptionText="@(p => p.Name)" Label="@LOC("Selected view")"
+						  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" Disabled=true/>
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="Navigate"/>
+			<FluentButton Appearance="Appearance.Outline" OnClick="@_goToView">@LOC("browse view")</FluentButton>
+		</FluentGridItem>
+	</FluentGrid>
+}
 else
 {
 
