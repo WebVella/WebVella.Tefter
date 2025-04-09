@@ -18,7 +18,7 @@ public interface ITfSpacePageAddon : ITfAddon
 
 public class TfSpacePageAddonMeta
 {
-	public Type ComponentType { get; init; }
+	public Guid ComponentId { get; init; }
 	internal ITfSpacePageAddon Instance { get; init; }
 }
 

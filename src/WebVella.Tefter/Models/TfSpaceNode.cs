@@ -9,8 +9,8 @@ public class TfSpaceNode
 	public string Name { get; set; }
 	public string Icon { get; set; } = TfConstants.PageIconString;
 	public short? Position { get; set; }
-	public string ComponentTypeFullName { get; set; }
-	public Type ComponentType { get; init; }
+	public Guid? ComponentId { get; init; }
+	public Type ComponentType { get; internal set; }
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TfSpaceNode> ChildNodes { get; set; } = new();
 	public TfSpaceNode ParentNode { get; set; } = null;
@@ -44,7 +44,7 @@ public class TfSpaceNode
 
 
 [DboCacheModel]
-[TfDboModel("space_node")]
+[TfDboModel("tf_space_page")]
 public class TfSpaceNodeDbo
 {
 	[TfDboModelProperty("id")]
@@ -69,8 +69,8 @@ public class TfSpaceNodeDbo
 	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
-	[TfDboModelProperty("component_type")]
-	public string ComponentType { get; set; }
+	[TfDboModelProperty("component_id")]
+	public Guid? ComponentId { get; set; }
 
 	[TfDboModelProperty("component_settings_json")]
 	public string ComponentSettingsJson { get; set; } = "{}";

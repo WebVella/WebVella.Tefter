@@ -155,7 +155,7 @@ public partial class TfService : ITfService
 
 				if (providerType == null)
 					throw new TfException($"Failed to get data providers, because " +
-						$"provider type {dbo.TypeName} with id = '{dbo.TypeId}' is not found.");
+						$"provider type with id = '{dbo.TypeId}' is not found.");
 
 				var sharedKeys = GetDataProviderSharedKeys(dbo.Id);
 
@@ -388,7 +388,6 @@ public partial class TfService : ITfService
 			Name = providerModel.Name,
 			SettingsJson = providerModel.SettingsJson,
 			TypeId = providerModel.ProviderType.Id,
-			TypeName = providerModel.ProviderType.GetType().FullName,
 			SynchPrimaryKeyColumnsJson = JsonSerializer.Serialize(providerModel.SynchPrimaryKeyColumns ?? new List<string>())
 		};
 	}

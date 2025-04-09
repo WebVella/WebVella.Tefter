@@ -10,7 +10,7 @@ public class TfSpace
 }
 
 [DboCacheModel]
-[TfDboModel("space")]
+[TfDboModel("tf_space")]
 internal class TfSpaceDbo
 {
 	[TfDboModelProperty("id")]

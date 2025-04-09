@@ -6,11 +6,13 @@ public class ExportUseCase
 {
 	private readonly IServiceProvider _serviceProvider;
 	private readonly ITfService _tfService;
+	private readonly ITfMetaService _tfMetaService;
 
 	public ExportUseCase(IServiceProvider serviceProvider)
 	{
 		_serviceProvider = serviceProvider;
 		_tfService = serviceProvider.GetService<ITfService>();
+		_tfMetaService = serviceProvider.GetService<ITfMetaService>();
 	}
 
 	//TODO RUMEN: Move to service method?
@@ -28,7 +30,9 @@ public class ExportUseCase
 			if (resultNode is null)
 				throw new TfException("GetSpaceNode method failed");
 
-			if (resultNode.Type == TfSpaceNodeType.Page && resultNode.ComponentType == typeof(TfSpaceViewSpacePageAddon))
+			var spacePagesMeta = _tfMetaService.GetSpaceNodesComponentsMeta();
+			var spacePageMeta = spacePagesMeta.SingleOrDefault( x=>x.ComponentId == resultNode.ComponentId);
+			if (resultNode.Type == TfSpaceNodeType.Page && spacePageMeta != null && spacePageMeta.Instance.GetType() == typeof(TfSpaceViewSpacePageAddon))
 			{
 				try
 				{

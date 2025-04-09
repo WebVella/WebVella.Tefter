@@ -26,7 +26,7 @@ internal partial class AppStateUseCase
 			if (spaceNode is not null)
 			{
 				var nodeComponentsMeta = GetSpaceNodeComponents();
-				var spaceNodeMeta = nodeComponentsMeta.FirstOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentTypeFullName);
+				var spaceNodeMeta = nodeComponentsMeta.FirstOrDefault(x => x.ComponentId == spaceNode.ComponentId);
 				if (spaceNodeMeta is not null)
 				{
 					var context = new TfSpacePageAddonContext

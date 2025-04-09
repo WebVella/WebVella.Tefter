@@ -26,7 +26,7 @@ public partial class TfMetaService : ITfMetaService
 			TfSpacePageAddonMeta meta = new TfSpacePageAddonMeta
 			{
 				Instance = instance,
-				ComponentType = type,
+				ComponentId = instance.Id,
 			};
 
 			_spaceNodeComponentMeta.Add(meta);

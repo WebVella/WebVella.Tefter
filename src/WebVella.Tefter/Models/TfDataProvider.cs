@@ -37,7 +37,7 @@ public record TfDataProviderModel
 
 
 [DboCacheModel]
-[TfDboModel("data_provider")]
+[TfDboModel("tf_data_provider")]
 internal record TfDataProviderDbo
 {
 	[TfDboModelProperty("id")]
@@ -52,9 +52,6 @@ internal record TfDataProviderDbo
 
 	[TfDboModelProperty("type_id")]
 	public Guid TypeId { get; set; }
-
-	[TfDboModelProperty("type_name")]
-	public string TypeName { get; set; }
 
 	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = null;

@@ -27,7 +27,7 @@ public class TfSpaceDataAsOption
 
 
 [DboCacheModel]
-[TfDboModel("space_data")]
+[TfDboModel("tf_space_data")]
 internal class TfSpaceDataDbo
 {
 	[TfDboModelProperty("id")]

@@ -43,6 +43,10 @@ public partial class TfService : ITfService
 			foreach (var rootNode in rootNodes)
 			{
 				rootNode.ParentNode = null;
+				rootNode.ComponentType = _metaService
+					.GetSpaceNodesComponentsMeta()
+					.SingleOrDefault(x => x.ComponentId == rootNode.ComponentId)
+					?.Instance.GetType();
 				InitSpaceNodeChildNodes(rootNode, spaceNodesList);
 			}
 			return rootNodes;
@@ -72,6 +76,10 @@ public partial class TfService : ITfService
 			foreach (var rootNode in rootNodes)
 			{
 				rootNode.ParentNode = null;
+				rootNode.ComponentType = _metaService
+					.GetSpaceNodesComponentsMeta()
+					.SingleOrDefault(x => x.ComponentId == rootNode.ComponentId)
+					?.Instance.GetType();
 				InitSpaceNodeChildNodes(rootNode, spaceNodesList);
 			}
 
@@ -229,10 +237,10 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Insert<TfSpaceNodeDbo> failed.");
 
 
-				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentTypeFullName))
+				if (spaceNode.Type == TfSpaceNodeType.Page && spaceNode.ComponentId.HasValue )
 				{
 					var spaceNodeComponents = _metaService.GetSpaceNodesComponentsMeta();
-					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentTypeFullName);
+					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentId == spaceNode.ComponentId);
 					if (nodeComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -503,10 +511,10 @@ public partial class TfService : ITfService
 				}
 
 
-				if (spaceNode.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(spaceNode.ComponentTypeFullName))
+				if (spaceNode.Type == TfSpaceNodeType.Page && spaceNode.ComponentId.HasValue)
 				{
 					var spaceNodeComponents = _metaService.GetSpaceNodesComponentsMeta();
-					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == spaceNode.ComponentTypeFullName);
+					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentId == spaceNode.ComponentId);
 					if (nodeComponent is not null)
 					{
 						var task = Task.Run(async () =>
@@ -614,9 +622,9 @@ public partial class TfService : ITfService
 					if (!_dboManager.Delete<TfSpaceNodeDbo>(nodeToDelete.Id))
 						throw new TfDboServiceException("Delete<TfSpaceNodeDbo> failed");
 
-					if (nodeToDelete.Type == TfSpaceNodeType.Page && !String.IsNullOrWhiteSpace(nodeToDelete.ComponentTypeFullName))
+					if (nodeToDelete.Type == TfSpaceNodeType.Page && nodeToDelete.ComponentId.HasValue)
 					{
-						var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentType.FullName == nodeToDelete.ComponentTypeFullName);
+						var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentId == nodeToDelete.ComponentId);
 						if (nodeComponent is not null)
 						{
 							var task = Task.Run(async () =>
@@ -710,8 +718,6 @@ public partial class TfService : ITfService
 		if (dbo == null)
 			return null;
 
-		var componentType = _metaService.GetTypeForFullClassName(dbo.ComponentType);
-
 		return new TfSpaceNode
 		{
 			Id = dbo.Id,
@@ -720,8 +726,7 @@ public partial class TfService : ITfService
 			SpaceId = dbo.SpaceId,
 			Type = dbo.Type,
 			ComponentOptionsJson = dbo.ComponentSettingsJson,
-			ComponentTypeFullName = dbo.ComponentType,
-			ComponentType = componentType,
+			ComponentId = dbo.ComponentId,
 			Icon = dbo.Icon,
 			ParentId = dbo.ParentId
 		};
@@ -742,7 +747,7 @@ public partial class TfService : ITfService
 			Type = model.Type,
 			ParentId = model.ParentId,
 			Icon = model.Icon ?? string.Empty,
-			ComponentType = model.ComponentTypeFullName ?? "",
+			ComponentId = model.ComponentId,
 			ComponentSettingsJson = model.ComponentOptionsJson ?? "{}",
 		};
 	}

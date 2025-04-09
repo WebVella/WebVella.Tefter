@@ -14,7 +14,7 @@ public class TfSpaceView
 }
 
 [DboCacheModel]
-[TfDboModel("space_view")]
+[TfDboModel("tf_space_view")]
 public class TfSpaceViewDbo
 {
 	[TfDboModelProperty("id")]

@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Models;
 
 [DboCacheModel]
-[TfDboModel("shared_column")]
+[TfDboModel("tf_shared_column")]
 public record TfSharedColumn
 {
 	[TfDboModelProperty("id")]

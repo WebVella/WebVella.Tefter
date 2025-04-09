@@ -20,7 +20,7 @@ public class TfSpaceViewColumn
 }
 
 [DboCacheModel]
-[TfDboModel("space_view_column")]
+[TfDboModel("tf_space_view_column")]
 internal class TfSpaceViewColumnDbo
 {
 	[TfDboModelProperty("id")]

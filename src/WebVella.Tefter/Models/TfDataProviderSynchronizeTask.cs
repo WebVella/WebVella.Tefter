@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-[TfDboModel("data_provider_synchronize_task")]
+[TfDboModel("tf_data_provider_synchronize_task")]
 public class TfDataProviderSynchronizeTaskExtended
 {
 	[TfDboModelProperty("id")]
@@ -50,7 +50,7 @@ public class TfDataProviderSynchronizeTask
 	public DateTime? CompletedOn { get; set; } = null;
 }
 
-[TfDboModel("data_provider_synchronize_task")]
+[TfDboModel("tf_data_provider_synchronize_task")]
 public class TfDataProviderSynchronizeTaskDbo
 {
 	[TfDboModelProperty("id")]
@@ -98,7 +98,7 @@ public class TfDataProviderSynchronizeResultInfo
 	public string Error { get; set; } = null;
 }
 
-[TfDboModel("data_provider_synchronize_result_info")]
+[TfDboModel("tf_data_provider_synchronize_result_info")]
 public class TfDataProviderSynchronizeResultInfoDbo
 {
 	[TfDboModelProperty("id")]

@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Models;
 
 [DboCacheModel]
-[TfDboModel("repository_file")]
+[TfDboModel("tf_repository_file")]
 public class TfRepositoryFile
 {
 	[TfDboModelProperty("id")]

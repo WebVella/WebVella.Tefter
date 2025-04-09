@@ -8,7 +8,7 @@ public class TfRole
 }
 
 [DboCacheModel]
-[TfDboModel("role")]
+[TfDboModel("tf_role")]
 public record RoleDbo
 {
 	[TfDboModelProperty("id")]

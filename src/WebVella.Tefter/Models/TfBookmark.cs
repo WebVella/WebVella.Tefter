@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Models;
 
 [DboCacheModel]
-[TfDboModel("bookmark")]
+[TfDboModel("tf_bookmark")]
 public class TfBookmark
 {
 	[TfDboModelProperty("id")]
@@ -30,7 +30,7 @@ public class TfBookmark
 }
 
 [DboCacheModel]
-[TfDboModel("tag")]
+[TfDboModel("tf_tag")]
 public class TfTag
 {
 	[TfDboModelProperty("id")]
@@ -42,7 +42,7 @@ public class TfTag
 }
 
 [DboCacheModel]
-[TfDboModel("bookmark_tags")]
+[TfDboModel("tf_bookmark_tags")]
 internal class TfBookmarkTag
 {
 	[TfDboModelProperty("bookmark_id")]

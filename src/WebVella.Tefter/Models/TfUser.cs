@@ -33,7 +33,7 @@ public class TfUser
 
 
 [DboCacheModel]
-[TfDboModel("user")]
+[TfDboModel("tf_user")]
 internal record UserDbo
 {
 	[TfDboModelProperty("id")]
@@ -68,7 +68,7 @@ internal record UserDbo
 
 
 [DboCacheModel]
-[TfDboModel("user_role")]
+[TfDboModel("tf_user_role")]
 internal record UserRoleDbo
 {
 	[TfDboModelProperty("user_id")]

@@ -38,7 +38,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 				SpaceId = TfAppState.Value.Space.Id,
 				Type = TfSpaceNodeType.Page,
 				Icon = TfConstants.PageIconString,
-				ComponentTypeFullName = _pageComponents.Count > 0 ? _pageComponents[0].ComponentType.FullName : null
+				ComponentId = _pageComponents.Count > 0 ? _pageComponents[0].ComponentId : null
 			};
 		}
 		else
@@ -47,9 +47,9 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 			_form = Content with { Id = Content.Id };
 			_parentNode = _parentNodeOptions.FirstOrDefault(x => x.Id == _form.ParentId);
 		}
-		if (!String.IsNullOrWhiteSpace(_form.ComponentTypeFullName))
+		if (_form.ComponentId.HasValue)
 		{
-			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentType.FullName == _form.ComponentTypeFullName);
+			_selectedPageComponent = _pageComponents.FirstOrDefault(x => x.ComponentId == _form.ComponentId);
 		}
 
 		base.InitForm(_form);
@@ -72,7 +72,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		if (submit.Type == TfSpaceNodeType.Folder)
 		{
 			submit.ComponentOptionsJson = null;
-			submit.ComponentTypeFullName = null;
+			submit.ComponentType = null;
 
 		}
 		else if (submit.Type == TfSpaceNodeType.Page)
@@ -82,7 +82,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 				addonComponent = typeSettingsComponent.Instance as ITfSpacePageAddon;
 				settingsErrors = addonComponent.ValidateOptions();
 				submit.ComponentOptionsJson = addonComponent.GetOptions();
-				submit.ComponentTypeFullName = _selectedPageComponent?.ComponentType.FullName;
+				submit.ComponentType = _selectedPageComponent?.Instance.GetType();
 			}
 		}
 

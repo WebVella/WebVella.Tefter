@@ -4,7 +4,7 @@ namespace WebVella.Tefter.Models;
 
 
 [DboCacheModel]
-[TfDboModel("data_provider_column")]
+[TfDboModel("tf_data_provider_column")]
 public class TfDataProviderColumn
 {
 	[TfDboModelProperty("id")]

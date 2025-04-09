@@ -13,9 +13,8 @@ public record TucSpaceNode
 	[Required]
 	public string Icon { get; set; } = TfConstants.PageIconString;
 	public short? Position { get; set; }
-	[Required]
-	public string ComponentTypeFullName { get; set; }
 
+	public Guid? ComponentId { get; set; }
 	[JsonIgnore]
 	public Type ComponentType { get; set; }
 
@@ -35,10 +34,10 @@ public record TucSpaceNode
 		Name = model.Name; 
 		Icon = model.Icon;
 		Position = model.Position;
-		ComponentTypeFullName = model.ComponentTypeFullName;
+		ComponentId = model.ComponentId;
+		ComponentType = model.ComponentType;
 		ComponentOptionsJson = model.ComponentOptionsJson;
 		ChildNodes = model.ChildNodes.Select(x => new TucSpaceNode(x)).ToList();
-		ComponentType = model.ComponentType;
 	}
 	public TfSpaceNode ToModel()
 	{
@@ -51,7 +50,8 @@ public record TucSpaceNode
 			Name = Name,
 			Icon = Icon,
 			Position = Position,
-			ComponentTypeFullName = ComponentTypeFullName,
+			ComponentId = ComponentId,
+			ComponentType = ComponentType,
 			ComponentOptionsJson = ComponentOptionsJson,
 			ChildNodes = ChildNodes.Select(x=> x.ToModel()).ToList(),
 			//ComponentType is a getter

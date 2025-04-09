@@ -6,7 +6,7 @@ internal partial interface IMigrationManager
 
 internal partial class MigrationManager : IMigrationManager
 {
-	[TfDboModel("migration")]
+	[TfDboModel("tf_migration")]
 	private record Migration
 	{
 		[TfDboModelProperty("id")]

@@ -19,7 +19,7 @@ public record TfDataProviderSharedKey
 
 
 [DboCacheModel]
-[TfDboModel("data_provider_shared_key")]
+[TfDboModel("tf_data_provider_shared_key")]
 internal record TfDataProviderSharedKeyDbo
 {
 	[TfDboModelProperty("id")]
