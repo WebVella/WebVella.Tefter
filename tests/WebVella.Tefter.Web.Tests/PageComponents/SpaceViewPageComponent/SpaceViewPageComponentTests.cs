@@ -11,10 +11,10 @@ public class SpaceViewPageComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfSpaceViewPageComponent>(args => args
+		var cut = Context.RenderComponent<TfSpaceViewSpacePageAddon>(args => args
 		.Add(x => x.Context, new TfSpacePageAddonContext()
 		{
-			ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewPageComponentOptions())
+			ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions())
 		})
 		);
 

@@ -1,6 +1,6 @@
-﻿namespace WebVella.Tefter.Web.PageComponents;
-[LocalizationResource("WebVella.Tefter.Web.PageComponents.SpaceViewPageComponent.TfSpaceViewPageComponent", "WebVella.Tefter")]
-public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
+﻿namespace WebVella.Tefter.Web.Addons;
+
+public partial class TfSpaceViewSpacePageAddon : TucBaseSpaceNodeComponent
 {
 	#region << Render Injects >>
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -64,7 +64,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		#region << Init Options >>
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) return Task.FromResult((newAppState, newAuxDataState)); ;
 
-		var options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(context.ComponentOptionsJson);
+		var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
 		if (options is null || options.SpaceViewId is null) return Task.FromResult((newAppState, newAuxDataState)); ;
 		#endregion
 
@@ -80,7 +80,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	{
 		await base.OnPageCreated(serviceProvider, context);
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TfSpaceViewPageComponent error: ComponentOptionsJson is null");
-		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(context.ComponentOptionsJson);
+		var jsonOptions = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TfSpaceViewPageComponent error: options cannot be deserialized");
 		Guid? originalSpaceViewId = jsonOptions.SpaceViewId;
 		var tfService = serviceProvider.GetService<ITfService>();
@@ -118,7 +118,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 
 	#region << Private properties >>
 	private string optionsJson = "{}";
-	private TfSpaceViewPageComponentOptions _options { get; set; } = new();
+	private TfSpaceViewSpacePageAddonOptions _options { get; set; } = new();
 	private TucDataProvider _optionsDataProvider = null;
 	private TucSpaceData _optionsDataset = null;
 	private TucSpaceView _optionsExistingSpaceView = null;
@@ -134,9 +134,9 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 		if (Context.ComponentOptionsJson != optionsJson)
 		{
 			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(optionsJson);
+			_options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(optionsJson);
 			//When cannot node has json from another page type
-			if (_options is null) _options = new TfSpaceViewPageComponentOptions();
+			if (_options is null) _options = new TfSpaceViewSpacePageAddonOptions();
 
 			if (_options.SpaceViewId is not null)
 				_optionsExistingSpaceView = TfAppState.Value.SpaceViewList.FirstOrDefault(x => x.Id == _options.SpaceViewId);
@@ -273,7 +273,7 @@ public partial class TfSpaceViewPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 }
 
-public class TfSpaceViewPageComponentOptions
+public class TfSpaceViewSpacePageAddonOptions
 {
 	[JsonPropertyName("SetType")]
 	public TucSpaceViewSetType SetType { get; set; } = TucSpaceViewSetType.New;

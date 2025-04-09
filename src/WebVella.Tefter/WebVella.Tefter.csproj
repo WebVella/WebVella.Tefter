@@ -92,4 +92,10 @@
 	  </Content>
 	</ItemGroup>
 
+	
+
+	<ItemGroup>
+	  <Folder Include="Web\PageComponents\" />
+	</ItemGroup>
+
 </Project>

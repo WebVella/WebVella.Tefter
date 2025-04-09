@@ -1,5 +1,4 @@
 ﻿using ClosedXML.Excel;
-using WebVella.Tefter.Web.PageComponents;
 
 namespace WebVella.Tefter.UseCases.Export;
 
@@ -29,11 +28,11 @@ public class ExportUseCase
 			if (resultNode is null)
 				throw new TfException("GetSpaceNode method failed");
 
-			if (resultNode.Type == TfSpaceNodeType.Page && resultNode.ComponentType == typeof(TfSpaceViewPageComponent))
+			if (resultNode.Type == TfSpaceNodeType.Page && resultNode.ComponentType == typeof(TfSpaceViewSpacePageAddon))
 			{
 				try
 				{
-					var options = JsonSerializer.Deserialize<TfSpaceViewPageComponentOptions>(resultNode.ComponentOptionsJson);
+					var options = JsonSerializer.Deserialize<TfSpaceViewSpacePageAddonOptions>(resultNode.ComponentOptionsJson);
 					spaceViewId = options.SpaceViewId;
 				}
 				catch (Exception ex)

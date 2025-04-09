@@ -60,6 +60,7 @@ global using WebVella.Tefter.UseCases.Export;
 global using WebVella.Tefter.Utility;
 /// Components
 global using WebVella.Tefter.Web.Components;
+global using WebVella.Tefter.Web.Addons;
 global using WebVella.Tefter.Web.Models;
 
 //State
