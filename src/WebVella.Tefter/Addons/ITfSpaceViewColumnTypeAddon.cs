@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Addons;
 
-public interface ITfSpaceViewColumnAddon : ITfAddon
+public interface ITfSpaceViewColumnTypeAddon : ITfAddon
 {
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
 	public Type DefaultComponentType { get; init; }
@@ -18,7 +18,7 @@ public record TfSpaceViewColumnAddonDataMapping
 }
 
 
-public class TfSpaceViewColumnAddonMeta
+public class TfSpaceViewColumnTypeAddonMeta
 {
-	public ITfSpaceViewColumnAddon Instance { get; init; }
+	public ITfSpaceViewColumnTypeAddon Instance { get; init; }
 }

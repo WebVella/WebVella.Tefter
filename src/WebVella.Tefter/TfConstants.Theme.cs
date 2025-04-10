@@ -1,4 +1,5 @@
-﻿namespace WebVella.Tefter.Web.Utils;
+﻿namespace WebVella.Tefter;
+
 using SystemColor = System.Drawing.Color;
 public partial class TfConstants
 {

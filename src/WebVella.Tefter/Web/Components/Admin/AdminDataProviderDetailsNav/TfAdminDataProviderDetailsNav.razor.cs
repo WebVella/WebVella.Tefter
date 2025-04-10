@@ -11,42 +11,42 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		var providerId = TfAppState.Value.Route.DataProviderId.Value;
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Text = LOC("Details")
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Columns")
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.TableAdd(),
 			Text = LOC("Shared Columns")
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Shared Keys")
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Database(),
 			Text = LOC("Synchronization")
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = String.Format(TfConstants.AdminDataProviderDataPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderDataPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Database(),
 			Text = LOC("Data")

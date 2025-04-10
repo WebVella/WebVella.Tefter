@@ -16,7 +16,7 @@ public partial class GuestLayout : LayoutComponentBase
 		{
 			var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 			var user = authState.User;
-			var cookie = await new CookieService(JSRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
+			var cookie = await new CookieService(JSRuntime).GetAsync(TfConstants.TEFTER_AUTH_COOKIE_NAME);
 
 			//Temp fix
 			if (!(cookie is null || user.Identity is null || !user.Identity.IsAuthenticated ||

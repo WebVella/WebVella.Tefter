@@ -70,7 +70,7 @@ public record TucSpaceNode
 			OnClick = null,
 			OnExpand = null,
 			Data = this,
-			Url = Type == TfSpacePageType.Folder ? null : String.Format(TfConstants.SpaceNodePageUrl,SpaceId,Id),
+			Url = Type == TfSpacePageType.Folder ? null : string.Format(TfConstants.SpaceNodePageUrl, SpaceId, Id),
 			Description = null
 		};
 

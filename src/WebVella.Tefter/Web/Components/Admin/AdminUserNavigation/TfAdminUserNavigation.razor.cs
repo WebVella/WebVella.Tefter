@@ -51,7 +51,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		{
 			var user = (TucUser)result.Data;
 			ToastService.ShowSuccess(LOC("User successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
 		}
 	}
 

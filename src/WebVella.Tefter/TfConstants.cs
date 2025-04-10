@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-internal class Constants
+public partial class TfConstants
 {
 	public const string TEFTER_AUTH_COOKIE_NAME = "tefter-auth";
 
@@ -44,4 +44,6 @@ internal class Constants
 	public static NumberStyles TF_FILTER_NUMBER_STYLE = 
 		NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite |
 		NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint ;
+
+
 }

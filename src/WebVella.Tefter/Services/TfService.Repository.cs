@@ -180,7 +180,7 @@ public partial class TfService : ITfService
 
 			DateTime now = DateTime.Now;
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
 				var blobId = CreateBlob(localPath);
@@ -225,7 +225,7 @@ public partial class TfService : ITfService
 
 			DateTime now = DateTime.Now;
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var repFile = GetRepositoryFile(filename);
 

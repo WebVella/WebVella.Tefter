@@ -27,7 +27,7 @@ public partial class TfAdminTemplateNavigation : TfBaseComponent, IAsyncDisposab
 		{
 			var template = (TucTemplate)result.Data;
 			ToastService.ShowSuccess(LOC("Template successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)TfAppState.Value.Route.TemplateResultType, template.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)TfAppState.Value.Route.TemplateResultType, template.Id));
 		}
 	}
 

@@ -69,7 +69,7 @@ public partial class TfNavigation : TfBaseComponent
 				IconCollapsed = TfConstants.ApplicationIcon.WithColor(_defaultColor.ToAttributeValue()),
 				IconColor = _defaultColor,
 				Text = TfConstants.PagesMenuTitle,
-				Url = String.Format(TfConstants.PagesSinglePageUrl, TfAppState.Value.Pages[0].Id),
+				Url = string.Format(TfConstants.PagesSinglePageUrl, TfAppState.Value.Pages[0].Id),
 				Selected = uri.LocalPath.StartsWith(TfConstants.PagesPageUrl)
 			});
 		}
@@ -85,7 +85,7 @@ public partial class TfNavigation : TfBaseComponent
 				IconColor = item.IconColor,
 				Text = item.Text,
 				Url = item.Url,
-				Selected = uri.LocalPath.StartsWith(String.Format(TfConstants.SpacePageUrl, TfConverters.ConvertHtmlElementIdToGuid(item.Id)))
+				Selected = uri.LocalPath.StartsWith(string.Format(TfConstants.SpacePageUrl, TfConverters.ConvertHtmlElementIdToGuid(item.Id)))
 			});
 		}
 	}
@@ -106,7 +106,7 @@ public partial class TfNavigation : TfBaseComponent
 		{
 			var item = (TucSpace)result.Data;
 			ToastService.ShowSuccess(LOC("Space successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, item.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpacePageUrl, item.Id));
 		}
 	}
 

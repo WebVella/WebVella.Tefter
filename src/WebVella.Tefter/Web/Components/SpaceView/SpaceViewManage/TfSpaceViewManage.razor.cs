@@ -37,9 +37,9 @@ public partial class TfSpaceViewManage : TfBaseComponent
 			ToastService.ShowSuccess(LOC("Space view deleted"));
 
 			if (TfAppState.Value.SpaceViewList.Count > 0)
-				Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
+				Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
 			else
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
+				Navigator.NavigateTo(string.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
 		}
 		catch (Exception ex)
 		{
@@ -236,7 +236,7 @@ public partial class TfSpaceViewManage : TfBaseComponent
 		TfSpaceViewManageTab tab = TfSpaceViewManageTab.Columns;
 		if (Enum.TryParse<TfSpaceViewManageTab>(tabObj.Id, false, out tab)) { }
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.TabQueryName, tab.ToString()}
+			{ TfConstants.TabQueryName, tab.ToString()}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}

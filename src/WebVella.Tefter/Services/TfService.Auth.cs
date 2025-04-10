@@ -47,7 +47,7 @@ public partial class TfService : ITfService
 
 			//Set auth cookie
 			await new CookieService(jsRuntime).SetAsync(
-					key: Constants.TEFTER_AUTH_COOKIE_NAME,
+					key: TfConstants.TEFTER_AUTH_COOKIE_NAME,
 					value: cryptoService.Encrypt(user.Id.ToString()),
 					expiration: rememberMe ? DateTimeOffset.Now.AddDays(30) : null);
 		}
@@ -64,7 +64,7 @@ public partial class TfService : ITfService
 		try
 		{
 			//remove auth cookie
-			await new CookieService(jsRuntime).RemoveAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
+			await new CookieService(jsRuntime).RemoveAsync(TfConstants.TEFTER_AUTH_COOKIE_NAME);
 		}
 		catch (Exception ex)
 		{

@@ -19,7 +19,7 @@ public record TucSpaceViewColumnType
 
 
 	public TucSpaceViewColumnType() { }
-	public TucSpaceViewColumnType(ITfSpaceViewColumnAddon model)
+	public TucSpaceViewColumnType(ITfSpaceViewColumnTypeAddon model)
 	{
 		Id = model.Id;
 		Name = model.Name;

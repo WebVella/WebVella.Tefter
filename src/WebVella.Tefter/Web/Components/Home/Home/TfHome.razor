@@ -89,7 +89,7 @@
 							@foreach (var item in TfAppState.Value.HomeSaves)
 							{
 								<FluentNavLink Icon="@TfConstants.SaveIcon"
-											   Href="@NavigatorExt.AddQueryValueToUri(item.Url, TfConstants.ActiveSaveQueryName,item.Id.ToString())" ActiveClass="noclass">
+											   Href="@NavigatorExt.AddQueryValueToUri(item.Url, TfConstants.ActiveSaveQueryName, item.Id.ToString())" ActiveClass="noclass">
 									@item.Name
 								</FluentNavLink>
 							}
@@ -125,7 +125,7 @@
 							@foreach (var item in TfAppState.Value.HomeViews)
 							{
 								<FluentNavLink Icon="@TfConstants.SpaceViewIcon"
-											   Href="@(String.Format(TfConstants.SpaceViewPageUrl,item.SpaceId,item.Id))" ActiveClass="noclass">
+											   Href="@(String.Format(TfConstants.SpaceViewPageUrl, item.SpaceId, item.Id))" ActiveClass="noclass">
 									@item.Name
 								</FluentNavLink>
 							}

@@ -23,7 +23,7 @@ public partial class TfSpaceDataViews : TfBaseComponent
 		return items;
 	}
 
-	private void _navigateToView(TucSpaceView view){ 
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl,view.SpaceId,view.Id));
+	private void _navigateToView(TucSpaceView view){
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, view.SpaceId, view.Id));
 	}
 }

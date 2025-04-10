@@ -147,7 +147,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 					IconCollapsed = TfConstants.BookmarkOFFIcon,
 					Match = NavLinkMatch.Prefix,
 					Text = record.Name,
-					Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.SpaceViewId),
+					Url = string.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.SpaceViewId),
 					Selected = record.SpaceViewId == TfAppState.Value.Route.SpaceViewId
 				};
 				menuItems.Add(viewMenu);

@@ -83,7 +83,7 @@ public partial class TfService : ITfService
 				.ThrowIfContainsErrors();
 
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var spaces = GetSpacesList();
 
@@ -139,7 +139,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var spaces = GetSpacesList();
 
@@ -185,7 +185,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var spaces = GetSpacesList();
 
@@ -232,7 +232,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var space = GetSpace(id);
 

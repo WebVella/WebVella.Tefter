@@ -71,7 +71,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (_isDataLoading) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.SearchQueryName, value}
+			{ TfConstants.SearchQueryName, value}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -82,7 +82,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (TfAppState.Value.Route.Page == 1) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, 1}
+			{ TfConstants.PageQueryName, 1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -94,7 +94,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		queryDict[TfConstants.PageQueryName] = page;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
@@ -111,7 +111,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -121,7 +121,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (TfAppState.Value.Route.Page == -1) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, -1}
+			{ TfConstants.PageQueryName, -1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -132,7 +132,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -158,7 +158,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageSizeQueryName, pageSize}
+			{ TfConstants.PageSizeQueryName, pageSize}
 		};
 		queryDict[TfConstants.PageSizeQueryName] = pageSize;
 		await Navigator.ApplyChangeToUrlQuery(queryDict);

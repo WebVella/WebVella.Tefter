@@ -16,7 +16,7 @@ public partial class TfServiceTest : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
 
@@ -98,7 +98,7 @@ public partial class TfServiceTest : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
@@ -196,7 +196,7 @@ public partial class TfServiceTest : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
@@ -273,7 +273,7 @@ public partial class TfServiceTest : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
@@ -384,7 +384,7 @@ public partial class TfServiceTest : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
 
@@ -506,7 +506,7 @@ public partial class TfServiceTest : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
@@ -593,7 +593,7 @@ public partial class TfServiceTest : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
@@ -717,7 +717,7 @@ public partial class TfServiceTest : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				#region Create Structure
 

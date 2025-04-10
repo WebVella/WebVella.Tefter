@@ -362,7 +362,7 @@ public partial class TfService : ITfService
 			}
 
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var provider = GetDataProvider(table.QueryInfo.DataProviderId);
 				if (provider is null)

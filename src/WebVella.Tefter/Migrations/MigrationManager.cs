@@ -29,7 +29,7 @@ internal partial class MigrationManager : IMigrationManager
 
 	public async Task CheckExecutePendingMigrationsAsync()
 	{
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			await CheckExecutePendingSystemMigrationsAsync();
 

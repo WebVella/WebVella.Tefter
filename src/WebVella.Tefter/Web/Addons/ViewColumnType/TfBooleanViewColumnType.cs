@@ -1,8 +1,8 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.Addons;
 
-public class TfBooleanViewColumnType : ITfSpaceViewColumnAddon
+public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	const string TF_COLUMN_BOOLEAN_ID = Constants.TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID;
+	const string TF_COLUMN_BOOLEAN_ID = TfConstants.TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID;
 	const string TF_COLUMN_BOOLEAN_NAME = "Boolean";
 	const string TF_COLUMN_BOOLEAN_DESCRIPTION = "displays a boolean";
 	const string TF_COLUMN_BOOLEAN_ICON = "CircleMultipleSubtractCheckmark";
@@ -47,7 +47,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnAddon
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfBooleanDisplayColumnComponent);
+		//DefaultComponentType = typeof(TfBooleanDisplayColumnComponent);
 	}
 }
 

@@ -31,7 +31,7 @@ public class NavigatorExtTests
 		result.SecondNode.Should().Be(default);
 		result.ThirdNode.Should().Be(default);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDashboardUrl)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDashboardUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(1);
@@ -40,7 +40,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(default);
 
 		#region << Admin Users >>
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminUsersPageUrl)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUsersPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
@@ -48,7 +48,7 @@ public class NavigatorExtTests
 		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
 		result.ThirdNode.Should().Be(default);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminUserDetailsPageUrl, userId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserDetailsPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(3);
@@ -57,7 +57,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
 		result.UserId.Should().Be(userId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminUserAccessPageUrl, userId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserAccessPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -66,7 +66,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Access);
 		result.UserId.Should().Be(userId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminUserSavesViewsPageUrl, userId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserSavesViewsPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -77,7 +77,7 @@ public class NavigatorExtTests
 		#endregion
 
 		#region << Admin Data providers >>
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDataProvidersPageUrl)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProvidersPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
@@ -85,7 +85,7 @@ public class NavigatorExtTests
 		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
 		result.ThirdNode.Should().Be(default);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(3);
@@ -94,7 +94,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
 		result.DataProviderId.Should().Be(providerId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -103,7 +103,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Schema);
 		result.DataProviderId.Should().Be(providerId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -112,7 +112,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.SharedKeys);
 		result.DataProviderId.Should().Be(providerId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -121,7 +121,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.AuxColumns);
 		result.DataProviderId.Should().Be(providerId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -130,7 +130,7 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Synchronization);
 		result.DataProviderId.Should().Be(providerId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminDataProviderDataPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderDataPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -141,7 +141,7 @@ public class NavigatorExtTests
 		#endregion
 
 		#region << Admin SharedColumns >>
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminSharedColumnsPageUrl)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminSharedColumnsPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
@@ -151,7 +151,7 @@ public class NavigatorExtTests
 		#endregion
 
 		#region << Admin FileRepository >>
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.AdminFileRepositoryPageUrl)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminFileRepositoryPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
@@ -171,7 +171,7 @@ public class NavigatorExtTests
 		#endregion
 
 		#region << Space view >>
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceViewPageUrl, spaceId, viewId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceViewPageUrl, spaceId, viewId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -184,7 +184,7 @@ public class NavigatorExtTests
 
 		#region << Space data >>
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceDataPageUrl, spaceId, dataId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceDataPageUrl, spaceId, dataId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
@@ -194,7 +194,7 @@ public class NavigatorExtTests
 		result.SpaceId.Should().Be(spaceId);
 		result.SpaceDataId.Should().Be(dataId);
 
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceDataViewsPageUrl, spaceId, dataId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceDataViewsPageUrl, spaceId, dataId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(5);
@@ -207,7 +207,7 @@ public class NavigatorExtTests
 		#endregion
 
 		#region << Space node >>
-		uri = new Uri($"{baseUrl}{String.Format(TfConstants.SpaceNodePageUrl, spaceId, nodeId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceNodePageUrl, spaceId, nodeId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);

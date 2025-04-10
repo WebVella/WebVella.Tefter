@@ -89,7 +89,7 @@ public partial class TfService : ITfService
 
 			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType);
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				if (template is not null && template.Id == Guid.Empty)
 				{
@@ -195,7 +195,7 @@ public partial class TfService : ITfService
 
 			var contentProcessor = GetTemplateProcessor(template.ContentProcessorType);
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var errors = contentProcessor.OnUpdate(template, _serviceProvider);
 				if (errors is not null && errors.Count > 0)
@@ -293,7 +293,7 @@ public partial class TfService : ITfService
 
 			var contentProcessor = GetTemplateProcessor(existingTemplate.ContentProcessorType);
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var errors = contentProcessor.OnDelete(existingTemplate, _serviceProvider);
 				if (errors is not null && errors.Count > 0)

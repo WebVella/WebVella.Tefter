@@ -172,7 +172,7 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var success = _dboManager.Insert<TfDataProviderColumn>(column);
 				if (!success)
@@ -206,7 +206,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var validator = new TfDataProviderColumnValidator(this);
 				List<ValidationResult> validationResults = new();
@@ -292,7 +292,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var column = GetDataProviderColumn(id);
 
@@ -1150,9 +1150,9 @@ public partial class TfService : ITfService
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						return dbName.Length >= Constants.DB_MIN_OBJECT_NAME_LENGTH;
+						return dbName.Length >= TfConstants.DB_MIN_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The database name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
+					.WithMessage($"The database name must be at least {TfConstants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>
@@ -1160,9 +1160,9 @@ public partial class TfService : ITfService
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						return dbName.Length <= Constants.DB_MAX_OBJECT_NAME_LENGTH;
+						return dbName.Length <= TfConstants.DB_MAX_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The length of database name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
+					.WithMessage($"The length of database name must be less or equal than {TfConstants.DB_MAX_OBJECT_NAME_LENGTH} characters");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>
@@ -1171,14 +1171,14 @@ public partial class TfService : ITfService
 							return true;
 
 						//other validation will trigger
-						if (dbName.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
+						if (dbName.Length < TfConstants.DB_MIN_OBJECT_NAME_LENGTH)
 							return true;
 
 						//other validation will trigger
-						if (dbName.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
+						if (dbName.Length > TfConstants.DB_MAX_OBJECT_NAME_LENGTH)
 							return true;
 
-						Match match = Regex.Match(dbName, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
+						Match match = Regex.Match(dbName, TfConstants.DB_OBJECT_NAME_VALIDATION_PATTERN);
 						return match.Success && match.Value == dbName.Trim();
 					})
 					.WithMessage($"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +

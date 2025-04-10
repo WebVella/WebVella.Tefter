@@ -32,10 +32,10 @@ public record TucSearchResult
 		SpaceColor = model.SpaceColor;
 		SpaceIcon = model.SpaceIcon;
 		if (type == TucSearchResultType.Bookmark)
-			Url = String.Format(TfConstants.SpaceViewPageUrl, model.SpaceId, model.SpaceViewId);
+			Url = string.Format(TfConstants.SpaceViewPageUrl, model.SpaceId, model.SpaceViewId);
 		else if (type == TucSearchResultType.UrlSave)
 		{
-			Url = NavigatorExt.AddQueryValueToUri(model.Url, TfConstants.ActiveSaveQueryName,model.Id.ToString());
+			Url = NavigatorExt.AddQueryValueToUri(model.Url, TfConstants.ActiveSaveQueryName, model.Id.ToString());
 		}
 	}
 
@@ -52,7 +52,7 @@ public record TucSearchResult
 		SpaceViewName = model.Name;
 		SpaceColor = space.Color;
 		SpaceIcon = space.Icon;
-		Url = String.Format(TfConstants.SpaceViewPageUrl, model.SpaceId, model.Id);
+		Url = string.Format(TfConstants.SpaceViewPageUrl, model.SpaceId, model.Id);
 	}
 }
 

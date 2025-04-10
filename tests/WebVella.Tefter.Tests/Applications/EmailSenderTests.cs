@@ -16,7 +16,7 @@ public partial class EmailSenderTests : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				Guid relatedRowId = Guid.NewGuid();
 

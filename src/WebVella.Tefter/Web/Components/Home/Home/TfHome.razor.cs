@@ -27,7 +27,7 @@ public partial class TfHome : TfBaseComponent
 	private async Task _onSearch(string value)
 	{
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.SearchQueryName, value}
+			{ TfConstants.SearchQueryName, value}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -47,7 +47,7 @@ public partial class TfHome : TfBaseComponent
 	private async Task _tagClick(TucTag tag)
 	{
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.SearchQueryName, "#" + tag.Label}
+			{ TfConstants.SearchQueryName, "#" + tag.Label}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -57,7 +57,7 @@ public partial class TfHome : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private void _showNotification(){ 
+	private void _showNotification(){
 		MessageService.ShowMessageBar(options =>
 		{
 			options.Intent = MessageIntent.Error;

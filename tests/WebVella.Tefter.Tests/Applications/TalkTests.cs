@@ -15,7 +15,7 @@ public partial class TalkTests : BaseTest
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var user = tfService.GetUser("rumen@webvella.com");
 
@@ -47,7 +47,7 @@ public partial class TalkTests : BaseTest
 			ITalkService talkService = ServiceProvider.GetRequiredService<ITalkService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 				var dataTable = tfService.QueryDataProvider(provider);

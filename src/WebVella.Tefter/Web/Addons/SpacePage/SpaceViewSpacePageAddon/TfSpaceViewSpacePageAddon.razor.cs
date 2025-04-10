@@ -267,7 +267,7 @@ public partial class TfSpaceViewSpacePageAddon : TucBaseSpaceNodeComponent
 	private void _goToView(){ 
 		if(TfAppState.Value.Space is null || _optionsExistingSpaceView is null || _optionsExistingSpaceView.Id == Guid.Empty) return;
 
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl,TfAppState.Value.Space.Id, _optionsExistingSpaceView.Id));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, _optionsExistingSpaceView.Id));
 	}
 
 	#endregion

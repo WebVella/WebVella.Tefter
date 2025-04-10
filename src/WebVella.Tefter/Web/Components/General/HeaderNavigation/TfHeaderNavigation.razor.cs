@@ -22,7 +22,7 @@ public partial class TfHeaderNavigation : TfBaseComponent
 	private async Task _onClick(Guid? presetId)
 	{
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PresetIdQueryName, presetId}
+			{ TfConstants.PresetIdQueryName, presetId}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 

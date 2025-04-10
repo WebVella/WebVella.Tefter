@@ -15,7 +15,7 @@ public partial class TfServiceTest : BaseTest
 		{
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 
@@ -35,7 +35,7 @@ public partial class TfServiceTest : BaseTest
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-		using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			//var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 			var provider = tfService.GetDataProvider(providerId);
@@ -133,7 +133,7 @@ public partial class TfServiceTest : BaseTest
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-		using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			//var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 			var provider = tfService.GetDataProvider(providerId);
@@ -175,7 +175,7 @@ public partial class TfServiceTest : BaseTest
 		ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 		ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-		using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			//var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 			var provider = tfService.GetDataProvider(providerId);

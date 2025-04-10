@@ -9,7 +9,7 @@ public partial class TfSpaceActions : TfBaseComponent
 
 	private void onManageSpaceClick()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id));
 	}
 	private async Task addSpaceDataClick()
 	{
@@ -39,14 +39,14 @@ public partial class TfSpaceActions : TfBaseComponent
 				SpaceDataList = itemList.OrderBy(x => x.Position).ToList()
 			}));
 
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, item.SpaceId, item.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, item.SpaceId, item.Id));
 		}
 	}
 	private void onDataListClick()
 	{
 		Guid? spaceDataId = null;
 		if (TfAppState.Value.SpaceDataList.Count > 0) spaceDataId = TfAppState.Value.SpaceDataList[0].Id;
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, spaceDataId));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, spaceDataId));
 	}
 
 	private async Task addPage()
@@ -80,7 +80,7 @@ public partial class TfSpaceActions : TfBaseComponent
 	{
 		Guid? spaceViewId = null;
 		if (TfAppState.Value.SpaceViewList.Count > 0) spaceViewId = TfAppState.Value.SpaceViewList[0].Id;
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, spaceViewId));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, spaceViewId));
 	}
 
 	private async Task addViewClick()
@@ -124,13 +124,13 @@ public partial class TfSpaceActions : TfBaseComponent
 						}));
 
 			ToastService.ShowSuccess(LOC("Space view successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
 		}
 	}
 
 	private void onPageListClick()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.Space.DefaultNodeId));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceManagePageUrl, TfAppState.Value.Space.Id, TfAppState.Value.Space.DefaultNodeId));
 	}
 
 }

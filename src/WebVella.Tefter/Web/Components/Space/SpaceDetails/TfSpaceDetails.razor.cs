@@ -15,7 +15,7 @@ public partial class TfSpaceDetails : TfBaseComponent
 		{
 			if (TfAppState.Value.Space is not null && TfAppState.Value.SpaceViewList.Count > 0)
 			{
-				Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id));
+				Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id));
 			}
 			else
 			{
@@ -65,7 +65,7 @@ public partial class TfSpaceDetails : TfBaseComponent
 						}));
 
 			ToastService.ShowSuccess(LOC("Space view successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
 		}
 	}
 

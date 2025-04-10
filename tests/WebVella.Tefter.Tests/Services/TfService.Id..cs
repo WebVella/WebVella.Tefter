@@ -12,7 +12,7 @@ public partial class TfServiceTest : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				Guid? id1 = null;
 				Guid? id2 = null;
@@ -41,7 +41,7 @@ public partial class TfServiceTest : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var faker = new Faker("en");
 

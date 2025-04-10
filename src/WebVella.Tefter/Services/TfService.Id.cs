@@ -165,7 +165,7 @@ public partial class TfService : ITfService
 			if (keys == null || keys.Length == 0)
 				return string.Empty;
 
-			return string.Join(Constants.SHARED_KEY_SEPARATOR, keys) ?? string.Empty;
+			return string.Join(TfConstants.SHARED_KEY_SEPARATOR, keys) ?? string.Empty;
 		}
 		catch (Exception ex)
 		{

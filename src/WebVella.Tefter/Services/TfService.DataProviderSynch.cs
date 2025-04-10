@@ -432,7 +432,7 @@ ORDER BY st.created_on DESC");
 			if (provider is null)
 				throw new TfException("Unable to get provider.");
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_SYNC_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_SYNC_OPERATION_LOCK_KEY))
 			{
 				var existingData = GetExistingData(provider);
 				var newData = GetNewData(provider);
@@ -981,7 +981,7 @@ ORDER BY st.created_on DESC");
 				columnKeyValues.Add(value?.ToString());
 			}
 
-			return string.Join(Constants.SHARED_KEY_SEPARATOR, columnKeyValues) ?? string.Empty;
+			return string.Join(TfConstants.SHARED_KEY_SEPARATOR, columnKeyValues) ?? string.Empty;
 		}
 		else
 		{
@@ -1003,7 +1003,7 @@ ORDER BY st.created_on DESC");
 				columnKeyValues.Add(dr[column]?.ToString());
 			}
 
-			return string.Join(Constants.SHARED_KEY_SEPARATOR, columnKeyValues) ?? string.Empty;
+			return string.Join(TfConstants.SHARED_KEY_SEPARATOR, columnKeyValues) ?? string.Empty;
 		}
 		else
 		{

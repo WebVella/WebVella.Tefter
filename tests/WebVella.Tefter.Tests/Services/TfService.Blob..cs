@@ -15,7 +15,7 @@ public partial class TfServiceTest : BaseTest
 			if (dbService.Configuration.ConnectionString.ToLowerInvariant().Contains("database=tefter;"))
 				throw new Exception("Invalid database");
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				const string sampleJsonFileContent = @"{
 	""Tefter"": {
@@ -164,7 +164,7 @@ public partial class TfServiceTest : BaseTest
 			if (dbService.Configuration.ConnectionString.ToLowerInvariant().Contains("database=tefter;"))
 				throw new Exception("Invalid database");
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				const string sampleJsonFileContent = @"{
 	""Tefter"": {

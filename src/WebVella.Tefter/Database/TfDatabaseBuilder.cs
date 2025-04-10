@@ -385,13 +385,13 @@ public class TfDatabaseBuilder
 			return false;
 		}
 
-		if (name.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
-			error = $"The name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long";
+		if (name.Length < TfConstants.DB_MIN_OBJECT_NAME_LENGTH)
+			error = $"The name must be at least {TfConstants.DB_MIN_OBJECT_NAME_LENGTH} characters long";
 
-		if (name.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
-			error = $"The length of name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters";
+		if (name.Length > TfConstants.DB_MAX_OBJECT_NAME_LENGTH)
+			error = $"The length of name must be less or equal than {TfConstants.DB_MAX_OBJECT_NAME_LENGTH} characters";
 
-		Match match = Regex.Match(name, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
+		Match match = Regex.Match(name, TfConstants.DB_OBJECT_NAME_VALIDATION_PATTERN);
 		if (!match.Success || match.Value != name.Trim())
 			error = $"Name can only contains underscores and lowercase alphanumeric characters. It must begin with a letter, " +
 				$"not include spaces, not end with an underscore, and not contain two consecutive underscores";

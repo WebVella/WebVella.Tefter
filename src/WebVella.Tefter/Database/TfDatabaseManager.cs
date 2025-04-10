@@ -22,7 +22,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 	{
 		var databaseBuilder = TfDatabaseBuilder.New();
 
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			#region <---tables--->
 
@@ -73,7 +73,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 						{
 							Guid? guidDefaultValue = (Guid?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfGuidDatabaseColumn), defaultValue);
 
-							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
+							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
 
 							var columnBuider = columnCollectionBuilder
 								.AddGuidColumnBuilder(meta.Id, columnName)
@@ -134,7 +134,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 						{
 							DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
 
-							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
 
 							var columnBuider = columnCollectionBuilder
 								.AddDateColumnBuilder(meta.Id, columnName)
@@ -156,7 +156,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 						{
 							DateTime? columnDefaultValue = (DateTime?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateTimeDatabaseColumn), defaultValue);
 
-							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
 
 							var columnBuider = columnCollectionBuilder
 								.AddDateTimeColumnBuilder(meta.Id, columnName)
@@ -416,7 +416,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 
 		var cloneTableName = $"{tableToClone}_{suffix}";
 
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			#region <---tables--->
 
@@ -476,7 +476,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 						{
 							Guid? guidDefaultValue = (Guid?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfGuidDatabaseColumn), defaultValue);
 
-							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
+							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_GUID_COLUMN_AUTO_DEFAULT_VALUE;
 
 							var columnBuider = columnCollectionBuilder
 								.AddGuidColumnBuilder(meta.Id, columnName)
@@ -537,7 +537,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 						{
 							DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
 
-							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
 
 							var columnBuider = columnCollectionBuilder
 								.AddDateColumnBuilder(meta.Id, columnName)
@@ -559,7 +559,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 						{
 							DateTime? columnDefaultValue = (DateTime?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateTimeDatabaseColumn), defaultValue);
 
-							bool isAutoDefaultValue = defaultValue?.Trim() == Constants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
+							bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE;
 
 							var columnBuider = columnCollectionBuilder
 								.AddDateTimeColumnBuilder(meta.Id, columnName)
@@ -834,7 +834,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 		if (differences.Count == 0)
 			return new TfDatabaseUpdateResult(log);
 
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			var dtLogs = _dbService.ExecuteSqlQueryCommand(updateScript);
 

@@ -59,7 +59,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (TfAppState.Value.Route.Page == 1) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, 1}
+			{ TfConstants.PageQueryName, 1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -71,7 +71,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -86,7 +86,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -96,7 +96,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (TfAppState.Value.Route.Page == -1) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, -1}
+			{ TfConstants.PageQueryName, -1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -107,7 +107,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (TfAppState.Value.Route.Page == page) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -131,7 +131,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageSizeQueryName, pageSize}
+			{ TfConstants.PageSizeQueryName, pageSize}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -142,7 +142,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (_isDataLoading) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.SearchQueryName, value}
+			{ TfConstants.SearchQueryName, value}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -173,9 +173,9 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		if (_isDataLoading) return;
 		_isDataLoading = true;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.SearchQueryName, null},
-			{TfConstants.FiltersQueryName, null},
-			{TfConstants.SortsQueryName, null}
+			{ TfConstants.SearchQueryName, null},
+			{ TfConstants.FiltersQueryName, null},
+			{ TfConstants.SortsQueryName, null}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}

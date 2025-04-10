@@ -65,9 +65,9 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 			ToastService.ShowSuccess(LOC("Space data deleted"));
 
 			if (TfAppState.Value.SpaceDataList.Count > 0)
-				Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceDataList[0].Id), true);
+				Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceDataList[0].Id), true);
 			else
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
+				Navigator.NavigateTo(string.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
 		}
 		catch (Exception ex)
 		{

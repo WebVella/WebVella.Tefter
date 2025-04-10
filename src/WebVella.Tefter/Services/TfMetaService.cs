@@ -9,6 +9,7 @@ public partial interface ITfMetaService
 public partial class TfMetaService : ITfMetaService
 {
 	private static Dictionary<string, Type> _typesMap = new Dictionary<string, Type>();
+	private static Dictionary<Guid, Type> _addonIdToTypeMap = new Dictionary<Guid, Type>();
 
 	public Type GetTypeForFullClassName(
 		string fullClassName)

@@ -1,8 +1,8 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.Addons;
 
-public class TfGuidViewColumnType : ITfSpaceViewColumnAddon
+public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	const string TF_COLUMN_GUID_ID = Constants.TF_GENERIC_GUID_COLUMN_TYPE_ID;
+	const string TF_COLUMN_GUID_ID = TfConstants.TF_GENERIC_GUID_COLUMN_TYPE_ID;
 	const string TF_COLUMN_GUID_NAME = "Unique identifier (GUID)";
 	const string TF_COLUMN_GUID_DESCRIPTION = "displays GUID value";
 	const string TF_COLUMN_GUID_ICON = "Key";
@@ -49,7 +49,7 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnAddon
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfGuidDisplayColumnComponent);
+		//DefaultComponentType = typeof(TfGuidDisplayColumnComponent);
 	}
 }
 

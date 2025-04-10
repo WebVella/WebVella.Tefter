@@ -8,7 +8,7 @@ public partial class TfSpaceDataData : TfBaseComponent
 	{
 		if (TfAppState.Value.SpaceDataPage == 1) return;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName,1}
+			{ TfConstants.PageQueryName,1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -18,7 +18,7 @@ public partial class TfSpaceDataData : TfBaseComponent
 		if (page < 1) page = 1;
 		if (TfAppState.Value.SpaceDataPage == page) return;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -33,7 +33,7 @@ public partial class TfSpaceDataData : TfBaseComponent
 		if (TfAppState.Value.SpaceDataPage == page) return;
 
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -41,7 +41,7 @@ public partial class TfSpaceDataData : TfBaseComponent
 	{
 		if (TfAppState.Value.SpaceDataPage == -1) return;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, -1}
+			{ TfConstants.PageQueryName, -1}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -50,7 +50,7 @@ public partial class TfSpaceDataData : TfBaseComponent
 		if (page < 1 && page != -1) page = 1;
 		if (TfAppState.Value.SpaceDataPage == page) return;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.PageQueryName, page}
+			{ TfConstants.PageQueryName, page}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}
@@ -59,7 +59,7 @@ public partial class TfSpaceDataData : TfBaseComponent
 	private async Task _onSearch(string value)
 	{
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.SearchQueryName, value}
+			{ TfConstants.SearchQueryName, value}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}

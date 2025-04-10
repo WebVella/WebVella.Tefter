@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Assets;
 
-public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnAddon
+public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
 {
 	public Guid Id { get; init; }
 	public string Name { get; init; }

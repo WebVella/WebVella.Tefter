@@ -10,7 +10,7 @@ internal sealed record TfDatabaseColumnMeta
 
 	[JsonInclude]
     [JsonPropertyName("last_commited")]
-    internal DateTime LastCommited { get; set; } = Constants.DB_INITIAL_LAST_COMMITED;
+    internal DateTime LastCommited { get; set; } = TfConstants.DB_INITIAL_LAST_COMMITED;
 
     [JsonConstructor]
     internal TfDatabaseColumnMeta() : this(Guid.Empty)

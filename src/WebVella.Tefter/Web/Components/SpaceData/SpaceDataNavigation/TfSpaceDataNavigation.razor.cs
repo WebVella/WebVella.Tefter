@@ -28,7 +28,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 				Id = TfConverters.ConvertGuidToHtmlElementId(spaceData.Id),
 				IconCollapsed = TfConstants.SpaceDataIcon,
 				Text = spaceData.Name,
-				Url = String.Format(TfConstants.SpaceDataPageUrl, spaceData.SpaceId, spaceData.Id),
+				Url = string.Format(TfConstants.SpaceDataPageUrl, spaceData.SpaceId, spaceData.Id),
 				Selected = spaceData.Id == TfAppState.Value.Route.SpaceDataId
 			};
 			menuItems.Add(menu);
@@ -65,7 +65,7 @@ public partial class TfSpaceDataNavigation : TfBaseComponent
 				SpaceDataList = itemList.OrderBy(x => x.Position).ToList()
 			}));
 
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, item.SpaceId, item.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, item.SpaceId, item.Id));
 		}
 	}
 

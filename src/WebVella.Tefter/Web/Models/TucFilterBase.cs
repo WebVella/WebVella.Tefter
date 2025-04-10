@@ -649,7 +649,7 @@ public record TucFilterNumeric : TucFilterBase
 	}
 	public void ValueChanged(decimal? value)
 	{
-		Value = value?.ToString(Constants.TF_FILTER_CULTURE);
+		Value = value?.ToString(TfConstants.TF_FILTER_CULTURE);
 	}
 
 	public decimal? ValueAsDecimal
@@ -659,7 +659,7 @@ public record TucFilterNumeric : TucFilterBase
 			if (String.IsNullOrWhiteSpace(Value)) return null;
 
 			decimal? result = null;
-			if (decimal.TryParse(Value, Constants.TF_FILTER_CULTURE, out decimal outDec))
+			if (decimal.TryParse(Value, TfConstants.TF_FILTER_CULTURE, out decimal outDec))
 			{
 				result = outDec;
 			}

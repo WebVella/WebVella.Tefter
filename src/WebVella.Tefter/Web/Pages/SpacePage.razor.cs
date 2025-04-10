@@ -7,6 +7,6 @@ public partial class SpacePage : TfBasePage
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceNodePageUrl, SpaceId,null));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceNodePageUrl, SpaceId, null));
 	}
 }

@@ -40,7 +40,7 @@ else
 							@if (TfAppState.Value.CurrentUser.IsAdmin)
 							{
 								<FluentAnchor Style="flex:0 0 40px" Appearance="@Appearance.Outline" title="@LOC("open view")"
-											  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl,SelectedProvider.Id))"
+											  Href="@(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, SelectedProvider.Id))"
 											  IconStart="@TfConstants.ViewIcon" Target="_blank" />
 							}
 						</FluentStack>

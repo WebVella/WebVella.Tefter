@@ -22,7 +22,7 @@ public partial class TfLocation : TfBaseComponent
 			result.Add(new TucMenuItem
 			{
 				Text = TfConverters.StringOverflow("Pages", _ellipsisCount),
-				Url = String.Format(TfConstants.PagesPageUrl)
+				Url = string.Format(TfConstants.PagesPageUrl)
 			});
 		}
 		else if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Admin)
@@ -39,7 +39,7 @@ public partial class TfLocation : TfBaseComponent
 				result.Add(new TucMenuItem
 				{
 					Text = TfAppState.Value.Space.Name,
-					Url = String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id)
+					Url = string.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id)
 				});
 				//if (TfAppState.Value.SpaceView is not null)
 				//{

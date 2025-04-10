@@ -160,7 +160,7 @@ public partial class TfService : ITfService
 			if (spacePage != null && spacePage.Id == Guid.Empty)
 				spacePage.Id = Guid.NewGuid();
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
 				var allPages = GetSpacePages(spacePage.SpaceId);
@@ -284,7 +284,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var allPages = GetSpacePages(spacePage.SpaceId);
 
@@ -559,7 +559,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var allPages = GetSpacePages(spacePage.SpaceId);
 
@@ -663,7 +663,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var allPages = GetAllSpacePages();
 

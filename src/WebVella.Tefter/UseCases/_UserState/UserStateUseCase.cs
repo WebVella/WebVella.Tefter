@@ -62,7 +62,7 @@ internal partial class UserStateUseCase
 		var user = (await _authenticationStateProvider.GetAuthenticationStateAsync())?.User;
 		if(user is null) return null;
 		//Temporary fix for multitab logout- we check the cookie as well
-		var cookie = await new CookieService(_jsRuntime).GetAsync(Constants.TEFTER_AUTH_COOKIE_NAME);
+		var cookie = await new CookieService(_jsRuntime).GetAsync(TfConstants.TEFTER_AUTH_COOKIE_NAME);
 		if (cookie is null || user.Identity is null || !user.Identity.IsAuthenticated ||
 			(user.Identity as TfIdentity) is null ||
 			(user.Identity as TfIdentity).User is null)
@@ -110,7 +110,7 @@ internal partial class UserStateUseCase
 			catch { }
 		}
 
-		var userCultureInfo = user is null || user.Settings is null || String.IsNullOrWhiteSpace(user.Settings.CultureName)
+		var userCultureInfo = user is null || user.Settings is null || string.IsNullOrWhiteSpace(user.Settings.CultureName)
 						? TfConstants.CultureOptions[0].CultureInfo
 						: CultureInfo.GetCultureInfo(user.Settings.CultureName);
 

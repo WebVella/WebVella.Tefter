@@ -32,7 +32,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			TucSpaceViewColumnType defaultColumnType = null;
 			if (TfAppState.Value.AvailableColumnTypes is not null && TfAppState.Value.AvailableColumnTypes.Any())
 			{
-				defaultColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+				defaultColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 				if (defaultColumnType is null) defaultColumnType = TfAppState.Value.AvailableColumnTypes[0];
 			}
 			_form = _form with
@@ -126,7 +126,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			_form.ColumnType = columnType;
 
 		if (_form.ColumnType is null)
-			_form.ColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+			_form.ColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(1);
 

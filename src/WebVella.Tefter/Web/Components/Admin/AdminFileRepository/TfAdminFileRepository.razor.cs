@@ -105,7 +105,7 @@ public partial class TfAdminFileRepository : TfBaseComponent
 		if (_search == search) return;
 		_search = search;
 		var queryDict = new Dictionary<string, object>{
-			{TfConstants.SearchQueryName, _search}
+			{ TfConstants.SearchQueryName, _search}
 		};
 		await Navigator.ApplyChangeToUrlQuery(queryDict);
 	}

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Talk;
 
-public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnAddon
+public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
 {
 	public Guid Id { get; init; }
 	public string Name { get; init; }

@@ -22,9 +22,9 @@ public record TucSpace
 	{
 		get
 		{
-			if(DefaultNodeId is null) return String.Format(TfConstants.SpacePageUrl,Id);
+			if(DefaultNodeId is null) return string.Format(TfConstants.SpacePageUrl, Id);
 
-			return String.Format(TfConstants.SpaceNodePageUrl,Id,DefaultNodeId.Value);
+			return string.Format(TfConstants.SpaceNodePageUrl, Id, DefaultNodeId.Value);
 		}
 	}
 

@@ -29,7 +29,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 				Id = TfConverters.ConvertGuidToHtmlElementId(record.Id),
 				IconCollapsed = TfConstants.SpaceViewIcon,
 				Text = record.Name,
-				Url = String.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id),
+				Url = string.Format(TfConstants.SpaceViewPageUrl, record.SpaceId, record.Id),
 				Selected = record.Id == TfAppState.Value.SpaceView?.Id
 			};
 			menuItems.Add(viewMenu);
@@ -79,7 +79,7 @@ public partial class TfSpaceViewNavigation : TfBaseComponent
 						}));
 
 			ToastService.ShowSuccess(LOC("Space view successfully created!"));
-			Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, spaceView.SpaceId, spaceView.Id));
 		}
 	}
 	

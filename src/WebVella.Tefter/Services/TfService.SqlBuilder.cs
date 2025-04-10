@@ -709,7 +709,7 @@ public partial class TfService : ITfService
 			}
 			else if (type == typeof(TfFilterNumeric))
 			{
-				if (decimal.TryParse(((TfFilterNumeric)filter).Value?.ToString(), Constants.TF_FILTER_CULTURE, out decimal outVal))
+				if (decimal.TryParse(((TfFilterNumeric)filter).Value?.ToString(), TfConstants.TF_FILTER_CULTURE, out decimal outVal))
 					value = outVal;
 				else
 					value = null;

@@ -1,6 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Office.CustomUI;
 
-namespace WebVella.Tefter.Web.Utils;
+namespace WebVella.Tefter;
 
 public partial class TfConstants
 {

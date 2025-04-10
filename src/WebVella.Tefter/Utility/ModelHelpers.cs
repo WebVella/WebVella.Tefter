@@ -1,47 +1,47 @@
 ﻿namespace WebVella.Tefter.Utility;
 public static class ModelHelpers
 {
-	internal static ITfSpaceViewColumnAddon GetColumnTypeForDbType(TfDatabaseColumnType dbType, ReadOnlyCollection<ITfSpaceViewColumnAddon> availableTypes)
+	internal static ITfSpaceViewColumnTypeAddon GetColumnTypeForDbType(TfDatabaseColumnType dbType, ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> availableTypes)
 	{
-		ITfSpaceViewColumnAddon selectedType = null;
+		ITfSpaceViewColumnTypeAddon selectedType = null;
 		switch (dbType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.AutoIncrement:
 			case TfDatabaseColumnType.Integer:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_INTEGER_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_INTEGER_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.LongInteger:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.Number:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_NUMBER_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_NUMBER_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.ShortText:
 			case TfDatabaseColumnType.Text:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.Boolean:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_BOOLEAN_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.Guid:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_GUID_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_GUID_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.Date:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_DATEONLY_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_DATEONLY_COLUMN_TYPE_ID));
 				break;
 			case TfDatabaseColumnType.DateTime:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID));
 				break;
 			default:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 				break;
 		}
 
 		if (selectedType is null)
-			selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(Constants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+			selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 
 		return selectedType;
 	}

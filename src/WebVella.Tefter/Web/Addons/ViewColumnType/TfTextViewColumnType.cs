@@ -1,11 +1,10 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
-
-public class TfDateTimeViewColumnType : ITfSpaceViewColumnAddon
+﻿namespace WebVella.Tefter.Web.Addons;
+public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	const string TF_COLUMN_DATETIME_ID = Constants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID;
-	const string TF_COLUMN_DATETIME_NAME = "DateTime";
-	const string TF_COLUMN_DATETIME_DESCRIPTION = "displays date and time";
-	const string TF_COLUMN_DATETIME_ICON = "CalendarMonth";
+	const string TF_COLUMN_TEXT_ID = TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID;
+	const string TF_COLUMN_TEXT_NAME = "Text";
+	const string TF_COLUMN_TEXT_DESCRIPTION = "displays text";
+	const string TF_COLUMN_TEXT_ICON = "TextCaseTitle";
 	const string ALIAS = "Value";
 
 	public Guid Id { get; init; }
@@ -21,36 +20,27 @@ public class TfDateTimeViewColumnType : ITfSpaceViewColumnAddon
 	public List<string> FilterAliases { get; init; }
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
-
-	public TfDateTimeViewColumnType()
+	public TfTextViewColumnType()
 	{
-		Id = new Guid(TF_COLUMN_DATETIME_ID);
-
-		Name = TF_COLUMN_DATETIME_NAME;
-
-		Description = TF_COLUMN_DATETIME_DESCRIPTION;
-
-		FluentIconName = TF_COLUMN_DATETIME_ICON;
-
+		Id = new Guid(TF_COLUMN_TEXT_ID);
+		Name = TF_COLUMN_TEXT_NAME;
+		Description = TF_COLUMN_TEXT_DESCRIPTION;
+		FluentIconName = TF_COLUMN_TEXT_ICON;
 		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
 			new TfSpaceViewColumnAddonDataMapping
 				{
 					Alias = ALIAS,
-					Description = "this column is compatible with the all Date and DateTime database column types, but its intented use is with DateTime",
+					Description = "this column is compatible with all column types, but its intended use is with text",
 					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
-						TfDatabaseColumnType.Date,
-						TfDatabaseColumnType.DateTime
+						TfDatabaseColumnType.ShortText,
+						TfDatabaseColumnType.Text
 					}
 				}
 		};
-
 		FilterAliases = new List<string>() { ALIAS };
-
 		SortAliases = new List<string> { ALIAS };
-
-		DefaultComponentType = typeof(TfDateTimeDisplayColumnComponent);
-
+		//DefaultComponentType = typeof(TfTextDisplayColumnComponent);
 	}
 }
 

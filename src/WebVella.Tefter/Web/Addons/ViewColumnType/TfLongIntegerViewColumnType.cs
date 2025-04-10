@@ -1,10 +1,10 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.Addons;
 
-public class TfIntegerViewColumnType : ITfSpaceViewColumnAddon
+public class TfLongIntegerViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	const string TF_COLUMN_NUMBER_ID = Constants.TF_GENERIC_INTEGER_COLUMN_TYPE_ID;
-	const string TF_COLUMN_NUMBER_NAME = "Integer";
-	const string TF_COLUMN_NUMBER_DESCRIPTION = "displays integer numbers.";
+	const string TF_COLUMN_NUMBER_ID = TfConstants.TF_GENERIC_LONG_INTEGER_COLUMN_TYPE_ID;
+	const string TF_COLUMN_NUMBER_NAME = "Long integer";
+	const string TF_COLUMN_NUMBER_DESCRIPTION = "displays very big integer numbers.";
 	const string TF_COLUMN_NUMBER_ICON = "NumberSymbol";
 	const string ALIAS = "Value";
 
@@ -22,7 +22,7 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnAddon
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
 
-	public TfIntegerViewColumnType()
+	public TfLongIntegerViewColumnType()
 	{
 
 		Id = new Guid(TF_COLUMN_NUMBER_ID);
@@ -38,11 +38,11 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnAddon
 			new TfSpaceViewColumnAddonDataMapping
 				{
 					Alias = ALIAS,
-					Description = "this column is compatible with integer and short integer database column types",
+					Description = "this column is compatible with all integer database column types",
 					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
 						TfDatabaseColumnType.ShortInteger,
-						TfDatabaseColumnType.Integer
-						}
+						TfDatabaseColumnType.Integer,
+						TfDatabaseColumnType.LongInteger }
 			}
 		};
 
@@ -50,7 +50,7 @@ public class TfIntegerViewColumnType : ITfSpaceViewColumnAddon
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfIntegerDisplayColumnComponent);
+		//DefaultComponentType = typeof(TfLongIntegerDisplayColumnComponent);
 	}
 }
 

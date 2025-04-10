@@ -1,11 +1,11 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.Addons;
 
-public class TfShortIntegerViewColumnType : ITfSpaceViewColumnAddon
+public class TfDateOnlyViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	const string TF_COLUMN_NUMBER_ID = Constants.TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID;
-	const string TF_COLUMN_NUMBER_NAME = "Short Integer";
-	const string TF_COLUMN_NUMBER_DESCRIPTION = "displays small integer numbers.";
-	const string TF_COLUMN_NUMBER_ICON = "NumberSymbol";
+	const string TF_COLUMN_DATETIME_ID = TfConstants.TF_GENERIC_DATEONLY_COLUMN_TYPE_ID;
+	const string TF_COLUMN_DATETIME_NAME = "Date";
+	const string TF_COLUMN_DATETIME_DESCRIPTION = "displays a date";
+	const string TF_COLUMN_DATETIME_ICON = "CalendarMonth";
 	const string ALIAS = "Value";
 
 	public Guid Id { get; init; }
@@ -22,34 +22,34 @@ public class TfShortIntegerViewColumnType : ITfSpaceViewColumnAddon
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
 
-	public TfShortIntegerViewColumnType()
+	public TfDateOnlyViewColumnType()
 	{
+		Id = new Guid(TF_COLUMN_DATETIME_ID);
 
-		Id = new Guid(TF_COLUMN_NUMBER_ID);
+		Name = TF_COLUMN_DATETIME_NAME;
 
-		Name = TF_COLUMN_NUMBER_NAME;
+		Description = TF_COLUMN_DATETIME_DESCRIPTION;
 
-		Description = TF_COLUMN_NUMBER_DESCRIPTION;
-
-		FluentIconName = TF_COLUMN_NUMBER_ICON;
+		FluentIconName = TF_COLUMN_DATETIME_ICON;
 
 		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
 			new TfSpaceViewColumnAddonDataMapping
 				{
 					Alias = ALIAS,
-					Description = "this column is compatible with short integer database column types",
+					Description = "this column is compatible with the all Date and DateTime database column types, but its intented use is with Date",
 					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
-						TfDatabaseColumnType.ShortInteger
-						}
-			}
+						TfDatabaseColumnType.Date,
+						TfDatabaseColumnType.DateTime 
+					}
+				}
 		};
 
 		FilterAliases = new List<string>() { ALIAS };
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfShortIntegerDisplayColumnComponent);
+		//DefaultComponentType = typeof(TfDateOnlyDisplayColumnComponent);
 	}
 }
 

@@ -45,7 +45,7 @@ public partial class TfNotificationCenterPanel : TfBaseComponent, IDialogContent
 		await Dialog.CancelAsync();
 	}
 
-	private async Task _dismissAll(){ 
+	private async Task _dismissAll(){
 		MessageService.Clear(TfConstants.MESSAGES_NOTIFICATION_CENTER);
 		await _cancel();
 	}

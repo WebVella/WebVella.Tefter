@@ -18,11 +18,11 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 
 	private void _manageView()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.Id));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.Id));
 	}
 	private void _manageData()
 	{
-		Navigator.NavigateTo(String.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.SpaceDataId));
+		Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceView.SpaceDataId));
 	}
 
 	private async Task _deleteView()
@@ -35,9 +35,9 @@ public partial class TfSpaceViewSettingsSelector : TfBaseComponent
 			UC.DeleteSpaceView(TfAppState.Value.SpaceView.Id);
 			ToastService.ShowSuccess(LOC("Space view deleted"));
 			if (TfAppState.Value.SpaceViewList.Count > 0)
-				Navigator.NavigateTo(String.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
+				Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceViewList[0].Id), true);
 			else
-				Navigator.NavigateTo(String.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
+				Navigator.NavigateTo(string.Format(TfConstants.SpacePageUrl, TfAppState.Value.Space.Id), true);
 		}
 		catch (Exception ex)
 		{

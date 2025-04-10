@@ -25,7 +25,7 @@ else
 			@if (Item.Nodes.Count > 0)
 			{
 				<span class="tf-menu-item__expander" @onclick=Item.OnExpand @onclick:stopPropagation @onclick:preventDefault>
-					<FluentIcon Value="@(Item.Expanded ? TfConstants.GetIcon("ChevronDown") :TfConstants.GetIcon("ChevronRight"))" />
+					<FluentIcon Value="@(Item.Expanded ? TfConstants.GetIcon("ChevronDown") : TfConstants.GetIcon("ChevronRight"))" />
 				</span>
 			}
 		</span>

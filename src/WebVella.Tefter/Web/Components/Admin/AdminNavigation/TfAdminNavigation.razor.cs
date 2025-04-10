@@ -58,7 +58,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			IconCollapsed = TfConstants.AdminUsersIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Users,
-			Url = String.Format(TfConstants.AdminUsersPageUrl),
+			Url = string.Format(TfConstants.AdminUsersPageUrl),
 			Text = LOC(TfConstants.AdminUsersMenuTitle)
 		});
 
@@ -68,7 +68,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			IconCollapsed = TfConstants.AdminDataProvidersIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.DataProviders,
-			Url = String.Format(TfConstants.AdminDataProvidersPageUrl),
+			Url = string.Format(TfConstants.AdminDataProvidersPageUrl),
 			Text = LOC(TfConstants.AdminDataProvidersMenuTitle)
 		});
 		menuItems.Add(new TucMenuItem()
@@ -86,7 +86,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			IconCollapsed = TfConstants.TemplateIcon,
 			IconColor = TfConstants.AdminThemeColor,
 			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Templates,
-			Url = String.Format(TfConstants.AdminTemplatesResultPageUrl,(int)TfTemplateResultType.File),
+			Url = string.Format(TfConstants.AdminTemplatesResultPageUrl,(int)TfTemplateResultType.File),
 			Text = LOC(TfConstants.AdminTemplatesMenuTitle)
 		});
 		menuItems.Add(new TucMenuItem()
@@ -106,7 +106,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 				IconCollapsed = TfConstants.ApplicationIcon,
 				IconColor = TfConstants.AdminThemeColor,
 				Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Pages,
-				Url = String.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Id),
+				Url = string.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Id),
 				Text = LOC(TfConstants.AdminPagesMenuTitle)
 			});
 		}

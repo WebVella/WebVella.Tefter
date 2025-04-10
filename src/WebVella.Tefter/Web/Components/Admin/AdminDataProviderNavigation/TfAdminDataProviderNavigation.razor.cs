@@ -28,7 +28,7 @@ public partial class TfAdminDataProviderNavigation : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var provider = (TucDataProvider)result.Data;
-			Navigator.NavigateTo(String.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
+			Navigator.NavigateTo(string.Format(TfConstants.AdminDataProviderDetailsPageUrl, provider.Id));
 		}
 	}
 	private List<TucDataProvider> _getProviders()

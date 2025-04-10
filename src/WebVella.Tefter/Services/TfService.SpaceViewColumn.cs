@@ -2,7 +2,7 @@
 
 public partial interface ITfService
 {
-	public ReadOnlyCollection<ITfSpaceViewColumnAddon> GetAvailableSpaceViewColumnTypes();
+	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetAvailableSpaceViewColumnTypes();
 
 	public List<TfSpaceViewColumn> GetSpaceViewColumnsList(
 		Guid spaceViewId);
@@ -28,7 +28,7 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
-	public ReadOnlyCollection<ITfSpaceViewColumnAddon> GetAvailableSpaceViewColumnTypes()
+	public ReadOnlyCollection<ITfSpaceViewColumnTypeAddon> GetAvailableSpaceViewColumnTypes()
 	{
 		try
 		{
@@ -92,7 +92,7 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var spaceViewColumns = GetSpaceViewColumnsList(spaceViewColumn.SpaceViewId);
 
@@ -213,7 +213,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var spaceViewColumn = GetSpaceViewColumn(id);
 
@@ -261,7 +261,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
 
@@ -309,7 +309,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var spaceViewColumn = GetSpaceViewColumn(id);
 
@@ -350,7 +350,7 @@ public partial class TfService : ITfService
 		if (dbo == null)
 			return null;
 
-		ITfSpaceViewColumnAddon columnType = _metaService.GetSpaceViewColumnTypeByName(dbo.FullTypeName);
+		ITfSpaceViewColumnTypeAddon columnType = _metaService.GetSpaceViewColumnTypeByName(dbo.FullTypeName);
 		Type componentType = _metaService.GetSpaceViewColumnComponentType(dbo.FullComponentTypeName);
 
 		return new TfSpaceViewColumn
@@ -436,9 +436,9 @@ public partial class TfService : ITfService
 					if (string.IsNullOrWhiteSpace(QueryName))
 						return true;
 
-					return QueryName.Length >= Constants.DB_MIN_OBJECT_NAME_LENGTH;
+					return QueryName.Length >= TfConstants.DB_MIN_OBJECT_NAME_LENGTH;
 				})
-				.WithMessage($"The query name must be at least {Constants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
+				.WithMessage($"The query name must be at least {TfConstants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
 
 				RuleFor(column => column.QueryName)
 					.Must((column, QueryName) =>
@@ -446,9 +446,9 @@ public partial class TfService : ITfService
 						if (string.IsNullOrWhiteSpace(QueryName))
 							return true;
 
-						return QueryName.Length <= Constants.DB_MAX_OBJECT_NAME_LENGTH;
+						return QueryName.Length <= TfConstants.DB_MAX_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The length of query name must be less or equal than {Constants.DB_MAX_OBJECT_NAME_LENGTH} characters");
+					.WithMessage($"The length of query name must be less or equal than {TfConstants.DB_MAX_OBJECT_NAME_LENGTH} characters");
 
 				RuleFor(column => column.QueryName)
 					.Must((column, QueryName) =>
@@ -457,14 +457,14 @@ public partial class TfService : ITfService
 							return true;
 
 						//other validation will trigger
-						if (QueryName.Length < Constants.DB_MIN_OBJECT_NAME_LENGTH)
+						if (QueryName.Length < TfConstants.DB_MIN_OBJECT_NAME_LENGTH)
 							return true;
 
 						//other validation will trigger
-						if (QueryName.Length > Constants.DB_MAX_OBJECT_NAME_LENGTH)
+						if (QueryName.Length > TfConstants.DB_MAX_OBJECT_NAME_LENGTH)
 							return true;
 
-						Match match = Regex.Match(QueryName, Constants.DB_OBJECT_NAME_VALIDATION_PATTERN);
+						Match match = Regex.Match(QueryName, TfConstants.DB_OBJECT_NAME_VALIDATION_PATTERN);
 						return match.Success && match.Value == QueryName.Trim();
 					})
 					.WithMessage($"The query name can only contains underscores and lowercase alphanumeric characters. It must beggin with a letter, " +

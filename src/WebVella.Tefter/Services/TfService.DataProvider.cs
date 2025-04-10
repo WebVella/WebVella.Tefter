@@ -200,7 +200,7 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
 				TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
@@ -298,7 +298,7 @@ public partial class TfService : ITfService
 		Guid id)
 	{
 		try { 
-		using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			var provider = GetDataProvider(id);
 			if (provider is null)

@@ -1,11 +1,11 @@
-﻿namespace WebVella.Tefter.Web.ViewColumns;
+﻿namespace WebVella.Tefter.Web.Addons;
 
-public class TfNumberViewColumnType : ITfSpaceViewColumnAddon
+public class TfDateTimeViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	const string TF_COLUMN_NUMBER_ID = Constants.TF_GENERIC_NUMBER_COLUMN_TYPE_ID;
-	const string TF_COLUMN_NUMBER_NAME = "Number";
-	const string TF_COLUMN_NUMBER_DESCRIPTION = "displays decimal numbers";
-	const string TF_COLUMN_NUMBER_ICON = "NumberSymbol";
+	const string TF_COLUMN_DATETIME_ID = TfConstants.TF_GENERIC_DATETIME_COLUMN_TYPE_ID;
+	const string TF_COLUMN_DATETIME_NAME = "DateTime";
+	const string TF_COLUMN_DATETIME_DESCRIPTION = "displays date and time";
+	const string TF_COLUMN_DATETIME_ICON = "CalendarMonth";
 	const string ALIAS = "Value";
 
 	public Guid Id { get; init; }
@@ -22,36 +22,35 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnAddon
 	public List<string> SortAliases { get; init; }
 	public List<Guid> SupportedAddonTypes { get; init; } = new();
 
-	public TfNumberViewColumnType()
+	public TfDateTimeViewColumnType()
 	{
+		Id = new Guid(TF_COLUMN_DATETIME_ID);
 
-		Id = new Guid(TF_COLUMN_NUMBER_ID);
+		Name = TF_COLUMN_DATETIME_NAME;
 
-		Name = TF_COLUMN_NUMBER_NAME;
+		Description = TF_COLUMN_DATETIME_DESCRIPTION;
 
-		Description = TF_COLUMN_NUMBER_DESCRIPTION;
-
-		FluentIconName = TF_COLUMN_NUMBER_ICON;
+		FluentIconName = TF_COLUMN_DATETIME_ICON;
 
 		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
 			new TfSpaceViewColumnAddonDataMapping
 				{
 					Alias = ALIAS,
-					Description = "this column is compatible with all number and integer database column types",
+					Description = "this column is compatible with the all Date and DateTime database column types, but its intented use is with DateTime",
 					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> {
-						TfDatabaseColumnType.ShortInteger,
-						TfDatabaseColumnType.Integer,
-						TfDatabaseColumnType.LongInteger,
-						TfDatabaseColumnType.Number }
-			}
+						TfDatabaseColumnType.Date,
+						TfDatabaseColumnType.DateTime
+					}
+				}
 		};
 
 		FilterAliases = new List<string>() { ALIAS };
 
 		SortAliases = new List<string> { ALIAS };
 
-		DefaultComponentType = typeof(TfNumberDisplayColumnComponent);
+		//DefaultComponentType = typeof(TfDateTimeDisplayColumnComponent);
+
 	}
 }
 

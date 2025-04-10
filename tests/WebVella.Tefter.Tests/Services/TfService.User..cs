@@ -12,7 +12,7 @@ public partial class TfServiceTest : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var role = tfService
 					.CreateRoleBuilder()
@@ -86,7 +86,7 @@ public partial class TfServiceTest : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 
 				var task = Task.Run(() => { var user = tfService.GetUser(null, null); });
@@ -108,7 +108,7 @@ public partial class TfServiceTest : BaseTest
 			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
 			ITfService tfService = ServiceProvider.GetService<ITfService>();
 
-			using (var scope = dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var role = tfService
 					.CreateRoleBuilder()
