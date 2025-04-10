@@ -17,9 +17,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	public string Name { get; init;} = String.Empty;
 	public string Description { get; init;} = String.Empty;
 	public string FluentIconName { get; init;} = String.Empty;
-	public virtual List<Type> SupportedColumnTypes { get; init; }
-	public virtual List<Guid> SupportedColumnTypeAddons { get; init; }
-	[Parameter] public TucViewColumnComponentContext Context { get; set; }
+	public virtual List<Type> SupportedColumnTypes { get; init; } = new();
+	public virtual List<Guid> SupportedColumnTypeAddons { get; init; } = new();
+	[Parameter] public TfSpaceViewColumnScreenRegion Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 

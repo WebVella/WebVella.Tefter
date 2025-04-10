@@ -62,7 +62,7 @@ internal partial class AppStateUseCase
 			if (newAppState.SpaceView is not null)
 			{
 				//Aux Data Hook
-				var compContext = new TucViewColumnComponentContext()
+				var compContext = new TfSpaceViewColumnScreenRegion()
 				{
 					Hash = newAppState.Hash,
 					DataTable = newAppState.SpaceViewData,

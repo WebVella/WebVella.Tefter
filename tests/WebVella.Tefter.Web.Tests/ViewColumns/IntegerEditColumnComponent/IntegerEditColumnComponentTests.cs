@@ -10,7 +10,7 @@ public class IntegerEditColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfIntegerEditColumnComponent>(args => args
-		.Add(x => x.Context, new TucViewColumnComponentContext())
+		.Add(x => x.Context, new TfSpaceViewColumnScreenRegion())
 		);
 
 		// Assert

@@ -57,7 +57,7 @@
 		</FluentButton> *@
 	</div>
 	<div class="content-toolbar-right">
-		<TfRegionComponent Context="@(new TfSpaceViewToolBarActionScreenRegion())"/>
+		<TfScreenRegionComponent Context="@(new TfSpaceViewToolBarActionScreenRegion())" />
 		@if (TfAppState.Value.SpaceView.Settings.CanCreateRows)
 		{
 			<FluentButton OnClick="_onAddRowClick" Appearance="@Appearance.Outline">

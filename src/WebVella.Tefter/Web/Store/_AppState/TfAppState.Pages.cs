@@ -3,6 +3,6 @@
 
 public partial record TfAppState
 {
-	public ReadOnlyCollection<TfRegionComponentMeta> Pages { get; init; }
+	public ReadOnlyCollection<TfScreenRegionComponentMeta> Pages { get; init; }
 	
 }

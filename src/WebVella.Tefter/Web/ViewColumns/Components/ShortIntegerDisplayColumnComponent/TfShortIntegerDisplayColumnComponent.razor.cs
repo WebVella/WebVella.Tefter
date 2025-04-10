@@ -22,7 +22,7 @@ public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<Tf
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>	
-	public TfShortIntegerDisplayColumnComponent(TucViewColumnComponentContext context)
+	public TfShortIntegerDisplayColumnComponent(TfSpaceViewColumnScreenRegion context)
 	{
 		Context = context;
 	}

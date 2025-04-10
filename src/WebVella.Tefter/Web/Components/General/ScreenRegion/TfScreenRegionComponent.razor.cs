@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-public partial class TfRegionComponent
+public partial class TfScreenRegionComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Parameter] public TfScreenRegionScope Scope { get; set; }
@@ -17,11 +17,11 @@ public partial class TfRegionComponent
 		}
 	}
 
-	private ReadOnlyCollection<TfRegionComponentMeta> _componentsMeta
+	private ReadOnlyCollection<TfScreenRegionComponentMeta> _componentsMeta
 	{
 		get
 		{
-			if (Context is null) return (new List<TfRegionComponentMeta>()).AsReadOnly();
+			if (Context is null) return (new List<TfScreenRegionComponentMeta>()).AsReadOnly();
 
 			if (Count is not null)
 			{

@@ -27,7 +27,7 @@ internal partial class AppStateUseCase
 			};
 		}
 
-		foreach (TfRegionComponentMeta addonComponent in newAppState.Pages)
+		foreach (TfScreenRegionComponentMeta addonComponent in newAppState.Pages)
 		{
 			if (addonComponent.ComponentType.ImplementsInterface(typeof(ITfAuxDataState)))
 			{

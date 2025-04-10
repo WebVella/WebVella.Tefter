@@ -22,7 +22,7 @@ public partial class TfDateTimeDisplayColumnComponent : TucBaseViewColumn<TfDate
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfDateTimeDisplayColumnComponent(TucViewColumnComponentContext context)
+	public TfDateTimeDisplayColumnComponent(TfSpaceViewColumnScreenRegion context)
 	{
 		Context = context;
 	}

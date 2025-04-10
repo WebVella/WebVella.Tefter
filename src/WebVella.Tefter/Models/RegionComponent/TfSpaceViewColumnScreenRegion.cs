@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
-namespace WebVella.Tefter.Web.Models;
+namespace WebVella.Tefter.Models;
 
-public class TucViewColumnComponentContext
+public class TfSpaceViewColumnScreenRegion : TfBaseScreenRegion
 {
 	public Guid Hash { get; set; }
 	public Guid SpaceViewId { get; set; }

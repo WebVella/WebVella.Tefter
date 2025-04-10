@@ -29,7 +29,7 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfFolderAssetsCountComponent(TucViewColumnComponentContext context)
+	public TfFolderAssetsCountComponent(TfSpaceViewColumnScreenRegion context)
 	{
 		Context = context;
 	}
