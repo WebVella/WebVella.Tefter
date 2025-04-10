@@ -235,7 +235,7 @@ public partial class TfService : ITfService
 							.AddForeignKeyConstraint($"fk_{providerTableName}_id_dict", c =>
 							{
 								c.WithColumns("tf_id")
-								.WithForeignTable("id_dict")
+								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id");
 							});
 
