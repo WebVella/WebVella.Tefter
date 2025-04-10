@@ -254,10 +254,10 @@ public partial class TfService : ITfService
 					DeleteSpaceData(spaceData.Id);
 				}
 
-				var spaceNodes = GetSpaceNodes(id);
-				foreach (var spaceNode in spaceNodes.OrderByDescending(x => x.Position))
+				var spacePages = GetSpacePages(id);
+				foreach (var spacePage in spacePages.OrderByDescending(x => x.Position))
 				{
-					DeleteSpaceNode(spaceNode);
+					DeleteSpacePage(spacePage);
 				}
 
 				var spacesAfter = GetSpacesList()

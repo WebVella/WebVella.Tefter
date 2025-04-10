@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter;
 
-public enum TfSpaceNodeType
+public enum TfSpacePageType
 {
 	[Description("folder")]
 	Folder = 0,

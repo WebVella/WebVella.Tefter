@@ -20,7 +20,7 @@ public partial class TfSpaceNodeDetails : TfBaseComponent
 				Icon = TfAppState.Value.SpaceNode.Icon,
 				Mode = TfComponentMode.Read,
 				SpaceId = TfAppState.Value.SpaceNode.SpaceId,
-				SpaceNodeId = TfAppState.Value.SpaceNode.Id
+				SpacePageId = TfAppState.Value.SpaceNode.Id
 			};
 		}
 

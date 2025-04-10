@@ -1,36 +1,36 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public class TfSpaceNode
+public class TfSpacePage
 {
 	public Guid Id { get; set; }
 	public Guid? ParentId { get; set; } = null;
 	public Guid SpaceId { get; set; }
-	public TfSpaceNodeType Type { get; set; } = TfSpaceNodeType.Page;
+	public TfSpacePageType Type { get; set; } = TfSpacePageType.Page;
 	public string Name { get; set; }
 	public string Icon { get; set; } = TfConstants.PageIconString;
 	public short? Position { get; set; }
 	public Guid? ComponentId { get; init; }
 	public Type ComponentType { get; internal set; }
 	public string ComponentOptionsJson { get; set; } = "{}";
-	public List<TfSpaceNode> ChildNodes { get; set; } = new();
-	public TfSpaceNode ParentNode { get; set; } = null;
+	public List<TfSpacePage> ChildPages { get; set; } = new();
+	public TfSpacePage ParentPage { get; set; } = null;
 
-	internal List<TfSpaceNode> GetChildNodesPlainList()
+	internal List<TfSpacePage> GetChildPagesPlainList()
 	{
-		List<TfSpaceNode> result = new List<TfSpaceNode>();
-		Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+		List<TfSpacePage> result = new List<TfSpacePage>();
+		Queue<TfSpacePage> queue = new Queue<TfSpacePage>();
 
-		foreach (var node in ChildNodes)
-			queue.Enqueue(node);
+		foreach (var page in ChildPages)
+			queue.Enqueue(page);
 
 		while (queue.Count > 0)
 		{
-			var node = queue.Dequeue();
+			var page = queue.Dequeue();
 
-			result.Add(node);
+			result.Add(page);
 
-			foreach (var childNode in node.ChildNodes)
-				queue.Enqueue(childNode);
+			foreach (var childPage in page.ChildPages)
+				queue.Enqueue(childPage);
 
 		}
 
@@ -38,14 +38,14 @@ public class TfSpaceNode
 	}
 	public override string ToString()
 	{
-		return $"{Name} (pos:{Position}; par:{ParentNode?.Name})";
+		return $"{Name} (pos:{Position}; par:{ParentPage?.Name})";
 	}
 }
 
 
 [DboCacheModel]
 [TfDboModel("tf_space_page")]
-public class TfSpaceNodeDbo
+public class TfSpacePageDbo
 {
 	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
@@ -57,8 +57,8 @@ public class TfSpaceNodeDbo
 	public Guid SpaceId { get; set; }
 
 	[TfDboModelProperty("type")]
-	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSpaceNodeType>))]
-	public TfSpaceNodeType Type { get; set; }
+	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfSpacePageType>))]
+	public TfSpacePageType Type { get; set; }
 
 	[TfDboModelProperty("name")]
 	public string Name { get; set; }

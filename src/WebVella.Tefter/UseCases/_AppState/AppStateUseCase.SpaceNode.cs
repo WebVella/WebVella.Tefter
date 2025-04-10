@@ -35,7 +35,7 @@ internal partial class AppStateUseCase
 						Icon = spaceNode.Icon,
 						Mode = TfComponentMode.Read,
 						SpaceId = spaceNode.SpaceId,
-						SpaceNodeId = spaceNode.Id
+						SpacePageId = spaceNode.Id
 					};
 					var(appStateResult, auxDataStateResult) = await spaceNodeMeta.Instance.InitState(
 					serviceProvider:serviceProvider,

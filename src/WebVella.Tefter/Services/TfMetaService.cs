@@ -58,7 +58,7 @@ public partial class TfMetaService : ITfMetaService
 				if (defaultConstructor is null)
 					continue;
 
-				ScanAndRegisterSpaceNodeComponents(type);
+				ScanAndRegisterSpacePageComponents(type);
 				ScanAndRegisterDataProvidersTypes(type);
 				ScanAndRegisterSpaceViewColumnTypes(type);
 				ScanAndRegisterApplications(type);

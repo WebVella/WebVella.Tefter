@@ -4,52 +4,52 @@ namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
-	public List<TfSpaceNode> GetAllSpaceNodes();
+	public List<TfSpacePage> GetAllSpacePages();
 
-	public List<TfSpaceNode> GetSpaceNodes(
+	public List<TfSpacePage> GetSpacePages(
 		Guid spaceId);
 
-	public TfSpaceNode GetSpaceNode(
-		Guid nodeId);
+	public TfSpacePage GetSpacePage(
+		Guid pageId);
 
-	public (Guid, List<TfSpaceNode>) CreateSpaceNode(
-		TfSpaceNode spaceNode);
+	public (Guid, List<TfSpacePage>) CreateSpacePage(
+		TfSpacePage spacePage);
 
-	public List<TfSpaceNode> UpdateSpaceNode(
-		TfSpaceNode spaceNode);
+	public List<TfSpacePage> UpdateSpacePage(
+		TfSpacePage spacePage);
 
-	public List<TfSpaceNode> DeleteSpaceNode(
-		TfSpaceNode spaceNode);
+	public List<TfSpacePage> DeleteSpacePage(
+		TfSpacePage spacePage);
 
-	public (Guid, List<TfSpaceNode>) CopySpaceNode(
-		Guid nodeId);
+	public (Guid, List<TfSpacePage>) CopySpacePage(
+		Guid pageId);
 }
 
 public partial class TfService : ITfService
 {
-	public List<TfSpaceNode> GetAllSpaceNodes()
+	public List<TfSpacePage> GetAllSpacePages()
 	{
 		try
 		{
-			var spaceNodesList = _dboManager.GetList<TfSpaceNodeDbo>()
+			var spacePagesList = _dboManager.GetList<TfSpacePageDbo>()
 			.Select(x => ConvertDboToModel(x))
 			.ToList();
 
-			var rootNodes = spaceNodesList
+			var rootPages = spacePagesList
 				.Where(x => x.ParentId is null)
 				.OrderBy(x => x.Position)
 				.ToList();
 
-			foreach (var rootNode in rootNodes)
+			foreach (var rootPage in rootPages)
 			{
-				rootNode.ParentNode = null;
-				rootNode.ComponentType = _metaService
-					.GetSpaceNodesComponentsMeta()
-					.SingleOrDefault(x => x.ComponentId == rootNode.ComponentId)
+				rootPage.ParentPage = null;
+				rootPage.ComponentType = _metaService
+					.GetSpacePagesComponentsMeta()
+					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
 					?.Instance.GetType();
-				InitSpaceNodeChildNodes(rootNode, spaceNodesList);
+				InitSpacePageChildPages(rootPage, spacePagesList);
 			}
-			return rootNodes;
+			return rootPages;
 		}
 		catch (Exception ex)
 		{
@@ -57,33 +57,33 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfSpaceNode> GetSpaceNodes(
+	public List<TfSpacePage> GetSpacePages(
 		Guid spaceId)
 	{
 		try
 		{
-			var spaceNodesList = _dboManager.GetList<TfSpaceNodeDbo>(
+			var spacePagesList = _dboManager.GetList<TfSpacePageDbo>(
 				spaceId,
 				nameof(TfSpaceView.SpaceId))
 			.Select(x => ConvertDboToModel(x))
 			.ToList();
 
-			var rootNodes = spaceNodesList
+			var rootPages = spacePagesList
 				.Where(x => x.ParentId is null)
 				.OrderBy(x => x.Position)
 				.ToList();
 
-			foreach (var rootNode in rootNodes)
+			foreach (var rootPage in rootPages)
 			{
-				rootNode.ParentNode = null;
-				rootNode.ComponentType = _metaService
-					.GetSpaceNodesComponentsMeta()
-					.SingleOrDefault(x => x.ComponentId == rootNode.ComponentId)
+				rootPage.ParentPage = null;
+				rootPage.ComponentType = _metaService
+					.GetSpacePagesComponentsMeta()
+					.SingleOrDefault(x => x.ComponentId == rootPage.ComponentId)
 					?.Instance.GetType();
-				InitSpaceNodeChildNodes(rootNode, spaceNodesList);
+				InitSpacePageChildPages(rootPage, spacePagesList);
 			}
 
-			return rootNodes;
+			return rootPages;
 		}
 		catch (Exception ex)
 		{
@@ -91,12 +91,12 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfSpaceNode GetSpaceNode(Guid nodeId)
+	public TfSpacePage GetSpacePage(Guid pageId)
 	{
 		try
 		{
-			var allNodes = GetAllSpaceNodes();
-			return FindNodeById(nodeId, allNodes);
+			var allPages = GetAllSpacePages();
+			return FindPageById(pageId, allPages);
 		}
 		catch (Exception ex)
 		{
@@ -104,162 +104,162 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private void InitSpaceNodeChildNodes(
-		TfSpaceNode node,
-		List<TfSpaceNode> allNodes)
+	private void InitSpacePageChildPages(
+		TfSpacePage page,
+		List<TfSpacePage> allPages)
 	{
-		var childNodes = allNodes
-			.Where(x => x.ParentId == node.Id)
+		var childPages = allPages
+			.Where(x => x.ParentId == page.Id)
 			.OrderBy(x => x.Position)
 			.ToList();
 
-		node.ChildNodes.AddRange(childNodes);
+		page.ChildPages.AddRange(childPages);
 
-		foreach (var childNode in childNodes)
+		foreach (var childPage in childPages)
 		{
-			childNode.ParentNode = node;
-			InitSpaceNodeChildNodes(childNode, allNodes);
+			childPage.ParentPage = page;
+			InitSpacePageChildPages(childPage, allPages);
 		}
 	}
 
-	private TfSpaceNode FindNodeById(
+	private TfSpacePage FindPageById(
 		Guid id,
-		List<TfSpaceNode> nodes)
+		List<TfSpacePage> pages)
 	{
-		if (nodes == null || nodes.Count == 0)
+		if (pages == null || pages.Count == 0)
 			return null;
 
-		Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+		Queue<TfSpacePage> queue = new Queue<TfSpacePage>();
 
-		foreach (var node in nodes)
+		foreach (var page in pages)
 		{
-			if (node.Id == id)
-				return node;
+			if (page.Id == id)
+				return page;
 
-			queue.Enqueue(node);
+			queue.Enqueue(page);
 		}
 
 		while (queue.Count > 0)
 		{
-			var node = queue.Dequeue();
-			if (node.Id == id)
-				return node;
+			var page = queue.Dequeue();
+			if (page.Id == id)
+				return page;
 
-			foreach (var childNode in node.ChildNodes)
-				queue.Enqueue(childNode);
+			foreach (var childPage in page.ChildPages)
+				queue.Enqueue(childPage);
 		}
 
 		return null;
 	}
 
-	public (Guid, List<TfSpaceNode>) CreateSpaceNode(
-		TfSpaceNode spaceNode)
+	public (Guid, List<TfSpacePage>) CreateSpacePage(
+		TfSpacePage spacePage)
 	{
 		try
 		{
-			if (spaceNode != null && spaceNode.Id == Guid.Empty)
-				spaceNode.Id = Guid.NewGuid();
+			if (spacePage != null && spacePage.Id == Guid.Empty)
+				spacePage.Id = Guid.NewGuid();
 
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
 
-				var allNodes = GetSpaceNodes(spaceNode.SpaceId);
+				var allPages = GetSpacePages(spacePage.SpaceId);
 
-				new TfSpaceNodeValidator(allNodes)
-					.ValidateCreate(spaceNode)
+				new TfSpacePageValidator(allPages)
+					.ValidateCreate(spacePage)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				List<TfSpaceNode> nodesToUpdate = new List<TfSpaceNode>();
+				List<TfSpacePage> pagesToUpdate = new List<TfSpacePage>();
 
-				TfSpaceNode parentNode = null;
+				TfSpacePage parentPage = null;
 				short? maxPosition = null;
-				if (spaceNode.ParentId is null)
+				if (spacePage.ParentId is null)
 				{
-					maxPosition = allNodes
+					maxPosition = allPages
 						.Where(x => x.ParentId is null)
 						.Select(x => (short?)x.Position.Value)
 						.Max(x => x);
 				}
 				else
 				{
-					parentNode = FindNodeById(spaceNode.ParentId.Value, allNodes);
+					parentPage = FindPageById(spacePage.ParentId.Value, allPages);
 
-					maxPosition = parentNode
-						.ChildNodes
+					maxPosition = parentPage
+						.ChildPages
 						.Select(x => (short?)x.Position.Value)
 						.Max(x => x);
 				}
 				if (maxPosition is null)
 					maxPosition = 0;
 
-				//if position is not specified or bigger than max position, we add node at the end
-				if (spaceNode.Position == null || spaceNode.Position > maxPosition)
+				//if position is not specified or bigger than max position, we add page at the end
+				if (spacePage.Position == null || spacePage.Position > maxPosition)
 				{
-					spaceNode.Position = (short)(maxPosition + 1);
+					spacePage.Position = (short)(maxPosition + 1);
 				}
 				//if new position is equal or lower to 0 and current position is 1, 
 				// we do not change position
-				else if (spaceNode.Position <= 0)
+				else if (spacePage.Position <= 0)
 				{
-					spaceNode.Position = 1;
+					spacePage.Position = 1;
 				}
 
-				var childNodesForPositionUpdate = new List<TfSpaceNode>();
+				var childPagesForPositionUpdate = new List<TfSpacePage>();
 
-				if (parentNode is not null)
+				if (parentPage is not null)
 				{
-					childNodesForPositionUpdate = parentNode.ChildNodes
-						.Where(x => x.Position.Value >= spaceNode.Position)
+					childPagesForPositionUpdate = parentPage.ChildPages
+						.Where(x => x.Position.Value >= spacePage.Position)
 						.ToList();
 				}
 				else
 				{
-					childNodesForPositionUpdate = allNodes
-						.Where(x => x.ParentId is null && x.Position.Value >= spaceNode.Position)
+					childPagesForPositionUpdate = allPages
+						.Where(x => x.ParentId is null && x.Position.Value >= spacePage.Position)
 						.ToList();
 				}
 
-				foreach (var childNode in childNodesForPositionUpdate)
+				foreach (var childPage in childPagesForPositionUpdate)
 				{
-					childNode.Position++;
-					nodesToUpdate.Add(childNode);
+					childPage.Position++;
+					pagesToUpdate.Add(childPage);
 				}
 
-				//update nodes which position is changed
-				foreach (var nodeToUpdate in nodesToUpdate)
+				//update pages which position is changed
+				foreach (var pageToUpdate in pagesToUpdate)
 				{
-					if (!_dboManager.Update<TfSpaceNodeDbo>(ConvertModelToDbo(nodeToUpdate), nameof(TfSpaceNodeDbo.Position)))
-						throw new TfDboServiceException("Update<TfSpaceNodeDbo> failed.");
+					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(pageToUpdate), nameof(TfSpacePageDbo.Position)))
+						throw new TfDboServiceException("Update<TfSpacePageDbo> failed.");
 				}
 
-				if (!_dboManager.Insert<TfSpaceNodeDbo>(ConvertModelToDbo(spaceNode)))
-					throw new TfDboServiceException("Insert<TfSpaceNodeDbo> failed.");
+				if (!_dboManager.Insert<TfSpacePageDbo>(ConvertModelToDbo(spacePage)))
+					throw new TfDboServiceException("Insert<TfSpacePageDbo> failed.");
 
 
-				if (spaceNode.Type == TfSpaceNodeType.Page && spaceNode.ComponentId.HasValue )
+				if (spacePage.Type == TfSpacePageType.Page && spacePage.ComponentId.HasValue )
 				{
-					var spaceNodeComponents = _metaService.GetSpaceNodesComponentsMeta();
-					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentId == spaceNode.ComponentId);
-					if (nodeComponent is not null)
+					var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
+					var pageComponent = spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
+					if (pageComponent is not null)
 					{
 						var task = Task.Run(async () =>
 						{
 							var context = new TfSpacePageAddonContext
 							{
-								SpaceId = spaceNode.SpaceId,
-								SpaceNodeId = spaceNode.Id,
-								ComponentOptionsJson = spaceNode.ComponentOptionsJson,
-								Icon = spaceNode.Icon,
+								SpaceId = spacePage.SpaceId,
+								SpacePageId = spacePage.Id,
+								ComponentOptionsJson = spacePage.ComponentOptionsJson,
+								Icon = spacePage.Icon,
 								Mode = TfComponentMode.Update
 							};
 
-							var optionsJson = await nodeComponent.Instance.OnPageCreated(_serviceProvider, context);
-							if (optionsJson != spaceNode.ComponentOptionsJson)
+							var optionsJson = await pageComponent.Instance.OnPageCreated(_serviceProvider, context);
+							if (optionsJson != spacePage.ComponentOptionsJson)
 							{
-								spaceNode.ComponentOptionsJson = optionsJson;
-								if (!_dboManager.Update<TfSpaceNodeDbo>(ConvertModelToDbo(spaceNode), nameof(TfSpaceNodeDbo.ComponentSettingsJson)))
-									throw new Exception("Space Node update failed");
+								spacePage.ComponentOptionsJson = optionsJson;
+								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage), nameof(TfSpacePageDbo.ComponentSettingsJson)))
+									throw new Exception("Space page update failed");
 							}
 						});
 						task.WaitAndUnwrapException();
@@ -268,9 +268,9 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				allNodes = GetSpaceNodes(spaceNode.SpaceId);
+				allPages = GetSpacePages(spacePage.SpaceId);
 
-				return (spaceNode.Id, allNodes);
+				return (spacePage.Id, allPages);
 			}
 		}
 		catch (Exception ex)
@@ -279,261 +279,261 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfSpaceNode> UpdateSpaceNode(
-		TfSpaceNode spaceNode)
+	public List<TfSpacePage> UpdateSpacePage(
+		TfSpacePage spacePage)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var allNodes = GetSpaceNodes(spaceNode.SpaceId);
+				var allPages = GetSpacePages(spacePage.SpaceId);
 
-				new TfSpaceNodeValidator(allNodes)
-					.ValidateUpdate(spaceNode)
+				new TfSpacePageValidator(allPages)
+					.ValidateUpdate(spacePage)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				var existingSpaceNode = FindNodeById(spaceNode.Id, allNodes);
+				var existingSpacePage = FindPageById(spacePage.Id, allPages);
 
-				List<TfSpaceNode> nodesToUpdate = new List<TfSpaceNode>();
+				List<TfSpacePage> pagesToUpdate = new List<TfSpacePage>();
 
-				nodesToUpdate.Add(spaceNode);
+				pagesToUpdate.Add(spacePage);
 
-				if (spaceNode.ParentId != existingSpaceNode.ParentId)
+				if (spacePage.ParentId != existingSpacePage.ParentId)
 				{
-					//update existing node parent children nodes position
-					if (existingSpaceNode.ParentId is not null)
+					//update existing page parent children pages position
+					if (existingSpacePage.ParentId is not null)
 					{
-						var childNodesForPositionUpdate = new List<TfSpaceNode>();
+						var childPagesForPositionUpdate = new List<TfSpacePage>();
 
-						existingSpaceNode.ParentNode.ChildNodes.Remove(existingSpaceNode);
+						existingSpacePage.ParentPage.ChildPages.Remove(existingSpacePage);
 
-						childNodesForPositionUpdate = existingSpaceNode.ParentNode.ChildNodes
-							.Where(x => x.Position.Value > existingSpaceNode.Position)
+						childPagesForPositionUpdate = existingSpacePage.ParentPage.ChildPages
+							.Where(x => x.Position.Value > existingSpacePage.Position)
 							.ToList();
 
-						foreach (var childNode in childNodesForPositionUpdate)
+						foreach (var childPage in childPagesForPositionUpdate)
 						{
-							childNode.Position--;
-							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-								nodesToUpdate.Add(childNode);
+							childPage.Position--;
+							if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
+								pagesToUpdate.Add(childPage);
 						}
 					}
 					else
 					{
-						var childNodesForPositionUpdate = new List<TfSpaceNode>();
+						var childPagesForPositionUpdate = new List<TfSpacePage>();
 
-						allNodes.Remove(existingSpaceNode);
+						allPages.Remove(existingSpacePage);
 
-						childNodesForPositionUpdate = allNodes
-							.Where(x => x.ParentId is null && x.Position.Value > existingSpaceNode.Position)
+						childPagesForPositionUpdate = allPages
+							.Where(x => x.ParentId is null && x.Position.Value > existingSpacePage.Position)
 							.ToList();
 
-						foreach (var childNode in childNodesForPositionUpdate)
+						foreach (var childPage in childPagesForPositionUpdate)
 						{
-							childNode.Position--;
-							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-								nodesToUpdate.Add(childNode);
+							childPage.Position--;
+							if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
+								pagesToUpdate.Add(childPage);
 						}
 					}
 
-					TfSpaceNode parentNode = null;
+					TfSpacePage parentPage = null;
 					short? maxPosition = null;
-					if (spaceNode.ParentId is null)
+					if (spacePage.ParentId is null)
 					{
-						maxPosition = allNodes
+						maxPosition = allPages
 							.Where(x => x.ParentId is null)
 							.Select(x => (short?)x.Position.Value)
 							.Max(x => x);
 					}
 					else
 					{
-						parentNode = FindNodeById(spaceNode.ParentId.Value, allNodes);
+						parentPage = FindPageById(spacePage.ParentId.Value, allPages);
 
-						maxPosition = parentNode
-							.ChildNodes
+						maxPosition = parentPage
+							.ChildPages
 							.Select(x => (short?)x.Position.Value)
 							.Max(x => x);
 					}
 					if (maxPosition is null)
 						maxPosition = 0;
 
-					//if position is not valid, we add node at the end
-					if (spaceNode.Position == null || spaceNode.Position <= 0 || spaceNode.Position > maxPosition)
+					//if position is not valid, we add page at the end
+					if (spacePage.Position == null || spacePage.Position <= 0 || spacePage.Position > maxPosition)
 					{
-						spaceNode.Position = (short)(maxPosition + 1);
+						spacePage.Position = (short)(maxPosition + 1);
 					}
 					else
 					{
-						//else move nodes after position we insert at with one position down
-						var childNodesForPositionUpdate = new List<TfSpaceNode>();
+						//else move pages after position we insert at with one position down
+						var childPagesForPositionUpdate = new List<TfSpacePage>();
 
-						if (parentNode is null)
+						if (parentPage is null)
 						{
-							allNodes.Remove(existingSpaceNode);
+							allPages.Remove(existingSpacePage);
 
-							childNodesForPositionUpdate = allNodes
-								.Where(x => x.Position.Value >= spaceNode.Position)
+							childPagesForPositionUpdate = allPages
+								.Where(x => x.Position.Value >= spacePage.Position)
 								.ToList();
 						}
 						else
 						{
-							parentNode.ChildNodes.Remove(existingSpaceNode);
+							parentPage.ChildPages.Remove(existingSpacePage);
 
-							childNodesForPositionUpdate = parentNode.ChildNodes
-								.Where(x => x.Position.Value >= spaceNode.Position)
+							childPagesForPositionUpdate = parentPage.ChildPages
+								.Where(x => x.Position.Value >= spacePage.Position)
 								.ToList();
 						}
 
-						foreach (var childNode in childNodesForPositionUpdate)
+						foreach (var childPage in childPagesForPositionUpdate)
 						{
-							childNode.Position++;
-							if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-								nodesToUpdate.Add(childNode);
+							childPage.Position++;
+							if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
+								pagesToUpdate.Add(childPage);
 						}
 					}
 
 				}
-				else if (spaceNode.Position != existingSpaceNode.Position)
+				else if (spacePage.Position != existingSpacePage.Position)
 				{
 
-					TfSpaceNode parentNode = null;
-					if (spaceNode.ParentId is not null)
-						parentNode = FindNodeById(spaceNode.ParentId.Value, allNodes);
+					TfSpacePage parentPage = null;
+					if (spacePage.ParentId is not null)
+						parentPage = FindPageById(spacePage.ParentId.Value, allPages);
 
-					var childNodesForPositionDecrease = new List<TfSpaceNode>();
+					var childPagesForPositionDecrease = new List<TfSpacePage>();
 
 					short? maxPosition = null;
-					if (spaceNode.ParentId is null)
+					if (spacePage.ParentId is null)
 					{
-						allNodes.Remove(existingSpaceNode);
+						allPages.Remove(existingSpacePage);
 
-						maxPosition = allNodes
+						maxPosition = allPages
 							.Where(x => x.ParentId is null)
 							.Select(x => (short?)x.Position.Value)
 							.Max(x => x);
 					}
 					else
 					{
-						parentNode.ChildNodes.Remove(existingSpaceNode);
+						parentPage.ChildPages.Remove(existingSpacePage);
 
-						maxPosition = parentNode
-							.ChildNodes
+						maxPosition = parentPage
+							.ChildPages
 							.Select(x => (short?)x.Position.Value)
 							.Max(x => x);
 					}
 					if (maxPosition is null)
 						maxPosition = 1;
 
-					//if position is not valid, we add node at the end
-					if (spaceNode.Position == null || spaceNode.Position > maxPosition)
+					//if position is not valid, we add page at the end
+					if (spacePage.Position == null || spacePage.Position > maxPosition)
 					{
-						spaceNode.Position = (short)(maxPosition);
+						spacePage.Position = (short)(maxPosition);
 					}
 					//if new position is equal or lower to 0 and current position is 1, 
 					// we do not change position
-					else if (spaceNode.Position <= 0 && existingSpaceNode.Position == 1)
+					else if (spacePage.Position <= 0 && existingSpacePage.Position == 1)
 					{
-						spaceNode.Position = 1;
+						spacePage.Position = 1;
 					}
 
 					//only calculate if position is changed
-					if (spaceNode.Position != existingSpaceNode.Position)
+					if (spacePage.Position != existingSpacePage.Position)
 					{
-						if (parentNode is not null)
+						if (parentPage is not null)
 						{
-							childNodesForPositionDecrease = parentNode.ChildNodes
-								.Where(x => x.Position.Value >= existingSpaceNode.Position)
+							childPagesForPositionDecrease = parentPage.ChildPages
+								.Where(x => x.Position.Value >= existingSpacePage.Position)
 								.ToList();
 
-							foreach (var childNode in childNodesForPositionDecrease)
+							foreach (var childPage in childPagesForPositionDecrease)
 							{
-								childNode.Position--;
-								if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-									nodesToUpdate.Add(childNode);
+								childPage.Position--;
+								if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
+									pagesToUpdate.Add(childPage);
 							}
 						}
 						else
 						{
-							childNodesForPositionDecrease = allNodes
-								.Where(x => x.ParentId is null && x.Position.Value >= existingSpaceNode.Position)
+							childPagesForPositionDecrease = allPages
+								.Where(x => x.ParentId is null && x.Position.Value >= existingSpacePage.Position)
 								.ToList();
 
-							foreach (var childNode in childNodesForPositionDecrease)
+							foreach (var childPage in childPagesForPositionDecrease)
 							{
-								childNode.Position--;
-								if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-									nodesToUpdate.Add(childNode);
+								childPage.Position--;
+								if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
+									pagesToUpdate.Add(childPage);
 							}
 						}
 
-						var childNodesForPositionIncrease = new List<TfSpaceNode>();
+						var childPagesForPositionIncrease = new List<TfSpacePage>();
 
-						if (parentNode is not null)
+						if (parentPage is not null)
 						{
-							parentNode.ChildNodes.Remove(existingSpaceNode);
+							parentPage.ChildPages.Remove(existingSpacePage);
 
-							childNodesForPositionIncrease = parentNode.ChildNodes
-								.Where(x => x.Position.Value >= spaceNode.Position)
+							childPagesForPositionIncrease = parentPage.ChildPages
+								.Where(x => x.Position.Value >= spacePage.Position)
 								.ToList();
 
-							foreach (var childNode in childNodesForPositionIncrease)
+							foreach (var childPage in childPagesForPositionIncrease)
 							{
-								childNode.Position++;
-								if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-									nodesToUpdate.Add(childNode);
+								childPage.Position++;
+								if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
+									pagesToUpdate.Add(childPage);
 							}
 
 						}
 						else
 						{
-							allNodes.Remove(existingSpaceNode);
+							allPages.Remove(existingSpacePage);
 
-							childNodesForPositionIncrease = allNodes
-								.Where(x => x.ParentId is null && x.Position.Value >= spaceNode.Position)
+							childPagesForPositionIncrease = allPages
+								.Where(x => x.ParentId is null && x.Position.Value >= spacePage.Position)
 								.ToList();
 
-							foreach (var childNode in childNodesForPositionIncrease)
+							foreach (var childPage in childPagesForPositionIncrease)
 							{
-								childNode.Position++;
-								if (!nodesToUpdate.Any(x => x.Id == childNode.Id))
-									nodesToUpdate.Add(childNode);
+								childPage.Position++;
+								if (!pagesToUpdate.Any(x => x.Id == childPage.Id))
+									pagesToUpdate.Add(childPage);
 							}
 						}
 					}
 				}
 
-				//update nodes which parent or position is/are changed
-				foreach (var childNode in nodesToUpdate)
+				//update pages which parent or position is/are changed
+				foreach (var childPage in pagesToUpdate)
 				{
-					if (!_dboManager.Update<TfSpaceNodeDbo>(ConvertModelToDbo(childNode)))
-						throw new TfDboServiceException("Update<TfSpaceNodeDbo> failed");
+					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(childPage)))
+						throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
 				}
 
 
-				if (spaceNode.Type == TfSpaceNodeType.Page && spaceNode.ComponentId.HasValue)
+				if (spacePage.Type == TfSpacePageType.Page && spacePage.ComponentId.HasValue)
 				{
-					var spaceNodeComponents = _metaService.GetSpaceNodesComponentsMeta();
-					var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentId == spaceNode.ComponentId);
-					if (nodeComponent is not null)
+					var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
+					var pageComponent = spacePageComponents.SingleOrDefault(x => x.ComponentId == spacePage.ComponentId);
+					if (pageComponent is not null)
 					{
 						var task = Task.Run(async () =>
 						{
 							var context = new TfSpacePageAddonContext
 							{
-								SpaceId = spaceNode.SpaceId,
-								SpaceNodeId = spaceNode.Id,
-								ComponentOptionsJson = spaceNode.ComponentOptionsJson,
-								Icon = spaceNode.Icon,
+								SpaceId = spacePage.SpaceId,
+								SpacePageId = spacePage.Id,
+								ComponentOptionsJson = spacePage.ComponentOptionsJson,
+								Icon = spacePage.Icon,
 								Mode = TfComponentMode.Update
 							};
 
-							var optionsJson = await nodeComponent.Instance.OnPageUpdated(_serviceProvider, context);
-							if (optionsJson != spaceNode.ComponentOptionsJson)
+							var optionsJson = await pageComponent.Instance.OnPageUpdated(_serviceProvider, context);
+							if (optionsJson != spacePage.ComponentOptionsJson)
 							{
-								spaceNode.ComponentOptionsJson = optionsJson;
-								if (!_dboManager.Update<TfSpaceNodeDbo>(ConvertModelToDbo(spaceNode), nameof(TfSpaceNodeDbo.ComponentSettingsJson)))
-									throw new TfDboServiceException("Update<TfSpaceNodeDbo> failed");
+								spacePage.ComponentOptionsJson = optionsJson;
+								if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(spacePage), nameof(TfSpacePageDbo.ComponentSettingsJson)))
+									throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
 							}
 						});
 						task.WaitAndUnwrapException();
@@ -543,9 +543,9 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				allNodes = GetSpaceNodes(spaceNode.SpaceId);
+				allPages = GetSpacePages(spacePage.SpaceId);
 
-				return allNodes;
+				return allPages;
 			}
 		}
 		catch (Exception ex)
@@ -554,91 +554,91 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public List<TfSpaceNode> DeleteSpaceNode(
-		TfSpaceNode spaceNode)
+	public List<TfSpacePage> DeleteSpacePage(
+		TfSpacePage spacePage)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var allNodes = GetSpaceNodes(spaceNode.SpaceId);
+				var allPages = GetSpacePages(spacePage.SpaceId);
 
-				new TfSpaceNodeValidator(allNodes)
-					.ValidateDelete(spaceNode)
+				new TfSpacePageValidator(allPages)
+					.ValidateDelete(spacePage)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				TfSpaceNode parentNode = null;
+				TfSpacePage parentPage = null;
 
-				if (spaceNode.ParentId.HasValue)
-					parentNode = FindNodeById(spaceNode.ParentId.Value, allNodes);
+				if (spacePage.ParentId.HasValue)
+					parentPage = FindPageById(spacePage.ParentId.Value, allPages);
 
-				var childNodesForPositionUpdate = new List<TfSpaceNode>();
+				var childPagesForPositionUpdate = new List<TfSpacePage>();
 
-				if (parentNode is not null)
+				if (parentPage is not null)
 				{
-					childNodesForPositionUpdate = parentNode.ChildNodes
-						.Where(x => x.Position.Value > spaceNode.Position)
+					childPagesForPositionUpdate = parentPage.ChildPages
+						.Where(x => x.Position.Value > spacePage.Position)
 						.ToList();
 				}
 				else
 				{
-					childNodesForPositionUpdate = allNodes
-						.Where(x => x.ParentId is null && x.Position.Value > spaceNode.Position)
+					childPagesForPositionUpdate = allPages
+						.Where(x => x.ParentId is null && x.Position.Value > spacePage.Position)
 						.ToList();
 				}
 
-				foreach (var childNode in childNodesForPositionUpdate)
+				foreach (var childPage in childPagesForPositionUpdate)
 				{
-					childNode.Position--;
+					childPage.Position--;
 
-					if (!_dboManager.Update<TfSpaceNodeDbo>(ConvertModelToDbo(childNode), nameof(TfSpaceNodeDbo.Position)))
-						throw new TfDboServiceException("Update<TfSpaceNodeDbo> failed");
+					if (!_dboManager.Update<TfSpacePageDbo>(ConvertModelToDbo(childPage), nameof(TfSpacePageDbo.Position)))
+						throw new TfDboServiceException("Update<TfSpacePageDbo> failed");
 
 				}
 
-				List<TfSpaceNode> nodesToDelete = new List<TfSpaceNode>();
-				Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+				List<TfSpacePage> pagesToDelete = new List<TfSpacePage>();
+				Queue<TfSpacePage> queue = new Queue<TfSpacePage>();
 
-				var node = FindNodeById(spaceNode.Id, allNodes);
+				var page = FindPageById(spacePage.Id, allPages);
 
-				queue.Enqueue(node);
+				queue.Enqueue(page);
 
 				while (queue.Count > 0)
 				{
-					var queueNode = queue.Dequeue();
-					foreach (var childNode in queueNode.ChildNodes)
-						queue.Enqueue(childNode);
+					var queuePage = queue.Dequeue();
+					foreach (var childPage in queuePage.ChildPages)
+						queue.Enqueue(childPage);
 
-					nodesToDelete.Add(queueNode);
+					pagesToDelete.Add(queuePage);
 				}
 
-				nodesToDelete.Reverse();
+				pagesToDelete.Reverse();
 
-				var spaceNodeComponents = _metaService.GetSpaceNodesComponentsMeta();
+				var spacePageComponents = _metaService.GetSpacePagesComponentsMeta();
 
-				foreach (var nodeToDelete in nodesToDelete)
+				foreach (var pageToDelete in pagesToDelete)
 				{
-					if (!_dboManager.Delete<TfSpaceNodeDbo>(nodeToDelete.Id))
-						throw new TfDboServiceException("Delete<TfSpaceNodeDbo> failed");
+					if (!_dboManager.Delete<TfSpacePageDbo>(pageToDelete.Id))
+						throw new TfDboServiceException("Delete<TfSpacePageDbo> failed");
 
-					if (nodeToDelete.Type == TfSpaceNodeType.Page && nodeToDelete.ComponentId.HasValue)
+					if (pageToDelete.Type == TfSpacePageType.Page && pageToDelete.ComponentId.HasValue)
 					{
-						var nodeComponent = spaceNodeComponents.SingleOrDefault(x => x.ComponentId == nodeToDelete.ComponentId);
-						if (nodeComponent is not null)
+						var pageComponent = spacePageComponents.SingleOrDefault(x => x.ComponentId == pageToDelete.ComponentId);
+						if (pageComponent is not null)
 						{
 							var task = Task.Run(async () =>
 							{
 								var context = new TfSpacePageAddonContext
 								{
-									SpaceId = nodeToDelete.SpaceId,
-									SpaceNodeId = nodeToDelete.Id,
-									ComponentOptionsJson = nodeToDelete.ComponentOptionsJson,
-									Icon = nodeToDelete.Icon,
+									SpaceId = pageToDelete.SpaceId,
+									SpacePageId = pageToDelete.Id,
+									ComponentOptionsJson = pageToDelete.ComponentOptionsJson,
+									Icon = pageToDelete.Icon,
 									Mode = TfComponentMode.Update
 								};
 
-								await nodeComponent.Instance.OnPageDeleted(_serviceProvider, context);
+								await pageComponent.Instance.OnPageDeleted(_serviceProvider, context);
 							});
 							task.WaitAndUnwrapException();
 						}
@@ -647,9 +647,9 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				allNodes = GetSpaceNodes(spaceNode.SpaceId);
+				allPages = GetSpacePages(spacePage.SpaceId);
 
-				return allNodes;
+				return allPages;
 			}
 		}
 		catch (Exception ex)
@@ -658,50 +658,50 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public (Guid, List<TfSpaceNode>) CopySpaceNode(
-		Guid nodeId)
+	public (Guid, List<TfSpacePage>) CopySpacePage(
+		Guid pageId)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(Constants.DB_OPERATION_LOCK_KEY))
 			{
-				var allNodes = GetAllSpaceNodes();
+				var allPages = GetAllSpacePages();
 
-				var nodeToCopy = FindNodeById(nodeId, allNodes);
+				var pageToCopy = FindPageById(pageId, allPages);
 
-				if (nodeToCopy is null)
-					throw new TfException("Node not found");
+				if (pageToCopy is null)
+					throw new TfException("Page not found");
 
-				List<TfSpaceNode> nodesToCreate = new List<TfSpaceNode>();
+				List<TfSpacePage> pagesToCreate = new List<TfSpacePage>();
 
-				Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+				Queue<TfSpacePage> queue = new Queue<TfSpacePage>();
 
-				//node is placed after node we copy from
-				nodeToCopy.Position++;
+				//page is placed after page we copy from
+				pageToCopy.Position++;
 
-				queue.Enqueue(nodeToCopy);
+				queue.Enqueue(pageToCopy);
 
 				while (queue.Count > 0)
 				{
-					var queuedNode = queue.Dequeue();
-					queuedNode.Id = Guid.NewGuid();
-					nodesToCreate.Add(queuedNode);
+					var queuedPage = queue.Dequeue();
+					queuedPage.Id = Guid.NewGuid();
+					pagesToCreate.Add(queuedPage);
 
-					foreach (var childNode in queuedNode.ChildNodes)
+					foreach (var childPage in queuedPage.ChildPages)
 					{
-						childNode.ParentId = queuedNode.Id;
-						queue.Enqueue(childNode);
+						childPage.ParentId = queuedPage.Id;
+						queue.Enqueue(childPage);
 					}
 				}
 
-				foreach (var nodeToCreate in nodesToCreate)
+				foreach (var pageToCreate in pagesToCreate)
 				{
-					CreateSpaceNode(nodeToCreate);
+					CreateSpacePage(pageToCreate);
 				}
 
 				scope.Complete();
 
-				return (nodeToCopy.Id, GetSpaceNodes(nodeToCopy.SpaceId));
+				return (pageToCopy.Id, GetSpacePages(pageToCopy.SpaceId));
 
 			}
 		}
@@ -712,13 +712,13 @@ public partial class TfService : ITfService
 	}
 
 
-	private TfSpaceNode ConvertDboToModel(
-		TfSpaceNodeDbo dbo)
+	private TfSpacePage ConvertDboToModel(
+		TfSpacePageDbo dbo)
 	{
 		if (dbo == null)
 			return null;
 
-		return new TfSpaceNode
+		return new TfSpacePage
 		{
 			Id = dbo.Id,
 			Name = dbo.Name,
@@ -732,13 +732,13 @@ public partial class TfService : ITfService
 		};
 	}
 
-	private TfSpaceNodeDbo ConvertModelToDbo(
-		TfSpaceNode model)
+	private TfSpacePageDbo ConvertModelToDbo(
+		TfSpacePage model)
 	{
 		if (model == null)
 			return null;
 
-		return new TfSpaceNodeDbo
+		return new TfSpacePageDbo
 		{
 			Id = model.Id,
 			Name = model.Name,
@@ -754,61 +754,61 @@ public partial class TfService : ITfService
 
 	#region <--- validation --->
 
-	internal class TfSpaceNodeValidator
-	: AbstractValidator<TfSpaceNode>
+	internal class TfSpacePageValidator
+	: AbstractValidator<TfSpacePage>
 	{
-		private readonly List<TfSpaceNode> _allNodes;
-		public TfSpaceNodeValidator(
-			List<TfSpaceNode> allNodes)
+		private readonly List<TfSpacePage> _allPages;
+		public TfSpacePageValidator(
+			List<TfSpacePage> allPages)
 		{
-			_allNodes = allNodes;
+			_allPages = allPages;
 
 			RuleSet("general", () =>
 			{
-				RuleFor(spaceNode => spaceNode.Id)
+				RuleFor(spacePage => spacePage.Id)
 					.NotEmpty()
-					.WithMessage("The space node id is required.");
+					.WithMessage("The space page id is required.");
 
-				RuleFor(spaceNode => spaceNode.Name)
+				RuleFor(spacePage => spacePage.Name)
 					.NotEmpty()
-					.WithMessage("The space node name is required.");
+					.WithMessage("The space page name is required.");
 
-				RuleFor(spaceNode => spaceNode.SpaceId)
+				RuleFor(spacePage => spacePage.SpaceId)
 					.NotEmpty()
 					.WithMessage("The space id is required.");
 			});
 
 			RuleSet("create", () =>
 			{
-				RuleFor(spaceNode => spaceNode.Id)
-						.Must((spaceNode, id) => { return FindNodeById(id, allNodes) == null; })
-						.WithMessage("There is already existing space node with specified identifier.");
+				RuleFor(spacePage => spacePage.Id)
+						.Must((spacePage, id) => { return FindPageById(id, allPages) == null; })
+						.WithMessage("There is already existing space page with specified identifier.");
 
-				RuleFor(spaceNode => spaceNode.ParentId)
-						.Must((spaceNode, parentId) => { return spaceNode.Id != parentId; })
-						.WithMessage("Space node cannot be parent to itself.");
+				RuleFor(spacePage => spacePage.ParentId)
+						.Must((spacePage, parentId) => { return spacePage.Id != parentId; })
+						.WithMessage("Space page cannot be parent to itself.");
 			});
 
 			RuleSet("update", () =>
 			{
-				RuleFor(spaceNode => spaceNode.Id)
-						.Must((spaceNode, id) => { return FindNodeById(id, allNodes) != null; })
-						.WithMessage("There is not existing space node with specified identifier.");
+				RuleFor(spacePage => spacePage.Id)
+						.Must((spacePage, id) => { return FindPageById(id, allPages) != null; })
+						.WithMessage("There is not existing space page with specified identifier.");
 
-				RuleFor(spaceNode => spaceNode.ParentId)
-						.Must((spaceNode, parentId) => { return spaceNode.Id != parentId; })
-						.WithMessage("Space node cannot be parent to itself.");
+				RuleFor(spacePage => spacePage.ParentId)
+						.Must((spacePage, parentId) => { return spacePage.Id != parentId; })
+						.WithMessage("Space page cannot be parent to itself.");
 
-				RuleFor(spaceNode => spaceNode.ParentId)
-						.Must((spaceNode, parentId) =>
+				RuleFor(spacePage => spacePage.ParentId)
+						.Must((spacePage, parentId) =>
 						{
-							var existingNode = FindNodeById(spaceNode.Id, allNodes);
+							var existingPage = FindPageById(spacePage.Id, allPages);
 
-							return existingNode
-									.GetChildNodesPlainList()
+							return existingPage
+									.GetChildPagesPlainList()
 									.Count(x => x.ParentId == parentId) == 0;
 						})
-						.WithMessage("Space node cannot be moved inside its child tree.");
+						.WithMessage("Space page cannot be moved inside its child tree.");
 
 			});
 
@@ -819,69 +819,69 @@ public partial class TfService : ITfService
 		}
 
 		public ValidationResult ValidateCreate(
-			TfSpaceNode spaceNode)
+			TfSpacePage spacePage)
 		{
-			if (spaceNode == null)
+			if (spacePage == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
-					"The space node is null.") });
+					"The space page is null.") });
 
-			return this.Validate(spaceNode, options =>
+			return this.Validate(spacePage, options =>
 			{
 				options.IncludeRuleSets("general", "create");
 			});
 		}
 
 		public ValidationResult ValidateUpdate(
-			TfSpaceNode spaceNode)
+			TfSpacePage spacePage)
 		{
-			if (spaceNode == null)
+			if (spacePage == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
-					"The space node is null.") });
+					"The space page is null.") });
 
-			return this.Validate(spaceNode, options =>
+			return this.Validate(spacePage, options =>
 			{
 				options.IncludeRuleSets("general", "update");
 			});
 		}
 
 		public ValidationResult ValidateDelete(
-			TfSpaceNode spaceNode)
+			TfSpacePage spacePage)
 		{
-			if (spaceNode == null)
+			if (spacePage == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
-					"The space node is null.") });
+					"The space page is null.") });
 
-			return this.Validate(spaceNode, options =>
+			return this.Validate(spacePage, options =>
 			{
 				options.IncludeRuleSets("delete");
 			});
 		}
 
-		private TfSpaceNode FindNodeById(
+		private TfSpacePage FindPageById(
 			Guid id,
-			List<TfSpaceNode> nodes)
+			List<TfSpacePage> pages)
 		{
-			if (nodes == null || nodes.Count == 0)
+			if (pages == null || pages.Count == 0)
 				return null;
 
-			Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+			Queue<TfSpacePage> queue = new Queue<TfSpacePage>();
 
-			foreach (var node in nodes)
+			foreach (var page in pages)
 			{
-				if (node.Id == id)
-					return node;
+				if (page.Id == id)
+					return page;
 
-				queue.Enqueue(node);
+				queue.Enqueue(page);
 			}
 
 			while (queue.Count > 0)
 			{
-				var node = queue.Dequeue();
-				if (node.Id == id)
-					return node;
+				var page = queue.Dequeue();
+				if (page.Id == id)
+					return page;
 
-				foreach (var childNode in node.ChildNodes)
-					queue.Enqueue(childNode);
+				foreach (var childPage in page.ChildPages)
+					queue.Enqueue(childPage);
 			}
 
 			return null;

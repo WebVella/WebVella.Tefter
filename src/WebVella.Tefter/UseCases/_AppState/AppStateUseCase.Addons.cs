@@ -48,7 +48,7 @@ internal partial class AppStateUseCase
 
 	internal virtual ReadOnlyCollection<TfSpacePageAddonMeta> GetSpaceNodeComponents()
 	{
-		return _metaService.GetSpaceNodesComponentsMeta();
+		return _metaService.GetSpacePagesComponentsMeta();
 	}
 	
 }

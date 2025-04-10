@@ -83,8 +83,8 @@ public class TfSpaceViewPreset
 	[JsonPropertyName("sort_orders")]
 	public List<TfSort> SortOrders { get; set; } = new();
 
-	[JsonPropertyName("nodes")]
-	public List<TfSpaceViewPreset> Nodes { get; set; } = new();
+	[JsonPropertyName("pages")]
+	public List<TfSpaceViewPreset> Pages { get; set; } = new();
 
 	[JsonPropertyName("is_group")]
 	public bool IsGroup { get; set; } = false;

@@ -733,7 +733,7 @@ public partial class TfServiceTest : BaseTest
 				tfService.CreateSpace(space);
 
 
-				var spaceNode1_0_0 = new TfSpaceNode
+				var spaceNode1_0_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = null,
@@ -743,12 +743,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = null,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode1_0_0);
+				tfService.CreateSpacePage(spaceNode1_0_0);
 
-				var spaceNode1_1_0 = new TfSpaceNode
+				var spaceNode1_1_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -758,12 +758,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode1_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode1_1_0);
+				tfService.CreateSpacePage(spaceNode1_1_0);
 
-				var spaceNode1_2_0 = new TfSpaceNode
+				var spaceNode1_2_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -773,12 +773,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode1_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode1_2_0);
+				tfService.CreateSpacePage(spaceNode1_2_0);
 
-				var spaceNode1_3_0 = new TfSpaceNode
+				var spaceNode1_3_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -788,12 +788,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode1_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode1_3_0);
+				tfService.CreateSpacePage(spaceNode1_3_0);
 
-				var spaceNode2_0_0 = new TfSpaceNode
+				var spaceNode2_0_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -803,12 +803,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = null,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode2_0_0);
+				tfService.CreateSpacePage(spaceNode2_0_0);
 
-				var spaceNode2_1_0 = new TfSpaceNode
+				var spaceNode2_1_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -818,12 +818,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode2_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode2_1_0);
+				tfService.CreateSpacePage(spaceNode2_1_0);
 
-				var spaceNode2_2_0 = new TfSpaceNode
+				var spaceNode2_2_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -833,12 +833,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode2_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode2_2_0);
+				tfService.CreateSpacePage(spaceNode2_2_0);
 
-				var spaceNode2_3_0 = new TfSpaceNode
+				var spaceNode2_3_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -848,12 +848,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode2_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode2_3_0);
+				tfService.CreateSpacePage(spaceNode2_3_0);
 
-				var spaceNode3_0_0 = new TfSpaceNode
+				var spaceNode3_0_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -863,12 +863,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = null,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode3_0_0);
+				tfService.CreateSpacePage(spaceNode3_0_0);
 
-				var spaceNode3_1_0 = new TfSpaceNode
+				var spaceNode3_1_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -878,12 +878,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode3_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode3_1_0);
+				tfService.CreateSpacePage(spaceNode3_1_0);
 
-				var spaceNode3_2_0 = new TfSpaceNode
+				var spaceNode3_2_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -893,12 +893,12 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode3_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode3_2_0);
+				tfService.CreateSpacePage(spaceNode3_2_0);
 
-				var spaceNode3_3_0 = new TfSpaceNode
+				var spaceNode3_3_0 = new TfSpacePage
 				{
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
@@ -908,10 +908,10 @@ public partial class TfServiceTest : BaseTest
 					ParentId = spaceNode3_0_0.Id,
 					Position = null,
 					SpaceId = space.Id,
-					Type = TfSpaceNodeType.Folder
+					Type = TfSpacePageType.Folder
 				};
 
-				tfService.CreateSpaceNode(spaceNode3_3_0);
+				tfService.CreateSpacePage(spaceNode3_3_0);
 
 				#endregion
 
@@ -919,7 +919,7 @@ public partial class TfServiceTest : BaseTest
 
 				//test move up in same parent node
 				spaceNode1_3_0.Position = 1;
-				var nodeTree = tfService.UpdateSpaceNode(spaceNode1_3_0);
+				var nodeTree = tfService.UpdateSpacePage(spaceNode1_3_0);
 
 				var updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(2);
@@ -933,7 +933,7 @@ public partial class TfServiceTest : BaseTest
 
 				//test move down in same parent node
 				spaceNode1_3_0.Position = 3;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_3_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_3_0);
 
 				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(1);
@@ -946,7 +946,7 @@ public partial class TfServiceTest : BaseTest
 
 				//test move up in same parent node
 				spaceNode1_3_0.Position = 2;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_3_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_3_0);
 
 				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(1);
@@ -960,7 +960,7 @@ public partial class TfServiceTest : BaseTest
 
 				//test move down in same parent node
 				spaceNode1_3_0.Position = 3;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_3_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_3_0);
 
 				updatedSpaceNode1_1_0 = FindNodeById(spaceNode1_1_0.Id, nodeTree);
 				updatedSpaceNode1_1_0.Position.Should().Be(1);
@@ -976,28 +976,28 @@ public partial class TfServiceTest : BaseTest
 
 				//test move up in same parent node while it is on first position
 				spaceNode1_0_0.Position = 0;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				var updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
 
 				//test move up in same parent node on position greater than max allowed
 				spaceNode1_0_0.Position = 10;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
 
 				//return node to position 1
 				spaceNode1_0_0.Position = 1;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
 
 				//test move up in same parent node
 				spaceNode1_0_0.Position = 3;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
@@ -1010,7 +1010,7 @@ public partial class TfServiceTest : BaseTest
 
 				//test move down in same parent node
 				spaceNode1_0_0.Position = 1;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
@@ -1023,7 +1023,7 @@ public partial class TfServiceTest : BaseTest
 
 				//change position without changing parent (root) with invalid position
 				spaceNode1_0_0.Position = null;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(3);
@@ -1043,7 +1043,7 @@ public partial class TfServiceTest : BaseTest
 				//test change parent node and position
 				spaceNode1_0_0.Position = 2;
 				spaceNode1_0_0.ParentId = spaceNode3_0_0.Id;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(2);
@@ -1063,7 +1063,7 @@ public partial class TfServiceTest : BaseTest
 
 				spaceNode1_0_0.Position = 1;
 				spaceNode1_0_0.ParentId = null;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
@@ -1085,7 +1085,7 @@ public partial class TfServiceTest : BaseTest
 				spaceNode1_0_0.Position = null;
 				spaceNode1_0_0.ParentId = spaceNode2_0_0.Id;
 
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(4); //last position
@@ -1100,7 +1100,7 @@ public partial class TfServiceTest : BaseTest
 				//return to initial state
 				spaceNode1_0_0.Position = 1;
 				spaceNode1_0_0.ParentId = null;
-				nodeTree = tfService.UpdateSpaceNode(spaceNode1_0_0);
+				nodeTree = tfService.UpdateSpacePage(spaceNode1_0_0);
 				updatedSpaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 				updatedSpaceNode1_0_0.Position.Should().Be(1);
 				updatedSpaceNode1_0_0.ParentId.Should().BeNull();
@@ -1108,7 +1108,7 @@ public partial class TfServiceTest : BaseTest
 				//try to move node inside child nodes tree
 				updatedSpaceNode1_0_0.Position = 1;
 				updatedSpaceNode1_0_0.ParentId = spaceNode1_2_0.Id;
-				var task = Task.Run(() => { nodeTree = tfService.UpdateSpaceNode(updatedSpaceNode1_0_0); });
+				var task = Task.Run(() => { nodeTree = tfService.UpdateSpacePage(updatedSpaceNode1_0_0); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
 
@@ -1118,37 +1118,37 @@ public partial class TfServiceTest : BaseTest
 
 				spaceNode1_0_0 = FindNodeById(spaceNode1_0_0.Id, nodeTree);
 
-				var (copyNodeId, newNodeTree) = tfService.CopySpaceNode(spaceNode1_0_0.Id);
+				var (copyNodeId, newNodeTree) = tfService.CopySpacePage(spaceNode1_0_0.Id);
 
 				var copiedNode = FindNodeById(copyNodeId, newNodeTree);
 				short newPosition = (short)(spaceNode1_0_0.Position.Value + 1);
 				copiedNode.Position.Value.Should().Be(newPosition);
-				copiedNode.ChildNodes.Count.Should().Be(spaceNode1_0_0.ChildNodes.Count);
+				copiedNode.ChildPages.Count.Should().Be(spaceNode1_0_0.ChildPages.Count);
 
-				tfService.DeleteSpaceNode(copiedNode);
+				tfService.DeleteSpacePage(copiedNode);
 
 				#endregion
 
 				#region delete node
 
-				tfService.DeleteSpaceNode(spaceNode1_0_0);
-				tfService.DeleteSpaceNode(spaceNode2_0_0);
-				tfService.DeleteSpaceNode(spaceNode3_3_0);
-				tfService.DeleteSpaceNode(spaceNode3_0_0);
+				tfService.DeleteSpacePage(spaceNode1_0_0);
+				tfService.DeleteSpacePage(spaceNode2_0_0);
+				tfService.DeleteSpacePage(spaceNode3_3_0);
+				tfService.DeleteSpacePage(spaceNode3_0_0);
 
 				#endregion
 			}
 		}
 	}
 
-	private TfSpaceNode FindNodeById(
+	private TfSpacePage FindNodeById(
 		Guid id,
-		List<TfSpaceNode> nodes)
+		List<TfSpacePage> nodes)
 	{
 		if (nodes == null || nodes.Count == 0)
 			return null;
 
-		Queue<TfSpaceNode> queue = new Queue<TfSpaceNode>();
+		Queue<TfSpacePage> queue = new Queue<TfSpacePage>();
 
 		foreach (var node in nodes)
 		{
@@ -1164,7 +1164,7 @@ public partial class TfServiceTest : BaseTest
 			if (node.Id == id)
 				return node;
 
-			foreach (var childNode in node.ChildNodes)
+			foreach (var childNode in node.ChildPages)
 				queue.Enqueue(childNode);
 		}
 

@@ -2,20 +2,20 @@
 
 public partial interface ITfMetaService
 {
-	public ReadOnlyCollection<TfSpacePageAddonMeta> GetSpaceNodesComponentsMeta();
+	public ReadOnlyCollection<TfSpacePageAddonMeta> GetSpacePagesComponentsMeta();
 }
 
 public partial class TfMetaService : ITfMetaService
 {
-	private static List<TfSpacePageAddonMeta> _spaceNodeComponentMeta = 
+	private static List<TfSpacePageAddonMeta> _spacePageComponentMeta = 
 		new List<TfSpacePageAddonMeta>();
 
-	public ReadOnlyCollection<TfSpacePageAddonMeta> GetSpaceNodesComponentsMeta()
+	public ReadOnlyCollection<TfSpacePageAddonMeta> GetSpacePagesComponentsMeta()
 	{
-		return _spaceNodeComponentMeta.AsReadOnly();
+		return _spacePageComponentMeta.AsReadOnly();
 	}
 
-	private static void ScanAndRegisterSpaceNodeComponents(
+	private static void ScanAndRegisterSpacePageComponents(
 		Type type)
 	{
 
@@ -29,7 +29,7 @@ public partial class TfMetaService : ITfMetaService
 				ComponentId = instance.Id,
 			};
 
-			_spaceNodeComponentMeta.Add(meta);
+			_spacePageComponentMeta.Add(meta);
 			_typesMap[type.FullName] = type;
 		}
 	}

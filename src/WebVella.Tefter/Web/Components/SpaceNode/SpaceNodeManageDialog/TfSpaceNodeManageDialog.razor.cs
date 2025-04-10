@@ -28,7 +28,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create page") : LOC("Manage page");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
-		_pageComponents = TfMetaService.GetSpaceNodesComponentsMeta();
+		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
 		_parentNodeOptions = _getParents();
 		if (_isCreate)
 		{
@@ -36,7 +36,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 			{
 				Id = Guid.NewGuid(),
 				SpaceId = TfAppState.Value.Space.Id,
-				Type = TfSpaceNodeType.Page,
+				Type = TfSpacePageType.Page,
 				Icon = TfConstants.PageIconString,
 				ComponentId = _pageComponents.Count > 0 ? _pageComponents[0].ComponentId : null
 			};
@@ -69,13 +69,13 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		List<ValidationError> settingsErrors = new();
 		ITfSpacePageAddon addonComponent = null;
 		TucSpaceNode submit = _form with { Id = _form.Id };
-		if (submit.Type == TfSpaceNodeType.Folder)
+		if (submit.Type == TfSpacePageType.Folder)
 		{
 			submit.ComponentOptionsJson = null;
 			submit.ComponentType = null;
 
 		}
-		else if (submit.Type == TfSpaceNodeType.Page)
+		else if (submit.Type == TfSpacePageType.Page)
 		{
 			if (typeSettingsComponent is not null)
 			{
@@ -158,16 +158,16 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		_form.ParentId = node?.Id;
 	}
 
-	private void _typeChanged(TfSpaceNodeType type)
+	private void _typeChanged(TfSpacePageType type)
 	{
 		_form.Type = type;
-		if (type == TfSpaceNodeType.Folder && _form.Icon == TfConstants.PageIconString)
+		if (type == TfSpacePageType.Folder && _form.Icon == TfConstants.PageIconString)
 			_form.Icon = TfConstants.FolderIconString;
-		else if (type == TfSpaceNodeType.Page && _form.Icon == TfConstants.FolderIconString)
+		else if (type == TfSpacePageType.Page && _form.Icon == TfConstants.FolderIconString)
 			_form.Icon = TfConstants.PageIconString;
 
-		if (type == TfSpaceNodeType.Folder) _selectedPageComponent = null;
-		else if (type == TfSpaceNodeType.Page && _pageComponents.Any()) _selectedPageComponent = _pageComponents[0];
+		if (type == TfSpacePageType.Folder) _selectedPageComponent = null;
+		else if (type == TfSpacePageType.Page && _pageComponents.Any()) _selectedPageComponent = _pageComponents[0];
 	}
 	private void _pageComponentChanged(TfSpacePageAddonMeta meta)
 	{

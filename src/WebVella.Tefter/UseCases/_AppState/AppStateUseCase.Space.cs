@@ -24,7 +24,7 @@ internal partial class AppStateUseCase
 		{
 			var space = GetSpace(newAppState.Route.SpaceId.Value);
 			var spaceNodes = GetSpaceNodes(newAppState.Route.SpaceId.Value);
-			var spacePageNode = spaceNodes.FindItemByMatch((x) => x.Type == TfSpaceNodeType.Page, (x) => x.ChildNodes);
+			var spacePageNode = spaceNodes.FindItemByMatch((x) => x.Type == TfSpacePageType.Page, (x) => x.ChildNodes);
 			if (spacePageNode != null)
 				space.DefaultNodeId = spacePageNode.Id;
 
@@ -76,9 +76,9 @@ internal partial class AppStateUseCase
 
 			var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
 
-			var allSpaceNodes = _tfService.GetAllSpaceNodes();
+			var allSpaceNodes = _tfService.GetAllSpacePages();
 
-			var spaceNodeDict = new Dictionary<Guid, List<TfSpaceNode>>();
+			var spaceNodeDict = new Dictionary<Guid, List<TfSpacePage>>();
 			foreach (var item in allSpaceNodes)
 			{
 				if (!spacesHS.Contains(item.SpaceId))
@@ -94,7 +94,7 @@ internal partial class AppStateUseCase
 			{
 				if (spaceNodeDict.ContainsKey(space.Id) && spaceNodeDict[space.Id].Count > 0)
 				{
-					var spacePageNode = spaceNodeDict[space.Id].FindItemByMatch((x) => x.Type == TfSpaceNodeType.Page, (x) => x.ChildNodes);
+					var spacePageNode = spaceNodeDict[space.Id].FindItemByMatch((x) => x.Type == TfSpacePageType.Page, (x) => x.ChildPages);
 					if (spacePageNode != null)
 						space.DefaultNodeId = spacePageNode.Id;
 				}
@@ -194,7 +194,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			return _tfService.GetSpaceNodes(spaceId)
+			return _tfService.GetSpacePages(spaceId)
 				.Select(x => new TucSpaceNode(x))
 				.ToList();
 		}
@@ -215,7 +215,7 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSpaceNode> CreateSpaceNode(
 		TucSpaceNode node)
 	{
-		return _tfService.CreateSpaceNode(node.ToModel())
+		return _tfService.CreateSpacePage(node.ToModel())
 				.Item2
 				.Select(x => new TucSpaceNode(x)).ToList();
 	}
@@ -223,7 +223,7 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSpaceNode> UpdateSpaceNode(
 		TucSpaceNode node)
 	{
-		return _tfService.UpdateSpaceNode(node.ToModel())
+		return _tfService.UpdateSpacePage(node.ToModel())
 			.Select(x => new TucSpaceNode(x))
 			.ToList();
 	}
@@ -243,7 +243,7 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSpaceNode> DeleteSpaceNode(
 		TucSpaceNode node)
 	{
-		return _tfService.DeleteSpaceNode(node.ToModel())
+		return _tfService.DeleteSpacePage(node.ToModel())
 			.Select(x => new TucSpaceNode(x))
 			.ToList();
 	}
@@ -251,7 +251,7 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSpaceNode> CopySpaceNode(Guid nodeId)
 	{
 		//newNodeId is the id of newly created node copy of specified one by nodeId argument
-		var (newNodeId, nodesList) = _tfService.CopySpaceNode(nodeId);
+		var (newNodeId, nodesList) = _tfService.CopySpacePage(nodeId);
 		return nodesList.Select(x => new TucSpaceNode(x)).ToList();
 	}
 }

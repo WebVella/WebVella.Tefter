@@ -26,13 +26,13 @@ public class ExportUseCase
 		}
 		else if (data.RouteState.SpaceNodeId is not null)
 		{
-			var resultNode = _tfService.GetSpaceNode(data.RouteState.SpaceNodeId.Value);
+			var resultNode = _tfService.GetSpacePage(data.RouteState.SpaceNodeId.Value);
 			if (resultNode is null)
 				throw new TfException("GetSpaceNode method failed");
 
-			var spacePagesMeta = _tfMetaService.GetSpaceNodesComponentsMeta();
+			var spacePagesMeta = _tfMetaService.GetSpacePagesComponentsMeta();
 			var spacePageMeta = spacePagesMeta.SingleOrDefault( x=>x.ComponentId == resultNode.ComponentId);
-			if (resultNode.Type == TfSpaceNodeType.Page && spacePageMeta != null && spacePageMeta.Instance.GetType() == typeof(TfSpaceViewSpacePageAddon))
+			if (resultNode.Type == TfSpacePageType.Page && spacePageMeta != null && spacePageMeta.Instance.GetType() == typeof(TfSpaceViewSpacePageAddon))
 			{
 				try
 				{

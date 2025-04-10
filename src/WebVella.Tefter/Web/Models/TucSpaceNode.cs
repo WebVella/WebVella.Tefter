@@ -7,7 +7,7 @@ public record TucSpaceNode
 	public Guid Id { get; set; }
 	public Guid? ParentId { get; set; } = null;
 	public Guid SpaceId { get; set; }
-	public TfSpaceNodeType Type { get; set; } = TfSpaceNodeType.Page;
+	public TfSpacePageType Type { get; set; } = TfSpacePageType.Page;
 	[Required]
 	public string Name { get; set; }
 	[Required]
@@ -25,7 +25,7 @@ public record TucSpaceNode
 	public Action OnClick { get; set; }
 
 	public TucSpaceNode() { }
-	public TucSpaceNode(TfSpaceNode model)
+	public TucSpaceNode(TfSpacePage model)
 	{
 		Id = model.Id;
 		ParentId = model.ParentId;
@@ -37,11 +37,11 @@ public record TucSpaceNode
 		ComponentId = model.ComponentId;
 		ComponentType = model.ComponentType;
 		ComponentOptionsJson = model.ComponentOptionsJson;
-		ChildNodes = model.ChildNodes.Select(x => new TucSpaceNode(x)).ToList();
+		ChildNodes = model.ChildPages.Select(x => new TucSpaceNode(x)).ToList();
 	}
-	public TfSpaceNode ToModel()
+	public TfSpacePage ToModel()
 	{
-		return new TfSpaceNode
+		return new TfSpacePage
 		{
 			Id = Id,
 			ParentId = ParentId,
@@ -53,7 +53,7 @@ public record TucSpaceNode
 			ComponentId = ComponentId,
 			ComponentType = ComponentType,
 			ComponentOptionsJson = ComponentOptionsJson,
-			ChildNodes = ChildNodes.Select(x=> x.ToModel()).ToList(),
+			ChildPages = ChildNodes.Select(x=> x.ToModel()).ToList(),
 			//ComponentType is a getter
 		};
 	}
@@ -70,7 +70,7 @@ public record TucSpaceNode
 			OnClick = null,
 			OnExpand = null,
 			Data = this,
-			Url = Type == TfSpaceNodeType.Folder ? null : String.Format(TfConstants.SpaceNodePageUrl,SpaceId,Id),
+			Url = Type == TfSpacePageType.Folder ? null : String.Format(TfConstants.SpaceNodePageUrl,SpaceId,Id),
 			Description = null
 		};
 

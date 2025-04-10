@@ -4,7 +4,7 @@
 @if (Context.Mode == TfComponentMode.Read)
 {
 	<TalkThreadComponent ChannelId="_options.ChannelId" CurrentUser="@TfUserState.Value.CurrentUser"
-						 SharedKeyValue="@Context.SpaceNodeId" Style="height:100%;margin:calc(-1 * var(--tf-body-content-padding));display:flex;" />
+						 SharedKeyValue="@Context.SpacePageId" Style="height:100%;margin:calc(-1 * var(--tf-body-content-padding));display:flex;" />
 }
 else if (Context.Mode == TfComponentMode.Create)
 {

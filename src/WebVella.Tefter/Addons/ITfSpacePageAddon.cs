@@ -24,7 +24,7 @@ public class TfSpacePageAddonMeta
 
 public class TfSpacePageAddonContext
 {
-	public Guid SpaceNodeId { get; set; }
+	public Guid SpacePageId { get; set; }
 	public Guid SpaceId { get; set; }
 	public string Icon { get; set; }
 	public string ComponentOptionsJson { get; set; }

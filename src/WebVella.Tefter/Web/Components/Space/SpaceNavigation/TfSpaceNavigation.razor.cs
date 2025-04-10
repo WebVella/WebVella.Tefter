@@ -203,7 +203,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 		if (item.Data is not null && item.Data is TucSpaceNode)
 		{
 			var node = (TucSpaceNode)item.Data;
-			if (node.Type == TfSpaceNodeType.Folder)
+			if (node.Type == TfSpacePageType.Folder)
 			{
 				await _onMenuItemExpand(item);
 				return;
