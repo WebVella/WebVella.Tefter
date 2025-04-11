@@ -42,7 +42,7 @@ public class TfBooleanViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		SortAliases = new List<string> { ALIAS };
 
-		//DefaultComponentType = typeof(TfBooleanDisplayColumnComponent);
+		DefaultComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_BOOLEAN_ID);
 	}
 }
 

@@ -1,12 +1,12 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfNumberDisplayColumnComponentOptions>
-@if (Context.Mode == TfComponentPresentationMode.Display)
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 	<div>@_value?.ToString(componentOptions.DisplayFormat,
 				new CultureInfo(String.IsNullOrWhiteSpace(componentOptions.CultureName) ? "en-US" : componentOptions.CultureName))
 	</div>
 }
-else if (Context.Mode == TfComponentPresentationMode.Options)
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">

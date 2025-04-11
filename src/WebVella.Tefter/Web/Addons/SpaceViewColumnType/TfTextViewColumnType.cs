@@ -36,7 +36,7 @@ public class TfTextViewColumnType : ITfSpaceViewColumnTypeAddon
 		};
 		FilterAliases = new List<string>() { ALIAS };
 		SortAliases = new List<string> { ALIAS };
-		//DefaultComponentType = typeof(TfTextDisplayColumnComponent);
+		DefaultComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
 	}
 }
 

@@ -31,7 +31,7 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
 	public TfFolderAssetsCountComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
-		Context = context;
+		RegionContext = context;
 	}
 	#endregion
 
@@ -56,7 +56,7 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	{
 		await base.OnInitializedAsync();
 		_initStorageKeys();
-		if (Context.Mode == TfComponentPresentationMode.Options)
+		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
 			var _folders = AssetsService.GetFolders();
 	
@@ -95,10 +95,10 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (Context.Hash != _renderedHash)
+		if (RegionContext.Hash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = Context.Hash;
+			_renderedHash = RegionContext.Hash;
 		}
 	}
 	#endregion
@@ -151,8 +151,8 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 		var panelContext = new AssetsFolderPanelContext
 		{
 			FolderId = componentOptions.FolderId,
-			DataTable = Context.DataTable,
-			RowIndex = Context.RowIndex
+			DataTable = RegionContext.DataTable,
+			RowIndex = RegionContext.RowIndex
 		};
 
 		_dialog = await DialogService.ShowPanelAsync<AssetsFolderPanel>(
@@ -178,7 +178,7 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 
 	private void _initStorageKeys()
 	{
-		_storageKey = this.GetType().Name + "_" + Context.SpaceViewColumnId;
+		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
 	}
 
 	private async Task _folderSelectHandler(AssetsFolder folder)

@@ -30,7 +30,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
 	public TfSelectEditColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
-		Context = context;
+		RegionContext = context;
 	}
 	#endregion
 
@@ -76,10 +76,10 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (Context.Hash != _renderedHash)
+		if (RegionContext.Hash != _renderedHash)
 		{
 			await _initValues();
-			_renderedHash = Context.Hash;
+			_renderedHash = RegionContext.Hash;
 		}
 	}
 	#endregion
@@ -260,7 +260,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	}
 	private async Task _initValues()
 	{
-		if (Context.Mode == TfComponentPresentationMode.Options)
+		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
 			_selectedSpaceData = TfAppState.Value.SpaceDataList?.FirstOrDefault(x => x.Id == componentOptions.SpaceDataId);
 
@@ -298,7 +298,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	}
 	private void _initStorageKeys()
 	{
-		_storageKey = this.GetType().Name + "_" + Context.SpaceViewColumnId;
+		_storageKey = this.GetType().Name + "_" + RegionContext.SpaceViewColumnId;
 	}
 	private List<TucSelectOption> _getOptionsFromString(string optionsString)
 	{

@@ -1,12 +1,12 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfTimeDisplayColumnComponentOptions>
-@if (Context.Mode == TfComponentPresentationMode.Display)
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 	var format = componentOptions.Format;
 	if (string.IsNullOrWhiteSpace(format)) format = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
 	<div>@_value?.ToString(format)</div>
 }
-else if (Context.Mode == TfComponentPresentationMode.Options)
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">

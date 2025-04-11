@@ -47,7 +47,7 @@ public class TfNumberViewColumnType : ITfSpaceViewColumnTypeAddon
 
 		SortAliases = new List<string> { ALIAS };
 
-		//DefaultComponentType = typeof(TfNumberDisplayColumnComponent);
+		DefaultComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_NUMBER_ID);
 	}
 }
 

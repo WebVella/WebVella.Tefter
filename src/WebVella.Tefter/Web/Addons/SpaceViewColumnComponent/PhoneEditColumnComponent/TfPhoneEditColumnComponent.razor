@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfPhoneEditColumnComponentOptions>
-@if (Context.Mode == TfComponentPresentationMode.Display)
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 	<div>
 		<FluentTextField Id="@_valueInputId" TextFieldType="TextFieldType.Tel"
@@ -9,7 +9,7 @@
 						 Style="width:100%;min-width:80px;" AutoComplete="off" />
 	</div>
 }
-else if (Context.Mode == TfComponentPresentationMode.Options)
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="4">

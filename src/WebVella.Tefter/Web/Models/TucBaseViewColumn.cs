@@ -18,7 +18,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	public virtual string Description { get; init;} = String.Empty;
 	public virtual string FluentIconName { get; init;} = String.Empty;
 	public virtual List<Guid> SupportedColumnTypes { get; init; } = new();
-	[Parameter] public TfSpaceViewColumnScreenRegionContext Context { get; set; }
+	[Parameter] public TfSpaceViewColumnScreenRegionContext RegionContext { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }
 
@@ -34,9 +34,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <returns></returns>
 	public virtual ValueTask DisposeAsync()
 	{
-		if (Context is not null && Context.EditContext is not null)
+		if (RegionContext is not null && RegionContext.EditContext is not null)
 		{
-			Context.EditContext.OnValidationRequested -= OnOptionsValidationRequested;
+			RegionContext.EditContext.OnValidationRequested -= OnOptionsValidationRequested;
 		}
 		return ValueTask.CompletedTask;
 	}
@@ -54,17 +54,17 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			LC = StringLocalizerFactory.Create(type);
 		}
-		if (Context.EditContext is not null)
-			Context.EditContext.OnValidationRequested += OnOptionsValidationRequested;
+		if (RegionContext.EditContext is not null)
+			RegionContext.EditContext.OnValidationRequested += OnOptionsValidationRequested;
 
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (Context.CustomOptionsJson != optionsSerialized)
+		if (RegionContext.CustomOptionsJson != optionsSerialized)
 		{
-			optionsSerialized = Context.CustomOptionsJson;
+			optionsSerialized = RegionContext.CustomOptionsJson;
 			componentOptions = GetOptions();
 		}
 	}
@@ -92,9 +92,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	protected virtual string GetColumnNameFromAlias(string alias)
 	{
 		string colName = null;
-		if (Context.DataMapping.ContainsKey(alias))
+		if (RegionContext.DataMapping.ContainsKey(alias))
 		{
-			colName = Context.DataMapping[alias];
+			colName = RegionContext.DataMapping[alias];
 		}
 
 		return colName;
@@ -107,14 +107,14 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <returns></returns>
 	protected virtual TfDatabaseColumnType? GetColumnDatabaseTypeByAlias(string alias)
 	{
-		if (Context.DataTable is null) return null;
+		if (RegionContext.DataTable is null) return null;
 		var colName = GetColumnNameFromAlias(alias);
 		if (colName == null) return null;
 
 		TfDataColumn column = null;
 		try
 		{
-			column = Context.DataTable.Columns[colName];
+			column = RegionContext.DataTable.Columns[colName];
 		}
 		catch { }
 		if (column == null) return null;
@@ -238,12 +238,12 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			return defaultValue;
 		}
-		if (Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
-		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return defaultValue;
-		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return defaultValue;
+		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return defaultValue;
+		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return defaultValue;
 
-		return Context.DataTable.Rows[Context.RowIndex][dbName]?.ToString();
+		return RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName]?.ToString();
 	}
 
 	/// <summary>
@@ -262,11 +262,11 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			return null;
 		}
-		if (Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
-		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return null;
-		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
-		object value = Context.DataTable.Rows[Context.RowIndex][dbName];
+		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return null;
+		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return null;
+		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
 		if (value is null) return null;
 
 		if (typeof(T) == typeof(String)) return (T)value;
@@ -289,11 +289,11 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 		{
 			return null;
 		}
-		if (Context.DataTable is null || Context.DataTable.Rows.Count == 0) return defaultValue;
+		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
-		if (Context.DataTable.Rows.Count < Context.RowIndex + 1) return null;
-		if (Context.DataTable.Rows[Context.RowIndex][dbName] is null) return null;
-		object value = Context.DataTable.Rows[Context.RowIndex][dbName];
+		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return null;
+		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return null;
+		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
 		if (value is null) return null;
 		if (value is string && String.IsNullOrWhiteSpace((string)value)) return null;
 		if (value is T) return (T)value;
@@ -311,9 +311,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	protected virtual TItem GetOptions()
 	{
-		if (!String.IsNullOrWhiteSpace(Context.CustomOptionsJson))
+		if (!String.IsNullOrWhiteSpace(RegionContext.CustomOptionsJson))
 		{
-			componentOptions = JsonSerializer.Deserialize<TItem>(Context.CustomOptionsJson);
+			componentOptions = JsonSerializer.Deserialize<TItem>(RegionContext.CustomOptionsJson);
 			if (componentOptions is not null) return componentOptions;
 		}
 		return Activator.CreateInstance<TItem>();
@@ -359,8 +359,8 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	{
 		var columnName = GetColumnNameFromAlias(alias);
 		if (String.IsNullOrWhiteSpace(columnName)) return null;
-		if (Context.DataTable is null) return null;
-		return Context.DataTable.Columns[columnName];
+		if (RegionContext.DataTable is null) return null;
+		return RegionContext.DataTable.Columns[columnName];
 	}
 
 
@@ -389,10 +389,10 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	{
 		if (!RowChanged.HasDelegate) return;
 
-		var dt = Context.DataTable.NewTable(Context.RowIndex);
+		var dt = RegionContext.DataTable.NewTable(RegionContext.RowIndex);
 		if (dt.Rows.Count == 0)
 		{
-			ToastService.ShowError(LOC("Row with index {0} is not found", Context.RowIndex));
+			ToastService.ShowError(LOC("Row with index {0} is not found", RegionContext.RowIndex));
 			return;
 		}
 		var colName = GetColumnNameFromAlias(alias);

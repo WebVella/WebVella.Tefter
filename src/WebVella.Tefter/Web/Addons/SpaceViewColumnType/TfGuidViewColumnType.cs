@@ -21,16 +21,10 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 
 	public TfGuidViewColumnType()
 	{
-
-
 		Id = new Guid(TF_COLUMN_GUID_ID);
-
 		Name = TF_COLUMN_GUID_NAME;
-
 		Description = TF_COLUMN_GUID_DESCRIPTION;
-
 		FluentIconName = TF_COLUMN_GUID_ICON;
-
 		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
 		{
 			new TfSpaceViewColumnAddonDataMapping
@@ -40,12 +34,9 @@ public class TfGuidViewColumnType : ITfSpaceViewColumnTypeAddon
 					SupportedDatabaseColumnTypes = new List<TfDatabaseColumnType> { TfDatabaseColumnType.Guid }
 				}
 		};
-
 		FilterAliases = new List<string>() { ALIAS };
-
 		SortAliases = new List<string> { ALIAS };
-
-		//DefaultComponentType = typeof(TfGuidDisplayColumnComponent);
+		DefaultComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_GUID_ID);
 	}
 }
 

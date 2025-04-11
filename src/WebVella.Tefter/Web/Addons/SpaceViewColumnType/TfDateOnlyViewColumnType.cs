@@ -44,8 +44,7 @@ public class TfDateOnlyViewColumnType : ITfSpaceViewColumnTypeAddon
 		FilterAliases = new List<string>() { ALIAS };
 
 		SortAliases = new List<string> { ALIAS };
-
-		//DefaultComponentType = typeof(TfDateOnlyDisplayColumnComponent);
+		DefaultComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_DATEONLY_ID);
 	}
 }
 

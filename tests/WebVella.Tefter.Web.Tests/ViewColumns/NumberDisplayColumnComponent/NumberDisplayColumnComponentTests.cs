@@ -10,7 +10,7 @@ public class NumberDisplayColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfNumberDisplayColumnComponent>(args => args
-		.Add(x => x.Context, new TfSpaceViewColumnScreenRegionContext())
+		.Add(x => x.RegionContext, new TfSpaceViewColumnScreenRegionContext())
 		);
 
 		// Assert
