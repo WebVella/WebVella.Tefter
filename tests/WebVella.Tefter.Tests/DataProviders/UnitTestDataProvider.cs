@@ -7,13 +7,13 @@ namespace WebVella.Tefter.Tests.DataProviders;
 
 public class UnitTestDataProvider : ITfDataProviderAddon
 {
-	public Guid Id {get; init;} = new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d");
+	public Guid Id { get; init; } = new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d");
 
-	public string Name {get; init;} =  "UnitTest Data Provider";
+	public string Name { get; init; } = "UnitTest Data Provider";
 
-	public string Description {get; init;} =  "Used for unit test only";
+	public string Description { get; init; } = "Used for unit test only";
 
-	public string FluentIconName {get; init;} = "DocumentTable";
+	public string FluentIconName { get; init; } = "DocumentTable";
 
 	public Type SettingsComponentType => typeof(UnitTestDataProviderSettingsComponent);
 
@@ -64,7 +64,8 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 	}
 
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
-		TfDataProvider provider)
+		TfDataProvider provider,
+		ITfDataProviderSychronizationLog synchLog)
 	{
 		List<Tuple<string, TfDatabaseColumnType, string>> columns = new List<Tuple<string, TfDatabaseColumnType, string>>();
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("guid_column", TfDatabaseColumnType.Guid, "GUID"));
@@ -78,7 +79,7 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
 		var rows = new List<TfDataProviderDataRow>();
-		for ( int i = 0; i < 100; i++ )
+		for (int i = 0; i < 100; i++)
 		{
 			TfDataProviderDataRow tfDataProviderDataRow = new TfDataProviderDataRow();
 			foreach (var column in columns)

@@ -60,7 +60,8 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 
 
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
-		TfDataProvider provider)
+		TfDataProvider provider, 
+		ITfDataProviderSychronizationLog synchLog)
 	{
 		var result = new List<TfDataProviderDataRow>();
 

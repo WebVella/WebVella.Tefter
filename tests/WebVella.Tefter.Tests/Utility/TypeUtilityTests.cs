@@ -262,7 +262,9 @@ public class UtilityTestsDataProviderTypeClass : ITfDataProviderAddon
 		throw new NotImplementedException();
 	}
 
-	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(TfDataProvider provider)
+	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
+		TfDataProvider provider,
+		ITfDataProviderSychronizationLog synchLog)
 	{
 		throw new NotImplementedException();
 	}

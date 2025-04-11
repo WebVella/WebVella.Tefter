@@ -17,9 +17,9 @@ public class TfDataProvider
 	public ITfDataProviderAddon ProviderType { get; internal set; }
 	public IServiceProvider ServiceProvider { get; internal set; }
 	public ReadOnlyCollection<string> SupportedSourceDataTypes => ProviderType.GetSupportedSourceDataTypes();
-	public ReadOnlyCollection<TfDataProviderDataRow> GetRows()
+	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(ITfDataProviderSychronizationLog log)
 	{
-		return ProviderType.GetRows(this);
+		return ProviderType.GetRows(this,log);
 	}
 }
 

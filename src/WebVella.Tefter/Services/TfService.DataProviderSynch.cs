@@ -350,35 +350,36 @@ ORDER BY st.created_on DESC");
 	public List<TfDataProviderSynchronizeResultInfo> GetSynchronizationTaskResultInfos(
 		Guid taskId)
 	{
-		try { 
-		var orderSettings = new TfOrderSettings(
-		nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
-		OrderDirection.ASC);
-
-		var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
-				"WHERE task_id = @task_id",
-				orderSettings,
-				new NpgsqlParameter("@task_id", taskId));
-
-		var result = new List<TfDataProviderSynchronizeResultInfo>();
-
-		foreach (var dbo in dbos)
+		try
 		{
-			var task = new TfDataProviderSynchronizeResultInfo
-			{
-				Id = dbo.Id,
-				TaskId = dbo.TaskId,
-				TfId = dbo.TfId,
-				TfRowIndex = dbo.TfRowIndex,
-				CreatedOn = dbo.CreatedOn,
-				Info = dbo.Info,
-				Error = dbo.Error,
-				Warning = dbo.Warning
-			};
-			result.Add(task);
-		}
+			var orderSettings = new TfOrderSettings(
+			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
+			OrderDirection.ASC);
 
-		return result;
+			var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
+					"WHERE task_id = @task_id",
+					orderSettings,
+					new NpgsqlParameter("@task_id", taskId));
+
+			var result = new List<TfDataProviderSynchronizeResultInfo>();
+
+			foreach (var dbo in dbos)
+			{
+				var task = new TfDataProviderSynchronizeResultInfo
+				{
+					Id = dbo.Id,
+					TaskId = dbo.TaskId,
+					TfId = dbo.TfId,
+					TfRowIndex = dbo.TfRowIndex,
+					CreatedOn = dbo.CreatedOn,
+					Info = dbo.Info,
+					Error = dbo.Error,
+					Warning = dbo.Warning
+				};
+				result.Add(task);
+			}
+
+			return result;
 		}
 		catch (Exception ex)
 		{
@@ -394,22 +395,23 @@ ORDER BY st.created_on DESC");
 		string warning = null,
 		string error = null)
 	{
-		try { 
-		var dbo = new TfDataProviderSynchronizeResultInfoDbo
+		try
 		{
-			Id = Guid.NewGuid(),
-			TaskId = taskId,
-			CreatedOn = DateTime.Now,
-			Info = info,
-			Error = error,
-			Warning = warning,
-			TfId = tfId,
-			TfRowIndex = tfRowIndex
-		};
+			var dbo = new TfDataProviderSynchronizeResultInfoDbo
+			{
+				Id = Guid.NewGuid(),
+				TaskId = taskId,
+				CreatedOn = DateTime.Now,
+				Info = info,
+				Error = error,
+				Warning = warning,
+				TfId = tfId,
+				TfRowIndex = tfRowIndex
+			};
 
-		var success = _dboManager.Insert<TfDataProviderSynchronizeResultInfoDbo>(dbo);
-		if (!success)
-			throw new TfDatabaseException("Failed to insert synchronization task result info.");
+			var success = _dboManager.Insert<TfDataProviderSynchronizeResultInfoDbo>(dbo);
+			if (!success)
+				throw new TfDatabaseException("Failed to insert synchronization task result info.");
 
 		}
 		catch (Exception ex)
@@ -427,6 +429,8 @@ ORDER BY st.created_on DESC");
 		{
 			await Task.Delay(1);
 
+			TfDataProviderSychronizationLog synchLog = new TfDataProviderSychronizationLog();
+
 			var provider = GetDataProvider(task.DataProviderId);
 
 			if (provider is null)
@@ -435,7 +439,7 @@ ORDER BY st.created_on DESC");
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_SYNC_OPERATION_LOCK_KEY))
 			{
 				var existingData = GetExistingData(provider);
-				var newData = GetNewData(provider);
+				var newData = GetNewData(provider, synchLog);
 
 				if (newData.Count() == 0)
 				{
@@ -718,7 +722,7 @@ ORDER BY st.created_on DESC");
 									value = (DateTime)row[column.DbName];
 								}
 							}
-							else if (row[column.DbName] == null )
+							else if (row[column.DbName] == null)
 							{
 								value = null;
 							}
@@ -890,9 +894,18 @@ ORDER BY st.created_on DESC");
 	}
 
 	private ReadOnlyCollection<TfDataProviderDataRow> GetNewData(
-		TfDataProvider provider)
+		TfDataProvider provider,
+		ITfDataProviderSychronizationLog synchLog)
 	{
-		var newData = provider.GetRows();
+		ReadOnlyCollection<TfDataProviderDataRow> newData = new List<TfDataProviderDataRow>().AsReadOnly();
+		try
+		{
+			newData = provider.GetRows(synchLog);
+		}
+		catch (Exception ex)
+		{
+			throw new TfException("An error occured while getting data from data provider.", ex);
+		}
 
 		if (newData.Count == 0)
 		{

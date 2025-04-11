@@ -85,7 +85,8 @@ public class CsvDataProvider : ITfDataProviderAddon
 	/// Gets data from the data source
 	/// </summary>
 	public ReadOnlyCollection<TfDataProviderDataRow> GetRows(
-		TfDataProvider provider)
+		TfDataProvider provider,
+		ITfDataProviderSychronizationLog synchLog)
 	{
 
 		var currentCulture = Thread.CurrentThread.CurrentCulture;
