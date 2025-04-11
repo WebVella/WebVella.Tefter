@@ -51,7 +51,7 @@ internal partial class AssetsService : IAssetsService
 @"WITH sk_info AS (
 	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
 	FROM assets_related_sk trs
-		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	GROUP BY trs.asset_id
 )
 SELECT 
@@ -94,7 +94,7 @@ WHERE aa.id = @id
 WITH sk_info AS (
 	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
 	FROM assets_related_sk trs
-		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	WHERE ( @sk_id IS NULL OR trs.id = @sk_id )
 	GROUP BY trs.asset_id
 )

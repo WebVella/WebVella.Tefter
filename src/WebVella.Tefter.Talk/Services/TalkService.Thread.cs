@@ -66,7 +66,7 @@ internal partial class TalkService : ITalkService
 @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
 	FROM talk_related_sk trs
-		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	GROUP BY trs.thread_id
 ), 
 root_threads AS (
@@ -96,7 +96,7 @@ ORDER BY tt.created_on DESC
 		const string SQL_WITH_SK = @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
 	FROM talk_related_sk trs
-		LEFT OUTER JOIN id_dict idd ON idd.id = trs.id
+		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	GROUP BY trs.thread_id
 ),
 root_threads AS (

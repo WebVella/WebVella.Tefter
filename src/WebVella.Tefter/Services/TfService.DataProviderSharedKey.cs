@@ -174,7 +174,7 @@ public partial class TfService : ITfService
 							.AddForeignKeyConstraint($"fk_{providerTableName}_{sharedKey.DbName}_id_dict", c =>
 							{
 								c.WithColumns($"tf_sk_{sharedKey.DbName}_id")
-								.WithForeignTable("id_dict")
+								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id");
 							});
 					});

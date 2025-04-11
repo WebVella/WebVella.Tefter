@@ -88,7 +88,7 @@ public partial class TfService : ITfService
 			}
 
 			//select all by existing text_id
-			var sql = "SELECT * FROM id_dict WHERE text_id = ANY(@text_id)";
+			var sql = "SELECT * FROM tf_id_dict WHERE text_id = ANY(@text_id)";
 			var dt = _dbService.ExecuteSqlQueryCommand(sql, parameterTextIds);
 
 			//create dictionary with existing data
@@ -127,7 +127,7 @@ public partial class TfService : ITfService
 				}
 
 				//ignore conflicts because during operation someone else may create same id-text_id combination
-				sql = $"INSERT INTO id_dict ( id, text_id ) SELECT * FROM UNNEST ( @id, @text_id ) ON CONFLICT DO NOTHING";
+				sql = $"INSERT INTO tf_id_dict ( id, text_id ) SELECT * FROM UNNEST ( @id, @text_id ) ON CONFLICT DO NOTHING";
 				_dbService.ExecuteSqlNonQueryCommand(sql, parameterIds, parameterTextIds);
 
 
@@ -139,7 +139,7 @@ public partial class TfService : ITfService
 					((List<string>)parameterTextIds.Value).Add(key);
 
 				//select newly created records and fill input
-				sql = "SELECT * FROM id_dict WHERE text_id = ANY(@text_id)";
+				sql = "SELECT * FROM tf_id_dict WHERE text_id = ANY(@text_id)";
 				dt = _dbService.ExecuteSqlQueryCommand(sql, parameterTextIds);
 
 				foreach (DataRow dr in dt.Rows)
@@ -221,6 +221,6 @@ public partial class TfService : ITfService
 		NpgsqlParameter idParam = new NpgsqlParameter("id", DbType.Guid);
 		idParam.Value = lastId.HasValue? lastId.Value : DBNull.Value;
 		return _dbService.ExecuteSqlQueryCommand(
-			$"SELECT * FROM id_dict WHERE ( id > @id OR @id IS NULL ) ORDER BY id LIMIT {pageSize}",idParam);
+			$"SELECT * FROM tf_id_dict WHERE ( id > @id OR @id IS NULL ) ORDER BY id LIMIT {pageSize}",idParam);
 	}
 }
