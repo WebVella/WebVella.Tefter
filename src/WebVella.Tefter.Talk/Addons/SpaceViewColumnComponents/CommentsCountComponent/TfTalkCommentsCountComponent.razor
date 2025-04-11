@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Talk.Components
 
 @inherits TucBaseViewColumn<TfTalkCommentsCountComponentOptions>
-@if (Context.Mode == TfComponentPresentationMode.Display)
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 
 	<div>
@@ -19,7 +19,7 @@
 
 
 }
-else if (Context.Mode == TfComponentPresentationMode.Options)
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="6">

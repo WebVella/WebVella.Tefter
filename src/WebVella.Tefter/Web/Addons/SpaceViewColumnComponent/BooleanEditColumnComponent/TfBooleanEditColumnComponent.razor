@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfBooleanEditColumnComponentOptions>
-@if (Context.Mode == TfComponentPresentationMode.Display)
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 	var value = GetDataStructByAlias<bool>(_valueAlias, null);
 	<div>
@@ -19,7 +19,7 @@
 	</div>
 
 }
-else if (Context.Mode == TfComponentPresentationMode.Options)
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="4">

@@ -26,7 +26,7 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
 	public TfGuidEditColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
-		Context = context;
+		RegionContext = context;
 	}
 	#endregion
 
@@ -63,10 +63,10 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (Context.Hash != _renderedHash)
+		if (RegionContext.Hash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = Context.Hash;
+			_renderedHash = RegionContext.Hash;
 		}
 	}
 	#endregion

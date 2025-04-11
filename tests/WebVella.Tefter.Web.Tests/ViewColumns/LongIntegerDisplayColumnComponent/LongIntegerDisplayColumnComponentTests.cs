@@ -10,7 +10,7 @@ public class LongIntegerDisplayColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfLongIntegerDisplayColumnComponent>(args => args
-		.Add(x => x.Context, new TfSpaceViewColumnScreenRegionContext())
+		.Add(x => x.RegionContext, new TfSpaceViewColumnScreenRegionContext())
 		);
 
 		// Assert

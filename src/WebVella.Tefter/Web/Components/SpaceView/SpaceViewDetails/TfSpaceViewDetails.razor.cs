@@ -15,6 +15,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	// State
 	private bool _isDataLoading = true;
 	private bool _selectAllLoading = false;
+	private Dictionary<Guid,TucSpaceViewColumnComponent> _componentMetaDict;
 
 	// Lifecycle Methods
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -25,6 +26,13 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		}
 		await base.DisposeAsyncCore(disposing);
 	}
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		_componentMetaDict = UC.GetSpaceViewColumnComponentDict();
+	}
+
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		base.OnAfterRender(firstRender);

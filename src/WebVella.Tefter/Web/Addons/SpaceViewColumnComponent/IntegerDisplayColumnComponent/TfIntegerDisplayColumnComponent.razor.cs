@@ -23,12 +23,12 @@ public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfInteg
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>	
 	public TfIntegerDisplayColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
-		Context = context;
+		RegionContext = context;
 	}
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init; } = new Guid("40a51679-0e22-477e-bf60-9b0142043b7c");
+	public override Guid Id { get; init; } = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_INTEGER_ID);
 	public override string Name { get; init;} = "Integer Display";
 	public override string Description { get; init;} = String.Empty;
 	public override string FluentIconName { get; init;} = String.Empty;
@@ -58,10 +58,10 @@ public partial class TfIntegerDisplayColumnComponent : TucBaseViewColumn<TfInteg
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (Context.Hash != _renderedHash)
+		if (RegionContext.Hash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = Context.Hash;
+			_renderedHash = RegionContext.Hash;
 		}
 	}
 	#endregion

@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
-@if (Context.Mode == TfComponentPresentationMode.Display)
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 	if (_value is null)
 	{
@@ -44,7 +44,7 @@
 		}
 	}
 }
-else if (Context.Mode == TfComponentPresentationMode.Options)
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 
 	<FluentInputLabel Label="@LOC("on TRUE (text with priority)")" />

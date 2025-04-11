@@ -23,12 +23,12 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
 	public TfBooleanDisplayColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
-		Context = context;
+		RegionContext = context;
 	}
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init;} = new Guid("a1119d49-aa69-4140-aaa3-de2b9d6a78bb");
+	public override Guid Id { get; init;} = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_BOOLEAN_ID);
 	public override string Name { get; init;} = "Boolean Display";
 	public override string Description { get; init;} = String.Empty;
 	public override string FluentIconName { get; init;} = String.Empty;
@@ -59,10 +59,10 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (Context.Hash != _renderedHash)
+		if (RegionContext.Hash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = Context.Hash;
+			_renderedHash = RegionContext.Hash;
 		}
 	}
 	#endregion

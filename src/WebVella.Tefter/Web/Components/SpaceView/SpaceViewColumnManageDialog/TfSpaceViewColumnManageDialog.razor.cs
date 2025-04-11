@@ -38,7 +38,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				QueryName = NavigatorExt.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
 				TypeId = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID),
-				ComponentId = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID),
+				ComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID),
 			};
 		}
 		else
@@ -47,7 +47,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			_form = Content with { Id = Content.Id };
 		}
 		if (_form.ComponentId == Guid.Empty)
-			_form.ComponentId = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
+			_form.ComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
 
 		_selectComponentType(_form.TypeId);
 
@@ -161,7 +161,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			if (_selectedColumnComponent is null)
 			{
 				Guid defaultCompId = _selectedColumnType.DefaultComponentId is not null ? _selectedColumnType.DefaultComponentId.Value
-					: new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
+					: new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
 				_selectedColumnComponent = UC.GetSpaceViewColumnComponentById(defaultCompId);
 				_form.ComponentId = _selectedColumnComponent.Id;
 			}

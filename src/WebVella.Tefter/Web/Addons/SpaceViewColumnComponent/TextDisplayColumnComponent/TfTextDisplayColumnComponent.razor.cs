@@ -21,12 +21,12 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
 	public TfTextDisplayColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
-		Context = context;
+		RegionContext = context;
 	}
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init; } = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
+	public override Guid Id { get; init; } = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
 	public override string Name { get; init;} = "Text Display";
 	public override string Description { get; init;} = String.Empty;
 	public override string FluentIconName { get; init;} = String.Empty;
@@ -65,10 +65,10 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (Context.Hash != _renderedHash)
+		if (RegionContext.Hash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = Context.Hash;
+			_renderedHash = RegionContext.Hash;
 		}
 	}
 	#endregion
@@ -81,9 +81,11 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
-		if (columnData is not null && columnData is not string)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
-		excelCell.SetValue(XLCellValue.FromObject((string)columnData));
+		var columnDataString = String.Empty;
+		if(columnData is not null) {
+			columnDataString = columnData.ToString();
+		}
+		excelCell.SetValue(XLCellValue.FromObject(columnDataString));
 	}
 	#endregion
 
@@ -91,9 +93,11 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	private void _initValues()
 	{
 		object columnData = GetColumnDataByAlias(_valueAlias);
-		if (columnData is not null && columnData is not string)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
-		_value = (string)columnData;
+		var columnDataString = String.Empty;
+		if(columnData is not null) {
+			columnDataString = columnData.ToString();
+		}
+		_value = columnDataString;
 	}
 	#endregion
 }

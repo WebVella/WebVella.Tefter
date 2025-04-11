@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfSelectDisplayColumnComponentOptions>
-@if (Context.Mode == TfComponentPresentationMode.Display)
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 
 	<div>
@@ -22,7 +22,7 @@
 		}
 	</div>
 }
-else if (Context.Mode == TfComponentPresentationMode.Options)
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="12">
