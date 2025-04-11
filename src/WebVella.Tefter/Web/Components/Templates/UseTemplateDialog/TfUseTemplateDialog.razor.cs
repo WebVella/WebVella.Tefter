@@ -13,8 +13,8 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private TucTemplate _selectedTemplate = null;
 	private ITfTemplateProcessor _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
-	private TfTemplateProcessorResultPreviewScreenRegion _resultPreviewComponentContext = null;
-	private TfTemplateProcessorResultScreenRegion _resultComponentContext = null;
+	private TfTemplateProcessorResultPreviewScreenRegionContext _resultPreviewComponentContext = null;
+	private TfTemplateProcessorResultScreenRegionContext _resultComponentContext = null;
 	private TfScreenRegionScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
@@ -142,7 +142,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private void _initDynamicComponent()
 	{
 		_processor = _getProcessor();
-		_resultPreviewComponentContext = new TfTemplateProcessorResultPreviewScreenRegion
+		_resultPreviewComponentContext = new TfTemplateProcessorResultPreviewScreenRegionContext
 		{
 			Template = null,
 			SelectedRowIds = Content.SelectedRowIds,
@@ -154,7 +154,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 			ValidatePreviewResult = null,
 
 		};
-		_resultComponentContext = new TfTemplateProcessorResultScreenRegion
+		_resultComponentContext = new TfTemplateProcessorResultScreenRegionContext
 		{
 			Template = null,
 			SelectedRowIds = Content.SelectedRowIds,

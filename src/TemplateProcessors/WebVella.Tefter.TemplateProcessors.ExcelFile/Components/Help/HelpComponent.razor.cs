@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class HelpComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorHelpScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("c1090557-af1e-48c9-844d-51c90170df24");
 	public int PositionRank { get; init; } = 1000;
@@ -14,6 +14,6 @@ public partial class HelpComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(ExcelFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorHelpScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorHelpScreenRegionContext RegionContext { get; init; }
 
 }

@@ -9,7 +9,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	private List<TfSpaceDataAsOption> _spaceDataAll = new();
 	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
 
-	private TfTemplateProcessorDisplaySettingsScreenRegion _dynamicComponentContext = null;
+	private TfTemplateProcessorDisplaySettingsScreenRegionContext _dynamicComponentContext = null;
 	private TfScreenRegionScope _dynamicComponentScope = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -61,7 +61,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 		if (TfAppState.Value.AdminTemplateDetails is null)
 			throw new Exception("Template not found");
 
-		_dynamicComponentContext = new TfTemplateProcessorDisplaySettingsScreenRegion
+		_dynamicComponentContext = new TfTemplateProcessorDisplaySettingsScreenRegionContext
 		{
 			Template = TfAppState.Value.AdminTemplateDetails
 		};

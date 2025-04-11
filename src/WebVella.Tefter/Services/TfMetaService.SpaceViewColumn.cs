@@ -2,31 +2,73 @@
 public partial interface ITfMetaService
 {
 	public ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> GetSpaceViewColumnTypesMeta();
-
-	internal ITfSpaceViewColumnTypeAddon GetSpaceViewColumnTypeByName(
-		string fullTypeName);
-
-	internal Type GetSpaceViewColumnComponentType(
-		string componentTypeName);
+	public ReadOnlyCollection<TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentMeta();
+	public ReadOnlyDictionary<Guid,TfSpaceViewColumnTypeAddonMeta> GetSpaceViewColumnTypeMetaDictionary();
+	public ReadOnlyDictionary<Guid,TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentMetaDictionary();
+	public ITfSpaceViewColumnTypeAddon GetSpaceViewColumnType(Guid addonId);
+	public ITfSpaceViewColumnComponentAddon GetSpaceViewColumnComponent(Guid addonId);
+	public List<ITfSpaceViewColumnComponentAddon> GetSpaceViewColumnTypeSupportedComponents(Guid addonId);
 }
 
 public partial class TfMetaService : ITfMetaService
 {
-	private static readonly Dictionary<string, List<Type>> _columnTypeSupportDict = new();
-	private static readonly Dictionary<Guid, List<Guid>> _columnTypeAddonIdSupportDict = new();
-	private static readonly List<TfSpaceViewColumnTypeAddonMeta> _spaceViewColumnTypeMeta = new();
-	private static List<TfSpaceViewColumnComponentAddonMeta> _spaceViewColumnComponentMeta = new();
+	private static readonly List<TfSpaceViewColumnTypeAddonMeta> _columnTypeMetaList = new();
+	private static readonly Dictionary<Guid, TfSpaceViewColumnTypeAddonMeta> _columnTypeMetaDict = new();
+	private static readonly Dictionary<Guid, List<Guid>> _columnTypeComponentsDict = new();
+	private static List<TfSpaceViewColumnComponentAddonMeta> _columnComponentMetaList = new();
+	private static Dictionary<Guid, TfSpaceViewColumnComponentAddonMeta> _columnComponentMetaDict = new();
 
 	public ReadOnlyCollection<TfSpaceViewColumnTypeAddonMeta> GetSpaceViewColumnTypesMeta()
 	{
-		return _spaceViewColumnTypeMeta.AsReadOnly();
+		return _columnTypeMetaList.AsReadOnly();
 	}
-
 	public ReadOnlyCollection<TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentMeta()
 	{
-		return _spaceViewColumnComponentMeta.AsReadOnly();
+		return _columnComponentMetaList.AsReadOnly();
 	}
 
+	public ReadOnlyDictionary<Guid,TfSpaceViewColumnTypeAddonMeta> GetSpaceViewColumnTypeMetaDictionary()
+	{
+		return _columnTypeMetaDict.AsReadOnly();
+	}
+
+	public ReadOnlyDictionary<Guid,TfSpaceViewColumnComponentAddonMeta> GetSpaceViewColumnComponentMetaDictionary()
+	{
+		return _columnComponentMetaDict.AsReadOnly();
+	}
+
+	public ITfSpaceViewColumnTypeAddon GetSpaceViewColumnType(Guid addonId)
+	{
+		if (_columnTypeMetaDict.ContainsKey(addonId)) return _columnTypeMetaDict[addonId].Instance;
+		return null;
+	}
+
+	public List<ITfSpaceViewColumnComponentAddon> GetSpaceViewColumnTypeSupportedComponents(Guid addonId)
+	{
+		var componentType = GetSpaceViewColumnType(addonId);
+		if (componentType == null) return new List<ITfSpaceViewColumnComponentAddon>();
+		var result = new List<ITfSpaceViewColumnComponentAddon>();
+		var addedHs = new HashSet<Guid>();
+		foreach (var compId in componentType.SupportedComponents)
+		{
+			if(addedHs.Contains(addonId)) continue;
+			addedHs.Add(compId);
+
+			var comp = GetSpaceViewColumnComponent(compId);
+			if (comp is not null)
+				result.Add(comp);
+		}
+
+		return result;
+	}
+
+	public ITfSpaceViewColumnComponentAddon GetSpaceViewColumnComponent(Guid addonId)
+	{
+		if (_columnComponentMetaDict.ContainsKey(addonId)) return _columnComponentMetaDict[addonId].Instance;
+		return null;
+	}
+
+	//Private
 	private static void ScanAndRegisterSpaceViewColumnComponents(
 			Type type)
 	{
@@ -38,24 +80,16 @@ public partial class TfMetaService : ITfMetaService
 			{
 				Instance = instance
 			};
-			_spaceViewColumnComponentMeta.Add(meta);
+			_columnComponentMetaList.Add(meta);
+			_columnComponentMetaDict[instance.Id] = meta;
 
 			_typesMap[type.FullName] = type;
-			_addonIdToTypeMap[instance.Id] = type;
-
-			foreach (var columType in instance.SupportedColumnTypes)
+			foreach (var addonId in instance.SupportedColumnTypes)
 			{
-				if (!_columnTypeSupportDict.ContainsKey(columType.FullName))
-					_columnTypeSupportDict[columType.FullName] = new List<Type>();
+				if (!_columnTypeComponentsDict.ContainsKey(addonId))
+					_columnTypeComponentsDict[addonId] = new List<Guid>();
 
-				_columnTypeSupportDict[columType.FullName].Add(type);
-			}
-			foreach (var addonId in instance.SupportedColumnTypeAddons)
-			{
-				if (!_columnTypeAddonIdSupportDict.ContainsKey(addonId))
-					_columnTypeAddonIdSupportDict[addonId] = new List<Guid>();
-
-				_columnTypeAddonIdSupportDict[addonId].Add(instance.Id);
+				_columnTypeComponentsDict[addonId].Add(instance.Id);
 			}
 		}
 	}
@@ -67,54 +101,27 @@ public partial class TfMetaService : ITfMetaService
 		{
 			var instance = (ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(type);
 
-			instance.SupportedComponentTypes = GetSupportedComponentTypesForColumnType(type.FullName);
+			instance.SupportedComponents = GetSupportedComponentTypesForColumnType(instance.Id);
 
 			TfSpaceViewColumnTypeAddonMeta meta = new TfSpaceViewColumnTypeAddonMeta
 			{
 				Instance = instance
 			};
-			_spaceViewColumnTypeMeta.Add(meta);
+			_columnTypeMetaList.Add(meta);
+			_columnTypeMetaDict[instance.Id] = meta;
 
 			_typesMap[type.FullName] = type;
-			_addonIdToTypeMap[instance.Id] = type;
 		}
 	}
 
-	private static List<Type> GetSupportedComponentTypesForColumnType(string typeFullName)
+	private static List<Guid> GetSupportedComponentTypesForColumnType(Guid addonId)
 	{
-		return _columnTypeSupportDict.ContainsKey(typeFullName)
-				? _columnTypeSupportDict[typeFullName]
-				: new List<Type>();
+		return _columnTypeComponentsDict.ContainsKey(addonId)
+				? _columnTypeComponentsDict[addonId]
+				: new List<Guid>();
 
 	}
 
-	public ITfSpaceViewColumnTypeAddon GetSpaceViewColumnTypeByName(
-		string fullTypeName)
-	{
-		var meta = _spaceViewColumnTypeMeta.SingleOrDefault(x => x.Instance.GetType().FullName == fullTypeName);
-
-		if (meta != null)
-		{
-			return (ITfSpaceViewColumnTypeAddon)meta.Instance;
-		}
-
-		return null;
-	}
-
-	public Type GetSpaceViewColumnComponentType(
-		string componentTypeName)
-	{
-		if (_typesMap.ContainsKey(componentTypeName))
-		{
-			var type = _typesMap[componentTypeName];
-			if (type.ImplementsInterface(typeof(ITfSpaceViewColumnComponentAddon)))
-			{
-				return type;
-			}
-		}
-
-		return null;
-	}
 }
 
 

@@ -62,11 +62,11 @@ internal partial class AppStateUseCase
 			if (newAppState.SpaceView is not null)
 			{
 				//Aux Data Hook
-				var compContext = new TfSpaceViewColumnScreenRegion()
+				var compContext = new TfSpaceViewColumnScreenRegionContext()
 				{
 					Hash = newAppState.Hash,
 					DataTable = newAppState.SpaceViewData,
-					Mode = TucComponentMode.Display, //ignored here
+					Mode = TfComponentPresentationMode.Display, //ignored here
 					SpaceViewId = newAppState.SpaceView.Id,
 					EditContext = null, //ignored here
 					ValidationMessageStore = null, //ignored here
@@ -78,14 +78,15 @@ internal partial class AppStateUseCase
 				};
 				foreach (TucSpaceViewColumn column in newAppState.SpaceViewColumns)
 				{
-					if (column.ComponentType is not null
-						&& column.ComponentType.GetInterface(nameof(ITfAuxDataState)) != null)
+					var columnComp = GetSpaceViewColumnComponentById(column.ComponentId);
+					if (columnComp is not null
+						&& columnComp.Type.ImplementsInterface(typeof(ITfAuxDataState)))
 					{
 						compContext.SpaceViewColumnId = column.Id;
 						compContext.CustomOptionsJson = column.CustomOptionsJson;
 						compContext.DataMapping = column.DataMapping;
 						compContext.QueryName = column.QueryName;
-						var component = (ITfAuxDataState)Activator.CreateInstance(column.ComponentType, compContext);
+						var component = (ITfAuxDataState)Activator.CreateInstance(columnComp.Type, compContext);
 						await component.OnAppStateInit(
 								serviceProvider: serviceProvider,
 								currentUser: currentUser,
@@ -310,26 +311,14 @@ internal partial class AppStateUseCase
 	internal virtual List<TucSpaceViewColumn> CreateSpaceViewColumnWithForm(
 		TucSpaceViewColumn column)
 	{
-		var availableTypes = _tfService.GetAvailableSpaceViewColumnTypes();
-		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
-		if (selectedType is null)
-			throw new TfException("Column selected type is not found");
-
-		_tfService.CreateSpaceViewColumn(column.ToModel(selectedType));
-		
+		_tfService.CreateSpaceViewColumn(column.ToModel());
 		return GetViewColumns(column.SpaceViewId);
 	}
 
 	internal virtual List<TucSpaceViewColumn> UpdateSpaceViewColumnWithForm(
 		TucSpaceViewColumn column)
 	{
-		var availableTypes = _tfService.GetAvailableSpaceViewColumnTypes();
-
-		var selectedType = availableTypes.FirstOrDefault(x => x.Id == column.ColumnType?.Id);
-		if (selectedType is null)
-			throw new TfException("Column selected type is not found");
-
-		_tfService.UpdateSpaceViewColumn(column.ToModel(selectedType));
+		_tfService.UpdateSpaceViewColumn(column.ToModel());
 
 		return GetViewColumns(column.SpaceViewId);
 	}
@@ -376,11 +365,53 @@ internal partial class AppStateUseCase
 
 	}
 
+	internal virtual TucSpaceViewColumnType GetSpaceViewColumnTypeById(Guid addonId)
+	{
+		var result = _metaService.GetSpaceViewColumnType(addonId);
+		if(result is null) return null;
+		return new TucSpaceViewColumnType(result);
+	}
+
+	internal virtual List<TucSpaceViewColumnComponent> GetSpaceViewColumnTypeSupportedComponents(Guid addonId)
+	{
+		var srcResult = _metaService.GetSpaceViewColumnTypeSupportedComponents(addonId);
+		var result = new List<TucSpaceViewColumnComponent>();
+		foreach( var component in srcResult){ 
+			result.Add(new TucSpaceViewColumnComponent(component));
+		}
+		return result;
+	}
+
 	internal virtual List<TucSpaceViewColumnType> GetAvailableSpaceViewColumnTypes()
 	{
 		var serviceResult = _metaService.GetSpaceViewColumnTypesMeta();
 		return serviceResult.Select(x => new TucSpaceViewColumnType(x.Instance)).ToList();
-
 	}
 
+	internal virtual Dictionary<Guid,TucSpaceViewColumnType> GetSpaceViewColumnTypeDict()
+	{
+		var resultSM = _metaService.GetSpaceViewColumnTypeMetaDictionary();
+		var result = new Dictionary<Guid,TucSpaceViewColumnType>();
+		foreach( var key in resultSM.Keys){
+			result[key] = new TucSpaceViewColumnType(resultSM[key].Instance);
+		}
+		return result;
+	}
+
+	internal virtual Dictionary<Guid,TucSpaceViewColumnComponent> GetSpaceViewColumnComponentDict()
+	{
+		var resultSM = _metaService.GetSpaceViewColumnComponentMetaDictionary();
+		var result = new Dictionary<Guid,TucSpaceViewColumnComponent>();
+		foreach( var key in resultSM.Keys){
+			result[key] = new TucSpaceViewColumnComponent(resultSM[key].Instance);
+		}
+		return result;
+	}
+
+	internal virtual TucSpaceViewColumnComponent GetSpaceViewColumnComponentById(Guid addonId)
+	{
+		var result = _metaService.GetSpaceViewColumnComponent(addonId);
+		if(result is null) return null;
+		return new TucSpaceViewColumnComponent(result);
+	}
 }

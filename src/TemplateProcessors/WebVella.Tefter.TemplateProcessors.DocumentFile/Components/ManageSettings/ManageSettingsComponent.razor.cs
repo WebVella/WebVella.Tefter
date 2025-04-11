@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("51157e04-9849-48ec-9bf3-de31308c4b0c");
 	public int PositionRank { get; init; } = 1000;
@@ -16,7 +16,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-	[Parameter] public TfTemplateProcessorManageSettingsScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext RegionContext { get; init; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 	private DocumentFileTemplateSettings _form = new();
@@ -36,18 +36,18 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
-		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
-		Context.Validate = _validate;
+		if (RegionContext is null || RegionContext.Template is null) throw new Exception("Context is not defined");
+		_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(RegionContext.Template.SettingsJson) ?? new();
+		RegionContext.Validate = _validate;
 		base.InitForm(_form);
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
+			_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(RegionContext.Template.SettingsJson) ?? new();
 			base.InitForm(_form);
 		}
 	}
@@ -90,8 +90,8 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	}
 	private async Task _valueChanged()
 	{
-		Context.Template.SettingsJson = JsonSerializer.Serialize(_form);
-		await Context.SettingsJsonChanged.InvokeAsync(Context.Template.SettingsJson);
+		RegionContext.Template.SettingsJson = JsonSerializer.Serialize(_form);
+		await RegionContext.SettingsJsonChanged.InvokeAsync(RegionContext.Template.SettingsJson);
 	}
 
 }

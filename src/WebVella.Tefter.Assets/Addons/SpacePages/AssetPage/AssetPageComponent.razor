@@ -1,0 +1,70 @@
+﻿@namespace WebVella.Tefter.Assets.Addons
+@inherits TucBaseSpaceNodeComponent
+
+@if (Context.Mode == TfComponentMode.Read)
+{
+	<AssetsFolderComponent FolderId="_options.FolderId" CurrentUser="@TfUserState.Value.CurrentUser"
+						   SharedKeyValue="@_getSharedKeyValue()" 
+						   Style="height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important" />
+}
+else if (Context.Mode == TfComponentMode.Create)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentSelect OptionSelected="(x => x.Id == _optionsFolder?.Id)"
+						  SelectedOption="@_optionsFolder"
+						  SelectedOptionChanged="_optionsFolderChangeHandler"
+						  TOption="AssetsFolder"
+						  Items="@_folders" Style="width:100%"
+						  OptionValue="@((p)=> p.Id.ToString())"
+						  Placeholder="@LOC("select..")"
+						  OptionText="@(p => p.Name)" Label="@LOC("Select folder")"
+						  Class="@GetValidationCssClass(nameof(_options.FolderId))" />
+			<TfValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentSelect OptionSelected="(x => x == _options.ViewType)"
+						  @bind-SelectedOption="@_options.ViewType"
+						  TOption="AssetsFolderViewType"
+						  Items="@(Enum.GetValues<AssetsFolderViewType>())" Style="width:100%"
+						  OptionValue="@((p)=> ((int)p).ToString())"
+						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Folder presentation")"
+						  Class="@GetValidationCssClass(nameof(_options.ViewType))" />
+			<TfValidationMessage Field="@(nameof(_options.ViewType))" Errors="ValidationErrors" />
+		</FluentGridItem>
+	</FluentGrid>
+
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentSelect OptionSelected="(x => x == _options.ShareKeyType)"
+						  @bind-SelectedOption="@_options.ShareKeyType"
+						  TOption="AssetsFolderShareKeyType"
+						  Items="@(Enum.GetValues<AssetsFolderShareKeyType>())" Style="width:100%"
+						  OptionValue="@((p)=> ((int)p).ToString())"
+						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Share key value")"
+						  Class="@GetValidationCssClass(nameof(_options.ShareKeyType))" />
+			<TfValidationMessage Field="@(nameof(_options.ShareKeyType))" Errors="ValidationErrors" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			@if (_options.ShareKeyType == AssetsFolderShareKeyType.CustomString)
+			{
+				<FluentTextField TextFieldType="@TextFieldType.Text"
+								 Placeholder="@LOC("empty string")"
+								 @bind-Value=@_options.CustomShareKeyValue AutoComplete="off"
+								 Label="@LOC("Custom shared key valye")" Style="width:100%" />
+				<TfValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
+			}
+		</FluentGridItem>
+	</FluentGrid>
+
+	//view
+	//selected asset -> latest null, or id
+	//sharekey - space, space node (default), custom string
+
+}
+else
+{
+
+}
+
+

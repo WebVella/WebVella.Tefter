@@ -1,0 +1,41 @@
+﻿@namespace WebVella.Tefter.Assets.Addons
+
+@inherits TucBaseViewColumn<TfFolderAssetsCountComponentOptions>
+@if (Context.Mode == TfComponentPresentationMode.Display)
+{
+
+	<div>
+		@if (componentOptions.FolderId is not null)
+		{
+			<FluentButton Appearance="@Appearance.Outline" OnClick="_onClick">
+				<FluentIcon Value="@TfConstants.GetIcon("DocumentCopy")" />
+			</FluentButton>
+		}
+		else
+		{
+			<FluentIcon Value="TfConstants.ErrorIcon" Title="@LOC("channel is not configured")" />
+		}
+	</div>
+
+
+}
+else if (Context.Mode == TfComponentPresentationMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentSelect TOption="AssetsFolder"
+						  Items="_folders"
+						  OptionText="(x=> x.Name)"
+						  OptionSelected="(x => x.Id == _selectedFolder?.Id)"
+						  SelectedOption="_selectedFolder"
+						  SelectedOptionChanged="_folderSelectHandler" />
+		</FluentGridItem>
+
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

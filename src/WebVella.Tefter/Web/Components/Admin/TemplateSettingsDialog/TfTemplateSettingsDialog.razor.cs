@@ -16,7 +16,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	private string _form = null;
 
 	private ITfTemplateProcessor _processor = null;
-	private TfTemplateProcessorManageSettingsScreenRegion _dynamicComponentContext = null;
+	private TfTemplateProcessorManageSettingsScreenRegionContext _dynamicComponentContext = null;
 	private TfScreenRegionScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
@@ -85,7 +85,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	{
 		_processor = _getProcessor();
 
-		_dynamicComponentContext = new TfTemplateProcessorManageSettingsScreenRegion
+		_dynamicComponentContext = new TfTemplateProcessorManageSettingsScreenRegionContext
 		{
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),
 			Template = Content with { Id = Content.Id },

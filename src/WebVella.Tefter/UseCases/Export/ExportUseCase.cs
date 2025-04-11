@@ -93,11 +93,11 @@ public class ExportUseCase
 			currentExcelRow++;
 
 			var typeDict = new Dictionary<string, object>();
-			var compContext = new TfSpaceViewColumnScreenRegion()
+			var compContext = new TfSpaceViewColumnScreenRegionContext()
 			{
 				Hash = Guid.NewGuid(),
 				DataTable = viewData,
-				Mode = TucComponentMode.Display, //ignored here
+				Mode = TfComponentPresentationMode.Display, //ignored here
 				SpaceViewId = view.Id,
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here
@@ -123,11 +123,11 @@ public class ExportUseCase
 					compContext.QueryName = column.QueryName;
 
 					IXLCell excelCell = ws.Cell(currentExcelRow, currentExcelColumn);
-
-					if (column.ComponentType.ImplementsInterface(typeof(ITfSpaceViewColumnComponentAddon)))
+					var component = _tfMetaService.GetSpaceViewColumnComponent(column.ComponentId);
+					if (component is not null)
 					{
-						var component = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(column.ComponentType, compContext);
-						component.ProcessExcelCell(_serviceProvider, excelCell);
+						var componentNewInstance = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(component.GetType(), compContext);
+						componentNewInstance.ProcessExcelCell(_serviceProvider, excelCell);
 					}
 					currentExcelColumn++;
 				}

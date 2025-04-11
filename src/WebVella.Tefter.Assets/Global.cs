@@ -22,6 +22,7 @@ global using WebVella.Tefter.Utility;
 
 
 global using WebVella.Tefter.Assets;
+global using WebVella.Tefter.Assets.Addons;
 global using WebVella.Tefter.Assets.Models;
 global using WebVella.Tefter.Assets.Services;
 global using WebVella.Tefter.Assets.Components;

@@ -21,6 +21,7 @@ global using WebVella.Tefter.Utility;
 
 global using WebVella.Tefter.Talk;
 global using WebVella.Tefter.Talk.Components;
+global using WebVella.Tefter.Talk.Addons;
 global using WebVella.Tefter.Talk.Models;
 global using WebVella.Tefter.Talk.Services;
 

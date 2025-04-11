@@ -10,7 +10,7 @@ public class EmailDisplayColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfEmailDisplayColumnComponent>(args => args
-		.Add(x => x.Context, new TfSpaceViewColumnScreenRegion())
+		.Add(x => x.Context, new TfSpaceViewColumnScreenRegionContext())
 		);
 
 		// Assert

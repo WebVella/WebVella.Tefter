@@ -9,7 +9,6 @@ public partial interface ITfMetaService
 public partial class TfMetaService : ITfMetaService
 {
 	private static Dictionary<string, Type> _typesMap = new Dictionary<string, Type>();
-	private static Dictionary<Guid, Type> _addonIdToTypeMap = new Dictionary<Guid, Type>();
 
 	public Type GetTypeForFullClassName(
 		string fullClassName)
@@ -33,6 +32,8 @@ public partial class TfMetaService : ITfMetaService
 							.Where(a => !(a.FullName.ToLowerInvariant().StartsWith("microsoft.")
 							   || a.FullName.ToLowerInvariant().StartsWith("system.")));
 
+
+		//Components that needs to be processed first
 		foreach (var assembly in assemblies)
 		{
 			foreach (Type type in assembly.GetTypes())

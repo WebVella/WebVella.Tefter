@@ -12,7 +12,7 @@ public class SelectDisplayColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfSelectDisplayColumnComponent>(args => args
-		.Add(x => x.Context, new TfSpaceViewColumnScreenRegion())
+		.Add(x => x.Context, new TfSpaceViewColumnScreenRegionContext())
 		);
 
 		// Assert

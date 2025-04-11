@@ -178,16 +178,16 @@ else
 																</div>
 															</td>
 															<td class="tf-grid-td">
-																@if (context.ColumnType is not null)
+																@if (_typeMetaDict.ContainsKey(context.TypeId))
 																{
 																	<div>
 																		<div>
 																			<FluentStack>
-																				<FluentIcon Value="@context.ColumnType.Icon" Color="@Color.Accent" />
-																				<div>@context.ColumnType.Name</div>
+																				<FluentIcon Value="@_typeMetaDict[context.TypeId].FluentIcon" Color="@Color.Accent" />
+																				<div>@_typeMetaDict[context.TypeId].Name</div>
 																			</FluentStack>
 																		</div>
-																		<div class="td-description">@context.ColumnType.Description</div>
+																		<div class="td-description">@_typeMetaDict[context.TypeId].Description</div>
 																	</div>
 																}
 																else
@@ -196,11 +196,11 @@ else
 																}
 															</td>
 															<td class="tf-grid-td">
-																@if (context.ComponentType is not null)
+																@if (_componentMetaDict.ContainsKey(context.ComponentId))
 																{
 																	<div>
-																		<div>@context.ComponentType.ToDescriptionString()</div>
-																		<div class="td-description">@context.ComponentType.FullName</div>
+																		<div>@_componentMetaDict[context.ComponentId].Name</div>
+																		<div class="td-description">@_componentMetaDict[context.ComponentId].Description</div>
 																	</div>
 																}
 																else

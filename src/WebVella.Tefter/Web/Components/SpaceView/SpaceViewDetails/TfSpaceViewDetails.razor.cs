@@ -304,10 +304,10 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	{
 		var componentData = new Dictionary<string, object>();
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_ROW_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<TfDataTable>(this, _onRowChanged);
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegion
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
 		{
 			Hash = TfAppState.Value.Hash,
-			Mode = TucComponentMode.Display,
+			Mode = TfComponentPresentationMode.Display,
 			CustomOptionsJson = column.CustomOptionsJson,
 			DataMapping = column.DataMapping,
 			DataTable = dataTable,

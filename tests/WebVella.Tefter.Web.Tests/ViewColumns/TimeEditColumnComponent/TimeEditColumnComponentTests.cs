@@ -10,7 +10,7 @@ public class TimeEditColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfTimeEditColumnComponent>(args => args
-		.Add(x => x.Context, new TfSpaceViewColumnScreenRegion())
+		.Add(x => x.Context, new TfSpaceViewColumnScreenRegionContext())
 		);
 
 		// Assert

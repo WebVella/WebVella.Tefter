@@ -1,0 +1,94 @@
+﻿@namespace WebVella.Tefter.Web.Addons
+@inherits TucBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
+@if (Context.Mode == TfComponentPresentationMode.Display)
+{
+	if (_value is null)
+	{
+		if (!String.IsNullOrWhiteSpace(componentOptions.NullLabel))
+		{
+			<div>@componentOptions.NullLabel</div>
+		}
+		else if (componentOptions.NullValueShowAsIcon)
+		{
+			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("SubtractSquare")" Color="@Color.FillInverse" /></div>
+		}
+		else
+		{
+			<div></div>
+		}
+	}
+	else if (_value.Value)
+	{
+		if (!String.IsNullOrWhiteSpace(componentOptions.TrueLabel))
+		{
+			<div>@componentOptions.TrueLabel</div>
+		}
+		else if (componentOptions.TrueValueShowAsIcon)
+		{
+			<div>@_value.Value.ToString()</div>
+		}
+	}
+	else
+	{
+		if (!String.IsNullOrWhiteSpace(componentOptions.FalseLabel))
+		{
+			<div>@componentOptions.FalseLabel</div>
+		}
+		else if (componentOptions.FalseValueShowAsIcon)
+		{
+			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
+		}
+		else
+		{
+			<div>@_value.Value.ToString()</div>
+		}
+	}
+}
+else if (Context.Mode == TfComponentPresentationMode.Options)
+{
+
+	<FluentInputLabel Label="@LOC("on TRUE (text with priority)")" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@componentOptions.TrueLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.TrueLabel),x))
+							 Placeholder="@LOC("default value")" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentCheckbox Value="@componentOptions.TrueValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.TrueValueShowAsIcon),x))
+							Label="@LOC("render as icon")" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentInputLabel Label="@LOC("on FALSE (text with priority)")" style="margin-top:1rem;" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@componentOptions.FalseLabel" Style="width:100%" 
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseLabel),x))
+							 Placeholder="@LOC("default value")" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentCheckbox Value="@componentOptions.FalseValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseValueShowAsIcon),x))
+							Label="@LOC("render as icon")" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentInputLabel Label="@LOC("on NULL (text with priority)")" style="margin-top:1rem;" />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Value="@componentOptions.NullLabel" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.NullLabel),x))
+							 Placeholder="@LOC("default value")" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentCheckbox Value="@componentOptions.NullValueShowAsIcon" Style="height:32px;"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.NullValueShowAsIcon),x))
+							Label="@LOC("render as icon")" />
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+

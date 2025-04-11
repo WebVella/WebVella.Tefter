@@ -243,18 +243,14 @@ public partial class TfService : ITfService
 									QueryName = column.DbName,
 									CustomOptionsJson = "{}",
 									DataMapping = new(),
-									ColumnType = null,
-									ComponentType = null,
-									FullComponentTypeName = null,
-									FullTypeName = null,
+									TypeId = Guid.Empty,
+									ComponentId = Guid.Empty,
 								};
 
 								if (columnType is not null)
 								{
-									tfColumn.ColumnType = columnType;
-									tfColumn.ComponentType = columnType.DefaultComponentType;
-									tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
-									tfColumn.FullTypeName = columnType.Name;
+									tfColumn.TypeId = columnType.Id;
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -278,18 +274,14 @@ public partial class TfService : ITfService
 									QueryName = column.DbName,
 									CustomOptionsJson = "{}",
 									DataMapping = new(),
-									ColumnType = null,
-									ComponentType = null,
-									FullComponentTypeName = null,
-									FullTypeName = null
+									TypeId = Guid.Empty,
+									ComponentId = Guid.Empty,
 								};
 
 								if (columnType is not null)
 								{
-									tfColumn.ColumnType = columnType;
-									tfColumn.ComponentType = columnType.DefaultComponentType;
-									tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
-									tfColumn.FullTypeName = columnType.Name;
+									tfColumn.TypeId = columnType.Id;
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -313,18 +305,14 @@ public partial class TfService : ITfService
 									QueryName = column.DbName,
 									CustomOptionsJson = "{}",
 									DataMapping = new(),
-									ColumnType = null,
-									ComponentType = null,
-									FullComponentTypeName = null,
-									FullTypeName = null,
+									TypeId = Guid.Empty,
+									ComponentId = Guid.Empty,
 								};
 
 								if (columnType is not null)
 								{
-									tfColumn.ColumnType = columnType;
-									tfColumn.ComponentType = columnType.DefaultComponentType;
-									tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
-									tfColumn.FullTypeName = columnType.Name;
+									tfColumn.TypeId = columnType.Id;
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -370,18 +358,14 @@ public partial class TfService : ITfService
 									QueryName = dbName,
 									CustomOptionsJson = "{}",
 									DataMapping = new(),
-									ColumnType = null,
-									ComponentType = null,
-									FullComponentTypeName = null,
-									FullTypeName = null,
+									TypeId = Guid.Empty,
+									ComponentId = Guid.Empty
 								};
 
 								if (columnType is not null)
 								{
-									tfColumn.ColumnType = columnType;
-									tfColumn.ComponentType = columnType.DefaultComponentType;
-									tfColumn.FullComponentTypeName = columnType.DefaultComponentType.FullName;
-									tfColumn.FullTypeName = columnType.Name;
+									tfColumn.TypeId = columnType.Id;
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = dbName;

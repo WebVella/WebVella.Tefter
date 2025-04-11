@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("e403ba40-0d75-4ee5-b978-d0490cd8c374");
 	public int PositionRank { get; init; } = 1000;
@@ -13,7 +13,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; init; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 	private DocumentFileTemplateSettings _form = new();
 	private string _downloadUrl
@@ -30,16 +30,16 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
-		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
+		if (RegionContext is null || RegionContext.Template is null) throw new Exception("Context is not defined");
+		_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(RegionContext.Template.SettingsJson) ?? new();
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
+			_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<DocumentFileTemplateSettings>(RegionContext.Template.SettingsJson) ?? new();
 		}
 	}
 

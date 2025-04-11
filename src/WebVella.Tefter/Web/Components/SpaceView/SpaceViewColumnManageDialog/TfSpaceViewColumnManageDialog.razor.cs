@@ -19,6 +19,9 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	private string _activeTab = "data";
 	private TucSpaceViewColumn _form = new();
 	private List<string> _options = new();
+	private TucSpaceViewColumnType _selectedColumnType = null;
+	private List<TucSpaceViewColumnComponent> _selectedColumnTypeComponents = null;
+	private TucSpaceViewColumnComponent _selectedColumnComponent = null;
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -29,19 +32,13 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 		if (_isCreate)
 		{
-			TucSpaceViewColumnType defaultColumnType = null;
-			if (TfAppState.Value.AvailableColumnTypes is not null && TfAppState.Value.AvailableColumnTypes.Any())
-			{
-				defaultColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
-				if (defaultColumnType is null) defaultColumnType = TfAppState.Value.AvailableColumnTypes[0];
-			}
 			_form = _form with
 			{
 				Id = Guid.NewGuid(),
 				QueryName = NavigatorExt.GenerateQueryName(),
 				SpaceViewId = Content.SpaceViewId,
-				ColumnType = defaultColumnType with { Id = defaultColumnType.Id },
-				ComponentType = defaultColumnType?.DefaultComponentType
+				TypeId = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID),
+				ComponentId = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID),
 			};
 		}
 		else
@@ -49,8 +46,10 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 			_form = Content with { Id = Content.Id };
 		}
-		if (_form.ComponentType is null && _form.ColumnType is not null)
-			_form.ComponentType = _form.ColumnType.DefaultComponentType;
+		if (_form.ComponentId == Guid.Empty)
+			_form.ComponentId = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
+
+		_selectComponentType(_form.TypeId);
 
 		base.InitForm(_form);
 		_renderComponentTypeSelect = true;
@@ -73,6 +72,13 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				}
 			}
 		}
+	}
+
+	private void _selectComponentType(Guid typeId)
+	{
+		_selectedColumnType = UC.GetSpaceViewColumnTypeById(typeId);
+		if (_selectedColumnType is not null)
+			_selectedColumnTypeComponents = UC.GetSpaceViewColumnTypeSupportedComponents(_selectedColumnType.Id);
 	}
 
 	private async Task _save()
@@ -121,58 +127,44 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	private async Task _columnTypeChangeHandler(TucSpaceViewColumnType columnType)
 	{
 		_renderComponentTypeSelect = false;
-		_form.ColumnType = null;
+		_selectedColumnType = null;
+		_form.TypeId = Guid.Empty;
 		if (columnType is not null)
-			_form.ColumnType = columnType;
+		{
+			_selectedColumnType = columnType;
+			_form.TypeId = columnType.Id;
+		}
 
-		if (_form.ColumnType is null)
-			_form.ColumnType = TfAppState.Value.AvailableColumnTypes.FirstOrDefault(x => x.Id == new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+		if (_selectedColumnType is null)
+		{
+			_selectedColumnType = UC.GetSpaceViewColumnTypeById(new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
+			_form.TypeId = _selectedColumnType.Id;
+		}
+		_selectComponentType(_form.TypeId);
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(1);
-
-
-		if (_form.ColumnType is null)
-		{
-			_form.ComponentType = null;
-		}
-		//else if (_form.ComponentType is not null)
-		//{
-		//	//select the current value from the new list of objects
-		//	Type selectedType = null;
-		//	foreach (var supType in option.SupportedComponentTypes)
-		//	{
-		//		if (supType.FullName == _form.ComponentType.FullName)
-		//		{
-		//			selectedType = supType;
-		//			break;
-		//		}
-		//	}
-		//	if (selectedType is null)
-		//	{
-		//		_form.ComponentType = option.DefaultComponentType;
-		//	}
-		//	else
-		//	{
-		//		_form.ComponentType = selectedType;
-		//	}
-		//}
-		else
-		{
-			_form.ComponentType = _form.ColumnType?.DefaultComponentType;
-		}
 		_renderComponentTypeSelect = true;
 		await InvokeAsync(StateHasChanged);
 	}
-	private void _columnComponentChangeHandler(Type componentType)
+	private void _columnComponentChangeHandler(TucSpaceViewColumnComponent componentType)
 	{
-		_form.ComponentType = null;
-		if (_form.ColumnType is not null)
+		_selectedColumnComponent = null;
+		_form.ComponentId = Guid.Empty;
+		if (_selectedColumnType is not null)
 		{
 			if (componentType is not null)
-				_form.ComponentType = componentType;
+			{
+				_selectedColumnComponent = componentType;
+				_form.ComponentId = componentType.Id;
+			}
 
-			if (_form.ComponentType is null)
-				_form.ComponentType = _form.ColumnType?.DefaultComponentType;
+			if (_selectedColumnComponent is null)
+			{
+				Guid defaultCompId = _selectedColumnType.DefaultComponentId is not null ? _selectedColumnType.DefaultComponentId.Value
+					: new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID);
+				_selectedColumnComponent = UC.GetSpaceViewColumnComponentById(defaultCompId);
+				_form.ComponentId = _selectedColumnComponent.Id;
+			}
 		}
 	}
 
@@ -193,10 +185,10 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	{
 		var componentData = new Dictionary<string, object>();
 
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegion
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
 		{
 			Hash = TfAppState.Value.Hash,
-			Mode = TucComponentMode.Options,
+			Mode = TfComponentPresentationMode.Options,
 			CustomOptionsJson = _form.CustomOptionsJson,
 			DataMapping = _form.DataMapping,
 			DataTable = null,

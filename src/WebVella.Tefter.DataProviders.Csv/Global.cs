@@ -7,6 +7,6 @@ global using Microsoft.Extensions.DependencyInjection;
 
 global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Database;
-global using WebVella.Tefter.DataProviders.Csv.Components;
+global using WebVella.Tefter.DataProviders.Csv.Addons;
 global using WebVella.Tefter.Exceptions;
 

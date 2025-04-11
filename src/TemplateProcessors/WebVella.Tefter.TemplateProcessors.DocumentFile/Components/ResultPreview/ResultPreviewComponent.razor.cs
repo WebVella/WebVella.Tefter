@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("e6923a63-885f-4201-bab5-701867f7b952");
 	public int PositionRank { get; init; } = 1000;
@@ -16,7 +16,7 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)
 	};
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-	[Parameter] public TfTemplateProcessorResultPreviewScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext RegionContext { get; init; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
 	private DocumentFileTemplatePreviewResult? _preview = null;
@@ -25,27 +25,27 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null) throw new Exception("Context is not defined");
-		Context.ValidatePreviewResult = _validatePreviewResult;
+		if (RegionContext is null) throw new Exception("Context is not defined");
+		RegionContext.ValidatePreviewResult = _validatePreviewResult;
 	}
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			if (Context.Template is not null && Context.SpaceData is not null)
+			if (RegionContext.Template is not null && RegionContext.SpaceData is not null)
 			{
 				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
-					templateId: Context.Template.Id,
-					spaceDataId: Context.SpaceData.Id,
-					tfRecordIds: Context.SelectedRowIds
+					templateId: RegionContext.Template.Id,
+					spaceDataId: RegionContext.SpaceData.Id,
+					tfRecordIds: RegionContext.SelectedRowIds
 				);
 				if (result is not DocumentFileTemplatePreviewResult)
 				{
 					throw new Exception("Preview result is not of type DocumentFileTemplatePreviewResult");
 				}
 				_preview = (DocumentFileTemplatePreviewResult)result;
-				await Context.PreviewResultChanged.InvokeAsync(_preview);
+				await RegionContext.PreviewResultChanged.InvokeAsync(_preview);
 			}
 
 			_isLoading = false;

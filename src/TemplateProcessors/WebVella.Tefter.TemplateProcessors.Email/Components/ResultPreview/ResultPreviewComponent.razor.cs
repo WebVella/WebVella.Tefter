@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultPreviewComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("57ef9ad4-45ff-4674-8ad6-9e1420fefbb1");
 	public int PositionRank { get; init; } = 1000;
@@ -15,7 +15,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultPreviewScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultPreviewScreenRegionContext RegionContext { get; init; }
 
 	private EmailTemplatePreviewResult _preview = null;
 	private bool _isLoading = true;
@@ -25,9 +25,9 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null) throw new Exception("Context is not defined");
+		if (RegionContext is null) throw new Exception("Context is not defined");
 
-		Context.ValidatePreviewResult = _validatePreviewResult;
+		RegionContext.ValidatePreviewResult = _validatePreviewResult;
 		base.InitForm(_form);
 	}
 
@@ -36,12 +36,12 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			if (Context.Template is not null && Context.SpaceData is not null)
+			if (RegionContext.Template is not null && RegionContext.SpaceData is not null)
 			{
 				ITfTemplatePreviewResult result = TfService.GenerateTemplatePreviewResult(
-					templateId: Context.Template.Id,
-					spaceDataId: Context.SpaceData.Id,
-					tfRecordIds: Context.SelectedRowIds
+					templateId: RegionContext.Template.Id,
+					spaceDataId: RegionContext.SpaceData.Id,
+					tfRecordIds: RegionContext.SelectedRowIds
 				);
 				if (result is not EmailTemplatePreviewResult)
 				{
@@ -60,7 +60,7 @@ public partial class ResultPreviewComponent : TfFormBaseComponent,
 						position++;
 					}
 				}
-				await Context.PreviewResultChanged.InvokeAsync(_preview);
+				await RegionContext.PreviewResultChanged.InvokeAsync(_preview);
 			}
 
 			_isLoading = false;

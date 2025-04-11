@@ -96,7 +96,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Web\PageComponents\" />
-	  <Folder Include="Web\ViewColumns\Types\" />
 	</ItemGroup>
 
 </Project>

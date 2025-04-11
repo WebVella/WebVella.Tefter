@@ -1,0 +1,24 @@
+﻿@namespace WebVella.Tefter.Web.Addons
+@inherits TucBaseViewColumn<TfUrlDisplayColumnComponentOptions>
+@if (Context.Mode == TfComponentPresentationMode.Display)
+{
+	if (!String.IsNullOrWhiteSpace(_value) && TfValidators.IsValidURL(_value))
+	{
+		<div><a href="@_value">@_value</a></div>
+	}
+	else
+	{
+		<div>@_value</div>
+	}
+	
+}
+else if (Context.Mode == TfComponentPresentationMode.Options)
+{
+	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+
