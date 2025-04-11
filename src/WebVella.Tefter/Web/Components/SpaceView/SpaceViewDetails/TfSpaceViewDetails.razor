@@ -184,12 +184,13 @@ else
 												<div class="tf-grid-td-color" style="@column.CellColorStyle"></div>
 												<div class="tf-grid-td-selection"></div>
 												<div class="tf-grid-td-hover"></div>
-												@if (column.ComponentType is not null)
+												@*TODO BOZ: implament region*@
+		@* 										@if (column.ComponentType is not null)
 												{
 													<TfErrorBoundry ShowErrorDetails=false>
 														<DynamicComponent Type="column.ComponentType" Parameters="@_getColumnComponentContext(column, TfAppState.Value.SpaceViewData,index)" />
 													</TfErrorBoundry>
-												}
+												} *@
 											</td>
 											columnIndex++;
 										}

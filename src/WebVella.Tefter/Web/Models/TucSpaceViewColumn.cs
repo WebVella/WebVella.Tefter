@@ -14,12 +14,10 @@ public record TucSpaceViewColumn
 	public string Icon { get; set; }
 	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
-
 	[Required(ErrorMessage = "required")]
-	public TucSpaceViewColumnType ColumnType { get; set; }
-
+	public Guid TypeId { get; set; }
 	[Required(ErrorMessage = "required")]
-	public Type ComponentType { get; set; }
+	public Guid ComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
 	public TucSpaceViewColumnSettings Settings { get; set; } = new TucSpaceViewColumnSettings();
@@ -63,7 +61,6 @@ public record TucSpaceViewColumn
 		}
 	}
 
-
 	public string FullTypeName { get; set; }
 	public string FullComponentTypeName { get; set; }
 
@@ -78,12 +75,10 @@ public record TucSpaceViewColumn
 		Icon = model.Icon;
 		OnlyIcon = model.OnlyIcon;
 		Position = model.Position;
-		ColumnType = model.ColumnType is not null ? new TucSpaceViewColumnType(model.ColumnType) : null;
-		ComponentType = model.ComponentType;
+		TypeId = model.TypeId;
+		ComponentId = model.ComponentId;
 		DataMapping = model.DataMapping;
 		CustomOptionsJson = model.CustomOptionsJson;
-		FullTypeName = model.FullTypeName;
-		FullComponentTypeName = model.FullComponentTypeName;
 		Settings = new TucSpaceViewColumnSettings();
 		if (!String.IsNullOrWhiteSpace(model.SettingsJson) && model.SettingsJson.StartsWith("{")
 		 && model.SettingsJson.EndsWith("}"))
@@ -105,12 +100,28 @@ public record TucSpaceViewColumn
 			Icon = Icon,
 			OnlyIcon = OnlyIcon,
 			Position = Position,
-			ColumnType = columnType,
-			ComponentType = ComponentType,
 			DataMapping = DataMapping,
 			CustomOptionsJson = CustomOptionsJson,
-			FullTypeName = FullTypeName,
-			FullComponentTypeName = FullComponentTypeName,
+			TypeId = TypeId,
+			ComponentId = ComponentId,
+			SettingsJson = JsonSerializer.Serialize(Settings)
+		};
+	}
+	public TfSpaceViewColumn ToModel()
+	{
+		return new TfSpaceViewColumn
+		{
+			Id = Id,
+			SpaceViewId = SpaceViewId,
+			QueryName = QueryName,
+			Title = Title,
+			Icon = Icon,
+			OnlyIcon = OnlyIcon,
+			Position = Position,
+			TypeId = TypeId,
+			ComponentId = ComponentId,
+			DataMapping = DataMapping,
+			CustomOptionsJson = CustomOptionsJson,
 			SettingsJson = JsonSerializer.Serialize(Settings)
 		};
 	}

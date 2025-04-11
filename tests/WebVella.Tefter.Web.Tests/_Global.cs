@@ -19,4 +19,3 @@ global using Moq;
 global using WebVella.Tefter.Web.Store;
 //global using WebVella.Tefter.Web.PageComponents;
 global using WebVella.Tefter.Web.Addons;
-global using WebVella.Tefter.Web.ViewColumns;

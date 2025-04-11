@@ -1,0 +1,46 @@
+﻿@namespace WebVella.Tefter.Web.Addons
+@inherits TucBaseViewColumn<TfNumberDisplayColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
+{
+	<div>@_value?.ToString(componentOptions.DisplayFormat,
+				new CultureInfo(String.IsNullOrWhiteSpace(componentOptions.CultureName) ? "en-US" : componentOptions.CultureName))
+	</div>
+}
+else if (Context.Mode == TucComponentMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Label="@LOC("Display Format")"
+							 Value="@componentOptions.DisplayFormat" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.DisplayFormat),x))
+							 Placeholder="@LOC("eg. 'N3'")" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+			<FluentInputLabel Label="@LOC("Locale")" />
+			<FluentStack>
+				<FluentTextField TextFieldType="@TextFieldType.Text" Immediate ImmediateDelay="500"
+								 Value=@componentOptions.CultureName AutoComplete="off"
+								 Style="width:100%"
+								 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.CultureName),x))
+								 Placeholder="@LOC("en-US")" />
+				<FluentButton IconStart="(new Icons.Regular.Size20.CloudArrowDown())" Title="@LOC("get from server")"
+							  OnClick="_getCultureFromServer" Appearance="@Appearance.Outline" />
+			</FluentStack>
+			<FluentValidationMessage For="@(() => componentOptions.CultureName)" />
+		</FluentGridItem>
+	</FluentGrid>
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField Label="@LOC("Excel Format")"
+							 Value="@componentOptions.ExcelFormat" Style="width:100%" Immediate ImmediateDelay="500"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ExcelFormat),x))
+							 Placeholder="@LOC("eg. '0.000'")" />
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

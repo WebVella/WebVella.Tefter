@@ -2,7 +2,7 @@
 using System;
 using WebVella.Tefter.Exceptions;
 using WebVella.Tefter.Models;
-using WebVella.Tefter.Web.ViewColumns;
+using WebVella.Tefter.Web.Addons;
 
 namespace WebVella.Tefter.Tests.Services;
 
@@ -647,17 +647,14 @@ public partial class TfServiceTest : BaseTest
 				spaceView.Should().NotBeNull();
 
 				var availableColumnTypes = tfService.GetAvailableSpaceViewColumnTypes();
-				Type componentType = typeof(TfTextDisplayColumnComponent);
-
 				List<TfSpaceViewColumn> createdColums = new List<TfSpaceViewColumn>();
-
 				foreach (var availableColumnType in availableColumnTypes)
 				{
 
 					TfSpaceViewColumn column = new TfSpaceViewColumn
 					{
 						Id = Guid.NewGuid(),
-						ColumnType = availableColumnType,
+						TypeId = availableColumnType.Id,
 						QueryName = availableColumnType.Name
 											.ToLower()
 											.Replace(".", "")
@@ -665,7 +662,7 @@ public partial class TfServiceTest : BaseTest
 											.Replace("(", "")
 											.Replace(")", ""),
 						Title = availableColumnType.Name,
-						ComponentType = componentType,
+						ComponentId = new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_COMPONENT_ID),
 						SpaceViewId = view.Id,
 						CustomOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }

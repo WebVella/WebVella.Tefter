@@ -14,11 +14,10 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 	#region << Properties >>
 	public virtual Guid Id { get; init; } = Guid.NewGuid();
-	public string Name { get; init;} = String.Empty;
-	public string Description { get; init;} = String.Empty;
-	public string FluentIconName { get; init;} = String.Empty;
-	public virtual List<Type> SupportedColumnTypes { get; init; } = new();
-	public virtual List<Guid> SupportedColumnTypeAddons { get; init; } = new();
+	public virtual string Name { get; init;} = String.Empty;
+	public virtual string Description { get; init;} = String.Empty;
+	public virtual string FluentIconName { get; init;} = String.Empty;
+	public virtual List<Guid> SupportedColumnTypes { get; init; } = new();
 	[Parameter] public TfSpaceViewColumnScreenRegion Context { get; set; }
 	[Parameter] public EventCallback<string> OptionsChanged { get; set; }
 	[Parameter] public EventCallback<TfDataTable> RowChanged { get; set; }

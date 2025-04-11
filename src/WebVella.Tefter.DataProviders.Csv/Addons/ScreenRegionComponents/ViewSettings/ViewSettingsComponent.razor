@@ -1,0 +1,55 @@
+﻿@using WebVella.Tefter.Web.Components
+@using Microsoft.FluentUI.AspNetCore.Components;
+@using WebVella.Tefter.Web.Utils;
+@namespace WebVella.Tefter.DataProviders.Csv.Addons
+@inherits TfBaseComponent
+
+
+<FluentGrid>
+	<FluentGridItem xs="9">
+		<FluentTextField ReadOnly="true"
+						 TextFieldType="@TextFieldType.Text"
+						 Placeholder="@LOC("local, network or tefter protocols are supported")"
+						 Value=@_form.Filepath AutoComplete="off"
+						 Label="@LOC("CSV File with full access path")" Style="width:100%" />
+	</FluentGridItem>
+	<FluentGridItem xs="3">
+		<FluentTextField Disabled="true"
+						 TextFieldType="@TextFieldType.Text"
+						 Value="UTF-8"
+						 Label="@LOC("File encoding")" Style="width:100%" />
+	</FluentGridItem>
+</FluentGrid>
+<FluentGrid>
+	<FluentGridItem xs="6">
+		<FluentInputLabel Label="@LOC("Delimiter")" />
+		<div>
+			<FluentBadge Appearance="Appearance.Accent">@LOC(_form.Delimter.ToString())</FluentBadge>
+		</div>
+	</FluentGridItem>
+	<FluentGridItem xs="6">
+		<FluentInputLabel Label="@LOC("Locale")" />
+		<FluentStack>
+			<FluentTextField ReadOnly="true"
+							 TextFieldType="@TextFieldType.Text"
+							 Value=@_form.CultureName
+							 AutoComplete="off"
+							 Style="width:100%"
+							 Required="true"
+							 Placeholder="@LOC("empty uses culture invariant")" />
+		</FluentStack>
+	</FluentGridItem>
+</FluentGrid>
+
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentTextArea ReadOnly="true"
+						Rows="5"
+						Value=@_advancedSettings
+						Resize="TextAreaResize.Vertical"
+						Label="@LOC("Advanced Settings")" Style="width:100%" />
+	</FluentGridItem>
+</FluentGrid>
+
+
+

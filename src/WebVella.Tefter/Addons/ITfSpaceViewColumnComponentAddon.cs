@@ -2,8 +2,7 @@
 
 public interface ITfSpaceViewColumnComponentAddon : ITfAddon
 {
-	public List<Type> SupportedColumnTypes { get; init; }
-	public List<Guid> SupportedColumnTypeAddons { get; init; }
+	public List<Guid> SupportedColumnTypes { get; init; }
 	void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell);
 }
 

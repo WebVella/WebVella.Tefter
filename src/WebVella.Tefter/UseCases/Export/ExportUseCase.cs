@@ -123,11 +123,11 @@ public class ExportUseCase
 					compContext.QueryName = column.QueryName;
 
 					IXLCell excelCell = ws.Cell(currentExcelRow, currentExcelColumn);
-
-					if (column.ComponentType.ImplementsInterface(typeof(ITfSpaceViewColumnComponentAddon)))
+					var component = _tfMetaService.GetSpaceViewColumnComponent(column.ComponentId);
+					if (component is not null)
 					{
-						var component = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(column.ComponentType, compContext);
-						component.ProcessExcelCell(_serviceProvider, excelCell);
+						var componentNewInstance = (ITfSpaceViewColumnComponentAddon)Activator.CreateInstance(component.GetType(), compContext);
+						componentNewInstance.ProcessExcelCell(_serviceProvider, excelCell);
 					}
 					currentExcelColumn++;
 				}

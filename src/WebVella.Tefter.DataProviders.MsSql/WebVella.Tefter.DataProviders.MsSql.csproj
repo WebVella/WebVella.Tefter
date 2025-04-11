@@ -18,10 +18,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Update="Components\ManageSettings\ManageSettingsComponent.bg.resx">
+		<EmbeddedResource Update="Addons\ScreenRegionComponents\ManageSettings\ManageSettingsComponent.bg.resx">
 			<Generator></Generator>
 		</EmbeddedResource>
-		<EmbeddedResource Update="Components\ViewSettings\ViewSettingsComponent.bg.resx">
+		<EmbeddedResource Update="Addons\ScreenRegionComponents\ViewSettings\ViewSettingsComponent.bg.resx">
 		  <Generator></Generator>
 		</EmbeddedResource>
 	</ItemGroup>

@@ -18,7 +18,7 @@
 /// Create a custom path to a localization resource of a component. Usefull when component namespace differes from folder structure
 // Parameters:
 //   baseName:
-//     The base name of the resource to load strings from. Eg. "WebVella.Tefter.Web.ViewColumns.GuidViewColumn.TfGuidViewColumn"
+//     The base name of the resource to load strings from. Eg. "WebVella.Tefter.Web.Addons.GuidViewColumn.TfGuidViewColumn"
 //
 //   location:
 //     The location to load resources from.Eg. "WebVella.Tefter"

@@ -1,4 +1,4 @@
-﻿using WebVella.Tefter.DataProviders.Csv;
+﻿using WebVella.Tefter.DataProviders.Csv.Addons;
 
 namespace WebVella.Tefter.Web.Tests.Components;
 public class AdminDataProviderDetailsComponentTests : BaseTest

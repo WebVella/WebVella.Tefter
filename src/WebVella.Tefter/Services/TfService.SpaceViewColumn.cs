@@ -349,10 +349,6 @@ public partial class TfService : ITfService
 	{
 		if (dbo == null)
 			return null;
-
-		ITfSpaceViewColumnTypeAddon columnType = _metaService.GetSpaceViewColumnTypeByName(dbo.FullTypeName);
-		Type componentType = _metaService.GetSpaceViewColumnComponentType(dbo.FullComponentTypeName);
-
 		return new TfSpaceViewColumn
 		{
 			Id = dbo.Id,
@@ -362,13 +358,11 @@ public partial class TfService : ITfService
 			Icon = dbo.Icon ?? string.Empty,
 			OnlyIcon = dbo.OnlyIcon,
 			Position = dbo.Position,
-			ColumnType = columnType,
-			ComponentType = componentType,
+			TypeId = dbo.TypeId,
+			ComponentId = dbo.ComponentId,
 			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson),
 			CustomOptionsJson = dbo.CustomOptionsJson,
 			SettingsJson = dbo.SettingsJson,
-			FullTypeName = dbo.FullTypeName,
-			FullComponentTypeName = dbo.FullComponentTypeName
 		};
 
 	}
@@ -387,8 +381,8 @@ public partial class TfService : ITfService
 			Icon = model.Icon ?? string.Empty,
 			OnlyIcon = model.OnlyIcon,
 			Position = model.Position.Value,
-			FullTypeName = model.ColumnType.GetType().FullName,
-			FullComponentTypeName = model.ComponentType.FullName,
+			TypeId = model.TypeId,
+			ComponentId = model.ComponentId,
 			DataMappingJson = JsonSerializer.Serialize(model.DataMapping ?? new Dictionary<string, string>()),
 			CustomOptionsJson = model.CustomOptionsJson,
 			SettingsJson = model.SettingsJson,
@@ -418,11 +412,11 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The query name is required.");
 
-				RuleFor(column => column.ColumnType)
+				RuleFor(column => column.TypeId)
 					.NotEmpty()
 					.WithMessage("The column type is required.");
 
-				RuleFor(column => column.ComponentType)
+				RuleFor(column => column.ComponentId)
 					.NotEmpty()
 					.WithMessage("The column component type is required.");
 

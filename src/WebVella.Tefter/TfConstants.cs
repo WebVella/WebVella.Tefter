@@ -40,6 +40,8 @@ public partial class TfConstants
 	public const string TF_GENERIC_INTEGER_COLUMN_TYPE_ID = "a0708248-ebfc-4ba9-84e9-3f959c06989c";
 	public const string TF_GENERIC_SHORT_INTEGER_COLUMN_TYPE_ID = "e8a52dfe-fcb8-4fd2-8011-bd9e0a5a81d9";
 
+	public const string TF_GENERIC_TEXT_COLUMN_COMPONENT_ID = "f7f6a912-f670-4275-8794-13a483cac2c9"; //used as default in view column presentation
+
 	public static CultureInfo TF_FILTER_CULTURE = CultureInfo.InvariantCulture;
 	public static NumberStyles TF_FILTER_NUMBER_STYLE = 
 		NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite |

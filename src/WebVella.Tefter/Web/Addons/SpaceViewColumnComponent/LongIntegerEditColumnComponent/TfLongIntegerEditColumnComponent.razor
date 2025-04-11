@@ -1,0 +1,36 @@
+﻿@namespace WebVella.Tefter.Web.Addons
+@inherits TucBaseViewColumn<TfLongIntegerEditColumnComponentOptions>
+@if (Context.Mode == TucComponentMode.Display)
+{
+	<div>
+		<FluentNumberField TValue="long?"
+						   Id="@_valueInputId"
+						   Value="@_value"
+						   ValueChanged="@((x) => _valueChanged(x))"
+						   Step="1"
+						   Style="width:100%;min-width:80px;" />
+	</div>
+}
+else if (Context.Mode == TucComponentMode.Options)
+{
+	<FluentGrid>
+		<FluentGridItem xs="4">
+			<FluentInputLabel Label="@LOC("Change confirmation")" />
+			<FluentCheckbox Value="@componentOptions.ChangeRequiresConfirmation"
+							ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeRequiresConfirmation),x))
+							Label="@LOC("requires confirmation")" />
+		</FluentGridItem>
+		<FluentGridItem xs="8">
+			<FluentTextField Label="@LOC("Confirmation message")"
+							 Value="@componentOptions.ChangeConfirmationMessage" Style="width:100%"
+							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.ChangeConfirmationMessage),x))
+							 Placeholder="@LOC("empty shows a system one")" />
+		</FluentGridItem>
+	</FluentGrid>
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+

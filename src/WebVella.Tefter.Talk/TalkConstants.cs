@@ -7,4 +7,7 @@ internal class TalkConstants
 	public static string TALK_APP_DECRIPTION = "Talk Application Description";
 	public static string TALK_APP_CHANNEL_LIST_DATA_KEY = $"{TALK_APP_ID}-channels-list";
 	public static string TALK_APP_SHARED_COLUMNS_LIST_DATA_KEY = $"{TALK_APP_ID}-shared-columns-list";
+
+	public static string TALK_APP_SPACE_VIEW_COLUMN_TYPE_COMMENTS_COUNT = $"60ab4197-be46-4ebd-a6de-02e8d25450d3";
+	public static string TALK_APP_SPACE_VIEW_COLUMN_COMPONENT_COMMENTS_COUNT = $"5f3855f1-4819-488f-b24a-d4a81448e4f0";
 }

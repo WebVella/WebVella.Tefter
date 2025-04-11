@@ -46,47 +46,47 @@
 				<FluentGridItem xs="6">
 					<FluentInputLabel Label="@LOC("Column type")" />
 					<FluentStack HorizontalGap="5">
-						@if (_form.ColumnType?.Icon is null)
+						@if (_selectedColumnType?.FluentIcon is null)
 						{
 							<FluentButton Appearance="@Appearance.Outline" />
 						}
 						else
 						{
-							<FluentButton Appearance="@Appearance.Outline" IconStart="@_form.ColumnType?.Icon" />
+							<FluentButton Appearance="@Appearance.Outline" IconStart="@_selectedColumnType?.FluentIcon" />
 						}
 						<FluentSelect Style="width:100%"
 									  TOption="TucSpaceViewColumnType"
 									  Placeholder="@LOC("select...")"
-									  OptionSelected="(x => x.Id == _form.ColumnType?.Id)"
-									  SelectedOption="@_form.ColumnType"
+									  OptionSelected="(x => x.Id == _form.TypeId)"
+									  SelectedOption="@_selectedColumnType"
 									  SelectedOptionChanged="_columnTypeChangeHandler"
 									  OptionText="((x)=> x.Name)"
 									  OptionValue="((x)=> x.Id.ToString())"
 									  Items="TfAppState.Value.AvailableColumnTypes">
 							<OptionTemplate Context="option">
 								<FluentStack>
-									<FluentIcon Value="@option.Icon" Color="@Color.Accent" />
+									<FluentIcon Value="@option.FluentIcon" Color="@Color.Accent" />
 									@option.Name
 								</FluentStack>
 							</OptionTemplate>
 						</FluentSelect>
 					</FluentStack>
-					<FluentValidationMessage For="@(() => _form.ColumnType)" />
+					<FluentValidationMessage For="@(() => _form.TypeId)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					@if (_renderComponentTypeSelect)
 					{
 						<FluentSelect Label="@LOC("Presentation component")"
 									  Style="width:100%" Required=true
-									  OptionSelected="(x => x.FullName == _form.ComponentType?.FullName)"
-									  SelectedOption="@_form.ComponentType"
+									  OptionSelected="(x => x.Id == _form.ComponentId)"
+									  SelectedOption="@_selectedColumnComponent"
 									  SelectedOptionChanged="_columnComponentChangeHandler"
-									  TOption="Type"
-									  OptionText="((x)=> x.ToDescriptionString() ?? x.Name)"
-									  OptionValue="((x)=> x.FullName)"
-									  Items="_form.ColumnType?.SupportedComponentTypes.OrderBy(x=> x.ToDescriptionString()).ToList()" />
+									  TOption="TucSpaceViewColumnComponent"
+									  OptionText="((x)=> x.Name)"
+									  OptionValue="((x)=> x.Id.ToString())"
+									  Items="_selectedColumnTypeComponents" />
 
-						<FluentValidationMessage For="@(() => _form.ComponentType)" />
+						<FluentValidationMessage For="@(() => _form.ComponentId)" />
 					}
 				</FluentGridItem>
 			</FluentGrid>
@@ -97,12 +97,12 @@
 			<FluentValidationMessage For="@(() => _form.Settings.Color)" />
 			<FluentTabs @bind-ActiveTabId="@_activeTab" Class="tf-tabs">
 				<FluentTab Label="@LOC("Data mapping")" Id="data">
-					@if (_form.ColumnType is not null && _form.ComponentType is not null)
+					@if (_selectedColumnType is not null && _selectedColumnComponent is not null)
 					{
-						@if (_form.ColumnType.DataMapping is not null
-											&& _form.ColumnType.DataMapping.Count > 0)
+						@if (_selectedColumnType.DataMapping is not null
+											&& _selectedColumnType.DataMapping.Count > 0)
 						{
-							foreach (var item in _form.ColumnType.DataMapping)
+							foreach (var item in _selectedColumnType.DataMapping)
 							{
 								<FluentGrid>
 									<FluentGridItem xs="6">
@@ -124,11 +124,11 @@
 								<FluentGridItem xs="6">
 									<FluentInputLabel Label="@LOC("Sort by alias")" />
 									<div>
-										@foreach (var item in _form.ColumnType.SortAliases)
+										@foreach (var item in _selectedColumnType.SortAliases)
 										{
 											<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
 										}
-										@if (_form.ColumnType.SortAliases.Count == 0)
+										@if (_selectedColumnType.SortAliases.Count == 0)
 										{
 											<FluentLabel Color="@Color.Disabled" Typo="@Typography.Body">@LOC("column cannot be sorted")</FluentLabel>
 										}
@@ -137,11 +137,11 @@
 								<FluentGridItem xs="6">
 									<FluentInputLabel Label="@LOC("Filter by alias")" />
 									<div>
-										@foreach (var item in _form.ColumnType.FilterAliases)
+										@foreach (var item in _selectedColumnType.FilterAliases)
 										{
 											<FluentBadge Appearance="@Appearance.Neutral">@item</FluentBadge>
 										}
-										@if (_form.ColumnType.FilterAliases.Count == 0)
+										@if (_selectedColumnType.FilterAliases.Count == 0)
 										{
 											<FluentLabel Color="@Color.Disabled" Typo="@Typography.Body">@LOC("column cannot be filtered")</FluentLabel>
 										}
@@ -160,14 +160,15 @@
 					}
 				</FluentTab>
 				<FluentTab Label="@LOC("Component options")" Id="component-options">
-					@if (_form.ColumnType is not null && _form.ComponentType is not null)
+					@if (_selectedColumnType is not null && _selectedColumnComponent is not null)
 					{
 						<FluentGrid>
 							<FluentGridItem xs="12">
-								@if (_form.ComponentType is not null)
+								@if (_selectedColumnComponent is not null)
 								{
 									<TfErrorBoundry>
-										<DynamicComponent Type="_form.ComponentType" Parameters="@_getColumnComponentContext()" />
+										@* TODO BOZ: CHANGE WITH RENDER REGION *@
+										@* <DynamicComponent Type="_form.ComponentType" Parameters="@_getColumnComponentContext()" /> *@
 									</TfErrorBoundry>
 								}
 								else

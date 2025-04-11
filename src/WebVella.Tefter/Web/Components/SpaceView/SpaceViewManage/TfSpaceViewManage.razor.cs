@@ -11,7 +11,8 @@ public partial class TfSpaceViewManage : TfBaseComponent
 	private TucSpaceData _spaceData { get => TfAppState.Value.SpaceDataList.FirstOrDefault(x => x.Id == TfAppState.Value.SpaceView.SpaceDataId); }
 	private TucDataProvider _dataProvider { get => TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _spaceData?.DataProviderId); }
 	private string _activeTab;
-
+	private Dictionary<Guid,TucSpaceViewColumnType> _typeMetaDict;
+	private Dictionary<Guid,TucSpaceViewColumnComponent> _componentMetaDict;
 
 	protected override void OnInitialized()
 	{
@@ -24,6 +25,9 @@ public partial class TfSpaceViewManage : TfBaseComponent
 				_spaceViewPreset = new TucSpaceViewPreset { Id = TfAppState.Value.SpaceView.Id, Name = TfAppState.Value.SpaceView.Name };
 		}
 		_activeTab = (Navigator.GetEnumFromQuery<TfSpaceViewManageTab>(TfConstants.TabQueryName, TfSpaceViewManageTab.Columns).Value).ToString();
+
+		_typeMetaDict = UC.GetSpaceViewColumnTypeDict();
+		_componentMetaDict = UC.GetSpaceViewColumnComponentDict();
 	}
 
 	private async Task _deleteSpaceView()

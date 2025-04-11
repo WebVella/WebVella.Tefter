@@ -9,14 +9,11 @@ public class TfSpaceViewColumn
 	public string Icon { get; set; }
 	public bool OnlyIcon { get; set; } = false;
 	public short? Position { get; set; }
-	public ITfSpaceViewColumnTypeAddon ColumnType { get; set; }
-	public Type ComponentType { get; set; }
+	public Guid TypeId { get; set; }
+	public Guid ComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
 	public string SettingsJson { get; set; } = "{}";
-	public string FullTypeName { get; set; }
-	public string FullComponentTypeName { get; set; }
-
 }
 
 [DboCacheModel]
@@ -44,11 +41,11 @@ internal class TfSpaceViewColumnDbo
 	[TfDboModelProperty("position")]
 	public short Position { get; set; }
 
-	[TfDboModelProperty("full_type_name")]
-	public string FullTypeName { get; set; }
+	[TfDboModelProperty("type_id")]
+	public Guid TypeId { get; set; }
 
-	[TfDboModelProperty("full_component_type_name")]
-	public string FullComponentTypeName { get; set; }
+	[TfDboModelProperty("component_id")]
+	public Guid ComponentId { get; set; }
 
 	[TfDboModelProperty("data_mapping_json")]
 	public string DataMappingJson { get; set; } = "{}";
