@@ -142,10 +142,10 @@ public partial class TfService : ITfService
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM data_provider_synchronize_task st
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+FROM tf_data_provider_synchronize_task st
 WHERE st.id = @task_id 
 GROUP BY
 	st.id,
@@ -177,10 +177,10 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM data_provider_synchronize_task st
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+FROM tf_data_provider_synchronize_task st
 WHERE data_provider_id = @data_provider_id AND status = @status
 GROUP BY 
 	st.id, 
@@ -206,10 +206,10 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM data_provider_synchronize_task st
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+FROM tf_data_provider_synchronize_task st
 WHERE data_provider_id = @data_provider_id 
 GROUP BY
 	st.id,
@@ -237,10 +237,10 @@ ORDER BY st.created_on DESC",
 	COUNT( sri_info.id ) AS info_count,
 	COUNT( sri_warning.id ) AS warning_count,
 	COUNT( sri_error.id ) AS error_count
-FROM data_provider_synchronize_task st
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
-	LEFT OUTER JOIN data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
+FROM tf_data_provider_synchronize_task st
+	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
+	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
+	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
 WHERE status = @status
 GROUP BY 
 	st.id, 
@@ -264,10 +264,10 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM data_provider_synchronize_task st
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+FROM tf_data_provider_synchronize_task st
 GROUP BY 
 	st.id, 
 	st.data_provider_id, 
