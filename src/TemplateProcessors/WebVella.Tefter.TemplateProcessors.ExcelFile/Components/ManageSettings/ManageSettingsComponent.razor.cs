@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Components;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Components.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("51157e04-9849-48ec-9bf3-de31308c4b0c");
 	public int PositionRank { get; init; } = 1000;
@@ -15,7 +15,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(ExcelFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorManageSettingsScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorManageSettingsScreenRegionContext RegionContext { get; init; }
 
 	private ExcelFileTemplateSettings _form = new();
 	private string _downloadUrl
@@ -34,18 +34,18 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
-		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<ExcelFileTemplateSettings>(Context.Template.SettingsJson);
-		Context.Validate = _validate;
+		if (RegionContext is null || RegionContext.Template is null) throw new Exception("Context is not defined");
+		_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<ExcelFileTemplateSettings>(RegionContext.Template.SettingsJson);
+		RegionContext.Validate = _validate;
 		base.InitForm(_form);
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<ExcelFileTemplateSettings>(Context.Template.SettingsJson);
+			_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<ExcelFileTemplateSettings>(RegionContext.Template.SettingsJson);
 			base.InitForm(_form);
 		}
 	}
@@ -88,8 +88,8 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	}
 	private async Task _valueChanged()
 	{
-		Context.Template.SettingsJson = JsonSerializer.Serialize(_form);
-		await Context.SettingsJsonChanged.InvokeAsync(Context.Template.SettingsJson);
+		RegionContext.Template.SettingsJson = JsonSerializer.Serialize(_form);
+		await RegionContext.SettingsJsonChanged.InvokeAsync(RegionContext.Template.SettingsJson);
 	}
 
 }

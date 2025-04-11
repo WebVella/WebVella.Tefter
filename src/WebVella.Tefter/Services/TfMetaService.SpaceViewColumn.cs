@@ -39,7 +39,7 @@ public partial class TfMetaService : ITfMetaService
 
 	public ITfSpaceViewColumnTypeAddon GetSpaceViewColumnType(Guid addonId)
 	{
-		if (_columnComponentMetaDict.ContainsKey(addonId)) return _columnTypeMetaDict[addonId].Instance;
+		if (_columnTypeMetaDict.ContainsKey(addonId)) return _columnTypeMetaDict[addonId].Instance;
 		return null;
 	}
 

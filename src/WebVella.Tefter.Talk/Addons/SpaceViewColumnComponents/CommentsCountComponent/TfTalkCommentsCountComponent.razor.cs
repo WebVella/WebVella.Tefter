@@ -29,7 +29,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfTalkCommentsCountComponent(TfSpaceViewColumnScreenRegion context)
+	public TfTalkCommentsCountComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
 		Context = context;
 	}
@@ -56,7 +56,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	{
 		await base.OnInitializedAsync();
 		_initStorageKeys();
-		if (Context.Mode == TucComponentMode.Options)
+		if (Context.Mode == TfComponentPresentationMode.Options)
 		{
 			_channels = TalkService.GetChannels();
 

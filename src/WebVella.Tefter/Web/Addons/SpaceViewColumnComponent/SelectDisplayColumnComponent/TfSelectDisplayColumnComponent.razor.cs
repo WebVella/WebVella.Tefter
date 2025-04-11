@@ -28,7 +28,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfSelectDisplayColumnComponent(TfSpaceViewColumnScreenRegion context)
+	public TfSelectDisplayColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
 		Context = context;
 	}
@@ -210,7 +210,7 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 	#region << Private logic >>
 	private async Task _initValues()
 	{
-		if (Context.Mode == TucComponentMode.Options)
+		if (Context.Mode == TfComponentPresentationMode.Options)
 		{
 			_selectedSpaceData = TfAppState.Value.SpaceDataList?.FirstOrDefault(x => x.Id == componentOptions.SpaceDataId);
 

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public enum TucComponentMode
+public enum TfComponentPresentationMode
 {
 	Display,
 	Options

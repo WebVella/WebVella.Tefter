@@ -5,7 +5,7 @@
 {
 	<TfLoadingPane />
 }
-else if (Context is null || Context.Template is null || Context.SpaceData is null)
+else if (RegionContext is null || RegionContext.Template is null || RegionContext.SpaceData is null)
 {
 	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("Preview cannot be generated as arguments are missing from the provided context")</FluentMessageBar>
 }

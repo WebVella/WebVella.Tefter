@@ -11,7 +11,7 @@ internal partial class AppStateUseCase
 			newAppState = newAppState with
 			{
 				Pages = GetRegionComponentsMetaForContext(
-					context: typeof(TfAdminPageScreenRegion),
+					context: typeof(TfAdminPageScreenRegionContext),
 					scope: null
 				)
 			};
@@ -21,7 +21,7 @@ internal partial class AppStateUseCase
 			newAppState = newAppState with
 			{
 				Pages = GetRegionComponentsMetaForContext(
-					context: typeof(TfPageScreenRegion),
+					context: typeof(TfPageScreenRegionContext),
 					scope: null
 				)
 			};
@@ -29,9 +29,9 @@ internal partial class AppStateUseCase
 
 		foreach (TfScreenRegionComponentMeta addonComponent in newAppState.Pages)
 		{
-			if (addonComponent.ComponentType.ImplementsInterface(typeof(ITfAuxDataState)))
+			if (addonComponent.Type.ImplementsInterface(typeof(ITfAuxDataState)))
 			{
-				var component = (ITfAuxDataState)Activator.CreateInstance(addonComponent.ComponentType);
+				var component = (ITfAuxDataState)Activator.CreateInstance(addonComponent.Type);
 				component.OnAppStateInit(
 						serviceProvider: _serviceProvider,
 						currentUser: currentUser,

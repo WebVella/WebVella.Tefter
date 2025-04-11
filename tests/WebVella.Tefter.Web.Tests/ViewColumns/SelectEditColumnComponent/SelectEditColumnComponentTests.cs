@@ -11,7 +11,7 @@ public class SelectEditColumnComponentTests : BaseTest
 		Context.RenderComponent<FluentMenuProvider>();
 		// Act
 		var cut = Context.RenderComponent<TfSelectEditColumnComponent>(args => args
-		.Add(x => x.Context, new TfSpaceViewColumnScreenRegion())
+		.Add(x => x.Context, new TfSpaceViewColumnScreenRegionContext())
 		);
 
 		// Assert

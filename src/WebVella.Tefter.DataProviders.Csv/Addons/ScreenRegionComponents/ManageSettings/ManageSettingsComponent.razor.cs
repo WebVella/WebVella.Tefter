@@ -9,7 +9,7 @@ namespace WebVella.Tefter.DataProviders.Csv.Addons;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.Csv.Addons.ScreenRegionComponents.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.Csv")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfRegionComponent<TfDataProviderManageSettingsScreenRegion>
+	ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("8edf466e-74d1-42f0-b166-8df2c4e3e1b9");
 	public int PositionRank { get; init; } = 1000;
@@ -19,7 +19,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(CsvDataProvider),null)
 	};
-	[Parameter] public TfDataProviderManageSettingsScreenRegion Context { get; init; }
+	[Parameter] public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
 
 	private string _advancedSettings
 	{
@@ -35,17 +35,17 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(Context.SettingsJson);
-		Context.SetValidate(_validate);
+		_form = String.IsNullOrWhiteSpace(RegionContext.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(RegionContext.SettingsJson);
+		RegionContext.SetValidate(_validate);
 		base.InitForm(_form);
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Context.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(Context.SettingsJson);
+			_form = String.IsNullOrWhiteSpace(RegionContext.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(RegionContext.SettingsJson);
 			base.InitForm(_form);
 		}
 	}
@@ -106,7 +106,7 @@ public partial class ManageSettingsComponent : TfFormBaseComponent,
 
 	private async Task _valueChanged()
 	{
-		Context.SettingsJson = JsonSerializer.Serialize(_form);
-		await Context.SettingsJsonChanged.InvokeAsync(Context.SettingsJson);
+		RegionContext.SettingsJson = JsonSerializer.Serialize(_form);
+		await RegionContext.SettingsJsonChanged.InvokeAsync(RegionContext.SettingsJson);
 	}
 }

@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class DisplaySettingsComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("a23a91fe-cf4b-4f83-9f43-58484978cdab");
 	public int PositionRank { get; init; } = 0;
@@ -12,7 +12,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(TextFileTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; init; }
 	private TextFileTemplateSettings _form = new();
 	private string _downloadUrl
 	{
@@ -28,16 +28,16 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
-		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<TextFileTemplateSettings>(Context.Template.SettingsJson) ?? new();
+		if (RegionContext is null || RegionContext.Template is null) throw new Exception("Context is not defined");
+		_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<TextFileTemplateSettings>(RegionContext.Template.SettingsJson) ?? new();
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<TextFileTemplateSettings>(Context.Template.SettingsJson);
+			_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<TextFileTemplateSettings>(RegionContext.Template.SettingsJson);
 		}
 	}
 

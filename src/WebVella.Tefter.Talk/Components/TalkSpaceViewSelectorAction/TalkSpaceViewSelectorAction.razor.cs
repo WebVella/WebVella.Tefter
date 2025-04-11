@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Talk.Components;
 
-public partial class TalkSpaceViewSelectorAction : TfBaseComponent, ITfRegionComponent<TfSpaceViewSelectorActionScreenRegion>
+public partial class TalkSpaceViewSelectorAction : TfBaseComponent, ITfRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("942d6fb0-4662-4c5c-ae52-123dd40375ac"); 
 	public int PositionRank { get; init; } = 100;
@@ -9,7 +9,7 @@ public partial class TalkSpaceViewSelectorAction : TfBaseComponent, ITfRegionCom
 	public string FluentIconName { get; init; } =  "CommentMultiple";
 	public List<TfScreenRegionScope> Scopes { get; init; } = new ();
 	[Parameter] 
-	public TfSpaceViewSelectorActionScreenRegion Context { get; init; }
+	public TfSpaceViewSelectorActionScreenRegionContext RegionContext { get; init; }
 
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 

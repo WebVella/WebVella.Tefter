@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfShortIntegerEditColumnComponentOptions>
-@if (Context.Mode == TucComponentMode.Display)
+@if (Context.Mode == TfComponentPresentationMode.Display)
 {
 	<div>
 		<FluentNumberField TValue="short?"
@@ -11,7 +11,7 @@
 						   Style="width:100%;min-width:80px;" AutoComplete="off" />
 	</div>
 }
-else if (Context.Mode == TucComponentMode.Options)
+else if (Context.Mode == TfComponentPresentationMode.Options)
 {
 	<FluentGrid>
 		<FluentGridItem xs="4">

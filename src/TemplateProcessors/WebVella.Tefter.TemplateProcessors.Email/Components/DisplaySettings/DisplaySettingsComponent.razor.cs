@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Components.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class DisplaySettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("a52465b2-6e8c-48b3-a903-7fb2d43c55fa");
 	public int PositionRank { get; init; } = 1000;
@@ -13,7 +13,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 		new TfScreenRegionScope(typeof(EmailTemplateProcessor),null)
 	};
 	[Parameter] 
-	public TfTemplateProcessorDisplaySettingsScreenRegion Context { get; init; }
+	public TfTemplateProcessorDisplaySettingsScreenRegionContext RegionContext { get; init; }
 
 	private bool _loading = true;
 	private string _activeTab = SettingsComponentTabs.Content.ToDescriptionString();
@@ -24,16 +24,16 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null || Context.Template is null) throw new Exception("Context is not defined");
+		if (RegionContext is null || RegionContext.Template is null) throw new Exception("Context is not defined");
 		contentProcessor = new EmailTemplateProcessor();
-		_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(Context.Template.SettingsJson);
+		_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(RegionContext.Template.SettingsJson);
 	}
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Context.Template.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext.Template.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(Context.Template.SettingsJson);
+			_form = String.IsNullOrWhiteSpace(RegionContext.Template.SettingsJson) ? new() : JsonSerializer.Deserialize<EmailTemplateSettings>(RegionContext.Template.SettingsJson);
 			_recalcAttachmentData();
 		}
 	}
@@ -42,7 +42,7 @@ public partial class DisplaySettingsComponent : TfBaseComponent,
 		await base.OnAfterRenderAsync(firstRender);
 		if (firstRender)
 		{
-			_templatesAll = contentProcessor.GetTemplateSelectionList(Context.Template.Id, TfService);
+			_templatesAll = contentProcessor.GetTemplateSelectionList(RegionContext.Template.Id, TfService);
 			_recalcAttachmentData();
 			_loading = false;
 			await InvokeAsync(StateHasChanged);

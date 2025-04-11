@@ -112,7 +112,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegion)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegionContext)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeTrue();
 		}
@@ -148,11 +148,11 @@ public class TypeUtilityTests
 	{
 		using (await locker.LockAsync())
 		{
-			Type objType = typeof(ITfRegionComponent<TfDataProviderManageSettingsScreenRegion>);
+			Type objType = typeof(ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>);
 			string result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().NotThrow();
-			result.Should().Be(typeof(TfDataProviderManageSettingsScreenRegion).FullName);
+			result.Should().Be(typeof(TfDataProviderManageSettingsScreenRegionContext).FullName);
 		}
 	}
 
@@ -183,7 +183,7 @@ public class TypeUtilityTests
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(1);
-			result[0].Should().Be(typeof(TfDataProviderManageSettingsScreenRegion).FullName);
+			result[0].Should().Be(typeof(TfDataProviderManageSettingsScreenRegionContext).FullName);
 		}
 	}
 
@@ -216,9 +216,9 @@ public class UtilityTestsChildGenericClass : UtilityTestsBaseGenericClass<Utilit
 
 }
 
-public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<TfDataProviderManageSettingsScreenRegion>
+public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
-	public TfDataProviderManageSettingsScreenRegion Context { get; init; }
+	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
 	public Guid Id { get; init; }
 	public int PositionRank { get; init; }
 	public string Name { get; init; }
@@ -227,9 +227,9 @@ public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>() { };
 }
 
-public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsScreenRegion>
+public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
-	public TfDataProviderManageSettingsScreenRegion Context { get; init; }
+	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
 	public Guid Id { get; init; }
 	public int PositionRank { get; init; }
 	public string Name { get; init; }

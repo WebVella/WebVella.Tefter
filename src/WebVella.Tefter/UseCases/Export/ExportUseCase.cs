@@ -93,11 +93,11 @@ public class ExportUseCase
 			currentExcelRow++;
 
 			var typeDict = new Dictionary<string, object>();
-			var compContext = new TfSpaceViewColumnScreenRegion()
+			var compContext = new TfSpaceViewColumnScreenRegionContext()
 			{
 				Hash = Guid.NewGuid(),
 				DataTable = viewData,
-				Mode = TucComponentMode.Display, //ignored here
+				Mode = TfComponentPresentationMode.Display, //ignored here
 				SpaceViewId = view.Id,
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here

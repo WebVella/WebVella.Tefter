@@ -167,8 +167,7 @@
 								@if (_selectedColumnComponent is not null)
 								{
 									<TfErrorBoundry>
-										@* TODO BOZ: CHANGE WITH RENDER REGION *@
-										@* <DynamicComponent Type="_form.ComponentType" Parameters="@_getColumnComponentContext()" /> *@
+										<DynamicComponent Type="_selectedColumnComponent.Type" Parameters="@_getColumnComponentContext()" />
 									</TfErrorBoundry>
 								}
 								else

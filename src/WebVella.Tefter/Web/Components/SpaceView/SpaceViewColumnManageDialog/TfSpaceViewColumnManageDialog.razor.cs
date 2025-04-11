@@ -140,6 +140,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			_selectedColumnType = UC.GetSpaceViewColumnTypeById(new Guid(TfConstants.TF_GENERIC_TEXT_COLUMN_TYPE_ID));
 			_form.TypeId = _selectedColumnType.Id;
 		}
+		_selectComponentType(_form.TypeId);
 		await InvokeAsync(StateHasChanged);
 		await Task.Delay(1);
 		_renderComponentTypeSelect = true;
@@ -184,10 +185,10 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 	{
 		var componentData = new Dictionary<string, object>();
 
-		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegion
+		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
 		{
 			Hash = TfAppState.Value.Hash,
-			Mode = TucComponentMode.Options,
+			Mode = TfComponentPresentationMode.Options,
 			CustomOptionsJson = _form.CustomOptionsJson,
 			DataMapping = _form.DataMapping,
 			DataTable = null,

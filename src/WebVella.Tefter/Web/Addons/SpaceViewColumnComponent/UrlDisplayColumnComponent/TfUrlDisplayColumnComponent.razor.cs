@@ -21,7 +21,7 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfUrlDisplayColumnComponent(TfSpaceViewColumnScreenRegion context)
+	public TfUrlDisplayColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
 		Context = context;
 	}

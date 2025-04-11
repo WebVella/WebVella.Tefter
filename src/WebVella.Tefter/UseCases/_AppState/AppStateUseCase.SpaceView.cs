@@ -62,11 +62,11 @@ internal partial class AppStateUseCase
 			if (newAppState.SpaceView is not null)
 			{
 				//Aux Data Hook
-				var compContext = new TfSpaceViewColumnScreenRegion()
+				var compContext = new TfSpaceViewColumnScreenRegionContext()
 				{
 					Hash = newAppState.Hash,
 					DataTable = newAppState.SpaceViewData,
-					Mode = TucComponentMode.Display, //ignored here
+					Mode = TfComponentPresentationMode.Display, //ignored here
 					SpaceViewId = newAppState.SpaceView.Id,
 					EditContext = null, //ignored here
 					ValidationMessageStore = null, //ignored here

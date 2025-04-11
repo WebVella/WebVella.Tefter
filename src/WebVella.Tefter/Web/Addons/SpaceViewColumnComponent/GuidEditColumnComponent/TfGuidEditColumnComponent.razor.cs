@@ -24,7 +24,7 @@ public partial class TfGuidEditColumnComponent : TucBaseViewColumn<TfGuidEditCol
 	/// rendering. The export to excel is one of those cases.
 	/// </summary>
 	/// <param name="context">this value contains options, the entire DataTable as well as the row index that needs to be processed</param>
-	public TfGuidEditColumnComponent(TfSpaceViewColumnScreenRegion context)
+	public TfGuidEditColumnComponent(TfSpaceViewColumnScreenRegionContext context)
 	{
 		Context = context;
 	}

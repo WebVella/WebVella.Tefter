@@ -17,7 +17,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 	private bool _isCreate = false;
 	private TucDataProviderForm _form = new();
 
-	private TfDataProviderManageSettingsScreenRegion _dynamicComponentContext = null;
+	private TfDataProviderManageSettingsScreenRegionContext _dynamicComponentContext = null;
 	private TfScreenRegionScope _dynamicComponentScope = null;
 
 	protected override async Task OnInitializedAsync()
@@ -65,7 +65,7 @@ public partial class TfDataProviderManageDialog : TfFormBaseComponent, IDialogCo
 
 	private void _initDynamicComponent()
 	{
-		_dynamicComponentContext = new TfDataProviderManageSettingsScreenRegion
+		_dynamicComponentContext = new TfDataProviderManageSettingsScreenRegionContext
 		{
 			SettingsJson = _form.SettingsJson,
 			SettingsJsonChanged = EventCallback.Factory.Create<string>(this, _settingsChanged),

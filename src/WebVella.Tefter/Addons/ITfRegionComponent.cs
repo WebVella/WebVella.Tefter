@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.Addons;
 
-public interface ITfRegionComponent<T> : ITfAddon where T : TfBaseScreenRegion
+public interface ITfRegionComponent<T> : ITfAddon where T : TfBaseScreenRegionContext
 {
 	public int PositionRank { get; init;}
 	public List<TfScreenRegionScope> Scopes { get; init; }
-	T Context { get; init; }
+	T RegionContext { get; init; }
 }
 
 public class TfScreenRegionComponentMeta
@@ -14,7 +14,6 @@ public class TfScreenRegionComponentMeta
 	public string Name { get; init;}
 	public string Description { get; init;}
 	public string FluentIconName { get; init;}
-	public Type ComponentType { get; init; }
+	public Type Type { get; init; }
 	public List<TfScreenRegionScope> Scopes { get; init; }
-	public List<string> ScopeTypeFullNames { get; init; } = new();
 }

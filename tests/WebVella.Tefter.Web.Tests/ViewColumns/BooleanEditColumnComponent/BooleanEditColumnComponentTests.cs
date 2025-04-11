@@ -10,7 +10,7 @@ public class BooleanEditColumnComponentTests : BaseTest
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfBooleanEditColumnComponent>(args => args
-		.Add(x => x.Context, new TfSpaceViewColumnScreenRegion())
+		.Add(x => x.Context, new TfSpaceViewColumnScreenRegionContext())
 		);
 
 		// Assert

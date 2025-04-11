@@ -6,7 +6,7 @@ namespace WebVella.Tefter.DataProviders.Csv.Addons;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.Csv.Addons.ScreenRegionComponents.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.DataProviders.Csv")]
 public partial class ViewSettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegion>
+	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("15fb7760-5ff5-425f-b41e-339d67282cc4");
 	public int PositionRank { get; init; } = 1000;
@@ -16,7 +16,7 @@ public partial class ViewSettingsComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(CsvDataProvider),null)
 	};
-	[Parameter] public TfDataProviderDisplaySettingsScreenRegion Context { get; init; }
+	[Parameter] public TfDataProviderDisplaySettingsScreenRegionContext RegionContext { get; init; }
 
 	private string _advancedSettings
 	{
@@ -32,15 +32,15 @@ public partial class ViewSettingsComponent : TfBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(Context.SettingsJson);
+		_form = String.IsNullOrWhiteSpace(RegionContext.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(RegionContext.SettingsJson);
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (Context.SettingsJson != JsonSerializer.Serialize(_form))
+		if (RegionContext.SettingsJson != JsonSerializer.Serialize(_form))
 		{
-			_form = String.IsNullOrWhiteSpace(Context.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(Context.SettingsJson);
+			_form = String.IsNullOrWhiteSpace(RegionContext.SettingsJson) ? new() : JsonSerializer.Deserialize<CsvDataProviderSettings>(RegionContext.SettingsJson);
 		}
 	}
 

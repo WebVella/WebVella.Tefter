@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Talk.Addons;
 
 
-public partial class TalkPage : TfBaseComponent, ITfRegionComponent<TfPageScreenRegion>
+public partial class TalkPage : TfBaseComponent, ITfRegionComponent<TfPageScreenRegionContext>
 {
 	public Guid Id { get; init; }
 	public int PositionRank { get; init; }
@@ -10,7 +10,7 @@ public partial class TalkPage : TfBaseComponent, ITfRegionComponent<TfPageScreen
 	public string FluentIconName { get; init; }
 	public List<TfScreenRegionScope> Scopes { get; init; }
 	[Parameter]
-	public TfPageScreenRegion Context { get; init; }
+	public TfPageScreenRegionContext RegionContext { get; init; }
 
 	public TalkPage() : base()
 	{

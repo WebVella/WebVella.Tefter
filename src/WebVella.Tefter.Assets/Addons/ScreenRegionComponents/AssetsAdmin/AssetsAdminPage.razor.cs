@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Assets.Addons;
 
 public partial class AssetsAdminPage : TfBaseComponent, ITfAuxDataState, 
-	ITfRegionComponent<TfAdminPageScreenRegion>
+	ITfRegionComponent<TfAdminPageScreenRegionContext>
 {
 	public Guid Id { get; init; }
 	public int PositionRank { get; init; }
@@ -10,7 +10,7 @@ public partial class AssetsAdminPage : TfBaseComponent, ITfAuxDataState,
 	public string FluentIconName { get; init; }
 	public List<TfScreenRegionScope> Scopes { get; init; }
 	[Parameter] 
-	public TfAdminPageScreenRegion Context { get; init; }
+	public TfAdminPageScreenRegionContext RegionContext { get; init; }
 
 	public AssetsAdminPage() : base()
 	{

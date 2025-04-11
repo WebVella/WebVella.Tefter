@@ -1,6 +1,6 @@
 ﻿@namespace WebVella.Tefter.Web.Addons
 @inherits TucBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
-@if (Context.Mode == TucComponentMode.Display)
+@if (Context.Mode == TfComponentPresentationMode.Display)
 {
 	if (_value is null)
 	{
@@ -25,10 +25,6 @@
 		}
 		else if (componentOptions.TrueValueShowAsIcon)
 		{
-			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Checkmark")" Color="@Color.Success" /></div>
-		}
-		else
-		{
 			<div>@_value.Value.ToString()</div>
 		}
 	}
@@ -48,7 +44,7 @@
 		}
 	}
 }
-else if (Context.Mode == TucComponentMode.Options)
+else if (Context.Mode == TfComponentPresentationMode.Options)
 {
 
 	<FluentInputLabel Label="@LOC("on TRUE (text with priority)")" />
