@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons;
 
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
 	public const string ID = "ac4317e2-ef23-46b8-875d-c763e50a5d8e";
 	public const string NAME = "Sample Template Result";

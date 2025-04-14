@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons;
 
-public class SampleTemplateProcessor : ITfTemplateProcessor
+public class SampleTemplateProcessor : ITfTemplateProcessorAddon
 {
 
 	public const string ID = "9754c7dc-80da-4b65-bf10-eb441d370fe2";

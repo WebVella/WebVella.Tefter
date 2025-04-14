@@ -12,4 +12,15 @@ internal class SampleDataProviderSynchronizationLog : ITfDataProviderSychronizat
 	{
 		throw new NotImplementedException();
 	}
+
+	public void Log(string message, TfDataProviderSychronizationLogEntryType type = TfDataProviderSychronizationLogEntryType.Info)
+	{
+		throw new NotImplementedException();
+	}
+
+	public void Log(string message, Exception ex)
+	{
+		throw new NotImplementedException();
+	}
+
 }

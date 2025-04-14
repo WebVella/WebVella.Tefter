@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons;
 
 public partial class DisplaySettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {
 	public const string ID = "d05ea639-b6d2-4f8b-8cc7-307961cf0502";
 	public const string NAME = "Sample Template View Settings";

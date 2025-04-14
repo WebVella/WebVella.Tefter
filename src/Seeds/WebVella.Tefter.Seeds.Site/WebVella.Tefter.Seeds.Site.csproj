@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="WebVella.Tefter" Version="0.1.0" />
+		<PackageReference Include="WebVella.Tefter" Version="1.0.1" />
 		<ProjectReference Include="..\WebVella.Tefter.Seeds.SampleApplication\WebVella.Tefter.Seeds.SampleApplication.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.Seeds.SampleDataProvider\WebVella.Tefter.Seeds.SampleDataProvider.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter.Seeds.SampleTemplateProcessor\WebVella.Tefter.Seeds.SampleTemplateProcessor.csproj" />

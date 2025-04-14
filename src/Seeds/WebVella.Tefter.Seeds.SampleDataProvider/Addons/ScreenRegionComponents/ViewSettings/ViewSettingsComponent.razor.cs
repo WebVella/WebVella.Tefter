@@ -5,7 +5,7 @@ using WebVella.Tefter.Web.Models;
 namespace WebVella.Tefter.Seeds.SampleDataProvider.Components;
 
 public partial class ViewSettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
 	public const string ID = "4872f1ca-778e-4076-9ca0-b2b8424b1093";
 	public const string NAME = "Sample Data Provider View Settings";

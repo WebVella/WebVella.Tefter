@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleApplication.Pages;
 
-public partial class SampleAppAdminPage : TfBaseComponent, ITfAuxDataState, ITfRegionComponent<TfAdminPageScreenRegionContext>
+public partial class SampleAppAdminPage : TfBaseComponent, ITfAuxDataState, ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
 {
 	public const string ID = "afc65ec6-5e97-4149-aa0a-b39eb4c6561a";
 	public const string NAME = "Sample App";

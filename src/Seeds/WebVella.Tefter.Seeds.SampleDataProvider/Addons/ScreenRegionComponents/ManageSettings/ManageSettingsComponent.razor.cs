@@ -9,7 +9,7 @@ using WebVella.Tefter.Web.Models;
 namespace WebVella.Tefter.Seeds.SampleDataProvider.Components;
 
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 	public const string ID = "83b22c00-34d3-4883-af5b-7f4a4cd46f4c";
 	public const string NAME = "Sample Data Provider Manage Settings";

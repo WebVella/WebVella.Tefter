@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons;
 
 public partial class HelpComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
 {
 	public const string ID = "2a9fd6da-2827-425b-9841-7b995e114ab2";
 	public const string NAME = "Sample Template Help";

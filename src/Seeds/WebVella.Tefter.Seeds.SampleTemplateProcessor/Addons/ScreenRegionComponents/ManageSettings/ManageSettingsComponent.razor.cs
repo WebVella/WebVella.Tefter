@@ -3,7 +3,7 @@
 namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons;
 
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
 	public const string ID = "459ce24e-37af-48eb-99fe-abf32d0b83b4";
 	public const string NAME = "Sample Template Manage Settings";
