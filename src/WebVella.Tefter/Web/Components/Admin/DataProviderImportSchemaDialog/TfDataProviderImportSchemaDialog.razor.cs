@@ -51,6 +51,7 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 				var matchColumn = Content.Columns.FirstOrDefault(x => x.SourceName?.Trim().ToLowerInvariant() == columnName.Trim().ToLowerInvariant());
 				if (matchColumn is null)
 				{
+					string defaultValue = _schemaInfo.SourceColumnDefaultValue.ContainsKey(columnName) ? _schemaInfo.SourceColumnDefaultValue[columnName] : null;
 					_newColumns.Add(new TucDataProviderColumn
 					{
 						Id = Guid.NewGuid(),
@@ -60,6 +61,7 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 						DataProviderId = Content.Id,
 						DbName = TfConverters.GenerateDbNameFromText(columnName),
 						DbType = _schemaInfo.SourceColumnDefaultDbType[columnName],
+						DefaultValue = defaultValue
 					});
 				}
 				else
@@ -86,11 +88,11 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
-			
+
 			var provider = UC.CreateBulkDataProviderColumn(Content.Id, _newColumns);
 			await Dialog.CloseAsync(provider);
 		}
-		catch(TfValidationException ex)
+		catch (TfValidationException ex)
 		{
 			ValidationErrors = new();
 
@@ -151,5 +153,20 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 	{
 		column.PreferredSearchType = type;
 	}
-	
+
+	private void _nullableChanged(TucDataProviderColumn column)
+	{
+		if (column.IsNullable)
+		{
+			column.DefaultValue = null;
+		}
+		else
+		{
+			if (_schemaInfo.SourceColumnDefaultValue.ContainsKey(column.DbName))
+				column.DefaultValue = _schemaInfo.SourceColumnDefaultValue[column.DbName];
+			else
+				column.DefaultValue = null;
+		}
+	}
+
 }

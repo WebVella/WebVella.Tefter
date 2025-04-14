@@ -16,7 +16,7 @@ public partial class TfDataProviderSyncLogDialog : TfFormBaseComponent, IDialogC
 	{
 		base.OnInitialized();
 		if (Content is null) throw new Exception("Content is null");
-		_title = LOC("Synchronization informations");
+		_title = LOC("Synchronization log");
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)

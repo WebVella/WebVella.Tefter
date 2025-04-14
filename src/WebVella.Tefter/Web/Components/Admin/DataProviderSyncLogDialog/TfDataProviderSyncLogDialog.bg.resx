@@ -123,8 +123,8 @@
   <data name="Synchronization errors" xml:space="preserve">
     <value>Грешки при синхронизацията</value>
   </data>
-  <data name="Synchronization informations" xml:space="preserve">
-    <value>Информации при синхронизацията</value>
+  <data name="Synchronization log" xml:space="preserve">
+    <value>Дневник на синхронизацията</value>
   </data>
   <data name="Synchronization warnings" xml:space="preserve">
     <value>Предупреждения при синхронизацията</value>

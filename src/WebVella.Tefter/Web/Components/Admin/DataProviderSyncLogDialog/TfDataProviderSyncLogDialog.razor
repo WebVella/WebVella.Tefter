@@ -20,37 +20,16 @@
 		}
 		else
 		{
-			<div class="tf-grid-wrapper">
-				<table class="tf-grid">
-					<thead class="tf-grid-thead">
-						<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
-						<tr class="tf-grid-tr">
-							<th class="tf-grid-th" style="width:140px;">created on</th>
-							<th class="tf-grid-th">message</th>
-						</tr>
-					</thead>
-					<tbody class="tf-grid-tbody">
-						@foreach (var context in _items)
-						{
-							<tr class="tf-grid-tr">
-								<td class="tf-grid-td">
-									<div>@context.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</div>
-								</td>
-								<td class="tf-grid-td">
-									@if (context.Type == TfDataProviderSychronizationLogEntryType.Info)
-									{
-										<div>@context.Message</div>
-									}
-									else
-									{
-										<div style="background-color: red">@context.Message</div>
-									}
-									
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
+			<div class="tf-console-box">
+				@foreach (var context in _items)
+				{
+					<div class="tf-console-box__row">
+						<div class="tf-console-box__row__date">[@context.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")]</div>
+						<div class="tf-console-box__row__message">
+							<span class="@(context.Type == TfDataProviderSychronizationLogEntryType.Error ? "error" : "")">@context.Message</span>
+						</div>
+					</div>
+				}
 			</div>
 		}
 	</div>

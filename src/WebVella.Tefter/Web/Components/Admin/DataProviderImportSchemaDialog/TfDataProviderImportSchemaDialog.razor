@@ -121,7 +121,7 @@
 									</td>
 									<td class="tf-grid-td">
 										<div>
-											<FluentSwitch @bind-Value=@context.IsNullable Class="@_getValidationCssClass(context.SourceName,nameof(context.IsNullable))" />
+											<FluentSwitch @bind-Value=@context.IsNullable @bind-Value:after=@(() => _nullableChanged(context)) Class="@_getValidationCssClass(context.SourceName,nameof(context.IsNullable))" />
 											<TfValidationMessage Field="@nameof(context.IsNullable)" Index=_rowIndex Errors="ValidationErrors" />
 										</div>
 									</td>

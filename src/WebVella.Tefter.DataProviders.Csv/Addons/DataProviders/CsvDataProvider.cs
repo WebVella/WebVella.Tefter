@@ -252,6 +252,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 					var fieldValue = csvReader.GetField(column);
 					if (!suggestedColumnTypes.ContainsKey(column)) suggestedColumnTypes[column] = new();
 					TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
+					result.SourceColumnDefaultValue[column] = fieldValue.ToString();
 					suggestedColumnTypes[column].Add(type);
 				}
 				counter++;

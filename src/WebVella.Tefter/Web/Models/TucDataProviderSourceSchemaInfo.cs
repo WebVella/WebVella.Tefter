@@ -6,6 +6,8 @@ public class TucDataProviderSourceSchemaInfo
 	public Dictionary<string, TfDatabaseColumnType> SourceColumnDefaultDbType { get; set; } = new();
 	public Dictionary<string, List<TfDatabaseColumnType>> SourceTypeSupportedDbTypes { get; set; } = new();
 
+	public Dictionary<string, string> SourceColumnDefaultValue { get; set; } = new();
+
 	public TucDataProviderSourceSchemaInfo()
 	{
 	}
@@ -14,5 +16,6 @@ public class TucDataProviderSourceSchemaInfo
 		SourceColumnDefaultSourceType = model.SourceColumnDefaultSourceType;
 		SourceColumnDefaultDbType = model.SourceColumnDefaultDbType;
 		SourceTypeSupportedDbTypes = model.SourceTypeSupportedDbTypes;
+		SourceColumnDefaultValue = model.SourceColumnDefaultValue;
 	}
 }

@@ -981,6 +981,25 @@ fluent-switch::part(label) {
 .tf-tabs fluent-tab-panel {
   padding-top: 1rem;
 }
+.tf-console-box {
+  padding: 10px;
+  background: var(--neutral-layer-3);
+  max-height: 350px;
+  overflow-y: auto;
+  font-family: monospace;
+}
+.tf-console-box__row {
+  display: flex;
+  margin-bottom: 5px;
+}
+.tf-console-box__row__date {
+  flex: 0 0 auto;
+  padding-right: 10px;
+  color: var(--neutral-base-color);
+}
+.tf-console-box__row__message .error {
+  color: var(--error);
+}
 :root {
   --tf-layout-header-height: 48px;
   --tf-layout-wrapper-height: calc(100vh - var(--tf-layout-header-height));
