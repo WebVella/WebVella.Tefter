@@ -130,7 +130,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							columnBuider.WithLastCommited(meta.LastCommited);
 						}
 						break;
-					case TfDatabaseColumnType.Date:
+					case TfDatabaseColumnType.DateOnly:
 						{
 							DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
 
@@ -533,7 +533,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							columnBuider.WithLastCommited(meta.LastCommited);
 						}
 						break;
-					case TfDatabaseColumnType.Date:
+					case TfDatabaseColumnType.DateOnly:
 						{
 							DateOnly? columnDefaultValue = (DateOnly?)TfDatabaseUtility.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfDateDatabaseColumn), defaultValue);
 

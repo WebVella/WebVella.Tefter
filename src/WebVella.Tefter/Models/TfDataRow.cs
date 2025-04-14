@@ -57,7 +57,7 @@ public class TfDataRow : IEnumerable
 					if (value is not bool)
 						throw new Exception($"Trying to set non boolean value as value to boolean column.");
 					break;
-				case TfDatabaseColumnType.Date:
+				case TfDatabaseColumnType.DateOnly:
 					if (value is not DateOnly)
 						throw new Exception($"Trying to set non DateOnly value as value to Date column.");
 					break;

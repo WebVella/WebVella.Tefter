@@ -7,7 +7,7 @@ public enum TfDatabaseColumnType
 	LongInteger = 2,
 	Number = 3,
 	Boolean = 4,
-	Date = 5,
+	DateOnly = 5,
 	DateTime = 6,
 	ShortText = 7,
 	Text = 8,

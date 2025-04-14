@@ -65,9 +65,9 @@ public class CsvDataProvider : ITfDataProviderAddon
 			case "NUMBER":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
 			case "DATE":
-				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Date, TfDatabaseColumnType.DateTime }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateOnly, TfDatabaseColumnType.DateTime }.AsReadOnly();
 			case "DATETIME":
-				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.Date }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.DateOnly }.AsReadOnly();
 			case "SHORT_INTEGER":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger }.AsReadOnly();
 			case "INTEGER":
@@ -417,7 +417,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 					throw new Exception($"Cannot convert value to DateTime value for column {column.SourceName}");
 				}
 
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				{
 					if (!String.IsNullOrWhiteSpace(columnImportParseFormat)
 						&& DateTime.TryParseExact(value?.ToString(), columnImportParseFormat, culture, DateTimeStyles.AssumeLocal, out DateTime parsedValueExact))

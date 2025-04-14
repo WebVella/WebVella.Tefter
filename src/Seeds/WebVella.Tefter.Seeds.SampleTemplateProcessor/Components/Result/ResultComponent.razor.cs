@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Components;
 
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultScreenRegion>
+	ITfRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
 	public Guid Id { get; init; } = new Guid("ac4317e2-ef23-46b8-875d-c763e50a5d8e");
 	public int PositionRank { get; init; } = 1000;
@@ -11,7 +11,7 @@ public partial class ResultComponent : TfBaseComponent,
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(SampleTemplateProcessor),null)
 	};
-	[Parameter] public TfTemplateProcessorResultScreenRegion Context { get; init; }
+	[Parameter] public TfTemplateProcessorResultScreenRegionContext RegionContext { get; init; }
 
 
 	private SampleTemplateResult _result = null;
@@ -22,7 +22,7 @@ public partial class ResultComponent : TfBaseComponent,
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
-		if (Context is null) throw new Exception("Context is not defined");
+		if (RegionContext is null) throw new Exception("Context is not defined");
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -30,13 +30,13 @@ public partial class ResultComponent : TfBaseComponent,
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
-			if (Context.Template is not null && Context.SpaceData is not null)
+			if (RegionContext.Template is not null && RegionContext.SpaceData is not null)
 			{
 				ITfTemplateResult result = TfService.ProcessTemplate(
-					templateId: Context.Template.Id,
-					spaceDataId: Context.SpaceData.Id,
-					tfRecordIds: Context.SelectedRowIds,
-					preview: Context.Preview
+					templateId: RegionContext.Template.Id,
+					spaceDataId: RegionContext.SpaceData.Id,
+					tfRecordIds: RegionContext.SelectedRowIds,
+					preview: RegionContext.Preview
 				);
 				if (result is not SampleTemplateResult)
 				{

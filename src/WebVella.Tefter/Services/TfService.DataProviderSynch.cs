@@ -569,7 +569,7 @@ ORDER BY st.created_on DESC");
 						paramsDict.Add(column.DbName, parameter);
 					}
 					break;
-				case TfDatabaseColumnType.Date:
+				case TfDatabaseColumnType.DateOnly:
 				case TfDatabaseColumnType.DateTime:
 					{
 						var parameter = new NpgsqlParameter($"@{column.DbName}", NpgsqlDbType.Array | NpgsqlDbType.Date);
@@ -688,7 +688,7 @@ ORDER BY st.created_on DESC");
 							((List<string>)paramsDict[column.DbName].Value).Add((string)row[column.DbName]);
 						}
 						break;
-					case TfDatabaseColumnType.Date:
+					case TfDatabaseColumnType.DateOnly:
 					case TfDatabaseColumnType.DateTime:
 						{
 							DateTime? value = null;

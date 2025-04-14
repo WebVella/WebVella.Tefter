@@ -21,7 +21,7 @@ public static class CsvSourceToColumnTypeConverter
 		else if (Guid.TryParse(str, out guidValue)) return TfDatabaseColumnType.Guid;
 		else if (bool.TryParse(str, out boolValue)) return TfDatabaseColumnType.Boolean;
 		else if (decimal.TryParse(str, culture, out decimalValue)) return TfDatabaseColumnType.Number;
-		else if (DateOnly.TryParse(str, culture, out dateOnlyValue)) return TfDatabaseColumnType.Date;
+		else if (DateOnly.TryParse(str, culture, out dateOnlyValue)) return TfDatabaseColumnType.DateOnly;
 		else if (DateTime.TryParse(str, culture, out dateValue)) return TfDatabaseColumnType.DateTime;
 		else if (str.Length <= 4000) return TfDatabaseColumnType.ShortText;
 		else return TfDatabaseColumnType.Text;
@@ -39,7 +39,7 @@ public static class CsvSourceToColumnTypeConverter
 		if(distinctOptions.Contains(TfDatabaseColumnType.Guid)) return TfDatabaseColumnType.Guid;
 		if(distinctOptions.Contains(TfDatabaseColumnType.Number)) return TfDatabaseColumnType.Number;
 		if(distinctOptions.Contains(TfDatabaseColumnType.DateTime)) return TfDatabaseColumnType.DateTime;
-		if(distinctOptions.Contains(TfDatabaseColumnType.Date)) return TfDatabaseColumnType.Date;
+		if(distinctOptions.Contains(TfDatabaseColumnType.DateOnly)) return TfDatabaseColumnType.DateOnly;
 		if(distinctOptions.Contains(TfDatabaseColumnType.Boolean)) return TfDatabaseColumnType.Boolean;
 		if(distinctOptions.Contains(TfDatabaseColumnType.LongInteger)) return TfDatabaseColumnType.LongInteger;
 		if(distinctOptions.Contains(TfDatabaseColumnType.Integer)) return TfDatabaseColumnType.Integer;

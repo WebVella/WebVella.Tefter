@@ -42,9 +42,9 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 			case "NUMBER":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
 			case "DATE":
-				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Date, TfDatabaseColumnType.DateTime }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateOnly, TfDatabaseColumnType.DateTime }.AsReadOnly();
 			case "DATETIME":
-				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.Date }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.DateOnly }.AsReadOnly();
 			case "SHORT_INTEGER":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger }.AsReadOnly();
 			case "INTEGER":
@@ -125,7 +125,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 				}
 				else if (column.DataType == typeof(DateOnly) || column.DataType == typeof(DateOnly?))
 				{
-					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Date;
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.DateOnly;
 					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "DATE";
 				}
 				else if (column.DataType == typeof(DateTime) || column.DataType == typeof(DateTime?))
@@ -296,7 +296,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 				}
 				break;
 
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				{
 					if (value is DateTime)
 						return DateOnly.FromDateTime((DateTime)value);

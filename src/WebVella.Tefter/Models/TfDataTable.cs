@@ -263,7 +263,7 @@ public sealed class TfDataTable
 				return typeof(long);
 			case TfDatabaseColumnType.Number:
 				return typeof(decimal);
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				return typeof(DateOnly);
 			case TfDatabaseColumnType.DateTime:
 				return typeof(DateTime);

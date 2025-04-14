@@ -9,11 +9,12 @@ global using System.Text.Json.Serialization;
 global using ClosedXML.Excel;
 
 
+global using WebVella.Tefter.Addons;
 global using WebVella.Tefter.Models;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Exceptions;
 global using WebVella.Tefter.Web.Models;
 
-global using WebVella.Tefter.Seeds.SampleViewColumn;
-global using WebVella.Tefter.Seeds.SampleViewColumn.Components;
+global using WebVella.Tefter.Seeds.Addons;
+
 

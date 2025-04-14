@@ -8,4 +8,5 @@ global using Microsoft.Extensions.DependencyInjection;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Seeds.SampleDataProvider.Components;
 global using WebVella.Tefter.Exceptions;
+global using WebVella.Tefter.Addons;
 
