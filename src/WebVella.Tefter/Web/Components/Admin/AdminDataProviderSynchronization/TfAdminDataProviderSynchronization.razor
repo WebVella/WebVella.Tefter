@@ -24,7 +24,7 @@
 					<th class="tf-grid-th">status</th>
 					<th class="tf-grid-th" style="width:140px;">started on</th>
 					<th class="tf-grid-th" style="width:140px;">completed on</th>
-					<th class="tf-grid-th" style="width:160px;">errors</th>
+					<th class="tf-grid-th" style="width:160px;">log</th>
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
@@ -45,16 +45,9 @@
 						</td>
 						<td class="tf-grid-td">
 							<div>
-								@if (context.ErrorCount > 0)
-								{
-									<FluentButton OnClick="@(()=> _onViewLogClick(context.Id, TucDataProviderSyncTaskInfoType.Error))">
-										@LOC("{0} errors", context.ErrorCount)
-									</FluentButton>
-								}
-								else
-								{
-									<FluentButton Disabled="true">@LOC("no errors")</FluentButton>
-								}
+								<FluentButton OnClick="@(()=> _onViewLogClick(context))">
+									@LOC("view")
+								</FluentButton>
 							</div>
 						</td>
 					</tr>

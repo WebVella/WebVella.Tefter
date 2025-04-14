@@ -26,56 +26,28 @@
 						<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
 						<tr class="tf-grid-tr">
 							<th class="tf-grid-th" style="width:140px;">created on</th>
-							<th class="tf-grid-th" style="width:300px;">id</th>
-							<th class="tf-grid-th" style="width:80px;">row</th>
-							<th class="tf-grid-th">
-								@if (Content.Type == TucDataProviderSyncTaskInfoType.Info)
-								{
-									<span>info</span>
-								}
-								else if (Content.Type == TucDataProviderSyncTaskInfoType.Warning)
-								{
-									<span>warning</span>
-								}
-								else
-								{
-									<span>error</span>
-								}
-							</th>
+							<th class="tf-grid-th">message</th>
 						</tr>
 					</thead>
 					<tbody class="tf-grid-tbody">
-						@foreach (var context in _items.Take(_limit))
+						@foreach (var context in _items)
 						{
-							<tr @key=context.Id class="tf-grid-tr">
+							<tr class="tf-grid-tr">
 								<td class="tf-grid-td">
-									<div>@context.CreatedOn.ToString("yyyy-MM-dd HH:mm")</div>
+									<div>@context.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</div>
 								</td>
 								<td class="tf-grid-td">
-									<div>@context.TfId</div>
-								</td>
-								<td class="tf-grid-td">
-									<div>@context.TfRowIndex</div>
-								</td>
-								<td class="tf-grid-td">
-									@if (Content.Type == TucDataProviderSyncTaskInfoType.Info)
+									@if (context.Type == TfDataProviderSychronizationLogEntryType.Info)
 									{
-										<span>@context.Info</span>
-									}
-									else if (Content.Type == TucDataProviderSyncTaskInfoType.Warning)
-									{
-										<span>@context.Warning</span>
+										<div>@context.Message</div>
 									}
 									else
 									{
-										<span>@context.Error</span>
+										<div style="background-color: red">@context.Message</div>
 									}
+									
 								</td>
 							</tr>
-						}
-						@if (_items.Count > _limit)
-						{
-							<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("this screen shows only up to {0} rows", _limit)</FluentMessageBar>
 						}
 					</tbody>
 				</table>

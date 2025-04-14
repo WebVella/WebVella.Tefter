@@ -337,7 +337,7 @@ internal partial class AppStateUseCase
 	{
 		try
 		{
-			var result = _tfService.GetSynchronizationTasksExtended(providerId);
+			var result = _tfService.GetSynchronizationTasks(providerId);
 
 			if (result is null)
 				return Task.FromResult(new List<TucDataProviderSyncTask>());
@@ -406,31 +406,31 @@ internal partial class AppStateUseCase
 		return Task.CompletedTask;
 	}
 
-	internal virtual List<TucDataProviderSyncTaskInfo> GetSynchronizationTaskLogRecords(
-		Guid taskId,
-		TucDataProviderSyncTaskInfoType type)
-	{
-		var allTasks = _tfService.GetSynchronizationTaskResultInfos(taskId);
-		var result = new List<TucDataProviderSyncTaskInfo>();
-		switch (type)
-		{
-			case TucDataProviderSyncTaskInfoType.Info:
-				result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Info))
-				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
-				break;
-			case TucDataProviderSyncTaskInfoType.Warning:
-				result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Warning))
-				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
-				break;
-			case TucDataProviderSyncTaskInfoType.Error:
-				result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Error))
-				.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
-				break;
-			default:
-				throw new TfException("Not supported TucDataProviderSyncTaskInfoType");
-		}
-		return result;
-	}
+	//internal virtual List<TucDataProviderSyncTaskInfo> GetSynchronizationTaskLogRecords(
+	//	Guid taskId,
+	//	TucDataProviderSyncTaskInfoType type)
+	//{
+	//	var allTasks = _tfService.GetSynchronizationTaskResultInfos(taskId);
+	//	var result = new List<TucDataProviderSyncTaskInfo>();
+	//	switch (type)
+	//	{
+	//		case TucDataProviderSyncTaskInfoType.Info:
+	//			result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Info))
+	//			.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
+	//			break;
+	//		case TucDataProviderSyncTaskInfoType.Warning:
+	//			result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Warning))
+	//			.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
+	//			break;
+	//		case TucDataProviderSyncTaskInfoType.Error:
+	//			result = allTasks.Where(x => !String.IsNullOrWhiteSpace(x.Error))
+	//			.Select(x => new TucDataProviderSyncTaskInfo(x)).ToList();
+	//			break;
+	//		default:
+	//			throw new TfException("Not supported TucDataProviderSyncTaskInfoType");
+	//	}
+	//	return result;
+	//}
 
 	//Data
 	internal virtual TfDataTable GetDataProviderDataResult(Guid providerId, string search = null, int? page = null, int? pageSize = null)

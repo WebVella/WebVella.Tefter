@@ -11,13 +11,6 @@ public partial interface ITfService
 	internal TfDataProviderSynchronizeTask GetSynchronizationTask(
 		Guid taskId);
 
-	internal TfDataProviderSynchronizeTaskExtended GetSynchronizationTaskExtended(
-		Guid taskId);
-
-	internal List<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTasksExtended(
-		Guid? providerId = null,
-		TfSynchronizationStatus? status = null);
-
 	internal List<TfDataProviderSynchronizeTask> GetSynchronizationTasks(
 		Guid? providerId = null,
 		TfSynchronizationStatus? status = null);
@@ -32,17 +25,6 @@ public partial interface ITfService
 		ITfDataProviderSychronizationLog log,
 		DateTime? startedOn = null,
 		DateTime? completedOn = null);
-
-	internal List<TfDataProviderSynchronizeResultInfo> GetSynchronizationTaskResultInfos(
-		Guid taskId);
-
-	internal void CreateSynchronizationResultInfo(
-		Guid syncTaskId,
-		int? tfRowIndex,
-		Guid? tfId,
-		string info = null,
-		string warning = null,
-		string error = null);
 
 	internal TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(
 		Guid providerId);
@@ -132,168 +114,168 @@ public partial class TfService : ITfService
 		return result;
 	}
 
-	public TfDataProviderSynchronizeTaskExtended GetSynchronizationTaskExtended(
-		Guid taskId)
-	{
-		TfDataProviderSynchronizeTaskExtended dbo =
-			_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
-@"SELECT
-	st.id,
-	st.data_provider_id,
-	st.policy_json,
-	st.status,
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM tf_data_provider_synchronize_task st
-WHERE st.id = @task_id 
-GROUP BY
-	st.id,
-	st.data_provider_id,
-	st.policy_json,
-	st.status,
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json
-ORDER BY st.created_on DESC",
-				new NpgsqlParameter("@task_id", taskId));
+//	public TfDataProviderSynchronizeTaskExtended GetSynchronizationTaskExtended(
+//		Guid taskId)
+//	{
+//		TfDataProviderSynchronizeTaskExtended dbo =
+//			_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
+//@"SELECT
+//	st.id,
+//	st.data_provider_id,
+//	st.policy_json,
+//	st.status,
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+//FROM tf_data_provider_synchronize_task st
+//WHERE st.id = @task_id 
+//GROUP BY
+//	st.id,
+//	st.data_provider_id,
+//	st.policy_json,
+//	st.status,
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json
+//ORDER BY st.created_on DESC",
+//				new NpgsqlParameter("@task_id", taskId));
 
-		return dbo;
-	}
+//		return dbo;
+//	}
 
-	public List<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTasksExtended(
-		Guid? providerId = null,
-		TfSynchronizationStatus? status = null)
-	{
-		List<TfDataProviderSynchronizeTaskExtended> dbos = null;
-		if (providerId is not null && status is not null)
-		{
-			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-@"SELECT
-	st.id,
-	st.data_provider_id,
-	st.policy_json,
-	st.status,
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM tf_data_provider_synchronize_task st
-WHERE data_provider_id = @data_provider_id AND status = @status
-GROUP BY 
-	st.id, 
-	st.data_provider_id, 
-	st.policy_json, 
-	st.status, 
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json
-ORDER BY st.created_on DESC",
-				new NpgsqlParameter("@data_provider_id", providerId.Value),
-				new NpgsqlParameter("@status", (short)status.Value));
+//	public List<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTasksExtended(
+//		Guid? providerId = null,
+//		TfSynchronizationStatus? status = null)
+//	{
+//		List<TfDataProviderSynchronizeTaskExtended> dbos = null;
+//		if (providerId is not null && status is not null)
+//		{
+//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+//@"SELECT
+//	st.id,
+//	st.data_provider_id,
+//	st.policy_json,
+//	st.status,
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+//FROM tf_data_provider_synchronize_task st
+//WHERE data_provider_id = @data_provider_id AND status = @status
+//GROUP BY 
+//	st.id, 
+//	st.data_provider_id, 
+//	st.policy_json, 
+//	st.status, 
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json
+//ORDER BY st.created_on DESC",
+//				new NpgsqlParameter("@data_provider_id", providerId.Value),
+//				new NpgsqlParameter("@status", (short)status.Value));
 
-		}
-		else if (providerId is not null)
-		{
-			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-@"SELECT
-	st.id,
-	st.data_provider_id,
-	st.policy_json,
-	st.status,
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM tf_data_provider_synchronize_task st
-WHERE data_provider_id = @data_provider_id 
-GROUP BY
-	st.id,
-	st.data_provider_id,
-	st.policy_json,
-	st.status,
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json
-ORDER BY st.created_on DESC",
-				new NpgsqlParameter("@data_provider_id", providerId.Value));
+//		}
+//		else if (providerId is not null)
+//		{
+//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+//@"SELECT
+//	st.id,
+//	st.data_provider_id,
+//	st.policy_json,
+//	st.status,
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+//FROM tf_data_provider_synchronize_task st
+//WHERE data_provider_id = @data_provider_id 
+//GROUP BY
+//	st.id,
+//	st.data_provider_id,
+//	st.policy_json,
+//	st.status,
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json
+//ORDER BY st.created_on DESC",
+//				new NpgsqlParameter("@data_provider_id", providerId.Value));
 
-		}
-		else if (status is not null)
-		{
-			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-@"SELECT 
-	st.id, 
-	st.data_provider_id, 
-	st.policy_json, 
-	st.status, 
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json,
-	COUNT( sri_info.id ) AS info_count,
-	COUNT( sri_warning.id ) AS warning_count,
-	COUNT( sri_error.id ) AS error_count
-FROM tf_data_provider_synchronize_task st
-	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
-	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
-	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
-WHERE status = @status
-GROUP BY 
-	st.id, 
-	st.data_provider_id, 
-	st.policy_json, 
-	st.status, 
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json
-ORDER BY st.created_on DESC",
-				new NpgsqlParameter("@status", (short)status.Value));
-		}
-		else
-		{
-			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-@"SELECT
-	st.id,
-	st.data_provider_id,
-	st.policy_json,
-	st.status,
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-FROM tf_data_provider_synchronize_task st
-GROUP BY 
-	st.id, 
-	st.data_provider_id, 
-	st.policy_json, 
-	st.status, 
-	st.created_on,
-	st.started_on,
-	st.completed_on,
-	st.synch_log_json
-ORDER BY st.created_on DESC");
-		}
+//		}
+//		else if (status is not null)
+//		{
+//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+//@"SELECT 
+//	st.id, 
+//	st.data_provider_id, 
+//	st.policy_json, 
+//	st.status, 
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json,
+//	COUNT( sri_info.id ) AS info_count,
+//	COUNT( sri_warning.id ) AS warning_count,
+//	COUNT( sri_error.id ) AS error_count
+//FROM tf_data_provider_synchronize_task st
+//	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
+//	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
+//	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
+//WHERE status = @status
+//GROUP BY 
+//	st.id, 
+//	st.data_provider_id, 
+//	st.policy_json, 
+//	st.status, 
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json
+//ORDER BY st.created_on DESC",
+//				new NpgsqlParameter("@status", (short)status.Value));
+//		}
+//		else
+//		{
+//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
+//@"SELECT
+//	st.id,
+//	st.data_provider_id,
+//	st.policy_json,
+//	st.status,
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
+//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
+//FROM tf_data_provider_synchronize_task st
+//GROUP BY 
+//	st.id, 
+//	st.data_provider_id, 
+//	st.policy_json, 
+//	st.status, 
+//	st.created_on,
+//	st.started_on,
+//	st.completed_on,
+//	st.synch_log_json
+//ORDER BY st.created_on DESC");
+//		}
 
-		return dbos;
-	}
+//		return dbos;
+//	}
 
 	public Guid CreateSynchronizationTask(
 		Guid providerId,
@@ -362,83 +344,6 @@ ORDER BY st.created_on DESC");
 			throw ProcessException(ex);
 		}
 	}
-
-	#region <--- Synchronization Result Info --->
-
-	public List<TfDataProviderSynchronizeResultInfo> GetSynchronizationTaskResultInfos(
-		Guid taskId)
-	{
-		try
-		{
-			var orderSettings = new TfOrderSettings(
-			nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
-			OrderDirection.ASC);
-
-			var dbos = _dboManager.GetList<TfDataProviderSynchronizeResultInfoDbo>(
-					"WHERE task_id = @task_id",
-					orderSettings,
-					new NpgsqlParameter("@task_id", taskId));
-
-			var result = new List<TfDataProviderSynchronizeResultInfo>();
-
-			foreach (var dbo in dbos)
-			{
-				var task = new TfDataProviderSynchronizeResultInfo
-				{
-					Id = dbo.Id,
-					TaskId = dbo.TaskId,
-					TfId = dbo.TfId,
-					TfRowIndex = dbo.TfRowIndex,
-					CreatedOn = dbo.CreatedOn,
-					Info = dbo.Info,
-					Error = dbo.Error,
-					Warning = dbo.Warning
-				};
-				result.Add(task);
-			}
-
-			return result;
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	public void CreateSynchronizationResultInfo(
-		Guid taskId,
-		int? tfRowIndex,
-		Guid? tfId,
-		string info = null,
-		string warning = null,
-		string error = null)
-	{
-		try
-		{
-			var dbo = new TfDataProviderSynchronizeResultInfoDbo
-			{
-				Id = Guid.NewGuid(),
-				TaskId = taskId,
-				CreatedOn = DateTime.Now,
-				Info = info,
-				Error = error,
-				Warning = warning,
-				TfId = tfId,
-				TfRowIndex = tfRowIndex
-			};
-
-			var success = _dboManager.Insert<TfDataProviderSynchronizeResultInfoDbo>(dbo);
-			if (!success)
-				throw new TfDatabaseException("Failed to insert synchronization task result info.");
-
-		}
-		catch (Exception ex)
-		{
-			throw ProcessException(ex);
-		}
-	}
-
-	#endregion
 
 	public Task BulkSynchronize(
 		TfDataProviderSynchronizeTask task)
@@ -623,7 +528,8 @@ ORDER BY st.created_on DESC");
 		}
 		catch (Exception ex)
 		{
-			task.SynchronizationLog.Log($"synchronization task failed");
+			task.SynchronizationLog.Log($"synchronization task failed",
+							TfDataProviderSychronizationLogEntryType.Error);
 			throw ProcessException(ex);
 		}
 	}

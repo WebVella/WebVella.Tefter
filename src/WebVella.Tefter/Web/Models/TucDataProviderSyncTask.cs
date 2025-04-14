@@ -34,15 +34,17 @@ public record TucDataProviderSyncTask
 				return "not completed";
 		}
 	}
-	public long ErrorCount { get; set; } = 0;
+	public ITfDataProviderSychronizationLog SynchronizationLog { get; set; }
+	
 	public TucDataProviderSyncTask() { }
-	public TucDataProviderSyncTask(TfDataProviderSynchronizeTaskExtended model)
+	
+	public TucDataProviderSyncTask(TfDataProviderSynchronizeTask model)
 	{
 		Id = model.Id;
 		Status = (TucSynchronizationStatus)(int)model.Status;
 		CreatedOn = model.CreatedOn;
 		StartedOn = model.StartedOn;
 		CompletedOn = model.CompletedOn;
-		ErrorCount = model.ErrorCount;
+		SynchronizationLog = model.SynchronizationLog;
 	}
 }

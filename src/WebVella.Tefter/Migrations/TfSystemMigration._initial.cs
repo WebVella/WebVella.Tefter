@@ -251,44 +251,6 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 
 		#endregion
 
-		#region  TABLE: DATA_PROVIDER_SYNCHRONIZE_RESULT_INFO
-
-		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_data_provider_synchronize_result_info")
-			.WithColumns(columns =>
-			{
-				columns
-					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddGuidColumn("task_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
-					.AddDateTimeColumn("created_on", c => { c.NotNullable().WithAutoDefaultValue(); })
-					.AddIntegerColumn("tf_row_index", c => { c.Nullable(); })
-					.AddGuidColumn("tf_id", c => { c.Nullable(); })
-					.AddShortTextColumn("info", c => { c.Nullable(); })
-					.AddShortTextColumn("warning", c => { c.Nullable(); })
-					.AddShortTextColumn("error", c => { c.Nullable(); });
-			})
-			.WithConstraints(constraints =>
-			{
-				constraints
-					.AddPrimaryKeyConstraint("pk_dp_synchronize_result_info_id", c => { c.WithColumns("id"); })
-					.AddForeignKeyConstraint("fk_dp_task_result_info", c =>
-					{
-						c
-						.WithForeignTable("tf_data_provider_synchronize_task")
-						.WithForeignColumns("id")
-						.WithColumns("task_id");
-					});
-			})
-			.WithIndexes(indexes =>
-			{
-				indexes
-					.AddBTreeIndex("ix_dp_synchronize_result_info_id", i => { i.WithColumns("id"); })
-					.AddBTreeIndex("ix_dp_synchronize_result_info_task_id", i => { i.WithColumns("task_id"); })
-					.AddBTreeIndex("ix_dp_synchronize_result_info_created_on", i => { i.WithColumns("created_on"); });
-			});
-
-		#endregion
-
 		#region  TABLE: SHARED_COLUMN
 
 		dbBuilder

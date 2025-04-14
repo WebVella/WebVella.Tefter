@@ -14,14 +14,10 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 			_keyitems = TfAppState.Value.AdminDataProvider.SynchPrimaryKeyColumns.ToList();
 	}
 
-	private async Task _onViewLogClick(Guid taskId, TucDataProviderSyncTaskInfoType type)
+	private async Task _onViewLogClick(TucDataProviderSyncTask task)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderSyncLogDialog>(
-				new TucDataProviderSyncTaskInfoLog()
-				{
-					Type = type,
-					TaskId = taskId
-				},
+				task,
 				new DialogParameters()
 				{
 					PreventDismissOnOverlayClick = true,

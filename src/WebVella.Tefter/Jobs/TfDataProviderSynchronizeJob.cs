@@ -44,18 +44,15 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 
 					foreach (var taskInProgress in inProgresTasks)
 					{
+						taskInProgress.SynchronizationLog.Log(
+							"Application was stopped during synchronization process", 
+							TfDataProviderSychronizationLogEntryType.Error);
+
 						_tfService.UpdateSychronizationTask(
 							taskInProgress.Id,
 							TfSynchronizationStatus.Failed,
 							taskInProgress.SynchronizationLog,
 							completedOn: DateTime.Now);
-
-						_tfService.CreateSynchronizationResultInfo(
-							syncTaskId: taskInProgress.Id,
-							tfRowIndex: null,
-							tfId: null,
-							warning: null,
-							error: "Application was stopped during synchronization process");
 					}
 				}
 
@@ -85,11 +82,6 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 						TfSynchronizationStatus.Completed,
 						task.SynchronizationLog,
 						completedOn: DateTime.Now);
-
-					_tfService.CreateSynchronizationResultInfo(
-						syncTaskId: task.Id,
-						tfRowIndex: null,
-						tfId: null);
 				}
 				catch (OperationCanceledException ex)
 				{
@@ -98,13 +90,6 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 						TfSynchronizationStatus.Failed,
 						task.SynchronizationLog,
 						completedOn: DateTime.Now);
-
-					_tfService.CreateSynchronizationResultInfo(
-						syncTaskId: task.Id,
-						tfRowIndex: null,
-						tfId: null,
-						warning: null,
-						error: ex.Message);
 
 					// Prevent throwing if stoppingToken was signaled
 					_logger.LogError($"Task canceled {task.GetType().Name}", ex);
@@ -116,13 +101,8 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 						TfSynchronizationStatus.Failed,
 						task.SynchronizationLog,
 						completedOn: DateTime.Now);
-
-					_tfService.CreateSynchronizationResultInfo(
-						syncTaskId: task.Id,
-						tfRowIndex: null,
-						tfId: null,
-						warning: null,
-						error: ex.Message);
+					
+					_logger.LogError($"Task failed {task.GetType().Name}", ex);
 				}
 			}
 		}
@@ -153,18 +133,15 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 
 		foreach (var taskInProgress in inProgresTasks)
 		{
+			taskInProgress.SynchronizationLog.Log(
+							"Application was stopped during synchronization process",
+							TfDataProviderSychronizationLogEntryType.Error);
+
 			_tfService.UpdateSychronizationTask(
 				taskInProgress.Id,
 				TfSynchronizationStatus.Failed,
 				taskInProgress.SynchronizationLog,
 				completedOn: DateTime.Now);
-
-			_tfService.CreateSynchronizationResultInfo(
-				syncTaskId: taskInProgress.Id,
-				tfRowIndex: null,
-				tfId: null,
-				warning: null,
-				error: "Application was stopped during synchronization process");
 		}
 
 
@@ -200,17 +177,10 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 				task.SynchronizationLog,
 				completedOn: DateTime.Now);
 
-			_tfService.CreateSynchronizationResultInfo(
-				syncTaskId: task.Id,
-				tfRowIndex: null,
-				tfId: null,
-				warning: null,
-				error: ex.Message);
-
 			// Prevent throwing if stoppingToken was signaled
 			_logger.LogError($"Task canceled {task.GetType().Name}", ex);
 		}
-		catch (Exception ex)
+		catch(Exception ex)
 		{
 			_tfService.UpdateSychronizationTask(
 				task.Id,
@@ -218,12 +188,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 				task.SynchronizationLog,
 				completedOn: DateTime.Now);
 
-			_tfService.CreateSynchronizationResultInfo(
-				syncTaskId: task.Id,
-				tfRowIndex: null,
-				tfId: null,
-				warning: null,
-				error: ex.Message);
+			_logger.LogError($"Task failed {task.GetType().Name}", ex);
 		}
 	}
 }

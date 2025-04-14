@@ -4,9 +4,13 @@ namespace WebVella.Tefter.Models;
 
 public interface ITfDataProviderSychronizationLog
 {
-	public void Log(string message);
+	public void Log(string message,
+		TfDataProviderSychronizationLogEntryType type =
+		TfDataProviderSychronizationLogEntryType.Info);
 
-	public void Log(string message, Exception ex);
+	public void Log(
+		string message,
+		Exception ex);
 
 	internal ReadOnlyCollection<TfDataProviderSychronizationLogEntry> GetEntries();
 }
@@ -34,13 +38,15 @@ internal class TfDataProviderSychronizationLog : ITfDataProviderSychronizationLo
 		return _entries.AsReadOnly();
 	}
 
-	public void Log(string message)
+	public void Log(string message,
+		TfDataProviderSychronizationLogEntryType type = 
+		TfDataProviderSychronizationLogEntryType.Info )
 	{
 		_entries.Add(new TfDataProviderSychronizationLogEntry
 		{
 			CreatedOn = DateTime.Now,
 			Message = message??string.Empty,
-			Type =  TfDataProviderSychronizationLogEntryType.Info
+			Type =  type
 		});
 	}
 
