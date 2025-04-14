@@ -9,7 +9,7 @@
 		<PackageId>$(AssemblyName)</PackageId>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<Description>The core library of the open-source Tefter platform. It is an open-source web platform hosted on your server, designed to optimize your team's processes, enhance communication, and streamline tasks when working with data.		</Description>
-		<Version>0.0.8</Version>
+		<Version>0.1.0</Version>
 		<Authors>WebVella</Authors>
 		<Company>WebVella</Company>
 		<Copyright>WebVella 2025</Copyright>
@@ -50,7 +50,7 @@
 		<!--<PackageReference Include="FluentResults" Version="3.16.0" />
 		<PackageReference Include="FluentResults.Extensions.AspNetCore" Version="0.1.0" />-->
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-		<PackageReference Include="Bogus" Version="35.6.2" />
+		<PackageReference Include="Bogus" Version="35.6.3" />
 		<PackageReference Include="Fluxor" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.6.0" />
@@ -58,8 +58,8 @@
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.4" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.7" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.7" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.8" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.8" />
 	
 		<PackageReference Include="Npgsql" Version="9.0.3" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />

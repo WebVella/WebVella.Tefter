@@ -27,7 +27,7 @@ global using WebVella.Tefter.Services;
 
 global using WebVella.Tefter.TemplateProcessors.DocumentFile;
 global using WebVella.Tefter.TemplateProcessors.DocumentFile.Models;
-global using WebVella.Tefter.TemplateProcessors.DocumentFile.Components;
+global using WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 //global using WebVella.Tefter.TemplateProcessors.ExcelFile.Services;
 
 global using FluentValidation;

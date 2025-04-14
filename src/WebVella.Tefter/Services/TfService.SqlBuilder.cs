@@ -541,7 +541,7 @@ public partial class TfService : ITfService
 			}
 			else if (filter is TfFilterDateTime)
 			{
-				if (!(column.DbType == TfDatabaseColumnType.Date ||
+				if (!(column.DbType == TfDatabaseColumnType.DateOnly ||
 					 column.DbType == TfDatabaseColumnType.DateTime))
 				{
 					return string.Empty;

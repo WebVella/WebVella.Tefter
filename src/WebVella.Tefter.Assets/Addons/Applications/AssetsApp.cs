@@ -1,22 +1,15 @@
 ﻿namespace WebVella.Tefter.Assets.Addons;
 public class AssetsApp : ITfApplicationAddon
 {
-	/// <summary>
-	/// used as unique identifier
-	/// </summary>
-	public Guid Id { get; init; } = AssetsConstants.ASSETS_APP_ID;
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string Name { get; init; } = AssetsConstants.ASSETS_APP_NAME;
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string Description { get; init; } = AssetsConstants.ASSETS_APP_DECRIPTION;
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string FluentIconName { get; init; } = "Folder";
+	public const string ID = "5d229b2b-5c78-48fb-b91f-6e853f24aaf2";
+	public const string NAME = "Talk Application";
+	public const string DESCRIPTION = "Talk Application Description";
+	public const string FLUENT_ICON_NAME = "Folder";
+
+	public Guid Id { get; init;} =  new Guid(ID);
+	public string Name { get; init;} =  NAME;
+	public string Description { get; init;} =  DESCRIPTION;
+	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
 	/// <summary>
 	/// Called once on program start
 	/// </summary>

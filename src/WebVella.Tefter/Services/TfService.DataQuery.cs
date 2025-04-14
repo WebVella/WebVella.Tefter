@@ -314,13 +314,13 @@ public partial class TfService : ITfService
 
 		foreach (var column in provider.Columns)
 		{
-			if (column.DbType == TfDatabaseColumnType.Date)
+			if (column.DbType == TfDatabaseColumnType.DateOnly)
 				dateOnlyColumns.Add(column.DbName);
 		}
 
 		foreach (var column in provider.SharedColumns)
 		{
-			if (column.DbType == TfDatabaseColumnType.Date)
+			if (column.DbType == TfDatabaseColumnType.DateOnly)
 				dateOnlyColumns.Add(column.DbName);
 		}
 
@@ -652,7 +652,7 @@ public partial class TfService : ITfService
 				if ((Guid?)row[column.Name] != (Guid?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
 			}
-			else if (column.DbType == TfDatabaseColumnType.Date)
+			else if (column.DbType == TfDatabaseColumnType.DateOnly)
 			{
 				if ((DateOnly?)row[column.Name] != (DateOnly?)existingRow[column.Name])
 					columnsWithChanges.Add(column.Name);
@@ -836,7 +836,7 @@ public partial class TfService : ITfService
 				resultType = DbType.Guid; break;
 			case TfDatabaseColumnType.Boolean:
 				resultType = DbType.Boolean; break;
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				resultType = DbType.Date; break;
 			case TfDatabaseColumnType.DateTime:
 				resultType = DbType.DateTime2; break;
@@ -887,7 +887,7 @@ public partial class TfService : ITfService
 				else
 				{
 					var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == column.ColumnName);
-					if (providerColumn is not null && providerColumn.DbType == TfDatabaseColumnType.Date)
+					if (providerColumn is not null && providerColumn.DbType == TfDatabaseColumnType.DateOnly)
 					{
 						value = DateOnly.FromDateTime((DateTime)value);
 					}
@@ -929,7 +929,7 @@ public partial class TfService : ITfService
 				else
 				{
 					var providerColumn = provider.Columns.SingleOrDefault(x => x.DbName == column.ColumnName);
-					if (providerColumn is not null && providerColumn.DbType == TfDatabaseColumnType.Date)
+					if (providerColumn is not null && providerColumn.DbType == TfDatabaseColumnType.DateOnly)
 					{
 						value = DateOnly.FromDateTime((DateTime)value);
 					}
@@ -1366,7 +1366,7 @@ public partial class TfService : ITfService
 				return "shared_column_long_integer_value";
 			case TfDatabaseColumnType.Number:
 				return "shared_column_number_value";
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				return "shared_column_date_value";
 			case TfDatabaseColumnType.DateTime:
 				return "shared_column_datetime_value";

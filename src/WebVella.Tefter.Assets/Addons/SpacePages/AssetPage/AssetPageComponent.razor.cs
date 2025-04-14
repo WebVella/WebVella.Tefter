@@ -4,6 +4,12 @@ namespace WebVella.Tefter.Assets.Addons;
 [LocalizationResource("WebVella.Tefter.Assets.Addons.SpacePages.AssetPage.AssetPageComponent", "WebVella.Tefter.Assets")]
 public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 {
+	public const string ID = "0109d2c8-8597-47e7-bb4b-b1b06badd4a7";
+	public const string NAME = "Asset Page";
+	public const string DESCRIPTION = "asset folder per page";
+	public const string FLUENT_ICON_NAME = "Folder";
+
+
 	#region << Injects >>
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
@@ -12,10 +18,10 @@ public partial class AssetPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid Id { get; init; } = new Guid("0109d2c8-8597-47e7-bb4b-b1b06badd4a7");
-	public override string Name { get; init; } = "Asset Page";
-	public override string Description { get; init; } = "asset folder per page";
-	public override string FluentIconName { get; init; } = "Folder";
+	public override Guid Id { get; init; } = new Guid(ID);
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);

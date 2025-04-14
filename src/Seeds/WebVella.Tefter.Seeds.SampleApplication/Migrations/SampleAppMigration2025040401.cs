@@ -3,10 +3,10 @@
 namespace WebVella.Tefter.Seeds.SampleApplication.Migrations;
 
 
-[TfApplicationMigration(SampleAppConstants.APP_ID_STRING, "2025.04.04.01")]
+[TfApplicationMigration(SampleApp.ID, "2025.04.04.01")]
 public class SampleAppMigration2025040401 : ITfApplicationMigration
 {
-	public Task MigrateDataAsync(ITfApplication app, IServiceProvider serviceProvider, ITfDatabaseService dbService)
+	public Task MigrateDataAsync(ITfApplicationAddon app, IServiceProvider serviceProvider, ITfDatabaseService dbService)
 	{
 		ISampleAppService sampleAppService = serviceProvider.GetService<ISampleAppService>();
 
@@ -17,7 +17,7 @@ public class SampleAppMigration2025040401 : ITfApplicationMigration
 		return Task.CompletedTask;
 	}
 
-	public Task MigrateStructureAsync(ITfApplication app, TfDatabaseBuilder dbBuilder)
+	public Task MigrateStructureAsync(ITfApplicationAddon app, TfDatabaseBuilder dbBuilder)
 	{
 		dbBuilder
 			.NewTableBuilder(Guid.NewGuid(), "sample_app_notes")

@@ -4,13 +4,15 @@ namespace WebVella.Tefter.DataProviders.MsSql.Addons;
 
 public class MsSqlDataProvider : ITfDataProviderAddon
 {
-	public Guid Id { get; init;} = new Guid("0f86e009-1db4-497f-b10a-a55f4fad455d");
 
-	public string Name { get; init;} = "Microsoft Sql Data Provider";
-
-	public string Description { get; init;} = "Provide data from Microsoft SQL server query.";
-
-	public string FluentIconName { get; init;} = "DocumentTable";
+	public const string ID = "0f86e009-1db4-497f-b10a-a55f4fad455d";
+	public const string NAME = "Microsoft Sql Data Provider";
+	public const string DESCRIPTION = "Provide data from Microsoft SQL server query";
+	public const string FLUENT_ICON_NAME = "DocumentTable";
+	public Guid Id { get; init;} =  new Guid(ID);
+	public string Name { get; init;} = NAME;
+	public string Description { get; init;} = DESCRIPTION;
+	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
 
 	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{
@@ -42,9 +44,9 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 			case "NUMBER":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
 			case "DATE":
-				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Date, TfDatabaseColumnType.DateTime }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateOnly, TfDatabaseColumnType.DateTime }.AsReadOnly();
 			case "DATETIME":
-				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.Date }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime, TfDatabaseColumnType.DateOnly }.AsReadOnly();
 			case "SHORT_INTEGER":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.ShortInteger }.AsReadOnly();
 			case "INTEGER":
@@ -145,7 +147,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 				}
 				else if (column.DataType == typeof(DateOnly) || column.DataType == typeof(DateOnly?))
 				{
-					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.Date;
+					schemaInfo.SourceColumnDefaultDbType[column.ColumnName] = TfDatabaseColumnType.DateOnly;
 					schemaInfo.SourceColumnDefaultSourceType[column.ColumnName] = "DATE";
 				}
 				else if (column.DataType == typeof(DateTime) || column.DataType == typeof(DateTime?))
@@ -344,7 +346,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 				}
 				break;
 
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				{
 					if (value is DateTime)
 						return DateOnly.FromDateTime((DateTime)value);

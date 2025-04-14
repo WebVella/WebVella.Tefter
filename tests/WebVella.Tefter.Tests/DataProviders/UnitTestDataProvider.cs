@@ -47,7 +47,7 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 			case "NUMBER":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Number }.AsReadOnly();
 			case "DATE":
-				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.Date }.AsReadOnly();
+				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateOnly }.AsReadOnly();
 			case "DATETIME":
 				return new List<TfDatabaseColumnType> { TfDatabaseColumnType.DateTime }.AsReadOnly();
 			case "SHORT_INTEGER":
@@ -71,7 +71,7 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("guid_column", TfDatabaseColumnType.Guid, "GUID"));
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_text_column", TfDatabaseColumnType.ShortText, "SHORT_TEXT"));
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("text_column", TfDatabaseColumnType.Text, "TEXT"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("date_column", TfDatabaseColumnType.Date, "DATE"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("date_column", TfDatabaseColumnType.DateOnly, "DATE"));
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("datetime_column", TfDatabaseColumnType.DateTime, "DATETIME"));
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_int_column", TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
 		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("int_column", TfDatabaseColumnType.Integer, "INTEGER"));
@@ -110,7 +110,7 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 				return faker.Random.Long(1000, 10000);
 			case TfDatabaseColumnType.Number:
 				return faker.Random.Decimal(100000, 1000000);
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				return faker.Date.PastDateOnly();
 			case TfDatabaseColumnType.DateTime:
 				return faker.Date.Future();

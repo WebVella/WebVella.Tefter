@@ -385,7 +385,7 @@ public partial class TfServiceTest : BaseTest
 					DefaultValue = "2024-06-27",
 					DataProviderId = provider.Id,
 					DbName = "date",
-					DbType = TfDatabaseColumnType.Date,
+					DbType = TfDatabaseColumnType.DateOnly,
 					SourceName = "source_column",
 					SourceType = "DATE",
 					IncludeInTableSearch = true,
@@ -481,7 +481,7 @@ public partial class TfServiceTest : BaseTest
 	{
 		using (await locker.LockAsync())
 		{
-			CreateAndUpdateColumnType(TfDatabaseColumnType.Date, "DATE", "1975-10-25");
+			CreateAndUpdateColumnType(TfDatabaseColumnType.DateOnly, "DATE", "1975-10-25");
 		}
 	}
 

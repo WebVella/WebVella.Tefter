@@ -3,6 +3,7 @@
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Services;
 using WebVella.Tefter.TemplateProcessors.TextContent;
+using WebVella.Tefter.TemplateProcessors.TextContent.Addons;
 
 public partial class TfServiceTest : BaseTest
 {

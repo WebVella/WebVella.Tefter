@@ -7,11 +7,16 @@ namespace WebVella.Tefter.DataProviders.MsSql.Addons;
 [LocalizationResource("WebVella.Tefter.DataProviders.MsSql.Addons.ScreenRegionComponents.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.MsSql")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,	ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
-	public Guid Id { get; init; } = new Guid("b543421c-c77f-45d9-8c81-ac0c5a0a303f");
-	public int PositionRank { get; init; } = 1000;
-	public string Name { get; init; } = "MSSQL Data Provider Manage Settings";
-	public string Description { get; init; } = "";
-	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public const string ID = "b543421c-c77f-45d9-8c81-ac0c5a0a303f";
+	public const string NAME = "MSSQL Data Provider Manage Settings";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "PuzzlePiece";
+	public const int POSITION_RANK = 1000;
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(MsSqlDataProvider),null)
 	};

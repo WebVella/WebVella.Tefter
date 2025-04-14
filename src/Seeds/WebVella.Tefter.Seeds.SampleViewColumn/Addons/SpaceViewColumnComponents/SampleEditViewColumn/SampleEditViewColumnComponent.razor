@@ -1,0 +1,20 @@
+﻿@namespace WebVella.Tefter.Seeds.Addons
+@inherits ComponentBase
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
+{
+	<div>
+		<FluentTextField Id="@_valueInputId"
+						 @bind-Value="@_value"
+						 @bind-Value:after="_valueChanged"
+						 Style="width:100%;min-width:60px;" AutoComplete="off" />
+	</div>
+}
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
+{
+	<div style="color:red">Component options form</div>
+}
+else
+{
+	<div style="color:red">Component Mode Not implemented</div>
+}
+

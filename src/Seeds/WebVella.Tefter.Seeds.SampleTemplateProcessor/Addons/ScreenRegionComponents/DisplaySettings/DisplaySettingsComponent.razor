@@ -1,0 +1,10 @@
+﻿@using WebVella.Tefter.Web.Components
+@namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons
+@inherits TfFormBaseComponent
+
+<FluentGrid>
+	<FluentGridItem xs="12">
+		<FluentInputLabel Label="Content" />
+		<FluentTextArea Value=@_form.Content ReadOnly="true" Style="width:100%" Rows="7" />
+	</FluentGridItem>
+</FluentGrid>

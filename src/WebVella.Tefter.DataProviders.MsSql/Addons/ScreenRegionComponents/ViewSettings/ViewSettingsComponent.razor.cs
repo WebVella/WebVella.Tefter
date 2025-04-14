@@ -7,11 +7,16 @@ namespace WebVella.Tefter.DataProviders.MsSql.Addons;
 public partial class ViewSettingsComponent : TfBaseComponent,
 	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
-	public Guid Id { get; init; } = new Guid("26621b7b-c7de-4a27-8330-ee33cf0a807f");
-	public int PositionRank { get; init; } = 1000;
-	public string Name { get; init; } = "MSSQL Data Provider View Settings";
-	public string Description { get; init; } = "";
-	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public const string ID = "26621b7b-c7de-4a27-8330-ee33cf0a807f";
+	public const string NAME = "MSSQL Data Provider View Settings";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "PuzzlePiece";
+	public const int POSITION_RANK = 1000;
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(MsSqlDataProvider),null)
 	};

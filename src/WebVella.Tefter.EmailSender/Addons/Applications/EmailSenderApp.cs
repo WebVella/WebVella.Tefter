@@ -2,12 +2,14 @@
 
 public class EmailSenderApp : ITfApplicationAddon
 {
-	public Guid Id { get; init; } = EmailSenderConstants.APP_ID;
-
-	public string Name { get; init; } = EmailSenderConstants.APP_NAME;
-
-	public string Description { get; init; } = EmailSenderConstants.APP_DECRIPTION;
-	public string FluentIconName { get; init; } = "Mail";
+	public const string ID = "0c847f54-28c0-4314-9151-bb9226d42033";
+	public const string NAME = "Email Sender Application";
+	public const string DESCRIPTION = "Email Sender Application Description";
+	public const string FLUENT_ICON_NAME = "Mail";
+	public Guid Id { get; init;} =  new Guid(ID);
+	public string Name { get; init;} =  NAME;
+	public string Description { get; init;} =  DESCRIPTION;
+	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
 
 	public void OnStart()
 	{

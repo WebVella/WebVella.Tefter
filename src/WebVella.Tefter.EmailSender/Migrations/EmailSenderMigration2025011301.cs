@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Talk.Migrations;
 
 
-[TfApplicationMigration(EmailSenderConstants.APP_ID_STRING, "2025.01.13.1")]
+[TfApplicationMigration(EmailSenderApp.ID, "2025.01.13.1")]
 public class EmailSenderMigration2025011301 : ITfApplicationMigration
 {
 	public async Task MigrateDataAsync(ITfApplicationAddon app, IServiceProvider serviceprovider, ITfDatabaseService dbService)

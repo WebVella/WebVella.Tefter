@@ -141,7 +141,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 				return GetDataStructByAlias<decimal>(alias);
 			case TfDatabaseColumnType.Boolean:
 				return GetDataStructByAlias<bool>(alias);
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				return GetDataStructByAlias<DateOnly>(alias);
 			case TfDatabaseColumnType.DateTime:
 				return GetDataStructByAlias<DateTime>(alias);
@@ -174,7 +174,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 				return typeof(decimal);
 			case TfDatabaseColumnType.Boolean:
 				return typeof(bool);
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				return typeof(DateOnly);
 			case TfDatabaseColumnType.DateTime:
 				return typeof(DateTime);
@@ -207,7 +207,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 				return TfConverters.Convert<decimal>(stringValue);
 			case TfDatabaseColumnType.Boolean:
 				return TfConverters.Convert<bool>(stringValue);
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				return TfConverters.Convert<DateOnly>(stringValue);
 			case TfDatabaseColumnType.DateTime:
 				return TfConverters.Convert<DateTime>(stringValue);

@@ -250,7 +250,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.Id;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -281,7 +281,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.Id;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -312,7 +312,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.Id;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = column.DbName;
@@ -365,7 +365,7 @@ public partial class TfService : ITfService
 								if (columnType is not null)
 								{
 									tfColumn.TypeId = columnType.Id;
-									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID);
+									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
 										tfColumn.DataMapping[mapper.Alias] = dbName;

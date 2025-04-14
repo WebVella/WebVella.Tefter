@@ -4,6 +4,11 @@ namespace WebVella.Tefter.Talk.Addons;
 [LocalizationResource("WebVella.Tefter.Talk.Addons.SpacePages.TalkPageComponent.TalkPageComponent", "WebVella.Tefter.Talk")]
 public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 {
+	public const string ID = "6589259a-4f90-445d-8a62-d4b51bab3afd";
+	public const string NAME = "Talk Page";
+	public const string DESCRIPTION = "general discussion per page";
+	public const string FLUENT_ICON_NAME = "ChatMultiple";
+
 	#region << Injects >>
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
@@ -11,10 +16,10 @@ public partial class TalkPageComponent : TucBaseSpaceNodeComponent
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid Id { get; init; } = new Guid("6589259a-4f90-445d-8a62-d4b51bab3afd");
-	public override string Name { get; init; } = "Talk Page";
-	public override string Description { get; init; } = "general discussion per page";
-	public override string FluentIconName { get; init; } = "ChatMultiple";
+	public override Guid Id { get; init; } = new Guid(ID);
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);

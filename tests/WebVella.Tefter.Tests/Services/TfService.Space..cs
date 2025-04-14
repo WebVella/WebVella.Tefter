@@ -662,7 +662,7 @@ public partial class TfServiceTest : BaseTest
 											.Replace("(", "")
 											.Replace(")", ""),
 						Title = availableColumnType.Name,
-						ComponentId = new Guid(TfConstants.TF_COLUMN_COMPONENT_DISPLAY_TEXT_ID),
+						ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
 						SpaceViewId = view.Id,
 						CustomOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }

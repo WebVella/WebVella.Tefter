@@ -420,7 +420,7 @@ public partial class TfService : ITfService
 					}
 				}
 				break;
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				{
 					columnsBuilder.AddDateColumn(column.DbName, c =>
 					{
@@ -710,7 +710,7 @@ public partial class TfService : ITfService
 					}
 				}
 				break;
-			case TfDatabaseColumnType.Date:
+			case TfDatabaseColumnType.DateOnly:
 				{
 					columnsBuilder.WithDateColumn(column.DbName, c =>
 					{
@@ -956,7 +956,7 @@ public partial class TfService : ITfService
 			new DatabaseColumnTypeInfo
 			{
 				Name = "DATE",
-				Type = TfDatabaseColumnType.Date,
+				Type = TfDatabaseColumnType.DateOnly,
 				CanBeProviderDataType = true,
 				SupportAutoDefaultValue = true
 			});
@@ -1230,7 +1230,7 @@ public partial class TfService : ITfService
 										}
 									}
 									break;
-								case TfDatabaseColumnType.Date:
+								case TfDatabaseColumnType.DateOnly:
 									{
 										if (column.AutoDefaultValue == false && column.DefaultValue is not null)
 										{

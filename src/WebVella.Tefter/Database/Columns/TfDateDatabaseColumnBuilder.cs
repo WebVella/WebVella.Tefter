@@ -58,7 +58,7 @@ public class TfDateDatabaseColumnBuilder : TfDatabaseColumnBuilder
             IsNullable = _isNullable,
             AutoDefaultValue = _autoDefaultValue,
             Name = _name,
-            Type = TfDatabaseColumnType.Date
+            Type = TfDatabaseColumnType.DateOnly
         };
     }
 }
