@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Assets.Addons;
 [LocalizationResource("WebVella.Tefter.Assets.Addons.SpacePages.AssetPage.AssetPageComponent", "WebVella.Tefter.Assets")]
-public partial class AssetPageComponent : TucBaseSpaceNodeComponent
+public partial class AssetPageComponent : TucBaseSpacePageComponent
 {
 	public const string ID = "0109d2c8-8597-47e7-bb4b-b1b06badd4a7";
 	public const string NAME = "Asset Page";

@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Addons;
 
-public partial class TfSpaceViewSpacePageAddon : TucBaseSpaceNodeComponent
+public partial class TfSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 {
 	#region << Render Injects >>
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }

@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Talk.Addons;
 [LocalizationResource("WebVella.Tefter.Talk.Addons.SpacePages.TalkPageComponent.TalkPageComponent", "WebVella.Tefter.Talk")]
-public partial class TalkPageComponent : TucBaseSpaceNodeComponent
+public partial class TalkPageComponent : TucBaseSpacePageComponent
 {
 	public const string ID = "6589259a-4f90-445d-8a62-d4b51bab3afd";
 	public const string NAME = "Talk Page";

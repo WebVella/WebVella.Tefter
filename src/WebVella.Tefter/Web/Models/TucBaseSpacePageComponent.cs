@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-public abstract class TucBaseSpaceNodeComponent : ComponentBase, ITfSpacePageAddon
+public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAddon
 {
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
 	public virtual Guid Id { get; init; } = Guid.NewGuid();
