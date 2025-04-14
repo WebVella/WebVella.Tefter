@@ -11,7 +11,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	private bool _loading = true;
 	private List<TucTemplate> _templates = new();
 	private TucTemplate _selectedTemplate = null;
-	private ITfTemplateProcessor _processor = null;
+	private ITfTemplateProcessorAddon _processor = null;
 	private TfUseTemplateDialogStep _currentStep = TfUseTemplateDialogStep.SelectTemplate;
 	private TfTemplateProcessorResultPreviewScreenRegionContext _resultPreviewComponentContext = null;
 	private TfTemplateProcessorResultScreenRegionContext _resultComponentContext = null;
@@ -92,11 +92,11 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 		_next();
 	}
 
-	private ITfTemplateProcessor _getTemplateProcessorInstance(Type type)
+	private ITfTemplateProcessorAddon _getTemplateProcessorInstance(Type type)
 	{
-		if (type is not null && type.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		if (type is not null && type.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			return (ITfTemplateProcessor)Activator.CreateInstance(type);
+			return (ITfTemplateProcessorAddon)Activator.CreateInstance(type);
 		}
 		return null;
 	}
@@ -125,14 +125,14 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	{
 		_resultComponentContext.Preview = value;
 	}
-	private ITfTemplateProcessor _getProcessor()
+	private ITfTemplateProcessorAddon _getProcessor()
 	{
 		if (_selectedTemplate is null) return null;
 
 		if (_selectedTemplate.ContentProcessorType is not null
-			&& _selectedTemplate.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+			&& _selectedTemplate.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			return (ITfTemplateProcessor)Activator.CreateInstance(_selectedTemplate.ContentProcessorType);
+			return (ITfTemplateProcessorAddon)Activator.CreateInstance(_selectedTemplate.ContentProcessorType);
 
 		}
 		return null;

@@ -15,7 +15,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 	private Icon _iconBtn;
 	private string _form = null;
 
-	private ITfTemplateProcessor _processor = null;
+	private ITfTemplateProcessorAddon _processor = null;
 	private TfTemplateProcessorManageSettingsScreenRegionContext _dynamicComponentContext = null;
 	private TfScreenRegionScope _dynamicComponentScope = null;
 
@@ -69,12 +69,12 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		_form = json;
 	}
 
-	private ITfTemplateProcessor _getProcessor()
+	private ITfTemplateProcessorAddon _getProcessor()
 	{
 
-		if (Content.ContentProcessorType is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		if (Content.ContentProcessorType is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			return (ITfTemplateProcessor)Activator.CreateInstance(Content.ContentProcessorType);
+			return (ITfTemplateProcessorAddon)Activator.CreateInstance(Content.ContentProcessorType);
 
 		}
 		return null;

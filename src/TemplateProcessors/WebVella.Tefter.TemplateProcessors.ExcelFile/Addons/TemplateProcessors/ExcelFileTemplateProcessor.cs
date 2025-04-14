@@ -4,7 +4,7 @@ using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 
-public class ExcelFileTemplateProcessor : ITfTemplateProcessor
+public class ExcelFileTemplateProcessor : ITfTemplateProcessorAddon
 {
 	public const string ID = "a655fffd-1a02-4e90-9e05-50595916f97a";
 	public const string NAME = "Excel file template";

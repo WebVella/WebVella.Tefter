@@ -4,7 +4,7 @@ using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 
-public class DocumentFileTemplateProcessor : ITfTemplateProcessor
+public class DocumentFileTemplateProcessor : ITfTemplateProcessorAddon
 {
 	public const string ID = "87c5667a-b49a-4949-aac3-d91a05457b6a";
 	public const string NAME = "Document file template";

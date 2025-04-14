@@ -10,7 +10,7 @@ using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.TextFile.Addons;
 
-public class TextFileTemplateProcessor : ITfTemplateProcessor
+public class TextFileTemplateProcessor : ITfTemplateProcessorAddon
 {
 	public const string ID = "1f1139b2-a92c-4ae3-9dc9-318404ab6b04";
 	public const string NAME = "Text file template";

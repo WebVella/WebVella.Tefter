@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public interface ITfTemplateProcessor
+public interface ITfTemplateProcessorAddon
 {
 	public Guid Id { get; init;}
 	public string Name { get; init;}

@@ -101,7 +101,7 @@
 		</ChildContent>
 	</TfCard>
 	<div style="margin:1rem 0">
-		<TfSelectComponent TOption="ITfTemplateProcessor" Items="@TfAppState.Value.AdminTemplateProcessors"
+		<TfSelectComponent TOption="ITfTemplateProcessorAddon" Items="@TfAppState.Value.AdminTemplateProcessors"
 						   Value="_processor"
 						   OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
 						   OptionMatch="@((x,y)=> x.Id == y.Id)" />

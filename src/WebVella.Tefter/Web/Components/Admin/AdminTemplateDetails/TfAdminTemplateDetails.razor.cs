@@ -5,7 +5,7 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 {
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
-	private ITfTemplateProcessor _processor = null;
+	private ITfTemplateProcessorAddon _processor = null;
 	private List<TfSpaceDataAsOption> _spaceDataAll = new();
 	private List<TfSpaceDataAsOption> _spaceDataSelection = new();
 
@@ -128,16 +128,16 @@ public partial class TfAdminTemplateDetails : TfBaseComponent
 	}
 
 
-	private ITfTemplateProcessor _getProcessor()
+	private ITfTemplateProcessorAddon _getProcessor()
 	{
 		if (TfAppState.Value.AdminTemplateDetails is null)
 			throw new Exception("Template not found");
 
 		var context = TfAppState.Value.AdminTemplateDetails;
 		if (context is null) return null;
-		if (context.ContentProcessorType is not null && context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		if (context.ContentProcessorType is not null && context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			return (ITfTemplateProcessor)Activator.CreateInstance(context.ContentProcessorType);
+			return (ITfTemplateProcessorAddon)Activator.CreateInstance(context.ContentProcessorType);
 
 		}
 		return null;

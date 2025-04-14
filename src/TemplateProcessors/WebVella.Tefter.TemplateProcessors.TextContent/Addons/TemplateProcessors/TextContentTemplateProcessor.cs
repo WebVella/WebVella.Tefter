@@ -5,7 +5,7 @@ using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.TemplateProcessors.TextContent.Addons;
 
-public class TextContentTemplateProcessor : ITfTemplateProcessor
+public class TextContentTemplateProcessor : ITfTemplateProcessorAddon
 {
 	public const string ID = "174c885f-dd5e-4666-900a-adfafca633cc";
 	public const string NAME = "Text content template";

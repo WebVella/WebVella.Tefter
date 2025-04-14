@@ -33,7 +33,7 @@ internal partial class AppStateUseCase
 	}
 
 	//Processors
-	internal virtual List<ITfTemplateProcessor> GetProcessors()
+	internal virtual List<ITfTemplateProcessorAddon> GetProcessors()
 	{
 		try
 		{
@@ -49,7 +49,7 @@ internal partial class AppStateUseCase
 					toastService: _toastService,
 					messageService: _messageService
 				);
-			return new List<ITfTemplateProcessor>();
+			return new List<ITfTemplateProcessorAddon>();
 		}
 	}
 

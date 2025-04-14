@@ -92,9 +92,9 @@ else
 						<td class="tf-grid-td">
 							<div>
 								@if (context.ContentProcessorType is not null
-													&& context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+													&& context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 								{
-									var component = (ITfTemplateProcessor)Activator.CreateInstance(context.ContentProcessorType);
+									var component = (ITfTemplateProcessorAddon)Activator.CreateInstance(context.ContentProcessorType);
 									<div>@component.Name</div>
 									<div class="td-description">@component.Description</div>
 								}

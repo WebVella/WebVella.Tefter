@@ -8,7 +8,7 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 
 	private string _error = string.Empty;
 
-	private ITfTemplateProcessor _processor = null;
+	private ITfTemplateProcessorAddon _processor = null;
 	private TfTemplateProcessorHelpScreenRegionContext _dynamicComponentContext = null;
 	private TfScreenRegionScope _dynamicComponentScope = null;
 
@@ -23,12 +23,12 @@ public partial class TfTemplateHelpDialog : TfBaseComponent, IDialogContentCompo
 		await Dialog.CancelAsync();
 	}
 
-	private ITfTemplateProcessor _getProcessor()
+	private ITfTemplateProcessorAddon _getProcessor()
 	{
 
-		if (Content.ContentProcessorType is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		if (Content.ContentProcessorType is not null && Content.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			return (ITfTemplateProcessor)Activator.CreateInstance(Content.ContentProcessorType);
+			return (ITfTemplateProcessorAddon)Activator.CreateInstance(Content.ContentProcessorType);
 
 		}
 		return null;

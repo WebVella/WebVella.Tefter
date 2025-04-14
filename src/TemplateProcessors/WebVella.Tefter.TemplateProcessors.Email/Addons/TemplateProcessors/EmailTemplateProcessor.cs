@@ -14,7 +14,7 @@ using WebVella.Tefter.Web.Components;
 
 namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 
-public class EmailTemplateProcessor : ITfTemplateProcessor
+public class EmailTemplateProcessor : ITfTemplateProcessorAddon
 {
 	public const string ID = "12c7c882-0be3-4692-add0-469098d36032";
 	public const string NAME = "Email template";

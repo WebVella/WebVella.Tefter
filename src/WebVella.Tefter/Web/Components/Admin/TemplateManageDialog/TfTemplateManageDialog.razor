@@ -132,7 +132,7 @@
 				<FluentGrid>
 					<FluentGridItem xs="12">
 						<FluentInputLabel Label="@LOC("Template type")" />
-						<TfSelectComponent TOption="ITfTemplateProcessor" Items="@_processors"
+						<TfSelectComponent TOption="ITfTemplateProcessorAddon" Items="@_processors"
 										   Value="_selectedProcessor" ValueChanged="_componentChanged"
 										   OptionText="@(x=> x.Name)" OptionIcon="@(x=> x.FluentIconName)" OptionDescription="@(x=> x.Description)"
 										   OptionMatch="@((x,y)=> x.Id == y.Id)" />

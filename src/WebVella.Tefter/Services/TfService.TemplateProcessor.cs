@@ -2,22 +2,22 @@
 
 public partial interface ITfService
 {
-	public ITfTemplateProcessor GetTemplateProcessor(
+	public ITfTemplateProcessorAddon GetTemplateProcessor(
 			string typeName);
 
-	public ITfTemplateProcessor GetTemplateProcessor(
+	public ITfTemplateProcessorAddon GetTemplateProcessor(
 			Type type);
 
 	public ReadOnlyCollection<Type> GetTemplateProcessorTypes();
 
-	public ReadOnlyCollection<ITfTemplateProcessor> GetTemplateProcessors();
+	public ReadOnlyCollection<ITfTemplateProcessorAddon> GetTemplateProcessors();
 }
 
 public partial class TfService : ITfService
 {
-	private static Dictionary<Type, ITfTemplateProcessor> _templateProcessorsDict = null;
+	private static Dictionary<Type, ITfTemplateProcessorAddon> _templateProcessorsDict = null;
 
-	public ITfTemplateProcessor GetTemplateProcessor(
+	public ITfTemplateProcessorAddon GetTemplateProcessor(
 		string typeName)
 	{
 		try
@@ -31,7 +31,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public ITfTemplateProcessor GetTemplateProcessor(
+	public ITfTemplateProcessorAddon GetTemplateProcessor(
 		Type type)
 	{
 		try
@@ -49,7 +49,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public ReadOnlyCollection<ITfTemplateProcessor> GetTemplateProcessors()
+	public ReadOnlyCollection<ITfTemplateProcessorAddon> GetTemplateProcessors()
 	{
 		try
 		{
@@ -92,7 +92,7 @@ public partial class TfService : ITfService
 				return;
 			}
 
-			_templateProcessorsDict = new Dictionary<Type, ITfTemplateProcessor>();
+			_templateProcessorsDict = new Dictionary<Type, ITfTemplateProcessorAddon>();
 
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies()
 							.Where(a => !(a.FullName.ToLowerInvariant().StartsWith("microsoft.")
@@ -102,9 +102,9 @@ public partial class TfService : ITfService
 			{
 				foreach (Type type in assembly.GetTypes())
 				{
-					if (type.GetInterfaces().Any(x => x == typeof(ITfTemplateProcessor)))
+					if (type.GetInterfaces().Any(x => x == typeof(ITfTemplateProcessorAddon)))
 					{
-						var instance = (ITfTemplateProcessor)Activator.CreateInstance(type);
+						var instance = (ITfTemplateProcessorAddon)Activator.CreateInstance(type);
 						_templateProcessorsDict.Add(type, instance);
 					}
 				}

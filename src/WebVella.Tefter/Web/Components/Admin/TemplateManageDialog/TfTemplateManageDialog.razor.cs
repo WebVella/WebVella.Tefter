@@ -16,8 +16,8 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 	private Icon _iconBtn;
 	private bool _isCreate = false;
 	private TucManageTemplateModel _form = null;
-	private List<ITfTemplateProcessor> _processors = new();
-	private ITfTemplateProcessor _selectedProcessor = null;
+	private List<ITfTemplateProcessorAddon> _processors = new();
+	private ITfTemplateProcessorAddon _selectedProcessor = null;
 
 	private List<TfSpaceDataAsOption> _spaceDataAll = new();
 	private List<TfSpaceDataAsOption> _spaceDataOptions = new();
@@ -45,9 +45,9 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 			UserId = TfAppState.Value.CurrentUser.Id,
 			SpaceDataList = Content.SpaceDataList,
 		};
-		if (_form.ContentProcessorType is not null && _form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessor)) != null)
+		if (_form.ContentProcessorType is not null && _form.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 		{
-			_selectedProcessor = (ITfTemplateProcessor)Activator.CreateInstance(_form.ContentProcessorType);
+			_selectedProcessor = (ITfTemplateProcessorAddon)Activator.CreateInstance(_form.ContentProcessorType);
 
 		}
 		if (_selectedProcessor is null)
@@ -128,7 +128,7 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 	{
 		await Dialog.CancelAsync();
 	}
-	private void _componentChanged(ITfTemplateProcessor item)
+	private void _componentChanged(ITfTemplateProcessorAddon item)
 	{
 		_selectedProcessor = item;
 		_form.ContentProcessorType = _selectedProcessor.GetType();
