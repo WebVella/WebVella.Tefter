@@ -48,6 +48,7 @@ public class TfDataProviderSynchronizeTask
 	public DateTime CreatedOn { get; set; } = DateTime.Now;
 	public DateTime? StartedOn { get; set; } = null;
 	public DateTime? CompletedOn { get; set; } = null;
+	internal TfDataProviderSychronizationLog SynchronizationLog { get; set; } = new TfDataProviderSychronizationLog();
 }
 
 [TfDboModel("tf_data_provider_synchronize_task")]
@@ -77,6 +78,9 @@ public class TfDataProviderSynchronizeTaskDbo
 	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	[TfDboModelProperty("completed_on")]
 	public DateTime? CompletedOn { get; set; } = null;
+
+	[TfDboModelProperty("synch_log_json")]
+	public string SynchLogJson { get; set; } = "[]";
 }
 
 public class TfDataProviderSynchronizeResultInfo
@@ -116,7 +120,6 @@ public class TfDataProviderSynchronizeResultInfoDbo
 
 	[TfDboModelProperty("tf_id")]
 	public Guid? TfId { get; set; } = null;
-
 
 	[TfDboModelProperty("info")]
 	public string Info { get; set; } = null;

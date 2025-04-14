@@ -47,6 +47,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 						_tfService.UpdateSychronizationTask(
 							taskInProgress.Id,
 							TfSynchronizationStatus.Failed,
+							taskInProgress.SynchronizationLog,
 							completedOn: DateTime.Now);
 
 						_tfService.CreateSynchronizationResultInfo(
@@ -74,6 +75,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.InProgress,
+						task.SynchronizationLog,
 						startedOn: DateTime.Now);
 										
 					await _tfService.BulkSynchronize(task);
@@ -81,13 +83,20 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.Completed,
+						task.SynchronizationLog,
 						completedOn: DateTime.Now);
+
+					_tfService.CreateSynchronizationResultInfo(
+						syncTaskId: task.Id,
+						tfRowIndex: null,
+						tfId: null);
 				}
 				catch (OperationCanceledException ex)
 				{
 					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.Failed,
+						task.SynchronizationLog,
 						completedOn: DateTime.Now);
 
 					_tfService.CreateSynchronizationResultInfo(
@@ -105,6 +114,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 					_tfService.UpdateSychronizationTask(
 						task.Id,
 						TfSynchronizationStatus.Failed,
+						task.SynchronizationLog,
 						completedOn: DateTime.Now);
 
 					_tfService.CreateSynchronizationResultInfo(
@@ -146,6 +156,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			_tfService.UpdateSychronizationTask(
 				taskInProgress.Id,
 				TfSynchronizationStatus.Failed,
+				taskInProgress.SynchronizationLog,
 				completedOn: DateTime.Now);
 
 			_tfService.CreateSynchronizationResultInfo(
@@ -170,6 +181,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.InProgress,
+				task.SynchronizationLog,
 				startedOn: DateTime.Now);
 
 			await _tfService.BulkSynchronize(task);
@@ -177,6 +189,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.Completed,
+				task.SynchronizationLog,
 				completedOn: DateTime.Now);
 		}
 		catch (OperationCanceledException ex)
@@ -184,6 +197,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.Failed,
+				task.SynchronizationLog,
 				completedOn: DateTime.Now);
 
 			_tfService.CreateSynchronizationResultInfo(
@@ -201,6 +215,7 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 			_tfService.UpdateSychronizationTask(
 				task.Id,
 				TfSynchronizationStatus.Failed,
+				task.SynchronizationLog,
 				completedOn: DateTime.Now);
 
 			_tfService.CreateSynchronizationResultInfo(

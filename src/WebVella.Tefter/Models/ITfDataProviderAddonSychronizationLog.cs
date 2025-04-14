@@ -1,8 +1,14 @@
-﻿namespace WebVella.Tefter.Models;
+﻿using Microsoft.FluentUI.AspNetCore.Components;
+
+namespace WebVella.Tefter.Models;
 
 public interface ITfDataProviderSychronizationLog
 {
-	public void AddNewLogEntry(string message);
+	public void Log(string message);
+
+	public void Log(string message, Exception ex);
+
+	internal ReadOnlyCollection<TfDataProviderSychronizationLogEntry> GetEntries();
 }
 
 internal class TfDataProviderSychronizationLog : ITfDataProviderSychronizationLog
@@ -14,23 +20,68 @@ internal class TfDataProviderSychronizationLog : ITfDataProviderSychronizationLo
 		_entries = new List<TfDataProviderSychronizationLogEntry>();
 	}
 
+	public TfDataProviderSychronizationLog(IEnumerable<TfDataProviderSychronizationLogEntry> entries)
+	{
+		if(entries == null)
+			throw new ArgumentNullException(nameof(entries));
+
+		_entries = new List<TfDataProviderSychronizationLogEntry>();
+		_entries.AddRange(entries);
+	}
+
 	public ReadOnlyCollection<TfDataProviderSychronizationLogEntry> GetEntries()
 	{
 		return _entries.AsReadOnly();
 	}
 
-	public void AddNewLogEntry(string message)
+	public void Log(string message)
 	{
 		_entries.Add(new TfDataProviderSychronizationLogEntry
 		{
 			CreatedOn = DateTime.Now,
-			Message = message
+			Message = message??string.Empty,
+			Type =  TfDataProviderSychronizationLogEntryType.Info
+		});
+	}
+
+	public void Log(string message, Exception ex)
+	{
+		_entries.Add(new TfDataProviderSychronizationLogEntry
+		{
+			CreatedOn = DateTime.Now,
+			Message = message ?? string.Empty,
+			Type =  TfDataProviderSychronizationLogEntryType.Error
+		});
+
+		if (ex == null)
+			return;
+
+		_entries.Add(new TfDataProviderSychronizationLogEntry
+		{
+			CreatedOn = DateTime.Now,
+			Message = $"exception message:{ex.Message}",
+			Type = TfDataProviderSychronizationLogEntryType.Error
+		});
+
+		_entries.Add(new TfDataProviderSychronizationLogEntry
+		{
+			CreatedOn = DateTime.Now,
+			Message = $"exception stacktrace:{ex.StackTrace}",
+			Type = TfDataProviderSychronizationLogEntryType.Error
 		});
 	}
 }
 
-internal record TfDataProviderSychronizationLogEntry
+public record TfDataProviderSychronizationLogEntry
 {
 	public DateTime CreatedOn { get; set; }
 	public string Message { get; set; }
+	public TfDataProviderSychronizationLogEntryType Type { get; set; } =
+		TfDataProviderSychronizationLogEntryType.Info;
+}
+
+public enum TfDataProviderSychronizationLogEntryType
+{
+	Info,
+	Error
 }
