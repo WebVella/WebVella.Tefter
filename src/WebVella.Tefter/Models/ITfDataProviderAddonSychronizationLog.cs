@@ -12,7 +12,7 @@ public interface ITfDataProviderSychronizationLog
 		string message,
 		Exception ex);
 
-	internal ReadOnlyCollection<TfDataProviderSychronizationLogEntry> GetEntries();
+	public ReadOnlyCollection<TfDataProviderSychronizationLogEntry> GetEntries();
 }
 
 internal class TfDataProviderSychronizationLog : ITfDataProviderSychronizationLog

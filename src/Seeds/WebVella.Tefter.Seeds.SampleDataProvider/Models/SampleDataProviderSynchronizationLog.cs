@@ -23,4 +23,8 @@ internal class SampleDataProviderSynchronizationLog : ITfDataProviderSychronizat
 		throw new NotImplementedException();
 	}
 
+	public ReadOnlyCollection<TfDataProviderSychronizationLogEntry> GetEntries()	
+	{
+		throw new NotImplementedException();
+	}
 }
