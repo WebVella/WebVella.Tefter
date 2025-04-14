@@ -29,6 +29,7 @@ public partial interface ITfService
 	internal void UpdateSychronizationTask(
 		Guid taskId,
 		TfSynchronizationStatus status,
+		ITfDataProviderSychronizationLog log,
 		DateTime? startedOn = null,
 		DateTime? completedOn = null);
 
@@ -113,6 +114,7 @@ public partial class TfService : ITfService
 
 		foreach (var dbo in dbos)
 		{
+			var logEntries = JsonSerializer.Deserialize<List<TfDataProviderSychronizationLogEntry>>(dbo.SynchLogJson??"[]");
 			var task = new TfDataProviderSynchronizeTask
 			{
 				Id = dbo.Id,
@@ -122,6 +124,7 @@ public partial class TfService : ITfService
 				Policy = JsonSerializer.Deserialize<TfSynchronizationPolicy>(dbo.PolicyJson),
 				StartedOn = dbo.StartedOn,
 				Status = dbo.Status,
+				SynchronizationLog = new TfDataProviderSychronizationLog(logEntries)
 			};
 			result.Add(task);
 		}
@@ -142,6 +145,7 @@ public partial class TfService : ITfService
 	st.created_on,
 	st.started_on,
 	st.completed_on,
+	st.synch_log_json,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
@@ -154,7 +158,8 @@ GROUP BY
 	st.status,
 	st.created_on,
 	st.started_on,
-	st.completed_on
+	st.completed_on,
+	st.synch_log_json
 ORDER BY st.created_on DESC",
 				new NpgsqlParameter("@task_id", taskId));
 
@@ -177,6 +182,7 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
+	st.synch_log_json,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
@@ -189,7 +195,8 @@ GROUP BY
 	st.status, 
 	st.created_on,
 	st.started_on,
-	st.completed_on
+	st.completed_on,
+	st.synch_log_json
 ORDER BY st.created_on DESC",
 				new NpgsqlParameter("@data_provider_id", providerId.Value),
 				new NpgsqlParameter("@status", (short)status.Value));
@@ -206,6 +213,7 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
+	st.synch_log_json,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
@@ -218,7 +226,8 @@ GROUP BY
 	st.status,
 	st.created_on,
 	st.started_on,
-	st.completed_on
+	st.completed_on,
+	st.synch_log_json
 ORDER BY st.created_on DESC",
 				new NpgsqlParameter("@data_provider_id", providerId.Value));
 
@@ -234,6 +243,7 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
+	st.synch_log_json,
 	COUNT( sri_info.id ) AS info_count,
 	COUNT( sri_warning.id ) AS warning_count,
 	COUNT( sri_error.id ) AS error_count
@@ -249,7 +259,8 @@ GROUP BY
 	st.status, 
 	st.created_on,
 	st.started_on,
-	st.completed_on
+	st.completed_on,
+	st.synch_log_json
 ORDER BY st.created_on DESC",
 				new NpgsqlParameter("@status", (short)status.Value));
 		}
@@ -264,6 +275,7 @@ ORDER BY st.created_on DESC",
 	st.created_on,
 	st.started_on,
 	st.completed_on,
+	st.synch_log_json,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
 	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
@@ -275,7 +287,8 @@ GROUP BY
 	st.status, 
 	st.created_on,
 	st.started_on,
-	st.completed_on
+	st.completed_on,
+	st.synch_log_json
 ORDER BY st.created_on DESC");
 		}
 
@@ -294,7 +307,9 @@ ORDER BY st.created_on DESC");
 			Status = TfSynchronizationStatus.Pending,
 			CreatedOn = DateTime.Now,
 			CompletedOn = null,
-			StartedOn = DateTime.Now
+			StartedOn = DateTime.Now,
+			SynchLogJson = JsonSerializer.Serialize(new List<TfDataProviderSychronizationLogEntry>()),
+
 		};
 
 		var success = _dboManager.Insert<TfDataProviderSynchronizeTaskDbo>(task);
@@ -307,6 +322,7 @@ ORDER BY st.created_on DESC");
 	public void UpdateSychronizationTask(
 		Guid taskId,
 		TfSynchronizationStatus status,
+		ITfDataProviderSychronizationLog log,
 		DateTime? startedOn = null,
 		DateTime? completedOn = null)
 	{
@@ -319,6 +335,8 @@ ORDER BY st.created_on DESC");
 			dbo.StartedOn = startedOn;
 		if (completedOn is not null)
 			dbo.CompletedOn = completedOn;
+
+		dbo.SynchLogJson = JsonSerializer.Serialize(log.GetEntries());
 
 		var success = _dboManager.Update<TfDataProviderSynchronizeTaskDbo>(dbo);
 		if (!success)
@@ -422,98 +440,190 @@ ORDER BY st.created_on DESC");
 
 	#endregion
 
-	public async Task BulkSynchronize(
+	public Task BulkSynchronize(
 		TfDataProviderSynchronizeTask task)
 	{
 		try
 		{
-			await Task.Delay(1);
-
-			TfDataProviderSychronizationLog synchLog = new TfDataProviderSychronizationLog();
+			task.SynchronizationLog.Log("synchronization task started");
 
 			var provider = GetDataProvider(task.DataProviderId);
 
 			if (provider is null)
-				throw new TfException("Unable to get provider.");
+			{
+				var ex = new TfException("Unable to get provider.");
+				task.SynchronizationLog.Log($"data provider ({task.DataProviderId}) for task not found.", ex );
+				throw ex;
+			}
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_SYNC_OPERATION_LOCK_KEY))
 			{
-				var existingData = GetExistingData(provider);
-				var newData = GetNewData(provider, synchLog);
+				Dictionary<string, DataRow> existingData = null;
+				try
+				{
+					task.SynchronizationLog.Log($"start loading existing system data information needed for synchronization");
+					existingData = GetExistingData(provider);
+					task.SynchronizationLog.Log($"complete loading existing system data information needed for synchronization");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to load existing system data information needed for synchronization", ex);
+					throw new TfException("Failed to load existing system data information needed for synchronization.", ex);
+				}
+
+				ReadOnlyCollection<TfDataProviderDataRow> newData = null;
+				try
+				{
+					task.SynchronizationLog.Log($"start loading data from provider");
+					newData = GetNewData(provider, task.SynchronizationLog);
+					task.SynchronizationLog.Log($"complete loading data from provider");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to load data from provider", ex);
+					throw new TfException("Failed to load data from provider.", ex);
+				}
 
 				if (newData.Count() == 0)
 				{
+					task.SynchronizationLog.Log($"data provider returned empty data set");
+					task.SynchronizationLog.Log($"delete all rows from data provider data table");
+					
 					DeleteAllProviderRows(provider);
+					
+					task.SynchronizationLog.Log($"all rows deleted successfully");
+					
 					scope.Complete();
-					return;
+					
+					task.SynchronizationLog.Log($"task completed successfully");
+					return Task.CompletedTask;
 				}
 
 				var tableName = $"dp{provider.Index}";
 
-				var preparedSharedKeyIds = BulkPrepareSharedKeyValueIds(provider, newData);
+				Dictionary<string, Guid> preparedSharedKeyIds = null;
+				List<string> columnList = null;
+				Dictionary<string, NpgsqlParameter> paramsDict = null;
+				Dictionary<string, Guid> newTfIds = null;
 
-				var (columnList, paramsDict, newTfIds) = PrepareQueryArrayParameters(provider, preparedSharedKeyIds, existingData, newData);
-
-				BulkPrepareAndUpdateTfIds(newTfIds, paramsDict["tf_id"]);
-
-				//drop cloned table if exists
-				_dbService.ExecuteSqlNonQueryCommand($"DROP TABLE IF EXISTS {tableName}_sync CASCADE;");
-
-				//clone table
-				var result = _dbManager.CloneTableForSynch(tableName);
-
-				if (!result.IsSuccess)
+				try
 				{
-					throw new Exception("Failed to create duplicate structure of provider database table.");
+					task.SynchronizationLog.Log($"start prepare shared keys informations needed for synchronization");
+					preparedSharedKeyIds = BulkPrepareSharedKeyValueIds(provider, newData);
+					task.SynchronizationLog.Log($"complete prepare shared keys informations needed for synchronization");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed prepare shared keys informations needed for synchronization", ex );
+					throw new TfException("Failed to prepare shared key value ids.", ex);
 				}
 
-				StringBuilder sql = new StringBuilder();
-				sql.Append($"INSERT INTO {tableName}_sync ( ");
-				sql.Append(string.Join(", ", columnList.Select(x => $"\"{x}\"").ToArray()));
-				sql.Append(" ) SELECT * FROM UNNEST ( ");
-				sql.Append(string.Join(", ", columnList.Select(x => $"@{x}").ToArray()));
-				sql.Append(" ); ");
-				sql.AppendLine();
-
-				sql.AppendLine($"DROP TABLE IF EXISTS {tableName} CASCADE;");
-				sql.AppendLine($"ALTER TABLE {tableName}_sync RENAME TO {tableName};");
-
-				DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
-				foreach (DataRow row in dtConstraints.Rows)
+				try
 				{
-					var constraintName = (string)row["constraint_name"];
+					task.SynchronizationLog.Log($"start processing new rows system identifiers");
 
-					if (constraintName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+					(columnList, paramsDict, newTfIds) = PrepareQueryArrayParameters(provider, preparedSharedKeyIds, existingData, newData);
+
+					BulkPrepareAndUpdateTfIds(newTfIds, paramsDict["tf_id"]);
+
+					task.SynchronizationLog.Log($"complete processing new rows system identifiers");
+				}
+				catch(Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to process new rows system identifiers",ex);
+					throw new TfException("Failed to process new rows system identifiers.", ex);
+				}
+				try
+				{
+					task.SynchronizationLog.Log($"start creating temporary database structures for syncronization");
+
+					//drop cloned table if exists
+					_dbService.ExecuteSqlNonQueryCommand($"DROP TABLE IF EXISTS {tableName}_sync CASCADE;");
+
+					//clone table
+					var result = _dbManager.CloneTableForSynch(tableName);
+
+					if (!result.IsSuccess)
 					{
-						var constraintNewName = constraintName.Substring(0, constraintName.Length - 5);
-						sql.AppendLine($"ALTER TABLE {tableName} RENAME CONSTRAINT {constraintName} TO {constraintNewName};");
+						throw new Exception("Failed to create duplicate structure of provider database table.");
 					}
+
+					task.SynchronizationLog.Log($"complete creating temporary database structures for syncronization");
+				}
+				catch (Exception ex)
+				{
+					task.SynchronizationLog.Log($"failed to create temporary database structures for syncronization",ex);
+					throw new TfException("Failed to create temporary database structures for syncronization.", ex);
 				}
 
-				DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
-				foreach (DataRow row in dtIndexes.Rows)
+				try
 				{
-					var indexName = (string)row["index_name"];
-					if (indexName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+					task.SynchronizationLog.Log($"start generating SQL code for synchronization");
+
+					StringBuilder sql = new StringBuilder();
+					sql.Append($"INSERT INTO {tableName}_sync ( ");
+					sql.Append(string.Join(", ", columnList.Select(x => $"\"{x}\"").ToArray()));
+					sql.Append(" ) SELECT * FROM UNNEST ( ");
+					sql.Append(string.Join(", ", columnList.Select(x => $"@{x}").ToArray()));
+					sql.Append(" ); ");
+					sql.AppendLine();
+
+					sql.AppendLine($"DROP TABLE IF EXISTS {tableName} CASCADE;");
+					sql.AppendLine($"ALTER TABLE {tableName}_sync RENAME TO {tableName};");
+
+					DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
+					foreach (DataRow row in dtConstraints.Rows)
 					{
-						var indexNewName = indexName.Substring(0, indexName.Length - 5);
-						sql.AppendLine($"ALTER INDEX {indexName} RENAME TO {indexNewName};");
+						var constraintName = (string)row["constraint_name"];
+
+						if (constraintName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+						{
+							var constraintNewName = constraintName.Substring(0, constraintName.Length - 5);
+							sql.AppendLine($"ALTER TABLE {tableName} RENAME CONSTRAINT {constraintName} TO {constraintNewName};");
+						}
 					}
-				}
 
-				List<NpgsqlParameter> paramList = new List<NpgsqlParameter>();
-				foreach (var column in columnList)
+					DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
+					foreach (DataRow row in dtIndexes.Rows)
+					{
+						var indexName = (string)row["index_name"];
+						if (indexName.EndsWith("_sync") && (string)row["table_name"] == $"{tableName}_sync")
+						{
+							var indexNewName = indexName.Substring(0, indexName.Length - 5);
+							sql.AppendLine($"ALTER INDEX {indexName} RENAME TO {indexNewName};");
+						}
+					}
+
+					List<NpgsqlParameter> paramList = new List<NpgsqlParameter>();
+					foreach (var column in columnList)
+					{
+						paramList.Add(paramsDict[column]);
+					}
+					
+					task.SynchronizationLog.Log($"complete generating SQL code for synchronization");
+
+					task.SynchronizationLog.Log($"start database update");
+
+					_dbService.ExecuteSqlNonQueryCommand(sql.ToString(), paramList);
+
+					task.SynchronizationLog.Log($"completed database update");
+				}
+				catch (Exception ex)
 				{
-					paramList.Add(paramsDict[column]);
+					task.SynchronizationLog.Log($"failed to update database", ex);
+					throw new TfException("Failed to update database.", ex);
 				}
-
-				_dbService.ExecuteSqlNonQueryCommand(sql.ToString(), paramList);
 
 				scope.Complete();
+
+				task.SynchronizationLog.Log($"synchronization task completed successfully");
+
+				return Task.CompletedTask;
 			}
 		}
 		catch (Exception ex)
 		{
+			task.SynchronizationLog.Log($"synchronization task failed");
 			throw ProcessException(ex);
 		}
 	}

@@ -65,18 +65,38 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 	{
 		var result = new List<TfDataProviderDataRow>();
 
-		var settings = JsonSerializer.Deserialize<MsSqlDataProviderSettings>(provider.SettingsJson);
+		MsSqlDataProviderSettings settings = null;
+		try
+		{
+			synchLog.Log("start loading provider settings");
+			settings = JsonSerializer.Deserialize<MsSqlDataProviderSettings>(provider.SettingsJson);
+			synchLog.Log("complete loading provider settings");
+		}
+		catch (Exception ex)
+		{
+			synchLog.Log("failed loading provider settings", ex);
+			throw ex;
+		}
 
 		if (string.IsNullOrWhiteSpace(settings.ConnectionString))
-			throw new Exception("Connection string is not specified.");
+		{
+			var ex = new Exception("Connection string is not specified.");
+			synchLog.Log("connection string is not specified.", ex);
+			throw ex;
+		}
 
 		if (string.IsNullOrWhiteSpace(settings.SqlQuery))
-			throw new Exception("Sql query is not specified.");
+		{
+			var ex = new Exception("Sql query is not specified.");
+			synchLog.Log("sql query is not specified", ex);
+			throw ex;
+		}
 
 		return ReadDataFromSql(
 			settings.ConnectionString,
 			settings.SqlQuery,
-			provider);
+			provider,
+			synchLog);
 	}
 
 	TfDataProviderSourceSchemaInfo ITfDataProviderAddon.GetDataProviderSourceSchema(
@@ -185,14 +205,19 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 	private ReadOnlyCollection<TfDataProviderDataRow> ReadDataFromSql(
 		string connectionString,
 		string sql,
-		TfDataProvider provider)
+		TfDataProvider provider,
+		ITfDataProviderSychronizationLog synchLog)
 	{
 		var result = new List<TfDataProviderDataRow>();
 
 		SqlConnection connection = new SqlConnection(connectionString);
 		try
 		{
+			synchLog.Log($"trying to open connection to sql server");
+
 			connection.Open();
+
+			synchLog.Log($"connnection to sql server opened successfully");
 
 			SqlCommand command = new SqlCommand(sql, connection);
 
@@ -200,13 +225,19 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 
 			DataTable dt = new DataTable();
 
+			synchLog.Log($"start executing sql query and get data");
+			
 			adapter.Fill(dt);
+			
+			synchLog.Log($"complete getting data from sql");
 
 			var providerColumnsWithSourceName = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 
 			if (!providerColumnsWithSourceName.Any())
 			{
-				throw new Exception($"No columns with source name are specified.");
+				var ex =  new Exception($"Found no column with source name in provider.");
+				synchLog.Log($"found no column with source name in provider", ex);
+				throw ex;
 			}
 
 			HashSet<string> sourceColumns = new HashSet<string>();
@@ -215,6 +246,7 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 				sourceColumns.Add(column.ColumnName.ToLowerInvariant());
 			}
 
+			int rowCounter = 1;
 			foreach (DataRow dr in dt.Rows)
 			{
 				TfDataProviderDataRow row = new TfDataProviderDataRow();
@@ -226,12 +258,25 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 					{
 						if (!sourceColumns.Contains(sourceName.ToLowerInvariant()))
 						{
-							throw new Exception($"Source column '{sourceName}' is not found in query result.");
+							var ex = new Exception($"Source column '{sourceName}' is not found in query result.");
+							synchLog.Log($"source column '{sourceName}' is not found in query result", ex);
+							throw ex;
 						}
 
-						row[providerColumnWithSource.DbName] = ConvertValue(
-								providerColumnWithSource,
-								dr[sourceName]);
+						try
+						{
+							row[providerColumnWithSource.DbName] = ConvertValue(
+									providerColumnWithSource,
+									dr[sourceName]);
+						}
+						catch (Exception ex)
+						{
+							var value = dr[sourceName];
+							synchLog.Log($"failed to process value for row index={rowCounter}, source column='{sourceName}'," +
+								$" provider column='{providerColumnWithSource.DbName}', provider column type='{providerColumnWithSource.DbType}'," +
+								$"  value='{value}'", ex);
+							throw ex;
+						}
 					}
 					catch (Exception ex)
 					{
@@ -240,7 +285,10 @@ public class MsSqlDataProvider : ITfDataProviderAddon
 					}
 				}
 				result.Add(row);
+				rowCounter++;
 			}
+
+			synchLog.Log($"successfully processed {rowCounter - 1} rows from sql server query result");
 		}
 		catch
 		{
