@@ -26,6 +26,7 @@ global using WebVella.Tefter.Services;
 
 
 global using WebVella.Tefter.Seeds.SampleTemplateProcessor;
+global using WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons;
 global using WebVella.Tefter.Seeds.SampleTemplateProcessor.Models;
 
 global using FluentValidation;

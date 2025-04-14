@@ -2,11 +2,11 @@
 
 public interface ITfTemplateProcessor
 {
-	public Guid Id { get; }
-	public string Name { get; }
-	public string Description { get; }
-	public string FluentIconName { get; }
-	public TfTemplateResultType ResultType { get; }
+	public Guid Id { get; init;}
+	public string Name { get; init;}
+	public string Description { get; init;}
+	public string FluentIconName { get; init;}
+	public TfTemplateResultType ResultType { get; init;}
 
 	public void ValidatePreview(
 		TfTemplate template,

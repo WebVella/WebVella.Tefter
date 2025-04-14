@@ -6,16 +6,19 @@
 		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <Compile Remove="Services\**" />
+	  <Content Remove="Services\**" />
+	  <EmbeddedResource Remove="Services\**" />
+	  <None Remove="Services\**" />
+	</ItemGroup>
+
 
 
 	<ItemGroup>
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
 		<PackageReference Include="System.IO.Packaging" Version="9.0.4" />
 		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Services\" />
 	</ItemGroup>
 
 	<ItemGroup>

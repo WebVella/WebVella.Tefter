@@ -26,6 +26,7 @@ global using WebVella.Tefter.Services;
 
 
 global using WebVella.Tefter.TemplateProcessors.Email;
+global using WebVella.Tefter.TemplateProcessors.Email.Addons;
 global using WebVella.Tefter.TemplateProcessors.Email.Models;
 //global using WebVella.Tefter.TemplateProcessors.Email.Services;
 

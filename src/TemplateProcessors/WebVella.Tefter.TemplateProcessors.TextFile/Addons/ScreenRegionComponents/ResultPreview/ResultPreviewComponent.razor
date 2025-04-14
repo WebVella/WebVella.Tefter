@@ -1,0 +1,92 @@
+﻿@using WebVella.Tefter.Web.Components
+@namespace WebVella.Tefter.TemplateProcessors.TextFile.Addons
+@inherits TfBaseComponent
+@if (_isLoading)
+{
+	<TfLoadingPane />
+}
+else if (RegionContext is null || RegionContext.Template is null || RegionContext.SpaceData is null)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("Preview cannot be generated as arguments are missing from the provided context")</FluentMessageBar>
+}
+else if (_preview is null)
+{
+	<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss="false">@LOC("Preview is from the wrong object type")</FluentMessageBar>
+}
+else if (_previewValidationErrors.Count > 0)
+{
+	<h4>@LOC("Errors")</h4>
+	<TfValidationErrors Errors="_previewValidationErrors" Message="@LOC("Errors occured while validation the preview")" />
+}
+else if (_preview.Errors.Count > 0)
+{
+	<h4>@LOC("Errors")</h4>
+	<TfValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occured while generating the preview")" />
+}
+else if (_preview.Items.Count == 0)
+{
+	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("No files will be generated")</FluentMessageBar>
+}
+else
+{
+	@if (_preview.ItemWithErrorsCount > 0)
+	{
+		<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("{0} files have errors", _preview.ItemWithErrorsCount)</FluentMessageBar>
+	}
+	<h4 style="margin-top:1rem;">@LOC("Files to be generated")</h4>
+	<div class="tf-grid-wrapper" style="margin-top:15px;">
+		<table class="tf-grid">
+			<thead class="tf-grid-thead">
+				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-tr">
+					<th class="tf-grid-th">@LOC("file name")</th>
+					<th class="tf-grid-th" style="width:80px;max-width:80px;">@LOC("used rows")</th>
+					<th class="tf-grid-th">@LOC("errors")</th>
+				</tr>
+			</thead>
+			<tbody class="tf-grid-tbody">
+				@foreach (var item in _preview.Items)
+				{
+					<tr @key=@(Guid.NewGuid())>
+						<td class="tf-grid-td">
+							<div>
+								<a href="@item.DownloadUrl" target="_blank">@item.FileName</a>
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>@item.NumberOfRows</div>
+						</td>
+						<td class="tf-grid-td">
+							<div style="white-space:normal">
+								@if (item.Errors.Count > 0)
+								{
+									<ul>
+										@foreach (var error in item.Errors)
+										{
+											<li style="color:var(--error)">
+												@if (String.IsNullOrWhiteSpace(error.PropertyName))
+												{
+													<span>@error.Message</span>
+												}
+												else
+												{
+													<span><i>@error.PropertyName :</i> <span>@error.Message</span></span>
+												}
+											</li>
+										}
+									</ul>
+								}
+								else
+								{
+									<span>@LOC("no errors")</span>
+								}
+							</div>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+
