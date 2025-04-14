@@ -11,11 +11,17 @@ namespace WebVella.Tefter.Seeds.SampleDataProvider.Components;
 public partial class ManageSettingsComponent : TfFormBaseComponent,
 	ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
-	public Guid Id { get; init; } = new Guid("83b22c00-34d3-4883-af5b-7f4a4cd46f4c");
-	public int PositionRank { get; init; } = 1000;
-	public string Name { get; init; } = "Sample Data Provider Manage Settings";
-	public string Description { get; init; } = "";
-	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public const string ID = "83b22c00-34d3-4883-af5b-7f4a4cd46f4c";
+	public const string NAME = "Sample Data Provider Manage Settings";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "PuzzlePiece";
+	public const int POSITION_RANK = 1000;
+
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(SampleDataProvider),null)
 	};

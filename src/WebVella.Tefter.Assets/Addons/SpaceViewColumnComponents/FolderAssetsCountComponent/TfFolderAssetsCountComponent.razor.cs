@@ -6,10 +6,15 @@ namespace WebVella.Tefter.Assets.Addons;
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Folder Assets Count Display")]
 [LocalizationResource("WebVella.Tefter.Assets.Addons.SpaceViewColumnComponents.FolderAssetsCountComponent.TfFolderAssetsCountComponent", "WebVella.Tefter.Assets")]
 public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAssetsCountComponentOptions>, ITfAuxDataState
 {
+	public const string ID = "6c32d6e7-8758-4916-9685-e0476275a3a2";
+	public const string NAME = "Folder Assets Count Display";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "";
+
+
 	#region << Injects >>
 	[Inject] protected IAssetsService AssetsService { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
@@ -36,9 +41,12 @@ public partial class TfFolderAssetsCountComponent : TucBaseViewColumn<TfFolderAs
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init; } = new Guid(AssetsConstants.ASSETS_ADDONS_SPACE_VIEW_COLUMN_COMPONENTS_FOLDER_ASSET_COUNT_ID);
+	public override Guid Id { get; init; } = new Guid(ID);
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
-		new Guid(AssetsConstants.ASSETS_ADDONS_SPACE_VIEW_COLUMN_TYPES_FOLDER_ASSET_COUNT_ID)
+		new Guid(TfFolderAssetsCountViewColumnType.ID)
 	};
 	private List<TucSelectOption> _sharedKeyOptions = new();
 	/// <summary>

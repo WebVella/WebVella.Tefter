@@ -4,13 +4,15 @@ namespace WebVella.Tefter.DataProviders.MsSql.Addons;
 
 public class MsSqlDataProvider : ITfDataProviderAddon
 {
-	public Guid Id { get; init;} = new Guid("0f86e009-1db4-497f-b10a-a55f4fad455d");
 
-	public string Name { get; init;} = "Microsoft Sql Data Provider";
-
-	public string Description { get; init;} = "Provide data from Microsoft SQL server query.";
-
-	public string FluentIconName { get; init;} = "DocumentTable";
+	public const string ID = "0f86e009-1db4-497f-b10a-a55f4fad455d";
+	public const string NAME = "Microsoft Sql Data Provider";
+	public const string DESCRIPTION = "Provide data from Microsoft SQL server query";
+	public const string FLUENT_ICON_NAME = "DocumentTable";
+	public Guid Id { get; init;} =  new Guid(ID);
+	public string Name { get; init;} = NAME;
+	public string Description { get; init;} = DESCRIPTION;
+	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
 
 	public ReadOnlyCollection<string> GetSupportedSourceDataTypes()
 	{

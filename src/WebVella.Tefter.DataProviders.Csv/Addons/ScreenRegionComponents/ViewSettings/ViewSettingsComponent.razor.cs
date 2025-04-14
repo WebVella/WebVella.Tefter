@@ -8,11 +8,16 @@ namespace WebVella.Tefter.DataProviders.Csv.Addons;
 public partial class ViewSettingsComponent : TfBaseComponent,
 	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
-	public Guid Id { get; init; } = new Guid("15fb7760-5ff5-425f-b41e-339d67282cc4");
-	public int PositionRank { get; init; } = 1000;
-	public string Name { get; init; } = "CSV Data Provider View Settings";
-	public string Description { get; init; } = "";
-	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public const string ID = "15fb7760-5ff5-425f-b41e-339d67282cc4";
+	public const string NAME = "CSV Data Provider View Settings";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "PuzzlePiece";
+	public const int POSITION_RANK = 1000;
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(CsvDataProvider),null)
 	};

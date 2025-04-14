@@ -3,7 +3,7 @@
 namespace WebVella.Tefter.Seeds.SampleApplication.Migrations;
 
 
-[TfApplicationMigration(SampleAppConstants.APP_ID_STRING, "2025.04.04.01")]
+[TfApplicationMigration(SampleApp.ID, "2025.04.04.01")]
 public class SampleAppMigration2025040401 : ITfApplicationMigration
 {
 	public Task MigrateDataAsync(ITfApplicationAddon app, IServiceProvider serviceProvider, ITfDatabaseService dbService)

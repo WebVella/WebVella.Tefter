@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Assets.Migrations;
 
 
-[TfApplicationMigration(AssetsConstants.ASSETS_APP_ID_STRING, "2024.12.5.1")]
+[TfApplicationMigration(AssetsApp.ID, "2024.12.5.1")]
 public class AssetsMigration2024120501 : ITfApplicationMigration
 {
 	/// <summary>

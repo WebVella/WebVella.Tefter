@@ -2,12 +2,15 @@
 
 public class SampleApp : ITfApplicationAddon
 {
-	public Guid Id { get; init;} =  SampleAppConstants.APP_ID;
+	public const string ID = "1492d19b-c8b2-4abb-9e88-2b645ba518ff";
+	public const string NAME = "Sample Application";
+	public const string DESCRIPTION = "Sample Application Description";
+	public const string FLUENT_ICON_NAME = "Album";
 
-	public string Name { get; init;} =  SampleAppConstants.APP_NAME;
-
-	public string Description { get; init;} =  SampleAppConstants.APP_DECRIPTION;
-	public string FluentIconName { get; init;} =  "Album";
+	public Guid Id { get; init;} =  new Guid(ID);
+	public string Name { get; init;} =  NAME;
+	public string Description { get; init;} =  DESCRIPTION;
+	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
 
 	public void OnStart()
 	{

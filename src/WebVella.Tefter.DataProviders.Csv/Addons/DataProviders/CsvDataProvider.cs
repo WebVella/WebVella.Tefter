@@ -12,22 +12,16 @@ namespace WebVella.Tefter.DataProviders.Csv.Addons;
 
 public class CsvDataProvider : ITfDataProviderAddon
 {
-	/// <summary>
-	/// used as unique identifier
-	/// </summary>
-	public Guid Id { get; init;} = new Guid("82883b60-197f-4f5a-8c6a-2bec16508816");
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string Name { get; init;} = "Csv Data Provider";
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string Description { get; init;} = "Provide data from CSV formated file.";
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string FluentIconName { get; init;} = "DocumentTable";
+
+	public const string ID = "82883b60-197f-4f5a-8c6a-2bec16508816";
+	public const string NAME = "Csv Data Provider";
+	public const string DESCRIPTION = "Provide data from CSV formated file";
+	public const string FLUENT_ICON_NAME = "DocumentTable";
+
+	public Guid Id { get; init;} =  new Guid(ID);
+	public string Name { get; init;} = NAME;
+	public string Description { get; init;} = DESCRIPTION;
+	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
 
 	/// <summary>
 	/// Return what types of data types it can process from the data source

@@ -2,34 +2,25 @@
 
 public partial class SampleAppAdminPage : TfBaseComponent, ITfAuxDataState, ITfRegionComponent<TfAdminPageScreenRegionContext>
 {
+	public const string ID = "afc65ec6-5e97-4149-aa0a-b39eb4c6561a";
+	public const string NAME = "Sample App";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "Album";
+	public const int POSITION_RANK = 1000;
+
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
 
-	//Id of the component
-	public Guid Id { get; init; } 
-	//Position ranking
-	public int PositionRank { get; init; }
-	//Human readable name of the component
-	public string Name { get; init; }
-	//Human readable name of the component
-	public string Description { get; init; }
-	public string FluentIconName { get; init; }
-	public List<TfScreenRegionScope> Scopes { get; init; }
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
+			new TfScreenRegionScope(null,new Guid(ID))
+		};
 	[Parameter]
 	public TfAdminPageScreenRegionContext RegionContext { get; init; }
-
-	public SampleAppAdminPage() : base()
-	{
-		var componentId = new Guid("afc65ec6-5e97-4149-aa0a-b39eb4c6561a");
-		Id = componentId;
-		PositionRank = 1000;
-		Name = "Sample App";
-		Description = "";
-		FluentIconName = "Album";
-		Scopes = new List<TfScreenRegionScope>(){
-			new TfScreenRegionScope(null,componentId)
-		};
-	}
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
 		TfAppState newAppState,

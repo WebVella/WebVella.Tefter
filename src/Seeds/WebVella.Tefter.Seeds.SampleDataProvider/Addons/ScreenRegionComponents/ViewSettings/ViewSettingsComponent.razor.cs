@@ -7,11 +7,16 @@ namespace WebVella.Tefter.Seeds.SampleDataProvider.Components;
 public partial class ViewSettingsComponent : TfBaseComponent,
 	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
-	public Guid Id { get; init; } = new Guid("4872f1ca-778e-4076-9ca0-b2b8424b1093");
-	public int PositionRank { get; init; } = 1000;
-	public string Name { get; init; } = "Sample Data Provider View Settings";
-	public string Description { get; init; } = "";
-	public string FluentIconName { get; init; } = "PuzzlePiece";
+	public const string ID = "4872f1ca-778e-4076-9ca0-b2b8424b1093";
+	public const string NAME = "Sample Data Provider View Settings";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "PuzzlePiece";
+	public const int POSITION_RANK = 1000;
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(SampleDataProvider),null)
 	};

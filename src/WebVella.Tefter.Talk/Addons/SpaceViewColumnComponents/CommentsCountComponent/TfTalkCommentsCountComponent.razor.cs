@@ -6,10 +6,14 @@ namespace WebVella.Tefter.Talk.Components;
 /// Description attribute is needed when presenting the component to the user as a select option
 /// Localization attributes is needed to strongly type the location of the components translation resource
 /// </summary>
-[Description("Talk Comments Count Display")]
 [LocalizationResource("WebVella.Tefter.Talk.Addons.SpaceViewColumnComponents.TalkCommentsCountComponent.TfTalkCommentsCountComponent", "WebVella.Tefter.Talk")]
 public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkCommentsCountComponentOptions>
 {
+	public const string ID = "5f3855f1-4819-488f-b24a-d4a81448e4f0";
+	public const string NAME = "Talk Comments Count Display";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "";
+
 	#region << Injects >>
 	[Inject] protected ITalkService TalkService { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
@@ -36,9 +40,12 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init; } = new Guid(TalkConstants.TALK_APP_SPACE_VIEW_COLUMN_COMPONENT_COMMENTS_COUNT);
+	public override Guid Id { get; init; } = new Guid(ID);
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
-		new Guid(TalkConstants.TALK_APP_SPACE_VIEW_COLUMN_TYPE_COMMENTS_COUNT)
+		new Guid(TfTalkCommentsCountViewColumnType.ID)
 	};
 	private List<TucSelectOption> _sharedKeyOptions = new();
 	/// <summary>

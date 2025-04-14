@@ -2,38 +2,19 @@
 
 public class TfTalkCommentsCountViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	public Guid Id { get; init; }
-	public string Name { get; init; }
-	public string Description { get; init; }
-	public string FluentIconName { get; init; }
-	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
-	public Guid? DefaultComponentId { get; init; }
-	public List<string> FilterAliases { get; init; }
-	public List<string> SortAliases { get; init; }
+	public const string ID = "60ab4197-be46-4ebd-a6de-02e8d25450d3";
+	public const string NAME = "Talk Comments count";
+	public const string DESCRIPTION = "displays related comments count";
+	public const string FLUENT_ICON_NAME = "CommentMultiple";
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; } = new();
+	public Guid? DefaultComponentId { get; init; }= new Guid(TfTalkCommentsCountComponent.ID);
+	public List<string> FilterAliases { get; init; } = new();
+	public List<string> SortAliases { get; init; } = new();
 	public List<Guid> SupportedComponents { get; set; } = new();
 
-
-	public TfTalkCommentsCountViewColumnType()
-	{
-
-		Id = new Guid(TalkConstants.TALK_APP_SPACE_VIEW_COLUMN_TYPE_COMMENTS_COUNT);
-
-		Name = "Talk Comments count";
-
-		Description = "displays related comments count";
-
-		FluentIconName = "CommentMultiple";
-
-		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
-		{
-		};
-
-		FilterAliases = new List<string>() { };
-
-		SortAliases = new List<string> { };
-
-		DefaultComponentId = new Guid(TalkConstants.TALK_APP_SPACE_VIEW_COLUMN_COMPONENT_COMMENTS_COUNT);
-
-	}
 }
 

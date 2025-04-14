@@ -2,37 +2,19 @@
 
 public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
 {
-	public Guid Id { get; init; }
-	public string Name { get; init; }
-	public string Description { get; init; }
-	public string FluentIconName { get; init; }
-	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; }
-	public Guid? DefaultComponentId { get; init; }
-	public List<string> FilterAliases { get; init; }
-	public List<string> SortAliases { get; init; }
+	public const string ID = "aafd5f8a-95d0-4f6b-8b43-c75a80316504";
+	public const string NAME = "Assets Folder Count";
+	public const string DESCRIPTION = "displays related files count";
+	public const string FLUENT_ICON_NAME = "DocumentCopy";
+
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; } = new();
+	public Guid? DefaultComponentId { get; init; } = new Guid(TfFolderAssetsCountComponent.ID);
+	public List<string> FilterAliases { get; init; } = new();
+	public List<string> SortAliases { get; init; } = new();
 	public List<Guid> SupportedComponents { get; set; } = new();
-
-
-	public TfFolderAssetsCountViewColumnType()
-	{
-
-		Id = new Guid(AssetsConstants.ASSETS_ADDONS_SPACE_VIEW_COLUMN_TYPES_FOLDER_ASSET_COUNT_ID);
-
-		Name = "Assets Folder Count";
-
-		Description = "displays related files count";
-
-		FluentIconName = "DocumentCopy";
-
-		DataMapping = new List<TfSpaceViewColumnAddonDataMapping>
-		{
-		};
-
-		FilterAliases = new List<string>() { };
-
-		SortAliases = new List<string> { };
-
-		DefaultComponentId = new Guid(AssetsConstants.ASSETS_ADDONS_SPACE_VIEW_COLUMN_COMPONENTS_FOLDER_ASSET_COUNT_ID);
-	}
 }
 

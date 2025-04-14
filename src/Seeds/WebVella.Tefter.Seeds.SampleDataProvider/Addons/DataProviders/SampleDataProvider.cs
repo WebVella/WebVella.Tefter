@@ -11,22 +11,15 @@ namespace WebVella.Tefter.Seeds.SampleDataProvider;
 
 public class SampleDataProvider : ITfDataProviderAddon
 {
-	/// <summary>
-	/// used as unique identifier
-	/// </summary>
-	public Guid Id { get; init;} =  new Guid("6c1efbe4-249a-472b-bfc6-7599310069e1");
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string Name { get; init;} = "Sample Data Provider";
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string Description { get; init;} =  "Provide hardcoded sample data.";
-	/// <summary>
-	/// presented to the end user
-	/// </summary>
-	public string FluentIconName { get; init;} =  "DocumentTable";
+	public const string ID = "6c1efbe4-249a-472b-bfc6-7599310069e1";
+	public const string NAME = "Sample Data Provider";
+	public const string DESCRIPTION = "Provide hardcoded sample data";
+	public const string FLUENT_ICON_NAME = "DocumentTable";
+
+	public Guid Id { get; init;} =  new Guid(ID);
+	public string Name { get; init;} = NAME;
+	public string Description { get; init;} = DESCRIPTION;
+	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
 
 	/// <summary>
 	/// Return what types of data types it can process from the data source

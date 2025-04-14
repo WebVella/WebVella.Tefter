@@ -2,31 +2,24 @@
 
 public partial class EmailSenderAdminPage : TfBaseComponent, ITfAuxDataState, ITfRegionComponent<TfAdminPageScreenRegionContext>
 {
+	public const string ID = "1f6e544e-6a53-4fa1-98ef-9c51a569c2b5";
+	public const string NAME = "Email Sender";
+	public const string DESCRIPTION = "";
+	public const string FLUENT_ICON_NAME = "Mail";
+	public const int POSITION_RANK = 990;
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] protected IState<TfAuxDataState> TfAuxDataState { get; set; }
 
-	public Guid Id { get; init; }
-	public int PositionRank { get; init; }
-	public string Name { get; init; }
-	public string Description { get; init; }
-	public string FluentIconName { get; init; }
-	public List<TfScreenRegionScope> Scopes { get; init; }
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public int PositionRank { get; init; } = POSITION_RANK;
+	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
+			new TfScreenRegionScope(null,new Guid(ID))
+		};
 	[Parameter]
 	public TfAdminPageScreenRegionContext RegionContext { get; init; }
-
-	public EmailSenderAdminPage() : base()
-	{
-		var componentId = new Guid("1f6e544e-6a53-4fa1-98ef-9c51a569c2b5");
-		Id = componentId;
-		PositionRank = 990;
-		Name = "Email Sender";
-		Description = "";
-		FluentIconName = "Mail";
-		Scopes = new List<TfScreenRegionScope>(){
-			new TfScreenRegionScope(null,componentId)
-		};
-
-	}
 
 	public Task OnAppStateInit(IServiceProvider serviceProvider, TucUser currentUser,
 		TfAppState newAppState,

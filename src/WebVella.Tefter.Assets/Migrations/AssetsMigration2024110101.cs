@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Assets.Migrations;
 
 
-[TfApplicationMigration(AssetsConstants.ASSETS_APP_ID_STRING, "2024.11.1.1")]
+[TfApplicationMigration(AssetsApp.ID, "2024.11.1.1")]
 public class AssetsMigration2024110101 : ITfApplicationMigration
 {
 	public async Task MigrateDataAsync(ITfApplicationAddon app, IServiceProvider serviceprovider, ITfDatabaseService dbService)
