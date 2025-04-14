@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Addons.ScreenRegionComponents.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultPreviewComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
 	public const string ID = "57ef9ad4-45ff-4674-8ad6-9e1420fefbb1";
 	public const string NAME = "Email Template Result Preview";

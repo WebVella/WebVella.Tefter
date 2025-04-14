@@ -99,7 +99,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(UtilityTestsSimpleClass)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(UtilityTestsSimpleClass)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeFalse();
 		}
@@ -112,7 +112,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
 			bool? result = null;
-			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegionContext)); return true; };
+			Func<bool> action = () => { result = objType.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegionContext)); return true; };
 			action.Should().NotThrow();
 			result.Should().BeTrue();
 		}
@@ -148,7 +148,7 @@ public class TypeUtilityTests
 	{
 		using (await locker.LockAsync())
 		{
-			Type objType = typeof(ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>);
+			Type objType = typeof(ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>);
 			string result = null;
 			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromGenericInterface(); return true; };
 			action.Should().NotThrow();
@@ -165,7 +165,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsSimpleClass);
 			List<string> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfScreenRegionComponent<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(0);
@@ -179,7 +179,7 @@ public class TypeUtilityTests
 		{
 			Type objType = typeof(UtilityTestsClassDynamicComponentWithoutScope);
 			List<string> result = new();
-			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfRegionComponent<>)); return true; };
+			Func<bool> action = () => { result = objType.GetGenericTypeFullNameFromImplementedGenericInterface(typeof(ITfScreenRegionComponent<>)); return true; };
 			action.Should().NotThrow();
 			result.Should().NotBeNull();
 			result.Count.Should().Be(1);
@@ -216,7 +216,7 @@ public class UtilityTestsChildGenericClass : UtilityTestsBaseGenericClass<Utilit
 
 }
 
-public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+public class UtilityTestsClassDynamicComponentWithoutScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
 	public Guid Id { get; init; }
@@ -227,7 +227,7 @@ public class UtilityTestsClassDynamicComponentWithoutScope : ITfRegionComponent<
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>() { };
 }
 
-public class UtilityTestsClassDynamicComponentWithScope : ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
 	public Guid Id { get; init; }

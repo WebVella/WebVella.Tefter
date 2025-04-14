@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Talk.Addons;
 
-public partial class TalkAdminPage : TfBaseComponent, ITfAuxDataState, ITfRegionComponent<TfAdminPageScreenRegionContext>
+public partial class TalkAdminPage : TfBaseComponent, ITfAuxDataState, ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
 {
 
 	public const string ID = "15f22367-7c8d-4971-9950-d7b1ff51f678";

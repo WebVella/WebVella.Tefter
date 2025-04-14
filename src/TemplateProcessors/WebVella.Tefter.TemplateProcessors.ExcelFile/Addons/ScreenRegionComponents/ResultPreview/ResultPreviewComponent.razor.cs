@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.ScreenRegionComponents.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
 	public const string ID = "e6923a63-885f-4201-bab5-701867f7b952";
 	public const string NAME = "Excel Template Result Preview";

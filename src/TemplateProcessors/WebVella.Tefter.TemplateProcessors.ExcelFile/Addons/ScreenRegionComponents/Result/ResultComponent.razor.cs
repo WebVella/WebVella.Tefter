@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.ScreenRegionComponents.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
 	public const string ID = "8eed6b14-101b-4fb9-863c-6e520b0196d8";
 	public const string NAME = "Excel Template Result";

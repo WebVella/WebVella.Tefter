@@ -5,7 +5,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextContent.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Addons.ScreenRegionComponents.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
 	public const string ID = "459ce24e-37af-48eb-99fe-abf32d0b83b4";
 	public const string NAME = "Text Content Template Manage Settings";

@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Talk.Addons;
 
 
-public partial class TalkPage : TfBaseComponent, ITfRegionComponent<TfPageScreenRegionContext>
+public partial class TalkPage : TfBaseComponent, ITfScreenRegionComponent<TfPageScreenRegionContext>
 {
 
 	public const string ID = "beb9a070-49b0-4c49-b57e-7f110da4dccd";

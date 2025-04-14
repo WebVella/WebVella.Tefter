@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextContent.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Addons.ScreenRegionComponents.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
 	public const string ID = "b276ed6b-5125-4a05-a5ef-0e47b432920c";
 	public const string NAME = "Text Content Result Preview";

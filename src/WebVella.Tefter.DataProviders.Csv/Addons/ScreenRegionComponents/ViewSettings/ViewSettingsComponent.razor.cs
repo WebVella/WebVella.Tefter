@@ -6,7 +6,7 @@ namespace WebVella.Tefter.DataProviders.Csv.Addons;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.Csv.Addons.ScreenRegionComponents.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.DataProviders.Csv")]
 public partial class ViewSettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
 	public const string ID = "15fb7760-5ff5-425f-b41e-339d67282cc4";
 	public const string NAME = "CSV Data Provider View Settings";

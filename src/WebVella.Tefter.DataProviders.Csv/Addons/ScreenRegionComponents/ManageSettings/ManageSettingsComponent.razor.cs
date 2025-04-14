@@ -9,7 +9,7 @@ namespace WebVella.Tefter.DataProviders.Csv.Addons;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.Csv.Addons.ScreenRegionComponents.ManageSettings.ManageSettingsComponent", "WebVella.Tefter.DataProviders.Csv")]
 public partial class ManageSettingsComponent : TfFormBaseComponent,
-	ITfRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 
 	public const string ID = "8edf466e-74d1-42f0-b166-8df2c4e3e1b9";

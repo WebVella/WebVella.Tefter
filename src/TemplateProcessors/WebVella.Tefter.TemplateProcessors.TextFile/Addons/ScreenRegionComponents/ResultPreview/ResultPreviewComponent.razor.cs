@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.TextFile.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Addons.ScreenRegionComponents.ResultPreview.ResultPreviewComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class ResultPreviewComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
 	public const string ID = "c940dd21-6151-4c4c-ae5b-e6d21de8b80c";
 	public const string NAME = "Text File Template Result Preview";

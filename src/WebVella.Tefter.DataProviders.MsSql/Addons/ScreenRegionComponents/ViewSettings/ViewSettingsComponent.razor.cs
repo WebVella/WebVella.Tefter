@@ -5,7 +5,7 @@ namespace WebVella.Tefter.DataProviders.MsSql.Addons;
 
 [LocalizationResource("WebVella.Tefter.DataProviders.MsSql.Addons.ScreenRegionComponents.ViewSettings.ViewSettingsComponent", "WebVella.Tefter.DataProviders.MsSql")]
 public partial class ViewSettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>
 {
 	public const string ID = "26621b7b-c7de-4a27-8330-ee33cf0a807f";
 	public const string NAME = "MSSQL Data Provider View Settings";

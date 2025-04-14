@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextContent.Addons.ScreenRegionComponents.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.TextContent")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
 	public const string ID = "ac4317e2-ef23-46b8-875d-c763e50a5d8e";
 	public const string NAME = "Text Content Result";

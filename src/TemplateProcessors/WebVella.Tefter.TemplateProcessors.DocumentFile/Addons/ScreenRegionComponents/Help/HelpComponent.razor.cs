@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Addons.ScreenRegionComponents.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class HelpComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
 {
 	public const string ID = "c1090557-af1e-48c9-844d-51c90170df24";
 	public const string NAME = "Document Template Help";

@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.ScreenRegionComponents.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.ExcelFile")]
 public partial class HelpComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
 {
 	public const string ID = "c1090557-af1e-48c9-844d-51c90170df24";
 	public const string NAME = "Excel Template Help";

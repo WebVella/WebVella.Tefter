@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.DocumentFile.Addons.ScreenRegionComponents.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.DocumentFile")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
 	public const string ID = "8eed6b14-101b-4fb9-863c-6e520b0196d8";
 	public const string NAME = "Document Template Result";

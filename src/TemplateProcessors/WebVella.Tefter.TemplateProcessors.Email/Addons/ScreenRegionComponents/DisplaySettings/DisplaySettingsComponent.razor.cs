@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Addons.ScreenRegionComponents.DisplaySettings.DisplaySettingsComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class DisplaySettingsComponent : TfBaseComponent,
-	ITfRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>
 {
 	public const string ID = "a52465b2-6e8c-48b3-a903-7fb2d43c55fa";
 	public const string NAME = "Email Template View Settings";

@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Addons.ScreenRegionComponents.Result.ResultComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class ResultComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorResultScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>
 {
 	public const string ID = "b0ca06fa-4e26-49c4-a043-c0ec7960ab02";
 	public const string NAME = "Email Template Result";

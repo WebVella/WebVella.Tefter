@@ -1,7 +1,7 @@
 ﻿namespace WebVella.Tefter.Assets.Addons;
 
 public partial class AssetsAdminPage : TfBaseComponent, ITfAuxDataState,
-	ITfRegionComponent<TfAdminPageScreenRegionContext>
+	ITfScreenRegionComponent<TfAdminPageScreenRegionContext>
 {
 	public const string ID = "9cf13acf-8959-499e-aab8-ff2c25a6c97e";
 	public const string NAME = "Assets Folders";

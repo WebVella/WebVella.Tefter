@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Addons;
 
-public interface ITfRegionComponent<T> : ITfAddon where T : TfBaseScreenRegionContext
+public interface ITfScreenRegionComponent<T> : ITfAddon where T : TfBaseScreenRegionContext
 {
 	public int PositionRank { get; init;}
 	public List<TfScreenRegionScope> Scopes { get; init; }

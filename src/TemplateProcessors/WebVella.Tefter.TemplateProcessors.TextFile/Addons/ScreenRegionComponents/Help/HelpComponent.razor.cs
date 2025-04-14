@@ -2,7 +2,7 @@
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.TextFile.Addons.ScreenRegionComponents.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.TextFile")]
 public partial class HelpComponent : TfBaseComponent, 
-	ITfRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
 {
 	public const string ID = "12d4f78b-daf2-48f0-ab84-3108703e7d7b";
 	public const string NAME = "Text File Template Help";

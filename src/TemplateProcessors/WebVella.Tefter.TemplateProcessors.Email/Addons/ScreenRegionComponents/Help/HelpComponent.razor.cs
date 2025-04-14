@@ -4,7 +4,7 @@ namespace WebVella.Tefter.TemplateProcessors.Email.Addons;
 
 [LocalizationResource("WebVella.Tefter.TemplateProcessors.Email.Addons.ScreenRegionComponents.Help.HelpComponent", "WebVella.Tefter.TemplateProcessors.Email")]
 public partial class HelpComponent : TfBaseComponent,
-	ITfRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
+	ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>
 {
 	public const string ID = "e1cc2761-3526-4672-b1f7-aa1092f8fb1d";
 	public const string NAME = "Email Template Help";
