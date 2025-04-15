@@ -47,7 +47,7 @@ public partial class TfPhoneEditColumnComponent : TucBaseViewColumn<TfPhoneEditC
 	};
 	/// <summary>
 	/// The alias of the column name that stores the value.
-	/// Depends on the ITfSpaceViewColumnType that renders this component
+	/// Depends on the ITfSpaceViewColumnTypeAddon that renders this component
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>

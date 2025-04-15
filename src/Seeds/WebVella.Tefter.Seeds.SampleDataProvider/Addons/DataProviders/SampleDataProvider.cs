@@ -16,10 +16,10 @@ public class SampleDataProvider : ITfDataProviderAddon
 	public const string DESCRIPTION = "Provide hardcoded sample data";
 	public const string FLUENT_ICON_NAME = "DocumentTable";
 
-	public Guid Id { get; init;} =  new Guid(ID);
-	public string Name { get; init;} = NAME;
-	public string Description { get; init;} = DESCRIPTION;
-	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 
 	/// <summary>
 	/// Return what types of data types it can process from the data source
@@ -185,19 +185,19 @@ public class SampleDataProvider : ITfDataProviderAddon
 	{
 		TfDataProviderSourceSchemaInfo schemaInfo = new TfDataProviderSourceSchemaInfo();
 		SampleDataProviderSynchronizationLog synchLog = new();
-		var rows = GetRows(provider,synchLog);
+		var rows = GetRows(provider, synchLog);
 		if (rows.Count == 0)
 			return schemaInfo;
 
 		var columnNames = rows[0].ColumnNames;
 
-		foreach (var columnName in columnNames )
+		foreach (var columnName in columnNames)
 		{
 			object value = null;
 
 			//try to find value in any row,
 			//on first found exist cycle
-			foreach(var row in rows)
+			foreach (var row in rows)
 			{
 				if (row[columnName] != null)
 				{
@@ -209,7 +209,7 @@ public class SampleDataProvider : ITfDataProviderAddon
 			if (value == null)
 				continue;
 
-			if ( value.GetType() == typeof(Guid))
+			if (value.GetType() == typeof(Guid))
 			{
 				schemaInfo.SourceColumnDefaultDbType[columnName] = TfDatabaseColumnType.Guid;
 				schemaInfo.SourceColumnDefaultSourceType[columnName] = "GUID";
