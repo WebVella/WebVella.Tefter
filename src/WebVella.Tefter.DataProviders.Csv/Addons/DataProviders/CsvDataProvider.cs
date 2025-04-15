@@ -43,7 +43,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 		}.AsReadOnly();
 	}
 	/// <summary>
-	/// Returns mapping between source data types and Tefter.bg data types
+	/// Returns mapping between source data types and Tefter data types
 	/// </summary>
 	public ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(
 		string dataType)

@@ -38,7 +38,7 @@ public class TfConfigurationService : ITfConfigurationService
 		CompanyName = config["Tefter:CompanyName"];
 		CompanyLogoUrl = config["Tefter:CompanyLogoUrl"];
 		BaseUrl = config["Tefter:BaseUrl"];
-		if (string.IsNullOrWhiteSpace(CompanyName)) CompanyName = "Tefter.bg";
+		if (string.IsNullOrWhiteSpace(CompanyName)) CompanyName = "Tefter by WebVella";
 		if (string.IsNullOrWhiteSpace(CompanyLogoUrl)) CompanyLogoUrl = "_content/WebVella.Tefter/logo.svg";
 	}
 }
