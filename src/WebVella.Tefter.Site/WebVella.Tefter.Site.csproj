@@ -4,6 +4,11 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
+	<PropertyGroup>
+		<AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+		<ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+		<SatelliteResourceLanguages>en,bg</SatelliteResourceLanguages>
+	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
 		<PackageReference Include="System.IO.Packaging" Version="9.0.4" />
