@@ -1,7 +1,5 @@
 ﻿using System.Text;
-
 namespace WebVella.Tefter.Seeds.SampleTemplateProcessor.Addons;
-
 public class SampleTemplateProcessor : ITfTemplateProcessorAddon
 {
 

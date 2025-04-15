@@ -20,5 +20,4 @@ public class SampleApp : ITfApplicationAddon
 	{
 		services.AddSingleton<ISampleAppService, SampleAppService>();
 	}
-
 }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-
 namespace WebVella.Tefter.Seeds.SampleApplication.Migrations;
-
 
 [TfApplicationMigration(SampleApp.ID, "2025.04.04.01")]
 public class SampleAppMigration2025040401 : ITfApplicationMigration
