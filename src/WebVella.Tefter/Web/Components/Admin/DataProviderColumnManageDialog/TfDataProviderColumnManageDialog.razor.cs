@@ -89,6 +89,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 				_selectedDbType = _form.DbType;
 				_selectedProviderType = _providerTypeOptions.FirstOrDefault(x => x.Name == _form.SourceType);
 				_providerTypeOptions = _providerTypeOptions.Where(x => x.SupportedDatabaseColumnTypes.Contains(_selectedDbType)).ToList();
+				_form.IsDetached = String.IsNullOrWhiteSpace(_form.SourceName);
 			}
 			base.InitForm(_form);
 		}
@@ -109,12 +110,27 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			MessageStore.Clear();
 
+			var errors = new List<ValidationError>();
+
+			if (!_form.IsDetached && String.IsNullOrWhiteSpace(_form.SourceName))
+			{
+				errors.Add(new ValidationError(nameof(_form.SourceName), LOC("required if attached")));
+			}
+
+			foreach (var item in errors)
+			{
+				MessageStore.Add(EditContext.Field(item.PropertyName), item.Message);
+			}
+
 			////Check form
 			var isValid = EditContext.Validate();
 			if (!isValid) return;
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
+			if(_form.IsDetached)
+				_form.SourceName = null;
+
 			if (!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))
 			{
 				_form.DefaultValue = String.Empty;
@@ -165,7 +181,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		{
 			var currentdbSelectionIndex = _selectedProviderType.SupportedDatabaseColumnTypes.FindIndex(x => x.TypeValue == _selectedDbType?.TypeValue);
 			if (currentdbSelectionIndex > -1)
-			{ 
+			{
 				_selectedDbType = _selectedProviderType.SupportedDatabaseColumnTypes[currentdbSelectionIndex];
 			}
 			else if (_selectedProviderType.SupportedDatabaseColumnTypes.Any())
@@ -180,7 +196,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	private void _sourceColumnNameChanged(string text)
 	{
 		_form.SourceName = text;
-		if(_isCreate)
+		if (_isCreate)
 			_form.DbName = TfConverters.GenerateDbNameFromText(text);
 	}
 

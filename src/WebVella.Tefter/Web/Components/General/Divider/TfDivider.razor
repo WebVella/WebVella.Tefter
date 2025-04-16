@@ -1,0 +1,42 @@
+﻿@namespace WebVella.Tefter.Web.Components
+
+<div @attributes=_attributes>
+	@if (!String.IsNullOrWhiteSpace(Title))
+	{
+		<div class="tf-divider__title">@((MarkupString)Title)</div>
+	}
+	<div class="tf-divider__hr"/>
+</div>
+
+@code {
+	[Parameter] public string Class { get; set; }
+	[Parameter] public string Style { get; set; }
+	[Parameter] public string Title { get; set; }
+
+	private Dictionary<string, object> _attributes
+	{
+		get
+		{
+			var attrDict = new Dictionary<string, object>();
+			var classSb = new StringBuilder();
+			classSb.Append("tf-divider");
+			if (!String.IsNullOrWhiteSpace(Title))
+			{
+				classSb.Append(" tf-divider--with-title");
+			}
+			if (!String.IsNullOrWhiteSpace(Class))
+			{
+				classSb.Append(" ");
+				classSb.Append(Class);
+			}
+			attrDict["class"] = classSb.ToString();
+
+			if (!String.IsNullOrWhiteSpace(Style))
+			{
+				attrDict["style"] = Style;
+			}
+
+			return attrDict;
+		}
+	}
+}

@@ -33,60 +33,69 @@
 			<FluentEditForm EditContext="EditContext" OnValidSubmit="_save"
 							FormName="submit-form" class="tf-form" novalidate>
 				<DataAnnotationsValidator />
+				<TfDivider Style="margin-bottom:15px" Title="PROVIDER" />
 				<FluentGrid>
-					<FluentGridItem xs="6">
-						<FluentSelect OptionSelected="(x => x.Name == _selectedProviderType?.Name)"
-									  SelectedOption="@_selectedProviderType" TOption="TucDataProviderTypeDataTypeInfo"
-									  SelectedOptionChanged="_selectionSourceTypeChanged"
-									  Items="@_providerTypeOptions" Style="width:100%"
-									  OptionValue="@(p => p.Name)"
-									  OptionText="@(p => p.Name)"
-									  Label="@LOC("SOURCE column type")" />
-						<FluentValidationMessage For="@(() => _form.SourceType)" />
+					<FluentGridItem xs="4">
+						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
+										 Label="@LOC("column name")" Style="width:100%"
+										 Disabled="!_isCreate" AutoComplete="off" />
+						<FluentValidationMessage For="@(() => _form.DbName)" />
 					</FluentGridItem>
-					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.SourceName ValueChanged="(x=> _sourceColumnNameChanged(x))"
-										 Label="@LOC("SOURCE column name")" Style="width:100%" AutoComplete="off"
-										 Placeholder="@LOC("leave empty, if no source")" />
-						<FluentValidationMessage For="@(() => _form.SourceName)" />
-					</FluentGridItem>
-				</FluentGrid>
-				<FluentGrid>
-					<FluentGridItem xs="6">
+					<FluentGridItem xs="4">
 						<FluentSelect OptionSelected="(x => x.Name == _selectedDbType?.Name)"
 									  @bind-SelectedOption="@_selectedDbType"
 									  TOption="TucDatabaseColumnTypeInfo"
 									  Items="@_selectedProviderType.SupportedDatabaseColumnTypes" Style="width:100%" Placeholder="@LOC("select SOURCE column type")"
 									  OptionValue="@(p => p.Name)"
 									  OptionText="@(p => p.Name)"
-									  Label="@LOC("PROVIDER data type")" Disabled="!_isCreate" />
-						<FluentValidationMessage For="@(() => _form.SourceType)" />
-					</FluentGridItem>
-					<FluentGridItem xs="6">
-						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
-										 Label="@LOC("PROVIDER column name")" Style="width:100%"
-										 Disabled="!_isCreate" AutoComplete="off" />
-						<FluentValidationMessage For="@(() => _form.DbName)" />
+									  Label="@LOC("data type")" Disabled="!_isCreate" />
+						<FluentValidationMessage For="@(() => _form.DbType)" />
 					</FluentGridItem>
 				</FluentGrid>
-				<FluentDivider Style="margin:15px 0" />
+				<TfDivider Style="margin:15px 0" Title="SOURCE" />
 				<FluentGrid>
-					<FluentGridItem xs="12">
-						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DefaultValue
-										 Label="@LOC("Default value")" Style="width:100%" AutoComplete="off" />
-						<FluentValidationMessage For="@(() => _form.DefaultValue)" />
+					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Data Link")" />
+						<FluentSwitch @bind-Value=@_form.IsDetached>@LOC("detached from source")</FluentSwitch>
+						<FluentValidationMessage For="@(() => _form.IsDetached)" />
 					</FluentGridItem>
+					@if (!_form.IsDetached)
+					{
+						<FluentGridItem xs="4">
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@_form.SourceName ValueChanged="(x=> _sourceColumnNameChanged(x))"
+											 Label="@LOC("column name")" Style="width:100%" AutoComplete="off"
+											 Placeholder="@LOC("leave empty, if no source")" />
+							<FluentValidationMessage For="@(() => _form.SourceName)" />
+						</FluentGridItem>
+						<FluentGridItem xs="4">
+							<FluentSelect OptionSelected="(x => x.Name == _selectedProviderType?.Name)"
+										  SelectedOption="@_selectedProviderType" TOption="TucDataProviderTypeDataTypeInfo"
+										  SelectedOptionChanged="_selectionSourceTypeChanged"
+										  Items="@_providerTypeOptions" Style="width:100%"
+										  OptionValue="@(p => p.Name)"
+										  OptionText="@(p => p.Name)"
+										  Label="@LOC("column type")" />
+							<FluentValidationMessage For="@(() => _form.SourceType)" />
+						</FluentGridItem>
+					}
+					else
+					{
+						<FluentGridItem xs="8" Style="display:flex;align-items:end">
+							<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss="false">@LOC("data stored but NOT synchronized")</FluentMessageBar>
+						</FluentGridItem>
+					}
 				</FluentGrid>
-				<FluentGrid Style="margin-top:15px;">
+				<TfDivider Style="margin:15px 0" Title="OPTIONS" />
+				<FluentGrid>
 					<FluentGridItem xs="4">
 						<FluentInputLabel Label="@LOC("Nullable")" />
 						<FluentSwitch @bind-Value=@_form.IsNullable>@LOC("can be NULL")</FluentSwitch>
 						<FluentValidationMessage For="@(() => _form.IsNullable)" />
 					</FluentGridItem>
 					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Unique")" />
-						<FluentSwitch @bind-Value=@_form.IsUnique>@LOC("only unique values")</FluentSwitch>
-						<FluentValidationMessage For="@(() => _form.IsUnique)" />
+						<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DefaultValue
+										 Label="@LOC("Default value")" Style="width:100%" AutoComplete="off" />
+						<FluentValidationMessage For="@(() => _form.DefaultValue)" />
 					</FluentGridItem>
 					<FluentGridItem xs="4">
 						@if (_selectedDbType.SupportAutoDefaultValue)
@@ -97,7 +106,19 @@
 						}
 					</FluentGridItem>
 				</FluentGrid>
-				<FluentGrid Style="margin-top:15px;">
+				<FluentGrid>
+					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Unique")" />
+						<FluentSwitch @bind-Value=@_form.IsUnique>@LOC("only unique values")</FluentSwitch>
+						<FluentValidationMessage For="@(() => _form.IsUnique)" />
+					</FluentGridItem>
+					<FluentGridItem xs="4">
+						<FluentInputLabel Label="@LOC("Sortable")" />
+						<FluentSwitch @bind-Value=@_form.IsSortable>@LOC("used for sorting")</FluentSwitch>
+						<FluentValidationMessage For="@(() => _form.IsSortable)" />
+					</FluentGridItem>
+				</FluentGrid>
+				<FluentGrid>
 					<FluentGridItem xs="4">
 						<FluentInputLabel Label="@LOC("Searchable")" />
 						<FluentSwitch @bind-Value=@_form.IsSearchable>@LOC("used in filters")</FluentSwitch>
@@ -116,13 +137,6 @@
 									  OptionText="@(p => p.Name)"
 									  Label="@LOC("Preferred search type")" />
 						<FluentValidationMessage For="@(() => _form.PreferredSearchType)" />
-					</FluentGridItem>
-				</FluentGrid>
-				<FluentGrid Style="margin-top:15px;">
-					<FluentGridItem xs="4">
-						<FluentInputLabel Label="@LOC("Sortable")" />
-						<FluentSwitch @bind-Value=@_form.IsSortable>@LOC("used for sorting")</FluentSwitch>
-						<FluentValidationMessage For="@(() => _form.IsSortable)" />
 					</FluentGridItem>
 				</FluentGrid>
 			</FluentEditForm>

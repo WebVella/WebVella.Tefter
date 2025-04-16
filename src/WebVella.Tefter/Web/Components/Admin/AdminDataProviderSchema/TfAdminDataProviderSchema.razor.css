@@ -1,0 +1,7 @@
+﻿::deep > fluent-badge {
+    --badge-fill-attached: #00B294;
+    --badge-color-attached: var(--foreground-on-accent-rest);
+
+    --badge-fill-detached: #CA5010;
+    --badge-color-detached: var(--foreground-on-accent-rest);
+}

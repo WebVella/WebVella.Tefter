@@ -138,6 +138,9 @@
   <data name="Create column" xml:space="preserve">
     <value>Създай колона</value>
   </data>
+  <data name="data stored but NOT synchronized" xml:space="preserve">
+    <value>данните се съхраняват но БЕЗ синхронизация</value>
+  </data>
   <data name="Default value" xml:space="preserve">
     <value>Стойност по подразбиране</value>
   </data>

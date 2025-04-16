@@ -16,20 +16,20 @@ public partial class TfAdminUserDetailsNav : TfBaseComponent
 			//Icon = new Icons.Regular.Size20.PersonInfo(),
 			Text = LOC("Details")
 		});
-		menu.Add(new TucMenuItem
-		{
-			Url = string.Format(TfConstants.AdminUserAccessPageUrl, TfAppState.Value.Route.UserId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.Key(),
-			Text = LOC("Access")
-		});
-		menu.Add(new TucMenuItem
-		{
-			Url = string.Format(TfConstants.AdminUserSavesViewsPageUrl, TfAppState.Value.Route.UserId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.Save(),
-			Text = LOC("Saved Views")
-		});
+		//menu.Add(new TucMenuItem
+		//{
+		//	Url = string.Format(TfConstants.AdminUserAccessPageUrl, TfAppState.Value.Route.UserId),
+		//	Match = NavLinkMatch.All,
+		//	//Icon = new Icons.Regular.Size20.Key(),
+		//	Text = LOC("Access")
+		//});
+		//menu.Add(new TucMenuItem
+		//{
+		//	Url = string.Format(TfConstants.AdminUserSavesViewsPageUrl, TfAppState.Value.Route.UserId),
+		//	Match = NavLinkMatch.All,
+		//	//Icon = new Icons.Regular.Size20.Save(),
+		//	Text = LOC("Saved Views")
+		//});
 
 		return menu;
 	}

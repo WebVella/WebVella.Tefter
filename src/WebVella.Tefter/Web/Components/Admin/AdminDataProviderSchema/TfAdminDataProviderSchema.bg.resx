@@ -123,6 +123,12 @@
   <data name="Column successfully updated!" xml:space="preserve">
     <value>Колоната е редактирана успешно!</value>
   </data>
+  <data name="data stored AND synchronized" xml:space="preserve">
+    <value>данните се съхраняват СЪС синхронизация</value>
+  </data>
+  <data name="data stored but NOT synchronized" xml:space="preserve">
+    <value>данните се съхраняват но БЕЗ синхронизация</value>
+  </data>
   <data name="Delete column" xml:space="preserve">
     <value>Изтриване на колоната</value>
   </data>

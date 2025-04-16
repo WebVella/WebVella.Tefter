@@ -3,7 +3,7 @@
 
 <TfAdminDataProviderDetailsActions />
 @if (TfAppState.Value.AdminDataProvider is null || TfAppState.Value.AdminDataProvider.Columns is null
-				|| TfAppState.Value.AdminDataProvider.Columns.Count == 0)
+																				|| TfAppState.Value.AdminDataProvider.Columns.Count == 0)
 {
 	<FluentMessageBar Title="@LOC("No columns")" AllowDismiss="false"
 					  Intent="@MessageIntent.Info">@LOC("No columns are created yet for this data source")</FluentMessageBar>
@@ -16,6 +16,7 @@ else
 				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
 				<tr class="tf-grid-tr">
 					<th class="tf-grid-th" style="min-width:110px;width:110px;"></th>
+					<th class="tf-grid-th" style="min-width:80px;width:80px;"></th>
 					<th class="tf-grid-th">name</th>
 					<th class="tf-grid-th">type</th>
 					<th class="tf-grid-th" style="min-width:120px;width:120px;">created on</th>
@@ -33,20 +34,41 @@ else
 												  Title="@LOC("Edit column")" OnClick="@(()=> _editColumn(context))" />
 									<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteColumn(context))" Title="@LOC("Delete column")"
 												  Loading="@(_deletedColumnId == context.Id)" Disabled="@(_deletedColumnId is not null)"
-												  IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"/>
+												  IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)" />
 								</FluentStack>
 							</div>
 						</td>
 						<td class="tf-grid-td">
 							<div>
+								@if (!String.IsNullOrWhiteSpace(context.SourceName))
+								{
+									<span title="@LOC("data stored AND synchronized")">
+										<FluentBadge Fill="attached" Style="width:100%">attached</FluentBadge>
+									</span>
+								}
+								else
+								{
+									<span title="@LOC("data stored but NOT synchronized")">
+										<FluentBadge Fill="detached" Style="width:100%">detached</FluentBadge>
+									</span>
+								}
+							</div>
+						</td>
+						<td class="tf-grid-td">
+							<div>
 								<div>@context.DbName</div>
-								<div class="td-description">@context.SourceName</div>
+								<div class="td-description">
+									@context.SourceName
+								</div>
 							</div>
 						</td>
 						<td class="tf-grid-td">
 							<div>
 								<div>@((new TucDatabaseColumnTypeInfo(context.DbType)).Name)</div>
-								<div class="td-description">@context.SourceType</div>
+								@if (!String.IsNullOrWhiteSpace(context.SourceName))
+								{
+									<div class="td-description">@context.SourceType</div>
+								}
 							</div>
 						</td>
 						<td class="tf-grid-td">
