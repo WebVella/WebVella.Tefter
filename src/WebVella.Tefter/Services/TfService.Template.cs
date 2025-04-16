@@ -43,7 +43,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			const string SQL = @"SELECT * FROM template WHERE id = @id";
+			const string SQL = @"SELECT * FROM tf_template WHERE id = @id";
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL, CreateParameter("@id", id, DbType.Guid));
 
@@ -64,7 +64,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			const string SQL = @"SELECT * FROM template";
+			const string SQL = @"SELECT * FROM tf_template";
 
 			var dt = _dbService.ExecuteSqlQueryCommand(SQL);
 
@@ -240,7 +240,7 @@ public partial class TfService : ITfService
 				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
 
 				const string SQL = @"
-				UPDATE template
+				UPDATE tf_template
 				SET 
 					name=@name,
 					icon=@icon,
@@ -311,7 +311,7 @@ public partial class TfService : ITfService
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
-				const string SQL = "DELETE FROM template WHERE id = @id";
+				const string SQL = "DELETE FROM tf_template WHERE id = @id";
 
 				var idPar = CreateParameter("id", templateId, DbType.Guid);
 
