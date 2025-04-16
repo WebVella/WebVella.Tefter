@@ -528,15 +528,15 @@ public partial class TfService : ITfService
 			ITfService tfService)
 		{
 
-			RuleFor(provider => provider.Columns)
-					.Must((provider, columns) =>
-					{
-						if (columns.Count > 0)
-							return false;
+			//RuleFor(provider => provider.Columns)
+			//		.Must((provider, columns) =>
+			//		{
+			//			if (columns.Count > 0)
+			//				return false;
 
-						return true;
-					})
-					.WithMessage("The data provider contains columns be deleted.");
+			//			return true;
+			//		})
+			//		.WithMessage("The data provider contains columns be deleted.");
 		}
 
 		public ValidationResult ValidateDelete(TfDataProvider provider)

@@ -96,7 +96,7 @@ public partial class TfService : ITfService
 
 		foreach (var dbo in dbos)
 		{
-			var logEntries = JsonSerializer.Deserialize<List<TfDataProviderSychronizationLogEntry>>(dbo.SynchLogJson??"[]");
+			var logEntries = JsonSerializer.Deserialize<List<TfDataProviderSychronizationLogEntry>>(dbo.SynchLogJson ?? "[]");
 			var task = new TfDataProviderSynchronizeTask
 			{
 				Id = dbo.Id,
@@ -113,170 +113,6 @@ public partial class TfService : ITfService
 
 		return result;
 	}
-
-//	public TfDataProviderSynchronizeTaskExtended GetSynchronizationTaskExtended(
-//		Guid taskId)
-//	{
-//		TfDataProviderSynchronizeTaskExtended dbo =
-//			_dboManager.GetBySql<TfDataProviderSynchronizeTaskExtended>(
-//@"SELECT
-//	st.id,
-//	st.data_provider_id,
-//	st.policy_json,
-//	st.status,
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-//FROM tf_data_provider_synchronize_task st
-//WHERE st.id = @task_id 
-//GROUP BY
-//	st.id,
-//	st.data_provider_id,
-//	st.policy_json,
-//	st.status,
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json
-//ORDER BY st.created_on DESC",
-//				new NpgsqlParameter("@task_id", taskId));
-
-//		return dbo;
-//	}
-
-//	public List<TfDataProviderSynchronizeTaskExtended> GetSynchronizationTasksExtended(
-//		Guid? providerId = null,
-//		TfSynchronizationStatus? status = null)
-//	{
-//		List<TfDataProviderSynchronizeTaskExtended> dbos = null;
-//		if (providerId is not null && status is not null)
-//		{
-//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-//@"SELECT
-//	st.id,
-//	st.data_provider_id,
-//	st.policy_json,
-//	st.status,
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-//FROM tf_data_provider_synchronize_task st
-//WHERE data_provider_id = @data_provider_id AND status = @status
-//GROUP BY 
-//	st.id, 
-//	st.data_provider_id, 
-//	st.policy_json, 
-//	st.status, 
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json
-//ORDER BY st.created_on DESC",
-//				new NpgsqlParameter("@data_provider_id", providerId.Value),
-//				new NpgsqlParameter("@status", (short)status.Value));
-
-//		}
-//		else if (providerId is not null)
-//		{
-//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-//@"SELECT
-//	st.id,
-//	st.data_provider_id,
-//	st.policy_json,
-//	st.status,
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-//FROM tf_data_provider_synchronize_task st
-//WHERE data_provider_id = @data_provider_id 
-//GROUP BY
-//	st.id,
-//	st.data_provider_id,
-//	st.policy_json,
-//	st.status,
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json
-//ORDER BY st.created_on DESC",
-//				new NpgsqlParameter("@data_provider_id", providerId.Value));
-
-//		}
-//		else if (status is not null)
-//		{
-//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-//@"SELECT 
-//	st.id, 
-//	st.data_provider_id, 
-//	st.policy_json, 
-//	st.status, 
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json,
-//	COUNT( sri_info.id ) AS info_count,
-//	COUNT( sri_warning.id ) AS warning_count,
-//	COUNT( sri_error.id ) AS error_count
-//FROM tf_data_provider_synchronize_task st
-//	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_info ON sri_info.task_id = st.id AND sri_info.info IS NOT NULL
-//	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_warning ON sri_warning.task_id = st.id AND sri_warning.warning IS NOT NULL
-//	LEFT OUTER JOIN tf_data_provider_synchronize_result_info sri_error ON sri_error.task_id = st.id AND sri_error.error IS NOT NULL
-//WHERE status = @status
-//GROUP BY 
-//	st.id, 
-//	st.data_provider_id, 
-//	st.policy_json, 
-//	st.status, 
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json
-//ORDER BY st.created_on DESC",
-//				new NpgsqlParameter("@status", (short)status.Value));
-//		}
-//		else
-//		{
-//			dbos = _dboManager.GetListBySql<TfDataProviderSynchronizeTaskExtended>(
-//@"SELECT
-//	st.id,
-//	st.data_provider_id,
-//	st.policy_json,
-//	st.status,
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.info IS NOT NULL ) AS info_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.warning IS NOT NULL ) AS warning_count,
-//	(  SELECT COUNT(id) FROM tf_data_provider_synchronize_result_info sri WHERE sri.task_id = st.id AND sri.error IS NOT NULL ) AS error_count
-//FROM tf_data_provider_synchronize_task st
-//GROUP BY 
-//	st.id, 
-//	st.data_provider_id, 
-//	st.policy_json, 
-//	st.status, 
-//	st.created_on,
-//	st.started_on,
-//	st.completed_on,
-//	st.synch_log_json
-//ORDER BY st.created_on DESC");
-//		}
-
-//		return dbos;
-//	}
-
 	public Guid CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy)
@@ -357,7 +193,7 @@ public partial class TfService : ITfService
 			if (provider is null)
 			{
 				var ex = new TfException("Unable to get provider.");
-				task.SynchronizationLog.Log($"data provider ({task.DataProviderId}) for task not found.", ex );
+				task.SynchronizationLog.Log($"data provider ({task.DataProviderId}) for task not found.", ex);
 				throw ex;
 			}
 
@@ -393,13 +229,13 @@ public partial class TfService : ITfService
 				{
 					task.SynchronizationLog.Log($"data provider returned empty data set");
 					task.SynchronizationLog.Log($"delete all rows from data provider data table");
-					
+
 					DeleteAllProviderRows(provider);
-					
+
 					task.SynchronizationLog.Log($"all rows deleted successfully");
-					
+
 					scope.Complete();
-					
+
 					task.SynchronizationLog.Log($"task completed successfully");
 					return Task.CompletedTask;
 				}
@@ -419,7 +255,7 @@ public partial class TfService : ITfService
 				}
 				catch (Exception ex)
 				{
-					task.SynchronizationLog.Log($"failed prepare shared keys informations needed for synchronization", ex );
+					task.SynchronizationLog.Log($"failed prepare shared keys informations needed for synchronization", ex);
 					throw new TfException("Failed to prepare shared key value ids.", ex);
 				}
 
@@ -433,9 +269,9 @@ public partial class TfService : ITfService
 
 					task.SynchronizationLog.Log($"complete processing new rows system identifiers");
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
-					task.SynchronizationLog.Log($"failed to process new rows system identifiers",ex);
+					task.SynchronizationLog.Log($"failed to process new rows system identifiers", ex);
 					throw new TfException("Failed to process new rows system identifiers.", ex);
 				}
 				try
@@ -457,7 +293,7 @@ public partial class TfService : ITfService
 				}
 				catch (Exception ex)
 				{
-					task.SynchronizationLog.Log($"failed to create temporary database structures for syncronization",ex);
+					task.SynchronizationLog.Log($"failed to create temporary database structures for syncronization", ex);
 					throw new TfException("Failed to create temporary database structures for syncronization.", ex);
 				}
 
@@ -504,7 +340,7 @@ public partial class TfService : ITfService
 					{
 						paramList.Add(paramsDict[column]);
 					}
-					
+
 					task.SynchronizationLog.Log($"complete generating SQL code for synchronization");
 
 					task.SynchronizationLog.Log($"start database update");
@@ -540,6 +376,7 @@ public partial class TfService : ITfService
 		Dictionary<string, DataRow> existingData,
 		ReadOnlyCollection<TfDataProviderDataRow> newData)
 	{
+
 		List<string> columnNames = new List<string>();
 
 		Dictionary<string, NpgsqlParameter> paramsDict =
@@ -550,9 +387,6 @@ public partial class TfService : ITfService
 		//data column names and parameters
 		foreach (var column in provider.Columns)
 		{
-			if (string.IsNullOrWhiteSpace(column.SourceName))
-				continue;
-
 			columnNames.Add(column.DbName);
 
 			switch (column.DbType)
@@ -684,7 +518,200 @@ public partial class TfService : ITfService
 		{
 			currentRowIndex++;
 
-			foreach (var column in provider.Columns)
+			var key = GetDataRowPrimaryKeyValueAsString(provider, row, currentRowIndex);
+
+			var columnsWithoutSource = provider.Columns.Where(x => string.IsNullOrWhiteSpace(x.SourceName));
+
+			if (existingData.ContainsKey(key))
+			{
+				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)existingData[key]["tf_id"]);
+				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)existingData[key]["tf_created_on"]);
+				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
+				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
+			
+				foreach (var column in columnsWithoutSource)
+				{
+					switch (column.DbType)
+					{
+						case TfDatabaseColumnType.Boolean:
+							{
+								((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)existingData[key][column.DbName]);
+							}
+							break;
+						case TfDatabaseColumnType.Guid:
+							{
+								((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)existingData[key][column.DbName]);
+							}
+							break;
+						case TfDatabaseColumnType.Text:
+						case TfDatabaseColumnType.ShortText:
+							{
+								((List<string>)paramsDict[column.DbName].Value).Add((string)existingData[key][column.DbName]);
+							}
+							break;
+						case TfDatabaseColumnType.DateOnly:
+						case TfDatabaseColumnType.DateTime:
+							{
+								DateTime? value = null;
+								if (existingData[key][column.DbName] is DateOnly)
+								{
+									value = ((DateOnly)existingData[key][column.DbName]).ToDateTime();
+								}
+								else if (existingData[key][column.DbName] is DateOnly?)
+								{
+									if (existingData[key][column.DbName] == null)
+									{
+										value = null;
+									}
+									else
+									{
+										value = ((DateOnly)existingData[key][column.DbName]).ToDateTime();
+									}
+								}
+								else if (existingData[key][column.DbName] is DateTime)
+								{
+									value = (DateTime)existingData[key][column.DbName];
+								}
+								else if (existingData[key][column.DbName] is DateTime?)
+								{
+									if (existingData[key][column.DbName] == null)
+									{
+										value = null;
+									}
+									else
+									{
+										value = (DateTime)row[column.DbName];
+									}
+								}
+								else if (existingData[key][column.DbName] == null)
+								{
+									value = null;
+								}
+								else
+								{
+									throw new Exception($"Some source rows contains non DateTime or DateOnly objects for column '{column.DbName}' of type Date\\DateTime.");
+								}
+
+								((List<DateTime?>)paramsDict[column.DbName].Value).Add(value);
+							}
+							break;
+						case TfDatabaseColumnType.ShortInteger:
+							{
+								((List<short?>)paramsDict[column.DbName].Value).Add((short?)existingData[key][column.DbName]);
+							}
+							break;
+						case TfDatabaseColumnType.Integer:
+							{
+								((List<int?>)paramsDict[column.DbName].Value).Add((int?)existingData[key][column.DbName]);
+
+							}
+							break;
+						case TfDatabaseColumnType.LongInteger:
+							{
+								((List<long?>)paramsDict[column.DbName].Value).Add((long?)existingData[key][column.DbName]);
+							}
+							break;
+						case TfDatabaseColumnType.Number:
+							{
+								((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)existingData[key][column.DbName]);
+							}
+							break;
+						default:
+							throw new Exception("Not supported database type");
+					}
+				}
+			}
+			else
+			{
+				var tfId = Guid.NewGuid();
+				newTfIds[tfId.ToString()] = tfId;
+				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)tfId);
+				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)DateTime.Now);
+				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
+				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
+
+				foreach (var column in columnsWithoutSource)
+				{
+
+					switch (column.DbType)
+					{
+						case TfDatabaseColumnType.Boolean:
+							{
+								if(!column.IsNullable)
+									((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)GetColumnDefaultValue(column));
+								else
+									((List<bool?>)paramsDict[column.DbName].Value).Add(null);
+							}
+							break;
+						case TfDatabaseColumnType.Guid:
+							{
+								if (!column.IsNullable)
+									((List<Guid?>)paramsDict[column.DbName].Value).Add((Guid?)GetColumnDefaultValue(column));
+								else
+									((List<Guid?>)paramsDict[column.DbName].Value).Add(null);
+
+							}
+							break;
+						case TfDatabaseColumnType.Text:
+						case TfDatabaseColumnType.ShortText:
+							{
+								if(!column.IsNullable)
+									((List<string>)paramsDict[column.DbName].Value).Add((string)GetColumnDefaultValue(column));
+								else
+									((List<string>)paramsDict[column.DbName].Value).Add(null);
+							}
+							break;
+						case TfDatabaseColumnType.DateOnly:
+						case TfDatabaseColumnType.DateTime:
+							{
+								if(!column.IsNullable)
+									((List<DateTime?>)paramsDict[column.DbName].Value).Add((DateTime?)GetColumnDefaultValue(column));
+								else
+									((List<DateTime?>)paramsDict[column.DbName].Value).Add(null);
+							}
+							break;
+						case TfDatabaseColumnType.ShortInteger:
+							{
+								if(!column.IsNullable)
+									((List<short?>)paramsDict[column.DbName].Value).Add((short?)GetColumnDefaultValue(column));
+								else
+									((List<short?>)paramsDict[column.DbName].Value).Add(null);
+							}
+							break;
+						case TfDatabaseColumnType.Integer:
+							{
+								if(!column.IsNullable)
+									((List<int?>)paramsDict[column.DbName].Value).Add((int?)GetColumnDefaultValue(column));
+								else
+									((List<int?>)paramsDict[column.DbName].Value).Add(null);
+
+							}
+							break;
+						case TfDatabaseColumnType.LongInteger:
+							{
+								if(!column.IsNullable)
+									((List<long?>)paramsDict[column.DbName].Value).Add((long?)GetColumnDefaultValue(column));
+								else
+									((List<long?>)paramsDict[column.DbName].Value).Add(null);
+							}
+							break;
+						case TfDatabaseColumnType.Number:
+							{
+								if(!column.IsNullable)
+									((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)GetColumnDefaultValue(column));
+								else
+									((List<decimal?>)paramsDict[column.DbName].Value).Add(null);
+							}
+							break;
+						default:
+							throw new Exception("Not supported database type");
+					}
+				}
+			}
+
+
+			var columnsWithSource = provider.Columns.Where(x=> !string.IsNullOrWhiteSpace(x.SourceName));
+			foreach (var column in columnsWithSource)
 			{
 				switch (column.DbType)
 				{
@@ -776,8 +803,6 @@ public partial class TfService : ITfService
 				}
 			}
 
-			var key = GetDataRowPrimaryKeyValueAsString(provider, row, currentRowIndex);
-
 			foreach (var sharedKey in provider.SharedKeys)
 			{
 				List<string> keys = new List<string>();
@@ -793,23 +818,6 @@ public partial class TfService : ITfService
 
 				((List<short>)paramsDict[$"tf_sk_{sharedKey.DbName}_version"].Value)
 					.Add(sharedKey.Version);
-			}
-
-			if (existingData.ContainsKey(key))
-			{
-				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)existingData[key]["tf_id"]);
-				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)existingData[key]["tf_created_on"]);
-				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
-				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
-			}
-			else
-			{
-				var tfId = Guid.NewGuid();
-				newTfIds[tfId.ToString()] = tfId;
-				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)tfId);
-				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)DateTime.Now);
-				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
-				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
 			}
 		}
 
@@ -891,6 +899,12 @@ public partial class TfService : ITfService
 			{
 				columnsToSelect.Add(column);
 			}
+		}
+
+		var noSourceColumns = provider.Columns.Where(x => string.IsNullOrWhiteSpace(x.SourceName));
+		foreach (var column in noSourceColumns)
+		{
+			columnsToSelect.Add(column.DbName);
 		}
 
 		var columnsString = string.Join(", ", columnsToSelect.Select(x => $"\"{x}\"").ToArray());
@@ -1037,6 +1051,58 @@ public partial class TfService : ITfService
 		else
 		{
 			return rowIndex.ToString();
+		}
+	}
+
+	private object GetColumnDefaultValue(TfDataProviderColumn column)
+	{
+		if(!column.IsNullable && column.DefaultValue is null)
+			throw new Exception("Column is not nullable, but default value is null.");
+
+		if (column.DefaultValue is null)
+			return null;
+
+		switch (column.DbType)
+		{
+			case TfDatabaseColumnType.Boolean:
+				return Convert.ToBoolean(column.DefaultValue);
+			case TfDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+				return column.DefaultValue;
+			case TfDatabaseColumnType.Guid:
+				{
+					if(column.AutoDefaultValue)
+					{
+						return Guid.NewGuid();
+					}
+					return Guid.Parse(column.DefaultValue);
+				}
+			case TfDatabaseColumnType.DateOnly:
+				{
+					if (column.AutoDefaultValue == true)
+					{
+						return DateOnly.FromDateTime(DateTime.Now).ToDateTime();
+					}
+					return DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture).ToDateTime();
+				}
+			case TfDatabaseColumnType.DateTime:
+				{
+					if (column.AutoDefaultValue == true)
+					{
+						return DateTime.Now;
+					}
+					return DateOnly.Parse(column.DefaultValue, CultureInfo.InvariantCulture);
+				}
+			case TfDatabaseColumnType.Number:
+				return Convert.ToDecimal(column.DefaultValue, CultureInfo.InvariantCulture);
+			case TfDatabaseColumnType.ShortInteger:
+				return Convert.ToInt16(column.DefaultValue);
+			case TfDatabaseColumnType.Integer:
+				return Convert.ToInt32(column.DefaultValue);
+			case TfDatabaseColumnType.LongInteger:
+				return Convert.ToInt64(column.DefaultValue);
+			default:
+				throw new Exception("Not supported database column type while validate default value.");
 		}
 	}
 }
