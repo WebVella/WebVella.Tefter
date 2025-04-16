@@ -119,7 +119,9 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddAutoIncrementColumn("index")
 					.AddGuidColumn("type_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddTextColumn("settings_json", c => { c.Nullable(); })
-					.AddTextColumn("sync_primary_key_columns_json", c => { c.NotNullable().WithDefaultValue("[]"); });
+					.AddTextColumn("sync_primary_key_columns_json", c => { c.NotNullable().WithDefaultValue("[]"); })
+					.AddShortIntegerColumn("synch_schedule_minutes", c => { c.NotNullable().WithDefaultValue(60); })
+					.AddBooleanColumn("synch_schedule_enabled", c => { c.NotNullable().WithDefaultValue(false); });
 			})
 			.WithConstraints(constraints =>
 			{

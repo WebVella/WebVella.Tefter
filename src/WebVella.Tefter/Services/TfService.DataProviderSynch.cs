@@ -28,6 +28,9 @@ public partial interface ITfService
 
 	internal TfDataProviderSourceSchemaInfo GetDataProviderSourceSchemaInfo(
 		Guid providerId);
+
+	internal Task CheckScheduleSynchronizationTasksAsync(
+		CancellationToken stoppingToken);
 }
 
 public partial class TfService : ITfService
@@ -113,6 +116,36 @@ public partial class TfService : ITfService
 
 		return result;
 	}
+
+	public TfDataProviderSynchronizeTask GetLastSynchronizationTask(
+		Guid? providerId = null)
+	{
+		var orderSettings = new TfOrderSettings(
+		nameof(TfDataProviderSynchronizeTaskDbo.CreatedOn),
+		OrderDirection.ASC);
+
+		var dbo = _dboManager.GetBySql<TfDataProviderSynchronizeTaskDbo>(
+				"SELECT * FROM tf_data_provider_synchronize_task WHERE data_provider_id = @data_provider_id ORDER BY created_on DESC LIMIT 1 ",
+				new NpgsqlParameter("@data_provider_id", providerId.Value));
+
+
+		if (dbo == null)
+			return null;
+
+		var logEntries = JsonSerializer.Deserialize<List<TfDataProviderSychronizationLogEntry>>(dbo.SynchLogJson ?? "[]");
+		return new TfDataProviderSynchronizeTask
+		{
+			Id = dbo.Id,
+			DataProviderId = dbo.DataProviderId,
+			CompletedOn = dbo.CompletedOn,
+			CreatedOn = dbo.CreatedOn,
+			Policy = JsonSerializer.Deserialize<TfSynchronizationPolicy>(dbo.PolicyJson),
+			StartedOn = dbo.StartedOn,
+			Status = dbo.Status,
+			SynchronizationLog = new TfDataProviderSychronizationLog(logEntries)
+		};
+	}
+
 	public Guid CreateSynchronizationTask(
 		Guid providerId,
 		TfSynchronizationPolicy synchPolicy)
@@ -1104,5 +1137,42 @@ public partial class TfService : ITfService
 			default:
 				throw new Exception("Not supported database column type while validate default value.");
 		}
+	}
+
+	public Task CheckScheduleSynchronizationTasksAsync(
+		CancellationToken stoppingToken)
+	{
+		var providers = GetDataProviders();
+
+		foreach (var provider in providers)
+		{
+			if (stoppingToken.IsCancellationRequested)
+				break;
+
+			if (!provider.SynchScheduleEnabled)
+				continue;
+
+			var lastSynchTask = GetLastSynchronizationTask(provider.Id);
+
+			if(lastSynchTask is null)
+			{
+				CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy() );
+				continue;
+			}
+
+			if(lastSynchTask.Status == TfSynchronizationStatus.Pending)
+				continue;
+
+			if(lastSynchTask.CompletedOn is null)
+				continue;
+
+			if (lastSynchTask.CompletedOn.Value.AddMinutes(provider.SynchScheduleMinutes) < DateTime.Now)
+			{
+				CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy());
+				continue;
+			}
+		}
+
+		return Task.CompletedTask;
 	}
 }

@@ -9,6 +9,8 @@ public class TfDataProvider
 	public string Name { get; internal set; }
 	public int Index { get; internal set; }
 	public string SettingsJson { get; internal set; }
+	public short SynchScheduleMinutes { get; set; } = 60;
+	public bool SynchScheduleEnabled { get; set; } = false;
 	public ReadOnlyCollection<TfDataProviderSystemColumn> SystemColumns { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; internal set; }
 	public ReadOnlyCollection<TfSharedColumn> SharedColumns { get; internal set; }
@@ -33,6 +35,9 @@ public record TfDataProviderModel
 	public ITfDataProviderAddon ProviderType { get; internal set; }
 	public string SettingsJson { get; internal set; } = null;
 	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
+	[Required]
+	public short SynchScheduleMinutes { get; set; } = 60;
+	public bool SynchScheduleEnabled { get; set; } = false;
 }
 
 
@@ -58,4 +63,10 @@ internal record TfDataProviderDbo
 
 	[TfDboModelProperty("sync_primary_key_columns_json")]
 	public string SynchPrimaryKeyColumnsJson { get; set; } = "[]";
+
+	[TfDboModelProperty("synch_schedule_minutes")]
+	public short SynchScheduleMinutes { get; set; } = 60;
+
+	[TfDboModelProperty("synch_schedule_enabled")]
+	public bool SynchScheduleEnabled { get; set; } = false;
 }
