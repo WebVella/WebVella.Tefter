@@ -417,6 +417,8 @@ public partial class TfService : ITfService
 			Name = dbo.Name,
 			Index = dbo.Index,
 			SettingsJson = dbo.SettingsJson,
+			SynchScheduleEnabled = dbo.SynchScheduleEnabled,
+			SynchScheduleMinutes = dbo.SynchScheduleMinutes,
 			ProviderType = providerType,
 			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
@@ -455,6 +457,12 @@ public partial class TfService : ITfService
 					.Must(name => { return tfService.GetDataProvider(name) == null; })
 					.WithMessage("There is already existing data provider with specified name.");
 
+			RuleFor(provider => provider.SynchScheduleMinutes)
+					.Must((provider, syncMinutes) =>
+					{
+						return syncMinutes >= 15;
+					})
+					.WithMessage("Minimum time between synchronizations is 15 min");
 		}
 
 		public ValidationResult ValidateCreate(TfDataProviderModel provider)
@@ -510,6 +518,13 @@ public partial class TfService : ITfService
 					return !(existingObj != null && existingObj.Id != provider.Id);
 				})
 				.WithMessage("There is already existing data provider with specified name.");
+
+			RuleFor(provider => provider.SynchScheduleMinutes)
+				.Must((provider, syncMinutes) =>
+				{
+					return syncMinutes >= 15;
+				})
+				.WithMessage("Minimum time between synchronizations is 15 min");
 		}
 
 		public ValidationResult ValidateUpdate(TfDataProviderModel provider)
