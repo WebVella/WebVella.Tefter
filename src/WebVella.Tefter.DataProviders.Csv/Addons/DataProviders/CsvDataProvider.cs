@@ -426,9 +426,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 		//CSV source values are all string
 		string stringValue = value?.ToString();
 
-		//if column is nullable return null, null is return for empty string 
-		if ((string.IsNullOrEmpty(stringValue) || stringValue?.ToLowerInvariant() == "null")
-			&& column.IsNullable)
+		if (string.IsNullOrEmpty(stringValue) || stringValue?.ToLowerInvariant() == "null")
 			return null;
 
 		string columnImportParseFormat = null;
