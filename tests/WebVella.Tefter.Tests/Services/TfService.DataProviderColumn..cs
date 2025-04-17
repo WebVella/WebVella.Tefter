@@ -23,7 +23,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = null,
 					DataProviderId = provider.Id,
-					DbName = "textOwa colona",
+					DbName = $"dp{provider.Index}_textOwa colona",
 					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
@@ -62,8 +62,17 @@ public partial class TfServiceTest : BaseTest
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
 				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
 
+				//start with wrong prefix -it should start with dp{index}, where index is data provider index
+				column.DbName = "prefix_test";
+				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
+				exception.Should().BeOfType(typeof(TfValidationException));
+				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
+				((TfValidationException)exception).Data.Contains(nameof(TfDataProviderColumn.DbName)).Should().BeTrue();
+
 				//too short
-				column.DbName = "a";
+				column.DbName = $"dp{provider.Index}_a";
 				task = Task.Run(() => { tfService.CreateDataProviderColumn(column); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().NotBeNull();
@@ -103,7 +112,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = null,
 					DataProviderId = provider.Id,
-					DbName = "textcolona",
+					DbName = $"dp{provider.Index}_textcolona",
 					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
@@ -142,7 +151,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = null,
 					DataProviderId = Guid.Empty,
-					DbName = "textcolona",
+					DbName = $"dp{provider.Index}_textcolona",
 					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
@@ -184,7 +193,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = null,
 					DataProviderId = provider.Id,
-					DbName = "textcolona",
+					DbName = $"dp{provider.Index}_textcolona",
 					DbType = TfDatabaseColumnType.Text,
 					SourceName = "",
 					SourceType = "TEXT",
@@ -223,7 +232,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = null,
 					DataProviderId = provider.Id,
-					DbName = "textcolona",
+					DbName = $"dp{provider.Index}_textcolona",
 					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source",
 					SourceType = "",
@@ -264,7 +273,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = false,
 					DefaultValue = Guid.NewGuid().ToString(),
 					DataProviderId = provider.Id,
-					DbName = "text",
+					DbName = $"dp{provider.Index}_text",
 					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",
@@ -284,7 +293,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = false,
 					DefaultValue = string.Empty,
 					DataProviderId = provider.Id,
-					DbName = "short_text",
+					DbName = $"dp{provider.Index}_short_text",
 					DbType = TfDatabaseColumnType.ShortText,
 					SourceName = "source_column",
 					SourceType = "SHORT_TEXT",
@@ -304,7 +313,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = false,
 					DefaultValue = short.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
-					DbName = "short_int",
+					DbName = $"dp{provider.Index}_short_int",
 					DbType = TfDatabaseColumnType.ShortInteger,
 					SourceName = "source_column",
 					SourceType = "SHORT_INTEGER",
@@ -324,7 +333,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = false,
 					DefaultValue = int.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
-					DbName = "int",
+					DbName = $"dp{provider.Index}_int",
 					DbType = TfDatabaseColumnType.Integer,
 					SourceName = "source_column",
 					SourceType = "INTEGER",
@@ -344,7 +353,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = long.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
-					DbName = "long_int",
+					DbName = $"dp{provider.Index}_long_int",
 					DbType = TfDatabaseColumnType.LongInteger,
 					SourceName = "source_column",
 					SourceType = "LONG_INTEGER",
@@ -364,7 +373,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = decimal.MaxValue.ToString(CultureInfo.InvariantCulture),
 					DataProviderId = provider.Id,
-					DbName = "number",
+					DbName = $"dp{provider.Index}_number",
 					DbType = TfDatabaseColumnType.Number,
 					SourceName = "source_column",
 					SourceType = "NUMBER",
@@ -384,7 +393,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = false,
 					DefaultValue = "2024-06-27",
 					DataProviderId = provider.Id,
-					DbName = "date",
+					DbName = $"dp{provider.Index}_date",
 					DbType = TfDatabaseColumnType.DateOnly,
 					SourceName = "source_column",
 					SourceType = "DATE",
@@ -404,7 +413,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = false,
 					DefaultValue = "2024-06-27 12:01",
 					DataProviderId = provider.Id,
-					DbName = "datetime",
+					DbName = $"dp{provider.Index}_datetime",
 					DbType = TfDatabaseColumnType.DateTime,
 					SourceName = "source_column",
 					SourceType = "DATETIME",
@@ -532,7 +541,7 @@ public partial class TfServiceTest : BaseTest
 				AutoDefaultValue = false,
 				DefaultValue = null,
 				DataProviderId = provider.Id,
-				DbName = "db_column",
+				DbName = $"dp{provider.Index}_db_column",
 				DbType = type,
 				SourceName = "source_column",
 				SourceType = sourceType,
