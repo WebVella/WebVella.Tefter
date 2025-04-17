@@ -7,7 +7,7 @@ public partial record TfAppState
 	{
 		get
 		{
-			if (Space is null) return OfficeColor.Excel;
+			if (Space is null) return OfficeColor.Windows;
 
 			return Space.Color;
 		}

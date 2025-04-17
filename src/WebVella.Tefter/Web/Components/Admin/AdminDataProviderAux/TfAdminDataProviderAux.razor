@@ -2,7 +2,7 @@
 @inherits TfBaseComponent
 @if (TfAppState.Value.AdminDataProvider is not null)
 {
-	<TfPageHeader Style="margin:1rem 0">@LOC("Shared keys")</TfPageHeader>
+	<TfPageHeader Style="margin-bottom:1rem">@LOC("Shared keys")</TfPageHeader>
 	<TfCard>
 		<TitleTemplate>
 			<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
@@ -57,7 +57,7 @@
 											<FluentStack>
 												@foreach (var item in context.Columns)
 												{
-													<FluentBadge Appearance="@Appearance.Accent">@item.DbName</FluentBadge>
+													<FluentBadge Appearance="@Appearance.Neutral">@item.DbName</FluentBadge>
 												}
 											</FluentStack>
 										</div>
@@ -113,7 +113,7 @@
 								<div>
 									@if (context.IncludeInTableSearch)
 									{
-										<FluentBadge Appearance="@Appearance.Accent">yes</FluentBadge>
+										<FluentBadge Appearance="@Appearance.Neutral">yes</FluentBadge>
 									}
 									else
 									{

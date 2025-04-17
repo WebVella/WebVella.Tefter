@@ -20,7 +20,7 @@ public record TucUserAdminManageForm
 	[Required]
 	public DesignThemeModes ThemeMode { get; set; } = DesignThemeModes.System;
 	[Required]
-	public OfficeColor ThemeColor { get; set; } = OfficeColor.Excel;
+	public OfficeColor ThemeColor { get; set; } = OfficeColor.Windows;
 	[Required]
 	public bool IsSidebarOpen { get; set; } = true;
 	public TucCultureOption Culture { get; set; }
