@@ -93,24 +93,4 @@ public partial class TfAdminDataProviderDetailsActions : TfBaseComponent
 
 	}
 
-	private async Task _addKey()
-	{
-		var dialog = await DialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(
-		new TucDataProviderSharedKey(),
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var record = (TucDataProvider)result.Data;
-			ToastService.ShowSuccess(LOC("Key successfully created!"));
-			Dispatcher.Dispatch(new SetAppStateAction(component: this,
-				state: TfAppState.Value with { AdminDataProvider = record }));
-		}
-	}
 }

@@ -1137,11 +1137,11 @@ body {
 .tf-layout__body__main__header__content {
   flex: 0 0 auto;
   padding: var(--tf-body-content-padding) 0;
-  width: 35%;
+  width: 200px;
+  margin-right: 50px;
 }
 .tf-layout__body__main__header__aside {
-  flex: 0 0 auto;
-  width: 65%;
+  flex: 1 1 auto;
   display: flex;
   justify-content: end;
   align-items: center;

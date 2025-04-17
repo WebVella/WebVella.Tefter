@@ -10,7 +10,7 @@ public record TucDataProviderColumnForm
 
 	public string SourceType { get; set; }
 
-	public bool IsDetached { get; set; } = false;
+	public bool IsDisconnected { get; set; } = false;
 
 	public DateTime CreatedOn { get; set; }
 

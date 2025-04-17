@@ -89,7 +89,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 				_selectedDbType = _form.DbType;
 				_selectedProviderType = _providerTypeOptions.FirstOrDefault(x => x.Name == _form.SourceType);
 				_providerTypeOptions = _providerTypeOptions.Where(x => x.SupportedDatabaseColumnTypes.Contains(_selectedDbType)).ToList();
-				_form.IsDetached = String.IsNullOrWhiteSpace(_form.SourceName);
+				_form.IsDisconnected = String.IsNullOrWhiteSpace(_form.SourceName);
 			}
 			base.InitForm(_form);
 		}
@@ -112,7 +112,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			var errors = new List<ValidationError>();
 
-			if (!_form.IsDetached && String.IsNullOrWhiteSpace(_form.SourceName))
+			if (!_form.IsDisconnected && String.IsNullOrWhiteSpace(_form.SourceName))
 			{
 				errors.Add(new ValidationError(nameof(_form.SourceName), LOC("required if attached")));
 			}
@@ -128,7 +128,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
-			if(_form.IsDetached)
+			if(_form.IsDisconnected)
 				_form.SourceName = null;
 
 			if (!_form.IsNullable && String.IsNullOrWhiteSpace(_form.DefaultValue))

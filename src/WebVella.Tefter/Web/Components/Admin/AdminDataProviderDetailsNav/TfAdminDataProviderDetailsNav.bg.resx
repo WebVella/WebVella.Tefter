@@ -120,14 +120,14 @@
   <data name="Access" xml:space="preserve">
     <value>Достъп</value>
   </data>
-  <data name="Columns" xml:space="preserve">
-    <value>Колони</value>
-  </data>
   <data name="Data" xml:space="preserve">
     <value>Данни</value>
   </data>
   <data name="Details" xml:space="preserve">
     <value>Детайли</value>
+  </data>
+  <data name="Provider Columns" xml:space="preserve">
+    <value>Източник Колони</value>
   </data>
   <data name="Saved Views" xml:space="preserve">
     <value>Запомнени Изгледи</value>

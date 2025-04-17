@@ -144,6 +144,9 @@
   <data name="Default value" xml:space="preserve">
     <value>Стойност по подразбиране</value>
   </data>
+  <data name="disconnect from source" xml:space="preserve">
+    <value>разкачи от източника</value>
+  </data>
   <data name="Global search" xml:space="preserve">
     <value>Глобално търсене</value>
   </data>
