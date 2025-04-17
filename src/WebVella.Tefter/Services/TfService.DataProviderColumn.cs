@@ -167,7 +167,11 @@ public partial class TfService : ITfService
 			if (column != null && column.Id == Guid.Empty)
 				column.Id = Guid.NewGuid();
 
-			new TfDataProviderColumnValidator(this)
+			TfDataProvider provider = null;
+			if (column is not null)
+				provider = GetDataProvider(column.DataProviderId);
+
+			new TfDataProviderColumnValidator(this,provider)
 				.ValidateCreate(column)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
@@ -178,7 +182,6 @@ public partial class TfService : ITfService
 				if (!success)
 					throw new TfDboServiceException("Insert<TfDataProviderColumn> failed.");
 
-				var provider = GetDataProvider(column.DataProviderId);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
 
@@ -206,9 +209,16 @@ public partial class TfService : ITfService
 	{
 		try
 		{
+			if(columns == null || columns.Count == 0)
+				throw new TfException("No columns to create");
+
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var validator = new TfDataProviderColumnValidator(this);
+				TfDataProvider provider = null;
+				if (columns[0] is not null )
+					provider = GetDataProvider(columns[0].DataProviderId);
+
+				var validator = new TfDataProviderColumnValidator(this,provider);
 				List<ValidationResult> validationResults = new();
 				foreach (var column in columns)
 				{
@@ -232,7 +242,6 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
-				var provider = GetDataProvider(providerId);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
 
@@ -256,7 +265,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			new TfDataProviderColumnValidator(this)
+			new TfDataProviderColumnValidator(this, null)
 				.ValidateUpdate(column)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
@@ -296,7 +305,7 @@ public partial class TfService : ITfService
 			{
 				var column = GetDataProviderColumn(id);
 
-				new TfDataProviderColumnValidator(this)
+				new TfDataProviderColumnValidator(this,null)
 					.ValidateDelete(column)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
@@ -1053,9 +1062,14 @@ public partial class TfService : ITfService
 	internal class TfDataProviderColumnValidator
 	: AbstractValidator<TfDataProviderColumn>
 	{
+		private readonly string _requiredColumnNamePrefix;
 		public TfDataProviderColumnValidator(
-			ITfService tfService)
+			ITfService tfService,
+			TfDataProvider provider )
 		{
+			if( provider is not null )
+				_requiredColumnNamePrefix = $"dp{provider.Index}_";
+
 			RuleSet("general", () =>
 			{
 				RuleFor(column => column.Id)
@@ -1143,6 +1157,19 @@ public partial class TfService : ITfService
 						return !dbName.StartsWith("tf_");
 					})
 					.WithMessage("The data provider column database name cannot start with 'tf_'.");
+
+				RuleFor(column => column.DbName)
+					.Must((column, dbName) =>
+					{
+						if (string.IsNullOrWhiteSpace(dbName))
+							return true;
+
+						if (string.IsNullOrWhiteSpace(_requiredColumnNamePrefix))
+							return true;
+
+						return dbName.StartsWith(_requiredColumnNamePrefix);
+					})
+					.WithMessage($"The column database name should start with '{_requiredColumnNamePrefix}'.");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>
