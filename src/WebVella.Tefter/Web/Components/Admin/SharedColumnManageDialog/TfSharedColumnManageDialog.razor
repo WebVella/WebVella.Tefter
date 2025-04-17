@@ -30,7 +30,7 @@
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentSelect OptionSelected="(x => x.Name == _form.DbType?.Name)"
-							@bind-SelectedOption="_form.DbType"
+									@bind-SelectedOption="_form.DbType"
 								  TOption="TucDatabaseColumnTypeInfo"
 								  Items="@TfAppState.Value.AdminSharedColumnDataTypes" Style="width:100%"
 								  OptionValue="@(p => p.Name)"

@@ -43,6 +43,9 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 				SharedKeyDbName = Content.SharedKeyDbName,
 			};
 		}
+		else{ 
+			_form.DbType = TfAppState.Value.AdminSharedColumnDataTypes.Single(x=> x.TypeValue == TfDatabaseColumnType.Text);
+		}
 		base.InitForm(_form);
 
 	}
