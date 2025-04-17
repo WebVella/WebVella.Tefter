@@ -187,6 +187,10 @@ public partial class TfService : ITfService
 
 				CreateDatabaseColumn(provider, column);
 
+				provider = GetDataProvider(column.DataProviderId);
+				if (provider is null)
+					throw new TfException("Failed to create new data provider column");
+
 				scope.Complete();
 
 				return provider;
@@ -242,6 +246,7 @@ public partial class TfService : ITfService
 
 				scope.Complete();
 
+				provider = GetDataProvider(columns[0].DataProviderId);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
 
@@ -265,7 +270,11 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			new TfDataProviderColumnValidator(this, null)
+			TfDataProvider provider = null;
+			if (column is not null)
+				provider = GetDataProvider(column.DataProviderId);
+
+			new TfDataProviderColumnValidator(this, provider)
 				.ValidateUpdate(column)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
@@ -277,7 +286,7 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Update<TfDataProviderColumn> failed.");
 
-			var provider = GetDataProvider(column.DataProviderId);
+			provider = GetDataProvider(column.DataProviderId);
 			if (provider is null)
 				throw new TfException("Failed to create new data provider column");
 
@@ -305,7 +314,11 @@ public partial class TfService : ITfService
 			{
 				var column = GetDataProviderColumn(id);
 
-				new TfDataProviderColumnValidator(this,null)
+				TfDataProvider provider = null;
+				if (column is not null)
+					provider = GetDataProvider(column.DataProviderId);
+
+				new TfDataProviderColumnValidator(this,provider)
 					.ValidateDelete(column)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
@@ -315,7 +328,7 @@ public partial class TfService : ITfService
 				if (!success)
 					throw new TfDboServiceException("Delete<TfDataProviderColumn> failed");
 
-				var provider = GetDataProvider(column.DataProviderId);
+				provider = GetDataProvider(column.DataProviderId);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider column");
 
@@ -1062,7 +1075,7 @@ public partial class TfService : ITfService
 	internal class TfDataProviderColumnValidator
 	: AbstractValidator<TfDataProviderColumn>
 	{
-		private readonly string _requiredColumnNamePrefix;
+		private readonly string _requiredColumnNamePrefix = string.Empty;
 		public TfDataProviderColumnValidator(
 			ITfService tfService,
 			TfDataProvider provider )
@@ -1177,9 +1190,13 @@ public partial class TfService : ITfService
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						return dbName.Length >= TfConstants.DB_MIN_OBJECT_NAME_LENGTH;
+						var customNamePart = dbName;
+						if(dbName.StartsWith(_requiredColumnNamePrefix))
+							customNamePart = dbName.Substring(_requiredColumnNamePrefix.Length);
+
+						return customNamePart.Length >= TfConstants.DB_MIN_OBJECT_NAME_LENGTH;
 					})
-					.WithMessage($"The database name must be at least {TfConstants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
+					.WithMessage($"The database name must be at least {TfConstants.DB_MIN_OBJECT_NAME_LENGTH + _requiredColumnNamePrefix.Length} characters long.");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>

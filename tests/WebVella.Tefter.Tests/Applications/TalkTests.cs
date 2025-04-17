@@ -56,7 +56,7 @@ public partial class TalkTests : BaseTest
 				for (int i = 0; i < 5; i++)
 					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
 
-				var user = tfService.GetUser("rumen@webvella.com");
+				var user = tfService.GetUser("admin@tefter.bg");
 
 				TalkChannel channel = new TalkChannel
 				{

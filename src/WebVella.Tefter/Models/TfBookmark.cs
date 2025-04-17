@@ -42,7 +42,7 @@ public class TfTag
 }
 
 [DboCacheModel]
-[TfDboModel("tf_bookmark_tags")]
+[TfDboModel("tf_bookmark_tag")]
 internal class TfBookmarkTag
 {
 	[TfDboModelProperty("bookmark_id")]

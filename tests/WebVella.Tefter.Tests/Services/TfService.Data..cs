@@ -52,15 +52,15 @@ public partial class TfServiceTest : BaseTest
 			{
 				var newRow = newTable.NewRow();
 
-				newRow["guid_column"] = Guid.NewGuid();
-				newRow["short_text_column"] = i + faker.Lorem.Sentence();
-				newRow["text_column"] = i + faker.Lorem.Lines();
-				newRow["date_column"] = faker.Date.PastDateOnly();
-				newRow["datetime_column"] = faker.Date.Future();
-				newRow["short_int_column"] = faker.Random.Short(0, 100);
-				newRow["int_column"] = faker.Random.Number(100, 1000);
-				newRow["long_int_column"] = faker.Random.Long(1000, 10000);
-				newRow["number_column"] = faker.Random.Decimal(100000, 1000000);
+				newRow[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
+				newRow[$"dp{provider.Index}_short_text_column"] = i + faker.Lorem.Sentence();
+				newRow[$"dp{provider.Index}_text_column"] = i + faker.Lorem.Lines();
+				newRow[$"dp{provider.Index}_date_column"] = faker.Date.PastDateOnly();
+				newRow[$"dp{provider.Index}_datetime_column"] = faker.Date.Future();
+				newRow[$"dp{provider.Index}_short_int_column"] = faker.Random.Short(0, 100);
+				newRow[$"dp{provider.Index}_int_column"] = faker.Random.Number(100, 1000);
+				newRow[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
+				newRow[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
 				newRow["sk_shared_key_text"] = "this is shared key text test " + i;
 				newRow["sk_shared_key_int"] = i;
@@ -82,15 +82,15 @@ public partial class TfServiceTest : BaseTest
 			{
 				var row = tableToUpdate.Rows[i];
 
-				row["guid_column"] = Guid.NewGuid();
-				row["short_text_column"] = i + faker.Lorem.Sentence() + "upd";
-				row["text_column"] = i + faker.Lorem.Lines() + "upd";
-				row["date_column"] = faker.Date.PastDateOnly();
-				row["datetime_column"] = faker.Date.Future();
-				row["short_int_column"] = faker.Random.Short(0, 100);
-				row["int_column"] = faker.Random.Number(100, 1000);
-				row["long_int_column"] = faker.Random.Long(1000, 10000);
-				row["number_column"] = faker.Random.Decimal(100000, 1000000);
+				row[$"dp{provider.Index}_guid_column"] = Guid.NewGuid();
+				row[$"dp{provider.Index}_short_text_column"] = i + faker.Lorem.Sentence() + "upd";
+				row[$"dp{provider.Index}_text_column"] = i + faker.Lorem.Lines() + "upd";
+				row[$"dp{provider.Index}_date_column"] = faker.Date.PastDateOnly();
+				row[$"dp{provider.Index}_datetime_column"] = faker.Date.Future();
+				row[$"dp{provider.Index}_short_int_column"] = faker.Random.Short(0, 100);
+				row[$"dp{provider.Index}_int_column"] = faker.Random.Number(100, 1000);
+				row[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
+				row[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
 				row["sk_shared_key_text"] = "this is shared key text test " + i + "update";
 				row["sk_shared_key_int"] = i + i;
@@ -107,15 +107,15 @@ public partial class TfServiceTest : BaseTest
 			{
 				var row = tableToUpdate.Rows[i];
 
-				row["guid_column"] = null;
-				row["short_text_column"] = null;
-				row["text_column"] = null;
-				row["date_column"] = null;
-				row["datetime_column"] = null;
-				row["short_int_column"] = null;
-				row["int_column"] = null;
-				row["long_int_column"] = null;
-				row["number_column"] = null;
+				row[$"dp{provider.Index}_guid_column"] = null;
+				row[$"dp{provider.Index}_short_text_column"] = null;
+				row[$"dp{provider.Index}_text_column"] = null;
+				row[$"dp{provider.Index}_date_column"] = null;
+				row[$"dp{provider.Index}_datetime_column"] = null;
+				row[$"dp{provider.Index}_short_int_column"] = null;
+				row[$"dp{provider.Index}_int_column"] = null;
+				row[$"dp{provider.Index}_long_int_column"] = null;
+				row[$"dp{provider.Index}_number_column"] = null;
 
 				row["sk_shared_key_text"] = null;
 				row["sk_shared_key_int"] = null;
@@ -148,8 +148,8 @@ public partial class TfServiceTest : BaseTest
 				{
 						new TfFilterOr(new[]
 							{
-								(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
-								(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
+								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
+								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
 								(TfFilterBase)new TfFilterText("sk_shared_key_text", TfFilterTextComparisonMethod.Contains, "a"),
 								(TfFilterBase)new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
 							})
@@ -160,7 +160,7 @@ public partial class TfServiceTest : BaseTest
 							DbName ="missing_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName ="guid_column",
+							DbName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
 							DbName ="sk_shared_key_int",
@@ -203,7 +203,7 @@ public partial class TfServiceTest : BaseTest
 							DbName ="missing_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName ="guid_column",
+							DbName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
 							DbName ="sk_shared_key_int",

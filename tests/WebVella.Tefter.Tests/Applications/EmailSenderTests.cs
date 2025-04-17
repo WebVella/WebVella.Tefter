@@ -20,7 +20,7 @@ public partial class EmailSenderTests : BaseTest
 			{
 				Guid relatedRowId = Guid.NewGuid();
 
-				var user = tfService.GetUser("rumen@webvella.com");
+				var user = tfService.GetUser("admin@tefter.bg");
 				CreateEmailMessageModel model = new CreateEmailMessageModel();
 				model.Subject = "test";
 				model.TextBody = "";

@@ -110,7 +110,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = false,
 					DefaultValue = null,
 					DataProviderId = provider.Id,
-					DbName = "db_column",
+					DbName = $"dp{provider.Index}_db_column",
 					DbType = TfDatabaseColumnType.Integer,
 					SourceName = "source_column",
 					SourceType = "INTEGER",

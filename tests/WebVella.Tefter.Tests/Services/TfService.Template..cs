@@ -51,7 +51,7 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var user = tfService.GetUser("rumen@webvella.com");
+				var user = tfService.GetUser("admin@tefter.bg");
 
 				TfManageTemplateModel createTemplateModel = new TfManageTemplateModel
 				{

@@ -1351,25 +1351,25 @@ public partial class TfService : ITfService
 		switch (dbColumnType)
 		{
 			case TfDatabaseColumnType.ShortText:
-				return "shared_column_short_text_value";
+				return "tf_shared_column_short_text_value";
 			case TfDatabaseColumnType.Text:
-				return "shared_column_text_value";
+				return "tf_shared_column_text_value";
 			case TfDatabaseColumnType.Boolean:
-				return "shared_column_boolean_value";
+				return "tf_shared_column_boolean_value";
 			case TfDatabaseColumnType.Guid:
-				return "shared_column_guid_value";
+				return "tf_shared_column_guid_value";
 			case TfDatabaseColumnType.ShortInteger:
-				return "shared_column_short_integer_value";
+				return "tf_shared_column_short_integer_value";
 			case TfDatabaseColumnType.Integer:
-				return "shared_column_integer_value";
+				return "tf_shared_column_integer_value";
 			case TfDatabaseColumnType.LongInteger:
-				return "shared_column_long_integer_value";
+				return "tf_shared_column_long_integer_value";
 			case TfDatabaseColumnType.Number:
-				return "shared_column_number_value";
+				return "tf_shared_column_number_value";
 			case TfDatabaseColumnType.DateOnly:
-				return "shared_column_date_value";
+				return "tf_shared_column_date_value";
 			case TfDatabaseColumnType.DateTime:
-				return "shared_column_datetime_value";
+				return "tf_shared_column_datetime_value";
 			default:
 				throw new Exception("Not supported column type.");
 		}

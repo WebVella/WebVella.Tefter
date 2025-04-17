@@ -15,7 +15,7 @@ public partial class TfConstants
 
     //postgres name boundaries for length
     //maximum length is 63 but we reserve 13 for prefixes
-    public const int DB_MIN_OBJECT_NAME_LENGTH = 8; //first 4(min 4) characters are for prefix
+    public const int DB_MIN_OBJECT_NAME_LENGTH = 2; 
     public const int DB_MAX_OBJECT_NAME_LENGTH = 50;
     public const string DB_OBJECT_NAME_VALIDATION_PATTERN = @"^[a-z](?!.*__)[a-z0-9_]*[a-z0-9]$";
 

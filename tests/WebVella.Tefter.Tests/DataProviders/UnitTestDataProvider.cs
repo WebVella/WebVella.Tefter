@@ -68,15 +68,15 @@ public class UnitTestDataProvider : ITfDataProviderAddon
 		ITfDataProviderSychronizationLog synchLog)
 	{
 		List<Tuple<string, TfDatabaseColumnType, string>> columns = new List<Tuple<string, TfDatabaseColumnType, string>>();
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("guid_column", TfDatabaseColumnType.Guid, "GUID"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_text_column", TfDatabaseColumnType.ShortText, "SHORT_TEXT"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("text_column", TfDatabaseColumnType.Text, "TEXT"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("date_column", TfDatabaseColumnType.DateOnly, "DATE"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("datetime_column", TfDatabaseColumnType.DateTime, "DATETIME"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("short_int_column", TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("int_column", TfDatabaseColumnType.Integer, "INTEGER"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("long_int_column", TfDatabaseColumnType.LongInteger, "LONG_INTEGER"));
-		columns.Add(new Tuple<string, TfDatabaseColumnType, string>("number_column", TfDatabaseColumnType.Number, "NUMBER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_guid_column", TfDatabaseColumnType.Guid, "GUID"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_short_text_column", TfDatabaseColumnType.ShortText, "SHORT_TEXT"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_text_column", TfDatabaseColumnType.Text, "TEXT"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_date_column", TfDatabaseColumnType.DateOnly, "DATE"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_datetime_column", TfDatabaseColumnType.DateTime, "DATETIME"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_short_int_column", TfDatabaseColumnType.ShortInteger, "SHORT_INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_int_column", TfDatabaseColumnType.Integer, "INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_long_int_column", TfDatabaseColumnType.LongInteger, "LONG_INTEGER"));
+		columns.Add(new Tuple<string, TfDatabaseColumnType, string>($"dp{provider.Index}_number_column", TfDatabaseColumnType.Number, "NUMBER"));
 
 		var rows = new List<TfDataProviderDataRow>();
 		for (int i = 0; i < 100; i++)

@@ -295,7 +295,7 @@ public partial class TfServiceTest : BaseTest
 					AutoDefaultValue = true,
 					DefaultValue = null,
 					DataProviderId = providerModel.Id,
-					DbName = "textcolona",
+					DbName = $"dp{provider.Index}_textcolona",
 					DbType = TfDatabaseColumnType.Text,
 					SourceName = "source_column",
 					SourceType = "TEXT",

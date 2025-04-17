@@ -146,7 +146,7 @@ public partial class TfService : ITfService
 				var modifiedByPar = CreateParameter("@modified_by", template.UserId, DbType.Guid);
 
 				const string SQL = @"
-				INSERT INTO template(
+				INSERT INTO tf_template(
 					id, name, icon, description, space_data_json, is_enabled, 
 					is_selectable, result_type, settings_json, content_processor_type,
 					created_on, modified_on, created_by, modified_by)

@@ -77,8 +77,8 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			return _dboManager.GetListBySql<TfTag>(@"SELECT t.* FROM tag t
-				LEFT OUTER JOIN bookmark_tags bt ON bt.tag_id = t.id AND bt.bookmark_id = @bookmark_id
+			return _dboManager.GetListBySql<TfTag>(@"SELECT t.* FROM tf_tag t
+				LEFT OUTER JOIN tf_bookmark_tag bt ON bt.tag_id = t.id AND bt.bookmark_id = @bookmark_id
 			WHERE bt.tag_id IS NOT NULL AND bt.bookmark_id = @bookmark_id
 			", new NpgsqlParameter("bookmark_id", bookmarkId));
 		}
