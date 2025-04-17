@@ -21,7 +21,7 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 			Url = string.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Table(),
-			Text = LOC("Columns")
+			Text = LOC("Provider Columns")
 		});
 		menu.Add(new TucMenuItem
 		{
@@ -29,13 +29,6 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.TableAdd(),
 			Text = LOC("Shared Columns")
-		});
-		menu.Add(new TucMenuItem
-		{
-			Url = string.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId),
-			Match = NavLinkMatch.All,
-			//Icon = new Icons.Regular.Size20.Table(),
-			Text = LOC("Shared Keys")
 		});
 		menu.Add(new TucMenuItem
 		{

@@ -36,13 +36,13 @@ public partial class TfConstants
 	public static string AdminDashboardMenuTitle = "Dashboard";
 	public static string AdminPagesMenuTitle = "Pages";
 
-	public static Icon AdminDataProvidersIcon = GetIcon("Connector");
+	public static Icon AdminDataProvidersIcon = GetIcon("CloudDatabase");
 	public static string AdminDataProvidersMenuTitle = "Data providers";
 
 	public static Icon AdminUsersIcon = GetIcon("People");
 	public static string AdminUsersMenuTitle = "Users";
 
-	public static Icon AdminSharedColumnsIcon = GetIcon("Column");
+	public static Icon AdminSharedColumnsIcon = GetIcon("BookDatabase");
 	public static string AdminSharedColumnsMenuTitle = "Shared Columns";
 
 	public static Icon AdminFileRepositoryIcon = GetIcon("DocumentDatabase");

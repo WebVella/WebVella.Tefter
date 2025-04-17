@@ -34,7 +34,7 @@ public partial record TfUserState
 			if (CurrentUser is not null && CurrentUser.Settings is not null)
 				return CurrentUser.Settings.ThemeColor;
 
-			return OfficeColor.Excel;
+			return OfficeColor.Windows;
 		}
 	}
 

@@ -45,6 +45,7 @@ public record TucDataProvider
 			return result.OrderBy(x=> x.DbName).ToList();
 		}
 	}
+	public string ColumnPrefix { get => $"dp{Index}_"; }
 	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
 	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; init; }

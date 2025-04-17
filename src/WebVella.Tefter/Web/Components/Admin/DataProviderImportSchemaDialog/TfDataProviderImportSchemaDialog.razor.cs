@@ -89,6 +89,10 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
 
+			foreach (var matchColumn in _newColumns) {
+				matchColumn.DbName = TfAppState.Value.AdminDataProvider.ColumnPrefix + matchColumn.DbName;
+			}
+
 			var provider = UC.CreateBulkDataProviderColumn(Content.Id, _newColumns);
 			await Dialog.CloseAsync(provider);
 		}

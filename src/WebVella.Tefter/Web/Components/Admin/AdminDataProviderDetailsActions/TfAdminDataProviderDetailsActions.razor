@@ -27,23 +27,3 @@ else if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.Schema)
 		</FluentButton>
 	</FluentStack>
 }
-else if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.AuxColumns)
-{
-}
-else if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.SharedKeys)
-{
-	<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End" Style="margin-bottom:1rem">
-		<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
-			@LOC("Shared key")
-			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
-		</FluentButton>
-	</FluentStack>
-}
-else if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.Synchronization)
-{
-
-}
-else if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.Data)
-{
-
-}

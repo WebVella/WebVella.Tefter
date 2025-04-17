@@ -76,6 +76,7 @@ internal partial class AppStateUseCase
 		if (form.Id == Guid.Empty)
 			form = form with { Id = Guid.NewGuid() };
 
+
 		_tfService.CreateSharedColumn(form.ToModel());
 
 		return GetSharedColumns();

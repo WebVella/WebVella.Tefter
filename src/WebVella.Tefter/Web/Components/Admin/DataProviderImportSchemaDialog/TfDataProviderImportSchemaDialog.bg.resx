@@ -132,11 +132,17 @@
   <data name="Cancel" xml:space="preserve">
     <value>Отказ</value>
   </data>
+  <data name="column name" xml:space="preserve">
+    <value>име на колона</value>
+  </data>
   <data name="Create" xml:space="preserve">
     <value>Създай</value>
   </data>
   <data name="Create column" xml:space="preserve">
     <value>Създай колона</value>
+  </data>
+  <data name="data type" xml:space="preserve">
+    <value>тип данни</value>
   </data>
   <data name="Default value" xml:space="preserve">
     <value>Стойност по подразбиране</value>
@@ -162,12 +168,6 @@
   <data name="Preferred search type" xml:space="preserve">
     <value>Предпочитан тип търсене</value>
   </data>
-  <data name="PROVIDER column name" xml:space="preserve">
-    <value>ДОСТАВЧИК име на колона</value>
-  </data>
-  <data name="PROVIDER data type" xml:space="preserve">
-    <value>ДОСТАВЧИК тип данни</value>
-  </data>
   <data name="Save" xml:space="preserve">
     <value>Запомни</value>
   </data>
@@ -180,11 +180,11 @@
   <data name="Sortable" xml:space="preserve">
     <value>Сортиране</value>
   </data>
-  <data name="SOURCE column name" xml:space="preserve">
-    <value>ИЗТОЧНИК име на колона</value>
+  <data name="SOURCE column" xml:space="preserve">
+    <value>ИЗТОЧНИК колона</value>
   </data>
-  <data name="SOURCE column type" xml:space="preserve">
-    <value>ИЗТОЧНИК тип данни</value>
+  <data name="SOURCE type" xml:space="preserve">
+    <value>ИЗТОЧНИК тип</value>
   </data>
   <data name="Unique" xml:space="preserve">
     <value>Уникалност</value>
