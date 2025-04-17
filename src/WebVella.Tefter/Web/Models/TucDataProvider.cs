@@ -26,7 +26,7 @@ public record TucDataProvider
 			{
 				foreach (var item in SystemColumns) result.Add(new TucColumn(item));
 			}
-			return result.OrderBy(x=> x.DbName).ToList();
+			return result.OrderBy(x => x.DbName).ToList();
 		}
 	}
 	public List<TucColumn> ColumnsPublic
@@ -42,10 +42,11 @@ public record TucDataProvider
 			{
 				foreach (var item in SharedColumns) result.Add(new TucColumn(item));
 			}
-			return result.OrderBy(x=> x.DbName).ToList();
+			return result.OrderBy(x => x.DbName).ToList();
 		}
 	}
-	public string ColumnPrefix { get => $"dp{Index}_"; }
+	public string ColumnPrefix { get => $"{Code}_"; }
+	public string Code { get => $"dp{Index}"; }
 	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
 	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; init; }
