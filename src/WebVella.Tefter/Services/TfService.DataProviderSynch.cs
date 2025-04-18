@@ -1015,8 +1015,7 @@ public partial class TfService : ITfService
 
 				if (!column.IsNullable && row[column.DbName] == null)
 				{
-					throw new Exception($"The column '{column.DbName}'(Source Name='{column.SourceName})' " +
-						$" is specified as non nullable, but provider data contains records with null for this column");
+					row[column.DbName] = GetColumnDefaultValue(column);
 				}
 
 				if (column.IsUnique)
