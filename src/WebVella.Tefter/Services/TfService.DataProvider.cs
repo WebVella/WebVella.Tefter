@@ -276,7 +276,14 @@ public partial class TfService : ITfService
 
 		TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
 
-		var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo);
+		var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo, 
+			nameof(TfDataProviderDbo.Name),
+			nameof(TfDataProviderDbo.TypeId),
+			nameof(TfDataProviderDbo.SettingsJson),
+			nameof(TfDataProviderDbo.SynchPrimaryKeyColumnsJson),
+			nameof(TfDataProviderDbo.SynchScheduleMinutes),
+			nameof(TfDataProviderDbo.SynchScheduleEnabled)
+			);
 
 		if (!success)
 			throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
@@ -388,7 +395,9 @@ public partial class TfService : ITfService
 			Name = providerModel.Name,
 			SettingsJson = providerModel.SettingsJson,
 			TypeId = providerModel.ProviderType.Id,
-			SynchPrimaryKeyColumnsJson = JsonSerializer.Serialize(providerModel.SynchPrimaryKeyColumns ?? new List<string>())
+			SynchPrimaryKeyColumnsJson = JsonSerializer.Serialize(providerModel.SynchPrimaryKeyColumns ?? new List<string>()),
+			SynchScheduleEnabled = providerModel.SynchScheduleEnabled,
+			SynchScheduleMinutes = providerModel.SynchScheduleMinutes,
 		};
 	}
 

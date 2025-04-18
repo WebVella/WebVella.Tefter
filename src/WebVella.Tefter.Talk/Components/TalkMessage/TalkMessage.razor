@@ -41,7 +41,7 @@
 						</span>
 					}
 					<span class="talk-sender">@_user.Names</span>
-					<span class="talk-timestamp" title="@Item.CreatedOn.ToString("dd MMM yyyy HH:mm")">@Item.CreatedOn.ToString("HH:mm")</span>
+					<span class="talk-timestamp" title="@Item.CreatedOn.ToString(TfConstants.DateTimeFormat)">@Item.CreatedOn.ToString(TfConstants.HourFormat)</span>
 					@if (Item.LastUpdatedOn is not null)
 					{
 						<span class="talk-updated" style="margin-left:5px;" title="@Item.LastUpdatedOn?.ToString(TfConstants.DateTimeFormat)">(@LOC("updated"))</span>

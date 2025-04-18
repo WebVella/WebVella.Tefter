@@ -78,7 +78,7 @@ internal class TfDatabaseUtility
             if (column.DefaultValue is null)
                 return "NULL";
             else
-                return $"'{((DateOnly)column.DefaultValue).ToString("yyyy-MM-dd")}'";
+                return $"'{((DateOnly)column.DefaultValue).ToString(TfConstants.DateFormat)}'";
         };
 
         Func<TfDateTimeDatabaseColumn, string> dateTimeDefaultValueFunc = (column) =>
@@ -89,7 +89,7 @@ internal class TfDatabaseUtility
             if (column.DefaultValue is null)
                 return "NULL";
             else
-                return $"'{((DateTime)column.DefaultValue).ToString("yyyy-MM-dd HH:mm:ss.fff")}'";
+                return $"'{((DateTime)column.DefaultValue).ToString(TfConstants.DateTimeFullFormat)}'";
         };
 
         Func<TfGuidDatabaseColumn, string> guidDefaultValueFunc = (column) =>

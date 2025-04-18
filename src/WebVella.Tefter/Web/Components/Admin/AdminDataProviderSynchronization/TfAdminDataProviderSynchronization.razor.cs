@@ -6,12 +6,21 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	private List<string> _keyitems = new();
+	private string _nextSyncronization;
 
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		if (TfAppState.Value.AdminDataProvider is null)
+			throw new Exception("Data provider not initialized");
 		if (TfAppState.Value.AdminDataProvider?.SynchPrimaryKeyColumns is not null)
 			_keyitems = TfAppState.Value.AdminDataProvider.SynchPrimaryKeyColumns.ToList();
+
+		_nextSyncronization = LOC("not scheduled");
+		var providerNextTaskCreatedOn = UC.GetProviderNextTaskCreatedOn(TfAppState.Value.AdminDataProvider.Id);
+		if (providerNextTaskCreatedOn is not null)
+			_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);
+
 	}
 
 	private async Task _onViewLogClick(TucDataProviderSyncTask task)
@@ -33,6 +42,26 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 		await UC.TriggerSynchronization(TfAppState.Value.AdminDataProvider.Id);
 		ToastService.ShowSuccess(LOC("Synchronization task created!"));
 		Navigator.ReloadCurrentUrl();
+	}
+
+	private async Task _editSchedule()
+	{
+		var dialog = await DialogService.ShowDialogAsync<TfDataProviderSyncManageDialog>(TfAppState.Value.AdminDataProvider,
+				new DialogParameters()
+				{
+					PreventDismissOnOverlayClick = true,
+					PreventScroll = true,
+					Width = TfConstants.DialogWidthLarge,
+					TrapFocus = false
+				});
+		var result = await dialog.Result;
+		if (!result.Cancelled && result.Data != null)
+		{
+			var record = (TucDataProvider)result.Data;
+			ToastService.ShowSuccess(LOC("Provider successfully updated!"));
+			Dispatcher.Dispatch(new SetAppStateAction(component: this,
+				state: TfAppState.Value with { AdminDataProvider = record }));
+		}
 	}
 
 	private async Task _goFirstPage()

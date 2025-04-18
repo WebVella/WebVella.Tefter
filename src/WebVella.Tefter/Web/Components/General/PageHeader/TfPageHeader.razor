@@ -3,4 +3,12 @@
 
 <div class="@_cssClass" style="@Style">
 	<div class="page-header-inner">@ChildContent</div>
+	@if (SubHeader is not null)
+	{
+		<div class="page-subheader">
+			<div class="page-header-inner">
+				@SubHeader
+			</div>
+		</div>
+	}
 </div>

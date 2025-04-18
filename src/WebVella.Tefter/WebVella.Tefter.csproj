@@ -84,18 +84,4 @@
 		<PackageReference Include="WebVella.DocumentTemplates" Version="1.1.1" />
 	</ItemGroup>
 
-	
-
-	<ItemGroup>
-	  <Content Update="Web\Components\General\ValidationErrors\TfValidationErrors.razor">
-	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-	  </Content>
-	</ItemGroup>
-
-	
-
-	<ItemGroup>
-	  <Folder Include="Web\PageComponents\" />
-	</ItemGroup>
-
 </Project>

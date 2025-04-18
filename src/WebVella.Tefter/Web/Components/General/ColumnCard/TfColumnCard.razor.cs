@@ -20,6 +20,9 @@ public partial class TfColumnCard : TfBaseComponent
 	[Parameter]
 	public string NoItemsMessage { get; set; } = "This dataset will return all data provider columns. Select columns for limitation.";
 
+	[Parameter]
+	public RenderFragment NoItemsTemplate { get; set; }
+
 	public List<string> AllColumnOptions
 	{
 		get

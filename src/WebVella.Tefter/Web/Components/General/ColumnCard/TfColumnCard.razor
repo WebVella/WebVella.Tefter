@@ -29,7 +29,14 @@
 	<ChildContent>
 		@if (Items.Count == 0)
 		{
-			@LOC(NoItemsMessage)
+			@if (NoItemsTemplate is not null)
+			{
+				@NoItemsTemplate
+			}
+			else
+			{
+				<span>@LOC(NoItemsMessage)</span>
+			}
 		}
 		else
 		{

@@ -1,7 +1,7 @@
 ﻿::deep fluent-switch {
 	display:flex;
 	height:32px;
-	align-items:center
+	align-items:center;
 }
 	::deep fluent-switch::part(label) {
 		flex:1 1 auto;

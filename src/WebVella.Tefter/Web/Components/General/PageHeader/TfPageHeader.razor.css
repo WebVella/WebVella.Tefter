@@ -2,9 +2,10 @@
 	font-size: var(--type-ramp-plus-2-font-size);
 	line-height:1.5em;
 }
-::deep.page-subheader {
+::deep .page-subheader {
 	font-size:var(--type-ramp-base-font-size);
-	color: var(--neutral-base-color)
+	color: var(--neutral-base-color);
+	margin-top:-0.5em;
 }
 
 

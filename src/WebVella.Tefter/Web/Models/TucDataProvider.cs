@@ -50,6 +50,8 @@ public record TucDataProvider
 	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
 	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; init; }
+	public short SynchScheduleMinutes { get; set; } = 60;
+	public bool SynchScheduleEnabled { get; set; } = false;
 	public TucDataProvider() { }
 	public TucDataProvider(TfDataProvider model)
 	{
@@ -63,6 +65,8 @@ public record TucDataProvider
 		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x => new TucDataProviderSharedKey(x)).ToList();
 		ProviderType = new TucDataProviderTypeInfo(model.ProviderType);
 		SynchPrimaryKeyColumns = model.SynchPrimaryKeyColumns;
+		SynchScheduleMinutes = model.SynchScheduleMinutes;
+		SynchScheduleEnabled = model.SynchScheduleEnabled;
 	}
 
 }

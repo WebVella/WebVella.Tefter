@@ -23,7 +23,8 @@ internal partial class AppStateUseCase
 				AdminDataProviderData = null,
 			};
 			return (newAppState, newAuxDataState);
-		};
+		}
+		;
 
 
 		//AdminDataProviders, AdminDataProvidersPage
@@ -211,7 +212,11 @@ internal partial class AppStateUseCase
 		TucDataProviderForm form)
 	{
 		var providerTypes = _metaService.GetDataProviderTypes();
-		var submitForm = form.ToModel(providerTypes);
+		var providerSM = _tfService.GetDataProvider(form.Id);
+		if (providerSM is null)
+			throw new TfException("CreateDataProvider provider not found");
+
+		var submitForm = form.ToModel(providerTypes, providerSM);
 
 		var provider = _tfService.CreateDataProvider(submitForm);
 		if (provider is null)
@@ -224,7 +229,11 @@ internal partial class AppStateUseCase
 		TucDataProviderForm form)
 	{
 		var providerTypes = _metaService.GetDataProviderTypes();
-		var submitForm = form.ToModel(providerTypes);
+		var providerSM = _tfService.GetDataProvider(form.Id);
+		if (providerSM is null)
+			throw new TfException("CreateDataProvider provider not found");
+
+		var submitForm = form.ToModel(providerTypes, providerSM);
 
 		var provider = _tfService.UpdateDataProvider(submitForm);
 		if (provider is null)
@@ -251,6 +260,23 @@ internal partial class AppStateUseCase
 		};
 
 		provider = _tfService.UpdateDataProvider(submit);
+		if (provider is null)
+			throw new TfException("UpdateDataProvider returned null object");
+
+		return new TucDataProvider(provider);
+	}
+
+	internal virtual TucDataProvider UpdateDataProviderSunchronization(
+		TucDataProviderUpdateSyncForm form)
+	{
+		var providerTypes = _metaService.GetDataProviderTypes();
+		var providerSM = _tfService.GetDataProvider(form.Id);
+		if (providerSM is null)
+			throw new TfException("CreateDataProvider provider not found");
+
+		var submitForm = form.ToModel(providerSM);
+
+		var provider = _tfService.UpdateDataProvider(submitForm);
 		if (provider is null)
 			throw new TfException("UpdateDataProvider returned null object");
 
@@ -384,6 +410,29 @@ internal partial class AppStateUseCase
 				);
 		}
 		return Task.CompletedTask;
+	}
+
+	internal virtual DateTime? GetProviderNextTaskCreatedOn(
+			Guid dataProviderId)
+	{
+		try
+		{
+			var providerTasks = _tfService.GetSynchronizationTasks(dataProviderId, null);
+			var nextTask = providerTasks.Where(x => x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress).OrderBy(x => x.CreatedOn).FirstOrDefault();
+			if (nextTask is not null) return nextTask.CreatedOn;
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+		}
+		return null;
 	}
 
 	internal virtual Task DeleteAllProviderData(

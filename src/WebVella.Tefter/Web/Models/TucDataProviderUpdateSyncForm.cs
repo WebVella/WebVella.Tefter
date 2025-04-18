@@ -2,18 +2,21 @@
 
 namespace WebVella.Tefter.Web.Models;
 
-public record TucDataProviderForm
+public record TucDataProviderUpdateSyncForm
 {
 	public Guid Id { get; set; }
 	[Required]
-	public string Name { get; set; }
-	public string SettingsJson { get; set; }
-	[Required]
-	public TucDataProviderTypeInfo ProviderType { get; set; }
+	public short SynchScheduleMinutes { get; set; } = 60;
+	public bool SynchScheduleEnabled { get; set; } = false;
 
-	public TucDataProviderForm() { }
-
-	public TfDataProviderModel ToModel(ReadOnlyCollection<ITfDataProviderAddon> providerTypes, TfDataProvider currentProvider)
+	public TucDataProviderUpdateSyncForm() { }
+	public TucDataProviderUpdateSyncForm(TfDataProviderModel model)
+	{
+		Id = model.Id;
+		SynchScheduleMinutes = model.SynchScheduleMinutes;
+		SynchScheduleEnabled = model.SynchScheduleEnabled;
+	}
+	public TfDataProviderModel ToModel(TfDataProvider currentProvider)
 	{
 		var result = new TfDataProviderModel();
 		if(currentProvider is not null){ 
@@ -29,10 +32,8 @@ public record TucDataProviderForm
 		}
 
 		result.Id = Id;
-		result.Name = Name;
-		result.SettingsJson = SettingsJson;
-		result.ProviderType = ProviderType.ToModel(providerTypes);
-
+		result.SynchScheduleMinutes = SynchScheduleMinutes;
+		result.SynchScheduleEnabled = SynchScheduleEnabled;
 		return result;
 	}
 
