@@ -212,11 +212,8 @@ internal partial class AppStateUseCase
 		TucDataProviderForm form)
 	{
 		var providerTypes = _metaService.GetDataProviderTypes();
-		var providerSM = _tfService.GetDataProvider(form.Id);
-		if (providerSM is null)
-			throw new TfException("CreateDataProvider provider not found");
 
-		var submitForm = form.ToModel(providerTypes, providerSM);
+		var submitForm = form.ToModel(providerTypes, null);
 
 		var provider = _tfService.CreateDataProvider(submitForm);
 		if (provider is null)
