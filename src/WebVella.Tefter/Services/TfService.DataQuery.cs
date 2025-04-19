@@ -469,18 +469,18 @@ public partial class TfService : ITfService
 
 		row["tf_search"] = searchSb.ToString();
 
-		//process shared keys
-		foreach (var sharedKey in provider.SharedKeys)
+		//process join keys
+		foreach (var joinKey in provider.JoinKeys)
 		{
 			List<string> keys = new List<string>();
 
-			foreach (var column in sharedKey.Columns)
+			foreach (var column in joinKey.Columns)
 				keys.Add(row[column.DbName]?.ToString()); //Boz: columns could be nullable
 
 
-			row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
+			row[$"tf_sk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
 
-			row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
+			row[$"tf_sk_{joinKey.DbName}_version"] = joinKey.Version;
 		}
 
 		List<NpgsqlParameter> parameters;
@@ -498,7 +498,7 @@ public partial class TfService : ITfService
 
 			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
 
-			var sharedKey = provider.SharedKeys.Single(x => x.DbName == sharedColumn.SharedKeyDbName);
+			var joinKey = provider.JoinKeys.Single(x => x.DbName == sharedColumn.JoinKeyDbName);
 
 			TfDatabaseColumnType dbType = sharedColumn.DbType;
 
@@ -506,13 +506,13 @@ public partial class TfService : ITfService
 
 			Guid sharedColumnId = sharedColumn.Id;
 
-			Guid sharedKeyId = (Guid)row[$"tf_sk_{sharedKey.DbName}_id"];
+			Guid joinKeyId = (Guid)row[$"tf_sk_{joinKey.DbName}_id"];
 
 			UpsertSharedColumnValue(
 				value,
 				 tableColumn.Name,
 				sharedColumnId,
-				sharedKeyId,
+				joinKeyId,
 				dbType);
 		}
 	}
@@ -521,7 +521,7 @@ public partial class TfService : ITfService
 		object value,
 		string columnName,
 		Guid sharedColumnId,
-		Guid sharedKeyId,
+		Guid joinKeyId,
 		TfDatabaseColumnType dbType)
 	{
 
@@ -536,7 +536,7 @@ public partial class TfService : ITfService
 
 		NpgsqlParameter sharedColumnIdParameter = new NpgsqlParameter("@shared_column_id", sharedColumnId);
 
-		NpgsqlParameter sharedKeyIdParameter = new NpgsqlParameter("@shared_key_id", sharedKeyId);
+		NpgsqlParameter joinKeyIdParameter = new NpgsqlParameter("@shared_key_id", joinKeyId);
 
 		var tableName = GetSharedColumnValueTableNameByType(dbType);
 
@@ -550,7 +550,7 @@ public partial class TfService : ITfService
 			new List<NpgsqlParameter> {
 				valueParameter,
 				sharedColumnIdParameter,
-				sharedKeyIdParameter
+				joinKeyIdParameter
 			});
 	}
 
@@ -628,20 +628,20 @@ public partial class TfService : ITfService
 
 		row["tf_updated_on"] = DateTime.Now;
 
-		//process shared keys for changes
-		foreach (var sharedKey in provider.SharedKeys)
+		//process join keys for changes
+		foreach (var joinKey in provider.JoinKeys)
 		{
 			List<string> keys = new List<string>();
 
-			foreach (var column in sharedKey.Columns)
+			foreach (var column in joinKey.Columns)
 				keys.Add(row[column.DbName]?.ToString());
 
 			var newId = GetId(keys.ToArray());
 
-			if (newId != (Guid)row[$"tf_sk_{sharedKey.DbName}_id"])
-				row[$"tf_sk_{sharedKey.DbName}_id"] = newId;
+			if (newId != (Guid)row[$"tf_sk_{joinKey.DbName}_id"])
+				row[$"tf_sk_{joinKey.DbName}_id"] = newId;
 
-			row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
+			row[$"tf_sk_{joinKey.DbName}_version"] = joinKey.Version;
 		}
 
 		List<string> columnsWithChanges = new List<string>();
@@ -723,7 +723,7 @@ public partial class TfService : ITfService
 
 			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
 
-			var sharedKey = provider.SharedKeys.Single(x => x.DbName == sharedColumn.SharedKeyDbName);
+			var joinKey = provider.JoinKeys.Single(x => x.DbName == sharedColumn.JoinKeyDbName);
 
 			TfDatabaseColumnType dbType = sharedColumn.DbType;
 
@@ -731,13 +731,13 @@ public partial class TfService : ITfService
 
 			Guid sharedColumnId = sharedColumn.Id;
 
-			Guid sharedKeyId = (Guid)row[$"tf_sk_{sharedKey.DbName}_id"];
+			Guid joinKeyId = (Guid)row[$"tf_sk_{joinKey.DbName}_id"];
 
 			UpsertSharedColumnValue(
 				value,
 				 tableColumn.Name,
 				sharedColumnId,
-				sharedKeyId,
+				joinKeyId,
 				dbType);
 		}
 	}
@@ -972,14 +972,14 @@ public partial class TfService : ITfService
 			}
 			row["tf_search"] = searchSb.ToString();
 
-			foreach (var sharedKey in provider.SharedKeys)
+			foreach (var joinKey in provider.JoinKeys)
 			{
 				List<string> keys = new List<string>();
-				foreach (var column in sharedKey.Columns)
+				foreach (var column in joinKey.Columns)
 					keys.Add(row[column.DbName]?.ToString());
 
-				row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
-				row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
+				row[$"tf_sk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
+				row[$"tf_sk_{joinKey.DbName}_version"] = joinKey.Version;
 			}
 
 			List<NpgsqlParameter> parameters;
@@ -1022,14 +1022,14 @@ public partial class TfService : ITfService
 			}
 			row["tf_search"] = searchSb.ToString();
 
-			foreach (var sharedKey in provider.SharedKeys)
+			foreach (var joinKey in provider.JoinKeys)
 			{
 				List<string> keys = new List<string>();
-				foreach (var column in sharedKey.Columns)
+				foreach (var column in joinKey.Columns)
 					keys.Add(row[column.DbName].ToString());
 
-				row[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
-				row[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
+				row[$"tf_sk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
+				row[$"tf_sk_{joinKey.DbName}_version"] = joinKey.Version;
 			}
 
 			List<NpgsqlParameter> parameters;
@@ -1047,7 +1047,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private void UpdateProviderRowSharedKeysOnly(
+	private void UpdateProviderRowJoinKeysOnly(
 		TfDataProvider provider,
 		Guid tfId,
 		Dictionary<string, object> values)
@@ -1055,7 +1055,7 @@ public partial class TfService : ITfService
 		try
 		{
 			List<NpgsqlParameter> parameters;
-			var sql = BuildUpdateRowSharedKeysOnlySql(provider, tfId, values, out parameters);
+			var sql = BuildUpdateRowJoinKeysOnlySql(provider, tfId, values, out parameters);
 
 			var count = _dbService.ExecuteSqlNonQueryCommand(sql, parameters);
 			if (count != 1)
@@ -1097,11 +1097,11 @@ public partial class TfService : ITfService
 		sql.AppendLine("tf_row_index");
 		sql.AppendLine(",");
 
-		foreach (var sharedKey in provider.SharedKeys)
+		foreach (var joinKey in provider.JoinKeys)
 		{
-			sql.AppendLine($"tf_sk_{sharedKey.DbName}_id");
+			sql.AppendLine($"tf_sk_{joinKey.DbName}_id");
 			sql.AppendLine(",");
-			sql.AppendLine($"tf_sk_{sharedKey.DbName}_version");
+			sql.AppendLine($"tf_sk_{joinKey.DbName}_version");
 			sql.AppendLine(",");
 		}
 
@@ -1140,9 +1140,9 @@ public partial class TfService : ITfService
 		sql.AppendLine("tf_row_index");
 		sql.AppendLine(",");
 
-		foreach (var sharedKey in provider.SharedKeys)
+		foreach (var joinKey in provider.JoinKeys)
 		{
-			sql.AppendLine($"tf_sk_{sharedKey.DbName}_id");
+			sql.AppendLine($"tf_sk_{joinKey.DbName}_id");
 			sql.AppendLine(",");
 		}
 
@@ -1168,11 +1168,11 @@ public partial class TfService : ITfService
 		sql.AppendLine("@tf_row_index");
 		sql.AppendLine(",");
 
-		foreach (var sharedKey in provider.SharedKeys)
+		foreach (var joinKey in provider.JoinKeys)
 		{
-			var sharedKeyName = $"tf_sk_{sharedKey.DbName}_id";
-			parameters.Add(new NpgsqlParameter($"@{sharedKeyName}", row[sharedKeyName]));
-			sql.AppendLine("@" + sharedKeyName);
+			var joinKeyName = $"tf_sk_{joinKey.DbName}_id";
+			parameters.Add(new NpgsqlParameter($"@{joinKeyName}", row[joinKeyName]));
+			sql.AppendLine("@" + joinKeyName);
 			sql.AppendLine(",");
 		}
 
@@ -1222,16 +1222,16 @@ public partial class TfService : ITfService
 		sql.Append("tf_row_index = @tf_row_index");
 		sql.AppendLine(",");
 
-		foreach (var sharedKey in provider.SharedKeys)
+		foreach (var joinKey in provider.JoinKeys)
 		{
-			var sharedKeyName = $"tf_sk_{sharedKey.DbName}_id";
-			parameters.Add(new NpgsqlParameter($"@{sharedKeyName}", row[sharedKeyName]));
-			sql.Append($"{sharedKeyName} = @{sharedKeyName}");
+			var joinKeyName = $"tf_sk_{joinKey.DbName}_id";
+			parameters.Add(new NpgsqlParameter($"@{joinKeyName}", row[joinKeyName]));
+			sql.Append($"{joinKeyName} = @{joinKeyName}");
 			sql.AppendLine(",");
 
-			var sharedKeyVersion = $"tf_sk_{sharedKey.DbName}_version";
-			parameters.Add(new NpgsqlParameter($"@{sharedKeyVersion}", row[sharedKeyVersion]));
-			sql.Append($"{sharedKeyVersion} = @{sharedKeyVersion}");
+			var joinKeyVersion = $"tf_sk_{joinKey.DbName}_version";
+			parameters.Add(new NpgsqlParameter($"@{joinKeyVersion}", row[joinKeyVersion]));
+			sql.Append($"{joinKeyVersion} = @{joinKeyVersion}");
 			sql.AppendLine(",");
 		}
 
@@ -1266,7 +1266,7 @@ public partial class TfService : ITfService
 		return sql.ToString();
 	}
 
-	private string BuildUpdateRowSharedKeysOnlySql(
+	private string BuildUpdateRowJoinKeysOnlySql(
 		TfDataProvider provider,
 		Guid tfId,
 		Dictionary<string,object> values,
@@ -1277,16 +1277,16 @@ public partial class TfService : ITfService
 
 		sql.AppendLine($"UPDATE dp{provider.Index} SET ");
 
-		foreach (var sharedKey in provider.SharedKeys)
+		foreach (var joinKey in provider.JoinKeys)
 		{
-			var sharedKeyName = $"tf_sk_{sharedKey.DbName}_id";
-			parameters.Add(new NpgsqlParameter($"@{sharedKeyName}", (Guid)values[sharedKeyName]));
-			sql.Append($"{sharedKeyName} = @{sharedKeyName}");
+			var joinKeyName = $"tf_sk_{joinKey.DbName}_id";
+			parameters.Add(new NpgsqlParameter($"@{joinKeyName}", (Guid)values[joinKeyName]));
+			sql.Append($"{joinKeyName} = @{joinKeyName}");
 			sql.AppendLine(",");
 
-			var sharedKeyVersion = $"tf_sk_{sharedKey.DbName}_version";
-			parameters.Add(new NpgsqlParameter($"@{sharedKeyVersion}", (short)values[sharedKeyVersion]));
-			sql.Append($"{sharedKeyVersion} = @{sharedKeyVersion}");
+			var joinKeyVersion = $"tf_sk_{joinKey.DbName}_version";
+			parameters.Add(new NpgsqlParameter($"@{joinKeyVersion}", (short)values[joinKeyVersion]));
+			sql.Append($"{joinKeyVersion} = @{joinKeyVersion}");
 			sql.AppendLine(",");
 		}
 

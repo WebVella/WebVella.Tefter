@@ -119,12 +119,12 @@ public class TfDataRow : IEnumerable
 		return values;
 	}
 
-	public Guid? GetSharedKeyValue(string sharedKeyName)
+	public Guid? GetJoinKeyValue(string joinKeyName)
 	{
-		if (string.IsNullOrEmpty(sharedKeyName))
+		if (string.IsNullOrEmpty(joinKeyName))
 			return null;
 
-		string skColumnName = $"tf_sk_{sharedKeyName}_id";
+		string skColumnName = $"tf_sk_{joinKeyName}_id";
 
 		int index = DataTable.Columns.IndexOf(x => x.Name == skColumnName);
 		if (index == -1)

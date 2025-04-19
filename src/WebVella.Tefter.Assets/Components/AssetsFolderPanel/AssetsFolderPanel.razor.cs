@@ -26,10 +26,10 @@ public partial class AssetsFolderPanel : TfFormBaseComponent, IDialogContentComp
 			if (Content.FolderId is not null)
 			{
 				_folder = AssetsService.GetFolder(Content.FolderId.Value);
-				if (_folder is not null && !String.IsNullOrWhiteSpace(_folder.SharedKey) && Content.RowIndex > -1)
+				if (_folder is not null && !String.IsNullOrWhiteSpace(_folder.JoinKey) && Content.RowIndex > -1)
 				{
 					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-					_skValue = Content.DataTable.Rows[Content.RowIndex].GetSharedKeyValue(_folder.SharedKey);
+					_skValue = Content.DataTable.Rows[Content.RowIndex].GetJoinKeyValue(_folder.JoinKey);
 					if (_skValue is not null)
 						_items = AssetsService.GetAssets(_folder.Id, _skValue);
 				}

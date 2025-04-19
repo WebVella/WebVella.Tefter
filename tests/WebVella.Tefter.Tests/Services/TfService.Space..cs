@@ -312,8 +312,8 @@ public partial class TfServiceTest : BaseTest
 
 				provider = tfService.GetDataProvider(providerModel.Id);
 
-				TfDataProviderSharedKey sharedKey =
-					new TfDataProviderSharedKey
+				TfDataProviderJoinKey joinKey =
+					new TfDataProviderJoinKey
 					{
 						Id = Guid.NewGuid(),
 						Description = "testing1",
@@ -323,10 +323,10 @@ public partial class TfServiceTest : BaseTest
 
 					};
 
-				tfService.CreateDataProviderSharedKey(sharedKey);
+				tfService.CreateDataProviderJoinKey(joinKey);
 
 				provider = tfService.GetDataProvider(providerModel.Id);
-				provider.SharedKeys.Count().Should().Be(1);
+				provider.JoinKeys.Count().Should().Be(1);
 
 
 				var space = new TfSpace

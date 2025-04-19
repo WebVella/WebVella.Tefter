@@ -41,9 +41,9 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.SharedKeyDbName
-									 Label="@LOC("Target shared key")" Style="width:100%" AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.SharedKeyDbName)" />
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.JoinKeyDbName
+									 Label="@LOC("Target join key")" Style="width:100%" AutoComplete="off" />
+					<FluentValidationMessage For="@(() => _form.JoinKeyDbName)" />
 				</FluentGridItem>
 			</FluentGrid>
 			<FluentDivider Style="margin:15px 0" />

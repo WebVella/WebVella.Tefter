@@ -10,7 +10,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	[Inject] public IState<TfAppState> TfAppState { get; set; }
 	[Inject] public IAssetsService AssetsService { get; set; }
 	[Parameter] public Guid? FolderId { get; set; }
-	[Parameter] public string SharedKeyValue { get; set; } = "";
+	[Parameter] public string JoinKeyValue { get; set; } = "";
 	[Parameter] public TucUser CurrentUser { get; set; }
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
@@ -64,7 +64,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (SharedKeyValue != _itemsShareKeyValue || FolderId != _itemsFolderId)
+		if (JoinKeyValue != _itemsShareKeyValue || FolderId != _itemsFolderId)
 		{
 			//_allitems needs to be regenerated
 			_getAllItems();
@@ -122,13 +122,13 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private void _getAllItems()
 	{
 		_folder = AssetsService.GetFolder(FolderId.Value);
-		if (_folder is not null && SharedKeyValue is not null)
+		if (_folder is not null && JoinKeyValue is not null)
 		{
 			_allItems = AssetsService.GetAssets(
 				folderId: _folder.Id,
-				skTextId: SharedKeyValue);
+				skTextId: JoinKeyValue);
 		}
-		_itemsShareKeyValue = SharedKeyValue;
+		_itemsShareKeyValue = JoinKeyValue;
 		_itemsFolderId = FolderId;
 	}
 

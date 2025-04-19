@@ -9,7 +9,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 
 	private bool _isDataLoading = false;
 	private bool _showSystemColumns = true;
-	private bool _showSharedKeyColumns = true;
+	private bool _showJoinKeyColumns = true;
 	private bool _showCustomColumns = true;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -46,9 +46,9 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		_showSystemColumns = !_showSystemColumns;
 		StateHasChanged();
 	}
-	private void _toggleSharedKeyColumns()
+	private void _toggleJoinKeyColumns()
 	{
-		_showSharedKeyColumns = !_showSharedKeyColumns;
+		_showJoinKeyColumns = !_showJoinKeyColumns;
 		StateHasChanged();
 	}
 	private void _toggleCustomColumns()
@@ -166,7 +166,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 
 	private bool _columnIsVisible(TfDataColumn column)
 	{
-		if (_showSharedKeyColumns && column.IsShared) return true;
+		if (_showJoinKeyColumns && column.IsShared) return true;
 		if (_showSystemColumns && column.IsSystem) return true;
 		if (_showCustomColumns && !column.IsSystem) return true;
 

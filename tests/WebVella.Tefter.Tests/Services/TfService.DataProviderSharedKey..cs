@@ -5,7 +5,7 @@ namespace WebVella.Tefter.Tests.Services;
 public partial class TfServiceTest : BaseTest
 {
 	[Fact]
-	public async Task DataProviderSharedKey_CRUD()
+	public async Task DataProviderJoinKey_CRUD()
 	{
 		using (await locker.LockAsync())
 		{
@@ -16,10 +16,10 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateSharedKeysStructure(tfService, tfMetaService);
+				var provider = CreateJoinKeysStructure(tfService, tfMetaService);
 
-				TfDataProviderSharedKey sharedKey =
-					new TfDataProviderSharedKey
+				TfDataProviderJoinKey joinKey =
+					new TfDataProviderJoinKey
 					{
 						Id = Guid.NewGuid(),
 						Description = "testing1",
@@ -29,27 +29,27 @@ public partial class TfServiceTest : BaseTest
 
 					};
 
-				var task = Task.Run(() => { provider = tfService.CreateDataProviderSharedKey(sharedKey); });
+				var task = Task.Run(() => { provider = tfService.CreateDataProviderJoinKey(joinKey); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				provider.SharedKeys.Count().Should().Be(1);
+				provider.JoinKeys.Count().Should().Be(1);
 
 				var tables = dbManager.GetDatabaseBuilder().Build();
 				var table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
 				table.Should().NotBeNull();
-				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey.DbName}_id").Should().BeTrue();
-				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey.DbName}_version").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey.DbName}_id").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey.DbName}_version").Should().BeTrue();
 
-				var sharedKey1Created = provider.SharedKeys.Single(x => x.Id == sharedKey.Id);
+				var joinKey1Created = provider.JoinKeys.Single(x => x.Id == joinKey.Id);
 
-				sharedKey1Created.DataProviderId.Should().Be(sharedKey.DataProviderId);
-				sharedKey1Created.DbName.Should().Be(sharedKey.DbName);
-				sharedKey1Created.Description.Should().Be(sharedKey.Description);
-				sharedKey1Created.Version.Should().Be(1);
-				sharedKey1Created.Columns[0].Id.Should().Be(provider.Columns[0].Id);
+				joinKey1Created.DataProviderId.Should().Be(joinKey.DataProviderId);
+				joinKey1Created.DbName.Should().Be(joinKey.DbName);
+				joinKey1Created.Description.Should().Be(joinKey.Description);
+				joinKey1Created.Version.Should().Be(1);
+				joinKey1Created.Columns[0].Id.Should().Be(provider.Columns[0].Id);
 
-				var sharedKey2 = new TfDataProviderSharedKey
+				var joinKey2 = new TfDataProviderJoinKey
 				{
 					Id = Guid.NewGuid(),
 					Description = "testing2",
@@ -58,59 +58,59 @@ public partial class TfServiceTest : BaseTest
 					Columns = new() { provider.Columns[1] }
 				};
 
-				task = Task.Run(() => { provider = tfService.CreateDataProviderSharedKey(sharedKey2); });
+				task = Task.Run(() => { provider = tfService.CreateDataProviderJoinKey(joinKey2); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				provider.SharedKeys.Count().Should().Be(2);
+				provider.JoinKeys.Count().Should().Be(2);
 
-				var sharedKey2Created = provider.SharedKeys.Single(x => x.Id == sharedKey2.Id);
+				var joinKey2Created = provider.JoinKeys.Single(x => x.Id == joinKey2.Id);
 
-				sharedKey2Created.DataProviderId.Should().Be(sharedKey2.DataProviderId);
-				sharedKey2Created.DbName.Should().Be(sharedKey2.DbName);
-				sharedKey2Created.Description.Should().Be(sharedKey2.Description);
-				sharedKey2Created.Version.Should().Be(1);
-				sharedKey2Created.Columns[0].Id.Should().Be(provider.Columns[1].Id);
+				joinKey2Created.DataProviderId.Should().Be(joinKey2.DataProviderId);
+				joinKey2Created.DbName.Should().Be(joinKey2.DbName);
+				joinKey2Created.Description.Should().Be(joinKey2.Description);
+				joinKey2Created.Version.Should().Be(1);
+				joinKey2Created.Columns[0].Id.Should().Be(provider.Columns[1].Id);
 
-				sharedKey2Created.Columns.Add(provider.Columns[0]);
+				joinKey2Created.Columns.Add(provider.Columns[0]);
 
-				task = Task.Run(() => { provider = tfService.UpdateDataProviderSharedKey(sharedKey2Created); });
+				task = Task.Run(() => { provider = tfService.UpdateDataProviderJoinKey(joinKey2Created); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
-				provider.SharedKeys.Count().Should().Be(2);
+				provider.JoinKeys.Count().Should().Be(2);
 
 				tables = dbManager.GetDatabaseBuilder().Build();
 				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
 				table.Should().NotBeNull();
-				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_id").Should().BeTrue();
-				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_version").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_id").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_version").Should().BeTrue();
 
 
 
-				var sharedKey2Update = provider.SharedKeys.Single(x => x.Id == sharedKey2Created.Id);
-				sharedKey2Update.DataProviderId.Should().Be(sharedKey2.DataProviderId);
-				sharedKey2Update.DbName.Should().Be(sharedKey2.DbName);
-				sharedKey2Update.Description.Should().Be(sharedKey2.Description);
-				sharedKey2Update.Version.Should().Be(2);
-				sharedKey2Update.Columns.Count().Should().Be(2);
+				var joinKey2Update = provider.JoinKeys.Single(x => x.Id == joinKey2Created.Id);
+				joinKey2Update.DataProviderId.Should().Be(joinKey2.DataProviderId);
+				joinKey2Update.DbName.Should().Be(joinKey2.DbName);
+				joinKey2Update.Description.Should().Be(joinKey2.Description);
+				joinKey2Update.Version.Should().Be(2);
+				joinKey2Update.Columns.Count().Should().Be(2);
 
-				task = Task.Run(() => { provider = tfService.DeleteDataProviderSharedKey(sharedKey2Created.Id); });
+				task = Task.Run(() => { provider = tfService.DeleteDataProviderJoinKey(joinKey2Created.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
-				provider.SharedKeys.Count().Should().Be(1);
+				provider.JoinKeys.Count().Should().Be(1);
 
 				tables = dbManager.GetDatabaseBuilder().Build();
 				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
 				table.Should().NotBeNull();
-				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_id").Should().BeFalse();
-				table.Columns.Any(x => x.Name == $"tf_sk_{sharedKey2Created.DbName}_version").Should().BeFalse();
+				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_id").Should().BeFalse();
+				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_version").Should().BeFalse();
 			}
 		}
 	}
 
 	[Fact]
-	public async Task DataProviderSharedKey_WithDuplicateColumns()
+	public async Task DataProviderJoinKey_WithDuplicateColumns()
 	{
 		using (await locker.LockAsync())
 		{
@@ -121,10 +121,10 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateSharedKeysStructure(tfService, tfMetaService);
+				var provider = CreateJoinKeysStructure(tfService, tfMetaService);
 
-				TfDataProviderSharedKey sharedKey =
-					new TfDataProviderSharedKey
+				TfDataProviderJoinKey joinKey =
+					new TfDataProviderJoinKey
 					{
 						Id = Guid.NewGuid(),
 						Description = "testing1",
@@ -134,14 +134,14 @@ public partial class TfServiceTest : BaseTest
 
 					};
 
-				var task = Task.Run(() => { tfService.CreateDataProviderSharedKey(sharedKey); });
+				var task = Task.Run(() => { tfService.CreateDataProviderJoinKey(joinKey); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 			}
 		}
 	}
 
-	private TfDataProvider CreateSharedKeysStructure(
+	private TfDataProvider CreateJoinKeysStructure(
 		ITfService tfService,
 		ITfMetaService tfMetaService)
 	{

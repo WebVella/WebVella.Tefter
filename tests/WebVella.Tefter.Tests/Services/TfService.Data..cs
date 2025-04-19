@@ -62,7 +62,7 @@ public partial class TfServiceTest : BaseTest
 				newRow[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				newRow[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				newRow["sk_shared_key_text"] = "this is shared key text test " + i;
+				newRow["sk_shared_key_text"] = "this is join key text test " + i;
 				newRow["sk_shared_key_int"] = i;
 
 				newTable.Rows.Add(newRow);
@@ -70,8 +70,8 @@ public partial class TfServiceTest : BaseTest
 
 			result = tfService.SaveDataTable(newTable);
 
-			Guid? skIntValue = result.Rows[0].GetSharedKeyValue("test");
-			Guid? skTextValue = result.Rows[0].GetSharedKeyValue("shared_key_text");
+			Guid? skIntValue = result.Rows[0].GetJoinKeyValue("test");
+			Guid? skTextValue = result.Rows[0].GetJoinKeyValue("shared_key_text");
 
 			//result = tfService.QuerySpaceData(spaceData.Id);
 			result = tfService.QueryDataProvider(provider);
@@ -92,7 +92,7 @@ public partial class TfServiceTest : BaseTest
 				row[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				row[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				row["sk_shared_key_text"] = "this is shared key text test " + i + "update";
+				row["sk_shared_key_text"] = "this is join key text test " + i + "update";
 				row["sk_shared_key_int"] = i + i;
 			}
 

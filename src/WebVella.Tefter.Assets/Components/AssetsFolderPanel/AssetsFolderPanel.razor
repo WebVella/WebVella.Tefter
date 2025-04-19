@@ -48,7 +48,7 @@
 				</div>
 			</div>
 		}
-		else if (String.IsNullOrWhiteSpace(_folder.SharedKey))
+		else if (String.IsNullOrWhiteSpace(_folder.JoinKey))
 		{
 			<div class="asset-panel">
 				<div class="asset-panel__header">
@@ -60,7 +60,7 @@
 					</div>
 				</div>
 				<div class="asset-panel__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The folder has no shared key set!")</FluentMessageBar>
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The folder has no join key set!")</FluentMessageBar>
 				</div>
 			</div>
 		}
@@ -76,7 +76,7 @@
 					</div>
 				</div>
 				<div class="asset-panel__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of folder '{1}'!", _folder.SharedKey, _folder.Name)</FluentMessageBar>
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the join key '{0}' of folder '{1}'!", _folder.JoinKey, _folder.Name)</FluentMessageBar>
 				</div>
 			</div>
 		}
@@ -92,7 +92,7 @@
 					</div>
 				</div>
 				<div class="asset-panel__body" style="padding:10px">
-					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _folder.SharedKey)</FluentMessageBar>
+					<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected join key '{0}' value is not yet generated for this row of the dataset!", _folder.JoinKey)</FluentMessageBar>
 				</div>
 			</div>
 		}

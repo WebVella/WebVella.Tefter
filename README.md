@@ -27,7 +27,7 @@ GitHub stars guide developers toward great tools. If you find this project valua
 * [and more](https://tefter.webvella.com/en/features)
 
 ## What's the secret sauce?
-At the heart of our strategy lies the shared key, a powerful feature that allows you to define multiple identifiers for each data record across various data sources. Once configured, shared keys enable seamless, long-term collaboration by ensuring data records remain recognizable, even across updates and data sources.
+At the heart of our strategy lies the join key, a powerful feature that allows you to define multiple identifiers for each data record across various data sources. Once configured, join keys enable seamless, long-term collaboration by ensuring data records remain recognizable, even across updates and data sources.
 
 ## Documentation
 The best way to get started is to visit our documentation on [our project website](https://tefter.webvella.com/en/docs/introduction/getting-started)

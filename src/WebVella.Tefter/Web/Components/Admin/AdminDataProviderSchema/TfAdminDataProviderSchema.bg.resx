@@ -147,8 +147,8 @@
   <data name="The column is successfully deleted!" xml:space="preserve">
     <value>Колоната е успешно изтрита!</value>
   </data>
-  <data name="This data source is missing its syncronization key. No data syncronization is possible until this key is created. Once you have added the schema columns, you can do that in the next 'Shared Keys' tab." xml:space="preserve">
-    <value>За този доставчик на данни все още няма създаден синхронизационен ключ. Синхронизацията на данни е невъзможно без него. Щом добавите колони в схемата, може да го създадете в следващото меню 'Споделени ключове'.</value>
+  <data name="This data source is missing its syncronization key. No data syncronization is possible until this key is created. Once you have added the schema columns, you can do that in the next 'Join Keys' tab." xml:space="preserve">
+    <value>За този доставчик на данни все още няма създаден синхронизационен ключ. Синхронизацията на данни е невъзможно без него. Щом добавите колони в схемата, може да го създадете в следващото меню 'Свързващи ключове'.</value>
   </data>
   <data name="This will delete all related data too!" xml:space="preserve">
     <value>Това ще изтрие и всички свързани данни!</value>

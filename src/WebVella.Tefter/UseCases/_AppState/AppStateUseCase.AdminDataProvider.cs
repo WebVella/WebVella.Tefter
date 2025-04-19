@@ -57,7 +57,7 @@ internal partial class AppStateUseCase
 				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Schema)
 				{
 				}
-				else if (newAppState.Route.ThirdNode == RouteDataThirdNode.SharedKeys)
+				else if (newAppState.Route.ThirdNode == RouteDataThirdNode.JoinKeys)
 				{
 				}
 			}
@@ -337,23 +337,23 @@ internal partial class AppStateUseCase
 
 	//Data provider key
 	internal virtual TucDataProvider CreateDataProviderKey(
-		TucDataProviderSharedKeyForm form)
+		TucDataProviderJoinKeyForm form)
 	{
-		var result = _tfService.CreateDataProviderSharedKey(form.ToModel());
+		var result = _tfService.CreateDataProviderJoinKey(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
 	internal virtual TucDataProvider UpdateDataProviderKey(
-		TucDataProviderSharedKeyForm form)
+		TucDataProviderJoinKeyForm form)
 	{
-		var result = _tfService.UpdateDataProviderSharedKey(form.ToModel());
+		var result = _tfService.UpdateDataProviderJoinKey(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
-	internal TucDataProvider DeleteDataProviderSharedKey(
+	internal TucDataProvider DeleteDataProviderJoinKey(
 		Guid keyId)
 	{
-		var result = _tfService.DeleteDataProviderSharedKey(keyId);
+		var result = _tfService.DeleteDataProviderJoinKey(keyId);
 		return new TucDataProvider(result);
 	}
 

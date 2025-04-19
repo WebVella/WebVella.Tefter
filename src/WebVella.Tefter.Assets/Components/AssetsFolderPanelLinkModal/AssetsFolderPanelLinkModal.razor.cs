@@ -65,7 +65,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 			}
 			else if (_isCreate && Content.SKValueIds is not null && Content.SKValueIds.Count > 0)
 			{
-				var submit = new CreateLinkAssetWithSharedKeyModel
+				var submit = new CreateLinkAssetWithJoinKeyModel
 				{
 					FolderId = Content.FolderId,
 					Label = _form.Label,

@@ -76,8 +76,8 @@ public enum RouteDataThirdNode
 	Saves = 3,
 	[Description("Schema")]
 	Schema = 4,
-	[Description("Shared Keys")]
-	SharedKeys = 5,
+	[Description("Join Keys")]
+	JoinKeys = 5,
 	[Description("Shared Columns")]
 	AuxColumns = 6,
 	[Description("Synchronization")]

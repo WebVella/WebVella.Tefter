@@ -16,7 +16,7 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 	private List<TalkChannel> _channels = new();
 	private TalkChannel _selectedChannel = null;
 	private string _content = null;
-	private List<Guid> _sharedKeyValueIds = new();
+	private List<Guid> _joinKeyValueIds = new();
 	private TfDataProvider _dataProvider = null;
 
 
@@ -37,8 +37,8 @@ public partial class TalkThreadModal : TfFormBaseComponent, IDialogContentCompon
 			//Select only channels that are compatible with this DataProvider
 			foreach (var channel in allChannels)
 			{
-				if (String.IsNullOrWhiteSpace(channel.SharedKey)) continue;
-				if (!_dataProvider.SharedKeys.Any(x => x.DbName == channel.SharedKey)) continue;
+				if (String.IsNullOrWhiteSpace(channel.JoinKey)) continue;
+				if (!_dataProvider.JoinKeys.Any(x => x.DbName == channel.JoinKey)) continue;
 				_channels.Add(channel);
 			}
 

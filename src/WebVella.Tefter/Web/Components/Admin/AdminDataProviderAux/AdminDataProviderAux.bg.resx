@@ -144,17 +144,17 @@
   <data name="No keys" xml:space="preserve">
     <value>Няма ключове</value>
   </data>
-  <data name="No shared columns are matching any of the shared keys for this data source" xml:space="preserve">
-    <value>Няма споделени колони, които да използват споделен ключ на този източник</value>
+  <data name="No shared columns are matching any of the join keys for this data source" xml:space="preserve">
+    <value>Няма споделени колони, които да използват свързващ ключ на този източник</value>
   </data>
   <data name="No shared columns matched" xml:space="preserve">
     <value>Няма споделени колони</value>
   </data>
-  <data name="No shared keys are created yet for this data provider" xml:space="preserve">
-    <value>Все още няма създадени споделени ключове за този доставчик на данни</value>
+  <data name="No join keys are created yet for this data provider" xml:space="preserve">
+    <value>Все още няма създадени свързващи ключове за този доставчик на данни</value>
   </data>
-  <data name="Shared key" xml:space="preserve">
-    <value>Споделен ключ</value>
+  <data name="Join key" xml:space="preserve">
+    <value>Свързващ ключ</value>
   </data>
   <data name="The column is successfully deleted!" xml:space="preserve">
     <value>Колоната е успешно изтрита!</value>
@@ -165,8 +165,8 @@
   <data name="The key was successfully updated!" xml:space="preserve">
     <value>Ключът е редактиран успешно!</value>
   </data>
-  <data name="This data source is missing its syncronization key. No data syncronization is possible until this key is created. Once you have added the schema columns, you can do that in the next 'Shared Keys' tab." xml:space="preserve">
-    <value>За този доставчик на данни все още няма създаден синхронизационен ключ. Синхронизацията на данни е невъзможно без него. Щом добавите колони в схемата, може да го създадете в следващото меню 'Споделени ключове'.</value>
+  <data name="This data source is missing its syncronization key. No data syncronization is possible until this key is created. Once you have added the schema columns, you can do that in the next 'Join Keys' tab." xml:space="preserve">
+    <value>За този доставчик на данни все още няма създаден синхронизационен ключ. Синхронизацията на данни е невъзможно без него. Щом добавите колони в схемата, може да го създадете в следващото меню 'Свързващи ключове'.</value>
   </data>
   <data name="This will delete all related data too!" xml:space="preserve">
     <value>Това ще изтрие и всички свързани данни!</value>

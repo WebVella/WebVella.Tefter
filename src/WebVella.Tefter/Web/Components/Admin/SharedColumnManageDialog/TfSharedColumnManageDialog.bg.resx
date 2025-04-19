@@ -150,8 +150,8 @@
   <data name="Selected type settings" xml:space="preserve">
     <value>Настройки на избрания тип</value>
   </data>
-  <data name="Target shared key" xml:space="preserve">
-    <value>Целеви споделен ключ</value>
+  <data name="Target join key" xml:space="preserve">
+    <value>Целеви свързващ ключ</value>
   </data>
   <data name="Type" xml:space="preserve">
     <value>Тип</value>

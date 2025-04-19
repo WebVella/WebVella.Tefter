@@ -144,7 +144,7 @@
   <data name="No channels created yet" xml:space="preserve">
     <value>Все още няма създадени канали</value>
   </data>
-  <data name="shared key" xml:space="preserve">
-    <value>споделен ключ</value>
+  <data name="join key" xml:space="preserve">
+    <value>свързващ ключ</value>
   </data>
 </root>

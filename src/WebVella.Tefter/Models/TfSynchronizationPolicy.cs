@@ -3,7 +3,7 @@
 public enum TfSynchronizationPolicyComparisonType
 {
 	ByRowOrder = 0,
-	BySharedKey = 1
+	ByJoinKey = 1
 }
 
 public enum TfSynchronizationPolicyDuplicateResolution
@@ -19,7 +19,7 @@ public enum TfSynchronizationPolicyDuplicateResolution
 1. Comparison
 	1.1. by row order
 	1.2. by column key combination
-		1.2.1. by specific list of columns - select from shared keys
+		1.2.1. by specific list of columns - select from join keys
 		1.2.2. by all columns
 2. Filter 
 	2.1. include 
@@ -46,7 +46,7 @@ public enum TfSynchronizationPolicyDuplicateResolution
 public record TfSynchronizationPolicy
 {
 	public TfSynchronizationPolicyComparisonType ComparisonType { get; set; } = TfSynchronizationPolicyComparisonType.ByRowOrder;
-	public string SharedKeyName { get; set; } = null;
+	public string JoinKeyName { get; set; } = null;
 	public TfSynchronizationPolicyDuplicateResolution DuplicateResolution { get; set; } = TfSynchronizationPolicyDuplicateResolution.UpdateFirstDeleteOthers;
 	public bool WriteInfoResults { get; set; } = false;
 }

@@ -2,7 +2,7 @@
 
 namespace WebVella.Tefter.Assets.Models;
 
-public enum AssetsFolderShareKeyType
+public enum AssetsFolderJoinKeyType
 {
 	[Description("connect to page")]
 	SpaceNodeId = 0,

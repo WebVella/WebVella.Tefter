@@ -6,73 +6,73 @@ namespace WebVella.Tefter.Services;
 public partial interface ITfService
 {
 	/// <summary>
-	/// Gets shared key instance by id
+	/// Gets join key instance by id
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	internal TfDataProviderSharedKey GetDataProviderSharedKey(
+	internal TfDataProviderJoinKey GetDataProviderJoinKey(
 		Guid id);
 
 	/// <summary>
-	/// Gets shared keys list for specified provider id
+	/// Gets join keys list for specified provider id
 	/// </summary>
 	/// <param name="providerId"></param>
 	/// <returns></returns>
-	internal List<TfDataProviderSharedKey> GetDataProviderSharedKeys(
+	internal List<TfDataProviderJoinKey> GetDataProviderJoinKeys(
 		Guid providerId);
 
 	/// <summary>
-	/// Creates new shared key
+	/// Creates new join key
 	/// </summary>
-	/// <param name="sharedKey"></param>
+	/// <param name="joinKey"></param>
 	/// <returns></returns>
-	public TfDataProvider CreateDataProviderSharedKey(
-		TfDataProviderSharedKey sharedKey);
+	public TfDataProvider CreateDataProviderJoinKey(
+		TfDataProviderJoinKey joinKey);
 
 	/// <summary>
-	/// Updates an existing shared key
+	/// Updates an existing join key
 	/// </summary>
-	/// <param name="sharedKey"></param>
+	/// <param name="joinKey"></param>
 	/// <returns></returns>
-	public TfDataProvider UpdateDataProviderSharedKey(
-		TfDataProviderSharedKey sharedKey);
+	public TfDataProvider UpdateDataProviderJoinKey(
+		TfDataProviderJoinKey joinKey);
 
 	/// <summary>
-	/// Deletes and existing shared key for specified identifier
+	/// Deletes and existing join key for specified identifier
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public TfDataProvider DeleteDataProviderSharedKey(
+	public TfDataProvider DeleteDataProviderJoinKey(
 		Guid id);
 
 	/// <summary>
-	/// Updates rows with shared keys different to last version
-	/// This happens when new shared key is added or existing one is
+	/// Updates rows with join keys different to last version
+	/// This happens when new join key is added or existing one is
 	/// updated after provider data is synchronized
 	/// </summary>
-	internal Task UpdateSharedKeysVersionAsync(CancellationToken stoppingToken);
+	internal Task UpdateJoinKeysVersionAsync(CancellationToken stoppingToken);
 }
 
 public partial class TfService : ITfService
 {
 	/// <summary>
-	/// Gets shared key instance by id
+	/// Gets join key instance by id
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public TfDataProviderSharedKey GetDataProviderSharedKey(
+	public TfDataProviderJoinKey GetDataProviderJoinKey(
 		Guid id)
 	{
 		try
 		{
-			var dbo = _dboManager.Get<TfDataProviderSharedKeyDbo>(id);
+			var dbo = _dboManager.Get<TfDataProviderJoinKeyDbo>(id);
 
 			if (dbo == null)
 				return null;
 
 			var allColumns = GetDataProviderColumns(dbo.DataProviderId);
 
-			return SharedKeyFromDbo(dbo, allColumns);
+			return JoinKeyFromDbo(dbo, allColumns);
 		}
 		catch (Exception ex)
 		{
@@ -81,20 +81,20 @@ public partial class TfService : ITfService
 	}
 
 	/// <summary>
-	/// Gets shared keys list for specified provider id
+	/// Gets join keys list for specified provider id
 	/// </summary>
 	/// <param name="providerId"></param>
 	/// <returns></returns>
-	public List<TfDataProviderSharedKey> GetDataProviderSharedKeys(
+	public List<TfDataProviderJoinKey> GetDataProviderJoinKeys(
 		Guid providerId)
 	{
 		try
 		{
 			var orderSettings = new TfOrderSettings(
-				nameof(TfDataProviderSharedKey.DbName),
+				nameof(TfDataProviderJoinKey.DbName),
 				OrderDirection.ASC);
 
-			var dbos = _dboManager.GetList<TfDataProviderSharedKeyDbo>(
+			var dbos = _dboManager.GetList<TfDataProviderJoinKeyDbo>(
 				providerId,
 				nameof(TfDataProviderColumn.DataProviderId),
 				order: orderSettings
@@ -103,7 +103,7 @@ public partial class TfService : ITfService
 			var allColumns = GetDataProviderColumns(providerId);
 
 			return dbos
-				.Select(x => SharedKeyFromDbo(x, allColumns))
+				.Select(x => JoinKeyFromDbo(x, allColumns))
 				.ToList();
 		}
 		catch (Exception ex)
@@ -113,26 +113,26 @@ public partial class TfService : ITfService
 	}
 
 	/// <summary>
-	/// Creates new shared key
+	/// Creates new join key
 	/// </summary>
-	/// <param name="sharedKey"></param>
+	/// <param name="joinKey"></param>
 	/// <returns></returns>
-	public TfDataProvider CreateDataProviderSharedKey(
-		TfDataProviderSharedKey sharedKey)
+	public TfDataProvider CreateDataProviderJoinKey(
+		TfDataProviderJoinKey joinKey)
 	{
 		try
 		{
-			if (sharedKey != null && sharedKey.Id == Guid.Empty)
-				sharedKey.Id = Guid.NewGuid();
+			if (joinKey != null && joinKey.Id == Guid.Empty)
+				joinKey.Id = Guid.NewGuid();
 
-			new TfDataProviderSharedKeyValidator(this)
-				.ValidateCreate(sharedKey)
+			new TfDataProviderJoinKeyValidator(this)
+				.ValidateCreate(joinKey)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var dbo = SharedKeyToDbo(sharedKey);
+				var dbo = JoinKeyToDbo(joinKey);
 
 				//set initial version to 1,
 				//default database value for version column is 0
@@ -142,13 +142,13 @@ public partial class TfService : ITfService
 
 				dbo.LastModifiedOn = DateTime.Now;
 
-				var success = _dboManager.Insert<TfDataProviderSharedKeyDbo>(dbo);
+				var success = _dboManager.Insert<TfDataProviderJoinKeyDbo>(dbo);
 				if (!success)
-					throw new TfDboServiceException("Insert<TfDataProviderSharedKeyDbo>");
+					throw new TfDboServiceException("Insert<TfDataProviderJoinKeyDbo>");
 
-				var provider = GetDataProvider(sharedKey.DataProviderId);
+				var provider = GetDataProvider(joinKey.DataProviderId);
 				if (provider is null)
-					throw new TfException("Failed to create new data provider shared key");
+					throw new TfException("Failed to create new data provider join key");
 
 				string providerTableName = $"dp{provider.Index}";
 
@@ -157,11 +157,11 @@ public partial class TfService : ITfService
 				dbBuilder
 					.WithTableBuilder(providerTableName)
 					.WithColumnsBuilder()
-					.AddGuidColumn($"tf_sk_{sharedKey.DbName}_id", c =>
+					.AddGuidColumn($"tf_sk_{joinKey.DbName}_id", c =>
 					{
 						c.WithDefaultValue(Guid.Empty);
 					})
-					.AddShortIntegerColumn($"tf_sk_{sharedKey.DbName}_version", c =>
+					.AddShortIntegerColumn($"tf_sk_{joinKey.DbName}_version", c =>
 					{
 						c.WithDefaultValue(0);
 					});
@@ -171,9 +171,9 @@ public partial class TfService : ITfService
 					.WithConstraints(constraints =>
 					{
 						constraints
-							.AddForeignKeyConstraint($"fk_{providerTableName}_{sharedKey.DbName}_id_dict", c =>
+							.AddForeignKeyConstraint($"fk_{providerTableName}_{joinKey.DbName}_id_dict", c =>
 							{
-								c.WithColumns($"tf_sk_{sharedKey.DbName}_id")
+								c.WithColumns($"tf_sk_{joinKey.DbName}_id")
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id");
 							});
@@ -193,30 +193,30 @@ public partial class TfService : ITfService
 	}
 
 	/// <summary>
-	/// Updates an existing shared key
+	/// Updates an existing join key
 	/// </summary>
-	/// <param name="sharedKey"></param>
+	/// <param name="joinKey"></param>
 	/// <returns></returns>
-	public TfDataProvider UpdateDataProviderSharedKey(
-		TfDataProviderSharedKey sharedKey)
+	public TfDataProvider UpdateDataProviderJoinKey(
+		TfDataProviderJoinKey joinKey)
 	{
 		try
 		{
-			new TfDataProviderSharedKeyValidator(this)
-				.ValidateUpdate(sharedKey)
+			new TfDataProviderJoinKeyValidator(this)
+				.ValidateUpdate(joinKey)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var existingSharedKey = GetDataProviderSharedKey(sharedKey.Id);
+				var existingJoinKey = GetDataProviderJoinKey(joinKey.Id);
 
-				bool columnsChange = existingSharedKey.Columns.Count != sharedKey.Columns.Count;
+				bool columnsChange = existingJoinKey.Columns.Count != joinKey.Columns.Count;
 				if (!columnsChange)
 				{
-					for (int i = 0; i < sharedKey.Columns.Count; i++)
+					for (int i = 0; i < joinKey.Columns.Count; i++)
 					{
-						if (existingSharedKey.Columns[i].Id != sharedKey.Columns[i].Id)
+						if (existingJoinKey.Columns[i].Id != joinKey.Columns[i].Id)
 						{
 							columnsChange = true;
 							break;
@@ -224,22 +224,22 @@ public partial class TfService : ITfService
 					}
 				}
 
-				var dbo = SharedKeyToDbo(sharedKey);
+				var dbo = JoinKeyToDbo(joinKey);
 
 				//only increment version if columns or columns order is changed
 				if (columnsChange)
-					dbo.Version = (short)(existingSharedKey.Version + 1);
+					dbo.Version = (short)(existingJoinKey.Version + 1);
 
 				dbo.LastModifiedOn = DateTime.Now;
 
-				var success = _dboManager.Update<TfDataProviderSharedKeyDbo>(dbo);
+				var success = _dboManager.Update<TfDataProviderJoinKeyDbo>(dbo);
 
 				if (!success)
-					throw new TfDboServiceException("Update<TfDataProviderSharedKeyDbo>");
+					throw new TfDboServiceException("Update<TfDataProviderJoinKeyDbo>");
 
-				var provider = GetDataProvider(sharedKey.DataProviderId);
+				var provider = GetDataProvider(joinKey.DataProviderId);
 				if (provider is null)
-					throw new TfException("Failed to create new data provider shared key");
+					throw new TfException("Failed to create new data provider join key");
 
 				scope.Complete();
 
@@ -254,30 +254,30 @@ public partial class TfService : ITfService
 
 
 	/// <summary>
-	/// Deletes and existing shared key for specified identifier
+	/// Deletes and existing join key for specified identifier
 	/// </summary>
 	/// <param name="id"></param>
 	/// <returns></returns>
-	public TfDataProvider DeleteDataProviderSharedKey(
+	public TfDataProvider DeleteDataProviderJoinKey(
 		Guid id)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var sharedKey = GetDataProviderSharedKey(id);
+				var joinKey = GetDataProviderJoinKey(id);
 
-				if (sharedKey is null)
-					throw new TfException("Failed to delete data provider shared key cause not found");
+				if (joinKey is null)
+					throw new TfException("Failed to delete data provider join key cause not found");
 
-				var success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
+				var success = _dboManager.Delete<TfDataProviderJoinKeyDbo>(joinKey.Id);
 
 				if (!success)
-					throw new TfDboServiceException("Delete<TfDataProviderSharedKeyDbo>");
+					throw new TfDboServiceException("Delete<TfDataProviderJoinKeyDbo>");
 
-				var provider = GetDataProvider(sharedKey.DataProviderId);
+				var provider = GetDataProvider(joinKey.DataProviderId);
 				if (provider is null)
-					throw new TfException("Failed to create new data provider shared key");
+					throw new TfException("Failed to create new data provider join key");
 
 
 				string providerTableName = $"dp{provider.Index}";
@@ -287,8 +287,8 @@ public partial class TfService : ITfService
 				dbBuilder
 					.WithTableBuilder(providerTableName)
 					.WithColumnsBuilder()
-					.Remove($"tf_sk_{sharedKey.DbName}_id")
-					.Remove($"tf_sk_{sharedKey.DbName}_version");
+					.Remove($"tf_sk_{joinKey.DbName}_id")
+					.Remove($"tf_sk_{joinKey.DbName}_version");
 
 				_dbManager.SaveChanges(dbBuilder);
 
@@ -303,7 +303,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public Task UpdateSharedKeysVersionAsync(CancellationToken stoppingToken)
+	public Task UpdateJoinKeysVersionAsync(CancellationToken stoppingToken)
 	{
 		try
 		{
@@ -313,15 +313,15 @@ public partial class TfService : ITfService
 				if (stoppingToken.IsCancellationRequested)
 					return Task.CompletedTask;
 
-				var sharedKeys = GetDataProviderSharedKeys(provider.Id);
+				var joinKeys = GetDataProviderJoinKeys(provider.Id);
 
-				if (sharedKeys.Count == 0)
+				if (joinKeys.Count == 0)
 					continue;
 
 				List<string> conditions = new List<string>();
-				foreach (var sharedKey in sharedKeys)
+				foreach (var joinKey in joinKeys)
 				{
-					conditions.Add($"tf_sk_{sharedKey.DbName}_version <> {sharedKey.Version}");
+					conditions.Add($"tf_sk_{joinKey.DbName}_version <> {joinKey.Version}");
 				}
 
 				//select 100 rows
@@ -351,17 +351,17 @@ public partial class TfService : ITfService
 					Dictionary<string, object> values = new Dictionary<string, object>();
 					foreach (TfDataRow row in dataTable.Rows)
 					{
-						foreach (var sharedKey in provider.SharedKeys)
+						foreach (var joinKey in provider.JoinKeys)
 						{
 							List<string> keys = new List<string>();
-							foreach (var column in sharedKey.Columns)
+							foreach (var column in joinKey.Columns)
 								keys.Add(row[column.DbName]?.ToString());
 
-							values[$"tf_sk_{sharedKey.DbName}_id"] = GetId(keys.ToArray());
-							values[$"tf_sk_{sharedKey.DbName}_version"] = sharedKey.Version;
+							values[$"tf_sk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
+							values[$"tf_sk_{joinKey.DbName}_version"] = joinKey.Version;
 						}
 
-						UpdateProviderRowSharedKeysOnly(provider, (Guid)row["tf_id"], values);
+						UpdateProviderRowJoinKeysOnly(provider, (Guid)row["tf_id"], values);
 					}
 				}
 			}
@@ -375,31 +375,31 @@ public partial class TfService : ITfService
 
 	#region <--- utility --->
 
-	private static TfDataProviderSharedKeyDbo SharedKeyToDbo(
-	TfDataProviderSharedKey sharedKey)
+	private static TfDataProviderJoinKeyDbo JoinKeyToDbo(
+	TfDataProviderJoinKey joinKey)
 	{
-		if (sharedKey == null)
-			throw new ArgumentException(nameof(sharedKey));
+		if (joinKey == null)
+			throw new ArgumentException(nameof(joinKey));
 
 		string columnIdsJson = "[]";
-		if (sharedKey.Columns is not null)
+		if (joinKey.Columns is not null)
 			columnIdsJson = JsonSerializer.Serialize(
-				sharedKey.Columns.Select(x => x.Id));
+				joinKey.Columns.Select(x => x.Id));
 
-		return new TfDataProviderSharedKeyDbo
+		return new TfDataProviderJoinKeyDbo
 		{
-			Id = sharedKey.Id,
-			DataProviderId = sharedKey.DataProviderId,
-			DbName = sharedKey.DbName,
-			Description = sharedKey.Description ?? string.Empty,
+			Id = joinKey.Id,
+			DataProviderId = joinKey.DataProviderId,
+			DbName = joinKey.DbName,
+			Description = joinKey.Description ?? string.Empty,
 			ColumnIdsJson = columnIdsJson,
-			Version = sharedKey.Version,
-			LastModifiedOn = sharedKey.LastModifiedOn,
+			Version = joinKey.Version,
+			LastModifiedOn = joinKey.LastModifiedOn,
 		};
 	}
 
-	private static TfDataProviderSharedKey SharedKeyFromDbo(
-		TfDataProviderSharedKeyDbo dbo,
+	private static TfDataProviderJoinKey JoinKeyFromDbo(
+		TfDataProviderJoinKeyDbo dbo,
 		List<TfDataProviderColumn> allColumns)
 	{
 		if (dbo == null)
@@ -416,7 +416,7 @@ public partial class TfService : ITfService
 		foreach (var id in columnIds)
 			columns.Add(allColumns.Single(x => x.Id == id));
 
-		return new TfDataProviderSharedKey
+		return new TfDataProviderJoinKey
 		{
 			Id = dbo.Id,
 			DataProviderId = dbo.DataProviderId,
@@ -432,32 +432,32 @@ public partial class TfService : ITfService
 
 	#region <--- validation --->
 
-	internal class TfDataProviderSharedKeyValidator
-		: AbstractValidator<TfDataProviderSharedKey>
+	internal class TfDataProviderJoinKeyValidator
+		: AbstractValidator<TfDataProviderJoinKey>
 	{
-		public TfDataProviderSharedKeyValidator(
+		public TfDataProviderJoinKeyValidator(
 			ITfService tfService)
 		{
 			RuleSet("general", () =>
 			{
-				RuleFor(sharedKey => sharedKey.Id)
+				RuleFor(joinKey => joinKey.Id)
 					.NotEmpty()
-					.WithMessage("The shared key id is required.");
+					.WithMessage("The join key id is required.");
 
-				RuleFor(sharedKey => sharedKey.DataProviderId)
+				RuleFor(joinKey => joinKey.DataProviderId)
 					.NotEmpty()
-					.WithMessage("The shared key data provider id is required.");
+					.WithMessage("The join key data provider id is required.");
 
-				RuleFor(sharedKey => sharedKey.DataProviderId)
+				RuleFor(joinKey => joinKey.DataProviderId)
 					.Must(providerId => { return tfService.GetDataProvider(providerId) != null; })
 					.WithMessage("There is no existing data provider for specified provider id.");
 
-				RuleFor(sharedKey => sharedKey.DbName)
+				RuleFor(joinKey => joinKey.DbName)
 					.NotEmpty()
 					.WithMessage("The data provider column database name is required.");
 
-				RuleFor(sharedKey => sharedKey.DbName)
-					.Must((sharedKey, dbName) =>
+				RuleFor(joinKey => joinKey.DbName)
+					.Must((joinKey, dbName) =>
 					{
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
@@ -467,8 +467,8 @@ public partial class TfService : ITfService
 					.WithMessage($"The database name must be at least " +
 								$"{TfConstants.DB_MIN_OBJECT_NAME_LENGTH} characters long.");
 
-				RuleFor(sharedKey => sharedKey.DbName)
-					.Must((sharedKey, dbName) =>
+				RuleFor(joinKey => joinKey.DbName)
+					.Must((joinKey, dbName) =>
 					{
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
@@ -478,8 +478,8 @@ public partial class TfService : ITfService
 					.WithMessage($"The length of database name must be less or equal " +
 								$"than {TfConstants.DB_MAX_OBJECT_NAME_LENGTH} characters");
 
-				RuleFor(sharedKey => sharedKey.DbName)
-					.Must((sharedKey, dbName) =>
+				RuleFor(joinKey => joinKey.DbName)
+					.Must((joinKey, dbName) =>
 					{
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
@@ -499,17 +499,17 @@ public partial class TfService : ITfService
 						$" It must begin with a letter, not include spaces, not end with an underscore," +
 						$" and not contain two consecutive underscores");
 
-				RuleFor(sharedKey => sharedKey.Columns)
+				RuleFor(joinKey => joinKey.Columns)
 					.NotEmpty()
-					.WithMessage("The shared key required at least one column.");
+					.WithMessage("The join key required at least one column.");
 
-				RuleFor(sharedKey => sharedKey.Columns)
-					.Must((sharedKey, columns) =>
+				RuleFor(joinKey => joinKey.Columns)
+					.Must((joinKey, columns) =>
 					{
 						if (columns == null)
 							return true;
 
-						var providerColumns = tfService.GetDataProviderColumns(sharedKey.DataProviderId);
+						var providerColumns = tfService.GetDataProviderColumns(joinKey.DataProviderId);
 
 						foreach (var column in columns)
 						{
@@ -522,13 +522,13 @@ public partial class TfService : ITfService
 					})
 					.WithMessage($"Some of the selected columns cannot be found in data provider columns list.");
 
-				RuleFor(sharedKey => sharedKey.Columns)
-					.Must((sharedKey, columns) =>
+				RuleFor(joinKey => joinKey.Columns)
+					.Must((joinKey, columns) =>
 					{
 						if (columns == null)
 							return true;
 
-						var providerColumns = tfService.GetDataProviderColumns(sharedKey.DataProviderId);
+						var providerColumns = tfService.GetDataProviderColumns(joinKey.DataProviderId);
 
 						HashSet<Guid> columnIds = new HashSet<Guid>();
 
@@ -548,82 +548,82 @@ public partial class TfService : ITfService
 
 			RuleSet("create", () =>
 			{
-				RuleFor(sharedKey => sharedKey.Id)
-					.Must((sharedKey, id) =>
+				RuleFor(joinKey => joinKey.Id)
+					.Must((joinKey, id) =>
 					{
-						return tfService.GetDataProviderSharedKey(id) == null;
+						return tfService.GetDataProviderJoinKey(id) == null;
 					})
-					.WithMessage("There is already existing shared key with specified identifier.");
+					.WithMessage("There is already existing join key with specified identifier.");
 
 
-				RuleFor(sharedKey => sharedKey.DbName)
-					.Must((sharedKey, dbName) =>
+				RuleFor(joinKey => joinKey.DbName)
+					.Must((joinKey, dbName) =>
 					{
 						if (string.IsNullOrEmpty(dbName))
 							return true;
 
-						var sharedKeys = tfService.GetDataProviderSharedKeys(sharedKey.DataProviderId);
-						return !sharedKeys.Any(x => x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim());
+						var joinKeys = tfService.GetDataProviderJoinKeys(joinKey.DataProviderId);
+						return !joinKeys.Any(x => x.DbName.ToLowerInvariant().Trim() == dbName.ToLowerInvariant().Trim());
 					})
-					.WithMessage("There is already existing shared key with specified database name.");
+					.WithMessage("There is already existing join key with specified database name.");
 			});
 
 			RuleSet("update", () =>
 			{
-				RuleFor(sharedKey => sharedKey.Id)
-					.Must((sharedKey, id) =>
+				RuleFor(joinKey => joinKey.Id)
+					.Must((joinKey, id) =>
 					{
-						return tfService.GetDataProviderSharedKey(id) != null;
+						return tfService.GetDataProviderJoinKey(id) != null;
 					})
-					.WithMessage("There is not existing shared key with specified identifier.");
+					.WithMessage("There is not existing join key with specified identifier.");
 
-				RuleFor(sharedKey => sharedKey.DataProviderId)
-					.Must((sharedKey, providerId) =>
+				RuleFor(joinKey => joinKey.DataProviderId)
+					.Must((joinKey, providerId) =>
 					{
 
-						var existingSharedKey = tfService.GetDataProviderSharedKey(sharedKey.Id);
-						if (existingSharedKey is null)
+						var existingJoinKey = tfService.GetDataProviderJoinKey(joinKey.Id);
+						if (existingJoinKey is null)
 							return true;
 
-						return existingSharedKey.DataProviderId == providerId;
+						return existingJoinKey.DataProviderId == providerId;
 					})
-					.WithMessage("There data provider cannot be changed for shared key.");
+					.WithMessage("There data provider cannot be changed for join key.");
 
-				RuleFor(sharedKey => sharedKey.DbName)
-					.Must((sharedKey, dbName) =>
+				RuleFor(joinKey => joinKey.DbName)
+					.Must((joinKey, dbName) =>
 					{
 
-						var existingSharedKey = tfService.GetDataProviderSharedKey(sharedKey.Id);
-						if (existingSharedKey is null)
+						var existingJoinKey = tfService.GetDataProviderJoinKey(joinKey.Id);
+						if (existingJoinKey is null)
 							return true;
 
-						return existingSharedKey.DbName == dbName;
+						return existingJoinKey.DbName == dbName;
 					})
-					.WithMessage("There database name of shared key cannot be changed.");
+					.WithMessage("There database name of join key cannot be changed.");
 			});
 		}
 
 		public ValidationResult ValidateCreate(
-			TfDataProviderSharedKey sharedKey)
+			TfDataProviderJoinKey joinKey)
 		{
-			if (sharedKey == null)
+			if (joinKey == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
-					"The data provider shared key is null.") });
+					"The data provider join key is null.") });
 
-			return this.Validate(sharedKey, options =>
+			return this.Validate(joinKey, options =>
 			{
 				options.IncludeRuleSets("general", "create");
 			});
 		}
 
 		public ValidationResult ValidateUpdate(
-			TfDataProviderSharedKey sharedKey)
+			TfDataProviderJoinKey joinKey)
 		{
-			if (sharedKey == null)
+			if (joinKey == null)
 				return new ValidationResult(new[] { new ValidationFailure("",
-					"The data provider shared key is null.") });
+					"The data provider join key is null.") });
 
-			return this.Validate(sharedKey, options =>
+			return this.Validate(joinKey, options =>
 			{
 				options.IncludeRuleSets("general", "update");
 			});

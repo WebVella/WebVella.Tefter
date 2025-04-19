@@ -18,7 +18,7 @@ public partial class TfServiceTest : BaseTest
 					DbName = "sk_test",
 					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
-					SharedKeyDbName = "shared_key"
+					JoinKeyDbName = "shared_key"
 				};
 
 				var task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });
@@ -36,12 +36,12 @@ public partial class TfServiceTest : BaseTest
 				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
 				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
-				sharedColumns[0].SharedKeyDbName.Should().Be(sharedColumn.SharedKeyDbName);
+				sharedColumns[0].JoinKeyDbName.Should().Be(sharedColumn.JoinKeyDbName);
 
 				sharedColumn.DbName = "sk_test1";
 				sharedColumn.DbType = TfDatabaseColumnType.Integer;
 				sharedColumn.IncludeInTableSearch = !sharedColumn.IncludeInTableSearch;
-				sharedColumn.SharedKeyDbName = "shared_key_1";
+				sharedColumn.JoinKeyDbName = "shared_key_1";
 
 
 				task = Task.Run(() => { tfService.UpdateSharedColumn(sharedColumn); });
@@ -58,7 +58,7 @@ public partial class TfServiceTest : BaseTest
 				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
 				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
-				sharedColumns[0].SharedKeyDbName.Should().Be(sharedColumn.SharedKeyDbName);
+				sharedColumns[0].JoinKeyDbName.Should().Be(sharedColumn.JoinKeyDbName);
 
 				task = Task.Run(() => { tfService.DeleteSharedColumn(sharedColumn.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
@@ -128,8 +128,8 @@ public partial class TfServiceTest : BaseTest
 
 				provider = tfService.GetDataProvider(provider.Id);
 
-				TfDataProviderSharedKey sharedKey =
-					new TfDataProviderSharedKey
+				TfDataProviderJoinKey joinKey =
+					new TfDataProviderJoinKey
 					{
 						Id = Guid.NewGuid(),
 						Description = "testing1",
@@ -139,7 +139,7 @@ public partial class TfServiceTest : BaseTest
 
 					};
 
-				task = Task.Run(() => { provider = tfService.CreateDataProviderSharedKey(sharedKey); });
+				task = Task.Run(() => { provider = tfService.CreateDataProviderJoinKey(joinKey); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
@@ -149,7 +149,7 @@ public partial class TfServiceTest : BaseTest
 					DbName = "sk_test1",
 					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
-					SharedKeyDbName = "shared_key"
+					JoinKeyDbName = "shared_key"
 				};
 
 				task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });

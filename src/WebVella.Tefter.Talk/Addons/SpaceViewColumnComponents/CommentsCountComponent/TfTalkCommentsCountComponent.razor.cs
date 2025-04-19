@@ -47,7 +47,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfTalkCommentsCountViewColumnType.ID)
 	};
-	private List<TucSelectOption> _sharedKeyOptions = new();
+	private List<TucSelectOption> _joinKeyOptions = new();
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
@@ -137,7 +137,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 				var dataProvider = tfService.GetDataProvider(spaceData.DataProviderId);
 				if (dataProvider is not null)
 				{
-					foreach (var key in dataProvider.SharedKeys)
+					foreach (var key in dataProvider.JoinKeys)
 					{
 						options.Add(new TucSelectOption
 						{
@@ -180,7 +180,7 @@ public partial class TfTalkCommentsCountComponent : TucBaseViewColumn<TfTalkComm
 	private void _initValues()
 	{
 		if (!TfAuxDataState.Value.Data.ContainsKey(_storageKey)) return;
-		_sharedKeyOptions = ((List<TucSelectOption>)TfAuxDataState.Value.Data[_storageKey]).ToList();
+		_joinKeyOptions = ((List<TucSelectOption>)TfAuxDataState.Value.Data[_storageKey]).ToList();
 	}
 
 	private void _initStorageKeys()

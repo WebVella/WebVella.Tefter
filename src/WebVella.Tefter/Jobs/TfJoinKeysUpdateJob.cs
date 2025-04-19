@@ -1,13 +1,13 @@
 ﻿namespace WebVella.Tefter.Jobs;
 
-internal class TfSharedKeysUpdateJob : BackgroundService
+internal class TfJoinKeysUpdateJob : BackgroundService
 {
 	private readonly ITfService _tfService;
-	private readonly ILogger<TfSharedKeysUpdateJob> _logger;
+	private readonly ILogger<TfJoinKeysUpdateJob> _logger;
 
-	public TfSharedKeysUpdateJob(
+	public TfJoinKeysUpdateJob(
 		ITfService tfService,
-		ILogger<TfSharedKeysUpdateJob> logger)
+		ILogger<TfJoinKeysUpdateJob> logger)
 	{
 		_tfService = tfService;
 		_logger = logger;
@@ -25,7 +25,7 @@ internal class TfSharedKeysUpdateJob : BackgroundService
 		{
 			try
 			{
-				await _tfService.UpdateSharedKeysVersionAsync(stoppingToken);
+				await _tfService.UpdateJoinKeysVersionAsync(stoppingToken);
 			}
 			catch (Exception ex)
 			{

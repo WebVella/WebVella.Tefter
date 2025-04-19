@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Models;
 
-public record TucDataProviderSharedKeyForm
+public record TucDataProviderJoinKeyForm
 {
 	public Guid Id { get; set; }
 	public Guid DataProviderId { get; set; }
@@ -10,8 +10,8 @@ public record TucDataProviderSharedKeyForm
 	public short Version { get; set; }
 	public DateTime LastModifiedOn { get; set; }
 
-	public TucDataProviderSharedKeyForm() { }
-	public TucDataProviderSharedKeyForm(TucDataProviderSharedKey model)
+	public TucDataProviderJoinKeyForm() { }
+	public TucDataProviderJoinKeyForm(TucDataProviderJoinKey model)
 	{
 		Id = model.Id;
 		DbName = model.DbName;
@@ -21,9 +21,9 @@ public record TucDataProviderSharedKeyForm
 		LastModifiedOn = model.LastModifiedOn;
 		Version = model.Version;
 	}
-	public TfDataProviderSharedKey ToModel()
+	public TfDataProviderJoinKey ToModel()
 	{
-		var model = new TfDataProviderSharedKey()
+		var model = new TfDataProviderJoinKey()
 		{
 			Id = Id,
 			DbName = DbName,

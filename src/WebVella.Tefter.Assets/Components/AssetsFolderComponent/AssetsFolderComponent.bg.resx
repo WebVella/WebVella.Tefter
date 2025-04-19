@@ -141,14 +141,14 @@
   <data name="Send" xml:space="preserve">
     <value>Изпрати</value>
   </data>
-  <data name="Shared key value is not provided" xml:space="preserve">
-    <value>Не е зададена стойност на споделения ключ</value>
+  <data name="Join key value is not provided" xml:space="preserve">
+    <value>Не е зададена стойност на свързващия ключ</value>
   </data>
   <data name="Shift + Enter for new line. Enter to send." xml:space="preserve">
     <value>Shift + Enter за нов ред. Enter за изпращане.</value>
   </data>
-  <data name="The talk channel has no shared key set!" xml:space="preserve">
-    <value>Дискусионният канал няма зададен споделен ключ!</value>
+  <data name="The talk channel has no join key set!" xml:space="preserve">
+    <value>Дискусионният канал няма зададен свързващ ключ!</value>
   </data>
   <data name="Thread" xml:space="preserve">
     <value>Дискусия</value>

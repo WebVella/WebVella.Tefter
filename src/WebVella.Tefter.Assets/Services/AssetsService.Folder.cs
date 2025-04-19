@@ -74,9 +74,9 @@ internal partial class AssetsService : IAssetsService
 			folder.Name,
 			DbType.StringFixedLength);
 
-		var sharedKeyPar = CreateParameter(
+		var joinKeyPar = CreateParameter(
 			"shared_key",
-			folder.SharedKey,
+			folder.JoinKey,
 			DbType.StringFixedLength);
 
 		var countSharedColumnNamePar = CreateParameter(
@@ -88,7 +88,7 @@ internal partial class AssetsService : IAssetsService
 			SQL,
 			idPar,
 			namePar,
-			sharedKeyPar,
+			joinKeyPar,
 			countSharedColumnNamePar);
 
 		if (dbResult != 1)
@@ -124,9 +124,9 @@ internal partial class AssetsService : IAssetsService
 			folder.Name,
 			DbType.StringFixedLength);
 
-		var sharedKeyPar = CreateParameter(
+		var joinKeyPar = CreateParameter(
 			"shared_key",
-			folder.SharedKey,
+			folder.JoinKey,
 			DbType.StringFixedLength);
 
 		var countSharedColumnNamePar = CreateParameter(
@@ -138,7 +138,7 @@ internal partial class AssetsService : IAssetsService
 			SQL,
 			idPar,
 			namePar,
-			sharedKeyPar,
+			joinKeyPar,
 			countSharedColumnNamePar);
 
 		if (dbResult != 1)
@@ -179,7 +179,7 @@ internal partial class AssetsService : IAssetsService
 		{
 			Id = dr.Field<Guid>("id"),
 			Name = dr.Field<string>("name") ?? string.Empty,
-			SharedKey = dr.Field<string>("shared_key"),
+			JoinKey = dr.Field<string>("shared_key"),
 			CountSharedColumnName = dr.Field<string>("count_shared_column_name")
 		};
 	}

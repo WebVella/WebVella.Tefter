@@ -13,7 +13,7 @@ public partial interface ITalkService
 		CreateTalkThread thread);
 
 	public Guid CreateThread(
-		CreateTalkThreadWithSharedKey thread);
+		CreateTalkThreadWithJoinKey thread);
 
 	public Guid CreateSubThread(
 		CreateTalkSubThread thread);
@@ -258,7 +258,7 @@ ORDER BY tt.created_on DESC";
 
 				foreach (TfDataRow row in dataTable.Rows)
 				{
-					var skIdValue = row.GetSharedKeyValue(channel.SharedKey);
+					var skIdValue = row.GetJoinKeyValue(channel.JoinKey);
 					if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
 						relatedSK.Add(skIdValue.Value);
 				}
@@ -271,7 +271,7 @@ ORDER BY tt.created_on DESC";
 							new NpgsqlParameter("@thread_id", id));
 
 					if (skDbResult != 1)
-						throw new Exception("Failed to insert new row in database for related shared key object");
+						throw new Exception("Failed to insert new row in database for related join key object");
 				}
 			}
 
@@ -282,7 +282,7 @@ ORDER BY tt.created_on DESC";
 	}
 
 	public Guid CreateThread(
-		CreateTalkThreadWithSharedKey thread)
+		CreateTalkThreadWithJoinKey thread)
 	{
 		if (thread == null)
 			throw new NullReferenceException("Thread object is null");
@@ -373,7 +373,7 @@ ORDER BY tt.created_on DESC";
 							new NpgsqlParameter("@thread_id", id));
 
 					if (skDbResult != 1)
-						throw new Exception("Failed to insert new row in database for related shared key object");
+						throw new Exception("Failed to insert new row in database for related join key object");
 				}
 			}
 
@@ -578,12 +578,12 @@ ORDER BY tt.created_on DESC";
 				RelatedSK = new Dictionary<Guid, string>()
 			};
 
-			var relatedSharedKeysJson = dr.Field<string>("related_shared_key_json");
-			if (!String.IsNullOrWhiteSpace(relatedSharedKeysJson) &&
-				relatedSharedKeysJson.StartsWith("[") &&
-				relatedSharedKeysJson != "[null]")
+			var relatedJoinKeysJson = dr.Field<string>("related_shared_key_json");
+			if (!String.IsNullOrWhiteSpace(relatedJoinKeysJson) &&
+				relatedJoinKeysJson.StartsWith("[") &&
+				relatedJoinKeysJson != "[null]")
 			{
-				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedSharedKeysJson);
+				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedJoinKeysJson);
 				foreach (var item in items)
 					thread.RelatedSK[item.Id] = item.TextId;
 			}
@@ -645,7 +645,7 @@ ORDER BY tt.created_on DESC";
 		}
 
 		public ValidationResult ValidateCreate(
-			CreateTalkThreadWithSharedKey thread,
+			CreateTalkThreadWithJoinKey thread,
 			Guid id)
 		{
 			if (thread == null)

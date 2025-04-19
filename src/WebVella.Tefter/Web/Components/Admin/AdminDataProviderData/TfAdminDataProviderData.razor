@@ -21,10 +21,10 @@
 					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider?.SystemColumns.Count</FluentBadge>
 				</span>
 			</FluentButton>
-			<FluentButton Id="view-filter-selector" Title="toggle shared key columns" OnClick="_toggleSharedKeyColumns"
+			<FluentButton Id="view-filter-selector" Title="toggle join key columns" OnClick="_toggleJoinKeyColumns"
 						  Appearance="Appearance.Outline">
-				<FluentIcon Slot="start" Value="@(_showSharedKeyColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
-				<span>shared key</span>
+				<FluentIcon Slot="start" Value="@(_showJoinKeyColumns ? TfConstants.GetIcon("Checkmark").WithColor(Color.Success) : TfConstants.GetIcon("Dismiss").WithColor(Color.Error))" />
+				<span>join key</span>
 				<span slot="end">
 					<FluentBadge Appearance="Appearance.Neutral">@TfAppState.Value.AdminDataProvider?.SharedColumns.Count</FluentBadge>
 				</span>

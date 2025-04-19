@@ -23,7 +23,7 @@ public partial class TalkTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Channel",
-					SharedKey = "talk_shared_key",
+					JoinKey = "talk_shared_key",
 					CountSharedColumnName = ""
 				};
 
@@ -62,7 +62,7 @@ public partial class TalkTests : BaseTest
 				{
 					Id = Guid.NewGuid(),
 					Name = "Test Channel",
-					SharedKey = "shared_key_text",
+					JoinKey = "shared_key_text",
 					CountSharedColumnName = ""
 				};
 				var channelCreated = talkService.CreateChannel(channel);

@@ -8,7 +8,7 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 	private async Task _addKey()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(
-		new TucDataProviderSharedKey(),
+		new TucDataProviderJoinKey(),
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,
@@ -26,7 +26,7 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 		}
 	}
 
-	private async Task _editKey(TucDataProviderSharedKey key)
+	private async Task _editKey(TucDataProviderJoinKey key)
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfDataProviderKeyManageDialog>(
 				key,
@@ -46,13 +46,13 @@ public partial class TfAdminDataProviderAux : TfBaseComponent
 		}
 	}
 
-	private async Task _deleteKey(TucDataProviderSharedKey key)
+	private async Task _deleteKey(TucDataProviderJoinKey key)
 	{
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this key deleted?")))
 			return;
 		try
 		{
-			var provider = UC.DeleteDataProviderSharedKey(key.Id);
+			var provider = UC.DeleteDataProviderJoinKey(key.Id);
 			ToastService.ShowSuccess(LOC("The key is successfully deleted!"));
 			Dispatcher.Dispatch(new SetAppStateAction(component: this,
 				state: TfAppState.Value with { AdminDataProvider = (TucDataProvider)provider }));

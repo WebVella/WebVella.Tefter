@@ -62,7 +62,7 @@ public class CreateLinkAssetModel
 	public Guid DataProviderId { get; set; }
 }
 
-public class CreateFileAssetWithSharedKeyModel
+public class CreateFileAssetWithJoinKeyModel
 {
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }
@@ -72,7 +72,7 @@ public class CreateFileAssetWithSharedKeyModel
 	public List<Guid> SKValueIds { get; set; }
 }
 
-public class CreateLinkAssetWithSharedKeyModel
+public class CreateLinkAssetWithJoinKeyModel
 {
 	public Guid FolderId { get; set; }
 	public string Label { get; set; }

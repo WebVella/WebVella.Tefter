@@ -101,7 +101,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 			}
 			else if (_isCreate && Content.SKValueIds is not null && Content.SKValueIds.Count > 0)
 			{
-				var submit = new CreateFileAssetWithSharedKeyModel
+				var submit = new CreateFileAssetWithJoinKeyModel
 				{
 					FolderId = Content.FolderId,
 					Label = _form.Label,

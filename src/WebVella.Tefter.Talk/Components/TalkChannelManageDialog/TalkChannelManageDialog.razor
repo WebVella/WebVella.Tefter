@@ -38,9 +38,9 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.SharedKey
-									 Label="@LOC("Shared Key")" Style="width:100%" AutoComplete="off" />
-					<FluentValidationMessage For="@(() => _form.SharedKey)" />
+					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.JoinKey
+									 Label="@LOC("Join Key")" Style="width:100%" AutoComplete="off" />
+					<FluentValidationMessage For="@(() => _form.JoinKey)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">
 					<FluentCombobox TOption="string"

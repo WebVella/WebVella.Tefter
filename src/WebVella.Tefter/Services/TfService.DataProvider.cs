@@ -72,13 +72,13 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Unable to find provider type for specified provider instance.");
 
-			var sharedKeys = GetDataProviderSharedKeys(id);
+			var joinKeys = GetDataProviderJoinKeys(id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
-					GetDataProviderSystemColumns(sharedKeys),
+					GetDataProviderSystemColumns(joinKeys),
 					GetDataProviderColumns(id),
-					sharedKeys,
+					joinKeys,
 					providerType);
 
 			provider.ServiceProvider = _serviceProvider;
@@ -114,13 +114,13 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Failed to get data provider");
 
-			var sharedKeys = GetDataProviderSharedKeys(providerDbo.Id);
+			var joinKeys = GetDataProviderJoinKeys(providerDbo.Id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
-					GetDataProviderSystemColumns(sharedKeys),
+					GetDataProviderSystemColumns(joinKeys),
 					GetDataProviderColumns(providerDbo.Id),
-					sharedKeys,
+					joinKeys,
 					providerType);
 
 			provider.ServiceProvider = _serviceProvider;
@@ -157,13 +157,13 @@ public partial class TfService : ITfService
 					throw new TfException($"Failed to get data providers, because " +
 						$"provider type with id = '{dbo.TypeId}' is not found.");
 
-				var sharedKeys = GetDataProviderSharedKeys(dbo.Id);
+				var joinKeys = GetDataProviderJoinKeys(dbo.Id);
 
 				var provider = DataProviderFromDbo(
 						dbo,
-						GetDataProviderSystemColumns(sharedKeys),
+						GetDataProviderSystemColumns(joinKeys),
 						GetDataProviderColumns(dbo.Id),
-						sharedKeys,
+						joinKeys,
 						providerType);
 
 				provider.ServiceProvider = _serviceProvider;
@@ -326,12 +326,12 @@ public partial class TfService : ITfService
 					throw new TfDboServiceException("Delete<TfDataProviderColumn> failed.");
 			}
 
-			foreach (var sharedKey in provider.SharedKeys)
+			foreach (var joinKey in provider.JoinKeys)
 			{
-				success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
+				success = _dboManager.Delete<TfDataProviderJoinKeyDbo>(joinKey.Id);
 
 				if (!success)
-					throw new TfDboServiceException("Delete<TfDataProviderSharedKeyDbo> failed.");
+					throw new TfDboServiceException("Delete<TfDataProviderJoinKeyDbo> failed.");
 			}
 
 			success = _dboManager.Delete<TfDataProviderDbo>(id);
@@ -366,7 +366,7 @@ public partial class TfService : ITfService
 	{
 		List<TfSharedColumn> columns = new List<TfSharedColumn>();
 
-		if (provider.SharedKeys.Count == 0)
+		if (provider.JoinKeys.Count == 0)
 		{
 			provider.SharedColumns = columns.AsReadOnly();
 			return;
@@ -375,8 +375,8 @@ public partial class TfService : ITfService
 		var sharedColumns = GetSharedColumns();
 		foreach (var sharedColumn in sharedColumns)
 		{
-			var sharedKey = provider.SharedKeys.SingleOrDefault(x => x.DbName == sharedColumn.SharedKeyDbName);
-			if (sharedKey is not null && !columns.Contains(sharedColumn))
+			var joinKey = provider.JoinKeys.SingleOrDefault(x => x.DbName == sharedColumn.JoinKeyDbName);
+			if (joinKey is not null && !columns.Contains(sharedColumn))
 				columns.Add(sharedColumn);
 		}
 
@@ -405,7 +405,7 @@ public partial class TfService : ITfService
 		TfDataProviderDbo dbo,
 		List<TfDataProviderSystemColumn> systemColumns,
 		List<TfDataProviderColumn> columns,
-		List<TfDataProviderSharedKey> sharedKeys,
+		List<TfDataProviderJoinKey> joinKeys,
 		ITfDataProviderAddon providerType)
 	{
 		if (dbo == null)
@@ -414,8 +414,8 @@ public partial class TfService : ITfService
 		if (columns == null)
 			throw new ArgumentException(nameof(columns));
 
-		if (sharedKeys == null)
-			throw new ArgumentException(nameof(sharedKeys));
+		if (joinKeys == null)
+			throw new ArgumentException(nameof(joinKeys));
 
 		if (providerType == null)
 			throw new ArgumentException(nameof(providerType));
@@ -431,7 +431,7 @@ public partial class TfService : ITfService
 			ProviderType = providerType,
 			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
-			SharedKeys = sharedKeys.AsReadOnly(),
+			JoinKeys = joinKeys.AsReadOnly(),
 			SynchPrimaryKeyColumns = JsonSerializer.Deserialize<List<string>>(dbo.SynchPrimaryKeyColumnsJson ?? "[]").AsReadOnly()
 		};
 	}

@@ -20,10 +20,10 @@ public partial interface IAssetsService
 		CreateLinkAssetModel asset);
 
 	public Asset CreateFileAsset(
-		CreateFileAssetWithSharedKeyModel asset);
+		CreateFileAssetWithJoinKeyModel asset);
 
 	public Asset CreateLinkAsset(
-		CreateLinkAssetWithSharedKeyModel asset);
+		CreateLinkAssetWithJoinKeyModel asset);
 
 	public Asset UpdateFileAsset(
 		Guid id,
@@ -226,7 +226,7 @@ ORDER BY aa.created_on DESC;";
 
 				foreach (TfDataRow row in dataTable.Rows)
 				{
-					var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
+					var skIdValue = row.GetJoinKeyValue(folder.JoinKey);
 
 					if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
 					{
@@ -243,7 +243,7 @@ ORDER BY aa.created_on DESC;";
 
 					if (skDbResult != 1)
 					{
-						throw new Exception("Failed to insert new row in database for related shared key object");
+						throw new Exception("Failed to insert new row in database for related join key object");
 					}
 				}
 			}
@@ -334,7 +334,7 @@ ORDER BY aa.created_on DESC;";
 
 				foreach (TfDataRow row in dataTable.Rows)
 				{
-					var skIdValue = row.GetSharedKeyValue(folder.SharedKey);
+					var skIdValue = row.GetJoinKeyValue(folder.JoinKey);
 
 					if (skIdValue is not null && !relatedSK.Contains(skIdValue.Value))
 					{
@@ -351,7 +351,7 @@ ORDER BY aa.created_on DESC;";
 
 					if (skDbResult != 1)
 					{
-						throw new Exception("Failed to insert new row in database for related shared key object");
+						throw new Exception("Failed to insert new row in database for related join key object");
 					}
 				}
 			}
@@ -365,7 +365,7 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateFileAsset(
-		CreateFileAssetWithSharedKeyModel asset)
+		CreateFileAssetWithJoinKeyModel asset)
 	{
 
 		if (asset == null)
@@ -445,7 +445,7 @@ ORDER BY aa.created_on DESC;";
 
 					if (skDbResult != 1)
 					{
-						throw new Exception("Failed to insert new row in database for related shared key object");
+						throw new Exception("Failed to insert new row in database for related join key object");
 					}
 				}
 			}
@@ -459,7 +459,7 @@ ORDER BY aa.created_on DESC;";
 	}
 
 	public Asset CreateLinkAsset(
-		CreateLinkAssetWithSharedKeyModel asset)
+		CreateLinkAssetWithJoinKeyModel asset)
 	{
 
 		if (asset == null)
@@ -535,7 +535,7 @@ ORDER BY aa.created_on DESC;";
 
 					if (skDbResult != 1)
 					{
-						throw new Exception("Failed to insert new row in database for related shared key object");
+						throw new Exception("Failed to insert new row in database for related join key object");
 					}
 				}
 			}
@@ -735,7 +735,7 @@ ORDER BY aa.created_on DESC;";
 
 		using (var scope = _dbService.CreateTransactionScope())
 		{
-			//delete link to related shared keys
+			//delete link to related join keys
 
 			var SQL = "DELETE FROM assets_related_sk WHERE asset_id = @asset_id";
 
@@ -816,13 +816,13 @@ ORDER BY aa.created_on DESC;";
 			};
 
 
-			var relatedSharedKeysJson = dr.Field<string>("related_shared_key_json");
+			var relatedJoinKeysJson = dr.Field<string>("related_shared_key_json");
 
-			if (!String.IsNullOrWhiteSpace(relatedSharedKeysJson) &&
-				relatedSharedKeysJson.StartsWith("[") &&
-				relatedSharedKeysJson != "[null]")
+			if (!String.IsNullOrWhiteSpace(relatedJoinKeysJson) &&
+				relatedJoinKeysJson.StartsWith("[") &&
+				relatedJoinKeysJson != "[null]")
 			{
-				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedSharedKeysJson);
+				var items = JsonSerializer.Deserialize<List<IdDictModel>>(relatedJoinKeysJson);
 
 				foreach (var item in items)
 				{
@@ -926,7 +926,7 @@ ORDER BY aa.created_on DESC;";
 		}
 
 		public ValidationResult ValidateCreateFileAsset(
-			CreateFileAssetWithSharedKeyModel asset,
+			CreateFileAssetWithJoinKeyModel asset,
 			Guid id)
 		{
 			if (asset == null)
@@ -957,7 +957,7 @@ ORDER BY aa.created_on DESC;";
 		}
 
 		public ValidationResult ValidateCreateLinkAsset(
-			CreateLinkAssetWithSharedKeyModel asset,
+			CreateLinkAssetWithJoinKeyModel asset,
 			Guid id)
 		{
 			if (asset == null)
