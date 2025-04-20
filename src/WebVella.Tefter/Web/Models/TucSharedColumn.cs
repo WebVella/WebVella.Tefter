@@ -3,7 +3,7 @@
 public record TucSharedColumn
 {
 	public Guid Id { get; init; }
-	public string SharedKeyDbName { get; init; }
+	public string JoinKeyDbName { get; init; }
 	public string DbName { get; init; }
 	public TucDatabaseColumnTypeInfo DbType { get; init; }
 	public bool IncludeInTableSearch { get; init; }
@@ -11,7 +11,7 @@ public record TucSharedColumn
 	public TucSharedColumn(TfSharedColumn model)
 	{
 		Id = model.Id;
-		SharedKeyDbName = model.SharedKeyDbName;
+		JoinKeyDbName = model.JoinKeyDbName;
 		DbName = model.DbName;
 		DbType = new TucDatabaseColumnTypeInfo(model.DbType);
 		IncludeInTableSearch = model.IncludeInTableSearch;
@@ -22,7 +22,7 @@ public record TucSharedColumn
 		return new TfSharedColumn
 		{
 			Id = Id,
-			SharedKeyDbName = SharedKeyDbName,
+			JoinKeyDbName = JoinKeyDbName,
 			DbName = DbName,
 			DbType = DbType.TypeValue,
 			IncludeInTableSearch = IncludeInTableSearch,

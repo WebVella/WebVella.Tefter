@@ -7,7 +7,7 @@ public partial class TalkThreadComponent : TfBaseComponent
 {
 	[Inject] public ITalkService TalkService { get; set; }
 	[Parameter] public Guid? ChannelId { get; set; }
-	[Parameter] public Guid? SharedKeyValue { get; set; }
+	[Parameter] public Guid? JoinKeyValue { get; set; }
 	[Parameter] public TucUser CurrentUser { get; set; }
 	[Parameter] public string Style { get; set; } = "";
 	[Parameter] public RenderFragment HeaderActions { get; set; }
@@ -42,8 +42,8 @@ public partial class TalkThreadComponent : TfBaseComponent
 			if (ChannelId is not null)
 			{
 				_channel = TalkService.GetChannel(ChannelId.Value);
-				if (_channel is not null && SharedKeyValue is not null)
-					_threads = TalkService.GetThreads(_channel.Id, SharedKeyValue.Value);
+				if (_channel is not null && JoinKeyValue is not null)
+					_threads = TalkService.GetThreads(_channel.Id, JoinKeyValue.Value);
 
 				_isLoading = false;
 				await InvokeAsync(StateHasChanged);
@@ -68,13 +68,13 @@ public partial class TalkThreadComponent : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			var submit = new CreateTalkThreadWithSharedKey
+			var submit = new CreateTalkThreadWithJoinKey
 			{
 				ChannelId = _channel.Id,
 				Content = _channelEditorContent,
 				Type = TalkThreadType.Comment,
 				UserId = CurrentUser.Id,
-				SKValueIds = new List<Guid> { SharedKeyValue.Value }
+				SKValueIds = new List<Guid> { JoinKeyValue.Value }
 			};
 			var threadId = TalkService.CreateThread(submit);
 			ToastService.ShowSuccess(LOC("Message is sent"));

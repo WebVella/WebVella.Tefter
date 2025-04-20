@@ -146,9 +146,9 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The shared column id is required.");
 
-				RuleFor(column => column.SharedKeyDbName)
+				RuleFor(column => column.JoinKeyDbName)
 				.NotEmpty()
-				.WithMessage("The shared column associated shared key database name is required.");
+				.WithMessage("The shared column associated join key database name is required.");
 
 				RuleFor(column => column.DbName)
 					.NotEmpty()

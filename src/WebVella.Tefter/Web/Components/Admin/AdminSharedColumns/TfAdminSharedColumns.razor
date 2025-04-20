@@ -3,7 +3,7 @@
 
 <div class="tf-admin-shared-columns-toolbar" style="display:flex;justify-content:space-between;margin-bottom:1rem;">
 	<div>
-		<FluentSearch Placeholder="@LOC("column shared key...")" ValueChanged="_searchValueChanged" Value="@_search" AutoComplete="off" />
+		<FluentSearch Placeholder="@LOC("column join key...")" ValueChanged="_searchValueChanged" Value="@_search" AutoComplete="off" />
 	</div>
 	<div>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_addColumn">
@@ -32,7 +32,7 @@ else
 					<th class="tf-grid-th" style="width:100px;min-width:100px;"></th>
 					<th class="tf-grid-th" style="width:250px;min-width:270px;">name</th>
 					<th class="tf-grid-th">data type</th>
-					<th class="tf-grid-th">shared key</th>
+					<th class="tf-grid-th">join key</th>
 					<th class="tf-grid-th">options</th>
 				</tr>
 			</thead>
@@ -65,7 +65,7 @@ else
 						</td>
 						<td class="tf-grid-td">
 							<div>
-								@context.SharedKeyDbName
+								@context.JoinKeyDbName
 							</div>
 						</td>
 						<td class="tf-grid-td">

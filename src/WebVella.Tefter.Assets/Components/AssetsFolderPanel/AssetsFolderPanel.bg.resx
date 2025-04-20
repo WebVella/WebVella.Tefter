@@ -144,14 +144,14 @@
   <data name="Shift + Enter for new line. Enter to send." xml:space="preserve">
     <value>Shift + Enter за нов ред. Enter за изпращане.</value>
   </data>
-  <data name="The selected dataset does not support the shared key '{0}' of channel '{1}'!" xml:space="preserve">
-    <value>Избраните изходни данни не поддържат споделения ключ '{0}' на канала '{1}'!</value>
+  <data name="The selected dataset does not support the join key '{0}' of channel '{1}'!" xml:space="preserve">
+    <value>Избраните изходни данни не поддържат свързващия ключ '{0}' на канала '{1}'!</value>
   </data>
-  <data name="The selected shared key '{0}' value is not yet generated for this row of the dataset!" xml:space="preserve">
-    <value>Стойността на споделения ключ '{0}' все още не е генерирана за този ред на изходните данни!</value>
+  <data name="The selected join key '{0}' value is not yet generated for this row of the dataset!" xml:space="preserve">
+    <value>Стойността на свързващия ключ '{0}' все още не е генерирана за този ред на изходните данни!</value>
   </data>
-  <data name="The talk channel has no shared key set!" xml:space="preserve">
-    <value>Дискусионният канал няма зададен споделен ключ!</value>
+  <data name="The talk channel has no join key set!" xml:space="preserve">
+    <value>Дискусионният канал няма зададен свързващ ключ!</value>
   </data>
   <data name="Thread" xml:space="preserve">
     <value>Дискусия</value>

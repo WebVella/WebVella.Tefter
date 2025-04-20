@@ -25,7 +25,7 @@
 //				{
 //					Id = Guid.NewGuid(),
 //					Name = "Test Folder",
-//					SharedKey = "talk_shared_key",
+//					JoinKey = "talk_shared_key",
 //					CountSharedColumnName = ""
 //				};
 
@@ -73,7 +73,7 @@
 //				{
 //					Id = Guid.NewGuid(),
 //					Name = "Test Folder",
-//					SharedKey = "shared_key_text",
+//					JoinKey = "shared_key_text",
 //					CountSharedColumnName = ""
 //				};
 //				var folderCreatedResult = assetService.CreateFolder(folder);

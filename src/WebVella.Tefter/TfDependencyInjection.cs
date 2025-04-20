@@ -63,7 +63,7 @@ public static class TfDependencyInjection
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();
 		services.AddHostedService<TfBlobMaintenanceJob>();
-		services.AddHostedService<TfSharedKeysUpdateJob>();
+		services.AddHostedService<TfJoinKeysUpdateJob>();
 		services.AddHostedService<TfIdsCacheLoaderJob>();
 		services.AddHostedService<TfDataProviderSynchScheduleJob>();
 		

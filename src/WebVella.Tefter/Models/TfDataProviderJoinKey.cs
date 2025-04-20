@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Models;
 
-public record TfDataProviderSharedKey
+public record TfDataProviderJoinKey
 {
 	public Guid Id { get; internal set; }
 
@@ -20,7 +20,7 @@ public record TfDataProviderSharedKey
 
 [DboCacheModel]
 [TfDboModel("tf_data_provider_shared_key")]
-internal record TfDataProviderSharedKeyDbo
+internal record TfDataProviderJoinKeyDbo
 {
 	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }

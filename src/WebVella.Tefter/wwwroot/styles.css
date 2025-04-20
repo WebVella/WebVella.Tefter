@@ -1137,7 +1137,7 @@ body {
 .tf-layout__body__main__header__content {
   flex: 0 0 auto;
   padding: var(--tf-body-content-padding) 0;
-  width: 200px;
+  width: 300px;
   margin-right: 50px;
 }
 .tf-layout__body__main__header__aside {

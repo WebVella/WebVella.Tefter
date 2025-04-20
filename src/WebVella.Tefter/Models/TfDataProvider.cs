@@ -14,7 +14,7 @@ public class TfDataProvider
 	public ReadOnlyCollection<TfDataProviderSystemColumn> SystemColumns { get; internal set; }
 	public ReadOnlyCollection<TfDataProviderColumn> Columns { get; internal set; }
 	public ReadOnlyCollection<TfSharedColumn> SharedColumns { get; internal set; }
-	public ReadOnlyCollection<TfDataProviderSharedKey> SharedKeys { get; internal set; }
+	public ReadOnlyCollection<TfDataProviderJoinKey> JoinKeys { get; internal set; }
 	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; internal set; }
 	public ITfDataProviderAddon ProviderType { get; internal set; }
 	public IServiceProvider ServiceProvider { get; internal set; }

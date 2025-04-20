@@ -34,6 +34,13 @@ public partial interface ITfService
 	/// <returns></returns>
 	public ReadOnlyCollection<TfDataProvider> GetDataProviders();
 
+
+	/// <summary>
+	/// Gets list of available data providers with their row count
+	/// </summary>
+	/// <returns></returns>
+	public ReadOnlyCollection<TfDataProviderInfo> GetDataProvidersInfo();
+
 	/// <summary>
 	/// Creates new data provider 
 	/// </summary>
@@ -80,13 +87,13 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Unable to find provider type for specified provider instance.");
 
-			var sharedKeys = GetDataProviderSharedKeys(id);
+			var joinKeys = GetDataProviderJoinKeys(id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
-					GetDataProviderSystemColumns(sharedKeys),
+					GetDataProviderSystemColumns(joinKeys),
 					GetDataProviderColumns(id),
-					sharedKeys,
+					joinKeys,
 					providerType);
 
 			provider.ServiceProvider = _serviceProvider;
@@ -163,13 +170,13 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Failed to get data provider");
 
-			var sharedKeys = GetDataProviderSharedKeys(providerDbo.Id);
+			var joinKeys = GetDataProviderJoinKeys(providerDbo.Id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
-					GetDataProviderSystemColumns(sharedKeys),
+					GetDataProviderSystemColumns(joinKeys),
 					GetDataProviderColumns(providerDbo.Id),
-					sharedKeys,
+					joinKeys,
 					providerType);
 
 			provider.ServiceProvider = _serviceProvider;
@@ -206,13 +213,13 @@ public partial class TfService : ITfService
 					throw new TfException($"Failed to get data providers, because " +
 						$"provider type with id = '{dbo.TypeId}' is not found.");
 
-				var sharedKeys = GetDataProviderSharedKeys(dbo.Id);
+				var joinKeys = GetDataProviderJoinKeys(dbo.Id);
 
 				var provider = DataProviderFromDbo(
 						dbo,
-						GetDataProviderSystemColumns(sharedKeys),
+						GetDataProviderSystemColumns(joinKeys),
 						GetDataProviderColumns(dbo.Id),
-						sharedKeys,
+						joinKeys,
 						providerType);
 
 				provider.ServiceProvider = _serviceProvider;
@@ -230,6 +237,30 @@ public partial class TfService : ITfService
 		}
 	}
 
+	/// <summary>
+	/// Gets list of available data providers with their row count
+	/// </summary>
+	/// <returns></returns>
+	public ReadOnlyCollection<TfDataProviderInfo> GetDataProvidersInfo()
+	{
+		var result = new List<TfDataProviderInfo>();
+		foreach (var provider in GetDataProviders())
+		{
+			var info = new TfDataProviderInfo
+			{
+				Id = provider.Id,
+				Index = provider.Index,
+				Name = provider.Name,
+				ProviderType = provider.ProviderType,
+				RowsCount = 0
+			};
+			//info.
+
+			result.Add(info);
+		}
+
+		return result.AsReadOnly();
+	}
 
 	/// <summary>
 	/// Creates new data provider 
@@ -317,27 +348,28 @@ public partial class TfService : ITfService
 	public TfDataProvider UpdateDataProvider(
 		TfDataProviderModel providerModel)
 	{
-		try { 
-		new TfDataProviderUpdateValidator(this)
-			.Validate(providerModel)
-			.ToValidationException()
-			.ThrowIfContainsErrors();
+		try
+		{
+			new TfDataProviderUpdateValidator(this)
+				.Validate(providerModel)
+				.ToValidationException()
+				.ThrowIfContainsErrors();
 
-		TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
+			TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
 
-		var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo, 
-			nameof(TfDataProviderDbo.Name),
-			nameof(TfDataProviderDbo.TypeId),
-			nameof(TfDataProviderDbo.SettingsJson),
-			nameof(TfDataProviderDbo.SynchPrimaryKeyColumnsJson),
-			nameof(TfDataProviderDbo.SynchScheduleMinutes),
-			nameof(TfDataProviderDbo.SynchScheduleEnabled)
-			);
+			var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo,
+				nameof(TfDataProviderDbo.Name),
+				nameof(TfDataProviderDbo.TypeId),
+				nameof(TfDataProviderDbo.SettingsJson),
+				nameof(TfDataProviderDbo.SynchPrimaryKeyColumnsJson),
+				nameof(TfDataProviderDbo.SynchScheduleMinutes),
+				nameof(TfDataProviderDbo.SynchScheduleEnabled)
+				);
 
-		if (!success)
-			throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
+			if (!success)
+				throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
 
-		return GetDataProvider(providerModel.Id);
+			return GetDataProvider(providerModel.Id);
 		}
 		catch (Exception ex)
 		{
@@ -353,52 +385,53 @@ public partial class TfService : ITfService
 	public void DeleteDataProvider(
 		Guid id)
 	{
-		try { 
-		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+		try
 		{
-			var provider = GetDataProvider(id);
-			if (provider is null)
-				new TfException("Provider is not found.");
-
-			new TfDataProviderDeleteValidator(this)
-				.Validate(provider)
-				.ToValidationException()
-				.ThrowIfContainsErrors();
-
-			bool success = true;
-
-			foreach (var column in provider.Columns)
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				success = _dboManager.Delete<TfDataProviderColumn>(column.Id);
+				var provider = GetDataProvider(id);
+				if (provider is null)
+					new TfException("Provider is not found.");
+
+				new TfDataProviderDeleteValidator(this)
+					.Validate(provider)
+					.ToValidationException()
+					.ThrowIfContainsErrors();
+
+				bool success = true;
+
+				foreach (var column in provider.Columns)
+				{
+					success = _dboManager.Delete<TfDataProviderColumn>(column.Id);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<TfDataProviderColumn> failed.");
+				}
+
+				foreach (var joinKey in provider.JoinKeys)
+				{
+					success = _dboManager.Delete<TfDataProviderJoinKeyDbo>(joinKey.Id);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<TfDataProviderJoinKeyDbo> failed.");
+				}
+
+				success = _dboManager.Delete<TfDataProviderDbo>(id);
 
 				if (!success)
-					throw new TfDboServiceException("Delete<TfDataProviderColumn> failed.");
+					throw new TfDboServiceException("Delete<TfDataProviderDbo> failed.");
+
+
+				string providerTableName = $"dp{provider.Index}";
+
+				TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
+
+				dbBuilder.Remove(providerTableName);
+
+				_dbManager.SaveChanges(dbBuilder);
+
+				scope.Complete();
 			}
-
-			foreach (var sharedKey in provider.SharedKeys)
-			{
-				success = _dboManager.Delete<TfDataProviderSharedKeyDbo>(sharedKey.Id);
-
-				if (!success)
-					throw new TfDboServiceException("Delete<TfDataProviderSharedKeyDbo> failed.");
-			}
-
-			success = _dboManager.Delete<TfDataProviderDbo>(id);
-
-			if (!success)
-				throw new TfDboServiceException("Delete<TfDataProviderDbo> failed.");
-
-
-			string providerTableName = $"dp{provider.Index}";
-
-			TfDatabaseBuilder dbBuilder = _dbManager.GetDatabaseBuilder();
-
-			dbBuilder.Remove(providerTableName);
-
-			_dbManager.SaveChanges(dbBuilder);
-
-			scope.Complete();
-		}
 		}
 		catch (Exception ex)
 		{
@@ -415,7 +448,7 @@ public partial class TfService : ITfService
 	{
 		List<TfSharedColumn> columns = new List<TfSharedColumn>();
 
-		if (provider.SharedKeys.Count == 0)
+		if (provider.JoinKeys.Count == 0)
 		{
 			provider.SharedColumns = columns.AsReadOnly();
 			return;
@@ -424,8 +457,8 @@ public partial class TfService : ITfService
 		var sharedColumns = GetSharedColumns();
 		foreach (var sharedColumn in sharedColumns)
 		{
-			var sharedKey = provider.SharedKeys.SingleOrDefault(x => x.DbName == sharedColumn.SharedKeyDbName);
-			if (sharedKey is not null && !columns.Contains(sharedColumn))
+			var joinKey = provider.JoinKeys.SingleOrDefault(x => x.DbName == sharedColumn.JoinKeyDbName);
+			if (joinKey is not null && !columns.Contains(sharedColumn))
 				columns.Add(sharedColumn);
 		}
 
@@ -454,7 +487,7 @@ public partial class TfService : ITfService
 		TfDataProviderDbo dbo,
 		List<TfDataProviderSystemColumn> systemColumns,
 		List<TfDataProviderColumn> columns,
-		List<TfDataProviderSharedKey> sharedKeys,
+		List<TfDataProviderJoinKey> joinKeys,
 		ITfDataProviderAddon providerType)
 	{
 		if (dbo == null)
@@ -463,8 +496,8 @@ public partial class TfService : ITfService
 		if (columns == null)
 			throw new ArgumentException(nameof(columns));
 
-		if (sharedKeys == null)
-			throw new ArgumentException(nameof(sharedKeys));
+		if (joinKeys == null)
+			throw new ArgumentException(nameof(joinKeys));
 
 		if (providerType == null)
 			throw new ArgumentException(nameof(providerType));
@@ -480,7 +513,7 @@ public partial class TfService : ITfService
 			ProviderType = providerType,
 			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
-			SharedKeys = sharedKeys.AsReadOnly(),
+			JoinKeys = joinKeys.AsReadOnly(),
 			SynchPrimaryKeyColumns = JsonSerializer.Deserialize<List<string>>(dbo.SynchPrimaryKeyColumnsJson ?? "[]").AsReadOnly()
 		};
 	}

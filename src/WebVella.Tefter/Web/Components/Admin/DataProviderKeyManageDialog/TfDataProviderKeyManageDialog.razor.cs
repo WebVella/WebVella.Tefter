@@ -1,10 +1,10 @@
 ﻿namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.Admin.DataProviderKeyManageDialog.TfDataProviderKeyManageDialog", "WebVella.Tefter")]
-public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderSharedKey>
+public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialogContentComponent<TucDataProviderJoinKey>
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] private IState<TfAppState> TfAppState { get; set; }
-	[Parameter] public TucDataProviderSharedKey Content { get; set; }
+	[Parameter] public TucDataProviderJoinKey Content { get; set; }
 
 	[CascadingParameter] public FluentDialog Dialog { get; set; }
 
@@ -15,7 +15,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 	private Icon _iconBtn;
 
 	private List<TucDataProviderColumn> _providerColumns = new();
-	private TucDataProviderSharedKeyForm _form = new();
+	private TucDataProviderJoinKeyForm _form = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -37,7 +37,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			//Setup form
 			if (_isCreate)
 			{
-				_form = new TucDataProviderSharedKeyForm
+				_form = new TucDataProviderJoinKeyForm
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = TfAppState.Value.AdminDataProvider.Id,
@@ -45,7 +45,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 			}
 			else
 			{
-				_form = new TucDataProviderSharedKeyForm(Content);
+				_form = new TucDataProviderJoinKeyForm(Content);
 				_providerColumns = _providerColumns.Where(x => !_form.Columns.Any(y => y.Id == x.Id)).ToList();
 			}
 			base.InitForm(_form);

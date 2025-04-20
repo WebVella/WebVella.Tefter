@@ -47,7 +47,7 @@ public record TucDataProvider
 	}
 	public string ColumnPrefix { get => $"{Code}_"; }
 	public string Code { get => $"dp{Index}"; }
-	public List<TucDataProviderSharedKey> SharedKeys { get; init; }
+	public List<TucDataProviderJoinKey> JoinKeys { get; init; }
 	public TucDataProviderTypeInfo ProviderType { get; init; }
 	public ReadOnlyCollection<string> SynchPrimaryKeyColumns { get; init; }
 	public short SynchScheduleMinutes { get; set; } = 60;
@@ -62,7 +62,7 @@ public record TucDataProvider
 		SystemColumns = model.SystemColumns is null ? null : model.SystemColumns.Select(x => new TucDataProviderSystemColumn(x)).ToList();
 		Columns = model.Columns is null ? null : model.Columns.Select(x => new TucDataProviderColumn(x)).ToList();
 		SharedColumns = model.SharedColumns is null ? null : model.SharedColumns.Select(x => new TucSharedColumn(x)).ToList();
-		SharedKeys = model.SharedKeys is null ? null : model.SharedKeys.Select(x => new TucDataProviderSharedKey(x)).ToList();
+		JoinKeys = model.JoinKeys is null ? null : model.JoinKeys.Select(x => new TucDataProviderJoinKey(x)).ToList();
 		ProviderType = new TucDataProviderTypeInfo(model.ProviderType);
 		SynchPrimaryKeyColumns = model.SynchPrimaryKeyColumns;
 		SynchScheduleMinutes = model.SynchScheduleMinutes;

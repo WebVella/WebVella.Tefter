@@ -79,7 +79,7 @@ public partial class TfAdminSharedColumns : TfBaseComponent
 		{
 			return TfAppState.Value.AdminSharedColumns.Where(x =>
 				x.DbName.ToLowerInvariant().Contains(searchProcessed)
-				|| x.SharedKeyDbName.ToLowerInvariant().Contains(searchProcessed)
+				|| x.JoinKeyDbName.ToLowerInvariant().Contains(searchProcessed)
 			).ToList();
 		}
 		else

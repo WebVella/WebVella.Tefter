@@ -4,7 +4,7 @@
 @if (Context.Mode == TfComponentMode.Read)
 {
 	<AssetsFolderComponent FolderId="_options.FolderId" CurrentUser="@TfUserState.Value.CurrentUser"
-						   SharedKeyValue="@_getSharedKeyValue()" 
+						   JoinKeyValue="@_getJoinKeyValue()" 
 						   Style="height: calc(100vh - var(--tf-header-height) - var(--tf-content-margin-bottom) - var(--tf-content-border-top-width)) !important" />
 }
 else if (Context.Mode == TfComponentMode.Create)
@@ -38,20 +38,20 @@ else if (Context.Mode == TfComponentMode.Create)
 		<FluentGridItem xs="6">
 			<FluentSelect OptionSelected="(x => x == _options.ShareKeyType)"
 						  @bind-SelectedOption="@_options.ShareKeyType"
-						  TOption="AssetsFolderShareKeyType"
-						  Items="@(Enum.GetValues<AssetsFolderShareKeyType>())" Style="width:100%"
+						  TOption="AssetsFolderJoinKeyType"
+						  Items="@(Enum.GetValues<AssetsFolderJoinKeyType>())" Style="width:100%"
 						  OptionValue="@((p)=> ((int)p).ToString())"
 						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Share key value")"
 						  Class="@GetValidationCssClass(nameof(_options.ShareKeyType))" />
 			<TfValidationMessage Field="@(nameof(_options.ShareKeyType))" Errors="ValidationErrors" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			@if (_options.ShareKeyType == AssetsFolderShareKeyType.CustomString)
+			@if (_options.ShareKeyType == AssetsFolderJoinKeyType.CustomString)
 			{
 				<FluentTextField TextFieldType="@TextFieldType.Text"
 								 Placeholder="@LOC("empty string")"
 								 @bind-Value=@_options.CustomShareKeyValue AutoComplete="off"
-								 Label="@LOC("Custom shared key valye")" Style="width:100%" />
+								 Label="@LOC("Custom join key valye")" Style="width:100%" />
 				<TfValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
 			}
 		</FluentGridItem>

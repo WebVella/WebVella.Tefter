@@ -149,9 +149,9 @@ public sealed class TfDataTable
 			isShared: false,
 			isSystem: true));
 
-		foreach (var sharedKey in dataProvider.SharedKeys)
+		foreach (var joinKey in dataProvider.JoinKeys)
 		{
-			string name = $"tf_sk_{sharedKey.DbName}_id";
+			string name = $"tf_sk_{joinKey.DbName}_id";
 			columns.Add(new TfDataColumn(
 			this,
 			name,
@@ -160,7 +160,7 @@ public sealed class TfDataTable
 			isShared: false,
 			isSystem: true));
 
-			name = $"tf_sk_{sharedKey.DbName}_version";
+			name = $"tf_sk_{joinKey.DbName}_version";
 			columns.Add(new TfDataColumn(
 			this,
 			name,

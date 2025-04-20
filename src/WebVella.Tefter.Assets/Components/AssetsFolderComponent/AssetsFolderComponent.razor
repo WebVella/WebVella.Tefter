@@ -19,25 +19,25 @@ else if (_folder is null)
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
-else if (String.IsNullOrWhiteSpace(_folder.SharedKey))
+else if (String.IsNullOrWhiteSpace(_folder.JoinKey))
 {
 	<TfLayoutBodyMain>
 		<Header>
 			<TfPageHeader>@LOC("Error")</TfPageHeader>
 		</Header>
 		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The assets folder has no shared key set!")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The assets folder has no join key set!")</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
-else if (String.IsNullOrWhiteSpace(SharedKeyValue))
+else if (String.IsNullOrWhiteSpace(JoinKeyValue))
 {
 	<TfLayoutBodyMain>
 		<Header>
 			<TfPageHeader>@LOC("Error")</TfPageHeader>
 		</Header>
 		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("Shared key value is not provided!")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("Join key value is not provided!")</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }

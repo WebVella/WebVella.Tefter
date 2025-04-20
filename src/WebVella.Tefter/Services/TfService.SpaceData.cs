@@ -106,11 +106,11 @@ public partial class TfService : ITfService
 				});
 			}
 
-			foreach (var sharedKey in provider.SharedKeys)
+			foreach (var joinKey in provider.JoinKeys)
 			{
 				columns.Add(new TfAvailableSpaceDataColumn
 				{
-					DbName = sharedKey.DbName,
+					DbName = joinKey.DbName,
 					DbType = TfDatabaseColumnType.Guid,
 				});
 			}

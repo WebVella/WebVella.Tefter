@@ -120,8 +120,8 @@
   <data name="Are you sure that you need this column deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете тази колона?</value>
   </data>
-  <data name="column shared key..." xml:space="preserve">
-    <value>колона споделен ключ ...</value>
+  <data name="column join key..." xml:space="preserve">
+    <value>колона свързващ ключ ...</value>
   </data>
   <data name="Column successfully created!" xml:space="preserve">
     <value>Колоната е успешно създадена!</value>

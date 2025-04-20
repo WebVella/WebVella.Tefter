@@ -1087,7 +1087,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		ITfService tfService = serviceProvider.GetService<ITfService>();
 
 		//creates default empty id in id_dict
-		//this entry is required because data provider shared keys default
+		//this entry is required because data provider join keys default
 		//values are Guid.Empty and they have foreign key to id_dict
 
 		dbService.ExecuteSqlNonQueryCommand("INSERT INTO tf_id_dict(id,text_id) VALUES(@id,@text_id)",

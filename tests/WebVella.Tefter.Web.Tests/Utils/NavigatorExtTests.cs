@@ -109,7 +109,7 @@ public class NavigatorExtTests
 		result.NodesDict.Count.Should().Be(4);
 		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
 		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.SharedKeys);
+		result.ThirdNode.Should().Be(RouteDataThirdNode.JoinKeys);
 		result.DataProviderId.Should().Be(providerId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId)}");

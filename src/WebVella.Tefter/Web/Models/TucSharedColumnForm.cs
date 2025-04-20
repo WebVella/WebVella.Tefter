@@ -3,7 +3,7 @@
 public record TucSharedColumnForm
 {
 	public Guid Id { get; set; }
-	public string SharedKeyDbName { get; set; }
+	public string JoinKeyDbName { get; set; }
 	public string DbName { get; set; }
 	public TucDatabaseColumnTypeInfo DbType { get; set; }
 	public bool IncludeInTableSearch { get; set; }
@@ -12,7 +12,7 @@ public record TucSharedColumnForm
 		return new TfSharedColumn
 		{
 			Id = Id,
-			SharedKeyDbName = SharedKeyDbName,
+			JoinKeyDbName = JoinKeyDbName,
 			DbName = DbName,
 			DbType = DbType.TypeValue,
 			IncludeInTableSearch = IncludeInTableSearch,

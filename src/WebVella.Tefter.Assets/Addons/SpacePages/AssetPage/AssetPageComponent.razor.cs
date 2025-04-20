@@ -102,15 +102,15 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 
 	#region << Private methods >>
 
-	private string _getSharedKeyValue()
+	private string _getJoinKeyValue()
 	{
 		switch (_options.ShareKeyType)
 		{
-			case AssetsFolderShareKeyType.SpaceNodeId:
+			case AssetsFolderJoinKeyType.SpaceNodeId:
 				return (TfAppState.Value.SpaceNode?.Id ?? Guid.Empty).ToString();
-			case AssetsFolderShareKeyType.SpaceId:
+			case AssetsFolderJoinKeyType.SpaceId:
 				return (TfAppState.Value.Space?.Id ?? Guid.Empty).ToString();
-			case AssetsFolderShareKeyType.CustomString:
+			case AssetsFolderJoinKeyType.CustomString:
 				return (String.IsNullOrWhiteSpace(_options.CustomShareKeyValue) ? Guid.Empty.ToString() : _options.CustomShareKeyValue);
 			default:
 				throw new Exception("Shared Key Type not supported");
@@ -139,7 +139,7 @@ public class AssetsPageComponentPageComponentOptions
 	public Guid? AssetId { get; set; } = null;
 
 	[JsonPropertyName("ShareKeyType")]
-	public AssetsFolderShareKeyType ShareKeyType { get; set; } = AssetsFolderShareKeyType.SpaceNodeId;
+	public AssetsFolderJoinKeyType ShareKeyType { get; set; } = AssetsFolderJoinKeyType.SpaceNodeId;
 
 	[JsonPropertyName("CustomShareKeyValue")]
 	public string CustomShareKeyValue { get; set; } = "";

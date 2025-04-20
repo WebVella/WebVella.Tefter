@@ -57,7 +57,7 @@ internal partial class AppStateUseCase
 				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Schema)
 				{
 				}
-				else if (newAppState.Route.ThirdNode == RouteDataThirdNode.SharedKeys)
+				else if (newAppState.Route.ThirdNode == RouteDataThirdNode.JoinKeys)
 				{
 				}
 			}
@@ -173,6 +173,53 @@ internal partial class AppStateUseCase
 				messageService: _messageService
 			);
 			return Task.FromResult(new TucDataProvider());
+
+		}
+	}
+
+	internal virtual Task<ReadOnlyCollection<TucDataProviderInfo>> GetDataProvidersInfoAsync()
+	{
+		try
+		{
+			var providersInfo = _tfService.GetDataProvidersInfo();
+			if (providersInfo is null)
+				return Task.FromResult((new List<TucDataProviderInfo>()).AsReadOnly());
+
+			var syncTasks = _tfService.GetSynchronizationTasks();
+			var syncTaskDict = new Dictionary<Guid, TfDataProviderSynchronizeTask>();
+			foreach (var syncTask in syncTasks.OrderBy(x=> x.CreatedOn))
+			{
+				if (syncTaskDict.ContainsKey(syncTask.DataProviderId)) continue;
+				if(syncTask.CompletedOn is not null) continue;
+				if(!(syncTask.Status == TfSynchronizationStatus.Pending || syncTask.Status == TfSynchronizationStatus.InProgress)) continue;
+
+				syncTaskDict[syncTask.DataProviderId] = syncTask;
+			}
+
+
+			var result = new List<TucDataProviderInfo>();
+			foreach (var item in providersInfo)
+			{
+				var info = new TucDataProviderInfo(item);
+				if(syncTaskDict.ContainsKey(item.Id)){ 
+					info.NextSyncTask = syncTaskDict[item.Id].CreatedOn;
+				}
+				result.Add(info);
+			}
+
+			return Task.FromResult(result.AsReadOnly());
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+				exception: ex,
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult((new List<TucDataProviderInfo>()).AsReadOnly());
 
 		}
 	}
@@ -334,23 +381,23 @@ internal partial class AppStateUseCase
 
 	//Data provider key
 	internal virtual TucDataProvider CreateDataProviderKey(
-		TucDataProviderSharedKeyForm form)
+		TucDataProviderJoinKeyForm form)
 	{
-		var result = _tfService.CreateDataProviderSharedKey(form.ToModel());
+		var result = _tfService.CreateDataProviderJoinKey(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
 	internal virtual TucDataProvider UpdateDataProviderKey(
-		TucDataProviderSharedKeyForm form)
+		TucDataProviderJoinKeyForm form)
 	{
-		var result = _tfService.UpdateDataProviderSharedKey(form.ToModel());
+		var result = _tfService.UpdateDataProviderJoinKey(form.ToModel());
 		return new TucDataProvider(result);
 	}
 
-	internal TucDataProvider DeleteDataProviderSharedKey(
+	internal TucDataProvider DeleteDataProviderJoinKey(
 		Guid keyId)
 	{
-		var result = _tfService.DeleteDataProviderSharedKey(keyId);
+		var result = _tfService.DeleteDataProviderJoinKey(keyId);
 		return new TucDataProvider(result);
 	}
 

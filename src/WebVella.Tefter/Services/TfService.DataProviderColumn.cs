@@ -95,7 +95,7 @@ public partial class TfService : ITfService
 	}
 
 	private List<TfDataProviderSystemColumn> GetDataProviderSystemColumns(
-		List<TfDataProviderSharedKey> sharedKeys)
+		List<TfDataProviderJoinKey> joinKeys)
 	{
 		try
 		{
@@ -131,17 +131,17 @@ public partial class TfService : ITfService
 				DbType = TfDatabaseColumnType.Text
 			});
 
-			foreach (var sharedKey in sharedKeys)
+			foreach (var joinKey in joinKeys)
 			{
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
-					DbName = $"tf_sk_{sharedKey.DbName}_id",
+					DbName = $"tf_sk_{joinKey.DbName}_id",
 					DbType = TfDatabaseColumnType.Guid
 				});
 
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
-					DbName = $"tf_sk_{sharedKey.DbName}_version",
+					DbName = $"tf_sk_{joinKey.DbName}_version",
 					DbType = TfDatabaseColumnType.ShortInteger
 				});
 			}
@@ -1409,11 +1409,11 @@ public partial class TfService : ITfService
 				RuleFor(column => column.Id)
 						.Must((column, id) =>
 						{
-							var sharedKeys = tfService.GetDataProviderSharedKeys(column.DataProviderId);
-							var found = sharedKeys.Any(x => x.Columns.Any(c => c.Id == id));
+							var joinKeys = tfService.GetDataProviderJoinKeys(column.DataProviderId);
+							var found = joinKeys.Any(x => x.Columns.Any(c => c.Id == id));
 							return !found;
 						})
-						.WithMessage("There data provider column cannot be deleted, because it is part of shared key.");
+						.WithMessage("There data provider column cannot be deleted, because it is part of join key.");
 			});
 
 		}

@@ -275,28 +275,28 @@ public partial class TfService : ITfService
 
 				var tableName = $"dp{provider.Index}";
 
-				Dictionary<string, Guid> preparedSharedKeyIds = null;
+				Dictionary<string, Guid> preparedJoinKeyIds = null;
 				List<string> columnList = null;
 				Dictionary<string, NpgsqlParameter> paramsDict = null;
 				Dictionary<string, Guid> newTfIds = null;
 
 				try
 				{
-					task.SynchronizationLog.Log($"start prepare shared keys informations needed for synchronization");
-					preparedSharedKeyIds = BulkPrepareSharedKeyValueIds(provider, newData);
-					task.SynchronizationLog.Log($"complete prepare shared keys informations needed for synchronization");
+					task.SynchronizationLog.Log($"start prepare join keys informations needed for synchronization");
+					preparedJoinKeyIds = BulkPrepareJoinKeyValueIds(provider, newData);
+					task.SynchronizationLog.Log($"complete prepare join keys informations needed for synchronization");
 				}
 				catch (Exception ex)
 				{
-					task.SynchronizationLog.Log($"failed prepare shared keys informations needed for synchronization", ex);
-					throw new TfException("Failed to prepare shared key value ids.", ex);
+					task.SynchronizationLog.Log($"failed prepare join keys informations needed for synchronization", ex);
+					throw new TfException("Failed to prepare join key value ids.", ex);
 				}
 
 				try
 				{
 					task.SynchronizationLog.Log($"start processing new rows system identifiers");
 
-					(columnList, paramsDict, newTfIds) = PrepareQueryArrayParameters(provider, preparedSharedKeyIds, existingData, newData);
+					(columnList, paramsDict, newTfIds) = PrepareQueryArrayParameters(provider, preparedJoinKeyIds, existingData, newData);
 
 					BulkPrepareAndUpdateTfIds(newTfIds, paramsDict["tf_id"]);
 
@@ -405,7 +405,7 @@ public partial class TfService : ITfService
 
 	private (List<string> columnNames, Dictionary<string, NpgsqlParameter>, Dictionary<string, Guid>) PrepareQueryArrayParameters(
 		TfDataProvider provider,
-		Dictionary<string, Guid> sharedKeyBulkIdDict,
+		Dictionary<string, Guid> joinKeyBulkIdDict,
 		Dictionary<string, DataRow> existingData,
 		ReadOnlyCollection<TfDataProviderDataRow> newData)
 	{
@@ -493,22 +493,22 @@ public partial class TfService : ITfService
 			}
 		}
 
-		//shared keys column names and parameters
-		foreach (var sharedKey in provider.SharedKeys)
+		//join keys column names and parameters
+		foreach (var joinKey in provider.JoinKeys)
 		{
-			columnNames.Add($"tf_sk_{sharedKey.DbName}_id");
-			columnNames.Add($"tf_sk_{sharedKey.DbName}_version");
+			columnNames.Add($"tf_sk_{joinKey.DbName}_id");
+			columnNames.Add($"tf_sk_{joinKey.DbName}_version");
 
 			{
-				var parameter = new NpgsqlParameter($"tf_sk_{sharedKey.DbName}_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+				var parameter = new NpgsqlParameter($"tf_sk_{joinKey.DbName}_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
 				parameter.Value = new List<Guid>();
-				paramsDict.Add($"tf_sk_{sharedKey.DbName}_id", parameter);
+				paramsDict.Add($"tf_sk_{joinKey.DbName}_id", parameter);
 			}
 
 			{
-				var parameter = new NpgsqlParameter($"tf_sk_{sharedKey.DbName}_version", NpgsqlDbType.Array | NpgsqlDbType.Smallint);
+				var parameter = new NpgsqlParameter($"tf_sk_{joinKey.DbName}_version", NpgsqlDbType.Array | NpgsqlDbType.Smallint);
 				parameter.Value = new List<short>();
-				paramsDict.Add($"tf_sk_{sharedKey.DbName}_version", parameter);
+				paramsDict.Add($"tf_sk_{joinKey.DbName}_version", parameter);
 			}
 		}
 
@@ -836,53 +836,53 @@ public partial class TfService : ITfService
 				}
 			}
 
-			foreach (var sharedKey in provider.SharedKeys)
+			foreach (var joinKey in provider.JoinKeys)
 			{
 				List<string> keys = new List<string>();
-				foreach (var column in sharedKey.Columns)
+				foreach (var column in joinKey.Columns)
 					keys.Add(row[column.DbName]?.ToString());
 
 				var combinedKey = CombineKey(keys);
 
-				var skIdValue = sharedKeyBulkIdDict[combinedKey];
+				var skIdValue = joinKeyBulkIdDict[combinedKey];
 
-				((List<Guid>)paramsDict[$"tf_sk_{sharedKey.DbName}_id"].Value)
+				((List<Guid>)paramsDict[$"tf_sk_{joinKey.DbName}_id"].Value)
 					.Add(skIdValue);
 
-				((List<short>)paramsDict[$"tf_sk_{sharedKey.DbName}_version"].Value)
-					.Add(sharedKey.Version);
+				((List<short>)paramsDict[$"tf_sk_{joinKey.DbName}_version"].Value)
+					.Add(joinKey.Version);
 			}
 		}
 
 		return (columnNames, paramsDict, newTfIds);
 	}
 
-	private Dictionary<string, Guid> BulkPrepareSharedKeyValueIds(
+	private Dictionary<string, Guid> BulkPrepareJoinKeyValueIds(
 		TfDataProvider provider,
 		ReadOnlyCollection<TfDataProviderDataRow> newData)
 	{
-		Dictionary<string, Guid> sharedKeyBulkIdDict = new();
+		Dictionary<string, Guid> joinKeyBulkIdDict = new();
 
 		foreach (var row in newData)
 		{
-			foreach (var sharedKey in provider.SharedKeys)
+			foreach (var joinKey in provider.JoinKeys)
 			{
 				List<string> keys = new List<string>();
-				foreach (var column in sharedKey.Columns)
+				foreach (var column in joinKey.Columns)
 					keys.Add(row[column.DbName]?.ToString());
 
 				var key = CombineKey(keys);
 
-				if (sharedKeyBulkIdDict.ContainsKey(key))
+				if (joinKeyBulkIdDict.ContainsKey(key))
 					continue;
 
-				sharedKeyBulkIdDict[key] = Guid.Empty;
+				joinKeyBulkIdDict[key] = Guid.Empty;
 			}
 		}
 
-		BulkFillIds(sharedKeyBulkIdDict);
+		BulkFillIds(joinKeyBulkIdDict);
 
-		return sharedKeyBulkIdDict;
+		return joinKeyBulkIdDict;
 	}
 
 	private void BulkPrepareAndUpdateTfIds(
@@ -917,12 +917,12 @@ public partial class TfService : ITfService
 			columnsToSelect.Add(column.DbName);
 		}
 
-		foreach (var sharedKey in provider.SharedKeys)
+		foreach (var joinKey in provider.JoinKeys)
 		{
-			string sharedKeyIdColumnDbName = $"tf_sk_{sharedKey.DbName}_id";
-			string sharedKeyVersionColumnDbName = $"tf_sk_{sharedKey.DbName}_version";
-			columnsToSelect.Add(sharedKeyIdColumnDbName);
-			columnsToSelect.Add(sharedKeyVersionColumnDbName);
+			string joinKeyIdColumnDbName = $"tf_sk_{joinKey.DbName}_id";
+			string joinKeyVersionColumnDbName = $"tf_sk_{joinKey.DbName}_version";
+			columnsToSelect.Add(joinKeyIdColumnDbName);
+			columnsToSelect.Add(joinKeyVersionColumnDbName);
 		}
 
 		if (provider.SynchPrimaryKeyColumns != null &&

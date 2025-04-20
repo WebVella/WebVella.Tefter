@@ -19,36 +19,36 @@ else if (_channel is null)
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
-else if (String.IsNullOrWhiteSpace(_channel.SharedKey))
+else if (String.IsNullOrWhiteSpace(_channel.JoinKey))
 {
 	<TfLayoutBodyMain>
 		<Header>
 			<TfPageHeader>@LOC("Error")</TfPageHeader>
 		</Header>
 		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The talk channel has no shared key set!")</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The talk channel has no join key set!")</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
-else if (SharedKeyValue is null)
+else if (JoinKeyValue is null)
 {
 	<TfLayoutBodyMain>
 		<Header>
 			<TfPageHeader>@LOC("Error")</TfPageHeader>
 		</Header>
 		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the shared key '{0}' of channel '{1}'!", _channel.SharedKey, _channel.Name)</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected dataset does not support the join key '{0}' of channel '{1}'!", _channel.JoinKey, _channel.Name)</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
-else if (SharedKeyValue == Guid.Empty)
+else if (JoinKeyValue == Guid.Empty)
 {
 	<TfLayoutBodyMain>
 		<Header>
 			<TfPageHeader>@LOC("Error")</TfPageHeader>
 		</Header>
 		<ChildContent>
-			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected shared key '{0}' value is not yet generated for this row of the dataset!", _channel.SharedKey)</FluentMessageBar>
+			<FluentMessageBar AllowDismiss="false" Intent="@MessageIntent.Warning">@LOC("The selected join key '{0}' value is not yet generated for this row of the dataset!", _channel.JoinKey)</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }

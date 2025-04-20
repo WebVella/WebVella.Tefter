@@ -2,21 +2,21 @@
 @inherits TfBaseComponent
 @if (TfAppState.Value.AdminDataProvider is not null)
 {
-	<TfPageHeader Style="margin-bottom:1rem">@LOC("Shared keys")</TfPageHeader>
+	<TfPageHeader Style="margin-bottom:1rem">@LOC("Join keys")</TfPageHeader>
 	<TfCard>
 		<TitleTemplate>
 			<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 				<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
-					@LOC("Shared key")
+					@LOC("Join key")
 					<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
 				</FluentButton>
 			</FluentStack>
 		</TitleTemplate>
 		<ChildContent>
-			@if (TfAppState.Value.AdminDataProvider.SharedKeys is null || TfAppState.Value.AdminDataProvider.SharedKeys.Count == 0)
+			@if (TfAppState.Value.AdminDataProvider.JoinKeys is null || TfAppState.Value.AdminDataProvider.JoinKeys.Count == 0)
 			{
 				<FluentMessageBar Title="@LOC("No keys")" AllowDismiss="false"
-								  Intent="@MessageIntent.Info">@LOC("No shared keys are created yet for this data provider")</FluentMessageBar>
+								  Intent="@MessageIntent.Info">@LOC("No join keys are created yet for this data provider")</FluentMessageBar>
 			}
 			else
 			{
@@ -32,7 +32,7 @@
 							</tr>
 						</thead>
 						<tbody class="tf-grid-tbody">
-							@foreach (var context in TfAppState.Value.AdminDataProvider.SharedKeys)
+							@foreach (var context in TfAppState.Value.AdminDataProvider.JoinKeys)
 							{
 								<tr @key=context.Id class="tf-grid-tr">
 									<td class="tf-grid-td">
@@ -81,7 +81,7 @@
 	@if (TfAppState.Value.AdminDataProvider.SharedColumns is null || TfAppState.Value.AdminDataProvider.SharedColumns.Count == 0)
 	{
 		<FluentMessageBar Title="@LOC("No shared columns matched")" AllowDismiss="false"
-						  Intent="@MessageIntent.Info">@LOC("No shared columns are matching any of the shared keys for this data source")</FluentMessageBar>
+						  Intent="@MessageIntent.Info">@LOC("No shared columns are matching any of the join keys for this data source")</FluentMessageBar>
 	}
 	else
 	{
@@ -107,7 +107,7 @@
 								<div>@context.DbType.Name</div>
 							</td>
 							<td class="tf-grid-td">
-								<div>@context.SharedKeyDbName</div>
+								<div>@context.JoinKeyDbName</div>
 							</td>
 							<td class="tf-grid-td">
 								<div>

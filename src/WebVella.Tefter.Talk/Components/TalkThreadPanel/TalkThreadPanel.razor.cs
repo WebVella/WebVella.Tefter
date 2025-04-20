@@ -42,10 +42,10 @@ public partial class TalkThreadPanel : TfFormBaseComponent, IDialogContentCompon
 			if (Content.ChannelId is not null)
 			{
 				_channel = TalkService.GetChannel(Content.ChannelId.Value);
-				if (_channel is not null && !String.IsNullOrWhiteSpace(_channel.SharedKey) && Content.RowIndex > -1)
+				if (_channel is not null && !String.IsNullOrWhiteSpace(_channel.JoinKey) && Content.RowIndex > -1)
 				{
 					_rowId = (Guid)Content.DataTable.Rows[Content.RowIndex][TfConstants.TEFTER_ITEM_ID_PROP_NAME];
-					_skValue = Content.DataTable.Rows[Content.RowIndex].GetSharedKeyValue(_channel.SharedKey);
+					_skValue = Content.DataTable.Rows[Content.RowIndex].GetJoinKeyValue(_channel.JoinKey);
 					if (_skValue is not null)
 						_threads = TalkService.GetThreads(_channel.Id, _skValue);
 				}

@@ -135,8 +135,8 @@
   <data name="Shared Columns" xml:space="preserve">
     <value>Споделени колони</value>
   </data>
-  <data name="Shared Keys" xml:space="preserve">
-    <value>Споделени ключове</value>
+  <data name="Join Keys" xml:space="preserve">
+    <value>Свързващи ключове</value>
   </data>
   <data name="Synchronization" xml:space="preserve">
     <value>Синхронизация</value>

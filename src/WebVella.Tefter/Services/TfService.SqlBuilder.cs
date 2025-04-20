@@ -163,8 +163,8 @@ public partial class TfService : ITfService
 			foreach (var column in _dataProvider.Columns)
 				AddAvailableColumn(column.Id, column.DbName, column.DbType);
 
-			foreach (var column in _dataProvider.SharedColumns)
-				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.SharedKeyDbName);
+			foreach (var column in dataProvider.SharedColumns)
+				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.JoinKeyDbName);
 
 
 			if (_spaceData is null)
@@ -229,7 +229,7 @@ public partial class TfService : ITfService
 							var sharedKeyExistingInBothProviders = extProvider
 								.SharedColumns
 								.Select(x => x.SharedKeyDbName)
-								.Intersect(_dataProvider.SharedKeys.Select(x => x.DbName))
+								.Intersect(_dataProvider.JoinKeys.Select(x => x.DbName))
 								.FirstOrDefault();	
 
 							//if not intersection by names between shared keys , ignore column
@@ -237,7 +237,7 @@ public partial class TfService : ITfService
 								continue;
 
 							var sharedKey = extProvider
-								.SharedKeys
+								.JoinKeys
 								.FirstOrDefault(x => x.DbName == sharedKeyExistingInBothProviders);
 
 							_tableAliasCounter++;
@@ -313,10 +313,10 @@ public partial class TfService : ITfService
 			Guid id,
 			string dbName,
 			TfDatabaseColumnType dbType,
-			string sharedKeyDbName = null,
+			string joinKeyDbName = null,
 			bool isSystem = false)
 		{
-			if (sharedKeyDbName == null)
+			if (joinKeyDbName == null)
 			{
 				_availableColumns.Add(new SqlBuilderColumn
 				{
@@ -325,7 +325,7 @@ public partial class TfService : ITfService
 					TableAlias = _tableAlias,
 					DbName = dbName,
 					DbType = dbType,
-					SharedKeyDbName = sharedKeyDbName,
+					JoinKeyDbName = joinKeyDbName,
 					IsSystem = isSystem
 				});
 			}
@@ -340,7 +340,7 @@ public partial class TfService : ITfService
 					TableAlias = $"t{_tableAliasCounter}",
 					DbName = dbName,
 					DbType = dbType,
-					SharedKeyDbName = sharedKeyDbName,
+					JoinKeyDbName = joinKeyDbName,
 					IsSystem = isSystem
 				});
 			}
@@ -428,18 +428,18 @@ public partial class TfService : ITfService
 
 			//joins are created for select columns, filter columns and sort columns
 			var columnsToJoin = _selectColumns
-					.Where(x => x.SharedKeyDbName != null)
+					.Where(x => x.JoinKeyDbName != null)
 					.Union(_filterColumns
-						.Where(x => x.SharedKeyDbName != null)
+						.Where(x => x.JoinKeyDbName != null)
 					)
 					.Union(_sortColumns
-						.Where(x => x.SharedKeyDbName != null)
+						.Where(x => x.JoinKeyDbName != null)
 					)
 					.Distinct().ToList();
 
 			string joins = string.Join(Environment.NewLine, columnsToJoin
 					.Select(x => $"	LEFT OUTER JOIN {x.TableName} {x.TableAlias} ON " +
-					$"{x.TableAlias}.shared_key_id = {_tableAlias}.tf_sk_{x.SharedKeyDbName}_id AND " +
+					$"{x.TableAlias}.shared_key_id = {_tableAlias}.tf_sk_{x.JoinKeyDbName}_id AND " +
 					$"{x.TableAlias}.shared_column_id = '{x.Id}'").ToList());
 
 			if (!string.IsNullOrEmpty(joins.Trim()))
@@ -482,7 +482,7 @@ public partial class TfService : ITfService
 
 					string comma = first ? " " : ", ";
 					string direction = sort.Direction == TfSortDirection.ASC ? "ASC" : "DESC";
-					if (string.IsNullOrWhiteSpace(column.SharedKeyDbName))
+					if (string.IsNullOrWhiteSpace(column.JoinKeyDbName))
 						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
 					else
 						sortSb.Append($"{comma}{column.TableAlias}.value {direction}");
@@ -585,7 +585,7 @@ public partial class TfService : ITfService
 				return string.Empty;
 
 			var columnName = $"{column.TableAlias}.{filter.ColumnName}";
-			if (!string.IsNullOrWhiteSpace(column.SharedKeyDbName))
+			if (!string.IsNullOrWhiteSpace(column.JoinKeyDbName))
 				columnName = $"{column.TableAlias}.value";
 
 			var parameterName = "filter_par_" + Guid.NewGuid().ToString().Replace("-", string.Empty);
@@ -812,7 +812,7 @@ public partial class TfService : ITfService
 	{
 		public Guid Id { get; set; }
 		public string DbName { get; set; }
-		public string SharedKeyDbName { get; set; }
+		public string JoinKeyDbName { get; set; }
 		public TfDatabaseColumnType DbType { get; set; }
 		public string TableName { get; set; }
 		public string TableAlias { get; set; }
@@ -820,7 +820,7 @@ public partial class TfService : ITfService
 
 		public string GetSelectString()
 		{
-			if (string.IsNullOrWhiteSpace(SharedKeyDbName))
+			if (string.IsNullOrWhiteSpace(JoinKeyDbName))
 				return $"{TableAlias}.{DbName}";
 			else
 				return $"{TableAlias}.value AS {DbName}";

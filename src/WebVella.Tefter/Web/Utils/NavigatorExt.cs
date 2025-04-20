@@ -112,7 +112,7 @@ public static class NavigatorExt
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameKeys)
 					{
-						result = result with { ThirdNode = RouteDataThirdNode.SharedKeys };
+						result = result with { ThirdNode = RouteDataThirdNode.JoinKeys };
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameAux)
 					{
