@@ -196,7 +196,7 @@ internal partial class AppStateUseCase
 		return false;
 	}
 
-	//Space data
+	//Space dataset
 	internal virtual List<TfSpaceDataAsOption> GetSpaceDataOptionsForTemplate()
 	{
 		var result = new List<TfSpaceDataAsOption>();

@@ -126,7 +126,7 @@
   <data name="Delete view" xml:space="preserve">
     <value>Изтриване на изглед</value>
   </data>
-  <data name="Manage data" xml:space="preserve">
+  <data name="Manage dataset" xml:space="preserve">
     <value>Редакция на данни</value>
   </data>
   <data name="Manage view" xml:space="preserve">

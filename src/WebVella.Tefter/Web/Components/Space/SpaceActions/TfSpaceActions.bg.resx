@@ -120,7 +120,7 @@
   <data name="Are you sure that you need this space deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете тази област?</value>
   </data>
-  <data name="Create Space Data" xml:space="preserve">
+  <data name="Create Dataset" xml:space="preserve">
     <value>Създай данни</value>
   </data>
   <data name="Create Space Page" xml:space="preserve">
@@ -138,7 +138,7 @@
   <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
   </data>
-  <data name="Space Data List" xml:space="preserve">
+  <data name="Space Dataset" xml:space="preserve">
     <value>Данни в областта</value>
   </data>
   <data name="Space Pages List" xml:space="preserve">

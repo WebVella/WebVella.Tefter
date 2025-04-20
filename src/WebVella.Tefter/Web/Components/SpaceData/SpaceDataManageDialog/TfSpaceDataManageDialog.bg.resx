@@ -132,6 +132,9 @@
   <data name="Name" xml:space="preserve">
     <value>Име</value>
   </data>
+  <data name="Primary Data provider" xml:space="preserve">
+    <value>Основен Източник на данни</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Запомни</value>
   </data>

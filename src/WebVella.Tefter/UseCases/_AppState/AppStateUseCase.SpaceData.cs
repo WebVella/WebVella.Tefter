@@ -298,7 +298,7 @@ internal partial class AppStateUseCase
 
 			var spaceData = GetSpaceData(spaceDataId);
 			if (spaceData is null)
-				throw new TfException("Space Data is not found");
+				throw new TfException("Space Dataset is not found");
 
 			List<TfFilterBase> presetFiltersSM = null;
 			List<TfSort> presetSortsSM = null;
@@ -351,7 +351,7 @@ internal partial class AppStateUseCase
 
 			var spaceData = GetSpaceData(spaceDataId);
 			if (spaceData is null)
-				throw new TfException("Space Data is not found");
+				throw new TfException("Space Dataset is not found");
 
 			List<TfFilterBase> presetFiltersSM = null;
 			List<TfSort> presetSortsSM = null;
@@ -413,7 +413,7 @@ internal partial class AppStateUseCase
 
 			var spaceData = GetSpaceData(spaceDataId);
 			if (spaceData is null)
-				throw new TfException("Space Data is not found");
+				throw new TfException("Space Dataset is not found");
 
 			var dataProvider = _tfService.GetDataProvider(spaceData.DataProviderId);
 			if (dataProvider is null)
