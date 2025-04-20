@@ -64,7 +64,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 				_options = selectedSpaceData.Columns;
 			else
 			{
-				//This space data uses all the columns from the data provider
+				//This space dataset uses all the columns from the data provider
 				var dataProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == selectedSpaceData.DataProviderId);
 				if (dataProvider is not null)
 				{

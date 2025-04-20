@@ -69,9 +69,9 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Target Space Data")" />
+					<FluentInputLabel Label="@LOC("Target Space Dataset")" />
 					<FluentSelect Style="width:100%" TOption="TfSpaceDataAsOption" SelectedOption="_spaceDataOption" SelectedOptionChanged="_spaceDataOptionChanged"
-								  Placeholder="@LOC("select space data...")"
+								  Placeholder="@LOC("select space dataset...")"
 								  Value="@_spaceDataOption?.Id.ToString()"
 								  OptionValue="@((p)=> p.Id.ToString())"
 								  @bind-Items="_spaceDataOptions">
@@ -116,7 +116,7 @@
 									<tr class="tf-grid-tr">
 										<td class="tf-grid-td" colspan="4">
 											<div>
-												@LOC("No targeted space data found")
+												@LOC("No targeted space dataset found")
 											</div>
 										</td>
 									</tr>

@@ -415,6 +415,6 @@ public enum TfSelectEditColumnComponentOptionsSourceType
 {
 	[Description("manually set")]
 	ManuallySet = 0,
-	[Description("space data")]
+	[Description("space dataset")]
 	SpaceData = 1,
 }

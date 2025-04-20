@@ -43,12 +43,12 @@ else
 				<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
 			</Header>
 			<ChildContent>
-				<FluentMessageBar Title="No space data found"
+				<FluentMessageBar Title="No space dataset found"
 								  Style="@("border: 1px solid var(--neutral-base-color)")"
 								  Intent="MessageIntent.Info"
 								  Type="@MessageType.Notification"
 								  AllowDismiss="false">
-					No space data found
+					No space dataset found
 				</FluentMessageBar>
 			</ChildContent>
 		</TfLayoutBodyMain>
@@ -62,7 +62,7 @@ else
 	{
 		<TfLayoutBodyMain HeaderClass="aside-tabs">
 			<Header>
-				<TfPageHeader>@LOC("Manage data '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
+				<TfPageHeader>@LOC("Manage dataset '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
 			</Header>
 			<HeaderAside>
 				<TfSpaceDataDetailsNav />

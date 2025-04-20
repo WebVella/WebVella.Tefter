@@ -182,7 +182,7 @@ public class NavigatorExtTests
 		result.SpaceViewId.Should().Be(viewId);
 		#endregion
 
-		#region << Space data >>
+		#region << Space dataset >>
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceDataPageUrl, spaceId, dataId)}");
 		result = NavigatorExt.GetNodeData(uri);

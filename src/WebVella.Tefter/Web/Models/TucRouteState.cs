@@ -52,7 +52,7 @@ public enum RouteDataSecondNode
 	SharedColumns = 3,
 	[Description("Space View")]
 	SpaceView = 4,
-	[Description("Space Data")]
+	[Description("Space Dataset")]
 	SpaceData = 5,
 	[Description("Pages")]
 	Pages = 6,

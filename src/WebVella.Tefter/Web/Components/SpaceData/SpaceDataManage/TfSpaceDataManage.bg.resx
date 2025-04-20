@@ -147,7 +147,7 @@
   <data name="limited access" xml:space="preserve">
     <value>ограничен достъп</value>
   </data>
-  <data name="Manage data '{0}'" xml:space="preserve">
+  <data name="Manage dataset '{0}'" xml:space="preserve">
     <value>Редакция на данни '{0}'</value>
   </data>
   <data name="Manage view" xml:space="preserve">

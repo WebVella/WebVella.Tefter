@@ -62,7 +62,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		{
 			UC.DeleteSpaceData(TfAppState.Value.SpaceData.Id);
 
-			ToastService.ShowSuccess(LOC("Space data deleted"));
+			ToastService.ShowSuccess(LOC("Space dataset deleted"));
 
 			if (TfAppState.Value.SpaceDataList.Count > 0)
 				Navigator.NavigateTo(string.Format(TfConstants.SpaceDataPageUrl, TfAppState.Value.Space.Id, TfAppState.Value.SpaceDataList[0].Id), true);
