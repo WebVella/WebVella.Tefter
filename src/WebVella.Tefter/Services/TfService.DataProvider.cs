@@ -64,6 +64,8 @@ public partial interface ITfService
 	/// <returns></returns>
 	internal void DeleteDataProvider(
 		Guid id);
+
+	public long GetDataProviderRowsCount(Guid dataProviderId);
 }
 
 public partial class TfService : ITfService
@@ -439,7 +441,25 @@ public partial class TfService : ITfService
 		}
 	}
 
+	public long GetDataProviderRowsCount(Guid dataProviderId)
+	{
+		try
+		{
+			var dataProvider = GetDataProvider(dataProviderId);
+			if (dataProvider is null)
+				throw new Exception("DataProvider not found for specified identifier.");
 
+
+			using var connection = _dbService.CreateConnection();
+			var dbCommand = connection.CreateCommand($"SELECT COUNT(*) FROM dp{dataProvider.Index} ");
+			return (long)dbCommand.ExecuteScalar();
+
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
 
 	#region <--- utility --->
 
