@@ -26,7 +26,7 @@ public partial class TfAdminDashboard : TfBaseComponent
 	private async Task _loadProviderInfo()
 	{
 		_providersInfo = await UC.GetDataProvidersInfoAsync();
-		_syncInfo = _providersInfo.Where(x=> x.NextSyncTask is not null).OrderBy(x => x.NextSyncTask).Take(5).ToList();
+		_syncInfo = _providersInfo.Where(x=> x.NextSyncOn is not null).OrderBy(x => x.NextSyncOn).Take(5).ToList();
 		_providerInfoLoading = false;
 	}
 

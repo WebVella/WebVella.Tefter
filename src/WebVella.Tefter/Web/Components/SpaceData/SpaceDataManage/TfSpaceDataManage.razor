@@ -35,7 +35,7 @@ else
 					@if (SelectedProvider is not null)
 					{
 						<FluentStack>
-							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@SelectedProvider.Name
+							<FluentTextField TextFieldType="@TextFieldType.Text" Value=@($"[{SelectedProvider.Code}] {SelectedProvider.Name}")
 											 Style="width:100%" ReadOnly="true" />
 							@if (TfAppState.Value.CurrentUser.IsAdmin)
 							{

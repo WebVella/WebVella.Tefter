@@ -185,26 +185,10 @@ internal partial class AppStateUseCase
 			if (providersInfo is null)
 				return Task.FromResult((new List<TucDataProviderInfo>()).AsReadOnly());
 
-			var syncTasks = _tfService.GetSynchronizationTasks();
-			var syncTaskDict = new Dictionary<Guid, TfDataProviderSynchronizeTask>();
-			foreach (var syncTask in syncTasks.OrderBy(x=> x.CreatedOn))
-			{
-				if (syncTaskDict.ContainsKey(syncTask.DataProviderId)) continue;
-				if(syncTask.CompletedOn is not null) continue;
-				if(!(syncTask.Status == TfSynchronizationStatus.Pending || syncTask.Status == TfSynchronizationStatus.InProgress)) continue;
-
-				syncTaskDict[syncTask.DataProviderId] = syncTask;
-			}
-
-
 			var result = new List<TucDataProviderInfo>();
 			foreach (var item in providersInfo)
 			{
-				var info = new TucDataProviderInfo(item);
-				if(syncTaskDict.ContainsKey(item.Id)){ 
-					info.NextSyncTask = syncTaskDict[item.Id].CreatedOn;
-				}
-				result.Add(info);
+				result.Add(new TucDataProviderInfo(item));
 			}
 
 			return Task.FromResult(result.AsReadOnly());
@@ -301,6 +285,8 @@ internal partial class AppStateUseCase
 			Name = provider.Name,
 			ProviderType = provider.ProviderType,
 			SettingsJson = provider.SettingsJson,
+			SynchScheduleEnabled = provider.SynchScheduleEnabled,
+			SynchScheduleMinutes = provider.SynchScheduleMinutes
 		};
 
 		provider = _tfService.UpdateDataProvider(submit);
@@ -456,14 +442,12 @@ internal partial class AppStateUseCase
 		return Task.CompletedTask;
 	}
 
-	internal virtual DateTime? GetProviderNextTaskCreatedOn(
+	internal virtual DateTime? GetProviderNextSyncOn(
 			Guid dataProviderId)
 	{
 		try
 		{
-			var providerTasks = _tfService.GetSynchronizationTasks(dataProviderId, null);
-			var nextTask = providerTasks.Where(x => x.Status == TfSynchronizationStatus.Pending || x.Status == TfSynchronizationStatus.InProgress).OrderBy(x => x.CreatedOn).FirstOrDefault();
-			if (nextTask is not null) return nextTask.CreatedOn;
+			return _tfService.GetDataProviderNextSynchronizationTime(dataProviderId);
 		}
 		catch (Exception ex)
 		{

@@ -8,6 +8,15 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 	private List<string> _keyitems = new();
 	private string _nextSyncronization;
 
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
+
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
@@ -15,12 +24,32 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 			throw new Exception("Data provider not initialized");
 		if (TfAppState.Value.AdminDataProvider?.SynchPrimaryKeyColumns is not null)
 			_keyitems = TfAppState.Value.AdminDataProvider.SynchPrimaryKeyColumns.ToList();
+		_setNextSyncOn();
+	}
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
+		}
+	}
+
+	private void On_AppChanged(SetAppStateAction action)
+	{
+		InvokeAsync(async () =>
+		{
+			_setNextSyncOn();
+			await InvokeAsync(StateHasChanged);
+		});
+	}
+
+	private void _setNextSyncOn(){ 
 		_nextSyncronization = LOC("not scheduled");
-		var providerNextTaskCreatedOn = UC.GetProviderNextTaskCreatedOn(TfAppState.Value.AdminDataProvider.Id);
+		var providerNextTaskCreatedOn = UC.GetProviderNextSyncOn(TfAppState.Value.AdminDataProvider.Id);
 		if (providerNextTaskCreatedOn is not null)
-			_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);
-
+			_nextSyncronization = providerNextTaskCreatedOn.Value.ToString(TfConstants.DateTimeFormat);	
 	}
 
 	private async Task _onViewLogClick(TucDataProviderSyncTask task)

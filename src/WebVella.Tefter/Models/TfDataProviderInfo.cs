@@ -6,5 +6,6 @@ public class TfDataProviderInfo
 	public string Name { get; internal set; }
 	public int Index { get; internal set; }
 	public long RowsCount { get; internal set; }
+	public DateTime? NextSyncOn { get; internal set; }
 	public ITfDataProviderAddon ProviderType { get; internal set; }
 }
