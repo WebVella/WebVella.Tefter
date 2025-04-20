@@ -177,6 +177,53 @@ internal partial class AppStateUseCase
 		}
 	}
 
+	internal virtual Task<ReadOnlyCollection<TucDataProviderInfo>> GetDataProvidersInfoAsync()
+	{
+		try
+		{
+			var providersInfo = _tfService.GetDataProvidersInfo();
+			if (providersInfo is null)
+				return Task.FromResult((new List<TucDataProviderInfo>()).AsReadOnly());
+
+			var syncTasks = _tfService.GetSynchronizationTasks();
+			var syncTaskDict = new Dictionary<Guid, TfDataProviderSynchronizeTask>();
+			foreach (var syncTask in syncTasks.OrderBy(x=> x.CreatedOn))
+			{
+				if (syncTaskDict.ContainsKey(syncTask.DataProviderId)) continue;
+				if(syncTask.CompletedOn is not null) continue;
+				if(!(syncTask.Status == TfSynchronizationStatus.Pending || syncTask.Status == TfSynchronizationStatus.InProgress)) continue;
+
+				syncTaskDict[syncTask.DataProviderId] = syncTask;
+			}
+
+
+			var result = new List<TucDataProviderInfo>();
+			foreach (var item in providersInfo)
+			{
+				var info = new TucDataProviderInfo(item);
+				if(syncTaskDict.ContainsKey(item.Id)){ 
+					info.NextSyncTask = syncTaskDict[item.Id].CreatedOn;
+				}
+				result.Add(info);
+			}
+
+			return Task.FromResult(result.AsReadOnly());
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+				exception: ex,
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult((new List<TucDataProviderInfo>()).AsReadOnly());
+
+		}
+	}
+
 	internal virtual Task<List<TucDataProviderTypeInfo>> GetProviderTypesAsync()
 	{
 		try
