@@ -31,6 +31,8 @@ public partial interface ITfService
 
 	internal Task CheckScheduleSynchronizationTasksAsync(
 		CancellationToken stoppingToken);
+
+	public DateTime? GetDataProviderNextSynchronizationTime(Guid id);
 }
 
 public partial class TfService : ITfService
@@ -1173,5 +1175,24 @@ public partial class TfService : ITfService
 		}
 
 		return Task.CompletedTask;
+	}
+
+	public DateTime? GetDataProviderNextSynchronizationTime(Guid id)
+	{
+		var provider = GetDataProvider(id);
+
+		if (provider is null)
+			return null;
+
+		if (!provider.SynchScheduleEnabled)
+			return null;
+
+
+		var lastSynchTask = GetLastSynchronizationTask(provider.Id);
+
+		if (lastSynchTask is null)
+			return DateTime.Now;
+
+		return lastSynchTask.CompletedOn.Value.AddMinutes(provider.SynchScheduleMinutes);
 	}
 }
