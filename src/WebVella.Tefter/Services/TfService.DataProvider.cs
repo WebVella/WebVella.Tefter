@@ -128,7 +128,7 @@ public partial class TfService : ITfService
 			if (providerType == null)
 				throw new TfException("Unable to find provider type for specified provider instance.");
 
-			var sharedKeys = GetDataProviderSharedKeys(providerDbo.Id);
+			var sharedKeys = GetDataProviderJoinKeys(providerDbo.Id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,

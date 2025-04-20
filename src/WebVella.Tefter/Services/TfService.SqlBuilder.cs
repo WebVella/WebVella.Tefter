@@ -163,7 +163,7 @@ public partial class TfService : ITfService
 			foreach (var column in _dataProvider.Columns)
 				AddAvailableColumn(column.Id, column.DbName, column.DbType);
 
-			foreach (var column in dataProvider.SharedColumns)
+			foreach (var column in _dataProvider.SharedColumns)
 				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.JoinKeyDbName);
 
 
@@ -226,19 +226,19 @@ public partial class TfService : ITfService
 							if (extColumn is null)
 								continue;
 
-							var sharedKeyExistingInBothProviders = extProvider
-								.SharedColumns
-								.Select(x => x.SharedKeyDbName)
+							var joinKeyExistingInBothProviders = extProvider
+								.JoinKeys
+								.Select(x => x.DbName)
 								.Intersect(_dataProvider.JoinKeys.Select(x => x.DbName))
 								.FirstOrDefault();	
 
 							//if not intersection by names between shared keys , ignore column
-							if (sharedKeyExistingInBothProviders is null)	
+							if (joinKeyExistingInBothProviders is null)	
 								continue;
 
-							var sharedKey = extProvider
+							var joinKey = extProvider
 								.JoinKeys
-								.FirstOrDefault(x => x.DbName == sharedKeyExistingInBothProviders);
+								.FirstOrDefault(x => x.DbName == joinKeyExistingInBothProviders);
 
 							_tableAliasCounter++;
 
@@ -247,7 +247,7 @@ public partial class TfService : ITfService
 								DataProvider = extProvider,
 								DbName = columnName,
 								DbType =extColumn.DbType,
-								SharedKeyDbName = sharedKey.DbName,
+								JoinKeyDbName = joinKey.DbName,
 								Id = extColumn.Id,
 								IsSystem = false,
 								TableAlias = $"t{_tableAliasCounter}",
