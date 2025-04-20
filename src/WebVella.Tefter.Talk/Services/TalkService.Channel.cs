@@ -61,8 +61,8 @@ internal partial class TalkService : ITalkService
 			.ToValidationException()
 			.ThrowIfContainsErrors();
 
-		var SQL = "INSERT INTO talk_channel(id,name,shared_key,count_shared_column_name) " +
-			"VALUES( @id,@name,@shared_key,@count_shared_column_name)";
+		var SQL = "INSERT INTO talk_channel(id,name,join_key,count_shared_column_name) " +
+			"VALUES( @id,@name,@join_key,@count_shared_column_name)";
 
 		var idPar = TalkUtility.CreateParameter(
 			"id",
@@ -75,7 +75,7 @@ internal partial class TalkService : ITalkService
 			DbType.StringFixedLength);
 
 		var joinKeyPar = TalkUtility.CreateParameter(
-			"shared_key",
+			"join_key",
 			channel.JoinKey,
 			DbType.StringFixedLength);
 
@@ -110,7 +110,7 @@ internal partial class TalkService : ITalkService
 
 		var SQL = "UPDATE talk_channel SET " +
 			"name=@name, " +
-			"shared_key=@shared_key, " +
+			"join_key=@join_key, " +
 			"count_shared_column_name=@count_shared_column_name " +
 			"WHERE id = @id";
 
@@ -125,7 +125,7 @@ internal partial class TalkService : ITalkService
 			DbType.StringFixedLength);
 
 		var joinKeyPar = TalkUtility.CreateParameter(
-			"shared_key",
+			"join_key",
 			channel.JoinKey,
 			DbType.StringFixedLength);
 
@@ -179,7 +179,7 @@ internal partial class TalkService : ITalkService
 		{
 			Id = dr.Field<Guid>("id"),
 			Name = dr.Field<string>("name") ?? string.Empty,
-			JoinKey = dr.Field<string>("shared_key"),
+			JoinKey = dr.Field<string>("join_key"),
 			CountSharedColumnName = dr.Field<string>("count_shared_column_name")
 		};
 	}

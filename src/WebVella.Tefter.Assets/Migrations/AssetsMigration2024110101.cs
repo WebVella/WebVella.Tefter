@@ -20,7 +20,7 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
-					.AddShortTextColumn("shared_key", c => { c.NotNullable(); })
+					.AddShortTextColumn("join_key", c => { c.NotNullable(); })
 					.AddShortTextColumn("count_shared_column_name", c => { c.Nullable(); });
 			})
 			.WithConstraints(constraints =>
@@ -59,7 +59,7 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
 
 
 		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "assets_related_sk")
+			.NewTableBuilder(Guid.NewGuid(), "assets_related_jk")
 			.WithColumns(columns =>
 			{
 				columns
@@ -69,8 +69,8 @@ public class AssetsMigration2024110101 : ITfApplicationMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_assets_related_sk", c => { c.WithColumns("id", "asset_id"); })
-					.AddForeignKeyConstraint("fk_assets_related_sk_asset", c =>
+					.AddPrimaryKeyConstraint("pk_assets_related_jk", c => { c.WithColumns("id", "asset_id"); })
+					.AddForeignKeyConstraint("fk_assets_related_jk_asset", c =>
 					{
 						c
 						.WithForeignTable("assets_asset")

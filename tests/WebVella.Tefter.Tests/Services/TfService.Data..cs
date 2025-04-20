@@ -62,8 +62,8 @@ public partial class TfServiceTest : BaseTest
 				newRow[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				newRow[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				newRow["sk_shared_key_text"] = "this is join key text test " + i;
-				newRow["sk_shared_key_int"] = i;
+				newRow["sc_join_key_text"] = "this is join key text test " + i;
+				newRow["sc_join_key_int"] = i;
 
 				newTable.Rows.Add(newRow);
 			}
@@ -71,7 +71,7 @@ public partial class TfServiceTest : BaseTest
 			result = tfService.SaveDataTable(newTable);
 
 			Guid? skIntValue = result.Rows[0].GetJoinKeyValue("test");
-			Guid? skTextValue = result.Rows[0].GetJoinKeyValue("shared_key_text");
+			Guid? skTextValue = result.Rows[0].GetJoinKeyValue("join_key_text");
 
 			//result = tfService.QuerySpaceData(spaceData.Id);
 			result = tfService.QueryDataProvider(provider);
@@ -92,8 +92,8 @@ public partial class TfServiceTest : BaseTest
 				row[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				row[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				row["sk_shared_key_text"] = "this is join key text test " + i + "update";
-				row["sk_shared_key_int"] = i + i;
+				row["sc_join_key_text"] = "this is join key text test " + i + "update";
+				row["sc_join_key_int"] = i + i;
 			}
 
 			result = tfService.SaveDataTable(tableToUpdate);
@@ -117,8 +117,8 @@ public partial class TfServiceTest : BaseTest
 				row[$"dp{provider.Index}_long_int_column"] = null;
 				row[$"dp{provider.Index}_number_column"] = null;
 
-				row["sk_shared_key_text"] = null;
-				row["sk_shared_key_int"] = null;
+				row["sc_join_key_text"] = null;
+				row["sc_join_key_int"] = null;
 			}
 
 			result = tfService.SaveDataTable(tableToUpdate);
@@ -150,8 +150,8 @@ public partial class TfServiceTest : BaseTest
 							{
 								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
 								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
-								(TfFilterBase)new TfFilterText("sk_shared_key_text", TfFilterTextComparisonMethod.Contains, "a"),
-								(TfFilterBase)new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
+								(TfFilterBase)new TfFilterText("sc_join_key_text", TfFilterTextComparisonMethod.Contains, "a"),
+								(TfFilterBase)new TfFilterNumeric("sc_join_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
 							})
 
 				},
@@ -163,7 +163,7 @@ public partial class TfServiceTest : BaseTest
 							DbName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName ="sk_shared_key_int",
+							DbName ="sc_join_key_int",
 							Direction=TfSortDirection.ASC}
 				});
 
@@ -193,8 +193,8 @@ public partial class TfServiceTest : BaseTest
 				//		{
 				//			(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
 				//			(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
-				//			(TfFilterBase)new TfFilterText("sk_shared_key_text", TfFilterTextComparisonMethod.Contains, "a"),
-				//			(TfFilterBase)new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
+				//			(TfFilterBase)new TfFilterText("jk_join_key_text", TfFilterTextComparisonMethod.Contains, "a"),
+				//			(TfFilterBase)new TfFilterNumeric("jk_join_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
 				//		})
 
 				//},
@@ -206,7 +206,7 @@ public partial class TfServiceTest : BaseTest
 							DbName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName ="sk_shared_key_int",
+							DbName ="sc_join_key_int",
 							Direction=TfSortDirection.ASC}
 				});
 		}

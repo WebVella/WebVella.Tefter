@@ -498,19 +498,19 @@ public partial class TfService : ITfService
 		//join keys column names and parameters
 		foreach (var joinKey in provider.JoinKeys)
 		{
-			columnNames.Add($"tf_sk_{joinKey.DbName}_id");
-			columnNames.Add($"tf_sk_{joinKey.DbName}_version");
+			columnNames.Add($"tf_jk_{joinKey.DbName}_id");
+			columnNames.Add($"tf_jk_{joinKey.DbName}_version");
 
 			{
-				var parameter = new NpgsqlParameter($"tf_sk_{joinKey.DbName}_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
+				var parameter = new NpgsqlParameter($"tf_jk_{joinKey.DbName}_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
 				parameter.Value = new List<Guid>();
-				paramsDict.Add($"tf_sk_{joinKey.DbName}_id", parameter);
+				paramsDict.Add($"tf_jk_{joinKey.DbName}_id", parameter);
 			}
 
 			{
-				var parameter = new NpgsqlParameter($"tf_sk_{joinKey.DbName}_version", NpgsqlDbType.Array | NpgsqlDbType.Smallint);
+				var parameter = new NpgsqlParameter($"tf_jk_{joinKey.DbName}_version", NpgsqlDbType.Array | NpgsqlDbType.Smallint);
 				parameter.Value = new List<short>();
-				paramsDict.Add($"tf_sk_{joinKey.DbName}_version", parameter);
+				paramsDict.Add($"tf_jk_{joinKey.DbName}_version", parameter);
 			}
 		}
 
@@ -848,10 +848,10 @@ public partial class TfService : ITfService
 
 				var skIdValue = joinKeyBulkIdDict[combinedKey];
 
-				((List<Guid>)paramsDict[$"tf_sk_{joinKey.DbName}_id"].Value)
+				((List<Guid>)paramsDict[$"tf_jk_{joinKey.DbName}_id"].Value)
 					.Add(skIdValue);
 
-				((List<short>)paramsDict[$"tf_sk_{joinKey.DbName}_version"].Value)
+				((List<short>)paramsDict[$"tf_jk_{joinKey.DbName}_version"].Value)
 					.Add(joinKey.Version);
 			}
 		}
@@ -921,8 +921,8 @@ public partial class TfService : ITfService
 
 		foreach (var joinKey in provider.JoinKeys)
 		{
-			string joinKeyIdColumnDbName = $"tf_sk_{joinKey.DbName}_id";
-			string joinKeyVersionColumnDbName = $"tf_sk_{joinKey.DbName}_version";
+			string joinKeyIdColumnDbName = $"tf_jk_{joinKey.DbName}_id";
+			string joinKeyVersionColumnDbName = $"tf_jk_{joinKey.DbName}_version";
 			columnsToSelect.Add(joinKeyIdColumnDbName);
 			columnsToSelect.Add(joinKeyVersionColumnDbName);
 		}

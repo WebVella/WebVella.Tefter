@@ -25,7 +25,7 @@
 //				{
 //					Id = Guid.NewGuid(),
 //					Name = "Test Folder",
-//					JoinKey = "talk_shared_key",
+//					JoinKey = "talk_join_key",
 //					CountSharedColumnName = ""
 //				};
 
@@ -73,12 +73,12 @@
 //				{
 //					Id = Guid.NewGuid(),
 //					Name = "Test Folder",
-//					JoinKey = "shared_key_text",
+//					JoinKey = "join_key_text",
 //					CountSharedColumnName = ""
 //				};
 //				var folderCreatedResult = assetService.CreateFolder(folder);
 
-//				Guid skId = dataManager.GetId("shared_key_value", "1").Value;
+//				Guid skId = dataManager.GetId("join_key_value", "1").Value;
 
 //				CreateLinkAssetModel asset = new CreateLinkAssetModel
 //				{

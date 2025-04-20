@@ -29,7 +29,7 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 		if(!_isCreate)
 		{
 			var dbName = Content.DbName;
-			if (dbName.StartsWith("sk_"))
+			if (dbName.StartsWith("sc_"))
 			{
 				dbName = dbName.Substring(3);
 			}
@@ -68,7 +68,7 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 			_isSubmitting = true;
 			await InvokeAsync(StateHasChanged);
 			List<TucSharedColumn> sharedColumns;
-			var submit = _form with { DbName = "sk_" + _form.DbName };
+			var submit = _form with { DbName = "sc_" + _form.DbName };
 			if (_isCreate)
 			{
 				sharedColumns = UC.CreateSharedColumn(submit);

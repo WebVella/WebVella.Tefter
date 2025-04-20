@@ -135,13 +135,13 @@ public partial class TfService : ITfService
 			{
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
-					DbName = $"tf_sk_{joinKey.DbName}_id",
+					DbName = $"tf_jk_{joinKey.DbName}_id",
 					DbType = TfDatabaseColumnType.Guid
 				});
 
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
-					DbName = $"tf_sk_{joinKey.DbName}_version",
+					DbName = $"tf_jk_{joinKey.DbName}_version",
 					DbType = TfDatabaseColumnType.ShortInteger
 				});
 			}

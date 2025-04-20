@@ -85,7 +85,7 @@ public class BaseTest
 						Id = Guid.NewGuid(),
 						Description = "will be used for integer shared column",
 						DataProviderId = provider.Id,
-						DbName = "shared_key_int",
+						DbName = "join_key_int",
 						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.Integer) }
 					};
 
@@ -98,7 +98,7 @@ public class BaseTest
 						Id = Guid.NewGuid(),
 						Description = "will be used for short text shared column",
 						DataProviderId = provider.Id,
-						DbName = "shared_key_text",
+						DbName = "join_key_text",
 						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.ShortText) }
 
 					};
@@ -109,20 +109,20 @@ public class BaseTest
 		TfSharedColumn sharedColumn1 = new TfSharedColumn
 		{
 			Id = Guid.NewGuid(),
-			DbName = "sk_shared_key_text",
+			DbName = "sc_join_key_text",
 			DbType = TfDatabaseColumnType.ShortText,
 			IncludeInTableSearch = false,
-			JoinKeyDbName = "shared_key_text"
+			JoinKeyDbName = "join_key_text"
 		};
 		tfService.CreateSharedColumn(sharedColumn1);
 
 		TfSharedColumn sharedColumn2 = new TfSharedColumn
 		{
 			Id = Guid.NewGuid(),
-			DbName = "sk_shared_key_int",
+			DbName = "sc_join_key_int",
 			DbType = TfDatabaseColumnType.Integer,
 			IncludeInTableSearch = false,
-			JoinKeyDbName = "shared_key_int"
+			JoinKeyDbName = "join_key_int"
 		};
 		tfService.CreateSharedColumn(sharedColumn2);
 
@@ -137,13 +137,13 @@ public class BaseTest
 		DataTable dt = dbService.ExecuteSqlQueryCommand($"SELECT * FROM dp{provider.Index}");
 		foreach (DataRow dr in dt.Rows)
 		{
-			var textJoinKeyId = (Guid)dr["tf_sk_shared_key_text_id"];
-			int insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_short_text_value(shared_key_id,shared_column_id,value) " +
+			var textJoinKeyId = (Guid)dr["tf_jk_join_key_text_id"];
+			int insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_short_text_value(join_key_id,shared_column_id,value) " +
 				$"VALUES ('{textJoinKeyId}','{sharedColumn1.Id}', @value) ", new NpgsqlParameter("value", new Faker("en").Lorem.Sentence()));
 			insertResult.Should().Be(1);
 
-			var intJoinKeyId = (Guid)dr["tf_sk_shared_key_int_id"];
-			insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_integer_value(shared_key_id,shared_column_id,value) " +
+			var intJoinKeyId = (Guid)dr["tf_jk_join_key_int_id"];
+			insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_integer_value(join_key_id,shared_column_id,value) " +
 				$"VALUES ('{textJoinKeyId}','{sharedColumn2.Id}', @value) ", new NpgsqlParameter("value", new Faker("en").Random.Int()));
 			insertResult.Should().Be(1);
 		}
@@ -174,7 +174,7 @@ public class BaseTest
 
 		List<TfFilterBase> filters = new List<TfFilterBase>();
 
-		//spaceData.Filters.Add(new TfFilterNumeric("sk_shared_key_int", TfFilterNumericComparisonMethod.Greater, 5));
+		//spaceData.Filters.Add(new TfFilterNumeric("sc_join_key_int", TfFilterNumericComparisonMethod.Greater, 5));
 
 		var result = tfService.CreateSpaceData(spaceData);
 		provider = tfService.GetDataProvider(provider.Id);

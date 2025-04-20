@@ -206,7 +206,8 @@ public partial class TfService : ITfService
 							_selectColumns.Add(column);
 						}
 
-						if( !column.DbName.StartsWith($"{_tableName}_"))
+						if( !column.DbName.StartsWith($"{_tableName}_") &&
+							!column.DbName.StartsWith($"sc_" ))
 						{
 							if (_externalColumns.Any(x => x.DbName == columnName))
 								continue;
@@ -439,7 +440,7 @@ public partial class TfService : ITfService
 
 			string joins = string.Join(Environment.NewLine, columnsToJoin
 					.Select(x => $"	LEFT OUTER JOIN {x.TableName} {x.TableAlias} ON " +
-					$"{x.TableAlias}.shared_key_id = {_tableAlias}.tf_sk_{x.JoinKeyDbName}_id AND " +
+					$"{x.TableAlias}.join_key_id = {_tableAlias}.tf_jk_{x.JoinKeyDbName}_id AND " +
 					$"{x.TableAlias}.shared_column_id = '{x.Id}'").ToList());
 
 			if (!string.IsNullOrEmpty(joins.Trim()))

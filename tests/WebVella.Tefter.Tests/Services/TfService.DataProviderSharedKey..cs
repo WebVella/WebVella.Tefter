@@ -38,8 +38,8 @@ public partial class TfServiceTest : BaseTest
 				var tables = dbManager.GetDatabaseBuilder().Build();
 				var table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
 				table.Should().NotBeNull();
-				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey.DbName}_id").Should().BeTrue();
-				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey.DbName}_version").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_jk_{joinKey.DbName}_id").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_jk_{joinKey.DbName}_version").Should().BeTrue();
 
 				var joinKey1Created = provider.JoinKeys.Single(x => x.Id == joinKey.Id);
 
@@ -83,8 +83,8 @@ public partial class TfServiceTest : BaseTest
 				tables = dbManager.GetDatabaseBuilder().Build();
 				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
 				table.Should().NotBeNull();
-				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_id").Should().BeTrue();
-				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_version").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_jk_{joinKey2Created.DbName}_id").Should().BeTrue();
+				table.Columns.Any(x => x.Name == $"tf_jk_{joinKey2Created.DbName}_version").Should().BeTrue();
 
 
 
@@ -103,8 +103,8 @@ public partial class TfServiceTest : BaseTest
 				tables = dbManager.GetDatabaseBuilder().Build();
 				table = tables.SingleOrDefault(t => t.Name == $"dp{provider.Index}");
 				table.Should().NotBeNull();
-				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_id").Should().BeFalse();
-				table.Columns.Any(x => x.Name == $"tf_sk_{joinKey2Created.DbName}_version").Should().BeFalse();
+				table.Columns.Any(x => x.Name == $"tf_jk_{joinKey2Created.DbName}_id").Should().BeFalse();
+				table.Columns.Any(x => x.Name == $"tf_jk_{joinKey2Created.DbName}_version").Should().BeFalse();
 			}
 		}
 	}

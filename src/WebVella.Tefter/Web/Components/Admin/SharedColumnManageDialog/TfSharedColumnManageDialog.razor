@@ -24,7 +24,7 @@
 					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
 									 Label="@LOC("Column name")" Style="width:100%"
 									 Disabled="!_isCreate" AutoComplete="off">
-						<span slot="start" style="margin-right:-7px;">sk_</span>
+						<span slot="start" style="margin-right:-7px;">sc_</span>
 					</FluentTextField>
 					<FluentValidationMessage For="@(() => _form.DbName)" />
 				</FluentGridItem>

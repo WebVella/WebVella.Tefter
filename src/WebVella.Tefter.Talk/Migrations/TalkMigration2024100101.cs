@@ -24,7 +24,7 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddShortTextColumn("name", c => { c.NotNullable(); })
-					.AddShortTextColumn("shared_key", c => { c.NotNullable(); })
+					.AddShortTextColumn("join_key", c => { c.NotNullable(); })
 					.AddShortTextColumn("count_shared_column_name", c => { c.Nullable(); });
 			})
 			.WithConstraints(constraints =>
@@ -61,7 +61,7 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 		
 
 		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "talk_related_sk")
+			.NewTableBuilder(Guid.NewGuid(), "talk_related_jk")
 			.WithColumns(columns =>
 			{
 				columns
@@ -71,8 +71,8 @@ public class TalkMigration2024100101 : ITfApplicationMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_talk_related_sk_id", c => { c.WithColumns("id", "thread_id"); })
-					.AddForeignKeyConstraint("fk_talk_related_sk_thread", c =>
+					.AddPrimaryKeyConstraint("pk_talk_related_jk_id", c => { c.WithColumns("id", "thread_id"); })
+					.AddForeignKeyConstraint("fk_talk_related_jk_thread", c =>
 					{
 						c
 						.WithForeignTable("talk_thread")

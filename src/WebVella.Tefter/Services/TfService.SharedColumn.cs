@@ -160,9 +160,9 @@ public partial class TfService : ITfService
 						if (string.IsNullOrWhiteSpace(dbName))
 							return true;
 
-						return dbName.StartsWith("sk_");
+						return dbName.StartsWith("sc_");
 					})
-					.WithMessage("The shared column database name should start with 'sk_'.");
+					.WithMessage("The shared column database name should start with 'sc_'.");
 
 				RuleFor(column => column.DbName)
 					.Must((column, dbName) =>

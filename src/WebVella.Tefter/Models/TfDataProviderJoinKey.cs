@@ -19,7 +19,7 @@ public record TfDataProviderJoinKey
 
 
 [DboCacheModel]
-[TfDboModel("tf_data_provider_shared_key")]
+[TfDboModel("tf_data_provider_join_key")]
 internal record TfDataProviderJoinKeyDbo
 {
 	[TfDboModelProperty("id")]

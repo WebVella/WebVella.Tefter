@@ -168,9 +168,9 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			});
 		#endregion
 
-		#region  TABLE: DATA_PROVIDER_SHARED_KEY
+		#region  TABLE: DATA_PROVIDER_JOIN_KEY
 		dbBuilder
-			.NewTableBuilder(Guid.NewGuid(), "tf_data_provider_shared_key")
+			.NewTableBuilder(Guid.NewGuid(), "tf_data_provider_join_key")
 			.WithColumns(columns =>
 			{
 				columns
@@ -185,8 +185,8 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithConstraints(constraints =>
 			{
 				constraints
-					.AddPrimaryKeyConstraint("pk_data_provider_shared_key", c => { c.WithColumns("id"); })
-					.AddForeignKeyConstraint("fk_data_provider_shared_key_data_provider", c =>
+					.AddPrimaryKeyConstraint("pk_data_provider_join_key", c => { c.WithColumns("id"); })
+					.AddForeignKeyConstraint("fk_data_provider_join_key_data_provider", c =>
 					{
 						c.WithColumns("data_provider_id")
 						.WithForeignTable("tf_data_provider")
@@ -261,7 +261,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
-					.AddShortTextColumn("shared_key_db_name", c => { c.NotNullable(); })
+					.AddShortTextColumn("join_key_db_name", c => { c.NotNullable(); })
 					.AddShortTextColumn("db_name", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("db_type", c => { c.NotNullable(); })
 					.AddBooleanColumn("include_table_search", c => { c.NotNullable().WithDefaultValue(false); });
@@ -275,7 +275,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_id", i => { i.WithColumns("id"); })
-					.AddBTreeIndex("ix_shared_column_shared_key_db_name", i => { i.WithColumns("shared_key_db_name"); });
+					.AddBTreeIndex("ix_shared_column_join_key_db_name", i => { i.WithColumns("join_key_db_name"); });
 			});
 
 		#endregion
@@ -287,7 +287,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddShortTextColumn("value", c => { c.Nullable(); });
 			})
@@ -296,7 +296,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_short_text_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_short_text_value_1",
 						fk =>
@@ -313,7 +313,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -321,7 +321,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_short_text_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -333,7 +333,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddTextColumn("value", c => { c.Nullable(); });
 			})
@@ -342,7 +342,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_text_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_text_value_1",
 						fk =>
@@ -359,7 +359,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -367,7 +367,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_text_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -379,7 +379,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddBooleanColumn("value", c => { c.Nullable(); });
 			})
@@ -388,7 +388,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_boolean_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_boolean_value_1",
 						fk =>
@@ -405,7 +405,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -413,7 +413,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_boolean_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -425,7 +425,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddGuidColumn("value", c => { c.Nullable(); });
 			})
@@ -434,7 +434,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_guid_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_guid_value_1",
 						fk =>
@@ -451,7 +451,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -459,7 +459,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_guid_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -471,7 +471,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddShortIntegerColumn("value", c => { c.Nullable(); });
 			})
@@ -480,7 +480,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_short_integer_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_short_integer_value_1",
 						fk =>
@@ -497,7 +497,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -505,7 +505,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_short_integer_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -517,7 +517,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddIntegerColumn("value", c => { c.Nullable(); });
 			})
@@ -526,7 +526,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_integer_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_integer_value_1",
 						fk =>
@@ -543,7 +543,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -551,7 +551,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_integer_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -563,7 +563,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddLongIntegerColumn("value", c => { c.Nullable(); });
 			})
@@ -572,7 +572,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_long_integer_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_long_integer_value_1",
 						fk =>
@@ -589,7 +589,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -597,7 +597,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_long_integer_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -609,7 +609,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddNumberColumn("value", c => { c.Nullable(); });
 			})
@@ -618,7 +618,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_number_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_number_value_1",
 						fk =>
@@ -635,7 +635,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -643,7 +643,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_number_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -655,7 +655,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddDateColumn("value", c => { c.Nullable(); });
 			})
@@ -664,7 +664,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_date_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_date_value_1",
 						fk =>
@@ -681,7 +681,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -689,7 +689,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_date_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion
@@ -701,7 +701,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			.WithColumns(columns =>
 			{
 				columns
-					.AddGuidColumn("shared_key_id", c => { c.NotNullable(); })
+					.AddGuidColumn("join_key_id", c => { c.NotNullable(); })
 					.AddGuidColumn("shared_column_id", c => { c.NotNullable(); })
 					.AddDateTimeColumn("value", c => { c.Nullable(); });
 			})
@@ -710,7 +710,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				constraints
 
 					.AddPrimaryKeyConstraint("pk_shared_column_datetime_value",
-						c => { c.WithColumns("shared_key_id", "shared_column_id"); })
+						c => { c.WithColumns("join_key_id", "shared_column_id"); })
 
 					.AddForeignKeyConstraint("fk_shared_column_datetime_value_1",
 						fk =>
@@ -727,7 +727,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 							fk
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id")
-								.WithColumns("shared_key_id");
+								.WithColumns("join_key_id");
 						});
 
 			})
@@ -735,7 +735,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			{
 				indexes
 					.AddBTreeIndex("ix_shared_column_datetime_value",
-						i => { i.WithColumns("shared_key_id", "shared_column_id"); });
+						i => { i.WithColumns("join_key_id", "shared_column_id"); });
 			});
 
 		#endregion

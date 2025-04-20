@@ -50,7 +50,7 @@ internal partial class AssetsService : IAssetsService
 		const string SQL =
 @"WITH sk_info AS (
 	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
-	FROM assets_related_sk trs
+	FROM assets_related_jk trs
 		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	GROUP BY trs.asset_id
 )
@@ -63,7 +63,7 @@ SELECT
 	aa.created_on,
 	aa.modified_by,
 	aa.modified_on,
-	sk_info.json_result AS related_shared_key_json
+	sk_info.json_result AS related_join_key_json
 FROM assets_asset aa
 	LEFT OUTER JOIN sk_info  ON aa.id = sk_info.asset_id
 WHERE aa.id = @id
@@ -93,7 +93,7 @@ WHERE aa.id = @id
 		const string SQL = @"
 WITH sk_info AS (
 	SELECT trs.asset_id, JSON_AGG( idd.* ) AS json_result
-	FROM assets_related_sk trs
+	FROM assets_related_jk trs
 		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	WHERE ( @sk_id IS NULL OR trs.id = @sk_id )
 	GROUP BY trs.asset_id
@@ -107,7 +107,7 @@ SELECT
 	aa.created_on,
 	aa.modified_by,
 	aa.modified_on,
-	sk.json_result AS related_shared_key_json
+	sk.json_result AS related_join_key_json
 FROM assets_asset aa
 	LEFT OUTER JOIN sk_info sk ON aa.id = sk.asset_id
 WHERE ( @folder_id IS NULL OR aa.folder_id = @folder_id ) AND ( @sk_id IS NULL OR sk.asset_id is not null )
@@ -237,7 +237,7 @@ ORDER BY aa.created_on DESC;";
 				foreach (var skId in relatedSK)
 				{
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
+						"INSERT INTO assets_related_jk (id,asset_id) VALUES (@id, @asset_id)",
 							new NpgsqlParameter("@id", skId),
 							new NpgsqlParameter("@asset_id", id));
 
@@ -345,7 +345,7 @@ ORDER BY aa.created_on DESC;";
 				foreach (var skId in relatedSK)
 				{
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO assets_related_sk (id,asset_id) VALUES (@id, @asset_id)",
+						"INSERT INTO assets_related_jk (id,asset_id) VALUES (@id, @asset_id)",
 							new NpgsqlParameter("@id", skId),
 							new NpgsqlParameter("@asset_id", id));
 
@@ -439,7 +439,7 @@ ORDER BY aa.created_on DESC;";
 				{
 					Guid skId = _tfService.GetId(skValueId);
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
+						"INSERT INTO assets_related_jk (id, asset_id) VALUES (@id, @asset_id)",
 							new NpgsqlParameter("@id", skId),
 							new NpgsqlParameter("@asset_id", id));
 
@@ -529,7 +529,7 @@ ORDER BY aa.created_on DESC;";
 				foreach (var skId in asset.SKValueIds)
 				{
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO assets_related_sk (id, asset_id) VALUES (@id, @asset_id)",
+						"INSERT INTO assets_related_jk (id, asset_id) VALUES (@id, @asset_id)",
 							new NpgsqlParameter("@id", skId),
 							new NpgsqlParameter("@asset_id", id));
 
@@ -737,7 +737,7 @@ ORDER BY aa.created_on DESC;";
 		{
 			//delete link to related join keys
 
-			var SQL = "DELETE FROM assets_related_sk WHERE asset_id = @asset_id";
+			var SQL = "DELETE FROM assets_related_jk WHERE asset_id = @asset_id";
 
 			var assetIdPar = CreateParameter("asset_id", assetId, DbType.Guid);
 
@@ -816,7 +816,7 @@ ORDER BY aa.created_on DESC;";
 			};
 
 
-			var relatedJoinKeysJson = dr.Field<string>("related_shared_key_json");
+			var relatedJoinKeysJson = dr.Field<string>("related_join_key_json");
 
 			if (!String.IsNullOrWhiteSpace(relatedJoinKeysJson) &&
 				relatedJoinKeysJson.StartsWith("[") &&

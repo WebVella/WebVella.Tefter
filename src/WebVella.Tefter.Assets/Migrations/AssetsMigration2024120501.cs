@@ -13,7 +13,7 @@ public class AssetsMigration2024120501 : ITfApplicationMigration
 			.WithTableBuilder("assets_folder")
 			.WithColumns(columns =>
 			{
-				columns.WithShortTextColumn("shared_key", c => c.Nullable());
+				columns.WithShortTextColumn("join_key", c => c.Nullable());
 			});
 		return Task.CompletedTask;
 	}

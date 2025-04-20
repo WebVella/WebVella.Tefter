@@ -15,10 +15,10 @@ public partial class TfServiceTest : BaseTest
 				TfSharedColumn sharedColumn = new TfSharedColumn
 				{
 					Id = Guid.NewGuid(),
-					DbName = "sk_test",
+					DbName = "sc_test",
 					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
-					JoinKeyDbName = "shared_key"
+					JoinKeyDbName = "join_key"
 				};
 
 				var task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });
@@ -38,10 +38,10 @@ public partial class TfServiceTest : BaseTest
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
 				sharedColumns[0].JoinKeyDbName.Should().Be(sharedColumn.JoinKeyDbName);
 
-				sharedColumn.DbName = "sk_test1";
+				sharedColumn.DbName = "sc_test1";
 				sharedColumn.DbType = TfDatabaseColumnType.Integer;
 				sharedColumn.IncludeInTableSearch = !sharedColumn.IncludeInTableSearch;
-				sharedColumn.JoinKeyDbName = "shared_key_1";
+				sharedColumn.JoinKeyDbName = "join_key_1";
 
 
 				task = Task.Run(() => { tfService.UpdateSharedColumn(sharedColumn); });
@@ -134,7 +134,7 @@ public partial class TfServiceTest : BaseTest
 						Id = Guid.NewGuid(),
 						Description = "testing1",
 						DataProviderId = provider.Id,
-						DbName = "shared_key",
+						DbName = "join_key",
 						Columns = new() { provider.Columns[0] }
 
 					};
@@ -146,10 +146,10 @@ public partial class TfServiceTest : BaseTest
 				TfSharedColumn sharedColumn = new TfSharedColumn
 				{
 					Id = Guid.NewGuid(),
-					DbName = "sk_test1",
+					DbName = "sc_test1",
 					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
-					JoinKeyDbName = "shared_key"
+					JoinKeyDbName = "join_key"
 				};
 
 				task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });

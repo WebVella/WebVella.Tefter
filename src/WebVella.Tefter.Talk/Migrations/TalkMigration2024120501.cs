@@ -21,7 +21,7 @@ public class TalkMigration2024120501 : ITfApplicationMigration
 			.WithTableBuilder("talk_channel")
 			.WithColumns(columns =>
 			{
-				columns.WithShortTextColumn("shared_key", c=>c.Nullable() );
+				columns.WithShortTextColumn("join_key", c=>c.Nullable() );
 			});
 	}
 }

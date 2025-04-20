@@ -151,7 +151,7 @@ public sealed class TfDataTable
 
 		foreach (var joinKey in dataProvider.JoinKeys)
 		{
-			string name = $"tf_sk_{joinKey.DbName}_id";
+			string name = $"tf_jk_{joinKey.DbName}_id";
 			columns.Add(new TfDataColumn(
 			this,
 			name,
@@ -160,7 +160,7 @@ public sealed class TfDataTable
 			isShared: false,
 			isSystem: true));
 
-			name = $"tf_sk_{joinKey.DbName}_version";
+			name = $"tf_jk_{joinKey.DbName}_version";
 			columns.Add(new TfDataColumn(
 			this,
 			name,

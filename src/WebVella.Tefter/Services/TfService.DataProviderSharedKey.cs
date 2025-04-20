@@ -157,11 +157,11 @@ public partial class TfService : ITfService
 				dbBuilder
 					.WithTableBuilder(providerTableName)
 					.WithColumnsBuilder()
-					.AddGuidColumn($"tf_sk_{joinKey.DbName}_id", c =>
+					.AddGuidColumn($"tf_jk_{joinKey.DbName}_id", c =>
 					{
 						c.WithDefaultValue(Guid.Empty);
 					})
-					.AddShortIntegerColumn($"tf_sk_{joinKey.DbName}_version", c =>
+					.AddShortIntegerColumn($"tf_jk_{joinKey.DbName}_version", c =>
 					{
 						c.WithDefaultValue(0);
 					});
@@ -173,7 +173,7 @@ public partial class TfService : ITfService
 						constraints
 							.AddForeignKeyConstraint($"fk_{providerTableName}_{joinKey.DbName}_id_dict", c =>
 							{
-								c.WithColumns($"tf_sk_{joinKey.DbName}_id")
+								c.WithColumns($"tf_jk_{joinKey.DbName}_id")
 								.WithForeignTable("tf_id_dict")
 								.WithForeignColumns("id");
 							});
@@ -287,8 +287,8 @@ public partial class TfService : ITfService
 				dbBuilder
 					.WithTableBuilder(providerTableName)
 					.WithColumnsBuilder()
-					.Remove($"tf_sk_{joinKey.DbName}_id")
-					.Remove($"tf_sk_{joinKey.DbName}_version");
+					.Remove($"tf_jk_{joinKey.DbName}_id")
+					.Remove($"tf_jk_{joinKey.DbName}_version");
 
 				_dbManager.SaveChanges(dbBuilder);
 
@@ -321,7 +321,7 @@ public partial class TfService : ITfService
 				List<string> conditions = new List<string>();
 				foreach (var joinKey in joinKeys)
 				{
-					conditions.Add($"tf_sk_{joinKey.DbName}_version <> {joinKey.Version}");
+					conditions.Add($"tf_jk_{joinKey.DbName}_version <> {joinKey.Version}");
 				}
 
 				//select 100 rows
@@ -357,8 +357,8 @@ public partial class TfService : ITfService
 							foreach (var column in joinKey.Columns)
 								keys.Add(row[column.DbName]?.ToString());
 
-							values[$"tf_sk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
-							values[$"tf_sk_{joinKey.DbName}_version"] = joinKey.Version;
+							values[$"tf_jk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
+							values[$"tf_jk_{joinKey.DbName}_version"] = joinKey.Version;
 						}
 
 						UpdateProviderRowJoinKeysOnly(provider, (Guid)row["tf_id"], values);

@@ -65,7 +65,7 @@ internal partial class TalkService : ITalkService
 		const string SQL_NO_SK =
 @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
-	FROM talk_related_sk trs
+	FROM talk_related_jk trs
 		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	GROUP BY trs.thread_id
 ), 
@@ -85,7 +85,7 @@ SELECT
 	tt.last_updated_on,
 	tt.visible_in_channel,
 	tt.deleted_on,
-	sk_info.json_result AS related_shared_key_json
+	sk_info.json_result AS related_join_key_json
 FROM talk_thread tt
 	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
@@ -95,14 +95,14 @@ ORDER BY tt.created_on DESC
 
 		const string SQL_WITH_SK = @"WITH sk_info AS (
 	SELECT trs.thread_id, JSON_AGG( idd.* ) AS json_result
-	FROM talk_related_sk trs
+	FROM talk_related_jk trs
 		LEFT OUTER JOIN tf_id_dict idd ON idd.id = trs.id
 	GROUP BY trs.thread_id
 ),
 root_threads AS (
 	SELECT tt.id 
 	FROM talk_thread tt
-		LEFT OUTER JOIN talk_related_sk sk ON sk.thread_id = tt.id AND sk.id = @sk_id
+		LEFT OUTER JOIN talk_related_jk sk ON sk.thread_id = tt.id AND sk.id = @sk_id
 	WHERE tt.channel_id = @channel_id AND tt.thread_id IS NULL AND sk.id IS NOT NULL
 )
 SELECT 
@@ -116,7 +116,7 @@ SELECT
 	tt.last_updated_on,
 	tt.visible_in_channel,
 	tt.deleted_on,
-	sk_info.json_result AS related_shared_key_json
+	sk_info.json_result AS related_join_key_json
 FROM talk_thread tt
 	LEFT OUTER JOIN sk_info  ON tt.id = sk_info.thread_id
 	LEFT OUTER JOIN root_threads  rt ON rt.id = tt.id OR tt.thread_id = rt.id
@@ -266,7 +266,7 @@ ORDER BY tt.created_on DESC";
 				foreach (var skId in relatedSK)
 				{
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
+						"INSERT INTO talk_related_jk (id,thread_id) VALUES (@id, @thread_id)",
 							new NpgsqlParameter("@id", skId),
 							new NpgsqlParameter("@thread_id", id));
 
@@ -368,7 +368,7 @@ ORDER BY tt.created_on DESC";
 				foreach (var skId in thread.SKValueIds)
 				{
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
-						"INSERT INTO talk_related_sk (id,thread_id) VALUES (@id, @thread_id)",
+						"INSERT INTO talk_related_jk (id,thread_id) VALUES (@id, @thread_id)",
 							new NpgsqlParameter("@id", skId),
 							new NpgsqlParameter("@thread_id", id));
 
@@ -578,7 +578,7 @@ ORDER BY tt.created_on DESC";
 				RelatedSK = new Dictionary<Guid, string>()
 			};
 
-			var relatedJoinKeysJson = dr.Field<string>("related_shared_key_json");
+			var relatedJoinKeysJson = dr.Field<string>("related_join_key_json");
 			if (!String.IsNullOrWhiteSpace(relatedJoinKeysJson) &&
 				relatedJoinKeysJson.StartsWith("[") &&
 				relatedJoinKeysJson != "[null]")

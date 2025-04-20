@@ -124,7 +124,7 @@ public class TfDataRow : IEnumerable
 		if (string.IsNullOrEmpty(joinKeyName))
 			return null;
 
-		string skColumnName = $"tf_sk_{joinKeyName}_id";
+		string skColumnName = $"tf_jk_{joinKeyName}_id";
 
 		int index = DataTable.Columns.IndexOf(x => x.Name == skColumnName);
 		if (index == -1)
