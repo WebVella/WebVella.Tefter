@@ -14,11 +14,17 @@ public partial class TfService : ITfService
 		private short _tableAliasCounter = 1;
 		private string _tableAlias = "t1";
 
+		private ITfService _tfService;
+		private TfDataProvider _dataProvider = null;
+		private ReadOnlyCollection<TfDataProvider> _allDataProviders = null;
+		private TfSpaceData _spaceData = null;
+
 		private ITfDatabaseService _dbService = null;
 		private List<SqlBuilderColumn> _availableColumns = new();
 		private List<SqlBuilderColumn> _selectColumns = new();
 		private List<SqlBuilderColumn> _filterColumns = new();
 		private List<SqlBuilderColumn> _sortColumns = new();
+		private List<SqlBuilderExternalColumn> _externalColumns = new();
 
 		private TfFilterAnd _mainFilter;
 		private List<TfFilterBase> _filters = new();
@@ -34,8 +40,10 @@ public partial class TfService : ITfService
 		private bool _returnOnlyTfIds = false;
 
 		public SqlBuilder(
+			ITfService tfService,
 			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
+			ReadOnlyCollection<TfDataProvider> dataProviders,
 			TfSpaceData spaceData = null,
 			List<TfFilterBase> userFilters = null,
 			List<TfSort> userSorts = null,
@@ -51,6 +59,9 @@ public partial class TfService : ITfService
 
 			if (dataProvider is null)
 				throw new ArgumentNullException(nameof(dataProvider));
+
+			if (dataProviders is null)
+				throw new ArgumentNullException(nameof(dataProviders));
 
 			if (spaceData is not null && spaceData.Filters is not null)
 				_filters = spaceData.Filters;
@@ -77,24 +88,36 @@ public partial class TfService : ITfService
 
 			_tableName = $"dp{dataProvider.Index}";
 
-			InitColumns(dataProvider, spaceData);
+			_tfService = tfService;
+
+			_dataProvider = dataProvider;
+
+			_allDataProviders = dataProviders;
+
+			_spaceData = spaceData;
+
+			InitColumns();
 
 			if (spaceData is not null && spaceData.Filters is not null)
 				_filters = spaceData.Filters;
 		}
 
 		public SqlBuilder(
+			ITfService tfService,
 			ITfDatabaseService dbService,
 			TfDataProvider dataProvider,
+			ReadOnlyCollection<TfDataProvider> dataProviders,
 			TfSpaceData spaceData,
-			List<Guid> tfIds
-			)
+			List<Guid> tfIds)
 		{
 			if (dbService is null)
 				throw new ArgumentNullException(nameof(dbService));
 
 			if (dataProvider is null)
 				throw new ArgumentNullException(nameof(dataProvider));
+
+			if (dataProviders is null)
+				throw new ArgumentNullException(nameof(dataProviders));
 
 			if (tfIds is null)
 				throw new ArgumentNullException(nameof(tfIds));
@@ -121,24 +144,30 @@ public partial class TfService : ITfService
 
 			_tableName = $"dp{dataProvider.Index}";
 
-			InitColumns(dataProvider, spaceData);
+			_dataProvider = dataProvider;
+
+			_allDataProviders = dataProviders;
+
+			_tfService = tfService;
+
+			_spaceData = spaceData;
+
+			InitColumns();
 		}
 
-		private void InitColumns(
-			TfDataProvider dataProvider,
-			TfSpaceData spaceData)
+		private void InitColumns()
 		{
-			foreach (var column in dataProvider.SystemColumns)
+			foreach (var column in _dataProvider.SystemColumns)
 				AddAvailableColumn(Guid.Empty, column.DbName, column.DbType, isSystem: true);
 
-			foreach (var column in dataProvider.Columns)
+			foreach (var column in _dataProvider.Columns)
 				AddAvailableColumn(column.Id, column.DbName, column.DbType);
 
-			foreach (var column in dataProvider.SharedColumns)
+			foreach (var column in _dataProvider.SharedColumns)
 				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.SharedKeyDbName);
 
 
-			if (spaceData is null)
+			if (_spaceData is null)
 			{
 				_selectColumns = _availableColumns.ToList();
 
@@ -160,9 +189,9 @@ public partial class TfService : ITfService
 					_selectColumns.Add(column);
 
 				bool spaceDataHasAtLeastOneValidColumn = false;
-				if (spaceData.Columns.Any())
+				if (_spaceData.Columns.Any())
 				{
-					foreach (var columnName in spaceData.Columns.Distinct())
+					foreach (var columnName in _spaceData.Columns.Distinct())
 					{
 						if (_selectColumns.Any(x => x.DbName == columnName))
 						{
@@ -175,6 +204,55 @@ public partial class TfService : ITfService
 						{
 							spaceDataHasAtLeastOneValidColumn = true;
 							_selectColumns.Add(column);
+						}
+
+						if( !column.DbName.StartsWith($"{_tableName}_"))
+						{
+							if (_externalColumns.Any(x => x.DbName == columnName))
+								continue;
+
+							var providerIndex = Int32.Parse(columnName.Split('_').First().Substring(2));
+							var extProvider = _tfService.GetDataProvider(providerIndex);
+							
+							//if provider is not found, ignore column
+							if(extProvider is null)
+								continue;
+
+							var extColumn = extProvider
+								.Columns
+								.SingleOrDefault(x => x.DbName == columnName);
+
+							//column is not found in external provider, ignore column
+							if (extColumn is null)
+								continue;
+
+							var sharedKeyExistingInBothProviders = extProvider
+								.SharedColumns
+								.Select(x => x.SharedKeyDbName)
+								.Intersect(_dataProvider.SharedKeys.Select(x => x.DbName))
+								.FirstOrDefault();	
+
+							//if not intersection by names between shared keys , ignore column
+							if (sharedKeyExistingInBothProviders is null)	
+								continue;
+
+							var sharedKey = extProvider
+								.SharedKeys
+								.FirstOrDefault(x => x.DbName == sharedKeyExistingInBothProviders);
+
+							_tableAliasCounter++;
+
+							_externalColumns.Add(new SqlBuilderExternalColumn
+							{
+								DataProvider = extProvider,
+								DbName = columnName,
+								DbType =extColumn.DbType,
+								SharedKeyDbName = sharedKey.DbName,
+								Id = extColumn.Id,
+								IsSystem = false,
+								TableAlias = $"t{_tableAliasCounter}",
+								TableName = $"dp{extProvider.Index}"
+							});
 						}
 
 						//ignore missing columns
@@ -211,10 +289,10 @@ public partial class TfService : ITfService
 							_sortColumns.Add(column);
 					}
 				}
-				else if (spaceData.SortOrders is not null && spaceData.SortOrders.Any())
+				else if (_spaceData.SortOrders is not null && _spaceData.SortOrders.Any())
 				{
-					_sorts = spaceData.SortOrders.ToList();
-					foreach (var sortOrder in spaceData.SortOrders)
+					_sorts = _spaceData.SortOrders.ToList();
+					foreach (var sortOrder in _spaceData.SortOrders)
 					{
 						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
 						if (column is not null)
@@ -738,7 +816,6 @@ public partial class TfService : ITfService
 		public TfDatabaseColumnType DbType { get; set; }
 		public string TableName { get; set; }
 		public string TableAlias { get; set; }
-
 		public bool IsSystem { get; set; } = false;
 
 		public string GetSelectString()
@@ -748,5 +825,10 @@ public partial class TfService : ITfService
 			else
 				return $"{TableAlias}.value AS {DbName}";
 		}
+	}
+
+	record SqlBuilderExternalColumn : SqlBuilderColumn
+	{
+		public TfDataProvider DataProvider { get; set; }
 	}
 }

@@ -13,6 +13,14 @@ public partial interface ITfService
 		Guid id);
 
 	/// <summary>
+	/// Gets data provider instance for specified index
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	public TfDataProvider GetDataProvider(
+		int index);
+
+	/// <summary>
 	/// Gets data provider instance for specified name
 	/// </summary>
 	/// <param name="name"></param>
@@ -78,6 +86,47 @@ public partial class TfService : ITfService
 					providerDbo,
 					GetDataProviderSystemColumns(sharedKeys),
 					GetDataProviderColumns(id),
+					sharedKeys,
+					providerType);
+
+			provider.ServiceProvider = _serviceProvider;
+
+			InitDataProviderSharedColumns(provider);
+
+			return provider;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	/// <summary>
+	/// Gets data provider instance for specified index
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	public TfDataProvider GetDataProvider(
+		int index)
+	{
+		try
+		{
+			var providerDbo = _dboManager
+				.Get<TfDataProviderDbo>(index, nameof(TfDataProviderDbo.Index));
+
+			if (providerDbo == null)
+				return null;
+
+			var providerType = _metaService.GetDataProviderType(providerDbo.TypeId);
+			if (providerType == null)
+				throw new TfException("Unable to find provider type for specified provider instance.");
+
+			var sharedKeys = GetDataProviderSharedKeys(providerDbo.Id);
+
+			var provider = DataProviderFromDbo(
+					providerDbo,
+					GetDataProviderSystemColumns(sharedKeys),
+					GetDataProviderColumns(providerDbo.Id),
 					sharedKeys,
 					providerType);
 

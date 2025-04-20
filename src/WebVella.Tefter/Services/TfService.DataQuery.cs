@@ -85,9 +85,13 @@ public partial class TfService : ITfService
 				throw new ArgumentNullException(nameof(provider));
 			}
 
+			var allDataProviders = GetDataProviders();
+
 			var sqlBuilder = new SqlBuilder(
+				tfService: this,
 				dbService: _dbService,
 				dataProvider: provider,
+				dataProviders: allDataProviders,
 				spaceData: null,
 				userFilters: null,
 				userSorts: null,
@@ -141,9 +145,13 @@ public partial class TfService : ITfService
 				throw new ArgumentNullException(nameof(tfIds));
 			}
 
+			var allDataProviders = GetDataProviders();
+
 			var sqlBuilder = new SqlBuilder(
+				tfService: this,
 				dbService: _dbService,
 				dataProvider: provider,
+				dataProviders: allDataProviders,
 				spaceData: null,
 				tfIds: tfIds);
 
@@ -191,8 +199,12 @@ public partial class TfService : ITfService
 				throw new TfException("There is not existing provider for specified space data.");
 			}
 
+			var allDataProviders = GetDataProviders();
+
 			var sqlBuilder = new SqlBuilder(
+				tfService: this,
 				dbService: _dbService,
+				dataProviders: allDataProviders,
 				dataProvider: provider,
 				spaceData: spaceData,
 				tfIds: tfIds);
@@ -249,10 +261,13 @@ public partial class TfService : ITfService
 				throw new TfException("There is not existing provider for specified space data.");
 			}
 
+			var allDataProviders = GetDataProviders();
 
 			var sqlBuilder = new SqlBuilder(
+				tfService: this,
 				dbService: _dbService,
 				dataProvider: provider,
+				dataProviders: allDataProviders,
 				spaceData: spaceData,
 				userFilters: userFilters,
 				userSorts: userSorts,
