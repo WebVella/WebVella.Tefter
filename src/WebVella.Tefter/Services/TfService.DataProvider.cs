@@ -254,10 +254,11 @@ public partial class TfService : ITfService
 				Index = provider.Index,
 				Name = provider.Name,
 				ProviderType = provider.ProviderType,
-				RowsCount = 0
+				RowsCount = 0,
+				NextSyncOn = null
 			};
-			//info.
-
+			info.RowsCount = GetDataProviderRowsCount(provider.Id);
+			info.NextSyncOn = GetDataProviderNextSynchronizationTime(provider.Id);
 			result.Add(info);
 		}
 
