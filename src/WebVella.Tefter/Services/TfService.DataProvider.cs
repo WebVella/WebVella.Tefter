@@ -494,7 +494,7 @@ public partial class TfService : ITfService
 							.Intersect(dataProvider.JoinKeys.Select(x => x.DbName))
 							.Any();
 			
-			if (!foundSimilarJoinKey)
+			if (foundSimilarJoinKey)
 				result.Add(provider);
 		}
 
