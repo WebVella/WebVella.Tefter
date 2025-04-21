@@ -46,7 +46,7 @@ public partial class TfConstants
 	public static string AdminDataProviderDetailsPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}";
 	public static string AdminDataProviderSchemaPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSchema}";
 	public static string AdminDataProviderKeysPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameKeys}";
-	public static string AdminDataProviderAuxColumnsPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameAux}";
+	public static string AdminDataProviderJoinedDataPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameAux}";
 	public static string AdminDataProviderSynchronizationPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSynchronization}";
 	public static string AdminDataProviderDataPageUrl  = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameData}";
 	public static string AdminSharedColumnsPageUrl  = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";

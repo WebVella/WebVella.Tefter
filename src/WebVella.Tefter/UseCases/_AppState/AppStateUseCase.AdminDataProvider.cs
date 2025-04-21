@@ -198,6 +198,34 @@ internal partial class AppStateUseCase
 		}
 	}
 
+	internal virtual Task<List<TucDataProvider>> GetDataProviderJoinedProvidersAsync(Guid providerId)
+	{
+		var result = new List<TucDataProvider>();
+		try
+		{
+			var providers = _tfService.GetAvailableForJoinDataProviders(providerId);
+			if (providers is not null)
+			{
+				foreach (var item in providers)
+					result.Add(new TucDataProvider(item));
+			}
+			return Task.FromResult(result);
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+				exception: ex,
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(result);
+
+		}
+	}
+
 	internal virtual Task<ReadOnlyCollection<TucDataProviderInfo>> GetDataProvidersInfoAsync()
 	{
 		try

@@ -1,9 +1,42 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminDataProviderAux.TfAdminDataProviderAux", "WebVella.Tefter")]
-public partial class TfAdminDataProviderAux : TfBaseComponent
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminDataProviderJoinedData.TfAdminDataProviderJoinedData", "WebVella.Tefter")]
+public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 {
 	[Inject] private AppStateUseCase UC { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
+
+	private List<TucDataProvider> _joinedProviders = new();
+	protected override async ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (disposing)
+		{
+			ActionSubscriber.UnsubscribeFromAllActions(this);
+		}
+		await base.DisposeAsyncCore(disposing);
+	}
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(TfAppState.Value.AdminDataProvider.Id);
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
+			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);
+		}
+	}
+
+	private void On_AppChanged(SetAppStateAction action)
+	{
+		InvokeAsync(async () =>
+		{
+			_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(TfAppState.Value.AdminDataProvider.Id);
+			await InvokeAsync(StateHasChanged);
+		});
+	}
 
 	private async Task _addKey()
 	{

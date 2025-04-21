@@ -79,7 +79,7 @@ public enum RouteDataThirdNode
 	[Description("Join Keys")]
 	JoinKeys = 5,
 	[Description("Shared Columns")]
-	AuxColumns = 6,
+	JoinedData = 6,
 	[Description("Synchronization")]
 	Synchronization = 7,
 	[Description("Data")]

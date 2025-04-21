@@ -1,0 +1,183 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (TfAppState.Value.AdminDataProvider is not null)
+{
+
+	<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+		<TfPageHeader Style="margin-bottom:1rem">@LOC("Implemented join keys")</TfPageHeader>
+		<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
+			@LOC("Join key")
+			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
+		</FluentButton>
+	</FluentStack>
+	@if (TfAppState.Value.AdminDataProvider.JoinKeys is null || TfAppState.Value.AdminDataProvider.JoinKeys.Count == 0)
+	{
+		<FluentMessageBar Title="@LOC("No keys")" AllowDismiss="false"
+						  Intent="@MessageIntent.Info">@LOC("No join keys are created yet for this data provider")</FluentMessageBar>
+	}
+	else
+	{
+		<div class="tf-grid-wrapper">
+			<table class="tf-grid">
+				<thead class="tf-grid-thead">
+					<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+					<tr class="tf-grid-tr">
+						<th class="tf-grid-th" style="width:110px;min-width:110px;"></th>
+						<th class="tf-grid-th">name</th>
+						<th class="tf-grid-th">columns</th>
+						<th class="tf-grid-th" style="width:220px;min-width:220px;">details</th>
+					</tr>
+				</thead>
+				<tbody class="tf-grid-tbody">
+					@foreach (var context in TfAppState.Value.AdminDataProvider.JoinKeys)
+					{
+						<tr @key=context.Id class="tf-grid-tr">
+							<td class="tf-grid-td">
+								<div>
+									<FluentStack Wrap="false">
+										<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+													  Title="@LOC("Edit column")" OnClick="@(()=> _editKey(context))" />
+										<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _deleteKey(context))" Title="@LOC("Delete column")">
+											<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
+										</FluentButton>
+									</FluentStack>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									<div>@context.DbName</div>
+									<div class="td-description">@context.Description</div>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									<FluentStack>
+										@foreach (var item in context.Columns)
+										{
+											<FluentBadge Appearance="@Appearance.Neutral">@item.DbName</FluentBadge>
+										}
+									</FluentStack>
+								</div>
+							</td>
+							<td class="tf-grid-td">
+								<div>
+									<div>@context.Id</div>
+									<div class="td-description">ver. @context.Version</div>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+
+	}
+
+	<FluentGrid Style="margin-top:3rem;">
+		<FluentGridItem xs="12" md="6">
+			<TfCard>
+				<TitleTemplate>
+					<TfPageHeader>
+						<ChildContent>@LOC("Joined Data providers")</ChildContent>
+						<SubHeader>@LOC("When data providers share at least one common join key, their data can be joined. Important: Only the data from the primary provider is modifiable.")</SubHeader>
+					</TfPageHeader>
+				</TitleTemplate>
+				<ChildContent>
+					@if (_joinedProviders.Count == 0)
+					{
+						<FluentMessageBar Title="@LOC("No data providers can be joined")" AllowDismiss="false"
+										  Intent="@MessageIntent.Info">@LOC("For data from different providers to be joined, they must implement at least one common join key.")</FluentMessageBar>
+					}
+					else
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th">type</th>
+									</tr>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in _joinedProviders)
+									{
+										<tr @key=context.Id class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.Name</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.ProviderType.Name</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</ChildContent>
+			</TfCard>
+		</FluentGridItem>
+		<FluentGridItem xs="12" md="6">
+			<TfCard>
+				<TitleTemplate>
+					<TfPageHeader>
+						<ChildContent>@LOC("Joined Shared columns")</ChildContent>
+						<SubHeader>@LOC("Columns that match one of the join keys implemented for this data source")</SubHeader>
+					</TfPageHeader>
+				</TitleTemplate>
+				<ChildContent>
+					@if (TfAppState.Value.AdminDataProvider.SharedColumns is null || TfAppState.Value.AdminDataProvider.SharedColumns.Count == 0)
+					{
+						<FluentMessageBar Title="@LOC("No shared columns matched")" AllowDismiss="false"
+										  Intent="@MessageIntent.Info">@LOC("No shared columns are matching any of the join keys for this data source")</FluentMessageBar>
+					}
+					else
+					{
+						<div class="tf-grid-wrapper">
+							<table class="tf-grid">
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th">type</th>
+										<th class="tf-grid-th">key</th>
+										<th class="tf-grid-th" style="width:80px">in search</th>
+									</tr>
+								</thead>
+								<tbody class="tf-grid-tbody">
+									@foreach (var context in TfAppState.Value.AdminDataProvider.SharedColumns)
+									{
+										<tr @key=context.Id class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.DbName</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.DbType.Name</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>@context.JoinKeyDbName</div>
+											</td>
+											<td class="tf-grid-td">
+												<div>
+													@if (context.IncludeInTableSearch)
+													{
+														<FluentBadge Appearance="@Appearance.Neutral">yes</FluentBadge>
+													}
+													else
+													{
+														<FluentBadge>no</FluentBadge>
+													}
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</ChildContent>
+			</TfCard>
+		</FluentGridItem>
+	</FluentGrid>
+}

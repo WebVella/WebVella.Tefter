@@ -112,13 +112,13 @@ public class NavigatorExtTests
 		result.ThirdNode.Should().Be(RouteDataThirdNode.JoinKeys);
 		result.DataProviderId.Should().Be(providerId);
 
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderJoinedDataPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
 		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
 		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.AuxColumns);
+		result.ThirdNode.Should().Be(RouteDataThirdNode.JoinedData);
 		result.DataProviderId.Should().Be(providerId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId)}");

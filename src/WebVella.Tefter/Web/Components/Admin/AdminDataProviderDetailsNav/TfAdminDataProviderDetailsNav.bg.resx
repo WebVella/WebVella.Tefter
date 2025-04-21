@@ -132,11 +132,8 @@
   <data name="Saved Views" xml:space="preserve">
     <value>Запомнени Изгледи</value>
   </data>
-  <data name="Shared Columns" xml:space="preserve">
-    <value>Споделени колони</value>
-  </data>
-  <data name="Join Keys" xml:space="preserve">
-    <value>Свързващи ключове</value>
+  <data name="Joined Data" xml:space="preserve">
+    <value>Свързани данни</value>
   </data>
   <data name="Synchronization" xml:space="preserve">
     <value>Синхронизация</value>

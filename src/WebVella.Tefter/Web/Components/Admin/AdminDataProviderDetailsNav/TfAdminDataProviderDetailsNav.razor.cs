@@ -25,10 +25,10 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = string.Format(TfConstants.AdminDataProviderAuxColumnsPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderJoinedDataPageUrl, providerId),
 			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.TableAdd(),
-			Text = LOC("Shared Columns")
+			Text = LOC("Joined Data")
 		});
 		menu.Add(new TucMenuItem
 		{

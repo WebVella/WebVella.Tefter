@@ -116,7 +116,7 @@ public static class NavigatorExt
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameAux)
 					{
-						result = result with { ThirdNode = RouteDataThirdNode.AuxColumns };
+						result = result with { ThirdNode = RouteDataThirdNode.JoinedData };
 					}
 					else if (result.NodesDict[3] == TfConstants.RouteNameSynchronization)
 					{

@@ -1,5 +1,5 @@
 ﻿namespace WebVella.Tefter.Web.Tests.Components;
-public class AdminDataProviderAuxComponentTests : BaseTest
+public class AdminDataProviderJoinedDataComponentTests : BaseTest
 {
 
 	[Fact]
@@ -8,7 +8,7 @@ public class AdminDataProviderAuxComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		// Act
-		var cut = Context.RenderComponent<TfAdminDataProviderAux>();
+		var cut = Context.RenderComponent<TfAdminDataProviderJoinedData>();
 
 		// Assert
 		//When no data provider it shows nothings
