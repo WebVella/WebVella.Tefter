@@ -195,4 +195,7 @@
   <data name="view {0} warnings" xml:space="preserve">
     <value>виж {0} предупреждения</value>
   </data>
+  <data name="{0} total rows" xml:space="preserve">
+    <value>{0} общо реда</value>
+  </data>
 </root>

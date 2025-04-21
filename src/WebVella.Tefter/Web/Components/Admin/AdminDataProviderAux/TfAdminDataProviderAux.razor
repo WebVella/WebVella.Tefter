@@ -4,7 +4,7 @@
 {
 
 	<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-		<TfPageHeader Style="margin-bottom:1rem">@LOC("Implemented Join keys")</TfPageHeader>
+		<TfPageHeader Style="margin-bottom:1rem">@LOC("Implemented join keys")</TfPageHeader>
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_addKey">
 			@LOC("Join key")
 			<FluentIcon Value="@TfConstants.AddIcon" Color="@Color.Accent" Slot="start" />
@@ -73,7 +73,7 @@
 
 	}
 	<TfPageHeader Style="margin:1rem 0">
-		<ChildContent>@LOC("Shared columns")</ChildContent>
+		<ChildContent>@LOC("Joined shared columns")</ChildContent>
 		<SubHeader>@LOC("Columns that match one of the join keys implemented for this data source")</SubHeader>
 	</TfPageHeader>
 	@if (TfAppState.Value.AdminDataProvider.SharedColumns is null || TfAppState.Value.AdminDataProvider.SharedColumns.Count == 0)

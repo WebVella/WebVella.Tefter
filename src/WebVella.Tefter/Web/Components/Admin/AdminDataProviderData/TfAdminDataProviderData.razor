@@ -40,10 +40,13 @@
 		</FluentStack>
 	</Toolbar>
 	<ToolbarAside>
-		<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
-			@LOC("delete all data")
-		</FluentButton>
+		<FluentStack VerticalAlignment="@VerticalAlignment.Center">
+			<div class="go-muted" style="margin-right:10px;">@LOC("{0} total rows", _totalRows)</div>
+			<FluentButton OnClick="_deleteAllData" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.DeleteIcon" Slot="start" Color="@Color.Error" />
+				@LOC("delete all data")
+			</FluentButton>
+		</FluentStack>
 	</ToolbarAside>
 	<ChildContent>
 		@if (TfAppState.Value.AdminDataProviderData is not null && (TfAppState.Value.AdminDataProviderData.Rows.Count > 0 || TfAppState.Value.Route.Page != 1))

@@ -11,7 +11,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	private bool _showSystemColumns = true;
 	private bool _showJoinKeyColumns = true;
 	private bool _showCustomColumns = true;
-
+	private long _totalRows = 0;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -26,6 +26,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
+			_totalRows = await UC.GetDataProviderTotalRowCountAsync(TfAppState.Value.AdminDataProvider.Id);
 			_isDataLoading = false;
 			await InvokeAsync(StateHasChanged);
 			ActionSubscriber.SubscribeToAction<SetAppStateAction>(this, On_AppChanged);

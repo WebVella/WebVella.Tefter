@@ -174,7 +174,10 @@
   <data name="Columns that match one of the join keys implemented for this data source" xml:space="preserve">
     <value>Колони, които съвпадат с един от ключовете за присъединяване, имплементирани за този източник на данни</value>
   </data>
-  <data name="Implemented Join keys" xml:space="preserve">
-    <value>Приложени Свързващи ключове</value>
+  <data name="Implemented join keys" xml:space="preserve">
+    <value>Приложени свързващи ключове</value>
+  </data>
+  <data name="Joined shared columns" xml:space="preserve">
+    <value>Свързани споделени колони</value>
   </data>
 </root>

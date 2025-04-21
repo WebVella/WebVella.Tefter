@@ -177,6 +177,27 @@ internal partial class AppStateUseCase
 		}
 	}
 
+	internal virtual Task<long> GetDataProviderTotalRowCountAsync(Guid providerId)
+	{
+		try
+		{
+			return Task.FromResult(_tfService.GetDataProviderRowsCount(providerId));
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+				exception: ex,
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult((long)0);
+
+		}
+	}
+
 	internal virtual Task<ReadOnlyCollection<TucDataProviderInfo>> GetDataProvidersInfoAsync()
 	{
 		try

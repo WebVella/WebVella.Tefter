@@ -1412,6 +1412,9 @@ body {
 .go-accent {
   color: var(--accent-foreground-rest);
 }
+.go-muted {
+  color: var(--neutral-base-color);
+}
 .text-muted {
   color: var(--neutral-base-color);
   font-size: 0.85em;
