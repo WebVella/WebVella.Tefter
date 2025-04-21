@@ -25,5 +25,13 @@
 		<ProjectReference Include="..\WebVella.Tefter.DataProviders.Csv\WebVella.Tefter.DataProviders.Csv.csproj" />
 		<ProjectReference Include="..\WebVella.Tefter\WebVella.Tefter.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Content Update="appsettings.DESKTOP-KU8LRG2.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="appsettings.Development.json">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 
 </Project>
