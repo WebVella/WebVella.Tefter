@@ -1,4 +1,5 @@
-﻿using JsonSerializer = System.Text.Json.JsonSerializer;
+﻿using WebVella.Tefter.Models;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebVella.Tefter.Services;
 
@@ -65,7 +66,19 @@ public partial interface ITfService
 	internal void DeleteDataProvider(
 		Guid id);
 
+	/// <summary>
+	/// Gets the total number of rows in the data provider table for the specified data provider ID.
+	/// </summary>
+	/// <param name="dataProviderId">The unique identifier of the data provider.</param>
+	/// <returns>The total number of rows in the data provider table.</returns>
 	public long GetDataProviderRowsCount(Guid dataProviderId);
+
+	/// <summary>
+	/// Retrieves a list of data providers that are available for joining with the specified data provider.
+	/// </summary>
+	/// <param name="dataProviderId">The unique identifier of the data provider to check for join availability.</param>
+	/// <returns>A list of data providers that can be joined with the specified data provider.</returns>
+	public List<TfDataProvider> GetAvailableForJoinDataProviders(Guid dataProviderId);
 }
 
 public partial class TfService : ITfService
@@ -460,6 +473,32 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
+	}
+
+	public List<TfDataProvider> GetAvailableForJoinDataProviders(Guid dataProviderId)
+	{
+		List<TfDataProvider> result = new List<TfDataProvider>();
+
+		var dataProvider = GetDataProvider(dataProviderId);
+		var allDataProviders = GetDataProviders();
+
+		foreach (var provider in allDataProviders)
+		{
+
+			if( provider.Id == dataProviderId)
+				continue;
+
+			var foundSimilarJoinKey = provider
+							.JoinKeys
+							.Select(x => x.DbName)
+							.Intersect(dataProvider.JoinKeys.Select(x => x.DbName))
+							.Any();
+			
+			if (!foundSimilarJoinKey)
+				result.Add(provider);
+		}
+
+		return result;
 	}
 
 	#region <--- utility --->
