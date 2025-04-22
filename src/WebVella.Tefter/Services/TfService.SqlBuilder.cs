@@ -1,4 +1,7 @@
-﻿using NpgsqlTypes;
+﻿using Microsoft.FluentUI.AspNetCore.Components;
+using NpgsqlTypes;
+using Serilog;
+using System;
 
 namespace WebVella.Tefter.Services;
 
@@ -24,7 +27,7 @@ public partial class TfService : ITfService
 		private List<SqlBuilderColumn> _selectColumns = new();
 		private List<SqlBuilderColumn> _filterColumns = new();
 		private List<SqlBuilderColumn> _sortColumns = new();
-		private List<SqlBuilderExternalColumn> _externalColumns = new();
+		private List<SqlBuilderExternalProvider> _joinedProviders = new();
 
 		private TfFilterAnd _mainFilter;
 		private List<TfFilterBase> _filters = new();
@@ -38,6 +41,7 @@ public partial class TfService : ITfService
 		private int? _pageSize = null;
 		private List<Guid> _tfIds = null;
 		private bool _returnOnlyTfIds = false;
+		public List<SqlBuilderExternalProvider> JoinedProviders { get {  return _joinedProviders; } }
 
 		public SqlBuilder(
 			ITfService tfService,
@@ -100,6 +104,9 @@ public partial class TfService : ITfService
 
 			if (spaceData is not null && spaceData.Filters is not null)
 				_filters = spaceData.Filters;
+
+
+			
 		}
 
 		public SqlBuilder(
@@ -206,17 +213,16 @@ public partial class TfService : ITfService
 							_selectColumns.Add(column);
 						}
 
-						if( !column.DbName.StartsWith($"{_tableName}_") &&
-							!column.DbName.StartsWith($"sc_" ))
+						if (!columnName.StartsWith($"{_tableName}_") &&
+							!columnName.StartsWith($"sc_"))
 						{
-							if (_externalColumns.Any(x => x.DbName == columnName))
-								continue;
+
 
 							var providerIndex = Int32.Parse(columnName.Split('_').First().Substring(2));
 							var extProvider = _tfService.GetDataProvider(providerIndex);
-							
+
 							//if provider is not found, ignore column
-							if(extProvider is null)
+							if (extProvider is null)
 								continue;
 
 							var extColumn = extProvider
@@ -231,28 +237,51 @@ public partial class TfService : ITfService
 								.JoinKeys
 								.Select(x => x.DbName)
 								.Intersect(_dataProvider.JoinKeys.Select(x => x.DbName))
-								.FirstOrDefault();	
+								.FirstOrDefault();
 
 							//if not intersection by names between shared keys , ignore column
-							if (joinKeyExistingInBothProviders is null)	
+							if (joinKeyExistingInBothProviders is null)
 								continue;
 
 							var joinKey = extProvider
 								.JoinKeys
 								.FirstOrDefault(x => x.DbName == joinKeyExistingInBothProviders);
 
-							_tableAliasCounter++;
+							SqlBuilderExternalProvider sqlBuilderExternalProvider =
+								_joinedProviders.FirstOrDefault(x => x.Provider.Id == extProvider.Id);
 
-							_externalColumns.Add(new SqlBuilderExternalColumn
+
+							if (sqlBuilderExternalProvider is null)
 							{
-								DataProvider = extProvider,
-								DbName = columnName,
-								DbType =extColumn.DbType,
-								JoinKeyDbName = joinKey.DbName,
+								_tableAliasCounter++;
+
+								sqlBuilderExternalProvider = new SqlBuilderExternalProvider
+								{
+									Provider = extProvider,
+									JoinKeyDbName = joinKey.DbName,
+									TableAlias = $"t{_tableAliasCounter}",
+									TableName = $"dp{extProvider.Index}",
+									DataProvider = extProvider,
+									Columns = new List<SqlBuilderColumn>()
+								};
+
+								_joinedProviders.Add(sqlBuilderExternalProvider);
+							}
+
+							//column already exists in joined provider, ignore column
+							if (sqlBuilderExternalProvider.Columns.Any(x => x.DbName == columnName))
+								continue;
+
+
+							sqlBuilderExternalProvider.Columns.Add(new SqlBuilderColumn
+							{
 								Id = extColumn.Id,
 								IsSystem = false,
-								TableAlias = $"t{_tableAliasCounter}",
-								TableName = $"dp{extProvider.Index}"
+								DbName = columnName,
+								DbType = extColumn.DbType,
+								JoinKeyDbName = sqlBuilderExternalProvider.JoinKeyDbName,
+								TableAlias = sqlBuilderExternalProvider.TableAlias,
+								TableName = sqlBuilderExternalProvider.TableName
 							});
 						}
 
@@ -421,6 +450,14 @@ public partial class TfService : ITfService
 			string columns = string.Join($",{Environment.NewLine}\t",
 				_selectColumns.Select(x => x.GetSelectString()).ToList());
 
+			if (_joinedProviders.Count > 0)
+			{ 
+				string extColumns = string.Join($",{Environment.NewLine}\t",
+					_joinedProviders.Select(x => x.GetSelectString(_tableAlias)).ToList());
+
+				columns = columns + $",{Environment.NewLine}\t" + extColumns;
+			}
+			
 			StringBuilder sb = new StringBuilder();
 			if (_returnOnlyTfIds)
 				sb.Append($"SELECT tf_id {Environment.NewLine}FROM {_tableName} {_tableAlias}");
@@ -806,30 +843,5 @@ public partial class TfService : ITfService
 			return value;
 		}
 
-	}
-
-
-	record SqlBuilderColumn
-	{
-		public Guid Id { get; set; }
-		public string DbName { get; set; }
-		public string JoinKeyDbName { get; set; }
-		public TfDatabaseColumnType DbType { get; set; }
-		public string TableName { get; set; }
-		public string TableAlias { get; set; }
-		public bool IsSystem { get; set; } = false;
-
-		public string GetSelectString()
-		{
-			if (string.IsNullOrWhiteSpace(JoinKeyDbName))
-				return $"{TableAlias}.{DbName}";
-			else
-				return $"{TableAlias}.value AS {DbName}";
-		}
-	}
-
-	record SqlBuilderExternalColumn : SqlBuilderColumn
-	{
-		public TfDataProvider DataProvider { get; set; }
 	}
 }

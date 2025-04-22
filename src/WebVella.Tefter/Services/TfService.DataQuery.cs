@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using DocumentFormat.OpenXml.Office2013.PowerPoint.Roaming;
+using Newtonsoft.Json.Linq;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -112,6 +115,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
+				sqlBuilder.JoinedProviders,
 				new TfDataTableQuery
 				{
 					Search = search,
@@ -163,6 +167,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
+				sqlBuilder.JoinedProviders,
 				new TfDataTableQuery
 				{
 					Search = null,
@@ -217,6 +222,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
+				sqlBuilder.JoinedProviders,
 				new TfDataTableQuery
 				{
 					Search = null,
@@ -291,6 +297,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
+				sqlBuilder.JoinedProviders,
 				new TfDataTableQuery
 				{
 					Search = search,
@@ -313,14 +320,17 @@ public partial class TfService : ITfService
 		string sql,
 		List<NpgsqlParameter> sqlParameters,
 		TfDataProvider provider,
+		List<SqlBuilderExternalProvider> joinedProviders,
 		TfDataTableQuery query,
 		DataTable dataTable)
 	{
 		List<string> columns = new List<string>();
 		foreach (DataColumn column in dataTable.Columns)
+		{
 			columns.Add(column.ColumnName);
+		}
 
-		TfDataTable resultTable = new TfDataTable(provider, query, sql, sqlParameters, columns);
+		TfDataTable resultTable = new TfDataTable(provider, joinedProviders, query, sql, sqlParameters, columns);
 
 		if (dataTable.Rows.Count == 0)
 			return resultTable;
@@ -339,14 +349,44 @@ public partial class TfService : ITfService
 				dateOnlyColumns.Add(column.DbName);
 		}
 
+		Dictionary<string, TfDataProviderColumn> joinedColumns = new();
+
+		foreach (var joinedProvider in joinedProviders)
+		{
+			foreach (var column in joinedProvider.Columns)
+			{
+				var providerColumn = joinedProvider.Provider.Columns.Single(x => x.DbName == column.DbName);
+				joinedColumns.Add(providerColumn.DbName, providerColumn);
+			}
+		}
 
 		foreach (DataRow row in dataTable.Rows)
 		{
+			Dictionary<string, JArray> joinedRecords = new Dictionary<string, JArray>();
+
 			object[] values = new object[resultTable.Columns.Count];
 
 			int valuesCounter = 0;
 			foreach (var column in resultTable.Columns)
 			{
+				if (joinedColumns.ContainsKey(column.Name))
+				{
+					var sourceColumnName = $"jp_{column.Name.Split("_").First()}";
+
+					JArray jArr = null;
+
+					if (joinedRecords.ContainsKey(sourceColumnName))
+						jArr = joinedRecords[sourceColumnName];
+					else
+					{
+						jArr = JArray.Parse((string)row[sourceColumnName]);
+						joinedRecords[sourceColumnName] = jArr;
+					}
+
+					values[valuesCounter++] = ExtractJoinedRecordsValue(jArr, joinedColumns[column.Name]);
+					continue;
+				}
+
 				object value = row[column.Name];
 
 				if (value == DBNull.Value)
@@ -364,6 +404,123 @@ public partial class TfService : ITfService
 		}
 
 		return resultTable;
+	}
+
+	private object ExtractJoinedRecordsValue(JArray jArr, TfDataProviderColumn providerColumn)
+	{
+		switch (providerColumn.DbType)
+		{
+			case TfDatabaseColumnType.Text:
+			case TfDatabaseColumnType.ShortText:
+				{
+					List<string> result = new List<string>();
+					foreach (var jObj in jArr)
+					{
+						string stringValue = ((JToken)jObj[providerColumn.DbName]).ToObject<string>();
+						result.Add(stringValue);
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.DateTime:
+				{
+					List<DateTime?> result = new List<DateTime?>();
+					foreach (var jObj in jArr)
+					{
+						string stringValue = ((JToken)jObj[providerColumn.DbName]).ToObject<string>();
+						if (string.IsNullOrWhiteSpace(stringValue))
+							result.Add(null);
+						else
+							result.Add(DateTime.Parse(stringValue));
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.DateOnly:
+				{
+					List<DateOnly?> result = new List<DateOnly?>();
+					foreach (var jObj in jArr)
+					{
+						string stringValue = ((JToken)jObj[providerColumn.DbName]).ToObject<string>();
+						if (string.IsNullOrWhiteSpace(stringValue))
+							result.Add(null);
+						else 
+							result.Add(DateOnly.Parse(stringValue));
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.Number:
+				{
+					List<decimal?> result = new List<decimal?>();
+					foreach (var jObj in jArr)
+					{
+						var value = ((JToken)jObj[providerColumn.DbName]).Value<decimal?>();
+						result.Add(value);
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.ShortInteger:
+				{
+					List<short?> result = new List<short?>();
+					foreach (var jObj in jArr)
+					{
+						var value = ((JToken)jObj[providerColumn.DbName]).Value<short?>();
+						result.Add(value);
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.Integer:
+				{
+					List<int?> result = new List<int?>();
+					foreach (var jObj in jArr)
+					{
+						var value = ((JToken)jObj[providerColumn.DbName]).Value<int?>();
+						result.Add(value);
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.LongInteger:
+				{
+					List<long?> result = new List<long?>();
+					foreach (var jObj in jArr)
+					{
+						var value = ((JToken)jObj[providerColumn.DbName]).Value<long?>();
+						result.Add(value);
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.AutoIncrement:
+				{
+					List<int?> result = new List<int?>();
+					foreach (var jObj in jArr)
+					{
+						var value = ((JToken)jObj[providerColumn.DbName]).Value<int?>();
+						result.Add(value);
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.Guid:
+				{
+					List<Guid?> result = new List<Guid?>();
+					foreach (var jObj in jArr)
+					{
+						var value = ((JToken)jObj[providerColumn.DbName]).Value<Guid?>();
+						result.Add(value);
+					}
+					return result;
+				}
+			case TfDatabaseColumnType.Boolean:
+				{
+					List<bool?> result = new List<bool?>();
+					foreach (var jObj in jArr)
+					{
+						var value = ((JToken)jObj[providerColumn.DbName]).Value<bool?>();
+						result.Add(value);
+					}
+					return result;
+				}
+			default:
+				throw new Exception("Not supported db type");
+
+		}
 	}
 
 	public TfDataTable SaveDataTable(
@@ -1284,7 +1441,7 @@ public partial class TfService : ITfService
 	private string BuildUpdateRowJoinKeysOnlySql(
 		TfDataProvider provider,
 		Guid tfId,
-		Dictionary<string,object> values,
+		Dictionary<string, object> values,
 		out List<NpgsqlParameter> parameters)
 	{
 		parameters = new List<NpgsqlParameter>();

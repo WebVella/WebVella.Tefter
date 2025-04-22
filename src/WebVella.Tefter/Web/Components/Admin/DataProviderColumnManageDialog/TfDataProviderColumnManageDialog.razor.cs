@@ -142,10 +142,11 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 
 			var submit = _form with
 			{
+				DbName = TfAppState.Value.AdminDataProvider.ColumnPrefix + _form.DbName,
 				SourceType = _selectedProviderType.Name,
 				DbType = _selectedDbType
 			};
-			_form.DbName = TfAppState.Value.AdminDataProvider.ColumnPrefix + _form.DbName;
+			
 			TucDataProvider provider;
 			if (_isCreate)
 			{

@@ -1236,6 +1236,14 @@ public partial class TfService : ITfService
 
 						if (!column.IsNullable && column.DefaultValue == null)
 							return false;
+
+						if(column.IsNullable && column.DefaultValue == null && column.AutoDefaultValue &&
+							(column.DbType == TfDatabaseColumnType.Guid ||
+							 column.DbType == TfDatabaseColumnType.DateOnly ||
+							 column.DbType == TfDatabaseColumnType.DateTime ))
+						{
+							return true;
+						}
 					
 						if	(!column.IsNullable && string.IsNullOrWhiteSpace(column.DefaultValue) &&
 							( column.DbType != TfDatabaseColumnType.Text && column.DbType != TfDatabaseColumnType.ShortText) )

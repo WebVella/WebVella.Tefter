@@ -70,6 +70,7 @@ public sealed class TfDataTable
 
 	internal TfDataTable(
 		TfDataProvider dataProvider,
+		List<SqlBuilderExternalProvider> joinedProviders,
 		TfDataTableQuery query,
 		string sql,
 		List<NpgsqlParameter> sqlParameters,
@@ -88,6 +89,7 @@ public sealed class TfDataTable
 
 		Columns = InitColumns(
 			dataProvider,
+			joinedProviders,
 			onlyColumns);
 
 		Sql = sql;
@@ -99,6 +101,7 @@ public sealed class TfDataTable
 
 	private TfDataColumnCollection InitColumns(
 		TfDataProvider dataProvider,
+		List<SqlBuilderExternalProvider> joinedProviders,
 		List<string> onlyColumns)
 	{
 		var columns = new TfDataColumnCollection(this);
@@ -177,12 +180,12 @@ public sealed class TfDataTable
 				continue;
 
 			columns.Add(new TfDataColumn(
-			this,
-			providerColumn.DbName,
-			providerColumn.DbType,
-			isNullable: providerColumn.IsNullable,
-			isShared: false,
-			isSystem: false));
+				this,
+				providerColumn.DbName,
+				providerColumn.DbType,
+				isNullable: providerColumn.IsNullable,
+				isShared: false,
+				isSystem: false));
 		}
 
 
@@ -192,12 +195,36 @@ public sealed class TfDataTable
 				continue;
 
 			columns.Add(new TfDataColumn(
-			this,
-			providerColumn.DbName,
-			providerColumn.DbType,
-			isNullable: true,
-			isShared: true,
-			isSystem: false));
+				this,
+				providerColumn.DbName,
+				providerColumn.DbType,
+				isNullable: true,
+				isShared: true,
+				isSystem: false));
+		}
+
+		if (onlyColumns != null)
+		{
+			foreach (var joinedProvider in joinedProviders)
+			{
+				var columnName = $"jp_dp{joinedProvider.Provider.Index}";
+
+				if (onlyColumns.Contains(columnName))
+				{
+					foreach (var providerColumn in joinedProvider.Columns)
+					{
+						var joinedProviderColumn = joinedProvider.Provider.Columns.Single(x=>x.DbName == providerColumn.DbName);
+
+						columns.Add(new TfDataColumn(
+							this,
+							joinedProviderColumn.DbName,
+							joinedProviderColumn.DbType,
+							isNullable: joinedProviderColumn.IsNullable,
+							isShared: false,
+							isSystem: false));
+					}
+				}
+			}
 		}
 
 		return columns;
