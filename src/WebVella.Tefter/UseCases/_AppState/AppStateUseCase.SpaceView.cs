@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.UseCases.AppState;
+﻿using WebVella.Tefter.Models;
+
+namespace WebVella.Tefter.UseCases.AppState;
 internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitSpaceViewAsync(
@@ -18,7 +20,7 @@ internal partial class AppStateUseCase
 				SpaceViewData = null,
 				SelectedDataRows = new()
 			};
-			return (newAppState,newAuxDataState);
+			return (newAppState, newAuxDataState);
 		}
 
 		if (newAppState.Route.SpaceViewId is not null)
@@ -32,7 +34,7 @@ internal partial class AppStateUseCase
 				SpaceViewFilters = newAppState.Route.Filters,
 				SpaceViewSorts = newAppState.Route.Sorts,
 			};
-			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue)
+			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue && newAppState.SpaceData is not null)
 			{
 				TucSpaceViewPreset preset = null;
 				if (newAppState.Route.SpaceViewPresetId is not null)
@@ -59,6 +61,7 @@ internal partial class AppStateUseCase
 			{
 				newAppState = newAppState with { SpaceViewData = null };
 			}
+
 			if (newAppState.SpaceView is not null)
 			{
 				//Aux Data Hook
@@ -118,7 +121,7 @@ internal partial class AppStateUseCase
 			newAppState = newAppState with { SelectedDataRows = new() };
 
 
-		return (newAppState,newAuxDataState);
+		return (newAppState, newAuxDataState);
 	}
 	internal virtual TucSpaceView GetSpaceView(
 		Guid viewId)
@@ -126,7 +129,7 @@ internal partial class AppStateUseCase
 		try
 		{
 			var spaceView = _tfService.GetSpaceView(viewId);
-			if (spaceView is null) 
+			if (spaceView is null)
 				return null;
 
 			return new TucSpaceView(spaceView);
@@ -173,7 +176,7 @@ internal partial class AppStateUseCase
 		try
 		{
 			var spaceView = _tfService.CreateSpaceView(
-				view.ToModelExtended(), 
+				view.ToModelExtended(),
 				view.DataSetType == TucSpaceViewDataSetType.New);
 
 			var spaceData = _tfService.GetSpaceData(spaceView.SpaceDataId);
@@ -201,9 +204,9 @@ internal partial class AppStateUseCase
 		try
 		{
 			var spaceView = _tfService.UpdateSpaceView(
-				view.ToModelExtended(), 
+				view.ToModelExtended(),
 				view.DataSetType == TucSpaceViewDataSetType.New);
-			
+
 			var spaceData = _tfService.GetSpaceData(spaceView.SpaceDataId);
 
 			return new Tuple<TucSpaceView, TucSpaceData>(
@@ -235,7 +238,7 @@ internal partial class AppStateUseCase
 		try
 		{
 			var allSpaceViews = _tfService.GetAllSpaceViews();
-			if (allSpaceViews is null) 
+			if (allSpaceViews is null)
 				return Task.FromResult(new List<TucSpaceView>());
 
 			return Task.FromResult(allSpaceViews
@@ -288,7 +291,7 @@ internal partial class AppStateUseCase
 		try
 		{
 			var columnList = _tfService.GetSpaceViewColumnsList(viewId);
-			if (columnList is null) 
+			if (columnList is null)
 				return new List<TucSpaceViewColumn>();
 
 			return columnList.Select(x => new TucSpaceViewColumn(x)).ToList();
@@ -335,13 +338,13 @@ internal partial class AppStateUseCase
 			throw new TfException("Column is not found");
 
 		_tfService.DeleteSpaceViewColumn(columnId);
-		
+
 		return GetViewColumns(column.SpaceViewId);
 	}
 
 	internal virtual List<TucSpaceViewColumn> MoveSpaceViewColumn(
-		Guid viewId, 
-		Guid columnId, 
+		Guid viewId,
+		Guid columnId,
 		bool isUp)
 	{
 		if (columnId == Guid.Empty)
@@ -368,7 +371,7 @@ internal partial class AppStateUseCase
 	internal virtual TucSpaceViewColumnType GetSpaceViewColumnTypeById(Guid addonId)
 	{
 		var result = _metaService.GetSpaceViewColumnType(addonId);
-		if(result is null) return null;
+		if (result is null) return null;
 		return new TucSpaceViewColumnType(result);
 	}
 
@@ -376,7 +379,8 @@ internal partial class AppStateUseCase
 	{
 		var srcResult = _metaService.GetSpaceViewColumnTypeSupportedComponents(addonId);
 		var result = new List<TucSpaceViewColumnComponent>();
-		foreach( var component in srcResult){ 
+		foreach (var component in srcResult)
+		{
 			result.Add(new TucSpaceViewColumnComponent(component));
 		}
 		return result;
@@ -388,21 +392,23 @@ internal partial class AppStateUseCase
 		return serviceResult.Select(x => new TucSpaceViewColumnType(x.Instance)).ToList();
 	}
 
-	internal virtual Dictionary<Guid,TucSpaceViewColumnType> GetSpaceViewColumnTypeDict()
+	internal virtual Dictionary<Guid, TucSpaceViewColumnType> GetSpaceViewColumnTypeDict()
 	{
 		var resultSM = _metaService.GetSpaceViewColumnTypeMetaDictionary();
-		var result = new Dictionary<Guid,TucSpaceViewColumnType>();
-		foreach( var key in resultSM.Keys){
+		var result = new Dictionary<Guid, TucSpaceViewColumnType>();
+		foreach (var key in resultSM.Keys)
+		{
 			result[key] = new TucSpaceViewColumnType(resultSM[key].Instance);
 		}
 		return result;
 	}
 
-	internal virtual Dictionary<Guid,TucSpaceViewColumnComponent> GetSpaceViewColumnComponentDict()
+	internal virtual Dictionary<Guid, TucSpaceViewColumnComponent> GetSpaceViewColumnComponentDict()
 	{
 		var resultSM = _metaService.GetSpaceViewColumnComponentMetaDictionary();
-		var result = new Dictionary<Guid,TucSpaceViewColumnComponent>();
-		foreach( var key in resultSM.Keys){
+		var result = new Dictionary<Guid, TucSpaceViewColumnComponent>();
+		foreach (var key in resultSM.Keys)
+		{
 			result[key] = new TucSpaceViewColumnComponent(resultSM[key].Instance);
 		}
 		return result;
@@ -411,7 +417,7 @@ internal partial class AppStateUseCase
 	internal virtual TucSpaceViewColumnComponent GetSpaceViewColumnComponentById(Guid addonId)
 	{
 		var result = _metaService.GetSpaceViewColumnComponent(addonId);
-		if(result is null) return null;
+		if (result is null) return null;
 		return new TucSpaceViewColumnComponent(result);
 	}
 }

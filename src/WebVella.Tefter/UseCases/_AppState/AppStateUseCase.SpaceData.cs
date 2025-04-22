@@ -27,8 +27,14 @@ internal partial class AppStateUseCase
 		{
 			newAppState = newAppState with { SpaceData = GetSpaceData(newAppState.Route.SpaceDataId.Value) };
 
-			//Space Data data
-			if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
+			//if provider is not found then we init space data as null
+			var provider = GetDataProviderAsync(newAppState.SpaceData.DataProviderId).Result;
+			if (provider is null)
+			{
+				newAppState = newAppState with { SpaceData = null };
+			}
+			//Space Data data init
+			else if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
 			{
 				var viewData = GetSpaceDataDataTable(
 							spaceDataId: newAppState.SpaceData.Id,
@@ -53,7 +59,6 @@ internal partial class AppStateUseCase
 			newAppState = newAppState with { SpaceData = null };
 		}
 		newAppState = newAppState with { AllDataProviders = GetDataProviderList() };
-
 
 		return Task.FromResult((newAppState, newAuxDataState));
 	}

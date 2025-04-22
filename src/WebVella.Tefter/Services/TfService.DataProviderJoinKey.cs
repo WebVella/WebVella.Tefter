@@ -179,6 +179,17 @@ public partial class TfService : ITfService
 							});
 					});
 
+				dbBuilder
+					.WithTableBuilder(providerTableName)
+					.WithIndexes(indexes =>
+					{
+						indexes
+							.AddBTreeIndex($"ix_{providerTableName}_tf_jk_{joinKey.DbName}_id", i =>
+							{
+								i.WithColumns($"tf_jk_{joinKey.DbName}_id");
+							});
+					});
+
 				_dbManager.SaveChanges(dbBuilder);
 
 				scope.Complete();
@@ -289,6 +300,11 @@ public partial class TfService : ITfService
 					.WithColumnsBuilder()
 					.Remove($"tf_jk_{joinKey.DbName}_id")
 					.Remove($"tf_jk_{joinKey.DbName}_version");
+
+				dbBuilder
+					.WithTableBuilder(providerTableName)
+					.WithIndexesBuilder()
+					.Remove($"ix_{providerTableName}_tf_jk_{joinKey.DbName}_id");
 
 				_dbManager.SaveChanges(dbBuilder);
 
