@@ -1,10 +1,11 @@
 ﻿::deep.page-header {
 	font-size: var(--type-ramp-plus-2-font-size);
 	line-height:1.5em;
+	color:var(--tf-font-color-mute);
 }
 ::deep .page-subheader {
 	font-size:var(--type-ramp-base-font-size);
-	color: var(--neutral-base-color);
+	color:var(--tf-font-color-mute);
 	margin-top:-0.5em;
 }
 
@@ -16,7 +17,7 @@
 }
 
 ::deep .page-header-divider {
-	color: var(--neutral-base-color);
+	color:var(--tf-font-color-mute);
 	margin:0 7px;
 }
 

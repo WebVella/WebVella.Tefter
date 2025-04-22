@@ -3,8 +3,8 @@
 public record TucSpaceViewColumnSettings
 {
 	public short? Width { get; set; }
-	public OfficeColor Color { get; set; } = OfficeColor.Default;
-	public OfficeColor BackgroundColor { get; set; } = OfficeColor.Default;
+	public TfColor Color { get; set; } = TfColor.Black;
+	public TfColor BackgroundColor { get; set; } = TfColor.Black;
 
 
 }

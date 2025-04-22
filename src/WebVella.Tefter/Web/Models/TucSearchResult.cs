@@ -13,7 +13,7 @@ public record TucSearchResult
 	public Guid? SpaceId { get; set; }
 	public string SpaceViewName { get; set; }
 	public string SpaceName { get; set; }
-	public OfficeColor SpaceColor { get; set; } = OfficeColor.Default;
+	public TfColor SpaceColor { get; set; } = TfColor.Emerald500;
 	public Icon SpaceIcon { get; set; } = null;
 	public string Url { get; set; }
 	public TucSearchResult() { }

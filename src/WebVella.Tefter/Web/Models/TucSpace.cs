@@ -12,7 +12,7 @@ public record TucSpace
 	[Required]
 	public string IconString { get; set; } = "Apps";
 	[Required]
-	public OfficeColor Color { get; set; } = OfficeColor.Default;
+	public TfColor Color { get; set; } = TfColor.Emerald500;
 
 	public Icon Icon { get => TfConstants.GetIcon(IconString); }
 
@@ -37,7 +37,7 @@ public record TucSpace
 		Position = model.Position;
 		IsPrivate = model.IsPrivate;
 		IconString = model.Icon;
-		Color = Web.Utils.EnumExtensions.ConvertIntToEnum<OfficeColor>(model.Color, OfficeColor.Default);
+		Color = Web.Utils.EnumExtensions.ConvertIntToEnum<TfColor>(model.Color, TfColor.Emerald500);
 	}
 
 	public TfSpace ToModel()

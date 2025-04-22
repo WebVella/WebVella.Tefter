@@ -1114,7 +1114,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				.WithPassword("@tefter.bg")
 				.Enabled(true)
 				.WithRoles(adminRole)
-				.WithThemeColor(OfficeColor.Excel)
+				.WithThemeColor(TfColor.Emerald500)
 				.WithThemeMode(DesignThemeModes.System)
 				.WithOpenSidebar(true)
 				.Build();

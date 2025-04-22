@@ -29,7 +29,7 @@ public record TucSpaceViewColumn
 			var sb = new StringBuilder();
 			//if (Settings is not null)
 			//{
-			//	if(Settings.BackgroundColor != OfficeColor.Default){ 
+			//	if(Settings.BackgroundColor != TfColor.Black){ 
 			//		sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}35, {Settings.BackgroundColor.ToAttributeValue()}35)," +
 			//		$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
 			//	}
@@ -46,11 +46,11 @@ public record TucSpaceViewColumn
 			var sb = new StringBuilder();
 			if (Settings is not null)
 			{
-				if(Settings.Color != OfficeColor.Default){ 
-					sb.Append($"color:{Settings.Color.ToAttributeValue()};");
+				if(Settings.Color != TfColor.Black){ 
+					sb.Append($"color:{Settings.Color.ToColorString()};");
 				}
-				if(Settings.BackgroundColor != OfficeColor.Default){ 
-					sb.Append($"background: {Settings.BackgroundColor.ToAttributeValue()}25");
+				if(Settings.BackgroundColor != TfColor.Black){ 
+					sb.Append($"background: {Settings.BackgroundColor.ToColorString()}25");
 					//sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}50, {Settings.BackgroundColor.ToAttributeValue()}50)," +
 					//$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
 				}

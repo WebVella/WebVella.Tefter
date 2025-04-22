@@ -5,4 +5,5 @@
 ::deep .tf-select-btn::part(content) {
 	flex:1 1 auto;
 	text-align:left;
+	color:var(--tf-body-color-mute) !important;
 }

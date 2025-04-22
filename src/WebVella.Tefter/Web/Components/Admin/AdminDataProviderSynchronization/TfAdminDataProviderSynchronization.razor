@@ -28,11 +28,11 @@
 						<div>
 							@if (TfAppState.Value.AdminDataProvider?.SynchScheduleEnabled ?? false)
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white" Height="26px">ON</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.ToColorString()" Color="white" Height="26px">ON</FluentBadge>
 							}
 							else
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white" Height="26px">OFF</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.ToColorString()" Color="white" Height="26px">OFF</FluentBadge>
 							}
 						</div>
 					</FluentGridItem>
@@ -65,7 +65,7 @@
 	<ChildContent>
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg" style="@($"background-color: {TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-thead-bkg"></tr>
 				<tr class="tf-grid-tr">
 					<th class="tf-grid-th" style="width:140px;">created on</th>
 					<th class="tf-grid-th">status</th>

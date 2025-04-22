@@ -1,0 +1,120 @@
+﻿:root {
+  --tf-font-color: var(--tf-go-stone-800);
+  --tf-font-color-mute: var(--tf-go-stone-600);
+  --tf-body-color: var(--tf-go-stone-100);
+  --tf-body-color-mute: var(--tf-go-stone-50);
+  --tf-body-color-accent: var(--tf-go-stone-200);
+  --tf-body-color-accent-2: var(--tf-go-stone-300);
+  --tf-body-color-accent-3: var(--tf-go-stone-400);
+  --tf-body-page-header: var(--tf-go-stone-50);
+  --tf-admin-color: var(--tf-go-red-500);
+}
+fluent-anchored-region > div {
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+fluent-anchored-region fluent-menu {
+  background-color: var(--tf-body-color-accent);
+}
+fluent-anchored-region fluent-menu-item {
+  color: var(--tf-font-color);
+}
+fluent-anchored-region fluent-menu-item:not([disabled]):hover {
+  background-color: var(--tf-body-color-accent-2);
+}
+fluent-anchored-region fluent-menu > fluent-divider {
+  border-top-color: var(--tf-body-color-accent-2) !important;
+  border-top-width: 1px !important;
+}
+fluent-badge.neutral:not([fill="somevalue"])::part(control) {
+  background-color: var(--tf-body-color-accent-2) !important;
+  color: var(--tf-font-color);
+}
+fluent-button {
+  color: var(--tf-font-color-mute) !important;
+}
+fluent-button.outline::part(control) {
+  border-color: var(--tf-body-color-accent-2);
+}
+fluent-button.accent svg {
+  fill: var(--tf-body-color-accent) !important;
+}
+fluent-dialog::part(control) {
+  background-color: var(--tf-body-color);
+}
+fluent-divider {
+  border-color: var(--tf-body-color-accent);
+  border-width: 3px;
+}
+:root .tf-select-menu {
+  background: var(--tf-body-color-accent) !important;
+}
+:root .tf-select-menu__body {
+  background: var(--tf-body-color-accent) !important;
+}
+:root .tf-select-menu__body fluent-menu-item .fluent-typography {
+  color: var(--tf-font-color);
+}
+.tf-input-label {
+  color: var(--tf-font-color) !important;
+}
+.tf-input-description {
+  color: var(--tf-font-color-mute);
+  font-size: 11px;
+}
+fluent-text-field::part(root),
+fluent-number-field::part(root),
+fluent-select::part(control),
+fluent-text-area::part(control),
+fluent-switch::part(switch),
+.tf-select-btn::part(control) {
+  background: oklch(95.4% 0.038 75.164) !important;
+  border-color: var(--tf-body-color-accent-2) !important;
+  color: var(--tf-body-color-mute);
+}
+fluent-text-field[readonly]::part(root),
+fluent-number-field[readonly]::part(root),
+fluent-select[readonly]::part(control),
+fluent-text-area[readonly]::part(control),
+fluent-text-field.disabled::part(root),
+fluent-number-field.disabled::part(root),
+fluent-select.disabled::part(control),
+fluent-text-area.disabled::part(control) {
+  background: transparent !important;
+  border-color: var(--tf-body-color-accent-2) !important;
+  color: var(--tf-font-color);
+}
+.fluent-input-label {
+  color: var(--neutral-foreground-hint) !important;
+}
+fluent-radio::part(label),
+fluent-switch::part(label) {
+  color: var(--tf-font-color);
+}
+.sortable-item {
+  background-color: var(--tf-body-color-accent-2) !important;
+  border-color: var(--tf-body-color-accent-3) !important;
+}
+.sortable-item .sortable-grab {
+  background-color: var(--tf-body-color-accent) !important;
+}
+fluent-data-grid-row:has([row-selected]) {
+  background-color: var(--tf-body-color-accent);
+}
+.tf-grid-thead-bkg {
+  background: var(--tf-body-color-accent);
+}
+.tf-grid-td,
+.tf-grid-th {
+  color: var(--tf-font-color);
+  border: 1px solid var(--tf-body-color-accent);
+}
+.tf-grid .tf-grid-tbody tr > .tf-grid-th::before,
+.tf-grid .tf-grid-tbody tr > .tf-grid-td::before {
+  background-color: var(--tf-body-color);
+}
+.fluent-messagebar.intent-info {
+  background-color: var(--tf-go-blue-100) !important;
+  border-color: var(--tf-go-blue-200) !important;
+  color: var(--tf-font-color);
+}

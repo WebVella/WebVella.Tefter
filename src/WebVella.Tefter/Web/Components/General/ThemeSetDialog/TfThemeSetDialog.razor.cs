@@ -9,14 +9,14 @@ public partial class TfThemeSetDialog : TfFormBaseComponent, IDialogContentCompo
     public FluentDialog Dialog { get; set; }
 
     public DesignThemeModes _themeMode = DesignThemeModes.System;
-    public OfficeColor _themeColor = OfficeColor.Windows;
+    public TfColor _themeColor = TfColor.Emerald500;
 
     protected override void OnParametersSet()
     {
         if (Content is null)
         {
             _themeMode = DesignThemeModes.System;
-            _themeColor = OfficeColor.Windows;
+            _themeColor = TfColor.Emerald500;
         }
         else
         {

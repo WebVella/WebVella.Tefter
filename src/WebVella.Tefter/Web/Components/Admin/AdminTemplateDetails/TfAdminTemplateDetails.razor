@@ -36,22 +36,22 @@
 					<FluentInputLabel Label="@LOC("Status")" />
 					@if (context.IsEnabled)
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">enabled</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.ToColorString()" Color="white">enabled</FluentBadge>
 					}
 					else
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">disabled</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.ToColorString()" Color="white">disabled</FluentBadge>
 					}
 				</FluentGridItem>
 				<FluentGridItem xs="3">
 					<FluentInputLabel Label="@LOC("Usable")" />
 					@if (context.IsSelectable)
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white">selectable</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.ToColorString()" Color="white">selectable</FluentBadge>
 					}
 					else
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">not selectable</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.ToColorString()" Color="white">not selectable</FluentBadge>
 					}
 				</FluentGridItem>
 			</FluentGrid>
@@ -61,7 +61,7 @@
 					<div class="tf-grid-wrapper" style="margin-top:15px;">
 						<table class="tf-grid">
 							<thead class="tf-grid-thead">
-								<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+								<tr class="tf-grid-thead-bkg"></tr>
 								<tr class="tf-grid-tr">
 									<th class="tf-grid-th">space</th>
 									<th class="tf-grid-th">data name</th>

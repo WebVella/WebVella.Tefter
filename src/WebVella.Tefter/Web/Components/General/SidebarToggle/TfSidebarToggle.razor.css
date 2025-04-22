@@ -3,17 +3,18 @@
 	padding-right:15px;
 }
 ::deep .stealth::part(control) {
-	background: var(--neutral-layer-3);
+	background: var(--tf-body-color);
+	border:none !important;
 }
 
 ::deep .stealth:hover::part(control) {
-	background: var(--neutral-fill-stealth-hover);
+	background: var(--tf-body-color-accent);
 }
 
 ::deep .stealth:hover::part(control) {
-	background: var(--neutral-fill-stealth-hover);
+	background: var(--tf-body-color-accent);
 }
 
 ::deep .stealth svg{
-	fill:var(--neutral-base-color) !important;
+	fill:var(--tf-font-color-mute) !important;
 }

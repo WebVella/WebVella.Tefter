@@ -3,11 +3,11 @@ using SystemColor = System.Drawing.Color;
 public partial record TfAppState
 {
 	public TucSpace Space { get; init; }
-	public OfficeColor SpaceColor
+	public TfColor SpaceColor
 	{
 		get
 		{
-			if (Space is null) return OfficeColor.Windows;
+			if (Space is null) return TfColor.Black;
 
 			return Space.Color;
 		}
@@ -16,9 +16,9 @@ public partial record TfAppState
 	{
 		get
 		{
-			if (Space is null) return TfConstants.DefaultThemeColor.ToAttributeValue();
+			if (Space is null) return TfConstants.DefaultThemeColor.ToColorString();
 
-			return Space.Color.ToAttributeValue();
+			return Space.Color.ToColorString();
 		}
 	}
 	public string SpaceIconColorString
@@ -29,8 +29,8 @@ public partial record TfAppState
 	{
 		get
 		{
-			if (SpaceColorString == "default")
-				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToAttributeValue());
+			if (SpaceColor == TfColor.Black)
+				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToColorString());
 			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(SpaceColorString);
 		}
 	}

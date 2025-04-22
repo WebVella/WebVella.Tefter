@@ -3,7 +3,7 @@
 @if (_isReadonly)
 {
 	<FluentTextField ReadOnly="true" Value="@Value.ToString()" Style="width:100%">
-		@if (Value == OfficeColor.Default)
+		@if (Value is null)
 		{
 			<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
 						Color="Color.Neutral" />
@@ -12,7 +12,7 @@
 		{
 			<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 						Color="Color.Custom"
-						CustomColor="@Value.ToAttributeValue()" />
+						CustomColor="@Value.ToColorString()" />
 		}
 
 	</FluentTextField>
@@ -24,8 +24,8 @@ else
 			<FluentButton Id="@_elementId" Style="width:100%" Class="tf-select-btn"
 						  OnClick="@(_=> _onOpenChanged(true))">
 
-				<span>@(Value.ToString())</span>
-				@if (Value == OfficeColor.Default)
+				<span>@(Value?.ToSelectableLabel())</span>
+				@if (Value is null)
 				{
 					<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
 								Color="Color.Neutral"/>
@@ -34,13 +34,13 @@ else
 				{
 					<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 								Color="Color.Custom"
-								CustomColor="@Value.ToAttributeValue()" />
+								CustomColor="@Value.Value.ToColorString()" />
 				}
 				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
 			</FluentButton>
-			@if (!Required && Value != OfficeColor.Default)
+			@if (!Required && Value is not null)
 			{
-				<FluentButton IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(()=> _optionChanged(OfficeColor.Default))" />
+				<FluentButton Appearance=@Appearance.Outline IconStart="@TfConstants.CloseIcon.WithColor(Color.Error)" OnClick="@(()=> _optionChanged(TfColor.Black))" />
 			}
 		</FluentStack>
 		@if (_open)
@@ -55,9 +55,9 @@ else
 								  HorizontalScaling="AxisScalingMode.Anchor">
 				<div class="tf-select-menu__body">
 					<FluentNavMenu>
-						<Virtualize TItem="OfficeColor" Items="@_colors" Context="option" ItemSize="32">
-							<FluentMenuItem @key=@option OnClick="@(()=> _optionChanged(option))" Class="@(option == Value ? "tf-menu-item-selected" : "")">
-								@if (option == OfficeColor.Default)
+						<Virtualize TItem="TfColor" Items="@_colors" Context="option" ItemSize="32">
+							<FluentMenuItem @key=@((int)option) OnClick="@(()=> _optionChanged(option))" Class="@(option == Value ? "tf-menu-item-selected" : "")">
+								@if (option == TfColor.Black)
 								{
 									<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
 												Color="Color.Neutral" />
@@ -66,9 +66,9 @@ else
 								{
 									<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 												Color="Color.Custom"
-												CustomColor="@option.ToAttributeValue()" />
+												CustomColor="@option.ToColorString()" />
 								}
-								<FluentLabel>@option</FluentLabel>
+								<FluentLabel>@option.ToSelectableLabel()</FluentLabel>
 							</FluentMenuItem>
 						</Virtualize>
 					</FluentNavMenu>

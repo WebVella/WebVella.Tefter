@@ -877,19 +877,7 @@
 	z-index: 5;
 }
 */
-:root .tf-select-menu {
-  background: var(--neutral-layer-3) !important;
-}
-/*Overrides*/
-fluent-data-grid-row:has([row-selected]) {
-  background-color: var(--neutral-fill-stealth-hover);
-}
-fluent-select::part(listbox) {
-  max-height: 200px;
-}
-.tf-input-label {
-  color: var(--neutral-foreground-hover) !important;
-}
+/*Message*/
 .fluent-messagebar-message .title {
   display: block;
 }
@@ -898,17 +886,7 @@ div[class^='fluent-messagebar'],
 .fluent-messagebar-message {
   animation: none !important;
 }
-fluent-button.accent svg {
-  fill: var(--neutral-layer-1) !important;
-}
-.tf-input-description {
-  color: var(--neutral-foreground-active);
-  font-size: 11px;
-}
-fluent-anchored-region > div {
-  box-shadow: none !important;
-  background-color: transparent !important;
-}
+/*Anchor region*/
 fluent-anchored-region fluent-menu-item {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -926,9 +904,7 @@ fluent-anchored-region fluent-menu-item > .tf-addon {
   display: block;
   padding: 0;
 }
-.tf-menu-item-selected {
-  position: relative;
-}
+/*Menu*/
 .tf-menu-item-selected::before {
   content: "";
   display: block;
@@ -939,22 +915,39 @@ fluent-anchored-region fluent-menu-item > .tf-addon {
   width: 3px;
   background: var(--accent-fill-rest);
 }
-.fluent-dialog-main.right::part(control),
-.fluent-dialog-main.left::part(control) {
-  --dialog-padding: 0px;
+.tf-menu-item-selected {
+  position: relative;
 }
-fluent-text-field[readonly]::part(root),
-fluent-number-field[readonly]::part(root),
-fluent-select[readonly]::part(control),
-fluent-text-area[readonly]::part(control) {
-  background: transparent !important;
-  border-color: var(--neutral-fill-input-alt-active) !important;
+/*Form*/
+fluent-select::part(listbox) {
+  max-height: 200px;
 }
-.fluent-input-label {
-  color: var(--neutral-foreground-hint) !important;
+fluent-text-field.disabled,
+fluent-number-field.disabled,
+fluent-select.disabled,
+fluent-select.disabled::part(control),
+fluent-text-area.disabled {
+  opacity: 1;
 }
 fluent-switch::part(label) {
   margin-inline-end: 0;
+}
+/*Dialog*/
+.fluent-dialog-header .fluent-typography {
+  color: var(--tf-font-color-mute) !important;
+}
+.fluent-dialog-header fluent-button::part(control) {
+  background: transparent;
+}
+.fluent-dialog-header fluent-button:hover::part(control) {
+  background: var(--tf-body-color-accent-2);
+}
+.fluent-dialog-header fluent-button svg {
+  fill: var(--tf-font-color-mute) !important;
+}
+.fluent-dialog-main.right::part(control),
+.fluent-dialog-main.left::part(control) {
+  --dialog-padding: 0px;
 }
 .tf-select-menu {
   display: flex;
@@ -999,15 +992,6 @@ fluent-switch::part(label) {
 }
 .tf-console-box__row__message .error {
   color: var(--error);
-}
-:root {
-  --tf-layout-header-height: 48px;
-  --tf-layout-wrapper-height: calc(100vh - var(--tf-layout-header-height));
-  --tf-layout-wrapper-aside-width: 60px;
-  --tf-layout-wrapper-body-width: calc(100vw - var(--tf-layout-wrapper-aside-width));
-  --tf-layout-wrapper-body-border-radius: 8px;
-  --tf-layout-wrapper-body-aside-width: 240px;
-  --tf-layout-wrapper-body-aside-toolbar-height: 40px;
 }
 body {
   width: 100vw;
@@ -1065,20 +1049,28 @@ body {
   display: none;
 }
 .tf-layout__body {
-  --tf-layout-body-color-rest: color-mix(in srgb, var(--accent-base-color) 40%, var(--neutral-layer-3) 60%);
-  --tf-layout-body-color-background: color-mix(in srgb, var(--accent-base-color) 15%, var(--neutral-layer-3) 85%);
+  /*Definitions*/
+  --tf-layout-body-color-mute: color-mix(in srgb, var(--tf-layout-color) 10%, var(--tf-body-color) 90%);
+  --tf-layout-body-color: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-body-color) 80%);
+  --tf-layout-body-color-accent: color-mix(in srgb, var(--tf-layout-color) 40%, var(--tf-body-color) 60%);
+  --tf-layout-body-color-accent-2: color-mix(in srgb, var(--tf-layout-color) 70%, var(--tf-body-color) 30%);
+  /*Overrides*/
+  --accent-foreground-rest: var(--tf-layout-color);
+  --accent-foreground-hover: color-mix(in srgb, var(--tf-layout-color) 70%, var(--tf-body-color) 30%);
+  --accent-fill-rest: var(--tf-layout-color);
+  /*CSS*/
   flex: 1 1 auto;
   width: var(--tf-layout-wrapper-body-width);
   display: flex;
-  background: var(--neutral-layer-2) !important;
+  background: var(--tf-body-color) !important;
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
-  border-top: 3px solid var(--tf-layout-body-color-rest);
-  border-left: 1px solid var(--tf-layout-body-color-rest);
+  border-top: 3px solid var(--tf-layout-body-color-accent);
+  border-left: 1px solid var(--tf-layout-body-color-accent);
 }
 .tf-layout__body__aside {
   --neutral-fill-input-rest: var(--neutral-fill-input-focus);
-  --neutral-stroke-input-rest: var(--tf-layout-body-color-rest);
-  --neutral-stroke-rest: var(--tf-layout-body-color-rest);
+  --neutral-stroke-input-rest: var(--tf-layout-body-color-accent);
+  --neutral-stroke-rest: var(--tf-layout-body-color-accent);
   flex: 0 0 auto;
   width: var(--tf-layout-wrapper-body-aside-width);
   display: flex;
@@ -1087,7 +1079,7 @@ body {
   border-right: 1px solid var(--neutral-stroke-input-rest);
 }
 .tf-layout__body__aside:before {
-  background: var(--tf-layout-body-color-background);
+  background: var(--tf-layout-body-color);
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
   content: "";
   position: absolute;
@@ -1123,8 +1115,8 @@ body {
 .tf-layout__body__main__header {
   flex: 0 0 auto;
   padding: 0 var(--tf-body-content-padding);
-  background: var(--neutral-layer-1);
-  border-bottom: 1px solid var(--neutral-layer-4);
+  background: var(--tf-body-page-header);
+  border-bottom: 1px solid var(--tf-body-color-accent);
   display: flex;
   border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 }
@@ -1206,6 +1198,13 @@ body {
   justify-content: center !important;
   align-items: center !important;
   flex: 0 0 auto !important;
+  background: transparent;
+}
+.tf-navigation .fluent-nav-item .positioning-region:hover:not(:has(.disabled)) {
+  background: var(--tf-body-color-accent);
+}
+.tf-navigation .fluent-nav-item .positioning-region::before {
+  display: none !important;
 }
 .tf-navigation .fluent-nav-item .content-region {
   display: flex;
@@ -1223,21 +1222,8 @@ body {
 .tf-navigation .fluent-nav-item .fluent-nav-text {
   display: none;
 }
-.tf-navigation .fluent-nav-item:not(.selected) .fluent-nav-link.active .positioning-region:before {
-  display: none;
-}
-.tf-navigation .fluent-nav-item.selected a .positioning-region::before {
-  content: "";
-  display: block;
-  position: absolute;
-  right: unset;
-  left: -10px;
-  width: 3px;
-  height: calc(((var(--base-height-multiplier) + var(--density))*var(--design-unit) / 2)*1px);
-  background: var(--accent-fill-rest);
-  border-radius: calc(var(--control-corner-radius)*1px);
-  margin: calc(var(--design-unit)*2px) 2px;
-  z-index: 5;
+.tf-navigation .fluent-nav-item.selected .positioning-region {
+  background: var(--tf-body-color-accent);
 }
 .tf-navigation .fluent-nav-item.expand-link .positioning-region {
   border-radius: 50%;
@@ -1261,8 +1247,17 @@ body {
   align-items: center !important;
   flex: 0 0 auto !important;
 }
+.tf-sidenav .fluent-nav-link {
+  border-radius: 5px;
+}
 .tf-sidenav .fluent-nav-link .positioning-region {
   background: transparent !important;
+}
+.tf-sidenav .fluent-nav-link .positioning-region::before {
+  display: none !important;
+}
+.tf-sidenav .fluent-nav-link.active {
+  background: var(--tf-layout-body-color-accent);
 }
 .tf-sidetoolbar {
   display: flex;
@@ -1309,8 +1304,22 @@ body {
 .tf-sidetoolbar__search .search {
   width: 100%;
 }
+.tf-sidetoolbar__search .search::part(root) {
+  background: transparent !important;
+  border-color: var(--tf-layout-body-color-accent) !important;
+  color: var(--tf-font-color);
+}
+.tf-sidetoolbar__search .search::part(control)::placeholder {
+  color: var(--tf-font-color-mute);
+}
 .tf-sidetoolbar__actions {
   flex: 0 0 auto;
+}
+.tf-sidetoolbar__actions fluent-button {
+  color: var(--tf-font-color-mute) !important;
+}
+.tf-sidetoolbar__actions fluent-button.outline::part(control) {
+  border-color: var(--tf-layout-body-color-accent);
 }
 .tf-tabnav.fluent-nav-menu {
   display: flex;
@@ -1322,8 +1331,8 @@ body {
   margin: 0;
 }
 .tf-tabnav.fluent-nav-menu .fluent-nav-item.selected .positioning-region {
-  background: var(--neutral-layer-2);
-  border-top-color: var(--accent-base-color);
+  background: var(--tf-body-color);
+  border-top-color: var(--tf-layout-body-color-accent);
 }
 .tf-tabnav.fluent-nav-menu .fluent-nav-link {
   padding-right: 5px;
@@ -1365,11 +1374,11 @@ body {
 }
 .tf-tabnav.fluent-nav-menu .fluent-nav-link .positioning-region:hover {
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
-  background-color: var(--neutral-layer-2) !important;
+  background-color: var(--tf-body-color-accent-2);
 }
 .tf-tabnav.fluent-nav-menu .fluent-nav-link.active .positioning-region {
-  background: var(--neutral-layer-2);
-  border-top-color: var(--accent-base-color);
+  background: var(--tf-body-color);
+  border-top-color: var(--tf-layout-body-color-accent);
 }
 .modal-with-tabs .fluent-nav-item {
   margin-right: 5px !important;
@@ -1390,32 +1399,17 @@ body {
 .modal-with-tabs__menu {
   flex: 1 1 auto;
 }
-:root {
-  --tf-content-padding: 10px;
-  --tf-header-height: 48px;
-  --tf-content-border-radius: 8px;
-  --tf-content-border-top-width: 3px;
-  --tf-content-margin-bottom: 5px;
-  --tf-content-header-height: 50px;
-  --tf-content-toolbar-height: 60px;
-  --tf-sidebar-toolbar-height: 40px;
-  --tf-sidebar-toolbar-margin-top-bottom: 10px;
-  --tf-body-content-padding: 10px;
-  --tf-grid-padding-top: calc(var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width));
-  --tf-grid-padding-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1);
-  --tf-grid-negative-margin-top: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
-  --tf-grid-negative-margin-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
-}
 body {
-  background: var(--neutral-layer-3) !important;
+  background: var(--tf-body-color);
+  color: var(--tf-font-color);
 }
 .go-accent {
   color: var(--accent-foreground-rest);
 }
 .go-muted {
-  color: var(--neutral-base-color);
+  color: var(--tf-font-color-mute);
 }
 .text-muted {
-  color: var(--neutral-base-color);
+  color: var(--tf-font-color-mute);
   font-size: 0.85em;
 }

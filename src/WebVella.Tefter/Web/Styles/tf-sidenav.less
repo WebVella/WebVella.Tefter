@@ -1,8 +1,17 @@
 ﻿.tf-sidenav {
 	.fluent-nav-link {
+		border-radius: 5px;
+
 		.positioning-region {
 			background: transparent !important;
+
+			&::before {
+				display: none !important;
+			}
 		}
 
+		&.active {
+			background: var(--tf-layout-body-color-accent);
+		}
 	}
 }

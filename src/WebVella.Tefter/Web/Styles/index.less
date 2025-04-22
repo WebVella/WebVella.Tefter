@@ -13,25 +13,10 @@
 @import 'tf-sidetoolbar.less';
 @import 'tf-tabnav.less';
 
-:root {
-	--tf-content-padding: 10px;
-	--tf-header-height: 48px;
-	--tf-content-border-radius: 8px;
-	--tf-content-border-top-width: 3px;
-	--tf-content-margin-bottom: 5px;
-	--tf-content-header-height: 50px;
-	--tf-content-toolbar-height: 60px;
-	--tf-sidebar-toolbar-height: 40px;
-	--tf-sidebar-toolbar-margin-top-bottom: 10px;
-	--tf-body-content-padding: 10px;
-	--tf-grid-padding-top: calc(var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width));
-	--tf-grid-padding-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1);
-	--tf-grid-negative-margin-top: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
-	--tf-grid-negative-margin-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
-}
 
 body {
-	background: var(--neutral-layer-3) !important;
+	background: var(--tf-body-color);
+	color:var(--tf-font-color);
 }
 
 .go-accent {
@@ -39,10 +24,10 @@ body {
 }
 
 .go-muted {
-	color: var(--neutral-base-color);
+	color: var(--tf-font-color-mute);
 }
 
 .text-muted {
-	color: var(--neutral-base-color);
+	color: var(--tf-font-color-mute);
 	font-size: 0.85em;
 }

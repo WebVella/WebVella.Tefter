@@ -7,12 +7,12 @@ public record TucMenuItem
 	public string Description { get; set; }
 	public Icon IconCollapsed { get; set; }
 	public Icon IconExpanded { get; set; }
-	public OfficeColor? IconColor { get; set; }
+	public TfColor? IconColor { get; set; }
 	public Icon Icon
 	{
 		get => Expanded
-			? (IconColor is null ? IconExpanded : IconExpanded.WithColor(IconColor.ToAttributeValue()))
-			: (IconColor is null ? IconCollapsed : IconCollapsed.WithColor(IconColor.ToAttributeValue()));
+			? (IconColor is null ? IconExpanded : IconExpanded.WithColor(IconColor.ToColorString()))
+			: (IconColor is null ? IconCollapsed : IconCollapsed.WithColor(IconColor.ToColorString()));
 	}
 	public string Url { get; set; }
 	public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;
