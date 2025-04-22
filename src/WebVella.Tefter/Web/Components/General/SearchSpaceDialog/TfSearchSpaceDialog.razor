@@ -28,7 +28,7 @@
 					<FluentGridItem sm="4" @key=@item.Id>
 						<FluentAnchor Href="@item.Url">
 							<div class="tf-space-icon">
-								<FluentIcon Value="@item.Icon" Style="@($"fill: {item.Color.ToAttributeValue()}")" />
+								<FluentIcon Value="@item.Icon" Style="@($"fill: {item.Color.ToColorString()}")" />
 							</div>
 							<div class="tf-space-title">@item.Name</div>
 						</FluentAnchor>

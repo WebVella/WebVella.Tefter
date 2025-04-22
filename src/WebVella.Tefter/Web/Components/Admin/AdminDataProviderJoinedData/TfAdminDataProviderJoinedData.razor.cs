@@ -33,8 +33,11 @@ public partial class TfAdminDataProviderJoinedData : TfBaseComponent
 	{
 		InvokeAsync(async () =>
 		{
-			_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(TfAppState.Value.AdminDataProvider.Id);
-			await InvokeAsync(StateHasChanged);
+			if (TfAppState.Value.AdminDataProvider is not null)
+			{
+				_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(TfAppState.Value.AdminDataProvider.Id);
+				await InvokeAsync(StateHasChanged);
+			}
 		});
 	}
 

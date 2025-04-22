@@ -11,7 +11,7 @@ public class TfUserBuilder
 	private DateTime _createdOn;
 
 	private DesignThemeModes _themeMode;
-	private OfficeColor _themeColor;
+	private TfColor _themeColor;
 	private bool _sidebarOpen;
 	private string _cultureCode;
 	private string _startUpUrl;
@@ -105,9 +105,9 @@ public class TfUserBuilder
 	}
 
 	public TfUserBuilder WithThemeColor(
-		OfficeColor officeColor)
+		TfColor tfColor)
 	{
-		_themeColor = officeColor;
+		_themeColor = tfColor;
 		return this;
 	}
 

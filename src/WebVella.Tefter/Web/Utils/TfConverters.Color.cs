@@ -2,13 +2,13 @@
 
 public static partial class TfConverters
 {
-	public static System.Drawing.Color OfficeColorToColor(OfficeColor? color)
+	public static System.Drawing.Color TfColorToColor(TfColor? color)
 	{
-		if (color is null || color == OfficeColor.Default)
+		if (color is null || color == TfColor.Black)
 		{
 			return new System.Drawing.Color();
 		}
-		return System.Drawing.ColorTranslator.FromHtml(color.ToAttributeValue());
+		return System.Drawing.ColorTranslator.FromHtml(color.ToColorString());
 	}
 
 	public static System.Drawing.Color HEXToColor(string color)
@@ -105,14 +105,14 @@ public static partial class TfConverters
 		|| colorString.StartsWith("hsl") || colorString.StartsWith("hwb"))
 			return colorString;
 
-		//Check if OfficeColor int
+		//Check if TfColor int
 		if (int.TryParse(colorString, out int value)
-		&& Enum.IsDefined(typeof(OfficeColor), value))
+		&& Enum.IsDefined(typeof(TfColor), value))
 		{
-			return ((OfficeColor)value).ToAttributeValue();
+			return ((TfColor)value).ToAttributeValue();
 		}
-		//Check if OfficeColor string
-		if (Enum.TryParse<OfficeColor>(colorString, true, out OfficeColor outColor))
+		//Check if TfColor string
+		if (Enum.TryParse<TfColor>(colorString, true, out TfColor outColor))
 		{
 			return outColor.ToAttributeValue();
 		}

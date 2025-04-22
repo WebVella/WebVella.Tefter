@@ -14,7 +14,7 @@ public record TucBookmark
 	public Guid SpaceViewId { get; set; }
 	public string SpaceViewName { get; set; }
 	public string SpaceName { get; set; }
-	public OfficeColor SpaceColor { get; set; } = OfficeColor.Default;
+	public TfColor SpaceColor { get; set; } = TfColor.Emerald500;
 	public Icon SpaceIcon { get; set; } = null;
 	public Guid SpaceId { get; set; }
 	public List<TucTag> Tags { get; set; } = new();

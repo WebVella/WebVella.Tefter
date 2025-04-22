@@ -9,9 +9,9 @@
 		{
 			<FluentIcon Slot="start" Value="@TfConstants.GetIcon(Item.Icon)" />
 		}
-		@if (Item.Color != OfficeColor.Default)
+		@if (Item.Color != TfColor.Black)
 		{
-			<span class="tf-addon" style="@($"background-color:{Item.Color.ToAttributeValue()}")"></span>
+			<span class="tf-addon" style="@($"background-color:{Item.Color.ToColorString()}")"></span>
 		}
 	</FluentMenuItem>
 }

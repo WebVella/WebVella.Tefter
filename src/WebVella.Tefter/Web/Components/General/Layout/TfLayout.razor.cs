@@ -16,8 +16,7 @@ public partial class TfLayout : ComponentBase
 			sb.AppendLine(":root .tf-layout {");
 			if (!String.IsNullOrWhiteSpace(Color))
 			{
-				sb.AppendLine($"--accent-base-color: {Color};");
-				sb.AppendLine($"--accent-fill-rest: {Color};");
+				sb.AppendLine($"--tf-layout-color: {Color};");
 			}
 			sb.AppendLine("}");
 			sb.AppendLine("</style>");

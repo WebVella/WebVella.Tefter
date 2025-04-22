@@ -28,11 +28,9 @@
 	<link rel="icon" type="image/png" href="@Assets[$"/favicon.ico"]" />
 	@* <script src="_content/Microsoft.FluentUI.AspNetCore.Components/Microsoft.FluentUI.AspNetCore.Components.lib.module.js?cb=@cb" type="module" async></script> *@
 	<script src="@Assets[$"_content/WebVella.Tefter/lib/quill.js?cb={cb}"]"></script>
-
 </head>
 
 <body>
-	@* <loading-theme storage-name="tf-theme"></loading-theme> *@
 	<div id="top"></div>
 	<Routes @rendermode="new InteractiveServerRenderMode(prerender: false)" />
 	<script src="@Assets[$"_framework/blazor.web.js?cb={cb}"]"></script>
@@ -44,5 +42,6 @@
 
 
 @code {
-	private string cb = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
+	[Inject] protected ITfConfigurationService ConfigurationService { get; set; }
+	private string cb => ConfigurationService.CacheKey;
 }

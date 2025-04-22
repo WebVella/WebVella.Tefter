@@ -10,7 +10,7 @@
 
 			.btn {
 				margin: 0;
-				border-radius:0;
+				border-radius: 0;
 
 				&.active {
 					background: var(--accent-base-color);
@@ -32,7 +32,7 @@
 
 				&:last-child {
 					border-radius: 0 calc(var(--control-corner-radius) * 1px) calc(var(--control-corner-radius) * 1px) 0;
-					margin-right:5px;
+					margin-right: 5px;
 				}
 			}
 
@@ -54,10 +54,30 @@
 
 		.search {
 			width: 100%;
+
+			&::part(root) {
+				background: transparent !important;
+				border-color: var(--tf-layout-body-color-accent) !important;
+				color: var(--tf-font-color);
+			}
+
+			&::part(control)::placeholder {
+				color: var(--tf-font-color-mute);
+			}
 		}
 	}
 
 	&__actions {
 		flex: 0 0 auto;
+
+		fluent-button {
+			color: var(--tf-font-color-mute) !important;
+
+			&.outline {
+				&::part(control) {
+					border-color: var(--tf-layout-body-color-accent);
+				}
+			}
+		}
 	}
 }

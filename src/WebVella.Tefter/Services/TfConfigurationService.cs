@@ -11,6 +11,7 @@ public interface ITfConfigurationService
 	public string CompanyName { get; }
 	public string CompanyLogoUrl { get; }
 	public string BaseUrl { get; }
+	public string CacheKey { get; }
 
 
 
@@ -27,6 +28,7 @@ public class TfConfigurationService : ITfConfigurationService
 	public string CompanyName { get; init; }
 	public string CompanyLogoUrl { get; init; }
 	public string BaseUrl { get; init; }
+	public string CacheKey { get; init; }
 
 	public TfConfigurationService(IConfiguration config)
 	{
@@ -38,6 +40,9 @@ public class TfConfigurationService : ITfConfigurationService
 		CompanyName = config["Tefter:CompanyName"];
 		CompanyLogoUrl = config["Tefter:CompanyLogoUrl"];
 		BaseUrl = config["Tefter:BaseUrl"];
+		CacheKey = config["Tefter:CacheKey"];
+		if (String.IsNullOrWhiteSpace(CacheKey))
+			CacheKey = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
 		if (string.IsNullOrWhiteSpace(CompanyName)) CompanyName = "Tefter by WebVella";
 		if (string.IsNullOrWhiteSpace(CompanyLogoUrl)) CompanyLogoUrl = "_content/WebVella.Tefter/logo.svg";
 	}

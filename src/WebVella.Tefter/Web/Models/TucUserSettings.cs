@@ -4,7 +4,7 @@ public record TucUserSettings
 {
 	public DesignThemeModes ThemeMode { get; init; } = DesignThemeModes.System;
 
-	public OfficeColor ThemeColor { get; init; } = OfficeColor.Windows;
+	public TfColor ThemeColor { get; init; } = TfColor.Emerald500;
 
 	public bool IsSidebarOpen { get; init; } = true;
 

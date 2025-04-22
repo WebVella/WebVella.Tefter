@@ -20,6 +20,8 @@ internal partial class UserStateUseCase
 
 	internal virtual async Task<TfUserState> InitUserState(Guid sessionId)
 	{
+		//TfConverters.GenerateColorsFromVariables();
+
 		var result = new TfUserState();
 
 		//Init User
@@ -139,8 +141,9 @@ internal partial class UserStateUseCase
 
 	//Theme
 	public virtual async Task<TucUser> SetUserTheme(Guid userId,
-		DesignThemeModes themeMode, OfficeColor themeColor)
+		DesignThemeModes themeMode, TfColor themeColor)
 	{
+
 		var user = await GetUserWithChecks(userId);
 		var userBld = _tfService.CreateUserBuilder(user);
 		userBld

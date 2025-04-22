@@ -1,13 +1,4 @@
-﻿:root {
-	--tf-layout-header-height: 48px;
-	--tf-layout-wrapper-height: calc(100vh - var(--tf-layout-header-height));
-	--tf-layout-wrapper-aside-width: 60px;
-	--tf-layout-wrapper-body-width: calc(100vw - var(--tf-layout-wrapper-aside-width));
-	--tf-layout-wrapper-body-border-radius: 8px;
-	--tf-layout-wrapper-body-aside-width: 240px;
-	--tf-layout-wrapper-body-aside-toolbar-height: 40px;
-}
-
+﻿
 body {
 	width: 100vw;
 	height: 100vh;
@@ -76,20 +67,28 @@ body {
 	}
 
 	&__body {
-		--tf-layout-body-color-rest: color-mix(in srgb, var(--accent-base-color) 40%, var(--neutral-layer-3) 60%);
-		--tf-layout-body-color-background: color-mix(in srgb, var(--accent-base-color) 15%, var(--neutral-layer-3) 85%);
+		/*Definitions*/
+		--tf-layout-body-color-mute: color-mix(in srgb, var(--tf-layout-color) 10%, var(--tf-body-color) 90%);
+		--tf-layout-body-color: color-mix(in srgb, var(--tf-layout-color) 20%, var(--tf-body-color) 80%);
+		--tf-layout-body-color-accent: color-mix(in srgb, var(--tf-layout-color) 40%, var(--tf-body-color) 60%);
+		--tf-layout-body-color-accent-2: color-mix(in srgb, var(--tf-layout-color) 70%, var(--tf-body-color) 30%);
+		/*Overrides*/
+		--accent-foreground-rest: var(--tf-layout-color);
+		--accent-foreground-hover: color-mix(in srgb, var(--tf-layout-color) 70%, var(--tf-body-color) 30%);
+		--accent-fill-rest: var(--tf-layout-color);
+		/*CSS*/
 		flex: 1 1 auto;
 		width: var(--tf-layout-wrapper-body-width);
 		display: flex;
-		background: var(--neutral-layer-2) !important;
+		background: var(--tf-body-color) !important;
 		border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
-		border-top: 3px solid var(--tf-layout-body-color-rest);
-		border-left: 1px solid var(--tf-layout-body-color-rest);
+		border-top: 3px solid var(--tf-layout-body-color-accent);
+		border-left: 1px solid var(--tf-layout-body-color-accent);
 
 		&__aside {
 			--neutral-fill-input-rest: var(--neutral-fill-input-focus);
-			--neutral-stroke-input-rest: var(--tf-layout-body-color-rest);
-			--neutral-stroke-rest: var(--tf-layout-body-color-rest);
+			--neutral-stroke-input-rest: var(--tf-layout-body-color-accent);
+			--neutral-stroke-rest: var(--tf-layout-body-color-accent);
 			flex: 0 0 auto;
 			width: var(--tf-layout-wrapper-body-aside-width);
 			display: flex;
@@ -98,7 +97,7 @@ body {
 			border-right: 1px solid var(--neutral-stroke-input-rest);
 
 			&:before {
-				background: var(--tf-layout-body-color-background);
+				background: var(--tf-layout-body-color);
 				border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 				content: "";
 				position: absolute;
@@ -139,8 +138,8 @@ body {
 			&__header {
 				flex: 0 0 auto;
 				padding: 0 var(--tf-body-content-padding);
-				background: var(--neutral-layer-1);
-				border-bottom: 1px solid var(--neutral-layer-4);
+				background: var(--tf-body-page-header);
+				border-bottom: 1px solid var(--tf-body-color-accent);
 				display: flex;
 				border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 

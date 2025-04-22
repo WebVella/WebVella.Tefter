@@ -1,74 +1,65 @@
 ﻿
 .tf-card {
-	--tf-card-border-radius:8px;
-	border: 3px solid var(--neutral-layer-1);
+	--tf-card-border-radius: 8px;
+	border: 3px solid var(--tf-body-color-accent);
 	border-radius: var(--tf-card-border-radius);
 	/*	box-shadow: var(--elevation-shadow-card-rest);*/
 }
+
 .fluent-dialog-body .tf-card {
-	border-color:var(--neutral-layer-2);
-}
-.tf-card-title {
-	padding: 5px 10px;
-	background: var(--neutral-layer-1);
+	border-color: var(--tf-body-color-accent-2);
 }
 
+.tf-card-title {
+	padding: 5px 10px;
+	background: var(--tf-body-color-accent);
+	color: var(--tf-font-color) !important;
+}
+
+	::deep .tf-card-title fluent-button.outline::part(control) {
+		border-color: var(--tf-body-color-accent-3) !important; 
+	}
+
 fluent-dialog .tf-card-title {
-	background: var(--neutral-layer-2);
+	background: var(--tf-body-color-accent-2);
 }
 
 .tf-card-content {
 	padding: 5px 10px;
 }
 
-.tf-card.tf-card--no-body .tf-card-title{
+.tf-card.tf-card--no-body .tf-card-title {
 	border-radius: var(--tf-card-border-radius);
 }
 
 
-.tf-card.tf-card--no-body .tf-card-content{
-	display:none;
-}
-
-::deep fluent-text-field[readonly]::part(root),
-::deep fluent-text-area[readonly]::part(root),
-::deep fluent-number-field[readonly]::part(root){
-	border: 1px solid var(--neutral-fill-input-alt-active) !important;
-}
-
-::deep fluent-text-field[readonly]::part(control) {
-	border: none !important;
-}
-
-::deep fluent-text-field[readonly]::after,
-::deep fluent-text-area[readonly]::after,
-::deep fluent-number-field[readonly]::after{
+.tf-card.tf-card--no-body .tf-card-content {
 	display: none;
 }
 
-::deep .tf-card-content .tf-grid-wrapper:first-child .tf-grid tr:first-child td{
-	border-top-width:0 !important;
+
+::deep .tf-card-content .tf-grid-wrapper:first-child .tf-grid tr:first-child td {
+	border-top-width: 0 !important;
 }
 
 
 
 ::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid {
-	margin-bottom:0;
+	margin-bottom: 0;
 }
 
-::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid .tf-grid-tbody .tf-grid-tr:last-child td{
-	border-bottom:none;
-}
+	::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid .tf-grid-tbody .tf-grid-tr:last-child td {
+		border-bottom: none;
+	}
 
 ::deep .tf-card .tf-card-content .tf-card:last-child {
-	margin-bottom:0 !important;
+	margin-bottom: 0 !important;
 }
 
 .tf-card--clickable {
-	cursor:pointer;
+	cursor: pointer;
 }
 
-.tf-card--clickable:hover {
-	background:var(--neutral-fill-stealth-hover);
-}
-
+	.tf-card--clickable:hover {
+		background: var(--neutral-fill-stealth-hover);
+	}

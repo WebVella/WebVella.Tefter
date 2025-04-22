@@ -90,7 +90,7 @@ public class TfSpaceViewPreset
 	public bool IsGroup { get; set; } = false;
 
 	[JsonPropertyName("color")]
-	public OfficeColor Color { get; set; } = OfficeColor.Windows;
+	public TfColor Color { get; set; } = TfColor.Emerald500;
 
 	[JsonPropertyName("icon")]
 	public string Icon { get; set; }

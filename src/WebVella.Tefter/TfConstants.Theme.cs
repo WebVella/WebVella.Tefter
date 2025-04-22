@@ -4,14 +4,14 @@ using SystemColor = System.Drawing.Color;
 public partial class TfConstants
 {
 	public static DesignThemeModes DefaultThemeMode { get; } = DesignThemeModes.System;
-	public static OfficeColor DefaultThemeColor { get; } = OfficeColor.Booking;
+	public static TfColor DefaultThemeColor { get; } = TfColor.Emerald500;
 
 	public static DesignThemeModes AdminThemeMode { get; } = DesignThemeModes.System;
-	public static OfficeColor AdminThemeColor { get; } = OfficeColor.Office;
+	public static TfColor AdminThemeColor { get; } = TfColor.Red500;
 	public static IconSize IconSize { get; } = IconSize.Size20;
 	public static IconVariant IconVariant { get; } = IconVariant.Regular;
 
-	public static string AdminColor { get => AdminThemeColor.ToAttributeValue(); }
+	public static string AdminColor { get => AdminThemeColor.ToColorString(); }
 
 	public static SystemColor AdminColorObject
 	{

@@ -1,21 +1,4 @@
-﻿
-:root .tf-select-menu {
-	background: var(--neutral-layer-3) !important;
-}
-
-/*Overrides*/
-fluent-data-grid-row:has([row-selected]) {
-	background-color: var(--neutral-fill-stealth-hover)
-}
-
-fluent-select::part(listbox) {
-	max-height: 200px;
-}
-
-.tf-input-label {
-	color: var(--neutral-foreground-hover) !important;
-}
-
+﻿/*Message*/
 .fluent-messagebar-message .title {
 	display: block;
 }
@@ -26,19 +9,7 @@ div[class ^='fluent-messagebar'],
 	animation: none !important;
 }
 
-fluent-button.accent svg {
-	fill: var(--neutral-layer-1) !important;
-}
-
-.tf-input-description {
-	color: var(--neutral-foreground-active);
-	font-size: 11px;
-}
-fluent-anchored-region > div{
-	box-shadow: none !important;
-	background-color: transparent !important;
-}
-
+/*Anchor region*/
 fluent-anchored-region fluent-menu-item {
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -55,15 +26,10 @@ fluent-anchored-region fluent-menu-item > .tf-addon {
 	bottom: 2px;
 	width: 3px;
 	display: block;
-	padding:0;
+	padding: 0;
 }
 
-
-
-.tf-menu-item-selected{
-	position:relative;
-}
-
+/*Menu*/
 .tf-menu-item-selected::before {
 	content: "";
 	display: block;
@@ -75,22 +41,45 @@ fluent-anchored-region fluent-menu-item > .tf-addon {
 	background: var(--accent-fill-rest);
 }
 
-.fluent-dialog-main.right::part(control),
-.fluent-dialog-main.left::part(control) {
-	--dialog-padding: 0px;
+.tf-menu-item-selected {
+	position: relative;
 }
 
-fluent-text-field[readonly]::part(root),
-fluent-number-field[readonly]::part(root),
-fluent-select[readonly]::part(control),
-fluent-text-area[readonly]::part(control) {
-	background: transparent !important;
-	border-color: var(--neutral-fill-input-alt-active) !important;
+/*Form*/
+fluent-select::part(listbox) {
+	max-height: 200px;
 }
-.fluent-input-label {
-	color: var(--neutral-foreground-hint) !important;
+
+fluent-text-field.disabled,
+fluent-number-field.disabled,
+fluent-select.disabled,
+fluent-select.disabled::part(control),
+fluent-text-area.disabled {
+	opacity: 1;
 }
 
 fluent-switch::part(label) {
 	margin-inline-end: 0;
+}
+
+/*Dialog*/
+.fluent-dialog-header .fluent-typography {
+	color: var(--tf-font-color-mute) !important;
+}
+
+.fluent-dialog-header fluent-button::part(control) {
+	background: transparent;
+}
+
+.fluent-dialog-header fluent-button:hover::part(control) {
+	background: var(--tf-body-color-accent-2);
+}
+
+.fluent-dialog-header fluent-button svg{
+	fill: var(--tf-font-color-mute) !important;
+}
+
+.fluent-dialog-main.right::part(control),
+.fluent-dialog-main.left::part(control) {
+	--dialog-padding: 0px;
 }

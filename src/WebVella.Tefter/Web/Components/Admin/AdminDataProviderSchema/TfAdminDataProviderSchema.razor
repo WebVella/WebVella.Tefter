@@ -13,7 +13,7 @@ else
 	<div class="tf-grid-wrapper">
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-thead-bkg"></tr>
 				<tr class="tf-grid-tr">
 					<th class="tf-grid-th" style="min-width:110px;width:110px;"></th>
 					<th class="tf-grid-th" style="min-width:60px;width:60px;">sync</th>
@@ -43,7 +43,7 @@ else
 								@if (!String.IsNullOrWhiteSpace(context.SourceName))
 								{
 									<span title="@LOC("synchronized")" style="display:inline-block;width:100%;">
-										<FluentBadge Fill="somevalue" BackgroundColor="@OfficeColor.Excel.ToAttributeValue()" Color="white" Style="width:100%">ON</FluentBadge>
+										<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.ToColorString()" Color="white" Style="width:100%">ON</FluentBadge>
 									</span>
 								}
 								else

@@ -5,29 +5,29 @@
 
 	.usernav .actions {
 		padding-right: 10px;
-		display:flex;
-		flex-grow:0;
-		align-items:center;
+		display: flex;
+		flex-grow: 0;
+		align-items: center;
 	}
 
 ::deep .fluent-presence-badge {
 	font-size: 12px;
 }
 
-/*::deep .fluent-persona .initials {
-	background: var(--neutral-base-color) !important;
-}*/
-
-::deep.usernav .actions > .stealth::part(control),
-::deep.usernav .actions .language-switch > .stealth::part(control){
-	background: var(--neutral-layer-3) !important;
+::deep.usernav .actions > fluent-anchor::part(control),
+::deep.usernav .actions > fluent-button::part(control),
+::deep.usernav .actions > .language-switch > fluent-button::part(control){
+	background: var(--tf-body-color) !important;
+	color: var(--tf-font-color);
 }
 
-::deep.usernav .actions > .stealth:hover::part(control),
-::deep.usernav .actions .language-switch > .stealth:hover::part(control) {
-	background: var(--neutral-fill-stealth-hover) !important;
-}
-/*::deep.usernav .stealth svg {
-	fill: var(--neutral-fill-inverse-rest) !important;
-}*/
+	::deep.usernav .actions > fluent-button svg,
+	::deep.usernav .actions > fluent-anchor svg{
+		fill: var(--tf-font-color) !important;
+	}
 
+::deep.usernav .actions > fluent-anchor:hover::part(control),
+::deep.usernav .actions > fluent-button:hover::part(control),
+::deep.usernav .actions > .language-switch > fluent-button:hover::part(control){
+	background: var(--tf-body-color-accent) !important;
+}

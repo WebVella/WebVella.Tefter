@@ -22,9 +22,9 @@
 						<FluentIcon Slot="start" Value="@TfConstants.GetIcon(item.Icon)" />
 					}
 					@item.Name
-					@if (item.Color != OfficeColor.Default)
+					@if (item.Color != TfColor.Black)
 					{
-						<span class="tf-addon" style="@($"background-color:{item.Color.ToAttributeValue()}")"></span>
+						<span class="tf-addon" style="@($"background-color:{item.Color.ToColorString()}")"></span>
 					}
 				</FluentAnchor>
 			}
@@ -42,9 +42,9 @@
 					{
 						<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" />
 					}
-					@if (item.Color != OfficeColor.Default)
+					@if (item.Color != TfColor.Black)
 					{
-						<span class="tf-addon" style="@($"background-color:{item.Color.ToAttributeValue()}")"></span>
+						<span class="tf-addon" style="@($"background-color:{item.Color.ToColorString()}")"></span>
 					}
 				</FluentAnchor>
 				@if (item.Nodes.Count > 0)

@@ -27,14 +27,14 @@ public partial record TfUserState
 			return DesignThemeModes.System;
 		}
 	}
-	public OfficeColor ThemeColor
+	public TfColor ThemeColor
 	{
 		get
 		{
 			if (CurrentUser is not null && CurrentUser.Settings is not null)
 				return CurrentUser.Settings.ThemeColor;
 
-			return OfficeColor.Windows;
+			return TfColor.Emerald500;
 		}
 	}
 
@@ -42,7 +42,7 @@ public partial record TfUserState
 	{
 		get
 		{
-			return ThemeColor.ToAttributeValue();
+			return ThemeColor.ToColorString();
 		}
 	}
 
@@ -51,17 +51,17 @@ public partial record TfUserState
 		get
 		{
 			if(ThemeColorString == "default") 
-				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToAttributeValue());
+				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToColorString());
 			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(ThemeColorString);
 		}
 	}
 
-	public string ThemeBackgkroundColor => ThemeColor != OfficeColor.Default ? $"{ThemeColorString}25" : "transparent";
+	public string ThemeBackgkroundColor => ThemeColor != TfColor.Black ? $"{ThemeColorString}25" : "transparent";
 
-	public string ThemeBorderColor => ThemeColor != OfficeColor.Default ? $"{ThemeColorString}75" : "transparent";
+	public string ThemeBorderColor => ThemeColor != TfColor.Black ? $"{ThemeColorString}75" : "transparent";
 
-	public string ThemeBackgroundAccentColor => ThemeColor != OfficeColor.Default ? $"{ThemeColorString}35" : "transparent";
+	public string ThemeBackgroundAccentColor => ThemeColor != TfColor.Black ? $"{ThemeColorString}35" : "transparent";
 
-	public string ThemeSidebarStyle => ThemeColor != OfficeColor.Default ? $"background-color:{ThemeBackgkroundColor} !important; border-color:{ThemeBorderColor} !important" :
+	public string ThemeSidebarStyle => ThemeColor != TfColor.Black ? $"background-color:{ThemeBackgkroundColor} !important; border-color:{ThemeBorderColor} !important" :
 		$"background-color:transparent !important; border-color:transparent !important";
 }

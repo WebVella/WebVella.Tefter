@@ -5,9 +5,7 @@
 
 .tf-divider__title {
 	flex:0 0 auto;
-	background:var(--neutral-stroke-divider-rest);
-	background:color-mix(in srgb, var(--accent-base-color) 15%, var(--neutral-layer-3) 85%);
-	background:var(--neutral-layer-2);
+	background:var(--tf-body-color-accent-2);
 	color:rgba(255,255,255,0.5);
 	padding:5px 15px;
 	border-radius: 5px 5px 0 0;
@@ -16,7 +14,5 @@
 .tf-divider__hr {
 	flex:1 1 auto;
 	height: 2px;
-	background:var(--neutral-stroke-divider-rest);
-	background:color-mix(in srgb, var(--accent-base-color) 15%, var(--neutral-layer-3) 85%);
-	background:var(--neutral-layer-2);
+	background:var(--tf-body-color-accent-2);
 }

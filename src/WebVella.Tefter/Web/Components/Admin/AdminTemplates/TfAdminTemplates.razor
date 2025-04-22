@@ -27,7 +27,7 @@ else
 	<div class="tf-grid-wrapper">
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">
-				<tr class="tf-grid-thead-bkg" style="@($"background-color:{TfConstants.AdminBackgkroundColor}")"></tr>
+				<tr class="tf-grid-thead-bkg"></tr>
 				<tr class="tf-grid-tr">
 					<th class="tf-grid-th" style="width:100px;min-width:100px;"></th>
 					<th class="tf-grid-th" style="width:60px;min-width:60px;">status</th>
@@ -65,7 +65,7 @@ else
 									}
 									else
 									{
-										<FluentBadge Style="display:block" Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">@LOC("OFF")</FluentBadge>
+										<FluentBadge Style="display:block" Fill="somevalue" BackgroundColor="@TfColor.Red500.ToColorString()" Color="white">@LOC("OFF")</FluentBadge>
 									}
 								</div>
 								<div style="width:100%">
@@ -75,7 +75,7 @@ else
 									}
 									else
 									{
-										<FluentBadge Style="display:block" Fill="somevalue" BackgroundColor="@OfficeColor.Access.ToAttributeValue()" Color="white">@LOC("not selectable")</FluentBadge>
+										<FluentBadge Style="display:block" Fill="somevalue" BackgroundColor="@TfColor.Red500.ToColorString()" Color="white">@LOC("not selectable")</FluentBadge>
 									}
 								</div>
 							</div>

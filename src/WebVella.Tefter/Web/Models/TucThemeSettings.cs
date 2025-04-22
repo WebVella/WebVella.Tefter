@@ -9,7 +9,7 @@ public record TucThemeSettings
 	public string Mode { get => ThemeMode.ToString(); }
 
 	[JsonIgnore]
-	public OfficeColor ThemeColor { get; init; } = OfficeColor.Windows;
+	public TfColor ThemeColor { get; init; } = TfColor.Emerald500;
 
 	[JsonPropertyName("color")]
 	public string Color { get => ThemeColor.ToString(); }

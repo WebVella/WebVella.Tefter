@@ -71,4 +71,100 @@ public static class EnumExtensions
 		return "ErrorCircle";
 	}
 
+	public static string ToColorString<TEnum>(this TEnum e) where TEnum : Enum
+	{
+		string description = "#fff";
+		if (e is null)
+			return description;
+		if (e is Enum)
+		{
+			Type type = e.GetType();
+			var memValue = type.GetEnumName((Enum)e);
+			if(memValue is null)
+				return description;
+			var memInfo = type.GetMember(memValue);
+			var soAttributes = memInfo[0].GetCustomAttributes(typeof(ColorAttribute), false);
+			if (soAttributes.Length > 0)
+			{
+				// we're only getting the first description we find
+				// others will be ignored
+				description = ((ColorAttribute)soAttributes[0]).OKLCH;
+			}
+		}
+
+		return description;
+	}
+
+	public static string ToColorString<TEnum>(this TEnum? e) where TEnum : struct, Enum
+	{
+		string description = "#fff";
+		if (e is null)
+			return description;
+		if (e is Enum)
+		{
+			Type type = e.GetType();
+			var memValue = type.GetEnumName((Enum)e.Value);
+			if(memValue is null)
+				return description;
+			var memInfo = type.GetMember(memValue);
+			var soAttributes = memInfo[0].GetCustomAttributes(typeof(ColorAttribute), false);
+			if (soAttributes.Length > 0)
+			{
+				// we're only getting the first description we find
+				// others will be ignored
+				description = ((ColorAttribute)soAttributes[0]).OKLCH;
+			}
+		}
+
+		return description;
+	}
+
+	public static string ToSelectableLabel<TEnum>(this TEnum e) where TEnum : IConvertible
+	{
+		string label = null;
+		if (e is null)
+			return label;
+		if (e is Enum)
+		{
+			Type type = e.GetType();
+			var memValue = type.GetEnumName(e.ToInt32(CultureInfo.InvariantCulture));
+			if(memValue is null)
+				return label;
+			var memInfo = type.GetMember(memValue);
+			var soAttributes = memInfo[0].GetCustomAttributes(typeof(SelectableAttribute), false);
+			if (soAttributes.Length > 0)
+			{
+				// we're only getting the first description we find
+				// others will be ignored
+				label = ((SelectableAttribute)soAttributes[0]).Label;
+			}
+		}
+
+		return label;
+	}
+
+	public static string ToName<TEnum>(this TEnum e) where TEnum : IConvertible
+	{
+		string label = null;
+		if (e is null)
+			return label;
+		if (e is Enum)
+		{
+			Type type = e.GetType();
+			var memValue = type.GetEnumName(e.ToInt32(CultureInfo.InvariantCulture));
+			if(memValue is null)
+				return label;
+			var memInfo = type.GetMember(memValue);
+			var soAttributes = memInfo[0].GetCustomAttributes(typeof(NameAttribute), false);
+			if (soAttributes.Length > 0)
+			{
+				// we're only getting the first description we find
+				// others will be ignored
+				label = ((NameAttribute)soAttributes[0]).Name;
+			}
+		}
+
+		return label;
+	}
+
 }

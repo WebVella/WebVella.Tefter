@@ -3,7 +3,7 @@ public partial class MainLayout : FluxorLayout
 {
 	[Inject] protected IStateSelection<TfUserState, bool> SidebarExpanded { get; set; }
 	[Inject] protected IStateSelection<TfUserState, DesignThemeModes> ThemeMode { get; set; }
-	[Inject] protected IStateSelection<TfUserState, OfficeColor> ThemeColor { get; set; }
+	[Inject] protected IStateSelection<TfUserState, TfColor> ThemeColor { get; set; }
 	[Inject] protected IStateSelection<TfAppState, RouteDataFirstNode?> FirstRouteNode { get; set; }
 	[Inject] protected IStateSelection<TfAppState, string> SpaceColor { get; set; }
 
@@ -25,7 +25,7 @@ public partial class MainLayout : FluxorLayout
 				return SpaceColor.Value;
 			}
 
-			return ThemeColor.Value.ToAttributeValue();
+			return ThemeColor.Value.ToColorString();
 		}
 	}
 }

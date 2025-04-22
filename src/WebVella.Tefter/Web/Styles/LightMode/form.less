@@ -1,0 +1,65 @@
+﻿
+:root .tf-select-menu {
+	background: var(--tf-body-color-accent) !important;
+
+	&__body {
+		background: var(--tf-body-color-accent) !important;
+
+		fluent-menu-item .fluent-typography {
+			color: var(--tf-font-color);
+		}
+	}
+}
+
+.tf-input-label {
+	color: var(--tf-font-color) !important;
+}
+
+.tf-input-description {
+	color: var(--tf-font-color-mute);
+	font-size: 11px;
+}
+
+fluent-text-field::part(root),
+fluent-number-field::part(root),
+fluent-select::part(control),
+fluent-text-area::part(control),
+fluent-switch::part(switch),
+.tf-select-btn::part(control){
+	background: oklch(95.4% 0.038 75.164) !important;
+	border-color: var(--tf-body-color-accent-2) !important;
+	color: var(--tf-body-color-mute);
+}
+
+fluent-text-field[readonly]::part(root),
+fluent-number-field[readonly]::part(root),
+fluent-select[readonly]::part(control),
+fluent-text-area[readonly]::part(control),
+fluent-text-field.disabled::part(root),
+fluent-number-field.disabled::part(root),
+fluent-select.disabled::part(control),
+fluent-text-area.disabled::part(control) {
+	background: transparent !important;
+	border-color: var(--tf-body-color-accent-2) !important;
+	color: var(--tf-font-color);
+}
+
+.fluent-input-label {
+	color: var(--neutral-foreground-hint) !important;
+}
+
+fluent-radio::part(label),
+fluent-switch::part(label) {
+	color: var(--tf-font-color);
+}
+
+.sortable-item {
+	background-color: var(--tf-body-color-accent-2) !important;
+	border-color: var(--tf-body-color-accent-3) !important;
+
+	.sortable-grab {
+		background-color: var(--tf-body-color-accent) !important;
+	}
+}
+
+fluent-select{}

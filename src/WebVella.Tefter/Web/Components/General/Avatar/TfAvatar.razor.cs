@@ -18,8 +18,8 @@ public partial class TfAvatar :ComponentBase
 			if (!String.IsNullOrWhiteSpace(Styles)) list.Add(Styles);
 			if (User is not null)
 			{
-				if (UseUserColor && User.Settings is not null && User.Settings.ThemeColor != OfficeColor.Default)
-					list.Add($"background-color:{User.Settings.ThemeColor.ToAttributeValue()};");
+				if (UseUserColor && User.Settings is not null && User.Settings.ThemeColor != TfColor.Black)
+					list.Add($"background-color:{User.Settings.ThemeColor.ToColorString()};");
 				else
 					list.Add("background-color:var(--neutral-fill-layer-hover);");
 			}

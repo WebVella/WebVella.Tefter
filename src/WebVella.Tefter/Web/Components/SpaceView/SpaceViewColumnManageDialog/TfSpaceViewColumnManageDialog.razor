@@ -197,29 +197,29 @@
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Color")" />
 							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								@if (_form.Settings.Color.ToAttributeValue() != "default")
+								@if (_form.Settings.Color != TfColor.Black)
 								{
 									<FluentIcon Value="@TfConstants.RectangleIcon"
 												Color="Color.Custom" Style="height:100%;"
-												CustomColor="@_form.Settings.Color.ToAttributeValue()" />
+												CustomColor="@_form.Settings.Color.ToColorString()" />
 								}
 								else
 								{
 									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
 								}
 								<FluentSelect OptionSelected="(x => x == _form.Settings?.Color)"
-											  @bind-SelectedOption="@_form.Settings.Color" TOption="OfficeColor"
-											  Items="@(Enum.GetValues<OfficeColor>())"
+											  @bind-SelectedOption="@_form.Settings.Color" TOption="TfColor"
+											  Items="@TfConverters.GetSelectableColors()"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
-											@if (color.ToAttributeValue() != "default")
+											@if (color != TfColor.Black)
 											{
 												<FluentIcon Value="@TfConstants.RectangleIcon"
 															Color="Color.Custom"
-															CustomColor="@color.ToAttributeValue()" />
+															CustomColor="@color.ToColorString()" />
 											}
 											else
 											{
@@ -234,29 +234,29 @@
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Background Color")" />
 							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								@if (_form.Settings.BackgroundColor.ToAttributeValue() != "default")
+								@if (_form.Settings.BackgroundColor != TfColor.Black)
 								{
 									<FluentIcon Value="@TfConstants.RectangleIcon"
 												Color="Color.Custom" Style="height:100%;"
-												CustomColor="@_form.Settings.BackgroundColor.ToAttributeValue()" />
+												CustomColor="@_form.Settings.BackgroundColor.ToColorString()" />
 								}
 								else
 								{
 									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
 								}
 								<FluentSelect OptionSelected="(x => x == _form.Settings?.BackgroundColor)"
-											  @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="OfficeColor"
-											  Items="@(Enum.GetValues<OfficeColor>())"
+											  @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="TfColor"
+											  Items="@TfConverters.GetSelectableColors()"
 											  Style="width:100%;"
 											  OptionValue="@((p)=> ((int)p).ToString())"
 											  OptionText="@(p => p.ToString())">
 									<OptionTemplate Context="color">
 										<FluentStack>
-											@if (color.ToAttributeValue() != "default")
+											@if (color != TfColor.Black)
 											{
 												<FluentIcon Value="@TfConstants.RectangleIcon"
 															Color="Color.Custom"
-															CustomColor="@color.ToAttributeValue()" />
+															CustomColor="@color.ToColorString()" />
 											}
 											else
 											{
