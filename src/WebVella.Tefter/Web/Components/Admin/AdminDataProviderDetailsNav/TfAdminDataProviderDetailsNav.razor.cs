@@ -19,28 +19,28 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		menu.Add(new TucMenuItem
 		{
 			Url = string.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Provider Columns")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = string.Format(TfConstants.AdminDataProviderJoinedDataPageUrl, providerId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.TableAdd(),
 			Text = LOC("Joined Data")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = string.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Database(),
 			Text = LOC("Synchronization")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = string.Format(TfConstants.AdminDataProviderDataPageUrl, providerId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Database(),
 			Text = LOC("Data")
 		});

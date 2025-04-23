@@ -1,9 +1,18 @@
 ﻿fluent-button {
-	color: var(--tf-font-color-mute) !important;
+	--neutral-foreground-rest: var(--tf-font-color-mute) !important;
 
 	&.outline {
+		--neutral-stroke-rest: var(--tf-body-color-accent-2);
+		--neutral-stroke-hover: var(--tf-body-color-accent);
+	}
+
+	&.accent {
+		--neutral-stroke-rest: var(--tf-body-color-accent-2);
+		--neutral-stroke-hover: var(--tf-body-color-accent);
+		--accent-fill-hover: var(--accent-foreground-hover);
+
 		&::part(control) {
-			border-color: var(--tf-body-color-accent-2);
+			border-color: var(--neutral-stroke-rest);
 		}
 	}
 }

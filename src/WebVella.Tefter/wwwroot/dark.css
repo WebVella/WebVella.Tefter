@@ -1,12 +1,12 @@
 ﻿:root {
-  --tf-font-color: var(--tf-go-stone-200);
-  --tf-font-color-mute: var(--tf-go-stone-400);
-  --tf-body-color: var(--tf-go-stone-900);
-  --tf-body-color-mute: var(--tf-go-stone-950);
-  --tf-body-color-accent: var(--tf-go-stone-800);
-  --tf-body-color-accent-2: var(--tf-go-stone-700);
-  --tf-body-color-accent-3: var(--tf-go-stone-600);
-  --tf-body-page-header: var(--tf-go-stone-800);
+  --tf-font-color: var(--tf-go-zinc-200);
+  --tf-font-color-mute: var(--tf-go-zinc-400);
+  --tf-body-color: var(--tf-go-zinc-900);
+  --tf-body-color-mute: var(--tf-go-zinc-950);
+  --tf-body-color-accent: var(--tf-go-zinc-800);
+  --tf-body-color-accent-2: var(--tf-go-zinc-700);
+  --tf-body-color-accent-3: var(--tf-go-zinc-600);
+  --tf-body-page-header: var(--tf-go-zinc-800);
   --tf-admin-color: var(--tf-go-red-500);
 }
 fluent-anchored-region > div {
@@ -31,10 +31,19 @@ fluent-badge.neutral:not([fill="somevalue"])::part(control) {
   color: var(--tf-font-color);
 }
 fluent-button {
-  color: var(--tf-font-color-mute) !important;
+  --neutral-foreground-rest: var(--tf-font-color-mute) !important;
 }
-fluent-button.outline::part(control) {
-  border-color: var(--tf-body-color-accent-2);
+fluent-button.outline {
+  --neutral-stroke-rest: var(--tf-body-color-accent-2);
+  --neutral-stroke-hover: var(--tf-body-color-accent);
+}
+fluent-button.accent {
+  --neutral-stroke-rest: var(--tf-body-color-accent-2);
+  --neutral-stroke-hover: var(--tf-body-color-accent);
+  --accent-fill-hover: var(--accent-foreground-hover);
+}
+fluent-button.accent::part(control) {
+  border-color: var(--neutral-stroke-rest);
 }
 fluent-button.accent svg {
   fill: var(--tf-font-color) !important;
@@ -63,14 +72,16 @@ fluent-divider {
   font-size: 11px;
 }
 fluent-text-field::part(root),
+fluent-search::part(root),
 fluent-number-field::part(root),
 fluent-select::part(control),
 fluent-text-area::part(control),
 fluent-switch::part(switch),
 .tf-select-btn::part(control) {
-  background: oklch(95.4% 0.038 75.164) !important;
+  background: color-mix(in srgb, var(--tf-go-yellow-900) 10%, var(--tf-body-color) 90%) !important;
   border-color: var(--tf-body-color-accent-2) !important;
-  color: var(--tf-body-color-mute);
+  color: var(--tf-font-color);
+  fill: var(--tf-font-color);
 }
 fluent-text-field[readonly]::part(root),
 fluent-number-field[readonly]::part(root),
@@ -90,6 +101,9 @@ fluent-text-area.disabled::part(control) {
 fluent-radio::part(label),
 fluent-switch::part(label) {
   color: var(--tf-font-color);
+}
+fluent-switch {
+  --neutral-foreground-rest: var(--tf-body-color-accent-2);
 }
 .sortable-item {
   background-color: var(--tf-body-color-accent-2) !important;
@@ -127,8 +141,29 @@ fluent-data-grid-row:has([row-selected]) {
 .tf-grid .tf-grid-tbody tr > .tf-grid-td::before {
   background-color: var(--tf-body-color);
 }
+.tf-grid__pager {
+  background: var(--tf-body-color-accent) !important;
+  border-color: var(--tf-body-color-accent-2) !important;
+}
 .fluent-messagebar.intent-info {
   background-color: color-mix(in srgb, var(--tf-go-blue-500) 15%, var(--tf-body-color) 85%) !important;
   border-color: color-mix(in srgb, var(--tf-go-blue-500) 15%, var(--tf-body-color) 85%) !important;
   color: var(--tf-font-color);
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--tf-body-color-mute);
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--tf-body-color-accent-2);
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tf-body-color-accent);
 }

@@ -21,14 +21,16 @@
 }
 
 fluent-text-field::part(root),
+fluent-search::part(root),
 fluent-number-field::part(root),
 fluent-select::part(control),
 fluent-text-area::part(control),
 fluent-switch::part(switch),
 .tf-select-btn::part(control) {
-	background: oklch(95.4% 0.038 75.164) !important;
+	background: color-mix(in srgb, var(--tf-go-yellow-900)10%, var(--tf-body-color) 90%) !important;
 	border-color: var(--tf-body-color-accent-2) !important;
-	color: var(--tf-body-color-mute);
+	color: var(--tf-font-color);
+	fill:var(--tf-font-color);
 }
 
 
@@ -53,7 +55,9 @@ fluent-radio::part(label),
 fluent-switch::part(label) {
 	color: var(--tf-font-color);
 }
-
+fluent-switch {
+	--neutral-foreground-rest: var(--tf-body-color-accent-2);
+}
 
 .sortable-item {
 	background-color: var(--tf-body-color-accent-2) !important;

@@ -31,10 +31,19 @@ fluent-badge.neutral:not([fill="somevalue"])::part(control) {
   color: var(--tf-font-color);
 }
 fluent-button {
-  color: var(--tf-font-color-mute) !important;
+  --neutral-foreground-rest: var(--tf-font-color-mute) !important;
 }
-fluent-button.outline::part(control) {
-  border-color: var(--tf-body-color-accent-2);
+fluent-button.outline {
+  --neutral-stroke-rest: var(--tf-body-color-accent-2);
+  --neutral-stroke-hover: var(--tf-body-color-accent);
+}
+fluent-button.accent {
+  --neutral-stroke-rest: var(--tf-body-color-accent-2);
+  --neutral-stroke-hover: var(--tf-body-color-accent);
+  --accent-fill-hover: var(--accent-foreground-hover);
+}
+fluent-button.accent::part(control) {
+  border-color: var(--neutral-stroke-rest);
 }
 fluent-button.accent svg {
   fill: var(--tf-body-color-accent) !important;
@@ -63,14 +72,15 @@ fluent-divider {
   font-size: 11px;
 }
 fluent-text-field::part(root),
+fluent-search::part(root),
 fluent-number-field::part(root),
 fluent-select::part(control),
 fluent-text-area::part(control),
 fluent-switch::part(switch),
 .tf-select-btn::part(control) {
-  background: oklch(95.4% 0.038 75.164) !important;
+  background: color-mix(in srgb, var(--tf-go-yellow-300) 10%, var(--tf-body-color) 90%) !important;
   border-color: var(--tf-body-color-accent-2) !important;
-  color: var(--tf-body-color-mute);
+  color: var(--tf-font-color) !important;
 }
 fluent-text-field[readonly]::part(root),
 fluent-number-field[readonly]::part(root),
@@ -113,8 +123,29 @@ fluent-data-grid-row:has([row-selected]) {
 .tf-grid .tf-grid-tbody tr > .tf-grid-td::before {
   background-color: var(--tf-body-color);
 }
+.tf-grid__pager {
+  background: var(--tf-body-color-accent);
+  border-color: var(--tf-body-color-accent-2);
+}
 .fluent-messagebar.intent-info {
   background-color: var(--tf-go-blue-100) !important;
   border-color: var(--tf-go-blue-200) !important;
   color: var(--tf-font-color);
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--tf-body-color-mute);
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--tf-body-color-accent-2);
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tf-body-color-accent);
 }

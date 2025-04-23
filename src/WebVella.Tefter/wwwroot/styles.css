@@ -1373,8 +1373,8 @@ body {
   display: none !important;
 }
 .tf-tabnav.fluent-nav-menu .fluent-nav-link .positioning-region:hover {
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
-  background-color: var(--tf-body-color-accent-2);
+  /*box-shadow: 0 0 3px rgba(0,0,0,0.25);*/
+  background-color: color-mix(in srgb, var(--tf-layout-body-color-accent) 30%, var(--tf-body-color-accent) 70%);
 }
 .tf-tabnav.fluent-nav-menu .fluent-nav-link.active .positioning-region {
   background: var(--tf-body-color);

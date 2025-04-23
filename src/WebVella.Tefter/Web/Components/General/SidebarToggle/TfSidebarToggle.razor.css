@@ -2,6 +2,11 @@
 	margin-left: -10px;
 	padding-right:15px;
 }
+
+	::deep .stealth fluent-button {
+		outline:none !important;
+	}
+
 ::deep .stealth::part(control) {
 	background: var(--tf-body-color);
 	border:none !important;

@@ -10,8 +10,9 @@
 		align-items: center;
 	}
 
-::deep .fluent-presence-badge {
+::deep .avatar > div {
 	font-size: 12px;
+	color: rgba(255,255,255,0.75);
 }
 
 ::deep.usernav .actions > fluent-anchor::part(control),
