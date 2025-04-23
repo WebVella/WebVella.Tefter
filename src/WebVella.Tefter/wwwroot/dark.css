@@ -1,4 +1,4 @@
-﻿:root {
+﻿html:root {
   --tf-layout-header-height: 48px;
   --tf-layout-wrapper-height: calc(100vh - var(--tf-layout-header-height));
   --tf-layout-wrapper-aside-width: 60px;
@@ -20,8 +20,6 @@
   --tf-grid-padding-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * 1);
   --tf-grid-negative-margin-top: calc((var(--design-unit) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
   --tf-grid-negative-margin-side: calc(((var(--design-unit) * 3) + var(--focus-stroke-width) - var(--stroke-width)) * -1);
-}
-:root {
   --tf-black: #000;
   --tf-white: #fff;
   --tf-red-50: oklch(97.1% 0.013 17.38);
@@ -266,7 +264,7 @@
   --tf-stone-900: oklch(21.6% 0.006 56.043);
   --tf-stone-950: oklch(14.7% 0.004 49.25);
 }
-:root body {
+html:root {
   --neutral-base-color: var(--tf-zinc-500);
   --accent-base-color: var(--tf-sky-500);
   --neutral-layer-card-container: var(--tf-zinc-400);
@@ -396,15 +394,16 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neutral-fill-secondary-focus);
 }
+fluent-anchored-region .tf-select-menu,
 fluent-anchored-region fluent-menu {
-  --neutral-layer-floating: oklch(27.4% 0.006 286.033);
+  --neutral-layer-floating: var(--tf-zinc-800);
 }
 fluent-anchored-region fluent-menu-item {
-  --neutral-foreground-rest: oklch(92% 0.004 286.32);
-  --neutral-fill-stealth-hover: oklch(37% 0.013 285.805);
+  --neutral-foreground-rest: var(--tf-zinc-200);
+  --neutral-fill-stealth-hover: var(--tf-zinc-700);
 }
 fluent-anchored-region fluent-divider {
-  --neutral-stroke-divider-rest: oklch(37% 0.013 285.805);
+  --neutral-stroke-divider-rest: var(--tf-zinc-700);
 }
 :root .tf-select-menu__body {
   background: var(--neutral-layer-floating) !important;
@@ -462,14 +461,14 @@ fluent-switch {
   /*background-color: var(--neutral-fill-layer-hover) !important;*/
 }
 fluent-select::part(listbox) {
-  background-color: oklch(27.4% 0.006 286.033) !important;
+  background-color: var(--tf-zinc-800) !important;
 }
 fluent-select fluent-option {
   background: transparent !important;
-  color: oklch(92.8% 0.006 264.531);
+  color: var(--tf-zinc-200);
 }
 fluent-select fluent-option:hover {
-  background-color: oklch(37% 0.013 285.805) !important;
+  background-color: var(--tf-zinc-700) !important;
 }
 fluent-button.accent {
   --foreground-on-accent-rest: var(--tf-white);

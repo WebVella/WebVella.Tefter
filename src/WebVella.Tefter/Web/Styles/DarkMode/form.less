@@ -1,4 +1,4 @@
-﻿
+﻿@import '../variables.less';
 :root .tf-select-menu {
 	&__body {
 		background: var(--neutral-layer-floating) !important;
@@ -69,15 +69,15 @@ fluent-switch {
 
 fluent-select {
 	&::part(listbox) {
-		background-color: oklch(27.4% .006 286.033) !important;
+		background-color: var(--tf-zinc-800) !important;
 	}
 
 	fluent-option {
 		background: transparent !important;
-		color: oklch(92.8% .006 264.531);
+		color: var(--tf-zinc-200);
 
 		&:hover {
-			background-color: oklch(37% .013 285.805) !important;
+			background-color: var(--tf-zinc-700) !important;
 		}
 	}
 }
