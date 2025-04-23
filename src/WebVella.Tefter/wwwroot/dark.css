@@ -1,18 +1,4 @@
 ﻿:root {
-  /*	//Font
-	--tf-font-color: var(--tf-go-zinc-200);
-	--tf-font-color-mute: var(--tf-go-zinc-400);
-	//Layout
-	--tf-body-color: var(--tf-go-zinc-900);
-	--tf-body-color-mute: var(--tf-go-zinc-950);
-	--tf-body-color-accent: var(--tf-go-zinc-800);
-	--tf-body-color-accent-2: var(--tf-go-zinc-700);
-	--tf-body-color-accent-3: var(--tf-go-zinc-600);
-	--tf-body-page-header: var(--tf-go-zinc-800);
-	//Admin
-	--tf-admin-color: var(--tf-go-red-500);*/
-}
-:root {
   --tf-layout-header-height: 48px;
   --tf-layout-wrapper-height: calc(100vh - var(--tf-layout-header-height));
   --tf-layout-wrapper-aside-width: 60px;
@@ -281,31 +267,31 @@
   --tf-stone-950: oklch(14.7% 0.004 49.25);
 }
 :root body {
-  --neutral-base-color: #808080;
-  --accent-base-color: var(--tf-teal-500);
+  --neutral-base-color: var(--tf-zinc-500);
+  --accent-base-color: var(--tf-sky-500);
   --neutral-layer-card-container: var(--tf-zinc-400);
-  --neutral-layer-floating: var(--tf-zinc-200);
+  --neutral-layer-floating: var(--tf-zinc-800);
   --neutral-layer-1: var(--tf-zinc-300);
   --neutral-layer-2: var(--tf-zinc-400);
   --neutral-layer-3: var(--tf-zinc-500);
   --neutral-layer-4: var(--tf-zinc-600);
-  --fill-color: var(--tf-zinc-300);
-  --accent-fill-rest: var(--tf-teal-400);
-  --accent-fill-hover: var(--tf-teal-600);
-  --accent-fill-active: var(--tf-teal-500);
-  --accent-fill-focus: var(--tf-teal-400);
+  --fill-color: var(--tf-zinc-800);
+  --accent-fill-rest: var(--tf-sky-800);
+  --accent-fill-hover: var(--tf-sky-700);
+  --accent-fill-active: var(--tf-sky-800);
+  --accent-fill-focus: var(--tf-sky-600);
   --foreground-on-accent-rest: var(--tf-zinc-200);
   --foreground-on-accent-hover: var(--tf-zinc-200);
   --foreground-on-accent-active: var(--tf-zinc-200);
   --foreground-on-accent-focus: var(--tf-zinc-200);
-  --accent-foreground-rest: var(--tf-teal-700);
-  --accent-foreground-hover: var(--tf-teal-600);
-  --accent-foreground-active: var(--tf-teal-400);
-  --accent-foreground-focus: var(--tf-teal-700);
-  --accent-stroke-control-rest: linear-gradient(var(--tf-teal-400) 90%, var(--tf-teal-700) 100%);
-  --accent-stroke-control-hover: linear-gradient(var(--tf-teal-500) 90%, var(--tf-teal-800) 100%);
-  --accent-stroke-control-active: var(--tf-teal-500);
-  --accent-stroke-control-focus: linear-gradient(var(--tf-teal-400) 90%, var(--tf-teal-700) 100%);
+  --accent-foreground-rest: var(--tf-sky-700);
+  --accent-foreground-hover: var(--tf-sky-600);
+  --accent-foreground-active: var(--tf-sky-400);
+  --accent-foreground-focus: var(--tf-sky-700);
+  --accent-stroke-control-rest: linear-gradient(var(--tf-sky-600) 90%, var(--tf-sky-700) 100%);
+  --accent-stroke-control-hover: linear-gradient(var(--tf-sky-500) 90%, var(--tf-sky-600) 100%);
+  --accent-stroke-control-active: var(--tf-sky-500);
+  --accent-stroke-control-focus: linear-gradient(var(--tf-sky-400) 90%, var(--tf-sky-700) 100%);
   --neutral-fill-rest: var(--tf-zinc-200);
   --neutral-fill-hover: var(--tf-zinc-400);
   --neutral-fill-active: var(--tf-zinc-300);
@@ -320,8 +306,8 @@
   --neutral-fill-input-alt-focus: var(--tf-zinc-400);
   --neutral-fill-layer-rest: var(--tf-zinc-900);
   --neutral-fill-layer-hover: var(--tf-zinc-800);
-  --neutral-fill-layer-active: var(--tf-zinc-950);
-  --neutral-fill-layer-alt-rest: var(--tf-zinc-200);
+  --neutral-fill-layer-active: var(--tf-zinc-700);
+  --neutral-fill-layer-alt-rest: var(--tf-zinc-950);
   --neutral-fill-secondary-rest: var(--tf-zinc-800);
   --neutral-fill-secondary-hover: var(--tf-zinc-800);
   --neutral-fill-secondary-active: var(--tf-zinc-700);
@@ -339,15 +325,15 @@
   --neutral-foreground-active: var(--tf-zinc-600);
   --neutral-foreground-focus: var(--tf-zinc-200);
   --neutral-foreground-hint: var(--tf-zinc-500);
-  --neutral-stroke-rest: var(--tf-zinc-700);
-  --neutral-stroke-hover: var(--tf-zinc-800);
-  --neutral-stroke-active: var(--tf-zinc-600);
-  --neutral-stroke-focus: var(--tf-zinc-700);
+  --neutral-stroke-rest: var(--tf-zinc-800);
+  --neutral-stroke-hover: var(--tf-zinc-600);
+  --neutral-stroke-active: var(--tf-zinc-500);
+  --neutral-stroke-focus: var(--tf-zinc-600);
   --neutral-stroke-control-rest: linear-gradient(var(--tf-zinc-100) 90%, var(--tf-zinc-700) 100%);
   --neutral-stroke-control-hover: linear-gradient(var(--tf-zinc-200) 90%, var(--tf-zinc-800) 100%);
   --neutral-stroke-control-active: var(--tf-zinc-200);
   --neutral-stroke-control-focus: linear-gradient(var(--tf-zinc-200) 90%, var(--tf-zinc-800) 100%);
-  --neutral-stroke-divider-rest: var(--tf-zinc-500);
+  --neutral-stroke-divider-rest: var(--tf-zinc-700);
   --neutral-stroke-input-rest: linear-gradient(var(--tf-zinc-100) calc(100% - 1px), var(--tf-zinc-800) calc(100% - 1px), var(--tf-zinc-800));
   --neutral-stroke-input-hover: linear-gradient(var(--tf-zinc-200) calc(100% - 1px), var(--tf-zinc-900) calc(100% - 1px), var(--tf-zinc-900));
   --neutral-stroke-input-active: var(--tf-zinc-200);
@@ -365,10 +351,6 @@
   --foreground-on-accent-hover-large: var(--tf-zinc-200);
   --foreground-on-accent-active-large: var(--tf-zinc-200);
   --foreground-on-accent-focus-large: var(--tf-zinc-200);
-  --neutral-fill-inverse-rest-delta: 0;
-  --neutral-fill-inverse-hover-delta: -3;
-  --neutral-fill-inverse-active-delta: 7;
-  --neutral-fill-inverse-focus-delta: 0;
   --neutral-fill-inverse-rest: var(--tf-zinc-900);
   --neutral-fill-inverse-hover: var(--tf-zinc-800);
   --neutral-fill-inverse-active: var(--tf-zinc-950);
@@ -414,12 +396,133 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neutral-fill-secondary-focus);
 }
-/*@import 'anchor-region.less';
-@import 'badge.less';
-@import 'button.less';
-@import 'dialog.less';
-@import 'divider.less';
-@import 'form.less';
-@import 'grid.less';
-@import 'message.less';
+fluent-anchored-region fluent-menu {
+  --neutral-layer-floating: oklch(27.4% 0.006 286.033);
+}
+fluent-anchored-region fluent-menu-item {
+  --neutral-foreground-rest: oklch(92% 0.004 286.32);
+  --neutral-fill-stealth-hover: oklch(37% 0.013 285.805);
+}
+fluent-anchored-region fluent-divider {
+  --neutral-stroke-divider-rest: oklch(37% 0.013 285.805);
+}
+:root .tf-select-menu__body {
+  background: var(--neutral-layer-floating) !important;
+}
+:root .tf-select-menu__body fluent-menu-item .fluent-typography {
+  color: var(--neutral-foreground-rest);
+}
+/*.tf-input-label {
+	color: var(--neutral-foreground-rest) !important;
+}
 */
+.tf-input-description {
+  color: var(--neutral-foreground-hint);
+  font-size: 11px;
+}
+fluent-text-field::part(root),
+fluent-search::part(root),
+fluent-number-field::part(root),
+fluent-select::part(control),
+fluent-text-area::part(control),
+fluent-switch::part(switch),
+.tf-select-btn::part(control) {
+  background: color-mix(in srgb, var(--tf-go-yellow-900) 10%, var(--neutral-fill-layer-rest) 90%) !important;
+  border-color: var(--neutral-fill-layer-active) !important;
+  color: var(--neutral-foreground-rest);
+  fill: var(--neutral-foreground-rest);
+}
+fluent-text-field[readonly]::part(root),
+fluent-number-field[readonly]::part(root),
+fluent-select[readonly]::part(control),
+fluent-text-area[readonly]::part(control),
+fluent-text-field.disabled::part(root),
+fluent-number-field.disabled::part(root),
+fluent-select.disabled::part(control),
+fluent-text-area.disabled::part(control) {
+  /*background: transparent !important;
+	border-color: var(--neutral-fill-layer-active) !important;
+	color: var(--neutral-foreground-rest);*/
+}
+.fluent-input-label {
+  /*color: var(--neutral-foreground-hint) !important;*/
+}
+fluent-radio::part(label),
+fluent-switch::part(label) {
+  /*color: var(--neutral-foreground-rest);*/
+}
+fluent-switch {
+  --neutral-foreground-rest: var(--neutral-fill-layer-active);
+}
+.sortable-item {
+  /*	background-color: var(--neutral-fill-layer-active) !important;
+	border-color: var(--neutral-fill-layer-active) !important;*/
+}
+.sortable-item .sortable-grab {
+  /*background-color: var(--neutral-fill-layer-hover) !important;*/
+}
+fluent-select::part(listbox) {
+  background-color: oklch(27.4% 0.006 286.033) !important;
+}
+fluent-select fluent-option {
+  background: transparent !important;
+  color: oklch(92.8% 0.006 264.531);
+}
+fluent-select fluent-option:hover {
+  background-color: oklch(37% 0.013 285.805) !important;
+}
+fluent-button.accent {
+  --foreground-on-accent-rest: var(--tf-white);
+  --foreground-on-accent-hover: var(--tf-white);
+  --foreground-on-accent-active: var(--tf-white);
+  --foreground-on-accent-focus: var(--tf-white);
+  --neutral-layer-1: var(--tf-white);
+}
+fluent-button.neutral {
+  color: oklch(27.4% 0.006 286.033);
+  --neutral-fill-rest: oklch(96.7% 0.003 264.542);
+  --neutral-fill-hover: oklch(92% 0.004 286.32);
+  --neutral-fill-active: oklch(96.7% 0.003 264.542);
+  --neutral-fill-focus: oklch(96.7% 0.003 264.542);
+  --neutral-stroke-control-rest: oklch(70.5% 0.015 286.067);
+  --neutral-stroke-control-hover: oklch(70.5% 0.015 286.067);
+  --neutral-stroke-control-active: oklch(70.5% 0.015 286.067);
+  --neutral-stroke-control-focus: oklch(70.5% 0.015 286.067);
+}
+fluent-data-grid-row:has([row-selected]) {
+  background-color: var(--tf-body-color-accent);
+}
+.tf-grid .tf-grid-thead tr > .tf-grid-th,
+.tf-grid .tf-grid-thead tr > .tf-grid-td {
+  color: var(--tf-font-color-mute);
+}
+.tf-grid-thead-bkg {
+  background: var(--tf-body-color-accent);
+}
+.tf-grid-td,
+.tf-grid-th {
+  color: var(--tf-font-color);
+  border: 1px solid var(--tf-body-color-accent);
+}
+.tf-grid .tf-grid-tbody tr > .tf-grid-th::before,
+.tf-grid .tf-grid-tbody tr > .tf-grid-td::before {
+  background-color: var(--tf-body-color);
+}
+.tf-grid__pager {
+  background: var(--tf-body-color-accent) !important;
+  border-color: var(--tf-body-color-accent-2) !important;
+}
+:root .tf-layout__body {
+  --tf-layout-color-mute: color-mix(in srgb, var(--accent-base-color) 10%, var(--neutral-fill-layer-rest) 90%);
+  --tf-layout-color: color-mix(in srgb, var(--accent-base-color) 20%, var(--neutral-fill-layer-rest) 80%);
+  --tf-layout-color-accent: color-mix(in srgb, var(--accent-base-color) 30%, var(--neutral-fill-layer-rest) 70%);
+  --tf-layout-color-accent-2: color-mix(in srgb, var(--accent-base-color) 60%, var(--neutral-fill-layer-rest) 40%);
+}
+.fluent-messagebar.intent-info {
+  background-color: color-mix(in srgb, var(--tf-go-blue-500) 15%, var(--tf-body-color) 85%) !important;
+  border-color: color-mix(in srgb, var(--tf-go-blue-500) 15%, var(--tf-body-color) 85%) !important;
+  color: var(--tf-font-color);
+}
+:root .tf-navigation.admin {
+  --accent-fill-rest: var(--tf-red-500);
+}

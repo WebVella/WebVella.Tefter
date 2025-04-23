@@ -15,20 +15,11 @@
 	color: rgba(255,255,255,0.75);
 }
 
-::deep.usernav .actions > fluent-anchor::part(control),
-::deep.usernav .actions > fluent-button::part(control),
-::deep.usernav .actions > .language-switch > fluent-button::part(control){
-	background: var(--tf-body-color) !important;
-	color: var(--tf-font-color);
-}
-
-	::deep.usernav .actions > fluent-button svg,
-	::deep.usernav .actions > fluent-anchor svg{
-		fill: var(--tf-font-color) !important;
-	}
-
-::deep.usernav .actions > fluent-anchor:hover::part(control),
-::deep.usernav .actions > fluent-button:hover::part(control),
-::deep.usernav .actions > .language-switch > fluent-button:hover::part(control){
-	background: var(--tf-body-color-accent) !important;
+::deep.usernav .actions > fluent-anchor,
+::deep.usernav .actions > fluent-button,
+::deep.usernav .actions > .language-switch > fluent-button{
+	--neutral-fill-stealth-rest: var(--neutral-fill-layer-rest);
+	--neutral-foreground-rest: var(--neutral-foreground-rest);
+	--neutral-fill-stealth-hover: var(--neutral-fill-layer-hover);
+	--neutral-fill-stealth-active: var(--neutral-fill-layer-active);
 }

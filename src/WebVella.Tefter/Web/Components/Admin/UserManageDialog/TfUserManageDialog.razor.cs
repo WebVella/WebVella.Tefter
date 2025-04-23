@@ -23,7 +23,7 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create user") : LOC("Manage user");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? new Icons.Regular.Size20.Add() : new Icons.Regular.Size20.Save();
+		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
 
 		if (_isCreate)
 		{

@@ -1,4 +1,10 @@
-﻿/*Message*/
+﻿
+*:focus,
+*:focus-visible {
+	outline: none !important;
+}
+
+/*Message*/
 .fluent-messagebar-message .title {
 	display: block;
 }
@@ -10,6 +16,7 @@ div[class ^='fluent-messagebar'],
 }
 
 /*Anchor region*/
+
 fluent-anchored-region fluent-menu-item {
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -68,7 +75,7 @@ fluent-switch::part(label) {
 }
 
 .fluent-dialog-header fluent-button::part(control) {
-	/*background: transparent;*/
+	background: transparent;
 }
 
 .fluent-dialog-header fluent-button:hover::part(control) {

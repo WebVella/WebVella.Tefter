@@ -3,18 +3,6 @@ public partial class TfLayoutBody : ComponentBase
 {
 	[Parameter] public RenderFragment Aside { get; set; }
 	[Parameter] public RenderFragment ChildContent { get; set; }
-	private string _styles
-	{
-		get
-		{
-			var sb = new StringBuilder();
-			sb.AppendLine("<style>");
-			sb.AppendLine(":root .tf-layout__body {");
-			sb.AppendLine("}");
-			sb.AppendLine("</style>");
-			return sb.ToString();
-		}
-	}
 
 	private string _layoutClass
 	{

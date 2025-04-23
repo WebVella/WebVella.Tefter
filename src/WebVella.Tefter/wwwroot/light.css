@@ -280,110 +280,108 @@
   --tf-stone-900: oklch(21.6% 0.006 56.043);
   --tf-stone-950: oklch(14.7% 0.004 49.25);
 }
-:root body {
-  --neutral-base-color: #808080;
-  --accent-base-color: #0078d4;
-  --neutral-layer-card-container: #f3f3f3;
-  --neutral-layer-floating: #ffffff;
-  --neutral-layer-1: #fbfbfb;
-  --neutral-layer-2: #f3f3f3;
-  --neutral-layer-3: #ebebeb;
-  --neutral-layer-4: #e0e0e0;
-  --fill-color: #fbfbfb;
-  --accent-fill-rest: #036ac4;
-  --accent-fill-hover: #0473ce;
-  --accent-fill-active: #0481e0;
-  --accent-fill-focus: #036ac4;
-  --foreground-on-accent-rest: #ffffff;
-  --foreground-on-accent-hover: #ffffff;
-  --foreground-on-accent-active: #ffffff;
-  --foreground-on-accent-focus: #ffffff;
-  --accent-foreground-rest: #023b8f;
-  --accent-foreground-hover: #012e7f;
-  --accent-foreground-active: #0360b9;
-  --accent-foreground-focus: #023b8f;
-  --accent-stroke-control-rest: linear-gradient(#1c79ca 90%, #024885 100%);
-  --accent-stroke-control-hover: linear-gradient(#1b80d2 90%, #035292 100%);
-  --accent-stroke-control-active: #1b8ce3;
-  --accent-stroke-control-focus: linear-gradient(#1c79ca 90%, #024885 100%);
-  --neutral-fill-rest: #ffffff;
-  --neutral-fill-hover: #f7f7f7;
-  --neutral-fill-active: #fbfbfb;
-  --neutral-fill-focus: #fbfbfb;
-  --neutral-fill-input-rest: #ffffff;
-  --neutral-fill-input-hover: #f7f7f7;
-  --neutral-fill-input-active: #fbfbfb;
-  --neutral-fill-input-focus: #ffffff;
-  --neutral-fill-input-alt-rest: #f3f3f3;
-  --neutral-fill-input-alt-hover: #ebebeb;
-  --neutral-fill-input-alt-active: #e0e0e0;
-  --neutral-fill-input-alt-focus: #f3f3f3;
-  --neutral-fill-layer-rest: var(--tf-go-stone-100);
-  --neutral-fill-layer-hover: #ffffff;
-  --neutral-fill-layer-active: #ffffff;
-  --neutral-fill-layer-alt-rest: #ffffff;
-  --neutral-fill-secondary-rest: #efefef;
-  --neutral-fill-secondary-hover: #f3f3f3;
-  --neutral-fill-secondary-active: #f7f7f7;
-  --neutral-fill-secondary-focus: #efefef;
-  --neutral-fill-stealth-rest: #fbfbfb;
-  --neutral-fill-stealth-hover: #efefef;
-  --neutral-fill-stealth-active: #f3f3f3;
-  --neutral-fill-stealth-focus: #fbfbfb;
-  --neutral-fill-strong-rest: #717171;
-  --neutral-fill-strong-hover: #4b4b4b;
-  --neutral-fill-strong-active: #868686;
-  --neutral-fill-strong-focus: #717171;
-  --neutral-foreground-rest: #1a1a1a;
-  --neutral-foreground-hover: #7a7a7a;
-  --neutral-foreground-active: #a8a8a8;
-  --neutral-foreground-focus: #1a1a1a;
-  --neutral-foreground-hint: #717171;
-  --neutral-stroke-rest: #d6d6d6;
-  --neutral-stroke-hover: #c6c6c6;
-  --neutral-stroke-active: #e0e0e0;
-  --neutral-stroke-focus: #d6d6d6;
-  --neutral-stroke-control-rest: linear-gradient(#efefef 90%, #d6d6d6 100%);
-  --neutral-stroke-control-hover: linear-gradient(#e5e5e5 90%, #cecece 100%);
-  --neutral-stroke-control-active: #e5e5e5;
-  --neutral-stroke-control-focus: linear-gradient(#e5e5e5 90%, #cecece 100%);
-  --neutral-stroke-divider-rest: #ebebeb;
-  --neutral-stroke-input-rest: linear-gradient(#efefef calc(100% - 1px), #929292 calc(100% - 1px), #929292);
-  --neutral-stroke-input-hover: linear-gradient(#e5e5e5 calc(100% - 1px), #8a8a8a calc(100% - 1px), #8a8a8a);
-  --neutral-stroke-input-active: #e5e5e5;
-  --neutral-stroke-input-focus: linear-gradient(#e5e5e5 calc(100% - 1px), #8a8a8a calc(100% - 1px), #8a8a8a);
-  --neutral-stroke-layer-rest: #efefef;
-  --neutral-stroke-layer-hover: #efefef;
-  --neutral-stroke-layer-active: #efefef;
-  --neutral-stroke-strong-rest: #636363;
-  --neutral-stroke-strong-hover: #636363;
-  --neutral-stroke-strong-active: #636363;
-  --neutral-stroke-strong-focus: #636363;
-  --focus-stroke-outer: #000000;
-  --focus-stroke-inner: #ffffff;
-  --foreground-on-accent-rest-large: #ffffff;
-  --foreground-on-accent-hover-large: #ffffff;
-  --foreground-on-accent-active-large: #ffffff;
-  --foreground-on-accent-focus-large: #ffffff;
-  --neutral-fill-inverse-rest-delta: 0;
-  --neutral-fill-inverse-hover-delta: -3;
-  --neutral-fill-inverse-active-delta: 7;
-  --neutral-fill-inverse-focus-delta: 0;
-  --neutral-fill-inverse-rest: #131313;
-  --neutral-fill-inverse-hover: #272727;
-  --neutral-fill-inverse-active: #000000;
-  --neutral-fill-inverse-focus: #131313;
-  --neutral-fill-stealth-rest-on-neutral-fill-layer-rest: #ffffff;
-  --neutral-fill-stealth-hover-on-neutral-fill-layer-rest: #f3f3f3;
-  --neutral-fill-stealth-active-on-neutral-fill-layer-rest: #f7f7f7;
-  --input-placeholder-rest: #767676;
-  --input-placeholder-hover: #717171;
-  --input-filled-placeholder-rest: #6c6c6c;
-  --input-filled-placeholder-hover: #6c6c6c;
-  --clear-button-hover: #f3f3f3;
-  --clear-button-active: #f7f7f7;
-  --tree-item-expand-collapse-hover: #e0e0e0;
-  --tree-item-expand-collapse-selected-hover: #e0e0e0;
+:root body,
+:root fluent-anchored-region,
+:root fluent-dialog {
+  --neutral-base-color: var(--tf-zinc-500);
+  --accent-base-color: var(--tf-sky-500);
+  --neutral-layer-card-container: var(--tf-zinc-600);
+  --neutral-layer-floating: var(--tf-zinc-200);
+  --neutral-layer-1: var(--tf-zinc-700);
+  --neutral-layer-2: var(--tf-zinc-600);
+  --neutral-layer-3: var(--tf-zinc-500);
+  --neutral-layer-4: var(--tf-zinc-400);
+  --fill-color: var(--tf-zinc-50);
+  --accent-fill-rest: var(--tf-sky-600);
+  --accent-fill-hover: var(--tf-sky-500);
+  --accent-fill-active: var(--tf-sky-400);
+  --accent-fill-focus: var(--tf-sky-600);
+  --foreground-on-accent-rest: var(--tf-zinc-800);
+  --foreground-on-accent-hover: var(--tf-zinc-800);
+  --foreground-on-accent-active: var(--tf-zinc-800);
+  --foreground-on-accent-focus: var(--tf-zinc-800);
+  --accent-foreground-rest: var(--tf-sky-700);
+  --accent-foreground-hover: var(--tf-sky-600);
+  --accent-foreground-active: var(--tf-sky-400);
+  --accent-foreground-focus: var(--tf-sky-700);
+  --accent-stroke-control-rest: linear-gradient(var(--tf-sky-600) 90%, var(--tf-sky-700) 100%);
+  --accent-stroke-control-hover: linear-gradient(var(--tf-sky-500) 90%, var(--tf-sky-600) 100%);
+  --accent-stroke-control-active: var(--tf-sky-500);
+  --accent-stroke-control-focus: linear-gradient(var(--tf-sky-400) 90%, var(--tf-sky-700) 100%);
+  --neutral-fill-rest: var(--tf-zinc-800);
+  --neutral-fill-hover: var(--tf-zinc-600);
+  --neutral-fill-active: var(--tf-zinc-700);
+  --neutral-fill-focus: var(--tf-zinc-700);
+  --neutral-fill-input-rest: var(--tf-white);
+  --neutral-fill-input-hover: var(--tf-white);
+  --neutral-fill-input-active: var(--tf-white);
+  --neutral-fill-input-focus: var(--tf-white);
+  --neutral-fill-input-alt-rest: var(--tf-zinc-600);
+  --neutral-fill-input-alt-hover: var(--tf-zinc-500);
+  --neutral-fill-input-alt-active: var(--tf-zinc-400);
+  --neutral-fill-input-alt-focus: var(--tf-zinc-600);
+  --neutral-fill-layer-rest: var(--tf-zinc-100);
+  --neutral-fill-layer-hover: var(--tf-zinc-200);
+  --neutral-fill-layer-active: var(--tf-zinc-50);
+  --neutral-fill-layer-alt-rest: var(--tf-zinc-800);
+  --neutral-fill-secondary-rest: var(--tf-zinc-200);
+  --neutral-fill-secondary-hover: var(--tf-zinc-200);
+  --neutral-fill-secondary-active: var(--tf-zinc-300);
+  --neutral-fill-secondary-focus: var(--tf-zinc-200);
+  --neutral-fill-stealth-rest: var(--tf-zinc-100);
+  --neutral-fill-stealth-hover: var(--tf-zinc-200);
+  --neutral-fill-stealth-active: var(--tf-zinc-400);
+  --neutral-fill-stealth-focus: var(--tf-zinc-300);
+  --neutral-fill-strong-rest: var(--tf-zinc-600);
+  --neutral-fill-strong-hover: var(--tf-zinc-500);
+  --neutral-fill-strong-active: var(--tf-zinc-300);
+  --neutral-fill-strong-focus: var(--tf-zinc-600);
+  --neutral-foreground-rest: var(--tf-zinc-800);
+  --neutral-foreground-hover: var(--tf-zinc-600);
+  --neutral-foreground-active: var(--tf-zinc-400);
+  --neutral-foreground-focus: var(--tf-zinc-800);
+  --neutral-foreground-hint: var(--tf-zinc-500);
+  --neutral-stroke-rest: var(--tf-zinc-300);
+  --neutral-stroke-hover: var(--tf-zinc-200);
+  --neutral-stroke-active: var(--tf-zinc-400);
+  --neutral-stroke-focus: var(--tf-zinc-300);
+  --neutral-stroke-control-rest: linear-gradient(var(--tf-zinc-900) 90%, var(--tf-zinc-300) 100%);
+  --neutral-stroke-control-hover: linear-gradient(var(--tf-zinc-800) 90%, var(--tf-zinc-200) 100%);
+  --neutral-stroke-control-active: var(--tf-zinc-800);
+  --neutral-stroke-control-focus: linear-gradient(var(--tf-zinc-800) 90%, var(--tf-zinc-200) 100%);
+  --neutral-stroke-divider-rest: var(--tf-zinc-300);
+  --neutral-stroke-input-rest: var(--tf-zinc-300);
+  --neutral-stroke-input-hover: linear-gradient(var(--tf-zinc-400) calc(100% - 1px), var(--tf-zinc-300) calc(100% - 1px), var(--tf-zinc-300));
+  --neutral-stroke-input-active: var(--tf-zinc-500);
+  --neutral-stroke-input-focus: linear-gradient(var(--tf-zinc-400) calc(100% - 1px), var(--tf-zinc-300) calc(100% - 1px), var(--tf-zinc-300));
+  --neutral-stroke-layer-rest: var(--tf-zinc-900);
+  --neutral-stroke-layer-hover: var(--tf-zinc-900);
+  --neutral-stroke-layer-active: var(--tf-zinc-900);
+  --neutral-stroke-strong-rest: var(--tf-zinc-400);
+  --neutral-stroke-strong-hover: var(--tf-zinc-400);
+  --neutral-stroke-strong-active: var(--tf-zinc-400);
+  --neutral-stroke-strong-focus: var(--tf-zinc-400);
+  --focus-stroke-outer: var(--tf-black);
+  --focus-stroke-inner: var(--tf-zinc-800);
+  --foreground-on-accent-rest-large: var(--tf-zinc-800);
+  --foreground-on-accent-hover-large: var(--tf-zinc-800);
+  --foreground-on-accent-active-large: var(--tf-zinc-800);
+  --foreground-on-accent-focus-large: var(--tf-zinc-800);
+  --neutral-fill-inverse-rest: var(--tf-zinc-100);
+  --neutral-fill-inverse-hover: var(--tf-zinc-200);
+  --neutral-fill-inverse-active: var(--tf-zinc-50);
+  --neutral-fill-inverse-focus: var(--tf-zinc-100);
+  --neutral-fill-stealth-rest-on-neutral-fill-layer-rest: var(--tf-zinc-800);
+  --neutral-fill-stealth-hover-on-neutral-fill-layer-rest: var(--tf-zinc-600);
+  --neutral-fill-stealth-active-on-neutral-fill-layer-rest: var(--tf-zinc-600);
+  --input-placeholder-rest: var(--tf-zinc-400);
+  --input-placeholder-hover: var(--tf-zinc-600);
+  --input-filled-placeholder-rest: var(--tf-zinc-500);
+  --input-filled-placeholder-hover: var(--tf-zinc-500);
+  --clear-button-hover: var(--tf-zinc-600);
+  --clear-button-active: var(--tf-zinc-600);
+  --tree-item-expand-collapse-hover: var(--tf-zinc-400);
+  --tree-item-expand-collapse-selected-hover: var(--tf-zinc-400);
   --success: var(--tf-green-500);
   --warning: var(--tf-orange-500);
   --error: var(--tf-red-500);
@@ -397,66 +395,45 @@
   --presence-unknown: var(--tf-red-700);
   --highlight-bg: var(--tf-yellow-100);
 }
-fluent-anchored-region > div {
-  box-shadow: none !important;
-  background-color: transparent !important;
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
-fluent-anchored-region fluent-menu {
-  background-color: var(--tf-body-color-accent);
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--tf-body-color-mute);
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--tf-body-color-accent-2);
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tf-body-color-accent);
+}
+fluent-anchored-region fluent-menu,
+fluent-anchored-region .tf-select-menu {
+  --neutral-layer-floating: oklch(98.5% 0 0);
 }
 fluent-anchored-region fluent-menu-item {
-  color: var(--tf-font-color);
+  --neutral-foreground-rest: oklch(27.4% 0.006 286.033);
+  --neutral-fill-stealth-hover: oklch(92% 0.004 286.32);
 }
-fluent-anchored-region fluent-menu-item:not([disabled]):hover {
-  background-color: var(--tf-body-color-accent-2);
-}
-fluent-anchored-region fluent-menu > fluent-divider {
-  border-top-color: var(--tf-body-color-accent-2) !important;
-  border-top-width: 1px !important;
-}
-fluent-badge.neutral:not([fill="somevalue"])::part(control) {
-  background-color: var(--tf-body-color-accent-2) !important;
-  color: var(--tf-font-color);
-}
-fluent-button {
-  --neutral-foreground-rest: var(--tf-font-color-mute) !important;
-}
-fluent-button.outline {
-  --neutral-stroke-rest: var(--tf-body-color-accent-2);
-  --neutral-stroke-hover: var(--tf-body-color-accent);
-}
-fluent-button.accent {
-  --neutral-stroke-rest: var(--tf-body-color-accent-2);
-  --neutral-stroke-hover: var(--tf-body-color-accent);
-  --accent-fill-hover: var(--accent-foreground-hover);
-}
-fluent-button.accent::part(control) {
-  border-color: var(--neutral-stroke-rest);
-}
-fluent-button.accent svg {
-  fill: var(--tf-body-color-accent) !important;
-}
-fluent-dialog {
-  --fill-color: var(--tf-body-color-accent);
-}
-fluent-divider {
-  border-color: var(--tf-body-color-accent);
-  border-width: 3px;
-}
-:root .tf-select-menu {
-  background: var(--tf-body-color-accent) !important;
+fluent-anchored-region fluent-divider {
+  --neutral-stroke-divider-rest: oklch(87.1% 0.006 286.286);
 }
 :root .tf-select-menu__body {
-  background: var(--tf-body-color-accent) !important;
+  background: var(--neutral-layer-floating) !important;
 }
 :root .tf-select-menu__body fluent-menu-item .fluent-typography {
-  color: var(--tf-font-color);
+  color: var(--neutral-foreground-rest);
 }
 .tf-input-label {
-  color: var(--tf-font-color) !important;
+  /*color: var(--neutral-foreground-rest) !important;*/
 }
 .tf-input-description {
-  color: var(--tf-font-color-mute);
+  color: var(--neutral-foreground-hint);
   font-size: 11px;
 }
 fluent-text-field::part(root),
@@ -466,9 +443,10 @@ fluent-select::part(control),
 fluent-text-area::part(control),
 fluent-switch::part(switch),
 .tf-select-btn::part(control) {
-  background: color-mix(in srgb, var(--tf-go-yellow-300) 10%, var(--tf-body-color) 90%) !important;
-  border-color: var(--tf-body-color-accent-2) !important;
-  color: var(--tf-font-color) !important;
+  background: color-mix(in srgb, var(--tf-go-yellow-900) 10%, var(--neutral-fill-layer-rest) 90%) !important;
+  border-color: var(--neutral-stroke-input-rest) !important;
+  color: var(--neutral-foreground-rest);
+  fill: var(--neutral-foreground-rest);
 }
 fluent-text-field[readonly]::part(root),
 fluent-number-field[readonly]::part(root),
@@ -479,22 +457,53 @@ fluent-number-field.disabled::part(root),
 fluent-select.disabled::part(control),
 fluent-text-area.disabled::part(control) {
   background: transparent !important;
-  border-color: var(--tf-body-color-accent-2) !important;
-  color: var(--tf-font-color);
+  border-color: var(--neutral-stroke-input-rest) !important;
+  color: var(--neutral-foreground-rest);
 }
 .fluent-input-label {
-  color: var(--neutral-foreground-hint) !important;
+  /*color: var(--neutral-foreground-hint) !important;*/
 }
 fluent-radio::part(label),
 fluent-switch::part(label) {
-  color: var(--tf-font-color);
+  /*color: var(--neutral-foreground-rest);*/
+}
+fluent-switch {
+  --neutral-foreground-rest: var(--neutral-fill-layer-active);
 }
 .sortable-item {
-  background-color: var(--tf-body-color-accent-2) !important;
-  border-color: var(--tf-body-color-accent-3) !important;
+  /*background-color: var(--neutral-fill-layer-active) !important;
+	border-color: var(--neutral-fill-layer-active) !important;*/
 }
 .sortable-item .sortable-grab {
-  background-color: var(--tf-body-color-accent) !important;
+  /*background-color: var(--neutral-fill-layer-hover) !important;*/
+}
+fluent-select::part(listbox) {
+  background-color: oklch(96.7% 0.003 264.542) !important;
+}
+fluent-select fluent-option {
+  background: transparent !important;
+  color: oklch(27.9% 0.041 260.031);
+}
+fluent-select fluent-option:hover {
+  background-color: oklch(92.8% 0.006 264.531) !important;
+}
+fluent-button.accent {
+  --foreground-on-accent-rest: var(--tf-white);
+  --foreground-on-accent-hover: var(--tf-white);
+  --foreground-on-accent-active: var(--tf-white);
+  --foreground-on-accent-focus: var(--tf-white);
+  --neutral-layer-1: var(--tf-white);
+}
+fluent-button.neutral {
+  color: oklch(27.4% 0.006 286.033);
+  --neutral-fill-rest: oklch(96.7% 0.003 264.542);
+  --neutral-fill-hover: oklch(92% 0.004 286.32);
+  --neutral-fill-active: oklch(96.7% 0.003 264.542);
+  --neutral-fill-focus: oklch(96.7% 0.003 264.542);
+  --neutral-stroke-control-rest: oklch(70.5% 0.015 286.067);
+  --neutral-stroke-control-hover: oklch(70.5% 0.015 286.067);
+  --neutral-stroke-control-active: oklch(70.5% 0.015 286.067);
+  --neutral-stroke-control-focus: oklch(70.5% 0.015 286.067);
 }
 fluent-data-grid-row:has([row-selected]) {
   background-color: var(--tf-body-color-accent);
@@ -515,25 +524,17 @@ fluent-data-grid-row:has([row-selected]) {
   background: var(--tf-body-color-accent);
   border-color: var(--tf-body-color-accent-2);
 }
+:root .tf-layout__body {
+  --tf-layout-color-mute: color-mix(in srgb, var(--accent-base-color) 10%, var(--neutral-fill-layer-rest) 90%);
+  --tf-layout-color: color-mix(in srgb, var(--accent-base-color) 20%, var(--neutral-fill-layer-rest) 80%);
+  --tf-layout-color-accent: color-mix(in srgb, var(--accent-base-color) 60%, var(--neutral-fill-layer-rest) 40%);
+  --tf-layout-color-accent-2: color-mix(in srgb, var(--accent-base-color) 80%, var(--neutral-fill-layer-rest) 20%);
+}
 .fluent-messagebar.intent-info {
   background-color: var(--tf-go-blue-100) !important;
   border-color: var(--tf-go-blue-200) !important;
   color: var(--tf-font-color);
 }
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-/* Track */
-::-webkit-scrollbar-track {
-  background: var(--tf-body-color-mute);
-}
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: var(--tf-body-color-accent-2);
-}
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: var(--tf-body-color-accent);
+:root .tf-navigation.admin {
+  --accent-fill-rest: var(--tf-red-500);
 }

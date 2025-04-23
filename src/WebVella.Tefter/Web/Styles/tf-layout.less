@@ -67,19 +67,14 @@ body {
 	}
 
 	&__body {
-		/*Definitions*/
-		--tf-layout-body-color-mute: color-mix(in srgb, var(--accent-base-color) 10%, var(--neutral-fill-layer-rest) 90%);
-		--tf-layout-body-color: color-mix(in srgb, var(--accent-base-color) 20%, var(--neutral-fill-layer-rest) 80%);
-		--tf-layout-body-color-accent: color-mix(in srgb, var(--accent-base-color) 40%, var(--neutral-fill-layer-rest) 60%);
-		--tf-layout-body-color-accent-2: color-mix(in srgb, var(--accent-base-color) 70%, var(--neutral-fill-layer-rest) 30%);
 		/*CSS*/
 		flex: 1 1 auto;
 		width: var(--tf-layout-wrapper-body-width);
 		display: flex;
 		background: var(--neutral-fill-layer-rest) !important;
 		border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
-		border-top: 3px solid var(--tf-layout-body-color-accent);
-		border-left: 1px solid var(--tf-layout-body-color-accent);
+		border-top: 3px solid var(--tf-layout-color-accent-2);
+		border-left: 1px solid var(--tf-layout-color-accent-2);
 
 		&__aside {
 			flex: 0 0 auto;
@@ -87,11 +82,11 @@ body {
 			display: flex;
 			flex-flow: column;
 			position: relative;
-			border-right: 1px solid var(--neutral-stroke-input-rest);
+			border-right: 1px solid var(--tf-layout-color-accent);
 			border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 
 			&:before {
-				background: var(--tf-layout-body-color);
+				background: var(--tf-layout-color);
 				border-radius: 6px 0 0 0;
 				content: "";
 				position: absolute;
@@ -132,8 +127,8 @@ body {
 			&__header {
 				flex: 0 0 auto;
 				padding: 0 var(--tf-body-content-padding);
-				background: var(--tf-body-page-header);
-				border-bottom: 1px solid var(--tf-body-color-accent);
+				background: var(--neutral-fill-layer-hover);
+				border-bottom: 1px solid var(--tf-layout-color-accent);
 				display: flex;
 				border-radius: var(--tf-layout-wrapper-body-border-radius) 0 0 0;
 

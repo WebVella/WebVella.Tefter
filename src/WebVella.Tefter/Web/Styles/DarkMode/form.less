@@ -1,22 +1,20 @@
 ﻿
 :root .tf-select-menu {
-	background: var(--tf-body-color-accent) !important;
-
 	&__body {
-		background: var(--tf-body-color-accent) !important;
+		background: var(--neutral-layer-floating) !important;
 
 		fluent-menu-item .fluent-typography {
-			color: var(--tf-font-color-mute);
+			color: var(--neutral-foreground-rest);
 		}
 	}
 }
 
-.tf-input-label {
-	color: var(--tf-font-color) !important;
+/*.tf-input-label {
+	color: var(--neutral-foreground-rest) !important;
 }
-
+*/
 .tf-input-description {
-	color: var(--tf-font-color-mute);
+	color: var(--neutral-foreground-hint);
 	font-size: 11px;
 }
 
@@ -27,10 +25,10 @@ fluent-select::part(control),
 fluent-text-area::part(control),
 fluent-switch::part(switch),
 .tf-select-btn::part(control) {
-	background: color-mix(in srgb, var(--tf-go-yellow-900)10%, var(--tf-body-color) 90%) !important;
-	border-color: var(--tf-body-color-accent-2) !important;
-	color: var(--tf-font-color);
-	fill:var(--tf-font-color);
+	background: color-mix(in srgb, var(--tf-go-yellow-900)10%, var(--neutral-fill-layer-rest) 90%) !important;
+	border-color: var(--neutral-fill-layer-active) !important;
+	color: var(--neutral-foreground-rest);
+	fill: var(--neutral-foreground-rest);
 }
 
 
@@ -42,43 +40,66 @@ fluent-text-field.disabled::part(root),
 fluent-number-field.disabled::part(root),
 fluent-select.disabled::part(control),
 fluent-text-area.disabled::part(control) {
-	background: transparent !important;
-	border-color: var(--tf-body-color-accent-2) !important;
-	color: var(--tf-font-color);
+	/*background: transparent !important;
+	border-color: var(--neutral-fill-layer-active) !important;
+	color: var(--neutral-foreground-rest);*/
 }
 
 .fluent-input-label {
-	color: var(--neutral-foreground-hint) !important;
+	/*color: var(--neutral-foreground-hint) !important;*/
 }
 
 fluent-radio::part(label),
 fluent-switch::part(label) {
-	color: var(--tf-font-color);
+	/*color: var(--neutral-foreground-rest);*/
 }
+
 fluent-switch {
-	--neutral-foreground-rest: var(--tf-body-color-accent-2);
+	--neutral-foreground-rest: var(--neutral-fill-layer-active);
 }
 
 .sortable-item {
-	background-color: var(--tf-body-color-accent-2) !important;
-	border-color: var(--tf-body-color-accent-3) !important;
+/*	background-color: var(--neutral-fill-layer-active) !important;
+	border-color: var(--neutral-fill-layer-active) !important;*/
 
 	.sortable-grab {
-		background-color: var(--tf-body-color-accent) !important;
+		/*background-color: var(--neutral-fill-layer-hover) !important;*/
 	}
 }
 
 fluent-select {
 	&::part(listbox) {
-		background-color: var(--tf-body-color-accent) !important;
+		background-color: oklch(27.4% .006 286.033) !important;
 	}
 
 	fluent-option {
 		background: transparent !important;
-		color:var(--tf-font-color);
+		color: oklch(92.8% .006 264.531);
 
 		&:hover {
-			background-color: var(--tf-body-color-accent-2) !important;
+			background-color: oklch(37% .013 285.805) !important;
 		}
+	}
+}
+
+fluent-button {
+	&.accent {
+		--foreground-on-accent-rest: var(--tf-white);
+		--foreground-on-accent-hover: var(--tf-white);
+		--foreground-on-accent-active: var(--tf-white);
+		--foreground-on-accent-focus: var(--tf-white);
+		--neutral-layer-1: var(--tf-white);
+	}
+
+	&.neutral {
+		color: oklch(27.4% .006 286.033);
+		--neutral-fill-rest: oklch(96.7% .003 264.542);
+		--neutral-fill-hover: oklch(92% .004 286.32);
+		--neutral-fill-active: oklch(96.7% .003 264.542);
+		--neutral-fill-focus: oklch(96.7% .003 264.542);
+		--neutral-stroke-control-rest: oklch(70.5% .015 286.067);
+		--neutral-stroke-control-hover: oklch(70.5% .015 286.067);
+		--neutral-stroke-control-active: oklch(70.5% .015 286.067);
+		--neutral-stroke-control-focus: oklch(70.5% .015 286.067);
 	}
 }

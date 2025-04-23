@@ -4,7 +4,7 @@
 	private RenderFragment NotificationIcon() =>
         @<FluentIcon Value="@TfConstants.GetIcon("Alert")" Color="Color.Neutral" Title="Notification center" />;
 }
-<FluentButton BackgroundColor="var(--neutral-layer-4)" OnClick="OpenNotificationCenterAsync"
+<FluentButton OnClick="OpenNotificationCenterAsync"
 			  Title="Notification center" Appearance="Appearance.Stealth">
 	@if (MessageService.Count(TfConstants.MESSAGES_NOTIFICATION_CENTER) > 0)
 	{
