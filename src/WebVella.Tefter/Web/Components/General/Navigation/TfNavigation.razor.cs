@@ -52,8 +52,8 @@ public partial class TfNavigation : TfBaseComponent
 		_topMenuItems.Add(new TucMenuItem()
 		{
 			Id = TfConverters.ConvertGuidToHtmlElementId(new Guid("b79b0776-0587-46d0-85bf-32b998aec4e8")),
-			IconExpanded = TfConstants.HomeIcon.WithColor(_defaultColor.ToColorString()),
-			IconCollapsed = TfConstants.HomeIcon.WithColor(_defaultColor.ToColorString()),
+			IconExpanded = TfConstants.HomeIcon.WithColor(_defaultColor.GetAttribute().Value),
+			IconCollapsed = TfConstants.HomeIcon.WithColor(_defaultColor.GetAttribute().Value),
 			IconColor = _defaultColor,
 			Text = TfConstants.HomeMenuTitle,
 			Url = "/",
@@ -65,8 +65,8 @@ public partial class TfNavigation : TfBaseComponent
 			_topMenuItems.Add(new TucMenuItem()
 			{
 				Id = TfConverters.ConvertGuidToHtmlElementId(new Guid("5277cf88-d852-4af6-b551-7650fca3a596")),
-				IconExpanded = TfConstants.ApplicationIcon.WithColor(_defaultColor.ToColorString()),
-				IconCollapsed = TfConstants.ApplicationIcon.WithColor(_defaultColor.ToColorString()),
+				IconExpanded = TfConstants.ApplicationIcon.WithColor(_defaultColor.GetAttribute().Value),
+				IconCollapsed = TfConstants.ApplicationIcon.WithColor(_defaultColor.GetAttribute().Value),
 				IconColor = _defaultColor,
 				Text = TfConstants.PagesMenuTitle,
 				Url = string.Format(TfConstants.PagesSinglePageUrl, TfAppState.Value.Pages[0].Id),
@@ -80,8 +80,8 @@ public partial class TfNavigation : TfBaseComponent
 			_mainMenuItems.Add(new TucMenuItem()
 			{
 				Id = item.Id,
-				IconCollapsed = item.IconCollapsed.WithColor(item.IconColor.ToColorString()),
-				IconExpanded = item.IconExpanded.WithColor(item.IconColor.ToColorString()),
+				IconCollapsed = item.IconCollapsed.WithColor(item.IconColor.GetAttribute().Value),
+				IconExpanded = item.IconExpanded.WithColor(item.IconColor.GetAttribute().Value),
 				IconColor = item.IconColor,
 				Text = item.Text,
 				Url = item.Url,

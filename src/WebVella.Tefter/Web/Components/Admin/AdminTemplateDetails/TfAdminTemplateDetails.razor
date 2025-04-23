@@ -36,22 +36,22 @@
 					<FluentInputLabel Label="@LOC("Status")" />
 					@if (context.IsEnabled)
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.ToColorString()" Color="white">enabled</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white">enabled</FluentBadge>
 					}
 					else
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.ToColorString()" Color="white">disabled</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white">disabled</FluentBadge>
 					}
 				</FluentGridItem>
 				<FluentGridItem xs="3">
 					<FluentInputLabel Label="@LOC("Usable")" />
 					@if (context.IsSelectable)
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.ToColorString()" Color="white">selectable</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white">selectable</FluentBadge>
 					}
 					else
 					{
-						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.ToColorString()" Color="white">not selectable</FluentBadge>
+						<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white">not selectable</FluentBadge>
 					}
 				</FluentGridItem>
 			</FluentGrid>

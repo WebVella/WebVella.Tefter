@@ -1,5 +1,5 @@
 ﻿.location {
-	color: var(--tf-font-color-mute);
+	color: var(--neutral-foreground-hint);
 	display: flex;
 	align-items: center;
 	justify-content: start;
@@ -15,20 +15,20 @@
 	}
 
 ::deep.location .stealth::part(control) {
-	background: var(--tf-font-color-mute);
+	background: var(--neutral-foreground-hint);
 }
 
 ::deep.location .stealth:hover::part(control) {
-	background: var(--tf-body-color-accent);
+	background: var(--neutral-foreground-hover);
 }
 
 ::deep.location fluent-breadcrumb-item {
-	color: var(--tf-font-color-mute);
+	color: var(--neutral-foreground-hint);
 	/*font-size: var(--type-ramp-minus-1-font-size);*/
 }
 
 	::deep.location fluent-breadcrumb-item::part(separator) {
-		fill: var(--tf-font-color-mute) !important;
+		fill: var(--neutral-foreground-hint) !important;
 		padding-left: 3px;
 		padding-right: 3px;
 	}

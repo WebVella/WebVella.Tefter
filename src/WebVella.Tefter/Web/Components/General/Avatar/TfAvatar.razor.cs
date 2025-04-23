@@ -19,7 +19,7 @@ public partial class TfAvatar :ComponentBase
 			if (User is not null)
 			{
 				if (UseUserColor && User.Settings is not null && User.Settings.ThemeColor != TfColor.Black)
-					list.Add($"background-color:{User.Settings.ThemeColor.ToColorString()};");
+					list.Add($"background-color:{User.Settings.ThemeColor.GetAttribute().Value};");
 				else
 					list.Add("background-color:var(--neutral-fill-layer-hover);");
 			}

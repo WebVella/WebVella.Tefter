@@ -22,10 +22,10 @@
 	</ChildContent>
 	<Bottom>
 		<FluentNavMenu class="tf-navigation">
-			<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon.WithColor(_defaultColor.ToColorString())"
+			<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon.WithColor(_defaultColor.GetAttribute().Value)"
 						   IconColor="Color.Custom" Class="expand-link"
 						   OnClick="_searchSpaceHandler" title="@LOC("Search Spaces")" />
-			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon.WithColor(_defaultColor.ToColorString())"
+			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon.WithColor(_defaultColor.GetAttribute().Value)"
 						   IconColor="Color.Custom" Class="expand-link"
 						   OnClick="_addSpaceHandler" title="@LOC("Create Space")" />
 		</FluentNavMenu>

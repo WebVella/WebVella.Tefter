@@ -64,7 +64,6 @@ else
 	{
 		var configCss = _generateColumnConfigurationCss(TfAppState.Value.SpaceView, TfAppState.Value.SpaceViewColumns);
 		var columnIndex = 1;
-		var _gridHeadBackgroundStyle = $"background: linear-gradient(to right, {TfAppState.Value.SpaceGridBackgkroundColor}, {TfAppState.Value.SpaceGridBackgkroundColor}),linear-gradient(to right, var(--neutral-layer-2),var(--neutral-layer-2));";
 		@((MarkupString)_getEmbeddedStyles())
 		<TfLayoutBodyMain ContentClass="no-padding">
 			<Header>
@@ -85,7 +84,7 @@ else
 						</colgroup>
 						<thead class="tf-grid-thead">
 							<tr class="tf-grid-tr">
-								<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{_gridHeadBackgroundStyle}{configCss[0].Item3}")">
+								<th class="tf-grid-th tf-grid-th--check @configCss[0].Item2" style="@($"{configCss[0].Item3}")">
 									<div class="check-content">
 										@if (TfAppState.Value.AllDataRowsSelected)
 										{
@@ -103,7 +102,7 @@ else
 								</th>
 								@foreach (var column in TfAppState.Value.SpaceViewColumns.OrderBy(x => x.Position))
 								{
-									<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{_gridHeadBackgroundStyle}{column.HeaderStyle}{configCss[columnIndex].Item3}")">
+									<th data-query-name="@column.QueryName" class="tf-grid-th @configCss[columnIndex].Item2" style="@($"{column.HeaderStyle}{configCss[columnIndex].Item3}")">
 										<div>
 											@if (String.IsNullOrWhiteSpace(column.Icon))
 											{

@@ -5,7 +5,7 @@ public partial class MainLayout : FluxorLayout
 	[Inject] protected IStateSelection<TfUserState, DesignThemeModes> ThemeMode { get; set; }
 	[Inject] protected IStateSelection<TfUserState, TfColor> ThemeColor { get; set; }
 	[Inject] protected IStateSelection<TfAppState, RouteDataFirstNode?> FirstRouteNode { get; set; }
-	[Inject] protected IStateSelection<TfAppState, string> SpaceColor { get; set; }
+	[Inject] protected IStateSelection<TfAppState, TfColor> SpaceColor { get; set; }
 
 	protected override void OnInitialized()
 	{
@@ -14,18 +14,19 @@ public partial class MainLayout : FluxorLayout
 		ThemeMode.Select(x => x.ThemeMode);
 		ThemeColor.Select(x => x.ThemeColor);
 		FirstRouteNode.Select(x=> x.Route.FirstNode);
-		SpaceColor.Select(x=> x.SpaceColorString);
+		SpaceColor.Select(x=> x.SpaceColor);
 	}
 
-	private string _layoutColor
+	private TfColor _layoutColor
 	{
 		get
 		{
-			if(FirstRouteNode.Value is not null && FirstRouteNode.Value == RouteDataFirstNode.Space){ 
+			if(FirstRouteNode.Value is not null 
+				&& FirstRouteNode.Value == RouteDataFirstNode.Space){ 
 				return SpaceColor.Value;
 			}
 
-			return ThemeColor.Value.ToColorString();
+			return ThemeColor.Value;
 		}
 	}
 }

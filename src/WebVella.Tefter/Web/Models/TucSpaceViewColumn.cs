@@ -47,10 +47,10 @@ public record TucSpaceViewColumn
 			if (Settings is not null)
 			{
 				if(Settings.Color != TfColor.Black){ 
-					sb.Append($"color:{Settings.Color.ToColorString()};");
+					sb.Append($"color:{Settings.Color.GetAttribute().Value};");
 				}
 				if(Settings.BackgroundColor != TfColor.Black){ 
-					sb.Append($"background: {Settings.BackgroundColor.ToColorString()}25");
+					sb.Append($"background: {Settings.BackgroundColor.GetAttribute().Value}25");
 					//sb.Append($"background:linear-gradient(to right, {Settings.BackgroundColor.ToAttributeValue()}50, {Settings.BackgroundColor.ToAttributeValue()}50)," +
 					//$"linear-gradient(to right, var(--neutral-fill-layer-rest),var(--neutral-fill-layer-rest));");
 				}

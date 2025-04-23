@@ -5,19 +5,20 @@ public partial class TfLayout : ComponentBase
 	[Parameter] public RenderFragment Header { get; set; }
 	[Parameter] public RenderFragment Navigation { get; set; }
 	[Parameter] public RenderFragment Body { get; set; }
-	[Parameter] public string Color { get; set; }
-	[Parameter] public string BackgroundColor { get; set; }
+	[Parameter] public TfColor Color { get; set; } = TfColor.Emerald500;
 	private string _styles
 	{
 		get
 		{
+			var colorName = Color.GetAttribute().Name;
 			var sb = new StringBuilder();
 			sb.AppendLine("<style>");
 			sb.AppendLine(":root .tf-layout {");
-			if (!String.IsNullOrWhiteSpace(Color))
-			{
-				sb.AppendLine($"--tf-layout-color: {Color};");
-			}
+			sb.AppendLine($"--accent-base-color: var(--tf-{colorName}-500);");
+			sb.AppendLine($"--accent-fill-rest: var(--tf-{colorName}-400);");
+			sb.AppendLine($"--accent-fill-hover: var(--tf-{colorName}-600);");
+			sb.AppendLine($"--accent-fill-active: var(--tf-{colorName}-500);");
+			sb.AppendLine($"--accent-fill-focus: var(--tf-{colorName}-400);");
 			sb.AppendLine("}");
 			sb.AppendLine("</style>");
 			return sb.ToString();

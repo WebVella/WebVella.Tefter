@@ -41,7 +41,7 @@
 					{
 						<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 									Color="Color.Custom"
-									CustomColor="@Item.Color.ToColorString()" />
+									CustomColor="@Item.Color.GetAttribute().Value" />
 					}
 					<span>@Item.Name</span>
 					<span class="td-description">(@LOC("group"))</span>
@@ -67,7 +67,7 @@
 					{
 						<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 									Color="Color.Custom"
-									CustomColor="@Item.Color.ToColorString()" />
+									CustomColor="@Item.Color.GetAttribute().Value" />
 					}
 					<span>@Item.Name</span>
 				</FluentStack>

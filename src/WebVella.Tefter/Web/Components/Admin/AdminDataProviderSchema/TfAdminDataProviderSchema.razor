@@ -43,7 +43,7 @@ else
 								@if (!String.IsNullOrWhiteSpace(context.SourceName))
 								{
 									<span title="@LOC("synchronized")" style="display:inline-block;width:100%;">
-										<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.ToColorString()" Color="white" Style="width:100%">ON</FluentBadge>
+										<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Style="width:100%">ON</FluentBadge>
 									</span>
 								}
 								else

@@ -8,7 +8,7 @@ public static partial class TfConverters
 		{
 			return new System.Drawing.Color();
 		}
-		return System.Drawing.ColorTranslator.FromHtml(color.ToColorString());
+		return System.Drawing.ColorTranslator.FromHtml(color.GetAttribute().Value);
 	}
 
 	public static System.Drawing.Color HEXToColor(string color)

@@ -11,7 +11,7 @@ public partial class TfConstants
 	public static IconSize IconSize { get; } = IconSize.Size20;
 	public static IconVariant IconVariant { get; } = IconVariant.Regular;
 
-	public static string AdminColor { get => AdminThemeColor.ToColorString(); }
+	public static string AdminColor { get => AdminThemeColor.GetAttribute().Value; }
 
 	public static SystemColor AdminColorObject
 	{

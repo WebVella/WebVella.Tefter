@@ -6,7 +6,7 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-export-selector" UseMenuService="false">
 			<FluentMenuItem OnClick="_copyLinkToClipboard">
 				@LOC("Copy link")
-				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("Link")" Slot="start" Color="@Color.Accent" />
 			</FluentMenuItem>
 			@if (TfAppState.Value.ActiveSpaceViewBookmark is null || TfAppState.Value.ActiveSpaceViewSavedUrl is null)
 			{
@@ -14,21 +14,21 @@
 				{
 					<FluentMenuItem OnClick="_bookmarkView">
 						@LOC("Bookmark View")
-						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						<FluentIcon Value="@TfConstants.BookmarkOFFIcon" Slot="start" Color="@Color.Accent" />
 					</FluentMenuItem>
 				} *@
 				@if (TfAppState.Value.ActiveSpaceViewSavedUrl is null)
 				{
 					<FluentMenuItem OnClick="_saveViewUrl">
 						@LOC("Save URL")
-						<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+						<FluentIcon Value="@TfConstants.GetIcon("LinkAdd")" Slot="start" Color="@Color.Accent" />
 					</FluentMenuItem>
 				}
 			}
 			<FluentDivider />
 			<FluentMenuItem Disabled="@(TfAppState.Value.SelectedDataRows.Count == 0)" OnClick="_exportSelection">
 				@LOC("Export Selection")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
 				@if (TfAppState.Value.SelectedDataRows.Count > 0)
 				{
 					<span slot="end">
@@ -38,7 +38,7 @@
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_exportAll">
 				@LOC("Export All")
-				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.GetIcon("CloudArrowDown")" Slot="start" Color="@Color.Accent" />
 			</FluentMenuItem>
 		</FluentMenu>
 		<div style="display:none">

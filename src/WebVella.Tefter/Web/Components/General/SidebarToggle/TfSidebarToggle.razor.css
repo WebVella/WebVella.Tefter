@@ -8,18 +8,9 @@
 	}
 
 ::deep .stealth::part(control) {
-	background: var(--tf-body-color);
-	border:none !important;
+	outline:none !important;
 }
 
-::deep .stealth:hover::part(control) {
-	background: var(--tf-body-color-accent);
-}
-
-::deep .stealth:hover::part(control) {
-	background: var(--tf-body-color-accent);
-}
-
-::deep .stealth svg{
+/*::deep .stealth svg{
 	fill:var(--tf-font-color-mute) !important;
-}
+}*/

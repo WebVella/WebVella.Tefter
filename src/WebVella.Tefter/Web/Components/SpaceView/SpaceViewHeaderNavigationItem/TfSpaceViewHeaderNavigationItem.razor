@@ -11,7 +11,7 @@
 		}
 		@if (Item.Color != TfColor.Black)
 		{
-			<span class="tf-addon" style="@($"background-color:{Item.Color.ToColorString()}")"></span>
+			<span class="tf-addon" style="@($"background-color:{Item.Color.GetAttribute().Value}")"></span>
 		}
 	</FluentMenuItem>
 }

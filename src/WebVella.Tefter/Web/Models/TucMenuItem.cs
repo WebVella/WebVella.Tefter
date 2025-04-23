@@ -11,8 +11,8 @@ public record TucMenuItem
 	public Icon Icon
 	{
 		get => Expanded
-			? (IconColor is null ? IconExpanded : IconExpanded.WithColor(IconColor.ToColorString()))
-			: (IconColor is null ? IconCollapsed : IconCollapsed.WithColor(IconColor.ToColorString()));
+			? (IconColor is null ? IconExpanded : IconExpanded.WithColor(IconColor.GetAttribute().Value))
+			: (IconColor is null ? IconCollapsed : IconCollapsed.WithColor(IconColor.GetAttribute().Value));
 	}
 	public string Url { get; set; }
 	public NavLinkMatch Match { get; set; } = NavLinkMatch.Prefix;

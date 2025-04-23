@@ -12,35 +12,6 @@ public partial record TfAppState
 			return Space.Color;
 		}
 	}
-	public string SpaceColorString
-	{
-		get
-		{
-			if (Space is null) return TfConstants.DefaultThemeColor.ToColorString();
-
-			return Space.Color.ToColorString();
-		}
-	}
-	public string SpaceIconColorString
-	{
-		get => TfConverters.ChangeColorDarknessHex(SpaceColorObject, (float)0.25);
-	}
-	public SystemColor SpaceColorObject
-	{
-		get
-		{
-			if (SpaceColor == TfColor.Black)
-				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToColorString());
-			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(SpaceColorString);
-		}
-	}
-	public string SpaceBackgkroundColor => $"{SpaceColorString}25";
-	public string SpaceGridBackgkroundColor => $"{SpaceColorString}25";
-	public string SpaceGridSelectedColor => $"{SpaceColorString}25";
-	public string SpaceBorderColor => $"{SpaceColorString}75";
-	public string SpaceBackgroundAccentColor => $"{SpaceColorString}35";
-	public string SpaceSidebarStyle => $"background-color:{SpaceBackgkroundColor} !important; border-color:{SpaceBorderColor} !important";
-
 	//Navigation
 	public List<TucSpace> CurrentUserSpaces { get; init; } = new();
 	public List<TucSpaceNode> SpaceNodes { get; init; } = new();

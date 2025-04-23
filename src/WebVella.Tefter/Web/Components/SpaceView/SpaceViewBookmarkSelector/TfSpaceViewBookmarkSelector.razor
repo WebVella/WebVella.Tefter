@@ -6,7 +6,7 @@
 		<FluentMenu Width="200" @bind-Open="_open" Anchor="view-bookmark-selector" UseMenuService="false">
 			<FluentMenuItem OnClick="_bookmarkEdit">
 				@LOC("Edit Bookmark")
-				<FluentIcon Value="@TfConstants.BookmarkEditIcon" Slot="start" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+				<FluentIcon Value="@TfConstants.BookmarkEditIcon" Slot="start" Color="@Color.Accent" />
 			</FluentMenuItem>
 			<FluentMenuItem OnClick="_bookmarkRemove">
 				@LOC("Remove Bookmark")

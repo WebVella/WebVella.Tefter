@@ -1,4 +1,6 @@
-﻿/* width */
+﻿@import 'fluent.less';
+
+/* width */
 ::-webkit-scrollbar {
 	width:10px;
 	height:10px;
@@ -6,15 +8,15 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-	background: var(--tf-body-color-mute);
+	background: var(--neutral-fill-secondary-rest);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-	background: var(--tf-body-color-accent-2);
+	background: var(--neutral-fill-secondary-active);
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: var(--tf-body-color-accent);
+	background: var(--neutral-fill-secondary-focus);
 }

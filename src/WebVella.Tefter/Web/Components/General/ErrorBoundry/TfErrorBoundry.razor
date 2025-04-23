@@ -8,7 +8,7 @@
         {
             <div style="display:flex;">
                 <div style="flex:0 0 30px"><FluentIcon Value="TfConstants.ErrorIcon"/></div>
-                <div style="@($"flex:1 1 auto; color:{Color.Error.ToColorString()};")">@context.Message</div>
+                <div style="@($"flex:1 1 auto; color:{Color.Error.GetAttribute().Value};")">@context.Message</div>
             </div>
         }
         else

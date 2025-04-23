@@ -5,11 +5,11 @@
 			&& TfAppState.Value.SpaceView.Presets.Count > 0)
 {
 	var selectionDict = _generateSelectionDict();
-	<div class="tf-header-nav" style="@($"--space-color: {TfAppState.Value.SpaceColorString};")">
+	<div class="tf-header-nav">
 		<FluentAnchor Href="#" OnClick="@(_=> _onClick(null))" Appearance="@Appearance.Outline"
 					  Id="space-view-unfiltered"
 					  Class="@(TfAppState.Value.Route.SpaceViewPresetId is null ? "main-active" : "")">
-			<FluentIcon Value="@TfConstants.SpaceViewIcon" Color="@Color.Custom" CustomColor="@TfAppState.Value.SpaceIconColorString" />
+			<FluentIcon Value="@TfConstants.SpaceViewIcon" Color="@Color.Accent" />
 		</FluentAnchor>
 		@foreach (var item in TfAppState.Value.SpaceView.Presets)
 		{
@@ -24,7 +24,7 @@
 					@item.Name
 					@if (item.Color != TfColor.Black)
 					{
-						<span class="tf-addon" style="@($"background-color:{item.Color.ToColorString()}")"></span>
+						<span class="tf-addon" style="@($"background-color:{item.Color.GetAttribute().Value}")"></span>
 					}
 				</FluentAnchor>
 			}
@@ -44,7 +44,7 @@
 					}
 					@if (item.Color != TfColor.Black)
 					{
-						<span class="tf-addon" style="@($"background-color:{item.Color.ToColorString()}")"></span>
+						<span class="tf-addon" style="@($"background-color:{item.Color.GetAttribute().Value}")"></span>
 					}
 				</FluentAnchor>
 				@if (item.Nodes.Count > 0)

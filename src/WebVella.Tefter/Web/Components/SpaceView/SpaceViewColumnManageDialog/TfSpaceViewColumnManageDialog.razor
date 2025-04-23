@@ -201,7 +201,7 @@
 								{
 									<FluentIcon Value="@TfConstants.RectangleIcon"
 												Color="Color.Custom" Style="height:100%;"
-												CustomColor="@_form.Settings.Color.ToColorString()" />
+												CustomColor="@_form.Settings.Color.GetAttribute().Value" />
 								}
 								else
 								{
@@ -219,7 +219,7 @@
 											{
 												<FluentIcon Value="@TfConstants.RectangleIcon"
 															Color="Color.Custom"
-															CustomColor="@color.ToColorString()" />
+															CustomColor="@color.GetAttribute().Value" />
 											}
 											else
 											{
@@ -238,7 +238,7 @@
 								{
 									<FluentIcon Value="@TfConstants.RectangleIcon"
 												Color="Color.Custom" Style="height:100%;"
-												CustomColor="@_form.Settings.BackgroundColor.ToColorString()" />
+												CustomColor="@_form.Settings.BackgroundColor.GetAttribute().Value" />
 								}
 								else
 								{
@@ -256,7 +256,7 @@
 											{
 												<FluentIcon Value="@TfConstants.RectangleIcon"
 															Color="Color.Custom"
-															CustomColor="@color.ToColorString()" />
+															CustomColor="@color.GetAttribute().Value" />
 											}
 											else
 											{

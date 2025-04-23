@@ -2,12 +2,6 @@
 @inherits TfBaseComponent
 @if (TfAppState.Value.SpaceView is not null)
 {
-	<style>
-		.page-header {
-			--space-color: @TfAppState.Value.SpaceColorString;
-			--space-background-color: @TfAppState.Value.SpaceBackgkroundColor;
-		}
-	</style>
 	<div class="content-header">
 		<div class="page-header">
 			<div class="page-header-inner">@((MarkupString)$"{TfAppState.Value.SpaceView.Name}{_generatePresetPathHtml()}")</div>

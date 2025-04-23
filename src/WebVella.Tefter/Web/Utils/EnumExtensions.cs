@@ -71,100 +71,51 @@ public static class EnumExtensions
 		return "ErrorCircle";
 	}
 
-	public static string ToColorString<TEnum>(this TEnum e) where TEnum : Enum
+	public static TfColorAttribute GetAttribute<TEnum>(this TEnum e) where TEnum : Enum
 	{
-		string description = "#fff";
+		TfColorAttribute result = new TfColorAttribute(name: "", value: "", variable: "", number: 0, selectable: false);
 		if (e is null)
-			return description;
+			return result;
 		if (e is Enum)
 		{
 			Type type = e.GetType();
 			var memValue = type.GetEnumName((Enum)e);
-			if(memValue is null)
-				return description;
+			if (memValue is null)
+				return result;
 			var memInfo = type.GetMember(memValue);
-			var soAttributes = memInfo[0].GetCustomAttributes(typeof(ColorAttribute), false);
+			var soAttributes = memInfo[0].GetCustomAttributes(typeof(TfColorAttribute), false);
 			if (soAttributes.Length > 0)
 			{
 				// we're only getting the first description we find
 				// others will be ignored
-				description = ((ColorAttribute)soAttributes[0]).OKLCH;
+				result = ((TfColorAttribute)soAttributes[0]);
 			}
 		}
-
-		return description;
+		return result;
 	}
-
-	public static string ToColorString<TEnum>(this TEnum? e) where TEnum : struct, Enum
+	public static TfColorAttribute GetAttribute<TEnum>(this TEnum? e) where TEnum : struct, Enum
 	{
-		string description = "#fff";
+		TfColorAttribute result = new TfColorAttribute(name: "", value: "", variable: "", number: 0, selectable: false);
 		if (e is null)
-			return description;
+			return result;
 		if (e is Enum)
 		{
 			Type type = e.GetType();
 			var memValue = type.GetEnumName((Enum)e.Value);
-			if(memValue is null)
-				return description;
+			if (memValue is null)
+				return result;
 			var memInfo = type.GetMember(memValue);
-			var soAttributes = memInfo[0].GetCustomAttributes(typeof(ColorAttribute), false);
+			var soAttributes = memInfo[0].GetCustomAttributes(typeof(TfColorAttribute), false);
 			if (soAttributes.Length > 0)
 			{
 				// we're only getting the first description we find
 				// others will be ignored
-				description = ((ColorAttribute)soAttributes[0]).OKLCH;
+				result = ((TfColorAttribute)soAttributes[0]);
 			}
 		}
 
-		return description;
+		return result;
 	}
 
-	public static string ToSelectableLabel<TEnum>(this TEnum e) where TEnum : IConvertible
-	{
-		string label = null;
-		if (e is null)
-			return label;
-		if (e is Enum)
-		{
-			Type type = e.GetType();
-			var memValue = type.GetEnumName(e.ToInt32(CultureInfo.InvariantCulture));
-			if(memValue is null)
-				return label;
-			var memInfo = type.GetMember(memValue);
-			var soAttributes = memInfo[0].GetCustomAttributes(typeof(SelectableAttribute), false);
-			if (soAttributes.Length > 0)
-			{
-				// we're only getting the first description we find
-				// others will be ignored
-				label = ((SelectableAttribute)soAttributes[0]).Label;
-			}
-		}
-
-		return label;
-	}
-
-	public static string ToName<TEnum>(this TEnum e) where TEnum : IConvertible
-	{
-		string label = null;
-		if (e is null)
-			return label;
-		if (e is Enum)
-		{
-			Type type = e.GetType();
-			var memValue = type.GetEnumName(e.ToInt32(CultureInfo.InvariantCulture));
-			if(memValue is null)
-				return label;
-			var memInfo = type.GetMember(memValue);
-			var soAttributes = memInfo[0].GetCustomAttributes(typeof(NameAttribute), false);
-			if (soAttributes.Length > 0)
-			{
-				// we're only getting the first description we find
-				// others will be ignored
-				label = ((NameAttribute)soAttributes[0]).Name;
-			}
-		}
-
-		return label;
-	}
 
 }

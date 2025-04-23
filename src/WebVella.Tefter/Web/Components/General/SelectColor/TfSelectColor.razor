@@ -12,7 +12,7 @@
 		{
 			<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 						Color="Color.Custom"
-						CustomColor="@Value.ToColorString()" />
+						CustomColor="@Value.GetAttribute().Value" />
 		}
 
 	</FluentTextField>
@@ -24,7 +24,7 @@ else
 			<FluentButton Id="@_elementId" Style="width:100%" Class="tf-select-btn"
 						  OnClick="@(_=> _onOpenChanged(true))">
 
-				<span>@(Value?.ToSelectableLabel())</span>
+				<span>@(Value.GetAttribute().Variable)</span>
 				@if (Value is null)
 				{
 					<FluentIcon Slot="start" Value="@TfConstants.GetIcon("RectangleLandscape")"
@@ -34,7 +34,7 @@ else
 				{
 					<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 								Color="Color.Custom"
-								CustomColor="@Value.Value.ToColorString()" />
+								CustomColor="@Value.Value.GetAttribute().Value" />
 				}
 				<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" CustomColor="var(--neutral-fill-strong-focus)" Color="@Color.Custom" />
 			</FluentButton>
@@ -66,9 +66,9 @@ else
 								{
 									<FluentIcon Slot="start" Value="@TfConstants.RectangleIcon"
 												Color="Color.Custom"
-												CustomColor="@option.ToColorString()" />
+												CustomColor="@option.GetAttribute().Value" />
 								}
-								<FluentLabel>@option.ToSelectableLabel()</FluentLabel>
+								<FluentLabel>@option.GetAttribute().Variable</FluentLabel>
 							</FluentMenuItem>
 						</Virtualize>
 					</FluentNavMenu>

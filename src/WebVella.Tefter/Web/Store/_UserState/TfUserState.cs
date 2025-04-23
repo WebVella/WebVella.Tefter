@@ -42,7 +42,7 @@ public partial record TfUserState
 	{
 		get
 		{
-			return ThemeColor.ToColorString();
+			return ThemeColor.GetAttribute().Value;
 		}
 	}
 
@@ -51,7 +51,7 @@ public partial record TfUserState
 		get
 		{
 			if(ThemeColorString == "default") 
-				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.ToColorString());
+				return (SystemColor)System.Drawing.ColorTranslator.FromHtml(TfConstants.DefaultThemeColor.GetAttribute().Value);
 			return (SystemColor)System.Drawing.ColorTranslator.FromHtml(ThemeColorString);
 		}
 	}

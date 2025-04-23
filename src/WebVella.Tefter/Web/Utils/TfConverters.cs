@@ -671,17 +671,18 @@ public static partial class TfConverters
 
 			var colorValue = defArray[1].Trim();
 			var colorNameArray = defArray[0].Split("-", StringSplitOptions.RemoveEmptyEntries);
-			var colorName = colorNameArray[0].Trim();
+			var colorType = colorNameArray[0].Trim();
 			int colorNumber = int.Parse(colorNameArray[1].Trim());
-			if(!colorCountHash.Contains(colorName))
-				colorCountHash.Add(colorName);
+			if(!colorCountHash.Contains(colorType))
+				colorCountHash.Add(colorType);
 
 			var colorCount = colorCountHash.Count;
-			colorSB.AppendLine($"[Name(\"--tf-go-{defArray[0]}\")]");
-			colorSB.AppendLine($"[Color(\"{colorValue}\")]");
-			if(colorNumber == 500 && !nonSelectableList.Contains(colorName) )
-				colorSB.AppendLine($"[Selectable(\"{textInfo.ToTitleCase(colorName)}\")]");
-			colorSB.AppendLine($"{textInfo.ToTitleCase(colorName)}{colorNumber} = {colorCount}{colorNumber},");
+			var selectable = "false";
+			if(colorNumber == 500 && !nonSelectableList.Contains(colorType) )
+				selectable = "true";
+
+			colorSB.AppendLine($"[TfColor(name: \"{colorType}\",value:\"{colorValue}\",variable:\"--tf-{defArray[0]}\",number:{colorNumber}, selectable: {selectable})]");
+			colorSB.AppendLine($"{textInfo.ToTitleCase(colorType)}{colorNumber} = {colorCount}{colorNumber},");
 		}
 
 		colorSB.AppendLine("#endregion << Generated >>");
@@ -690,7 +691,7 @@ public static partial class TfConverters
 	}
 
 	public static List<TfColor> GetSelectableColors(){ 
-		return Enum.GetValues<TfColor>().Where(x=> !String.IsNullOrWhiteSpace(x.ToSelectableLabel())).ToList();
+		return Enum.GetValues<TfColor>().Where(x=> x.GetAttribute().Selectable).ToList();
 	}
 
 	#endregion
