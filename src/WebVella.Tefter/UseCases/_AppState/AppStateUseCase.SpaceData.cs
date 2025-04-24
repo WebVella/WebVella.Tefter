@@ -36,14 +36,20 @@ internal partial class AppStateUseCase
 			//Space Data data init
 			else if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
 			{
-				var viewData = GetSpaceDataDataTable(
-							spaceDataId: newAppState.SpaceData.Id,
-							userFilters: null,
-							userSorts: null,
-							search: newAppState.Route.Search,
-							page: newAppState.Route.Page,
-							pageSize: newAppState.Route.PageSize ?? TfConstants.PageSize
-						);
+				TfDataTable viewData = null;
+				try
+				{
+					viewData = GetSpaceDataDataTable(
+						spaceDataId: newAppState.SpaceData.Id,
+						userFilters: null,
+						userSorts: null,
+						search: newAppState.Route.Search,
+						page: newAppState.Route.Page,
+						pageSize: newAppState.Route.PageSize ?? TfConstants.PageSize
+					);
+				}
+				catch { }
+
 				newAppState = newAppState with
 				{
 					SpaceDataData = viewData,

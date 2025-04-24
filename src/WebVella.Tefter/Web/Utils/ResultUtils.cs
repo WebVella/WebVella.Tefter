@@ -84,8 +84,7 @@ internal static class ResultUtils
 		}
 		else
 		{
-			if (!string.IsNullOrWhiteSpace(exception.Message))
-				generalErrors.Add(exception.Message);
+			GetExceptionMessages(exception, generalErrors);
 		}
 
 		if (generalErrors.Count > 0)
@@ -105,6 +104,16 @@ internal static class ResultUtils
 				}
 			});
 		}
+	}
+
+	internal static void GetExceptionMessages(Exception ex, List<string> messages)
+	{
+		if (ex is null) return;
+		if (!String.IsNullOrWhiteSpace(ex.Message))
+		{
+			messages.Add(ex.Message);
+		}
+		GetExceptionMessages(ex.InnerException, messages);
 	}
 
 	internal static void SendErrorsToNotifications(

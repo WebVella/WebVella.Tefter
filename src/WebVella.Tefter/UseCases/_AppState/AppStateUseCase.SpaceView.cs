@@ -43,21 +43,25 @@ internal partial class AppStateUseCase
 				var spaceData = GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
 				if (spaceData is not null)
 				{
-					var viewData = GetSpaceDataDataTable(
-								spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
-								presetFilters: preset is not null ? preset.Filters : null,
-								presetSorts: preset is not null ? preset.SortOrders : null,
-								userFilters: newAppState.SpaceViewFilters,
-								userSorts: newAppState.SpaceViewSorts,
-								search: newAppState.Route.Search,
-								page: newAppState.Route.Page,
-								pageSize: newAppState.Route.PageSize
-							);
+					TfDataTable viewData = null;
+					try
+					{
+						viewData = GetSpaceDataDataTable(
+									spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
+									presetFilters: preset is not null ? preset.Filters : null,
+									presetSorts: preset is not null ? preset.SortOrders : null,
+									userFilters: newAppState.SpaceViewFilters,
+									userSorts: newAppState.SpaceViewSorts,
+									search: newAppState.Route.Search,
+									page: newAppState.Route.Page,
+									pageSize: newAppState.Route.PageSize
+								);
+					}catch{ }
 					newAppState = newAppState with
 					{
 						SpaceViewData = viewData,
-						SpaceData = GetSpaceData(newAppState.SpaceView.SpaceDataId.Value),
-						Route = newAppState.Route with { Page = viewData.QueryInfo.Page }
+						SpaceData = spaceData,
+						Route = newAppState.Route with { Page = viewData?.QueryInfo.Page ?? (newAppState.Route.Page ?? 1) }
 					};
 				}
 				else
