@@ -6,13 +6,26 @@
 	<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />
 </FluentButton>
 <FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
-	<FluentMenuItem OnClick="onManageSpaceClick">
-		@LOC("Manage Space")
-		<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Accent" />
+	<FluentMenuItem OnClick="onPageListClick">
+		@LOC("All Pages")
+		<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Accent" />
+	</FluentMenuItem>
+	<FluentMenuItem OnClick="addPage">
+		@LOC("Create Page")
+		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
+	</FluentMenuItem>
+	<FluentDivider></FluentDivider>
+	<FluentMenuItem OnClick="onViewListClick">
+		@LOC("All Views")
+		<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Accent" />
+	</FluentMenuItem>
+	<FluentMenuItem OnClick="addViewClick">
+		@LOC("Create View")
+		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
 	</FluentMenuItem>
 	<FluentDivider></FluentDivider>
 	<FluentMenuItem OnClick="onDataListClick">
-		@LOC("Space Datasets")
+		@LOC("All Datasets")
 		<FluentIcon Value="@TfConstants.SpaceDataIcon" Slot="start" Color="@Color.Accent" />
 	</FluentMenuItem>
 	<FluentMenuItem OnClick="addSpaceDataClick">
@@ -20,23 +33,11 @@
 		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
 	</FluentMenuItem>
 	<FluentDivider></FluentDivider>
-	<FluentMenuItem OnClick="onPageListClick">
-		@LOC("Space Pages List")
-		<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Accent" />
+	<FluentMenuItem OnClick="onManageSpaceClick">
+		@LOC("Manage Space")
+		<FluentIcon Value="@TfConstants.EditIcon" Slot="start" Color="@Color.Accent" />
 	</FluentMenuItem>
-	<FluentMenuItem OnClick="addPage">
-		@LOC("Create Space Page")
-		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
-	</FluentMenuItem>
-	<FluentDivider></FluentDivider>
-	<FluentMenuItem OnClick="onViewListClick">
-		@LOC("Space Views List")
-		<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Accent" />
-	</FluentMenuItem>
-	<FluentMenuItem OnClick="addViewClick">
-		@LOC("Create Space View")
-		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
-	</FluentMenuItem>
+
 </FluentMenu>
 
 

@@ -3,9 +3,22 @@
 
 
 .tf-card {
-	border-color: var(--neutral-fill-secondary-rest) !important;
+	border-color: var(--neutral-fill-secondary-rest);
 
 	.tf-card-title {
 		background-color: var(--neutral-fill-secondary-rest);
+	}
+}
+
+
+.fluent-dialog-body {
+	.tf-card {
+		border-color: var(--neutral-fill-secondary-hover);
+		border-width: 1px;
+	}
+
+	.tf-card-title {
+		background-color: transparent;
+		border-bottom: 1px solid var(--neutral-fill-secondary-hover)
 	}
 }

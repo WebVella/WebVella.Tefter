@@ -30,7 +30,7 @@ public partial class TfTemplateManageDialog : TfFormBaseComponent, IDialogConten
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create template") : LOC("Manage template");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.GetIcon("Add") : TfConstants.GetIcon("Save");
+		_iconBtn = _isCreate ? TfConstants.GetIcon("Add").WithColor(Color.Neutral) : TfConstants.GetIcon("Save").WithColor(Color.Neutral);
 		_processors = TfAppState.Value.AdminTemplateProcessors;
 		_form = new TucManageTemplateModel
 		{

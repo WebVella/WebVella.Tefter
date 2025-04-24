@@ -35,7 +35,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 		}
 		_title = _isCreate ? LOC("Create column") : LOC("Manage column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		foreach (TfDataProviderColumnSearchType item in Enum.GetValues<TfDataProviderColumnSearchType>())
 		{
 			_searchTypes.Add(new TucDataProviderColumnSearchTypeInfo(item));

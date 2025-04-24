@@ -22,7 +22,7 @@
 <FluentDialogFooter>
 	@if (String.IsNullOrWhiteSpace(_error) && _newColumns.Count > 0)
 	{
-		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("ArrowDownload")"
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("ArrowDownload").WithColor(Color.Neutral)"
 		Loading="_isSubmitting" Disabled="@(_isSubmitting || _isBusy || _activeTab == "existing")">@LOC("Import")</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>

@@ -25,6 +25,7 @@ public partial class TfSortCard : TfBaseComponent
 
 	private async Task _addSortColumn()
 	{
+		if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
 		if(Items.Any(x=> x.DbName == _selectedColumn)){ 
 			ToastService.ShowWarning(LOC("Column already added for sort"));
 			return;

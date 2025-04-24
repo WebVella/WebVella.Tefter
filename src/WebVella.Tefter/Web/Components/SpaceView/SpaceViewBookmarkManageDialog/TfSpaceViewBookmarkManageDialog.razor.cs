@@ -21,7 +21,7 @@ public partial class TfSpaceViewBookmarkManageDialog : TfFormBaseComponent, IDia
 		if (!String.IsNullOrWhiteSpace(Content.Url)) _isBookmark = false;
 		_title = _isBookmark ? LOC("Bookmark for {0}", TfAppState.Value.SpaceView.Name) : LOC("Saved URL in {0}", TfAppState.Value.Space.Name);
 		_btnText = LOC("Save");
-		_iconBtn = TfConstants.SaveIcon;
+		_iconBtn = TfConstants.SaveIcon.WithColor(Color.Neutral);
 
 		_form = Content with { Id = Content.Id };
 

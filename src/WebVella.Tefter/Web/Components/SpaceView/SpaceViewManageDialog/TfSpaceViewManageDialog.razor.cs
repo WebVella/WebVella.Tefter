@@ -26,7 +26,7 @@ public partial class TfSpaceViewManageDialog : TfFormBaseComponent, IDialogConte
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create view in {0}", TfAppState.Value.Space.Name) : LOC("Manage view in {0}", TfAppState.Value.Space.Name);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 
 		if (_isCreate)
 		{

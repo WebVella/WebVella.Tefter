@@ -25,7 +25,7 @@ public partial class TfTemplateSettingsDialog : TfBaseComponent, IDialogContentC
 		if (Content is null) throw new Exception("Content is null");
 		_title = LOC("Update settings");
 		_btnText = LOC("Save");
-		_iconBtn = TfConstants.GetIcon("Save");
+		_iconBtn = TfConstants.GetIcon("Save").WithColor(Color.Neutral);
 		_form = Content.SettingsJson;
 		_initDynamicComponent();
 	}

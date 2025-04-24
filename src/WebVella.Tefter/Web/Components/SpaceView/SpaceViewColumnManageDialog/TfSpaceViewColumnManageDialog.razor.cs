@@ -29,7 +29,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create column") : LOC("Manage column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		if (_isCreate)
 		{
 			_form = _form with

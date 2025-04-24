@@ -401,15 +401,25 @@ fluent-anchored-region fluent-menu {
 fluent-anchored-region fluent-menu-item {
   --neutral-foreground-rest: var(--tf-zinc-200);
   --neutral-fill-stealth-hover: var(--tf-zinc-700);
+  --neutral-fill-stealth-active: var(--tf-zinc-600);
+  --neutral-fill-stealth-focus: var(--tf-zinc-800);
 }
 fluent-anchored-region fluent-divider {
   --neutral-stroke-divider-rest: var(--tf-zinc-700);
 }
 .tf-card {
-  border-color: var(--neutral-fill-secondary-rest) !important;
+  border-color: var(--neutral-fill-secondary-rest);
 }
 .tf-card .tf-card-title {
   background-color: var(--neutral-fill-secondary-rest);
+}
+.fluent-dialog-body .tf-card {
+  border-color: var(--neutral-fill-secondary-hover);
+  border-width: 1px;
+}
+.fluent-dialog-body .tf-card-title {
+  background-color: transparent;
+  border-bottom: 1px solid var(--neutral-fill-secondary-hover);
 }
 html:root .tf-select-menu__body {
   background: var(--neutral-layer-floating) !important;
@@ -543,12 +553,18 @@ html:root .tf-layout__body {
   border-color: color-mix(in srgb, var(--error) 30%, var(--neutral-fill-layer-rest) 80%) !important;
   color: var(--neutral-foreground-rest);
 }
-html:root .tf-navigation.admin {
+.tf-navigation.admin {
   --accent-fill-rest: var(--tf-red-500);
 }
-html:root .tf-sidenav .fluent-nav-link.active {
+.tf-sidenav .fluent-nav-link.active {
   background: var(--tf-layout-color-accent);
 }
-html:root .tf-sidenav .fluent-nav-link:not(.active):hover {
+.tf-sidenav .fluent-nav-link:not(.active):hover {
   background: rgba(255, 255, 255, 0.05);
+}
+.tf-menu-item:not(.tf-selected):hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.tf-menu-item.tf-selected {
+  background: var(--tf-layout-color-accent);
 }

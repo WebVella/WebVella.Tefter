@@ -27,7 +27,7 @@
 				else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 				{
 					<FluentButton Appearance="Appearance.Neutral" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
-					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send")">@LOC("Submit")</FluentButton>
+					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send").WithColor(Color.Neutral)">@LOC("Submit")</FluentButton>
 				}
 			</FluentStack>
 		</FluentStack>

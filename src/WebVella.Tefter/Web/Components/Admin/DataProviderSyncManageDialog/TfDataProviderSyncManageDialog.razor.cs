@@ -11,7 +11,7 @@ public partial class TfDataProviderSyncManageDialog : TfFormBaseComponent, IDial
 	private bool _isSubmitting = false;
 	private string _title = "Update synchronization schedule";
 	private string _btnText = "Save";
-	private Icon _iconBtn = TfConstants.SaveIcon;
+	private Icon _iconBtn = TfConstants.SaveIcon.WithColor(Color.Neutral);
 	private TucDataProviderUpdateSyncForm _form = new();
 
 	protected override async Task OnInitializedAsync()

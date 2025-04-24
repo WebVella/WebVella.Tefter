@@ -22,7 +22,7 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create channel") : LOC("Manage channel");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		if (_isCreate)
 		{
 			_form = _form with { Id = Guid.NewGuid() };

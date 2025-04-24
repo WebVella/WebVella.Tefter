@@ -23,7 +23,7 @@ public partial class TfSpaceDataManageDialog : TfFormBaseComponent, IDialogConte
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create dataset in {0}", TfAppState.Value.Space.Name) : LOC("Manage dataset in {0}", TfAppState.Value.Space.Name);
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		if (_isCreate)
 			_form = Content with { Id = Guid.NewGuid() };
 		else

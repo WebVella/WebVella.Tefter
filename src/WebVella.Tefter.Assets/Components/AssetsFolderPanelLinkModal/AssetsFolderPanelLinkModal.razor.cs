@@ -22,7 +22,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create link") : LOC("Manage link");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		_form.Label = Content.Label;
 		_form.Url = Content.Url;
 		_form.IconUrl = Content.IconUrl;

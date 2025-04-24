@@ -20,7 +20,7 @@ public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentCo
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create space") : LOC("Manage space");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		if (_isCreate)
 		{
 			_form = _form with { Id = Guid.NewGuid(), Color = TfColor.Emerald500 };

@@ -117,16 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="All Dataset" xml:space="preserve">
+    <value>Всички Данни</value>
+  </data>
+  <data name="All Pages" xml:space="preserve">
+    <value>Всички Страници</value>
+  </data>
+  <data name="All Views" xml:space="preserve">
+    <value>Всички Изгледи</value>
+  </data>
   <data name="Are you sure that you need this space deleted?" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете тази област?</value>
   </data>
   <data name="Create Dataset" xml:space="preserve">
     <value>Създай данни</value>
   </data>
-  <data name="Create Space Page" xml:space="preserve">
+  <data name="Create Page" xml:space="preserve">
     <value>Създай страница</value>
   </data>
-  <data name="Create Space View" xml:space="preserve">
+  <data name="Create View" xml:space="preserve">
     <value>Създай изглед</value>
   </data>
   <data name="Manage Space" xml:space="preserve">
@@ -137,14 +146,5 @@
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
-  </data>
-  <data name="Space Dataset" xml:space="preserve">
-    <value>Данни в областта</value>
-  </data>
-  <data name="Space Pages List" xml:space="preserve">
-    <value>Страници в областта</value>
-  </data>
-  <data name="Space Views List" xml:space="preserve">
-    <value>Изгледи в областта</value>
   </data>
 </root>

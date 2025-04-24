@@ -31,7 +31,7 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		}
 		_title = _isCreate ? LOC("Create key") : LOC("Manage key");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 
 		_providerColumns = TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName).ToList();
 			//Setup form

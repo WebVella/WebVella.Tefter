@@ -26,6 +26,16 @@
 	text-decoration: none;
 	min-height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) + 1)* 1px);
 	padding-left: 8px;
+	color: var(--neutral-foreground-rest);
+	border-radius: 5px;
+
+	&:hover {
+		color: var(--neutral-foreground-rest);
+	}
+
+	&:not(.tf-selected):hover {
+		background: transparent;
+	}
 
 	&__content {
 		display: flex;
@@ -92,19 +102,10 @@
 
 	&.tf-selected {
 		position: relative;
+		background: transparent;
 
 		&::before {
-			display: block !important;
-			content: "";
-			position: absolute;
-			/*background-color: var(--accent-fill-rest);*/
-			border-radius: calc(var(--control-corner-radius)* 1px);
-			right: unset;
-			width: 3px;
-			height: calc(((var(--base-height-multiplier) + var(--density))* var(--design-unit) / 2)* 1px);
-			margin: 0 2px;
-			z-index: 5;
-			left: 0;
+			display: none !important;
 		}
 	}
 }

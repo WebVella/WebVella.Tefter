@@ -15,7 +15,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 	// State
 	private bool _isDataLoading = true;
 	private bool _selectAllLoading = false;
-	private Dictionary<Guid,TucSpaceViewColumnComponent> _componentMetaDict;
+	private Dictionary<Guid, TucSpaceViewColumnComponent> _componentMetaDict;
 
 	// Lifecycle Methods
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
@@ -361,6 +361,10 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 
 	private void _toggleSelectAll(bool isChecked)
 	{
+		if (TfAppState.Value.SpaceViewData is null
+		|| TfAppState.Value.SpaceViewData.Rows is null
+		|| TfAppState.Value.SpaceViewData.Rows.Count == 0)
+			return;
 		var selectedItems = TfAppState.Value.SelectedDataRows.ToList();
 		for (int i = 0; i < TfAppState.Value.SpaceViewData.Rows.Count; i++)
 		{

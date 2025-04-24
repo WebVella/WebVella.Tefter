@@ -10,7 +10,7 @@
 <FluentDialogFooter>
 	@if (String.IsNullOrWhiteSpace(_error))
 	{
-		<FluentButton Appearance="Appearance.Accent" OnClick="@_sendEmail" IconStart="@TfConstants.GetIcon("MailArrowUp")"
+		<FluentButton Appearance="Appearance.Accent" OnClick="@_sendEmail" IconStart="@TfConstants.GetIcon("MailArrowUp").WithColor(Color.Neutral)"
 					  Loading="_isSubmitting" Disabled="_isSubmitting">@LOC("Send")</FluentButton>
 	}
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>

@@ -27,7 +27,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Create page") : LOC("Manage page");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		_pageComponents = TfMetaService.GetSpacePagesComponentsMeta();
 		_parentNodeOptions = _getParents();
 		if (_isCreate)

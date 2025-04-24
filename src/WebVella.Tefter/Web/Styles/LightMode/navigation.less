@@ -1,20 +1,28 @@
 ﻿@import '../variables.less';
 @import 'fluent.less';
 
-html:root {
-	.tf-navigation.admin {
-		--accent-fill-rest: var(--tf-red-500);
+.tf-navigation.admin {
+	--accent-fill-rest: var(--tf-red-500);
+}
+
+.tf-sidenav {
+	.fluent-nav-link {
+		&.active {
+			background: var(--tf-layout-color-mute);
+		}
+
+		&:not(.active):hover {
+			background: fade(white,25%);
+		}
+	}
+}
+
+.tf-menu-item {
+	&:not(.tf-selected):hover {
+		background: fade(white,25%);
 	}
 
-	.tf-sidenav {
-		.fluent-nav-link {
-			&.active {
-				background: var(--tf-layout-color-mute);
-			}
-
-			&:not(.active):hover {
-				background: fade(white,15%);
-			}
-		}
+	&.tf-selected {
+		background: var(--tf-layout-color-mute);
 	}
 }
