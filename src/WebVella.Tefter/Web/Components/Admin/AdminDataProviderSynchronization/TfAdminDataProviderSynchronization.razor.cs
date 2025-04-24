@@ -46,6 +46,7 @@ public partial class TfAdminDataProviderSynchronization : TfBaseComponent
 	}
 
 	private void _setNextSyncOn(){ 
+		if(TfAppState.Value.AdminDataProvider is null) return;
 		_nextSyncronization = LOC("not scheduled");
 		var providerNextTaskCreatedOn = UC.GetProviderNextSyncOn(TfAppState.Value.AdminDataProvider.Id);
 		if (providerNextTaskCreatedOn is not null)

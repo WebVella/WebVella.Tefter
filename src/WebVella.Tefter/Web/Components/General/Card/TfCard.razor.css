@@ -1,27 +1,23 @@
 ﻿
 .tf-card {
 	--tf-card-border-radius: 8px;
-	border: 3px solid var(--tf-body-color-accent);
+	border: 3px solid transparent;
 	border-radius: var(--tf-card-border-radius);
-	/*	box-shadow: var(--elevation-shadow-card-rest);*/
 }
 
 .fluent-dialog-body .tf-card {
-	border-color: var(--tf-body-color-accent-2);
+	border-color: transparent;
 }
 
 .tf-card-title {
 	padding: 5px 10px;
-	background: var(--tf-body-color-accent);
+	background: transparent;
 	color: var(--tf-font-color) !important;
 }
 
-	::deep .tf-card-title fluent-button.outline::part(control) {
-		border-color: var(--tf-body-color-accent-3) !important; 
-	}
 
 fluent-dialog .tf-card-title {
-	background: var(--tf-body-color-accent-2);
+	background: transparent;
 }
 
 .tf-card-content {
@@ -38,19 +34,19 @@ fluent-dialog .tf-card-title {
 }
 
 
-::deep .tf-card-content .tf-grid-wrapper:first-child .tf-grid tr:first-child td {
+/*::deep .tf-card-content .tf-grid-wrapper:first-child .tf-grid tr:first-child td {
 	border-top-width: 0 !important;
 }
-
+*/
 
 
 ::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid {
 	margin-bottom: 0;
 }
 
-	::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid .tf-grid-tbody .tf-grid-tr:last-child td {
+	/*::deep .tf-card-content .tf-grid-wrapper:last-child .tf-grid .tf-grid-tbody .tf-grid-tr:last-child td {
 		border-bottom: none;
-	}
+	}*/
 
 ::deep .tf-card .tf-card-content .tf-card:last-child {
 	margin-bottom: 0 !important;
@@ -61,5 +57,5 @@ fluent-dialog .tf-card-title {
 }
 
 	.tf-card--clickable:hover {
-		background: var(--neutral-fill-stealth-hover);
+		background: var(--neutral-fill-secondary-rest);
 	}

@@ -6,15 +6,15 @@
 
 
 ::deep fluent-switch:not(.checked)::part(switch) {
-	border-color:var(--tf-space-border-color);
+	border-color:var(--tf-layout-color-accent);
 }
 
 ::deep fluent-switch.checked::part(switch) {
-	background:var(--tf-space-color);
+	background:var(--tf-layout-color);
 }
 
 ::deep .fluent-nav-item .fluent-nav-icon{
-	fill:var(--tf-space-icon-color) !important;
+	fill:var(--tf-layout-color) !important;
 }
 
 ::deep .fluent-nav-item .expand-collapse-button {

@@ -5,7 +5,7 @@
 	<FluentSearch Value="@TfAppState.Value.HomeSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
 	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInBookmarks ? Appearance.Accent : Appearance.Outline)"
 				  OnClick="@(() => _toggleFilter("HomeSearchInBookmarks"))">
-		<FluentIcon Value="@TfConstants.BookmarkONIcon" />
+		<FluentIcon Value="@TfConstants.BookmarkONIcon"/>
 	</FluentButton>
 	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInSaves ? Appearance.Accent : Appearance.Outline)"
 				  OnClick="@(() => _toggleFilter("HomeSearchInSaves"))">

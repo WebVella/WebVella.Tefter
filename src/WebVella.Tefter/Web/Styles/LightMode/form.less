@@ -1,6 +1,7 @@
 ﻿@import '../variables.less';
+@import 'fluent.less';
 
-:root .tf-select-menu {
+html:root .tf-select-menu {
 	&__body {
 		background: var(--neutral-layer-floating) !important;
 
@@ -25,8 +26,9 @@ fluent-number-field::part(root),
 fluent-select::part(control),
 fluent-text-area::part(control),
 fluent-switch::part(switch),
+fluent-anchor::part(control),
 .tf-select-btn::part(control) {
-	background: color-mix(in srgb, var(--tf-go-yellow-900)10%, var(--neutral-fill-layer-rest) 90%) !important;
+	background: white;
 	border-color: var(--neutral-stroke-input-rest) !important;
 	color: var(--neutral-foreground-rest);
 	fill: var(--neutral-foreground-rest);
@@ -84,12 +86,22 @@ fluent-select {
 }
 
 fluent-button {
+	&.outline {
+		&:hover {
+			background: rgba(0,0,0,0.05);
+		}
+	}
+
 	&.accent {
 		--foreground-on-accent-rest: var(--tf-white);
 		--foreground-on-accent-hover: var(--tf-white);
 		--foreground-on-accent-active: var(--tf-white);
 		--foreground-on-accent-focus: var(--tf-white);
 		--neutral-layer-1: var(--tf-white);
+
+		svg {
+			--accent-fill-rest: var(--foreground-on-accent-rest);
+		}
 	}
 
 	&.neutral {

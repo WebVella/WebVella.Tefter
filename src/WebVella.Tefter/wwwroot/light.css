@@ -1,18 +1,4 @@
-﻿:root {
-  /*	//Font
-	--tf-font-color: var(--tf-go-stone-800);
-	--tf-font-color-mute: var(--tf-go-stone-600);
-	//Layout
-	--tf-body-color: var(--tf-go-stone-100);
-	--tf-body-color-mute: var(--tf-go-stone-50);
-	--tf-body-color-accent: var(--tf-go-stone-200);
-	--tf-body-color-accent-2: var(--tf-go-stone-300);
-	--tf-body-color-accent-3: var(--tf-go-stone-400);
-	--tf-body-page-header: var(--tf-go-stone-50);
-	//Admin
-	--tf-admin-color: var(--tf-go-red-500);*/
-}
-html:root {
+﻿html:root {
   --tf-layout-header-height: 48px;
   --tf-layout-wrapper-height: calc(100vh - var(--tf-layout-header-height));
   --tf-layout-wrapper-aside-width: 60px;
@@ -289,24 +275,24 @@ html:root {
   --neutral-layer-4: var(--tf-zinc-400);
   --fill-color: var(--tf-zinc-50);
   --accent-fill-rest: var(--tf-sky-600);
-  --accent-fill-hover: var(--tf-sky-500);
-  --accent-fill-active: var(--tf-sky-400);
-  --accent-fill-focus: var(--tf-sky-600);
-  --foreground-on-accent-rest: var(--tf-zinc-800);
-  --foreground-on-accent-hover: var(--tf-zinc-800);
-  --foreground-on-accent-active: var(--tf-zinc-800);
-  --foreground-on-accent-focus: var(--tf-zinc-800);
+  --accent-fill-hover: var(--tf-sky-400);
+  --accent-fill-active: var(--tf-sky-300);
+  --accent-fill-focus: var(--tf-sky-500);
+  --foreground-on-accent-rest: var(--tf-white);
+  --foreground-on-accent-hover: var(--tf-white);
+  --foreground-on-accent-active: var(--tf-white);
+  --foreground-on-accent-focus: var(--tf-white);
   --accent-foreground-rest: var(--tf-sky-700);
-  --accent-foreground-hover: var(--tf-sky-600);
+  --accent-foreground-hover: var(--tf-sky-500);
   --accent-foreground-active: var(--tf-sky-400);
-  --accent-foreground-focus: var(--tf-sky-700);
+  --accent-foreground-focus: var(--tf-sky-600);
   --accent-stroke-control-rest: linear-gradient(var(--tf-sky-600) 90%, var(--tf-sky-700) 100%);
   --accent-stroke-control-hover: linear-gradient(var(--tf-sky-500) 90%, var(--tf-sky-600) 100%);
   --accent-stroke-control-active: var(--tf-sky-500);
   --accent-stroke-control-focus: linear-gradient(var(--tf-sky-400) 90%, var(--tf-sky-700) 100%);
   --neutral-fill-rest: var(--tf-zinc-800);
   --neutral-fill-hover: var(--tf-zinc-600);
-  --neutral-fill-active: var(--tf-zinc-700);
+  --neutral-fill-active: var(--tf-zinc-500);
   --neutral-fill-focus: var(--tf-zinc-700);
   --neutral-fill-input-rest: var(--tf-white);
   --neutral-fill-input-hover: var(--tf-white);
@@ -318,29 +304,29 @@ html:root {
   --neutral-fill-input-alt-focus: var(--tf-zinc-600);
   --neutral-fill-layer-rest: var(--tf-zinc-100);
   --neutral-fill-layer-hover: var(--tf-zinc-200);
-  --neutral-fill-layer-active: var(--tf-zinc-50);
+  --neutral-fill-layer-active: var(--tf-zinc-300);
   --neutral-fill-layer-alt-rest: var(--tf-zinc-800);
   --neutral-fill-secondary-rest: var(--tf-zinc-200);
-  --neutral-fill-secondary-hover: var(--tf-zinc-200);
-  --neutral-fill-secondary-active: var(--tf-zinc-300);
-  --neutral-fill-secondary-focus: var(--tf-zinc-200);
+  --neutral-fill-secondary-hover: var(--tf-zinc-400);
+  --neutral-fill-secondary-active: var(--tf-zinc-500);
+  --neutral-fill-secondary-focus: var(--tf-zinc-300);
   --neutral-fill-stealth-rest: var(--tf-zinc-100);
-  --neutral-fill-stealth-hover: var(--tf-zinc-200);
+  --neutral-fill-stealth-hover: var(--tf-zinc-300);
   --neutral-fill-stealth-active: var(--tf-zinc-400);
-  --neutral-fill-stealth-focus: var(--tf-zinc-300);
+  --neutral-fill-stealth-focus: var(--tf-zinc-400);
   --neutral-fill-strong-rest: var(--tf-zinc-600);
-  --neutral-fill-strong-hover: var(--tf-zinc-500);
+  --neutral-fill-strong-hover: var(--tf-zinc-400);
   --neutral-fill-strong-active: var(--tf-zinc-300);
-  --neutral-fill-strong-focus: var(--tf-zinc-600);
+  --neutral-fill-strong-focus: var(--tf-zinc-500);
   --neutral-foreground-rest: var(--tf-zinc-800);
   --neutral-foreground-hover: var(--tf-zinc-600);
-  --neutral-foreground-active: var(--tf-zinc-400);
-  --neutral-foreground-focus: var(--tf-zinc-800);
+  --neutral-foreground-active: var(--tf-zinc-500);
+  --neutral-foreground-focus: var(--tf-zinc-700);
   --neutral-foreground-hint: var(--tf-zinc-500);
-  --neutral-stroke-rest: var(--tf-zinc-300);
-  --neutral-stroke-hover: var(--tf-zinc-200);
-  --neutral-stroke-active: var(--tf-zinc-400);
-  --neutral-stroke-focus: var(--tf-zinc-300);
+  --neutral-stroke-rest: var(--tf-zinc-400);
+  --neutral-stroke-hover: var(--tf-zinc-600);
+  --neutral-stroke-active: var(--tf-zinc-700);
+  --neutral-stroke-focus: var(--tf-zinc-500);
   --neutral-stroke-control-rest: linear-gradient(var(--tf-zinc-900) 90%, var(--tf-zinc-300) 100%);
   --neutral-stroke-control-hover: linear-gradient(var(--tf-zinc-800) 90%, var(--tf-zinc-200) 100%);
   --neutral-stroke-control-active: var(--tf-zinc-800);
@@ -351,22 +337,22 @@ html:root {
   --neutral-stroke-input-active: var(--tf-zinc-500);
   --neutral-stroke-input-focus: linear-gradient(var(--tf-zinc-400) calc(100% - 1px), var(--tf-zinc-300) calc(100% - 1px), var(--tf-zinc-300));
   --neutral-stroke-layer-rest: var(--tf-zinc-900);
-  --neutral-stroke-layer-hover: var(--tf-zinc-900);
-  --neutral-stroke-layer-active: var(--tf-zinc-900);
-  --neutral-stroke-strong-rest: var(--tf-zinc-400);
+  --neutral-stroke-layer-hover: var(--tf-zinc-700);
+  --neutral-stroke-layer-active: var(--tf-zinc-600);
+  --neutral-stroke-strong-rest: var(--tf-zinc-600);
   --neutral-stroke-strong-hover: var(--tf-zinc-400);
-  --neutral-stroke-strong-active: var(--tf-zinc-400);
-  --neutral-stroke-strong-focus: var(--tf-zinc-400);
+  --neutral-stroke-strong-active: var(--tf-zinc-300);
+  --neutral-stroke-strong-focus: var(--tf-zinc-500);
   --focus-stroke-outer: var(--tf-black);
   --focus-stroke-inner: var(--tf-zinc-800);
-  --foreground-on-accent-rest-large: var(--tf-zinc-800);
-  --foreground-on-accent-hover-large: var(--tf-zinc-800);
-  --foreground-on-accent-active-large: var(--tf-zinc-800);
-  --foreground-on-accent-focus-large: var(--tf-zinc-800);
+  --foreground-on-accent-rest-large: var(--tf-white);
+  --foreground-on-accent-hover-large: var(--tf-white);
+  --foreground-on-accent-active-large: var(--tf-white);
+  --foreground-on-accent-focus-large: var(--tf-white);
   --neutral-fill-inverse-rest: var(--tf-zinc-100);
-  --neutral-fill-inverse-hover: var(--tf-zinc-200);
-  --neutral-fill-inverse-active: var(--tf-zinc-50);
-  --neutral-fill-inverse-focus: var(--tf-zinc-100);
+  --neutral-fill-inverse-hover: var(--tf-zinc-300);
+  --neutral-fill-inverse-active: var(--tf-zinc-400);
+  --neutral-fill-inverse-focus: var(--tf-zinc-200);
   --neutral-fill-stealth-rest-on-neutral-fill-layer-rest: var(--tf-zinc-800);
   --neutral-fill-stealth-hover-on-neutral-fill-layer-rest: var(--tf-zinc-600);
   --neutral-fill-stealth-active-on-neutral-fill-layer-rest: var(--tf-zinc-600);
@@ -419,10 +405,16 @@ fluent-anchored-region fluent-menu-item {
 fluent-anchored-region fluent-divider {
   --neutral-stroke-divider-rest: var(--tf-zinc-300);
 }
-:root .tf-select-menu__body {
+.tf-card {
+  border-color: var(--neutral-fill-secondary-rest) !important;
+}
+.tf-card .tf-card-title {
+  background-color: var(--neutral-fill-secondary-rest);
+}
+html:root .tf-select-menu__body {
   background: var(--neutral-layer-floating) !important;
 }
-:root .tf-select-menu__body fluent-menu-item .fluent-typography {
+html:root .tf-select-menu__body fluent-menu-item .fluent-typography {
   color: var(--neutral-foreground-rest);
 }
 .tf-input-label {
@@ -438,8 +430,9 @@ fluent-number-field::part(root),
 fluent-select::part(control),
 fluent-text-area::part(control),
 fluent-switch::part(switch),
+fluent-anchor::part(control),
 .tf-select-btn::part(control) {
-  background: color-mix(in srgb, var(--tf-go-yellow-900) 10%, var(--neutral-fill-layer-rest) 90%) !important;
+  background: white;
   border-color: var(--neutral-stroke-input-rest) !important;
   color: var(--neutral-foreground-rest);
   fill: var(--neutral-foreground-rest);
@@ -483,12 +476,18 @@ fluent-select fluent-option {
 fluent-select fluent-option:hover {
   background-color: oklch(92.8% 0.006 264.531) !important;
 }
+fluent-button.outline:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
 fluent-button.accent {
   --foreground-on-accent-rest: var(--tf-white);
   --foreground-on-accent-hover: var(--tf-white);
   --foreground-on-accent-active: var(--tf-white);
   --foreground-on-accent-focus: var(--tf-white);
   --neutral-layer-1: var(--tf-white);
+}
+fluent-button.accent svg {
+  --accent-fill-rest: var(--foreground-on-accent-rest);
 }
 fluent-button.neutral {
   color: oklch(27.4% 0.006 286.033);
@@ -502,35 +501,60 @@ fluent-button.neutral {
   --neutral-stroke-control-focus: oklch(70.5% 0.015 286.067);
 }
 fluent-data-grid-row:has([row-selected]) {
-  background-color: var(--tf-body-color-accent);
+  background-color: var(--neutral-stroke-rest);
 }
 .tf-grid-thead-bkg {
-  background: var(--tf-body-color-accent);
+  background: var(--neutral-fill-secondary-rest);
 }
 .tf-grid-td,
 .tf-grid-th {
   color: var(--tf-font-color);
-  border: 1px solid var(--tf-body-color-accent);
+  border: 1px solid var(--neutral-stroke-rest);
 }
 .tf-grid .tf-grid-tbody tr > .tf-grid-th::before,
 .tf-grid .tf-grid-tbody tr > .tf-grid-td::before {
   background-color: var(--tf-body-color);
 }
 .tf-grid__pager {
-  background: var(--tf-body-color-accent);
-  border-color: var(--tf-body-color-accent-2);
+  background: var(--neutral-fill-secondary-rest);
+  border-color: var(--neutral-fill-secondary-hover);
 }
-:root .tf-layout__body {
-  --tf-layout-color-mute: color-mix(in srgb, var(--accent-base-color) 10%, var(--neutral-fill-layer-rest) 90%);
+html:root .tf-layout__body {
+  --tf-layout-color-mute: color-mix(in srgb, var(--accent-base-color) 30%, var(--neutral-fill-layer-rest) 70%);
   --tf-layout-color: color-mix(in srgb, var(--accent-base-color) 20%, var(--neutral-fill-layer-rest) 80%);
   --tf-layout-color-accent: color-mix(in srgb, var(--accent-base-color) 60%, var(--neutral-fill-layer-rest) 40%);
   --tf-layout-color-accent-2: color-mix(in srgb, var(--accent-base-color) 80%, var(--neutral-fill-layer-rest) 20%);
 }
-.fluent-messagebar.intent-info {
-  background-color: var(--tf-go-blue-100) !important;
-  border-color: var(--tf-go-blue-200) !important;
-  color: var(--tf-font-color);
+.fluent-messagebar.intent-info,
+.fluent-messagebar-notification.intent-info {
+  background-color: color-mix(in srgb, var(--info) 20%, var(--neutral-fill-layer-rest) 80%) !important;
+  border-color: color-mix(in srgb, var(--info) 30%, var(--neutral-fill-layer-rest) 70%) !important;
+  color: var(--neutral-foreground-rest);
 }
-:root .tf-navigation.admin {
+.fluent-messagebar.intent-success,
+.fluent-messagebar-notification.intent-success {
+  background-color: color-mix(in srgb, var(--success) 20%, var(--neutral-fill-layer-rest) 80%) !important;
+  border-color: color-mix(in srgb, var(--success) 30%, var(--neutral-fill-layer-rest) 70%) !important;
+  color: var(--neutral-foreground-rest);
+}
+.fluent-messagebar.intent-warning,
+.fluent-messagebar-notification.intent-warning {
+  background-color: color-mix(in srgb, var(--warning) 20%, var(--neutral-fill-layer-rest) 80%) !important;
+  border-color: color-mix(in srgb, var(--warning) 30%, var(--neutral-fill-layer-rest) 70%) !important;
+  color: var(--neutral-foreground-rest);
+}
+.fluent-messagebar.intent-error,
+.fluent-messagebar-notification.intent-error {
+  background-color: color-mix(in srgb, var(--error) 20%, var(--neutral-fill-layer-rest) 80%) !important;
+  border-color: color-mix(in srgb, var(--error) 30%, var(--neutral-fill-layer-rest) 70%) !important;
+  color: var(--neutral-foreground-rest);
+}
+html:root .tf-navigation.admin {
   --accent-fill-rest: var(--tf-red-500);
+}
+html:root .tf-sidenav .fluent-nav-link.active {
+  background: var(--tf-layout-color-mute);
+}
+html:root .tf-sidenav .fluent-nav-link:not(.active):hover {
+  background: rgba(255, 255, 255, 0.15);
 }

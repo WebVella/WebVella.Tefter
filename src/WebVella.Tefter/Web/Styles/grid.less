@@ -2,7 +2,8 @@
 .tf-grid {
 	table-layout: fixed;
 	min-width: 100%;
-	border: none !important;
+	border: 1px solid var(--neutral-stroke-rest);
+	border-bottom:none;
 	border-collapse: separate !important;
 	border-spacing: 0;
 }
@@ -13,7 +14,7 @@
 	top: 0;
 	bottom: 0;
 	left: 0;
-	right: 0;
+	right: 1px;
 	z-index: 1;
 	pointer-events: none;
 }
@@ -36,7 +37,7 @@
 
 	& tr > .tf-grid-th,
 	& tr > .tf-grid-td {
-		border-left-width: 0;
+		border-left-width:0;
 	}
 }
 
@@ -140,6 +141,15 @@
 	}
 }
 
+.tf-grid > .tf-grid-tbody {
+	.tf-grid-tr:first-child{
+		& > td,
+		& > th{
+			border-top-width:0;
+		}
+		
+	}
+}
 
 .tf-grid-td,
 .tf-grid-th {
@@ -182,9 +192,11 @@
 }
 
 /*Border override*/
-.tf-grid > .tf-grid-thead > .tf-grid-tr > .tf-grid-th:first-child,
+.tf-grid > .tf-grid-thead > .tf-grid-tr > .tf-grid-th:first-child {
+	border-left-width: 0;
+}
 .tf-grid > .tf-grid-tbody > .tf-grid-tr > .tf-grid-td:first-child {
-	border-left: none;
+	border-left-width: 0;
 }
 
 .tf-grid > .tf-grid-thead > .tf-grid-tr > .tf-grid-th:last-child,

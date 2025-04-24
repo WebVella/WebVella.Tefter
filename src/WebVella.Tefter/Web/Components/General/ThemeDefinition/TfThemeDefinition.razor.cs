@@ -5,6 +5,7 @@ public partial class TfThemeDefinition : TfBaseComponent
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 
 	private string _themeStyles = "";
+	private DesignThemeModes _mode = DesignThemeModes.System;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -45,21 +46,28 @@ public partial class TfThemeDefinition : TfBaseComponent
 	private async Task _initThemeStyles()
 	{
 
-		var themeMode = DesignThemeModes.Dark;
+		_mode = DesignThemeModes.Dark;
 		var cacheKey = ConfigurationService.CacheKey;
 		if (TfUserState.Value.CurrentUser is not null && TfUserState.Value.CurrentUser.Settings is not null)
 		{
-			themeMode = TfUserState.Value.CurrentUser.Settings.ThemeMode;
+			_mode = TfUserState.Value.CurrentUser.Settings.ThemeMode;
 		}
-		if (themeMode == DesignThemeModes.System)
+		if (_mode == DesignThemeModes.System)
 		{
-			var browserModeIsDark = await _getIsDarkModeFromBrowser();
-			themeMode = browserModeIsDark ? DesignThemeModes.Dark : DesignThemeModes.Light;
+			try
+			{
+				var browserModeIsDark = await _getIsDarkModeFromBrowser();
+				_mode = browserModeIsDark ? DesignThemeModes.Dark : DesignThemeModes.Light;
+			}
+			catch
+			{
+				//there is a strange error here that happens when the browser stays opened for long
+			}
 		}
 
 		var sb = new StringBuilder();
 		//Dark
-		if (themeMode == DesignThemeModes.Dark)
+		if (_mode == DesignThemeModes.Dark)
 		{
 			sb.AppendLine($"<link rel=\"stylesheet\" href=\"_content/WebVella.Tefter/dark.css?cb={cacheKey}\">");
 		}
@@ -75,6 +83,5 @@ public partial class TfThemeDefinition : TfBaseComponent
 	{
 		return await JSRuntime.InvokeAsync<bool>(
 				"Tefter.getIsDarkTheme");
-
 	}
 }

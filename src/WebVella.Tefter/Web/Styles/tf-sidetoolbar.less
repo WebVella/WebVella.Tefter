@@ -15,12 +15,10 @@
 				&.active {
 					background: var(--accent-base-color);
 					border-color: var(--accent-base-color);
-					color: var(--neutral-foreground-rest) !important;
-					fill: var(--neutral-foreground-rest) !important;
+					color: var(--foreground-on-accent-rest) !important;
 
 					svg {
-						color: var(--neutral-foreground-rest) !important;
-						fill: var(--neutral-foreground-rest) !important;
+						fill: var(--foreground-on-accent-rest) !important;
 					}
 				}
 
@@ -56,28 +54,16 @@
 			width: 100%;
 
 			&::part(root) {
-				background: transparent !important;
-				/*border-color: var(--tf-layout-color-accent) !important;*/
-				/*color: var(--tf-font-color);*/
+				background: var(--tf-layout-color-mute);
 			}
 
 			&::part(control)::placeholder {
-				/*color: var(--tf-font-color-mute);*/
+				color: var(--tf-layout-color-accent);
 			}
 		}
 	}
 
 	&__actions {
 		flex: 0 0 auto;
-
-		fluent-button {
-			/*color: var(--tf-font-color-mute) !important;*/
-
-			&.outline {
-				&::part(control) {
-					/*border-color: var(--tf-layout-color-accent);*/
-				}
-			}
-		}
 	}
 }

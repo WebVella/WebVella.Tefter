@@ -104,7 +104,7 @@ public partial class TfUseTemplateDialog : TfBaseComponent, IDialogContentCompon
 	{
 		var sb = new StringBuilder();
 		sb.AppendLine("<style>");
-		sb.AppendLine(":root {");
+		sb.AppendLine("html:root {");
 		sb.AppendLine($"--tf-grid-row-selected: var(--neutral-layer-3);");
 		sb.AppendLine("}");
 		sb.AppendLine("</style>");

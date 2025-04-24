@@ -1,0 +1,20 @@
+﻿@import '../variables.less';
+@import 'fluent.less';
+
+html:root {
+	.tf-navigation.admin {
+		--accent-fill-rest: var(--tf-red-500);
+	}
+
+	.tf-sidenav {
+		.fluent-nav-link {
+			&.active {
+				background: var(--tf-layout-color-mute);
+			}
+
+			&:not(.active):hover {
+				background: fade(white,15%);
+			}
+		}
+	}
+}

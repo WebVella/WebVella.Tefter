@@ -1,5 +1,29 @@
-﻿.fluent-messagebar.intent-info {
-	background-color: color-mix(in srgb, var(--tf-go-blue-500) 15%, var(--tf-body-color) 85%) !important;
-	border-color: color-mix(in srgb, var(--tf-go-blue-500) 15%, var(--tf-body-color) 85%) !important;
-	color:var(--tf-font-color);
+﻿@import '../variables.less';
+@import 'fluent.less';
+
+.fluent-messagebar,
+.fluent-messagebar-notification {
+	&.intent-info {
+		background-color: color-mix(in srgb, var(--info) 15%, var(--neutral-fill-layer-rest) 85%) !important;
+		border-color: color-mix(in srgb, var(--info) 30%, var(--neutral-fill-layer-rest) 80%) !important;
+		color: var(--neutral-foreground-rest);
+	}
+
+	&.intent-success {
+		background-color: color-mix(in srgb, var(--success) 15%, var(--neutral-fill-layer-rest) 85%) !important;
+		border-color: color-mix(in srgb, var(--success) 30%, var(--neutral-fill-layer-rest) 80%) !important;
+		color: var(--neutral-foreground-rest);
+	}
+
+	&.intent-warning {
+		background-color: color-mix(in srgb, var(--warning) 15%, var(--neutral-fill-layer-rest) 85%) !important;
+		border-color: color-mix(in srgb, var(--warning) 30%, var(--neutral-fill-layer-rest) 80%) !important;
+		color: var(--neutral-foreground-rest);
+	}
+
+	&.intent-error {
+		background-color: color-mix(in srgb, var(--error) 15%, var(--neutral-fill-layer-rest) 85%) !important;
+		border-color: color-mix(in srgb, var(--error) 30%, var(--neutral-fill-layer-rest) 80%) !important;
+		color: var(--neutral-foreground-rest);
+	}
 }

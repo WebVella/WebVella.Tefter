@@ -1,18 +1,17 @@
-﻿fluent-data-grid-row:has([row-selected]) {
-	background-color: var(--tf-body-color-accent);
-}
+﻿@import '../variables.less';
+@import 'fluent.less';
 
-.tf-grid .tf-grid-thead tr > .tf-grid-th, .tf-grid .tf-grid-thead tr > .tf-grid-td{
-	color:var(--tf-font-color-mute);
+fluent-data-grid-row:has([row-selected]) {
+	background-color: var(--neutral-stroke-rest);
 }
 
 .tf-grid-thead-bkg {
-	background: var(--tf-body-color-accent);
+	background: var(--neutral-fill-secondary-rest);
 }
 
 .tf-grid-td, .tf-grid-th {
 	color: var(--tf-font-color);
-	border: 1px solid var(--tf-body-color-accent);
+	border: 1px solid var(--neutral-stroke-rest);
 }
 
 .tf-grid .tf-grid-tbody tr > .tf-grid-th::before, .tf-grid .tf-grid-tbody tr > .tf-grid-td::before {
@@ -20,6 +19,6 @@
 }
 
 .tf-grid__pager {
-	background: var(--tf-body-color-accent) !important;
-	border-color: var(--tf-body-color-accent-2) !important;
+	background: var(--neutral-fill-secondary-rest);
+	border-color: var(--neutral-fill-secondary-hover);
 }
