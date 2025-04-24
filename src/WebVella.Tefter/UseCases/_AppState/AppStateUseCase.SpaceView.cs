@@ -34,28 +34,41 @@ internal partial class AppStateUseCase
 				SpaceViewFilters = newAppState.Route.Filters,
 				SpaceViewSorts = newAppState.Route.Sorts,
 			};
-			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue && newAppState.SpaceData is not null)
+			if (newAppState.SpaceView is not null && newAppState.SpaceView.SpaceDataId.HasValue)
 			{
 				TucSpaceViewPreset preset = null;
 				if (newAppState.Route.SpaceViewPresetId is not null)
 					preset = newAppState.SpaceView.Presets.GetPresetById(newAppState.Route.SpaceViewPresetId.Value);
 
-				var viewData = GetSpaceDataDataTable(
-							spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
-							presetFilters: preset is not null ? preset.Filters : null,
-							presetSorts: preset is not null ? preset.SortOrders : null,
-							userFilters: newAppState.SpaceViewFilters,
-							userSorts: newAppState.SpaceViewSorts,
-							search: newAppState.Route.Search,
-							page: newAppState.Route.Page,
-							pageSize: newAppState.Route.PageSize
-						);
-				newAppState = newAppState with
+				var spaceData = GetSpaceData(newAppState.SpaceView.SpaceDataId.Value);
+				if (spaceData is not null)
 				{
-					SpaceViewData = viewData,
-					SpaceData = GetSpaceData(newAppState.SpaceView.SpaceDataId.Value),
-					Route = newAppState.Route with { Page = viewData.QueryInfo.Page }
-				};
+					var viewData = GetSpaceDataDataTable(
+								spaceDataId: newAppState.SpaceView.SpaceDataId.Value,
+								presetFilters: preset is not null ? preset.Filters : null,
+								presetSorts: preset is not null ? preset.SortOrders : null,
+								userFilters: newAppState.SpaceViewFilters,
+								userSorts: newAppState.SpaceViewSorts,
+								search: newAppState.Route.Search,
+								page: newAppState.Route.Page,
+								pageSize: newAppState.Route.PageSize
+							);
+					newAppState = newAppState with
+					{
+						SpaceViewData = viewData,
+						SpaceData = GetSpaceData(newAppState.SpaceView.SpaceDataId.Value),
+						Route = newAppState.Route with { Page = viewData.QueryInfo.Page }
+					};
+				}
+				else
+				{
+					newAppState = newAppState with
+					{
+						SpaceViewData = null,
+						SpaceData = null,
+						Route = newAppState.Route with { Page = 1 }
+					};
+				}
 			}
 			else
 			{

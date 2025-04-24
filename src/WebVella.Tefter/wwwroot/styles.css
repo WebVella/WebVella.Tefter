@@ -1575,7 +1575,7 @@ body {
   width: 100%;
 }
 .tf-sidetoolbar__search .search::part(root) {
-  background: var(--tf-layout-color-mute);
+  background: var(--tf-layout-color-mute) !important;
 }
 .tf-sidetoolbar__search .search::part(control)::placeholder {
   color: var(--tf-layout-color-accent);

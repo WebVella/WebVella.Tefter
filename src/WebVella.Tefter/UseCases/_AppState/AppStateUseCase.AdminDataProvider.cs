@@ -172,7 +172,7 @@ internal partial class AppStateUseCase
 				toastService: _toastService,
 				messageService: _messageService
 			);
-			return Task.FromResult(new TucDataProvider());
+			return Task.FromResult((TucDataProvider)null);
 
 		}
 	}
