@@ -12,7 +12,9 @@
 
 @* Footer *@
 <FluentDialogFooter>
-	<FluentButton Appearance="Appearance.Accent" OnClick="@_save">@LOC("Save")</FluentButton>
+	<FluentButton Appearance="Appearance.Accent" OnClick="@_save" IconStart="@TfConstants.GetIcon("Save").WithColor(Color.Neutral)">
+		@LOC("Save")
+	</FluentButton>
 	<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 </FluentDialogFooter>
 

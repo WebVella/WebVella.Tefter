@@ -6,7 +6,6 @@
 		<FluentMessageBar Title="No space found"
 						  Style="border: 1px solid var(--neutral-base-color)"
 						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
 						  AllowDismiss="false">
 			No spaces found yet notification
 		</FluentMessageBar>
@@ -18,9 +17,8 @@ else if (TfAppState.Value.SpaceViewList.Count == 0)
 		<FluentMessageBar Title="No space views found"
 						  Style="border: 1px solid var(--neutral-base-color)"
 						  Intent="MessageIntent.Info"
-						  Type="@MessageType.Notification"
 						  AllowDismiss="false">
-			<div><FluentButton OnClick="_createViewHandler" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Accent">Create view</FluentButton></div>
+			<div><FluentButton OnClick="_createViewHandler" IconStart="@TfConstants.AddIcon.WithColor(Color.Neutral)" Appearance="@Appearance.Accent">Create view</FluentButton></div>
 		</FluentMessageBar>
 	</TfLayoutBodyMain>
 }

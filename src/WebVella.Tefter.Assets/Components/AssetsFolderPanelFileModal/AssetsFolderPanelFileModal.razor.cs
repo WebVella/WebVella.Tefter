@@ -30,7 +30,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 		if (Content.Id == Guid.Empty) _isCreate = true;
 		_title = _isCreate ? LOC("Upload file") : LOC("Update file");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
-		_iconBtn = _isCreate ? TfConstants.AddIcon : TfConstants.SaveIcon;
+		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		_form.Label = Content.Label;
 		_form.FileName = Content.FileName;
 		_form.LocalPath = _isCreate ? null : fakeLocalPath;

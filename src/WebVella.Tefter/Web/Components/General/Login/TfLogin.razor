@@ -20,7 +20,7 @@
 			</div>
 			<div class="login-btn">
 				<FluentButton Type="ButtonType.Submit" Appearance="@Appearance.Accent"
-							  IconStart="@TfConstants.GetIcon("Key")"
+							  IconStart="@TfConstants.GetIcon("Key").WithColor(Color.Neutral)"
 							  Loading="@UC.IsSubmitting" Disabled="@UC.IsSubmitting">@LOC("Login")</FluentButton>
 			</div>
 		</FluentEditForm>
