@@ -397,7 +397,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		var result = new Dictionary<int, Tuple<int?, string, string>>();
 
 		//Position 0 is always the checkbox , width 40
-		result[0] = new Tuple<int?, string, string>(40, "tf--sticky", "left:0");
+		result[0] = new Tuple<int?, string, string>(40, "tf--sticky", "");
 		_freezeLeftWidth += 40;
 		for (int i = 0; i < columns.Count; i++)
 		{

@@ -6,7 +6,7 @@
 		<div class="actions">
 			@if (_isAdmin)
 			{
-				<FluentAnchor Appearance="@Appearance.Stealth" Href="@TfConstants.HomePageUrl" Title="@LOC("Exit Admin")">
+				<FluentAnchor Appearance="@Appearance.Outline" Href="@TfConstants.HomePageUrl" Title="@LOC("Exit Admin")">
 					<FluentIcon Value="@TfConstants.GetIcon("ArrowExit")" Color="@Color.Neutral" Slot="start" />
 					@LOC("Exit Admin")
 				</FluentAnchor>
@@ -15,7 +15,7 @@
 			}
 			else
 			{
-				<FluentAnchor Appearance="@Appearance.Stealth" Href="@TfConstants.AdminDashboardUrl" Title="@LOC("Administration")">
+				<FluentAnchor Appearance="@Appearance.Outline" Href="@TfConstants.AdminDashboardUrl" Title="@LOC("Administration")">
 					@LOC("Admin")
 				</FluentAnchor>
 				<TfLanguageSwitch />

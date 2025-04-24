@@ -153,7 +153,7 @@ else
 									columnIndex = 1;
 									var selected = _getItemSelection(index);
 									<tr @key=@index class="@($"tf-grid-tr {(selected ? "tf-grid-tr--selected" : "")}")">
-										<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"background:var(--neutral-fill-layer-rest);{configCss[0].Item3}")">
+										<td class="tf-grid-td tf-grid-td--check @configCss[0].Item2" style="@($"{configCss[0].Item3}")">
 											<div class="tf-grid-td-selection"></div>
 											<div class="tf-grid-td-hover"></div>
 											<div class="check-content">
@@ -177,8 +177,8 @@ else
 										</td>
 										@foreach (var column in TfAppState.Value.SpaceViewColumns)
 										{
-											<td class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{configCss[columnIndex].Item3}")">
-												<div class="tf-grid-td-color" style="@column.CellColorStyle"></div>
+											<td class="tf-grid-td @configCss[columnIndex].Item2" style="@($"{column.CellColorStyle}{configCss[columnIndex].Item3}")">
+												<div class="tf-grid-td-color" style="@column.CellFillColorStyle"></div>
 												<div class="tf-grid-td-selection"></div>
 												<div class="tf-grid-td-hover"></div>
 												@if (_componentMetaDict.ContainsKey(column.ComponentId))

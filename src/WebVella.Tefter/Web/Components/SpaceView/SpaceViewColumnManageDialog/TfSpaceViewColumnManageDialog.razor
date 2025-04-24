@@ -185,6 +185,7 @@
 					}
 				</FluentTab>
 				<FluentTab Label="@LOC("Styling")" Id="styling">
+					<div>@(JsonSerializer.Serialize(_form.Settings))</div>
 					<FluentGrid>
 						<FluentGridItem xs="6">
 							<FluentNumberField TValue="short?" @bind-Value="_form.Settings.Width" AutoComplete="off"
@@ -196,77 +197,11 @@
 					<FluentGrid>
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Color")" />
-							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								@if (_form.Settings.Color != TfColor.Black)
-								{
-									<FluentIcon Value="@TfConstants.RectangleIcon"
-												Color="Color.Custom" Style="height:100%;"
-												CustomColor="@_form.Settings.Color.GetAttribute().Value" />
-								}
-								else
-								{
-									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
-								}
-								<FluentSelect OptionSelected="(x => x == _form.Settings?.Color)"
-											  @bind-SelectedOption="@_form.Settings.Color" TOption="TfColor"
-											  Items="@TfConverters.GetSelectableColors()"
-											  Style="width:100%;"
-											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@(p => p.ToString())">
-									<OptionTemplate Context="color">
-										<FluentStack>
-											@if (color != TfColor.Black)
-											{
-												<FluentIcon Value="@TfConstants.RectangleIcon"
-															Color="Color.Custom"
-															CustomColor="@color.GetAttribute().Value" />
-											}
-											else
-											{
-												<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
-											}
-											<FluentLabel>@color</FluentLabel>
-										</FluentStack>
-									</OptionTemplate>
-								</FluentSelect>
-							</FluentStack>
+							<TfSelectColor @bind-Value=@_form.Settings.Color />
 						</FluentGridItem>
 						<FluentGridItem xs="6">
 							<FluentInputLabel Label="@LOC("Background Color")" />
-							<FluentStack HorizontalGap="0" VerticalAlignment="@VerticalAlignment.Center">
-								@if (_form.Settings.BackgroundColor != TfColor.Black)
-								{
-									<FluentIcon Value="@TfConstants.RectangleIcon"
-												Color="Color.Custom" Style="height:100%;"
-												CustomColor="@_form.Settings.BackgroundColor.GetAttribute().Value" />
-								}
-								else
-								{
-									<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
-								}
-								<FluentSelect OptionSelected="(x => x == _form.Settings?.BackgroundColor)"
-											  @bind-SelectedOption="@_form.Settings.BackgroundColor" TOption="TfColor"
-											  Items="@TfConverters.GetSelectableColors()"
-											  Style="width:100%;"
-											  OptionValue="@((p)=> ((int)p).ToString())"
-											  OptionText="@(p => p.ToString())">
-									<OptionTemplate Context="color">
-										<FluentStack>
-											@if (color != TfColor.Black)
-											{
-												<FluentIcon Value="@TfConstants.RectangleIcon"
-															Color="Color.Custom"
-															CustomColor="@color.GetAttribute().Value" />
-											}
-											else
-											{
-												<FluentIcon Value="@TfConstants.GetIcon("RectangleLandscape")" Color="@Color.Accent" />
-											}
-											<FluentLabel>@color</FluentLabel>
-										</FluentStack>
-									</OptionTemplate>
-								</FluentSelect>
-							</FluentStack>
+							<TfSelectColor @bind-Value=@_form.Settings.BackgroundColor />
 						</FluentGridItem>
 					</FluentGrid>
 				</FluentTab>

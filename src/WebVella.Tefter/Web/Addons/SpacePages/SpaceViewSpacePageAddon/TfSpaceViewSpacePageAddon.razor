@@ -5,10 +5,12 @@
 {
 	if (TfAppState.Value.SpaceView is null)
 	{
-		<FluentMessageBar Title="The page view no longer exists or not found"
-						  Style="border: 1px solid var(--neutral-base-color)"
-						  Intent="MessageIntent.Warning"
-						  AllowDismiss="false" />
+		<TfLayoutBodyMain>
+			<FluentMessageBar Title="The page view no longer exists or not found"
+							  Style="border: 1px solid var(--neutral-base-color)"
+							  Intent="MessageIntent.Warning"
+							  AllowDismiss="false" />
+		</TfLayoutBodyMain>
 	}
 	else
 	{
@@ -187,10 +189,10 @@ else if (Context.Mode == TfComponentMode.Update)
 						  Items="@TfAppState.Value.SpaceViewList" Style="width:100%"
 						  OptionValue="@((p)=> p.Id.ToString())"
 						  OptionText="@(p => p.Name)" Label="@LOC("Selected view")"
-						  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" Disabled=true/>
+						  Class="@GetValidationCssClass(nameof(_options.SpaceViewId))" Disabled=true />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			<FluentInputLabel Label="Navigate"/>
+			<FluentInputLabel Label="Navigate" />
 			<FluentButton Appearance="Appearance.Outline" OnClick="@_goToView">@LOC("browse view")</FluentButton>
 		</FluentGridItem>
 	</FluentGrid>

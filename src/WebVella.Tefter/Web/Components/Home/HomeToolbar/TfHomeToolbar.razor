@@ -5,14 +5,14 @@
 	<FluentSearch Value="@TfAppState.Value.HomeSearch" ValueChanged="_searchChanged" AutoComplete="off" Placeholder="@LOC("search...")" />
 	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInBookmarks ? Appearance.Accent : Appearance.Outline)"
 				  OnClick="@(() => _toggleFilter("HomeSearchInBookmarks"))">
-		<FluentIcon Value="@TfConstants.BookmarkONIcon"/>
+		<FluentIcon Value="@TfConstants.BookmarkONIcon.WithColor(TfAppState.Value.HomeSearchInBookmarks ? Color.Accent : Color.Neutral)" />
 	</FluentButton>
 	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInSaves ? Appearance.Accent : Appearance.Outline)"
 				  OnClick="@(() => _toggleFilter("HomeSearchInSaves"))">
-		<FluentIcon Value="@TfConstants.SaveIcon" />
+		<FluentIcon Value="@TfConstants.SaveIcon.WithColor(TfAppState.Value.HomeSearchInBookmarks ? Color.Accent : Color.Neutral)" />
 	</FluentButton>
 	<FluentButton Appearance="@(TfAppState.Value.HomeSearchInViews ? Appearance.Accent : Appearance.Outline)"
 				  OnClick="@(() => _toggleFilter("HomeSearchInViews"))">
-		<FluentIcon Value="@TfConstants.SpaceViewIcon"/>
+		<FluentIcon Value="@TfConstants.SpaceViewIcon.WithColor(TfAppState.Value.HomeSearchInBookmarks ? Color.Accent : Color.Neutral)" />
 	</FluentButton>
 </div>
