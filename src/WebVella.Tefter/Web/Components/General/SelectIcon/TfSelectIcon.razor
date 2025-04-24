@@ -11,6 +11,7 @@ else
 	<div class="tf-select-icon">
 		<FluentStack HorizontalGap="5">
 			<FluentButton Id="@_elementId" Style="width:100%" Class="tf-select-btn"
+						  Appearance="@Appearance.Outline"
 						  IconStart="IconsExtensions.GetInstance(_icon)"
 						  OnClick="@(_=> _onOpenChanged(true))">
 				@if (!String.IsNullOrWhiteSpace(Value))

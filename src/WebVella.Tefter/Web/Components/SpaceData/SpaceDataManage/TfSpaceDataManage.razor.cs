@@ -42,6 +42,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	private void _init()
 	{
+		if(TfAppState.Value.SpaceData is null) return;
 		_form = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
 		base.InitForm(_form);
 		if (_form.DataProviderId != Guid.Empty)
