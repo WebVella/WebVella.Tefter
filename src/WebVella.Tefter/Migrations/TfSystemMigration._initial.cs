@@ -1094,7 +1094,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			new NpgsqlParameter("id", Guid.Empty), new NpgsqlParameter("text_id", Guid.Empty.ToString()));
 
 		// CREATES INITIAL ADMINISTRATOR USER AND ROLE 
-
+		
 		{
 			var adminRole = tfService
 				.CreateRoleBuilder()

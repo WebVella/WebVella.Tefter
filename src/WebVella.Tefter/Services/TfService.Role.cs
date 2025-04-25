@@ -100,7 +100,13 @@ public partial class TfService : ITfService
 			if (role.Id == Guid.Empty)
 				return CreateRole(role);
 			else
-				return UpdateRole(role);
+			{
+				var existingRole = GetRole(role.Id);
+				if(existingRole is not null)
+					return UpdateRole(role);
+				else
+					return CreateRole(role);
+			}
 		}
 		catch (Exception ex)
 		{
@@ -257,7 +263,14 @@ public partial class TfService : ITfService
 			if (role.Id == Guid.Empty)
 				return await CreateRoleAsync(role);
 			else
-				return await UpdateRoleAsync(role);
+			{
+				var existingRole = await GetRoleAsync(role.Id);
+
+				if (existingRole is not null)
+					return await UpdateRoleAsync(role);
+				else
+					return await CreateRoleAsync(role);
+			}
 		}
 		catch (Exception ex)
 		{

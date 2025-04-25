@@ -239,7 +239,13 @@ public partial class TfService : ITfService
 			if (user.Id == Guid.Empty)
 				return CreateUser(user);
 			else
-				return UpdateUser(user);
+			{
+				var existingUser = GetUser(user.Id);
+				if(existingUser is not null)
+					return UpdateUser(user);
+				else
+					return CreateUser(user);
+			}
 		}
 		catch (Exception ex)
 		{
@@ -571,7 +577,13 @@ public partial class TfService : ITfService
 			if (user.Id == Guid.Empty)
 				return await CreateUserAsync(user);
 			else
-				return await UpdateUserAsync(user);
+			{
+				var existingUser = await GetUserAsync(user.Id);
+				if (existingUser is not null)
+					return await UpdateUserAsync(user);
+				else
+					return await CreateUserAsync(user);
+			}
 		}
 		catch (Exception ex)
 		{
