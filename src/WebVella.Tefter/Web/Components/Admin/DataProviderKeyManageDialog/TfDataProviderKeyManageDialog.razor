@@ -22,9 +22,13 @@
 			<DataAnnotationsValidator />
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.DbName
-									 Label="@LOC("Name")" Style="width:100%"
-									 Disabled="!_isCreate" AutoComplete="off" />
+					<FluentCombobox TOption="string"
+									Autocomplete="ComboboxAutocomplete.Both"
+									Items="_allJoinKeys"
+									Height="@TfConstants.ComboPanelHeight"
+									@bind-Value=@_form.DbName
+									Placeholder="@LOC("select or add...")"
+									Label="@LOC("Name")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.DbName)" />
 				</FluentGridItem>
 				<FluentGridItem xs="6">

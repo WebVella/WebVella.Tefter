@@ -31,7 +31,7 @@ public record TucUser
 	{
 		get
 		{
-			if (Roles is not null && Roles.Any(x => x.Id == TfConstants.TEFTER_USER_ROLE_ADMINISTRATORS_ID))
+			if (Roles is not null && Roles.Any(x => x.Id == TfConstants.ADMIN_ROLE_ID))
 				return true;
 			return false;
 		}

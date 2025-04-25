@@ -15,7 +15,7 @@ public partial class TfSpaceViewDetailsNav : TfBaseComponent
 		menu.Add(new TucMenuItem
 		{
 			Url = string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceViewId),
-			Match = NavLinkMatch.Prefix,
+			Match = NavLinkMatch.All,
 			//Icon = new Icons.Regular.Size20.Info(),
 			Text = LOC("Details")
 		});

@@ -10,7 +10,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	private string _error = string.Empty;
 	private bool _isSubmitting = false;
 	private TucSpaceData _form = new();
-
+	private List<TucDataProvider> _joinedProviders = new();
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)
@@ -22,7 +22,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
-		_init();
+		await _init();
 	}
 
 	protected override void OnAfterRender(bool firstRender)
@@ -36,11 +36,14 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 
 	private void On_AppChanged(SetAppStateAction action)
 	{
-		_init();
-		StateHasChanged();
+		InvokeAsync(async () =>
+		{
+			await _init();
+			await InvokeAsync(StateHasChanged);
+		});
 	}
 
-	private void _init()
+	private async Task _init()
 	{
 		if(TfAppState.Value.SpaceData is null) return;
 		_form = TfAppState.Value.SpaceData with { Id = TfAppState.Value.SpaceData.Id };
@@ -48,6 +51,7 @@ public partial class TfSpaceDataManage : TfFormBaseComponent
 		if (_form.DataProviderId != Guid.Empty)
 		{
 			SelectedProvider = TfAppState.Value.AllDataProviders.FirstOrDefault(x => x.Id == _form.DataProviderId);
+			_joinedProviders = await UC.GetDataProviderJoinedProvidersAsync(SelectedProvider.Id);
 		}
 		else
 		{

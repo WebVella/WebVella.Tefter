@@ -41,8 +41,13 @@
 			</FluentGrid>
 			<FluentGrid>
 				<FluentGridItem xs="6">
-					<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.JoinKeyDbName
-									 Label="@LOC("Target join key")" Style="width:100%" AutoComplete="off" />
+					<FluentCombobox TOption="string"
+									Autocomplete="ComboboxAutocomplete.Both"
+									Items="_allJoinKeys"
+									Height="@TfConstants.ComboPanelHeight"
+									@bind-Value=@_form.JoinKeyDbName
+									Placeholder="@LOC("select or add...")"
+									Label="@LOC("Target join key")" Style="width:100%" />
 					<FluentValidationMessage For="@(() => _form.JoinKeyDbName)" />
 				</FluentGridItem>
 			</FluentGrid>

@@ -29,36 +29,34 @@ internal partial class AppStateUseCase
 
 			//if provider is not found then we init space data as null
 			var provider = await GetDataProviderAsync(newAppState.SpaceData.DataProviderId);
-			if (provider is null)
+			if (provider is not null)
 			{
-				newAppState = newAppState with { SpaceData = null };
-			}
-			//Space Data data init
-			else if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
-			{
-				TfDataTable viewData = null;
-				try
+				//Space Data data init
+				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
 				{
-					viewData = GetSpaceDataDataTable(
-						spaceDataId: newAppState.SpaceData.Id,
-						userFilters: null,
-						userSorts: null,
-						search: newAppState.Route.Search,
-						page: newAppState.Route.Page,
-						pageSize: newAppState.Route.PageSize ?? TfConstants.PageSize
-					);
+					TfDataTable viewData = null;
+					try
+					{
+						viewData = GetSpaceDataDataTable(
+							spaceDataId: newAppState.SpaceData.Id,
+							userFilters: null,
+							userSorts: null,
+							search: newAppState.Route.Search,
+							page: newAppState.Route.Page,
+							pageSize: newAppState.Route.PageSize ?? TfConstants.PageSize
+						);
+					}
+					catch { }
+
+					newAppState = newAppState with
+					{
+						SpaceDataData = viewData,
+						SpaceDataPage = viewData?.QueryInfo.Page ?? (newAppState.Route.Page ?? 1),
+						SpaceDataPageSize = newAppState.Route.PageSize ?? TfConstants.PageSize,
+						SpaceDataSearch = newAppState.Route.Search
+					};
 				}
-				catch { }
-
-				newAppState = newAppState with
-				{
-					SpaceDataData = viewData,
-					SpaceDataPage = viewData?.QueryInfo.Page ?? (newAppState.Route.Page ?? 1),
-					SpaceDataPageSize = newAppState.Route.PageSize ?? TfConstants.PageSize,
-					SpaceDataSearch = newAppState.Route.Search
-				};
 			}
-
 		}
 		else
 		{
@@ -468,6 +466,18 @@ internal partial class AppStateUseCase
 					messageService: _messageService
 				);
 			return null;
+		}
+	}
+
+	internal virtual Task<List<string>> GetAllJoinKeysAsync()
+	{
+		try
+		{
+			return Task.FromResult(_tfService.GetAllJoinKeyNames());
+		}
+		catch (Exception)
+		{
+			return Task.FromResult(new List<string>());
 		}
 	}
 }

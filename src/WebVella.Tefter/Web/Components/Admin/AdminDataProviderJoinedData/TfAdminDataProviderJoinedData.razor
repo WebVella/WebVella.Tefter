@@ -79,7 +79,7 @@
 				<TitleTemplate>
 					<TfPageHeader>
 						<ChildContent>@LOC("Joined Data providers")</ChildContent>
-						<SubHeader>@LOC("When data providers share at least one common join key, their data can be joined. Important: Only the data from the primary provider is modifiable.")</SubHeader>
+						<SubHeader>@LOC("When data providers share at least one common join key, their data can be joined. Only the data from the primary provider is modifiable.")</SubHeader>
 					</TfPageHeader>
 				</TitleTemplate>
 				<ChildContent>
@@ -95,6 +95,7 @@
 								<thead class="tf-grid-thead">
 									<tr class="tf-grid-thead-bkg"></tr>
 									<tr class="tf-grid-tr">
+										<th class="tf-grid-th" style="width:80px;min-width:80px;">code</th>
 										<th class="tf-grid-th">name</th>
 										<th class="tf-grid-th">type</th>
 									</tr>
@@ -103,6 +104,9 @@
 									@foreach (var context in _joinedProviders)
 									{
 										<tr @key=context.Id class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.Code</div>
+											</td>
 											<td class="tf-grid-td">
 												<div>@context.Name</div>
 											</td>

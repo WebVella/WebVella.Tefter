@@ -156,6 +156,9 @@
   <data name="Space View updated" xml:space="preserve">
     <value>Изгледа е обновен</value>
   </data>
+  <data name="The data provider no longer exists" xml:space="preserve">
+    <value>Източника на данни не е намерен</value>
+  </data>
   <data name="These filters will be applied simultaneously with the user defined ones." xml:space="preserve">
     <value>Тези филтри ще бъдат приложени едновременно с потребителските.</value>
   </data>
