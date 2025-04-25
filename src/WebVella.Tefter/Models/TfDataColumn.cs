@@ -8,6 +8,7 @@ public class TfDataColumn
 	public bool IsNullable { get; init; }
 	public bool IsShared { get; init; }
 	public bool IsSystem { get; init; }
+	public bool IsJoinColumn { get; init; }
 
 	internal TfDataColumn( 
 		TfDataTable dataTable,
@@ -15,7 +16,8 @@ public class TfDataColumn
 		TfDatabaseColumnType dbType,
 		bool isNullable,
 		bool isShared,
-		bool isSystem )
+		bool isSystem, 
+		bool isJoinColumn)
 	{
 		DataTable = dataTable;
 		Name = name;
@@ -23,6 +25,7 @@ public class TfDataColumn
 		IsNullable = isNullable;
 		IsShared = isShared;
 		IsSystem = isSystem;
+		IsJoinColumn = isJoinColumn;
 	}
 
 	public override string ToString()

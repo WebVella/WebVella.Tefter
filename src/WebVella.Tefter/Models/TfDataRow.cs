@@ -47,49 +47,99 @@ public class TfDataRow : IEnumerable
 				return;
 			}
 
-			switch (column.DbType)
+			if (column.IsJoinColumn)
 			{
-				case TfDatabaseColumnType.Guid:
-					if (value is not Guid)
-						throw new Exception($"Trying to set non Guid value as value to Guid column.");
-					break;
-				case TfDatabaseColumnType.Boolean:
-					if (value is not bool)
-						throw new Exception($"Trying to set non boolean value as value to boolean column.");
-					break;
-				case TfDatabaseColumnType.DateOnly:
-					if (value is not DateOnly)
-						throw new Exception($"Trying to set non DateOnly value as value to Date column.");
-					break;
-				case TfDatabaseColumnType.DateTime:
-					if (value is not DateTime)
-						throw new Exception($"Trying to set non DateTime value as value to DateTime column.");
-					break;
-				case TfDatabaseColumnType.ShortInteger:
-					if (value is not short)
-						throw new Exception($"Trying to set non short value as value to ShortInteger column.");
-					break;
-				case TfDatabaseColumnType.Integer:
-					if (value is not int)
-						throw new Exception($"Trying to set non integer value as value to Integer column.");
-					break;
-				case TfDatabaseColumnType.LongInteger:
-					if (value is not long)
-						throw new Exception($"Trying to set non long integer value as value to LongInteger column.");
-					break;
-				case TfDatabaseColumnType.Number:
-					if (value is not decimal)
-						throw new Exception($"Trying to set non number value as value to Number column.");
-					break;
-				case TfDatabaseColumnType.ShortText:
-				case TfDatabaseColumnType.Text:
-					if (value is not string)
-						throw new Exception($"Trying to set non text value as value to Text or ShortText column.");
-					break;
-				case TfDatabaseColumnType.AutoIncrement:
-					throw new Exception($"Trying to set value to autoincrement column.Not allowed.");
-				default:
-					throw new Exception($"Not supported database column type.");
+				switch (column.DbType)
+				{
+					case TfDatabaseColumnType.Guid:
+						if (value is not List<Guid?>)
+							throw new Exception($"Trying to set non Guid value as value to Guid column.");
+						break;
+					case TfDatabaseColumnType.Boolean:
+						if (value is not List<bool?>)
+							throw new Exception($"Trying to set non boolean value as value to boolean column.");
+						break;
+					case TfDatabaseColumnType.DateOnly:
+						if (value is not List<DateOnly?>)
+							throw new Exception($"Trying to set non DateOnly value as value to Date column.");
+						break;
+					case TfDatabaseColumnType.DateTime:
+						if (value is not List<DateTime?>)
+							throw new Exception($"Trying to set non DateTime value as value to DateTime column.");
+						break;
+					case TfDatabaseColumnType.ShortInteger:
+						if (value is not List<short?>)
+							throw new Exception($"Trying to set non short value as value to ShortInteger column.");
+						break;
+					case TfDatabaseColumnType.Integer:
+						if (value is not List<int?>)
+							throw new Exception($"Trying to set non integer value as value to Integer column.");
+						break;
+					case TfDatabaseColumnType.LongInteger:
+						if (value is not List<long?>)
+							throw new Exception($"Trying to set non long integer value as value to LongInteger column.");
+						break;
+					case TfDatabaseColumnType.Number:
+						if (value is not List<decimal?>)
+							throw new Exception($"Trying to set non number value as value to Number column.");
+						break;
+					case TfDatabaseColumnType.ShortText:
+					case TfDatabaseColumnType.Text:
+						if (value is not List<string>)
+							throw new Exception($"Trying to set non text value as value to Text or ShortText column.");
+						break;
+					case TfDatabaseColumnType.AutoIncrement:
+						throw new Exception($"Trying to set value to autoincrement column.Not allowed.");
+					default:
+						throw new Exception($"Not supported database column type.");
+				}
+			}
+			else
+			{
+				switch (column.DbType)
+				{
+					case TfDatabaseColumnType.Guid:
+						if (value is not Guid)
+							throw new Exception($"Trying to set non Guid value as value to Guid column.");
+						break;
+					case TfDatabaseColumnType.Boolean:
+						if (value is not bool)
+							throw new Exception($"Trying to set non boolean value as value to boolean column.");
+						break;
+					case TfDatabaseColumnType.DateOnly:
+						if (value is not DateOnly)
+							throw new Exception($"Trying to set non DateOnly value as value to Date column.");
+						break;
+					case TfDatabaseColumnType.DateTime:
+						if (value is not DateTime)
+							throw new Exception($"Trying to set non DateTime value as value to DateTime column.");
+						break;
+					case TfDatabaseColumnType.ShortInteger:
+						if (value is not short)
+							throw new Exception($"Trying to set non short value as value to ShortInteger column.");
+						break;
+					case TfDatabaseColumnType.Integer:
+						if (value is not int)
+							throw new Exception($"Trying to set non integer value as value to Integer column.");
+						break;
+					case TfDatabaseColumnType.LongInteger:
+						if (value is not long)
+							throw new Exception($"Trying to set non long integer value as value to LongInteger column.");
+						break;
+					case TfDatabaseColumnType.Number:
+						if (value is not decimal)
+							throw new Exception($"Trying to set non number value as value to Number column.");
+						break;
+					case TfDatabaseColumnType.ShortText:
+					case TfDatabaseColumnType.Text:
+						if (value is not string)
+							throw new Exception($"Trying to set non text value as value to Text or ShortText column.");
+						break;
+					case TfDatabaseColumnType.AutoIncrement:
+						throw new Exception($"Trying to set value to autoincrement column.Not allowed.");
+					default:
+						throw new Exception($"Not supported database column type.");
+				}
 			}
 
 			_values[index] = value;

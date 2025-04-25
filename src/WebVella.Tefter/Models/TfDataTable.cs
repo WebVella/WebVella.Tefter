@@ -50,7 +50,8 @@ public sealed class TfDataTable
 				column.DbType,
 				column.IsNullable,
 				column.IsShared,
-				column.IsSystem
+				column.IsSystem,
+				column.IsJoinColumn
 			));
 		}
 
@@ -112,7 +113,8 @@ public sealed class TfDataTable
 				TfDatabaseColumnType.Guid,
 				isNullable: false,
 				isShared: false,
-				isSystem: true));
+				isSystem: true,
+				isJoinColumn: false));
 
 		//the case we return only tf_ids
 		if (onlyColumns.Count == 1 && onlyColumns[0] == "tf_id")
@@ -126,7 +128,8 @@ public sealed class TfDataTable
 			TfDatabaseColumnType.Integer,
 			isNullable: false,
 			isShared: false,
-			isSystem: true));
+			isSystem: true,
+			isJoinColumn: false));
 
 		columns.Add(new TfDataColumn(
 			this,
@@ -134,7 +137,8 @@ public sealed class TfDataTable
 			TfDatabaseColumnType.DateTime,
 			isNullable: false,
 			isShared: false,
-			isSystem: true));
+			isSystem: true, 
+			isJoinColumn: false));
 
 		columns.Add(new TfDataColumn(
 			this,
@@ -142,7 +146,8 @@ public sealed class TfDataTable
 			TfDatabaseColumnType.DateTime,
 			isNullable: false,
 			isShared: false,
-			isSystem: true));
+			isSystem: true,
+			isJoinColumn: false));
 
 		columns.Add(new TfDataColumn(
 			this,
@@ -150,7 +155,8 @@ public sealed class TfDataTable
 			TfDatabaseColumnType.Text,
 			isNullable: false,
 			isShared: false,
-			isSystem: true));
+			isSystem: true,
+			isJoinColumn: false));
 
 		foreach (var joinKey in dataProvider.JoinKeys)
 		{
@@ -161,7 +167,8 @@ public sealed class TfDataTable
 			TfDatabaseColumnType.Guid,
 			isNullable: false,
 			isShared: false,
-			isSystem: true));
+			isSystem: true,
+			isJoinColumn: false));
 
 			name = $"tf_jk_{joinKey.DbName}_version";
 			columns.Add(new TfDataColumn(
@@ -170,7 +177,8 @@ public sealed class TfDataTable
 			TfDatabaseColumnType.ShortInteger,
 			isNullable: false,
 			isShared: false,
-			isSystem: true));
+			isSystem: true,
+			isJoinColumn: false));
 
 		}
 
@@ -185,7 +193,8 @@ public sealed class TfDataTable
 				providerColumn.DbType,
 				isNullable: providerColumn.IsNullable,
 				isShared: false,
-				isSystem: false));
+				isSystem: false,
+				isJoinColumn: false));
 		}
 
 
@@ -200,7 +209,8 @@ public sealed class TfDataTable
 				providerColumn.DbType,
 				isNullable: true,
 				isShared: true,
-				isSystem: false));
+				isSystem: false,
+				isJoinColumn: false));
 		}
 
 		if (onlyColumns != null)
@@ -221,7 +231,8 @@ public sealed class TfDataTable
 							joinedProviderColumn.DbType,
 							isNullable: joinedProviderColumn.IsNullable,
 							isShared: false,
-							isSystem: false));
+							isSystem: false,
+							isJoinColumn: true));
 					}
 				}
 			}

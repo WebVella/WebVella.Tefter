@@ -668,6 +668,12 @@ public partial class TfService : ITfService
 			if (!tableColumn.IsShared)
 				continue;
 
+			//join columns will not be updated
+			//this is not supported at the moment, 
+			//but in case we support it at later stage
+			if (tableColumn.IsJoinColumn)
+				continue;
+
 			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
 
 			var joinKey = provider.JoinKeys.Single(x => x.DbName == sharedColumn.JoinKeyDbName);
@@ -739,8 +745,8 @@ public partial class TfService : ITfService
 		{
 			var tableColumn = row.DataTable.Columns[i];
 
-			//ignore shared columns here
-			if (tableColumn.IsShared)
+			//ignore shared and joined columns here
+			if (tableColumn.IsShared || tableColumn.IsJoinColumn)
 				continue;
 
 			columnNames.Add(tableColumn.Name);
@@ -772,6 +778,9 @@ public partial class TfService : ITfService
 		TfDataRow existingRow,
 		TfDataRow row)
 	{
+
+		string providerTableName = $"dp{provider.Index}";
+
 		//generate search
 		var searchSb = new StringBuilder();
 
@@ -819,6 +828,10 @@ public partial class TfService : ITfService
 		List<string> columnsWithChanges = new List<string>();
 		foreach (var column in row.DataTable.Columns)
 		{
+			//join columns will not be updated
+			if (column.IsJoinColumn)
+				continue;
+
 			if (column.DbType == TfDatabaseColumnType.Guid)
 			{
 				if ((Guid?)row[column.Name] != (Guid?)existingRow[column.Name])
@@ -889,8 +902,10 @@ public partial class TfService : ITfService
 			if (!tableColumn.IsShared)
 				continue;
 
-			//if no change
-			if (!columnsWithChanges.Contains(tableColumn.Name))
+			//join columns will not be updated
+			//this is not supported at the moment, 
+			//but in case we support it at later stage
+			if (tableColumn.IsJoinColumn)
 				continue;
 
 			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
@@ -928,8 +943,8 @@ public partial class TfService : ITfService
 		{
 			var tableColumn = row.DataTable.Columns[i];
 
-			//ignore shared columns here
-			if (tableColumn.IsShared)
+			//ignore shared and joined columns here
+			if (tableColumn.IsShared || tableColumn.IsJoinColumn)
 				continue;
 
 			if (!columnsWithChange.Contains(tableColumn.Name))
