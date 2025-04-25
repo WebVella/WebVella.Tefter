@@ -23,7 +23,7 @@
 		right: 0 !important;
 		width: 100%;
 		height: 1px;
-		background: var(--neutral-stroke-active);
+		background: var(--neutral-stroke-rest);
 		display: block;
 		animation: none;
 	}

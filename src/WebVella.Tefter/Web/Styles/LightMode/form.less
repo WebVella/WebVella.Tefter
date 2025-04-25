@@ -20,57 +20,44 @@ html:root .tf-select-menu {
 	font-size: 11px;
 }
 
-fluent-text-field::part(root),
-fluent-search::part(root),
-fluent-number-field::part(root),
-fluent-select::part(control),
-fluent-text-area::part(control),
-fluent-switch::part(switch),
-fluent-anchor::part(control),
-.tf-select-btn::part(control) {
-	background: white;
-	border-color: var(--neutral-stroke-input-rest) !important;
-	color: var(--neutral-foreground-rest);
-	fill: var(--neutral-foreground-rest);
-}
 
+fluent-text-field,
+fluent-search,
+fluent-number-field,
+fluent-text-area {
+	--neutral-fill-input-rest: var(--tf-white);
+	--neutral-fill-input-hover: var(--tf-white);
+	--neutral-fill-input-active: var(--tf-white);
+	--neutral-fill-input-focus: var(--tf-white);
+	--neutral-stroke-input-rest: var(--tf-zinc-300);
+	--neutral-stroke-input-hover: var(--tf-zinc-500);
+	--neutral-stroke-input-active: var(--tf-zinc-600);
+	--neutral-stroke-input-focus: var(--tf-zinc-400);
+}
 
 fluent-text-field[readonly]::part(root),
-fluent-number-field[readonly]::part(root),
-fluent-select[readonly]::part(control),
-fluent-text-area[readonly]::part(control),
 fluent-text-field.disabled::part(root),
+fluent-search[readonly]::part(root),
+fluent-search.disabled::part(root),
+fluent-number-field[readonly]::part(root),
 fluent-number-field.disabled::part(root),
-fluent-select.disabled::part(control),
+fluent-text-area[readonly]::part(control),
 fluent-text-area.disabled::part(control) {
-	background: transparent !important;
-	border-color: var(--neutral-stroke-input-rest) !important;
-	color: var(--neutral-foreground-rest);
+	background: transparent;
+	border-color: var(--neutral-stroke-input-rest);
 }
 
-.fluent-input-label {
-	/*color: var(--neutral-foreground-hint) !important;*/
-}
+fluent-select,
+fluent-combobox {
+	--neutral-fill-rest: var(--tf-white);
+	--neutral-fill-hover: var(--tf-white);
+	--neutral-fill-active: var(--tf-white);
+	--neutral-fill-focus: var(--tf-white);
+	--neutral-stroke-control-rest: var(--tf-zinc-300);
+	--neutral-stroke-control-hover: var(--tf-zinc-500);
+	--neutral-stroke-control-active: var(--tf-zinc-600);
+	--neutral-stroke-control-focus: var(--tf-zinc-400);
 
-fluent-radio::part(label),
-fluent-switch::part(label) {
-	/*color: var(--neutral-foreground-rest);*/
-}
-
-fluent-switch {
-	--neutral-foreground-rest: var(--neutral-fill-layer-active);
-}
-
-.sortable-item {
-	/*background-color: var(--neutral-fill-layer-active) !important;
-	border-color: var(--neutral-fill-layer-active) !important;*/
-
-	.sortable-grab {
-		/*background-color: var(--neutral-fill-layer-hover) !important;*/
-	}
-}
-
-fluent-select {
 	&::part(listbox) {
 		background-color: oklch(96.7% .003 264.542) !important;
 	}
@@ -85,12 +72,42 @@ fluent-select {
 	}
 }
 
-fluent-button {
-	&.outline {
-		&:hover {
-			background: rgba(0,0,0,0.05);
-		}
+fluent-select[readonly]::part(control),
+fluent-select.disabled::part(control),
+fluent-combobox[readonly]::part(control),
+fluent-combobox.disabled::part(control) {
+	background: transparent;
+	border-color: var(--neutral-stroke-input-rest);
+}
+
+fluent-switch {
+	--neutral-foreground-rest: var(--tf-zinc-700);
+
+	&::part(switch) {
+		background: var(--tf-white);
 	}
+
+	&.checked::part(switch) {
+		background: var(--accent-base-color);
+	}
+}
+fluent-checkbox,
+fluent-radio {
+	--neutral-fill-input-alt-rest: var(--tf-white);
+	--neutral-stroke-strong-rest: var(--tf-zinc-300);
+}
+
+.sortable-item {
+	/*background-color: var(--neutral-fill-layer-active) !important;
+	border-color: var(--neutral-fill-layer-active) !important;*/
+
+	.sortable-grab {
+		/*background-color: var(--neutral-fill-layer-hover) !important;*/
+	}
+}
+
+
+fluent-button {
 
 	&.accent {
 		--foreground-on-accent-rest: var(--tf-white);
