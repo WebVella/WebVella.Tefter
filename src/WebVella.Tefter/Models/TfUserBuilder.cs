@@ -55,6 +55,13 @@ public class TfUserBuilder
 		_id = userId;
 	}
 
+	public TfUserBuilder WithId(
+		Guid id)
+	{
+		_id = id;
+		return this;
+	}
+
 	public TfUserBuilder WithEmail(
 		string email)
 	{

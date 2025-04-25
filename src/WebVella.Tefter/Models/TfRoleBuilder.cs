@@ -27,6 +27,12 @@ public class TfRoleBuilder
 		_id = roleId;
 	}
 
+	public TfRoleBuilder WithId(Guid id)
+	{
+		_id = id;
+		return this;
+	}
+
 	public TfRoleBuilder WithName(string name)
 	{
 		_name = name;

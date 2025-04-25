@@ -1098,6 +1098,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		{
 			var adminRole = tfService
 				.CreateRoleBuilder()
+				.WithId(TfConstants.ADMIN_ROLE_ID)
 				.WithName("Administrators")
 				.IsSystem(true)
 			.Build();
@@ -1107,6 +1108,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			//default settings
 			var user = tfService
 				.CreateUserBuilder()
+				.WithId(TfConstants.ADMIN_USER_ID)
 				.WithEmail("admin@tefter.bg")
 				.WithFirstName("Tefter")
 				.WithLastName("Administrator")

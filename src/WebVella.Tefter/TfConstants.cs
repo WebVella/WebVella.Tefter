@@ -35,5 +35,8 @@ public partial class TfConstants
 		NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite |
 		NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint ;
 
+	public static Guid ADMIN_ROLE_ID = new Guid("3a0c26c5-bd28-4cca-aaf7-5d225b4c3136");
+	public static Guid ADMIN_USER_ID = new Guid("9c9f7fdc-3ce9-4e2a-9b0c-ba23f0949149");
+
 
 }
