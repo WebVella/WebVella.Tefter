@@ -24,14 +24,14 @@ public partial class TfSpaceDataDetailsNav : TfBaseComponent
 		menu.Add(new TucMenuItem
 		{
 			Url = string.Format(TfConstants.SpaceDataViewsPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceDataId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Used in Views")
 		});
 		menu.Add(new TucMenuItem
 		{
 			Url = string.Format(TfConstants.SpaceDataDataPageUrl, TfAppState.Value.Route.SpaceId, TfAppState.Value.Route.SpaceDataId),
-			Match = NavLinkMatch.All,
+			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.Table(),
 			Text = LOC("Data")
 		});

@@ -2,6 +2,7 @@
 
 public partial interface ITalkService
 {
+	Task<List<string>> GetAllJoinKeysAsync();
 }
 
 internal partial class TalkService : ITalkService
@@ -15,5 +16,17 @@ internal partial class TalkService : ITalkService
 	{
 		_dbService = dbService;
 		_tfService = tfService;
+	}
+
+	public Task<List<string>> GetAllJoinKeysAsync()
+	{
+		try
+		{
+			return Task.FromResult(_tfService.GetAllJoinKeyNames());
+		}
+		catch (Exception)
+		{
+			return Task.FromResult(new List<string>());
+		}
 	}
 }

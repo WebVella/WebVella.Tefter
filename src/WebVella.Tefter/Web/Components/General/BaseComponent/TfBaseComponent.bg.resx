@@ -132,6 +132,9 @@
   <data name="search..." xml:space="preserve">
     <value>търси...</value>
   </data>
+  <data name="select or add..." xml:space="preserve">
+    <value>избери или добави...</value>
+  </data>
   <data name="select..." xml:space="preserve">
     <value>избери...</value>
   </data>

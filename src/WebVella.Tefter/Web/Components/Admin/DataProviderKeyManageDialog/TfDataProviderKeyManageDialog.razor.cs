@@ -16,6 +16,9 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 
 	private List<TucDataProviderColumn> _providerColumns = new();
 	private TucDataProviderJoinKeyForm _form = new();
+
+	private List<string> _allJoinKeys = new();
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -32,23 +35,23 @@ public partial class TfDataProviderKeyManageDialog : TfFormBaseComponent, IDialo
 		_title = _isCreate ? LOC("Create key") : LOC("Manage key");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
-
+		_allJoinKeys = await UC.GetAllJoinKeysAsync();
 		_providerColumns = TfAppState.Value.AdminDataProvider.Columns.OrderBy(x => x.DbName).ToList();
-			//Setup form
-			if (_isCreate)
+		//Setup form
+		if (_isCreate)
+		{
+			_form = new TucDataProviderJoinKeyForm
 			{
-				_form = new TucDataProviderJoinKeyForm
-				{
-					Id = Guid.NewGuid(),
-					DataProviderId = TfAppState.Value.AdminDataProvider.Id,
-				};
-			}
-			else
-			{
-				_form = new TucDataProviderJoinKeyForm(Content);
-				_providerColumns = _providerColumns.Where(x => !_form.Columns.Any(y => y.Id == x.Id)).ToList();
-			}
-			base.InitForm(_form);
+				Id = Guid.NewGuid(),
+				DataProviderId = TfAppState.Value.AdminDataProvider.Id,
+			};
+		}
+		else
+		{
+			_form = new TucDataProviderJoinKeyForm(Content);
+			_providerColumns = _providerColumns.Where(x => !_form.Columns.Any(y => y.Id == x.Id)).ToList();
+		}
+		base.InitForm(_form);
 
 	}
 

@@ -16,7 +16,7 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 	private bool _isCreate = false;
 
 	private TucSharedColumnForm _form = new();
-
+	private List<string> _allJoinKeys = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -25,7 +25,7 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 		_title = _isCreate ? LOC("Create shared column") : LOC("Manage shared column");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
-
+		_allJoinKeys = await UC.GetAllJoinKeysAsync();
 		if(!_isCreate)
 		{
 			var dbName = Content.DbName;

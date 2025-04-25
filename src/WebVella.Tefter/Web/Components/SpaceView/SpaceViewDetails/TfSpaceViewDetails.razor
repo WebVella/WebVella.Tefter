@@ -136,7 +136,7 @@ else
 							else if (TfAppState.Value.SpaceViewData is null)
 							{
 								<tr class="tf-grid-tr">
-									<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Space dataset not found")</div></td>
+									<td class="tf-grid-td" colspan="@(TfAppState.Value.SpaceViewColumns.Count + 1)"><div>@LOC("Dataset or DataProvider not found")</div></td>
 								</tr>
 							}
 							else if (TfAppState.Value.SpaceViewData.Rows.Count == 0)

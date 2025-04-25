@@ -15,6 +15,7 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 	private bool _isCreate = false;
 	private TalkChannel _form = new();
 	private List<string> _sharedColumnsOptions = new();
+	private List<string> _allJoinKeys = new();
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
@@ -23,6 +24,7 @@ public partial class TalkChannelManageDialog : TfFormBaseComponent, IDialogConte
 		_title = _isCreate ? LOC("Create channel") : LOC("Manage channel");
 		_btnText = _isCreate ? LOC("Create") : LOC("Save");
 		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
+		_allJoinKeys = await TalkService.GetAllJoinKeysAsync();
 		if (_isCreate)
 		{
 			_form = _form with { Id = Guid.NewGuid() };

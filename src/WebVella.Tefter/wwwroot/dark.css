@@ -512,11 +512,9 @@ fluent-radio {
   color: var(--neutral-foreground-hover) !important;
 }
 .sortable-item {
-  /*	background-color: var(--neutral-fill-layer-active) !important;
-	border-color: var(--neutral-fill-layer-active) !important;*/
-}
-.sortable-item .sortable-grab {
-  /*background-color: var(--neutral-fill-layer-hover) !important;*/
+  --fluent-sortable-list-background-color: var(--neutral-fill-layer-rest);
+  --neutral-stroke-input-active: var(--neutral-fill-layer-active);
+  --neutral-layer-1: var(--neutral-fill-layer-focus);
 }
 fluent-button:hover {
   background: rgba(255, 255, 255, 0.05);
