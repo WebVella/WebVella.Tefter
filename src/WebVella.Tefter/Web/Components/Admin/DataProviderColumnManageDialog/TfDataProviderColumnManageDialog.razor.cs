@@ -199,7 +199,7 @@ public partial class TfDataProviderColumnManageDialog : TfFormBaseComponent, IDi
 	{
 		_form.SourceName = text;
 		if (_isCreate)
-			_form.DbName = TfConverters.GenerateDbNameFromText(text);
+			_form.DbName = text.GenerateDbNameFromText();
 	}
 
 }

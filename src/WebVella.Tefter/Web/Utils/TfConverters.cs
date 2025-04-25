@@ -59,7 +59,7 @@ public static partial class TfConverters
 		str = Regex.Replace(str, @"\s", "-"); // hyphens   
 		return str;
 	}
-	public static string GenerateDbNameFromText(string text)
+	public static string GenerateDbNameFromText(this string text)
 	{
 		if (String.IsNullOrEmpty(text)) return text;
 		text = text.Trim().ToLowerInvariant();
