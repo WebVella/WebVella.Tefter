@@ -59,7 +59,7 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 						SourceType = _schemaInfo.SourceColumnDefaultSourceType[columnName],
 						CreatedOn = DateTime.Now,
 						DataProviderId = Content.Id,
-						DbName = TfConverters.GenerateDbNameFromText(columnName),
+						DbName = columnName.GenerateDbNameFromText(),
 						DbType = _schemaInfo.SourceColumnDefaultDbType[columnName],
 						DefaultValue = defaultValue
 					});

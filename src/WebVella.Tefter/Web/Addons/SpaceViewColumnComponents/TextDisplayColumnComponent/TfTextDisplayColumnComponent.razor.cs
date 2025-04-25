@@ -102,7 +102,17 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 		var columnDataString = String.Empty;
 		if (columnData is not null)
 		{
-			columnDataString = columnData.ToString();
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				var results = new List<string>();
+				foreach (var item in columnData as IList)
+				{
+					results.Add(item.ToString());
+				}
+				columnDataString = String.Join(", ", results);
+			}
+			else
+				columnDataString = columnData.ToString();
 		}
 		_value = columnDataString;
 	}

@@ -230,7 +230,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual string GetDataStringByAlias(string alias, string defaultValue = null)
+	protected virtual object GetDataStringByAlias(string alias, string defaultValue = null)
 	{
 		string dbName = GetColumnNameFromAlias(alias);
 
@@ -242,8 +242,10 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 
 		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return defaultValue;
 		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return defaultValue;
-
-		return RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName]?.ToString();
+		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
+		if (value is null) return defaultValue;
+		if(value.GetType().ImplementsInterface(typeof(IList))) return (List<string>)value;
+		return value.ToString();
 	}
 
 	/// <summary>
@@ -255,22 +257,24 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// <param name="alias">the expected data alias as defined by the implementing component</param>
 	/// <param name="defaultValue">what value to return if value is not found in the provided datatable</param>
 	/// <returns></returns>
-	protected virtual Nullable<T> GetDataStructByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
+	protected virtual object GetDataStructByAlias<T>(string alias, Nullable<T> defaultValue = null) where T : struct
 	{
 		string dbName = GetColumnNameFromAlias(alias);
 		if (String.IsNullOrWhiteSpace(dbName))
 		{
-			return null;
+			return defaultValue;
 		}
 		if (RegionContext.DataTable is null || RegionContext.DataTable.Rows.Count == 0) return defaultValue;
 
-		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return null;
-		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return null;
+		if (RegionContext.DataTable.Rows.Count < RegionContext.RowIndex + 1) return defaultValue;
+		if (RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName] is null) return defaultValue;
+
 		object value = RegionContext.DataTable.Rows[RegionContext.RowIndex][dbName];
-		if (value is null) return null;
+		if (value is null) return defaultValue;
 
 		if (typeof(T) == typeof(String)) return (T)value;
 		else if (value is T) return (T)value;
+		else if(value.GetType().ImplementsInterface(typeof(IList))) return (List<Nullable<T>>)value;
 		return TfConverters.Convert<T>(value.ToString());
 	}
 
