@@ -1,10 +1,17 @@
-﻿using NpgsqlTypes;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using NpgsqlTypes;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
+	/// <summary>
+	/// Gets all join keys for all providers
+	/// </summary>
+	/// <returns></returns>
+	public List<TfDataProviderJoinKey> GetAllJoinKeys();
+
 	/// <summary>
 	/// Gets join key instance by id
 	/// </summary>
@@ -55,6 +62,35 @@ public partial interface ITfService
 
 public partial class TfService : ITfService
 {
+	/// <summary>
+	/// Gets all join keys for all providers
+	/// </summary>
+	/// <returns></returns>
+	public List<TfDataProviderJoinKey> GetAllJoinKeys()
+	{
+		try
+		{
+			var orderSettings = new TfOrderSettings(nameof(TfDataProviderJoinKeyDbo.DbName), OrderDirection.ASC);
+			var dbos = _dboManager.GetList<TfDataProviderJoinKeyDbo>(order:orderSettings);
+			var allDataProvidersColumns = GetAllDataProviderColumns();
+
+			List<TfDataProviderJoinKey> result = new List<TfDataProviderJoinKey>();
+			foreach (var dbo in dbos)
+			{
+				var providerColumns = allDataProvidersColumns
+					.Where(x => x.DataProviderId == dbo.DataProviderId)
+					.ToList();
+				
+				result.Add(JoinKeyFromDbo(dbo, providerColumns));
+			}
+			return result;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
 	/// <summary>
 	/// Gets join key instance by id
 	/// </summary>

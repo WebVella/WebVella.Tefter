@@ -3,6 +3,12 @@
 public partial interface ITfService
 {
 	/// <summary>
+	/// Gets all data provider columns list
+	/// </summary>
+	/// <returns></returns>
+	public List<TfDataProviderColumn> GetAllDataProviderColumns();
+
+	/// <summary>
 	/// Gets data provider column instance for specified identifier
 	/// </summary>
 	/// <param name="id"></param>
@@ -67,6 +73,23 @@ public partial class TfService : ITfService
 		try
 		{
 			return _dboManager.Get<TfDataProviderColumn>(id);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	/// <summary>
+	/// Gets list of data provider columns for specified provider identifier
+	/// </summary>
+	/// <param name="providerId"></param>
+	/// <returns></returns>
+	public List<TfDataProviderColumn> GetAllDataProviderColumns()
+	{
+		try
+		{
+			return _dboManager.GetList<TfDataProviderColumn>();
 		}
 		catch (Exception ex)
 		{
