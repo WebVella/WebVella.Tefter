@@ -1,11 +1,15 @@
-﻿using DocumentFormat.OpenXml.Office2010.Excel;
-using NpgsqlTypes;
-using JsonSerializer = System.Text.Json.JsonSerializer;
+﻿using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
+	/// <summary>
+	/// Gets all join key names
+	/// </summary>
+	/// <returns></returns>
+	public List<string> GetAllJoinKeyNames();
+
 	/// <summary>
 	/// Gets all join keys for all providers
 	/// </summary>
@@ -63,6 +67,44 @@ public partial interface ITfService
 public partial class TfService : ITfService
 {
 	/// <summary>
+	/// Gets all join key names
+	/// </summary>
+	/// <returns></returns>
+	public List<string> GetAllJoinKeyNames()
+	{
+		try
+		{
+			List<string> result = new List<string>();
+
+			var joinKeyDbos = _dboManager.GetList<TfDataProviderJoinKeyDbo>();
+			
+			foreach (var dbo in joinKeyDbos)
+			{
+				if (result.Contains(dbo.DbName))
+					continue;
+
+				result.Add(dbo.DbName);
+			}
+
+			var sharedColumns = _dboManager.GetList<TfSharedColumn>();
+			
+			foreach (var sharedColumn in sharedColumns)
+			{
+				if (result.Contains(sharedColumn.JoinKeyDbName))
+					continue;
+
+				result.Add(sharedColumn.JoinKeyDbName);
+			}
+
+			return result.OrderBy(n => n).ToList();
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	/// <summary>
 	/// Gets all join keys for all providers
 	/// </summary>
 	/// <returns></returns>
@@ -71,7 +113,7 @@ public partial class TfService : ITfService
 		try
 		{
 			var orderSettings = new TfOrderSettings(nameof(TfDataProviderJoinKeyDbo.DbName), OrderDirection.ASC);
-			var dbos = _dboManager.GetList<TfDataProviderJoinKeyDbo>(order:orderSettings);
+			var dbos = _dboManager.GetList<TfDataProviderJoinKeyDbo>(order: orderSettings);
 			var allDataProvidersColumns = GetAllDataProviderColumns();
 
 			List<TfDataProviderJoinKey> result = new List<TfDataProviderJoinKey>();
@@ -80,7 +122,7 @@ public partial class TfService : ITfService
 				var providerColumns = allDataProvidersColumns
 					.Where(x => x.DataProviderId == dbo.DataProviderId)
 					.ToList();
-				
+
 				result.Add(JoinKeyFromDbo(dbo, providerColumns));
 			}
 			return result;
