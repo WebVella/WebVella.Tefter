@@ -4,7 +4,7 @@
   --tf-layout-wrapper-aside-width: 60px;
   --tf-layout-wrapper-body-width: calc(100vw - var(--tf-layout-wrapper-aside-width));
   --tf-layout-wrapper-body-border-radius: 8px;
-  --tf-layout-wrapper-body-aside-width: 240px;
+  --tf-layout-wrapper-body-aside-width: 200px;
   --tf-layout-wrapper-body-aside-toolbar-height: 40px;
   --tf-content-padding: 10px;
   --tf-header-height: 48px;
@@ -514,7 +514,7 @@ fluent-button.accent {
   --neutral-layer-1: var(--tf-white);
 }
 fluent-button.accent svg {
-  --accent-fill-rest: var(--foreground-on-accent-rest);
+  --neutral-foreground-rest: var(--foreground-on-accent-rest);
 }
 fluent-button.neutral {
   color: oklch(27.4% 0.006 286.033);

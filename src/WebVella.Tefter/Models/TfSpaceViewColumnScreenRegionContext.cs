@@ -15,14 +15,19 @@ public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 	public EditContext EditContext { get; set; } = null;
 	public ValidationMessageStore ValidationMessageStore { get; set; } = null;
 
-	public string GetHash(){ 
+	public string GetHash()
+	{
 		var sb = new StringBuilder();
 		sb.Append(RowIndex);
 		sb.Append(SpaceViewId);
 		sb.Append(SpaceViewColumnId);
-		sb.Append(DataTable.QueryInfo);
-		sb.Append(DataTable.QueryInfo.DataProviderId);
-		sb.Append(DataTable.QueryInfo.SpaceDataId);
+		if (DataTable is not null && DataTable.QueryInfo is not null)
+		{
+			sb.Append(DataTable.GetHashCode());
+			sb.Append(DataTable.QueryInfo);
+			sb.Append(DataTable.QueryInfo.DataProviderId);
+			sb.Append(DataTable.QueryInfo.SpaceDataId);
+		}
 		return sb.ToString();
 	}
 }
