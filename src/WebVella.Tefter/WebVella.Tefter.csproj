@@ -9,7 +9,7 @@
 		<PackageId>$(AssemblyName)</PackageId>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<Description>The core library of the open-source Tefter platform. It is an open-source web platform hosted on your server, designed to optimize your team's processes, enhance communication, and streamline tasks when working with data.		</Description>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Authors>WebVella</Authors>
 		<Company>WebVella</Company>
 		<Copyright>WebVella 2025</Copyright>
