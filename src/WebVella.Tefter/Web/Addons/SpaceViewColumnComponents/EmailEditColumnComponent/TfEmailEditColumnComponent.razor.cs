@@ -55,7 +55,7 @@ public partial class TfEmailEditColumnComponent : TucBaseViewColumn<TfEmailEditC
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -66,10 +66,11 @@ public partial class TfEmailEditColumnComponent : TucBaseViewColumn<TfEmailEditC
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -134,6 +135,12 @@ public partial class TfEmailEditColumnComponent : TucBaseViewColumn<TfEmailEditC
 
 	private void _initValues()
 	{
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
+
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
 		if (columnData is not null && columnData is not string)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");

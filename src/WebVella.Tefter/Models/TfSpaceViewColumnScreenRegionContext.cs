@@ -4,7 +4,6 @@ namespace WebVella.Tefter.Models;
 
 public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 {
-	public Guid Hash { get; set; }
 	public Guid SpaceViewId { get; set; }
 	public Guid SpaceViewColumnId { get; set; }
 	public string QueryName { get; set; }
@@ -15,4 +14,15 @@ public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 	public int RowIndex { get; set; } = -1;
 	public EditContext EditContext { get; set; } = null;
 	public ValidationMessageStore ValidationMessageStore { get; set; } = null;
+
+	public string GetHash(){ 
+		var sb = new StringBuilder();
+		sb.Append(RowIndex);
+		sb.Append(SpaceViewId);
+		sb.Append(SpaceViewColumnId);
+		sb.Append(DataTable.QueryInfo);
+		sb.Append(DataTable.QueryInfo.DataProviderId);
+		sb.Append(DataTable.QueryInfo.SpaceDataId);
+		return sb.ToString();
+	}
 }

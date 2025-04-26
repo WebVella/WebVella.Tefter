@@ -35,7 +35,7 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>

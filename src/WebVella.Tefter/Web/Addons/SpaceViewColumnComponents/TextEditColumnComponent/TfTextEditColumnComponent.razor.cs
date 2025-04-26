@@ -35,9 +35,9 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 
 	#region << Properties >>
 	public override Guid Id { get; init; } = new Guid(ID);
-	public override string Name { get; init;} = NAME;
-	public override string Description { get; init;} = DESCRIPTION;
-	public override string FluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfTextViewColumnType.ID),
 	};
@@ -49,11 +49,10 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 	/// </summary>
 	private string _value = null;
 	private string _valueInputId = "input-" + Guid.NewGuid();
-
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -64,10 +63,11 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -77,7 +77,7 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
 		if (columnData is not null && columnData is not string)
@@ -108,7 +108,8 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 				_initValues();
 				await InvokeAsync(StateHasChanged);
 				return;
-			};
+			}
+			;
 		}
 
 		try
@@ -129,9 +130,15 @@ public partial class TfTextEditColumnComponent : TucBaseViewColumn<TfTextEditCol
 
 	private void _initValues()
 	{
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
 		if (columnData is not null && columnData is not string)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
+
 		_value = (string)columnData;
 	}
 	#endregion

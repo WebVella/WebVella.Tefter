@@ -34,11 +34,11 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init;} = new Guid(ID);
-	public override string Name { get; init;} = NAME;
-	public override string Description { get; init;} = DESCRIPTION;
-	public override string FluentIconName { get; init;} = FLUENT_ICON_NAME;
-	public override List<Guid> SupportedColumnTypes { get; init;} = new List<Guid>{ 
+	public override Guid Id { get; init; } = new Guid(ID);
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfBooleanViewColumnType.ID),
 	};
 	/// <summary>
@@ -54,7 +54,7 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -65,10 +65,11 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -78,7 +79,7 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
 		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
@@ -111,7 +112,8 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 				_initValues();
 				await InvokeAsync(StateHasChanged);
 				return;
-			};
+			}
+			;
 		}
 
 		try
@@ -133,16 +135,19 @@ public partial class TfBooleanEditColumnComponent : TucBaseViewColumn<TfBooleanE
 
 	private void _initValues()
 	{
-		var column = GetColumnInfoByAlias(VALUE_ALIAS);
-		if (column is not null)
-		{
-			_isThreeState = column.IsNullable;
-			object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-			if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'");
-			var value = (bool?)columnData;
-			_value = value is null ? false : value.Value;
-			_state = value;
-		}
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
+
+		_isThreeState = column.IsNullable;
+		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
+		if (columnData is not null && columnData is not bool) throw new Exception($"Not supported data type of '{columnData.GetType()}'");
+		var value = (bool?)columnData;
+		_value = value is null ? false : value.Value;
+		_state = value;
+
 	}
 
 	private string _getLabel()

@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.Web.Addons;
+﻿using System.ComponentModel.Design;
+
+namespace WebVella.Tefter.Web.Addons;
 
 /// <summary>
 /// Description attribute is needed when presenting the component to the user as a select option
@@ -48,18 +50,13 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 		new Guid(TfShortIntegerViewColumnType.ID),
 		new Guid(TfNumberViewColumnType.ID),
 	};
-	/// <summary>
-	/// The alias of the column name that stores the value.
-	/// Depends on the ITfSpaceViewColumnTypeAddon that renders this component
-	/// by default it is 'Value'. The alias<>column name mapping is set by the user
-	/// upon space view column configuration
-	/// </summary>
-	private string _value = null;
+	//when only single value is provided by the DataTable
+	private List<string> _value = new();
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -70,10 +67,11 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -85,36 +83,34 @@ public partial class TfTextDisplayColumnComponent : TucBaseViewColumn<TfTextDisp
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		var columnDataString = String.Empty;
-		if (columnData is not null)
-		{
-			columnDataString = columnData.ToString();
-		}
-		excelCell.SetValue(XLCellValue.FromObject(columnDataString));
+		_initValues();
+		excelCell.SetValue(XLCellValue.FromObject(String.Join(", ",_value)));
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		var columnDataString = String.Empty;
-		if (columnData is not null)
+		if (columnData is null)
+		{
+			_value.Add(String.Empty);
+			return;
+		}
+		if (column.IsJoinColumn)
 		{
 			if (columnData.GetType().ImplementsInterface(typeof(IList)))
 			{
-				var results = new List<string>();
-				foreach (var item in columnData as IList)
-				{
-					results.Add(item.ToString());
-				}
-				columnDataString = String.Join(", ", results);
+				foreach (var joinValue in columnData as IList)
+					_value.Add(joinValue?.ToString());
 			}
-			else
-				columnDataString = columnData.ToString();
 		}
-		_value = columnDataString;
+		else
+			_value.Add(columnData.ToString());
 	}
 	#endregion
 }

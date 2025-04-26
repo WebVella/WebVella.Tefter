@@ -793,6 +793,7 @@
   border-right-width: 1px;
   border-top-width: 1px;
   position: relative;
+  vertical-align: top;
 }
 .tf-grid .tf-grid-tbody tr > .tf-grid-th::before,
 .tf-grid .tf-grid-tbody tr > .tf-grid-td::before {
@@ -912,6 +913,18 @@
   display: flex;
   flex-flow: row;
   justify-content: center;
+}
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check .check-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.tf-grid-tbody > .tf-grid-tr > .tf-grid-td.tf-grid-td--check .check-content fluent-button {
+  display: block;
+  height: 100%;
+  width: 100%;
 }
 .tf-grid-thead > .tf-grid-tr > .tf-grid-th,
 .tf-grid-tfoot > .tf-grid-tr > .tf-grid-td {

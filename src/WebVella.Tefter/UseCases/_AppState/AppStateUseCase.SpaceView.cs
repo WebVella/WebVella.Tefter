@@ -84,7 +84,6 @@ internal partial class AppStateUseCase
 				//Aux Data Hook
 				var compContext = new TfSpaceViewColumnScreenRegionContext()
 				{
-					Hash = newAppState.Hash,
 					DataTable = newAppState.SpaceViewData,
 					Mode = TfComponentPresentationMode.Display, //ignored here
 					SpaceViewId = newAppState.SpaceView.Id,

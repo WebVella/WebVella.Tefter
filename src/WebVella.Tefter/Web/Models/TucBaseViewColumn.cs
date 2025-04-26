@@ -105,7 +105,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	/// <param name="alias"></param>
 	/// <returns></returns>
-	protected virtual TfDatabaseColumnType? GetColumnDatabaseTypeByAlias(string alias)
+	protected virtual TfDataColumn GetColumnByAlias(string alias)
 	{
 		if (RegionContext.DataTable is null) return null;
 		var colName = GetColumnNameFromAlias(alias);
@@ -117,18 +117,16 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 			column = RegionContext.DataTable.Columns[colName];
 		}
 		catch { }
-		if (column == null) return null;
-
-		return column.DbType;
+		return column;
 	}
 
 	protected virtual object GetColumnDataByAlias(string alias)
 	{
 		var colName = GetColumnNameFromAlias(alias);
-		var colDbType = GetColumnDatabaseTypeByAlias(alias);
-		if (colName is null || colDbType is null) return null;
+		var column = GetColumnByAlias(alias);
+		if (colName is null || column is null) return null;
 
-		switch (colDbType)
+		switch (column.DbType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
 				return GetDataStructByAlias<short>(alias);
@@ -158,10 +156,10 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	protected virtual Type GetColumnObjectTypeByAlias(string alias)
 	{
 		var colName = GetColumnNameFromAlias(alias);
-		var colDbType = GetColumnDatabaseTypeByAlias(alias);
-		if (colName is null || colDbType is null) return null;
+		var column = GetColumnByAlias(alias);
+		if (colName is null || column is null) return null;
 
-		switch (colDbType)
+		switch (column.DbType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
 				return typeof(short);
@@ -191,10 +189,10 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	protected virtual object ConvertStringToColumnObjectByAlias(string alias, string stringValue)
 	{
 		var colName = GetColumnNameFromAlias(alias);
-		var colDbType = GetColumnDatabaseTypeByAlias(alias);
-		if (colName is null || colDbType is null) return null;
+		var column = GetColumnByAlias(alias);
+		if (colName is null || column is null) return null;
 
-		switch (colDbType)
+		switch (column.DbType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
 				return TfConverters.Convert<short>(stringValue);
@@ -354,19 +352,6 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	{
 		//Should be overrided in child component if needed
 	}
-
-	/// <summary>
-	/// This method needs to be overriden in the implementing component,
-	/// and will be called by various export services as Excel export in example
-	/// </summary>
-	public virtual TfDataColumn GetColumnInfoByAlias(string alias)
-	{
-		var columnName = GetColumnNameFromAlias(alias);
-		if (String.IsNullOrWhiteSpace(columnName)) return null;
-		if (RegionContext.DataTable is null) return null;
-		return RegionContext.DataTable.Columns[columnName];
-	}
-
 
 	/// <summary>
 	/// This method needs to be overriden in the implementing component,

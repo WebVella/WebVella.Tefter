@@ -52,7 +52,7 @@ public partial class TfEmailDisplayColumnComponent : TucBaseViewColumn<TfEmailDi
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -63,10 +63,11 @@ public partial class TfEmailDisplayColumnComponent : TucBaseViewColumn<TfEmailDi
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion

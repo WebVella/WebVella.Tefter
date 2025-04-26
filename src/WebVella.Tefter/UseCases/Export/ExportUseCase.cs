@@ -95,7 +95,6 @@ public class ExportUseCase
 			var typeDict = new Dictionary<string, object>();
 			var compContext = new TfSpaceViewColumnScreenRegionContext()
 			{
-				Hash = Guid.NewGuid(),
 				DataTable = viewData,
 				Mode = TfComponentPresentationMode.Display, //ignored here
 				SpaceViewId = view.Id,

@@ -62,7 +62,7 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	private string _storageKey = "";
 	private TucSpaceData _selectedSpaceData = null;
 	#endregion
@@ -81,10 +81,11 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
-			await _initValues();
-			_renderedHash = RegionContext.Hash;
+			_initValues();
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -265,6 +266,12 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 	}
 	private async Task _initValues()
 	{
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
+
 		if (RegionContext.Mode == TfComponentPresentationMode.Options)
 		{
 			_selectedSpaceData = TfAppState.Value.SpaceDataList?.FirstOrDefault(x => x.Id == componentOptions.SpaceDataId);
@@ -280,7 +287,6 @@ public partial class TfSelectEditColumnComponent : TucBaseViewColumn<TfSelectEdi
 		_value = GetColumnDataByAlias(VALUE_ALIAS);
 		if (!TfAuxDataState.Value.Data.ContainsKey(_storageKey)) return;
 		_selectOptionsList = ((List<TucSelectOption>)TfAuxDataState.Value.Data[_storageKey]).ToList();
-		var column = GetColumnInfoByAlias(VALUE_ALIAS);
 		if (column is not null && column.IsNullable)
 		{
 			_selectOptionsList.Insert(0, new TucSelectOption(null, LOC("no value")));

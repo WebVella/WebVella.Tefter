@@ -53,7 +53,7 @@ public partial class TfLongIntegerEditColumnComponent : TucBaseViewColumn<TfLong
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -64,10 +64,11 @@ public partial class TfLongIntegerEditColumnComponent : TucBaseViewColumn<TfLong
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -144,6 +145,11 @@ public partial class TfLongIntegerEditColumnComponent : TucBaseViewColumn<TfLong
 
 	private void _initValues()
 	{
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
 		if (columnData is not null && columnData is not long)
 			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports long.");

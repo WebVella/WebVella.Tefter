@@ -314,7 +314,6 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_ROW_CHANGED_PROPERTY_NAME] = EventCallback.Factory.Create<TfDataTable>(this, _onRowChanged);
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
 		{
-			Hash = TfAppState.Value.Hash,
 			Mode = TfComponentPresentationMode.Display,
 			CustomOptionsJson = column.CustomOptionsJson,
 			DataMapping = column.DataMapping,
@@ -322,7 +321,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 			RowIndex = rowIndex,
 			QueryName = column.QueryName,
 			SpaceViewId = column.SpaceViewId,
-			SpaceViewColumnId = column.Id,
+			SpaceViewColumnId = column.Id
 		};
 		return componentData;
 	}
