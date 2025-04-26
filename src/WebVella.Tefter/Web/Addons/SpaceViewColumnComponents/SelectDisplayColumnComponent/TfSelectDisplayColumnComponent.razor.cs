@@ -227,11 +227,15 @@ public partial class TfSelectDisplayColumnComponent : TucBaseViewColumn<TfSelect
 			}
 
 		}
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
+		if (column.IsJoinColumn)
+			throw new Exception("Joined data cannot be edited");
 
 		_value = GetColumnDataByAlias(VALUE_ALIAS);
 		if (!TfAuxDataState.Value.Data.ContainsKey(_storageKey)) return;
 		_selectOptionsList = ((List<TucSelectOption>)TfAuxDataState.Value.Data[_storageKey]).ToList();
-		var column = GetColumnByAlias(VALUE_ALIAS);
 		if (column is not null && column.IsNullable)
 		{
 			_selectOptionsList.Insert(0, new TucSelectOption(null, LOC("no value")));

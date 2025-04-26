@@ -2,15 +2,18 @@
 @inherits TucBaseViewColumn<TfUrlDisplayColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	if (!String.IsNullOrWhiteSpace(_value) && TfValidators.IsValidURL(_value))
+	foreach (var item in _value)
 	{
-		<div><a href="@_value">@_value</a></div>
+		if (!String.IsNullOrWhiteSpace(item) && TfValidators.IsValidURL(item))
+		{
+			<div><a href="@item">@item</a></div>
+		}
+		else
+		{
+			<div>@item</div>
+		}
 	}
-	else
-	{
-		<div>@_value</div>
-	}
-	
+
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {

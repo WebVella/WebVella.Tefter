@@ -4,7 +4,10 @@
 {
 	var format = componentOptions.Format;
 	if (string.IsNullOrWhiteSpace(format)) format = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
-	<div>@_value?.ToString(format)</div>
+	foreach (var item in _value)
+	{
+		<div>@item?.ToString(format)</div>
+	}
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {

@@ -49,7 +49,7 @@ public partial class TfNumberDisplayColumnComponent : TucBaseViewColumn<TfNumber
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private decimal? _value = null;
+	private List<decimal?> _value = null;
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
@@ -81,21 +81,56 @@ public partial class TfNumberDisplayColumnComponent : TucBaseViewColumn<TfNumber
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		var componentOptions = GetOptions();
-		if (columnData is not null && columnData is not decimal)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
-		excelCell.SetValue(XLCellValue.FromObject((decimal?)columnData));
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return;
+			excelCell.SetValue(XLCellValue.FromObject((decimal?)_value[0]));
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString());
+			}
+			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+		}
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if(columnData is not null && columnData is not decimal) 
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports decimal.");
-		_value = (decimal?)columnData;
+		if (columnData is null)
+		{
+			_value.Add(null);
+			return;
+		}
+		if (column.IsJoinColumn)
+		{
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				foreach (var joinValue in columnData as IList)
+					_value.Add((decimal?)joinValue);
+			}
+		}
+		else
+			_value.Add((decimal?)columnData);
 	}
 
 	private void _getCultureFromServer()

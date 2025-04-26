@@ -45,11 +45,15 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 	/// </summary>
 	protected async Task OnParametersSetAsync()
 	{
-		if (RegionContext.Hash != _renderedHash)
-		{
-			_initValues();
-			_renderedHash = RegionContext.Hash;
-		}
+		//OPTIONAL: Implement protection for unnecessary renders
+		//Check how the TucBaseViewColumn GetHash works
+		//var contextHash = RegionContext.GetHash();
+		//if (contextHash != _renderedHash)
+		//{
+		//	_initValues();
+		//	_renderedHash = contextHash;
+		//}
+		_initValues();
 	}
 	#endregion
 
@@ -79,8 +83,13 @@ public partial class SampleEditViewColumnComponent : ComponentBase,ITfSpaceViewC
 
 	private void _initValues()
 	{
-		var columnDataString = String.Empty;//Get and set the column value here
-		_value = columnDataString;
+		//NOTE: values from joins cannot be edited so you need to make a check like:
+		//TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		//if (column is null)
+		//	throw new Exception("Column not found");
+		//if (column.IsJoinColumn)
+		//	throw new Exception("Joined data cannot be edited");
+		_value = String.Empty;//Get and set the column value here
 	}
 	#endregion
 }

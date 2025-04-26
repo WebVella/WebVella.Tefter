@@ -2,45 +2,48 @@
 @inherits TucBaseViewColumn<TfBooleanDisplayColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	if (_value is null)
+	foreach (var item in _value)
 	{
-		if (!String.IsNullOrWhiteSpace(componentOptions.NullLabel))
+		if (item is null)
 		{
-			<div>@componentOptions.NullLabel</div>
+			if (!String.IsNullOrWhiteSpace(componentOptions.NullLabel))
+			{
+				<div>@componentOptions.NullLabel</div>
+			}
+			else if (componentOptions.NullValueShowAsIcon)
+			{
+				<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("SubtractSquare")" Color="@Color.FillInverse" /></div>
+			}
+			else
+			{
+				<div></div>
+			}
 		}
-		else if (componentOptions.NullValueShowAsIcon)
+		else if (item.Value)
 		{
-			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("SubtractSquare")" Color="@Color.FillInverse" /></div>
+			if (!String.IsNullOrWhiteSpace(componentOptions.TrueLabel))
+			{
+				<div>@componentOptions.TrueLabel</div>
+			}
+			else if (componentOptions.TrueValueShowAsIcon)
+			{
+				<div>@item.Value.ToString()</div>
+			}
 		}
 		else
 		{
-			<div></div>
-		}
-	}
-	else if (_value.Value)
-	{
-		if (!String.IsNullOrWhiteSpace(componentOptions.TrueLabel))
-		{
-			<div>@componentOptions.TrueLabel</div>
-		}
-		else if (componentOptions.TrueValueShowAsIcon)
-		{
-			<div>@_value.Value.ToString()</div>
-		}
-	}
-	else
-	{
-		if (!String.IsNullOrWhiteSpace(componentOptions.FalseLabel))
-		{
-			<div>@componentOptions.FalseLabel</div>
-		}
-		else if (componentOptions.FalseValueShowAsIcon)
-		{
-			<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
-		}
-		else
-		{
-			<div>@_value.Value.ToString()</div>
+			if (!String.IsNullOrWhiteSpace(componentOptions.FalseLabel))
+			{
+				<div>@componentOptions.FalseLabel</div>
+			}
+			else if (componentOptions.FalseValueShowAsIcon)
+			{
+				<div style="text-align:center"><FluentIcon Value="@TfConstants.GetIcon("Dismiss")" Color="@Color.Error" /></div>
+			}
+			else
+			{
+				<div>@item.Value.ToString()</div>
+			}
 		}
 	}
 }
@@ -63,7 +66,7 @@ else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 	<FluentInputLabel Label="@LOC("on FALSE (text with priority)")" style="margin-top:1rem;" />
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentTextField Value="@componentOptions.FalseLabel" Style="width:100%" 
+			<FluentTextField Value="@componentOptions.FalseLabel" Style="width:100%"
 							 ValueChanged=@((x)=> OnOptionsChanged(nameof(componentOptions.FalseLabel),x))
 							 Placeholder="@LOC("default value")" />
 		</FluentGridItem>

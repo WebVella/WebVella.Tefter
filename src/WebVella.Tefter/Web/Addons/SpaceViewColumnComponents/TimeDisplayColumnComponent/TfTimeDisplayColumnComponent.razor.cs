@@ -47,7 +47,7 @@ public partial class TfTimeDisplayColumnComponent : TucBaseViewColumn<TfTimeDisp
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private DateTime? _value = null;
+	private List<DateTime?> _value = null;
 
 	private string _defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern + " "
 	+ Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortTimePattern;
@@ -81,18 +81,57 @@ public partial class TfTimeDisplayColumnComponent : TucBaseViewColumn<TfTimeDisp
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not DateTime) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateTime.");
-		excelCell.SetValue(XLCellValue.FromObject((DateTime?)columnData));
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return;
+			excelCell.SetValue(XLCellValue.FromObject((DateTime?)_value[0]));
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			var format = !String.IsNullOrWhiteSpace(componentOptions.Format) ? componentOptions.Format : _defaultFormat;
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString(format));
+			}
+			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+		}
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not DateTime) throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateTime.");
-		_value = (DateTime?)columnData;
+		if (columnData is null)
+		{
+			_value.Add(null);
+			return;
+		}
+		if (column.IsJoinColumn)
+		{
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				foreach (var joinValue in columnData as IList)
+					_value.Add((DateTime?)joinValue);
+			}
+		}
+		else
+			_value.Add((DateTime?)columnData);
 	}
 	#endregion
 

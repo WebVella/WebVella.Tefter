@@ -2,7 +2,10 @@
 @inherits TucBaseViewColumn<TfLongIntegerDisplayColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	<div>@_value?.ToString(componentOptions.Format)</div>
+	foreach (var item in _value)
+	{
+		<div>@item?.ToString(componentOptions.Format)</div>
+	}
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {

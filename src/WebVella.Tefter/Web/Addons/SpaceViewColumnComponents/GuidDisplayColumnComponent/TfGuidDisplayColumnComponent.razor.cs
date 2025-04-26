@@ -35,9 +35,9 @@ public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisp
 
 	#region << Properties >>
 	public override Guid Id { get; init; } = new Guid(ID);
-	public override string Name { get; init;} = NAME;
-	public override string Description { get; init;} = DESCRIPTION;
-	public override string FluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfGuidViewColumnType.ID),
 	};
@@ -47,7 +47,7 @@ public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisp
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private Guid? _value = null;
+	private List<Guid?> _value = null;
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
@@ -77,22 +77,58 @@ public partial class TfGuidDisplayColumnComponent : TucBaseViewColumn<TfGuidDisp
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not Guid) 
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
-		excelCell.SetValue(XLCellValue.FromObject((Guid?)columnData));
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return;
+			excelCell.SetValue(XLCellValue.FromObject((Guid?)_value[0]));
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString());
+			}
+			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+		}
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not Guid) 
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Guid.");
-		_value =  (Guid?)columnData;
+		if (columnData is null)
+		{
+			_value.Add(null);
+			return;
+		}
+		if (column.IsJoinColumn)
+		{
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				foreach (var joinValue in columnData as IList)
+					_value.Add((Guid?)joinValue);
+			}
+		}
+		else
+			_value.Add((Guid?)columnData);
 	}
 	#endregion
 }

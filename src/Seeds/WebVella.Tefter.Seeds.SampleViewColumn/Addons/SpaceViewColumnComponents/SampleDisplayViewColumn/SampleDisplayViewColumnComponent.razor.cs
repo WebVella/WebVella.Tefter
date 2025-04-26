@@ -27,7 +27,7 @@ public partial class SampleDisplayViewColumnComponent : ComponentBase, ITfSpaceV
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private string _value = null;
+	private List<string> _value = null;
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
@@ -40,13 +40,18 @@ public partial class SampleDisplayViewColumnComponent : ComponentBase, ITfSpaceV
 	/// When data needs to be inited, parameter set is the best place as Initialization is 
 	/// done only once
 	/// </summary>
-	protected async Task OnParametersSetAsync()
+	protected override async Task OnParametersSetAsync()
 	{
-		if (RegionContext.Hash != _renderedHash)
-		{
-			_initValues();
-			_renderedHash = RegionContext.Hash;
-		}
+		await base.OnParametersSetAsync();
+		//OPTIONAL: Implement protection for unnecessary renders
+		//Check how the TucBaseViewColumn GetHash works
+		//var contextHash = RegionContext.GetHash();
+		//if (contextHash != _renderedHash)
+		//{
+		//	_initValues();
+		//	_renderedHash = contextHash;
+		//}
+		_initValues();
 	}
 	#endregion
 
@@ -64,7 +69,7 @@ public partial class SampleDisplayViewColumnComponent : ComponentBase, ITfSpaceV
 
 	private void _initValues()
 	{
-		var columnDataString = String.Empty;//Get and set the column value here
-		_value = columnDataString;
+		_value = new();
+		_value.Add(String.Empty);//Get and set the column value here
 	}
 }

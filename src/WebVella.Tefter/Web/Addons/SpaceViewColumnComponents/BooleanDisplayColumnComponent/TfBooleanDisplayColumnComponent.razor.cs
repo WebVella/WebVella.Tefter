@@ -34,11 +34,11 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init;} = new Guid(ID);
-	public override string Name { get; init;} = NAME;
-	public override string Description { get; init;} = DESCRIPTION;
-	public override string FluentIconName { get; init;} = FLUENT_ICON_NAME;
-	public override List<Guid> SupportedColumnTypes { get; init;} = new List<Guid>{ 
+	public override Guid Id { get; init; } = new Guid(ID);
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfBooleanViewColumnType.ID),
 	};
 
@@ -48,7 +48,7 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private bool? _value = null;
+	private List<bool?> _value = new();
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
@@ -78,32 +78,69 @@ public partial class TfBooleanDisplayColumnComponent : TucBaseViewColumn<TfBoole
 	/// Overrides the default export method in order to apply its own options
 	/// </summary>
 	/// <returns></returns>
-	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
+	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not bool) 
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'");
-
-		bool? value = (bool?)columnData;
-		if (value is null) return;
-
-		//options are not inited yet as the component is not rendered
+		_initValues();
 		var options = GetOptions();
-
-		if (value.Value && !String.IsNullOrWhiteSpace(options.TrueLabel)) excelCell.SetValue(XLCellValue.FromObject(options.TrueLabel));
-		else if (!value.Value && !String.IsNullOrWhiteSpace(options.FalseLabel)) excelCell.SetValue(XLCellValue.FromObject(options.FalseLabel));
-
-		excelCell.SetValue(XLCellValue.FromObject(value));
+		if (_value.Count == 0)
+		{
+			return;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return;
+			if (!String.IsNullOrWhiteSpace(options.TrueLabel))
+				excelCell.SetValue(XLCellValue.FromObject(options.TrueLabel));
+			else if (!String.IsNullOrWhiteSpace(options.FalseLabel))
+				excelCell.SetValue(XLCellValue.FromObject(options.FalseLabel));
+			else
+				excelCell.SetValue(XLCellValue.FromObject((bool?)_value[0]));
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				if (!String.IsNullOrWhiteSpace(options.TrueLabel))
+					valuesList.Add(options.TrueLabel);
+				else if (!String.IsNullOrWhiteSpace(options.FalseLabel))
+					valuesList.Add(options.FalseLabel);
+				else
+					valuesList.Add(item.Value.ToString());
+			}
+			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+		}
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not bool) 
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports Boolean.");
-		_value = (bool?)columnData;
+		if (columnData is null)
+		{
+			_value.Add(null);
+			return;
+		}
+		if (column.IsJoinColumn)
+		{
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				foreach (var joinValue in columnData as IList)
+					_value.Add((bool?)joinValue);
+			}
+		}
+		else
+			_value.Add((bool?)columnData);
 	}
 	#endregion
 }

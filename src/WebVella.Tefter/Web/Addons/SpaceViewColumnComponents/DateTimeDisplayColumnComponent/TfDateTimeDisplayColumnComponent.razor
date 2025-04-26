@@ -2,7 +2,11 @@
 @inherits TucBaseViewColumn<TfDateTimeDisplayColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	<div>@_value?.ToString(componentOptions.Format)</div>
+	var format = !String.IsNullOrWhiteSpace(componentOptions.Format) ? componentOptions.Format : _defaultFormat;
+	foreach (var item in _value)
+	{
+		<div>@item?.ToString(format)</div>
+	}
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {
