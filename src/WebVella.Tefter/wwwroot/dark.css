@@ -601,7 +601,8 @@ fluent-data-grid-row:has([row-selected]) {
   --tf-td-color-slate: var(--tf-slate-600);
   --tf-td-fill-slate: color-mix(in srgb, var(--tf-slate-700) 20%, var(--neutral-fill-layer-rest) 80%);
 }
-.tf-layout__body {
+.tf-layout__body,
+.tf-header-nav {
   --tf-layout-color-mute: color-mix(in srgb, var(--accent-base-color) 10%, var(--neutral-fill-layer-rest) 90%);
   --tf-layout-color: color-mix(in srgb, var(--accent-base-color) 20%, var(--neutral-fill-layer-rest) 80%);
   --tf-layout-color-accent: color-mix(in srgb, var(--accent-base-color) 30%, var(--neutral-fill-layer-rest) 70%);
