@@ -123,9 +123,13 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
+			Guid roleId = role.Id;
+			if (role.Id == Guid.Empty)
+				roleId = Guid.NewGuid();
+
 			RoleDbo roleDbo = new RoleDbo
 			{
-				Id = Guid.NewGuid(),
+				Id = roleId,
 				Name = role.Name,
 				IsSystem = role.IsSystem
 			};
@@ -287,9 +291,13 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
+			Guid roleId = role.Id;
+			if(role.Id == Guid.Empty)
+				roleId = Guid.NewGuid();
+
 			RoleDbo roleDbo = new RoleDbo
 			{
-				Id = Guid.NewGuid(),
+				Id = roleId,
 				Name = role.Name,
 				IsSystem = role.IsSystem
 			};
