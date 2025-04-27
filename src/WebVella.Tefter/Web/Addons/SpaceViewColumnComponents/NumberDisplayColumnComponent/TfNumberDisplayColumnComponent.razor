@@ -2,9 +2,13 @@
 @inherits TucBaseViewColumn<TfNumberDisplayColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	<div>@_value?.ToString(componentOptions.DisplayFormat,
-				new CultureInfo(String.IsNullOrWhiteSpace(componentOptions.CultureName) ? "en-US" : componentOptions.CultureName))
-	</div>
+	@foreach (var item in _value)
+	{
+		<div>
+			@item?.ToString(componentOptions.DisplayFormat,
+					new CultureInfo(String.IsNullOrWhiteSpace(componentOptions.CultureName) ? "en-US" : componentOptions.CultureName))
+		</div>
+	}
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {

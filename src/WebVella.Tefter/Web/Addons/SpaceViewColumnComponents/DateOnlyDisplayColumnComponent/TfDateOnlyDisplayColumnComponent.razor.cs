@@ -34,9 +34,9 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 
 	#region << Properties >>
 	public override Guid Id { get; init; } = new Guid(ID);
-	public override string Name { get; init;} = NAME;
-	public override string Description { get; init;} = DESCRIPTION;
-	public override string FluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override string Name { get; init; } = NAME;
+	public override string Description { get; init; } = DESCRIPTION;
+	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfDateOnlyViewColumnType.ID),
 	};
@@ -46,13 +46,13 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private DateOnly? _value = null;
+	private List<DateOnly?> _value = new();
 	private string _defaultFormat = Thread.CurrentThread.CurrentCulture.DateTimeFormat.ShortDatePattern;
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -63,10 +63,11 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -79,20 +80,57 @@ public partial class TfDateOnlyDisplayColumnComponent : TucBaseViewColumn<TfDate
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
 		//dateonly is not generally supported so we return datetime
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not DateOnly)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
-		excelCell.SetValue(XLCellValue.FromObject(((DateOnly?)columnData)?.ToDateTime()));
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return;
+			excelCell.SetValue(XLCellValue.FromObject(((DateOnly?)_value[0]).ToDateTime()));
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			var format = !String.IsNullOrWhiteSpace(componentOptions.Format) ? componentOptions.Format : _defaultFormat;
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString(format));
+			}
+			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+		}
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not DateOnly)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports DateOnly.");
-		_value = (DateOnly?)columnData;
+		if (columnData is null)
+		{
+			_value.Add(null);
+			return;
+		}
+		if (column.IsJoinColumn)
+		{
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				foreach (var joinValue in columnData as IList)
+					_value.Add((DateOnly?)joinValue);
+			}
+		}
+		else
+			_value.Add((DateOnly?)columnData);
 	}
 	#endregion
 }

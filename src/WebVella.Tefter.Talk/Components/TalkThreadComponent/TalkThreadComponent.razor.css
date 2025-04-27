@@ -163,8 +163,8 @@
 
 /*right header */
 ::deep .talk-panel__right__header.broadcast {
-	background-color:var(--space-background-color);
-	border-bottom:1px solid var(--space-color);
+	background-color:var(--tf-layout-color-mute);
+	border-bottom:1px solid var(--tf-layout-color);
 }
 
 ::deep .talk-panel__right__header-icon {

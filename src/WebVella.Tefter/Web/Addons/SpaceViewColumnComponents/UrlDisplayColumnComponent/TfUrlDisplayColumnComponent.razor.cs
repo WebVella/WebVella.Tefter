@@ -47,12 +47,12 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private string _value = null;
+	private List<string> _value = null;
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -63,10 +63,11 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -78,20 +79,34 @@ public partial class TfUrlDisplayColumnComponent : TucBaseViewColumn<TfUrlDispla
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider, IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not string)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
-		excelCell.SetValue(XLCellValue.FromObject((string)columnData));
+		_initValues();
+		excelCell.SetValue(XLCellValue.FromObject(String.Join(", ",_value)));
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not string)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports string.");
-		_value = (string)columnData;
+		if (columnData is null)
+		{
+			_value.Add(String.Empty);
+			return;
+		}
+		if (column.IsJoinColumn)
+		{
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				foreach (var joinValue in columnData as IList)
+					_value.Add(joinValue?.ToString());
+			}
+		}
+		else
+			_value.Add(columnData.ToString());
 	}
 	#endregion
 }

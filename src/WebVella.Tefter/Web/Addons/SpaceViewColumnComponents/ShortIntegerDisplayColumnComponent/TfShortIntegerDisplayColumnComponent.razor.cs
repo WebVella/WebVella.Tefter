@@ -47,12 +47,12 @@ public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<Tf
 	/// by default it is 'Value'. The alias<>column name mapping is set by the user
 	/// upon space view column configuration
 	/// </summary>
-	private short? _value = null;
+	private List<short?> _value = null;
 
 	/// <summary>
 	/// Each state has an unique hash and this is set in the component context under the Hash property value
 	/// </summary>
-	private Guid? _renderedHash = null;
+	private string _renderedHash = null;
 	#endregion
 
 	#region << Lifecycle >>
@@ -63,10 +63,11 @@ public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<Tf
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.Hash != _renderedHash)
+		var contextHash = RegionContext.GetHash();
+		if (contextHash != _renderedHash)
 		{
 			_initValues();
-			_renderedHash = RegionContext.Hash;
+			_renderedHash = contextHash;
 		}
 	}
 	#endregion
@@ -78,20 +79,56 @@ public partial class TfShortIntegerDisplayColumnComponent : TucBaseViewColumn<Tf
 	/// <returns></returns>
 	public override void ProcessExcelCell(IServiceProvider serviceProvider,IXLCell excelCell)
 	{
-		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if (columnData is not null && columnData is not short)
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports short.");
-		excelCell.SetValue(XLCellValue.FromObject((short?)columnData));
+		_initValues();
+		if (_value.Count == 0)
+		{
+			return;
+		}
+		else if (_value.Count == 1)
+		{
+			if (_value[0] is null) return;
+			excelCell.SetValue(XLCellValue.FromObject((short?)_value[0]));
+		}
+		else
+		{
+			var valuesList = new List<string>();
+			foreach (var item in _value)
+			{
+				if (item is null)
+				{
+					valuesList.Add(TfConstants.ExcelNullWord);
+					continue;
+				}
+				valuesList.Add(item.Value.ToString());
+			}
+			excelCell.SetValue(XLCellValue.FromObject(String.Join(", ", valuesList)));
+		}
 	}
 	#endregion
 
 	#region << Private logic >>
 	private void _initValues()
 	{
+		_value = new();
+		TfDataColumn column = GetColumnByAlias(VALUE_ALIAS);
+		if (column is null)
+			throw new Exception("Column not found");
 		object columnData = GetColumnDataByAlias(VALUE_ALIAS);
-		if(columnData is not null && columnData is not short) 
-			throw new Exception($"Not supported data type of '{columnData.GetType()}'. Supports short.");
-		_value = (short?)columnData;
+		if (columnData is null)
+		{
+			_value.Add(null);
+			return;
+		}
+		if (column.IsJoinColumn)
+		{
+			if (columnData.GetType().ImplementsInterface(typeof(IList)))
+			{
+				foreach (var joinValue in columnData as IList)
+					_value.Add((short?)joinValue);
+			}
+		}
+		else
+			_value.Add((short?)columnData);
 	}
 	#endregion
 }

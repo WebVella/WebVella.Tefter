@@ -5,8 +5,8 @@
 
 .tf-divider__title {
 	flex:0 0 auto;
-	background:var(--tf-body-color-accent-2);
-	color:rgba(255,255,255,0.5);
+	background:var(--neutral-fill-secondary-rest);
+	color:var(--neutral-foreground-rest);
 	padding:5px 15px;
 	border-radius: 5px 5px 0 0;
 }
@@ -14,5 +14,13 @@
 .tf-divider__hr {
 	flex:1 1 auto;
 	height: 2px;
-	background:var(--tf-body-color-accent-2);
+	background:var(--neutral-fill-secondary-rest);
+}
+
+.fluent-dialog-body .tf-divider__title{
+	background:var(--neutral-fill-secondary-hover);
+}
+
+.fluent-dialog-body .tf-divider__hr{
+	background:var(--neutral-fill-secondary-hover);
 }

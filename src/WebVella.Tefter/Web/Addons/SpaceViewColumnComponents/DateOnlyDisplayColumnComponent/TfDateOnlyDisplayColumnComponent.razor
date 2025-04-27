@@ -3,7 +3,10 @@
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
 	var format = !String.IsNullOrWhiteSpace(componentOptions.Format) ? componentOptions.Format : _defaultFormat;
-	<div>@_value?.ToString(format)</div>
+	foreach (var item in _value)
+	{
+		<div>@item?.ToString(format)</div>
+	}
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {

@@ -89,7 +89,10 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 			await InvokeAsync(StateHasChanged);
 			await Task.Delay(1);
 
-			foreach (var matchColumn in _newColumns) {
+			foreach (var matchColumn in _newColumns)
+			{
+				if (matchColumn.DbName.StartsWith(TfAppState.Value.AdminDataProvider.ColumnPrefix))
+					continue;
 				matchColumn.DbName = TfAppState.Value.AdminDataProvider.ColumnPrefix + matchColumn.DbName;
 			}
 
@@ -173,4 +176,11 @@ public partial class TfDataProviderImportSchemaDialog : TfBaseComponent, IDialog
 		}
 	}
 
+	private string _processColumnName(string columnName)
+	{
+		if (!columnName.StartsWith(TfAppState.Value.AdminDataProvider.ColumnPrefix))
+			return columnName;
+
+		return columnName.Substring(TfAppState.Value.AdminDataProvider.ColumnPrefix.Length); //it is not -1 as it needs to account for the _
+	}
 }

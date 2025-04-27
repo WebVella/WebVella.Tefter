@@ -18,10 +18,10 @@ public class CsvDataProvider : ITfDataProviderAddon
 	public const string DESCRIPTION = "Provide data from CSV formated file";
 	public const string FLUENT_ICON_NAME = "DocumentTable";
 
-	public Guid Id { get; init;} =  new Guid(ID);
-	public string Name { get; init;} = NAME;
-	public string Description { get; init;} = DESCRIPTION;
-	public string FluentIconName { get; init;} =  FLUENT_ICON_NAME;
+	public Guid Id { get; init; } = new Guid(ID);
+	public string Name { get; init; } = NAME;
+	public string Description { get; init; } = DESCRIPTION;
+	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
 
 	/// <summary>
 	/// Return what types of data types it can process from the data source
@@ -188,7 +188,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 	/// </summary>
 	public TfDataProviderSourceSchemaInfo GetDataProviderSourceSchema(TfDataProvider provider)
 	{
-		int maxSampleSize = 25;
+		int maxSampleSize = 200;
 		var settings = JsonSerializer.Deserialize<CsvDataProviderSettings>(provider.SettingsJson);
 		var culture = new CultureInfo(settings.CultureName);
 		var result = new TfDataProviderSourceSchemaInfo();
@@ -235,27 +235,66 @@ public class CsvDataProvider : ITfDataProviderAddon
 		}
 		Dictionary<string, List<TfDatabaseColumnType>> suggestedColumnTypes = new();
 		using (var reader = new StreamReader(stream))
-		using (var csvReader = new CsvReader(reader, config))
 		{
-			csvReader.Read();
-			csvReader.ReadHeader();
-			foreach (var item in csvReader.HeaderRecord)
+			//for dealing with auto=generation indexes
+			//we need to split the sample between the first and the last records
+			int totalRecords = 0;
+			while (reader.ReadLine() != null)
 			{
-				result.SourceColumnDefaultDbType[item] = TfDatabaseColumnType.Text;
+				++totalRecords;
 			}
-			var counter = 0;
-			while (csvReader.Read())
+			//restart reader
+			stream.Position = 0;
+			reader.DiscardBufferedData();
+
+			totalRecords--; // discount 1 line because there are column headers in first row.
+			var rowIndexToReadHS = new HashSet<long>();
+			if (maxSampleSize >= totalRecords)
 			{
-				if (counter >= maxSampleSize) break;
-				foreach (var column in csvReader.HeaderRecord)
+				for (int i = 0; i < totalRecords; i++)
 				{
-					var fieldValue = csvReader.GetField(column);
-					if (!suggestedColumnTypes.ContainsKey(column)) suggestedColumnTypes[column] = new();
-					TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
-					result.SourceColumnDefaultValue[column] = fieldValue.ToString();
-					suggestedColumnTypes[column].Add(type);
+					rowIndexToReadHS.Add(i);
 				}
-				counter++;
+			}
+			else
+			{
+				for (int i = 0; i < (maxSampleSize / 2); i++)
+				{
+					rowIndexToReadHS.Add(i);
+				}
+				for (int i = totalRecords - 1; i >= (totalRecords - maxSampleSize / 2); i--)
+				{
+					rowIndexToReadHS.Add(i);
+				}
+			}
+
+
+
+			using (var csvReader = new CsvReader(reader, config))
+			{
+				csvReader.Read();
+				csvReader.ReadHeader();
+				foreach (var item in csvReader.HeaderRecord)
+				{
+					result.SourceColumnDefaultDbType[item] = TfDatabaseColumnType.Text;
+				}
+
+				var counter = 0;
+				while (csvReader.Read())
+				{
+					if (rowIndexToReadHS.Contains(counter))
+					{
+						foreach (var column in csvReader.HeaderRecord)
+						{
+							var fieldValue = csvReader.GetField(column);
+							if (!suggestedColumnTypes.ContainsKey(column)) suggestedColumnTypes[column] = new();
+							TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
+							result.SourceColumnDefaultValue[column] = fieldValue.ToString();
+							suggestedColumnTypes[column].Add(type);
+						}
+					}
+					counter++;
+				}
 			}
 		}
 		foreach (var key in result.SourceColumnDefaultDbType.Keys)

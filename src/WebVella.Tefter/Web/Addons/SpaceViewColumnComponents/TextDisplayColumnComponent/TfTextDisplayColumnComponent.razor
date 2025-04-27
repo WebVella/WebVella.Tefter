@@ -2,7 +2,10 @@
 @inherits TucBaseViewColumn<TfTextDisplayColumnComponentOptions>
 @if (RegionContext.Mode == TfComponentPresentationMode.Display)
 {
-	<div>@_value</div>
+	foreach (var item in _value)
+	{
+		<div>@item</div>
+	}
 }
 else if (RegionContext.Mode == TfComponentPresentationMode.Options)
 {

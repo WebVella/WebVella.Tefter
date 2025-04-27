@@ -13,7 +13,7 @@
 	}
 
 		::deep > fluent-anchor.main-active {
-			background: var(--space-color) !important;
+			background: var(--tf-layout-color) !important;
 		}
 
 		::deep > fluent-anchor{
@@ -25,7 +25,7 @@
 	}
 
 	::deep fluent-anchor.main-active::part(control) {
-		border-color: var(--space-color);
+		border-color: var(--tf-layout-color);
 	}
 
 	::deep fluent-anchor.main-active svg,

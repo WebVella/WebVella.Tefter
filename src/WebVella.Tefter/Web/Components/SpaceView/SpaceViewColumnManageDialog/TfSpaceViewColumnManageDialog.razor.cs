@@ -187,7 +187,6 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
 		{
-			Hash = TfAppState.Value.Hash,
 			Mode = TfComponentPresentationMode.Options,
 			CustomOptionsJson = _form.CustomOptionsJson,
 			DataMapping = _form.DataMapping,
