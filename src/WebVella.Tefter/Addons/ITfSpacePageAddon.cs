@@ -29,4 +29,6 @@ public class TfSpacePageAddonContext
 	public string Icon { get; set; }
 	public string ComponentOptionsJson { get; set; }
 	public TfComponentMode Mode { get; set; }
+	public EventCallback EditNode { get; set; }
+	public EventCallback DeleteNode { get; set; }
 }

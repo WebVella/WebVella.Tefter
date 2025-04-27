@@ -1,5 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Addons;
 
+[LocalizationResource("WebVella.Tefter.Web.Addons.SpacePages.SpaceViewSpacePageAddon.TfSpaceViewSpacePageAddon", "WebVella.Tefter")]
 public partial class TfSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 {
 	#region << Render Injects >>
@@ -269,6 +270,9 @@ public partial class TfSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 		Navigator.NavigateTo(string.Format(TfConstants.SpaceViewPageUrl, TfAppState.Value.Space.Id, _optionsExistingSpaceView.Id));
 	}
+
+	private async Task _onNodeEdit() => await Context.EditNode.InvokeAsync();
+	private async Task _onNodeDelete() => await Context.DeleteNode.InvokeAsync();
 
 	#endregion
 }

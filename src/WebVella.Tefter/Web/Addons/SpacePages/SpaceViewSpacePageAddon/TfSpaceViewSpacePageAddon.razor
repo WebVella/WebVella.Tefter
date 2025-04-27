@@ -10,6 +10,15 @@
 							  Style="border: 1px solid var(--neutral-base-color)"
 							  Intent="MessageIntent.Warning"
 							  AllowDismiss="false" />
+			@if (TfAppState.Value.CurrentUser.IsAdmin)
+			{
+				<FluentStack Style="margin-top:1rem;">
+					<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"
+								  OnClick="_onNodeEdit">@LOC("edit page")</FluentButton>
+					<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.DeleteIcon.WithColor(Color.Error)"
+								  OnClick="_onNodeDelete">@LOC("delete page")</FluentButton>
+				</FluentStack>
+			}
 		</TfLayoutBodyMain>
 	}
 	else
