@@ -68,6 +68,11 @@ public static partial class TfConverters
 		Regex rgx = new Regex("[^a-zA-Z0-9]");
 		text = rgx.Replace(text, "_");
 		text = Regex.Replace(text, @"_+", "_");
+		//remove starting or trailing _
+		if (text.StartsWith("_"))
+			text = text.Substring(1);
+		if (text.EndsWith("_"))
+			text = text.Substring(0, text.Length - 1);
 		return text;
 	}
 	public static string RemoveDiacritics(this string text)
@@ -661,7 +666,7 @@ public static partial class TfConverters
 		TextInfo textInfo = cultureInfo.TextInfo;
 		var colorCountHash = new HashSet<string>();
 
-		var nonSelectableList = new List<string>{ "gray", "zinc", "neutral", "stone" };
+		var nonSelectableList = new List<string> { "gray", "zinc", "neutral", "stone" };
 
 
 		foreach (var def in colorDefinitions)
@@ -673,12 +678,12 @@ public static partial class TfConverters
 			var colorNameArray = defArray[0].Split("-", StringSplitOptions.RemoveEmptyEntries);
 			var colorType = colorNameArray[0].Trim();
 			int colorNumber = int.Parse(colorNameArray[1].Trim());
-			if(!colorCountHash.Contains(colorType))
+			if (!colorCountHash.Contains(colorType))
 				colorCountHash.Add(colorType);
 
 			var colorCount = colorCountHash.Count;
 			var selectable = "false";
-			if(colorNumber == 500 && !nonSelectableList.Contains(colorType) )
+			if (colorNumber == 500 && !nonSelectableList.Contains(colorType))
 				selectable = "true";
 
 			colorSB.AppendLine($"[TfColor(name: \"{colorType}\",value:\"{colorValue}\",variable:\"--tf-{defArray[0]}\",number:{colorNumber}, selectable: {selectable})]");
@@ -690,8 +695,9 @@ public static partial class TfConverters
 		var result = colorSB.ToString();
 	}
 
-	public static List<TfColor> GetSelectableColors(){ 
-		return Enum.GetValues<TfColor>().Where(x=> x.GetAttribute().Selectable).ToList();
+	public static List<TfColor> GetSelectableColors()
+	{
+		return Enum.GetValues<TfColor>().Where(x => x.GetAttribute().Selectable).ToList();
 	}
 
 	#endregion

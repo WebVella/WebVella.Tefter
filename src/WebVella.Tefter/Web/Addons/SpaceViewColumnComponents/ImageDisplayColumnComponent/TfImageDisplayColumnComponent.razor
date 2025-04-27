@@ -1,0 +1,27 @@
+﻿@namespace WebVella.Tefter.Web.Addons
+@inherits TucBaseViewColumn<TfImageDisplayColumnComponentOptions>
+@if (RegionContext.Mode == TfComponentPresentationMode.Display)
+{
+	foreach (var item in _value)
+	{
+		if (!String.IsNullOrWhiteSpace(item) && TfValidators.IsValidURL(item))
+		{
+			<div><a href="@item">@item</a></div>
+		}
+		else
+		{
+			<div>@item</div>
+		}
+	}
+
+}
+else if (RegionContext.Mode == TfComponentPresentationMode.Options)
+{
+	<FluentMessageBar Intent="@MessageIntent.Info" Title="@LOC("The selected component has no options")" AllowDismiss="false" />
+}
+else
+{
+	<div style="color:red">@LOC("Component Mode Not implemented")</div>
+}
+
+
