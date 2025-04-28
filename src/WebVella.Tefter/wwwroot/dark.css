@@ -527,7 +527,8 @@ fluent-button.accent {
   --neutral-layer-1: var(--tf-white);
 }
 fluent-button.accent svg {
-  --accent-fill-rest: var(--foreground-on-accent-rest);
+  --accent-fill-rest: var(--tf-white);
+  --neutral-foreground-rest: var(--tf-white);
 }
 fluent-button:not(.tf-select-btn).neutral {
   --neutral-foreground-rest: var(--neutral-stroke-rest);

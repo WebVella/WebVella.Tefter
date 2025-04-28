@@ -4,30 +4,33 @@
 	@if (TfUserState.Value is not null && TfUserState.Value.CurrentUser is not null)
 	{
 		<div class="actions">
-			@if (_isAdmin)
+			@if (TfUserState.Value.CurrentUser.IsAdmin)
 			{
-				<FluentAnchor Appearance="@Appearance.Outline" Href="@TfConstants.HomePageUrl" Title="@LOC("Exit Admin")">
-					<FluentIcon Value="@TfConstants.GetIcon("ArrowExit")" Color="@Color.Neutral" Slot="start" />
-					@LOC("Exit Admin")
-				</FluentAnchor>
-				<TfLanguageSwitch />
-				<TfNotificationCenter />
-			}
-			else
-			{
-				<FluentAnchor Appearance="@Appearance.Outline" Href="@TfConstants.AdminDashboardUrl" Title="@LOC("Administration")">
-					@LOC("Admin")
-				</FluentAnchor>
-				<TfLanguageSwitch />
-				<TfNotificationCenter />
-				@* <FluentButton Appearance="@Appearance.Stealth" OnClick="@(() => _helpVisible = !_helpVisible)" Title="Help" Id="help-switch-btn">
+				@if (_isAdmin)
+				{
+					<FluentAnchor Appearance="@Appearance.Outline" Href="@TfConstants.HomePageUrl" Title="@LOC("Exit Admin")">
+						<FluentIcon Value="@TfConstants.GetIcon("ArrowExit")" Color="@Color.Neutral" Slot="start" />
+						@LOC("Exit Admin")
+					</FluentAnchor>
+					<TfLanguageSwitch />
+					<TfNotificationCenter />
+				}
+				else
+				{
+					<FluentAnchor Appearance="@Appearance.Outline" Href="@TfConstants.AdminDashboardUrl" Title="@LOC("Administration")">
+						@LOC("Admin")
+					</FluentAnchor>
+					<TfLanguageSwitch />
+					<TfNotificationCenter />
+					@* <FluentButton Appearance="@Appearance.Stealth" OnClick="@(() => _helpVisible = !_helpVisible)" Title="Help" Id="help-switch-btn">
 					<FluentIcon Value="@TfConstants.GetIcon("QuestionCircle")" Color="@Color.Neutral" />
 				</FluentButton> *@
+				}
 			}
 		</div>
 		<div class="avatar">
-			<TfAvatar Id="user-menu-toggle" OnClick="() => _visible = !_visible" User="TfUserState.Value.CurrentUser"/>
-@* 			<FluentPersona Id="user-menu-toggle" Initials="@TfConverters.GetUserInitials(TfUserState.Value.CurrentUser)"
+			<TfAvatar Id="user-menu-toggle" OnClick="() => _visible = !_visible" User="TfUserState.Value.CurrentUser" />
+			@* 			<FluentPersona Id="user-menu-toggle" Initials="@TfConverters.GetUserInitials(TfUserState.Value.CurrentUser)"
 						   ImageSize="24px" OnClick="() => _visible = !_visible"></FluentPersona> *@
 		</div>
 		<FluentMenu Width="200px" @bind-Open="_visible" Anchor="user-menu-toggle" UseMenuService="false">

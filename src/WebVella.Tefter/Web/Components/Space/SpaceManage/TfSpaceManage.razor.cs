@@ -210,7 +210,7 @@ public partial class TfSpaceManage : TfBaseComponent
 		if (!result.Cancelled && result.Data != null)
 		{
 			var nodes = (List<TucSpaceNode>)result.Data;
-			ToastService.ShowSuccess(LOC("Space page successfully created!"));
+			ToastService.ShowSuccess(LOC("Space page successfully updated!"));
 			Dispatcher.Dispatch(new SetAppStateAction(
 			component: this,
 			state: TfAppState.Value with
