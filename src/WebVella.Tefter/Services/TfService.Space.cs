@@ -2,28 +2,82 @@
 
 public partial interface ITfService
 {
+	/// <summary>
+	/// Retrieves a list of all spaces.
+	/// </summary>
+	/// <returns>A list of <see cref="TfSpace"/> objects.</returns>
 	public List<TfSpace> GetSpacesList();
 
+	/// <summary>
+	/// Retrieves a list of spaces accessible to a specific user.
+	/// </summary>
+	/// <param name="userId">The unique identifier of the user.</param>
+	/// <returns>A list of <see cref="TfSpace"/> objects accessible to the user.</returns>
 	public List<TfSpace> GetSpacesListForUser(
 		Guid userId);
 
+	/// <summary>
+	/// Retrieves a specific space by its unique identifier.
+	/// </summary>
+	/// <param name="id">The unique identifier of the space.</param>
+	/// <returns>The <see cref="TfSpace"/> object if found; otherwise, null.</returns>
 	public TfSpace GetSpace(
 		Guid id);
 
+	/// <summary>
+	/// Creates a new space.
+	/// </summary>
+	/// <param name="space">The <see cref="TfSpace"/> object to create.</param>
+	/// <returns>The created <see cref="TfSpace"/> object.</returns>
 	public TfSpace CreateSpace(
 		TfSpace space);
 
+	/// <summary>
+	/// Updates an existing space.
+	/// </summary>
+	/// <param name="space">The <see cref="TfSpace"/> object with updated information.</param>
+	/// <returns>The updated <see cref="TfSpace"/> object.</returns>
 	public TfSpace UpdateSpace(
 		TfSpace space);
 
+	/// <summary>
+	/// Deletes a space by its unique identifier.
+	/// </summary>
+	/// <param name="id">The unique identifier of the space to delete.</param>
 	public void DeleteSpace(
 		Guid id);
 
+	/// <summary>
+	/// Moves a space up in the order.
+	/// </summary>
+	/// <param name="id">The unique identifier of the space to move up.</param>
 	public void MoveSpaceUp(
 		Guid id);
 
+	/// <summary>
+	/// Moves a space down in the order.
+	/// </summary>
+	/// <param name="id">The unique identifier of the space to move down.</param>
 	public void MoveSpaceDown(
 		Guid id);
+
+	/// <summary>
+	/// Removes a role from a list of spaces.
+	/// </summary>
+	/// <param name="spaces">The list of <see cref="TfSpace"/> objects to remove the role from.</param>
+	/// <param name="role">The <see cref="TfRole"/> to remove.</param>
+	void RemoveSpacesRole(
+		List<TfSpace> spaces,
+		TfRole role);
+
+	/// <summary>
+	/// Adds a role to a list of spaces.
+	/// </summary>
+	/// <param name="spaces">The list of <see cref="TfSpace"/> objects to add the role to.</param>
+	/// <param name="role">The <see cref="TfRole"/> to add.</param>
+	void AddSpacesRole(
+		List<TfSpace> spaces,
+		TfRole role);
 }
 
 public partial class TfService : ITfService
@@ -39,7 +93,26 @@ public partial class TfService : ITfService
 			var dbos = _dboManager.GetList<TfSpaceDbo>(
 				order: orderSettings);
 
-			return dbos.Select(x => ConvertDboToModel(x)).ToList();
+			var spaces = dbos.Select(x => ConvertDboToModel(x)).ToList();
+
+			var roles = GetRoles();
+			var spaceRolesDict = new Dictionary<Guid, List<TfRole>>();
+			foreach (var spaceRoleRelation in _dboManager.GetList<SpaceRoleDbo>())
+			{
+				if (!spaceRolesDict.ContainsKey(spaceRoleRelation.SpaceId))
+					spaceRolesDict[spaceRoleRelation.SpaceId] = new List<TfRole>();
+
+				spaceRolesDict[spaceRoleRelation.SpaceId].Add(roles.Single(x => x.Id == spaceRoleRelation.RoleId));
+			}
+
+			foreach (var space in spaces)
+			{
+				if (spaceRolesDict.ContainsKey(space.Id))
+					space.Roles.AddRange(spaceRolesDict[space.Id].ToArray());
+			}
+
+			return spaces;
+
 		}
 		catch (Exception ex)
 		{
@@ -47,13 +120,42 @@ public partial class TfService : ITfService
 		}
 	}
 
-	/// <summary>
-	/// This is a placeholder method. In the future there will be private spaces with limited access
-	/// and the user will not be able to access all of them, so spaces from the UI should be get with the userId
-	/// </summary>
-	/// <param name="userId"></param>
-	/// <returns></returns>
-	public List<TfSpace> GetSpacesListForUser(Guid userId) => GetSpacesList();
+
+	public List<TfSpace> GetSpacesListForUser(
+		Guid userId)
+	{
+		try
+		{
+			var user = GetUser(userId);
+			if (user == null)
+				throw new TfValidationException(nameof(userId), "User not found.");
+
+			var spaces = GetSpacesList();
+
+			//return all spaces for administrators
+			var isAdmin = user.Roles.Any(x => x.Id == TfConstants.ADMIN_ROLE_ID);
+			if (isAdmin)
+				return spaces;
+
+			List<TfSpace> userSpaces = new List<TfSpace>();
+			foreach(var space in spaces)
+			{
+				if(space.Roles
+					.Select(x=>x.Id)
+					.Intersect(user.Roles.Select(x=>x.Id))
+					.Any())
+				{
+					userSpaces.Add(space);
+				}
+			}
+
+			return userSpaces;
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
 
 	public TfSpace GetSpace(
 		Guid id)
@@ -61,7 +163,17 @@ public partial class TfService : ITfService
 		try
 		{
 			var dbo = _dboManager.Get<TfSpaceDbo>(id);
-			return ConvertDboToModel(dbo);
+			var space = ConvertDboToModel(dbo);
+
+			if (space is not null)
+			{
+				var roles = GetRoles();
+				var spaceRoles = new List<TfRole>();
+				foreach (var spaceRoleRelation in _dboManager.GetList<SpaceRoleDbo>(space.Id, nameof(SpaceRoleDbo.SpaceId)))
+					space.Roles.Add(roles.Single(x => x.Id == spaceRoleRelation.RoleId));
+			}
+
+			return space;
 		}
 		catch (Exception ex)
 		{
@@ -82,18 +194,33 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
 				var spaces = GetSpacesList();
 
 				//position is ignored - space is added at last place
-				var dbo = ConvertModelToDbo(space);
-				dbo.Position = (short)(spaces.Count + 1);
+				var spaceDbo = ConvertModelToDbo(space);
+				spaceDbo.Position = (short)(spaces.Count + 1);
 
-				var success = _dboManager.Insert<TfSpaceDbo>(dbo);
+				var success = _dboManager.Insert<TfSpaceDbo>(spaceDbo);
 				if (!success)
 					throw new TfDboServiceException("Insert<TfSpaceDbo> failed");
+
+				if (space.Roles is not null)
+				{
+					foreach (var role in space.Roles)
+					{
+						var spaceRoleDbo = new SpaceRoleDbo
+						{
+							RoleId = role.Id,
+							SpaceId = spaceDbo.Id
+						};
+
+						success = _dboManager.Insert<SpaceRoleDbo>(spaceRoleDbo);
+						if (!success)
+							throw new TfDboServiceException("Insert<SpaceRoleDbo> failed");
+					}
+				}
 
 				scope.Complete();
 
@@ -116,17 +243,50 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			var existingSpace = _dboManager.Get<TfSpaceDbo>(space.Id);
+			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var existingSpace = GetSpace(space.Id);
 
-			//position is not updated
-			var dbo = ConvertModelToDbo(space);
-			dbo.Position = existingSpace.Position;
+				//position is not updated
+				var spaceDbo = ConvertModelToDbo(space);
+				spaceDbo.Position = existingSpace.Position;
 
-			var success = _dboManager.Update<TfSpaceDbo>(dbo);
-			if (!success)
-				throw new TfDboServiceException("Update<TfSpaceDbo> failed");
+				var success = _dboManager.Update<TfSpaceDbo>(spaceDbo);
+				if (!success)
+					throw new TfDboServiceException("Update<TfSpaceDbo> failed");
 
-			return GetSpace(space.Id);
+				//remove old roles
+				foreach (var role in existingSpace.Roles)
+				{
+					var dbId = new Dictionary<string, Guid> {
+						{ nameof(SpaceRoleDbo.SpaceId), space.Id },
+						{ nameof(SpaceRoleDbo.RoleId), role.Id }};
+
+					success = _dboManager.Delete<SpaceRoleDbo>(dbId);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<SpaceRoleDbo> failed");
+				}
+
+				//add new roles
+				foreach (var role in space.Roles)
+				{
+					var spaceRoleDbo = new SpaceRoleDbo
+					{
+						RoleId = role.Id,
+						SpaceId = spaceDbo.Id
+					};
+
+					success = _dboManager.Insert<SpaceRoleDbo>(spaceRoleDbo);
+
+					if (!success)
+						throw new TfDboServiceException("Insert<SpaceRoleDbo> failed");
+				}
+
+				scope.Complete();
+
+				return GetSpace(space.Id);
+			}
 		}
 		catch (Exception ex)
 		{
@@ -241,6 +401,20 @@ public partial class TfService : ITfService
 					.ToValidationException()
 					.ThrowIfContainsErrors();
 
+				bool success = false;
+
+				foreach (var role in space.Roles)
+				{
+					var dbId = new Dictionary<string, Guid> {
+						{ nameof(SpaceRoleDbo.SpaceId), space.Id },
+						{ nameof(SpaceRoleDbo.RoleId), role.Id }};
+
+					success = _dboManager.Delete<SpaceRoleDbo>(dbId);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<SpaceRoleDbo> failed");
+				}
+
 				var spaceViews = GetSpaceViewsList(space.Id);
 				foreach (var spaceView in spaceViews)
 				{
@@ -248,7 +422,6 @@ public partial class TfService : ITfService
 				}
 
 				var spaceDataList = GetSpaceDataList(id);
-
 				foreach (var spaceData in spaceDataList)
 				{
 					DeleteSpaceData(spaceData.Id);
@@ -274,10 +447,97 @@ public partial class TfService : ITfService
 						throw new TfDboServiceException("Update<TfSpaceDbo> failed");
 				}
 
-				var success = _dboManager.Delete<TfSpaceDbo>(id);
+				success = _dboManager.Delete<TfSpaceDbo>(id);
 
 				if (!success)
 					throw new TfDboServiceException("Delete<TfSpaceDbo> failed");
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public void AddSpacesRole(
+		List<TfSpace> spaces,
+		TfRole role)
+	{
+		try
+		{
+			if (spaces == null)
+				throw new ArgumentNullException(nameof(spaces));
+
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
+
+			using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+			{
+				foreach (var space in spaces)
+				{
+					var existingSpace = GetSpace(space.Id);
+					if (existingSpace is null)
+						throw new TfValidationException($"Space with id {space.Id} does not exist.");
+
+					if (existingSpace.Roles.Any(x => x.Id == role.Id))
+						continue;
+
+					var success = _dboManager.Insert<SpaceRoleDbo>(
+						new SpaceRoleDbo
+						{
+							RoleId = role.Id,
+							SpaceId = space.Id
+						});
+
+					if (!success)
+						throw new TfDboServiceException("Insert<SpaceRoleDbo> failed");
+
+				}
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+
+	public void RemoveSpacesRole(
+		List<TfSpace> spaces,
+		TfRole role)
+	{
+		try
+		{
+			if (spaces == null)
+				throw new ArgumentNullException(nameof(spaces));
+
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
+
+			using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+			{
+				foreach (var space in spaces)
+				{
+					var existingSpace = GetSpace(space.Id);
+					if (existingSpace is null)
+						throw new TfValidationException($"Space with id {space.Id} does not exist.");
+
+					if (existingSpace.Roles.Any(x => x.Id != role.Id))
+						continue;
+
+					var dbId = new Dictionary<string, Guid> {
+						{ nameof(SpaceRoleDbo.SpaceId), space.Id },
+						{ nameof(SpaceRoleDbo.RoleId), role.Id }};
+
+					var success = _dboManager.Delete<SpaceRoleDbo>(dbId);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<SpaceRoleDbo> failed");
+				}
 
 				scope.Complete();
 			}

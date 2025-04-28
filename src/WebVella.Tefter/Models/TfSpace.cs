@@ -7,6 +7,7 @@ public class TfSpace
 	public bool IsPrivate { get; set; }
 	public string Icon { get; set; }
 	public short Color { get; set; }
+	public List<TfRole> Roles { get; set; } = new();
 }
 
 [DboCacheModel]
@@ -30,4 +31,15 @@ internal class TfSpaceDbo
 
 	[TfDboModelProperty("color")]
 	public short Color { get; set; }
+}
+
+[DboCacheModel]
+[TfDboModel("tf_space_role")]
+internal record SpaceRoleDbo
+{
+	[TfDboModelProperty("space_id")]
+	public Guid SpaceId { get; set; }
+
+	[TfDboModelProperty("role_id")]
+	public Guid RoleId { get; set; }
 }

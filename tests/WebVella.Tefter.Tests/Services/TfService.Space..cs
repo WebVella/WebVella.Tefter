@@ -18,7 +18,13 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
+				var role = tfService
+					.CreateRoleBuilder()
+					.WithName("UnitTester")
+					.Build();
 
+				role = await tfService.SaveRoleAsync(role);
+				role.Should().NotBeNull();
 
 				var space1 = new TfSpace
 				{
@@ -27,7 +33,8 @@ public partial class TfServiceTest : BaseTest
 					Color = 10,
 					Icon = "icon1",
 					IsPrivate = false,
-					Position = 0
+					Position = 0,
+					Roles = new List<TfRole> { role }
 				};
 				var result = tfService.CreateSpace(space1);
 				result.Should().NotBeNull();
@@ -37,6 +44,7 @@ public partial class TfServiceTest : BaseTest
 				result.IsPrivate.Should().Be(space1.IsPrivate);
 				result.Icon.Should().Be(space1.Icon);
 				result.Color.Should().Be(space1.Color);
+				result.Roles.Count.Should().Be(1);
 
 				var space2 = new TfSpace
 				{
@@ -45,7 +53,8 @@ public partial class TfServiceTest : BaseTest
 					Color = 12,
 					Icon = "icon2",
 					IsPrivate = false,
-					Position = 0
+					Position = 0,
+					Roles = new List<TfRole> { role }
 				};
 				result = tfService.CreateSpace(space2);
 				result.Should().NotBeNull();
@@ -55,6 +64,7 @@ public partial class TfServiceTest : BaseTest
 				result.IsPrivate.Should().Be(space2.IsPrivate);
 				result.Icon.Should().Be(space2.Icon);
 				result.Color.Should().Be(space2.Color);
+				result.Roles.Count.Should().Be(1);
 
 				tfService.MoveSpaceDown(space1.Id);
 				space1 = tfService.GetSpace(space1.Id);
@@ -88,6 +98,179 @@ public partial class TfServiceTest : BaseTest
 			}
 		}
 	}
+
+	[Fact]
+	public async Task Space_ListPerUser()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var role = tfService
+					.CreateRoleBuilder()
+					.WithName("UnitTester")
+					.Build();
+
+				role = await tfService.SaveRoleAsync(role);
+				role.Should().NotBeNull();
+
+
+				var user = tfService
+					.CreateUserBuilder()
+					.WithEmail("test@test.com")
+					.WithPassword("password")
+					.WithFirstName("firstname")
+					.WithLastName("lastname")
+					.CreatedOn(DateTime.Now)
+					.Enabled(true)
+					.WithRoles(role)
+					.Build();
+
+				user = await tfService.SaveUserAsync(user);
+				user.Should().NotBeNull();
+
+				var space1 = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0,
+					Roles = new List<TfRole> { role }
+				};
+				var result = tfService.CreateSpace(space1);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(space1.Id);
+				result.Name.Should().Be(space1.Name);
+				result.Position.Should().Be(1);
+				result.IsPrivate.Should().Be(space1.IsPrivate);
+				result.Icon.Should().Be(space1.Icon);
+				result.Color.Should().Be(space1.Color);
+				result.Roles.Count.Should().Be(1);
+
+				var space2 = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space2",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0,
+					Roles = new List<TfRole> { }
+				};
+				result = tfService.CreateSpace(space2);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(space2.Id);
+				result.Name.Should().Be(space2.Name);
+				result.Position.Should().Be(2);
+				result.IsPrivate.Should().Be(space2.IsPrivate);
+				result.Icon.Should().Be(space2.Icon);
+				result.Color.Should().Be(space2.Color);
+				result.Roles.Count.Should().Be(0);
+
+				var userSpaces = tfService.GetSpacesListForUser(user.Id);
+				userSpaces.Should().NotBeNull();
+				userSpaces.Count.Should().Be(1);
+				userSpaces[0].Id.Should().Be(space1.Id);
+
+				tfService.RemoveUsersRoleAsync(new List<TfUser> { user }, role).Wait();
+
+				userSpaces = tfService.GetSpacesListForUser(user.Id);
+				userSpaces.Should().NotBeNull();
+				userSpaces.Count.Should().Be(0);
+
+				var adminRole = tfService.GetRole(TfConstants.ADMIN_ROLE_ID);
+				tfService.AddUsersRole(new List<TfUser> { user }, adminRole);
+
+				userSpaces = tfService.GetSpacesListForUser(user.Id);
+				userSpaces.Should().NotBeNull();
+				userSpaces.Count.Should().Be(2);
+			}
+		}
+	}
+
+	[Fact]
+	public async Task Space_AddAndRemoveToRole()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var role = tfService
+					.CreateRoleBuilder()
+					.WithName("UnitTester")
+					.Build();
+
+				role = await tfService.SaveRoleAsync(role);
+				role.Should().NotBeNull();
+
+				var space1 = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space1",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0,
+					Roles = new List<TfRole> { }
+				};
+				var result = tfService.CreateSpace(space1);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(space1.Id);
+				result.Name.Should().Be(space1.Name);
+				result.Position.Should().Be(1);
+				result.IsPrivate.Should().Be(space1.IsPrivate);
+				result.Icon.Should().Be(space1.Icon);
+				result.Color.Should().Be(space1.Color);
+				result.Roles.Count.Should().Be(0);
+
+				var space2 = new TfSpace
+				{
+					Id = Guid.NewGuid(),
+					Name = "Space2",
+					Color = 10,
+					Icon = "icon1",
+					IsPrivate = false,
+					Position = 0,
+					Roles = new List<TfRole> { }
+				};
+				result = tfService.CreateSpace(space2);
+				result.Should().NotBeNull();
+				result.Id.Should().Be(space2.Id);
+				result.Name.Should().Be(space2.Name);
+				result.Position.Should().Be(2);
+				result.IsPrivate.Should().Be(space2.IsPrivate);
+				result.Icon.Should().Be(space2.Icon);
+				result.Color.Should().Be(space2.Color);
+				result.Roles.Count.Should().Be(0);
+
+
+				tfService.AddSpacesRole(new List<TfSpace> { space1, space2 }, role);
+
+				space1 = tfService.GetSpace(space1.Id);
+				space1.Roles.Count().Should().Be(1);
+
+				space2 = tfService.GetSpace(space2.Id);
+				space2.Roles.Count().Should().Be(1);
+
+				tfService.RemoveSpacesRole(new List<TfSpace> { space1, space2 }, role);
+
+				space1 = tfService.GetSpace(space1.Id);
+				space1.Roles.Count().Should().Be(0);
+
+				space2 = tfService.GetSpace(space2.Id);
+				space2.Roles.Count().Should().Be(0);
+			}
+		}
+	}
+
 
 	[Fact]
 	public async Task SpaceData_CRUD()

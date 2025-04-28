@@ -881,6 +881,37 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 
 		#endregion
 
+		#region TABLE: SPACE_ROLE
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_space_role")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("space_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+					.AddGuidColumn("role_id", c => { c.WithoutAutoDefaultValue().NotNullable(); });
+
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_space_role", c => { c.WithColumns("space_id", "role_id"); })
+					.AddForeignKeyConstraint("fk_space_role_role", c =>
+					{
+						c
+						.WithColumns("role_id")
+						.WithForeignTable("tf_role")
+						.WithForeignColumns("id");
+					})
+					.AddForeignKeyConstraint("fk_space_role_user", c =>
+					{
+						c
+						.WithColumns("space_id")
+						.WithForeignTable("tf_space")
+						.WithForeignColumns("id");
+					});
+			});
+		#endregion
+
 		#region  TABLE: BOOKMARK
 
 		dbBuilder

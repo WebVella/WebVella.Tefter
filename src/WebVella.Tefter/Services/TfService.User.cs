@@ -2,26 +2,137 @@
 
 public partial interface ITfService
 {
-	TfUserBuilder CreateUserBuilder(TfUser user = null);
-	TfUser GetUser(Guid id);
-	TfUser GetUser(string email);
-	TfUser GetUser(string email, string password);
+	/// <summary>
+	/// Creates a new instance of <see cref="TfUserBuilder"/> for building users.
+	/// </summary>
+	/// <param name="user">Optional user to initialize the builder with.</param>
+	/// <returns>A <see cref="TfUserBuilder"/> instance.</returns>
+	TfUserBuilder CreateUserBuilder(
+		TfUser user = null);
+
+	/// <summary>
+	/// Retrieves a user by their unique identifier.
+	/// </summary>
+	/// <param name="id">The unique identifier of the user.</param>
+	/// <returns>The <see cref="TfUser"/> instance if found; otherwise, null.</returns>
+	TfUser GetUser(
+		Guid id);
+
+	/// <summary>
+	/// Retrieves a user by their email address.
+	/// </summary>
+	/// <param name="email">The email address of the user.</param>
+	/// <returns>The <see cref="TfUser"/> instance if found; otherwise, null.</returns>
+	TfUser GetUser(
+		string email);
+
+	/// <summary>
+	/// Retrieves a user by their email address and password.
+	/// </summary>
+	/// <param name="email">The email address of the user.</param>
+	/// <param name="password">The password of the user.</param>
+	/// <returns>The <see cref="TfUser"/> instance if found; otherwise, null.</returns>
+	TfUser GetUser(
+		string email,
+		string password);
+
+	/// <summary>
+	/// Retrieves all users in the system.
+	/// </summary>
+	/// <returns>A read-only collection of <see cref="TfUser"/> instances.</returns>
 	ReadOnlyCollection<TfUser> GetUsers();
-	TfUser SaveUser(TfUser user);
-	Task<TfUser> GetUserAsync(Guid id);
-	Task<TfUser> GetUserAsync(string email);
-	Task<TfUser> GetUserAsync(string email, string password);
+
+	/// <summary>
+	/// Saves a user to the system. Creates a new user if it does not exist, or updates an existing one.
+	/// </summary>
+	/// <param name="user">The user to save.</param>
+	/// <returns>The saved <see cref="TfUser"/> instance.</returns>
+	TfUser SaveUser(
+		TfUser user);
+
+	/// <summary>
+	/// Asynchronously retrieves a user by their unique identifier.
+	/// </summary>
+	/// <param name="id">The unique identifier of the user.</param>
+	/// <returns>A task representing the asynchronous operation, with the <see cref="TfUser"/> instance if found; otherwise, null.</returns>
+	Task<TfUser> GetUserAsync(
+		Guid id);
+
+	/// <summary>
+	/// Asynchronously retrieves a user by their email address.
+	/// </summary>
+	/// <param name="email">The email address of the user.</param>
+	/// <returns>A task representing the asynchronous operation, with the <see cref="TfUser"/> instance if found; otherwise, null.</returns>
+	Task<TfUser> GetUserAsync(
+		string email);
+
+	/// <summary>
+	/// Asynchronously retrieves a user by their email address and password.
+	/// </summary>
+	/// <param name="email">The email address of the user.</param>
+	/// <param name="password">The password of the user.</param>
+	/// <returns>A task representing the asynchronous operation, with the <see cref="TfUser"/> instance if found; otherwise, null.</returns>
+	Task<TfUser> GetUserAsync(
+		string email,
+		string password);
+
+	/// <summary>
+	/// Asynchronously retrieves all users in the system.
+	/// </summary>
+	/// <returns>A task representing the asynchronous operation, with a read-only collection of <see cref="TfUser"/> instances.</returns>
 	Task<ReadOnlyCollection<TfUser>> GetUsersAsync();
-	Task<TfUser> SaveUserAsync(TfUser user);
-	void RemoveUsersRole(List<TfUser> users, TfRole role);
-	Task RemoveUsersRoleAsync(List<TfUser> users, TfRole role);
-	void AddUsersRole(List<TfUser> users, TfRole role);
-	Task AddUsersRoleAsync(List<TfUser> users, TfRole role);
+
+	/// <summary>
+	/// Asynchronously saves a user to the system. Creates a new user if it does not exist, or updates an existing one.
+	/// </summary>
+	/// <param name="user">The user to save.</param>
+	/// <returns>A task representing the asynchronous operation, with the saved <see cref="TfUser"/> instance.</returns>
+	Task<TfUser> SaveUserAsync(
+		TfUser user);
+
+	/// <summary>
+	/// Removes a role from a list of users.
+	/// </summary>
+	/// <param name="users">The list of users to remove the role from.</param>
+	/// <param name="role">The role to remove.</param>
+	void RemoveUsersRole(
+		List<TfUser> users,
+		TfRole role);
+
+	/// <summary>
+	/// Asynchronously removes a role from a list of users.
+	/// </summary>
+	/// <param name="users">The list of users to remove the role from.</param>
+	/// <param name="role">The role to remove.</param>
+	/// <returns>A task representing the asynchronous operation.</returns>
+	Task RemoveUsersRoleAsync(
+		List<TfUser> users,
+		TfRole role);
+
+	/// <summary>
+	/// Adds a role to a list of users.
+	/// </summary>
+	/// <param name="users">The list of users to add the role to.</param>
+	/// <param name="role">The role to add.</param>
+	void AddUsersRole(
+		List<TfUser> users,
+		TfRole role);
+
+	/// <summary>
+	/// Asynchronously adds a role to a list of users.
+	/// </summary>
+	/// <param name="users">The list of users to add the role to.</param>
+	/// <param name="role">The role to add.</param>
+	/// <returns>A task representing the asynchronous operation.</returns>
+	Task AddUsersRoleAsync(
+		List<TfUser> users,
+		TfRole role);
 }
 
 public partial class TfService : ITfService
 {
-	public TfUserBuilder CreateUserBuilder(TfUser user = null)
+	public TfUserBuilder CreateUserBuilder(
+		TfUser user = null)
 	{
 		try
 		{
@@ -33,7 +144,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfUser GetUser(Guid id)
+	public TfUser GetUser(
+		Guid id)
 	{
 		try
 		{
@@ -75,7 +187,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfUser GetUser(string email)
+	public TfUser GetUser(
+		string email)
 	{
 		try
 		{
@@ -123,7 +236,9 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfUser GetUser(string email, string password)
+	public TfUser GetUser(
+		string email,
+		string password)
 	{
 		try
 		{
@@ -233,7 +348,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public TfUser SaveUser(TfUser user)
+	public TfUser SaveUser(
+		TfUser user)
 	{
 		try
 		{
@@ -257,7 +373,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private TfUser CreateUser(TfUser user)
+	private TfUser CreateUser(
+		TfUser user)
 	{
 		new UserValidator(this)
 			.ValidateCreate(user)
@@ -303,7 +420,8 @@ public partial class TfService : ITfService
 		return GetUser(userDbo.Id);
 	}
 
-	private TfUser UpdateUser(TfUser user)
+	private TfUser UpdateUser(
+		TfUser user)
 	{
 		new UserValidator(this)
 			.ValidateUpdate(user)
@@ -371,7 +489,9 @@ public partial class TfService : ITfService
 		return GetUser(userDbo.Id);
 	}
 
-	public void AddUsersRole(List<TfUser> users, TfRole role)
+	public void AddUsersRole(
+		List<TfUser> users,
+		TfRole role)
 	{
 		try
 		{
@@ -391,7 +511,12 @@ public partial class TfService : ITfService
 					if (existingUser.Roles.Any(x => x.Id == role.Id))
 						continue;
 
-					var success = _dboManager.Insert<UserRoleDbo>(new UserRoleDbo { RoleId = role.Id, UserId = user.Id });
+					var success = _dboManager.Insert<UserRoleDbo>(
+						new UserRoleDbo
+						{
+							RoleId = role.Id,
+							UserId = user.Id
+						});
 
 					if (!success)
 						throw new TfDboServiceException("Insert<UserRoleDbo> failed");
@@ -407,7 +532,9 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public void RemoveUsersRole(List<TfUser> users, TfRole role)
+	public void RemoveUsersRole(
+		List<TfUser> users,
+		TfRole role)
 	{
 		try
 		{
@@ -446,7 +573,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public async Task<TfUser> GetUserAsync(Guid id)
+	public async Task<TfUser> GetUserAsync(
+		Guid id)
 	{
 		try
 		{
@@ -487,7 +615,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public async Task<TfUser> GetUserAsync(string email)
+	public async Task<TfUser> GetUserAsync(
+		string email)
 	{
 		try
 		{
@@ -535,7 +664,9 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public async Task<TfUser> GetUserAsync(string email, string password)
+	public async Task<TfUser> GetUserAsync(
+		string email,
+		string password)
 	{
 		try
 		{
@@ -646,7 +777,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	public async Task<TfUser> SaveUserAsync(TfUser user)
+	public async Task<TfUser> SaveUserAsync(
+		TfUser user)
 	{
 		try
 		{
@@ -670,7 +802,8 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private async Task<TfUser> CreateUserAsync(TfUser user)
+	private async Task<TfUser> CreateUserAsync(
+		TfUser user)
 	{
 		new UserValidator(this)
 			.ValidateCreate(user)
@@ -715,7 +848,8 @@ public partial class TfService : ITfService
 		return await GetUserAsync(userDbo.Id);
 	}
 
-	private async Task<TfUser> UpdateUserAsync(TfUser user)
+	private async Task<TfUser> UpdateUserAsync(
+		TfUser user)
 	{
 		new UserValidator(this)
 			.ValidateUpdate(user)
@@ -782,11 +916,13 @@ public partial class TfService : ITfService
 		return await GetUserAsync(userDbo.Id);
 	}
 
-	public Task AddUsersRoleAsync(List<TfUser> users, TfRole role)
+	public Task AddUsersRoleAsync(
+		List<TfUser> users,
+		TfRole role)
 	{
 		try
 		{
-			AddUsersRole(users, role);	
+			AddUsersRole(users, role);
 		}
 		catch (Exception ex)
 		{
@@ -795,7 +931,9 @@ public partial class TfService : ITfService
 		return Task.CompletedTask;
 	}
 
-	public Task RemoveUsersRoleAsync(List<TfUser> users, TfRole role)
+	public Task RemoveUsersRoleAsync(
+		List<TfUser> users,
+		TfRole role)
 	{
 		try
 		{
@@ -870,7 +1008,8 @@ public partial class TfService : ITfService
 			});
 		}
 
-		public ValidationResult ValidateCreate(TfUser user)
+		public ValidationResult ValidateCreate(
+			TfUser user)
 		{
 			if (user == null)
 				return new ValidationResult(new[] { new ValidationFailure("", "The user instance is null.") });
@@ -881,7 +1020,8 @@ public partial class TfService : ITfService
 			});
 		}
 
-		public ValidationResult ValidateUpdate(TfUser user)
+		public ValidationResult ValidateUpdate(
+			TfUser user)
 		{
 			if (user == null)
 				return new ValidationResult(new[] { new ValidationFailure("", "The user instance is null.") });

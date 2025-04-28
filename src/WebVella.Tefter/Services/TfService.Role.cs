@@ -2,17 +2,89 @@
 
 public partial interface ITfService
 {
-	TfRoleBuilder CreateRoleBuilder(TfRole role = null);
-	TfRole GetRole(Guid id);
-	TfRole GetRole(string name);
+	/// <summary>
+	/// Creates a new instance of <see cref="TfRoleBuilder"/> for building roles.
+	/// </summary>
+	/// <param name="role">Optional role to initialize the builder with.</param>
+	/// <returns>A <see cref="TfRoleBuilder"/> instance.</returns>
+	TfRoleBuilder CreateRoleBuilder(
+		TfRole role = null);
+
+	/// <summary>
+	/// Retrieves a role by its unique identifier.
+	/// </summary>
+	/// <param name="id">The unique identifier of the role.</param>
+	/// <returns>The <see cref="TfRole"/> instance if found; otherwise, null.</returns>
+	TfRole GetRole(
+		Guid id);
+
+	/// <summary>
+	/// Retrieves a role by its name.
+	/// </summary>
+	/// <param name="name">The name of the role.</param>
+	/// <returns>The <see cref="TfRole"/> instance if found; otherwise, null.</returns>
+	TfRole GetRole(
+		string name);
+
+	/// <summary>
+	/// Retrieves all roles in the system.
+	/// </summary>
+	/// <returns>A read-only collection of <see cref="TfRole"/> instances.</returns>
 	ReadOnlyCollection<TfRole> GetRoles();
-	TfRole SaveRole(TfRole role);
-	void DeleteRole(TfRole role);
-	Task<TfRole> GetRoleAsync(Guid id);
-	Task<TfRole> GetRoleAsync(string name);
+
+	/// <summary>
+	/// Saves a role to the system. Creates a new role if it does not exist, or updates an existing one.
+	/// </summary>
+	/// <param name="role">The role to save.</param>
+	/// <returns>The saved <see cref="TfRole"/> instance.</returns>
+	TfRole SaveRole(
+		TfRole role);
+
+	/// <summary>
+	/// Deletes a role from the system.
+	/// </summary>
+	/// <param name="role">The role to delete.</param>
+	void DeleteRole(
+		TfRole role);
+
+	/// <summary>
+	/// Asynchronously retrieves a role by its unique identifier.
+	/// </summary>
+	/// <param name="id">The unique identifier of the role.</param>
+	/// <returns>A task representing the asynchronous operation, with the <see cref="TfRole"/> instance if found; otherwise, null.</returns>
+	Task<TfRole> GetRoleAsync(
+		Guid id);
+
+	/// <summary>
+	/// Asynchronously retrieves a role by its name.
+	/// </summary>
+	/// <param name="name">The name of the role.</param>
+	/// <returns>A task representing the asynchronous operation, with the <see cref="TfRole"/> instance if found; otherwise, null.</returns>
+	Task<TfRole> GetRoleAsync(
+		string name);
+
+	/// <summary>
+	/// Asynchronously retrieves all roles in the system.
+	/// </summary>
+	/// <returns>A task representing the asynchronous operation, with a read-only collection of <see cref="TfRole"/> instances.</returns>
 	Task<ReadOnlyCollection<TfRole>> GetRolesAsync();
-	Task<TfRole> SaveRoleAsync(TfRole role);
-	Task DeleteRoleAsync(TfRole role);
+
+	/// <summary>
+	/// Asynchronously saves a role to the system. Creates a new role if it does not exist, or updates an existing one.
+	/// </summary>
+	/// <param name="role">The role to save.</param>
+	/// <returns>A task representing the asynchronous operation, with the saved <see cref="TfRole"/> instance.</returns>
+	Task<TfRole> SaveRoleAsync(
+		TfRole role);
+
+	/// <summary>
+	/// Asynchronously deletes a role from the system.
+	/// </summary>
+	/// <param name="role">The role to delete.</param>
+	/// <returns>A task representing the asynchronous operation.</returns>
+	Task DeleteRoleAsync(
+		TfRole role);
+
 }
 
 public partial class TfService : ITfService
@@ -420,6 +492,14 @@ public partial class TfService : ITfService
 						return users.Count(x => x.Roles.Any(r => r.Id == id)) == 0;
 					})
 					.WithMessage("There is one or more existing users with this role.");
+
+				RuleFor(role => role.Id)
+					.Must(id =>
+					{
+						var spaces = tfService.GetSpacesList();
+						return spaces.Count(x => x.Roles.Any(r => r.Id == id)) == 0;
+					})
+					.WithMessage("There is one or more existing spaces with this role.");
 			});
 		}
 
