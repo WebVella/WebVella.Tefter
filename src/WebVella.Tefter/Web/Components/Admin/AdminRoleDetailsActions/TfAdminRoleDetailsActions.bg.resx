@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Load more" xml:space="preserve">
-    <value>Зареди още</value>
+  <data name="Edit" xml:space="preserve">
+    <value>Редактирай</value>
   </data>
-  <data name="No users match search criteria" xml:space="preserve">
-    <value>Няма потребители отговарящи на критерия за търсене</value>
+  <data name="Locked" xml:space="preserve">
+    <value>Заключено</value>
   </data>
-  <data name="search..." xml:space="preserve">
-    <value>търси...</value>
+  <data name="System roles cannot be managed" xml:space="preserve">
+    <value>Системните роли не могат да бъдат променяни</value>
   </data>
-  <data name="User successfully created!" xml:space="preserve">
-    <value>Потребителят е успешно създаден</value>
+  <data name="User successfully updated" xml:space="preserve">
+    <value>Потребителят е успешно редактиран</value>
   </data>
 </root>

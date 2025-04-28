@@ -1,0 +1,28 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<FluentButton Id="space-settings" Title="space actions"
+			  OnClick="() => _settingsMenuVisible = !_settingsMenuVisible" Appearance="@Appearance.Outline">
+	<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />
+</FluentButton>
+<FluentMenu Anchor="space-settings" @bind-Open="_settingsMenuVisible" Width="200px" UseMenuService="false">
+	<FluentMenuItem OnClick="onUsersListClick">
+		@LOC("All Users")
+		<FluentIcon Value="@TfConstants.PageIcon" Slot="start" Color="@Color.Accent" />
+	</FluentMenuItem>
+	<FluentMenuItem OnClick="addUser">
+		@LOC("Create User")
+		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
+	</FluentMenuItem>
+	<FluentDivider></FluentDivider>
+	<FluentMenuItem OnClick="onRolesListClick">
+		@LOC("All Roles")
+		<FluentIcon Value="@TfConstants.SpaceViewIcon" Slot="start" Color="@Color.Accent" />
+	</FluentMenuItem>
+	<FluentMenuItem OnClick="addRoleClick">
+		@LOC("Create Role")
+		<FluentIcon Value="@TfConstants.AddIcon" Slot="start" Color="@Color.Accent" />
+	</FluentMenuItem>
+</FluentMenu>
+
+

@@ -1230,6 +1230,13 @@ fluent-switch::part(label) {
 .fluent-dialog-main.left::part(control) {
   --dialog-padding: 0px;
 }
+fluent-badge::part(control) {
+  font-size: 14px;
+  padding: 3px 5px;
+}
+fluent-badge.input-badge::part(control) {
+  padding: 7px 5px;
+}
 .tf-select-menu {
   display: flex;
   flex-flow: column;

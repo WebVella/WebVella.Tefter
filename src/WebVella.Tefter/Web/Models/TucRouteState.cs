@@ -7,6 +7,7 @@ public partial record TucRouteState
 	public Guid? SpaceViewId { get; init; }
 	public Guid? SpaceNodeId { get; init; }
 	public Guid? UserId { get; init; }
+	public Guid? RoleId { get; init; }
 	public Guid? DataProviderId { get; init; }
 	public Guid? SpaceViewPresetId { get; init; }
 	public string SpaceSection { get; init; }
@@ -62,6 +63,8 @@ public enum RouteDataSecondNode
 	FileRepository = 8,
 	[Description("Templates")]
 	Templates = 9,
+	[Description("Roles")]
+	Roles = 10,
 }
 
 public enum RouteDataThirdNode

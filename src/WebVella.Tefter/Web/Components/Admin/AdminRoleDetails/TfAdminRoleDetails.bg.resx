@@ -117,16 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Load more" xml:space="preserve">
-    <value>Зареди още</value>
+  <data name="all users added" xml:space="preserve">
+    <value>всички потребители са добавени</value>
   </data>
-  <data name="No users match search criteria" xml:space="preserve">
-    <value>Няма потребители отговарящи на критерия за търсене</value>
+  <data name="Are you sure that you need this user unassigned?" xml:space="preserve">
+    <value>Сигурен ли си, че искаш потребителя да няма тази роля?</value>
   </data>
-  <data name="search..." xml:space="preserve">
-    <value>търси...</value>
+  <data name="Details" xml:space="preserve">
+    <value>Детайли</value>
   </data>
-  <data name="User successfully created!" xml:space="preserve">
-    <value>Потребителят е успешно създаден</value>
+  <data name="remove" xml:space="preserve">
+    <value>махни</value>
+  </data>
+  <data name="Remove the user" xml:space="preserve">
+    <value>Махни потребителят</value>
+  </data>
+  <data name="Role not found" xml:space="preserve">
+    <value>Ролята не е намерена</value>
+  </data>
+  <data name="select user" xml:space="preserve">
+    <value>избери потребител</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="This role has no users assigned" xml:space="preserve">
+    <value>Тази роля няма потребители</value>
+  </data>
+  <data name="User added" xml:space="preserve">
+    <value>Потребителят е добавен</value>
+  </data>
+  <data name="User removed" xml:space="preserve">
+    <value>Потребителят е махнат</value>
+  </data>
+  <data name="Users with the role" xml:space="preserve">
+    <value>Потребители с ролята</value>
   </data>
 </root>

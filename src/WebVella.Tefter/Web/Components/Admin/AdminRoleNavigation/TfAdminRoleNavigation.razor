@@ -16,11 +16,11 @@
 		</Toolbar>
 		<ChildContent>
 			<FluentNavMenu Class="tf-sidenav">
-				@foreach (var item in _getUsers())
+				@foreach (var item in _getRoles())
 				{
-					<FluentNavLink Href="@(string.Format(TfConstants.AdminUserDetailsPageUrl, item.Id))" Match="@NavLinkMatch.Prefix"
+					<FluentNavLink Href="@(string.Format(TfConstants.AdminRoleDetailsPageUrl, item.Id))" Match="@NavLinkMatch.Prefix"
 								   @key="@item.Id" Icon="@TfConstants.AdminUsersIcon">
-						@TfConverters.StringOverflow(item.Names, _stringLimit)
+						@TfConverters.StringOverflow(item.Name, _stringLimit)
 					</FluentNavLink>
 				}
 			</FluentNavMenu>

@@ -1,10 +1,15 @@
-﻿namespace WebVella.Tefter.Web.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebVella.Tefter.Web.Models;
 
 public record TucRole
 {
-	public Guid Id { get; init; }
-	public string Name { get; init; }
-	public bool IsSystem { get; init; }
+	[Required]
+	public Guid Id { get; set; }
+	[Required]
+	public string Name { get; set; }
+	//Should not be managed by the user
+	public bool IsSystem { get; set; } = false;
 
 	public TucRole() { }
 	public TucRole(TfRole model)

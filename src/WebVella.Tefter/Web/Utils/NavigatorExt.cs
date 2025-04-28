@@ -58,6 +58,10 @@ public static class NavigatorExt
 				{
 					result = result with { SecondNode = RouteDataSecondNode.Users };
 				}
+				else if (result.NodesDict[1] == TfConstants.RouteNameRoles)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.Roles };
+				}
 				else if (result.NodesDict[1] == TfConstants.RouteNameDataProviders)
 				{
 					result = result with { SecondNode = RouteDataSecondNode.DataProviders };
@@ -84,6 +88,10 @@ public static class NavigatorExt
 					if (result.SecondNode == RouteDataSecondNode.Users)
 					{
 						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { UserId = outGuid };
+					}
+					else if (result.SecondNode == RouteDataSecondNode.Roles)
+					{
+						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { RoleId = outGuid };
 					}
 					else if (result.SecondNode == RouteDataSecondNode.DataProviders)
 					{

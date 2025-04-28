@@ -12,10 +12,16 @@
 	color: var(--tf-font-color) !important;
 }
 
+	::deep .tf-card-title h3 {
+		font-size:18px;
+		margin-bottom:0 !important;
+		font-weight:normal;
+	}
+
 
 
 .tf-card-content {
-	padding: 5px 10px;
+	padding: 10px;
 }
 
 .tf-card.tf-card--no-body .tf-card-title {

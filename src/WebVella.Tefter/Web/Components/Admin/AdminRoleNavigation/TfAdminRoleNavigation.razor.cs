@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.Web.Components;
-[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminUserNavigation.TfAdminUserNavigation", "WebVella.Tefter")]
-public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
+[LocalizationResource("WebVella.Tefter.Web.Components.Admin.AdminRoleNavigation.TfAdminRoleNavigation", "WebVella.Tefter")]
+public partial class TfAdminRoleNavigation : TfBaseComponent, IAsyncDisposable
 {
 	[Inject] protected IStateSelection<TfUserState,bool> SidebarExpanded { get; set; }
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
@@ -14,22 +14,20 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 
 	}
 
-	private List<TucUser> _getUsers()
+	private List<TucRole> _getRoles()
 	{
 		search = search?.Trim().ToLowerInvariant();
-		var menuItems = new List<TucUser>();
-		foreach (var user in TfAppState.Value.AdminUsers)
+		var menuItems = new List<TucRole>();
+		foreach (var role in TfAppState.Value.UserRoles)
 		{
 			if (!String.IsNullOrWhiteSpace(search) &&
 				!(
-					user.FirstName.ToLowerInvariant().Contains(search)
-					|| user.LastName.ToLowerInvariant().Contains(search)
-					|| user.Email.ToLowerInvariant().Contains(search)
+					role.Name.ToLowerInvariant().Contains(search)
 				)
 				)
 				continue;
 
-			menuItems.Add(user);
+			menuItems.Add(role);
 		}
 
 		return menuItems;
