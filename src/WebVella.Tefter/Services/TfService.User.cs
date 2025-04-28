@@ -13,6 +13,10 @@ public partial interface ITfService
 	Task<TfUser> GetUserAsync(string email, string password);
 	Task<ReadOnlyCollection<TfUser>> GetUsersAsync();
 	Task<TfUser> SaveUserAsync(TfUser user);
+	void RemoveUsersRole(List<TfUser> users, TfRole role);
+	Task RemoveUsersRoleAsync(List<TfUser> users, TfRole role);
+	void AddUsersRole(List<TfUser> users, TfRole role);
+	Task AddUsersRoleAsync(List<TfUser> users, TfRole role);
 }
 
 public partial class TfService : ITfService
@@ -241,7 +245,7 @@ public partial class TfService : ITfService
 			else
 			{
 				var existingUser = GetUser(user.Id);
-				if(existingUser is not null)
+				if (existingUser is not null)
 					return UpdateUser(user);
 				else
 					return CreateUser(user);
@@ -365,6 +369,81 @@ public partial class TfService : ITfService
 		}
 
 		return GetUser(userDbo.Id);
+	}
+
+	public void AddUsersRole(List<TfUser> users, TfRole role)
+	{
+		try
+		{
+			if (users == null)
+				throw new ArgumentNullException(nameof(users));
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
+
+			using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+			{
+				foreach (var user in users)
+				{
+					var existingUser = GetUser(user.Id);
+					if (existingUser is null)
+						throw new TfValidationException($"User with id {user.Id} does not exist.");
+
+					if (existingUser.Roles.Any(x => x.Id == role.Id))
+						continue;
+
+					var success = _dboManager.Insert<UserRoleDbo>(new UserRoleDbo { RoleId = role.Id, UserId = user.Id });
+
+					if (!success)
+						throw new TfDboServiceException("Insert<UserRoleDbo> failed");
+
+				}
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public void RemoveUsersRole(List<TfUser> users, TfRole role)
+	{
+		try
+		{
+			if (users == null)
+				throw new ArgumentNullException(nameof(users));
+			if (role == null)
+				throw new ArgumentNullException(nameof(role));
+
+			using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
+			{
+				foreach (var user in users)
+				{
+					var existingUser = GetUser(user.Id);
+					if (existingUser is null)
+						throw new TfValidationException($"User with id {user.Id} does not exist.");
+
+					if (existingUser.Roles.Any(x => x.Id != role.Id))
+						continue;
+
+					var dbId = new Dictionary<string, Guid> {
+						{ nameof(UserRoleDbo.UserId), user.Id },
+						{ nameof(UserRoleDbo.RoleId), role.Id }};
+
+					var success = _dboManager.Delete<UserRoleDbo>(dbId);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<UserRoleDbo> failed");
+				}
+
+				scope.Complete();
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
 	}
 
 	public async Task<TfUser> GetUserAsync(Guid id)
@@ -701,6 +780,32 @@ public partial class TfService : ITfService
 		}
 
 		return await GetUserAsync(userDbo.Id);
+	}
+
+	public Task AddUsersRoleAsync(List<TfUser> users, TfRole role)
+	{
+		try
+		{
+			AddUsersRole(users, role);	
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+		return Task.CompletedTask;
+	}
+
+	public Task RemoveUsersRoleAsync(List<TfUser> users, TfRole role)
+	{
+		try
+		{
+			RemoveUsersRole(users, role);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+		return Task.CompletedTask;
 	}
 
 	#region <--- validation --->

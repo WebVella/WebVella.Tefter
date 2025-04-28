@@ -388,6 +388,53 @@ internal partial class TfDboManager : ITfDboManager
 	}
 
 	/// <summary>
+	/// Updates record
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <typeparam name="KT"></typeparam>
+	/// <param name="idFieldName"></param>
+	/// <param name="obj"></param>
+	/// <param name="updateThesePropsOnly"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
+	public bool Update<T>(string idFieldName, T obj, params string[] updateThesePropsOnly) where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+		var idProperty = meta.Properties.SingleOrDefault(x => x.PropertyInfo.Name == idFieldName);
+
+		if (idProperty is null)
+			throw new Exception($"Property {idFieldName} not found in model {typeof(T).Name}");
+
+
+		var whereClause = $" @{idProperty.ColumnName} = {idProperty.ColumnName} ";
+		List<NpgsqlParameter> parameters = ExractParametersFromObject<T>(obj, updateThesePropsOnly);
+
+		string sql = string.Empty;
+		if (updateThesePropsOnly != null && updateThesePropsOnly.Length > 0)
+		{
+			var existingPropNames = meta.Properties.Select(x => x.PropertyInfo.Name).ToHashSet();
+			var notFoundProps = updateThesePropsOnly.Where(x => !existingPropNames.Contains(x)).ToList();
+
+			if (notFoundProps.Count > 0)
+				throw new Exception("Properties to update contain non existing one or more! [" + string.Join(",", notFoundProps) + "]");
+
+			var columnNamesToUpdate = meta.Properties.Where(x => updateThesePropsOnly.Contains(x.PropertyInfo.Name)).Select(x => x.ColumnName);
+			sql = $"UPDATE {meta.TableName} SET {string.Join(", ", columnNamesToUpdate.Where(x => x != idProperty.ColumnName ).Select(x => $"{x}=@{x}"))} WHERE {whereClause} ";
+		}
+		else
+			sql = meta.UpdateRecordSql.Replace("$$$WHERE$$$", whereClause);
+
+		var affectedRows = ExecuteSqlNonQueryCommand(sql, parameters);
+		if (affectedRows > 0 && meta.UseCache)
+			ClearCache<T>();
+		return affectedRows == 1;
+	}
+
+	/// <summary>
 	/// Updates existing record into database
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
@@ -457,6 +504,26 @@ internal partial class TfDboManager : ITfDboManager
 			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
 
 		var affectedRows = ExecuteSqlNonQueryCommand(meta.DeleteRecordSql.Replace("$$$WHERE$$$", " id = @id "), new NpgsqlParameter("id", id));
+		if (affectedRows > 0 && meta.UseCache)
+			ClearCache<T>();
+		return affectedRows == 1;
+	}
+
+
+	public bool Delete<T, KT>(string idFieldName, KT id) where T : class, new()
+	{
+		var meta = GetModelMeta<T>();
+
+		if (meta.IsSqlModel)
+			throw new Exception("This method cannot be used with model decorated with DboSqlModelAttribute");
+
+		var idProperty = meta.Properties.SingleOrDefault(x=>x.PropertyInfo.Name == idFieldName);
+
+		if(idProperty is null)
+			throw new Exception($"Property {idFieldName} not found in model {typeof(T).Name}");
+				
+
+		var affectedRows = ExecuteSqlNonQueryCommand(meta.DeleteRecordSql.Replace("$$$WHERE$$$", $" {idProperty.ColumnName} = @id "), new NpgsqlParameter("id", id));
 		if (affectedRows > 0 && meta.UseCache)
 			ClearCache<T>();
 		return affectedRows == 1;

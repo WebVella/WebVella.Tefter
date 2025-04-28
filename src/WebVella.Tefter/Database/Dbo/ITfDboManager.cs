@@ -109,16 +109,33 @@ internal partial interface ITfDboManager
 	/// <typeparam name="T"></typeparam>
 	/// <param name="obj"></param>
 	/// <returns></returns>
+	bool Update<T>(string idFieldName, T obj, params string[] updateThesePropsOnly) where T : class, new();
+
+	/// <summary>
+	/// Updates existing record into database
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="obj"></param>
+	/// <returns></returns>
 	bool Update<T>(T obj, Dictionary<string, Guid> compositeKey, params string[] updateThesePropsOnly) where T : class, new();
 
 	/// <summary>
-	/// Deletes existing record from relation table
+	/// Deletes record
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	/// <param name="origin_id"></param>
-	/// <param name="target_id"></param>
+	/// <param name="id"></param>
 	/// <returns></returns>
 	bool Delete<T>(Guid id) where T : class, new();
+
+	/// <summary>
+	/// Deletes record by id from KT type
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <typeparam name="KT"></typeparam>
+	/// <param name="idFieldName"></param>
+	/// <param name="id"></param>
+	/// <returns></returns>
+	bool Delete<T,KT>(string idFieldName, KT id) where T : class, new();
 
 	/// <summary>
 	/// Deletes existing record from relation table

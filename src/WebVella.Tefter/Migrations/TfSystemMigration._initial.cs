@@ -1078,6 +1078,29 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			});
 
 		#endregion
+
+		#region  TABLE: SETTING
+
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_setting")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddShortTextColumn("name", c => { c.NotNullable(); })
+					.AddTextColumn("value", c => { c.Nullable().WithDefaultValue(""); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_setting_name", c => { c.WithColumns("name"); });
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes
+					.AddBTreeIndex("ix_setting_name", i => { i.WithColumns("name"); });
+			});
+
+		#endregion
 	}
 
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)

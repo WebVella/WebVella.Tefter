@@ -79,6 +79,71 @@ public partial class TfServiceTest : BaseTest
 	}
 
 	[Fact]
+	public async Task User_AddAndRemoveToRole()
+	{
+		using (await locker.LockAsync())
+		{
+			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
+			ITfService tfService = ServiceProvider.GetService<ITfService>();
+
+			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
+			{
+				var role = tfService
+					.CreateRoleBuilder()
+					.WithName("UnitTester")
+					.Build();
+
+				role = await tfService.SaveRoleAsync(role);
+				role.Should().NotBeNull();
+
+				var user1 = tfService
+					.CreateUserBuilder()
+					.WithEmail("test1@test.com")
+					.WithPassword("password")
+					.WithFirstName("firstname")
+					.WithLastName("lastname")
+					.CreatedOn(DateTime.Now)
+					.Enabled(true)
+					.Build();
+
+				user1 = await tfService.SaveUserAsync(user1);
+				user1.Should().NotBeNull();
+				user1.Roles.Count().Should().Be(0);
+
+				var user2 = tfService
+				.CreateUserBuilder()
+				.WithEmail("test2@test.com")
+				.WithPassword("password")
+				.WithFirstName("firstname")
+				.WithLastName("lastname")
+				.CreatedOn(DateTime.Now)
+				.Enabled(true)
+				.Build();
+
+				user2 = await tfService.SaveUserAsync(user2);
+				user2.Should().NotBeNull();
+				user2.Roles.Count().Should().Be(0);
+
+				await tfService.AddUsersRoleAsync( new List<TfUser> { user1, user2 }, role);
+
+				user1 = await tfService.GetUserAsync(user1.Id);
+				user1.Roles.Count().Should().Be(1);
+
+				user2 = await tfService.GetUserAsync(user2.Id);
+				user2.Roles.Count().Should().Be(1);
+
+				await tfService.RemoveUsersRoleAsync(new List<TfUser> { user1, user2 }, role);
+
+				user1 = await tfService.GetUserAsync(user1.Id);
+				user1.Roles.Count().Should().Be(0);
+
+				user2 = await tfService.GetUserAsync(user2.Id);
+				user2.Roles.Count().Should().Be(0);
+			}
+		}
+	}
+
+	[Fact]
 	public async Task User_GetWithNoEmailAndPassword()
 	{
 		using (await locker.LockAsync())
