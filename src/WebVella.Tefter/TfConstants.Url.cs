@@ -2,6 +2,7 @@
 
 public partial class TfConstants
 {
+	public static string NoDefaultRedirectQueryName = "ndr";
 	public static string PageQueryName = "pg";
 	public static string PageSizeQueryName = "pgs";
 	public static string SearchQueryName = "sch";
@@ -77,6 +78,7 @@ public partial class TfConstants
 	public static string SpaceDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}";
 	public static string SpaceDataViewsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameViews}";
 	public static string SpaceDataDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameData}";
+	public static string NoAccessPage = $"/403";
 
 	public static List<string> SupportedUriFirstNodes = new List<string>() {
 		String.Empty,RouteNameAdmin, RouteNameSpacePages,RouteNameSpace

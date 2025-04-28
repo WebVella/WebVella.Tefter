@@ -53,6 +53,7 @@ public partial class TfUserStateManager : FluxorComponent
 			if (state is null)
 				state = await UC.InitUserState(ComponentId);
 			var uri = new Uri(Navigator.Uri);
+			var queryDictionary = System.Web.HttpUtility.ParseQueryString(uri.Query);
 			if (state is null || state.CurrentUser is null)
 			{
 				Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
@@ -63,9 +64,9 @@ public partial class TfUserStateManager : FluxorComponent
 				Navigator.ReloadCurrentUrl();
 				return;
 			}
-			else if (uri.LocalPath == "/" && !String.IsNullOrWhiteSpace(state.CurrentUser.Settings.StartUpUrl))
+			else if (uri.LocalPath == "/" && !String.IsNullOrWhiteSpace(state.CurrentUser.Settings.StartUpUrl) 
+				&& queryDictionary[TfConstants.NoDefaultRedirectQueryName] is null)
 			{
-
 				Navigator.NavigateTo(state.CurrentUser.Settings.StartUpUrl);
 			}
 			//Setup states
