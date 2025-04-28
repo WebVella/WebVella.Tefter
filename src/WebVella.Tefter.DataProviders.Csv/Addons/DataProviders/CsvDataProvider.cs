@@ -276,7 +276,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 				csvReader.ReadHeader();
 				foreach (var item in csvReader.HeaderRecord)
 				{
-					result.SourceColumnDefaultDbType[item] = TfDatabaseColumnType.Text;
+					result.SourceColumnDefaultDbType[item.ToSourceColumnName()] = TfDatabaseColumnType.Text;
 				}
 
 				var counter = 0;
@@ -284,13 +284,14 @@ public class CsvDataProvider : ITfDataProviderAddon
 				{
 					if (rowIndexToReadHS.Contains(counter))
 					{
-						foreach (var column in csvReader.HeaderRecord)
+						foreach (var columnNameUnprocessed in csvReader.HeaderRecord)
 						{
-							var fieldValue = csvReader.GetField(column);
-							if (!suggestedColumnTypes.ContainsKey(column)) suggestedColumnTypes[column] = new();
+							var fieldValue = csvReader.GetField(columnNameUnprocessed);
+							var columnName = columnNameUnprocessed.ToSourceColumnName();
+							if (!suggestedColumnTypes.ContainsKey(columnName)) suggestedColumnTypes[columnName] = new();
 							TfDatabaseColumnType type = CsvSourceToColumnTypeConverter.GetDataTypeFromString(fieldValue, culture);
-							result.SourceColumnDefaultValue[column] = fieldValue.ToString();
-							suggestedColumnTypes[column].Add(type);
+							result.SourceColumnDefaultValue[columnName] = fieldValue.ToString();
+							suggestedColumnTypes[columnName].Add(type);
 						}
 					}
 					counter++;
@@ -384,7 +385,6 @@ public class CsvDataProvider : ITfDataProviderAddon
 		using (var reader = new StreamReader(stream))
 		using (var csvReader = new CsvReader(reader, config))
 		{
-
 			try
 			{
 				synchLog.Log($"start open and parse csv file");
@@ -408,7 +408,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 				try
 				{
 					foreach (var column in csvReader.HeaderRecord)
-						sourceRow[column] = csvReader.GetField(column);
+						sourceRow[column.ToSourceColumnName()] = csvReader.GetField(column);
 				}
 				catch (Exception ex)
 				{
@@ -420,7 +420,7 @@ public class CsvDataProvider : ITfDataProviderAddon
 				TfDataProviderDataRow row = new TfDataProviderDataRow();
 				foreach (var providerColumnWithSource in sourceColumns)
 				{
-					var sourceName = providerColumnWithSource.SourceName.Trim();
+					var sourceName = providerColumnWithSource.SourceName.ToSourceColumnName();
 
 					if (!sourceRow.ContainsKey(sourceName))
 					{

@@ -17,6 +17,7 @@ public class NavigatorExtTests
 		TucRouteState result = new();
 		Guid spaceId = Guid.NewGuid();
 		Guid userId = Guid.NewGuid();
+		Guid roleId = Guid.NewGuid();
 		Guid providerId = Guid.NewGuid();
 		Guid viewId = Guid.NewGuid();
 		Guid dataId = Guid.NewGuid();
@@ -48,6 +49,14 @@ public class NavigatorExtTests
 		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
 		result.ThirdNode.Should().Be(default);
 
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminRolesPageUrl)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(2);
+		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
+		result.SecondNode.Should().Be(RouteDataSecondNode.Roles);
+		result.ThirdNode.Should().Be(default);
+
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserDetailsPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
@@ -56,6 +65,15 @@ public class NavigatorExtTests
 		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
 		result.UserId.Should().Be(userId);
+
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminRoleDetailsPageUrl, roleId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(3);
+		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
+		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
+		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
+		result.UserId.Should().Be(roleId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserAccessPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);

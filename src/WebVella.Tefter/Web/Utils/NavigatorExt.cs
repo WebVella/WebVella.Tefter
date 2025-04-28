@@ -31,7 +31,7 @@ public static class NavigatorExt
 		return GetNodeData(uri);
 	}
 
-	internal static TucRouteState GetNodeData(Uri uri)
+	internal static TucRouteState GetNodeData(this Uri uri)
 	{
 		var result = new TucRouteState();
 
@@ -57,6 +57,10 @@ public static class NavigatorExt
 				if (result.NodesDict[1] == TfConstants.RouteNameUsers)
 				{
 					result = result with { SecondNode = RouteDataSecondNode.Users };
+				}
+				else if (result.NodesDict[1] == TfConstants.RouteNameRoles)
+				{
+					result = result with { SecondNode = RouteDataSecondNode.Roles };
 				}
 				else if (result.NodesDict[1] == TfConstants.RouteNameDataProviders)
 				{
@@ -84,6 +88,10 @@ public static class NavigatorExt
 					if (result.SecondNode == RouteDataSecondNode.Users)
 					{
 						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { UserId = outGuid };
+					}
+					else if (result.SecondNode == RouteDataSecondNode.Roles)
+					{
+						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { RoleId = outGuid };
 					}
 					else if (result.SecondNode == RouteDataSecondNode.DataProviders)
 					{

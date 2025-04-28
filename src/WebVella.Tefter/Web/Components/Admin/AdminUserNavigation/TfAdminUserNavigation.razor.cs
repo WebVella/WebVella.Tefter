@@ -35,25 +35,7 @@ public partial class TfAdminUserNavigation : TfBaseComponent, IAsyncDisposable
 		return menuItems;
 	}
 
-	private async Task onAddClick()
-	{
-		var dialog = await DialogService.ShowDialogAsync<TfUserManageDialog>(
-		new TucUser(),
-		new DialogParameters()
-		{
-			PreventDismissOnOverlayClick = true,
-			PreventScroll = true,
-			Width = TfConstants.DialogWidthLarge,
-			TrapFocus = false
-		});
-		var result = await dialog.Result;
-		if (!result.Cancelled && result.Data != null)
-		{
-			var user = (TucUser)result.Data;
-			ToastService.ShowSuccess(LOC("User successfully created!"));
-			Navigator.NavigateTo(string.Format(TfConstants.AdminUserDetailsPageUrl, user.Id));
-		}
-	}
+
 
 	private void onSearch(string search)
 	{

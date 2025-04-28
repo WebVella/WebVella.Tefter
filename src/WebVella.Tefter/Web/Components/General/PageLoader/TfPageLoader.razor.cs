@@ -10,7 +10,7 @@ public partial class TfPageLoader : ComponentBase, IAsyncDisposable
 	public ValueTask DisposeAsync()
 	{
 		Navigator.LocationChanged -= Navigator_LocationChanged;
-		
+		ActionSubscriber.UnsubscribeFromAllActions(this);
 		return ValueTask.CompletedTask;
 	}
 

@@ -7,7 +7,6 @@ public partial class TfNavigation : TfBaseComponent
 	private List<TucMenuItem> _topMenuItems = new();
 	private List<TucMenuItem> _mainMenuItems = new();
 	private TfColor _defaultColor = TfConstants.DefaultThemeColor;
-
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
 		if (disposing)

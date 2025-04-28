@@ -12,7 +12,7 @@
 	<ChildContent>
 		@if (ProviderId == Guid.Empty || TfAppState.Value.AdminDataProvider is null)
 		{
-			<TfLayoutBodyMain>
+@* 			<TfLayoutBodyMain>
 				<Header>
 					<TfPageHeader>@LOC("Data Providers")</TfPageHeader>
 				</Header>
@@ -26,7 +26,7 @@
 						<div>Select provider from the list to review and manage it</div>
 					</FluentMessageBar>
 				</ChildContent>
-			</TfLayoutBodyMain>
+			</TfLayoutBodyMain> *@
 		}
 		else
 		{

@@ -13,21 +13,30 @@
 	</Top>
 	<ChildContent>
 		<FluentNavMenu class="tf-navigation">
+			@if (TfAppState.Value.CurrentUser.IsAdmin && TfAppState.Value.CurrentUserSpaces.Count == 0)
+			{
+				<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon.WithColor(_defaultColor.GetAttribute().Value)"
+							   IconColor="Color.Custom" Class="expand-link"
+							   OnClick="_addSpaceHandler" title="@LOC("Create Space")" />
+			}
 			@foreach (var item in _mainMenuItems)
 			{
 				<FluentNavLink @key=item.Id Href="@item.Url" title="@item.Text" Class="@(item.Selected ? "selected" : "")"
-							   Icon="@item.IconCollapsed"  IconColor="Color.Custom"/>
+							   Icon="@item.IconCollapsed" IconColor="Color.Custom" />
 			}
 		</FluentNavMenu>
 	</ChildContent>
 	<Bottom>
 		<FluentNavMenu class="tf-navigation">
+			@if (TfAppState.Value.CurrentUser.IsAdmin && TfAppState.Value.CurrentUserSpaces.Count > 0)
+			{
+				<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon.WithColor(_defaultColor.GetAttribute().Value)"
+							   IconColor="Color.Custom" Class="expand-link"
+							   OnClick="_addSpaceHandler" title="@LOC("Create Space")" />
+			}
 			<FluentNavLink Id="tf-space-search-link" Icon="@TfConstants.SearchIcon.WithColor(_defaultColor.GetAttribute().Value)"
 						   IconColor="Color.Custom" Class="expand-link"
 						   OnClick="_searchSpaceHandler" title="@LOC("Search Spaces")" />
-			<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon.WithColor(_defaultColor.GetAttribute().Value)"
-						   IconColor="Color.Custom" Class="expand-link"
-						   OnClick="_addSpaceHandler" title="@LOC("Create Space")" />
 		</FluentNavMenu>
 	</Bottom>
 </TfLayoutNavigation>

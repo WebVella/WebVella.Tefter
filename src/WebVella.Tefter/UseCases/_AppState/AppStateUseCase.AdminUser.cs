@@ -2,27 +2,31 @@
 internal partial class AppStateUseCase
 {
 	internal async Task<(TfAppState, TfAuxDataState)> InitAdminUsersAsync(IServiceProvider serviceProvider,
-		TucUser currentUser, 
-		TfAppState newAppState, TfAppState oldAppState, 
+		TucUser currentUser,
+		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
 			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
-			&& newAppState.Route.SecondNode == RouteDataSecondNode.Users)
+			&& (newAppState.Route.SecondNode == RouteDataSecondNode.Users
+				|| newAppState.Route.SecondNode == RouteDataSecondNode.Roles))
 			)
 		{
 			newAppState = newAppState with { AdminUsers = new(), AdminManagedUser = null, UserRoles = new() };
-			return (newAppState,newAuxDataState);
-		};
+			return (newAppState, newAuxDataState);
+		}
+		;
 
 		//AdminUsers, AdminUsersPage
 		if (
 			newAppState.AdminUsers.Count == 0
 			|| (newAppState.Route.UserId is not null && !newAppState.AdminUsers.Any(x => x.Id == newAppState.Route.UserId))
 			)
-			newAppState = newAppState with { AdminUsers = await GetUsersAsync()};
+			newAppState = newAppState with { AdminUsers = await GetUsersAsync() };
 
 		//AdminManagedUser, UserRoles
+		var roles = await GetRolesAsync();
+		newAppState = newAppState with { UserRoles = roles ?? new List<TucRole>() };
 		if (newAppState.Route.UserId.HasValue)
 		{
 			var adminUser = await GetUserAsync(newAppState.Route.UserId.Value);
@@ -35,10 +39,6 @@ internal partial class AppStateUseCase
 					users.Add(adminUser);
 					newAppState = newAppState with { AdminUsers = users };
 				}
-
-				var roles = await GetUserRolesAsync();
-				newAppState = newAppState with { UserRoles = roles ?? new List<TucRole>() };
-
 				//check for the other tabs
 				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Access)
 				{
@@ -48,7 +48,12 @@ internal partial class AppStateUseCase
 				}
 			}
 		}
-		return (newAppState,newAuxDataState);
+		if (newAppState.Route.RoleId.HasValue)
+		{
+			var adminRole = roles.FirstOrDefault(x => x.Id == newAppState.Route.RoleId.Value);
+			newAppState = newAppState with { AdminManagedRole = adminRole };
+		}
+		return (newAppState, newAuxDataState);
 	}
 
 	internal virtual async Task<List<TucUser>> GetUsersAsync(string search = null, int? page = null, int? pageSize = null)
@@ -95,32 +100,11 @@ internal partial class AppStateUseCase
 		try
 		{
 			var user = await _tfService.GetUserAsync(userId);
-			
-			if (user is null) 
+
+			if (user is null)
 				return null;
 
 			return new TucUser(user);
-		}
-		catch (Exception ex)
-		{
-			ResultUtils.ProcessServiceException(
-					exception: ex,
-					toastErrorMessage: "Unexpected Error",
-					toastValidationMessage: "Invalid Data",
-					notificationErrorTitle: "Unexpected Error",
-					toastService: _toastService,
-					messageService: _messageService
-				);
-			return null;
-		}
-	}
-
-	internal virtual async Task<List<TucRole>> GetUserRolesAsync()
-	{
-		try
-		{
-			var roles = await _tfService.GetRolesAsync();
-			return roles.Select(x => new TucRole(x)).ToList();
 		}
 		catch (Exception ex)
 		{
@@ -159,7 +143,7 @@ internal partial class AppStateUseCase
 	internal virtual async Task<TucUser> UpdateUserWithFormAsync(TucUserAdminManageForm form)
 	{
 		var currentUser = await _tfService.GetUserAsync(form.Id);
-		if (currentUser is null) 
+		if (currentUser is null)
 			throw new TfException("User does not exist");
 
 		TfUserBuilder userBuilder = _tfService.CreateUserBuilder(currentUser);
@@ -179,5 +163,110 @@ internal partial class AppStateUseCase
 		var user = userBuilder.Build();
 		var result = await _tfService.SaveUserAsync(user);
 		return new TucUser(result);
+	}
+	internal virtual async Task<List<TucRole>> GetRolesAsync()
+	{
+		try
+		{
+			var roles = await _tfService.GetRolesAsync();
+			return roles.Select(x => new TucRole(x)).ToList();
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
+	}
+	internal virtual async Task<List<TucUser>> GetUsersForRoleAsync(Guid roleId)
+	{
+		try
+		{
+			var users = await _tfService.GetUsersAsync();
+			return users
+				.Where(x => x.Roles.Any(r => r.Id == roleId))
+				.OrderBy(x => x.Email)
+				.Select(x => new TucUser(x))
+				.ToList();
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
+	}
+
+	internal virtual async Task<TucRole> CreateRoleWithFormAsync(TucRole form)
+	{
+		TfRoleBuilder roleBuilder = _tfService.CreateRoleBuilder(null);
+		roleBuilder
+			.WithName(form.Name)
+			.IsSystem(form.IsSystem);
+
+		var role = roleBuilder.Build();
+		role = await _tfService.SaveRoleAsync(role);
+		return new TucRole(role);
+	}
+
+	internal virtual async Task<TucRole> UpdateRoleWithFormAsync(TucRole form)
+	{
+		var currentRole = await _tfService.GetRoleAsync(form.Id);
+		if (currentRole is null)
+			throw new TfException("Role does not exist");
+
+		TfRoleBuilder roleBuilder = _tfService.CreateRoleBuilder(currentRole);
+		roleBuilder
+			.WithName(form.Name)
+			.IsSystem(form.IsSystem);
+
+		var role = roleBuilder.Build();
+		var result = await _tfService.SaveRoleAsync(role);
+		return new TucRole(result);
+	}
+
+	internal virtual async Task AddUserToRoleAsync(Guid roleId, Guid userId)
+	{
+		var currentRole = await _tfService.GetRoleAsync(roleId);
+		if (currentRole is null)
+			throw new TfException("Role does not exist");
+
+		var user = await _tfService.GetUserAsync(userId);
+		if (user is null)
+			throw new TfException("User does not exist");
+
+		var roleUsers = await GetUsersForRoleAsync(roleId);
+		if(roleUsers.Any(x=> x.Id == userId))
+			return;
+		await _tfService.AddUsersRoleAsync(new List<TfUser>{ user}, currentRole);
+	}
+
+	internal virtual async Task RemoveUserFromRoleAsync(Guid roleId, Guid userId)
+	{
+		var currentRole = await _tfService.GetRoleAsync(roleId);
+		if (currentRole is null)
+			throw new TfException("Role does not exist");
+
+		var user = await _tfService.GetUserAsync(userId);
+		if (user is null)
+			throw new TfException("User does not exist");
+
+		var roleUsers = await GetUsersForRoleAsync(roleId);
+		if(!roleUsers.Any(x=> x.Id == userId))
+			return;
+
+		await _tfService.RemoveUsersRoleAsync(new List<TfUser>{ user}, currentRole);
 	}
 }

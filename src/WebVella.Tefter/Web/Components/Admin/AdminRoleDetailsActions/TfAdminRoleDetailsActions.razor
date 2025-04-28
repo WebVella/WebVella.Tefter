@@ -1,0 +1,17 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+@if (TfAppState.Value.AdminManagedRole.IsSystem)
+{
+	<FluentButton Appearance="@Appearance.Outline" Disabled=true Title="@LOC("System roles cannot be managed")">
+		@LOC("Locked")
+		<FluentIcon Value="@TfConstants.LockIcon" Color="@Color.Accent" Slot="start" />
+	</FluentButton>
+}
+else
+{
+	<FluentButton Appearance="@Appearance.Outline" OnClick="_editRole">
+		@LOC("Edit")
+		<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+	</FluentButton>
+}

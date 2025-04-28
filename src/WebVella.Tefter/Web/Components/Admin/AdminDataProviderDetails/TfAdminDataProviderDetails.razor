@@ -37,7 +37,7 @@
 					<FluentStack Orientation="@Orientation.Horizontal">
 						@foreach (var item in supportedDataTypes.OrderBy(x => x.Name))
 						{
-							<FluentBadge Appearance="Appearance.Neutral">@item.Name</FluentBadge>
+							<FluentBadge Appearance="Appearance.Neutral" Class="input-badge">@item.Name</FluentBadge>
 						}
 					</FluentStack>
 				}

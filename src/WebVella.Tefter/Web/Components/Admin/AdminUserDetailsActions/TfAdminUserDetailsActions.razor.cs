@@ -21,6 +21,13 @@ public partial class TfAdminUserDetailsActions : TfBaseComponent
 			var user = (TucUser)result.Data;
 			ToastService.ShowSuccess(LOC("User successfully updated!"));
 			var state = TfAppState.Value with { AdminManagedUser = user};
+			var recIndex = TfAppState.Value.AdminUsers.FindIndex(x => x.Id == user.Id);
+			if (recIndex > 0)
+			{
+				var users = state.AdminUsers.ToList();
+				users[recIndex] = user;
+				state = state with { AdminUsers = users };
+			}
 			Dispatcher.Dispatch(new SetAppStateAction(component: this, state: state));
 		}
 	}

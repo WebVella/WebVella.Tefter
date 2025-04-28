@@ -28,11 +28,11 @@
 						<div>
 							@if (TfAppState.Value.AdminDataProvider?.SynchScheduleEnabled ?? false)
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Height="26px">ON</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Emerald500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">ON</FluentBadge>
 							}
 							else
 							{
-								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white" Height="26px">OFF</FluentBadge>
+								<FluentBadge Fill="somevalue" BackgroundColor="@TfColor.Red500.GetAttribute().Value" Color="white" Class="input-badge" Style="width:100%">OFF</FluentBadge>
 							}
 						</div>
 					</FluentGridItem>

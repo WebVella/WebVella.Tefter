@@ -40,6 +40,7 @@ public partial class TfConstants
 	public static string AdminDataProvidersMenuTitle = "Data providers";
 
 	public static Icon AdminUsersIcon = GetIcon("People");
+	public static Icon AdminRoleIcon = GetIcon("Key");
 	public static string AdminUsersMenuTitle = "Users";
 
 	public static Icon AdminSharedColumnsIcon = GetIcon("BookDatabase");
@@ -62,6 +63,7 @@ public partial class TfConstants
 	public static Icon SearchIcon = GetIcon("Search");
 	public static Icon AddIcon = GetIcon("Add");
 	public static Icon EditIcon = GetIcon("Edit");
+	public static Icon LockIcon = GetIcon("LockClosed");
 	public static Icon DeleteIcon = GetIcon("Delete");
 	public static Icon ViewIcon = GetIcon("Eye");
 	public static Icon HelpIcon = GetIcon("QuestionCircle");
