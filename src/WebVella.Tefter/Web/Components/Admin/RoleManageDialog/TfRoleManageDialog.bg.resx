@@ -126,8 +126,8 @@
   <data name="Create" xml:space="preserve">
     <value>Създай</value>
   </data>
-  <data name="Create user" xml:space="preserve">
-    <value>Създай потребител</value>
+  <data name="Create Role" xml:space="preserve">
+    <value>Създай роля</value>
   </data>
   <data name="Created On" xml:space="preserve">
     <value>Създаден на</value>
@@ -150,8 +150,8 @@
   <data name="Localization" xml:space="preserve">
     <value>Локализация</value>
   </data>
-  <data name="Manage user" xml:space="preserve">
-    <value>Редакция на потребител</value>
+  <data name="Manage Role" xml:space="preserve">
+    <value>Редакция на роля</value>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Парола</value>

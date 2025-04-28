@@ -62,4 +62,14 @@ internal partial class AppStateUseCase
 			scope: scope);
 	}
 
+	internal virtual bool UserHasAccess(TucUser user, NavigationManager navigator){
+		var routeData = navigator.GetRouteState();
+		if(routeData.FirstNode == RouteDataFirstNode.Admin){ 
+			return user.IsAdmin;
+		}
+		else{ 
+			return true;
+		}
+	}
+
 }

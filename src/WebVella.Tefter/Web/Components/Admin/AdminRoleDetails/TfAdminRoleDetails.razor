@@ -89,11 +89,23 @@
 									</td>
 									<td class="tf-grid-td" style="width:1%;">
 										<div>
-											<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _removeUser(context))" Title="@LOC("Remove the user")"
-														  Disabled="_submitting">
-												<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
-												<span>@LOC("remove")</span>
-											</FluentButton>
+											@if (TfAppState.Value.CurrentUser.Id == context.Id
+																			&& TfAppState.Value.AdminManagedRole.Id == TfConstants.ADMIN_ROLE_ID)
+											{
+												<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
+															  Disabled="true">
+													<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+													<span>@LOC("locked")</span>
+												</FluentButton>
+											}
+											else
+											{
+												<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _removeUser(context))" Title="@LOC("Remove the user")"
+															  Disabled="_submitting">
+													<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
+													<span>@LOC("remove")</span>
+												</FluentButton>
+											}
 										</div>
 									</td>
 								</tr>

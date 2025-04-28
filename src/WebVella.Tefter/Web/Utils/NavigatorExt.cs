@@ -31,7 +31,7 @@ public static class NavigatorExt
 		return GetNodeData(uri);
 	}
 
-	internal static TucRouteState GetNodeData(Uri uri)
+	internal static TucRouteState GetNodeData(this Uri uri)
 	{
 		var result = new TucRouteState();
 

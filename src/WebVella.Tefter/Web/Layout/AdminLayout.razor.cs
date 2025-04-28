@@ -4,6 +4,7 @@ public partial class AdminLayout : FluxorLayout
 	[Inject] protected IState<TfUserState> UserState { get; set; }
 	[Inject] public IActionSubscriber ActionSubscriber { get; set; }
 	[Inject] protected NavigationManager Navigator { get; set; }
+	[Inject] private AppStateUseCase UC { get; set; }
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -43,7 +44,7 @@ public partial class AdminLayout : FluxorLayout
 
 	private void _checkAccess()
 	{
-		if(UserState.Value.CurrentUser.Roles.Any(x=> x.Id == TfConstants.ADMIN_ROLE_ID))  return;
+		if(UC.UserHasAccess(UserState.Value.CurrentUser,Navigator))  return;
 		Navigator.NavigateTo(string.Format(TfConstants.NoAccessPage));
 	}
 }
