@@ -551,7 +551,7 @@ public partial class TfService : ITfService
 					if (existingUser is null)
 						throw new TfValidationException($"User with id {user.Id} does not exist.");
 
-					if (existingUser.Roles.Any(x => x.Id != role.Id))
+					if (!existingUser.Roles.Any(x => x.Id == role.Id))
 						continue;
 
 					var dbId = new Dictionary<string, Guid> {

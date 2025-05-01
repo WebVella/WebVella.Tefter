@@ -132,12 +132,77 @@ internal partial class AppStateUseCase
 			.WithThemeMode(form.ThemeMode)
 			.WithThemeColor(form.ThemeColor)
 			.WithOpenSidebar(true)
-			.WithCultureCode(form.Culture.CultureInfo.Name)
-			.WithRoles(form.Roles.Select(x => x.ToModel()).ToArray());
+			.WithCultureCode(form.Culture.CultureInfo.Name);
 
 		var user = userBuilder.Build();
 		user = await _tfService.SaveUserAsync(user);
 		return new TucUser(user);
+	}
+
+	internal virtual async Task<TucUser> AddRoleToUserAsync(Guid roleId, Guid userId)
+	{
+		try
+		{
+			var userSM = await _tfService.GetUserAsync(userId);
+			if (userSM is null)
+				throw new Exception("User not found");
+
+			var roleSM = await _tfService.GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (userSM.Roles.Any(x => x.Id == roleId))
+				return new TucUser(userSM);
+
+			await _tfService.AddUsersRoleAsync(new List<TfUser> { userSM }, roleSM);
+
+			return new TucUser(await _tfService.GetUserAsync(userId));
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
+	}
+
+	internal virtual async Task<TucUser> RemoveRoleFromUserAsync(Guid roleId,Guid userId)
+	{
+		try
+		{
+			var userSM = await _tfService.GetUserAsync(userId);
+			if (userSM is null)
+				throw new Exception("User not found");
+
+			var roleSM = await _tfService.GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (!userSM.Roles.Any(x => x.Id == roleId))
+				return new TucUser(userSM);
+
+			await _tfService.RemoveUsersRoleAsync(new List<TfUser> { userSM }, roleSM);
+
+			return new TucUser(await _tfService.GetUserAsync(userId));
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
 	}
 
 	internal virtual async Task<TucUser> UpdateUserWithFormAsync(TucUserAdminManageForm form)
@@ -155,7 +220,7 @@ internal partial class AppStateUseCase
 			.WithThemeMode(form.ThemeMode)
 			.WithThemeColor(form.ThemeColor)
 			.WithCultureCode(form.Culture.CultureInfo.Name)
-			.WithRoles(form.Roles.Select(x => x.ToModel()).ToArray());
+			.WithRoles(currentUser.Roles.ToArray());
 
 		if (!String.IsNullOrWhiteSpace(form.Password))
 			userBuilder.WithPassword(form.Password);
@@ -248,9 +313,9 @@ internal partial class AppStateUseCase
 			throw new TfException("User does not exist");
 
 		var roleUsers = await GetUsersForRoleAsync(roleId);
-		if(roleUsers.Any(x=> x.Id == userId))
+		if (roleUsers.Any(x => x.Id == userId))
 			return;
-		await _tfService.AddUsersRoleAsync(new List<TfUser>{ user}, currentRole);
+		await _tfService.AddUsersRoleAsync(new List<TfUser> { user }, currentRole);
 	}
 
 	internal virtual async Task RemoveUserFromRoleAsync(Guid roleId, Guid userId)
@@ -264,9 +329,9 @@ internal partial class AppStateUseCase
 			throw new TfException("User does not exist");
 
 		var roleUsers = await GetUsersForRoleAsync(roleId);
-		if(!roleUsers.Any(x=> x.Id == userId))
+		if (!roleUsers.Any(x => x.Id == userId))
 			return;
 
-		await _tfService.RemoveUsersRoleAsync(new List<TfUser>{ user}, currentRole);
+		await _tfService.RemoveUsersRoleAsync(new List<TfUser> { user }, currentRole);
 	}
 }

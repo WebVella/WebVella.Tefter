@@ -98,20 +98,6 @@
 					<FluentValidationMessage For="@(() => _form.Culture)" />
 				</FluentGridItem>
 			</FluentGrid>
-			<FluentGrid>
-				<FluentGridItem xs="12">
-					<FluentInputLabel Label="@LOC("Roles")" />
-					<FluentStack Style="margin-top:10px;">
-						@foreach (var role in TfAppState.Value.UserRoles)
-						{
-							<FluentCheckbox Value="@_form.Roles.Any(x=> x.Id == role.Id)" Label="@role.Name"
-											Disabled="@(TfAppState.Value.CurrentUser.Id == _form.Id && role.Id == TfConstants.ADMIN_ROLE_ID)"
-											ValueChanged="@(()=>_form.OnRoleChange(role))" Style="height:32px;" />
-						}
-					</FluentStack>
-					<FluentValidationMessage For="@(() => _form.Roles)" />
-				</FluentGridItem>
-			</FluentGrid>
 		</FluentEditForm>
 	}
 </FluentDialogBody>
