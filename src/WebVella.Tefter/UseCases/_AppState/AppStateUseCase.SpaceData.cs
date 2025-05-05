@@ -118,6 +118,32 @@ internal partial class AppStateUseCase
 		}
 	}
 
+internal virtual List<TucSpaceData> GetAllSpaceData()
+	{
+		try
+		{
+			var spaceDataList = _tfService.GetAllSpaceData();
+			if (spaceDataList is null)
+				return new();
+
+			return spaceDataList
+				.Select(x => new TucSpaceData(x))
+				.ToList();
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
+	}
+
 	internal virtual void DeleteSpaceData(
 		Guid dataId)
 	{
