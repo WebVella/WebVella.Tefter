@@ -49,15 +49,14 @@ public partial class TfConstants
 	public static string AdminDataProvidersPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}";
 	public static string AdminDataProviderDetailsPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}";
 	public static string AdminDataProviderSchemaPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSchema}";
-	public static string AdminDataProviderKeysPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameKeys}";
-	public static string AdminDataProviderJoinedDataPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameAux}";
+	public static string AdminDataProviderAuxPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameAux}";
 	public static string AdminDataProviderSynchronizationPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameSynchronization}";
 	public static string AdminDataProviderDataPageUrl = $"/{RouteNameAdmin}/{RouteNameDataProviders}/{{0}}/{RouteNameData}";
 	public static string AdminSharedColumnsPageUrl = $"/{RouteNameAdmin}/{RouteNameSharedColumns}";
 	public static string AdminFileRepositoryPageUrl = $"/{RouteNameAdmin}/{RouteNameFileRepository}";
 	public static string AdminTemplatesPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}";
-	public static string AdminTemplatesResultPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}";
-	public static string AdminTemplatesResultWithSearchPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}?{TfConstants.SearchQueryName}={{1}}";
+	public static string AdminTemplatesTypePageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}";
+	public static string AdminTemplatesTypeWithSearchPageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}?{TfConstants.SearchQueryName}={{1}}";
 	public static string AdminTemplatesTemplatePageUrl = $"/{RouteNameAdmin}/{RouteNameTemplates}/{{0}}/{{1}}";
 	public static string BlobDownloadUrl = $"/fs/blob/{{0}}/{{1}}";
 

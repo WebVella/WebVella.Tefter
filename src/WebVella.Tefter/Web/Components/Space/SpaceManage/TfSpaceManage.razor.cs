@@ -10,8 +10,9 @@ public partial class TfSpaceManage : TfBaseComponent
 
 	private TucRole _adminRole
 	{
-		get { 
-			return TfAppState.Value.UserRoles.Single(x => x.Id != TfConstants.ADMIN_ROLE_ID);
+		get
+		{
+			return TfAppState.Value.UserRoles.Single(x => x.Id == TfConstants.ADMIN_ROLE_ID);
 		}
 	}
 	private List<TucRole> _roleOptions
@@ -249,7 +250,7 @@ public partial class TfSpaceManage : TfBaseComponent
 		try
 		{
 			_submitting = true;
-			var result = await UC.AddRoleToSpaceAsync(_selectedRole.Id, TfAppState.Value.AdminManagedUser.Id);
+			var result = await UC.AddRoleToSpaceAsync(_selectedRole.Id, TfAppState.Value.Space.Id);
 			_updateSpaceInState(result);
 			ToastService.ShowSuccess(LOC("Space role added"));
 		}
@@ -273,9 +274,28 @@ public partial class TfSpaceManage : TfBaseComponent
 		try
 		{
 			_removingRoleId = role.Id;
-			var result = await UC.RemoveRoleFromSpaceAsync(role.Id, TfAppState.Value.AdminManagedUser.Id);
+			var result = await UC.RemoveRoleFromSpaceAsync(role.Id, TfAppState.Value.Space.Id);
 			_updateSpaceInState(result);
 			ToastService.ShowSuccess(LOC("Space role removed"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_removingRoleId = null;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _setPrivacy(bool newValue)
+	{
+		try
+		{
+			var result = UC.SetSpacePrivacy(TfAppState.Value.Space.Id, newValue);
+			_updateSpaceInState(result);
+			ToastService.ShowSuccess(LOC("Space access changed"));
 		}
 		catch (Exception ex)
 		{
@@ -300,4 +320,6 @@ public partial class TfSpaceManage : TfBaseComponent
 		}
 		Dispatcher.Dispatch(new SetAppStateAction(component: this, state: state));
 	}
+
+
 }

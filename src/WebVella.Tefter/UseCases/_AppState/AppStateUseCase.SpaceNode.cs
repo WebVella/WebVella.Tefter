@@ -16,10 +16,10 @@ internal partial class AppStateUseCase
 			return (newAppState,newAuxDataState);
 		}
 		TucSpaceNode spaceNode = null;
-		if (newAppState.Route.SpaceNodeId is not null)
+		if (newAppState.Route.SpacePageId is not null)
 		{
 			spaceNode = newAppState.SpaceNodes.FindItemByMatch(
-				matcher:(x)=> x.Id == newAppState.Route.SpaceNodeId.Value,
+				matcher:(x)=> x.Id == newAppState.Route.SpacePageId.Value,
 				childGetter:(x)=> x.ChildNodes
 			);
 			newAppState = newAppState with { SpaceNode = spaceNode };

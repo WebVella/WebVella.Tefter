@@ -56,18 +56,35 @@ internal partial class AppStateUseCase
 		return (appState, auxDataState);
 	}
 
-	internal virtual ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMetaForContext(Type context, TfScreenRegionScope scope = null){ 
+	internal virtual ReadOnlyCollection<TfScreenRegionComponentMeta> GetRegionComponentsMetaForContext(Type context, TfScreenRegionScope scope = null)
+	{
 		return _metaService.GetRegionComponentsMeta(
 			context: context,
 			scope: scope);
 	}
 
-	internal virtual bool UserHasAccess(TucUser user, NavigationManager navigator){
+	internal virtual bool UserHasAccess(TucUser user, NavigationManager navigator)
+	{
+		if (user.IsAdmin) return true;
+
 		var routeData = navigator.GetRouteState();
-		if(routeData.FirstNode == RouteDataFirstNode.Admin){ 
-			return user.IsAdmin;
+		if (routeData.HasNode(RouteDataNode.Space,0) && routeData.SpaceId is not null)
+		{
+
+			var space = _tfService.GetSpace(routeData.SpaceId.Value);
+			if(!space.IsPrivate) return true;
+
+			if(routeData.HasNode(RouteDataNode.Manage,2) && !user.IsAdmin) return false;
+
+			if (space.Roles
+			.Select(x => x.Id)
+			.Intersect(user.Roles.Select(x => x.Id))
+			.Any())
+				return true;
+			return false;
 		}
-		else{ 
+		else
+		{
 			return true;
 		}
 	}

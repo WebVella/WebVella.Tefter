@@ -8,7 +8,7 @@ public class AdminUserDetailsActionsComponentTests : BaseTest
 		//Given
 		var Context = GetTestContext();
 		var route = new TucRouteState();
-		route = route with { ThirdNode = RouteDataThirdNode.Details };
+		route = route with { RouteNodes = new List<RouteDataNode>{RouteDataNode.Admin, RouteDataNode.Users, RouteDataNode.UserId} };
 		Dispatcher.Dispatch(new SetAppStateAction(
 			component: null,
 			state: new TfAppState { Route = route }));

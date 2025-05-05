@@ -22,75 +22,79 @@ public class NavigatorExtTests
 		Guid viewId = Guid.NewGuid();
 		Guid dataId = Guid.NewGuid();
 		Guid nodeId = Guid.NewGuid();
+		Guid templateId = Guid.NewGuid();
 
 		//When
 		uri = new Uri($"{baseUrl}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(0);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Home);
-		result.SecondNode.Should().Be(default);
-		result.ThirdNode.Should().Be(default);
+		result.RouteNodes.Count.Should().Be(1);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Home);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDashboardUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(1);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Dashboard);
-		result.ThirdNode.Should().Be(default);
+		result.RouteNodes.Count.Should().Be(1);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
 
 		#region << Admin Users >>
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUsersPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
-		result.ThirdNode.Should().Be(default);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Users);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminRolesPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Roles);
-		result.ThirdNode.Should().Be(default);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Roles);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserDetailsPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(3);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
+		result.RouteNodes.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Users);
+		result.RouteNodes[2].Should().Be(RouteDataNode.UserId);
 		result.UserId.Should().Be(userId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminRoleDetailsPageUrl, roleId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(3);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Roles);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
+		result.RouteNodes.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Roles);
+		result.RouteNodes[2].Should().Be(RouteDataNode.RoleId);
 		result.RoleId.Should().Be(roleId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserAccessPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Access);
+		result.RouteNodes.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Users);
+		result.RouteNodes[2].Should().Be(RouteDataNode.UserId);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Access);
 		result.UserId.Should().Be(userId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserSavesViewsPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Saves);
+		result.RouteNodes.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Users);
+		result.RouteNodes[2].Should().Be(RouteDataNode.UserId);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Saves);
 		result.UserId.Should().Be(userId);
 		#endregion
 
@@ -99,62 +103,62 @@ public class NavigatorExtTests
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(default);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataProviders);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderDetailsPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(3);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
+		result.RouteNodes.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataProviders);
+		result.RouteNodes[2].Should().Be(RouteDataNode.DataProviderId);
 		result.DataProviderId.Should().Be(providerId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderSchemaPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Schema);
+		result.RouteNodes.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataProviders);
+		result.RouteNodes[2].Should().Be(RouteDataNode.DataProviderId);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Schema);
 		result.DataProviderId.Should().Be(providerId);
 
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderKeysPageUrl, providerId)}");
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderAuxPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.JoinKeys);
-		result.DataProviderId.Should().Be(providerId);
-
-		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderJoinedDataPageUrl, providerId)}");
-		result = NavigatorExt.GetNodeData(uri);
-		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.JoinedData);
+		result.RouteNodes.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataProviders);
+		result.RouteNodes[2].Should().Be(RouteDataNode.DataProviderId);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Aux);
 		result.DataProviderId.Should().Be(providerId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderSynchronizationPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Synchronization);
+		result.RouteNodes.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataProviders);
+		result.RouteNodes[2].Should().Be(RouteDataNode.DataProviderId);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Synchronization);
 		result.DataProviderId.Should().Be(providerId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminDataProviderDataPageUrl, providerId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.DataProviders);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Data);
+		result.RouteNodes.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.DataProviders);
+		result.RouteNodes[2].Should().Be(RouteDataNode.DataProviderId);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Data);
 		result.DataProviderId.Should().Be(providerId);
 		#endregion
 
@@ -163,9 +167,9 @@ public class NavigatorExtTests
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.SharedColumns);
-		result.ThirdNode.Should().Be(default);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SharedColumns);
 		#endregion
 
 		#region << Admin FileRepository >>
@@ -173,29 +177,83 @@ public class NavigatorExtTests
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(2);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.FileRepository);
-		result.ThirdNode.Should().Be(default);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.FileRepository);
 		#endregion
 
-		#region << Dashboard >>
-		uri = new Uri($"{baseUrl}/");
+		#region << Admin Templates >>
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminTemplatesPageUrl)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
-		result.NodesDict.Count.Should().Be(0);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Home);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Dashboard);
-		result.ThirdNode.Should().Be(default);
+		result.NodesDict.Count.Should().Be(2);
+		result.RouteNodes.Count.Should().Be(2);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Templates);
+
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminTemplatesTypePageUrl,TfTemplateResultType.Text)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(3);
+		result.RouteNodes.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Templates);
+		result.RouteNodes[2].Should().Be(RouteDataNode.TemplateTypeId);
+		result.TemplateResultType.Should().Be(TfTemplateResultType.Text);
+
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminTemplatesTemplatePageUrl,TfTemplateResultType.Text,templateId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(4);
+		result.RouteNodes.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Admin);
+		result.RouteNodes[1].Should().Be(RouteDataNode.Templates);
+		result.RouteNodes[2].Should().Be(RouteDataNode.TemplateTypeId);
+		result.RouteNodes[3].Should().Be(RouteDataNode.TemplateId);
+		result.TemplateResultType.Should().Be(TfTemplateResultType.Text);
+		result.TemplateId.Should().Be(templateId);
 		#endregion
+
+
+		#region << Space >>
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceManagePageUrl, spaceId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(3);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.Manage);
+		result.SpaceId.Should().Be(spaceId);
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceManagePagesPageUrl, spaceId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.Manage);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Pages);
+		result.SpaceId.Should().Be(spaceId);
+		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceManageAccessPageUrl, spaceId)}");
+		result = NavigatorExt.GetNodeData(uri);
+		result.NodesDict.Should().NotBeNull();
+		result.NodesDict.Count.Should().Be(4);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.Manage);
+		result.RouteNodes[3].Should().Be(RouteDataNode.Access);
+		result.SpaceId.Should().Be(spaceId);
+		#endregion
+
 
 		#region << Space view >>
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.SpaceViewPageUrl, spaceId, viewId)}");
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Space);
-		result.SecondNode.Should().Be(RouteDataSecondNode.SpaceView);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Manage);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.SpaceView);
+		result.RouteNodes[3].Should().Be(RouteDataNode.SpaceViewId);
 		result.SpaceId.Should().Be(spaceId);
 		result.SpaceViewId.Should().Be(viewId);
 		#endregion
@@ -206,9 +264,10 @@ public class NavigatorExtTests
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Space);
-		result.SecondNode.Should().Be(RouteDataSecondNode.SpaceData);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.SpaceData);
+		result.RouteNodes[3].Should().Be(RouteDataNode.SpaceDataId);
 		result.SpaceId.Should().Be(spaceId);
 		result.SpaceDataId.Should().Be(dataId);
 
@@ -216,9 +275,11 @@ public class NavigatorExtTests
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(5);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Space);
-		result.SecondNode.Should().Be(RouteDataSecondNode.SpaceData);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Views);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.SpaceData);
+		result.RouteNodes[3].Should().Be(RouteDataNode.SpaceDataId);
+		result.RouteNodes[4].Should().Be(RouteDataNode.Views);
 		result.SpaceId.Should().Be(spaceId);
 		result.SpaceDataId.Should().Be(dataId);
 
@@ -229,11 +290,12 @@ public class NavigatorExtTests
 		result = NavigatorExt.GetNodeData(uri);
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(4);
-		result.FirstNode.Should().Be(RouteDataFirstNode.Space);
-		result.SecondNode.Should().Be(RouteDataSecondNode.SpacePage);
-		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
+		result.RouteNodes[0].Should().Be(RouteDataNode.Space);
+		result.RouteNodes[1].Should().Be(RouteDataNode.SpaceId);
+		result.RouteNodes[2].Should().Be(RouteDataNode.SpacePage);
+		result.RouteNodes[3].Should().Be(RouteDataNode.SpacePageId);
 		result.SpaceId.Should().Be(spaceId);
-		result.SpaceNodeId.Should().Be(nodeId);
+		result.SpacePageId.Should().Be(nodeId);
 		#endregion
 	}
 

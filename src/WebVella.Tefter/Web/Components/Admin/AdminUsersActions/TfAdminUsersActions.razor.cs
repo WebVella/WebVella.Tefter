@@ -33,13 +33,13 @@ public partial class TfAdminUsersActions : TfBaseComponent
 	}
 	private void onUsersListClick()
 	{
-		if (TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Users) return;
+		if (TfAppState.Value.Route.HasNode(RouteDataNode.Users,1)) return;
 		Navigator.NavigateTo(string.Format(TfConstants.AdminUsersPageUrl));
 	}
 
 	private void onRolesListClick()
 	{
-		if (TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Roles) return;
+		if (TfAppState.Value.Route.HasNode(RouteDataNode.Roles,1)) return;
 		Navigator.NavigateTo(string.Format(TfConstants.AdminRolesPageUrl));
 	}
 

@@ -70,18 +70,35 @@ else
 			}
 			else if (Menu == TfConstants.RouteNameAccess)
 			{
-				@if (TfAppState.Value.Space.IsPrivate)
-				{
-					<FluentMessageBar Intent="@MessageIntent.Success" AllowDismiss=false>@LOC("This space has restricted access. Only users with the explicitly listed roles will be granted entry.")</FluentMessageBar>
-				}
-				else
-				{
-					<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("This space has no access limitations. All users will have access.")</FluentMessageBar>
-				}
+				<div class="tf-grid-wrapper">
+					<table class="tf-grid">
+						<tbody class="tf-grid-tbody">
+							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>
+										@if (TfAppState.Value.Space.IsPrivate)
+										{
+											<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false Title="@LOC("Access Restricted")">@LOC("Only users with the explicitly listed roles will be granted entry.")</FluentMessageBar>
+										}
+										else
+										{
+											<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss=false Title="@LOC("Free Access")">@LOC("All users will have access.")</FluentMessageBar>
+										}
+									</div>
+								</td>
+								<td class="tf-grid-td" style="width:200px;vertical-align:middle;">
+									<div>
+										<FluentSwitch Value=@TfAppState.Value.Space.IsPrivate ValueChanged=_setPrivacy CheckedMessage="@LOC("restricted access")" UnCheckedMessage="@LOC("restricted access")" />
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 				<TfCard Style="margin-top:30px;">
 					<TitleTemplate>
 						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
-							<h3>@LOC("Roles")</h3>
+							<h3>@LOC("Roles with Access")</h3>
 							<div>
 								<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 									@if (_roleOptions.Count > 0)
@@ -131,7 +148,7 @@ else
 											</div>
 										</td>
 									</tr>
-									@foreach (var context in TfAppState.Value.AdminManagedUser.Roles)
+									@foreach (var context in TfAppState.Value.Space.Roles)
 									{
 										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 											<td class="tf-grid-td">
@@ -139,23 +156,11 @@ else
 											</td>
 											<td class="tf-grid-td" style="width:1%;">
 												<div>
-													@if (TfAppState.Value.CurrentUser.Id == TfAppState.Value.AdminManagedUser.Id
-																					&& context.Id == TfConstants.ADMIN_ROLE_ID)
-													{
-														<FluentButton Appearance="@Appearance.Outline" Title="@LOC("the current user cannot unassign admin role to self")"
-																	  Disabled="true">
-															<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
-															<span>@LOC("locked")</span>
-														</FluentButton>
-													}
-													else
-													{
-														<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _removeRole(context))" Title="@LOC("Remove the role")"
-																	  Disabled="_submitting">
-															<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
-															<span>@LOC("remove")</span>
-														</FluentButton>
-													}
+													<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _removeRole(context))" Title="@LOC("Remove the role")"
+																  Disabled="_submitting">
+														<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
+														<span>@LOC("remove")</span>
+													</FluentButton>
 												</div>
 											</td>
 										</tr>
@@ -194,9 +199,9 @@ else
 								</FluentStack>
 							</FluentGridItem>
 							<FluentGridItem xs="6">
-								<FluentInputLabel Label="@LOC("Access")" />
+@* 								<FluentInputLabel Label="@LOC("Access")" />
 								<FluentCheckbox Value=@TfAppState.Value.Space.IsPrivate Label="@LOC("restricted access")" Style="margin-top:5px;"
-												ReadOnly="true" />
+												ReadOnly="true" /> *@
 							</FluentGridItem>
 						</FluentGrid>
 						<FluentGrid>

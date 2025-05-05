@@ -36,9 +36,9 @@
                     <FluentValidationMessage For="@(() => _form.Name)"/>
                 </FluentGridItem>
                 <FluentGridItem xs="6">
-                    <FluentInputLabel Label="@LOC("Access")" />
+@*                     <FluentInputLabel Label="@LOC("Access")" />
                     <FluentCheckbox @bind-Value=@_form.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;"/>
-                    <FluentValidationMessage For="@(() => _form.IsPrivate)"/>
+                    <FluentValidationMessage For="@(() => _form.IsPrivate)"/> *@
                 </FluentGridItem>
             </FluentGrid>
             <FluentGrid>

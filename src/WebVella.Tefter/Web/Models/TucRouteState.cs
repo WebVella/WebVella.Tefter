@@ -5,18 +5,16 @@ public partial record TucRouteState
 	public Guid? SpaceId { get; init; }
 	public Guid? SpaceDataId { get; init; }
 	public Guid? SpaceViewId { get; init; }
-	public Guid? SpaceNodeId { get; init; }
+	public Guid? SpacePageId { get; init; }
 	public Guid? UserId { get; init; }
 	public Guid? RoleId { get; init; }
 	public Guid? DataProviderId { get; init; }
+	public Guid? PageId { get; init; }
 	public Guid? SpaceViewPresetId { get; init; }
 	public string SpaceSection { get; init; }
 	public TfTemplateResultType? TemplateResultType { get; init; }
 	public Guid? TemplateId { get; init; }
-	public RouteDataFirstNode FirstNode { get; init; } = RouteDataFirstNode.Home;
-	public RouteDataSecondNode SecondNode { get; init; } = default!;
-	public RouteDataThirdNode ThirdNode { get; init; } = default!;
-
+	public List<RouteDataNode> RouteNodes { get; init; } = new List<RouteDataNode>();
 
 	public int? Page { get; init; } = null;
 	public int? PageSize { get; init; } = null;
@@ -27,69 +25,93 @@ public partial record TucRouteState
 	public bool SearchInBookmarks { get; init; } = true;
 	public bool SearchInSaves { get; init; } = true;
 	public bool SearchInViews { get; init; } = true;
+
+	public TucRouteState AddRouteNodes(params RouteDataNode[] nodes){ 
+		var routeData = RouteNodes.ToList();
+		routeData.AddRange(nodes);
+		return this with { RouteNodes = routeData };
+	}
+
+	public bool HasNode(RouteDataNode node, int? index = null){ 
+		if(RouteNodes is null) return false;
+		if(index is null)
+			return RouteNodes.Contains(node);
+
+		if(RouteNodes.Count >= index + 1)
+			return RouteNodes[index.Value] == node;
+
+		return false;
+	}
 }
 
-public enum RouteDataFirstNode
+public enum RouteDataNode
 {
 	[Description("Home")]
-	Home = 0,
+	Home,
 	[Description("Space")]
-	Space = 1,
-	[Description("Administration")]
-	Admin = 2,
+	Space,
+	[Description("Admin")]
+	Admin,
 	[Description("Pages")]
-	Pages = 3,
-}
-
-public enum RouteDataSecondNode
-{
-	[Description("Dashboard")]
-	Dashboard = 0,
+	Pages,
 	[Description("Users")]
-	Users = 1,
+	Users,
 	[Description("Data Providers")]
-	DataProviders = 2,
+	DataProviders,
 	[Description("Shared Columns")]
-	SharedColumns = 3,
+	SharedColumns,
 	[Description("Space View")]
-	SpaceView = 4,
+	SpaceView,
 	[Description("Space Dataset")]
-	SpaceData = 5,
-	[Description("Pages")]
-	Pages = 6,
+	SpaceData,
 	[Description("Space Page")]
-	SpacePage = 7,
+	SpacePage,
 	[Description("File Repository")]
-	FileRepository = 8,
+	FileRepository,
 	[Description("Templates")]
-	Templates = 9,
+	Templates,
 	[Description("Roles")]
-	Roles = 10,
-}
-
-public enum RouteDataThirdNode
-{
+	Roles,
 	[Description("Details")]
-	Details = 0,
+	Details,
 	[Description("Manage")]
-	Manage = 1,
+	Manage,
 	[Description("Access")]
-	Access = 2,
+	Access,
 	[Description("Saves")]
-	Saves = 3,
+	Saves,
 	[Description("Schema")]
-	Schema = 4,
+	Schema,
 	[Description("Join Keys")]
-	JoinKeys = 5,
+	JoinKeys,
 	[Description("Shared Columns")]
-	JoinedData = 6,
+	Aux,
 	[Description("Synchronization")]
-	Synchronization = 7,
+	Synchronization,
 	[Description("Data")]
-	Data = 8,
+	Data,
 	[Description("Views")]
-	Views = 9,
+	Views,
 	[Description("List")]
-	List = 10
-
+	List,
+	[Description("User Id")]
+	UserId,
+	[Description("Role Id")]
+	RoleId,
+	[Description("Data Provider Id")]
+	DataProviderId,
+	[Description("Template Id")]
+	TemplateId,
+	[Description("Template Type Id")]
+	TemplateTypeId,
+	[Description("Space Id")]
+	SpaceId,
+	[Description("Space Page Id")]
+	SpacePageId,
+	[Description("Space Data Id")]
+	SpaceDataId,
+	[Description("Space View Id")]
+	SpaceViewId,
+	[Description("Page Id")]
+	PageId,
 }

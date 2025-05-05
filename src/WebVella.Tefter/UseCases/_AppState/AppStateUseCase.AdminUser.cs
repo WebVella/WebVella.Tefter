@@ -7,9 +7,8 @@ internal partial class AppStateUseCase
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
-			&& (newAppState.Route.SecondNode == RouteDataSecondNode.Users
-				|| newAppState.Route.SecondNode == RouteDataSecondNode.Roles))
+			!(newAppState.Route.HasNode(RouteDataNode.Admin,0)
+			&& (newAppState.Route.HasNode(RouteDataNode.Users,1) || newAppState.Route.HasNode(RouteDataNode.Roles,1)))
 			)
 		{
 			newAppState = newAppState with { AdminUsers = new(), AdminManagedUser = null, UserRoles = new() };
@@ -40,10 +39,10 @@ internal partial class AppStateUseCase
 					newAppState = newAppState with { AdminUsers = users };
 				}
 				//check for the other tabs
-				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Access)
+				if (newAppState.Route.HasNode(RouteDataNode.Access,2))
 				{
 				}
-				else if (newAppState.Route.ThirdNode == RouteDataThirdNode.Saves)
+				else if (newAppState.Route.HasNode(RouteDataNode.Saves,2))
 				{
 				}
 			}

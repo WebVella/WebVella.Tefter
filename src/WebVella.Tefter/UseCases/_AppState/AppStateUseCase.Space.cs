@@ -7,7 +7,7 @@ internal partial class AppStateUseCase
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (newAppState.Route.FirstNode == RouteDataFirstNode.Admin)
+		if (newAppState.Route.HasNode(RouteDataNode.Admin,0))
 		{
 			newAppState = newAppState with { CurrentUserSpaces = new(), Space = null };
 			return (newAppState, newAuxDataState);
@@ -30,7 +30,15 @@ internal partial class AppStateUseCase
 
 			var spaceDataList = GetSpaceDataList(space.Id);
 			var spaceViewList = GetSpaceViewList(space.Id);
-			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes, SpaceDataList = spaceDataList, SpaceViewList = spaceViewList };
+			var userRoles = await GetRolesAsync();
+			newAppState = newAppState with
+			{
+				Space = space,
+				SpaceNodes = spaceNodes,
+				SpaceDataList = spaceDataList,
+				SpaceViewList = spaceViewList,
+				UserRoles = userRoles
+			};
 		}
 		else
 		{
@@ -187,6 +195,18 @@ internal partial class AppStateUseCase
 		Guid spaceId)
 	{
 		_tfService.DeleteSpace(spaceId);
+	}
+
+	internal virtual TucSpace SetSpacePrivacy(
+		Guid spaceId,
+		bool isPrivate)
+	{
+		var space = _tfService.GetSpace(spaceId);
+		if(space is null)
+			throw new Exception("Space not found");
+		space.IsPrivate = isPrivate;
+		var result = _tfService.UpdateSpace(space);
+		return new TucSpace(result);
 	}
 
 	internal virtual List<TucSpaceNode> GetSpaceNodes(

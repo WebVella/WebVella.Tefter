@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 
-@if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.Details)
+@if (TfAppState.Value.Route is not null && TfAppState.Value.Route.HasNode(RouteDataNode.DataProviderId, 2))
 {
 	<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteProvider" Loading="_isDeleting" Disabled="_isDeleting">
@@ -14,7 +14,7 @@
 		</FluentButton>
 	</FluentStack>
 }
-else if (TfAppState.Value.Route?.ThirdNode == RouteDataThirdNode.Schema)
+else if (TfAppState.Value.Route is not null && TfAppState.Value.Route.HasNode(RouteDataNode.Schema, 2))
 {
 	<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End" Style="margin-bottom:1rem">
 		<FluentButton Appearance="@Appearance.Outline" OnClick="_importFromSource">

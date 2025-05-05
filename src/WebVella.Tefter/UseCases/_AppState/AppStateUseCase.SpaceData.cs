@@ -32,7 +32,7 @@ internal partial class AppStateUseCase
 			if (provider is not null)
 			{
 				//Space Data data init
-				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
+				if (newAppState.Route.HasNode(RouteDataNode.Data,2))
 				{
 					TfDataTable viewData = null;
 					try

@@ -10,7 +10,7 @@ public class AdminUserDetailsComponentTests : BaseTest
 		var user = new TucUser { Settings = new TucUserSettings { IsSidebarOpen = true } };
 		Dispatcher.Dispatch(new SetAppStateAction(
 			component: null,
-			state: new TfAppState { AdminManagedUser = user }));
+			state: new TfAppState { AdminManagedUser = user, Route = new TucRouteState() }));
 
 		// Act
 		var cut = Context.RenderComponent<TfAdminUserDetails>();

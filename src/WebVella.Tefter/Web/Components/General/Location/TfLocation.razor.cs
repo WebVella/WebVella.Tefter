@@ -8,8 +8,8 @@ public partial class TfLocation : TfBaseComponent
 	private List<TucMenuItem> generateLocations()
 	{
 		var result = new List<TucMenuItem>();
-		if(TfAppState.Value.Route is null) return result;
-		if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Home)
+		if (TfAppState.Value.Route is null) return result;
+		if (TfAppState.Value.Route.HasNode(RouteDataNode.Home, 0))
 		{
 			result.Add(new TucMenuItem
 			{
@@ -17,7 +17,7 @@ public partial class TfLocation : TfBaseComponent
 				Url = "/"
 			});
 		}
-		if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Pages)
+		if (TfAppState.Value.Route.HasNode(RouteDataNode.Pages, 0))
 		{
 			result.Add(new TucMenuItem
 			{
@@ -25,14 +25,23 @@ public partial class TfLocation : TfBaseComponent
 				Url = string.Format(TfConstants.PagesPageUrl)
 			});
 		}
-		else if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Admin)
+		else if (TfAppState.Value.Route.HasNode(RouteDataNode.Admin, 0))
 		{
-			result.Add(new TucMenuItem
+			if (TfAppState.Value.Route.RouteNodes.Count > 1)
 			{
-				Text = TfConverters.StringOverflow(TfAppState.Value.Route.SecondNode.ToDescriptionString(), _ellipsisCount)
-			});
+				result.Add(new TucMenuItem
+				{
+					Text = TfConverters.StringOverflow(TfAppState.Value.Route.RouteNodes[1].ToDescriptionString(), _ellipsisCount)
+				});
+			}
+			else{ 
+				result.Add(new TucMenuItem
+				{
+					Text = TfConverters.StringOverflow("Dashboard", _ellipsisCount)
+				});
+			}
 		}
-		else if (TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Space)
+		else if (TfAppState.Value.Route.HasNode(RouteDataNode.Space, 0))
 		{
 			if (TfAppState.Value.Space is not null)
 			{

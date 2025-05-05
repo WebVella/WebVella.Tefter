@@ -23,7 +23,7 @@ public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentCo
 		_iconBtn = _isCreate ? TfConstants.AddIcon.WithColor(Color.Neutral) : TfConstants.SaveIcon.WithColor(Color.Neutral);
 		if (_isCreate)
 		{
-			_form = _form with { Id = Guid.NewGuid(), Color = TfColor.Emerald500 };
+			_form = _form with { Id = Guid.NewGuid(), Color = TfColor.Emerald500, IsPrivate = false };
 		}
 		else
 		{
