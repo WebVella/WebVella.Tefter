@@ -7,7 +7,7 @@ internal partial class AppStateUseCase
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (newAppState.Route.HasNode(RouteDataNode.Admin,0))
+		if (newAppState.Route.HasNode(RouteDataNode.Admin, 0))
 		{
 			newAppState = newAppState with { CurrentUserSpaces = new(), Space = null };
 			return (newAppState, newAuxDataState);
@@ -124,6 +124,57 @@ internal partial class AppStateUseCase
 		}
 	}
 
+	internal virtual Task<List<TucSpace>> GetAllUserSpaceListAsync(Guid userId)
+	{
+		try
+		{
+			var allSpaces = _tfService.GetSpacesListForUser(userId)
+				.Select(s => new TucSpace(s))
+				.OrderBy(x => x.Position)
+				.ToList();
+
+			var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
+
+			var allSpaceNodes = _tfService.GetAllSpacePages();
+
+			var spaceNodeDict = new Dictionary<Guid, List<TfSpacePage>>();
+			foreach (var item in allSpaceNodes)
+			{
+				if (!spacesHS.Contains(item.SpaceId))
+					continue;
+
+				if (!spaceNodeDict.ContainsKey(item.SpaceId))
+					spaceNodeDict[item.SpaceId] = new();
+
+				spaceNodeDict[item.SpaceId].Add(item);
+			}
+
+			foreach (var space in allSpaces)
+			{
+				if (spaceNodeDict.ContainsKey(space.Id) && spaceNodeDict[space.Id].Count > 0)
+				{
+					var spacePageNode = spaceNodeDict[space.Id].FindItemByMatch((x) => x.Type == TfSpacePageType.Page, (x) => x.ChildPages);
+					if (spacePageNode != null)
+						space.DefaultNodeId = spacePageNode.Id;
+				}
+
+			}
+			return Task.FromResult(allSpaces.OrderBy(x => x.Position).ToList());
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+				exception: ex,
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpace>());
+		}
+	}
+
 	internal virtual Task<List<TucSpace>> GetAllSpaces()
 	{
 		try
@@ -202,7 +253,7 @@ internal partial class AppStateUseCase
 		bool isPrivate)
 	{
 		var space = _tfService.GetSpace(spaceId);
-		if(space is null)
+		if (space is null)
 			throw new Exception("Space not found");
 		space.IsPrivate = isPrivate;
 		var result = _tfService.UpdateSpace(space);

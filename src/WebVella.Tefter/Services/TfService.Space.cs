@@ -138,15 +138,14 @@ public partial class TfService : ITfService
 				return spaces;
 
 			List<TfSpace> userSpaces = new List<TfSpace>();
-			foreach(var space in spaces)
+			foreach (var space in spaces)
 			{
-				if(space.Roles
-					.Select(x=>x.Id)
-					.Intersect(user.Roles.Select(x=>x.Id))
-					.Any())
-				{
-					userSpaces.Add(space);
-				}
+				if (space.IsPrivate && !space.Roles
+					.Select(x => x.Id)
+					.Intersect(user.Roles.Select(x => x.Id))
+					.Any()) continue;
+
+				userSpaces.Add(space);
 			}
 
 			return userSpaces;

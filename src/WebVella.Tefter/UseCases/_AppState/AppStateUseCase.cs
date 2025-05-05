@@ -70,11 +70,10 @@ internal partial class AppStateUseCase
 		var routeData = navigator.GetRouteState();
 		if (routeData.HasNode(RouteDataNode.Space,0) && routeData.SpaceId is not null)
 		{
+			if(routeData.HasNode(RouteDataNode.Manage,2)) return false;
 
 			var space = _tfService.GetSpace(routeData.SpaceId.Value);
 			if(!space.IsPrivate) return true;
-
-			if(routeData.HasNode(RouteDataNode.Manage,2) && !user.IsAdmin) return false;
 
 			if (space.Roles
 			.Select(x => x.Id)

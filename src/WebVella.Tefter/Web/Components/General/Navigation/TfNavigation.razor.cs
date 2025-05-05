@@ -112,7 +112,7 @@ public partial class TfNavigation : TfBaseComponent
 	private async Task _searchSpaceHandler()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSearchSpaceDialog>(
-		true,
+		TfAppState.Value.CurrentUser.Id,
 		new DialogParameters()
 		{
 			PreventDismissOnOverlayClick = true,

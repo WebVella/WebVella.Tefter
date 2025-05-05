@@ -11,7 +11,7 @@
 				@if (TfAppState.Value.SelectedDataRows.Count > 0)
 				{
 					<FluentBadge Appearance="Appearance.Accent">@TfAppState.Value.SelectedDataRows.Count</FluentBadge>
-					<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Slot="start" Color="@Color.Accent"/>
+					<FluentIcon Value="@TfConstants.GetIcon("CheckmarkStarburst")" Slot="start" Color="@Color.Accent" />
 				}
 				else
 				{
@@ -38,12 +38,12 @@
 		<FluentButton Id="view-sort-selector" OnClick="OnSortClick" Title="data sort" Appearance="@Appearance.Outline">
 			@if ((TfAppState.Value.SpaceViewSorts?.Count ?? 0) > 0)
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Accent"  />
+				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Slot="start" Color="@Color.Accent" />
 				<FluentBadge Appearance="Appearance.Accent">@(TfAppState.Value.SpaceViewSorts?.Count ?? 0)</FluentBadge>
 			}
 			else
 			{
-				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Color="@Color.Accent"  />
+				<FluentIcon Value="@TfConstants.GetIcon("ArrowSort")" Color="@Color.Accent" />
 			}
 		</FluentButton>
 		@if (_showClearFilter)
@@ -84,16 +84,19 @@
 			else
 			{
 				<FluentButton Id="view-save-selector" OnClick="OnSaveLinkClick" Appearance="@Appearance.Outline">
-					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Accent"/>
+					<FluentIcon Value="@TfConstants.GetIcon("Link")" Color="@Color.Accent" />
 				</FluentButton>
 			}
 		}
 		<FluentButton Id="view-export-selector" OnClick="OnExportClick" Appearance="@Appearance.Outline">
 			<FluentIcon Value="@TfConstants.GetIcon("ShareAndroid")" Color="@Color.Accent" />
 		</FluentButton>
-		<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
-			<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />
-		</FluentButton>
+		@if (TfAppState.Value.CurrentUser.IsAdmin)
+		{
+			<FluentButton Id="view-setting-selector" OnClick="OnSettingsClick" Appearance="@Appearance.Outline">
+				<FluentIcon Value="@TfConstants.GetIcon("Settings")" Color="@Color.Accent" />
+			</FluentButton>
+		}
 	</div>
 </div>
 @* <TfSpaceViewPropertiesSelector @ref="_propertiesSelector" /> *@
