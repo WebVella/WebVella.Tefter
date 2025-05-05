@@ -232,9 +232,9 @@ internal partial class AppStateUseCase
 		TucSpaceNode node,
 		bool isMoveUp)
 	{
-		if (isMoveUp) 
+		if (isMoveUp)
 			node.Position--;
-		else 
+		else
 			node.Position++;
 
 		return UpdateSpaceNode(node);
@@ -253,5 +253,71 @@ internal partial class AppStateUseCase
 		//newNodeId is the id of newly created node copy of specified one by nodeId argument
 		var (newNodeId, nodesList) = _tfService.CopySpacePage(nodeId);
 		return nodesList.Select(x => new TucSpaceNode(x)).ToList();
+	}
+
+	internal virtual async Task<TucSpace> AddRoleToSpaceAsync(Guid roleId, Guid spaceId)
+	{
+		try
+		{
+			var space = _tfService.GetSpace(spaceId);
+			if (space is null)
+				throw new Exception("User not found");
+
+			var roleSM = await _tfService.GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (space.Roles.Any(x => x.Id == roleId))
+				return new TucSpace(space);
+
+			_tfService.AddSpacesRole(new List<TfSpace> { space }, roleSM);
+
+			return new TucSpace(_tfService.GetSpace(spaceId));
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
+	}
+
+	internal virtual async Task<TucSpace> RemoveRoleFromSpaceAsync(Guid roleId, Guid spaceId)
+	{
+		try
+		{
+			var space = _tfService.GetSpace(spaceId);
+			if (space is null)
+				throw new Exception("User not found");
+
+			var roleSM = await _tfService.GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (!space.Roles.Any(x => x.Id == roleId))
+				return new TucSpace(space);
+
+			_tfService.RemoveSpacesRole(new List<TfSpace> { space }, roleSM);
+
+			return new TucSpace(_tfService.GetSpace(spaceId));
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
 	}
 }

@@ -73,12 +73,16 @@ public partial class TfConstants
 	public static string SpacePageUrl = $"/{RouteNameSpace}/{{0}}";
 	public static string SpaceNodePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpacePage}/{{1}}";
 	public static string SpaceManagePageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}";
+	public static string SpaceManagePagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameSpacePages}";
+	public static string SpaceManageAccessPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameManage}/{RouteNameAccess}";
 	public static string SpaceViewPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}";
 	public static string SpaceViewPagesPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceView}/{{1}}/{RouteNameSpacePages}";
 	public static string SpaceDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}";
 	public static string SpaceDataViewsPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameViews}";
 	public static string SpaceDataDataPageUrl = $"/{RouteNameSpace}/{{0}}/{RouteNameSpaceData}/{{1}}/{RouteNameData}";
 	public static string NoAccessPage = $"/403";
+	public static string InstallPage = $"/tf-install";
+	public static string InstallDetailsPage = $"/tf-install/{{0}}";
 
 	public static List<string> SupportedUriFirstNodes = new List<string>() {
 		String.Empty,RouteNameAdmin, RouteNameSpacePages,RouteNameSpace

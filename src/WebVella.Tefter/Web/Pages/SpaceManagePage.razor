@@ -1,4 +1,5 @@
 ﻿@page "/space/{SpaceId:guid}/manage"
+@page "/space/{SpaceId:guid}/manage/{Menu}"
 @layout MainLayout
 @inherits TfBasePage
 <TfLayoutBody>
@@ -6,7 +7,7 @@
 		<TfSpaceNavigation />
 	</Aside>
 	<ChildContent>
-		<TfSpaceManage />
+		<TfSpaceManage Menu="@Menu"/>
 	</ChildContent>
 </TfLayoutBody>
 

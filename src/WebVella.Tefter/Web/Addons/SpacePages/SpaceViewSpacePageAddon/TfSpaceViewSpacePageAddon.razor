@@ -10,7 +10,7 @@
 							  Style="border: 1px solid var(--neutral-base-color)"
 							  Intent="MessageIntent.Warning"
 							  AllowDismiss="false" />
-			@if (TfAppState.Value.CurrentUser.IsAdmin)
+			@if (TfAppState.Value.CurrentUser is not null && TfAppState.Value.CurrentUser.IsAdmin)
 			{
 				<FluentStack Style="margin-top:1rem;">
 					<FluentButton Appearance="@Appearance.Outline" IconStart="@TfConstants.EditIcon"

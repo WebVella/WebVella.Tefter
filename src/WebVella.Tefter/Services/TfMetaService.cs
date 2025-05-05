@@ -65,6 +65,7 @@ public partial class TfMetaService : ITfMetaService
 				ScanAndRegisterSpaceViewColumnTypes(type);
 				ScanAndRegisterApplications(type);
 				ScanAndRegisterRegionComponents(type);
+				ScanAndRegisterRecipes(type);
 			}
 		}
 	}

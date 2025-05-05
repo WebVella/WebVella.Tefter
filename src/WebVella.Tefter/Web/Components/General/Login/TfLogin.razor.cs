@@ -1,11 +1,18 @@
-﻿namespace WebVella.Tefter.Web.Components;
+﻿using WebVella.Tefter.UseCases.Install;
+
+namespace WebVella.Tefter.Web.Components;
 [LocalizationResource("WebVella.Tefter.Web.Components.General.Login.TfLogin", "WebVella.Tefter")]
 public partial class TfLogin : TfFormBaseComponent
 {
 	[Inject] private LoginUseCase UC { get; set; }
-	protected override void OnInitialized()
+	[Inject] private InstallUseCase InstallUC { get; set; }
+	[Inject] private AppStateUseCase AppUC { get; set; }
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
+		await base.OnInitializedAsync();
+		//var installData = await InstallUC.GetInstallDataAsync();
+		//if(installData is null)
+		//	Navigator.NavigateTo(TfConstants.InstallPage, true);
 		UC.OnInitialized();
 		base.InitForm(UC.Form);
 	}

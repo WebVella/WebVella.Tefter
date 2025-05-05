@@ -1,0 +1,10 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+<FluentNavMenu Class="tf-tabnav">
+	@foreach (var item in _generateMenu())
+	{
+		<FluentNavLink Match="@item.Match" Href="@item.Url"
+					   Icon="@item.IconCollapsed">@item.Text</FluentNavLink>
+	}
+</FluentNavMenu>
+

@@ -1,0 +1,42 @@
+﻿.tf-recipe {
+	display: flex;
+
+	&:not(.clean) {
+		border: 1px solid var(--neutral-fill-secondary-hover);
+		background: var(--neutral-fill-secondary-rest);
+		border-radius: 5px;
+		padding: 10px;
+
+		&:hover {
+			background: var(--neutral-fill-secondary-hover);
+			cursor: pointer;
+		}
+	}
+
+
+	&__icon {
+		flex: 0 0 50px;
+		display: flex;
+		flex-flow: column;
+		justify-content: center;
+
+		svg {
+			width: 36px !important;
+		}
+	}
+
+	&__meta {
+		flex: 1 1 auto;
+
+		&__name {
+			font-weight: bold;
+			font-size: 16px;
+			margin-bottom: 5px;
+		}
+
+		&__author {
+			margin-top: 5px;
+			color: var(--neutral-foreground-hint);
+		}
+	}
+}

@@ -66,7 +66,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="spaces">The list of <see cref="TfSpace"/> objects to remove the role from.</param>
 	/// <param name="role">The <see cref="TfRole"/> to remove.</param>
-	void RemoveSpacesRole(
+	public void RemoveSpacesRole(
 		List<TfSpace> spaces,
 		TfRole role);
 
@@ -75,7 +75,7 @@ public partial interface ITfService
 	/// </summary>
 	/// <param name="spaces">The list of <see cref="TfSpace"/> objects to add the role to.</param>
 	/// <param name="role">The <see cref="TfRole"/> to add.</param>
-	void AddSpacesRole(
+	public void AddSpacesRole(
 		List<TfSpace> spaces,
 		TfRole role);
 }

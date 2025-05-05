@@ -41,6 +41,7 @@ global using System.Web;
 global using ClosedXML;
 global using ClosedXML.Excel;
 //webvella
+global using WebVella.Tefter;
 global using WebVella.Tefter.Jobs;
 global using WebVella.Tefter.Database;
 global using WebVella.Tefter.Database.Dbo;
@@ -57,6 +58,7 @@ global using WebVella.Tefter.UseCases.AppState;
 global using WebVella.Tefter.UseCases.Login;
 global using WebVella.Tefter.UseCases.UserState;
 global using WebVella.Tefter.UseCases.Export;
+global using WebVella.Tefter.UseCases.Install;
 global using WebVella.Tefter.Utility;
 /// Components
 global using WebVella.Tefter.Web.Components;

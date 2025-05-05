@@ -33,7 +33,7 @@ public partial class TfService : ITfService
 	{
 		try
 		{
-			return _dboManager.Get<TfSetting>(name, nameof(TfSetting.Name));
+			return _dboManager.Get<TfSetting>(name, nameof(TfSetting.Key));
 		}
 		catch (Exception ex)
 		{
@@ -51,10 +51,10 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			var existingSetting = GetSetting(setting.Name);
+			var existingSetting = GetSetting(setting.Key);
 			if (existingSetting is not null)
 			{
-				var success = _dboManager.Update<TfSetting>(nameof(setting.Name),setting);
+				var success = _dboManager.Update<TfSetting>(nameof(setting.Key),setting);
 				if (!success)
 					throw new TfDboServiceException("Update<TfSetting> failed.");
 			}
@@ -84,7 +84,7 @@ public partial class TfService : ITfService
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			var success = _dboManager.Delete<TfSetting, string>(nameof(TfSetting.Name), existingSetting.Name);
+			var success = _dboManager.Delete<TfSetting, string>(nameof(TfSetting.Key), existingSetting.Key);
 			if (!success)
 				throw new TfDboServiceException("Delete<TfSetting> failed.");
 		}
@@ -112,7 +112,7 @@ public partial class TfService : ITfService
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The setting is null.") });
 
-			if (string.IsNullOrWhiteSpace(setting.Name))
+			if (string.IsNullOrWhiteSpace(setting.Key))
 				return new ValidationResult(new[] { new ValidationFailure("",
 					"The setting name is required.") });
 

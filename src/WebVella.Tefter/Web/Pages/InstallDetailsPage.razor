@@ -1,0 +1,7 @@
+﻿@page "/tf-install/{RecipeId:guid}"
+@layout GuestLayout
+<TfRecipeDetails RecipeId="@RecipeId"/>
+
+@code{
+	[Parameter] public Guid RecipeId { get; set; }
+}

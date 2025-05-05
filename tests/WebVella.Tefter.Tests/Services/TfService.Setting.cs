@@ -20,7 +20,7 @@ public partial class TfServiceTest : BaseTest
 			{
 				TfSetting setting = new TfSetting
 				{
-					Name = "unit.test.setting",
+					Key = "unit.test.setting",
 					Value = "unit test value",
 				};
 
@@ -29,11 +29,11 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 
 				TfSetting createdSetting = null;
-				task = Task.Run(() => { createdSetting = tfService.GetSetting(setting.Name); });
+				task = Task.Run(() => { createdSetting = tfService.GetSetting(setting.Key); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				createdSetting.Should().NotBeNull();
-				createdSetting.Name.Should().Be(setting.Name);
+				createdSetting.Key.Should().Be(setting.Key);
 				createdSetting.Value.Should().Be(setting.Value);
 
 				List<TfSetting> allSettings = null;
@@ -42,7 +42,7 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 				allSettings.Should().NotBeNull();
 				allSettings.Count.Should().Be(1);
-				allSettings[0].Name.Should().Be(setting.Name);
+				allSettings[0].Key.Should().Be(setting.Key);
 				allSettings[0].Value.Should().Be(setting.Value);
 
 				setting.Value = "unit test value 2";
@@ -52,15 +52,15 @@ public partial class TfServiceTest : BaseTest
 
 
 				TfSetting updatedSetting = null;
-				task = Task.Run(() => { updatedSetting = tfService.GetSetting(setting.Name); });
+				task = Task.Run(() => { updatedSetting = tfService.GetSetting(setting.Key); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				updatedSetting.Should().NotBeNull();
-				updatedSetting.Name.Should().Be(setting.Name);
+				updatedSetting.Key.Should().Be(setting.Key);
 				updatedSetting.Value.Should().Be(setting.Value);
 
 
-				task = Task.Run(() => { tfService.DeleteSetting(setting.Name); });
+				task = Task.Run(() => { tfService.DeleteSetting(setting.Key); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				
@@ -71,7 +71,7 @@ public partial class TfServiceTest : BaseTest
 				allSettings.Count.Should().Be(0);
 
 				TfSetting deletedSetting = null;
-				task = Task.Run(() => { deletedSetting = tfService.GetSetting(setting.Name); });
+				task = Task.Run(() => { deletedSetting = tfService.GetSetting(setting.Key); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				deletedSetting.Should().BeNull();

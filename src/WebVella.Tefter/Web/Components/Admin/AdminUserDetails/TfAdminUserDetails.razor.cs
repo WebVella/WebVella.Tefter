@@ -8,7 +8,9 @@ public partial class TfAdminUserDetails : TfBaseComponent
 	{
 		get
 		{
-			if (TfAppState.Value.AdminManagedUser.Roles.Count == 0) return TfAppState.Value.UserRoles;
+			if (TfAppState.Value.AdminManagedUser is null
+			|| TfAppState.Value.AdminManagedUser.Roles is null
+			|| TfAppState.Value.AdminManagedUser.Roles.Count == 0) return TfAppState.Value.UserRoles;
 			return TfAppState.Value.UserRoles.Where(x => !TfAppState.Value.AdminManagedUser.Roles.Any(u => x.Id == u.Id)).ToList();
 		}
 	}

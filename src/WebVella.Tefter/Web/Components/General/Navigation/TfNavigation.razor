@@ -13,7 +13,7 @@
 	</Top>
 	<ChildContent>
 		<FluentNavMenu class="tf-navigation">
-			@if (TfAppState.Value.CurrentUser.IsAdmin && TfAppState.Value.CurrentUserSpaces.Count == 0)
+			@if (TfAppState.Value.CurrentUser is not null && TfAppState.Value.CurrentUser.IsAdmin && TfAppState.Value.CurrentUserSpaces.Count == 0)
 			{
 				<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon.WithColor(_defaultColor.GetAttribute().Value)"
 							   IconColor="Color.Custom" Class="expand-link"
@@ -28,7 +28,7 @@
 	</ChildContent>
 	<Bottom>
 		<FluentNavMenu class="tf-navigation">
-			@if (TfAppState.Value.CurrentUser.IsAdmin && TfAppState.Value.CurrentUserSpaces.Count > 0)
+			@if (TfAppState.Value.CurrentUser is not null && TfAppState.Value.CurrentUser.IsAdmin && TfAppState.Value.CurrentUserSpaces.Count > 0)
 			{
 				<FluentNavLink Id="tf-create-space-link" Icon="@TfConstants.AddIcon.WithColor(_defaultColor.GetAttribute().Value)"
 							   IconColor="Color.Custom" Class="expand-link"

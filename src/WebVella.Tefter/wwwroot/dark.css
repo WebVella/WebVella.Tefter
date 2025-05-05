@@ -648,3 +648,6 @@ fluent-data-grid-row:has([row-selected]) {
 .tf-menu-item.tf-selected {
   background: var(--tf-layout-color-accent);
 }
+body .components-reconnect-dialog {
+  background: red !important;
+}

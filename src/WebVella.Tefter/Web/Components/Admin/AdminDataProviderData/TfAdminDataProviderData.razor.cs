@@ -26,6 +26,7 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 		base.OnAfterRender(firstRender);
 		if (firstRender)
 		{
+			if(TfAppState.Value.AdminDataProvider is null) return;
 			_totalRows = await UC.GetDataProviderTotalRowCountAsync(TfAppState.Value.AdminDataProvider.Id);
 			_isDataLoading = false;
 			await InvokeAsync(StateHasChanged);

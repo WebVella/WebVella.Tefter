@@ -71,9 +71,9 @@ public class NavigatorExtTests
 		result.NodesDict.Should().NotBeNull();
 		result.NodesDict.Count.Should().Be(3);
 		result.FirstNode.Should().Be(RouteDataFirstNode.Admin);
-		result.SecondNode.Should().Be(RouteDataSecondNode.Users);
+		result.SecondNode.Should().Be(RouteDataSecondNode.Roles);
 		result.ThirdNode.Should().Be(RouteDataThirdNode.Details);
-		result.UserId.Should().Be(roleId);
+		result.RoleId.Should().Be(roleId);
 
 		uri = new Uri($"{baseUrl}{string.Format(TfConstants.AdminUserAccessPageUrl, userId)}");
 		result = NavigatorExt.GetNodeData(uri);
