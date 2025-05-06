@@ -25,7 +25,7 @@ public partial class TfAdminDataProviderDetailsNav : TfBaseComponent
 		});
 		menu.Add(new TucMenuItem
 		{
-			Url = string.Format(TfConstants.AdminDataProviderJoinedDataPageUrl, providerId),
+			Url = string.Format(TfConstants.AdminDataProviderAuxPageUrl, providerId),
 			Match = NavLinkMatch.Prefix,
 			//Icon = new Icons.Regular.Size20.TableAdd(),
 			Text = LOC("Joined Data")

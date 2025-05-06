@@ -4,8 +4,7 @@
 	var bcMenu = generateLocations();
 }
 <div class="location">
-	@if (TfAppState.Value.Route?.FirstNode is not null
-		&& TfAppState.Value.Route.FirstNode == RouteDataFirstNode.Admin)
+	@if (TfAppState.Value.Route is not null && TfAppState.Value.Route.HasNode(RouteDataNode.Admin, 0))
 	{
 		<div class="title">
 			<FluentBadge Fill="somevalue" BackgroundColor="var(--tf-red-500)" Color="rgba(255,255,255,0.75)">@LOC("Admin Panel")</FluentBadge>
@@ -23,7 +22,7 @@
 			@foreach (var item in bcMenu)
 			{
 				<FluentBreadcrumbItem title="@item.Text">
-					@TfConverters.StringOverflow(item.Text,_ellipsisCount)
+					@TfConverters.StringOverflow(item.Text, _ellipsisCount)
 				</FluentBreadcrumbItem>
 			}
 		</FluentBreadcrumb>

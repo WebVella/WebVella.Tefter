@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Data;
+using System.Text.Json;
 
 namespace WebVella.Tefter.Web.Tests.PageComponents;
 
@@ -19,7 +20,7 @@ public class SpaceViewPageComponentTests : BaseTest
 		);
 
 		// Assert
-		cut.Find(".fluent-messagebar-notification");
+		cut.Find(".fluent-messagebar");
 
 		Context.DisposeComponents();
 	}

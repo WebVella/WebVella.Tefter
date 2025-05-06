@@ -488,9 +488,10 @@ fluent-combobox.disabled::part(control) {
   border-color: var(--neutral-stroke-input-rest);
 }
 fluent-switch {
-  --neutral-foreground-rest: var(--tf-zinc-700);
+  --neutral-foreground-rest: var(--tf-zinc-800);
 }
 fluent-switch::part(switch) {
+  --neutral-foreground-rest: var(--tf-zinc-700);
   background: var(--tf-white);
 }
 fluent-switch.checked::part(switch) {

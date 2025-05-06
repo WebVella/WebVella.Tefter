@@ -47,7 +47,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 		{
 			Id = "tf-dashboard-link",
 			IconCollapsed = TfConstants.AdminDashboardIcon,
-			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Dashboard,
+			Selected = TfAppState.Value.Route.RouteNodes.Count == 1,
 			Url = "/admin",
 			Text = LOC(TfConstants.AdminDashboardMenuTitle)
 		});
@@ -56,7 +56,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 		{
 			Id = "tf-users-link",
 			IconCollapsed = TfConstants.AdminUsersIcon,
-			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Users,
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Users,1),
 			Url = string.Format(TfConstants.AdminUsersPageUrl),
 			Text = LOC(TfConstants.AdminUsersMenuTitle)
 		});
@@ -65,7 +65,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 		{
 			Id = "tf-data-providers-link",
 			IconCollapsed = TfConstants.AdminDataProvidersIcon,
-			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.DataProviders,
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.DataProviders,1),
 			Url = string.Format(TfConstants.AdminDataProvidersPageUrl),
 			Text = LOC(TfConstants.AdminDataProvidersMenuTitle)
 		});
@@ -73,7 +73,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 		{
 			Id = "tf-shared-columns-link",
 			IconCollapsed = TfConstants.AdminSharedColumnsIcon,
-			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.SharedColumns,
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.SharedColumns,1),
 			Url = TfConstants.AdminSharedColumnsPageUrl,
 			Text = LOC(TfConstants.AdminSharedColumnsMenuTitle)
 		});
@@ -81,15 +81,15 @@ public partial class TfAdminNavigation : TfBaseComponent
 		{
 			Id = "tf-templates-link",
 			IconCollapsed = TfConstants.TemplateIcon,
-			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Templates,
-			Url = string.Format(TfConstants.AdminTemplatesResultPageUrl,(int)TfTemplateResultType.File),
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Templates,1),
+			Url = string.Format(TfConstants.AdminTemplatesTypePageUrl,(int)TfTemplateResultType.File),
 			Text = LOC(TfConstants.AdminTemplatesMenuTitle)
 		});
 		menuItems.Add(new TucMenuItem()
 		{
 			Id = "tf-file-repository-link",
 			IconCollapsed = TfConstants.AdminFileRepositoryIcon,
-			Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.FileRepository,
+			Selected = TfAppState.Value.Route.HasNode(RouteDataNode.FileRepository,1),
 			Url = TfConstants.AdminFileRepositoryPageUrl,
 			Text = LOC(TfConstants.AdminFileRepositoryMenuTitle)
 		});
@@ -99,7 +99,7 @@ public partial class TfAdminNavigation : TfBaseComponent
 			{
 				Id = "tf-pages-link",
 				IconCollapsed = TfConstants.ApplicationIcon,
-				Selected = TfAppState.Value.Route.SecondNode == RouteDataSecondNode.Pages,
+				Selected = TfAppState.Value.Route.HasNode(RouteDataNode.Pages,1),
 				Url = string.Format(TfConstants.AdminPagesSingleUrl, TfAppState.Value.Pages[0].Id),
 				Text = LOC(TfConstants.AdminPagesMenuTitle)
 			});

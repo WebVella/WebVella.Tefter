@@ -46,10 +46,6 @@ public partial class TfUserManageDialog : TfFormBaseComponent, IDialogContentCom
 				ThemeColor = Content.Settings.ThemeColor,
 				IsSidebarOpen = Content.Settings.IsSidebarOpen,
 			};
-			if (Content.Roles is not null)
-			{
-				_form.Roles = Content.Roles.ToList();
-			}
 
 			_form.Culture = TfConstants.CultureOptions.FirstOrDefault(x => x.CultureCode == Content.Settings.CultureName);
 			if (_form.Culture is null) _form.Culture = TfConstants.CultureOptions[0];

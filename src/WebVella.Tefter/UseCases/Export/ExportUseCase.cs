@@ -24,9 +24,9 @@ public class ExportUseCase
 		{
 			spaceViewId = data.RouteState.SpaceViewId.Value;
 		}
-		else if (data.RouteState.SpaceNodeId is not null)
+		else if (data.RouteState.SpacePageId is not null)
 		{
-			var resultNode = _tfService.GetSpacePage(data.RouteState.SpaceNodeId.Value);
+			var resultNode = _tfService.GetSpacePage(data.RouteState.SpacePageId.Value);
 			if (resultNode is null)
 				throw new TfException("GetSpaceNode method failed");
 

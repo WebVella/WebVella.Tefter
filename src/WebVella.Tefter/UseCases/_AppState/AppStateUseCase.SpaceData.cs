@@ -32,7 +32,7 @@ internal partial class AppStateUseCase
 			if (provider is not null)
 			{
 				//Space Data data init
-				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
+				if (newAppState.Route.HasNode(RouteDataNode.Data,2))
 				{
 					TfDataTable viewData = null;
 					try
@@ -97,6 +97,32 @@ internal partial class AppStateUseCase
 		try
 		{
 			var spaceDataList = _tfService.GetSpaceDataList(spaceId);
+			if (spaceDataList is null)
+				return new();
+
+			return spaceDataList
+				.Select(x => new TucSpaceData(x))
+				.ToList();
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
+	}
+
+internal virtual List<TucSpaceData> GetAllSpaceData()
+	{
+		try
+		{
+			var spaceDataList = _tfService.GetAllSpaceData();
 			if (spaceDataList is null)
 				return new();
 

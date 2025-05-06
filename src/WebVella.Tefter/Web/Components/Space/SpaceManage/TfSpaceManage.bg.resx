@@ -126,4 +126,7 @@
   <data name="Pages" xml:space="preserve">
     <value>Страници</value>
   </data>
+  <data name="restricted access" xml:space="preserve">
+    <value>ограничен достъп</value>
+  </data>
 </root>

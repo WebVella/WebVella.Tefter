@@ -1,7 +1,7 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
 @if (TfAppState.Value.SpaceView is not null
-		&& TfAppState.Value.Route.SpaceNodeId is not null
+		&& TfAppState.Value.Route.SpacePageId is not null
 			&& TfAppState.Value.SpaceView.Presets.Count > 0)
 {
 	var selectionDict = _generateSelectionDict();

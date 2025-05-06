@@ -15,12 +15,12 @@
 @if (String.IsNullOrWhiteSpace(_search) && (TfAppState.Value.AdminTemplateList is null || TfAppState.Value.AdminTemplateList.Count == 0))
 {
 	<FluentMessageBar Title="@LOC("No templates")" AllowDismiss="false"
-					  Intent="@MessageIntent.Info">@LOC("No templates are created yet")</FluentMessageBar>
+	Intent="@MessageIntent.Info">@LOC("No templates are created yet")</FluentMessageBar>
 }
 else if (!String.IsNullOrWhiteSpace(_search) && (TfAppState.Value.AdminTemplateList is null || TfAppState.Value.AdminTemplateList.Count == 0))
 {
 	<FluentMessageBar Title="@LOC("No templates found")" AllowDismiss="false"
-					  Intent="@MessageIntent.Info">@LOC("No templates are found for this search")</FluentMessageBar>
+	Intent="@MessageIntent.Info">@LOC("No templates are found for this search")</FluentMessageBar>
 }
 else
 {
@@ -35,7 +35,7 @@ else
 					<th class="tf-grid-th">name</th>
 					<th class="tf-grid-th">processor</th>
 					<th class="tf-grid-th">target data</th>
-					<th class="tf-grid-th" style="width:120px;min-width:120px;">date</th>
+					<th class="tf-grid-th">date</th>
 				</tr>
 			</thead>
 			<tbody class="tf-grid-tbody">
@@ -46,17 +46,17 @@ else
 							<div>
 								<FluentStack Wrap="false">
 									<FluentAnchor Href="@(String.Format(TfConstants.AdminTemplatesTemplatePageUrl, (int)TfAppState.Value.Route.TemplateResultType, context.Id))"
-												  Appearance="@Appearance.Outline">
+									Appearance="@Appearance.Outline">
 										<FluentIcon Value="@TfConstants.ViewIcon" Title="@LOC("View template")" />
 									</FluentAnchor>
 									<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Delete template")"
-												  OnClick="@(() => _deleteColumn(context))">
+									OnClick="@(() => _deleteColumn(context))">
 										<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" />
 									</FluentButton>
 								</FluentStack>
 							</div>
 						</td>
- 						<td class="tf-grid-td">
+						<td class="tf-grid-td">
 							<div>
 								<div style="margin-bottom:5px;width:100%">
 									@if (context.IsEnabled)
@@ -92,7 +92,7 @@ else
 						<td class="tf-grid-td">
 							<div>
 								@if (context.ContentProcessorType is not null
-													&& context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
+																													&& context.ContentProcessorType.GetInterface(nameof(ITfTemplateProcessorAddon)) != null)
 								{
 									var component = (ITfTemplateProcessorAddon)Activator.CreateInstance(context.ContentProcessorType);
 									<div>@component.Name</div>
@@ -102,7 +102,10 @@ else
 						</td>
 						<td class="tf-grid-td">
 							<div>
-								???
+								@foreach (var dataId in context.SpaceDataList)
+								{
+									<div>@_spaceDataDict[dataId].Name</div>
+								}
 							</div>
 						</td>
 						<td class="tf-grid-td">

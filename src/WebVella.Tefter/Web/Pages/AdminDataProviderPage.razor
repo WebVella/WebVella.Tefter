@@ -12,7 +12,7 @@
 	<ChildContent>
 		@if (ProviderId == Guid.Empty || TfAppState.Value.AdminDataProvider is null)
 		{
-@* 			<TfLayoutBodyMain>
+			@* 			<TfLayoutBodyMain>
 				<Header>
 					<TfPageHeader>@LOC("Data Providers")</TfPageHeader>
 				</Header>
@@ -30,7 +30,7 @@
 		}
 		else
 		{
-			if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Data)
+			if (TfAppState.Value.Route.HasNode(RouteDataNode.Data, 3))
 			{
 				<TfAdminDataProviderData />
 			}
@@ -44,21 +44,22 @@
 						<TfAdminDataProviderDetailsNav />
 					</HeaderAside>
 					<ChildContent>
-						@if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Details)
-						{
-							<TfAdminDataProviderDetails />
-						}
-						else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Schema)
+
+						@if (TfAppState.Value.Route.HasNode(RouteDataNode.Schema, 3))
 						{
 							<TfAdminDataProviderSchema />
 						}
-						else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.JoinedData)
+						else if (TfAppState.Value.Route.HasNode(RouteDataNode.Aux, 3))
 						{
 							<TfAdminDataProviderJoinedData />
 						}
-						else if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Synchronization)
+						else if (TfAppState.Value.Route.HasNode(RouteDataNode.Synchronization, 3))
 						{
 							<TfAdminDataProviderSynchronization />
+						}
+						else
+						{
+							<TfAdminDataProviderDetails />
 						}
 					</ChildContent>
 				</TfLayoutBodyMain>

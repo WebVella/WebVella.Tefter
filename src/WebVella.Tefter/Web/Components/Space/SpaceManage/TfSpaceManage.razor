@@ -19,86 +19,204 @@
 }
 else
 {
-	<TfLayoutBodyMain>
+	<TfLayoutBodyMain HeaderClass="aside-tabs">
 		<Header>
 			<TfPageHeader>@LOC("Manage space '{0}'", TfAppState.Value.Space.Name)</TfPageHeader>
 		</Header>
+		<HeaderAside>
+			<TfSpaceDetailsNav />
+		</HeaderAside>
 		<ChildContent>
-			<TfCard>
-				<TitleTemplate>
-					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-						<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpace">
-							@LOC("Delete")
-							<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
-						</FluentButton>
-						<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpace">
-							@LOC("Edit")
-							<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
-						</FluentButton>
-					</FluentStack>
-				</TitleTemplate>
-				<ChildContent>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Name")" />
-							<FluentStack>
-								<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.Space.Name
-												 ReadOnly="true" Style="width:100%" />
-							</FluentStack>
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Access")" />
-							<FluentCheckbox Value=@TfAppState.Value.Space.IsPrivate Label="@LOC("limited access")" Style="margin-top:5px;"
-											ReadOnly="true" />
-						</FluentGridItem>
-					</FluentGrid>
-					<FluentGrid>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Color")" />
-							<TfSelectColor Value="@TfAppState.Value.Space.Color" />
-						</FluentGridItem>
-						<FluentGridItem xs="6">
-							<FluentInputLabel Label="@LOC("Icon")" />
-							<TfSelectIcon Value="@TfAppState.Value.Space.IconString" Required="true"/>
-						</FluentGridItem>
-					</FluentGrid>
-				</ChildContent>
-			</TfCard>
-			<FluentLabel Typo="@Typography.H4" Style="margin:1rem 0">@LOC("Pages")</FluentLabel>
-			<TfCard>
-				<TitleTemplate>
-					<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
-						<FluentButton OnClick="_addNode" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline"
-									  Disabled="@_submitting">@LOC("Add page")</FluentButton>
-					</FluentStack>
-				</TitleTemplate>
-				<ChildContent>
-					@if (TfAppState.Value.SpaceNodes.Count == 0)
-					{
-						@LOC("No pages or folders created yet.")
-					}
-					else
-					{
+
+			@if (Menu == TfConstants.RouteNamePages)
+			{
+				<TfCard>
+					<TitleTemplate>
+						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+							<h3>@LOC("Pages")</h3>
+							<div>
+								<FluentButton OnClick="_addNode" IconStart="@TfConstants.AddIcon.WithColor(Color.Accent)" Appearance="@Appearance.Outline"
+											  Disabled="@_submitting">@LOC("Add page")</FluentButton>
+							</div>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+						@if (TfAppState.Value.SpaceNodes.Count == 0)
+						{
+							@LOC("No pages or folders created yet.")
+						}
+						else
+						{
+							<div class="tf-grid-wrapper">
+								<table class="tf-grid">
+									<colgroup style="width:1%"></colgroup>
+									<colgroup></colgroup>
+									<colgroup style="width:120px;"></colgroup>
+									<colgroup style="width:120px;"></colgroup>
+									<tbody class="tf-grid-tbody">
+										@foreach (var context in TfAppState.Value.SpaceNodes)
+										{
+											var contextIndex = TfAppState.Value.SpaceNodes.FindIndex(x => x.Id == context.Id);
+											<TfSpaceManageNodeItem Item="context" Level="0" OnRemove="_removeNode" OnMove="_moveNode"
+																   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == TfAppState.Value.SpaceNodes.Count -1)"
+																   OnEdit="_editNode" OnCopy="_copyNode" />
+										}
+									</tbody>
+								</table>
+							</div>
+						}
+					</ChildContent>
+				</TfCard>
+			}
+			else if (Menu == TfConstants.RouteNameAccess)
+			{
+				<div class="tf-grid-wrapper">
+					<table class="tf-grid">
+						<tbody class="tf-grid-tbody">
+							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+								<td class="tf-grid-td">
+									<div>
+										@if (TfAppState.Value.Space.IsPrivate)
+										{
+											<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false Title="@LOC("Access Restricted")">@LOC("Only users with the explicitly listed roles will be granted entry.")</FluentMessageBar>
+										}
+										else
+										{
+											<FluentMessageBar Intent="@MessageIntent.Info" AllowDismiss=false Title="@LOC("Free Access")">@LOC("All users will have access.")</FluentMessageBar>
+										}
+									</div>
+								</td>
+								<td class="tf-grid-td" style="width:200px;vertical-align:middle;">
+									<div>
+										<FluentSwitch Value=@TfAppState.Value.Space.IsPrivate ValueChanged=_setPrivacy CheckedMessage="@LOC("restricted access")" UnCheckedMessage="@LOC("restricted access")" />
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<TfCard Style="margin-top:30px;">
+					<TitleTemplate>
+						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+							<h3>@LOC("Roles with Access")</h3>
+							<div>
+								<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.End">
+									@if (_roleOptions.Count > 0)
+									{
+										<FluentSelect OptionSelected="(x => x.Id == _selectedRole?.Id)"
+													  @bind-SelectedOption="@_selectedRole"
+													  Disabled="_submitting"
+													  TOption="TucRole" Required="false"
+													  Items="@_roleOptions" Style="width:200px"
+													  Placeholder="@LOC("select role")">
+											<OptionTemplate Context="option">
+												<span>@option.Name</span>
+											</OptionTemplate>
+										</FluentSelect>
+									}
+									else
+									{
+										<FluentTextField TextFieldType="@TextFieldType.Text" Value=@LOC("all roles added") Style="width:200px" Disabled="true" />
+									}
+									<FluentButton OnClick="_addRole" IconStart="@TfConstants.AddIcon" Appearance="@Appearance.Outline" Disabled="@(_roleOptions.Count == 0 || _submitting)">@LOC("Add new")</FluentButton>
+								</FluentStack>
+							</div>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
 						<div class="tf-grid-wrapper">
 							<table class="tf-grid">
-								<colgroup style="width:1%"></colgroup>
-								<colgroup></colgroup>
-								<colgroup style="width:120px;"></colgroup>
-								<colgroup style="width:120px;"></colgroup>
+								<thead class="tf-grid-thead">
+									<tr class="tf-grid-thead-bkg"></tr>
+									<tr class="tf-grid-tr">
+										<th class="tf-grid-th">name</th>
+										<th class="tf-grid-th"></th>
+									</tr>
+								</thead>
 								<tbody class="tf-grid-tbody">
-									@foreach (var context in TfAppState.Value.SpaceNodes)
+									<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+										<td class="tf-grid-td">
+											<div>@_adminRole.Name</div>
+										</td>
+										<td class="tf-grid-td" style="width:1%;">
+											<div>
+												<FluentButton Appearance="@Appearance.Outline" Title="@LOC("Administrators has always access")"
+															  Disabled="true">
+													<FluentIcon Value="@TfConstants.LockIcon" Slot="start" />
+													<span>@LOC("locked")</span>
+												</FluentButton>
+											</div>
+										</td>
+									</tr>
+									@foreach (var context in TfAppState.Value.Space.Roles)
 									{
-										var contextIndex = TfAppState.Value.SpaceNodes.FindIndex(x => x.Id == context.Id);
-										<TfSpaceManageNodeItem Item="context" Level="0" OnRemove="_removeNode" OnMove="_moveNode"
-															   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == TfAppState.Value.SpaceNodes.Count -1)"
-															   OnEdit="_editNode" OnCopy="_copyNode" />
+										<tr @key=@Guid.NewGuid() class="tf-grid-tr">
+											<td class="tf-grid-td">
+												<div>@context.Name</div>
+											</td>
+											<td class="tf-grid-td" style="width:1%;">
+												<div>
+													<FluentButton Appearance="@Appearance.Outline" OnClick="@(()=> _removeRole(context))" Title="@LOC("Remove the role")"
+																  Disabled="_submitting">
+														<FluentIcon Color="@Color.Error" Value="@TfConstants.DeleteIcon" Slot="start" />
+														<span>@LOC("remove")</span>
+													</FluentButton>
+												</div>
+											</td>
+										</tr>
 									}
 								</tbody>
 							</table>
 						</div>
-					}
-				</ChildContent>
-			</TfCard>
+					</ChildContent>
+				</TfCard>
+			}
+			else
+			{
+				<TfCard>
+					<TitleTemplate>
+						<FluentStack Orientation="@Orientation.Horizontal" HorizontalAlignment="@HorizontalAlignment.SpaceBetween" VerticalAlignment="@VerticalAlignment.Center">
+							<h3>@LOC("Details")</h3>
+							<div>
+								<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpace">
+									@LOC("Delete")
+									<FluentIcon Value="@TfConstants.DeleteIcon" Color="@Color.Error" Slot="start" />
+								</FluentButton>
+								<FluentButton Appearance="@Appearance.Outline" OnClick="_editSpace">
+									@LOC("Edit")
+									<FluentIcon Value="@TfConstants.EditIcon" Color="@Color.Accent" Slot="start" />
+								</FluentButton>
+							</div>
+						</FluentStack>
+					</TitleTemplate>
+					<ChildContent>
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentInputLabel Label="@LOC("Name")" />
+								<FluentStack>
+									<FluentTextField TextFieldType="@TextFieldType.Text" Value=@TfAppState.Value.Space.Name
+													 ReadOnly="true" Style="width:100%" />
+								</FluentStack>
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+@* 								<FluentInputLabel Label="@LOC("Access")" />
+								<FluentCheckbox Value=@TfAppState.Value.Space.IsPrivate Label="@LOC("restricted access")" Style="margin-top:5px;"
+												ReadOnly="true" /> *@
+							</FluentGridItem>
+						</FluentGrid>
+						<FluentGrid>
+							<FluentGridItem xs="6">
+								<FluentInputLabel Label="@LOC("Color")" />
+								<TfSelectColor Value="@TfAppState.Value.Space.Color" />
+							</FluentGridItem>
+							<FluentGridItem xs="6">
+								<FluentInputLabel Label="@LOC("Icon")" />
+								<TfSelectIcon Value="@TfAppState.Value.Space.IconString" Required="true" />
+							</FluentGridItem>
+						</FluentGrid>
+					</ChildContent>
+				</TfCard>
+			}
 		</ChildContent>
 	</TfLayoutBodyMain>
 }

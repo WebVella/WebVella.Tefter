@@ -127,7 +127,7 @@ public partial class TfSpaceNavigation : TfBaseComponent
 				{
 					_assignMenuItemActions(x);
 					x.Expanded = _expandedNodeIdList.Contains(x.Id);
-					x.Selected = TfAppState.Value.Route.SpaceNodeId == ((TucSpaceNode)x.Data).Id;
+					x.Selected = TfAppState.Value.Route.SpacePageId == ((TucSpaceNode)x.Data).Id;
 				});
 				menuItems.Add(item);
 			}

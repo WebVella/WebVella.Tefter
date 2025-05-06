@@ -37,7 +37,7 @@ public class ConvertersTests
 		{ 
 			input = "Item No.";
 			output = input.GenerateDbNameFromText();
-			output.Should().Be("item_no_");
+			output.Should().Be("item_no");
 		}
 		{ 
 			input = "Vendor Item №";

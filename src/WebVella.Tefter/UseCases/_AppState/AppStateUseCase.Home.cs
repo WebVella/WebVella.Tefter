@@ -6,7 +6,7 @@ internal partial class AppStateUseCase
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (!(newAppState.Route.FirstNode == RouteDataFirstNode.Home))
+		if (!(newAppState.Route.HasNode(RouteDataNode.Home,0)))
 		{
 			newAppState = newAppState with
 			{

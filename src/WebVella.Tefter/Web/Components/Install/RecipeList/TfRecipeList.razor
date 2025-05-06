@@ -1,0 +1,24 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+
+<div class="tf-guest-layout">
+	<div class="tf-guest-layout__header">
+		<div class="tf-guest-layout__header__title">@LOC("Initial Setup")</div>
+		<div class="tf-guest-layout__header__description">@LOC("Welcome to Tefter. Begin using it by simply clicking on one of the available preconfiguration options.")</div>
+	</div>
+	<div class="tf-guest-layout__body">
+		@foreach (var item in _items)
+		{
+			<div class="tf-recipe" @onclick=@(()=> _select(item))>
+				<div class="tf-recipe__icon">
+					<FluentIcon Value="@TfConstants.GetIcon(item.FluentIconName)" Color="@Color.Custom"/>
+				</div>
+				<div class="tf-recipe__meta">
+					<div class="tf-recipe__meta__name">@item.Name</div>
+					<div class="tf-recipe__meta__description">@item.Description</div>
+					<div class="tf-recipe__meta__author">by @item.Author</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

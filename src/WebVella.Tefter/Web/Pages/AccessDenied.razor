@@ -1,12 +1,18 @@
 ﻿@page "/403"
 @layout SystemLayout
-
 <PageTitle>Access Denied</PageTitle>
 
-<h1 class="text-danger">Access Denied</h1>
-<p>This page or record does not exist!</p>
+<FluentStack HorizontalAlignment="@HorizontalAlignment.Center">
+	<TfCard Style="width:500px;margin-top:100px;" Class="login-card">
+		<h1 class="text-danger">Access Denied</h1>
+		<p>You do not have access to this page!</p>
 
-<FluentButton OnClick="_goHome">Home Page</FluentButton>
+		<FluentButton Appearance=@Appearance.Accent OnClick="_goHome">Go to Home</FluentButton>
+	</TfCard>
+</FluentStack>
+
+
+
 
 @code {
 	[Inject] protected NavigationManager Navigator { get; set; }

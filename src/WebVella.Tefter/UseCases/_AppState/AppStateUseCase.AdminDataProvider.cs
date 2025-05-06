@@ -10,8 +10,8 @@ internal partial class AppStateUseCase
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
-			&& newAppState.Route.SecondNode == RouteDataSecondNode.DataProviders)
+			!(newAppState.Route.HasNode(RouteDataNode.Admin,0)
+			&& newAppState.Route.HasNode(RouteDataNode.DataProviders,1))
 			)
 		{
 			newAppState = newAppState with
@@ -54,15 +54,15 @@ internal partial class AppStateUseCase
 				}
 
 				//check for the other tabs
-				if (newAppState.Route.ThirdNode == RouteDataThirdNode.Schema)
+				if (newAppState.Route.HasNode(RouteDataNode.Schema,2))
 				{
 				}
-				else if (newAppState.Route.ThirdNode == RouteDataThirdNode.JoinKeys)
+				else if (newAppState.Route.HasNode(RouteDataNode.JoinKeys,2))
 				{
 				}
 			}
 
-			if (newAppState.Route.ThirdNode == RouteDataThirdNode.Synchronization)
+			if (newAppState.Route.HasNode(RouteDataNode.Synchronization,2))
 			{
 				var tasks = await GetDataProviderSynchronizationTasks(newAppState.Route.DataProviderId.Value);
 				var pageSize = 5;
@@ -74,7 +74,7 @@ internal partial class AppStateUseCase
 			{
 				newAppState = newAppState with { DataProviderSyncTasks = new() };
 			}
-			if (newAppState.Route.ThirdNode == RouteDataThirdNode.Data)
+			if (newAppState.Route.HasNode(RouteDataNode.Data,2))
 			{
 				var dt = await GetDataProviderData(newAppState.Route.DataProviderId.Value, newAppState.Route.Search,
 					(newAppState.Route.Page ?? 1), (newAppState.Route.PageSize ?? TfConstants.PageSize));

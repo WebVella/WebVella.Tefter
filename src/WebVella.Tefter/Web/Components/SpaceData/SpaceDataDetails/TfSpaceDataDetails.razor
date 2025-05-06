@@ -4,76 +4,72 @@
 {
 	<TfLayoutBodyMain>
 		<Header>
-			<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
+			<TfPageHeader>@LOC("Space")</TfPageHeader>
 		</Header>
 		<ChildContent>
 			<FluentMessageBar Title="No space found"
-							  Style="@("border: 1px solid var(--neutral-base-color)")"
-							  Intent="MessageIntent.Info"
-							  AllowDismiss="false">
+			Style="@("border: 1px solid var(--neutral-base-color)")"
+			Intent="MessageIntent.Info"
+			AllowDismiss="false">
 				No spaces found yet notification
 			</FluentMessageBar>
 		</ChildContent>
 	</TfLayoutBodyMain>
 }
+else if (TfAppState.Value.SpaceDataList.Count == 0)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar Title="No datasets yet"
+			Style="@("border: 1px solid var(--neutral-base-color)")"
+			Intent="MessageIntent.Info"
+			AllowDismiss="false">
+				No Space datasets created yet
+			</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (TfAppState.Value.SpaceData is null)
+{
+	<TfLayoutBodyMain>
+		<Header>
+			<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
+		</Header>
+		<ChildContent>
+			<FluentMessageBar Title="Dataset Not found"
+			Style="@("border: 1px solid var(--neutral-base-color)")"
+			Intent="MessageIntent.Info"
+			AllowDismiss="false">
+				The corresponding dataset was not found.
+			</FluentMessageBar>
+		</ChildContent>
+	</TfLayoutBodyMain>
+}
+else if (Menu == "data"){
+	<TfSpaceDataData />
+}
 else
 {
-	@if (TfAppState.Value.SpaceDataList.Count == 0)
-	{
-		<TfLayoutBodyMain>
-			<Header>
-				<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
-			</Header>
-			<ChildContent>
-				<FluentMessageBar Title="No datasets yet"
-								  Style="@("border: 1px solid var(--neutral-base-color)")"
-								  Intent="MessageIntent.Info"
-								  AllowDismiss="false">
-					Space datasets created yet
-				</FluentMessageBar>
-			</ChildContent>
-		</TfLayoutBodyMain>
-	}
-	else if (TfAppState.Value.SpaceData is null)
-	{
-		<TfLayoutBodyMain>
-			<Header>
-				<TfPageHeader>@LOC("Space Pages")</TfPageHeader>
-			</Header>
-			<ChildContent>
-				<FluentMessageBar Title="Dataset Not found"
-								  Style="@("border: 1px solid var(--neutral-base-color)")"
-								  Intent="MessageIntent.Info"
-								  AllowDismiss="false">
-					The corresponding dataset was not found.
-				</FluentMessageBar>
-			</ChildContent>
-		</TfLayoutBodyMain>
-	}
-	else if (Menu == "data")
-	{
-		<TfSpaceDataData />
-
-	}
-	else
-	{
-		<TfLayoutBodyMain HeaderClass="aside-tabs">
-			<Header>
-				<TfPageHeader>@LOC("Manage dataset '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
-			</Header>
-			<HeaderAside>
-				<TfSpaceDataDetailsNav />
-			</HeaderAside>
-			<ChildContent>
-				@if (Menu == "views")
-				{
-					<TfSpaceDataViews />
-				}
-				else
-				{
-					<TfSpaceDataManage />
-				}
-			</ChildContent>
-		</TfLayoutBodyMain>
-	}
+	<TfLayoutBodyMain HeaderClass="aside-tabs">
+		<Header>
+			<TfPageHeader>@LOC("Manage dataset '{0}'", TfAppState.Value.SpaceData.Name)</TfPageHeader>
+		</Header>
+		<HeaderAside>
+			<TfSpaceDataDetailsNav />
+		</HeaderAside>
+		<ChildContent>
+			@if (Menu == "views")
+			{
+				<TfSpaceDataViews />
+			}
+			else
+			{
+				<TfSpaceDataManage />
+			}
+		</ChildContent>
+	</TfLayoutBodyMain>
 }
+

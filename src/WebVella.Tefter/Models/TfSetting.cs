@@ -5,7 +5,7 @@
 public class TfSetting
 {
 	[TfDboModelProperty("name")]
-	public string Name { get; set; }
+	public string Key { get; set; }
 
 	[TfDboModelProperty("value")]
 	public string Value { get; set; }

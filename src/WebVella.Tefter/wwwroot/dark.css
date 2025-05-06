@@ -495,9 +495,10 @@ fluent-combobox.disabled::part(control) {
   border-color: var(--neutral-stroke-input-rest);
 }
 fluent-switch {
-  --neutral-foreground-rest: var(--tf-zinc-700);
+  --neutral-foreground-rest: var(--tf-zinc-200);
 }
 fluent-switch::part(switch) {
+  --neutral-foreground-rest: var(--tf-zinc-700);
   background: var(--tf-zinc-900);
 }
 fluent-switch.checked::part(switch) {
@@ -647,4 +648,7 @@ fluent-data-grid-row:has([row-selected]) {
 }
 .tf-menu-item.tf-selected {
   background: var(--tf-layout-color-accent);
+}
+body .components-reconnect-dialog {
+  background: red !important;
 }

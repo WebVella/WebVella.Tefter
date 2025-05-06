@@ -8,6 +8,6 @@ public partial class AdminTemplateDetailsPage : TfBasePage
 	{
 		base.OnInitialized();
 		if(ResultId is null)
-			Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesResultPageUrl,(int)TfTemplateResultType.File));
+			Navigator.NavigateTo(string.Format(TfConstants.AdminTemplatesTypePageUrl,(int)TfTemplateResultType.File));
 	}
 }

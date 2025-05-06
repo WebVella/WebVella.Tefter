@@ -11,8 +11,8 @@ internal partial class AppStateUseCase
 		TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
-			&& newAppState.Route.SecondNode == RouteDataSecondNode.SharedColumns)
+			!(newAppState.Route.HasNode(RouteDataNode.Admin,0)
+			&& newAppState.Route.HasNode(RouteDataNode.SharedColumns,1))
 			)
 		{
 			newAppState = newAppState with

@@ -3,6 +3,7 @@
 public partial class TfThemeDefinition : TfBaseComponent
 {
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
+	[Parameter] public DesignThemeModes? Mode { get; set; } = null;
 
 	private string _themeStyles = "";
 	private DesignThemeModes _mode = DesignThemeModes.System;
@@ -45,26 +46,31 @@ public partial class TfThemeDefinition : TfBaseComponent
 
 	private async Task _initThemeStyles()
 	{
-
-		_mode = DesignThemeModes.Dark;
 		var cacheKey = ConfigurationService.CacheKey;
-		if (TfUserState.Value.CurrentUser is not null && TfUserState.Value.CurrentUser.Settings is not null)
+		if (Mode is not null)
 		{
-			_mode = TfUserState.Value.CurrentUser.Settings.ThemeMode;
+			_mode = Mode.Value;
 		}
-		if (_mode == DesignThemeModes.System)
+		else
 		{
-			try
+			_mode = DesignThemeModes.Dark;
+			if (TfUserState.Value.CurrentUser is not null && TfUserState.Value.CurrentUser.Settings is not null)
 			{
-				var browserModeIsDark = await _getIsDarkModeFromBrowser();
-				_mode = browserModeIsDark ? DesignThemeModes.Dark : DesignThemeModes.Light;
+				_mode = TfUserState.Value.CurrentUser.Settings.ThemeMode;
 			}
-			catch
+			if (_mode == DesignThemeModes.System)
 			{
-				//there is a strange error here that happens when the browser stays opened for long
+				try
+				{
+					var browserModeIsDark = await _getIsDarkModeFromBrowser();
+					_mode = browserModeIsDark ? DesignThemeModes.Dark : DesignThemeModes.Light;
+				}
+				catch
+				{
+					//there is a strange error here that happens when the browser stays opened for long
+				}
 			}
 		}
-
 		var sb = new StringBuilder();
 		//Dark
 		if (_mode == DesignThemeModes.Dark)

@@ -7,7 +7,7 @@ internal partial class AppStateUseCase
 		TfAppState newAppState, TfAppState oldAppState,
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
-		if (newAppState.Route.FirstNode == RouteDataFirstNode.Admin)
+		if (newAppState.Route.HasNode(RouteDataNode.Admin, 0))
 		{
 			newAppState = newAppState with { CurrentUserSpaces = new(), Space = null };
 			return (newAppState, newAuxDataState);
@@ -30,7 +30,15 @@ internal partial class AppStateUseCase
 
 			var spaceDataList = GetSpaceDataList(space.Id);
 			var spaceViewList = GetSpaceViewList(space.Id);
-			newAppState = newAppState with { Space = space, SpaceNodes = spaceNodes, SpaceDataList = spaceDataList, SpaceViewList = spaceViewList };
+			var userRoles = await GetRolesAsync();
+			newAppState = newAppState with
+			{
+				Space = space,
+				SpaceNodes = spaceNodes,
+				SpaceDataList = spaceDataList,
+				SpaceViewList = spaceViewList,
+				UserRoles = userRoles
+			};
 		}
 		else
 		{
@@ -101,6 +109,57 @@ internal partial class AppStateUseCase
 
 			}
 			return Task.FromResult(allSpaces.OrderBy(x => x.Position).Take(10).ToList());
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+				exception: ex,
+				toastErrorMessage: "Unexpected Error",
+				toastValidationMessage: "Invalid Data",
+				notificationErrorTitle: "Unexpected Error",
+				toastService: _toastService,
+				messageService: _messageService
+			);
+			return Task.FromResult(new List<TucSpace>());
+		}
+	}
+
+	internal virtual Task<List<TucSpace>> GetAllUserSpaceListAsync(Guid userId)
+	{
+		try
+		{
+			var allSpaces = _tfService.GetSpacesListForUser(userId)
+				.Select(s => new TucSpace(s))
+				.OrderBy(x => x.Position)
+				.ToList();
+
+			var spacesHS = allSpaces.Select(x => x.Id).Distinct().ToHashSet();
+
+			var allSpaceNodes = _tfService.GetAllSpacePages();
+
+			var spaceNodeDict = new Dictionary<Guid, List<TfSpacePage>>();
+			foreach (var item in allSpaceNodes)
+			{
+				if (!spacesHS.Contains(item.SpaceId))
+					continue;
+
+				if (!spaceNodeDict.ContainsKey(item.SpaceId))
+					spaceNodeDict[item.SpaceId] = new();
+
+				spaceNodeDict[item.SpaceId].Add(item);
+			}
+
+			foreach (var space in allSpaces)
+			{
+				if (spaceNodeDict.ContainsKey(space.Id) && spaceNodeDict[space.Id].Count > 0)
+				{
+					var spacePageNode = spaceNodeDict[space.Id].FindItemByMatch((x) => x.Type == TfSpacePageType.Page, (x) => x.ChildPages);
+					if (spacePageNode != null)
+						space.DefaultNodeId = spacePageNode.Id;
+				}
+
+			}
+			return Task.FromResult(allSpaces.OrderBy(x => x.Position).ToList());
 		}
 		catch (Exception ex)
 		{
@@ -189,6 +248,18 @@ internal partial class AppStateUseCase
 		_tfService.DeleteSpace(spaceId);
 	}
 
+	internal virtual TucSpace SetSpacePrivacy(
+		Guid spaceId,
+		bool isPrivate)
+	{
+		var space = _tfService.GetSpace(spaceId);
+		if (space is null)
+			throw new Exception("Space not found");
+		space.IsPrivate = isPrivate;
+		var result = _tfService.UpdateSpace(space);
+		return new TucSpace(result);
+	}
+
 	internal virtual List<TucSpaceNode> GetSpaceNodes(
 		Guid spaceId)
 	{
@@ -232,9 +303,9 @@ internal partial class AppStateUseCase
 		TucSpaceNode node,
 		bool isMoveUp)
 	{
-		if (isMoveUp) 
+		if (isMoveUp)
 			node.Position--;
-		else 
+		else
 			node.Position++;
 
 		return UpdateSpaceNode(node);
@@ -253,5 +324,71 @@ internal partial class AppStateUseCase
 		//newNodeId is the id of newly created node copy of specified one by nodeId argument
 		var (newNodeId, nodesList) = _tfService.CopySpacePage(nodeId);
 		return nodesList.Select(x => new TucSpaceNode(x)).ToList();
+	}
+
+	internal virtual async Task<TucSpace> AddRoleToSpaceAsync(Guid roleId, Guid spaceId)
+	{
+		try
+		{
+			var space = _tfService.GetSpace(spaceId);
+			if (space is null)
+				throw new Exception("User not found");
+
+			var roleSM = await _tfService.GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (space.Roles.Any(x => x.Id == roleId))
+				return new TucSpace(space);
+
+			_tfService.AddSpacesRole(new List<TfSpace> { space }, roleSM);
+
+			return new TucSpace(_tfService.GetSpace(spaceId));
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
+	}
+
+	internal virtual async Task<TucSpace> RemoveRoleFromSpaceAsync(Guid roleId, Guid spaceId)
+	{
+		try
+		{
+			var space = _tfService.GetSpace(spaceId);
+			if (space is null)
+				throw new Exception("User not found");
+
+			var roleSM = await _tfService.GetRoleAsync(roleId);
+			if (roleSM is null)
+				throw new Exception("Role not found");
+
+			if (!space.Roles.Any(x => x.Id == roleId))
+				return new TucSpace(space);
+
+			_tfService.RemoveSpacesRole(new List<TfSpace> { space }, roleSM);
+
+			return new TucSpace(_tfService.GetSpace(spaceId));
+		}
+		catch (Exception ex)
+		{
+			ResultUtils.ProcessServiceException(
+					exception: ex,
+					toastErrorMessage: "Unexpected Error",
+					toastValidationMessage: "Invalid Data",
+					notificationErrorTitle: "Unexpected Error",
+					toastService: _toastService,
+					messageService: _messageService
+				);
+			return null;
+		}
 	}
 }

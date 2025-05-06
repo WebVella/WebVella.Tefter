@@ -9,8 +9,8 @@ internal partial class AppStateUseCase
 		TfAuxDataState newAuxDataState, TfAuxDataState oldAuxDataState)
 	{
 		if (
-			!(newAppState.Route.FirstNode == RouteDataFirstNode.Admin
-			&& newAppState.Route.SecondNode == RouteDataSecondNode.Templates)
+			!(newAppState.Route.HasNode(RouteDataNode.Admin,0)
+			&& newAppState.Route.HasNode(RouteDataNode.Templates,1))
 			)
 		{
 			newAppState = newAppState with

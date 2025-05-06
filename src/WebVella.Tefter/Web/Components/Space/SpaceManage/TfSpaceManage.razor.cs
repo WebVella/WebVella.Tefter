@@ -2,10 +2,31 @@
 [LocalizationResource("WebVella.Tefter.Web.Components.Space.SpaceManage.TfSpaceManage", "WebVella.Tefter")]
 public partial class TfSpaceManage : TfBaseComponent
 {
+	[Parameter] public string Menu { get; set; } = "";
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 	[Inject] private AppStateUseCase UC { get; set; }
 
 	private bool _submitting = false;
+
+	private TucRole _adminRole
+	{
+		get
+		{
+			return TfAppState.Value.UserRoles.Single(x => x.Id == TfConstants.ADMIN_ROLE_ID);
+		}
+	}
+	private List<TucRole> _roleOptions
+	{
+		get
+		{
+			var allRolesWithoutAdmin = TfAppState.Value.UserRoles.Where(x => x.Id != TfConstants.ADMIN_ROLE_ID).ToList();
+			if (TfAppState.Value.Space.Roles.Count == 0) return allRolesWithoutAdmin;
+			return allRolesWithoutAdmin.Where(x => !TfAppState.Value.Space.Roles.Any(u => x.Id == u.Id)).ToList();
+		}
+	}
+	private TucRole _selectedRole = null;
+	public Guid? _removingRoleId = null;
+
 	private async Task _editSpace()
 	{
 		var dialog = await DialogService.ShowDialogAsync<TfSpaceManageDialog>(
@@ -219,6 +240,85 @@ public partial class TfSpaceManage : TfBaseComponent
 			}
 			));
 		}
+	}
+
+	private async Task _addRole()
+	{
+		if (_submitting) return;
+
+		if (_selectedRole is null) return;
+		try
+		{
+			_submitting = true;
+			var result = await UC.AddRoleToSpaceAsync(_selectedRole.Id, TfAppState.Value.Space.Id);
+			_updateSpaceInState(result);
+			ToastService.ShowSuccess(LOC("Space role added"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_submitting = false;
+			_selectedRole = null;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+	private async Task _removeRole(TucRole role)
+	{
+		if (_removingRoleId is not null) return;
+		if (role is null) return;
+		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this role unassigned?")))
+			return;
+		try
+		{
+			_removingRoleId = role.Id;
+			var result = await UC.RemoveRoleFromSpaceAsync(role.Id, TfAppState.Value.Space.Id);
+			_updateSpaceInState(result);
+			ToastService.ShowSuccess(LOC("Space role removed"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_removingRoleId = null;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private async Task _setPrivacy(bool newValue)
+	{
+		try
+		{
+			var result = UC.SetSpacePrivacy(TfAppState.Value.Space.Id, newValue);
+			_updateSpaceInState(result);
+			ToastService.ShowSuccess(LOC("Space access changed"));
+		}
+		catch (Exception ex)
+		{
+			ProcessException(ex);
+		}
+		finally
+		{
+			_removingRoleId = null;
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+
+	private void _updateSpaceInState(TucSpace space)
+	{
+		var state = TfAppState.Value with { Space = space };
+		var recIndex = TfAppState.Value.CurrentUserSpaces.FindIndex(x => x.Id == space.Id);
+		if (recIndex > 0)
+		{
+			var userSpaces = state.CurrentUserSpaces.ToList();
+			userSpaces[recIndex] = space;
+			state = state with { CurrentUserSpaces = userSpaces };
+		}
+		Dispatcher.Dispatch(new SetAppStateAction(component: this, state: state));
 	}
 
 

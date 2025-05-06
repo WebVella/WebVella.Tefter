@@ -28,6 +28,8 @@ public record TucSpace
 		}
 	}
 
+	public List<TucRole> Roles { get; set; } = new();
+
 	public TucSpace() { }
 
 	public TucSpace(TfSpace model)
@@ -38,6 +40,7 @@ public record TucSpace
 		IsPrivate = model.IsPrivate;
 		IconString = model.Icon;
 		Color = Web.Utils.EnumExtensions.ConvertIntToEnum<TfColor>(model.Color, TfColor.Emerald500);
+		Roles = model.Roles is null ? new() : model.Roles.Select(x => new TucRole(x)).ToList();
 	}
 
 	public TfSpace ToModel()
@@ -49,7 +52,8 @@ public record TucSpace
 			Position = Position,
 			IsPrivate = IsPrivate,
 			Icon = IconString,
-			Color = (short)Color
+			Color = (short)Color,
+			Roles = Roles is null ? null : Roles.Select(x => x.ToModel()).ToList()
 		};
 	}
 }

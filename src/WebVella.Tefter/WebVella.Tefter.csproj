@@ -54,7 +54,7 @@
 		<PackageReference Include="Fluxor" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
 		<PackageReference Include="Fluxor.Blazor.Web.ReduxDevTools" Version="6.6.0" />
-		<PackageReference Include="Markdig" Version="0.41.0" />
+		<PackageReference Include="Markdig" Version="0.41.1" />
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.4" />
@@ -74,7 +74,7 @@
 		<PackageReference Include="Serilog.Extensions.Logging" Version="9.0.1" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
 		<PackageReference Include="System.Drawing.Common" Version="9.0.4" />
 		<PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
@@ -85,7 +85,16 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+	  <EmbeddedResource Update="UseCases\_Install\InstallUseCase.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\Admin\AdminUsersActions\TfAdminUsersActions.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Install\RecipeList\TfRecipeList.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Install\RecipeDetails\TfRecipeDetails.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	</ItemGroup>

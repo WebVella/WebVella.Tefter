@@ -10,7 +10,7 @@ else
 	<TfCard>
 		<TitleTemplate>
 			<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
-				@if (TfAppState.Value.Route.ThirdNode == RouteDataThirdNode.Details)
+				@if (TfAppState.Value.Route.HasNode(RouteDataNode.SpaceDataId, 3))
 				{
 					<FluentButton Appearance="@Appearance.Outline" OnClick="_deleteSpaceData">
 						@LOC("Delete")

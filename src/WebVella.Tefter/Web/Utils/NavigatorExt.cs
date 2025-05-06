@@ -1,15 +1,16 @@
 ﻿namespace WebVella.Tefter.Web.Utils;
 using WebVella.Tefter.Web.Models;
-public static class NavigatorExt
+public static partial class NavigatorExt
 {
-	internal static bool UrlHasState(this NavigationManager navigator){ 
+	internal static bool UrlHasState(this NavigationManager navigator)
+	{
 		Uri uri = new Uri(navigator.Uri);
 		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-		if(nodes.Length == 0)  return TfConstants.SupportedUriFirstNodes.Contains(String.Empty);
+		if (nodes.Length == 0) return TfConstants.SupportedUriFirstNodes.Contains(String.Empty);
 
 		var firstNode = nodes[0].ToLowerInvariant();
-		if(TfConstants.SupportedUriFirstNodes.Any(x=> x.ToLowerInvariant() == firstNode)) return true;
-		
+		if (TfConstants.SupportedUriFirstNodes.Any(x => x.ToLowerInvariant() == firstNode)) return true;
+
 		return false;
 	}
 
@@ -18,251 +19,21 @@ public static class NavigatorExt
 		Uri uri = null;
 		if (String.IsNullOrWhiteSpace(url))
 			uri = new Uri(navigator.Uri);
-		else if(url.ToLowerInvariant().StartsWith("http")){ 
+		else if (url.ToLowerInvariant().StartsWith("http"))
+		{
 			uri = new Uri(url);
 		}
-		else {
-			if(url.StartsWith("/")) url = url.Substring(1, url.Length - 1);
+		else
+		{
+			if (url.StartsWith("/")) url = url.Substring(1, url.Length - 1);
 
 			url = navigator.BaseUri + url;
 			uri = new Uri(url);
 		}
-			
+
 		return GetNodeData(uri);
 	}
 
-	internal static TucRouteState GetNodeData(this Uri uri)
-	{
-		var result = new TucRouteState();
-
-		var nodes = uri.LocalPath.Split('/', StringSplitOptions.RemoveEmptyEntries);
-		var dictIndex = 0;
-		foreach (var item in nodes)
-		{
-			result.NodesDict[dictIndex] = item;
-			dictIndex++;
-		}
-		if (result.NodesDict.Count == 0)
-		{
-			result = result with { FirstNode = RouteDataFirstNode.Home };
-			result = result with { SecondNode = RouteDataSecondNode.Dashboard };
-		}
-		else if (result.NodesDict[0] == TfConstants.RouteNameAdmin)
-		{
-			result = result with { FirstNode = RouteDataFirstNode.Admin };
-			result = result with { SecondNode = RouteDataSecondNode.Dashboard };
-			//Process 2
-			if (result.NodesDict.Count >= 2)
-			{
-				if (result.NodesDict[1] == TfConstants.RouteNameUsers)
-				{
-					result = result with { SecondNode = RouteDataSecondNode.Users };
-				}
-				else if (result.NodesDict[1] == TfConstants.RouteNameRoles)
-				{
-					result = result with { SecondNode = RouteDataSecondNode.Roles };
-				}
-				else if (result.NodesDict[1] == TfConstants.RouteNameDataProviders)
-				{
-					result = result with { SecondNode = RouteDataSecondNode.DataProviders };
-				}
-				else if (result.NodesDict[1] == TfConstants.RouteNameSharedColumns)
-				{
-					result = result with { SecondNode = RouteDataSecondNode.SharedColumns };
-				}
-				else if (result.NodesDict[1] == TfConstants.RouteNamePages)
-				{
-					result = result with { SecondNode = RouteDataSecondNode.Pages };
-				}
-				else if (result.NodesDict[1] == TfConstants.RouteNameFileRepository)
-				{
-					result = result with { SecondNode = RouteDataSecondNode.FileRepository };
-				}
-				else if (result.NodesDict[1] == TfConstants.RouteNameTemplates)
-				{
-					result = result with { SecondNode = RouteDataSecondNode.Templates };
-				}
-				//Process 3
-				if (result.NodesDict.Count >= 3)
-				{
-					if (result.SecondNode == RouteDataSecondNode.Users)
-					{
-						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { UserId = outGuid };
-					}
-					else if (result.SecondNode == RouteDataSecondNode.Roles)
-					{
-						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { RoleId = outGuid };
-					}
-					else if (result.SecondNode == RouteDataSecondNode.DataProviders)
-					{
-						if (Guid.TryParse(result.NodesDict[2], out Guid outGuid)) result = result with { DataProviderId = outGuid };
-					}
-					else if (result.SecondNode == RouteDataSecondNode.Templates)
-					{
-						if (Enum.TryParse<TfTemplateResultType>(result.NodesDict[2], out TfTemplateResultType outEnum)) result = result with { TemplateResultType = outEnum };
-					}
-				}
-
-				//Process 4
-				if (result.NodesDict.Count >= 4)
-				{
-					if (result.NodesDict[3] == TfConstants.RouteNameAccess)
-					{
-						result = result with { ThirdNode = RouteDataThirdNode.Access };
-					}
-					else if (result.NodesDict[3] == TfConstants.RouteNameSaves)
-					{
-						result = result with { ThirdNode = RouteDataThirdNode.Saves };
-					}
-					else if (result.NodesDict[3] == TfConstants.RouteNameSchema)
-					{
-						result = result with { ThirdNode = RouteDataThirdNode.Schema };
-					}
-					else if (result.NodesDict[3] == TfConstants.RouteNameKeys)
-					{
-						result = result with { ThirdNode = RouteDataThirdNode.JoinKeys };
-					}
-					else if (result.NodesDict[3] == TfConstants.RouteNameAux)
-					{
-						result = result with { ThirdNode = RouteDataThirdNode.JoinedData };
-					}
-					else if (result.NodesDict[3] == TfConstants.RouteNameSynchronization)
-					{
-						result = result with { ThirdNode = RouteDataThirdNode.Synchronization };
-					}
-					else if (result.NodesDict[3] == TfConstants.RouteNameData)
-					{
-						result = result with { ThirdNode = RouteDataThirdNode.Data };
-					}
-					else if (result.SecondNode == RouteDataSecondNode.Templates && result.TemplateResultType is not null)
-					{
-						if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { TemplateId = outGuid };
-					}
-				}
-			}
-
-		}
-		else if (result.NodesDict[0] == TfConstants.RouteNameSpace)
-		{
-			result = result with { FirstNode = RouteDataFirstNode.Space };
-			//Process 2
-			if (result.NodesDict.Count >= 2)
-			{
-				result = result with { SecondNode = RouteDataSecondNode.Dashboard };
-				if (Guid.TryParse(result.NodesDict[1], out Guid outGuid)) result = result with { SpaceId = outGuid };
-			}
-			//Process 3
-			if (result.NodesDict.Count >= 3)
-			{
-				if (result.NodesDict[2] == TfConstants.RouteNameSpacePage)
-				{
-					result = result with
-					{
-						SecondNode = RouteDataSecondNode.SpacePage,
-						ThirdNode = RouteDataThirdNode.Details
-					};
-				}
-				else if (result.NodesDict[2] == TfConstants.RouteNameSpaceView)
-				{
-					result = result with
-					{
-						SecondNode = RouteDataSecondNode.SpaceView,
-						ThirdNode = RouteDataThirdNode.Manage
-					};
-				}
-				else if (result.NodesDict[2] == TfConstants.RouteNameSpaceData)
-				{
-					result = result with
-					{
-						SecondNode = RouteDataSecondNode.SpaceData,
-						ThirdNode = RouteDataThirdNode.Details
-					};
-					if (result.NodesDict.Count >= 5)
-					{
-						if (result.NodesDict[4] == TfConstants.RouteNameViews)
-						{
-							result = result with
-							{
-								ThirdNode = RouteDataThirdNode.Views
-							};
-						}
-						else if (result.NodesDict[4] == TfConstants.RouteNameData)
-						{
-							result = result with
-							{
-								ThirdNode = RouteDataThirdNode.Data
-							};
-						}
-					}
-				}
-			}
-			//Process 4
-			if (result.NodesDict.Count >= 4)
-			{
-				if (result.SecondNode == RouteDataSecondNode.SpacePage)
-				{
-					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpaceNodeId = outGuid };
-				}
-				else if (result.SecondNode == RouteDataSecondNode.SpaceView)
-				{
-					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpaceViewId = outGuid };
-				}
-				else if (result.SecondNode == RouteDataSecondNode.SpaceData)
-				{
-					if (Guid.TryParse(result.NodesDict[3], out Guid outGuid)) result = result with { SpaceDataId = outGuid };
-				}
-			}
-			//process 5
-			if (result.NodesDict.Count >= 5)
-			{
-				if (result.NodesDict[4] == TfConstants.RouteNameManage)
-				{
-					result = result with { ThirdNode = RouteDataThirdNode.Manage };
-				}
-				else if (result.NodesDict[4] == TfConstants.RouteNameViews)
-				{
-					result = result with { ThirdNode = RouteDataThirdNode.Views };
-				}
-			}
-		}
-		else if (result.NodesDict[0] == TfConstants.RouteNamePages)
-		{
-			result = result with { FirstNode = RouteDataFirstNode.Pages };
-		}
-		//Query
-		var page = GetIntFromQuery(uri, TfConstants.PageQueryName, 1);
-		var pageSize = GetIntFromQuery(uri, TfConstants.PageSizeQueryName, null);
-		var search = GetStringFromQuery(uri, TfConstants.SearchQueryName, null);
-		List<TucFilterBase> filters = null;
-		var filtersString = GetStringFromQuery(uri, TfConstants.FiltersQueryName, null);
-		if (!String.IsNullOrWhiteSpace(filtersString)) filters = DeserializeFiltersFromUrl(filtersString, true);
-		List<TucSort> sorts = null;
-		var sortString = GetStringFromQuery(uri, TfConstants.SortsQueryName, null);
-		if (!String.IsNullOrWhiteSpace(sortString)) sorts = DeserializeSortsFromUrl(sortString, true);
-
-		Guid? activeSaveId = GetGuidFromQuery(uri, TfConstants.ActiveSaveQueryName, null);
-		bool searchInBookmarks = GetBooleanFromQuery(uri, TfConstants.SearchInBookmarksQueryName, true).Value;
-		bool searchInSaves = GetBooleanFromQuery(uri, TfConstants.SearchInSavesQueryName, true).Value;
-		bool searchInViews = GetBooleanFromQuery(uri, TfConstants.SearchInViewsQueryName, true).Value;
-
-		Guid? spaceViewPresetId = GetGuidFromQuery(uri,TfConstants.PresetIdQueryName, null);
-
-		result = result with
-		{
-			Page = page,
-			PageSize = pageSize,
-			Search = search,
-			Filters = filters,
-			Sorts = sorts,
-			ActiveSaveId = activeSaveId,
-			SearchInBookmarks = searchInBookmarks,
-			SearchInSaves = searchInSaves,
-			SearchInViews = searchInViews,
-			SpaceViewPresetId = spaceViewPresetId,
-		};
-
-		return result;
-	}
 
 	public static async Task ApplyChangeToUrlQuery(this NavigationManager navigator, Dictionary<string, object> replaceDict, bool forceLoad = false)
 	{
