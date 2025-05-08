@@ -9,11 +9,6 @@ public partial class TfRecipeStepForm : TfRecipeStepFormBase
 	private TfRecipeStepFormBase compRef;
 	private string _renderedStepJson = null;
 
-	protected override void OnInitialized()
-	{
-		base.OnInitialized();
-	}
-
 	protected override bool ShouldRender()
 	{
 		var stepJson = JsonSerializer.Serialize(Step);
@@ -23,5 +18,6 @@ public partial class TfRecipeStepForm : TfRecipeStepFormBase
 		}
 		return false;
 	}
+	public override void ValidateForm() { }
 }
 

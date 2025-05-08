@@ -7,8 +7,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Files\worldcities-template1.xlsx" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Files\worldcities-template1.xlsx">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
 	  <EmbeddedResource Include="Files\worldcities.csv">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </EmbeddedResource>
 	</ItemGroup>
 

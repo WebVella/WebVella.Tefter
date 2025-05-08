@@ -4,14 +4,15 @@ namespace WebVella.Tefter.Web.Components;
 public partial class TfInfoRecipeStepForm : TfRecipeStepFormBase
 {
 	[Parameter] public TfInfoRecipeStep Step { get; set; }
-
-	protected override void OnInitialized()
+	protected override void OnAfterRender(bool firstRender)
 	{
-		base.OnInitialized();
-		base.InitForm(Step);
-		ComponentId = Step.StepId;
-		Step.Component = this;
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
+			ComponentId = Step.StepId;
+			Step.Component = this;
+		}
 	}
-
+	public override void ValidateForm() { }
 }
 

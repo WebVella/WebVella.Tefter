@@ -2,15 +2,37 @@
 
 public abstract class TfRecipeStepBase
 {
+	/// <summary>
+	/// Unique identifier of the step
+	/// </summary>
 	public Guid StepId { get; set; }
 
-	//name of the step
+	/// <summary>
+	/// The Title of the step in the navigation menu
+	/// </summary>
 	public string StepMenuTitle { get; set; }
+
+		/// <summary>
+	/// Title of the step presented in the step content area
+	/// </summary>
 	public string StepContentTitle { get; set; }
+	/// <summary>
+	/// Description of the step presented under the title in the step content area
+	/// </summary>
 	public string StepContentDescription { get; set; }
+	/// <summary>
+	/// Is this step visible for the user during the recipe management
+	/// </summary>
 	public bool Visible { get; set; } = true;
+
+	/// <summary>
+	/// Set by the engine. Used in the recipe management screen.
+	/// </summary>
 	[JsonIgnore]
-	public TfRecipeStepFormBase Component { get; set; } = new();
+	public TfRecipeStepFormBase Component { get; set; }
+	/// <summary>
+	/// Set by the engine. Used in the recipe management screen.
+	/// </summary>
 	public List<ValidationError> Errors { get; set; } = new();
 }
 
@@ -62,9 +84,18 @@ public class TfCreateRepositoryFileRecipeStep : TfRecipeStepBase
 	public string EmbeddedResourceName { get; set; }
 }
 
+public class TfCreateBlobRecipeStep : TfRecipeStepBase
+{
+	public Guid BlobId { get; set; }
+	public Assembly Assembly { get; set; }
+	public string EmbeddedResourceName { get; set; }
+	public bool IsTemporary { get; set; } = false;
+}
+
 public class TfCreateDataProviderRecipeStep : TfRecipeStepBase
 {
 	public Guid DataProviderId { get; set; }
+	public int DataProviderIndex { get; set; }
 	public ITfDataProviderAddon Type { get; set; }
 	public string Name { get; set; }
 	public List<TfDataProviderColumn> Columns { get; set; } = new();
@@ -119,10 +150,30 @@ public class TfCreateSpacePageRecipeStep : TfRecipeStepBase
 	public string Name { get; set; }
 	public short Position { get; set; } = 100;
 	public TfSpacePageType Type { get; set; } = TfSpacePageType.Page;
-	public Type ComponentType { get; set; } = typeof(TfSpaceViewSpacePageAddon);
+	public ITfSpacePageAddon ComponentType { get; set; }
 	public Guid? ComponentId { get; set; } = null;
 	public string ComponentOptionsJson { get; set; } = "{}";
 	public List<TfSpacePage> ChildPages { get; set; } = new();
 
 	public string FluentIconName { get; set; }
+}
+
+public class TfCreateTemplateRecipeStep : TfRecipeStepBase
+{
+	public Guid TemplateId { get; set; }
+	public string Name { get; set; }
+	public string Description { get; set; }
+	public string FluentIconName { get; set; }
+	public ITfTemplateProcessorAddon ContentProcessorType { get; set; }
+	public bool IsEnabled { get; set; } = true;
+	public bool IsSelectable { get; set; } = true;
+	public string SettingsJson { get; set; } = "{}";
+	public List<Guid> SpaceDataList { get; set; } = new();
+	/// <summary>
+	/// will be used if an uploaded file is needed
+	/// </summary>
+	public string EmbeddedResourceName { get; set; }
+	public string FileName { get; set; }
+	public Assembly Assembly { get; set; }
+
 }

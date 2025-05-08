@@ -91,6 +91,9 @@
 	  <EmbeddedResource Update="Web\Components\Admin\AdminUsersActions\TfAdminUsersActions.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Recipe\CreateRoleRecipeStepForm\TfCreateRoleRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\Recipe\GroupRecipeStepForm\TfGroupRecipeStepForm.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>

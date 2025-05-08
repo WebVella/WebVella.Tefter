@@ -400,9 +400,14 @@ fluent-anchored-region fluent-menu {
 }
 fluent-anchored-region fluent-menu-item {
   --neutral-foreground-rest: var(--tf-zinc-200);
+  --neutral-fill-secondary-rest: var(--tf-zinc-700);
   --neutral-fill-stealth-hover: var(--tf-zinc-700);
   --neutral-fill-stealth-active: var(--tf-zinc-600);
   --neutral-fill-stealth-focus: var(--tf-zinc-800);
+}
+fluent-anchored-region fluent-menu-item *[slot="end"] {
+  margin-inline-start: 5px !important;
+  margin-inline-end: 0 !important;
 }
 fluent-anchored-region fluent-divider {
   --neutral-stroke-divider-rest: var(--tf-zinc-700);
@@ -659,6 +664,6 @@ fluent-data-grid-row:has([row-selected]) {
 .tf-menu-item.tf-selected {
   background: var(--tf-layout-color-accent);
 }
-body .components-reconnect-dialog {
-  background: red !important;
+.fluent-toast {
+  --neutral-layer-floating: var(--neutral-fill-secondary-hover);
 }

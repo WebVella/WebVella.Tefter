@@ -30,6 +30,10 @@
 		{
 			<TfGroupRecipeStepForm Step="@((TfGroupRecipeStep)Step)" StepInfoDict="StepInfoDict" />
 		}
+		else if (Step.GetType() == typeof(TfCreateRoleRecipeStep))
+		{
+			<TfCreateRoleRecipeStepForm Step="@((TfCreateRoleRecipeStep)Step)" StepInfoDict="StepInfoDict" />
+		}
 		else if (Step.GetType() == typeof(TfCreateUserRecipeStep))
 		{
 			<TfCreateUserRecipeStepForm Step="@((TfCreateUserRecipeStep)Step)" StepInfoDict="StepInfoDict" />
@@ -40,7 +44,8 @@
 		}
 		else
 		{
-			<FluentMessageBar Intent="@MessageIntent.Error" AllowDismiss=false>@LOC("Step Type not supported")</FluentMessageBar>
+			<p>This step does not have any form to be filled.</p>
+			<p>Press Next to continue</p>
 
 		}
 	</div>

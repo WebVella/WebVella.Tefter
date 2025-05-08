@@ -1,9 +1,9 @@
 ﻿using WebVella.Tefter.UseCases.Recipe;
 
 namespace WebVella.Tefter.Web.Components;
-public partial class TfCreateUserRecipeStepForm : TfRecipeStepFormBase
+public partial class TfCreateRoleRecipeStepForm : TfRecipeStepFormBase
 {
-	[Parameter] public TfCreateUserRecipeStep Step { get; set; }
+	[Parameter] public TfCreateRoleRecipeStep Step { get; set; }
 
 	protected override void OnInitialized()
 	{
@@ -17,6 +17,7 @@ public partial class TfCreateUserRecipeStepForm : TfRecipeStepFormBase
 		{
 			ComponentId = Step.StepId;
 			Step.Component = this;
+
 			if (Step.Errors.Count > 0)
 			{
 				foreach (var item in Step.Errors)
@@ -36,26 +37,9 @@ public partial class TfCreateUserRecipeStepForm : TfRecipeStepFormBase
 		MessageStore.Clear();
 		var errors = new List<ValidationError>();
 
-		if (String.IsNullOrWhiteSpace(Step.Email))
+		if (String.IsNullOrWhiteSpace(Step.Name))
 		{
-			errors.Add(new ValidationError(nameof(Step.Email), LOC("required")));
-		}
-		else if (!Step.Email.IsEmail())
-		{
-			errors.Add(new ValidationError(nameof(Step.Email), LOC("invalid email")));
-		}
-
-		if (String.IsNullOrWhiteSpace(Step.Password))
-		{
-			errors.Add(new ValidationError(nameof(Step.Password), LOC("required")));
-		}
-		if (String.IsNullOrWhiteSpace(Step.FirstName))
-		{
-			errors.Add(new ValidationError(nameof(Step.FirstName), LOC("required")));
-		}
-		if (String.IsNullOrWhiteSpace(Step.LastName))
-		{
-			errors.Add(new ValidationError(nameof(Step.LastName), LOC("required")));
+			errors.Add(new ValidationError(nameof(Step.Name), LOC("required")));
 		}
 
 		foreach (var item in errors)

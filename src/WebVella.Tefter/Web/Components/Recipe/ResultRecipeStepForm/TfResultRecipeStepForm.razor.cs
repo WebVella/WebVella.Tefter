@@ -11,8 +11,6 @@ public partial class TfResultRecipeStepForm : TfRecipeStepFormBase
 	{
 		base.OnInitialized();
 		base.InitForm(Step);
-		ComponentId = Step.StepId;
-		Step.Component = this;
 		if (!Step.Result.IsSuccessful)
 		{
 			foreach (var stepResult in Step.Result.Steps)
@@ -21,5 +19,15 @@ public partial class TfResultRecipeStepForm : TfRecipeStepFormBase
 			}
 		}
 	}
+	protected override void OnAfterRender(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+		if (firstRender)
+		{
+			ComponentId = Step.StepId;
+			Step.Component = this;
+		}
+	}
+	public override void ValidateForm() { }
 }
 

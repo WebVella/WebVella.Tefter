@@ -18,7 +18,10 @@ public partial interface ITfService
 	public Guid CreateBlob(
 		string localPath,
 		bool temporary = false);
-
+	public void CreateBlob(
+		Guid blobId,
+		string localPath,
+		bool temporary = false);
 	public void UpdateBlob(
 		Guid blobId,
 		byte[] byteArray,
@@ -111,7 +114,8 @@ public partial class TfService : ITfService
 	private void CreateBlob(
 		Guid id,
 		Stream inputStream,
-		bool temporary = false)
+		bool temporary = false,
+		bool replaceIdIfExists = true)
 	{
 		try
 		{
@@ -125,6 +129,8 @@ public partial class TfService : ITfService
 			{
 				if (File.Exists(GetFileSystemPath(blobId, temporary)))
 				{
+					if(!replaceIdIfExists)
+						throw new Exception($"Blob Id ({id}) already exists.");
 					blobId = Guid.NewGuid();
 					continue;
 				}
@@ -190,6 +196,46 @@ public partial class TfService : ITfService
 			{
 				using var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 				return CreateBlob(stream, temporary);
+			}
+			finally
+			{
+				if (File.Exists(localPath))
+				{
+					File.Delete(localPath);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public void CreateBlob(
+		Guid blobId,
+		string localPath,
+		bool temporary = false)
+	{
+		try
+		{
+			if (blobId == Guid.Empty)
+			{
+				throw new Exception("blobId is not provided.");
+			}
+			if (string.IsNullOrEmpty(localPath))
+			{
+				throw new Exception("Local path is not provided.");
+			}
+
+			if (!File.Exists(localPath))
+			{
+				throw new Exception("File does not exists on provided local path.");
+			}
+
+			try
+			{
+				using var stream = File.Open(localPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+				CreateBlob(blobId, stream, temporary, replaceIdIfExists:false);
 			}
 			finally
 			{

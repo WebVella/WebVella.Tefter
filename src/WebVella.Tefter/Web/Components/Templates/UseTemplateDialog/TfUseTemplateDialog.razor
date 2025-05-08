@@ -12,21 +12,21 @@
 	@if (_currentStep == TfUseTemplateDialogStep.Result)
 	{
 		<FluentStack HorizontalAlignment="@HorizontalAlignment.Center">
-			<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Close")</FluentButton>
+			<FluentButton Appearance="Appearance.Outline" OnClick="@_cancel">@LOC("Close")</FluentButton>
 		</FluentStack>
 	}
 	else
 	{
 		<FluentStack HorizontalAlignment="@HorizontalAlignment.Stretch">
-			<FluentButton Appearance="Appearance.Neutral" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
+			<FluentButton Appearance="Appearance.Outline" OnClick="@_cancel">@LOC("Cancel")</FluentButton>
 			<FluentStack HorizontalAlignment="@HorizontalAlignment.Right">
 				@if (_currentStep == TfUseTemplateDialogStep.SelectTemplate)
 				{
-					<FluentButton Appearance="Appearance.Neutral" OnClick="@_next" IconEnd="@TfConstants.GetIcon("ArrowRight")">@LOC("Next")</FluentButton>
+					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("ArrowRight")">@LOC("Next")</FluentButton>
 				}
 				else if (_currentStep == TfUseTemplateDialogStep.ResultPreview)
 				{
-					<FluentButton Appearance="Appearance.Neutral" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
+					<FluentButton Appearance="Appearance.Outline" OnClick="@_back" IconStart="@TfConstants.GetIcon("ArrowLeft")">@LOC("Back")</FluentButton>
 					<FluentButton Appearance="Appearance.Accent" OnClick="@_next" IconEnd="@TfConstants.GetIcon("Send").WithColor(Color.Neutral)">@LOC("Submit")</FluentButton>
 				}
 			</FluentStack>
@@ -60,6 +60,7 @@
 		<div class="tf-grid-wrapper" style="margin-top:15px;">
 			<table class="tf-grid">
 				<thead class="tf-grid-thead">
+					<tr class="tf-grid-thead-bkg"></tr>
 					<tr class="tf-grid-tr">
 						<th class="tf-grid-th" style="width:120px;min-width:120px;"></th>
 						<th class="tf-grid-th" style="width:30px;min-width:30px;"></th>
@@ -83,7 +84,7 @@
 									}
 									else
 									{
-										<FluentButton OnClick="@(_=> _selectTemplate(row))" Appearance="Appearance.Neutral" Style="width:100%">select</FluentButton>
+										<FluentButton OnClick="@(_=> _selectTemplate(row))" Appearance="Appearance.Outline" Style="width:100%">select</FluentButton>
 									}
 
 								</div>

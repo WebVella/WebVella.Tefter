@@ -638,3 +638,6 @@ fluent-data-grid-row:has([row-selected]) {
 .tf-menu-item.tf-selected {
   background: var(--tf-layout-color-mute);
 }
+.fluent-toast {
+  --neutral-layer-floating: var(--neutral-fill-secondary-hover);
+}

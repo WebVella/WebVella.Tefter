@@ -8,6 +8,8 @@ using WebVella.Tefter.Addons;
 using WebVella.Tefter.DataProviders.Csv;
 using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
+using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
 using WebVella.Tefter.Web.Addons;
 
 namespace WebVella.Tefter.Recipes.Addons.Recipes;
@@ -26,10 +28,15 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 	{
 		var regularRoleId = new Guid("26dfd164-f1d7-4078-85e7-7f3f852f6577");
 		var dataProviderId = new Guid("9ba6d290-8de0-475e-92f7-bda8d03667c7");
+		int dataProviderIndex = 1;
+		string dataProviderPrefix = $"dp{dataProviderIndex}_";
 		var spaceId = new Guid("116a3baa-cd02-4926-8a76-639a2e15a011");
 		var spaceDataId = new Guid("1a363406-6cb8-418b-95b2-9c72fb5d5fe9");
 		var spaceViewId = new Guid("52363483-1d9b-4e7d-afe1-1602b7a7697f");
 		var spacePageId = new Guid("831ce409-febb-40c3-a9b3-74af0c3bb8d3");
+		var template1Id = new Guid("3ec7ec15-e3bb-4854-8688-0227e5efa646");
+		var template1BlobId = new Guid("18716b34-b123-4366-be4d-c0bc967da59b");
+		var template1FileName = "worldcities-template1.xlsx";
 		var csvFileName = "worldcities.csv";
 		var joinKeyName = "city_id";
 
@@ -136,7 +143,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 		{
 			Visible = false,
 			StepId = new Guid("a0c78375-3a1d-4707-b04a-94ccf3a4ab14"),
-			StepMenuTitle = "Regular Role",
+			StepMenuTitle = "Roles and Users",
 			Steps = new List<TfRecipeStepBase>()
 			{
 				new TfCreateUserRecipeStep
@@ -154,7 +161,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				},
 				new TfCreateRoleRecipeStep
 				{
-					Visible = false,
+					Visible = true,
 					StepId = new Guid("89759f9b-062a-4a96-9b45-9b7007078e18"),
 					StepMenuTitle = "Regular Role",
 					StepContentTitle = "Regular Role",
@@ -164,7 +171,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				},
 				new TfCreateUserRecipeStep
 				{
-					Visible = false,
+					Visible = true,
 					StepId = new Guid("7ab6070d-46a7-4bb0-8538-3637898bb69b"),
 					StepMenuTitle = "Regular User 1",
 					StepContentTitle = "Regular User 1",
@@ -177,7 +184,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				},
 				new TfCreateUserRecipeStep
 				{
-					Visible = false,
+					Visible = true,
 					StepId = new Guid("e5b36d26-c9ab-4efe-9d2d-6399d501bc89"),
 					StepMenuTitle = "Regular User 2",
 					StepContentTitle = "Regular User 2",
@@ -208,6 +215,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			StepMenuTitle = "Data Provider",
 			StepContentTitle = "Creating the Data provider",
 			DataProviderId = dataProviderId,
+			DataProviderIndex = dataProviderIndex,
 			Name = "World Cities",
 			Type = new CsvDataProvider(),
 			SettingsJson = JsonSerializer.Serialize(new CsvDataProviderSettings
@@ -222,7 +230,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				DataProviderId = dataProviderId,
 				SourceName = "city",
 				SourceType = "TEXT",
-				DbName = "city",
+				DbName = $"{dataProviderPrefix}city",
 				DbType = Database.TfDatabaseColumnType.Text,
 				DefaultValue = "city",
 				IsNullable = false,
@@ -238,7 +246,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				DataProviderId = dataProviderId,
 				SourceName = "country",
 				SourceType = "TEXT",
-				DbName = "country",
+				DbName = $"{dataProviderPrefix}country",
 				DbType = Database.TfDatabaseColumnType.Text,
 				DefaultValue = "country",
 				IsNullable = false,
@@ -254,7 +262,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				DataProviderId = dataProviderId,
 				SourceName = "population",
 				SourceType = "LONG_INTEGER",
-				DbName = "population",
+				DbName = $"{dataProviderPrefix}population",
 				DbType = Database.TfDatabaseColumnType.LongInteger,
 				DefaultValue = "0",
 				IsNullable = false,
@@ -270,7 +278,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				DataProviderId = dataProviderId,
 				SourceName = "id",
 				SourceType = "LONG_INTEGER",
-				DbName = "id",
+				DbName = $"{dataProviderPrefix}id",
 				DbType = Database.TfDatabaseColumnType.LongInteger,
 				DefaultValue = "0",
 				IsNullable = false,
@@ -282,12 +290,12 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				}
 			},
 			TriggerDataSynchronization = true,
-			SynchPrimaryKeyColumns = new List<string>{"id"},
+			SynchPrimaryKeyColumns = new List<string>{$"{dataProviderPrefix}id"},
 			JoinKeys = new List<TfRecipeStepDataProviderJoinKey>{ 
 				new TfRecipeStepDataProviderJoinKey(
 					id:new Guid("81b6b073-f4f2-44b9-a29b-d8024a6e910c"),
 					dbName:joinKeyName,
-					columns:new List<string>{"id"})
+					columns:new List<string>{$"{dataProviderPrefix}id"})
 			}
 		});
 
@@ -317,7 +325,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			Position = 100,
 			Columns = new(),
 			Filters = new(),
-			SortOrders = new List<TfSort> { new TfSort { ColumnName = "city", Direction = TfSortDirection.ASC } }
+			SortOrders = new List<TfSort> { new TfSort { ColumnName = $"{dataProviderPrefix}city", Direction = TfSortDirection.ASC } }
 		});
 
 		Steps.Add(new TfCreateSpaceViewRecipeStep
@@ -345,10 +353,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Color = Web.Models.TfColor.Amber500,
 					Name = "1M+",
 					Filters = new List<TfFilterBase>(){
-						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.GreaterOrEqual,"1000000")
+						new TfFilterNumeric($"{dataProviderPrefix}population",TfFilterNumericComparisonMethod.GreaterOrEqual,"1000000")
 					},
 					SortOrders = new List<TfSort>{
-						new TfSort("population",TfSortDirection.DESC)
+						new TfSort($"{dataProviderPrefix}population",TfSortDirection.DESC)
 					}
 				},
 				new TfSpaceViewPreset{
@@ -357,11 +365,11 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Name = "100K+",
 					Color = Web.Models.TfColor.Blue500,
 					Filters = new List<TfFilterBase>(){
-						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.Lower,"1000000"),
-						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.GreaterOrEqual,"100000")
+						new TfFilterNumeric($"{dataProviderPrefix}population",TfFilterNumericComparisonMethod.Lower,"1000000"),
+						new TfFilterNumeric($"{dataProviderPrefix}population",TfFilterNumericComparisonMethod.GreaterOrEqual,"100000")
 					},
 					SortOrders = new List<TfSort>{
-						new TfSort("population",TfSortDirection.DESC)
+						new TfSort($"{dataProviderPrefix}population",TfSortDirection.DESC)
 					}
 				},
 				new TfSpaceViewPreset{
@@ -370,10 +378,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Name = "<100K",
 					Color = Web.Models.TfColor.Cyan500,
 					Filters = new List<TfFilterBase>(){
-						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.Lower,"100000"),
+						new TfFilterNumeric($"{dataProviderPrefix}population",TfFilterNumericComparisonMethod.Lower,"100000"),
 					},
 					SortOrders = new List<TfSort>{
-						new TfSort("population",TfSortDirection.DESC)
+						new TfSort($"{dataProviderPrefix}population",TfSortDirection.DESC)
 					}
 				},
 			},
@@ -383,7 +391,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Position = 1,
 					QueryName = "city",
 					Title = "city",
-					DataMapping = new Dictionary<string, string> { {"Value","city"}},
+					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}city"}},
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfTextViewColumnType.ID),
 					ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
@@ -393,7 +401,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Position = 2,
 					QueryName = "country",
 					Title = "country",
-					DataMapping = new Dictionary<string, string> { {"Value","country"}},
+					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}country"}},
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfTextViewColumnType.ID),
 					ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
@@ -403,7 +411,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Position = 3,
 					QueryName = "population",
 					Title = "population",
-					DataMapping = new Dictionary<string, string> { {"Value","population"}},
+					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}population"}},
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
 					ComponentId = new Guid(TfLongIntegerDisplayColumnComponent.ID),
@@ -413,7 +421,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					Position = 4,
 					QueryName = "id",
 					Title = "id",
-					DataMapping = new Dictionary<string, string> { {"Value","id"}},
+					DataMapping = new Dictionary<string, string> { {"Value",$"{dataProviderPrefix}id"}},
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
 					ComponentId = new Guid(TfLongIntegerDisplayColumnComponent.ID),
@@ -433,7 +441,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			Position = 100,
 			Type = TfSpacePageType.Page,
 			ChildPages = new(),
-			ComponentType = typeof(TfSpaceViewSpacePageAddon),
+			ComponentType = new TfSpaceViewSpacePageAddon(),
 			ComponentId = new Guid(TfSpaceViewSpacePageAddon.ID),
 			ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions
 			{
@@ -445,9 +453,41 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				DataSetType = Web.Models.TucSpaceViewDataSetType.Existing,
 				SpaceDataId = spaceDataId,
 			})
+		});
 
+		Steps.Add(new TfCreateBlobRecipeStep
+		{
+			Visible = false,
+			StepId = new Guid("fb72375f-f891-4220-b821-e9500756ed6f"),
+			StepMenuTitle = "Create blob",
+			BlobId = template1BlobId,
+			EmbeddedResourceName = $"WebVella.Tefter.Recipes.Files.{template1FileName}",
+			Assembly = this.GetType().Assembly,
+			IsTemporary = false,
+		});
 
-
+		Steps.Add(new TfCreateTemplateRecipeStep
+		{
+			Visible = false,
+			StepId = new Guid("d519db63-b138-46b3-b044-8c8ecd8cc806"),
+			StepMenuTitle = "Create template",
+			StepContentTitle = "",
+			StepContentDescription = "",
+			TemplateId = template1Id,
+			Name = "Export Cities by Template",
+			FluentIconName = "DocumentTable",
+			Description = "generates the selected cities in an excel template",
+			ContentProcessorType = new ExcelFileTemplateProcessor(),
+			IsEnabled = true,
+			IsSelectable = true,
+			SpaceDataList = new() {spaceDataId},
+			EmbeddedResourceName = $"WebVella.Tefter.Recipes.Files.{csvFileName}",
+			Assembly = this.GetType().Assembly,
+			SettingsJson = JsonSerializer.Serialize(new ExcelFileTemplateSettings(){ 
+				FileName = template1FileName,
+				GroupBy = new(),
+				TemplateFileBlobId = template1BlobId,
+			})
 		});
 	}
 

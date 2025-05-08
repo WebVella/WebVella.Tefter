@@ -12,15 +12,16 @@ public partial class TfService : ITfService
 {
 	public async Task<TfRecipeResult> ApplyRecipeAsync(ITfRecipeAddon recipe)
 	{
+		var result = new TfRecipeResult();
+		var blobIdList = new List<Guid>();
 		try
 		{
 			if (recipe == null) throw new ArgumentNullException(nameof(recipe));
-			var result = new TfRecipeResult();
 			using (TfDatabaseTransactionScope scope = _dbService.CreateTransactionScope())
 			{
 				foreach (var step in recipe.Steps)
 				{
-					result.Steps.Add(await ApplyStep(step));
+					result.Steps.Add(await ApplyStep(step, blobIdList));
 				}
 				if (result.IsSuccessful)
 				{
@@ -45,10 +46,19 @@ public partial class TfService : ITfService
 		{
 			throw ProcessException(ex);
 		}
-
+		finally
+		{
+			if (!result.IsSuccessful && blobIdList.Count > 0)
+			{
+				foreach (var blobId in blobIdList)
+				{
+					DeleteBlob(blobId);
+				}
+			}
+		}
 	}
 
-	public async Task<TfRecipeStepResult> ApplyStep(TfRecipeStepBase stepBase)
+	public async Task<TfRecipeStepResult> ApplyStep(TfRecipeStepBase stepBase, List<Guid> blobIdList)
 	{
 		var stepResult = new TfRecipeStepResult()
 		{
@@ -66,7 +76,7 @@ public partial class TfService : ITfService
 				var step = (TfGroupRecipeStep)stepBase;
 				foreach (var substep in step.Steps)
 				{
-					var subStepResult = await ApplyStep(substep);
+					var subStepResult = await ApplyStep(substep, blobIdList);
 					stepResult.SubSteps.Add(subStepResult);
 					stepResult.Errors.AddRange(subStepResult.Errors);
 				}
@@ -114,15 +124,29 @@ public partial class TfService : ITfService
 					Settings = new TfUserSettings()
 				});
 			}
+			else if (stepBase.GetType() == typeof(TfCreateBlobRecipeStep))
+			{
+				var step = (TfCreateBlobRecipeStep)stepBase;
+				var fileLocalPath = step.Assembly.GetFileFromResourceAndUploadLocally(step.EmbeddedResourceName);
+				var blobId = step.BlobId == Guid.Empty ? Guid.NewGuid() : step.BlobId;
+				CreateBlob(
+					blobId: blobId,
+					localPath: fileLocalPath,
+					temporary: step.IsTemporary
+				);
+				blobIdList.Add(blobId);
+			}
 			else if (stepBase.GetType() == typeof(TfCreateRepositoryFileRecipeStep))
 			{
 				var step = (TfCreateRepositoryFileRecipeStep)stepBase;
 				var fileLocalPath = step.Assembly.GetFileFromResourceAndUploadLocally(step.EmbeddedResourceName);
-				var result = CreateRepositoryFile(
+				var repFile = CreateRepositoryFile(
 					filename: step.FileName,
 					localPath: fileLocalPath,
 					createdBy: null
 				);
+				var blobId = repFile.Id;
+				blobIdList.Add(blobId);
 			}
 			else if (stepBase.GetType() == typeof(TfCreateDataProviderRecipeStep))
 			{
@@ -130,6 +154,7 @@ public partial class TfService : ITfService
 				var dataProvider = CreateDataProvider(new TfDataProviderModel
 				{
 					Id = step.DataProviderId == Guid.Empty ? Guid.NewGuid() : step.DataProviderId,
+					Index = step.DataProviderIndex,
 					Name = step.Name,
 					ProviderType = step.Type,
 					SettingsJson = step.SettingsJson,
@@ -143,6 +168,7 @@ public partial class TfService : ITfService
 					var updateModel = new TfDataProviderModel()
 					{
 						Id = dataProvider.Id,
+						Index = dataProvider.Index,
 						Name = dataProvider.Name,
 						ProviderType = dataProvider.ProviderType,
 						SettingsJson = dataProvider.SettingsJson,
@@ -278,11 +304,28 @@ public partial class TfService : ITfService
 					Name = step.Name,
 					Position = step.Position,
 					Type = step.Type,
-					ComponentType = step.ComponentType,
+					ComponentType = step.ComponentType.GetType(),
 					ComponentId = step.ComponentId,
 					ComponentOptionsJson = step.ComponentOptionsJson,
 					ChildPages = step.ChildPages,
 					FluentIconName = step.FluentIconName
+				});
+			}
+			else if (stepBase.GetType() == typeof(TfCreateTemplateRecipeStep))
+			{
+				var step = (TfCreateTemplateRecipeStep)stepBase;
+				var result = CreateTemplate(new TfManageTemplateModel
+				{
+					Id = step.TemplateId == Guid.Empty ? Guid.NewGuid() : step.TemplateId,
+					Name = step.Name,
+					FluentIconName = step.FluentIconName,
+					ContentProcessorType = step.ContentProcessorType.GetType(),
+					Description = step.Description,
+					IsEnabled = step.IsEnabled,
+					IsSelectable = step.IsSelectable,
+					SettingsJson = step.SettingsJson,
+					SpaceDataList = step.SpaceDataList,
+					UserId = null
 				});
 			}
 			else throw new Exception("Unsupported step type");
@@ -315,6 +358,7 @@ public partial class TfService : ITfService
 					StackTrace = ex.StackTrace
 				});
 			}
+
 		}
 		catch (Exception ex)
 		{

@@ -156,6 +156,7 @@ body {
 
 			&__body {
 				padding: 15px;
+				padding-bottom:30px;
 				flex: 1 1 auto;
 				border-left: 1px solid var(--neutral-fill-secondary-hover);
 
@@ -170,6 +171,11 @@ body {
 							font-size: 15px;
 							font-weight: bold;
 							margin-bottom: 10px;
+							margin-top: 1rem;
+						}
+
+						.substep:first-child & {
+							margin-top: 0;
 						}
 					}
 
@@ -186,8 +192,6 @@ body {
 
 					&__form {
 						table:not(.tf-grid) {
-
-
 							th, td {
 								padding: 5px 10px;
 								border: 1px solid var(--neutral-stroke-rest);
