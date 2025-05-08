@@ -32,6 +32,8 @@ public record TfDataProviderModel
 	[Required]
 	public string Name { get; internal set; }
 	[Required]
+	public int Index { get; internal set; } = -1;
+	[Required]
 	public ITfDataProviderAddon ProviderType { get; internal set; }
 	public string SettingsJson { get; internal set; } = null;
 	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
@@ -51,7 +53,6 @@ internal record TfDataProviderDbo
 	[TfDboModelProperty("name")]
 	public string Name { get; set; }
 
-	[TfDboAutoIncrementModel]
 	[TfDboModelProperty("index")]
 	public int Index { get; set; }
 

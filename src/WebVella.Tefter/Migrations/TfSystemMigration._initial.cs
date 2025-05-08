@@ -116,7 +116,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 				columns
 					.AddGuidColumn("id", c => { c.WithAutoDefaultValue().NotNullable(); })
 					.AddTextColumn("name", c => { c.NotNullable(); })
-					.AddAutoIncrementColumn("index")
+					.AddIntegerColumn("index", c => { c.NotNullable(); })
 					.AddGuidColumn("type_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddTextColumn("settings_json", c => { c.Nullable(); })
 					.AddTextColumn("sync_primary_key_columns_json", c => { c.NotNullable().WithDefaultValue("[]"); })

@@ -298,8 +298,25 @@ public partial class TfService : ITfService
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
+				var providerIndex = providerModel.Index;
+
+				//find lowest available index
+				if (providerModel.Index == -1)
+				{
+					var existingProviderIndexes = GetDataProviders()
+							.Select(x => x.Index)
+							.ToHashSet();
+
+					providerIndex = 1;
+					while(existingProviderIndexes.Contains(providerIndex))
+					{
+						providerIndex++;
+					}
+				}
 
 				TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
+				//set correct index
+				dataProviderDbo.Index = providerIndex;
 
 				var success = _dboManager.Insert<TfDataProviderDbo>(dataProviderDbo);
 
@@ -535,6 +552,7 @@ public partial class TfService : ITfService
 		{
 			Id = providerModel.Id,
 			Name = providerModel.Name,
+			Index = providerModel.Index,
 			SettingsJson = providerModel.SettingsJson,
 			TypeId = providerModel.ProviderType.Id,
 			SynchPrimaryKeyColumnsJson = JsonSerializer.Serialize(providerModel.SynchPrimaryKeyColumns ?? new List<string>()),
@@ -596,6 +614,30 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The data provider name is required.");
 
+			RuleFor(provider => provider.Index)
+					.Must((provider, index) =>
+					{
+						if (index == -1)
+							return true;
+
+						if (index <= 0)
+							return false;
+
+						return true;
+					})
+					.WithMessage("The data provider index should be -1 or positive integer value.");
+
+				RuleFor(provider => provider.Index)
+					.Must((provider, index) =>
+					{
+						var existingProviderIndexes = tfService.GetDataProviders()
+							.Select(x => x.Index)
+							.ToHashSet();
+
+						return !existingProviderIndexes.Contains(index);
+					})
+					.WithMessage("There is already existing data provider with same index.");
+
 			RuleFor(provider => provider.ProviderType)
 				.NotEmpty()
 				.WithMessage("The data provider type is required.");
@@ -638,6 +680,21 @@ public partial class TfService : ITfService
 			RuleFor(provider => provider.Name)
 					.NotEmpty()
 					.WithMessage("The data provider name is required.");
+
+			RuleFor(provider => provider.Index)
+					.Must((provider, index) =>
+					{
+						var existingProvider = tfService.GetDataProvider(provider.Id);
+						if(existingProvider == null)
+							return true;
+
+						if (index == existingProvider.Index)
+							return true;
+
+						return false;
+					})
+					.WithMessage("the data provider index cannot be changed during provider update.");
+
 
 			RuleFor(provider => provider.ProviderType)
 				.NotEmpty()
