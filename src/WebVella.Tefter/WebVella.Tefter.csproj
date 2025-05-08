@@ -85,16 +85,31 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <EmbeddedResource Update="UseCases\_Install\InstallUseCase.bg.resx">
+	  <EmbeddedResource Update="UseCases\_Recipe\RecipeUseCase.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\Admin\AdminUsersActions\TfAdminUsersActions.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Install\RecipeList\TfRecipeList.bg.resx">
+	  <EmbeddedResource Update="Web\Components\Recipe\GroupRecipeStepForm\TfGroupRecipeStepForm.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Install\RecipeDetails\TfRecipeDetails.bg.resx">
+	  <EmbeddedResource Update="Web\Components\Recipe\ResultRecipeStepForm\TfResultRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Recipe\RecipeStepForm\TfRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Recipe\InfoRecipeStepForm\TfInfoRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Recipe\CreateUserRecipeStepForm\TfCreateUserRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Recipe\RecipeList\TfRecipeList.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Components\Recipe\RecipeDetails\TfRecipeDetails.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	</ItemGroup>

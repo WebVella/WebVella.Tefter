@@ -59,7 +59,7 @@ public static class TfDependencyInjection
 		services.AddTransient<UserStateUseCase, UserStateUseCase>();
 		services.AddTransient<ExportUseCase, ExportUseCase>();
 		services.AddTransient<LoginUseCase, LoginUseCase>();
-		services.AddTransient<InstallUseCase, InstallUseCase>();
+		services.AddTransient<RecipeUseCase, RecipeUseCase>();
 
 		//hosted services
 		services.AddHostedService<TfDataProviderSynchronizeJob>();

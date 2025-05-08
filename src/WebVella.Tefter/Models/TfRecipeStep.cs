@@ -5,38 +5,69 @@ public abstract class TfRecipeStepBase
 	public Guid StepId { get; set; }
 
 	//name of the step
-	public string StepName { get; set; }
+	public string StepMenuTitle { get; set; }
+	public string StepContentTitle { get; set; }
+	public string StepContentDescription { get; set; }
+	public bool Visible { get; set; } = true;
+	[JsonIgnore]
+	public TfRecipeStepFormBase Component { get; set; } = new();
+	public List<ValidationError> Errors { get; set; } = new();
+}
 
+public class TfRecipeStepInfo
+{
+	public int Position { get; set; }
+	public bool IsFirst { get; set; }
+	public bool IsLast { get; set; }
+}
+
+
+public class TfResultRecipeStep : TfRecipeStepBase
+{
+	public TfRecipeResult Result { get; set; }
+}
+
+public class TfInfoRecipeStep : TfRecipeStepBase
+{
+	public string HtmlContent { get; set; }
+}
+
+public class TfGroupRecipeStep : TfRecipeStepBase
+{
+	public List<TfRecipeStepBase> Steps { get; set; } = new();
 }
 
 public class TfCreateRoleRecipeStep : TfRecipeStepBase
 {
 	//name of the step
 	public Guid RoleId { get; set; }
-	public string RoleName { get; set; }
-	public string RoleDescription { get; set; }
-}
-
-public class TfCreateMultipleRolesRecipeStep : TfRecipeStepBase
-{
-	public List<TfCreateRoleRecipeStep> Roles { get; set; }
+	public string Name { get; set; }
 }
 
 public class TfCreateUserRecipeStep : TfRecipeStepBase
 {
-	public string UserEmail { get; set; }
-	public string UserPassword { get; set; }
-	public List<Guid> UserRoles { get; set; }
+	public Guid UserId { get; set; }
+	public string Email { get; set; }
+	public string Password { get; set; }
+	public string FirstName { get; set; }
+	public string LastName { get; set; }
+	public List<Guid> Roles { get; set; }
+
 }
 
-public class TfCreateMultipleUsersRecipeStep : TfRecipeStepBase
+public class TfCreateRepositoryFileRecipeStep : TfRecipeStepBase
 {
-	public List<TfCreateUserRecipeStep> Users { get; set; }
+	public string FileName { get; set; }
+	public Assembly Assembly { get; set; }
+	public string EmbeddedResourceName { get; set; }
 }
 
 public class TfCreateDataProviderRecipeStep : TfRecipeStepBase
 {
-	public Type DataProvider { get; set; }
+	public Guid DataProviderId { get; set; }
+	public ITfDataProviderAddon Type { get; set; }
 	public string Name { get; set; }
-	public List<Guid> Columns { get; set; }
+	public List<TfDataProviderColumn> Columns { get; set; }
+	public string SettingsJson { get; set; }
+	public bool ShouldSynchronizeData { get; set; } = false;
 }

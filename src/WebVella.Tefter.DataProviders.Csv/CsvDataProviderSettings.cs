@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace WebVella.Tefter.DataProviders.Csv;
 
-internal class CsvDataProviderSettings
+public class CsvDataProviderSettings
 {
 	[Required]
 	public string Filepath { get; set; }
@@ -19,12 +19,12 @@ internal class CsvDataProviderSettings
 	public CsvDataProviderSettingsAdvanced AdvancedSetting { get; set; } = new CsvDataProviderSettingsAdvanced();
 }
 
-internal class CsvDataProviderSettingsAdvanced
+public class CsvDataProviderSettingsAdvanced
 {
 	public Dictionary<string,string> ColumnImportParseFormat { get; set;} = new();
 }
 
-internal enum CsvDataProviderSettingsDelimiter
+public enum CsvDataProviderSettingsDelimiter
 {
 	Comma = 0,
 	Semicolon = 1,

@@ -52,17 +52,9 @@ internal partial class AppStateUseCase
 					adminProviders.Add(adminProvider);
 					newAppState = newAppState with { AdminDataProviders = adminProviders };
 				}
-
-				//check for the other tabs
-				if (newAppState.Route.HasNode(RouteDataNode.Schema,2))
-				{
-				}
-				else if (newAppState.Route.HasNode(RouteDataNode.JoinKeys,2))
-				{
-				}
 			}
 
-			if (newAppState.Route.HasNode(RouteDataNode.Synchronization,2))
+			if (newAppState.Route.HasNode(RouteDataNode.Synchronization,3))
 			{
 				var tasks = await GetDataProviderSynchronizationTasks(newAppState.Route.DataProviderId.Value);
 				var pageSize = 5;
@@ -74,7 +66,7 @@ internal partial class AppStateUseCase
 			{
 				newAppState = newAppState with { DataProviderSyncTasks = new() };
 			}
-			if (newAppState.Route.HasNode(RouteDataNode.Data,2))
+			if (newAppState.Route.HasNode(RouteDataNode.Data,3))
 			{
 				var dt = await GetDataProviderData(newAppState.Route.DataProviderId.Value, newAppState.Route.Search,
 					(newAppState.Route.Page ?? 1), (newAppState.Route.PageSize ?? TfConstants.PageSize));

@@ -20,7 +20,8 @@ public partial class EmailSenderTests : BaseTest
 			{
 				Guid relatedRowId = Guid.NewGuid();
 
-				var user = tfService.GetUser("admin@tefter.bg");
+				var user = tfService.GetDefaultSystemUser();
+				if (user == null) throw new Exception("No default email sender user found");
 				CreateEmailMessageModel model = new CreateEmailMessageModel();
 				model.Subject = "test";
 				model.TextBody = "";

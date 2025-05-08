@@ -24,7 +24,7 @@ using WebVella.Tefter.Utility;
 using WebVella.Tefter.Web.Store;
 using WebVella.Tefter.Web.Utils;
 using WebVella.Tefter.Services;
-using WebVella.Tefter.UseCases.Install;
+using WebVella.Tefter.UseCases.Recipe;
 
 
 namespace WebVella.Tefter.Web.Tests;
@@ -57,7 +57,7 @@ public class BaseTest
 	internal Mock<UserStateUseCase> UserStateUseCaseMock;
 	internal Mock<ExportUseCase> ExportUseCaseMock;
 	internal Mock<LoginUseCase> LoginUseCaseMock;
-	internal Mock<InstallUseCase> InstallUseCaseMock;
+	internal Mock<RecipeUseCase> InstallUseCaseMock;
 
 	public IStore Store;
 	public IDispatcher Dispatcher;
@@ -183,8 +183,8 @@ public class BaseTest
 		LoginUseCaseMock = new Mock<LoginUseCase>(Context.Services);
 		Context.Services.AddTransient(typeof(LoginUseCase), Services => LoginUseCaseMock.Object);
 
-		InstallUseCaseMock = new Mock<InstallUseCase>(Context.Services);
-		Context.Services.AddTransient(typeof(InstallUseCase), Services => InstallUseCaseMock.Object);
+		InstallUseCaseMock = new Mock<RecipeUseCase>(Context.Services);
+		Context.Services.AddTransient(typeof(RecipeUseCase), Services => InstallUseCaseMock.Object);
 
 		Store = Context.Services.GetRequiredService<IStore>();
 		Store.InitializeAsync().Wait();

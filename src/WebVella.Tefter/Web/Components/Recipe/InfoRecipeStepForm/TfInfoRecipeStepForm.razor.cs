@@ -1,0 +1,17 @@
+﻿using WebVella.Tefter.UseCases.Recipe;
+
+namespace WebVella.Tefter.Web.Components;
+public partial class TfInfoRecipeStepForm : TfRecipeStepFormBase
+{
+	[Parameter] public TfInfoRecipeStep Step { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		base.InitForm(Step);
+		ComponentId = Step.StepId;
+		Step.Component = this;
+	}
+
+}
+

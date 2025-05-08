@@ -27,6 +27,12 @@ public partial interface ITfService
 		string email);
 
 	/// <summary>
+	/// Retrieves a user for the email sender service
+	/// </summary>
+	/// <returns>The <see cref="TfUser"/> instance if found; otherwise, null.</returns>
+	TfUser GetDefaultSystemUser();
+
+	/// <summary>
 	/// Retrieves a user by their email address and password.
 	/// </summary>
 	/// <param name="email">The email address of the user.</param>
@@ -137,6 +143,26 @@ public partial class TfService : ITfService
 		try
 		{
 			return new TfUserBuilder(this, user);
+		}
+		catch (Exception ex)
+		{
+			throw ProcessException(ex);
+		}
+	}
+
+	public TfUser GetDefaultSystemUser()
+	{
+		try
+		{
+			var users = GetUsers();
+			var adminUsers = users.Where(x=> x.Roles.Any(r=> r.Id == TfConstants.ADMIN_ROLE_ID)).ToList();
+			if(adminUsers.Count > 0)
+				return adminUsers.First();
+
+			if(users.Count > 0)
+				return users.First();
+
+			return null;
 		}
 		catch (Exception ex)
 		{

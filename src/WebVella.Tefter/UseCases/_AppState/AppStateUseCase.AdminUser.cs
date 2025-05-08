@@ -38,13 +38,6 @@ internal partial class AppStateUseCase
 					users.Add(adminUser);
 					newAppState = newAppState with { AdminUsers = users };
 				}
-				//check for the other tabs
-				if (newAppState.Route.HasNode(RouteDataNode.Access,2))
-				{
-				}
-				else if (newAppState.Route.HasNode(RouteDataNode.Saves,2))
-				{
-				}
 			}
 		}
 		if (newAppState.Route.RoleId.HasValue)

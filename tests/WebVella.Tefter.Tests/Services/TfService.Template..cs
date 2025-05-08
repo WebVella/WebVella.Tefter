@@ -51,7 +51,8 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var user = tfService.GetUser("admin@tefter.bg");
+				var user = tfService.GetDefaultSystemUser();
+				if (user == null) throw new Exception("No default email sender user found");
 
 				TfManageTemplateModel createTemplateModel = new TfManageTemplateModel
 				{

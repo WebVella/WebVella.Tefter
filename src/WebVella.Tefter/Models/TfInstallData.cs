@@ -2,11 +2,10 @@
 
 public class TfInstallData 
 {
-	//public TfRecipeType ConfigurationType { get; set; } = TfRecipeType.Blank;
-	//public DateTime ConfiguredOn { get; set; }
-	//public TfInstallResultType ResultType { get; set; } = TfInstallResultType.Error;
-	//public string Message { get; set; }
-	//public string Description { get; set; }
+	public Guid RecipeId { get; set; }
+	public string RecipeTypeFullName { get; set; }
+	public DateTime AppliedOn { get; set; }
+	
 
 }
 

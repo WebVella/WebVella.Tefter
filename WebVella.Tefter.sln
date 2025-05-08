@@ -59,6 +59,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Seeds.Sampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Seeds.SampleViewColumn", "src\Seeds\WebVella.Tefter.Seeds.SampleViewColumn\WebVella.Tefter.Seeds.SampleViewColumn.csproj", "{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebVella.Tefter.Recipes", "src\WebVella.Tefter.Recipes\WebVella.Tefter.Recipes.csproj", "{69935673-893B-4634-A6BD-9990E983FCDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,10 @@ Global
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{573B27CA-DBA6-4B12-74AD-F2BEA35BC7F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69935673-893B-4634-A6BD-9990E983FCDC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69935673-893B-4634-A6BD-9990E983FCDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69935673-893B-4634-A6BD-9990E983FCDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69935673-893B-4634-A6BD-9990E983FCDC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

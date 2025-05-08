@@ -5,7 +5,7 @@
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": true,
-			"launchUrl": "tf-install/de692b3f-be7a-4ace-a1d5-4cdfcbf50d12",
+			"launchUrl": "tf-install/b8f2c8ae-cc42-4c90-9f22-289498b4dffb",
 			"applicationUrl": "https://localhost:5000;http://localhost:5001",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development"

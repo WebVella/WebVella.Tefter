@@ -18,21 +18,27 @@ public class BlankRecipeAddon : ITfRecipeAddon
 
 	public BlankRecipeAddon()
 	{
-		Steps.Add(new TfCreateUserRecipeStep
+		Steps.Add(new TfInfoRecipeStep
 		{
-			StepId = new Guid("52a05dfd-177f-4c12-a068-b0843ff95fdc"),
-			StepName = "Create administrator",
-			UserEmail = "admin@webvella.com",
-			UserPassword = "@adminPassword",
-			UserRoles = new List<Guid> { TfConstants.ADMIN_ROLE_ID}
+			Visible = true,
+			StepId = new Guid("7593cd72-90fb-4278-9b3f-65f4afee7b79"),
+			StepMenuTitle = "Get Started",
+			StepContentTitle = "Get Started",
+			StepContentDescription = null,
+			HtmlContent = "<p>This recipe will not preconfigure any items except setting up the System administrator account</p><p>To Start with the step configuration, press the <strong>Forward button</strong></p>",
 		});
 		Steps.Add(new TfCreateUserRecipeStep
 		{
-			StepId = new Guid("0af8a449-7933-4c52-92ed-619ffe11fa82"),
-			StepName = "Data provider",
-			UserEmail = "admin@webvella.com",
-			UserPassword = "@adminPassword",
-			UserRoles = new List<Guid> { TfConstants.ADMIN_ROLE_ID}
+			Visible = true,
+			StepId = new Guid("52a05dfd-177f-4c12-a068-b0843ff95fdc"),
+			StepMenuTitle = "System Administrator",
+			StepContentTitle = "Create administrative account",
+			StepContentDescription = "This user will be designated as the system superuser, automatically assigned the administrator role, and granted access to all system areas.",
+			Email = "",
+			Password = "",
+			FirstName = "System",
+			LastName = "Administrator",
+			Roles = new List<Guid> { TfConstants.ADMIN_ROLE_ID }
 		});
 	}
 

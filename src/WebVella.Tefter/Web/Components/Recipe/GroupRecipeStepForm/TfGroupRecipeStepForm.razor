@@ -1,0 +1,7 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfRecipeStepFormBase
+
+@foreach (var step in Step.Steps.Where(x=> x.Visible))
+{
+	<TfRecipeStepForm Step=step StepInfoDict="StepInfoDict" IsSubstep=true />
+}

@@ -1,0 +1,24 @@
+﻿@namespace WebVella.Tefter.Web.Components
+@inherits TfBaseComponent
+@if (Errors.Count > 0)
+{
+	<div>
+		<FluentMessageBar Class="@Class" Style="@Style"
+						  Intent="@MessageIntent.Error"
+						  AllowDismiss="false" Title="@Message">
+			<ul>
+				@foreach (var error in Errors)
+				{
+					<li>
+						@if (!String.IsNullOrWhiteSpace(error.PropertyName))
+						{
+							<span><strong>@error.PropertyName</strong>: </span>
+						}
+						<span>@error.Message</span>
+					</li>
+				}
+			</ul>
+
+		</FluentMessageBar>
+	</div>
+}

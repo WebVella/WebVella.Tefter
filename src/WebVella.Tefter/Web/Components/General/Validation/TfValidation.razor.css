@@ -1,0 +1,8 @@
+﻿::deep .fluent-messagebar .fluent-messagebar-message{
+	padding:5px 0 !important;
+}
+
+::deep .fluent-messagebar .fluent-messagebar-message ul{
+	margin-bottom:0 !important;
+	padding-inline-start: 1rem !important;
+}

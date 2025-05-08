@@ -8,53 +8,53 @@ namespace WebVella.Tefter.Models;
 public class TfDataProviderColumn
 {
 	[TfDboModelProperty("id")]
-	public Guid Id { get; internal set; }
+	public Guid Id { get; set; }
 
 	[TfDboModelProperty("data_provider_id")]
-	public Guid DataProviderId { get; internal set; }
+	public Guid DataProviderId { get; set; }
 
 	[Required]
 	[TfDboModelProperty("source_name")]
-	public string SourceName { get; internal set; }
+	public string SourceName { get; set; }
 
 	[TfDboModelProperty("source_type")]
-	public string SourceType { get; internal set; }
+	public string SourceType { get; set; }
 
 	[TfDboTypeConverter(typeof(TfDateTimePropertyConverter))]
 	[TfDboModelProperty("created_on")]
-	public DateTime CreatedOn { get; internal set; }
+	public DateTime CreatedOn { get; set; }
 
 	[Required]
 	[TfDboModelProperty("db_name")]
-	public string DbName { get; internal set; }
+	public string DbName { get; set; }
 
 	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfDatabaseColumnType>))]
 	[TfDboModelProperty("db_type")]
-	public TfDatabaseColumnType DbType { get; internal set; }
+	public TfDatabaseColumnType DbType { get; set; }
 
 	[TfDboModelProperty("default_value")]
-	public string DefaultValue { get; internal set; }
+	public string DefaultValue { get; set; }
 
 	[TfDboModelProperty("auto_default_value")]
-	public bool AutoDefaultValue { get; internal set; }
+	public bool AutoDefaultValue { get; set; }
 
 	[TfDboModelProperty("is_nullable")]
-	public bool IsNullable { get; internal set; }
+	public bool IsNullable { get; set; }
 
 	[TfDboModelProperty("is_unique")]
-	public bool IsUnique { get; internal set; }
+	public bool IsUnique { get; set; }
 
 
 	[TfDboModelProperty("is_sortable")]
-	public bool IsSortable { get; internal set; }
+	public bool IsSortable { get; set; }
 
 	[TfDboModelProperty("is_searchable")]
-	public bool IsSearchable { get; internal set; }
+	public bool IsSearchable { get; set; }
 
 	[TfDboTypeConverter(typeof(TfEnumPropertyConverter<TfDataProviderColumnSearchType>))]
 	[TfDboModelProperty("preferred_search_type")]
-	public TfDataProviderColumnSearchType PreferredSearchType { get; internal set; }
+	public TfDataProviderColumnSearchType PreferredSearchType { get; set; }
 
 	[TfDboModelProperty("include_in_table_search")]
-	public bool IncludeInTableSearch { get; internal set; }
+	public bool IncludeInTableSearch { get; set; }
 }

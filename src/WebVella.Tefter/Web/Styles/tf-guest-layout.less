@@ -17,6 +17,11 @@ body {
 		display: flex;
 		flex-flow: column;
 
+		.wizard & {
+			background: var(--neutral-fill-secondary-rest);
+			border-radius: 5px 5px 0 0;
+		}
+
 		&__title {
 			text-align: center;
 			font-size: 23px;
@@ -46,6 +51,10 @@ body {
 		border-bottom: 1px solid var(--neutral-fill-secondary-hover);
 		align-items: center;
 
+		.wizard & {
+			background: var(--neutral-fill-secondary-rest);
+		}
+
 		&__action {
 			flex: 0 0 60px;
 		}
@@ -57,31 +66,40 @@ body {
 
 	&__body {
 		flex: 1 1 auto;
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		grid-gap: 15px;
+
+		.grid & {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			grid-gap: 15px;
+		}
 
 		.wizard & {
 			display: flex;
 			grid-gap: 0;
+			min-height: 400px;
 		}
 
 		&__steps {
 			flex: 0 0 200px;
 			padding: 10px 0;
 			background: var(--neutral-fill-secondary-rest);
-			border-right: 1px solid var(--neutral-fill-secondary-hover);
 			padding-bottom: 60px;
-
+			border-radius: 0 0 0 5px;
 
 			&__step {
-				padding: 5px 10px;
+				padding: 5px;
 				display: flex;
+				cursor: pointer;
+				align-items: center;
+
+				&:hover {
+					background: var(--neutral-fill-secondary-hover);
+				}
 
 				&__index {
 					flex: 0 0 23px;
-					text-align:right;
-					padding-right:5px;
+					text-align: right;
+					padding-right: 5px;
 				}
 
 				&__title {
@@ -89,10 +107,13 @@ body {
 				}
 
 				&__icon {
-					flex: 0 0 20px;
+					flex: 0 0 30px;
+					display: flex;
+					align-items: center;
+					justify-content: end;
 				}
 
-				.check, .arrow {
+				.check, .arrow, .error {
 					display: none;
 				}
 
@@ -115,6 +136,16 @@ body {
 						display: none;
 					}
 				}
+
+				&.error {
+					.error {
+						display: inline-block;
+					}
+
+					.pending {
+						display: none;
+					}
+				}
 			}
 		}
 
@@ -124,8 +155,46 @@ body {
 			flex-flow: column;
 
 			&__body {
-				padding: 10px;
+				padding: 15px;
 				flex: 1 1 auto;
+				border-left: 1px solid var(--neutral-fill-secondary-hover);
+
+				&__step {
+
+					&__title {
+						font-size: 18px;
+						margin-bottom: 1rem;
+						color: var(--accent-base-color);
+
+						.substep & {
+							font-size: 15px;
+							font-weight: bold;
+							margin-bottom: 10px;
+						}
+					}
+
+					&__description {
+						margin-top: -1rem;
+						margin-bottom: 1rem;
+						color: var(--neutral-foreground-hint);
+
+						.substep & {
+							margin-top: -10px;
+							margin-bottom: 10px;
+						}
+					}
+
+					&__form {
+						table:not(.tf-grid) {
+
+
+							th, td {
+								padding: 5px 10px;
+								border: 1px solid var(--neutral-stroke-rest);
+							}
+						}
+					}
+				}
 			}
 
 			&__actions {
@@ -135,6 +204,8 @@ body {
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
+				background: var(--neutral-fill-secondary-rest);
+				border-radius: 0 0 5px 0;
 			}
 		}
 	}

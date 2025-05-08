@@ -56,7 +56,8 @@ public partial class TalkTests : BaseTest
 				for (int i = 0; i < 5; i++)
 					rowIds.Add((Guid)dataTable.Rows[i]["tf_id"]);
 
-				var user = tfService.GetUser("admin@tefter.bg");
+				var user = tfService.GetDefaultSystemUser();
+				if (user == null) throw new Exception("No default email sender user found");
 
 				TalkChannel channel = new TalkChannel
 				{

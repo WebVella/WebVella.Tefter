@@ -1,6 +1,6 @@
 ﻿namespace WebVella.Tefter.DataProviders.MsSql;
 
-internal class MsSqlDataProviderSettings
+public class MsSqlDataProviderSettings
 {
 	[Required]
 	public string ConnectionString { get; set; }

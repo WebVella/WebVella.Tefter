@@ -1,5 +1,5 @@
-﻿namespace WebVella.Tefter.UseCases.Install;
-internal partial class InstallUseCase
+﻿namespace WebVella.Tefter.UseCases.Recipe;
+internal partial class RecipeUseCase
 {
 	internal virtual Task<TucInstallData> GetInstallDataAsync()
 	{

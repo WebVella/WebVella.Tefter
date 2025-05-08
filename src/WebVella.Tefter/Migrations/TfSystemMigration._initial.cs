@@ -1160,22 +1160,23 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			adminRole = await tfService.SaveRoleAsync(adminRole);
 
 			//default settings
-			var user = tfService
-				.CreateUserBuilder()
-				.WithId(TfConstants.ADMIN_USER_ID)
-				.WithEmail("admin@tefter.bg")
-				.WithFirstName("Tefter")
-				.WithLastName("Administrator")
-				.CreatedOn(DateTime.Now)
-				.WithPassword("@tefter.bg")
-				.Enabled(true)
-				.WithRoles(adminRole)
-				.WithThemeColor(TfColor.Emerald500)
-				.WithThemeMode(DesignThemeModes.System)
-				.WithOpenSidebar(true)
-				.Build();
+			//Will be created by a recipe
+			//var user = tfService
+			//	.CreateUserBuilder()
+			//	.WithId(TfConstants.ADMIN_USER_ID)
+			//	.WithEmail("admin@tefter.bg")
+			//	.WithFirstName("Tefter")
+			//	.WithLastName("Administrator")
+			//	.CreatedOn(DateTime.Now)
+			//	.WithPassword("@tefter.bg")
+			//	.Enabled(true)
+			//	.WithRoles(adminRole)
+			//	.WithThemeColor(TfColor.Emerald500)
+			//	.WithThemeMode(DesignThemeModes.System)
+			//	.WithOpenSidebar(true)
+			//	.Build();
 
-			await tfService.SaveUserAsync(user);
+			//await tfService.SaveUserAsync(user);
 		}
 
 	}
