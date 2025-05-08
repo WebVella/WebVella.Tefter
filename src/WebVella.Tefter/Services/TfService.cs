@@ -40,6 +40,9 @@ public partial class TfService : ITfService
 		cacheOptions.ExpirationScanFrequency = TimeSpan.FromHours(1);
 		_cache = new MemoryCache(cacheOptions);
 
-		InitBlobStorageFolder(_config.BlobStoragePath);
+		var tefterInstanceId = GetSetting(TfConstants.TEFTER_INSTANCE_SETTING_KEY).Value;
+		var blobStoragePath = Path.Combine( _config.BlobStoragePath, tefterInstanceId);
+
+		InitBlobStorageFolder(blobStoragePath);
 	}
 }

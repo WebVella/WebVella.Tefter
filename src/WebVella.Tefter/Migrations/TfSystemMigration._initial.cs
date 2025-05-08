@@ -1137,8 +1137,6 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)
 	{
 		ITfDatabaseService dbService = serviceProvider.GetService<ITfDatabaseService>();
-		ITfDboManager dboManager = serviceProvider.GetService<ITfDboManager>();
-		ITfService tfService = serviceProvider.GetService<ITfService>();
 
 		//creates default empty id in id_dict
 		//this entry is required because data provider join keys default
@@ -1147,8 +1145,15 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		dbService.ExecuteSqlNonQueryCommand("INSERT INTO tf_id_dict(id,text_id) VALUES(@id,@text_id)",
 			new NpgsqlParameter("id", Guid.Empty), new NpgsqlParameter("text_id", Guid.Empty.ToString()));
 
+		dbService.ExecuteSqlNonQueryCommand("INSERT INTO tf_setting(name,value) VALUES(@name,@value)",
+			new NpgsqlParameter("name", TfConstants.TEFTER_INSTANCE_SETTING_KEY ), 
+			new NpgsqlParameter("value", Guid.NewGuid().ToString()));
+
+
+		ITfDboManager dboManager = serviceProvider.GetService<ITfDboManager>();
+		ITfService tfService = serviceProvider.GetService<ITfService>();
+
 		// CREATES INITIAL ADMINISTRATOR USER AND ROLE 
-		
 		{
 			var adminRole = tfService
 				.CreateRoleBuilder()

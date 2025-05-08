@@ -3,6 +3,7 @@
 public partial class TfConstants
 {
 	public const string TEFTER_AUTH_COOKIE_NAME = "tefter-auth";
+	public const string TEFTER_INSTANCE_SETTING_KEY = "tefter_instance_id";
 
 	public static Guid TEFTER_CORE_APP_ID = new Guid("7d272612-0824-496a-a02d-2c144959ae73");
 
