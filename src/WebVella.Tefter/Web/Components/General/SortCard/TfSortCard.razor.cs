@@ -26,12 +26,12 @@ public partial class TfSortCard : TfBaseComponent
 	private async Task _addSortColumn()
 	{
 		if (String.IsNullOrWhiteSpace(_selectedColumn)) return;
-		if(Items.Any(x=> x.DbName == _selectedColumn)){ 
+		if(Items.Any(x=> x.ColumnName == _selectedColumn)){ 
 			ToastService.ShowWarning(LOC("Column already added for sort"));
 			return;
 		}
 		if (_submitting) return;
-		Items.Add(new TucSort{ DbName = _selectedColumn, Direction = _selectedDirection });
+		Items.Add(new TucSort{ ColumnName = _selectedColumn, Direction = _selectedDirection });
 		await ItemsChanged.InvokeAsync(Items);
 		_submitting = false;
 		_selectedColumn = null;
@@ -46,7 +46,7 @@ public partial class TfSortCard : TfBaseComponent
 		if (!await JSRuntime.InvokeAsync<bool>("confirm", LOC("Are you sure that you need this sort order removed?")))
 			return;
 
-		Items = Items.Where(x=> x.DbName != sort.DbName).ToList();
+		Items = Items.Where(x=> x.ColumnName != sort.ColumnName).ToList();
 
 		await ItemsChanged.InvokeAsync(Items);
 		_submitting = false;

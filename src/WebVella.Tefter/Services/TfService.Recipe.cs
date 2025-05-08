@@ -1,4 +1,7 @@
-﻿namespace WebVella.Tefter.Services;
+﻿using DocumentFormat.OpenXml.Wordprocessing;
+using System.Diagnostics.Eventing.Reader;
+
+namespace WebVella.Tefter.Services;
 
 public partial interface ITfService
 {
@@ -130,23 +133,69 @@ public partial class TfService : ITfService
 					Name = step.Name,
 					ProviderType = step.Type,
 					SettingsJson = step.SettingsJson,
+					SynchPrimaryKeyColumns = new List<string>(),
+					SynchScheduleEnabled = step.SynchScheduleEnabled,
+					SynchScheduleMinutes = step.SynchScheduleMinutes
 				});
+				var dpPrefix = $"dp{dataProvider.Index}_";
+				if (step.SynchPrimaryKeyColumns.Count > 0)
+				{
+					var updateModel = new TfDataProviderModel()
+					{
+						Id = dataProvider.Id,
+						Name = dataProvider.Name,
+						ProviderType = dataProvider.ProviderType,
+						SettingsJson = dataProvider.SettingsJson,
+						SynchScheduleEnabled = dataProvider.SynchScheduleEnabled,
+						SynchScheduleMinutes = dataProvider.SynchScheduleMinutes,
+						SynchPrimaryKeyColumns = new()
+					};
+					foreach (var columnName in step.SynchPrimaryKeyColumns)
+					{
+						var fixedColumnName = columnName;
+						if (!fixedColumnName.StartsWith(dpPrefix))
+							fixedColumnName = dpPrefix + fixedColumnName;
+
+						updateModel.SynchPrimaryKeyColumns.Add(fixedColumnName);
+					}
+
+					dataProvider = UpdateDataProvider(updateModel);
+				}
+
 				if (step.Columns.Count > 0)
 				{
 					//Add prefix if needed
-					var dpPrefix = $"dp{dataProvider.Index}_";
-					foreach (var column in step.Columns)
-					{
-						if (!column.DbName.StartsWith(dpPrefix))
-							column.DbName = dpPrefix + column.DbName;
-					}
-
-					var colResult = CreateBulkDataProviderColumn(dataProvider.Id, step.Columns);
-					if (step.ShouldSynchronizeData)
+					step.Columns.ForEach(x => x.FixProviderPrefix(dpPrefix));
+					dataProvider = CreateBulkDataProviderColumn(dataProvider.Id, step.Columns);
+					if (step.TriggerDataSynchronization)
 					{
 						CreateSynchronizationTask(dataProvider.Id, new TfSynchronizationPolicy());
 					}
 				}
+
+				foreach (var joinKey in step.JoinKeys)
+				{
+					joinKey.FixProviderPrefix(dpPrefix);
+					var keyColumns = new List<TfDataProviderColumn>();
+					foreach (var columnName in joinKey.Columns)
+					{
+						var dpColumn = dataProvider.Columns.FirstOrDefault(x => x.DbName == columnName);
+						if (dpColumn is null) continue;
+						keyColumns.Add(dpColumn);
+					}
+					var keySM = new TfDataProviderJoinKey
+					{
+						Id = joinKey.Id,
+						DataProviderId = dataProvider.Id,
+						DbName = joinKey.DbName,
+						Description = joinKey.Description,
+						LastModifiedOn = joinKey.LastModifiedOn,
+						Version = joinKey.Version,
+						Columns = keyColumns
+					};
+					var result = CreateDataProviderJoinKey(keySM);
+				}
+
 			}
 			else if (stepBase.GetType() == typeof(TfCreateSpaceRecipeStep))
 			{
@@ -167,6 +216,14 @@ public partial class TfService : ITfService
 			else if (stepBase.GetType() == typeof(TfCreateSpaceDataRecipeStep))
 			{
 				var step = (TfCreateSpaceDataRecipeStep)stepBase;
+				if (step.Filters.Count > 0 || step.SortOrders.Count > 0)
+				{
+					var dataProvider = GetDataProvider(step.DataProviderId);
+					var dpPrefix = $"dp{dataProvider.Index}_";
+					step.Filters.ForEach(x => x.FixProviderPrefix(dpPrefix));
+					step.SortOrders.ForEach(x => x.FixProviderPrefix(dpPrefix));
+
+				}
 				var result = CreateSpaceData(new TfSpaceData
 				{
 					Id = step.SpaceDataId == Guid.Empty ? Guid.NewGuid() : step.SpaceDataId,
@@ -182,6 +239,17 @@ public partial class TfService : ITfService
 			else if (stepBase.GetType() == typeof(TfCreateSpaceViewRecipeStep))
 			{
 				var step = (TfCreateSpaceViewRecipeStep)stepBase;
+				var spaceData = GetSpaceData(step.SpaceDataId);
+				var dataProvider = GetDataProvider(spaceData.DataProviderId);
+				var dpPrefix = $"dp{dataProvider.Index}_";
+				if (step.Presets is not null)
+				{
+					foreach (var preset in step.Presets)
+					{
+						preset.Filters.ForEach(x => x.FixProviderPrefix(dpPrefix));
+						preset.SortOrders.ForEach(x => x.FixProviderPrefix(dpPrefix));
+					}
+				}
 				var spaceView = CreateSpaceView(new TfSpaceView
 				{
 					Id = step.SpaceViewId == Guid.Empty ? Guid.NewGuid() : step.SpaceViewId,
@@ -193,25 +261,11 @@ public partial class TfService : ITfService
 					Presets = step.Presets,
 					SettingsJson = step.Settings is not null ? JsonSerializer.Serialize(step.Settings) : "{}",
 				});
-				if (step.Columns.Count > 0)
+				;
+				foreach (var column in step.Columns)
 				{
-					var spaceData = GetSpaceData(spaceView.SpaceDataId);
-					var dataProvider = GetDataProvider(spaceData.DataProviderId);
-					var dpPrefix = $"dp{dataProvider.Index}_";
-					foreach (var column in step.Columns)
-					{
-						if(column.DataMapping is not null){ 
-							foreach (var alias in column.DataMapping.Keys){ 
-								var dbName = column.DataMapping[alias];
-								if(!dbName.StartsWith(dpPrefix)){ 
-									dbName = dpPrefix + dbName;
-								}
-								column.DataMapping[alias] = dbName;
-							}
-						}
-
-						var columnResult = CreateSpaceViewColumn(column);
-					}
+					column.FixProviderPrefix(dpPrefix);
+					var columnResult = CreateSpaceViewColumn(column);
 				}
 			}
 			else if (stepBase.GetType() == typeof(TfCreateSpacePageRecipeStep))

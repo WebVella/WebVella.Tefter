@@ -348,11 +348,11 @@ public class NavigatorExtTests
 		var sortColumnOrder2 = TucSortDirection.DESC;
 		var sorts = new List<TucSort>(){
 				new TucSort{
-					DbName = sortColumnName1,
+					ColumnName = sortColumnName1,
 					Direction = sortColumnOrder1,
 				},
 				new TucSort{
-					DbName = sortColumnName2,
+					ColumnName = sortColumnName2,
 					Direction = sortColumnOrder2,
 				},
 			};
@@ -414,9 +414,9 @@ public class NavigatorExtTests
 		{
 			result.Sorts.Should().NotBeNull();
 			result.Sorts.Count.Should().Be(2);
-			result.Sorts[0].DbName.Should().Be(sortColumnName1);
+			result.Sorts[0].ColumnName.Should().Be(sortColumnName1);
 			result.Sorts[0].Direction.Should().Be(sortColumnOrder1);
-			result.Sorts[1].DbName.Should().Be(sortColumnName2);
+			result.Sorts[1].ColumnName.Should().Be(sortColumnName2);
 			result.Sorts[1].Direction.Should().Be(sortColumnOrder2);
 
 		}
@@ -702,7 +702,7 @@ public class NavigatorExtTests
 		{
 			test = new List<TucSort>(){
 				new TucSort{
-					DbName = columnName1,
+					ColumnName = columnName1,
 					Direction = columnOrder1,
 				}
 			};
@@ -711,7 +711,7 @@ public class NavigatorExtTests
 			result.Should().NotBeNull();
 			result.Count.Should().Be(1);
 			result[0].Should().BeOfType<TucSort>();
-			result[0].DbName.Should().Be(columnName1);
+			result[0].ColumnName.Should().Be(columnName1);
 			result[0].Direction.Should().Be(columnOrder1);
 		}
 		#endregion
@@ -720,11 +720,11 @@ public class NavigatorExtTests
 		{
 			test = new List<TucSort>(){
 				new TucSort{
-					DbName = columnName1,
+					ColumnName = columnName1,
 					Direction = columnOrder1,
 				},
 				new TucSort{
-					DbName = columnName2,
+					ColumnName = columnName2,
 					Direction = columnOrder2,
 				},
 			};
@@ -733,10 +733,10 @@ public class NavigatorExtTests
 			result.Should().NotBeNull();
 			result.Count.Should().Be(2);
 			result[0].Should().BeOfType<TucSort>();
-			result[0].DbName.Should().Be(columnName1);
+			result[0].ColumnName.Should().Be(columnName1);
 			result[0].Direction.Should().Be(columnOrder1);
 			result[1].Should().BeOfType<TucSort>();
-			result[1].DbName.Should().Be(columnName2);
+			result[1].ColumnName.Should().Be(columnName2);
 			result[1].Direction.Should().Be(columnOrder2);
 		}
 		#endregion

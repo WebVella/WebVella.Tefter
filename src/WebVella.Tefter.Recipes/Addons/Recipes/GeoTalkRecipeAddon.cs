@@ -31,6 +31,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 		var spaceViewId = new Guid("52363483-1d9b-4e7d-afe1-1602b7a7697f");
 		var spacePageId = new Guid("831ce409-febb-40c3-a9b3-74af0c3bb8d3");
 		var csvFileName = "worldcities.csv";
+		var joinKeyName = "city_id";
 
 		var step11 = new TfInfoRecipeStep
 		{
@@ -280,7 +281,14 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				IsUnique = true
 				}
 			},
-			ShouldSynchronizeData = true
+			TriggerDataSynchronization = true,
+			SynchPrimaryKeyColumns = new List<string>{"id"},
+			JoinKeys = new List<TfRecipeStepDataProviderJoinKey>{ 
+				new TfRecipeStepDataProviderJoinKey(
+					id:new Guid("81b6b073-f4f2-44b9-a29b-d8024a6e910c"),
+					dbName:joinKeyName,
+					columns:new List<string>{"id"})
+			}
 		});
 
 		Steps.Add(new TfCreateSpaceRecipeStep
@@ -309,7 +317,7 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 			Position = 100,
 			Columns = new(),
 			Filters = new(),
-			SortOrders = new List<TfSort> { new TfSort { DbName = "city", Direction = TfSortDirection.ASC } }
+			SortOrders = new List<TfSort> { new TfSort { ColumnName = "city", Direction = TfSortDirection.ASC } }
 		});
 
 		Steps.Add(new TfCreateSpaceViewRecipeStep
@@ -334,26 +342,38 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				new TfSpaceViewPreset{
 					Id = new Guid("8598ced6-55ff-4b7a-a51e-d83957aa2084"),
 					IsGroup = false,
-					Name = "Large cities",
+					Color = Web.Models.TfColor.Amber500,
+					Name = "1M+",
 					Filters = new List<TfFilterBase>(){
 						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.GreaterOrEqual,"1000000")
+					},
+					SortOrders = new List<TfSort>{
+						new TfSort("population",TfSortDirection.DESC)
 					}
 				},
 				new TfSpaceViewPreset{
 					Id = new Guid("5431e7f8-e871-407b-8ade-58baa1ad69ca"),
 					IsGroup = false,
-					Name = "Cities",
+					Name = "100K+",
+					Color = Web.Models.TfColor.Blue500,
 					Filters = new List<TfFilterBase>(){
 						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.Lower,"1000000"),
 						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.GreaterOrEqual,"100000")
+					},
+					SortOrders = new List<TfSort>{
+						new TfSort("population",TfSortDirection.DESC)
 					}
 				},
 				new TfSpaceViewPreset{
 					Id = new Guid("a7ca2eb7-e800-4880-a2a7-e177a2d10850"),
 					IsGroup = false,
-					Name = "Small Cities",
+					Name = "<100K",
+					Color = Web.Models.TfColor.Cyan500,
 					Filters = new List<TfFilterBase>(){
 						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.Lower,"100000"),
+					},
+					SortOrders = new List<TfSort>{
+						new TfSort("population",TfSortDirection.DESC)
 					}
 				},
 			},

@@ -51,7 +51,7 @@ public class TfCreateUserRecipeStep : TfRecipeStepBase
 	public string Password { get; set; }
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
-	public List<Guid> Roles { get; set; }
+	public List<Guid> Roles { get; set; } = new();
 
 }
 
@@ -67,9 +67,13 @@ public class TfCreateDataProviderRecipeStep : TfRecipeStepBase
 	public Guid DataProviderId { get; set; }
 	public ITfDataProviderAddon Type { get; set; }
 	public string Name { get; set; }
-	public List<TfDataProviderColumn> Columns { get; set; }
+	public List<TfDataProviderColumn> Columns { get; set; } = new();
 	public string SettingsJson { get; set; }
-	public bool ShouldSynchronizeData { get; set; } = false;
+	public List<string> SynchPrimaryKeyColumns { get; set; } = new();
+	public bool SynchScheduleEnabled { get; set; } = false;
+	public short SynchScheduleMinutes { get; set; } = 60;
+	public bool TriggerDataSynchronization { get; set; } = false;
+	public List<TfRecipeStepDataProviderJoinKey> JoinKeys { get; set; } = new();
 }
 
 public class TfCreateSpaceRecipeStep : TfRecipeStepBase

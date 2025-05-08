@@ -157,13 +157,13 @@ public partial class TfServiceTest : BaseTest
 				},
 				userSorts: new List<TfSort> {
 						new TfSort {
-							DbName ="missing_column",
+							ColumnName ="missing_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName =$"dp{provider.Index}_guid_column",
+							ColumnName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName ="sc_join_key_int",
+							ColumnName ="sc_join_key_int",
 							Direction=TfSortDirection.ASC}
 				});
 
@@ -200,13 +200,13 @@ public partial class TfServiceTest : BaseTest
 				//},
 				userSorts: new List<TfSort> {
 						new TfSort {
-							DbName ="missing_column",
+							ColumnName ="missing_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName =$"dp{provider.Index}_guid_column",
+							ColumnName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							DbName ="sc_join_key_int",
+							ColumnName ="sc_join_key_int",
 							Direction=TfSortDirection.ASC}
 				});
 		}

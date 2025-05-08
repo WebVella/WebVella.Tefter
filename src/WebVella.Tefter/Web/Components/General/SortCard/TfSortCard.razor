@@ -45,7 +45,7 @@
 							<tr @key=@Guid.NewGuid() class="tf-grid-tr">
 								<td class="tf-grid-td" style="width:1%;vertical-align:middle">
 									<div>
-										@if (AllColumnOptions.Contains(context.DbName))
+										@if (AllColumnOptions.Contains(context.ColumnName))
 										{
 											<FluentIcon Value="@TfConstants.GetIcon("CheckmarkCircle")" Color="@Color.Success" Title="@LOC("found in provider")"></FluentIcon>
 										}
@@ -56,7 +56,7 @@
 									</div>
 								</td>
 								<td class="tf-grid-td" style="width:300px;">
-									<div>@context.DbName</div>
+									<div>@context.ColumnName</div>
 								</td>
 								<td class="tf-grid-td">
 									<div>@context.Direction.ToDescriptionString()</div>

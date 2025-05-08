@@ -39,18 +39,18 @@ public partial class TfSpaceViewSortsDialog : TfFormBaseComponent, IDialogConten
 
 	private void _generateColumnOptions()
 	{
-		_columnOptions = _spaceData.Columns.Where(x => !_items.Any(y => y.DbName == x)).ToList();
+		_columnOptions = _spaceData.Columns.Where(x => !_items.Any(y => y.ColumnName == x)).ToList();
 	}
 
 	private void _addSortColumn()
 	{
-		_items.Add(_selectedSort with { DbName = _selectedSort.DbName });
+		_items.Add(_selectedSort with { ColumnName = _selectedSort.ColumnName });
 		_selectedSort = new();
 	}
 
 	private void _deleteSortColumn(TucSort tucSort)
 	{
-		_items = _items.Where(x => x.DbName != tucSort.DbName).ToList();
+		_items = _items.Where(x => x.ColumnName != tucSort.ColumnName).ToList();
 	}
 
 }

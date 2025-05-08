@@ -57,4 +57,10 @@ public class TfDataProviderColumn
 
 	[TfDboModelProperty("include_in_table_search")]
 	public bool IncludeInTableSearch { get; set; }
+
+	public void FixProviderPrefix(string dpPrefix)
+	{
+		if (!DbName.StartsWith(dpPrefix))
+			DbName = dpPrefix + DbName;
+	}
 }

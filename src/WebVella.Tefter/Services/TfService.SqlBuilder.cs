@@ -182,7 +182,7 @@ public partial class TfService : ITfService
 				{
 					foreach (var sortOrder in _userSorts)
 					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.ColumnName);
 						if (column is not null)
 							_sortColumns.Add(column);
 
@@ -304,7 +304,7 @@ public partial class TfService : ITfService
 					_sorts = _userSorts.ToList();
 					foreach (var sortOrder in _userSorts)
 					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.ColumnName);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -314,7 +314,7 @@ public partial class TfService : ITfService
 					_sorts = _presetSorts.ToList();
 					foreach (var sortOrder in _presetSorts)
 					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.ColumnName);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -324,7 +324,7 @@ public partial class TfService : ITfService
 					_sorts = _spaceData.SortOrders.ToList();
 					foreach (var sortOrder in _spaceData.SortOrders)
 					{
-						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.DbName);
+						var column = _availableColumns.FirstOrDefault(x => x.DbName == sortOrder.ColumnName);
 						if (column is not null)
 							_sortColumns.Add(column);
 					}
@@ -512,7 +512,7 @@ public partial class TfService : ITfService
 				bool first = true;
 				foreach (var sort in _sorts)
 				{
-					var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.DbName);
+					var column = _availableColumns.SingleOrDefault(x => x.DbName == sort.ColumnName);
 
 					//ignore columns not found in data provider
 					if (column is null)

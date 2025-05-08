@@ -14,6 +14,20 @@ public class TfSpaceViewColumn
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
 	public string SettingsJson { get; set; } = "{}";
+	public void FixProviderPrefix(string dpPrefix)
+	{
+		if (DataMapping is null) return;
+
+		foreach (var alias in DataMapping.Keys)
+		{
+			var dbName = DataMapping[alias];
+			if (!dbName.StartsWith(dpPrefix))
+			{
+				dbName = dpPrefix + dbName;
+			}
+			DataMapping[alias] = dbName;
+		}
+	}
 }
 
 [DboCacheModel]
