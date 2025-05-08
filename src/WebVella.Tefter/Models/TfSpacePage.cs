@@ -7,7 +7,7 @@ public class TfSpacePage
 	public Guid SpaceId { get; set; }
 	public TfSpacePageType Type { get; set; } = TfSpacePageType.Page;
 	public string Name { get; set; }
-	public string Icon { get; set; } = TfConstants.PageIconString;
+	public string FluentIconName { get; set; } = TfConstants.PageIconString;
 	public short? Position { get; set; }
 	public Guid? ComponentId { get; init; }
 	public Type ComponentType { get; internal set; }

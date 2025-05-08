@@ -5,7 +5,7 @@ public class TfSpace
 	public string Name { get; set; }
 	public short Position { get; set; }
 	public bool IsPrivate { get; set; }
-	public string Icon { get; set; }
+	public string FluentIconName { get; set; }
 	public short Color { get; set; }
 	public List<TfRole> Roles { get; set; } = new();
 }

@@ -19,7 +19,7 @@ else
 {
 	<FluentMenuItem Id="@($"tf-{Item.Id}")" Label="@Item.Name" Checked="SelectionDictionary[Item.Id].Contains(ActivePresetId ?? Guid.Empty)">
 		<MenuItems>
-			@foreach (var node in Item.Nodes)
+			@foreach (var node in Item.Pages)
 			{
 				<TfSpaceViewHeaderNavigationItem @key=node.Id Item="node"
 												 OnClick="OnClick"

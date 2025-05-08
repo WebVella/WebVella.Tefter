@@ -17,7 +17,7 @@ public partial class TfQuickFilterManageDialog : TfFormBaseComponent, IDialogCon
 			Name = Content.Item.Name,
 			Filters = Content.Item.Filters.ToList(),
 			SortOrders = Content.Item.SortOrders.ToList(),
-			Nodes = Content.Item.Nodes.ToList(),
+			Pages = Content.Item.Pages.ToList(),
 			ParentId = Content.Item.ParentId,
 			Color = Content.Item.Color,
 			Icon = Content.Item.Icon

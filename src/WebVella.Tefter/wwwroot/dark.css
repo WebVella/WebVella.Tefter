@@ -540,16 +540,26 @@ fluent-anchor::part(control) {
 fluent-anchor:hover::part(control) {
   background: var(--neutral-fill-layer-active);
 }
+.fluent-dialog-body .tf-grid {
+  border-color: var(--neutral-fill-input-alt-active);
+}
 fluent-data-grid-row:has([row-selected]) {
   background-color: var(--neutral-stroke-rest);
 }
 .tf-grid-thead-bkg {
   background: var(--neutral-fill-secondary-rest);
 }
+.fluent-dialog-body .tf-grid-thead-bkg {
+  background: var(--neutral-fill-layer-rest);
+}
 .tf-grid-td,
 .tf-grid-th {
   color: var(--tf-font-color);
   border: 1px solid var(--neutral-stroke-rest);
+}
+.fluent-dialog-body .tf-grid-td,
+.fluent-dialog-body .tf-grid-th {
+  border-color: var(--neutral-fill-input-alt-active);
 }
 .tf-grid .tf-grid-tbody tr > .tf-grid-th::before,
 .tf-grid .tf-grid-tbody tr > .tf-grid-td::before {

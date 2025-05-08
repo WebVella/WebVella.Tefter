@@ -17,8 +17,8 @@ public record TucSpaceViewPreset
 	[JsonPropertyName("sort_orders")]
 	public List<TucSort> SortOrders { get; set; } = new();
 
-	[JsonPropertyName("nodes")]
-	public List<TucSpaceViewPreset> Nodes { get; set; } = new();
+	[JsonPropertyName("pages")]
+	public List<TucSpaceViewPreset> Pages { get; set; } = new();
 
 	[JsonPropertyName("is_group")]
 	public bool IsGroup { get; set; } = false;
@@ -36,7 +36,7 @@ public record TucSpaceViewPreset
 		Name = model.Name;
 		Filters = model.Filters.Select(x => TucFilterBase.FromModel(x)).ToList();
 		SortOrders = model.SortOrders.Select(x => new TucSort(x)).ToList();
-		Nodes = model.Pages.Select(x => new TucSpaceViewPreset(x)).ToList();
+		Pages = model.Pages.Select(x => new TucSpaceViewPreset(x)).ToList();
 		IsGroup = model.IsGroup;
 		ParentId = model.ParentId;
 		Color = model.Color;
@@ -51,7 +51,7 @@ public record TucSpaceViewPreset
 			Name = Name,
 			Filters = Filters.Select(x => TucFilterBase.ToModel(x)).ToList(),
 			SortOrders = SortOrders.Select(x => x.ToModel()).ToList(),
-			Pages = Nodes.Select(x => x.ToModel()).ToList(),
+			Pages = Pages.Select(x => x.ToModel()).ToList(),
 			IsGroup = IsGroup,
 			ParentId = ParentId,
 			Color = Color,

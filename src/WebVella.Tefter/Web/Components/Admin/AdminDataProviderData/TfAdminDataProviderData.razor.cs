@@ -8,8 +8,8 @@ public partial class TfAdminDataProviderData : TfBaseComponent
 	[Inject] protected IState<TfUserState> TfUserState { get; set; }
 
 	private bool _isDataLoading = false;
-	private bool _showSystemColumns = true;
-	private bool _showJoinKeyColumns = true;
+	private bool _showSystemColumns = false;
+	private bool _showJoinKeyColumns = false;
 	private bool _showCustomColumns = true;
 	private long _totalRows = 0;
 	protected override async ValueTask DisposeAsyncCore(bool disposing)

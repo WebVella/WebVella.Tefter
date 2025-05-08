@@ -71,3 +71,54 @@ public class TfCreateDataProviderRecipeStep : TfRecipeStepBase
 	public string SettingsJson { get; set; }
 	public bool ShouldSynchronizeData { get; set; } = false;
 }
+
+public class TfCreateSpaceRecipeStep : TfRecipeStepBase
+{
+	public Guid SpaceId { get; set; }
+	public string Name { get; set; }
+	public TfColor? Color { get; set; } = TfColor.Emerald500;
+	public string FluentIconName { get; set; }
+	public bool IsPrivate { get; set; } = false;
+	public short Position { get; set; } = 100;
+	public List<Guid> Roles { get; set; } = new();
+}
+
+public class TfCreateSpaceDataRecipeStep : TfRecipeStepBase
+{
+	public Guid SpaceDataId { get; set; }
+	public Guid DataProviderId { get; set; }
+	public Guid SpaceId { get; set; }
+	public string Name { get; set; }
+	public List<string> Columns { get; set; } = new();
+	public short Position { get; set; } = 100;
+	public List<TfFilterBase> Filters { get; set; } = new();
+	public List<TfSort> SortOrders { get; set; } = new();
+}
+
+public class TfCreateSpaceViewRecipeStep : TfRecipeStepBase
+{
+	public Guid SpaceViewId { get; set; }
+	public Guid SpaceId { get; set; }
+	public Guid SpaceDataId { get; set; }
+	public string Name { get; set; }
+	public short Position { get; set; } = 100;
+	public TfSpaceViewType Type { get; set; } = TfSpaceViewType.DataGrid;
+	public List<TfSpaceViewPreset> Presets { get; set; } = new();
+	public TucSpaceViewSettings Settings { get; set; } = new();
+	public List<TfSpaceViewColumn> Columns { get; set; } = new();
+}
+
+public class TfCreateSpacePageRecipeStep : TfRecipeStepBase
+{
+	public Guid SpacePageId { get; set; }
+	public Guid SpaceId { get; set; }
+	public string Name { get; set; }
+	public short Position { get; set; } = 100;
+	public TfSpacePageType Type { get; set; } = TfSpacePageType.Page;
+	public Type ComponentType { get; set; } = typeof(TfSpaceViewSpacePageAddon);
+	public Guid? ComponentId { get; set; } = null;
+	public string ComponentOptionsJson { get; set; } = "{}";
+	public List<TfSpacePage> ChildPages { get; set; } = new();
+
+	public string FluentIconName { get; set; }
+}

@@ -35,7 +35,7 @@ public partial class TfSpaceManageDialog : TfFormBaseComponent, IDialogContentCo
 				Position = Content.Position,
 				IsPrivate = Content.IsPrivate,
 				Color = Content.Color,
-				IconString = Content.IconString,
+				FluentIconName = Content.FluentIconName,
 			};
 		}
 		base.InitForm(_form);

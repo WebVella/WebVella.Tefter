@@ -3,5 +3,5 @@
 }
 
 ::deep .card-rule > .tf-card-title {
-	background-color:var(--neutral-layer-2);
+	background-color:var(--neutral-fill-secondary-hover);
 }

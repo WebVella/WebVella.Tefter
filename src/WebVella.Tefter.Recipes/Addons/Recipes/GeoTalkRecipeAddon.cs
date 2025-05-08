@@ -8,6 +8,7 @@ using WebVella.Tefter.Addons;
 using WebVella.Tefter.DataProviders.Csv;
 using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.Web.Addons;
 
 namespace WebVella.Tefter.Recipes.Addons.Recipes;
 public class GeoTalkRecipeAddon : ITfRecipeAddon
@@ -25,6 +26,10 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 	{
 		var regularRoleId = new Guid("26dfd164-f1d7-4078-85e7-7f3f852f6577");
 		var dataProviderId = new Guid("9ba6d290-8de0-475e-92f7-bda8d03667c7");
+		var spaceId = new Guid("116a3baa-cd02-4926-8a76-639a2e15a011");
+		var spaceDataId = new Guid("1a363406-6cb8-418b-95b2-9c72fb5d5fe9");
+		var spaceViewId = new Guid("52363483-1d9b-4e7d-afe1-1602b7a7697f");
+		var spacePageId = new Guid("831ce409-febb-40c3-a9b3-74af0c3bb8d3");
 		var csvFileName = "worldcities.csv";
 
 		var step11 = new TfInfoRecipeStep
@@ -276,6 +281,153 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 				}
 			},
 			ShouldSynchronizeData = true
+		});
+
+		Steps.Add(new TfCreateSpaceRecipeStep
+		{
+			Visible = false,
+			StepId = new Guid("b0efcbc7-0157-4d35-8221-54dacfd3aa91"),
+			StepMenuTitle = "Create space",
+			SpaceId = spaceId,
+			Name = "World Cities",
+			IsPrivate = true,
+			Roles = new List<Guid> { regularRoleId },
+			Color = Web.Models.TfColor.Teal500,
+			FluentIconName = "Globe",
+			Position = 100
+		});
+
+		Steps.Add(new TfCreateSpaceDataRecipeStep
+		{
+			Visible = false,
+			StepId = new Guid("1e8bec9f-e4ea-452c-9bb2-04dbb5f43e98"),
+			StepMenuTitle = "Create space data",
+			SpaceDataId = spaceDataId,
+			DataProviderId = dataProviderId,
+			SpaceId = spaceId,
+			Name = "World Cities",
+			Position = 100,
+			Columns = new(),
+			Filters = new(),
+			SortOrders = new List<TfSort> { new TfSort { DbName = "city", Direction = TfSortDirection.ASC } }
+		});
+
+		Steps.Add(new TfCreateSpaceViewRecipeStep
+		{
+			Visible = false,
+			StepId = new Guid("34d0cfe8-852e-460a-acbf-c74b13482673"),
+			StepMenuTitle = "Create space view",
+			SpaceDataId = spaceDataId,
+			SpaceViewId = spaceViewId,
+			SpaceId = spaceId,
+			Name = "World Cities",
+			Position = 100,
+			Type = TfSpaceViewType.DataGrid,
+			Settings = new Web.Models.TucSpaceViewSettings
+			{
+				CanCreateRows = false,
+				CanDeleteRows = false,
+				FreezeFinalNColumns = 0,
+				FreezeStartingNColumns = 0,
+			},
+			Presets = new(){
+				new TfSpaceViewPreset{
+					Id = new Guid("8598ced6-55ff-4b7a-a51e-d83957aa2084"),
+					IsGroup = false,
+					Name = "Large cities",
+					Filters = new List<TfFilterBase>(){
+						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.GreaterOrEqual,"1000000")
+					}
+				},
+				new TfSpaceViewPreset{
+					Id = new Guid("5431e7f8-e871-407b-8ade-58baa1ad69ca"),
+					IsGroup = false,
+					Name = "Cities",
+					Filters = new List<TfFilterBase>(){
+						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.Lower,"1000000"),
+						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.GreaterOrEqual,"100000")
+					}
+				},
+				new TfSpaceViewPreset{
+					Id = new Guid("a7ca2eb7-e800-4880-a2a7-e177a2d10850"),
+					IsGroup = false,
+					Name = "Small Cities",
+					Filters = new List<TfFilterBase>(){
+						new TfFilterNumeric("population",TfFilterNumericComparisonMethod.Lower,"100000"),
+					}
+				},
+			},
+			Columns = new(){
+				new TfSpaceViewColumn{
+					Id = new Guid("7b9bed20-529c-4b53-b886-5d92cf317304"),
+					Position = 1,
+					QueryName = "city",
+					Title = "city",
+					DataMapping = new Dictionary<string, string> { {"Value","city"}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfTextViewColumnType.ID),
+					ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
+				},
+				new TfSpaceViewColumn{
+					Id = new Guid("80aa74a1-2453-4001-9af6-b4a537695d70"),
+					Position = 2,
+					QueryName = "country",
+					Title = "country",
+					DataMapping = new Dictionary<string, string> { {"Value","country"}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfTextViewColumnType.ID),
+					ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
+				},
+				new TfSpaceViewColumn{
+					Id = new Guid("c3f77a8c-9336-4bee-8412-7e193ee64882"),
+					Position = 3,
+					QueryName = "population",
+					Title = "population",
+					DataMapping = new Dictionary<string, string> { {"Value","population"}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
+					ComponentId = new Guid(TfLongIntegerDisplayColumnComponent.ID),
+				},
+				new TfSpaceViewColumn{
+					Id = new Guid("6a0eee60-6d6e-4fd8-9fed-e2462f1922ea"),
+					Position = 4,
+					QueryName = "id",
+					Title = "id",
+					DataMapping = new Dictionary<string, string> { {"Value","id"}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
+					ComponentId = new Guid(TfLongIntegerDisplayColumnComponent.ID),
+				}
+			}
+		});
+
+		Steps.Add(new TfCreateSpacePageRecipeStep
+		{
+			Visible = false,
+			StepId = new Guid("12cb625a-5a9a-43a1-b3ba-683576278578"),
+			StepMenuTitle = "Create space page",
+			SpacePageId = spacePageId,
+			SpaceId = spaceId,
+			Name = "World Cities",
+			FluentIconName = "Globe",
+			Position = 100,
+			Type = TfSpacePageType.Page,
+			ChildPages = new(),
+			ComponentType = typeof(TfSpaceViewSpacePageAddon),
+			ComponentId = new Guid(TfSpaceViewSpacePageAddon.ID),
+			ComponentOptionsJson = JsonSerializer.Serialize(new TfSpaceViewSpacePageAddonOptions
+			{
+				SetType = Web.Models.TucSpaceViewSetType.Existing,
+				SpaceViewId = spaceViewId,
+				Name = "World Cities",
+				Type = Web.Models.TucSpaceViewType.DataGrid,
+				DataProviderId = dataProviderId,
+				DataSetType = Web.Models.TucSpaceViewDataSetType.Existing,
+				SpaceDataId = spaceDataId,
+			})
+
+
+
 		});
 	}
 

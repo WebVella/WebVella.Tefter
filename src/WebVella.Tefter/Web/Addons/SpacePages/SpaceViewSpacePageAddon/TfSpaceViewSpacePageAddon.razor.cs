@@ -9,7 +9,8 @@ public partial class TfSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid Id { get; init; } = new Guid("68afeecc-6ca9-4102-831d-ef4028057128");
+	public static string ID = "68afeecc-6ca9-4102-831d-ef4028057128";
+	public override Guid Id { get; init; } = new Guid(ID);
 	public override string Name { get; init; } = "Space View";
 	public override string Description { get; init; } = "present data in a grid format";
 	public override string FluentIconName { get; init; } = "Table";

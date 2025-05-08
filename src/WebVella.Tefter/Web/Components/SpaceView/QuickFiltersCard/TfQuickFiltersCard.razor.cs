@@ -34,14 +34,14 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 			SortOrders = new(),
 			IsGroup = _selectedType == TfQuickFilterItemType.Group,
 			Name = _selectedName,
-			Nodes = new()
+			Pages = new()
 		};
 
 		if (_selectedParent is not null)
 		{
 			TucSpaceViewPreset parentNode = ModelHelpers.GetPresetById(Items, _selectedParent.Id);
 			if (parentNode is not null)
-				parentNode.Nodes.Add(preset);
+				parentNode.Pages.Add(preset);
 		}
 		else
 		{
@@ -83,10 +83,10 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 			TucSpaceViewPreset parent = ModelHelpers.GetPresetById(Items, source.ParentId.Value);
 			if (parent is null) return;
 
-			var sourceIndex = parent.Nodes.FindIndex(x => x.Id == source.Id);
+			var sourceIndex = parent.Pages.FindIndex(x => x.Id == source.Id);
 			if (sourceIndex > -1)
 			{
-				parent.Nodes.Insert(sourceIndex + 1, _copyNode(source));
+				parent.Pages.Insert(sourceIndex + 1, _copyNode(source));
 			}
 		}
 		else
@@ -146,8 +146,8 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 
 				if (currentParent is not null)
 				{
-					var findIndex = currentParent.Nodes.FindIndex(x => x.Id == record.Id);
-					if (findIndex > -1) currentParent.Nodes.RemoveAt(findIndex);
+					var findIndex = currentParent.Pages.FindIndex(x => x.Id == record.Id);
+					if (findIndex > -1) currentParent.Pages.RemoveAt(findIndex);
 				}
 				else
 				{
@@ -157,7 +157,7 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 
 				if (newParent is not null)
 				{
-					newParent.Nodes.Add(currentValue);
+					newParent.Pages.Add(currentValue);
 				}
 				else
 				{
@@ -188,7 +188,7 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 	private void _fillParents(List<TucSpaceViewPreset> parents, TucSpaceViewPreset current)
 	{
 		if (current.IsGroup) parents.Add(current);
-		foreach (var item in current.Nodes) _fillParents(parents, item);
+		foreach (var item in current.Pages) _fillParents(parents, item);
 	}
 
 	private List<TucSpaceViewPreset> _removeNode(List<TucSpaceViewPreset> nodes, Guid nodeId)
@@ -200,7 +200,7 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 		}
 		foreach (var item in nodes)
 		{
-			item.Nodes = _removeNode(item.Nodes, nodeId);
+			item.Pages = _removeNode(item.Pages, nodeId);
 		}
 
 		return nodes;
@@ -223,7 +223,7 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 
 		foreach (var item in nodes)
 		{
-			item.Nodes = _moveNode(item.Nodes, nodeId, isUp);
+			item.Pages = _moveNode(item.Pages, nodeId, isUp);
 		}
 
 		return nodes;
@@ -233,11 +233,11 @@ public partial class TfQuickFiltersCard : TfBaseComponent
 	{
 		var newItem = item with { Id = Guid.NewGuid() };
 		var newNodes = new List<TucSpaceViewPreset>();
-		foreach (var node in item.Nodes)
+		foreach (var node in item.Pages)
 		{
 			newNodes.Add(_copyNode(node));
 		}
-		newItem.Nodes = newNodes;
+		newItem.Pages = newNodes;
 		return newItem;
 	}
 }

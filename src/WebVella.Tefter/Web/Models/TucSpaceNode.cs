@@ -32,7 +32,7 @@ public record TucSpaceNode
 		SpaceId = model.SpaceId;
 		Type = model.Type;
 		Name = model.Name; 
-		Icon = model.Icon;
+		Icon = model.FluentIconName;
 		Position = model.Position;
 		ComponentId = model.ComponentId;
 		ComponentType = model.ComponentType;
@@ -48,7 +48,7 @@ public record TucSpaceNode
 			SpaceId = SpaceId,
 			Type = Type,
 			Name = Name,
-			Icon = Icon,
+			FluentIconName = Icon,
 			Position = Position,
 			ComponentId = ComponentId,
 			ComponentType = ComponentType,

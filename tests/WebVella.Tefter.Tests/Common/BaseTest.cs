@@ -153,7 +153,7 @@ public class BaseTest
 			Id = Guid.NewGuid(),
 			Name = "TestSpace",
 			Color = 10,
-			Icon = "icon1",
+			FluentIconName = "icon1",
 			IsPrivate = false,
 			Position = 0
 		};

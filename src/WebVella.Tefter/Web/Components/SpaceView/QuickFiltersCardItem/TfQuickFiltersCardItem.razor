@@ -83,10 +83,10 @@
 	}
 
 </tr>
-@foreach (var context in Item.Nodes)
+@foreach (var context in Item.Pages)
 {
-	var contextIndex = Item.Nodes.FindIndex(x => x.Id == context.Id);
+	var contextIndex = Item.Pages.FindIndex(x => x.Id == context.Id);
 	<TfQuickFiltersCardItem Item="context" Level="(Level+1)" OnEdit="OnEdit" OnMove="OnMove" OnRemove="OnRemove"
 						OnCopy="OnCopy"
-					   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Item.Nodes.Count -1)" />
+					   IsFirst="(contextIndex == 0)" IsLast="(contextIndex == Item.Pages.Count -1)" />
 }

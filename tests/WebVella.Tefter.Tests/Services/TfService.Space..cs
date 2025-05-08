@@ -31,7 +31,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
 					Roles = new List<TfRole> { role }
@@ -42,7 +42,7 @@ public partial class TfServiceTest : BaseTest
 				result.Name.Should().Be(space1.Name);
 				result.Position.Should().Be(1);
 				result.IsPrivate.Should().Be(space1.IsPrivate);
-				result.Icon.Should().Be(space1.Icon);
+				result.FluentIconName.Should().Be(space1.FluentIconName);
 				result.Color.Should().Be(space1.Color);
 				result.Roles.Count.Should().Be(1);
 
@@ -51,7 +51,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space2",
 					Color = 12,
-					Icon = "icon2",
+					FluentIconName = "icon2",
 					IsPrivate = false,
 					Position = 0,
 					Roles = new List<TfRole> { role }
@@ -62,7 +62,7 @@ public partial class TfServiceTest : BaseTest
 				result.Name.Should().Be(space2.Name);
 				result.Position.Should().Be(2);
 				result.IsPrivate.Should().Be(space2.IsPrivate);
-				result.Icon.Should().Be(space2.Icon);
+				result.FluentIconName.Should().Be(space2.FluentIconName);
 				result.Color.Should().Be(space2.Color);
 				result.Roles.Count.Should().Be(1);
 
@@ -79,7 +79,7 @@ public partial class TfServiceTest : BaseTest
 				space2.Position.Should().Be(2);
 
 				space1.Name = "updated name";
-				space1.Icon = "updated icon";
+				space1.FluentIconName = "updated icon";
 				space1.Color = 100;
 				space1.IsPrivate = true;
 
@@ -89,7 +89,7 @@ public partial class TfServiceTest : BaseTest
 				result.Name.Should().Be(space1.Name);
 				result.Position.Should().Be(1);
 				result.IsPrivate.Should().Be(space1.IsPrivate);
-				result.Icon.Should().Be(space1.Icon);
+				result.FluentIconName.Should().Be(space1.FluentIconName);
 				result.Color.Should().Be(space1.Color);
 
 				tfService.DeleteSpace(space1.Id);
@@ -137,7 +137,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
 					Roles = new List<TfRole> { role }
@@ -148,7 +148,7 @@ public partial class TfServiceTest : BaseTest
 				result.Name.Should().Be(space1.Name);
 				result.Position.Should().Be(1);
 				result.IsPrivate.Should().Be(space1.IsPrivate);
-				result.Icon.Should().Be(space1.Icon);
+				result.FluentIconName.Should().Be(space1.FluentIconName);
 				result.Color.Should().Be(space1.Color);
 				result.Roles.Count.Should().Be(1);
 
@@ -157,7 +157,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space2",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
 					Roles = new List<TfRole> { }
@@ -168,7 +168,7 @@ public partial class TfServiceTest : BaseTest
 				result.Name.Should().Be(space2.Name);
 				result.Position.Should().Be(2);
 				result.IsPrivate.Should().Be(space2.IsPrivate);
-				result.Icon.Should().Be(space2.Icon);
+				result.FluentIconName.Should().Be(space2.FluentIconName);
 				result.Color.Should().Be(space2.Color);
 				result.Roles.Count.Should().Be(0);
 
@@ -216,7 +216,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
 					Roles = new List<TfRole> { }
@@ -227,7 +227,7 @@ public partial class TfServiceTest : BaseTest
 				result.Name.Should().Be(space1.Name);
 				result.Position.Should().Be(1);
 				result.IsPrivate.Should().Be(space1.IsPrivate);
-				result.Icon.Should().Be(space1.Icon);
+				result.FluentIconName.Should().Be(space1.FluentIconName);
 				result.Color.Should().Be(space1.Color);
 				result.Roles.Count.Should().Be(0);
 
@@ -236,7 +236,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space2",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0,
 					Roles = new List<TfRole> { }
@@ -247,7 +247,7 @@ public partial class TfServiceTest : BaseTest
 				result.Name.Should().Be(space2.Name);
 				result.Position.Should().Be(2);
 				result.IsPrivate.Should().Be(space2.IsPrivate);
-				result.Icon.Should().Be(space2.Icon);
+				result.FluentIconName.Should().Be(space2.FluentIconName);
 				result.Color.Should().Be(space2.Color);
 				result.Roles.Count.Should().Be(0);
 
@@ -303,7 +303,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -401,7 +401,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -412,7 +412,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space2",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -517,7 +517,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -615,7 +615,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -710,7 +710,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -797,7 +797,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -906,7 +906,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					Name = "Space1",
 					Color = 10,
-					Icon = "icon1",
+					FluentIconName = "icon1",
 					IsPrivate = false,
 					Position = 0
 				};
@@ -918,7 +918,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = null,
 					ComponentId = null,
-					Icon = null,
+					FluentIconName = null,
 					Name = "1_0_0",
 					ParentId = null,
 					Position = null,
@@ -933,7 +933,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "1_1_0",
+					FluentIconName = "1_1_0",
 					Name = "1_1_0",
 					ParentId = spaceNode1_0_0.Id,
 					Position = null,
@@ -948,7 +948,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "1_2_0",
+					FluentIconName = "1_2_0",
 					Name = "1_2_0",
 					ParentId = spaceNode1_0_0.Id,
 					Position = null,
@@ -963,7 +963,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "1_3_0",
+					FluentIconName = "1_3_0",
 					Name = "1_3_0",
 					ParentId = spaceNode1_0_0.Id,
 					Position = null,
@@ -978,7 +978,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "2_0_0",
+					FluentIconName = "2_0_0",
 					Name = "2_0_0",
 					ParentId = null,
 					Position = null,
@@ -993,7 +993,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "2_1_0",
+					FluentIconName = "2_1_0",
 					Name = "2_1_0",
 					ParentId = spaceNode2_0_0.Id,
 					Position = null,
@@ -1008,7 +1008,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "2_2_0",
+					FluentIconName = "2_2_0",
 					Name = "2_2_0",
 					ParentId = spaceNode2_0_0.Id,
 					Position = null,
@@ -1023,7 +1023,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "2_3_0",
+					FluentIconName = "2_3_0",
 					Name = "2_3_0",
 					ParentId = spaceNode2_0_0.Id,
 					Position = null,
@@ -1038,7 +1038,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "3_0_0",
+					FluentIconName = "3_0_0",
 					Name = "3_0_0",
 					ParentId = null,
 					Position = null,
@@ -1053,7 +1053,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "3_1_0",
+					FluentIconName = "3_1_0",
 					Name = "3_1_0",
 					ParentId = spaceNode3_0_0.Id,
 					Position = null,
@@ -1068,7 +1068,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "3_2_0",
+					FluentIconName = "3_2_0",
 					Name = "3_2_0",
 					ParentId = spaceNode3_0_0.Id,
 					Position = null,
@@ -1083,7 +1083,7 @@ public partial class TfServiceTest : BaseTest
 					Id = Guid.NewGuid(),
 					ComponentOptionsJson = "{}",
 					ComponentId = null,
-					Icon = "3_3_0",
+					FluentIconName = "3_3_0",
 					Name = "3_3_0",
 					ParentId = spaceNode3_0_0.Id,
 					Position = null,

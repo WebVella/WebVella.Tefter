@@ -42,7 +42,7 @@ public partial class TfHeaderNavigation : TfBaseComponent
 	{
 		var list = new List<Guid>();
 		list.Add(item.Id);
-		foreach (var node in item.Nodes)
+		foreach (var node in item.Pages)
 		{
 			list.Add(node.Id);
 			var childIds = _getChildNodeIds(node, dict);

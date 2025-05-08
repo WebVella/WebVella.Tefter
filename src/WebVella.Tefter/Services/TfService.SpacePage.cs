@@ -250,7 +250,7 @@ public partial class TfService : ITfService
 								SpaceId = spacePage.SpaceId,
 								SpacePageId = spacePage.Id,
 								ComponentOptionsJson = spacePage.ComponentOptionsJson,
-								Icon = spacePage.Icon,
+								Icon = spacePage.FluentIconName,
 								Mode = TfComponentMode.Update
 							};
 
@@ -524,7 +524,7 @@ public partial class TfService : ITfService
 								SpaceId = spacePage.SpaceId,
 								SpacePageId = spacePage.Id,
 								ComponentOptionsJson = spacePage.ComponentOptionsJson,
-								Icon = spacePage.Icon,
+								Icon = spacePage.FluentIconName,
 								Mode = TfComponentMode.Update
 							};
 
@@ -634,7 +634,7 @@ public partial class TfService : ITfService
 									SpaceId = pageToDelete.SpaceId,
 									SpacePageId = pageToDelete.Id,
 									ComponentOptionsJson = pageToDelete.ComponentOptionsJson,
-									Icon = pageToDelete.Icon,
+									Icon = pageToDelete.FluentIconName,
 									Mode = TfComponentMode.Update
 								};
 
@@ -727,7 +727,7 @@ public partial class TfService : ITfService
 			Type = dbo.Type,
 			ComponentOptionsJson = dbo.ComponentSettingsJson,
 			ComponentId = dbo.ComponentId,
-			Icon = dbo.Icon,
+			FluentIconName = dbo.Icon,
 			ParentId = dbo.ParentId
 		};
 	}
@@ -746,7 +746,7 @@ public partial class TfService : ITfService
 			SpaceId = model.SpaceId,
 			Type = model.Type,
 			ParentId = model.ParentId,
-			Icon = model.Icon ?? string.Empty,
+			Icon = model.FluentIconName ?? string.Empty,
 			ComponentId = model.ComponentId,
 			ComponentSettingsJson = model.ComponentOptionsJson ?? "{}",
 		};

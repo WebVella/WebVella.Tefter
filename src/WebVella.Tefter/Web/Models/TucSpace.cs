@@ -10,11 +10,11 @@ public record TucSpace
 	public short Position { get; set; }
 	public bool IsPrivate { get; set; }
 	[Required]
-	public string IconString { get; set; } = "Apps";
+	public string FluentIconName { get; set; } = "Apps";
 	[Required]
 	public TfColor Color { get; set; } = TfColor.Emerald500;
 
-	public Icon Icon { get => TfConstants.GetIcon(IconString); }
+	public Icon Icon { get => TfConstants.GetIcon(FluentIconName); }
 
 	public Guid? DefaultNodeId { get; set; } = null;
 
@@ -38,7 +38,7 @@ public record TucSpace
 		Name = model.Name;
 		Position = model.Position;
 		IsPrivate = model.IsPrivate;
-		IconString = model.Icon;
+		FluentIconName = model.FluentIconName;
 		Color = Web.Utils.EnumExtensions.ConvertIntToEnum<TfColor>(model.Color, TfColor.Emerald500);
 		Roles = model.Roles is null ? new() : model.Roles.Select(x => new TucRole(x)).ToList();
 	}
@@ -51,7 +51,7 @@ public record TucSpace
 			Name = Name,
 			Position = Position,
 			IsPrivate = IsPrivate,
-			Icon = IconString,
+			FluentIconName = FluentIconName,
 			Color = (short)Color,
 			Roles = Roles is null ? null : Roles.Select(x => x.ToModel()).ToList()
 		};

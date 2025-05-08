@@ -38,7 +38,7 @@
 						<FluentIcon Slot="start" Value="@TfConstants.GetIcon(item.Icon)" />
 					}
 					@item.Name
-					@if (item.Nodes.Count > 0)
+					@if (item.Pages.Count > 0)
 					{
 						<FluentIcon Slot="end" Value="@TfConstants.GetIcon("ChevronDown")" />
 					}
@@ -47,13 +47,13 @@
 						<span class="tf-addon" style="@($"background-color:{item.Color.GetAttribute().Value}")"></span>
 					}
 				</FluentAnchor>
-				@if (item.Nodes.Count > 0)
+				@if (item.Pages.Count > 0)
 				{
 					<FluentMenu UseMenuService="true"
 								Open="(_opendedNode == item.Id)"
 								OpenChanged="@(x => _toggleMenu(item.Id,x))"
 								Anchor="@($"tf-{item.Id}")">
-						@foreach (var node in item.Nodes)
+						@foreach (var node in item.Pages)
 						{
 							<TfSpaceViewHeaderNavigationItem @key=node.Id Item="node" OnClick="@(x=> _onClick(x))"
 															 SelectionDictionary="selectionDict" ActivePresetId="TfAppState.Value.Route.SpaceViewPresetId" />

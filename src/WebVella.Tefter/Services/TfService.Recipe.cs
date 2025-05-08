@@ -148,6 +148,89 @@ public partial class TfService : ITfService
 					}
 				}
 			}
+			else if (stepBase.GetType() == typeof(TfCreateSpaceRecipeStep))
+			{
+				var step = (TfCreateSpaceRecipeStep)stepBase;
+				var allRoles = GetRoles();
+				var stepRoles = allRoles.Where(x => step.Roles.Contains(x.Id)).ToList();
+				var result = CreateSpace(new TfSpace
+				{
+					Id = step.SpaceId == Guid.Empty ? Guid.NewGuid() : step.SpaceId,
+					Name = step.Name,
+					Color = (short)(step.Color is null ? TfColor.Emerald500 : step.Color),
+					FluentIconName = !String.IsNullOrWhiteSpace(step.FluentIconName) ? step.FluentIconName : "Apps",
+					IsPrivate = step.IsPrivate,
+					Position = step.Position,
+					Roles = stepRoles
+				});
+			}
+			else if (stepBase.GetType() == typeof(TfCreateSpaceDataRecipeStep))
+			{
+				var step = (TfCreateSpaceDataRecipeStep)stepBase;
+				var result = CreateSpaceData(new TfSpaceData
+				{
+					Id = step.SpaceDataId == Guid.Empty ? Guid.NewGuid() : step.SpaceDataId,
+					SpaceId = step.SpaceId,
+					DataProviderId = step.DataProviderId,
+					Name = step.Name,
+					Columns = step.Columns,
+					Position = step.Position,
+					Filters = step.Filters,
+					SortOrders = step.SortOrders,
+				});
+			}
+			else if (stepBase.GetType() == typeof(TfCreateSpaceViewRecipeStep))
+			{
+				var step = (TfCreateSpaceViewRecipeStep)stepBase;
+				var spaceView = CreateSpaceView(new TfSpaceView
+				{
+					Id = step.SpaceViewId == Guid.Empty ? Guid.NewGuid() : step.SpaceViewId,
+					SpaceId = step.SpaceId,
+					Name = step.Name,
+					Position = step.Position,
+					SpaceDataId = step.SpaceDataId,
+					Type = TfSpaceViewType.DataGrid,
+					Presets = step.Presets,
+					SettingsJson = step.Settings is not null ? JsonSerializer.Serialize(step.Settings) : "{}",
+				});
+				if (step.Columns.Count > 0)
+				{
+					var spaceData = GetSpaceData(spaceView.SpaceDataId);
+					var dataProvider = GetDataProvider(spaceData.DataProviderId);
+					var dpPrefix = $"dp{dataProvider.Index}_";
+					foreach (var column in step.Columns)
+					{
+						if(column.DataMapping is not null){ 
+							foreach (var alias in column.DataMapping.Keys){ 
+								var dbName = column.DataMapping[alias];
+								if(!dbName.StartsWith(dpPrefix)){ 
+									dbName = dpPrefix + dbName;
+								}
+								column.DataMapping[alias] = dbName;
+							}
+						}
+
+						var columnResult = CreateSpaceViewColumn(column);
+					}
+				}
+			}
+			else if (stepBase.GetType() == typeof(TfCreateSpacePageRecipeStep))
+			{
+				var step = (TfCreateSpacePageRecipeStep)stepBase;
+				var result = CreateSpacePage(new TfSpacePage
+				{
+					Id = step.SpacePageId == Guid.Empty ? Guid.NewGuid() : step.SpacePageId,
+					SpaceId = step.SpaceId,
+					Name = step.Name,
+					Position = step.Position,
+					Type = step.Type,
+					ComponentType = step.ComponentType,
+					ComponentId = step.ComponentId,
+					ComponentOptionsJson = step.ComponentOptionsJson,
+					ChildPages = step.ChildPages,
+					FluentIconName = step.FluentIconName
+				});
+			}
 			else throw new Exception("Unsupported step type");
 			stepResult.IsCompleted = true;
 			stepResult.IsSuccessful = !stepResult.Errors.Any();
