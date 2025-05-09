@@ -7,11 +7,11 @@ public partial class TfUseTemplateSelectorAction : TfBaseComponent, ITfScreenReg
 	[Inject] protected IState<TfAppState> TfAppState { get; set; }
 
 	//State
-	public Guid Id { get; init; } = new Guid("3e344931-988c-4f84-874d-823e31ec73ad"); 
+	public Guid AddonId { get; init; } = new Guid("3e344931-988c-4f84-874d-823e31ec73ad"); 
 	public int PositionRank { get; init; } = 90;
-	public string Name { get; init;} = "Use template with selection";
-	public string Description { get; init;} = "";
-	public string FluentIconName { get; init; } =  "CalendarTemplate";
+	public string AddonName { get; init;} = "Use template with selection";
+	public string AddonDescription { get; init;} = "";
+	public string AddonFluentIconName { get; init; } =  "CalendarTemplate";
 	public List<TfScreenRegionScope> Scopes { get; init; } = new ();
 
 	[Parameter] 

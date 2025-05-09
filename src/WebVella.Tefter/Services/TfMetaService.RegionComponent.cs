@@ -76,13 +76,17 @@ public partial class TfMetaService : ITfMetaService
 			if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfAdminPageScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfAdminPageScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
+
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -90,13 +94,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfDataProviderManageSettingsScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -104,13 +111,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfDataProviderDisplaySettingsScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfDataProviderDisplaySettingsScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -118,13 +128,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfPageScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfPageScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -132,13 +145,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfSpaceViewSelectorActionScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfSpaceViewSelectorActionScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -146,13 +162,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfSpaceViewToolBarActionScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfSpaceViewToolBarActionScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -160,13 +179,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorHelpScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfTemplateProcessorHelpScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -174,13 +196,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorManageSettingsScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -188,13 +213,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorResultScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfTemplateProcessorResultScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -202,13 +230,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorResultPreviewScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};
@@ -216,13 +247,16 @@ public partial class TfMetaService : ITfMetaService
 			else if (type.ImplementsGenericInterface(typeof(ITfScreenRegionComponent<>), typeof(TfTemplateProcessorDisplaySettingsScreenRegionContext)))
 			{
 				var instance = (ITfScreenRegionComponent<TfTemplateProcessorDisplaySettingsScreenRegionContext>)Activator.CreateInstance(type);
+				if (_addonIdHS.Contains(instance.AddonId))
+					throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+				_addonIdHS.Add(instance.AddonId);
 				meta = new TfScreenRegionComponentMeta
 				{
-					Id = instance.Id,
+					Id = instance.AddonId,
 					PositionRank = instance.PositionRank,
-					Name = instance.Name,
-					Description = instance.Description,
-					FluentIconName = instance.FluentIconName,
+					Name = instance.AddonName,
+					Description = instance.AddonDescription,
+					FluentIconName = instance.AddonFluentIconName,
 					Type = type,
 					Scopes = instance.Scopes
 				};

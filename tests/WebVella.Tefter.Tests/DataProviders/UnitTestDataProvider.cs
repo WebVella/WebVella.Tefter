@@ -7,13 +7,13 @@ namespace WebVella.Tefter.Tests.DataProviders;
 
 public class UnitTestDataProvider : ITfDataProviderAddon
 {
-	public Guid Id { get; init; } = new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d");
+	public Guid AddonId { get; init; } = new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d");
 
-	public string Name { get; init; } = "UnitTest Data Provider";
+	public string AddonName { get; init; } = "UnitTest Data Provider";
 
-	public string Description { get; init; } = "Used for unit test only";
+	public string AddonDescription { get; init; } = "Used for unit test only";
 
-	public string FluentIconName { get; init; } = "DocumentTable";
+	public string AddonFluentIconName { get; init; } = "DocumentTable";
 
 	public Type SettingsComponentType => typeof(UnitTestDataProviderSettingsComponent);
 

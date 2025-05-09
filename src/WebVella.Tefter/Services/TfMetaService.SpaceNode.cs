@@ -23,10 +23,14 @@ public partial class TfMetaService : ITfMetaService
 		{
 			var instance = (ITfSpacePageAddon)Activator.CreateInstance(type);
 			
+			if(_addonIdHS.Contains(instance.AddonId))
+				throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+			_addonIdHS.Add(instance.AddonId);
+
 			TfSpacePageAddonMeta meta = new TfSpacePageAddonMeta
 			{
 				Instance = instance,
-				ComponentId = instance.Id,
+				ComponentId = instance.AddonId,
 			};
 
 			_spacePageComponentMeta.Add(meta);

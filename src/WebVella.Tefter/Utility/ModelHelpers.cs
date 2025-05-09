@@ -7,41 +7,41 @@ public static class ModelHelpers
 		switch (dbType)
 		{
 			case TfDatabaseColumnType.ShortInteger:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfShortIntegerViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfShortIntegerViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.AutoIncrement:
 			case TfDatabaseColumnType.Integer:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfIntegerViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfIntegerViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.LongInteger:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfLongIntegerViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfLongIntegerViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.Number:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfNumberViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfNumberViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.ShortText:
 			case TfDatabaseColumnType.Text:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfTextViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfTextViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.Boolean:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfBooleanViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfBooleanViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.Guid:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfGuidViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfGuidViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.DateOnly:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfDateOnlyViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfDateOnlyViewColumnType.ID));
 				break;
 			case TfDatabaseColumnType.DateTime:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfDateTimeViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfDateTimeViewColumnType.ID));
 				break;
 			default:
-				selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfTextViewColumnType.ID));
+				selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfTextViewColumnType.ID));
 				break;
 		}
 
 		if (selectedType is null)
-			selectedType = availableTypes.FirstOrDefault(x => x.Id == new Guid(TfTextViewColumnType.ID));
+			selectedType = availableTypes.FirstOrDefault(x => x.AddonId == new Guid(TfTextViewColumnType.ID));
 
 		return selectedType;
 	}

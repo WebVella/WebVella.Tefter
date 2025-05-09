@@ -285,7 +285,7 @@ public partial class TfServiceTest : BaseTest
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
 				{
@@ -383,7 +383,7 @@ public partial class TfServiceTest : BaseTest
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
 				{
@@ -460,7 +460,7 @@ public partial class TfServiceTest : BaseTest
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
 				{
@@ -598,7 +598,7 @@ public partial class TfServiceTest : BaseTest
 
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
 				{
@@ -693,7 +693,7 @@ public partial class TfServiceTest : BaseTest
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
 				{
@@ -780,7 +780,7 @@ public partial class TfServiceTest : BaseTest
 			{
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				TfDataProviderModel providerModel = new TfDataProviderModel
 				{
@@ -837,14 +837,14 @@ public partial class TfServiceTest : BaseTest
 					TfSpaceViewColumn column = new TfSpaceViewColumn
 					{
 						Id = Guid.NewGuid(),
-						TypeId = availableColumnType.Id,
-						QueryName = availableColumnType.Name
+						TypeId = availableColumnType.AddonId,
+						QueryName = availableColumnType.AddonName
 											.ToLower()
 											.Replace(".", "")
 											.Replace(" ", "")
 											.Replace("(", "")
 											.Replace(")", ""),
-						Title = availableColumnType.Name,
+						Title = availableColumnType.AddonName,
 						ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
 						SpaceViewId = view.Id,
 						CustomOptionsJson = "{}",

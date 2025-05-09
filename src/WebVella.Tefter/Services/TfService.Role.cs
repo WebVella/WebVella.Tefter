@@ -41,6 +41,20 @@ public partial interface ITfService
 		TfRole role);
 
 	/// <summary>
+	/// Creates new role
+	/// </summary>
+	/// <param name="role"></param>
+	/// <returns></returns>
+	TfRole CreateRole(TfRole role);
+
+	/// <summary>
+	/// Updates existing role
+	/// </summary>
+	/// <param name="role"></param>
+	/// <returns></returns>
+	TfRole UpdateRole(TfRole role);
+
+	/// <summary>
 	/// Deletes a role from the system.
 	/// </summary>
 	/// <param name="role">The role to delete.</param>
@@ -76,6 +90,20 @@ public partial interface ITfService
 	/// <returns>A task representing the asynchronous operation, with the saved <see cref="TfRole"/> instance.</returns>
 	Task<TfRole> SaveRoleAsync(
 		TfRole role);
+
+	/// <summary>
+	/// Creates new role
+	/// </summary>
+	/// <param name="role"></param>
+	/// <returns></returns>
+	Task<TfRole> CreateRoleAsync(TfRole role);
+
+	/// <summary>
+	/// Updates existing role
+	/// </summary>
+	/// <param name="role"></param>
+	/// <returns></returns>
+	Task<TfRole> UpdateRoleAsync(TfRole role);
 
 	/// <summary>
 	/// Asynchronously deletes a role from the system.
@@ -174,7 +202,7 @@ public partial class TfService : ITfService
 			else
 			{
 				var existingRole = GetRole(role.Id);
-				if(existingRole is not null)
+				if (existingRole is not null)
 					return UpdateRole(role);
 				else
 					return CreateRole(role);
@@ -186,7 +214,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private TfRole CreateRole(TfRole role)
+	public TfRole CreateRole(TfRole role)
 	{
 		try
 		{
@@ -218,7 +246,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private TfRole UpdateRole(TfRole role)
+	public TfRole UpdateRole(TfRole role)
 	{
 		try
 		{
@@ -354,7 +382,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private async Task<TfRole> CreateRoleAsync(TfRole role)
+	public async Task<TfRole> CreateRoleAsync(TfRole role)
 	{
 		try
 		{
@@ -364,7 +392,7 @@ public partial class TfService : ITfService
 				.ThrowIfContainsErrors();
 
 			Guid roleId = role.Id;
-			if(role.Id == Guid.Empty)
+			if (role.Id == Guid.Empty)
 				roleId = Guid.NewGuid();
 
 			RoleDbo roleDbo = new RoleDbo
@@ -386,7 +414,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private async Task<TfRole> UpdateRoleAsync(TfRole role)
+	public async Task<TfRole> UpdateRoleAsync(TfRole role)
 	{
 		try
 		{

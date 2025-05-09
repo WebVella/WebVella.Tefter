@@ -20,11 +20,11 @@ public abstract class TfFilterBase
 		Value = value;
 	}
 
-	public void FixProviderPrefix(string dpPrefix)
+	public void FixPrefix(string prefix)
 	{
-		if (!ColumnName.StartsWith(dpPrefix))
+		if (!ColumnName.StartsWith(prefix))
 		{
-			ColumnName = dpPrefix + ColumnName;
+			ColumnName = prefix + ColumnName;
 		}
 
 		if (this.GetType() == typeof(TfFilterAnd))
@@ -32,7 +32,7 @@ public abstract class TfFilterBase
 			var column = (TfFilterAnd)this;
 			foreach (var subFilter in column.Filters)
 			{
-				subFilter.FixProviderPrefix(dpPrefix);
+				subFilter.FixPrefix(prefix);
 			}
 		}
 
@@ -41,7 +41,7 @@ public abstract class TfFilterBase
 			var column = (TfFilterOr)this;
 			foreach (var subFilter in column.Filters)
 			{
-				subFilter.FixProviderPrefix(dpPrefix);
+				subFilter.FixPrefix(prefix);
 			}
 		}
 	}

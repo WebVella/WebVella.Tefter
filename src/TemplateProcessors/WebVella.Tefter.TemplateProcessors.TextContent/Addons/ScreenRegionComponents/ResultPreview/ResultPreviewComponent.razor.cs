@@ -11,10 +11,10 @@ public partial class ResultPreviewComponent : TfBaseComponent,
 	public const string DESCRIPTION = "";
 	public const string FLUENT_ICON_NAME = "PuzzlePiece";
 	public const int POSITION_RANK = 1000;
-	public Guid Id { get; init; } = new Guid(ID);
-	public string Name { get; init; } = NAME;
-	public string Description { get; init; } = DESCRIPTION;
-	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public Guid AddonId { get; init; } = new Guid(ID);
+	public string AddonName { get; init; } = NAME;
+	public string AddonDescription { get; init; } = DESCRIPTION;
+	public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(TextContentTemplateProcessor),null)

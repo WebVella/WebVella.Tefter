@@ -17,13 +17,17 @@ public partial class TfMetaService : ITfMetaService
 		if (type.GetInterfaces().Any(x => x == typeof(ITfRecipeAddon)))
 		{
 			var instance = (ITfRecipeAddon)Activator.CreateInstance(type);
+			if(_addonIdHS.Contains(instance.AddonId))
+				throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+			_addonIdHS.Add(instance.AddonId);
+
 			_recipes.Add(instance);
 			_typesMap[type.FullName] = type;
 		}
 	}
 	public ITfRecipeAddon GetRecipe(Guid id)
 	{
-		return _recipes.SingleOrDefault(x => x.Id == id);
+		return _recipes.SingleOrDefault(x => x.AddonId == id);
 	}
 
 	public ReadOnlyCollection<ITfRecipeAddon> GetRecipes()

@@ -1,92 +1,94 @@
 ﻿@namespace WebVella.Tefter.Web.Components
 @inherits TfBaseComponent
+@if (_recipe is not null)
+{
+	<div class="tf-guest-layout wizard">
+		<div class="tf-guest-layout__header">
+			<div class="tf-guest-layout__header__title">@LOC("Initial Setup")</div>
+		</div>
+		<div class="tf-guest-layout__subheader">
+			<div class="tf-guest-layout__subheader__action">
+				<FluentButton OnClick=_toList Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowLeft")" />
+			</div>
+			<div class="tf-guest-layout__subheader__meta">
+				<div class="tf-recipe clean">
+					<div class="tf-recipe__icon">
+						<FluentIcon Value="@TfConstants.GetIcon(_recipe.AddonFluentIconName)" Color="@Color.Custom" />
+					</div>
+					<div class="tf-recipe__meta">
+						<div class="tf-recipe__meta__name">@_recipe.AddonName</div>
+						<div class="tf-recipe__meta__description">@_recipe.AddonDescription</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="tf-guest-layout__body">
+			<div class="tf-guest-layout__body__steps">
+				@foreach (var step in _visibleSteps)
+				{
+					<div class="tf-guest-layout__body__steps__step @_getStepClasses(step)" @onclick=@(()=> _activateStep(step))>
+						<div class="tf-guest-layout__body__steps__step__index">@step.Instance.Position. </div>
+						<div class="tf-guest-layout__body__steps__step__title">@step.Instance.StepMenuTitle</div>
+						<div class="tf-guest-layout__body__steps__step__icon">
+							<FluentIcon Class="check" Value="@TfConstants.GetIcon("Checkmark").WithColor(Color.Success)" />
+							<FluentIcon Class="arrow" Value="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Accent)" />
+							<FluentIcon Class="error" Value="@TfConstants.GetIcon("ErrorCircle").WithColor(Color.Error)" />
+						</div>
+					</div>
+				}
+			</div>
+			<div class="tf-guest-layout__body__content">
+				<div class="tf-guest-layout__body__content__body">
+					@if (_visibleSteps.Count == 0)
+					{
+						<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("This recipe has no configuration steps")</FluentMessageBar>
+					}
+					else if (_activeStep is null)
+					{
+						<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("No step selected")</FluentMessageBar>
+					}
+					else
+					{
+						<TfRecipeStepForm Addon=_activeStep IsSubstep=false ComponentId="_activeStep.Instance.StepId" />
+					}
+				</div>
+				<div class="tf-guest-layout__body__content__actions">
+					@if (_activeStep.Instance.StepId != Guid.Empty)
+					{
+						<div>
+							@if (_visibleSteps.Count > 0 && !_activeStep.Instance.IsFirst)
+							{
+								<FluentButton OnClick=_stepBack Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</FluentButton>
+							}
+						</div>
+						<div>
 
-<div class="tf-guest-layout wizard">
-	<div class="tf-guest-layout__header">
-		<div class="tf-guest-layout__header__title">@LOC("Initial Setup")</div>
-	</div>
-	<div class="tf-guest-layout__subheader">
-		<div class="tf-guest-layout__subheader__action">
-			<FluentButton OnClick=_toList Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ArrowLeft")" />
-		</div>
-		<div class="tf-guest-layout__subheader__meta">
-			<div class="tf-recipe clean">
-				<div class="tf-recipe__icon">
-					<FluentIcon Value="@TfConstants.GetIcon(_recipe.FluentIconName)" Color="@Color.Custom" />
-				</div>
-				<div class="tf-recipe__meta">
-					<div class="tf-recipe__meta__name">@_recipe.Name</div>
-					<div class="tf-recipe__meta__description">@_recipe.Description</div>
+							@if (_visibleSteps.Count == 0 || _activeStep.Instance.IsLast)
+							{
+								<FluentButton OnClick=_submit Appearance="@Appearance.Accent" Loading=_submitting Disabled=_submitting IconStart="@TfConstants.GetIcon("Send")">@LOC("Apply Configuration")</FluentButton>
+							}
+							else
+							{
+								<FluentButton OnClick=_submit Appearance="@Appearance.Accent" Loading=_submitting Disabled=_submitting IconEnd="@TfConstants.GetIcon("ChevronRight")">@LOC("Forward")</FluentButton>
+							}
+						</div>
+					}
+					else
+					{
+						<div>
+							@if (_recipeResult is not null && !_recipeResult.IsSuccessful)
+							{
+								<FluentButton OnClick=_stepBack Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</FluentButton>
+							}
+							else
+							{
+								<FluentButton OnClick=_goToLogin Appearance="@Appearance.Accent">@LOC("To Login Page")</FluentButton>
+							}
+						</div>
+						<div></div>
+					}
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="tf-guest-layout__body">
-		<div class="tf-guest-layout__body__steps">
-			@foreach (var step in _visibleSteps)
-			{
-				<div class="tf-guest-layout__body__steps__step @_getStepClasses(step)" @onclick=@(()=> _activateStep(step))>
-					<div class="tf-guest-layout__body__steps__step__index">@_stepInfoDict[step.StepId].Position. </div>
-					<div class="tf-guest-layout__body__steps__step__title">@step.StepMenuTitle</div>
-					<div class="tf-guest-layout__body__steps__step__icon">
-						<FluentIcon Class="check" Value="@TfConstants.GetIcon("Checkmark").WithColor(Color.Success)" />
-						<FluentIcon Class="arrow" Value="@TfConstants.GetIcon("ArrowRight").WithColor(Color.Accent)" />
-						<FluentIcon Class="error" Value="@TfConstants.GetIcon("ErrorCircle").WithColor(Color.Error)" />
-					</div>
-				</div>
-			}
-		</div>
-		<div class="tf-guest-layout__body__content">
-			<div class="tf-guest-layout__body__content__body">
-				@if (_visibleSteps.Count == 0)
-				{
-					<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("This recipe has no configuration steps")</FluentMessageBar>
-				}
-				else if (_activeStep is null)
-				{
-					<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss=false>@LOC("No step selected")</FluentMessageBar>
-				}
-				else
-				{
-					<TfRecipeStepForm Step=_activeStep StepInfoDict="_stepInfoDict" IsSubstep=false ComponentId="_activeStep.StepId" />
-				}
-			</div>
-			<div class="tf-guest-layout__body__content__actions">
-				@if (_activeStep.StepId != Guid.Empty)
-				{
-					<div>
-						@if (_visibleSteps.Count > 0 && !_stepInfoDict[_activeStep.StepId].IsFirst)
-						{
-							<FluentButton OnClick=_stepBack Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</FluentButton>
-						}
-					</div>
-					<div>
-
-						@if (_visibleSteps.Count == 0 || _stepInfoDict[_activeStep.StepId].IsLast)
-						{
-							<FluentButton OnClick=_submit Appearance="@Appearance.Accent" Loading=_submitting Disabled=_submitting IconStart="@TfConstants.GetIcon("Send")">@LOC("Apply Configuration")</FluentButton>
-						}
-						else
-						{
-							<FluentButton OnClick=_submit Appearance="@Appearance.Accent" Loading=_submitting Disabled=_submitting IconEnd="@TfConstants.GetIcon("ChevronRight")">@LOC("Forward")</FluentButton>
-						}
-					</div>
-				}
-				else
-				{
-					<div>
-						@if (_recipeResult is not null && !_recipeResult.IsSuccessful)
-						{
-							<FluentButton OnClick=_stepBack Appearance="@Appearance.Outline" IconStart="@TfConstants.GetIcon("ChevronLeft")">@LOC("Back")</FluentButton>
-						}
-						else
-						{
-							<FluentButton OnClick=_goToLogin Appearance="@Appearance.Accent">@LOC("To Login Page")</FluentButton>
-						}
-					</div>
-					<div></div>
-				}
-			</div>
-		</div>
-	</div>
-</div>
+}

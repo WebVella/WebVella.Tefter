@@ -219,22 +219,22 @@ public class UtilityTestsChildGenericClass : UtilityTestsBaseGenericClass<Utilit
 public class UtilityTestsClassDynamicComponentWithoutScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
-	public Guid Id { get; init; }
+	public Guid AddonId { get; init; }
 	public int PositionRank { get; init; }
-	public string Name { get; init; }
-	public string Description { get; init; }
-	public string FluentIconName { get; init; }
+	public string AddonName { get; init; }
+	public string AddonDescription { get; init; }
+	public string AddonFluentIconName { get; init; }
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>() { };
 }
 
 public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
 {
 	public TfDataProviderManageSettingsScreenRegionContext RegionContext { get; init; }
-	public Guid Id { get; init; }
+	public Guid AddonId { get; init; }
 	public int PositionRank { get; init; }
-	public string Name { get; init; }
-	public string Description { get; init; }
-	public string FluentIconName { get; init; }
+	public string AddonName { get; init; }
+	public string AddonDescription { get; init; }
+	public string AddonFluentIconName { get; init; }
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
 		new TfScreenRegionScope(typeof(UtilityTestsDataProviderTypeClass),null)
 	};
@@ -242,13 +242,13 @@ public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionCompone
 
 public class UtilityTestsDataProviderTypeClass : ITfDataProviderAddon
 {
-	public Guid Id { get; init; }
+	public Guid AddonId { get; init; }
 
-	public string Name { get; init; }
+	public string AddonName { get; init; }
 
-	public string Description { get; init; }
+	public string AddonDescription { get; init; }
 
-	public string FluentIconName { get; init; }
+	public string AddonFluentIconName { get; init; }
 
 	public Type SettingsComponentType { get; set; }
 

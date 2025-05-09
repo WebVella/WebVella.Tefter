@@ -10,10 +10,10 @@ public record TucDataProviderTypeInfo
 	public TucDataProviderTypeInfo() { }
 	public TucDataProviderTypeInfo(ITfDataProviderAddon model)
 	{
-		Id = model.Id;
-		Name = model.Name;
-		Description = model.Description;
-		FluentIconName = model.FluentIconName;
+		Id = model.AddonId;
+		Name = model.AddonName;
+		Description = model.AddonDescription;
+		FluentIconName = model.AddonFluentIconName;
 		foreach (var sourceDataType in model.GetSupportedSourceDataTypes())
 		{
 			var supportedDbTypes = new List<TucDatabaseColumnTypeInfo>();
@@ -30,6 +30,6 @@ public record TucDataProviderTypeInfo
 	}
 	public ITfDataProviderAddon ToModel(ReadOnlyCollection<ITfDataProviderAddon> type)
 	{
-		return type.Single(x=> x.Id == Id);
+		return type.Single(x=> x.AddonId == Id);
 	}
 }

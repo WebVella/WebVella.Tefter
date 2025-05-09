@@ -30,7 +30,7 @@ public partial class TfMetaService : ITfMetaService
 		Guid appId)
 	{
 		return GetApplications()
-			.SingleOrDefault(x => x.Id == appId);
+			.SingleOrDefault(x => x.AddonId == appId);
 	}
 
 
@@ -42,7 +42,9 @@ public partial class TfMetaService : ITfMetaService
 		if (type.ImplementsInterface(typeof(ITfApplicationAddon)))
 		{
 			var instance = (ITfApplicationAddon)Activator.CreateInstance(type);
-
+			if(_addonIdHS.Contains(instance.AddonId))
+				throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+			_addonIdHS.Add(instance.AddonId);
 			TfApplicationAddonMeta meta = new TfApplicationAddonMeta
 			{
 				Instance = instance,

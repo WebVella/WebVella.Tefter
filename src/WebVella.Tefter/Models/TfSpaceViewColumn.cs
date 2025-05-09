@@ -14,16 +14,16 @@ public class TfSpaceViewColumn
 	public Dictionary<string, string> DataMapping { get; set; } = new();
 	public string CustomOptionsJson { get; set; } = "{}";
 	public string SettingsJson { get; set; } = "{}";
-	public void FixProviderPrefix(string dpPrefix)
+	public void FixPrefix(string prefix)
 	{
 		if (DataMapping is null) return;
 
 		foreach (var alias in DataMapping.Keys)
 		{
 			var dbName = DataMapping[alias];
-			if (!dbName.StartsWith(dpPrefix))
+			if (!dbName.StartsWith(prefix))
 			{
-				dbName = dpPrefix + dbName;
+				dbName = prefix + dbName;
 			}
 			DataMapping[alias] = dbName;
 		}

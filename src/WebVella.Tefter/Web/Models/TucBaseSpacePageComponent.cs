@@ -3,10 +3,10 @@
 public abstract class TucBaseSpacePageComponent : ComponentBase, ITfSpacePageAddon
 {
 	[Inject] protected IStringLocalizerFactory StringLocalizerFactory { get; set; }
-	public virtual Guid Id { get; init; } = Guid.NewGuid();
-	public virtual string Name { get; init; } = null;
-	public virtual string Description { get; init; } = null;
-	public virtual string FluentIconName { get; init; } = null;
+	public virtual Guid AddonId { get; init; } = Guid.NewGuid();
+	public virtual string AddonName { get; init; } = null;
+	public virtual string AddonDescription { get; init; } = null;
+	public virtual string AddonFluentIconName { get; init; } = null;
 	public virtual TfSpacePageAddonContext Context { get; set; }
 	public virtual string GetOptions() => "{}";
 	public virtual List<ValidationError> ValidateOptions() => new List<ValidationError>();

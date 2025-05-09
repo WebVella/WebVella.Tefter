@@ -14,7 +14,7 @@ public class TfRecipeStepDataProviderJoinKey
 
 	public DateTime LastModifiedOn { get; set; }
 
-	public void FixProviderPrefix(string dpPrefix)
+	public void FixPrefix(string prefix)
 	{
 		if (Columns is not null)
 		{
@@ -22,9 +22,9 @@ public class TfRecipeStepDataProviderJoinKey
 			foreach (var columnName in Columns)
 			{
 				var fixColumnName = columnName;
-				if (!fixColumnName.StartsWith(dpPrefix))
+				if (!fixColumnName.StartsWith(prefix))
 				{
-					fixColumnName = dpPrefix + fixColumnName;
+					fixColumnName = prefix + fixColumnName;
 				}
 				fixedList.Add(fixColumnName);
 			}

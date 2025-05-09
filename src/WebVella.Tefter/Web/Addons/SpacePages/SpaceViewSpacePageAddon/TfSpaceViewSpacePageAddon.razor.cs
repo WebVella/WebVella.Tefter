@@ -10,10 +10,10 @@ public partial class TfSpaceViewSpacePageAddon : TucBaseSpacePageComponent
 
 	#region << Base Overrides >>
 	public static string ID = "68afeecc-6ca9-4102-831d-ef4028057128";
-	public override Guid Id { get; init; } = new Guid(ID);
-	public override string Name { get; init; } = "Space View";
-	public override string Description { get; init; } = "present data in a grid format";
-	public override string FluentIconName { get; init; } = "Table";
+	public override Guid AddonId { get; init; } = new Guid(ID);
+	public override string AddonName { get; init; } = "Space View";
+	public override string AddonDescription { get; init; } = "present data in a grid format";
+	public override string AddonFluentIconName { get; init; } = "Table";
 	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);

@@ -864,6 +864,7 @@
 .tf-grid .tf-grid-tbody tr > .tf-grid-th .td-description,
 .tf-grid .tf-grid-tbody tr > .tf-grid-td .td-description {
   font-size: var(--type-ramp-minus-1-font-size);
+  color: var(--neutral-foreground-hint);
   white-space: initial;
 }
 .tf-grid .tf-grid-tbody tr.tf-grid-tr--selected .tf-grid-td-selection {

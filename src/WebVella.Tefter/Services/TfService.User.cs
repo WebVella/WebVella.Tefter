@@ -57,6 +57,22 @@ public partial interface ITfService
 		TfUser user);
 
 	/// <summary>
+	/// Creates user
+	/// </summary>
+	/// <param name="user"></param>
+	/// <returns></returns>
+	public TfUser CreateUser(
+			TfUser user);
+
+	/// <summary>
+	/// Updates existing user
+	/// </summary>
+	/// <param name="user"></param>
+	/// <returns></returns>
+	public TfUser UpdateUser(
+		TfUser user);
+
+	/// <summary>
 	/// Asynchronously retrieves a user by their unique identifier.
 	/// </summary>
 	/// <param name="id">The unique identifier of the user.</param>
@@ -95,6 +111,22 @@ public partial interface ITfService
 	/// <returns>A task representing the asynchronous operation, with the saved <see cref="TfUser"/> instance.</returns>
 	Task<TfUser> SaveUserAsync(
 		TfUser user);
+
+	/// <summary>
+	/// Creates user
+	/// </summary>
+	/// <param name="user"></param>
+	/// <returns></returns>
+	Task<TfUser> CreateUserAsync(
+			TfUser user);
+
+	/// <summary>
+	/// Updates user
+	/// </summary>
+	/// <param name="user"></param>
+	/// <returns></returns>
+	Task<TfUser> UpdateUserAsync(
+			TfUser user);
 
 	/// <summary>
 	/// Removes a role from a list of users.
@@ -155,11 +187,11 @@ public partial class TfService : ITfService
 		try
 		{
 			var users = GetUsers();
-			var adminUsers = users.Where(x=> x.Roles.Any(r=> r.Id == TfConstants.ADMIN_ROLE_ID)).ToList();
-			if(adminUsers.Count > 0)
+			var adminUsers = users.Where(x => x.Roles.Any(r => r.Id == TfConstants.ADMIN_ROLE_ID)).ToList();
+			if (adminUsers.Count > 0)
 				return adminUsers.First();
 
-			if(users.Count > 0)
+			if (users.Count > 0)
 				return users.First();
 
 			return null;
@@ -399,7 +431,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private TfUser CreateUser(
+	public TfUser CreateUser(
 		TfUser user)
 	{
 		new UserValidator(this)
@@ -446,7 +478,7 @@ public partial class TfService : ITfService
 		return GetUser(userDbo.Id);
 	}
 
-	private TfUser UpdateUser(
+	public TfUser UpdateUser(
 		TfUser user)
 	{
 		new UserValidator(this)
@@ -828,7 +860,7 @@ public partial class TfService : ITfService
 		}
 	}
 
-	private async Task<TfUser> CreateUserAsync(
+	public async Task<TfUser> CreateUserAsync(
 		TfUser user)
 	{
 		new UserValidator(this)
@@ -874,7 +906,7 @@ public partial class TfService : ITfService
 		return await GetUserAsync(userDbo.Id);
 	}
 
-	private async Task<TfUser> UpdateUserAsync(
+	public async Task<TfUser> UpdateUserAsync(
 		TfUser user)
 	{
 		new UserValidator(this)

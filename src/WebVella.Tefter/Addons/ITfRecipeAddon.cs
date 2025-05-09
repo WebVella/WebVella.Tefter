@@ -8,6 +8,6 @@ public interface ITfRecipeAddon : ITfAddon
 	//url for the documentation
 	public string Website { get; init; }
 	//ordered list of steps that will be performed
-	public List<TfRecipeStepBase> Steps { get; init; }
+	public List<ITfRecipeStepAddon> Steps { get; init; }
 }
 

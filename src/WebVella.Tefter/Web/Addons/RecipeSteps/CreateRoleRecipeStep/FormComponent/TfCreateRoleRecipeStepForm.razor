@@ -1,0 +1,16 @@
+﻿@namespace WebVella.Tefter.Web.Addons.RecipeSteps
+@inherits TfRecipeStepFormBase
+
+<FluentEditForm EditContext="EditContext"
+				FormName="submit-form" class="tf-form" novalidate>
+	<DataAnnotationsValidator />
+	<FluentGrid>
+		<FluentGridItem xs="6">
+			<FluentTextField TextFieldType="@TextFieldType.Text" @bind-Value=@_form.Name
+							 Label="@LOC("Name")" Style="width:100%" AutoComplete="new-password" />
+			<FluentValidationMessage For="@(() => _form.Name)" />
+		</FluentGridItem>
+		<FluentGridItem xs="6">
+		</FluentGridItem>
+	</FluentGrid>
+</FluentEditForm>

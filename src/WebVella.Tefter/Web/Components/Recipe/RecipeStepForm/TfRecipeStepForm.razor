@@ -2,50 +2,32 @@
 @inherits TfRecipeStepFormBase
 
 <div class="tf-guest-layout__body__content__body__step @(IsSubstep ? "substep" : "")">
-	@if (Step.Errors.Any(x => String.IsNullOrWhiteSpace(x.PropertyName)))
+	@if (Addon.Instance.Errors.Any(x => String.IsNullOrWhiteSpace(x.PropertyName)))
 	{
-		<TfValidation Message="@LOC("Service error")" Style="margin-bottom:1rem;" Errors="@Step.Errors.Where(x => String.IsNullOrWhiteSpace(x.PropertyName)).ToList()" />
+		<TfValidation Message="@LOC("Service error")" Style="margin-bottom:1rem;" Errors="@Addon.Instance.Errors.Where(x => String.IsNullOrWhiteSpace(x.PropertyName)).ToList()" />
 	}
-	@if (!String.IsNullOrWhiteSpace(Step.StepContentTitle))
+	@if (!String.IsNullOrWhiteSpace(Addon.Instance.StepContentTitle))
 	{
 		<div class="tf-guest-layout__body__content__body__step__title">
-			@if (StepInfoDict.ContainsKey(Step.StepId))
-			{
-				<span>@StepInfoDict[Step.StepId].Position. </span>
-			}
-			<span>@(!String.IsNullOrWhiteSpace(Step.StepContentTitle) ? Step.StepContentTitle : Step.StepMenuTitle)</span>
+			<span>@Addon.Instance.Position. </span>
+			<span>@(!String.IsNullOrWhiteSpace(Addon.Instance.StepContentTitle) ? Addon.Instance.StepContentTitle : Addon.Instance.StepMenuTitle)</span>
 		</div>
 	}
-	@if (!String.IsNullOrWhiteSpace(Step.StepContentDescription))
+	@if (!String.IsNullOrWhiteSpace(Addon.Instance.StepContentDescription))
 	{
-		<div class="tf-guest-layout__body__content__body__step__description">@Step.StepContentDescription</div>
+		<div class="tf-guest-layout__body__content__body__step__description">@Addon.Instance.StepContentDescription</div>
 	}
 	<div class="tf-guest-layout__body__content__body__step__form">
-		@if (Step.GetType() == typeof(TfInfoRecipeStep))
+		@if (Addon.FormComponent is not null)
 		{
-			<TfInfoRecipeStepForm Step="@((TfInfoRecipeStep)Step)" StepInfoDict="StepInfoDict" />
-			<div>@compRef?.ComponentId</div>
-		}
-		else if (Step.GetType() == typeof(TfGroupRecipeStep))
-		{
-			<TfGroupRecipeStepForm Step="@((TfGroupRecipeStep)Step)" StepInfoDict="StepInfoDict" />
-		}
-		else if (Step.GetType() == typeof(TfCreateRoleRecipeStep))
-		{
-			<TfCreateRoleRecipeStepForm Step="@((TfCreateRoleRecipeStep)Step)" StepInfoDict="StepInfoDict" />
-		}
-		else if (Step.GetType() == typeof(TfCreateUserRecipeStep))
-		{
-			<TfCreateUserRecipeStepForm Step="@((TfCreateUserRecipeStep)Step)" StepInfoDict="StepInfoDict" />
-		}
-		else if (Step.GetType() == typeof(TfResultRecipeStep))
-		{
-			<TfResultRecipeStepForm Step="@((TfResultRecipeStep)Step)" StepInfoDict="StepInfoDict" />
+			<TfErrorBoundry>
+				<DynamicComponent Type="@Addon.FormComponent" Parameters="@_getDynamicComponentParams()" />
+			</TfErrorBoundry>
 		}
 		else
 		{
-			<p>This step does not have any form to be filled.</p>
-			<p>Press Next to continue</p>
+			<div>@Addon.FormComponent.GetType().FullName</div>
+			<FluentMessageBar AllowDismiss=false Intent="@MessageIntent.Error">@LOC("Recipe step does not have Form Component or it is not inheriting the class TfRecipeStepFormBase")</FluentMessageBar>
 
 		}
 	</div>

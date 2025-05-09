@@ -7,15 +7,15 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 public partial class ResultPreviewComponent : TfBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorResultPreviewScreenRegionContext>
 {
-	public const string ID = "e6923a63-885f-4201-bab5-701867f7b952";
+	public const string ID = "6cb815b4-c178-439f-9f95-cff5f86711db";
 	public const string NAME = "Document Template Result Preview";
 	public const string DESCRIPTION = "";
 	public const string FLUENT_ICON_NAME = "PuzzlePiece";
 	public const int POSITION_RANK = 1000;
-	public Guid Id { get; init; } = new Guid(ID);
-	public string Name { get; init; } = NAME;
-	public string Description { get; init; } = DESCRIPTION;
-	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public Guid AddonId { get; init; } = new Guid(ID);
+	public string AddonName { get; init; } = NAME;
+	public string AddonDescription { get; init; } = DESCRIPTION;
+	public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)

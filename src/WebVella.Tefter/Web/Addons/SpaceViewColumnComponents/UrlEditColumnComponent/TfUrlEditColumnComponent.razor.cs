@@ -34,10 +34,10 @@ public partial class TfUrlEditColumnComponent : TucBaseViewColumn<TfUrlEditColum
 	#endregion
 
 	#region << Properties >>
-	public override Guid Id { get; init; } = new Guid(ID);
-	public override string Name { get; init;} = NAME;
-	public override string Description { get; init;} = DESCRIPTION;
-	public override string FluentIconName { get; init;} = FLUENT_ICON_NAME;
+	public override Guid AddonId { get; init; } = new Guid(ID);
+	public override string AddonName { get; init;} = NAME;
+	public override string AddonDescription { get; init;} = DESCRIPTION;
+	public override string AddonFluentIconName { get; init;} = FLUENT_ICON_NAME;
 	public override List<Guid> SupportedColumnTypes { get; init; } = new List<Guid>{
 		new Guid(TfTextViewColumnType.ID),
 	};

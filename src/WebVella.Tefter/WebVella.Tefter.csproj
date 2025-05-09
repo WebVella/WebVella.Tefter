@@ -88,25 +88,49 @@
 	  <EmbeddedResource Update="UseCases\_Recipe\RecipeUseCase.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateBlobRecipeStep\FormComponent\TfCreateBlobRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateDataProviderRecipeStep\FormComponent\TfCreateDataProviderRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateRepositoryFileRecipeStep\FormComponent\TfCreateRepositoryFileRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSharedColumnRecipeStep\FormComponent\TfCreateSharedColumnRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpaceDataRecipeStep\FormComponent\TfCreateSpaceDataRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpacePageRecipeStep\FormComponent\TfCreateSpacePageRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpaceRecipeStep\FormComponent\TfCreateSpaceRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateSpaceViewRecipeStep\FormComponent\TfCreateSpaceViewRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\GroupRecipeStep\FormComponent\TfGroupRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\InfoRecipeStep\FormComponent\TfInfoRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\Admin\AdminUsersActions\TfAdminUsersActions.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\CreateRoleRecipeStepForm\TfCreateRoleRecipeStepForm.bg.resx">
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateRoleRecipeStep\FormComponent\TfCreateRoleRecipeStepForm.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\GroupRecipeStepForm\TfGroupRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\ResultRecipeStepForm\TfResultRecipeStepForm.bg.resx">
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\ResultRecipeStep\FormComponent\TfResultRecipeStepForm.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\Recipe\RecipeStepForm\TfRecipeStepForm.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\InfoRecipeStepForm\TfInfoRecipeStepForm.bg.resx">
-	    <SubType>Designer</SubType>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Web\Components\Recipe\CreateUserRecipeStepForm\TfCreateUserRecipeStepForm.bg.resx">
+	  <EmbeddedResource Update="Web\Addons\RecipeSteps\CreateUserRecipeStep\FormComponent\TfCreateUserRecipeStepForm.bg.resx">
 	    <SubType>Designer</SubType>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Web\Components\Recipe\RecipeList\TfRecipeList.bg.resx">

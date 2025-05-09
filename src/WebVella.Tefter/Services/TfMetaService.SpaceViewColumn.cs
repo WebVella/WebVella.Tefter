@@ -81,7 +81,12 @@ public partial class TfMetaService : ITfMetaService
 				Instance = instance
 			};
 			_columnComponentMetaList.Add(meta);
-			_columnComponentMetaDict[instance.Id] = meta;
+
+			if(_addonIdHS.Contains(instance.AddonId))
+				throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+			_addonIdHS.Add(instance.AddonId);
+
+			_columnComponentMetaDict[instance.AddonId] = meta;
 
 			_typesMap[type.FullName] = type;
 			foreach (var addonId in instance.SupportedColumnTypes)
@@ -89,7 +94,7 @@ public partial class TfMetaService : ITfMetaService
 				if (!_columnTypeComponentsDict.ContainsKey(addonId))
 					_columnTypeComponentsDict[addonId] = new List<Guid>();
 
-				_columnTypeComponentsDict[addonId].Add(instance.Id);
+				_columnTypeComponentsDict[addonId].Add(instance.AddonId);
 			}
 		}
 	}
@@ -101,14 +106,18 @@ public partial class TfMetaService : ITfMetaService
 		{
 			var instance = (ITfSpaceViewColumnTypeAddon)Activator.CreateInstance(type);
 
-			instance.SupportedComponents = GetSupportedComponentTypesForColumnType(instance.Id);
+			if(_addonIdHS.Contains(instance.AddonId))
+				throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+			_addonIdHS.Add(instance.AddonId);
+
+			instance.SupportedComponents = GetSupportedComponentTypesForColumnType(instance.AddonId);
 
 			TfSpaceViewColumnTypeAddonMeta meta = new TfSpaceViewColumnTypeAddonMeta
 			{
 				Instance = instance
 			};
 			_columnTypeMetaList.Add(meta);
-			_columnTypeMetaDict[instance.Id] = meta;
+			_columnTypeMetaDict[instance.AddonId] = meta;
 
 			_typesMap[type.FullName] = type;
 		}

@@ -16,10 +16,10 @@ public record TucSpaceViewColumnType
 	public TucSpaceViewColumnType() { }
 	public TucSpaceViewColumnType(ITfSpaceViewColumnTypeAddon model)
 	{
-		Id = model.Id;
-		Name = model.Name;
-		Description = model.Description;
-		FluentIcon = TfConstants.GetIcon(model.FluentIconName);
+		Id = model.AddonId;
+		Name = model.AddonName;
+		Description = model.AddonDescription;
+		FluentIcon = TfConstants.GetIcon(model.AddonFluentIconName);
 		DataMapping = model.DataMapping.Select(x => new TucSpaceViewColumnDataMapping(x)).ToList();
 		DefaultComponentId = model.DefaultComponentId;
 		SupportedComponents = model.SupportedComponents;

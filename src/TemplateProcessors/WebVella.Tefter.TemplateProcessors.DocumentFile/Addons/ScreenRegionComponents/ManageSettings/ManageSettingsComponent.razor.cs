@@ -7,15 +7,15 @@ namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons;
 public partial class ManageSettingsComponent : TfFormBaseComponent, 
 	ITfScreenRegionComponent<TfTemplateProcessorManageSettingsScreenRegionContext>
 {
-	public const string ID = "51157e04-9849-48ec-9bf3-de31308c4b0c";
+	public const string ID = "d3c8a6d1-02b0-4611-81ae-ac1581fe93a3";
 	public const string NAME = "Document Template Manage Seettings";
 	public const string DESCRIPTION = "";
 	public const string FLUENT_ICON_NAME = "PuzzlePiece";
 	public const int POSITION_RANK = 1000;
-	public Guid Id { get; init; } = new Guid(ID);
-	public string Name { get; init; } = NAME;
-	public string Description { get; init; } = DESCRIPTION;
-	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public Guid AddonId { get; init; } = new Guid(ID);
+	public string AddonName { get; init; } = NAME;
+	public string AddonDescription { get; init; } = DESCRIPTION;
+	public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){ 
 		new TfScreenRegionScope(typeof(DocumentFileTemplateProcessor),null)

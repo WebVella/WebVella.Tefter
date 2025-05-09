@@ -11,11 +11,11 @@
 		{
 			<div class="tf-recipe" @onclick=@(()=> _select(item))>
 				<div class="tf-recipe__icon">
-					<FluentIcon Value="@TfConstants.GetIcon(item.FluentIconName)" Color="@Color.Custom"/>
+					<FluentIcon Value="@TfConstants.GetIcon(item.AddonFluentIconName)" Color="@Color.Custom"/>
 				</div>
 				<div class="tf-recipe__meta">
-					<div class="tf-recipe__meta__name">@item.Name</div>
-					<div class="tf-recipe__meta__description">@item.Description</div>
+					<div class="tf-recipe__meta__name">@item.AddonName</div>
+					<div class="tf-recipe__meta__description">@item.AddonDescription</div>
 					<div class="tf-recipe__meta__author">by @item.Author</div>
 				</div>
 			</div>

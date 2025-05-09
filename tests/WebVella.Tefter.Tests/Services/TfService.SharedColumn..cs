@@ -89,7 +89,7 @@ public partial class TfServiceTest : BaseTest
 
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
-					.Single(x => x.Id == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
+					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
 				TfDataProviderModel model = new TfDataProviderModel

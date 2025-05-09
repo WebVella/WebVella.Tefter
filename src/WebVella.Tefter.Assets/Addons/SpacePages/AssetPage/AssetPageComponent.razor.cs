@@ -18,10 +18,10 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 	#endregion
 
 	#region << Base Overrides >>
-	public override Guid Id { get; init; } = new Guid(ID);
-	public override string Name { get; init; } = NAME;
-	public override string Description { get; init; } = DESCRIPTION;
-	public override string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public override Guid AddonId { get; init; } = new Guid(ID);
+	public override string AddonName { get; init; } = NAME;
+	public override string AddonDescription { get; init; } = DESCRIPTION;
+	public override string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	[Parameter] public override TfSpacePageAddonContext Context { get; set; }
 
 	public override string GetOptions() => JsonSerializer.Serialize(_options);

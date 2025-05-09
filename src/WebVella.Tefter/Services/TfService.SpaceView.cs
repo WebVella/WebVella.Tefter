@@ -249,7 +249,7 @@ public partial class TfService : ITfService
 
 								if (columnType is not null)
 								{
-									tfColumn.TypeId = columnType.Id;
+									tfColumn.TypeId = columnType.AddonId;
 									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
@@ -280,7 +280,7 @@ public partial class TfService : ITfService
 
 								if (columnType is not null)
 								{
-									tfColumn.TypeId = columnType.Id;
+									tfColumn.TypeId = columnType.AddonId;
 									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
@@ -311,7 +311,7 @@ public partial class TfService : ITfService
 
 								if (columnType is not null)
 								{
-									tfColumn.TypeId = columnType.Id;
+									tfColumn.TypeId = columnType.AddonId;
 									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{
@@ -364,7 +364,7 @@ public partial class TfService : ITfService
 
 								if (columnType is not null)
 								{
-									tfColumn.TypeId = columnType.Id;
+									tfColumn.TypeId = columnType.AddonId;
 									tfColumn.ComponentId = columnType.DefaultComponentId ?? new Guid(TfTextDisplayColumnComponent.ID);
 									foreach (var mapper in columnType.DataMapping)
 									{

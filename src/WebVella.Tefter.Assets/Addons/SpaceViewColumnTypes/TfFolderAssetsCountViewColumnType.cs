@@ -7,10 +7,10 @@ public class TfFolderAssetsCountViewColumnType : ITfSpaceViewColumnTypeAddon
 	public const string DESCRIPTION = "displays related files count";
 	public const string FLUENT_ICON_NAME = "DocumentCopy";
 
-	public Guid Id { get; init; } = new Guid(ID);
-	public string Name { get; init; } = NAME;
-	public string Description { get; init; } = DESCRIPTION;
-	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public Guid AddonId { get; init; } = new Guid(ID);
+	public string AddonName { get; init; } = NAME;
+	public string AddonDescription { get; init; } = DESCRIPTION;
+	public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public List<TfSpaceViewColumnAddonDataMapping> DataMapping { get; init; } = new();
 	public Guid? DefaultComponentId { get; init; } = new Guid(TfFolderAssetsCountComponent.ID);
 	public List<string> FilterAliases { get; init; } = new();

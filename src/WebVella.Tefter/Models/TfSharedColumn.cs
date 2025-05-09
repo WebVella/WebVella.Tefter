@@ -19,4 +19,12 @@ public record TfSharedColumn
 
 	[TfDboModelProperty("include_table_search")]
 	public bool IncludeInTableSearch { get; set; }
+
+	public void FixPrefix()
+	{
+		if (!DbName.StartsWith("sc_"))
+		{
+			DbName = "sc_" + DbName;
+		}
+	}
 }

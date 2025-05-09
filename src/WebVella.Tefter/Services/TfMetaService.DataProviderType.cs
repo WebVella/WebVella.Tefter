@@ -18,6 +18,11 @@ public partial class TfMetaService : ITfMetaService
 		if (type.GetInterfaces().Any(x => x == typeof(ITfDataProviderAddon)))
 		{
 			var instance = (ITfDataProviderAddon)Activator.CreateInstance(type);
+
+			if(_addonIdHS.Contains(instance.AddonId))
+				throw new Exception($"Duplicated Addon Id found: {instance.AddonId}");
+			_addonIdHS.Add(instance.AddonId);
+
 			_providerTypes.Add(instance);
 			_typesMap[type.FullName] = type;
 		}
@@ -25,7 +30,7 @@ public partial class TfMetaService : ITfMetaService
 	public ITfDataProviderAddon GetDataProviderType(
 		Guid id)
 	{
-		return _providerTypes.SingleOrDefault(x => x.Id == id);
+		return _providerTypes.SingleOrDefault(x => x.AddonId == id);
 	}
 
 	public ReadOnlyCollection<ITfDataProviderAddon> GetDataProviderTypes()

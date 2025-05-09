@@ -9,6 +9,7 @@ public partial interface ITfMetaService
 public partial class TfMetaService : ITfMetaService
 {
 	private static Dictionary<string, Type> _typesMap = new Dictionary<string, Type>();
+	private static HashSet<Guid> _addonIdHS = new();
 
 	public Type GetTypeForFullClassName(
 		string fullClassName)
@@ -57,6 +58,7 @@ public partial class TfMetaService : ITfMetaService
 					continue;
 
 				var defaultConstructor = type.GetConstructor(Type.EmptyTypes);
+
 				if (defaultConstructor is null)
 					continue;
 
@@ -66,6 +68,7 @@ public partial class TfMetaService : ITfMetaService
 				ScanAndRegisterApplications(type);
 				ScanAndRegisterRegionComponents(type);
 				ScanAndRegisterRecipes(type);
+				ScanAndRegisterRecipeSteps(type);
 			}
 		}
 	}

@@ -153,7 +153,7 @@ internal partial class MigrationManager : IMigrationManager
 			if (lastExecutedApplicationMigration is not null &&
 				lastExecutedApplicationMigration.Version > migration.Version)
 			{
-				throw new TfDatabaseException($"Application migration for application {tfApp.Name}({tfApp.Id}) " +
+				throw new TfDatabaseException($"Application migration for application {tfApp.AddonName}({tfApp.AddonId}) " +
 					$" with version [{migration.Version}] " +
 					$" is pending for execution, but greater version migration " +
 					$"[{lastExecutedApplicationMigration.Version}] is already executed!");

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using WebVella.Tefter.UseCases.Recipe;
+using WebVella.Tefter.Web.Addons.RecipeSteps;
 
 namespace WebVella.Tefter.Web.Components;
 public partial class TfRecipeDetails : TfBaseComponent
@@ -11,9 +12,8 @@ public partial class TfRecipeDetails : TfBaseComponent
 	private ITfRecipeAddon _recipe;
 
 	private bool _submitting = false;
-	private TfRecipeStepBase _activeStep;
-	private List<TfRecipeStepBase> _visibleSteps = new();
-	private Dictionary<Guid, TfRecipeStepInfo> _stepInfoDict = new();
+	private ITfRecipeStepAddon _activeStep;
+	private List<ITfRecipeStepAddon> _visibleSteps = new();
 	private TfRecipeResult _recipeResult = null;
 	protected override async Task OnInitializedAsync()
 	{
@@ -23,35 +23,36 @@ public partial class TfRecipeDetails : TfBaseComponent
 			Navigator.NavigateTo(TfConstants.LoginPageUrl, true);
 
 		_recipe = UC.GetRecipe(RecipeId);
+		if(_recipe is null)
+			throw new Exception("Recipe Id not found");
 		var position = 1;
 		foreach (var step in _recipe.Steps)
 		{
-			if (!step.Visible) continue;
-			_stepInfoDict[step.StepId] = new TfRecipeStepInfo
-			{
-				Position = position,
-				IsFirst = position == 1,
-				IsLast = false
-			};
+			if (!step.Instance.Visible) continue;
+			step.Instance.Position = position;
+			step.Instance.IsFirst = position == 1;
 			position++;
 			_visibleSteps.Add(step);
 		}
-		_stepInfoDict[_visibleSteps.Last().StepId].IsLast = true;
+		_visibleSteps.Last().Instance.IsLast = true;
 
 		_visibleSteps.Add(new TfResultRecipeStep()
 		{
-			StepId = Guid.Empty,
-			Result = null,
-			StepMenuTitle = "Result",
-			StepContentTitle = "Result",
-			Visible = true
+			Instance = new TfRecipeStepInstance
+			{
+				StepId = Guid.Empty,
+				StepMenuTitle = "Result",
+				StepContentTitle = "Result",
+				Visible = true,
+				Position = position,
+				IsFirst = false,
+				IsLast = false,
+			},
+			Data = new TfResultRecipeStepData
+			{
+				Result = null
+			}
 		});
-		_stepInfoDict[Guid.Empty] = new TfRecipeStepInfo
-		{
-			Position = position,
-			IsFirst = false,
-			IsLast = false
-		};
 
 		if (_visibleSteps.Count > 0)
 			_activeStep = _visibleSteps[0];
@@ -65,20 +66,20 @@ public partial class TfRecipeDetails : TfBaseComponent
 
 	private void _stepBack()
 	{
-		if (_visibleSteps.Count == 0 || _visibleSteps.First().StepId == _activeStep.StepId)
+		if (_visibleSteps.Count == 0 || _visibleSteps.First().Instance.StepId == _activeStep.Instance.StepId)
 			return;
 
-		var activeIndex = _visibleSteps.FindIndex(x => x.StepId == _activeStep.StepId);
+		var activeIndex = _visibleSteps.FindIndex(x => x.Instance.StepId == _activeStep.Instance.StepId);
 		if (activeIndex > 0)
 			_activeStep = _visibleSteps[activeIndex - 1];
 	}
 
 	private void _stepNext()
 	{
-		if (_visibleSteps.Count == 0 || _visibleSteps.Last().StepId == _activeStep.StepId)
+		if (_visibleSteps.Count == 0 || _visibleSteps.Last().Instance.StepId == _activeStep.Instance.StepId)
 			return;
 
-		var activeIndex = _visibleSteps.FindIndex(x => x.StepId == _activeStep.StepId);
+		var activeIndex = _visibleSteps.FindIndex(x => x.Instance.StepId == _activeStep.Instance.StepId);
 		if (activeIndex < _visibleSteps.Count - 1)
 			_activeStep = _visibleSteps[activeIndex + 1];
 	}
@@ -91,25 +92,25 @@ public partial class TfRecipeDetails : TfBaseComponent
 		await InvokeAsync(StateHasChanged);
 		try
 		{
-			if (_activeStep is not null && _activeStep.Component is not null)
+			if (_activeStep is not null && _activeStep.Instance.FormComponent is not null)
 			{
-				_activeStep.Component.ValidateForm();
+				_activeStep.Instance.FormComponent.SubmitForm();
 			}
-			if (_activeStep.Errors.Count > 0)
+			if (_activeStep.Instance.Errors.Count > 0)
 			{
 				ToastService.ShowWarning(LOC("Invalid Data!"));
 				return;
 			}
-			if (!_stepInfoDict[_activeStep.StepId].IsLast && _activeStep.StepId != Guid.Empty)
+			if (!_activeStep.Instance.IsLast && _activeStep.Instance.StepId != Guid.Empty)
 			{
 				_stepNext();
 				return;
 			}
 			_recipeResult = await UC.ApplyRecipe(_recipe);
 			_recipeResult.ApplyResultToSteps(_recipe.Steps);
-			var resultStepBase = _visibleSteps.Single(x=> x.GetType() == typeof(TfResultRecipeStep));
+			var resultStepBase = _visibleSteps.Single(x => x.GetType() == typeof(TfResultRecipeStep));
 			var resultStep = (TfResultRecipeStep)resultStepBase;
-			resultStep.Result = _recipeResult;
+			((TfResultRecipeStepData)resultStep.Data).Result = _recipeResult;
 			_activeStep = resultStep;
 
 		}
@@ -127,32 +128,33 @@ public partial class TfRecipeDetails : TfBaseComponent
 		}
 	}
 
-	private string _getStepClasses(TfRecipeStepBase step)
+	private string _getStepClasses(ITfRecipeStepAddon step)
 	{
 		var classList = new List<string>();
-		if (step.StepId == _activeStep?.StepId)
+		if (step.Instance.StepId == _activeStep?.Instance.StepId)
 			classList.Add("active");
 
-		else if (step.Errors.Count > 0)
+		else if (step.Instance.Errors.Count > 0)
 		{
 			classList.Add("error");
 		}
 		else
 		{
-			var currentStepIndex = _visibleSteps.FindIndex(x => x.StepId == step.StepId);
-			var activeStepIndex = _visibleSteps.FindIndex(x => x.StepId == _activeStep?.StepId);
+			var currentStepIndex = _visibleSteps.FindIndex(x => x.Instance.StepId == step.Instance.StepId);
+			var activeStepIndex = _visibleSteps.FindIndex(x => x.Instance.StepId == _activeStep?.Instance.StepId);
 			if (currentStepIndex < activeStepIndex)
 				classList.Add("completed");
 		}
 		return String.Join(" ", classList);
 	}
 
-	private void _activateStep(TfRecipeStepBase step)
+	private void _activateStep(ITfRecipeStepAddon step)
 	{
 		_activeStep = step;
 	}
 
-	private void _goToLogin(){ 
+	private void _goToLogin()
+	{
 		Navigator.NavigateTo(TfConstants.LoginPageUrl);
 	}
 }

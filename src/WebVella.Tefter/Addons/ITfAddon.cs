@@ -2,10 +2,10 @@
 
 public interface ITfAddon
 {
-	public Guid Id { get; init;}
-	public string Name { get; init;}
-	public string Description { get; init;}
-	public string FluentIconName { get; init;}
+	public Guid AddonId { get; init;}
+	public string AddonName { get; init;}
+	public string AddonDescription { get; init;}
+	public string AddonFluentIconName { get; init;}
 }
 
 public abstract class ITfAddonMeta

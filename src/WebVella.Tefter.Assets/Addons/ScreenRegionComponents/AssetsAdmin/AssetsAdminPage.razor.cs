@@ -9,10 +9,10 @@ public partial class AssetsAdminPage : TfBaseComponent, ITfAuxDataState,
 	public const string FLUENT_ICON_NAME = "Folder";
 	public const int POSITION_RANK = 100;
 
-	public Guid Id { get; init; } = new Guid(ID);
-	public string Name { get; init; } = NAME;
-	public string Description { get; init; } = DESCRIPTION;
-	public string FluentIconName { get; init; } = FLUENT_ICON_NAME;
+	public Guid AddonId { get; init; } = new Guid(ID);
+	public string AddonName { get; init; } = NAME;
+	public string AddonDescription { get; init; } = DESCRIPTION;
+	public string AddonFluentIconName { get; init; } = FLUENT_ICON_NAME;
 	public int PositionRank { get; init; } = POSITION_RANK;
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
 			new TfScreenRegionScope(null,new Guid(ID))

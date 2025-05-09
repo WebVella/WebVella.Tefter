@@ -222,7 +222,7 @@ public partial class TfService : ITfService
 
 			foreach (var dbo in providersDbo)
 			{
-				var providerType = providerTypes.SingleOrDefault(x => x.Id == dbo.TypeId);
+				var providerType = providerTypes.SingleOrDefault(x => x.AddonId == dbo.TypeId);
 
 				if (providerType == null)
 					throw new TfException($"Failed to get data providers, because " +
@@ -554,7 +554,7 @@ public partial class TfService : ITfService
 			Name = providerModel.Name,
 			Index = providerModel.Index,
 			SettingsJson = providerModel.SettingsJson,
-			TypeId = providerModel.ProviderType.Id,
+			TypeId = providerModel.ProviderType.AddonId,
 			SynchPrimaryKeyColumnsJson = JsonSerializer.Serialize(providerModel.SynchPrimaryKeyColumns ?? new List<string>()),
 			SynchScheduleEnabled = providerModel.SynchScheduleEnabled,
 			SynchScheduleMinutes = providerModel.SynchScheduleMinutes,
@@ -712,7 +712,7 @@ public partial class TfService : ITfService
 
 						var existingObject = tfService.GetDataProvider(provider.Id);
 
-						if (existingObject != null && existingObject.ProviderType.Id != provider.ProviderType.Id)
+						if (existingObject != null && existingObject.ProviderType.AddonId != provider.ProviderType.AddonId)
 							return false;
 
 						return true;
