@@ -361,7 +361,7 @@ public partial class TfService : ITfService
 			TypeId = dbo.TypeId,
 			ComponentId = dbo.ComponentId,
 			DataMapping = JsonSerializer.Deserialize<Dictionary<string, string>>(dbo.DataMappingJson),
-			CustomOptionsJson = dbo.CustomOptionsJson,
+			ComponentOptionsJson = dbo.ComponentOptionsJson,
 			SettingsJson = dbo.SettingsJson,
 		};
 
@@ -384,7 +384,7 @@ public partial class TfService : ITfService
 			TypeId = model.TypeId,
 			ComponentId = model.ComponentId,
 			DataMappingJson = JsonSerializer.Serialize(model.DataMapping ?? new Dictionary<string, string>()),
-			CustomOptionsJson = model.CustomOptionsJson,
+			ComponentOptionsJson = model.ComponentOptionsJson,
 			SettingsJson = model.SettingsJson,
 		};
 	}

@@ -9,7 +9,9 @@ using WebVella.Tefter.Assets.Addons;
 using WebVella.Tefter.DataProviders.Csv;
 using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.Talk;
 using WebVella.Tefter.Talk.Addons;
+using WebVella.Tefter.Talk.Components;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.RecipeSteps;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
@@ -616,6 +618,32 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					SpaceViewId = spaceViewId,
 					TypeId = new Guid(TfLongIntegerViewColumnType.ID),
 					ComponentId = new Guid(TfLongIntegerDisplayColumnComponent.ID),
+				},
+				new TfSpaceViewColumn{
+					Id = new Guid("d56ca398-c128-44c7-8b43-aa96e1a030c8"),
+					Position = 5,
+					QueryName = "talk",
+					Title = "talk",
+					DataMapping = new Dictionary<string, string> { {"Value",talkCountSharedColumnName}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfTalkCommentsCountViewColumnType.ID),
+					ComponentId = new Guid(TfTalkCommentsCountComponent.ID),
+					ComponentOptionsJson = JsonSerializer.Serialize(new TfTalkCommentsCountComponentOptions{
+						ChannelId = talkChannelId
+					})
+				},
+				new TfSpaceViewColumn{
+					Id = new Guid("bab61acc-fd5a-41f2-982a-53a6d5635557"),
+					Position = 6,
+					QueryName = "assets",
+					Title = "assets",
+					DataMapping = new Dictionary<string, string> { {"Value",assetsCountSharedColumnName}},
+					SpaceViewId = spaceViewId,
+					TypeId = new Guid(TfFolderAssetsCountViewColumnType.ID),
+					ComponentId = new Guid(TfFolderAssetsCountComponent.ID),
+					ComponentOptionsJson = JsonSerializer.Serialize(new TfFolderAssetsCountComponentOptions{
+						FolderId = assetFolderId
+					})
 				}
 			}
 			}

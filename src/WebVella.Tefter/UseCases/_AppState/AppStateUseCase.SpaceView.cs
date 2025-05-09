@@ -90,7 +90,7 @@ internal partial class AppStateUseCase
 					EditContext = null, //ignored here
 					ValidationMessageStore = null, //ignored here
 					RowIndex = 0,///ignored here
-					CustomOptionsJson = null, //set in column loop
+					ComponentOptionsJson = null, //set in column loop
 					DataMapping = null,//set in column loop
 					QueryName = null,//set in column loop
 					SpaceViewColumnId = Guid.Empty, //set in column loop
@@ -102,7 +102,7 @@ internal partial class AppStateUseCase
 						&& columnComp.Type.ImplementsInterface(typeof(ITfAuxDataState)))
 					{
 						compContext.SpaceViewColumnId = column.Id;
-						compContext.CustomOptionsJson = column.CustomOptionsJson;
+						compContext.ComponentOptionsJson = column.ComponentOptionsJson;
 						compContext.DataMapping = column.DataMapping;
 						compContext.QueryName = column.QueryName;
 						var component = (ITfAuxDataState)Activator.CreateInstance(columnComp.Type, compContext);

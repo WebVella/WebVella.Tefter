@@ -847,7 +847,7 @@ public partial class TfServiceTest : BaseTest
 						Title = availableColumnType.AddonName,
 						ComponentId = new Guid(TfTextDisplayColumnComponent.ID),
 						SpaceViewId = view.Id,
-						CustomOptionsJson = "{}",
+						ComponentOptionsJson = "{}",
 						DataMapping = new Dictionary<string, string> { { "Value", "test" } }
 					};
 

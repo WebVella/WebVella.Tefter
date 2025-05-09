@@ -188,7 +188,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
 		{
 			Mode = TfComponentPresentationMode.Options,
-			CustomOptionsJson = _form.CustomOptionsJson,
+			ComponentOptionsJson = _form.ComponentOptionsJson,
 			DataMapping = _form.DataMapping,
 			DataTable = null,
 			RowIndex = -1,
@@ -204,7 +204,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 
 	private async Task _customOptionsChangedHandler(string value)
 	{
-		if (String.IsNullOrWhiteSpace(value)) _form.CustomOptionsJson = null;
+		if (String.IsNullOrWhiteSpace(value)) _form.ComponentOptionsJson = null;
 
 		if (!(value.StartsWith("{") && value.StartsWith("{"))
 		|| (value.StartsWith("[") && value.StartsWith("]")))
@@ -213,7 +213,7 @@ public partial class TfSpaceViewColumnManageDialog : TfFormBaseComponent, IDialo
 			return;
 		}
 
-		_form.CustomOptionsJson = value;
+		_form.ComponentOptionsJson = value;
 		await InvokeAsync(StateHasChanged);
 	}
 

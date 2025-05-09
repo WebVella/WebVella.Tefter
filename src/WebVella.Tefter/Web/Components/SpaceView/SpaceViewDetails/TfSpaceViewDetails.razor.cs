@@ -315,7 +315,7 @@ public partial class TfSpaceViewDetails : TfBaseComponent
 		componentData[TfConstants.SPACE_VIEW_COMPONENT_CONTEXT_PROPERTY_NAME] = new TfSpaceViewColumnScreenRegionContext
 		{
 			Mode = TfComponentPresentationMode.Display,
-			CustomOptionsJson = column.CustomOptionsJson,
+			ComponentOptionsJson = column.ComponentOptionsJson,
 			DataMapping = column.DataMapping,
 			DataTable = dataTable,
 			RowIndex = rowIndex,

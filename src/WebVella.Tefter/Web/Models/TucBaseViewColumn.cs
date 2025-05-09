@@ -62,9 +62,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	protected override async Task OnParametersSetAsync()
 	{
 		await base.OnParametersSetAsync();
-		if (RegionContext.CustomOptionsJson != optionsSerialized)
+		if (RegionContext.ComponentOptionsJson != optionsSerialized)
 		{
-			optionsSerialized = RegionContext.CustomOptionsJson;
+			optionsSerialized = RegionContext.ComponentOptionsJson;
 			componentOptions = GetOptions();
 		}
 	}
@@ -313,9 +313,9 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// </summary>
 	protected virtual TItem GetOptions()
 	{
-		if (!String.IsNullOrWhiteSpace(RegionContext.CustomOptionsJson))
+		if (!String.IsNullOrWhiteSpace(RegionContext.ComponentOptionsJson))
 		{
-			componentOptions = JsonSerializer.Deserialize<TItem>(RegionContext.CustomOptionsJson);
+			componentOptions = JsonSerializer.Deserialize<TItem>(RegionContext.ComponentOptionsJson);
 			if (componentOptions is not null) return componentOptions;
 		}
 		return Activator.CreateInstance<TItem>();
@@ -345,7 +345,7 @@ public abstract class TucBaseViewColumn<TItem> : ComponentBase, IAsyncDisposable
 	/// Called when EditContext.Validate is triggered by the parent component 
 	/// when component options needs to be saved
 	/// Override in child component. Add possible validation errors with:
-	/// Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.CustomOptionsJson)), "your message here");
+	/// Context.ValidationMessageStore.Add(Context.EditContext.Field(nameof(TucSpaceViewColumn.ComponentOptionsJson)), "your message here");
 	/// Note: in the above change only the message text
 	/// </summary>
 	protected virtual void OnOptionsValidationRequested(object sender, ValidationRequestedEventArgs e)

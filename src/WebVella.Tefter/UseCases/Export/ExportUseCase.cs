@@ -101,7 +101,7 @@ public class ExportUseCase
 				EditContext = null, //ignored here
 				ValidationMessageStore = null, //ignored here
 				RowIndex = 0,//set in row loop
-				CustomOptionsJson = null, //set in column loop
+				ComponentOptionsJson = null, //set in column loop
 				DataMapping = null,//set in column loop
 				QueryName = null,//set in column loop
 				SpaceViewColumnId = Guid.Empty
@@ -117,7 +117,7 @@ public class ExportUseCase
 				foreach (TfSpaceViewColumn column in viewColumns)
 				{
 					compContext.SpaceViewColumnId = column.Id;
-					compContext.CustomOptionsJson = column.CustomOptionsJson;
+					compContext.ComponentOptionsJson = column.ComponentOptionsJson;
 					compContext.DataMapping = column.DataMapping;
 					compContext.QueryName = column.QueryName;
 

@@ -19,7 +19,7 @@ public record TucSpaceViewColumn
 	[Required(ErrorMessage = "required")]
 	public Guid ComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
-	public string CustomOptionsJson { get; set; } = "{}";
+	public string ComponentOptionsJson { get; set; } = "{}";
 	public TucSpaceViewColumnSettings Settings { get; set; } = new TucSpaceViewColumnSettings();
 
 	public string HeaderStyle
@@ -90,7 +90,7 @@ public record TucSpaceViewColumn
 		TypeId = model.TypeId;
 		ComponentId = model.ComponentId;
 		DataMapping = model.DataMapping;
-		CustomOptionsJson = model.CustomOptionsJson;
+		ComponentOptionsJson = model.ComponentOptionsJson;
 		Settings = new TucSpaceViewColumnSettings();
 		if (!String.IsNullOrWhiteSpace(model.SettingsJson) && model.SettingsJson.StartsWith("{")
 		 && model.SettingsJson.EndsWith("}"))
@@ -113,7 +113,7 @@ public record TucSpaceViewColumn
 			OnlyIcon = OnlyIcon,
 			Position = Position,
 			DataMapping = DataMapping,
-			CustomOptionsJson = CustomOptionsJson,
+			ComponentOptionsJson = ComponentOptionsJson,
 			TypeId = TypeId,
 			ComponentId = ComponentId,
 			SettingsJson = JsonSerializer.Serialize(Settings)
@@ -133,7 +133,7 @@ public record TucSpaceViewColumn
 			TypeId = TypeId,
 			ComponentId = ComponentId,
 			DataMapping = DataMapping,
-			CustomOptionsJson = CustomOptionsJson,
+			ComponentOptionsJson = ComponentOptionsJson,
 			SettingsJson = JsonSerializer.Serialize(Settings)
 		};
 	}

@@ -8,7 +8,7 @@ public class TfSpaceViewColumnScreenRegionContext : TfBaseScreenRegionContext
 	public Guid SpaceViewColumnId { get; set; }
 	public string QueryName { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
-	public string CustomOptionsJson { get; set; } = "{}";
+	public string ComponentOptionsJson { get; set; } = "{}";
 	public TfComponentPresentationMode Mode { get; set; } = TfComponentPresentationMode.Display;
 	public TfDataTable DataTable { get; set; } = null;
 	public int RowIndex { get; set; } = -1;

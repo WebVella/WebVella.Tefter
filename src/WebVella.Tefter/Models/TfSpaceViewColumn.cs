@@ -12,7 +12,7 @@ public class TfSpaceViewColumn
 	public Guid TypeId { get; set; }
 	public Guid ComponentId { get; set; }
 	public Dictionary<string, string> DataMapping { get; set; } = new();
-	public string CustomOptionsJson { get; set; } = "{}";
+	public string ComponentOptionsJson { get; set; } = "{}";
 	public string SettingsJson { get; set; } = "{}";
 	public void FixPrefix(string prefix)
 	{
@@ -65,7 +65,7 @@ internal class TfSpaceViewColumnDbo
 	public string DataMappingJson { get; set; } = "{}";
 
 	[TfDboModelProperty("custom_options_json")]
-	public string CustomOptionsJson { get; set; } = "{}";
+	public string ComponentOptionsJson { get; set; } = "{}";
 
 	[TfDboModelProperty("settings_json")]
 	public string SettingsJson { get; set; } = "{}";
