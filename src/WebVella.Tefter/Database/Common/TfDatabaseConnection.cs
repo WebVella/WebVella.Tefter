@@ -59,7 +59,16 @@ public class TfDatabaseConnection : IDisposable
         }
     }
 
-    public void AcquireAdvisoryLock(string key)
+	internal void UnlockAllAdvisoryLocks()
+	{
+		NpgsqlCommand command = CreateCommand("SELECT pg_advisory_unlock_all();");
+		using (var reader = command.ExecuteReader())
+		{
+			try { reader.Read(); } finally { reader.Close(); }
+		}
+	}
+
+	public void AcquireAdvisoryLock(string key)
     {
         AcquireAdvisoryLock(StringKeyToLong(key));
     }

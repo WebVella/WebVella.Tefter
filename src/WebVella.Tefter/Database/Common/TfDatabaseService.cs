@@ -17,6 +17,7 @@ public interface ITfDatabaseService
 	Task<DataTable> ExecuteSqlQueryCommandAsync(string sql, List<NpgsqlParameter> parameters);
 	Task<int> ExecuteSqlNonQueryCommandAsync(string sql, params NpgsqlParameter[] parameters);
 	Task<int> ExecuteSqlNonQueryCommandAsync(string sql, List<NpgsqlParameter> parameters);
+	void ReleaseAllAdvisoryLocks();
 }
 
 
@@ -44,6 +45,12 @@ public class TfDatabaseService : ITfDatabaseService
 		else
 			return TfDatabaseContext.CreateContext(Configuration).CreateConnection();
 	}
+
+	public void ReleaseAllAdvisoryLocks()
+	{
+		CreateConnection().UnlockAllAdvisoryLocks();
+	}
+
 
 	public TfDatabaseTransactionScope CreateTransactionScope(string lockKey = null)
 	{

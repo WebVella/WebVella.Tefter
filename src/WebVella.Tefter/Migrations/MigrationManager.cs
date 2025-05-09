@@ -29,6 +29,9 @@ internal partial class MigrationManager : IMigrationManager
 
 	public async Task CheckExecutePendingMigrationsAsync()
 	{
+		//release all locks before take db lock for migration update
+		_dbService.ReleaseAllAdvisoryLocks();
+
 		using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
 			await CheckExecutePendingSystemMigrationsAsync();
