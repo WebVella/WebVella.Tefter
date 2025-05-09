@@ -23,4 +23,10 @@
 		</Content>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Update="Addons\RecipeSteps\CreateTalkChannelRecipeStep\FormComponent\TfCreateTalkChannelRecipeStepForm.bg.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>

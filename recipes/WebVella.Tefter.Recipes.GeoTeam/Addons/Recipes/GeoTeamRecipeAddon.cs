@@ -5,9 +5,11 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WebVella.Tefter.Addons;
+using WebVella.Tefter.Assets.Addons;
 using WebVella.Tefter.DataProviders.Csv;
 using WebVella.Tefter.DataProviders.Csv.Addons;
 using WebVella.Tefter.Models;
+using WebVella.Tefter.Talk.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Addons.RecipeSteps;
 using WebVella.Tefter.TemplateProcessors.ExcelFile.Models;
@@ -42,8 +44,12 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 		var template1FileName = "worldcities-template1.xlsx";
 		var csvFileName = "worldcities.csv";
 		var joinKey = "city_id";
+		var talkChannelId = new Guid("36a26f87-2900-49ce-9757-c3e9da90f3b0");
+		var talkChannelName = "general";
 		var talkCountSharedColumnId = new Guid("2bb01d12-76bd-4247-8478-9ed5eb8a1707");
 		var talkCountSharedColumnName = "sc_talk_count";
+		var assetFolderId = new Guid("49ab08a6-e318-44e9-88ea-6441575043ed");
+		var assetFolderName = "general";
 		var assetsCountSharedColumnId = new Guid("801b1b8d-d7d1-44c6-9530-978a43fd2884");
 		var assetsCountSharedColumnName = "sc_asset_count";
 
@@ -430,6 +436,40 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					}
 				},
 			}
+			}
+		});
+
+		Steps.Add(new TfCreateTalkChannelRecipeStep
+		{
+			Instance = new TfRecipeStepInstance
+			{
+				Visible = false,
+				StepId = new Guid("16cd166b-75a2-458f-8423-b00e170cefe5"),
+				StepMenuTitle = "Talk channel",
+			},
+			Data = new TfCreateTalkChannelRecipeStepData
+			{
+				ChannelId = talkChannelId,
+				Name = talkChannelName,
+				CountSharedColumnName = talkCountSharedColumnName,
+				JoinKey = joinKey,
+			}
+		});
+
+		Steps.Add(new TfCreateAssetFolderRecipeStep
+		{
+			Instance = new TfRecipeStepInstance
+			{
+				Visible = false,
+				StepId = new Guid("d8726839-678d-48ae-8c22-e8e451aad453"),
+				StepMenuTitle = "Asset Folder",
+			},
+			Data = new TfCreateAssetFolderRecipeStepData
+			{
+				FolderId = assetFolderId,
+				Name = assetFolderName,
+				CountSharedColumnName = assetsCountSharedColumnName,
+				JoinKey = joinKey,
 			}
 		});
 
