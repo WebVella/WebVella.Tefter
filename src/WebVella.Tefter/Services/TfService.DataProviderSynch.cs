@@ -521,6 +521,7 @@ public partial class TfService : ITfService
 			columnNames.Add($"tf_created_on");
 			columnNames.Add($"tf_updated_on");
 			columnNames.Add($"tf_row_index");
+			columnNames.Add($"tf_search");
 
 			{
 				var parameter = new NpgsqlParameter($"@tf_id", NpgsqlDbType.Array | NpgsqlDbType.Uuid);
@@ -545,6 +546,12 @@ public partial class TfService : ITfService
 				parameter.Value = new List<int>();
 				paramsDict.Add("tf_row_index", parameter);
 			}
+
+			{
+				var parameter = new NpgsqlParameter($"@tf_search", NpgsqlDbType.Array | NpgsqlDbType.Text);
+				parameter.Value = new List<string>();
+				paramsDict.Add("tf_search", parameter);
+			}
 		}
 
 
@@ -557,15 +564,25 @@ public partial class TfService : ITfService
 
 			var columnsWithoutSource = provider.Columns.Where(x => string.IsNullOrWhiteSpace(x.SourceName));
 
+			var searchSb = new StringBuilder();
+
+
 			if (existingData.ContainsKey(key))
 			{
 				((List<Guid>)paramsDict["tf_id"].Value).Add((Guid)existingData[key]["tf_id"]);
 				((List<DateTime>)paramsDict["tf_created_on"].Value).Add((DateTime)existingData[key]["tf_created_on"]);
 				((List<DateTime>)paramsDict["tf_updated_on"].Value).Add((DateTime)DateTime.Now);
 				((List<int>)paramsDict["tf_row_index"].Value).Add(currentRowIndex);
-			
+
 				foreach (var column in columnsWithoutSource)
 				{
+					if (column.IncludeInTableSearch)
+					{
+						object value = existingData[key][column.DbName];
+						if (value is not null)
+							searchSb.Append($" {value}");
+					}
+
 					switch (column.DbType)
 					{
 						case TfDatabaseColumnType.Boolean:
@@ -667,12 +684,21 @@ public partial class TfService : ITfService
 
 				foreach (var column in columnsWithoutSource)
 				{
+					if (column.IncludeInTableSearch)
+					{
+						if (!column.IsNullable)
+						{
+							object defaultValue = GetColumnDefaultValue(column);
+							if (defaultValue is not null)
+								searchSb.Append($" {defaultValue}");
+						}
+					}
 
 					switch (column.DbType)
 					{
 						case TfDatabaseColumnType.Boolean:
 							{
-								if(!column.IsNullable)
+								if (!column.IsNullable)
 									((List<bool?>)paramsDict[column.DbName].Value).Add((bool?)GetColumnDefaultValue(column));
 								else
 									((List<bool?>)paramsDict[column.DbName].Value).Add(null);
@@ -690,7 +716,7 @@ public partial class TfService : ITfService
 						case TfDatabaseColumnType.Text:
 						case TfDatabaseColumnType.ShortText:
 							{
-								if(!column.IsNullable)
+								if (!column.IsNullable)
 									((List<string>)paramsDict[column.DbName].Value).Add((string)GetColumnDefaultValue(column));
 								else
 									((List<string>)paramsDict[column.DbName].Value).Add(null);
@@ -699,7 +725,7 @@ public partial class TfService : ITfService
 						case TfDatabaseColumnType.DateOnly:
 						case TfDatabaseColumnType.DateTime:
 							{
-								if(!column.IsNullable)
+								if (!column.IsNullable)
 									((List<DateTime?>)paramsDict[column.DbName].Value).Add((DateTime?)GetColumnDefaultValue(column));
 								else
 									((List<DateTime?>)paramsDict[column.DbName].Value).Add(null);
@@ -707,7 +733,7 @@ public partial class TfService : ITfService
 							break;
 						case TfDatabaseColumnType.ShortInteger:
 							{
-								if(!column.IsNullable)
+								if (!column.IsNullable)
 									((List<short?>)paramsDict[column.DbName].Value).Add((short?)GetColumnDefaultValue(column));
 								else
 									((List<short?>)paramsDict[column.DbName].Value).Add(null);
@@ -715,7 +741,7 @@ public partial class TfService : ITfService
 							break;
 						case TfDatabaseColumnType.Integer:
 							{
-								if(!column.IsNullable)
+								if (!column.IsNullable)
 									((List<int?>)paramsDict[column.DbName].Value).Add((int?)GetColumnDefaultValue(column));
 								else
 									((List<int?>)paramsDict[column.DbName].Value).Add(null);
@@ -724,7 +750,7 @@ public partial class TfService : ITfService
 							break;
 						case TfDatabaseColumnType.LongInteger:
 							{
-								if(!column.IsNullable)
+								if (!column.IsNullable)
 									((List<long?>)paramsDict[column.DbName].Value).Add((long?)GetColumnDefaultValue(column));
 								else
 									((List<long?>)paramsDict[column.DbName].Value).Add(null);
@@ -732,7 +758,7 @@ public partial class TfService : ITfService
 							break;
 						case TfDatabaseColumnType.Number:
 							{
-								if(!column.IsNullable)
+								if (!column.IsNullable)
 									((List<decimal?>)paramsDict[column.DbName].Value).Add((decimal?)GetColumnDefaultValue(column));
 								else
 									((List<decimal?>)paramsDict[column.DbName].Value).Add(null);
@@ -745,9 +771,16 @@ public partial class TfService : ITfService
 			}
 
 
-			var columnsWithSource = provider.Columns.Where(x=> !string.IsNullOrWhiteSpace(x.SourceName));
+			var columnsWithSource = provider.Columns.Where(x => !string.IsNullOrWhiteSpace(x.SourceName));
 			foreach (var column in columnsWithSource)
 			{
+				if (column.IncludeInTableSearch)
+				{
+					object value = row[column.DbName];
+					if (value is not null)
+						searchSb.Append($" {value}");
+				}
+
 				switch (column.DbType)
 				{
 					case TfDatabaseColumnType.Boolean:
@@ -854,6 +887,9 @@ public partial class TfService : ITfService
 				((List<short>)paramsDict[$"tf_jk_{joinKey.DbName}_version"].Value)
 					.Add(joinKey.Version);
 			}
+
+			//update search
+			((List<string>)paramsDict["tf_search"].Value).Add(searchSb.ToString());
 		}
 
 		return (columnNames, paramsDict, newTfIds);
@@ -1090,7 +1126,7 @@ public partial class TfService : ITfService
 
 	private object GetColumnDefaultValue(TfDataProviderColumn column)
 	{
-		if(!column.IsNullable && column.DefaultValue is null)
+		if (!column.IsNullable && column.DefaultValue is null)
 			throw new Exception("Column is not nullable, but default value is null.");
 
 		if (column.DefaultValue is null)
@@ -1105,7 +1141,7 @@ public partial class TfService : ITfService
 				return column.DefaultValue;
 			case TfDatabaseColumnType.Guid:
 				{
-					if(column.AutoDefaultValue)
+					if (column.AutoDefaultValue)
 					{
 						return Guid.NewGuid();
 					}
@@ -1155,16 +1191,16 @@ public partial class TfService : ITfService
 
 			var lastSynchTask = GetLastSynchronizationTask(provider.Id);
 
-			if(lastSynchTask is null)
+			if (lastSynchTask is null)
 			{
-				CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy() );
+				CreateSynchronizationTask(provider.Id, new TfSynchronizationPolicy());
 				continue;
 			}
 
-			if(lastSynchTask.Status == TfSynchronizationStatus.Pending)
+			if (lastSynchTask.Status == TfSynchronizationStatus.Pending)
 				continue;
 
-			if(lastSynchTask.CompletedOn is null)
+			if (lastSynchTask.CompletedOn is null)
 				continue;
 
 			if (lastSynchTask.CompletedOn.Value.AddMinutes(provider.SynchScheduleMinutes) < DateTime.Now)

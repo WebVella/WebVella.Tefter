@@ -747,6 +747,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 			DataTable dtIndexes = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetIndexesMetaSql());
 			foreach (DataRow row in dtIndexes.Rows)
 			{
+				if ((string)row["table_name"] != tableToClone)
+					continue;
+
 				var indexName = (string)row["index_name"];
 				if (!indexTableDict.ContainsKey(indexName))
 					indexTableDict[indexName] = (string)row["table_name"];
@@ -855,7 +858,7 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 			}
 
 			_dbService.ExecuteSqlNonQueryCommand(cleanupScript);
-
+			
 			var result = new TfDatabaseUpdateResult(log);
 
 			if (result.IsSuccess)
