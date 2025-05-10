@@ -53,6 +53,16 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 		//};
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
+
+	public override async Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
+	{
+		await base.OnPageCreated(serviceProvider, context);
+		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("AssetPageComponent error: ComponentOptionsJson is null");
+		var jsonOptions = JsonSerializer.Deserialize<AssetsPageComponentPageComponentOptions>(context.ComponentOptionsJson);
+		if (jsonOptions is null) throw new Exception("AssetPageComponent error: options cannot be deserialized");
+
+		return context.ComponentOptionsJson;
+	}
 	#endregion
 
 	#region << Private properties >>

@@ -52,6 +52,16 @@ public partial class TalkPageComponent : TucBaseSpacePageComponent
 		return Task.FromResult((newAppState, newAuxDataState));
 	}
 
+	public override async Task<string> OnPageCreated(IServiceProvider serviceProvider, TfSpacePageAddonContext context)
+	{
+		await base.OnPageCreated(serviceProvider, context);
+		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TalkPageComponent error: ComponentOptionsJson is null");
+		var jsonOptions = JsonSerializer.Deserialize<TalkPageComponentPageComponentOptions>(context.ComponentOptionsJson);
+		if (jsonOptions is null) throw new Exception("TalkPageComponent error: options cannot be deserialized");
+
+		return context.ComponentOptionsJson;
+	}
+
 	#endregion
 
 	#region << Private properties >>

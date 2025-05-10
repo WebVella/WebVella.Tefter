@@ -73,6 +73,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 		{
 			submit.ComponentOptionsJson = null;
 			submit.ComponentType = null;
+			submit.ComponentId = null;
 
 		}
 		else if (submit.Type == TfSpacePageType.Page)
@@ -83,6 +84,7 @@ public partial class TfSpaceNodeManageDialog : TfFormBaseComponent, IDialogConte
 				settingsErrors = addonComponent.ValidateOptions();
 				submit.ComponentOptionsJson = addonComponent.GetOptions();
 				submit.ComponentType = _selectedPageComponent?.Instance.GetType();
+				submit.ComponentId = _selectedPageComponent?.Instance.AddonId;
 			}
 		}
 
