@@ -3,6 +3,10 @@
 	border-color: var(--neutral-fill-secondary-hover);
 }
 
+	.login-card form {
+		width:100% !important;
+	}
+
 .login-logo {
 	display:flex;
 	align-items:center;

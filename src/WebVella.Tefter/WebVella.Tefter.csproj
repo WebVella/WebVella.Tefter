@@ -58,8 +58,8 @@
 		<PackageReference Include="Microsoft.Extensions.Localization" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.4" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.4" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.8" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.8" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.9" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.9" />
 	
 		<PackageReference Include="Npgsql" Version="9.0.3" />
 		<PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
