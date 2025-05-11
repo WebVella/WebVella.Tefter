@@ -163,7 +163,7 @@
 						<div class="talk-editor__actions">
 							<div class="editor__actions__left"></div>
 							<div class="editor__actions__right">
-								<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_sendMessage"
+								<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_sendMessage" Appearance=@Appearance.Accent
 											  Loading="_channelEditorSending" Disabled="_channelEditorSending">@LOC("Send")</FluentButton>
 							</div>
 						</div>
@@ -275,7 +275,7 @@
 											<FluentCheckbox @bind-Value=@_threadVisibleInChannel Label="@LOC("attach to channel")" />
 										</div>
 										<div class="editor__actions__right">
-											<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_replyMessage"
+											<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_replyMessage" Appearance=@Appearance.Accent
 														  Loading="_threadEditorSending" Disabled="_threadEditorSending">@LOC("Send")</FluentButton>
 										</div>
 									</div>

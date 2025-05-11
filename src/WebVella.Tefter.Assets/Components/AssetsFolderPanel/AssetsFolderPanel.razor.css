@@ -86,7 +86,7 @@
 }
 
 ::deep .asset-panel__body .asset-item {
-	background: var(--neutral-layer-2);
+	background: var(--neutral-fill-layer-rest);
 	border: none;
 	flex: 1 1 auto;
 	display: flex;
@@ -95,6 +95,10 @@
 	padding: 5px;
 	border-radius: 4px;
 }
+
+	::deep .asset-panel__body .asset-item:hover {
+		background-color: var(--neutral-fill-layer-active);
+	}
 
 ::deep .asset-panel__body .asset-item__icon {
 	flex: 0 0 auto;

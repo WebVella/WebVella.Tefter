@@ -36,21 +36,21 @@ else if (Context.Mode == TfComponentMode.Create)
 
 	<FluentGrid>
 		<FluentGridItem xs="6">
-			<FluentSelect OptionSelected="(x => x == _options.ShareKeyType)"
-						  @bind-SelectedOption="@_options.ShareKeyType"
+			<FluentSelect OptionSelected="(x => x == _options.JoinKeyType)"
+						  @bind-SelectedOption="@_options.JoinKeyType"
 						  TOption="AssetsFolderJoinKeyType"
 						  Items="@(Enum.GetValues<AssetsFolderJoinKeyType>())" Style="width:100%"
 						  OptionValue="@((p)=> ((int)p).ToString())"
-						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Share key value")"
-						  Class="@GetValidationCssClass(nameof(_options.ShareKeyType))" />
-			<TfValidationMessage Field="@(nameof(_options.ShareKeyType))" Errors="ValidationErrors" />
+						  OptionText="@(p => p.ToDescriptionString())" Label="@LOC("Join key value")"
+						  Class="@GetValidationCssClass(nameof(_options.JoinKeyType))" />
+			<TfValidationMessage Field="@(nameof(_options.JoinKeyType))" Errors="ValidationErrors" />
 		</FluentGridItem>
 		<FluentGridItem xs="6">
-			@if (_options.ShareKeyType == AssetsFolderJoinKeyType.CustomString)
+			@if (_options.JoinKeyType == AssetsFolderJoinKeyType.CustomString)
 			{
 				<FluentTextField TextFieldType="@TextFieldType.Text"
 								 Placeholder="@LOC("empty string")"
-								 @bind-Value=@_options.CustomShareKeyValue AutoComplete="off"
+								 @bind-Value=@_options.CustomJoinKeyValue AutoComplete="off"
 								 Label="@LOC("Custom join key valye")" Style="width:100%" />
 				<TfValidationMessage Field="@(nameof(_options.FolderId))" Errors="ValidationErrors" />
 			}
@@ -59,7 +59,7 @@ else if (Context.Mode == TfComponentMode.Create)
 
 	//view
 	//selected asset -> latest null, or id
-	//sharekey - space, space node (default), custom string
+	//joinkey - space, space node (default), custom string
 
 }
 else

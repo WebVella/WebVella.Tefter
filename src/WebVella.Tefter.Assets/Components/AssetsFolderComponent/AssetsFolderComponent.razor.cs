@@ -26,7 +26,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	private Guid? _actionMenuIdOpened = null;
 	private string _search = null;
 	private Guid? _itemsFolderId = null;
-	private string _itemsShareKeyValue = null;
+	private string _itemsJoinKeyValue = null;
 
 	protected override async ValueTask DisposeAsyncCore(bool disposing)
 	{
@@ -64,7 +64,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
-		if (JoinKeyValue != _itemsShareKeyValue || FolderId != _itemsFolderId)
+		if (JoinKeyValue != _itemsJoinKeyValue || FolderId != _itemsFolderId)
 		{
 			//_allitems needs to be regenerated
 			_getAllItems();
@@ -128,7 +128,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 				folderId: _folder.Id,
 				skTextId: JoinKeyValue);
 		}
-		_itemsShareKeyValue = JoinKeyValue;
+		_itemsJoinKeyValue = JoinKeyValue;
 		_itemsFolderId = FolderId;
 	}
 

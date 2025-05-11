@@ -57,7 +57,7 @@ else
 	<TfLayoutBodyMain>
 		<div class="talk-panel" style="@Style">
 			<div class="talk-panel__left">
-				<div class="talk-panel__left__header" style="background: var(--neutral-layer-1)">
+				<div class="talk-panel__left__header">
 					<div class="talk-channel-label">@($"#{_channel.Name}")</div>
 					<div class="talk-panel__left__header_actions">
 						@HeaderActions
@@ -102,7 +102,7 @@ else
 					<div class="talk-editor__actions">
 						<div class="editor__actions__left"></div>
 						<div class="editor__actions__right">
-							<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_sendMessage"
+							<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_sendMessage" Appearance=@Appearance.Accent
 										  Loading="_channelEditorSending" Disabled="_channelEditorSending">@LOC("Send")</FluentButton>
 						</div>
 					</div>
@@ -214,7 +214,7 @@ else
 										<FluentCheckbox @bind-Value=@_threadVisibleInChannel Label="@LOC("attach to channel")" />
 									</div>
 									<div class="editor__actions__right">
-										<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_replyMessage"
+										<FluentButton IconStart="@TfConstants.GetIcon("Send")" OnClick="_replyMessage" Appearance=@Appearance.Accent
 													  Loading="_threadEditorSending" Disabled="_threadEditorSending">@LOC("Send")</FluentButton>
 									</div>
 								</div>

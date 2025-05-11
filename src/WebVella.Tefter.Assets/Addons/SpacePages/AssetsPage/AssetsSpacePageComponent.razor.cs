@@ -1,8 +1,8 @@
 ﻿using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.Assets.Addons;
-[LocalizationResource("WebVella.Tefter.Assets.Addons.SpacePages.AssetPage.AssetPageComponent", "WebVella.Tefter.Assets")]
-public partial class AssetPageComponent : TucBaseSpacePageComponent
+[LocalizationResource("WebVella.Tefter.Assets.Addons.SpacePages.AssetsPage.AssetsPageComponent", "WebVella.Tefter.Assets")]
+public partial class AssetsSpacePageComponent : TucBaseSpacePageComponent
 {
 	public const string ID = "0109d2c8-8597-47e7-bb4b-b1b06badd4a7";
 	public const string NAME = "Asset Page";
@@ -58,7 +58,7 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 	{
 		await base.OnPageCreated(serviceProvider, context);
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("AssetPageComponent error: ComponentOptionsJson is null");
-		var jsonOptions = JsonSerializer.Deserialize<AssetsPageComponentPageComponentOptions>(context.ComponentOptionsJson);
+		var jsonOptions = JsonSerializer.Deserialize<AssetsSpacePageComponentOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("AssetPageComponent error: options cannot be deserialized");
 
 		return context.ComponentOptionsJson;
@@ -67,7 +67,7 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 
 	#region << Private properties >>
 	private string optionsJson = "{}";
-	private AssetsPageComponentPageComponentOptions _options = new();
+	private AssetsSpacePageComponentOptions _options = new();
 	private AssetsFolder _optionsFolder = null;
 	private List<Asset> _optionsFolderAssets = new();
 	private List<AssetsFolder> _folders = new();
@@ -83,7 +83,7 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 		if (!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson))
 		{
 			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<AssetsPageComponentPageComponentOptions>(optionsJson);
+			_options = JsonSerializer.Deserialize<AssetsSpacePageComponentOptions>(optionsJson);
 			if (_options.FolderId is not null)
 			{
 				_optionsFolder = _folders.FirstOrDefault(x => x.Id == _options.FolderId);
@@ -102,7 +102,7 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 		if (Context.ComponentOptionsJson != optionsJson)
 		{
 			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<AssetsPageComponentPageComponentOptions>(optionsJson);
+			_options = JsonSerializer.Deserialize<AssetsSpacePageComponentOptions>(optionsJson);
 			//When cannot node has json from another page type
 			if (_options is null) _options = new();
 			if (_options.FolderId is null && _optionsFolder is not null) _options.FolderId = _optionsFolder.Id;
@@ -114,14 +114,14 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 
 	private string _getJoinKeyValue()
 	{
-		switch (_options.ShareKeyType)
+		switch (_options.JoinKeyType)
 		{
 			case AssetsFolderJoinKeyType.SpaceNodeId:
 				return (TfAppState.Value.SpaceNode?.Id ?? Guid.Empty).ToString();
 			case AssetsFolderJoinKeyType.SpaceId:
 				return (TfAppState.Value.Space?.Id ?? Guid.Empty).ToString();
 			case AssetsFolderJoinKeyType.CustomString:
-				return (String.IsNullOrWhiteSpace(_options.CustomShareKeyValue) ? Guid.Empty.ToString() : _options.CustomShareKeyValue);
+				return (String.IsNullOrWhiteSpace(_options.CustomJoinKeyValue) ? Guid.Empty.ToString() : _options.CustomJoinKeyValue);
 			default:
 				throw new Exception("Shared Key Type not supported");
 		}
@@ -137,7 +137,7 @@ public partial class AssetPageComponent : TucBaseSpacePageComponent
 	#endregion
 }
 
-public class AssetsPageComponentPageComponentOptions
+public class AssetsSpacePageComponentOptions
 {
 	[JsonPropertyName("FolderId")]
 	public Guid? FolderId { get; set; } = null;
@@ -148,9 +148,9 @@ public class AssetsPageComponentPageComponentOptions
 	[JsonPropertyName("AssetId")]
 	public Guid? AssetId { get; set; } = null;
 
-	[JsonPropertyName("ShareKeyType")]
-	public AssetsFolderJoinKeyType ShareKeyType { get; set; } = AssetsFolderJoinKeyType.SpaceNodeId;
+	[JsonPropertyName("JoinKeyType")]
+	public AssetsFolderJoinKeyType JoinKeyType { get; set; } = AssetsFolderJoinKeyType.SpaceNodeId;
 
-	[JsonPropertyName("CustomShareKeyValue")]
-	public string CustomShareKeyValue { get; set; } = "";
+	[JsonPropertyName("CustomJoinKeyValue")]
+	public string CustomJoinKeyValue { get; set; } = "";
 }

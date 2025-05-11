@@ -1,8 +1,8 @@
 ﻿using WebVella.Tefter.Exceptions;
 
 namespace WebVella.Tefter.Talk.Addons;
-[LocalizationResource("WebVella.Tefter.Talk.Addons.SpacePages.TalkPageComponent.TalkPageComponent", "WebVella.Tefter.Talk")]
-public partial class TalkPageComponent : TucBaseSpacePageComponent
+[LocalizationResource("WebVella.Tefter.Talk.Addons.SpacePages.TalkSpacePage.TalkSpacePageComponent", "WebVella.Tefter.Talk")]
+public partial class TalkSpacePageComponent : TucBaseSpacePageComponent
 {
 	public const string ID = "6589259a-4f90-445d-8a62-d4b51bab3afd";
 	public const string NAME = "Talk Page";
@@ -56,7 +56,7 @@ public partial class TalkPageComponent : TucBaseSpacePageComponent
 	{
 		await base.OnPageCreated(serviceProvider, context);
 		if (String.IsNullOrWhiteSpace(context.ComponentOptionsJson)) throw new Exception("TalkPageComponent error: ComponentOptionsJson is null");
-		var jsonOptions = JsonSerializer.Deserialize<TalkPageComponentPageComponentOptions>(context.ComponentOptionsJson);
+		var jsonOptions = JsonSerializer.Deserialize<TalkSpacePageComponentOptions>(context.ComponentOptionsJson);
 		if (jsonOptions is null) throw new Exception("TalkPageComponent error: options cannot be deserialized");
 
 		return context.ComponentOptionsJson;
@@ -66,7 +66,7 @@ public partial class TalkPageComponent : TucBaseSpacePageComponent
 
 	#region << Private properties >>
 	private string optionsJson = "{}";
-	private TalkPageComponentPageComponentOptions _options { get; set; } = new();
+	private TalkSpacePageComponentOptions _options { get; set; } = new();
 	private TalkChannel _optionsChannel { get; set; } = null;
 	private List<TalkChannel> _channels { get; set; } = new();
 
@@ -80,7 +80,7 @@ public partial class TalkPageComponent : TucBaseSpacePageComponent
 		_channels = TalkService.GetChannels();
 		if(!String.IsNullOrWhiteSpace(Context.ComponentOptionsJson)){ 
 			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<TalkPageComponentPageComponentOptions>(optionsJson);
+			_options = JsonSerializer.Deserialize<TalkSpacePageComponentOptions>(optionsJson);
 			if(_options.ChannelId is not null){ 
 				_optionsChannel = _channels.FirstOrDefault(x=> x.Id == _options.ChannelId);
 			}
@@ -99,7 +99,7 @@ public partial class TalkPageComponent : TucBaseSpacePageComponent
 		if (Context.ComponentOptionsJson != optionsJson)
 		{
 			optionsJson = Context.ComponentOptionsJson;
-			_options = JsonSerializer.Deserialize<TalkPageComponentPageComponentOptions>(optionsJson);
+			_options = JsonSerializer.Deserialize<TalkSpacePageComponentOptions>(optionsJson);
 			//When cannot node has json from another page type
 			if(_options is null) _options = new();
 			if(_options.ChannelId is null && _optionsChannel is not null) _options.ChannelId = _optionsChannel.Id;
@@ -120,13 +120,13 @@ public partial class TalkPageComponent : TucBaseSpacePageComponent
 	#endregion
 }
 
-public class TalkPageComponentPageComponentOptions
+public class TalkSpacePageComponentOptions
 {
 	[JsonPropertyName("ChannelId")]
 	public Guid? ChannelId { get; set; } = null;
 }
 
-public class TalkPageComponentPageComponentContext
+public class TalkSpacePageComponentContext
 {
 	[JsonPropertyName("TalkChannels")]
 	public List<TalkChannel> TalkChannels { get; set; } = new();

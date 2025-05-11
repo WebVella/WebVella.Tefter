@@ -15,7 +15,8 @@
 
 ::deep .talk-panel__left__header {
 	flex: 0 0 50px;
-	border-bottom: 1px solid var(--neutral-stroke-rest);
+	border-bottom: 1px solid var(--tf-layout-color-accent);
+	background:var(--neutral-fill-secondary-rest);
 	padding: 0 10px;
 	display: flex;
 	align-items: center;

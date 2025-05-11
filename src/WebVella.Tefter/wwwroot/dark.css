@@ -545,18 +545,6 @@ fluent-anchor::part(control) {
 fluent-anchor:hover::part(control) {
   background: var(--neutral-fill-layer-active);
 }
-.editor-area .ql-editor {
-  background-color: var(--neutral-fill-layer-active) !important;
-}
-.editor-area .ql-editor::before {
-  color: var(--neutral-foreground-active) !important;
-}
-.asset-panel__body .asset-item {
-  background-color: var(--neutral-fill-layer-rest) !important;
-}
-.asset-panel__body .asset-item:hover {
-  background-color: var(--neutral-fill-layer-active) !important;
-}
 .fluent-dialog-body .tf-grid {
   border-color: var(--neutral-fill-input-alt-active);
 }

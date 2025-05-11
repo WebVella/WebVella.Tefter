@@ -5,7 +5,7 @@
 }
 
 ::deep  .asset-item {
-	background: var(--neutral-layer-1);
+	background: var(--neutral-fill-layer-hover);
 	border: none;
 	flex: 1 1 auto;
 	display: flex;
@@ -14,6 +14,10 @@
 	padding: 5px;
 	border-radius: 4px;
 }
+
+	::deep .asset-item:hover {
+		background: var(--neutral-fill-layer-active);
+	}
 
 ::deep  .asset-item__icon {
 	flex: 0 0 auto;
@@ -77,10 +81,6 @@
 
 ::deep  .asset-item__action svg {
 	fill: var(--neutral-base-color) !important;
-}
-
-::deep  .asset-item:hover {
-	background: var(--neutral-layer-3);
 }
 
 ::deep  .asset-item + .asset-item {

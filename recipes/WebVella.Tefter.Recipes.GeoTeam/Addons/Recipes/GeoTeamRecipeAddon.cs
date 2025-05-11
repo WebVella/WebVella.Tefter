@@ -55,6 +55,13 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 		var assetsCountSharedColumnId = new Guid("801b1b8d-d7d1-44c6-9530-978a43fd2884");
 		var assetsCountSharedColumnName = "sc_asset_count";
 
+		var talkSpacePageId = new Guid("88a08dc5-dbc8-49b6-8a82-b77823838bae");
+		var talkSpacePageName = "General Discussion";
+
+		var assetsSpacePageId = new Guid("f4b9ce0c-5aad-4eec-80e4-a3e29e002b8c");
+		var assetsSpacePageName = "General Assets";
+
+
 		var step11 = new TfInfoRecipeStep
 		{
 			Instance = new TfRecipeStepInstance
@@ -725,6 +732,62 @@ public class GeoTalkRecipeAddon : ITfRecipeAddon
 					FileName = template1FileName,
 					GroupBy = new(),
 					TemplateFileBlobId = template1BlobId,
+				})
+			}
+		});
+
+		Steps.Add(new TfCreateSpacePageRecipeStep
+		{
+			Instance = new TfRecipeStepInstance
+			{
+				Visible = false,
+				StepId = new Guid("1ebe588a-0da9-41c8-aa8e-40b95b5f0bc1"),
+				StepMenuTitle = "Create space page",
+			},
+			Data = new TfCreateSpacePageRecipeStepData
+			{
+				SpacePageId = talkSpacePageId,
+				SpaceId = spaceId,
+				Name = talkSpacePageName,
+				FluentIconName = "Comment",
+				Position = 200,
+				Type = TfSpacePageType.Page,
+				ChildPages = new(),
+				ComponentType = new TalkSpacePageComponent(),
+				ComponentId = new Guid(TalkSpacePageComponent.ID),
+				ComponentOptionsJson = JsonSerializer.Serialize(new TalkSpacePageComponentOptions
+				{
+					ChannelId = talkChannelId
+				})
+			}
+		});
+
+		Steps.Add(new TfCreateSpacePageRecipeStep
+		{
+			Instance = new TfRecipeStepInstance
+			{
+				Visible = false,
+				StepId = new Guid("4fffcfd3-66fd-43b1-92fb-7e7fc54e54cc"),
+				StepMenuTitle = "Create space page",
+			},
+			Data = new TfCreateSpacePageRecipeStepData
+			{
+				SpacePageId = assetsSpacePageId,
+				SpaceId = spaceId,
+				Name = assetsSpacePageName,
+				FluentIconName = "Folder",
+				Position = 200,
+				Type = TfSpacePageType.Page,
+				ChildPages = new(),
+				ComponentType = new AssetsSpacePageComponent(),
+				ComponentId = new Guid(AssetsSpacePageComponent.ID),
+				ComponentOptionsJson = JsonSerializer.Serialize(new AssetsSpacePageComponentOptions
+				{
+					AssetId = null,
+					CustomJoinKeyValue = null,
+					FolderId = assetFolderId,
+					JoinKeyType = Assets.Models.AssetsFolderJoinKeyType.SpaceNodeId,
+					ViewType = Assets.Models.AssetsFolderViewType.List
 				})
 			}
 		});
