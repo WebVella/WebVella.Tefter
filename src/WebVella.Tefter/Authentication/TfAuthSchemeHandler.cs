@@ -1,5 +1,4 @@
-﻿using DocumentFormat.OpenXml.InkML;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Text.Encodings.Web;
 
@@ -29,7 +28,7 @@ internal class TfAuthSchemeHandler : AuthenticationHandler<TfAuthSchemeOptions>
 	{
 		var authState = await _tfAuthStateProvider.GetAuthenticationStateAsync();
 
-		if (authState is not null && authState.User is not null && authState.User.Identities?.Count() > 0 )
+		if (authState is not null && authState.User is not null && authState.User.Identities?.Count() > 0)
 		{
 			var ticket = new AuthenticationTicket(authState.User, this.Scheme.Name);
 			return AuthenticateResult.Success(ticket);
