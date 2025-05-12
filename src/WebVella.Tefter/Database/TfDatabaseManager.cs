@@ -678,6 +678,9 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 			DataTable dtConstraints = _dbService.ExecuteSqlQueryCommand(TfDatabaseSqlProvider.GetConstraintsMetaSql());
 			foreach (DataRow row in dtConstraints.Rows)
 			{
+				if ((string)row["table_name"] != tableToClone)
+					continue;
+
 				var constraintName = (string)row["constraint_name"];
 				if (!constraintTableDict.ContainsKey(constraintName))
 					constraintTableDict[constraintName] = (string)row["table_name"];

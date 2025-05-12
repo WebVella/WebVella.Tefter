@@ -526,8 +526,9 @@ ORDER BY aa.created_on DESC;";
 
 			if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
 			{
-				foreach (var skId in asset.SKValueIds)
+				foreach (var skValueId in asset.SKValueIds)
 				{
+					Guid skId = _tfService.GetId(skValueId);
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
 						"INSERT INTO assets_related_jk (id, asset_id) VALUES (@id, @asset_id)",
 							new NpgsqlParameter("@id", skId),

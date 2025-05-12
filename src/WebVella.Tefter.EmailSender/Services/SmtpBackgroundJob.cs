@@ -38,6 +38,10 @@ internal class SmtpBackgroundJob : BackgroundService
 			{
 				await Task.Delay(30000, stoppingToken); //wait 30 sec before start
 			}
+			else
+			{
+				await Task.Delay(10000, stoppingToken);
+			}
 
 			while (!stoppingToken.IsCancellationRequested)
 			{
