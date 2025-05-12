@@ -1,14 +1,17 @@
 ﻿namespace WebVella.Tefter.Web.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
+[Authorize]
 [Route("api")]
 [ResponseCache(Location = ResponseCacheLocation.None, Duration = 0, NoStore = true)]
 public class ApiExcelController : ControllerBase
 {
 	internal readonly ExportUseCase UC;
+
 	public ApiExcelController(
 		ExportUseCase uc)
 	{

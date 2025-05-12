@@ -1,4 +1,9 @@
-﻿namespace WebVella.Tefter;
+﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
+
+namespace WebVella.Tefter;
 
 public static class TfDependencyInjection
 {
@@ -28,6 +33,12 @@ public static class TfDependencyInjection
 		services.AddAuthorizationCore();
 		services.AddAuthenticationCore();
 
+		services.AddAuthentication(TfAuthSchemeOptions.DefaultScheme) 
+			.AddScheme<TfAuthSchemeOptions, TfAuthSchemeHandler>(
+				TfAuthSchemeOptions.DefaultScheme,
+				opts => { }
+		);
+		//services.AddTransient<TfAuthenticationMiddleware>();
 		services.AddScoped<AuthenticationStateProvider, TfAuthStateProvider>();
 		services.AddSingleton<ITfConfigurationService, TfConfigurationService>((Context) =>
 		{
@@ -81,7 +92,7 @@ public static class TfDependencyInjection
 		return services;
 	}
 
-	public static IServiceProvider UseTefter(this IServiceProvider serviceProvider)
+	internal static IServiceProvider UseTefter(this IServiceProvider serviceProvider )
 	{
 		var migrationManager = serviceProvider.GetRequiredService<IMigrationManager>();
 		migrationManager.CheckExecutePendingMigrationsAsync().Wait();
@@ -92,6 +103,13 @@ public static class TfDependencyInjection
 			app.OnStart();
 
 		return serviceProvider;
+	}
+
+	public static WebApplication UseTefter(this WebApplication webApp )
+	{
+		webApp.Services.UseTefter();
+		//webApp.UseMiddleware<TfAuthenticationMiddleware>();
+		return webApp;
 	}
 
 	private static void LoadAllAssemblies()

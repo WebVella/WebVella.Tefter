@@ -2,12 +2,12 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
 using System.Net;
 
+[Authorize]
 [ResponseCache(Location = ResponseCacheLocation.None, Duration = 0, NoStore = true)]
 public class RepositoryController : ControllerBase
 {
@@ -29,7 +29,6 @@ public class RepositoryController : ControllerBase
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
 		}
-
 
 		var file = _tfService.GetRepositoryFile(filename);
 
@@ -75,7 +74,7 @@ public class RepositoryController : ControllerBase
 
 	[HttpGet]
 	[Route("/fs/blob/{blobId}/{fileName}")]
-	public IActionResult Download([FromRoute] Guid blobId, [FromRoute] string filename)
+	public async Task<IActionResult> Download([FromRoute] Guid blobId, [FromRoute] string filename)
 	{
 		if (blobId == Guid.Empty || string.IsNullOrWhiteSpace(filename))
 		{

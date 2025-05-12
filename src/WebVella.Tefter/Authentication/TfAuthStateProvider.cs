@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace WebVella.Tefter.Authorization;
+namespace WebVella.Tefter.Authentication;
 
 public class TfAuthStateProvider : AuthenticationStateProvider
 {
@@ -20,7 +20,15 @@ public class TfAuthStateProvider : AuthenticationStateProvider
 
 		_tfService = _serviceProvider.GetService<ITfService>();
 
-		_anonymous = new TfPrincipal(new TfIdentity());
+		_anonymous =new TfPrincipal();
+	}
+
+	public async Task<bool> IsUserAuthenticated()
+	{
+		var authState = await GetAuthenticationStateAsync();
+		return authState != null && authState.User != null 
+			&& authState.User.Identity != null 
+			&& authState.User.Identity.IsAuthenticated;
 	}
 
 	public override async Task<AuthenticationState> GetAuthenticationStateAsync()

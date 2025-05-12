@@ -103,9 +103,9 @@ try
 		app.UseRequestLocalization(localizationOptions);
 		CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(supportedCultures[0]);
 		CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(supportedCultures[0]);
-
+		
 		//IMPORTANT: Do not remove. Required for the application to work
-		app.Services.UseTefter();
+		app.UseTefter();
 		app.Run();
 	}
 }

@@ -1,12 +1,16 @@
 ﻿namespace WebVella.Tefter.Assets.Controllers;
 
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Net.Http.Headers;
 using System.Globalization;
 using System.Net;
+using WebVella.Tefter.Authentication;
 
+[Authorize]
 [ResponseCache(Location = ResponseCacheLocation.None, Duration = 0, NoStore = true)]
 public class AssetsController : ControllerBase
 {
@@ -28,16 +32,15 @@ public class AssetsController : ControllerBase
 		[FromRoute] Guid assetId,
 		[FromRoute] string filename)
 	{
-		
-		if (string.IsNullOrWhiteSpace(filename) || 
-			assetId == Guid.Empty )
+		if (string.IsNullOrWhiteSpace(filename) ||
+			assetId == Guid.Empty)
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
 		}
 
 		var asset = _assetsService.GetAsset(assetId);
-		if (asset is null || asset.Type != AssetType.File )
+		if (asset is null || asset.Type != AssetType.File)
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
@@ -45,7 +48,7 @@ public class AssetsController : ControllerBase
 
 		var fileAssetContent = ((FileAssetContent)asset.Content);
 
-		if(fileAssetContent.Filename.ToLowerInvariant()  != filename.ToLowerInvariant() )
+		if (fileAssetContent.Filename.ToLowerInvariant() != filename.ToLowerInvariant())
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
@@ -66,8 +69,8 @@ public class AssetsController : ControllerBase
 			}
 		}
 
-		
-		if(!_tfService.ExistsBlob(fileAssetContent.BlobId))
+
+		if (!_tfService.ExistsBlob(fileAssetContent.BlobId))
 		{
 			HttpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
 			return new JsonResult(new { });
@@ -88,11 +91,11 @@ public class AssetsController : ControllerBase
 
 		Stream fileContentStream = _tfService.GetBlobStream(fileAssetContent.BlobId);
 
-		if(string.IsNullOrWhiteSpace(mimeType))
+		if (string.IsNullOrWhiteSpace(mimeType))
 			mimeType = "text/plain";
 
 		return File(fileContentStream, mimeType);
-		
+
 	}
 
 

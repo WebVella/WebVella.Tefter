@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components.Server.Circuits;
 
-namespace WebVella.Tefter.Authorization;
+namespace WebVella.Tefter.Authentication;
 
 public class IdentityCircuitHandler : CircuitHandler
 {

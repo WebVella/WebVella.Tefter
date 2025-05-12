@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using WebVella.Tefter.Database;
 using WebVella.Tefter.Database.Dbo;
-using WebVella.Tefter.Authorization;
+using WebVella.Tefter.Authentication;
 using WebVella.Tefter.Messaging;
 using WebVella.Tefter.Migrations;
 using WebVella.Tefter.UseCases.AppState;
