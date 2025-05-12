@@ -213,7 +213,6 @@ public partial class TfService : ITfService
 						SpaceDataId = spaceData.Id,
 						SpaceId = space.Id,
 						Type = spaceViewExt.Type,
-						Groups = spaceViewExt.Groups,
 						Presets = spaceViewExt.Presets,
 						SettingsJson = spaceViewExt.SettingsJson,
 					};
@@ -602,7 +601,6 @@ public partial class TfService : ITfService
 						SpaceId = space.Id,
 						Type = spaceViewExt.Type,
 						SettingsJson = spaceViewExt.SettingsJson,
-						Groups = spaceViewExt.Groups,
 						Presets = spaceViewExt.Presets,
 					};
 					spaceView = UpdateSpaceView(spaceViewObj);
@@ -772,10 +770,6 @@ public partial class TfService : ITfService
 		if (dbo == null)
 			return null;
 
-		List<string> groups = new List<string>();
-		if (!string.IsNullOrWhiteSpace(dbo.GroupsJson))
-			groups = JsonSerializer.Deserialize<List<string>>(dbo.GroupsJson);
-
 		List<TfSpaceViewPreset> presets = new List<TfSpaceViewPreset>();
 
 		if (!string.IsNullOrWhiteSpace(dbo.PresetsJson))
@@ -799,7 +793,6 @@ public partial class TfService : ITfService
 			SpaceDataId = dbo.SpaceDataId,
 			SpaceId = dbo.SpaceId,
 			Type = dbo.Type,
-			Groups = groups,
 			Presets = presets
 		};
 
@@ -820,7 +813,6 @@ public partial class TfService : ITfService
 			SpaceDataId = model.SpaceDataId,
 			SpaceId = model.SpaceId,
 			Type = model.Type,
-			GroupsJson = JsonSerializer.Serialize(model.Groups ?? new List<string>()),
 			PresetsJson = JsonSerializer.Serialize(model.Presets ?? new List<TfSpaceViewPreset>())
 		};
 	}

@@ -821,8 +821,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 					.AddGuidColumn("space_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddGuidColumn("space_data_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 					.AddTextColumn("settings_json", c => { c.NotNullable().WithDefaultValue("{}"); })
-					.AddTextColumn("presets_json", c => { c.NotNullable().WithDefaultValue("[]"); })
-					.AddTextColumn("groups_json", c => { c.NotNullable().WithDefaultValue("[]"); });
+					.AddTextColumn("presets_json", c => { c.NotNullable().WithDefaultValue("[]"); });
 			})
 			.WithConstraints(constraints =>
 			{

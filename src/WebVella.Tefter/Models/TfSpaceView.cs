@@ -10,7 +10,6 @@ public class TfSpaceView
 	public short Position { get; set; }
 	public string SettingsJson { get; set; } = "{}";
 	public List<TfSpaceViewPreset> Presets { get; set; } = new();
-	public List<string> Groups { get; set; } = new();
 }
 
 [DboCacheModel]
@@ -41,9 +40,6 @@ public class TfSpaceViewDbo
 
 	[TfDboModelProperty("presets_json")]
 	public string PresetsJson { get; set; } = "[]";
-
-	[TfDboModelProperty("groups_json")]
-	public string GroupsJson { get; set; } = "[]";
 }
 
 
