@@ -323,10 +323,10 @@ html:root {
   --neutral-foreground-active: var(--tf-zinc-500);
   --neutral-foreground-focus: var(--tf-zinc-700);
   --neutral-foreground-hint: var(--tf-zinc-500);
-  --neutral-stroke-rest: var(--tf-zinc-400);
-  --neutral-stroke-hover: var(--tf-zinc-600);
-  --neutral-stroke-active: var(--tf-zinc-700);
-  --neutral-stroke-focus: var(--tf-zinc-500);
+  --neutral-stroke-rest: var(--tf-zinc-300);
+  --neutral-stroke-hover: var(--tf-zinc-500);
+  --neutral-stroke-active: var(--tf-zinc-600);
+  --neutral-stroke-focus: var(--tf-zinc-400);
   --neutral-stroke-control-rest: linear-gradient(var(--tf-zinc-900) 90%, var(--tf-zinc-300) 100%);
   --neutral-stroke-control-hover: linear-gradient(var(--tf-zinc-800) 90%, var(--tf-zinc-200) 100%);
   --neutral-stroke-control-active: var(--tf-zinc-800);

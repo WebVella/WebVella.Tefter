@@ -99,7 +99,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 				};
 				result = AssetsService.CreateFileAsset(submit);
 			}
-			else if (_isCreate && Content.SKValueIds is not null && Content.SKValueIds.Count > 0)
+			else if (_isCreate && Content.SKValues is not null && Content.SKValues.Count > 0)
 			{
 				var submit = new CreateFileAssetWithJoinKeyModel
 				{
@@ -108,7 +108,7 @@ public partial class AssetsFolderPanelFileModal : TfFormBaseComponent, IDialogCo
 					FileName = _form.FileName,
 					LocalPath = _form.LocalPath,
 					CreatedBy = TfAppState.Value.CurrentUser.Id,
-					SKValueIds = Content.SKValueIds,
+					SKValues = Content.SKValues,
 				};
 				result = AssetsService.CreateFileAsset(submit);
 			}
@@ -171,5 +171,5 @@ public class AssetsFolderPanelFileModalContext
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; }
 	public Guid DataProviderId { get; set; }
-	public List<Guid> SKValueIds { get; set; }
+	public List<string> SKValues { get; set; }
 }

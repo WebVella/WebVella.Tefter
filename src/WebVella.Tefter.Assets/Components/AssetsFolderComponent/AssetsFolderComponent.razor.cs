@@ -139,7 +139,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 			{
 				CreatedBy = TfAppState.Value.CurrentUser.Id,
 				FolderId = _folder.Id,
-				SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
+				SKValues = new List<string> { JoinKeyValue },
 				Id = Guid.Empty,
 				Label = null,
 				Url = null,
@@ -167,7 +167,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 			{
 				CreatedBy = TfAppState.Value.CurrentUser.Id,
 				FolderId = _folder.Id,
-				SKValueIds = new List<Guid> { TfAppState.Value.Space.Id },
+				SKValues = new List<string> { JoinKeyValue },
 				Id = Guid.Empty,
 				Label = null,
 				FileName = null,
@@ -199,7 +199,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 					new AssetsFolderPanelFileModalContext()
 					{
 						CreatedBy = TfAppState.Value.CurrentUser.Id,
-						SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
+						SKValues = new List<string> { JoinKeyValue },
 						FolderId = _folder.Id,
 						Id = asset.Id,
 						Label = assetContent.Label,
@@ -221,7 +221,7 @@ public partial class AssetsFolderComponent : TfBaseComponent
 					new AssetsFolderPanelLinkModalContext()
 					{
 						CreatedBy = TfAppState.Value.CurrentUser.Id,
-						SKValueIds = new List<Guid> { TfAppState.Value.SpaceNode.Id },
+						SKValues = new List<string> { JoinKeyValue },
 						FolderId = _folder.Id,
 						RowIds = new List<Guid> { _rowId },
 						Id = asset.Id,
