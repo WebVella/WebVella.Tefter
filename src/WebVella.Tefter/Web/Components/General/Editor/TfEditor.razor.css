@@ -51,7 +51,7 @@
 ::deep .editor-area .ql-editor {
 	min-height: 60px;
 	border-radius: calc(var(--control-corner-radius)* 1px);
-	background: var(--neutral-fill-secondary-rest);
+	background: var(--neutral-fill-input-focus);
 	border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
 	outline: none;
 	padding: 5px 10px;

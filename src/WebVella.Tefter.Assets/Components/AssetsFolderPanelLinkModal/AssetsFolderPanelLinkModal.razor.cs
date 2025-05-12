@@ -63,7 +63,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 				};
 				result = AssetsService.CreateLinkAsset(submit);
 			}
-			else if (_isCreate && Content.SKValueIds is not null && Content.SKValueIds.Count > 0)
+			else if (_isCreate && Content.SKValues is not null && Content.SKValues.Count > 0)
 			{
 				var submit = new CreateLinkAssetWithJoinKeyModel
 				{
@@ -72,7 +72,7 @@ public partial class AssetsFolderPanelLinkModal : TfFormBaseComponent, IDialogCo
 					Url = _form.Url,
 					IconUrl = _form.IconUrl,
 					CreatedBy = Content.CreatedBy,
-					SKValueIds = Content.SKValueIds
+					SKValues = Content.SKValues
 				};
 				result = AssetsService.CreateLinkAsset(submit);
 			}
@@ -144,5 +144,5 @@ public class AssetsFolderPanelLinkModalContext
 	public Guid CreatedBy { get; set; }
 	public List<Guid> RowIds { get; set; }
 	public Guid DataProviderId { get; set; }
-	public List<Guid> SKValueIds { get; set; }
+	public List<string> SKValues { get; set; }
 }

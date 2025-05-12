@@ -69,7 +69,7 @@ public class CreateFileAssetWithJoinKeyModel
 	public string FileName { get; set; }
 	public string LocalPath { get; set; }
 	public Guid CreatedBy { get; set; }
-	public List<Guid> SKValueIds { get; set; }
+	public List<string> SKValues { get; set; }
 }
 
 public class CreateLinkAssetWithJoinKeyModel
@@ -79,5 +79,5 @@ public class CreateLinkAssetWithJoinKeyModel
 	public string Url { get; set; }
 	public string IconUrl { get; set; }
 	public Guid CreatedBy { get; set; }
-	public List<Guid> SKValueIds { get; set; }
+	public List<string> SKValues { get; set; }
 }

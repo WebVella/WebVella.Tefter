@@ -433,11 +433,11 @@ ORDER BY aa.created_on DESC;";
 				throw new Exception("Failed to insert new row in database for thread object");
 			}
 
-			if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
+			if (asset.SKValues != null && asset.SKValues.Count > 0)
 			{
-				foreach (var skValueId in asset.SKValueIds)
+				foreach (var skValue in asset.SKValues)
 				{
-					Guid skId = _tfService.GetId(skValueId);
+					Guid skId = _tfService.GetId(skValue);
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
 						"INSERT INTO assets_related_jk (id, asset_id) VALUES (@id, @asset_id)",
 							new NpgsqlParameter("@id", skId),
@@ -524,11 +524,11 @@ ORDER BY aa.created_on DESC;";
 				throw new Exception("Failed to insert new row in database for thread object");
 			}
 
-			if (asset.SKValueIds != null && asset.SKValueIds.Count > 0)
+			if (asset.SKValues != null && asset.SKValues.Count > 0)
 			{
-				foreach (var skValueId in asset.SKValueIds)
+				foreach (var skValue in asset.SKValues)
 				{
-					Guid skId = _tfService.GetId(skValueId);
+					Guid skId = _tfService.GetId(skValue);
 					var skDbResult = _dbService.ExecuteSqlNonQueryCommand(
 						"INSERT INTO assets_related_jk (id, asset_id) VALUES (@id, @asset_id)",
 							new NpgsqlParameter("@id", skId),
