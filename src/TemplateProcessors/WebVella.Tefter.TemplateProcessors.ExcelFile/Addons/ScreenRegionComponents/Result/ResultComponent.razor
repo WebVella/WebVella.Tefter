@@ -1,5 +1,4 @@
-﻿@using WebVella.Tefter.Web.Components
-@namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons
+﻿@namespace WebVella.Tefter.TemplateProcessors.ExcelFile.Addons
 @inherits TfBaseComponent
 @if (_isLoading)
 {
@@ -16,7 +15,7 @@ else if (_result is null)
 else if (_result.Errors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("Errors occured while generating the preview")</FluentMessageBar>
+	<FluentMessageBar Intent="@MessageIntent.Warning" AllowDismiss="false">@LOC("Errors occurred while generating the preview")</FluentMessageBar>
 	<div class="tf-grid-wrapper" style="margin-top:15px;">
 		<table class="tf-grid">
 			<thead class="tf-grid-thead">

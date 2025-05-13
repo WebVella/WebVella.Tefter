@@ -123,7 +123,7 @@
   <data name="Errors" xml:space="preserve">
     <value>Грешки</value>
   </data>
-  <data name="Errors occured while generating the preview" xml:space="preserve">
+  <data name="Errors occurred while generating the preview" xml:space="preserve">
     <value>Има грешки при генериране на прегледа</value>
   </data>
   <data name="file name" xml:space="preserve">

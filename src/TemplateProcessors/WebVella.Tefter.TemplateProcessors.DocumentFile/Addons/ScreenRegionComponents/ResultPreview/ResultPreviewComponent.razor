@@ -1,5 +1,4 @@
-﻿@using WebVella.Tefter.Web.Components
-@namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons
+﻿@namespace WebVella.Tefter.TemplateProcessors.DocumentFile.Addons
 @inherits TfBaseComponent
 @if (_isLoading)
 {
@@ -16,12 +15,12 @@ else if (_preview is null)
 else if (_previewValidationErrors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<TfValidationErrors Errors="_previewValidationErrors" Message="@LOC("Errors occured while validation the preview")" />
+	<TfValidationErrors Errors="_previewValidationErrors" Message="@LOC("Errors occurred while validation the preview")" />
 }
 else if (_preview.Errors.Count > 0)
 {
 	<h4>@LOC("Errors")</h4>
-	<TfValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occured while generating the preview")" />
+	<TfValidationErrors Errors="_preview.Errors" Message="@LOC("Errors occurred while generating the preview")" />
 }
 else if (_preview.Items.Count == 0)
 {

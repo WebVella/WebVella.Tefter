@@ -1005,7 +1005,7 @@ public partial class TfService : ITfService
 		}
 		catch (Exception ex)
 		{
-			throw new TfException("An error occured while getting data from data provider.", ex);
+			throw new TfException("An error occurred while getting data from data provider.", ex);
 		}
 
 		if (newData.Count == 0)

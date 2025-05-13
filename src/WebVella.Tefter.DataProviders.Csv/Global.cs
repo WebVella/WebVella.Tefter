@@ -10,3 +10,8 @@ global using WebVella.Tefter.Database;
 global using WebVella.Tefter.DataProviders.Csv.Addons;
 global using WebVella.Tefter.Exceptions;
 
+global using Microsoft.AspNetCore.Components.Forms;
+global using System.Globalization;
+global using WebVella.Tefter.Models;
+global using WebVella.Tefter.Web.Components;
+global using WebVella.Tefter.Web.Models;
