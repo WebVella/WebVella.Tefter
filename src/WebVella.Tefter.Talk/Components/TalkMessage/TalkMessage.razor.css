@@ -48,8 +48,7 @@
 	height: auto;
 	width: auto;
 	padding: 5px;
-	background: var(--neutral-fill-layer-alt-rest);
-	/*	border: 1px solid var(--neutral-stroke-rest);*/
+	background: var(--neutral-fill-secondary-rest);
 	border-radius: calc(var(--control-corner-radius) * 1px);
 }
 
@@ -142,8 +141,8 @@
 
 	::deep .talk-subthreads-button:hover {
 		cursor: pointer;
-		background: var(--neutral-layer-2);
-		border-color: var(--neutral-stroke-hover);
+		background: var(--neutral-fill-secondary-rest);
+		/*border-color: var(--neutral-stroke-hover);*/
 	}
 
 ::deep .talk-subthreads-button__avatars {

@@ -664,6 +664,15 @@ fluent-data-grid-row:has([row-selected]) {
 .tf-menu-item.tf-selected {
   background: var(--tf-layout-color-accent);
 }
+.talk-subthreads-button:hover {
+  background: var(--neutral-fill-layer-active) !important;
+}
+.talk-message__actions {
+  background: var(--neutral-fill-layer-active) !important;
+}
+.talk-message__actions fluent-button::part(control):hover {
+  background: var(--neutral-fill-layer-rest) !important;
+}
 .fluent-toast {
   --neutral-layer-floating: var(--neutral-fill-secondary-hover);
 }

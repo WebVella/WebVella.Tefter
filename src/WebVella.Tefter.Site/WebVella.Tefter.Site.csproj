@@ -10,9 +10,9 @@
 		<SatelliteResourceLanguages>en,bg</SatelliteResourceLanguages>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
-		<PackageReference Include="System.IO.Packaging" Version="9.0.4" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.5" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.5" />
 		<ProjectReference Include="..\..\recipes\WebVella.Tefter.Recipes.GeoTeam\WebVella.Tefter.Recipes.GeoTeam.csproj" />
 		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.Email\WebVella.Tefter.TemplateProcessors.Email.csproj" />
 		<ProjectReference Include="..\TemplateProcessors\WebVella.Tefter.TemplateProcessors.ExcelFile\WebVella.Tefter.TemplateProcessors.ExcelFile.csproj" />

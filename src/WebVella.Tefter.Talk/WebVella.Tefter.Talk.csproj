@@ -12,9 +12,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
-		<PackageReference Include="System.Formats.Asn1" Version="9.0.4" />
-		<PackageReference Include="System.IO.Packaging" Version="9.0.4" />
-		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.4" />
+		<PackageReference Include="System.Formats.Asn1" Version="9.0.5" />
+		<PackageReference Include="System.IO.Packaging" Version="9.0.5" />
+		<PackageReference Include="System.Text.Encodings.Web" Version="9.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>
