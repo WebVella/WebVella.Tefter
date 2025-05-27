@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using FluentAssertions.Common;
+using Microsoft.Extensions.DependencyInjection;
 using WebVella.Tefter.Jobs;
 
 namespace WebVella.Tefter.Tests.Common;
@@ -21,6 +22,28 @@ public class BaseTest
 		Context.Services.AddSingleton<TfDataProviderSynchronizeJob>();
 		ServiceProvider = Context.Services.BuildServiceProvider();
 		ServiceProvider.UseTefter();
+
+		const string systemUserEmail = "unittestuser@test.bg";
+		ITfService tfService = ServiceProvider.GetService<ITfService>();
+		var user = tfService.GetUser(systemUserEmail);
+		if(user == null)
+		{
+			var adminRole = tfService.GetRole(TfConstants.ADMIN_ROLE_ID);
+
+			user = tfService
+				.CreateUserBuilder()
+				.WithEmail(systemUserEmail)
+				.WithPassword("Password")
+				.WithId(Guid.NewGuid())
+				.WithFirstName("Unit")
+				.WithLastName("Test")
+				.WithRoles(new TfRole[] { adminRole })
+				.Enabled(true)
+				.Build();
+
+			user = tfService.CreateUser(user);
+			Assert.True(user!= null);
+		}
 	}
 
     protected DataTable ExecuteSqlQueryCommand(string sql, params NpgsqlParameter[] parameters)

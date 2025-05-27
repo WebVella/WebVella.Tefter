@@ -8,6 +8,7 @@ public abstract class TfDatabaseColumnBuilder
     protected object _defaultValue = null;
     protected bool _isNullable = true;
     protected bool _autoDefaultValue = false;
+	protected string _generatedExpression = null;
     private readonly TfDatabaseBuilder _databaseBuilder;
 
     internal Guid Id => _id;
@@ -33,5 +34,5 @@ public abstract class TfDatabaseColumnBuilder
         return this;
     }
 
-    internal abstract TfDatabaseColumn Build();
+	internal abstract TfDatabaseColumn Build();
 }

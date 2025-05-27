@@ -10,10 +10,33 @@ internal static class TfDatabaseSqlProvider
 		sb.AppendLine("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";");
 		sb.AppendLine();
 
+		sb.AppendLine("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
+		sb.AppendLine();
+
 		sb.AppendLine("CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";");
 		sb.AppendLine();
 
 		sb.AppendLine("CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";");
+		sb.AppendLine();
+
+		sb.AppendLine(@"
+CREATE OR REPLACE FUNCTION _tefter_gen_sha1(col_values anyarray)
+RETURNS TEXT AS $$
+BEGIN
+    RETURN encode(digest(array_to_string(col_values, ''), 'sha1'), 'hex');
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+");
+		sb.AppendLine();
+
+		sb.AppendLine(@"
+CREATE OR REPLACE FUNCTION _tefter_gen_random_sha1()
+RETURNS TEXT AS $$
+BEGIN
+    RETURN encode(digest(uuid_generate_v1()::text, 'sha1'), 'hex');
+END;
+$$ LANGUAGE plpgsql;
+");
 		sb.AppendLine();
 
 		sb.AppendLine(@"
@@ -279,11 +302,18 @@ $$ LANGUAGE plpgsql;
         {
             StringBuilder sb = new StringBuilder();
             sb.Append($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" {column.DatabaseColumnType}");
-            if (!column.IsNullable)
-                sb.Append(" NOT NULL");
-            var defaultValue = TfDatabaseUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
-            if (defaultValue != null)
-                sb.Append($" DEFAULT {defaultValue}");
+			if (!string.IsNullOrWhiteSpace(column.GeneratedExpression))
+			{
+				sb.Append($" generated always as ( {column.GeneratedExpression} ) stored");
+			}
+			else
+			{
+				if (!column.IsNullable)
+					sb.Append(" NOT NULL");
+				var defaultValue = TfDatabaseUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
+				if (defaultValue != null)
+					sb.Append($" DEFAULT {defaultValue}");
+			}
 
             sb.Append(";");
             return sb.ToString();
@@ -327,17 +357,28 @@ $$ LANGUAGE plpgsql;
         Func<TfDatabaseColumn, string> generalFunc = (column) =>
         {
             StringBuilder sb = new StringBuilder();
-			sb.Append($"ALTER TABLE \"{tableName}\" ");
-			if (!column.IsNullable)
-				sb.Append($" ALTER COLUMN \"{column.Name}\" SET NOT NULL , ");
+		
+			if (!string.IsNullOrWhiteSpace(column.GeneratedExpression))
+			{
+				sb.Append($"ALTER TABLE \"{tableName}\" DROP COLUMN \"{column.Name}\";");
+				sb.Append($"ALTER TABLE \"{tableName}\" ADD COLUMN \"{column.Name}\" {column.DatabaseColumnType}  generated always as ( {column.GeneratedExpression} ) stored;");
+				//this will be available in postgres 17
+				//sb.Append($" ALTER COLUMN \"{column.Name}\" SET EXPRESSION AS ( {column.GeneratedExpression} );");
+			}
 			else
-				sb.Append($" ALTER COLUMN \"{column.Name}\" DROP NOT NULL , ");
+			{
+				sb.Append($"ALTER TABLE \"{tableName}\" ");
+				if (!column.IsNullable)
+					sb.Append($" ALTER COLUMN \"{column.Name}\" SET NOT NULL , ");
+				else
+					sb.Append($" ALTER COLUMN \"{column.Name}\" DROP NOT NULL , ");
 
-			var defaultValue = TfDatabaseUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
-            if (defaultValue != null)
-				sb.Append($" ALTER COLUMN \"{column.Name}\" SET DEFAULT {defaultValue}; ");
-			else
-				sb.Append($" ALTER COLUMN \"{column.Name}\" DROP DEFAULT; ");
+				var defaultValue = TfDatabaseUtility.ConvertDbColumnDefaultValueToDatabaseDefaultValue(column);
+				if (defaultValue != null)
+					sb.Append($" ALTER COLUMN \"{column.Name}\" SET DEFAULT {defaultValue}; ");
+				else
+					sb.Append($" ALTER COLUMN \"{column.Name}\" DROP DEFAULT; ");
+			}
 
             return sb.ToString();
         };
@@ -517,7 +558,7 @@ ORDER BY t.table_name ASC;";
     public static string GetColumnsMetaSql()
     {
         return @"
-SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type,
+SELECT table_name, column_name, ordinal_position, column_default, is_nullable, data_type, is_generated, generation_expression,
     (
         SELECT pg_catalog.col_description(c.oid, cols.ordinal_position::int)
         FROM pg_catalog.pg_class c

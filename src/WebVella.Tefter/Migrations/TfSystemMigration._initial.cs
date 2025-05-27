@@ -1131,6 +1131,126 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			});
 
 		#endregion
+
+		#region TABLE: DATA_IDENTITY
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_data_identity")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
+					.AddTextColumn("label", c => { c.NotNullable().WithDefaultValue(""); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_data_entity", c => { c.WithColumns("data_identity"); });
+			});
+		#endregion
+
+		#region  TABLE: DATA_PROVIDER_IDENTITY
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_data_provider_identity")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("id", c => { c.NotNullable().WithAutoDefaultValue(); })
+					.AddGuidColumn("data_provider_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
+					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
+					.AddTextColumn("column_names_json", c => { c.NotNullable().WithDefaultValue("[]"); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_data_provider_identity", c => { c.WithColumns("id"); })
+					.AddUniqueKeyConstraint("ux_data_provider_identity_data_provider", c => { c.WithColumns("data_provider_id", "data_identity"); })
+					.AddForeignKeyConstraint("fk_data_provider_identity_data_provider", c =>
+					{
+						c.WithColumns("data_provider_id")
+						.WithForeignTable("tf_data_provider")
+						.WithForeignColumns("id");
+					})
+					.AddForeignKeyConstraint("fk_data_provider_identity_data_identity", c =>
+					 {
+						 c.WithColumns("data_identity")
+						 .WithForeignTable("tf_data_identity")
+						 .WithForeignColumns("data_identity");
+					 });
+			});
+		#endregion
+
+		#region  TABLE: DATA_IDENTITY_CONNECTION
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_data_identity_connection")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddShortTextColumn("source_data_identity", c => { c.NotNullable(); })
+					.AddShortTextColumn("source_data_value", c => { c.NotNullable(); })
+					.AddShortTextColumn("target_data_identity", c => { c.NotNullable(); })
+					.AddShortTextColumn("target_data_value", c => { c.NotNullable(); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_data_identity_connection", c =>
+					{
+						c.WithColumns("source_data_identity", "source_data_value",
+							"target_data_identity", "target_data_value");
+					})
+					.AddForeignKeyConstraint("fk_data_identity_connection_source_identity", c =>
+					{
+						c.WithColumns("source_data_identity")
+						.WithForeignTable("tf_data_identity")
+						.WithForeignColumns("data_identity");
+					})
+					.AddForeignKeyConstraint("fk_data_identity_connection_target_identity", c =>
+					{
+						c.WithColumns("target_data_identity")
+						.WithForeignTable("tf_data_identity")
+						.WithForeignColumns("data_identity");
+					});
+			})
+			.WithIndexes(indexes =>
+			{
+				indexes
+					.AddBTreeIndex("ix_data_identity_connection_source_data_identity", i => { i.WithColumns("source_data_identity"); })
+					.AddBTreeIndex("ix_data_identity_connection_source_data_value", i => { i.WithColumns("source_data_value"); })
+					.AddBTreeIndex("ix_data_identity_connection_target_data_identity", i => { i.WithColumns("target_data_identity"); })
+					.AddBTreeIndex("ix_data_identity_connection_target_data_value", i => { i.WithColumns("target_data_value"); });
+			});
+		#endregion
+
+		#region  TABLE: SPACE_DATA_IDENTITY
+		dbBuilder
+			.NewTableBuilder(Guid.NewGuid(), "tf_space_data_identity")
+			.WithColumns(columns =>
+			{
+				columns
+					.AddGuidColumn("id", c => { c.NotNullable().WithAutoDefaultValue(); })
+					.AddGuidColumn("space_data_id", c => { c.NotNullable().WithoutAutoDefaultValue(); })
+					.AddShortTextColumn("data_identity", c => { c.NotNullable(); })
+					.AddTextColumn("column_names_json", c => { c.NotNullable().WithDefaultValue("[]"); });
+			})
+			.WithConstraints(constraints =>
+			{
+				constraints
+					.AddPrimaryKeyConstraint("pk_space_data_identity", c => { c.WithColumns("id"); })
+					.AddUniqueKeyConstraint("ux_space_data_identity_space_data", c => { c.WithColumns("space_data_id", "data_identity"); })
+					.AddForeignKeyConstraint("fk_space_data_identity_space_data", c =>
+					{
+						c.WithColumns("space_data_id")
+						.WithForeignTable("tf_space_data")
+						.WithForeignColumns("id");
+					})
+					.AddForeignKeyConstraint("fk_space_data_identity_data_identity", c =>
+					{
+						c.WithColumns("data_identity")
+						.WithForeignTable("tf_data_identity")
+						.WithForeignColumns("data_identity");
+					});
+			});
+		#endregion
 	}
 
 	public override async Task MigrateDataAsync(IServiceProvider serviceProvider)
@@ -1145,7 +1265,7 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 			new NpgsqlParameter("id", Guid.Empty), new NpgsqlParameter("text_id", Guid.Empty.ToString()));
 
 		dbService.ExecuteSqlNonQueryCommand("INSERT INTO tf_setting(name,value) VALUES(@name,@value)",
-			new NpgsqlParameter("name", TfConstants.TEFTER_INSTANCE_SETTING_KEY ), 
+			new NpgsqlParameter("name", TfConstants.TEFTER_INSTANCE_SETTING_KEY),
 			new NpgsqlParameter("value", Guid.NewGuid().ToString()));
 
 
@@ -1153,35 +1273,20 @@ internal class TefterSystemMigration2025040901 : TfSystemMigration
 		ITfService tfService = serviceProvider.GetService<ITfService>();
 
 		// CREATES INITIAL ADMINISTRATOR USER AND ROLE 
+		var adminRole = tfService
+			.CreateRoleBuilder()
+			.WithId(TfConstants.ADMIN_ROLE_ID)
+			.WithName("Administrators")
+			.IsSystem(true)
+		.Build();
+
+		adminRole = await tfService.SaveRoleAsync(adminRole);
+
+		tfService.CreateDataIdentity(new TfDataIdentity
 		{
-			var adminRole = tfService
-				.CreateRoleBuilder()
-				.WithId(TfConstants.ADMIN_ROLE_ID)
-				.WithName("Administrators")
-				.IsSystem(true)
-			.Build();
-
-			adminRole = await tfService.SaveRoleAsync(adminRole);
-
-			//default settings
-			//Will be created by a recipe
-			//var user = tfService
-			//	.CreateUserBuilder()
-			//	.WithId(TfConstants.ADMIN_USER_ID)
-			//	.WithEmail("admin@tefter.bg")
-			//	.WithFirstName("Tefter")
-			//	.WithLastName("Administrator")
-			//	.CreatedOn(DateTime.Now)
-			//	.WithPassword("@tefter.bg")
-			//	.Enabled(true)
-			//	.WithRoles(adminRole)
-			//	.WithThemeColor(TfColor.Emerald500)
-			//	.WithThemeMode(DesignThemeModes.System)
-			//	.WithOpenSidebar(true)
-			//	.Build();
-
-			//await tfService.SaveUserAsync(user);
-		}
+			DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+			Label = "System row id data identity"
+		});
 
 	}
 }

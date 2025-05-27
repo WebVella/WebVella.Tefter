@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization.Metadata;
+using WebVella.Tefter.Models;
 
 namespace WebVella.Tefter.Services;
 
@@ -37,7 +38,14 @@ public partial class TfService : ITfService
 		try
 		{
 			var dbos = _dboManager.GetList<TfSpaceDataDbo>();
-			return dbos.Select(x => ConvertDboToModel(x)).ToList();
+
+			var spaceDatas = dbos.Select(x => ConvertDboToModel(x)).ToList();
+			foreach(var spaceData in spaceDatas)
+			{
+				spaceData.Identities = new ReadOnlyCollection<TfSpaceDataIdentity>(
+					GetSpaceDataIdentities(spaceData.Id).ToList());
+			}
+			return spaceDatas;
 		}
 		catch (Exception ex)
 		{
@@ -58,7 +66,13 @@ public partial class TfService : ITfService
 				spaceId,
 				nameof(TfSpaceData.SpaceId), order: orderSettings);
 
-			return dbos.Select(x => ConvertDboToModel(x)).ToList();
+			var spaceDatas = dbos.Select(x => ConvertDboToModel(x)).ToList();
+			foreach (var spaceData in spaceDatas)
+			{
+				spaceData.Identities = new ReadOnlyCollection<TfSpaceDataIdentity>(
+					GetSpaceDataIdentities(spaceData.Id).ToList());
+			}
+			return spaceDatas;
 		}
 		catch (Exception ex)
 		{
@@ -72,7 +86,13 @@ public partial class TfService : ITfService
 		try
 		{
 			var dbo = _dboManager.Get<TfSpaceDataDbo>(id);
-			return ConvertDboToModel(dbo);
+			if(dbo == null)
+				return null;	
+
+			var spaceData = ConvertDboToModel(dbo);
+			spaceData.Identities = new ReadOnlyCollection<TfSpaceDataIdentity>(
+					GetSpaceDataIdentities(spaceData.Id).ToList());
+			return spaceData;
 		}
 		catch (Exception ex)
 		{
@@ -112,6 +132,15 @@ public partial class TfService : ITfService
 				{
 					DbName = joinKey.DbName,
 					DbType = TfDatabaseColumnType.Guid,
+				});
+			}
+
+			foreach (var identity in provider.Identities)
+			{
+				columns.Add(new TfAvailableSpaceDataColumn
+				{
+					DbName = identity.DataIdentity,
+					DbType = TfDatabaseColumnType.ShortText,
 				});
 			}
 
@@ -225,6 +254,15 @@ public partial class TfService : ITfService
 
 					if (!successUpdatePosition)
 						throw new TfDboServiceException("Update<TfSpaceDataDbo> failed during delete space process.");
+				}
+
+				//delete identities
+				var spaceDataIdentities = GetSpaceDataIdentities(spaceData.Id);
+				foreach(var identity in spaceDataIdentities)
+				{
+					var successDeleteIdentity = _dboManager.Delete<TfSpaceDataIdentityDbo>(identity.Id);
+					if (!successDeleteIdentity)
+						throw new TfDboServiceException("Delete<TfSpaceDataIdentityDbo> failed during delete space process.");
 				}
 
 				var success = _dboManager.Delete<TfSpaceDataDbo>(id);

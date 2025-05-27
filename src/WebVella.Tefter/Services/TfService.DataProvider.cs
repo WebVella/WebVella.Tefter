@@ -1,4 +1,5 @@
-﻿using WebVella.Tefter.Models;
+﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using WebVella.Tefter.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebVella.Tefter.Services;
@@ -104,11 +105,14 @@ public partial class TfService : ITfService
 
 			var joinKeys = GetDataProviderJoinKeys(id);
 
+			var identities = GetDataProviderIdentities(id);
+
 			var provider = DataProviderFromDbo(
 					providerDbo,
 					GetDataProviderSystemColumns(joinKeys),
 					GetDataProviderColumns(id),
 					joinKeys,
+					identities,
 					providerType);
 
 			provider.ServiceProvider = _serviceProvider;
@@ -144,12 +148,15 @@ public partial class TfService : ITfService
 				throw new TfException("Unable to find provider type for specified provider instance.");
 
 			var joinKeys = GetDataProviderJoinKeys(providerDbo.Id);
+			
+			var identities = GetDataProviderIdentities(providerDbo.Id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
 					GetDataProviderSystemColumns(joinKeys),
 					GetDataProviderColumns(providerDbo.Id),
 					joinKeys,
+					identities,
 					providerType);
 
 			provider.ServiceProvider = _serviceProvider;
@@ -186,12 +193,15 @@ public partial class TfService : ITfService
 				throw new TfException("Failed to get data provider");
 
 			var joinKeys = GetDataProviderJoinKeys(providerDbo.Id);
+			
+			var identities = GetDataProviderIdentities(providerDbo.Id);
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
 					GetDataProviderSystemColumns(joinKeys),
 					GetDataProviderColumns(providerDbo.Id),
 					joinKeys,
+					identities,
 					providerType);
 
 			provider.ServiceProvider = _serviceProvider;
@@ -230,11 +240,14 @@ public partial class TfService : ITfService
 
 				var joinKeys = GetDataProviderJoinKeys(dbo.Id);
 
+				var identities = GetDataProviderIdentities(dbo.Id);
+
 				var provider = DataProviderFromDbo(
 						dbo,
 						GetDataProviderSystemColumns(joinKeys),
 						GetDataProviderColumns(dbo.Id),
 						joinKeys,
+						identities,
 						providerType);
 
 				provider.ServiceProvider = _serviceProvider;
@@ -336,31 +349,34 @@ public partial class TfService : ITfService
 					{
 						columns
 							.AddGuidColumn("tf_id", c => { c.WithoutAutoDefaultValue().NotNullable(); })
+							.AddShortTextColumn("tf_row_id", c => { c.AsGeneratedSHA1FromColumns("tf_id"); })
 							.AddDateTimeColumn("tf_created_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 							.AddDateTimeColumn("tf_updated_on", c => { c.WithoutAutoDefaultValue().NotNullable(); })
 							.AddTextColumn("tf_search", c => { c.NotNullable().WithDefaultValue(string.Empty); })
 							.AddIntegerColumn("tf_row_index", c => { c.NotNullable(); });
 					})
-					.WithConstraints(constraints =>
-					{
-						constraints
-							.AddPrimaryKeyConstraint($"pk_{providerTableName}", c => { c.WithColumns("tf_id"); })
-							.AddForeignKeyConstraint($"fk_{providerTableName}_id_dict", c =>
-							{
-								c.WithColumns("tf_id")
-								.WithForeignTable("tf_id_dict")
-								.WithForeignColumns("id");
-							});
-
-					})
 					.WithIndexes(indexes =>
 					{
 						indexes
 							.AddBTreeIndex($"ix_{providerTableName}_tf_id", c => { c.WithColumns("tf_id"); })
+							.AddBTreeIndex($"ix_{providerTableName}_tf_row_id", c => { c.WithColumns("tf_row_id"); })
 							.AddGinIndex($"ix_{providerTableName}_tf_search", c => { c.WithColumns("tf_search"); });
 					});
 
 				_dbManager.SaveChanges(dbBuilder);
+
+				var dataProviderIdentityDbo = new TfDataProviderIdentityDbo
+				{
+					Id = Guid.NewGuid(),
+					DataProviderId = provider.Id,
+					DataIdentity = TfConstants.TF_ROW_ID_DATA_IDENTITY,
+					ColumnNamesJson = JsonSerializer.Serialize(new List<string> { "tf_row_id" }),
+				};
+
+				success = _dboManager.Insert<TfDataProviderIdentityDbo>(dataProviderIdentityDbo);
+
+				if (!success)
+					throw new TfDboServiceException("Insert<TfDataProviderIdentityDbo> failed");
 
 				scope.Complete();
 
@@ -447,6 +463,14 @@ public partial class TfService : ITfService
 
 					if (!success)
 						throw new TfDboServiceException("Delete<TfDataProviderJoinKeyDbo> failed.");
+				}
+
+				foreach (var identity in provider.Identities)
+				{
+					success = _dboManager.Delete<TfDataProviderIdentityDbo>(identity.Id);
+
+					if (!success)
+						throw new TfDboServiceException("Delete<TfDataProviderIdentityDbo> failed.");
 				}
 
 				success = _dboManager.Delete<TfDataProviderDbo>(id);
@@ -566,6 +590,7 @@ public partial class TfService : ITfService
 		List<TfDataProviderSystemColumn> systemColumns,
 		List<TfDataProviderColumn> columns,
 		List<TfDataProviderJoinKey> joinKeys,
+		List<TfDataProviderIdentity> identities,
 		ITfDataProviderAddon providerType)
 	{
 		if (dbo == null)
@@ -576,6 +601,9 @@ public partial class TfService : ITfService
 
 		if (joinKeys == null)
 			throw new ArgumentException(nameof(joinKeys));
+
+		if (identities == null)
+			throw new ArgumentException(nameof(identities));
 
 		if (providerType == null)
 			throw new ArgumentException(nameof(providerType));
@@ -592,6 +620,7 @@ public partial class TfService : ITfService
 			SystemColumns = systemColumns.AsReadOnly(),
 			Columns = columns.AsReadOnly(),
 			JoinKeys = joinKeys.AsReadOnly(),
+			Identities = identities.AsReadOnly(),
 			SynchPrimaryKeyColumns = JsonSerializer.Deserialize<List<string>>(dbo.SynchPrimaryKeyColumnsJson ?? "[]").AsReadOnly()
 		};
 	}

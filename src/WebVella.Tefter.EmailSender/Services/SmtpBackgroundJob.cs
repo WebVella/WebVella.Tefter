@@ -1,4 +1,6 @@
-﻿namespace WebVella.Tefter.EmailSender;
+﻿using System.Diagnostics;
+
+namespace WebVella.Tefter.EmailSender;
 
 internal class SmtpBackgroundJob : BackgroundService
 {
@@ -68,14 +70,22 @@ internal class SmtpBackgroundJob : BackgroundService
 					}
 
 					ExceptionDispatchInfo capturedException = null;
-
-					try
+					try 
 					{
-						await _smtpService.ProcessSmtpQueue();
+						SynchronizationContext.SetSynchronizationContext(new TfHostedServiceSynchContext());
+						await Task.Run(async () =>
+						{
+							await _smtpService.ProcessSmtpQueue();
+
+						}, stoppingToken);
 					}
 					catch (Exception ex)
 					{
 						capturedException = ExceptionDispatchInfo.Capture(ex);
+					}
+					finally
+					{
+						await Task.Delay(1000, stoppingToken); //add 1 sec delay to prevent tight loop
 					}
 
 					if (capturedException != null)

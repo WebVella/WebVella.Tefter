@@ -287,36 +287,82 @@ internal static class TfDatabaseComparer
                 return differences;
             }
 
+			if (string.IsNullOrWhiteSpace( initialColumn.GeneratedExpression ) != string.IsNullOrWhiteSpace( modifiedColumn.GeneratedExpression ) )
+			{
+				if (string.IsNullOrWhiteSpace(initialColumn.GeneratedExpression))
+				{
+					differences.Add(new TfDifference
+					{
+						Type = TfDifferenceActionType.Error,
+						ObjectType = TfDifferenceObjectType.Column,
+						TableName = tableName,
+						ObjectName = modifiedColumn.Name,
+						Object = modifiedColumn,
+						Descriptions = new List<string> {
+						$"Attempt to update regular column and make it generated."+
+						$"It's not supported. These columns will not be compared."
+					}.AsReadOnly()
+					});
+				}
+				else
+				{
+					differences.Add(new TfDifference
+					{
+						Type = TfDifferenceActionType.Error,
+						ObjectType = TfDifferenceObjectType.Column,
+						TableName = tableName,
+						ObjectName = modifiedColumn.Name,
+						Object = modifiedColumn,
+						Descriptions = new List<string> {
+						$"Attempt to update generated column and make it regular column."+
+						$"It's not supported. These columns will not be compared."
+					}.AsReadOnly()
+					});
+				}
 
-            List<string> descriptions = new List<string>();
-            if (initialColumn.IsNullable != modifiedColumn.IsNullable)
-            {
-                if (modifiedColumn.IsNullable)
-                    descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will be made NULLABLE");
-                else
-                    descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will be made NOT NULLABLE");
-            }
+				return differences;
+			}
 
-            if (!AreDefaultValuesEqual(initialColumn.DefaultValue, modifiedColumn.DefaultValue))
-            {
-                if (modifiedColumn.DefaultValue == null)
-                    descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' default value be changed to NULL");
-                else
-                    descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' default value be changed to '{modifiedColumn.DefaultValue}'");
-            }
+			List<string> descriptions = new List<string>();
 
-            if (initialColumn.GetType().IsAssignableFrom(typeof(TfDatabaseColumnWithAutoDefaultValue)))
-            {
-                var initialAutoDefaultValue = ((TfDatabaseColumnWithAutoDefaultValue)initialColumn).AutoDefaultValue;
-                var modifiedAutoDefaultValue = ((TfDatabaseColumnWithAutoDefaultValue)modifiedColumn).AutoDefaultValue;
-                if (initialAutoDefaultValue != modifiedAutoDefaultValue)
-                {
-                    if (modifiedAutoDefaultValue)
-                        descriptions.Add($"{GetDbObjectTypeName(initialColumn)} '{initialColumn.Name}' automatic generation of default value will be switched ON.");
-                    else
-                        descriptions.Add($"{GetDbObjectTypeName(initialColumn)} '{initialColumn.Name}' automatic generation of default value will be switched OFF.");
-                }
-            }
+			if (initialColumn.GeneratedExpression != null )
+			{
+				if (initialColumn.GeneratedExpression != modifiedColumn.GeneratedExpression)
+				{
+					descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will change generation expression to '{modifiedColumn.GeneratedExpression}'");
+				}
+			}
+			else
+			{
+				if (initialColumn.IsNullable != modifiedColumn.IsNullable)
+				{
+					if (modifiedColumn.IsNullable)
+						descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will be made NULLABLE");
+					else
+						descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' will be made NOT NULLABLE");
+				}
+
+				if (!AreDefaultValuesEqual(initialColumn.DefaultValue, modifiedColumn.DefaultValue))
+				{
+					if (modifiedColumn.DefaultValue == null)
+						descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' default value be changed to NULL");
+					else
+						descriptions.Add($"{GetDbObjectTypeName(modifiedColumn)} '{modifiedColumn.Name}' default value be changed to '{modifiedColumn.DefaultValue}'");
+				}
+
+				if (initialColumn.GetType().IsAssignableFrom(typeof(TfDatabaseColumnWithAutoDefaultValue)))
+				{
+					var initialAutoDefaultValue = ((TfDatabaseColumnWithAutoDefaultValue)initialColumn).AutoDefaultValue;
+					var modifiedAutoDefaultValue = ((TfDatabaseColumnWithAutoDefaultValue)modifiedColumn).AutoDefaultValue;
+					if (initialAutoDefaultValue != modifiedAutoDefaultValue)
+					{
+						if (modifiedAutoDefaultValue)
+							descriptions.Add($"{GetDbObjectTypeName(initialColumn)} '{initialColumn.Name}' automatic generation of default value will be switched ON.");
+						else
+							descriptions.Add($"{GetDbObjectTypeName(initialColumn)} '{initialColumn.Name}' automatic generation of default value will be switched OFF.");
+					}
+				}
+			}
 
             if (descriptions.Count > 0)
             {

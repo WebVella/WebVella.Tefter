@@ -132,6 +132,12 @@ public partial class TfService : ITfService
 
 			systemColumns.Add(new TfDataProviderSystemColumn
 			{
+				DbName = "tf_row_id",
+				DbType = TfDatabaseColumnType.ShortText
+			});
+
+			systemColumns.Add(new TfDataProviderSystemColumn
+			{
 				DbName = "tf_row_index",
 				DbType = TfDatabaseColumnType.Integer
 			});

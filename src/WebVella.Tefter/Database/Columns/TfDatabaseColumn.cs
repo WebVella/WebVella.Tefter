@@ -14,8 +14,9 @@ public abstract record TfDatabaseColumn : TfDatabaseObject
     public virtual object DefaultValue { get; set; } = null;
     public virtual bool IsNullable { get; set; } = false;
     internal virtual string DatabaseColumnType { get; set; }
+	public virtual string GeneratedExpression { get; set; } = null;
 
-    internal string GetMetaJson(DateTime lastCommited)
+	internal string GetMetaJson(DateTime lastCommited)
     {
         var meta = _meta with { LastCommited = lastCommited };
         return JsonSerializer.Serialize(meta);

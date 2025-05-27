@@ -64,6 +64,8 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 				var defaultValue = row["column_default"] == DBNull.Value ? null : ((string)row["column_default"]);
 				var isNullable = ((string)row["is_nullable"]).ToLower() == "yes";
 				var dbType = (string)row["data_type"];
+				var isGenerated = (string)row["is_generated"] == "ALWAYS";
+				var generationExpression = row["generation_expression"] == DBNull.Value ? null : (string)row["generation_expression"];
 
 				var columnCollectionBuilder = tableBuilder.WithColumnsBuilder();
 
@@ -195,16 +197,34 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							string columnDefaultValue = (string)TfDatabaseUtility
 								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfShortTextDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddShortTextColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
+								if(isGenerated && generationExpression != null)
+								{
+									columnCollectionBuilder
+										.AddShortTextColumnBuilder(meta.Id, columnName)
+										.AsGeneratedExpression(generationExpression)
+										.WithLastCommited(meta.LastCommited);
+								}
+								else
+								{
 
-							if (isNullable)
-								columnBuider.Nullable();
-							else
-								columnBuider.NotNullable();
-						}
+									bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE;
+
+									var columnBuider = columnCollectionBuilder
+										.AddShortTextColumnBuilder(meta.Id, columnName)
+										.WithDefaultValue(columnDefaultValue)
+										.WithLastCommited(meta.LastCommited);
+
+									if (isNullable)
+										columnBuider.Nullable();
+									else
+										columnBuider.NotNullable();
+
+									if (isAutoDefaultValue)
+										columnBuider.WithAutoDefaultValue();
+									else
+										columnBuider.WithoutAutoDefaultValue();
+								}
+							}
 						break;
 					case TfDatabaseColumnType.ShortInteger:
 						{
@@ -466,6 +486,8 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 				var defaultValue = row["column_default"] == DBNull.Value ? null : ((string)row["column_default"]);
 				var isNullable = ((string)row["is_nullable"]).ToLower() == "yes";
 				var dbType = (string)row["data_type"];
+				var isGenerated = (string)row["is_generated"] == "ALWAYS";
+				var generationExpression = row["generation_expression"] == DBNull.Value ? null : (string)row["generation_expression"];
 
 				var columnCollectionBuilder = newTableBuilder.WithColumnsBuilder();
 				meta.Id = Guid.NewGuid();
@@ -598,15 +620,32 @@ public partial class TfDatabaseManager : ITfDatabaseManager
 							string columnDefaultValue = (string)TfDatabaseUtility
 								.ConvertDatabaseDefaultValueToDbColumnDefaultValue(columnName, typeof(TfShortTextDatabaseColumn), defaultValue);
 
-							var columnBuider = columnCollectionBuilder
-								.AddShortTextColumnBuilder(meta.Id, columnName)
-								.WithDefaultValue(columnDefaultValue)
-								.WithLastCommited(meta.LastCommited);
-
-							if (isNullable)
-								columnBuider.Nullable();
+							if (isGenerated && generationExpression != null)
+							{
+								columnCollectionBuilder
+									.AddShortTextColumnBuilder(meta.Id, columnName)
+									.AsGeneratedExpression(generationExpression)
+									.WithLastCommited(meta.LastCommited);
+							}
 							else
-								columnBuider.NotNullable();
+							{
+								bool isAutoDefaultValue = defaultValue?.Trim() == TfConstants.DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE;
+
+								var columnBuider = columnCollectionBuilder
+									.AddShortTextColumnBuilder(meta.Id, columnName)
+									.WithDefaultValue(columnDefaultValue)
+									.WithLastCommited(meta.LastCommited);
+
+								if (isNullable)
+									columnBuider.Nullable();
+								else
+									columnBuider.NotNullable();
+
+								if (isAutoDefaultValue)
+									columnBuider.WithAutoDefaultValue();
+								else
+									columnBuider.WithoutAutoDefaultValue();
+							}
 						}
 						break;
 					case TfDatabaseColumnType.ShortInteger:

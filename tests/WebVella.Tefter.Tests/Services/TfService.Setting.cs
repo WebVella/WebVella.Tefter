@@ -41,9 +41,9 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				allSettings.Should().NotBeNull();
-				allSettings.Count.Should().Be(1);
-				allSettings[0].Key.Should().Be(setting.Key);
-				allSettings[0].Value.Should().Be(setting.Value);
+				allSettings.Count.Should().Be(2); //include default settings for instance id
+				allSettings[1].Key.Should().Be(setting.Key);
+				allSettings[1].Value.Should().Be(setting.Value);
 
 				setting.Value = "unit test value 2";
 				task = Task.Run(() => { tfService.SaveSetting(setting); });
@@ -68,7 +68,7 @@ public partial class TfServiceTest : BaseTest
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 				allSettings.Should().NotBeNull();
-				allSettings.Count.Should().Be(0);
+				allSettings.Count.Should().Be(1);
 
 				TfSetting deletedSetting = null;
 				task = Task.Run(() => { deletedSetting = tfService.GetSetting(setting.Key); });

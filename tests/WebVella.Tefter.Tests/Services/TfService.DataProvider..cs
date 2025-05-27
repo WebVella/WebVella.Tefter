@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Math;
+using System;
 using WebVella.Tefter.Models;
 using WebVella.Tefter.Services;
 
@@ -31,7 +32,8 @@ public partial class TfServiceTest : BaseTest
 
 	private TfDataProvider CreateProviderInternal(
 		ITfService tfService,
-		ITfMetaService tfMetaService)
+		ITfMetaService tfMetaService, 
+		string name = null )
 	{
 		var providerTypes = tfMetaService.GetDataProviderTypes();
 		var providerType = providerTypes
@@ -40,7 +42,7 @@ public partial class TfServiceTest : BaseTest
 		Guid id = Guid.NewGuid();
 		TfDataProviderModel model = new TfDataProviderModel
 		{
-			Name = "test data provider",
+			Name = name??"test data provider",
 			ProviderType = providerType,
 			SettingsJson = null
 		};

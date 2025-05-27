@@ -113,6 +113,9 @@ internal class TfDatabaseUtility
 
 		Func<TfShortTextDatabaseColumn, string> shortTextDefaultValueFunc = (column) =>
 		{
+			if (column.AutoDefaultValue)
+				return TfConstants.DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE;
+
 			if (column.DefaultValue is null)
 				return "NULL";
 			else
@@ -220,6 +223,9 @@ internal class TfDatabaseUtility
 		else if (columnType == typeof(TfShortTextDatabaseColumn))
 		{
 			if (string.IsNullOrWhiteSpace(defaultValue))
+				return null;
+
+			if (defaultValue == TfConstants.DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE)
 				return null;
 
 			return defaultValue

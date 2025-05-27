@@ -225,6 +225,11 @@ public class UtilityTestsClassDynamicComponentWithoutScope : ITfScreenRegionComp
 	public string AddonDescription { get; init; }
 	public string AddonFluentIconName { get; init; }
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>() { };
+
+	public UtilityTestsClassDynamicComponentWithoutScope()
+	{
+		AddonId = new Guid("cff347c8-ff47-4e93-ae46-fb2b1451c80f");
+	}
 }
 
 public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionComponent<TfDataProviderManageSettingsScreenRegionContext>
@@ -238,6 +243,13 @@ public class UtilityTestsClassDynamicComponentWithScope : ITfScreenRegionCompone
 	public List<TfScreenRegionScope> Scopes { get; init; } = new List<TfScreenRegionScope>(){
 		new TfScreenRegionScope(typeof(UtilityTestsDataProviderTypeClass),null)
 	};
+
+	public UtilityTestsClassDynamicComponentWithScope()
+	{
+		AddonId = new Guid("4ce31e80-60e1-4bc9-a6ac-8328606d102f");
+	}
+
+
 }
 
 public class UtilityTestsDataProviderTypeClass : ITfDataProviderAddon
@@ -251,6 +263,11 @@ public class UtilityTestsDataProviderTypeClass : ITfDataProviderAddon
 	public string AddonFluentIconName { get; init; }
 
 	public Type SettingsComponentType { get; set; }
+
+	public UtilityTestsDataProviderTypeClass()
+	{
+		AddonId = new Guid("c6160bb9-792f-48ad-a8d2-5269d84c7201");
+	}
 
 	public ReadOnlyCollection<TfDatabaseColumnType> GetDatabaseColumnTypesForSourceDataType(string dataType)
 	{

@@ -10,6 +10,7 @@ public class TfSpaceData
 	public List<TfFilterBase> Filters { get; set; } = new();
 	public List<string> Columns { get; set; } = new();
 	public List<TfSort> SortOrders { get; set; } = new();
+	public ReadOnlyCollection<TfSpaceDataIdentity> Identities { get; internal set; }
 }
 
 public class TfAvailableSpaceDataColumn

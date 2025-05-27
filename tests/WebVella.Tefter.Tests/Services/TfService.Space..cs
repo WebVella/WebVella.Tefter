@@ -158,7 +158,7 @@ public partial class TfServiceTest : BaseTest
 					Name = "Space2",
 					Color = 10,
 					FluentIconName = "icon1",
-					IsPrivate = false,
+					IsPrivate = true,
 					Position = 0,
 					Roles = new List<TfRole> { }
 				};
@@ -181,7 +181,7 @@ public partial class TfServiceTest : BaseTest
 
 				userSpaces = tfService.GetSpacesListForUser(user.Id);
 				userSpaces.Should().NotBeNull();
-				userSpaces.Count.Should().Be(0);
+				userSpaces.Count.Should().Be(1);
 
 				var adminRole = tfService.GetRole(TfConstants.ADMIN_ROLE_ID);
 				tfService.AddUsersRole(new List<TfUser> { user }, adminRole);
@@ -1352,3 +1352,4 @@ public partial class TfServiceTest : BaseTest
 	}
 
 }
+

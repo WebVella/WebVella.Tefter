@@ -1,14 +1,21 @@
-﻿namespace WebVella.Tefter.Jobs;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
+
+namespace WebVella.Tefter.Jobs;
 
 internal class TfDataProviderSynchronizeJob : BackgroundService
 {
+	private readonly IServiceScopeFactory _scopeFactory;
 	private readonly ITfService _tfService;
 	private readonly ILogger<TfDataProviderSynchronizeJob> _logger;
 
+
 	public TfDataProviderSynchronizeJob(
+		IServiceScopeFactory serviceScopeFactory,
 		ITfService tfService,
 		ILogger<TfDataProviderSynchronizeJob> logger)
 	{
+		_scopeFactory = serviceScopeFactory;
 		_tfService = tfService;
 		_logger = logger;
 	}
@@ -21,13 +28,18 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 #if DEBUG
 		//initial 10 sec wait
 		await Task.Delay(10 * 1000);
+
 #else
 		//initial 300 sec wait
 		await Task.Delay(300 * 1000);
 #endif
 
+		SynchronizationContext.SetSynchronizationContext(new TfHostedServiceSynchContext());
+		await Task.Run(async () =>
+		{
+			await ProcessTasks(stoppingToken).ConfigureAwait(false);
 
-		await ProcessTasks(stoppingToken);
+		}, stoppingToken );
 	}
 
 	private async Task ProcessTasks(
@@ -103,6 +115,10 @@ internal class TfDataProviderSynchronizeJob : BackgroundService
 						completedOn: DateTime.Now);
 					
 					_logger.LogError($"Task failed {task.GetType().Name}", ex);
+				}
+				finally
+				{
+					await Task.Delay(1000, stoppingToken); //add 1 sec delay to prevent tight loop
 				}
 			}
 		}

@@ -22,8 +22,10 @@ public partial class TfConstants
 
     public const string DB_GUID_COLUMN_AUTO_DEFAULT_VALUE = "uuid_generate_v1()";
     public const string DB_DATETIME_COLUMN_AUTO_DEFAULT_VALUE = "clock_timestamp()";
+	public const string DB_SHORT_TEXT_COLUMN_AUTO_SHA1_DEFAULT_VALUE = "_tefter_gen_random_sha1()";
+	public const string DB_SHORT_TEXT_COLUMN_SHA1_FROM_COLUMNS_VALUE = "_tefter_gen_sha1( ARRAY[ {0} ] )";
 
-    public const string DB_TABLE_ID_COLUMN_NAME = "id";
+	public const string DB_TABLE_ID_COLUMN_NAME = "id";
     public const string DB_OPERATION_LOCK_KEY = "DB_OPERATION_LOCK_KEY";
 	public const string DB_SYNC_OPERATION_LOCK_KEY = "DB_SYNC_OPERATION_LOCK_KEY";
 	public static DateTime DB_INITIAL_LAST_COMMITED = new DateTime(2000,1,1,0,0,0,0,DateTimeKind.Utc);
@@ -39,5 +41,6 @@ public partial class TfConstants
 	public static Guid ADMIN_ROLE_ID = new Guid("3a0c26c5-bd28-4cca-aaf7-5d225b4c3136");
 	public static Guid ADMIN_USER_ID = new Guid("9c9f7fdc-3ce9-4e2a-9b0c-ba23f0949149");
 
+	public const string TF_ROW_ID_DATA_IDENTITY = "tf_row_id";
 
 }
