@@ -302,7 +302,7 @@ internal partial class AppStateUseCase
 		if (providerSM is null)
 			throw new TfException("CreateDataProvider provider not found");
 
-		var submitForm = form.ToModel(providerTypes, providerSM);
+		var submitForm = form.ToUpdateModel(providerTypes, providerSM);
 
 		var provider = _tfService.UpdateDataProvider(submitForm);
 		if (provider is null)
@@ -319,12 +319,11 @@ internal partial class AppStateUseCase
 		if (provider is null)
 			throw new TfException("Provider not found");
 
-		var submit = new TfDataProviderModel
+		var submit = new TfUpdateDataProvider
 		{
 			Id = providerId,
 			SynchPrimaryKeyColumns = columns,
 			Name = provider.Name,
-			ProviderType = provider.ProviderType,
 			SettingsJson = provider.SettingsJson,
 			SynchScheduleEnabled = provider.SynchScheduleEnabled,
 			SynchScheduleMinutes = provider.SynchScheduleMinutes
@@ -345,7 +344,7 @@ internal partial class AppStateUseCase
 		if (providerSM is null)
 			throw new TfException("CreateDataProvider provider not found");
 
-		var submitForm = form.ToModel(providerSM);
+		var submitForm = form.ToUpdateModel(providerSM);
 
 		var provider = _tfService.UpdateDataProvider(submitForm);
 		if (provider is null)

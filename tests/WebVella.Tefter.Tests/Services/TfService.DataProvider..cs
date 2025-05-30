@@ -40,7 +40,7 @@ public partial class TfServiceTest : BaseTest
 			.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 		Guid id = Guid.NewGuid();
-		TfDataProviderModel model = new TfDataProviderModel
+		TfCreateDataProvider model = new TfCreateDataProvider
 		{
 			Name = name??"test data provider",
 			ProviderType = providerType,
@@ -88,7 +88,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel model = new TfDataProviderModel
+				TfCreateDataProvider model = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",
@@ -105,7 +105,7 @@ public partial class TfServiceTest : BaseTest
 				provider.Should().BeOfType<TfDataProvider>();
 
 
-				TfDataProviderModel model2 = new TfDataProviderModel
+				TfCreateDataProvider model2 = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider2",
@@ -139,7 +139,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel model = new TfDataProviderModel
+				TfCreateDataProvider model = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",
@@ -195,7 +195,7 @@ public partial class TfServiceTest : BaseTest
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
+				TfCreateDataProvider model = new TfCreateDataProvider
 				{
 					Name = "test",
 					ProviderType = null,
@@ -229,7 +229,7 @@ public partial class TfServiceTest : BaseTest
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
+				TfCreateDataProvider model = new TfCreateDataProvider
 				{
 					Name = "",
 					ProviderType = providerType,
@@ -263,7 +263,7 @@ public partial class TfServiceTest : BaseTest
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
+				TfCreateDataProvider model = new TfCreateDataProvider
 				{
 					Name = "test data provider",
 					ProviderType = providerType,
@@ -301,13 +301,11 @@ public partial class TfServiceTest : BaseTest
 				var provider = CreateProviderInternal(tfService, tfMetaService);
 
 				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
+				TfUpdateDataProvider model = new TfUpdateDataProvider
 				{
 					Id = provider.Id,
 					Name = "test data provider 1",
-					ProviderType = provider.ProviderType,
 					SettingsJson = null, 
-					Index = 1
 				};
 
 				var task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
@@ -319,7 +317,7 @@ public partial class TfServiceTest : BaseTest
 	}
 
 	[Fact]
-	public async Task DataProvider_UpdateDataProviderWithIndexUpdate()
+	public async Task DataProvider_UpdateNonExistantDataProvider()
 	{
 		using (await locker.LockAsync())
 		{
@@ -329,26 +327,25 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
-				var provider = CreateProviderInternal(tfService, tfMetaService);
-
 				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
+				TfUpdateDataProvider model = new TfUpdateDataProvider
 				{
-					Id = provider.Id,
+					Id = Guid.NewGuid(),
 					Name = "test data provider 1",
-					ProviderType = provider.ProviderType,
 					SettingsJson = null,
-					Index = 10
 				};
 
+				TfDataProvider provider = null;
 				var task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
 				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().NotBeNull();
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
-				((TfValidationException)exception).Data.Contains("Index").Should().BeTrue();
+				((TfValidationException)exception).Data.Contains("Id").Should().BeTrue();
 			}
 		}
 	}
+
 
 	[Fact]
 	public async Task DataProvider_UpdateDataProviderWithSameName()
@@ -365,7 +362,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel model = new TfDataProviderModel
+				TfCreateDataProvider model = new TfCreateDataProvider
 				{
 					Name = "test data provider",
 					ProviderType = providerType,
@@ -379,7 +376,7 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeNull();
 				provider.Should().BeOfType<TfDataProvider>();
 
-				TfDataProviderModel model2 = new TfDataProviderModel
+				TfCreateDataProvider model2 = new TfCreateDataProvider
 				{
 					Name = "test data provider 2",
 					ProviderType = providerType,
@@ -393,9 +390,14 @@ public partial class TfServiceTest : BaseTest
 				provider.Should().BeOfType<TfDataProvider>();
 
 
-				model.Name = model2.Name;
+				TfUpdateDataProvider updateModel = new TfUpdateDataProvider
+				{
+					Id = model.Id,
+					Name = model2.Name,
+					SettingsJson = null,
+				};
 
-				task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
+				task = Task.Run(() => { provider = tfService.UpdateDataProvider(updateModel); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
@@ -417,13 +419,11 @@ public partial class TfServiceTest : BaseTest
 			{
 				var provider = CreateProviderInternal(tfService, tfMetaService);
 
-				TfDataProviderModel model = new TfDataProviderModel
+				TfUpdateDataProvider model = new TfUpdateDataProvider
 				{
 					Id = provider.Id,
 					Name = string.Empty,
-					ProviderType = provider.ProviderType,
 					SettingsJson = null,
-					Index = 1
 				};
 
 				var task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
@@ -432,38 +432,6 @@ public partial class TfServiceTest : BaseTest
 				exception.Should().BeOfType(typeof(TfValidationException));
 				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
 				((TfValidationException)exception).Data.Contains("Name").Should().BeTrue();
-			}
-		}
-	}
-
-	[Fact]
-	public async Task DataProvider_UpdateDataProviderWithNoProviderType()
-	{
-		using (await locker.LockAsync())
-		{
-			ITfService tfService = ServiceProvider.GetService<ITfService>();
-			ITfMetaService tfMetaService = ServiceProvider.GetService<ITfMetaService>();
-			ITfDatabaseService dbService = ServiceProvider.GetRequiredService<ITfDatabaseService>();
-
-			using (var scope = dbService.CreateTransactionScope())
-			{
-				var provider = CreateProviderInternal(tfService, tfMetaService);
-
-				TfDataProviderModel model = new TfDataProviderModel
-				{
-					Id = provider.Id,
-					Name = provider.Name,
-					ProviderType = null,
-					SettingsJson = null,
-					Index = 1
-				};
-
-				var task = Task.Run(() => { provider = tfService.UpdateDataProvider(model); });
-				var exception = Record.ExceptionAsync(async () => await task).Result;
-				exception.Should().NotBeNull();
-				exception.Should().BeOfType(typeof(TfValidationException));
-				((TfValidationException)exception).Data.Keys.Count.Should().Be(1);
-				((TfValidationException)exception).Data.Contains("ProviderType").Should().BeTrue();
 			}
 		}
 	}

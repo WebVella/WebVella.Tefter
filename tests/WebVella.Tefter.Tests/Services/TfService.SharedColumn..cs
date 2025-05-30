@@ -92,7 +92,7 @@ public partial class TfServiceTest : BaseTest
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
 				Guid id = Guid.NewGuid();
-				TfDataProviderModel model = new TfDataProviderModel
+				TfCreateDataProvider model = new TfCreateDataProvider
 				{
 					Name = "test data provider",
 					ProviderType = providerType,

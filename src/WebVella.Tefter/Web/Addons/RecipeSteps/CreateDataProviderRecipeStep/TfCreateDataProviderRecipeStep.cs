@@ -21,7 +21,7 @@ public class TfCreateDataProviderRecipeStep : ITfRecipeStepAddon
 			throw new Exception("Wrong data model type provided for application");
 
 		var step = (TfCreateDataProviderRecipeStepData)addon.Data;
-		var dataProvider = tfService.CreateDataProvider(new TfDataProviderModel
+		var dataProvider = tfService.CreateDataProvider(new TfCreateDataProvider
 		{
 			Id = step.DataProviderId == Guid.Empty ? Guid.NewGuid() : step.DataProviderId,
 			Index = step.DataProviderIndex,
@@ -36,12 +36,10 @@ public class TfCreateDataProviderRecipeStep : ITfRecipeStepAddon
 
 		if (step.SynchPrimaryKeyColumns.Count > 0)
 		{
-			var updateModel = new TfDataProviderModel()
+			var updateModel = new TfUpdateDataProvider()
 			{
 				Id = dataProvider.Id,
-				Index = dataProvider.Index,
 				Name = dataProvider.Name,
-				ProviderType = dataProvider.ProviderType,
 				SettingsJson = dataProvider.SettingsJson,
 				SynchScheduleEnabled = dataProvider.SynchScheduleEnabled,
 				SynchScheduleMinutes = dataProvider.SynchScheduleMinutes,

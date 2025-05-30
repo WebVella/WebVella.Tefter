@@ -287,7 +287,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel providerModel = new TfDataProviderModel
+				TfCreateDataProvider providerModel = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",
@@ -392,7 +392,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel providerModel = new TfDataProviderModel
+				TfCreateDataProvider providerModel = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",
@@ -481,7 +481,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel providerModel = new TfDataProviderModel
+				TfCreateDataProvider providerModel = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",
@@ -619,7 +619,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel providerModel = new TfDataProviderModel
+				TfCreateDataProvider providerModel = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",
@@ -714,7 +714,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel providerModel = new TfDataProviderModel
+				TfCreateDataProvider providerModel = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",
@@ -801,7 +801,7 @@ public partial class TfServiceTest : BaseTest
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
 
-				TfDataProviderModel providerModel = new TfDataProviderModel
+				TfCreateDataProvider providerModel = new TfCreateDataProvider
 				{
 					Id = Guid.NewGuid(),
 					Name = "test data provider",

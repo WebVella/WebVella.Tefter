@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Office2010.Excel;
+using FluentValidation;
 using WebVella.Tefter.Models;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -49,7 +50,7 @@ public partial interface ITfService
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
 	internal TfDataProvider CreateDataProvider(
-		TfDataProviderModel providerModel);
+		TfCreateDataProvider providerModel);
 
 	/// <summary>
 	/// Update existing data provider
@@ -57,7 +58,7 @@ public partial interface ITfService
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
 	internal TfDataProvider UpdateDataProvider(
-		TfDataProviderModel providerModel);
+		TfUpdateDataProvider providerModel);
 
 	/// <summary>
 	/// Deletes existing data provider
@@ -294,27 +295,27 @@ public partial class TfService : ITfService
 	/// <summary>
 	/// Creates new data provider 
 	/// </summary>
-	/// <param name="providerModel"></param>
+	/// <param name="createModel"></param>
 	/// <returns></returns>
 	public TfDataProvider CreateDataProvider(
-		TfDataProviderModel providerModel)
+		TfCreateDataProvider createModel)
 	{
 		try
 		{
-			if (providerModel != null && providerModel.Id == Guid.Empty)
-				providerModel.Id = Guid.NewGuid();
+			if (createModel != null && createModel.Id == Guid.Empty)
+				createModel.Id = Guid.NewGuid();
 
 			new TfDataProviderCreateValidator(this)
-				.Validate(providerModel)
+				.Validate(createModel)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				var providerIndex = providerModel.Index;
+				var providerIndex = createModel.Index;
 
 				//find lowest available index
-				if (providerModel.Index == -1)
+				if (createModel.Index == -1)
 				{
 					var existingProviderIndexes = GetDataProviders()
 							.Select(x => x.Index)
@@ -327,7 +328,7 @@ public partial class TfService : ITfService
 					}
 				}
 
-				TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
+				TfDataProviderDbo dataProviderDbo = DataProviderToDbo(createModel);
 				//set correct index
 				dataProviderDbo.Index = providerIndex;
 
@@ -336,7 +337,7 @@ public partial class TfService : ITfService
 				if (!success)
 					throw new TfDboServiceException("Insert<TfDataProviderDbo> failed");
 
-				var provider = GetDataProvider(providerModel.Id);
+				var provider = GetDataProvider(createModel.Id);
 				if (provider is null)
 					throw new TfException("Failed to create new data provider");
 
@@ -395,16 +396,17 @@ public partial class TfService : ITfService
 	/// <param name="providerModel"></param>
 	/// <returns></returns>
 	public TfDataProvider UpdateDataProvider(
-		TfDataProviderModel providerModel)
+		TfUpdateDataProvider updateModel)
 	{
 		try
 		{
 			new TfDataProviderUpdateValidator(this)
-				.Validate(providerModel)
+				.Validate(updateModel)
 				.ToValidationException()
 				.ThrowIfContainsErrors();
 
-			TfDataProviderDbo dataProviderDbo = DataProviderToDbo(providerModel);
+			TfDataProvider existingProvider = GetDataProvider(updateModel.Id);
+			TfDataProviderDbo dataProviderDbo = DataProviderToDbo(updateModel, existingProvider);
 
 			var success = _dboManager.Update<TfDataProviderDbo>(dataProviderDbo,
 				nameof(TfDataProviderDbo.Name),
@@ -418,7 +420,7 @@ public partial class TfService : ITfService
 			if (!success)
 				throw new TfDboServiceException("Update<TfDataProviderDbo> failed.");
 
-			return GetDataProvider(providerModel.Id);
+			return GetDataProvider(updateModel.Id);
 		}
 		catch (Exception ex)
 		{
@@ -567,7 +569,7 @@ public partial class TfService : ITfService
 	}
 
 	private static TfDataProviderDbo DataProviderToDbo(
-		TfDataProviderModel providerModel)
+		TfCreateDataProvider providerModel)
 	{
 		if (providerModel == null)
 			throw new ArgumentException(nameof(providerModel));
@@ -579,6 +581,26 @@ public partial class TfService : ITfService
 			Index = providerModel.Index,
 			SettingsJson = providerModel.SettingsJson,
 			TypeId = providerModel.ProviderType.AddonId,
+			SynchPrimaryKeyColumnsJson = JsonSerializer.Serialize(providerModel.SynchPrimaryKeyColumns ?? new List<string>()),
+			SynchScheduleEnabled = providerModel.SynchScheduleEnabled,
+			SynchScheduleMinutes = providerModel.SynchScheduleMinutes,
+		};
+	}
+
+	private static TfDataProviderDbo DataProviderToDbo(
+		TfUpdateDataProvider providerModel,
+		TfDataProvider existingProvider )
+	{
+		if (providerModel == null)
+			throw new ArgumentException(nameof(providerModel));
+
+		return new TfDataProviderDbo
+		{
+			Id = providerModel.Id,
+			Name = providerModel.Name,
+			Index = existingProvider.Index,
+			TypeId = existingProvider.ProviderType.AddonId,
+			SettingsJson = providerModel.SettingsJson,
 			SynchPrimaryKeyColumnsJson = JsonSerializer.Serialize(providerModel.SynchPrimaryKeyColumns ?? new List<string>()),
 			SynchScheduleEnabled = providerModel.SynchScheduleEnabled,
 			SynchScheduleMinutes = providerModel.SynchScheduleMinutes,
@@ -630,7 +652,7 @@ public partial class TfService : ITfService
 	#region <--- validation --->
 
 	internal class TfDataProviderCreateValidator
-		: AbstractValidator<TfDataProviderModel>
+		: AbstractValidator<TfCreateDataProvider>
 	{
 		public TfDataProviderCreateValidator(
 			ITfService tfService)
@@ -687,7 +709,7 @@ public partial class TfService : ITfService
 					.WithMessage("Minimum time between synchronizations is 15 min");
 		}
 
-		public ValidationResult ValidateCreate(TfDataProviderModel provider)
+		public ValidationResult ValidateCreate(TfCreateDataProvider provider)
 		{
 			if (provider == null)
 				return new ValidationResult(new[] { new ValidationFailure("", "The data provider model is null.") });
@@ -697,7 +719,7 @@ public partial class TfService : ITfService
 	}
 
 	internal class TfDataProviderUpdateValidator
-		: AbstractValidator<TfDataProviderModel>
+		: AbstractValidator<TfUpdateDataProvider>
 	{
 		public TfDataProviderUpdateValidator(
 			ITfService tfService)
@@ -710,43 +732,9 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The data provider name is required.");
 
-			RuleFor(provider => provider.Index)
-					.Must((provider, index) =>
-					{
-						var existingProvider = tfService.GetDataProvider(provider.Id);
-						if(existingProvider == null)
-							return true;
-
-						if (index == existingProvider.Index)
-							return true;
-
-						return false;
-					})
-					.WithMessage("the data provider index cannot be changed during provider update.");
-
-
-			RuleFor(provider => provider.ProviderType)
-				.NotEmpty()
-				.WithMessage("The data provider type is required.");
-
 			RuleFor(provider => provider.Id)
 					.Must((provider, id) => { return tfService.GetDataProvider(id) != null; })
 					.WithMessage("There is no existing data provider for specified identifier.");
-
-			RuleFor(provider => provider.ProviderType)
-					.Must((provider, providerType) =>
-					{
-						if (provider.ProviderType == null)
-							return true;
-
-						var existingObject = tfService.GetDataProvider(provider.Id);
-
-						if (existingObject != null && existingObject.ProviderType.AddonId != provider.ProviderType.AddonId)
-							return false;
-
-						return true;
-					})
-					.WithMessage("The data provider type cannot be updated.");
 
 			RuleFor(provider => provider.Name)
 				.Must((provider, name) =>
@@ -764,7 +752,7 @@ public partial class TfService : ITfService
 				.WithMessage("Minimum time between synchronizations is 15 min");
 		}
 
-		public ValidationResult ValidateUpdate(TfDataProviderModel provider)
+		public ValidationResult ValidateUpdate(TfUpdateDataProvider provider)
 		{
 			if (provider == null)
 				return new ValidationResult(new[] { new ValidationFailure("", "The data provider model is null.") });
