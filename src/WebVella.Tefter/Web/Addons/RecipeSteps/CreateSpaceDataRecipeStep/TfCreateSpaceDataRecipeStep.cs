@@ -28,14 +28,13 @@ public class TfCreateSpaceDataRecipeStep : ITfRecipeStepAddon
 			step.SortOrders.ForEach(x => x.FixPrefix(dpPrefix));
 
 		}
-		var result = tfService.CreateSpaceData(new TfSpaceData
+		var result = tfService.CreateSpaceData(new TfCreateSpaceData
 		{
 			Id = step.SpaceDataId == Guid.Empty ? Guid.NewGuid() : step.SpaceDataId,
 			SpaceId = step.SpaceId,
 			DataProviderId = step.DataProviderId,
 			Name = step.Name,
 			Columns = step.Columns,
-			Position = step.Position,
 			Filters = step.Filters,
 			SortOrders = step.SortOrders,
 		});

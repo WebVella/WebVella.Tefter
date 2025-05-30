@@ -186,7 +186,7 @@ public class BaseTest
 		spaceColumns.Add(sharedColumn1.DbName);
 		spaceColumns.Add(sharedColumn2.DbName); //this one will be used for sort to check sort join
 
-		var spaceData = new TfSpaceData
+		var spaceData = new TfCreateSpaceData
 		{
 			Id = Guid.NewGuid(),
 			DataProviderId = providerModel.Id,
@@ -201,9 +201,9 @@ public class BaseTest
 
 		var result = tfService.CreateSpaceData(spaceData);
 		provider = tfService.GetDataProvider(provider.Id);
-		spaceData = tfService.GetSpaceData(spaceData.Id);
+		var createdSpaceData = tfService.GetSpaceData(spaceData.Id);
 
-		return (provider, spaceData);
+		return (provider, createdSpaceData);
 	}
 
 	private static void CreateProviderColumn(

@@ -188,15 +188,14 @@ public partial class TfService : ITfService
 						selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
 					}
 
-					var spaceDataObj = new TfSpaceData()
+					var spaceDataObj = new TfCreateSpaceData()
 					{
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.NewSpaceDataName,
 						Filters = new(),//filters will not be added at this point
 						Columns = selectedColumns,
 						DataProviderId = dataprovider.Id,
-						SpaceId = space.Id,
-						Position = 1 //position is overrided in the creation
+						SpaceId = space.Id
 					};
 
 					spaceData = CreateSpaceData(spaceDataObj);
@@ -575,7 +574,7 @@ public partial class TfService : ITfService
 						selectedColumns.AddRange(dataprovider.SharedColumns.Select(x => x.DbName).ToList());
 					}
 
-					var spaceDataObj = new TfSpaceData()
+					var spaceDataObj = new TfCreateSpaceData()
 					{
 						Id = Guid.NewGuid(),
 						Name = spaceViewExt.NewSpaceDataName,
@@ -583,7 +582,6 @@ public partial class TfService : ITfService
 						Columns = selectedColumns,
 						DataProviderId = dataprovider.Id,
 						SpaceId = space.Id,
-						Position = 1 //position is updated in the creation
 					};
 
 					spaceData = CreateSpaceData(spaceDataObj);

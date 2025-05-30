@@ -46,4 +46,17 @@ public record TucSpaceData
 			SortOrders = SortOrders.Select(x=> x.ToModel()).ToList()
 		};
 	}
+
+	public TfUpdateSpaceData ToUpdateModel()
+	{
+		return new TfUpdateSpaceData
+		{
+			Id = Id,
+			DataProviderId = DataProviderId,
+			Name = Name,
+			Filters = Filters.Select(x => TucFilterBase.ToModel(x)).ToList(),
+			Columns = Columns,
+			SortOrders = SortOrders.Select(x => x.ToModel()).ToList()
+		};
+	}
 }

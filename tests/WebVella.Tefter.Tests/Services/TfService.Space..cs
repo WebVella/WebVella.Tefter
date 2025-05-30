@@ -310,7 +310,7 @@ public partial class TfServiceTest : BaseTest
 				tfService.CreateSpace(space);
 
 
-				var spaceData1 = new TfSpaceData
+				var spaceDataCreate1 = new TfCreateSpaceData
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
@@ -318,17 +318,17 @@ public partial class TfServiceTest : BaseTest
 					SpaceId = space.Id,
 				};
 
-				var result = tfService.CreateSpaceData(spaceData1);
+				var result = tfService.CreateSpaceData(spaceDataCreate1);
 				result.Should().NotBeNull();
-				result.Id.Should().Be(spaceData1.Id);
-				result.Name.Should().Be(spaceData1.Name);
+				result.Id.Should().Be(spaceDataCreate1.Id);
+				result.Name.Should().Be(spaceDataCreate1.Name);
 				result.SpaceId.Should().Be(space.Id);
 				result.Position.Should().Be(1);
 				result.Filters.Should().NotBeNull();
 				result.Filters.Count().Should().Be(0);
 
 
-				var spaceData2 = new TfSpaceData
+				var spaceDataCreate2 = new TfCreateSpaceData
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
@@ -336,18 +336,18 @@ public partial class TfServiceTest : BaseTest
 					SpaceId = space.Id,
 				};
 
-				result = tfService.CreateSpaceData(spaceData2);
+				result = tfService.CreateSpaceData(spaceDataCreate2);
 				result.Should().NotBeNull();
-				result.Id.Should().Be(spaceData2.Id);
-				result.Name.Should().Be(spaceData2.Name);
+				result.Id.Should().Be(spaceDataCreate2.Id);
+				result.Name.Should().Be(spaceDataCreate2.Name);
 				result.SpaceId.Should().Be(space.Id);
 				result.Position.Should().Be(2);
 				result.Filters.Should().NotBeNull();
 				result.Filters.Count().Should().Be(0);
 
-				tfService.MoveSpaceDataDown(spaceData1.Id);
-				spaceData1 = tfService.GetSpaceData(spaceData1.Id);
-				spaceData2 = tfService.GetSpaceData(spaceData2.Id);
+				tfService.MoveSpaceDataDown(spaceDataCreate1.Id);
+				var spaceData1 = tfService.GetSpaceData(spaceDataCreate1.Id);
+				var spaceData2 = tfService.GetSpaceData(spaceDataCreate2.Id);
 				spaceData1.Position.Should().Be(2);
 				spaceData2.Position.Should().Be(1);
 
@@ -357,9 +357,16 @@ public partial class TfServiceTest : BaseTest
 				spaceData1.Position.Should().Be(1);
 				spaceData2.Position.Should().Be(2);
 
-				spaceData1.Name = "updated name";
-				result = tfService.UpdateSpaceData(spaceData1);
-				result.Name.Should().Be(spaceData1.Name);
+				result = tfService.UpdateSpaceData(new TfUpdateSpaceData
+				{
+					Id = spaceData1.Id,
+					DataProviderId = spaceData1.DataProviderId,
+					Columns = spaceData1.Columns,
+					Name = "updated name",
+					Filters = spaceData1.Filters,
+					SortOrders = spaceData1.SortOrders
+				});
+				result.Name.Should().Be("updated name");
 
 				tfService.DeleteSpaceData(spaceData1.Id);
 				spaceData2 = tfService.GetSpaceData(spaceData2.Id);
@@ -418,7 +425,7 @@ public partial class TfServiceTest : BaseTest
 				};
 				tfService.CreateSpace(space2);
 
-				var spaceData1 = new TfSpaceData
+				var spaceData1 = new TfCreateSpaceData
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
@@ -436,13 +443,25 @@ public partial class TfServiceTest : BaseTest
 				result.Filters.Count().Should().Be(0);
 
 
-				spaceData1.SpaceId = space2.Id;
-				var task = Task.Run(() => { result = tfService.UpdateSpaceData(spaceData1); });
-				var exception = Record.ExceptionAsync(async () => await task).Result;
-				exception.Should().NotBeNull();
-				exception.Should().BeOfType(typeof(TfValidationException));
-				exception.Data.Keys.Count.Should().Be(1);
-				exception.Data.Contains(nameof(TfSpaceData.SpaceId)).Should().BeTrue();
+				//update of space id is not allowed because update model has no such property
+				//spaceData1.SpaceId = space2.Id;
+				//var task = Task.Run(() =>
+				//{
+				//	result = tfService.UpdateSpaceData(new TfUpdateSpaceData
+				//	{
+				//		Id = Guid.NewGuid(),
+				//		DataProviderId = spaceData1.DataProviderId,
+				//		Columns = spaceData1.Columns,
+				//		Name = spaceData1.Name,
+				//		Filters = spaceData1.Filters,
+				//		SortOrders = spaceData1.SortOrders,
+				//	});
+				//});
+				//var exception = Record.ExceptionAsync(async () => await task).Result;
+				//exception.Should().NotBeNull();
+				//exception.Should().BeOfType(typeof(TfValidationException));
+				//exception.Data.Keys.Count.Should().Be(1);
+				//exception.Data.Contains(nameof(TfSpaceData.SpaceId)).Should().BeTrue();
 			}
 		}
 	}
@@ -623,7 +642,7 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceData = new TfSpaceData
+				var spaceDataCreate = new TfCreateSpaceData
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
@@ -631,7 +650,7 @@ public partial class TfServiceTest : BaseTest
 					SpaceId = space.Id,
 				};
 
-				spaceData = tfService.CreateSpaceData(spaceData);
+				var spaceData = tfService.CreateSpaceData(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 
@@ -718,7 +737,7 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceData = new TfSpaceData
+				var spaceDataCreate = new TfCreateSpaceData
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
@@ -726,7 +745,7 @@ public partial class TfServiceTest : BaseTest
 					SpaceId = space.Id,
 				};
 
-				spaceData = tfService.CreateSpaceData(spaceData);
+				var spaceData = tfService.CreateSpaceData(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 
@@ -805,7 +824,7 @@ public partial class TfServiceTest : BaseTest
 				space = tfService.CreateSpace(space);
 				space.Should().NotBeNull();
 
-				var spaceData = new TfSpaceData
+				var spaceDataCreate = new TfCreateSpaceData
 				{
 					Id = Guid.NewGuid(),
 					DataProviderId = providerModel.Id,
@@ -813,7 +832,7 @@ public partial class TfServiceTest : BaseTest
 					SpaceId = space.Id,
 				};
 
-				spaceData = tfService.CreateSpaceData(spaceData);
+				var spaceData = tfService.CreateSpaceData(spaceDataCreate);
 				spaceData.Should().NotBeNull();
 
 				TfSpaceView view = new TfSpaceView

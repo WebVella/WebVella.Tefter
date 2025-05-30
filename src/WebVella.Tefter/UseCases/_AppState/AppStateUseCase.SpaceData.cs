@@ -187,7 +187,7 @@ internal virtual List<TucSpaceData> GetAllSpaceData()
 
 		#endregion
 
-		var spaceDataObj = new TfSpaceData()
+		var spaceDataObj = new TfCreateSpaceData()
 		{
 			Id = Guid.NewGuid(),
 			Name = form.Name,
@@ -195,7 +195,6 @@ internal virtual List<TucSpaceData> GetAllSpaceData()
 			Columns = new(), // columns will be added later
 			DataProviderId = dataprovider.Id,
 			SpaceId = space.Id,
-			Position = 1 //position is overrided in the creation
 		};
 
 		var spaceData = _tfService.CreateSpaceData(spaceDataObj);
@@ -252,7 +251,15 @@ internal virtual List<TucSpaceData> GetAllSpaceData()
 		spaceData.Name = form.Name;
 		spaceData.DataProviderId = form.DataProviderId;
 
-		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData);
+		var updatedSpaceData = _tfService.UpdateSpaceData(new TfUpdateSpaceData
+		{
+			Id = spaceData.Id,
+			Name = spaceData.Name,
+			DataProviderId = spaceData.DataProviderId,
+			Filters = form.Filters.Select(x => TucFilterBase.ToModel(x)).ToList(),
+			Columns = form.Columns,
+			SortOrders = form.SortOrders.Select(x => x.ToModel()).ToList(),
+		});
 
 		//Should commit transaction
 		return new TucSpaceData(updatedSpaceData);
@@ -271,7 +278,7 @@ internal virtual List<TucSpaceData> GetAllSpaceData()
 
 		spaceData.Columns = columns;
 
-		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToModel());
+		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToUpdateModel());
 
 		return new TucSpaceData(updatedSpaceData);
 
@@ -290,7 +297,7 @@ internal virtual List<TucSpaceData> GetAllSpaceData()
 
 		spaceData.Filters = filters;
 
-		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToModel());
+		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToUpdateModel());
 
 		return new TucSpaceData(updatedSpaceData);
 
@@ -309,7 +316,7 @@ internal virtual List<TucSpaceData> GetAllSpaceData()
 
 		spaceData.SortOrders = sorts;
 
-		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToModel());
+		var updatedSpaceData = _tfService.UpdateSpaceData(spaceData.ToUpdateModel());
 
 		return new TucSpaceData(updatedSpaceData);
 

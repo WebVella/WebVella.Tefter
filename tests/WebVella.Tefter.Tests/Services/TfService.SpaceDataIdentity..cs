@@ -212,7 +212,7 @@ public partial class TfServiceTest : BaseTest
 		tfService.CreateSpace(space);
 
 
-		var spaceData = new TfSpaceData
+		var spaceData = new TfCreateSpaceData
 		{
 			Id = Guid.NewGuid(),
 			DataProviderId = provider.Id,

@@ -14,10 +14,10 @@ public partial interface ITfService
 		Guid id);
 
 	public TfSpaceData CreateSpaceData(
-		TfSpaceData spaceData);
+		TfCreateSpaceData spaceData);
 
 	public TfSpaceData UpdateSpaceData(
-		TfSpaceData spaceData);
+		TfUpdateSpaceData spaceData);
 
 	public void DeleteSpaceData(
 		Guid id);
@@ -162,14 +162,28 @@ public partial class TfService : ITfService
 	}
 
 	public TfSpaceData CreateSpaceData(
-		TfSpaceData spaceData)
+		TfCreateSpaceData createSpaceData)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
-				if (spaceData != null && spaceData.Id == Guid.Empty)
-					spaceData.Id = Guid.NewGuid();
+				TfSpaceData spaceData = null;
+
+				if (createSpaceData is not null)
+				{
+					spaceData = new TfSpaceData();
+					spaceData.Id = createSpaceData.Id;
+					spaceData.DataProviderId = createSpaceData.DataProviderId;
+					spaceData.Name = createSpaceData.Name;
+					spaceData.SpaceId = createSpaceData.SpaceId;
+					spaceData.Filters = createSpaceData.Filters ?? new List<TfFilterBase>();
+					spaceData.Columns = createSpaceData.Columns ?? new List<string>();
+					spaceData.SortOrders = createSpaceData.SortOrders ?? new List<TfSort>();
+					
+					if (spaceData.Id == Guid.Empty)
+						spaceData.Id = Guid.NewGuid();
+				}
 
 				new TfSpaceDataValidator(this)
 					.ValidateCreate(spaceData)
@@ -198,19 +212,35 @@ public partial class TfService : ITfService
 	}
 
 	public TfSpaceData UpdateSpaceData(
-		TfSpaceData spaceData)
+		TfUpdateSpaceData updateSpaceData)
 	{
 		try
 		{
 			using (var scope = _dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 			{
+				TfSpaceData spaceData = null;
+				TfSpaceDataDbo existingSpaceData = null;
+
+				if (updateSpaceData is not null)
+				{
+					existingSpaceData = _dboManager.Get<TfSpaceDataDbo>(updateSpaceData.Id);
+
+					spaceData = new TfSpaceData();
+					spaceData.Id = updateSpaceData.Id;
+					spaceData.DataProviderId = updateSpaceData.DataProviderId;
+					spaceData.Name = updateSpaceData.Name;
+					spaceData.Filters = updateSpaceData.Filters ?? new List<TfFilterBase>();
+					spaceData.Columns = updateSpaceData.Columns ?? new List<string>();
+					spaceData.SortOrders = updateSpaceData.SortOrders ?? new List<TfSort>();
+
+					if (existingSpaceData is not null)
+						spaceData.SpaceId = existingSpaceData.SpaceId;
+				}
 
 				new TfSpaceDataValidator(this)
 					.ValidateUpdate(spaceData)
 					.ToValidationException()
 					.ThrowIfContainsErrors();
-
-				var existingSpaceData = _dboManager.Get<TfSpaceDataDbo>(spaceData.Id);
 
 				var dbo = ConvertModelToDbo(spaceData);
 				dbo.Position = existingSpaceData.Position;
