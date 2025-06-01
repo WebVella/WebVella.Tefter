@@ -21,19 +21,24 @@ internal class TfIdsCacheLoaderJob : BackgroundService
 		//initial 60 sec wait
 		await Task.Delay(60 * 1000);
 
-		while (!stoppingToken.IsCancellationRequested)
+		SynchronizationContext.SetSynchronizationContext(new TfHostedServiceSynchContext());
+		await Task.Run(async () =>
 		{
-			try
+			while (!stoppingToken.IsCancellationRequested)
 			{
-				await _tfService.LoadIdsCacheAsync(stoppingToken);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, $"{GetType().Name} exception");
+				try
+				{
+					await _tfService.LoadIdsCacheAsync(stoppingToken);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, $"{GetType().Name} exception");
+				}
+
+				await Task.Delay(60 * 60 * 1000); //60mins
 			}
 
-			await Task.Delay(60 * 60 * 1000); //60mins
-		}
+		}, stoppingToken);
 	}
 
 	public override async Task StopAsync(

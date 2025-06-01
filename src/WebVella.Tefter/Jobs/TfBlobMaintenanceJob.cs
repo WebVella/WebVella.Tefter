@@ -21,19 +21,25 @@ internal class TfBlobMaintenanceJob : BackgroundService
 		//initial 120 sec wait
 		await Task.Delay(120 * 1000);
 
-		while (!stoppingToken.IsCancellationRequested)
+
+		SynchronizationContext.SetSynchronizationContext(new TfHostedServiceSynchContext());
+		await Task.Run(async () =>
 		{
-			try
+			while (!stoppingToken.IsCancellationRequested)
 			{
-				await _tfService.CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(stoppingToken);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, $"{GetType().Name} exception");
+				try
+				{
+					await _tfService.CleanupEmptyFoldersAndExpiredTemporaryFilesAsync(stoppingToken);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, $"{GetType().Name} exception");
+				}
+
+				await Task.Delay(4320000); //12 hour
 			}
 
-			await Task.Delay(4320000); //12 hour
-		}
+		}, stoppingToken);
 	}
 
 	public override async Task StopAsync(

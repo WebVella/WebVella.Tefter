@@ -18,22 +18,24 @@ internal class TfJoinKeysUpdateJob : BackgroundService
 	{
 		_logger.LogInformation($"{GetType().Name} is running.");
 
-		//initial 600 sec wait
-		await Task.Delay(600 * 1000);
+		//This job will be removed
 
-		while (!stoppingToken.IsCancellationRequested)
-		{
-			try
-			{
-				await _tfService.UpdateJoinKeysVersionAsync(stoppingToken);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, $"{GetType().Name} exception");
-			}
+		////initial 600 sec wait
+		//await Task.Delay(600 * 1000);
 
-			await Task.Delay(5 * 60 * 1000); //5mins
-		}
+		//while (!stoppingToken.IsCancellationRequested)
+		//{
+		//	try
+		//	{
+		//		await _tfService.UpdateJoinKeysVersionAsync(stoppingToken);
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		_logger.LogError(ex, $"{GetType().Name} exception");
+		//	}
+
+		//	await Task.Delay(5 * 60 * 1000); //5mins
+		//}
 	}
 
 	public override async Task StopAsync(

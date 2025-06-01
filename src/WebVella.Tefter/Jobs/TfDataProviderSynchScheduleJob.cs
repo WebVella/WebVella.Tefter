@@ -21,19 +21,24 @@ internal class TfDataProviderSynchScheduleJob : BackgroundService
 		//initial 60 sec wait
 		await Task.Delay(60 * 1000);
 
-		while (!stoppingToken.IsCancellationRequested)
+		SynchronizationContext.SetSynchronizationContext(new TfHostedServiceSynchContext());
+		await Task.Run(async () =>
 		{
-			try
+			while (!stoppingToken.IsCancellationRequested)
 			{
-				await _tfService.CheckScheduleSynchronizationTasksAsync(stoppingToken);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, $"{GetType().Name} exception");
+				try
+				{
+					await _tfService.CheckScheduleSynchronizationTasksAsync(stoppingToken);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, $"{GetType().Name} exception");
+				}
+
+				await Task.Delay(5 * 60 * 1000); //5min
 			}
 
-			await Task.Delay(5 * 60 * 1000); //5min
-		}
+		}, stoppingToken);
 	}
 
 	public override async Task StopAsync(
