@@ -7,8 +7,8 @@ public record TfSharedColumn
 	[TfDboModelProperty("id")]
 	public Guid Id { get; set; }
 
-	[TfDboModelProperty("join_key_db_name")]
-	public string JoinKeyDbName { get; set; }
+	[TfDboModelProperty("data_identity")]
+	public string DataIdentity { get; set; }
 
 	[TfDboModelProperty("db_name")]
 	public string DbName { get; set; }

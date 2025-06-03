@@ -9,7 +9,7 @@ public class LongIntegerDisplayColumnComponentTests : BaseTest
 		//Given
 		var columnName = "name";
 		var dt = new TfDataTable();
-		dt.Columns.Add(new TfDataColumn(dt,columnName,Database.TfDatabaseColumnType.Text,true,false,false,false));
+		dt.Columns.Add(new TfDataColumn(dt,columnName,Database.TfDatabaseColumnType.Text,true,false,false,false, false));
 		var Context = GetTestContext();
 		// Act
 		var cut = Context.RenderComponent<TfLongIntegerDisplayColumnComponent>(args => args

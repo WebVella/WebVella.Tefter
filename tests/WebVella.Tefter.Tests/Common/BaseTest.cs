@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using FluentAssertions.Common;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using WebVella.Tefter.Jobs;
 
 namespace WebVella.Tefter.Tests.Common;
@@ -102,50 +103,64 @@ public class BaseTest
 		//get provider with new columns
 		provider = tfService.GetDataProvider(provider.Id);
 
-		TfDataProviderJoinKey joinKey =
-					new TfDataProviderJoinKey
+		//create data identity
+		TfDataIdentity dataIdentityModel1 = new TfDataIdentity
+		{
+			DataIdentity = "test_data_identity_1",
+			Label = "Test Data Identity 1",
+		};
+		TfDataIdentity dataIdentity1 = tfService.CreateDataIdentity(dataIdentityModel1);
+		dataIdentity1.Should().NotBeNull();
+
+		TfDataIdentity dataIdentityModel2 = new TfDataIdentity
+		{
+			DataIdentity = "test_data_identity_2",
+			Label = "Test Data Identity 2",
+		};
+		TfDataIdentity dataIdentity2 = tfService.CreateDataIdentity(dataIdentityModel2);
+		dataIdentity2.Should().NotBeNull();
+
+		//create provider data identity link
+		TfDataProviderIdentity providerDataIdentity1 =
+					new TfDataProviderIdentity
 					{
 						Id = Guid.NewGuid(),
-						Description = "will be used for integer shared column",
 						DataProviderId = provider.Id,
-						DbName = "join_key_int",
-						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.Integer) }
+						DataIdentity = dataIdentityModel1.DataIdentity,
+						Columns = new() { $"dp{provider.Index}_text_column" } //text column
 					};
 
-		provider = tfService.CreateDataProviderJoinKey(joinKey);
-		provider.Should().NotBeNull();
+		provider = tfService.CreateDataProviderIdentity(providerDataIdentity1);
 
-		joinKey =
-					new TfDataProviderJoinKey
+		TfDataProviderIdentity providerDataIdentity2 =
+					new TfDataProviderIdentity
 					{
 						Id = Guid.NewGuid(),
-						Description = "will be used for short text shared column",
 						DataProviderId = provider.Id,
-						DbName = "join_key_text",
-						Columns = new() { provider.Columns.Single(x => x.DbType == TfDatabaseColumnType.ShortText) }
-
+						DataIdentity = dataIdentityModel2.DataIdentity,
+						Columns = new() { $"dp{provider.Index}_int_column" } //int column
 					};
 
-		provider = tfService.CreateDataProviderJoinKey(joinKey);
-		provider.Should().NotBeNull();
+		provider = tfService.CreateDataProviderIdentity(providerDataIdentity2);
+
 
 		TfSharedColumn sharedColumn1 = new TfSharedColumn
 		{
 			Id = Guid.NewGuid(),
-			DbName = "sc_join_key_text",
+			DbName = "sc_text",
 			DbType = TfDatabaseColumnType.ShortText,
 			IncludeInTableSearch = false,
-			JoinKeyDbName = "join_key_text"
+			DataIdentity = providerDataIdentity1.DataIdentity
 		};
 		tfService.CreateSharedColumn(sharedColumn1);
 
 		TfSharedColumn sharedColumn2 = new TfSharedColumn
 		{
 			Id = Guid.NewGuid(),
-			DbName = "sc_join_key_int",
+			DbName = "sc_int",
 			DbType = TfDatabaseColumnType.Integer,
 			IncludeInTableSearch = false,
-			JoinKeyDbName = "join_key_int"
+			DataIdentity = providerDataIdentity2.DataIdentity
 		};
 		tfService.CreateSharedColumn(sharedColumn2);
 
@@ -156,19 +171,39 @@ public class BaseTest
 
 		await backgroundSync.StartManualProcessTasks();
 
+		HashSet<string> textDataIdentityValues = new HashSet<string>();
+		HashSet<string> intDataIdentityValues = new HashSet<string>();
+
 		//insert data for join keys
 		DataTable dt = dbService.ExecuteSqlQueryCommand($"SELECT * FROM dp{provider.Index}");
+
+		int sharedColumnIntValueInc = 0;
+
 		foreach (DataRow dr in dt.Rows)
 		{
-			var textJoinKeyId = (Guid)dr["tf_jk_join_key_text_id"];
-			int insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_short_text_value(join_key_id,shared_column_id,value) " +
-				$"VALUES ('{textJoinKeyId}','{sharedColumn1.Id}', @value) ", new NpgsqlParameter("value", new Faker("en").Lorem.Sentence()));
+			var textDataIdentityValue = (string)dr[$"tf_ide_{dataIdentity1.DataIdentity}"];
+			
+			if (textDataIdentityValues.Contains(textDataIdentityValue))
+				continue; //skip if already exists
+
+			textDataIdentityValues.Add(textDataIdentityValue);
+
+			int insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_short_text_value(data_identity_value,shared_column_id,value) " +
+				$"VALUES ('{textDataIdentityValue}','{sharedColumn1.Id}', @value) ", new NpgsqlParameter("value", new Faker("en").Lorem.Sentence()));
 			insertResult.Should().Be(1);
 
-			var intJoinKeyId = (Guid)dr["tf_jk_join_key_int_id"];
-			insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_integer_value(join_key_id,shared_column_id,value) " +
-				$"VALUES ('{textJoinKeyId}','{sharedColumn2.Id}', @value) ", new NpgsqlParameter("value", new Faker("en").Random.Int()));
+			var intDataIdentityValue = (string)dr[$"tf_ide_{dataIdentity2.DataIdentity}"];
+
+			if (intDataIdentityValues.Contains(intDataIdentityValue))
+				continue; //skip if already exists
+
+			intDataIdentityValues.Add(intDataIdentityValue);
+
+			insertResult = dbService.ExecuteSqlNonQueryCommand($"INSERT INTO tf_shared_column_integer_value(data_identity_value,shared_column_id,value) " +
+				$"VALUES ('{intDataIdentityValue}','{sharedColumn2.Id}', @value) ", new NpgsqlParameter("value", sharedColumnIntValueInc /*new Faker("en").Random.Int()*/));
 			insertResult.Should().Be(1);
+
+			sharedColumnIntValueInc++;
 		}
 
 		var space = new TfSpace

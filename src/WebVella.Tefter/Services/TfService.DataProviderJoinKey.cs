@@ -86,15 +86,16 @@ public partial class TfService : ITfService
 				result.Add(dbo.DbName);
 			}
 
-			var sharedColumns = _dboManager.GetList<TfSharedColumn>();
+			//join keys are not part of shared columns anymore
+			//var sharedColumns = _dboManager.GetList<TfSharedColumn>();
 			
-			foreach (var sharedColumn in sharedColumns)
-			{
-				if (result.Contains(sharedColumn.JoinKeyDbName))
-					continue;
+			//foreach (var sharedColumn in sharedColumns)
+			//{
+			//	if (result.Contains(sharedColumn.DataIdentity))
+			//		continue;
 
-				result.Add(sharedColumn.JoinKeyDbName);
-			}
+			//	result.Add(sharedColumn.DataIdentity);
+			//}
 
 			return result.OrderBy(n => n).ToList();
 		}

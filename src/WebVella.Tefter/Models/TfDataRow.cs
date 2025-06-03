@@ -183,6 +183,22 @@ public class TfDataRow : IEnumerable
 		return (Guid)_values[index];
 	}
 
+	public string GetDataIdentityValue(string dataIdentity )
+	{
+		if (string.IsNullOrEmpty(dataIdentity))
+			return null;
+
+		var dataIdentityColumn = $"tf_ide_{dataIdentity}";
+		if(dataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+			dataIdentityColumn = "tf_row_id";
+
+		int index = DataTable.Columns.IndexOf(x => x.Name == dataIdentityColumn);
+		if (index == -1)
+			return null;
+
+		return (string)_values[index];
+	}
+
 	private static class UnboxT<T>
 	{
 		internal static readonly Converter<object, T> Unbox = Create(typeof(T));

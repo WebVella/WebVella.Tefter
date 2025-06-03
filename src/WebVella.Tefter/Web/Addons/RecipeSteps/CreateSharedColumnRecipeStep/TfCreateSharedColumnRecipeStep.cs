@@ -26,7 +26,7 @@ public class TfCreateSharedColumnRecipeStep : ITfRecipeStepAddon
 			DbName = step.DbName,
 			DbType = step.ColumnType,
 			IncludeInTableSearch = step.IncludeInTableSearch,
-			JoinKeyDbName = step.JoinKey
+			DataIdentity = step.JoinKey
 		};
 		column.FixPrefix();
 		tfService.CreateSharedColumn(column);

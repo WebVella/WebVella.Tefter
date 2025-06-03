@@ -37,7 +37,6 @@ public partial class TfServiceTest : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			//var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 			var provider = tfService.GetDataProvider(providerId);
 			var spaceData = tfService.GetSpaceData(spaceDataId);
 
@@ -62,16 +61,17 @@ public partial class TfServiceTest : BaseTest
 				newRow[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				newRow[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				newRow["sc_join_key_text"] = "this is join key text test " + i;
-				newRow["sc_join_key_int"] = i;
+				newRow["sc_text"] = "this is join key text test " + i;
+				newRow["sc_int"] = i;
 
 				newTable.Rows.Add(newRow);
 			}
 
 			result = tfService.SaveDataTable(newTable);
 
-			Guid? skIntValue = result.Rows[0].GetJoinKeyValue("test");
-			Guid? skTextValue = result.Rows[0].GetJoinKeyValue("join_key_text");
+			string skRowIdValue = result.Rows[0].GetDataIdentityValue("tf_row_id");
+			string skIntValue = result.Rows[0].GetDataIdentityValue("test_data_identity_1");
+			string skTextValue = result.Rows[0].GetDataIdentityValue("test_data_identity_2");
 
 			//result = tfService.QuerySpaceData(spaceData.Id);
 			result = tfService.QueryDataProvider(provider);
@@ -92,8 +92,8 @@ public partial class TfServiceTest : BaseTest
 				row[$"dp{provider.Index}_long_int_column"] = faker.Random.Long(1000, 10000);
 				row[$"dp{provider.Index}_number_column"] = faker.Random.Decimal(100000, 1000000);
 
-				row["sc_join_key_text"] = "this is join key text test " + i + "update";
-				row["sc_join_key_int"] = i + i;
+				row["sc_text"] = "this is join key text test " + i + "update";
+				row["sc_int"] = i + i;
 			}
 
 			result = tfService.SaveDataTable(tableToUpdate);
@@ -117,8 +117,8 @@ public partial class TfServiceTest : BaseTest
 				row[$"dp{provider.Index}_long_int_column"] = null;
 				row[$"dp{provider.Index}_number_column"] = null;
 
-				row["sc_join_key_text"] = null;
-				row["sc_join_key_int"] = null;
+				row["sc_text"] = null;
+				row["sc_int"] = null;
 			}
 
 			result = tfService.SaveDataTable(tableToUpdate);
@@ -135,25 +135,18 @@ public partial class TfServiceTest : BaseTest
 
 		using (var scope = dbService.CreateTransactionScope(TfConstants.DB_OPERATION_LOCK_KEY))
 		{
-			//var (provider, spaceData) = await CreateTestStructureAndData(ServiceProvider, dbService);
 			var provider = tfService.GetDataProvider(providerId);
 			var spaceData = tfService.GetSpaceData(spaceDataId);
 
 			var result = tfService.QuerySpaceData(spaceData.Id,
-				noRows: true,
-				search: "10",
 				page: 1,
 				pageSize: 5,
 				userFilters: new List<TfFilterBase>
 				{
 						new TfFilterOr(new[]
 							{
-								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
-								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
-								(TfFilterBase)new TfFilterText("sc_join_key_text", TfFilterTextComparisonMethod.Contains, "a"),
-								(TfFilterBase)new TfFilterNumeric("sc_join_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
+								(TfFilterBase)new TfFilterNumeric("sc_int", TfFilterNumericComparisonMethod.Equal, "5" )
 							})
-
 				},
 				userSorts: new List<TfSort> {
 						new TfSort {
@@ -163,7 +156,36 @@ public partial class TfServiceTest : BaseTest
 							ColumnName =$"dp{provider.Index}_guid_column",
 							Direction=TfSortDirection.DESC} ,
 						new TfSort {
-							ColumnName ="sc_join_key_int",
+							ColumnName ="sc_int",
+							Direction=TfSortDirection.ASC}
+				});
+
+			result.Rows.Count.Should().Be(1);
+
+			result = tfService.QuerySpaceData(spaceData.Id,
+				//noRows: true,
+				//search: "10",
+				page: 1,
+				pageSize: 5,
+				userFilters: new List<TfFilterBase>
+				{
+						new TfFilterOr(new[]
+							{
+								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
+								(TfFilterBase)new TfFilterText($"dp{provider.Index}_short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
+								(TfFilterBase)new TfFilterText("sc_text", TfFilterTextComparisonMethod.Contains, "a"),
+								(TfFilterBase)new TfFilterNumeric("sc_int", TfFilterNumericComparisonMethod.Equal, "5" )
+							})
+				},
+				userSorts: new List<TfSort> {
+						new TfSort {
+							ColumnName ="missing_column",
+							Direction=TfSortDirection.DESC} ,
+						new TfSort {
+							ColumnName =$"dp{provider.Index}_guid_column",
+							Direction=TfSortDirection.DESC} ,
+						new TfSort {
+							ColumnName ="sc_int",
 							Direction=TfSortDirection.ASC}
 				});
 
@@ -183,21 +205,7 @@ public partial class TfServiceTest : BaseTest
 
 			var result = tfService.QuerySpaceData(spaceData.Id,
 				noRows: false,
-				//search: "10",
-				//page: 1,
-				//pageSize: 5,
 				returnOnlyTfIds: true,
-				//userFilters: new List<TfFilterBase>
-				//{
-				//	new TfFilterOr(new[]
-				//		{
-				//			(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Contains, "b"),
-				//			(TfFilterBase)new TfFilterText("short_text_column", TfFilterTextComparisonMethod.Fts, "a"),
-				//			(TfFilterBase)new TfFilterText("jk_join_key_text", TfFilterTextComparisonMethod.Contains, "a"),
-				//			(TfFilterBase)new TfFilterNumeric("jk_join_key_int", TfFilterNumericComparisonMethod.Equal, "5" )
-				//		})
-
-				//},
 				userSorts: new List<TfSort> {
 						new TfSort {
 							ColumnName ="missing_column",
@@ -209,6 +217,9 @@ public partial class TfServiceTest : BaseTest
 							ColumnName ="sc_join_key_int",
 							Direction=TfSortDirection.ASC}
 				});
+
+			result.Rows.Count.Should().Be(100);
+			result.Columns.Count.Should().Be(1);
 		}
 	}
 }

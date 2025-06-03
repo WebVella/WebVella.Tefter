@@ -118,7 +118,7 @@ public partial class TfService : ITfService
 	}
 
 	private List<TfDataProviderSystemColumn> GetDataProviderSystemColumns(
-		List<TfDataProviderJoinKey> joinKeys)
+		List<TfDataProviderIdentity> providerIdentities)
 	{
 		try
 		{
@@ -160,18 +160,15 @@ public partial class TfService : ITfService
 				DbType = TfDatabaseColumnType.Text
 			});
 
-			foreach (var joinKey in joinKeys)
+			foreach (var providerDataIdentity in providerIdentities)
 			{
-				systemColumns.Add(new TfDataProviderSystemColumn
-				{
-					DbName = $"tf_jk_{joinKey.DbName}_id",
-					DbType = TfDatabaseColumnType.Guid
-				});
+				if(providerDataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+					continue;
 
 				systemColumns.Add(new TfDataProviderSystemColumn
 				{
-					DbName = $"tf_jk_{joinKey.DbName}_version",
-					DbType = TfDatabaseColumnType.ShortInteger
+					DbName = $"tf_ide_{providerDataIdentity.DataIdentity}",
+					DbType = TfDatabaseColumnType.ShortText
 				});
 			}
 

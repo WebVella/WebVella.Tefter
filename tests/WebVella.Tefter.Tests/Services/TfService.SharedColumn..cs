@@ -12,17 +12,42 @@ public partial class TfServiceTest : BaseTest
 
 			using (var scope = dbService.CreateTransactionScope())
 			{
+
+				TfDataIdentity dataIdentityModel1 = new TfDataIdentity
+				{
+					DataIdentity = "test_data_identity_1",
+					Label = "Test Data Identity 1",
+				};
+
+				TfDataIdentity dataIdentity1 = null;
+				var task = Task.Run(() => { dataIdentity1 = tfService.CreateDataIdentity(dataIdentityModel1); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				dataIdentity1.Should().NotBeNull();
+
+				TfDataIdentity dataIdentityModel2 = new TfDataIdentity
+				{
+					DataIdentity = "test_data_identity_2",
+					Label = "Test Data Identity 2",
+				};
+
+				TfDataIdentity dataIdentity2 = null;
+				task = Task.Run(() => { dataIdentity2 = tfService.CreateDataIdentity(dataIdentityModel2); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				dataIdentity2.Should().NotBeNull();
+
 				TfSharedColumn sharedColumn = new TfSharedColumn
 				{
 					Id = Guid.NewGuid(),
 					DbName = "sc_test",
 					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
-					JoinKeyDbName = "join_key"
+					DataIdentity = "test_data_identity_1"
 				};
 
-				var task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });
-				var exception = Record.ExceptionAsync(async () => await task).Result;
+				task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
 				List<TfSharedColumn> sharedColumns = null;
@@ -36,12 +61,11 @@ public partial class TfServiceTest : BaseTest
 				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
 				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
-				sharedColumns[0].JoinKeyDbName.Should().Be(sharedColumn.JoinKeyDbName);
+				sharedColumns[0].DataIdentity.Should().Be(sharedColumn.DataIdentity);
 
-				sharedColumn.DbName = "sc_test1";
 				sharedColumn.DbType = TfDatabaseColumnType.Integer;
 				sharedColumn.IncludeInTableSearch = !sharedColumn.IncludeInTableSearch;
-				sharedColumn.JoinKeyDbName = "join_key_1";
+				sharedColumn.DataIdentity = "test_data_identity_2";
 
 
 				task = Task.Run(() => { tfService.UpdateSharedColumn(sharedColumn); });
@@ -58,7 +82,7 @@ public partial class TfServiceTest : BaseTest
 				sharedColumns[0].DbName.Should().Be(sharedColumn.DbName);
 				sharedColumns[0].DbType.Should().Be(sharedColumn.DbType);
 				sharedColumns[0].IncludeInTableSearch.Should().Be(sharedColumn.IncludeInTableSearch);
-				sharedColumns[0].JoinKeyDbName.Should().Be(sharedColumn.JoinKeyDbName);
+				sharedColumns[0].DataIdentity.Should().Be(sharedColumn.DataIdentity);
 
 				task = Task.Run(() => { tfService.DeleteSharedColumn(sharedColumn.Id); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
@@ -87,6 +111,18 @@ public partial class TfServiceTest : BaseTest
 			using (var scope = dbService.CreateTransactionScope())
 			{
 
+				TfDataIdentity dataIdentityModel = new TfDataIdentity
+				{
+					DataIdentity = "test_data_identity",
+					Label = "Test Data Identity",
+				};
+
+				TfDataIdentity dataIdentity = null;
+				var task = Task.Run(() => { dataIdentity = tfService.CreateDataIdentity(dataIdentityModel); });
+				var exception = Record.ExceptionAsync(async () => await task).Result;
+				exception.Should().BeNull();
+				dataIdentity.Should().NotBeNull();
+			
 				var providerTypes = tfMetaService.GetDataProviderTypes();
 				var providerType = providerTypes
 					.Single(x => x.AddonId == new Guid("90b7de99-4f7f-4a31-bcf9-9be988739d2d"));
@@ -100,8 +136,8 @@ public partial class TfServiceTest : BaseTest
 				};
 
 				TfDataProvider provider = null;
-				var task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
-				var exception = Record.ExceptionAsync(async () => await task).Result;
+				task = Task.Run(() => { provider = tfService.CreateDataProvider(model); });
+				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
 				TfDataProviderColumn column = new TfDataProviderColumn
@@ -128,18 +164,17 @@ public partial class TfServiceTest : BaseTest
 
 				provider = tfService.GetDataProvider(provider.Id);
 
-				TfDataProviderJoinKey joinKey =
-					new TfDataProviderJoinKey
+				TfDataProviderIdentity providerDataIdentity =
+					new TfDataProviderIdentity
 					{
 						Id = Guid.NewGuid(),
-						Description = "testing1",
 						DataProviderId = provider.Id,
-						DbName = "join_key",
-						Columns = new() { provider.Columns[0] }
+						DataIdentity = dataIdentityModel.DataIdentity,
+						Columns = new() { provider.Columns[0].DbName }
 
 					};
 
-				task = Task.Run(() => { provider = tfService.CreateDataProviderJoinKey(joinKey); });
+				task = Task.Run(() => { provider = tfService.CreateDataProviderIdentity(providerDataIdentity); });
 				exception = Record.ExceptionAsync(async () => await task).Result;
 				exception.Should().BeNull();
 
@@ -149,7 +184,7 @@ public partial class TfServiceTest : BaseTest
 					DbName = "sc_test1",
 					DbType = TfDatabaseColumnType.Text,
 					IncludeInTableSearch = false,
-					JoinKeyDbName = "join_key"
+					DataIdentity = dataIdentityModel.DataIdentity
 				};
 
 				task = Task.Run(() => { tfService.CreateSharedColumn(sharedColumn); });

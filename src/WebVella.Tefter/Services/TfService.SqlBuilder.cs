@@ -27,7 +27,7 @@ public partial class TfService : ITfService
 		private List<SqlBuilderColumn> _selectColumns = new();
 		private List<SqlBuilderColumn> _filterColumns = new();
 		private List<SqlBuilderColumn> _sortColumns = new();
-		private List<SqlBuilderExternalProvider> _joinedProviders = new();
+		private List<SqlBuilderJoinData> _joinData = new();
 
 		private TfFilterAnd _mainFilter;
 		private List<TfFilterBase> _filters = new();
@@ -41,7 +41,7 @@ public partial class TfService : ITfService
 		private int? _pageSize = null;
 		private List<Guid> _tfIds = null;
 		private bool _returnOnlyTfIds = false;
-		public List<SqlBuilderExternalProvider> JoinedProviders { get {  return _joinedProviders; } }
+		public List<SqlBuilderJoinData> JoinData { get { return _joinData; } }
 
 		public SqlBuilder(
 			ITfService tfService,
@@ -106,7 +106,7 @@ public partial class TfService : ITfService
 				_filters = spaceData.Filters;
 
 
-			
+
 		}
 
 		public SqlBuilder(
@@ -171,7 +171,7 @@ public partial class TfService : ITfService
 				AddAvailableColumn(column.Id, column.DbName, column.DbType);
 
 			foreach (var column in _dataProvider.SharedColumns)
-				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.JoinKeyDbName);
+				AddAvailableColumn(column.Id, column.DbName, column.DbType, column.DataIdentity);
 
 
 			if (_spaceData is null)
@@ -213,10 +213,25 @@ public partial class TfService : ITfService
 							_selectColumns.Add(column);
 						}
 
-						if (!columnName.StartsWith($"{_tableName}_") &&
-							!columnName.StartsWith($"sc_"))
-						{
+						//ignore missing columns
+					}
 
+					foreach (var spaceDataIdentity in _spaceData.Identities)
+					{
+						//if identity is not found in primary data provider, ignore it
+						if ( !_dataProvider.Identities.Any(x => x.DataIdentity == spaceDataIdentity.DataIdentity))
+						{
+							continue;
+						}
+
+						foreach (var columnName in spaceDataIdentity.Columns.Distinct())
+						{
+							//ignore columns from same provider and shared columns
+							if (columnName.StartsWith($"{_tableName}_") ||
+								columnName.StartsWith($"sc_"))
+							{
+								continue;
+							}
 
 							var providerIndex = Int32.Parse(columnName.Split('_').First().Substring(2));
 							var extProvider = _tfService.GetDataProvider(providerIndex);
@@ -233,59 +248,52 @@ public partial class TfService : ITfService
 							if (extColumn is null)
 								continue;
 
-							var joinKeyExistingInBothProviders = extProvider
-								.JoinKeys
-								.Select(x => x.DbName)
-								.Intersect(_dataProvider.JoinKeys.Select(x => x.DbName))
-								.FirstOrDefault();
+							var identity = extProvider
+								.Identities
+								.SingleOrDefault(x => x.DataIdentity == spaceDataIdentity.DataIdentity);
 
-							//if not intersection by names between shared keys , ignore column
-							if (joinKeyExistingInBothProviders is null)
+							//ignore column if there is no identity found for specified data provider
+							if (identity is null)
 								continue;
 
-							var joinKey = extProvider
-								.JoinKeys
-								.FirstOrDefault(x => x.DbName == joinKeyExistingInBothProviders);
-
-							SqlBuilderExternalProvider sqlBuilderExternalProvider =
-								_joinedProviders.FirstOrDefault(x => x.Provider.Id == extProvider.Id);
+							SqlBuilderJoinData joinData =
+								_joinData.FirstOrDefault(x => x.Provider.Id == extProvider.Id && 
+								x.DataIdentity == spaceDataIdentity.DataIdentity );
 
 
-							if (sqlBuilderExternalProvider is null)
+							if (joinData is null)
 							{
 								_tableAliasCounter++;
 
-								sqlBuilderExternalProvider = new SqlBuilderExternalProvider
+								joinData = new SqlBuilderJoinData
 								{
 									Provider = extProvider,
-									JoinKeyDbName = joinKey.DbName,
+									DataIdentity = spaceDataIdentity.DataIdentity,
 									TableAlias = $"t{_tableAliasCounter}",
 									TableName = $"dp{extProvider.Index}",
 									DataProvider = extProvider,
 									Columns = new List<SqlBuilderColumn>()
 								};
 
-								_joinedProviders.Add(sqlBuilderExternalProvider);
+								_joinData.Add(joinData);
 							}
 
 							//column already exists in joined provider, ignore column
-							if (sqlBuilderExternalProvider.Columns.Any(x => x.DbName == columnName))
+							if (joinData.Columns.Any(x => x.DbName == columnName))
 								continue;
 
 
-							sqlBuilderExternalProvider.Columns.Add(new SqlBuilderColumn
+							joinData.Columns.Add(new SqlBuilderColumn
 							{
 								Id = extColumn.Id,
 								IsSystem = false,
 								DbName = columnName,
 								DbType = extColumn.DbType,
-								JoinKeyDbName = sqlBuilderExternalProvider.JoinKeyDbName,
-								TableAlias = sqlBuilderExternalProvider.TableAlias,
-								TableName = sqlBuilderExternalProvider.TableName
+								DataIdentity = joinData.DataIdentity,
+								TableAlias = joinData.TableAlias,
+								TableName = joinData.TableName
 							});
 						}
-
-						//ignore missing columns
 					}
 				}
 
@@ -343,10 +351,10 @@ public partial class TfService : ITfService
 			Guid id,
 			string dbName,
 			TfDatabaseColumnType dbType,
-			string joinKeyDbName = null,
+			string dataIdentity = null,
 			bool isSystem = false)
 		{
-			if (joinKeyDbName == null)
+			if (dataIdentity == null)
 			{
 				_availableColumns.Add(new SqlBuilderColumn
 				{
@@ -355,7 +363,7 @@ public partial class TfService : ITfService
 					TableAlias = _tableAlias,
 					DbName = dbName,
 					DbType = dbType,
-					JoinKeyDbName = joinKeyDbName,
+					DataIdentity = dataIdentity,
 					IsSystem = isSystem
 				});
 			}
@@ -370,7 +378,7 @@ public partial class TfService : ITfService
 					TableAlias = $"t{_tableAliasCounter}",
 					DbName = dbName,
 					DbType = dbType,
-					JoinKeyDbName = joinKeyDbName,
+					DataIdentity = dataIdentity,
 					IsSystem = isSystem
 				});
 			}
@@ -450,14 +458,14 @@ public partial class TfService : ITfService
 			string columns = string.Join($",{Environment.NewLine}\t",
 				_selectColumns.Select(x => x.GetSelectString()).ToList());
 
-			if (_joinedProviders.Count > 0)
-			{ 
+			if (_joinData.Count > 0)
+			{
 				string extColumns = string.Join($",{Environment.NewLine}\t",
-					_joinedProviders.Select(x => x.GetSelectString(_tableAlias)).ToList());
+					_joinData.Select(x => x.GetSelectString(_tableAlias)).ToList());
 
 				columns = columns + $",{Environment.NewLine}\t" + extColumns;
 			}
-			
+
 			StringBuilder sb = new StringBuilder();
 			if (_returnOnlyTfIds)
 				sb.Append($"SELECT tf_id {Environment.NewLine}FROM {_tableName} {_tableAlias}");
@@ -466,18 +474,18 @@ public partial class TfService : ITfService
 
 			//joins are created for select columns, filter columns and sort columns
 			var columnsToJoin = _selectColumns
-					.Where(x => x.JoinKeyDbName != null)
+					.Where(x => x.DataIdentity != null)
 					.Union(_filterColumns
-						.Where(x => x.JoinKeyDbName != null)
+						.Where(x => x.DataIdentity != null)
 					)
 					.Union(_sortColumns
-						.Where(x => x.JoinKeyDbName != null)
+						.Where(x => x.DataIdentity != null)
 					)
 					.Distinct().ToList();
 
 			string joins = string.Join(Environment.NewLine, columnsToJoin
 					.Select(x => $"	LEFT OUTER JOIN {x.TableName} {x.TableAlias} ON " +
-					$"{x.TableAlias}.join_key_id = {_tableAlias}.tf_jk_{x.JoinKeyDbName}_id AND " +
+					$"{x.TableAlias}.data_identity_value = {_tableAlias}.tf_ide_{x.DataIdentity} AND " +
 					$"{x.TableAlias}.shared_column_id = '{x.Id}'").ToList());
 
 			if (!string.IsNullOrEmpty(joins.Trim()))
@@ -520,7 +528,7 @@ public partial class TfService : ITfService
 
 					string comma = first ? " " : ", ";
 					string direction = sort.Direction == TfSortDirection.ASC ? "ASC" : "DESC";
-					if (string.IsNullOrWhiteSpace(column.JoinKeyDbName))
+					if (string.IsNullOrWhiteSpace(column.DataIdentity))
 						sortSb.Append($"{comma}{column.TableAlias}.{column.DbName} {direction}");
 					else
 						sortSb.Append($"{comma}{column.TableAlias}.value {direction}");
@@ -623,7 +631,7 @@ public partial class TfService : ITfService
 				return string.Empty;
 
 			var columnName = $"{column.TableAlias}.{filter.ColumnName}";
-			if (!string.IsNullOrWhiteSpace(column.JoinKeyDbName))
+			if (!string.IsNullOrWhiteSpace(column.DataIdentity))
 				columnName = $"{column.TableAlias}.value";
 
 			var parameterName = "filter_par_" + Guid.NewGuid().ToString().Replace("-", string.Empty);

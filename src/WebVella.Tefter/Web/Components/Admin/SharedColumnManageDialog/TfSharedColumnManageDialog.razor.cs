@@ -40,7 +40,7 @@ public partial class TfSharedColumnManageDialog : TfFormBaseComponent, IDialogCo
 				DbName = dbName,
 				DbType = Content.DbType,
 				IncludeInTableSearch = Content.IncludeInTableSearch,
-				JoinKeyDbName = Content.JoinKeyDbName,
+				DataIdentity = Content.DataIdentity,
 			};
 		}
 		else{ 

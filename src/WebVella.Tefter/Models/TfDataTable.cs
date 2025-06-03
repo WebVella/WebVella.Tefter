@@ -51,7 +51,8 @@ public sealed class TfDataTable
 				column.IsNullable,
 				column.IsShared,
 				column.IsSystem,
-				column.IsJoinColumn
+				column.IsJoinColumn,
+				column.IsIdentityColumn
 			));
 		}
 
@@ -71,7 +72,7 @@ public sealed class TfDataTable
 
 	internal TfDataTable(
 		TfDataProvider dataProvider,
-		List<SqlBuilderExternalProvider> joinedProviders,
+		List<SqlBuilderJoinData> joinData,
 		TfDataTableQuery query,
 		string sql,
 		List<NpgsqlParameter> sqlParameters,
@@ -90,7 +91,7 @@ public sealed class TfDataTable
 
 		Columns = InitColumns(
 			dataProvider,
-			joinedProviders,
+			joinData,
 			onlyColumns);
 
 		Sql = sql;
@@ -102,7 +103,7 @@ public sealed class TfDataTable
 
 	private TfDataColumnCollection InitColumns(
 		TfDataProvider dataProvider,
-		List<SqlBuilderExternalProvider> joinedProviders,
+		List<SqlBuilderJoinData> joinData,
 		List<string> onlyColumns)
 	{
 		var columns = new TfDataColumnCollection(this);
@@ -114,13 +115,25 @@ public sealed class TfDataTable
 				isNullable: false,
 				isShared: false,
 				isSystem: true,
-				isJoinColumn: false));
+				isJoinColumn: false,
+				isIdentityColumn: false ));
 
 		//the case we return only tf_ids
 		if (onlyColumns.Count == 1 && onlyColumns[0] == "tf_id")
 		{
 			return columns;
 		}
+
+
+		columns.Add(new TfDataColumn(
+			this,
+			"tf_row_id",
+			TfDatabaseColumnType.ShortText,
+			isNullable: false,
+			isShared: false,
+			isSystem: true,
+			isJoinColumn: false,
+			isIdentityColumn: true));
 
 		columns.Add(new TfDataColumn(
 			this,
@@ -129,7 +142,8 @@ public sealed class TfDataTable
 			isNullable: false,
 			isShared: false,
 			isSystem: true,
-			isJoinColumn: false));
+			isJoinColumn: false,
+			isIdentityColumn: false));
 
 		columns.Add(new TfDataColumn(
 			this,
@@ -138,7 +152,8 @@ public sealed class TfDataTable
 			isNullable: false,
 			isShared: false,
 			isSystem: true, 
-			isJoinColumn: false));
+			isJoinColumn: false,
+			isIdentityColumn: false));
 
 		columns.Add(new TfDataColumn(
 			this,
@@ -147,7 +162,8 @@ public sealed class TfDataTable
 			isNullable: false,
 			isShared: false,
 			isSystem: true,
-			isJoinColumn: false));
+			isJoinColumn: false, 
+			isIdentityColumn: false));
 
 		columns.Add(new TfDataColumn(
 			this,
@@ -156,30 +172,24 @@ public sealed class TfDataTable
 			isNullable: false,
 			isShared: false,
 			isSystem: true,
-			isJoinColumn: false));
+			isJoinColumn: false,
+			isIdentityColumn: false));
 
-		foreach (var joinKey in dataProvider.JoinKeys)
+		foreach (var identity in dataProvider.Identities)
 		{
-			string name = $"tf_jk_{joinKey.DbName}_id";
-			columns.Add(new TfDataColumn(
-			this,
-			name,
-			TfDatabaseColumnType.Guid,
-			isNullable: false,
-			isShared: false,
-			isSystem: true,
-			isJoinColumn: false));
+			if (identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+				continue;
 
-			name = $"tf_jk_{joinKey.DbName}_version";
+			string name = $"tf_ide_{identity.DataIdentity}";
 			columns.Add(new TfDataColumn(
-			this,
-			name,
-			TfDatabaseColumnType.ShortInteger,
-			isNullable: false,
-			isShared: false,
-			isSystem: true,
-			isJoinColumn: false));
-
+				this,
+				name,
+				TfDatabaseColumnType.ShortText,
+				isNullable: false,
+				isShared: false,
+				isSystem: true,
+				isJoinColumn: false,
+				isIdentityColumn: true));
 		}
 
 		foreach (var providerColumn in dataProvider.Columns)
@@ -194,7 +204,8 @@ public sealed class TfDataTable
 				isNullable: providerColumn.IsNullable,
 				isShared: false,
 				isSystem: false,
-				isJoinColumn: false));
+				isJoinColumn: false,
+				isIdentityColumn: false));
 		}
 
 
@@ -210,29 +221,31 @@ public sealed class TfDataTable
 				isNullable: true,
 				isShared: true,
 				isSystem: false,
-				isJoinColumn: false));
+				isJoinColumn: false,
+				isIdentityColumn: false ));
 		}
 
 		if (onlyColumns != null)
 		{
-			foreach (var joinedProvider in joinedProviders)
+			foreach (var data in joinData)
 			{
-				var columnName = $"jp_dp{joinedProvider.Provider.Index}";
+				var columnName = $"jp$dp{data.Provider.Index}${data.DataIdentity}";
 
 				if (onlyColumns.Contains(columnName))
 				{
-					foreach (var providerColumn in joinedProvider.Columns)
+					foreach (var joinDataColumn in data.Columns)
 					{
-						var joinedProviderColumn = joinedProvider.Provider.Columns.Single(x=>x.DbName == providerColumn.DbName);
+						var joinedProviderColumn = data.Provider.Columns.Single(x=>x.DbName == joinDataColumn.DbName);
 
 						columns.Add(new TfDataColumn(
 							this,
-							joinedProviderColumn.DbName,
+							$"{joinDataColumn.DbName}.{joinedProviderColumn.DbName}",
 							joinedProviderColumn.DbType,
 							isNullable: joinedProviderColumn.IsNullable,
 							isShared: false,
 							isSystem: false,
-							isJoinColumn: true));
+							isJoinColumn: true,
+							isIdentityColumn: false));
 					}
 				}
 			}

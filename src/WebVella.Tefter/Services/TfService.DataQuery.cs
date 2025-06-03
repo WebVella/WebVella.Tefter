@@ -115,7 +115,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
-				sqlBuilder.JoinedProviders,
+				sqlBuilder.JoinData,
 				new TfDataTableQuery
 				{
 					Search = search,
@@ -167,7 +167,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
-				sqlBuilder.JoinedProviders,
+				sqlBuilder.JoinData,
 				new TfDataTableQuery
 				{
 					Search = null,
@@ -222,7 +222,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
-				sqlBuilder.JoinedProviders,
+				sqlBuilder.JoinData,
 				new TfDataTableQuery
 				{
 					Search = null,
@@ -297,7 +297,7 @@ public partial class TfService : ITfService
 				sql,
 				parameters,
 				provider,
-				sqlBuilder.JoinedProviders,
+				sqlBuilder.JoinData,
 				new TfDataTableQuery
 				{
 					Search = search,
@@ -320,7 +320,7 @@ public partial class TfService : ITfService
 		string sql,
 		List<NpgsqlParameter> sqlParameters,
 		TfDataProvider provider,
-		List<SqlBuilderExternalProvider> joinedProviders,
+		List<SqlBuilderJoinData> joinData,
 		TfDataTableQuery query,
 		DataTable dataTable)
 	{
@@ -330,7 +330,7 @@ public partial class TfService : ITfService
 			columns.Add(column.ColumnName);
 		}
 
-		TfDataTable resultTable = new TfDataTable(provider, joinedProviders, query, sql, sqlParameters, columns);
+		TfDataTable resultTable = new TfDataTable(provider, joinData, query, sql, sqlParameters, columns);
 
 		if (dataTable.Rows.Count == 0)
 			return resultTable;
@@ -351,12 +351,12 @@ public partial class TfService : ITfService
 
 		Dictionary<string, TfDataProviderColumn> joinedColumns = new();
 
-		foreach (var joinedProvider in joinedProviders)
+		foreach (var data in joinData)
 		{
-			foreach (var column in joinedProvider.Columns)
+			foreach (var column in data.Columns)
 			{
-				var providerColumn = joinedProvider.Provider.Columns.Single(x => x.DbName == column.DbName);
-				joinedColumns.Add(providerColumn.DbName, providerColumn);
+				var providerColumn = data.Provider.Columns.Single(x => x.DbName == column.DbName);
+				joinedColumns.Add($"jp$dp{data.Provider.Index}${data.DataIdentity}", providerColumn);
 			}
 		}
 
@@ -371,7 +371,11 @@ public partial class TfService : ITfService
 			{
 				if (joinedColumns.ContainsKey(column.Name))
 				{
-					var sourceColumnName = $"jp_{column.Name.Split("_").First()}";
+					var segments = column.Name.Split(".");
+					string providerColumnName = segments[0];
+					string identity = segments[1];
+					
+					var sourceColumnName = $"jp${providerColumnName}${identity}";
 
 					JArray jArr = null;
 
@@ -641,19 +645,6 @@ public partial class TfService : ITfService
 
 		row["tf_search"] = searchSb.ToString();
 
-		//process join keys
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			List<string> keys = new List<string>();
-
-			foreach (var column in joinKey.Columns)
-				keys.Add(row[column.DbName]?.ToString()); //Boz: columns could be nullable
-
-
-			row[$"tf_jk_{joinKey.DbName}_id"] = GetId(keys.ToArray());
-
-			row[$"tf_jk_{joinKey.DbName}_version"] = joinKey.Version;
-		}
 
 		List<NpgsqlParameter> parameters;
 		var sql = BuildInsertNewRowSql(provider, row, out parameters);
@@ -662,6 +653,9 @@ public partial class TfService : ITfService
 
 		if (count != 1)
 			throw new Exception("Failed to insert new row");
+
+		//we need the row after update because identity columns value is calculated in database
+		var insertedRow = GetProviderRow(provider, (Guid)row["tf_id"]);
 
 		foreach (var tableColumn in row.DataTable.Columns)
 		{
@@ -676,7 +670,7 @@ public partial class TfService : ITfService
 
 			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
 
-			var joinKey = provider.JoinKeys.Single(x => x.DbName == sharedColumn.JoinKeyDbName);
+			var dataIdentity = provider.Identities.Single(x => x.DataIdentity == sharedColumn.DataIdentity);
 
 			TfDatabaseColumnType dbType = sharedColumn.DbType;
 
@@ -684,13 +678,17 @@ public partial class TfService : ITfService
 
 			Guid sharedColumnId = sharedColumn.Id;
 
-			Guid joinKeyId = (Guid)row[$"tf_jk_{joinKey.DbName}_id"];
+			string identityValue = null;
+			if(dataIdentity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+				identityValue = (string)insertedRow["tf_row_id"];
+			else
+				identityValue =	(string)insertedRow[$"tf_ide_{dataIdentity.DataIdentity}"];
 
 			UpsertSharedColumnValue(
 				value,
-				 tableColumn.Name,
+				tableColumn.Name,
 				sharedColumnId,
-				joinKeyId,
+				identityValue,
 				dbType);
 		}
 	}
@@ -699,7 +697,7 @@ public partial class TfService : ITfService
 		object value,
 		string columnName,
 		Guid sharedColumnId,
-		Guid joinKeyId,
+		string identityValue,
 		TfDatabaseColumnType dbType)
 	{
 
@@ -714,21 +712,21 @@ public partial class TfService : ITfService
 
 		NpgsqlParameter sharedColumnIdParameter = new NpgsqlParameter("@shared_column_id", sharedColumnId);
 
-		NpgsqlParameter joinKeyIdParameter = new NpgsqlParameter("@join_key_id", joinKeyId);
+		NpgsqlParameter dataIdentityValueParameter = new NpgsqlParameter("@data_identity_value", identityValue);
 
 		var tableName = GetSharedColumnValueTableNameByType(dbType);
 
 		var sql = $"DELETE FROM {tableName} WHERE " +
-			$"join_key_id =  @join_key_id AND shared_column_id = @shared_column_id;";
+			$"data_identity_value =  @data_identity_value AND shared_column_id = @shared_column_id;";
 
-		sql += $"{Environment.NewLine}INSERT INTO {tableName}(join_key_id, shared_column_id, value) " +
-			$"VALUES( @join_key_id, @shared_column_id, @value );";
+		sql += $"{Environment.NewLine}INSERT INTO {tableName}(data_identity_value, shared_column_id, value) " +
+			$"VALUES( @data_identity_value, @shared_column_id, @value );";
 
 		_dbService.ExecuteSqlNonQueryCommand(sql,
 			new List<NpgsqlParameter> {
 				valueParameter,
 				sharedColumnIdParameter,
-				joinKeyIdParameter
+				dataIdentityValueParameter
 			});
 	}
 
@@ -745,8 +743,8 @@ public partial class TfService : ITfService
 		{
 			var tableColumn = row.DataTable.Columns[i];
 
-			//ignore shared and joined columns here
-			if (tableColumn.IsShared || tableColumn.IsJoinColumn)
+			//ignore shared, identity and joined columns here
+			if (tableColumn.IsShared || tableColumn.IsJoinColumn || tableColumn.IsIdentityColumn )
 				continue;
 
 			columnNames.Add(tableColumn.Name);
@@ -809,27 +807,12 @@ public partial class TfService : ITfService
 
 		row["tf_updated_on"] = DateTime.Now;
 
-		//process join keys for changes
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			List<string> keys = new List<string>();
-
-			foreach (var column in joinKey.Columns)
-				keys.Add(row[column.DbName]?.ToString());
-
-			var newId = GetId(keys.ToArray());
-
-			if (newId != (Guid)row[$"tf_jk_{joinKey.DbName}_id"])
-				row[$"tf_jk_{joinKey.DbName}_id"] = newId;
-
-			row[$"tf_jk_{joinKey.DbName}_version"] = joinKey.Version;
-		}
 
 		List<string> columnsWithChanges = new List<string>();
 		foreach (var column in row.DataTable.Columns)
 		{
-			//join columns will not be updated
-			if (column.IsJoinColumn)
+			//join,shared and identity columns will not be updated
+			if ( column.IsShared || column.IsJoinColumn ||column.IsIdentityColumn)
 				continue;
 
 			if (column.DbType == TfDatabaseColumnType.Guid)
@@ -897,6 +880,9 @@ public partial class TfService : ITfService
 		if (count != 1)
 			throw new Exception("Failed to update row");
 
+		//we need the row after update because identity columns value is calculated in database
+		var updatedRow = GetProviderRow(provider, (Guid)row["tf_id"]);
+
 		foreach (var tableColumn in row.DataTable.Columns)
 		{
 			if (!tableColumn.IsShared)
@@ -910,7 +896,7 @@ public partial class TfService : ITfService
 
 			var sharedColumn = provider.SharedColumns.Single(x => x.DbName == tableColumn.Name);
 
-			var joinKey = provider.JoinKeys.Single(x => x.DbName == sharedColumn.JoinKeyDbName);
+			var identity = provider.Identities.Single(x => x.DataIdentity == sharedColumn.DataIdentity);
 
 			TfDatabaseColumnType dbType = sharedColumn.DbType;
 
@@ -918,13 +904,13 @@ public partial class TfService : ITfService
 
 			Guid sharedColumnId = sharedColumn.Id;
 
-			Guid joinKeyId = (Guid)row[$"tf_jk_{joinKey.DbName}_id"];
+			string identityValue = (string)updatedRow[$"tf_ide_{identity.DataIdentity}"];
 
 			UpsertSharedColumnValue(
 				value,
-				 tableColumn.Name,
+				tableColumn.Name,
 				sharedColumnId,
-				joinKeyId,
+				identityValue,
 				dbType);
 		}
 	}
@@ -943,8 +929,8 @@ public partial class TfService : ITfService
 		{
 			var tableColumn = row.DataTable.Columns[i];
 
-			//ignore shared and joined columns here
-			if (tableColumn.IsShared || tableColumn.IsJoinColumn)
+			//ignore shared,identity and joined columns here
+			if ( tableColumn.IsIdentityColumn || tableColumn.IsShared || tableColumn.IsJoinColumn)
 				continue;
 
 			if (!columnsWithChange.Contains(tableColumn.Name))
@@ -1284,11 +1270,15 @@ public partial class TfService : ITfService
 		sql.AppendLine("tf_row_index");
 		sql.AppendLine(",");
 
-		foreach (var joinKey in provider.JoinKeys)
+		foreach (var identity in provider.Identities)
 		{
-			sql.AppendLine($"tf_jk_{joinKey.DbName}_id");
-			sql.AppendLine(",");
-			sql.AppendLine($"tf_jk_{joinKey.DbName}_version");
+			if (identity.DataIdentity == TfConstants.TF_ROW_ID_DATA_IDENTITY)
+			{
+				sql.AppendLine(TfConstants.TF_ROW_ID_DATA_IDENTITY);
+				sql.AppendLine(",");
+				continue;
+			}
+			sql.AppendLine($"tf_ide_{identity.DataIdentity}");
 			sql.AppendLine(",");
 		}
 
@@ -1327,12 +1317,8 @@ public partial class TfService : ITfService
 		sql.AppendLine("tf_row_index");
 		sql.AppendLine(",");
 
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			sql.AppendLine($"tf_jk_{joinKey.DbName}_id");
-			sql.AppendLine(",");
-		}
-
+		//note we do not set value for identity columns and tf_row_id
+	
 		foreach (var column in provider.Columns)
 		{
 			sql.AppendLine(column.DbName);
@@ -1409,18 +1395,7 @@ public partial class TfService : ITfService
 		sql.Append("tf_row_index = @tf_row_index");
 		sql.AppendLine(",");
 
-		foreach (var joinKey in provider.JoinKeys)
-		{
-			var joinKeyName = $"tf_jk_{joinKey.DbName}_id";
-			parameters.Add(new NpgsqlParameter($"@{joinKeyName}", row[joinKeyName]));
-			sql.Append($"{joinKeyName} = @{joinKeyName}");
-			sql.AppendLine(",");
-
-			var joinKeyVersion = $"tf_jk_{joinKey.DbName}_version";
-			parameters.Add(new NpgsqlParameter($"@{joinKeyVersion}", row[joinKeyVersion]));
-			sql.Append($"{joinKeyVersion} = @{joinKeyVersion}");
-			sql.AppendLine(",");
-		}
+		//note we do not set value for identity columns and tf_row_id
 
 		foreach (var column in provider.Columns)
 		{

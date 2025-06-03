@@ -3,7 +3,7 @@ internal record SqlBuilderColumn
 {
 	public Guid Id { get; set; }
 	public string DbName { get; set; }
-	public string JoinKeyDbName { get; set; }
+	public string DataIdentity { get; set; }
 	public TfDatabaseColumnType DbType { get; set; }
 	public string TableName { get; set; }
 	public string TableAlias { get; set; }
@@ -11,7 +11,7 @@ internal record SqlBuilderColumn
 
 	public string GetSelectString()
 	{
-		if (string.IsNullOrWhiteSpace(JoinKeyDbName))
+		if (string.IsNullOrWhiteSpace(DataIdentity))
 			return $"{TableAlias}.{DbName}";
 		else
 			return $"{TableAlias}.value AS {DbName}";

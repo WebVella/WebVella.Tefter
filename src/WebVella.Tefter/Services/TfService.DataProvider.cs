@@ -110,7 +110,7 @@ public partial class TfService : ITfService
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
-					GetDataProviderSystemColumns(joinKeys),
+					GetDataProviderSystemColumns(identities),
 					GetDataProviderColumns(id),
 					joinKeys,
 					identities,
@@ -154,7 +154,7 @@ public partial class TfService : ITfService
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
-					GetDataProviderSystemColumns(joinKeys),
+					GetDataProviderSystemColumns(identities),
 					GetDataProviderColumns(providerDbo.Id),
 					joinKeys,
 					identities,
@@ -199,7 +199,7 @@ public partial class TfService : ITfService
 
 			var provider = DataProviderFromDbo(
 					providerDbo,
-					GetDataProviderSystemColumns(joinKeys),
+					GetDataProviderSystemColumns(identities),
 					GetDataProviderColumns(providerDbo.Id),
 					joinKeys,
 					identities,
@@ -245,7 +245,7 @@ public partial class TfService : ITfService
 
 				var provider = DataProviderFromDbo(
 						dbo,
-						GetDataProviderSystemColumns(joinKeys),
+						GetDataProviderSystemColumns(identities),
 						GetDataProviderColumns(dbo.Id),
 						joinKeys,
 						identities,
@@ -551,17 +551,11 @@ public partial class TfService : ITfService
 	{
 		List<TfSharedColumn> columns = new List<TfSharedColumn>();
 
-		if (provider.JoinKeys.Count == 0)
-		{
-			provider.SharedColumns = columns.AsReadOnly();
-			return;
-		}
-
 		var sharedColumns = GetSharedColumns();
 		foreach (var sharedColumn in sharedColumns)
 		{
-			var joinKey = provider.JoinKeys.SingleOrDefault(x => x.DbName == sharedColumn.JoinKeyDbName);
-			if (joinKey is not null && !columns.Contains(sharedColumn))
+			var dataIdentity = provider.Identities.SingleOrDefault(x => x.DataIdentity == sharedColumn.DataIdentity);
+			if (dataIdentity is not null && !columns.Contains(sharedColumn))
 				columns.Add(sharedColumn);
 		}
 

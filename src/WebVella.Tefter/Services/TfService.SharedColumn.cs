@@ -146,9 +146,9 @@ public partial class TfService : ITfService
 					.NotEmpty()
 					.WithMessage("The shared column id is required.");
 
-				RuleFor(column => column.JoinKeyDbName)
+				RuleFor(column => column.DataIdentity)
 				.NotEmpty()
-				.WithMessage("The shared column associated join key database name is required.");
+				.WithMessage("The shared column associated data identity is required.");
 
 				RuleFor(column => column.DbName)
 					.NotEmpty()
@@ -210,7 +210,7 @@ public partial class TfService : ITfService
 			{
 				RuleFor(column => column.Id)
 						.Must((column, id) => { return tfService.GetSharedColumn(id) == null; })
-						.WithMessage("There is already existing data shared column with specified identifier.");
+						.WithMessage("There is already existing shared column with specified identifier.");
 
 				RuleFor(column => column.DbName)
 						.Must((column, dbName) =>
